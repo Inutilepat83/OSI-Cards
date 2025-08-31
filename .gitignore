@@ -9,6 +9,9 @@ build/
 .vite/
 .turbo/
 
+# Angular
+.angular/
+
 # TypeScript
 .tsbuildinfo
 
