@@ -1,0 +1,40 @@
+.tilt-container {
+  transform: perspective(1000px) 
+             rotateX(var(--tilt-x, 0deg)) 
+             rotateY(var(--tilt-y, 0deg)) 
+             scale(var(--tilt-scale, 1));
+  transition: transform 0.15s ease-out;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.glow-container {
+  filter: drop-shadow(0 0 var(--glow-blur, 25px) var(--glow-color, rgba(255, 121, 0, 0.2)));
+  transition: filter 0.2s ease-out;
+  will-change: filter;
+}
+
+.card-reflection {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 121, 0, 0.1) 0%,
+    transparent 50%,
+    rgba(255, 121, 0, 0.1) 100%
+  );
+  opacity: var(--reflection-opacity, 0);
+  transition: opacity 0.2s ease-out;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 2;
+}
+
+.tilt-content {
+  position: relative;
+  z-index: 1;
+  transform-style: preserve-3d;
+}

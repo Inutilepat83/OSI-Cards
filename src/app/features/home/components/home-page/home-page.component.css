@@ -1,0 +1,48 @@
+.card {
+  @apply bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors;
+}
+
+.card-content {
+  @apply p-6 sm:p-8 text-center;
+}
+
+.badge {
+  @apply bg-primary/20 text-primary border-primary/30 ml-2;
+}
+
+.badge-destructive {
+  @apply text-xs bg-red-500/20 text-red-400 border border-red-500/30;
+}
+
+/* Replace icons with Angular Material or Font Awesome */
+.sparkles-icon {
+  @apply w-8 h-8 sm:w-10 sm:h-10;
+}
+
+.zap-icon {
+  @apply w-8 h-8 sm:w-10 sm:h-10;
+}
+
+.code-icon {
+  @apply w-8 h-8 sm:w-10 sm:h-10;
+}
+
+.file-text-icon {
+  @apply w-8 h-8 sm:w-10 sm:h-10;
+}
+
+.target-icon {
+  @apply w-8 h-8 sm:w-10 sm:h-10;
+}
+
+.settings-icon {
+  @apply w-8 h-8 sm:w-10 sm:h-10;
+}
+
+.download-icon {
+  @apply w-8 h-8 sm:w-10 sm:h-10;
+}
+
+.save-icon {
+  @apply w-8 h-8 sm:w-10 sm:h-10;
+}

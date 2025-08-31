@@ -1,0 +1,10 @@
+<div class="info-section">
+  <div class="info-grid">
+    <div *ngFor="let field of section.fields; trackBy: trackByFn" 
+         class="info-field" 
+         (click)="onFieldClick(field)">
+      <div class="field-label">{{field.label}}</div>
+      <div class="field-value" [style.color]="field.valueColor">{{field.value}}</div>
+    </div>
+  </div>
+</div>
