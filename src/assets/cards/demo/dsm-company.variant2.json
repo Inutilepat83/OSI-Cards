@@ -1,0 +1,59 @@
+{
+  "cardTitle": "DSM",
+  "cardType": "Company",
+  "columns": 2,
+  "variant": 2,
+  "sections": [
+    {
+      "title": "Company Snapshot",
+      "type": "info",
+      "preferredColumns": 2,
+      "fields": [
+        { "label": "Industry", "value": "Nutrition & Health" },
+        { "label": "Founded", "value": "1902" },
+        { "label": "Employees", "value": "~23k" },
+        { "label": "HQ", "value": "Heerlen, NL" }
+      ]
+    },
+    {
+      "title": "Key ICT Investments",
+      "type": "analytics",
+      "preferredColumns": 2,
+      "fields": [
+        { "label": "Annual ICT Budget", "value": "€200M", "percentage": 100, "performance": "excellent", "trend": "up", "change": 8 },
+        { "label": "Cloud", "value": "€50M", "percentage": 25, "performance": "good", "trend": "up", "change": 15 }
+      ]
+    },
+    {
+      "title": "Cloud & Network Summary",
+      "type": "info",
+      "preferredColumns": 1,
+      "fields": [
+        { "label": "IaaS", "value": "75%" },
+        { "label": "SaaS", "value": "85%" },
+        { "label": "Multi-Cloud", "value": "AWS + Azure" }
+      ]
+    },
+    {
+      "title": "Network Snapshot",
+      "type": "chart",
+      "fields": [
+        { "label": "Sites", "value": 120, "color": "#FF7900" },
+        { "label": "Bandwidth (Gbps)", "value": 45, "color": "#FF9933" }
+      ]
+    },
+    {
+      "title": "Global Offices",
+      "type": "map",
+      "preferredColumns": 2,
+      "fields": [
+        { "name": "Heerlen HQ", "x": 52, "y": 32, "type": "hq", "address": "Heerlen, NL" },
+        { "name": "New York", "x": 25, "y": 35, "type": "office", "address": "New York, USA" },
+        { "name": "Singapore", "x": 80, "y": 60, "type": "office", "address": "Singapore" }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Visit DSM", "type": "primary", "action": "https://www.dsm.com" }
+  ]
+}

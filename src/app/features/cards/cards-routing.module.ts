@@ -5,12 +5,12 @@ import { CardsContainerComponent } from './components/cards-container/cards-cont
 const routes: Routes = [
   {
     path: '',
-    component: CardsContainerComponent
-  }
+    component: CardsContainerComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class CardsRoutingModule {}

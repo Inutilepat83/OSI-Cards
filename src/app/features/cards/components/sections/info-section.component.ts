@@ -1,10 +1,11 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CardSection, CardField } from '../../../../models/card.model';
 
 @Component({
   selector: 'app-info-section',
   templateUrl: './info-section.component.html',
-  styleUrls: ['./info-section.component.css']
+  styleUrls: ['./info-section.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InfoSectionComponent {
   @Input() section!: CardSection;
@@ -18,7 +19,7 @@ export class InfoSectionComponent {
     this.fieldInteraction.emit({
       field: field,
       section: this.section,
-      action: 'click'
+      action: 'click',
     });
   }
 }

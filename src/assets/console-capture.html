@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Console Capture Client</title>
+    <style>body{font-family:system-ui;padding:12px}label{display:block;margin:8px 0}</style>
+  </head>
+  <body>
+    <h3>Console Capture Control</h3>
+    <label><input id="toggle" type="checkbox" checked /> Enable forwarding</label>
+    <p>Port: <input id="port" value="9229" style="width:100px" /></p>
+    <p>Open this page from your app via an iframe or navigate to it in another tab to enable forwarding.</p>
+    <script src="/assets/console-capture.js"></script>
+    <script>
+      const toggle = document.getElementById('toggle');
+      const portInput = document.getElementById('port');
+      toggle.addEventListener('change', () => window.__consoleCaptureEnabled = toggle.checked);
+      portInput.addEventListener('change', () => {
+        // reload with port query
+        const p = portInput.value || '9229';
+        const q = new URLSearchParams(location.search);
+        q.set('port', p);
+        location.search = q.toString();
+      });
+      // initialize
+      toggle.checked = !!window.__consoleCaptureEnabled;
+    </script>
+  </body>
+</html>

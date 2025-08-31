@@ -1,0 +1,16 @@
+{
+  "cardTitle": "Product Interest Scores",
+  "cardType": "Analytics",
+  "variant": 2,
+  "sections": [
+    {
+      "title": "Summary",
+      "type": "info",
+      "fields": [
+        { "label": "Total Contacts", "value": "1,240" },
+        { "label": "Avg. Interest Score", "value": "78" }
+      ]
+    }
+  ],
+  "actions": []
+}

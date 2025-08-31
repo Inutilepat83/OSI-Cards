@@ -1,0 +1,9 @@
+{
+  "cardTitle": "DSM Quarterly Business Review",
+  "cardType": "Event",
+  "variant": 2,
+  "sections": [
+    { "title": "Summary", "type": "info", "fields": [ { "label": "Event", "value": "DSM QBR" } ] }
+  ],
+  "actions": [ { "label": "Schedule Follow-Up", "type": "primary", "action": "https://ob.orange.com/schedule/qbr-dsm" } ]
+}

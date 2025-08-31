@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { MousePosition } from './magnetic-tilt.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MouseTrackingService {
   private mousePositionSubject = new BehaviorSubject<MousePosition>({ x: 0, y: 0 });
@@ -43,19 +43,19 @@ export class MouseTrackingService {
     this.lastUpdateTime = now;
 
     const newPosition = { x: e.clientX, y: e.clientY };
-    
+
     // Run change detection only when needed
     this.ngZone.run(() => {
       this.mousePositionSubject.next(newPosition);
     });
-  }
+  };
 
   trackElement(elementRef: ElementRef<HTMLElement>, magneticRange = 300, throttleMs = 16): void {
     this.magneticRange = magneticRange;
     this.throttleMs = throttleMs;
 
     const element = elementRef.nativeElement;
-    
+
     this.ngZone.runOutsideAngular(() => {
       element.addEventListener('mouseenter', this.handleMouseEnter);
       element.addEventListener('mouseleave', this.handleMouseLeave);
@@ -72,7 +72,7 @@ export class MouseTrackingService {
     this.ngZone.run(() => {
       this.isHoveredSubject.next(true);
     });
-  }
+  };
 
   private handleMouseLeave = (): void => {
     this.ngZone.run(() => {
@@ -81,31 +81,31 @@ export class MouseTrackingService {
       this.magneticIntensitySubject.next(0);
       this.relativePositionSubject.next({ x: 0, y: 0 });
     });
-  }
+  };
 
   updateElementPosition(elementRef: ElementRef<HTMLElement>): void {
     if (!elementRef?.nativeElement) return;
-    
+
     const element = elementRef.nativeElement;
     const rect = element.getBoundingClientRect();
     const mousePos = this.mousePositionSubject.value;
-    
+
     // Calculate relative position
     const relativePos = {
       x: mousePos.x - rect.left,
-      y: mousePos.y - rect.top
+      y: mousePos.y - rect.top,
     };
-    
+
     // Calculate distance to center
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     const dx = mousePos.x - centerX;
     const dy = mousePos.y - centerY;
     const distance = Math.hypot(dx, dy);
-    
+
     // Calculate magnetic intensity
     const intensity = this.calculateMagneticIntensity(distance);
-    
+
     this.ngZone.run(() => {
       this.relativePositionSubject.next(relativePos);
       this.magneticIntensitySubject.next(intensity);

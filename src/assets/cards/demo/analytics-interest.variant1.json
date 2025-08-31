@@ -1,0 +1,27 @@
+{
+  "cardTitle": "Product Interest Scores",
+  "cardType": "Analytics",
+  "sections": [
+    {
+      "title": "Analytics Overview",
+      "type": "info",
+      "fields": [
+        { "label": "Report Name", "value": "Product Interest Scores" },
+        { "label": "Total Contacts Engaged", "value": "1,240" },
+        { "label": "Target Accounts", "value": "85" }
+      ]
+    },
+    {
+      "title": "Top Product Interest Scores",
+      "type": "analytics",
+      "columns": 2,
+      "fields": [
+        { "label": "Cloud Connect", "value": "85", "percentage": 85 },
+        { "label": "SD-WAN", "value": "78", "percentage": 78 }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Drill-Down Report", "type": "primary", "action": "https://crm.orange.com/analytics/product-interest" }
+  ]
+}

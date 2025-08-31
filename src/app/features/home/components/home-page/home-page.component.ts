@@ -1,27 +1,31 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { Observable, debounceTime, distinctUntilChanged } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { AICardConfig } from '../../../../models/card.model';
 import { LocalCardConfigurationService } from '../../../../core/services/local-card-configuration.service';
 import { LocalInitializationService } from '../../../../core/services/local-initialization.service';
+import { LoggingService } from '../../../../core/services/logging.service';
 
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
   styleUrls: ['./home-page.component.css'],
-  providers: [MessageService]
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [MessageService],
 })
 export class HomePageComponent implements OnInit {
-  jsonInput = new FormControl('{}', [
-    Validators.required,
-    this.jsonValidator
-  ]);
-  
+  jsonInput = new FormControl('{}', [Validators.required, this.jsonValidator]);
+
   cardTypes: ('company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'event')[] = [
-    'company', 'contact', 'opportunity', 'product', 'analytics', 'event'
+    'company',
+    'contact',
+    'opportunity',
+    'product',
+    'analytics',
+    'event',
   ];
-  
+
   cardType: 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'event' = 'company';
   cardVariant: 1 | 2 | 3 = 1;
   generatedCard: AICardConfig | null = null;
@@ -32,48 +36,54 @@ export class HomePageComponent implements OnInit {
   isJsonValid = true;
   isInitialized = false;
   isFullscreen = false;
-  
+
   @ViewChild('cardPreview') cardPreview!: ElementRef;
 
   constructor(
     private cardConfigService: LocalCardConfigurationService,
     private initService: LocalInitializationService,
-    private messageService: MessageService
-  ) { }
+    private messageService: MessageService,
+    private logger: LoggingService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
+    console.log('[HomePageComponent] Initializing in features/home/components/home-page');
+    console.log('[HomePageComponent] ChangeDetectorRef available:', !!this.cdr);
+    console.log('[HomePageComponent] Services available:', {
+      cardConfigService: !!this.cardConfigService,
+      initService: !!this.initService,
+      messageService: !!this.messageService,
+      logger: !!this.logger
+    });
+    
     // Initialize system
     this.initializeSystem();
-    
+
     // Setup JSON input listener with validation
-    this.jsonInput.valueChanges
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged()
-      )
-      .subscribe(value => {
-        if (value) {
-          this.validateJsonInput(value);
-          if (this.isJsonValid) {
-            this.generateCard(value);
-          }
+    this.jsonInput.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(value => {
+      if (value) {
+        this.validateJsonInput(value);
+        if (this.isJsonValid) {
+          this.generateCard(value);
         }
-      });
-    
+      }
+    });
+
     // Load from localStorage if available
     this.loadSavedConfiguration();
   }
-  
+
   // Custom JSON validator
-  jsonValidator(control: FormControl): {[key: string]: any} | null {
+  jsonValidator(control: FormControl): { [key: string]: any } | null {
     try {
       JSON.parse(control.value);
       return null;
-    } catch (e) {
-      return { 'jsonInvalid': true };
+    } catch {
+      return { jsonInvalid: true };
     }
   }
-  
+
   validateJsonInput(value: string): void {
     try {
       JSON.parse(value);
@@ -86,42 +96,52 @@ export class HomePageComponent implements OnInit {
   }
 
   initializeSystem(): void {
+    console.log('[HomePageComponent] Starting system initialization');
     this.initService.initialize().subscribe(result => {
+      console.log('[HomePageComponent] Initialization result:', result);
+      
       if (result.success && result.initialCard) {
+        console.log('[HomePageComponent] Initial card loaded:', result.initialCard.cardTitle);
+        
         // Clean the template
         const cleanTemplate = this.removeAllIds(result.initialCard);
         const templateJson = JSON.stringify(cleanTemplate, null, 2);
-        
+
         this.jsonInput.setValue(templateJson);
         this.isInitialized = true;
-        
+
+        // Trigger change detection
+        this.cdr.detectChanges();
+        console.log('[HomePageComponent] Change detection triggered, isInitialized:', this.isInitialized);
+
         // Show success message
         this.messageService.add({
           severity: 'success',
           summary: 'System Initialized',
-          detail: 'Templates and services loaded successfully'
+          detail: 'Templates and services loaded successfully',
         });
-        
+
         // Show warnings if any
         if (result.warnings.length > 0) {
-          console.warn('Initialization warnings:', result.warnings);
+          this.logger.warn('HomePageComponent', 'Initialization warnings', result.warnings);
           result.warnings.forEach(warning => {
             this.messageService.add({
               severity: 'warn',
               summary: 'Warning',
-              detail: warning
+              detail: warning,
             });
           });
         }
       } else {
-        console.error('Initialization failed');
-        
+        console.error('[HomePageComponent] Initialization failed:', result);
+        this.logger.error('HomePageComponent', 'Initialization failed');
+
         this.messageService.add({
           severity: 'error',
           summary: 'Initialization Failed',
-          detail: 'Could not load required templates'
+          detail: 'Could not load required templates',
         });
-        
+
         // Set fallback minimal card
         const minimalFallback: AICardConfig = {
           cardTitle: 'System Initialization Failed',
@@ -133,13 +153,13 @@ export class HomePageComponent implements OnInit {
               fields: [
                 {
                   label: 'Error',
-                  value: 'Failed to initialize system'
-                }
-              ]
-            }
-          ]
+                  value: 'Failed to initialize system',
+                },
+              ],
+            },
+          ],
         };
-        
+
         this.jsonInput.setValue(JSON.stringify(minimalFallback, null, 2));
         this.isInitialized = true;
       }
@@ -149,7 +169,7 @@ export class HomePageComponent implements OnInit {
   generateCard(inputJson: string, silentMode = false): void {
     try {
       this.isGenerating = true;
-      
+
       // Check if JSON is empty
       if (!inputJson || inputJson.trim() === '' || inputJson.trim() === '{}') {
         this.generatedCard = null;
@@ -157,41 +177,46 @@ export class HomePageComponent implements OnInit {
         this.jsonError = '';
         return;
       }
-      
+
       const data = JSON.parse(inputJson);
-      
+
       // Auto-generate ID if not provided
       if (!data.id) {
         data.id = `card_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       }
-      
+
       // Validate card data
       if (data.cardTitle && data.cardType && data.sections && Array.isArray(data.sections)) {
         this.generatedCard = data;
         this.isJsonValid = true;
         this.jsonError = '';
-        
+
+        // Trigger change detection
+        this.cdr.detectChanges();
+
         if (!silentMode) {
           this.messageService.add({
             severity: 'success',
             summary: 'Card Generated',
-            detail: 'Card configuration loaded successfully'
+            detail: 'Card configuration loaded successfully',
           });
         }
       } else {
-        throw new Error('Invalid card configuration format - missing required fields (cardTitle, cardType, sections)');
+        throw new Error(
+          'Invalid card configuration format - missing required fields (cardTitle, cardType, sections)'
+        );
       }
     } catch (error: any) {
-      console.error('Card generation error:', error);
+      this.logger.error('HomePageComponent', 'Card generation error', error);
       this.isJsonValid = false;
       this.jsonError = error.message;
       this.generatedCard = null;
-      
+
       if (!silentMode) {
         this.messageService.add({
           severity: 'error',
           summary: 'Card Generation Failed',
-          detail: error.message
+          detail: error.message,
         });
       }
     } finally {
@@ -199,70 +224,79 @@ export class HomePageComponent implements OnInit {
     }
   }
 
-  switchCardType(type: 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'event'): void {
+  switchCardType(
+    type: 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'event'
+  ): void {
     if (this.switchingType) return;
-    
+
     this.switchingType = true;
     this.cardType = type;
-    
+
     this.cardConfigService.getTemplate(type, this.cardVariant).subscribe(
       template => {
         if (template) {
           // Clean the template
           const cleanTemplate = this.removeAllIds(template);
           const templateJson = JSON.stringify(cleanTemplate, null, 2);
-          
+
           this.jsonInput.setValue(templateJson);
           this.messageService.add({
             severity: 'success',
             summary: 'Template Loaded',
-            detail: `${type.charAt(0).toUpperCase() + type.slice(1)} template (variant ${this.cardVariant}) loaded`
+            detail: `${type.charAt(0).toUpperCase() + type.slice(1)} template (variant ${this.cardVariant}) loaded`,
           });
         }
         this.switchingType = false;
+        
+        // Trigger change detection
+        this.cdr.detectChanges();
       },
       error => {
-        console.error('Error switching card type:', error);
+        this.logger.error('HomePageComponent', 'Error switching card type', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Template Error',
-          detail: `Failed to load ${type} template`
+          detail: `Failed to load ${type} template`,
         });
         this.switchingType = false;
+        
+        // Trigger change detection
+        this.cdr.detectChanges();
       }
     );
   }
 
   handleVariantChange(variant: any): void {
     if (this.switchingType) return;
-    
+
     // Ensure variant is one of the allowed values: 1, 2, or 3
-    const safeVariant = (variant === 1 || variant === 2 || variant === 3) ? variant as 1 | 2 | 3 : 1;
+    const safeVariant =
+      variant === 1 || variant === 2 || variant === 3 ? (variant as 1 | 2 | 3) : 1;
     this.cardVariant = safeVariant;
     this.switchingType = true;
-    
+
     this.cardConfigService.getTemplate(this.cardType, safeVariant).subscribe(
       template => {
         if (template) {
           // Clean the template
           const cleanTemplate = this.removeAllIds(template);
           const templateJson = JSON.stringify(cleanTemplate, null, 2);
-          
+
           this.jsonInput.setValue(templateJson);
           this.messageService.add({
             severity: 'success',
             summary: 'Variant Loaded',
-            detail: `${this.cardType.charAt(0).toUpperCase() + this.cardType.slice(1)} variant ${variant} loaded`
+            detail: `${this.cardType.charAt(0).toUpperCase() + this.cardType.slice(1)} variant ${variant} loaded`,
           });
         }
         this.switchingType = false;
       },
       error => {
-        console.error('Error switching variant:', error);
+        this.logger.error('HomePageComponent', 'Error switching variant', error);
         this.messageService.add({
           severity: 'error',
           summary: 'Variant Error',
-          detail: `Failed to load variant ${variant}`
+          detail: `Failed to load variant ${variant}`,
         });
         this.switchingType = false;
       }
@@ -270,63 +304,63 @@ export class HomePageComponent implements OnInit {
   }
 
   handleFieldInteraction(data: any): void {
-    console.log('Field interaction in preview:', data);
+    this.logger.log('HomePageComponent', 'Field interaction in preview', data);
     this.messageService.add({
       severity: 'info',
       summary: 'Field Interaction',
-      detail: `Clicked on field: ${data.field.label}`
+      detail: `Clicked on field: ${data.field.label}`,
     });
   }
 
   handleCardInteraction(event: any): void {
-    console.log('Card interaction in preview:', event);
+    this.logger.log('HomePageComponent', 'Card interaction in preview', event);
     this.messageService.add({
       severity: 'info',
       summary: 'Card Interaction',
-      detail: `Action: ${event.action}`
+      detail: `Action: ${event.action}`,
     });
   }
 
   handleFullscreenToggle(fullscreen: boolean): void {
     this.isFullscreen = fullscreen;
   }
-  
+
   // Save current configuration to localStorage
   saveConfiguration(): void {
     if (!this.isJsonValid || !this.generatedCard) {
       this.messageService.add({
         severity: 'error',
         summary: 'Save Failed',
-        detail: 'Cannot save invalid configuration'
+        detail: 'Cannot save invalid configuration',
       });
       return;
     }
-    
+
     try {
       const key = `osi-card-config-${this.cardType}-${this.cardVariant}`;
       localStorage.setItem(key, this.jsonInput.value as string);
-      
+
       this.messageService.add({
         severity: 'success',
         summary: 'Configuration Saved',
-        detail: 'Card configuration saved to local storage'
+        detail: 'Card configuration saved to local storage',
       });
     } catch (error) {
-      console.error('Error saving configuration:', error);
+      this.logger.error('HomePageComponent', 'Error saving configuration', error);
       this.messageService.add({
         severity: 'error',
         summary: 'Save Failed',
-        detail: 'Could not save to local storage'
+        detail: 'Could not save to local storage',
       });
     }
   }
-  
+
   // Load saved configuration from localStorage
   loadSavedConfiguration(): void {
     try {
       const key = `osi-card-config-${this.cardType}-${this.cardVariant}`;
       const saved = localStorage.getItem(key);
-      
+
       if (saved) {
         this.validateJsonInput(saved);
         if (this.isJsonValid) {
@@ -334,40 +368,40 @@ export class HomePageComponent implements OnInit {
           this.messageService.add({
             severity: 'info',
             summary: 'Configuration Loaded',
-            detail: 'Loaded saved configuration from local storage'
+            detail: 'Loaded saved configuration from local storage',
           });
         }
       }
     } catch (error) {
-      console.error('Error loading saved configuration:', error);
+      this.logger.error('HomePageComponent', 'Error loading saved configuration', error);
     }
   }
-  
+
   // Export card as PNG
   exportAsPng(): void {
     if (!this.generatedCard || !this.cardPreview) {
       this.messageService.add({
         severity: 'error',
         summary: 'Export Failed',
-        detail: 'No card to export'
+        detail: 'No card to export',
       });
       return;
     }
-    
+
     try {
       // This would use html2canvas or similar library to export
       // For this demonstration, we'll just show a success message
       this.messageService.add({
         severity: 'success',
         summary: 'Card Exported',
-        detail: 'Card exported as PNG'
+        detail: 'Card exported as PNG',
       });
     } catch (error) {
-      console.error('Error exporting PNG:', error);
+      this.logger.error('HomePageComponent', 'Error exporting PNG', error);
       this.messageService.add({
         severity: 'error',
         summary: 'Export Failed',
-        detail: 'Could not export card as PNG'
+        detail: 'Could not export card as PNG',
       });
     }
   }

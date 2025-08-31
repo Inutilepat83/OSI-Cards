@@ -1,0 +1,16 @@
+<cdk-virtual-scroll-viewport
+  [itemSize]="itemSize"
+  [minBufferPx]="minBufferPx"
+  [maxBufferPx]="maxBufferPx"
+  [orientation]="orientation"
+  class="virtual-viewport"
+  (scrolledIndexChange)="onScrolledIndexChanged($event)"
+>
+  <div
+    *cdkVirtualFor="let item of items; trackBy: trackByFn"
+    class="virtual-item"
+    (click)="onItemClick(item)"
+  >
+    <ng-content></ng-content>
+  </div>
+</cdk-virtual-scroll-viewport>

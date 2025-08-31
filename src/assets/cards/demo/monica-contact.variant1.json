@@ -1,0 +1,40 @@
+{
+  "cardTitle": "Monica de Jong",
+  "cardType": "Contact",
+  "sections": [
+    {
+      "title": "Contact Overview",
+      "type": "info",
+      "fields": [
+        { "label": "Full Name", "value": "Monica de Jong" },
+        { "label": "Title", "value": "Chief Information Officer" },
+        { "label": "Company", "value": "DSM" },
+        { "label": "Email", "value": "monica.dejong@dsm.com" },
+        { "label": "Phone", "value": "+31 (45) 578-2121" },
+        { "label": "Location", "value": "Heerlen, Netherlands" }
+      ]
+    },
+    {
+      "title": "CRM Profile Summary",
+      "type": "info",
+      "fields": [
+        { "label": "Account Owner", "value": "Alice Martin", "status": "active" },
+        { "label": "Account Tier", "value": "Platinum" },
+        { "label": "Last Interaction", "value": "2025-07-15" },
+        { "label": "Lead Score", "value": "95/100" }
+      ]
+    },
+    {
+      "title": "Engagement Analytics",
+      "type": "analytics",
+      "fields": [
+        { "label": "Email Opens", "value": "120", "percentage": 80, "performance": "good" },
+        { "label": "Meetings Held", "value": "8", "percentage": 67 }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Log Call", "type": "primary", "icon": "📞", "action": "https://crm.orange.com/logcall?contact=monica" },
+    { "label": "Schedule Meeting", "type": "primary", "icon": "📅", "action": "https://calendar.orange.com/schedule?contact=monica" }
+  ]
+}

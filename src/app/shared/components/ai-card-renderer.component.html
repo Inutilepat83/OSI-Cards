@@ -1,79 +1,88 @@
 <div class="card-container" #cardContainer>
   <app-tilt-wrapper [isActive]="isTiltActive" className="card-tilt-wrapper">
-    <div class="card-wrapper" [ngClass]="{'fullscreen': isFullscreen}">
+    <div class="card-wrapper" [ngClass]="{ fullscreen: isFullscreen }">
       <!-- Card Header -->
       <div class="card-header">
         <div class="title-section">
-          <h2 class="card-title">{{cardConfig.cardTitle}}</h2>
-          <p *ngIf="cardConfig.cardSubtitle" class="card-subtitle">{{cardConfig.cardSubtitle}}</p>
+          <h2 class="card-title">{{ cardConfig.cardTitle }}</h2>
+          <p *ngIf="cardConfig.cardSubtitle" class="card-subtitle">{{ cardConfig.cardSubtitle }}</p>
         </div>
-        
+
         <div class="card-actions">
           <button class="action-btn" (click)="toggleFullscreen()">
             <i [ngClass]="isFullscreen ? 'minimize-icon' : 'maximize-icon'"></i>
           </button>
         </div>
       </div>
-      
+
       <!-- Card Content / Sections -->
       <div class="card-content">
         <ng-container *ngFor="let section of cardConfig.sections; trackBy: trackByIndex">
           <div class="card-section" [ngClass]="'section-type-' + section.type">
-            <h3 class="section-title">{{section.title}}</h3>
-            
+            <h3 class="section-title">{{ section.title }}</h3>
+
             <!-- Info Section Type -->
             <div *ngIf="section.type === 'info' && section.fields" class="info-grid">
-              <div *ngFor="let field of section.fields; trackBy: trackByIndex" 
-                   class="info-field" 
-                   (click)="onFieldClick(field)">
-                <div class="field-label">{{field.label}}</div>
-                <div class="field-value" [style.color]="field.valueColor">{{field.value}}</div>
+              <div
+                *ngFor="let field of section.fields; trackBy: trackByIndex"
+                class="info-field"
+                (click)="onFieldClick(field)"
+              >
+                <div class="field-label">{{ field.label }}</div>
+                <div class="field-value" [style.color]="field.valueColor">{{ field.value }}</div>
               </div>
             </div>
-            
+
             <!-- List Section Type -->
             <div *ngIf="section.type === 'list' && section.items" class="list-container">
               <div *ngFor="let item of section.items; trackBy: trackByIndex" class="list-item">
                 <i *ngIf="item.icon" [class]="item.icon + ' item-icon'"></i>
                 <div class="item-content">
-                  <div class="item-title">{{item.title}}</div>
-                  <div *ngIf="item.description" class="item-description">{{item.description}}</div>
+                  <div class="item-title">{{ item.title }}</div>
+                  <div *ngIf="item.description" class="item-description">
+                    {{ item.description }}
+                  </div>
                 </div>
-                <div *ngIf="item.value" class="item-value">{{item.value}}</div>
+                <div *ngIf="item.value" class="item-value">{{ item.value }}</div>
               </div>
             </div>
-            
+
             <!-- Chart Section Placeholder -->
             <div *ngIf="section.type === 'chart'" class="chart-container">
               <div class="chart-placeholder">Chart would render here</div>
             </div>
-            
+
             <!-- Map Section Placeholder -->
             <div *ngIf="section.type === 'map'" class="map-container">
               <div class="map-placeholder">Map would render here</div>
             </div>
-            
+
             <!-- Other section types would be implemented similarly -->
-            <div *ngIf="!['info', 'list', 'chart', 'map'].includes(section.type)" class="section-placeholder">
-              {{section.type}} section would render here
+            <div
+              *ngIf="!['info', 'list', 'chart', 'map'].includes(section.type)"
+              class="section-placeholder"
+            >
+              {{ section.type }} section would render here
             </div>
           </div>
         </ng-container>
       </div>
-      
+
       <!-- Card Footer / Actions -->
       <div *ngIf="cardConfig.actions && cardConfig.actions.length > 0" class="card-footer">
-        <button *ngFor="let action of cardConfig.actions; trackBy: trackByIndex"
-                class="card-action-btn"
-                [ngClass]="'btn-' + (action.variant || 'primary')"
-                (click)="onActionClick(action.label)">
+        <button
+          *ngFor="let action of cardConfig.actions; trackBy: trackByIndex"
+          class="card-action-btn"
+          [ngClass]="'btn-' + (action.variant || 'primary')"
+          (click)="onActionClick(action.label)"
+        >
           <i *ngIf="action.icon" [class]="action.icon + ' action-icon'"></i>
-          <span>{{action.label}}</span>
+          <span>{{ action.label }}</span>
         </button>
       </div>
     </div>
   </app-tilt-wrapper>
-  
+
   <!-- Add particle system for enhanced visual effect -->
   <!-- <app-particle-system *ngIf="isHovered"></app-particle-system> -->
 </div>

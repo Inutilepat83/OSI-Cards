@@ -1,0 +1,29 @@
+{
+  "cardTitle": "ICS Firewall As-a-Service",
+  "cardType": "Product",
+  "sections": [
+    {
+      "title": "Product Overview",
+      "type": "info",
+      "fields": [
+        { "label": "Product Name", "value": "ICS Firewall As-a-Service" },
+        { "label": "Category", "value": "Industrial Security" },
+        { "label": "Deployment", "value": "Cloud & On-premise" },
+        { "label": "Support Level", "value": "24/7 Enterprise Support" }
+      ]
+    },
+    {
+      "title": "Plans",
+      "type": "list",
+      "fields": [
+        { "title": "Basic Plan", "value": "Essential features" },
+        { "title": "Advanced Plan", "value": "Enhanced features" },
+        { "title": "Enterprise Plan", "value": "Full suite" }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Contact Sales", "type": "primary", "action": "https://orange.com/contact" },
+    { "label": "Request Demo", "type": "primary", "action": "https://orange.com/demo" }
+  ]
+}

@@ -13,11 +13,11 @@ const initialState: AppState = {
   cards: [],
   selectedCard: null,
   isLoading: false,
-  error: null
+  error: null,
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class StateService {
   private state$ = new BehaviorSubject<AppState>(initialState);
@@ -59,15 +59,13 @@ export class StateService {
   addCard(card: AICardConfig): void {
     const currentState = this.state$.value;
     this.updateState({
-      cards: [...currentState.cards, card]
+      cards: [...currentState.cards, card],
     });
   }
 
   updateCard(updatedCard: AICardConfig): void {
     const currentState = this.state$.value;
-    const cards = currentState.cards.map(card =>
-      card.id === updatedCard.id ? updatedCard : card
-    );
+    const cards = currentState.cards.map(card => (card.id === updatedCard.id ? updatedCard : card));
     this.updateState({ cards });
   }
 
@@ -98,7 +96,7 @@ export class StateService {
     const currentState = this.state$.value;
     this.state$.next({
       ...currentState,
-      ...updates
+      ...updates,
     });
   }
 

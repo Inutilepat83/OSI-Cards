@@ -1,0 +1,9 @@
+{
+  "cardTitle": "DSM Quarterly Business Review",
+  "cardType": "Event",
+  "variant": 3,
+  "sections": [
+    { "title": "Compact Event", "type": "info", "fields": [ { "label": "Date", "value": "2025-08-20" } ] }
+  ],
+  "actions": [ { "label": "View Deck", "type": "primary", "action": "https://ob.orange.com/qbr/dsm" } ]
+}

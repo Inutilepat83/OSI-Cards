@@ -4,5 +4,5 @@ export const environment = {
   supabaseUrl: 'your-production-supabase-url',
   supabaseKey: 'your-production-supabase-key',
   enableDebug: false,
-  logLevel: 'error'
+  logLevel: 'error',
 };

@@ -1,18 +1,22 @@
 // Ambient declarations for npm modules in Angular
 
-declare module "hono" {
-  export * from "hono";
+declare module 'hono' {
+  export class Hono {
+    constructor();
+    // Add other Hono methods as needed
+  }
   export default Hono;
 }
 
-declare module "hono/middleware" {
-  // Hono middleware exports
-  export { cors, logger } from "hono/middleware";
+declare module 'hono/middleware' {
+  export function cors(): any;
+  export function logger(): any;
 }
 
-declare module "@supabase/supabase-js" {
-  // Supabase JS client
-  import * as supabase from "@supabase/supabase-js";
-  export * from "@supabase/supabase-js";
-  export default supabase;
+declare module '@supabase/supabase-js' {
+  export class SupabaseClient {
+    constructor(url: string, key: string);
+    // Add other Supabase methods as needed
+  }
+  export function createClient(url: string, key: string): SupabaseClient;
 }

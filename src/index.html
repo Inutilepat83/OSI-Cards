@@ -1,14 +1,128 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>OSI Cards</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-</head>
-<body>
-  <app-root></app-root>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>OSI Cards</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <!-- Content Security Policy - Relaxed for development -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self' 'unsafe-inline' 'unsafe-eval';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com http://localhost:* https://localhost:*;
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com http://localhost:* https://localhost:*;
+      font-src 'self' https://fonts.gstatic.com;
+      img-src 'self' data: https: blob: http://localhost:* https://localhost:*;
+      connect-src 'self' https://api.example.com wss://api.example.com http://localhost:* https://localhost:* ws://localhost:* wss://localhost:*;
+      frame-src 'none';
+      object-src 'none';
+      base-uri 'self';
+      form-action 'self';
+    " />
+
+    <!-- PWA and App Metadata -->
+    <meta name="theme-color" content="#1976d2" />
+    <meta name="description" content="Interactive business card creation and management platform" />
+    <meta name="keywords" content="business cards, interactive cards, card management, OSI cards" />
+    <meta name="author" content="OSI Cards Team" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OSI Cards - Interactive Business Cards" />
+    <meta property="og:description" content="Create and manage interactive business cards with advanced visualization features" />
+    <meta property="og:image" content="assets/icons/icon-512x512.png" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="OSI Cards - Interactive Business Cards" />
+    <meta name="twitter:description" content="Create and manage interactive business cards with advanced visualization features" />
+    <meta name="twitter:image" content="assets/icons/icon-512x512.png" />
+
+    <!-- External Resources with Integrity Checks -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin="anonymous"
+    />
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="assets/icons/icon-192x192.png" as="image" />
+    <link rel="preload" href="assets/icons/icon-512x512.png" as="image" />
+
+    <!-- DNS prefetch for external domains -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="//unpkg.com" />
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net" />
+  </head>
+  <body>
+    <app-root></app-root>
+
+    <!-- Fallback for JavaScript disabled -->
+    <noscript>
+      <div style="text-align: center; padding: 50px;">
+        <h1>OSI Cards</h1>
+        <p>This application requires JavaScript to function properly.</p>
+        <p>Please enable JavaScript in your browser settings and reload the page.</p>
+      </div>
+    </noscript>
+
+    <!-- Dev-only: forward browser console to local console capture server -->
+    <script>
+      (function(){
+        try {
+          const host = location.hostname;
+          if (host === 'localhost' || host === '127.0.0.1') {
+            const server = 'http://localhost:9229';
+            function send(payload) {
+              try {
+                if (navigator.sendBeacon) {
+                  navigator.sendBeacon(server + '/log', JSON.stringify(payload));
+                } else {
+                  fetch(server + '/log', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).catch(()=>{});
+                }
+              } catch (e) {}
+            }
+
+            const levels = ['log','info','warn','error','debug'];
+            levels.forEach(level => {
+              const orig = console[level] || console.log;
+              console[level] = function(...args){
+                send({ level, args });
+                try { orig.apply(console, args); } catch(e) {}
+              };
+            });
+
+            window.addEventListener('error', e => send({ level: 'error', args: [e.message, e.filename, e.lineno, e.colno, e.error && e.error.stack] }));
+            window.addEventListener('unhandledrejection', e => send({ level: 'error', args: ['UnhandledRejection', e.reason] }));
+
+            // Try websocket fallback
+            try {
+              const ws = new WebSocket('ws://localhost:9229');
+              ws.addEventListener('open', () => console.info('Console capture websocket connected'));
+              ws.addEventListener('error', () => {});
+              levels.forEach(level => {
+                const orig = console[level] || console.log;
+                console[level] = function(...args){
+                  try { ws.send(JSON.stringify({ level, args })); } catch(e) {}
+                  try { orig.apply(console, args); } catch(e) {}
+                };
+              });
+            } catch(e) {}
+          }
+        } catch(e) {}
+      })();
+    </script>
+  </body>
 </html>

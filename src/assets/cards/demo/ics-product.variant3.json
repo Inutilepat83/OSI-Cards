@@ -1,0 +1,18 @@
+{
+  "cardTitle": "ICS Firewall As-a-Service",
+  "cardType": "Product",
+  "variant": 3,
+  "sections": [
+    {
+      "title": "Compact Product",
+      "type": "info",
+      "fields": [
+        { "label": "Name", "value": "ICS Firewall As-a-Service" },
+        { "label": "Starting Price", "value": "Contact Sales" }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Contact Sales", "type": "primary", "action": "https://orange.com/contact" }
+  ]
+}

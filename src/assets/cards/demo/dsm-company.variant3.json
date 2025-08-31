@@ -1,0 +1,38 @@
+{
+  "cardTitle": "DSM",
+  "cardType": "Company",
+  "columns": 2,
+  "variant": 3,
+  "sections": [
+    {
+      "title": "Executive Summary",
+      "type": "info",
+      "preferredColumns": 2,
+      "fields": [
+        { "label": "Industry", "value": "Nutrition & Health" },
+        { "label": "CEO", "value": "Dimitri de Vreeze" },
+        { "label": "Revenue", "value": "€12.1B" }
+      ]
+    },
+    {
+      "title": "ICT KPIs",
+      "type": "analytics",
+      "columns": 2,
+      "fields": [
+        { "label": "ICT Budget", "value": "€200M", "percentage": 100, "performance": "excellent" },
+        { "label": "Cloud Spend", "value": "€50M", "percentage": 25 }
+      ]
+    },
+    {
+      "title": "Cloud Footprint",
+      "type": "info",
+      "fields": [
+        { "label": "IaaS", "value": "75%" },
+        { "label": "Hybrid Cloud", "value": "Active" }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Visit DSM", "type": "primary", "action": "https://www.dsm.com" }
+  ]
+}

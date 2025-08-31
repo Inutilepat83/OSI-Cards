@@ -15,7 +15,7 @@ export interface TiltCalculations {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MagneticTiltService {
   private readonly MAX_LIFT_PX = 5; // slightly reduced lift for gentler tilt
@@ -30,7 +30,7 @@ export class MagneticTiltService {
     rotateY: 0,
     glowBlur: this.BASE_GLOW_BLUR,
     glowOpacity: this.BASE_GLOW_OPACITY,
-    reflectionOpacity: 0
+    reflectionOpacity: 0,
   });
 
   tiltCalculations$ = this.tiltCalculationsSubject.asObservable();
@@ -73,7 +73,7 @@ export class MagneticTiltService {
       rotateY,
       glowBlur,
       glowOpacity,
-      reflectionOpacity
+      reflectionOpacity,
     });
   }
 
@@ -83,7 +83,7 @@ export class MagneticTiltService {
       rotateY: 0,
       glowBlur: this.BASE_GLOW_BLUR,
       glowOpacity: this.BASE_GLOW_OPACITY,
-      reflectionOpacity: 0
+      reflectionOpacity: 0,
     });
   }
 }

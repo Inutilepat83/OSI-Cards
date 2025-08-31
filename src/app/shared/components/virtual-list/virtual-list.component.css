@@ -1,0 +1,60 @@
+.virtual-viewport {
+  height: 400px;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--card);
+}
+
+.virtual-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  min-height: 50px;
+}
+
+.virtual-item:hover {
+  background-color: var(--muted);
+}
+
+.virtual-item:last-child {
+  border-bottom: none;
+}
+
+.virtual-item:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+/* Horizontal scrolling */
+.virtual-viewport[orientation="horizontal"] {
+  height: auto;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.virtual-viewport[orientation="horizontal"] .virtual-item {
+  display: inline-block;
+  border-bottom: none;
+  border-right: 1px solid var(--border);
+  white-space: normal;
+  vertical-align: top;
+}
+
+.virtual-viewport[orientation="horizontal"] .virtual-item:last-child {
+  border-right: none;
+}
+
+/* Custom scrollbar styling */
+.virtual-viewport ::ng-deep .cdk-virtual-scroll-content-wrapper {
+  /* Ensure proper scrolling behavior */
+  contain: layout style paint;
+}
+
+.virtual-viewport ::ng-deep .cdk-virtual-scroll-orientation-horizontal .cdk-virtual-scroll-content-wrapper {
+  display: flex;
+  flex-direction: row;
+}

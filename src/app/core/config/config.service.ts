@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
+import { LoggingService } from '../services/logging.service';
 
 export interface AppConfig {
   api: {
@@ -29,33 +30,33 @@ const defaultConfig: AppConfig = {
   api: {
     baseUrl: environment.apiUrl,
     timeout: 30000,
-    retries: 3
+    retries: 3,
   },
   features: {
     tiltEffects: true,
     particleSystem: true,
     analytics: !environment.production,
-    errorReporting: environment.production
+    errorReporting: environment.production,
   },
   ui: {
     theme: 'auto',
     animations: true,
-    transitions: true
+    transitions: true,
   },
   performance: {
     enablePerformanceMonitoring: !environment.production,
     enableMemoryMonitoring: !environment.production,
-    lazyLoadThreshold: 50
-  }
+    lazyLoadThreshold: 50,
+  },
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ConfigService {
   private config: AppConfig = { ...defaultConfig };
 
-  constructor() {
+  constructor(private logger: LoggingService) {
     this.loadConfig();
   }
 
@@ -105,7 +106,7 @@ export class ConfigService {
         this.config = { ...defaultConfig, ...parsedConfig };
       }
     } catch (error) {
-      console.warn('Failed to load configuration from storage:', error);
+      this.logger.warn('ConfigService', 'Failed to load configuration from storage', error);
     }
   }
 
@@ -116,7 +117,7 @@ export class ConfigService {
     try {
       localStorage.setItem('app-config', JSON.stringify(this.config));
     } catch (error) {
-      console.warn('Failed to save configuration to storage:', error);
+      this.logger.warn('ConfigService', 'Failed to save configuration to storage', error);
     }
   }
 
@@ -127,7 +128,7 @@ export class ConfigService {
     try {
       localStorage.removeItem('app-config');
     } catch (error) {
-      console.warn('Failed to clear configuration from storage:', error);
+      this.logger.warn('ConfigService', 'Failed to clear configuration from storage', error);
     }
   }
 

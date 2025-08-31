@@ -1,0 +1,23 @@
+<div class="theme-toggle">
+  <button
+    type="button"
+    class="theme-toggle-btn"
+    [attr.aria-label]="getAriaLabel()"
+    (click)="toggleTheme()"
+    [class.dark]="isDarkTheme">
+    <i [class]="getCurrentIcon()" class="theme-icon"></i>
+  </button>
+
+  <!-- Optional dropdown for theme selection -->
+  <div class="theme-dropdown" *ngIf="showDropdown">
+    <button
+      *ngFor="let theme of availableThemes"
+      type="button"
+      class="theme-option"
+      [class.active]="theme.value === currentTheme"
+      (click)="setTheme(theme.value)">
+      <i [class]="theme.icon" class="theme-option-icon"></i>
+      <span class="theme-option-label">{{ theme.label }}</span>
+    </button>
+  </div>
+</div>

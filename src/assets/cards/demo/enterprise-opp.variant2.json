@@ -1,0 +1,27 @@
+{
+  "cardTitle": "Enterprise Connectivity Deployment",
+  "cardType": "Opportunity",
+  "variant": 2,
+  "sections": [
+    {
+      "title": "Quick Overview",
+      "type": "info",
+      "fields": [
+        { "label": "Name", "value": "Enterprise Connectivity Deployment" },
+        { "label": "Owner", "value": "Pierre Dupont" },
+        { "label": "Deal Value", "value": "€3.8M" }
+      ]
+    },
+    {
+      "title": "Products",
+      "type": "list",
+      "fields": [
+        { "title": "SD-WAN", "value": "80 Sites" },
+        { "title": "Cloud Connect", "value": "AWS & Azure" }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Schedule Call", "type": "primary", "icon": "📞", "action": "https://crm.orange.com/opps/book?opp=enterprise-connectivity" }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "cardTitle": "Monica de Jong",
+  "cardType": "Contact",
+  "variant": 3,
+  "sections": [
+    {
+      "title": "Compact Contact",
+      "type": "contact-card",
+      "fields": [
+        { "name": "Monica de Jong", "role": "CIO", "email": "monica.dejong@dsm.com", "phone": "+31 (45) 578-2121" }
+      ]
+    },
+    {
+      "title": "Recent Activities",
+      "type": "list",
+      "fields": [
+        { "title": "Cloud Workshop", "date": "2025-07-15", "status": "completed" }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Contact", "type": "primary", "icon": "📧", "action": "mailto:monica.dejong@dsm.com" }
+  ]
+}

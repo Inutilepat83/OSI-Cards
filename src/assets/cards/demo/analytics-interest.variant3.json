@@ -1,0 +1,18 @@
+{
+  "cardTitle": "Product Interest Scores",
+  "cardType": "Analytics",
+  "variant": 3,
+  "sections": [
+    {
+      "title": "Compact Analytics",
+      "type": "chart",
+      "fields": [
+        { "label": "Enterprise", "value": 88, "color": "#FF7900" },
+        { "label": "SMB", "value": 72, "color": "#FF9933" }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Export Scores", "type": "primary", "action": "https://crm.orange.com/analytics/export-interest" }
+  ]
+}

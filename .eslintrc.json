@@ -1,0 +1,159 @@
+{
+  "root": true,
+  "ignorePatterns": [
+    "projects/**/*",
+    "angular-migration/**/*",
+    "Example of App/**/*",
+    "cypress/**/*",
+    "dist/**/*",
+    "node_modules/**/*"
+  ],
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "project": ["tsconfig.json"],
+        "createDefaultProgram": true
+      },
+      "plugins": ["@typescript-eslint", "prettier"],
+      "extends": [
+        "eslint:recommended",
+        "prettier"
+      ],
+      "env": {
+        "browser": true,
+        "es6": true,
+        "node": true
+      },
+      "globals": {
+        "console": "readonly",
+        "window": "readonly",
+        "document": "readonly",
+        "localStorage": "readonly",
+        "sessionStorage": "readonly",
+        "setTimeout": "readonly",
+        "clearTimeout": "readonly",
+        "setInterval": "readonly",
+        "clearInterval": "readonly",
+        "requestAnimationFrame": "readonly",
+        "cancelAnimationFrame": "readonly",
+        "performance": "readonly",
+        "confirm": "readonly"
+      },
+      "rules": {
+        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "@typescript-eslint/no-explicit-any": "warn",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-empty-function": "warn",
+        "prefer-const": "error",
+        "no-var": "error",
+        "no-console": "warn",
+        "prettier/prettier": "error"
+      }
+    },
+    {
+      "files": ["*.spec.ts", "*.test.ts", "setup-jest.ts", "test-utils.ts"],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "project": ["tsconfig.json"],
+        "createDefaultProgram": true
+      },
+      "plugins": ["@typescript-eslint", "prettier"],
+      "extends": [
+        "eslint:recommended",
+        "prettier"
+      ],
+      "env": {
+        "browser": true,
+        "es6": true,
+        "node": true,
+        "jest": true
+      },
+      "globals": {
+        "console": "readonly",
+        "window": "readonly",
+        "document": "readonly",
+        "localStorage": "readonly",
+        "sessionStorage": "readonly",
+        "setTimeout": "readonly",
+        "clearTimeout": "readonly",
+        "setInterval": "readonly",
+        "clearInterval": "readonly",
+        "requestAnimationFrame": "readonly",
+        "cancelAnimationFrame": "readonly",
+        "performance": "readonly",
+        "confirm": "readonly",
+        "jest": "readonly",
+        "describe": "readonly",
+        "it": "readonly",
+        "test": "readonly",
+        "expect": "readonly",
+        "spyOn": "readonly",
+        "beforeEach": "readonly",
+        "afterEach": "readonly",
+        "beforeAll": "readonly",
+        "afterAll": "readonly",
+        "global": "readonly"
+      },
+      "rules": {
+        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "@typescript-eslint/no-explicit-any": "warn",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-empty-function": "warn",
+        "prefer-const": "error",
+        "no-var": "error",
+        "no-console": "warn",
+        "prettier/prettier": "error"
+      }
+    },
+    {
+      "files": ["*.cy.ts", "cypress/**/*.ts"],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "project": ["cypress/tsconfig.json"],
+        "createDefaultProgram": true
+      },
+      "plugins": ["@typescript-eslint", "prettier"],
+      "extends": [
+        "eslint:recommended",
+        "prettier"
+      ],
+      "env": {
+        "browser": true,
+        "es6": true,
+        "node": true
+      },
+      "globals": {
+        "cy": "readonly",
+        "Cypress": "readonly",
+        "describe": "readonly",
+        "it": "readonly",
+        "beforeEach": "readonly",
+        "afterEach": "readonly",
+        "before": "readonly",
+        "after": "readonly",
+        "expect": "readonly",
+        "context": "readonly"
+      },
+      "rules": {
+        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "@typescript-eslint/no-explicit-any": "warn",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-empty-function": "warn",
+        "prefer-const": "error",
+        "no-var": "error",
+        "no-console": "warn",
+        "prettier/prettier": "error"
+      }
+    },
+    {
+      "files": ["*.html"],
+      "extends": ["plugin:@angular-eslint/template/recommended"],
+      "rules": {}
+    }
+  ]
+}

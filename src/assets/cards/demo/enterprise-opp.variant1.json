@@ -1,0 +1,37 @@
+{
+  "cardTitle": "Enterprise Connectivity Deployment",
+  "cardType": "Opportunity",
+  "sections": [
+    {
+      "title": "Opportunity Overview",
+      "type": "info",
+      "fields": [
+        { "label": "Opportunity Name", "value": "Enterprise Connectivity Deployment" },
+        { "label": "Opportunity Owner", "value": "Pierre Dupont" },
+        { "label": "Account", "value": "DSM" },
+        { "label": "Stage", "value": "Proposal" },
+        { "label": "Deal Value", "value": "€3.8M" }
+      ]
+    },
+    {
+      "title": "Products & Services",
+      "type": "list",
+      "fields": [
+        { "title": "Global MPLS", "value": "200 Sites" },
+        { "title": "SD-WAN", "value": "80 Sites" },
+        { "title": "Cloud Connect", "value": "AWS & Azure" }
+      ]
+    },
+    {
+      "title": "Engagement Metrics",
+      "type": "analytics",
+      "fields": [
+        { "label": "Meetings Held", "value": "6", "percentage": 60 },
+        { "label": "Email Opens", "value": "220", "percentage": 90 }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "View Proposal", "type": "primary", "icon": "📄", "action": "https://crm.orange.com/opps/enterprise-connectivity" }
+  ]
+}

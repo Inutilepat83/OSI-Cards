@@ -1,24 +1,26 @@
 import { Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { LoggingService } from '../services/logging.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PerformanceService {
   private navigationStartTime: number = 0;
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private logger: LoggingService
+  ) {
     this.initializePerformanceMonitoring();
   }
 
   private initializePerformanceMonitoring(): void {
     // Monitor navigation performance
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.logNavigationPerformance();
-      });
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+      this.logNavigationPerformance();
+    });
 
     // Monitor page load performance
     if (typeof window !== 'undefined' && 'performance' in window) {
@@ -30,12 +32,15 @@ export class PerformanceService {
 
   private logNavigationPerformance(): void {
     if (typeof window !== 'undefined' && 'performance' in window) {
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      const navigation = performance.getEntriesByType(
+        'navigation'
+      )[0] as PerformanceNavigationTiming;
       if (navigation) {
-        console.log('Navigation Performance:', {
-          domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+        this.logger.log('PerformanceService', 'Navigation Performance', {
+          domContentLoaded:
+            navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
           loadComplete: navigation.loadEventEnd - navigation.loadEventStart,
-          totalTime: navigation.loadEventEnd - navigation.fetchStart
+          totalTime: navigation.loadEventEnd - navigation.fetchStart,
         });
       }
     }
@@ -47,11 +52,11 @@ export class PerformanceService {
       const pageLoadTime = timing.loadEventEnd - timing.navigationStart;
       const domReadyTime = timing.domContentLoadedEventEnd - timing.navigationStart;
 
-      console.log('Page Load Performance:', {
+      this.logger.log('PerformanceService', 'Page Load Performance', {
         pageLoadTime,
         domReadyTime,
         networkLatency: timing.responseEnd - timing.fetchStart,
-        processingTime: timing.loadEventEnd - timing.domContentLoadedEventEnd
+        processingTime: timing.loadEventEnd - timing.domContentLoadedEventEnd,
       });
     }
   }
@@ -64,11 +69,18 @@ export class PerformanceService {
       const endTime = performance.now();
       const renderTime = endTime - startTime;
 
-      console.log(`${componentName} render time: ${renderTime.toFixed(2)}ms`);
+      this.logger.log(
+        'PerformanceService',
+        `${componentName} render time: ${renderTime.toFixed(2)}ms`
+      );
 
       // Log slow renders
-      if (renderTime > 16) { // More than one frame at 60fps
-        console.warn(`Slow render detected for ${componentName}: ${renderTime.toFixed(2)}ms`);
+      if (renderTime > 16) {
+        // More than one frame at 60fps
+        this.logger.warn(
+          'PerformanceService',
+          `Slow render detected for ${componentName}: ${renderTime.toFixed(2)}ms`
+        );
       }
     };
   }
@@ -79,7 +91,10 @@ export class PerformanceService {
     const result = fn();
     const endTime = performance.now();
 
-    console.log(`${label} execution time: ${(endTime - startTime).toFixed(2)}ms`);
+    this.logger.log(
+      'PerformanceService',
+      `${label} execution time: ${(endTime - startTime).toFixed(2)}ms`
+    );
     return result;
   }
 
@@ -87,10 +102,10 @@ export class PerformanceService {
   logMemoryUsage(): void {
     if (typeof window !== 'undefined' && 'performance' in window && 'memory' in performance) {
       const memory = (performance as any).memory;
-      console.log('Memory Usage:', {
-        used: Math.round(memory.usedJSHeapSize / 1048576 * 100) / 100 + ' MB',
-        total: Math.round(memory.totalJSHeapSize / 1048576 * 100) / 100 + ' MB',
-        limit: Math.round(memory.jsHeapSizeLimit / 1048576 * 100) / 100 + ' MB'
+      this.logger.log('PerformanceService', 'Memory Usage', {
+        used: Math.round((memory.usedJSHeapSize / 1048576) * 100) / 100 + ' MB',
+        total: Math.round((memory.totalJSHeapSize / 1048576) * 100) / 100 + ' MB',
+        limit: Math.round((memory.jsHeapSizeLimit / 1048576) * 100) / 100 + ' MB',
       });
     }
   }

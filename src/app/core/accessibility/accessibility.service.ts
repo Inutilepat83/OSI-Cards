@@ -9,14 +9,14 @@ export interface AccessibilitySettings {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AccessibilityService {
   private settings$ = new BehaviorSubject<AccessibilitySettings>({
     highContrast: false,
     reducedMotion: false,
     fontSize: 'medium',
-    focusVisible: true
+    focusVisible: true,
   });
 
   get settings() {
@@ -115,14 +115,14 @@ export class AccessibilityService {
     if (typeof document === 'undefined') return;
 
     // Ensure focus is visible
-    document.addEventListener('keydown', (event) => {
+    document.addEventListener('keydown', event => {
       if (event.key === 'Tab') {
         document.documentElement.setAttribute('data-focus-visible', 'true');
       }
     });
 
     // Handle focus management for modals and dialogs
-    document.addEventListener('keydown', (event) => {
+    document.addEventListener('keydown', event => {
       if (event.key === 'Escape') {
         // Close modals, menus, etc.
         this.handleEscapeKey();

@@ -1,0 +1,26 @@
+{
+  "cardTitle": "ICS Firewall As-a-Service",
+  "cardType": "Product",
+  "variant": 2,
+  "sections": [
+    {
+      "title": "Overview",
+      "type": "info",
+      "fields": [
+        { "label": "Name", "value": "ICS Firewall As-a-Service" },
+        { "label": "Category", "value": "Industrial Security" }
+      ]
+    },
+    {
+      "title": "Key Features",
+      "type": "list",
+      "fields": [
+        { "title": "Real-Time Monitoring", "value": "Continuous threat detection" },
+        { "title": "Network Segmentation", "value": "Isolate critical systems" }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Request Demo", "type": "primary", "action": "https://orange.com/demo" }
+  ]
+}

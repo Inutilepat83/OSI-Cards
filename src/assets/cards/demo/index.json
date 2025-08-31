@@ -1,0 +1,10 @@
+{
+  "cards": [
+    { "id": "dsm-company", "title": "DSM (Company)", "variants": [1,2,3], "path": "dsm-company" },
+    { "id": "monica-contact", "title": "Monica de Jong (Contact)", "variants": [1,2,3], "path": "monica-contact" },
+    { "id": "enterprise-opp", "title": "Enterprise Connectivity (Opportunity)", "variants": [1,2,3], "path": "enterprise-opp" },
+    { "id": "ics-product", "title": "ICS Firewall (Product)", "variants": [1,2,3], "path": "ics-product" },
+    { "id": "analytics-interest", "title": "Product Interest Scores (Analytics)", "variants": [1,2,3], "path": "analytics-interest" },
+    { "id": "qbr-event", "title": "DSM Quarterly Business Review (Event)", "variants": [1,2,3], "path": "qbr-event" }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+    "chat.agent.maxRequests": 200,
+    "chat.tools.terminal.autoApprove": {
+        "rm": true,
+        "rmdir": true,
+        "del": true,
+        "git": true,
+        "kill": true,
+        "curl": true,
+        "node": true,
+        "wget": true,
+        "eval": true,
+        "npm": true,
+        "npx": true,
+        "ng": true,
+        "cat": true,
+        "pwd": true,
+        "cd": true,
+        "ps": true,  
+        "ls": true,
+        "sed": true,
+        "timeout": true,
+        "echo": true,
+        "python": true,
+        "touch": true,
+        "chmod": true,
+        "chown": true,
+        "/^Remove-Item\\b/i": true
+    },
+    "github.copilot.chat.agent.thinkingTool": true,
+    "chat.todoListTool.enabled": true
+}

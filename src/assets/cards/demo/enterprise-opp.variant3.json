@@ -1,0 +1,19 @@
+{
+  "cardTitle": "Enterprise Connectivity Deployment",
+  "cardType": "Opportunity",
+  "variant": 3,
+  "sections": [
+    {
+      "title": "Compact Opportunity",
+      "type": "info",
+      "fields": [
+        { "label": "Name", "value": "Enterprise Connectivity Deployment" },
+        { "label": "Stage", "value": "Proposal" },
+        { "label": "Expected Close", "value": "2025-09-30" }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "View Proposal", "type": "primary", "action": "https://crm.orange.com/opps/enterprise-connectivity" }
+  ]
+}

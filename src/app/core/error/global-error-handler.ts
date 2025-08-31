@@ -1,9 +1,13 @@
 import { ErrorHandler, Injectable, Injector } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { LoggingService } from '../services/logging.service';
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
-  constructor(private injector: Injector) {}
+  constructor(
+    private injector: Injector,
+    private logger: LoggingService
+  ) {}
 
   handleError(error: any): void {
     let errorMessage = '';
@@ -11,15 +15,15 @@ export class GlobalErrorHandler implements ErrorHandler {
     if (error instanceof HttpErrorResponse) {
       // Server error
       errorMessage = `HTTP Error: ${error.status} - ${error.message}`;
-      console.error('HTTP Error:', error);
+      this.logger.error('GlobalErrorHandler', 'HTTP Error', error);
     } else if (error instanceof Error) {
       // Client error
       errorMessage = error.message;
-      console.error('Client Error:', error);
+      this.logger.error('GlobalErrorHandler', 'Client Error', error);
     } else {
       // Unknown error
       errorMessage = 'An unknown error occurred';
-      console.error('Unknown Error:', error);
+      this.logger.error('GlobalErrorHandler', 'Unknown Error', error);
     }
 
     // Log to external service in production
@@ -39,7 +43,11 @@ export class GlobalErrorHandler implements ErrorHandler {
 
   private logErrorToService(error: any, message: string): void {
     // TODO: Implement external error logging service
-    console.error('Error logged to service:', { error, message, timestamp: new Date() });
+    this.logger.error('GlobalErrorHandler', 'Error logged to service', {
+      error,
+      message,
+      timestamp: new Date(),
+    });
   }
 }
 

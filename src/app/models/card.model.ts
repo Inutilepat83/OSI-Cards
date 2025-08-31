@@ -11,7 +11,19 @@ export interface AICardConfig {
 export interface CardSection {
   id?: string;
   title: string;
-  type: 'info' | 'overview' | 'list' | 'chart' | 'map' | 'analytics' | 'contact' | 'product' | 'solutions' | 'event' | 'financials' | 'network';
+  type:
+    | 'info'
+    | 'overview'
+    | 'list'
+    | 'chart'
+    | 'map'
+    | 'analytics'
+    | 'contact'
+    | 'product'
+    | 'solutions'
+    | 'event'
+    | 'financials'
+    | 'network';
   fields?: CardField[];
   items?: CardItem[];
   chartData?: any;
@@ -29,6 +41,8 @@ export interface CardField {
   value: string | number | boolean | null;
   icon?: string;
   valueColor?: string;
+  percentage?: number;
+  performance?: string;
   meta?: Record<string, any>;
 }
 

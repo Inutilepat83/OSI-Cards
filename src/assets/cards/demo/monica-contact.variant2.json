@@ -1,0 +1,29 @@
+{
+  "cardTitle": "Monica de Jong",
+  "cardType": "Contact",
+  "variant": 2,
+  "sections": [
+    {
+      "title": "Profile",
+      "type": "info",
+      "fields": [
+        { "label": "Name", "value": "Monica de Jong" },
+        { "label": "Role", "value": "CIO" },
+        { "label": "Company", "value": "DSM" },
+        { "label": "Email", "value": "monica.dejong@dsm.com" }
+      ]
+    },
+    {
+      "title": "Engagement",
+      "type": "analytics",
+      "fields": [
+        { "label": "Last Interaction", "value": "2025-07-15" },
+        { "label": "Lead Score", "value": "95/100" },
+        { "label": "Open Rate", "value": "80%" }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Create Task", "type": "primary", "icon": "📝", "action": "https://crm.orange.com/newtask?contact=monica" }
+  ]
+}

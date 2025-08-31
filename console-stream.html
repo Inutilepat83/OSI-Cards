@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Console Stream</title>
+    <style>
+      body { font-family: monospace; white-space: pre-wrap; }
+      .log { margin: 2px 0; }
+      .error { color: red; }
+      .warn { color: darkorange; }
+      .info { color: blue; }
+    </style>
+  </head>
+  <body>
+    <h3>Console Stream</h3>
+    <div id="out"></div>
+    <script>
+      const out = document.getElementById('out');
+      function append(level, text){
+        const el = document.createElement('div');
+        el.className = 'log ' + level;
+        el.textContent = '[' + level + '] ' + text;
+        out.appendChild(el);
+      }
+
+      // Poll server logs (for servers that simply log to stdout this is illustrative only)
+      setInterval(()=>{
+        // noop - server does not expose logs over HTTP by default
+      }, 2500);
+
+      append('info','Open the server terminal to see incoming logs from connected browsers.');
+    </script>
+  </body>
+</html>

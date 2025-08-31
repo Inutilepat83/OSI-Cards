@@ -1,0 +1,207 @@
+
+> osi-cards@0.0.1 start
+> npm run stop:dev --silent && npm run start:concurrent
+
+killed 340312
+
+> osi-cards@0.0.1 start:concurrent
+> concurrently "node ./console-server.js" "ng serve"
+
+[0] Console capture server listening on http://localhost:9229
+[0] WebSocket client connected
+[1] - Generating browser application bundles (phase: setup)...
+[1] /workspaces/OSI-Cards/node_modules/webpack-dev-server/lib/Server.js:2557
+[1]         throw error;
+[1]         ^
+[1] 
+[1] Error: listen EADDRINUSE: address already in use ::1:4200
+[1]     at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+[1]     at listenInCluster (node:net:1997:12)
+[1]     at GetAddrInfoReqWrap.callback (node:net:2206:7)
+[1]     at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:134:8) {
+[1]   code: 'EADDRINUSE',
+[1]   errno: -98,
+[1]   syscall: 'listen',
+[1]   address: '::1',
+[1]   port: 4200
+[1] }
+[1] 
+[1] Node.js v22.17.0
+[1] ng serve exited with code 1
+[0] WebSocket client connected
+[0] [BROWSER] 2025-08-31T17:37:35.904Z INFO Console capture websocket connected
+[0] [BROWSER] 2025-08-31T17:37:35.925Z INFO [webpack-dev-server] Server started: Hot Module Replacement disabled, Live Reloading enabled, Progress disabled, Overlay enabled.
+[0] [BROWSER] 2025-08-31T17:37:35.951Z INFO Console capture websocket connected
+[0] [BROWSER] 2025-08-31T17:37:35.960Z INFO [webpack-dev-server] Server started: Hot Module Replacement disabled, Live Reloading enabled, Progress disabled, Overlay enabled.
+[0] [BROWSER] 2025-08-31T17:37:35.997Z WARN The `useDefaultLang` and `defaultLanguage` options are deprecated. Please use `fallbackLang` instead.
+[0] [BROWSER] 2025-08-31T17:37:36.012Z LOG [2025-08-31T17:37:35.628Z][LOG][CoreModule] Enhanced Core module initialized
+[0] [BROWSER] 2025-08-31T17:37:36.034Z WARN Could not find Angular Material core theme. Most Material components may not work as expected. For more info refer to the theming guide: https://material.angular.io/guide/theming
+[0] [BROWSER] 2025-08-31T17:37:36.054Z LOG Angular is running in development mode.
+[0] [BROWSER] 2025-08-31T17:37:36.069Z LOG [2025-08-31T17:37:35.628Z][LOG][CoreModule] Enhanced Core module initialized
+[0] [BROWSER] 2025-08-31T17:37:36.071Z WARN The `useDefaultLang` and `defaultLanguage` options are deprecated. Please use `fallbackLang` instead.
+[0] [BROWSER] 2025-08-31T17:37:36.095Z WARN Could not find Angular Material core theme. Most Material components may not work as expected. For more info refer to the theming guide: https://material.angular.io/guide/theming
+[0] [BROWSER] 2025-08-31T17:37:36.109Z WARN Could not find Angular Material core theme. Most Material components may not work as expected. For more info refer to the theming guide: https://material.angular.io/guide/theming
+[0] [BROWSER] 2025-08-31T17:37:36.110Z LOG Angular is running in development mode.
+[0] [BROWSER] 2025-08-31T17:37:36.118Z LOG [HomePageComponent] Initializing in features/home/components/home-page
+[0] [BROWSER] 2025-08-31T17:37:36.118Z LOG [HomePageComponent] ChangeDetectorRef available: true
+[0] [BROWSER] 2025-08-31T17:37:36.119Z LOG [HomePageComponent] Services available: [object Object]
+[0] [BROWSER] 2025-08-31T17:37:36.120Z WARN Could not find Angular Material core theme. Most Material components may not work as expected. For more info refer to the theming guide: https://material.angular.io/guide/theming
+[0] [BROWSER] 2025-08-31T17:37:36.124Z LOG [HomePageComponent] Starting system initialization
+[0] [BROWSER] 2025-08-31T17:37:36.127Z LOG [LocalCardConfigurationService] getTemplate called: company, variant: 1, demoMode: true
+[0] [BROWSER] 2025-08-31T17:37:36.127Z LOG [LocalCardConfigurationService] Loading demo card: dsm-company.variant1.json
+[0] [BROWSER] 2025-08-31T17:37:36.130Z LOG [DemoCardLoaderService] Loading card: /assets/cards/demo/dsm-company.variant1.json
+[0] [BROWSER] 2025-08-31T17:37:36.132Z LOG [HomePageComponent] Initializing in features/home/components/home-page
+[0] [BROWSER] 2025-08-31T17:37:36.136Z LOG [HomePageComponent] ChangeDetectorRef available: true
+[0] [BROWSER] 2025-08-31T17:37:36.138Z LOG [2025-08-31T17:37:35.768Z][LOG][SecurityService] HSTS should be configured at server level
+[0] [BROWSER] 2025-08-31T17:37:36.142Z LOG [2025-08-31T17:37:35.768Z][LOG][PerformanceMonitoringService] Analytics event [object Object]
+[0] [BROWSER] 2025-08-31T17:37:36.145Z LOG [HomePageComponent] Services available: {"cardConfigService":true,"initService":true,"messageService":true,"logger":true}
+[0] [BROWSER] 2025-08-31T17:37:36.147Z LOG [2025-08-31T17:37:35.768Z][LOG][HttpErrorInterceptor] HTTP Request: GET /assets/cards/demo/dsm-company.variant1.json [object Object]
+[0] [BROWSER] 2025-08-31T17:37:36.148Z LOG [2025-08-31T17:37:35.769Z][LOG][LoggingInterceptor] HTTP Request [pdyp17b7j] [object Object]
+[0] [BROWSER] 2025-08-31T17:37:36.149Z WARN [2025-08-31T17:37:35.776Z][WARN][HttpErrorInterceptor] Retrying request 7ip8y5d44jutx0198zvb6 in 2000ms (attempt 2)
+[0] [BROWSER] 2025-08-31T17:37:36.151Z LOG [HomePageComponent] Starting system initialization
+[0] [BROWSER] 2025-08-31T17:37:36.152Z LOG [LocalCardConfigurationService] getTemplate called: company, variant: 1, demoMode: true
+[0] [BROWSER] 2025-08-31T17:37:36.156Z LOG [LocalCardConfigurationService] Loading demo card: dsm-company.variant1.json
+[0] [BROWSER] 2025-08-31T17:37:36.164Z LOG [DemoCardLoaderService] Loading card: /assets/cards/demo/dsm-company.variant1.json
+[0] [BROWSER] 2025-08-31T17:37:38.153Z WARN [2025-08-31T17:37:37.779Z][WARN][HttpErrorInterceptor] Retrying request 7ip8y5d44jutx0198zvb6 in 4000ms (attempt 3)
+[0] [BROWSER] 2025-08-31T17:37:42.138Z ERROR [2025-08-31T17:37:41.782Z][ERROR][HttpErrorInterceptor] HTTP Error: GET /assets/cards/demo/dsm-company.variant1.json (6014ms) [object Object]
+[0] [BROWSER] 2025-08-31T17:37:42.139Z ERROR [DemoCardLoaderService] Failed to load card: dsm-company.variant1.json [object Object]
+[0] [BROWSER] 2025-08-31T17:37:42.146Z WARN Failed to load demo template, using fallback: [object Object]
+[0] [BROWSER] 2025-08-31T17:37:42.148Z LOG [HomePageComponent] Initialization result: [object Object]
+[0] [BROWSER] 2025-08-31T17:37:42.148Z LOG [HomePageComponent] Initial card loaded: Company Card
+[0] [BROWSER] 2025-08-31T17:37:42.149Z LOG [HomePageComponent] Change detection triggered, isInitialized: true
+[0] [BROWSER] 2025-08-31T17:37:42.150Z WARN [2025-08-31T17:37:41.786Z][WARN][HomePageComponent] Initialization warnings Could not load demo templates, using fallback
+[0] [BROWSER] 2025-08-31T17:38:06.124Z LOG [2025-08-31T17:38:05.778Z][LOG][PerformanceMonitoringService] Analytics event [object Object]
+[0] [BROWSER] 2025-08-31T17:38:06.126Z LOG [2025-08-31T17:38:05.779Z][LOG][PerformanceMonitoringService] Analytics event [object Object]
+[0] [BROWSER] 2025-08-31T17:38:08.522Z INFO [webpack-dev-server] App updated. Recompiling...
+[0] [BROWSER] 2025-08-31T17:38:11.159Z INFO [webpack-dev-server] App updated. Reloading...
+[0] WebSocket client disconnected
+[0] WebSocket client connected
+[0] [BROWSER] 2025-08-31T17:38:11.448Z INFO Console capture websocket connected
+[0] [BROWSER] 2025-08-31T17:38:11.463Z INFO [webpack-dev-server] Server started: Hot Module Replacement disabled, Live Reloading enabled, Progress disabled, Overlay enabled.
+[0] [BROWSER] 2025-08-31T17:38:11.482Z INFO Console capture websocket connected
+[0] [BROWSER] 2025-08-31T17:38:11.597Z WARN The `useDefaultLang` and `defaultLanguage` options are deprecated. Please use `fallbackLang` instead.
+[0] [BROWSER] 2025-08-31T17:38:11.600Z WARN The `useDefaultLang` and `defaultLanguage` options are deprecated. Please use `fallbackLang` instead.
+[0] [BROWSER] 2025-08-31T17:38:11.604Z LOG [2025-08-31T17:38:11.254Z][LOG][CoreModule] Enhanced Core module initialized
+[0] [BROWSER] 2025-08-31T17:38:11.607Z LOG [2025-08-31T17:38:11.254Z][LOG][CoreModule] Enhanced Core module initialized
+[0] [BROWSER] 2025-08-31T17:38:11.611Z WARN Could not find Angular Material core theme. Most Material components may not work as expected. For more info refer to the theming guide: https://material.angular.io/guide/theming
+[0] [BROWSER] 2025-08-31T17:38:11.619Z LOG Angular is running in development mode.
+[0] [BROWSER] 2025-08-31T17:38:11.643Z WARN Could not find Angular Material core theme. Most Material components may not work as expected. For more info refer to the theming guide: https://material.angular.io/guide/theming
+[0] [BROWSER] 2025-08-31T17:38:11.649Z LOG Angular is running in development mode.
+[0] [BROWSER] 2025-08-31T17:38:11.654Z WARN Could not find Angular Material core theme. Most Material components may not work as expected. For more info refer to the theming guide: https://material.angular.io/guide/theming
+[0] [BROWSER] 2025-08-31T17:38:11.657Z WARN Could not find Angular Material core theme. Most Material components may not work as expected. For more info refer to the theming guide: https://material.angular.io/guide/theming
+[0] [BROWSER] 2025-08-31T17:38:11.660Z LOG [HomePageComponent] Initializing in features/home/components/home-page
+[0] [BROWSER] 2025-08-31T17:38:11.664Z LOG [HomePageComponent] ChangeDetectorRef available: true
+[0] [BROWSER] 2025-08-31T17:38:11.664Z LOG [HomePageComponent] Services available: [object Object]
+[0] [BROWSER] 2025-08-31T17:38:11.666Z LOG [HomePageComponent] Starting system initialization
+[0] [BROWSER] 2025-08-31T17:38:11.668Z LOG [LocalCardConfigurationService] getTemplate called: company, variant: 1, demoMode: true
+[0] [BROWSER] 2025-08-31T17:38:11.671Z LOG [HomePageComponent] Initializing in features/home/components/home-page
+[0] [BROWSER] 2025-08-31T17:38:11.673Z LOG [LocalCardConfigurationService] Loading demo card: dsm-company.variant1.json
+[0] [BROWSER] 2025-08-31T17:38:11.676Z LOG [DemoCardLoaderService] Loading card: /assets/cards/demo/dsm-company.variant1.json
+[0] [BROWSER] 2025-08-31T17:38:11.678Z LOG [2025-08-31T17:38:11.316Z][LOG][SecurityService] HSTS should be configured at server level
+[0] [BROWSER] 2025-08-31T17:38:11.695Z LOG [2025-08-31T17:38:11.317Z][LOG][PerformanceMonitoringService] Analytics event [object Object]
+[0] [BROWSER] 2025-08-31T17:38:11.695Z LOG [2025-08-31T17:38:11.318Z][LOG][HttpErrorInterceptor] HTTP Request: GET /assets/cards/demo/dsm-company.variant1.json [object Object]
+[0] [BROWSER] 2025-08-31T17:38:11.695Z LOG [2025-08-31T17:38:11.318Z][LOG][LoggingInterceptor] HTTP Request [j9wm1p2ry] [object Object]
+[0] [BROWSER] 2025-08-31T17:38:11.696Z ERROR [2025-08-31T17:38:11.326Z][ERROR][HttpErrorInterceptor] HTTP Error: GET /assets/cards/demo/dsm-company.variant1.json (8ms) [object Object]
+[0] [BROWSER] 2025-08-31T17:38:11.696Z ERROR [DemoCardLoaderService] Failed to load card: dsm-company.variant1.json [object Object]
+[0] [BROWSER] 2025-08-31T17:38:11.696Z WARN Failed to load demo template, using fallback: [object Object]
+[0] [BROWSER] 2025-08-31T17:38:11.697Z LOG [HomePageComponent] Initialization result: [object Object]
+[0] [BROWSER] 2025-08-31T17:38:11.697Z LOG [HomePageComponent] Initial card loaded: Company Card
+[0] [BROWSER] 2025-08-31T17:38:11.697Z LOG [HomePageComponent] Change detection triggered, isInitialized: true
+[0] [BROWSER] 2025-08-31T17:38:11.697Z LOG [LocalCardConfigurationService] Loading demo card: dsm-company.variant1.json
+[0] [BROWSER] 2025-08-31T17:38:11.698Z LOG [HomePageComponent] Starting system initialization
+[0] [BROWSER] 2025-08-31T17:38:11.699Z LOG [LocalCardConfigurationService] getTemplate called: company, variant: 1, demoMode: true
+[0] [BROWSER] 2025-08-31T17:38:11.700Z WARN [2025-08-31T17:38:11.327Z][WARN][HomePageComponent] Initialization warnings Could not load demo templates, using fallback
+[0] [BROWSER] 2025-08-31T17:38:11.704Z LOG [DemoCardLoaderService] Loading card: /assets/cards/demo/dsm-company.variant1.json
+[0] [BROWSER] 2025-08-31T17:38:11.740Z LOG [HomePageComponent] ChangeDetectorRef available: true
+[0] [BROWSER] 2025-08-31T17:38:11.745Z LOG [HomePageComponent] Services available: {"cardConfigService":true,"initService":true,"messageService":true,"logger":true}
+[0] [BROWSER] 2025-08-31T17:38:15.781Z INFO [webpack-dev-server] App updated. Recompiling...
+[0] [BROWSER] 2025-08-31T17:38:17.121Z INFO [webpack-dev-server] App updated. Reloading...
+[0] WebSocket client disconnected
+[0] WebSocket client connected
+[0] [BROWSER] 2025-08-31T17:38:17.380Z INFO [webpack-dev-server] Server started: Hot Module Replacement disabled, Live Reloading enabled, Progress disabled, Overlay enabled.
+[0] [BROWSER] 2025-08-31T17:38:17.412Z INFO Console capture websocket connected
+[0] [BROWSER] 2025-08-31T17:38:17.414Z INFO Console capture websocket connected
+[0] [BROWSER] 2025-08-31T17:38:17.496Z WARN The `useDefaultLang` and `defaultLanguage` options are deprecated. Please use `fallbackLang` instead.
+[0] [BROWSER] 2025-08-31T17:38:17.502Z WARN The `useDefaultLang` and `defaultLanguage` options are deprecated. Please use `fallbackLang` instead.
+[0] [BROWSER] 2025-08-31T17:38:17.508Z LOG [2025-08-31T17:38:17.153Z][LOG][CoreModule] Enhanced Core module initialized
+[0] [BROWSER] 2025-08-31T17:38:17.513Z LOG [2025-08-31T17:38:17.153Z][LOG][CoreModule] Enhanced Core module initialized
+[0] [BROWSER] 2025-08-31T17:38:17.520Z WARN Could not find Angular Material core theme. Most Material components may not work as expected. For more info refer to the theming guide: https://material.angular.io/guide/theming
+[0] [BROWSER] 2025-08-31T17:38:17.525Z WARN Could not find Angular Material core theme. Most Material components may not work as expected. For more info refer to the theming guide: https://material.angular.io/guide/theming
+[0] [BROWSER] 2025-08-31T17:38:17.526Z LOG Angular is running in development mode.
+[0] [BROWSER] 2025-08-31T17:38:17.531Z LOG Angular is running in development mode.
+[0] [BROWSER] 2025-08-31T17:38:17.579Z WARN Could not find Angular Material core theme. Most Material components may not work as expected. For more info refer to the theming guide: https://material.angular.io/guide/theming
+[0] [BROWSER] 2025-08-31T17:38:17.586Z WARN Could not find Angular Material core theme. Most Material components may not work as expected. For more info refer to the theming guide: https://material.angular.io/guide/theming
+[0] [BROWSER] 2025-08-31T17:38:17.593Z LOG [HomePageComponent] Initializing in features/home/components/home-page
+[0] [BROWSER] 2025-08-31T17:38:17.597Z LOG [HomePageComponent] ChangeDetectorRef available: true
+[0] [BROWSER] 2025-08-31T17:38:17.598Z LOG [HomePageComponent] Services available: [object Object]
+[0] [BROWSER] 2025-08-31T17:38:17.603Z LOG [HomePageComponent] Starting system initialization
+[0] [BROWSER] 2025-08-31T17:38:17.605Z LOG [LocalCardConfigurationService] getTemplate called: company, variant: 1, demoMode: true
+[0] [BROWSER] 2025-08-31T17:38:17.611Z LOG [HomePageComponent] Initializing in features/home/components/home-page
+[0] [BROWSER] 2025-08-31T17:38:17.613Z LOG [LocalCardConfigurationService] Loading demo card: dsm-company.variant1.json
+[0] [BROWSER] 2025-08-31T17:38:17.615Z LOG [HomePageComponent] ChangeDetectorRef available: true
+[0] [BROWSER] 2025-08-31T17:38:17.624Z LOG [HomePageComponent] Services available: {"cardConfigService":true,"initService":true,"messageService":true,"logger":true}
+[0] [BROWSER] 2025-08-31T17:38:17.624Z LOG [DemoCardLoaderService] Loading card: /assets/cards/demo/dsm-company.variant1.json
+[0] [BROWSER] 2025-08-31T17:38:17.624Z LOG [2025-08-31T17:38:17.240Z][LOG][SecurityService] HSTS should be configured at server level
+[0] [BROWSER] 2025-08-31T17:38:17.633Z LOG [HomePageComponent] Starting system initialization
+[0] [BROWSER] 2025-08-31T17:38:17.638Z LOG [LocalCardConfigurationService] getTemplate called: company, variant: 1, demoMode: true
+[0] [BROWSER] 2025-08-31T17:38:17.638Z LOG [2025-08-31T17:38:17.241Z][LOG][PerformanceMonitoringService] Analytics event [object Object]
+[0] [BROWSER] 2025-08-31T17:38:17.639Z LOG [2025-08-31T17:38:17.241Z][LOG][HttpErrorInterceptor] HTTP Request: GET /assets/cards/demo/dsm-company.variant1.json [object Object]
+[0] [BROWSER] 2025-08-31T17:38:17.642Z LOG [2025-08-31T17:38:17.242Z][LOG][LoggingInterceptor] HTTP Request [1mxckvi7s] [object Object]
+[0] [BROWSER] 2025-08-31T17:38:17.646Z ERROR [2025-08-31T17:38:17.249Z][ERROR][HttpErrorInterceptor] HTTP Error: GET /assets/cards/demo/dsm-company.variant1.json (8ms) [object Object]
+[0] [BROWSER] 2025-08-31T17:38:17.649Z ERROR [DemoCardLoaderService] Failed to load card: dsm-company.variant1.json [object Object]
+[0] [BROWSER] 2025-08-31T17:38:17.653Z WARN Failed to load demo template, using fallback: [object Object]
+[0] [BROWSER] 2025-08-31T17:38:17.655Z LOG [HomePageComponent] Initialization result: [object Object]
+[0] [BROWSER] 2025-08-31T17:38:17.655Z LOG [HomePageComponent] Initial card loaded: Company Card
+[0] [BROWSER] 2025-08-31T17:38:17.656Z LOG [HomePageComponent] Change detection triggered, isInitialized: true
+[0] [BROWSER] 2025-08-31T17:38:17.658Z WARN [2025-08-31T17:38:17.250Z][WARN][HomePageComponent] Initialization warnings Could not load demo templates, using fallback
+[0] [BROWSER] 2025-08-31T17:38:17.659Z LOG [LocalCardConfigurationService] Loading demo card: dsm-company.variant1.json
+[0] [BROWSER] 2025-08-31T17:38:17.661Z LOG [DemoCardLoaderService] Loading card: /assets/cards/demo/dsm-company.variant1.json
+[0] [BROWSER] 2025-08-31T17:38:36.066Z INFO [webpack-dev-server] App updated. Recompiling...
+[0] [BROWSER] 2025-08-31T17:38:38.330Z INFO [webpack-dev-server] App updated. Reloading...
+[0] WebSocket client disconnected
+[0] WebSocket client connected
+[0] [BROWSER] 2025-08-31T17:38:38.809Z INFO Console capture websocket connected
+[0] [BROWSER] 2025-08-31T17:38:38.826Z INFO [webpack-dev-server] Server started: Hot Module Replacement disabled, Live Reloading enabled, Progress disabled, Overlay enabled.
+[0] [BROWSER] 2025-08-31T17:38:38.880Z INFO Console capture websocket connected
+[0] [BROWSER] 2025-08-31T17:38:38.885Z INFO [webpack-dev-server] Server started: Hot Module Replacement disabled, Live Reloading enabled, Progress disabled, Overlay enabled.
+[0] [BROWSER] 2025-08-31T17:38:38.967Z WARN The `useDefaultLang` and `defaultLanguage` options are deprecated. Please use `fallbackLang` instead.
+[0] [BROWSER] 2025-08-31T17:38:38.971Z LOG [2025-08-31T17:38:38.606Z][LOG][CoreModule] Enhanced Core module initialized
+[0] [BROWSER] 2025-08-31T17:38:38.972Z WARN The `useDefaultLang` and `defaultLanguage` options are deprecated. Please use `fallbackLang` instead.
+[0] [BROWSER] 2025-08-31T17:38:38.978Z LOG [2025-08-31T17:38:38.606Z][LOG][CoreModule] Enhanced Core module initialized
+[0] [BROWSER] 2025-08-31T17:38:38.982Z WARN Could not find Angular Material core theme. Most Material components may not work as expected. For more info refer to the theming guide: https://material.angular.io/guide/theming
+[0] [BROWSER] 2025-08-31T17:38:38.993Z LOG Angular is running in development mode.
+[0] [BROWSER] 2025-08-31T17:38:39.017Z WARN Could not find Angular Material core theme. Most Material components may not work as expected. For more info refer to the theming guide: https://material.angular.io/guide/theming
+[0] [BROWSER] 2025-08-31T17:38:39.027Z LOG Angular is running in development mode.
+[0] [BROWSER] 2025-08-31T17:38:39.031Z WARN Could not find Angular Material core theme. Most Material components may not work as expected. For more info refer to the theming guide: https://material.angular.io/guide/theming
+[0] [BROWSER] 2025-08-31T17:38:39.034Z WARN Could not find Angular Material core theme. Most Material components may not work as expected. For more info refer to the theming guide: https://material.angular.io/guide/theming
+[0] [BROWSER] 2025-08-31T17:38:39.037Z LOG [HomePageComponent] Initializing in features/home/components/home-page
+[0] [BROWSER] 2025-08-31T17:38:39.039Z LOG [HomePageComponent] ChangeDetectorRef available: true
+[0] [BROWSER] 2025-08-31T17:38:39.041Z LOG [HomePageComponent] Services available: [object Object]
+[0] [BROWSER] 2025-08-31T17:38:39.044Z LOG [HomePageComponent] Starting system initialization
+[0] [BROWSER] 2025-08-31T17:38:39.046Z LOG [LocalCardConfigurationService] getTemplate called: company, variant: 1, demoMode: true
+[0] [BROWSER] 2025-08-31T17:38:39.048Z LOG [LocalCardConfigurationService] Loading demo card: dsm-company.variant1.json
+[0] [BROWSER] 2025-08-31T17:38:39.051Z LOG [HomePageComponent] Initializing in features/home/components/home-page
+[0] [BROWSER] 2025-08-31T17:38:39.054Z LOG [DemoCardLoaderService] Loading card: /assets/cards/demo/dsm-company.variant1.json
+[0] [BROWSER] 2025-08-31T17:38:39.057Z LOG [2025-08-31T17:38:38.687Z][LOG][SecurityService] HSTS should be configured at server level
+[0] [BROWSER] 2025-08-31T17:38:39.075Z LOG [2025-08-31T17:38:38.687Z][LOG][PerformanceMonitoringService] Analytics event [object Object]
+[0] [BROWSER] 2025-08-31T17:38:39.076Z LOG [2025-08-31T17:38:38.688Z][LOG][HttpErrorInterceptor] Asset Request: GET /assets/cards/demo/dsm-company.variant1.json [object Object]
+[0] [BROWSER] 2025-08-31T17:38:39.076Z LOG [2025-08-31T17:38:38.688Z][LOG][LoggingInterceptor] HTTP Request [rkmk82u36] [object Object]
+[0] [BROWSER] 2025-08-31T17:38:39.077Z ERROR [2025-08-31T17:38:38.696Z][ERROR][HttpErrorInterceptor] Asset Error: GET /assets/cards/demo/dsm-company.variant1.json (8ms) - Status: 0 [object Object]
+[0] [BROWSER] 2025-08-31T17:38:39.077Z ERROR [DemoCardLoaderService] Failed to load card: dsm-company.variant1.json [object Object]
+[0] [BROWSER] 2025-08-31T17:38:39.077Z WARN Failed to load demo template, using fallback: [object Object]
+[0] [BROWSER] 2025-08-31T17:38:39.077Z LOG [HomePageComponent] Initialization result: [object Object]
+[0] [BROWSER] 2025-08-31T17:38:39.077Z LOG [HomePageComponent] Initial card loaded: Company Card
+[0] [BROWSER] 2025-08-31T17:38:39.077Z LOG [HomePageComponent] Change detection triggered, isInitialized: true
+[0] [BROWSER] 2025-08-31T17:38:39.077Z WARN [2025-08-31T17:38:38.697Z][WARN][HomePageComponent] Initialization warnings Could not load demo templates, using fallback
+[0] [BROWSER] 2025-08-31T17:38:39.085Z LOG [HomePageComponent] Starting system initialization
+[0] [BROWSER] 2025-08-31T17:38:39.089Z LOG [LocalCardConfigurationService] getTemplate called: company, variant: 1, demoMode: true
+[0] [BROWSER] 2025-08-31T17:38:39.094Z LOG [LocalCardConfigurationService] Loading demo card: dsm-company.variant1.json
+[0] [BROWSER] 2025-08-31T17:38:39.098Z LOG [DemoCardLoaderService] Loading card: /assets/cards/demo/dsm-company.variant1.json
+[0] [BROWSER] 2025-08-31T17:38:39.100Z LOG [HomePageComponent] ChangeDetectorRef available: true
+[0] [BROWSER] 2025-08-31T17:38:39.101Z LOG [HomePageComponent] Services available: {"cardConfigService":true,"initService":true,"messageService":true,"logger":true}
+[0] 
+[0] Console capture server shutting down...
+[0] [BROWSER] 2025-08-31T17:38:48.412Z INFO [webpack-dev-server] Disconnected!
+[0] [BROWSER] 2025-08-31T17:38:48.418Z INFO [webpack-dev-server] Trying to reconnect...
+[0] [BROWSER] 2025-08-31T17:38:49.487Z ERROR [webpack-dev-server] [object Object]
+[0] node ./console-server.js exited with code 1
