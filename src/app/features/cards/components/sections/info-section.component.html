@@ -1,10 +1,139 @@
-<div class="info-section">
-  <div class="info-grid">
-    <div *ngFor="let field of section.fields; trackBy: trackByFn" 
-         class="info-field" 
-         (click)="onFieldClick(field)">
-      <div class="field-label">{{field.label}}</div>
-      <div class="field-value" [style.color]="field.valueColor">{{field.value}}</div>
+<div class="info-section" [attr.aria-label]="section.title">
+  <div class="section-header" *ngIf="section.title || section.description">
+    <h3 class="section-title">{{ section.title }}</h3>
+    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
+  </div>
+
+  <div class="info-container" [ngClass]="'layout-' + layout">
+    <div 
+      *ngFor="let field of fields; trackBy: trackByFn" 
+      [ngClass]="getFieldClass(field)"
+      [attr.tabindex]="field.clickable || field.link ? '0' : null"
+      [attr.role]="field.clickable || field.link ? 'button' : null"
+      (click)="onFieldClick(field)"
+      (keyup.enter)="onFieldClick(field)"
+      (keyup.space)="onFieldClick(field)"
+      [attr.aria-label]="field.label + ': ' + formatFieldValue(field)"
+    >
+      <!-- Field Header -->
+      <div class="field-header">
+        <div class="field-icon" *ngIf="field.icon" aria-hidden="true">
+          <i [class]="'icon ' + field.icon"></i>
+        </div>
+        <div class="field-label">{{ field.label }}</div>
+      </div>
+
+      <!-- Field Content -->
+      <div class="field-content">
+        <!-- Different field types -->
+        <ng-container [ngSwitch]="field.type">
+          
+          <!-- Rating field -->
+          <div *ngSwitchCase="'rating'" class="rating-display">
+            <div class="stars" *ngIf="field.rating !== undefined">
+              <i 
+                *ngFor="let filled of getStarArray(field.rating!, field.maxRating)"
+                [class]="filled ? 'fas fa-star star-filled' : 'far fa-star star-empty'"
+                aria-hidden="true"
+              ></i>
+            </div>
+            <span class="rating-text">{{ field.rating }}/{{ field.maxRating || 5 }}</span>
+          </div>
+
+          <!-- Progress field -->
+          <div *ngSwitchCase="'progress'" class="progress-display">
+            <div class="progress-bar">
+              <div 
+                class="progress-fill"
+                [style.width.%]="field.percentage"
+                [style.background-color]="field.valueColor"
+              ></div>
+            </div>
+            <span class="progress-text">{{ field.percentage }}%</span>
+          </div>
+
+          <!-- Status/Badge field -->
+          <span 
+            *ngSwitchCase="'status'"
+            class="status-badge"
+            [style.color]="field.valueColor"
+            [style.background-color]="field.backgroundColor"
+          >
+            {{ formatFieldValue(field) }}
+          </span>
+
+          <!-- Tag field -->
+          <span 
+            *ngSwitchCase="'tag'"
+            class="tag-badge"
+            [style.color]="field.valueColor"
+            [style.background-color]="field.backgroundColor"
+          >
+            {{ formatFieldValue(field) }}
+          </span>
+
+          <!-- Avatar field -->
+          <div *ngSwitchCase="'avatar'" class="avatar-display">
+            <img 
+              [src]="field.value" 
+              [alt]="field.label"
+              class="avatar-image"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"
+            >
+            <div class="avatar-fallback">
+              {{ (field.label || '').charAt(0).toUpperCase() }}
+            </div>
+          </div>
+
+          <!-- URL field -->
+          <a 
+            *ngSwitchCase="'url'"
+            [href]="field.value"
+            class="url-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            (click)="$event.stopPropagation()"
+          >
+            {{ formatFieldValue(field) }}
+            <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+          </a>
+
+          <!-- Email field -->
+          <a 
+            *ngSwitchCase="'email'"
+            [href]="'mailto:' + field.value"
+            class="email-link"
+            (click)="$event.stopPropagation()"
+          >
+            {{ formatFieldValue(field) }}
+            <i class="fas fa-envelope" aria-hidden="true"></i>
+          </a>
+
+          <!-- Phone field -->
+          <a 
+            *ngSwitchCase="'phone'"
+            [href]="'tel:' + field.value"
+            class="phone-link"
+            (click)="$event.stopPropagation()"
+          >
+            {{ formatFieldValue(field) }}
+            <i class="fas fa-phone" aria-hidden="true"></i>
+          </a>
+
+          <!-- Default field -->
+          <div *ngSwitchDefault class="field-value" [style.color]="field.valueColor">
+            {{ formatFieldValue(field) }}
+          </div>
+        </ng-container>
+
+        <!-- Trend indicator -->
+        <div class="field-trend" *ngIf="field.trend && field.change !== undefined">
+          <span [ngClass]="getTrendClass(field.trend)" class="trend-indicator">
+            <i [class]="getTrendIcon(field.trend)" aria-hidden="true"></i>
+            <span class="trend-value">{{ formatChange(field.change) }}</span>
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 </div>

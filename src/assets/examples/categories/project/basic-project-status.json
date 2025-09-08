@@ -1,0 +1,157 @@
+{
+  "id": "basic-project-status",
+  "cardTitle": "Mobile App Redesign",
+  "cardSubtitle": "UI/UX Improvement Initiative",
+  "cardType": "project",
+  "description": "Basic project status card with timeline, team information, and current progress",
+  "sections": [
+    {
+      "id": "project-overview",
+      "title": "Project Overview",
+      "type": "info",
+      "fields": [
+        {
+          "id": "project-manager",
+          "label": "Project Manager",
+          "value": "Sarah Johnson",
+          "type": "text",
+          "icon": "fas fa-user-tie"
+        },
+        {
+          "id": "start-date",
+          "label": "Start Date",
+          "value": "2024-08-01",
+          "type": "date",
+          "icon": "fas fa-calendar"
+        },
+        {
+          "id": "end-date",
+          "label": "Target Completion",
+          "value": "2024-11-30",
+          "type": "date",
+          "icon": "fas fa-calendar-check"
+        },
+        {
+          "id": "status",
+          "label": "Current Status",
+          "value": "On Track",
+          "type": "status",
+          "backgroundColor": "#d1fae5",
+          "valueColor": "#10b981",
+          "icon": "fas fa-check-circle"
+        }
+      ]
+    },
+    {
+      "id": "team-members",
+      "title": "Project Team",
+      "type": "list",
+      "items": [
+        {
+          "title": "Sarah Johnson",
+          "description": "Project Manager",
+          "icon": "fas fa-user-tie"
+        },
+        {
+          "title": "Mike Chen",
+          "description": "Lead Designer",
+          "icon": "fas fa-palette"
+        },
+        {
+          "title": "Alex Rodriguez",
+          "description": "Senior Developer",
+          "icon": "fas fa-code"
+        },
+        {
+          "title": "Emma Davis",
+          "description": "QA Engineer",
+          "icon": "fas fa-bug"
+        }
+      ]
+    },
+    {
+      "id": "key-milestones",
+      "title": "Key Milestones",
+      "type": "list",
+      "items": [
+        {
+          "title": "Design Phase Complete",
+          "description": "Wireframes and mockups finalized",
+          "icon": "fas fa-draw-polygon"
+        },
+        {
+          "title": "Development Started",
+          "description": "Core functionality implementation begun",
+          "icon": "fas fa-code"
+        },
+        {
+          "title": "Beta Testing",
+          "description": "Internal testing phase scheduled for October",
+          "icon": "fas fa-flask"
+        },
+        {
+          "title": "Launch Preparation",
+          "description": "Final testing and deployment preparation",
+          "icon": "fas fa-rocket"
+        }
+      ]
+    },
+    {
+      "id": "current-progress",
+      "title": "Current Progress",
+      "type": "info",
+      "fields": [
+        {
+          "id": "completion-percentage",
+          "label": "Overall Completion",
+          "value": 65,
+          "type": "percentage",
+          "icon": "fas fa-percentage"
+        },
+        {
+          "id": "days-remaining",
+          "label": "Days Remaining",
+          "value": 45,
+          "type": "number",
+          "icon": "fas fa-clock"
+        },
+        {
+          "id": "budget-used",
+          "label": "Budget Utilized",
+          "value": 78.5,
+          "type": "percentage",
+          "icon": "fas fa-dollar-sign"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "View Project Details",
+      "id": "view-details",
+      "icon": "fas fa-eye"
+    },
+    {
+      "label": "Update Progress",
+      "id": "update-progress",
+      "icon": "fas fa-edit"
+    },
+    {
+      "label": "Add Team Member",
+      "id": "add-member",
+      "icon": "fas fa-user-plus"
+    },
+    {
+      "label": "Schedule Meeting",
+      "id": "schedule-meeting",
+      "icon": "fas fa-calendar"
+    }
+  ],
+  "metadata": {
+    "category": "project",
+    "variant": "basic",
+    "complexity": "low",
+    "useCase": "Simple project status tracking with team info and basic progress indicators",
+    "features": ["project overview", "team members", "key milestones", "current progress"]
+  }
+}

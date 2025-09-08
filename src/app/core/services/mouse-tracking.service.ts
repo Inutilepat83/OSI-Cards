@@ -1,4 +1,4 @@
-import { Injectable, ElementRef, NgZone } from '@angular/core';
+import { Injectable, ElementRef, NgZone, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { MousePosition } from './magnetic-tilt.service';
 
@@ -21,8 +21,9 @@ export class MouseTrackingService {
   private lastUpdateTime = 0;
   private throttleMs = 16; // ~60fps
   private magneticRange = 300;
+  private ngZone = inject(NgZone);
 
-  constructor(private ngZone: NgZone) {
+  constructor() {
     this.setupGlobalMouseTracking();
   }
 

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Input, ElementRef, ViewChild, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { Subject, takeUntil, interval } from 'rxjs';
+import { Subject, takeUntil, interval, Subscription } from 'rxjs';
 import { MagneticTiltService, MousePosition } from '../../../core/services/magnetic-tilt.service';
 import { MouseTrackingService } from '../../../core/services/mouse-tracking.service';
 
@@ -12,14 +12,15 @@ import { MouseTrackingService } from '../../../core/services/mouse-tracking.serv
 export class TiltWrapperComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() isActive = true;
   @Input() className = '';
+  @Input() isHovered = false;
   
   @ViewChild('tiltContainer') tiltContainerRef!: ElementRef<HTMLDivElement>;
   
   // CSS variables for the tilt effect
-  tiltStyle: any = {};
+  tiltStyle: Record<string, string | number> = {};
   
   private destroyed$ = new Subject<void>();
-  private updateInterval: any;
+  private updateInterval: Subscription | undefined;
 
   constructor(
     private elementRef: ElementRef,
@@ -68,7 +69,6 @@ export class TiltWrapperComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private updateTilt(): void {
     const mousePosition = this.mouseTrackingService.mousePosition$;
-    const isHovered = this.mouseTrackingService.isHovered$;
     
     // Get the latest values
     let currentMousePos: MousePosition = { x: 0, y: 0 };
@@ -76,12 +76,7 @@ export class TiltWrapperComponent implements OnInit, AfterViewInit, OnDestroy {
       currentMousePos = pos;
     });
     
-    let hovered = false;
-    isHovered.pipe(takeUntil(this.destroyed$)).subscribe(val => {
-      hovered = val;
-    });
-    
-    if (this.isActive && hovered && this.tiltContainerRef?.nativeElement) {
+    if (this.isActive && this.isHovered && this.tiltContainerRef?.nativeElement) {
       this.magneticTiltService.calculateTilt(currentMousePos, this.tiltContainerRef.nativeElement);
     } else {
       this.magneticTiltService.resetTilt();

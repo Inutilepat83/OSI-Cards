@@ -9,9 +9,9 @@ import { Chart, ChartConfiguration } from 'chart.js';
 })
 export class ChartSectionComponent implements AfterViewInit, OnChanges {
   @Input() section?: CardSection;
-  @Input() chartData?: any;
+  @Input() chartData?: ChartConfiguration['data'];
   @Input() chartType: 'bar' | 'line' | 'pie' | 'doughnut' | 'radar' | 'polarArea' = 'bar';
-  @Input() chartOptions?: any;
+  @Input() chartOptions?: ChartConfiguration['options'];
   
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
   

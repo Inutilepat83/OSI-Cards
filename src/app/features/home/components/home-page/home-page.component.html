@@ -8,7 +8,7 @@
           <span class="text-primary">Sales Intelligence</span>
         </h1>
         <p class="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-12 lg:mb-16 px-4">
-          OSI Cards is a versatile card generator used by sales intelligence agents. 
+          OSI Cards is a versatile card generator used by sales intelligence agents.
           It features structured formatting that can design cards for any form of business intelligence data.
         </p>
       </div>
@@ -17,7 +17,7 @@
         <div class="card">
           <div class="card-content">
             <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-              <i class="sparkles-icon text-primary"></i>
+              <div class="sparkles-icon"></div>
             </div>
             <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-white">AI-Powered Generation</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
@@ -29,7 +29,7 @@
         <div class="card">
           <div class="card-content">
             <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-              <i class="zap-icon text-primary"></i>
+              <div class="cogs-icon"></div>
             </div>
             <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-white">Instant Generation</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
@@ -41,7 +41,7 @@
         <div class="card md:col-span-2 lg:col-span-1">
           <div class="card-content">
             <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-              <i class="code-icon text-primary"></i>
+              <div class="code-icon"></div>
             </div>
             <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-white">JSON Configuration</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
@@ -58,21 +58,24 @@
     <div class="mx-auto max-w-7xl">
       <div class="text-center mb-6 sm:mb-8">
         <h3 class="text-2xl sm:text-4xl font-bold text-white mb-4 sm:mb-6">Interactive Demo</h3>
-        
+
         <!-- Card Type Selector with Label -->
         <div class="flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
           <span class="text-sm text-muted-foreground">Card Type:</span>
           <div class="flex gap-2 sm:gap-3 flex-wrap justify-center">
             <button
-              *ngFor="let type of cardTypes"
+              *ngFor="let type of cardTypes; trackBy: trackByCardType"
               (click)="switchCardType(type)"
-              [class]="'px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm ' + 
-                (cardType === type
-                  ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg scale-105'
-                  : 'bg-card text-foreground border border-border hover:border-primary/50 hover:scale-105')"
+              (keydown.enter)="switchCardType(type)"
+              (keydown.space)="$event.preventDefault(); switchCardType(type)"
+              class="px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm"
+              [class]="cardType === type ? 'bg-primary text-primary-foreground shadow-lg scale-105' : 'bg-card text-foreground border border-border hover:border-primary/50 hover:scale-105'"
               [disabled]="switchingType"
-            >
-              {{type.charAt(0).toUpperCase() + type.slice(1)}}
+              [attr.aria-label]="'Switch to ' + type + ' card type'"
+              [attr.aria-pressed]="cardType === type"
+              role="button"
+              tabindex="0">
+              {{ type.charAt(0).toUpperCase() + type.slice(1) }}
             </button>
           </div>
         </div>
@@ -82,67 +85,63 @@
           <span class="text-sm text-muted-foreground">Variants:</span>
           <div class="flex gap-2">
             <button
-              *ngFor="let variant of [1, 2, 3]"
-              (click)="handleVariantChange(variant)"
-              [class]="'w-8 h-8 rounded-full text-xs font-medium transition-all duration-200 ' + 
-                (cardVariant === variant
-                  ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg scale-110'
-                  : 'bg-card text-foreground border border-border hover:border-primary/50 hover:scale-105')"
+              *ngFor="let variant of [1, 2, 3]; trackBy: trackByVariant"
+              (click)="switchCardVariant(variant)"
+              (keydown.enter)="switchCardVariant(variant)"
+              (keydown.space)="$event.preventDefault(); switchCardVariant(variant)"
+              class="w-8 h-8 rounded-full text-xs font-medium transition-all duration-200"
+              [class]="cardVariant === variant ? 'bg-primary text-primary-foreground shadow-lg scale-110' : 'bg-card text-foreground border border-border hover:border-primary/50 hover:scale-105'"
               [disabled]="switchingType"
               [title]="'Load variant ' + variant + ' of ' + cardType + ' template'"
-            >
-              {{variant}}
+              [attr.aria-label]="'Load variant ' + variant + ' of ' + cardType + ' template'"
+              [attr.aria-pressed]="cardVariant === variant"
+              role="button"
+              tabindex="0">
+              {{ variant }}
             </button>
           </div>
         </div>
       </div>
 
       <!-- Enhanced Responsive Layout with Fullscreen Support -->
-      <div [class]="'transition-all duration-500 ease-in-out mb-16 min-h-[800px] ' + 
-        (isFullscreen 
-          ? 'flex flex-col gap-8' 
-          : 'grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-8 items-start')">
-        
+      <div class="transition-all duration-500 ease-in-out mb-16 min-h-[800px] grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-8 items-start">
+
         <!-- Card Preview -->
-        <div [class]="'flex flex-col ' + (isFullscreen ? 'order-1 w-full' : 'lg:col-span-3 order-2 lg:order-2')">
+        <div class="flex flex-col lg:col-span-3 order-2 lg:order-2">
           <div class="flex items-center gap-2 mb-4">
-            <i class="sparkles-icon text-primary"></i>
+            <div class="sparkles-icon w-5 h-5"></div>
             <span class="font-semibold">Live Preview</span>
-            <span *ngIf="generatedCard" class="text-sm text-muted-foreground">
-              • {{generatedCard.cardType}} Card
+            <span class="text-sm text-muted-foreground" *ngIf="generatedCard">
+              • {{ generatedCard.cardType }} Card
             </span>
-            <span *ngIf="isFullscreen" class="badge">
-              Fullscreen Mode
-            </span>
+            <span class="badge" *ngIf="isFullscreen">Fullscreen Mode</span>
           </div>
 
           <div class="flex-1">
             <div *ngIf="isGenerating || !isInitialized" class="flex flex-col items-center justify-center space-y-4 text-center py-20">
-              <div class="w-8 h-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+              <div class="animate-spin w-8 h-8 rounded-full border-2 border-primary border-t-transparent"></div>
               <div>
                 <p class="text-lg font-medium text-foreground">
-                  {{!isInitialized ? 'Initializing System...' : 'Generating Card...'}}
+                  {{ !isInitialized ? 'Initializing System...' : 'Generating Card...' }}
                 </p>
                 <p class="text-sm text-muted-foreground">
-                  {{!isInitialized ? 'Loading templates and services' : 'Processing your configuration'}}
+                  {{ !isInitialized ? 'Loading templates and services' : 'Processing your configuration' }}
                 </p>
               </div>
             </div>
 
-            <div *ngIf="!isGenerating && isInitialized && generatedCard" [class]="'w-full ' + (isFullscreen ? 'max-w-none' : '')">
+            <div *ngIf="!isGenerating && isInitialized && generatedCard" class="w-full">
               <app-ai-card-renderer
                 [cardConfig]="generatedCard"
-                (fieldInteraction)="handleFieldInteraction($event)"
-                (cardInteraction)="handleCardInteraction($event)"
-                class="w-full"
                 [isFullscreen]="isFullscreen"
-                (fullscreenToggle)="handleFullscreenToggle($event)"
-              ></app-ai-card-renderer>
+                (cardInteraction)="onCardInteraction($event)"
+                (fullscreenToggle)="onFullscreenToggle($event)">
+              </app-ai-card-renderer>
             </div>
 
             <div *ngIf="!isGenerating && isInitialized && !generatedCard" class="flex flex-col items-center justify-center space-y-4 text-center py-20">
               <div class="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center">
-                <i class="code-icon text-muted-foreground"></i>
+                <div class="code-icon w-8 h-8"></div>
               </div>
               <div>
                 <p class="text-lg font-medium text-foreground mb-2">No Card Preview</p>
@@ -169,28 +168,34 @@
         </div>
 
         <!-- JSON Configuration -->
-        <div [class]="'flex flex-col space-y-4 ' + (isFullscreen ? 'order-2 w-full' : 'lg:col-span-2 order-1 lg:order-1')">
-          <div class="flex items-center gap-2 mb-4">
-            <i class="file-text-icon text-primary"></i>
+        <div class="flex flex-col space-y-4 lg:col-span-2 order-1 lg:order-1">
+          <label for="json-config-textarea" class="flex items-center gap-2 mb-4">
+            <div class="file-text-icon w-5 h-5"></div>
             <span class="font-semibold">JSON Configuration</span>
-            <span *ngIf="!isJsonValid" class="badge-destructive">
-              Invalid JSON
-            </span>
-          </div>
-          
+            <span class="badge-destructive" *ngIf="!isJsonValid">Invalid JSON</span>
+          </label>
+
           <textarea
-            [formControl]="jsonInput"
-            [class]="'font-mono text-sm resize-none overflow-y-auto border-2 transition-all duration-300 ' +
-              (isJsonValid ? 'border-gray-600' : 'border-red-500/50') +
-              ' focus:border-gray-500 bg-input-background text-foreground p-4 ' +
-              (isFullscreen ? 'max-h-[300px]' : 'max-h-[500px] lg:max-h-[600px]')"
+            id="json-config-textarea"
+            #textareaRef
+            [(ngModel)]="jsonInput"
+            (ngModelChange)="onJsonInputChange()"
+            class="font-mono text-sm resize-none overflow-y-auto border-2 transition-all duration-300 min-h-[400px] lg:min-h-[600px] p-4 input-background text-foreground textarea-focus"
+            [class]="isJsonValid ? 'border-gray-600' : 'border-red-500/50'"
+            [attr.aria-invalid]="!isJsonValid"
+            [attr.aria-describedby]="jsonError ? 'json-error-message' : null"
             placeholder="Enter your card configuration JSON here..."
-            [style.minHeight]="isFullscreen ? '250px' : '400px'"
-            [style.maxHeight]="isFullscreen ? '300px' : '600px'"
-          ></textarea>
-          
-          <div *ngIf="jsonError" class="p-2 bg-red-500/10 border border-red-500/20 rounded text-sm text-red-400">
-            <strong>JSON Error:</strong> {{jsonError}}
+            rows="20"
+            aria-label="JSON configuration editor for card customization">
+          </textarea>
+
+          <div 
+            id="json-error-message"
+            class="p-2 bg-red-500/10 border border-red-500/20 rounded text-sm text-red-400" 
+            *ngIf="jsonError"
+            role="alert"
+            aria-live="polite">
+            <strong>JSON Error:</strong> {{ jsonError }}
           </div>
         </div>
       </div>
@@ -210,7 +215,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
         <div class="card">
           <div class="card-content">
-            <i class="target-icon text-primary mb-4"></i>
+            <div class="target-icon w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-4"></div>
             <h4 class="text-lg font-semibold mb-3">Real-time Generation</h4>
             <p class="text-muted-foreground text-sm">
               Instant card generation with live preview and JSON validation
@@ -220,7 +225,7 @@
 
         <div class="card">
           <div class="card-content">
-            <i class="settings-icon text-primary mb-4"></i>
+            <div class="settings-icon w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-4"></div>
             <h4 class="text-lg font-semibold mb-3">Flexible Configuration</h4>
             <p class="text-muted-foreground text-sm">
               Multiple card types with customizable sections and fields
@@ -230,7 +235,7 @@
 
         <div class="card">
           <div class="card-content">
-            <i class="download-icon text-primary mb-4"></i>
+            <div class="download-icon w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-4"></div>
             <h4 class="text-lg font-semibold mb-3">PNG Export</h4>
             <p class="text-muted-foreground text-sm">
               High-quality PNG export with 2x scaling for presentations
@@ -240,7 +245,7 @@
 
         <div class="card">
           <div class="card-content">
-            <i class="file-text-icon text-primary mb-4"></i>
+            <div class="file-text-icon w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-4"></div>
             <h4 class="text-lg font-semibold mb-3">TypeScript Support</h4>
             <p class="text-muted-foreground text-sm">
               Full TypeScript integration with comprehensive type definitions
@@ -250,7 +255,7 @@
 
         <div class="card">
           <div class="card-content">
-            <i class="save-icon text-primary mb-4"></i>
+            <div class="save-icon w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-4"></div>
             <h4 class="text-lg font-semibold mb-3">Save & Load</h4>
             <p class="text-muted-foreground text-sm">
               Save your card configurations and load them anytime from local storage
@@ -260,10 +265,10 @@
 
         <div class="card">
           <div class="card-content">
-            <i class="code-icon text-primary mb-4"></i>
+            <div class="code-icon w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-4"></div>
             <h4 class="text-lg font-semibold mb-3">Component Architecture</h4>
             <p class="text-muted-foreground text-sm">
-              Modular design with {{systemStats.totalFiles}} documented components
+              Modular design with {{ systemStats.totalFiles }} documented components
             </p>
           </div>
         </div>

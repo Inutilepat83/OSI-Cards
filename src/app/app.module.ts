@@ -4,6 +4,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
 
+// NgRx Store
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { reducers } from './store/app.state';
+import { CardsEffects } from './store/cards/cards.effects';
+
 // Core module for singleton services
 import { CoreModule } from './core/core.module';
 import { AppComponent } from './app.component';
@@ -28,6 +35,12 @@ const routes: Routes = [
     BrowserAnimationsModule,
     HttpClientModule,
     RouterModule.forRoot(routes),
+    StoreModule.forRoot(reducers),
+    EffectsModule.forRoot([CardsEffects]),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: false,
+    }),
     CoreModule // Import core module for global services
   ],
   bootstrap: [AppComponent]

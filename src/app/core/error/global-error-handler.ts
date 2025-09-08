@@ -1,11 +1,11 @@
-import { ErrorHandler, Injectable, Injector } from '@angular/core';
+import { ErrorHandler, Injectable, Injector, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
-  constructor(private injector: Injector) {}
+  private injector = inject(Injector);
 
-  handleError(error: any): void {
+  handleError(error: unknown): void {
     let errorMessage = '';
 
     if (error instanceof HttpErrorResponse) {
@@ -37,7 +37,7 @@ export class GlobalErrorHandler implements ErrorHandler {
     return !environment.production;
   }
 
-  private logErrorToService(error: any, message: string): void {
+  private logErrorToService(error: unknown, message: string): void {
     // TODO: Implement external error logging service
     console.error('Error logged to service:', { error, message, timestamp: new Date() });
   }

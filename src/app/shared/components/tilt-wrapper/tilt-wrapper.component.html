@@ -1,5 +1,6 @@
-<div #tiltContainer 
-     class="tilt-container glow-container {{className}}"
+<div #tiltContainer
+     class="tilt-wrapper tilt-container glow-container {{className}}"
+     [class.active]="isActive"
      [ngStyle]="tiltStyle">
   <div class="tilt-content">
     <ng-content></ng-content>

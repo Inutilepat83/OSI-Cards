@@ -5,9 +5,22 @@
     "types": []
   },
   "files": [
-    "src/main.ts"
+    "src/main.ts",
+    "src/polyfills.ts"
   ],
   "include": [
-    "src/**/*.d.ts"
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/test.ts",
+    "**/*.spec.ts",
+    "example",
+  "Cards Examples",
+  "src/app/index.ts",
+  "src/app/shared/components/error-display.component.ts",
+  "src/app/shared/components/loading-spinner.component.ts",
+  "src/app/shared/index.ts",
+  "src/app/store/index.ts",
+  "src/environments/environment.prod.ts"
   ]
 }

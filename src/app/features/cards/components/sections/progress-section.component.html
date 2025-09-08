@@ -1,0 +1,40 @@
+<div class="progress-section" [attr.aria-label]="section.title">
+  <div class="section-header" *ngIf="section.title || section.description">
+    <h3 class="section-title">{{ section.title }}</h3>
+    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
+  </div>
+
+  <div class="progress-container">
+    <div 
+      class="progress-item"
+      *ngFor="let item of progressItems; trackBy: trackByFn"
+      (click)="onProgressClick(item)"
+      (keyup.enter)="onProgressClick(item)"
+      (keyup.space)="onProgressClick(item)"
+      [attr.tabindex]="0"
+      [attr.role]="'progressbar'"
+      [attr.aria-valuenow]="item.value"
+      [attr.aria-valuemin]="0"
+      [attr.aria-valuemax]="item.max || 100"
+      [attr.aria-label]="item.label + ': ' + formatValue(item)"
+    >
+      <div class="progress-header">
+        <span class="progress-label">{{ item.label }}</span>
+        <span class="progress-value" *ngIf="showValues">{{ formatValue(item) }}</span>
+      </div>
+      
+      <div class="progress-bar-container">
+        <div 
+          class="progress-bar"
+          [ngClass]="{ 'animated': animated }"
+        >
+          <div 
+            class="progress-fill"
+            [style.width.%]="calculatePercentage(item)"
+            [style.background-color]="getProgressColor(item)"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

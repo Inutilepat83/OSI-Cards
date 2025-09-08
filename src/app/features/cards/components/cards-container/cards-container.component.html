@@ -1,4 +1,15 @@
 <div class="cards-container">
-  <h1>Cards Feature</h1>
-  <p>This is the cards feature container. Card components are available through the shared module.</p>
+  <!-- Placeholder cards container -->
+  <ng-content></ng-content>
+</div>
+<div class="cards-container">
+  <h1>OSI Cards Examples</h1>
+  <div class="cards-grid">
+    <app-independent-card
+      *ngFor="let card of cards; trackBy: trackByCardId"
+      [cardConfig]="card"
+      [tiltEnabled]="true"
+      class="card-item">
+    </app-independent-card>
+  </div>
 </div>

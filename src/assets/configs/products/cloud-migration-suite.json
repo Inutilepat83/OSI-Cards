@@ -1,0 +1,222 @@
+{
+  "cardTitle": "Cloud Migration Suite",
+  "cardType": "Product",
+  "sections": [
+    {
+      "title": "Product Overview",
+      "type": "info",
+      "preferredColumns": 2,
+      "fields": [
+        {
+          "label": "Category",
+          "value": "Cloud Services"
+        },
+        {
+          "label": "Launch Date",
+          "value": "2023"
+        },
+        {
+          "label": "Version",
+          "value": "2.1.4"
+        },
+        {
+          "label": "Target Market",
+          "value": "Enterprise"
+        },
+        {
+          "label": "Pricing Model",
+          "value": "Subscription"
+        },
+        {
+          "label": "Support Level",
+          "value": "24/7 Premium"
+        },
+        {
+          "label": "Deployment",
+          "value": "SaaS"
+        },
+        {
+          "label": "Compliance",
+          "value": "GDPR, SOC 2, ISO 27001"
+        }
+      ]
+    },
+    {
+      "title": "Performance Metrics",
+      "type": "analytics",
+      "preferredColumns": 2,
+      "fields": [
+        {
+          "label": "Migration Success Rate",
+          "value": "98.5%",
+          "percentage": 98.5,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 2.1
+        },
+        {
+          "label": "Average Migration Time",
+          "value": "12 days",
+          "percentage": 75,
+          "performance": "good",
+          "trend": "down",
+          "change": -15
+        },
+        {
+          "label": "Cost Savings",
+          "value": "35%",
+          "percentage": 35,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 8
+        },
+        {
+          "label": "User Satisfaction",
+          "value": "4.8/5",
+          "percentage": 96,
+          "performance": "excellent",
+          "trend": "stable",
+          "change": 0.2
+        }
+      ]
+    },
+    {
+      "title": "Technical Specifications",
+      "type": "info",
+      "preferredColumns": 1,
+      "fields": [
+        {
+          "label": "Supported Platforms",
+          "value": "AWS, Azure, GCP"
+        },
+        {
+          "label": "API Endpoints",
+          "value": "REST, GraphQL"
+        },
+        {
+          "label": "Data Transfer Rate",
+          "value": "Up to 10 Gbps"
+        },
+        {
+          "label": "Encryption",
+          "value": "AES-256, TLS 1.3"
+        },
+        {
+          "label": "Backup Frequency",
+          "value": "Real-time"
+        }
+      ]
+    },
+    {
+      "title": "Usage Statistics",
+      "type": "chart",
+      "fields": [
+        {
+          "label": "Active Customers",
+          "value": 2500,
+          "color": "#FF7900"
+        },
+        {
+          "label": "Data Migrated (PB)",
+          "value": 1250,
+          "color": "#FF9933"
+        },
+        {
+          "label": "API Calls (Monthly)",
+          "value": 50000000,
+          "color": "#CC5F00"
+        },
+        {
+          "label": "Uptime SLA",
+          "value": 99.9,
+          "color": "#FFE6CC"
+        }
+      ]
+    },
+    {
+      "title": "Features & Capabilities",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Automated Discovery",
+          "value": "AI-Powered"
+        },
+        {
+          "label": "Zero-Downtime Migration",
+          "value": "Supported"
+        },
+        {
+          "label": "Real-time Monitoring",
+          "value": "Advanced Dashboard"
+        },
+        {
+          "label": "Compliance Reporting",
+          "value": "Automated"
+        }
+      ]
+    },
+    {
+      "title": "Market Position",
+      "type": "map",
+      "preferredColumns": 2,
+      "fields": [
+        {
+          "name": "North America HQ",
+          "x": 25,
+          "y": 35,
+          "type": "headquarters",
+          "address": "San Francisco, CA, USA"
+        },
+        {
+          "name": "Europe Office",
+          "x": 48,
+          "y": 28,
+          "type": "regional-office",
+          "address": "London, UK"
+        },
+        {
+          "name": "Asia Pacific",
+          "x": 80,
+          "y": 60,
+          "type": "regional-office",
+          "address": "Singapore"
+        },
+        {
+          "name": "Data Center US-West",
+          "x": 15,
+          "y": 40,
+          "type": "datacenter",
+          "address": "Oregon, USA"
+        },
+        {
+          "name": "Data Center EU",
+          "x": 50,
+          "y": 30,
+          "type": "datacenter",
+          "address": "Ireland"
+        },
+        {
+          "name": "Data Center Asia",
+          "x": 82,
+          "y": 55,
+          "type": "datacenter",
+          "address": "Tokyo, Japan"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Try Free Demo",
+      "type": "primary",
+      "icon": "🚀",
+      "action": "https://demo.cloudmigrationsuite.com"
+    },
+    {
+      "label": "Download Documentation",
+      "type": "secondary",
+      "icon": "📋",
+      "action": "https://docs.cloudmigrationsuite.com"
+    }
+  ]
+}

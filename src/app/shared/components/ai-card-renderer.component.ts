@@ -1,8 +1,8 @@
 import { Component, ElementRef, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
-import { AICardConfig } from '../../models/card.model';
+import { AICardConfig, CardField, CardItem, CardAction } from '../../models';
 import { Subject, takeUntil, fromEvent } from 'rxjs';
-import { MouseTrackingService } from '../../core/services/mouse-tracking.service';
-import { MagneticTiltService } from '../../core/services/magnetic-tilt.service';
+import { MouseTrackingService, MagneticTiltService } from '../../core';
+import { IconService } from '../services/icon.service';
 
 @Component({
   selector: 'app-ai-card-renderer',
@@ -12,8 +12,8 @@ import { MagneticTiltService } from '../../core/services/magnetic-tilt.service';
 })
 export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() cardConfig!: AICardConfig;
-  @Input() isFullscreen: boolean = false;
-  @Input() tiltEnabled: boolean = true;
+  @Input() isFullscreen = false;
+  @Input() tiltEnabled = true;
   @Output() fieldInteraction = new EventEmitter<any>();
   @Output() cardInteraction = new EventEmitter<{ action: string, card: AICardConfig }>();
   @Output() fullscreenToggle = new EventEmitter<boolean>();
@@ -29,19 +29,12 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     private el: ElementRef,
     private mouseTrackingService: MouseTrackingService,
     private magneticTiltService: MagneticTiltService,
+    private iconService: IconService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.isTiltActive = this.tiltEnabled;
-    
-    // Listen for hover state changes
-    this.mouseTrackingService.isHovered$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((isHovered: boolean) => {
-        this.isHovered = isHovered;
-        this.cdr.markForCheck();
-      });
   }
   
   ngAfterViewInit(): void {
@@ -62,7 +55,17 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     this.destroyed$.complete();
   }
 
-  onFieldClick(field: any): void {
+  onMouseEnter(): void {
+    this.isHovered = true;
+    this.cdr.markForCheck();
+  }
+
+  onMouseLeave(): void {
+    this.isHovered = false;
+    this.cdr.markForCheck();
+  }
+
+  onFieldClick(field: CardField): void {
     this.fieldInteraction.emit({
       field: field,
       action: 'click'
@@ -77,8 +80,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   toggleFullscreen(): void {
-    this.isFullscreen = !this.isFullscreen;
-    this.fullscreenToggle.emit(this.isFullscreen);
+    // Emit the toggle event to parent component
+    this.fullscreenToggle.emit(!this.isFullscreen);
     
     // Allow time for layout to adjust before recalculating tilt
     setTimeout(() => {
@@ -86,7 +89,53 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     }, 100);
   }
 
-  trackByIndex(index: number, item: any): number {
+  trackByIndex(index: number, item: unknown): number {
     return index;
+  }
+
+  // Section expand/collapse state map
+  sectionState: Record<number, { expanded: boolean }> = {};
+
+  isSectionExpanded(index: number, section: unknown): boolean {
+    if (this.sectionState[index] === undefined) {
+      // default: if section has `collapsed: true` set, start collapsed, otherwise expanded
+      this.sectionState[index] = { expanded: !(section && typeof section === 'object' && section !== null && 'collapsed' in section && (section as Record<string, unknown>)['collapsed'] === true) };
+    }
+    return this.sectionState[index].expanded;
+  }
+
+  toggleSection(index: number): void {
+    if (!this.sectionState[index]) {
+      this.sectionState[index] = { expanded: true };
+    }
+    this.sectionState[index].expanded = !this.sectionState[index].expanded;
+    this.cdr.markForCheck();
+  }
+
+  getFieldIconClass(label: string): string {
+    return this.iconService.getFieldIconClass(label);
+  }
+
+  getFieldIcon(label: string): string {
+    return this.iconService.getFieldIcon(label);
+  }
+
+  getFieldIconPath(field: CardField): string {
+    // First check if the field has an explicit icon property from JSON
+    if (field.icon) {
+      return this.iconService.getFieldIcon(field.icon) || this.iconService.getFieldIcon(field.label);
+    }
+    // Fall back to label-based icon
+    return this.iconService.getFieldIcon(field.label);
+  }
+
+  getItemIconPath(item: CardItem): string {
+    // Use the item's icon property
+    return this.iconService.getFieldIcon(item.icon || item.title);
+  }
+
+  getActionIconPath(action: CardAction): string {
+    // Use the action's icon property
+    return this.iconService.getFieldIcon(action.icon || action.label);
   }
 }

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, ElementRef, NgZone, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ElementRef, NgZone, ChangeDetectionStrategy, inject } from '@angular/core';
 import { fromEvent, Subject, takeUntil } from 'rxjs';
 
 interface Particle {
@@ -19,20 +19,23 @@ interface Particle {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ParticleSystemComponent implements OnInit, OnDestroy {
-  @Input() particleCount: number = 30;
-  @Input() particleColor: string = 'rgba(255, 121, 0, 0.5)';
-  @Input() particleMinSize: number = 2;
-  @Input() particleMaxSize: number = 6;
-  @Input() particleLifespan: number = 3000; // milliseconds
+  @Input() particleCount = 30;
+  @Input() particleColor = 'rgba(255, 121, 0, 0.5)';
+  @Input() particleMinSize = 2;
+  @Input() particleMaxSize = 6;
+  @Input() particleLifespan = 3000; // milliseconds
   
   private canvas!: HTMLCanvasElement;
   private ctx!: CanvasRenderingContext2D;
   private particles: Particle[] = [];
-  private animationFrameId: number = 0;
-  private lastTimestamp: number = 0;
+  private animationFrameId = 0;
+  private lastTimestamp = 0;
   private destroyed$ = new Subject<void>();
+  private isAnimating = false; // guard to prevent multiple loops
+  private elementRef = inject(ElementRef);
+  private ngZone = inject(NgZone);
   
-  constructor(private elementRef: ElementRef, private ngZone: NgZone) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.canvas = this.elementRef.nativeElement.querySelector('canvas');
@@ -41,16 +44,19 @@ export class ParticleSystemComponent implements OnInit, OnDestroy {
     this.initializeCanvas();
     this.createParticles();
     
-    // Listen for window resize
+    // Listen for window resize and restart canvas safely
     this.ngZone.runOutsideAngular(() => {
       fromEvent(window, 'resize')
         .pipe(takeUntil(this.destroyed$))
         .subscribe(() => {
           this.initializeCanvas();
         });
-        
-      // Start animation loop outside Angular zone for better performance
-      this.animate(0);
+      
+      // Start animation loop only once
+      if (!this.isAnimating) {
+        this.isAnimating = true;
+        this.animate(0);
+      }
     });
   }
 
@@ -58,6 +64,7 @@ export class ParticleSystemComponent implements OnInit, OnDestroy {
     this.destroyed$.next();
     this.destroyed$.complete();
     cancelAnimationFrame(this.animationFrameId);
+    this.isAnimating = false;
   }
 
   private initializeCanvas(): void {
@@ -90,6 +97,8 @@ export class ParticleSystemComponent implements OnInit, OnDestroy {
   }
 
   private animate(timestamp: number): void {
+    // Cancel any previous frame before scheduling a new one (prevents duplicate loops)
+    cancelAnimationFrame(this.animationFrameId);
     this.animationFrameId = requestAnimationFrame(this.animate.bind(this));
     
     if (!this.lastTimestamp) {
@@ -131,7 +140,7 @@ export class ParticleSystemComponent implements OnInit, OnDestroy {
   private adjustOpacity(color: string, opacity: number): string {
     if (color.startsWith('rgba')) {
       // Replace the last parameter in rgba()
-      return color.replace(/[\d\.]+\)$/, `${opacity})`);
+      return color.replace(/[\d.]+$/, `${opacity})`);
     } else if (color.startsWith('rgb')) {
       // Convert rgb to rgba
       return color.replace('rgb', 'rgba').replace(')', `, ${opacity})`);

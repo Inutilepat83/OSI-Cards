@@ -1,0 +1,239 @@
+{
+  "cardTitle": "Investment Portfolio Q1 2025",
+  "cardType": "Financial",
+  "sections": [
+    {
+      "title": "Portfolio Overview",
+      "type": "info",
+      "preferredColumns": 2,
+      "fields": [
+        {
+          "label": "Portfolio Value",
+          "value": "$45.2M"
+        },
+        {
+          "label": "Reporting Period",
+          "value": "January - March 2025"
+        },
+        {
+          "label": "Total Return YTD",
+          "value": "+8.7%"
+        },
+        {
+          "label": "Benchmark Return",
+          "value": "+6.2%"
+        },
+        {
+          "label": "Risk Profile",
+          "value": "Moderate Growth"
+        },
+        {
+          "label": "Investment Horizon",
+          "value": "5-7 Years"
+        },
+        {
+          "label": "Portfolio Manager",
+          "value": "Jennifer Walsh"
+        },
+        {
+          "label": "Custodian",
+          "value": "State Street Bank"
+        }
+      ]
+    },
+    {
+      "title": "Asset Allocation",
+      "type": "analytics",
+      "preferredColumns": 2,
+      "fields": [
+        {
+          "label": "US Large Cap Stocks",
+          "value": "35% ($15.8M)",
+          "percentage": 35,
+          "performance": "good",
+          "trend": "up",
+          "change": 4.2
+        },
+        {
+          "label": "International Stocks",
+          "value": "25% ($11.3M)",
+          "percentage": 25,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 6.8
+        },
+        {
+          "label": "Bonds & Fixed Income",
+          "value": "20% ($9.0M)",
+          "percentage": 20,
+          "performance": "stable",
+          "trend": "stable",
+          "change": 1.2
+        },
+        {
+          "label": "Real Estate & REITs",
+          "value": "12% ($5.4M)",
+          "percentage": 12,
+          "performance": "good",
+          "trend": "up",
+          "change": 3.5
+        },
+        {
+          "label": "Private Equity",
+          "value": "5% ($2.3M)",
+          "percentage": 5,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 8.1
+        },
+        {
+          "label": "Cash & Equivalents",
+          "value": "3% ($1.4M)",
+          "percentage": 3,
+          "performance": "stable",
+          "trend": "down",
+          "change": -0.8
+        }
+      ]
+    },
+    {
+      "title": "Performance Breakdown",
+      "type": "info",
+      "preferredColumns": 1,
+      "fields": [
+        {
+          "label": "1-Month Return",
+          "value": "+2.1%"
+        },
+        {
+          "label": "3-Month Return",
+          "value": "+8.7%"
+        },
+        {
+          "label": "1-Year Return",
+          "value": "+18.3%"
+        },
+        {
+          "label": "3-Year Return (Annualized)",
+          "value": "+12.5%"
+        },
+        {
+          "label": "5-Year Return (Annualized)",
+          "value": "+10.8%"
+        },
+        {
+          "label": "Since Inception",
+          "value": "+142.3%"
+        }
+      ]
+    },
+    {
+      "title": "Risk Metrics",
+      "type": "chart",
+      "fields": [
+        {
+          "label": "Volatility (Std Dev)",
+          "value": 12.5,
+          "color": "#F59E0B"
+        },
+        {
+          "label": "Sharpe Ratio",
+          "value": 1.85,
+          "color": "#F97316"
+        },
+        {
+          "label": "Maximum Drawdown",
+          "value": 15.2,
+          "color": "#EF4444"
+        },
+        {
+          "label": "Value at Risk (95%)",
+          "value": 8.7,
+          "color": "#DC2626"
+        }
+      ]
+    },
+    {
+      "title": "Top Holdings & Sectors",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Technology Sector",
+          "value": "28% of Portfolio"
+        },
+        {
+          "label": "Healthcare Sector",
+          "value": "18% of Portfolio"
+        },
+        {
+          "label": "Financial Services",
+          "value": "15% of Portfolio"
+        },
+        {
+          "label": "Consumer Discretionary",
+          "value": "12% of Portfolio"
+        },
+        {
+          "label": "Communication Services",
+          "value": "10% of Portfolio"
+        }
+      ]
+    },
+    {
+      "title": "Geographic Distribution",
+      "type": "map",
+      "preferredColumns": 2,
+      "fields": [
+        {
+          "name": "United States",
+          "x": 25,
+          "y": 35,
+          "type": "primary",
+          "address": "60% of Assets"
+        },
+        {
+          "name": "European Union",
+          "x": 48,
+          "y": 28,
+          "type": "secondary",
+          "address": "20% of Assets"
+        },
+        {
+          "name": "Asia Pacific",
+          "x": 80,
+          "y": 60,
+          "type": "secondary",
+          "address": "12% of Assets"
+        },
+        {
+          "name": "Emerging Markets",
+          "x": 70,
+          "y": 52,
+          "type": "emerging",
+          "address": "6% of Assets"
+        },
+        {
+          "name": "Canada",
+          "x": 20,
+          "y": 25,
+          "type": "secondary",
+          "address": "2% of Assets"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "View Detailed Report",
+      "type": "primary",
+      "icon": "📈",
+      "action": "https://portfolio.client.com/q1-2025-report"
+    },
+    {
+      "label": "Schedule Review Meeting",
+      "type": "secondary",
+      "icon": "📅",
+      "action": "mailto:jennifer.walsh@investmentfirm.com?subject=Portfolio%20Review"
+    }
+  ]
+}

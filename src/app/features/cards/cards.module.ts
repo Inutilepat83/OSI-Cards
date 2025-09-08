@@ -7,20 +7,37 @@ import { ParticleSystemComponent } from './components/particle-system/particle-s
 import { InfoSectionComponent } from './components/sections/info-section.component';
 import { ChartSectionComponent } from './components/sections/chart-section.component';
 import { MapSectionComponent } from './components/sections/map-section.component';
-import { CardsContainerComponent } from './components/cards-container/cards-container.component';
+import { SingleCardComponent } from './components/single-card/single-card.component';
+import { TimelineSectionComponent } from './components/sections/timeline-section.component';
+import { MetricsSectionComponent } from './components/sections/metrics-section.component';
+import { TableSectionComponent } from './components/sections/table-section.component';
+import { ProgressSectionComponent } from './components/sections/progress-section.component';
 
 @NgModule({
   declarations: [
-    CardsContainerComponent,
     ParticleSystemComponent,
     InfoSectionComponent,
     ChartSectionComponent,
-    MapSectionComponent
+    MapSectionComponent,
+    SingleCardComponent,
+    TimelineSectionComponent,
+    MetricsSectionComponent,
+    TableSectionComponent,
+    ProgressSectionComponent
   ],
   imports: [
     CommonModule,
     SharedModule,
     CardsRoutingModule
+  ],
+  exports: [
+    InfoSectionComponent,
+    ChartSectionComponent,
+    MapSectionComponent,
+    TimelineSectionComponent,
+    MetricsSectionComponent,
+    TableSectionComponent,
+    ProgressSectionComponent
   ]
 })
 export class CardsModule {}

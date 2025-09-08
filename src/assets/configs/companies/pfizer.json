@@ -1,0 +1,222 @@
+{
+  "cardTitle": "Pfizer",
+  "cardType": "Company",
+  "sections": [
+    {
+      "title": "Company Overview",
+      "type": "info",
+      "preferredColumns": 2,
+      "fields": [
+        {
+          "label": "Industry",
+          "value": "Pharmaceuticals & Biotechnology"
+        },
+        {
+          "label": "Founded",
+          "value": "1849"
+        },
+        {
+          "label": "Employees",
+          "value": "88,000+"
+        },
+        {
+          "label": "Headquarters",
+          "value": "New York, NY, USA"
+        },
+        {
+          "label": "Annual Revenue",
+          "value": "$100B"
+        },
+        {
+          "label": "Global Presence",
+          "value": "125+ Countries"
+        },
+        {
+          "label": "CEO",
+          "value": "Albert Bourla"
+        },
+        {
+          "label": "Stock Exchange",
+          "value": "NYSE: PFE"
+        }
+      ]
+    },
+    {
+      "title": "ICT Investment Profile",
+      "type": "analytics",
+      "preferredColumns": 2,
+      "fields": [
+        {
+          "label": "Annual ICT Budget",
+          "value": "$3.2B",
+          "percentage": 100,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 18
+        },
+        {
+          "label": "Digital Health Investment",
+          "value": "$800M",
+          "percentage": 25,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 45
+        },
+        {
+          "label": "R&D Digital Tools",
+          "value": "$1.5B",
+          "percentage": 46,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 30
+        },
+        {
+          "label": "Data Security Budget",
+          "value": "$400M",
+          "percentage": 12,
+          "performance": "good",
+          "trend": "up",
+          "change": 15
+        }
+      ]
+    },
+    {
+      "title": "Digital Health Adoption",
+      "type": "info",
+      "preferredColumns": 1,
+      "fields": [
+        {
+          "label": "Clinical Trials Platform",
+          "value": "Fully Digital"
+        },
+        {
+          "label": "Patient Data Analytics",
+          "value": "Advanced AI"
+        },
+        {
+          "label": "Supply Chain Digital",
+          "value": "IoT Enabled"
+        },
+        {
+          "label": "Remote Monitoring",
+          "value": "Active"
+        },
+        {
+          "label": "Multi-Cloud Strategy",
+          "value": "AWS + Azure + GCP"
+        }
+      ]
+    },
+    {
+      "title": "Research Infrastructure",
+      "type": "chart",
+      "fields": [
+        {
+          "label": "Research Centers",
+          "value": 12,
+          "color": "#00B4D8"
+        },
+        {
+          "label": "Clinical Trial Sites",
+          "value": 850,
+          "color": "#0077B6"
+        },
+        {
+          "label": "Data Storage (PB)",
+          "value": 250,
+          "color": "#03045E"
+        },
+        {
+          "label": "AI Models Trained",
+          "value": 1500,
+          "color": "#00FF88"
+        }
+      ]
+    },
+    {
+      "title": "Innovation & Clinical Research",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Annual R&D Budget",
+          "value": "$11B"
+        },
+        {
+          "label": "Active Clinical Trials",
+          "value": "380+"
+        },
+        {
+          "label": "Patent Portfolio",
+          "value": "12,000+ Patents"
+        },
+        {
+          "label": "Digital Health Patents",
+          "value": "450+ Filed"
+        }
+      ]
+    },
+    {
+      "title": "Global Operations",
+      "type": "map",
+      "preferredColumns": 2,
+      "fields": [
+        {
+          "name": "Pfizer HQ - New York",
+          "x": 28,
+          "y": 32,
+          "type": "headquarters",
+          "address": "New York, NY, USA"
+        },
+        {
+          "name": "Pfizer Europe",
+          "x": 48,
+          "y": 28,
+          "type": "regional-office",
+          "address": "Brussels, Belgium"
+        },
+        {
+          "name": "Pfizer Asia Pacific",
+          "x": 80,
+          "y": 60,
+          "type": "regional-office",
+          "address": "Singapore"
+        },
+        {
+          "name": "Pfizer China",
+          "x": 83,
+          "y": 42,
+          "type": "office",
+          "address": "Shanghai, China"
+        },
+        {
+          "name": "Pfizer Japan",
+          "x": 85,
+          "y": 40,
+          "type": "office",
+          "address": "Tokyo, Japan"
+        },
+        {
+          "name": "Pfizer India",
+          "x": 70,
+          "y": 52,
+          "type": "office",
+          "address": "Mumbai, India"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Visit Pfizer",
+      "type": "primary",
+      "icon": "🌐",
+      "action": "https://www.pfizer.com"
+    },
+    {
+      "label": "Digital Health Solutions",
+      "type": "primary",
+      "icon": "🏥",
+      "action": "https://www.pfizer.com/science/digital-health"
+    }
+  ]
+}

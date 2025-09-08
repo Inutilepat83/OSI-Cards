@@ -1,0 +1,222 @@
+{
+  "cardTitle": "Emma Thompson",
+  "cardType": "Contact",
+  "sections": [
+    {
+      "title": "Professional Profile",
+      "type": "info",
+      "preferredColumns": 2,
+      "fields": [
+        {
+          "label": "Job Title",
+          "value": "Chief Marketing Officer"
+        },
+        {
+          "label": "Company",
+          "value": "BrandForward Agency"
+        },
+        {
+          "label": "Industry",
+          "value": "Digital Marketing & Advertising"
+        },
+        {
+          "label": "Location",
+          "value": "London, UK"
+        },
+        {
+          "label": "Experience",
+          "value": "12+ Years"
+        },
+        {
+          "label": "Education",
+          "value": "Oxford Marketing, Digital Strategy"
+        },
+        {
+          "label": "LinkedIn",
+          "value": "emma-thompson-cmo"
+        },
+        {
+          "label": "Languages",
+          "value": "English, French, German"
+        }
+      ]
+    },
+    {
+      "title": "Marketing Performance",
+      "type": "analytics",
+      "preferredColumns": 2,
+      "fields": [
+        {
+          "label": "Brand Awareness Growth",
+          "value": "145% Increase",
+          "percentage": 145,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 25
+        },
+        {
+          "label": "Campaign ROI",
+          "value": "380% Average",
+          "percentage": 95,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 18
+        },
+        {
+          "label": "Social Media Engagement",
+          "value": "2.8M Interactions",
+          "percentage": 88,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 32
+        },
+        {
+          "label": "Lead Generation",
+          "value": "450% Increase",
+          "percentage": 120,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 45
+        }
+      ]
+    },
+    {
+      "title": "Marketing Expertise",
+      "type": "info",
+      "preferredColumns": 1,
+      "fields": [
+        {
+          "label": "Specializations",
+          "value": "Digital Strategy, Content Marketing, Social Media"
+        },
+        {
+          "label": "Certifications",
+          "value": "Google Analytics, HubSpot, Facebook Blueprint"
+        },
+        {
+          "label": "Tools & Platforms",
+          "value": "Adobe Creative Suite, Google Ads, Meta Business"
+        },
+        {
+          "label": "Content Creation",
+          "value": "Video Production, Copywriting, Graphic Design"
+        },
+        {
+          "label": "Awards",
+          "value": "Marketing Excellence Award 2024"
+        }
+      ]
+    },
+    {
+      "title": "Marketing Reach",
+      "type": "chart",
+      "fields": [
+        {
+          "label": "Social Followers",
+          "value": 850000,
+          "color": "#7C3AED"
+        },
+        {
+          "label": "Monthly Website Traffic",
+          "value": 1200000,
+          "color": "#8B5CF6"
+        },
+        {
+          "label": "Email Subscribers",
+          "value": 150000,
+          "color": "#A78BFA"
+        },
+        {
+          "label": "Brand Partnerships",
+          "value": 65,
+          "color": "#C4B5FD"
+        }
+      ]
+    },
+    {
+      "title": "Current Campaigns & Projects",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Active Campaigns",
+          "value": "Global Brand Relaunch, Influencer Marketing"
+        },
+        {
+          "label": "Content Strategy",
+          "value": "Video-First Approach, User-Generated Content"
+        },
+        {
+          "label": "Team Leadership",
+          "value": "85 Marketing Professionals"
+        },
+        {
+          "label": "Industry Involvement",
+          "value": "Marketing Council Member, Conference Speaker"
+        }
+      ]
+    },
+    {
+      "title": "Marketing Locations",
+      "type": "map",
+      "preferredColumns": 2,
+      "fields": [
+        {
+          "name": "BrandForward HQ",
+          "x": 48,
+          "y": 28,
+          "type": "work",
+          "address": "London, UK"
+        },
+        {
+          "name": "Creative Studio",
+          "x": 50,
+          "y": 30,
+          "type": "studio",
+          "address": "Manchester, UK"
+        },
+        {
+          "name": "European Office",
+          "x": 52,
+          "y": 25,
+          "type": "regional-office",
+          "address": "Paris, France"
+        },
+        {
+          "name": "Client Presentation",
+          "x": 28,
+          "y": 32,
+          "type": "business",
+          "address": "New York, NY, USA"
+        },
+        {
+          "name": "Marketing Summit",
+          "x": 15,
+          "y": 35,
+          "type": "conference",
+          "address": "San Francisco, CA, USA"
+        },
+        {
+          "name": "Photo Shoot",
+          "x": 25,
+          "y": 35,
+          "type": "creative",
+          "address": "Los Angeles, CA, USA"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Connect on LinkedIn",
+      "type": "primary",
+      "icon": "💼",
+      "action": "https://linkedin.com/in/emma-thompson-cmo"
+    },
+    {
+      "label": "View Portfolio",
+      "type": "secondary",
+      "icon": "🎨",
+      "action": "https://brandforward.agency/portfolio"
+    }
+  ]
+}

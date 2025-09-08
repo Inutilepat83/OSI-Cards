@@ -16,7 +16,7 @@ interface MapMarker {
 export class MapSectionComponent implements AfterViewInit, OnDestroy {
   @Input() section!: CardSection;
   @Input() center: {lat: number, lng: number} | [number, number] = [51.505, -0.09];
-  @Input() zoom: number = 13;
+  @Input() zoom = 13;
   @Input() markers: MapMarker[] = [];
   
   @ViewChild('mapContainer') mapContainer!: ElementRef;

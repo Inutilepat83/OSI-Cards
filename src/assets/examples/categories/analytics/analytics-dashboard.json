@@ -1,0 +1,561 @@
+{
+  "id": "analytics-dashboard",
+  "cardTitle": "Business Intelligence Center",
+  "cardSubtitle": "Enterprise Analytics & Business Intelligence Platform",
+  "cardType": "analytics",
+  "description": "Comprehensive analytics dashboard with advanced BI features, real-time monitoring, and executive insights",
+  "sections": [
+    {
+      "id": "executive-summary",
+      "title": "Executive Analytics Summary",
+      "type": "info",
+      "fields": [
+        {
+          "id": "total-revenue",
+          "label": "Total Revenue (YTD)",
+          "value": 12500000,
+          "type": "currency",
+          "icon": "fas fa-dollar-sign"
+        },
+        {
+          "id": "growth-rate",
+          "label": "Year-over-Year Growth",
+          "value": 23.7,
+          "type": "percentage",
+          "icon": "fas fa-chart-line"
+        },
+        {
+          "id": "market-share",
+          "label": "Market Share",
+          "value": 12.8,
+          "type": "percentage",
+          "icon": "fas fa-pie-chart"
+        },
+        {
+          "id": "roi",
+          "label": "Digital Transformation ROI",
+          "value": 340,
+          "type": "percentage",
+          "icon": "fas fa-calculator"
+        }
+      ]
+    },
+    {
+      "id": "kpi-dashboard",
+      "title": "Key Performance Indicators Dashboard",
+      "description": "Real-time KPI monitoring with trend analysis and alerts",
+      "type": "metrics",
+      "metrics": [
+        {
+          "id": "monthly-revenue",
+          "label": "Monthly Revenue",
+          "value": 1041667,
+          "format": "currency",
+          "change": 8.3,
+          "changeType": "percentage",
+          "trend": "up",
+          "icon": "fas fa-dollar-sign"
+        },
+        {
+          "id": "customer-acquisition-cost",
+          "label": "Customer Acquisition Cost",
+          "value": 127.50,
+          "format": "currency",
+          "change": -12.4,
+          "changeType": "percentage",
+          "trend": "up",
+          "icon": "fas fa-user-plus"
+        },
+        {
+          "id": "customer-lifetime-value",
+          "label": "Customer Lifetime Value",
+          "value": 2150,
+          "format": "currency",
+          "change": 15.2,
+          "changeType": "percentage",
+          "trend": "up",
+          "icon": "fas fa-gem"
+        },
+        {
+          "id": "net-promoter-score",
+          "label": "Net Promoter Score",
+          "value": 42,
+          "format": "number",
+          "change": 5,
+          "changeType": "absolute",
+          "trend": "up",
+          "icon": "fas fa-star"
+        },
+        {
+          "id": "employee-satisfaction",
+          "label": "Employee Satisfaction",
+          "value": 4.1,
+          "format": "rating",
+          "change": 0.2,
+          "changeType": "absolute",
+          "trend": "up",
+          "icon": "fas fa-users"
+        },
+        {
+          "id": "operational-efficiency",
+          "label": "Operational Efficiency",
+          "value": 87.3,
+          "format": "percentage",
+          "change": 3.1,
+          "changeType": "percentage",
+          "trend": "up",
+          "icon": "fas fa-cogs"
+        }
+      ]
+    },
+    {
+      "id": "performance-analysis",
+      "title": "Multi-Dimensional Performance Analysis",
+      "description": "Comprehensive performance analysis across key business dimensions",
+      "type": "table",
+      "columns": [
+        {
+          "key": "dimension",
+          "label": "Business Dimension",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "currentValue",
+          "label": "Current Value",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "target",
+          "label": "Target",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "achievement",
+          "label": "Achievement %",
+          "type": "percentage",
+          "sortable": true,
+          "align": "right"
+        },
+        {
+          "key": "trend",
+          "label": "Trend",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "priority",
+          "label": "Priority",
+          "type": "status",
+          "sortable": true
+        }
+      ],
+      "data": [
+        {
+          "dimension": "Revenue Growth",
+          "currentValue": "$10.4M",
+          "target": "$12.0M",
+          "achievement": 86.7,
+          "trend": "Accelerating",
+          "priority": "High"
+        },
+        {
+          "dimension": "Customer Satisfaction",
+          "currentValue": "4.1/5.0",
+          "target": "4.5/5.0",
+          "achievement": 91.1,
+          "trend": "Stable",
+          "priority": "High"
+        },
+        {
+          "dimension": "Market Share",
+          "currentValue": "12.8%",
+          "target": "15.0%",
+          "achievement": 85.3,
+          "trend": "Growing",
+          "priority": "Medium"
+        },
+        {
+          "dimension": "Operational Efficiency",
+          "currentValue": "87.3%",
+          "target": "90.0%",
+          "achievement": 97.0,
+          "trend": "Improving",
+          "priority": "Medium"
+        },
+        {
+          "dimension": "Employee Engagement",
+          "currentValue": "78.5%",
+          "target": "85.0%",
+          "achievement": 92.4,
+          "trend": "Stable",
+          "priority": "Medium"
+        },
+        {
+          "dimension": "Innovation Pipeline",
+          "currentValue": "23 Projects",
+          "target": "30 Projects",
+          "achievement": 76.7,
+          "trend": "Growing",
+          "priority": "Low"
+        }
+      ]
+    },
+    {
+      "id": "predictive-analytics",
+      "title": "Predictive Analytics & Forecasting",
+      "description": "AI-powered business forecasting and predictive insights",
+      "type": "table",
+      "columns": [
+        {
+          "key": "forecast",
+          "label": "Forecast Category",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "current",
+          "label": "Current",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "predicted",
+          "label": "3-Month Prediction",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "confidence",
+          "label": "Confidence Level",
+          "type": "percentage",
+          "sortable": true,
+          "align": "right"
+        },
+        {
+          "key": "impact",
+          "label": "Business Impact",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "action",
+          "label": "Recommended Action",
+          "type": "text",
+          "sortable": true
+        }
+      ],
+      "data": [
+        {
+          "forecast": "Revenue Forecast",
+          "current": "$10.4M",
+          "predicted": "$11.8M",
+          "confidence": 89,
+          "impact": "High",
+          "action": "Increase marketing spend"
+        },
+        {
+          "forecast": "Customer Churn",
+          "current": "2.3%",
+          "predicted": "1.8%",
+          "confidence": 92,
+          "impact": "Medium",
+          "action": "Enhance retention programs"
+        },
+        {
+          "forecast": "Market Demand",
+          "current": "Stable",
+          "predicted": "Increasing",
+          "confidence": 78,
+          "impact": "High",
+          "action": "Expand production capacity"
+        },
+        {
+          "forecast": "Competitive Pressure",
+          "current": "Moderate",
+          "predicted": "High",
+          "confidence": 85,
+          "impact": "Medium",
+          "action": "Accelerate innovation"
+        },
+        {
+          "forecast": "Talent Acquisition",
+          "current": "12 hires/month",
+          "predicted": "18 hires/month",
+          "confidence": 76,
+          "impact": "Medium",
+          "action": "Enhance recruitment process"
+        }
+      ]
+    },
+    {
+      "id": "real-time-monitoring",
+      "title": "Real-Time Business Monitoring",
+      "description": "Live business metrics and performance indicators",
+      "type": "progress",
+      "progressItems": [
+        {
+          "id": "system-uptime",
+          "label": "System Uptime",
+          "value": 99.7,
+          "max": 100,
+          "format": "percentage",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "99.7% system availability this month"
+        },
+        {
+          "id": "response-time",
+          "label": "Average Response Time",
+          "value": 1.2,
+          "max": 2.0,
+          "format": "number",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "1.2 seconds average response time"
+        },
+        {
+          "id": "data-quality",
+          "label": "Data Quality Score",
+          "value": 94.5,
+          "max": 100,
+          "format": "percentage",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "94.5% data accuracy and completeness"
+        },
+        {
+          "id": "security-score",
+          "label": "Security Compliance",
+          "value": 96.8,
+          "max": 100,
+          "format": "percentage",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "96.8% security compliance score"
+        },
+        {
+          "id": "automation-level",
+          "label": "Process Automation",
+          "value": 73.2,
+          "max": 100,
+          "format": "percentage",
+          "color": "#f59e0b",
+          "showValue": true,
+          "description": "73.2% of processes are automated"
+        },
+        {
+          "id": "ai-adoption",
+          "label": "AI Technology Adoption",
+          "value": 58.9,
+          "max": 100,
+          "format": "percentage",
+          "color": "#3b82f6",
+          "showValue": true,
+          "description": "58.9% AI adoption across business functions"
+        }
+      ]
+    },
+    {
+      "id": "strategic-roadmap",
+      "title": "Strategic Analytics Roadmap",
+      "description": "Long-term analytics and BI strategic initiatives",
+      "type": "timeline",
+      "events": [
+        {
+          "id": "foundation-complete",
+          "title": "Analytics Foundation Complete",
+          "description": "Core data infrastructure and basic reporting implemented",
+          "date": "Q1 2024",
+          "icon": "fas fa-database",
+          "status": "completed"
+        },
+        {
+          "id": "advanced-analytics",
+          "title": "Advanced Analytics Implementation",
+          "description": "Machine learning models and predictive analytics deployed",
+          "date": "Q2 2024",
+          "icon": "fas fa-brain",
+          "status": "completed"
+        },
+        {
+          "id": "real-time-dashboards",
+          "title": "Real-Time Dashboards",
+          "description": "Live data streaming and real-time business monitoring",
+          "date": "Q3 2024",
+          "icon": "fas fa-tachometer-alt",
+          "status": "in-progress"
+        },
+        {
+          "id": "ai-automation",
+          "title": "AI-Driven Automation",
+          "description": "Automated insights generation and decision support",
+          "date": "Q4 2024",
+          "icon": "fas fa-robot",
+          "status": "planned"
+        },
+        {
+          "id": "predictive-optimization",
+          "title": "Predictive Business Optimization",
+          "description": "AI-powered business process optimization and forecasting",
+          "date": "Q1 2025",
+          "icon": "fas fa-chart-line",
+          "status": "planned"
+        },
+        {
+          "id": "enterprise-ai",
+          "title": "Enterprise AI Platform",
+          "description": "Comprehensive AI platform for all business functions",
+          "date": "Q2 2025",
+          "icon": "fas fa-cogs",
+          "status": "planned"
+        },
+        {
+          "id": "autonomous-operations",
+          "title": "Autonomous Operations",
+          "description": "Self-optimizing business operations with minimal human intervention",
+          "date": "2026",
+          "icon": "fas fa-magic",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "risk-intelligence",
+      "title": "Risk Intelligence & Mitigation",
+      "description": "Advanced risk analysis and mitigation strategies",
+      "type": "table",
+      "columns": [
+        {
+          "key": "riskCategory",
+          "label": "Risk Category",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "riskLevel",
+          "label": "Current Risk Level",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "trend",
+          "label": "Trend",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "mitigationStatus",
+          "label": "Mitigation Status",
+          "type": "status",
+          "sortable": true
+        },
+        {
+          "key": "impactAssessment",
+          "label": "Potential Impact",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "monitoringFrequency",
+          "label": "Monitoring Frequency",
+          "type": "text",
+          "sortable": true
+        }
+      ],
+      "data": [
+        {
+          "riskCategory": "Cybersecurity Threats",
+          "riskLevel": "Medium",
+          "trend": "Decreasing",
+          "mitigationStatus": "Active",
+          "impactAssessment": "High",
+          "monitoringFrequency": "Real-time"
+        },
+        {
+          "riskCategory": "Market Competition",
+          "riskLevel": "High",
+          "trend": "Increasing",
+          "mitigationStatus": "Active",
+          "impactAssessment": "High",
+          "monitoringFrequency": "Daily"
+        },
+        {
+          "riskCategory": "Regulatory Compliance",
+          "riskLevel": "Low",
+          "trend": "Stable",
+          "mitigationStatus": "Complete",
+          "impactAssessment": "Medium",
+          "monitoringFrequency": "Weekly"
+        },
+        {
+          "riskCategory": "Supply Chain Disruption",
+          "riskLevel": "Medium",
+          "trend": "Stable",
+          "mitigationStatus": "Active",
+          "impactAssessment": "High",
+          "monitoringFrequency": "Weekly"
+        },
+        {
+          "riskCategory": "Talent Retention",
+          "riskLevel": "Medium",
+          "trend": "Stable",
+          "mitigationStatus": "Active",
+          "impactAssessment": "Medium",
+          "monitoringFrequency": "Monthly"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Executive Dashboard",
+      "id": "exec-dashboard",
+      "icon": "fas fa-chart-bar"
+    },
+    {
+      "label": "Real-Time Monitoring",
+      "id": "real-time-monitoring",
+      "icon": "fas fa-tachometer-alt"
+    },
+    {
+      "label": "Predictive Analytics",
+      "id": "predictive-analytics",
+      "icon": "fas fa-brain"
+    },
+    {
+      "label": "Risk Management",
+      "id": "risk-management",
+      "icon": "fas fa-shield-alt"
+    },
+    {
+      "label": "Strategic Planning",
+      "id": "strategic-planning",
+      "icon": "fas fa-map-marked-alt"
+    },
+    {
+      "label": "Custom Reports",
+      "id": "custom-reports",
+      "icon": "fas fa-file-alt"
+    },
+    {
+      "label": "Data Export",
+      "id": "data-export",
+      "icon": "fas fa-download"
+    },
+    {
+      "label": "Alert Configuration",
+      "id": "alert-config",
+      "icon": "fas fa-bell"
+    }
+  ],
+  "metadata": {
+    "category": "analytics",
+    "variant": "dashboard",
+    "complexity": "expert",
+    "useCase": "Enterprise business intelligence platform with real-time monitoring, predictive analytics, and strategic insights",
+    "features": ["executive summary", "kpi dashboard", "performance analysis", "predictive analytics", "real-time monitoring", "strategic roadmap", "risk intelligence"]
+  }
+}

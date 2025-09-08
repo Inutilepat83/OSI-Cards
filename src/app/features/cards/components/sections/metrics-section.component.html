@@ -1,0 +1,43 @@
+<div class="metrics-section" [attr.aria-label]="section.title">
+  <div class="section-header" *ngIf="section.title || section.description">
+    <h3 class="section-title">{{ section.title }}</h3>
+    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
+  </div>
+
+  <div class="metrics-container" [ngClass]="'layout-' + layout">
+    <div 
+      class="metric-card"
+      *ngFor="let metric of metrics; trackBy: trackByFn"
+      (click)="onMetricClick(metric)"
+      [attr.tabindex]="0"
+      [attr.role]="'button'"
+      [attr.aria-label]="'Metric: ' + metric.label + ', value: ' + formatValue(metric)"
+      [style.border-left-color]="metric.color"
+    >
+      <div class="metric-header">
+        <div class="metric-icon" *ngIf="metric.icon" aria-hidden="true">
+          <i [class]="'icon ' + metric.icon"></i>
+        </div>
+        <div class="metric-label">{{ metric.label }}</div>
+      </div>
+      
+      <div class="metric-content">
+        <div class="metric-value" [style.color]="metric.color">
+          {{ formatValue(metric) }}
+        </div>
+        
+        <div class="metric-change" *ngIf="metric.change !== undefined || metric.changeLabel">
+          <span 
+            class="change-indicator"
+            [ngClass]="getTrendClass(metric.trend)"
+            *ngIf="metric.trend && metric.change !== undefined"
+          >
+            <i [class]="getTrendIcon(metric.trend)" aria-hidden="true"></i>
+            <span class="change-value">{{ formatChange(metric.change) }}</span>
+          </span>
+          <span class="change-label" *ngIf="metric.changeLabel">{{ metric.changeLabel }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -66,7 +66,12 @@ export class ConfigService {
 
   // Get nested configuration value
   getNested<T>(path: string): T | undefined {
-    return path.split('.').reduce((obj: any, key) => obj?.[key], this.config);
+    return path.split('.').reduce((obj: unknown, key) => {
+      if (obj && typeof obj === 'object' && key in obj) {
+        return (obj as Record<string, unknown>)[key];
+      }
+      return undefined;
+    }, this.config as unknown) as T | undefined;
   }
 
   // Update configuration
@@ -76,15 +81,23 @@ export class ConfigService {
   }
 
   // Update nested configuration
-  updateNested(path: string, value: any): void {
+  updateNested(path: string, value: unknown): void {
     const keys = path.split('.');
     const lastKey = keys.pop()!;
-    const target = keys.reduce((obj: any, key) => {
-      if (!obj[key]) obj[key] = {};
-      return obj[key];
-    }, this.config);
-
-    target[lastKey] = value;
+    const target = keys.reduce((obj: unknown, key) => {
+      if (obj && typeof obj === 'object') {
+        const objRecord = obj as Record<string, unknown>;
+        if (!(key in objRecord) || objRecord[key] === null || typeof objRecord[key] !== 'object') {
+          objRecord[key] = {};
+        }
+        return objRecord[key];
+      }
+      return {};
+    }, this.config as unknown);
+    
+    if (target && typeof target === 'object') {
+      (target as Record<string, unknown>)[lastKey] = value;
+    }
     this.saveConfig();
   }
 

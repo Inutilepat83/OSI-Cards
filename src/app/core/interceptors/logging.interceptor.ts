@@ -6,7 +6,7 @@ import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class LoggingInterceptor implements HttpInterceptor {
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     if (!environment.enableDebug) {
       return next.handle(request);
     }
@@ -20,13 +20,13 @@ export class LoggingInterceptor implements HttpInterceptor {
       headers: request.headers.keys().reduce((acc, key) => {
         acc[key] = request.headers.get(key);
         return acc;
-      }, {} as any),
+      }, {} as Record<string, string | null>),
       body: request.body,
       timestamp: new Date().toISOString()
     });
 
     return next.handle(request).pipe(
-      tap((event: HttpEvent<any>) => {
+      tap((event: HttpEvent<unknown>) => {
         if (event instanceof HttpResponse) {
           const endTime = Date.now();
           const duration = endTime - startTime;

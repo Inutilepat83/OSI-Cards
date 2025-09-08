@@ -1,0 +1,222 @@
+{
+  "cardTitle": "DSM",
+  "cardType": "Company",
+  "sections": [
+    {
+      "title": "Company Overview",
+      "type": "info",
+      "preferredColumns": 2,
+      "fields": [
+        {
+          "label": "Industry",
+          "value": "Nutrition & Health"
+        },
+        {
+          "label": "Founded",
+          "value": "1902"
+        },
+        {
+          "label": "Employees",
+          "value": "23,000+"
+        },
+        {
+          "label": "Headquarters",
+          "value": "Heerlen, Netherlands"
+        },
+        {
+          "label": "Annual Revenue",
+          "value": "€12.1B"
+        },
+        {
+          "label": "Global Presence",
+          "value": "50+ Countries"
+        },
+        {
+          "label": "CEO",
+          "value": "Dimitri de Vreeze"
+        },
+        {
+          "label": "Stock Exchange",
+          "value": "Euronext Amsterdam"
+        }
+      ]
+    },
+    {
+      "title": "ICT Investment Profile",
+      "type": "analytics",
+      "preferredColumns": 2,
+      "fields": [
+        {
+          "label": "Annual ICT Budget",
+          "value": "€200M",
+          "percentage": 100,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 8
+        },
+        {
+          "label": "Cloud Investment",
+          "value": "€50M",
+          "percentage": 25,
+          "performance": "good",
+          "trend": "up",
+          "change": 15
+        },
+        {
+          "label": "Digital Transformation",
+          "value": "€75M",
+          "percentage": 37,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 22
+        },
+        {
+          "label": "Cybersecurity Budget",
+          "value": "€25M",
+          "percentage": 12,
+          "performance": "good",
+          "trend": "stable",
+          "change": 5
+        }
+      ]
+    },
+    {
+      "title": "Cloud Adoption",
+      "type": "info",
+      "preferredColumns": 1,
+      "fields": [
+        {
+          "label": "IaaS Usage",
+          "value": "75%"
+        },
+        {
+          "label": "PaaS Usage",
+          "value": "60%"
+        },
+        {
+          "label": "SaaS Usage",
+          "value": "85%"
+        },
+        {
+          "label": "Hybrid Cloud",
+          "value": "Active"
+        },
+        {
+          "label": "Multi-Cloud Strategy",
+          "value": "AWS + Azure"
+        }
+      ]
+    },
+    {
+      "title": "Network Infrastructure",
+      "type": "chart",
+      "fields": [
+        {
+          "label": "Connected Sites",
+          "value": 120,
+          "color": "#FF7900"
+        },
+        {
+          "label": "Total Bandwidth (Gbps)",
+          "value": 45,
+          "color": "#FF9933"
+        },
+        {
+          "label": "SD-WAN Sites",
+          "value": 85,
+          "color": "#CC5F00"
+        },
+        {
+          "label": "Cloud Connections",
+          "value": 28,
+          "color": "#FFE6CC"
+        }
+      ]
+    },
+    {
+      "title": "Innovation & EIC Projects",
+      "type": "info",
+      "fields": [
+        {
+          "label": "EIC Grants Awarded",
+          "value": "€15M"
+        },
+        {
+          "label": "OB Pilot Projects",
+          "value": "5 Active"
+        },
+        {
+          "label": "Innovation Budget",
+          "value": "€3.2M"
+        },
+        {
+          "label": "Sustainability Projects",
+          "value": "8 Initiatives"
+        }
+      ]
+    },
+    {
+      "title": "Global Operations",
+      "type": "map",
+      "preferredColumns": 2,
+      "fields": [
+        {
+          "name": "DSM HQ - Heerlen",
+          "x": 52,
+          "y": 32,
+          "type": "headquarters",
+          "address": "Heerlen, Netherlands"
+        },
+        {
+          "name": "DSM North America",
+          "x": 25,
+          "y": 35,
+          "type": "regional-office",
+          "address": "New York, USA"
+        },
+        {
+          "name": "DSM Asia Pacific",
+          "x": 80,
+          "y": 60,
+          "type": "regional-office",
+          "address": "Singapore"
+        },
+        {
+          "name": "DSM China",
+          "x": 83,
+          "y": 42,
+          "type": "office",
+          "address": "Shanghai, China"
+        },
+        {
+          "name": "DSM Latin America",
+          "x": 30,
+          "y": 70,
+          "type": "office",
+          "address": "São Paulo, Brazil"
+        },
+        {
+          "name": "DSM India",
+          "x": 70,
+          "y": 52,
+          "type": "office",
+          "address": "Mumbai, India"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Visit DSM",
+      "type": "primary",
+      "icon": "🌐",
+      "action": "https://www.dsm.com"
+    },
+    {
+      "label": "Contact Orange Business",
+      "type": "primary",
+      "icon": "📧",
+      "action": "mailto:obclients@orange.com"
+    }
+  ]
+}

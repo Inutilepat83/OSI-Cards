@@ -1,0 +1,212 @@
+{
+  "id": "professional-contact",
+  "cardTitle": "Dr. Maria Rodriguez",
+  "cardSubtitle": "VP of Data Science & Analytics",
+  "cardType": "contact",
+  "description": "Professional contact card with extended profile, skills, and network information",
+  "sections": [
+    {
+      "id": "contact-details",
+      "title": "Contact Information",
+      "type": "info",
+      "fields": [
+        {
+          "id": "email",
+          "label": "Work Email",
+          "value": "maria.rodriguez@techcorp.com",
+          "type": "email",
+          "icon": "fas fa-envelope",
+          "clickable": true
+        },
+        {
+          "id": "phone",
+          "label": "Office Phone",
+          "value": "+1-415-555-0198",
+          "type": "phone",
+          "icon": "fas fa-phone",
+          "clickable": true
+        },
+        {
+          "id": "location",
+          "label": "Office Location",
+          "value": "San Francisco, CA",
+          "type": "text",
+          "icon": "fas fa-map-marker"
+        },
+        {
+          "id": "timezone",
+          "label": "Timezone",
+          "value": "PST (UTC-8)",
+          "type": "text",
+          "icon": "fas fa-clock"
+        }
+      ]
+    },
+    {
+      "id": "professional-background",
+      "title": "Professional Background",
+      "type": "info",
+      "fields": [
+        {
+          "id": "company",
+          "label": "Company",
+          "value": "TechCorp Solutions",
+          "type": "text",
+          "icon": "fas fa-building"
+        },
+        {
+          "id": "position",
+          "label": "Position",
+          "value": "VP of Data Science & Analytics",
+          "type": "text",
+          "icon": "fas fa-user-tie"
+        },
+        {
+          "id": "experience",
+          "label": "Years of Experience",
+          "value": 12,
+          "type": "number",
+          "icon": "fas fa-briefcase"
+        },
+        {
+          "id": "education",
+          "label": "Education",
+          "value": "PhD Computer Science, Stanford University",
+          "type": "text",
+          "icon": "fas fa-graduation-cap"
+        },
+        {
+          "id": "certifications",
+          "label": "Key Certifications",
+          "value": "AWS ML Specialty, TensorFlow Developer",
+          "type": "text",
+          "icon": "fas fa-certificate"
+        }
+      ]
+    },
+    {
+      "id": "skills-expertise",
+      "title": "Skills & Expertise",
+      "type": "list",
+      "items": [
+        {
+          "title": "Machine Learning",
+          "description": "Expert level - 8+ years experience",
+          "icon": "fas fa-brain"
+        },
+        {
+          "title": "Python",
+          "description": "Advanced - Data science, ML frameworks",
+          "icon": "fab fa-python"
+        },
+        {
+          "title": "R Programming",
+          "description": "Advanced - Statistical analysis",
+          "icon": "fas fa-chart-bar"
+        },
+        {
+          "title": "AWS AI Services",
+          "description": "Expert - SageMaker, Rekognition, Comprehend",
+          "icon": "fab fa-aws"
+        },
+        {
+          "title": "Big Data Analytics",
+          "description": "Advanced - Spark, Hadoop ecosystems",
+          "icon": "fas fa-database"
+        },
+        {
+          "title": "Team Leadership",
+          "description": "Senior level - Managing 25+ person team",
+          "icon": "fas fa-users-cog"
+        }
+      ]
+    },
+    {
+      "id": "professional-network",
+      "title": "Professional Network",
+      "type": "list",
+      "items": [
+        {
+          "title": "LinkedIn",
+          "description": "linkedin.com/in/mariarodriguez-ds",
+          "icon": "fab fa-linkedin",
+          "value": "https://linkedin.com/in/mariarodriguez-ds"
+        },
+        {
+          "title": "GitHub",
+          "description": "github.com/maria-rodriguez",
+          "icon": "fab fa-github",
+          "value": "https://github.com/maria-rodriguez"
+        },
+        {
+          "title": "ResearchGate",
+          "description": "researchgate.net/profile/Maria_Rodriguez",
+          "icon": "fas fa-flask",
+          "value": "https://researchgate.net/profile/Maria_Rodriguez"
+        },
+        {
+          "title": "Twitter",
+          "description": "@MariaDSRodriguez",
+          "icon": "fab fa-twitter",
+          "value": "https://twitter.com/MariaDSRodriguez"
+        }
+      ]
+    },
+    {
+      "id": "recent-achievements",
+      "title": "Recent Achievements",
+      "type": "list",
+      "items": [
+        {
+          "title": "AI Innovation Award 2024",
+          "description": "Recognized for breakthrough in predictive analytics",
+          "icon": "fas fa-trophy"
+        },
+        {
+          "title": "Published Research Paper",
+          "description": "Neural Networks for Financial Forecasting - Nature AI",
+          "icon": "fas fa-book"
+        },
+        {
+          "title": "Conference Speaker",
+          "description": "Keynote at Data Science Summit 2024",
+          "icon": "fas fa-microphone"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Send Email",
+      "id": "send-email",
+      "icon": "fas fa-envelope"
+    },
+    {
+      "label": "Schedule Meeting",
+      "id": "schedule-meeting",
+      "icon": "fas fa-calendar"
+    },
+    {
+      "label": "View LinkedIn Profile",
+      "id": "view-linkedin",
+      "icon": "fab fa-linkedin"
+    },
+    {
+      "label": "Download Resume",
+      "id": "download-resume",
+      "icon": "fas fa-download"
+    },
+    {
+      "label": "Connect on GitHub",
+      "id": "connect-github",
+      "icon": "fab fa-github"
+    }
+  ],
+  "metadata": {
+    "category": "contact",
+    "variant": "professional",
+    "complexity": "medium",
+    "useCase": "Extended professional contact with skills, network, and achievements",
+    "features": ["contact details", "professional background", "skills list", "network links", "achievements"]
+  }
+}

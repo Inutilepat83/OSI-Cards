@@ -1,383 +1,222 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
-import { Observable, debounceTime, distinctUntilChanged } from 'rxjs';
-import { MessageService } from 'primeng/api';
-import { AICardConfig } from '../../../../models/card.model';
-import { LocalCardConfigurationService } from '../../../../core/services/local-card-configuration.service';
-import { LocalInitializationService } from '../../../../core/services/local-initialization.service';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Subject, takeUntil } from 'rxjs';
+import { AICardConfig, CardSection, CardField, CardAction } from '../../../../models';
+import { LocalCardConfigurationService } from '../../../../core';
+import * as CardActions from '../../../../store/cards/cards.actions';
+import * as CardSelectors from '../../../../store/cards/cards.selectors';
+import { AppState } from '../../../../store/app.state';
 
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
   styleUrls: ['./home-page.component.css'],
-  providers: [MessageService]
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HomePageComponent implements OnInit {
-  jsonInput = new FormControl('{}', [
-    Validators.required,
-    this.jsonValidator
-  ]);
-  
-  cardTypes: ('company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'event')[] = [
-    'company', 'contact', 'opportunity', 'product', 'analytics', 'event'
-  ];
-  
-  cardType: 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'event' = 'company';
-  cardVariant: 1 | 2 | 3 = 1;
+export class HomePageComponent implements OnInit, OnDestroy {
+  @ViewChild('textareaRef', { static: false }) textareaRef!: ElementRef<HTMLTextAreaElement>;
+
+  private destroy$ = new Subject<void>();
+
+  // Component properties
+  cardType: 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'project' | 'event' = 'company';
+  cardVariant = 1;
   generatedCard: AICardConfig | null = null;
   isGenerating = false;
-  systemStats = { totalFiles: 18 };
-  switchingType = false;
-  jsonError = '';
-  isJsonValid = true;
   isInitialized = false;
   isFullscreen = false;
-  
-  @ViewChild('cardPreview') cardPreview!: ElementRef;
+  jsonInput = '{}';
+  jsonError = '';
+  isJsonValid = true;
+  switchingType = false;
+  systemStats = { totalFiles: 18 };
+
+  cardTypes: ('company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'project' | 'event')[] = [
+    'company', 'contact', 'opportunity', 'product', 'analytics', 'project', 'event'
+  ];
 
   constructor(
-    private cardConfigService: LocalCardConfigurationService,
-    private initService: LocalInitializationService,
-    private messageService: MessageService
-  ) { }
+    private store: Store<AppState>,
+    private localCardConfigurationService: LocalCardConfigurationService,
+    private cd: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    // Initialize system
-    this.initializeSystem();
-    
-    // Setup JSON input listener with validation
-    this.jsonInput.valueChanges
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged()
-      )
-      .subscribe(value => {
-        if (value) {
-          this.validateJsonInput(value);
-          if (this.isJsonValid) {
-            this.generateCard(value);
-          }
-        }
+  // Subscribe to store selectors
+
+    // Subscribe to store selectors
+    this.store.select(CardSelectors.selectCurrentCard)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(card => {
+        this.generatedCard = card;
+        this.cd.markForCheck();
       });
-    
-    // Load from localStorage if available
-    this.loadSavedConfiguration();
-  }
-  
-  // Custom JSON validator
-  jsonValidator(control: FormControl): {[key: string]: any} | null {
-    try {
-      JSON.parse(control.value);
-      return null;
-    } catch (e) {
-      return { 'jsonInvalid': true };
-    }
-  }
-  
-  validateJsonInput(value: string): void {
-    try {
-      JSON.parse(value);
-      this.isJsonValid = true;
-      this.jsonError = '';
-    } catch (error: any) {
-      this.isJsonValid = false;
-      this.jsonError = error.message;
-    }
+
+  // Removed selectIsGenerating; using selectLoading instead
+
+  this.store.select(CardSelectors.selectIsFullscreen)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(isFullscreen => {
+        this.isFullscreen = isFullscreen;
+    this.cd.markForCheck();
+      });
+
+  this.store.select(CardSelectors.selectJsonInput)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(jsonInput => {
+        this.jsonInput = jsonInput;
+    this.cd.markForCheck();
+      });
+
+  this.store.select(CardSelectors.selectError)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(error => {
+        this.jsonError = error || '';
+        this.isJsonValid = !error;
+    this.cd.markForCheck();
+      });
+    // Subscribe to template loading to control spinner
+    this.store.select(CardSelectors.selectLoading)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(loading => {
+        this.isGenerating = loading;
+        this.cd.markForCheck();
+      });
+  // Initialize system and load initial company card
+  this.initializeSystem();
   }
 
-  initializeSystem(): void {
-    this.initService.initialize().subscribe(result => {
-      if (result.success && result.initialCard) {
-        // Clean the template
-        const cleanTemplate = this.removeAllIds(result.initialCard);
-        const templateJson = JSON.stringify(cleanTemplate, null, 2);
-        
-        this.jsonInput.setValue(templateJson);
-        this.isInitialized = true;
-        
-        // Show success message
-        this.messageService.add({
-          severity: 'success',
-          summary: 'System Initialized',
-          detail: 'Templates and services loaded successfully'
-        });
-        
-        // Show warnings if any
-        if (result.warnings.length > 0) {
-          console.warn('Initialization warnings:', result.warnings);
-          result.warnings.forEach(warning => {
-            this.messageService.add({
-              severity: 'warn',
-              summary: 'Warning',
-              detail: warning
-            });
-          });
-        }
-      } else {
-        console.error('Initialization failed');
-        
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Initialization Failed',
-          detail: 'Could not load required templates'
-        });
-        
-        // Set fallback minimal card
-        const minimalFallback: AICardConfig = {
-          cardTitle: 'System Initialization Failed',
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private initializeSystem(): void {
+    this.isInitialized = true;
+    // Load initial company card
+    this.store.dispatch(CardActions.setCardType({ cardType: this.cardType }));
+    this.store.dispatch(CardActions.setCardVariant({ variant: this.cardVariant }));
+    this.store.dispatch(CardActions.loadTemplate({ cardType: this.cardType, variant: this.cardVariant }));
+  }
+
+  switchCardType(type: 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'project' | 'event'): void {
+    if (this.switchingType) return;
+    this.switchingType = true;
+    this.cardType = type;
+    console.log(`🔄 Switching to ${type} card type, variant ${this.cardVariant}...`);
+    // Update state and load template
+    this.store.dispatch(CardActions.setCardType({ cardType: type }));
+    this.store.dispatch(CardActions.loadTemplate({ cardType: type, variant: this.cardVariant }));
+    this.switchingType = false;
+  }
+
+  switchCardVariant(variant: number): void {
+    if (variant < 1 || variant > 3) return; // Ensure variant is within valid range
+    this.cardVariant = variant as 1 | 2 | 3;
+    this.store.dispatch(CardActions.setCardVariant({ variant }));
+    this.switchCardType(this.cardType);
+  }
+
+  onJsonInputChange(): void {
+    if (!this.isInitialized) return;
+
+    try {
+      this.store.dispatch(CardActions.updateJsonInput({ jsonInput: this.jsonInput }));
+
+      if (!this.jsonInput || this.jsonInput.trim() === '' || this.jsonInput.trim() === '{}') {
+        // Create a default empty card instead of null
+        const defaultCard: AICardConfig = {
+          cardTitle: 'Empty Card',
           cardType: 'company',
-          sections: [
-            {
-              title: 'Error Details',
-              type: 'info',
-              fields: [
-                {
-                  label: 'Error',
-                  value: 'Failed to initialize system'
-                }
-              ]
-            }
-          ]
+          sections: []
         };
-        
-        this.jsonInput.setValue(JSON.stringify(minimalFallback, null, 2));
-        this.isInitialized = true;
-      }
-    });
-  }
-
-  generateCard(inputJson: string, silentMode = false): void {
-    try {
-      this.isGenerating = true;
-      
-      // Check if JSON is empty
-      if (!inputJson || inputJson.trim() === '' || inputJson.trim() === '{}') {
-        this.generatedCard = null;
-        this.isJsonValid = true;
-        this.jsonError = '';
+        this.store.dispatch(CardActions.generateCardSuccess({ card: defaultCard }));
         return;
       }
-      
-      const data = JSON.parse(inputJson);
-      
-      // Auto-generate ID if not provided
-      if (!data.id) {
-        data.id = `card_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+      let data: unknown;
+      try {
+        data = JSON.parse(this.jsonInput);
+      } catch (parseError) {
+        console.error('Invalid JSON format:', parseError);
+        this.store.dispatch(CardActions.generateCardFailure({ error: 'Invalid JSON format. Please check your syntax.' }));
+        return;
       }
-      
-      // Validate card data
-      if (data.cardTitle && data.cardType && data.sections && Array.isArray(data.sections)) {
-        this.generatedCard = data;
-        this.isJsonValid = true;
-        this.jsonError = '';
-        
-        if (!silentMode) {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Card Generated',
-            detail: 'Card configuration loaded successfully'
-          });
-        }
+
+      // Validate that data is an object
+      if (!data || typeof data !== 'object' || Array.isArray(data)) {
+        this.store.dispatch(CardActions.generateCardFailure({ error: 'Card configuration must be a valid object.' }));
+        return;
+      }
+
+      const cardData = data as Record<string, unknown>;
+
+      // Auto-generate id if not provided
+      if (!cardData['id']) {
+        cardData['id'] = `card_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      }
+
+      // Auto-generate section and field IDs if missing
+      if (cardData['sections'] && Array.isArray(cardData['sections'])) {
+        cardData['sections'] = (cardData['sections'] as CardSection[]).map((section: CardSection, sIndex: number) => {
+          if (!section.id) {
+            section.id = `section_${sIndex}`;
+          }
+          if (section.fields && Array.isArray(section.fields)) {
+            section.fields = section.fields.map((field: CardField, fIndex: number) => {
+              if (!field.id) {
+                field.id = `field_${sIndex}_${fIndex}`;
+              }
+              return field;
+            });
+          }
+          return section;
+        });
+      }
+
+      // Auto-generate action IDs if missing
+      if (cardData['actions'] && Array.isArray(cardData['actions'])) {
+        cardData['actions'] = (cardData['actions'] as CardAction[]).map((action: CardAction, aIndex: number) => {
+          if (!action.id) {
+            action.id = `action_${aIndex}`;
+          }
+          return action;
+        });
+      }
+
+      // Validate and use the card data
+      if (cardData['cardTitle'] && cardData['cardType'] && cardData['sections'] && Array.isArray(cardData['sections'])) {
+        console.log('✅ Setting generated card:', cardData);
+        this.store.dispatch(CardActions.generateCardSuccess({ card: cardData as unknown as AICardConfig }));
       } else {
         throw new Error('Invalid card configuration format - missing required fields (cardTitle, cardType, sections)');
       }
-    } catch (error: any) {
-      console.error('Card generation error:', error);
-      this.isJsonValid = false;
-      this.jsonError = error.message;
-      this.generatedCard = null;
-      
-      if (!silentMode) {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Card Generation Failed',
-          detail: error.message
-        });
-      }
-    } finally {
-      this.isGenerating = false;
+    } catch (error: unknown) {
+      console.error('❌ Card generation error:', error);
+      this.store.dispatch(CardActions.generateCardFailure({ error: error instanceof Error ? error.message : 'Unknown error' }));
     }
   }
 
-  switchCardType(type: 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'event'): void {
-    if (this.switchingType) return;
-    
-    this.switchingType = true;
-    this.cardType = type;
-    
-    this.cardConfigService.getTemplate(type, this.cardVariant).subscribe(
-      template => {
-        if (template) {
-          // Clean the template
-          const cleanTemplate = this.removeAllIds(template);
-          const templateJson = JSON.stringify(cleanTemplate, null, 2);
-          
-          this.jsonInput.setValue(templateJson);
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Template Loaded',
-            detail: `${type.charAt(0).toUpperCase() + type.slice(1)} template (variant ${this.cardVariant}) loaded`
-          });
-        }
-        this.switchingType = false;
-      },
-      error => {
-        console.error('Error switching card type:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Template Error',
-          detail: `Failed to load ${type} template`
-        });
-        this.switchingType = false;
-      }
-    );
+  onCardInteraction(event: unknown): void {
+    console.log('Card interaction:', event);
   }
 
-  handleVariantChange(variant: any): void {
-    if (this.switchingType) return;
-    
-    // Ensure variant is one of the allowed values: 1, 2, or 3
-    const safeVariant = (variant === 1 || variant === 2 || variant === 3) ? variant as 1 | 2 | 3 : 1;
-    this.cardVariant = safeVariant;
-    this.switchingType = true;
-    
-    this.cardConfigService.getTemplate(this.cardType, safeVariant).subscribe(
-      template => {
-        if (template) {
-          // Clean the template
-          const cleanTemplate = this.removeAllIds(template);
-          const templateJson = JSON.stringify(cleanTemplate, null, 2);
-          
-          this.jsonInput.setValue(templateJson);
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Variant Loaded',
-            detail: `${this.cardType.charAt(0).toUpperCase() + this.cardType.slice(1)} variant ${variant} loaded`
-          });
-        }
-        this.switchingType = false;
-      },
-      error => {
-        console.error('Error switching variant:', error);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Variant Error',
-          detail: `Failed to load variant ${variant}`
-        });
-        this.switchingType = false;
-      }
-    );
+  onFullscreenToggle(isFullscreen: boolean): void {
+    this.isFullscreen = isFullscreen;
+    this.store.dispatch(CardActions.setFullscreen({ fullscreen: isFullscreen }));
   }
 
-  handleFieldInteraction(data: any): void {
-    console.log('Field interaction in preview:', data);
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Field Interaction',
-      detail: `Clicked on field: ${data.field.label}`
-    });
+  toggleFullscreen(): void {
+    this.isFullscreen = !this.isFullscreen;
+    this.store.dispatch(CardActions.setFullscreen({ fullscreen: this.isFullscreen }));
   }
 
-  handleCardInteraction(event: any): void {
-    console.log('Card interaction in preview:', event);
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Card Interaction',
-      detail: `Action: ${event.action}`
-    });
-  }
-
-  handleFullscreenToggle(fullscreen: boolean): void {
-    this.isFullscreen = fullscreen;
-  }
-  
-  // Save current configuration to localStorage
-  saveConfiguration(): void {
-    if (!this.isJsonValid || !this.generatedCard) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Save Failed',
-        detail: 'Cannot save invalid configuration'
-      });
-      return;
-    }
-    
-    try {
-      const key = `osi-card-config-${this.cardType}-${this.cardVariant}`;
-      localStorage.setItem(key, this.jsonInput.value as string);
-      
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Configuration Saved',
-        detail: 'Card configuration saved to local storage'
-      });
-    } catch (error) {
-      console.error('Error saving configuration:', error);
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Save Failed',
-        detail: 'Could not save to local storage'
-      });
-    }
-  }
-  
-  // Load saved configuration from localStorage
-  loadSavedConfiguration(): void {
-    try {
-      const key = `osi-card-config-${this.cardType}-${this.cardVariant}`;
-      const saved = localStorage.getItem(key);
-      
-      if (saved) {
-        this.validateJsonInput(saved);
-        if (this.isJsonValid) {
-          this.jsonInput.setValue(saved);
-          this.messageService.add({
-            severity: 'info',
-            summary: 'Configuration Loaded',
-            detail: 'Loaded saved configuration from local storage'
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Error loading saved configuration:', error);
-    }
-  }
-  
-  // Export card as PNG
-  exportAsPng(): void {
-    if (!this.generatedCard || !this.cardPreview) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Export Failed',
-        detail: 'No card to export'
-      });
-      return;
-    }
-    
-    try {
-      // This would use html2canvas or similar library to export
-      // For this demonstration, we'll just show a success message
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Card Exported',
-        detail: 'Card exported as PNG'
-      });
-    } catch (error) {
-      console.error('Error exporting PNG:', error);
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Export Failed',
-        detail: 'Could not export card as PNG'
-      });
-    }
-  }
-
-  // Helper method to remove all IDs from objects recursively
-  private removeAllIds(obj: any): any {
+  // Helper function to remove all IDs from objects recursively
+  private removeAllIds(obj: unknown): unknown {
     if (Array.isArray(obj)) {
       return obj.map(item => this.removeAllIds(item));
     } else if (obj && typeof obj === 'object') {
-      const newObj: any = {};
+      const newObj: Record<string, unknown> = {};
       for (const [key, value] of Object.entries(obj)) {
         if (key !== 'id') {
           newObj[key] = this.removeAllIds(value);
@@ -386,5 +225,14 @@ export class HomePageComponent implements OnInit {
       return newObj;
     }
     return obj;
+  }
+
+  // TrackBy functions for performance optimization
+  trackByCardType(index: number, type: string): string {
+    return type;
+  }
+
+  trackByVariant(index: number, variant: number): number {
+    return variant;
   }
 }

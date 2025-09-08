@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
@@ -6,9 +6,10 @@ import { filter } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class PerformanceService {
-  private navigationStartTime: number = 0;
+  private navigationStartTime = 0;
+  private router = inject(Router);
 
-  constructor(private router: Router) {
+  constructor() {
     this.initializePerformanceMonitoring();
   }
 
@@ -86,7 +87,7 @@ export class PerformanceService {
   // Method to track memory usage
   logMemoryUsage(): void {
     if (typeof window !== 'undefined' && 'performance' in window && 'memory' in performance) {
-      const memory = (performance as any).memory;
+      const memory = (performance as { memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
       console.log('Memory Usage:', {
         used: Math.round(memory.usedJSHeapSize / 1048576 * 100) / 100 + ' MB',
         total: Math.round(memory.totalJSHeapSize / 1048576 * 100) / 100 + ' MB',
