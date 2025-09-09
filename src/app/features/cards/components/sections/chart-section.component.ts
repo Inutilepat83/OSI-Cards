@@ -1,9 +1,12 @@
 import { Component, Input, ViewChild, ElementRef, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { CardSection } from '../../../../models/card.model';
 import { Chart, ChartConfiguration } from 'chart.js';
 
 @Component({
   selector: 'app-chart-section',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './chart-section.component.html',
   styleUrls: ['./chart-section.component.css']
 })

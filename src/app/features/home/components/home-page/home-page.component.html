@@ -60,143 +60,38 @@
         <h3 class="text-2xl sm:text-4xl font-bold text-white mb-4 sm:mb-6">Interactive Demo</h3>
 
         <!-- Card Type Selector with Label -->
-        <div class="flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
-          <span class="text-sm text-muted-foreground">Card Type:</span>
-          <div class="flex gap-2 sm:gap-3 flex-wrap justify-center">
-            <button
-              *ngFor="let type of cardTypes; trackBy: trackByCardType"
-              (click)="switchCardType(type)"
-              (keydown.enter)="switchCardType(type)"
-              (keydown.space)="$event.preventDefault(); switchCardType(type)"
-              class="px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm"
-              [class]="cardType === type ? 'bg-primary text-primary-foreground shadow-lg scale-105' : 'bg-card text-foreground border border-border hover:border-primary/50 hover:scale-105'"
-              [disabled]="switchingType"
-              [attr.aria-label]="'Switch to ' + type + ' card type'"
-              [attr.aria-pressed]="cardType === type"
-              role="button"
-              tabindex="0">
-              {{ type.charAt(0).toUpperCase() + type.slice(1) }}
-            </button>
-          </div>
-        </div>
-
-        <!-- Variant Selector -->
-        <div class="flex justify-center items-center gap-2 sm:gap-4 mb-6 sm:mb-8">
-          <span class="text-sm text-muted-foreground">Variants:</span>
-          <div class="flex gap-2">
-            <button
-              *ngFor="let variant of [1, 2, 3]; trackBy: trackByVariant"
-              (click)="switchCardVariant(variant)"
-              (keydown.enter)="switchCardVariant(variant)"
-              (keydown.space)="$event.preventDefault(); switchCardVariant(variant)"
-              class="w-8 h-8 rounded-full text-xs font-medium transition-all duration-200"
-              [class]="cardVariant === variant ? 'bg-primary text-primary-foreground shadow-lg scale-110' : 'bg-card text-foreground border border-border hover:border-primary/50 hover:scale-105'"
-              [disabled]="switchingType"
-              [title]="'Load variant ' + variant + ' of ' + cardType + ' template'"
-              [attr.aria-label]="'Load variant ' + variant + ' of ' + cardType + ' template'"
-              [attr.aria-pressed]="cardVariant === variant"
-              role="button"
-              tabindex="0">
-              {{ variant }}
-            </button>
-          </div>
-        </div>
+        <app-card-controls
+          [cardType]="cardType"
+          [cardVariant]="cardVariant"
+          [switchingType]="switchingType"
+          (cardTypeChange)="onCardTypeChange($event)"
+          (cardVariantChange)="onCardVariantChange($event)">
+        </app-card-controls>
       </div>
 
       <!-- Enhanced Responsive Layout with Fullscreen Support -->
-      <div class="transition-all duration-500 ease-in-out mb-16 min-h-[800px] grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-8 items-start">
+      <div class="transition-all duration-500 ease-in-out mb-16 min-h-[800px] grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8 items-start">
 
         <!-- Card Preview -->
-        <div class="flex flex-col lg:col-span-3 order-2 lg:order-2">
-          <div class="flex items-center gap-2 mb-4">
-            <div class="sparkles-icon w-5 h-5"></div>
-            <span class="font-semibold">Live Preview</span>
-            <span class="text-sm text-muted-foreground" *ngIf="generatedCard">
-              • {{ generatedCard.cardType }} Card
-            </span>
-            <span class="badge" *ngIf="isFullscreen">Fullscreen Mode</span>
-          </div>
-
-          <div class="flex-1">
-            <div *ngIf="isGenerating || !isInitialized" class="flex flex-col items-center justify-center space-y-4 text-center py-20">
-              <div class="animate-spin w-8 h-8 rounded-full border-2 border-primary border-t-transparent"></div>
-              <div>
-                <p class="text-lg font-medium text-foreground">
-                  {{ !isInitialized ? 'Initializing System...' : 'Generating Card...' }}
-                </p>
-                <p class="text-sm text-muted-foreground">
-                  {{ !isInitialized ? 'Loading templates and services' : 'Processing your configuration' }}
-                </p>
-              </div>
-            </div>
-
-            <div *ngIf="!isGenerating && isInitialized && generatedCard" class="w-full">
-              <app-ai-card-renderer
-                [cardConfig]="generatedCard"
-                [isFullscreen]="isFullscreen"
-                (cardInteraction)="onCardInteraction($event)"
-                (fullscreenToggle)="onFullscreenToggle($event)">
-              </app-ai-card-renderer>
-            </div>
-
-            <div *ngIf="!isGenerating && isInitialized && !generatedCard" class="flex flex-col items-center justify-center space-y-4 text-center py-20">
-              <div class="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center">
-                <div class="code-icon w-8 h-8"></div>
-              </div>
-              <div>
-                <p class="text-lg font-medium text-foreground mb-2">No Card Preview</p>
-                <p class="text-sm text-muted-foreground leading-relaxed max-w-md">
-                  Enter a valid JSON configuration or select a template to see your card preview here.
-                </p>
-              </div>
-              <div class="flex flex-col gap-2 text-xs text-muted-foreground">
-                <div class="flex items-center gap-2">
-                  <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                  <span>Valid JSON will auto-generate cards</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-                  <span>Interactive effects respond to mouse</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <div class="w-2 h-2 rounded-full bg-purple-500"></div>
-                  <span>Export cards as high-quality PNG</span>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="flex flex-col lg:col-span-2 order-2 lg:order-2">
+          <app-card-preview
+            [generatedCard]="generatedCard"
+            [isGenerating]="isGenerating"
+            [isInitialized]="isInitialized"
+            [isFullscreen]="isFullscreen"
+            (cardInteraction)="onCardInteraction($event)"
+            (fullscreenToggle)="onFullscreenToggle($event)">
+          </app-card-preview>
         </div>
 
-        <!-- JSON Configuration -->
-        <div class="flex flex-col space-y-4 lg:col-span-2 order-1 lg:order-1">
-          <label for="json-config-textarea" class="flex items-center gap-2 mb-4">
-            <div class="file-text-icon w-5 h-5"></div>
-            <span class="font-semibold">JSON Configuration</span>
-            <span class="badge-destructive" *ngIf="!isJsonValid">Invalid JSON</span>
-          </label>
-
-          <textarea
-            id="json-config-textarea"
-            #textareaRef
-            [(ngModel)]="jsonInput"
-            (ngModelChange)="onJsonInputChange()"
-            class="font-mono text-sm resize-none overflow-y-auto border-2 transition-all duration-300 min-h-[400px] lg:min-h-[600px] p-4 input-background text-foreground textarea-focus"
-            [class]="isJsonValid ? 'border-gray-600' : 'border-red-500/50'"
-            [attr.aria-invalid]="!isJsonValid"
-            [attr.aria-describedby]="jsonError ? 'json-error-message' : null"
-            placeholder="Enter your card configuration JSON here..."
-            rows="20"
-            aria-label="JSON configuration editor for card customization">
-          </textarea>
-
-          <div 
-            id="json-error-message"
-            class="p-2 bg-red-500/10 border border-red-500/20 rounded text-sm text-red-400" 
-            *ngIf="jsonError"
-            role="alert"
-            aria-live="polite">
-            <strong>JSON Error:</strong> {{ jsonError }}
-          </div>
+        <!-- JSON Editor -->
+        <div class="flex flex-col space-y-4 lg:col-span-1 order-1 lg:order-1">
+          <app-json-editor
+            [jsonInput]="jsonInput"
+            [jsonError]="jsonError"
+            [isJsonValid]="isJsonValid"
+            (jsonInputChange)="onJsonInputChange($event)">
+          </app-json-editor>
         </div>
       </div>
     </div>

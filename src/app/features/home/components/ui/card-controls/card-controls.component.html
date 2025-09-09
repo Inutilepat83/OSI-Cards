@@ -1,0 +1,42 @@
+<!-- Card Type Selector with Label -->
+<div class="flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+  <span class="text-sm text-muted-foreground">Card Type:</span>
+  <div class="flex gap-2 sm:gap-3 flex-wrap justify-center">
+    <button
+      *ngFor="let type of cardTypes; trackBy: trackByCardType"
+      (click)="onCardTypeChange(type)"
+      (keydown.enter)="onCardTypeChange(type)"
+      (keydown.space)="$event.preventDefault(); onCardTypeChange(type)"
+      class="px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm"
+      [class]="cardType === type ? 'bg-primary text-primary-foreground shadow-lg scale-105' : 'bg-card text-foreground border border-border hover:border-primary/50 hover:scale-105'"
+      [disabled]="switchingType"
+      [attr.aria-label]="'Switch to ' + type + ' card type'"
+      [attr.aria-pressed]="cardType === type"
+      role="button"
+      tabindex="0">
+      {{ type.charAt(0).toUpperCase() + type.slice(1) }}
+    </button>
+  </div>
+</div>
+
+<!-- Variant Selector -->
+<div class="flex justify-center items-center gap-2 sm:gap-4 mb-6 sm:mb-8">
+  <span class="text-sm text-muted-foreground">Variants:</span>
+  <div class="flex gap-2">
+    <button
+      *ngFor="let variant of [1, 2, 3]; trackBy: trackByVariant"
+      (click)="onCardVariantChange(variant)"
+      (keydown.enter)="onCardVariantChange(variant)"
+      (keydown.space)="$event.preventDefault(); onCardVariantChange(variant)"
+      class="w-8 h-8 rounded-full text-xs font-medium transition-all duration-200"
+      [class]="cardVariant === variant ? 'bg-primary text-primary-foreground shadow-lg scale-110' : 'bg-card text-foreground border border-border hover:border-primary/50 hover:scale-105'"
+      [disabled]="switchingType"
+      [title]="'Load variant ' + variant + ' of ' + cardType + ' template'"
+      [attr.aria-label]="'Load variant ' + variant + ' of ' + cardType + ' template'"
+      [attr.aria-pressed]="cardVariant === variant"
+      role="button"
+      tabindex="0">
+      {{ variant }}
+    </button>
+  </div>
+</div>

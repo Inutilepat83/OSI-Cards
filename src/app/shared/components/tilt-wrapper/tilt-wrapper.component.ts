@@ -1,10 +1,13 @@
 import { Component, OnInit, OnDestroy, Input, ElementRef, ViewChild, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Subject, takeUntil, interval, Subscription } from 'rxjs';
 import { MagneticTiltService, MousePosition } from '../../../core/services/magnetic-tilt.service';
 import { MouseTrackingService } from '../../../core/services/mouse-tracking.service';
 
 @Component({
   selector: 'app-tilt-wrapper',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './tilt-wrapper.component.html',
   styleUrls: ['./tilt-wrapper.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush

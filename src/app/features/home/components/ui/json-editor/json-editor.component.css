@@ -1,0 +1,19 @@
+/* JSON Editor Component Styles */
+/* Inherits global styles from parent component */
+
+/* Input styling */
+.input-background {
+  background-color: var(--input-background);
+}
+
+.textarea-focus:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px rgba(255, 121, 0, 0.2);
+}
+
+/* Badge styles */
+.badge-destructive {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}

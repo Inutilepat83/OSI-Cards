@@ -1,8 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { CardSection, Metric } from '../../../../models/card.model';
 
 @Component({
   selector: 'app-metrics-section',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './metrics-section.component.html',
   styleUrls: ['./metrics-section.component.css']
 })

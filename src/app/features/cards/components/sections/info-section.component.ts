@@ -1,8 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { CardSection, CardField } from '../../../../models/card.model';
 
 @Component({
   selector: 'app-info-section',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './info-section.component.html',
   styleUrls: ['./info-section.component.css']
 })

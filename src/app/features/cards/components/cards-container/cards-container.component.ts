@@ -15,8 +15,6 @@ export class CardsContainerComponent implements OnInit {
   cards: AICardConfig[] = [];
   private cardService = inject(LocalCardConfigurationService);
 
-  constructor() {}
-
   ngOnInit(): void {
     this.loadExampleCards();
   }

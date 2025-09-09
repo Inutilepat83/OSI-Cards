@@ -18,6 +18,7 @@
     "target": "ES2022",
     "module": "ES2022",
     "useDefineForClassFields": false,
+    "skipLibCheck": true,
     "lib": [
       "ES2022",
       "dom"
@@ -32,5 +33,11 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  }
+  },
+  "files": [
+    "src/polyfills.ts"
+  ],
+  "include": [
+    "src/**/*.ts"
+  ]
 }

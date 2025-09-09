@@ -7,8 +7,6 @@ import { AICardConfig } from '../../models/card.model';
 })
 export class LocalInitializationService {
   
-  constructor() { }
-  
   initialize(): Observable<{
     success: boolean;
     initialCard: AICardConfig | null;

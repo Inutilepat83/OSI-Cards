@@ -1,8 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { CardSection, ProgressItem } from '../../../../models/card.model';
 
 @Component({
   selector: 'app-progress-section',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './progress-section.component.html',
   styleUrls: ['./progress-section.component.css']
 })

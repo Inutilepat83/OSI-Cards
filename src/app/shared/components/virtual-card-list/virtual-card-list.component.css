@@ -1,0 +1,224 @@
+.virtual-scroll-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--surface-variant);
+  border-bottom: 1px solid var(--outline-variant);
+  font-size: 0.875rem;
+  color: var(--on-surface-variant);
+}
+
+.total-count {
+  font-weight: 500;
+}
+
+.visible-range {
+  opacity: 0.7;
+}
+
+.card-viewport {
+  flex: 1;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+/* Performance mode optimizations */
+.performance-mode .card-viewport {
+  scroll-behavior: auto; /* Disable smooth scrolling for performance */
+}
+
+.performance-mode .virtual-card-item {
+  contain: layout style paint; /* CSS containment for performance */
+}
+
+/* Reduced motion support */
+.reduced-motion .card-viewport {
+  scroll-behavior: auto;
+}
+
+.reduced-motion .virtual-card-item {
+  animation: none !important;
+  transition: none !important;
+}
+
+.virtual-card-item {
+  position: relative;
+  padding: 0.5rem;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  will-change: transform, opacity;
+}
+
+.virtual-card-item:not(.card-visible) {
+  opacity: 0.3;
+  transform: scale(0.95);
+}
+
+.virtual-card-item.card-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.virtual-card-item.card-optimized {
+  /* Optimizations for performance mode */
+  transform: none;
+  transition: none;
+  will-change: auto;
+}
+
+/* Performance overlay */
+.performance-overlay {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-family: monospace;
+  font-size: 0.75rem;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Loading states */
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--on-surface-variant);
+}
+
+.loading-spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--outline-variant);
+  border-top: 2px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  text-align: center;
+  color: var(--on-surface-variant);
+}
+
+.empty-state h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.empty-state p {
+  margin: 0;
+  opacity: 0.7;
+}
+
+/* Scroll indicator */
+.scroll-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: var(--primary);
+  transition: width 0.1s ease;
+  z-index: 10;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .scroll-header {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  .virtual-card-item {
+    padding: 0.25rem;
+  }
+  
+  .performance-overlay {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .scroll-header {
+    border-bottom-width: 2px;
+  }
+  
+  .performance-overlay {
+    background: black;
+    border: 1px solid white;
+  }
+}
+
+/* Prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .virtual-card-item {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .card-viewport {
+    scroll-behavior: auto;
+  }
+  
+  .loading-spinner {
+    animation: none;
+  }
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .scroll-header {
+    background: var(--surface-variant, #2c2c2c);
+    color: var(--on-surface-variant, #e0e0e0);
+  }
+  
+  .loading-indicator,
+  .empty-state {
+    color: var(--on-surface-variant, #e0e0e0);
+  }
+}
+
+/* Print styles */
+@media print {
+  .virtual-scroll-container {
+    overflow: visible;
+    height: auto;
+  }
+  
+  .card-viewport {
+    overflow: visible;
+    height: auto;
+  }
+  
+  .scroll-indicator,
+  .performance-overlay {
+    display: none;
+  }
+}

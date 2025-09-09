@@ -1,8 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { CardSection, TableColumn, TableRow } from '../../../../models/card.model';
 
 @Component({
   selector: 'app-table-section',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './table-section.component.html',
   styleUrls: ['./table-section.component.css']
 })

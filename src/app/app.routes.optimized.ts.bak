@@ -1,0 +1,177 @@
+import { EnvironmentInjector, importProvidersFrom, inject } from '@angular/core';
+import { Routes, Route, PreloadingStrategy, UrlSerializer } from '@angular/router';
+import { Observable, of } from 'rxjs';
+
+export const routes: Routes = [
+  // Home route with preloading
+  {
+    path: '',
+    loadComponent: () => 
+      import('../features/home/components/home-page/home-page.component').then(m => m.HomePageComponent),
+    title: 'OSI Cards - Home',
+    data: { 
+      preload: true,
+      description: 'Advanced AI-powered card management platform'
+    }
+  },
+
+  // Cards feature module with lazy loading and preloading strategy
+  {
+    path: 'cards',
+    loadChildren: () => 
+      import('../features/cards/cards.routes').then(m => m.CARDS_ROUTES),
+    title: 'OSI Cards - Card Management',
+    data: { 
+      preload: true,
+      description: 'Manage and organize your cards'
+    }
+  },
+
+  // Analytics feature with conditional loading based on feature flags
+  {
+    path: 'analytics',
+    loadComponent: () => 
+      import('../features/analytics/components/analytics.component').then(m => m.AnalyticsComponent),
+    title: 'OSI Cards - Analytics',
+    canActivate: [
+      (route: any, state: any) => {
+        const injector = inject(EnvironmentInjector);
+        // TODO: Implement feature flag check
+        return true;
+      }
+    ],
+    data: { 
+      preload: false,
+      description: 'View detailed analytics and insights'
+    }
+  },
+
+  // Settings with lazy loading
+  {
+    path: 'settings',
+    loadComponent: () => 
+      import('../features/settings/components/settings.component').then(m => m.SettingsComponent),
+    title: 'OSI Cards - Settings',
+    data: { 
+      preload: false,
+      description: 'Configure application settings'
+    }
+  },
+
+  // Admin routes with role-based access
+  {
+    path: 'admin',
+    loadChildren: () => 
+      import('../features/admin/admin.routes').then(m => m.ADMIN_ROUTES),
+    title: 'OSI Cards - Administration',
+    canActivate: [
+      (route: any, state: any) => {
+        // Check user role/permissions
+        return true; // Implement proper auth check
+      }
+    ],
+    data: { 
+      preload: false,
+      requiredRole: 'admin',
+      description: 'Administration panel'
+    }
+  },
+
+  // Help and documentation
+  {
+    path: 'help',
+    loadComponent: () => 
+      import('../features/help/components/help.component').then(m => m.HelpComponent),
+    title: 'OSI Cards - Help',
+    data: { 
+      preload: false,
+      description: 'Help and documentation'
+    }
+  },
+
+  // About page
+  {
+    path: 'about',
+    loadComponent: () => 
+      import('../features/about/components/about.component').then(m => m.AboutComponent),
+    title: 'OSI Cards - About',
+    data: { 
+      preload: false,
+      description: 'About OSI Cards'
+    }
+  },
+
+  // Error pages
+  {
+    path: '404',
+    loadComponent: () => 
+      import('../shared/components/not-found/not-found.component').then(m => m.NotFoundComponent),
+    title: 'Page Not Found - OSI Cards',
+    data: { 
+      preload: false,
+      description: 'Page not found'
+    }
+  },
+
+  {
+    path: 'error',
+    loadComponent: () => 
+      import('../shared/components/error-page/error-page.component').then(m => m.ErrorPageComponent),
+    title: 'Error - OSI Cards',
+    data: { 
+      preload: false,
+      description: 'Application error'
+    }
+  },
+
+  // Redirect empty path to home
+  {
+    path: '',
+    redirectTo: '/',
+    pathMatch: 'full'
+  },
+
+  // Wildcard route - must be last
+  {
+    path: '**',
+    redirectTo: '/404'
+  }
+];
+
+// Custom preloading strategy
+export class CustomPreloadingStrategy implements PreloadingStrategy {
+  preload(route: Route, fn: () => Observable<any>): Observable<any> {
+    const shouldPreload = route.data?.['preload'] ?? false;
+    
+    if (shouldPreload) {
+      console.log('Preloading module:', route.path);
+      return fn();
+    }
+    
+    return of(null);
+  }
+}
+
+// Route configuration with performance optimizations
+export const routeConfig = {
+  // Enable tracing for development
+  enableTracing: false,
+  
+  // Use hash location strategy for better caching
+  useHash: false,
+  
+  // Preloading strategy
+  preloadingStrategy: CustomPreloadingStrategy,
+  
+  // Router options
+  onSameUrlNavigation: 'reload' as const,
+  malformedUriErrorHandler: (error: URIError, urlSerializer: UrlSerializer, url: string) => {
+    return urlSerializer.parse('/404');
+  },
+  
+  // Error handler
+  errorHandler: (error: any) => {
+    console.error('Router error:', error);
+    return '/error';
+  }
+};

@@ -8,4 +8,3 @@ export * from './interceptors/http-error.interceptor';
 export * from './interceptors/logging.interceptor';
 export * from './config/config.service';
 export * from './state/state.service';
-export * from './core.module';

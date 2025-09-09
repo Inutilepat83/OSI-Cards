@@ -1,0 +1,62 @@
+<!-- Card Preview Header -->
+<div class="flex items-center gap-2 mb-4">
+  <div class="sparkles-icon w-5 h-5"></div>
+  <span class="font-semibold">Live Preview</span>
+  <span class="text-sm text-muted-foreground" *ngIf="generatedCard">
+    • {{ generatedCard.cardType }} Card
+  </span>
+  <span class="badge" *ngIf="isFullscreen">Fullscreen Mode</span>
+</div>
+
+<!-- Card Preview Content -->
+<div class="flex-1">
+  <!-- Loading State -->
+  <div *ngIf="isGenerating || !isInitialized" class="flex flex-col items-center justify-center space-y-4 text-center py-20">
+    <div class="animate-spin w-8 h-8 rounded-full border-2 border-primary border-t-transparent"></div>
+    <div>
+      <p class="text-lg font-medium text-foreground">
+        {{ !isInitialized ? 'Initializing System...' : 'Generating Card...' }}
+      </p>
+      <p class="text-sm text-muted-foreground">
+        {{ !isInitialized ? 'Loading templates and services' : 'Processing your configuration' }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Card Preview -->
+  <div *ngIf="!isGenerating && isInitialized && generatedCard" class="w-full">
+    <app-ai-card-renderer
+      [cardConfig]="generatedCard"
+      [isFullscreen]="isFullscreen"
+      (cardInteraction)="onCardInteraction($event)"
+      (fullscreenToggle)="onFullscreenToggle($event)">
+    </app-ai-card-renderer>
+  </div>
+
+  <!-- No Card State -->
+  <div *ngIf="!isGenerating && isInitialized && !generatedCard" class="flex flex-col items-center justify-center space-y-4 text-center py-20">
+    <div class="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center">
+      <div class="code-icon w-8 h-8"></div>
+    </div>
+    <div>
+      <p class="text-lg font-medium text-foreground mb-2">No Card Preview</p>
+      <p class="text-sm text-muted-foreground leading-relaxed max-w-md">
+        Enter a valid JSON configuration or select a template to see your card preview here.
+      </p>
+    </div>
+    <div class="flex flex-col gap-2 text-xs text-muted-foreground">
+      <div class="flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+        <span>Valid JSON will auto-generate cards</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+        <span>Interactive effects respond to mouse</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-purple-500"></div>
+        <span>Export cards as high-quality PNG</span>
+      </div>
+    </div>
+  </div>
+</div>

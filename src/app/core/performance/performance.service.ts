@@ -84,15 +84,47 @@ export class PerformanceService {
     return result;
   }
 
-  // Method to track memory usage
-  logMemoryUsage(): void {
-    if (typeof window !== 'undefined' && 'performance' in window && 'memory' in performance) {
-      const memory = (performance as { memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
-      console.log('Memory Usage:', {
-        used: Math.round(memory.usedJSHeapSize / 1048576 * 100) / 100 + ' MB',
-        total: Math.round(memory.totalJSHeapSize / 1048576 * 100) / 100 + ' MB',
-        limit: Math.round(memory.jsHeapSizeLimit / 1048576 * 100) / 100 + ' MB'
+  // Method to track custom metrics
+  trackMetric(metricName: string, data: any): void {
+    console.log(`Performance Metric - ${metricName}:`, data);
+    
+    // Store metric for analysis
+    if (typeof window !== 'undefined' && 'localStorage' in window) {
+      const metrics = JSON.parse(localStorage.getItem('performance_metrics') || '[]');
+      metrics.push({
+        name: metricName,
+        data,
+        timestamp: Date.now()
       });
+      
+      // Keep only last 100 metrics
+      if (metrics.length > 100) {
+        metrics.shift();
+      }
+      
+      localStorage.setItem('performance_metrics', JSON.stringify(metrics));
+    }
+  }
+
+  // Method to track user interactions
+  trackUserInteraction(interactionType: string, data: any): void {
+    console.log(`User Interaction - ${interactionType}:`, data);
+    
+    // Store interaction for analysis
+    if (typeof window !== 'undefined' && 'localStorage' in window) {
+      const interactions = JSON.parse(localStorage.getItem('user_interactions') || '[]');
+      interactions.push({
+        type: interactionType,
+        data,
+        timestamp: Date.now()
+      });
+      
+      // Keep only last 100 interactions
+      if (interactions.length > 100) {
+        interactions.shift();
+      }
+      
+      localStorage.setItem('user_interactions', JSON.stringify(interactions));
     }
   }
 }

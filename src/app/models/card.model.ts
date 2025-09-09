@@ -19,6 +19,8 @@ export interface AICardConfig {
   actions?: CardAction[];
   /** Additional metadata for extensibility */
   meta?: Record<string, unknown>;
+  /** Timestamp when the card was processed */
+  processedAt?: number;
   /** Metadata specific to example cards */
   metadata?: {
     category: string;
@@ -131,7 +133,7 @@ export interface CardField {
   /** Field value (can be various types) */
   value: string | number | boolean | null;
   /** Field type for specialized rendering */
-  type?: 'text' | 'number' | 'email' | 'url' | 'phone' | 'date' | 'currency' | 'percentage' | 'status' | 'rating' | 'progress' | 'tag' | 'avatar' | 'badge';
+  type?: 'text' | 'number' | 'email' | 'url' | 'phone' | 'date' | 'currency' | 'percentage' | 'status' | 'rating' | 'progress' | 'tag' | 'avatar' | 'badge' | 'image';
   /** Optional icon for the field */
   icon?: string;
   /** Color for the value display */

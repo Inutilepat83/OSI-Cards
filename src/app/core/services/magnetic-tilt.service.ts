@@ -35,8 +35,6 @@ export class MagneticTiltService {
 
   tiltCalculations$ = this.tiltCalculationsSubject.asObservable();
 
-  constructor() {}
-
   calculateTilt(mousePosition: MousePosition, element: HTMLElement | null): void {
     if (!element) {
       this.resetTilt();

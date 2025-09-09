@@ -92,7 +92,230 @@ interface MousePosition {
       </div>
     </div>
   `,
-  styleUrls: ['./ai-card-renderer.component.css'],
+  styles: [`
+    .card-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      perspective: 1000px;
+      transition: transform 0.3s ease;
+    }
+    
+    .card-wrapper {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      transform-style: preserve-3d;
+    }
+    
+    .card-wrapper.fullscreen {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      z-index: 1000;
+      width: auto;
+      height: auto;
+    }
+    
+    .card-header {
+      padding: 20px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    
+    .title-section h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1f2937;
+    }
+    
+    .card-subtitle {
+      margin: 4px 0 0 0;
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+    
+    .card-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .action-btn {
+      background: none;
+      border: none;
+      padding: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #6b7280;
+      transition: all 0.2s ease;
+    }
+    
+    .action-btn:hover {
+      background: #f3f4f6;
+      color: #374151;
+    }
+    
+    .card-content {
+      padding: 20px;
+    }
+    
+    .card-section {
+      margin-bottom: 24px;
+    }
+    
+    .section-title {
+      margin: 0 0 16px 0;
+      font-size: 1.125rem;
+      font-weight: 500;
+      color: #374151;
+    }
+    
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    
+    .info-field {
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .info-field:hover {
+      background: #f3f4f6;
+      transform: translateY(-1px);
+    }
+    
+    .field-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    
+    .field-value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1f2937;
+    }
+    
+    .list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .list-item {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+      gap: 12px;
+    }
+    
+    .item-icon {
+      color: #6b7280;
+      font-size: 1.125rem;
+    }
+    
+    .item-content {
+      flex: 1;
+    }
+    
+    .item-title {
+      font-weight: 500;
+      color: #1f2937;
+      margin-bottom: 2px;
+    }
+    
+    .item-description {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+    
+    .item-value {
+      font-weight: 600;
+      color: #1f2937;
+    }
+    
+    .chart-container, .map-container {
+      padding: 40px;
+      text-align: center;
+      background: #f9fafb;
+      border-radius: 8px;
+      color: #6b7280;
+    }
+    
+    .section-placeholder {
+      padding: 20px;
+      text-align: center;
+      background: #f9fafb;
+      border-radius: 8px;
+      color: #6b7280;
+    }
+    
+    .card-footer {
+      padding: 20px;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+    
+    .card-action-btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+    
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+    
+    .btn-secondary {
+      background: white;
+      color: #374151;
+      border-color: #d1d5db;
+    }
+    
+    .btn-secondary:hover {
+      background: #f9fafb;
+    }
+    
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+    
+    .action-icon {
+      margin-right: 6px;
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule]

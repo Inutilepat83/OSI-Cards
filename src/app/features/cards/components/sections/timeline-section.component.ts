@@ -1,8 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { CardSection, TimelineEvent } from '../../../../models/card.model';
 
 @Component({
   selector: 'app-timeline-section',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './timeline-section.component.html',
   styleUrls: ['./timeline-section.component.css']
 })

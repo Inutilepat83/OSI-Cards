@@ -1,0 +1,281 @@
+{
+  "id": "enhanced-company-card",
+  "cardTitle": "TechCorp Solutions",
+  "cardSubtitle": "AI-Powered Software Company",
+  "cardType": "company",
+  "sections": [
+    {
+      "id": "overview",
+      "title": "Company Overview",
+      "description": "Key information about TechCorp Solutions",
+      "type": "info",
+      "fields": [
+        {
+          "id": "industry",
+          "label": "Industry",
+          "value": "Technology",
+          "type": "text",
+          "icon": "fas fa-industry"
+        },
+        {
+          "id": "founded",
+          "label": "Founded",
+          "value": "2018-03-15",
+          "type": "date",
+          "icon": "fas fa-calendar"
+        },
+        {
+          "id": "employees",
+          "label": "Employees",
+          "value": 250,
+          "type": "number",
+          "icon": "fas fa-users"
+        },
+        {
+          "id": "website",
+          "label": "Website",
+          "value": "https://techcorp.example.com",
+          "type": "url",
+          "icon": "fas fa-globe",
+          "clickable": true
+        },
+        {
+          "id": "email",
+          "label": "Contact Email",
+          "value": "info@techcorp.example.com",
+          "type": "email",
+          "icon": "fas fa-envelope",
+          "clickable": true
+        },
+        {
+          "id": "rating",
+          "label": "Company Rating",
+          "value": "4.5",
+          "type": "rating",
+          "rating": 4.5,
+          "maxRating": 5,
+          "icon": "fas fa-star"
+        },
+        {
+          "id": "growth",
+          "label": "Revenue Growth",
+          "value": "25%",
+          "type": "percentage",
+          "trend": "up",
+          "change": 25,
+          "valueColor": "#10b981",
+          "icon": "fas fa-chart-line"
+        }
+      ]
+    },
+    {
+      "id": "metrics",
+      "title": "Key Metrics",
+      "description": "Performance indicators and financial metrics",
+      "type": "metrics",
+      "metrics": [
+        {
+          "id": "revenue",
+          "label": "Annual Revenue",
+          "value": 15000000,
+          "format": "currency",
+          "trend": "up",
+          "change": 20,
+          "changeLabel": "vs last year",
+          "icon": "fas fa-dollar-sign",
+          "color": "#10b981"
+        },
+        {
+          "id": "customers",
+          "label": "Active Customers",
+          "value": 1250,
+          "format": "number",
+          "trend": "up",
+          "change": 150,
+          "changeLabel": "this quarter",
+          "icon": "fas fa-users",
+          "color": "#3b82f6"
+        },
+        {
+          "id": "satisfaction",
+          "label": "Customer Satisfaction",
+          "value": 94,
+          "format": "percentage",
+          "trend": "up",
+          "change": 3,
+          "changeLabel": "improvement",
+          "icon": "fas fa-smile",
+          "color": "#f59e0b"
+        },
+        {
+          "id": "retention",
+          "label": "Customer Retention",
+          "value": 89,
+          "format": "percentage",
+          "trend": "neutral",
+          "change": 0,
+          "icon": "fas fa-sync",
+          "color": "#6b7280"
+        }
+      ]
+    },
+    {
+      "id": "timeline",
+      "title": "Company Milestones",
+      "description": "Important events in TechCorp's history",
+      "type": "timeline",
+      "timelineEvents": [
+        {
+          "id": "founding",
+          "date": "2018-03-15",
+          "title": "Company Founded",
+          "description": "TechCorp Solutions was founded by John Doe and Jane Smith",
+          "status": "completed",
+          "icon": "fas fa-rocket"
+        },
+        {
+          "id": "series-a",
+          "date": "2019-08-22",
+          "title": "Series A Funding",
+          "description": "Raised $5M in Series A funding from leading VCs",
+          "status": "completed",
+          "icon": "fas fa-money-bill-wave"
+        },
+        {
+          "id": "product-launch",
+          "date": "2020-11-10",
+          "title": "Product Launch",
+          "description": "Launched our flagship AI platform",
+          "status": "completed",
+          "icon": "fas fa-product-hunt"
+        },
+        {
+          "id": "expansion",
+          "date": "2022-06-01",
+          "title": "International Expansion",
+          "description": "Opened offices in Europe and Asia",
+          "status": "completed",
+          "icon": "fas fa-globe-americas"
+        },
+        {
+          "id": "ipo-prep",
+          "date": "2024-12-31",
+          "title": "IPO Preparation",
+          "description": "Preparing for public offering",
+          "status": "current",
+          "icon": "fas fa-chart-bar"
+        },
+        {
+          "id": "ipo",
+          "date": "2025-06-15",
+          "title": "Planned IPO",
+          "description": "Expected public offering date",
+          "status": "upcoming",
+          "icon": "fas fa-building"
+        }
+      ]
+    },
+    {
+      "id": "team-table",
+      "title": "Leadership Team",
+      "description": "Key executives and department heads",
+      "type": "table",
+      "tableColumns": [
+        {
+          "key": "name",
+          "header": "Name",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "position",
+          "header": "Position",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "department",
+          "header": "Department",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "experience",
+          "header": "Experience",
+          "type": "number",
+          "sortable": true,
+          "align": "center"
+        },
+        {
+          "key": "status",
+          "header": "Status",
+          "type": "status",
+          "sortable": false,
+          "align": "center"
+        }
+      ],
+      "tableRows": [
+        {
+          "id": "ceo",
+          "name": "John Doe",
+          "position": "Chief Executive Officer",
+          "department": "Executive",
+          "experience": 15,
+          "status": "active"
+        },
+        {
+          "id": "cto",
+          "name": "Jane Smith",
+          "position": "Chief Technology Officer",
+          "department": "Technology",
+          "experience": 12,
+          "status": "active"
+        },
+        {
+          "id": "cfo",
+          "name": "Mike Johnson",
+          "position": "Chief Financial Officer",
+          "department": "Finance",
+          "experience": 10,
+          "status": "active"
+        },
+        {
+          "id": "cmo",
+          "name": "Sarah Wilson",
+          "position": "Chief Marketing Officer",
+          "department": "Marketing",
+          "experience": 8,
+          "status": "active"
+        },
+        {
+          "id": "vp-sales",
+          "name": "Tom Brown",
+          "position": "VP of Sales",
+          "department": "Sales",
+          "experience": 7,
+          "status": "active"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "contact",
+      "label": "Contact Company",
+      "icon": "fas fa-envelope",
+      "variant": "primary"
+    },
+    {
+      "id": "visit-website",
+      "label": "Visit Website",
+      "icon": "fas fa-external-link-alt",
+      "variant": "secondary"
+    },
+    {
+      "id": "schedule-meeting",
+      "label": "Schedule Meeting",
+      "icon": "fas fa-calendar-plus",
+      "variant": "outline"
+    }
+  ]
+}

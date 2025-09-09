@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, OnDestroy, ElementRef, NgZone, ChangeDetectionStrategy, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { fromEvent, Subject, takeUntil } from 'rxjs';
 
 interface Particle {
@@ -14,6 +15,8 @@ interface Particle {
 
 @Component({
   selector: 'app-particle-system',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './particle-system.component.html',
   styleUrls: ['./particle-system.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -35,8 +38,6 @@ export class ParticleSystemComponent implements OnInit, OnDestroy {
   private elementRef = inject(ElementRef);
   private ngZone = inject(NgZone);
   
-  constructor() {}
-
   ngOnInit(): void {
     this.canvas = this.elementRef.nativeElement.querySelector('canvas');
     this.ctx = this.canvas.getContext('2d')!;

@@ -1,11 +1,16 @@
 import { Component, ElementRef, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
+import { CardInteractionEvent } from './virtual-card-list/virtual-card-list.component';
+import { CommonModule } from '@angular/common';
 import { AICardConfig, CardField, CardItem, CardAction } from '../../models';
 import { Subject, takeUntil, fromEvent } from 'rxjs';
 import { MouseTrackingService, MagneticTiltService } from '../../core';
 import { IconService } from '../services/icon.service';
+import { TiltWrapperComponent } from './tilt-wrapper/tilt-wrapper.component';
 
 @Component({
   selector: 'app-ai-card-renderer',
+  standalone: true,
+  imports: [CommonModule, TiltWrapperComponent],
   templateUrl: './ai-card-renderer.component.html',
   styleUrls: ['./ai-card-renderer.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -14,8 +19,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   @Input() cardConfig!: AICardConfig;
   @Input() isFullscreen = false;
   @Input() tiltEnabled = true;
-  @Output() fieldInteraction = new EventEmitter<any>();
-  @Output() cardInteraction = new EventEmitter<{ action: string, card: AICardConfig }>();
+  @Output() fieldInteraction = new EventEmitter<CardInteractionEvent>();
+  @Output() cardInteraction = new EventEmitter<CardInteractionEvent>();
   @Output() fullscreenToggle = new EventEmitter<boolean>();
   
   @ViewChild('cardContainer') cardContainer!: ElementRef<HTMLElement>;
@@ -68,14 +73,16 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   onFieldClick(field: CardField): void {
     this.fieldInteraction.emit({
       field: field,
-      action: 'click'
+      action: 'click',
+      renderer: this
     });
   }
 
   onActionClick(action: string): void {
     this.cardInteraction.emit({
       action: action,
-      card: this.cardConfig
+      card: this.cardConfig,
+      renderer: this
     });
   }
 

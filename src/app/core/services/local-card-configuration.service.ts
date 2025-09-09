@@ -49,8 +49,6 @@ export class LocalCardConfigurationService {
     }
   };
 
-  constructor() { }
-
   getAllExampleCards(): Observable<AICardConfig[]> {
     // Get all example cards from the new categorized structure
     const allCardFiles: string[] = [];
@@ -172,8 +170,9 @@ export class LocalCardConfigurationService {
     };
   }
 
-  saveCardConfiguration(_config: AICardConfig): Observable<boolean> {
-    // Save logic would go here
+  saveCardConfiguration(config: AICardConfig): Observable<boolean> {
+    // Save logic would go here - config would be saved to local storage or sent to server
+    console.log('Saving card configuration:', config);
     return of(true);
   }
 }

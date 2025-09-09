@@ -1,0 +1,23 @@
+/* Card Preview Component Styles */
+/* Inherits global styles from parent component */
+
+/* Animation for loading spinner */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Badge styles */
+.badge {
+  background-color: rgba(255, 121, 0, 0.2);
+  color: var(--primary);
+  border: 1px solid rgba(255, 121, 0, 0.3);
+  margin-left: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+}

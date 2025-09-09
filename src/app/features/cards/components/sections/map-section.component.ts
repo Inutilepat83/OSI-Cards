@@ -1,4 +1,5 @@
 import { Component, Input, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { CardSection } from '../../../../models/card.model';
 import * as L from 'leaflet';
 
@@ -10,6 +11,8 @@ interface MapMarker {
 
 @Component({
   selector: 'app-map-section',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './map-section.component.html',
   styleUrls: ['./map-section.component.css']
 })

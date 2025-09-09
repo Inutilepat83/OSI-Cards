@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
 import { AICardConfig, CardSection, CardField, CardAction } from '../../../../models';
@@ -7,15 +8,25 @@ import * as CardActions from '../../../../store/cards/cards.actions';
 import * as CardSelectors from '../../../../store/cards/cards.selectors';
 import { AppState } from '../../../../store/app.state';
 
+// Import standalone components
+import { CardControlsComponent } from '../ui/card-controls/card-controls.component';
+import { CardPreviewComponent } from '../ui/card-preview/card-preview.component';
+import { JsonEditorComponent } from '../ui/json-editor/json-editor.component';
+
 @Component({
   selector: 'app-home-page',
+  standalone: true,
+  imports: [
+    CommonModule,
+    CardControlsComponent,
+    CardPreviewComponent,
+    JsonEditorComponent
+  ],
   templateUrl: './home-page.component.html',
   styleUrls: ['./home-page.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomePageComponent implements OnInit, OnDestroy {
-  @ViewChild('textareaRef', { static: false }) textareaRef!: ElementRef<HTMLTextAreaElement>;
-
   private destroy$ = new Subject<void>();
 
   // Component properties
@@ -42,8 +53,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-  // Subscribe to store selectors
-
     // Subscribe to store selectors
     this.store.select(CardSelectors.selectCurrentCard)
       .pipe(takeUntil(this.destroy$))
@@ -52,29 +61,28 @@ export class HomePageComponent implements OnInit, OnDestroy {
         this.cd.markForCheck();
       });
 
-  // Removed selectIsGenerating; using selectLoading instead
-
-  this.store.select(CardSelectors.selectIsFullscreen)
+    this.store.select(CardSelectors.selectIsFullscreen)
       .pipe(takeUntil(this.destroy$))
       .subscribe(isFullscreen => {
         this.isFullscreen = isFullscreen;
-    this.cd.markForCheck();
+        this.cd.markForCheck();
       });
 
-  this.store.select(CardSelectors.selectJsonInput)
+    this.store.select(CardSelectors.selectJsonInput)
       .pipe(takeUntil(this.destroy$))
       .subscribe(jsonInput => {
         this.jsonInput = jsonInput;
-    this.cd.markForCheck();
+        this.cd.markForCheck();
       });
 
-  this.store.select(CardSelectors.selectError)
+    this.store.select(CardSelectors.selectError)
       .pipe(takeUntil(this.destroy$))
       .subscribe(error => {
         this.jsonError = error || '';
         this.isJsonValid = !error;
-    this.cd.markForCheck();
+        this.cd.markForCheck();
       });
+
     // Subscribe to template loading to control spinner
     this.store.select(CardSelectors.selectLoading)
       .pipe(takeUntil(this.destroy$))
@@ -82,8 +90,9 @@ export class HomePageComponent implements OnInit, OnDestroy {
         this.isGenerating = loading;
         this.cd.markForCheck();
       });
-  // Initialize system and load initial company card
-  this.initializeSystem();
+
+    // Initialize system and load initial company card
+    this.initializeSystem();
   }
 
   ngOnDestroy(): void {
@@ -99,7 +108,20 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.store.dispatch(CardActions.loadTemplate({ cardType: this.cardType, variant: this.cardVariant }));
   }
 
-  switchCardType(type: 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'project' | 'event'): void {
+  onCardTypeChange(type: 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'project' | 'event'): void {
+    this.switchCardType(type);
+  }
+
+  onCardVariantChange(variant: number): void {
+    this.switchCardVariant(variant);
+  }
+
+  onJsonInputChange(jsonInput: string): void {
+    this.jsonInput = jsonInput;
+    this.onJsonInputChangeInternal();
+  }
+
+  private switchCardType(type: 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'project' | 'event'): void {
     if (this.switchingType) return;
     this.switchingType = true;
     this.cardType = type;
@@ -110,14 +132,14 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.switchingType = false;
   }
 
-  switchCardVariant(variant: number): void {
+  private switchCardVariant(variant: number): void {
     if (variant < 1 || variant > 3) return; // Ensure variant is within valid range
     this.cardVariant = variant as 1 | 2 | 3;
     this.store.dispatch(CardActions.setCardVariant({ variant }));
     this.switchCardType(this.cardType);
   }
 
-  onJsonInputChange(): void {
+  private onJsonInputChangeInternal(): void {
     if (!this.isInitialized) return;
 
     try {
