@@ -80,7 +80,7 @@ jobs:
     name: Unit & Integration Tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: [code_quality]
+  needs: [code_quality]
 
     strategy:
       matrix:
@@ -101,17 +101,15 @@ jobs:
 
       - name: Run Tests
         run: |
-          case "$MATRIX_TEST_SUITE" in
-            "unit")
-              npm run test:unit -- --watch=false --code-coverage
-              ;;
-            "integration")
-              npm run test:integration -- --watch=false
-              ;;
-            "performance")
-              npm run test:performance -- --watch=false
-              ;;
-          esac
+          # Assign matrix value to local variable to satisfy shellcheck
+          TEST_SUITE='${{ matrix.test_suite }}'
+          if [ "$TEST_SUITE" = "unit" ]; then
+            npm run test:unit -- --watch=false --code-coverage
+          elif [ "$TEST_SUITE" = "integration" ]; then
+            npm run test:integration -- --watch=false
+          elif [ "$TEST_SUITE" = "performance" ]; then
+            npm run test:performance -- --watch=false
+          fi
 
       - name: Upload Coverage Reports
         if: ${{ matrix.test_suite == 'unit' }}
@@ -136,7 +134,7 @@ jobs:
     name: End-to-End Tests
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    needs: [code_quality]
+  needs: [code_quality]
 
     strategy:
       matrix:
@@ -184,7 +182,7 @@ jobs:
     name: Build & Bundle Analysis
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: [test_unit, test_e2e]
+  needs: [test_unit, test_e2e]
 
     strategy:
       matrix:
@@ -205,17 +203,14 @@ jobs:
 
       - name: Build Application
         run: |
-          case "$MATRIX_BUILD_CONFIG" in
-            "development")
-              npm run build
-              ;;
-            "production")
-              npm run build:prod
-              ;;
-            "analyze")
-              npm run build:analyze
-              ;;
-          esac
+          BUILD_CFG='${{ matrix.build_config }}'
+          if [ "$BUILD_CFG" = "development" ]; then
+            npm run build
+          elif [ "$BUILD_CFG" = "production" ]; then
+            npm run build:prod
+          elif [ "$BUILD_CFG" = "analyze" ]; then
+            npm run build:analyze
+          fi
 
       - name: Bundle Size Analysis
         if: ${{ matrix.build_config == 'analyze' }}
@@ -250,6 +245,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: [code_quality]
+    env:
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
     steps:
       - name: Checkout Repository
@@ -272,12 +269,12 @@ jobs:
           format: ALL
 
       - name: Snyk Security Scan
-        if: ${{ secrets.SNYK_TOKEN != '' }}
+        if: ${{ env.SNYK_TOKEN != '' }}
         run: |
           npm install -g snyk
           snyk test --severity-threshold=medium
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          SNYK_TOKEN: ${{ env.SNYK_TOKEN }}
 
       - name: CodeQL Init
         uses: github/codeql-action/init@v2
@@ -303,7 +300,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     needs: [build_analyze]
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+  if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    env:
+      CR: ${{ secrets.CONTAINER_REGISTRY }}
+      CR_USER: ${{ secrets.CONTAINER_USERNAME }}
+      CR_PASS: ${{ secrets.CONTAINER_PASSWORD }}
 
     steps:
       - name: Checkout Repository
@@ -313,19 +314,19 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Login to Container Registry
-        if: ${{ secrets.CONTAINER_REGISTRY && secrets.CONTAINER_USERNAME && secrets.CONTAINER_PASSWORD }}
+        if: ${{ env.CR && env.CR_USER && env.CR_PASS }}
         uses: docker/login-action@v3
         with:
-          registry: ${{ secrets.CONTAINER_REGISTRY }}
-          username: ${{ secrets.CONTAINER_USERNAME }}
-          password: ${{ secrets.CONTAINER_PASSWORD }}
+          registry: ${{ env.CR }}
+          username: ${{ env.CR_USER }}
+          password: ${{ env.CR_PASS }}
 
       - name: Extract Metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ secrets.CONTAINER_REGISTRY && format('{0}/osi-cards', secrets.CONTAINER_REGISTRY) || 'example.com/placeholder/osi-cards' }}
+            ${{ env.CR && format('{0}/osi-cards', env.CR) || 'example.com/placeholder/osi-cards' }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -333,7 +334,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and Push Container
-        if: ${{ secrets.CONTAINER_REGISTRY }}
+        if: ${{ env.CR }}
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -345,7 +346,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Container Security Scan
-        if: ${{ secrets.CONTAINER_REGISTRY != '' }}
+        if: ${{ env.CR != '' }}
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ steps.meta.outputs.tags }}
@@ -364,10 +365,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: [security_scan, container_build]
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
+  if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
     environment:
       name: staging
       url: https://staging.osi-cards.com
+    env:
+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
     steps:
       - uses: actions/checkout@v4
@@ -389,12 +392,13 @@ jobs:
         run: npm run test:smoke -- --env=staging
 
       - name: Notify Deployment Status
-        if: ${{ always() && secrets.SLACK_WEBHOOK }}
+        if: ${{ always() && env.SLACK_WEBHOOK != '' }}
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
           channel: '#deployments'
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
   # Deployment Production
   deploy_production:
@@ -402,10 +406,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: [security_scan, container_build]
-    if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+  if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
     environment:
       name: production
       url: https://osi-cards.com
+    env:
+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
     steps:
       - uses: actions/checkout@v4
@@ -430,13 +436,14 @@ jobs:
         run: echo "Updating monitoring dashboards..."
 
       - name: Notify Deployment Success
-        if: ${{ success() && secrets.SLACK_WEBHOOK }}
+        if: ${{ success() && env.SLACK_WEBHOOK != '' }}
         uses: 8398a7/action-slack@v3
         with:
           status: success
           channel: '#deployments'
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
           text: "🚀 OSI Cards successfully deployed to production!"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
   # Performance Monitoring
   performance_monitoring:
@@ -444,7 +451,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: [deploy_staging, deploy_production]
-    if: ${{ always() && (needs.deploy_staging.result == 'success' || needs.deploy_production.result == 'success') || github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+  if: ${{ always() && (needs.deploy_staging.result == 'success' || needs.deploy_production.result == 'success') || github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+
+    env:
+      DEPLOY_PROD_RESULT: ${{ needs.deploy_production.result }}
+      DEPLOY_STAGING_RESULT: ${{ needs.deploy_staging.result }}
 
     steps:
       - uses: actions/checkout@v4
@@ -457,14 +468,15 @@ jobs:
 
       - name: Run Performance Tests
         run: |
-          if [[ "${{ needs.deploy_production.result }}" == "success" ]] 2>/dev/null; then
-            npm run test:performance -- --env=production
-          elif [[ "${{ needs.deploy_staging.result }}" == "success" ]] 2>/dev/null; then
-            npm run test:performance -- --env=staging
-          else
-            echo "Running performance tests on main branch (no deployment)"
-            npm run test:performance -- --env=development
-          fi
+          # Use env values to avoid shellcheck constant expression warnings
+            if [ "${DEPLOY_PROD_RESULT}" = "success" ]; then
+              npm run test:performance -- --env=production
+            elif [ "${DEPLOY_STAGING_RESULT}" = "success" ]; then
+              npm run test:performance -- --env=staging
+            else
+              echo "Running performance tests on main branch (no deployment)"
+              npm run test:performance -- --env=development
+            fi
 
       - run: npm run performance:report
 
@@ -480,7 +492,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     needs: [deploy_staging, deploy_production, performance_monitoring]
-    if: always()
+  if: always()
 
     steps:
       - run: echo "Cleaning up temporary resources..."
