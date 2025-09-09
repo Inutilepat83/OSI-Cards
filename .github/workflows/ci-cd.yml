@@ -15,26 +15,26 @@ env:
   NODE_VERSION: '20.x'
   ANGULAR_CLI_VERSION: '17.x'
   CACHE_KEY_PREFIX: 'osi-cards-v1'
-  
+
 jobs:
   # Quality Gates - Run First
   code_quality:
     name: Code Quality & Security
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Full history for SonarCloud
-          
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          
+
       - name: Cache Node Modules
         uses: actions/cache@v3
         with:
@@ -42,25 +42,25 @@ jobs:
           key: ${{ env.CACHE_KEY_PREFIX }}-npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ env.CACHE_KEY_PREFIX }}-npm-
-            
+
       - name: Install Dependencies
         run: npm ci --prefer-offline
-        
+
       - name: Lint TypeScript
         run: npm run lint
-        
+
       - name: Lint Styles
         run: npm run lint:styles
-        
+
       - name: Check Formatting
         run: npm run format:check
-        
+
       - name: Security Audit
         run: npm audit --audit-level=moderate
-        
+
       - name: License Check
         run: npm run license:check
-        
+
       - name: SonarCloud Scan
         if: ${{ secrets.SONAR_TOKEN != '' }}
         uses: SonarSource/sonarcloud-github-action@v1
@@ -72,26 +72,26 @@ jobs:
   test_unit:
     name: Unit & Integration Tests
     runs-on: ubuntu-latest
-  timeout-minutes: 20
-  needs: [code_quality]
-    
+    timeout-minutes: 20
+    needs: [code_quality]
+
     strategy:
       matrix:
         test_suite: [unit, integration, performance]
-        
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          
+
       - name: Install Dependencies
         run: npm ci --prefer-offline
-        
+
       - name: Run Tests - ${{ matrix.test_suite }}
         run: |
           case "${{ matrix.test_suite }}" in
@@ -105,7 +105,7 @@ jobs:
               npm run test:performance -- --watch=false
               ;;
           esac
-          
+
       - name: Upload Coverage Reports
         if: ${{ matrix.test_suite == 'unit' }}
         uses: codecov/codecov-action@v3
@@ -113,7 +113,7 @@ jobs:
           files: ./coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
-          
+
       - name: Store Test Results
         uses: actions/upload-artifact@v3
         if: always()
@@ -128,40 +128,40 @@ jobs:
   test_e2e:
     name: End-to-End Tests
     runs-on: ubuntu-latest
-  timeout-minutes: 30
-  needs: [code_quality]
-    
+    timeout-minutes: 30
+    needs: [code_quality]
+
     strategy:
       matrix:
         browser: [chrome, firefox, edge]
-        
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          
+
       - name: Install Dependencies
         run: npm ci --prefer-offline
-        
+
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps ${{ matrix.browser }}
-        
+
       - name: Build Application
         run: npm run build:prod
-        
+
       - name: Start Application Server
         run: |
           npm run serve:prod &
           sleep 10
-          
+
       - name: Run E2E Tests - ${{ matrix.browser }}
         run: npm run test:e2e -- --project=${{ matrix.browser }}
-        
+
       - name: Upload E2E Results
         uses: actions/upload-artifact@v3
         if: always()
@@ -176,26 +176,26 @@ jobs:
   build_analyze:
     name: Build & Bundle Analysis
     runs-on: ubuntu-latest
-  timeout-minutes: 20
-  needs: [test_unit, test_e2e]
-    
+    timeout-minutes: 20
+    needs: [test_unit, test_e2e]
+
     strategy:
       matrix:
         build_config: [development, production, analyze]
-        
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          
+
       - name: Install Dependencies
         run: npm ci --prefer-offline
-      
+
       - name: Build Application - ${{ matrix.build_config }}
         run: |
           case "${{ matrix.build_config }}" in
@@ -209,13 +209,13 @@ jobs:
               npm run build:analyze
               ;;
           esac
-          
+
       - name: Bundle Size Analysis
         if: ${{ matrix.build_config == 'analyze' }}
         run: |
           npm run bundle:analyze
           npm run bundle:report
-          
+
       - name: Lighthouse Performance Audit
         if: ${{ matrix.build_config == 'production' }}
         uses: treosh/lighthouse-ci-action@v10
@@ -223,11 +223,11 @@ jobs:
           configPath: './.lighthouserc.js'
           uploadArtifacts: true
           temporaryPublicStorage: true
-          
+
       - name: PWA Validation
         if: ${{ matrix.build_config == 'production' }}
         run: npm run pwa:validate
-        
+
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -241,44 +241,44 @@ jobs:
   security_scan:
     name: Security & Dependency Scanning
     runs-on: ubuntu-latest
-  timeout-minutes: 15
-  needs: [code_quality]
-    
+    timeout-minutes: 15
+    needs: [code_quality]
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          
+
       - name: Install Dependencies
         run: npm ci --prefer-offline
-        
+
       - name: OWASP Dependency Check
         uses: dependency-check/Dependency-Check_Action@main
         with:
           project: 'OSI-Cards'
           path: '.'
           format: 'ALL'
-          
+
       - name: Snyk Security Scan
         uses: snyk/actions/node@v1
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           args: --severity-threshold=medium
-          
+
       - name: CodeQL Analysis
         uses: github/codeql-action/init@v2
         with:
           languages: javascript, typescript
-          
+
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
-        
+
       - name: Upload Security Reports
         uses: actions/upload-artifact@v3
         if: always()
@@ -293,17 +293,17 @@ jobs:
   container_build:
     name: Container Build & Security Scan
     runs-on: ubuntu-latest
-  timeout-minutes: 25
-  needs: [build_analyze]
-  if: "${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}"
-    
+    timeout-minutes: 25
+    needs: [build_analyze]
+    if: "${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}"
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        
+
       - name: Login to Container Registry
         if: ${{ secrets.CONTAINER_REGISTRY != '' && secrets.CONTAINER_USERNAME != '' && secrets.CONTAINER_PASSWORD != '' }}
         uses: docker/login-action@v3
@@ -311,7 +311,7 @@ jobs:
           registry: ${{ secrets.CONTAINER_REGISTRY }}
           username: ${{ secrets.CONTAINER_USERNAME }}
           password: ${{ secrets.CONTAINER_PASSWORD }}
-          
+
       - name: Extract Metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -322,7 +322,7 @@ jobs:
             type=ref,event=pr
             type=sha,prefix={{branch}}-
             type=raw,value=latest,enable={{is_default_branch}}
-            
+
       - name: Build and Push Container
         if: ${{ secrets.CONTAINER_REGISTRY != '' }}
         uses: docker/build-push-action@v5
@@ -334,7 +334,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          
+
       - name: Container Security Scan
         if: ${{ secrets.CONTAINER_REGISTRY != '' }}
         uses: aquasecurity/trivy-action@v0.14.1
@@ -342,7 +342,7 @@ jobs:
           image-ref: ${{ steps.meta.outputs.tags }}
           format: 'sarif'
           output: 'trivy-results.sarif'
-          
+
       - name: Upload Trivy Scan Results
         uses: github/codeql-action/upload-sarif@v2
         if: always()
@@ -359,33 +359,33 @@ jobs:
     environment:
       name: staging
       url: https://staging.osi-cards.com
-      
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          
+
       - name: Download Build Artifacts
         uses: actions/download-artifact@v3
         with:
           name: build-production
           path: dist/
-          
+
       - name: Deploy to Staging
         run: |
           echo "Deploying to staging environment..."
           # Add your staging deployment commands here
           # e.g., Azure Static Web Apps, Netlify, Vercel, etc.
-          
+
       - name: Run Smoke Tests
         run: |
           echo "Running smoke tests against staging..."
           npm run test:smoke -- --env=staging
-          
+
       - name: Notify Deployment Status
         if: ${{ always() && secrets.SLACK_WEBHOOK != '' }}
         uses: 8398a7/action-slack@v3
@@ -404,37 +404,37 @@ jobs:
     environment:
       name: production
       url: https://osi-cards.com
-      
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          
+
       - name: Download Build Artifacts
         uses: actions/download-artifact@v3
         with:
           name: build-production
           path: dist/
-          
+
       - name: Deploy to Production
         run: |
           echo "Deploying to production environment..."
           # Add your production deployment commands here
-          
+
       - name: Run Health Checks
         run: |
           echo "Running health checks..."
           npm run test:health -- --env=production
-          
+
       - name: Update Monitoring
         run: |
           echo "Updating monitoring dashboards..."
           # Update monitoring configurations
-          
+
       - name: Notify Deployment Success
         if: ${{ success() && secrets.SLACK_WEBHOOK != '' }}
         uses: 8398a7/action-slack@v3
@@ -448,22 +448,22 @@ jobs:
   performance_monitoring:
     name: Performance Monitoring
     runs-on: ubuntu-latest
-  timeout-minutes: 10
-  needs: [deploy_staging, deploy_production]
-  if: "${{ always() && (needs.deploy_staging.result == 'success' || needs.deploy_production.result == 'success') }}"
-    
+    timeout-minutes: 10
+    needs: [deploy_staging, deploy_production]
+    if: "${{ always() && (needs.deploy_staging.result == 'success' || needs.deploy_production.result == 'success') }}"
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          
+
       - name: Install Dependencies
         run: npm ci --prefer-offline
-        
+
       - name: Run Performance Tests
         run: |
           if [[ "${{ needs.deploy_production.result }}" == "success" ]]; then
@@ -471,10 +471,10 @@ jobs:
           else
             npm run test:performance -- --env=staging
           fi
-          
+
       - name: Generate Performance Report
         run: npm run performance:report
-        
+
       - name: Upload Performance Results
         uses: actions/upload-artifact@v3
         with:
@@ -485,14 +485,14 @@ jobs:
   cleanup:
     name: Cleanup
     runs-on: ubuntu-latest
-  timeout-minutes: 5
-  needs: [deploy_staging, deploy_production, performance_monitoring]
-  if: "${{ always() }}"
-    
+    timeout-minutes: 5
+    needs: [deploy_staging, deploy_production, performance_monitoring]
+    if: "${{ always() }}"
+
     steps:
       - name: Clean up artifacts
         run: echo "Cleaning up temporary resources..."
-        
+
       - name: Send Summary Report
         if: always()
         run: |

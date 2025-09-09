@@ -89,7 +89,9 @@ export class MemoryManagementService implements OnDestroy {
     if (this.memoryCache.size >= this.maxCacheSize) {
       // Remove oldest entries
       const firstKey = this.memoryCache.keys().next().value;
-      this.memoryCache.delete(firstKey);
+      if (firstKey !== undefined) {
+        this.memoryCache.delete(firstKey);
+      }
     }
     this.memoryCache.set(key, value);
   }
