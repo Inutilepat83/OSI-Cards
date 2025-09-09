@@ -439,7 +439,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: [deploy_staging, deploy_production]
-    if: ${{ always() && (needs.deploy_staging.result == 'success' || needs.deploy_production.result == 'success') }}
+    if: ${{ always() && (needs.deploy_staging.result == 'success' || needs.deploy_production.result == 'success') || github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -452,10 +452,13 @@ jobs:
 
       - name: Run Performance Tests
         run: |
-          if [[ "${{ needs.deploy_production.result }}" == "success" ]]; then
+          if [[ "${{ needs.deploy_production.result }}" == "success" ]] 2>/dev/null; then
             npm run test:performance -- --env=production
-          else
+          elif [[ "${{ needs.deploy_staging.result }}" == "success" ]] 2>/dev/null; then
             npm run test:performance -- --env=staging
+          else
+            echo "Running performance tests on main branch (no deployment)"
+            npm run test:performance -- --env=development
           fi
 
       - run: npm run performance:report
