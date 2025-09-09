@@ -70,3 +70,23 @@ export const trackPerformance = createAction(
   '[Cards] Track Performance', 
   props<{ action: string; duration: number }>()
 );
+
+// Backwards-compatibility re-exports for older test-suite / legacy action names
+// Tests and some legacy code reference action creators with different names
+// Re-export the current actions under the legacy identifiers to avoid widespread test updates.
+export const createCard = generateCard;
+export const createCardSuccess = generateCardSuccess;
+export const createCardFailure = generateCardFailure;
+
+// Update / upsert actions -> map to generateCard for compatibility
+export const updateCard = generateCard;
+export const updateCardSuccess = generateCardSuccess;
+export const updateCardFailure = generateCardFailure;
+
+export const deleteCard = createAction('[Cards] Delete Card', props<{ id: string }>());
+export const deleteCardSuccess = createAction('[Cards] Delete Card Success', props<{ id: string }>());
+export const deleteCardFailure = createAction('[Cards] Delete Card Failure', props<{ error: string }>());
+
+export const searchCards = createAction('[Cards] Search Cards', props<{ query: string }>());
+export const searchCardsSuccess = createAction('[Cards] Search Cards Success', props<{ query: string; results: AICardConfig[] }>());
+export const searchCardsFailure = createAction('[Cards] Search Cards Failure', props<{ query: string; error: string }>());
