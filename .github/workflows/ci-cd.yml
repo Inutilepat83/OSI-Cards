@@ -80,10 +80,7 @@ jobs:
 
     strategy:
       matrix:
-        test_suite:
-          - unit
-          - integration
-          - performance
+        test_suite: [unit, integration, performance]
 
     steps:
       - name: Checkout Repository
@@ -100,7 +97,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          case "${{ matrix.test_suite }}" in
+          case "$MATRIX_TEST_SUITE" in
             "unit")
               npm run test:unit -- --watch=false --code-coverage
               ;;
@@ -139,10 +136,7 @@ jobs:
 
     strategy:
       matrix:
-        browser:
-          - chrome
-          - firefox
-          - edge
+        browser: [chrome, firefox, edge]
 
     steps:
       - name: Checkout Repository
@@ -190,10 +184,7 @@ jobs:
 
     strategy:
       matrix:
-        build_config:
-          - development
-          - production
-          - analyze
+        build_config: [development, production, analyze]
 
     steps:
       - name: Checkout Repository
@@ -210,7 +201,7 @@ jobs:
 
       - name: Build Application
         run: |
-          case "${{ matrix.build_config }}" in
+          case "$MATRIX_BUILD_CONFIG" in
             "development")
               npm run build
               ;;
@@ -277,12 +268,12 @@ jobs:
           format: ALL
 
       - name: Snyk Security Scan
-        if: ${{ secrets.SNYK_TOKEN }}
-        uses: snyk/actions/node@v1
+        if: ${{ secrets.SNYK_TOKEN != '' }}
+        run: |
+          npm install -g snyk
+          snyk test --severity-threshold=medium
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --severity-threshold=medium
 
       - name: CodeQL Init
         uses: github/codeql-action/init@v2
@@ -349,12 +340,12 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Container Security Scan
-        if: ${{ secrets.CONTAINER_REGISTRY }}
-        uses: aquasecurity/trivy-action@v0.14.1
+        if: ${{ secrets.CONTAINER_REGISTRY != '' }}
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ steps.meta.outputs.tags }}
-          format: sarif
-          output: trivy-results.sarif
+          format: 'sarif'
+          output: 'trivy-results.sarif'
 
       - name: Upload Trivy Scan Results
         if: always()
@@ -461,7 +452,7 @@ jobs:
 
       - name: Run Performance Tests
         run: |
-          if [[ "${{ needs.deploy_production.result }}" == "success" ]]; then
+          if [[ "$DEPLOY_PRODUCTION_RESULT" == "success" ]]; then
             npm run test:performance -- --env=production
           else
             npm run test:performance -- --env=staging
