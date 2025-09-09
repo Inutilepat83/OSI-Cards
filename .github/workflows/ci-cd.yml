@@ -452,7 +452,7 @@ jobs:
 
       - name: Run Performance Tests
         run: |
-          if [[ "$DEPLOY_PRODUCTION_RESULT" == "success" ]]; then
+          if [[ "${{ needs.deploy_production.result }}" == "success" ]]; then
             npm run test:performance -- --env=production
           else
             npm run test:performance -- --env=staging
