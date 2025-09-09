@@ -69,11 +69,11 @@ jobs:
         run: npm run license:check
 
       - name: SonarCloud Scan
-        if: ${{ secrets.SONAR_TOKEN != '' }}
+        if: ${{ env.SONAR_TOKEN != '' }}
         uses: SonarSource/sonarcloud-github-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
 
   # Unit & Integration Tests
   test_unit:
@@ -81,24 +81,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
   needs: [code_quality]
-
     strategy:
       matrix:
         test_suite: [unit, integration, performance]
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-
       - name: Install Dependencies
         run: npm ci --prefer-offline
-
       - name: Run Tests
         run: |
           # Assign matrix value to local variable to satisfy shellcheck
@@ -246,7 +241,8 @@ jobs:
     timeout-minutes: 15
     needs: [code_quality]
     env:
-      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      # SNYK_TOKEN now provided at top-level; duplicated here only for clarity
+      SNYK_TOKEN: ${{ env.SNYK_TOKEN }}
 
     steps:
       - name: Checkout Repository
@@ -302,9 +298,9 @@ jobs:
     needs: [build_analyze]
   if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     env:
-      CR: ${{ secrets.CONTAINER_REGISTRY }}
-      CR_USER: ${{ secrets.CONTAINER_USERNAME }}
-      CR_PASS: ${{ secrets.CONTAINER_PASSWORD }}
+      CR: ${{ env.CONTAINER_REGISTRY }}
+      CR_USER: ${{ env.CONTAINER_USERNAME }}
+      CR_PASS: ${{ env.CONTAINER_PASSWORD }}
 
     steps:
       - name: Checkout Repository
@@ -314,7 +310,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Login to Container Registry
-        if: ${{ env.CR && env.CR_USER && env.CR_PASS }}
+  if: ${{ env.CR && env.CR_USER && env.CR_PASS }}
         uses: docker/login-action@v3
         with:
           registry: ${{ env.CR }}
@@ -334,7 +330,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and Push Container
-        if: ${{ env.CR }}
+  if: ${{ env.CR }}
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -346,7 +342,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Container Security Scan
-        if: ${{ env.CR != '' }}
+  if: ${{ env.CR != '' }}
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ steps.meta.outputs.tags }}
@@ -370,7 +366,7 @@ jobs:
       name: staging
       url: https://staging.osi-cards.com
     env:
-      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
 
     steps:
       - uses: actions/checkout@v4
@@ -398,7 +394,7 @@ jobs:
           status: ${{ job.status }}
           channel: '#deployments'
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_WEBHOOK_URL: ${{ env.SLACK_WEBHOOK }}
 
   # Deployment Production
   deploy_production:
@@ -411,7 +407,7 @@ jobs:
       name: production
       url: https://osi-cards.com
     env:
-      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
 
     steps:
       - uses: actions/checkout@v4
@@ -443,7 +439,7 @@ jobs:
           channel: '#deployments'
           text: "🚀 OSI Cards successfully deployed to production!"
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_WEBHOOK_URL: ${{ env.SLACK_WEBHOOK }}
 
   # Performance Monitoring
   performance_monitoring:
