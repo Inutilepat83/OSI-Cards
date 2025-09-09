@@ -320,7 +320,8 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.CONTAINER_REGISTRY && format('{0}/osi-cards', secrets.CONTAINER_REGISTRY) || 'example.com/placeholder/osi-cards' }}
+          images: |
+            ${{ secrets.CONTAINER_REGISTRY && format('{0}/osi-cards', secrets.CONTAINER_REGISTRY) || 'example.com/placeholder/osi-cards' }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
