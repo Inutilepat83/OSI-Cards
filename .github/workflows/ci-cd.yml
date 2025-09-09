@@ -65,7 +65,7 @@ jobs:
         run: npm run license:check
 
       - name: SonarCloud Scan
-        if: ${{ secrets.SONAR_TOKEN }}
+        if: ${{ secrets.SONAR_TOKEN != '' }}
         uses: SonarSource/sonarcloud-github-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
