@@ -6,7 +6,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { cold, hot } from 'jasmine-marbles';
 
 import { CardsEffects } from '../../store/cards/cards.effects';
-import * as CardsActions from '../../store/cards/cards.actions';
+import * as CardsActions from '../../store/cards/cards.state';
 import { TestDataFactory } from '../testing-utilities';
 
 // Mock HTTP service for cards

@@ -1,0 +1,15 @@
+<div class="cards-container">
+  <!-- Placeholder cards container -->
+  <ng-content></ng-content>
+</div>
+<div class="cards-container">
+  <h1>OSI Cards Examples</h1>
+  <div class="cards-grid">
+    <app-ai-card-renderer
+      *ngFor="let card of cards; trackBy: trackByCardId"
+      [cardConfig]="card"
+      [tiltEnabled]="true"
+      class="card-item">
+    </app-ai-card-renderer>
+  </div>
+</div>

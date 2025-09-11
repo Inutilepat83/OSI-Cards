@@ -3,15 +3,14 @@ import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { Subject, takeUntil } from 'rxjs';
 import { AICardConfig, CardSection, CardField, CardAction } from '../../../../models';
-import { LocalCardConfigurationService } from '../../../../core';
-import * as CardActions from '../../../../store/cards/cards.actions';
+import { CardDataService } from '../../../../core';
+import * as CardActions from '../../../../store/cards/cards.state';
 import * as CardSelectors from '../../../../store/cards/cards.selectors';
 import { AppState } from '../../../../store/app.state';
 
 // Import standalone components
-import { CardControlsComponent } from '../ui/card-controls/card-controls.component';
-import { CardPreviewComponent } from '../ui/card-preview/card-preview.component';
-import { JsonEditorComponent } from '../ui/json-editor/json-editor.component';
+import { CardControlsComponent, CardPreviewComponent } from '../../../../shared/components/cards';
+import { JsonEditorComponent } from '../../../../shared';
 
 @Component({
   selector: 'app-home-page',
@@ -48,7 +47,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store<AppState>,
-    private localCardConfigurationService: LocalCardConfigurationService,
+    private cardDataService: CardDataService,
     private cd: ChangeDetectorRef
   ) {}
 

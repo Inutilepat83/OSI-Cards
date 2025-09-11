@@ -7,7 +7,7 @@ export const routes: Routes = [
   },
   {
     path: 'cards',
-    loadComponent: () => import('./features/cards/components/cards-container/cards-container.component').then(m => m.CardsContainerComponent)
+    loadComponent: () => import('./shared/components/cards/cards-container/cards-container.component').then(m => m.CardsContainerComponent)
   },
   { path: '**', redirectTo: '' }
 ];
