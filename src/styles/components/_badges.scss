@@ -1,0 +1,22 @@
+/* Compact badge helpers shared across cards and layout */
+
+.badge,
+.badge-destructive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  padding: 0.25rem 0.75rem;
+}
+
+.badge {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.badge-destructive {
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
+}

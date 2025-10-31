@@ -1,23 +1,25 @@
-<div class="min-h-screen bg-background">
+<main class="min-h-screen bg-background" role="main" aria-labelledby="osi-hero-heading">
+  <div class="sr-only" [attr.role]="liveStatusRole" [attr.aria-live]="liveStatusTone" aria-atomic="true">
+    {{ statusMessage }}
+  </div>
   <!-- Hero Section -->
   <div class="relative overflow-hidden bg-background px-4 sm:px-6 py-6 sm:py-10">
     <div class="mx-auto max-w-7xl">
       <div class="text-center mb-12 lg:mb-16">
-        <h1 class="text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tight mb-4">
+        <h1 id="osi-hero-heading" class="text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tight mb-4">
           <span class="text-white">Orange </span>
           <span class="text-primary">Sales Intelligence</span>
         </h1>
         <p class="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-12 lg:mb-16 px-4">
-          OSI Cards is a versatile card generator used by sales intelligence agents.
-          It features structured formatting that can design cards for any form of business intelligence data.
+          OSI Cards is a versatile card generator used by sales intelligence agents. It features structured formatting that can design cards for any form of business intelligence data.
         </p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-16 lg:mb-20">
-        <div class="card">
-          <div class="card-content">
-            <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-              <div class="sparkles-icon"></div>
+        <div class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-2xl">
+          <div class="p-6 sm:p-8 text-center">
+            <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center rounded-full bg-primary/10" aria-hidden="true">
+              <lucide-icon name="sparkles" [size]="40" class="text-primary" aria-hidden="true"></lucide-icon>
             </div>
             <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-white">AI-Powered Generation</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
@@ -26,10 +28,10 @@
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-content">
-            <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-              <div class="cogs-icon"></div>
+        <div class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-2xl">
+          <div class="p-6 sm:p-8 text-center">
+            <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center rounded-full bg-primary/10" aria-hidden="true">
+              <lucide-icon name="zap" [size]="40" class="text-primary" aria-hidden="true"></lucide-icon>
             </div>
             <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-white">Instant Generation</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
@@ -38,10 +40,10 @@
           </div>
         </div>
 
-        <div class="card md:col-span-2 lg:col-span-1">
-          <div class="card-content">
-            <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-              <div class="code-icon"></div>
+        <div class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-2xl md:col-span-2 lg:col-span-1">
+          <div class="p-6 sm:p-8 text-center">
+            <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center rounded-full bg-primary/10" aria-hidden="true">
+              <lucide-icon name="code-2" [size]="40" class="text-primary" aria-hidden="true"></lucide-icon>
             </div>
             <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-white">JSON Configuration</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
@@ -59,7 +61,6 @@
       <div class="text-center mb-6 sm:mb-8">
         <h3 class="text-2xl sm:text-4xl font-bold text-white mb-4 sm:mb-6">Interactive Demo</h3>
 
-        <!-- Card Type Selector with Label -->
         <app-card-controls
           [cardType]="cardType"
           [cardVariant]="cardVariant"
@@ -67,31 +68,122 @@
           (cardTypeChange)="onCardTypeChange($event)"
           (cardVariantChange)="onCardVariantChange($event)">
         </app-card-controls>
-      </div>
+      <div
+        #previewRegion
+        class="transition-all duration-500 ease-in-out mb-16 min-h-[800px]"
+        [ngClass]="isFullscreen ? 'flex flex-col gap-8' : 'grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-8 items-start'"
+        [attr.role]="isFullscreen ? 'dialog' : 'region'"
+        [attr.aria-modal]="isFullscreen ? 'true' : null"
+        [attr.aria-label]="isFullscreen ? 'Card preview, fullscreen view' : 'Card preview region'"
+        [attr.aria-busy]="isGenerating"
+        tabindex="-1">
 
-      <!-- Enhanced Responsive Layout with Fullscreen Support -->
-      <div class="transition-all duration-500 ease-in-out mb-16 min-h-[800px] grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8 items-start">
+        <div
+          class="flex flex-col"
+          [ngClass]="isFullscreen ? 'order-1 w-full' : 'lg:col-span-3 order-2 lg:order-2'">
+          <div class="flex items-center gap-2 mb-4">
+            <lucide-icon name="sparkles" [size]="20" class="text-primary" aria-hidden="true"></lucide-icon>
+            <span class="font-semibold">Live Preview</span>
+            <span *ngIf="generatedCard" class="text-sm text-muted-foreground">
+              • {{ generatedCard.cardType }} Card
+            </span>
+            <span *ngIf="isFullscreen" class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-primary/20 text-primary border border-primary/30 ml-2">
+              Fullscreen Mode
+            </span>
+          </div>
 
-        <!-- Card Preview -->
-        <div class="flex flex-col lg:col-span-2 order-2 lg:order-2">
-          <app-card-preview
-            [generatedCard]="generatedCard"
-            [isGenerating]="isGenerating"
-            [isInitialized]="isInitialized"
-            [isFullscreen]="isFullscreen"
-            (cardInteraction)="onCardInteraction($event)"
-            (fullscreenToggle)="onFullscreenToggle($event)">
-          </app-card-preview>
+          <div class="flex-1">
+            <ng-container *ngIf="isInitialized; else initializing">
+              <ng-container *ngIf="!isGenerating; else generating">
+                <ng-container *ngIf="generatedCard; else emptyState">
+                  <div [ngClass]="isFullscreen ? 'w-full max-w-none' : 'w-full'">
+                    <app-card-preview
+                      [generatedCard]="generatedCard"
+                      [isGenerating]="isGenerating"
+                      [isInitialized]="isInitialized"
+                      [isFullscreen]="isFullscreen"
+                      (fieldInteraction)="onFieldInteraction($event)"
+                      (cardInteraction)="onCardInteraction($event)"
+                      (fullscreenToggle)="onFullscreenToggle($event)">
+                    </app-card-preview>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+
+            <ng-template #initializing>
+              <div class="flex flex-col items-center justify-center space-y-4 text-center py-20" role="status" aria-live="polite">
+                <div class="w-8 h-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+                <div>
+                  <p class="text-lg font-medium text-foreground">Initializing System...</p>
+                  <p class="text-sm text-muted-foreground">Loading templates and services</p>
+                </div>
+              </div>
+            </ng-template>
+
+            <ng-template #generating>
+              <div class="flex flex-col items-center justify-center space-y-4 text-center py-20" role="status" aria-live="polite">
+                <div class="w-8 h-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+                <div>
+                  <p class="text-lg font-medium text-foreground">Generating Card...</p>
+                  <p class="text-sm text-muted-foreground">Processing your configuration</p>
+                </div>
+              </div>
+            </ng-template>
+
+            <ng-template #emptyState>
+              <div class="flex flex-col items-center justify-center space-y-4 text-center py-20">
+                <div class="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center">
+                  <lucide-icon name="code-2" [size]="32" class="text-muted-foreground" aria-hidden="true"></lucide-icon>
+                </div>
+                <div>
+                  <p class="text-lg font-medium text-foreground mb-2">No Card Preview</p>
+                  <p class="text-sm text-muted-foreground leading-relaxed max-w-md">
+                    Enter a valid JSON configuration or select a template to see your card preview here.
+                  </p>
+                </div>
+                <div class="flex flex-col gap-2 text-xs text-muted-foreground">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500" aria-hidden="true"></span>
+                    <span>Valid JSON will auto-generate cards</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-500" aria-hidden="true"></span>
+                    <span>Interactive effects respond to mouse</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-purple-500" aria-hidden="true"></span>
+                    <span>Export cards as high-quality PNG</span>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </div>
         </div>
 
-        <!-- JSON Editor -->
-        <div class="flex flex-col space-y-4 lg:col-span-1 order-1 lg:order-1">
-          <app-json-editor
-            [jsonInput]="jsonInput"
-            [jsonError]="jsonError"
-            [isJsonValid]="isJsonValid"
-            (jsonInputChange)="onJsonInputChange($event)">
-          </app-json-editor>
+        <div
+          class="flex flex-col space-y-4"
+          [ngClass]="isFullscreen ? 'order-2 w-full' : 'lg:col-span-2 order-1 lg:order-1'">
+          <div class="flex items-center gap-2 mb-4">
+            <lucide-icon name="file-text" [size]="20" class="text-primary" aria-hidden="true"></lucide-icon>
+            <span class="font-semibold">JSON Configuration</span>
+            <span *ngIf="!isJsonValid" class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-destructive/10 text-destructive border border-destructive/30">
+              Invalid JSON
+            </span>
+          </div>
+
+          <div class="demo-section__editor-shell">
+            <app-json-editor
+              [jsonInput]="jsonInput"
+              [jsonError]="jsonError"
+              [isJsonValid]="isJsonValid"
+              (jsonInputChange)="onJsonInputChange($event)">
+            </app-json-editor>
+          </div>
+
+          <div *ngIf="jsonError" class="p-2 bg-destructive/10 border border-destructive/20 rounded text-sm text-destructive" role="alert" aria-live="assertive">
+            <strong>JSON Error:</strong> {{ jsonError }}
+          </div>
         </div>
       </div>
     </div>
@@ -108,9 +200,9 @@
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-        <div class="card">
-          <div class="card-content">
-            <div class="target-icon w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-4"></div>
+        <div class="border-2 hover:border-primary/50 transition-colors rounded-2xl bg-card">
+          <div class="p-6 flex flex-col">
+            <lucide-icon name="target" [size]="40" class="text-primary mb-4" aria-hidden="true"></lucide-icon>
             <h4 class="text-lg font-semibold mb-3">Real-time Generation</h4>
             <p class="text-muted-foreground text-sm">
               Instant card generation with live preview and JSON validation
@@ -118,9 +210,9 @@
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-content">
-            <div class="settings-icon w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-4"></div>
+        <div class="border-2 hover:border-primary/50 transition-colors rounded-2xl bg-card">
+          <div class="p-6 flex flex-col">
+            <lucide-icon name="settings" [size]="40" class="text-primary mb-4" aria-hidden="true"></lucide-icon>
             <h4 class="text-lg font-semibold mb-3">Flexible Configuration</h4>
             <p class="text-muted-foreground text-sm">
               Multiple card types with customizable sections and fields
@@ -128,9 +220,9 @@
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-content">
-            <div class="download-icon w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-4"></div>
+        <div class="border-2 hover:border-primary/50 transition-colors rounded-2xl bg-card">
+          <div class="p-6 flex flex-col">
+            <lucide-icon name="download" [size]="40" class="text-primary mb-4" aria-hidden="true"></lucide-icon>
             <h4 class="text-lg font-semibold mb-3">PNG Export</h4>
             <p class="text-muted-foreground text-sm">
               High-quality PNG export with 2x scaling for presentations
@@ -138,9 +230,9 @@
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-content">
-            <div class="file-text-icon w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-4"></div>
+        <div class="border-2 hover:border-primary/50 transition-colors rounded-2xl bg-card">
+          <div class="p-6 flex flex-col">
+            <lucide-icon name="file-text" [size]="40" class="text-primary mb-4" aria-hidden="true"></lucide-icon>
             <h4 class="text-lg font-semibold mb-3">TypeScript Support</h4>
             <p class="text-muted-foreground text-sm">
               Full TypeScript integration with comprehensive type definitions
@@ -148,19 +240,19 @@
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-content">
-            <div class="save-icon w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-4"></div>
-            <h4 class="text-lg font-semibold mb-3">Save & Load</h4>
+        <div class="border-2 hover:border-primary/50 transition-colors rounded-2xl bg-card">
+          <div class="p-6 flex flex-col">
+            <lucide-icon name="save" [size]="40" class="text-primary mb-4" aria-hidden="true"></lucide-icon>
+            <h4 class="text-lg font-semibold mb-3">Save &amp; Load</h4>
             <p class="text-muted-foreground text-sm">
               Save your card configurations and load them anytime from local storage
             </p>
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-content">
-            <div class="code-icon w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-4"></div>
+        <div class="border-2 hover:border-primary/50 transition-colors rounded-2xl bg-card">
+          <div class="p-6 flex flex-col">
+            <lucide-icon name="code-2" [size]="40" class="text-primary mb-4" aria-hidden="true"></lucide-icon>
             <h4 class="text-lg font-semibold mb-3">Component Architecture</h4>
             <p class="text-muted-foreground text-sm">
               Modular design with {{ systemStats.totalFiles }} documented components
@@ -170,4 +262,5 @@
       </div>
     </div>
   </div>
-</div>
+  </div>
+</main>

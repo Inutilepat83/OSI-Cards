@@ -1,0 +1,18 @@
+/* Marketing landing styles for the Angular home page */
+
+.demo-section__editor-shell {
+  @include glass-panel(1.4rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  &::before {
+    @include shimmer-overlay(20px);
+    opacity: 0.35;
+  }
+}
+
+.demo-section__editor-shell > * {
+  position: relative;
+  z-index: 1;
+}

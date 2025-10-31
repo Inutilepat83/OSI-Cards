@@ -1,0 +1,28 @@
+/* Card renderer container and async states */
+
+.ai-card-container {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.ai-card-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.ai-card-error {
+  padding: 1rem;
+  background-color: var(--destructive);
+  color: white;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+}

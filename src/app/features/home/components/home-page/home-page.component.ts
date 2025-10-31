@@ -1,35 +1,42 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, ElementRef, HostListener, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { Subject, takeUntil } from 'rxjs';
-import { AICardConfig, CardSection, CardField, CardAction } from '../../../../models';
-import { CardDataService } from '../../../../core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AICardConfig, CardType, CardTypeGuards } from '../../../../models';
 import * as CardActions from '../../../../store/cards/cards.state';
 import * as CardSelectors from '../../../../store/cards/cards.selectors';
 import { AppState } from '../../../../store/app.state';
 
 // Import standalone components
-import { CardControlsComponent, CardPreviewComponent } from '../../../../shared/components/cards';
-import { JsonEditorComponent } from '../../../../shared';
+import { AICardRendererComponent, CardControlsComponent, CardPreviewComponent } from '../../../../shared/components/cards';
+import { JsonEditorComponent, ensureCardIds } from '../../../../shared';
+import { LucideIconsModule } from '../../../../shared/icons/lucide-icons.module';
 
 @Component({
   selector: 'app-home-page',
   standalone: true,
   imports: [
     CommonModule,
+    AICardRendererComponent,
     CardControlsComponent,
     CardPreviewComponent,
-    JsonEditorComponent
+    JsonEditorComponent,
+    LucideIconsModule
   ],
   templateUrl: './home-page.component.html',
-  styleUrls: ['./home-page.component.css'],
+  styleUrls: ['./home-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HomePageComponent implements OnInit, OnDestroy {
-  private destroy$ = new Subject<void>();
+export class HomePageComponent implements OnInit {
+  private readonly store: Store<AppState> = inject(Store);
+  private readonly cd = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
+
+  @ViewChild(JsonEditorComponent) private jsonEditorComponent?: JsonEditorComponent;
+  @ViewChild('previewRegion') private previewRegion?: ElementRef<HTMLDivElement>;
 
   // Component properties
-  cardType: 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'project' | 'event' = 'company';
+  cardType: CardType = 'company';
   cardVariant = 1;
   generatedCard: AICardConfig | null = null;
   isGenerating = false;
@@ -41,52 +48,68 @@ export class HomePageComponent implements OnInit, OnDestroy {
   switchingType = false;
   systemStats = { totalFiles: 18 };
 
-  cardTypes: ('company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'project' | 'event')[] = [
-    'company', 'contact', 'opportunity', 'product', 'analytics', 'project', 'event'
-  ];
+  cardTypes: CardType[] = ['company', 'contact', 'opportunity', 'product', 'analytics', 'project', 'event'];
 
-  constructor(
-    private store: Store<AppState>,
-    private cardDataService: CardDataService,
-    private cd: ChangeDetectorRef
-  ) {}
+  statusMessage = '';
+  private statusTone: 'polite' | 'assertive' = 'polite';
+  private statusRole: 'status' | 'alert' = 'status';
+  private previousLoading = false;
+  private previousError = '';
 
   ngOnInit(): void {
     // Subscribe to store selectors
     this.store.select(CardSelectors.selectCurrentCard)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(card => {
+        const cardChanged = this.generatedCard !== card;
         this.generatedCard = card;
+        if (cardChanged && card && !this.isGenerating && !this.jsonError) {
+          this.announceStatus(`${card.cardType} card preview updated.`);
+        }
         this.cd.markForCheck();
       });
 
     this.store.select(CardSelectors.selectIsFullscreen)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(isFullscreen => {
         this.isFullscreen = isFullscreen;
         this.cd.markForCheck();
       });
 
     this.store.select(CardSelectors.selectJsonInput)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(jsonInput => {
         this.jsonInput = jsonInput;
         this.cd.markForCheck();
       });
 
     this.store.select(CardSelectors.selectError)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(error => {
         this.jsonError = error || '';
         this.isJsonValid = !error;
+        if (error && error !== this.previousError) {
+          this.announceStatus(`JSON error: ${error}`, true);
+          this.focusJsonEditor();
+        }
+        if (!error && this.previousError) {
+          this.announceStatus('JSON issues resolved. Card preview will refresh shortly.');
+        }
+        this.previousError = error || '';
         this.cd.markForCheck();
       });
 
     // Subscribe to template loading to control spinner
-    this.store.select(CardSelectors.selectLoading)
-      .pipe(takeUntil(this.destroy$))
+    this.store.select(CardSelectors.selectIsBusy)
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(loading => {
         this.isGenerating = loading;
+        if (loading && !this.previousLoading) {
+          this.announceStatus('Generating card preview. Please wait.');
+        } else if (!loading && this.previousLoading && !this.jsonError) {
+          this.announceStatus('Card generation complete. Preview ready.');
+        }
+        this.previousLoading = loading;
         this.cd.markForCheck();
       });
 
@@ -94,20 +117,16 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.initializeSystem();
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
   private initializeSystem(): void {
     this.isInitialized = true;
+    this.announceStatus('Loading default company card template.');
     // Load initial company card
     this.store.dispatch(CardActions.setCardType({ cardType: this.cardType }));
     this.store.dispatch(CardActions.setCardVariant({ variant: this.cardVariant }));
     this.store.dispatch(CardActions.loadTemplate({ cardType: this.cardType, variant: this.cardVariant }));
   }
 
-  onCardTypeChange(type: 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'project' | 'event'): void {
+  onCardTypeChange(type: CardType): void {
     this.switchCardType(type);
   }
 
@@ -120,7 +139,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.onJsonInputChangeInternal();
   }
 
-  private switchCardType(type: 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'project' | 'event'): void {
+  private switchCardType(type: CardType): void {
     if (this.switchingType) return;
     this.switchingType = true;
     this.cardType = type;
@@ -151,7 +170,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
           cardType: 'company',
           sections: []
         };
-        this.store.dispatch(CardActions.generateCardSuccess({ card: defaultCard }));
+        this.store.dispatch(CardActions.generateCardSuccess({ card: ensureCardIds(defaultCard) }));
         return;
       }
 
@@ -170,45 +189,13 @@ export class HomePageComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const cardData = data as Record<string, unknown>;
-
-      // Auto-generate id if not provided
-      if (!cardData['id']) {
-        cardData['id'] = `card_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      }
-
-      // Auto-generate section and field IDs if missing
-      if (cardData['sections'] && Array.isArray(cardData['sections'])) {
-        cardData['sections'] = (cardData['sections'] as CardSection[]).map((section: CardSection, sIndex: number) => {
-          if (!section.id) {
-            section.id = `section_${sIndex}`;
-          }
-          if (section.fields && Array.isArray(section.fields)) {
-            section.fields = section.fields.map((field: CardField, fIndex: number) => {
-              if (!field.id) {
-                field.id = `field_${sIndex}_${fIndex}`;
-              }
-              return field;
-            });
-          }
-          return section;
-        });
-      }
-
-      // Auto-generate action IDs if missing
-      if (cardData['actions'] && Array.isArray(cardData['actions'])) {
-        cardData['actions'] = (cardData['actions'] as CardAction[]).map((action: CardAction, aIndex: number) => {
-          if (!action.id) {
-            action.id = `action_${aIndex}`;
-          }
-          return action;
-        });
-      }
+      const cardData = data as AICardConfig;
 
       // Validate and use the card data
-      if (cardData['cardTitle'] && cardData['cardType'] && cardData['sections'] && Array.isArray(cardData['sections'])) {
-        console.log('✅ Setting generated card:', cardData);
-        this.store.dispatch(CardActions.generateCardSuccess({ card: cardData as unknown as AICardConfig }));
+      if (CardTypeGuards.isAICardConfig(cardData)) {
+        const sanitized = ensureCardIds(cardData);
+        console.log('✅ Setting generated card:', sanitized);
+        this.store.dispatch(CardActions.generateCardSuccess({ card: sanitized }));
       } else {
         throw new Error('Invalid card configuration format - missing required fields (cardTitle, cardType, sections)');
       }
@@ -222,30 +209,20 @@ export class HomePageComponent implements OnInit, OnDestroy {
     console.log('Card interaction:', event);
   }
 
+  onFieldInteraction(event: unknown): void {
+    console.log('Field interaction:', event);
+  }
+
   onFullscreenToggle(isFullscreen: boolean): void {
     this.isFullscreen = isFullscreen;
     this.store.dispatch(CardActions.setFullscreen({ fullscreen: isFullscreen }));
+    this.focusPreviewRegion();
   }
 
   toggleFullscreen(): void {
     this.isFullscreen = !this.isFullscreen;
     this.store.dispatch(CardActions.setFullscreen({ fullscreen: this.isFullscreen }));
-  }
-
-  // Helper function to remove all IDs from objects recursively
-  private removeAllIds(obj: unknown): unknown {
-    if (Array.isArray(obj)) {
-      return obj.map(item => this.removeAllIds(item));
-    } else if (obj && typeof obj === 'object') {
-      const newObj: Record<string, unknown> = {};
-      for (const [key, value] of Object.entries(obj)) {
-        if (key !== 'id') {
-          newObj[key] = this.removeAllIds(value);
-        }
-      }
-      return newObj;
-    }
-    return obj;
+    this.focusPreviewRegion();
   }
 
   // TrackBy functions for performance optimization
@@ -255,5 +232,39 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   trackByVariant(index: number, variant: number): number {
     return variant;
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  handleGlobalKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape' && this.isFullscreen) {
+      event.preventDefault();
+      this.toggleFullscreen();
+    }
+  }
+
+  private focusJsonEditor(): void {
+    this.jsonEditorComponent?.focusEditor(true);
+  }
+
+  private focusPreviewRegion(): void {
+    if (!this.previewRegion) return;
+    queueMicrotask(() => {
+      this.previewRegion?.nativeElement.focus({ preventScroll: true });
+    });
+  }
+
+  private announceStatus(message: string, assertive = false): void {
+    this.statusMessage = message;
+    this.statusTone = assertive ? 'assertive' : 'polite';
+    this.statusRole = assertive ? 'alert' : 'status';
+    this.cd.markForCheck();
+  }
+
+  get liveStatusTone(): 'polite' | 'assertive' {
+    return this.statusTone;
+  }
+
+  get liveStatusRole(): 'status' | 'alert' {
+    return this.statusRole;
   }
 }

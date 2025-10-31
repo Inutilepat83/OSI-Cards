@@ -1,0 +1,36 @@
+<div class="ai-section">
+  <div class="ai-section__header">
+    <h3 class="ai-section__title">
+      {{ section.title }}
+    </h3>
+  </div>
+
+  <div class="ai-section__body">
+    <ng-container *ngIf="hasFields; else overviewEmpty">
+      <div class="overview-grid">
+        <button
+          *ngFor="let field of fields; let i = index"
+          type="button"
+          class="overview-card"
+          (click)="onFieldClick(field)"
+          [style.animation]="'fadeInUp 0.6s ease-out forwards'"
+          [style.animation-delay]="i * 50 + 'ms'"
+        >
+          <span class="overview-card__label">
+            {{ field.label || field.title }}
+          </span>
+          <span class="overview-card__value">
+            {{ field.value }}
+          </span>
+        </button>
+      </div>
+    </ng-container>
+
+    <ng-template #overviewEmpty>
+      <div class="overview-empty">
+        <lucide-icon name="alert-circle" [size]="32" class="mb-4 opacity-50"></lucide-icon>
+        <p class="text-sm">No overview information available</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

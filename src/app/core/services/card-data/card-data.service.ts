@@ -1,7 +1,7 @@
-import { Injectable, inject, InjectionToken } from '@angular/core';
-import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
-import { map, switchMap, shareReplay, startWith } from 'rxjs/operators';
-import { AICardConfig } from '../../../models';
+import { Injectable, inject, InjectionToken, OnDestroy } from '@angular/core';
+import { Observable, BehaviorSubject, combineLatest, EMPTY } from 'rxjs';
+import { map, switchMap, shareReplay, startWith, filter } from 'rxjs/operators';
+import { AICardConfig, CardType } from '../../../models';
 import { CardDataProvider } from './card-data-provider.interface';
 import { JsonCardProvider } from './json-card-provider.service';
 
@@ -11,6 +11,11 @@ import { JsonCardProvider } from './json-card-provider.service';
  */
 export const CARD_DATA_PROVIDER = new InjectionToken<CardDataProvider>('CardDataProvider');
 
+interface CardUpdate {
+  type: 'created' | 'updated' | 'deleted';
+  card: AICardConfig;
+}
+
 /**
  * Main card data service that orchestrates different data providers
  * Provides a unified interface for card data operations
@@ -18,7 +23,7 @@ export const CARD_DATA_PROVIDER = new InjectionToken<CardDataProvider>('CardData
 @Injectable({
   providedIn: 'root'
 })
-export class CardDataService {
+export class CardDataService implements OnDestroy {
   private provider = inject(CARD_DATA_PROVIDER, { optional: true }) || inject(JsonCardProvider);
   private activeProviderSubject = new BehaviorSubject<CardDataProvider>(this.provider);
 
@@ -29,12 +34,12 @@ export class CardDataService {
   );
 
   private cardUpdates$ = this.activeProviderSubject.pipe(
-    switchMap(provider => 
-      provider.supportsRealtime && provider.subscribeToUpdates 
-        ? provider.subscribeToUpdates() 
-        : new Observable<{type: 'created' | 'updated' | 'deleted'; card: AICardConfig}>(observer => {}) // Empty observable for non-realtime providers
+    switchMap(provider =>
+      provider.supportsRealtime && provider.subscribeToUpdates
+        ? provider.subscribeToUpdates()
+        : EMPTY as Observable<CardUpdate>
     ),
-    startWith(null as {type: 'created' | 'updated' | 'deleted'; card: AICardConfig} | null)
+    startWith(null as CardUpdate | null)
   );
 
   constructor() {
@@ -54,7 +59,7 @@ export class CardDataService {
   /**
    * Get cards filtered by type
    */
-  getCardsByType(cardType: string): Observable<AICardConfig[]> {
+  getCardsByType(cardType: CardType): Observable<AICardConfig[]> {
     return this.activeProviderSubject.pipe(
       switchMap(provider => provider.getCardsByType(cardType))
     );
@@ -72,11 +77,11 @@ export class CardDataService {
   /**
    * Get unique card types from all available cards
    */
-  getAvailableCardTypes(): Observable<string[]> {
+  getAvailableCardTypes(): Observable<CardType[]> {
     return this.allCards$.pipe(
       map(cards => {
         const types = new Set(cards.map(card => card.cardType));
-        return Array.from(types).sort();
+        return Array.from(types).sort() as CardType[];
       })
     );
   }
@@ -109,10 +114,7 @@ export class CardDataService {
    */
   getCardsWithUpdates(): Observable<{
     cards: AICardConfig[];
-    lastUpdate: {
-      type: 'created' | 'updated' | 'deleted';
-      card: AICardConfig;
-    } | null;
+    lastUpdate: CardUpdate | null;
   }> {
     return combineLatest([
       this.allCards$,
@@ -160,14 +162,9 @@ export class CardDataService {
   /**
    * Subscribe to real-time card updates (if supported)
    */
-  subscribeToUpdates(): Observable<{
-    type: 'created' | 'updated' | 'deleted';
-    card: AICardConfig;
-  }> {
+  subscribeToUpdates(): Observable<CardUpdate> {
     return this.cardUpdates$.pipe(
-      map(update => update!),
-      // Filter out null values (initial startWith value)
-      map(update => update as {type: 'created' | 'updated' | 'deleted'; card: AICardConfig})
+      filter((update): update is CardUpdate => update !== null)
     );
   }
 

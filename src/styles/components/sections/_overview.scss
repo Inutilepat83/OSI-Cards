@@ -1,0 +1,55 @@
+/* Overview metric cards shown within the overview section */
+
+.overview-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.overview-card {
+  border: 1px solid rgba(255, 121, 0, 0.3);
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: linear-gradient(180deg, rgba(28, 28, 28, 0.94) 0%, rgba(12, 12, 12, 0.9) 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 86px;
+  cursor: pointer;
+  transition: border-color 0.24s ease, box-shadow 0.24s ease, transform 0.24s ease;
+}
+
+.overview-card:hover {
+  border-color: rgba(255, 153, 51, 0.55);
+  box-shadow: 0 16px 32px rgba(255, 121, 0, 0.22);
+  transform: translateY(-2px);
+}
+
+.overview-card__label {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.overview-card__value {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--foreground);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.overview-empty {
+  padding: 56px 24px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+@media (max-width: 768px) {
+  .overview-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}

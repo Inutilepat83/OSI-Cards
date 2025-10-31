@@ -1,152 +1,109 @@
-<div class="card-container" #cardContainer (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()" *ngIf="cardConfig">
+<div
+  *ngIf="cardConfig"
+  #cardContainer
+  class="relative h-full"
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
+  (mousemove)="onMouseMove($event)"
+>
   <div class="glow-container" [ngStyle]="tiltStyle">
     <div class="tilt-container" #tiltContainer [ngStyle]="tiltStyle">
       <div class="card-reflection"></div>
-      <div class="tilt-content">
-        <div class="card-wrapper" [ngClass]="{'fullscreen': isFullscreen}">
-    <!-- Card Header -->
-    <div class="card-header">
-      <div class="title-section">
-        <h2 class="card-title">{{cardConfig.cardTitle}}</h2>
-        <p *ngIf="cardConfig.cardSubtitle" class="card-subtitle">{{cardConfig.cardSubtitle}}</p>
-      </div>
-      
-      <div class="card-actions">
-        <button class="action-btn" 
-                (click)="toggleFullscreen()" 
-                (keydown.enter)="toggleFullscreen()" 
-                (keydown.space)="$event.preventDefault(); toggleFullscreen()"
-                [attr.aria-label]="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
-                role="button"
-                tabindex="0">
-          <i [ngClass]="isFullscreen ? 'minimize-icon' : 'maximize-icon'"></i>
+
+      <article
+        class="ai-card-surface"
+        [ngClass]="{ 'ai-card-surface--fullscreen': isFullscreen }"
+      >
+        <button
+          type="button"
+          class="ai-card-fullscreen-btn"
+          [attr.aria-label]="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
+          (click)="toggleFullscreen()"
+        >
+          <lucide-icon [name]="isFullscreen ? 'minimize-2' : 'maximize-2'" [size]="16" aria-hidden="true"></lucide-icon>
         </button>
-      </div>
-    </div>
-    
-    <!-- Card Content / Sections -->
-    <div class="card-content">
-      <ng-container *ngFor="let section of cardConfig.sections; let i = index; trackBy: trackByIndex">
-        <div class="card-section section-card" [ngClass]="'section-type-' + section.type">
-          <div class="section-card-header" 
-               tabindex="0"
-               role="button"
-               (click)="toggleSection(i)"
-               (keydown.enter)="toggleSection(i)"
-               (keydown.space)="toggleSection(i)"
-               [attr.aria-expanded]="isSectionExpanded(i, section)"
-               [attr.aria-label]="'Toggle ' + section.title + ' section'">
-            <div class="header-left">
-              <h3 class="section-title">{{section.title}}</h3>
-              <div *ngIf="section.description" class="section-desc">{{section.description}}</div>
-            </div>
-            <div class="header-right">
-              <button class="collapse-btn" 
-                      (click)="toggleSection(i)"
-                      (keydown.enter)="toggleSection(i)"
-                      (keydown.space)="$event.preventDefault(); toggleSection(i)"
-                      [attr.aria-expanded]="isSectionExpanded(i, section)"
-                      [attr.aria-label]="'Toggle ' + section.title + ' section'"
-                      role="button"
-                      tabindex="0">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path [attr.d]="isSectionExpanded(i, section) ? 'M6 9l6 6 6-6' : 'M6 15l6-6 6 6'" stroke-linecap="round" stroke-linejoin="round"></path>
-                </svg>
-              </button>
+
+        <header class="ai-card-header">
+          <div class="ai-card-title-row">
+            <div class="ai-card-title-group">
+              <h1 class="ai-card-title">
+                {{ cardConfig.cardTitle }}
+              </h1>
+              <span class="ai-card-type-pill">
+                {{ cardConfig.cardType }}
+              </span>
             </div>
           </div>
 
-          <div [ngClass]="{'collapsed': !isSectionExpanded(i, section)}" class="section-card-body">
-            <!-- Info Section Type -->
-            <div *ngIf="section.type === 'info' && section.fields" class="info-grid">
-              <div *ngFor="let field of section.fields; trackBy: trackByIndex"
-                   class="field-card group" 
-                   (click)="onFieldClick(field)"
-                   (keydown.enter)="onFieldClick(field)"
-                   (keydown.space)="$event.preventDefault(); onFieldClick(field)"
-                   [attr.aria-label]="'View details for ' + field.label"
-                   role="button"
-                   tabindex="0">
-                <div class="field-card-left">
-                  <div class="field-icon">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path [attr.d]="getFieldIconPath(field)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                    </svg>
-                  </div>
-                </div>
-                <div class="field-card-body">
-                  <div class="field-label">{{field.label}}</div>
-                  <div class="field-value" [style.color]="field.valueColor">{{field.value}}</div>
-                  <div class="field-meta" *ngIf="field.percentage !== undefined || field.change !== undefined || field.trend">
-                    <div *ngIf="field.percentage !== undefined" class="meta-item">
-                      <div class="meta-label">Progress</div>
-                      <div class="meta-value">{{field.percentage}}%</div>
-                    </div>
-                    <div *ngIf="field.change !== undefined" class="meta-item">
-                      <div class="meta-label">Change</div>
-                      <div class="meta-value" [ngClass]="field.change >= 0 ? 'positive' : 'negative'">
-                        {{field.change >= 0 ? '+' : ''}}{{field.change}}%
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          
-            <!-- List Section Type -->
-            <div *ngIf="section.type === 'list' && section.items" class="list-container">
-              <div *ngFor="let item of section.items; trackBy: trackByIndex" class="list-item">
-                <div *ngIf="item.icon" class="item-icon">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path [attr.d]="getItemIconPath(item)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                  </svg>
-                </div>
-                <div class="item-content">
-                  <div class="item-title">{{item.title}}</div>
-                  <div *ngIf="item.description" class="item-description">{{item.description}}</div>
-                </div>
-                <div *ngIf="item.value" class="item-value">{{item.value}}</div>
-              </div>
-            </div>
-            
-            <!-- Chart Section Placeholder -->
-            <div *ngIf="section.type === 'chart'" class="chart-container">
-              <div class="chart-placeholder">Chart would render here</div>
-            </div>
-            
-            <!-- Map Section Placeholder -->
-            <div *ngIf="section.type === 'map'" class="map-container">
-              <div class="map-placeholder">Map would render here</div>
-            </div>
-            
-            <!-- Other section types would be implemented similarly -->
-            <div *ngIf="!['info', 'list', 'chart', 'map'].includes(section.type)" class="section-placeholder">
-              {{section.type}} section would render here
-            </div>
+          <p *ngIf="cardConfig.cardSubtitle" class="ai-card-subtitle">
+            {{ cardConfig.cardSubtitle }}
+          </p>
+
+          <div *ngIf="cardConfig.metadata" class="ai-card-meta">
+            <span *ngIf="cardConfig.metadata.category" class="ai-card-meta__chip">
+              <span class="ai-card-meta__chip-dot ai-card-meta__chip-dot--primary" aria-hidden="true"></span>
+              <span>{{ cardConfig.metadata.category }}</span>
+            </span>
+            <span *ngIf="cardConfig.metadata.variant" class="ai-card-meta__chip">
+              <span class="ai-card-meta__chip-dot ai-card-meta__chip-dot--secondary" aria-hidden="true"></span>
+              <span>{{ cardConfig.metadata.variant }}</span>
+            </span>
+            <span *ngIf="cardConfig.metadata.complexity" class="ai-card-meta__chip">
+              <span class="ai-card-meta__chip-dot ai-card-meta__chip-dot--tertiary" aria-hidden="true"></span>
+              <span>{{ cardConfig.metadata.complexity }}</span>
+            </span>
           </div>
-        </div>
-      </ng-container>
-    </div>
-    
-    <!-- Card Footer / Actions -->
-    <div *ngIf="cardConfig.actions && cardConfig.actions.length > 0" class="card-footer">
-      <button *ngFor="let action of cardConfig.actions; trackBy: trackByIndex"
-              class="card-action-btn"
-              [ngClass]="'btn-' + (action.variant || 'primary')"
+        </header>
+
+        <div
+          class="ai-card-body"
+          [style.maxHeight]="isFullscreen ? 'none' : null"
+          [style.overflowY]="isFullscreen ? 'visible' : null"
+          [style.height]="isFullscreen ? 'auto' : null"
+        >
+          <ng-container *ngIf="processedSections.length; else emptyState">
+            <app-masonry-grid
+              [sections]="processedSections"
+              [gap]="24"
+              [minColumnWidth]="280"
+              class="w-full"
+              (sectionEvent)="onSectionEvent($event)"
+            ></app-masonry-grid>
+          </ng-container>
+
+          <ng-template #emptyState>
+            <div class="flex h-full flex-col items-center justify-center rounded-3xl border border-dashed border-border/40 bg-background/40 p-12 text-center text-muted-foreground">
+              <lucide-icon name="alert-circle" [size]="32" class="mb-4 text-muted-foreground/70"></lucide-icon>
+              <span class="sr-only">No sections available for this configuration</span>
+              <p class="text-base font-medium">No sections available for this configuration.</p>
+              <p class="mt-1 text-sm text-muted-foreground/80">Add sections to the card to visualize insights and data.</p>
+            </div>
+          </ng-template>
+
+          <div *ngIf="cardConfig.actions?.length" class="ai-card-actions">
+            <button
+              *ngFor="let action of cardConfig.actions; trackBy: trackAction"
+              type="button"
+              [ngClass]="getActionButtonClasses(action)"
               (click)="onActionClick(action.label)"
               (keydown.enter)="onActionClick(action.label)"
               (keydown.space)="$event.preventDefault(); onActionClick(action.label)"
-              [attr.aria-label]="action.label + ' action'"
-              role="button"
-              tabindex="0">
-        <svg *ngIf="action.icon" class="w-4 h-4 action-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path [attr.d]="getActionIconPath(action)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-        </svg>
-        <span>{{action.label}}</span>
-      </button>
-    </div>
+            >
+              <span class="relative z-10 flex items-center gap-3">
+                <span *ngIf="action.icon" class="text-base sm:text-lg" aria-hidden="true">{{ action.icon }}</span>
+                <span>{{ action.label }}</span>
+              </span>
+              <span class="ai-card-action__shine"></span>
+            </button>
+          </div>
+
+          <div class="ai-card-footnote">
+            <span>
+              Powered by Orange Sales Intelligence
+            </span>
+          </div>
         </div>
-      </div>
+      </article>
     </div>
   </div>
 </div>

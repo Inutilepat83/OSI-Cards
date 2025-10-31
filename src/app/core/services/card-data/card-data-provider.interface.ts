@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { AICardConfig } from '../../../models';
+import { AICardConfig, CardType } from '../../../models';
 
 /**
  * Abstract interface for card data providers
@@ -14,7 +14,7 @@ export abstract class CardDataProvider {
   /**
    * Get cards by type
    */
-  abstract getCardsByType(cardType: string): Observable<AICardConfig[]>;
+  abstract getCardsByType(cardType: CardType): Observable<AICardConfig[]>;
 
   /**
    * Get a specific card by ID
@@ -34,9 +34,7 @@ export abstract class CardDataProvider {
   /**
    * Check if provider supports real-time updates
    */
-  get supportsRealtime(): boolean {
-    return false;
-  }
+  readonly supportsRealtime: boolean = false;
 
   /**
    * Subscribe to real-time card updates (if supported)

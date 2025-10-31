@@ -1,9 +1,31 @@
 <!-- JSON Configuration Header -->
-<label for="json-config-textarea" class="flex items-center gap-2 mb-4">
-  <div class="file-text-icon w-5 h-5"></div>
-  <span class="font-semibold">JSON Configuration</span>
+<div class="editor-toolbar" role="group" aria-label="JSON editor controls">
+  <label for="json-config-textarea" class="flex items-center gap-2">
+    <div class="file-text-icon w-5 h-5" aria-hidden="true"></div>
+    <span class="font-semibold">JSON Configuration</span>
+  </label>
+
+  <div class="editor-toolbar__actions">
+    <p id="json-editor-instructions" class="editor-toolbar__hint">
+      Tip: Press <span class="kbd">⌘⏎</span> or <span class="kbd">Ctrl⏎</span> to format JSON.
+    </p>
+    <button
+      type="button"
+      class="editor-toolbar__button"
+      (click)="formatJson()"
+      [attr.aria-label]="'Format JSON'"
+      title="Format JSON">
+      <span>Format</span>
+    </button>
+  </div>
+
   <span class="badge-destructive" *ngIf="!isJsonValid">Invalid JSON</span>
-</label>
+</div>
+
+<!-- Live status messaging for screen readers -->
+<div class="sr-only" [attr.role]="isStatusAssertive ? 'alert' : 'status'" [attr.aria-live]="isStatusAssertive ? 'assertive' : 'polite'" aria-atomic="true">
+  {{ editorStatus }}
+</div>
 
 <!-- JSON Textarea -->
 <textarea
@@ -11,13 +33,16 @@
   #textareaRef
   [(ngModel)]="jsonInput"
   (ngModelChange)="onJsonInputChange()"
+  (keydown)="onTextareaKeydown($event)"
   class="font-mono text-sm resize-none overflow-y-auto border-2 transition-all duration-300 min-h-[400px] lg:min-h-[600px] p-4 input-background text-foreground textarea-focus"
   [class]="isJsonValid ? 'border-gray-600' : 'border-red-500/50'"
   [attr.aria-invalid]="!isJsonValid"
-  [attr.aria-describedby]="jsonError ? 'json-error-message' : null"
+  [attr.aria-describedby]="jsonError ? 'json-error-message' : 'json-editor-instructions'"
   placeholder="Enter your card configuration JSON here..."
   rows="20"
-  aria-label="JSON configuration editor for card customization">
+  aria-label="JSON configuration editor for card customization"
+  aria-multiline="true"
+  aria-live="off">
 </textarea>
 
 <!-- Error Message -->
@@ -26,6 +51,6 @@
   class="p-2 bg-red-500/10 border border-red-500/20 rounded text-sm text-red-400"
   *ngIf="jsonError"
   role="alert"
-  aria-live="polite">
+  aria-live="assertive">
   <strong>JSON Error:</strong> {{ jsonError }}
 </div>

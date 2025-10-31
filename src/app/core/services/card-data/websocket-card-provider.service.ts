@@ -1,9 +1,54 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable, Subject, BehaviorSubject, NEVER } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { map, catchError, retry, tap } from 'rxjs/operators';
+import { map, catchError, retry } from 'rxjs/operators';
 import { AICardConfig } from '../../../models';
 import { CardDataProvider } from './card-data-provider.interface';
+
+interface AllCardsMessage {
+  type: 'all_cards';
+  data: AICardConfig[];
+}
+
+interface CardCreatedMessage {
+  type: 'card_created';
+  data: AICardConfig;
+}
+
+interface CardUpdatedMessage {
+  type: 'card_updated';
+  data: AICardConfig;
+}
+
+interface CardDeletedMessage {
+  type: 'card_deleted';
+  data: AICardConfig;
+}
+
+type InboundSocketMessage = AllCardsMessage | CardCreatedMessage | CardUpdatedMessage | CardDeletedMessage;
+
+interface GetAllCardsMessage {
+  type: 'get_all_cards';
+}
+
+interface CreateCardMessage {
+  type: 'create_card';
+  data: AICardConfig;
+}
+
+interface UpdateCardMessage {
+  type: 'update_card';
+  data: AICardConfig;
+}
+
+interface DeleteCardMessage {
+  type: 'delete_card';
+  data: { id: string };
+}
+
+type OutboundSocketMessage = GetAllCardsMessage | CreateCardMessage | UpdateCardMessage | DeleteCardMessage;
+
+type SocketMessage = InboundSocketMessage | OutboundSocketMessage;
 
 /**
  * WebSocket-based card data provider for real-time updates
@@ -13,7 +58,7 @@ import { CardDataProvider } from './card-data-provider.interface';
   providedIn: 'root'
 })
 export class WebSocketCardProvider extends CardDataProvider {
-  private socket$?: WebSocketSubject<any>;
+  private socket$?: WebSocketSubject<SocketMessage>;
   private cardsSubject = new BehaviorSubject<AICardConfig[]>([]);
   private updatesSubject = new Subject<{
     type: 'created' | 'updated' | 'deleted';
@@ -23,9 +68,7 @@ export class WebSocketCardProvider extends CardDataProvider {
   private isConnected = false;
   private wsUrl = 'ws://localhost:8080/cards'; // Configure as needed
 
-  override get supportsRealtime(): boolean {
-    return true;
-  }
+  override readonly supportsRealtime = true;
 
   override initialize(): void {
     this.connect();
@@ -40,7 +83,7 @@ export class WebSocketCardProvider extends CardDataProvider {
       return;
     }
 
-    this.socket$ = webSocket({
+  this.socket$ = webSocket<SocketMessage>({
       url: this.wsUrl,
       openObserver: {
         next: () => {
@@ -67,9 +110,15 @@ export class WebSocketCardProvider extends CardDataProvider {
         return NEVER;
       })
     ).subscribe({
-      next: (message) => this.handleMessage(message),
-      error: (error) => {
-        console.error('WebSocket subscription error:', error);
+      next: message => {
+        if (this.isInboundMessage(message)) {
+          this.handleMessage(message);
+        } else {
+          console.warn('Received unexpected WebSocket payload:', message);
+        }
+      },
+      error: subscriptionError => {
+        console.error('WebSocket subscription error:', subscriptionError);
         this.isConnected = false;
       }
     });
@@ -83,29 +132,40 @@ export class WebSocketCardProvider extends CardDataProvider {
     this.isConnected = false;
   }
 
-  private sendMessage(message: any): void {
+  private sendMessage(message: OutboundSocketMessage): void {
     if (this.socket$ && this.isConnected) {
       this.socket$.next(message);
     }
   }
 
-  private handleMessage(message: any): void {
+  private isInboundMessage(message: SocketMessage): message is InboundSocketMessage {
+    if (!message || typeof message !== 'object') {
+      return false;
+    }
+
+    const type = (message as { type?: unknown }).type;
+    return type === 'all_cards' || type === 'card_created' || type === 'card_updated' || type === 'card_deleted';
+  }
+
+  private handleMessage(message: InboundSocketMessage): void {
     switch (message.type) {
-      case 'all_cards':
-        this.cardsSubject.next(message.data || []);
+      case 'all_cards': {
+        this.cardsSubject.next(Array.isArray(message.data) ? message.data : []);
         break;
-      
-      case 'card_created':
+      }
+
+      case 'card_created': {
         const currentCards = this.cardsSubject.value;
-        this.cardsSubject.next([...currentCards, message.data]);
+        this.cardsSubject.next([...currentCards.filter(card => card.id !== message.data.id), message.data]);
         this.updatesSubject.next({
           type: 'created',
           card: message.data
         });
         break;
-      
-      case 'card_updated':
-        const updatedCards = this.cardsSubject.value.map(card => 
+      }
+
+      case 'card_updated': {
+        const updatedCards = this.cardsSubject.value.map(card =>
           card.id === message.data.id ? message.data : card
         );
         this.cardsSubject.next(updatedCards);
@@ -114,9 +174,10 @@ export class WebSocketCardProvider extends CardDataProvider {
           card: message.data
         });
         break;
-      
-      case 'card_deleted':
-        const filteredCards = this.cardsSubject.value.filter(card => 
+      }
+
+      case 'card_deleted': {
+        const filteredCards = this.cardsSubject.value.filter(card =>
           card.id !== message.data.id
         );
         this.cardsSubject.next(filteredCards);
@@ -125,9 +186,12 @@ export class WebSocketCardProvider extends CardDataProvider {
           card: message.data
         });
         break;
-      
-      default:
-        console.warn('Unknown WebSocket message type:', message.type);
+      }
+
+      default: {
+        const exhaustiveCheck: never = message;
+        console.warn('Unknown WebSocket message payload:', exhaustiveCheck);
+      }
     }
   }
 

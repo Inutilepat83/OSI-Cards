@@ -1,0 +1,30 @@
+/* Shared styling mixins for OSI Cards */
+
+@mixin glass-panel(
+  $padding: 1.5rem,
+  $border-color: rgba(255, 255, 255, 0.08),
+  $background-start: rgba(16, 16, 24, 0.86),
+  $background-end: rgba(10, 10, 18, 0.92),
+  $shadow: 0 28px 70px rgba(0, 0, 0, 0.5)
+) {
+  position: relative;
+  border-radius: 22px;
+  border: 1px solid $border-color;
+  background: linear-gradient(160deg, $background-start, $background-end);
+  box-shadow: $shadow;
+  backdrop-filter: blur(18px);
+  padding: $padding;
+}
+
+@mixin shimmer-overlay(
+  $border-radius: 20px,
+  $start-opacity: 0.08,
+  $end-opacity: 0
+) {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: $border-radius;
+  background: linear-gradient(180deg, rgba(255, 255, 255, $start-opacity), rgba(255, 255, 255, $end-opacity));
+  pointer-events: none;
+}

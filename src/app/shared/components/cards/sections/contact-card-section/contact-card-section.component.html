@@ -1,0 +1,86 @@
+<div class="ai-section">
+  <div class="ai-section__header">
+    <div class="ai-section__icon">
+      <lucide-icon name="users" size="18"></lucide-icon>
+    </div>
+    <div class="ai-section__details">
+      <h3 class="ai-section__title">{{ section.title }}</h3>
+      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
+    </div>
+    <span *ngIf="hasContacts" class="ai-section__badge">
+      {{ contacts.length }} contacts
+    </span>
+  </div>
+
+  <div class="ai-section__body">
+    <ng-container *ngIf="hasContacts; else contactEmpty">
+      <div class="contact-collection">
+        <button
+          *ngFor="let contact of contacts; trackBy: trackContact; let i = index"
+          type="button"
+          class="contact-card"
+          (click)="onContactClick(contact)"
+          [style.animation]="'fadeInUp 0.55s ease-out forwards'"
+          [style.animation-delay]="i * 50 + 'ms'"
+        >
+          <div class="contact-card__avatar">
+            <ng-container *ngIf="getContactAvatar(contact) as avatar; else contactInitials">
+              <img [src]="avatar" [alt]="getContactName(contact)" />
+            </ng-container>
+            <ng-template #contactInitials>
+              <span class="contact-card__initials">
+                {{ getInitials(getContactName(contact)) }}
+              </span>
+            </ng-template>
+          </div>
+
+          <div class="contact-card__details">
+            <div class="contact-card__header">
+              <p class="contact-card__name">{{ getContactName(contact) }}</p>
+              <p *ngIf="getContactRole(contact) as role" class="contact-card__role">{{ role }}</p>
+            </div>
+
+            <div class="contact-card__meta">
+              <a
+                *ngIf="getContactEmail(contact) as email"
+                class="contact-card__meta-item contact-card__meta-item--link"
+                href="mailto:{{ email }}"
+                (click)="$event.stopPropagation()"
+              >
+                <lucide-icon name="mail" size="14"></lucide-icon>
+                <span>{{ email }}</span>
+              </a>
+
+              <a
+                *ngIf="getContactPhone(contact) as phone"
+                class="contact-card__meta-item contact-card__meta-item--link"
+                href="tel:{{ phone }}"
+                (click)="$event.stopPropagation()"
+              >
+                <lucide-icon name="phone" size="14"></lucide-icon>
+                <span>{{ phone }}</span>
+              </a>
+
+              <div *ngIf="contact.department" class="contact-card__meta-item">
+                <lucide-icon name="building" size="14"></lucide-icon>
+                <span>{{ contact.department }}</span>
+              </div>
+
+              <div *ngIf="contact.location" class="contact-card__meta-item">
+                <lucide-icon name="map-pin" size="14"></lucide-icon>
+                <span>{{ contact.location }}</span>
+              </div>
+            </div>
+          </div>
+        </button>
+      </div>
+    </ng-container>
+
+    <ng-template #contactEmpty>
+      <div class="contact-empty">
+        <lucide-icon name="user" size="32" class="mb-3 opacity-60"></lucide-icon>
+        <p class="text-sm">No contacts available.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

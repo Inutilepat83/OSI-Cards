@@ -25,6 +25,10 @@ export class MagneticTiltService {
   private readonly MAX_GLOW_OPACITY_OFFSET = 0.3;
   private readonly MAX_REFLECTION_OPACITY = 0.3;
 
+  private frameHandle: number | null = null;
+  private lastPosition: MousePosition | null = null;
+  private lastElement: HTMLElement | null = null;
+
   private tiltCalculationsSubject = new BehaviorSubject<TiltCalculations>({
     rotateX: 0,
     rotateY: 0,
@@ -41,6 +45,29 @@ export class MagneticTiltService {
       return;
     }
 
+    this.lastPosition = mousePosition;
+    this.lastElement = element;
+
+    if (this.frameHandle !== null) {
+      return;
+    }
+
+    if (typeof window === 'undefined') {
+      this.applyTilt(mousePosition, element);
+      return;
+    }
+
+    this.frameHandle = window.requestAnimationFrame(() => {
+      this.frameHandle = null;
+      if (!this.lastElement || !this.lastPosition) {
+        this.resetTilt();
+        return;
+      }
+      this.applyTilt(this.lastPosition, this.lastElement);
+    });
+  }
+
+  private applyTilt(mousePosition: MousePosition, element: HTMLElement): void {
     const rect = element.getBoundingClientRect();
     const halfW = rect.width / 2;
     const halfH = rect.height / 2;
@@ -76,6 +103,13 @@ export class MagneticTiltService {
   }
 
   resetTilt(): void {
+    if (this.frameHandle !== null && typeof window !== 'undefined') {
+      window.cancelAnimationFrame(this.frameHandle);
+      this.frameHandle = null;
+    }
+    this.lastPosition = null;
+    this.lastElement = null;
+
     this.tiltCalculationsSubject.next({
       rotateX: 0,
       rotateY: 0,

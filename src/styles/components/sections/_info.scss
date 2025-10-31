@@ -1,0 +1,55 @@
+/* Detailed info cards shown in the company information section */
+
+.info-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.info-card {
+  border: 1px solid rgba(255, 121, 0, 0.28);
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: linear-gradient(182deg, rgba(28, 28, 28, 0.94) 0%, rgba(12, 12, 12, 0.92) 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 92px;
+  transition: border-color 0.24s ease, box-shadow 0.24s ease, transform 0.24s ease;
+}
+
+.info-card:hover {
+  border-color: rgba(255, 153, 51, 0.52);
+  box-shadow: 0 14px 28px rgba(255, 121, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.info-card__label {
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.info-card__value {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--foreground);
+  letter-spacing: 0.01em;
+}
+
+.info-card__description {
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+}
+
+.info-card__trend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}

@@ -60,7 +60,7 @@ export class IconService {
     
     // Products & Services
     'product': 'package',
-    'service': 'tool',
+  'service': 'wrench',
     'category': 'folder',
     'type': 'type',
     'brand': 'award',

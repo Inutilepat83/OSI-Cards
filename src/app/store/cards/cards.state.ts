@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { createReducer, on } from '@ngrx/store';
-import { AICardConfig } from '../../models/card.model';
+import { AICardConfig, CardType } from '../../models/card.model';
 
 // ===== ACTIONS =====
 
@@ -18,7 +18,7 @@ export const loadCardsFailure = createAction(
 // Card Type and Variant Actions
 export const setCardType = createAction(
   '[Cards] Set Card Type',
-  props<{ cardType: string }>()
+  props<{ cardType: CardType }>()
 );
 export const setCardVariant = createAction(
   '[Cards] Set Card Variant',
@@ -53,7 +53,7 @@ export const setFullscreen = createAction(
 // Template Loading Actions
 export const loadTemplate = createAction(
   '[Cards] Load Template',
-  props<{ cardType: string; variant: number }>()
+  props<{ cardType: CardType; variant: number }>()
 );
 export const loadTemplateSuccess = createAction(
   '[Cards] Load Template Success',
@@ -97,7 +97,7 @@ export const searchCardsFailure = createAction('[Cards] Search Cards Failure', p
 export interface CardsState {
   cards: AICardConfig[];
   currentCard: AICardConfig | null;
-  cardType: string;
+  cardType: CardType;
   cardVariant: number;
   jsonInput: string;
   isGenerating: boolean;

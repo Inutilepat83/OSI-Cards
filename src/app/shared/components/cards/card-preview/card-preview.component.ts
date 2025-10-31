@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AICardConfig } from '../../../../models';
-import { AICardRendererComponent } from '../ai-card-renderer.component';
+import { AICardRendererComponent, CardFieldInteractionEvent } from '../ai-card-renderer.component';
 
 @Component({
   selector: 'app-card-preview',
@@ -17,14 +17,19 @@ export class CardPreviewComponent {
   @Input() isInitialized = false;
   @Input() isFullscreen = false;
 
-  @Output() cardInteraction = new EventEmitter<unknown>();
+  @Output() cardInteraction = new EventEmitter<{ action: string; card: AICardConfig }>();
+  @Output() fieldInteraction = new EventEmitter<CardFieldInteractionEvent>();
   @Output() fullscreenToggle = new EventEmitter<boolean>();
 
-  onCardInteraction(event: unknown): void {
+  onCardInteraction(event: { action: string; card: AICardConfig }): void {
     this.cardInteraction.emit(event);
   }
 
-  onFullscreenToggle(event: any): void {
-    this.fullscreenToggle.emit(event);
+  onFieldInteraction(event: CardFieldInteractionEvent): void {
+    this.fieldInteraction.emit(event);
+  }
+
+  onFullscreenToggle(isFullscreen: boolean): void {
+    this.fullscreenToggle.emit(isFullscreen);
   }
 }

@@ -1,0 +1,28 @@
+/* Responsive image wrapper with graceful fallback */
+
+.image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-placeholder {
+  background-color: var(--muted);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-error {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+}

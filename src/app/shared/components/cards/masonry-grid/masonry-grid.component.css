@@ -1,0 +1,15 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.masonry-item {
+  will-change: transform, top, left, width, height;
+}
+
+/* Ensure sections have proper containment */
+.masonry-item > * {
+  display: block;
+  width: 100%;
+  height: auto;
+}

@@ -1,18 +1,21 @@
-import { Injectable } from '@angular/core';
-import { Action } from '@ngrx/store';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { map, mergeMap, catchError } from 'rxjs/operators';
 import * as CardsActions from './cards.state';
 import { CardDataService } from '../../core';
 import { AICardConfig } from '../../models/card.model';
+import { ensureCardIds, removeAllIds } from '../../shared';
+
+type GenerateCardAction = ReturnType<typeof CardsActions.generateCard>;
+type LoadTemplateAction = ReturnType<typeof CardsActions.loadTemplate>;
+type DeleteCardAction = ReturnType<typeof CardsActions.deleteCard>;
+type SearchCardsAction = ReturnType<typeof CardsActions.searchCards>;
 
 @Injectable()
 export class CardsEffects {
-  constructor(
-    private actions$: Actions,
-    private cardConfigService: CardDataService
-  ) {}
+  private readonly actions$ = inject(Actions);
+  private readonly cardConfigService = inject(CardDataService);
 
   loadCards$ = createEffect(() =>
     this.actions$.pipe(
@@ -29,8 +32,8 @@ export class CardsEffects {
   generateCard$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CardsActions.generateCard),
-      mergeMap((action: any) =>
-        of(action.config).pipe(
+      mergeMap(({ config }: GenerateCardAction) =>
+        of(config).pipe(
           map((card) => CardsActions.generateCardSuccess({ card })),
           catchError((error: unknown) => of(CardsActions.generateCardFailure({ error: error instanceof Error ? error.message : String(error) })))
         )
@@ -41,14 +44,18 @@ export class CardsEffects {
   loadTemplate$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CardsActions.loadTemplate),
-      mergeMap((action: any) =>
-        this.cardConfigService.getCardsByType(action.cardType).pipe(
+      mergeMap(({ cardType, variant }: LoadTemplateAction) =>
+        this.cardConfigService.getCardsByType(cardType).pipe(
           map((cards) => {
-            // Get the first card as template (or by variant if needed)
-            const template = cards[Math.min(action.variant - 1, cards.length - 1)] || cards[0];
-            const cleanTemplate = this.removeAllIds(template) as AICardConfig;
-            delete cleanTemplate.cardSubtitle;
-            return CardsActions.loadTemplateSuccess({ template: cleanTemplate });
+            if (!cards.length) {
+              return CardsActions.loadTemplateFailure({ error: `No templates available for card type "${cardType}".` });
+            }
+
+            const template = cards[Math.min(variant - 1, cards.length - 1)] ?? cards[0];
+            const scrubbed = removeAllIds(template);
+            const hydrated = ensureCardIds({ ...scrubbed });
+            delete hydrated.cardSubtitle;
+            return CardsActions.loadTemplateSuccess({ template: hydrated });
           }),
           catchError((error: unknown) => of(CardsActions.loadTemplateFailure({ error: String(error) })))
         )
@@ -60,8 +67,8 @@ export class CardsEffects {
   createCard$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CardsActions.createCard),
-      mergeMap((action: any) =>
-        of(action.card).pipe(
+      mergeMap(({ config }: GenerateCardAction) =>
+        of(config).pipe(
           map((card: AICardConfig) => CardsActions.createCardSuccess({ card })),
           catchError((error: unknown) => of(CardsActions.createCardFailure({ error: error instanceof Error ? error.message : String(error) })))
         )
@@ -72,8 +79,8 @@ export class CardsEffects {
   updateCard$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CardsActions.updateCard),
-      mergeMap((action: any) =>
-        of(action.card || action.changes).pipe(
+      mergeMap((action: GenerateCardAction) =>
+        of(action.config).pipe(
           map((card: AICardConfig) => CardsActions.updateCardSuccess({ card })),
           catchError((error: unknown) => of(CardsActions.updateCardFailure({ error: error instanceof Error ? error.message : String(error) })))
         )
@@ -84,9 +91,9 @@ export class CardsEffects {
   deleteCard$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CardsActions.deleteCard),
-      mergeMap((action: any) =>
-        of(action.id).pipe(
-          map((id: string) => CardsActions.deleteCardSuccess({ id })),
+      mergeMap(({ id }: DeleteCardAction) =>
+        of(id).pipe(
+          map((cardId: string) => CardsActions.deleteCardSuccess({ id: cardId })),
           catchError((error: unknown) => of(CardsActions.deleteCardFailure({ error: error instanceof Error ? error.message : String(error) })))
         )
       )
@@ -96,32 +103,17 @@ export class CardsEffects {
   searchCards$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CardsActions.searchCards),
-      mergeMap((action: any) =>
-        this.cardConfigService.searchCards(action.query).pipe(
+      mergeMap(({ query }: SearchCardsAction) =>
+        this.cardConfigService.searchCards(query).pipe(
           map((results: AICardConfig[]) => {
-            return CardsActions.searchCardsSuccess({ query: action.query, results });
+            return CardsActions.searchCardsSuccess({ query, results });
           }),
           catchError((error: unknown) => of(CardsActions.searchCardsFailure({
-            query: action.query,
+            query,
             error: error instanceof Error ? error.message : String(error)
           })))
         )
       )
     )
   );
-
-  private removeAllIds(obj: unknown): unknown {
-    if (Array.isArray(obj)) {
-      return obj.map((item) => this.removeAllIds(item));
-    } else if (obj && typeof obj === 'object') {
-      const newObj: Record<string, unknown> = {};
-      for (const [key, value] of Object.entries(obj)) {
-        if (key !== 'id') {
-          newObj[key] = this.removeAllIds(value);
-        }
-      }
-      return newObj;
-    }
-    return obj;
-  }
 }
