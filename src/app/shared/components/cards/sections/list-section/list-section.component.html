@@ -14,8 +14,8 @@
           type="button"
           class="list-card"
           (click)="onItemClick(item)"
-          [style.animation]="'fadeInUp 0.55s ease-out forwards'"
-          [style.animation-delay]="i * 50 + 'ms'"
+          [style.animation]="getAnimationDuration(0.55)"
+          [style.animation-delay]="getAnimationDelay(i, 50)"
         >
           <div class="list-card__header">
             <div class="list-card__icon">

@@ -25,7 +25,36 @@
     ],
     "paths": {
       "@app/*": ["./src/app/*"],
-      "@environments/*": ["./src/environments/*"]
+      "@environments/*": [
+        "./src/environments/*"
+      ],
+      "@core/*": [
+        "./src/app/core/*"
+      ],
+      "@core": [
+        "./src/app/core/index.ts"
+      ],
+      "@shared/*": [
+        "./src/app/shared/*"
+      ],
+      "@shared": [
+        "./src/app/shared/index.ts"
+      ],
+      "@models/*": [
+        "./src/app/models/*"
+      ],
+      "@models": [
+        "./src/app/models/index.ts"
+      ],
+      "@ui": [
+        "./ui/src/public-api"
+      ],
+      "@data-access/cards": [
+        "./cards-data-access/src/public-api"
+      ],
+      "@data-access/cards/*": [
+        "./cards-data-access/src/lib/cards/*"
+      ]
     }
   },
   "angularCompilerOptions": {

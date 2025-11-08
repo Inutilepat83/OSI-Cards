@@ -22,8 +22,8 @@ interface PositionedSection {
 })
 export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() sections: CardSection[] = [];
-  @Input() gap = 24;
-  @Input() minColumnWidth = 280;
+  @Input() gap = 12;
+  @Input() minColumnWidth = 200;
 
   @Output() sectionEvent = new EventEmitter<SectionRenderEvent>();
 
@@ -100,6 +100,11 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     if (this.pendingAnimationFrame) {
       cancelAnimationFrame(this.pendingAnimationFrame);
     }
+    // Reset the reflow counter so every new layout request can attempt
+    // another full round of measurements. Without this the layout would
+    // stop reflowing after the initial MAX_REFLOWS executions, causing
+    // stale positions when sections resize or new data arrives.
+    this.reflowCount = 0;
     this.pendingAnimationFrame = requestAnimationFrame(() => {
       this.pendingAnimationFrame = undefined;
       this.reflowWithActualHeights();
@@ -108,6 +113,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
   private computeInitialLayout(): void {
     const resolvedSections = this.sections ?? [];
+    this.reflowCount = 0;
+    this.containerHeight = 0;
     this.positionedSections = resolvedSections.map((section, index) => ({
       section,
       key: section.id ?? `${section.title}-${index}`,
@@ -119,6 +126,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     
     // Don't schedule update here - let ngAfterViewInit handle it
     this.cdr.markForCheck();
+    this.scheduleLayoutUpdate();
   }
 
   private reflowWithActualHeights(): void {
@@ -216,17 +224,20 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     const type = (section.type ?? '').toLowerCase();
     const title = (section.title ?? '').toLowerCase();
 
+    // Overview sections: full width
     if (title.includes('overview')) {
       return 2;
     }
 
+    // Media-heavy sections: wider
     switch (type) {
-      case 'analytics':
-      case 'chart':
       case 'map':
-      case 'financials':
-      case 'network-card':
+      case 'chart':
         return 2;
+      case 'financials':
+      case 'analytics':
+      case 'network-card':
+        return 1;
       default:
         return 1;
     }

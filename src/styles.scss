@@ -13,6 +13,7 @@
 @import 'styles/layout/json-editor';
 
 @import 'styles/components/cards/ai-card';
+@import 'styles/components/sections/sections-base';
 @import 'styles/components/sections/section-shell';
 @import 'styles/components/sections/overview';
 @import 'styles/components/sections/analytics';
@@ -22,6 +23,12 @@
 @import 'styles/components/sections/contact';
 @import 'styles/components/sections/network';
 @import 'styles/components/sections/product';
+@import 'styles/components/sections/chart';
+@import 'styles/components/sections/event';
+@import 'styles/components/sections/financials';
+@import 'styles/components/sections/solutions';
+@import 'styles/components/sections/fallback';
+@import 'styles/components/sections/unified-cards'; /* Must be last to override all section-specific styles */
 @import 'styles/components/badges';
 @import 'styles/components/config-panel';
 @import 'styles/components/ai-card-renderer';

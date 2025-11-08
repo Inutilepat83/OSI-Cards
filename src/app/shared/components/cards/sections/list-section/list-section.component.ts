@@ -1,19 +1,16 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardField, CardItem, CardSection } from '../../../../../models';
+import { CardField, CardItem } from '../../../../../models';
 import { LucideIconsModule } from '../../../../icons/lucide-icons.module';
 import { IconService } from '../../../../services/icon.service';
+import { BaseSectionComponent } from '../base-section.component';
+import { SectionUtilsService } from '../../../../services/section-utils.service';
 
 type ListEntry = (CardItem & CardField) & {
   priority?: string;
   assignee?: string;
   date?: string;
 };
-
-interface ListItemInteraction {
-  item: ListEntry;
-  metadata?: Record<string, unknown>;
-}
 
 @Component({
   selector: 'app-list-section',
@@ -22,32 +19,12 @@ interface ListItemInteraction {
   templateUrl: './list-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ListSectionComponent {
-  @Input({ required: true }) section!: CardSection;
-  @Output() itemInteraction = new EventEmitter<ListItemInteraction>();
-
+export class ListSectionComponent extends BaseSectionComponent<ListEntry> {
   private readonly iconService = inject(IconService);
+  protected readonly utils = inject(SectionUtilsService);
 
   get items(): ListEntry[] {
-    if (Array.isArray(this.section.items) && this.section.items.length) {
-      return this.section.items as ListEntry[];
-    }
-
-    if (Array.isArray(this.section.fields) && this.section.fields.length) {
-      return (this.section.fields as ListEntry[]).map((field) => {
-        const metaDescription = typeof field.meta?.['description'] === 'string'
-          ? (field.meta['description'] as string)
-          : undefined;
-
-        return {
-          ...field,
-          title: field.title ?? field.label ?? field.id,
-          description: field.description ?? metaDescription
-        };
-      });
-    }
-
-    return [];
+    return super.getItems() as ListEntry[];
   }
 
   getIconName(item: ListEntry): string {
@@ -56,41 +33,18 @@ export class ListSectionComponent {
   }
 
   getStatusClasses(status?: string): string {
-    switch ((status ?? '').toLowerCase()) {
-      case 'completed':
-        return 'list-card__tag--status-completed';
-      case 'in-progress':
-      case 'active':
-        return 'list-card__tag--status-active';
-      case 'pending':
-        return 'list-card__tag--status-pending';
-      case 'cancelled':
-      case 'blocked':
-        return 'list-card__tag--status-blocked';
-      default:
-        return 'list-card__tag--status-default';
-    }
+    // Map to list-card specific classes while using utils logic
+    const baseClass = this.utils.getStatusClasses(status);
+    return baseClass.replace('status--', 'list-card__tag--status-');
   }
 
   getPriorityClasses(priority?: string): string {
-    switch ((priority ?? '').toLowerCase()) {
-      case 'high':
-        return 'list-card__tag--priority-high';
-      case 'medium':
-        return 'list-card__tag--priority-medium';
-      case 'low':
-        return 'list-card__tag--priority-low';
-      default:
-        return 'list-card__tag--priority-default';
-    }
+    // Map to list-card specific classes while using utils logic
+    const baseClass = this.utils.getPriorityClasses(priority);
+    return baseClass.replace('priority--', 'list-card__tag--priority-');
   }
 
   onItemClick(item: ListEntry): void {
-    this.itemInteraction.emit({
-      item,
-      metadata: {
-        sectionId: this.section.id
-      }
-    });
+    this.emitItemInteraction(item);
   }
 }

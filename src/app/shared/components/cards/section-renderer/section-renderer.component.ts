@@ -95,7 +95,11 @@ export class SectionRendererComponent {
       type: 'field',
       section: this.section,
       field,
-      metadata
+      metadata: {
+        sectionId: this.section.id,
+        sectionTitle: this.section.title,
+        ...metadata
+      }
     });
   }
 
@@ -104,7 +108,11 @@ export class SectionRendererComponent {
       type: 'item',
       section: this.section,
       item,
-      metadata
+      metadata: {
+        sectionId: this.section.id,
+        sectionTitle: this.section.title,
+        ...metadata
+      }
     });
   }
 

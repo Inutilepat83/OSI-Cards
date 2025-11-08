@@ -1,6 +1,5 @@
 <div class="ai-section">
   <div class="ai-section__header">
-    <lucide-icon name="bar-chart-3" [size]="20"></lucide-icon>
     <h3 class="ai-section__title">{{ section.title }}</h3>
     <span *ngIf="fields.length" class="ai-section__badge">
       {{ fields.length }} metrics
@@ -18,8 +17,8 @@
           (keydown.space)="$event.preventDefault(); onFieldClick(field)"
           role="button"
           tabindex="0"
-          [style.animation]="'fadeInUp 0.6s ease-out forwards'"
-          [style.animation-delay]="i * 60 + 'ms'"
+          [style.animation]="getAnimationDuration(0.6)"
+          [style.animation-delay]="getAnimationDelay(i, 60)"
         >
           <div class="analytics-metric__label">
             <lucide-icon [name]="getTrendIcon(field)" [size]="16" [ngClass]="getTrendClass(field)"></lucide-icon>
@@ -44,7 +43,7 @@
           <div *ngIf="field.change !== undefined" class="analytics-metric__meta">
             <span>Change:</span>
             <span class="analytics-metric__change" [ngClass]="getTrendClass(field)">
-              {{ field.change > 0 ? '+' : '' }}{{ field.change }}%
+              {{ formatChange(field.change) }}
             </span>
             <lucide-icon [name]="getTrendIcon(field)" [size]="14" [ngClass]="getTrendClass(field)"></lucide-icon>
           </div>

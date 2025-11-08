@@ -1,18 +1,15 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardField, CardSection } from '../../../../../models';
+import { CardField } from '../../../../../models';
 import { LucideIconsModule } from '../../../../icons/lucide-icons.module';
+import { BaseSectionComponent } from '../base-section.component';
+import { SectionUtilsService } from '../../../../services/section-utils.service';
 
 type AnalyticsField = CardField & {
   change?: number;
   trend?: 'up' | 'down' | 'stable';
   percentage?: number;
 };
-
-interface AnalyticsFieldInteraction {
-  field: AnalyticsField;
-  metadata?: Record<string, unknown>;
-}
 
 @Component({
   selector: 'app-analytics-section',
@@ -21,48 +18,27 @@ interface AnalyticsFieldInteraction {
   templateUrl: './analytics-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AnalyticsSectionComponent {
+export class AnalyticsSectionComponent extends BaseSectionComponent<AnalyticsField> {
   readonly Math = Math;
-
-  @Input({ required: true }) section!: CardSection;
-  @Output() fieldInteraction = new EventEmitter<AnalyticsFieldInteraction>();
+  protected readonly utils = inject(SectionUtilsService);
 
   get fields(): AnalyticsField[] {
-    return (this.section.fields as AnalyticsField[]) ?? [];
+    return this.getFields() as AnalyticsField[];
   }
 
   onFieldClick(field: AnalyticsField): void {
-    this.fieldInteraction.emit({
-      field,
-      metadata: {
-        sectionTitle: this.section.title
-      }
-    });
+    this.emitFieldInteraction(field);
   }
 
   getTrendIcon(field: AnalyticsField): string {
-    switch (field.trend) {
-      case 'up':
-        return 'trending-up';
-      case 'down':
-        return 'trending-down';
-      case 'stable':
-        return 'minus';
-      default:
-        return 'bar-chart-3';
-    }
+    return this.utils.getTrendIcon(field.trend ?? this.utils.calculateTrend(field.change));
   }
 
   getTrendClass(field: AnalyticsField): string {
-    switch (field.trend) {
-      case 'up':
-        return 'trend--up';
-      case 'down':
-        return 'trend--down';
-      case 'stable':
-        return 'trend--stable';
-      default:
-        return 'trend--neutral';
-    }
+    return this.utils.getTrendClass(field.trend ?? field.change);
+  }
+
+  formatChange(change?: number): string {
+    return this.utils.formatChange(change);
   }
 }

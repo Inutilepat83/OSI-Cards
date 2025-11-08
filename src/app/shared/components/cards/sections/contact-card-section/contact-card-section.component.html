@@ -1,8 +1,5 @@
 <div class="ai-section">
   <div class="ai-section__header">
-    <div class="ai-section__icon">
-      <lucide-icon name="users" size="18"></lucide-icon>
-    </div>
     <div class="ai-section__details">
       <h3 class="ai-section__title">{{ section.title }}</h3>
       <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
@@ -20,8 +17,8 @@
           type="button"
           class="contact-card"
           (click)="onContactClick(contact)"
-          [style.animation]="'fadeInUp 0.55s ease-out forwards'"
-          [style.animation-delay]="i * 50 + 'ms'"
+          [style.animation]="getAnimationDuration(0.55)"
+          [style.animation-delay]="getAnimationDelay(i, 50)"
         >
           <div class="contact-card__avatar">
             <ng-container *ngIf="getContactAvatar(contact) as avatar; else contactInitials">

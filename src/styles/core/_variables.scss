@@ -45,6 +45,199 @@
   --text-5xl: 3rem;
   --text-7xl: 4.5rem;
 
+  /* ===== COMPONENT-SPECIFIC FONT SIZES ===== */
+  /* Card Fonts */
+  --font-card-title: 1.15rem;           /* Card main title */
+  --font-card-eyebrow: 0.50rem;         /* Card category/eyebrow text */
+  --font-card-subtitle: 0.70rem;        /* Card subtitle */
+  --font-card-meta: 0.48rem;            /* Card metadata chips */
+  --font-card-meta-value: 0.60rem;      /* Card metadata values */
+  --font-card-footnote: 0.46rem;        /* Card footnote */
+  --font-card-action: 0.64rem;          /* Card action buttons */
+  
+  /* Section Fonts - Standardized across all sections */
+  --font-section-title: 0.75rem;        /* Section header title */
+  --font-section-label: 0.62rem;        /* Section card labels */
+  --font-section-value: 0.57rem;        /* Section card values */
+  --font-section-description: 0.62rem;  /* Section descriptions */
+  --font-section-meta: 0.50rem;         /* Section metadata */
+  
+  /* Additional Section Font Sizes (for specific use cases) */
+  --font-section-label-lg: 0.75rem;     /* Large labels */
+  --font-section-value-lg: 0.78rem;     /* Large values */
+  --font-section-value-xl: 0.85rem;     /* Extra large values */
+  --font-section-value-2xl: 0.95rem;    /* 2XL values */
+  --font-section-name: 0.85rem;         /* Contact/name text */
+  --font-section-role: 0.65rem;         /* Role/subtitle text */
+  --font-section-tag: 0.50rem;          /* Tag/badge text */
+  --font-section-tag-sm: 0.55rem;       /* Small tag text */
+  --font-section-tag-lg: 0.72rem;       /* Large tag text */
+  
+  /* Overview Section - Larger fonts (50% increase from standard) */
+  --font-overview-label: 0.72rem;       /* Overview card labels */
+  --font-overview-value: 0.63rem;       /* Overview card values */
+  
+  /* Contact Section Specific */
+  --font-contact-name: 0.85rem;
+  --font-contact-role: 0.65rem;
+  --font-contact-meta: 0.64rem;
+  --font-contact-initials: 0.75rem;
+  
+  /* List Section Specific */
+  --font-list-title: 0.75rem;
+  --font-list-subtitle: 0.62rem;
+  --font-list-meta: 0.62rem;
+  --font-list-tag: 0.50rem;
+  
+  /* Chart Section Specific */
+  --font-chart-label: 0.75rem;
+  --font-chart-value: 0.78rem;
+  --font-chart-meta: 0.65rem;
+  
+  /* Mobile Font Overrides */
+  --font-contact-name-mobile: 0.85rem;
+  --font-list-title-mobile: 0.75rem;
+  --font-chart-value-mobile: 0.95rem;
+  
+  /* ===== UNIFIED CARD SYSTEM ===== */
+  /* All cards (metric, contact, list, etc.) use this consistent base */
+  /* Matches Tailwind style: rounded-2xl, border-border/40, bg-card/70 */
+  --card-padding: 12px 16px;
+  --card-min-height: 50px;
+  --card-background: color-mix(in srgb, var(--card) 70%, transparent);
+  --card-border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+  --card-border-radius: 16px; /* rounded-2xl */
+  --card-gap: 6px;
+  --card-box-shadow: none;
+  
+  /* Card hover states - consistent across ALL cards */
+  /* Matches Tailwind: hover:-translate-y-1, hover:border-primary/40, hover:bg-card */
+  --card-hover-border: color-mix(in srgb, var(--primary) 40%, transparent);
+  --card-hover-background: var(--card);
+  --card-hover-transform: translateY(-4px); /* -translate-y-1 */
+  
+  /* Card typography - ALL labels/values use these */
+  --card-label-font-size: var(--font-section-label);      /* 0.62rem */
+  --card-value-font-size: var(--font-section-value);      /* 0.57rem */
+  
+  /* Mobile overrides - ALL cards responsive at ≤768px */
+  --card-padding-mobile: 10px 12px;
+  --card-min-height-mobile: 46px;
+  --card-border-radius-mobile: 12px;
+  
+  /* ===== UNIFIED SPACING SYSTEM ===== */
+  /* All spacing MUST use these variables - NO hardcoded values allowed */
+  
+  /* Item-Level Spacing (inside cards/sections) */
+  --spacing-xs: 2px;
+  --spacing-sm: 4px;
+  --spacing-md: 6px;
+  --spacing-lg: 8px;
+  --spacing-xl: 10px;
+  --spacing-2xl: 12px;
+  --spacing-3xl: 14px;
+  --spacing-4xl: 16px;
+  --spacing-5xl: 18px;
+  --spacing-6xl: 20px;
+  --spacing-7xl: 22px;
+  --spacing-8xl: 24px;
+  --spacing-9xl: 26px;
+  --spacing-10xl: 28px;
+  
+  /* Grid Gaps - Standardized for all section grids */
+  --grid-gap-xs: 3px;
+  --grid-gap-sm: 4px;
+  --grid-gap-md: 6px;
+  --grid-gap-lg: 8px;
+  --grid-gap-xl: 10px;
+  --grid-gap-2xl: 12px;
+  --grid-gap-3xl: 18px;
+  
+  /* Unified Section Grid Gap - Used by ALL section grids */
+  --section-grid-gap: var(--grid-gap-lg); /* 8px - consistent spacing for all sections */
+  --section-grid-gap-mobile: var(--grid-gap-md); /* 6px - mobile spacing */
+  
+  /* Grid Gaps Mobile */
+  --grid-gap-xs-mobile: 4px;
+  --grid-gap-sm-mobile: 4px;
+  --grid-gap-md-mobile: 4px;
+  
+  /* Section Item Padding (for items INSIDE sections) */
+  --section-item-padding: 8px;
+  --section-item-padding-mobile: 6px;
+  --section-item-gap: 6px;
+  --section-item-gap-mobile: 4px;
+  
+  /* Metric Card Padding (analytics, overview, info cards) */
+  --metric-item-padding: 10px 12px;
+  --metric-item-gap: 6px;
+  --metric-item-gap-mobile: 4px;
+  
+  /* List/Contact Item Padding */
+  --list-item-padding: 10px 12px;
+  --list-item-gap: 6px;
+  --list-item-gap-mobile: 4px;
+  
+  /* Internal Card Element Gaps */
+  --card-element-gap-xs: 2px;
+  --card-element-gap-sm: 3px;
+  --card-element-gap-md: 4px;
+  --card-element-gap-lg: 6px;
+  --card-element-gap-xl: 8px;
+  --card-element-gap-2xl: 10px;
+  
+  /* Tag/Badge Padding */
+  --tag-padding-x: 6px;
+  --tag-padding-y: 3px;
+  --tag-padding-x-sm: 4px;
+  --tag-padding-y-sm: 2px;
+  --tag-padding-x-lg: 7px;
+  --tag-padding-y-lg: 3px;
+  
+  /* Border Accents */
+  --accent-border-width: 3px;
+  --accent-border-width-sm: 2px;
+  
+  /* Icon Sizes - Standardized */
+  --icon-size-xs: 10px;
+  --icon-size-sm: 13px;
+  --icon-size-md: 16px;
+  --icon-size-lg: 22px;
+  --icon-size-xl: 36px;
+  
+  /* Avatar Sizes */
+  --avatar-size-sm: 32px;
+  --avatar-size-md: 36px;
+  
+  /* Progress Bar */
+  --progress-height: 2px;
+  --progress-margin: 4px 0;
+  
+  /* Legacy metric-card variables (map to unified --card-* system) */
+  --metric-card-padding: var(--card-padding);
+  --metric-card-min-height: var(--card-min-height);
+  --metric-card-background: var(--card-background);
+  --metric-card-border: var(--card-border);
+  --metric-card-border-radius: var(--card-border-radius);
+  --metric-card-gap: var(--card-gap);
+  --metric-card-box-shadow: var(--card-box-shadow);
+  --metric-card-hover-border: var(--card-hover-border);
+  --metric-card-hover-background: var(--card-hover-background);
+  --metric-card-hover-transform: var(--card-hover-transform);
+  --metric-label-font-size: var(--card-label-font-size);
+  --metric-value-font-size: var(--card-value-font-size);
+  --metric-card-padding-mobile: var(--card-padding-mobile);
+  --metric-card-min-height-mobile: var(--card-min-height-mobile);
+  --metric-card-border-radius-mobile: var(--card-border-radius-mobile);
+
+  /* Responsive Overrides */
+  --font-card-title-mobile: 0.95rem;
+  --font-card-eyebrow-mobile: 0.42rem;
+  --font-card-meta-mobile: 0.42rem;
+  --font-section-title-mobile: 0.56rem;
+  --font-section-label-mobile: 0.56rem;
+  --font-section-description-mobile: 0.48rem;
+
   /* Legacy variables - kept for backward compatibility */
   --bg-color: var(--background);
   --card-bg: var(--card);

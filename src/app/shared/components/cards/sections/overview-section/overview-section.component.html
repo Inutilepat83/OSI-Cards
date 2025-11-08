@@ -13,8 +13,8 @@
           type="button"
           class="overview-card"
           (click)="onFieldClick(field)"
-          [style.animation]="'fadeInUp 0.6s ease-out forwards'"
-          [style.animation-delay]="i * 50 + 'ms'"
+          [style.animation]="getAnimationDuration(0.6)"
+          [style.animation-delay]="getAnimationDelay(i, 50)"
         >
           <span class="overview-card__label">
             {{ field.label || field.title }}
@@ -28,7 +28,7 @@
 
     <ng-template #overviewEmpty>
       <div class="overview-empty">
-        <lucide-icon name="alert-circle" [size]="32" class="mb-4 opacity-50"></lucide-icon>
+        <lucide-icon name="alert-circle" [size]="32" class="mb-4 opacity-50" aria-hidden="true"></lucide-icon>
         <p class="text-sm">No overview information available</p>
       </div>
     </ng-template>

@@ -1,0 +1,189 @@
+/* Solutions section styling - Product solutions and offerings */
+
+@import 'sections-base';
+@import 'unified-cards';
+
+.solutions-section {
+  @include card;
+
+  .solutions-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--section-grid-gap);
+    
+    @media (max-width: 768px) {
+      gap: var(--section-grid-gap-mobile);
+    }
+  }
+
+  .solution-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: var(--metric-item-padding);
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.02);
+    cursor: pointer;
+    margin: 0;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: rgba(128, 128, 128, 0.35);
+      background: rgba(255, 255, 255, 0.04);
+      transform: translateY(-1px);
+    }
+    
+    @media (max-width: 768px) {
+      padding: 8px 10px;
+      gap: var(--spacing-sm);
+    }
+  }
+
+  .solution-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+    justify-content: space-between;
+  }
+
+  .solution-title {
+    @extend %unified-card-value;
+    font-weight: 600;
+    flex: 1;
+    /* Font size enforced by unified-card-value */
+  }
+
+  .solution-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--card-element-gap-sm);
+    padding: var(--tag-padding-y-sm) var(--tag-padding-x);
+    border-radius: 3px;
+    font-size: var(--font-section-tag-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    background: rgba(255, 121, 0, 0.15);
+    color: #ff7900;
+    border: 1px solid rgba(255, 121, 0, 0.3);
+  }
+
+  .solution-description {
+    font-size: var(--font-section-description);
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.3;
+  }
+
+  .solution-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-xs);
+  }
+
+  .solution-feature {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: 2px;
+    font-size: var(--font-section-label);
+    color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 121, 0, 0.08);
+
+    .feature-icon {
+      font-size: var(--font-section-tag-sm);
+    }
+  }
+
+  .solution-price {
+    display: flex;
+    align-items: baseline;
+    gap: var(--card-element-gap-sm);
+    margin-top: var(--spacing-sm);
+    font-size: var(--font-section-label);
+
+    .price-value {
+      font-size: var(--font-section-value);
+      font-weight: 700;
+      color: var(--foreground);
+    }
+
+    .price-currency {
+      font-size: var(--font-section-value-lg);
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .price-period {
+      font-size: var(--font-section-value-lg);
+      color: rgba(255, 255, 255, 0.45);
+    }
+  }
+
+  .solution-status {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+    font-size: var(--font-section-role);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    font-weight: 600;
+
+    .status-indicator {
+      display: inline-block;
+      width: var(--list-item-gap);
+      height: var(--list-item-gap);
+      border-radius: 50%;
+      background: #22c55e;
+
+      &.inactive {
+        background: #ef4444;
+      }
+
+      &.pending {
+        background: #f59e0b;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .solutions-section {
+    .solutions-list {
+      gap: var(--list-item-gap);
+    }
+
+    .solution-item {
+      padding: var(--card-padding-mobile);
+      gap: var(--spacing-sm);
+    }
+
+    .solution-title {
+      font-size: var(--font-section-value-xl);
+    }
+
+    .solution-description {
+      font-size: var(--font-section-value-lg);
+    }
+
+    .solution-features {
+      gap: var(--card-element-gap-sm);
+      margin-top: var(--spacing-xs);
+    }
+
+    .solution-feature {
+      font-size: var(--font-section-tag-sm);
+    }
+
+    .solution-price {
+      font-size: var(--font-section-role);
+
+      .price-value {
+        font-size: var(--font-section-value-2xl);
+      }
+    }
+  }
+}

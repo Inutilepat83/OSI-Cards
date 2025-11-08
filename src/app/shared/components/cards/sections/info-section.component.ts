@@ -1,11 +1,14 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardField, CardSection } from '../../../../models';
+import { CardField } from '../../../../models';
 import { LucideIconsModule } from '../../../../shared/icons/lucide-icons.module';
+import { BaseSectionComponent } from './base-section.component';
+import { SectionUtilsService } from '../../../services/section-utils.service';
 
 type InfoField = CardField & {
   description?: string;
   change?: number;
+  trend?: 'up' | 'down' | 'stable' | 'neutral';
 };
 
 export interface InfoSectionFieldInteraction {
@@ -20,64 +23,46 @@ export interface InfoSectionFieldInteraction {
   templateUrl: './info-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class InfoSectionComponent {
-  @Input({ required: true }) section!: CardSection;
-  @Output() fieldInteraction = new EventEmitter<InfoSectionFieldInteraction>();
+export class InfoSectionComponent extends BaseSectionComponent<InfoField> {
+  private readonly utils = inject(SectionUtilsService);
+  
+  // Custom output for backward compatibility with InfoSectionFieldInteraction format
+  @Output() infoFieldInteraction = new EventEmitter<InfoSectionFieldInteraction>();
 
   get fields(): InfoField[] {
-    return (this.section.fields as InfoField[]) ?? [];
+    return super.getFields() as InfoField[];
   }
 
-  get hasFields(): boolean {
-    return this.fields.length > 0;
+  override get hasFields(): boolean {
+    return super.hasFields;
   }
 
   onFieldClick(field: InfoField): void {
-    this.fieldInteraction.emit({
-      sectionTitle: this.section.title,
-      field
+    // Emit to base class for standard handling
+    this.emitFieldInteraction(field, { sectionTitle: this.section.title });
+    
+    // Also emit in InfoSectionFieldInteraction format for backward compatibility
+    this.infoFieldInteraction.emit({
+      field,
+      sectionTitle: this.section.title
     });
   }
 
   getTrendIcon(field: InfoField): string | null {
-    switch (field.trend) {
-      case 'up':
-        return 'trending-up';
-      case 'down':
-        return 'trending-down';
-      case 'neutral':
-        return 'minus';
-      default:
-        return null;
-    }
+    const icon = this.utils.getTrendIcon(field.trend ?? this.utils.calculateTrend(field.change));
+    // Return null for neutral/default to hide icon
+    return icon === 'bar-chart-3' ? null : icon;
   }
 
   getTrendClass(field: InfoField): string {
-    if (field.change === undefined) {
-      return 'trend--neutral';
-    }
-
-    if (field.change > 0) {
-      return 'trend--up';
-    }
-
-    if (field.change < 0) {
-      return 'trend--down';
-    }
-
-    return 'trend--stable';
+    return this.utils.getTrendClass(field.trend ?? field.change);
   }
 
   getTrendIconClass(field: InfoField): string {
-    switch (field.trend) {
-      case 'up':
-        return 'trend--up';
-      case 'down':
-        return 'trend--down';
-      case 'neutral':
-        return 'trend--stable';
-      default:
-        return 'trend--neutral';
-    }
+    return this.getTrendClass(field);
+  }
+
+  formatChange(change?: number): string {
+    return this.utils.formatChange(change);
   }
 }

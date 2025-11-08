@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardField, CardSection } from '../../../../../models';
+import { CardField } from '../../../../../models';
 import { LucideIconsModule } from '../../../../icons/lucide-icons.module';
+import { BaseSectionComponent } from '../base-section.component';
 
 interface ContactField extends CardField {
   name?: string;
@@ -20,11 +21,6 @@ interface ContactField extends CardField {
   };
 }
 
-interface ContactInteraction {
-  field: ContactField;
-  metadata?: Record<string, unknown>;
-}
-
 @Component({
   selector: 'app-contact-card-section',
   standalone: true,
@@ -32,29 +28,20 @@ interface ContactInteraction {
   templateUrl: './contact-card-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ContactCardSectionComponent {
-  @Input({ required: true }) section!: CardSection;
-  @Output() fieldInteraction = new EventEmitter<ContactInteraction>();
-
+export class ContactCardSectionComponent extends BaseSectionComponent<ContactField> {
   get contacts(): ContactField[] {
-    return (this.section.fields as ContactField[]) ?? [];
+    return super.getFields() as ContactField[];
   }
 
   get hasContacts(): boolean {
-    return this.contacts.length > 0;
+    return super.hasFields;
   }
 
   trackContact = (_index: number, contact: ContactField): string =>
     contact.id ?? this.getContactEmail(contact) ?? this.getContactName(contact) ?? `contact-${_index}`;
 
   onContactClick(field: ContactField): void {
-    this.fieldInteraction.emit({
-      field,
-      metadata: {
-        sectionId: this.section.id,
-        sectionTitle: this.section.title
-      }
-    });
+    this.emitFieldInteraction(field);
   }
 
   getContactName(contact: ContactField): string {

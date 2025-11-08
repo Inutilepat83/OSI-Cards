@@ -1,10 +1,7 @@
 <div class="flex h-full flex-col space-y-4">
-  <div class="flex items-center gap-3 border-b border-border/40 pb-3">
-    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 text-primary">
-      <lucide-icon [name]="getChartIcon()" size="18"></lucide-icon>
-    </div>
+  <div class="flex items-center gap-3 pb-4">
     <div>
-      <h3 class="text-lg font-semibold text-foreground">{{ section.title }}</h3>
+      <h3 class="text-xl font-semibold text-foreground">{{ section.title }}</h3>
       <p *ngIf="section.description" class="text-xs text-muted-foreground">{{ section.description }}</p>
     </div>
   </div>

@@ -1,55 +1,69 @@
 /* Detailed info cards shown in the company information section */
 
+@import 'sections-base';
+
 .info-grid {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
+  gap: var(--section-grid-gap);
+  min-height: 0;
+
+  @media (max-width: 520px) {
+    grid-template-columns: 1fr !important;
+  }
+  
+  @media (max-width: 768px) {
+    gap: var(--section-grid-gap-mobile);
+  }
 }
 
 .info-card {
-  border: 1px solid rgba(255, 121, 0, 0.28);
-  border-radius: 14px;
-  padding: 16px 18px;
-  background: linear-gradient(182deg, rgba(28, 28, 28, 0.94) 0%, rgba(12, 12, 12, 0.92) 100%);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-height: 92px;
-  transition: border-color 0.24s ease, box-shadow 0.24s ease, transform 0.24s ease;
-}
+  @include metric-card;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease;
 
-.info-card:hover {
-  border-color: rgba(255, 153, 51, 0.52);
-  box-shadow: 0 14px 28px rgba(255, 121, 0, 0.2);
-  transform: translateY(-2px);
-}
+  &:hover {
+    /* Uses unified hover transform from card mixin */
+    
+    .info-card__value {
+      color: color-mix(in srgb, var(--section-accent) 62%, var(--foreground) 38%);
+      text-shadow: 0 1px 4px color-mix(in srgb, var(--section-accent) 28%, transparent);
+    }
 
-.info-card__label {
-  font-size: 0.76rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.58);
-}
+    .info-card__label {
+      color: color-mix(in srgb, var(--foreground) 78%, transparent);
+    }
+  }
 
-.info-card__value {
-  font-size: 1.02rem;
-  font-weight: 600;
-  color: var(--foreground);
-  letter-spacing: 0.01em;
-}
+  &:active {
+    transform: translateY(-1px);
+    transition: transform 0.1s ease;
+  }
 
-.info-card__description {
-  font-size: 0.76rem;
-  color: rgba(255, 255, 255, 0.5);
-  line-height: 1.5;
-}
+  &__label {
+    @include metric-label;
+    /* Font size enforced by unified-card-label */
+  }
 
-.info-card__trend {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.74rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.6);
+  &__value {
+    @include metric-value;
+    /* Font size enforced by unified-card-value */
+  }
+
+  &__description {
+    @include section-description;
+  }
+
+  &__trend {
+    display: flex;
+    align-items: center;
+    gap: var(--card-element-gap-sm);
+    font-size: var(--font-section-label);
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: color-mix(in srgb, var(--foreground) 62%, transparent);
+    line-height: 1.2;
+    font-weight: 600;
+    margin-top: var(--spacing-xs);
+    @include trend-colors;
+  }
 }

@@ -1,0 +1,98 @@
+/* ===== UNIFIED CARD STYLES ===== */
+/* Consolidated card styling for ALL sections */
+/* This file manages all card parameters in one place */
+/* Style: rounded-2xl, border-border/40, bg-card/70, hover effects */
+
+@import 'sections-base';
+
+/* ===== UNIFIED CARD TYPOGRAPHY ===== */
+/* All cards MUST use these same font sizes for labels and values */
+/* This ensures 100% consistency across all sections */
+/* 
+ * Label font: var(--card-label-font-size) = 0.62rem
+ * Value font: var(--card-value-font-size) = 0.57rem
+ * These are defined in _variables.scss and enforced here
+ */
+
+/* Unified label style - used by ALL cards */
+%unified-card-label {
+  @include metric-label;
+  font-size: var(--card-label-font-size) !important; /* Force consistency */
+  /* All card labels use: 0.62rem, weight 600, color 65% opacity */
+}
+
+/* Unified value style - used by ALL cards */
+%unified-card-value {
+  @include metric-value;
+  font-size: var(--card-value-font-size) !important; /* Force consistency */
+  /* All card values use: 0.57rem, weight 700, full opacity */
+}
+
+/* Unified card class - use this for all section cards */
+/* Matches Tailwind style: rounded-2xl, border-border/40, bg-card/70 */
+.unified-card {
+  @include card;
+  
+  /* Additional utility classes for variations */
+  &--large {
+    padding: 16px 20px;
+    border-radius: 24px; /* rounded-3xl */
+  }
+  
+  &--compact {
+    padding: 8px 12px;
+  }
+  
+  &--no-hover {
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+/* Apply unified style to all section card classes */
+.overview-card,
+.analytics-metric,
+.info-card,
+.list-card,
+.contact-card,
+.network-card,
+.map-card,
+.product-entry,
+.product-reference {
+  @include card;
+}
+
+/* Enforce unified typography for all card labels - must come after section-specific styles */
+.overview-card__label,
+.analytics-metric__label,
+.info-card__label,
+.list-card__label,
+.contact-card__label,
+.network-card__label,
+.map-card__label,
+.product-entry__label,
+.product-reference__label {
+  @extend %unified-card-label;
+}
+
+/* Enforce unified typography for all card values - must come after section-specific styles */
+.overview-card__value,
+.analytics-metric__value,
+.info-card__value,
+.list-card__value,
+.contact-card__value,
+.network-card__value,
+.map-card__value,
+.product-entry__value,
+.product-reference__value {
+  @extend %unified-card-value;
+}
+
+/* Ensure all cards use the unified style */
+[class*="-card"],
+[class*="-metric"],
+[class*="-entry"] {
+  /* Cards will inherit from their specific classes above */
+}
+

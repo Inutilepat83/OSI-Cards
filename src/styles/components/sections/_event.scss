@@ -1,0 +1,123 @@
+/* Event section styling - Timeline events */
+
+.event-section {
+  @include card;
+
+  .event-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--section-gap);
+  }
+
+  .event-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--section-item-padding);
+    border-left: var(--accent-border-width) solid var(--section-accent);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.02);
+    margin: 0;
+    transition: background 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-left-color: var(--section-accent);
+    }
+    
+    @media (max-width: 768px) {
+      padding: var(--section-item-padding-mobile);
+      gap: var(--spacing-xs);
+    }
+  }
+
+  .event-date {
+    font-size: var(--font-section-label);
+    color: rgba(255, 255, 255, 0.45);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+  }
+
+  .event-title {
+    font-size: var(--font-section-value);
+    font-weight: 600;
+    color: var(--foreground);
+    line-height: 1.2;
+  }
+
+  .event-description {
+    font-size: var(--font-section-description);
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.3;
+  }
+
+  .event-status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--tag-padding-y-sm) var(--tag-padding-x);
+    border-radius: 3px;
+    font-size: var(--font-section-role);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    border: 1px solid;
+    width: fit-content;
+
+    &.success,
+    &.completed {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22c55e;
+      border-color: rgba(34, 197, 94, 0.4);
+    }
+
+    &.active,
+    &.in-progress {
+      background: rgba(255, 121, 0, 0.15);
+      color: #ff7900;
+      border-color: rgba(255, 121, 0, 0.4);
+    }
+
+    &.pending,
+    &.upcoming {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+
+    &.blocked,
+    &.delayed {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+  }
+
+  .event-time {
+    font-size: var(--font-section-role);
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 500;
+  }
+}
+
+@media (max-width: 768px) {
+  .event-section {
+    .event-item {
+      padding: var(--list-item-gap);
+      gap: var(--card-element-gap-sm);
+    }
+
+    .event-date {
+      font-size: var(--font-section-meta);
+    }
+
+    .event-title {
+      font-size: var(--font-section-value-lg);
+    }
+
+    .event-description {
+      font-size: var(--font-section-role);
+    }
+  }
+}
