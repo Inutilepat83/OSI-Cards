@@ -1,0 +1,205 @@
+<div class="ai-section">
+  <div class="ai-section__header">
+    <div class="ai-section__details">
+      <h3 class="ai-section__title">{{ section.title }}</h3>
+      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
+    </div>
+    <span *ngIf="hasFields" class="ai-section__badge">
+      {{ fields.length }} entries
+    </span>
+  </div>
+
+  <div class="ai-section__body">
+    <ng-container *ngIf="hasFields; else productEmpty">
+      <div class="product-layout">
+        <ng-container *ngIf="referenceGroup as references">
+          <section class="product-card product-card--references" [style.animation]="'fadeInUp 0.6s ease-out forwards'">
+            <div class="product-card__header">
+              <div class="product-card__icon" [ngClass]="getCategoryIconTone(references)">
+                <lucide-icon [name]="references.icon" size="18"></lucide-icon>
+              </div>
+              <div class="product-card__headline">
+                <p class="product-card__title">{{ references.title }}</p>
+                <p class="product-card__subtitle">Verified client testimonials and success stories</p>
+              </div>
+              <span class="product-card__badge">
+                {{ getGroupBadgeLabel(references) }}
+              </span>
+            </div>
+
+            <div class="product-reference-list">
+              <button
+                *ngFor="let field of references.fields; trackBy: trackField; let i = index"
+                type="button"
+                class="product-reference"
+                (click)="onFieldClick(field)"
+                [style.animation]="'fadeInUp 0.55s ease-out forwards'"
+                [style.animation-delay]="i * 60 + 'ms'"
+              >
+                <div class="product-reference__avatar">
+                  <lucide-icon name="award" size="20"></lucide-icon>
+                </div>
+                <div class="product-reference__content">
+                  <p class="product-reference__company">
+                    {{ field.reference?.company || field.title || field.label }}
+                  </p>
+                  <p *ngIf="field.reference?.testimonial" class="product-reference__testimonial">
+                    "{{ field.reference?.testimonial }}"
+                  </p>
+                  <div class="product-reference__meta">
+                    <div class="product-reference__stars">
+                      <lucide-icon
+                        *ngFor="let star of referenceStars"
+                        name="star"
+                        size="14"
+                      ></lucide-icon>
+                    </div>
+                    <span class="product-reference__badge">Success Story</span>
+                  </div>
+                </div>
+                <span class="product-entry__chevron">
+                  <lucide-icon name="chevron-right" size="16"></lucide-icon>
+                </span>
+              </button>
+            </div>
+          </section>
+        </ng-container>
+
+        <div class="product-grid" [ngClass]="{ 'product-grid--single': gridGroups.length <= 1 }">
+          <section
+            *ngFor="let group of gridGroups; trackBy: trackGroup; let gi = index"
+            class="product-card"
+            [style.animation]="'fadeInUp 0.6s ease-out forwards'"
+            [style.animation-delay]="(referenceGroup ? gi + 1 : gi) * 70 + 'ms'"
+          >
+            <div class="product-card__header">
+              <div class="product-card__icon" [ngClass]="getCategoryIconTone(group)">
+                <lucide-icon [name]="group.icon" size="18"></lucide-icon>
+              </div>
+              <div class="product-card__headline">
+                <p class="product-card__title">{{ group.title }}</p>
+                <p class="product-card__subtitle" *ngIf="group.key === 'pricing'">
+                  Tailored packages and commercial structures
+                </p>
+                <p class="product-card__subtitle" *ngIf="group.key === 'features'">
+                  Capabilities that differentiate our solution
+                </p>
+                <p class="product-card__subtitle" *ngIf="group.key === 'advantages'">
+                  Strategic benefits for your organization
+                </p>
+                <p class="product-card__subtitle" *ngIf="group.key === 'process'">
+                  Structured delivery and engagement steps
+                </p>
+                <p class="product-card__subtitle" *ngIf="group.key === 'contacts'">
+                  Key people to accelerate collaboration
+                </p>
+              </div>
+              <span class="product-card__badge">
+                {{ getGroupBadgeLabel(group) }}
+              </span>
+            </div>
+
+            <div class="product-card__content">
+              <button
+                *ngFor="let field of group.fields; trackBy: trackField; let i = index"
+                type="button"
+                class="product-entry"
+                (click)="onFieldClick(field)"
+                [style.animation]="'fadeInUp 0.55s ease-out forwards'"
+                [style.animation-delay]="i * 45 + 'ms'"
+              >
+                <ng-container *ngIf="isContactField(field); else productEntryDefault">
+                  <div class="product-contact">
+                    <div class="product-contact__avatar">
+                      <lucide-icon name="users" size="18"></lucide-icon>
+                    </div>
+                    <div class="product-contact__details">
+                      <p class="product-contact__name">{{ field.contact?.name }}</p>
+                      <p *ngIf="field.contact?.role" class="product-contact__role">{{ field.contact?.role }}</p>
+                      <div class="product-contact__meta">
+                        <a
+                          *ngIf="field.contact?.email"
+                          class="product-contact__link"
+                          href="mailto:{{ field.contact?.email }}"
+                          (click)="$event.stopPropagation()"
+                        >
+                          <lucide-icon name="mail" size="12"></lucide-icon>
+                          <span>{{ field.contact?.email }}</span>
+                        </a>
+                        <a
+                          *ngIf="field.contact?.phone"
+                          class="product-contact__link"
+                          href="tel:{{ field.contact?.phone }}"
+                          (click)="$event.stopPropagation()"
+                        >
+                          <lucide-icon name="phone" size="12"></lucide-icon>
+                          <span>{{ field.contact?.phone }}</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+
+                <ng-template #productEntryDefault>
+                  <div class="product-entry__body">
+                    <div class="product-entry__heading">
+                      <p class="product-entry__title">
+                        {{ field.title || field.label }}
+                      </p>
+                      <span *ngIf="field.value" class="product-entry__value">
+                        {{ field.value }}
+                      </span>
+                    </div>
+
+                    <p *ngIf="field.description" class="product-entry__description">
+                      {{ field.description }}
+                    </p>
+
+                    <div *ngIf="field.benefits?.length" class="product-entry__benefits">
+                      <div
+                        *ngFor="let benefit of (field.benefits || []) | slice:0:3"
+                        class="product-entry__benefit"
+                      >
+                        <lucide-icon name="check-circle-2" size="14"></lucide-icon>
+                        <span>{{ benefit }}</span>
+                      </div>
+                    </div>
+
+                    <div class="product-entry__meta">
+                      <span *ngIf="field.deliveryTime" class="product-entry__meta-item">
+                        <lucide-icon name="clock" size="12"></lucide-icon>
+                        {{ field.deliveryTime }}
+                      </span>
+                      <span *ngIf="field.teamSize" class="product-entry__meta-item">
+                        <lucide-icon name="users" size="12"></lucide-icon>
+                        {{ field.teamSize }}
+                      </span>
+                    </div>
+                  </div>
+                </ng-template>
+
+                <span class="product-entry__chevron">
+                  <lucide-icon name="chevron-right" size="16"></lucide-icon>
+                </span>
+              </button>
+            </div>
+          </section>
+        </div>
+
+        <div class="product-summary" *ngIf="summaryStats.length">
+          <div class="product-summary__item" *ngFor="let stat of summaryStats">
+            <span class="product-summary__value">{{ stat.value }}</span>
+            <span class="product-summary__label">{{ stat.label }}</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #productEmpty>
+      <div class="product-empty">
+        <lucide-icon name="box" size="32" class="mb-3 opacity-60"></lucide-icon>
+        <p class="text-sm">No product insights configured.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

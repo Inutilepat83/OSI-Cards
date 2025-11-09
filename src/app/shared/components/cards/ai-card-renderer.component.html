@@ -14,15 +14,6 @@
         class="ai-card-surface"
         [ngClass]="{ 'ai-card-surface--fullscreen': isFullscreen }"
       >
-        <button
-          type="button"
-          class="ai-card-fullscreen-btn"
-          [attr.aria-label]="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
-          (click)="toggleFullscreen()"
-        >
-          <lucide-icon [name]="isFullscreen ? 'minimize-2' : 'maximize-2'" [size]="16" aria-hidden="true"></lucide-icon>
-        </button>
-
         <header class="ai-card-header">
           <div class="ai-card-title-row">
             <div class="ai-card-title-group">
@@ -33,6 +24,14 @@
                 {{ cardConfig.cardType }}
               </span>
             </div>
+            <button
+              type="button"
+              class="ai-card-fullscreen-btn"
+              [attr.aria-label]="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
+              (click)="toggleFullscreen()"
+            >
+              <lucide-icon [name]="isFullscreen ? 'minimize-2' : 'maximize-2'" [size]="16" aria-hidden="true"></lucide-icon>
+            </button>
           </div>
 
           <p *ngIf="cardConfig.cardSubtitle" class="ai-card-subtitle">
@@ -64,7 +63,7 @@
           <ng-container *ngIf="processedSections.length; else emptyState">
             <app-masonry-grid
               [sections]="processedSections"
-              [gap]="24"
+              [gap]="12"
               [minColumnWidth]="280"
               class="w-full"
               (sectionEvent)="onSectionEvent($event)"

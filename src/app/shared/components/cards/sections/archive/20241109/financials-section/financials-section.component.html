@@ -1,0 +1,44 @@
+<div class="flex flex-col space-y-4">
+  <div class="flex items-center justify-between pb-2">
+    <h3 class="text-xl font-semibold text-foreground">{{ section.title }}</h3>
+    <span *ngIf="fields.length" class="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-xs text-emerald-400">
+      Financials
+    </span>
+  </div>
+
+  <div class="grid gap-3">
+    <button
+      *ngFor="let field of fields"
+      type="button"
+      class="flex items-center justify-between rounded-2xl border border-border/40 bg-card/70 p-4 text-left transition-colors duration-300 hover:border-primary/40 hover:bg-card"
+      (click)="onFieldClick(field)"
+    >
+      <div class="flex-1">
+        <span class="text-sm text-muted-foreground">{{ field.label }}</span>
+        <div class="mt-1 flex items-center gap-2 text-base font-semibold text-foreground">
+          <ng-container [ngSwitch]="field.format">
+            <span *ngSwitchCase="'currency'" class="flex items-center gap-1 text-emerald-400">
+              <lucide-icon name="dollar-sign" size="16"></lucide-icon>
+              {{ field.value }}
+            </span>
+            <span *ngSwitchDefault>{{ field.value }}</span>
+          </ng-container>
+          <lucide-icon
+            *ngIf="getTrendIcon(field) as trendIcon"
+            [name]="trendIcon"
+            size="16"
+            [ngClass]="getChangeClass(field)"
+          ></lucide-icon>
+        </div>
+      </div>
+      <div *ngIf="field.change !== undefined" class="text-right text-sm font-medium" [ngClass]="getChangeClass(field)">
+        {{ field.change > 0 ? '+' : '' }}{{ field.change }}%
+      </div>
+    </button>
+  </div>
+
+  <div *ngIf="!fields.length" class="rounded-2xl border border-dashed border-border/50 bg-background/50 p-8 text-center text-muted-foreground">
+    <lucide-icon name="dollar-sign" size="32" class="mx-auto mb-3 opacity-60"></lucide-icon>
+    <p>No financial metrics available.</p>
+  </div>
+</div>

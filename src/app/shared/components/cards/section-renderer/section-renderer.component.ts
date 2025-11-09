@@ -14,6 +14,8 @@ import { MapSectionComponent } from '../sections/map-section/map-section.compone
 import { ChartSectionComponent } from '../sections/chart-section/chart-section.component';
 import { OverviewSectionComponent } from '../sections/overview-section/overview-section.component';
 import { FallbackSectionComponent } from '../sections/fallback-section/fallback-section.component';
+import { QuotationSectionComponent } from '../sections/quotation-section/quotation-section.component';
+import { TextReferenceSectionComponent } from '../sections/text-reference-section/text-reference-section.component';
 
 export interface SectionRenderEvent {
   type: 'field' | 'item' | 'action';
@@ -41,7 +43,9 @@ export interface SectionRenderEvent {
     MapSectionComponent,
     ChartSectionComponent,
     OverviewSectionComponent,
-    FallbackSectionComponent
+    FallbackSectionComponent,
+    QuotationSectionComponent,
+    TextReferenceSectionComponent
   ],
   templateUrl: './section-renderer.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -71,6 +75,12 @@ export class SectionRendererComponent {
     }
     if (type === 'locations') {
       return 'map';
+    }
+    if (type === 'quotation' || type === 'quote') {
+      return 'quotation';
+    }
+    if (type === 'text-reference' || type === 'reference' || type === 'text-ref') {
+      return 'text-reference';
     }
     if (!type) {
       if (title.includes('overview')) {

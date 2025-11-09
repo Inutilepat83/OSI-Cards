@@ -1,11 +1,11 @@
-import { Injectable, ElementRef, NgZone, inject } from '@angular/core';
+import { Injectable, ElementRef, NgZone, OnDestroy, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { MousePosition } from './magnetic-tilt.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class MouseTrackingService {
+export class MouseTrackingService implements OnDestroy {
   private mousePositionSubject = new BehaviorSubject<MousePosition>({ x: 0, y: 0 });
   private relativePositionSubject = new BehaviorSubject<MousePosition>({ x: 0, y: 0 });
   private isInMagneticFieldSubject = new BehaviorSubject<boolean>(false);
@@ -18,44 +18,61 @@ export class MouseTrackingService {
   magneticIntensity$ = this.magneticIntensitySubject.asObservable();
   isHovered$ = this.isHoveredSubject.asObservable();
 
-  private lastUpdateTime = 0;
-  private throttleMs = 16; // ~60fps
   private magneticRange = 300;
+  private throttleMs = 16;
   private ngZone = inject(NgZone);
+  private trackedElements = new Set<HTMLElement>();
+  private pendingPosition: MousePosition | null = null;
+  private rafHandle: number | null = null;
+  private pointerMoveAttached = false;
+  private lastPointerFrame = 0;
 
-  constructor() {
-    this.setupGlobalMouseTracking();
-  }
+  constructor() {}
 
-  private setupGlobalMouseTracking(): void {
-    // Run outside Angular zone for better performance with frequent events
-    this.ngZone.runOutsideAngular(() => {
-      window.addEventListener('mousemove', this.handleGlobalMouseMove);
-    });
+  ngOnDestroy(): void {
+    this.detachGlobalPointerMove();
+    this.cleanup();
   }
 
   cleanup(): void {
-    window.removeEventListener('mousemove', this.handleGlobalMouseMove);
+    this.detachGlobalPointerMove();
   }
 
-  private handleGlobalMouseMove = (e: MouseEvent): void => {
-    const now = Date.now();
-    if (now - this.lastUpdateTime < this.throttleMs) return;
-    this.lastUpdateTime = now;
+  private handlePointerMove = (event: PointerEvent): void => {
+    const now = performance.now ? performance.now() : Date.now();
+    if (now - this.lastPointerFrame < this.throttleMs) {
+      return;
+    }
 
-    const newPosition = { x: e.clientX, y: e.clientY };
-    
-    // Run change detection only when needed
-    this.ngZone.run(() => {
-      this.mousePositionSubject.next(newPosition);
+    this.pendingPosition = { x: event.clientX, y: event.clientY };
+
+    if (this.rafHandle !== null) {
+      return;
+    }
+
+    this.rafHandle = requestAnimationFrame((timestamp) => {
+      const position = this.pendingPosition;
+      this.pendingPosition = null;
+      this.rafHandle = null;
+      this.lastPointerFrame = timestamp;
+
+      if (!position) {
+        return;
+      }
+
+      this.ngZone.run(() => {
+        this.mousePositionSubject.next(position);
+      });
     });
-  }
+  };
 
   trackElement(elementRef: ElementRef<HTMLElement>, magneticRange = 300, throttleMs = 16): void {
     this.magneticRange = magneticRange;
     this.throttleMs = throttleMs;
 
     const element = elementRef.nativeElement;
+    this.trackedElements.add(element);
+    this.ensureGlobalPointerMove();
     
     this.ngZone.runOutsideAngular(() => {
       element.addEventListener('mouseenter', this.handleMouseEnter);
@@ -67,6 +84,10 @@ export class MouseTrackingService {
     const element = elementRef.nativeElement;
     element.removeEventListener('mouseenter', this.handleMouseEnter);
     element.removeEventListener('mouseleave', this.handleMouseLeave);
+    this.trackedElements.delete(element);
+    if (this.trackedElements.size === 0) {
+      this.detachGlobalPointerMove();
+    }
   }
 
   private handleMouseEnter = (): void => {
@@ -118,5 +139,39 @@ export class MouseTrackingService {
     if (distance >= this.magneticRange) return 0;
     const t = distance / this.magneticRange;
     return 1 - t * t;
+  }
+
+  private ensureGlobalPointerMove(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (this.pointerMoveAttached) {
+      return;
+    }
+
+    this.pointerMoveAttached = true;
+    this.ngZone.runOutsideAngular(() => {
+      window.addEventListener('pointermove', this.handlePointerMove, { passive: true });
+    });
+  }
+
+  private detachGlobalPointerMove(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (!this.pointerMoveAttached) {
+      return;
+    }
+
+    window.removeEventListener('pointermove', this.handlePointerMove);
+    this.pointerMoveAttached = false;
+
+    if (this.rafHandle !== null) {
+      cancelAnimationFrame(this.rafHandle);
+      this.rafHandle = null;
+    }
+    this.pendingPosition = null;
   }
 }

@@ -38,7 +38,9 @@ export interface CardSection {
     | 'product'
     | 'solutions'
     | 'overview'
-    | 'stats';
+    | 'stats'
+    | 'quotation'
+    | 'text-reference';
   description?: string;
   subtitle?: string;
   preferredColumns?: 1 | 2 | 3 | 4;

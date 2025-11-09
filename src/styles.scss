@@ -14,6 +14,7 @@
 
 @import 'styles/components/cards/ai-card';
 @import 'styles/components/sections/sections-base';
+@import 'styles/components/sections/section-types';
 @import 'styles/components/sections/section-shell';
 @import 'styles/components/sections/overview';
 @import 'styles/components/sections/analytics';
@@ -27,6 +28,8 @@
 @import 'styles/components/sections/event';
 @import 'styles/components/sections/financials';
 @import 'styles/components/sections/solutions';
+@import 'styles/components/sections/quotation';
+@import 'styles/components/sections/text-reference';
 @import 'styles/components/sections/fallback';
 @import 'styles/components/sections/unified-cards'; /* Must be last to override all section-specific styles */
 @import 'styles/components/badges';

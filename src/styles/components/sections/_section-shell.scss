@@ -3,23 +3,34 @@
 /* Consistent spacing across ALL sections */
 .ai-section {
   --section-accent: var(--accent);
-  --section-padding: var(--spacing-2xl);
-  --section-gap: var(--spacing-5xl);
+  --section-padding: var(--spacing-4xl); /* Reduced from 8xl (24px) to 4xl (16px) */
+  --section-gap-internal: var(--spacing-4xl); /* Internal gap within section (16px) */
   
   position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
-  border-radius: 10px;
-  border: 1px solid rgba(128, 128, 128, 0.25);
-  background: transparent;
+  border-radius: var(--radius-lg);
+  border: none; /* ✅ NO BORDER - only inner cards have borders */
+  background: var(--section-bg-main); /* ✅ Default to main background */
   box-shadow:
-    0 12px 30px rgba(7, 11, 18, 0.26),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    0 4px 14px rgba(7, 11, 18, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.02);
   overflow: hidden;
   transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
   padding: var(--section-padding);
+  margin-bottom: var(--section-gap); /* ✅ Standardized 32px spacing between sections */
   backdrop-filter: none;
+}
+
+/* ✅ MAIN SECTION: Lighter background for most sections */
+.ai-section--main {
+  background: var(--section-bg-main);
+}
+
+/* ✅ CONTRAST SECTION: Darker background for emphasis (1-2 max per card) */
+.ai-section--contrast {
+  background: var(--section-bg-contrast);
 }
 
 .ai-section::before {
@@ -27,59 +38,70 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: radial-gradient(circle at top right,
-    color-mix(in srgb, var(--section-accent) 20%, transparent) 0%,
-    transparent 55%);
+  background: transparent;
   opacity: 0;
   transition: opacity 0.22s ease;
   pointer-events: none;
 }
 
 .ai-section:hover {
-  border-color: rgba(128, 128, 128, 0.4);
-  background: transparent;
+  border-color: transparent; /* ✅ No border on hover */
+  background: var(--section-bg-main); /* Keep same background */
   box-shadow:
-    0 18px 38px rgba(7, 11, 18, 0.3),
-    0 0 0 1px color-mix(in srgb, var(--section-accent) 18%, transparent),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  transform: translateY(-2px);
+    0 5px 16px rgba(7, 11, 18, 0.16),
+    0 0 0 1px color-mix(in srgb, var(--section-accent) 12%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  transform: translateY(-1px);
+}
+
+.ai-section--contrast:hover {
+  background: var(--section-bg-contrast); /* Contrast sections keep their darker bg on hover */
 }
 
 .ai-section:hover::before {
-  opacity: 0.6;
+  opacity: 0.12;
 }
 
 .ai-section__header {
   display: flex;
   align-items: center;
-  gap: var(--section-gap);
-  padding: 0 0 var(--section-gap) 0;
+  gap: var(--section-gap-internal);
+  padding: 0 0 var(--section-gap-internal) 0;
   border-bottom: none;
   background: transparent;
   flex-shrink: 0;
   margin: 0;
-  padding-top: 0;
-  padding-right: 0;
-  padding-bottom: var(--section-gap);
-  padding-left: 0;
 }
 
 .ai-section__title {
-  font-size: var(--font-section-title);
-  font-weight: 700;
+  font-size: var(--font-size-section-header); /* ✅ Standardized to 20px */
+  font-weight: var(--font-weight-section-header); /* ✅ Standardized to 600 */
   color: var(--foreground);
   letter-spacing: 0.02em;
-  text-transform: none;
-  opacity: 0.95;
+  text-transform: capitalize;
+  opacity: 1;
   line-height: 1.2;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 32px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
 }
 
 .ai-section__icon {
   display: none;
+  width: var(--icon-size-section); /* ✅ Standardized to 18px */
+  height: var(--icon-size-section);
 }
 
 .ai-section__details {
@@ -111,33 +133,34 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--section-gap);
+  gap: var(--section-gap-internal);
   min-height: 0;
   margin: 0;
 }
 
 @media (max-width: 768px) {
   .ai-section {
-    padding: var(--spacing-xl);
-    border-radius: 8px;
-    --section-padding: var(--spacing-xl);
-    --section-gap: var(--list-item-gap);
+    padding: var(--spacing-4xl);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--section-gap-mobile); /* ✅ Standardized 24px mobile spacing */
+    --section-padding: var(--spacing-4xl);
+    --section-gap-internal: var(--spacing-xl);
   }
 
   .ai-section__header {
-    padding: 0 0 var(--list-item-gap) 0;
+    padding: 0 0 var(--spacing-lg) 0;
     gap: var(--spacing-sm);
     margin: 0;
   }
 
   .ai-section__body {
     padding: 0;
-    gap: var(--list-item-gap);
+    gap: var(--spacing-lg);
     margin: 0;
   }
 
   .ai-section__title {
-    font-size: var(--font-section-title-mobile);
+    font-size: var(--font-size-section-header); /* ✅ Keep same size on mobile for consistency */
   }
 
   .ai-section__description {

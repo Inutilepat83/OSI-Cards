@@ -6,9 +6,8 @@
   <div class="relative overflow-hidden bg-background px-4 sm:px-6 py-6 sm:py-10">
     <div class="mx-auto max-w-7xl">
       <div class="text-center mb-12 lg:mb-16">
-        <h1 id="osi-hero-heading" class="text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tight mb-4">
-          <span class="text-white">Orange </span>
-          <span class="text-primary">Sales Intelligence</span>
+        <h1 id="osi-hero-heading" class="hero-title text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tight mb-4">
+          Orange Sales Intelligence
         </h1>
         <p class="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-12 lg:mb-16 px-4">
           OSI Cards is a versatile card generator used by sales intelligence agents. It features structured formatting that can design cards for any form of business intelligence data.
@@ -21,7 +20,7 @@
             <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center rounded-full bg-primary/10" aria-hidden="true">
               <lucide-icon name="sparkles" [size]="40" class="text-primary" aria-hidden="true"></lucide-icon>
             </div>
-            <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-white">AI-Powered Generation</h3>
+            <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-foreground">AI-Powered Generation</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
               Intelligent card generation with magnetic physics and interactive animations
             </p>
@@ -33,7 +32,7 @@
             <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center rounded-full bg-primary/10" aria-hidden="true">
               <lucide-icon name="zap" [size]="40" class="text-primary" aria-hidden="true"></lucide-icon>
             </div>
-            <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-white">Instant Generation</h3>
+            <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-foreground">Instant Generation</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
               Real-time conversion from JSON data to interactive business cards
             </p>
@@ -45,7 +44,7 @@
             <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center rounded-full bg-primary/10" aria-hidden="true">
               <lucide-icon name="code-2" [size]="40" class="text-primary" aria-hidden="true"></lucide-icon>
             </div>
-            <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-white">JSON Configuration</h3>
+            <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-foreground">JSON Configuration</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
               Simple, powerful JSON-driven card creation and customization
             </p>
@@ -59,7 +58,7 @@
   <div class="px-4 sm:px-6 py-2">
     <div class="mx-auto max-w-7xl">
       <div class="text-center mb-6 sm:mb-8">
-        <h3 class="text-2xl sm:text-4xl font-bold text-white mb-4 sm:mb-6">Interactive Demo</h3>
+        <h3 class="font-bold text-foreground mb-4 sm:mb-6" style="font-size: var(--font-size-section-header); font-weight: var(--font-weight-section-header);">Interactive Demo</h3>
 
         <app-card-controls
           [cardType]="cardType"
@@ -165,8 +164,6 @@
           class="flex flex-col space-y-4"
           [ngClass]="isFullscreen ? 'order-2 w-full' : 'lg:col-span-2 order-1 lg:order-1'">
           <div class="flex items-center gap-2 mb-4">
-            <lucide-icon name="file-text" [size]="20" class="text-primary" aria-hidden="true"></lucide-icon>
-            <span class="font-semibold">JSON Configuration</span>
             <span *ngIf="!isJsonValid" class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-destructive/10 text-destructive border border-destructive/30">
               Invalid JSON
             </span>

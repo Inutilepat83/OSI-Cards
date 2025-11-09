@@ -2,7 +2,7 @@
 .json-editor {
   font-family: 'Courier New', monospace;
   background: var(--input-background);
-  border: 2px solid #6b7280;
+  border: 2px solid color-mix(in srgb, var(--color-gray-500) 100%, transparent);
   border-radius: var(--radius);
   padding: 1rem;
   color: var(--foreground);
@@ -11,18 +11,34 @@
   resize: none;
 }
 
+.json-editor-textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--card-border-radius);
+  background: var(--card-background);
+  border: 1px solid var(--card-border);
+  color: var(--foreground);
+  transition: border-color 0.2s ease, background 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+    background: var(--card-hover-background);
+  }
+}
+
 .json-editor:focus {
-  border-color: #9ca3af;
+  border-color: color-mix(in srgb, var(--color-gray-300) 100%, transparent);
   outline: none;
-  box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.2);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-gray-300) 20%, transparent);
 }
 
 .json-valid {
-  border-color: #6b7280 !important;
+  border-color: color-mix(in srgb, var(--color-gray-500) 100%, transparent) !important;
 }
 
 .json-invalid {
-  border-color: #ef4444 !important;
+  border-color: color-mix(in srgb, var(--color-brand) 70%, var(--color-black) 30%) !important;
 }
 
 .json-editor::-webkit-scrollbar {
@@ -30,15 +46,15 @@
 }
 
 .json-editor::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
+  background: color-mix(in srgb, var(--color-white) 10%, transparent);
   border-radius: 4px;
 }
 
 .json-editor::-webkit-scrollbar-thumb {
-  background: rgba(255, 121, 0, 0.6);
+  background: color-mix(in srgb, var(--color-brand) 60%, transparent);
   border-radius: 4px;
 }
 
 .json-editor::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 121, 0, 0.8);
+  background: color-mix(in srgb, var(--color-brand) 80%, transparent);
 }

@@ -1,0 +1,94 @@
+/* Quotation section with unified card styling */
+
+@use 'sections-base' as *;
+
+.section-grid--quotation {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--section-grid-gap);
+  
+  @media (max-width: 500px) {
+    grid-template-columns: 1fr;
+    gap: var(--section-grid-gap-mobile);
+  }
+}
+
+.section-card--quotation {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.quotation-card__quote {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  position: relative;
+}
+
+.quotation-card__icon {
+  color: var(--color-orange-solid);
+  opacity: 0.8;
+  align-self: flex-start;
+  font-size: 1.2rem;
+}
+
+.quotation-card__text {
+  font-size: 0.9rem;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--foreground);
+  margin: 0;
+  padding-left: var(--spacing-lg);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--border-accent);
+    border-radius: 2px;
+  }
+}
+
+.quotation-card__footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--card-border);
+}
+
+.quotation-card__author {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.quotation-card__author-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.quotation-card__author-role {
+  font-size: 0.65rem;
+  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+}
+
+.quotation-card__date {
+  font-size: 0.65rem;
+  color: color-mix(in srgb, var(--foreground) 50%, transparent);
+}
+
+@media (max-width: 768px) {
+  .quotation-card__text {
+    padding-left: var(--spacing-md);
+    font-size: 0.8rem;
+  }
+}
+

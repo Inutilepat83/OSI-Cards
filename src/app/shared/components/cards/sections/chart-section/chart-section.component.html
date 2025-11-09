@@ -13,7 +13,7 @@
           <button
             *ngFor="let field of fields; let idx = index"
             type="button"
-            class="flex w-full items-center gap-3 rounded-2xl border border-border/40 bg-card/70 p-3 text-left transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card"
+            class="flex w-full items-center gap-3 rounded-md border border-card-unified bg-card-unified p-3 text-left transition-all duration-300 hover:border-card-unified-hover hover:bg-primary/5"
             (click)="onFieldClick(field)"
           >
             <div class="h-3 w-3 rounded-full" [ngStyle]="{ backgroundColor: getColor(field, idx) }"></div>
@@ -23,7 +23,7 @@
             </div>
           </button>
         </div>
-        <div class="rounded-2xl border border-border/40 bg-card/60 p-4 text-sm text-muted-foreground">
+        <div class="rounded-md border border-card-unified bg-card-unified p-4 text-sm text-muted-foreground">
           <p>Total: <span class="font-semibold text-foreground">{{ totalValue }}</span></p>
           <p class="mt-2">Tap any segment to focus on the underlying metric.</p>
         </div>
@@ -33,7 +33,7 @@
         <button
           *ngFor="let field of fields; let idx = index"
           type="button"
-          class="group w-full rounded-2xl border border-border/40 bg-card/70 p-4 text-left transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:bg-card"
+          class="group w-full rounded-md border border-card-unified bg-card-unified p-4 text-left transition-all duration-300 hover:border-card-unified-hover hover:bg-primary/5"
           (click)="onFieldClick(field)"
         >
           <div class="flex items-center justify-between gap-4">

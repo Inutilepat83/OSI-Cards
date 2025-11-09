@@ -1,130 +1,125 @@
-/* Contact directory cards showing key stakeholders */
+/* Contact section leveraging unified card styling */
 
 @import 'sections-base';
 
-.contact-collection {
-  display: flex;
-  flex-direction: column;
-  gap: var(--list-item-gap);
+.section-block--contacts {
+  --section-accent: rgba(255, 121, 0, 1);
 }
 
-.contact-card {
+.section-grid--contacts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--section-grid-gap);
+  
+  @media (max-width: 500px) {
+    grid-template-columns: 1fr;
+    gap: var(--section-grid-gap-mobile);
+  }
+}
+
+.section-card--contact {
   @include card;
-  --contact-accent: var(--section-accent, var(--accent));
+  display: flex;
+  flex-direction: column;
   gap: var(--spacing-xl);
-  align-items: flex-start;
-  width: 100%;
   text-align: left;
+  position: relative;
 
   &::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: var(--accent-border-width);
-    background: linear-gradient(180deg,
-      color-mix(in srgb, var(--contact-accent) 52%, transparent),
-      color-mix(in srgb, var(--contact-accent) 32%, transparent));
+    inset: 0 auto 0 0;
+    width: 3px;
+    border-top-left-radius: var(--card-border-radius);
+    border-bottom-left-radius: var(--card-border-radius);
+    background: var(--border-accent);
     opacity: 0;
     transition: opacity 0.2s ease;
   }
 
   &:hover {
-    border-color: color-mix(in srgb, var(--contact-accent) 38%, transparent);
-    background: color-mix(in srgb, var(--contact-accent) 16%, transparent);
-    transform: translateX(2px);
-
     &::before {
       opacity: 1;
     }
   }
 
-  &__avatar {
-    width: var(--avatar-size-md);
-    height: var(--avatar-size-md);
+  .section-card__row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--spacing-xl);
+    align-items: center;
+  }
+
+  .section-card__avatar {
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    border: var(--accent-border-width-sm) solid color-mix(in srgb, var(--contact-accent) 36%, transparent);
-    background: color-mix(in srgb, var(--contact-accent) 18%, transparent);
-    display: flex;
+    border: 1px solid var(--card-border);
+    background: var(--card-background);
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    color: color-mix(in srgb, var(--contact-accent) 82%, transparent);
-    flex-shrink: 0;
-    transition: transform 0.2s ease;
-
-    &:hover {
-      transform: scale(1.05);
-    }
+    color: rgba(255, 180, 91, 1);
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display: block;
     }
   }
 
-  &__initials {
-    font-size: var(--font-contact-initials);
+  .section-card__initials {
+    font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
-  &__details {
-    flex: 1;
-    min-width: 0;
+  .section-card__content {
     display: flex;
     flex-direction: column;
-    gap: var(--list-item-gap);
+    gap: var(--spacing-md);
+    min-width: 0;
   }
 
-  &__header {
+  .section-card__header {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xs);
   }
 
-  &__name {
-    font-size: var(--font-contact-name);
-    font-weight: 700;
-    color: var(--foreground);
+  .section-card__label {
+    font-size: 0.85rem;
     letter-spacing: -0.01em;
-    transition: color 0.2s ease;
-    line-height: 1.2;
-
-    .contact-card:hover & {
-      color: color-mix(in srgb, var(--contact-accent) 85%, transparent);
-    }
+    font-weight: 600;
+    color: var(--foreground);
   }
 
-  &__role {
-    font-size: var(--font-contact-role);
+  .section-card__meta-detail {
+    font-size: 0.7rem;
     color: color-mix(in srgb, var(--foreground) 62%, transparent);
     letter-spacing: 0.02em;
-    line-height: 1.3;
     font-weight: 600;
   }
 
-  &__meta {
+  .section-card__meta {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
-    gap: var(--spacing-sm) var(--list-item-gap);
-    font-size: var(--font-contact-meta);
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--spacing-sm) var(--section-grid-gap);
+    font-size: 0.65rem;
     color: color-mix(in srgb, var(--foreground) 60%, transparent);
   }
 
-  &__meta-item {
-    display: flex;
+  .section-card__meta-item {
+    display: inline-flex;
     align-items: center;
-    gap: var(--list-item-gap);
+    gap: var(--spacing-sm);
     min-width: 0;
-    transition: color 0.2s ease;
 
     lucide-icon {
-      color: color-mix(in srgb, var(--contact-accent) 70%, transparent);
+      color: var(--color-orange-fill);
+      flex-shrink: 0;
     }
 
     span {
@@ -134,36 +129,38 @@
     }
 
     &--link {
-      color: rgba(255, 255, 255, 0.8);
+      color: color-mix(in srgb, var(--foreground) 78%, transparent);
       text-decoration: none;
-      transition: color 0.2s ease;
-      cursor: pointer;
       font-weight: 600;
 
       &:hover {
-        color: rgba(255, 177, 68, 1);
+        color: rgba(255, 121, 0, 0.9);
       }
     }
   }
 }
 
-.contact-empty {
+.section-block--contacts .section-empty {
   @include section-empty-state;
 }
 
 @media (max-width: 768px) {
-  .contact-card {
-    padding: var(--card-padding-mobile);
-    gap: var(--list-item-gap-mobile);
+  .section-card--contact {
+    gap: var(--spacing-lg);
 
-    &__meta {
-      grid-template-columns: 1fr !important;
-      gap: var(--spacing-sm);
+    .section-card__row {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-lg);
     }
 
-    &__avatar {
-      width: var(--avatar-size-sm);
-      height: var(--avatar-size-sm);
+    .section-card__avatar {
+      width: 32px;
+      height: 32px;
+    }
+
+    .section-card__meta {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-sm);
     }
   }
 }

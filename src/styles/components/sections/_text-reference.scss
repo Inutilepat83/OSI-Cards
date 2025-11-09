@@ -1,0 +1,109 @@
+/* Text reference section with unified card styling */
+
+@use 'sections-base' as *;
+@import 'unified-cards';
+
+.section-grid--reference {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--section-grid-gap);
+  
+  @media (max-width: 500px) {
+    grid-template-columns: 1fr;
+    gap: var(--section-grid-gap-mobile);
+  }
+}
+
+.section-card--reference {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.reference-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.reference-card__text {
+  @include metric-value;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--foreground);
+  margin: 0;
+}
+
+.reference-card__footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--card-border);
+}
+
+.reference-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+  align-items: center;
+}
+
+.reference-card__category {
+  @include metric-label;
+  font-size: 0.6rem;
+  padding: 2px 4px;
+  background: var(--card-background);
+  color: rgba(255, 180, 91, 1);
+  border-radius: var(--radius-xs);
+  font-weight: 600;
+}
+
+.reference-card__source,
+.reference-card__reference {
+  @include metric-label;
+  font-size: 0.65rem;
+  color: color-mix(in srgb, var(--foreground) 70%, transparent);
+}
+
+.reference-card__date {
+  @include metric-label;
+  font-size: 0.65rem;
+  color: color-mix(in srgb, var(--foreground) 50%, transparent);
+  margin-left: auto;
+}
+
+.reference-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  @include metric-label;
+  font-size: 0.65rem;
+  color: var(--color-orange-solid);
+  text-decoration: none;
+  transition: color 0.2s ease, opacity 0.2s ease;
+
+  &:hover {
+    color: var(--hover-text-color);
+    opacity: 0.9;
+  }
+
+  lucide-icon {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+@media (max-width: 500px) {
+  .reference-card__meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+  }
+
+  .reference-card__date {
+    margin-left: 0;
+  }
+}
+

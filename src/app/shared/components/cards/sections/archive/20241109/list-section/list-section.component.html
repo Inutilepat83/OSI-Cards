@@ -1,0 +1,61 @@
+<div class="ai-section">
+  <div class="ai-section__header">
+    <h3 class="ai-section__title">{{ section.title }}</h3>
+    <span *ngIf="items.length" class="ai-section__badge">
+      {{ items.length }} items
+    </span>
+  </div>
+
+  <div class="ai-section__body">
+    <ng-container *ngIf="items.length; else listEmpty">
+      <div class="list-collection">
+        <button
+          *ngFor="let item of items; let i = index"
+          type="button"
+          class="list-card"
+          (click)="onItemClick(item)"
+          [style.animation]="getAnimationDuration(0.55)"
+          [style.animation-delay]="getAnimationDelay(i, 50)"
+        >
+          <div class="list-card__header">
+            <div class="list-card__icon">
+              <lucide-icon [name]="getIconName(item)" [size]="18"></lucide-icon>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="list-card__title">
+                {{ item.title || item.label }}
+              </p>
+              <p *ngIf="item.description" class="list-card__subtitle">
+                {{ item.description }}
+              </p>
+
+              <div class="list-card__tags">
+                <span *ngIf="item.priority" class="list-card__tag" [ngClass]="getPriorityClasses(item.priority)">
+                  {{ item.priority }}
+                </span>
+                <span *ngIf="item.status" class="list-card__tag" [ngClass]="getStatusClasses(item.status)">
+                  {{ item.status }}
+                </span>
+              </div>
+            </div>
+            <div *ngIf="item.value" class="list-card__tag list-card__tag--value">
+              {{ item.value }}
+            </div>
+          </div>
+
+          <div class="list-card__meta">
+            <span *ngIf="item.assignee">Assigned to <strong>{{ item.assignee }}</strong></span>
+            <span *ngIf="item.date">Due {{ item.date }}</span>
+          </div>
+        </button>
+      </div>
+    </ng-container>
+
+    <ng-template #listEmpty>
+      <div class="list-empty">
+        <lucide-icon name="list" [size]="32" class="mb-3 opacity-50"></lucide-icon>
+        <p class="text-sm">No list items configured</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

@@ -1,51 +1,52 @@
-<div class="ai-section">
-  <div class="ai-section__header" *ngIf="section.title">
-    <h3 class="ai-section__title">{{ section.title }}</h3>
-  </div>
+<section class="section-block section-block--insights" aria-labelledby="info-section-title">
+  <header class="section-block__header" *ngIf="section.title">
+    <div class="section-block__heading">
+      <h3 id="info-section-title" class="section-block__title">{{ section.title }}</h3>
+    </div>
+  </header>
 
-  <div class="ai-section__body">
-    <ng-container *ngIf="hasFields; else infoEmpty">
-      <div class="info-grid">
-        <button
-          *ngFor="let field of fields; let i = index"
-          type="button"
-          class="info-card"
-          (click)="onFieldClick(field)"
-          [style.animation]="getAnimationDuration(0.55)"
-          [style.animation-delay]="getAnimationDelay(i, 45)"
-        >
-          <span class="info-card__label">
-            {{ field.label }}
+  <ng-container *ngIf="hasFields; else infoEmpty">
+    <div class="section-grid section-grid--insights">
+      <button
+        *ngFor="let field of fields; let i = index"
+        type="button"
+        class="section-card section-card--insight"
+        (click)="onFieldClick(field)"
+        [style.animation]="getAnimationDuration(0.55)"
+        [style.animation-delay]="getAnimationDelay(i, 45)"
+      >
+        <span class="section-card__label">
+          {{ field.label }}
+        </span>
+
+        <span class="section-card__value">
+          {{ field.value }}
+        </span>
+
+        <p class="section-card__description" *ngIf="field.description">
+          {{ field.description }}
+        </p>
+
+        <div class="section-card__meta" *ngIf="field.change !== undefined">
+          <lucide-icon
+            *ngIf="getTrendIcon(field) as trendIcon"
+            [name]="trendIcon"
+            [size]="14"
+            [ngClass]="getTrendIconClass(field)"
+            aria-hidden="true"
+          ></lucide-icon>
+          <span class="section-card__meta-change" [ngClass]="getTrendClass(field)">
+            {{ formatChange(field.change) }}
           </span>
-          <span class="info-card__value">
-            {{ field.value }}
-          </span>
+        </div>
+      </button>
+    </div>
+  </ng-container>
 
-          <p class="info-card__description" *ngIf="field.description">
-            {{ field.description }}
-          </p>
-
-          <div class="info-card__trend" *ngIf="field.change !== undefined">
-            <lucide-icon
-              *ngIf="getTrendIcon(field) as trendIcon"
-              [name]="trendIcon"
-              [size]="14"
-              [ngClass]="getTrendIconClass(field)"
-              aria-hidden="true"
-            ></lucide-icon>
-            <span [ngClass]="getTrendClass(field)">
-              {{ formatChange(field.change) }}
-            </span>
-          </div>
-        </button>
-      </div>
-    </ng-container>
-
-    <ng-template #infoEmpty>
-      <div class="overview-empty">
-        <lucide-icon name="alert-circle" [size]="32" class="mb-4 opacity-50" aria-hidden="true"></lucide-icon>
-        <p class="text-sm">No information available</p>
-      </div>
-    </ng-template>
-  </div>
-</div>
+  <ng-template #infoEmpty>
+    <div class="section-empty">
+      <lucide-icon name="alert-circle" [size]="32" class="mb-4 opacity-50" aria-hidden="true"></lucide-icon>
+      <p class="text-sm">No information available</p>
+    </div>
+  </ng-template>
+</section>

@@ -1,69 +1,34 @@
-/* Detailed info cards shown in the company information section */
+/* Insight cards leveraging the new section type system */
 
-@import 'sections-base';
+@use 'sections-base' as *;
 
-.info-grid {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
-  gap: var(--section-grid-gap);
-  min-height: 0;
-
-  @media (max-width: 520px) {
-    grid-template-columns: 1fr !important;
-  }
-  
-  @media (max-width: 768px) {
-    gap: var(--section-grid-gap-mobile);
-  }
+.section-grid--insights {
+  --section-card-grid-min: 180px; /* More compact and flexible */
 }
 
-.info-card {
-  @include metric-card;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease;
+.section-card--insight {
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-  &:hover {
-    /* Uses unified hover transform from card mixin */
-    
-    .info-card__value {
-      color: color-mix(in srgb, var(--section-accent) 62%, var(--foreground) 38%);
-      text-shadow: 0 1px 4px color-mix(in srgb, var(--section-accent) 28%, transparent);
-    }
-
-    .info-card__label {
-      color: color-mix(in srgb, var(--foreground) 78%, transparent);
-    }
+  &:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--section-accent) 50%, transparent);
+    outline-offset: 2px;
   }
 
-  &:active {
-    transform: translateY(-1px);
-    transition: transform 0.1s ease;
+  &:hover .section-card__value {
+    color: var(--section-accent);
   }
 
-  &__label {
-    @include metric-label;
-    /* Font size enforced by unified-card-label */
-  }
-
-  &__value {
-    @include metric-value;
-    /* Font size enforced by unified-card-value */
-  }
-
-  &__description {
+  .section-card__description {
     @include section-description;
   }
 
-  &__trend {
-    display: flex;
-    align-items: center;
-    gap: var(--card-element-gap-sm);
-    font-size: var(--font-section-label);
-    letter-spacing: 0.02em;
-    text-transform: none;
-    color: color-mix(in srgb, var(--foreground) 62%, transparent);
-    line-height: 1.2;
-    font-weight: 600;
-    margin-top: var(--spacing-xs);
+  .section-card__meta {
+    justify-content: flex-start;
+  }
+
+  .section-card__meta-change {
     @include trend-colors;
   }
 }

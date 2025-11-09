@@ -71,6 +71,18 @@
     (fieldInteraction)="emitFieldInteraction($event.field!, $event.metadata)"
   ></app-chart-section>
 
+  <app-quotation-section
+    *ngSwitchCase="'quotation'"
+    [section]="section"
+    (fieldInteraction)="emitFieldInteraction($event.field!, $event.metadata)"
+  ></app-quotation-section>
+
+  <app-text-reference-section
+    *ngSwitchCase="'text-reference'"
+    [section]="section"
+    (fieldInteraction)="emitFieldInteraction($event.field!, $event.metadata)"
+  ></app-text-reference-section>
+
   <app-fallback-section
     *ngSwitchDefault
     [section]="section"

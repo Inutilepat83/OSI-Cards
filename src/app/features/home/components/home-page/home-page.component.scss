@@ -1,3 +1,12 @@
 :host {
   display: block;
 }
+
+.hero-title {
+  color: var(--color-brand);
+  text-shadow: 0 0 1px color-mix(in srgb, var(--color-brand) 30%, transparent);
+}
+
+:host-context(:root[data-theme='night']) .hero-title {
+  text-shadow: 0 4px 20px color-mix(in srgb, var(--color-brand) 25%, transparent);
+}

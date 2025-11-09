@@ -6,31 +6,19 @@
   position: relative;
   padding: clamp(1.5rem, 3vw, 2.25rem);
   border-radius: 1.25rem;
-  background: linear-gradient(145deg, rgba(17, 17, 17, 0.95), rgba(8, 8, 8, 0.85));
+  background: rgba(12, 12, 12, 0.9);
   border: 1px solid rgba(255, 121, 0, 0.25);
-  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45), 0 0 40px rgba(255, 121, 0, 0.18);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18), 0 0 12px rgba(255, 121, 0, 0.08);
   backdrop-filter: blur(20px);
   overflow: hidden;
 }
 
-.preview-shell::before {
-  content: '';
-  position: absolute;
-  inset: -40% -50% auto -50%;
-  height: 65%;
-  background: radial-gradient(circle, rgba(255, 121, 0, 0.25) 0%, transparent 70%);
-  filter: blur(120px);
-  opacity: 0.6;
-  pointer-events: none;
-}
-
+.preview-shell::before,
 .preview-shell::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.04), transparent 60%),
-              radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.12), transparent 45%);
-  opacity: 0.8;
+  opacity: 0;
   pointer-events: none;
 }
 

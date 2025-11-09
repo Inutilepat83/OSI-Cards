@@ -1,7 +1,7 @@
 /* ===== UNIFIED CARD STYLES ===== */
 /* Consolidated card styling for ALL sections */
 /* This file manages all card parameters in one place */
-/* Style: rounded-2xl, border-border/40, bg-card/70, hover effects */
+/* Style: 6px border-radius, orange borders, consistent typography */
 
 @import 'sections-base';
 
@@ -9,38 +9,52 @@
 /* All cards MUST use these same font sizes for labels and values */
 /* This ensures 100% consistency across all sections */
 /* 
- * Label font: var(--card-label-font-size) = 0.62rem
- * Value font: var(--card-value-font-size) = 0.57rem
- * These are defined in _variables.scss and enforced here
+ * Label font: 0.6rem (uppercase)
+ * Value font: 0.85rem
+ * Large value: 1.3rem (for analytics)
  */
 
 /* Unified label style - used by ALL cards */
 %unified-card-label {
   @include metric-label;
-  font-size: var(--card-label-font-size) !important; /* Force consistency */
-  /* All card labels use: 0.62rem, weight 600, color 65% opacity */
+  font-size: 0.6rem !important; /* Enforce 0.6rem for all labels */
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+
+  > span,
+  > strong,
+  > em {
+    text-transform: inherit;
+  }
 }
 
 /* Unified value style - used by ALL cards */
 %unified-card-value {
   @include metric-value;
-  font-size: var(--card-value-font-size) !important; /* Force consistency */
-  /* All card values use: 0.57rem, weight 700, full opacity */
+  font-size: 0.85rem !important; /* Enforce 0.85rem for all values */
+  font-weight: 700;
+}
+
+/* Large value style for analytics/special emphasis */
+%unified-card-value-lg {
+  @include metric-value;
+  font-size: 1.3rem !important; /* Enforce 1.3rem for large values */
+  font-weight: 700;
 }
 
 /* Unified card class - use this for all section cards */
-/* Matches Tailwind style: rounded-2xl, border-border/40, bg-card/70 */
+/* Design: 10px 12px padding, 6px radius, orange border */
 .unified-card {
   @include card;
   
   /* Additional utility classes for variations */
   &--large {
-    padding: 16px 20px;
-    border-radius: 24px; /* rounded-3xl */
+    padding: calc(var(--card-padding-vertical) + 2px) calc(var(--card-padding-horizontal) + 4px);
+    border-radius: 8px;
   }
   
   &--compact {
-    padding: 8px 12px;
+    padding: calc(var(--card-padding-vertical) - 2px) calc(var(--card-padding-horizontal) - 2px);
   }
   
   &--no-hover {
@@ -87,6 +101,12 @@
 .product-entry__value,
 .product-reference__value {
   @extend %unified-card-value;
+}
+
+/* Apply large value style for analytics */
+.analytics-metric__value,
+.analytics-metric__value--lg {
+  @extend %unified-card-value-lg;
 }
 
 /* Ensure all cards use the unified style */

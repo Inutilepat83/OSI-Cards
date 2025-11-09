@@ -29,7 +29,10 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "buildTarget": "osi-cards:build"
+            "buildTarget": "osi-cards:build",
+            "liveReload": true,
+            "watch": true,
+            "poll": 500
           }
         },
         "lint": {

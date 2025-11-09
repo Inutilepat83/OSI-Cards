@@ -4,18 +4,52 @@
              rotateX(var(--tilt-x, 0deg))
              rotateY(var(--tilt-y, 0deg))
              scale(var(--tilt-scale, 1));
-  transition: transform 0.15s ease-out;
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
   transform-style: preserve-3d;
   position: relative;
+  border-radius: var(--card-border-radius);
 }
 
 .tilt-container:hover {
   will-change: transform;
+  /* Brand color glow shadow - highly dynamic based on tilt */
+  /* Multiple layers with varying intensity, blur, and spread for depth */
+  box-shadow: 
+    /* Outer glow - largest, most diffuse */
+    calc(var(--shadow-offset-x, 0px) * 1.2) calc(var(--shadow-offset-y, 0px) * 1.2 + 25px) 
+    calc(var(--shadow-glow-blur, 60px) * 1.2) 
+    calc(var(--shadow-glow-spread, 15px) * 1.1)
+    color-mix(in srgb, var(--color-brand) calc(var(--shadow-glow-opacity, 0.75) * 100% * 0.5), transparent),
+    
+    /* Mid-outer glow */
+    calc(var(--shadow-offset-x, 0px) * 1.1) calc(var(--shadow-offset-y, 0px) * 1.1 + 20px) 
+    calc(var(--shadow-glow-blur, 60px) * 0.9) 
+    calc(var(--shadow-glow-spread, 15px) * 0.8)
+    color-mix(in srgb, var(--color-brand) calc(var(--shadow-glow-opacity, 0.75) * 100% * 0.65), transparent),
+    
+    /* Mid glow - main shadow */
+    calc(var(--shadow-offset-x, 0px) * 1.0) calc(var(--shadow-offset-y, 0px) * 1.0 + 15px) 
+    calc(var(--shadow-glow-blur, 60px) * 0.7) 
+    calc(var(--shadow-glow-spread, 15px) * 0.6)
+    color-mix(in srgb, var(--color-brand) calc(var(--shadow-glow-opacity, 0.75) * 100% * 0.8), transparent),
+    
+    /* Inner glow - tighter, more intense */
+    calc(var(--shadow-offset-x, 0px) * 0.8) calc(var(--shadow-offset-y, 0px) * 0.8 + 10px) 
+    calc(var(--shadow-glow-blur, 60px) * 0.5) 
+    calc(var(--shadow-glow-spread, 15px) * 0.4)
+    color-mix(in srgb, var(--color-brand) calc(var(--shadow-glow-opacity, 0.75) * 100% * 0.9), transparent),
+    
+    /* Core glow - tightest, most intense */
+    calc(var(--shadow-offset-x, 0px) * 0.6) calc(var(--shadow-offset-y, 0px) * 0.6 + 5px) 
+    calc(var(--shadow-glow-blur, 60px) * 0.3) 
+    calc(var(--shadow-glow-spread, 15px) * 0.2)
+    color-mix(in srgb, var(--color-brand) calc(var(--shadow-glow-opacity, 0.75) * 100%), transparent);
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
 }
 
 .glow-container {
   position: relative;
-  filter: drop-shadow(0 0 var(--glow-blur, 24px) var(--glow-color, rgba(255, 121, 0, 0.25)));
+  filter: none; /* Removed drop-shadow to match flat card design */
   transition: filter 0.2s ease-out;
 }
 
@@ -26,12 +60,7 @@
 .card-reflection {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 121, 0, 0.1) 0%,
-    transparent 50%,
-    rgba(255, 121, 0, 0.12) 100%
-  );
+  background: transparent;
   opacity: var(--reflection-opacity, 0.08);
   transition: opacity 0.2s ease-out;
   pointer-events: none;
@@ -52,11 +81,7 @@
   inset: 0;
   pointer-events: none;
   border-radius: inherit;
-  background: radial-gradient(
-    circle at var(--glare-x, 50%) var(--glare-y, 50%),
-    rgba(255, 255, 255, 0.4) 0%,
-    rgba(255, 255, 255, 0) 60%
-  );
+  background: transparent;
   opacity: var(--glare-opacity, 0);
   transition: opacity 0.3s ease;
 }

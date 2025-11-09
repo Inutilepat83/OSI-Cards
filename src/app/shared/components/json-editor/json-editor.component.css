@@ -13,9 +13,9 @@
 
 /* Badge styles */
 .badge-destructive {
-  background-color: rgba(239, 68, 68, 0.2);
-  color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background-color: color-mix(in srgb, var(--destructive) 20%, transparent);
+  color: var(--destructive);
+  border: 1px solid color-mix(in srgb, var(--destructive) 30%, transparent);
 }
 
 .editor-toolbar {
@@ -41,9 +41,9 @@
   font-size: 0.75rem;
   font-weight: 600;
   border-radius: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.04);
-  color: inherit;
+  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+  background: color-mix(in srgb, var(--card-background) 95%, transparent);
+  color: var(--foreground);
   transition: all 0.2s ease;
 }
 
@@ -51,13 +51,14 @@
 .editor-toolbar__button:focus-visible {
   border-color: var(--primary);
   color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
   outline: none;
 }
 
 .editor-toolbar__hint {
   margin: 0;
   font-size: 0.75rem;
-  color: rgba(226, 232, 240, 0.7);
+  color: color-mix(in srgb, var(--foreground) 70%, transparent);
 }
 
 .kbd {
@@ -66,8 +67,9 @@
   justify-content: center;
   padding: 0.1rem 0.35rem;
   border-radius: 0.25rem;
-  border: 1px solid rgba(148, 163, 184, 0.4);
-  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+  background: color-mix(in srgb, var(--card-background) 90%, transparent);
+  color: var(--foreground);
   font-size: 0.7rem;
   line-height: 1;
   font-family: var(--font-mono, 'SFMono-Regular', ui-monospace, monospace);

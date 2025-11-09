@@ -1,38 +1,75 @@
-:root {
+:root,
+:root[data-theme='night'] {
   --font-size: 14px;
-  --master-color: #FF7900;
-  --master-color-dark: #CC5F00;
-  --master-color-light: #FF9933;
-  --master-color-pale: #FFE6CC;
-  --background: #000000;
-  --foreground: #ffffff;
-  --card: #111111;
-  --card-foreground: #ffffff;
-  --popover: #111111;
-  --popover-foreground: #ffffff;
-  --primary: #FF7900;
-  --primary-foreground: #000000;
-  --secondary: #333333;
-  --secondary-foreground: #ffffff;
-  --muted: #222222;
-  --muted-foreground: #888888;
-  --accent: #FF7900;
-  --accent-foreground: #000000;
-  --destructive: #d4183d;
-  --destructive-foreground: #ffffff;
-  --border: rgba(255, 121, 0, 0.4);
+
+  /* === BRAND & CORE COLORS === */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-brand: #ff7900;
+
+  /* Grayscale ramp */
+  --color-gray-50: #ffffff;
+  --color-gray-100: #fcfcfc;
+  --color-gray-150: #f7f7f7;
+  --color-gray-200: #f0f0f1;
+  --color-gray-300: #e9e9e9;
+  --color-gray-400: #92999e;
+  --color-gray-500: #5a5f62;
+  --color-gray-600: #343541;
+  --color-gray-700: #2a2a2a; /* Less blue, more neutral grey */
+  --color-gray-800: #232323;
+  --color-gray-850: #171717;
+  --color-gray-900: #000000;
+
+  /* === UI TOKENS === */
+  --background: var(--color-gray-900);
+  --foreground: var(--color-gray-100);
+  --muted: var(--color-gray-700);
+  --muted-foreground: var(--color-gray-300);
+  --card: var(--color-gray-850);
+  --card-foreground: var(--color-gray-100);
+  --card-section-bg: var(--color-gray-800); /* Theme-aware: grey-800 for night, grey-50 for day */
+  --card-section-card-bg: var(--color-gray-700); /* Theme-aware: grey-700 for night, grey-100 for day - more contrasty */
+  
+  /* === SECTION CONTAINER BACKGROUNDS === */
+  /* Main sections: lighter background for most sections (majority) */
+  --section-bg-main: var(--color-gray-800);
+  /* Contrast sections: darker background for emphasis sections (1-2 max per card) */
+  --section-bg-contrast: var(--color-gray-900);
+  
+  --popover: var(--color-gray-850);
+  --popover-foreground: var(--color-gray-100);
+  --primary: var(--color-brand);
+  --primary-foreground: var(--color-black);
+  --secondary: var(--color-gray-700);
+  --secondary-foreground: var(--color-gray-100);
+  --accent: var(--color-brand);
+  --accent-foreground: var(--color-black);
+  --destructive: var(--color-brand);
+  --destructive-foreground: var(--color-black);
+  --border: color-mix(in srgb, var(--color-white) 28%, transparent);
   --input: transparent;
-  --input-background: #222222;
-  --switch-background: #333333;
+  --input-background: var(--color-gray-800);
+  --switch-background: var(--color-gray-700);
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --ring: rgba(255, 121, 0, 0.6);
-  --chart-1: #FF7900;
-  --chart-2: #FF9933;
-  --chart-3: #CC5F00;
-  --chart-4: #FFE6CC;
-  --chart-5: #FF4500;
+  --ring: color-mix(in srgb, var(--color-brand) 60%, transparent);
+  --chart-1: var(--color-brand);
+  --chart-2: color-mix(in srgb, var(--color-brand) 72%, var(--color-white));
+  --chart-3: color-mix(in srgb, var(--color-brand) 58%, var(--color-black));
+  --chart-4: color-mix(in srgb, var(--color-brand) 24%, var(--color-white));
+  --chart-5: color-mix(in srgb, var(--color-brand) 80%, var(--color-black));
   --radius: 0.625rem;
+  
+  /* === CONSISTENT BORDER RADIUS SYSTEM === */
+  --radius-xs: 4px;      /* Tiny elements: progress bars, decorative accents */
+  --radius-sm: 6px;      /* Small elements: badges, pills, tags */
+  --radius-md: 10px;     /* Medium surfaces: inner cards, list items */
+  --radius-lg: 12px;     /* Large surfaces: sections, containers */
+  --radius-xl: 16px;     /* Extra large: main card surfaces */
+  --radius-2xl: 20px;    /* Hero elements: featured cards */
+  --radius-full: 999px;  /* Circular/pill shapes */
+  
   --spacing: 0.25rem;
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
@@ -47,83 +84,135 @@
 
   /* ===== COMPONENT-SPECIFIC FONT SIZES ===== */
   /* Card Fonts */
-  --font-card-title: 1.15rem;           /* Card main title */
-  --font-card-eyebrow: 0.50rem;         /* Card category/eyebrow text */
-  --font-card-subtitle: 0.70rem;        /* Card subtitle */
-  --font-card-meta: 0.48rem;            /* Card metadata chips */
-  --font-card-meta-value: 0.60rem;      /* Card metadata values */
-  --font-card-footnote: 0.46rem;        /* Card footnote */
-  --font-card-action: 0.64rem;          /* Card action buttons */
+  --font-card-title: 1.52rem;           /* Card main title */
+  --font-card-eyebrow: 0.79rem;         /* Card category/eyebrow text */
+  --font-card-subtitle: 0.87rem;        /* Card subtitle */
+  --font-card-meta: 0.65rem;            /* Card metadata chips */
+  --font-card-meta-value: 0.77rem;      /* Card metadata values */
+  --font-card-footnote: 0.63rem;        /* Card footnote */
+  --font-card-action: 0.81rem;          /* Card action buttons */
   
   /* Section Fonts - Standardized across all sections */
-  --font-section-title: 0.75rem;        /* Section header title */
-  --font-section-label: 0.62rem;        /* Section card labels */
-  --font-section-value: 0.57rem;        /* Section card values */
-  --font-section-description: 0.62rem;  /* Section descriptions */
-  --font-section-meta: 0.50rem;         /* Section metadata */
+  --font-section-title: calc(1.1rem - 2px);         /* Section header title - 2px smaller */
+  --font-section-label: calc(0.79rem + 1pt);        /* Section card labels - increased by 1pt */
+  --font-section-value: calc(0.98rem + 1pt);        /* Section card values - increased by 1pt */
+  --font-section-description: 0.85rem;  /* Section descriptions */
+  --font-section-meta: 0.77rem;         /* Section metadata */
   
   /* Additional Section Font Sizes (for specific use cases) */
-  --font-section-label-lg: 0.75rem;     /* Large labels */
-  --font-section-value-lg: 0.78rem;     /* Large values */
-  --font-section-value-xl: 0.85rem;     /* Extra large values */
-  --font-section-value-2xl: 0.95rem;    /* 2XL values */
-  --font-section-name: 0.85rem;         /* Contact/name text */
-  --font-section-role: 0.65rem;         /* Role/subtitle text */
-  --font-section-tag: 0.50rem;          /* Tag/badge text */
-  --font-section-tag-sm: 0.55rem;       /* Small tag text */
-  --font-section-tag-lg: 0.72rem;       /* Large tag text */
+  --font-section-label-lg: 0.92rem;     /* Large labels */
+  --font-section-value-lg: 0.95rem;     /* Large values */
+  --font-section-value-xl: 1.02rem;     /* Extra large values */
+  --font-section-value-2xl: 1.12rem;    /* 2XL values */
+  --font-section-name: 1.02rem;         /* Contact/name text */
+  --font-section-role: 0.82rem;         /* Role/subtitle text */
+  --font-section-tag: 0.67rem;          /* Tag/badge text */
+  --font-section-tag-sm: 0.72rem;       /* Small tag text */
+  --font-section-tag-lg: 0.89rem;       /* Large tag text */
   
   /* Overview Section - Larger fonts (50% increase from standard) */
-  --font-overview-label: 0.72rem;       /* Overview card labels */
-  --font-overview-value: 0.63rem;       /* Overview card values */
+  --font-overview-label: 0.89rem;       /* Overview card labels */
+  --font-overview-value: 0.80rem;       /* Overview card values */
   
   /* Contact Section Specific */
-  --font-contact-name: 0.85rem;
-  --font-contact-role: 0.65rem;
-  --font-contact-meta: 0.64rem;
-  --font-contact-initials: 0.75rem;
+  --font-contact-name: 1.02rem;
+  --font-contact-role: 0.82rem;
+  --font-contact-meta: 0.81rem;
+  --font-contact-initials: 0.92rem;
   
   /* List Section Specific */
-  --font-list-title: 0.75rem;
-  --font-list-subtitle: 0.62rem;
-  --font-list-meta: 0.62rem;
-  --font-list-tag: 0.50rem;
+  --font-list-title: 0.92rem;
+  --font-list-subtitle: 0.79rem;
+  --font-list-meta: 0.79rem;
+  --font-list-tag: 0.67rem;
   
   /* Chart Section Specific */
-  --font-chart-label: 0.75rem;
-  --font-chart-value: 0.78rem;
-  --font-chart-meta: 0.65rem;
+  --font-chart-label: 0.92rem;
+  --font-chart-value: 0.95rem;
+  --font-chart-meta: 0.82rem;
   
   /* Mobile Font Overrides */
-  --font-contact-name-mobile: 0.85rem;
-  --font-list-title-mobile: 0.75rem;
-  --font-chart-value-mobile: 0.95rem;
+  --font-contact-name-mobile: 1.02rem;
+  --font-list-title-mobile: 0.92rem;
+  --font-chart-value-mobile: 1.12rem;
   
   /* ===== UNIFIED CARD SYSTEM ===== */
   /* All cards (metric, contact, list, etc.) use this consistent base */
-  /* Matches Tailwind style: rounded-2xl, border-border/40, bg-card/70 */
-  --card-padding: 12px 16px;
-  --card-min-height: 50px;
-  --card-background: color-mix(in srgb, var(--card) 70%, transparent);
-  --card-border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
-  --card-border-radius: 16px; /* rounded-2xl */
-  --card-gap: 6px;
-  --card-box-shadow: none;
+  /* Design System: 10px 12px padding, 6px border-radius, orange borders */
+  --card-padding: 10px 12px; /* Unified across all cards */
+  --card-padding-vertical: 10px;
+  --card-padding-horizontal: 12px;
+  --card-min-height: 68px;
+  --card-background: rgba(255, 121, 0, 0.03); /* Very subtle orange background */
+  --card-border: 1px solid rgba(255, 121, 0, 0.2); /* Orange border at 20% opacity */
+  --card-border-radius: 6px; /* Unified compact radius */
+  --card-gap: 8px;
+  --card-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   
-  /* Card hover states - consistent across ALL cards */
-  /* Matches Tailwind: hover:-translate-y-1, hover:border-primary/40, hover:bg-card */
-  --card-hover-border: color-mix(in srgb, var(--primary) 40%, transparent);
-  --card-hover-background: var(--card);
-  --card-hover-transform: translateY(-4px); /* -translate-y-1 */
+  /* Card hover states - consistent orange shift */
+  --card-hover-border: rgba(255, 121, 0, 0.4); /* Orange border at 40% opacity on hover */
+  --card-hover-background: rgba(255, 121, 0, 0.06); /* Orange background at 6% opacity */
+  --card-hover-transform: none;
+  --card-hover-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  /* Master card hover shadow with colored glow - smaller, respects rounded corners */
+  --master-card-hover-shadow: calc(var(--shadow-offset-x, 0px) + 0px) calc(var(--shadow-offset-y, 0px) + 12px) 32px color-mix(in srgb, var(--color-brand) 35%, transparent),
+                              calc(var(--shadow-offset-x, 0px) + 8px) calc(var(--shadow-offset-y, 0px) + 8px) 24px color-mix(in srgb, var(--color-brand) 30%, transparent),
+                              calc(var(--shadow-offset-x, 0px) + -8px) calc(var(--shadow-offset-y, 0px) + 8px) 24px color-mix(in srgb, var(--color-brand) 30%, transparent),
+                              calc(var(--shadow-offset-x, 0px) + 8px) calc(var(--shadow-offset-y, 0px) + -8px) 24px color-mix(in srgb, var(--color-brand) 30%, transparent),
+                              calc(var(--shadow-offset-x, 0px) + -8px) calc(var(--shadow-offset-y, 0px) + -8px) 24px color-mix(in srgb, var(--color-brand) 30%, transparent),
+                              calc(var(--shadow-offset-x, 0px) + 0px) calc(var(--shadow-offset-y, 0px) + -12px) 24px color-mix(in srgb, var(--color-brand) 30%, transparent),
+                              calc(var(--shadow-offset-x, 0px) + 12px) calc(var(--shadow-offset-y, 0px) + 0px) 20px color-mix(in srgb, var(--color-brand) 25%, transparent),
+                              calc(var(--shadow-offset-x, 0px) + -12px) calc(var(--shadow-offset-y, 0px) + 0px) 20px color-mix(in srgb, var(--color-brand) 25%, transparent),
+                              0 2px 8px color-mix(in srgb, var(--color-black) 15%, transparent),
+                              0 0 4px color-mix(in srgb, var(--color-black) 10%, transparent);
   
   /* Card typography - ALL labels/values use these */
-  --card-label-font-size: var(--font-section-label);      /* 0.62rem */
-  --card-value-font-size: var(--font-section-value);      /* 0.57rem */
+  --card-label-font-size: 0.6rem;      /* Labels: 0.6rem uppercase */
+  --card-label-font-weight: 600;                          /* Thicker weight for all labels */
+  --card-value-font-size: 0.85rem;      /* Values: 0.85rem */
+  --card-value-font-weight: 700;                          /* Thicker weight for all values */
+  --card-value-font-size-lg: 1.3rem;    /* Large values for analytics: 1.3rem */
   
   /* Mobile overrides - ALL cards responsive at ≤768px */
-  --card-padding-mobile: 10px 12px;
-  --card-min-height-mobile: 46px;
-  --card-border-radius-mobile: 12px;
+  --card-padding-mobile: 10px 12px; /* Same padding on mobile for consistency */
+  --card-padding-vertical-mobile: 10px;
+  --card-padding-horizontal-mobile: 12px;
+  --card-min-height-mobile: 60px;
+  --card-border-radius-mobile: 6px; /* Same radius on mobile */
+  
+  /* ===== STANDARDIZED TYPOGRAPHY HIERARCHY ===== */
+  /* ALL sections and components MUST use these font sizes - NO overrides allowed */
+  
+  /* Section Typography - Unified across all section types */
+  --font-size-section-header: 1.25rem;      /* 20px - ALL section headers */
+  --font-weight-section-header: 600;        /* Section header weight */
+  
+  /* Card Typography - Unified across all card types */
+  --font-size-card-title: 0.875rem;         /* 14px - ALL card titles */
+  --font-weight-card-title: 600;            /* Card title weight */
+  --font-size-card-value: 1rem;             /* 16px - Standard card values */
+  --font-weight-card-value: 500;            /* Standard card value weight */
+  --font-size-card-value-emphasis: 1.3rem;  /* 20.8px - Emphasized values (analytics) */
+  --font-weight-card-value-emphasis: 700;   /* Emphasized value weight */
+  --font-size-card-label: 0.625rem;         /* 10px - ALL card labels */
+  --font-weight-card-label: 400;            /* Card label weight */
+  
+  /* ===== STANDARDIZED SPACING SYSTEM ===== */
+  /* ALL sections and components MUST use these spacing values */
+  
+  /* Layout Spacing - Between major UI elements */
+  --section-gap: 2rem;                      /* 32px - Space between sections */
+  --section-gap-mobile: 1.5rem;             /* 24px - Mobile section spacing */
+  
+  /* Card Spacing - Inside sections */
+  --card-gap: 0.75rem;                      /* 12px - Space between cards in grid */
+  --card-gap-mobile: 0.5rem;                /* 8px - Mobile card spacing */
+  --card-padding-y: 0.625rem;               /* 10px - Vertical card padding */
+  --card-padding-x: 0.75rem;                /* 12px - Horizontal card padding */
+  
+  /* Icon Sizing - Standardized across all components */
+  --icon-size-section: 1.125rem;            /* 18px - Section header icons */
+  --icon-size-card: 1rem;                   /* 16px - Card icons */
   
   /* ===== UNIFIED SPACING SYSTEM ===== */
   /* All spacing MUST use these variables - NO hardcoded values allowed */
@@ -144,6 +233,11 @@
   --spacing-9xl: 26px;
   --spacing-10xl: 28px;
   
+  /* Section Block Shadow - Theme-aware */
+  --section-block-shadow: 0 0 8px color-mix(in srgb, var(--color-black) 12%, transparent),
+                          0 0 4px color-mix(in srgb, var(--color-black) 8%, transparent),
+                          0 2px 4px color-mix(in srgb, var(--color-black) 10%, transparent);
+
   /* Grid Gaps - Standardized for all section grids */
   --grid-gap-xs: 3px;
   --grid-gap-sm: 4px;
@@ -154,8 +248,19 @@
   --grid-gap-3xl: 18px;
   
   /* Unified Section Grid Gap - Used by ALL section grids */
-  --section-grid-gap: var(--grid-gap-lg); /* 8px - consistent spacing for all sections */
-  --section-grid-gap-mobile: var(--grid-gap-md); /* 6px - mobile spacing */
+  --section-grid-gap: 12px; /* Increased spacing between cards */
+  --section-grid-gap-mobile: 6px; /* Compact mobile spacing */
+  
+  /* Responsive Grid Columns - Dynamic column counts based on screen size */
+  --grid-columns-mobile: 1;        /* <640px: Single column on mobile */
+  --grid-columns-tablet: 2;        /* 640-1024px: Two columns on tablet */
+  --grid-columns-desktop: 2;       /* 1024-1440px: Two columns on desktop */
+  --grid-columns-desktop-lg: 3;    /* 1440-1920px: Three columns on large desktop */
+  --grid-columns-desktop-xl: 4;    /* >1920px: Four columns on extra large screens */
+  
+  /* Card minimum widths for auto-fit grids */
+  --card-min-width: 160px;         /* Minimum card width before wrapping */
+  --card-min-width-sm: 120px;      /* Smaller minimum for compact cards */
   
   /* Grid Gaps Mobile */
   --grid-gap-xs-mobile: 4px;
@@ -169,7 +274,7 @@
   --section-item-gap-mobile: 4px;
   
   /* Metric Card Padding (analytics, overview, info cards) */
-  --metric-item-padding: 10px 12px;
+  --metric-item-padding: 4px 6px; /* Reduced by 2px (was 6px 8px) */
   --metric-item-gap: 6px;
   --metric-item-gap-mobile: 4px;
   
@@ -210,8 +315,148 @@
   --avatar-size-md: 36px;
   
   /* Progress Bar */
-  --progress-height: 2px;
-  --progress-margin: 4px 0;
+  --progress-height: 6px;
+  --progress-margin: 8px 0;
+  --progress-background: color-mix(in srgb, var(--accent) 15%, transparent);
+  --progress-border-radius: var(--radius-xs);
+  
+  /* ===== SEMANTIC COLOR PALETTE (UNIFIED DESIGN TOKENS) ===== */
+  /* All components should use these semantic variables instead of hardcoded rgba values */
+  
+  /* Primary Orange Color Variants (unified from 8 different opacities to 5 semantic levels) */
+  --color-orange-bg-subtle: rgba(255, 121, 0, 0.03);    /* Subtle background (cards, very light fills) */
+  --color-orange-bg-light: rgba(255, 121, 0, 0.08);     /* Light background (icon backgrounds, badges) */
+  --color-orange-bg: rgba(255, 121, 0, 0.15);           /* Standard background (badges, icon fills) */
+  --color-orange-hover: rgba(255, 121, 0, 0.06);        /* Hover state background */
+  --color-orange-border: rgba(255, 121, 0, 0.2);        /* Border default state */
+  --color-orange-border-hover: rgba(255, 121, 0, 0.4);  /* Border hover state */
+  --color-orange-accent: rgba(255, 121, 0, 0.4);        /* Accent borders (list left border, etc) */
+  --color-orange-fill: rgba(255, 121, 0, 0.7);          /* Progress bar fill, dark fills */
+  --color-orange-solid: #ff7900;                         /* Solid orange (no transparency) */
+  
+  /* Status Color Palette (success, warning, error, info, neutral) */
+  /* Each has: light (background), standard (border), fill (progress/strong), hover (interactive) */
+  
+  /* Success (Green) */
+  --color-success-light: rgba(34, 197, 94, 0.14);       /* Success badge/tag background */
+  --color-success-border: rgba(34, 197, 94, 0.4);       /* Success border/accent */
+  --color-success-fill: rgba(34, 197, 94, 0.8);         /* Success indicator fill */
+  --color-success-solid: #22c55e;                        /* Solid success color */
+  
+  /* Warning (Amber/Yellow) */
+  --color-warning-light: rgba(251, 191, 36, 0.16);      /* Warning badge/tag background */
+  --color-warning-border: rgba(251, 191, 36, 0.4);      /* Warning border/accent */
+  --color-warning-fill: rgba(251, 191, 36, 0.8);        /* Warning indicator fill */
+  --color-warning-solid: #fbbf24;                        /* Solid warning color */
+  
+  /* Error (Red) */
+  --color-error-light: rgba(239, 68, 68, 0.18);         /* Error badge/tag background */
+  --color-error-border: rgba(239, 68, 68, 0.4);         /* Error border/accent */
+  --color-error-fill: rgba(239, 68, 68, 0.8);           /* Error indicator fill */
+  --color-error-solid: #ef4444;                          /* Solid error color */
+  
+  /* Info (Blue) */
+  --color-info-light: rgba(59, 130, 246, 0.15);         /* Info badge/tag background */
+  --color-info-border: rgba(59, 130, 246, 0.4);         /* Info border/accent */
+  --color-info-fill: rgba(59, 130, 246, 0.8);           /* Info indicator fill */
+  --color-info-solid: #3b82f6;                           /* Solid info color */
+  
+  /* Purple */
+  --color-purple-light: rgba(168, 85, 247, 0.16);       /* Purple badge/tag background */
+  --color-purple-border: rgba(168, 85, 247, 0.4);       /* Purple border/accent */
+  --color-purple-fill: rgba(168, 85, 247, 0.8);         /* Purple indicator fill */
+  --color-purple-solid: #a855f7;                         /* Solid purple color */
+  
+  /* Additional Secondary Colors */
+  --color-yellow-light: rgba(250, 204, 21, 0.18);       /* Yellow badge/tag background */
+  --color-yellow-solid: #facc15;                         /* Solid yellow color */
+  
+  /* Neutral/Gray Status */
+  --color-neutral-light: rgba(128, 128, 128, 0.15);     /* Neutral badge/tag background */
+  --color-neutral-border: rgba(128, 128, 128, 0.4);     /* Neutral border */
+  --color-neutral-solid: #808080;                        /* Solid neutral color */
+  
+  /* ===== COMPONENT-SPECIFIC SEMANTIC COLORS ===== */
+  
+  /* Badge/Tag Colors (all use standardized opacity levels) */
+  --badge-bg-success: var(--color-success-light);
+  --badge-bg-warning: var(--color-warning-light);
+  --badge-bg-error: var(--color-error-light);
+  --badge-bg-info: var(--color-info-light);
+  --badge-bg-primary: var(--color-orange-bg);
+  --badge-bg-neutral: var(--color-neutral-light);
+  
+  /* Icon Background Colors (semantic mapping by icon type) */
+  --icon-bg-default: var(--color-orange-bg);            /* Default icon background */
+  --icon-bg-success: var(--color-success-light);
+  --icon-bg-warning: var(--color-warning-light);
+  --icon-bg-error: var(--color-error-light);
+  --icon-bg-info: var(--color-info-light);
+  --icon-bg-purple: var(--color-purple-light);
+  --icon-bg-social: var(--color-orange-bg);             /* Social networks default to orange */
+  --icon-bg-web: var(--color-info-light);               /* Web/browser icons default to blue */
+  --icon-bg-messaging: var(--color-purple-light);       /* Messaging icons default to purple */
+  --icon-bg-payment: var(--color-success-light);        /* Payment/financial icons default to green */
+  
+  /* Progress Bar Colors */
+  --progress-bg-light: var(--color-orange-bg-light);    /* Progress background (light) */
+  --progress-fill: var(--color-orange-fill);            /* Progress fill (dark/strong) */
+  --progress-fill-success: var(--color-success-fill);
+  --progress-fill-warning: var(--color-warning-fill);
+  --progress-fill-error: var(--color-error-fill);
+  --progress-fill-info: var(--color-info-fill);
+  
+  /* Border Colors (all accent borders use these semantic variables) */
+  --border-accent: var(--color-orange-accent);          /* Left border accent (lists, events, quotations) */
+  --border-accent-success: var(--color-success-border);
+  --border-accent-warning: var(--color-warning-border);
+  --border-accent-error: var(--color-error-border);
+  --border-accent-info: var(--color-info-border);
+  
+  /* ===== HOVER STATE EFFECTS (UNIFIED PATTERNS) ===== */
+  
+  /* Hover Effect 1: Border + Background Shift (used by cards, tags, buttons) */
+  --hover-border-color: var(--card-hover-border);       /* Border on hover: 0.4 opacity */
+  --hover-bg-color: var(--card-hover-background);       /* Background on hover: 0.06 opacity */
+  --hover-shadow: var(--card-hover-shadow);             /* Shadow on hover */
+  --hover-transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  
+  /* Hover Effect 2: Color Shift (used by titles, links, text) */
+  --hover-text-color: var(--color-orange-solid);        /* Text color on hover: solid orange */
+  --hover-text-transition: color 0.2s ease;
+  
+  /* Hover Effect 3: Transform + Color (used by chevrons, arrows, icons) */
+  --hover-transform: translateX(2px);                   /* Slight rightward shift */
+  --hover-transform-transition: transform 0.2s ease;
+  
+  /* ===== STANDARDIZED TEXT COLORS ===== */
+  
+  /* Label Colors (field labels, metadata labels) */
+  --label-color: color-mix(in srgb, var(--foreground) 55%, transparent);
+  --label-font-size: 0.6rem;                             /* Enforce 0.6rem for all labels */
+  --label-text-transform: uppercase;
+  --label-letter-spacing: 0.04em;
+  
+  /* Value Colors (field values, metric values) */
+  --value-color: var(--foreground);                      /* Use full foreground for values */
+  --value-font-size: 0.85rem;                            /* Enforce 0.85rem for standard values */
+  --value-font-weight: 700;                              /* Enforce 700 weight for values */
+  
+  /* Value Size Variants */
+  --value-font-size-sm: 0.75rem;                         /* Smaller values */
+  --value-font-size-lg: 1.3rem;                          /* Large values (analytics) */
+  --value-font-size-xl: 1.5rem;                          /* Extra large values */
+  
+  /* Transition Speed (unified animation timing) */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.2s ease;
+  --transition-slow: 0.3s ease;
+  
+  /* Focus Ring (keyboard navigation) */
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-brand) 40%, transparent);
+  
+  /* ===== DEPRECATED/MAPPED VARIABLES (backward compatibility) ===== */
+  /* These are kept for backward compatibility but should not be used in new code */
   
   /* Legacy metric-card variables (map to unified --card-* system) */
   --metric-card-padding: var(--card-padding);
@@ -231,12 +476,12 @@
   --metric-card-border-radius-mobile: var(--card-border-radius-mobile);
 
   /* Responsive Overrides */
-  --font-card-title-mobile: 0.95rem;
-  --font-card-eyebrow-mobile: 0.42rem;
-  --font-card-meta-mobile: 0.42rem;
-  --font-section-title-mobile: 0.56rem;
-  --font-section-label-mobile: 0.56rem;
-  --font-section-description-mobile: 0.48rem;
+  --font-card-title-mobile: 1.32rem;
+  --font-card-eyebrow-mobile: 0.69rem;
+  --font-card-meta-mobile: 0.59rem;
+  --font-section-title-mobile: calc(0.90rem - 2px);
+  --font-section-label-mobile: 0.75rem;
+  --font-section-description-mobile: 0.65rem;
 
   /* Legacy variables - kept for backward compatibility */
   --bg-color: var(--background);
@@ -251,4 +496,55 @@
   --secondary-contrast: var(--secondary-foreground);
   --hover-bg: rgba(255, 121, 0, 0.1);
   --placeholder-bg: rgba(255, 255, 255, 0.05);
+}
+
+:root[data-theme='day'] {
+  --background: var(--color-gray-50);
+  --foreground: var(--color-gray-900);
+  --muted: var(--color-gray-200);
+  --muted-foreground: var(--color-gray-700);
+  --card: var(--color-gray-150);
+  --card-foreground: var(--color-gray-900);
+  --card-section-bg: var(--color-gray-50); /* Theme-aware: grey-800 for night, grey-50 for day */
+  --card-section-card-bg: var(--color-gray-100); /* Theme-aware: grey-700 for night, grey-100 for day - more contrasty */
+  
+  /* === SECTION CONTAINER BACKGROUNDS === */
+  /* Main sections: lighter background for most sections (majority) */
+  --section-bg-main: var(--color-gray-50);
+  /* Contrast sections: darker background for emphasis sections (1-2 max per card) */
+  --section-bg-contrast: var(--color-gray-100);
+  
+  --popover: var(--color-gray-150);
+  --popover-foreground: var(--color-gray-900);
+  --primary-foreground: var(--color-white);
+  --secondary: var(--color-gray-100);
+  --secondary-foreground: var(--color-gray-900);
+  --accent-foreground: var(--color-white);
+  --destructive-foreground: var(--color-white);
+  --border: color-mix(in srgb, var(--color-gray-400) 60%, transparent);
+  --input-background: var(--color-gray-150);
+  --switch-background: var(--color-gray-200);
+  --ring: color-mix(in srgb, var(--color-brand) 70%, transparent);
+  --card-background: rgba(255, 121, 0, 0.03); /* Unified orange background - day theme */
+  --card-border: 1px solid rgba(255, 121, 0, 0.2); /* Unified orange border - day theme */
+  --card-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --card-hover-border: rgba(255, 121, 0, 0.4); /* Orange hover border - day theme */
+  --card-hover-background: rgba(255, 121, 0, 0.06); /* Orange hover background - day theme */
+  --card-hover-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  /* Master card hover shadow with colored glow - smaller, respects rounded corners */
+  --master-card-hover-shadow: calc(var(--shadow-offset-x, 0px) + 0px) calc(var(--shadow-offset-y, 0px) + 12px) 32px color-mix(in srgb, var(--color-brand) 35%, transparent),
+                              calc(var(--shadow-offset-x, 0px) + 8px) calc(var(--shadow-offset-y, 0px) + 8px) 24px color-mix(in srgb, var(--color-brand) 30%, transparent),
+                              calc(var(--shadow-offset-x, 0px) + -8px) calc(var(--shadow-offset-y, 0px) + 8px) 24px color-mix(in srgb, var(--color-brand) 30%, transparent),
+                              calc(var(--shadow-offset-x, 0px) + 8px) calc(var(--shadow-offset-y, 0px) + -8px) 24px color-mix(in srgb, var(--color-brand) 30%, transparent),
+                              calc(var(--shadow-offset-x, 0px) + -8px) calc(var(--shadow-offset-y, 0px) + -8px) 24px color-mix(in srgb, var(--color-brand) 30%, transparent),
+                              calc(var(--shadow-offset-x, 0px) + 0px) calc(var(--shadow-offset-y, 0px) + -12px) 24px color-mix(in srgb, var(--color-brand) 30%, transparent),
+                              calc(var(--shadow-offset-x, 0px) + 12px) calc(var(--shadow-offset-y, 0px) + 0px) 20px color-mix(in srgb, var(--color-brand) 25%, transparent),
+                              calc(var(--shadow-offset-x, 0px) + -12px) calc(var(--shadow-offset-y, 0px) + 0px) 20px color-mix(in srgb, var(--color-brand) 25%, transparent),
+                              0 2px 8px color-mix(in srgb, var(--color-gray-400) 12%, transparent),
+                              0 0 4px color-mix(in srgb, var(--color-gray-400) 8%, transparent);
+  --progress-background: color-mix(in srgb, var(--color-brand) 12%, var(--color-gray-150));
+  /* Section Block Shadow - Less visible in day mode */
+  --section-block-shadow: 0 0 4px color-mix(in srgb, var(--color-gray-400) 6%, transparent),
+                          0 0 2px color-mix(in srgb, var(--color-gray-400) 4%, transparent),
+                          0 1px 2px color-mix(in srgb, var(--color-gray-400) 5%, transparent);
 }

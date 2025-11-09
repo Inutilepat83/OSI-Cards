@@ -9,7 +9,7 @@ import { routes } from './app.routes';
 import { reducers } from './store/app.state';
 import { CardsEffects } from './store/cards/cards.effects';
 import { CARD_DATA_PROVIDER } from './core/services/card-data/card-data.service';
-import { TemplateCardProvider } from './core/services/card-data/template-card-provider.service';
+import { JsonCardProvider } from './core/services/card-data/json-card-provider.service';
 
 export const config: ApplicationConfig = {
   providers: [
@@ -23,7 +23,7 @@ export const config: ApplicationConfig = {
     }),
     {
       provide: CARD_DATA_PROVIDER,
-      useClass: TemplateCardProvider
+      useClass: JsonCardProvider
     }
   ]
 };

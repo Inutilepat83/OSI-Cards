@@ -1,4 +1,4 @@
-/* Chart visualization cards with shared section shell */
+/* Chart visualization cards with unified styling */
 
 @import 'sections-base';
 @import 'unified-cards';
@@ -6,18 +6,14 @@
 .chart-section {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xl);
+  gap: var(--section-grid-gap);
   width: 100%;
 }
 
 .chart-section__split {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--section-grid-gap);
-
-  @media (max-width: 1024px) {
-    gap: var(--section-grid-gap);
-  }
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -26,33 +22,30 @@
 }
 
 .chart-section__list {
-  @include section-grid(160px, var(--list-item-gap));
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--section-grid-gap);
   width: 100%;
 
-  @media (max-width: 1024px) {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
-    gap: var(--spacing-lg);
-  }
-
-  @media (max-width: 840px) {
-    grid-template-columns: 1fr !important;
-    gap: var(--spacing-lg);
+  @media (max-width: 500px) {
+    grid-template-columns: 1fr;
+    gap: var(--section-grid-gap-mobile);
   }
 }
 
 .chart-card {
+  @include card;
   appearance: none;
-  background: transparent;
-  border: none;
+  background: var(--card-background) !important;
+  border: var(--card-border);
   text-align: left;
-  @include section-card-base;
   gap: var(--spacing-lg);
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
   width: 100%;
 
   &:focus-visible {
-    outline: var(--accent-border-width-sm) solid rgba(255, 121, 0, 0.4);
-    outline-offset: var(--spacing-xs);
+    outline: 2px solid var(--card-hover-border);
+    outline-offset: 2px;
   }
 
   &__row {
@@ -64,13 +57,13 @@
 
   &__label {
     @extend %unified-card-label;
-    /* Font size enforced by unified-card-label */
+    font-size: 0.6rem;
   }
 
   &__value {
     @extend %unified-card-value;
-    color: rgba(255, 255, 255, 0.7);
-    /* Font size enforced by unified-card-value */
+    font-size: 0.85rem;
+    color: var(--foreground);
   }
 
   &__content {
@@ -81,24 +74,24 @@
   }
 
   &__meta {
-    font-size: var(--font-chart-meta);
-    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.65rem;
+    color: color-mix(in srgb, var(--foreground) 60%, transparent);
     letter-spacing: 0.02em;
     line-height: 1.3;
   }
 
   &__legend-dot {
-    width: var(--icon-size-xs);
-    height: var(--icon-size-xs);
-    border-radius: 999px;
-    box-shadow: 0 0 0 var(--accent-border-width-sm) rgba(255, 255, 255, 0.08);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
   }
 
   &__progress {
     position: relative;
-    height: var(--spacing-sm);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.12);
+    height: 4px;
+    border-radius: 2px;
+    background: var(--card-background);
     overflow: hidden;
     transition: height 0.25s ease;
   }
@@ -106,7 +99,151 @@
   &__progress-bar {
     height: 100%;
     border-radius: inherit;
+    background: var(--color-orange-fill);
     transition: width 0.5s ease;
+  }
+}
+
+.chart-card--legend {
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+  gap: var(--spacing-xl);
+}
+
+.chart-section__summary {
+  @include card;
+  cursor: default;
+  gap: var(--spacing-xl);
+  pointer-events: none;
+  min-height: auto;
+}
+
+.chart-section__summary-total {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
+}
+
+.chart-section__summary-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--foreground);
+  letter-spacing: -0.01em;
+}
+
+.chart-section__summary-hint {
+  font-size: 0.65rem;
+  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+  line-height: 1.4;
+}
+
+.chart-section__empty {
+  @include section-empty-state;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--section-grid-gap);
+  padding: var(--spacing-8xl) var(--spacing-4xl);
+  border-radius: var(--card-border-radius);
+
+  lucide-icon {
+    opacity: 0.65;
+  }
+}
+
+.chart-section__empty-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.chart-section__empty-hint {
+  font-size: 0.65rem;
+  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+}
+
+@media (max-width: 768px) {
+  .chart-card {
+    @include card;
+
+    &__label {
+      font-size: 0.6rem;
+    }
+
+    &__value {
+      font-size: 0.85rem;
+    }
+
+    &__meta {
+      font-size: 0.65rem;
+    }
+  }
+
+  .chart-card--legend {
+    align-items: flex-start;
+  }
+
+  .chart-card__progress {
+    height: 3px;
+  }
+
+  .chart-section__summary {
+    text-align: center;
+    align-items: center;
+  }
+}
+
+@media (max-width: 500px) {
+  .chart-section {
+    gap: var(--section-grid-gap-mobile);
+  }
+
+  .chart-section__list {
+    gap: var(--section-grid-gap-mobile);
+    grid-template-columns: 1fr !important;
+  }
+
+  .chart-card {
+    gap: var(--section-grid-gap-mobile);
+
+    &__row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-sm);
+    }
+
+    &__value {
+      font-size: 0.85rem;
+    }
+  }
+
+  .chart-card--legend {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+  }
+
+  .chart-card__progress {
+    height: 4px;
+  }
+
+  .chart-section__summary-value {
+    font-size: 1.1rem;
+  }
+
+  .chart-card__legend-dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .chart-section__summary {
+    gap: var(--spacing-sm);
+  }
+
+  .chart-section__summary-hint {
+    font-size: 0.65rem;
   }
 }
 

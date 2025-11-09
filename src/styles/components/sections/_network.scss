@@ -1,84 +1,80 @@
-/* Network relationship cards showing collaboration context */
+/* Network relationship cards with unified styling */
+
+@use 'sections-base' as *;
 
 .network-collection {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--section-grid-gap);
 }
 
 .network-card {
+  @include card;
   position: relative;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 18px;
+  gap: var(--spacing-lg);
   width: 100%;
-  padding: 18px 20px;
-  border-radius: 18px;
-  border: 1px solid rgba(255, 121, 0, 0.24);
-  background: linear-gradient(180deg, rgba(28, 28, 28, 0.92) 0%, rgba(14, 14, 14, 0.94) 100%);
+  border-radius: var(--card-border-radius);
   cursor: pointer;
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-}
 
-.network-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 153, 51, 0.46);
-  box-shadow: 0 18px 36px rgba(255, 121, 0, 0.18);
+  @media (max-width: 500px) {
+    padding: var(--card-padding-mobile);
+  }
 }
 
 .network-card__icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 121, 0, 0.16);
-  color: rgba(255, 153, 51, 0.92);
-  border: 1px solid rgba(255, 121, 0, 0.32);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.28);
+  background: var(--card-background);
+  color: var(--color-orange-solid);
+  border: 1px solid var(--card-border);
 }
 
 .network-card__icon--collab {
-  background: rgba(59, 130, 246, 0.16);
-  border-color: rgba(59, 130, 246, 0.34);
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.3);
   color: rgba(147, 197, 253, 0.92);
 }
 
 .network-card__icon--recognition {
-  background: rgba(234, 179, 8, 0.16);
+  background: rgba(234, 179, 8, 0.15);
   border-color: rgba(234, 179, 8, 0.34);
   color: rgba(253, 224, 71, 0.92);
 }
 
 .network-card__icon--advisory {
-  background: rgba(34, 197, 94, 0.16);
+  background: rgba(34, 197, 94, 0.15);
   border-color: rgba(34, 197, 94, 0.34);
   color: rgba(134, 239, 172, 0.92);
 }
 
 .network-card__icon--events {
-  background: rgba(168, 85, 247, 0.16);
+  background: rgba(168, 85, 247, 0.15);
   border-color: rgba(168, 85, 247, 0.34);
   color: rgba(233, 213, 255, 0.9);
 }
 
 .network-card__icon--default {
-  background: rgba(255, 121, 0, 0.16);
-  border-color: rgba(255, 121, 0, 0.32);
-  color: rgba(255, 153, 51, 0.92);
+  background: rgba(255, 121, 0, 0.15);
+  border-color: rgba(255, 121, 0, 0.3);
+  color: rgba(255, 121, 0, 0.8);
 }
 
 .network-card__details {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-xs);
   min-width: 0;
 }
 
 .network-card__title {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--foreground);
   letter-spacing: 0.01em;
@@ -86,39 +82,37 @@
 }
 
 .network-card:hover .network-card__title {
-  color: var(--primary);
+  color: var(--color-orange-solid);
 }
 
 .network-card__meta {
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.65rem;
+  color: color-mix(in srgb, var(--foreground) 62%, transparent);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .network-card__chevron {
-  color: rgba(255, 255, 255, 0.55);
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
   transition: transform 0.2s ease, color 0.2s ease;
+  flex-shrink: 0;
 }
 
 .network-card:hover .network-card__chevron {
   transform: translateX(2px);
-  color: rgba(255, 177, 68, 0.9);
+  color: var(--color-orange-solid);
 }
 
 .network-empty {
-  border: 1px dashed rgba(255, 121, 0, 0.32);
-  border-radius: 18px;
-  padding: 60px 24px;
-  text-align: center;
-  color: rgba(255, 255, 255, 0.55);
-  background: rgba(0, 0, 0, 0.35);
+  @include section-empty-state;
+  border-radius: var(--card-border-radius);
+  padding: var(--spacing-8xl) var(--spacing-6xl);
 }
 
 @media (max-width: 768px) {
   .network-card {
-    padding: 16px 18px;
-    gap: 14px;
+    padding: var(--card-padding-mobile);
+    gap: var(--spacing-lg);
   }
 }

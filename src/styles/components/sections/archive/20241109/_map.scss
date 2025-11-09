@@ -1,0 +1,66 @@
+/* Map section card styling for geographic insights */
+
+.map-card {
+  border: 1px solid rgba(255, 121, 0, 0.3);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-5xl) var(--spacing-6xl);
+  background: linear-gradient(180deg, rgba(28, 28, 28, 0.94) 0%, rgba(12, 12, 12, 0.9) 100%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5xl);
+  transition: border-color 0.24s ease, box-shadow 0.24s ease, transform 0.24s ease;
+}
+
+.map-card:hover {
+  border-color: rgba(255, 153, 51, 0.52);
+  box-shadow: 0 4px 12px rgba(255, 121, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.map-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.map-card__title {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--foreground);
+  letter-spacing: 0.01em;
+}
+
+.map-card__subtitle {
+  font-size: 0.82rem;
+  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+}
+
+.map-card__badge {
+  padding: var(--spacing-sm) var(--spacing-xl);
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 121, 0, 0.32);
+  background: color-mix(in srgb, var(--foreground) 5%, transparent);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 153, 51, 0.85);
+}
+
+.map-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-2xl);
+  font-size: 0.78rem;
+  color: color-mix(in srgb, var(--foreground) 62%, transparent);
+}
+
+.map-empty {
+  border: 1px dashed rgba(255, 121, 0, 0.32);
+  border-radius: var(--radius-md);
+  padding: 60px 24px;
+  text-align: center;
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
+  background: color-mix(in srgb, var(--foreground) 3%, transparent);
+}

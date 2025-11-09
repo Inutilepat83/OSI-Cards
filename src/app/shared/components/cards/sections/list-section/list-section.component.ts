@@ -33,15 +33,13 @@ export class ListSectionComponent extends BaseSectionComponent<ListEntry> {
   }
 
   getStatusClasses(status?: string): string {
-    // Map to list-card specific classes while using utils logic
     const baseClass = this.utils.getStatusClasses(status);
-    return baseClass.replace('status--', 'list-card__tag--status-');
+    return baseClass.replace('status--', 'section-card__tag--status-');
   }
 
   getPriorityClasses(priority?: string): string {
-    // Map to list-card specific classes while using utils logic
     const baseClass = this.utils.getPriorityClasses(priority);
-    return baseClass.replace('priority--', 'list-card__tag--priority-');
+    return baseClass.replace('priority--', 'section-card__tag--priority-');
   }
 
   onItemClick(item: ListEntry): void {

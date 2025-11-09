@@ -18,16 +18,17 @@ export interface TiltCalculations {
   providedIn: 'root'
 })
 export class MagneticTiltService {
-  private readonly MAX_LIFT_PX = 5; // slightly reduced lift for gentler tilt
-  private readonly BASE_GLOW_BLUR = 20;
-  private readonly MAX_GLOW_BLUR_OFFSET = 10;
-  private readonly BASE_GLOW_OPACITY = 0.2;
-  private readonly MAX_GLOW_OPACITY_OFFSET = 0.3;
-  private readonly MAX_REFLECTION_OPACITY = 0.3;
+  private readonly MAX_LIFT_PX = 3;
+  private readonly BASE_GLOW_BLUR = 12;
+  private readonly MAX_GLOW_BLUR_OFFSET = 6;
+  private readonly BASE_GLOW_OPACITY = 0.16;
+  private readonly MAX_GLOW_OPACITY_OFFSET = 0.18;
+  private readonly MAX_REFLECTION_OPACITY = 0.22;
 
   private frameHandle: number | null = null;
   private lastPosition: MousePosition | null = null;
   private lastElement: HTMLElement | null = null;
+  private lastRect: DOMRectReadOnly | null = null;
 
   private tiltCalculationsSubject = new BehaviorSubject<TiltCalculations>({
     rotateX: 0,
@@ -39,7 +40,7 @@ export class MagneticTiltService {
 
   tiltCalculations$ = this.tiltCalculationsSubject.asObservable();
 
-  calculateTilt(mousePosition: MousePosition, element: HTMLElement | null): void {
+  calculateTilt(mousePosition: MousePosition, element: HTMLElement | null, rect?: DOMRectReadOnly | null): void {
     if (!element) {
       this.resetTilt();
       return;
@@ -47,13 +48,14 @@ export class MagneticTiltService {
 
     this.lastPosition = mousePosition;
     this.lastElement = element;
+    this.lastRect = rect ?? null;
 
     if (this.frameHandle !== null) {
       return;
     }
 
     if (typeof window === 'undefined') {
-      this.applyTilt(mousePosition, element);
+      this.applyTilt(mousePosition, element, element.getBoundingClientRect());
       return;
     }
 
@@ -63,12 +65,20 @@ export class MagneticTiltService {
         this.resetTilt();
         return;
       }
-      this.applyTilt(this.lastPosition, this.lastElement);
+      this.applyTilt(
+        this.lastPosition,
+        this.lastElement,
+        this.lastRect ?? this.lastElement.getBoundingClientRect()
+      );
     });
   }
 
-  private applyTilt(mousePosition: MousePosition, element: HTMLElement): void {
-    const rect = element.getBoundingClientRect();
+  private applyTilt(
+    mousePosition: MousePosition,
+    element: HTMLElement,
+    rectOverride?: DOMRectReadOnly
+  ): void {
+    const rect = rectOverride ?? element.getBoundingClientRect();
     const halfW = rect.width / 2;
     const halfH = rect.height / 2;
     const fx = (mousePosition.x - rect.left) / rect.width;
@@ -109,6 +119,7 @@ export class MagneticTiltService {
     }
     this.lastPosition = null;
     this.lastElement = null;
+    this.lastRect = null;
 
     this.tiltCalculationsSubject.next({
       rotateX: 0,

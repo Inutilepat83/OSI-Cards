@@ -1,0 +1,295 @@
+/* Consolidated base styles for all card sections */
+
+/* ===== RESPONSIVE GRID SYSTEM ===== */
+/* 
+ * All grids now use a unified responsive column system:
+ * 
+ * Breakpoints and Column Counts:
+ * - Mobile (<640px):           1 column  (--grid-columns-mobile)
+ * - Tablet (640-1024px):       2 columns (--grid-columns-tablet)
+ * - Desktop (1024-1440px):     2 columns (--grid-columns-desktop)
+ * - Large Desktop (1440-1920px): 3 columns (--grid-columns-desktop-lg)
+ * - XL Desktop (>1920px):      4 columns (--grid-columns-desktop-xl)
+ * 
+ * Override Classes:
+ * - .grid--single-column:  Force 1 column (mobile: 1)
+ * - .grid--two-columns:    Force 2 columns (tablet/mobile: 2/1)
+ * - .grid--three-columns:  Force 3 columns (tablet/mobile: 2/1)
+ * - .grid--four-columns:   Force 4 columns (lg/tablet/mobile: 3/2/1)
+ * 
+ * This ensures:
+ * 1. Maximum use of available horizontal space
+ * 2. Consistent responsive behavior across all sections
+ * 3. Easy customization via CSS variables
+ */
+
+/* ===== GRID MIXINS (LEGACY) ===== */
+/* Default gap values map to CSS variables: --grid-gap-xs (3px), --grid-gap-sm (4px) */
+@mixin section-grid($min-width: 120px, $gap: 3px) {
+  display: grid !important;
+  gap: $gap;
+  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr)) !important;
+  min-height: 0;
+
+  @media (max-width: 520px) {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@mixin section-grid-responsive($min-width: 130px, $gap: 4px, $tablet-breakpoint: 820px) {
+  display: grid !important;
+  gap: $gap;
+  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr)) !important;
+  min-height: 0;
+
+  @media (max-width: $tablet-breakpoint) {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ===== UNIVERSAL CARD MIXIN ===== */
+/* Used for ALL card types: metric, contact, list, product, etc. */
+/* Guarantees 100% consistency across entire application */
+/* Refined neutral styling */
+@mixin card {
+  position: relative;
+  overflow: hidden;
+  border: var(--card-border);
+  border-radius: var(--card-border-radius);
+  padding: var(--card-padding);
+  background: var(--card-background);
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+  min-height: var(--card-min-height);
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.28s ease,
+    transform 0.24s ease;
+  box-shadow: var(--card-box-shadow);
+
+  &:hover {
+    border-color: var(--card-hover-border);
+    background: var(--card-hover-background);
+    transform: var(--card-hover-transform);
+    box-shadow: var(--card-hover-shadow);
+  }
+  
+  @media (max-width: 768px) {
+    padding: var(--card-padding-mobile);
+    min-height: var(--card-min-height-mobile);
+    border-radius: var(--card-border-radius-mobile);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overview-card,
+  .analytics-metric,
+  .info-card,
+  .list-card,
+  .contact-card,
+  .network-card,
+  .map-card,
+  .product-entry,
+  .product-reference,
+  .unified-card {
+    transition: none !important;
+    transform: none !important;
+    box-shadow: var(--card-box-shadow);
+  }
+}
+
+/* ===== METRIC CARD MIXIN (DEPRECATED) ===== */
+/* Legacy alias for backward compatibility - use @mixin card instead */
+@mixin metric-card {
+  @include card;
+}
+
+/* ===== CARD BASE STYLES (DEPRECATED) ===== */
+/* Legacy alias for backward compatibility - use @mixin card instead */
+@mixin section-card-base($accent: var(--section-accent, var(--accent))) {
+  @include card;
+}
+
+/* ===== UNIFIED SECTION CARD CLASS ===== */
+/* Master card component for direct use without mixins */
+/* This class provides the same style as Tailwind: rounded-2xl, border-border/40, bg-card/70 */
+.unified-card {
+  @include card;
+}
+
+/* Alias for backward compatibility */
+.section-card {
+  @include card;
+}
+
+/* ===== METRIC TYPOGRAPHY MIXINS ===== */
+/* Consistent label/value styling for all metric cards */
+/* NOTE: Font sizes are now enforced by unified-cards.scss - do not set font-size here */
+@mixin metric-label {
+  /* font-size is set by unified-cards.scss - do not override */
+  letter-spacing: 0.03em;
+  text-transform: lowercase;
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
+  line-height: 1.3;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+
+  > span,
+  > strong,
+  > em,
+  > p,
+  > i,
+  > b {
+    text-transform: inherit;
+  }
+}
+
+@mixin metric-value {
+  /* font-size is set by unified-cards.scss - do not override */
+  font-weight: 700;
+  color: var(--foreground);
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+@mixin section-description {
+  font-size: var(--font-section-description);
+  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+  font-weight: 500;
+}
+
+/* Legacy aliases for backward compatibility */
+@mixin section-label {
+  @include metric-label;
+}
+
+@mixin section-value {
+  @include metric-value;
+}
+
+/* ===== COMMON COMPONENTS ===== */
+@mixin section-empty-state($accent: var(--section-accent, var(--accent))) {
+  padding: var(--spacing-7xl) var(--spacing-3xl);
+  text-align: center;
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
+  border: 1px dashed color-mix(in srgb, #{$accent} 30%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, #{$accent} 10%, transparent);
+}
+
+@mixin section-empty-icon {
+  margin: 0 auto var(--spacing-4xl);
+  opacity: 0.65;
+  filter: drop-shadow(0 var(--spacing-xs) var(--spacing-sm) rgba(0, 0, 0, 0.22));
+}
+
+/* ===== TREND COLORS ===== */
+/* Standardized trend colors used across ALL sections */
+@mixin trend-colors {
+  &.trend--up {
+    color: color-mix(in srgb, var(--color-brand) 60%, var(--color-white) 40%) !important;
+    text-shadow: 0 1px 3px color-mix(in srgb, var(--color-brand) 24%, var(--color-white) 76%);
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--color-brand) 18%, transparent));
+  }
+
+  &.trend--down {
+    color: color-mix(in srgb, var(--color-brand) 65%, var(--color-black) 35%) !important;
+    text-shadow: 0 1px 3px color-mix(in srgb, var(--color-brand) 30%, var(--color-black) 70%);
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--color-brand) 22%, transparent));
+  }
+
+  &.trend--stable {
+    color: color-mix(in srgb, var(--color-brand) 55%, var(--color-white) 45%) !important;
+    text-shadow: 0 1px 3px color-mix(in srgb, var(--color-brand) 20%, var(--color-white) 80%);
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--color-brand) 16%, transparent));
+  }
+
+  &.trend--neutral {
+    color: color-mix(in srgb, var(--color-gray-400) 100%, transparent) !important;
+    text-shadow: 0 1px 3px color-mix(in srgb, var(--color-gray-500) 26%, transparent);
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--color-gray-500) 18%, transparent));
+  }
+}
+
+/* ===== STANDARDIZED STATUS CLASSES ===== */
+/* Use these classes across ALL sections for consistent status styling */
+.status--completed,
+.status--success {
+  border-color: rgba(74, 222, 128, 0.4) !important;
+  color: rgba(134, 239, 172, 1) !important;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(34, 197, 94, 0.1)) !important;
+}
+
+.status--active,
+.status--in-progress {
+  border-color: color-mix(in srgb, var(--section-accent, var(--accent)) 45%, transparent) !important;
+  color: color-mix(in srgb, var(--section-accent, var(--accent)) 72%, var(--foreground) 28%) !important;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--section-accent, var(--accent)) 28%, transparent),
+    color-mix(in srgb, var(--section-accent, var(--accent)) 16%, transparent)) !important;
+}
+
+.status--pending,
+.status--warning {
+  border-color: rgba(251, 191, 36, 0.45) !important;
+  color: rgba(253, 224, 71, 1) !important;
+  background: linear-gradient(135deg, rgba(253, 186, 116, 0.2), rgba(253, 186, 116, 0.12)) !important;
+}
+
+.status--blocked,
+.status--cancelled,
+.status--delayed,
+.status--inactive,
+.status--error {
+  border-color: rgba(248, 113, 113, 0.48) !important;
+  color: rgba(252, 165, 165, 1) !important;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.22), rgba(239, 68, 68, 0.14)) !important;
+}
+
+.status--default {
+  border-color: rgba(120, 120, 120, 0.4) !important;
+  color: rgba(200, 200, 200, 0.85) !important;
+  background: linear-gradient(135deg, rgba(40, 40, 40, 0.3), rgba(40, 40, 40, 0.2)) !important;
+}
+
+/* ===== STANDARDIZED PRIORITY CLASSES ===== */
+.priority--high {
+  border-color: rgba(248, 113, 113, 0.48) !important;
+  color: rgba(252, 165, 165, 1) !important;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.22), rgba(239, 68, 68, 0.14)) !important;
+}
+
+.priority--medium {
+  border-color: rgba(251, 191, 36, 0.45) !important;
+  color: rgba(253, 224, 71, 1) !important;
+  background: linear-gradient(135deg, rgba(253, 186, 116, 0.2), rgba(253, 186, 116, 0.12)) !important;
+}
+
+.priority--low {
+  border-color: rgba(74, 222, 128, 0.4) !important;
+  color: rgba(134, 239, 172, 1) !important;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(34, 197, 94, 0.1)) !important;
+}
+
+.priority--default {
+  border-color: rgba(120, 120, 120, 0.4) !important;
+  color: rgba(200, 200, 200, 0.85) !important;
+  background: linear-gradient(135deg, rgba(40, 40, 40, 0.3), rgba(40, 40, 40, 0.2)) !important;
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@mixin section-card-mobile {
+  padding: var(--section-card-padding-mobile);
+  min-height: var(--section-card-min-height-mobile);
+  border-radius: var(--section-card-border-radius-mobile);
+}

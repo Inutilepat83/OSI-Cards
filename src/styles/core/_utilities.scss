@@ -73,7 +73,7 @@
 }
 
 .text-red-400 {
-  color: #ef4444;
+  color: color-mix(in srgb, var(--color-brand) 70%, var(--color-black) 30%);
 }
 
 /* Align icon pseudo-elements with text */

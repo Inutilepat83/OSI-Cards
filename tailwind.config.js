@@ -45,6 +45,13 @@ module.exports = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      backgroundColor: {
+        'card-unified': 'rgba(255, 121, 0, 0.03)',
+      },
+      borderColor: {
+        'card-unified': 'rgba(255, 121, 0, 0.2)',
+        'card-unified-hover': 'rgba(255, 121, 0, 0.4)',
+      },
     },
   },
   plugins: [],

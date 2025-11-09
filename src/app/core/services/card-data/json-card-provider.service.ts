@@ -15,58 +15,45 @@ import { CardDataProvider } from './card-data-provider.interface';
 export class JsonCardProvider extends CardDataProvider {
   private http = inject(HttpClient);
 
-  // Define the mapping of card types to their file names
-  private cardTypeMapping: Record<string, { basic: string; enhanced: string; enterprise: string }> = {
-    company: {
-      basic: 'basic-company-profile.json',
-      enhanced: 'enhanced-company-profile.json',
-      enterprise: 'enterprise-company-dashboard.json'
-    },
-    contact: {
-      basic: 'basic-contact-info.json',
-      enhanced: 'professional-contact.json',
-      enterprise: 'executive-contact.json'
-    },
-    product: {
-      basic: 'basic-product-info.json',
-      enhanced: 'enhanced-product-catalog.json',
-      enterprise: 'product-analytics-dashboard.json'
-    },
-    project: {
-      basic: 'basic-project-overview.json',
-      enhanced: 'enhanced-project-dashboard.json',
-      enterprise: 'enterprise-project-analytics.json'
-    },
-    analytics: {
-      basic: 'basic-analytics-report.json',
-      enhanced: 'enhanced-analytics-dashboard.json',
-      enterprise: 'enterprise-analytics-suite.json'
-    },
-    opportunity: {
-      basic: 'basic-opportunity-tracker.json',
-      enhanced: 'enhanced-opportunity-pipeline.json',
-      enterprise: 'enterprise-opportunity-analytics.json'
-    }
+  // Define the mapping of card types to their config directories
+  private cardTypeConfigMapping: Record<string, string> = {
+    company: 'companies',
+    contact: 'contacts',
+    product: 'products',
+    project: 'projects',
+    analytics: 'analytics',
+    opportunity: 'opportunities',
+    event: 'events',
+    financials: 'financials'
   };
 
   getAllCards(): Observable<AICardConfig[]> {
-    // Get all example cards from the categorized structure
+    // Load all JSON files from configs directories
     const allCardFiles: string[] = [];
 
-    // Add files for each category
-    const categories = Object.keys(this.cardTypeMapping);
-    categories.forEach(category => {
-      const typeMapping = this.cardTypeMapping[category];
-      if (typeMapping) {
+    // Add files for each card type from configs
+    Object.entries(this.cardTypeConfigMapping).forEach(([cardType, directory]) => {
+      // For now, we'll need to know the files. In a real scenario, you might want to
+      // maintain a manifest file or use a different approach
+      // For company type, load from companies directory
+      if (cardType === 'company') {
         allCardFiles.push(
-          `/assets/examples/categories/${category}/${typeMapping.basic}`,
-          `/assets/examples/categories/${category}/${typeMapping.enhanced}`,
-          `/assets/examples/categories/${category}/${typeMapping.enterprise}`
+          '/assets/configs/companies/dsm.json',
+          '/assets/configs/companies/google.json',
+          '/assets/configs/companies/pfizer.json'
         );
       }
+      // Add other types as needed
     });
 
     const requests = allCardFiles.map(file => this.http.get<AICardConfig>(file).pipe(
+      map(card => {
+        // Normalize cardType to lowercase
+        if (card && card.cardType) {
+          card.cardType = card.cardType.toLowerCase() as any;
+        }
+        return card;
+      }),
       catchError(error => {
         console.warn(`Failed to load card from ${file}:`, error);
         return of(null);
@@ -79,28 +66,42 @@ export class JsonCardProvider extends CardDataProvider {
   }
 
   getCardsByType(cardType: string): Observable<AICardConfig[]> {
-    const typeMapping = this.cardTypeMapping[cardType];
-    if (!typeMapping) {
+    const directory = this.cardTypeConfigMapping[cardType];
+    if (!directory) {
       console.warn(`Unknown card type: ${cardType}`);
       return of([]);
     }
 
-    const cardFiles = [
-      `/assets/examples/categories/${cardType}/${typeMapping.basic}`,
-      `/assets/examples/categories/${cardType}/${typeMapping.enhanced}`,
-      `/assets/examples/categories/${cardType}/${typeMapping.enterprise}`
-    ];
+    // Load all JSON files from the specific config directory
+    // For company type, return the available company cards
+    if (cardType === 'company') {
+      const cardFiles = [
+        '/assets/configs/companies/dsm.json',
+        '/assets/configs/companies/google.json',
+        '/assets/configs/companies/pfizer.json'
+      ];
 
-    const requests = cardFiles.map(file => this.http.get<AICardConfig>(file).pipe(
-      catchError(error => {
-        console.warn(`Failed to load card from ${file}:`, error);
-        return of(null);
-      })
-    ));
+      const requests = cardFiles.map(file => this.http.get<AICardConfig>(file).pipe(
+        map(card => {
+          // Normalize cardType to lowercase
+          if (card && card.cardType) {
+            card.cardType = card.cardType.toLowerCase() as any;
+          }
+          return card;
+        }),
+        catchError(error => {
+          console.warn(`Failed to load card from ${file}:`, error);
+          return of(null);
+        })
+      ));
 
-    return forkJoin(requests).pipe(
-      map(cards => cards.filter(card => card !== null) as AICardConfig[])
-    );
+      return forkJoin(requests).pipe(
+        map(cards => cards.filter(card => card !== null) as AICardConfig[])
+      );
+    }
+
+    // For other types, return empty array for now
+    return of([]);
   }
 
   getCardById(id: string): Observable<AICardConfig | null> {
@@ -112,20 +113,16 @@ export class JsonCardProvider extends CardDataProvider {
 
   /**
    * Get card configuration by complexity level
+   * Note: This method is kept for backward compatibility but may not work with the new config structure
    */
   getCardByComplexity(cardType: string, complexity: 'basic' | 'enhanced' | 'enterprise'): Observable<AICardConfig | null> {
-    const typeMapping = this.cardTypeMapping[cardType];
-    if (!typeMapping) {
-      return of(null);
-    }
-
-    const fileName = typeMapping[complexity];
-    const filePath = `/assets/examples/categories/${cardType}/${fileName}`;
-
-    return this.http.get<AICardConfig>(filePath).pipe(
-      catchError(error => {
-        console.warn(`Failed to load ${complexity} card for ${cardType}:`, error);
-        return of(null);
+    // For now, return the first card of the requested type
+    // In the future, you might want to add complexity metadata to JSON files
+    return this.getCardsByType(cardType).pipe(
+      map(cards => {
+        if (cards.length === 0) return null;
+        // Return first card as default, or implement complexity-based selection
+        return cards[0] || null;
       })
     );
   }
@@ -134,6 +131,6 @@ export class JsonCardProvider extends CardDataProvider {
    * Get available card types
    */
   getAvailableCardTypes(): string[] {
-    return Object.keys(this.cardTypeMapping);
+    return Object.keys(this.cardTypeConfigMapping);
   }
 }

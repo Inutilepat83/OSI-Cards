@@ -1,36 +1,36 @@
-<div class="ai-section">
-  <div class="ai-section__header">
-    <h3 class="ai-section__title">
-      {{ section.title }}
-    </h3>
-  </div>
+<section class="section-block section-block--metrics" aria-labelledby="overview-section-title">
+  <header class="section-block__header">
+    <div class="section-block__heading">
+      <h3 id="overview-section-title" class="section-block__title">
+        {{ section.title }}
+      </h3>
+    </div>
+  </header>
 
-  <div class="ai-section__body">
-    <ng-container *ngIf="hasFields; else overviewEmpty">
-      <div class="overview-grid">
-        <button
-          *ngFor="let field of fields; let i = index"
-          type="button"
-          class="overview-card"
-          (click)="onFieldClick(field)"
-          [style.animation]="getAnimationDuration(0.6)"
-          [style.animation-delay]="getAnimationDelay(i, 50)"
-        >
-          <span class="overview-card__label">
-            {{ field.label || field.title }}
-          </span>
-          <span class="overview-card__value">
-            {{ field.value }}
-          </span>
-        </button>
-      </div>
-    </ng-container>
+  <ng-container *ngIf="hasFields; else overviewEmpty">
+    <div class="section-grid section-grid--metrics">
+      <button
+        *ngFor="let field of fields; let i = index"
+        type="button"
+        class="section-card section-card--metric"
+        (click)="onFieldClick(field)"
+        [style.animation]="getAnimationDuration(0.6)"
+        [style.animation-delay]="getAnimationDelay(i, 50)"
+      >
+        <span class="section-card__label">
+          {{ field.label || field.title }}
+        </span>
+        <span class="section-card__value">
+          {{ field.value }}
+        </span>
+      </button>
+    </div>
+  </ng-container>
 
-    <ng-template #overviewEmpty>
-      <div class="overview-empty">
-        <lucide-icon name="alert-circle" [size]="32" class="mb-4 opacity-50" aria-hidden="true"></lucide-icon>
-        <p class="text-sm">No overview information available</p>
-      </div>
-    </ng-template>
-  </div>
-</div>
+  <ng-template #overviewEmpty>
+    <div class="section-empty">
+      <lucide-icon name="alert-circle" [size]="32" class="mb-4 opacity-50" aria-hidden="true"></lucide-icon>
+      <p class="text-sm">No overview information available</p>
+    </div>
+  </ng-template>
+</section>

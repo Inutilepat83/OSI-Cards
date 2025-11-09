@@ -18,7 +18,7 @@ interface PositionedSection {
   imports: [CommonModule, SectionRendererComponent],
   templateUrl: './masonry-grid.component.html',
   styleUrls: ['./masonry-grid.component.css'],
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() sections: CardSection[] = [];
@@ -44,6 +44,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['sections']) {
       this.computeInitialLayout();
+      this.cdr.markForCheck();
     }
   }
 
@@ -202,7 +203,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     this.containerHeight = Math.max(...colHeights, 0);
     
     // Force immediate change detection
-    this.cdr.detectChanges();
+      this.cdr.markForCheck();
     
     // If we detected zero heights and haven't hit max reflows, try again
     if (hasZeroHeights && this.reflowCount < this.MAX_REFLOWS) {

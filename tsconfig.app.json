@@ -16,9 +16,10 @@
     "src/test.ts",
     "example/**/*",
     "src/environments/environment.prod.ts",
-    "src/app/app.config.optimized.ts",
     "src/app/features/index.ts",
     "src/app/features/home/index.ts",
-    "src/app/store/index.ts"
+    "src/app/store/index.ts",
+    "src/app/shared/components/cards/sections/archive/**/*",
+    "src/styles/components/sections/archive/**/*"
   ]
 }

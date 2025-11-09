@@ -1,61 +1,60 @@
-<div class="ai-section">
-  <div class="ai-section__header">
-    <h3 class="ai-section__title">{{ section.title }}</h3>
-    <span *ngIf="fields.length" class="ai-section__badge">
-      {{ fields.length }} metrics
-    </span>
-  </div>
+<section class="section-block section-block--metrics" aria-labelledby="analytics-section-title">
+  <header class="section-block__header">
+    <div class="section-block__heading">
+      <h3 id="analytics-section-title" class="section-block__title">{{ section.title }}</h3>
+      <p *ngIf="section.subtitle" class="section-block__subtitle">{{ section.subtitle }}</p>
+    </div>
+  </header>
 
-  <div class="ai-section__body">
-    <ng-container *ngIf="fields.length; else analyticsEmpty">
-      <div class="analytics-metrics">
-        <div
-          *ngFor="let field of fields; let i = index"
-          class="analytics-metric"
-          (click)="onFieldClick(field)"
-          (keydown.enter)="onFieldClick(field)"
-          (keydown.space)="$event.preventDefault(); onFieldClick(field)"
-          role="button"
-          tabindex="0"
-          [style.animation]="getAnimationDuration(0.6)"
-          [style.animation-delay]="getAnimationDelay(i, 60)"
-        >
-          <div class="analytics-metric__label">
-            <lucide-icon [name]="getTrendIcon(field)" [size]="16" [ngClass]="getTrendClass(field)"></lucide-icon>
-            <span>{{ field.label }}</span>
-          </div>
-
-          <div class="analytics-metric__value">
-            {{ field.value }}
-          </div>
-
-          <div *ngIf="field.percentage !== undefined" class="analytics-progress">
-            <div
-              class="analytics-progress__bar"
-              [style.width.%]="Math.min(field.percentage, 100)"
-            ></div>
-          </div>
-
-          <div *ngIf="field.percentage !== undefined" class="analytics-metric__meta">
-            <span>{{ field.percentage }}%</span>
-          </div>
-
-          <div *ngIf="field.change !== undefined" class="analytics-metric__meta">
-            <span>Change:</span>
-            <span class="analytics-metric__change" [ngClass]="getTrendClass(field)">
-              {{ formatChange(field.change) }}
-            </span>
-            <lucide-icon [name]="getTrendIcon(field)" [size]="14" [ngClass]="getTrendClass(field)"></lucide-icon>
-          </div>
+  <ng-container *ngIf="fields.length; else analyticsEmpty">
+    <div class="section-grid section-grid--metrics">
+      <button
+        type="button"
+        *ngFor="let field of fields; let i = index"
+        class="section-card section-card--metric"
+        (click)="onFieldClick(field)"
+        [style.animation]="getAnimationDuration(0.6)"
+        [style.animation-delay]="getAnimationDelay(i, 60)"
+      >
+        <div class="section-card__label">
+          <lucide-icon
+            [name]="getTrendIcon(field)"
+            [size]="16"
+            [ngClass]="getTrendClass(field)"
+          ></lucide-icon>
+          <span>{{ field.label }}</span>
         </div>
-      </div>
-    </ng-container>
 
-    <ng-template #analyticsEmpty>
-      <div class="analytics-empty">
-        <lucide-icon name="bar-chart-3" [size]="42" class="mb-4 opacity-50"></lucide-icon>
-        <p class="text-sm">No analytics data configured</p>
-      </div>
-    </ng-template>
-  </div>
-</div>
+        <div class="section-card__value">
+          {{ field.value }}
+        </div>
+
+        <div *ngIf="field.percentage !== undefined" class="section-card__progress">
+          <div
+            class="section-card__progress-bar"
+            [style.width.%]="Math.min(field.percentage, 100)"
+          ></div>
+        </div>
+
+        <div *ngIf="field.percentage !== undefined" class="section-card__meta">
+          <span>{{ field.percentage }}%</span>
+        </div>
+
+        <div *ngIf="field.change !== undefined" class="section-card__meta">
+          <span>Change:</span>
+          <span class="section-card__meta-change" [ngClass]="getTrendClass(field)">
+            {{ formatChange(field.change) }}
+          </span>
+          <lucide-icon [name]="getTrendIcon(field)" [size]="14" [ngClass]="getTrendClass(field)"></lucide-icon>
+        </div>
+      </button>
+    </div>
+  </ng-container>
+
+  <ng-template #analyticsEmpty>
+    <div class="section-empty">
+      <lucide-icon name="bar-chart-3" [size]="42" class="mb-4 opacity-50"></lucide-icon>
+      <p class="text-sm">No analytics data configured</p>
+    </div>
+  </ng-template>
+</section>
