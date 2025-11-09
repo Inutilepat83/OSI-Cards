@@ -104,7 +104,7 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
    * Get standardized animation delay for staggered animations
    * Public for template access
    */
-  getAnimationDelay(index: number, baseDelay: number = 50): string {
+  getAnimationDelay(index: number, baseDelay: number = 60): string {
     return `${index * baseDelay}ms`;
   }
 
@@ -112,7 +112,7 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
    * Get standardized animation duration
    * Public for template access
    */
-  getAnimationDuration(duration: number = 0.55): string {
+  getAnimationDuration(duration: number = 0.6): string {
     return `fadeInUp ${duration}s ease-out forwards`;
   }
 }

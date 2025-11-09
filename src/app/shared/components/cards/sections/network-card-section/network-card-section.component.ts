@@ -55,6 +55,14 @@ export class NetworkCardSectionComponent {
     return 'share-2';
   }
 
+  getAnimationDelay(index: number, baseDelay = 60): string {
+    return `${index * baseDelay}ms`;
+  }
+
+  getAnimationDuration(duration = 0.6): string {
+    return `fadeInUp ${duration}s ease-out forwards`;
+  }
+
   getIconTone(field: NetworkField): string {
     const id = (field.id ?? '').toLowerCase();
 

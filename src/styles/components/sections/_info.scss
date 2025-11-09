@@ -7,21 +7,29 @@
 }
 
 .section-card--insight {
+  @include card;
   cursor: pointer;
   text-align: left;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &:focus-visible {
     outline: 2px solid color-mix(in srgb, var(--section-accent) 50%, transparent);
     outline-offset: 2px;
   }
 
-  &:hover .section-card__value {
-    color: var(--section-accent);
+  &:hover {
+    .section-card__value {
+      color: var(--section-accent);
+      transform: scale(1.02);
+    }
+    
+    .section-card__description {
+      color: color-mix(in srgb, var(--foreground) 75%, transparent);
+    }
   }
 
   .section-card__description {
     @include section-description;
+    @include fast-transition;
   }
 
   .section-card__meta {
@@ -30,5 +38,10 @@
 
   .section-card__meta-change {
     @include trend-colors;
+    @include fast-transition;
+  }
+  
+  &:hover .section-card__meta-change {
+    transform: translateX(2px);
   }
 }

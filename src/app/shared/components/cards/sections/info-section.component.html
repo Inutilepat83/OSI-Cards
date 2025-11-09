@@ -1,14 +1,16 @@
-<section class="section-block section-block--insights" aria-labelledby="info-section-title">
-  <header class="section-block__header" *ngIf="section.title">
-    <div class="section-block__heading">
-      <h3 id="info-section-title" class="section-block__title">{{ section.title }}</h3>
+<div class="ai-section ai-section--info">
+  <div class="ai-section__header">
+    <div class="ai-section__details">
+      <h3 class="ai-section__title">{{ section.title }}</h3>
+      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
     </div>
-  </header>
+  </div>
 
-  <ng-container *ngIf="hasFields; else infoEmpty">
-    <div class="section-grid section-grid--insights">
-      <button
-        *ngFor="let field of fields; let i = index"
+  <div class="ai-section__body">
+    <ng-container *ngIf="hasFields; else infoEmpty">
+      <div class="section-grid section-grid--insights">
+        <button
+        *ngFor="let field of fields; trackBy: trackField; let i = index"
         type="button"
         class="section-card section-card--insight"
         (click)="onFieldClick(field)"
@@ -40,13 +42,14 @@
           </span>
         </div>
       </button>
-    </div>
-  </ng-container>
+      </div>
+    </ng-container>
 
-  <ng-template #infoEmpty>
-    <div class="section-empty">
-      <lucide-icon name="alert-circle" [size]="32" class="mb-4 opacity-50" aria-hidden="true"></lucide-icon>
-      <p class="text-sm">No information available</p>
-    </div>
-  </ng-template>
-</section>
+    <ng-template #infoEmpty>
+      <div class="section-empty">
+        <lucide-icon name="alert-circle" [size]="32" class="mb-4 opacity-50" aria-hidden="true"></lucide-icon>
+        <p class="text-sm">No information available</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

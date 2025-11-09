@@ -1,42 +1,22 @@
-/* List section cards with unified card styling */
+/* List section cards using the unified section type system */
 
 @use 'sections-base' as *;
 
 .section-block--list {
-  --section-accent: var(--color-orange-solid);
-}
-
-.section-grid--list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--section-grid-gap);
-  
-  @media (max-width: 500px) {
-    grid-template-columns: 1fr;
-    gap: var(--section-grid-gap-mobile);
-  }
+  --section-accent: color-mix(in srgb, var(--color-brand) 50%, var(--foreground) 50%);
+  --section-card-grid-min: 200px; /* More compact and flexible */
 }
 
 .section-card--list {
-  @include card;
   align-items: stretch;
   position: relative;
 
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0 auto 0 0;
-    width: 3px;
-    border-top-left-radius: var(--card-border-radius);
-    border-bottom-left-radius: var(--card-border-radius);
-    background: var(--card-hover-border);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-  }
-
+  @include accent-border;
+  
   &:hover {
-    &::before {
-      opacity: 1;
+    .section-card__icon {
+      transform: scale(1.08);
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--section-accent) 25%, transparent);
     }
   }
 
@@ -47,15 +27,11 @@
   }
 
   .section-card__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px;
-    height: 22px;
-    border-radius: var(--radius-sm);
-    background: var(--card-background);
-    color: rgba(255, 180, 91, 1);
+    @include standard-icon;
+    width: var(--icon-size-lg);
+    height: var(--icon-size-lg);
     flex-shrink: 0;
+    --accent: var(--section-accent);
   }
 
   .section-card__content {
@@ -74,27 +50,52 @@
   }
 
   .section-card__tag {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-    padding: 3px 6px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--card-border);
-    background: var(--card-background);
-    font-size: 0.65rem;
-    font-weight: 600;
+    @include standard-badge;
+    padding: var(--tag-padding-y) var(--tag-padding-x-lg);
+    font-size: var(--font-list-tag);
     letter-spacing: 0.04em;
     text-transform: uppercase;
+    --accent: var(--section-accent);
+  }
+
+  .section-card__tag--value {
+    border-color: color-mix(in srgb, var(--section-accent) 45%, transparent);
+    background: color-mix(in srgb, var(--section-accent) 18%, transparent);
+    color: color-mix(in srgb, var(--section-accent) 80%, var(--foreground) 20%);
   }
 
   .section-card__meta {
     display: flex;
     flex-wrap: wrap;
     gap: var(--spacing-xl);
-    font-size: 0.7rem;
-    color: color-mix(in srgb, var(--foreground) 60%, transparent);
+    font-size: var(--font-list-meta);
+    color: color-mix(in srgb, var(--foreground) 85%, transparent);
     font-weight: 600;
   }
+}
+
+.section-card__tag--status-completed,
+.section-card__tag--priority-low {
+  @extend .status--completed;
+}
+
+.section-card__tag--status-active,
+.section-card__tag--priority-medium {
+  @extend .status--active;
+}
+
+.section-card__tag--status-pending,
+.section-card__tag--priority-default {
+  @extend .status--pending;
+}
+
+.section-card__tag--status-blocked,
+.section-card__tag--priority-high {
+  @extend .status--blocked;
+}
+
+.section-card__tag--status-default {
+  @extend .status--default;
 }
 
 .section-block--list .section-empty {

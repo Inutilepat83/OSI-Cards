@@ -64,11 +64,23 @@ export class MapSectionComponent {
     });
   }
 
+  getAnimationDelay(index: number, baseDelay = 60): string {
+    return `${index * baseDelay}ms`;
+  }
+
+  getAnimationDuration(duration = 0.6): string {
+    return `fadeInUp ${duration}s ease-out forwards`;
+  }
+
   formatCoordinates(location: MapLocation): string | null {
     if (!location.coordinates) {
       return null;
     }
     const { lat, lng } = location.coordinates;
     return `${lat.toFixed(2)}, ${lng.toFixed(2)}`;
+  }
+
+  trackLocation(index: number, location: MapLocation): string {
+    return location.id ?? `${location.name}-${index}`;
   }
 }

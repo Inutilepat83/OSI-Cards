@@ -1,24 +1,15 @@
-/* Text reference section with unified card styling */
-
 @use 'sections-base' as *;
 @import 'unified-cards';
 
-.section-grid--reference {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--section-grid-gap);
-  
-  @media (max-width: 500px) {
-    grid-template-columns: 1fr;
-    gap: var(--section-grid-gap-mobile);
-  }
+.section-block--reference {
+  --section-card-grid-min: 300px; /* Wider cards for text references */
 }
 
 .section-card--reference {
   @include card;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-4xl);
 }
 
 .reference-card__content {
@@ -29,7 +20,7 @@
 
 .reference-card__text {
   @include metric-value;
-  font-size: 0.9rem;
+  font-size: var(--font-section-value);
   line-height: 1.7;
   color: var(--foreground);
   margin: 0;
@@ -38,39 +29,38 @@
 .reference-card__footer {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
-  padding-top: var(--spacing-lg);
-  border-top: 1px solid var(--card-border);
+  gap: var(--spacing-3xl);
+  padding-top: var(--spacing-3xl);
+  border-top: 1px solid var(--section-card-border);
 }
 
 .reference-card__meta {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-2xl);
   align-items: center;
 }
 
 .reference-card__category {
+  @include standard-badge;
   @include metric-label;
-  font-size: 0.6rem;
-  padding: 2px 4px;
-  background: var(--card-background);
-  color: rgba(255, 180, 91, 1);
-  border-radius: var(--radius-xs);
-  font-weight: 600;
+  font-size: var(--font-section-tag);
+  padding: var(--tag-padding-y) var(--tag-padding-x);
+  color: var(--color-brand);
+  --accent: var(--color-brand);
 }
 
 .reference-card__source,
 .reference-card__reference {
   @include metric-label;
-  font-size: 0.65rem;
+  font-size: var(--font-section-meta);
   color: color-mix(in srgb, var(--foreground) 70%, transparent);
 }
 
 .reference-card__date {
   @include metric-label;
-  font-size: 0.65rem;
-  color: color-mix(in srgb, var(--foreground) 50%, transparent);
+  font-size: var(--font-section-meta);
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
   margin-left: auto;
 }
 
@@ -79,23 +69,33 @@
   align-items: center;
   gap: var(--spacing-sm);
   @include metric-label;
-  font-size: 0.65rem;
-  color: var(--color-orange-solid);
+  font-size: var(--font-section-meta);
+  color: var(--color-brand);
   text-decoration: none;
-  transition: color 0.2s ease, opacity 0.2s ease;
+  @include fast-transition;
 
   &:hover {
-    color: var(--hover-text-color);
-    opacity: 0.9;
+    color: color-mix(in srgb, var(--color-brand) 90%, transparent);
+    opacity: 1;
+    transform: translateX(2px);
+    
+    lucide-icon {
+      transform: translateX(2px);
+    }
   }
 
   lucide-icon {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
+    @include fast-transition;
   }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 768px) {
+  .section-card--reference {
+    /* Mobile padding handled by @include card */
+  }
+
   .reference-card__meta {
     flex-direction: column;
     align-items: flex-start;

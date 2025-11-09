@@ -1,4 +1,4 @@
-<div class="ai-section">
+<div class="ai-section ai-section--network-card">
   <div class="ai-section__header">
     <div class="ai-section__details">
       <h3 class="ai-section__title">{{ section.title }}</h3>
@@ -14,8 +14,8 @@
           type="button"
           class="network-card"
           (click)="onItemClick(field)"
-          [style.animation]="'fadeInUp 0.5s ease-out forwards'"
-          [style.animation-delay]="i * 50 + 'ms'"
+          [style.animation]="getAnimationDuration(0.6)"
+          [style.animation-delay]="getAnimationDelay(i)"
         >
           <div class="network-card__icon" [ngClass]="getIconTone(field)">
             <lucide-icon [name]="getIconName(field)" size="18"></lucide-icon>
@@ -32,7 +32,7 @@
     </ng-container>
 
     <ng-template #networkEmpty>
-      <div class="network-empty">
+      <div class="section-empty">
         <lucide-icon name="users" size="32" class="mb-3 opacity-60"></lucide-icon>
         <p class="text-sm">No network data available.</p>
       </div>

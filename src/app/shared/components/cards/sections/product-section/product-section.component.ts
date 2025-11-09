@@ -149,6 +149,14 @@ export class ProductSectionComponent {
 
   trackField = (_index: number, field: ProductField): string => field.id ?? field.label ?? `product-field-${_index}`;
 
+  getAnimationDelay(index: number, baseDelay = 60): string {
+    return `${index * baseDelay}ms`;
+  }
+
+  getAnimationDuration(duration = 0.6): string {
+    return `fadeInUp ${duration}s ease-out forwards`;
+  }
+
   getGroupBadgeLabel(group: ProductCategoryGroup): string {
     return `${group.fields.length} ${group.fields.length === 1 ? 'item' : 'items'}`;
   }

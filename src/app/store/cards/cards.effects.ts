@@ -63,31 +63,6 @@ export class CardsEffects {
     )
   );
 
-  // Legacy/test-targeted effects - simplified implementations
-  createCard$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(CardsActions.createCard),
-      mergeMap(({ config }: GenerateCardAction) =>
-        of(config).pipe(
-          map((card: AICardConfig) => CardsActions.createCardSuccess({ card })),
-          catchError((error: unknown) => of(CardsActions.createCardFailure({ error: error instanceof Error ? error.message : String(error) })))
-        )
-      )
-    )
-  );
-
-  updateCard$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(CardsActions.updateCard),
-      mergeMap((action: GenerateCardAction) =>
-        of(action.config).pipe(
-          map((card: AICardConfig) => CardsActions.updateCardSuccess({ card })),
-          catchError((error: unknown) => of(CardsActions.updateCardFailure({ error: error instanceof Error ? error.message : String(error) })))
-        )
-      )
-    )
-  );
-
   deleteCard$ = createEffect(() =>
     this.actions$.pipe(
       ofType(CardsActions.deleteCard),

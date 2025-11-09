@@ -13,10 +13,14 @@ $section-base-shadow: 0 18px 40px color-mix(in srgb, var(--foreground) 8%, trans
 
 .section-block {
   --section-accent: var(--color-brand);
-  --section-background: var(--section-bg-main); /* ✅ Default to main background */
-  --section-header-text: color-mix(in srgb, var(--foreground) 75%, transparent);
+  --section-background: var(--card-section-bg); /* Theme-aware: grey-800 (night) or grey-50 (day) */
+  --section-border: color-mix(in srgb, var(--border) 40%, transparent); /* Lighter border color */
+  --section-header-text: color-mix(in srgb, var(--foreground) 75%, transparent); /* Less contrasty */
   --section-header-meta: color-mix(in srgb, var(--foreground) 60%, transparent);
-  --section-card-grid-min: 180px;
+  --section-card-background: var(--card-section-card-bg); /* Theme-aware: grey-700 (night) or grey-100 (day) - more contrasty */
+  --section-card-border: color-mix(in srgb, var(--color-gray-400) 50%, transparent); /* Grey border for both themes */
+  --section-card-hover: var(--card-section-card-bg); /* Theme-aware: grey-700 (night) or grey-100 (day) - more contrasty */
+  --section-card-grid-min: 180px; /* More flexible, allows more items per row */
   --section-reflection-opacity: var(--section-reflection-opacity, 0);
   --section-reflection-offset-x: var(--section-reflection-offset-x, 0%);
   --section-reflection-offset-y: var(--section-reflection-offset-y, 0%);
@@ -26,14 +30,13 @@ $section-base-shadow: 0 18px 40px color-mix(in srgb, var(--foreground) 8%, trans
   display: flex;
   flex-direction: column;
   gap: calc(var(--spacing-7xl) - 4px);
-  padding: clamp(14px, 2vw, 22px);
+  padding: clamp(14px, 2vw, 22px); /* Increased by 2px */
   border-radius: var(--radius-lg);
-  border: none; /* ✅ NO BORDER - only inner cards (.section-card) have borders */
+  border: 0.5px solid var(--section-border); /* 50% thinner border */
   background: var(--section-background);
-  box-shadow: var(--section-block-shadow);
-  margin-bottom: var(--section-gap); /* ✅ Standardized 32px spacing between sections */
+  box-shadow: var(--section-block-shadow); /* Theme-aware shadow - less visible in day mode */
   transition: border-color 0.2s ease, background 0.2s ease;
-  overflow: hidden;
+  overflow: hidden; /* Ensure reflection doesn't overflow */
 
   /* Light flare effect - makes surface appear to catch light */
   &::before {
@@ -62,16 +65,6 @@ $section-base-shadow: 0 18px 40px color-mix(in srgb, var(--foreground) 8%, trans
   }
 }
 
-/* ✅ MAIN SECTION: Lighter background for most sections (default) */
-.section-block--main {
-  --section-background: var(--section-bg-main);
-}
-
-/* ✅ CONTRAST SECTION: Darker background for emphasis sections (1-2 max per card) */
-.section-block--contrast {
-  --section-background: var(--section-bg-contrast);
-}
-
 .section-block__header {
   display: flex;
   align-items: center;
@@ -81,8 +74,8 @@ $section-base-shadow: 0 18px 40px color-mix(in srgb, var(--foreground) 8%, trans
 }
 
 .section-block__title {
-  font-size: var(--font-size-section-header); /* ✅ Standardized to 20px */
-  font-weight: var(--font-weight-section-header); /* ✅ Standardized to 600 */
+  font-size: var(--font-section-title);
+  font-weight: 700;
   color: var(--section-header-text);
   letter-spacing: 0.02em;
   margin: 0;
@@ -112,14 +105,14 @@ $section-base-shadow: 0 18px 40px color-mix(in srgb, var(--foreground) 8%, trans
 .section-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--section-card-grid-min), 1fr));
-  gap: var(--card-gap); /* ✅ Standardized to 12px */
+  gap: var(--section-grid-gap);
   width: 100%;
 }
 
 .section-list {
   display: flex;
   flex-direction: column;
-  gap: var(--card-gap); /* ✅ Standardized to 12px */
+  gap: var(--section-grid-gap);
 }
 
 .section-card {
@@ -156,7 +149,7 @@ $section-base-shadow: 0 18px 40px color-mix(in srgb, var(--foreground) 8%, trans
   align-items: center;
   gap: var(--spacing-sm);
   font-size: var(--font-section-meta);
-  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
 }
 
 .section-card__progress {
@@ -179,7 +172,7 @@ $section-base-shadow: 0 18px 40px color-mix(in srgb, var(--foreground) 8%, trans
   border: 1px dashed color-mix(in srgb, var(--section-accent) 32%, transparent);
   background: color-mix(in srgb, var(--section-accent) 10%, transparent);
   text-align: center;
-  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -247,20 +240,15 @@ $section-base-shadow: 0 18px 40px color-mix(in srgb, var(--foreground) 8%, trans
   .section-block {
     gap: var(--spacing-5xl);
     padding: clamp(12px, 2.5vw, 18px); /* Increased by 2px */
-    margin-bottom: var(--section-gap-mobile); /* ✅ Standardized 24px mobile spacing */
   }
 
   .section-grid {
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: var(--card-gap-mobile); /* ✅ Standardized to 8px */
+    gap: var(--section-grid-gap-mobile);
   }
 
   .section-list {
-    gap: var(--card-gap-mobile); /* ✅ Standardized to 8px */
-  }
-  
-  .section-block__title {
-    font-size: var(--font-size-section-header); /* ✅ Keep same size on mobile for consistency */
+    gap: var(--section-grid-gap-mobile);
   }
 }
 

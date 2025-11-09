@@ -1,19 +1,21 @@
-<section class="section-block section-block--list" aria-labelledby="list-section-title">
-  <header class="section-block__header">
-    <div class="section-block__heading">
-      <h3 id="list-section-title" class="section-block__title">{{ section.title }}</h3>
+<div class="ai-section ai-section--list">
+  <div class="ai-section__header">
+    <div class="ai-section__details">
+      <h3 class="ai-section__title">{{ section.title }}</h3>
+      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
     </div>
-  </header>
+  </div>
 
-  <ng-container *ngIf="items.length; else listEmpty">
-    <div class="section-list">
-      <button
-        *ngFor="let item of items; let i = index"
+  <div class="ai-section__body">
+    <ng-container *ngIf="items.length; else listEmpty">
+      <div class="section-list">
+        <button
+        *ngFor="let item of items; trackBy: trackItem; let i = index"
         type="button"
         class="section-card section-card--list"
         (click)="onItemClick(item)"
-        [style.animation]="getAnimationDuration(0.55)"
-        [style.animation-delay]="getAnimationDelay(i, 50)"
+        [style.animation]="getAnimationDuration(0.6)"
+        [style.animation-delay]="getAnimationDelay(i)"
       >
         <div class="section-card__row">
           <div class="section-card__icon">
@@ -46,13 +48,14 @@
           <span *ngIf="item.date">Due {{ item.date }}</span>
         </div>
       </button>
-    </div>
-  </ng-container>
+      </div>
+    </ng-container>
 
-  <ng-template #listEmpty>
-    <div class="section-empty">
-      <lucide-icon name="list" [size]="32" class="mb-3 opacity-50"></lucide-icon>
-      <p class="text-sm">No list items configured</p>
-    </div>
-  </ng-template>
-</section>
+    <ng-template #listEmpty>
+      <div class="section-empty">
+        <lucide-icon name="list" [size]="32" class="mb-3 opacity-50"></lucide-icon>
+        <p class="text-sm">No list items configured</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

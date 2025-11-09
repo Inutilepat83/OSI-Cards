@@ -14,13 +14,17 @@
   border: none; /* ✅ NO BORDER - only inner cards have borders */
   background: var(--section-bg-main); /* ✅ Default to main background */
   box-shadow:
-    0 4px 14px rgba(7, 11, 18, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    0 4px 20px color-mix(in srgb, var(--section-shadow-color) var(--section-shadow-opacity-medium), transparent),
+    0 2px 8px color-mix(in srgb, var(--section-shadow-color) var(--section-shadow-opacity-light), transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--color-white) 3%, transparent);
   overflow: hidden;
-  transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), 
+              border-color 0.28s ease, 
+              background 0.28s ease, 
+              box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   padding: var(--section-padding);
   margin-bottom: var(--section-gap); /* ✅ Standardized 32px spacing between sections */
-  backdrop-filter: none;
+  backdrop-filter: blur(8px);
 }
 
 /* ✅ MAIN SECTION: Lighter background for most sections */
@@ -48,10 +52,11 @@
   border-color: transparent; /* ✅ No border on hover */
   background: var(--section-bg-main); /* Keep same background */
   box-shadow:
-    0 5px 16px rgba(7, 11, 18, 0.16),
-    0 0 0 1px color-mix(in srgb, var(--section-accent) 12%, transparent),
-    inset 0 1px 0 rgba(255, 255, 255, 0.03);
-  transform: translateY(-1px);
+    0 8px 28px color-mix(in srgb, var(--section-shadow-color) var(--section-shadow-opacity-heavy), transparent),
+    0 4px 12px color-mix(in srgb, var(--section-shadow-color) var(--section-shadow-opacity-medium), transparent),
+    0 0 0 1px color-mix(in srgb, var(--section-accent) 15%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--color-white) 4%, transparent);
+  transform: translateY(-2px);
 }
 
 .ai-section--contrast:hover {
@@ -77,24 +82,35 @@
   font-size: var(--font-size-section-header); /* ✅ Standardized to 20px */
   font-weight: var(--font-weight-section-header); /* ✅ Standardized to 600 */
   color: var(--foreground);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   text-transform: capitalize;
   opacity: 1;
-  line-height: 1.2;
+  line-height: 1.3;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   position: relative;
+  transition: color 0.2s ease;
   
   &::before {
     content: '';
     position: absolute;
     left: 0;
-    bottom: -4px;
-    width: 32px;
-    height: 2px;
-    background: var(--accent);
-    border-radius: 2px;
+    bottom: -6px;
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 70%, transparent));
+    border-radius: var(--radius-xs);
+    transition: width 0.3s ease, opacity 0.3s ease;
+  }
+  
+  &:hover {
+    color: color-mix(in srgb, var(--foreground) 95%, transparent);
+    
+    &::before {
+      width: 48px;
+      opacity: 0.9;
+    }
   }
 }
 
@@ -112,7 +128,7 @@
 
 .ai-section__description {
   font-size: var(--font-section-description);
-  color: color-mix(in srgb, var(--foreground) 65%, transparent);
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
   letter-spacing: 0.01em;
   line-height: 1.2;
   font-weight: 500;
@@ -128,6 +144,21 @@
   display: none;
 }
 
+/* Show badge for sections that need it */
+.ai-section--contact-card .ai-section__badge,
+.ai-section--solutions .ai-section__badge,
+.ai-section--event .ai-section__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--section-accent, var(--accent)) 12%, transparent);
+  color: color-mix(in srgb, var(--section-accent, var(--accent)) 90%, transparent);
+  border: 1px solid color-mix(in srgb, var(--section-accent, var(--accent)) 25%, transparent);
+}
+
 .ai-section__body {
   flex: 1;
   padding: 0;
@@ -138,11 +169,64 @@
   margin: 0;
 }
 
-@media (max-width: 768px) {
+/* Consistent empty state styling for all sections */
+.ai-section .section-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
+  min-height: 120px;
+
+  lucide-icon {
+    margin-bottom: 12px;
+    opacity: 0.6;
+  }
+
+  p {
+    font-size: 0.875rem;
+    margin: 0;
+  }
+}
+
+/* Responsive breakpoints */
+/* Mobile: < 640px */
+@media (max-width: 639px) {
+  .ai-section {
+    padding: var(--spacing-3xl);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--section-gap-mobile);
+    --section-padding: var(--spacing-3xl);
+    --section-gap-internal: var(--spacing-lg);
+  }
+
+  .ai-section__header {
+    padding: 0 0 var(--spacing-md) 0;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+  }
+
+  .ai-section__title {
+    font-size: calc(var(--font-size-section-header) * 0.95);
+  }
+
+  .ai-section__description {
+    font-size: var(--font-section-description-mobile);
+    -webkit-line-clamp: 3;
+  }
+
+  .ai-section__badge {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+  }
+}
+
+/* Tablet: 640px - 1023px */
+@media (min-width: 640px) and (max-width: 1023px) {
   .ai-section {
     padding: var(--spacing-4xl);
-    border-radius: var(--radius-md);
-    margin-bottom: var(--section-gap-mobile); /* ✅ Standardized 24px mobile spacing */
     --section-padding: var(--spacing-4xl);
     --section-gap-internal: var(--spacing-xl);
   }
@@ -150,21 +234,23 @@
   .ai-section__header {
     padding: 0 0 var(--spacing-lg) 0;
     gap: var(--spacing-sm);
-    margin: 0;
   }
+}
 
+/* Mobile and Tablet: < 1024px */
+@media (max-width: 1023px) {
   .ai-section__body {
     padding: 0;
     gap: var(--spacing-lg);
     margin: 0;
   }
+}
 
-  .ai-section__title {
-    font-size: var(--font-size-section-header); /* ✅ Keep same size on mobile for consistency */
-  }
-
-  .ai-section__description {
-    font-size: var(--font-section-description-mobile);
+/* Desktop: >= 1024px */
+@media (min-width: 1024px) {
+  .ai-section {
+    --section-padding: var(--spacing-4xl);
+    --section-gap-internal: var(--spacing-4xl);
   }
 }
 
@@ -212,4 +298,16 @@
 
 .ai-section--event {
   --section-accent: var(--section-accent-event);
+}
+
+.ai-section--chart {
+  --section-accent: var(--section-accent-chart, var(--accent));
+}
+
+.ai-section--text-reference {
+  --section-accent: var(--section-accent-reference, var(--accent));
+}
+
+.ai-section--quotation {
+  --section-accent: var(--section-accent-quotation, var(--accent));
 }

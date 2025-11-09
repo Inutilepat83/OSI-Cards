@@ -95,4 +95,8 @@ export class ChartSectionComponent {
   getColor(field: ChartField, index: number): string {
     return field.color ?? this.palette[index % this.palette.length];
   }
+
+  trackField(index: number, field: ChartField): string {
+    return field.id ?? `${field.label ?? field.title}-${index}`;
+  }
 }

@@ -23,8 +23,15 @@
     outline-offset: 2px;
   }
 
-  &:hover .section-card__value {
-    color: var(--foreground);
+  &:hover {
+    .section-card__value {
+      color: var(--foreground);
+      transform: scale(1.02);
+    }
+    
+    .section-card__progress-bar {
+      box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 40%, transparent);
+    }
   }
 
   .section-card__meta-change {
@@ -32,21 +39,21 @@
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-xs);
+    @include fast-transition;
+  }
+  
+  &:hover .section-card__meta-change {
+    transform: translateX(2px);
   }
 
   .section-card__progress {
     margin: var(--spacing-xs) 0;
-    height: 3px;
-    border-radius: 2px;
-    background: var(--card-background);
-    overflow: hidden;
+    @include standard-progress;
   }
 
   .section-card__progress-bar {
+    @include standard-progress-bar;
     position: relative;
-    height: 100%;
-    background: var(--color-orange-fill);
-    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .section-card__meta {
@@ -55,7 +62,7 @@
     align-items: center;
     gap: var(--spacing-sm);
     font-size: 0.7rem;
-    color: color-mix(in srgb, var(--foreground) 60%, transparent);
+    color: color-mix(in srgb, var(--foreground) 85%, transparent);
   }
 }
 

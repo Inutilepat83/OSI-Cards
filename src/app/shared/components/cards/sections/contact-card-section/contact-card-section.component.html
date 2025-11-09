@@ -17,8 +17,8 @@
           type="button"
           class="contact-card"
           (click)="onContactClick(contact)"
-          [style.animation]="getAnimationDuration(0.55)"
-          [style.animation-delay]="getAnimationDelay(i, 50)"
+          [style.animation]="getAnimationDuration(0.6)"
+          [style.animation-delay]="getAnimationDelay(i)"
         >
           <div class="contact-card__avatar">
             <ng-container *ngIf="getContactAvatar(contact) as avatar; else contactInitials">

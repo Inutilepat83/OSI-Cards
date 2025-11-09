@@ -1,6 +1,15 @@
 import { createAction, props } from '@ngrx/store';
 import { createReducer, on } from '@ngrx/store';
+import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { AICardConfig, CardType } from '../../models/card.model';
+import { ensureCardIds } from '../../shared/utils/card-utils';
+
+// ===== ENTITY ADAPTER =====
+
+export const cardsAdapter = createEntityAdapter<AICardConfig>({
+  selectId: (card) => card.id ?? ensureCardIds(card).id!,
+  sortComparer: (a, b) => a.cardTitle.localeCompare(b.cardTitle)
+});
 
 // ===== ACTIONS =====
 
@@ -43,6 +52,23 @@ export const generateCardFailure = createAction(
   props<{ error: string }>()
 );
 
+// Card CRUD Actions
+export const addCard = createAction(
+  '[Cards] Add Card',
+  props<{ card: AICardConfig }>()
+);
+export const updateCard = createAction(
+  '[Cards] Update Card',
+  props<{ id: string; changes: Partial<AICardConfig> }>()
+);
+export const upsertCard = createAction(
+  '[Cards] Upsert Card',
+  props<{ card: AICardConfig }>()
+);
+export const deleteCard = createAction('[Cards] Delete Card', props<{ id: string }>());
+export const deleteCardSuccess = createAction('[Cards] Delete Card Success', props<{ id: string }>());
+export const deleteCardFailure = createAction('[Cards] Delete Card Failure', props<{ error: string }>());
+
 // UI State Actions
 export const toggleFullscreen = createAction('[Cards] Toggle Fullscreen');
 export const setFullscreen = createAction(
@@ -74,29 +100,15 @@ export const trackPerformance = createAction(
   props<{ action: string; duration: number }>()
 );
 
-// Backwards-compatibility re-exports for older test-suite / legacy action names
-export const createCard = generateCard;
-export const createCardSuccess = generateCardSuccess;
-export const createCardFailure = generateCardFailure;
-
-// Update / upsert actions -> map to generateCard for compatibility
-export const updateCard = generateCard;
-export const updateCardSuccess = generateCardSuccess;
-export const updateCardFailure = generateCardFailure;
-
-export const deleteCard = createAction('[Cards] Delete Card', props<{ id: string }>());
-export const deleteCardSuccess = createAction('[Cards] Delete Card Success', props<{ id: string }>());
-export const deleteCardFailure = createAction('[Cards] Delete Card Failure', props<{ error: string }>());
-
+// Search Actions
 export const searchCards = createAction('[Cards] Search Cards', props<{ query: string }>());
 export const searchCardsSuccess = createAction('[Cards] Search Cards Success', props<{ query: string; results: AICardConfig[] }>());
 export const searchCardsFailure = createAction('[Cards] Search Cards Failure', props<{ query: string; error: string }>());
 
 // ===== STATE INTERFACE =====
 
-export interface CardsState {
-  cards: AICardConfig[];
-  currentCard: AICardConfig | null;
+export interface CardsState extends EntityState<AICardConfig> {
+  currentCardId: string | null;
   cardType: CardType;
   cardVariant: number;
   jsonInput: string;
@@ -108,9 +120,8 @@ export interface CardsState {
 
 // ===== INITIAL STATE =====
 
-export const initialState: CardsState = {
-  cards: [],
-  currentCard: null,
+export const initialState: CardsState = cardsAdapter.getInitialState({
+  currentCardId: null,
   cardType: 'company',
   cardVariant: 1,
   jsonInput: '{}',
@@ -118,14 +129,17 @@ export const initialState: CardsState = {
   isFullscreen: false,
   error: null,
   loading: false,
-};
+});
 
 // ===== REDUCER =====
 
 export const reducer = createReducer(
   initialState,
   on(loadCards, (state) => ({ ...state, loading: true })),
-  on(loadCardsSuccess, (state, { cards }) => ({ ...state, cards, loading: false })),
+  on(loadCardsSuccess, (state, { cards }) => {
+    const cardsWithIds = cards.map(card => ensureCardIds(card));
+    return cardsAdapter.setAll(cardsWithIds, { ...state, loading: false });
+  }),
   on(loadCardsFailure, (state, { error }) => ({ ...state, error: error as string, loading: false })),
 
   on(setCardType, (state, { cardType }) => ({ ...state, cardType })),
@@ -133,30 +147,74 @@ export const reducer = createReducer(
 
   on(updateJsonInput, (state, { jsonInput }) => ({ ...state, jsonInput })),
   on(generateCard, (state) => ({ ...state, isGenerating: true, error: null })),
-  on(generateCardSuccess, (state, { card }) => ({
-    ...state,
-    currentCard: card,
-    isGenerating: false,
-  })),
+  on(generateCardSuccess, (state, { card }) => {
+    const cardWithId = ensureCardIds(card);
+    return {
+      ...cardsAdapter.upsertOne(cardWithId, state),
+      currentCardId: cardWithId.id ?? null,
+      isGenerating: false,
+    };
+  }),
   on(generateCardFailure, (state, { error }) => ({
     ...state,
     error,
     isGenerating: false,
   })),
 
+  on(addCard, (state, { card }) => {
+    const cardWithId = ensureCardIds(card);
+    return cardsAdapter.addOne(cardWithId, state);
+  }),
+  on(updateCard, (state, { id, changes }) => {
+    return cardsAdapter.updateOne({ id, changes }, state);
+  }),
+  on(upsertCard, (state, { card }) => {
+    const cardWithId = ensureCardIds(card);
+    return cardsAdapter.upsertOne(cardWithId, state);
+  }),
+  on(deleteCard, (state, { id }) => {
+    return cardsAdapter.removeOne(id, state);
+  }),
+  on(deleteCardSuccess, (state, { id }) => {
+    const newState = cardsAdapter.removeOne(id, state);
+    return {
+      ...newState,
+      currentCardId: state.currentCardId === id ? null : state.currentCardId
+    };
+  }),
+  on(deleteCardFailure, (state, { error }) => ({
+    ...state,
+    error: error as string,
+  })),
+
   on(toggleFullscreen, (state) => ({ ...state, isFullscreen: !state.isFullscreen })),
   on(setFullscreen, (state, { fullscreen }) => ({ ...state, isFullscreen: fullscreen })),
 
   on(loadTemplate, (state) => ({ ...state, loading: true })),
-  on(loadTemplateSuccess, (state, { template }) => ({
-    ...state,
-    currentCard: template,
-    jsonInput: JSON.stringify(template, null, 2),
-    loading: false,
-  })),
+  on(loadTemplateSuccess, (state, { template }) => {
+    const templateWithId = ensureCardIds(template);
+    return {
+      ...cardsAdapter.upsertOne(templateWithId, state),
+      currentCardId: templateWithId.id ?? null,
+      jsonInput: JSON.stringify(template, null, 2),
+      loading: false,
+    };
+  }),
   on(loadTemplateFailure, (state, { error }) => ({
     ...state,
     error,
     loading: false,
+  })),
+
+  on(clearError, (state) => ({ ...state, error: null })),
+  on(resetCardState, () => initialState),
+
+  on(searchCardsSuccess, (state, { results }) => {
+    const resultsWithIds = results.map(card => ensureCardIds(card));
+    return cardsAdapter.setAll(resultsWithIds, state);
+  }),
+  on(searchCardsFailure, (state, { error }) => ({
+    ...state,
+    error: error as string,
   }))
 );

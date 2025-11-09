@@ -63,4 +63,8 @@ export class FinancialsSectionComponent {
     }
     return 'text-amber-400';
   }
+
+  trackField(index: number, field: FinancialField): string {
+    return field.id ?? `${field.label}-${index}`;
+  }
 }

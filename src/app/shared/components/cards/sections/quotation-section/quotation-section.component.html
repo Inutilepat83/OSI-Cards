@@ -1,18 +1,20 @@
-<section class="section-block section-block--quotation" aria-labelledby="quotation-section-title">
-  <header class="section-block__header" *ngIf="section.title">
-    <div class="section-block__heading">
-      <h3 id="quotation-section-title" class="section-block__title">{{ section.title }}</h3>
+<div class="ai-section ai-section--quotation">
+  <div class="ai-section__header">
+    <div class="ai-section__details">
+      <h3 class="ai-section__title">{{ section.title }}</h3>
+      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
     </div>
-  </header>
+  </div>
 
-  <ng-container *ngIf="hasFields; else quotationEmpty">
-    <div class="section-grid section-grid--quotation">
-      <article
+  <div class="ai-section__body">
+    <ng-container *ngIf="hasFields; else quotationEmpty">
+      <div class="section-grid section-grid--quotation">
+        <article
         *ngFor="let field of fields; let i = index"
         class="section-card section-card--quotation"
         (click)="onQuotationClick(field)"
         [style.animation]="getAnimationDuration(0.6)"
-        [style.animation-delay]="getAnimationDelay(i, 50)"
+        [style.animation-delay]="getAnimationDelay(i)"
       >
         <div class="quotation-card__quote">
           <lucide-icon name="quote" [size]="24" class="quotation-card__icon" aria-hidden="true"></lucide-icon>
@@ -29,14 +31,15 @@
           <time class="quotation-card__date" *ngIf="field.date">{{ field.date }}</time>
         </footer>
       </article>
-    </div>
-  </ng-container>
+      </div>
+    </ng-container>
 
-  <ng-template #quotationEmpty>
-    <div class="section-empty">
-      <lucide-icon name="message-square" [size]="32" class="mb-4 opacity-50" aria-hidden="true"></lucide-icon>
-      <p class="text-sm">No quotations available</p>
-    </div>
-  </ng-template>
-</section>
+    <ng-template #quotationEmpty>
+      <div class="section-empty">
+        <lucide-icon name="message-square" [size]="32" class="mb-4 opacity-50" aria-hidden="true"></lucide-icon>
+        <p class="text-sm">No quotations available</p>
+      </div>
+    </ng-template>
+  </div>
+</div>
 

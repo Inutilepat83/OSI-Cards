@@ -4,6 +4,7 @@ import { AICardConfig, CardSection, CardField, CardItem, CardAction } from '../.
 import { Subject, takeUntil, fromEvent, throttleTime } from 'rxjs';
 import { MouseTrackingService, MagneticTiltService, MousePosition, TiltCalculations } from '../../../core';
 import { IconService } from '../../services/icon.service';
+import { SectionNormalizationService } from '../../services/section-normalization.service';
 import { LucideIconsModule } from '../../icons/lucide-icons.module';
 import { MasonryGridComponent } from './masonry-grid/masonry-grid.component';
 import { SectionRenderEvent } from './section-renderer/section-renderer.component';
@@ -73,6 +74,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   private readonly mouseTrackingService = inject(MouseTrackingService);
   private readonly magneticTiltService = inject(MagneticTiltService);
   private readonly iconService = inject(IconService);
+  private readonly sectionNormalizationService = inject(SectionNormalizationService);
 
   // Fallback card configuration for testing
   private fallbackCard: AICardConfig = {
@@ -385,109 +387,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       return;
     }
 
-    const normalizedSections = this.cardConfig.sections
-      .map((section) => this.normalizeSection(section))
-      .sort((a, b) => this.getSectionPriority(a) - this.getSectionPriority(b));
-
-    this.processedSections = normalizedSections;
-  }
-
-  private normalizeSection(section: CardSection): CardSection {
-    const rawType = (section.type ?? '').toLowerCase();
-    const title = (section.title ?? '').toLowerCase();
-
-    const supportedTypes: CardSection['type'][] = [
-      'info',
-      'analytics',
-      'contact-card',
-      'network-card',
-      'map',
-      'financials',
-      'locations',
-      'event',
-      'project',
-      'list',
-      'chart',
-      'product',
-      'solutions',
-      'overview',
-      'stats'
-    ];
-
-    let resolvedType: CardSection['type'];
-
-    switch (rawType) {
-      case 'timeline':
-        resolvedType = 'event';
-        break;
-      case 'metrics':
-      case 'stats':
-        resolvedType = 'analytics';
-        break;
-      case 'table':
-        resolvedType = 'list';
-        break;
-      case 'locations':
-        resolvedType = 'map';
-        break;
-      case 'project':
-        resolvedType = 'info';
-        break;
-      case 'contact':
-        resolvedType = 'contact-card';
-        break;
-      case 'network':
-        resolvedType = 'network-card';
-        break;
-      case '':
-        resolvedType = title.includes('overview') ? 'overview' : 'info';
-        break;
-      default:
-        resolvedType = supportedTypes.includes(rawType as CardSection['type'])
-          ? (rawType as CardSection['type'])
-          : 'info';
-        break;
-    }
-
-    if (!rawType && title.includes('overview')) {
-      resolvedType = 'overview';
-    }
-
-    const normalized: CardSection = {
-      ...section,
-      type: resolvedType
-    };
-
-    if (resolvedType === 'analytics' && (!normalized.fields || !normalized.fields.length)) {
-      const metrics = (section as Record<string, unknown>)['metrics'];
-      if (Array.isArray(metrics)) {
-        normalized.fields = metrics as CardField[];
-      }
-    }
-
-    if (!normalized.description && section.subtitle) {
-      normalized.description = section.subtitle;
-    }
-
-    return normalized;
-  }
-
-  private getSectionPriority(section: CardSection): number {
-    const type = section.type?.toLowerCase() ?? '';
-    const title = section.title?.toLowerCase() ?? '';
-
-    if (type === 'contact-card' || type === 'contact') return 1;
-    if (type === 'overview' || title.includes('overview')) return 2;
-    if (type === 'analytics') return 3;
-    if (type === 'product') return 4;
-    if (type === 'solutions') return 5;
-    if (type === 'map') return 6;
-    if (type === 'financials') return 7;
-    if (type === 'chart') return 8;
-    if (type === 'list') return 9;
-    if (type === 'event') return 10;
-    if (type === 'info') return 11;
-    return 12;
+    this.processedSections = this.sectionNormalizationService.normalizeAndSortSections(this.cardConfig.sections);
   }
 
   private startTiltLoop(): void {

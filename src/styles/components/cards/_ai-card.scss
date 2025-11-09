@@ -91,7 +91,7 @@
   font-size: var(--font-card-eyebrow);
   letter-spacing: 0.08em;
   text-transform: none;
-  color: color-mix(in srgb, var(--foreground) 55%, transparent);
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
   font-weight: 600;
   opacity: 0.9;
 }
@@ -130,7 +130,7 @@
 .ai-card-subtitle {
   font-size: var(--font-card-subtitle);
   line-height: 1.4;
-  color: color-mix(in srgb, var(--foreground) 70%, transparent);
+  color: color-mix(in srgb, var(--foreground) 88%, transparent);
   max-width: 42ch;
   text-transform: none;
 }
@@ -143,7 +143,7 @@
   text-transform: none;
   font-size: var(--font-card-meta);
   letter-spacing: 0.05em;
-  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
 }
 
 .ai-card-meta__chip {
@@ -187,7 +187,7 @@
   font-size: 0.48rem;
   letter-spacing: 0.05em;
   text-transform: none;
-  color: color-mix(in srgb, var(--foreground) 50%, transparent);
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
   font-weight: 600;
 }
 
@@ -321,7 +321,7 @@
   font-size: var(--font-card-footnote);
   letter-spacing: 0.08em;
   text-transform: none;
-  color: color-mix(in srgb, var(--foreground) 45%, transparent);
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
 }
 
 @media (max-width: 768px) {

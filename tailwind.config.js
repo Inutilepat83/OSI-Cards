@@ -46,11 +46,12 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       backgroundColor: {
-        'card-unified': 'rgba(255, 121, 0, 0.03)',
+        'card-unified': 'var(--card-background)',
+        'card-unified-hover': 'var(--card-hover-background)',
       },
       borderColor: {
-        'card-unified': 'rgba(255, 121, 0, 0.2)',
-        'card-unified-hover': 'rgba(255, 121, 0, 0.4)',
+        'card-unified': 'var(--card-border-color)',
+        'card-unified-hover': 'var(--card-hover-border-color)',
       },
     },
   },

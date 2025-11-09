@@ -1,45 +1,24 @@
-/* Contact section leveraging unified card styling */
+/* Contact section leveraging the contacts type */
 
 @import 'sections-base';
 
 .section-block--contacts {
-  --section-accent: rgba(255, 121, 0, 1);
-}
-
-.section-grid--contacts {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--section-grid-gap);
-  
-  @media (max-width: 500px) {
-    grid-template-columns: 1fr;
-    gap: var(--section-grid-gap-mobile);
-  }
+  --section-card-grid-min: 180px; /* More compact and flexible */
+  --section-accent: color-mix(in srgb, var(--color-brand) 70%, var(--foreground) 30%);
 }
 
 .section-card--contact {
-  @include card;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xl);
   text-align: left;
   position: relative;
 
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0 auto 0 0;
-    width: 3px;
-    border-top-left-radius: var(--card-border-radius);
-    border-bottom-left-radius: var(--card-border-radius);
-    background: var(--border-accent);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-  }
-
+  @include accent-border;
+  
   &:hover {
-    &::before {
-      opacity: 1;
+    .section-card__avatar {
+      transform: scale(1.05);
     }
   }
 
@@ -51,26 +30,41 @@
   }
 
   .section-card__avatar {
-    width: 36px;
-    height: 36px;
+    width: var(--avatar-size-md);
+    height: var(--avatar-size-md);
     border-radius: 50%;
-    border: 1px solid var(--card-border);
-    background: var(--card-background);
+    border: var(--accent-border-width-sm) solid color-mix(in srgb, var(--section-accent) 36%, transparent);
+    background: linear-gradient(135deg, 
+      color-mix(in srgb, var(--section-accent) 22%, transparent),
+      color-mix(in srgb, var(--section-accent) 14%, transparent));
     display: inline-flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    color: rgba(255, 180, 91, 1);
+    color: color-mix(in srgb, var(--section-accent) 90%, transparent);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--section-accent) 15%, transparent);
+    @include slow-transition;
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      @include slow-transition;
+    }
+    
+    &:hover {
+      transform: scale(1.05);
+      border-color: color-mix(in srgb, var(--section-accent) 50%, transparent);
+      box-shadow: 0 4px 16px color-mix(in srgb, var(--section-accent) 25%, transparent);
+      
+      img {
+        transform: scale(1.1);
+      }
     }
   }
 
   .section-card__initials {
-    font-size: 0.75rem;
+    font-size: var(--font-contact-initials);
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -90,25 +84,23 @@
   }
 
   .section-card__label {
-    font-size: 0.85rem;
+    font-size: var(--font-contact-name);
     letter-spacing: -0.01em;
-    font-weight: 600;
-    color: var(--foreground);
   }
 
   .section-card__meta-detail {
-    font-size: 0.7rem;
-    color: color-mix(in srgb, var(--foreground) 62%, transparent);
+    font-size: var(--font-contact-role);
+    color: color-mix(in srgb, var(--foreground) 85%, transparent);
     letter-spacing: 0.02em;
     font-weight: 600;
   }
 
   .section-card__meta {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: var(--spacing-sm) var(--section-grid-gap);
-    font-size: 0.65rem;
-    color: color-mix(in srgb, var(--foreground) 60%, transparent);
+    font-size: var(--font-contact-meta);
+    color: color-mix(in srgb, var(--foreground) 85%, transparent);
   }
 
   .section-card__meta-item {
@@ -118,8 +110,7 @@
     min-width: 0;
 
     lucide-icon {
-      color: var(--color-orange-fill);
-      flex-shrink: 0;
+      color: color-mix(in srgb, var(--section-accent) 70%, transparent);
     }
 
     span {
@@ -134,7 +125,7 @@
       font-weight: 600;
 
       &:hover {
-        color: rgba(255, 121, 0, 0.9);
+        color: color-mix(in srgb, var(--accent) 100%, transparent);
       }
     }
   }
@@ -154,13 +145,174 @@
     }
 
     .section-card__avatar {
-      width: 32px;
-      height: 32px;
+      width: var(--avatar-size-sm);
+      height: var(--avatar-size-sm);
     }
 
     .section-card__meta {
       grid-template-columns: 1fr;
       gap: var(--spacing-sm);
     }
+  }
+}
+
+/* ===== CONTACT CARD COMPONENT STYLES ===== */
+/* Improved contact card layout matching the design */
+
+.contact-collection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-grid-gap);
+}
+
+.contact-card {
+  @include card; /* Base card styles */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  /* Padding, gap, border, background, border-radius, and hover states are set by @include card */
+  @include accent-border;
+
+  &:hover {
+    .contact-card__avatar {
+      transform: scale(1.05);
+    }
+  }
+}
+
+.contact-card__avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, 
+    color-mix(in srgb, var(--section-accent, var(--accent)) 22%, transparent),
+    color-mix(in srgb, var(--section-accent, var(--accent)) 14%, transparent));
+  border: 2px solid color-mix(in srgb, var(--section-accent, var(--accent)) 36%, transparent);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--section-accent, var(--accent)) 15%, transparent);
+  flex-shrink: 0;
+  @include slow-transition;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+    border-color: color-mix(in srgb, var(--section-accent, var(--accent)) 50%, transparent);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--section-accent, var(--accent)) 25%, transparent);
+  }
+}
+
+.contact-card__initials {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--section-accent, var(--accent)) 90%, transparent);
+  line-height: 1;
+}
+
+.contact-card__details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4xl);
+  width: 100%;
+}
+
+.contact-card__role {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--foreground);
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  text-align: center;
+  margin: 0;
+}
+
+.contact-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  width: 100%;
+  align-items: flex-start;
+}
+
+.contact-card__meta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+  width: 100%;
+  font-size: 0.875rem;
+  color: color-mix(in srgb, var(--foreground) 75%, transparent);
+  text-align: left;
+
+  lucide-icon {
+    color: color-mix(in srgb, var(--section-accent, var(--accent)) 70%, transparent);
+    flex-shrink: 0;
+  }
+
+  span {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &--link {
+    color: color-mix(in srgb, var(--foreground) 80%, transparent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--section-accent, var(--accent));
+      
+      lucide-icon {
+        color: var(--section-accent, var(--accent));
+      }
+    }
+  }
+}
+
+.contact-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8xl) var(--spacing-6xl);
+  text-align: center;
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
+}
+
+@media (max-width: 768px) {
+  .contact-card {
+    /* Padding handled by @include card mobile override */
+  }
+
+  .contact-card__avatar {
+    width: 56px;
+    height: 56px;
+  }
+
+  .contact-card__initials {
+    font-size: 1.25rem;
+  }
+
+  .contact-card__role {
+    font-size: 0.9rem;
+  }
+
+  .contact-card__meta-item {
+    font-size: 0.8rem;
+    gap: var(--spacing-lg);
   }
 }

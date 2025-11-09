@@ -1,73 +1,56 @@
-/* Map section card styling with unified card base */
+/* Map section card styling for geographic insights */
 
 @use 'sections-base' as *;
 
-.section-grid--map {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--section-grid-gap);
-  
-  @media (max-width: 500px) {
-    grid-template-columns: 1fr;
-    gap: var(--section-grid-gap-mobile);
-  }
-}
-
 .map-card {
   @include card;
-  border-radius: var(--card-border-radius);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
-  transition: border-color 0.24s ease, box-shadow 0.24s ease;
-
-  &:hover {
-    border-color: var(--card-hover-border);
-    box-shadow: var(--card-hover-shadow);
-  }
+  /* Border, background, padding, border-radius, and hover states are set by @include card */
+  /* Flex gap for internal layout - card mixin sets gap: var(--card-gap) for card children */
+  /* Override gap only if needed for internal content spacing */
 }
 
 .map-card__header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-4xl);
 }
 
 .map-card__title {
-  font-size: 0.85rem;
+  font-size: 1.02rem;
   font-weight: 600;
   color: var(--foreground);
   letter-spacing: 0.01em;
 }
 
 .map-card__subtitle {
-  font-size: 0.7rem;
-  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+  font-size: 0.82rem;
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
 }
 
 .map-card__badge {
-  padding: 3px 6px;
+  @include standard-badge;
+  padding: var(--tag-padding-y) var(--tag-padding-x-lg);
   border-radius: var(--radius-full);
-  border: 1px solid var(--card-border);
-  background: var(--card-background);
-  font-size: 0.65rem;
+  font-size: var(--font-section-tag);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-orange-fill);
+  color: color-mix(in srgb, var(--accent) 90%, transparent);
 }
 
 .map-card__meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--spacing-lg);
-  font-size: 0.65rem;
-  color: color-mix(in srgb, var(--foreground) 62%, transparent);
+  gap: var(--spacing-2xl);
+  font-size: 0.78rem;
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
 }
 
 .map-empty {
   @include section-empty-state;
-  border-radius: var(--card-border-radius);
+  border-radius: var(--radius-md);
   padding: var(--spacing-8xl) var(--spacing-6xl);
 }

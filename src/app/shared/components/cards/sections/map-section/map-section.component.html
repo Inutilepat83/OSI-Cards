@@ -1,4 +1,4 @@
-<div class="ai-section">
+<div class="ai-section ai-section--map">
   <div class="ai-section__header">
     <div class="ai-section__details">
       <h3 class="ai-section__title">{{ section.title }}</h3>
@@ -14,8 +14,8 @@
           type="button"
           class="map-card"
           (click)="onLocationClick(location)"
-          [style.animation]="'fadeInUp 0.6s ease-out forwards'"
-          [style.animation-delay]="i * 60 + 'ms'"
+          [style.animation]="getAnimationDuration(0.6)"
+          [style.animation-delay]="getAnimationDelay(i)"
         >
           <div class="map-card__header">
             <div>
@@ -44,9 +44,9 @@
     </ng-container>
 
     <ng-template #mapEmpty>
-      <div class="map-empty">
+      <div class="section-empty">
         <lucide-icon name="map-pin" size="32" class="mb-3 opacity-60"></lucide-icon>
-        <p>No location data provided.</p>
+        <p class="text-sm">No location data provided.</p>
       </div>
     </ng-template>
   </div>

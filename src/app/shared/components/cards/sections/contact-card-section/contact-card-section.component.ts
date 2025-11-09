@@ -57,7 +57,17 @@ export class ContactCardSectionComponent extends BaseSectionComponent<ContactFie
   }
 
   getContactRole(contact: ContactField): string | undefined {
+    // Prioritize title field as it often contains the role description
+    if (contact.title) {
+      const role = contact.contact?.role ?? contact.role;
+      // Combine title and role if both exist
+      return role ? `${contact.title} ${role}` : contact.title;
+    }
     return contact.contact?.role ?? contact.role ?? undefined;
+  }
+
+  getContactTitle(contact: ContactField): string | undefined {
+    return contact.title ?? contact.contact?.role ?? contact.role ?? undefined;
   }
 
   getContactEmail(contact: ContactField): string | undefined {
@@ -82,5 +92,32 @@ export class ContactCardSectionComponent extends BaseSectionComponent<ContactFie
       .slice(0, 2)
       .map((part) => part.charAt(0).toUpperCase())
       .join('');
+  }
+
+  getRoleInitials(contact: ContactField): string {
+    const title = contact.title;
+    if (title) {
+      // Extract first letter of each significant word (skip words <= 2 chars)
+      const words = title.split(' ').filter(w => w.length > 2);
+      if (words.length >= 2) {
+        // Take first two words: "Technology Leadership" -> "TL"
+        return words.slice(0, 2).map(w => w.charAt(0).toUpperCase()).join('');
+      } else if (words.length === 1) {
+        // Single word: "Cybersecurity" -> "C"
+        return words[0].charAt(0).toUpperCase();
+      }
+    }
+    // Fallback: try to get initials from role or name
+    const role = this.getContactRole(contact);
+    if (role) {
+      const words = role.split(' ').filter(w => w.length > 2);
+      if (words.length >= 2) {
+        return words.slice(0, 2).map(w => w.charAt(0).toUpperCase()).join('');
+      } else if (words.length === 1) {
+        return words[0].charAt(0).toUpperCase();
+      }
+    }
+    // Final fallback to name initials
+    return this.getInitials(this.getContactName(contact));
   }
 }

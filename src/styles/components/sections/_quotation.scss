@@ -1,47 +1,47 @@
-/* Quotation section with unified card styling */
-
 @use 'sections-base' as *;
+@import 'unified-cards';
 
-.section-grid--quotation {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--section-grid-gap);
-  
-  @media (max-width: 500px) {
-    grid-template-columns: 1fr;
-    gap: var(--section-grid-gap-mobile);
-  }
+.section-block--quotation {
+  --section-card-grid-min: 280px; /* Wider cards for quotations */
 }
 
 .section-card--quotation {
   @include card;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-4xl);
 }
 
 .quotation-card__quote {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-3xl);
   position: relative;
 }
 
 .quotation-card__icon {
-  color: var(--color-orange-solid);
-  opacity: 0.8;
+  color: color-mix(in srgb, var(--color-brand) 70%, transparent);
+  opacity: 0.7;
   align-self: flex-start;
-  font-size: 1.2rem;
+  @include slow-transition;
+  
+  .section-card--quotation:hover & {
+    transform: scale(1.08);
+    opacity: 0.9;
+    color: var(--color-brand);
+  }
 }
 
 .quotation-card__text {
-  font-size: 0.9rem;
+  @include metric-value;
+  font-size: var(--font-section-value-lg);
   font-style: italic;
-  line-height: 1.6;
+  line-height: 1.7;
   color: var(--foreground);
   margin: 0;
-  padding-left: var(--spacing-lg);
+  padding-left: var(--spacing-4xl);
   position: relative;
+  @include fast-transition;
 
   &::before {
     content: '';
@@ -49,9 +49,21 @@
     left: 0;
     top: 0;
     bottom: 0;
-    width: 3px;
-    background: var(--border-accent);
-    border-radius: 2px;
+    width: 4px;
+    background: linear-gradient(180deg, 
+      var(--color-brand),
+      color-mix(in srgb, var(--color-brand) 65%, transparent));
+    border-radius: var(--radius-xs);
+    @include slow-transition;
+  }
+  
+  .section-card--quotation:hover & {
+    color: color-mix(in srgb, var(--foreground) 95%, transparent);
+    
+    &::before {
+      width: 5px;
+      opacity: 0.9;
+    }
   }
 }
 
@@ -59,8 +71,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
-  padding-top: var(--spacing-lg);
-  border-top: 1px solid var(--card-border);
+  padding-top: var(--spacing-3xl);
+  border-top: 1px solid var(--section-card-border);
 }
 
 .quotation-card__author {
@@ -70,25 +82,31 @@
 }
 
 .quotation-card__author-name {
-  font-size: 0.85rem;
+  @include metric-label;
   font-weight: 600;
   color: var(--foreground);
 }
 
 .quotation-card__author-role {
-  font-size: 0.65rem;
-  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+  @include metric-label;
+  font-size: var(--font-section-meta);
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
 }
 
 .quotation-card__date {
-  font-size: 0.65rem;
-  color: color-mix(in srgb, var(--foreground) 50%, transparent);
+  @include metric-label;
+  font-size: var(--font-section-meta);
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
 }
 
 @media (max-width: 768px) {
+  .section-card--quotation {
+    /* Mobile padding handled by @include card */
+  }
+
   .quotation-card__text {
-    padding-left: var(--spacing-md);
-    font-size: 0.8rem;
+    padding-left: var(--spacing-3xl);
+    font-size: var(--font-section-value);
   }
 }
 

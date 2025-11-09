@@ -41,4 +41,8 @@ export class AnalyticsSectionComponent extends BaseSectionComponent<AnalyticsFie
   formatChange(change?: number): string {
     return this.utils.formatChange(change);
   }
+
+  trackField(index: number, field: AnalyticsField): string {
+    return field.id ?? `${field.label}-${index}`;
+  }
 }

@@ -1,0 +1,74 @@
+:root,
+:root[data-theme='night'] {
+  /* === BRAND & CORE COLORS === */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-brand: #ff7900;
+
+  /* Grayscale ramp */
+  --color-gray-50: #ffffff;
+  --color-gray-100: #fcfcfc;
+  --color-gray-150: #f7f7f7;
+  --color-gray-200: #f0f0f1;
+  --color-gray-300: #e9e9e9;
+  --color-gray-400: #92999e;
+  --color-gray-500: #5a5f62;
+  --color-gray-600: #343541;
+  --color-gray-700: #2a2a2a; /* Less blue, more neutral grey */
+  --color-gray-800: #232323;
+  --color-gray-850: #171717;
+  --color-gray-900: #000000;
+
+  /* === UI TOKENS === */
+  --background: var(--color-gray-900);
+  --foreground: var(--color-gray-100);
+  --muted: var(--color-gray-700);
+  --muted-foreground: var(--color-gray-300);
+  --card: var(--color-gray-850);
+  --card-foreground: var(--color-gray-100);
+  --card-section-bg: var(--color-gray-800); /* Theme-aware: grey-800 for night, grey-50 for day */
+  --card-section-card-bg: var(--color-gray-700); /* Theme-aware: grey-700 for night, grey-100 for day - more contrasty */
+  --popover: var(--color-gray-850);
+  --popover-foreground: var(--color-gray-100);
+  --primary: var(--color-brand);
+  --primary-foreground: var(--color-black);
+  --secondary: var(--color-gray-700);
+  --secondary-foreground: var(--color-gray-100);
+  --accent: var(--color-brand);
+  --accent-foreground: var(--color-black);
+  --destructive: var(--color-brand);
+  --destructive-foreground: var(--color-black);
+  --border: color-mix(in srgb, var(--color-white) 28%, transparent);
+  --input: transparent;
+  --input-background: var(--color-gray-800);
+  --switch-background: var(--color-gray-700);
+  --ring: color-mix(in srgb, var(--color-brand) 60%, transparent);
+  --chart-1: var(--color-brand);
+  --chart-2: color-mix(in srgb, var(--color-brand) 72%, var(--color-white));
+  --chart-3: color-mix(in srgb, var(--color-brand) 58%, var(--color-black));
+  --chart-4: color-mix(in srgb, var(--color-brand) 24%, var(--color-white));
+  --chart-5: color-mix(in srgb, var(--color-brand) 80%, var(--color-black));
+}
+
+:root[data-theme='day'] {
+  --background: var(--color-gray-50);
+  --foreground: var(--color-gray-900);
+  --muted: var(--color-gray-200);
+  --muted-foreground: var(--color-gray-700);
+  --card: var(--color-gray-150);
+  --card-foreground: var(--color-gray-900);
+  --card-section-bg: var(--color-gray-50); /* Theme-aware: grey-800 for night, grey-50 for day */
+  --card-section-card-bg: var(--color-gray-100); /* Theme-aware: grey-700 for night, grey-100 for day - more contrasty */
+  --popover: var(--color-gray-150);
+  --popover-foreground: var(--color-gray-900);
+  --primary-foreground: var(--color-white);
+  --secondary: var(--color-gray-100);
+  --secondary-foreground: var(--color-gray-900);
+  --accent-foreground: var(--color-white);
+  --destructive-foreground: var(--color-white);
+  --border: color-mix(in srgb, var(--color-gray-400) 60%, transparent);
+  --input-background: var(--color-gray-150);
+  --switch-background: var(--color-gray-200);
+  --ring: color-mix(in srgb, var(--color-brand) 70%, transparent);
+}
+

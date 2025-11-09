@@ -45,4 +45,8 @@ export class ListSectionComponent extends BaseSectionComponent<ListEntry> {
   onItemClick(item: ListEntry): void {
     this.emitItemInteraction(item);
   }
+
+  trackItem(index: number, item: ListEntry): string {
+    return item.id ?? `${item.title ?? item.label}-${index}`;
+  }
 }

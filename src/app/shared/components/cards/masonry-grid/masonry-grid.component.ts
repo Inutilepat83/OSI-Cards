@@ -40,6 +40,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private pendingAnimationFrame?: number;
   private reflowCount = 0;
   private readonly MAX_REFLOWS = 3;
+  private resizeThrottleTimeout?: number;
+  private readonly RESIZE_THROTTLE_MS = 150;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['sections']) {
@@ -65,6 +67,9 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     if (this.pendingAnimationFrame) {
       cancelAnimationFrame(this.pendingAnimationFrame);
     }
+    if (this.resizeThrottleTimeout) {
+      clearTimeout(this.resizeThrottleTimeout);
+    }
   }
 
   trackItem = (_: number, item: PositionedSection) => item.key;
@@ -77,7 +82,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     if (typeof ResizeObserver === 'undefined' || !this.containerRef) {
       return;
     }
-    this.resizeObserver = new ResizeObserver(() => this.scheduleLayoutUpdate());
+    this.resizeObserver = new ResizeObserver(() => this.throttledScheduleLayoutUpdate());
     this.resizeObserver.observe(this.containerRef.nativeElement);
   }
 
@@ -86,7 +91,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       return;
     }
 
-    this.itemObserver = new ResizeObserver(() => this.scheduleLayoutUpdate());
+    this.itemObserver = new ResizeObserver(() => this.throttledScheduleLayoutUpdate());
 
     this.itemRefs.changes.subscribe((items: QueryList<ElementRef<HTMLDivElement>>) => {
       this.itemObserver?.disconnect();
@@ -95,6 +100,16 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     });
 
     this.itemRefs.forEach((item) => this.itemObserver?.observe(item.nativeElement));
+  }
+
+  private throttledScheduleLayoutUpdate(): void {
+    if (this.resizeThrottleTimeout) {
+      return;
+    }
+    this.resizeThrottleTimeout = window.setTimeout(() => {
+      this.resizeThrottleTimeout = undefined;
+      this.scheduleLayoutUpdate();
+    }, this.RESIZE_THROTTLE_MS);
   }
 
   private scheduleLayoutUpdate(): void {

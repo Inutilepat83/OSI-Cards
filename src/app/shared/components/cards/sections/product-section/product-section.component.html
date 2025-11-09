@@ -1,4 +1,4 @@
-<div class="ai-section">
+<div class="ai-section ai-section--product">
   <div class="ai-section__header">
     <div class="ai-section__details">
       <h3 class="ai-section__title">{{ section.title }}</h3>
@@ -30,11 +30,11 @@
                 type="button"
                 class="product-reference"
                 (click)="onFieldClick(field)"
-                [style.animation]="'fadeInUp 0.55s ease-out forwards'"
-                [style.animation-delay]="i * 60 + 'ms'"
+                [style.animation]="getAnimationDuration(0.6)"
+                [style.animation-delay]="getAnimationDelay(i)"
               >
                 <div class="product-reference__avatar">
-                  <lucide-icon name="award" size="20"></lucide-icon>
+                  <lucide-icon name="award" size="18"></lucide-icon>
                 </div>
                 <div class="product-reference__content">
                   <p class="product-reference__company">
@@ -66,15 +66,15 @@
           <section
             *ngFor="let group of gridGroups; trackBy: trackGroup; let gi = index"
             class="product-card"
-            [style.animation]="'fadeInUp 0.6s ease-out forwards'"
-            [style.animation-delay]="(referenceGroup ? gi + 1 : gi) * 70 + 'ms'"
+            [style.animation]="getAnimationDuration(0.6)"
+            [style.animation-delay]="getAnimationDelay(referenceGroup ? gi + 1 : gi)"
           >
             <div class="product-card__header">
               <div class="product-card__icon" [ngClass]="getCategoryIconTone(group)">
                 <lucide-icon [name]="group.icon" size="18"></lucide-icon>
               </div>
               <div class="product-card__headline">
-                <p class="product-card__title">{{ group.title }}</p>
+                <p class="product-card__title" *ngIf="group.title !== section.title">{{ group.title }}</p>
                 <p class="product-card__subtitle" *ngIf="group.key === 'pricing'">
                   Tailored packages and commercial structures
                 </p>
@@ -90,6 +90,9 @@
                 <p class="product-card__subtitle" *ngIf="group.key === 'contacts'">
                   Key people to accelerate collaboration
                 </p>
+                <p class="product-card__subtitle" *ngIf="group.key === 'default' && group.title === section.title">
+                  Additional product details and specifications
+                </p>
               </div>
               <span class="product-card__badge">
                 {{ getGroupBadgeLabel(group) }}
@@ -102,8 +105,8 @@
                 type="button"
                 class="product-entry"
                 (click)="onFieldClick(field)"
-                [style.animation]="'fadeInUp 0.55s ease-out forwards'"
-                [style.animation-delay]="i * 45 + 'ms'"
+                [style.animation]="getAnimationDuration(0.6)"
+                [style.animation-delay]="getAnimationDelay(i)"
               >
                 <ng-container *ngIf="isContactField(field); else productEntryDefault">
                   <div class="product-contact">

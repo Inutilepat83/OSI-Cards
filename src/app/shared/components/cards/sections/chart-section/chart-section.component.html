@@ -1,29 +1,30 @@
-<div class="flex h-full flex-col space-y-4">
-  <div class="flex items-center gap-3 pb-4">
-    <div>
-      <h3 class="text-xl font-semibold text-foreground">{{ section.title }}</h3>
-      <p *ngIf="section.description" class="text-xs text-muted-foreground">{{ section.description }}</p>
+<div class="ai-section ai-section--chart">
+  <div class="ai-section__header">
+    <div class="ai-section__details">
+      <h3 class="ai-section__title">{{ section.title }}</h3>
+      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
     </div>
   </div>
 
-  <ng-container *ngIf="hasData; else chartEmpty">
-    <ng-container [ngSwitch]="chartType">
+  <div class="ai-section__body">
+    <ng-container *ngIf="hasData; else chartEmpty">
+      <ng-container [ngSwitch]="chartType">
       <div *ngSwitchCase="'pie'" class="grid gap-4 md:grid-cols-2">
         <div class="space-y-3">
           <button
-            *ngFor="let field of fields; let idx = index"
+            *ngFor="let field of fields; trackBy: trackField; let idx = index"
             type="button"
-            class="flex w-full items-center gap-3 rounded-md border border-card-unified bg-card-unified p-3 text-left transition-all duration-300 hover:border-card-unified-hover hover:bg-primary/5"
+            class="chart-card chart-card--pie"
             (click)="onFieldClick(field)"
           >
-            <div class="h-3 w-3 rounded-full" [ngStyle]="{ backgroundColor: getColor(field, idx) }"></div>
-            <div class="flex-1">
+            <div class="h-3 w-3 rounded-full flex-shrink-0" [ngStyle]="{ backgroundColor: getColor(field, idx) }"></div>
+            <div class="flex-1 min-w-0">
               <p class="text-sm font-semibold text-foreground">{{ field.label || field.title }}</p>
               <p class="text-xs text-muted-foreground">{{ getPercentage(field) }} &middot; {{ field.value }}</p>
             </div>
           </button>
         </div>
-        <div class="rounded-md border border-card-unified bg-card-unified p-4 text-sm text-muted-foreground">
+        <div class="chart-card">
           <p>Total: <span class="font-semibold text-foreground">{{ totalValue }}</span></p>
           <p class="mt-2">Tap any segment to focus on the underlying metric.</p>
         </div>
@@ -31,13 +32,13 @@
 
       <div *ngSwitchDefault class="space-y-4">
         <button
-          *ngFor="let field of fields; let idx = index"
+          *ngFor="let field of fields; trackBy: trackField; let idx = index"
           type="button"
-          class="group w-full rounded-md border border-card-unified bg-card-unified p-4 text-left transition-all duration-300 hover:border-card-unified-hover hover:bg-primary/5"
+          class="chart-card"
           (click)="onFieldClick(field)"
         >
-          <div class="flex items-center justify-between gap-4">
-            <p class="text-sm font-semibold text-foreground transition-colors duration-300 group-hover:text-primary">
+          <div class="flex items-center justify-between gap-4 w-full">
+            <p class="text-sm font-semibold text-foreground">
               {{ field.label || field.title }}
             </p>
             <span class="text-sm text-muted-foreground">{{ field.value }}</span>
@@ -50,15 +51,14 @@
           </div>
         </button>
       </div>
+      </ng-container>
     </ng-container>
-  </ng-container>
 
-  <ng-template #chartEmpty>
-    <div class="flex flex-1 items-center justify-center rounded-2xl border border-dashed border-border/40 bg-background/40 p-10 text-center text-muted-foreground">
-      <div>
-        <lucide-icon name="activity" size="32" class="mx-auto mb-3 opacity-60"></lucide-icon>
-        <p>No chart data available.</p>
+    <ng-template #chartEmpty>
+      <div class="section-empty">
+        <lucide-icon name="activity" size="32" class="mb-3 opacity-60"></lucide-icon>
+        <p class="text-sm">No chart data available.</p>
       </div>
-    </div>
-  </ng-template>
+    </ng-template>
+  </div>
 </div>

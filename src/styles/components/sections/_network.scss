@@ -1,4 +1,4 @@
-/* Network relationship cards with unified styling */
+/* Network relationship cards showing collaboration context */
 
 @use 'sections-base' as *;
 
@@ -14,56 +14,52 @@
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: var(--spacing-lg);
   width: 100%;
-  border-radius: var(--card-border-radius);
+  /* Border, background, padding, border-radius, and hover states are set by @include card */
+  /* Grid gap for internal layout - using consistent spacing */
+  gap: var(--spacing-5xl);
   cursor: pointer;
-
-  @media (max-width: 500px) {
-    padding: var(--card-padding-mobile);
-  }
 }
 
 .network-card__icon {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--card-background);
-  color: var(--color-orange-solid);
-  border: 1px solid var(--card-border);
+  @include standard-icon;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  
+  .network-card:hover & {
+    transform: scale(1.08);
+  }
 }
 
 .network-card__icon--collab {
-  background: rgba(59, 130, 246, 0.15);
-  border-color: rgba(59, 130, 246, 0.3);
-  color: rgba(147, 197, 253, 0.92);
+  background: color-mix(in srgb, rgba(59, 130, 246, 1) 16%, transparent);
+  border-color: color-mix(in srgb, rgba(59, 130, 246, 1) 34%, transparent);
+  color: color-mix(in srgb, rgba(147, 197, 253, 1) 92%, transparent);
 }
 
 .network-card__icon--recognition {
-  background: rgba(234, 179, 8, 0.15);
-  border-color: rgba(234, 179, 8, 0.34);
-  color: rgba(253, 224, 71, 0.92);
+  background: color-mix(in srgb, rgba(234, 179, 8, 1) 16%, transparent);
+  border-color: color-mix(in srgb, rgba(234, 179, 8, 1) 34%, transparent);
+  color: color-mix(in srgb, rgba(253, 224, 71, 1) 92%, transparent);
 }
 
 .network-card__icon--advisory {
-  background: rgba(34, 197, 94, 0.15);
-  border-color: rgba(34, 197, 94, 0.34);
-  color: rgba(134, 239, 172, 0.92);
+  background: color-mix(in srgb, rgba(34, 197, 94, 1) 16%, transparent);
+  border-color: color-mix(in srgb, rgba(34, 197, 94, 1) 34%, transparent);
+  color: color-mix(in srgb, rgba(134, 239, 172, 1) 92%, transparent);
 }
 
 .network-card__icon--events {
-  background: rgba(168, 85, 247, 0.15);
-  border-color: rgba(168, 85, 247, 0.34);
-  color: rgba(233, 213, 255, 0.9);
+  background: color-mix(in srgb, rgba(168, 85, 247, 1) 16%, transparent);
+  border-color: color-mix(in srgb, rgba(168, 85, 247, 1) 34%, transparent);
+  color: color-mix(in srgb, rgba(233, 213, 255, 1) 90%, transparent);
 }
 
 .network-card__icon--default {
-  background: rgba(255, 121, 0, 0.15);
-  border-color: rgba(255, 121, 0, 0.3);
-  color: rgba(255, 121, 0, 0.8);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 32%, transparent);
+  color: color-mix(in srgb, var(--accent) 92%, transparent);
 }
 
 .network-card__details {
@@ -74,45 +70,45 @@
 }
 
 .network-card__title {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--foreground);
   letter-spacing: 0.01em;
-  transition: color 0.22s ease;
+  @include standard-transition;
 }
 
 .network-card:hover .network-card__title {
-  color: var(--color-orange-solid);
+  color: var(--primary);
+  transform: translateX(2px);
 }
 
 .network-card__meta {
-  font-size: 0.65rem;
-  color: color-mix(in srgb, var(--foreground) 62%, transparent);
+  font-size: 0.78rem;
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .network-card__chevron {
-  color: color-mix(in srgb, var(--foreground) 55%, transparent);
-  transition: transform 0.2s ease, color 0.2s ease;
-  flex-shrink: 0;
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
+  @include fast-transition;
 }
 
 .network-card:hover .network-card__chevron {
   transform: translateX(2px);
-  color: var(--color-orange-solid);
+  color: color-mix(in srgb, var(--accent) 90%, transparent);
 }
 
 .network-empty {
   @include section-empty-state;
-  border-radius: var(--card-border-radius);
+  border-radius: var(--radius-md);
   padding: var(--spacing-8xl) var(--spacing-6xl);
 }
 
 @media (max-width: 768px) {
   .network-card {
     padding: var(--card-padding-mobile);
-    gap: var(--spacing-lg);
+    gap: var(--spacing-3xl);
   }
 }

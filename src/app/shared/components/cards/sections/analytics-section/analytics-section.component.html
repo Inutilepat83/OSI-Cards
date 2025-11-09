@@ -1,20 +1,21 @@
-<section class="section-block section-block--metrics" aria-labelledby="analytics-section-title">
-  <header class="section-block__header">
-    <div class="section-block__heading">
-      <h3 id="analytics-section-title" class="section-block__title">{{ section.title }}</h3>
-      <p *ngIf="section.subtitle" class="section-block__subtitle">{{ section.subtitle }}</p>
+<div class="ai-section ai-section--analytics">
+  <div class="ai-section__header">
+    <div class="ai-section__details">
+      <h3 class="ai-section__title">{{ section.title }}</h3>
+      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
     </div>
-  </header>
+  </div>
 
-  <ng-container *ngIf="fields.length; else analyticsEmpty">
-    <div class="section-grid section-grid--metrics">
-      <button
+  <div class="ai-section__body">
+    <ng-container *ngIf="fields.length; else analyticsEmpty">
+      <div class="section-grid section-grid--metrics">
+        <button
         type="button"
-        *ngFor="let field of fields; let i = index"
+        *ngFor="let field of fields; trackBy: trackField; let i = index"
         class="section-card section-card--metric"
         (click)="onFieldClick(field)"
         [style.animation]="getAnimationDuration(0.6)"
-        [style.animation-delay]="getAnimationDelay(i, 60)"
+        [style.animation-delay]="getAnimationDelay(i)"
       >
         <div class="section-card__label">
           <lucide-icon
@@ -48,13 +49,14 @@
           <lucide-icon [name]="getTrendIcon(field)" [size]="14" [ngClass]="getTrendClass(field)"></lucide-icon>
         </div>
       </button>
-    </div>
-  </ng-container>
+      </div>
+    </ng-container>
 
-  <ng-template #analyticsEmpty>
-    <div class="section-empty">
-      <lucide-icon name="bar-chart-3" [size]="42" class="mb-4 opacity-50"></lucide-icon>
-      <p class="text-sm">No analytics data configured</p>
-    </div>
-  </ng-template>
-</section>
+    <ng-template #analyticsEmpty>
+      <div class="section-empty">
+        <lucide-icon name="bar-chart-3" [size]="32" class="mb-4 opacity-50"></lucide-icon>
+        <p class="text-sm">No analytics data configured</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

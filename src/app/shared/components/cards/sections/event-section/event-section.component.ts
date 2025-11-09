@@ -62,4 +62,8 @@ export class EventSectionComponent {
       }
     });
   }
+
+  trackEvent(index: number, event: TimelineEvent): string {
+    return event.id ?? `${event.title}-${index}`;
+  }
 }

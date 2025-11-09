@@ -1,11 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { DOCUMENT, CommonModule } from '@angular/common';
+import { ErrorDisplayComponent } from './shared/components/error-display/error-display.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule],
+  imports: [RouterOutlet, CommonModule, ErrorDisplayComponent],
   template: `
     <div class="app-root">
       <header class="top-bar">
@@ -44,6 +45,8 @@ import { DOCUMENT, CommonModule } from '@angular/common';
       <div class="app-container">
         <router-outlet></router-outlet>
       </div>
+      
+      <app-error-display></app-error-display>
     </div>
   `,
   styles: [`

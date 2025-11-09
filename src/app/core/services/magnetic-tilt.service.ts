@@ -80,7 +80,7 @@ export class MagneticTiltService {
   ): void {
     const rect = rectOverride ?? element.getBoundingClientRect();
     const halfW = rect.width / 2;
-    const halfH = rect.height / 2;
+    const aspectRatio = rect.height / rect.width;
     const fx = (mousePosition.x - rect.left) / rect.width;
     const fy = (mousePosition.y - rect.top) / rect.height;
     const clampedFx = Math.max(0, Math.min(1, fx));
@@ -90,14 +90,19 @@ export class MagneticTiltService {
     const sinX = Math.sin(clampedFx * 2 * Math.PI);
     const sinY = Math.sin(clampedFy * 2 * Math.PI);
 
-    // Dynamic max angles so vertical lift is always MAX_LIFT_PX
+    // Use width for both tilt calculations (not height)
+    // For long cards (aspectRatio > 1), reduce tilt intensity
     const maxAngleY = Math.asin(this.MAX_LIFT_PX / halfW) * (180 / Math.PI);
-    const maxAngleX = Math.asin(this.MAX_LIFT_PX / halfH) * (180 / Math.PI);
+    const maxAngleX = Math.asin(this.MAX_LIFT_PX / halfW) * (180 / Math.PI); // Use width instead of height
+    
+    // Reduce tilt for long cards based on aspect ratio
+    // Cards with aspectRatio > 1.5 get progressively less tilt
+    const tiltReductionFactor = aspectRatio > 1 ? Math.max(0.3, 1 / Math.pow(aspectRatio, 0.7)) : 1;
 
-    const rotateY = sinX * maxAngleY;
-    const rotateX = -sinY * maxAngleX;
+    const rotateY = sinX * maxAngleY * tiltReductionFactor;
+    const rotateX = -sinY * maxAngleX * tiltReductionFactor;
 
-    const intensity = Math.max(Math.abs(sinX), Math.abs(sinY));
+    const intensity = Math.max(Math.abs(sinX), Math.abs(sinY)) * tiltReductionFactor;
 
     const glowBlur = this.BASE_GLOW_BLUR + intensity * this.MAX_GLOW_BLUR_OFFSET;
     const glowOpacity = this.BASE_GLOW_OPACITY + intensity * this.MAX_GLOW_OPACITY_OFFSET;
