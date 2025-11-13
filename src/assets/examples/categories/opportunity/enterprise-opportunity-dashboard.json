@@ -1,38 +1,32 @@
 {
-  "id": "enterprise-opportunity-dashboard",
   "cardTitle": "Global Enterprise Transformation",
   "cardSubtitle": "Multi-Billion Dollar Digital Transformation Initiative",
   "cardType": "opportunity",
   "description": "Enterprise-level opportunity dashboard with comprehensive analytics, stakeholder management, and strategic orchestration",
   "sections": [
     {
-      "id": "enterprise-overview",
       "title": "Enterprise Opportunity Overview",
       "type": "info",
       "fields": [
         {
-          "id": "total-contract-value",
           "label": "Total Contract Value",
           "value": 15000000,
           "type": "currency",
           "icon": "fas fa-dollar-sign"
         },
         {
-          "id": "annual-recurring-revenue",
           "label": "Annual Recurring Revenue",
           "value": 4200000,
           "type": "currency",
           "icon": "fas fa-sync-alt"
         },
         {
-          "id": "win-probability",
           "label": "Win Probability",
           "value": 82,
           "type": "percentage",
           "icon": "fas fa-trophy"
         },
         {
-          "id": "strategic-priority",
           "label": "Strategic Priority",
           "value": "Critical",
           "type": "status",
@@ -43,13 +37,11 @@
       ]
     },
     {
-      "id": "enterprise-metrics",
       "title": "Enterprise Performance Metrics",
       "description": "Comprehensive metrics dashboard for enterprise opportunity management",
       "type": "metrics",
       "metrics": [
         {
-          "id": "deal-complexity-score",
           "label": "Deal Complexity Score",
           "value": 9.2,
           "format": "rating",
@@ -59,7 +51,6 @@
           "icon": "fas fa-layer-group"
         },
         {
-          "id": "stakeholder-engagement",
           "label": "Stakeholder Engagement",
           "value": 88,
           "format": "percentage",
@@ -69,7 +60,6 @@
           "icon": "fas fa-users"
         },
         {
-          "id": "competitive-differentiation",
           "label": "Competitive Differentiation",
           "value": 4.8,
           "format": "rating",
@@ -79,7 +69,6 @@
           "icon": "fas fa-award"
         },
         {
-          "id": "strategic-alignment",
           "label": "Strategic Alignment",
           "value": 9.1,
           "format": "rating",
@@ -89,7 +78,6 @@
           "icon": "fas fa-bullseye"
         },
         {
-          "id": "financial-viability",
           "label": "Financial Viability",
           "value": 92,
           "format": "percentage",
@@ -99,7 +87,6 @@
           "icon": "fas fa-chart-pie"
         },
         {
-          "id": "execution-readiness",
           "label": "Execution Readiness",
           "value": 85,
           "format": "percentage",
@@ -111,7 +98,6 @@
       ]
     },
     {
-      "id": "multi-dimensional-analysis",
       "title": "Multi-Dimensional Opportunity Analysis",
       "description": "Comprehensive analysis across strategic, financial, operational, and risk dimensions",
       "type": "table",
@@ -219,7 +205,6 @@
       ]
     },
     {
-      "id": "stakeholder-ecosystem",
       "title": "Stakeholder Ecosystem Analysis",
       "description": "Comprehensive stakeholder mapping and influence analysis",
       "type": "table",
@@ -346,13 +331,11 @@
       ]
     },
     {
-      "id": "predictive-analytics-dashboard",
       "title": "Predictive Analytics Dashboard",
       "description": "AI-powered predictions and strategic insights for enterprise opportunity",
       "type": "progress",
       "progressItems": [
         {
-          "id": "win-probability-forecast",
           "label": "Win Probability Forecast",
           "value": 82,
           "max": 100,
@@ -362,7 +345,6 @@
           "description": "82% win probability with 95% confidence interval"
         },
         {
-          "id": "deal-velocity-optimization",
           "label": "Deal Velocity Optimization",
           "value": 91,
           "max": 100,
@@ -372,7 +354,6 @@
           "description": "91% of optimal deal velocity achieved"
         },
         {
-          "id": "stakeholder-satisfaction-index",
           "label": "Stakeholder Satisfaction Index",
           "value": 87,
           "max": 100,
@@ -382,7 +363,6 @@
           "description": "87% overall stakeholder satisfaction"
         },
         {
-          "id": "competitive-threat-assessment",
           "label": "Competitive Threat Assessment",
           "value": 23,
           "max": 100,
@@ -392,7 +372,6 @@
           "description": "23% competitive threat level"
         },
         {
-          "id": "budget-approval-confidence",
           "label": "Budget Approval Confidence",
           "value": 94,
           "max": 100,
@@ -402,7 +381,6 @@
           "description": "94% confidence in budget approval"
         },
         {
-          "id": "execution-risk-assessment",
           "label": "Execution Risk Assessment",
           "value": 18,
           "max": 100,
@@ -412,7 +390,6 @@
           "description": "18% execution risk assessment"
         },
         {
-          "id": "strategic-value-creation",
           "label": "Strategic Value Creation",
           "value": 89,
           "max": 100,
@@ -422,7 +399,6 @@
           "description": "89% strategic value creation potential"
         },
         {
-          "id": "market-timing-optimization",
           "label": "Market Timing Optimization",
           "value": 76,
           "max": 100,
@@ -434,13 +410,11 @@
       ]
     },
     {
-      "id": "enterprise-transformation-roadmap",
       "title": "Enterprise Transformation Roadmap",
       "description": "Comprehensive roadmap for enterprise digital transformation initiative",
       "type": "timeline",
       "events": [
         {
-          "id": "strategic-assessment",
           "title": "Strategic Assessment & Planning",
           "description": "Comprehensive business case development and strategic alignment",
           "date": "Q2-Q3 2024",
@@ -448,7 +422,6 @@
           "status": "completed"
         },
         {
-          "id": "pilot-implementation",
           "title": "Pilot Implementation Phase",
           "description": "Initial pilot programs across 2-3 business units",
           "date": "Q4 2024",
@@ -456,7 +429,6 @@
           "status": "in-progress"
         },
         {
-          "id": "enterprise-rollout-planning",
           "title": "Enterprise Rollout Planning",
           "description": "Detailed implementation planning and resource allocation",
           "date": "Q1 2025",
@@ -464,7 +436,6 @@
           "status": "planned"
         },
         {
-          "id": "phase-1-rollout",
           "title": "Phase 1 Enterprise Rollout",
           "description": "Core business units transformation (40% of organization)",
           "date": "Q2-Q3 2025",
@@ -472,7 +443,6 @@
           "status": "planned"
         },
         {
-          "id": "phase-2-expansion",
           "title": "Phase 2 Expansion",
           "description": "Remaining business units and global expansion",
           "date": "Q4 2025 - Q1 2026",
@@ -480,7 +450,6 @@
           "status": "planned"
         },
         {
-          "id": "optimization-phase",
           "title": "Optimization & Innovation",
           "description": "Performance optimization and advanced feature adoption",
           "date": "Q2-Q4 2026",
@@ -488,7 +457,6 @@
           "status": "planned"
         },
         {
-          "id": "strategic-growth",
           "title": "Strategic Growth & Expansion",
           "description": "Market expansion and ecosystem development",
           "date": "2027-2028",
@@ -496,7 +464,6 @@
           "status": "planned"
         },
         {
-          "id": "industry-leadership",
           "title": "Industry Leadership",
           "description": "Establishing industry leadership and thought leadership",
           "date": "2029+",
@@ -506,7 +473,6 @@
       ]
     },
     {
-      "id": "enterprise-risk-management",
       "title": "Enterprise Risk Management Framework",
       "description": "Comprehensive risk assessment and mitigation for enterprise opportunity",
       "type": "table",
@@ -628,52 +594,42 @@
   "actions": [
     {
       "label": "Executive Dashboard",
-      "id": "executive-dashboard",
       "icon": "fas fa-chart-bar"
     },
     {
       "label": "Strategic Planning",
-      "id": "strategic-planning",
       "icon": "fas fa-map-marked-alt"
     },
     {
       "label": "Risk Management",
-      "id": "risk-management",
       "icon": "fas fa-shield-alt"
     },
     {
       "label": "Stakeholder Management",
-      "id": "stakeholder-management",
       "icon": "fas fa-users"
     },
     {
       "label": "Financial Modeling",
-      "id": "financial-modeling",
       "icon": "fas fa-calculator"
     },
     {
       "label": "Technical Architecture",
-      "id": "technical-architecture",
       "icon": "fas fa-cogs"
     },
     {
       "label": "Change Management",
-      "id": "change-management",
       "icon": "fas fa-sync-alt"
     },
     {
       "label": "Competitive Intelligence",
-      "id": "competitive-intelligence",
       "icon": "fas fa-eye"
     },
     {
       "label": "Predictive Analytics",
-      "id": "predictive-analytics",
       "icon": "fas fa-brain"
     },
     {
       "label": "Executive Briefing",
-      "id": "executive-briefing",
       "icon": "fas fa-briefcase"
     }
   ],
@@ -682,6 +638,14 @@
     "variant": "enterprise",
     "complexity": "expert",
     "useCase": "Enterprise-level opportunity management with comprehensive analytics, stakeholder orchestration, and strategic transformation planning",
-    "features": ["enterprise overview", "enterprise metrics", "multi-dimensional analysis", "stakeholder ecosystem", "predictive analytics dashboard", "enterprise transformation roadmap", "enterprise risk management"]
+    "features": [
+      "enterprise overview",
+      "enterprise metrics",
+      "multi-dimensional analysis",
+      "stakeholder ecosystem",
+      "predictive analytics dashboard",
+      "enterprise transformation roadmap",
+      "enterprise risk management"
+    ]
   }
 }

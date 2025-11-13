@@ -1,38 +1,32 @@
 {
-  "id": "enhanced-analytics-dashboard",
   "cardTitle": "Customer Analytics Platform",
   "cardSubtitle": "Advanced Customer Behavior & Segmentation Analysis",
   "cardType": "analytics",
   "description": "Enhanced analytics dashboard with customer segmentation, behavior analysis, and predictive insights",
   "sections": [
     {
-      "id": "customer-overview",
       "title": "Customer Analytics Overview",
       "type": "info",
       "fields": [
         {
-          "id": "total-customers",
           "label": "Total Active Customers",
           "value": 45678,
           "type": "number",
           "icon": "fas fa-users"
         },
         {
-          "id": "customer-growth",
           "label": "Monthly Customer Growth",
           "value": 8.7,
           "type": "percentage",
           "icon": "fas fa-user-plus"
         },
         {
-          "id": "avg-lifetime-value",
           "label": "Average Lifetime Value",
           "value": 1250,
           "type": "currency",
           "icon": "fas fa-gem"
         },
         {
-          "id": "retention-rate",
           "label": "Customer Retention Rate",
           "value": 87.3,
           "type": "percentage",
@@ -41,13 +35,11 @@
       ]
     },
     {
-      "id": "customer-metrics",
       "title": "Customer Behavior Metrics",
       "description": "Detailed customer engagement and behavior analytics",
       "type": "metrics",
       "metrics": [
         {
-          "id": "engagement-score",
           "label": "Average Engagement Score",
           "value": 7.8,
           "format": "rating",
@@ -57,7 +49,6 @@
           "icon": "fas fa-star"
         },
         {
-          "id": "session-duration",
           "label": "Average Session Duration",
           "value": 12.5,
           "format": "number",
@@ -67,7 +58,6 @@
           "icon": "fas fa-clock"
         },
         {
-          "id": "page-views",
           "label": "Average Page Views per Session",
           "value": 8.3,
           "format": "number",
@@ -77,7 +67,6 @@
           "icon": "fas fa-eye"
         },
         {
-          "id": "conversion-funnel",
           "label": "Conversion Funnel Efficiency",
           "value": 4.2,
           "format": "percentage",
@@ -87,7 +76,6 @@
           "icon": "fas fa-filter"
         },
         {
-          "id": "cart-abandonment",
           "label": "Cart Abandonment Rate",
           "value": 68.5,
           "format": "percentage",
@@ -97,7 +85,6 @@
           "icon": "fas fa-shopping-cart"
         },
         {
-          "id": "support-tickets",
           "label": "Support Tickets per Customer",
           "value": 0.23,
           "format": "number",
@@ -109,7 +96,6 @@
       ]
     },
     {
-      "id": "customer-segments",
       "title": "Customer Segmentation Analysis",
       "description": "Revenue and engagement breakdown by customer segments",
       "type": "table",
@@ -185,7 +171,7 @@
           "segment": "Individual Consumers",
           "customerCount": 36510,
           "revenue": 245000,
-          "percentage": 10.0,
+          "percentage": 10,
           "avgOrderValue": 6.7,
           "retentionRate": 76.8
         },
@@ -200,7 +186,6 @@
       ]
     },
     {
-      "id": "behavior-analysis",
       "title": "Customer Behavior Patterns",
       "description": "Key insights from customer behavior analysis",
       "type": "table",
@@ -276,13 +261,11 @@
       ]
     },
     {
-      "id": "predictive-insights",
       "title": "Predictive Analytics Insights",
       "description": "AI-powered predictions and recommendations",
       "type": "progress",
       "progressItems": [
         {
-          "id": "churn-prediction",
           "label": "Churn Risk Prediction Accuracy",
           "value": 89,
           "max": 100,
@@ -292,7 +275,6 @@
           "description": "89% accuracy in predicting customer churn"
         },
         {
-          "id": "lifetime-value-prediction",
           "label": "Lifetime Value Prediction",
           "value": 76,
           "max": 100,
@@ -302,7 +284,6 @@
           "description": "76% accuracy in predicting customer lifetime value"
         },
         {
-          "id": "segment-migration",
           "label": "Segment Migration Prediction",
           "value": 82,
           "max": 100,
@@ -312,7 +293,6 @@
           "description": "82% accuracy in predicting segment changes"
         },
         {
-          "id": "upsell-opportunities",
           "label": "Upsell Opportunity Identification",
           "value": 91,
           "max": 100,
@@ -322,7 +302,6 @@
           "description": "91% accuracy in identifying upsell opportunities"
         },
         {
-          "id": "engagement-optimization",
           "label": "Engagement Optimization Score",
           "value": 73,
           "max": 100,
@@ -332,7 +311,6 @@
           "description": "73% effectiveness in engagement optimization"
         },
         {
-          "id": "personalization-effectiveness",
           "label": "Personalization Effectiveness",
           "value": 85,
           "max": 100,
@@ -344,13 +322,11 @@
       ]
     },
     {
-      "id": "customer-journey",
       "title": "Customer Journey Milestones",
       "description": "Key milestones in the customer lifecycle",
       "type": "timeline",
       "events": [
         {
-          "id": "awareness",
           "title": "Awareness Phase",
           "description": "Customer discovers product through marketing channels",
           "date": "Day 1-7",
@@ -358,7 +334,6 @@
           "status": "completed"
         },
         {
-          "id": "consideration",
           "title": "Consideration Phase",
           "description": "Customer evaluates product features and compares options",
           "date": "Day 8-30",
@@ -366,7 +341,6 @@
           "status": "completed"
         },
         {
-          "id": "trial",
           "title": "Trial Phase",
           "description": "Customer signs up for free trial or demo",
           "date": "Day 31-60",
@@ -374,7 +348,6 @@
           "status": "in-progress"
         },
         {
-          "id": "purchase",
           "title": "Purchase Decision",
           "description": "Customer converts to paying customer",
           "date": "Day 61-90",
@@ -382,7 +355,6 @@
           "status": "planned"
         },
         {
-          "id": "onboarding",
           "title": "Onboarding & Adoption",
           "description": "Customer successfully adopts the product",
           "date": "Day 91-180",
@@ -390,7 +362,6 @@
           "status": "planned"
         },
         {
-          "id": "expansion",
           "title": "Expansion & Growth",
           "description": "Customer expands usage and upgrades",
           "date": "Month 6+",
@@ -398,7 +369,6 @@
           "status": "planned"
         },
         {
-          "id": "advocacy",
           "title": "Advocacy & Retention",
           "description": "Customer becomes loyal advocate and brand promoter",
           "date": "Month 12+",
@@ -411,32 +381,26 @@
   "actions": [
     {
       "label": "Customer Segmentation",
-      "id": "segment-customers",
       "icon": "fas fa-users-cog"
     },
     {
       "label": "Predictive Analytics",
-      "id": "predictive-analytics",
       "icon": "fas fa-brain"
     },
     {
       "label": "Personalization Engine",
-      "id": "personalization-engine",
       "icon": "fas fa-magic"
     },
     {
       "label": "Campaign Management",
-      "id": "campaign-management",
       "icon": "fas fa-bullhorn"
     },
     {
       "label": "Retention Dashboard",
-      "id": "retention-dashboard",
       "icon": "fas fa-shield-alt"
     },
     {
       "label": "Export Customer Data",
-      "id": "export-customer-data",
       "icon": "fas fa-download"
     }
   ],
@@ -445,6 +409,13 @@
     "variant": "enhanced",
     "complexity": "high",
     "useCase": "Advanced customer analytics with segmentation, behavior analysis, and predictive insights",
-    "features": ["customer overview", "behavior metrics", "segmentation analysis", "behavior patterns", "predictive insights", "customer journey timeline"]
+    "features": [
+      "customer overview",
+      "behavior metrics",
+      "segmentation analysis",
+      "behavior patterns",
+      "predictive insights",
+      "customer journey timeline"
+    ]
   }
 }

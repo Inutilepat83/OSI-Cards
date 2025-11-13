@@ -112,3 +112,39 @@
   }
 }
 
+/* Light theme overrides */
+:root[data-theme='day'] {
+  .reference-card {
+    &__text {
+      color: #4b5563;
+    }
+    
+    &__category {
+      background: rgba(255, 121, 0, 0.08) !important;
+      color: var(--primary) !important;
+      border-color: rgba(255, 121, 0, 0.2) !important;
+    }
+    
+    &__source {
+      color: #6b7280;
+    }
+    
+    &__date {
+      color: #9ca3af;
+    }
+    
+    &__link {
+      color: var(--primary);
+      
+      &:hover {
+        color: var(--primary);
+      }
+    }
+  }
+  
+  .section-card--reference {
+    background: rgba(250, 250, 250, 0.9) !important;
+    border-color: rgba(200, 200, 200, 0.5) !important;
+  }
+}
+

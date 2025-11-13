@@ -57,7 +57,7 @@
 
   <!-- Interactive Demo Section -->
   <section class="demo-section">
-    <div class="demo-container">
+    <div class="demo-container" [ngClass]="isFullscreen ? 'max-w-none w-full' : ''">
       <div class="demo-header">
         <h3 class="demo-title">Interactive Demo</h3>
 
@@ -72,17 +72,42 @@
       
       <div
         #previewRegion
-        class="transition-all duration-500 ease-in-out mb-16 min-h-[800px]"
-        [ngClass]="isFullscreen ? 'flex flex-col gap-8' : 'grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-8 items-start'"
+        class="transition-all duration-500 ease-in-out mb-16"
+        [ngClass]="isFullscreen ? 'flex flex-col gap-4 w-full' : 'grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-8 items-start min-h-[800px]'"
         [attr.role]="isFullscreen ? 'dialog' : 'region'"
         [attr.aria-modal]="isFullscreen ? 'true' : null"
         [attr.aria-label]="isFullscreen ? 'Card preview, fullscreen view' : 'Card preview region'"
         [attr.aria-busy]="isGenerating"
         tabindex="-1">
 
+        <!-- JSON Editor - shown above in fullscreen -->
+        <div
+          class="flex flex-col space-y-4"
+          [ngClass]="isFullscreen ? 'order-1 w-full' : 'lg:col-span-2 order-1 lg:order-1'">
+          <div class="flex items-center gap-2 mb-4">
+            <span *ngIf="!isJsonValid" class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-destructive/10 text-destructive border border-destructive/30">
+              Invalid JSON
+            </span>
+          </div>
+
+          <div class="demo-section__editor-shell">
+            <app-json-editor
+              [jsonInput]="jsonInput"
+              [jsonError]="jsonError"
+              [isJsonValid]="isJsonValid"
+              (jsonInputChange)="onJsonInputChange($event)">
+            </app-json-editor>
+          </div>
+
+          <div *ngIf="jsonError" class="p-2 bg-destructive/10 border border-destructive/20 rounded text-sm text-destructive" role="alert" aria-live="assertive">
+            <strong>JSON Error:</strong> {{ jsonError }}
+          </div>
+        </div>
+
+        <!-- Card Preview - shown below in fullscreen -->
         <div
           class="flex flex-col"
-          [ngClass]="isFullscreen ? 'order-1 w-full' : 'lg:col-span-3 order-2 lg:order-2'">
+          [ngClass]="isFullscreen ? 'order-2 w-full' : 'lg:col-span-3 order-2 lg:order-2'">
           <div class="flex items-center gap-2 mb-4">
             <lucide-icon name="sparkles" [size]="20" class="text-primary" aria-hidden="true"></lucide-icon>
             <span class="font-semibold">Live Preview</span>
@@ -160,29 +185,6 @@
                 </div>
               </div>
             </ng-template>
-          </div>
-        </div>
-
-        <div
-          class="flex flex-col space-y-4"
-          [ngClass]="isFullscreen ? 'order-2 w-full' : 'lg:col-span-2 order-1 lg:order-1'">
-          <div class="flex items-center gap-2 mb-4">
-            <span *ngIf="!isJsonValid" class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-destructive/10 text-destructive border border-destructive/30">
-              Invalid JSON
-            </span>
-          </div>
-
-          <div class="demo-section__editor-shell">
-            <app-json-editor
-              [jsonInput]="jsonInput"
-              [jsonError]="jsonError"
-              [isJsonValid]="isJsonValid"
-              (jsonInputChange)="onJsonInputChange($event)">
-            </app-json-editor>
-          </div>
-
-          <div *ngIf="jsonError" class="p-2 bg-destructive/10 border border-destructive/20 rounded text-sm text-destructive" role="alert" aria-live="assertive">
-            <strong>JSON Error:</strong> {{ jsonError }}
           </div>
         </div>
       </div>

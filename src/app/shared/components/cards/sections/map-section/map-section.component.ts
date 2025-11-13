@@ -34,17 +34,19 @@ export class MapSectionComponent {
     const mappedFields = fromFields
       .map((field) => ({
         ...field,
-        name: field.name || field.title || field.label || field.id
+        name: field.name || field.title || field.label || field.id || 'Unknown Location'
       }))
-      .filter((field) => !!field.name);
+      .filter((field): field is MapLocation => !!field.name && typeof field.name === 'string');
 
     if (Array.isArray(this.section.items) && this.section.items.length) {
-      return mappedFields.concat(
-        (this.section.items as MapLocation[]).map((item) => ({
+      const mappedItems = (this.section.items as MapLocation[])
+        .map((item) => ({
           ...item,
-          name: item.name || item.title || item.id
+          name: item.name || item.title || item.id || 'Unknown Location'
         }))
-      );
+        .filter((item): item is MapLocation => !!item.name && typeof item.name === 'string');
+      
+      return mappedFields.concat(mappedItems);
     }
 
     return mappedFields;

@@ -246,7 +246,11 @@ $breakpoints: (
   color: var(--card-text-primary);
   letter-spacing: var(--card-title-letter-spacing);
   line-height: var(--card-title-line-height);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  
+  :root[data-theme='day'] & {
+    text-shadow: none;
+  }
 }
 
 // Card subtitle/description styling - Uses CSS variables

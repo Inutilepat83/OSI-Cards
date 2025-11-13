@@ -1,38 +1,32 @@
 {
-  "id": "analytics-dashboard",
   "cardTitle": "Business Intelligence Center",
   "cardSubtitle": "Enterprise Analytics & Business Intelligence Platform",
   "cardType": "analytics",
   "description": "Comprehensive analytics dashboard with advanced BI features, real-time monitoring, and executive insights",
   "sections": [
     {
-      "id": "executive-summary",
       "title": "Executive Analytics Summary",
       "type": "info",
       "fields": [
         {
-          "id": "total-revenue",
           "label": "Total Revenue (YTD)",
           "value": 12500000,
           "type": "currency",
           "icon": "fas fa-dollar-sign"
         },
         {
-          "id": "growth-rate",
           "label": "Year-over-Year Growth",
           "value": 23.7,
           "type": "percentage",
           "icon": "fas fa-chart-line"
         },
         {
-          "id": "market-share",
           "label": "Market Share",
           "value": 12.8,
           "type": "percentage",
           "icon": "fas fa-pie-chart"
         },
         {
-          "id": "roi",
           "label": "Digital Transformation ROI",
           "value": 340,
           "type": "percentage",
@@ -41,13 +35,11 @@
       ]
     },
     {
-      "id": "kpi-dashboard",
       "title": "Key Performance Indicators Dashboard",
       "description": "Real-time KPI monitoring with trend analysis and alerts",
       "type": "metrics",
       "metrics": [
         {
-          "id": "monthly-revenue",
           "label": "Monthly Revenue",
           "value": 1041667,
           "format": "currency",
@@ -57,9 +49,8 @@
           "icon": "fas fa-dollar-sign"
         },
         {
-          "id": "customer-acquisition-cost",
           "label": "Customer Acquisition Cost",
-          "value": 127.50,
+          "value": 127.5,
           "format": "currency",
           "change": -12.4,
           "changeType": "percentage",
@@ -67,7 +58,6 @@
           "icon": "fas fa-user-plus"
         },
         {
-          "id": "customer-lifetime-value",
           "label": "Customer Lifetime Value",
           "value": 2150,
           "format": "currency",
@@ -77,7 +67,6 @@
           "icon": "fas fa-gem"
         },
         {
-          "id": "net-promoter-score",
           "label": "Net Promoter Score",
           "value": 42,
           "format": "number",
@@ -87,7 +76,6 @@
           "icon": "fas fa-star"
         },
         {
-          "id": "employee-satisfaction",
           "label": "Employee Satisfaction",
           "value": 4.1,
           "format": "rating",
@@ -97,7 +85,6 @@
           "icon": "fas fa-users"
         },
         {
-          "id": "operational-efficiency",
           "label": "Operational Efficiency",
           "value": 87.3,
           "format": "percentage",
@@ -109,7 +96,6 @@
       ]
     },
     {
-      "id": "performance-analysis",
       "title": "Multi-Dimensional Performance Analysis",
       "description": "Comprehensive performance analysis across key business dimensions",
       "type": "table",
@@ -181,7 +167,7 @@
           "dimension": "Operational Efficiency",
           "currentValue": "87.3%",
           "target": "90.0%",
-          "achievement": 97.0,
+          "achievement": 97,
           "trend": "Improving",
           "priority": "Medium"
         },
@@ -204,7 +190,6 @@
       ]
     },
     {
-      "id": "predictive-analytics",
       "title": "Predictive Analytics & Forecasting",
       "description": "AI-powered business forecasting and predictive insights",
       "type": "table",
@@ -291,13 +276,11 @@
       ]
     },
     {
-      "id": "real-time-monitoring",
       "title": "Real-Time Business Monitoring",
       "description": "Live business metrics and performance indicators",
       "type": "progress",
       "progressItems": [
         {
-          "id": "system-uptime",
           "label": "System Uptime",
           "value": 99.7,
           "max": 100,
@@ -307,17 +290,15 @@
           "description": "99.7% system availability this month"
         },
         {
-          "id": "response-time",
           "label": "Average Response Time",
           "value": 1.2,
-          "max": 2.0,
+          "max": 2,
           "format": "number",
           "color": "#10b981",
           "showValue": true,
           "description": "1.2 seconds average response time"
         },
         {
-          "id": "data-quality",
           "label": "Data Quality Score",
           "value": 94.5,
           "max": 100,
@@ -327,7 +308,6 @@
           "description": "94.5% data accuracy and completeness"
         },
         {
-          "id": "security-score",
           "label": "Security Compliance",
           "value": 96.8,
           "max": 100,
@@ -337,7 +317,6 @@
           "description": "96.8% security compliance score"
         },
         {
-          "id": "automation-level",
           "label": "Process Automation",
           "value": 73.2,
           "max": 100,
@@ -347,7 +326,6 @@
           "description": "73.2% of processes are automated"
         },
         {
-          "id": "ai-adoption",
           "label": "AI Technology Adoption",
           "value": 58.9,
           "max": 100,
@@ -359,13 +337,11 @@
       ]
     },
     {
-      "id": "strategic-roadmap",
       "title": "Strategic Analytics Roadmap",
       "description": "Long-term analytics and BI strategic initiatives",
       "type": "timeline",
       "events": [
         {
-          "id": "foundation-complete",
           "title": "Analytics Foundation Complete",
           "description": "Core data infrastructure and basic reporting implemented",
           "date": "Q1 2024",
@@ -373,7 +349,6 @@
           "status": "completed"
         },
         {
-          "id": "advanced-analytics",
           "title": "Advanced Analytics Implementation",
           "description": "Machine learning models and predictive analytics deployed",
           "date": "Q2 2024",
@@ -381,7 +356,6 @@
           "status": "completed"
         },
         {
-          "id": "real-time-dashboards",
           "title": "Real-Time Dashboards",
           "description": "Live data streaming and real-time business monitoring",
           "date": "Q3 2024",
@@ -389,7 +363,6 @@
           "status": "in-progress"
         },
         {
-          "id": "ai-automation",
           "title": "AI-Driven Automation",
           "description": "Automated insights generation and decision support",
           "date": "Q4 2024",
@@ -397,7 +370,6 @@
           "status": "planned"
         },
         {
-          "id": "predictive-optimization",
           "title": "Predictive Business Optimization",
           "description": "AI-powered business process optimization and forecasting",
           "date": "Q1 2025",
@@ -405,7 +377,6 @@
           "status": "planned"
         },
         {
-          "id": "enterprise-ai",
           "title": "Enterprise AI Platform",
           "description": "Comprehensive AI platform for all business functions",
           "date": "Q2 2025",
@@ -413,7 +384,6 @@
           "status": "planned"
         },
         {
-          "id": "autonomous-operations",
           "title": "Autonomous Operations",
           "description": "Self-optimizing business operations with minimal human intervention",
           "date": "2026",
@@ -423,7 +393,6 @@
       ]
     },
     {
-      "id": "risk-intelligence",
       "title": "Risk Intelligence & Mitigation",
       "description": "Advanced risk analysis and mitigation strategies",
       "type": "table",
@@ -512,42 +481,34 @@
   "actions": [
     {
       "label": "Executive Dashboard",
-      "id": "exec-dashboard",
       "icon": "fas fa-chart-bar"
     },
     {
       "label": "Real-Time Monitoring",
-      "id": "real-time-monitoring",
       "icon": "fas fa-tachometer-alt"
     },
     {
       "label": "Predictive Analytics",
-      "id": "predictive-analytics",
       "icon": "fas fa-brain"
     },
     {
       "label": "Risk Management",
-      "id": "risk-management",
       "icon": "fas fa-shield-alt"
     },
     {
       "label": "Strategic Planning",
-      "id": "strategic-planning",
       "icon": "fas fa-map-marked-alt"
     },
     {
       "label": "Custom Reports",
-      "id": "custom-reports",
       "icon": "fas fa-file-alt"
     },
     {
       "label": "Data Export",
-      "id": "data-export",
       "icon": "fas fa-download"
     },
     {
       "label": "Alert Configuration",
-      "id": "alert-config",
       "icon": "fas fa-bell"
     }
   ],
@@ -556,6 +517,14 @@
     "variant": "dashboard",
     "complexity": "expert",
     "useCase": "Enterprise business intelligence platform with real-time monitoring, predictive analytics, and strategic insights",
-    "features": ["executive summary", "kpi dashboard", "performance analysis", "predictive analytics", "real-time monitoring", "strategic roadmap", "risk intelligence"]
+    "features": [
+      "executive summary",
+      "kpi dashboard",
+      "performance analysis",
+      "predictive analytics",
+      "real-time monitoring",
+      "strategic roadmap",
+      "risk intelligence"
+    ]
   }
 }

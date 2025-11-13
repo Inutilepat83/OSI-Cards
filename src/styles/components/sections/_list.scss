@@ -93,6 +93,28 @@
   @include empty-state;
 }
 
+/* Light theme overrides */
+:root[data-theme='day'] {
+  .list-card {
+    background: rgba(250, 250, 250, 0.9) !important;
+    border-color: rgba(200, 200, 200, 0.5) !important;
+    
+    &__title {
+      color: #1a1a1a;
+    }
+    
+    &__description {
+      color: #6b7280;
+    }
+    
+    &__badge {
+      background: rgba(255, 121, 0, 0.08) !important;
+      color: var(--primary) !important;
+      border-color: rgba(255, 121, 0, 0.2) !important;
+    }
+  }
+}
+
 @media (max-width: 640px) {
   .list-collection {
     gap: 8px;

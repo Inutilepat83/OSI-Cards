@@ -1,38 +1,32 @@
 {
-  "id": "enhanced-company-card",
   "cardTitle": "TechCorp Solutions",
   "cardSubtitle": "AI-Powered Software Company",
   "cardType": "company",
   "sections": [
     {
-      "id": "overview",
       "title": "Company Overview",
       "description": "Key information about TechCorp Solutions",
       "type": "info",
       "fields": [
         {
-          "id": "industry",
           "label": "Industry",
           "value": "Technology",
           "type": "text",
           "icon": "fas fa-industry"
         },
         {
-          "id": "founded",
           "label": "Founded",
           "value": "2018-03-15",
           "type": "date",
           "icon": "fas fa-calendar"
         },
         {
-          "id": "employees",
           "label": "Employees",
           "value": 250,
           "type": "number",
           "icon": "fas fa-users"
         },
         {
-          "id": "website",
           "label": "Website",
           "value": "https://techcorp.example.com",
           "type": "url",
@@ -40,7 +34,6 @@
           "clickable": true
         },
         {
-          "id": "email",
           "label": "Contact Email",
           "value": "info@techcorp.example.com",
           "type": "email",
@@ -48,7 +41,6 @@
           "clickable": true
         },
         {
-          "id": "rating",
           "label": "Company Rating",
           "value": "4.5",
           "type": "rating",
@@ -57,7 +49,6 @@
           "icon": "fas fa-star"
         },
         {
-          "id": "growth",
           "label": "Revenue Growth",
           "value": "25%",
           "type": "percentage",
@@ -69,13 +60,11 @@
       ]
     },
     {
-      "id": "metrics",
       "title": "Key Metrics",
       "description": "Performance indicators and financial metrics",
       "type": "metrics",
       "metrics": [
         {
-          "id": "revenue",
           "label": "Annual Revenue",
           "value": 15000000,
           "format": "currency",
@@ -86,7 +75,6 @@
           "color": "#10b981"
         },
         {
-          "id": "customers",
           "label": "Active Customers",
           "value": 1250,
           "format": "number",
@@ -97,7 +85,6 @@
           "color": "#3b82f6"
         },
         {
-          "id": "satisfaction",
           "label": "Customer Satisfaction",
           "value": 94,
           "format": "percentage",
@@ -108,7 +95,6 @@
           "color": "#f59e0b"
         },
         {
-          "id": "retention",
           "label": "Customer Retention",
           "value": 89,
           "format": "percentage",
@@ -120,13 +106,11 @@
       ]
     },
     {
-      "id": "timeline",
       "title": "Company Milestones",
       "description": "Important events in TechCorp's history",
       "type": "timeline",
       "timelineEvents": [
         {
-          "id": "founding",
           "date": "2018-03-15",
           "title": "Company Founded",
           "description": "TechCorp Solutions was founded by John Doe and Jane Smith",
@@ -134,7 +118,6 @@
           "icon": "fas fa-rocket"
         },
         {
-          "id": "series-a",
           "date": "2019-08-22",
           "title": "Series A Funding",
           "description": "Raised $5M in Series A funding from leading VCs",
@@ -142,7 +125,6 @@
           "icon": "fas fa-money-bill-wave"
         },
         {
-          "id": "product-launch",
           "date": "2020-11-10",
           "title": "Product Launch",
           "description": "Launched our flagship AI platform",
@@ -150,7 +132,6 @@
           "icon": "fas fa-product-hunt"
         },
         {
-          "id": "expansion",
           "date": "2022-06-01",
           "title": "International Expansion",
           "description": "Opened offices in Europe and Asia",
@@ -158,7 +139,6 @@
           "icon": "fas fa-globe-americas"
         },
         {
-          "id": "ipo-prep",
           "date": "2024-12-31",
           "title": "IPO Preparation",
           "description": "Preparing for public offering",
@@ -166,7 +146,6 @@
           "icon": "fas fa-chart-bar"
         },
         {
-          "id": "ipo",
           "date": "2025-06-15",
           "title": "Planned IPO",
           "description": "Expected public offering date",
@@ -176,7 +155,6 @@
       ]
     },
     {
-      "id": "team-table",
       "title": "Leadership Team",
       "description": "Key executives and department heads",
       "type": "table",
@@ -216,7 +194,6 @@
       ],
       "tableRows": [
         {
-          "id": "ceo",
           "name": "John Doe",
           "position": "Chief Executive Officer",
           "department": "Executive",
@@ -224,7 +201,6 @@
           "status": "active"
         },
         {
-          "id": "cto",
           "name": "Jane Smith",
           "position": "Chief Technology Officer",
           "department": "Technology",
@@ -232,7 +208,6 @@
           "status": "active"
         },
         {
-          "id": "cfo",
           "name": "Mike Johnson",
           "position": "Chief Financial Officer",
           "department": "Finance",
@@ -240,7 +215,6 @@
           "status": "active"
         },
         {
-          "id": "cmo",
           "name": "Sarah Wilson",
           "position": "Chief Marketing Officer",
           "department": "Marketing",
@@ -248,7 +222,6 @@
           "status": "active"
         },
         {
-          "id": "vp-sales",
           "name": "Tom Brown",
           "position": "VP of Sales",
           "department": "Sales",
@@ -260,19 +233,16 @@
   ],
   "actions": [
     {
-      "id": "contact",
       "label": "Contact Company",
       "icon": "fas fa-envelope",
       "variant": "primary"
     },
     {
-      "id": "visit-website",
       "label": "Visit Website",
       "icon": "fas fa-external-link-alt",
       "variant": "secondary"
     },
     {
-      "id": "schedule-meeting",
       "label": "Schedule Meeting",
       "icon": "fas fa-calendar-plus",
       "variant": "outline"

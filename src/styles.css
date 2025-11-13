@@ -137,6 +137,69 @@
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
+.shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Z-index */
+.z-50 {
+  z-index: 50;
+}
+
+/* Position */
+.absolute {
+  position: absolute;
+}
+
+.top-0 {
+  top: 0;
+}
+
+.right-0 {
+  right: 0;
+}
+
+/* Width */
+.w-96 {
+  width: 24rem;
+}
+
+/* Height */
+.max-h-screen {
+  max-height: 100vh;
+}
+
+/* Overflow */
+.overflow-auto {
+  overflow: auto;
+}
+
+/* Background */
+.bg-card\/95 {
+  background-color: rgba(35, 35, 35, 0.95);
+}
+
+/* Backdrop */
+.backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+}
+
+/* Padding */
+.p-4 {
+  padding: 1rem;
+}
+
+/* Border radius */
+.rounded-l-lg {
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+}
+
+/* Display */
+.hidden {
+  display: none;
+}
+
 /* Transforms */
 .scale-100 {
   transform: scale(1);
@@ -208,17 +271,18 @@
   transform-style: preserve-3d;
   position: relative;
   border-radius: 12px; /* This creates the rounded shape for the drop-shadow */
-  overflow: hidden; /* Clip children to rounded corners */
+  /* Removed overflow: hidden - it was clipping the shadow */
   background: transparent;
+  /* Add padding to allow shadow to show */
+  padding: 0;
 }
 
 .tilt-container:hover {
-  will-change: filter;
+  /* Removed will-change to prevent blinking/flickering */
 }
 
 .glow-container {
-  filter: drop-shadow(0 0 var(--glow-blur, 12px) var(--glow-color, rgba(255, 121, 0, 0.12)));
-  transition: filter 0.2s ease-out;
+  /* Container for tilt - no shadow here */
   position: relative;
 }
 

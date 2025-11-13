@@ -1,18 +1,15 @@
 {
-  "id": "project-management-dashboard",
   "cardTitle": "E-Commerce Platform Migration",
   "cardSubtitle": "Legacy System Modernization",
   "cardType": "project",
   "description": "Project management dashboard with detailed task tracking, resource allocation, and milestone management",
   "sections": [
     {
-      "id": "project-metrics",
       "title": "Project Performance Metrics",
       "description": "Key performance indicators for project success",
       "type": "metrics",
       "metrics": [
         {
-          "id": "overall-progress",
           "label": "Overall Progress",
           "value": 72,
           "format": "percentage",
@@ -22,7 +19,6 @@
           "icon": "fas fa-tasks"
         },
         {
-          "id": "tasks-completed",
           "label": "Tasks Completed",
           "value": 89,
           "format": "number",
@@ -32,7 +28,6 @@
           "icon": "fas fa-check-square"
         },
         {
-          "id": "team-utilization",
           "label": "Team Utilization",
           "value": 85,
           "format": "percentage",
@@ -42,7 +37,6 @@
           "icon": "fas fa-users"
         },
         {
-          "id": "budget-efficiency",
           "label": "Budget Efficiency",
           "value": 92,
           "format": "percentage",
@@ -54,7 +48,6 @@
       ]
     },
     {
-      "id": "task-breakdown",
       "title": "Task Status Breakdown",
       "description": "Current status of all project tasks by category",
       "type": "table",
@@ -128,12 +121,11 @@
           "totalTasks": 20,
           "completed": 8,
           "inProgress": 6,
-          "completionRate": 40.0
+          "completionRate": 40
         }
       ]
     },
     {
-      "id": "resource-allocation",
       "title": "Resource Allocation",
       "description": "Team member assignments and workload distribution",
       "type": "table",
@@ -211,13 +203,11 @@
       ]
     },
     {
-      "id": "milestone-progress",
       "title": "Milestone Progress",
       "description": "Critical project milestones and their completion status",
       "type": "progress",
       "progressItems": [
         {
-          "id": "requirements-gathering",
           "label": "Requirements Gathering",
           "value": 100,
           "max": 100,
@@ -227,7 +217,6 @@
           "description": "Completed - All business requirements documented and approved"
         },
         {
-          "id": "data-mapping",
           "label": "Data Mapping & Analysis",
           "value": 100,
           "max": 100,
@@ -237,7 +226,6 @@
           "description": "Completed - Legacy data structures mapped to new system"
         },
         {
-          "id": "system-development",
           "label": "System Development",
           "value": 75,
           "max": 100,
@@ -247,7 +235,6 @@
           "description": "In Progress - Core functionality 75% complete"
         },
         {
-          "id": "integration-testing",
           "label": "Integration Testing",
           "value": 40,
           "max": 100,
@@ -257,7 +244,6 @@
           "description": "In Progress - System integration tests underway"
         },
         {
-          "id": "user-acceptance",
           "label": "User Acceptance Testing",
           "value": 0,
           "max": 100,
@@ -267,7 +253,6 @@
           "description": "Planned - UAT scheduled for next sprint"
         },
         {
-          "id": "go-live",
           "label": "Go-Live Preparation",
           "value": 0,
           "max": 100,
@@ -279,33 +264,28 @@
       ]
     },
     {
-      "id": "risk-management",
       "title": "Risk Management",
       "type": "info",
       "fields": [
         {
-          "id": "high-risk-items",
           "label": "High Risk Items",
           "value": 2,
           "type": "number",
           "icon": "fas fa-exclamation-triangle"
         },
         {
-          "id": "medium-risk-items",
           "label": "Medium Risk Items",
           "value": 5,
           "type": "number",
           "icon": "fas fa-exclamation-circle"
         },
         {
-          "id": "mitigation-actions",
           "label": "Active Mitigation Actions",
           "value": 7,
           "type": "number",
           "icon": "fas fa-shield-alt"
         },
         {
-          "id": "risk-status",
           "label": "Overall Risk Status",
           "value": "Managed",
           "type": "status",
@@ -316,13 +296,11 @@
       ]
     },
     {
-      "id": "project-timeline",
       "title": "Project Timeline",
       "description": "Key dates and deadlines for project phases",
       "type": "timeline",
       "events": [
         {
-          "id": "kickoff",
           "title": "Project Kickoff",
           "description": "Initial project planning and team assembly",
           "date": "2024-06-01",
@@ -330,7 +308,6 @@
           "status": "completed"
         },
         {
-          "id": "design-complete",
           "title": "Design Phase Complete",
           "description": "System architecture and design specifications finalized",
           "date": "2024-07-15",
@@ -338,7 +315,6 @@
           "status": "completed"
         },
         {
-          "id": "development-milestone",
           "title": "Development Milestone",
           "description": "Core development phase 75% complete",
           "date": "2024-09-15",
@@ -346,7 +322,6 @@
           "status": "in-progress"
         },
         {
-          "id": "testing-phase",
           "title": "Testing Phase Start",
           "description": "Comprehensive testing and quality assurance begins",
           "date": "2024-10-01",
@@ -354,7 +329,6 @@
           "status": "upcoming"
         },
         {
-          "id": "user-training",
           "title": "User Training",
           "description": "End-user training and change management activities",
           "date": "2024-11-01",
@@ -362,7 +336,6 @@
           "status": "upcoming"
         },
         {
-          "id": "go-live",
           "title": "Go-Live",
           "description": "Production deployment and system launch",
           "date": "2024-12-01",
@@ -375,32 +348,26 @@
   "actions": [
     {
       "label": "View Detailed Tasks",
-      "id": "view-tasks",
       "icon": "fas fa-tasks"
     },
     {
       "label": "Resource Management",
-      "id": "resource-mgmt",
       "icon": "fas fa-users"
     },
     {
       "label": "Risk Dashboard",
-      "id": "risk-dashboard",
       "icon": "fas fa-exclamation-triangle"
     },
     {
       "label": "Progress Reports",
-      "id": "progress-reports",
       "icon": "fas fa-chart-bar"
     },
     {
       "label": "Schedule Meeting",
-      "id": "schedule-meeting",
       "icon": "fas fa-calendar"
     },
     {
       "label": "Update Milestones",
-      "id": "update-milestones",
       "icon": "fas fa-edit"
     }
   ],
@@ -409,6 +376,13 @@
     "variant": "management",
     "complexity": "medium",
     "useCase": "Comprehensive project management dashboard with task tracking, resource allocation, and milestone management",
-    "features": ["performance metrics", "task breakdown table", "resource allocation table", "milestone progress", "risk management", "project timeline"]
+    "features": [
+      "performance metrics",
+      "task breakdown table",
+      "resource allocation table",
+      "milestone progress",
+      "risk management",
+      "project timeline"
+    ]
   }
 }

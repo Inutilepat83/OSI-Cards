@@ -122,3 +122,63 @@
     gap: var(--spacing-3xl);
   }
 }
+
+/* Fullscreen mode - ultra compact */
+.ai-card-surface--fullscreen {
+  .network-collection {
+    gap: 8px !important;
+  }
+  
+  .network-card {
+    padding: 10px 12px !important;
+    gap: 10px !important;
+    
+    &__icon {
+      width: 28px !important;
+      height: 28px !important;
+      border-width: 1.5px !important;
+      
+      &:hover {
+        transform: scale(1.05) rotate(2deg) !important;
+      }
+    }
+    
+    &__details {
+      gap: 3px !important;
+    }
+    
+    &__title {
+      font-size: 13px !important;
+    }
+    
+    &__meta {
+      font-size: 11px !important;
+    }
+  }
+}
+
+/* Light theme overrides */
+:root[data-theme='day'] {
+  .network-card {
+    &__title {
+      color: #1a1a1a;
+      text-shadow: none;
+    }
+    
+    &:hover &__title {
+      color: var(--primary);
+    }
+    
+    &__meta {
+      color: #6b7280;
+    }
+    
+    &__chevron {
+      color: #9ca3af;
+    }
+    
+    &:hover &__chevron {
+      color: var(--primary);
+    }
+  }
+}

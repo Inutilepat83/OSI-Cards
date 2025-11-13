@@ -65,7 +65,7 @@
 }
 
 /* Apply unified style to all section card classes */
-.overview-card,
+/* NOTE: .overview-card is excluded - uses custom list style */
 .analytics-metric,
 .info-card,
 .list-card,
@@ -78,7 +78,7 @@
 }
 
 /* Enforce unified typography for all card labels - must come after section-specific styles */
-.overview-card__label,
+/* NOTE: .overview-card excluded - uses custom compact list typography */
 .analytics-metric__label,
 .info-card__label,
 .list-card__label,
@@ -91,7 +91,7 @@
 }
 
 /* Enforce unified typography for all card values - must come after section-specific styles */
-.overview-card__value,
+/* NOTE: .overview-card excluded - uses custom compact list typography */
 .analytics-metric__value,
 .info-card__value,
 .list-card__value,

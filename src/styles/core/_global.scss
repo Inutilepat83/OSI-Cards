@@ -15,6 +15,12 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   line-height: 1.5;
+  
+  /* Improved text rendering for sharpness */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'kern' 1;
 }
 
 button {

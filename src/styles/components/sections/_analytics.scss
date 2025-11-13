@@ -89,3 +89,81 @@
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Fullscreen mode - ultra compact */
+.ai-card-surface--fullscreen {
+  .analytics-metrics {
+    gap: 8px !important;
+  }
+  
+  .analytics-metric {
+    padding: 10px 12px !important;
+    
+    &__label {
+      font-size: 10px !important;
+      gap: 6px !important;
+      margin-bottom: 4px !important;
+      
+      lucide-icon {
+        width: 12px !important;
+        height: 12px !important;
+      }
+    }
+    
+    &__value {
+      font-size: 18px !important;
+    }
+    
+    &__progress {
+      margin-top: 6px !important;
+      height: 4px !important;
+    }
+    
+    &__meta {
+      font-size: 10px !important;
+      gap: 6px !important;
+      margin-top: 6px !important;
+      
+      lucide-icon {
+        width: 11px !important;
+        height: 11px !important;
+      }
+    }
+  }
+}
+
+/* Light theme overrides */
+:root[data-theme='day'] {
+  .analytics-metric {
+    &__label {
+      color: #6b7280;
+    }
+    
+    &:hover &__label {
+      color: #4b5563;
+    }
+    
+    &__value {
+      color: #1a1a1a;
+    }
+    
+    &:hover &__value {
+      color: var(--primary);
+      text-shadow: 0 2px 6px rgba(255, 121, 0, 0.2);
+    }
+    
+    &__meta {
+      color: #6b7280;
+    }
+  }
+  
+  .analytics-progress {
+    background: rgba(200, 200, 200, 0.2);
+    
+    &::after {
+      background: linear-gradient(90deg,
+        rgba(255, 121, 0, 0.8),
+        rgba(255, 121, 0, 1));
+    }
+  }
+}

@@ -105,14 +105,14 @@
   /* Card Meta/Description Text */
   --card-meta-font-size: 0.78rem;
   --card-meta-font-weight: 600;
-  --card-meta-color: rgba(255, 255, 255, 0.65);
   
-  /* Card Colors - Standardized text colors */
+  /* Card Colors - Standardized text colors (theme-aware, set in theme files) */
   --card-text-primary: var(--foreground);
-  --card-text-secondary: rgba(255, 255, 255, 0.7);
-  --card-text-muted: rgba(255, 255, 255, 0.65);
-  --card-text-hover: rgba(255, 180, 100, 1);
-  --card-text-label: rgba(255, 255, 255, 0.55);
+  --card-text-secondary: var(--muted-foreground);
+  --card-text-muted: var(--muted-foreground);
+  --card-text-hover: var(--primary);
+  --card-text-label: var(--muted-foreground);
+  --card-meta-color: var(--muted-foreground);
   
   /* Card Transitions */
   --card-transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);        /* Standard transition */

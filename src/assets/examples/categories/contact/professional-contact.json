@@ -1,17 +1,14 @@
 {
-  "id": "professional-contact",
   "cardTitle": "Dr. Maria Rodriguez",
   "cardSubtitle": "VP of Data Science & Analytics",
   "cardType": "contact",
   "description": "Professional contact card with extended profile, skills, and network information",
   "sections": [
     {
-      "id": "contact-details",
       "title": "Contact Information",
       "type": "info",
       "fields": [
         {
-          "id": "email",
           "label": "Work Email",
           "value": "maria.rodriguez@techcorp.com",
           "type": "email",
@@ -19,7 +16,6 @@
           "clickable": true
         },
         {
-          "id": "phone",
           "label": "Office Phone",
           "value": "+1-415-555-0198",
           "type": "phone",
@@ -27,14 +23,12 @@
           "clickable": true
         },
         {
-          "id": "location",
           "label": "Office Location",
           "value": "San Francisco, CA",
           "type": "text",
           "icon": "fas fa-map-marker"
         },
         {
-          "id": "timezone",
           "label": "Timezone",
           "value": "PST (UTC-8)",
           "type": "text",
@@ -43,40 +37,34 @@
       ]
     },
     {
-      "id": "professional-background",
       "title": "Professional Background",
       "type": "info",
       "fields": [
         {
-          "id": "company",
           "label": "Company",
           "value": "TechCorp Solutions",
           "type": "text",
           "icon": "fas fa-building"
         },
         {
-          "id": "position",
           "label": "Position",
           "value": "VP of Data Science & Analytics",
           "type": "text",
           "icon": "fas fa-user-tie"
         },
         {
-          "id": "experience",
           "label": "Years of Experience",
           "value": 12,
           "type": "number",
           "icon": "fas fa-briefcase"
         },
         {
-          "id": "education",
           "label": "Education",
           "value": "PhD Computer Science, Stanford University",
           "type": "text",
           "icon": "fas fa-graduation-cap"
         },
         {
-          "id": "certifications",
           "label": "Key Certifications",
           "value": "AWS ML Specialty, TensorFlow Developer",
           "type": "text",
@@ -85,7 +73,6 @@
       ]
     },
     {
-      "id": "skills-expertise",
       "title": "Skills & Expertise",
       "type": "list",
       "items": [
@@ -122,7 +109,6 @@
       ]
     },
     {
-      "id": "professional-network",
       "title": "Professional Network",
       "type": "list",
       "items": [
@@ -153,7 +139,6 @@
       ]
     },
     {
-      "id": "recent-achievements",
       "title": "Recent Achievements",
       "type": "list",
       "items": [
@@ -178,27 +163,22 @@
   "actions": [
     {
       "label": "Send Email",
-      "id": "send-email",
       "icon": "fas fa-envelope"
     },
     {
       "label": "Schedule Meeting",
-      "id": "schedule-meeting",
       "icon": "fas fa-calendar"
     },
     {
       "label": "View LinkedIn Profile",
-      "id": "view-linkedin",
       "icon": "fab fa-linkedin"
     },
     {
       "label": "Download Resume",
-      "id": "download-resume",
       "icon": "fas fa-download"
     },
     {
       "label": "Connect on GitHub",
-      "id": "connect-github",
       "icon": "fab fa-github"
     }
   ],
@@ -207,6 +187,12 @@
     "variant": "professional",
     "complexity": "medium",
     "useCase": "Extended professional contact with skills, network, and achievements",
-    "features": ["contact details", "professional background", "skills list", "network links", "achievements"]
+    "features": [
+      "contact details",
+      "professional background",
+      "skills list",
+      "network links",
+      "achievements"
+    ]
   }
 }

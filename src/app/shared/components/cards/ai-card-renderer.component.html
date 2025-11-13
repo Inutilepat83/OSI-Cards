@@ -2,11 +2,15 @@
   *ngIf="cardConfig"
   #cardContainer
   class="relative h-full"
+  [ngClass]="{ 'w-full max-w-none': isFullscreen }"
   (mouseenter)="onMouseEnter($event)"
   (mouseleave)="onMouseLeave()"
   (mousemove)="onMouseMove($event)"
 >
-  <div class="tilt-container glow-container" #tiltContainer [ngStyle]="tiltStyle">
+  <div class="tilt-container glow-container" 
+       [ngClass]="{ 'w-full max-w-none': isFullscreen }"
+       #tiltContainer 
+       [ngStyle]="tiltStyle">
     <article
       class="ai-card-surface"
       [ngClass]="{ 'ai-card-surface--fullscreen': isFullscreen }"

@@ -196,7 +196,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
    * Gets a unique section ID for scrolling
    */
   getSectionId(section: CardSection): string {
-    return `section-${this.sanitizeSectionId(section.title || section.id)}`;
+    return `section-${this.sanitizeSectionId(section.title || section.id || 'unknown')}`;
   }
 
   /**

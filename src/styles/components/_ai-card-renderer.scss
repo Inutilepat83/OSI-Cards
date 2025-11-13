@@ -24,18 +24,20 @@
 
 /* Section spacing improvements - using CSS variables */
 .ai-section + .ai-section {
-  margin-top: var(--spacing-6xl);
+  margin-top: 0; /* Spacing controlled by margin-bottom on .ai-section */
 }
 
 /* Card grid improvements - using centralized gaps */
 .contact-collection,
+/* Remove forced large gaps - sections now control their own spacing */
 .info-grid,
 .analytics-metrics,
-.overview-grid,
 .list-stack,
 .network-collection {
   gap: var(--spacing-4xl) !important;
 }
+
+/* Overview grid uses compact spacing defined in _overview.scss */
 
 /* Global card styling enforced via variables - remove !important overrides */
 /* All cards now inherit from centralized --card-* variables */
@@ -93,7 +95,7 @@
   }
   
   .ai-section + .ai-section {
-    margin-top: 16px;
+    margin-top: 0; /* Spacing controlled by margin-bottom */
   }
   
   .contact-card,

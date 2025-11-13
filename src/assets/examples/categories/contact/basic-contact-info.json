@@ -1,17 +1,14 @@
 {
-  "id": "basic-contact-info",
   "cardTitle": "Alex Johnson",
   "cardSubtitle": "Senior Software Engineer",
   "cardType": "contact",
   "description": "Basic contact information card with essential personal and professional details",
   "sections": [
     {
-      "id": "personal-info",
       "title": "Contact Information",
       "type": "info",
       "fields": [
         {
-          "id": "email",
           "label": "Email",
           "value": "alex.johnson@example.com",
           "type": "email",
@@ -19,7 +16,6 @@
           "clickable": true
         },
         {
-          "id": "phone",
           "label": "Phone",
           "value": "+1-555-0123",
           "type": "phone",
@@ -27,7 +23,6 @@
           "clickable": true
         },
         {
-          "id": "location",
           "label": "Location",
           "value": "San Francisco, CA",
           "type": "text",
@@ -36,26 +31,22 @@
       ]
     },
     {
-      "id": "professional-info",
       "title": "Professional Details",
       "type": "info",
       "fields": [
         {
-          "id": "company",
           "label": "Company",
           "value": "TechCorp Solutions",
           "type": "text",
           "icon": "fas fa-building"
         },
         {
-          "id": "position",
           "label": "Position",
           "value": "Senior Software Engineer",
           "type": "text",
           "icon": "fas fa-user-tie"
         },
         {
-          "id": "department",
           "label": "Department",
           "value": "Engineering",
           "type": "text",
@@ -64,7 +55,6 @@
       ]
     },
     {
-      "id": "social-links",
       "title": "Professional Networks",
       "type": "list",
       "items": [
@@ -86,17 +76,14 @@
   "actions": [
     {
       "label": "Send Email",
-      "id": "send-email",
       "icon": "fas fa-envelope"
     },
     {
       "label": "Call",
-      "id": "call",
       "icon": "fas fa-phone"
     },
     {
       "label": "View LinkedIn",
-      "id": "view-linkedin",
       "icon": "fab fa-linkedin"
     }
   ],
@@ -105,6 +92,10 @@
     "variant": "basic",
     "complexity": "low",
     "useCase": "Simple contact card for basic personal and professional information",
-    "features": ["contact details", "professional info", "social links"]
+    "features": [
+      "contact details",
+      "professional info",
+      "social links"
+    ]
   }
 }

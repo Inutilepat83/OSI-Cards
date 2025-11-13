@@ -1,38 +1,32 @@
 {
-  "id": "basic-product-info",
   "cardTitle": "CloudSync Pro",
   "cardSubtitle": "File Synchronization Software",
   "cardType": "product",
   "description": "Basic product information card with essential specifications and pricing",
   "sections": [
     {
-      "id": "product-overview",
       "title": "Product Overview",
       "type": "info",
       "fields": [
         {
-          "id": "category",
           "label": "Category",
           "value": "Productivity Software",
           "type": "text",
           "icon": "fas fa-tag"
         },
         {
-          "id": "version",
           "label": "Current Version",
           "value": "v2.1.4",
           "type": "text",
           "icon": "fas fa-code-branch"
         },
         {
-          "id": "release-date",
           "label": "Release Date",
           "value": "2024-03-15",
           "type": "date",
           "icon": "fas fa-calendar"
         },
         {
-          "id": "platform",
           "label": "Platform",
           "value": "Cross-platform (Windows, macOS, Linux)",
           "type": "text",
@@ -41,26 +35,22 @@
       ]
     },
     {
-      "id": "pricing",
       "title": "Pricing Information",
       "type": "info",
       "fields": [
         {
-          "id": "price",
           "label": "Price",
           "value": 29.99,
           "type": "currency",
           "icon": "fas fa-dollar-sign"
         },
         {
-          "id": "billing",
           "label": "Billing Cycle",
           "value": "Monthly subscription",
           "type": "text",
           "icon": "fas fa-calendar-alt"
         },
         {
-          "id": "trial",
           "label": "Free Trial",
           "value": "14 days",
           "type": "text",
@@ -69,7 +59,6 @@
       ]
     },
     {
-      "id": "key-features",
       "title": "Key Features",
       "type": "list",
       "items": [
@@ -96,7 +85,6 @@
       ]
     },
     {
-      "id": "system-requirements",
       "title": "System Requirements",
       "type": "list",
       "items": [
@@ -126,22 +114,18 @@
   "actions": [
     {
       "label": "Download Free Trial",
-      "id": "download-trial",
       "icon": "fas fa-download"
     },
     {
       "label": "Purchase Now",
-      "id": "purchase",
       "icon": "fas fa-shopping-cart"
     },
     {
       "label": "View Documentation",
-      "id": "view-docs",
       "icon": "fas fa-book"
     },
     {
       "label": "Contact Sales",
-      "id": "contact-sales",
       "icon": "fas fa-envelope"
     }
   ],
@@ -150,6 +134,11 @@
     "variant": "basic",
     "complexity": "low",
     "useCase": "Simple product information display with specifications and pricing",
-    "features": ["product overview", "pricing info", "key features", "system requirements"]
+    "features": [
+      "product overview",
+      "pricing info",
+      "key features",
+      "system requirements"
+    ]
   }
 }

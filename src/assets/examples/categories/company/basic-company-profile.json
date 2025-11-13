@@ -1,38 +1,32 @@
 {
-  "id": "basic-company-profile",
   "cardTitle": "TechStart Solutions",
   "cardSubtitle": "Software Development Company",
   "cardType": "company",
   "description": "Basic company profile showcasing essential business information",
   "sections": [
     {
-      "id": "overview",
       "title": "Company Overview",
       "type": "info",
       "fields": [
         {
-          "id": "industry",
           "label": "Industry",
           "value": "Technology",
           "type": "text",
           "icon": "fas fa-industry"
         },
         {
-          "id": "founded",
           "label": "Founded",
           "value": "2020-01-15",
           "type": "date",
           "icon": "fas fa-calendar"
         },
         {
-          "id": "employees",
           "label": "Employees",
           "value": 45,
           "type": "number",
           "icon": "fas fa-users"
         },
         {
-          "id": "headquarters",
           "label": "Headquarters",
           "value": "Austin, TX",
           "type": "text",
@@ -41,12 +35,10 @@
       ]
     },
     {
-      "id": "contact",
       "title": "Contact Information",
       "type": "info",
       "fields": [
         {
-          "id": "website",
           "label": "Website",
           "value": "https://techstart.example.com",
           "type": "url",
@@ -54,7 +46,6 @@
           "clickable": true
         },
         {
-          "id": "email",
           "label": "Email",
           "value": "info@techstart.example.com",
           "type": "email",
@@ -62,7 +53,6 @@
           "clickable": true
         },
         {
-          "id": "phone",
           "label": "Phone",
           "value": "+1-512-555-0123",
           "type": "phone",
@@ -72,7 +62,6 @@
       ]
     },
     {
-      "id": "key-people",
       "title": "Key Personnel",
       "type": "list",
       "items": [
@@ -97,17 +86,14 @@
   "actions": [
     {
       "label": "View Website",
-      "id": "view-website",
       "icon": "fas fa-external-link-alt"
     },
     {
       "label": "Contact Sales",
-      "id": "contact-sales",
       "icon": "fas fa-envelope"
     },
     {
       "label": "Schedule Demo",
-      "id": "schedule-demo",
       "icon": "fas fa-calendar"
     }
   ],
@@ -116,6 +102,10 @@
     "variant": "basic",
     "complexity": "low",
     "useCase": "Simple company profile for basic business information display",
-    "features": ["info sections", "contact details", "key personnel list"]
+    "features": [
+      "info sections",
+      "contact details",
+      "key personnel list"
+    ]
   }
 }

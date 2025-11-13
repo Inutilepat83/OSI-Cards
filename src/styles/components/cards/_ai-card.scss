@@ -9,18 +9,37 @@
   height: 100%;
   overflow: hidden;
   border-radius: 12px; /* Match tilt-container radius exactly */
-  border: var(--card-border);
+  border: 2px solid rgba(255, 121, 0, 0.3); /* Thicker, more visible brand border */
   background: var(--card-section-bg); /* Theme-aware: grey-800 (night) or grey-50 (day) */
   padding: var(--card-padding);
-  box-shadow: none; /* No box-shadow - glow comes from parent drop-shadow */
+  /* Subtle card elevation - no orange glow */
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.08);
   transition:
     border-color 0.2s ease,
     background 0.28s ease;
+  
+  /* Enhanced text sharpness */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  
+  /* Force sharp text rendering on all child elements */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
 }
 
 .ai-card-surface:hover {
-  border-color: var(--card-hover-border);
+  border-color: rgba(255, 121, 0, 0.5); /* Stronger orange border on hover */
   background: var(--card-section-bg); /* Theme-aware: grey-800 (night) or grey-50 (day) */
+  /* Subtle shadow on hover - no orange glow */
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.15),
+    0 4px 8px rgba(0, 0, 0, 0.1);
   /* No transform - keep card stationary, only glow effect */
 }
 
@@ -30,12 +49,17 @@
   box-shadow: none !important; /* No shadows in fullscreen */
   background: var(--background); /* Use main background */
   max-height: none !important; /* Allow full height */
+  max-width: none !important; /* Allow full width */
+  width: 100% !important; /* Take full width */
   overflow: visible !important; /* Allow scrolling */
+  padding: 20px 24px !important; /* Compact padding */
   
   /* Disable all tilt effects */
   .tilt-container {
     transform: none !important;
     box-shadow: none !important;
+    width: 100% !important;
+    max-width: none !important;
   }
   
   .glow-container {
@@ -44,6 +68,19 @@
   
   .card-reflection {
     display: none !important;
+  }
+  
+  /* Compact header */
+  .ai-card-header {
+    padding-bottom: 16px !important;
+  }
+  
+  .ai-card-title {
+    font-size: 22px !important;
+  }
+  
+  .ai-card-subtitle {
+    font-size: 12px !important;
   }
 }
 
@@ -416,5 +453,59 @@
 
   .ai-card-surface:hover {
     transform: none !important;
+  }
+}
+
+/* Light theme overrides */
+:root[data-theme='day'] {
+  .ai-card-surface {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(255, 121, 0, 0.25); /* Brand border in light mode too */
+    box-shadow: 
+      0 4px 6px rgba(0, 0, 0, 0.08),
+      0 2px 4px rgba(0, 0, 0, 0.06);
+  }
+  
+  .ai-card-surface:hover {
+    background: rgba(255, 255, 255, 1);
+    border-color: rgba(255, 121, 0, 0.4);
+    /* Subtle shadow in light mode - no orange glow */
+    box-shadow: 
+      0 8px 16px rgba(0, 0, 0, 0.12),
+      0 4px 8px rgba(0, 0, 0, 0.08);
+  }
+  
+  .ai-card-surface--fullscreen {
+    background: #ffffff;
+    border-color: rgba(200, 200, 200, 0.4);
+  }
+  
+  .ai-card-title {
+    color: #1a1a1a;
+  }
+  
+  .ai-card-subtitle {
+    color: #6b7280;
+  }
+  
+  .ai-card-eyebrow {
+    color: #9ca3af;
+  }
+  
+  .ai-card-type-pill {
+    background: rgba(255, 121, 0, 0.08);
+    color: var(--primary);
+    border-color: rgba(255, 121, 0, 0.2);
+  }
+  
+  .ai-card-fullscreen-btn {
+    background: rgba(255, 121, 0, 0.06);
+    border-color: rgba(255, 121, 0, 0.25);
+    color: #1a1a1a;
+    
+    &:hover {
+      background: rgba(255, 121, 0, 0.12);
+      border-color: rgba(255, 121, 0, 0.4);
+    }
   }
 }

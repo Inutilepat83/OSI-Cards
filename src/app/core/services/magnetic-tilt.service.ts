@@ -14,7 +14,7 @@ export interface TiltCalculations {
   reflectionOpacity: number;
 }
 
-const MAX_LIFT_PX = 1; // Very subtle tilt
+const MAX_LIFT_PX = 0.5; // 50% reduced tilt - prevents blur
 const BASE_GLOW_BLUR = 12; // Reduced glow blur
 const MAX_GLOW_BLUR_OFFSET = 6; // Reduced glow blur range
 const BASE_GLOW_OPACITY = 0.12; // More subtle opacity
@@ -76,7 +76,7 @@ export class MagneticTiltService {
   }
 
   resetTilt(): void {
-    this.tiltCalculationsSubject.next({
+      this.tiltCalculationsSubject.next({
       rotateX: 0,
       rotateY: 0,
       glowBlur: BASE_GLOW_BLUR,

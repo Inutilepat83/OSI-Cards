@@ -1,45 +1,38 @@
 {
-  "id": "enhanced-product-catalog",
   "cardTitle": "QuantumEdge Router X7",
   "cardSubtitle": "Enterprise Networking Solution",
   "cardType": "product",
   "description": "Enhanced product catalog with comprehensive features, inventory tracking, and customer reviews",
   "sections": [
     {
-      "id": "product-details",
       "title": "Product Details",
       "type": "info",
       "fields": [
         {
-          "id": "sku",
           "label": "SKU",
           "value": "QER-X7-ENT-001",
           "type": "text",
           "icon": "fas fa-hashtag"
         },
         {
-          "id": "category",
           "label": "Category",
           "value": "Enterprise Networking",
           "type": "text",
           "icon": "fas fa-network-wired"
         },
         {
-          "id": "price",
           "label": "MSRP",
           "value": 2499.99,
           "type": "currency",
           "icon": "fas fa-dollar-sign"
         },
         {
-          "id": "warranty",
           "label": "Warranty",
           "value": "5 years hardware, 1 year software support",
           "type": "text",
           "icon": "fas fa-shield-alt"
         },
         {
-          "id": "availability",
           "label": "Availability Status",
           "value": "In Stock",
           "type": "status",
@@ -50,40 +43,34 @@
       ]
     },
     {
-      "id": "technical-specs",
       "title": "Technical Specifications",
       "type": "info",
       "fields": [
         {
-          "id": "throughput",
           "label": "Maximum Throughput",
           "value": "10 Gbps",
           "type": "text",
           "icon": "fas fa-tachometer-alt"
         },
         {
-          "id": "ports",
           "label": "Ethernet Ports",
           "value": 8,
           "type": "number",
           "icon": "fas fa-ethernet"
         },
         {
-          "id": "wireless",
           "label": "Wireless Standard",
           "value": "Wi-Fi 6E (802.11ax)",
           "type": "text",
           "icon": "fas fa-wifi"
         },
         {
-          "id": "security",
           "label": "Security Features",
           "value": "WPA3, Firewall, VPN support",
           "type": "text",
           "icon": "fas fa-lock"
         },
         {
-          "id": "power",
           "label": "Power Consumption",
           "value": "45W maximum",
           "type": "text",
@@ -92,7 +79,6 @@
       ]
     },
     {
-      "id": "inventory-status",
       "title": "Inventory Status",
       "description": "Current stock levels across warehouses",
       "type": "table",
@@ -151,7 +137,6 @@
       ]
     },
     {
-      "id": "product-features",
       "title": "Advanced Features",
       "type": "list",
       "items": [
@@ -188,13 +173,11 @@
       ]
     },
     {
-      "id": "customer-reviews",
       "title": "Customer Reviews",
       "description": "Recent customer feedback and ratings",
       "type": "metrics",
       "metrics": [
         {
-          "id": "overall-rating",
           "label": "Overall Rating",
           "value": 4.7,
           "format": "rating",
@@ -204,7 +187,6 @@
           "icon": "fas fa-star"
         },
         {
-          "id": "total-reviews",
           "label": "Total Reviews",
           "value": 2847,
           "format": "number",
@@ -214,7 +196,6 @@
           "icon": "fas fa-comments"
         },
         {
-          "id": "satisfaction-score",
           "label": "Satisfaction Score",
           "value": 94.2,
           "format": "percentage",
@@ -226,7 +207,6 @@
       ]
     },
     {
-      "id": "certifications",
       "title": "Certifications & Compliance",
       "type": "list",
       "items": [
@@ -256,32 +236,26 @@
   "actions": [
     {
       "label": "Add to Cart",
-      "id": "add-to-cart",
       "icon": "fas fa-shopping-cart"
     },
     {
       "label": "Request Quote",
-      "id": "request-quote",
       "icon": "fas fa-file-invoice-dollar"
     },
     {
       "label": "Download Datasheet",
-      "id": "download-datasheet",
       "icon": "fas fa-download"
     },
     {
       "label": "Schedule Demo",
-      "id": "schedule-demo",
       "icon": "fas fa-calendar"
     },
     {
       "label": "View Reviews",
-      "id": "view-reviews",
       "icon": "fas fa-star"
     },
     {
       "label": "Contact Technical Support",
-      "id": "contact-support",
       "icon": "fas fa-headset"
     }
   ],
@@ -290,6 +264,13 @@
     "variant": "enhanced",
     "complexity": "medium",
     "useCase": "Comprehensive product catalog with inventory, features, reviews, and certifications",
-    "features": ["product details", "technical specs", "inventory table", "advanced features", "customer metrics", "certifications"]
+    "features": [
+      "product details",
+      "technical specs",
+      "inventory table",
+      "advanced features",
+      "customer metrics",
+      "certifications"
+    ]
   }
 }

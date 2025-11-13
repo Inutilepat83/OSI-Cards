@@ -712,3 +712,177 @@
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   }
 }
+
+/* Light theme overrides */
+:root[data-theme='day'] {
+  /* Override all product section backgrounds */
+  .ai-section--product {
+    background: rgba(255, 255, 255, 0.85) !important;
+  }
+  
+  .product-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-color: rgba(200, 200, 200, 0.6) !important;
+  }
+  
+  .product-card__title {
+    color: #1a1a1a !important;
+    text-shadow: none !important;
+  }
+  
+  .product-card__subtitle {
+    color: #6b7280 !important;
+  }
+  
+  .product-card__description {
+    color: #4b5563 !important;
+  }
+  
+  .product-card__badge {
+    background: rgba(255, 121, 0, 0.08) !important;
+    color: var(--primary) !important;
+    border-color: rgba(255, 121, 0, 0.2) !important;
+  }
+  
+  .product-card__spotlight-heading {
+    color: #6b7280 !important;
+  }
+  
+  .product-entry {
+    background: rgba(250, 250, 250, 0.9) !important;
+    border-color: rgba(200, 200, 200, 0.5) !important;
+    
+    &__title {
+      color: #1a1a1a !important;
+    }
+    
+    &__content {
+      color: #6b7280 !important;
+    }
+    
+    &__description {
+      color: #6b7280 !important;
+    }
+  }
+  
+  .product-reference {
+    background: rgba(250, 250, 250, 0.9) !important;
+    border-color: rgba(200, 200, 200, 0.5) !important;
+    
+    &__company {
+      color: #1a1a1a !important;
+    }
+    
+    &__quote {
+      color: #4b5563 !important;
+    }
+    
+    &__testimonial {
+      color: #4b5563 !important;
+    }
+    
+    &__badge {
+      background: rgba(255, 121, 0, 0.08) !important;
+      color: var(--primary) !important;
+      border-color: rgba(255, 121, 0, 0.2) !important;
+    }
+  }
+  
+  .product-contact {
+    background: rgba(250, 250, 250, 0.9) !important;
+    border-color: rgba(200, 200, 200, 0.5) !important;
+    
+    &__name {
+      color: #1a1a1a !important;
+    }
+    
+    &__role {
+      color: #4b5563 !important;
+    }
+    
+    &__email {
+      color: #6b7280 !important;
+      
+      &:hover {
+        color: var(--primary) !important;
+      }
+    }
+    
+    &__link {
+      color: #6b7280 !important;
+      
+      &:hover {
+        color: var(--primary) !important;
+      }
+    }
+    
+    &__meta {
+      color: #6b7280 !important;
+    }
+    
+    &__avatar {
+      background: rgba(255, 121, 0, 0.1) !important;
+      color: var(--primary) !important;
+      border-color: rgba(255, 121, 0, 0.3) !important;
+    }
+  }
+  
+  /* Product summary styling for light mode */
+  .product-summary {
+    background: rgba(255, 245, 230, 0.6) !important; /* Light orange tint */
+    
+    &__metric {
+      &-value {
+        color: var(--primary) !important;
+      }
+      
+      &-label {
+        color: #6b7280 !important;
+      }
+    }
+  }
+  
+  .product-card__icon {
+    &--pricing {
+      background: rgba(34, 197, 94, 0.1) !important;
+      border-color: rgba(34, 197, 94, 0.3) !important;
+      color: rgb(34, 197, 94) !important;
+    }
+    
+    &--features {
+      background: rgba(59, 130, 246, 0.1) !important;
+      border-color: rgba(59, 130, 246, 0.3) !important;
+      color: rgb(59, 130, 246) !important;
+    }
+    
+    &--process {
+      background: rgba(168, 85, 247, 0.1) !important;
+      border-color: rgba(168, 85, 247, 0.3) !important;
+      color: rgb(168, 85, 247) !important;
+    }
+    
+    &--references {
+      background: rgba(255, 121, 0, 0.1) !important;
+      border-color: rgba(255, 121, 0, 0.3) !important;
+      color: var(--primary) !important;
+    }
+    
+    &--contacts {
+      background: rgba(250, 204, 21, 0.1) !important;
+      border-color: rgba(250, 204, 21, 0.3) !important;
+      color: rgb(250, 204, 21) !important;
+    }
+    
+    &--advantages {
+      background: rgba(251, 191, 36, 0.1) !important;
+      border-color: rgba(251, 191, 36, 0.3) !important;
+      color: rgb(251, 191, 36) !important;
+    }
+    
+    &--default {
+      background: rgba(255, 121, 0, 0.1) !important;
+      border-color: rgba(255, 121, 0, 0.3) !important;
+      color: var(--primary) !important;
+    }
+  }
+}

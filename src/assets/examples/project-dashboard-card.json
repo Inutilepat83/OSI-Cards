@@ -1,44 +1,37 @@
 {
-  "id": "project-dashboard-card",
   "cardTitle": "AI Platform Project",
   "cardSubtitle": "Q4 2024 Development Sprint",
   "cardType": "analytics",
   "sections": [
     {
-      "id": "project-info",
       "title": "Project Details",
       "type": "info",
       "fields": [
         {
-          "id": "manager",
           "label": "Project Manager",
           "value": "Sarah Johnson",
           "type": "text",
           "icon": "fas fa-user-tie"
         },
         {
-          "id": "team-size",
           "label": "Team Size",
           "value": 8,
           "type": "number",
           "icon": "fas fa-users"
         },
         {
-          "id": "budget",
           "label": "Budget",
           "value": 250000,
           "type": "currency",
           "icon": "fas fa-dollar-sign"
         },
         {
-          "id": "deadline",
           "label": "Deadline",
           "value": "2024-12-31",
           "type": "date",
           "icon": "fas fa-calendar-alt"
         },
         {
-          "id": "status",
           "label": "Status",
           "value": "On Track",
           "type": "status",
@@ -47,7 +40,6 @@
           "icon": "fas fa-check-circle"
         },
         {
-          "id": "priority",
           "label": "Priority",
           "value": "High",
           "type": "badge",
@@ -58,13 +50,11 @@
       ]
     },
     {
-      "id": "progress-tracking",
       "title": "Development Progress",
       "description": "Current sprint progress and milestone completion",
       "type": "progress",
       "progressItems": [
         {
-          "id": "backend",
           "label": "Backend Development",
           "value": 85,
           "max": 100,
@@ -73,7 +63,6 @@
           "showValue": true
         },
         {
-          "id": "frontend",
           "label": "Frontend Development",
           "value": 92,
           "max": 100,
@@ -82,7 +71,6 @@
           "showValue": true
         },
         {
-          "id": "testing",
           "label": "Testing & QA",
           "value": 65,
           "max": 100,
@@ -91,7 +79,6 @@
           "showValue": true
         },
         {
-          "id": "documentation",
           "label": "Documentation",
           "value": 45,
           "max": 100,
@@ -100,7 +87,6 @@
           "showValue": true
         },
         {
-          "id": "deployment",
           "label": "Deployment Preparation",
           "value": 30,
           "max": 100,
@@ -111,12 +97,10 @@
       ]
     },
     {
-      "id": "team-metrics",
       "title": "Team Performance",
       "type": "metrics",
       "metrics": [
         {
-          "id": "velocity",
           "label": "Sprint Velocity",
           "value": 42,
           "format": "number",
@@ -127,7 +111,6 @@
           "color": "#10b981"
         },
         {
-          "id": "burndown",
           "label": "Burndown Rate",
           "value": 78,
           "format": "percentage",
@@ -138,7 +121,6 @@
           "color": "#3b82f6"
         },
         {
-          "id": "bugs",
           "label": "Active Bugs",
           "value": 3,
           "format": "number",
@@ -149,7 +131,6 @@
           "color": "#f59e0b"
         },
         {
-          "id": "code-coverage",
           "label": "Code Coverage",
           "value": 87,
           "format": "percentage",
@@ -162,7 +143,6 @@
       ]
     },
     {
-      "id": "task-table",
       "title": "Current Sprint Tasks",
       "type": "table",
       "tableColumns": [
@@ -201,7 +181,6 @@
       ],
       "tableRows": [
         {
-          "id": "task-1",
           "task": "Implement user authentication",
           "assignee": "John Doe",
           "priority": "high",
@@ -209,7 +188,6 @@
           "due_date": "2024-09-15"
         },
         {
-          "id": "task-2",
           "task": "Design API endpoints",
           "assignee": "Jane Smith",
           "priority": "medium",
@@ -217,7 +195,6 @@
           "due_date": "2024-09-10"
         },
         {
-          "id": "task-3",
           "task": "Frontend component library",
           "assignee": "Mike Johnson",
           "priority": "high",
@@ -225,7 +202,6 @@
           "due_date": "2024-09-20"
         },
         {
-          "id": "task-4",
           "task": "Database optimization",
           "assignee": "Sarah Wilson",
           "priority": "low",
@@ -237,19 +213,16 @@
   ],
   "actions": [
     {
-      "id": "view-details",
       "label": "View Details",
       "icon": "fas fa-eye",
       "variant": "primary"
     },
     {
-      "id": "update-progress",
       "label": "Update Progress",
       "icon": "fas fa-edit",
       "variant": "secondary"
     },
     {
-      "id": "export-report",
       "label": "Export Report",
       "icon": "fas fa-download",
       "variant": "outline"

@@ -158,3 +158,47 @@
     }
   }
 }
+
+/* Light theme overrides */
+:root[data-theme='day'] {
+  .event-card {
+    background: rgba(250, 250, 250, 0.9) !important;
+    border-color: rgba(200, 200, 200, 0.5) !important;
+    
+    &__title {
+      color: #1a1a1a;
+    }
+    
+    &__description {
+      color: #6b7280;
+    }
+    
+    &__date, &__time {
+      color: #6b7280;
+    }
+    
+    &__badge {
+      background: rgba(255, 121, 0, 0.08) !important;
+      color: var(--primary) !important;
+      border-color: rgba(255, 121, 0, 0.2) !important;
+      
+      &.success, &.completed {
+        background: rgba(34, 197, 94, 0.1) !important;
+        color: rgb(34, 197, 94) !important;
+        border-color: rgba(34, 197, 94, 0.3) !important;
+      }
+      
+      &.pending, &.in-progress {
+        background: rgba(59, 130, 246, 0.1) !important;
+        color: rgb(59, 130, 246) !important;
+        border-color: rgba(59, 130, 246, 0.3) !important;
+      }
+      
+      &.cancelled, &.warning {
+        background: rgba(239, 68, 68, 0.1) !important;
+        color: rgb(239, 68, 68) !important;
+        border-color: rgba(239, 68, 68, 0.3) !important;
+      }
+    }
+  }
+}

@@ -11,7 +11,7 @@
   flex-direction: column;
   height: 100%;
   border-radius: 12px;
-  border: 1px solid rgba(255, 121, 0, 0.2);
+  border: 1px solid var(--color-gray-700); /* Dark grey border */
   background: rgba(255, 121, 0, 0.015);
   box-shadow:
     0 3px 15px rgba(0, 0, 0, 0.12),
@@ -23,8 +23,18 @@
               background 0.28s ease, 
               box-shadow 0.32s cubic-bezier(0.4, 0, 0.2, 1);
   padding: 22px 26px;
-  margin-bottom: 20px;
+  margin-bottom: 12px; /* Reduced from 20px for tighter spacing */
   backdrop-filter: blur(12px);
+  
+  /* Enhanced text sharpness */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  /* Force sharp text rendering on all child elements */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
 /* ✅ MAIN SECTION: Lighter background for most sections */
@@ -49,7 +59,7 @@
 }
 
 .ai-section:hover {
-  border-color: rgba(255, 121, 0, 0.3);
+  border-color: var(--color-gray-600); /* Lighter grey on hover */
   background: rgba(255, 121, 0, 0.02);
   box-shadow:
     0 12px 40px rgba(0, 0, 0, 0.18),
@@ -243,9 +253,10 @@
   .ai-section {
     padding: var(--spacing-3xl);
     border-radius: var(--radius-md);
-    margin-bottom: var(--section-gap-mobile);
+    margin-bottom: 10px; /* Consistent tight spacing on mobile */
     --section-padding: var(--spacing-3xl);
     --section-gap-internal: var(--spacing-lg);
+    border: 1px solid var(--color-gray-700); /* Consistent dark grey border */
   }
 
   .ai-section__header {
@@ -273,6 +284,8 @@
 @media (min-width: 640px) and (max-width: 1023px) {
   .ai-section {
     padding: var(--spacing-4xl);
+    margin-bottom: 12px; /* Consistent tight spacing on tablet */
+    border: 1px solid var(--color-gray-700); /* Consistent dark grey border */
     --section-padding: var(--spacing-4xl);
     --section-gap-internal: var(--spacing-xl);
   }
@@ -297,6 +310,8 @@
   .ai-section {
     --section-padding: var(--spacing-4xl);
     --section-gap-internal: var(--spacing-4xl);
+    margin-bottom: 12px; /* Consistent tight spacing on desktop */
+    border: 1px solid var(--color-gray-700); /* Consistent dark grey border */
   }
 }
 
@@ -356,4 +371,97 @@
 
 .ai-section--quotation {
   --section-accent: var(--section-accent-quotation, var(--accent));
+}
+
+/* Fullscreen mode - ultra compact for all sections */
+.ai-card-surface--fullscreen {
+  .ai-section {
+    padding: 14px 18px !important;
+    margin-bottom: 8px !important;
+    --section-padding: 12px !important;
+    --section-gap-internal: 10px !important;
+  }
+  
+  .ai-section__header {
+    padding: 0 0 10px 0 !important;
+    gap: 8px !important;
+  }
+  
+  .ai-section__title {
+    font-size: 16px !important;
+    
+    &::before {
+      width: 32px !important;
+      height: 2px !important;
+      bottom: -8px !important;
+    }
+  }
+  
+  .ai-section__body {
+    gap: 10px !important;
+  }
+  
+  .ai-section__description {
+    font-size: 12px !important;
+    margin-top: 4px !important;
+  }
+}
+
+/* Light theme overrides for better visibility */
+:root[data-theme='day'] {
+  .ai-section {
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.06),
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      inset 0 1px 0 rgba(255, 121, 0, 0.04);
+  }
+  
+  .ai-section:hover {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.08),
+      0 2px 4px rgba(255, 121, 0, 0.08),
+      0 0 0 1px rgba(255, 121, 0, 0.2),
+      inset 0 1px 0 rgba(255, 121, 0, 0.08);
+  }
+  
+  .ai-section__title {
+    color: #1a1a1a;
+    text-shadow: none;
+    
+    &::before {
+      background: linear-gradient(90deg, 
+        rgba(255, 121, 0, 1), 
+        rgba(255, 121, 0, 0.5));
+      box-shadow: 0 2px 6px rgba(255, 121, 0, 0.25);
+    }
+    
+    &:hover {
+      color: var(--primary);
+      
+      &::before {
+        box-shadow: 0 3px 10px rgba(255, 121, 0, 0.35);
+      }
+    }
+  }
+  
+  .ai-section__description {
+    color: #4b5563;
+  }
+  
+  .ai-section:hover .ai-section__description {
+    color: #374151;
+  }
+  
+  .section-empty {
+    background: rgba(250, 250, 250, 0.8);
+    border-color: rgba(200, 200, 200, 0.4);
+    color: #6b7280;
+  }
+  
+  .section-empty:hover {
+    background: rgba(250, 250, 250, 1);
+    border-color: rgba(255, 121, 0, 0.3);
+  }
 }

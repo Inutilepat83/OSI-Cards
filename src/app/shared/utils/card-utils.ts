@@ -1,7 +1,5 @@
 import { AICardConfig, CardSection, CardField, CardItem, CardAction } from '../../models';
 
-type WithOptionalId<T> = T & { id?: string };
-
 /**
  * Recursively remove `id` properties from complex card payloads while preserving shape.
  */
@@ -27,79 +25,97 @@ export function removeAllIds<T>(value: T): T {
 }
 
 /**
- * Ensure card payloads include IDs where consumers expect them.
+ * Automatically generate IDs for cards, sections, fields, items, and actions that don't have them.
+ * This allows users to create cards without manually specifying IDs.
  */
 export function ensureCardIds(config: AICardConfig): AICardConfig {
-  const card: WithOptionalId<AICardConfig> = { ...config };
+  const card = { ...config };
 
+  // Auto-generate card ID if not provided
   if (!card.id) {
     card.id = generateId('card');
   }
 
+  // Auto-generate section IDs
   card.sections = card.sections?.map((section, index) => ensureSectionIds(section, index));
+  
+  // Auto-generate action IDs
   card.actions = card.actions?.map((action, index) => ensureActionIds(action, index));
 
-  return card as AICardConfig;
+  return card;
 }
 
 function ensureSectionIds(section: CardSection, sectionIndex: number): CardSection {
-  const nextSection: WithOptionalId<CardSection> = { ...section };
+  const nextSection = { ...section };
 
+  // Auto-generate section ID if not provided
   if (!nextSection.id) {
     nextSection.id = `section_${sectionIndex}`;
   }
 
+  // Auto-generate field IDs
   if (nextSection.fields) {
-    nextSection.fields = nextSection.fields.map((field, fieldIndex) => ensureFieldIds(field, sectionIndex, fieldIndex));
+    nextSection.fields = nextSection.fields.map((field, fieldIndex) => 
+      ensureFieldIds(field, sectionIndex, fieldIndex)
+    );
   }
 
+  // Auto-generate item IDs
   if (nextSection.items) {
-    nextSection.items = nextSection.items.map((item, itemIndex) => ensureItemIds(item, sectionIndex, itemIndex));
+    nextSection.items = nextSection.items.map((item, itemIndex) => 
+      ensureItemIds(item, sectionIndex, itemIndex)
+    );
   }
 
-  return nextSection as CardSection;
+  return nextSection;
 }
 
 function ensureFieldIds(field: CardField, sectionIndex: number, fieldIndex: number): CardField {
-  const nextField: WithOptionalId<CardField> = { ...field };
+  const nextField = { ...field };
 
+  // Auto-generate field ID if not provided
   if (!nextField.id) {
     nextField.id = `field_${sectionIndex}_${fieldIndex}`;
   }
 
+  // Clean up meta to avoid ID conflicts
   if (nextField.meta) {
     nextField.meta = removeAllIds(nextField.meta);
   }
 
-  return nextField as CardField;
+  return nextField;
 }
 
 function ensureItemIds(item: CardItem, sectionIndex: number, itemIndex: number): CardItem {
-  const nextItem: WithOptionalId<CardItem> = { ...item };
+  const nextItem = { ...item };
 
+  // Auto-generate item ID if not provided
   if (!nextItem.id) {
     nextItem.id = `item_${sectionIndex}_${itemIndex}`;
   }
 
+  // Clean up meta to avoid ID conflicts
   if (nextItem.meta) {
     nextItem.meta = removeAllIds(nextItem.meta);
   }
 
-  return nextItem as CardItem;
+  return nextItem;
 }
 
 function ensureActionIds(action: CardAction, actionIndex: number): CardAction {
-  const nextAction: WithOptionalId<CardAction> = { ...action };
+  const nextAction = { ...action };
 
+  // Auto-generate action ID if not provided
   if (!nextAction.id) {
     nextAction.id = `action_${actionIndex}`;
   }
 
+  // Clean up meta to avoid ID conflicts
   if (nextAction.meta) {
     nextAction.meta = removeAllIds(nextAction.meta);
   }
 
-  return nextAction as CardAction;
+  return nextAction;
 }
 
 function generateId(prefix: string): string {

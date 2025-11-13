@@ -23,8 +23,8 @@
   position: relative;
   border-radius: var(--card-border-radius);
   
-  /* Optimize rendering */
-  contain: layout style paint;
+  /* Don't use contain - it clips shadows */
+  /* contain: layout style paint; */
 }
 
 .tilt-container:hover {
@@ -44,8 +44,8 @@
   filter: none; /* Removed drop-shadow to match flat card design */
   transition: filter var(--glow-duration) var(--ease-out-smooth);
   
-  /* Optimize compositing */
-  contain: layout style paint;
+  /* Don't use contain - it clips shadows */
+  /* contain: layout style paint; */
 }
 
 .glow-container:hover {

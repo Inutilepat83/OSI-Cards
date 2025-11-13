@@ -1,18 +1,15 @@
 {
-  "id": "product-analytics-dashboard",
   "cardTitle": "AI Analytics Platform",
   "cardSubtitle": "Enterprise Business Intelligence Solution",
   "cardType": "product",
   "description": "Product analytics dashboard with comprehensive performance metrics, sales data, and market insights",
   "sections": [
     {
-      "id": "product-performance",
       "title": "Product Performance Overview",
       "description": "Key performance indicators for the current quarter",
       "type": "metrics",
       "metrics": [
         {
-          "id": "monthly-revenue",
           "label": "Monthly Recurring Revenue",
           "value": 2850000,
           "format": "currency",
@@ -22,7 +19,6 @@
           "icon": "fas fa-dollar-sign"
         },
         {
-          "id": "active-users",
           "label": "Active Users",
           "value": 125000,
           "format": "number",
@@ -32,7 +28,6 @@
           "icon": "fas fa-users"
         },
         {
-          "id": "customer-retention",
           "label": "Customer Retention Rate",
           "value": 94.2,
           "format": "percentage",
@@ -42,7 +37,6 @@
           "icon": "fas fa-user-check"
         },
         {
-          "id": "market-share",
           "label": "Market Share",
           "value": 23.7,
           "format": "percentage",
@@ -52,7 +46,6 @@
           "icon": "fas fa-chart-pie"
         },
         {
-          "id": "net-promoter-score",
           "label": "Net Promoter Score",
           "value": 68,
           "format": "number",
@@ -62,7 +55,6 @@
           "icon": "fas fa-star"
         },
         {
-          "id": "support-tickets",
           "label": "Avg Support Response Time",
           "value": 2.3,
           "format": "number",
@@ -74,7 +66,6 @@
       ]
     },
     {
-      "id": "sales-performance",
       "title": "Sales Performance by Region",
       "description": "Quarterly sales breakdown and growth trends",
       "type": "table",
@@ -145,13 +136,11 @@
       ]
     },
     {
-      "id": "feature-adoption",
       "title": "Feature Adoption Trends",
       "description": "Usage statistics for key product features",
       "type": "progress",
       "progressItems": [
         {
-          "id": "advanced-analytics",
           "label": "Advanced Analytics Dashboard",
           "value": 78,
           "max": 100,
@@ -161,7 +150,6 @@
           "description": "78% of customers actively using advanced analytics features"
         },
         {
-          "id": "predictive-modeling",
           "label": "Predictive Modeling Engine",
           "value": 65,
           "max": 100,
@@ -171,7 +159,6 @@
           "description": "65% adoption rate for AI-powered predictive modeling"
         },
         {
-          "id": "real-time-alerts",
           "label": "Real-time Alert System",
           "value": 89,
           "max": 100,
@@ -181,7 +168,6 @@
           "description": "89% of users have configured real-time alerts"
         },
         {
-          "id": "api-integration",
           "label": "API Integration Tools",
           "value": 54,
           "max": 100,
@@ -191,7 +177,6 @@
           "description": "54% of customers using API integrations"
         },
         {
-          "id": "mobile-app",
           "label": "Mobile Application",
           "value": 71,
           "max": 100,
@@ -201,7 +186,6 @@
           "description": "71% of users actively using mobile app features"
         },
         {
-          "id": "data-connectors",
           "label": "Third-party Data Connectors",
           "value": 43,
           "max": 100,
@@ -213,7 +197,6 @@
       ]
     },
     {
-      "id": "customer-segmentation",
       "title": "Customer Segmentation Analysis",
       "description": "Revenue breakdown by customer segments",
       "type": "table",
@@ -285,13 +268,11 @@
       ]
     },
     {
-      "id": "product-roadmap",
       "title": "Product Development Roadmap",
       "description": "Upcoming features and product enhancements",
       "type": "timeline",
       "events": [
         {
-          "id": "q4-2024",
           "title": "Q4 2024 Release",
           "description": "Advanced ML model marketplace and enhanced data connectors",
           "date": "2024-10-15",
@@ -299,7 +280,6 @@
           "status": "in-progress"
         },
         {
-          "id": "q1-2025",
           "title": "Q1 2025 Release",
           "description": "Real-time collaboration features and improved mobile experience",
           "date": "2025-01-20",
@@ -307,7 +287,6 @@
           "status": "planned"
         },
         {
-          "id": "q2-2025",
           "title": "Q2 2025 Release",
           "description": "AI-powered automated insights and predictive recommendations",
           "date": "2025-04-10",
@@ -315,7 +294,6 @@
           "status": "planned"
         },
         {
-          "id": "q3-2025",
           "title": "Q3 2025 Release",
           "description": "Enterprise-grade security enhancements and compliance features",
           "date": "2025-07-15",
@@ -323,7 +301,6 @@
           "status": "planned"
         },
         {
-          "id": "q4-2025",
           "title": "Q4 2025 Release",
           "description": "Global expansion with multi-language support and regional features",
           "date": "2025-10-20",
@@ -333,34 +310,29 @@
       ]
     },
     {
-      "id": "competitive-analysis",
       "title": "Competitive Intelligence",
       "description": "Market position and competitor analysis",
       "type": "info",
       "fields": [
         {
-          "id": "market-position",
           "label": "Market Position",
           "value": "#2 in AI Analytics Platforms",
           "type": "text",
           "icon": "fas fa-trophy"
         },
         {
-          "id": "competitive-advantage",
           "label": "Key Competitive Advantages",
           "value": "Superior AI accuracy, ease of use, comprehensive feature set",
           "type": "text",
           "icon": "fas fa-star"
         },
         {
-          "id": "price-positioning",
           "label": "Price Positioning",
           "value": "Premium tier with enterprise features",
           "type": "text",
           "icon": "fas fa-dollar-sign"
         },
         {
-          "id": "customer-satisfaction",
           "label": "Customer Satisfaction",
           "value": "4.8/5 average rating across 2,847 reviews",
           "type": "text",
@@ -372,32 +344,26 @@
   "actions": [
     {
       "label": "View Full Analytics",
-      "id": "view-analytics",
       "icon": "fas fa-chart-bar"
     },
     {
       "label": "Download Sales Report",
-      "id": "download-report",
       "icon": "fas fa-download"
     },
     {
       "label": "Schedule Product Demo",
-      "id": "schedule-demo",
       "icon": "fas fa-calendar"
     },
     {
       "label": "Contact Product Team",
-      "id": "contact-team",
       "icon": "fas fa-envelope"
     },
     {
       "label": "View Roadmap",
-      "id": "view-roadmap",
       "icon": "fas fa-map-marked-alt"
     },
     {
       "label": "Request Custom Features",
-      "id": "request-features",
       "icon": "fas fa-plus"
     }
   ],
@@ -406,6 +372,13 @@
     "variant": "analytics",
     "complexity": "high",
     "useCase": "Comprehensive product analytics dashboard with performance metrics, sales data, and market insights",
-    "features": ["performance metrics", "sales table", "feature adoption progress", "customer segmentation", "product roadmap timeline", "competitive analysis"]
+    "features": [
+      "performance metrics",
+      "sales table",
+      "feature adoption progress",
+      "customer segmentation",
+      "product roadmap timeline",
+      "competitive analysis"
+    ]
   }
 }

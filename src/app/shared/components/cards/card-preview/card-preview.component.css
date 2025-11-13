@@ -59,6 +59,7 @@
   gap: 1.5rem;
   border-radius: 1rem;
   padding: 0.75rem;
+  width: 100%; /* Ensure full width */
 }
 
 .preview-body app-ai-card-renderer {

@@ -1,38 +1,32 @@
 {
-  "id": "basic-opportunity-profile",
   "cardTitle": "Enterprise Software Deal",
   "cardSubtitle": "Technology Modernization Project",
   "cardType": "opportunity",
   "description": "Basic opportunity profile with key deal information and status tracking",
   "sections": [
     {
-      "id": "deal-overview",
       "title": "Deal Overview",
       "type": "info",
       "fields": [
         {
-          "id": "deal-value",
           "label": "Deal Value",
           "value": 750000,
           "type": "currency",
           "icon": "fas fa-dollar-sign"
         },
         {
-          "id": "probability",
           "label": "Win Probability",
           "value": 65,
           "type": "percentage",
           "icon": "fas fa-percentage"
         },
         {
-          "id": "expected-close",
           "label": "Expected Close Date",
           "value": "2024-08-15",
           "type": "date",
           "icon": "fas fa-calendar"
         },
         {
-          "id": "deal-stage",
           "label": "Current Stage",
           "value": "Proposal",
           "type": "status",
@@ -43,13 +37,11 @@
       ]
     },
     {
-      "id": "opportunity-metrics",
       "title": "Opportunity Metrics",
       "description": "Key metrics for opportunity evaluation and tracking",
       "type": "metrics",
       "metrics": [
         {
-          "id": "weighted-value",
           "label": "Weighted Value",
           "value": 487500,
           "format": "currency",
@@ -59,7 +51,6 @@
           "icon": "fas fa-balance-scale"
         },
         {
-          "id": "days-in-stage",
           "label": "Days in Current Stage",
           "value": 23,
           "format": "number",
@@ -69,7 +60,6 @@
           "icon": "fas fa-clock"
         },
         {
-          "id": "competition-level",
           "label": "Competition Level",
           "value": 3,
           "format": "rating",
@@ -79,7 +69,6 @@
           "icon": "fas fa-users"
         },
         {
-          "id": "decision-makers",
           "label": "Key Decision Makers",
           "value": 5,
           "format": "number",
@@ -89,7 +78,6 @@
           "icon": "fas fa-user-tie"
         },
         {
-          "id": "budget-approval",
           "label": "Budget Approval Status",
           "value": 80,
           "format": "percentage",
@@ -99,7 +87,6 @@
           "icon": "fas fa-check-circle"
         },
         {
-          "id": "technical-fit",
           "label": "Technical Fit Score",
           "value": 4.2,
           "format": "rating",
@@ -111,7 +98,6 @@
       ]
     },
     {
-      "id": "deal-progress",
       "title": "Deal Progress & Milestones",
       "description": "Key milestones and progress tracking for the opportunity",
       "type": "table",
@@ -200,7 +186,6 @@
       ]
     },
     {
-      "id": "stakeholder-analysis",
       "title": "Stakeholder Analysis",
       "description": "Key stakeholders and their influence on the deal",
       "type": "table",
@@ -275,13 +260,11 @@
       ]
     },
     {
-      "id": "deal-progress-indicators",
       "title": "Deal Progress Indicators",
       "description": "Visual indicators of deal progress and health",
       "type": "progress",
       "progressItems": [
         {
-          "id": "overall-progress",
           "label": "Overall Deal Progress",
           "value": 75,
           "max": 100,
@@ -291,7 +274,6 @@
           "description": "75% through the sales process"
         },
         {
-          "id": "budget-commitment",
           "label": "Budget Commitment",
           "value": 80,
           "max": 100,
@@ -301,7 +283,6 @@
           "description": "80% budget approval confidence"
         },
         {
-          "id": "stakeholder-alignment",
           "label": "Stakeholder Alignment",
           "value": 85,
           "max": 100,
@@ -311,7 +292,6 @@
           "description": "85% stakeholder alignment achieved"
         },
         {
-          "id": "competition-position",
           "label": "Competitive Position",
           "value": 70,
           "max": 100,
@@ -321,7 +301,6 @@
           "description": "70% competitive advantage maintained"
         },
         {
-          "id": "technical-readiness",
           "label": "Technical Readiness",
           "value": 90,
           "max": 100,
@@ -331,7 +310,6 @@
           "description": "90% technical requirements met"
         },
         {
-          "id": "deal-velocity",
           "label": "Deal Velocity",
           "value": 65,
           "max": 100,
@@ -346,32 +324,26 @@
   "actions": [
     {
       "label": "Update Deal Status",
-      "id": "update-status",
       "icon": "fas fa-edit"
     },
     {
       "label": "Schedule Meeting",
-      "id": "schedule-meeting",
       "icon": "fas fa-calendar-plus"
     },
     {
       "label": "Send Proposal",
-      "id": "send-proposal",
       "icon": "fas fa-paper-plane"
     },
     {
       "label": "View Contact Details",
-      "id": "contact-details",
       "icon": "fas fa-address-book"
     },
     {
       "label": "Generate Report",
-      "id": "generate-report",
       "icon": "fas fa-file-alt"
     },
     {
       "label": "Add Note",
-      "id": "add-note",
       "icon": "fas fa-sticky-note"
     }
   ],
@@ -380,6 +352,12 @@
     "variant": "basic",
     "complexity": "medium",
     "useCase": "Basic opportunity tracking with deal progress, stakeholder analysis, and key metrics",
-    "features": ["deal overview", "opportunity metrics", "deal progress table", "stakeholder analysis", "progress indicators"]
+    "features": [
+      "deal overview",
+      "opportunity metrics",
+      "deal progress table",
+      "stakeholder analysis",
+      "progress indicators"
+    ]
   }
 }

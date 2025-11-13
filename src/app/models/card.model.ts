@@ -21,7 +21,7 @@ export interface AICardConfig {
 }
 
 export interface CardSection {
-  id: string;
+  id?: string;
   title: string;
   type:
     | 'info'
@@ -67,7 +67,7 @@ export interface CardSection {
 }
 
 export interface CardField {
-  id: string;
+  id?: string;
   label?: string;
   title?: string;
   value?: string | number | boolean | null;
@@ -125,7 +125,7 @@ export interface CardField {
 }
 
 export interface CardItem {
-  id: string;
+  id?: string;
   title: string;
   description?: string;
   icon?: string;
@@ -135,7 +135,7 @@ export interface CardItem {
 }
 
 export interface CardAction {
-  id: string;
+  id?: string;
   label: string;
   type?: 'primary' | 'secondary';
   icon?: string;
@@ -159,13 +159,13 @@ export class CardTypeGuards {
   static isCardSection(obj: unknown): obj is CardSection {
     if (!obj || typeof obj !== 'object') return false;
     const section = obj as Record<string, unknown>;
-    return typeof section['id'] === 'string' && typeof section['title'] === 'string' && typeof section['type'] === 'string';
+    return typeof section['title'] === 'string' && typeof section['type'] === 'string';
   }
 
   static isCardField(obj: unknown): obj is CardField {
     if (!obj || typeof obj !== 'object') return false;
-    const field = obj as Record<string, unknown>;
-    return typeof field['id'] === 'string';
+    // CardField can have any properties, just needs to be an object
+    return true;
   }
 }
 
@@ -195,6 +195,29 @@ export class CardUtils {
     return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
   }
 
+  static ensureSectionIds(sections: CardSection[]): CardSection[] {
+    return sections.map((section, sectionIndex) => ({
+      ...section,
+      id: section.id || this.generateId(`section_${sectionIndex}`),
+      fields: section.fields ? this.ensureFieldIds(section.fields, sectionIndex) : undefined,
+      items: section.items ? this.ensureItemIds(section.items, sectionIndex) : undefined
+    }));
+  }
+
+  static ensureFieldIds(fields: CardField[], sectionIndex: number): CardField[] {
+    return fields.map((field, fieldIndex) => ({
+      ...field,
+      id: field.id || this.generateId(`field_${sectionIndex}_${fieldIndex}`)
+    }));
+  }
+
+  static ensureItemIds(items: CardItem[], sectionIndex: number): CardItem[] {
+    return items.map((item, itemIndex) => ({
+      ...item,
+      id: item.id || this.generateId(`item_${sectionIndex}_${itemIndex}`)
+    }));
+  }
+
   static sanitizeCardConfig(config: unknown): AICardConfig | null {
     if (!CardTypeGuards.isAICardConfig(config)) {
       return null;
@@ -204,7 +227,7 @@ export class CardUtils {
       ...config,
       cardTitle: this.safeString(config.cardTitle, 200),
       cardSubtitle: config.cardSubtitle ? this.safeString(config.cardSubtitle, 500) : undefined,
-      sections: config.sections.filter(CardTypeGuards.isCardSection),
+      sections: this.ensureSectionIds(config.sections.filter(CardTypeGuards.isCardSection)),
       actions: config.actions?.map((action) => ({ ...action, id: action.id ?? this.generateId('action') }))
     };
   }

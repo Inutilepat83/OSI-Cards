@@ -11,28 +11,43 @@
       "count": 3,
       "examples": [
         {
-          "id": "basic-company-profile",
           "title": "Basic Company Profile",
           "file": "basic-company-profile.json",
           "complexity": "basic",
           "description": "Essential company information with key metrics",
-          "features": ["company overview", "financial metrics", "contact information", "basic progress tracking"]
+          "features": [
+            "company overview",
+            "financial metrics",
+            "contact information",
+            "basic progress tracking"
+          ]
         },
         {
-          "id": "enhanced-company-profile",
           "title": "Enhanced Company Profile",
           "file": "enhanced-company-profile.json",
           "complexity": "medium",
           "description": "Comprehensive company analysis with market positioning",
-          "features": ["detailed company info", "market analysis", "competitive landscape", "financial performance", "strategic insights"]
+          "features": [
+            "detailed company info",
+            "market analysis",
+            "competitive landscape",
+            "financial performance",
+            "strategic insights"
+          ]
         },
         {
-          "id": "enterprise-company-dashboard",
           "title": "Enterprise Company Dashboard",
           "file": "enterprise-company-dashboard.json",
           "complexity": "high",
           "description": "Executive-level company intelligence and strategic analysis",
-          "features": ["executive summary", "market intelligence", "strategic analysis", "risk assessment", "predictive insights", "enterprise roadmap"]
+          "features": [
+            "executive summary",
+            "market intelligence",
+            "strategic analysis",
+            "risk assessment",
+            "predictive insights",
+            "enterprise roadmap"
+          ]
         }
       ]
     },
@@ -42,28 +57,43 @@
       "count": 3,
       "examples": [
         {
-          "id": "basic-contact-info",
           "title": "Basic Contact Information",
           "file": "basic-contact-info.json",
           "complexity": "basic",
           "description": "Essential contact details and basic relationship tracking",
-          "features": ["personal information", "contact details", "relationship status", "basic interaction history"]
+          "features": [
+            "personal information",
+            "contact details",
+            "relationship status",
+            "basic interaction history"
+          ]
         },
         {
-          "id": "professional-contact",
           "title": "Professional Contact Profile",
           "file": "professional-contact.json",
           "complexity": "medium",
           "description": "Professional contact with career and relationship insights",
-          "features": ["professional background", "career progression", "relationship mapping", "communication preferences", "engagement metrics"]
+          "features": [
+            "professional background",
+            "career progression",
+            "relationship mapping",
+            "communication preferences",
+            "engagement metrics"
+          ]
         },
         {
-          "id": "executive-contact",
           "title": "Executive Contact Dashboard",
           "file": "executive-contact.json",
           "complexity": "high",
           "description": "Executive-level contact management with strategic insights",
-          "features": ["executive profile", "strategic influence", "decision-making patterns", "relationship ecosystem", "predictive engagement", "executive roadmap"]
+          "features": [
+            "executive profile",
+            "strategic influence",
+            "decision-making patterns",
+            "relationship ecosystem",
+            "predictive engagement",
+            "executive roadmap"
+          ]
         }
       ]
     },
@@ -73,28 +103,43 @@
       "count": 3,
       "examples": [
         {
-          "id": "basic-product-info",
           "title": "Basic Product Information",
           "file": "basic-product-info.json",
           "complexity": "basic",
           "description": "Essential product details and basic performance metrics",
-          "features": ["product overview", "pricing information", "basic specifications", "performance metrics"]
+          "features": [
+            "product overview",
+            "pricing information",
+            "basic specifications",
+            "performance metrics"
+          ]
         },
         {
-          "id": "enhanced-product-catalog",
           "title": "Enhanced Product Catalog",
           "file": "enhanced-product-catalog.json",
           "complexity": "medium",
           "description": "Comprehensive product catalog with market analysis",
-          "features": ["detailed product info", "market positioning", "competitive analysis", "customer feedback", "performance analytics"]
+          "features": [
+            "detailed product info",
+            "market positioning",
+            "competitive analysis",
+            "customer feedback",
+            "performance analytics"
+          ]
         },
         {
-          "id": "product-analytics-dashboard",
           "title": "Product Analytics Dashboard",
           "file": "product-analytics-dashboard.json",
           "complexity": "high",
           "description": "Advanced product analytics with predictive insights",
-          "features": ["product performance", "market analysis", "predictive forecasting", "customer segmentation", "strategic roadmap", "risk assessment"]
+          "features": [
+            "product performance",
+            "market analysis",
+            "predictive forecasting",
+            "customer segmentation",
+            "strategic roadmap",
+            "risk assessment"
+          ]
         }
       ]
     },
@@ -104,28 +149,43 @@
       "count": 3,
       "examples": [
         {
-          "id": "basic-project-status",
           "title": "Basic Project Status",
           "file": "basic-project-status.json",
           "complexity": "basic",
           "description": "Essential project tracking with milestones and status",
-          "features": ["project overview", "milestone tracking", "resource allocation", "basic progress indicators"]
+          "features": [
+            "project overview",
+            "milestone tracking",
+            "resource allocation",
+            "basic progress indicators"
+          ]
         },
         {
-          "id": "project-management-dashboard",
           "title": "Project Management Dashboard",
           "file": "project-management-dashboard.json",
           "complexity": "medium",
           "description": "Comprehensive project management with team coordination",
-          "features": ["project metrics", "team management", "resource planning", "risk monitoring", "communication tracking"]
+          "features": [
+            "project metrics",
+            "team management",
+            "resource planning",
+            "risk monitoring",
+            "communication tracking"
+          ]
         },
         {
-          "id": "project-analytics",
           "title": "Project Analytics Dashboard",
           "file": "project-analytics.json",
           "complexity": "high",
           "description": "Advanced project analytics with predictive insights",
-          "features": ["performance analytics", "budget analysis", "risk assessment", "predictive forecasting", "milestone analysis", "strategic insights"]
+          "features": [
+            "performance analytics",
+            "budget analysis",
+            "risk assessment",
+            "predictive forecasting",
+            "milestone analysis",
+            "strategic insights"
+          ]
         }
       ]
     },
@@ -135,28 +195,46 @@
       "count": 3,
       "examples": [
         {
-          "id": "basic-analytics-dashboard",
           "title": "Basic Analytics Dashboard",
           "file": "basic-analytics-dashboard.json",
           "complexity": "basic",
           "description": "Essential business metrics and KPI tracking",
-          "features": ["kpi overview", "sales metrics", "monthly trends", "channel performance", "progress indicators"]
+          "features": [
+            "kpi overview",
+            "sales metrics",
+            "monthly trends",
+            "channel performance",
+            "progress indicators"
+          ]
         },
         {
-          "id": "enhanced-analytics-dashboard",
           "title": "Enhanced Analytics Dashboard",
           "file": "enhanced-analytics-dashboard.json",
           "complexity": "medium",
           "description": "Advanced customer analytics with segmentation",
-          "features": ["customer overview", "behavior metrics", "segmentation analysis", "behavior patterns", "predictive insights", "customer journey"]
+          "features": [
+            "customer overview",
+            "behavior metrics",
+            "segmentation analysis",
+            "behavior patterns",
+            "predictive insights",
+            "customer journey"
+          ]
         },
         {
-          "id": "analytics-dashboard",
           "title": "Business Intelligence Center",
           "file": "analytics-dashboard.json",
           "complexity": "high",
           "description": "Enterprise BI platform with real-time monitoring",
-          "features": ["executive summary", "kpi dashboard", "performance analysis", "predictive analytics", "real-time monitoring", "strategic roadmap", "risk intelligence"]
+          "features": [
+            "executive summary",
+            "kpi dashboard",
+            "performance analysis",
+            "predictive analytics",
+            "real-time monitoring",
+            "strategic roadmap",
+            "risk intelligence"
+          ]
         }
       ]
     },
@@ -166,28 +244,47 @@
       "count": 3,
       "examples": [
         {
-          "id": "basic-opportunity-profile",
           "title": "Basic Opportunity Profile",
           "file": "basic-opportunity-profile.json",
           "complexity": "basic",
           "description": "Essential deal tracking with stakeholder analysis",
-          "features": ["deal overview", "opportunity metrics", "deal progress", "stakeholder analysis", "progress indicators"]
+          "features": [
+            "deal overview",
+            "opportunity metrics",
+            "deal progress",
+            "stakeholder analysis",
+            "progress indicators"
+          ]
         },
         {
-          "id": "enhanced-opportunity-profile",
           "title": "Enhanced Opportunity Profile",
           "file": "enhanced-opportunity-profile.json",
           "complexity": "medium",
           "description": "Advanced opportunity management with competitive intelligence",
-          "features": ["strategic overview", "advanced metrics", "competitive landscape", "value proposition analysis", "predictive insights", "strategic roadmap", "risk mitigation"]
+          "features": [
+            "strategic overview",
+            "advanced metrics",
+            "competitive landscape",
+            "value proposition analysis",
+            "predictive insights",
+            "strategic roadmap",
+            "risk mitigation"
+          ]
         },
         {
-          "id": "enterprise-opportunity-dashboard",
           "title": "Enterprise Opportunity Dashboard",
           "file": "enterprise-opportunity-dashboard.json",
           "complexity": "high",
           "description": "Enterprise-level opportunity orchestration",
-          "features": ["enterprise overview", "enterprise metrics", "multi-dimensional analysis", "stakeholder ecosystem", "predictive analytics dashboard", "enterprise transformation roadmap", "enterprise risk management"]
+          "features": [
+            "enterprise overview",
+            "enterprise metrics",
+            "multi-dimensional analysis",
+            "stakeholder ecosystem",
+            "predictive analytics dashboard",
+            "enterprise transformation roadmap",
+            "enterprise risk management"
+          ]
         }
       ]
     }
@@ -196,17 +293,35 @@
     "basic": {
       "description": "Essential information and basic functionality",
       "count": 6,
-      "typicalFeatures": ["overview sections", "basic metrics", "essential information", "simple progress tracking"]
+      "typicalFeatures": [
+        "overview sections",
+        "basic metrics",
+        "essential information",
+        "simple progress tracking"
+      ]
     },
     "medium": {
       "description": "Enhanced functionality with analysis and insights",
       "count": 6,
-      "typicalFeatures": ["detailed analysis", "advanced metrics", "trend analysis", "relationship mapping", "strategic insights"]
+      "typicalFeatures": [
+        "detailed analysis",
+        "advanced metrics",
+        "trend analysis",
+        "relationship mapping",
+        "strategic insights"
+      ]
     },
     "high": {
       "description": "Enterprise-level functionality with predictive analytics",
       "count": 6,
-      "typicalFeatures": ["predictive analytics", "enterprise dashboards", "strategic roadmaps", "risk management", "executive insights", "comprehensive orchestration"]
+      "typicalFeatures": [
+        "predictive analytics",
+        "enterprise dashboards",
+        "strategic roadmaps",
+        "risk management",
+        "executive insights",
+        "comprehensive orchestration"
+      ]
     }
   },
   "sectionTypes": {

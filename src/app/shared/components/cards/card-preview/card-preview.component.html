@@ -20,7 +20,8 @@
           [cardConfig]="generatedCard"
           [isFullscreen]="isFullscreen"
           (cardInteraction)="onCardInteraction($event)"
-          (fieldInteraction)="onFieldInteraction($event)">
+          (fieldInteraction)="onFieldInteraction($event)"
+          (fullscreenToggle)="onFullscreenToggle($event)">
         </app-ai-card-renderer>
       </ng-container>
     </ng-template>

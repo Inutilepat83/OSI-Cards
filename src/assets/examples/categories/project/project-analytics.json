@@ -1,31 +1,26 @@
 {
-  "id": "project-analytics",
   "cardTitle": "Digital Transformation Initiative",
   "cardSubtitle": "Enterprise-wide Technology Modernization",
   "cardType": "project",
   "description": "Project analytics dashboard with comprehensive performance metrics, risk analysis, and forecasting insights",
   "sections": [
     {
-      "id": "executive-summary",
       "title": "Executive Project Summary",
       "type": "info",
       "fields": [
         {
-          "id": "project-value",
           "label": "Total Project Value",
           "value": 12500000,
           "type": "currency",
           "icon": "fas fa-dollar-sign"
         },
         {
-          "id": "expected-roi",
           "label": "Expected ROI",
           "value": 340,
           "type": "percentage",
           "icon": "fas fa-chart-line"
         },
         {
-          "id": "timeline-status",
           "label": "Timeline Status",
           "value": "On Schedule",
           "type": "status",
@@ -34,7 +29,6 @@
           "icon": "fas fa-clock"
         },
         {
-          "id": "overall-health",
           "label": "Project Health",
           "value": "Green",
           "type": "status",
@@ -45,13 +39,11 @@
       ]
     },
     {
-      "id": "performance-analytics",
       "title": "Performance Analytics",
       "description": "Comprehensive project performance metrics and KPIs",
       "type": "metrics",
       "metrics": [
         {
-          "id": "schedule-performance",
           "label": "Schedule Performance Index",
           "value": 1.02,
           "format": "number",
@@ -61,7 +53,6 @@
           "icon": "fas fa-calendar-check"
         },
         {
-          "id": "cost-performance",
           "label": "Cost Performance Index",
           "value": 0.98,
           "format": "number",
@@ -71,7 +62,6 @@
           "icon": "fas fa-dollar-sign"
         },
         {
-          "id": "earned-value",
           "label": "Earned Value",
           "value": 8750000,
           "format": "currency",
@@ -81,7 +71,6 @@
           "icon": "fas fa-chart-bar"
         },
         {
-          "id": "quality-metrics",
           "label": "Quality Compliance",
           "value": 96.7,
           "format": "percentage",
@@ -91,7 +80,6 @@
           "icon": "fas fa-award"
         },
         {
-          "id": "stakeholder-satisfaction",
           "label": "Stakeholder Satisfaction",
           "value": 4.3,
           "format": "rating",
@@ -101,7 +89,6 @@
           "icon": "fas fa-users"
         },
         {
-          "id": "risk-exposure",
           "label": "Risk Exposure Level",
           "value": 2.1,
           "format": "number",
@@ -113,7 +100,6 @@
       ]
     },
     {
-      "id": "budget-analysis",
       "title": "Budget Analysis & Forecasting",
       "description": "Detailed budget tracking and cost forecasting",
       "type": "table",
@@ -197,13 +183,12 @@
           "allocated": 800000,
           "spent": 120000,
           "remaining": 680000,
-          "variance": 85.0,
+          "variance": 85,
           "status": "Under Budget"
         }
       ]
     },
     {
-      "id": "risk-assessment",
       "title": "Risk Assessment Matrix",
       "description": "Critical risks and mitigation strategies",
       "type": "table",
@@ -280,13 +265,11 @@
       ]
     },
     {
-      "id": "predictive-forecasting",
       "title": "Predictive Forecasting",
       "description": "AI-powered project completion predictions and recommendations",
       "type": "progress",
       "progressItems": [
         {
-          "id": "completion-confidence",
           "label": "On-Time Completion Confidence",
           "value": 78,
           "max": 100,
@@ -296,7 +279,6 @@
           "description": "78% confidence of completing on original schedule"
         },
         {
-          "id": "budget-confidence",
           "label": "On-Budget Completion Confidence",
           "value": 65,
           "max": 100,
@@ -306,7 +288,6 @@
           "description": "65% confidence of completing within original budget"
         },
         {
-          "id": "quality-confidence",
           "label": "Quality Standards Confidence",
           "value": 89,
           "max": 100,
@@ -316,7 +297,6 @@
           "description": "89% confidence of meeting quality standards"
         },
         {
-          "id": "scope-confidence",
           "label": "Scope Stability Confidence",
           "value": 72,
           "max": 100,
@@ -326,7 +306,6 @@
           "description": "72% confidence of maintaining original scope"
         },
         {
-          "id": "resource-confidence",
           "label": "Resource Availability Confidence",
           "value": 81,
           "max": 100,
@@ -336,7 +315,6 @@
           "description": "81% confidence in resource availability"
         },
         {
-          "id": "stakeholder-confidence",
           "label": "Stakeholder Satisfaction Confidence",
           "value": 76,
           "max": 100,
@@ -348,7 +326,6 @@
       ]
     },
     {
-      "id": "milestone-analysis",
       "title": "Milestone Performance Analysis",
       "description": "Historical milestone completion and trend analysis",
       "type": "table",
@@ -438,33 +415,28 @@
       ]
     },
     {
-      "id": "strategic-insights",
       "title": "Strategic Insights & Recommendations",
       "type": "info",
       "fields": [
         {
-          "id": "bottleneck-analysis",
           "label": "Current Bottleneck",
           "value": "Integration testing phase requiring additional QA resources",
           "type": "text",
           "icon": "fas fa-exclamation-triangle"
         },
         {
-          "id": "optimization-opportunity",
           "label": "Optimization Opportunity",
           "value": "Parallel processing of development and testing phases",
           "type": "text",
           "icon": "fas fa-lightbulb"
         },
         {
-          "id": "risk-mitigation",
           "label": "Recommended Risk Mitigation",
           "value": "Increase contingency budget by 5% for vendor dependencies",
           "type": "text",
           "icon": "fas fa-shield-alt"
         },
         {
-          "id": "forecast-accuracy",
           "label": "Forecast Accuracy",
           "value": "92% accuracy in completion predictions",
           "type": "text",
@@ -473,13 +445,11 @@
       ]
     },
     {
-      "id": "project-roadmap",
       "title": "Strategic Project Roadmap",
       "description": "Long-term project phases and strategic objectives",
       "type": "timeline",
       "events": [
         {
-          "id": "phase-1-complete",
           "title": "Phase 1: Foundation Complete",
           "description": "Core infrastructure and basic functionality implemented",
           "date": "2024-06-30",
@@ -487,7 +457,6 @@
           "status": "completed"
         },
         {
-          "id": "phase-2-current",
           "title": "Phase 2: Integration & Testing",
           "description": "System integration, comprehensive testing, and user training",
           "date": "2024-09-30",
@@ -495,7 +464,6 @@
           "status": "in-progress"
         },
         {
-          "id": "phase-3-upcoming",
           "title": "Phase 3: Deployment & Optimization",
           "description": "Production deployment, performance optimization, and scaling",
           "date": "2024-12-31",
@@ -503,7 +471,6 @@
           "status": "planned"
         },
         {
-          "id": "phase-4-future",
           "title": "Phase 4: Advanced Features",
           "description": "AI enhancements, advanced analytics, and ecosystem expansion",
           "date": "2025-06-30",
@@ -511,7 +478,6 @@
           "status": "planned"
         },
         {
-          "id": "phase-5-vision",
           "title": "Phase 5: Industry Leadership",
           "description": "Market leadership position with innovative features and global presence",
           "date": "2026-12-31",
@@ -524,32 +490,26 @@
   "actions": [
     {
       "label": "Executive Dashboard",
-      "id": "exec-dashboard",
       "icon": "fas fa-chart-bar"
     },
     {
       "label": "Risk Management Portal",
-      "id": "risk-portal",
       "icon": "fas fa-exclamation-triangle"
     },
     {
       "label": "Forecasting Models",
-      "id": "forecasting-models",
       "icon": "fas fa-brain"
     },
     {
       "label": "Performance Reports",
-      "id": "performance-reports",
       "icon": "fas fa-file-pdf"
     },
     {
       "label": "Stakeholder Updates",
-      "id": "stakeholder-updates",
       "icon": "fas fa-users"
     },
     {
       "label": "Strategic Planning",
-      "id": "strategic-planning",
       "icon": "fas fa-map-marked-alt"
     }
   ],
@@ -558,6 +518,15 @@
     "variant": "analytics",
     "complexity": "high",
     "useCase": "Comprehensive project analytics with performance metrics, risk analysis, predictive forecasting, and strategic insights",
-    "features": ["executive summary", "performance analytics", "budget analysis table", "risk assessment matrix", "predictive forecasting", "milestone analysis", "strategic insights", "project roadmap"]
+    "features": [
+      "executive summary",
+      "performance analytics",
+      "budget analysis table",
+      "risk assessment matrix",
+      "predictive forecasting",
+      "milestone analysis",
+      "strategic insights",
+      "project roadmap"
+    ]
   }
 }

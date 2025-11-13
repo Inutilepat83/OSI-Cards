@@ -2,7 +2,7 @@ import { createAction, props } from '@ngrx/store';
 import { createReducer, on } from '@ngrx/store';
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { AICardConfig, CardType } from '../../models/card.model';
-import { ensureCardIds } from '../../shared/utils/card-utils';
+import { ensureCardIds, removeAllIds } from '../../shared/utils/card-utils';
 
 // ===== ENTITY ADAPTER =====
 
@@ -149,9 +149,11 @@ export const reducer = createReducer(
   on(generateCard, (state) => ({ ...state, isGenerating: true, error: null })),
   on(generateCardSuccess, (state, { card }) => {
     const cardWithId = ensureCardIds(card);
+    const cardWithoutIds = removeAllIds(card);
     return {
       ...cardsAdapter.upsertOne(cardWithId, state),
       currentCardId: cardWithId.id ?? null,
+      jsonInput: JSON.stringify(cardWithoutIds, null, 2),
       isGenerating: false,
     };
   }),
@@ -193,10 +195,11 @@ export const reducer = createReducer(
   on(loadTemplate, (state) => ({ ...state, loading: true })),
   on(loadTemplateSuccess, (state, { template }) => {
     const templateWithId = ensureCardIds(template);
+    const templateWithoutIds = removeAllIds(template);
     return {
       ...cardsAdapter.upsertOne(templateWithId, state),
       currentCardId: templateWithId.id ?? null,
-      jsonInput: JSON.stringify(template, null, 2),
+      jsonInput: JSON.stringify(templateWithoutIds, null, 2),
       loading: false,
     };
   }),

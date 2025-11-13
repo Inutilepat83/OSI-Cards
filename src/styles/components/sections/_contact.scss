@@ -3,96 +3,92 @@
 @import 'design-system';
 
 .contact-collection {
-  @include list-stack(12px);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px 14px; /* Tighter row and column gaps */
 }
 
 .contact-card {
   @include list-card;
-  align-items: flex-start;
-  // All styling now from centralized variables via @include list-card
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  padding: 16px 18px !important;
+  text-align: left !important;
+  gap: 10px !important;
+  
+  /* Remove left accent bar on hover */
+  &::before {
+    display: none !important;
+  }
 
   &__avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 2px solid rgba(255, 121, 0, 0.3);
-    background: var(--card-background);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    color: rgba(255, 121, 0, 0.9);
-    flex-shrink: 0;
-    font-size: var(--card-subtitle-font-size);
-    font-weight: var(--card-title-font-weight);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    box-shadow: var(--card-box-shadow);
-    transition: var(--card-transition);
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    &:hover {
-      transform: scale(1.08) rotate(3deg);
-      border-color: var(--card-border-hover);
-      box-shadow: var(--card-box-shadow-hover-lift);
-    }
+    display: none !important; /* Hide avatars for more compact design */
   }
 
   &__details {
     flex: 1;
     min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-2xl);
+    width: 100%;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   &__header {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100%;
   }
 
   &__name {
-    font-size: var(--card-title-font-size);
-    font-weight: var(--card-title-font-weight);
-    color: var(--card-text-primary);
-    letter-spacing: -0.015em;
-    line-height: 1.25;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    color: var(--card-text-primary) !important;
+    letter-spacing: -0.01em !important;
+    line-height: 1.4 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+    display: block !important;
   }
 
   &__role {
-    font-size: var(--card-subtitle-font-size);
-    color: var(--card-text-secondary);
-    letter-spacing: 0.02em;
-    line-height: 1.35;
-    font-weight: var(--card-subtitle-font-weight);
+    font-size: 13px !important;
+    color: var(--card-text-secondary) !important;
+    letter-spacing: 0.01em !important;
+    line-height: 1.4 !important;
+    font-weight: 500 !important;
+    display: block !important;
   }
 
   &__meta {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
-    gap: var(--spacing-xl) var(--spacing-3xl);
-    font-size: var(--card-subtitle-font-size);
-    color: var(--card-text-muted);
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    font-size: 13px !important;
+    color: var(--card-text-muted) !important;
+    width: 100%;
   }
 
   &__meta-item {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-lg);
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
     min-width: 0;
     transition: var(--card-transition-fast);
-    padding: var(--spacing-sm) 0;
+    padding: 0 !important;
+    font-size: 13px !important;
+    line-height: 1.4 !important;
 
     lucide-icon {
-      @include icon-base(15px);
+      @include icon-base(13px); /* Consistent icon size */
       flex-shrink: 0;
       opacity: 0.85;
     }
@@ -133,22 +129,121 @@
 
 @media (max-width: 640px) {
   .contact-collection {
+    grid-template-columns: 1fr; /* Single column on mobile */
     gap: 8px;
   }
 
   .contact-card {
-    padding: 10px 12px;
-    gap: 10px;
-
-    &__avatar {
-      width: 36px;
-      height: 36px;
-      font-size: 0.65rem;
+    padding: 14px 16px;
+    
+    &__name {
+      font-size: 14px !important;
     }
-
+    
+    &__role {
+      font-size: 12px !important;
+    }
+    
     &__meta {
-      grid-template-columns: 1fr !important;
-      gap: 6px 8px;
+      font-size: 12px !important;
+    }
+    
+    &__meta-item {
+      font-size: 12px !important;
+      
+      lucide-icon {
+        width: 12px !important;
+        height: 12px !important;
+      }
+    }
+  }
+}
+
+/* Fullscreen mode - ultra compact */
+.ai-card-surface--fullscreen {
+  .contact-collection {
+    gap: 6px 10px !important;
+  }
+  
+  .contact-card {
+    padding: 8px 12px !important;
+    
+    &__details {
+      gap: 6px !important;
+    }
+    
+    &__header {
+      gap: 2px !important;
+    }
+    
+    &__name {
+      font-size: 13px !important;
+    }
+    
+    &__role {
+      font-size: 11px !important;
+    }
+    
+    &__meta {
+      gap: 3px !important;
+      
+      &-item {
+        gap: 4px !important;
+        font-size: 10px !important;
+        
+        lucide-icon {
+          width: 11px !important;
+          height: 11px !important;
+        }
+      }
+    }
+  }
+}
+
+/* Light theme overrides */
+:root[data-theme='day'] {
+  .contact-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(200, 200, 200, 0.5) !important;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 1) !important;
+      border-color: rgba(255, 121, 0, 0.3) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    }
+    
+    &__name {
+      color: #1a1a1a !important;
+      text-shadow: none !important;
+    }
+    
+    &__role {
+      color: #6b7280 !important;
+    }
+    
+    &__meta {
+      color: #6b7280 !important;
+      
+      &-item {
+        color: #6b7280 !important;
+        
+        lucide-icon {
+          color: #9ca3af !important;
+        }
+      }
+      
+      &-item--link {
+        color: #6b7280 !important;
+        text-decoration: none !important;
+        
+        &:hover {
+          color: var(--primary) !important;
+          
+          lucide-icon {
+            color: var(--primary) !important;
+          }
+        }
+      }
     }
   }
 }

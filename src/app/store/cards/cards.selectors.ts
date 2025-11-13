@@ -31,6 +31,8 @@ export const selectCardById = (id: string) => createSelector(
 // Other State Selectors
 export const selectCardType = createSelector(selectCardsState, (state) => state.cardType);
 export const selectCardVariant = createSelector(selectCardsState, (state) => state.cardVariant);
+
+// JSON Input selector - return as-is (IDs already stripped in reducer)
 export const selectJsonInput = createSelector(selectCardsState, (state) => state.jsonInput);
 export const selectIsGenerating = createSelector(selectCardsState, (state) => state.isGenerating);
 export const selectIsFullscreen = createSelector(selectCardsState, (state) => state.isFullscreen);

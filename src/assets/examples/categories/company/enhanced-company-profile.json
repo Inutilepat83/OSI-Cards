@@ -1,45 +1,38 @@
 {
-  "id": "enhanced-company-profile",
   "cardTitle": "InnovateLabs Inc.",
   "cardSubtitle": "AI & Machine Learning Solutions",
   "cardType": "company",
   "description": "Enhanced company profile with timeline, metrics, and rich information sections",
   "sections": [
     {
-      "id": "company-info",
       "title": "Company Information",
       "type": "info",
       "fields": [
         {
-          "id": "industry",
           "label": "Industry",
           "value": "Artificial Intelligence",
           "type": "text",
           "icon": "fas fa-brain"
         },
         {
-          "id": "founded",
           "label": "Founded",
           "value": "2019-06-01",
           "type": "date",
           "icon": "fas fa-calendar"
         },
         {
-          "id": "employees",
           "label": "Employees",
           "value": 120,
           "type": "number",
           "icon": "fas fa-users"
         },
         {
-          "id": "funding",
           "label": "Total Funding",
           "value": 25000000,
           "type": "currency",
           "icon": "fas fa-dollar-sign"
         },
         {
-          "id": "website",
           "label": "Website",
           "value": "https://innovatelabs.example.com",
           "type": "url",
@@ -47,7 +40,6 @@
           "clickable": true
         },
         {
-          "id": "status",
           "label": "Company Status",
           "value": "Series B",
           "type": "status",
@@ -58,13 +50,11 @@
       ]
     },
     {
-      "id": "key-metrics",
       "title": "Key Performance Metrics",
       "description": "Current quarter performance indicators",
       "type": "metrics",
       "metrics": [
         {
-          "id": "revenue-growth",
           "label": "Revenue Growth",
           "value": 1250000,
           "format": "currency",
@@ -74,7 +64,6 @@
           "icon": "fas fa-chart-line"
         },
         {
-          "id": "active-users",
           "label": "Active Users",
           "value": 45000,
           "format": "number",
@@ -84,7 +73,6 @@
           "icon": "fas fa-users"
         },
         {
-          "id": "customer-satisfaction",
           "label": "Customer Satisfaction",
           "value": 4.8,
           "format": "rating",
@@ -96,13 +84,11 @@
       ]
     },
     {
-      "id": "company-timeline",
       "title": "Company Milestones",
       "description": "Key events in company history",
       "type": "timeline",
       "events": [
         {
-          "id": "founding",
           "title": "Company Founded",
           "description": "InnovateLabs Inc. was established with a focus on AI solutions",
           "date": "2019-06-01",
@@ -110,7 +96,6 @@
           "status": "completed"
         },
         {
-          "id": "seed-funding",
           "title": "Seed Funding Round",
           "description": "Raised $2.5M in seed funding from top-tier investors",
           "date": "2019-09-15",
@@ -118,7 +103,6 @@
           "status": "completed"
         },
         {
-          "id": "product-launch",
           "title": "First Product Launch",
           "description": "Launched AI-powered analytics platform to market",
           "date": "2020-03-01",
@@ -126,7 +110,6 @@
           "status": "completed"
         },
         {
-          "id": "series-a",
           "title": "Series A Funding",
           "description": "Successfully raised $15M in Series A funding",
           "date": "2021-01-20",
@@ -134,7 +117,6 @@
           "status": "completed"
         },
         {
-          "id": "expansion",
           "title": "International Expansion",
           "description": "Opened offices in London and Singapore",
           "date": "2022-08-01",
@@ -142,7 +124,6 @@
           "status": "completed"
         },
         {
-          "id": "series-b",
           "title": "Series B Funding",
           "description": "Raised $25M in Series B funding for global expansion",
           "date": "2023-11-15",
@@ -150,7 +131,6 @@
           "status": "completed"
         },
         {
-          "id": "ai-breakthrough",
           "title": "AI Breakthrough",
           "description": "Achieved major breakthrough in natural language processing",
           "date": "2024-06-01",
@@ -160,7 +140,6 @@
       ]
     },
     {
-      "id": "team-overview",
       "title": "Leadership Team",
       "type": "list",
       "items": [
@@ -190,22 +169,18 @@
   "actions": [
     {
       "label": "View Full Profile",
-      "id": "view-profile",
       "icon": "fas fa-eye"
     },
     {
       "label": "Download Pitch Deck",
-      "id": "download-pitch",
       "icon": "fas fa-download"
     },
     {
       "label": "Schedule Meeting",
-      "id": "schedule-meeting",
       "icon": "fas fa-calendar"
     },
     {
       "label": "View Products",
-      "id": "view-products",
       "icon": "fas fa-boxes"
     }
   ],
@@ -214,6 +189,12 @@
     "variant": "enhanced",
     "complexity": "medium",
     "useCase": "Rich company profile with timeline, metrics, and detailed information",
-    "features": ["info sections", "metrics dashboard", "timeline", "leadership team", "rich field types"]
+    "features": [
+      "info sections",
+      "metrics dashboard",
+      "timeline",
+      "leadership team",
+      "rich field types"
+    ]
   }
 }

@@ -1,38 +1,32 @@
 {
-  "id": "enhanced-opportunity-profile",
   "cardTitle": "Strategic Partnership Opportunity",
   "cardSubtitle": "Multi-Year Enterprise Partnership",
   "cardType": "opportunity",
   "description": "Enhanced opportunity profile with advanced analytics, competitive intelligence, and strategic insights",
   "sections": [
     {
-      "id": "strategic-overview",
       "title": "Strategic Opportunity Overview",
       "type": "info",
       "fields": [
         {
-          "id": "total-value",
           "label": "Total Contract Value",
           "value": 2500000,
           "type": "currency",
           "icon": "fas fa-dollar-sign"
         },
         {
-          "id": "annual-value",
           "label": "Annual Recurring Value",
           "value": 850000,
           "type": "currency",
           "icon": "fas fa-sync-alt"
         },
         {
-          "id": "win-probability",
           "label": "Win Probability",
           "value": 78,
           "type": "percentage",
           "icon": "fas fa-trophy"
         },
         {
-          "id": "strategic-importance",
           "label": "Strategic Importance",
           "value": "High",
           "type": "status",
@@ -43,13 +37,11 @@
       ]
     },
     {
-      "id": "advanced-metrics",
       "title": "Advanced Opportunity Analytics",
       "description": "Comprehensive metrics with predictive insights and competitive analysis",
       "type": "metrics",
       "metrics": [
         {
-          "id": "deal-score",
           "label": "Overall Deal Score",
           "value": 8.7,
           "format": "rating",
@@ -59,7 +51,6 @@
           "icon": "fas fa-chart-line"
         },
         {
-          "id": "engagement-velocity",
           "label": "Engagement Velocity",
           "value": 92,
           "format": "percentage",
@@ -69,7 +60,6 @@
           "icon": "fas fa-rocket"
         },
         {
-          "id": "competitive-position",
           "label": "Competitive Position",
           "value": 4.1,
           "format": "rating",
@@ -79,7 +69,6 @@
           "icon": "fas fa-trophy"
         },
         {
-          "id": "relationship-strength",
           "label": "Relationship Strength",
           "value": 8.2,
           "format": "rating",
@@ -89,7 +78,6 @@
           "icon": "fas fa-handshake"
         },
         {
-          "id": "budget-alignment",
           "label": "Budget Alignment",
           "value": 85,
           "format": "percentage",
@@ -99,7 +87,6 @@
           "icon": "fas fa-wallet"
         },
         {
-          "id": "decision-confidence",
           "label": "Decision Confidence",
           "value": 76,
           "format": "percentage",
@@ -111,7 +98,6 @@
       ]
     },
     {
-      "id": "competitive-landscape",
       "title": "Competitive Landscape Analysis",
       "description": "Detailed competitive analysis and positioning",
       "type": "table",
@@ -189,7 +175,6 @@
       ]
     },
     {
-      "id": "value-proposition-analysis",
       "title": "Value Proposition Analysis",
       "description": "Detailed analysis of value drivers and differentiation points",
       "type": "table",
@@ -285,13 +270,11 @@
       ]
     },
     {
-      "id": "predictive-insights",
       "title": "Predictive Deal Insights",
       "description": "AI-powered predictions and strategic recommendations",
       "type": "progress",
       "progressItems": [
         {
-          "id": "win-probability-trend",
           "label": "Win Probability Trend",
           "value": 78,
           "max": 100,
@@ -301,7 +284,6 @@
           "description": "78% win probability, trending upward"
         },
         {
-          "id": "deal-velocity",
           "label": "Deal Velocity vs Target",
           "value": 85,
           "max": 100,
@@ -311,7 +293,6 @@
           "description": "85% of optimal deal velocity achieved"
         },
         {
-          "id": "stakeholder-satisfaction",
           "label": "Stakeholder Satisfaction",
           "value": 82,
           "max": 100,
@@ -321,7 +302,6 @@
           "description": "82% stakeholder satisfaction with process"
         },
         {
-          "id": "competitive-threat",
           "label": "Competitive Threat Level",
           "value": 35,
           "max": 100,
@@ -331,7 +311,6 @@
           "description": "35% competitive threat assessment"
         },
         {
-          "id": "budget-risk",
           "label": "Budget Approval Risk",
           "value": 20,
           "max": 100,
@@ -341,7 +320,6 @@
           "description": "20% risk of budget approval issues"
         },
         {
-          "id": "timeline-confidence",
           "label": "Timeline Confidence",
           "value": 88,
           "max": 100,
@@ -353,13 +331,11 @@
       ]
     },
     {
-      "id": "strategic-roadmap",
       "title": "Strategic Partnership Roadmap",
       "description": "Long-term partnership development and expansion opportunities",
       "type": "timeline",
       "events": [
         {
-          "id": "discovery-phase",
           "title": "Discovery & Qualification",
           "description": "Initial assessment and strategic alignment",
           "date": "Q2 2024",
@@ -367,7 +343,6 @@
           "status": "completed"
         },
         {
-          "id": "proposal-development",
           "title": "Strategic Proposal Development",
           "description": "Comprehensive partnership proposal and value proposition",
           "date": "Q3 2024",
@@ -375,7 +350,6 @@
           "status": "in-progress"
         },
         {
-          "id": "pilot-implementation",
           "title": "Pilot Implementation",
           "description": "Initial pilot project to demonstrate value",
           "date": "Q4 2024",
@@ -383,7 +357,6 @@
           "status": "planned"
         },
         {
-          "id": "full-rollout",
           "title": "Full Solution Rollout",
           "description": "Complete implementation across all business units",
           "date": "Q1 2025",
@@ -391,7 +364,6 @@
           "status": "planned"
         },
         {
-          "id": "expansion-phase",
           "title": "Partnership Expansion",
           "description": "Additional services and expanded scope",
           "date": "Q2 2025",
@@ -399,7 +371,6 @@
           "status": "planned"
         },
         {
-          "id": "strategic-alliance",
           "title": "Strategic Alliance Formation",
           "description": "Formal strategic alliance and joint innovation",
           "date": "2026",
@@ -407,7 +378,6 @@
           "status": "planned"
         },
         {
-          "id": "market-leadership",
           "title": "Joint Market Leadership",
           "description": "Co-leadership in target market segments",
           "date": "2027",
@@ -417,7 +387,6 @@
       ]
     },
     {
-      "id": "risk-mitigation-strategy",
       "title": "Risk Mitigation Strategy",
       "description": "Comprehensive risk assessment and mitigation plans",
       "type": "table",
@@ -507,42 +476,34 @@
   "actions": [
     {
       "label": "Strategic Analysis",
-      "id": "strategic-analysis",
       "icon": "fas fa-chart-line"
     },
     {
       "label": "Competitive Intelligence",
-      "id": "competitive-intelligence",
       "icon": "fas fa-eye"
     },
     {
       "label": "Predictive Forecasting",
-      "id": "predictive-forecasting",
       "icon": "fas fa-brain"
     },
     {
       "label": "Stakeholder Mapping",
-      "id": "stakeholder-mapping",
       "icon": "fas fa-users"
     },
     {
       "label": "Risk Assessment",
-      "id": "risk-assessment",
       "icon": "fas fa-exclamation-triangle"
     },
     {
       "label": "Proposal Generator",
-      "id": "proposal-generator",
       "icon": "fas fa-file-contract"
     },
     {
       "label": "Deal Coaching",
-      "id": "deal-coaching",
       "icon": "fas fa-graduation-cap"
     },
     {
       "label": "Executive Briefing",
-      "id": "executive-briefing",
       "icon": "fas fa-briefcase"
     }
   ],
@@ -551,6 +512,14 @@
     "variant": "enhanced",
     "complexity": "high",
     "useCase": "Advanced opportunity management with competitive intelligence, predictive analytics, and strategic planning",
-    "features": ["strategic overview", "advanced metrics", "competitive landscape", "value proposition analysis", "predictive insights", "strategic roadmap", "risk mitigation"]
+    "features": [
+      "strategic overview",
+      "advanced metrics",
+      "competitive landscape",
+      "value proposition analysis",
+      "predictive insights",
+      "strategic roadmap",
+      "risk mitigation"
+    ]
   }
 }

@@ -207,3 +207,47 @@
     }
   }
 }
+
+/* Light theme overrides */
+:root[data-theme='day'] {
+  .solution-card {
+    background: rgba(250, 250, 250, 0.9) !important;
+    border-color: rgba(200, 200, 200, 0.5) !important;
+    
+    &__title {
+      color: #1a1a1a;
+    }
+    
+    &__description {
+      color: #6b7280;
+    }
+    
+    &__category {
+      background: rgba(255, 121, 0, 0.08) !important;
+      color: var(--primary) !important;
+      border-color: rgba(255, 121, 0, 0.2) !important;
+    }
+    
+    &__complexity {
+      color: #6b7280;
+    }
+    
+    &__benefits {
+      color: #4b5563;
+    }
+  }
+  
+  .solution-status {
+    &.active {
+      background: rgba(34, 197, 94, 0.1) !important;
+      color: rgb(34, 197, 94) !important;
+      border-color: rgba(34, 197, 94, 0.3) !important;
+    }
+    
+    &.inactive {
+      background: rgba(156, 163, 175, 0.1) !important;
+      color: rgb(107, 114, 128) !important;
+      border-color: rgba(156, 163, 175, 0.3) !important;
+    }
+  }
+}

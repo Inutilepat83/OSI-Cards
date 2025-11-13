@@ -179,3 +179,97 @@
     }
   }
 }
+
+/* Fullscreen mode - ultra compact */
+.ai-card-surface--fullscreen {
+  .financials-section {
+    .financials-grid {
+      gap: 8px !important;
+    }
+    
+    .financial-metric {
+      padding: 10px 12px !important;
+      gap: 4px !important;
+    }
+  }
+  
+  .financial-card {
+    padding: 10px 12px !important;
+  }
+  
+  .financial-label {
+    font-size: 10px !important;
+  }
+  
+  .financial-value {
+    font-size: 18px !important;
+  }
+  
+  .financial-change {
+    font-size: 10px !important;
+    gap: 6px !important;
+    
+    .change-icon {
+      font-size: 11px !important;
+    }
+  }
+  
+  .financial-row {
+    padding: 8px 0 !important;
+    gap: 12px !important;
+    
+    &:hover {
+      padding: 8px 6px !important;
+    }
+    
+    .financial-row-label,
+    .financial-row-value {
+      font-size: 12px !important;
+    }
+  }
+}
+
+/* Light theme overrides */
+:root[data-theme='day'] {
+  .financial-label {
+    color: #6b7280;
+  }
+  
+  .financial-value {
+    color: #1a1a1a;
+  }
+  
+  .financial-change {
+    &.positive {
+      color: #059669;
+    }
+    
+    &.negative {
+      color: #dc2626;
+    }
+    
+    &.neutral {
+      color: #6b7280;
+    }
+  }
+  
+  .financial-row {
+    border-bottom-color: rgba(200, 200, 200, 0.3);
+    
+    &:hover {
+      background: rgba(255, 121, 0, 0.03);
+    }
+    
+    .financial-row-label {
+      color: #6b7280;
+    }
+    
+    &:hover .financial-row-label {
+      color: #4b5563;
+    }
+    
+    .financial-row-value {
+      color: #1a1a1a;
+    }
+  }
+}
