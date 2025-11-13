@@ -8,48 +8,74 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  border-radius: var(--card-border-radius);
+  border-radius: 12px; /* Match tilt-container radius exactly */
   border: var(--card-border);
   background: var(--card-section-bg); /* Theme-aware: grey-800 (night) or grey-50 (day) */
   padding: var(--card-padding);
-  box-shadow: none; /* Removed all shadows */
+  box-shadow: none; /* No box-shadow - glow comes from parent drop-shadow */
   transition:
     border-color 0.2s ease,
-    background 0.28s ease,
-    transform 0.24s ease;
+    background 0.28s ease;
 }
 
 .ai-card-surface:hover {
   border-color: var(--card-hover-border);
   background: var(--card-section-bg); /* Theme-aware: grey-800 (night) or grey-50 (day) */
-  transform: var(--card-hover-transform);
+  /* No transform - keep card stationary, only glow effect */
 }
 
 .ai-card-surface--fullscreen {
-  border-color: rgba(255, 255, 255, 0.18);
-  box-shadow: none; /* Removed all shadows */
-  background: var(--card-section-bg); /* Theme-aware: grey-800 (night) or grey-50 (day) */
+  /* Fullscreen styling - clean and focused */
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: none !important; /* No shadows in fullscreen */
+  background: var(--background); /* Use main background */
+  max-height: none !important; /* Allow full height */
+  overflow: visible !important; /* Allow scrolling */
+  
+  /* Disable all tilt effects */
+  .tilt-container {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  
+  .glow-container {
+    filter: none !important;
+  }
+  
+  .card-reflection {
+    display: none !important;
+  }
 }
 
 .ai-card-fullscreen-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 0;
-  background: transparent;
-  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(255, 121, 0, 0.08);
+  border: 1px solid rgba(255, 121, 0, 0.2);
   color: var(--foreground);
   cursor: pointer;
-  transition: transform 160ms ease, opacity 160ms ease;
+  transition: all 0.2s ease;
   margin-left: auto;
   flex-shrink: 0;
+  
+  /* Ensure visibility */
+  position: relative;
+  z-index: 100;
 }
 
 .ai-card-fullscreen-btn:hover {
-  transform: translateY(-1px);
-  opacity: 0.8;
+  transform: translateY(-2px);
+  background: rgba(255, 121, 0, 0.15);
+  border-color: rgba(255, 121, 0, 0.4);
+  box-shadow: 0 4px 12px rgba(255, 121, 0, 0.2);
+}
+
+.ai-card-fullscreen-btn:active {
+  transform: translateY(0);
 }
 
 .ai-card-fullscreen-btn__icon {
@@ -60,6 +86,7 @@
   position: relative;
   z-index: 10;
   padding: var(--card-padding-vertical) 0;
+  padding-bottom: 24px; /* Increased bottom padding */
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -104,7 +131,7 @@
 }
 
 .ai-card-title {
-  font-size: var(--font-card-title);
+  font-size: 28px; /* Increased from default */
   font-weight: 700;
   color: var(--foreground);
   letter-spacing: -0.01em;

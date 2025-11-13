@@ -143,7 +143,6 @@ export class HomePageComponent implements OnInit {
     if (this.switchingType) return;
     this.switchingType = true;
     this.cardType = type;
-    console.log(`🔄 Switching to ${type} card type, variant ${this.cardVariant}...`);
     // Update state and load template
     this.store.dispatch(CardActions.setCardType({ cardType: type }));
     this.store.dispatch(CardActions.loadTemplate({ cardType: type, variant: this.cardVariant }));
@@ -178,7 +177,6 @@ export class HomePageComponent implements OnInit {
       try {
         data = JSON.parse(this.jsonInput);
       } catch (parseError) {
-        console.error('Invalid JSON format:', parseError);
         this.store.dispatch(CardActions.generateCardFailure({ error: 'Invalid JSON format. Please check your syntax.' }));
         return;
       }
@@ -194,23 +192,21 @@ export class HomePageComponent implements OnInit {
       // Validate and use the card data
       if (CardTypeGuards.isAICardConfig(cardData)) {
         const sanitized = ensureCardIds(cardData);
-        console.log('✅ Setting generated card:', sanitized);
         this.store.dispatch(CardActions.generateCardSuccess({ card: sanitized }));
       } else {
         throw new Error('Invalid card configuration format - missing required fields (cardTitle, cardType, sections)');
       }
     } catch (error: unknown) {
-      console.error('❌ Card generation error:', error);
       this.store.dispatch(CardActions.generateCardFailure({ error: error instanceof Error ? error.message : 'Unknown error' }));
     }
   }
 
   onCardInteraction(event: unknown): void {
-    console.log('Card interaction:', event);
+    // Handle card interaction
   }
 
   onFieldInteraction(event: unknown): void {
-    console.log('Field interaction:', event);
+    // Handle field interaction
   }
 
   onFullscreenToggle(isFullscreen: boolean): void {

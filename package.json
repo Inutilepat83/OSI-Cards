@@ -34,7 +34,7 @@
     "perf:lighthouse": "echo 'Run Lighthouse locally e.g. chrome --headless --remote-debugging-port=9222; lighthouse http://localhost:4200 --quiet --chrome-flags=\"--headless --no-sandbox\"'",
     "pwa:validate": "echo 'PWA validation placeholder'",
     "performance:report": "echo 'Performance report placeholder'",
-  "serve:prod": "npx ng serve --configuration production",
+    "serve:prod": "npx ng serve --configuration production",
     "clean": "rm -rf dist/ node_modules/.cache/ .angular/"
   },
   "dependencies": {

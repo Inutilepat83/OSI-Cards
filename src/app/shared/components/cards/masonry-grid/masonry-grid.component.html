@@ -1,13 +1,16 @@
 <div
   #container
-  class="relative w-full"
+  class="relative w-full masonry-container"
+  [class.masonry-container--loading]="!isLayoutReady"
   [style.height.px]="containerHeight"
   [style.gap.px]="gap"
 >
   <div
     *ngFor="let item of positionedSections; trackBy: trackItem; let idx = index"
     #itemRef
-    class="absolute masonry-item transition-all duration-300"
+    class="absolute masonry-item"
+    [class.masonry-item--ready]="isLayoutReady"
+    [attr.id]="getSectionId(item.section)"
     [ngStyle]="{
       position: 'absolute',
       left: item.left,

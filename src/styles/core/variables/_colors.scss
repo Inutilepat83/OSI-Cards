@@ -1,9 +1,10 @@
-:root,
-:root[data-theme='night'] {
+:root {
   /* === BRAND & CORE COLORS === */
   --color-white: #ffffff;
   --color-black: #000000;
   --color-brand: #ff7900;
+  --color-brand-dark: #CC5F00;
+  --color-brand-light: #FF9933;
 
   /* Grayscale ramp */
   --color-gray-50: #ffffff;
@@ -14,61 +15,73 @@
   --color-gray-400: #92999e;
   --color-gray-500: #5a5f62;
   --color-gray-600: #343541;
-  --color-gray-700: #2a2a2a; /* Less blue, more neutral grey */
+  --color-gray-700: #2a2a2a;
   --color-gray-800: #232323;
   --color-gray-850: #171717;
   --color-gray-900: #000000;
-
-  /* === UI TOKENS === */
-  --background: var(--color-gray-900);
-  --foreground: var(--color-gray-100);
-  --muted: var(--color-gray-700);
-  --muted-foreground: var(--color-gray-300);
-  --card: var(--color-gray-850);
-  --card-foreground: var(--color-gray-100);
-  --card-section-bg: var(--color-gray-800); /* Theme-aware: grey-800 for night, grey-50 for day */
-  --card-section-card-bg: var(--color-gray-700); /* Theme-aware: grey-700 for night, grey-100 for day - more contrasty */
-  --popover: var(--color-gray-850);
-  --popover-foreground: var(--color-gray-100);
-  --primary: var(--color-brand);
-  --primary-foreground: var(--color-black);
-  --secondary: var(--color-gray-700);
-  --secondary-foreground: var(--color-gray-100);
-  --accent: var(--color-brand);
-  --accent-foreground: var(--color-black);
-  --destructive: var(--color-brand);
-  --destructive-foreground: var(--color-black);
-  --border: color-mix(in srgb, var(--color-white) 28%, transparent);
-  --input: transparent;
-  --input-background: var(--color-gray-800);
-  --switch-background: var(--color-gray-700);
-  --ring: color-mix(in srgb, var(--color-brand) 60%, transparent);
-  --chart-1: var(--color-brand);
-  --chart-2: color-mix(in srgb, var(--color-brand) 72%, var(--color-white));
-  --chart-3: color-mix(in srgb, var(--color-brand) 58%, var(--color-black));
-  --chart-4: color-mix(in srgb, var(--color-brand) 24%, var(--color-white));
-  --chart-5: color-mix(in srgb, var(--color-brand) 80%, var(--color-black));
 }
 
+/* === DARK THEME (Night Mode - React Design) === */
+:root[data-theme='night'] {
+  --background: #000000;
+  --foreground: #ffffff;
+  --muted: #222222;
+  --muted-foreground: #888888;
+  --card: #111111;
+  --card-foreground: #ffffff;
+  --card-section-bg: #111111;
+  --card-section-card-bg: #0a0a0a;
+  --popover: #111111;
+  --popover-foreground: #ffffff;
+  --primary: #FF7900;
+  --primary-foreground: #000000;
+  --secondary: #333333;
+  --secondary-foreground: #ffffff;
+  --accent: #FF7900;
+  --accent-foreground: #000000;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(255, 121, 0, 0.4);
+  --input: transparent;
+  --input-background: #222222;
+  --switch-background: #333333;
+  --ring: rgba(255, 121, 0, 0.6);
+  --chart-1: #FF7900;
+  --chart-2: #FF9933;
+  --chart-3: #CC5F00;
+  --chart-4: #FFE6CC;
+  --chart-5: #FF4500;
+}
+
+/* === LIGHT THEME (Day Mode - Inverted React Design) === */
 :root[data-theme='day'] {
-  --background: var(--color-gray-50);
-  --foreground: var(--color-gray-900);
-  --muted: var(--color-gray-200);
-  --muted-foreground: var(--color-gray-700);
-  --card: var(--color-gray-150);
-  --card-foreground: var(--color-gray-900);
-  --card-section-bg: var(--color-gray-50); /* Theme-aware: grey-800 for night, grey-50 for day */
-  --card-section-card-bg: var(--color-gray-100); /* Theme-aware: grey-700 for night, grey-100 for day - more contrasty */
-  --popover: var(--color-gray-150);
-  --popover-foreground: var(--color-gray-900);
-  --primary-foreground: var(--color-white);
-  --secondary: var(--color-gray-100);
-  --secondary-foreground: var(--color-gray-900);
-  --accent-foreground: var(--color-white);
-  --destructive-foreground: var(--color-white);
-  --border: color-mix(in srgb, var(--color-gray-400) 60%, transparent);
-  --input-background: var(--color-gray-150);
-  --switch-background: var(--color-gray-200);
-  --ring: color-mix(in srgb, var(--color-brand) 70%, transparent);
+  --background: #ffffff;
+  --foreground: #000000;
+  --muted: #f5f5f5;
+  --muted-foreground: #666666;
+  --card: #fafafa;
+  --card-foreground: #000000;
+  --card-section-bg: #fafafa;
+  --card-section-card-bg: #ffffff;
+  --popover: #ffffff;
+  --popover-foreground: #000000;
+  --primary: #FF7900;
+  --primary-foreground: #ffffff;
+  --secondary: #f0f0f0;
+  --secondary-foreground: #000000;
+  --accent: #FF7900;
+  --accent-foreground: #ffffff;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(255, 121, 0, 0.3);
+  --input: transparent;
+  --input-background: #f5f5f5;
+  --switch-background: #e0e0e0;
+  --ring: rgba(255, 121, 0, 0.4);
+  --chart-1: #FF7900;
+  --chart-2: #FF9933;
+  --chart-3: #CC5F00;
+  --chart-4: #FFE6CC;
+  --chart-5: #FF4500;
 }
 

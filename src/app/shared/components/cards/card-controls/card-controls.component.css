@@ -1,2 +1,231 @@
 /* Card Controls Component Styles */
-/* Inherits global styles from parent component */
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* Layout utilities */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-3 {
+  gap: 0.75rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.mb-8 {
+  margin-bottom: 2rem;
+}
+
+/* Typography */
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+/* Text colors */
+.text-muted-foreground {
+  color: var(--muted-foreground);
+}
+
+.text-foreground {
+  color: var(--foreground);
+}
+
+.text-primary-foreground {
+  color: var(--primary-foreground);
+}
+
+/* Button base styles */
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button:not(:disabled):hover {
+  transform: scale(1.05);
+}
+
+/* Button padding */
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+/* Button border radius */
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+/* Button sizes */
+.w-8 {
+  width: 2rem;
+}
+
+.h-8 {
+  height: 2rem;
+}
+
+/* Backgrounds */
+.bg-primary {
+  background-color: var(--primary);
+}
+
+.bg-card {
+  background-color: var(--card);
+}
+
+/* Borders */
+.border {
+  border-width: 1px;
+  border-style: solid;
+}
+
+.border-border {
+  border-color: var(--border);
+}
+
+/* Shadows */
+.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Transforms */
+.scale-105 {
+  transform: scale(1.05);
+}
+
+.scale-110 {
+  transform: scale(1.1);
+}
+
+/* Transitions */
+.transition-all {
+  transition-property: all;
+}
+
+.duration-200 {
+  transition-duration: 200ms;
+}
+
+/* Responsive styles */
+@media (min-width: 640px) {
+  .sm\:flex-row {
+    flex-direction: row;
+  }
+  
+  .sm\:gap-3 {
+    gap: 0.75rem;
+  }
+  
+  .sm\:gap-4 {
+    gap: 1rem;
+  }
+  
+  .sm\:mb-6 {
+    margin-bottom: 1.5rem;
+  }
+  
+  .sm\:mb-8 {
+    margin-bottom: 2rem;
+  }
+  
+  .sm\:px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Hover effects - using attribute selector for dynamic classes */
+button[class*="bg-primary"]:hover:not(:disabled) {
+  background-color: hsl(var(--primary-hsl) / 0.9);
+}
+
+button[class*="bg-card"]:hover:not(:disabled) {
+  border-color: hsl(var(--primary-hsl) / 0.5);
+}
+
+/* Active state - using attribute selector for dynamic classes */
+button[class*="shadow-lg"] {
+  transform: scale(1.05);
+}
+
+button[class*="scale-110"] {
+  transform: scale(1.1);
+}

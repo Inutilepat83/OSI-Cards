@@ -1,116 +1,100 @@
-/* Contact section leveraging the contacts type */
+/* Contact directory cards showing key stakeholders */
 
-@import 'sections-base';
+@import 'design-system';
 
-.section-block--contacts {
-  --section-card-grid-min: 180px; /* More compact and flexible */
-  --section-accent: color-mix(in srgb, var(--color-brand) 70%, var(--foreground) 30%);
+.contact-collection {
+  @include list-stack(12px);
 }
 
-.section-card--contact {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xl);
-  text-align: left;
-  position: relative;
+.contact-card {
+  @include list-card;
+  align-items: flex-start;
+  // All styling now from centralized variables via @include list-card
 
-  @include accent-border;
-  
-  &:hover {
-    .section-card__avatar {
-      transform: scale(1.05);
-    }
-  }
-
-  .section-card__row {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--spacing-xl);
-    align-items: center;
-  }
-
-  .section-card__avatar {
-    width: var(--avatar-size-md);
-    height: var(--avatar-size-md);
+  &__avatar {
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    border: var(--accent-border-width-sm) solid color-mix(in srgb, var(--section-accent) 36%, transparent);
-    background: linear-gradient(135deg, 
-      color-mix(in srgb, var(--section-accent) 22%, transparent),
-      color-mix(in srgb, var(--section-accent) 14%, transparent));
-    display: inline-flex;
+    border: 2px solid rgba(255, 121, 0, 0.3);
+    background: var(--card-background);
+    display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    color: color-mix(in srgb, var(--section-accent) 90%, transparent);
-    box-shadow: 0 2px 8px color-mix(in srgb, var(--section-accent) 15%, transparent);
-    @include slow-transition;
+    color: rgba(255, 121, 0, 0.9);
+    flex-shrink: 0;
+    font-size: var(--card-subtitle-font-size);
+    font-weight: var(--card-title-font-weight);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    box-shadow: var(--card-box-shadow);
+    transition: var(--card-transition);
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      @include slow-transition;
+      display: block;
     }
-    
+
     &:hover {
-      transform: scale(1.05);
-      border-color: color-mix(in srgb, var(--section-accent) 50%, transparent);
-      box-shadow: 0 4px 16px color-mix(in srgb, var(--section-accent) 25%, transparent);
-      
-      img {
-        transform: scale(1.1);
-      }
+      transform: scale(1.08) rotate(3deg);
+      border-color: var(--card-border-hover);
+      box-shadow: var(--card-box-shadow-hover-lift);
     }
   }
 
-  .section-card__initials {
-    font-size: var(--font-contact-initials);
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+  &__details {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xl);
   }
 
-  .section-card__content {
+  &__header {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
-    min-width: 0;
   }
 
-  .section-card__header {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-xs);
+  &__name {
+    font-size: var(--card-title-font-size);
+    font-weight: var(--card-title-font-weight);
+    color: var(--card-text-primary);
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 
-  .section-card__label {
-    font-size: var(--font-contact-name);
-    letter-spacing: -0.01em;
-  }
-
-  .section-card__meta-detail {
-    font-size: var(--font-contact-role);
-    color: color-mix(in srgb, var(--foreground) 85%, transparent);
+  &__role {
+    font-size: var(--card-subtitle-font-size);
+    color: var(--card-text-secondary);
     letter-spacing: 0.02em;
-    font-weight: 600;
+    line-height: 1.35;
+    font-weight: var(--card-subtitle-font-weight);
   }
 
-  .section-card__meta {
+  &__meta {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: var(--spacing-sm) var(--section-grid-gap);
-    font-size: var(--font-contact-meta);
-    color: color-mix(in srgb, var(--foreground) 85%, transparent);
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+    gap: var(--spacing-xl) var(--spacing-3xl);
+    font-size: var(--card-subtitle-font-size);
+    color: var(--card-text-muted);
   }
 
-  .section-card__meta-item {
-    display: inline-flex;
+  &__meta-item {
+    display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
+    gap: var(--spacing-lg);
     min-width: 0;
+    transition: var(--card-transition-fast);
+    padding: var(--spacing-sm) 0;
 
     lucide-icon {
-      color: color-mix(in srgb, var(--section-accent) 70%, transparent);
+      @include icon-base(15px);
+      flex-shrink: 0;
+      opacity: 0.85;
     }
 
     span {
@@ -120,199 +104,51 @@
     }
 
     &--link {
-      color: color-mix(in srgb, var(--foreground) 78%, transparent);
+      color: rgba(255, 190, 110, 0.9);
       text-decoration: none;
-      font-weight: 600;
+      cursor: pointer;
+      font-weight: 700;
+      transition: var(--card-transition-fast);
 
       &:hover {
-        color: color-mix(in srgb, var(--accent) 100%, transparent);
+        color: var(--card-text-hover);
+        transform: translateX(2px);
+        
+        lucide-icon {
+          transform: scale(1.15);
+          opacity: 1;
+        }
       }
     }
-  }
-}
 
-.section-block--contacts .section-empty {
-  @include section-empty-state;
-}
-
-@media (max-width: 768px) {
-  .section-card--contact {
-    gap: var(--spacing-lg);
-
-    .section-card__row {
-      grid-template-columns: 1fr;
-      gap: var(--spacing-lg);
-    }
-
-    .section-card__avatar {
-      width: var(--avatar-size-sm);
-      height: var(--avatar-size-sm);
-    }
-
-    .section-card__meta {
-      grid-template-columns: 1fr;
-      gap: var(--spacing-sm);
-    }
-  }
-}
-
-/* ===== CONTACT CARD COMPONENT STYLES ===== */
-/* Improved contact card layout matching the design */
-
-.contact-collection {
-  display: flex;
-  flex-direction: column;
-  gap: var(--section-grid-gap);
-}
-
-.contact-card {
-  @include card; /* Base card styles */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  position: relative;
-  /* Padding, gap, border, background, border-radius, and hover states are set by @include card */
-  @include accent-border;
-
-  &:hover {
-    .contact-card__avatar {
-      transform: scale(1.05);
-    }
-  }
-}
-
-.contact-card__avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, 
-    color-mix(in srgb, var(--section-accent, var(--accent)) 22%, transparent),
-    color-mix(in srgb, var(--section-accent, var(--accent)) 14%, transparent));
-  border: 2px solid color-mix(in srgb, var(--section-accent, var(--accent)) 36%, transparent);
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--section-accent, var(--accent)) 15%, transparent);
-  flex-shrink: 0;
-  @include slow-transition;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-  }
-
-  &:hover {
-    transform: scale(1.05);
-    border-color: color-mix(in srgb, var(--section-accent, var(--accent)) 50%, transparent);
-    box-shadow: 0 4px 16px color-mix(in srgb, var(--section-accent, var(--accent)) 25%, transparent);
-  }
-}
-
-.contact-card__initials {
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--section-accent, var(--accent)) 90%, transparent);
-  line-height: 1;
-}
-
-.contact-card__details {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-4xl);
-  width: 100%;
-}
-
-.contact-card__role {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--foreground);
-  letter-spacing: 0.01em;
-  line-height: 1.4;
-  text-align: center;
-  margin: 0;
-}
-
-.contact-card__meta {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xl);
-  width: 100%;
-  align-items: flex-start;
-}
-
-.contact-card__meta-item {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xl);
-  width: 100%;
-  font-size: 0.875rem;
-  color: color-mix(in srgb, var(--foreground) 75%, transparent);
-  text-align: left;
-
-  lucide-icon {
-    color: color-mix(in srgb, var(--section-accent, var(--accent)) 70%, transparent);
-    flex-shrink: 0;
-  }
-
-  span {
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  &--link {
-    color: color-mix(in srgb, var(--foreground) 80%, transparent);
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s ease;
-
-    &:hover {
-      color: var(--section-accent, var(--accent));
-      
-      lucide-icon {
-        color: var(--section-accent, var(--accent));
-      }
+    &:hover lucide-icon {
+      opacity: 1;
     }
   }
 }
 
 .contact-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-8xl) var(--spacing-6xl);
-  text-align: center;
-  color: color-mix(in srgb, var(--foreground) 85%, transparent);
+  @include empty-state;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
+  .contact-collection {
+    gap: 8px;
+  }
+
   .contact-card {
-    /* Padding handled by @include card mobile override */
-  }
+    padding: 10px 12px;
+    gap: 10px;
 
-  .contact-card__avatar {
-    width: 56px;
-    height: 56px;
-  }
+    &__avatar {
+      width: 36px;
+      height: 36px;
+      font-size: 0.65rem;
+    }
 
-  .contact-card__initials {
-    font-size: 1.25rem;
-  }
-
-  .contact-card__role {
-    font-size: 0.9rem;
-  }
-
-  .contact-card__meta-item {
-    font-size: 0.8rem;
-    gap: var(--spacing-lg);
+    &__meta {
+      grid-template-columns: 1fr !important;
+      gap: 6px 8px;
+    }
   }
 }

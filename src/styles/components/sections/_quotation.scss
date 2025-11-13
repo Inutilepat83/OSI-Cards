@@ -1,4 +1,4 @@
-@use 'sections-base' as *;
+@import 'sections-base';
 @import 'unified-cards';
 
 .section-block--quotation {
@@ -34,10 +34,10 @@
 
 .quotation-card__text {
   @include metric-value;
-  font-size: var(--font-section-value-lg);
+  font-size: var(--card-title-font-size);
   font-style: italic;
   line-height: 1.7;
-  color: var(--foreground);
+  color: var(--card-text-primary);
   margin: 0;
   padding-left: var(--spacing-4xl);
   position: relative;
@@ -83,20 +83,20 @@
 
 .quotation-card__author-name {
   @include metric-label;
-  font-weight: 600;
-  color: var(--foreground);
+  font-weight: var(--card-subtitle-font-weight);
+  color: var(--card-text-primary);
 }
 
 .quotation-card__author-role {
   @include metric-label;
-  font-size: var(--font-section-meta);
-  color: color-mix(in srgb, var(--foreground) 85%, transparent);
+  font-size: var(--card-meta-font-size);
+  color: var(--card-meta-color);
 }
 
 .quotation-card__date {
   @include metric-label;
-  font-size: var(--font-section-meta);
-  color: color-mix(in srgb, var(--foreground) 85%, transparent);
+  font-size: var(--card-meta-font-size);
+  color: var(--card-meta-color);
 }
 
 @media (max-width: 768px) {
@@ -106,7 +106,7 @@
 
   .quotation-card__text {
     padding-left: var(--spacing-3xl);
-    font-size: var(--font-section-value);
+    font-size: var(--card-title-font-size);
   }
 }
 

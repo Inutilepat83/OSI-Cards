@@ -8,15 +8,15 @@
       (keydown.enter)="onCardTypeChange(type)"
       (keydown.space)="$event.preventDefault(); onCardTypeChange(type)"
       (keydown)="onCardTypeKeydown($event, i)"
-  #cardTypeButton
+      #cardTypeButton
       class="px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 text-sm"
-      [class]="cardType === type ? 'bg-primary text-primary-foreground shadow-lg scale-105' : 'bg-card text-foreground border border-border hover:border-primary/50 hover:scale-105'"
+      [class]="cardType === type ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg scale-105' : 'bg-card text-foreground border border-border hover:border-primary/50 hover:scale-105'"
       [disabled]="switchingType"
       [attr.aria-label]="'Switch to ' + type + ' card type'"
       [attr.aria-checked]="cardType === type"
       [attr.aria-describedby]="'card-type-label'"
       role="radio"
-  [attr.tabindex]="cardType === type ? 0 : -1"
+      [attr.tabindex]="cardType === type ? 0 : -1"
       type="button">
       {{ type.charAt(0).toUpperCase() + type.slice(1) }}
     </button>
@@ -32,17 +32,17 @@
       (click)="onCardVariantChange(variant)"
       (keydown.enter)="onCardVariantChange(variant)"
       (keydown.space)="$event.preventDefault(); onCardVariantChange(variant)"
-  (keydown)="onVariantKeydown($event, i)"
+      (keydown)="onVariantKeydown($event, i)"
       #variantButton
       class="w-8 h-8 rounded-full text-xs font-medium transition-all duration-200"
-      [class]="cardVariant === variant ? 'bg-primary text-primary-foreground shadow-lg scale-110' : 'bg-card text-foreground border border-border hover:border-primary/50 hover:scale-105'"
+      [class]="cardVariant === variant ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg scale-110' : 'bg-card text-foreground border border-border hover:border-primary/50 hover:scale-105'"
       [disabled]="switchingType"
       [title]="'Load variant ' + variant + ' of ' + cardType + ' template'"
       [attr.aria-label]="'Load variant ' + variant + ' of ' + cardType + ' template'"
       [attr.aria-checked]="cardVariant === variant"
       [attr.aria-describedby]="'card-variant-label'"
       role="radio"
-  [attr.tabindex]="cardVariant === variant ? 0 : -1"
+      [attr.tabindex]="cardVariant === variant ? 0 : -1"
       type="button">
       {{ variant }}
     </button>

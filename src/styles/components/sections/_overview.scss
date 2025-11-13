@@ -1,51 +1,73 @@
-/* Overview section uses unified metrics styling */
+/* Overview metric cards - same styling as analytics for consistency */
 
-@use 'sections-base' as *;
+@import 'design-system';
 
-.section-grid--insights {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--section-grid-gap);
-  
-  @media (max-width: 500px) {
-    grid-template-columns: 1fr;
-    gap: var(--section-grid-gap-mobile);
-  }
+.overview-grid {
+  @include grid-2col(16px);
 }
 
-.section-card--insight {
-  @include card;
-  cursor: pointer;
-  text-align: left;
+.overview-card {
+  @include unified-card;
+  // All core styling from centralized variables via @include unified-card
 
-  &:focus-visible {
-    outline: 2px solid var(--card-hover-border);
-    outline-offset: 2px;
+  &:hover {
+    .overview-card__value {
+      color: color-mix(in srgb, var(--section-accent) 68%, var(--foreground) 32%);
+      text-shadow: 0 2px 6px color-mix(in srgb, var(--section-accent) 32%, transparent);
+      transform: scale(1.02);
+    }
+
+    .overview-card__label {
+      color: rgba(255, 255, 255, 0.75);
+    }
   }
 
-  &:hover .section-card__value {
-    color: var(--foreground);
-  }
-
-  .section-card__description {
-    font-size: 0.75rem;
-    color: color-mix(in srgb, var(--foreground) 60%, transparent);
-    line-height: 1.3;
-  }
-
-  .section-card__meta {
+  &__label {
+    @include label-text;
     display: flex;
     align-items: center;
-    gap: var(--spacing-xs);
-    font-size: 0.7rem;
-    color: color-mix(in srgb, var(--foreground) 60%, transparent);
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xs);
+    transition: color 0.25s ease;
+
+    lucide-icon {
+      @include icon-base(15px);
+    }
   }
 
-  .section-card__meta-change {
-    font-weight: 700;
+  &__value {
+    @include value-text-lg;
+    transition: all 0.25s ease;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    font-size: var(--card-label-font-size);
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.3;
+    font-weight: var(--card-label-font-weight);
+    margin-top: var(--spacing-sm);
+
+    lucide-icon {
+      @include icon-base(14px);
+      @include trend-colors;
+    }
+  }
+
+  &__meta-change {
+    @include trend-colors;
+    font-weight: var(--card-label-font-weight);
   }
 }
 
-.section-block--metrics .section-empty {
-  @include section-empty-state;
+.overview-empty {
+  @include empty-state;
+}
+
+@media (max-width: 640px) {
+  .overview-grid {
+    grid-template-columns: 1fr !important;
+  }
 }

@@ -1,14 +1,111 @@
+/* ===================================================================
+   ANIMATION KEYFRAMES
+   Performance-optimized animations with hardware acceleration
+   =================================================================== */
+
+/* Entry Animations - For components appearing on screen */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(20px) translateZ(0); /* Hardware acceleration */
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateZ(0); /* Hardware acceleration */
+  }
+  to {
+    opacity: 1;
+    transform: translateZ(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px) translateZ(0);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) translateZ(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px) translateZ(0);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) translateZ(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-20px) translateZ(0);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) translateZ(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(20px) translateZ(0);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) translateZ(0);
+    opacity: 1;
+  }
+}
+
+/* Scale Animations - For interactive feedback */
+@keyframes scale {
+  0% {
+    transform: scale(0.95) translateZ(0);
+  }
+  70% {
+    transform: scale(1.05) translateZ(0);
+  }
+  100% {
+    transform: scale(1) translateZ(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9) translateZ(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateZ(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1) translateZ(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05) translateZ(0);
+    opacity: 0.8;
+  }
+}
+
+/* Glow & Effect Animations - For visual enhancements */
 @keyframes glowPulse {
   0%, 100% {
     opacity: 0.6;
@@ -23,19 +120,19 @@
 @keyframes glowDrift {
   0%, 100% {
     opacity: 0.7;
-    transform: translate(0, 0);
+    transform: translate(0, 0) translateZ(0);
   }
   25% {
     opacity: 0.8;
-    transform: translate(5px, -5px);
+    transform: translate(5px, -5px) translateZ(0);
   }
   50% {
     opacity: 0.9;
-    transform: translate(0, 5px);
+    transform: translate(0, 5px) translateZ(0);
   }
   75% {
     opacity: 0.8;
-    transform: translate(-5px, 0);
+    transform: translate(-5px, 0) translateZ(0);
   }
 }
 
@@ -48,43 +145,197 @@
   }
 }
 
+/* Rotation Animations - For loaders and indicators */
 @keyframes spin {
   from {
-    transform: rotate(0deg);
+    transform: rotate(0deg) translateZ(0);
   }
   to {
-    transform: rotate(360deg);
+    transform: rotate(360deg) translateZ(0);
   }
 }
 
-@keyframes fadeIn {
+@keyframes spinSlow {
   from {
-    opacity: 0;
+    transform: rotate(0deg) translateZ(0);
   }
   to {
-    opacity: 1;
+    transform: rotate(360deg) translateZ(0);
   }
 }
 
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
+/* Shake & Attention Animations */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0) translateZ(0);
   }
-  to {
-    transform: translateY(0);
-    opacity: 1;
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-4px) translateZ(0);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(4px) translateZ(0);
   }
 }
 
-@keyframes scale {
-  0% {
-    transform: scale(0.95);
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0) translateZ(0);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
   }
-  70% {
-    transform: scale(1.05);
+  50% {
+    transform: translateY(-10px) translateZ(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
   }
-  100% {
-    transform: scale(1);
+}
+
+/* ===================================================================
+   ANIMATION UTILITY CLASSES
+   Pre-configured animations using design system variables
+   =================================================================== */
+
+/* Entry Animations */
+.animate-fade-in {
+  animation: fadeIn var(--duration-moderate) var(--ease-out-smooth);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp var(--duration-moderate) var(--ease-out-smooth);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+.animate-slide-up {
+  animation: slideUp var(--duration-moderate) var(--ease-out-smooth);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+.animate-slide-down {
+  animation: slideDown var(--duration-moderate) var(--ease-out-smooth);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft var(--duration-moderate) var(--ease-out-smooth);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+.animate-slide-in-right {
+  animation: slideInRight var(--duration-moderate) var(--ease-out-smooth);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+/* Scale Animations */
+.animate-scale {
+  animation: scale var(--duration-moderate) var(--ease-spring);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+.animate-scale-in {
+  animation: scaleIn var(--duration-moderate) var(--ease-out-smooth);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+.animate-pulse {
+  animation: pulse var(--duration-slow) var(--ease-in-out-smooth) infinite;
+}
+
+/* Rotation Animations */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-spin-slow {
+  animation: spinSlow 3s linear infinite;
+}
+
+/* Attention Animations */
+.animate-shake {
+  animation: shake var(--duration-slow) var(--ease-in-out-smooth);
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+/* Stagger Animation Delays - For sequential animations */
+.animate-delay-1 {
+  animation-delay: calc(var(--stagger-delay-base) * 1);
+}
+
+.animate-delay-2 {
+  animation-delay: calc(var(--stagger-delay-base) * 2);
+}
+
+.animate-delay-3 {
+  animation-delay: calc(var(--stagger-delay-base) * 3);
+}
+
+.animate-delay-4 {
+  animation-delay: calc(var(--stagger-delay-base) * 4);
+}
+
+.animate-delay-5 {
+  animation-delay: calc(var(--stagger-delay-base) * 5);
+}
+
+/* ===================================================================
+   PERFORMANCE OPTIMIZATION
+   Hardware acceleration hints for smooth animations
+   =================================================================== */
+
+/* Apply to animated elements for better performance */
+.will-animate {
+  will-change: transform, opacity;
+}
+
+.will-animate-transform {
+  will-change: transform;
+}
+
+.will-animate-opacity {
+  will-change: opacity;
+}
+
+/* Remove will-change after animation to free resources */
+.animation-complete {
+  will-change: auto;
+}
+
+/* Hardware acceleration hint */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* ===================================================================
+   REDUCED MOTION SUPPORT
+   Respect user preferences for reduced motion
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Disable all custom animations */
+  .animate-fade-in,
+  .animate-fade-in-up,
+  .animate-slide-up,
+  .animate-slide-down,
+  .animate-slide-in-left,
+  .animate-slide-in-right,
+  .animate-scale,
+  .animate-scale-in,
+  .animate-pulse,
+  .animate-spin,
+  .animate-spin-slow,
+  .animate-shake,
+  .animate-bounce {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  /* Remove will-change hints */
+  .will-animate,
+  .will-animate-transform,
+  .will-animate-opacity {
+    will-change: auto !important;
   }
 }

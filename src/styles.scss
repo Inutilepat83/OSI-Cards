@@ -13,6 +13,7 @@
 @import 'styles/layout/json-editor';
 
 @import 'styles/components/cards/ai-card';
+@import 'styles/components/sections/design-system'; /* Master design system - must import first */
 @import 'styles/components/sections/sections-base';
 @import 'styles/components/sections/section-types';
 @import 'styles/components/sections/section-shell';

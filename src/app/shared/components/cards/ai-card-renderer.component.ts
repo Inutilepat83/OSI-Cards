@@ -1,14 +1,14 @@
 import { Component, ElementRef, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, ViewportScroller } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { AICardConfig, CardSection, CardField, CardItem, CardAction } from '../../../models';
-import { Subject, takeUntil, fromEvent, throttleTime } from 'rxjs';
+import { Subject, takeUntil, fromEvent, throttleTime, filter, delay } from 'rxjs';
 import { MouseTrackingService, MagneticTiltService, MousePosition, TiltCalculations } from '../../../core';
 import { IconService } from '../../services/icon.service';
 import { SectionNormalizationService } from '../../services/section-normalization.service';
 import { LucideIconsModule } from '../../icons/lucide-icons.module';
 import { MasonryGridComponent } from './masonry-grid/masonry-grid.component';
 import { SectionRenderEvent } from './section-renderer/section-renderer.component';
-import { calculateShadowGlow, calculateReflection, calculateProcessedGlow } from '../../utils/tilt-calculations.util';
 
 export interface CardFieldInteractionEvent {
   field?: CardField;
@@ -54,27 +54,17 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   
   processedSections: CardSection[] = [];
   isHovered = false;
-  isTiltActive = true;
+  mousePosition: MousePosition = { x: 0, y: 0 };
   
   // CSS variables for the tilt effect
   tiltStyle: Record<string, string | number> = {};
   
   private readonly destroyed$ = new Subject<void>();
-  private lastMousePosition: MousePosition = { x: 0, y: 0 };
-  private animationFrameId: number | null = null;
-  private lastTiltUpdate = 0;
-  private lastBoundingUpdate = 0;
-  private prefersReducedMotion = false;
-  private hasFinePointer = true;
-  private previousTilt?: TiltCalculations;
-  private readonly boundingUpdateInterval = 150;
-  private readonly tiltThrottleMs = 16;
-  private tiltElementRect: DOMRectReadOnly | null = null;
-  
-  private readonly mouseTrackingService = inject(MouseTrackingService);
   private readonly magneticTiltService = inject(MagneticTiltService);
   private readonly iconService = inject(IconService);
   private readonly sectionNormalizationService = inject(SectionNormalizationService);
+  private readonly viewportScroller = inject(ViewportScroller);
+  private readonly route = inject(ActivatedRoute);
 
   // Fallback card configuration for testing
   private fallbackCard: AICardConfig = {
@@ -113,12 +103,6 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   };
 
   ngOnInit(): void {
-    if (typeof window !== 'undefined') {
-      this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      this.hasFinePointer = window.matchMedia('(pointer: fine)').matches;
-    }
-    this.isTiltActive = this.tiltEnabled && this.hasFinePointer && !this.prefersReducedMotion;
-    
     // Use fallback if no card config provided
     if (!this.cardConfig) {
       this.cardConfig = this.fallbackCard;
@@ -137,151 +121,120 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         }
       });
 
-    this.mouseTrackingService.mousePosition$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((pos: MousePosition) => {
-        this.lastMousePosition = pos;
-      });
-
-    // Initialize tilt functionality with throttling for performance
+    // Subscribe to tilt calculations
     this.magneticTiltService.tiltCalculations$
-      .pipe(
-        throttleTime(16, undefined, { leading: true, trailing: true }), // ~60fps throttling
-        takeUntil(this.destroyed$)
-      )
+      .pipe(takeUntil(this.destroyed$))
       .subscribe((calculations: TiltCalculations) => {
-        if (!this.isTiltActive || !this.isHovered) {
-          return;
-        }
-
-        // Early exit if values haven't changed significantly
-        if (this.previousTilt &&
-          Math.abs(this.previousTilt.rotateX - calculations.rotateX) < 0.05 &&
-          Math.abs(this.previousTilt.rotateY - calculations.rotateY) < 0.05 &&
-          Math.abs(this.previousTilt.glowBlur - calculations.glowBlur) < 0.5 &&
-          Math.abs(this.previousTilt.glowOpacity - calculations.glowOpacity) < 0.02) {
-          return;
-        }
-
-        this.previousTilt = calculations;
-
-        // Use utility functions for calculations (better performance, testable)
-        const processedGlow = calculateProcessedGlow(calculations);
-        const shadowGlow = calculateShadowGlow(calculations);
-        const reflection = calculateReflection(calculations);
-
         this.tiltStyle = {
           '--tilt-x': `${calculations.rotateX}deg`,
           '--tilt-y': `${calculations.rotateY}deg`,
-          '--glow-blur': `${processedGlow.glowBlur}px`,
-          '--glow-color': `rgba(180,180,180,${processedGlow.glowOpacity})`,
-          '--reflection-opacity': processedGlow.reflectionOpacity,
-          '--shadow-offset-x': `${shadowGlow.offsetX}px`,
-          '--shadow-offset-y': `${shadowGlow.offsetY}px`,
-          '--shadow-glow-intensity': `${shadowGlow.intensity}`,
-          '--shadow-glow-blur': `${shadowGlow.blur}px`,
-          '--shadow-glow-spread': `${shadowGlow.spread}px`,
-          '--shadow-glow-opacity': `${shadowGlow.opacity}`,
-          '--section-reflection-opacity': reflection.intensity,
-          '--section-reflection-offset-x': `${reflection.offsetX}%`,
-          '--section-reflection-offset-y': `${reflection.offsetY}%`,
-          '--section-reflection-angle': `${reflection.angle}deg`
+          '--glow-blur': `${calculations.glowBlur}px`,
+          '--glow-color': `rgba(255,121,0,${calculations.glowOpacity})`,
+          '--reflection-opacity': calculations.reflectionOpacity
         };
         this.cdr.markForCheck();
       });
   }
   
   ngAfterViewInit(): void {
-    // Register the container element for mouse tracking
-    if (this.cardContainer && this.cardContainer.nativeElement) {
-      // Set up element position tracking on resize
-      fromEvent(window, 'resize')
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(() => {
-          // Trigger any necessary recalculations when container size changes
-          this.mouseTrackingService.updateElementPosition(this.el);
-          this.cdr.markForCheck();
-        });
+    // Handle URL fragment scrolling to sections
+    this.route.fragment
+      .pipe(
+        filter(fragment => !!fragment),
+        delay(100),
+        takeUntil(this.destroyed$)
+      )
+      .subscribe(fragment => {
+        this.scrollToSection(fragment as string);
+      });
+
+    // Also handle initial fragment on load
+    const initialFragment = this.route.snapshot.fragment;
+    if (initialFragment) {
+      setTimeout(() => {
+        this.scrollToSection(initialFragment);
+      }, 300);
+    }
+  }
+
+  /**
+   * Scrolls to a section by ID or sanitized title
+   */
+  private scrollToSection(sectionId: string): void {
+    if (typeof document === 'undefined') return;
+
+    // Try direct ID match first
+    let targetElement = document.getElementById(sectionId);
+
+    // If not found, try to find by sanitized section title
+    if (!targetElement) {
+      const section = this.processedSections.find(s => this.sanitizeSectionId(s.title) === sectionId);
+      if (section) {
+        targetElement = document.getElementById(this.getSectionId(section));
+      }
     }
 
-    // Track element for tilt functionality
-    this.mouseTrackingService.trackElement(this.el);
-    this.mouseTrackingService.updateElementPosition(this.el);
-    this.captureTiltRect(this.now());
+    if (targetElement) {
+      // Scroll with smooth behavior and offset for header
+      const yOffset = -20; // Offset from top
+      const y = targetElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      
+      window.scrollTo({
+        top: y,
+        behavior: 'smooth'
+      });
 
-    if (typeof document !== 'undefined') {
-      fromEvent(document, 'visibilitychange')
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(() => {
-          if (document.visibilityState === 'hidden') {
-            this.stopTiltLoop();
-            this.magneticTiltService.resetTilt();
-          } else if (this.isHovered && this.isTiltActive) {
-            this.mouseTrackingService.updateElementPosition(this.el);
-            this.captureTiltRect(this.now());
-            this.startTiltLoop();
-          }
-        });
+      // Add visual highlight effect
+      targetElement.classList.add('section-highlight');
+      setTimeout(() => {
+        targetElement?.classList.remove('section-highlight');
+      }, 2000);
     }
+  }
+
+  /**
+   * Gets a unique section ID for scrolling
+   */
+  getSectionId(section: CardSection): string {
+    return `section-${this.sanitizeSectionId(section.title || section.id)}`;
+  }
+
+  /**
+   * Sanitizes section title for use as HTML ID
+   */
+  private sanitizeSectionId(title: string): string {
+    return title.toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
   }
 
   ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();
-    this.mouseTrackingService.untrackElement(this.el);
-    this.stopTiltLoop();
   }
 
-  onMouseEnter(): void {
+  onMouseEnter(event: MouseEvent): void {
     this.isHovered = true;
-    if (this.isTiltActive) {
-      const now = this.now();
-      this.updateGeometry(now, true);
-      this.startTiltLoop();
+    this.mousePosition = { x: event.clientX, y: event.clientY };
+    if (this.tiltContainerRef?.nativeElement) {
+      this.magneticTiltService.calculateTilt(this.mousePosition, this.tiltContainerRef.nativeElement);
     }
     this.cdr.markForCheck();
   }
 
   onMouseLeave(): void {
     this.isHovered = false;
-    this.stopTiltLoop();
     this.magneticTiltService.resetTilt();
-    this.previousTilt = undefined;
-    this.tiltElementRect = null;
-    // Reset shadow offsets and reflection when mouse leaves
-    this.tiltStyle = {
-      ...this.tiltStyle,
-      '--shadow-offset-x': '0px',
-      '--shadow-offset-y': '0px',
-      '--shadow-glow-intensity': '0',
-      '--shadow-glow-blur': '30px',
-      '--shadow-glow-spread': '0px',
-      '--shadow-glow-opacity': '0',
-      '--section-reflection-opacity': '0',
-      '--section-reflection-offset-x': '0%',
-      '--section-reflection-offset-y': '0%',
-      '--section-reflection-angle': '0deg'
-    };
     this.cdr.markForCheck();
   }
 
   onMouseMove(event: MouseEvent): void {
-    if (!this.isHovered || !this.isTiltActive || !this.tiltContainerRef) {
+    if (!this.isHovered || !this.tiltContainerRef?.nativeElement) {
       return;
     }
-
-    const now = this.now();
-    if (now - this.lastTiltUpdate < this.tiltThrottleMs) {
-      return;
-    }
-
-    this.lastTiltUpdate = now;
-    this.lastMousePosition = { x: event.clientX, y: event.clientY };
-    this.magneticTiltService.calculateTilt(
-      this.lastMousePosition,
-      this.tiltContainerRef.nativeElement,
-      this.tiltElementRect
-    );
+    
+    this.mousePosition = { x: event.clientX, y: event.clientY };
+    this.magneticTiltService.calculateTilt(this.mousePosition, this.tiltContainerRef.nativeElement);
   }
 
   onFieldClick(field: CardField, section?: CardSection): void {
@@ -302,19 +255,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   toggleFullscreen(): void {
-    // Emit the toggle event to parent component
     this.fullscreenToggle.emit(!this.isFullscreen);
-    this.stopTiltLoop();
-    
-    // Allow time for layout to adjust before recalculating tilt
-    setTimeout(() => {
-      this.mouseTrackingService.updateElementPosition(this.el);
-      this.cdr.markForCheck();
-      if (this.isHovered && this.isTiltActive) {
-        this.captureTiltRect(this.now());
-        this.startTiltLoop();
-      }
-    }, 100);
+    this.magneticTiltService.resetTilt();
   }
 
   trackSection = (_index: number, section: CardSection): string =>
@@ -388,59 +330,5 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     this.processedSections = this.sectionNormalizationService.normalizeAndSortSections(this.cardConfig.sections);
-  }
-
-  private startTiltLoop(): void {
-    if (this.animationFrameId !== null || !this.isTiltActive) {
-      return;
-    }
-
-    const step = (time: number) => {
-      if (!this.isTiltActive || !this.isHovered) {
-        this.animationFrameId = null;
-        return;
-      }
-
-      if (time - this.lastBoundingUpdate >= this.boundingUpdateInterval) {
-        this.updateGeometry(time);
-      }
-
-      this.animationFrameId = requestAnimationFrame(step);
-    };
-
-    this.animationFrameId = requestAnimationFrame(step);
-  }
-
-  private stopTiltLoop(): void {
-    if (this.animationFrameId !== null) {
-      cancelAnimationFrame(this.animationFrameId);
-      this.animationFrameId = null;
-    }
-  }
-
-  private now(): number {
-    return typeof performance !== 'undefined' ? performance.now() : Date.now();
-  }
-
-  private updateGeometry(now: number, force = false): void {
-    if (!this.tiltContainerRef?.nativeElement) {
-      return;
-    }
-
-    if (!force && now - this.lastBoundingUpdate < this.boundingUpdateInterval) {
-      return;
-    }
-
-    this.mouseTrackingService.updateElementPosition(this.el);
-    this.captureTiltRect(now);
-  }
-
-  private captureTiltRect(now: number): void {
-    if (!this.tiltContainerRef?.nativeElement) {
-      return;
-    }
-
-    this.tiltElementRect = this.tiltContainerRef.nativeElement.getBoundingClientRect();
-    this.lastBoundingUpdate = now;
   }
 }

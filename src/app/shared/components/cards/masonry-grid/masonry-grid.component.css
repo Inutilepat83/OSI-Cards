@@ -3,8 +3,38 @@
   width: 100%;
 }
 
+/* Masonry container loading states */
+.masonry-container {
+  transition: opacity 0.25s ease;
+  opacity: 1;
+  min-height: 400px;
+  /* Better containment for absolute positioned items */
+  contain: layout style paint;
+}
+
+.masonry-container--loading {
+  opacity: 0.6;
+}
+
+/* Masonry items with smooth positioning */
 .masonry-item {
-  will-change: transform, top, left, width, height;
+  will-change: top, left;
+  transition: top 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
+              left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s ease,
+              transform 0.2s ease;
+  opacity: 0.3;
+  /* Better rendering performance */
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.masonry-item--ready {
+  opacity: 1;
+  transition: top 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
+              left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.45s ease 0.1s,
+              transform 0.2s ease;
 }
 
 /* Ensure sections have proper containment */
@@ -12,4 +42,32 @@
   display: block;
   width: 100%;
   height: auto;
+}
+
+/* Responsive optimizations */
+@media (max-width: 768px) {
+  .masonry-container {
+    min-height: 300px;
+  }
+  
+  .masonry-item {
+    /* Faster transitions on mobile for better responsiveness */
+    transition: top 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+                left 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.2s ease;
+  }
+  
+  .masonry-item--ready {
+    transition: top 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+                left 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s ease 0.05s;
+  }
+}
+
+/* Wide screen optimizations */
+@media (min-width: 1400px) {
+  .masonry-container {
+    /* Allow more space on wide screens */
+    min-height: 500px;
+  }
 }

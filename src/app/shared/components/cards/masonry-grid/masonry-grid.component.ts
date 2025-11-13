@@ -22,8 +22,8 @@ interface PositionedSection {
 })
 export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() sections: CardSection[] = [];
-  @Input() gap = 12;
-  @Input() minColumnWidth = 200;
+  @Input() gap = 16; // Increased for better visual breathing room
+  @Input() minColumnWidth = 280; // Increased for better readability and content display
 
   @Output() sectionEvent = new EventEmitter<SectionRenderEvent>();
 
@@ -34,14 +34,15 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
   positionedSections: PositionedSection[] = [];
   containerHeight = 0;
+  isLayoutReady = false; // Prevent FOUC (Flash of Unstyled Content)
 
   private resizeObserver?: ResizeObserver;
   private itemObserver?: ResizeObserver;
   private pendingAnimationFrame?: number;
   private reflowCount = 0;
-  private readonly MAX_REFLOWS = 3;
+  private readonly MAX_REFLOWS = 5; // Increased for better reliability
   private resizeThrottleTimeout?: number;
-  private readonly RESIZE_THROTTLE_MS = 150;
+  private readonly RESIZE_THROTTLE_MS = 100; // Faster response
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['sections']) {
@@ -55,10 +56,24 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     this.observeContainer();
     this.observeItems();
     
-    // Single delayed reflow to ensure content is fully rendered
-    setTimeout(() => {
+    // Multiple reflows to ensure proper layout
+    // First reflow: immediate
+    requestAnimationFrame(() => {
       this.reflowWithActualHeights();
-    }, 150);
+      
+      // Second reflow: after 50ms (for lazy-loaded content)
+      setTimeout(() => {
+        this.reflowWithActualHeights();
+        
+        // Third reflow: after 150ms (for images/heavy content)
+        setTimeout(() => {
+          this.reflowWithActualHeights();
+          // Mark layout as ready after final reflow
+          this.isLayoutReady = true;
+          this.cdr.markForCheck();
+        }, 150);
+      }, 50);
+    });
   }
 
   ngOnDestroy(): void {
@@ -76,6 +91,22 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
   onSectionEvent(event: SectionRenderEvent): void {
     this.sectionEvent.emit(event);
+  }
+
+  /**
+   * Gets a unique section ID for scrolling
+   */
+  getSectionId(section: CardSection): string {
+    return `section-${this.sanitizeSectionId(section.title || section.id)}`;
+  }
+
+  /**
+   * Sanitizes section title for use as HTML ID
+   */
+  private sanitizeSectionId(title: string): string {
+    return title.toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
   }
 
   private observeContainer(): void {
@@ -131,18 +162,26 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     const resolvedSections = this.sections ?? [];
     this.reflowCount = 0;
     this.containerHeight = 0;
-    this.positionedSections = resolvedSections.map((section, index) => ({
-      section,
-      key: section.id ?? `${section.title}-${index}`,
-      colSpan: this.getSectionColSpan(section),
-      left: '0px',
-      top: 0,
-      width: '100%'
-    }));
+    this.isLayoutReady = false; // Reset layout ready state
     
-    // Don't schedule update here - let ngAfterViewInit handle it
+    // Stack sections vertically initially to prevent overlap
+    let cumulativeTop = 0;
+    this.positionedSections = resolvedSections.map((section, index) => {
+      const item = {
+        section,
+        key: section.id ?? `${section.title}-${index}`,
+        colSpan: this.getSectionColSpan(section),
+        left: '0px',
+        top: cumulativeTop,
+        width: '100%'
+      };
+      // Add estimated spacing (will be recalculated with actual heights)
+      cumulativeTop += 300 + this.gap;
+      return item;
+    });
+    
+    this.containerHeight = cumulativeTop;
     this.cdr.markForCheck();
-    this.scheduleLayoutUpdate();
   }
 
   private reflowWithActualHeights(): void {
@@ -157,10 +196,25 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       return;
     }
 
-    const columns = Math.max(
-      1,
-      Math.floor((containerWidth + this.gap) / (this.minColumnWidth + this.gap))
-    );
+    // Smart responsive column calculation
+    // Mobile (<768px): 1 column
+    // Tablet (768-1200px): 2 columns
+    // Desktop (>1200px): up to 3 columns based on content
+    let columns: number;
+    if (containerWidth < 768) {
+      columns = 1;
+    } else if (containerWidth < 1200) {
+      columns = 2;
+    } else {
+      // For larger screens, calculate optimal columns
+      columns = Math.min(
+        3, // Max 3 columns even on very wide screens
+        Math.max(
+          2, // Minimum 2 columns on desktop
+          Math.floor((containerWidth + this.gap) / (this.minColumnWidth + this.gap))
+        )
+      );
+    }
 
     const colHeights = Array(columns).fill(0);
     let hasZeroHeights = false;
@@ -217,45 +271,105 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     this.positionedSections = updated;
     this.containerHeight = Math.max(...colHeights, 0);
     
+    // Mark layout as ready on first successful reflow without zero heights
+    if (!hasZeroHeights) {
+      this.isLayoutReady = true;
+    }
+    
     // Force immediate change detection
-      this.cdr.markForCheck();
+    this.cdr.markForCheck();
     
     // If we detected zero heights and haven't hit max reflows, try again
     if (hasZeroHeights && this.reflowCount < this.MAX_REFLOWS) {
       setTimeout(() => {
         this.reflowWithActualHeights();
-      }, 100);
+      }, 80);
     }
   }
 
   private getSectionColSpan(section: CardSection): number {
+    // Explicit colSpan always takes precedence
     if (section.colSpan) {
       return section.colSpan;
     }
 
+    // Explicit preferredColumns takes precedence
     if (section.preferredColumns) {
       return section.preferredColumns;
     }
 
     const type = (section.type ?? '').toLowerCase();
     const title = (section.title ?? '').toLowerCase();
+    const itemCount = section.items?.length ?? 0;
+    const fieldCount = section.fields?.length ?? 0;
+    const totalContent = itemCount + fieldCount;
 
-    // Overview sections: full width
-    if (title.includes('overview')) {
+    // Overview sections: full width for comprehensive view
+    if (title.includes('overview') || type === 'overview') {
       return 2;
     }
 
-    // Media-heavy sections: wider
+    // Intelligent column spanning based on section type and content
     switch (type) {
+      // Always wide: visual/media-heavy sections
       case 'map':
       case 'chart':
         return 2;
-      case 'financials':
+      
+      // Text-heavy sections: wider for better readability
+      case 'quotation':
+      case 'text-reference':
+        return 2;
+      
+      // Solutions: wider if multiple items
+      case 'solutions':
+        return totalContent > 2 ? 2 : 1;
+      
+      // Info sections: wider if many fields (more than 6)
+      case 'info':
+        return fieldCount > 6 ? 2 : 1;
+      
+      // Analytics: wider if many metrics (more than 4)
       case 'analytics':
+      case 'stats':
+        return totalContent > 4 ? 2 : 1;
+      
+      // Financials: wider if many financial items (more than 4)
+      case 'financials':
+        return totalContent > 4 ? 2 : 1;
+      
+      // Contact cards: wider if more than 3 contacts
+      case 'contact-card':
+        return totalContent > 3 ? 2 : 1;
+      
+      // Network cards: wider if many connections
       case 'network-card':
+        return totalContent > 4 ? 2 : 1;
+      
+      // Lists: wider if many items (more than 5)
+      case 'list':
+        return totalContent > 5 ? 2 : 1;
+      
+      // Events: wider if many events (more than 4)
+      case 'event':
+        return totalContent > 4 ? 2 : 1;
+      
+      // Products: wider if many products
+      case 'product':
+        return totalContent > 3 ? 2 : 1;
+      
+      // Project: single column for focused view
+      case 'project':
         return 1;
+      
+      // Locations: wider for map-like layout
+      case 'locations':
+        return 2;
+      
+      // Default: single column
       default:
-        return 1;
+        // If we have a lot of content, go wider
+        return totalContent > 6 ? 2 : 1;
     }
   }
 }

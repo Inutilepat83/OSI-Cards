@@ -14,99 +14,57 @@ export interface TiltCalculations {
   reflectionOpacity: number;
 }
 
+const MAX_LIFT_PX = 1; // Very subtle tilt
+const BASE_GLOW_BLUR = 12; // Reduced glow blur
+const MAX_GLOW_BLUR_OFFSET = 6; // Reduced glow blur range
+const BASE_GLOW_OPACITY = 0.12; // More subtle opacity
+const MAX_GLOW_OPACITY_OFFSET = 0.18; // More subtle opacity range
+const MAX_REFLECTION_OPACITY = 0.22; // Slightly reduced reflection
+
 @Injectable({
   providedIn: 'root'
 })
 export class MagneticTiltService {
-  private readonly MAX_LIFT_PX = 3;
-  private readonly BASE_GLOW_BLUR = 12;
-  private readonly MAX_GLOW_BLUR_OFFSET = 6;
-  private readonly BASE_GLOW_OPACITY = 0.16;
-  private readonly MAX_GLOW_OPACITY_OFFSET = 0.18;
-  private readonly MAX_REFLECTION_OPACITY = 0.22;
-
-  private frameHandle: number | null = null;
-  private lastPosition: MousePosition | null = null;
-  private lastElement: HTMLElement | null = null;
-  private lastRect: DOMRectReadOnly | null = null;
-
   private tiltCalculationsSubject = new BehaviorSubject<TiltCalculations>({
     rotateX: 0,
     rotateY: 0,
-    glowBlur: this.BASE_GLOW_BLUR,
-    glowOpacity: this.BASE_GLOW_OPACITY,
+    glowBlur: BASE_GLOW_BLUR,
+    glowOpacity: BASE_GLOW_OPACITY,
     reflectionOpacity: 0
   });
 
   tiltCalculations$ = this.tiltCalculationsSubject.asObservable();
 
-  calculateTilt(mousePosition: MousePosition, element: HTMLElement | null, rect?: DOMRectReadOnly | null): void {
+  calculateTilt(mousePosition: MousePosition, element: HTMLElement | null): void {
     if (!element) {
       this.resetTilt();
       return;
     }
 
-    this.lastPosition = mousePosition;
-    this.lastElement = element;
-    this.lastRect = rect ?? null;
-
-    if (this.frameHandle !== null) {
-      return;
-    }
-
-    if (typeof window === 'undefined') {
-      this.applyTilt(mousePosition, element, element.getBoundingClientRect());
-      return;
-    }
-
-    this.frameHandle = window.requestAnimationFrame(() => {
-      this.frameHandle = null;
-      if (!this.lastElement || !this.lastPosition) {
-        this.resetTilt();
-        return;
-      }
-      this.applyTilt(
-        this.lastPosition,
-        this.lastElement,
-        this.lastRect ?? this.lastElement.getBoundingClientRect()
-      );
-    });
-  }
-
-  private applyTilt(
-    mousePosition: MousePosition,
-    element: HTMLElement,
-    rectOverride?: DOMRectReadOnly
-  ): void {
-    const rect = rectOverride ?? element.getBoundingClientRect();
+    const rect = element.getBoundingClientRect();
     const halfW = rect.width / 2;
-    const aspectRatio = rect.height / rect.width;
+    const halfH = rect.height / 2;
     const fx = (mousePosition.x - rect.left) / rect.width;
     const fy = (mousePosition.y - rect.top) / rect.height;
     const clampedFx = Math.max(0, Math.min(1, fx));
     const clampedFy = Math.max(0, Math.min(1, fy));
 
-    // Sinusoidal tilt: 0@0%, +1@25%, 0@50%, -1@75%, 0@100%
+    // No tilt rotation - only glow effect
     const sinX = Math.sin(clampedFx * 2 * Math.PI);
     const sinY = Math.sin(clampedFy * 2 * Math.PI);
 
-    // Use width for both tilt calculations (not height)
-    // For long cards (aspectRatio > 1), reduce tilt intensity
-    const maxAngleY = Math.asin(this.MAX_LIFT_PX / halfW) * (180 / Math.PI);
-    const maxAngleX = Math.asin(this.MAX_LIFT_PX / halfW) * (180 / Math.PI); // Use width instead of height
-    
-    // Reduce tilt for long cards based on aspect ratio
-    // Cards with aspectRatio > 1.5 get progressively less tilt
-    const tiltReductionFactor = aspectRatio > 1 ? Math.max(0.3, 1 / Math.pow(aspectRatio, 0.7)) : 1;
+    // Dynamic max angles so vertical lift is always MAX_LIFT_PX
+    const maxAngleY = Math.asin(MAX_LIFT_PX / halfW) * (180 / Math.PI);
+    const maxAngleX = Math.asin(MAX_LIFT_PX / halfH) * (180 / Math.PI);
 
-    const rotateY = sinX * maxAngleY * tiltReductionFactor;
-    const rotateX = -sinY * maxAngleX * tiltReductionFactor;
+    const rotateY = sinX * maxAngleY;
+    const rotateX = -sinY * maxAngleX;
 
-    const intensity = Math.max(Math.abs(sinX), Math.abs(sinY)) * tiltReductionFactor;
+    const intensity = Math.max(Math.abs(sinX), Math.abs(sinY));
 
-    const glowBlur = this.BASE_GLOW_BLUR + intensity * this.MAX_GLOW_BLUR_OFFSET;
-    const glowOpacity = this.BASE_GLOW_OPACITY + intensity * this.MAX_GLOW_OPACITY_OFFSET;
-    const reflectionOpacity = intensity * this.MAX_REFLECTION_OPACITY;
+    const glowBlur = BASE_GLOW_BLUR + intensity * MAX_GLOW_BLUR_OFFSET;
+    const glowOpacity = BASE_GLOW_OPACITY + intensity * MAX_GLOW_OPACITY_OFFSET;
+    const reflectionOpacity = intensity * MAX_REFLECTION_OPACITY;
 
     this.tiltCalculationsSubject.next({
       rotateX,
@@ -118,19 +76,11 @@ export class MagneticTiltService {
   }
 
   resetTilt(): void {
-    if (this.frameHandle !== null && typeof window !== 'undefined') {
-      window.cancelAnimationFrame(this.frameHandle);
-      this.frameHandle = null;
-    }
-    this.lastPosition = null;
-    this.lastElement = null;
-    this.lastRect = null;
-
     this.tiltCalculationsSubject.next({
       rotateX: 0,
       rotateY: 0,
-      glowBlur: this.BASE_GLOW_BLUR,
-      glowOpacity: this.BASE_GLOW_OPACITY,
+      glowBlur: BASE_GLOW_BLUR,
+      glowOpacity: BASE_GLOW_OPACITY,
       reflectionOpacity: 0
     });
   }

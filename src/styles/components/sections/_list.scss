@@ -1,103 +1,117 @@
-/* List section cards using the unified section type system */
+/* List section cards and their tag variants */
 
-@use 'sections-base' as *;
+@import 'design-system';
 
-.section-block--list {
-  --section-accent: color-mix(in srgb, var(--color-brand) 50%, var(--foreground) 50%);
-  --section-card-grid-min: 200px; /* More compact and flexible */
+.list-collection {
+  @include list-stack(16px);
 }
 
-.section-card--list {
-  align-items: stretch;
-  position: relative;
+.list-card {
+  @include list-card;
+  // All core styling from centralized variables via @include list-card
 
-  @include accent-border;
-  
-  &:hover {
-    .section-card__icon {
-      transform: scale(1.08);
-      box-shadow: 0 4px 12px color-mix(in srgb, var(--section-accent) 25%, transparent);
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--card-gap-large);
+    flex: 1;
+  }
+
+  &__icon {
+    @include icon-button-base(36px);
+    border: 2px solid rgba(255, 121, 0, 0.3);
+    box-shadow: var(--card-box-shadow);
+    transition: var(--card-transition);
+    
+    &:hover {
+      transform: scale(1.1) rotate(3deg);
+      border-color: var(--card-border-hover);
+      box-shadow: var(--card-box-shadow-hover-lift);
     }
   }
 
-  .section-card__row {
+  &__title {
+    font-size: var(--card-title-font-size);
+    font-weight: var(--card-title-font-weight);
+    color: var(--card-text-primary);
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  &__subtitle {
+    font-size: var(--card-subtitle-font-size);
+    color: var(--card-text-secondary);
+    line-height: 1.35;
+    letter-spacing: 0.02em;
+    font-weight: var(--card-subtitle-font-weight);
+  }
+
+  &__tags {
     display: flex;
-    align-items: flex-start;
-    gap: var(--spacing-xl);
-  }
-
-  .section-card__icon {
-    @include standard-icon;
-    width: var(--icon-size-lg);
-    height: var(--icon-size-lg);
-    flex-shrink: 0;
-    --accent: var(--section-accent);
-  }
-
-  .section-card__content {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-xs);
-  }
-
-  .section-card__tags {
-    display: inline-flex;
     flex-wrap: wrap;
-    gap: var(--spacing-sm);
-    margin-top: var(--spacing-xs);
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
   }
 
-  .section-card__tag {
-    @include standard-badge;
-    padding: var(--tag-padding-y) var(--tag-padding-x-lg);
-    font-size: var(--font-list-tag);
+  &__tag {
+    padding: var(--spacing-xs) var(--spacing-2xl);
+    border-radius: var(--spacing-md);
+    border: var(--card-border);
+    font-size: var(--card-label-font-size);
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    --accent: var(--section-accent);
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.3;
+    font-weight: var(--card-label-font-weight);
+    transition: var(--card-transition-fast);
+    background: var(--card-background);
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-2px);
+      border-color: var(--card-border-hover);
+      background: var(--card-background-hover);
+      box-shadow: var(--card-box-shadow);
+    }
+
+    @include status-colors;
   }
 
-  .section-card__tag--value {
-    border-color: color-mix(in srgb, var(--section-accent) 45%, transparent);
-    background: color-mix(in srgb, var(--section-accent) 18%, transparent);
-    color: color-mix(in srgb, var(--section-accent) 80%, var(--foreground) 20%);
-  }
-
-  .section-card__meta {
+  &__meta {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-xl);
-    font-size: var(--font-list-meta);
-    color: color-mix(in srgb, var(--foreground) 85%, transparent);
-    font-weight: 600;
+    gap: var(--spacing-4xl);
+    font-size: var(--card-subtitle-font-size);
+    color: var(--card-text-muted);
+    line-height: 1.3;
+    font-weight: var(--card-subtitle-font-weight);
   }
 }
 
-.section-card__tag--status-completed,
-.section-card__tag--priority-low {
-  @extend .status--completed;
+.list-empty {
+  @include empty-state;
 }
 
-.section-card__tag--status-active,
-.section-card__tag--priority-medium {
-  @extend .status--active;
-}
+@media (max-width: 640px) {
+  .list-collection {
+    gap: 8px;
+  }
 
-.section-card__tag--status-pending,
-.section-card__tag--priority-default {
-  @extend .status--pending;
-}
+  .list-card {
+    padding: 10px 12px;
+    gap: 8px;
 
-.section-card__tag--status-blocked,
-.section-card__tag--priority-high {
-  @extend .status--blocked;
-}
+    &__header {
+      gap: 10px;
+    }
 
-.section-card__tag--status-default {
-  @extend .status--default;
-}
+    &__tags {
+      gap: 6px;
+    }
 
-.section-block--list .section-empty {
-  @include section-empty-state;
+    &__meta {
+      gap: 12px;
+    }
+  }
 }

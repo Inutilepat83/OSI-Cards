@@ -1,81 +1,93 @@
-/* Tilt and glow containers */
+/* ===================================================================
+   TILT & GLOW ANIMATIONS
+   Performance-optimized 3D tilt effects with dynamic lighting
+   =================================================================== */
+
+/* Base tilt container with 3D perspective */
 .tilt-container {
+  /* 3D transform with hardware acceleration */
   transform: perspective(1000px)
              rotateX(var(--tilt-x, 0deg))
              rotateY(var(--tilt-y, 0deg))
-             scale(var(--tilt-scale, 1));
-  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+             scale(var(--tilt-scale, 1))
+             translateZ(0); /* Force GPU acceleration */
+  
+  /* Use design system timing variables */
+  transition: transform var(--tilt-duration) var(--ease-out-smooth), 
+              box-shadow var(--shadow-duration) var(--ease-out-smooth);
+  
+  /* Enable 3D rendering */
   transform-style: preserve-3d;
+  backface-visibility: hidden; /* Prevent flickering */
+  
   position: relative;
   border-radius: var(--card-border-radius);
+  
+  /* Optimize rendering */
+  contain: layout style paint;
 }
 
 .tilt-container:hover {
-  will-change: transform;
-  /* Brand color glow shadow - highly dynamic based on tilt */
-  /* Multiple layers with varying intensity, blur, and spread for depth */
-  box-shadow: 
-    /* Outer glow - largest, most diffuse */
-    calc(var(--shadow-offset-x, 0px) * 1.2) calc(var(--shadow-offset-y, 0px) * 1.2 + 25px) 
-    calc(var(--shadow-glow-blur, 60px) * 1.2) 
-    calc(var(--shadow-glow-spread, 15px) * 1.1)
-    color-mix(in srgb, var(--color-brand) calc(var(--shadow-glow-opacity, 0.75) * 100% * 0.5), transparent),
-    
-    /* Mid-outer glow */
-    calc(var(--shadow-offset-x, 0px) * 1.1) calc(var(--shadow-offset-y, 0px) * 1.1 + 20px) 
-    calc(var(--shadow-glow-blur, 60px) * 0.9) 
-    calc(var(--shadow-glow-spread, 15px) * 0.8)
-    color-mix(in srgb, var(--color-brand) calc(var(--shadow-glow-opacity, 0.75) * 100% * 0.65), transparent),
-    
-    /* Mid glow - main shadow */
-    calc(var(--shadow-offset-x, 0px) * 1.0) calc(var(--shadow-offset-y, 0px) * 1.0 + 15px) 
-    calc(var(--shadow-glow-blur, 60px) * 0.7) 
-    calc(var(--shadow-glow-spread, 15px) * 0.6)
-    color-mix(in srgb, var(--color-brand) calc(var(--shadow-glow-opacity, 0.75) * 100% * 0.8), transparent),
-    
-    /* Inner glow - tighter, more intense */
-    calc(var(--shadow-offset-x, 0px) * 0.8) calc(var(--shadow-offset-y, 0px) * 0.8 + 10px) 
-    calc(var(--shadow-glow-blur, 60px) * 0.5) 
-    calc(var(--shadow-glow-spread, 15px) * 0.4)
-    color-mix(in srgb, var(--color-brand) calc(var(--shadow-glow-opacity, 0.75) * 100% * 0.9), transparent),
-    
-    /* Core glow - tightest, most intense */
-    calc(var(--shadow-offset-x, 0px) * 0.6) calc(var(--shadow-offset-y, 0px) * 0.6 + 5px) 
-    calc(var(--shadow-glow-blur, 60px) * 0.3) 
-    calc(var(--shadow-glow-spread, 15px) * 0.2)
-    color-mix(in srgb, var(--color-brand) calc(var(--shadow-glow-opacity, 0.75) * 100%), transparent);
-  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+  /* Hint browser about upcoming transform changes */
+  will-change: filter;
+  /* No box-shadow here - glow is handled by drop-shadow filter on .glow-container */
 }
 
+/* Reset will-change when not hovering to free resources */
+.tilt-container:not(:hover) {
+  will-change: auto;
+}
+
+/* Glow container for filter-based effects */
 .glow-container {
   position: relative;
   filter: none; /* Removed drop-shadow to match flat card design */
-  transition: filter 0.2s ease-out;
+  transition: filter var(--glow-duration) var(--ease-out-smooth);
+  
+  /* Optimize compositing */
+  contain: layout style paint;
 }
 
 .glow-container:hover {
   will-change: filter;
 }
 
+.glow-container:not(:hover) {
+  will-change: auto;
+}
+
+/* Card reflection overlay */
 .card-reflection {
   position: absolute;
   inset: 0;
   background: transparent;
   opacity: var(--reflection-opacity, 0.08);
-  transition: opacity 0.2s ease-out;
+  transition: opacity var(--reflection-duration) var(--ease-out-smooth);
   pointer-events: none;
   border-radius: inherit;
+  
+  /* Optimize as overlay */
+  will-change: opacity;
+  backface-visibility: hidden;
 }
 
+/* Wrapper for nested 3D transforms */
 .tilt-wrapper {
   transform-style: preserve-3d;
-  transition: transform 0.3s ease;
+  transition: transform var(--tilt-duration) var(--ease-out-smooth);
+  backface-visibility: hidden;
+  
+  /* Optimize transforms */
+  contain: layout style;
 }
 
+/* Content inside tilt effect */
 .tilt-content {
   transform-style: preserve-3d;
+  backface-visibility: hidden;
 }
 
+/* Glare/highlight effect that follows mouse */
 .tilt-glare {
   position: absolute;
   inset: 0;
@@ -83,5 +95,95 @@
   border-radius: inherit;
   background: transparent;
   opacity: var(--glare-opacity, 0);
-  transition: opacity 0.3s ease;
+  transition: opacity var(--glow-duration) var(--ease-out-smooth);
+  
+  /* Optimize as overlay */
+  will-change: opacity;
+  backface-visibility: hidden;
+}
+
+/* ===================================================================
+   MOBILE OPTIMIZATIONS
+   Reduce tilt intensity on smaller screens for better performance
+   =================================================================== */
+
+@media (max-width: 768px) {
+  .tilt-container {
+    /* Reduce perspective for subtler effect on mobile */
+    transform: perspective(800px)
+               rotateX(calc(var(--tilt-x, 0deg) * 0.7))
+               rotateY(calc(var(--tilt-y, 0deg) * 0.7))
+               scale(var(--tilt-scale, 1))
+               translateZ(0);
+  }
+  
+  .tilt-container:hover {
+    /* Simpler shadow on mobile for performance */
+    box-shadow: 
+      calc(var(--shadow-offset-x, 0px) * 1.0) calc(var(--shadow-offset-y, 0px) * 1.0 + 15px) 
+      calc(var(--shadow-glow-blur, 60px) * 0.8) 
+      calc(var(--shadow-glow-spread, 15px) * 0.6)
+      color-mix(in srgb, var(--color-brand) calc(var(--shadow-glow-opacity, 0.75) * 100% * 0.7), transparent);
+  }
+}
+
+/* ===================================================================
+   FULLSCREEN MODE - DISABLE TILT
+   Tilt effects disabled in fullscreen for better usability
+   =================================================================== */
+
+.ai-card-surface--fullscreen {
+  .tilt-container {
+    /* Reset all tilt transforms in fullscreen */
+    transform: perspective(1000px) translateZ(0) !important;
+    box-shadow: none !important;
+    will-change: auto !important;
+  }
+  
+  .glow-container {
+    filter: none !important;
+    will-change: auto !important;
+  }
+  
+  .card-reflection,
+  .tilt-glare {
+    opacity: 0 !important;
+    display: none; /* Completely remove from rendering */
+  }
+}
+
+/* ===================================================================
+   REDUCED MOTION SUPPORT
+   Disable tilt effects for accessibility
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .tilt-container,
+  .tilt-wrapper {
+    transform: none !important;
+    transition: none !important;
+  }
+  
+  .tilt-container:hover {
+    box-shadow: none !important;
+  }
+  
+  .glow-container {
+    filter: none !important;
+    transition: none !important;
+  }
+  
+  .card-reflection,
+  .tilt-glare {
+    opacity: 0 !important;
+    transition: none !important;
+  }
+  
+  /* Remove will-change hints */
+  .tilt-container,
+  .glow-container,
+  .card-reflection,
+  .tilt-glare {
+    will-change: auto !important;
+  }
 }

@@ -1,14 +1,24 @@
+@import 'design-system';
+
 /* Map section card styling for geographic insights */
 
-@use 'sections-base' as *;
-
 .map-card {
-  @include card;
+  border: var(--card-border);
+  border-radius: var(--card-border-radius-large);
+  padding: var(--card-padding-large);
+  background: var(--card-background);
   display: flex;
   flex-direction: column;
-  /* Border, background, padding, border-radius, and hover states are set by @include card */
-  /* Flex gap for internal layout - card mixin sets gap: var(--card-gap) for card children */
-  /* Override gap only if needed for internal content spacing */
+  gap: var(--card-gap-large);
+  box-shadow: var(--card-box-shadow);
+  transition: var(--card-transition);
+}
+
+.map-card:hover {
+  border-color: var(--card-border-hover);
+  background: var(--card-background-hover);
+  box-shadow: var(--card-box-shadow-hover-lift);
+  transform: translateY(-2px) scale(1.005);
 }
 
 .map-card__header {
@@ -19,38 +29,57 @@
 }
 
 .map-card__title {
-  font-size: 1.02rem;
-  font-weight: 600;
-  color: var(--foreground);
-  letter-spacing: 0.01em;
+  font-size: var(--card-title-font-size);
+  font-weight: var(--card-title-font-weight);
+  color: var(--card-text-primary);
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .map-card__subtitle {
-  font-size: 0.82rem;
-  color: color-mix(in srgb, var(--foreground) 85%, transparent);
+  font-size: var(--card-subtitle-font-size);
+  color: var(--card-text-secondary);
+  line-height: 1.35;
+  font-weight: var(--card-subtitle-font-weight);
 }
 
 .map-card__badge {
-  @include standard-badge;
-  padding: var(--tag-padding-y) var(--tag-padding-x-lg);
-  border-radius: var(--radius-full);
-  font-size: var(--font-section-tag);
-  letter-spacing: 0.12em;
+  padding: var(--spacing-xs) var(--spacing-2xl);
+  border-radius: 999px;
+  border: var(--card-border);
+  background: var(--card-background);
+  font-size: var(--card-label-font-size);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--accent) 90%, transparent);
+  color: var(--card-text-hover);
+  font-weight: var(--card-label-font-weight);
+  box-shadow: var(--card-box-shadow);
+  transition: var(--card-transition-fast);
+  
+  &:hover {
+    transform: translateY(-1px);
+    border-color: var(--card-border-hover);
+    background: var(--card-background-hover);
+    box-shadow: var(--card-box-shadow-hover-lift);
+  }
 }
 
 .map-card__meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--spacing-2xl);
-  font-size: 0.78rem;
-  color: color-mix(in srgb, var(--foreground) 85%, transparent);
+  gap: var(--card-gap-large);
+  font-size: var(--card-subtitle-font-size);
+  color: var(--card-text-muted);
+  font-weight: var(--card-subtitle-font-weight);
 }
 
 .map-empty {
-  @include section-empty-state;
-  border-radius: var(--radius-md);
-  padding: var(--spacing-8xl) var(--spacing-6xl);
+  border: 1px dashed rgba(255, 121, 0, 0.32);
+  border-radius: 18px;
+  padding: 60px 24px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.55);
+  background: rgba(0, 0, 0, 0.35);
 }

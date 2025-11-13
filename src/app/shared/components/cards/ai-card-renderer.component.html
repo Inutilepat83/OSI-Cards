@@ -2,18 +2,15 @@
   *ngIf="cardConfig"
   #cardContainer
   class="relative h-full"
-  (mouseenter)="onMouseEnter()"
+  (mouseenter)="onMouseEnter($event)"
   (mouseleave)="onMouseLeave()"
   (mousemove)="onMouseMove($event)"
 >
-  <div class="glow-container" [ngStyle]="tiltStyle">
-    <div class="tilt-container" #tiltContainer [ngStyle]="tiltStyle">
-      <div class="card-reflection"></div>
-
-      <article
-        class="ai-card-surface"
-        [ngClass]="{ 'ai-card-surface--fullscreen': isFullscreen }"
-      >
+  <div class="tilt-container glow-container" #tiltContainer [ngStyle]="tiltStyle">
+    <article
+      class="ai-card-surface"
+      [ngClass]="{ 'ai-card-surface--fullscreen': isFullscreen }"
+    >
         <header class="ai-card-header">
           <div class="ai-card-title-row">
             <div class="ai-card-title-group">
@@ -103,6 +100,5 @@
           </div>
         </div>
       </article>
-    </div>
   </div>
 </div>

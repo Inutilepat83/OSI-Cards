@@ -10,8 +10,12 @@
   align-items: center;
   justify-content: space-between;
   text-align: left;
+  // All core styling from centralized variables via @include card
+  transition: var(--card-transition);
   
-  /* Border, background, padding, border-radius, and hover states are set by @include card */
+  &:hover {
+    transform: var(--card-hover-transform-scale);
+  }
 }
 
 .financials-section {
@@ -40,30 +44,33 @@
 
   .financial-label {
     @extend %unified-card-label;
-    color: color-mix(in srgb, var(--foreground) 85%, transparent);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    /* Font size enforced by unified-card-label */
+    font-size: var(--card-label-font-size);
+    font-weight: var(--card-label-font-weight);
+    letter-spacing: var(--card-label-letter-spacing);
+    color: var(--card-text-label);
+    text-transform: var(--card-label-text-transform);
   }
 
   .financial-value {
     @extend %unified-card-value;
-    /* Font size enforced by unified-card-value */
+    font-size: var(--card-value-font-size);
+    font-weight: var(--card-value-font-weight);
+    color: var(--card-text-primary);
   }
 
   .financial-currency {
-    font-size: var(--font-section-value-lg);
-    color: color-mix(in srgb, var(--foreground) 85%, transparent);
+    font-size: var(--card-value-font-size-large);
+    color: var(--card-text-secondary);
     margin-left: var(--spacing-xs);
   }
 
   .financial-change {
     display: flex;
     align-items: center;
-    gap: var(--spacing-xs);
-    font-size: var(--font-section-value-lg);
-    font-weight: 600;
-    @include fast-transition;
+    gap: var(--spacing-md);
+    font-size: var(--card-meta-font-size);
+    font-weight: var(--card-meta-font-weight);
+    transition: var(--card-transition-fast);
     
     .financial-metric:hover & {
       transform: translateX(2px);
@@ -78,12 +85,12 @@
     }
 
     &.neutral {
-      color: color-mix(in srgb, var(--foreground) 85%, transparent);
+      color: var(--card-text-secondary);
     }
 
     .change-icon {
-      font-size: var(--font-section-label);
-      @include fast-transition;
+      font-size: var(--card-label-font-size);
+      transition: var(--card-transition-fast);
     }
     
     &:hover .change-icon {
@@ -162,9 +169,9 @@
       /* Padding handled by @include card */
     }
 
-    .financial-value {
-      font-size: 1rem;
-    }
+  .financial-value {
+    font-size: var(--font-section-value);
+  }
 
     .financial-row {
       grid-template-columns: 1fr 1fr;

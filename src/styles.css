@@ -201,43 +201,30 @@
 
 /* OSI Cards specific styles */
 .tilt-container {
-  transform: perspective(1000px) 
-             rotateX(var(--tilt-x, 0deg)) 
-             rotateY(var(--tilt-y, 0deg)) 
-             scale(var(--tilt-scale, 1));
+  transform: perspective(1000px)
+             rotateX(var(--tilt-x, 0deg))
+             rotateY(var(--tilt-y, 0deg));
   transition: transform 0.15s ease-out;
   transform-style: preserve-3d;
   position: relative;
+  border-radius: 12px; /* This creates the rounded shape for the drop-shadow */
+  overflow: hidden; /* Clip children to rounded corners */
+  background: transparent;
 }
 
 .tilt-container:hover {
-  will-change: transform;
-}
-
-.glow-container {
-  position: relative;
-  filter: drop-shadow(0 0 var(--glow-blur, 24px) var(--glow-color, rgba(255, 121, 0, 0.25)));
-  transition: filter 0.2s ease-out;
-}
-
-.glow-container:hover {
   will-change: filter;
 }
 
-.card-reflection {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 121, 0, 0.1) 0%,
-    transparent 50%,
-    rgba(255, 121, 0, 0.12) 100%
-  );
-  opacity: var(--reflection-opacity, 0.08);
-  transition: opacity 0.2s ease-out;
-  pointer-events: none;
-  border-radius: inherit;
+.glow-container {
+  filter: drop-shadow(0 0 var(--glow-blur, 12px) var(--glow-color, rgba(255, 121, 0, 0.12)));
+  transition: filter 0.2s ease-out;
+  position: relative;
 }
+
+
+/* Remove .card-reflection - it was causing the drop-shadow to follow a rectangular shape */
+/* The reflection effect is now handled directly by the dynamic glow colors */
 
 /* Animation for overview section fields */
 @keyframes fadeInUp {
