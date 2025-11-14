@@ -47,20 +47,19 @@
   overflow: hidden;
   box-shadow: var(--section-item-box-shadow);
   
-  /* Use design system variables for smoother, more responsive transitions */
-  transition: border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), 
-              background 0.22s cubic-bezier(0.4, 0, 0.2, 1), 
-              box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Smooth transitions for natural feel */
+  transition: background 300ms cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
   
   /* No transforms - keep card completely flat */
 
   &:hover {
-    border-color: var(--section-item-border-hover);
-    background: var(--section-item-background-hover);
+    /* Only darken background by 1%, no border changes */
+    background: color-mix(in srgb, var(--section-item-background) 99%, black);
     /* No transform - keep card stationary, only glow effect */
     box-shadow: var(--section-item-box-shadow-hover);
     transform: var(--section-item-hover-transform);
-    will-change: border-color, background, box-shadow;
+    will-change: background, box-shadow;
   }
   
   /* Focus state for keyboard navigation and accessibility */

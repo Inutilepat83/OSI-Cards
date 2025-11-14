@@ -77,8 +77,11 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private reflowCount = 0;
   private readonly MAX_REFLOWS = 5; // Increased for better reliability
   private resizeThrottleTimeout?: number;
-  private readonly RESIZE_THROTTLE_MS = 100; // Faster response
+  private readonly RESIZE_THROTTLE_MS = 150; // Optimized for performance
   private lastLayoutInfo?: MasonryLayoutInfo;
+  private layoutRafId: number | null = null;
+  private layoutUpdateQueue: Array<() => void> = [];
+  private layoutUpdateScheduled = false;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['sections']) {
@@ -180,18 +183,45 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   private scheduleLayoutUpdate(): void {
-    if (this.pendingAnimationFrame) {
-      cancelAnimationFrame(this.pendingAnimationFrame);
-    }
-    // Reset the reflow counter so every new layout request can attempt
-    // another full round of measurements. Without this the layout would
-    // stop reflowing after the initial MAX_REFLOWS executions, causing
-    // stale positions when sections resize or new data arrives.
-    this.reflowCount = 0;
-    this.pendingAnimationFrame = requestAnimationFrame(() => {
-      this.pendingAnimationFrame = undefined;
-      this.reflowWithActualHeights();
+    // Queue the layout update instead of scheduling immediately
+    this.layoutUpdateQueue.push(() => {
+      if (this.pendingAnimationFrame) {
+        cancelAnimationFrame(this.pendingAnimationFrame);
+      }
+      // Reset the reflow counter so every new layout request can attempt
+      // another full round of measurements. Without this the layout would
+      // stop reflowing after the initial MAX_REFLOWS executions, causing
+      // stale positions when sections resize or new data arrives.
+      this.reflowCount = 0;
+      this.pendingAnimationFrame = requestAnimationFrame(() => {
+        this.pendingAnimationFrame = undefined;
+        this.reflowWithActualHeights();
+      });
     });
+
+    // Schedule batched execution during idle time
+    if (!this.layoutUpdateScheduled) {
+      this.layoutUpdateScheduled = true;
+      
+      // Use requestIdleCallback if available, otherwise use setTimeout
+      if (typeof requestIdleCallback !== 'undefined') {
+        requestIdleCallback(() => {
+          // Execute all queued updates
+          this.layoutUpdateQueue.forEach(update => update());
+          this.layoutUpdateQueue = [];
+          this.layoutUpdateScheduled = false;
+        }, { timeout: 100 });
+      } else {
+        // Fallback to RAF + setTimeout
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            this.layoutUpdateQueue.forEach(update => update());
+            this.layoutUpdateQueue = [];
+            this.layoutUpdateScheduled = false;
+          }, 0);
+        });
+      }
+    }
   }
 
   private computeInitialLayout(): void {
@@ -221,13 +251,18 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   private reflowWithActualHeights(): void {
-    if (!this.containerRef || this.reflowCount >= this.MAX_REFLOWS) {
+    if (!this.containerRef?.nativeElement || this.reflowCount >= this.MAX_REFLOWS) {
       return;
     }
 
     this.reflowCount++;
 
-    const containerWidth = this.containerRef.nativeElement.clientWidth;
+    const containerElement = this.containerRef.nativeElement;
+    if (!containerElement || typeof containerElement.clientWidth === 'undefined') {
+      return;
+    }
+
+    const containerWidth = containerElement.clientWidth;
     if (!containerWidth) {
       return;
     }
@@ -239,7 +274,9 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     );
     
     // Expose column count as CSS custom property for section grids to consume
-    this.containerRef.nativeElement.style.setProperty('--masonry-columns', columns.toString());
+    if (containerElement.style && typeof containerElement.style.setProperty === 'function') {
+      containerElement.style.setProperty('--masonry-columns', columns.toString());
+    }
     
     this.emitLayoutInfo(columns, containerWidth);
 

@@ -1,0 +1,91 @@
+{
+  "cardTitle": "Sophie Martin",
+  "sections": [
+    {
+      "title": "Professional Profile",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Job Title",
+          "value": "Head of Digital Innovation"
+        },
+        {
+          "label": "Company",
+          "value": "InnovateNow Solutions"
+        },
+        {
+          "label": "Industry",
+          "value": "Digital Services"
+        },
+        {
+          "label": "Location",
+          "value": "Paris, France"
+        },
+        {
+          "label": "Experience",
+          "value": "15+ Years"
+        },
+        {
+          "label": "Education",
+          "value": "HEC Paris, MBA"
+        },
+        {
+          "label": "LinkedIn",
+          "value": "sophie-martin-innovation"
+        },
+        {
+          "label": "Languages",
+          "value": "French, English, Spanish"
+        }
+      ]
+    },
+    {
+      "title": "Innovation Focus",
+      "type": "overview",
+      "fields": [
+        {
+          "label": "Digital Strategy",
+          "value": "Transformation Leader"
+        },
+        {
+          "label": "Innovation Projects",
+          "value": "50+ Launched"
+        },
+        {
+          "label": "Team Size",
+          "value": "25 People"
+        }
+      ]
+    },
+    {
+      "title": "Key Contacts",
+      "type": "contact-card",
+      "fields": [
+        {
+          "label": "Direct Contact",
+          "title": "Sophie Martin",
+          "value": "Head of Digital Innovation",
+          "email": "sophie.martin@innovatnow.com",
+          "phone": "+33 1 42 86 83 26",
+          "role": "Management",
+          "department": "Innovation"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Send Email",
+      "type": "primary",
+      "icon": "📧",
+      "action": "mailto:sophie.martin@innovatnow.com"
+    },
+    {
+      "label": "View LinkedIn",
+      "type": "primary",
+      "icon": "💼",
+      "action": "https://linkedin.com/in/sophie-martin-innovation"
+    }
+  ]
+}
+

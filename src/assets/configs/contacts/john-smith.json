@@ -1,0 +1,91 @@
+{
+  "cardTitle": "John Smith",
+  "sections": [
+    {
+      "title": "Professional Profile",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Job Title",
+          "value": "Chief Technology Officer"
+        },
+        {
+          "label": "Company",
+          "value": "TechCorp International"
+        },
+        {
+          "label": "Industry",
+          "value": "Enterprise Technology"
+        },
+        {
+          "label": "Location",
+          "value": "San Francisco, CA"
+        },
+        {
+          "label": "Experience",
+          "value": "20+ Years"
+        },
+        {
+          "label": "Education",
+          "value": "MIT, Computer Science"
+        },
+        {
+          "label": "LinkedIn",
+          "value": "john-smith-cto"
+        },
+        {
+          "label": "Languages",
+          "value": "English, French"
+        }
+      ]
+    },
+    {
+      "title": "Technology Focus",
+      "type": "overview",
+      "fields": [
+        {
+          "label": "Cloud Strategy",
+          "value": "Multi-Cloud Expert"
+        },
+        {
+          "label": "AI/ML Experience",
+          "value": "10+ Years"
+        },
+        {
+          "label": "Digital Transformation",
+          "value": "Enterprise Leader"
+        }
+      ]
+    },
+    {
+      "title": "Key Contacts",
+      "type": "contact-card",
+      "fields": [
+        {
+          "label": "Direct Contact",
+          "title": "John Smith",
+          "value": "CTO",
+          "email": "john.smith@techcorp.com",
+          "phone": "+1 415 555 0100",
+          "role": "Executive",
+          "department": "Technology"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Send Email",
+      "type": "primary",
+      "icon": "📧",
+      "action": "mailto:john.smith@techcorp.com"
+    },
+    {
+      "label": "View LinkedIn",
+      "type": "primary",
+      "icon": "💼",
+      "action": "https://linkedin.com/in/john-smith-cto"
+    }
+  ]
+}
+

@@ -149,6 +149,29 @@ export const reducer = createReducer(
   on(generateCard, (state) => ({ ...state, isGenerating: true, error: null })),
   on(generateCardSuccess, (state, { card }) => {
     const cardWithId = ensureCardIds(card);
+    const existingCard = state.currentCardId ? state.entities[state.currentCardId] : null;
+    
+    // If card reference is the same (from incremental merge), return state unchanged
+    if (existingCard === cardWithId) {
+      return state;
+    }
+    
+    // If card content is identical, return state unchanged
+    // Note: We still use JSON.stringify for the reducer check but only compare IDs/titles for fast path
+    if (existingCard && existingCard.id === cardWithId.id) {
+      // Fast path: compare key properties first
+      if (existingCard.cardTitle === cardWithId.cardTitle &&
+          existingCard.cardSubtitle === cardWithId.cardSubtitle &&
+          existingCard.sections?.length === cardWithId.sections?.length) {
+        // Only do deep comparison if key properties match
+        const existingJson = JSON.stringify(removeAllIds(existingCard));
+        const newJson = JSON.stringify(removeAllIds(cardWithId));
+        if (existingJson === newJson) {
+          return state;
+        }
+      }
+    }
+    
     const cardWithoutIds = removeAllIds(card);
     return {
       ...cardsAdapter.upsertOne(cardWithId, state),

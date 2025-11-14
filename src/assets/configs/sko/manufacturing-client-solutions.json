@@ -1,0 +1,98 @@
+{
+  "cardTitle": "Top Orange Business Solutions",
+  "cardSubtitle": "Recommended Solutions for Manufacturing Client",
+  "sections": [
+    {
+      "title": "Recommended Solutions",
+      "type": "solutions",
+      "fields": [
+        {
+          "title": "IoT Manufacturing Platform",
+          "description": "Connected devices and sensors for smart manufacturing, predictive maintenance, and energy optimization",
+          "category": "IoT",
+          "complexity": "medium",
+          "benefits": [
+            "Real-time monitoring",
+            "Predictive maintenance",
+            "Energy optimization",
+            "Reduced downtime"
+          ],
+          "deliveryTime": "6-8 weeks"
+        },
+        {
+          "title": "Edge Computing Infrastructure",
+          "description": "Distributed computing infrastructure for low-latency processing at manufacturing sites",
+          "category": "Infrastructure",
+          "complexity": "high",
+          "benefits": [
+            "Low latency processing",
+            "Real-time decision making",
+            "Reduced bandwidth costs",
+            "Offline capability"
+          ],
+          "deliveryTime": "8-10 weeks"
+        },
+        {
+          "title": "Supply Chain Analytics",
+          "description": "Advanced analytics for supply chain optimization, demand forecasting, and inventory management",
+          "category": "Analytics",
+          "complexity": "medium",
+          "benefits": [
+            "Demand forecasting",
+            "Inventory optimization",
+            "Cost reduction",
+            "Improved visibility"
+          ],
+          "deliveryTime": "4-6 weeks"
+        }
+      ]
+    },
+    {
+      "title": "Client Contact",
+      "type": "contact-card",
+      "fields": [
+        {
+          "label": "Primary Contact",
+          "title": "Manufacturing Client",
+          "value": "Operations Director",
+          "email": "client@manufacturing.com",
+          "phone": "+1 555 0200",
+          "role": "Management",
+          "department": "Operations"
+        },
+        {
+          "label": "Company",
+          "title": "Manufacturing Corp",
+          "value": "Manufacturing",
+          "email": "info@manufacturing.com",
+          "phone": "+1 555 0000",
+          "role": "Organization",
+          "department": "Corporate"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Create Presentation",
+      "type": "primary",
+      "icon": "📊",
+      "action": "#presentation"
+    },
+    {
+      "label": "Send Email to Client",
+      "type": "primary",
+      "icon": "📧",
+      "email": {
+        "contact": {
+          "name": "Manufacturing Client",
+          "email": "client@manufacturing.com",
+          "role": "Operations Director"
+        },
+        "subject": "Orange Business Solutions - Manufacturing Industry Solutions",
+        "body": "Dear Manufacturing Client,\n\nI am excited to share the top Orange Business Solutions designed specifically for manufacturing organizations:\n\n1. IoT Manufacturing Platform\n   Connected devices for smart manufacturing and predictive maintenance\n\n2. Edge Computing Infrastructure\n   Low-latency processing at manufacturing sites\n\n3. Supply Chain Analytics\n   Advanced analytics for supply chain optimization\n\nThese solutions can help optimize your operations, reduce downtime, and improve efficiency.\n\nI would welcome the opportunity to discuss how these solutions can benefit your organization.\n\nBest regards,\nOrange Business Sales Team"
+      }
+    }
+  ]
+}
+

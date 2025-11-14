@@ -1,7 +1,7 @@
 import { Injectable, inject, InjectionToken, OnDestroy } from '@angular/core';
 import { Observable, BehaviorSubject, combineLatest, EMPTY } from 'rxjs';
 import { map, switchMap, shareReplay, startWith, filter } from 'rxjs/operators';
-import { AICardConfig, CardType } from '../../../models';
+import { AICardConfig, CardType, CardSection } from '../../../models';
 import { CardDataProvider } from './card-data-provider.interface';
 import { JsonCardProvider } from './json-card-provider.service';
 
@@ -62,6 +62,81 @@ export class CardDataService implements OnDestroy {
   getCardsByType(cardType: CardType): Observable<AICardConfig[]> {
     return this.activeProviderSubject.pipe(
       switchMap(provider => provider.getCardsByType(cardType))
+    );
+  }
+
+  /**
+   * Get all cards with streaming (progressive loading)
+   * Falls back to blocking getAllCards() if provider doesn't support streaming
+   */
+  getAllCardsStreaming(): Observable<AICardConfig> {
+    return this.activeProviderSubject.pipe(
+      switchMap(provider => {
+        if (provider.getAllCardsStreaming) {
+          return provider.getAllCardsStreaming();
+        }
+        // Fallback: convert array to stream
+        return provider.getAllCards().pipe(
+          switchMap(cards => {
+            const stream = new Observable<AICardConfig>(observer => {
+              cards.forEach(card => observer.next(card));
+              observer.complete();
+            });
+            return stream;
+          })
+        );
+      })
+    );
+  }
+
+  /**
+   * Get cards by type with streaming (progressive loading)
+   * Falls back to blocking getCardsByType() if provider doesn't support streaming
+   */
+  getCardsByTypeStreaming(cardType: CardType): Observable<AICardConfig> {
+    return this.activeProviderSubject.pipe(
+      switchMap(provider => {
+        if (provider.getCardsByTypeStreaming) {
+          return provider.getCardsByTypeStreaming(cardType);
+        }
+        // Fallback: convert array to stream
+        return provider.getCardsByType(cardType).pipe(
+          switchMap(cards => {
+            const stream = new Observable<AICardConfig>(observer => {
+              cards.forEach(card => observer.next(card));
+              observer.complete();
+            });
+            return stream;
+          })
+        );
+      })
+    );
+  }
+
+  /**
+   * Get card sections with streaming (progressive section loading)
+   * Falls back to single emission if provider doesn't support streaming
+   */
+  getCardSectionsStreaming(cardId: string): Observable<CardSection> {
+    return this.activeProviderSubject.pipe(
+      switchMap(provider => {
+        if (provider.getCardSectionsStreaming) {
+          return provider.getCardSectionsStreaming(cardId);
+        }
+        // Fallback: get card and emit sections
+        return provider.getCardById(cardId).pipe(
+          switchMap(card => {
+            if (!card?.sections) {
+              return EMPTY;
+            }
+            const stream = new Observable<CardSection>(observer => {
+              card.sections.forEach(section => observer.next(section));
+              observer.complete();
+            });
+            return stream;
+          })
+        );
+      })
     );
   }
 

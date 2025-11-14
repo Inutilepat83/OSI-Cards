@@ -2,13 +2,15 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, Elem
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { AICardConfig, CardType, CardTypeGuards } from '../../../../models';
 import * as CardActions from '../../../../store/cards/cards.state';
 import * as CardSelectors from '../../../../store/cards/cards.selectors';
 import { AppState } from '../../../../store/app.state';
+import { CardDiffUtil } from '../../../../shared/utils/card-diff.util';
 
 // Import standalone components
-import { AICardRendererComponent, CardControlsComponent, CardPreviewComponent } from '../../../../shared/components/cards';
+import { AICardRendererComponent, CardPreviewComponent } from '../../../../shared/components/cards';
 import { JsonEditorComponent, ensureCardIds } from '../../../../shared';
 import { LucideIconsModule } from '../../../../shared/icons/lucide-icons.module';
 
@@ -18,7 +20,6 @@ import { LucideIconsModule } from '../../../../shared/icons/lucide-icons.module'
   imports: [
     CommonModule,
     AICardRendererComponent,
-    CardControlsComponent,
     CardPreviewComponent,
     JsonEditorComponent,
     LucideIconsModule
@@ -48,13 +49,21 @@ export class HomePageComponent implements OnInit {
   switchingType = false;
   systemStats = { totalFiles: 18 };
 
-  cardTypes: CardType[] = ['company', 'contact', 'opportunity', 'product', 'analytics', 'project', 'event'];
+  cardTypes: CardType[] = ['company', 'contact', 'opportunity', 'product', 'analytics', 'event', 'sko'];
 
   statusMessage = '';
   private statusTone: 'polite' | 'assertive' = 'polite';
   private statusRole: 'status' | 'alert' = 'status';
   private previousLoading = false;
   private previousError = '';
+  
+  // Dual-stream JSON input processing:
+  // - Immediate stream: Live preview updates (50ms debounce for responsiveness)
+  // - Debounced stream: Final validation and merging (300ms debounce for performance)
+  private jsonInputSubject = new Subject<string>();
+  private immediateJsonSubject = new Subject<string>();
+  private lastProcessedJson = '';
+  private lastImmediateJson = '';
 
   ngOnInit(): void {
     // Subscribe to store selectors
@@ -116,11 +125,44 @@ export class HomePageComponent implements OnInit {
 
     // Initialize system and load initial company card
     this.initializeSystem();
+    
+    // Setup immediate JSON processing for live preview updates
+    // Very short debounce (50ms) for responsive feel while still batching rapid changes
+    this.immediateJsonSubject.pipe(
+      debounceTime(50), // 50ms for near-instant visual feedback
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(jsonInput => {
+      // Skip if this JSON was already processed immediately (prevents loops)
+      if (jsonInput === this.lastImmediateJson) {
+        return;
+      }
+      // Mark as processed and update card immediately
+      this.lastImmediateJson = jsonInput;
+      this.processJsonInputImmediate(jsonInput);
+    });
+    
+    // Setup debounced JSON processing for final validation and merging
+    // Longer debounce (300ms) for expensive operations like diffing
+    this.jsonInputSubject.pipe(
+      debounceTime(300), // 300ms debounce for final processing
+      distinctUntilChanged(), // Only process if JSON actually changed
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(jsonInput => {
+      // Skip if this JSON was already processed (prevents loops)
+      if (jsonInput === this.lastProcessedJson) {
+        return;
+      }
+      // Mark as processed and update card with full validation
+      this.lastProcessedJson = jsonInput;
+      this.processJsonInput(jsonInput);
+    });
   }
 
   private initializeSystem(): void {
+    // Pre-load initial card immediately
     this.isInitialized = true;
     this.announceStatus('Loading default company card template.');
+    
     // Load initial company card
     this.store.dispatch(CardActions.setCardType({ cardType: this.cardType }));
     this.store.dispatch(CardActions.setCardVariant({ variant: this.cardVariant }));
@@ -137,13 +179,23 @@ export class HomePageComponent implements OnInit {
 
   onJsonInputChange(jsonInput: string): void {
     this.jsonInput = jsonInput;
-    this.onJsonInputChangeInternal();
+    // Update store immediately for UI feedback
+    this.store.dispatch(CardActions.updateJsonInput({ jsonInput }));
+    
+    // Process through both streams:
+    // 1. Immediate stream for live preview (50ms debounce)
+    this.immediateJsonSubject.next(jsonInput);
+    // 2. Debounced stream for final validation (300ms debounce)
+    this.jsonInputSubject.next(jsonInput);
   }
 
   private switchCardType(type: CardType): void {
     if (this.switchingType) return;
     this.switchingType = true;
     this.cardType = type;
+    // Reset processed JSON before loading template to ensure updates
+    this.lastProcessedJson = '';
+    this.lastImmediateJson = '';
     // Update state and load template
     this.store.dispatch(CardActions.setCardType({ cardType: type }));
     this.store.dispatch(CardActions.loadTemplate({ cardType: type, variant: this.cardVariant }));
@@ -153,51 +205,117 @@ export class HomePageComponent implements OnInit {
   private switchCardVariant(variant: number): void {
     if (variant < 1 || variant > 3) return; // Ensure variant is within valid range
     this.cardVariant = variant as 1 | 2 | 3;
+    // Reset processed JSON before switching to ensure updates
+    this.lastProcessedJson = '';
+    this.lastImmediateJson = '';
     this.store.dispatch(CardActions.setCardVariant({ variant }));
     this.switchCardType(this.cardType);
   }
 
-  private onJsonInputChangeInternal(): void {
+  /**
+   * Immediate JSON processing for live preview updates.
+   * Lightweight parsing with ALL JSON content displayed in real-time.
+   * Very permissive - accepts partial/incomplete JSON for instant visual feedback.
+   */
+  private processJsonInputImmediate(jsonInput: string): void {
     if (!this.isInitialized) return;
 
+    // Quick validation - check if empty
+    if (!jsonInput || jsonInput.trim() === '' || jsonInput.trim() === '{}') {
+      // Show empty card immediately for live feedback
+      const emptyCard: AICardConfig = {
+        cardTitle: '',
+        sections: []
+      };
+      this.store.dispatch(CardActions.generateCardSuccess({ card: ensureCardIds(emptyCard) }));
+      this.cd.markForCheck();
+      return;
+    }
+
+    // Parse JSON in a try-catch for performance
+    let data: unknown;
     try {
-      this.store.dispatch(CardActions.updateJsonInput({ jsonInput: this.jsonInput }));
+      data = JSON.parse(jsonInput);
+    } catch (parseError) {
+      // Invalid JSON - don't update, let debounced stream handle error display
+      return;
+    }
 
-      if (!this.jsonInput || this.jsonInput.trim() === '' || this.jsonInput.trim() === '{}') {
-        // Create a default empty card instead of null
-        const defaultCard: AICardConfig = {
-          cardTitle: 'Empty Card',
-          sections: []
-        };
-        this.store.dispatch(CardActions.generateCardSuccess({ card: ensureCardIds(defaultCard) }));
-        return;
-      }
+    // Validate that data is an object
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+      return;
+    }
 
-      let data: unknown;
-      try {
-        data = JSON.parse(this.jsonInput);
-      } catch (parseError) {
-        this.store.dispatch(CardActions.generateCardFailure({ error: 'Invalid JSON format. Please check your syntax.' }));
-        return;
-      }
+    const cardData = data as Partial<AICardConfig> & Record<string, unknown>;
 
-      // Validate that data is an object
-      if (!data || typeof data !== 'object' || Array.isArray(data)) {
-        this.store.dispatch(CardActions.generateCardFailure({ error: 'Card configuration must be a valid object.' }));
-        return;
-      }
+    // Create a complete card config with defaults for missing required fields
+    // This ensures ALL JSON content is preserved and displayed, even if incomplete
+    const liveCard: AICardConfig = {
+      // Preserve all existing properties from JSON (cardSubtitle, description, columns, actions, meta, etc.)
+      ...cardData,
+      // Ensure required fields are always set (provide defaults if missing)
+      cardTitle: typeof cardData.cardTitle === 'string' ? cardData.cardTitle : '',
+      sections: Array.isArray(cardData.sections) ? cardData.sections : []
+    };
 
-      const cardData = data as AICardConfig;
+    // Lightweight processing - ensure IDs exist for rendering
+    const sanitized = ensureCardIds(liveCard);
+    
+    // Dispatch immediately for live preview with ALL JSON content
+    // No merging - direct replacement for instant feedback
+    this.store.dispatch(CardActions.generateCardSuccess({ card: sanitized }));
+    this.cd.markForCheck(); // Trigger change detection immediately
+  }
 
-      // Validate and use the card data
-      if (CardTypeGuards.isAICardConfig(cardData)) {
-        const sanitized = ensureCardIds(cardData);
-        this.store.dispatch(CardActions.generateCardSuccess({ card: sanitized }));
+  /**
+   * Debounced JSON processing for final validation and merging.
+   * Full validation, error handling, and smart merging with existing card.
+   */
+  private processJsonInput(jsonInput: string): void {
+    if (!this.isInitialized) return;
+
+    // Quick validation - check if empty
+    if (!jsonInput || jsonInput.trim() === '' || jsonInput.trim() === '{}') {
+      const defaultCard: AICardConfig = {
+        cardTitle: 'Empty Card',
+        sections: []
+      };
+      this.store.dispatch(CardActions.generateCardSuccess({ card: ensureCardIds(defaultCard) }));
+      return;
+    }
+
+    // Parse JSON in a try-catch for performance
+    let data: unknown;
+    try {
+      data = JSON.parse(jsonInput);
+    } catch (parseError) {
+      this.store.dispatch(CardActions.generateCardFailure({ error: 'Invalid JSON format. Please check your syntax.' }));
+      return;
+    }
+
+    // Validate that data is an object
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+      this.store.dispatch(CardActions.generateCardFailure({ error: 'Card configuration must be a valid object.' }));
+      return;
+    }
+
+    const cardData = data as AICardConfig;
+
+    // Validate and use the card data
+    if (CardTypeGuards.isAICardConfig(cardData)) {
+      const sanitized = ensureCardIds(cardData);
+      
+      // Smart merging with existing card for optimal updates
+      // The card preview component will handle streaming sections
+      if (this.generatedCard) {
+        const mergedCard = CardDiffUtil.mergeCardUpdates(this.generatedCard, sanitized);
+        this.store.dispatch(CardActions.generateCardSuccess({ card: mergedCard }));
       } else {
-        throw new Error('Invalid card configuration format - missing required fields (cardTitle, sections)');
+        // First load - dispatch immediately to show skeleton frame
+        this.store.dispatch(CardActions.generateCardSuccess({ card: sanitized }));
       }
-    } catch (error: unknown) {
-      this.store.dispatch(CardActions.generateCardFailure({ error: error instanceof Error ? error.message : 'Unknown error' }));
+    } else {
+      this.store.dispatch(CardActions.generateCardFailure({ error: 'Invalid card configuration format - missing required fields (cardTitle, sections)' }));
     }
   }
 

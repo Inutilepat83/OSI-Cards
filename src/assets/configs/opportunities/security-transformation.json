@@ -1,0 +1,85 @@
+{
+  "cardTitle": "Security Transformation Initiative",
+  "sections": [
+    {
+      "title": "Opportunity Overview",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Opportunity Type",
+          "value": "Security & Compliance"
+        },
+        {
+          "label": "Industry Focus",
+          "value": "Healthcare"
+        },
+        {
+          "label": "Estimated Value",
+          "value": "$8M - $12M"
+        },
+        {
+          "label": "Timeline",
+          "value": "12-15 Months"
+        },
+        {
+          "label": "Lead Source",
+          "value": "Trade Show"
+        },
+        {
+          "label": "Decision Maker",
+          "value": "CISO"
+        },
+        {
+          "label": "Competition Level",
+          "value": "High"
+        },
+        {
+          "label": "Success Probability",
+          "value": "65%"
+        }
+      ]
+    },
+    {
+      "title": "Implementation Progress",
+      "type": "analytics",
+      "fields": [
+        {
+          "label": "Requirements Gathering",
+          "value": "100% Complete",
+          "percentage": 100,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Solution Design",
+          "value": "80% Complete",
+          "percentage": 80,
+          "performance": "good",
+          "trend": "up"
+        },
+        {
+          "label": "Proposal Review",
+          "value": "40% Complete",
+          "percentage": 40,
+          "performance": "good",
+          "trend": "up"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "View Details",
+      "type": "primary",
+      "icon": "📋",
+      "action": "#"
+    },
+    {
+      "label": "Contact Team",
+      "type": "primary",
+      "icon": "📧",
+      "action": "mailto:sales@orange.com"
+    }
+  ]
+}
+

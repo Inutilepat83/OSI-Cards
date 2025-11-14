@@ -14,7 +14,10 @@
 
 /* AI card (hero shell) ----------------------------------------------------- */
 @mixin surface-ai-card-base {
-  border: var(--ai-card-border, none) !important;
+  border: var(--ai-card-border, 0.5px solid color-mix(in srgb, var(--color-brand) 49%, transparent)) !important;
+  border-width: 0.5px !important;
+  border-style: solid !important;
+  border-color: color-mix(in srgb, var(--color-brand) 49%, transparent) !important;
   border-radius: var(--ai-card-border-radius) !important;
   background: var(--ai-card-background, var(--card-surface, var(--card))) !important;
   box-shadow: var(--ai-card-box-shadow, none) !important;
@@ -24,7 +27,10 @@
 }
 
 @mixin surface-ai-card-hover {
-  border: var(--ai-card-border-hover, var(--ai-card-border, none)) !important;
+  border: var(--ai-card-border-hover, 0.5px solid var(--color-brand)) !important;
+  border-width: 0.5px !important;
+  border-style: solid !important;
+  border-color: var(--color-brand) !important;
   background: var(--ai-card-background-hover, var(--card-surface-hover, var(--card))) !important;
   box-shadow: var(--ai-card-box-shadow-hover, var(--ai-card-box-shadow, none)) !important;
 }
@@ -41,6 +47,8 @@
 }
 
 @mixin surface-section-hover {
+  /* Only darken background by 1%, no border changes */
+  background: color-mix(in srgb, var(--section-surface, var(--section-background, var(--card-section-bg))) 99%, black) !important;
   box-shadow: var(--section-box-shadow-hover, var(--section-box-shadow)) !important;
 }
 
@@ -61,8 +69,8 @@
 }
 
 @mixin surface-section-item-hover {
-  border-color: var(--section-item-border-hover) !important;
-  background: var(--section-item-background-hover) !important;
+  /* Only darken background by 1%, no border changes */
+  background: color-mix(in srgb, var(--section-item-background) 99%, black) !important;
   box-shadow: var(--section-item-box-shadow-hover) !important;
   transform: var(--section-item-hover-transform) !important;
 }

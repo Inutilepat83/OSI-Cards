@@ -176,54 +176,9 @@
   }
 }
 
-.demo-header {
-  text-align: center;
-  margin-bottom: 1.5rem;
+/* Demo title and controls now use Tailwind classes directly */
 
-  @media (min-width: 640px) {
-    margin-bottom: 2rem;
-  }
-}
-
-.demo-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--foreground);
-  margin-bottom: 1rem;
-
-  @media (min-width: 640px) {
-    font-size: 2.25rem;
-    margin-bottom: 1.5rem;
-  }
-}
-
-/* Editor Card Styles */
-.editor-card {
-  background: var(--card);
-  border: none;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.editor-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 1.25rem;
-  background: transparent;
-  border-bottom: none;
-}
-
-.editor-card-title {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--foreground);
-  margin: 0;
-}
-
-.editor-card-content {
-  padding: 0;
-}
+/* Editor Styles - Simplified to match React example */
 
 .error-badge {
   display: inline-flex;
@@ -247,37 +202,7 @@
   font-size: 0.8125rem;
 }
 
-/* Preview Card Header */
-.preview-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-  padding: 0.75rem 1rem;
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-}
-
-.preview-card-title {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--foreground);
-  margin: 0;
-}
-
-.card-type-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.625rem;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  text-transform: capitalize;
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--primary) 15%, transparent);
-  color: var(--primary);
-  border: none;
-}
+/* Preview Header - Simplified to match React example */
 
 .fullscreen-badge {
   display: inline-flex;

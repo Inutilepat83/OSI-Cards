@@ -31,6 +31,8 @@
     "analyze": "npx ng build --source-map && npx webpack-bundle-analyzer dist/osi-cards/*.js",
     "bundle:analyze": "echo 'Bundle analyze placeholder'",
     "bundle:report": "echo 'Bundle report placeholder'",
+    "generate:manifest": "node scripts/generate-manifest.js",
+    "prebuild": "npm run generate:manifest",
     "perf:lighthouse": "echo 'Run Lighthouse locally e.g. chrome --headless --remote-debugging-port=9222; lighthouse http://localhost:4200 --quiet --chrome-flags=\"--headless --no-sandbox\"'",
     "pwa:validate": "echo 'PWA validation placeholder'",
     "performance:report": "echo 'Performance report placeholder'",

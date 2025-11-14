@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { AICardConfig, CardType } from '../../../models';
+import { AICardConfig, CardType, CardSection } from '../../../models';
 
 /**
  * Abstract interface for card data providers
@@ -20,6 +20,24 @@ export abstract class CardDataProvider {
    * Get a specific card by ID
    */
   abstract getCardById(id: string): Observable<AICardConfig | null>;
+
+  /**
+   * Get all cards with streaming (progressive loading)
+   * Optional - defaults to blocking getAllCards() if not implemented
+   */
+  getAllCardsStreaming?(): Observable<AICardConfig>;
+
+  /**
+   * Get cards by type with streaming (progressive loading)
+   * Optional - defaults to blocking getCardsByType() if not implemented
+   */
+  getCardsByTypeStreaming?(cardType: CardType): Observable<AICardConfig>;
+
+  /**
+   * Get card sections with streaming (progressive section loading)
+   * Optional - for section-level streaming support
+   */
+  getCardSectionsStreaming?(cardId: string): Observable<CardSection>;
 
   /**
    * Initialize the provider (optional)

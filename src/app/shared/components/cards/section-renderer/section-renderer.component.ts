@@ -55,27 +55,38 @@ export class SectionRendererComponent {
   @Input({ required: true }) section!: CardSection;
   @Output() sectionEvent = new EventEmitter<SectionRenderEvent>();
 
-  @HostBinding('attr.data-section-type')
+  // Removed @HostBinding - will be set in template instead to avoid setAttribute errors
   get sectionTypeAttribute(): string {
     if (!this.section) {
-      return '';
+      return 'unknown';
     }
-    const typeLabel = (this.section.type ?? '').trim();
-    const resolved = this.resolvedType;
-    return (typeLabel || resolved || 'unknown').toLowerCase();
+    try {
+      const typeLabel = (this.section.type ?? '').trim();
+      const resolved = this.resolvedType;
+      return (typeLabel || resolved || 'unknown').toLowerCase();
+    } catch {
+      return 'unknown';
+    }
   }
 
-  @HostBinding('attr.data-section-id')
   get sectionIdAttribute(): string | null {
     if (!this.section?.id) {
       return null;
     }
-    return String(this.section.id);
+    try {
+      return String(this.section.id);
+    } catch {
+      return null;
+    }
   }
 
   get resolvedType(): string {
-    const type = (this.section.type ?? '').toLowerCase();
-    const title = (this.section.title ?? '').toLowerCase();
+    if (!this.section) {
+      return 'unknown';
+    }
+    try {
+      const type = (this.section.type ?? '').toLowerCase();
+      const title = (this.section.title ?? '').toLowerCase();
 
     if (type === 'info' && title.includes('overview')) {
       return 'overview';
@@ -108,6 +119,9 @@ export class SectionRendererComponent {
       return 'fallback';
     }
     return type;
+    } catch {
+      return 'unknown';
+    }
   }
 
   onInfoFieldInteraction(event: InfoSectionFieldInteraction): void {

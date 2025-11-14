@@ -116,11 +116,11 @@ div [class$="-icon"]::before {
   transition: opacity var(--duration-fast) var(--ease-out-smooth);
 }
 
-/* Color transitions */
+/* Color transitions - smooth 300ms transitions */
 .transition-colors {
-  transition: color var(--duration-normal) var(--ease-out-smooth),
-              background-color var(--duration-normal) var(--ease-out-smooth),
-              border-color var(--duration-normal) var(--ease-out-smooth);
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
 }
 
 /* ===================================================================

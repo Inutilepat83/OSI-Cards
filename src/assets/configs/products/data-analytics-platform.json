@@ -1,0 +1,85 @@
+{
+  "cardTitle": "Data Analytics Platform",
+  "sections": [
+    {
+      "title": "Product Overview",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Category",
+          "value": "Data & Analytics"
+        },
+        {
+          "label": "Launch Date",
+          "value": "2024"
+        },
+        {
+          "label": "Version",
+          "value": "1.2.0"
+        },
+        {
+          "label": "Target Market",
+          "value": "Business Intelligence"
+        },
+        {
+          "label": "Pricing Model",
+          "value": "Per User"
+        },
+        {
+          "label": "Support Level",
+          "value": "Business Hours"
+        },
+        {
+          "label": "Deployment",
+          "value": "SaaS"
+        },
+        {
+          "label": "Compliance",
+          "value": "GDPR, CCPA"
+        }
+      ]
+    },
+    {
+      "title": "Analytics Performance",
+      "type": "analytics",
+      "fields": [
+        {
+          "label": "Query Speed",
+          "value": "< 2 seconds",
+          "percentage": 98,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Data Processing",
+          "value": "1TB/hour",
+          "percentage": 95,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Uptime",
+          "value": "99.95%",
+          "percentage": 99.95,
+          "performance": "excellent",
+          "trend": "stable"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Learn More",
+      "type": "primary",
+      "icon": "📖",
+      "action": "#"
+    },
+    {
+      "label": "Request Demo",
+      "type": "primary",
+      "icon": "🎬",
+      "action": "mailto:demos@orange.com"
+    }
+  ]
+}
+

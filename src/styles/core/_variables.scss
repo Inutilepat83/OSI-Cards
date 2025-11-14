@@ -88,7 +88,7 @@
   --ai-card-box-shadow: var(--theme-ai-card-box-shadow, 0 2px 8px rgba(0, 0, 0, 0.08));
   --ai-card-box-shadow-hover: var(--theme-ai-card-box-shadow-hover, 0 4px 16px rgba(0, 0, 0, 0.12));
   --ai-card-hover-transform: none; /* No transform for cards */
-  --ai-card-transition-default: border-color 0.32s cubic-bezier(0.4, 0, 0.2, 1), background 0.32s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  --ai-card-transition-default: border 0.32s cubic-bezier(0.4, 0, 0.2, 1), background 0.32s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.32s cubic-bezier(0.4, 0, 0.2, 1);
   --ai-card-transition: var(--theme-ai-card-transition, var(--ai-card-transition-default));
   
   /* 4. SECTIONS (.masonry-item) - DISCRETE BORDERS */
@@ -113,7 +113,7 @@
   --section-item-box-shadow-hover-default: 0 3px 10px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(255, 121, 0, 0.1);
   --section-item-box-shadow-hover: var(--theme-section-item-box-shadow-hover, var(--section-item-box-shadow-hover-default));
   --section-item-hover-transform: var(--theme-section-item-hover-transform, none); /* No transform for section items */
-  --section-item-transition-default: border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), background 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  --section-item-transition-default: background 300ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
   --section-item-transition: var(--theme-section-item-transition, var(--section-item-transition-default));
   
   /* Legacy card variables now map to dedicated theme tokens */

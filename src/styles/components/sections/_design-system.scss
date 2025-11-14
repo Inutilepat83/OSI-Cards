@@ -245,10 +245,9 @@ $breakpoints: (
   background: var(--section-background, transparent);
   box-shadow: var(--card-box-shadow);
   overflow: hidden;
-  /* Use standard transition */
-  transition: border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-    background 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Smooth transitions for natural feel */
+  transition: background 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
   height: 100%;
   backdrop-filter: var(--section-backdrop-filter, none);
 
@@ -268,9 +267,8 @@ $breakpoints: (
   }
 
   &:hover {
-    /* GLOBALLY ENFORCED: Use main variables for hover */
-    border-color: var(--card-border-hover);
-    background: var(--card-background-hover);
+    /* Only darken background by 1%, no border changes */
+    background: color-mix(in srgb, var(--section-background, transparent) 99%, black);
     box-shadow: var(--card-box-shadow-hover);
 
     &::before {

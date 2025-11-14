@@ -34,11 +34,36 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   // Expose Math for template
   Math = Math;
   
+  private previousSectionsHash = '';
+  
   @Input()
   set cardConfig(value: AICardConfig | undefined) {
+    const previousConfig = this._cardConfig;
     this._cardConfig = value ?? undefined;
-    this.computeProcessedSections();
+    
+    // Only recompute if sections actually changed (using fast hash instead of JSON.stringify)
+    const sectionsHash = value?.sections ? this.hashSections(value.sections) : '';
+    if (sectionsHash !== this.previousSectionsHash || !previousConfig) {
+      this.previousSectionsHash = sectionsHash;
+      this.computeProcessedSections();
+    }
     this.cdr.markForCheck();
+  }
+
+  /**
+   * Fast hash function for sections (replaces JSON.stringify)
+   */
+  private hashSections(sections: CardSection[]): string {
+    // Create a lightweight hash based on section metadata
+    const hash = sections.map(s => `${s.id || ''}|${s.title || ''}|${s.type || ''}`).join('||');
+    // Simple hash of the string
+    let result = 0;
+    for (let i = 0; i < hash.length; i++) {
+      const char = hash.charCodeAt(i);
+      result = ((result << 5) - result) + char;
+      result = result & result; // Convert to 32-bit integer
+    }
+    return String(result);
   }
   get cardConfig(): AICardConfig | undefined {
     return this._cardConfig;
@@ -58,6 +83,10 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   
   // CSS variables for the tilt effect
   tiltStyle: Record<string, string | number> = {};
+  
+  // Performance: RAF batching for mouse moves
+  private mouseMoveRafId: number | null = null;
+  private pendingMouseMove: MouseEvent | null = null;
   
   private readonly destroyed$ = new Subject<void>();
   private readonly magneticTiltService = inject(MagneticTiltService);
@@ -120,18 +149,34 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         }
       });
 
-    // Subscribe to tilt calculations
+    // Subscribe to tilt calculations with RAF batching for performance
+    let tiltRafId: number | null = null;
+    let pendingCalculations: TiltCalculations | null = null;
+    
     this.magneticTiltService.tiltCalculations$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((calculations: TiltCalculations) => {
-        this.tiltStyle = {
-          '--tilt-x': `${calculations.rotateX}deg`,
-          '--tilt-y': `${calculations.rotateY}deg`,
-          '--glow-blur': `${calculations.glowBlur}px`,
-          '--glow-color': `rgba(255,121,0,${calculations.glowOpacity})`,
-          '--reflection-opacity': calculations.reflectionOpacity
-        };
-        this.cdr.markForCheck();
+        pendingCalculations = calculations;
+        
+        // Batch updates via RAF to avoid excessive change detection
+        // Always update to ensure smooth transitions
+        if (tiltRafId === null) {
+          tiltRafId = requestAnimationFrame(() => {
+            if (pendingCalculations) {
+              // Always update glow values for smooth transitions
+              this.tiltStyle = {
+                '--tilt-x': `${pendingCalculations.rotateX}deg`,
+                '--tilt-y': `${pendingCalculations.rotateY}deg`,
+                '--glow-blur': `${pendingCalculations.glowBlur}px`,
+                '--glow-color': `rgba(255,121,0,${pendingCalculations.glowOpacity})`,
+                '--reflection-opacity': pendingCalculations.reflectionOpacity
+              };
+              this.cdr.markForCheck();
+            }
+            pendingCalculations = null;
+            tiltRafId = null;
+          });
+        }
       });
   }
   
@@ -208,6 +253,16 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngOnDestroy(): void {
+    // Cancel any pending RAFs
+    if (this.mouseMoveRafId !== null) {
+      cancelAnimationFrame(this.mouseMoveRafId);
+    }
+    
+    // Clear tilt service cache for this element
+    if (this.tiltContainerRef?.nativeElement) {
+      this.magneticTiltService.clearCache(this.tiltContainerRef.nativeElement);
+    }
+    
     this.destroyed$.next();
     this.destroyed$.complete();
   }
@@ -223,6 +278,14 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
 
   onMouseLeave(): void {
     this.isHovered = false;
+    
+    // Cancel pending RAF
+    if (this.mouseMoveRafId !== null) {
+      cancelAnimationFrame(this.mouseMoveRafId);
+      this.mouseMoveRafId = null;
+    }
+    this.pendingMouseMove = null;
+    
     this.magneticTiltService.resetTilt();
     this.cdr.markForCheck();
   }
@@ -232,8 +295,26 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       return;
     }
     
-    this.mousePosition = { x: event.clientX, y: event.clientY };
-    this.magneticTiltService.calculateTilt(this.mousePosition, this.tiltContainerRef.nativeElement);
+    // Store latest mouse position
+    this.pendingMouseMove = event;
+    
+    // Throttle with RAF for 60fps smooth updates
+    if (this.mouseMoveRafId === null) {
+      this.mouseMoveRafId = requestAnimationFrame(() => {
+        if (this.pendingMouseMove && this.tiltContainerRef?.nativeElement) {
+          this.mousePosition = { 
+            x: this.pendingMouseMove.clientX, 
+            y: this.pendingMouseMove.clientY 
+          };
+          this.magneticTiltService.calculateTilt(
+            this.mousePosition, 
+            this.tiltContainerRef.nativeElement
+          );
+        }
+        this.pendingMouseMove = null;
+        this.mouseMoveRafId = null;
+      });
+    }
   }
 
   onFieldClick(field: CardField, section?: CardSection): void {
@@ -244,13 +325,77 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     });
   }
 
-  onActionClick(action: string): void {
+  onActionClick(actionObj: CardAction): void {
+    // Handle email actions
+    if (actionObj.email) {
+      this.handleEmailAction(actionObj);
+      return;
+    }
+
+    // Handle regular actions
     if (this.cardConfig) {
+      const action = actionObj.action || actionObj.label;
       this.cardInteraction.emit({
         action: action,
         card: this.cardConfig
       });
     }
+  }
+
+  private handleEmailAction(action: CardAction): void {
+    if (!action.email) return;
+
+    const email = action.email;
+    const to = Array.isArray(email.to) ? email.to.join(',') : email.to;
+    const cc = Array.isArray(email.cc) ? email.cc.join(',') : email.cc;
+    const bcc = Array.isArray(email.bcc) ? email.bcc.join(',') : email.bcc;
+
+    // Determine recipient email address
+    const recipientEmail = to || email.contact?.email || '';
+    if (!recipientEmail) {
+      console.warn('No email address provided for email action');
+      return;
+    }
+
+    // Build mailto URL parameters manually for better control over encoding
+    const params: string[] = [];
+    
+    // Add CC if provided
+    if (cc) {
+      params.push(`cc=${encodeURIComponent(cc)}`);
+    }
+
+    // Add BCC if provided
+    if (bcc) {
+      params.push(`bcc=${encodeURIComponent(bcc)}`);
+    }
+
+    // Add subject if provided
+    if (email.subject) {
+      params.push(`subject=${encodeURIComponent(email.subject)}`);
+    }
+
+    // Add body if provided - encode properly with newlines as %0D%0A
+    if (email.body) {
+      // Replace newlines with %0D%0A (CRLF) for proper email formatting
+      // Then encode the rest of the content
+      const bodyWithLineBreaks = email.body.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+      const encodedBody = encodeURIComponent(bodyWithLineBreaks).replace(/%0A/g, '%0D%0A');
+      params.push(`body=${encodedBody}`);
+    }
+
+    // Construct mailto link
+    const queryString = params.length > 0 ? '?' + params.join('&') : '';
+    const mailtoLink = `mailto:${recipientEmail}${queryString}`;
+    
+    // Open email client using a temporary anchor element (most reliable method)
+    // This ensures the email client opens without navigating away from the page
+    const anchor = document.createElement('a');
+    anchor.href = mailtoLink;
+    anchor.style.display = 'none';
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
   }
 
   toggleFullscreen(): void {
@@ -317,13 +462,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     return this.iconService.getFieldIcon(action.label);
   }
 
-  getActionButtonClasses(action: CardAction): string[] {
-    const variant = (action.variant ?? action.type ?? 'primary').toLowerCase();
-    if (variant === 'secondary' || variant === 'outline' || variant === 'ghost') {
-      return ['ai-card-action', 'ai-card-action--secondary'];
-    }
-
-    return ['ai-card-action', 'ai-card-action--primary'];
+  getActionButtonClasses(action: CardAction): string {
+    return 'bg-[var(--color-brand)] text-white font-semibold border-0 hover:bg-[var(--color-brand)]/90 hover:shadow-lg hover:shadow-[var(--color-brand)]/40 active:scale-95';
   }
 
   private computeProcessedSections(): void {

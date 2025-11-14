@@ -1,0 +1,85 @@
+{
+  "cardTitle": "Digital Transformation Forum 2025",
+  "sections": [
+    {
+      "title": "Event Overview",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Event Type",
+          "value": "Business Conference"
+        },
+        {
+          "label": "Date",
+          "value": "June 10-12, 2025"
+        },
+        {
+          "label": "Location",
+          "value": "London, UK"
+        },
+        {
+          "label": "Venue",
+          "value": "ExCeL London"
+        },
+        {
+          "label": "Expected Attendance",
+          "value": "5,000+"
+        },
+        {
+          "label": "Duration",
+          "value": "3 Days"
+        },
+        {
+          "label": "Format",
+          "value": "In-Person"
+        },
+        {
+          "label": "Target Audience",
+          "value": "CIOs, CTOs, Digital Leaders"
+        }
+      ]
+    },
+    {
+      "title": "Registration & Engagement",
+      "type": "analytics",
+      "fields": [
+        {
+          "label": "Early Bird Registration",
+          "value": "70% Complete",
+          "percentage": 70,
+          "performance": "good",
+          "trend": "up"
+        },
+        {
+          "label": "Speaker Confirmations",
+          "value": "90% Complete",
+          "percentage": 90,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Sponsor Slots",
+          "value": "85% Filled",
+          "percentage": 85,
+          "performance": "excellent",
+          "trend": "up"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Register Now",
+      "type": "primary",
+      "icon": "🎫",
+      "action": "#"
+    },
+    {
+      "label": "View Agenda",
+      "type": "primary",
+      "icon": "📅",
+      "action": "#"
+    }
+  ]
+}
+

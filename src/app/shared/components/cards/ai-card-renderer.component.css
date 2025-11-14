@@ -4,6 +4,21 @@
   height: 100%;
 }
 
+/* Force border to be visible on card surface - override any resets */
+:host ::ng-deep .ai-card-surface {
+  border: 0.5px solid color-mix(in srgb, var(--color-brand) 49%, transparent) !important;
+  border-width: 0.5px !important;
+  border-style: solid !important;
+  border-color: color-mix(in srgb, var(--color-brand) 49%, transparent) !important;
+}
+
+:host ::ng-deep .ai-card-surface:hover {
+  border: 0.5px solid var(--color-brand) !important;
+  border-width: 0.5px !important;
+  border-style: solid !important;
+  border-color: var(--color-brand) !important;
+}
+
 /* Use Tailwind classes for styling - minimal custom CSS */
 
 /* Section highlight animation for URL fragment scrolling */

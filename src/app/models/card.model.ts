@@ -1,4 +1,4 @@
-export type CardType = 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'event' | 'project';
+export type CardType = 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'event' | 'project' | 'sko';
 
 export interface AICardConfig {
   id?: string;
@@ -141,6 +141,19 @@ export interface CardAction {
   action?: string;
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   meta?: Record<string, unknown>;
+  // Email-specific fields
+  email?: {
+    to?: string | string[];
+    cc?: string | string[];
+    bcc?: string | string[];
+    subject?: string;
+    body?: string;
+    contact?: {
+      name?: string;
+      email?: string;
+      role?: string;
+    };
+  };
 }
 
 export class CardTypeGuards {

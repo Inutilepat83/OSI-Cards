@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, BehaviorSubject, NEVER } from 'rxjs';
+import { Observable, Subject, BehaviorSubject, NEVER, EMPTY, from } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { map, catchError, retry } from 'rxjs/operators';
-import { AICardConfig } from '../../../models';
+import { map, catchError, retry, concatMap, delay } from 'rxjs/operators';
+import { AICardConfig, CardSection } from '../../../models';
 import { CardDataProvider } from './card-data-provider.interface';
 
 interface AllCardsMessage {
@@ -212,6 +212,82 @@ export class WebSocketCardProvider extends CardDataProvider {
     return this.getAllCards().pipe(
       map(cards => cards.find(card => card.id === id) || null)
     );
+  }
+
+  /**
+   * Get all cards with streaming (progressive loading)
+   * WebSocket provider supports incremental card updates
+   */
+  override getAllCardsStreaming(): Observable<AICardConfig> {
+    // Return incremental updates from WebSocket
+    if (!this.isConnected) {
+      this.connect();
+    }
+    
+    // Emit existing cards first, then listen for updates
+    return new Observable<AICardConfig>(observer => {
+      // Emit current cards
+      const currentCards = this.cardsSubject.value;
+      currentCards.forEach(card => observer.next(card));
+
+      // Subscribe to updates
+      const subscription = this.updatesSubject.subscribe(update => {
+        if (update.type === 'created' || update.type === 'updated') {
+          observer.next(update.card);
+        }
+      });
+
+      return () => subscription.unsubscribe();
+    });
+  }
+
+  /**
+   * Get card sections with streaming (progressive section loading)
+   * Supports section-level streaming from WebSocket
+   */
+  override getCardSectionsStreaming(cardId: string): Observable<CardSection> {
+    // Request section streaming from server
+    if (!this.isConnected) {
+      this.connect();
+    }
+
+    // Send request for section streaming
+    this.sendMessage({
+      type: 'stream_card_sections',
+      data: { id: cardId }
+    } as any);
+
+    // Listen for section updates
+    return new Observable<CardSection>(observer => {
+      // First, get the full card to extract sections
+      this.getCardById(cardId).subscribe(card => {
+        if (!card?.sections) {
+          observer.complete();
+          return;
+        }
+
+        // Stream sections with delay for visual effect
+        from(card.sections).pipe(
+          concatMap((section, index) => 
+            from([section]).pipe(delay(index * 80)) // 80ms between sections
+          )
+        ).subscribe({
+          next: section => observer.next(section),
+          complete: () => observer.complete(),
+          error: err => observer.error(err)
+        });
+      });
+
+      // Also listen for real-time section updates
+      const subscription = this.updatesSubject.subscribe(update => {
+        if (update.type === 'updated' && update.card.id === cardId && update.card.sections) {
+          // Emit new sections as they arrive
+          update.card.sections.forEach(section => observer.next(section));
+        }
+      });
+
+      return () => subscription.unsubscribe();
+    });
   }
 
   override subscribeToUpdates(): Observable<{
