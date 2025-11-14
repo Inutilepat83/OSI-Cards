@@ -1,12 +1,10 @@
 {
   "cardTitle": "DSM",
   "cardSubtitle": "Nutrition, Health & Sustainable Living Leader",
-  "cardType": "company",
   "sections": [
     {
       "title": "Company Overview",
       "type": "info",
-      "preferredColumns": 2,
       "fields": [
         {
           "label": "Industry",
@@ -45,7 +43,6 @@
     {
       "title": "ICT Investment Profile",
       "type": "analytics",
-      "preferredColumns": 2,
       "fields": [
         {
           "label": "Annual ICT Budget",
@@ -84,7 +81,6 @@
     {
       "title": "Key Performance Metrics",
       "type": "overview",
-      "preferredColumns": 2,
       "fields": [
         {
           "label": "Cloud Adoption Rate",
@@ -115,7 +111,6 @@
     {
       "title": "Financial Performance",
       "type": "financials",
-      "preferredColumns": 2,
       "fields": [
         {
           "label": "Annual Revenue",
@@ -150,7 +145,6 @@
     {
       "title": "Key Digital Initiatives",
       "type": "list",
-      "preferredColumns": 1,
       "items": [
         {
           "title": "Enterprise Cloud Migration",
@@ -189,7 +183,6 @@
     {
       "title": "Recent Milestones",
       "type": "event",
-      "preferredColumns": 1,
       "items": [
         {
           "title": "Orange Business Partnership Launch",
@@ -224,7 +217,6 @@
     {
       "title": "Network Infrastructure",
       "type": "chart",
-      "preferredColumns": 1,
       "fields": [
         {
           "label": "Connected Sites",
@@ -251,7 +243,6 @@
     {
       "title": "Digital Solutions Portfolio",
       "type": "solutions",
-      "preferredColumns": 2,
       "fields": [
         {
           "title": "Hybrid Cloud Infrastructure",
@@ -306,7 +297,6 @@
     {
       "title": "Key Technology Products",
       "type": "product",
-      "preferredColumns": 2,
       "fields": [
         {
           "title": "DSM Cloud Platform",
@@ -351,7 +341,6 @@
     {
       "title": "Key Contacts",
       "type": "contact-card",
-      "preferredColumns": 1,
       "fields": [
         {
           "label": "CTO Office",
@@ -385,7 +374,6 @@
     {
       "title": "Strategic Technology Partners",
       "type": "network-card",
-      "preferredColumns": 1,
       "fields": [
         {
           "label": "Orange Business",
@@ -417,7 +405,6 @@
     {
       "title": "Global Operations",
       "type": "map",
-      "preferredColumns": 2,
       "fields": [
         {
           "name": "DSM HQ - Heerlen",
@@ -466,7 +453,6 @@
     {
       "title": "Executive Insights",
       "type": "quotation",
-      "preferredColumns": 1,
       "fields": [
         {
           "quote": "Digital transformation is not just about technology—it's about creating sustainable value for our customers and stakeholders. Our partnership with Orange Business has been instrumental in accelerating our cloud journey.",
@@ -485,7 +471,6 @@
     {
       "title": "Key References",
       "type": "text-reference",
-      "preferredColumns": 1,
       "fields": [
         {
           "text": "DSM has committed to achieving net-zero emissions by 2050, with an interim target of 50% reduction by 2030. The company's sustainability strategy integrates digital solutions to optimize resource usage and reduce environmental impact.",

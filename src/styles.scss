@@ -33,6 +33,7 @@
 @import 'styles/components/sections/text-reference';
 @import 'styles/components/sections/fallback';
 @import 'styles/components/sections/unified-cards'; /* Must be last to override all section-specific styles */
+@import 'styles/components/sections/global-enforcement'; /* GLOBAL ENFORCEMENT - MUST BE ABSOLUTELY LAST to enforce all settings */
 @import 'styles/components/badges';
 @import 'styles/components/config-panel';
 @import 'styles/components/ai-card-renderer';

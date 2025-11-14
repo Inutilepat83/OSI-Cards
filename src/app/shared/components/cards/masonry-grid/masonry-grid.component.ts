@@ -2,6 +2,39 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, E
 import { CommonModule } from '@angular/common';
 import { CardSection } from '../../../../models';
 import { SectionRendererComponent, SectionRenderEvent } from '../section-renderer/section-renderer.component';
+import { Breakpoint, getBreakpointFromWidth } from '../../../utils/responsive.util';
+
+interface ColSpanThresholds {
+  two: number;
+  three?: number;
+}
+
+const SECTION_COL_SPAN_THRESHOLDS: Record<string, ColSpanThresholds> = {
+  overview: { two: 2, three: 5 },
+  map: { two: 3 },
+  chart: { two: 3 },
+  quotation: { two: 4 },
+  'text-reference': { two: 4 },
+  solutions: { two: 4 },
+  info: { two: 4, three: 9 },
+  analytics: { two: 4 },
+  stats: { two: 4 },
+  financials: { two: 4 },
+  'contact-card': { two: 4 },
+  'network-card': { two: 4 },
+  list: { two: 5 },
+  event: { two: 5 },
+  product: { two: 4 },
+  locations: { two: 3 }
+};
+
+const DEFAULT_COL_SPAN_THRESHOLD: ColSpanThresholds = { two: 6 };
+
+export interface MasonryLayoutInfo {
+  breakpoint: Breakpoint;
+  columns: number;
+  containerWidth: number;
+}
 
 interface PositionedSection {
   section: CardSection;
@@ -22,10 +55,12 @@ interface PositionedSection {
 })
 export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() sections: CardSection[] = [];
-  @Input() gap = 16; // Increased for better visual breathing room
-  @Input() minColumnWidth = 280; // Increased for better readability and content display
+  @Input() gap = 12; // Harmonize with section grid tokens for consistent gutters
+  @Input() minColumnWidth = 260; // Keep cards readable when columns increase
+  @Input() maxColumns = 4; // Allow wider canvases to display four columns for better uniformity
 
   @Output() sectionEvent = new EventEmitter<SectionRenderEvent>();
+  @Output() layoutChange = new EventEmitter<MasonryLayoutInfo>();
 
   @ViewChild('container', { static: true }) containerRef!: ElementRef<HTMLDivElement>;
   @ViewChildren('itemRef') itemRefs!: QueryList<ElementRef<HTMLDivElement>>;
@@ -43,6 +78,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private readonly MAX_REFLOWS = 5; // Increased for better reliability
   private resizeThrottleTimeout?: number;
   private readonly RESIZE_THROTTLE_MS = 100; // Faster response
+  private lastLayoutInfo?: MasonryLayoutInfo;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['sections']) {
@@ -196,25 +232,16 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       return;
     }
 
-    // Smart responsive column calculation
-    // Mobile (<768px): 1 column
-    // Tablet (768-1200px): 2 columns
-    // Desktop (>1200px): up to 3 columns based on content
-    let columns: number;
-    if (containerWidth < 768) {
-      columns = 1;
-    } else if (containerWidth < 1200) {
-      columns = 2;
-    } else {
-      // For larger screens, calculate optimal columns
-      columns = Math.min(
-        3, // Max 3 columns even on very wide screens
-        Math.max(
-          2, // Minimum 2 columns on desktop
-          Math.floor((containerWidth + this.gap) / (this.minColumnWidth + this.gap))
-        )
-      );
-    }
+    // Smart responsive column calculation that adapts continuously
+    const columns = Math.min(
+      this.maxColumns,
+      Math.max(1, Math.floor((containerWidth + this.gap) / (this.minColumnWidth + this.gap)))
+    );
+    
+    // Expose column count as CSS custom property for section grids to consume
+    this.containerRef.nativeElement.style.setProperty('--masonry-columns', columns.toString());
+    
+    this.emitLayoutInfo(columns, containerWidth);
 
     const colHeights = Array(columns).fill(0);
     let hasZeroHeights = false;
@@ -287,89 +314,78 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     }
   }
 
+  private emitLayoutInfo(columns: number, containerWidth: number): void {
+    const layoutInfo: MasonryLayoutInfo = {
+      columns,
+      containerWidth,
+      breakpoint: getBreakpointFromWidth(containerWidth)
+    };
+    if (this.isSameLayoutInfo(layoutInfo, this.lastLayoutInfo)) {
+      return;
+    }
+    this.lastLayoutInfo = layoutInfo;
+    this.layoutChange.emit(layoutInfo);
+  }
+
+  private isSameLayoutInfo(a: MasonryLayoutInfo, b?: MasonryLayoutInfo): boolean {
+    if (!b) {
+      return false;
+    }
+    return (
+      a.breakpoint === b.breakpoint &&
+      a.columns === b.columns &&
+      Math.abs(a.containerWidth - b.containerWidth) < 4
+    );
+  }
+
   private getSectionColSpan(section: CardSection): number {
     // Explicit colSpan always takes precedence
     if (section.colSpan) {
-      return section.colSpan;
-    }
-
-    // Explicit preferredColumns takes precedence
-    if (section.preferredColumns) {
-      return section.preferredColumns;
+      return Math.min(section.colSpan, this.maxColumns);
     }
 
     const type = (section.type ?? '').toLowerCase();
     const title = (section.title ?? '').toLowerCase();
-    const itemCount = section.items?.length ?? 0;
-    const fieldCount = section.fields?.length ?? 0;
-    const totalContent = itemCount + fieldCount;
 
-    // Overview sections: full width for comprehensive view
     if (title.includes('overview') || type === 'overview') {
-      return 2;
+      return Math.min(2, this.maxColumns);
     }
 
-    // Intelligent column spanning based on section type and content
-    switch (type) {
-      // Always wide: visual/media-heavy sections
-      case 'map':
-      case 'chart':
-        return 2;
-      
-      // Text-heavy sections: wider for better readability
-      case 'quotation':
-      case 'text-reference':
-        return 2;
-      
-      // Solutions: wider if multiple items
-      case 'solutions':
-        return totalContent > 2 ? 2 : 1;
-      
-      // Info sections: wider if many fields (more than 6)
-      case 'info':
-        return fieldCount > 6 ? 2 : 1;
-      
-      // Analytics: wider if many metrics (more than 4)
-      case 'analytics':
-      case 'stats':
-        return totalContent > 4 ? 2 : 1;
-      
-      // Financials: wider if many financial items (more than 4)
-      case 'financials':
-        return totalContent > 4 ? 2 : 1;
-      
-      // Contact cards: wider if more than 3 contacts
-      case 'contact-card':
-        return totalContent > 3 ? 2 : 1;
-      
-      // Network cards: wider if many connections
-      case 'network-card':
-        return totalContent > 4 ? 2 : 1;
-      
-      // Lists: wider if many items (more than 5)
-      case 'list':
-        return totalContent > 5 ? 2 : 1;
-      
-      // Events: wider if many events (more than 4)
-      case 'event':
-        return totalContent > 4 ? 2 : 1;
-      
-      // Products: wider if many products
-      case 'product':
-        return totalContent > 3 ? 2 : 1;
-      
-      // Project: single column for focused view
-      case 'project':
-        return 1;
-      
-      // Locations: wider for map-like layout
-      case 'locations':
-        return 2;
-      
-      // Default: single column
-      default:
-        // If we have a lot of content, go wider
-        return totalContent > 6 ? 2 : 1;
+    if (type === 'project') {
+      return 1;
     }
+
+    const fieldCount = section.fields?.length ?? 0;
+    const itemCount = section.items?.length ?? 0;
+    const descriptionDensity = this.getDescriptionDensity(section.description);
+    const baseScore = fieldCount + itemCount + descriptionDensity;
+
+    const thresholds = this.getColSpanThreshold(type);
+    if (thresholds.three && baseScore >= thresholds.three) {
+      return Math.min(3, this.maxColumns);
+    }
+
+    if (baseScore >= thresholds.two) {
+      return Math.min(2, this.maxColumns);
+    }
+
+    return 1;
+  }
+
+  private getColSpanThreshold(type: string): ColSpanThresholds {
+    return SECTION_COL_SPAN_THRESHOLDS[type] ?? DEFAULT_COL_SPAN_THRESHOLD;
+  }
+
+  private getDescriptionDensity(description?: string): number {
+    if (!description) {
+      return 0;
+    }
+
+    const trimmedLength = description.trim().length;
+    if (trimmedLength < 120) {
+      return 0;
+    }
+
+    return Math.ceil(trimmedLength / 120);
   }
 }

@@ -1,85 +1,74 @@
 /* Detailed info cards shown in the company information section */
+/* OPTIMIZED: Compact design with proper typography hierarchy */
 
 @import 'design-system';
 
-.info-grid {
-  @include grid-2col(16px);
+.info-matrix {
+  @include section-responsive-grid(var(--section-grid-min-width), var(--section-card-gap));
+  /* GLOBALLY ENFORCED: Grid gap */
+  gap: var(--section-card-gap) !important;
+  padding: 0;
 }
 
-.info-card {
-  @include unified-card;
-  // All core styling from centralized variables via @include unified-card
+.info-row {
+  @include card;
+  appearance: none;
+  font: inherit;
+  /* COMPACT: Tight line-height */
+  line-height: 1.15;
+  /* COMPACT: No minimum height */
+  min-height: auto;
 
-  &:hover {
-    .info-card__value {
-      color: color-mix(in srgb, var(--section-accent) 68%, var(--foreground) 32%);
-      text-shadow: 0 2px 6px color-mix(in srgb, var(--section-accent) 32%, transparent);
-      transform: scale(1.02);
-    }
-
-    .info-card__label {
-      color: rgba(255, 255, 255, 0.75);
-    }
+  &__primary {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--card-gap);
+    /* OPTIMIZED: Tighter spacing */
   }
 
   &__label {
     @include label-text;
-    margin-bottom: var(--spacing-xs);
-    transition: color 0.25s ease;
+    /* OPTIMIZED: Proper hierarchy - labels are smallest */
+    margin: 0;
+    flex-shrink: 0;
   }
 
   &__value {
     @include value-text;
-    transition: all 0.25s ease;
+    /* OPTIMIZED: Values align to end for clean layout */
+    margin-left: auto;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--card-gap) * 0.5);
+    /* COMPACT: Tighter meta spacing */
+    margin-top: calc(var(--card-gap) * 0.25);
   }
 
   &__description {
-    @include section-description-text;
-    margin-top: var(--spacing-sm);
-    line-height: 1.4;
+    @include card-subtitle-text;
+    /* COMPACT: Tight line-height */
+    margin: 0;
+    line-height: 1.2;
   }
 
-  &__trend {
-    display: flex;
+  &__change {
+    @include card-meta-text;
+    display: inline-flex;
     align-items: center;
-    gap: var(--spacing-md);
-    font-size: var(--card-label-font-size);
-    color: rgba(255, 255, 255, 0.5);
-    line-height: 1.3;
-    font-weight: var(--card-label-font-weight);
-    margin-top: var(--spacing-md);
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border-radius: var(--spacing-md);
-    background: rgba(255, 255, 255, 0.02);
-    width: fit-content;
-    transition: var(--card-transition-fast);
-    @include trend-colors;
-    
-    &:hover {
-      background: rgba(255, 255, 255, 0.04);
-      transform: translateX(2px);
-    }
+    gap: calc(var(--card-gap) * 0.5);
+    /* COMPACT: Tighter spacing for change indicator */
+    font-weight: var(--card-meta-font-weight);
+    align-self: flex-start;
+    white-space: nowrap;
+    line-height: 1.2;
   }
 }
 
-@media (max-width: 640px) {
-  .info-grid {
-    grid-template-columns: 1fr !important;
-  }
-}
-
-/* Light theme overrides */
-:root[data-theme='day'] {
-  .info-card {
-    background: rgba(250, 250, 250, 0.9) !important;
-    border-color: rgba(200, 200, 200, 0.5) !important;
-    
-    &__label {
-      color: #6b7280;
-    }
-    
-    &__value {
-      color: #1a1a1a;
-    }
-  }
-}
+/* Theme overrides removed - handled by global enforcement */
+/* Global enforcement ensures consistent background and border for all section items */

@@ -8,17 +8,18 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  border-radius: 12px; /* Match tilt-container radius exactly */
-  border: 2px solid rgba(255, 121, 0, 0.3); /* Thicker, more visible brand border */
-  background: var(--card-section-bg); /* Theme-aware: grey-800 (night) or grey-50 (day) */
-  padding: var(--card-padding);
-  /* Subtle card elevation - no orange glow */
-  box-shadow: 
-    0 4px 6px rgba(0, 0, 0, 0.1),
-    0 2px 4px rgba(0, 0, 0, 0.08);
-  transition:
-    border-color 0.2s ease,
-    background 0.28s ease;
+  /* GLOBALLY DEFINED: Use global variables for cards */
+  border: var(--ai-card-border) !important;
+  border-radius: var(--ai-card-border-radius) !important;
+  background: var(--ai-card-background) !important;
+  padding: var(--card-main-padding); /* Main card padding: 16px */
+  box-shadow: var(--ai-card-box-shadow) !important;
+  transition: border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important,
+              background 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important,
+              box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  
+  /* Gap between header and body - defined at card level */
+  gap: var(--section-card-gap) !important;
   
   /* Enhanced text sharpness */
   -webkit-font-smoothing: antialiased;
@@ -34,13 +35,10 @@
 }
 
 .ai-card-surface:hover {
-  border-color: rgba(255, 121, 0, 0.5); /* Stronger orange border on hover */
-  background: var(--card-section-bg); /* Theme-aware: grey-800 (night) or grey-50 (day) */
-  /* Subtle shadow on hover - no orange glow */
-  box-shadow: 
-    0 8px 16px rgba(0, 0, 0, 0.15),
-    0 4px 8px rgba(0, 0, 0, 0.1);
-  /* No transform - keep card stationary, only glow effect */
+  border-color: var(--ai-card-border-hover) !important;
+  background: var(--ai-card-background-hover) !important;
+  box-shadow: var(--ai-card-box-shadow-hover) !important;
+  transform: var(--ai-card-hover-transform) !important;
 }
 
 .ai-card-surface--fullscreen {
@@ -52,7 +50,7 @@
   max-width: none !important; /* Allow full width */
   width: 100% !important; /* Take full width */
   overflow: visible !important; /* Allow scrolling */
-  padding: 20px 24px !important; /* Compact padding */
+  padding: var(--card-main-padding) !important; /* Main card padding */
   
   /* Disable all tilt effects */
   .tilt-container {
@@ -70,9 +68,13 @@
     display: none !important;
   }
   
-  /* Compact header */
+  /* Compact header - invisible container */
   .ai-card-header {
-    padding-bottom: 16px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
   }
   
   .ai-card-title {
@@ -96,11 +98,12 @@
   color: var(--foreground);
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-left: auto;
   flex-shrink: 0;
   
-  /* Ensure visibility */
-  position: relative;
+  /* Position absolutely in top-right corner */
+  position: absolute;
+  top: var(--card-main-padding);
+  right: var(--card-main-padding);
   z-index: 100;
 }
 
@@ -122,27 +125,99 @@
 .ai-card-header {
   position: relative;
   z-index: 10;
-  padding: var(--card-padding-vertical) 0;
-  padding-bottom: 24px; /* Increased bottom padding */
+  /* INVISIBLE CONTAINER - No visual styling */
+  /* NO PADDING - completely removed */
+  padding: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-block: 0 !important;
+  padding-block-start: 0 !important;
+  padding-block-end: 0 !important;
+  padding-inline: 0 !important;
+  padding-inline-start: 0 !important;
+  padding-inline-end: 0 !important;
+  margin: 0 !important;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  border-bottom: none;
-  background: transparent;
-  backdrop-filter: none;
-  margin: 0;
+  /* NO BORDER - completely invisible */
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  border-image: none !important;
+  border-block: none !important;
+  border-block-start: none !important;
+  border-block-end: none !important;
+  border-inline: none !important;
+  border-inline-start: none !important;
+  border-inline-end: none !important;
+  /* NO BACKGROUND - completely transparent */
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  /* NO BOX SHADOW - completely invisible */
+  box-shadow: none !important;
+  /* NO BORDER RADIUS - no visual styling */
+  border-radius: 0 !important;
+  /* NO OUTLINE - no visual styling */
+  outline: none !important;
+  outline-offset: 0 !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  outline-color: transparent !important;
+}
+
+.ai-card-header::before {
+  display: none !important;
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  border-image: none !important;
+  border-block: none !important;
+  border-inline: none !important;
+  padding: 0 !important;
+  padding-block: 0 !important;
+  padding-inline: 0 !important;
+  outline: none !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  outline-color: transparent !important;
+  box-shadow: none !important;
 }
 
 .ai-card-header::after {
-  display: none;
-}
-
-.ai-card-title-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  padding: 0 var(--card-padding-horizontal);
+  display: none !important;
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  border-image: none !important;
+  border-block: none !important;
+  border-inline: none !important;
+  padding: 0 !important;
+  padding-block: 0 !important;
+  padding-inline: 0 !important;
+  outline: none !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  outline-color: transparent !important;
+  box-shadow: none !important;
 }
 
 .ai-card-title-stack {
@@ -160,12 +235,7 @@
   opacity: 0.9;
 }
 
-.ai-card-title-group {
-  display: inline-flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-}
+/* Removed .ai-card-title-group - content moved up one level */
 
 .ai-card-title {
   font-size: 28px; /* Increased from default */
@@ -174,6 +244,85 @@
   letter-spacing: -0.01em;
   line-height: 1.2;
   text-transform: none;
+  
+  /* NO BORDERS */
+  border: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-block: none !important;
+  border-inline: none !important;
+  border-image: none !important;
+  border-radius: 0 !important;
+  
+  /* NO OUTLINES */
+  outline: none !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  outline-color: transparent !important;
+  outline-offset: 0 !important;
+  
+  /* NO PADDING */
+  padding: 0 !important;
+  padding-top: 0 !important;
+  padding-right: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: 0 !important;
+  padding-block: 0 !important;
+  padding-inline: 0 !important;
+  
+  /* NO MARGIN */
+  margin: 0 !important;
+  margin-top: 0 !important;
+  margin-right: 0 !important;
+  margin-bottom: 0 !important;
+  margin-left: 0 !important;
+  margin-block: 0 !important;
+  margin-inline: 0 !important;
+  
+  /* NO SHADOWS OR DECORATIONS */
+  box-shadow: none !important;
+  text-decoration: none !important;
+  text-decoration-line: none !important;
+  text-decoration-style: none !important;
+  text-decoration-color: transparent !important;
+  text-underline-offset: 0 !important;
+  text-decoration-thickness: 0 !important;
+  
+  /* NO PSEUDO-ELEMENT BORDERS */
+  &::before,
+  &::after {
+    display: none !important;
+    border: none !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    border-color: transparent !important;
+    border-top: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    border-left: none !important;
+    border-block: none !important;
+    border-inline: none !important;
+    border-image: none !important;
+    outline: none !important;
+    outline-width: 0 !important;
+    outline-style: none !important;
+    outline-color: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    padding-top: 0 !important;
+    padding-right: 0 !important;
+    padding-bottom: 0 !important;
+    padding-left: 0 !important;
+    padding-block: 0 !important;
+    padding-inline: 0 !important;
+    margin: 0 !important;
+    content: none !important;
+  }
 }
 
 .ai-card-type-pill {
@@ -266,26 +415,104 @@
   position: relative;
   z-index: 10;
   flex: 1;
-  padding: var(--card-padding-vertical) var(--card-padding-horizontal);
+  /* INVISIBLE CONTAINER - No visual styling */
+  /* NO PADDING - completely removed */
+  padding: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-block: 0 !important;
+  padding-block-start: 0 !important;
+  padding-block-end: 0 !important;
+  padding-inline: 0 !important;
+  padding-inline-start: 0 !important;
+  padding-inline-end: 0 !important;
+  margin: 0 !important;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px; /* Constant gap between sections */
   min-height: 0;
-  background: transparent;
-  backdrop-filter: none;
+  /* NO BORDER - completely invisible */
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  border-image: none !important;
+  border-block: none !important;
+  border-block-start: none !important;
+  border-block-end: none !important;
+  border-inline: none !important;
+  border-inline-start: none !important;
+  border-inline-end: none !important;
+  /* NO BACKGROUND - completely transparent */
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  /* NO BOX SHADOW - completely invisible */
+  box-shadow: none !important;
+  /* NO BORDER RADIUS - no visual styling */
+  border-radius: 0 !important;
+  /* NO OUTLINE - no visual styling */
+  outline: none !important;
+  outline-offset: 0 !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  outline-color: transparent !important;
 }
 
 .ai-card-body::before {
-  display: none;
+  display: none !important;
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  border-image: none !important;
+  border-block: none !important;
+  border-inline: none !important;
+  padding: 0 !important;
+  padding-block: 0 !important;
+  padding-inline: 0 !important;
+  outline: none !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  outline-color: transparent !important;
+  box-shadow: none !important;
 }
 
-.ai-card-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 3px;
-  margin-top: auto;
-  padding-top: 8px;
+.ai-card-body::after {
+  display: none !important;
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  border-image: none !important;
+  border-block: none !important;
+  border-inline: none !important;
+  padding: 0 !important;
+  padding-block: 0 !important;
+  padding-inline: 0 !important;
+  outline: none !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  outline-color: transparent !important;
+  box-shadow: none !important;
 }
+
+/* Actions are now direct children of .ai-card-body - no wrapper container */
+/* Removed .ai-card-actions container - actions are now direct children */
 
 .ai-card-action {
   position: relative;
@@ -378,67 +605,22 @@
 }
 
 .ai-card-footnote {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+  margin-top: auto;
+  /* NO PADDING - compact design */
+  padding: 0 !important;
+  /* NO BORDER - removed border */
+  border: none !important;
+  border-top: none !important;
   text-align: center;
-  font-size: var(--font-card-footnote);
+  /* MUCH SMALLER FONT - reduced font size */
+  font-size: 0.65rem !important; /* Reduced from default */
   letter-spacing: 0.08em;
   text-transform: none;
-  color: color-mix(in srgb, var(--foreground) 85%, transparent);
+  color: color-mix(in srgb, var(--foreground) 70%, transparent);
+  line-height: 1.2;
 }
 
-@media (max-width: 768px) {
-  .ai-card-surface {
-    padding: var(--card-padding-mobile);
-  }
-
-  .ai-card-fullscreen-btn {
-    width: 34px;
-    height: 34px;
-  }
-
-  .ai-card-header {
-    gap: 6px;
-    padding: var(--card-padding-vertical-mobile) 0;
-  }
-
-  .ai-card-title-row {
-    padding: 0 var(--card-padding-horizontal-mobile);
-  }
-
-  .ai-card-header::after {
-    left: 10px;
-    right: 10px;
-  }
-
-  .ai-card-title {
-    font-size: var(--font-card-title-mobile);
-  }
-
-  .ai-card-eyebrow {
-    font-size: var(--font-card-eyebrow-mobile);
-  }
-
-  .ai-card-type-pill {
-    font-size: var(--font-card-meta-mobile);
-  }
-
-  .ai-card-body {
-    padding: var(--card-padding-vertical-mobile) var(--card-padding-horizontal-mobile);
-    gap: 6px;
-  }
-
-  .ai-card-actions {
-    gap: 2px;
-  }
-
-  .ai-card-action {
-    width: 100%;
-    padding: 5px 8px;
-    font-size: 0.56rem;
-  }
-}
+/* All sizing is now continuous via clamp() - no discrete breakpoints */
 
 @media (prefers-reduced-motion: reduce) {
   .ai-card-surface {

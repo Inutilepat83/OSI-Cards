@@ -1,70 +1,85 @@
 /* Analytics metric cards with progress and trend indicators */
+/* OPTIMIZED: Compact design with clear visual hierarchy */
 
 @import 'design-system';
 
+
 .analytics-metrics {
-  @include grid-2col(16px);
+  @include section-responsive-grid(var(--section-grid-min-width), var(--section-card-gap));
+  /* GLOBALLY ENFORCED: Grid gap */
+  gap: var(--section-card-gap) !important;
 }
 
 .analytics-metric {
-  @include unified-card;
-  // All core styling from centralized variables via @include unified-card
+  @include card;
+  /* COMPACT: No minimum height */
+  min-height: auto;
+  justify-content: space-between;
 
-  &:hover {
-    .analytics-metric__value {
-      color: color-mix(in srgb, var(--section-accent) 70%, var(--foreground) 30%);
-      text-shadow: 0 2px 6px color-mix(in srgb, var(--section-accent) 35%, transparent);
-      transform: scale(1.02);
-    }
-
-    .analytics-metric__label {
-      color: rgba(255, 255, 255, 0.75);
-    }
+  &__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--card-gap);
+    /* OPTIMIZED: Tighter header spacing */
+    margin-bottom: calc(var(--card-gap) * 0.5);
   }
 
   &__label {
     @include label-text;
+    /* OPTIMIZED: Proper hierarchy - labels are secondary */
     display: flex;
     align-items: center;
-    gap: var(--spacing-lg);
-    margin-bottom: var(--spacing-xs);
-    transition: color 0.25s ease;
+    gap: calc(var(--card-gap) * 0.75);
+    margin: 0;
+    flex-shrink: 0;
 
     lucide-icon {
-      @include icon-base(15px);
-      @include trend-colors;
+      @include icon-base(12px);
+      flex-shrink: 0;
     }
   }
 
   &__value {
     @include value-text-lg;
-    transition: all 0.25s ease;
+    /* OPTIMIZED: Large values are primary - most prominent */
+    margin: 0;
+    line-height: 1.15;
+    text-align: right;
+    flex-shrink: 0;
   }
 
   &__progress {
     @include progress-bar;
-    margin-top: var(--spacing-md);
+    /* OPTIMIZED: Progress bar spacing */
+    margin-top: calc(var(--card-gap) * 0.75);
+    margin-bottom: calc(var(--card-gap) * 0.5);
   }
 
   &__meta {
     display: flex;
+    justify-content: flex-start;
     align-items: center;
-    gap: var(--spacing-md);
-    font-size: var(--card-label-font-size);
-    color: rgba(255, 255, 255, 0.5);
-    line-height: 1.3;
-    font-weight: var(--card-label-font-weight);
-    margin-top: var(--spacing-sm);
+    flex-wrap: wrap;
+    gap: calc(var(--card-gap) * 0.75);
+    /* OPTIMIZED: Tighter meta spacing */
+    width: 100%;
+    font-size: var(--card-meta-font-size) !important;
+    color: var(--card-text-muted) !important;
+    font-weight: var(--card-meta-font-weight) !important;
+    line-height: 1.2;
 
     lucide-icon {
-      @include icon-base(14px);
+      @include icon-base(11px);
       @include trend-colors;
+      flex-shrink: 0;
     }
   }
 
   &__meta-change {
     @include trend-colors;
-    font-weight: var(--card-label-font-weight);
+    font-weight: var(--card-meta-font-weight);
+    font-size: var(--card-meta-font-size);
   }
 }
 
@@ -84,24 +99,20 @@
   @include empty-state;
 }
 
-@media (max-width: 640px) {
-  .analytics-metrics {
-    grid-template-columns: 1fr !important;
-  }
-}
+/* Removed media queries - grid uses auto-fit with min() for continuous responsiveness */
+/* Removed forced 2-column layout - now controlled by section-responsive-grid mixin */
 
 /* Fullscreen mode - ultra compact */
 .ai-card-surface--fullscreen {
   .analytics-metrics {
-    gap: 8px !important;
+    gap: var(--card-gap) !important;
   }
   
   .analytics-metric {
-    padding: 10px 12px !important;
+    padding: var(--card-padding) !important; /* COMPACT: Use main variable */
     
     &__label {
-      font-size: 10px !important;
-      gap: 6px !important;
+      gap: var(--card-gap) !important;
       margin-bottom: 4px !important;
       
       lucide-icon {
@@ -111,7 +122,6 @@
     }
     
     &__value {
-      font-size: 18px !important;
     }
     
     &__progress {
@@ -120,8 +130,7 @@
     }
     
     &__meta {
-      font-size: 10px !important;
-      gap: 6px !important;
+      gap: var(--card-gap) !important;
       margin-top: 6px !important;
       
       lucide-icon {

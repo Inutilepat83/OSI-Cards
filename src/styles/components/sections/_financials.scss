@@ -1,275 +1,136 @@
-/* Financials section styling - Financial metrics and data */
+/* Financials Section - Modern, Clean Design */
 
 @import 'sections-base';
 @import 'unified-cards';
 
-/* Unified financial card class using global variables */
+/* Financials Grid Layout */
+.financials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--section-card-gap);
+  width: 100%;
+}
+
+/* Financial Card */
 .financial-card {
   @include card;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  text-align: left;
-  // All core styling from centralized variables via @include card
-  transition: var(--card-transition);
-  
+  gap: var(--card-gap);
+  min-height: auto;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
   &:hover {
-    transform: var(--card-hover-transform-scale);
+    transform: translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
   }
 }
 
-.financials-section {
-  @include card;
+/* Card Content */
+.financial-card__content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--card-gap) * 0.5);
+}
 
-  .financials-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--section-grid-gap);
-    
-    @media (max-width: 768px) {
-      gap: var(--section-grid-gap-mobile);
-    }
-  }
+.financial-card__label {
+  @include label-text;
+  margin: 0;
+  color: var(--card-text-label);
+  line-height: 1.2;
+}
 
-  .financial-metric {
-    @include card;
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-sm);
-    
-    @media (max-width: 768px) {
-      gap: var(--spacing-xs);
-    }
-  }
+.financial-card__value-wrapper {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--card-gap) * 0.5);
+}
 
-  .financial-label {
-    @extend %unified-card-label;
-    font-size: var(--card-label-font-size);
-    font-weight: var(--card-label-font-weight);
-    letter-spacing: var(--card-label-letter-spacing);
-    color: var(--card-text-label);
-    text-transform: var(--card-label-text-transform);
-  }
+.financial-card__value {
+  @include value-text;
+  margin: 0;
+  color: var(--card-text-primary);
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--card-gap) * 0.25);
 
-  .financial-value {
-    @extend %unified-card-value;
-    font-size: var(--card-value-font-size);
-    font-weight: var(--card-value-font-weight);
-    color: var(--card-text-primary);
-  }
-
-  .financial-currency {
-    font-size: var(--card-value-font-size-large);
-    color: var(--card-text-secondary);
-    margin-left: var(--spacing-xs);
-  }
-
-  .financial-change {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    font-size: var(--card-meta-font-size);
-    font-weight: var(--card-meta-font-weight);
-    transition: var(--card-transition-fast);
-    
-    .financial-metric:hover & {
-      transform: translateX(2px);
-    }
-
-    &.positive {
-      color: color-mix(in srgb, rgba(34, 197, 94, 1) 90%, transparent);
-    }
-
-    &.negative {
-      color: color-mix(in srgb, rgba(239, 68, 68, 1) 85%, transparent);
-    }
-
-    &.neutral {
-      color: var(--card-text-secondary);
-    }
-
-    .change-icon {
-      font-size: var(--card-label-font-size);
-      transition: var(--card-transition-fast);
-    }
-    
-    &:hover .change-icon {
-      transform: scale(1.1);
-    }
-  }
-
-  .financial-comparison {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--spacing-sm);
-    margin-top: var(--spacing-xs);
-    font-size: var(--font-section-role);
-    color: color-mix(in srgb, var(--foreground) 85%, transparent);
-  }
-
-  .financial-table {
-    display: flex;
-    flex-direction: column;
-    gap: var(--list-item-gap);
-    grid-column: 1 / -1;
-  }
-
-  .financial-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--grid-gap-2xl);
-    padding: var(--spacing-lg) 0;
-    border-bottom: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
-    @include fast-transition;
-
-    &:hover {
-      background: color-mix(in srgb, var(--accent) 5%, transparent);
-      padding-left: var(--spacing-sm);
-      padding-right: var(--spacing-sm);
-      border-radius: var(--radius-xs);
-    }
-
-    &:last-child {
-      border-bottom: none;
-    }
-
-    .financial-row-label {
-      font-size: var(--font-section-description);
-      color: color-mix(in srgb, var(--foreground) 85%, transparent);
-      @include fast-transition;
-    }
-    
-    &:hover .financial-row-label {
-      color: color-mix(in srgb, var(--foreground) 75%, transparent);
-    }
-
-    .financial-row-value {
-      text-align: right;
-      font-size: var(--font-section-description);
-      font-weight: 600;
-      color: var(--foreground);
-      @include fast-transition;
-    }
-    
-    &:hover .financial-row-value {
-      transform: scale(1.02);
-    }
+  &--currency {
+    color: var(--color-success, #10b981);
   }
 }
 
-@media (max-width: 768px) {
-  .financials-section {
-    .financials-grid {
-      grid-template-columns: 1fr;
-      gap: var(--section-grid-gap-mobile);
-    }
+.financial-card__currency-icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  opacity: 0.8;
+}
 
-    .financial-metric {
-      /* Padding handled by @include card */
-    }
+.financial-card__trend-icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
 
-  .financial-value {
-    font-size: var(--font-section-value);
-  }
-
-    .financial-row {
-      grid-template-columns: 1fr 1fr;
-      gap: var(--spacing-lg);
-    }
+  .financial-card:hover & {
+    opacity: 1;
   }
 }
 
-/* Fullscreen mode - ultra compact */
-.ai-card-surface--fullscreen {
-  .financials-section {
-    .financials-grid {
-      gap: 8px !important;
-    }
-    
-    .financial-metric {
-      padding: 10px 12px !important;
-      gap: 4px !important;
-    }
+/* Change Indicator */
+.financial-card__change {
+  flex-shrink: 0;
+  @include card-meta-text;
+  font-weight: var(--card-meta-font-weight);
+  line-height: 1.2;
+  text-align: right;
+  white-space: nowrap;
+
+  &.text-emerald-400 {
+    color: var(--color-success, #10b981) !important;
   }
-  
-  .financial-card {
-    padding: 10px 12px !important;
+
+  &.text-rose-400 {
+    color: var(--color-error, #ef4444) !important;
   }
-  
-  .financial-label {
-    font-size: 10px !important;
+
+  &.text-amber-400 {
+    color: var(--color-warning, #f59e0b) !important;
   }
-  
-  .financial-value {
-    font-size: 18px !important;
-  }
-  
-  .financial-change {
-    font-size: 10px !important;
-    gap: 6px !important;
-    
-    .change-icon {
-      font-size: 11px !important;
-    }
-  }
-  
-  .financial-row {
-    padding: 8px 0 !important;
-    gap: 12px !important;
-    
-    &:hover {
-      padding: 8px 6px !important;
-    }
-    
-    .financial-row-label,
-    .financial-row-value {
-      font-size: 12px !important;
-    }
+
+  &.text-muted-foreground {
+    color: var(--card-text-muted) !important;
   }
 }
 
-/* Light theme overrides */
-:root[data-theme='day'] {
-  .financial-label {
-    color: #6b7280;
-  }
-  
-  .financial-value {
-    color: #1a1a1a;
-  }
-  
-  .financial-change {
-    &.positive {
-      color: #059669;
-    }
-    
-    &.negative {
-      color: #dc2626;
-    }
-    
-    &.neutral {
-      color: #6b7280;
-    }
-  }
-  
-  .financial-row {
-    border-bottom-color: rgba(200, 200, 200, 0.3);
-    
-    &:hover {
-      background: rgba(255, 121, 0, 0.03);
-    }
-    
-    .financial-row-label {
-      color: #6b7280;
-    }
-    
-    &:hover .financial-row-label {
-      color: #4b5563;
-    }
-    
-    .financial-row-value {
-      color: #1a1a1a;
-    }
-  }
+/* Empty State */
+.section-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--card-padding) * 3);
+  text-align: center;
+  color: var(--card-text-muted);
+}
+
+.section-empty__icon {
+  margin-bottom: calc(var(--card-gap) * 1.5);
+  opacity: 0.5;
+}
+
+.section-empty__text {
+  @include card-meta-text;
+  margin: 0;
+  color: var(--card-text-muted);
 }

@@ -35,76 +35,150 @@
   /* All cards (metric, contact, list, etc.) use this consistent base */
   /* Enhanced design: better padding, visible borders, depth shadows */
   
-  /* STANDARDIZED CARD VARIABLES - Reuse these across ALL sections */
-  --card-padding: 16px 18px;                                          /* Consistent padding */
-  --card-padding-large: 18px 20px;                                    /* For list/contact cards */
-  --card-min-height: 84px;                                            /* Minimum card height */
-  --card-gap: 10px;                                                   /* Internal element gap */
-  --card-gap-large: 14px;                                             /* Larger gap for complex cards */
+  /* STANDARDIZED CARD VARIABLES - COMPACT DESIGN */
+  /* OPTIMIZED: Reduced padding and gaps for compact, clean design */
+  --card-main-padding: 12px; /* Main card container padding - REDUCED from 16px */
+  --card-padding-vertical: 10px; /* REDUCED from 12px */
+  --card-padding-horizontal: 10px; /* REDUCED from 12px */
+  --card-padding: 10px; /* Constant padding for sections and internal cards - REDUCED from 12px */
+  --card-padding-large: 10px; /* Same as base - REDUCED from 12px */
+  --section-padding: 10px; /* Fixed padding for all section internals - REDUCED from 12px */
+  --card-min-height: auto; /* COMPACT: No minimum height - cards fit content */
+  --card-gap: clamp(3px, 0.4vw, 6px); /* COMPACT: Internal element gap - REDUCED from 4-8px */
+  --card-gap-large: clamp(4px, 0.5vw, 8px); /* COMPACT: Larger gap - REDUCED from 6-10px */
+  
+  /* Nested Element Spacing - UNIFIED (no calc() needed) */
+  --card-nested-gap: clamp(3px, 0.4vw, 6px); /* Same as card-gap for consistency */
+  --section-header-gap: clamp(3px, 0.4vw, 6px); /* Same as card-gap for consistency */
+  --section-header-padding-bottom: clamp(3px, 0.4vw, 6px); /* Same as card-gap for consistency */
   
   /* Card Backgrounds - Orange tint theme */
-  --card-background: rgba(255, 121, 0, 0.025);                       /* Base background */
-  --card-background-hover: rgba(255, 121, 0, 0.055);                 /* Hover background */
+  --card-background: rgba(255, 121, 0, 0.025); /* Base background */
+  --card-background-hover: rgba(255, 121, 0, 0.055); /* Hover background */
   
-  /* Card Borders - Consistent orange theme */
-  --card-border: 1px solid rgba(255, 121, 0, 0.2);                   /* Base border */
-  --card-border-hover: rgba(255, 121, 0, 0.45);                      /* Hover border */
-  --card-border-radius: 12px;                                         /* Standard radius */
-  --card-border-radius-large: 14px;                                   /* Larger radius for emphasis */
+  /* ===== 5 ELEMENT TYPE SYSTEM ===== */
+  /* Global parameters for border, background, hover effect for each element type */
   
-  /* Card Shadows */
-  --card-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);                 /* Base shadow */
-  --card-box-shadow-hover: 0 10px 32px rgba(255, 121, 0, 0.18);     /* Hover shadow with orange glow */
-  --card-box-shadow-hover-lift: 0 8px 28px rgba(255, 121, 0, 0.18); /* Alternative hover shadow */
+  /* 1. HERO CARDS (.hero-feature-card) */
+  --hero-card-border: 1px solid rgba(146, 153, 158, 0.3);
+  --hero-card-border-hover: rgba(146, 153, 158, 0.6);
+  --hero-card-background: var(--card);
+  --hero-card-background-hover: var(--card);
+  --hero-card-border-radius: 0.5rem;
+  --hero-card-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --hero-card-box-shadow-hover: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+  --hero-card-hover-transform: translateY(-4px);
   
-  /* Card Transform Effects */
-  --card-hover-transform: translateY(-3px) scale(1.01);               /* Default hover transform */
-  --card-hover-transform-scale: translateY(-3px) scale(1.01);        /* Metric cards */
-  --card-hover-transform-slide: translateX(6px) translateY(-2px);    /* List/contact cards */
+  /* 2. BUTTONS & SELECTORS (buttons, radio buttons, etc.) */
+  --button-border: 1px solid transparent;
+  --button-border-hover: 1px solid rgba(255, 121, 0, 0.5);
+  --button-background: var(--primary);
+  --button-background-hover: color-mix(in srgb, var(--primary) 90%, transparent);
+  --button-border-radius: 0.5rem;
+  --button-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --button-box-shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.15);
+  --button-hover-transform: scale(1.05);
+  
+  /* 3. CARDS (.ai-card-surface) */
+  --ai-card-border: 2px solid rgba(255, 121, 0, 0.3);
+  --ai-card-border-hover: rgba(255, 121, 0, 0.5);
+  --ai-card-background: var(--card-section-bg);
+  --ai-card-background-hover: var(--card-section-bg);
+  --ai-card-border-radius: 12px;
+  --ai-card-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.08);
+  --ai-card-box-shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
+  --ai-card-hover-transform: none; /* No transform for cards */
+  
+  /* 4. SECTIONS (.masonry-item) */
+  --section-border: 1px solid rgba(146, 153, 158, 0.5);
+  --section-border-hover: rgba(255, 121, 0, 0.5);
+  --section-background: color-mix(in srgb, var(--card-section-bg) 95%, rgba(255, 121, 0, 0.05));
+  --section-background-hover: color-mix(in srgb, var(--card-section-bg) 95%, rgba(255, 121, 0, 0.07));
+  --section-border-radius: var(--card-border-radius);
+  --section-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --section-box-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+  --section-hover-transform: none; /* No transform for sections */
+  
+  /* 5. SECTION ITEMS (.section-card, .chart-card, etc.) */
+  --section-item-border: 1px solid rgba(146, 153, 158, 0.25);
+  --section-item-border-hover: rgba(255, 121, 0, 0.5);
+  --section-item-background: color-mix(in srgb, var(--card-section-bg) 99%, rgba(255, 121, 0, 0.015));
+  --section-item-background-hover: color-mix(in srgb, var(--card-section-bg) 99%, rgba(255, 121, 0, 0.02));
+  --section-item-border-radius: var(--section-card-border-radius);
+  --section-item-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 1px rgba(0, 0, 0, 0.04);
+  --section-item-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --section-item-hover-transform: none; /* No transform for section items */
+  
+  /* Legacy card variables - aliased to section-item variables for backward compatibility */
+  /* UNIFIED: All section items use section-item variables */
+  --card-border: var(--section-item-border); /* Alias: Section items use this */
+  --card-border-hover: var(--section-item-border-hover); /* Alias: Section items use this */
+  --card-background: var(--section-item-background); /* Alias: Section items use this */
+  --card-background-hover: var(--section-item-background-hover); /* Alias: Section items use this */
+  --card-box-shadow: var(--section-item-box-shadow); /* Alias: Section items use this */
+  --card-box-shadow-hover: var(--section-item-box-shadow-hover); /* Alias: Section items use this */
+  
+  /* Border radius - unified */
+  --card-border-radius: 10px; /* COMPACT: Standard radius - REDUCED from 12px */
+  --card-border-radius-large: 12px; /* COMPACT: Larger radius - REDUCED from 14px */
+  --section-card-gap: 8px; /* Gap between cards in section grids - globally applied */
+  --section-card-border-radius: 8px; /* Smaller radius for cards within sections (unified) */
+  --section-grid-min-width: 180px; /* COMPACT: Minimum column width - REDUCED from 200px */
   
   /* Card Hover State Aliases (for mixin compatibility) */
-  --card-hover-border: var(--card-border-hover);                      /* Alias for consistency */
-  --card-hover-background: var(--card-background-hover);              /* Alias for consistency */
-  --card-hover-shadow: var(--card-box-shadow-hover);                  /* Alias for consistency */
+  --card-hover-border: var(--section-item-border-hover); /* Alias: Section items use this */
+  --card-hover-background: var(--section-item-background-hover); /* Alias: Section items use this */
+  --card-hover-shadow: var(--section-item-box-shadow-hover); /* Alias: Section items use this */
+  
+  /* Legacy transform effects - deprecated (section items use none) */
+  --card-hover-transform: var(--section-item-hover-transform); /* Alias: Section items use this (none) */
+  --card-hover-transform-scale: var(--section-item-hover-transform); /* Alias: Section items use this (none) */
+  --card-hover-transform-slide: var(--section-item-hover-transform); /* Alias: Section items use this (none) */
+  --card-box-shadow-hover-lift: var(--section-item-box-shadow-hover); /* Alias: Section items use this */
   
   /* ===== UNIFIED TYPOGRAPHY SYSTEM ===== */
   /* Consistent font sizing across ALL card types and sections */
   
-  /* Section Titles (e.g., "Key Contacts", "Company Overview") */
-  --section-title-font-size: 1.05rem;
+  /* Section Titles (e.g., "Key Contacts", "Company Overview") - COMPACT */
+  --section-title-font-size: clamp(0.88rem, 0.8rem + 0.28vw, 1.16rem);
   --section-title-font-weight: 800;
   --section-title-letter-spacing: -0.015em;
-  --section-title-line-height: 1.3;
+  --section-title-line-height: 1.2; /* COMPACT: Reduced from 1.3 */
+  --font-size-section-header: var(--section-title-font-size);
   
-  /* Card Titles (individual cards within sections) */
-  --card-title-font-size: 0.95rem;
+  /* Card Titles (individual cards within sections) - COMPACT */
+  --card-title-font-size: clamp(0.84rem, 0.76rem + 0.24vw, 1rem);
   --card-title-font-weight: 800;
   --card-title-letter-spacing: -0.015em;
-  --card-title-line-height: 1.25;
+  --card-title-line-height: 1.2; /* COMPACT: Reduced from 1.25 */
   
-  /* Card Subtitles/Roles */
-  --card-subtitle-font-size: 0.8rem;
+  /* Card Subtitles/Roles - COMPACT */
+  --card-subtitle-font-size: clamp(0.7rem, 0.62rem + 0.16vw, 0.86rem);
   --card-subtitle-font-weight: 600;
   --card-subtitle-letter-spacing: 0.02em;
-  --card-subtitle-line-height: 1.35;
+  --card-subtitle-line-height: 1.25; /* COMPACT: Reduced from 1.35 */
   
-  /* Card Labels (e.g., "INDUSTRY", "FOUNDED") */
-  --card-label-font-size: 0.7rem;
+  /* Card Labels (e.g., "INDUSTRY", "FOUNDED") - COMPACT */
+  --card-label-font-size: clamp(0.54rem, 0.48rem + 0.16vw, 0.68rem);
   --card-label-font-weight: 800;
   --card-label-letter-spacing: 0.06em;
-  --card-label-line-height: 1.3;
+  --card-label-line-height: 1.2; /* COMPACT: Reduced from 1.3 */
   --card-label-text-transform: uppercase;
   
-  /* Card Values */
-  --card-value-font-size: 1rem;
-  --card-value-font-size-large: 1.3rem;
+  /* Card Values - COMPACT */
+  --card-value-font-size: clamp(0.84rem, 0.76rem + 0.26vw, 1.06rem);
+  --card-value-font-size-large: clamp(1.05rem, 0.92rem + 0.46vw, 1.34rem);
   --card-value-font-weight: 800;
   --card-value-letter-spacing: -0.01em;
-  --card-value-line-height: 1.3;
+  --card-value-line-height: 1.2; /* COMPACT: Reduced from 1.3 */
   
-  /* Card Meta/Description Text */
-  --card-meta-font-size: 0.78rem;
+  /* Card Meta/Description Text - COMPACT */
+  --card-meta-font-size: clamp(0.64rem, 0.56rem + 0.16vw, 0.8rem);
   --card-meta-font-weight: 600;
+  --card-meta-line-height: 1.25; /* COMPACT: Added explicit line-height */
+  
+  /* Smallest text size - for compact lists and features */
+  --card-text-small-font-size: clamp(0.43rem, 0.38rem + 0.13vw, 0.54rem); /* 80% of label size */
   
   /* Card Colors - Standardized text colors (theme-aware, set in theme files) */
   --card-text-primary: var(--foreground);
@@ -118,10 +192,7 @@
   --card-transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);        /* Standard transition */
   --card-transition-fast: all 0.22s ease;                            /* Fast transition */
   
-  /* Mobile overrides - ALL cards responsive at ≤768px */
-  --card-padding-mobile: 14px 16px;
-  --card-min-height-mobile: 72px;
-  --card-border-radius-mobile: 12px;
+  /* Removed mobile overrides - all sizing is now continuous via clamp() */
   
   /* ===== LEGACY FONT ALIASES (for backward compatibility) ===== */
   /* These map old variable names to the unified typography system */
@@ -166,20 +237,20 @@
   /* All spacing MUST use these variables - NO hardcoded values allowed */
   
   /* Item-Level Spacing (inside cards/sections) */
-  --spacing-xs: 2px;
-  --spacing-sm: 4px;
-  --spacing-md: 6px;
-  --spacing-lg: 8px;
-  --spacing-xl: 10px;
-  --spacing-2xl: 12px;
-  --spacing-3xl: 14px;
-  --spacing-4xl: 16px;
-  --spacing-5xl: 18px;
-  --spacing-6xl: 20px;
-  --spacing-7xl: 22px;
-  --spacing-8xl: 24px;
-  --spacing-9xl: 26px;
-  --spacing-10xl: 28px;
+    --spacing-xs: clamp(2px, 0.4vw, 6px);
+    --spacing-sm: clamp(4px, 0.6vw, 8px);
+    --spacing-md: clamp(6px, 0.8vw, 12px);
+    --spacing-lg: clamp(8px, 1vw, 14px);
+    --spacing-xl: clamp(10px, 1.2vw, 18px);
+    --spacing-2xl: clamp(12px, 1.4vw, 20px);
+    --spacing-3xl: clamp(14px, 1.6vw, 22px);
+    --spacing-4xl: clamp(16px, 1.8vw, 24px);
+    --spacing-5xl: clamp(18px, 2vw, 28px);
+    --spacing-6xl: clamp(20px, 2.2vw, 32px);
+    --spacing-7xl: clamp(22px, 2.4vw, 36px);
+    --spacing-8xl: clamp(24px, 2.6vw, 40px);
+    --spacing-9xl: clamp(26px, 2.8vw, 44px);
+    --spacing-10xl: clamp(28px, 3vw, 48px);
   
   /* Grid Gaps - Standardized for all section grids */
   --grid-gap-xs: 3px;
@@ -190,9 +261,11 @@
   --grid-gap-2xl: 16px;                           // Increased from 12px
   --grid-gap-3xl: 20px;                           // Increased from 18px
   
-  /* Unified Section Grid Gap - Used by ALL section grids - IMPROVED spacing */
-  --section-grid-gap: var(--grid-gap-lg);         /* 12px - improved spacing for all sections */
-  --section-grid-gap-mobile: var(--grid-gap-md);  /* 6px - mobile spacing */
+  /* Unified Section Grid Gap - LEGACY - Use --section-card-gap instead */
+    --section-grid-gap: 8px; /* Aliased to --section-card-gap for backward compatibility */
+    --section-grid-gap-mobile: 9px;
+    --section-stack-gap: 12px;
+    --section-stack-gap-mobile: 9px;
   
   /* Grid Gaps Mobile */
   --grid-gap-xs-mobile: 4px;
@@ -241,6 +314,7 @@
   --icon-size-md: 16px;
   --icon-size-lg: 22px;
   --icon-size-xl: 36px;
+  --icon-size-section: 18px;
   
   /* Avatar Sizes */
   --avatar-size-sm: 32px;
@@ -351,21 +425,4 @@
   }
 }
 
-/* Reduce animations on mobile for performance */
-@media (max-width: 768px) {
-  :root,
-  :root[data-theme='night'],
-  :root[data-theme='day'] {
-    /* Faster animations on mobile */
-    --duration-normal: 150ms;
-    --duration-moderate: 200ms;
-    --duration-slow: 250ms;
-    
-    /* Quicker tilt responses */
-    --tilt-duration: 60ms;
-    --glow-duration: 100ms;
-    
-    /* Reduced stagger for faster perception */
-    --stagger-delay-base: 30ms;
-  }
-}
+/* Animations are now consistent across all viewport sizes - controlled by prefers-reduced-motion only */

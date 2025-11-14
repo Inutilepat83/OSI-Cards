@@ -7,7 +7,7 @@ import { MouseTrackingService, MagneticTiltService, MousePosition, TiltCalculati
 import { IconService } from '../../services/icon.service';
 import { SectionNormalizationService } from '../../services/section-normalization.service';
 import { LucideIconsModule } from '../../icons/lucide-icons.module';
-import { MasonryGridComponent } from './masonry-grid/masonry-grid.component';
+import { MasonryGridComponent, MasonryLayoutInfo } from './masonry-grid/masonry-grid.component';
 import { SectionRenderEvent } from './section-renderer/section-renderer.component';
 
 export interface CardFieldInteractionEvent {
@@ -71,7 +71,6 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     id: 'fallback-test',
     cardTitle: 'Test Company',
     cardSubtitle: 'Fallback Card for Testing',
-    cardType: 'company',
     sections: [
       {
         id: 'test-info',
@@ -305,6 +304,10 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       default:
         break;
     }
+  }
+
+  onLayoutChange(layout: MasonryLayoutInfo): void {
+    // Layout change handler - kept for potential future use
   }
 
   getActionIconName(action: CardAction): string {

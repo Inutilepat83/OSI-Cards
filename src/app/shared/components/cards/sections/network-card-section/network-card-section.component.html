@@ -4,37 +4,39 @@
       <h3 class="ai-section__title">{{ section.title }}</h3>
       <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
     </div>
+    <span *ngIf="fields.length" class="ai-section__badge">
+      {{ fields.length }} {{ fields.length === 1 ? 'metric' : 'metrics' }}
+    </span>
   </div>
 
   <div class="ai-section__body">
     <ng-container *ngIf="fields.length; else networkEmpty">
-      <div class="network-collection">
-        <button
-          *ngFor="let field of fields; trackBy: trackField; let i = index"
-          type="button"
+      <div class="network-grid">
+        <article
+          *ngFor="let field of fields; trackBy: trackField"
           class="network-card"
+          role="button"
+          tabindex="0"
           (click)="onItemClick(field)"
-          [style.animation]="getAnimationDuration(0.6)"
-          [style.animation-delay]="getAnimationDelay(i)"
+          (keydown.enter)="onItemClick(field)"
+          (keydown.space)="$event.preventDefault(); onItemClick(field)"
         >
-          <div class="network-card__icon" [ngClass]="getIconTone(field)">
-            <lucide-icon [name]="getIconName(field)" size="18"></lucide-icon>
+          <div class="network-card__content">
+            <span class="network-card__label">
+              {{ field.label || field.title }}
+            </span>
+            <span *ngIf="field.value" class="network-card__value">
+              {{ field.value }}
+            </span>
           </div>
-          <div class="network-card__details">
-            <p class="network-card__title">{{ field.label || field.title }}</p>
-            <p *ngIf="field.value" class="network-card__meta">{{ field.value }}</p>
-          </div>
-          <span class="network-card__chevron">
-            <lucide-icon name="chevron-right" size="16"></lucide-icon>
-          </span>
-        </button>
+        </article>
       </div>
     </ng-container>
 
     <ng-template #networkEmpty>
       <div class="section-empty">
-        <lucide-icon name="users" size="32" class="mb-3 opacity-60"></lucide-icon>
-        <p class="text-sm">No network data available.</p>
+        <lucide-icon name="network" size="32" class="section-empty__icon"></lucide-icon>
+        <p class="section-empty__text">No network data available</p>
       </div>
     </ng-template>
   </div>

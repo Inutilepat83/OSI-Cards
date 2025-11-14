@@ -11,97 +11,81 @@
        [ngClass]="{ 'w-full max-w-none': isFullscreen }"
        #tiltContainer 
        [ngStyle]="tiltStyle">
-    <article
-      class="ai-card-surface"
-      [ngClass]="{ 'ai-card-surface--fullscreen': isFullscreen }"
-    >
-        <header class="ai-card-header">
-          <div class="ai-card-title-row">
-            <div class="ai-card-title-group">
-              <h1 class="ai-card-title">
-                {{ cardConfig.cardTitle }}
-              </h1>
-              <span class="ai-card-type-pill">
-                {{ cardConfig.cardType }}
-              </span>
-            </div>
-            <button
-              type="button"
-              class="ai-card-fullscreen-btn"
-              [attr.aria-label]="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
-              (click)="toggleFullscreen()"
-            >
-              <lucide-icon [name]="isFullscreen ? 'minimize-2' : 'maximize-2'" [size]="16" aria-hidden="true"></lucide-icon>
-            </button>
-          </div>
-
-          <p *ngIf="cardConfig.cardSubtitle" class="ai-card-subtitle">
-            {{ cardConfig.cardSubtitle }}
-          </p>
-
-          <div *ngIf="cardConfig.metadata" class="ai-card-meta">
-            <span *ngIf="cardConfig.metadata.category" class="ai-card-meta__chip">
-              <span class="ai-card-meta__chip-dot ai-card-meta__chip-dot--primary" aria-hidden="true"></span>
-              <span>{{ cardConfig.metadata.category }}</span>
-            </span>
-            <span *ngIf="cardConfig.metadata.variant" class="ai-card-meta__chip">
-              <span class="ai-card-meta__chip-dot ai-card-meta__chip-dot--secondary" aria-hidden="true"></span>
-              <span>{{ cardConfig.metadata.variant }}</span>
-            </span>
-            <span *ngIf="cardConfig.metadata.complexity" class="ai-card-meta__chip">
-              <span class="ai-card-meta__chip-dot ai-card-meta__chip-dot--tertiary" aria-hidden="true"></span>
-              <span>{{ cardConfig.metadata.complexity }}</span>
-            </span>
-          </div>
-        </header>
-
-        <div
-          class="ai-card-body"
-          [style.maxHeight]="isFullscreen ? 'none' : null"
-          [style.overflowY]="isFullscreen ? 'visible' : null"
-          [style.height]="isFullscreen ? 'auto' : null"
+      <article
+        class="ai-card-surface"
+        [ngClass]="{ 'ai-card-surface--fullscreen': isFullscreen }"
+      >
+        <h1 class="ai-card-title">
+          {{ cardConfig.cardTitle }}
+        </h1>
+        <button
+          type="button"
+          class="ai-card-fullscreen-btn"
+          [attr.aria-label]="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
+          (click)="toggleFullscreen()"
         >
-          <ng-container *ngIf="processedSections.length; else emptyState">
-            <app-masonry-grid
-              [sections]="processedSections"
-              [gap]="12"
-              [minColumnWidth]="280"
-              class="w-full"
-              (sectionEvent)="onSectionEvent($event)"
-            ></app-masonry-grid>
-          </ng-container>
+          <lucide-icon [name]="isFullscreen ? 'minimize-2' : 'maximize-2'" [size]="16" aria-hidden="true"></lucide-icon>
+        </button>
 
-          <ng-template #emptyState>
-            <div class="flex h-full flex-col items-center justify-center rounded-3xl border border-dashed border-border/40 bg-background/40 p-12 text-center text-muted-foreground">
-              <lucide-icon name="alert-circle" [size]="32" class="mb-4 text-muted-foreground/70"></lucide-icon>
-              <span class="sr-only">No sections available for this configuration</span>
-              <p class="text-base font-medium">No sections available for this configuration.</p>
-              <p class="mt-1 text-sm text-muted-foreground/80">Add sections to the card to visualize insights and data.</p>
-            </div>
-          </ng-template>
+        <p *ngIf="cardConfig.cardSubtitle" class="ai-card-subtitle">
+          {{ cardConfig.cardSubtitle }}
+        </p>
 
-          <div *ngIf="cardConfig.actions?.length" class="ai-card-actions">
-            <button
-              *ngFor="let action of cardConfig.actions; trackBy: trackAction"
-              type="button"
-              [ngClass]="getActionButtonClasses(action)"
-              (click)="onActionClick(action.label)"
-              (keydown.enter)="onActionClick(action.label)"
-              (keydown.space)="$event.preventDefault(); onActionClick(action.label)"
-            >
-              <span class="relative z-10 flex items-center gap-3">
-                <span *ngIf="action.icon" class="text-base sm:text-lg" aria-hidden="true">{{ action.icon }}</span>
-                <span>{{ action.label }}</span>
-              </span>
-              <span class="ai-card-action__shine"></span>
-            </button>
+        <div *ngIf="cardConfig.metadata" class="ai-card-meta">
+          <span *ngIf="cardConfig.metadata.category" class="ai-card-meta__chip">
+            <span class="ai-card-meta__chip-dot ai-card-meta__chip-dot--primary" aria-hidden="true"></span>
+            <span>{{ cardConfig.metadata.category }}</span>
+          </span>
+          <span *ngIf="cardConfig.metadata.variant" class="ai-card-meta__chip">
+            <span class="ai-card-meta__chip-dot ai-card-meta__chip-dot--secondary" aria-hidden="true"></span>
+            <span>{{ cardConfig.metadata.variant }}</span>
+          </span>
+          <span *ngIf="cardConfig.metadata.complexity" class="ai-card-meta__chip">
+            <span class="ai-card-meta__chip-dot ai-card-meta__chip-dot--tertiary" aria-hidden="true"></span>
+            <span>{{ cardConfig.metadata.complexity }}</span>
+          </span>
+        </div>
+        <ng-container *ngIf="processedSections.length; else emptyState">
+          <app-masonry-grid
+            [sections]="processedSections"
+            [gap]="12"
+            [minColumnWidth]="280"
+            class="w-full"
+            (sectionEvent)="onSectionEvent($event)"
+            (layoutChange)="onLayoutChange($event)"
+          ></app-masonry-grid>
+        </ng-container>
+
+        <ng-template #emptyState>
+          <div class="flex h-full flex-col items-center justify-center rounded-3xl border border-dashed border-border/40 bg-background/40 p-12 text-center text-muted-foreground">
+            <lucide-icon name="alert-circle" [size]="32" class="mb-4 text-muted-foreground/70"></lucide-icon>
+            <span class="sr-only">No sections available for this configuration</span>
+            <p class="text-base font-medium">No sections available for this configuration.</p>
+            <p class="mt-1 text-sm text-muted-foreground/80">Add sections to the card to visualize insights and data.</p>
           </div>
+        </ng-template>
 
-          <div class="ai-card-footnote">
-            <span>
-              Powered by Orange Sales Intelligence
-            </span>
-          </div>
+        <!-- Actions moved up one level - no wrapper container -->
+        <button
+          *ngFor="let action of cardConfig.actions; trackBy: trackAction"
+          type="button"
+          [ngClass]="getActionButtonClasses(action)"
+          (click)="onActionClick(action.label)"
+          (keydown.enter)="onActionClick(action.label)"
+          (keydown.space)="$event.preventDefault(); onActionClick(action.label)"
+        >
+          <span class="relative z-10 flex items-center gap-3">
+            <span *ngIf="action.icon" class="text-base sm:text-lg" aria-hidden="true">{{ action.icon }}</span>
+            <span>{{ action.label }}</span>
+          </span>
+          <span class="ai-card-action__shine"></span>
+        </button>
+
+        <!-- Footnote with smaller font and no border -->
+        <div class="ai-card-footnote">
+          <span>
+            Powered by Orange Sales Intelligence
+          </span>
         </div>
       </article>
   </div>

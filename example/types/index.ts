@@ -155,7 +155,6 @@ export interface AISectionConfig {
   columns?: number;
   width?: number;
   chartType?: 'bar' | 'pie' | 'line' | 'doughnut';
-  preferredColumns?: 1 | 2 | 3 | 4; // Smart column allocation preference
 }
 
 // Legacy alias for backward compatibility

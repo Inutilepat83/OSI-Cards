@@ -10,11 +10,9 @@
     <ng-container *ngIf="hasFields; else referenceEmpty">
       <div class="section-grid section-grid--reference">
         <article
-        *ngFor="let field of fields; let i = index"
+        *ngFor="let field of fields"
         class="section-card section-card--reference"
         (click)="onReferenceClick(field)"
-        [style.animation]="getAnimationDuration(0.6)"
-        [style.animation-delay]="getAnimationDelay(i)"
       >
         <div class="reference-card__content">
           <p class="reference-card__text">

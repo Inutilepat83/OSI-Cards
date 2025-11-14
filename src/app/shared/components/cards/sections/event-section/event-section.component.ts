@@ -33,26 +33,6 @@ export class EventSectionComponent {
     return (this.section.items as TimelineEvent[]) ?? [];
   }
 
-  getStatusChipClass(event: TimelineEvent): string {
-    switch ((event.status ?? '').toLowerCase()) {
-      case 'completed':
-      case 'success':
-        return 'badge--success';
-      case 'in-progress':
-      case 'active':
-        return 'badge--primary';
-      case 'pending':
-      case 'upcoming':
-        return 'badge--warning';
-      case 'current':
-        return 'badge--info';
-      case 'delayed':
-      case 'blocked':
-        return 'badge--error';
-      default:
-        return 'badge--neutral';
-    }
-  }
 
   onEventClick(event: TimelineEvent): void {
     this.itemInteraction.emit({

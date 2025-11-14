@@ -9,13 +9,14 @@
   <div class="ai-section__body">
     <ng-container *ngIf="hasFields; else overviewEmpty">
       <div class="section-grid section-grid--metrics">
-        <button
-          *ngFor="let field of fields; trackBy: trackField; let i = index"
-          type="button"
+        <article
+          *ngFor="let field of fields; trackBy: trackField"
           class="section-card section-card--metric"
+          role="button"
+          tabindex="0"
           (click)="onFieldClick(field)"
-          [style.animation]="getAnimationDuration(0.6)"
-          [style.animation-delay]="getAnimationDelay(i)"
+          (keydown.enter)="onFieldClick(field)"
+          (keydown.space)="$event.preventDefault(); onFieldClick(field)"
         >
           <span class="section-card__label">
             {{ field.label || field.title }}
@@ -23,7 +24,7 @@
           <span class="section-card__value">
             {{ field.value }}
           </span>
-        </button>
+        </article>
       </div>
     </ng-container>
 

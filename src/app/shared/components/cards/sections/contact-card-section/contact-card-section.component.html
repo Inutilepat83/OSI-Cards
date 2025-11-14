@@ -1,82 +1,84 @@
-<div class="ai-section">
+<div class="ai-section ai-section--contact">
   <div class="ai-section__header">
     <div class="ai-section__details">
       <h3 class="ai-section__title">{{ section.title }}</h3>
       <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
     </div>
     <span *ngIf="hasContacts" class="ai-section__badge">
-      {{ contacts.length }} contacts
+      {{ contacts.length }} {{ contacts.length === 1 ? 'contact' : 'contacts' }}
     </span>
   </div>
 
   <div class="ai-section__body">
     <ng-container *ngIf="hasContacts; else contactEmpty">
-      <div class="contact-collection">
-        <button
-          *ngFor="let contact of contacts; trackBy: trackContact; let i = index"
-          type="button"
+      <div class="contact-grid">
+        <article
+          *ngFor="let contact of contacts; trackBy: trackContact"
           class="contact-card"
+          role="button"
+          tabindex="0"
           (click)="onContactClick(contact)"
-          [style.animation]="getAnimationDuration(0.6)"
-          [style.animation-delay]="getAnimationDelay(i)"
+          (keydown.enter)="onContactClick(contact)"
+          (keydown.space)="$event.preventDefault(); onContactClick(contact)"
         >
-          <div class="contact-card__avatar">
-            <ng-container *ngIf="getContactAvatar(contact) as avatar; else contactInitials">
-              <img [src]="avatar" [alt]="getContactName(contact)" />
-            </ng-container>
-            <ng-template #contactInitials>
-              <span class="contact-card__initials">
-                {{ getInitials(getContactName(contact)) }}
-              </span>
-            </ng-template>
-          </div>
-
-          <div class="contact-card__details">
-            <div class="contact-card__header">
-              <p class="contact-card__name">{{ getContactName(contact) }}</p>
+          <!-- Header: Avatar and Name/Role -->
+          <header class="contact-card__header">
+            <div class="contact-card__avatar">
+              <ng-container *ngIf="getContactAvatar(contact) as avatar; else contactInitials">
+                <img [src]="avatar" [alt]="getContactName(contact)" class="contact-card__avatar-img" />
+              </ng-container>
+              <ng-template #contactInitials>
+                <span class="contact-card__initials">
+                  {{ getInitials(getContactName(contact)) }}
+                </span>
+              </ng-template>
+            </div>
+            <div class="contact-card__header-content">
+              <h3 class="contact-card__name">{{ getContactName(contact) }}</h3>
               <p *ngIf="getContactRole(contact) as role" class="contact-card__role">{{ role }}</p>
             </div>
+          </header>
 
-            <div class="contact-card__meta">
-              <a
-                *ngIf="getContactEmail(contact) as email"
-                class="contact-card__meta-item contact-card__meta-item--link"
-                href="mailto:{{ email }}"
-                (click)="$event.stopPropagation()"
-              >
-                <lucide-icon name="mail" size="14"></lucide-icon>
-                <span>{{ email }}</span>
-              </a>
+          <!-- Contact Information -->
+          <div class="contact-card__meta">
+            <a
+              *ngIf="getContactEmail(contact) as email"
+              class="contact-card__meta-item contact-card__meta-item--link"
+              href="mailto:{{ email }}"
+              (click)="$event.stopPropagation()"
+            >
+              <lucide-icon name="mail" size="14" class="contact-card__meta-icon"></lucide-icon>
+              <span class="contact-card__meta-text">{{ email }}</span>
+            </a>
 
-              <a
-                *ngIf="getContactPhone(contact) as phone"
-                class="contact-card__meta-item contact-card__meta-item--link"
-                href="tel:{{ phone }}"
-                (click)="$event.stopPropagation()"
-              >
-                <lucide-icon name="phone" size="14"></lucide-icon>
-                <span>{{ phone }}</span>
-              </a>
+            <a
+              *ngIf="getContactPhone(contact) as phone"
+              class="contact-card__meta-item contact-card__meta-item--link"
+              href="tel:{{ phone }}"
+              (click)="$event.stopPropagation()"
+            >
+              <lucide-icon name="phone" size="14" class="contact-card__meta-icon"></lucide-icon>
+              <span class="contact-card__meta-text">{{ phone }}</span>
+            </a>
 
-              <div *ngIf="contact.department" class="contact-card__meta-item">
-                <lucide-icon name="building" size="14"></lucide-icon>
-                <span>{{ contact.department }}</span>
-              </div>
+            <div *ngIf="contact.department" class="contact-card__meta-item">
+              <lucide-icon name="building" size="14" class="contact-card__meta-icon"></lucide-icon>
+              <span class="contact-card__meta-text">{{ contact.department }}</span>
+            </div>
 
-              <div *ngIf="contact.location" class="contact-card__meta-item">
-                <lucide-icon name="map-pin" size="14"></lucide-icon>
-                <span>{{ contact.location }}</span>
-              </div>
+            <div *ngIf="contact.location" class="contact-card__meta-item">
+              <lucide-icon name="map-pin" size="14" class="contact-card__meta-icon"></lucide-icon>
+              <span class="contact-card__meta-text">{{ contact.location }}</span>
             </div>
           </div>
-        </button>
+        </article>
       </div>
     </ng-container>
 
     <ng-template #contactEmpty>
-      <div class="contact-empty">
-        <lucide-icon name="user" size="32" class="mb-3 opacity-60"></lucide-icon>
-        <p class="text-sm">No contacts available.</p>
+      <div class="section-empty">
+        <lucide-icon name="user" size="32" class="section-empty__icon"></lucide-icon>
+        <p class="section-empty__text">No contacts available</p>
       </div>
     </ng-template>
   </div>

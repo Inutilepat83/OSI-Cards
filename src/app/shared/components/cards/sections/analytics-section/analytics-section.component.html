@@ -9,13 +9,14 @@
   <div class="ai-section__body">
     <ng-container *ngIf="fields.length; else analyticsEmpty">
       <div class="section-grid section-grid--metrics">
-        <button
-        type="button"
-        *ngFor="let field of fields; trackBy: trackField; let i = index"
+        <article
+        *ngFor="let field of fields; trackBy: trackField"
         class="section-card section-card--metric"
+        role="button"
+        tabindex="0"
         (click)="onFieldClick(field)"
-        [style.animation]="getAnimationDuration(0.6)"
-        [style.animation-delay]="getAnimationDelay(i)"
+        (keydown.enter)="onFieldClick(field)"
+        (keydown.space)="$event.preventDefault(); onFieldClick(field)"
       >
         <div class="section-card__label">
           <lucide-icon
@@ -48,7 +49,7 @@
           </span>
           <lucide-icon [name]="getTrendIcon(field)" [size]="14" [ngClass]="getTrendClass(field)"></lucide-icon>
         </div>
-      </button>
+      </article>
       </div>
     </ng-container>
 

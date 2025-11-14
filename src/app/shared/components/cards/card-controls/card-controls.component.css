@@ -4,6 +4,14 @@
   width: 100%;
 }
 
+/* Remove border from radiogroup container - invisible container */
+[role="radiogroup"] {
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 /* Layout utilities */
 .flex {
   display: flex;
@@ -142,16 +150,16 @@ button:not(:disabled):hover {
   height: 2rem;
 }
 
-/* Backgrounds */
+/* Backgrounds - GLOBALLY DEFINED: Use button variables */
 .bg-primary {
-  background-color: var(--primary);
+  background-color: var(--button-background) !important;
 }
 
 .bg-card {
   background-color: var(--card);
 }
 
-/* Borders */
+/* Borders - GLOBALLY DEFINED: Use button variables */
 .border {
   border-width: 1px;
   border-style: solid;
@@ -159,11 +167,26 @@ button:not(:disabled):hover {
 
 .border-border {
   border-color: var(--border);
+  /* For buttons, use button border variables */
+  border: var(--button-border) !important;
 }
 
-/* Shadows */
+/* Shadows - GLOBALLY DEFINED: Use button variables */
 .shadow-lg {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--button-box-shadow) !important;
+}
+
+/* Button hover states - GLOBALLY DEFINED */
+button[class*="bg-primary"]:hover:not(:disabled) {
+  background-color: var(--button-background-hover) !important;
+  border-color: var(--button-border-hover) !important;
+  box-shadow: var(--button-box-shadow-hover) !important;
+  transform: var(--button-hover-transform) !important;
+}
+
+button[class*="border-border"]:hover:not(:disabled) {
+  border-color: var(--button-border-hover) !important;
+  transform: var(--button-hover-transform) !important;
 }
 
 /* Transforms */

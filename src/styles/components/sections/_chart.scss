@@ -6,31 +6,22 @@
 .chart-section {
   display: flex;
   flex-direction: column;
-  gap: var(--section-grid-gap);
+  gap: var(--section-card-gap);
   width: 100%;
 }
 
 .chart-section__split {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--section-grid-gap);
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: var(--section-grid-gap-mobile);
-  }
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--section-card-gap) !important;
+  width: 100%;
 }
 
 .chart-section__list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--section-grid-gap);
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-card-gap) !important;
   width: 100%;
-
-  @media (max-width: 500px) {
-    grid-template-columns: 1fr;
-    gap: var(--section-grid-gap-mobile);
-  }
 }
 
 .chart-card {
@@ -39,6 +30,8 @@
   text-align: left;
   width: 100%;
   display: flex;
+  /* COMPACT: No minimum height */
+  min-height: auto;
   /* Border, background, padding, border-radius, and hover states are set by @include card */
 
   &:focus-visible {
@@ -49,51 +42,58 @@
   /* Default: vertical layout for bar charts and summary cards */
   flex-direction: column;
   align-items: flex-start;
-  /* Gap for internal content - card mixin sets gap: var(--card-gap) for card children */
-  /* Override only for specific layout needs */
+  gap: calc(var(--card-gap) * 0.5);
+  /* COMPACT: Tighter card gap */
   
   /* For pie chart cards - horizontal layout */
   &.chart-card--pie {
     flex-direction: row;
     align-items: center;
-    gap: var(--spacing-3xl); /* Spacing between color dot and content */
-  }
-  
-  /* For summary cards (non-button) */
-  &:not(button) {
-    /* Use card mixin gap */
+    gap: calc(var(--card-gap) * 0.5);
+    /* COMPACT: Tighter pie card gap */
   }
 
   &__row {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
-    gap: var(--spacing-lg);
+    gap: calc(var(--card-gap) * 0.5);
+    /* COMPACT: Tighter row spacing */
+    width: 100%;
   }
 
   &__label {
-    @extend %unified-card-label;
-    font-size: var(--card-label-font-size) !important;
+    @include label-text;
+    /* OPTIMIZED: Use mixin for consistency - labels are smallest */
+    margin: 0;
+    flex-shrink: 0;
   }
 
   &__value {
-    @extend %unified-card-value;
+    @include value-text;
+    /* OPTIMIZED: Values are primary - larger */
     font-size: var(--card-value-font-size) !important;
     color: var(--card-text-primary);
+    margin: 0;
+    text-align: right;
+    flex-shrink: 0;
+    line-height: 1.2;
   }
 
   &__content {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-xs);
+    gap: calc(var(--card-gap) * 0.5);
+    /* COMPACT: Tighter content spacing */
     min-width: 0;
+    flex: 1;
   }
 
   &__meta {
-    font-size: var(--card-meta-font-size);
-    color: var(--card-meta-color);
-    letter-spacing: 0.02em;
-    line-height: 1.3;
+    @include card-meta-text;
+    /* COMPACT: Tight line-height */
+    margin: 0;
+    line-height: 1.2;
   }
 
   &__legend-dot {
@@ -119,13 +119,11 @@
   flex-direction: row;
   align-items: center;
   cursor: pointer;
-  gap: var(--spacing-xl);
 }
 
 .chart-section__summary {
   @include card;
   cursor: default;
-  gap: var(--spacing-xl);
   pointer-events: none;
   min-height: auto;
 }
@@ -147,7 +145,8 @@
 .chart-section__summary-hint {
   font-size: var(--card-meta-font-size);
   color: var(--card-meta-color);
-  line-height: 1.4;
+  line-height: 1.2;
+  /* COMPACT: Tight line-height */
 }
 
 .chart-section__empty {
@@ -155,8 +154,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--section-grid-gap);
-  padding: var(--spacing-8xl) var(--spacing-4xl);
+  gap: calc(var(--section-card-gap) * 0.5);
+  /* COMPACT: Tighter empty state spacing */
+  padding: calc(var(--card-padding) * 1.5);
+  /* COMPACT: Reduced padding */
   border-radius: var(--card-border-radius);
 
   lucide-icon {
@@ -208,32 +209,32 @@
 
 @media (max-width: 500px) {
   .chart-section {
-    gap: var(--section-grid-gap-mobile);
+    gap: calc(var(--section-card-gap) * 0.75); /* COMPACT: Reduced from section-grid-gap-mobile */
   }
 
   .chart-section__list {
-    gap: var(--section-grid-gap-mobile);
+    gap: calc(var(--section-card-gap) * 0.75); /* COMPACT: Reduced from section-grid-gap-mobile */
     grid-template-columns: 1fr !important;
   }
 
   .chart-card {
-    gap: var(--section-grid-gap-mobile);
+    gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from section-grid-gap-mobile */
 
     &__row {
       flex-direction: column;
       align-items: flex-start;
-      gap: var(--spacing-sm);
+      gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from full gap */
     }
 
     &__value {
-      font-size: 0.85rem;
+      font-size: var(--card-value-font-size);
     }
   }
 
   .chart-card--legend {
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--spacing-lg);
+    gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from full gap */
   }
 
   .chart-card__progress {
@@ -250,7 +251,7 @@
   }
 
   .chart-section__summary {
-    gap: var(--spacing-sm);
+    gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from full gap */
   }
 
   .chart-section__summary-hint {
@@ -262,13 +263,15 @@
   flex-direction: row;
   align-items: center;
   cursor: pointer;
-  gap: var(--spacing-xl);
+  gap: calc(var(--card-gap) * 0.5);
+  /* COMPACT: Tighter legend spacing */
 }
 
 .chart-section__summary {
   @include section-card-base;
   cursor: default;
-  gap: var(--spacing-xl);
+  gap: calc(var(--card-gap) * 0.5);
+  /* COMPACT: Tighter summary spacing */
   pointer-events: none;
   min-height: auto;
 }
@@ -288,7 +291,8 @@
 .chart-section__summary-hint {
   font-size: var(--font-chart-meta);
   color: color-mix(in srgb, var(--foreground) 85%, transparent);
-  line-height: 1.4;
+  line-height: 1.2;
+  /* COMPACT: Tight line-height */
 }
 
 .chart-section__empty {
@@ -296,8 +300,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--list-item-gap);
-  padding: var(--spacing-8xl) var(--spacing-4xl);
+  gap: calc(var(--card-gap) * 0.5);
+  /* COMPACT: Tighter empty state spacing */
+  padding: calc(var(--card-padding) * 1.5);
+  /* COMPACT: Reduced padding */
 
   lucide-icon {
     @include section-empty-icon;
@@ -348,22 +354,22 @@
 
 @media (max-width: 620px) {
   .chart-section {
-    gap: var(--spacing-lg);
+    gap: calc(var(--section-card-gap) * 0.75); /* COMPACT: Reduced from full gap */
   }
 
   .chart-section__list {
-    gap: var(--list-item-gap);
+    gap: calc(var(--section-card-gap) * 0.75); /* COMPACT: Reduced from list-item-gap */
     grid-template-columns: 1fr !important;
   }
 
   .chart-card {
-    padding: var(--card-padding-mobile);
-    gap: var(--list-item-gap);
+    /* Padding is set by @include card */
+    gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from list-item-gap */
 
     &__row {
       flex-direction: column;
       align-items: flex-start;
-      gap: var(--spacing-sm);
+      gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from full gap */
     }
 
     &__value {
@@ -374,7 +380,7 @@
   .chart-card--legend {
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--spacing-lg);
+    gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from full gap */
   }
 
   .chart-card__progress {
@@ -388,7 +394,7 @@
 
 @media (max-width: 480px) {
   .chart-card {
-    padding: var(--card-padding-mobile);
+    /* Padding is set by @include card */
 
     &__label {
       font-size: var(--font-section-label-mobile);
@@ -404,7 +410,7 @@
   }
 
   .chart-card--legend {
-    gap: var(--list-item-gap);
+    gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from list-item-gap */
   }
 
   .chart-card__legend-dot {
@@ -413,7 +419,7 @@
   }
 
   .chart-section__summary {
-    gap: var(--spacing-sm);
+    gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from full gap */
   }
 
   .chart-section__summary-hint {
@@ -421,11 +427,11 @@
   }
 }
 
-/* Light theme overrides */
+/* Light theme overrides - text colors only */
+/* Background and border are handled by global enforcement */
 :root[data-theme='day'] {
   .chart-card {
-    background: rgba(250, 250, 250, 0.9) !important;
-    border-color: rgba(200, 200, 200, 0.5) !important;
+    /* Background and border removed - handled by global enforcement */
     
     &__label {
       color: #6b7280;
@@ -437,6 +443,7 @@
   }
   
   .chart-section__summary {
+    /* Summary is a nested element, not a card - styling handled by component */
     background: rgba(255, 255, 255, 0.95) !important;
     border-color: rgba(200, 200, 200, 0.6) !important;
   }

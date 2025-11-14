@@ -9,13 +9,16 @@
   @include card;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-4xl);
+  /* COMPACT: No minimum height */
+  min-height: auto;
+  gap: var(--card-gap);
 }
 
 .quotation-card__quote {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3xl);
+  gap: calc(var(--card-gap) * 0.5);
+  /* COMPACT: Tighter quote spacing */
   position: relative;
 }
 
@@ -23,25 +26,27 @@
   color: color-mix(in srgb, var(--color-brand) 70%, transparent);
   opacity: 0.7;
   align-self: flex-start;
-  @include slow-transition;
+  flex-shrink: 0;
+  transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   
+  // Use opacity and color changes instead of transform
   .section-card--quotation:hover & {
-    transform: scale(1.08);
     opacity: 0.9;
     color: var(--color-brand);
   }
 }
 
 .quotation-card__text {
-  @include metric-value;
-  font-size: var(--card-title-font-size);
+  @include card-title-text;
+  /* COMPACT: Tight line-height */
   font-style: italic;
-  line-height: 1.7;
+  line-height: 1.2; /* COMPACT: Reduced from 1.3 */
   color: var(--card-text-primary);
   margin: 0;
-  padding-left: var(--spacing-4xl);
+  padding-left: calc(var(--card-padding) * 0.75);
+  /* COMPACT: Reduced padding */
   position: relative;
-  @include fast-transition;
+  transition: color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 
   &::before {
     content: '';
@@ -49,19 +54,20 @@
     left: 0;
     top: 0;
     bottom: 0;
-    width: 4px;
+    width: 3px;
+    /* OPTIMIZED: Thinner accent bar */
     background: linear-gradient(180deg, 
       var(--color-brand),
       color-mix(in srgb, var(--color-brand) 65%, transparent));
     border-radius: var(--radius-xs);
-    @include slow-transition;
+    transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   .section-card--quotation:hover & {
     color: color-mix(in srgb, var(--foreground) 95%, transparent);
     
     &::before {
-      width: 5px;
+      width: 4px;
       opacity: 0.9;
     }
   }
@@ -70,47 +76,49 @@
 .quotation-card__footer {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
-  padding-top: var(--spacing-3xl);
-  border-top: 1px solid var(--section-card-border);
+  gap: calc(var(--card-gap) * 0.5);
+  /* COMPACT: Tighter footer spacing */
+  padding-top: calc(var(--card-padding) * 0.5);
+  /* COMPACT: Reduced padding */
+  border-top: none !important;
+  /* CLEAN: No borders on footers - only cards have borders */
+  margin-top: calc(var(--card-gap) * 0.125);
+  /* COMPACT: Reduced margin */
 }
 
 .quotation-card__author {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  gap: calc(var(--card-gap) * 0.5);
+  /* OPTIMIZED: Tighter author spacing */
 }
 
 .quotation-card__author-name {
-  @include metric-label;
-  font-weight: var(--card-subtitle-font-weight);
+  @include card-subtitle-text;
+  /* OPTIMIZED: Use typography mixin - names are secondary */
   color: var(--card-text-primary);
+  margin: 0;
+  line-height: 1.2;
 }
 
 .quotation-card__author-role {
-  @include metric-label;
-  font-size: var(--card-meta-font-size);
-  color: var(--card-meta-color);
+  @include card-meta-text;
+  /* COMPACT: Tight line-height */
+  margin: 0;
+  line-height: 1.2;
 }
 
 .quotation-card__date {
-  @include metric-label;
-  font-size: var(--card-meta-font-size);
-  color: var(--card-meta-color);
+  @include card-meta-text;
+  /* COMPACT: Tight line-height */
+  margin: 0;
+  line-height: 1.2;
 }
 
-@media (max-width: 768px) {
-  .section-card--quotation {
-    /* Mobile padding handled by @include card */
-  }
+/* Removed redundant 768px media query - continuous responsive design via base system */
 
-  .quotation-card__text {
-    padding-left: var(--spacing-3xl);
-    font-size: var(--card-title-font-size);
-  }
-}
-
-/* Light theme overrides */
+/* Light theme overrides - text colors only */
+/* Background and border are handled by global enforcement */
 :root[data-theme='day'] {
   .quotation-card {
     &__text {
@@ -131,8 +139,7 @@
   }
   
   .section-card--quotation {
-    background: rgba(250, 250, 250, 0.9) !important;
-    border-color: rgba(200, 200, 200, 0.5) !important;
+    /* Background and border removed - handled by global enforcement */
   }
 }
 

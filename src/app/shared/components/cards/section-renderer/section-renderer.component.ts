@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardAction, CardField, CardItem, CardSection } from '../../../../models';
 import { InfoSectionComponent, InfoSectionFieldInteraction } from '../sections/info-section.component';
@@ -48,11 +48,30 @@ export interface SectionRenderEvent {
     TextReferenceSectionComponent
   ],
   templateUrl: './section-renderer.component.html',
+  styleUrls: ['./section-renderer.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SectionRendererComponent {
   @Input({ required: true }) section!: CardSection;
   @Output() sectionEvent = new EventEmitter<SectionRenderEvent>();
+
+  @HostBinding('attr.data-section-type')
+  get sectionTypeAttribute(): string {
+    if (!this.section) {
+      return '';
+    }
+    const typeLabel = (this.section.type ?? '').trim();
+    const resolved = this.resolvedType;
+    return (typeLabel || resolved || 'unknown').toLowerCase();
+  }
+
+  @HostBinding('attr.data-section-id')
+  get sectionIdAttribute(): string | null {
+    if (!this.section?.id) {
+      return null;
+    }
+    return String(this.section.id);
+  }
 
   get resolvedType(): string {
     const type = (this.section.type ?? '').toLowerCase();

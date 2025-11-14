@@ -8,40 +8,35 @@
 
   <div class="ai-section__body">
     <ng-container *ngIf="hasFields; else infoEmpty">
-      <div class="section-grid section-grid--insights">
+      <div class="info-matrix">
         <button
-        *ngFor="let field of fields; trackBy: trackField; let i = index"
-        type="button"
-        class="section-card section-card--insight"
-        (click)="onFieldClick(field)"
-        [style.animation]="getAnimationDuration(0.55)"
-        [style.animation-delay]="getAnimationDelay(i, 45)"
-      >
-        <span class="section-card__label">
-          {{ field.label }}
-        </span>
+          *ngFor="let field of fields; trackBy: trackField"
+          type="button"
+          class="info-row"
+          (click)="onFieldClick(field)"
+          (keydown.enter)="onFieldClick(field)"
+          (keydown.space)="$event.preventDefault(); onFieldClick(field)"
+        >
+          <div class="info-row__primary">
+            <span class="info-row__label">{{ field.label }}</span>
+            <span class="info-row__value">{{ field.value }}</span>
+          </div>
 
-        <span class="section-card__value">
-          {{ field.value }}
-        </span>
-
-        <p class="section-card__description" *ngIf="field.description">
-          {{ field.description }}
-        </p>
-
-        <div class="section-card__meta" *ngIf="field.change !== undefined">
-          <lucide-icon
-            *ngIf="getTrendIcon(field) as trendIcon"
-            [name]="trendIcon"
-            [size]="14"
-            [ngClass]="getTrendIconClass(field)"
-            aria-hidden="true"
-          ></lucide-icon>
-          <span class="section-card__meta-change" [ngClass]="getTrendClass(field)">
-            {{ formatChange(field.change) }}
-          </span>
-        </div>
-      </button>
+          <div class="info-row__meta" *ngIf="field.description || field.change !== undefined">
+            <p class="info-row__description" *ngIf="field.description">
+              {{ field.description }}
+            </p>
+            <span class="info-row__change" *ngIf="field.change !== undefined" [ngClass]="getTrendClass(field)">
+              <lucide-icon
+                *ngIf="getTrendIcon(field) as trendIcon"
+                [name]="trendIcon"
+                [size]="12"
+                aria-hidden="true"
+              ></lucide-icon>
+              {{ formatChange(field.change) }}
+            </span>
+          </div>
+        </button>
       </div>
     </ng-container>
 

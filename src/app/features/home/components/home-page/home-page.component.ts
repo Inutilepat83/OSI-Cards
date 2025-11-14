@@ -64,7 +64,8 @@ export class HomePageComponent implements OnInit {
         const cardChanged = this.generatedCard !== card;
         this.generatedCard = card;
         if (cardChanged && card && !this.isGenerating && !this.jsonError) {
-          this.announceStatus(`${card.cardType} card preview updated.`);
+          const cardTypeLabel = card.cardType ? `${card.cardType} ` : '';
+          this.announceStatus(`${cardTypeLabel}card preview updated.`);
         }
         this.cd.markForCheck();
       });
@@ -166,7 +167,6 @@ export class HomePageComponent implements OnInit {
         // Create a default empty card instead of null
         const defaultCard: AICardConfig = {
           cardTitle: 'Empty Card',
-          cardType: 'company',
           sections: []
         };
         this.store.dispatch(CardActions.generateCardSuccess({ card: ensureCardIds(defaultCard) }));
@@ -194,7 +194,7 @@ export class HomePageComponent implements OnInit {
         const sanitized = ensureCardIds(cardData);
         this.store.dispatch(CardActions.generateCardSuccess({ card: sanitized }));
       } else {
-        throw new Error('Invalid card configuration format - missing required fields (cardTitle, cardType, sections)');
+        throw new Error('Invalid card configuration format - missing required fields (cardTitle, sections)');
       }
     } catch (error: unknown) {
       this.store.dispatch(CardActions.generateCardFailure({ error: error instanceof Error ? error.message : 'Unknown error' }));

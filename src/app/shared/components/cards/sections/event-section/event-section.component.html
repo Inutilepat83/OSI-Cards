@@ -5,52 +5,62 @@
       <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
     </div>
     <span *ngIf="events.length" class="ai-section__badge">
-      {{ events.length }} events
+      {{ events.length }} {{ events.length === 1 ? 'event' : 'events' }}
     </span>
   </div>
 
   <div class="ai-section__body">
     <ng-container *ngIf="events.length; else eventEmpty">
-      <div class="relative space-y-4">
-        <div class="absolute left-3 top-3 bottom-3 w-px bg-border/60"></div>
+      <div class="event-timeline">
+        <div class="event-timeline__line"></div>
 
-        <button
+        <article
           *ngFor="let event of events; trackBy: trackEvent"
-          type="button"
           class="event-card"
+          role="button"
+          tabindex="0"
           (click)="onEventClick(event)"
+          (keydown.enter)="onEventClick(event)"
+          (keydown.space)="$event.preventDefault(); onEventClick(event)"
         >
-          <div class="relative flex h-6 w-6 items-center justify-center rounded-full border border-primary/50 bg-primary/20 text-primary">
-            <lucide-icon name="calendar" size="14"></lucide-icon>
-            <span class="absolute -left-[21px] top-1/2 h-px w-[18px] -translate-y-1/2 bg-border/70"></span>
+          <div class="event-card__marker">
+            <lucide-icon name="calendar" size="14" class="event-card__marker-icon"></lucide-icon>
+            <div class="event-card__marker-line"></div>
           </div>
-          <div class="flex-1 space-y-2">
-            <div class="flex flex-wrap items-center gap-2">
-              <p class="text-base font-semibold text-foreground">{{ event.title }}</p>
-              <span *ngIf="event.status" class="badge" [ngClass]="getStatusChipClass(event)">
+
+          <div class="event-card__content">
+            <header class="event-card__header">
+              <h3 class="event-card__title">
+                {{ event.title }}
+              </h3>
+              <span *ngIf="event.status" class="event-card__badge" [attr.data-status]="event.status">
                 {{ event.status | uppercase }}
               </span>
-            </div>
-            <div class="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-              <div *ngIf="event.date" class="flex items-center gap-1">
-                <lucide-icon name="calendar" size="14"></lucide-icon>
+            </header>
+
+            <div *ngIf="event.date || event.time" class="event-card__datetime">
+              <div *ngIf="event.date" class="event-card__date">
+                <lucide-icon name="calendar" size="14" class="event-card__datetime-icon"></lucide-icon>
                 <span>{{ event.date }}</span>
               </div>
-              <div *ngIf="event.time" class="flex items-center gap-1">
-                <lucide-icon name="clock" size="14"></lucide-icon>
+              <div *ngIf="event.time" class="event-card__time">
+                <lucide-icon name="clock" size="14" class="event-card__datetime-icon"></lucide-icon>
                 <span>{{ event.time }}</span>
               </div>
             </div>
-            <p *ngIf="event.description" class="text-sm text-muted-foreground">{{ event.description }}</p>
+
+            <p *ngIf="event.description" class="event-card__description">
+              {{ event.description }}
+            </p>
           </div>
-        </button>
+        </article>
       </div>
     </ng-container>
 
     <ng-template #eventEmpty>
       <div class="section-empty">
-        <lucide-icon name="calendar" size="32" class="mb-3 opacity-60"></lucide-icon>
-        <p class="text-sm">No timeline data available.</p>
+        <lucide-icon name="calendar" size="32" class="section-empty__icon"></lucide-icon>
+        <p class="section-empty__text">No timeline data available</p>
       </div>
     </ng-template>
   </div>

@@ -111,8 +111,8 @@
           <div class="flex items-center gap-2 mb-4">
             <lucide-icon name="sparkles" [size]="20" class="text-primary" aria-hidden="true"></lucide-icon>
             <span class="font-semibold">Live Preview</span>
-            <span *ngIf="generatedCard" class="text-sm text-muted-foreground">
-              • {{ generatedCard.cardType }} Card
+            <span *ngIf="generatedCard?.cardType" class="text-sm text-muted-foreground">
+              • {{ generatedCard?.cardType }} Card
             </span>
             <span *ngIf="isFullscreen" class="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-primary/20 text-primary border border-primary/30 ml-2">
               Fullscreen Mode
@@ -206,84 +206,72 @@
       </div>
 
       <div class="capabilities-grid">
-        <div class="capability-card capability-card--primary">
+        <div class="capability-card-content capability-card-content--primary">
           <div class="capability-card-glow"></div>
-          <div class="capability-card-content">
-            <div class="capability-icon capability-icon--primary">
-              <lucide-icon name="zap" [size]="24" aria-hidden="true"></lucide-icon>
-            </div>
-            <h4 class="capability-title">Real-time Generation</h4>
-            <p class="capability-description">
-              Instant card generation with live preview and JSON validation
-            </p>
+          <div class="capability-icon capability-icon--primary">
+            <lucide-icon name="zap" [size]="24" aria-hidden="true"></lucide-icon>
           </div>
+          <h4 class="capability-title">Real-time Generation</h4>
+          <p class="capability-description">
+            Instant card generation with live preview and JSON validation
+          </p>
         </div>
 
-        <div class="capability-card">
+        <div class="capability-card-content">
           <div class="capability-card-glow"></div>
-          <div class="capability-card-content">
-            <div class="capability-icon">
-              <lucide-icon name="settings" [size]="24" aria-hidden="true"></lucide-icon>
-            </div>
-            <h4 class="capability-title">Flexible Configuration</h4>
-            <p class="capability-description">
-              Multiple card types with customizable sections and fields
-            </p>
+          <div class="capability-icon">
+            <lucide-icon name="settings" [size]="24" aria-hidden="true"></lucide-icon>
           </div>
+          <h4 class="capability-title">Flexible Configuration</h4>
+          <p class="capability-description">
+            Multiple card types with customizable sections and fields
+          </p>
         </div>
 
-        <div class="capability-card">
+        <div class="capability-card-content">
           <div class="capability-card-glow"></div>
-          <div class="capability-card-content">
-            <div class="capability-icon">
-              <lucide-icon name="download" [size]="24" aria-hidden="true"></lucide-icon>
-            </div>
-            <h4 class="capability-title">PNG Export</h4>
-            <p class="capability-description">
-              High-quality PNG export with 2x scaling for presentations
-            </p>
+          <div class="capability-icon">
+            <lucide-icon name="download" [size]="24" aria-hidden="true"></lucide-icon>
           </div>
+          <h4 class="capability-title">PNG Export</h4>
+          <p class="capability-description">
+            High-quality PNG export with 2x scaling for presentations
+          </p>
         </div>
 
-        <div class="capability-card">
+        <div class="capability-card-content">
           <div class="capability-card-glow"></div>
-          <div class="capability-card-content">
-            <div class="capability-icon">
-              <lucide-icon name="file-text" [size]="24" aria-hidden="true"></lucide-icon>
-            </div>
-            <h4 class="capability-title">TypeScript Support</h4>
-            <p class="capability-description">
-              Full TypeScript integration with comprehensive type definitions
-            </p>
+          <div class="capability-icon">
+            <lucide-icon name="file-text" [size]="24" aria-hidden="true"></lucide-icon>
           </div>
+          <h4 class="capability-title">TypeScript Support</h4>
+          <p class="capability-description">
+            Full TypeScript integration with comprehensive type definitions
+          </p>
         </div>
 
-        <div class="capability-card">
+        <div class="capability-card-content">
           <div class="capability-card-glow"></div>
-          <div class="capability-card-content">
-            <div class="capability-icon">
-              <lucide-icon name="save" [size]="24" aria-hidden="true"></lucide-icon>
-            </div>
-            <h4 class="capability-title">Save &amp; Load</h4>
-            <p class="capability-description">
-              Save your card configurations and load them anytime from local storage
-            </p>
+          <div class="capability-icon">
+            <lucide-icon name="save" [size]="24" aria-hidden="true"></lucide-icon>
           </div>
+          <h4 class="capability-title">Save &amp; Load</h4>
+          <p class="capability-description">
+            Save your card configurations and load them anytime from local storage
+          </p>
         </div>
 
-        <div class="capability-card">
+        <div class="capability-card-content">
           <div class="capability-card-glow"></div>
-          <div class="capability-card-content">
-            <div class="capability-icon">
-              <lucide-icon name="code-2" [size]="24" aria-hidden="true"></lucide-icon>
-            </div>
-            <h4 class="capability-title">Component Architecture</h4>
-            <p class="capability-description">
-              Modular design with {{ systemStats.totalFiles }} documented components
-            </p>
+          <div class="capability-icon">
+            <lucide-icon name="code-2" [size]="24" aria-hidden="true"></lucide-icon>
+          </div>
+          <h4 class="capability-title">Component Architecture</h4>
+          <p class="capability-description">
+            Modular design with {{ systemStats.totalFiles }} documented components
+          </p>
         </div>
       </div>
     </div>
-  </div>
   </div>
 </main>

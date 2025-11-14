@@ -1,253 +1,184 @@
-/* Solutions section styling - Product solutions and offerings */
+/* Solutions Section - Modern, Clean Design */
 
 @import 'sections-base';
 @import 'unified-cards';
 
-/* Unified solution card class using global variables */
+/* Solutions Grid Layout */
+.solutions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--section-card-gap);
+  width: 100%;
+}
+
+/* Solution Card */
 .solution-card {
   @include card;
   display: flex;
   flex-direction: column;
-  // All core styling from centralized variables via @include card
-  
+  gap: var(--card-gap);
+  min-height: auto;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
   &:hover {
-    .solution-card__title {
-      color: var(--card-text-hover);
-      transform: translateY(-1px);
-    }
+    transform: translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
   }
 }
 
-.solutions-section {
-  @include card;
+/* Card Header */
+.solution-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--card-gap) * 0.75);
+}
 
-  .solutions-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--section-grid-gap);
-    width: 100%;
-    
-    @media (max-width: 768px) {
-      gap: var(--section-grid-gap-mobile);
-    }
-  }
+.solution-card__title {
+  @include card-title-text;
+  font-size: calc(var(--card-value-font-size) - 2px) !important;
+  font-weight: var(--card-value-font-weight) !important;
+  letter-spacing: var(--card-value-letter-spacing) !important;
+  line-height: var(--card-value-line-height) !important;
+  color: var(--card-text-primary) !important;
+  margin: 0;
+}
 
-  .solution-item {
-    @include card;
-    display: flex;
-    flex-direction: column;
-    // All core styling from centralized variables
-    transition: var(--card-transition);
-    
-    &:hover {
-      transform: var(--card-hover-transform-scale);
-      .solution-title {
-        color: var(--card-text-hover);
-      }
-    }
-  }
+.solution-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--card-gap) * 0.5);
+  align-items: center;
+}
 
-  .solution-header {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--card-gap-large);
-    justify-content: space-between;
-  }
+.solution-card__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: calc(var(--tag-padding-y-sm) * 0.5) calc(var(--tag-padding-x) * 0.75);
+  border-radius: calc(var(--section-card-border-radius) * 0.75);
+  font-size: var(--card-meta-font-size);
+  font-weight: var(--card-meta-font-weight);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  text-transform: capitalize;
+  white-space: nowrap;
 
-  .solution-title {
-    @extend %unified-card-value;
-    font-size: var(--card-title-font-size);
-    font-weight: var(--card-title-font-weight);
-    letter-spacing: var(--card-title-letter-spacing);
-    line-height: var(--card-title-line-height);
-    flex: 1;
-    transition: color 0.25s ease, transform 0.25s ease;
-  }
-
-  .solution-badge {
-    @include standard-badge;
-    padding: var(--spacing-xs) var(--spacing-2xl);
-    font-size: var(--card-label-font-size);
-    font-weight: var(--card-label-font-weight);
-    text-transform: var(--card-label-text-transform);
-    letter-spacing: var(--card-label-letter-spacing);
-    white-space: nowrap;
-    color: var(--card-text-hover);
-    transition: var(--card-transition-fast);
-    
-    &:hover {
-      transform: translateY(-1px);
-      box-shadow: var(--card-box-shadow);
-    }
-  }
-
-  .solution-description {
-    font-size: var(--card-subtitle-font-size);
-    font-weight: var(--card-subtitle-font-weight);
+  &--category {
     color: var(--card-text-secondary);
-    line-height: var(--card-subtitle-line-height);
+    background: color-mix(in srgb, var(--card-text-secondary) 8%, transparent);
   }
 
-  .solution-features {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-lg);
-    margin-top: var(--spacing-xl);
-  }
-
-  .solution-feature {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border-radius: var(--spacing-md);
-    font-size: var(--card-meta-font-size);
-    color: var(--card-text-muted);
-    background: var(--card-background);
-    border: var(--card-border);
-    transition: var(--card-transition-fast);
-
-    .feature-icon {
-      font-size: var(--card-meta-font-size);
+  &--complexity {
+    &[data-complexity="low"] {
+      color: var(--color-success, #10b981);
+      background: color-mix(in srgb, var(--color-success, #10b981) 12%, transparent);
     }
-    
-    &:hover {
-      transform: translateY(-1px);
-      border-color: var(--card-border-hover);
-      background: var(--card-background-hover);
+    &[data-complexity="medium"] {
+      color: var(--color-warning, #f59e0b);
+      background: color-mix(in srgb, var(--color-warning, #f59e0b) 12%, transparent);
     }
-  }
-
-  .solution-price {
-    display: flex;
-    align-items: baseline;
-    gap: var(--card-element-gap-sm);
-    margin-top: var(--spacing-sm);
-    font-size: var(--font-section-label);
-
-    .price-value {
-      font-size: var(--font-section-value);
-      font-weight: 700;
-      color: var(--foreground);
-    }
-
-    .price-currency {
-      font-size: var(--font-section-value-lg);
-      color: color-mix(in srgb, var(--foreground) 85%, transparent);
-    }
-
-    .price-period {
-      font-size: var(--font-section-value-lg);
-      color: color-mix(in srgb, var(--foreground) 85%, transparent);
-    }
-  }
-
-  .solution-status {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    margin-top: var(--spacing-sm);
-    font-size: var(--font-section-role);
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-    font-weight: 600;
-
-    .status-indicator {
-      display: inline-block;
-      width: var(--list-item-gap);
-      height: var(--list-item-gap);
-      border-radius: 50%;
-      background: color-mix(in srgb, var(--color-brand) 35%, var(--color-white) 65%);
-
-      &.inactive {
-        background: color-mix(in srgb, var(--color-brand) 70%, var(--color-black) 30%);
-      }
-
-      &.pending {
-        background: color-mix(in srgb, var(--color-brand) 65%, var(--color-white) 35%);
-      }
+    &[data-complexity="high"] {
+      color: var(--color-error, #ef4444);
+      background: color-mix(in srgb, var(--color-error, #ef4444) 12%, transparent);
     }
   }
 }
 
-@media (max-width: 768px) {
-  .solutions-section {
-    .solutions-list {
-      gap: var(--list-item-gap);
-    }
-
-    .solution-item {
-      padding: var(--card-padding-mobile);
-      gap: var(--spacing-sm);
-    }
-
-    .solution-title {
-      font-size: var(--font-section-value-xl);
-    }
-
-    .solution-description {
-      font-size: var(--font-section-value-lg);
-    }
-
-    .solution-features {
-      gap: var(--card-element-gap-sm);
-      margin-top: var(--spacing-xs);
-    }
-
-    .solution-feature {
-      font-size: var(--font-section-tag-sm);
-    }
-
-    .solution-price {
-      font-size: var(--font-section-role);
-
-      .price-value {
-        font-size: var(--font-section-value-2xl);
-      }
-    }
-  }
+/* Card Description */
+.solution-card__description {
+  @include card-subtitle-text;
+  margin: 0;
+  color: var(--card-text-secondary);
+  line-height: 1.5;
 }
 
-/* Light theme overrides */
-:root[data-theme='day'] {
-  .solution-card {
-    background: rgba(250, 250, 250, 0.9) !important;
-    border-color: rgba(200, 200, 200, 0.5) !important;
-    
-    &__title {
-      color: #1a1a1a;
-    }
-    
-    &__description {
-      color: #6b7280;
-    }
-    
-    &__category {
-      background: rgba(255, 121, 0, 0.08) !important;
-      color: var(--primary) !important;
-      border-color: rgba(255, 121, 0, 0.2) !important;
-    }
-    
-    &__complexity {
-      color: #6b7280;
-    }
-    
-    &__benefits {
-      color: #4b5563;
-    }
-  }
-  
-  .solution-status {
-    &.active {
-      background: rgba(34, 197, 94, 0.1) !important;
-      color: rgb(34, 197, 94) !important;
-      border-color: rgba(34, 197, 94, 0.3) !important;
-    }
-    
-    &.inactive {
-      background: rgba(156, 163, 175, 0.1) !important;
-      color: rgb(107, 114, 128) !important;
-      border-color: rgba(156, 163, 175, 0.3) !important;
-    }
-  }
+/* Benefits List */
+.solution-card__benefits {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--card-gap) * 0.75);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.solution-card__benefit {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--card-gap) * 0.75);
+  margin: 0;
+  padding: 0;
+}
+
+.solution-card__benefit-icon {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  margin-top: 0.15em;
+  color: var(--card-text-secondary);
+  opacity: 0.7;
+}
+
+.solution-card__benefit-text {
+  @include card-meta-text;
+  flex: 1;
+  color: var(--card-text-secondary);
+  line-height: 1.5;
+}
+
+/* Card Footer */
+.solution-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--card-gap) * 0.75);
+  margin-top: auto;
+  padding-top: var(--card-gap);
+  border-top: 1px solid color-mix(in srgb, var(--card-text-secondary) 10%, transparent);
+}
+
+.solution-card__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--card-gap) * 0.5);
+  @include card-meta-text;
+  color: var(--card-text-secondary);
+}
+
+.solution-card__meta-icon {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  opacity: 0.6;
+  color: var(--card-text-muted);
+}
+
+.solution-card__meta-text {
+  @include card-meta-text;
+  white-space: nowrap;
+}
+
+/* Empty State */
+.section-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--card-padding) * 3);
+  text-align: center;
+  color: var(--card-text-muted);
+}
+
+.section-empty__icon {
+  margin-bottom: calc(var(--card-gap) * 1.5);
+  opacity: 0.5;
+}
+
+.section-empty__text {
+  @include card-meta-text;
+  margin: 0;
+  color: var(--card-text-muted);
 }

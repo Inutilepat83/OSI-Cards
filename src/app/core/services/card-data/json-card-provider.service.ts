@@ -47,13 +47,6 @@ export class JsonCardProvider extends CardDataProvider {
     });
 
     const requests = allCardFiles.map(file => this.http.get<AICardConfig>(file).pipe(
-      map(card => {
-        // Normalize cardType to lowercase
-        if (card && card.cardType) {
-          card.cardType = card.cardType.toLowerCase() as any;
-        }
-        return card;
-      }),
       catchError(error => {
         console.warn(`Failed to load card from ${file}:`, error);
         return of(null);
@@ -82,13 +75,6 @@ export class JsonCardProvider extends CardDataProvider {
       ];
 
       const requests = cardFiles.map(file => this.http.get<AICardConfig>(file).pipe(
-        map(card => {
-          // Normalize cardType to lowercase
-          if (card && card.cardType) {
-            card.cardType = card.cardType.toLowerCase() as any;
-          }
-          return card;
-        }),
         catchError(error => {
           console.warn(`Failed to load card from ${file}:`, error);
           return of(null);

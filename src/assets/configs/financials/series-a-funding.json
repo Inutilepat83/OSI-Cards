@@ -1,11 +1,9 @@
 {
   "cardTitle": "Series A Funding Round",
-  "cardType": "Financial",
   "sections": [
     {
       "title": "Funding Overview",
       "type": "info",
-      "preferredColumns": 2,
       "fields": [
         {
           "label": "Round Type",
@@ -44,7 +42,6 @@
     {
       "title": "Investment Terms",
       "type": "analytics",
-      "preferredColumns": 2,
       "fields": [
         {
           "label": "Price Per Share",
@@ -83,7 +80,6 @@
     {
       "title": "Capital Allocation",
       "type": "info",
-      "preferredColumns": 1,
       "fields": [
         {
           "label": "Product Development",
@@ -158,7 +154,6 @@
     {
       "title": "Investor Network",
       "type": "map",
-      "preferredColumns": 2,
       "fields": [
         {
           "name": "Sequoia Capital HQ",

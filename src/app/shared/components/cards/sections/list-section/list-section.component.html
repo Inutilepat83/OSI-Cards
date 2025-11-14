@@ -4,57 +4,67 @@
       <h3 class="ai-section__title">{{ section.title }}</h3>
       <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
     </div>
+    <span *ngIf="items.length" class="ai-section__badge">
+      {{ items.length }} {{ items.length === 1 ? 'item' : 'items' }}
+    </span>
   </div>
 
   <div class="ai-section__body">
     <ng-container *ngIf="items.length; else listEmpty">
-      <div class="section-list">
-        <button
-        *ngFor="let item of items; trackBy: trackItem; let i = index"
-        type="button"
-        class="section-card section-card--list"
-        (click)="onItemClick(item)"
-        [style.animation]="getAnimationDuration(0.6)"
-        [style.animation-delay]="getAnimationDelay(i)"
-      >
-        <div class="section-card__row">
-          <div class="section-card__icon">
-            <lucide-icon [name]="getIconName(item)" [size]="18"></lucide-icon>
-          </div>
-          <div class="section-card__content">
-            <p class="section-card__label">
-              {{ item.title || item.label }}
-            </p>
-            <p *ngIf="item.description" class="section-card__description">
-              {{ item.description }}
-            </p>
-
-            <div class="section-card__tags">
-              <span *ngIf="item.priority" class="section-card__tag" [ngClass]="getPriorityClasses(item.priority)">
-                {{ item.priority }}
-              </span>
-              <span *ngIf="item.status" class="section-card__tag" [ngClass]="getStatusClasses(item.status)">
-                {{ item.status }}
-              </span>
+      <div class="list-grid">
+        <article
+          *ngFor="let item of items; trackBy: trackItem"
+          class="list-card"
+          role="button"
+          tabindex="0"
+          (click)="onItemClick(item)"
+          (keydown.enter)="onItemClick(item)"
+          (keydown.space)="$event.preventDefault(); onItemClick(item)"
+        >
+          <!-- Header: Title -->
+          <header class="list-card__header">
+            <div class="list-card__header-content">
+              <h3 class="list-card__title">
+                {{ item.title || item.label }}
+              </h3>
+              <div class="list-card__badges" *ngIf="item.priority || item.status">
+                <span *ngIf="item.priority" class="list-card__badge list-card__badge--priority" [attr.data-priority]="item.priority">
+                  {{ item.priority }}
+                </span>
+                <span *ngIf="item.status" class="list-card__badge list-card__badge--status" [attr.data-status]="item.status">
+                  {{ item.status }}
+                </span>
+              </div>
             </div>
-          </div>
-          <div *ngIf="item.value" class="section-card__tag section-card__tag--value">
-            {{ item.value }}
-          </div>
-        </div>
+            <div *ngIf="item.value" class="list-card__value">
+              {{ item.value }}
+            </div>
+          </header>
 
-        <div class="section-card__meta">
-          <span *ngIf="item.assignee">Assigned to <strong>{{ item.assignee }}</strong></span>
-          <span *ngIf="item.date">Due {{ item.date }}</span>
-        </div>
-      </button>
+          <!-- Description -->
+          <p *ngIf="item.description" class="list-card__description">
+            {{ item.description }}
+          </p>
+
+          <!-- Meta Information -->
+          <footer *ngIf="item.assignee || item.date" class="list-card__footer">
+            <div *ngIf="item.assignee" class="list-card__meta">
+              <lucide-icon name="user" size="14" class="list-card__meta-icon"></lucide-icon>
+              <span class="list-card__meta-text">Assigned to <strong>{{ item.assignee }}</strong></span>
+            </div>
+            <div *ngIf="item.date" class="list-card__meta">
+              <lucide-icon name="calendar" size="14" class="list-card__meta-icon"></lucide-icon>
+              <span class="list-card__meta-text">Due {{ item.date }}</span>
+            </div>
+          </footer>
+        </article>
       </div>
     </ng-container>
 
     <ng-template #listEmpty>
       <div class="section-empty">
-        <lucide-icon name="list" [size]="32" class="mb-3 opacity-50"></lucide-icon>
-        <p class="text-sm">No list items configured</p>
+        <lucide-icon name="list" size="32" class="section-empty__icon"></lucide-icon>
+        <p class="section-empty__text">No items available</p>
       </div>
     </ng-template>
   </div>

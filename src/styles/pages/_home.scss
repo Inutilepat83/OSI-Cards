@@ -155,89 +155,8 @@
   }
 }
 
-/* Capability Cards */
-.capability-card {
-  position: relative;
-  background: linear-gradient(135deg, 
-    hsl(var(--card) / 0.85) 0%,
-    hsl(var(--card) / 0.75) 100%);
-  border: 1px solid rgba(255, 121, 0, 0.2);
-  border-radius: 1.25rem;
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: fadeInUp 0.6s ease-out backwards;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  
-  /* Stagger animation */
-  @for $i from 1 through 6 {
-    &:nth-child(#{$i}) {
-      animation-delay: #{$i * 0.1}s;
-    }
-  }
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(
-      90deg,
-      rgba(255, 121, 0, 0.6),
-      rgba(255, 121, 0, 0.2)
-    );
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  &:hover {
-    transform: translateY(-8px);
-    border-color: rgba(255, 121, 0, 0.5);
-    box-shadow: 
-      0 12px 32px rgba(255, 121, 0, 0.15),
-      0 4px 12px rgba(0, 0, 0, 0.12);
-
-    &::before {
-      transform: scaleX(1);
-    }
-
-    .capability-card-glow {
-      opacity: 1;
-    }
-
-    .capability-icon {
-      transform: scale(1.1) rotateZ(5deg);
-      background: rgba(255, 121, 0, 0.2);
-      border-color: rgba(255, 121, 0, 0.4);
-    }
-  }
-}
-
-.capability-card--primary {
-  border-color: hsl(var(--primary) / 0.3);
-  background: linear-gradient(
-    135deg,
-    hsl(var(--card)) 0%,
-    hsl(var(--primary) / 0.03) 100%
-  );
-
-  &::before {
-    background: linear-gradient(
-      90deg,
-      hsl(var(--primary)),
-      hsl(var(--primary) / 0.6)
-    );
-    transform: scaleX(1);
-  }
-
-  .capability-icon--primary {
-    background: hsl(var(--primary) / 0.15);
-    border-color: hsl(var(--primary) / 0.3);
-    color: hsl(var(--primary));
-  }
-}
+/* Capability Cards - Now using .capability-card-content as main container */
+/* Removed .capability-card wrapper - content is now direct child */
 
 .capability-card-glow {
   position: absolute;
@@ -257,15 +176,65 @@
 }
 
 .capability-card-content {
+  /* GLOBALLY DEFINED: Use hero card styling (capability cards are hero cards) */
   position: relative;
+  background: var(--hero-card-background) !important;
+  border: var(--hero-card-border) !important;
+  border-radius: var(--hero-card-border-radius) !important;
   padding: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   z-index: 1;
+  box-shadow: var(--hero-card-box-shadow) !important;
+  transition: border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important,
+              background 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important,
+              box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important,
+              transform 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  animation: fadeInUp 0.6s ease-out backwards;
+  overflow: hidden;
+  
+  /* Stagger animation */
+  @for $i from 1 through 6 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
+    }
+  }
 
   @media (max-width: 640px) {
     padding: 1.5rem;
+  }
+
+  &:hover {
+    transform: var(--hero-card-hover-transform) !important;
+    box-shadow: var(--hero-card-box-shadow-hover) !important;
+    border-color: var(--hero-card-border-hover) !important;
+    background: var(--hero-card-background-hover) !important;
+
+    .capability-card-glow {
+      opacity: 1;
+    }
+
+    .capability-icon {
+      transform: scale(1.1) rotateZ(5deg);
+      background: rgba(255, 121, 0, 0.2);
+      border-color: rgba(255, 121, 0, 0.4);
+    }
+  }
+}
+
+.capability-card-content--primary {
+  border-color: hsl(var(--primary) / 0.3) !important;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--card)) 0%,
+    hsl(var(--primary) / 0.03) 100%
+  ) !important;
+
+  .capability-icon--primary {
+    background: hsl(var(--primary) / 0.15);
+    border-color: hsl(var(--primary) / 0.3);
+    color: hsl(var(--primary));
   }
 }
 

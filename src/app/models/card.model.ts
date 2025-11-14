@@ -4,7 +4,7 @@ export interface AICardConfig {
   id?: string;
   cardTitle: string;
   cardSubtitle?: string;
-  cardType: CardType;
+  cardType?: CardType; // Optional - only for demo examples
   description?: string;
   columns?: 1 | 2 | 3;
   sections: CardSection[];
@@ -43,7 +43,6 @@ export interface CardSection {
     | 'text-reference';
   description?: string;
   subtitle?: string;
-  preferredColumns?: 1 | 2 | 3 | 4;
   columns?: number;
   colSpan?: number;
   width?: number;
@@ -150,7 +149,6 @@ export class CardTypeGuards {
     const card = obj as Record<string, unknown>;
     return (
       typeof card['cardTitle'] === 'string' &&
-      typeof card['cardType'] === 'string' &&
       Array.isArray(card['sections']) &&
       card['cardTitle'].length > 0
     );

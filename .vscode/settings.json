@@ -52,5 +52,12 @@
   // Remove this block if you need to investigate real syntax issues in the workflow file.
   "problems.exclude": {
     "**/.github/workflows/ci-cd.yml": true
+  },
+  "chat.mcp.serverSampling": {
+    "OSI-Cards/.vscode/mcp.json: mcpServers": {
+      "allowedModels": [
+        "copilot/gpt-5.1-codex-mini"
+      ]
+    }
   }
 }

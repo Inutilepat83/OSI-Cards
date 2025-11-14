@@ -17,9 +17,11 @@
 /* Unified label style - used by ALL cards */
 %unified-card-label {
   @include metric-label;
-  font-size: 0.6rem !important; /* Enforce 0.6rem for all labels */
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: var(--card-label-font-size);
+  letter-spacing: var(--card-label-letter-spacing);
+  text-transform: var(--card-label-text-transform);
+  font-weight: var(--card-label-font-weight);
+  line-height: var(--card-label-line-height);
 
   > span,
   > strong,
@@ -31,15 +33,19 @@
 /* Unified value style - used by ALL cards */
 %unified-card-value {
   @include metric-value;
-  font-size: 0.85rem !important; /* Enforce 0.85rem for all values */
-  font-weight: 700;
+  font-size: var(--card-value-font-size);
+  font-weight: var(--card-value-font-weight);
+  letter-spacing: var(--card-value-letter-spacing);
+  line-height: var(--card-value-line-height);
 }
 
 /* Large value style for analytics/special emphasis */
 %unified-card-value-lg {
   @include metric-value;
-  font-size: 1.3rem !important; /* Enforce 1.3rem for large values */
-  font-weight: 700;
+  font-size: var(--card-value-font-size-large);
+  font-weight: var(--card-value-font-weight);
+  letter-spacing: var(--card-value-letter-spacing);
+  line-height: var(--card-value-line-height);
 }
 
 /* Unified card class - use this for all section cards */

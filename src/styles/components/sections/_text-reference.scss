@@ -9,19 +9,22 @@
   @include card;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-4xl);
+  /* COMPACT: No minimum height */
+  min-height: auto;
+  gap: var(--card-gap);
 }
 
 .reference-card__content {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: calc(var(--card-gap) * 0.5);
+  /* COMPACT: Tighter content spacing */
 }
 
 .reference-card__text {
-  @include metric-value;
-  font-size: var(--card-subtitle-font-size);
-  line-height: 1.7;
+  @include card-subtitle-text;
+  /* COMPACT: Tight line-height */
+  line-height: 1.2; /* COMPACT: Reduced from 1.3 */
   color: var(--card-text-primary);
   margin: 0;
 }
@@ -29,90 +32,91 @@
 .reference-card__footer {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3xl);
-  padding-top: var(--spacing-3xl);
-  border-top: 1px solid var(--section-card-border);
+  gap: calc(var(--card-gap) * 0.5);
+  /* COMPACT: Tighter footer spacing */
+  padding-top: calc(var(--card-padding) * 0.5);
+  /* COMPACT: Reduced padding */
+  border-top: none !important;
+  /* CLEAN: No borders on footers - only cards have borders */
+  margin-top: calc(var(--card-gap) * 0.125);
+  /* COMPACT: Reduced margin */
 }
 
 .reference-card__meta {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-2xl);
+  gap: calc(var(--card-gap) * 0.5);
+  /* COMPACT: Tighter meta spacing */
   align-items: center;
 }
 
 .reference-card__category {
-  /* Badge styling for categories */
+  /* OPTIMIZED: Compact badge styling - NO BORDER (only cards have borders) */
   display: inline-flex;
   align-items: center;
-  padding: 4px 10px;
-  border-radius: 12px;
-  border: 1px solid color-mix(in srgb, var(--color-brand) 30%, transparent);
+  padding: calc(var(--tag-padding-y-sm) * 0.75) calc(var(--tag-padding-x) * 0.875);
+  border-radius: var(--section-card-border-radius);
+  border: none !important;
   background: rgba(255, 121, 0, 0.08);
-  @include metric-label;
-  font-size: var(--card-label-font-size);
+  @include label-text;
+  font-size: var(--card-meta-font-size);
   color: var(--color-brand);
   --accent: var(--color-brand);
+  line-height: 1.2;
+  flex-shrink: 0;
 }
 
 .reference-card__source,
 .reference-card__reference {
-  @include metric-label;
-  font-size: var(--card-meta-font-size);
-  color: var(--card-text-muted);
+  @include card-meta-text;
+  /* COMPACT: Tight line-height */
+  margin: 0;
+  line-height: 1.2;
 }
 
 .reference-card__date {
-  @include metric-label;
-  font-size: var(--card-meta-font-size);
-  color: var(--card-meta-color);
+  @include card-meta-text;
+  /* COMPACT: Tight line-height */
   margin-left: auto;
+  margin: 0;
+  line-height: 1.2;
 }
 
 .reference-card__link {
   display: inline-flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  @include metric-label;
-  font-size: var(--card-meta-font-size);
+  gap: calc(var(--card-gap) * 0.5);
+  /* COMPACT: Tighter link spacing */
+  @include card-meta-text;
   color: var(--color-brand);
   text-decoration: none;
-  @include fast-transition;
+  transition: color 0.22s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  line-height: 1.2;
+  /* COMPACT: Tight line-height */
 
+  // Use color and opacity changes instead of transform
   &:hover {
     color: color-mix(in srgb, var(--color-brand) 90%, transparent);
     opacity: 1;
-    transform: translateX(2px);
     
     lucide-icon {
-      transform: translateX(2px);
+      opacity: 1;
     }
   }
 
   lucide-icon {
-    width: 14px;
-    height: 14px;
-    @include fast-transition;
+    width: 12px;
+    height: 12px;
+    /* OPTIMIZED: Smaller icon */
+    transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
   }
 }
 
-@media (max-width: 768px) {
-  .section-card--reference {
-    /* Mobile padding handled by @include card */
-  }
+/* Removed redundant 768px media query - continuous responsive design via base system */
 
-  .reference-card__meta {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-lg);
-  }
-
-  .reference-card__date {
-    margin-left: 0;
-  }
-}
-
-/* Light theme overrides */
+/* Light theme overrides - text colors only */
+/* Background and border are handled by global enforcement */
 :root[data-theme='day'] {
   .reference-card {
     &__text {
@@ -120,9 +124,8 @@
     }
     
     &__category {
-      background: rgba(255, 121, 0, 0.08) !important;
+      /* Badge background/border handled by component styles - only text color here */
       color: var(--primary) !important;
-      border-color: rgba(255, 121, 0, 0.2) !important;
     }
     
     &__source {
@@ -143,8 +146,7 @@
   }
   
   .section-card--reference {
-    background: rgba(250, 250, 250, 0.9) !important;
-    border-color: rgba(200, 200, 200, 0.5) !important;
+    /* Background and border removed - handled by global enforcement */
   }
 }
 

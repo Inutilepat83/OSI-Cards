@@ -2,7 +2,7 @@
 
 /* ===== GRID MIXINS ===== */
 /* Default gap values map to CSS variables: --grid-gap-xs (3px), --grid-gap-sm (4px) */
-@mixin section-grid($min-width: 120px, $gap: 3px) {
+@mixin section-grid($min-width: var(--section-grid-min-width), $gap: var(--card-gap)) {
   display: grid !important;
   gap: $gap;
   grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr)) !important;
@@ -13,7 +13,7 @@
   }
 }
 
-@mixin section-grid-responsive($min-width: 130px, $gap: 4px, $tablet-breakpoint: 820px) {
+@mixin section-grid-responsive($min-width: var(--section-grid-min-width), $gap: var(--section-card-gap), $tablet-breakpoint: 820px) {
   display: grid !important;
   gap: $gap;
   grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr)) !important;
@@ -29,10 +29,15 @@
 /* Guarantees 100% consistency across entire application */
 /* Style matches: rounded-2xl, border-border/40, bg-card/70, hover effects */
 @mixin card {
-  border: var(--card-border);
-  border-radius: var(--card-border-radius);
+  /* UNIFIED CARD DESIGN - All section items use identical styling */
+  /* NOTE: Global enforcement (_global-enforcement.scss) overrides all these values with !important */
+  /* This mixin provides defaults, but global enforcement ensures 100% consistency */
+  
+  /* Use section-item variables for consistency (global enforcement overrides with !important) */
+  border: var(--section-item-border);
+  border-radius: var(--section-item-border-radius);
   padding: var(--card-padding);
-  background: var(--card-background);
+  background: var(--section-item-background);
   display: flex;
   flex-direction: column;
   gap: var(--card-gap);
@@ -40,7 +45,7 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  box-shadow: var(--card-box-shadow);
+  box-shadow: var(--section-item-box-shadow);
   
   /* Use design system variables for smoother, more responsive transitions */
   transition: border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), 
@@ -50,10 +55,11 @@
   /* No transforms - keep card completely flat */
 
   &:hover {
-    border-color: var(--card-hover-border);
-    background: var(--card-hover-background);
+    border-color: var(--section-item-border-hover);
+    background: var(--section-item-background-hover);
     /* No transform - keep card stationary, only glow effect */
-    box-shadow: var(--card-hover-shadow);
+    box-shadow: var(--section-item-box-shadow-hover);
+    transform: var(--section-item-hover-transform);
     will-change: border-color, background, box-shadow;
   }
   
@@ -69,16 +75,11 @@
     will-change: auto;
   }
   
-  @media (max-width: 768px) {
-    padding: var(--card-padding-mobile);
-    min-height: var(--card-min-height-mobile);
-    border-radius: var(--card-border-radius-mobile);
-  }
-  
   /* Accessibility: Disable animations for reduced motion preference */
   @media (prefers-reduced-motion: reduce) {
     transition: none !important;
     will-change: auto !important;
+    transform: none !important;
   }
 }
 
@@ -136,7 +137,7 @@
   font-size: var(--font-section-description);
   color: color-mix(in srgb, var(--foreground) 60%, transparent);
   letter-spacing: 0.01em;
-  line-height: 1.35;
+  line-height: 1.2; /* COMPACT: Reduced from 1.35 */
   font-weight: 500;
 }
 
@@ -151,18 +152,21 @@
 
 /* ===== COMMON COMPONENTS ===== */
 @mixin section-empty-state($accent: var(--section-accent, var(--accent))) {
-  padding: var(--spacing-7xl) var(--spacing-3xl);
+  /* COMPACT: Reduced padding */
+  padding: calc(var(--card-padding) * 1.5);
   text-align: center;
   color: color-mix(in srgb, var(--foreground) 55%, transparent);
-  border: 1px dashed color-mix(in srgb, #{$accent} 30%, transparent);
-  border-radius: 12px;
+  border: none !important;
+  /* CLEAN: No borders on empty states - only sections and cards have borders */
+  border-radius: var(--section-card-border-radius);
   background: color-mix(in srgb, #{$accent} 10%, transparent);
+  min-height: auto;
 }
 
 @mixin section-empty-icon {
-  margin: 0 auto var(--spacing-4xl);
+  margin: 0 auto var(--card-gap);
   opacity: 0.65;
-  filter: drop-shadow(0 var(--spacing-xs) var(--spacing-sm) rgba(0, 0, 0, 0.22));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.22));
 }
 
 /* ===== TREND COLORS ===== */
@@ -259,12 +263,7 @@
   background: linear-gradient(135deg, rgba(40, 40, 40, 0.3), rgba(40, 40, 40, 0.2)) !important;
 }
 
-/* ===== RESPONSIVE ADJUSTMENTS ===== */
-@mixin section-card-mobile {
-  padding: var(--section-card-padding-mobile);
-  min-height: var(--section-card-min-height-mobile);
-  border-radius: var(--section-card-border-radius-mobile);
-}
+/* Removed obsolete section-card-mobile mixin - continuous responsive design via base system */
 
 /* ===================================================================
    REDUCED MOTION SUPPORT

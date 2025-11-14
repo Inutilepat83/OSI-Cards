@@ -20,12 +20,39 @@
   width: 100%;
   break-inside: avoid;
   page-break-inside: avoid;
-  display: block;
+  display: flex;
+  flex-direction: column;
   overflow: visible;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-sizing: border-box;
   overflow-wrap: break-word;
   word-wrap: break-word;
+  
+  /* GLOBALLY DEFINED: Use global variables for sections */
+  border: var(--section-border) !important;
+  border-radius: var(--section-border-radius) !important;
+  padding: var(--section-padding);
+  background: var(--section-background) !important;
+  box-shadow: var(--section-box-shadow) !important;
+  
+  /* Gap between header and body */
+  gap: var(--section-card-gap);
+  
+  /* Standard transition for hover effects */
+  transition: border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important, 
+              background 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important, 
+              box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important,
+              top 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
+              left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s ease,
+              transform 0.2s ease;
+  
+  &:hover {
+    border-color: var(--section-border-hover) !important;
+    background: var(--section-background-hover) !important;
+    box-shadow: var(--section-box-shadow-hover) !important;
+    transform: var(--section-hover-transform) !important;
+  }
 }
 
 .masonry-item > * {

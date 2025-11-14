@@ -18,9 +18,11 @@ export function getCurrentBreakpoint(): Breakpoint {
   if (typeof window === 'undefined') {
     return Breakpoint.LG; // Default to desktop
   }
-  
-  const width = window.innerWidth;
-  
+
+  return getBreakpointFromWidth(window.innerWidth);
+}
+
+export function getBreakpointFromWidth(width: number): Breakpoint {
   if (width >= Breakpoint['2XL']) return Breakpoint['2XL'];
   if (width >= Breakpoint.XL) return Breakpoint.XL;
   if (width >= Breakpoint.LG) return Breakpoint.LG;
@@ -63,6 +65,24 @@ export function isTablet(): boolean {
  */
 export function isDesktop(): boolean {
   return getCurrentBreakpoint() >= Breakpoint.LG;
+}
+
+export function breakpointToName(breakpoint: Breakpoint): string {
+  switch (breakpoint) {
+    case Breakpoint['2XL']:
+      return '2XL';
+    case Breakpoint.XL:
+      return 'XL';
+    case Breakpoint.LG:
+      return 'LG';
+    case Breakpoint.MD:
+      return 'MD';
+    case Breakpoint.SM:
+      return 'SM';
+    case Breakpoint.XS:
+    default:
+      return 'XS';
+  }
 }
 
 /**

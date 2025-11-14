@@ -25,13 +25,14 @@
             </div>
 
             <div class="product-reference-list">
-              <button
-                *ngFor="let field of references.fields; trackBy: trackField; let i = index"
-                type="button"
+              <article
+                *ngFor="let field of references.fields; trackBy: trackField"
                 class="product-reference"
+                role="button"
+                tabindex="0"
                 (click)="onFieldClick(field)"
-                [style.animation]="getAnimationDuration(0.6)"
-                [style.animation-delay]="getAnimationDelay(i)"
+                (keydown.enter)="onFieldClick(field)"
+                (keydown.space)="$event.preventDefault(); onFieldClick(field)"
               >
                 <div class="product-reference__avatar">
                   <lucide-icon name="award" size="18"></lucide-icon>
@@ -57,17 +58,15 @@
                 <span class="product-entry__chevron">
                   <lucide-icon name="chevron-right" size="16"></lucide-icon>
                 </span>
-              </button>
+              </article>
             </div>
           </section>
         </ng-container>
 
         <div class="product-grid" [ngClass]="{ 'product-grid--single': gridGroups.length <= 1 }">
           <section
-            *ngFor="let group of gridGroups; trackBy: trackGroup; let gi = index"
+            *ngFor="let group of gridGroups; trackBy: trackGroup"
             class="product-card"
-            [style.animation]="getAnimationDuration(0.6)"
-            [style.animation-delay]="getAnimationDelay(referenceGroup ? gi + 1 : gi)"
           >
             <div class="product-card__header">
               <div class="product-card__icon" [ngClass]="getCategoryIconTone(group)">
@@ -100,13 +99,14 @@
             </div>
 
             <div class="product-card__content">
-              <button
-                *ngFor="let field of group.fields; trackBy: trackField; let i = index"
-                type="button"
+              <article
+                *ngFor="let field of group.fields; trackBy: trackField"
                 class="product-entry"
+                role="button"
+                tabindex="0"
                 (click)="onFieldClick(field)"
-                [style.animation]="getAnimationDuration(0.6)"
-                [style.animation-delay]="getAnimationDelay(i)"
+                (keydown.enter)="onFieldClick(field)"
+                (keydown.space)="$event.preventDefault(); onFieldClick(field)"
               >
                 <ng-container *ngIf="isContactField(field); else productEntryDefault">
                   <div class="product-contact">
@@ -181,7 +181,7 @@
                 <span class="product-entry__chevron">
                   <lucide-icon name="chevron-right" size="16"></lucide-icon>
                 </span>
-              </button>
+              </article>
             </div>
           </section>
         </div>

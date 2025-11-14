@@ -37,47 +37,4 @@ export class NetworkCardSectionComponent {
     });
   }
 
-  getIconName(field: NetworkField): string {
-    const id = (field.id ?? '').toLowerCase();
-
-    if (id.includes('report') || id.includes('partner')) {
-      return 'users';
-    }
-    if (id.includes('board') || id.includes('award')) {
-      return 'award';
-    }
-    if (id.includes('advisor') || id.includes('mentor')) {
-      return 'message-circle';
-    }
-    if (id.includes('event') || id.includes('speaking')) {
-      return 'calendar';
-    }
-    return 'share-2';
-  }
-
-  getAnimationDelay(index: number, baseDelay = 60): string {
-    return `${index * baseDelay}ms`;
-  }
-
-  getAnimationDuration(duration = 0.6): string {
-    return `fadeInUp ${duration}s ease-out forwards`;
-  }
-
-  getIconTone(field: NetworkField): string {
-    const id = (field.id ?? '').toLowerCase();
-
-    if (id.includes('report') || id.includes('partner')) {
-      return 'network-card__icon--collab';
-    }
-    if (id.includes('board') || id.includes('award')) {
-      return 'network-card__icon--recognition';
-    }
-    if (id.includes('advisor') || id.includes('mentor')) {
-      return 'network-card__icon--advisory';
-    }
-    if (id.includes('event') || id.includes('speaking')) {
-      return 'network-card__icon--events';
-    }
-    return 'network-card__icon--default';
-  }
 }

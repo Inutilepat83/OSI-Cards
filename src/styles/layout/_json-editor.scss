@@ -16,14 +16,21 @@
   padding: 12px;
   border-radius: var(--card-border-radius);
   background: var(--card-background);
-  border: 1px solid var(--card-border);
+  /* SMALL BORDER - visible border around textarea */
+  border: 1px solid rgba(146, 153, 158, 0.5) !important;
+  border-width: 1px !important;
+  border-style: solid !important;
   color: var(--foreground);
   transition: border-color 0.2s ease, background 0.2s ease;
+  font-family: monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
 
   &:focus {
     outline: none;
-    border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+    border-color: rgba(255, 121, 0, 0.6) !important;
     background: var(--card-hover-background);
+    box-shadow: 0 0 0 2px rgba(255, 121, 0, 0.1);
   }
 }
 

@@ -10,11 +10,9 @@
     <ng-container *ngIf="hasFields; else quotationEmpty">
       <div class="section-grid section-grid--quotation">
         <article
-        *ngFor="let field of fields; let i = index"
+        *ngFor="let field of fields"
         class="section-card section-card--quotation"
         (click)="onQuotationClick(field)"
-        [style.animation]="getAnimationDuration(0.6)"
-        [style.animation-delay]="getAnimationDelay(i)"
       >
         <div class="quotation-card__quote">
           <lucide-icon name="quote" [size]="24" class="quotation-card__icon" aria-hidden="true"></lucide-icon>

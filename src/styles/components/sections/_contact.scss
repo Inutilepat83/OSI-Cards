@@ -1,249 +1,182 @@
-/* Contact directory cards showing key stakeholders */
+/* Contact Section - Modern, Clean Design */
 
-@import 'design-system';
+@import 'sections-base';
+@import 'unified-cards';
 
-.contact-collection {
+/* Contact Grid Layout */
+.contact-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 10px 14px; /* Tighter row and column gaps */
+  gap: var(--section-card-gap) !important;
+  width: 100%;
 }
 
+/* Contact Card */
 .contact-card {
-  @include list-card;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  padding: 16px 18px !important;
-  text-align: left !important;
-  gap: 10px !important;
-  
-  /* Remove left accent bar on hover */
-  &::before {
-    display: none !important;
+  @include card;
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap) !important;
+  min-height: auto;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
   }
 
-  &__avatar {
-    display: none !important; /* Hide avatars for more compact design */
+  &:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
   }
+}
 
-  &__details {
-    flex: 1;
-    min-width: 0;
-    width: 100%;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
+/* Card Header */
+.contact-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--card-gap) * 0.875);
+  margin: 0;
+  padding-bottom: var(--card-gap);
+  border-bottom: 1px solid color-mix(in srgb, var(--card-text-secondary) 10%, transparent);
+}
 
-  &__header {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 4px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100%;
-  }
+.contact-card__avatar {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--color-brand) 14%, transparent);
+  overflow: hidden;
+  border: none !important;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--color-brand) 8%, transparent);
+}
 
-  &__name {
-    font-size: 15px !important;
-    font-weight: 600 !important;
-    color: var(--card-text-primary) !important;
-    letter-spacing: -0.01em !important;
-    line-height: 1.4 !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08) !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    text-align: left !important;
-    display: block !important;
-  }
+.contact-card__avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
 
-  &__role {
-    font-size: 13px !important;
-    color: var(--card-text-secondary) !important;
-    letter-spacing: 0.01em !important;
-    line-height: 1.4 !important;
-    font-weight: 500 !important;
-    display: block !important;
-  }
+.contact-card__initials {
+  @include card-title-text;
+  font-size: calc(var(--card-title-font-size) * 0.85);
+  font-weight: 600;
+  color: var(--color-brand);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
 
-  &__meta {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 6px !important;
-    font-size: 13px !important;
-    color: var(--card-text-muted) !important;
-    width: 100%;
-  }
+.contact-card__header-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--card-gap) * 0.375);
+  padding-top: 2px;
+}
 
-  &__meta-item {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    min-width: 0;
-    transition: var(--card-transition-fast);
-    padding: 0 !important;
-    font-size: 13px !important;
-    line-height: 1.4 !important;
+.contact-card__name {
+  @include card-title-text;
+  margin: 0;
+  line-height: 1.25;
+  color: var(--card-text-primary);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-weight: 600;
+}
 
-    lucide-icon {
-      @include icon-base(13px); /* Consistent icon size */
-      flex-shrink: 0;
-      opacity: 0.85;
-    }
+.contact-card__role {
+  @include card-subtitle-text;
+  margin: 0;
+  color: var(--card-text-secondary);
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-size: calc(var(--card-subtitle-font-size) * 0.95);
+}
 
-    span {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
+/* Contact Meta Information */
+.contact-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--card-gap) * 0.625);
+  margin-top: var(--card-gap);
+}
 
-    &--link {
-      color: rgba(255, 190, 110, 0.9);
-      text-decoration: none;
-      cursor: pointer;
-      font-weight: 700;
-      transition: var(--card-transition-fast);
+.contact-card__meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--card-gap) * 0.625);
+  @include card-meta-text;
+  color: var(--card-text-secondary) !important;
+  text-decoration: none;
+  min-width: 0;
+  transition: color 0.2s ease;
+  padding: calc(var(--card-gap) * 0.25) 0;
 
-      &:hover {
-        color: var(--card-text-hover);
-        transform: translateX(2px);
-        
-        lucide-icon {
-          transform: scale(1.15);
-          opacity: 1;
-        }
-      }
-    }
+  &:hover {
+    color: var(--card-text-hover) !important;
 
-    &:hover lucide-icon {
+    .contact-card__meta-icon {
       opacity: 1;
+      color: var(--card-text-hover);
+      transform: scale(1.05);
     }
   }
-}
 
-.contact-empty {
-  @include empty-state;
-}
+  &--link {
+    color: var(--card-text-secondary) !important;
+    cursor: pointer;
 
-@media (max-width: 640px) {
-  .contact-collection {
-    grid-template-columns: 1fr; /* Single column on mobile */
-    gap: 8px;
-  }
-
-  .contact-card {
-    padding: 14px 16px;
-    
-    &__name {
-      font-size: 14px !important;
-    }
-    
-    &__role {
-      font-size: 12px !important;
-    }
-    
-    &__meta {
-      font-size: 12px !important;
-    }
-    
-    &__meta-item {
-      font-size: 12px !important;
-      
-      lucide-icon {
-        width: 12px !important;
-        height: 12px !important;
-      }
-    }
-  }
-}
-
-/* Fullscreen mode - ultra compact */
-.ai-card-surface--fullscreen {
-  .contact-collection {
-    gap: 6px 10px !important;
-  }
-  
-  .contact-card {
-    padding: 8px 12px !important;
-    
-    &__details {
-      gap: 6px !important;
-    }
-    
-    &__header {
-      gap: 2px !important;
-    }
-    
-    &__name {
-      font-size: 13px !important;
-    }
-    
-    &__role {
-      font-size: 11px !important;
-    }
-    
-    &__meta {
-      gap: 3px !important;
-      
-      &-item {
-        gap: 4px !important;
-        font-size: 10px !important;
-        
-        lucide-icon {
-          width: 11px !important;
-          height: 11px !important;
-        }
-      }
-    }
-  }
-}
-
-/* Light theme overrides */
-:root[data-theme='day'] {
-  .contact-card {
-    background: rgba(255, 255, 255, 0.95) !important;
-    border: 1px solid rgba(200, 200, 200, 0.5) !important;
-    
     &:hover {
-      background: rgba(255, 255, 255, 1) !important;
-      border-color: rgba(255, 121, 0, 0.3) !important;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
-    }
-    
-    &__name {
-      color: #1a1a1a !important;
-      text-shadow: none !important;
-    }
-    
-    &__role {
-      color: #6b7280 !important;
-    }
-    
-    &__meta {
-      color: #6b7280 !important;
-      
-      &-item {
-        color: #6b7280 !important;
-        
-        lucide-icon {
-          color: #9ca3af !important;
-        }
-      }
-      
-      &-item--link {
-        color: #6b7280 !important;
-        text-decoration: none !important;
-        
-        &:hover {
-          color: var(--primary) !important;
-          
-          lucide-icon {
-            color: var(--primary) !important;
-          }
-        }
-      }
+      color: var(--card-text-hover) !important;
     }
   }
+}
+
+.contact-card__meta-icon {
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+  opacity: 0.65;
+  color: var(--card-text-muted);
+  transition: opacity 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.contact-card__meta-text {
+  @include card-meta-text;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.4;
+}
+
+/* Empty State */
+.section-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--card-padding) * 3);
+  text-align: center;
+  color: var(--card-text-muted);
+}
+
+.section-empty__icon {
+  margin-bottom: calc(var(--card-gap) * 1.5);
+  opacity: 0.5;
+}
+
+.section-empty__text {
+  @include card-meta-text;
+  margin: 0;
+  color: var(--card-text-muted);
 }
