@@ -1,0 +1,217 @@
+{
+  "cardTitle": "AI-Powered Customer Service",
+  "sections": [
+    {
+      "title": "Opportunity Overview",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Opportunity Type",
+          "value": "AI Implementation Project"
+        },
+        {
+          "label": "Industry Focus",
+          "value": "Retail & E-commerce"
+        },
+        {
+          "label": "Estimated Value",
+          "value": "$5M - $8M"
+        },
+        {
+          "label": "Timeline",
+          "value": "9-12 Months"
+        },
+        {
+          "label": "Lead Source",
+          "value": "Webinar Registration"
+        },
+        {
+          "label": "Decision Maker",
+          "value": "Head of Digital"
+        },
+        {
+          "label": "Competition Level",
+          "value": "Low"
+        },
+        {
+          "label": "Success Probability",
+          "value": "80%"
+        }
+      ]
+    },
+    {
+      "title": "Implementation Progress",
+      "type": "analytics",
+      "fields": [
+        {
+          "label": "Requirements Analysis",
+          "value": "100% Complete",
+          "percentage": 100,
+          "performance": "excellent",
+          "trend": "stable",
+          "change": 0
+        },
+        {
+          "label": "Solution Design",
+          "value": "95% Complete",
+          "percentage": 95,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 5
+        },
+        {
+          "label": "Pilot Preparation",
+          "value": "50% Complete",
+          "percentage": 50,
+          "performance": "good",
+          "trend": "up",
+          "change": 25
+        },
+        {
+          "label": "Team Training",
+          "value": "30% Complete",
+          "percentage": 30,
+          "performance": "fair",
+          "trend": "up",
+          "change": 15
+        }
+      ]
+    },
+    {
+      "title": "AI Solution Scope",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Chatbot Implementation",
+          "value": "24/7 Customer Support"
+        },
+        {
+          "label": "Natural Language Processing",
+          "value": "Multi-language Support"
+        },
+        {
+          "label": "Sentiment Analysis",
+          "value": "Real-time Customer Feedback"
+        },
+        {
+          "label": "Recommendation Engine",
+          "value": "Personalized Product Suggestions"
+        },
+        {
+          "label": "Voice Integration",
+          "value": "Speech-to-Text Processing"
+        }
+      ]
+    },
+    {
+      "title": "Expected ROI",
+      "type": "chart",
+      "fields": [
+        {
+          "label": "Cost Reduction",
+          "value": 50,
+          "color": "#8B5CF6"
+        },
+        {
+          "label": "Revenue Increase",
+          "value": 35,
+          "color": "#7C3AED"
+        },
+        {
+          "label": "Customer Satisfaction",
+          "value": 40,
+          "color": "#6D28D9"
+        },
+        {
+          "label": "Response Time Improvement",
+          "value": 75,
+          "color": "#A78BFA"
+        }
+      ]
+    },
+    {
+      "title": "Project Timeline",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Pilot Launch",
+          "value": "May 2025"
+        },
+        {
+          "label": "Full Implementation",
+          "value": "August 2025"
+        },
+        {
+          "label": "Training Completion",
+          "value": "September 2025"
+        },
+        {
+          "label": "Go-Live & Monitoring",
+          "value": "October 2025"
+        }
+      ]
+    },
+    {
+      "title": "Project Stakeholders",
+      "type": "map",
+      "fields": [
+        {
+          "name": "Retail HQ",
+          "x": 48,
+          "y": 28,
+          "type": "client",
+          "address": "London, UK"
+        },
+        {
+          "name": "Digital Team Office",
+          "x": 50,
+          "y": 30,
+          "type": "office",
+          "address": "Manchester, UK"
+        },
+        {
+          "name": "Customer Service Center",
+          "x": 52,
+          "y": 25,
+          "type": "facility",
+          "address": "Birmingham, UK"
+        },
+        {
+          "name": "Our AI Lab",
+          "x": 48,
+          "y": 28,
+          "type": "partner",
+          "address": "Cambridge, UK"
+        },
+        {
+          "name": "Data Center",
+          "x": 50,
+          "y": 30,
+          "type": "datacenter",
+          "address": "Ireland"
+        },
+        {
+          "name": "Pilot Testing Site",
+          "x": 48,
+          "y": 28,
+          "type": "testing",
+          "address": "London, UK"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "View AI Demo",
+      "type": "primary",
+      "icon": "🤖",
+      "action": "https://demo.company.com/ai-customer-service"
+    },
+    {
+      "label": "Schedule Pilot Discussion",
+      "type": "secondary",
+      "icon": "💬",
+      "action": "mailto:digital@retail.com?subject=AI%20Customer%20Service%20Pilot"
+    }
+  ]
+}

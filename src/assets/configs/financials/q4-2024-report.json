@@ -1,0 +1,217 @@
+{
+  "cardTitle": "Q4 2024 Financial Report",
+  "sections": [
+    {
+      "title": "Financial Overview",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Reporting Period",
+          "value": "October - December 2024"
+        },
+        {
+          "label": "Total Revenue",
+          "value": "$2.8B"
+        },
+        {
+          "label": "Net Profit",
+          "value": "$485M"
+        },
+        {
+          "label": "Profit Margin",
+          "value": "17.3%"
+        },
+        {
+          "label": "Currency",
+          "value": "USD"
+        },
+        {
+          "label": "Fiscal Year",
+          "value": "2024"
+        },
+        {
+          "label": "Auditor",
+          "value": "Deloitte & Touche"
+        },
+        {
+          "label": "Reporting Standard",
+          "value": "GAAP"
+        }
+      ]
+    },
+    {
+      "title": "Revenue Analysis",
+      "type": "analytics",
+      "fields": [
+        {
+          "label": "Quarterly Growth",
+          "value": "+12.5%",
+          "percentage": 112.5,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 12.5
+        },
+        {
+          "label": "Recurring Revenue",
+          "value": "78% of Total",
+          "percentage": 78,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 5
+        },
+        {
+          "label": "Customer Acquisition",
+          "value": "15,200 New",
+          "percentage": 85,
+          "performance": "good",
+          "trend": "up",
+          "change": 8
+        },
+        {
+          "label": "Average Deal Size",
+          "value": "$185K",
+          "percentage": 92,
+          "performance": "excellent",
+          "trend": "stable",
+          "change": 2
+        }
+      ]
+    },
+    {
+      "title": "Expense Breakdown",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Cost of Goods Sold",
+          "value": "$1.2B (43%)"
+        },
+        {
+          "label": "Research & Development",
+          "value": "$420M (15%)"
+        },
+        {
+          "label": "Sales & Marketing",
+          "value": "$680M (24%)"
+        },
+        {
+          "label": "General & Administrative",
+          "value": "$320M (11%)"
+        },
+        {
+          "label": "Operating Expenses",
+          "value": "$180M (6%)"
+        }
+      ]
+    },
+    {
+      "title": "Financial Metrics",
+      "type": "chart",
+      "fields": [
+        {
+          "label": "Revenue Growth",
+          "value": 12.5,
+          "color": "#10B981"
+        },
+        {
+          "label": "Gross Margin",
+          "value": 57,
+          "color": "#34D399"
+        },
+        {
+          "label": "Operating Margin",
+          "value": 23.5,
+          "color": "#6EE7B7"
+        },
+        {
+          "label": "Net Margin",
+          "value": 17.3,
+          "color": "#A7F3D0"
+        }
+      ]
+    },
+    {
+      "title": "Cash Flow & Liquidity",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Operating Cash Flow",
+          "value": "$620M"
+        },
+        {
+          "label": "Free Cash Flow",
+          "value": "$485M"
+        },
+        {
+          "label": "Cash & Equivalents",
+          "value": "$3.2B"
+        },
+        {
+          "label": "Debt-to-Equity Ratio",
+          "value": "0.25"
+        }
+      ]
+    },
+    {
+      "title": "Market Performance",
+      "type": "map",
+      "fields": [
+        {
+          "name": "North America HQ",
+          "x": 25,
+          "y": 35,
+          "type": "headquarters",
+          "address": "New York, NY, USA"
+        },
+        {
+          "name": "European Operations",
+          "x": 48,
+          "y": 28,
+          "type": "regional-office",
+          "address": "London, UK"
+        },
+        {
+          "name": "Asia Pacific",
+          "x": 80,
+          "y": 60,
+          "type": "regional-office",
+          "address": "Singapore"
+        },
+        {
+          "name": "Data Center East",
+          "x": 28,
+          "y": 32,
+          "type": "datacenter",
+          "address": "Virginia, USA"
+        },
+        {
+          "name": "Data Center Europe",
+          "x": 50,
+          "y": 30,
+          "type": "datacenter",
+          "address": "Ireland"
+        },
+        {
+          "name": "Data Center Asia",
+          "x": 82,
+          "y": 55,
+          "type": "datacenter",
+          "address": "Tokyo, Japan"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Download Full Report",
+      "type": "primary",
+      "icon": "📊",
+      "action": "https://investor.company.com/reports/q4-2024.pdf"
+    },
+    {
+      "label": "Schedule Earnings Call",
+      "type": "secondary",
+      "icon": "📞",
+      "action": "https://investor.company.com/earnings-call"
+    }
+  ]
+}

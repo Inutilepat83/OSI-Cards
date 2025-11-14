@@ -1,0 +1,124 @@
+/* ===== UNIFIED CARD STYLES ===== */
+/* Consolidated card styling for ALL sections */
+/* This file manages all card parameters in one place */
+/* Style: 6px border-radius, orange borders, consistent typography */
+
+@import 'sections-base';
+
+/* ===== UNIFIED CARD TYPOGRAPHY ===== */
+/* All cards MUST use these same font sizes for labels and values */
+/* This ensures 100% consistency across all sections */
+/* 
+ * Label font: 0.6rem (uppercase)
+ * Value font: 0.85rem
+ * Large value: 1.3rem (for analytics)
+ */
+
+/* Unified label style - used by ALL cards */
+%unified-card-label {
+  @include metric-label;
+  font-size: var(--card-label-font-size);
+  letter-spacing: var(--card-label-letter-spacing);
+  text-transform: var(--card-label-text-transform);
+  font-weight: var(--card-label-font-weight);
+  line-height: var(--card-label-line-height);
+
+  > span,
+  > strong,
+  > em {
+    text-transform: inherit;
+  }
+}
+
+/* Unified value style - used by ALL cards */
+%unified-card-value {
+  @include metric-value;
+  font-size: var(--card-value-font-size);
+  font-weight: var(--card-value-font-weight);
+  letter-spacing: var(--card-value-letter-spacing);
+  line-height: var(--card-value-line-height);
+}
+
+/* Large value style for analytics/special emphasis */
+%unified-card-value-lg {
+  @include metric-value;
+  font-size: var(--card-value-font-size-large);
+  font-weight: var(--card-value-font-weight);
+  letter-spacing: var(--card-value-letter-spacing);
+  line-height: var(--card-value-line-height);
+}
+
+/* Unified card class - use this for all section cards */
+/* Design: 10px 12px padding, 6px radius, orange border */
+.unified-card {
+  @include card;
+  
+  /* Additional utility classes for variations */
+  &--large {
+    padding: calc(var(--card-padding-vertical) + 2px) calc(var(--card-padding-horizontal) + 4px);
+    border-radius: 8px;
+  }
+  
+  &--compact {
+    padding: calc(var(--card-padding-vertical) - 2px) calc(var(--card-padding-horizontal) - 2px);
+  }
+  
+  &--no-hover {
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+/* Apply unified style to all section card classes */
+/* NOTE: .overview-card is excluded - uses custom list style */
+.analytics-metric,
+.info-card,
+.list-card,
+.contact-card,
+.network-card,
+.map-card,
+.product-entry,
+.product-reference {
+  @include card;
+}
+
+/* Enforce unified typography for all card labels - must come after section-specific styles */
+/* NOTE: .overview-card excluded - uses custom compact list typography */
+.analytics-metric__label,
+.info-card__label,
+.list-card__label,
+.contact-card__label,
+.network-card__label,
+.map-card__label,
+.product-entry__label,
+.product-reference__label {
+  @extend %unified-card-label;
+}
+
+/* Enforce unified typography for all card values - must come after section-specific styles */
+/* NOTE: .overview-card excluded - uses custom compact list typography */
+.analytics-metric__value,
+.info-card__value,
+.list-card__value,
+.contact-card__value,
+.network-card__value,
+.map-card__value,
+.product-entry__value,
+.product-reference__value {
+  @extend %unified-card-value;
+}
+
+/* Apply large value style for analytics */
+.analytics-metric__value,
+.analytics-metric__value--lg {
+  @extend %unified-card-value-lg;
+}
+
+/* Ensure all cards use the unified style */
+[class*="-card"],
+[class*="-metric"],
+[class*="-entry"] {
+  /* Cards will inherit from their specific classes above */
+}
+

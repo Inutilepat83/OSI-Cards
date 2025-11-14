@@ -1,0 +1,289 @@
+<main class="min-h-screen bg-background" role="main" aria-labelledby="osi-hero-heading">
+  <div class="sr-only" [attr.role]="liveStatusRole" [attr.aria-live]="liveStatusTone" aria-atomic="true">
+    {{ statusMessage }}
+  </div>
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-container">
+      <!-- Hero Header -->
+      <div class="hero-header">
+        <h1 class="hero-title" id="osi-hero-heading">
+          <span class="hero-title-primary">Orange </span>
+          <span class="hero-title-accent">Sales Intelligence</span>
+        </h1>
+        <p class="hero-description">
+          OSI Cards is a versatile card generator used by sales intelligence agents.
+          It features structured formatting that can design cards for any form of business intelligence data.
+        </p>
+      </div>
+
+      <!-- Feature Cards Grid -->
+      <div class="hero-features">
+        <!-- Feature Card 1 -->
+        <div class="hero-feature-card">
+          <div class="hero-feature-icon">
+            <lucide-icon name="sparkles" [size]="40"></lucide-icon>
+            </div>
+          <h3 class="hero-feature-title">AI-Powered Generation</h3>
+          <p class="hero-feature-description">
+              Intelligent card generation with magnetic physics and interactive animations
+            </p>
+        </div>
+
+        <!-- Feature Card 2 -->
+        <div class="hero-feature-card">
+          <div class="hero-feature-icon">
+            <lucide-icon name="zap" [size]="40"></lucide-icon>
+            </div>
+          <h3 class="hero-feature-title">Instant Generation</h3>
+          <p class="hero-feature-description">
+              Real-time conversion from JSON data to interactive business cards
+            </p>
+        </div>
+
+        <!-- Feature Card 3 -->
+        <div class="hero-feature-card">
+          <div class="hero-feature-icon">
+            <lucide-icon name="code-2" [size]="40"></lucide-icon>
+            </div>
+          <h3 class="hero-feature-title">JSON Configuration</h3>
+          <p class="hero-feature-description">
+              Simple, powerful JSON-driven card creation and customization
+            </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Demo Section -->
+  <section class="demo-section">
+    <div class="demo-container" [ngClass]="isFullscreen ? 'max-w-none w-full' : ''">
+      <div class="demo-header">
+        <h3 class="demo-title">Interactive Demo</h3>
+
+        <app-card-controls
+          [cardType]="cardType"
+          [cardVariant]="cardVariant"
+          [switchingType]="switchingType"
+          (cardTypeChange)="onCardTypeChange($event)"
+          (cardVariantChange)="onCardVariantChange($event)">
+        </app-card-controls>
+      </div>
+      
+      <div
+        #previewRegion
+        class="transition-all duration-500 ease-in-out mb-16"
+        [ngClass]="isFullscreen ? 'flex flex-col gap-4 w-full' : 'grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-8 items-start min-h-[800px]'"
+        [attr.role]="isFullscreen ? 'dialog' : 'region'"
+        [attr.aria-modal]="isFullscreen ? 'true' : null"
+        [attr.aria-label]="isFullscreen ? 'Card preview, fullscreen view' : 'Card preview region'"
+        [attr.aria-busy]="isGenerating"
+        tabindex="-1">
+
+        <!-- JSON Editor - shown above in fullscreen -->
+        <div
+          class="flex flex-col space-y-4"
+          [ngClass]="isFullscreen ? 'order-1 w-full' : 'lg:col-span-2 order-1 lg:order-1'">
+          
+          <!-- JSON Configuration Card -->
+          <div class="editor-card">
+            <div class="editor-card-header">
+              <div class="flex items-center gap-2">
+                <lucide-icon name="code-2" [size]="18" class="text-primary" aria-hidden="true"></lucide-icon>
+                <h3 class="editor-card-title">JSON Configuration</h3>
+              </div>
+              <span *ngIf="!isJsonValid" class="error-badge">
+                Invalid JSON
+              </span>
+            </div>
+
+            <div class="editor-card-content">
+              <app-json-editor
+                [jsonInput]="jsonInput"
+                [jsonError]="jsonError"
+                [isJsonValid]="isJsonValid"
+                (jsonInputChange)="onJsonInputChange($event)">
+              </app-json-editor>
+            </div>
+
+            <div *ngIf="jsonError" class="editor-error-message" role="alert" aria-live="assertive">
+              <strong>Error:</strong> {{ jsonError }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Preview - shown below in fullscreen -->
+        <div
+          class="flex flex-col"
+          [ngClass]="isFullscreen ? 'order-2 w-full' : 'lg:col-span-3 order-2 lg:order-2'">
+          
+          <!-- Live Preview Card Header -->
+          <div class="preview-card-header">
+            <div class="flex items-center gap-2">
+              <lucide-icon name="sparkles" [size]="18" class="text-primary" aria-hidden="true"></lucide-icon>
+              <h3 class="preview-card-title">Live Preview</h3>
+              <span *ngIf="generatedCard?.cardType" class="card-type-badge">
+                {{ generatedCard?.cardType }}
+              </span>
+            </div>
+            <span *ngIf="isFullscreen" class="fullscreen-badge">
+              Fullscreen Mode
+            </span>
+          </div>
+
+          <div class="flex-1">
+            <ng-container *ngIf="isInitialized; else initializing">
+              <ng-container *ngIf="!isGenerating; else generating">
+                <ng-container *ngIf="generatedCard; else emptyState">
+                  <div [ngClass]="isFullscreen ? 'w-full max-w-none' : 'w-full'">
+                    <app-card-preview
+                      [generatedCard]="generatedCard"
+                      [isGenerating]="isGenerating"
+                      [isInitialized]="isInitialized"
+                      [isFullscreen]="isFullscreen"
+                      (fieldInteraction)="onFieldInteraction($event)"
+                      (cardInteraction)="onCardInteraction($event)"
+                      (fullscreenToggle)="onFullscreenToggle($event)">
+                    </app-card-preview>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+
+            <ng-template #initializing>
+              <div class="flex flex-col items-center justify-center space-y-4 text-center py-20" role="status" aria-live="polite">
+                <div class="w-8 h-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+                <div>
+                  <p class="text-lg font-medium text-foreground">Initializing System...</p>
+                  <p class="text-sm text-muted-foreground">Loading templates and services</p>
+                </div>
+              </div>
+            </ng-template>
+
+            <ng-template #generating>
+              <div class="flex flex-col items-center justify-center space-y-4 text-center py-20" role="status" aria-live="polite">
+                <div class="w-8 h-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+                <div>
+                  <p class="text-lg font-medium text-foreground">Generating Card...</p>
+                  <p class="text-sm text-muted-foreground">Processing your configuration</p>
+                </div>
+              </div>
+            </ng-template>
+
+            <ng-template #emptyState>
+              <div class="flex flex-col items-center justify-center space-y-4 text-center py-20">
+                <div class="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center">
+                  <lucide-icon name="code-2" [size]="32" class="text-muted-foreground" aria-hidden="true"></lucide-icon>
+                </div>
+                <div>
+                  <p class="text-lg font-medium text-foreground mb-2">No Card Preview</p>
+                  <p class="text-sm text-muted-foreground leading-relaxed max-w-md">
+                    Enter a valid JSON configuration or select a template to see your card preview here.
+                  </p>
+                </div>
+                <div class="flex flex-col gap-2 text-xs text-muted-foreground">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500" aria-hidden="true"></span>
+                    <span>Valid JSON will auto-generate cards</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-500" aria-hidden="true"></span>
+                    <span>Interactive effects respond to mouse</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-purple-500" aria-hidden="true"></span>
+                    <span>Export cards as high-quality PNG</span>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <div class="capabilities-section">
+    <div class="capabilities-container">
+      <div class="capabilities-header">
+        <div class="capabilities-badge">
+          <lucide-icon name="zap" [size]="16" class="capabilities-badge-icon" aria-hidden="true"></lucide-icon>
+          <span>SYSTEM CAPABILITIES</span>
+        </div>
+        <h3 class="capabilities-title">Enterprise-Grade Features</h3>
+        <p class="capabilities-subtitle">
+          Designed for modern sales intelligence workflows with real-time generation and flexible configuration
+        </p>
+      </div>
+
+      <div class="capabilities-grid">
+        <div class="capability-card-content capability-card-content--primary">
+          <div class="capability-card-glow"></div>
+          <div class="capability-icon capability-icon--primary">
+            <lucide-icon name="zap" [size]="24" aria-hidden="true"></lucide-icon>
+          </div>
+          <h4 class="capability-title">Real-time Generation</h4>
+          <p class="capability-description">
+            Instant card generation with live preview and JSON validation
+          </p>
+        </div>
+
+        <div class="capability-card-content">
+          <div class="capability-card-glow"></div>
+          <div class="capability-icon">
+            <lucide-icon name="settings" [size]="24" aria-hidden="true"></lucide-icon>
+          </div>
+          <h4 class="capability-title">Flexible Configuration</h4>
+          <p class="capability-description">
+            Multiple card types with customizable sections and fields
+          </p>
+        </div>
+
+        <div class="capability-card-content">
+          <div class="capability-card-glow"></div>
+          <div class="capability-icon">
+            <lucide-icon name="download" [size]="24" aria-hidden="true"></lucide-icon>
+          </div>
+          <h4 class="capability-title">PNG Export</h4>
+          <p class="capability-description">
+            High-quality PNG export with 2x scaling for presentations
+          </p>
+        </div>
+
+        <div class="capability-card-content">
+          <div class="capability-card-glow"></div>
+          <div class="capability-icon">
+            <lucide-icon name="file-text" [size]="24" aria-hidden="true"></lucide-icon>
+          </div>
+          <h4 class="capability-title">TypeScript Support</h4>
+          <p class="capability-description">
+            Full TypeScript integration with comprehensive type definitions
+          </p>
+        </div>
+
+        <div class="capability-card-content">
+          <div class="capability-card-glow"></div>
+          <div class="capability-icon">
+            <lucide-icon name="save" [size]="24" aria-hidden="true"></lucide-icon>
+          </div>
+          <h4 class="capability-title">Save &amp; Load</h4>
+          <p class="capability-description">
+            Save your card configurations and load them anytime from local storage
+          </p>
+        </div>
+
+        <div class="capability-card-content">
+          <div class="capability-card-glow"></div>
+          <div class="capability-icon">
+            <lucide-icon name="code-2" [size]="24" aria-hidden="true"></lucide-icon>
+          </div>
+          <h4 class="capability-title">Component Architecture</h4>
+          <p class="capability-description">
+            Modular design with {{ systemStats.totalFiles }} documented components
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

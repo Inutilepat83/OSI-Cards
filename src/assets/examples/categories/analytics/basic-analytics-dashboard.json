@@ -1,0 +1,329 @@
+{
+  "cardTitle": "Sales Performance Dashboard",
+  "cardSubtitle": "Monthly Sales Analytics",
+  "cardType": "analytics",
+  "description": "Basic analytics dashboard with key performance indicators and trend analysis",
+  "sections": [
+    {
+      "title": "Key Performance Indicators",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Total Revenue",
+          "value": 2450000,
+          "type": "currency",
+          "icon": "fas fa-dollar-sign"
+        },
+        {
+          "label": "Monthly Growth",
+          "value": 12.5,
+          "type": "percentage",
+          "icon": "fas fa-chart-line"
+        },
+        {
+          "label": "Conversion Rate",
+          "value": 3.8,
+          "type": "percentage",
+          "icon": "fas fa-bullseye"
+        },
+        {
+          "label": "Customer Satisfaction",
+          "value": 4.2,
+          "type": "rating",
+          "icon": "fas fa-star"
+        }
+      ]
+    },
+    {
+      "title": "Sales Performance Metrics",
+      "description": "Core sales performance indicators",
+      "type": "metrics",
+      "metrics": [
+        {
+          "label": "Monthly Sales",
+          "value": 245000,
+          "format": "currency",
+          "change": 15000,
+          "changeType": "absolute",
+          "trend": "up",
+          "icon": "fas fa-shopping-cart"
+        },
+        {
+          "label": "Average Order Value",
+          "value": 127.5,
+          "format": "currency",
+          "change": 8.25,
+          "changeType": "absolute",
+          "trend": "up",
+          "icon": "fas fa-receipt"
+        },
+        {
+          "label": "New Customers",
+          "value": 342,
+          "format": "number",
+          "change": 45,
+          "changeType": "absolute",
+          "trend": "up",
+          "icon": "fas fa-user-plus"
+        },
+        {
+          "label": "Repeat Customers",
+          "value": 68,
+          "format": "percentage",
+          "change": 2.1,
+          "changeType": "percentage",
+          "trend": "up",
+          "icon": "fas fa-users"
+        },
+        {
+          "label": "Customer Lifetime Value",
+          "value": 1250,
+          "format": "currency",
+          "change": 75,
+          "changeType": "absolute",
+          "trend": "up",
+          "icon": "fas fa-gem"
+        },
+        {
+          "label": "Churn Rate",
+          "value": 2.3,
+          "format": "percentage",
+          "change": -0.5,
+          "changeType": "absolute",
+          "trend": "up",
+          "icon": "fas fa-sign-out-alt"
+        }
+      ]
+    },
+    {
+      "title": "Monthly Performance Trends",
+      "description": "Sales performance over the last 6 months",
+      "type": "table",
+      "columns": [
+        {
+          "key": "month",
+          "label": "Month",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "revenue",
+          "label": "Revenue",
+          "type": "currency",
+          "sortable": true,
+          "align": "right"
+        },
+        {
+          "key": "orders",
+          "label": "Orders",
+          "type": "number",
+          "sortable": true,
+          "align": "right"
+        },
+        {
+          "key": "growth",
+          "label": "Growth %",
+          "type": "percentage",
+          "sortable": true,
+          "align": "right"
+        },
+        {
+          "key": "target",
+          "label": "Target Achievement",
+          "type": "percentage",
+          "sortable": true,
+          "align": "right"
+        }
+      ],
+      "data": [
+        {
+          "month": "January",
+          "revenue": 210000,
+          "orders": 1650,
+          "growth": 8.5,
+          "target": 95
+        },
+        {
+          "month": "February",
+          "revenue": 225000,
+          "orders": 1780,
+          "growth": 7.1,
+          "target": 102
+        },
+        {
+          "month": "March",
+          "revenue": 235000,
+          "orders": 1850,
+          "growth": 4.4,
+          "target": 98
+        },
+        {
+          "month": "April",
+          "revenue": 240000,
+          "orders": 1900,
+          "growth": 2.1,
+          "target": 105
+        },
+        {
+          "month": "May",
+          "revenue": 242000,
+          "orders": 1920,
+          "growth": 0.8,
+          "target": 103
+        },
+        {
+          "month": "June",
+          "revenue": 245000,
+          "orders": 1925,
+          "growth": 1.2,
+          "target": 102
+        }
+      ]
+    },
+    {
+      "title": "Sales Channel Performance",
+      "description": "Revenue breakdown by sales channel",
+      "type": "table",
+      "columns": [
+        {
+          "key": "channel",
+          "label": "Sales Channel",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "revenue",
+          "label": "Revenue",
+          "type": "currency",
+          "sortable": true,
+          "align": "right"
+        },
+        {
+          "key": "percentage",
+          "label": "Percentage",
+          "type": "percentage",
+          "sortable": true,
+          "align": "right"
+        },
+        {
+          "key": "orders",
+          "label": "Orders",
+          "type": "number",
+          "sortable": true,
+          "align": "right"
+        },
+        {
+          "key": "avgOrderValue",
+          "label": "Avg Order Value",
+          "type": "currency",
+          "sortable": true,
+          "align": "right"
+        }
+      ],
+      "data": [
+        {
+          "channel": "Online Store",
+          "revenue": 1225000,
+          "percentage": 50,
+          "orders": 9500,
+          "avgOrderValue": 129
+        },
+        {
+          "channel": "Direct Sales",
+          "revenue": 735000,
+          "percentage": 30,
+          "orders": 5800,
+          "avgOrderValue": 126.72
+        },
+        {
+          "channel": "Partner Network",
+          "revenue": 367500,
+          "percentage": 15,
+          "orders": 2900,
+          "avgOrderValue": 126.72
+        },
+        {
+          "channel": "Retail Stores",
+          "revenue": 122500,
+          "percentage": 5,
+          "orders": 975,
+          "avgOrderValue": 125.64
+        }
+      ]
+    },
+    {
+      "title": "Monthly Goals Progress",
+      "description": "Progress towards monthly sales targets",
+      "type": "progress",
+      "progressItems": [
+        {
+          "label": "Revenue Target",
+          "value": 245000,
+          "max": 250000,
+          "format": "currency",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "98% of monthly revenue target achieved"
+        },
+        {
+          "label": "Orders Target",
+          "value": 1925,
+          "max": 2000,
+          "format": "number",
+          "color": "#3b82f6",
+          "showValue": true,
+          "description": "96% of monthly orders target achieved"
+        },
+        {
+          "label": "New Customers Target",
+          "value": 342,
+          "max": 350,
+          "format": "number",
+          "color": "#f59e0b",
+          "showValue": true,
+          "description": "98% of new customer acquisition target achieved"
+        },
+        {
+          "label": "Satisfaction Target",
+          "value": 4.2,
+          "max": 4.5,
+          "format": "rating",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "93% of customer satisfaction target achieved"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "View Detailed Report",
+      "icon": "fas fa-file-alt"
+    },
+    {
+      "label": "Export Data",
+      "icon": "fas fa-download"
+    },
+    {
+      "label": "Set Alerts",
+      "icon": "fas fa-bell"
+    },
+    {
+      "label": "Generate Insights",
+      "icon": "fas fa-brain"
+    }
+  ],
+  "metadata": {
+    "category": "analytics",
+    "variant": "basic",
+    "complexity": "medium",
+    "useCase": "Basic sales performance dashboard with KPIs, trends, and channel analysis",
+    "features": [
+      "kpi overview",
+      "sales metrics",
+      "monthly trends table",
+      "channel performance table",
+      "progress indicators"
+    ]
+  }
+}

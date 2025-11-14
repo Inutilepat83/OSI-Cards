@@ -1,0 +1,217 @@
+{
+  "cardTitle": "Series A Funding Round",
+  "sections": [
+    {
+      "title": "Funding Overview",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Round Type",
+          "value": "Series A"
+        },
+        {
+          "label": "Amount Raised",
+          "value": "$25M"
+        },
+        {
+          "label": "Pre-Money Valuation",
+          "value": "$85M"
+        },
+        {
+          "label": "Post-Money Valuation",
+          "value": "$110M"
+        },
+        {
+          "label": "Lead Investor",
+          "value": "Sequoia Capital"
+        },
+        {
+          "label": "Co-Investors",
+          "value": "Andreessen Horowitz, Index Ventures"
+        },
+        {
+          "label": "Closing Date",
+          "value": "February 15, 2025"
+        },
+        {
+          "label": "Use of Funds",
+          "value": "Product Development, Market Expansion"
+        }
+      ]
+    },
+    {
+      "title": "Investment Terms",
+      "type": "analytics",
+      "fields": [
+        {
+          "label": "Price Per Share",
+          "value": "$8.50",
+          "percentage": 100,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 35
+        },
+        {
+          "label": "Ownership Dilution",
+          "value": "18.5%",
+          "percentage": 18.5,
+          "performance": "good",
+          "trend": "stable",
+          "change": 0
+        },
+        {
+          "label": "Liquidation Preference",
+          "value": "1.5x",
+          "percentage": 85,
+          "performance": "good",
+          "trend": "stable",
+          "change": 0
+        },
+        {
+          "label": "Board Seats",
+          "value": "2 New Directors",
+          "percentage": 95,
+          "performance": "excellent",
+          "trend": "stable",
+          "change": 0
+        }
+      ]
+    },
+    {
+      "title": "Capital Allocation",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Product Development",
+          "value": "$12M (48%)"
+        },
+        {
+          "label": "Market Expansion",
+          "value": "$6M (24%)"
+        },
+        {
+          "label": "Talent Acquisition",
+          "value": "$4M (16%)"
+        },
+        {
+          "label": "Working Capital",
+          "value": "$2M (8%)"
+        },
+        {
+          "label": "Legal & Professional Fees",
+          "value": "$1M (4%)"
+        }
+      ]
+    },
+    {
+      "title": "Financial Projections",
+      "type": "chart",
+      "fields": [
+        {
+          "label": "Revenue 2025",
+          "value": 45,
+          "color": "#3B82F6"
+        },
+        {
+          "label": "Revenue 2026",
+          "value": 85,
+          "color": "#1D4ED8"
+        },
+        {
+          "label": "Revenue 2027",
+          "value": 150,
+          "color": "#1E3A8A"
+        },
+        {
+          "label": "Break-even Point",
+          "value": 18,
+          "color": "#60A5FA"
+        }
+      ]
+    },
+    {
+      "title": "Milestones & KPIs",
+      "type": "info",
+      "fields": [
+        {
+          "label": "User Acquisition Target",
+          "value": "500K MAU by EOY 2025"
+        },
+        {
+          "label": "Revenue Target",
+          "value": "$45M ARR by EOY 2025"
+        },
+        {
+          "label": "Team Expansion",
+          "value": "150 Employees by EOY 2025"
+        },
+        {
+          "label": "Market Expansion",
+          "value": "5 New Countries"
+        }
+      ]
+    },
+    {
+      "title": "Investor Network",
+      "type": "map",
+      "fields": [
+        {
+          "name": "Sequoia Capital HQ",
+          "x": 15,
+          "y": 35,
+          "type": "investor",
+          "address": "Menlo Park, CA, USA"
+        },
+        {
+          "name": "Andreessen Horowitz",
+          "x": 18,
+          "y": 38,
+          "type": "investor",
+          "address": "San Francisco, CA, USA"
+        },
+        {
+          "name": "Index Ventures",
+          "x": 48,
+          "y": 28,
+          "type": "investor",
+          "address": "London, UK"
+        },
+        {
+          "name": "Company HQ",
+          "x": 25,
+          "y": 35,
+          "type": "startup",
+          "address": "New York, NY, USA"
+        },
+        {
+          "name": "European Expansion",
+          "x": 50,
+          "y": 30,
+          "type": "expansion",
+          "address": "Berlin, Germany"
+        },
+        {
+          "name": "Asia Office",
+          "x": 80,
+          "y": 60,
+          "type": "expansion",
+          "address": "Singapore"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "View Term Sheet",
+      "type": "primary",
+      "icon": "📄",
+      "action": "https://startup.com/series-a-terms"
+    },
+    {
+      "label": "Investor Relations",
+      "type": "secondary",
+      "icon": "🤝",
+      "action": "mailto:ir@startup.com?subject=Series%20A%20Update"
+    }
+  ]
+}

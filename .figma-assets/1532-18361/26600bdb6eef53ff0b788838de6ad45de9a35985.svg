@@ -1,0 +1,13 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Layer_62">
+<path id="Path" d="M26.6667 4C26.6667 3.26362 26.0697 2.66667 25.3333 2.66667V5.33333C26.0697 5.33333 26.6667 4.73638 26.6667 4Z" fill="var(--fill-0, #4BB4E6)"/>
+<path id="Path_2" d="M1.33333 5.33333H14.6667V2.66667H1.33333C0.596954 2.66667 0 3.26362 0 4C0 4.73638 0.596954 5.33333 1.33333 5.33333Z" fill="var(--fill-0, #4BB4E6)"/>
+<path id="Path_3" d="M25.3333 12H14.6667V14.6667H25.3333C26.0697 14.6667 26.6667 14.0697 26.6667 13.3333C26.6667 12.597 26.0697 12 25.3333 12Z" fill="var(--fill-0, #4BB4E6)"/>
+<path id="Path_4" d="M1.33333 14.6667H4V12H1.33333C0.596954 12 0 12.597 0 13.3333C0 14.0697 0.596954 14.6667 1.33333 14.6667Z" fill="var(--fill-0, #4BB4E6)"/>
+<path id="Path_5" d="M25.3333 21.3333H22.6667V24H25.3333C26.0697 24 26.6667 23.403 26.6667 22.6667C26.6667 21.9303 26.0697 21.3333 25.3333 21.3333Z" fill="var(--fill-0, #4BB4E6)"/>
+<path id="Path_6" d="M0 22.6667C0 23.403 0.596954 24 1.33333 24H12V21.3333H1.33333C0.596954 21.3333 0 21.9303 0 22.6667Z" fill="var(--fill-0, #4BB4E6)"/>
+<rect id="Rectangle" x="16" width="8" height="8" rx="2" fill="var(--fill-0, #4BB4E6)"/>
+<rect id="Rectangle_2" x="5.33333" y="9.33333" width="8" height="8" rx="2" fill="var(--fill-0, #4BB4E6)"/>
+<rect id="Rectangle_3" x="13.3333" y="18.6667" width="8" height="8" rx="2" fill="var(--fill-0, #4BB4E6)"/>
+</g>
+</svg>

@@ -1,0 +1,15 @@
+<div class="ai-section">
+  <div class="ai-section__header">
+    <div class="ai-section__details">
+      <h3 class="ai-section__title">{{ section.title || 'Unsupported Section' }}</h3>
+      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
+    </div>
+  </div>
+
+  <div class="ai-section__body">
+    <div class="section-empty">
+      <lucide-icon name="alert-circle" size="32" class="mb-3 opacity-60"></lucide-icon>
+      <p class="text-sm">This section type is not yet customized. Add data or configure a renderer to display it.</p>
+    </div>
+  </div>
+</div>

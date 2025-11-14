@@ -1,0 +1,325 @@
+{
+  "cardTitle": "GlobalTech Corporation",
+  "cardSubtitle": "Enterprise Software Solutions Provider",
+  "cardType": "company",
+  "description": "Enterprise-level company dashboard with comprehensive analytics, progress tracking, and strategic insights",
+  "sections": [
+    {
+      "title": "Executive Summary",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Company Overview",
+          "value": "Leading enterprise software solutions provider with 500+ employees",
+          "type": "text",
+          "icon": "fas fa-building"
+        },
+        {
+          "label": "Market Position",
+          "value": "#3 in Enterprise Software Market",
+          "type": "text",
+          "icon": "fas fa-trophy"
+        },
+        {
+          "label": "Q4 2024 Performance",
+          "value": "Exceeded targets by 15%",
+          "type": "status",
+          "backgroundColor": "#d1fae5",
+          "valueColor": "#10b981",
+          "icon": "fas fa-check-circle"
+        },
+        {
+          "label": "Strategic Focus",
+          "value": "AI-Driven Digital Transformation",
+          "type": "badge",
+          "backgroundColor": "#dbeafe",
+          "valueColor": "#2563eb",
+          "icon": "fas fa-robot"
+        }
+      ]
+    },
+    {
+      "title": "Financial Performance",
+      "description": "Key financial metrics and growth indicators",
+      "type": "metrics",
+      "metrics": [
+        {
+          "label": "Annual Revenue",
+          "value": 450000000,
+          "format": "currency",
+          "change": 18.5,
+          "changeType": "percentage",
+          "trend": "up",
+          "icon": "fas fa-dollar-sign"
+        },
+        {
+          "label": "Gross Margin",
+          "value": 72.3,
+          "format": "percentage",
+          "change": 2.1,
+          "changeType": "percentage",
+          "trend": "up",
+          "icon": "fas fa-percentage"
+        },
+        {
+          "label": "New Customers",
+          "value": 1250,
+          "format": "number",
+          "change": 23.8,
+          "changeType": "percentage",
+          "trend": "up",
+          "icon": "fas fa-user-plus"
+        },
+        {
+          "label": "Market Share",
+          "value": 8.7,
+          "format": "percentage",
+          "change": 1.2,
+          "changeType": "percentage",
+          "trend": "up",
+          "icon": "fas fa-chart-pie"
+        }
+      ]
+    },
+    {
+      "title": "Strategic Initiatives Progress",
+      "description": "Current quarter strategic project completion status",
+      "type": "progress",
+      "progressItems": [
+        {
+          "label": "AI Platform Development",
+          "value": 85,
+          "max": 100,
+          "format": "percentage",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "Next-gen AI capabilities for enterprise clients"
+        },
+        {
+          "label": "Cloud Migration Program",
+          "value": 92,
+          "max": 100,
+          "format": "percentage",
+          "color": "#3b82f6",
+          "showValue": true,
+          "description": "Complete migration to multi-cloud infrastructure"
+        },
+        {
+          "label": "Digital Transformation",
+          "value": 78,
+          "max": 100,
+          "format": "percentage",
+          "color": "#f59e0b",
+          "showValue": true,
+          "description": "Enterprise-wide digital process optimization"
+        },
+        {
+          "label": "Sustainability Initiative",
+          "value": 65,
+          "max": 100,
+          "format": "percentage",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "Carbon-neutral operations by 2025"
+        },
+        {
+          "label": "Talent Development Program",
+          "value": 88,
+          "max": 100,
+          "format": "percentage",
+          "color": "#8b5cf6",
+          "showValue": true,
+          "description": "Advanced training and certification programs"
+        }
+      ]
+    },
+    {
+      "title": "Market Intelligence",
+      "description": "Competitive landscape and market trends analysis",
+      "type": "table",
+      "columns": [
+        {
+          "key": "competitor",
+          "label": "Competitor",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "marketShare",
+          "label": "Market Share",
+          "type": "percentage",
+          "sortable": true,
+          "align": "right"
+        },
+        {
+          "key": "growth",
+          "label": "YoY Growth",
+          "type": "percentage",
+          "sortable": true,
+          "align": "right"
+        },
+        {
+          "key": "threatLevel",
+          "label": "Threat Level",
+          "type": "status",
+          "sortable": true
+        }
+      ],
+      "data": [
+        {
+          "competitor": "TechCorp Solutions",
+          "marketShare": 12.5,
+          "growth": 8.2,
+          "threatLevel": "High"
+        },
+        {
+          "competitor": "DataSys Inc.",
+          "marketShare": 9.8,
+          "growth": 15.7,
+          "threatLevel": "Medium"
+        },
+        {
+          "competitor": "CloudTech Ltd.",
+          "marketShare": 7.3,
+          "growth": -2.1,
+          "threatLevel": "Low"
+        },
+        {
+          "competitor": "InnovateSoft",
+          "marketShare": 6.1,
+          "growth": 22.4,
+          "threatLevel": "High"
+        },
+        {
+          "competitor": "GlobalTech Corp.",
+          "marketShare": 8.7,
+          "growth": 18.5,
+          "threatLevel": "Self"
+        }
+      ]
+    },
+    {
+      "title": "Strategic Milestones",
+      "description": "Key achievements and upcoming objectives",
+      "type": "timeline",
+      "events": [
+        {
+          "title": "Successful IPO",
+          "description": "Public offering raised $500M at $45/share",
+          "date": "2020-03-15",
+          "icon": "fas fa-chart-line",
+          "status": "completed"
+        },
+        {
+          "title": "Strategic Acquisition",
+          "description": "Acquired AI startup for $200M to enhance ML capabilities",
+          "date": "2021-08-20",
+          "icon": "fas fa-shopping-cart",
+          "status": "completed"
+        },
+        {
+          "title": "Asia-Pacific Expansion",
+          "description": "Established regional headquarters in Singapore",
+          "date": "2022-11-01",
+          "icon": "fas fa-globe-asia",
+          "status": "completed"
+        },
+        {
+          "title": "AI Breakthrough Achievement",
+          "description": "Developed industry-leading natural language processing technology",
+          "date": "2023-06-15",
+          "icon": "fas fa-brain",
+          "status": "completed"
+        },
+        {
+          "title": "Sustainability Milestone",
+          "description": "Achieved carbon-neutral status for all US operations",
+          "date": "2024-01-01",
+          "icon": "fas fa-leaf",
+          "status": "completed"
+        },
+        {
+          "title": "Next-Gen Platform Launch",
+          "description": "Launch of AI-powered enterprise platform",
+          "date": "2024-09-01",
+          "icon": "fas fa-rocket",
+          "status": "in-progress"
+        },
+        {
+          "title": "Global Market Leadership",
+          "description": "Achieve #1 market position in enterprise software",
+          "date": "2025-12-31",
+          "icon": "fas fa-trophy",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "title": "Executive Leadership",
+      "type": "list",
+      "items": [
+        {
+          "title": "Jennifer Walsh",
+          "description": "CEO - 15+ years enterprise software experience",
+          "icon": "fas fa-user-tie"
+        },
+        {
+          "title": "Dr. Michael Chen",
+          "description": "CTO - Former VP Engineering at leading tech company",
+          "icon": "fas fa-user-gear"
+        },
+        {
+          "title": "Sarah Rodriguez",
+          "description": "CFO - CPA with 12+ years financial leadership",
+          "icon": "fas fa-calculator"
+        },
+        {
+          "title": "David Thompson",
+          "description": "Chief Strategy Officer - Ex-McKinsey partner",
+          "icon": "fas fa-chess-king"
+        },
+        {
+          "title": "Dr. Lisa Park",
+          "description": "Chief AI Officer - PhD AI, published researcher",
+          "icon": "fas fa-brain"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Executive Dashboard",
+      "icon": "fas fa-chart-bar"
+    },
+    {
+      "label": "Financial Reports",
+      "icon": "fas fa-file-pdf"
+    },
+    {
+      "label": "Strategic Planning",
+      "icon": "fas fa-map-marked-alt"
+    },
+    {
+      "label": "Investor Relations",
+      "icon": "fas fa-handshake"
+    },
+    {
+      "label": "Contact Leadership",
+      "icon": "fas fa-envelope"
+    }
+  ],
+  "metadata": {
+    "category": "company",
+    "variant": "enterprise",
+    "complexity": "high",
+    "useCase": "Comprehensive enterprise dashboard with strategic insights and performance tracking",
+    "features": [
+      "executive summary",
+      "financial metrics",
+      "progress tracking",
+      "market analysis table",
+      "strategic timeline",
+      "leadership team"
+    ]
+  }
+}

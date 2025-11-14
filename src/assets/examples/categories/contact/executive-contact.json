@@ -1,0 +1,329 @@
+{
+  "cardTitle": "Robert Chen",
+  "cardSubtitle": "Chief Executive Officer",
+  "cardType": "contact",
+  "description": "Executive-level contact card with comprehensive profile, relationships, and performance analytics",
+  "sections": [
+    {
+      "title": "Executive Profile",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Full Name",
+          "value": "Robert Chen",
+          "type": "text",
+          "icon": "fas fa-user-tie"
+        },
+        {
+          "label": "Executive Title",
+          "value": "Chief Executive Officer",
+          "type": "text",
+          "icon": "fas fa-crown"
+        },
+        {
+          "label": "Company",
+          "value": "GlobalTech Industries",
+          "type": "text",
+          "icon": "fas fa-building"
+        },
+        {
+          "label": "Tenure as CEO",
+          "value": "6 years",
+          "type": "text",
+          "icon": "fas fa-clock"
+        },
+        {
+          "label": "Annual Compensation",
+          "value": 8500000,
+          "type": "currency",
+          "icon": "fas fa-dollar-sign"
+        },
+        {
+          "label": "Executive Status",
+          "value": "Active",
+          "type": "status",
+          "backgroundColor": "#d1fae5",
+          "valueColor": "#10b981",
+          "icon": "fas fa-check-circle"
+        }
+      ]
+    },
+    {
+      "title": "Leadership Performance",
+      "description": "Key performance indicators under current leadership",
+      "type": "metrics",
+      "metrics": [
+        {
+          "label": "Stock Performance",
+          "value": 245.67,
+          "format": "currency",
+          "change": 15.8,
+          "changeType": "percentage",
+          "trend": "up",
+          "icon": "fas fa-chart-line"
+        },
+        {
+          "label": "Revenue Growth",
+          "value": 28.5,
+          "format": "percentage",
+          "change": 5.2,
+          "changeType": "percentage",
+          "trend": "up",
+          "icon": "fas fa-dollar-sign"
+        },
+        {
+          "label": "Employee Satisfaction",
+          "value": 4.6,
+          "format": "rating",
+          "change": 0.3,
+          "changeType": "absolute",
+          "trend": "up",
+          "icon": "fas fa-users"
+        },
+        {
+          "label": "Market Share Growth",
+          "value": 12.3,
+          "format": "percentage",
+          "change": 2.1,
+          "changeType": "percentage",
+          "trend": "up",
+          "icon": "fas fa-chart-pie"
+        }
+      ]
+    },
+    {
+      "title": "Professional Background",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Education",
+          "value": "MBA Harvard Business School, BS Computer Science MIT",
+          "type": "text",
+          "icon": "fas fa-graduation-cap"
+        },
+        {
+          "label": "Previous Executive Roles",
+          "value": "COO at TechGiant, VP at InnovateCorp",
+          "type": "text",
+          "icon": "fas fa-briefcase"
+        },
+        {
+          "label": "Board Memberships",
+          "value": "3 public company boards, 2 non-profit organizations",
+          "type": "text",
+          "icon": "fas fa-gavel"
+        },
+        {
+          "label": "Industry Experience",
+          "value": "18+ years in technology and software",
+          "type": "text",
+          "icon": "fas fa-industry"
+        },
+        {
+          "label": "Awards & Recognition",
+          "value": "Fortune 40 Under 40, Tech CEO of the Year 2023",
+          "type": "text",
+          "icon": "fas fa-trophy"
+        }
+      ]
+    },
+    {
+      "title": "Strategic Relationships",
+      "description": "Important business and industry connections",
+      "type": "table",
+      "columns": [
+        {
+          "key": "contact",
+          "label": "Contact",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "relationship",
+          "label": "Relationship",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "importance",
+          "label": "Importance",
+          "type": "status",
+          "sortable": true
+        },
+        {
+          "key": "lastInteraction",
+          "label": "Last Interaction",
+          "type": "date",
+          "sortable": true
+        }
+      ],
+      "data": [
+        {
+          "contact": "Sarah Johnson",
+          "relationship": "Board Chair",
+          "importance": "Critical",
+          "lastInteraction": "2024-09-15"
+        },
+        {
+          "contact": "Michael Davis",
+          "relationship": "Lead Investor",
+          "importance": "High",
+          "lastInteraction": "2024-09-08"
+        },
+        {
+          "contact": "Dr. Lisa Wang",
+          "relationship": "Industry Partner",
+          "importance": "High",
+          "lastInteraction": "2024-08-22"
+        },
+        {
+          "contact": "James Wilson",
+          "relationship": "Key Customer CEO",
+          "importance": "Medium",
+          "lastInteraction": "2024-08-10"
+        },
+        {
+          "contact": "Anna Martinez",
+          "relationship": "Government Liaison",
+          "importance": "Medium",
+          "lastInteraction": "2024-07-28"
+        }
+      ]
+    },
+    {
+      "title": "Communication Preferences",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Primary Email",
+          "value": "robert.chen@globaltech.com",
+          "type": "email",
+          "icon": "fas fa-envelope",
+          "clickable": true
+        },
+        {
+          "label": "Executive Assistant",
+          "value": "jennifer.smith@globaltech.com",
+          "type": "email",
+          "icon": "fas fa-user-secret",
+          "clickable": true
+        },
+        {
+          "label": "Direct Line",
+          "value": "+1-212-555-0100",
+          "type": "phone",
+          "icon": "fas fa-phone",
+          "clickable": true
+        },
+        {
+          "label": "Preferred Contact Method",
+          "value": "Email or Executive Assistant",
+          "type": "text",
+          "icon": "fas fa-comments"
+        },
+        {
+          "label": "Typical Availability",
+          "value": "Monday-Friday, 8 AM - 6 PM EST",
+          "type": "text",
+          "icon": "fas fa-calendar-check"
+        }
+      ]
+    },
+    {
+      "title": "Executive Journey",
+      "description": "Key milestones in executive career",
+      "type": "timeline",
+      "events": [
+        {
+          "title": "Career Beginnings",
+          "description": "Started as software engineer at startup",
+          "date": "2006-06-01",
+          "icon": "fas fa-code",
+          "status": "completed"
+        },
+        {
+          "title": "First Management Role",
+          "description": "Promoted to Engineering Manager",
+          "date": "2012-03-15",
+          "icon": "fas fa-user-cog",
+          "status": "completed"
+        },
+        {
+          "title": "VP of Engineering",
+          "description": "Joined GlobalTech as VP of Engineering",
+          "date": "2018-01-01",
+          "icon": "fas fa-rocket",
+          "status": "completed"
+        },
+        {
+          "title": "CEO Appointment",
+          "description": "Appointed CEO of GlobalTech Industries",
+          "date": "2018-07-01",
+          "icon": "fas fa-crown",
+          "status": "completed"
+        },
+        {
+          "title": "Successful IPO",
+          "description": "Led company through successful public offering",
+          "date": "2020-11-20",
+          "icon": "fas fa-chart-line",
+          "status": "completed"
+        },
+        {
+          "title": "Global Expansion",
+          "description": "Launched international expansion strategy",
+          "date": "2022-09-01",
+          "icon": "fas fa-globe",
+          "status": "completed"
+        },
+        {
+          "title": "AI Transformation",
+          "description": "Leading company-wide AI transformation initiative",
+          "date": "2024-01-01",
+          "icon": "fas fa-brain",
+          "status": "in-progress"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Schedule Executive Meeting",
+      "icon": "fas fa-calendar"
+    },
+    {
+      "label": "Contact Executive Assistant",
+      "icon": "fas fa-user-secret"
+    },
+    {
+      "label": "View Company Profile",
+      "icon": "fas fa-building"
+    },
+    {
+      "label": "Download Executive Bio",
+      "icon": "fas fa-download"
+    },
+    {
+      "label": "Connect on LinkedIn",
+      "icon": "fab fa-linkedin"
+    },
+    {
+      "label": "View Board Memberships",
+      "icon": "fas fa-gavel"
+    }
+  ],
+  "metadata": {
+    "category": "contact",
+    "variant": "executive",
+    "complexity": "high",
+    "useCase": "Comprehensive executive contact with performance metrics, relationships, and strategic insights",
+    "features": [
+      "executive profile",
+      "performance metrics",
+      "professional background",
+      "strategic relationships table",
+      "communication preferences",
+      "executive timeline"
+    ]
+  }
+}

@@ -1,0 +1,313 @@
+/* Consolidated base styles for all card sections */
+
+/* ===== GRID MIXINS ===== */
+/* Default gap values map to CSS variables: --grid-gap-xs (3px), --grid-gap-sm (4px) */
+@mixin section-grid($min-width: var(--section-grid-min-width), $gap: var(--card-gap)) {
+  display: grid !important;
+  gap: $gap;
+  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr)) !important;
+  min-height: 0;
+
+  @media (max-width: 520px) {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@mixin section-grid-responsive($min-width: var(--section-grid-min-width), $gap: var(--section-card-gap), $tablet-breakpoint: 820px) {
+  display: grid !important;
+  gap: $gap;
+  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr)) !important;
+  min-height: 0;
+
+  @media (max-width: $tablet-breakpoint) {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ===== UNIVERSAL CARD MIXIN ===== */
+/* Used for ALL card types: metric, contact, list, product, etc. */
+/* Guarantees 100% consistency across entire application */
+/* Style matches: rounded-2xl, border-border/40, bg-card/70, hover effects */
+@mixin card {
+  /* UNIFIED CARD DESIGN - All section items use identical styling */
+  /* NOTE: Global enforcement (_global-enforcement.scss) overrides all these values with !important */
+  /* This mixin provides defaults, but global enforcement ensures 100% consistency */
+  
+  /* Use section-item variables for consistency (global enforcement overrides with !important) */
+  border: var(--section-item-border);
+  border-radius: var(--section-item-border-radius);
+  padding: var(--card-padding);
+  background: var(--section-item-background);
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+  min-height: var(--card-min-height);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--section-item-box-shadow);
+  
+  /* Use design system variables for smoother, more responsive transitions */
+  transition: border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), 
+              background 0.22s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* No transforms - keep card completely flat */
+
+  &:hover {
+    border-color: var(--section-item-border-hover);
+    background: var(--section-item-background-hover);
+    /* No transform - keep card stationary, only glow effect */
+    box-shadow: var(--section-item-box-shadow-hover);
+    transform: var(--section-item-hover-transform);
+    will-change: border-color, background, box-shadow;
+  }
+  
+  /* Focus state for keyboard navigation and accessibility */
+  &:focus-visible {
+    outline: 2px solid rgba(255, 121, 0, 0.6);
+    outline-offset: 2px;
+    border-color: rgba(255, 121, 0, 0.5);
+  }
+  
+  /* Reset will-change when not hovering to free resources */
+  &:not(:hover) {
+    will-change: auto;
+  }
+  
+  /* Accessibility: Disable animations for reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    transition: none !important;
+    will-change: auto !important;
+    transform: none !important;
+  }
+}
+
+/* ===== METRIC CARD MIXIN (DEPRECATED) ===== */
+/* Legacy alias for backward compatibility - use @mixin card instead */
+@mixin metric-card {
+  @include card;
+}
+
+/* ===== CARD BASE STYLES (DEPRECATED) ===== */
+/* Legacy alias for backward compatibility - use @mixin card instead */
+@mixin section-card-base($accent: var(--section-accent, var(--accent))) {
+  @include card;
+}
+
+/* ===== UNIFIED SECTION CARD CLASS ===== */
+/* Master card component for direct use without mixins */
+/* This class provides the same style as Tailwind: rounded-2xl, border-border/40, bg-card/70 */
+.unified-card {
+  @include card;
+}
+
+/* Alias for backward compatibility */
+.section-card {
+  @include card;
+}
+
+/* ===== METRIC TYPOGRAPHY MIXINS ===== */
+/* Consistent label/value styling for all metric cards */
+/* NOTE: Font sizes are now enforced by unified-cards.scss - do not set font-size here */
+@mixin metric-label {
+  /* font-size is set by unified-cards.scss - do not override */
+  letter-spacing: 0.05em;
+  text-transform: none;
+  color: var(--card-text-label);
+  line-height: 1.2;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  
+  :root[data-theme='day'] & {
+    text-shadow: none;
+  }
+}
+
+@mixin metric-value {
+  /* font-size is set by unified-cards.scss - do not override */
+  font-weight: 700;
+  color: var(--foreground);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+@mixin section-description {
+  font-size: var(--font-section-description);
+  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+  letter-spacing: 0.01em;
+  line-height: 1.2; /* COMPACT: Reduced from 1.35 */
+  font-weight: 500;
+}
+
+/* Legacy aliases for backward compatibility */
+@mixin section-label {
+  @include metric-label;
+}
+
+@mixin section-value {
+  @include metric-value;
+}
+
+/* ===== COMMON COMPONENTS ===== */
+@mixin section-empty-state($accent: var(--section-accent, var(--accent))) {
+  /* COMPACT: Reduced padding */
+  padding: calc(var(--card-padding) * 1.5);
+  text-align: center;
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
+  border: none !important;
+  /* CLEAN: No borders on empty states - only sections and cards have borders */
+  border-radius: var(--section-card-border-radius);
+  background: color-mix(in srgb, #{$accent} 10%, transparent);
+  min-height: auto;
+}
+
+@mixin section-empty-icon {
+  margin: 0 auto var(--card-gap);
+  opacity: 0.65;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.22));
+}
+
+/* ===== TREND COLORS ===== */
+/* Standardized trend colors used across ALL sections */
+@mixin trend-colors {
+  &.trend--up {
+    color: #4ade80 !important;
+    text-shadow: 0 1px 3px rgba(74, 222, 128, 0.32);
+    filter: drop-shadow(0 0 4px rgba(74, 222, 128, 0.18));
+  }
+
+  &.trend--down {
+    color: #f87171 !important;
+    text-shadow: 0 1px 3px rgba(248, 113, 113, 0.32);
+    filter: drop-shadow(0 0 4px rgba(248, 113, 113, 0.18));
+  }
+
+  &.trend--stable {
+    color: #facc15 !important;
+    text-shadow: 0 1px 3px rgba(250, 204, 21, 0.28);
+    filter: drop-shadow(0 0 4px rgba(250, 204, 21, 0.18));
+  }
+
+  &.trend--neutral {
+    color: #94a3b8 !important;
+    text-shadow: 0 1px 3px rgba(148, 163, 184, 0.26);
+    filter: drop-shadow(0 0 4px rgba(148, 163, 184, 0.16));
+  }
+}
+
+/* ===== STANDARDIZED STATUS CLASSES ===== */
+/* Use these classes across ALL sections for consistent status styling */
+.status--completed,
+.status--success {
+  border-color: rgba(74, 222, 128, 0.4) !important;
+  color: rgba(134, 239, 172, 1) !important;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(34, 197, 94, 0.1)) !important;
+}
+
+.status--active,
+.status--in-progress {
+  border-color: color-mix(in srgb, var(--section-accent, var(--accent)) 45%, transparent) !important;
+  color: color-mix(in srgb, var(--section-accent, var(--accent)) 72%, var(--foreground) 28%) !important;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--section-accent, var(--accent)) 28%, transparent),
+    color-mix(in srgb, var(--section-accent, var(--accent)) 16%, transparent)) !important;
+}
+
+.status--pending,
+.status--warning {
+  border-color: rgba(251, 191, 36, 0.45) !important;
+  color: rgba(253, 224, 71, 1) !important;
+  background: linear-gradient(135deg, rgba(253, 186, 116, 0.2), rgba(253, 186, 116, 0.12)) !important;
+}
+
+.status--blocked,
+.status--cancelled,
+.status--delayed,
+.status--inactive,
+.status--error {
+  border-color: rgba(248, 113, 113, 0.48) !important;
+  color: rgba(252, 165, 165, 1) !important;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.22), rgba(239, 68, 68, 0.14)) !important;
+}
+
+.status--default {
+  border-color: rgba(120, 120, 120, 0.4) !important;
+  color: rgba(200, 200, 200, 0.85) !important;
+  background: linear-gradient(135deg, rgba(40, 40, 40, 0.3), rgba(40, 40, 40, 0.2)) !important;
+}
+
+/* ===== STANDARDIZED PRIORITY CLASSES ===== */
+.priority--high {
+  border-color: rgba(248, 113, 113, 0.48) !important;
+  color: rgba(252, 165, 165, 1) !important;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.22), rgba(239, 68, 68, 0.14)) !important;
+}
+
+.priority--medium {
+  border-color: rgba(251, 191, 36, 0.45) !important;
+  color: rgba(253, 224, 71, 1) !important;
+  background: linear-gradient(135deg, rgba(253, 186, 116, 0.2), rgba(253, 186, 116, 0.12)) !important;
+}
+
+.priority--low {
+  border-color: rgba(74, 222, 128, 0.4) !important;
+  color: rgba(134, 239, 172, 1) !important;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(34, 197, 94, 0.1)) !important;
+}
+
+.priority--default {
+  border-color: rgba(120, 120, 120, 0.4) !important;
+  color: rgba(200, 200, 200, 0.85) !important;
+  background: linear-gradient(135deg, rgba(40, 40, 40, 0.3), rgba(40, 40, 40, 0.2)) !important;
+}
+
+/* Removed obsolete section-card-mobile mixin - continuous responsive design via base system */
+
+/* ===================================================================
+   REDUCED MOTION SUPPORT
+   Global accessibility support for all sections
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Disable all card animations and transitions */
+  .unified-card,
+  .section-card,
+  [class*="__card"],
+  [class*="-card"],
+  [class*="__item"],
+  [class*="-item"] {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  /* Disable trend color effects */
+  .trend--up,
+  .trend--down,
+  .trend--stable,
+  .trend--neutral {
+    text-shadow: none !important;
+    filter: none !important;
+  }
+  
+  /* Disable status effects */
+  .status--completed,
+  .status--success,
+  .status--active,
+  .status--in-progress,
+  .status--pending,
+  .status--warning,
+  .status--blocked,
+  .status--cancelled,
+  .status--delayed,
+  .status--inactive,
+  .status--error,
+  .status--default,
+  .priority--high,
+  .priority--medium,
+  .priority--low,
+  .priority--default {
+    filter: none !important;
+  }
+}

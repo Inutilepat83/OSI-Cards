@@ -1,0 +1,60 @@
+/* Masonry layout */
+.masonry-grid-container {
+  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: 200px;
+}
+
+.masonry-grid-container .masonry-item {
+  position: absolute;
+  width: auto;
+  height: auto;
+  box-sizing: border-box;
+  transform-origin: top left;
+}
+
+.masonry-item {
+  height: fit-content;
+  min-height: fit-content;
+  width: 100%;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  
+  /* GLOBALLY DEFINED: Use shared mixins for discrete section borders */
+  @include surface-section-base;
+  padding: var(--section-padding);
+  
+  /* Gap between header and body */
+  gap: var(--section-card-gap);
+  
+  &:hover {
+    @include surface-section-hover;
+  }
+}
+
+.masonry-item > * {
+  height: auto !important;
+  min-height: fit-content !important;
+  max-height: none !important;
+}
+
+.masonry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-gap: 1rem;
+  grid-auto-rows: minmax(100px, auto);
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-gap: 1.5rem;
+}

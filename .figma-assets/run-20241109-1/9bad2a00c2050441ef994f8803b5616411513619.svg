@@ -1,0 +1,13 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Layer_62">
+<path id="Path" d="M20 3C20 2.44772 19.5523 2 19 2V4C19.5523 4 20 3.55228 20 3Z" fill="var(--fill-0, #4BB4E6)"/>
+<path id="Path_2" d="M1 4H11V2H1C0.447715 2 0 2.44772 0 3C0 3.55228 0.447715 4 1 4Z" fill="var(--fill-0, #4BB4E6)"/>
+<path id="Path_3" d="M19 9H11V11H19C19.5523 11 20 10.5523 20 10C20 9.44772 19.5523 9 19 9Z" fill="var(--fill-0, #4BB4E6)"/>
+<path id="Path_4" d="M1 11H3V9H1C0.447715 9 0 9.44772 0 10C0 10.5523 0.447715 11 1 11Z" fill="var(--fill-0, #4BB4E6)"/>
+<path id="Path_5" d="M19 16H17V18H19C19.5523 18 20 17.5523 20 17C20 16.4477 19.5523 16 19 16Z" fill="var(--fill-0, #4BB4E6)"/>
+<path id="Path_6" d="M0 17C0 17.5523 0.447715 18 1 18H9V16H1C0.447715 16 0 16.4477 0 17Z" fill="var(--fill-0, #4BB4E6)"/>
+<rect id="Rectangle" x="12" width="6" height="6" rx="2" fill="var(--fill-0, #4BB4E6)"/>
+<rect id="Rectangle_2" x="4" y="7" width="6" height="6" rx="2" fill="var(--fill-0, #4BB4E6)"/>
+<rect id="Rectangle_3" x="10" y="14" width="6" height="6" rx="2" fill="var(--fill-0, #4BB4E6)"/>
+</g>
+</svg>

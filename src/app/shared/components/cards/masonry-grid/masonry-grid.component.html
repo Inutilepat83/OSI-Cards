@@ -1,0 +1,27 @@
+<div
+  #container
+  class="relative w-full masonry-container"
+  [class.masonry-container--loading]="!isLayoutReady"
+  [style.height.px]="containerHeight"
+  [style.gap.px]="gap"
+>
+  <div
+    *ngFor="let item of positionedSections; trackBy: trackItem; let idx = index"
+    #itemRef
+    class="absolute masonry-item"
+    [class.masonry-item--ready]="isLayoutReady"
+    [attr.id]="getSectionId(item.section)"
+    [ngStyle]="{
+      position: 'absolute',
+      left: item.left,
+      top: item.top + 'px',
+      width: item.width,
+      zIndex: idx
+    }"
+  >
+    <app-section-renderer
+      [section]="item.section"
+      (sectionEvent)="onSectionEvent($event)"
+    ></app-section-renderer>
+  </div>
+</div>

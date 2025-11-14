@@ -1,0 +1,68 @@
+/* -------------------------------------------------------------------------- */
+/* Surface Layer Mixins                                                       */
+/* -------------------------------------------------------------------------- */
+/*
+ * Centralized mixins for the three visual layers in the card stack:
+ * 1. Hero AI card shell (.ai-card-surface)
+ * 2. Section containers (.masonry-item)
+ * 3. Section items (cards rendered inside sections)
+ *
+ * Each mixin relies exclusively on CSS custom properties declared in
+ * core/_variables.scss so that switching providers or day/night themes only
+ * requires token tweaks rather than touching component styles.
+ */
+
+/* AI card (hero shell) ----------------------------------------------------- */
+@mixin surface-ai-card-base {
+  border: var(--ai-card-border, none) !important;
+  border-radius: var(--ai-card-border-radius) !important;
+  background: var(--ai-card-background, var(--card-surface, var(--card))) !important;
+  box-shadow: var(--ai-card-box-shadow, none) !important;
+  transition: var(--ai-card-transition, none) !important;
+  animation: var(--ai-card-entrance-animation, none);
+  will-change: opacity, transform;
+}
+
+@mixin surface-ai-card-hover {
+  border: var(--ai-card-border-hover, var(--ai-card-border, none)) !important;
+  background: var(--ai-card-background-hover, var(--card-surface-hover, var(--card))) !important;
+  box-shadow: var(--ai-card-box-shadow-hover, var(--ai-card-box-shadow, none)) !important;
+}
+
+/* Section container (masonry item) ---------------------------------------- */
+@mixin surface-section-base {
+  border: var(--section-border) !important;
+  border-radius: var(--section-border-radius) !important;
+  background: var(--section-surface, var(--section-background, var(--card-section-bg))) !important;
+  box-shadow: var(--section-box-shadow) !important;
+  transition: var(--section-transition, none) !important;
+  animation: var(--section-entrance-animation, none);
+  will-change: opacity, transform;
+}
+
+@mixin surface-section-hover {
+  box-shadow: var(--section-box-shadow-hover, var(--section-box-shadow)) !important;
+}
+
+/* Section items (cards rendered inside sections) --------------------------- */
+@mixin surface-section-item-base {
+  padding: var(--card-padding) !important;
+  border: var(--section-item-border) !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-radius: var(--section-item-border-radius) !important;
+  background: var(--section-item-background) !important;
+  box-shadow: var(--section-item-box-shadow) !important;
+  gap: var(--card-gap) !important;
+  min-height: var(--card-min-height) !important;
+  transition: var(--section-item-transition) !important;
+  animation: var(--section-item-entrance-animation, none);
+  will-change: opacity, transform;
+}
+
+@mixin surface-section-item-hover {
+  border-color: var(--section-item-border-hover) !important;
+  background: var(--section-item-background-hover) !important;
+  box-shadow: var(--section-item-box-shadow-hover) !important;
+  transform: var(--section-item-hover-transform) !important;
+}

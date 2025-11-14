@@ -1,0 +1,87 @@
+/* Overview metric cards - compact card grid style */
+/* OPTIMIZED: Ultra-compact design with clear hierarchy */
+
+@import 'design-system';
+
+.overview-grid {
+  @include section-responsive-grid(var(--section-grid-min-width), var(--section-card-gap));
+  /* GLOBALLY ENFORCED: Grid gap */
+  gap: var(--section-card-gap) !important;
+}
+
+.overview-card {
+  @include card;
+  /* COMPACT: No minimum height */
+  min-height: auto;
+  justify-content: space-between;
+
+  &__label {
+    @include label-text;
+    /* OPTIMIZED: Proper hierarchy - labels at bottom */
+    transition: color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: calc(var(--card-gap) * 0.75);
+
+    lucide-icon {
+      @include icon-base(12px);
+      flex-shrink: 0;
+    }
+  }
+
+  &__value {
+    @include value-text;
+    /* OPTIMIZED: Values are primary - larger and prominent */
+    transition: color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--card-gap) * 0.5);
+    /* COMPACT: Tighter spacing for meta */
+    font-size: var(--card-meta-font-size) !important;
+    color: var(--card-text-muted) !important;
+    line-height: 1.2 !important;
+    font-weight: var(--card-meta-font-weight) !important;
+    margin-top: calc(var(--card-gap) * 0.25);
+
+    lucide-icon {
+      @include icon-base(11px);
+      @include trend-colors;
+      flex-shrink: 0;
+    }
+  }
+
+  &__meta-change {
+    @include trend-colors;
+    font-weight: var(--card-meta-font-weight);
+    font-size: var(--card-meta-font-size);
+  }
+}
+
+.overview-empty {
+  @include empty-state;
+}
+
+/* Removed media queries - grid uses auto-fit with min() for continuous responsiveness */
+/* Removed forced 2-column layout - now controlled by section-responsive-grid mixin */
+
+/* Light theme overrides - text colors only */
+/* Background and border are handled by global enforcement */
+:root[data-theme='day'] {
+  .overview-card {
+    /* Background and border removed - handled by global enforcement */
+    
+    &__label {
+      color: #6b7280;
+    }
+    
+    &__value {
+      color: #1a1a1a;
+    }
+  }
+}

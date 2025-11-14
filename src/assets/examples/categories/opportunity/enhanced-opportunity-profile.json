@@ -1,0 +1,525 @@
+{
+  "cardTitle": "Strategic Partnership Opportunity",
+  "cardSubtitle": "Multi-Year Enterprise Partnership",
+  "cardType": "opportunity",
+  "description": "Enhanced opportunity profile with advanced analytics, competitive intelligence, and strategic insights",
+  "sections": [
+    {
+      "title": "Strategic Opportunity Overview",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Total Contract Value",
+          "value": 2500000,
+          "type": "currency",
+          "icon": "fas fa-dollar-sign"
+        },
+        {
+          "label": "Annual Recurring Value",
+          "value": 850000,
+          "type": "currency",
+          "icon": "fas fa-sync-alt"
+        },
+        {
+          "label": "Win Probability",
+          "value": 78,
+          "type": "percentage",
+          "icon": "fas fa-trophy"
+        },
+        {
+          "label": "Strategic Importance",
+          "value": "High",
+          "type": "status",
+          "backgroundColor": "#dc2626",
+          "valueColor": "#ffffff",
+          "icon": "fas fa-star"
+        }
+      ]
+    },
+    {
+      "title": "Advanced Opportunity Analytics",
+      "description": "Comprehensive metrics with predictive insights and competitive analysis",
+      "type": "metrics",
+      "metrics": [
+        {
+          "label": "Overall Deal Score",
+          "value": 8.7,
+          "format": "rating",
+          "change": 0.4,
+          "changeType": "absolute",
+          "trend": "up",
+          "icon": "fas fa-chart-line"
+        },
+        {
+          "label": "Engagement Velocity",
+          "value": 92,
+          "format": "percentage",
+          "change": 8,
+          "changeType": "percentage",
+          "trend": "up",
+          "icon": "fas fa-rocket"
+        },
+        {
+          "label": "Competitive Position",
+          "value": 4.1,
+          "format": "rating",
+          "change": 0.2,
+          "changeType": "absolute",
+          "trend": "up",
+          "icon": "fas fa-trophy"
+        },
+        {
+          "label": "Relationship Strength",
+          "value": 8.2,
+          "format": "rating",
+          "change": 0.5,
+          "changeType": "absolute",
+          "trend": "up",
+          "icon": "fas fa-handshake"
+        },
+        {
+          "label": "Budget Alignment",
+          "value": 85,
+          "format": "percentage",
+          "change": 5,
+          "changeType": "percentage",
+          "trend": "up",
+          "icon": "fas fa-wallet"
+        },
+        {
+          "label": "Decision Confidence",
+          "value": 76,
+          "format": "percentage",
+          "change": 12,
+          "changeType": "percentage",
+          "trend": "up",
+          "icon": "fas fa-brain"
+        }
+      ]
+    },
+    {
+      "title": "Competitive Landscape Analysis",
+      "description": "Detailed competitive analysis and positioning",
+      "type": "table",
+      "columns": [
+        {
+          "key": "competitor",
+          "label": "Competitor",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "strengths",
+          "label": "Their Strengths",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "weaknesses",
+          "label": "Their Weaknesses",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "pricing",
+          "label": "Pricing Position",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "relationship",
+          "label": "Relationship with Prospect",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "threatLevel",
+          "label": "Threat Level",
+          "type": "status",
+          "sortable": true
+        }
+      ],
+      "data": [
+        {
+          "competitor": "TechCorp Solutions",
+          "strengths": "Established relationship, lower cost",
+          "weaknesses": "Limited scalability, outdated technology",
+          "pricing": "15% lower",
+          "relationship": "Current vendor for basic services",
+          "threatLevel": "Medium"
+        },
+        {
+          "competitor": "Global Systems Inc",
+          "strengths": "Global presence, comprehensive solutions",
+          "weaknesses": "Complex implementation, higher cost",
+          "pricing": "25% higher",
+          "relationship": "Previous competitor, lost deal 2 years ago",
+          "threatLevel": "High"
+        },
+        {
+          "competitor": "InnovateTech",
+          "strengths": "Cutting-edge technology, strong innovation",
+          "weaknesses": "Smaller company, limited resources",
+          "pricing": "10% lower",
+          "relationship": "No prior relationship",
+          "threatLevel": "Low"
+        },
+        {
+          "competitor": "Enterprise Solutions Ltd",
+          "strengths": "Similar market position, proven track record",
+          "weaknesses": "Slower response times, less flexible",
+          "pricing": "5% higher",
+          "relationship": "Met at industry conference",
+          "threatLevel": "Medium"
+        }
+      ]
+    },
+    {
+      "title": "Value Proposition Analysis",
+      "description": "Detailed analysis of value drivers and differentiation points",
+      "type": "table",
+      "columns": [
+        {
+          "key": "valueDriver",
+          "label": "Value Driver",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "importance",
+          "label": "Importance to Customer",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "ourStrength",
+          "label": "Our Strength",
+          "type": "rating",
+          "sortable": true,
+          "align": "center"
+        },
+        {
+          "key": "competitorStrength",
+          "label": "Competitor Strength",
+          "type": "rating",
+          "sortable": true,
+          "align": "center"
+        },
+        {
+          "key": "differentiation",
+          "label": "Differentiation",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "evidence",
+          "label": "Supporting Evidence",
+          "type": "text",
+          "sortable": true
+        }
+      ],
+      "data": [
+        {
+          "valueDriver": "Cost Reduction",
+          "importance": "High",
+          "ourStrength": 4,
+          "competitorStrength": 3,
+          "differentiation": "Superior efficiency",
+          "evidence": "20% better than industry average"
+        },
+        {
+          "valueDriver": "Technology Innovation",
+          "importance": "High",
+          "ourStrength": 5,
+          "competitorStrength": 3,
+          "differentiation": "Leading-edge AI capabilities",
+          "evidence": "Patented algorithms, recent awards"
+        },
+        {
+          "valueDriver": "Implementation Speed",
+          "importance": "Medium",
+          "ourStrength": 4,
+          "competitorStrength": 2,
+          "differentiation": "Agile methodology",
+          "evidence": "40% faster than competitors"
+        },
+        {
+          "valueDriver": "Scalability",
+          "importance": "High",
+          "ourStrength": 5,
+          "competitorStrength": 4,
+          "differentiation": "Cloud-native architecture",
+          "evidence": "Handles 10x growth without issues"
+        },
+        {
+          "valueDriver": "Support Quality",
+          "importance": "Medium",
+          "ourStrength": 4,
+          "competitorStrength": 4,
+          "differentiation": "24/7 expert support",
+          "evidence": "99.9% satisfaction rate"
+        },
+        {
+          "valueDriver": "Customization",
+          "importance": "Medium",
+          "ourStrength": 3,
+          "competitorStrength": 3,
+          "differentiation": "Flexible configuration",
+          "evidence": "80% of features configurable"
+        }
+      ]
+    },
+    {
+      "title": "Predictive Deal Insights",
+      "description": "AI-powered predictions and strategic recommendations",
+      "type": "progress",
+      "progressItems": [
+        {
+          "label": "Win Probability Trend",
+          "value": 78,
+          "max": 100,
+          "format": "percentage",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "78% win probability, trending upward"
+        },
+        {
+          "label": "Deal Velocity vs Target",
+          "value": 85,
+          "max": 100,
+          "format": "percentage",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "85% of optimal deal velocity achieved"
+        },
+        {
+          "label": "Stakeholder Satisfaction",
+          "value": 82,
+          "max": 100,
+          "format": "percentage",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "82% stakeholder satisfaction with process"
+        },
+        {
+          "label": "Competitive Threat Level",
+          "value": 35,
+          "max": 100,
+          "format": "percentage",
+          "color": "#3b82f6",
+          "showValue": true,
+          "description": "35% competitive threat assessment"
+        },
+        {
+          "label": "Budget Approval Risk",
+          "value": 20,
+          "max": 100,
+          "format": "percentage",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "20% risk of budget approval issues"
+        },
+        {
+          "label": "Timeline Confidence",
+          "value": 88,
+          "max": 100,
+          "format": "percentage",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "88% confidence in meeting target close date"
+        }
+      ]
+    },
+    {
+      "title": "Strategic Partnership Roadmap",
+      "description": "Long-term partnership development and expansion opportunities",
+      "type": "timeline",
+      "events": [
+        {
+          "title": "Discovery & Qualification",
+          "description": "Initial assessment and strategic alignment",
+          "date": "Q2 2024",
+          "icon": "fas fa-search",
+          "status": "completed"
+        },
+        {
+          "title": "Strategic Proposal Development",
+          "description": "Comprehensive partnership proposal and value proposition",
+          "date": "Q3 2024",
+          "icon": "fas fa-file-contract",
+          "status": "in-progress"
+        },
+        {
+          "title": "Pilot Implementation",
+          "description": "Initial pilot project to demonstrate value",
+          "date": "Q4 2024",
+          "icon": "fas fa-rocket",
+          "status": "planned"
+        },
+        {
+          "title": "Full Solution Rollout",
+          "description": "Complete implementation across all business units",
+          "date": "Q1 2025",
+          "icon": "fas fa-cogs",
+          "status": "planned"
+        },
+        {
+          "title": "Partnership Expansion",
+          "description": "Additional services and expanded scope",
+          "date": "Q2 2025",
+          "icon": "fas fa-expand-arrows-alt",
+          "status": "planned"
+        },
+        {
+          "title": "Strategic Alliance Formation",
+          "description": "Formal strategic alliance and joint innovation",
+          "date": "2026",
+          "icon": "fas fa-handshake",
+          "status": "planned"
+        },
+        {
+          "title": "Joint Market Leadership",
+          "description": "Co-leadership in target market segments",
+          "date": "2027",
+          "icon": "fas fa-crown",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "title": "Risk Mitigation Strategy",
+      "description": "Comprehensive risk assessment and mitigation plans",
+      "type": "table",
+      "columns": [
+        {
+          "key": "riskFactor",
+          "label": "Risk Factor",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "probability",
+          "label": "Probability",
+          "type": "percentage",
+          "sortable": true,
+          "align": "right"
+        },
+        {
+          "key": "impact",
+          "label": "Impact",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "mitigationStrategy",
+          "label": "Mitigation Strategy",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "owner",
+          "label": "Owner",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "status",
+          "label": "Status",
+          "type": "status",
+          "sortable": true
+        }
+      ],
+      "data": [
+        {
+          "riskFactor": "Budget approval delay",
+          "probability": 25,
+          "impact": "Medium",
+          "mitigationStrategy": "Executive sponsorship and ROI documentation",
+          "owner": "Account Executive",
+          "status": "Active"
+        },
+        {
+          "riskFactor": "Competitor intervention",
+          "probability": 35,
+          "impact": "High",
+          "mitigationStrategy": "Relationship building and differentiation messaging",
+          "owner": "Sales Team",
+          "status": "Active"
+        },
+        {
+          "riskFactor": "Technical integration challenges",
+          "probability": 20,
+          "impact": "Medium",
+          "mitigationStrategy": "Early technical validation and proof of concept",
+          "owner": "Solutions Engineer",
+          "status": "Planned"
+        },
+        {
+          "riskFactor": "Organizational change resistance",
+          "probability": 40,
+          "impact": "Medium",
+          "mitigationStrategy": "Change management and stakeholder engagement",
+          "owner": "Customer Success",
+          "status": "Active"
+        },
+        {
+          "riskFactor": "Regulatory compliance issues",
+          "probability": 15,
+          "impact": "High",
+          "mitigationStrategy": "Legal review and compliance assessment",
+          "owner": "Legal Team",
+          "status": "Completed"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Strategic Analysis",
+      "icon": "fas fa-chart-line"
+    },
+    {
+      "label": "Competitive Intelligence",
+      "icon": "fas fa-eye"
+    },
+    {
+      "label": "Predictive Forecasting",
+      "icon": "fas fa-brain"
+    },
+    {
+      "label": "Stakeholder Mapping",
+      "icon": "fas fa-users"
+    },
+    {
+      "label": "Risk Assessment",
+      "icon": "fas fa-exclamation-triangle"
+    },
+    {
+      "label": "Proposal Generator",
+      "icon": "fas fa-file-contract"
+    },
+    {
+      "label": "Deal Coaching",
+      "icon": "fas fa-graduation-cap"
+    },
+    {
+      "label": "Executive Briefing",
+      "icon": "fas fa-briefcase"
+    }
+  ],
+  "metadata": {
+    "category": "opportunity",
+    "variant": "enhanced",
+    "complexity": "high",
+    "useCase": "Advanced opportunity management with competitive intelligence, predictive analytics, and strategic planning",
+    "features": [
+      "strategic overview",
+      "advanced metrics",
+      "competitive landscape",
+      "value proposition analysis",
+      "predictive insights",
+      "strategic roadmap",
+      "risk mitigation"
+    ]
+  }
+}

@@ -1,0 +1,507 @@
+{
+  "cardTitle": "DSM",
+  "cardSubtitle": "Nutrition, Health & Sustainable Living Leader",
+  "sections": [
+    {
+      "title": "Company Overview",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Industry",
+          "value": "Nutrition & Health"
+        },
+        {
+          "label": "Founded",
+          "value": "1902"
+        },
+        {
+          "label": "Employees",
+          "value": "23,000+"
+        },
+        {
+          "label": "Headquarters",
+          "value": "Heerlen, Netherlands"
+        },
+        {
+          "label": "Annual Revenue",
+          "value": "€12.1B"
+        },
+        {
+          "label": "Global Presence",
+          "value": "50+ Countries"
+        },
+        {
+          "label": "CEO",
+          "value": "Dimitri de Vreeze"
+        },
+        {
+          "label": "Stock Exchange",
+          "value": "Euronext Amsterdam"
+        }
+      ]
+    },
+    {
+      "title": "ICT Investment Profile",
+      "type": "analytics",
+      "fields": [
+        {
+          "label": "Annual ICT Budget",
+          "value": "€200M",
+          "percentage": 100,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 8
+        },
+        {
+          "label": "Cloud Investment",
+          "value": "€50M",
+          "percentage": 25,
+          "performance": "good",
+          "trend": "up",
+          "change": 15
+        },
+        {
+          "label": "Digital Transformation",
+          "value": "€75M",
+          "percentage": 37,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 22
+        },
+        {
+          "label": "Cybersecurity Budget",
+          "value": "€25M",
+          "percentage": 12,
+          "performance": "good",
+          "trend": "stable",
+          "change": 5
+        }
+      ]
+    },
+    {
+      "title": "Key Performance Metrics",
+      "type": "overview",
+      "fields": [
+        {
+          "label": "Cloud Adoption Rate",
+          "value": "75%"
+        },
+        {
+          "label": "Digital Maturity Score",
+          "value": "8.5/10"
+        },
+        {
+          "label": "API Integrations",
+          "value": "120+"
+        },
+        {
+          "label": "Data Processed Daily",
+          "value": "2.5TB"
+        },
+        {
+          "label": "Uptime SLA",
+          "value": "99.9%"
+        },
+        {
+          "label": "Process Automation",
+          "value": "68%"
+        }
+      ]
+    },
+    {
+      "title": "Financial Performance",
+      "type": "financials",
+      "fields": [
+        {
+          "label": "Annual Revenue",
+          "value": "€12.1B",
+          "format": "currency",
+          "change": 8.5,
+          "trend": "up"
+        },
+        {
+          "label": "EBITDA",
+          "value": "€2.3B",
+          "format": "currency",
+          "change": 12.2,
+          "trend": "up"
+        },
+        {
+          "label": "Net Income",
+          "value": "€1.1B",
+          "format": "currency",
+          "change": 5.8,
+          "trend": "up"
+        },
+        {
+          "label": "Operating Margin",
+          "value": "19.0%",
+          "format": "percentage",
+          "change": 2.1,
+          "trend": "up"
+        }
+      ]
+    },
+    {
+      "title": "Key Digital Initiatives",
+      "type": "list",
+      "items": [
+        {
+          "title": "Enterprise Cloud Migration",
+          "description": "Migrating core ERP and manufacturing systems to AWS and Azure",
+          "status": "in-progress",
+          "priority": "high",
+          "assignee": "IT Transformation Team",
+          "date": "2025-Q2"
+        },
+        {
+          "title": "AI-Powered Analytics Platform",
+          "description": "Deploying predictive analytics across supply chain and operations",
+          "status": "in-progress",
+          "priority": "high",
+          "assignee": "Data Science Team",
+          "date": "2025-Q1"
+        },
+        {
+          "title": "Zero Trust Security Framework",
+          "description": "Implementing comprehensive zero trust architecture",
+          "status": "in-progress",
+          "priority": "high",
+          "assignee": "Security Team",
+          "date": "2024-Q4"
+        },
+        {
+          "title": "Digital Sustainability Dashboard",
+          "description": "Real-time monitoring of carbon footprint and resource usage",
+          "status": "completed",
+          "priority": "medium",
+          "assignee": "Sustainability Team",
+          "date": "2024-Q3"
+        }
+      ]
+    },
+    {
+      "title": "Recent Milestones",
+      "type": "event",
+      "items": [
+        {
+          "title": "Orange Business Partnership Launch",
+          "description": "Formalized strategic partnership for cloud transformation",
+          "date": "2024-09-15",
+          "time": "10:00 AM",
+          "status": "completed"
+        },
+        {
+          "title": "AI Analytics Platform Go-Live",
+          "description": "Successfully deployed predictive analytics across 3 manufacturing sites",
+          "date": "2024-11-01",
+          "time": "2:00 PM",
+          "status": "completed"
+        },
+        {
+          "title": "ISO 27001 Certification",
+          "description": "Achieved ISO 27001 certification for information security management",
+          "date": "2024-10-20",
+          "time": "9:00 AM",
+          "status": "completed"
+        },
+        {
+          "title": "Digital Sustainability Summit",
+          "description": "Presenting digital solutions for net-zero goals at industry summit",
+          "date": "2024-12-05",
+          "time": "3:00 PM",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "title": "Network Infrastructure",
+      "type": "chart",
+      "fields": [
+        {
+          "label": "Connected Sites",
+          "value": 120,
+          "color": "#FF7900"
+        },
+        {
+          "label": "Total Bandwidth (Gbps)",
+          "value": 45,
+          "color": "#FF9933"
+        },
+        {
+          "label": "SD-WAN Sites",
+          "value": 85,
+          "color": "#CC5F00"
+        },
+        {
+          "label": "Cloud Connections",
+          "value": 28,
+          "color": "#FFE6CC"
+        }
+      ]
+    },
+    {
+      "title": "Digital Solutions Portfolio",
+      "type": "solutions",
+      "fields": [
+        {
+          "title": "Hybrid Cloud Infrastructure",
+          "description": "Multi-cloud platform supporting AWS and Azure workloads with seamless integration",
+          "category": "Infrastructure",
+          "complexity": "high",
+          "benefits": [
+            "99.9% uptime SLA",
+            "Auto-scaling capabilities",
+            "Global edge network"
+          ],
+          "deliveryTime": "6-8 weeks"
+        },
+        {
+          "title": "Advanced Analytics Platform",
+          "description": "Real-time data processing and predictive analytics for business intelligence",
+          "category": "Analytics",
+          "complexity": "medium",
+          "benefits": [
+            "Real-time insights",
+            "Predictive modeling",
+            "Custom dashboards"
+          ],
+          "deliveryTime": "4-6 weeks"
+        },
+        {
+          "title": "Enterprise Security Suite",
+          "description": "Comprehensive security framework with zero trust architecture and threat detection",
+          "category": "Security",
+          "complexity": "high",
+          "benefits": [
+            "24/7 threat monitoring",
+            "Automated incident response",
+            "Compliance ready"
+          ],
+          "deliveryTime": "8-10 weeks"
+        },
+        {
+          "title": "IoT Manufacturing Platform",
+          "description": "Connected devices and sensors for smart manufacturing and predictive maintenance",
+          "category": "IoT",
+          "complexity": "medium",
+          "benefits": [
+            "Real-time monitoring",
+            "Predictive maintenance",
+            "Energy optimization"
+          ],
+          "deliveryTime": "6-8 weeks"
+        }
+      ]
+    },
+    {
+      "title": "Key Technology Products",
+      "type": "product",
+      "fields": [
+        {
+          "title": "DSM Cloud Platform",
+          "description": "Enterprise-grade cloud infrastructure for global operations",
+          "category": "Infrastructure",
+          "benefits": [
+            "Multi-region deployment",
+            "Disaster recovery",
+            "Compliance certified"
+          ],
+          "contact": {
+            "name": "Cloud Solutions Team",
+            "role": "Infrastructure Lead",
+            "email": "cloud@dsm.com"
+          }
+        },
+        {
+          "title": "DSM Analytics Suite",
+          "description": "Advanced business intelligence and predictive analytics platform",
+          "category": "Analytics",
+          "benefits": [
+            "Real-time dashboards",
+            "Machine learning models",
+            "Custom reporting"
+          ],
+          "contact": {
+            "name": "Data Analytics Team",
+            "role": "Analytics Lead",
+            "email": "analytics@dsm.com"
+          }
+        },
+        {
+          "title": "Client Success Story",
+          "category": "references",
+          "reference": {
+            "company": "Global Manufacturing Corp",
+            "testimonial": "DSM's cloud platform transformed our operations, reducing costs by 30% and improving efficiency."
+          }
+        }
+      ]
+    },
+    {
+      "title": "Key Contacts",
+      "type": "contact-card",
+      "fields": [
+        {
+          "label": "CTO Office",
+          "title": "Technology Leadership",
+          "value": "Chief Technology Officer",
+          "email": "cto@dsm.com",
+          "phone": "+31 45 578 2000",
+          "role": "Executive",
+          "department": "Technology"
+        },
+        {
+          "label": "Cloud Infrastructure Lead",
+          "title": "Cloud Solutions",
+          "value": "Senior Director",
+          "email": "cloud.lead@dsm.com",
+          "phone": "+31 45 578 2100",
+          "role": "Management",
+          "department": "IT Infrastructure"
+        },
+        {
+          "label": "Security Director",
+          "title": "Cybersecurity",
+          "value": "Director of Security",
+          "email": "security@dsm.com",
+          "phone": "+31 45 578 2200",
+          "role": "Management",
+          "department": "Information Security"
+        }
+      ]
+    },
+    {
+      "title": "Strategic Technology Partners",
+      "type": "network-card",
+      "fields": [
+        {
+          "label": "Orange Business",
+          "value": "Primary Cloud & Network Partner",
+          "connections": 15
+        },
+        {
+          "label": "Amazon Web Services",
+          "value": "Cloud Infrastructure Provider",
+          "connections": 8
+        },
+        {
+          "label": "Microsoft Azure",
+          "value": "Hybrid Cloud Platform",
+          "connections": 6
+        },
+        {
+          "label": "SAP",
+          "value": "ERP & Business Applications",
+          "connections": 12
+        },
+        {
+          "label": "Salesforce",
+          "value": "CRM & Customer Engagement",
+          "connections": 5
+        }
+      ]
+    },
+    {
+      "title": "Global Operations",
+      "type": "map",
+      "fields": [
+        {
+          "name": "DSM HQ - Heerlen",
+          "x": 52,
+          "y": 32,
+          "type": "headquarters",
+          "address": "Heerlen, Netherlands"
+        },
+        {
+          "name": "DSM North America",
+          "x": 25,
+          "y": 35,
+          "type": "regional-office",
+          "address": "New York, USA"
+        },
+        {
+          "name": "DSM Asia Pacific",
+          "x": 80,
+          "y": 60,
+          "type": "regional-office",
+          "address": "Singapore"
+        },
+        {
+          "name": "DSM China",
+          "x": 83,
+          "y": 42,
+          "type": "office",
+          "address": "Shanghai, China"
+        },
+        {
+          "name": "DSM Latin America",
+          "x": 30,
+          "y": 70,
+          "type": "office",
+          "address": "São Paulo, Brazil"
+        },
+        {
+          "name": "DSM India",
+          "x": 70,
+          "y": 52,
+          "type": "office",
+          "address": "Mumbai, India"
+        }
+      ]
+    },
+    {
+      "title": "Executive Insights",
+      "type": "quotation",
+      "fields": [
+        {
+          "quote": "Digital transformation is not just about technology—it's about creating sustainable value for our customers and stakeholders. Our partnership with Orange Business has been instrumental in accelerating our cloud journey.",
+          "author": "Dimitri de Vreeze",
+          "source": "CEO, DSM",
+          "date": "2024"
+        },
+        {
+          "quote": "The integration of AI and data analytics into our operations has transformed how we approach innovation. We're seeing measurable improvements in efficiency and decision-making across all business units.",
+          "author": "CTO Office",
+          "source": "DSM Technology Leadership",
+          "date": "2024"
+        }
+      ]
+    },
+    {
+      "title": "Key References",
+      "type": "text-reference",
+      "fields": [
+        {
+          "text": "DSM has committed to achieving net-zero emissions by 2050, with an interim target of 50% reduction by 2030. The company's sustainability strategy integrates digital solutions to optimize resource usage and reduce environmental impact.",
+          "category": "Sustainability",
+          "source": "DSM Annual Report 2023",
+          "date": "2024",
+          "referenceText": "Page 45-48",
+          "url": "https://www.dsm.com/corporate/sustainability.html"
+        },
+        {
+          "text": "The company's digital transformation initiative, launched in 2022, focuses on cloud migration, data analytics, and AI integration. Key achievements include 75% cloud adoption rate and deployment of predictive analytics across manufacturing operations.",
+          "category": "Digital Strategy",
+          "source": "Internal Strategy Document",
+          "date": "2024",
+          "referenceText": "Q3 2024 Update"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Visit DSM",
+      "type": "primary",
+      "icon": "🌐",
+      "action": "https://www.dsm.com"
+    },
+    {
+      "label": "Contact Orange Business",
+      "type": "primary",
+      "icon": "📧",
+      "action": "mailto:obclients@orange.com"
+    }
+  ]
+}
