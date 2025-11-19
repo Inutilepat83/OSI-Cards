@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export enum ErrorType {
@@ -42,7 +42,7 @@ export class ErrorHandlingService {
       return {
         type: this.categorizeError(error),
         message: error.message,
-        code: (error as any).code,
+        code: this.extractErrorCode(error),
         details: { stack: error.stack, context },
         retryable: this.isRetryable(error),
         timestamp: Date.now()
@@ -59,11 +59,11 @@ export class ErrorHandlingService {
       };
     }
 
-    if (error && typeof error === 'object' && 'message' in error) {
+    if (this.isErrorWithMessage(error)) {
       return {
         type: ErrorType.UNKNOWN,
-        message: String((error as any).message),
-        code: (error as any).code,
+        message: this.normalizeMessage(error.message),
+        code: this.normalizeCode(error.code),
         details: { original: error, context },
         retryable: false,
         timestamp: Date.now()
@@ -132,8 +132,8 @@ export class ErrorHandlingService {
     if (typeof error === 'string') {
       return error;
     }
-    if (error && typeof error === 'object' && 'message' in error) {
-      return String((error as any).message);
+    if (this.isErrorWithMessage(error)) {
+      return this.normalizeMessage(error.message);
     }
     return 'An unknown error occurred';
   }
@@ -150,6 +150,39 @@ export class ErrorHandlingService {
    */
   getCurrentError(): AppError | null {
     return this.errorSubject.value;
+  }
+
+  private isErrorWithMessage(value: unknown): value is { message?: unknown; code?: unknown } {
+    return typeof value === 'object' && value !== null && 'message' in value;
+  }
+
+  private extractErrorCode(error: Error): string | undefined {
+    const candidate = (error as { code?: unknown }).code;
+    return this.normalizeCode(candidate);
+  }
+
+  private normalizeMessage(message: unknown): string {
+    if (typeof message === 'string') {
+      return message;
+    }
+    if (message === undefined || message === null) {
+      return 'An unknown error occurred';
+    }
+    try {
+      return JSON.stringify(message);
+    } catch {
+      return String(message);
+    }
+  }
+
+  private normalizeCode(code: unknown): string | undefined {
+    if (typeof code === 'string') {
+      return code;
+    }
+    if (typeof code === 'number') {
+      return code.toString();
+    }
+    return undefined;
   }
 }
 

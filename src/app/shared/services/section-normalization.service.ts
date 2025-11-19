@@ -128,10 +128,49 @@ export class SectionNormalizationService {
    */
   sortSections(sections: CardSection[]): CardSection[] {
     return [...sections].sort((a, b) => {
+      const streamingOrderComparison = this.compareStreamingOrder(a, b);
+      if (streamingOrderComparison !== 0) {
+        return streamingOrderComparison;
+      }
       const priorityA = this.getSectionPriority(a);
       const priorityB = this.getSectionPriority(b);
       return priorityA - priorityB;
     });
+  }
+
+  private compareStreamingOrder(a: CardSection, b: CardSection): number {
+    const orderA = this.getStreamingOrder(a);
+    const orderB = this.getStreamingOrder(b);
+    const hasOrderA = orderA !== null;
+    const hasOrderB = orderB !== null;
+    if (!hasOrderA && !hasOrderB) {
+      return 0;
+    }
+    if (hasOrderA && !hasOrderB) {
+      return -1;
+    }
+    if (!hasOrderA && hasOrderB) {
+      return 1;
+    }
+    if (orderA! < orderB!) {
+      return -1;
+    }
+    if (orderA! > orderB!) {
+      return 1;
+    }
+    return 0;
+  }
+
+  private getStreamingOrder(section: CardSection): number | null {
+    const metadata = section.meta as Record<string, unknown> | undefined;
+    if (!metadata) {
+      return null;
+    }
+    const rawOrder = metadata['streamingOrder'];
+    if (typeof rawOrder === 'number' && Number.isFinite(rawOrder)) {
+      return rawOrder;
+    }
+    return null;
   }
 
   /**

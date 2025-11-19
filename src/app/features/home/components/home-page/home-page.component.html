@@ -40,7 +40,7 @@
             </div>
             <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-foreground">Instant Generation</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
-              Real-time conversion from JSON data to interactive business cards
+              Real-time conversion from TOON data to interactive business cards
             </p>
           </div>
         </div>
@@ -51,9 +51,9 @@
             <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
               <lucide-icon name="code-2" [size]="32" class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"></lucide-icon>
             </div>
-            <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-foreground">JSON Configuration</h3>
+            <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-foreground">TOON Configuration</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
-              Simple, powerful JSON-driven card creation and customization
+              Simple, powerful TOON-driven card creation and customization
             </p>
           </div>
         </div>
@@ -107,8 +107,9 @@
           <div class="flex items-center gap-2 mb-5 flex-shrink-0 min-h-[28px]">
             <lucide-icon name="sparkles" [size]="20" class="text-[var(--color-brand)]" aria-hidden="true"></lucide-icon>
             <span class="font-semibold">Live Preview</span>
-            <span *ngIf="generatedCard?.cardType" class="text-sm text-muted-foreground">
-              • {{ generatedCard?.cardType }} Card
+            <span *ngIf="toonInput?.trim() !== '' && !llmStreamState?.isSimulating" class="ml-2 px-2 py-1 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded text-xs">Live edit</span>
+            <span *ngIf="previewCard?.cardType" class="text-sm text-muted-foreground">
+              • {{ previewCard?.cardType }} Card
             </span>
             <span *ngIf="isFullscreen" class="bg-primary/20 text-primary border border-primary/30 ml-2 px-2 py-1 rounded text-xs font-semibold">
               Fullscreen Mode
@@ -116,90 +117,49 @@
           </div>
 
           <div class="flex-1">
-            <ng-container *ngIf="isGenerating || !isInitialized; else cardDisplay">
-              <!-- Loading State -->
-              <div class="flex flex-col items-center justify-center space-y-4 text-center py-20">
-                <div class="w-8 h-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
-                <div>
-                  <p class="text-lg font-medium text-foreground">
-                    {{ !isInitialized ? 'Initializing System...' : 'Generating Card...' }}
-                  </p>
-                  <p class="text-sm text-muted-foreground">
-                    {{ !isInitialized ? 'Loading templates and services' : 'Processing your configuration' }}
-                  </p>
-                </div>
-              </div>
-            </ng-container>
-
-            <ng-template #cardDisplay>
-              <ng-container *ngIf="generatedCard; else emptyState">
-                <!-- Card Display -->
-                <div [ngClass]="'w-full ' + (isFullscreen ? 'max-w-none' : '')">
-                  <app-card-preview
-                    [generatedCard]="generatedCard"
-                    [isGenerating]="isGenerating"
-                    [isInitialized]="isInitialized"
-                    [isFullscreen]="isFullscreen"
-                    (fieldInteraction)="onFieldInteraction($event)"
-                    (cardInteraction)="onCardInteraction($event)"
-                    (fullscreenToggle)="onFullscreenToggle($event)">
-                  </app-card-preview>
-                </div>
-              </ng-container>
-            </ng-template>
-
-            <ng-template #emptyState>
-              <!-- Empty State -->
-              <div class="flex flex-col items-center justify-center space-y-4 text-center py-20">
-                <div class="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center">
-                  <lucide-icon name="code-2" [size]="32" class="text-muted-foreground" aria-hidden="true"></lucide-icon>
-                </div>
-                <div>
-                  <p class="text-lg font-medium text-foreground mb-2">No Card Preview</p>
-                  <p class="text-sm text-muted-foreground leading-relaxed max-w-md">
-                    Enter a valid JSON configuration or select a template to see your card preview here.
-                  </p>
-                </div>
-                <div class="flex flex-col gap-2 text-xs text-muted-foreground">
-                  <div class="flex items-center gap-2">
-                    <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                    <span>Valid JSON will auto-generate cards</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-                    <span>Interactive effects respond to mouse</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <div class="w-2 h-2 rounded-full bg-purple-500"></div>
-                    <span>Export cards as high-quality PNG</span>
-                  </div>
-                </div>
-              </div>
-            </ng-template>
+            <div [ngClass]="'w-full ' + (isFullscreen ? 'max-w-none' : '')">
+              <app-card-preview
+                [generatedCard]="previewCard"
+                [isGenerating]="isGenerating"
+                [isInitialized]="isInitialized"
+                [isFullscreen]="isFullscreen"
+                [changeType]="previewChangeType"
+                [llmStreamState]="llmStreamState"
+                [llmPreviewCard]="llmPreviewCard"
+                [streamingCardUpdate]="currentStreamingUpdate"
+                (fieldInteraction)="onFieldInteraction($event)"
+                (cardInteraction)="onCardInteraction($event)"
+                (fullscreenToggle)="onFullscreenToggle($event)">
+              </app-card-preview>
+            </div>
           </div>
         </div>
 
-        <!-- JSON Configuration - Full width when fullscreen, otherwise responsive -->
+        <!-- TOON Configuration - Full width when fullscreen, otherwise responsive -->
         <div [ngClass]="'flex flex-col ' + (isFullscreen ? 'order-2 w-full' : 'lg:col-span-2 order-1 lg:order-1')">
           <div class="flex items-center gap-2 mb-5 flex-shrink-0 min-h-[28px]">
             <lucide-icon name="code-2" [size]="20" class="text-[var(--color-brand)]" aria-hidden="true"></lucide-icon>
-            <span class="font-semibold">JSON Configuration</span>
-            <span *ngIf="!isJsonValid" class="bg-destructive/10 text-destructive border border-destructive/20 px-2 py-1 rounded text-xs font-semibold">
-              Invalid JSON
+            <span class="font-semibold">TOON Configuration</span>
+            <span *ngIf="!isToonValid" class="bg-destructive/10 text-destructive border border-destructive/20 px-2 py-1 rounded text-xs font-semibold">
+              Invalid TOON
             </span>
           </div>
           
-          <!-- JSON Editor Card -->
+          <!-- TOON Editor Card -->
           <div class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg p-4" style="height: calc(100vh - 80px);">
-            <app-json-editor
-              [jsonInput]="jsonInput"
-              [jsonError]="jsonError"
-              [isJsonValid]="isJsonValid"
-              (jsonInputChange)="onJsonInputChange($event)">
-            </app-json-editor>
+            <app-toon-editor
+              [toonInput]="toonInput"
+              [toonError]="toonError"
+              [isToonValid]="isToonValid"
+              [isSimulatingLLM]="isSimulatingLLM"
+              [llmStatusMessage]="llmStreamState.statusLabel"
+              (toonInputChange)="onToonInputChange($event)"
+              (simulateLLMStart)="onSimulateLLMStart()"
+              (simulateLLMCancel)="onSimulateLLMCancel()">
+            </app-toon-editor>
             
-            <div *ngIf="jsonError" class="mt-4 p-2 bg-red-500/10 border border-red-500/20 rounded text-sm text-red-400">
-              <strong>JSON Error:</strong> {{ jsonError }}
+            <div *ngIf="toonError" class="mt-4 p-2 bg-red-500/10 border border-red-500/20 rounded text-sm text-red-400">
+              <strong>TOON Error:</strong> {{ toonError }}
             </div>
           </div>
         </div>
@@ -226,7 +186,7 @@
             </div>
             <h4 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Real-time Generation</h4>
             <p class="text-muted-foreground text-sm leading-relaxed">
-              Instant card generation with live preview and JSON validation
+              Instant card generation with live preview and TOON validation
             </p>
           </div>
         </div>

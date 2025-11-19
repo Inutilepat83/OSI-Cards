@@ -1,4 +1,4 @@
-import { Injectable, isDevMode } from '@angular/core';
+import { Injectable, inject, isDevMode } from '@angular/core';
 import { PerformanceService } from './performance.service';
 
 /**
@@ -41,15 +41,17 @@ export class PerformanceBudgetService {
     { name: 'sectionCount', type: 'count', threshold: 10, warning: 20, error: 50 }
   ];
 
-  private violations: Array<{
+  private violations: {
     budget: string;
     actual: number;
     threshold: number;
     severity: 'warning' | 'error';
     timestamp: number;
-  }> = [];
+  }[] = [];
 
-  constructor(private performanceService: PerformanceService) {
+  private readonly performanceService = inject(PerformanceService);
+
+  constructor() {
     // Subscribe to performance metrics and check against budgets
     this.setupBudgetMonitoring();
   }
@@ -151,20 +153,20 @@ export class PerformanceBudgetService {
   /**
    * Get budget violations
    */
-  getViolations(): Array<{
+  getViolations(): {
     budget: string;
     actual: number;
     threshold: number;
     severity: 'warning' | 'error';
     timestamp: number;
-  }> {
+  }[] {
     return [...this.violations];
   }
 
   /**
    * Get recent violations (last N minutes)
    */
-  getRecentViolations(minutes: number = 5): typeof this.violations {
+  getRecentViolations(minutes = 5): typeof this.violations {
     const cutoff = Date.now() - (minutes * 60 * 1000);
     return this.violations.filter(v => v.timestamp > cutoff);
   }
@@ -199,6 +201,10 @@ export class PerformanceBudgetService {
       return 'ok'; // No budget defined
     }
 
+    if (metadata && isDevMode()) {
+      console.debug(`Budget metadata for ${name}:`, metadata);
+    }
+
     if (value > budget.error) {
       this.recordViolation(name, value, budget.error, 'error');
       return 'error';
@@ -216,7 +222,7 @@ export class PerformanceBudgetService {
   getSummary(): {
     totalMetrics: number;
     averageDuration: number;
-    slowestOperations: Array<{ name: string; duration: number }>;
+    slowestOperations: { name: string; duration: number }[];
     violations: {
       total: number;
       warnings: number;

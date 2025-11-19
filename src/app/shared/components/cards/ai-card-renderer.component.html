@@ -12,7 +12,10 @@
        [ngStyle]="tiltStyle">
       <article
         class="ai-card-surface"
-        [ngClass]="{ 'ai-card-surface--fullscreen': isFullscreen }"
+        [ngClass]="{
+          'ai-card-surface--fullscreen': isFullscreen,
+          'streaming-active': streamingStage === 'streaming'
+        }"
       >
         <!-- Title and button at the top of the card -->
         <div class="flex items-center justify-between mb-4">
@@ -52,6 +55,7 @@
             [sections]="processedSections"
             [gap]="12"
             [minColumnWidth]="280"
+            [changeType]="changeType"
             class="w-full"
             (sectionEvent)="onSectionEvent($event)"
             (layoutChange)="onLayoutChange($event)"

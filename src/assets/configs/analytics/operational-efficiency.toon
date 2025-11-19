@@ -1,0 +1,21 @@
+cardTitle: Operational Efficiency Analytics
+sections[2]:
+  - title: Analytics Overview
+    type: info
+    fields[6]{label,value}:
+      Dashboard Type,Operations Analytics
+      Data Source,ERP & Operations Systems
+      Update Frequency,Daily
+      Time Range,Current Month
+      Metrics Tracked,25+ KPIs
+      Departments,All Operations
+  - title: Efficiency Metrics
+    type: analytics
+    fields[4]{label,value,percentage,performance,trend,change}:
+      Process Efficiency,87%,87,excellent,up,4
+      Cost Reduction,15%,15,excellent,up,3
+      Automation Rate,72%,72,good,up,8
+      Resource Utilization,82%,82,good,stable,1
+actions[2]{label,type,icon,action}:
+  View Dashboard,primary,📊,#
+  Generate Report,primary,📥,#

@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { AppState } from '../../../store/app.state';
 import { selectError } from '../../../store/cards/cards.selectors';
 import * as CardActions from '../../../store/cards/cards.state';
-import { ErrorHandlingService, AppError } from '../../../core/services/error-handling.service';
+import { ErrorHandlingService } from '../../../core/services/error-handling.service';
 
 @Component({
   selector: 'app-error-display',

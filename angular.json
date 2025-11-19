@@ -60,7 +60,16 @@
                   "maximumWarning": "500kb",
                   "maximumError": "1mb"
                 }
-              ]
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "commonChunk": true
             }
           }
         },

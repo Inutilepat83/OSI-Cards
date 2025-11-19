@@ -24,7 +24,7 @@ User Action → NgRx Action → Effect → CardDataService → Provider → HTTP
 
 ### 1.2 Current Implementation Analysis
 
-#### **JsonCardProvider Service** (`json-card-provider.service.ts`)
+#### **ToonCardProvider Service** (`toon-card-provider.service.ts`)
 
 **Blocking Patterns Identified:**
 - **`getAllCards()`**: Uses `forkJoin()` to load all cards synchronously before emitting
@@ -129,10 +129,10 @@ loadCards$ = createEffect(() =>
 
 **Hotspots Identified:**
 
-1. **`processJsonInput()` (Line 190-236)**:
-   - **`JSON.parse(jsonInput)`**: Called on every debounced input (300ms)
-   - **`JSON.stringify()`**: Used in `CardDiffUtil.mergeCardUpdates()` indirectly
-   - **Impact**: High - runs on every JSON editor change
+1. **`processToonInput()` (Line 190-236)**:
+  - **`decode(toonInput)`**: Called on every debounced input (300ms)
+  - **`encode()`**: Used in `CardDiffUtil.mergeCardUpdates()` indirectly
+  - **Impact**: High - runs on every TOON editor change
 
 2. **`CardDiffUtil.mergeCardUpdates()` (home-page.component.ts:227)**:
    - Calls `CardDiffUtil.mergeCardUpdates()` which internally uses `JSON.stringify()`
@@ -161,15 +161,15 @@ loadCards$ = createEffect(() =>
 
 3. **`cards.state.ts` (Line 161-164, 172)**:
    ```typescript
-   const existingJson = JSON.stringify(removeAllIds(existingCard));
-   const newJson = JSON.stringify(removeAllIds(cardWithId));
-   if (existingJson === newJson) {
+  const existingToon = encode(removeAllIds(existingCard), { indent: 2, keyFolding: 'safe' });
+  const newToon = encode(removeAllIds(cardWithId), { indent: 2, keyFolding: 'safe' });
+  if (existingToon === newToon) {
      return state;
    }
    // ...
-   jsonInput: JSON.stringify(cardWithoutIds, null, 2),
+  toonInput: formatToonPayload(cardWithoutIds),
    ```
-   - **Issue**: Full card serialization in reducer for equality check and JSON editor
+  - **Issue**: Full card serialization in reducer for equality check and TOON editor
    - **Frequency**: Every `generateCardSuccess` action
    - **Impact**: Critical - serializes entire card config on every update
 
@@ -196,7 +196,7 @@ loadCards$ = createEffect(() =>
 **Issues:**
 - **OnPush with manual `cd.markForCheck()`**: Used correctly but many subscription points
 - **Multiple store selectors** (Lines 66-120): 5+ separate subscriptions
-- **Debounced JSON input** (Line 126-137): Additional change detection trigger
+- **Debounced TOON input** (Line 126-137): Additional change detection trigger
 
 **Impact**: Medium - excessive change detection cycles
 
@@ -342,7 +342,7 @@ performance: {
 
 ### 4.1 Manifest-Driven Asset Discovery
 
-**Problem**: Hardcoded file paths in `JsonCardProvider`
+**Problem**: Hardcoded file paths in `ToonCardProvider`
 
 **Solution**: Create manifest file for dynamic discovery
 
@@ -354,7 +354,7 @@ performance: {
     {
       "id": "dsm",
       "type": "company",
-      "path": "companies/dsm.json",
+      "path": "companies/dsm.toon",
       "size": 14484,
       "priority": "high", // Load first
       "sections": 12,
@@ -381,7 +381,7 @@ performance: {
 
 **Implementation Steps:**
 1. Create manifest generator script
-2. Update `JsonCardProvider` to load manifest first
+2. Update `ToonCardProvider` to load manifest first (with TOON-only loading)
 3. Implement priority-based loading queue
 4. Add manifest version checking for cache busting
 
@@ -394,7 +394,7 @@ performance: {
 #### **Phase 1: Card-Level Streaming**
 
 ```typescript
-// json-card-provider.service.ts
+// toon-card-provider.service.ts
 getAllCardsStreaming(): Observable<AICardConfig> {
   // Load manifest first
   return this.http.get<Manifest>('/assets/configs/manifest.json').pipe(
@@ -714,12 +714,12 @@ ngOnInit(): void {
 
 ### Phase 1: Foundation (Week 1)
 - [ ] Create manifest.json generator script
-- [ ] Update JsonCardProvider to use manifest
+- [ ] Update ToonCardProvider to use manifest
 - [ ] Implement priority-based loading
 - [ ] Wire PerformanceService telemetry
 
 ### Phase 2: Streaming (Week 2)
-- [ ] Implement card-level streaming in JsonCardProvider
+- [ ] Implement card-level streaming in ToonCardProvider
 - [ ] Add section-level streaming to CardDataService
 - [ ] Update CardPreviewComponent to subscribe to streaming
 - [ ] Add skeleton loading states

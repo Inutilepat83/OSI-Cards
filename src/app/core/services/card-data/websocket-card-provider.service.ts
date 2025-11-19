@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, BehaviorSubject, NEVER, EMPTY, from } from 'rxjs';
+import { Observable, Subject, BehaviorSubject, NEVER, from } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { map, catchError, retry, concatMap, delay } from 'rxjs/operators';
 import { AICardConfig, CardSection } from '../../../models';
@@ -46,7 +46,17 @@ interface DeleteCardMessage {
   data: { id: string };
 }
 
-type OutboundSocketMessage = GetAllCardsMessage | CreateCardMessage | UpdateCardMessage | DeleteCardMessage;
+interface StreamCardSectionsMessage {
+  type: 'stream_card_sections';
+  data: { id: string };
+}
+
+type OutboundSocketMessage =
+  | GetAllCardsMessage
+  | CreateCardMessage
+  | UpdateCardMessage
+  | DeleteCardMessage
+  | StreamCardSectionsMessage;
 
 type SocketMessage = InboundSocketMessage | OutboundSocketMessage;
 
@@ -255,7 +265,7 @@ export class WebSocketCardProvider extends CardDataProvider {
     this.sendMessage({
       type: 'stream_card_sections',
       data: { id: cardId }
-    } as any);
+    });
 
     // Listen for section updates
     return new Observable<CardSection>(observer => {

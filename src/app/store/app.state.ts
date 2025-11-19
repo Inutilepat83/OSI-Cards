@@ -1,6 +1,5 @@
 import { ActionReducerMap, MetaReducer } from '@ngrx/store';
 import * as fromCards from './cards/cards.state';
-import { environment } from '../../environments/environment';
 import { localStorageSyncReducer } from './meta-reducers/local-storage.meta-reducer';
 
 export interface AppState {

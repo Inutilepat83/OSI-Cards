@@ -42,7 +42,7 @@ export class AnalyticsSectionComponent extends BaseSectionComponent<AnalyticsFie
     return this.utils.formatChange(change);
   }
 
-  trackField(index: number, field: AnalyticsField): string {
+  override trackField(index: number, field: AnalyticsField): string {
     return field.id ?? `${field.label}-${index}`;
   }
 }

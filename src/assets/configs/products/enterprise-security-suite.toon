@@ -1,0 +1,22 @@
+cardTitle: Enterprise Security Suite
+sections[2]:
+  - title: Product Overview
+    type: info
+    fields[8]{label,value}:
+      Category,Cybersecurity
+      Launch Date,"2023"
+      Version,2.1.0
+      Target Market,Enterprise Security
+      Pricing Model,Subscription
+      Support Level,24/7 Premium
+      Deployment,Hybrid
+      Compliance,"ISO 27001, SOC 2"
+  - title: Security Metrics
+    type: analytics
+    fields[3]{label,value,percentage,performance,trend}:
+      Threat Detection Rate,99.9%,99.9,excellent,up
+      Response Time,< 5 minutes,95,excellent,up
+      False Positive Rate,0.1%,0.1,excellent,down
+actions[2]{label,type,icon,action}:
+  Learn More,primary,📖,#
+  Request Demo,primary,🎬,"mailto:demos@orange.com"

@@ -1,8 +1,10 @@
 import { createAction, props } from '@ngrx/store';
 import { createReducer, on } from '@ngrx/store';
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
+import { encode } from '@toon-format/toon';
 import { AICardConfig, CardType } from '../../models/card.model';
 import { ensureCardIds, removeAllIds } from '../../shared/utils/card-utils';
+import { CardChangeType } from '../../shared/utils/card-diff.util';
 
 // ===== ENTITY ADAPTER =====
 
@@ -19,6 +21,11 @@ export const loadCardsSuccess = createAction(
   '[Cards] Load Cards Success',
   props<{ cards: AICardConfig[] }>()
 );
+export const loadCardIncremental = createAction(
+  '[Cards] Load Card Incremental',
+  props<{ card: AICardConfig }>()
+);
+export const loadCardsComplete = createAction('[Cards] Load Cards Complete');
 export const loadCardsFailure = createAction(
   '[Cards] Load Cards Failure',
   props<{ error: string }>()
@@ -34,10 +41,10 @@ export const setCardVariant = createAction(
   props<{ variant: number }>()
 );
 
-// JSON Input and Card Generation Actions
-export const updateJsonInput = createAction(
-  '[Cards] Update JSON Input',
-  props<{ jsonInput: string }>()
+// TOON Input and Card Generation Actions
+export const updateToonInput = createAction(
+  '[Cards] Update TOON Input',
+  props<{ toonInput: string }>()
 );
 export const generateCard = createAction(
   '[Cards] Generate Card',
@@ -45,7 +52,7 @@ export const generateCard = createAction(
 );
 export const generateCardSuccess = createAction(
   '[Cards] Generate Card Success',
-  props<{ card: AICardConfig }>()
+  props<{ card: AICardConfig; changeType?: CardChangeType }>()
 );
 export const generateCardFailure = createAction(
   '[Cards] Generate Card Failure',
@@ -90,6 +97,8 @@ export const loadTemplateFailure = createAction(
   props<{ error: string }>()
 );
 
+export const loadFirstCardExample = createAction('[Cards] Load First Card Example');
+
 // Clear State Actions
 export const clearError = createAction('[Cards] Clear Error');
 export const resetCardState = createAction('[Cards] Reset Card State');
@@ -111,11 +120,12 @@ export interface CardsState extends EntityState<AICardConfig> {
   currentCardId: string | null;
   cardType: CardType;
   cardVariant: number;
-  jsonInput: string;
+  toonInput: string;
   isGenerating: boolean;
   isFullscreen: boolean;
   error: string | null;
   loading: boolean;
+  lastChangeType: CardChangeType;
 }
 
 // ===== INITIAL STATE =====
@@ -124,12 +134,160 @@ export const initialState: CardsState = cardsAdapter.getInitialState({
   currentCardId: null,
   cardType: 'company',
   cardVariant: 1,
-  jsonInput: '{}',
+  toonInput: '',
   isGenerating: false,
   isFullscreen: false,
   error: null,
   loading: false,
+  lastChangeType: 'structural'
 });
+
+const removeNullValues = (value: unknown): unknown => {
+  if (Array.isArray(value)) {
+    return value
+      .map(removeNullValues)
+      .filter((item) => item !== undefined);
+  }
+
+  if (value && typeof value === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const [key, val] of Object.entries(value as Record<string, unknown>)) {
+      const cleaned = removeNullValues(val);
+      if (cleaned === undefined) {
+        continue;
+      }
+      result[key] = cleaned;
+    }
+    return result;
+  }
+
+  if (value === null || value === undefined) {
+    return undefined;
+  }
+
+  return value;
+};
+
+const formatToonPayload = (value: unknown): string => {
+  try {
+    const cleaned = removeNullValues(value);
+    return `${encode(cleaned ?? value, { indent: 2, keyFolding: 'safe' })}\n`;
+  } catch {
+    return '';
+  }
+};
+
+/**
+ * Fast hash function for card comparison (replaces expensive TOON encoding)
+ * Uses shallow hash based on key properties for O(1) comparison
+ */
+function hashString(str: string): number {
+  let hash = 0;
+  if (str.length === 0) return hash;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+  return hash;
+}
+
+/**
+ * Generate fast hash for card comparison
+ * Only uses key properties to avoid expensive serialization
+ */
+function getCardHash(card: AICardConfig): string {
+  const key = `${card.id || ''}|${card.cardTitle || ''}|${card.cardSubtitle || ''}|${card.sections?.length || 0}`;
+  return String(hashString(key));
+}
+
+/**
+ * Check if TOON input should be updated
+ * Only update when structure changes or TOON editor is active
+ */
+function shouldUpdateToonInput(state: CardsState, newCard: AICardConfig): boolean {
+  // Only update if structure changed or TOON input is empty
+  return state.lastChangeType === 'structural' || !state.toonInput;
+}
+
+/**
+ * Merge new card with existing card, preserving displayed values
+ * Once a field/item has a real value (not placeholder), it won't be overwritten
+ */
+function mergeCardPreservingValues(existing: AICardConfig | null, incoming: AICardConfig): AICardConfig {
+  if (!existing || existing.id !== incoming.id) {
+    return incoming;
+  }
+
+  // Merge sections, preserving existing field/item values
+  const mergedSections = (incoming.sections ?? []).map((incomingSection, sectionIndex) => {
+    const existingSection = existing.sections?.[sectionIndex];
+    if (!existingSection || existingSection.id !== incomingSection.id) {
+      return incomingSection;
+    }
+
+    // Merge fields - preserve existing values that are not placeholders
+    const mergedFields = (incomingSection.fields ?? []).map((incomingField, fieldIndex) => {
+      const existingField = existingSection.fields?.[fieldIndex];
+      if (!existingField || existingField.id !== incomingField.id) {
+        return incomingField;
+      }
+      
+      // If existing field has a real value (not placeholder), preserve it
+      const meta = existingField.meta as Record<string, unknown> | undefined;
+      const isPlaceholder = existingField.value === 'Streaming…' || 
+                           (meta && meta['placeholder'] === true);
+      
+      if (!isPlaceholder && existingField.value !== undefined && existingField.value !== null) {
+        // Preserve existing value and other properties
+        return {
+          ...incomingField,
+          value: existingField.value,
+          percentage: existingField.percentage ?? incomingField.percentage,
+          trend: existingField.trend ?? incomingField.trend
+        };
+      }
+      
+      return incomingField;
+    });
+
+    // Merge items - preserve existing values that are not placeholders
+    const mergedItems = (incomingSection.items ?? []).map((incomingItem, itemIndex) => {
+      const existingItem = existingSection.items?.[itemIndex];
+      if (!existingItem || existingItem.id !== incomingItem.id) {
+        return incomingItem;
+      }
+      
+      // If existing item has a real value (not placeholder), preserve it
+      const meta = existingItem.meta as Record<string, unknown> | undefined;
+      const isPlaceholder = existingItem.description === 'Streaming…' ||
+                           (meta && meta['placeholder'] === true);
+      
+      if (!isPlaceholder && existingItem.title && existingItem.title !== 'Item ' + (itemIndex + 1)) {
+        // Preserve existing item
+        return {
+          ...incomingItem,
+          title: existingItem.title,
+          description: existingItem.description ?? incomingItem.description,
+          value: existingItem.value ?? incomingItem.value
+        };
+      }
+      
+      return incomingItem;
+    });
+
+    return {
+      ...incomingSection,
+      fields: mergedFields,
+      items: mergedItems
+    };
+  });
+
+  return {
+    ...incoming,
+    sections: mergedSections
+  };
+}
 
 // ===== REDUCER =====
 
@@ -140,44 +298,57 @@ export const reducer = createReducer(
     const cardsWithIds = cards.map(card => ensureCardIds(card));
     return cardsAdapter.setAll(cardsWithIds, { ...state, loading: false });
   }),
+  on(loadCardIncremental, (state, { card }) => {
+    const cardWithId = ensureCardIds(card);
+    return cardsAdapter.upsertOne(cardWithId, { ...state, loading: true });
+  }),
+  on(loadCardsComplete, (state) => ({ ...state, loading: false })),
   on(loadCardsFailure, (state, { error }) => ({ ...state, error: error as string, loading: false })),
 
   on(setCardType, (state, { cardType }) => ({ ...state, cardType })),
   on(setCardVariant, (state, { variant }) => ({ ...state, cardVariant: variant })),
 
-  on(updateJsonInput, (state, { jsonInput }) => ({ ...state, jsonInput })),
+  on(updateToonInput, (state, { toonInput }) => ({ ...state, toonInput })),
   on(generateCard, (state) => ({ ...state, isGenerating: true, error: null })),
-  on(generateCardSuccess, (state, { card }) => {
+  on(generateCardSuccess, (state, { card, changeType = 'structural' }) => {
     const cardWithId = ensureCardIds(card);
-    const existingCard = state.currentCardId ? state.entities[state.currentCardId] : null;
+    const existingCard = state.currentCardId ? state.entities[state.currentCardId] ?? null : null;
     
-    // If card reference is the same (from incremental merge), return state unchanged
+    // Fast path: reference equality check
     if (existingCard === cardWithId) {
-      return state;
+      return { ...state, lastChangeType: changeType, isGenerating: false };
     }
     
-    // If card content is identical, return state unchanged
-    // Note: We still use JSON.stringify for the reducer check but only compare IDs/titles for fast path
-    if (existingCard && existingCard.id === cardWithId.id) {
-      // Fast path: compare key properties first
-      if (existingCard.cardTitle === cardWithId.cardTitle &&
-          existingCard.cardSubtitle === cardWithId.cardSubtitle &&
-          existingCard.sections?.length === cardWithId.sections?.length) {
-        // Only do deep comparison if key properties match
-        const existingJson = JSON.stringify(removeAllIds(existingCard));
-        const newJson = JSON.stringify(removeAllIds(cardWithId));
-        if (existingJson === newJson) {
-          return state;
+    // Merge card preserving existing displayed values
+    const mergedCard = mergeCardPreservingValues(existingCard, cardWithId);
+    
+    // Fast path: hash-based comparison (replaces expensive TOON encoding)
+    if (existingCard && existingCard.id === mergedCard.id) {
+      // Compare key properties first (cheapest check)
+      if (existingCard.cardTitle === mergedCard.cardTitle &&
+          existingCard.cardSubtitle === mergedCard.cardSubtitle &&
+          existingCard.sections?.length === mergedCard.sections?.length) {
+        // Use hash-based comparison instead of expensive TOON encoding
+        const existingHash = getCardHash(existingCard);
+        const newHash = getCardHash(mergedCard);
+        if (existingHash === newHash) {
+          return { ...state, lastChangeType: changeType, isGenerating: false };
         }
       }
     }
     
-    const cardWithoutIds = removeAllIds(card);
+    // Only encode TOON when actually needed (lazy evaluation)
+    const cardWithoutIds = removeAllIds(mergedCard);
+    const toonInput = shouldUpdateToonInput(state, mergedCard) 
+      ? formatToonPayload(cardWithoutIds)
+      : state.toonInput;
+    
     return {
-      ...cardsAdapter.upsertOne(cardWithId, state),
-      currentCardId: cardWithId.id ?? null,
-      jsonInput: JSON.stringify(cardWithoutIds, null, 2),
+      ...cardsAdapter.upsertOne(mergedCard, state),
+      currentCardId: mergedCard.id ?? null,
+      toonInput,
       isGenerating: false,
+      lastChangeType: changeType
     };
   }),
   on(generateCardFailure, (state, { error }) => ({
@@ -216,13 +387,14 @@ export const reducer = createReducer(
   on(setFullscreen, (state, { fullscreen }) => ({ ...state, isFullscreen: fullscreen })),
 
   on(loadTemplate, (state) => ({ ...state, loading: true })),
+  on(loadFirstCardExample, (state) => ({ ...state, loading: true })),
   on(loadTemplateSuccess, (state, { template }) => {
     const templateWithId = ensureCardIds(template);
     const templateWithoutIds = removeAllIds(template);
     return {
       ...cardsAdapter.upsertOne(templateWithId, state),
       currentCardId: templateWithId.id ?? null,
-      jsonInput: JSON.stringify(templateWithoutIds, null, 2),
+      toonInput: formatToonPayload(templateWithoutIds),
       loading: false,
     };
   }),

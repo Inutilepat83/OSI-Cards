@@ -688,18 +688,14 @@
   .ai-card-surface {
     background: rgba(255, 255, 255, 0.9);
     border: 0.5px solid rgba(255, 121, 0, 0.25); /* Brand border in light mode too */
-    box-shadow: 
-      0 4px 6px rgba(0, 0, 0, 0.08),
-      0 2px 4px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 0 18px rgba(255, 121, 0, 0.3); /* Orange glow only, intensified by 50% */
   }
   
   .ai-card-surface:hover {
     background: rgba(255, 255, 255, 1);
     border-color: rgba(255, 121, 0, 0.4);
-    /* Subtle shadow in light mode - no orange glow */
-    box-shadow: 
-      0 8px 16px rgba(0, 0, 0, 0.12),
-      0 4px 8px rgba(0, 0, 0, 0.08);
+    /* Orange glow only - no dark shadows, intensified by 50% */
+    box-shadow: 0 0 24px rgba(255, 121, 0, 0.45);
   }
   
   .ai-card-surface--fullscreen {

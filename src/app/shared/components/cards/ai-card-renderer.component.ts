@@ -2,13 +2,14 @@ import { Component, ElementRef, Input, Output, EventEmitter, OnInit, OnDestroy, 
 import { CommonModule, ViewportScroller } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { AICardConfig, CardSection, CardField, CardItem, CardAction } from '../../../models';
-import { Subject, takeUntil, fromEvent, throttleTime, filter, delay } from 'rxjs';
-import { MouseTrackingService, MagneticTiltService, MousePosition, TiltCalculations } from '../../../core';
+import { Subject, takeUntil, fromEvent, filter, delay } from 'rxjs';
+import { MagneticTiltService, MousePosition, TiltCalculations } from '../../../core';
 import { IconService } from '../../services/icon.service';
 import { SectionNormalizationService } from '../../services/section-normalization.service';
 import { LucideIconsModule } from '../../icons/lucide-icons.module';
 import { MasonryGridComponent, MasonryLayoutInfo } from './masonry-grid/masonry-grid.component';
 import { SectionRenderEvent } from './section-renderer/section-renderer.component';
+import { CardChangeType } from '../../utils/card-diff.util';
 
 export interface CardFieldInteractionEvent {
   field?: CardField;
@@ -17,6 +18,8 @@ export interface CardFieldInteractionEvent {
   sectionTitle?: string;
   metadata?: Record<string, unknown>;
 }
+
+export type StreamingStage = 'idle' | 'thinking' | 'streaming' | 'complete' | 'aborted' | 'error' | undefined;
 
 @Component({
   selector: 'app-ai-card-renderer',
@@ -35,27 +38,49 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   Math = Math;
   
   private previousSectionsHash = '';
+  private normalizedSectionCache = new WeakMap<CardSection, CardSection>();
+  private sectionHashCache = new WeakMap<CardSection[], string>();
+  private sectionOrderKeys: string[] = [];
+  private _changeType: CardChangeType = 'structural';
   
   @Input()
   set cardConfig(value: AICardConfig | undefined) {
     const previousConfig = this._cardConfig;
     this._cardConfig = value ?? undefined;
     
-    // Only recompute if sections actually changed (using fast hash instead of JSON.stringify)
-    const sectionsHash = value?.sections ? this.hashSections(value.sections) : '';
-    if (sectionsHash !== this.previousSectionsHash || !previousConfig) {
-      this.previousSectionsHash = sectionsHash;
-      this.computeProcessedSections();
+    if (!this._cardConfig?.sections?.length) {
+      this.resetProcessedSections();
+      return;
     }
-    this.cdr.markForCheck();
+
+    const sectionsHash = this.hashSections(this._cardConfig.sections);
+    const shouldForceStructural = sectionsHash !== this.previousSectionsHash || !previousConfig;
+    this.refreshProcessedSections(shouldForceStructural);
+  }
+
+  get cardConfig(): AICardConfig | undefined {
+    return this._cardConfig;
   }
 
   /**
    * Fast hash function for sections (replaces JSON.stringify)
+   * Uses WeakMap cache to avoid recomputation
    */
   private hashSections(sections: CardSection[]): string {
+    // Check cache first
+    if (this.sectionHashCache.has(sections)) {
+      return this.sectionHashCache.get(sections)!;
+    }
+    
     // Create a lightweight hash based on section metadata
-    const hash = sections.map(s => `${s.id || ''}|${s.title || ''}|${s.type || ''}`).join('||');
+    const hash = sections
+      .map(section => {
+        const fieldCount = section.fields?.length ?? 0;
+        const itemCount = section.items?.length ?? 0;
+        return `${section.id || ''}|${section.title || ''}|${section.type || ''}|f${fieldCount}|i${itemCount}`;
+      })
+      .join('||');
+    
     // Simple hash of the string
     let result = 0;
     for (let i = 0; i < hash.length; i++) {
@@ -63,19 +88,35 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       result = ((result << 5) - result) + char;
       result = result & result; // Convert to 32-bit integer
     }
-    return String(result);
-  }
-  get cardConfig(): AICardConfig | undefined {
-    return this._cardConfig;
+    
+    const hashString = String(result);
+    // Cache the result
+    this.sectionHashCache.set(sections, hashString);
+    return hashString;
   }
   @Input() isFullscreen = false;
   @Input() tiltEnabled = true;
+  @Input() streamingStage: StreamingStage = undefined;
+  @Input()
+  set changeType(value: CardChangeType) {
+    if (this._changeType === value) {
+      return;
+    }
+    this._changeType = value;
+    if (this._cardConfig?.sections?.length) {
+      this.refreshProcessedSections(value === 'structural');
+    }
+  }
+  get changeType(): CardChangeType {
+    return this._changeType;
+  }
   @Output() fieldInteraction = new EventEmitter<CardFieldInteractionEvent>();
   @Output() cardInteraction = new EventEmitter<{ action: string, card: AICardConfig }>();
   @Output() fullscreenToggle = new EventEmitter<boolean>();
   
   @ViewChild('cardContainer') cardContainer!: ElementRef<HTMLElement>;
   @ViewChild('tiltContainer') tiltContainerRef!: ElementRef<HTMLDivElement>;
+  @ViewChild(MasonryGridComponent) masonryGrid!: MasonryGridComponent;
   
   processedSections: CardSection[] = [];
   isHovered = false;
@@ -137,7 +178,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     if (!this.processedSections.length) {
-      this.computeProcessedSections();
+      this.refreshProcessedSections(true);
     }
 
     // Handle Escape key for fullscreen exit
@@ -271,23 +312,25 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     this.isHovered = true;
     this.mousePosition = { x: event.clientX, y: event.clientY };
     if (this.tiltContainerRef?.nativeElement) {
+      // Smooth enter: calculate tilt immediately for responsive feel
       this.magneticTiltService.calculateTilt(this.mousePosition, this.tiltContainerRef.nativeElement);
     }
-    this.cdr.markForCheck();
+    // No need for markForCheck - tilt updates are handled via RAF in subscription
   }
 
   onMouseLeave(): void {
     this.isHovered = false;
     
-    // Cancel pending RAF
+    // Cancel pending RAF for mouse moves
     if (this.mouseMoveRafId !== null) {
       cancelAnimationFrame(this.mouseMoveRafId);
       this.mouseMoveRafId = null;
     }
     this.pendingMouseMove = null;
     
-    this.magneticTiltService.resetTilt();
-    this.cdr.markForCheck();
+    // Smooth exit: reset with smooth transition that completes even if cursor leaves quickly
+    this.magneticTiltService.resetTilt(true);
+    // No need for markForCheck - tilt reset is handled via smooth animation
   }
 
   onMouseMove(event: MouseEvent): void {
@@ -400,7 +443,12 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
 
   toggleFullscreen(): void {
     this.fullscreenToggle.emit(!this.isFullscreen);
-    this.magneticTiltService.resetTilt();
+    // Immediate reset when toggling fullscreen (no smooth transition needed)
+    this.magneticTiltService.resetTilt(false);
+  }
+
+  get isStreamingActive(): boolean {
+    return this.streamingStage === 'streaming';
   }
 
   trackSection = (_index: number, section: CardSection): string =>
@@ -452,7 +500,18 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   onLayoutChange(layout: MasonryLayoutInfo): void {
+    void layout;
     // Layout change handler - kept for potential future use
+  }
+
+  /**
+   * Public method to trigger masonry grid recalculation
+   * Called when sections complete during streaming
+   */
+  public triggerMasonryRecalculation(): void {
+    if (this.masonryGrid) {
+      this.masonryGrid.recalculateLayout();
+    }
   }
 
   getActionIconName(action: CardAction): string {
@@ -463,15 +522,102 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   getActionButtonClasses(action: CardAction): string {
-    return 'bg-[var(--color-brand)] text-white font-semibold border-0 hover:bg-[var(--color-brand)]/90 hover:shadow-lg hover:shadow-[var(--color-brand)]/40 active:scale-95';
+    const primaryClasses = 'bg-[var(--color-brand)] text-white font-semibold border-0 hover:bg-[var(--color-brand)]/90 hover:shadow-lg hover:shadow-[var(--color-brand)]/40 active:scale-95';
+    const outlineClasses = 'text-[var(--color-brand)] border border-[var(--color-brand)] bg-transparent font-semibold hover:bg-[var(--color-brand)]/10 active:scale-95';
+    const ghostClasses = 'text-[var(--color-brand)] bg-transparent border-0 font-semibold hover:bg-[var(--color-brand)]/10 active:scale-95';
+
+    switch (action.variant) {
+      case 'secondary':
+      case 'outline':
+        return outlineClasses;
+      case 'ghost':
+        return ghostClasses;
+      default:
+        return primaryClasses;
+    }
   }
 
-  private computeProcessedSections(): void {
-    if (!this.cardConfig?.sections?.length) {
-      this.processedSections = [];
+  private refreshProcessedSections(forceStructural = false): void {
+    if (!this._cardConfig?.sections?.length) {
+      this.resetProcessedSections();
       return;
     }
 
-    this.processedSections = this.sectionNormalizationService.normalizeAndSortSections(this.cardConfig.sections);
+    const sections = this._cardConfig.sections;
+    const nextHash = this.hashSections(sections);
+    const structureChanged = nextHash !== this.previousSectionsHash;
+    const requiresStructuralRebuild =
+      forceStructural ||
+      structureChanged ||
+      this._changeType === 'structural' ||
+      !this.processedSections.length;
+
+    if (requiresStructuralRebuild) {
+      this.normalizedSectionCache = new WeakMap<CardSection, CardSection>();
+    }
+
+    const normalizedSections = sections.map(section => this.getNormalizedSection(section, requiresStructuralRebuild));
+    const orderedSections = requiresStructuralRebuild
+      ? this.sectionNormalizationService.sortSections(normalizedSections)
+      : this.mergeWithPreviousOrder(normalizedSections);
+
+    this.processedSections = orderedSections;
+    this.sectionOrderKeys = orderedSections.map(section => this.getSectionKey(section));
+    this.previousSectionsHash = nextHash;
+    this.cdr.markForCheck();
+  }
+
+  private getNormalizedSection(section: CardSection, forceRebuild: boolean): CardSection {
+    if (!forceRebuild) {
+      const cached = this.normalizedSectionCache.get(section);
+      if (cached) {
+        return cached;
+      }
+    }
+
+    const normalized = this.sectionNormalizationService.normalizeSection(section);
+    this.normalizedSectionCache.set(section, normalized);
+    return normalized;
+  }
+
+  private mergeWithPreviousOrder(normalizedSections: CardSection[]): CardSection[] {
+    if (!this.sectionOrderKeys.length) {
+      return normalizedSections;
+    }
+
+    const nextByKey = new Map<string, CardSection>();
+    normalizedSections.forEach(section => {
+      nextByKey.set(this.getSectionKey(section), section);
+    });
+
+    const ordered: CardSection[] = [];
+    this.sectionOrderKeys.forEach(key => {
+      const match = nextByKey.get(key);
+      if (match) {
+        ordered.push(match);
+        nextByKey.delete(key);
+      }
+    });
+
+    nextByKey.forEach(section => ordered.push(section));
+    return ordered;
+  }
+
+  private getSectionKey(section: CardSection): string {
+    if (section.id) {
+      return section.id;
+    }
+
+    const titleKey = section.title?.toLowerCase().replace(/[^a-z0-9]+/g, '-') ?? 'section';
+    const typeKey = section.type ?? 'info';
+    return `${titleKey}-${typeKey}`;
+  }
+
+  private resetProcessedSections(): void {
+    this.processedSections = [];
+    this.sectionOrderKeys = [];
+    this.previousSectionsHash = '';
+    this.normalizedSectionCache = new WeakMap<CardSection, CardSection>();
+    this.cdr.markForCheck();
   }
 }

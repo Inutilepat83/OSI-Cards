@@ -69,18 +69,18 @@
 .map-card__badge {
   display: inline-flex;
   align-items: center;
-  padding: calc(var(--tag-padding-y-sm) * 0.4) calc(var(--tag-padding-x) * 0.6);
+  padding: calc(var(--tag-padding-y-sm) * 0.5) calc(var(--tag-padding-x) * 0.75);
   border-radius: calc(var(--section-card-border-radius) * 0.5);
-  font-size: var(--card-text-small-font-size) !important;
-  font-weight: 500 !important;
+  font-size: calc(var(--card-text-small-font-size) + 2px) !important; /* Bigger font */
+  font-weight: 600 !important; /* Bolder */
   line-height: 1.2;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   white-space: nowrap;
   color: var(--card-text-muted) !important;
   background: color-mix(in srgb, var(--card-text-secondary) 5%, transparent);
   border: none !important;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 /* Address */

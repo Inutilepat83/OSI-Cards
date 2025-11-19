@@ -1,4 +1,4 @@
-  <ng-container [attr.aria-busy]="isGenerating">
+  <ng-container [attr.aria-busy]="(isGenerating || llmStreamState?.isSimulating) ? 'true' : null">
     <!-- Initial loading state -->
     <ng-container *ngIf="!isInitialized; else initializedState">
       <div class="preview-loading" role="status">
@@ -11,25 +11,45 @@
     </ng-container>
 
     <ng-template #initializedState>
-      <!-- Show skeleton frame only when generating or when actively streaming -->
-      <ng-container *ngIf="showSkeleton && isGenerating; else cardContent">
-        <app-card-skeleton
-          [cardTitle]="generatedCard?.cardTitle || progressiveCard?.cardTitle || ''"
-          [sectionCount]="generatedCard?.sections?.length || progressiveCard?.sections?.length || 0"
-          [isFullscreen]="isFullscreen">
-        </app-card-skeleton>
+      <!-- Show skeleton frame while generating or when LLM is thinking -->
+      <ng-container *ngIf="showCardSkeleton; else cardContent">
+        <div 
+          class="llm-thinking-frame" 
+          [class.llm-thinking-frame--active]="showLlmThinkingFrame"
+          [class]="getStateTransitionClass()"
+          [class.error-shake]="showErrorAnimation && llmStreamState?.stage === 'error'"
+          [class.error-pulse]="showErrorAnimation && llmStreamState?.stage === 'error'">
+          <app-card-skeleton
+            [cardTitle]="skeletonTitle"
+            [sectionCount]="skeletonSectionCount"
+            [isFullscreen]="isFullscreen">
+          </app-card-skeleton>
+          <div class="llm-thinking-frame__status" *ngIf="showLlmThinkingFrame" role="status" aria-live="polite">
+            <span class="llm-thinking-dot" aria-hidden="true"></span>
+            <span>{{ llmThinkingTitle }}</span>
+          </div>
+        </div>
       </ng-container>
 
       <ng-template #cardContent>
         <!-- Show card if we have either generatedCard or progressiveCard -->
         <ng-container *ngIf="displayCard; else previewEmpty">
           <div 
-            class="card-preview-container"
+            [class]="'card-preview-container' + (getStateTransitionClass() ? ' ' + getStateTransitionClass() : '')"
+            [class.error-shake]="showErrorAnimation && llmStreamState?.stage === 'error'"
             [style.opacity]="cardOpacity"
+            [attr.data-generated-card-id]="generatedCard?.id ?? null"
+            [attr.data-generated-card-sections]="generatedCard?.sections?.length != null ? (generatedCard?.sections?.length + '') : null"
             [style.transform]="'translateY(' + (isTransitioning ? '8px' : '0') + ')'">
+            <div class="llm-stream-indicator" *ngIf="showLlmStreamIndicator" role="status" aria-live="polite">
+              <span class="llm-stream-dot" aria-hidden="true"></span>
+              <span>{{ llmStatusLabel }}</span>
+            </div>
             <app-ai-card-renderer
               [cardConfig]="displayCard"
               [isFullscreen]="isFullscreen"
+              [changeType]="displayChangeType"
+              [streamingStage]="llmStreamState?.stage"
               (cardInteraction)="onCardInteraction($event)"
               (fieldInteraction)="onFieldInteraction($event)"
               (fullscreenToggle)="onFullscreenToggle($event)">
@@ -39,31 +59,55 @@
       </ng-template>
 
       <ng-template #previewEmpty>
-        <div class="preview-empty">
-          <div class="preview-empty-icon" aria-hidden="true">
-            <div class="code-icon w-8 h-8"></div>
-          </div>
-          <div class="preview-empty-copy">
-            <p class="preview-empty-title">No Card Preview</p>
-            <p class="preview-empty-subtitle">
-              Enter a valid JSON configuration or load a template to see your card design render in real time.
-            </p>
-          </div>
-          <div class="preview-empty-hints">
-            <div class="preview-empty-hint">
-              <div class="hint-dot bg-green-500"></div>
-              <span>Valid JSON auto-generates layouts</span>
-            </div>
-            <div class="preview-empty-hint">
-              <div class="hint-dot bg-blue-500"></div>
-              <span>Magnetic tilt responds to cursor position</span>
-            </div>
-            <div class="preview-empty-hint">
-              <div class="hint-dot bg-purple-500"></div>
-              <span>Export high-fidelity PNG snapshots</span>
+        <ng-container *ngIf="showLlmPlaceholder; else defaultEmptyState">
+          <div 
+            class="llm-placeholder-card" 
+            role="status" 
+            aria-live="polite"
+            [class]="getStateTransitionClass()"
+            [class.error-shake]="showErrorAnimation && llmStreamState?.stage === 'error'"
+            [class.error-pulse]="showErrorAnimation && llmStreamState?.stage === 'error'">
+            <div class="llm-placeholder-glow" aria-hidden="true"></div>
+            <div class="llm-placeholder-content">
+              <p class="llm-placeholder-title">{{ llmThinkingTitle }}</p>
+              <p class="llm-placeholder-subtitle">{{ llmStatusLabel || 'Waiting for first token…' }}</p>
+              <p class="llm-placeholder-hint" *ngIf="llmHint">{{ llmHint }}</p>
+              <div class="llm-placeholder-progress" *ngIf="llmProgressPercent > 0">
+                <span class="llm-placeholder-progress-bar">
+                  <span class="llm-placeholder-progress-value" [style.width.%]="llmProgressPercent"></span>
+                </span>
+                <span class="llm-placeholder-progress-label">{{ llmProgressPercent }}%</span>
+              </div>
             </div>
           </div>
-        </div>
+        </ng-container>
+        <ng-template #defaultEmptyState>
+          <div class="preview-empty">
+            <div class="preview-empty-icon" aria-hidden="true">
+              <div class="code-icon w-8 h-8"></div>
+            </div>
+            <div class="preview-empty-copy">
+              <p class="preview-empty-title">No Card Preview</p>
+              <p class="preview-empty-subtitle">
+                Enter a valid TOON configuration or load a template to see your card design render in real time.
+              </p>
+            </div>
+            <div class="preview-empty-hints">
+              <div class="preview-empty-hint">
+                <div class="hint-dot bg-green-500"></div>
+                <span>Valid TOON auto-generates layouts</span>
+              </div>
+              <div class="preview-empty-hint">
+                <div class="hint-dot bg-blue-500"></div>
+                <span>Magnetic tilt responds to cursor position</span>
+              </div>
+              <div class="preview-empty-hint">
+                <div class="hint-dot bg-purple-500"></div>
+                <span>Export high-fidelity PNG snapshots</span>
+              </div>
+            </div>
+          </div>
+        </ng-template>
       </ng-template>
     </ng-template>
   </ng-container>

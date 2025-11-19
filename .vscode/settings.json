@@ -59,5 +59,8 @@
         "copilot/gpt-5.1-codex-mini"
       ]
     }
+  },
+  "[toon]": {
+    "editor.defaultFormatter": "oaslananka.vscode-toon-tools"
   }
 }

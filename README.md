@@ -1,65 +1,656 @@
 # OSI Cards
 
-OSI Cards is an Angular 17+ dashboard experience that renders heterogeneous card sections with a cohesive surface language, deterministic grid spacing, and NgRx-backed state management. Every card is authored as a standalone section component that declares its layout, typography, and data bindings, while `AICardRendererComponent` + `SectionRendererComponent` orchestrate the masonry presentation and routing between section types.
+**OSI Cards** is a modern, token-driven Angular 17+ dashboard framework that transforms any dataset into a visually rich stack of *Toon* cards rendered within a responsive masonry grid. Built for flexibility, accessibility, and performance, OSI Cards empowers developers to compose diverse data experiences with minimal friction.
 
-## Architecture Snapshot
+Each card is composed of one or more **sections**—standalone, configurable components orchestrated by `AICardRendererComponent` ⟶ `SectionRendererComponent` ⟶ `MasonryGridComponent`. This architecture enables seamless combination of layouts, real-time streaming updates, and rich interactions.
 
-- **Section rendering** is handled by `AICardRendererComponent`, which feeds card payloads to `SectionRendererComponent`. That component uses a `resolvedType` `switch` to render the right standalone section (info, overview, timeline, table, etc.) and exposes `fieldInteraction` events so downstream listeners can track user gestures.
-- **Card data** flows through `CardDataService` (`core/services/card-data/card-data.service.ts`). It caches the active `CARD_DATA_PROVIDER`, exposes `getAllCards` / `getCardsByType`, and emits hot streams via `shareReplay(1)` so effects and selectors stay in sync. The default provider is the JSON-backed `JsonCardProvider`, but you've already got `websocket-card-provider.service.ts` ready for live edits when `switchProvider` is invoked.
-- **State management** uses the `cards` bundle in `store/cards/cards.state.ts`. It relies on an entity adapter, immutable reducer updates, and helper utilities (`ensureCardIds`, `removeAllIds`). New card payloads are always pushed through the canonical actions (`generateCard`, `loadTemplate`, `searchCards`) so selectors can remain stable.
-- **Field layouts** lean on `MasonryGridComponent` heuristics that calculate column spans based on text density; no single section forces a column span, which keeps the renderer agile across breakpoints.
+---
 
-## Surface & Motion Design System
+## Table of Contents
 
-- All cards reuse the central CSS variables defined under `styles/core/_variables.scss` and `styles/core/variables/_colors.scss`. These tokens drive border/fill colors, typography (`--card-title-font-size`, `--card-label-font-size`, `--card-value-font-size`, etc.), and spacing (`--card-padding`, `--card-gap`, `--section-card-gap`).
-- Layout mixins such as `@include card` (from `styles/components/sections/_sections-base.scss`), `section-responsive-grid`, and typography helpers (`label-text`, `value-text`, etc.) ensure consistent padding, hover states, and transition timing across sections.
-- Motion tokens are centralized in `styles/core/_animations.scss` and used throughout the SCSS modules under `styles/components/sections`. They power the subtle 0.22s transitions and strong focus on persistent borders + brand-aware hover accents.
-- Surface layering is governed by `styles/core/_surface-layers.scss`, keeping day/night parity via `var(--card-background)` and controlled `box-shadow` tokens.
-- The shared iconography lives in `src/app/shared/icons/lucide-icons.module.ts`, and every standalone section imports `CommonModule` + `LucideIconsModule` so icon assets stay consistent.
+1. [Quick Start](#quick-start)
+2. [Core Architecture](#core-architecture)
+3. [Section Types Catalog](#section-types-catalog---all-20-components)
+4. [Creating Cards: Complete Guide](#creating-cards-complete-guide)
+5. [Design System & Tokens](#design-system--tokens)
+6. [Advanced Features](#advanced-features)
+7. [Development](#development)
+8. [Appendix](#appendix)
 
-## Development Workflow
+---
 
-1. **Install dependencies**: `npm ci` (preferred for CI) or `npm install` locally.
-2. **Serve locally**: `npm start` / `npx ng serve` (Angular CLI on `:4200`).
-3. **Build**: `npm run build` (packaged artifacts end up under `dist/`).
-4. **Lint**: `npm run lint` plus `npm run lint:fix` after SCSS tweaks to keep spacing and token usage in line.
-5. **Tests**: `npm run test` (Karma unit tests) and, if needed, `npm run e2e` (Playwright/Cypress via `playwright.config.ts`).
+## Quick Start
 
-When adding a new section:
-- Create a standalone component under `src/app/shared/components/cards/sections/` with `standalone: true`, `OnPush`, and an exported `trackBy` helper.
-- Wire `fieldInteraction` outputs that emit `{ field, metadata }` for upstream listeners.
-- Avoid declaring column spans—let `MasonryGridComponent` determine them automatically.
-- Import the shared mixins and tokens from `styles/styles.scss` (e.g., `@include card`, `@include section-grid`).
+### Run the Development Server
 
-## Continuous Integration
+```bash
+npm start
+# Navigate to http://localhost:4200
+```
 
-The pipeline lives in `.github/workflows/ci-cd.yml` and includes the following jobs:
+### Create Your First Card
 
-- **Lint & Format** – runs ESLint + style checks.
-- **Unit Tests** – executes Jasmine/Karma suites via `npm run test`.
-- **Build** – triggers `npm run build` to ensure bundling succeeds.
-- **Security + Quality** – runs SonarQube, Snyk, vulnerability scanning, and container image validation when secrets are available.
-- **Performance/Size** – evaluates payload size through `scripts/size-check.js`.
-- **Cleanup** – reports job summaries and notifies downstream tools.
+Add a TOON card configuration to `src/assets/configs/companies/` or `src/assets/configs/contacts/`:
 
-Workflow updates require `workflow` scope; CLI pushes touching `.github/workflows` must be coordinated with repo maintainers.
+```toon
+```toon
+cardTitle: Your Company
+sections[2]:
+  - title: Company Info
+    type: info
+    fields[3]{label,value}:
+      Industry,Technology
+      Employees,1000+
+      Founded,2020
+  - title: Key Metrics
+    type: analytics
+    fields[2]{label,value,percentage}:
+      Growth,85%,85
+      ROI,120%,120
+```
+```
 
-## Repository Hygiene
+The card will automatically appear in the masonry grid on page load.
 
-- Legacy architecture markers such as `ANTI_BLUR_OPTIMIZATIONS.md`, `STYLING_FRAMEWORK.md`, and others have been consolidated into this README so the repository's root stays focused on runnable code.
-- `dist/`, `node_modules/`, and generated artifacts remain out of version control; only source and configuration files live under `src/`, `scripts/`, and `environments/`.
+---
 
-## Troubleshooting & Tips
+## Core Architecture
 
-- If `npm start` stalls, delete `node_modules/` and rerun `npm ci` (Angular CLI prompts happen when dependencies diverge).
-- To update the card dataset dynamically, call `CardDataService.switchProvider(...)` with a `websocket-card-provider` instance and ensure it implements `subscribeToUpdates` if live edits are required.
-- When adjusting typography or spacing, update the SCSS tokens under `styles/core/_variables.scss` before touching the section components.
+### Renderer Chain
 
-## Want to Contribute?
+1. **`AICardRendererComponent`**: Entry point that hydrates `CardSection` payloads and pipes them to the section renderer.
+2. **`SectionRendererComponent`**: Smart router that resolves section types (`type` or title-based matching) and renders the appropriate standalone component. Exposes `fieldInteraction`, `itemInteraction`, and `actionInteraction` events.
+3. **`MasonryGridComponent`**: Intelligent layout engine that:
+   - Watches container width and calculates optimal column count (1–4)
+   - Calculates `colSpan` per section using density heuristics
+   - Handles streaming animations and real-time updates
+   - Manages section appearance states and staggered animations
 
-1. Follow the `@mixin card` pattern plus typography mixins when editing or adding sections.
-2. Keep reducers immutable in `store/cards/cards.state.ts` and use `ensureCardIds` before upserting.
-3. Run the relevant tests (`npm run test`, `npm run lint`) before opening a PR.
-4. Mention any new section types in `SectionRendererComponent` and `CardSection['type']` so templates and JSON configs align.
+### Data Flow
 
-Anything unclear or missing in this set of instructions?
+```
+TOON Config (assets/configs/*)
+    ↓
+ToonCardProvider (CardDataService)
+    ↓
+NgRx Cards Store (ensureCardIds + entity adapter)
+    ↓
+AICardRendererComponent (hydration)
+    ↓
+SectionRendererComponent (type resolution)
+    ↓
+Standalone Section Components (rendering)
+    ↓
+MasonryGridComponent (layout + animation)
+```
+
+### State Management
+
+- **`CardDataService`** (`core/services/card-data/`): Manages providers (default: `ToonCardProvider`), caching via `shareReplay(1)`, and provider switching.
+- **`CardState`** (`store/cards/`): NgRx entity adapter using `ensureCardIds` for deterministic IDs and `mergeCardPreservingValues()` to prevent placeholder overwrites during streaming.
+- **Streaming Channel**: Direct `@Input` bypass for performance during LLM simulation; final state still persists to the store.
+
+---
+
+## Section Types Catalog - All 20+ Components
+
+OSI Cards includes **20+ pre-built section types**, each optimized for specific data patterns. Mix and match them freely to create diverse card layouts.
+
+| # | Section Type | Type Values | Component | Intent | Example Use |
+|---|---|---|---|---|---|
+| 1 | **Info** | `info` | `InfoSectionComponent` | Metadata lists, key-value pairs, statuses | Company details, contact info |
+| 2 | **Overview** | `overview` | `OverviewSectionComponent` | KPI dashboards, metric highlights | Executive summaries, top-line metrics |
+| 3 | **Analytics** | `analytics`, `metrics`, `stats` | `AnalyticsSectionComponent` | Spark lines, radial stats, trends | Performance metrics, growth rates |
+| 4 | **News** | `news` | `NewsSectionComponent` | News briefs, headlines, press releases | Press feeds, announcements |
+| 5 | **Social Media** | `social-media` | `SocialMediaSectionComponent` | Feed-style posts, engagement stats | Twitter streams, LinkedIn updates |
+| 6 | **Financials** | `financials` | `FinancialsSectionComponent` | Revenue tables, P&L, currency trends | Quarterly reports, budgets |
+| 7 | **List / Table** | `list`, `table` | `ListSectionComponent` | Columnar data, sortable rows | Product inventories, employee rosters |
+| 8 | **Event / Timeline** | `event`, `timeline` | `EventSectionComponent` | Chronological events, attendees, times | Calendars, project milestones |
+| 9 | **Product** | `product` | `ProductSectionComponent` | Feature grids, benefits, CTA chips | Product portfolios, SaaS plans |
+| 10 | **Solutions** | `solutions` | `SolutionsSectionComponent` | Use-cases, solution features, benefits | Service offerings, case studies |
+| 11 | **Contact Cards** | `contact-card` | `ContactCardSectionComponent` | Personas, roles, email, phone, avatars | Team members, key contacts |
+| 12 | **Network Cards** | `network-card` | `NetworkCardSectionComponent` | Relationship graphs, influence metrics | Org charts, connection maps |
+| 13 | **Map / Locations** | `map`, `locations` | `MapSectionComponent` | Embedded maps, pins, geodata | Office locations, store finder |
+| 14 | **Chart** | `chart` | `ChartSectionComponent` | Bar, line, pie, doughnut charts | Sales trends, demographic splits |
+| 15 | **Quotation** | `quotation`, `quote` | `QuotationSectionComponent` | Testimonials, quoted metrics, highlights | Customer testimonials, price quotes |
+| 16 | **Text Reference** | `text-reference`, `reference`, `text-ref` | `TextReferenceSectionComponent` | Long-form text, paragraphs, citations | Blog excerpts, research summaries |
+| 17 | **Brand Colors** | `brand-colors`, `brands`, `colors` | `BrandColorsSectionComponent` | Color swatches, hex/RGB, copy-to-clipboard | Brand assets, design systems |
+| 18 | **Fallback** | (any unmatched) | `FallbackSectionComponent` | Generic placeholder for unknown types | Debug/development |
+
+### Quick Lookup by Use Case
+
+**📊 Data Visualization**: Analytics, Chart, Financials, Overview  
+**📝 Content**: News, Text Reference, Quotation, Solutions  
+**👥 People**: Contact Cards, Network Cards, Social Media  
+**🗺️ Geography**: Map, Locations  
+**🛍️ Products**: Product, Solutions  
+**⏰ Time-based**: Event, Timeline  
+**🎨 Design**: Brand Colors  
+**📋 Structured Data**: Info, List, Table  
+
+---
+
+## Creating Cards: Complete Guide
+
+### 1. Understand Card Structure
+
+Every card follows this shape:
+
+```typescript
+interface AICardConfig {
+  cardTitle: string;              // Required: card headline
+  cardSubtitle?: string;          // Optional: secondary title
+  cardType?: CardType;            // Optional: semantic type (company, contact, event, etc.)
+  description?: string;           // Optional: card-level description
+  sections: CardSection[];        // Required: array of sections
+  actions?: CardAction[];         // Optional: CTA buttons
+  columns?: number;               // Optional: layout hint (1-3)
+  meta?: Record<string, unknown>; // Optional: arbitrary metadata
+}
+```
+
+### 2. Add Sections
+
+Sections are the building blocks. Each section represents a distinct data view:
+
+```typescript
+interface CardSection {
+  title: string;                    // Required: section header
+  type: 'info' | 'analytics' | ...  // Required: section renderer type
+  description?: string;             // Optional: subtitle
+  fields?: CardField[];             // Optional: key-value pairs
+  items?: CardItem[];               // Optional: list entries
+  colSpan?: number;                 // Optional: column span (1-4)
+  meta?: Record<string, unknown>;   // Optional: metadata for section
+}
+```
+
+**Choose `fields` or `items`:**
+- **`fields`**: Best for definition lists (label-value pairs). Used by Info, Overview, Analytics, Financials.
+- **`items`**: Best for lists/arrays. Used by List, Event, News, Social Media, Product.
+
+### 3. Write TOON Syntax (Recommended)
+
+TOON is a human-friendly card format. Here's the anatomy:
+
+```toon
+cardTitle: Company Name
+cardSubtitle: Optional tagline
+sections[3]:  # Number of sections
+  - title: Section 1 Title
+    type: info
+    description: Optional section description
+    fields[4]{label,value}:  # 4 fields with label and value
+      Label A,Value A
+      Label B,Value B
+      Label C,Value C
+      Label D,Value D
+  - title: Section 2 Title
+    type: analytics
+    fields[2]{label,value,percentage,trend,change}:  # 2 fields with extra properties
+      Growth Rate,85%,85,up,12
+      Conversion,65%,65,up,8
+  - title: Section 3 Title
+    type: list
+    items[2]{title,description,status}:  # 2 items
+      First Item,Description text,active
+      Second Item,More description,pending
+actions[2]{label,type,icon,action}:  # 2 CTA actions
+  Primary Button,primary,🚀,https://example.com
+  Secondary Button,secondary,📖,https://docs.example.com
+```
+
+### 4. Field Types & Properties
+
+#### Common Field Properties
+
+```typescript
+interface CardField {
+  id?: string;              // Unique identifier
+  label?: string;           // Display label
+  value?: string | number;  // Main value
+  icon?: string;            // Icon/emoji
+  format?: 'currency' | 'percentage' | 'number' | 'text';
+  trend?: 'up' | 'down' | 'stable' | 'neutral';
+  change?: number;          // Trend magnitude
+  performance?: string;     // Performance level
+  description?: string;     // Helper text
+  status?: 'completed' | 'in-progress' | 'pending' | 'error';
+  priority?: 'high' | 'medium' | 'low';
+}
+```
+
+#### Example: Multi-Property Fields
+
+```toon
+fields[3]{label,value,format,trend,change}:
+  Revenue,$2.5M,currency,up,18
+  Growth Rate,35%,percentage,up,5
+  Churn Rate,2.1%,percentage,down,-0.3
+```
+
+### 5. Item Types & Properties
+
+```typescript
+interface CardItem {
+  id?: string;              // Unique identifier
+  title: string;            // Required: item name
+  description?: string;     // Detail text
+  value?: string | number;  // Numeric value
+  status?: string;          // Status badge
+  meta?: {
+    source?: string;        // For news/social: publisher
+    platform?: string;      // For social: Twitter, LinkedIn, etc.
+    likes?: number;         // For social: engagement
+    comments?: number;      // For social: engagement
+    publishedAt?: string;   // ISO date
+    avatar?: string;        // Avatar URL
+    author?: string;        // Author name
+  };
+}
+```
+
+#### Example: News Items
+
+```toon
+items[2]{title,description,status,meta.source,meta.publishedAt}:
+  Breaking News,"Important announcement",active,TechCrunch,2025-11-19
+  Market Update,"quarterly earnings","completed",Reuters,2025-11-18
+```
+
+### 6. Adding Actions (CTA Buttons)
+
+Cards can include call-to-action buttons:
+
+```typescript
+interface CardAction {
+  label: string;            // Button text
+  type: 'primary' | 'secondary' | 'tertiary';
+  icon?: string;            // Emoji or icon text
+  action: string;           // URL, mailto:, or command
+}
+```
+
+```toon
+actions[3]{label,type,icon,action}:
+  Visit Website,primary,🌐,https://example.com
+  Email Support,secondary,📧,mailto:support@example.com
+  Download PDF,secondary,📄,https://example.com/docs.pdf
+```
+
+### 7. Real-World Examples
+
+#### Example 1: Company Overview Card
+
+```toon
+cardTitle: Acme Corporation
+cardType: company
+cardSubtitle: Enterprise Solutions
+sections[3]:
+  - title: Company Info
+    type: info
+    fields[4]{label,value}:
+      Industry,Enterprise Software
+      Employees,5000+
+      Founded,2010
+      HQ,San Francisco, CA
+  - title: Financial Performance
+    type: analytics
+    fields[3]{label,value,percentage,trend}:
+      Annual Revenue,$500M,100,up
+      YoY Growth,22%,22,up
+      Market Cap,$2.5B,100,stable
+  - title: Leadership
+    type: contact-card
+    items[2]{title,role,email,phone}:
+      John Smith,CEO,john@acme.com,+1-555-0100
+      Jane Doe,CFO,jane@acme.com,+1-555-0101
+actions[2]{label,type,icon,action}:
+  View Reports,primary,📊,https://acme.com/reports
+  Contact Sales,secondary,📞,mailto:sales@acme.com
+```
+
+#### Example 2: Product Card
+
+```toon
+cardTitle: CloudSync Pro
+cardType: product
+cardSubtitle: Real-time Data Synchronization
+sections[2]:
+  - title: Features
+    type: product
+    items[4]{title,description}:
+      Real-time Sync,Instant data updates across all devices
+      End-to-End Encryption,Military-grade security
+      Auto-scaling,Handles millions of transactions
+      99.99% Uptime,Enterprise SLA guaranteed
+  - title: Pricing
+    type: financials
+    fields[3]{label,value,format}:
+      Starter Plan,$29/mo,currency
+      Pro Plan,$99/mo,currency
+      Enterprise,Custom,text
+actions[2]{label,type,icon,action}:
+  Start Free Trial,primary,🚀,https://cloudsync.com/trial
+  View Pricing,secondary,💰,https://cloudsync.com/pricing
+```
+
+#### Example 3: Event Card
+
+```toon
+cardTitle: Tech Conference 2025
+cardType: event
+sections[2]:
+  - title: Event Details
+    type: info
+    fields[4]{label,value}:
+      Date,June 15-17 2025
+      Location,San Francisco Convention Center
+      Attendees,5000+
+      Speakers,150+ international experts
+  - title: Schedule
+    type: event
+    items[3]{title,description,status}:
+      Opening Keynote,"9:00 AM - Main Hall","active"
+      Workshop Track,"10:30 AM - Multiple venues","pending"
+      Networking Dinner,"6:00 PM - Rooftop","pending"
+actions[2]{label,type,icon,action}:
+  Register Now,primary,🎫,https://techconf.com/register
+  View Agenda,secondary,📋,https://techconf.com/agenda
+```
+
+### 8. Best Practices for Diverse Cards
+
+✅ **DO:**
+- **Mix section types** to create rich experiences (Info + Analytics + List)
+- **Use descriptive titles** that are scannable and clear
+- **Leverage metadata** for tracking, source attribution, timestamps
+- **Provide context** with descriptions and subtitles
+- **Include actions** to drive user engagement
+- **Test responsive** layouts on mobile, tablet, desktop
+- **Use appropriate formats** (currency, percentage) for clarity
+- **Group related data** in logical sections
+- **Support accessibility** with semantic HTML and labels
+
+❌ **DON'T:**
+- Cram too much data into one section (use multiple sections instead)
+- Mix incompatible section types (e.g., `chart` + `contact-card`)
+- Overuse placeholders; provide real data when possible
+- Force specific column spans; let the grid decide
+- Use raw pixel values in custom styles; use CSS variables
+- Ignore mobile breakpoints; test all card sizes
+
+---
+
+## Design System & Tokens
+
+### CSS Custom Variables
+
+Every card and section respects centralized design tokens defined in `src/styles/core/_variables.scss`:
+
+```scss
+// Typography
+--card-title-font-size: clamp(1.3rem, 1.15rem + 0.4vw, 1.6rem);
+--card-value-font-size: clamp(0.93rem, 0.88rem + 0.2vw, 1rem);
+--card-label-font-size: 0.65rem;
+--card-meta-font-size: 0.58rem;
+
+// Spacing
+--card-padding: 1.25rem;
+--card-gap: 0.75rem;
+--section-card-gap: 0.75rem;
+
+// Colors
+--color-brand: #FF7900;
+--card-text-primary: #FFFFFF;
+--card-text-secondary: #B8C5D6;
+--card-background: rgba(20, 30, 50, 0.4);
+
+// Borders & Radius
+--card-border-radius: 12px;
+--card-border: 1px solid rgba(255, 255, 255, 0.1);
+
+// Shadows
+--card-box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+--card-box-shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+// Animation
+--card-transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+```
+
+### Using Tokens in Custom Sections
+
+When creating custom sections, always use tokens:
+
+```scss
+// ✅ Good: Use tokens
+.my-section {
+  padding: var(--card-padding);
+  color: var(--card-text-primary);
+  font-size: var(--card-value-font-size);
+  transition: var(--card-transition);
+}
+
+// ❌ Bad: Hardcode values
+.my-section {
+  padding: 20px;
+  color: white;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+```
+
+### Mixins & Patterns
+
+Reusable mixins for consistent styling:
+
+```scss
+@include card;                           // Base card styling (border, shadow, padding)
+@include section-grid;                  // Responsive grid layout
+@include label-text;                    // Field label styling with color-mix
+@include value-text;                    // Field value styling
+@include card-title-text;               // Card title styling
+@include section-responsive-grid;       // Mobile-adaptive grid
+```
+
+---
+
+## Advanced Features
+
+### Progressive Rendering & LLM Streaming
+
+OSI Cards supports real-time card generation where sections appear as they stream in:
+
+```typescript
+// LLM simulation detects section completion automatically
+// Placeholders show "Streaming…" until real data arrives
+// Batched updates every 300ms prevent layout thrashing
+```
+
+**Enable debug logging** in `HomePageComponent`:
+```typescript
+ENABLE_SECTION_STATE_LOGGING = true;      // Track completion status
+ENABLE_POSITION_LOGGING = true;           // Track layout calculations
+```
+
+### Custom Providers
+
+Switch data sources on-the-fly:
+
+```typescript
+// Default: ToonCardProvider (assets/configs/*)
+cardDataService.switchProvider(new WebsocketCardProvider());
+cardDataService.switchProvider(new ApiCardProvider(http));
+```
+
+### Interaction Events
+
+Capture user interactions at the card level:
+
+```typescript
+// Component receives emit events from SectionRendererComponent
+onSectionEvent(event: SectionRenderEvent) {
+  const { type, section, field, item, action, metadata } = event;
+  
+  if (type === 'field') {
+    console.log('Field clicked:', field.label, metadata.sectionTitle);
+  } else if (type === 'item') {
+    console.log('Item selected:', item.title);
+  } else if (type === 'action') {
+    console.log('Action triggered:', action.label);
+  }
+}
+```
+
+---
+
+## Development
+
+### Setup
+
+```bash
+# Install dependencies
+npm install
+
+# Start dev server
+npm start
+
+# Run tests
+npm test
+
+# Lint + fix SCSS/TS
+npm run lint:fix
+
+# Build production
+npm run build
+
+# Run E2E tests
+npm run e2e
+
+# Check bundle size
+node scripts/size-check.js
+```
+
+### Adding a New Section Type
+
+1. **Create component** in `src/app/shared/components/cards/sections/<your-section>/`:
+   ```typescript
+   @Component({
+     selector: 'app-your-section',
+     standalone: true,
+     imports: [CommonModule, LucideIconsModule],
+     templateUrl: './your-section.component.html',
+     changeDetection: ChangeDetectionStrategy.OnPush
+   })
+   export class YourSectionComponent extends BaseSectionComponent<CardField> {
+     // Implement custom logic
+   }
+   ```
+
+2. **Add SCSS** in `src/styles/components/sections/_your-section.scss`:
+   ```scss
+   .your-section {
+     @include card;
+     @include section-grid;
+     // Custom styles using tokens
+   }
+   ```
+
+3. **Register with renderer** in `SectionRendererComponent`:
+   ```typescript
+   imports: [
+     // ... existing imports
+     YourSectionComponent
+   ]
+   
+   // In template:
+   // <app-your-section *ngSwitchCase="'your-type'" ...></app-your-section>
+   ```
+
+4. **Update model** in `src/app/models/card.model.ts`:
+   ```typescript
+   type: 'existing' | 'your-type' | ...
+   ```
+
+5. **Test & validate**:
+   ```bash
+   npm run lint:fix
+   npm run test
+   npm run build
+   ```
+
+---
+
+## Appendix
+
+### Project Structure
+
+```
+src/
+├── app/
+│   ├── shared/components/cards/
+│   │   ├── sections/
+│   │   │   ├── info-section/
+│   │   │   ├── analytics-section/
+│   │   │   ├── brand-colors-section/
+│   │   │   └── ... (20+ more)
+│   │   ├── section-renderer/
+│   │   └── ai-card-renderer/
+│   ├── store/cards/
+│   ├── core/services/card-data/
+│   └── models/card.model.ts
+├── assets/configs/
+│   ├── companies/
+│   ├── contacts/
+│   ├── events/
+│   └── ... (more categories)
+└── styles/
+    ├── core/
+    │   ├── _variables.scss
+    │   ├── _mixins.scss
+    │   └── _sections-base.scss
+    └── components/sections/
+        ├── _info.scss
+        ├── _analytics.scss
+        └── ... (20+ more)
+```
+
+### Key Services
+
+| Service | Location | Purpose |
+|---------|----------|---------|
+| `CardDataService` | `core/services/card-data/` | Provider management, card fetching, caching |
+| `PerformanceService` | `core/services/performance/` | Web Vitals tracking, memory monitoring |
+| `CardUtils` | `core/utils/` | ID generation, card merging, diffing |
+| `MasonryGridComponent` | `shared/components/` | Layout engine, column calculation, animations |
+
+### Resources
+
+- **Copilot Instructions**: See `.github/copilot-instructions.md` for architectural guidelines
+- **Architecture**: See `ARCHITECTURE_IMPROVEMENTS.md` for recent enhancements
+- **Performance**: See `PERFORMANCE_IMPROVEMENTS.md` for optimization strategies
+- **Streaming**: See `STREAMING_FIX_PLAN.md` for LLM streaming implementation
+
+### FAQ
+
+**Q: Can I mix different section types on one card?**  
+A: Yes! That's the core strength. Mix info + analytics + list + contact-card on the same card.
+
+**Q: What's the maximum card size?**  
+A: Cards can span 1–4 columns depending on container width. The grid auto-calculates based on content density.
+
+**Q: How do I add custom styling?**  
+A: Use `src/styles/components/sections/_your-section.scss` and import CSS variables from `_variables.scss`.
+
+**Q: Can I use the same card in multiple views?**  
+A: Yes. Cards are provider-agnostic. Load from files, APIs, WebSocket, or anywhere.
+
+**Q: How do I track user interactions?**  
+A: Listen to `SectionRenderEvent` emitted from `SectionRendererComponent`. Events include section, field, item, action, and metadata.
+
+**Q: Does OSI Cards work offline?**  
+A: Yes. The default `ToonCardProvider` loads static files. The app works entirely offline when using static configs.
+
+---
+
+**Questions or contributions?** See `.github/copilot-instructions.md` for coding standards and submission guidelines.

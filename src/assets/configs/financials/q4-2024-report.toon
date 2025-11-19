@@ -1,0 +1,54 @@
+cardTitle: Q4 2024 Financial Report
+sections[6]:
+  - title: Financial Overview
+    type: info
+    fields[8]{label,value}:
+      Reporting Period,October - December 2024
+      Total Revenue,$2.8B
+      Net Profit,$485M
+      Profit Margin,17.3%
+      Currency,USD
+      Fiscal Year,"2024"
+      Auditor,Deloitte & Touche
+      Reporting Standard,GAAP
+  - title: Revenue Analysis
+    type: analytics
+    fields[4]{label,value,percentage,performance,trend,change}:
+      Quarterly Growth,+12.5%,112.5,excellent,up,12.5
+      Recurring Revenue,78% of Total,78,excellent,up,5
+      Customer Acquisition,"15,200 New",85,good,up,8
+      Average Deal Size,$185K,92,excellent,stable,2
+  - title: Expense Breakdown
+    type: info
+    fields[5]{label,value}:
+      Cost of Goods Sold,$1.2B (43%)
+      Research & Development,$420M (15%)
+      Sales & Marketing,$680M (24%)
+      General & Administrative,$320M (11%)
+      Operating Expenses,$180M (6%)
+  - title: Financial Metrics
+    type: chart
+    fields[4]{label,value,color}:
+      Revenue Growth,12.5,#10B981
+      Gross Margin,57,#34D399
+      Operating Margin,23.5,#6EE7B7
+      Net Margin,17.3,#A7F3D0
+  - title: Cash Flow & Liquidity
+    type: info
+    fields[4]{label,value}:
+      Operating Cash Flow,$620M
+      Free Cash Flow,$485M
+      Cash & Equivalents,$3.2B
+      Debt-to-Equity Ratio,"0.25"
+  - title: Market Performance
+    type: map
+    fields[6]{name,x,y,type,address}:
+      North America HQ,25,35,headquarters,"New York, NY, USA"
+      European Operations,48,28,regional-office,"London, UK"
+      Asia Pacific,80,60,regional-office,Singapore
+      Data Center East,28,32,datacenter,"Virginia, USA"
+      Data Center Europe,50,30,datacenter,Ireland
+      Data Center Asia,82,55,datacenter,"Tokyo, Japan"
+actions[2]{label,type,icon,action}:
+  Download Full Report,primary,📊,"https://investor.company.com/reports/q4-2024.pdf"
+  Schedule Earnings Call,secondary,📞,"https://investor.company.com/earnings-call"

@@ -1,5 +1,12 @@
 import { AICardConfig, CardSection, CardField, CardItem } from '../../models';
 
+export type CardChangeType = 'content' | 'structural';
+
+export interface CardDiffResult {
+  card: AICardConfig;
+  changeType: CardChangeType;
+}
+
 /**
  * Simple hash function for content hashing (replaces JSON.stringify)
  * Uses MurmurHash-inspired algorithm for fast hashing
@@ -46,26 +53,44 @@ export class CardDiffUtil {
    * Creates an updated card with only changed sections/fields updated
    * Preserves references to unchanged sections for optimal performance
    */
-  static mergeCardUpdates(oldCard: AICardConfig, newCard: AICardConfig): AICardConfig {
+  static mergeCardUpdates(oldCard: AICardConfig, newCard: AICardConfig): CardDiffResult {
     // If cards are identical, return old card (preserve reference)
     if (this.areCardsEqual(oldCard, newCard)) {
-      return oldCard;
+      return { card: oldCard, changeType: 'content' };
     }
 
     // Check if only top-level properties changed (title, subtitle, etc.)
-    const topLevelChanged = 
-      oldCard.cardTitle !== newCard.cardTitle ||
-      oldCard.cardSubtitle !== newCard.cardSubtitle ||
-      oldCard.cardType !== newCard.cardType ||
-      oldCard.description !== newCard.description ||
-      oldCard.columns !== newCard.columns;
-
     // Check if sections array changed
     const sectionsChanged = !this.areSectionsEqual(oldCard.sections, newCard.sections);
 
     // If only top-level changed, update only those
     if (!sectionsChanged) {
       return {
+        card: {
+          ...oldCard,
+          cardTitle: newCard.cardTitle,
+          cardSubtitle: newCard.cardSubtitle,
+          cardType: newCard.cardType,
+          description: newCard.description,
+          columns: newCard.columns,
+          metadata: newCard.metadata,
+          actions: newCard.actions,
+          // Keep same sections reference
+          sections: oldCard.sections
+        },
+        changeType: 'content'
+      };
+    }
+
+    // Merge sections incrementally
+    const mergedSections = this.mergeSections(oldCard.sections, newCard.sections);
+
+    const changeType: CardChangeType = sectionsChanged && !this.didStructureChange(oldCard.sections, newCard.sections)
+      ? 'content'
+      : 'structural';
+
+    return {
+      card: {
         ...oldCard,
         cardTitle: newCard.cardTitle,
         cardSubtitle: newCard.cardSubtitle,
@@ -74,25 +99,33 @@ export class CardDiffUtil {
         columns: newCard.columns,
         metadata: newCard.metadata,
         actions: newCard.actions,
-        // Keep same sections reference
-        sections: oldCard.sections
-      };
-    }
-
-    // Merge sections incrementally
-    const mergedSections = this.mergeSections(oldCard.sections, newCard.sections);
-
-    return {
-      ...oldCard,
-      cardTitle: newCard.cardTitle,
-      cardSubtitle: newCard.cardSubtitle,
-      cardType: newCard.cardType,
-      description: newCard.description,
-      columns: newCard.columns,
-      metadata: newCard.metadata,
-      actions: newCard.actions,
-      sections: mergedSections
+        sections: mergedSections
+      },
+      changeType
     };
+  }
+
+  private static didStructureChange(oldSections: CardSection[], newSections: CardSection[]): boolean {
+    if (oldSections.length !== newSections.length) {
+      return true;
+    }
+    return oldSections.some((oldSection, index) => {
+      const newSection = newSections[index];
+      if (!newSection) {
+        return true;
+      }
+      if ((oldSection.id || index) !== (newSection.id || index)) {
+        return true;
+      }
+      if (oldSection.type !== newSection.type) {
+        return true;
+      }
+      const oldFieldsLength = oldSection.fields?.length ?? 0;
+      const newFieldsLength = newSection.fields?.length ?? 0;
+      const oldItemsLength = oldSection.items?.length ?? 0;
+      const newItemsLength = newSection.items?.length ?? 0;
+      return oldFieldsLength !== newFieldsLength || newItemsLength !== oldItemsLength;
+    });
   }
 
   /**
@@ -113,14 +146,13 @@ export class CardDiffUtil {
     // Merge each section
     return newSections.map((newSection, index) => {
       const oldSection = oldSections[index];
-      
+
       if (!oldSection) {
         return newSection;
       }
 
-      // If sections are equal, preserve reference
-      if (this.areSectionsEqual([oldSection], [newSection])) {
-        return oldSection;
+      if ((oldSection.id || index) !== (newSection.id || index)) {
+        return newSection;
       }
 
       // Merge section fields/items
@@ -133,14 +165,6 @@ export class CardDiffUtil {
    */
   private static mergeSection(oldSection: CardSection, newSection: CardSection): CardSection {
     // Check if only top-level section properties changed
-    const topLevelChanged = 
-      oldSection.title !== newSection.title ||
-      oldSection.type !== newSection.type ||
-      oldSection.description !== newSection.description ||
-      oldSection.subtitle !== newSection.subtitle ||
-      oldSection.columns !== newSection.columns ||
-      oldSection.colSpan !== newSection.colSpan;
-
     // Check if fields changed
     const fieldsChanged = !this.areFieldsEqual(oldSection.fields, newSection.fields);
     const itemsChanged = !this.areItemsEqual(oldSection.items, newSection.items);

@@ -25,7 +25,9 @@ export interface CardSection {
   title: string;
   type:
     | 'info'
+    | 'timeline'
     | 'analytics'
+    | 'metrics'
     | 'contact-card'
     | 'network-card'
     | 'map'
@@ -34,13 +36,17 @@ export interface CardSection {
     | 'event'
     | 'project'
     | 'list'
+    | 'table'
     | 'chart'
     | 'product'
     | 'solutions'
     | 'overview'
     | 'stats'
     | 'quotation'
-    | 'text-reference';
+    | 'reference'
+    | 'text-reference'
+    | 'text-ref'
+    | 'brand-colors';
   description?: string;
   subtitle?: string;
   columns?: number;

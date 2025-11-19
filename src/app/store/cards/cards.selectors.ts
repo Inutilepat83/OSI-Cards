@@ -1,6 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { CardsState, cardsAdapter } from './cards.state';
-import { AICardConfig } from '../../models/card.model';
 
 export const selectCardsState = createFeatureSelector<CardsState>('cards');
 
@@ -32,12 +31,13 @@ export const selectCardById = (id: string) => createSelector(
 export const selectCardType = createSelector(selectCardsState, (state) => state.cardType);
 export const selectCardVariant = createSelector(selectCardsState, (state) => state.cardVariant);
 
-// JSON Input selector - return as-is (IDs already stripped in reducer)
-export const selectJsonInput = createSelector(selectCardsState, (state) => state.jsonInput);
+// TOON Input selector - return as-is (IDs already stripped in reducer)
+export const selectToonInput = createSelector(selectCardsState, (state) => state.toonInput);
 export const selectIsGenerating = createSelector(selectCardsState, (state) => state.isGenerating);
 export const selectIsFullscreen = createSelector(selectCardsState, (state) => state.isFullscreen);
 export const selectError = createSelector(selectCardsState, (state) => state.error);
 export const selectLoading = createSelector(selectCardsState, (state) => state.loading);
+export const selectLastChangeType = createSelector(selectCardsState, (state) => state.lastChangeType);
 export const selectHasError = createSelector(selectError, (error) => Boolean(error));
 export const selectCardCount = selectCardTotal;
 export const selectIsBusy = createSelector(

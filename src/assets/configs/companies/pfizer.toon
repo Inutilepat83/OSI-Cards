@@ -1,0 +1,38 @@
+cardTitle: Pfizer
+sections[4]:
+  - title: Company Overview
+    type: info
+    fields[8]{label,value}:
+      Industry,Pharmaceuticals & Biotechnology
+      Founded,1849
+      Employees,88000+
+      Headquarters,New York NY
+      Annual Revenue,$100B
+      Global Presence,125+ Countries
+      CEO,Albert Bourla
+      Market Cap,$180B
+  - title: Digital Transformation Investment
+    type: analytics
+    fields[4]{label,value,percentage,performance,trend,change}:
+      Annual ICT Budget,$5B,100,excellent,up,28
+      Digital Health Investment,$1.2B,24,excellent,up,52
+      AI Research,$800M,16,excellent,up,48
+      Cloud Infrastructure,$600M,12,excellent,up,35
+  - title: Innovation Metrics
+    type: info
+    fields[6]{label,value}:
+      Active Clinical Trials,380+
+      Research Centers,12 Globally
+      Patent Portfolio,12000+ Patents
+      Digital Health Patents,450+ Filed
+      AI Models in Production,150+
+      Data Scientists,2500+
+  - title: Global Operations
+    type: contact-card
+    fields[2]{label,title,value,email,phone,role,department}:
+      CTO Innovation Office,Chief Technology Officer,Digital Transformation,cto@pfizer.com,+1 212 733 2323,Executive,Technology
+      Digital Health Lead,VP Digital Solutions,Enterprise Innovation,digital@pfizer.com,+1 212 733 2400,Management,Digital Health
+actions[3]{label,type,icon,action}:
+  Explore Pfizer,primary,🏥,https://www.pfizer.com
+  Digital Health Solutions,secondary,💻,https://www.pfizer.com/science/digital-health
+  Join Our Team,secondary,💼,https://careers.pfizer.com

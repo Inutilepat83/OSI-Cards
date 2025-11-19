@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, EventEmitter, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, EventEmitter, Output, ChangeDetectorRef, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { CardField, CardItem, CardSection } from '../../../../models';
 
 /**
@@ -18,10 +18,30 @@ export interface SectionInteraction<T = CardField | CardItem> {
   template: '',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export abstract class BaseSectionComponent<T extends CardField | CardItem = CardField> {
+export abstract class BaseSectionComponent<T extends CardField | CardItem = CardField> implements OnChanges {
   @Input({ required: true }) section!: CardSection;
   @Output() fieldInteraction = new EventEmitter<SectionInteraction<T>>();
   @Output() itemInteraction = new EventEmitter<SectionInteraction<T>>();
+
+  protected readonly cdr = inject(ChangeDetectorRef);
+  
+  // Animation state tracking
+  private readonly fieldAnimationStates = new Map<string, 'entering' | 'entered' | 'none'>();
+  private readonly itemAnimationStates = new Map<string, 'entering' | 'entered' | 'none'>();
+  private readonly fieldAnimationTimes = new Map<string, number>();
+  private readonly itemAnimationTimes = new Map<string, number>();
+  private readonly FIELD_STAGGER_DELAY_MS = 30;
+  private readonly ITEM_STAGGER_DELAY_MS = 40;
+  private readonly FIELD_ANIMATION_DURATION_MS = 300;
+  private readonly ITEM_ANIMATION_DURATION_MS = 350;
+  private fieldsAnimated = false;
+  private itemsAnimated = false;
+  
+  // Performance: Batch change detection for animation state updates
+  private pendingFieldAnimationUpdates = new Set<string>();
+  private pendingItemAnimationUpdates = new Set<string>();
+  private fieldAnimationUpdateRafId: number | null = null;
+  private itemAnimationUpdateRafId: number | null = null;
 
   /**
    * Get fields from section (standardized access pattern)
@@ -54,6 +74,206 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
     }
     
     return [];
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['section']) {
+      // Cancel pending RAFs
+      if (this.fieldAnimationUpdateRafId !== null) {
+        cancelAnimationFrame(this.fieldAnimationUpdateRafId);
+        this.fieldAnimationUpdateRafId = null;
+      }
+      if (this.itemAnimationUpdateRafId !== null) {
+        cancelAnimationFrame(this.itemAnimationUpdateRafId);
+        this.itemAnimationUpdateRafId = null;
+      }
+      // Reset animation states when section changes
+      this.resetFieldAnimations();
+      this.resetItemAnimations();
+      this.fieldsAnimated = false;
+      this.itemsAnimated = false;
+      // Clear pending updates
+      this.pendingFieldAnimationUpdates.clear();
+      this.pendingItemAnimationUpdates.clear();
+    }
+  }
+
+  /**
+   * Get animation class for a field based on its appearance state
+   */
+  getFieldAnimationClass(fieldId: string, index: number): string {
+    const state = this.fieldAnimationStates.get(fieldId);
+    
+    if (state === 'entering') {
+      return 'field-streaming';
+    }
+    
+    if (state === 'entered') {
+      return 'field-entered';
+    }
+    
+    // New field - mark as entering
+    if (state === undefined || state === 'none') {
+      this.markFieldEntering(fieldId, index);
+      return 'field-streaming';
+    }
+    
+    return '';
+  }
+
+  /**
+   * Get animation class for an item based on its appearance state
+   */
+  getItemAnimationClass(itemId: string, index: number): string {
+    const state = this.itemAnimationStates.get(itemId);
+    
+    if (state === 'entering') {
+      return 'item-streaming';
+    }
+    
+    if (state === 'entered') {
+      return 'item-entered';
+    }
+    
+    // New item - mark as entering
+    if (state === undefined || state === 'none') {
+      this.markItemEntering(itemId, index);
+      return 'item-streaming';
+    }
+    
+    return '';
+  }
+
+  /**
+   * Get stagger delay index for field animation
+   */
+  getFieldStaggerIndex(index: number): number {
+    return Math.min(index, 15);
+  }
+
+  /**
+   * Get stagger delay index for item animation
+   */
+  getItemStaggerIndex(index: number): number {
+    return Math.min(index, 15);
+  }
+
+  /**
+   * Mark field as entering and schedule entered state
+   * Optimized: Batches change detection for better performance
+   */
+  private markFieldEntering(fieldId: string, index: number): void {
+    this.fieldAnimationStates.set(fieldId, 'entering');
+    const appearanceTime = Date.now();
+    this.fieldAnimationTimes.set(fieldId, appearanceTime);
+    
+    // Calculate total delay (stagger + animation duration)
+    const staggerDelay = index * this.FIELD_STAGGER_DELAY_MS;
+    const totalDelay = staggerDelay + this.FIELD_ANIMATION_DURATION_MS;
+    
+    // Mark as entered after animation completes
+    // Batch change detection for multiple fields
+    setTimeout(() => {
+      // Only update if this is still the latest appearance
+      if (this.fieldAnimationTimes.get(fieldId) === appearanceTime) {
+        this.fieldAnimationStates.set(fieldId, 'entered');
+        // Batch change detection - add to pending updates
+        this.pendingFieldAnimationUpdates.add(fieldId);
+        this.scheduleBatchedFieldChangeDetection();
+      }
+    }, totalDelay);
+  }
+
+  /**
+   * Batch change detection for field animation state updates
+   */
+  private scheduleBatchedFieldChangeDetection(): void {
+    if (this.fieldAnimationUpdateRafId !== null) {
+      return; // Already scheduled
+    }
+    
+    this.fieldAnimationUpdateRafId = requestAnimationFrame(() => {
+      if (this.pendingFieldAnimationUpdates.size > 0) {
+        // Single change detection for all pending updates
+        this.cdr.markForCheck();
+        this.pendingFieldAnimationUpdates.clear();
+      }
+      this.fieldAnimationUpdateRafId = null;
+    });
+  }
+
+  /**
+   * Mark item as entering and schedule entered state
+   * Optimized: Batches change detection for better performance
+   */
+  private markItemEntering(itemId: string, index: number): void {
+    this.itemAnimationStates.set(itemId, 'entering');
+    const appearanceTime = Date.now();
+    this.itemAnimationTimes.set(itemId, appearanceTime);
+    
+    // Calculate total delay (stagger + animation duration)
+    const staggerDelay = index * this.ITEM_STAGGER_DELAY_MS;
+    const totalDelay = staggerDelay + this.ITEM_ANIMATION_DURATION_MS;
+    
+    // Mark as entered after animation completes
+    // Batch change detection for multiple items
+    setTimeout(() => {
+      // Only update if this is still the latest appearance
+      if (this.itemAnimationTimes.get(itemId) === appearanceTime) {
+        this.itemAnimationStates.set(itemId, 'entered');
+        // Batch change detection - add to pending updates
+        this.pendingItemAnimationUpdates.add(itemId);
+        this.scheduleBatchedItemChangeDetection();
+      }
+    }, totalDelay);
+  }
+
+  /**
+   * Batch change detection for item animation state updates
+   */
+  private scheduleBatchedItemChangeDetection(): void {
+    if (this.itemAnimationUpdateRafId !== null) {
+      return; // Already scheduled
+    }
+    
+    this.itemAnimationUpdateRafId = requestAnimationFrame(() => {
+      if (this.pendingItemAnimationUpdates.size > 0) {
+        // Single change detection for all pending updates
+        this.cdr.markForCheck();
+        this.pendingItemAnimationUpdates.clear();
+      }
+      this.itemAnimationUpdateRafId = null;
+    });
+  }
+
+  /**
+   * Reset field animation states
+   */
+  private resetFieldAnimations(): void {
+    this.fieldAnimationStates.clear();
+    this.fieldAnimationTimes.clear();
+  }
+
+  /**
+   * Reset item animation states
+   */
+  private resetItemAnimations(): void {
+    this.itemAnimationStates.clear();
+    this.itemAnimationTimes.clear();
+  }
+
+  /**
+   * Get field ID for tracking
+   */
+  protected getFieldId(field: CardField, index: number): string {
+    return field.id || `field-${index}-${field.label || ''}`;
+  }
+
+  /**
+   * Get item ID for tracking
+   */
+  protected getItemId(item: CardItem, index: number): string {
+    return item.id || `item-${index}-${item.title || ''}`;
   }
 
   /**
@@ -98,6 +318,22 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
         ...metadata
       }
     });
+  }
+
+  /**
+   * Phase 5: Perfect trackBy function for fields - uses stable field ID
+   * Can be overridden by child classes for custom tracking
+   */
+  protected trackField(index: number, field: CardField): string {
+    return field.id || `field-${index}-${field.label || ''}`;
+  }
+
+  /**
+   * Phase 5: Perfect trackBy function for items - uses stable item ID
+   * Can be overridden by child classes for custom tracking
+   */
+  protected trackItem(index: number, item: CardItem): string {
+    return item.id || `item-${index}-${item.title || ''}`;
   }
 
 }

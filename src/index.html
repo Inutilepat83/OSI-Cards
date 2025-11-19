@@ -6,7 +6,10 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Removed remote Material Icons link to avoid build-time inlining network fetch errors.
+      If you need local material icons, add the font files under `src/assets/fonts` and reference
+      them in your stylesheets using @font-face instead. Lucide icons are used across the UI.
+    -->
 </head>
 <body>
   <app-root></app-root>

@@ -10,6 +10,19 @@
     #itemRef
     class="absolute masonry-item"
     [class.masonry-item--ready]="isLayoutReady"
+    [class.section-streaming]="getSectionAnimationClass(item.key, idx) === 'section-streaming'"
+    [class.section-entered]="getSectionAnimationClass(item.key, idx) === 'section-entered'"
+    [class.section-stagger-0]="getSectionStaggerIndex(idx) === 0"
+    [class.section-stagger-1]="getSectionStaggerIndex(idx) === 1"
+    [class.section-stagger-2]="getSectionStaggerIndex(idx) === 2"
+    [class.section-stagger-3]="getSectionStaggerIndex(idx) === 3"
+    [class.section-stagger-4]="getSectionStaggerIndex(idx) === 4"
+    [class.section-stagger-5]="getSectionStaggerIndex(idx) === 5"
+    [class.section-stagger-6]="getSectionStaggerIndex(idx) === 6"
+    [class.section-stagger-7]="getSectionStaggerIndex(idx) === 7"
+    [class.section-stagger-8]="getSectionStaggerIndex(idx) === 8"
+    [class.section-stagger-9]="getSectionStaggerIndex(idx) === 9"
+    [class.section-stagger-10]="getSectionStaggerIndex(idx) === 10"
     [attr.id]="getSectionId(item.section)"
     [ngStyle]="{
       position: 'absolute',

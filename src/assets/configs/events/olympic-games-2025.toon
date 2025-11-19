@@ -1,0 +1,54 @@
+cardTitle: Olympic Games 2025
+sections[6]:
+  - title: Event Overview
+    type: info
+    fields[8]{label,value}:
+      Event Type,Multi-Sport Competition
+      Date,"July 25 - August 10, 2025"
+      Location,"Paris, France"
+      Main Venue,Stade de France
+      Expected Attendance,15 Million+
+      Duration,17 Days
+      Format,In-Person + Global Broadcast
+      Target Audience,Global Sports Fans
+  - title: Participation & Broadcasting
+    type: analytics
+    fields[4]{label,value,percentage,performance,trend,change}:
+      Athlete Registrations,98% Complete,98,excellent,up,3
+      Global Viewership,4 Billion Expected,95,excellent,up,8
+      Venue Preparations,92% Complete,92,excellent,up,15
+      Ticket Sales,85% Sold,85,good,up,12
+  - title: Event Features
+    type: info
+    fields[5]{label,value}:
+      Sports Disciplines,32 Olympic Sports
+      Participating Countries,206 Nations
+      Medal Events,329 Competitions
+      Athletes,"10,500+ Competitors"
+      Paralympic Integration,Unified Venues
+  - title: Event Scale
+    type: chart
+    fields[4]{label,value,color}:
+      Competition Venues,35,#059669
+      Volunteers,45000,#10B981
+      Media Personnel,5000,#34D399
+      Security Personnel,22000,#6EE7B7
+  - title: Infrastructure & Legacy
+    type: info
+    fields[4]{label,value}:
+      Budget Allocation,€9.2 Billion
+      New Facilities,12 Modern Venues
+      Sustainable Features,Carbon Neutral Event
+      Digital Innovation,AI-Powered Operations
+  - title: Competition Locations
+    type: map
+    fields[6]{name,x,y,type,address}:
+      Stade de France,48,28,stadium,"Saint-Denis, Paris"
+      Olympic Village,47,27,village,Saint-Ouen
+      La Défense Arena,49,29,arena,Nanterre
+      Grand Palais,48,28,venue,Champs-Élysées
+      Eiffel Tower Zone,48,28,ceremony,Champ de Mars
+      Seine River Events,48,28,water,Paris City Center
+actions[2]{label,type,icon,action}:
+  Get Tickets,primary,🎫,"https://olympics.com/paris-2024/tickets"
+  Watch Live,secondary,📺,"https://olympics.com/live"

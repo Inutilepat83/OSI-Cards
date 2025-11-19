@@ -12,7 +12,12 @@
         <article
         *ngFor="let field of fields"
         class="section-card section-card--reference"
+        role="button"
+        tabindex="0"
+        [attr.aria-label]="'Open reference ' + (field.title || field.category || 'details')"
         (click)="onReferenceClick(field)"
+        (keydown.enter)="onReferenceClick(field)"
+        (keydown.space)="$event.preventDefault(); onReferenceClick(field)"
       >
         <div class="reference-card__content">
           <p class="reference-card__text">

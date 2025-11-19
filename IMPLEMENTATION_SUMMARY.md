@@ -16,15 +16,14 @@ This document summarizes the comprehensive performance and streaming optimizatio
   - Complexity detection (basic/enhanced/enterprise)
   - Auto-runs before builds via `prebuild` script
 
-### 1.2 JsonCardProvider Updates
-- **File**: `src/app/core/services/card-data/json-card-provider.service.ts`
+### 1.2 ToonCardProvider Updates
+- **File**: `src/app/core/services/card-data/toon-card-provider.service.ts`
 - **Status**: ✓ Completed
 - **Changes**:
-  - Manifest-driven card discovery
+  - Manifest-driven TOON discovery via `manifest.json`
   - Priority-based loading (high priority cards first)
   - Streaming support: `getAllCardsStreaming()`, `getCardsByTypeStreaming()`, `getCardSectionsStreaming()`
-  - Fallback to legacy hardcoded paths if manifest fails
-  - Cached manifest loading with `shareReplay(1)`
+  - TOON decoding with `@toon-format/toon` and `CardUtils.sanitizeCardConfig`
 
 ### 1.3 CardDataService Streaming
 - **File**: `src/app/core/services/card-data/card-data.service.ts`
@@ -50,14 +49,14 @@ This document summarizes the comprehensive performance and streaming optimizatio
 ### 2.1 Card-Level Streaming
 - **Status**: ✓ Completed
 - **Implementation**: 
-  - `JsonCardProvider.getAllCardsStreaming()` uses `merge()` to emit cards as they load
+  - `ToonCardProvider.getAllCardsStreaming()` uses `merge()` to emit cards as they load
   - Priority-sorted cards load first (high → medium → low)
   - Cards emitted incrementally for progressive UI updates
 
 ### 2.2 Section-Level Streaming
 - **Status**: ✓ Completed
 - **Implementation**:
-  - `JsonCardProvider.getCardSectionsStreaming()` streams sections with 80ms delay
+  - `ToonCardProvider.getCardSectionsStreaming()` streams sections with 80ms delay
   - `CardDataService.getCardSectionsStreaming()` provides unified interface
   - Supports both JSON provider and WebSocket provider
 
@@ -163,7 +162,7 @@ This document summarizes the comprehensive performance and streaming optimizatio
 - `IMPLEMENTATION_SUMMARY.md` - This file
 
 ### Modified Files
-- `src/app/core/services/card-data/json-card-provider.service.ts`
+- `src/app/core/services/card-data/toon-card-provider.service.ts`
 - `src/app/core/services/card-data/card-data.service.ts`
 - `src/app/core/services/card-data/card-data-provider.interface.ts`
 - `src/app/core/services/card-data/websocket-card-provider.service.ts`

@@ -27,8 +27,6 @@ export class MouseTrackingService implements OnDestroy {
   private pointerMoveAttached = false;
   private lastPointerFrame = 0;
 
-  constructor() {}
-
   ngOnDestroy(): void {
     this.detachGlobalPointerMove();
     this.cleanup();

@@ -19,16 +19,17 @@
         (keydown.space)="$event.preventDefault(); onFieldClick(field)"
       >
         <div class="section-card__label">
-          <lucide-icon
-            [name]="getTrendIcon(field)"
-            [size]="16"
-            [ngClass]="getTrendClass(field)"
-          ></lucide-icon>
           <span>{{ field.label }}</span>
         </div>
 
         <div class="section-card__value">
-          {{ field.value }}
+          <span>{{ field.value }}</span>
+          <lucide-icon
+            *ngIf="getTrendIcon(field)"
+            [name]="getTrendIcon(field)"
+            [size]="18"
+            [ngClass]="getTrendClass(field)"
+          ></lucide-icon>
         </div>
 
         <div *ngIf="field.percentage !== undefined" class="section-card__progress">

@@ -72,7 +72,7 @@ export class PerformanceService {
         if (measure) {
           this.recordMetric(name, measure.duration);
         }
-      } catch (error) {
+      } catch {
         // Mark might not exist, ignore
       }
     }

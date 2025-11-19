@@ -88,7 +88,7 @@ export function breakpointToName(breakpoint: Breakpoint): string {
 /**
  * Get optimal column count for grid based on viewport
  */
-export function getOptimalColumns(minItemWidth: number = 200): number {
+export function getOptimalColumns(minItemWidth = 200): number {
   if (typeof window === 'undefined') {
     return 2;
   }

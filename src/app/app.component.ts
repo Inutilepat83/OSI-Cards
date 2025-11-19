@@ -1,7 +1,8 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { DOCUMENT, CommonModule } from '@angular/common';
 import { ErrorDisplayComponent } from './shared/components/error-display/error-display.component';
+import { PerformanceMonitorService } from './core';
 
 @Component({
   selector: 'app-root',
@@ -154,10 +155,10 @@ import { ErrorDisplayComponent } from './shared/components/error-display/error-d
     }
   `]
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   theme: 'day' | 'night' = 'night';
-
-  constructor(@Inject(DOCUMENT) private readonly document: Document) {}
+  private readonly document = inject(DOCUMENT);
+  private readonly performanceMonitor = inject(PerformanceMonitorService);
 
   ngOnInit(): void {
     if (typeof window !== 'undefined') {
@@ -167,6 +168,13 @@ export class AppComponent implements OnInit {
       }
     }
     this.applyTheme();
+    
+    // Initialize performance monitoring
+    this.performanceMonitor.initialize();
+  }
+
+  ngOnDestroy(): void {
+    this.performanceMonitor.destroy();
   }
 
   toggleTheme(): void {

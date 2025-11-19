@@ -10,9 +10,32 @@
     <ng-container *ngIf="hasFields; else quotationEmpty">
       <div class="section-grid section-grid--quotation">
         <article
-        *ngFor="let field of fields"
+        *ngFor="let field of fields; trackBy: trackField; let idx = index"
         class="section-card section-card--quotation"
+        role="button"
+        tabindex="0"
+        [class.field-streaming]="getFieldAnimationClass(getFieldId(field, idx), idx) === 'field-streaming'"
+        [class.field-entered]="getFieldAnimationClass(getFieldId(field, idx), idx) === 'field-entered'"
+        [class.field-stagger-0]="getFieldStaggerIndex(idx) === 0"
+        [class.field-stagger-1]="getFieldStaggerIndex(idx) === 1"
+        [class.field-stagger-2]="getFieldStaggerIndex(idx) === 2"
+        [class.field-stagger-3]="getFieldStaggerIndex(idx) === 3"
+        [class.field-stagger-4]="getFieldStaggerIndex(idx) === 4"
+        [class.field-stagger-5]="getFieldStaggerIndex(idx) === 5"
+        [class.field-stagger-6]="getFieldStaggerIndex(idx) === 6"
+        [class.field-stagger-7]="getFieldStaggerIndex(idx) === 7"
+        [class.field-stagger-8]="getFieldStaggerIndex(idx) === 8"
+        [class.field-stagger-9]="getFieldStaggerIndex(idx) === 9"
+        [class.field-stagger-10]="getFieldStaggerIndex(idx) === 10"
+        [class.field-stagger-11]="getFieldStaggerIndex(idx) === 11"
+        [class.field-stagger-12]="getFieldStaggerIndex(idx) === 12"
+        [class.field-stagger-13]="getFieldStaggerIndex(idx) === 13"
+        [class.field-stagger-14]="getFieldStaggerIndex(idx) === 14"
+        [class.field-stagger-15]="getFieldStaggerIndex(idx) === 15"
+        [attr.aria-label]="'Open quotation from ' + (field.author || 'unknown source')"
         (click)="onQuotationClick(field)"
+        (keydown.enter)="onQuotationClick(field)"
+        (keydown.space)="$event.preventDefault(); onQuotationClick(field)"
       >
         <div class="quotation-card__quote">
           <lucide-icon name="quote" [size]="24" class="quotation-card__icon" aria-hidden="true"></lucide-icon>

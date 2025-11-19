@@ -1,0 +1,38 @@
+cardTitle: Microsoft
+sections[4]:
+  - title: Company Overview
+    type: info
+    fields[8]{label,value}:
+      Industry,Technology & Software
+      Founded,1975
+      Employees,220000+
+      Headquarters,Redmond WA
+      Annual Revenue,$211B
+      Global Presence,190+ Countries
+      CEO,Satya Nadella
+      Market Cap,$3.4 Trillion
+  - title: ICT Investment Profile
+    type: analytics
+    fields[4]{label,value,percentage,performance,trend,change}:
+      Annual ICT Budget,$25B,100,excellent,up,22
+      Azure Investment,$12B,48,excellent,up,35
+      AI Research,$8B,32,excellent,up,45
+      Security Spending,$3B,12,excellent,up,28
+  - title: Key Performance Metrics
+    type: info
+    fields[6]{label,value}:
+      Azure Growth,+28% YoY
+      Digital Maturity Score,9.5 of 10
+      Cloud Customers,10000+
+      Copilot Integration,600M Users
+      Enterprise Contracts,98% Renewal
+      Process Automation,92%
+  - title: Global Operations
+    type: contact-card
+    fields[2]{label,title,value,email,phone,role,department}:
+      CTO Office,Chief Technology Officer,Technology Leadership,cto@microsoft.com,+1 425 882 8080,Executive,Technology
+      Azure Lead,VP of Azure Infrastructure,Enterprise Solutions,azure@microsoft.com,+1 425 882 8100,Management,Cloud
+actions[3]{label,type,icon,action}:
+  Explore Azure,primary,☁️,https://azure.microsoft.com
+  View Investor Information,secondary,📈,https://investor.microsoft.com
+  Join Our Team,secondary,💼,https://careers.microsoft.com

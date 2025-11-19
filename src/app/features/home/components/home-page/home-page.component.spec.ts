@@ -1,7 +1,7 @@
-import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideStore } from '@ngrx/store';
 import { HomePageComponent } from './home-page.component';
-import { provideAppStore } from '../../../../store/app.state';
-import { provideCardsFeature } from '@data-access/cards';
+import { reducer as cardsReducer } from '../../../../store/cards/cards.state';
 
 describe('HomePageComponent (a11y smoke)', () => {
   let fixture: ComponentFixture<HomePageComponent>;
@@ -10,8 +10,7 @@ describe('HomePageComponent (a11y smoke)', () => {
     await TestBed.configureTestingModule({
       imports: [HomePageComponent],
       providers: [
-        provideAppStore(),
-        provideCardsFeature()
+        provideStore({ cards: cardsReducer })
       ]
     }).compileComponents();
 

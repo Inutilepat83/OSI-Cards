@@ -30,7 +30,7 @@
               <span *ngIf="field.category" class="solution-card__badge solution-card__badge--category">
                 {{ field.category }}
               </span>
-              <span *ngIf="field.complexity" class="solution-card__badge solution-card__badge--complexity" [attr.data-complexity]="field.complexity">
+              <span *ngIf="field.complexity" class="solution-card__badge solution-card__badge--complexity" [attr.data-complexity]="field.complexity ? (field.complexity + '') : null">
                 {{ field.complexity }}
               </span>
             </div>

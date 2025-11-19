@@ -28,8 +28,8 @@
   --theme-ai-card-border-hover: 0.5px solid var(--color-brand);
   --theme-ai-card-background: color-mix(in srgb, var(--background) 99%, var(--surface-contrast-color) 1%);
   --theme-ai-card-background-hover: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
-  --theme-ai-card-box-shadow: 0 16px 32px rgba(15, 15, 20, 0.08), 0 0 12px rgba(255, 121, 0, 0.2);
-  --theme-ai-card-box-shadow-hover: 0 22px 44px rgba(12, 12, 18, 0.12), 0 0 16px rgba(255, 121, 0, 0.3);
+  --theme-ai-card-box-shadow: 0 0 18px rgba(255, 121, 0, 0.3); /* Orange glow only, intensified by 50% */
+  --theme-ai-card-box-shadow-hover: 0 0 24px rgba(255, 121, 0, 0.45); /* Orange glow only, intensified by 50% */
   --theme-ai-card-transition: border 0.38s cubic-bezier(0.4, 0, 0.2, 1), background 0.38s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
   --theme-card-border: 1px solid rgba(0, 0, 0, 0.16);
@@ -80,8 +80,8 @@
   --theme-ai-card-border-hover: 0.5px solid var(--color-brand);
   --theme-ai-card-background: color-mix(in srgb, var(--background) 99%, var(--surface-contrast-color) 1%);
   --theme-ai-card-background-hover: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
-  --theme-ai-card-box-shadow: 0 14px 34px rgba(0, 0, 0, 0.72), 0 0 12px rgba(255, 121, 0, 0.2);
-  --theme-ai-card-box-shadow-hover: 0 24px 60px rgba(0, 0, 0, 0.78), 0 0 16px rgba(255, 121, 0, 0.3);
+  --theme-ai-card-box-shadow: 0 0 18px rgba(255, 121, 0, 0.3); /* Orange glow only, intensified by 50% */
+  --theme-ai-card-box-shadow-hover: 0 0 24px rgba(255, 121, 0, 0.45); /* Orange glow only, intensified by 50% */
 
   --theme-card-border: 1px solid rgba(0, 0, 0, 0.16);
   --theme-card-border-hover: var(--color-brand);
@@ -151,8 +151,8 @@
   --theme-ai-card-border-hover: 0.5px solid var(--color-brand);
   --theme-ai-card-background: color-mix(in srgb, var(--background) 99%, var(--surface-contrast-color) 1%);
   --theme-ai-card-background-hover: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
-  --theme-ai-card-box-shadow: 0 16px 32px rgba(15, 15, 20, 0.08), 0 0 12px rgba(255, 121, 0, 0.2);
-  --theme-ai-card-box-shadow-hover: 0 22px 44px rgba(12, 12, 18, 0.12), 0 0 16px rgba(255, 121, 0, 0.3);
+  --theme-ai-card-box-shadow: 0 0 18px rgba(255, 121, 0, 0.3); /* Orange glow only, intensified by 50% */
+  --theme-ai-card-box-shadow-hover: 0 0 24px rgba(255, 121, 0, 0.45); /* Orange glow only, intensified by 50% */
 
   --theme-card-border: 1px solid rgba(255, 255, 255, 0.22);
   --theme-card-border-hover: var(--color-brand);

@@ -36,24 +36,28 @@
       <div *ngSwitchDefault class="chart-section__list">
         <article
           *ngFor="let field of fields; trackBy: trackField; let idx = index"
-          class="chart-card"
+          class="chart-card chart-card--with-progress"
           role="button"
           tabindex="0"
           (click)="onFieldClick(field)"
           (keydown.enter)="onFieldClick(field)"
           (keydown.space)="$event.preventDefault(); onFieldClick(field)"
         >
-          <div class="flex items-center justify-between gap-4 w-full">
-            <p class="text-sm font-semibold text-foreground">
-              {{ field.label || field.title }}
-            </p>
-            <span class="text-sm text-muted-foreground">{{ field.value }}</span>
+          <div class="chart-card__content-wrapper">
+            <div class="flex items-center justify-between gap-4 w-full">
+              <p class="text-sm font-semibold text-foreground">
+                {{ field.label || field.title }}
+              </p>
+              <span class="text-sm text-muted-foreground">{{ field.value }}</span>
+            </div>
           </div>
-          <div class="mt-3 h-2 w-full rounded-full bg-muted/30">
-            <div
-              class="h-full rounded-full transition-all duration-500"
-              [ngStyle]="{ width: getBarWidth(field), backgroundColor: getColor(field, idx) }"
-            ></div>
+          <div class="chart-card__progress-wrapper">
+            <div class="h-2 w-full rounded-full bg-muted/30">
+              <div
+                class="h-full rounded-full transition-all duration-500"
+                [ngStyle]="{ width: getBarWidth(field), backgroundColor: getColor(field, idx) }"
+              ></div>
+            </div>
           </div>
         </article>
       </div>

@@ -1,0 +1,22 @@
+cardTitle: Cloud Innovation Summit 2025
+sections[2]:
+  - title: Event Overview
+    type: info
+    fields[8]{label,value}:
+      Event Type,Technology Summit
+      Date,"September 20-22, 2025"
+      Location,"San Francisco, CA"
+      Venue,Moscone Center
+      Expected Attendance,"10,000+"
+      Duration,3 Days
+      Format,Hybrid
+      Target Audience,"Cloud Architects, DevOps"
+  - title: Registration & Engagement
+    type: analytics
+    fields[3]{label,value,percentage,performance,trend}:
+      Early Bird Registration,60% Complete,60,good,up
+      Speaker Confirmations,95% Complete,95,excellent,up
+      Sponsor Slots,75% Filled,75,good,up
+actions[2]{label,type,icon,action}:
+  Register Now,primary,🎫,#
+  View Agenda,primary,📅,#

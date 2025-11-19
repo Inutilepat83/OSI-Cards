@@ -1,12 +1,12 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2025-11-14T22:17:51.098Z",
+  "generatedAt": "2025-11-19T15:35:01.145Z",
   "cards": [
     {
       "id": "dsm",
       "type": "company",
-      "path": "companies/dsm.json",
-      "size": 14484,
+      "path": "companies/dsm.toon",
+      "size": 8058,
       "priority": "high",
       "sectionCount": 14,
       "complexity": "enterprise",
@@ -14,47 +14,31 @@
       "metadata": {
         "subtitle": "Nutrition, Health & Sustainable Living Leader",
         "description": null,
-        "lastUpdated": "2025-11-14T20:29:05.815Z",
+        "lastUpdated": "2025-11-17T12:35:25.503Z",
         "hasActions": true
       }
     },
     {
       "id": "pfizer",
       "type": "company",
-      "path": "companies/pfizer.json",
-      "size": 4821,
+      "path": "companies/pfizer.toon",
+      "size": 1552,
       "priority": "high",
-      "sectionCount": 6,
-      "complexity": "enhanced",
+      "sectionCount": 4,
+      "complexity": "basic",
       "title": "Pfizer",
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-14T20:29:05.815Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "google",
-      "type": "company",
-      "path": "companies/google.json",
-      "size": 4724,
-      "priority": "high",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "Google",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-14T20:29:05.815Z",
+        "lastUpdated": "2025-11-19T15:18:52.664Z",
         "hasActions": true
       }
     },
     {
       "id": "microsoft",
       "type": "company",
-      "path": "companies/microsoft.json",
-      "size": 3399,
+      "path": "companies/microsoft.toon",
+      "size": 1496,
       "priority": "high",
       "sectionCount": 4,
       "complexity": "basic",
@@ -62,15 +46,15 @@
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-14T21:53:00.171Z",
+        "lastUpdated": "2025-11-19T15:18:52.659Z",
         "hasActions": true
       }
     },
     {
       "id": "amazon",
       "type": "company",
-      "path": "companies/amazon.json",
-      "size": 3358,
+      "path": "companies/amazon.toon",
+      "size": 1480,
       "priority": "high",
       "sectionCount": 4,
       "complexity": "basic",
@@ -78,15 +62,15 @@
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-14T21:53:00.171Z",
+        "lastUpdated": "2025-11-19T15:18:52.664Z",
         "hasActions": true
       }
     },
     {
       "id": "emma-thompson",
       "type": "contact",
-      "path": "contacts/emma-thompson.json",
-      "size": 5173,
+      "path": "contacts/emma-thompson.toon",
+      "size": 2399,
       "priority": "medium",
       "sectionCount": 6,
       "complexity": "enhanced",
@@ -94,15 +78,15 @@
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-14T20:29:05.815Z",
+        "lastUpdated": "2025-11-19T15:18:52.664Z",
         "hasActions": true
       }
     },
     {
       "id": "marcus-rodriguez",
       "type": "contact",
-      "path": "contacts/marcus-rodriguez.json",
-      "size": 5106,
+      "path": "contacts/marcus-rodriguez.toon",
+      "size": 2296,
       "priority": "medium",
       "sectionCount": 6,
       "complexity": "enhanced",
@@ -110,15 +94,15 @@
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-14T20:29:05.815Z",
+        "lastUpdated": "2025-11-17T12:35:25.509Z",
         "hasActions": true
       }
     },
     {
       "id": "sarah-chen",
       "type": "contact",
-      "path": "contacts/sarah-chen.json",
-      "size": 5070,
+      "path": "contacts/sarah-chen.toon",
+      "size": 2262,
       "priority": "medium",
       "sectionCount": 6,
       "complexity": "enhanced",
@@ -126,15 +110,15 @@
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-14T20:29:05.815Z",
+        "lastUpdated": "2025-11-17T12:35:25.509Z",
         "hasActions": true
       }
     },
     {
       "id": "secureguard-enterprise",
       "type": "product",
-      "path": "products/secureguard-enterprise.json",
-      "size": 4873,
+      "path": "products/secureguard-enterprise.toon",
+      "size": 2051,
       "priority": "medium",
       "sectionCount": 6,
       "complexity": "enhanced",
@@ -142,15 +126,15 @@
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-14T20:29:05.817Z",
+        "lastUpdated": "2025-11-17T12:35:25.521Z",
         "hasActions": true
       }
     },
     {
       "id": "ai-insights-platform",
       "type": "product",
-      "path": "products/ai-insights-platform.json",
-      "size": 4867,
+      "path": "products/ai-insights-platform.toon",
+      "size": 2045,
       "priority": "medium",
       "sectionCount": 6,
       "complexity": "enhanced",
@@ -158,15 +142,15 @@
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-14T20:29:05.817Z",
+        "lastUpdated": "2025-11-17T12:35:25.519Z",
         "hasActions": true
       }
     },
     {
       "id": "cloud-migration-suite",
       "type": "product",
-      "path": "products/cloud-migration-suite.json",
-      "size": 4815,
+      "path": "products/cloud-migration-suite.toon",
+      "size": 1997,
       "priority": "medium",
       "sectionCount": 6,
       "complexity": "enhanced",
@@ -174,15 +158,31 @@
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-14T20:29:05.817Z",
+        "lastUpdated": "2025-11-17T12:35:25.520Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "john-smith",
+      "type": "contact",
+      "path": "contacts/john-smith.toon",
+      "size": 1784,
+      "priority": "medium",
+      "sectionCount": 4,
+      "complexity": "basic",
+      "title": "John Smith",
+      "metadata": {
+        "subtitle": null,
+        "description": null,
+        "lastUpdated": "2025-11-19T15:18:52.664Z",
         "hasActions": true
       }
     },
     {
       "id": "sophie-martin",
       "type": "contact",
-      "path": "contacts/sophie-martin.json",
-      "size": 2004,
+      "path": "contacts/sophie-martin.toon",
+      "size": 1003,
       "priority": "medium",
       "sectionCount": 3,
       "complexity": "basic",
@@ -190,31 +190,15 @@
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-14T21:53:00.171Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "john-smith",
-      "type": "contact",
-      "path": "contacts/john-smith.json",
-      "size": 1958,
-      "priority": "medium",
-      "sectionCount": 3,
-      "complexity": "basic",
-      "title": "John Smith",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-14T21:53:00.171Z",
+        "lastUpdated": "2025-11-17T12:35:25.510Z",
         "hasActions": true
       }
     },
     {
       "id": "enterprise-security-suite",
       "type": "product",
-      "path": "products/enterprise-security-suite.json",
-      "size": 1773,
+      "path": "products/enterprise-security-suite.toon",
+      "size": 734,
       "priority": "medium",
       "sectionCount": 2,
       "complexity": "basic",
@@ -222,15 +206,15 @@
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-14T21:53:00.175Z",
+        "lastUpdated": "2025-11-17T12:35:25.521Z",
         "hasActions": true
       }
     },
     {
       "id": "data-analytics-platform",
       "type": "product",
-      "path": "products/data-analytics-platform.json",
-      "size": 1757,
+      "path": "products/data-analytics-platform.toon",
+      "size": 718,
       "priority": "medium",
       "sectionCount": 2,
       "complexity": "basic",
@@ -238,159 +222,15 @@
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-14T21:53:00.175Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "investment-portfolio-q1",
-      "type": "financials",
-      "path": "financials/investment-portfolio-q1.json",
-      "size": 5330,
-      "priority": "low",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "Investment Portfolio Q1 2025",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-14T20:29:05.816Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "enterprise-cloud-migration",
-      "type": "opportunity",
-      "path": "opportunities/enterprise-cloud-migration.json",
-      "size": 5017,
-      "priority": "low",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "Enterprise Cloud Migration",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-14T20:29:05.817Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "digital-transformation-partnership",
-      "type": "opportunity",
-      "path": "opportunities/digital-transformation-partnership.json",
-      "size": 5013,
-      "priority": "low",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "Digital Transformation Partnership",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-14T20:29:05.816Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "ai-customer-service",
-      "type": "opportunity",
-      "path": "opportunities/ai-customer-service.json",
-      "size": 4963,
-      "priority": "low",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "AI-Powered Customer Service",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-14T20:29:05.816Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "global-business-forum",
-      "type": "event",
-      "path": "events/global-business-forum.json",
-      "size": 4897,
-      "priority": "low",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "Global Business Forum",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-14T20:29:05.816Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "series-a-funding",
-      "type": "financials",
-      "path": "financials/series-a-funding.json",
-      "size": 4873,
-      "priority": "low",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "Series A Funding Round",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-14T20:29:05.816Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "tech-summit-2025",
-      "type": "event",
-      "path": "events/tech-summit-2025.json",
-      "size": 4870,
-      "priority": "low",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "Tech Summit 2025",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-14T20:29:05.816Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "olympic-games-2025",
-      "type": "event",
-      "path": "events/olympic-games-2025.json",
-      "size": 4857,
-      "priority": "low",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "Olympic Games 2025",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-14T20:29:05.816Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "q4-2024-report",
-      "type": "financials",
-      "path": "financials/q4-2024-report.json",
-      "size": 4797,
-      "priority": "low",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "Q4 2024 Financial Report",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-14T20:29:05.816Z",
+        "lastUpdated": "2025-11-17T12:35:25.520Z",
         "hasActions": true
       }
     },
     {
       "id": "financial-services-solutions",
       "type": "sko",
-      "path": "sko/financial-services-solutions.json",
-      "size": 4092,
+      "path": "sko/financial-services-solutions.toon",
+      "size": 3035,
       "priority": "low",
       "sectionCount": 2,
       "complexity": "basic",
@@ -398,15 +238,15 @@
       "metadata": {
         "subtitle": "Recommended Solutions for Financial Services Client",
         "description": null,
-        "lastUpdated": "2025-11-14T21:53:00.175Z",
+        "lastUpdated": "2025-11-17T12:35:25.522Z",
         "hasActions": true
       }
     },
     {
       "id": "enterprise-client-solutions",
       "type": "sko",
-      "path": "sko/enterprise-client-solutions.json",
-      "size": 4004,
+      "path": "sko/enterprise-client-solutions.toon",
+      "size": 2949,
       "priority": "low",
       "sectionCount": 2,
       "complexity": "basic",
@@ -414,15 +254,15 @@
       "metadata": {
         "subtitle": "Recommended Solutions for Enterprise Client",
         "description": null,
-        "lastUpdated": "2025-11-14T21:53:00.175Z",
+        "lastUpdated": "2025-11-17T12:35:25.522Z",
         "hasActions": true
       }
     },
     {
       "id": "manufacturing-client-solutions",
       "type": "sko",
-      "path": "sko/manufacturing-client-solutions.json",
-      "size": 3539,
+      "path": "sko/manufacturing-client-solutions.toon",
+      "size": 2614,
       "priority": "low",
       "sectionCount": 2,
       "complexity": "basic",
@@ -430,15 +270,159 @@
       "metadata": {
         "subtitle": "Recommended Solutions for Manufacturing Client",
         "description": null,
-        "lastUpdated": "2025-11-14T21:53:00.175Z",
+        "lastUpdated": "2025-11-17T12:35:25.523Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "enterprise-cloud-migration",
+      "type": "opportunity",
+      "path": "opportunities/enterprise-cloud-migration.toon",
+      "size": 2195,
+      "priority": "low",
+      "sectionCount": 6,
+      "complexity": "enhanced",
+      "title": "Enterprise Cloud Migration",
+      "metadata": {
+        "subtitle": null,
+        "description": null,
+        "lastUpdated": "2025-11-17T12:35:25.518Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "digital-transformation-partnership",
+      "type": "opportunity",
+      "path": "opportunities/digital-transformation-partnership.toon",
+      "size": 2193,
+      "priority": "low",
+      "sectionCount": 6,
+      "complexity": "enhanced",
+      "title": "Digital Transformation Partnership",
+      "metadata": {
+        "subtitle": null,
+        "description": null,
+        "lastUpdated": "2025-11-17T12:35:25.517Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "investment-portfolio-q1",
+      "type": "financials",
+      "path": "financials/investment-portfolio-q1.toon",
+      "size": 2182,
+      "priority": "low",
+      "sectionCount": 6,
+      "complexity": "enhanced",
+      "title": "Investment Portfolio Q1 2025",
+      "metadata": {
+        "subtitle": null,
+        "description": null,
+        "lastUpdated": "2025-11-17T12:35:25.513Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "ai-customer-service",
+      "type": "opportunity",
+      "path": "opportunities/ai-customer-service.toon",
+      "size": 2161,
+      "priority": "low",
+      "sectionCount": 6,
+      "complexity": "enhanced",
+      "title": "AI-Powered Customer Service",
+      "metadata": {
+        "subtitle": null,
+        "description": null,
+        "lastUpdated": "2025-11-19T15:18:52.664Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "tech-summit-2025",
+      "type": "event",
+      "path": "events/tech-summit-2025.toon",
+      "size": 2104,
+      "priority": "low",
+      "sectionCount": 6,
+      "complexity": "enhanced",
+      "title": "Tech Summit 2025",
+      "metadata": {
+        "subtitle": null,
+        "description": null,
+        "lastUpdated": "2025-11-19T15:18:52.664Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "global-business-forum",
+      "type": "event",
+      "path": "events/global-business-forum.toon",
+      "size": 2069,
+      "priority": "low",
+      "sectionCount": 6,
+      "complexity": "enhanced",
+      "title": "Global Business Forum",
+      "metadata": {
+        "subtitle": null,
+        "description": null,
+        "lastUpdated": "2025-11-17T12:35:25.512Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "series-a-funding",
+      "type": "financials",
+      "path": "financials/series-a-funding.toon",
+      "size": 2053,
+      "priority": "low",
+      "sectionCount": 6,
+      "complexity": "enhanced",
+      "title": "Series A Funding Round",
+      "metadata": {
+        "subtitle": null,
+        "description": null,
+        "lastUpdated": "2025-11-17T12:35:25.514Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "olympic-games-2025",
+      "type": "event",
+      "path": "events/olympic-games-2025.toon",
+      "size": 2029,
+      "priority": "low",
+      "sectionCount": 6,
+      "complexity": "enhanced",
+      "title": "Olympic Games 2025",
+      "metadata": {
+        "subtitle": null,
+        "description": null,
+        "lastUpdated": "2025-11-17T12:35:25.512Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "q4-2024-report",
+      "type": "financials",
+      "path": "financials/q4-2024-report.toon",
+      "size": 1975,
+      "priority": "low",
+      "sectionCount": 6,
+      "complexity": "enhanced",
+      "title": "Q4 2024 Financial Report",
+      "metadata": {
+        "subtitle": null,
+        "description": null,
+        "lastUpdated": "2025-11-17T12:35:25.514Z",
         "hasActions": true
       }
     },
     {
       "id": "sales-performance-dashboard",
       "type": "analytics",
-      "path": "analytics/sales-performance-dashboard.json",
-      "size": 2292,
+      "path": "analytics/sales-performance-dashboard.toon",
+      "size": 901,
       "priority": "low",
       "sectionCount": 3,
       "complexity": "basic",
@@ -446,47 +430,15 @@
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-14T21:53:00.175Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "operational-efficiency",
-      "type": "analytics",
-      "path": "analytics/operational-efficiency.json",
-      "size": 1870,
-      "priority": "low",
-      "sectionCount": 2,
-      "complexity": "basic",
-      "title": "Operational Efficiency Analytics",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-14T21:53:00.175Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "customer-insights-report",
-      "type": "analytics",
-      "path": "analytics/customer-insights-report.json",
-      "size": 1841,
-      "priority": "low",
-      "sectionCount": 2,
-      "complexity": "basic",
-      "title": "Customer Insights Report",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-14T21:53:00.175Z",
+        "lastUpdated": "2025-11-17T12:35:25.496Z",
         "hasActions": true
       }
     },
     {
       "id": "cloud-migration-enterprise",
       "type": "opportunity",
-      "path": "opportunities/cloud-migration-enterprise.json",
-      "size": 1832,
+      "path": "opportunities/cloud-migration-enterprise.toon",
+      "size": 789,
       "priority": "low",
       "sectionCount": 2,
       "complexity": "basic",
@@ -494,15 +446,15 @@
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-14T21:53:00.171Z",
+        "lastUpdated": "2025-11-17T12:35:25.516Z",
         "hasActions": true
       }
     },
     {
       "id": "security-transformation",
       "type": "opportunity",
-      "path": "opportunities/security-transformation.json",
-      "size": 1813,
+      "path": "opportunities/security-transformation.toon",
+      "size": 770,
       "priority": "low",
       "sectionCount": 2,
       "complexity": "basic",
@@ -510,15 +462,15 @@
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-14T21:53:00.175Z",
+        "lastUpdated": "2025-11-17T12:35:25.519Z",
         "hasActions": true
       }
     },
     {
       "id": "digital-transformation-forum",
       "type": "event",
-      "path": "events/digital-transformation-forum.json",
-      "size": 1783,
+      "path": "events/digital-transformation-forum.toon",
+      "size": 746,
       "priority": "low",
       "sectionCount": 2,
       "complexity": "basic",
@@ -526,15 +478,15 @@
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-14T21:53:00.175Z",
+        "lastUpdated": "2025-11-17T12:35:25.511Z",
         "hasActions": true
       }
     },
     {
       "id": "cloud-innovation-summit",
       "type": "event",
-      "path": "events/cloud-innovation-summit.json",
-      "size": 1780,
+      "path": "events/cloud-innovation-summit.toon",
+      "size": 743,
       "priority": "low",
       "sectionCount": 2,
       "complexity": "basic",
@@ -542,7 +494,39 @@
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-14T21:53:00.175Z",
+        "lastUpdated": "2025-11-17T12:35:25.511Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "operational-efficiency",
+      "type": "analytics",
+      "path": "analytics/operational-efficiency.toon",
+      "size": 731,
+      "priority": "low",
+      "sectionCount": 2,
+      "complexity": "basic",
+      "title": "Operational Efficiency Analytics",
+      "metadata": {
+        "subtitle": null,
+        "description": null,
+        "lastUpdated": "2025-11-17T12:44:42.968Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "customer-insights-report",
+      "type": "analytics",
+      "path": "analytics/customer-insights-report.toon",
+      "size": 705,
+      "priority": "low",
+      "sectionCount": 2,
+      "complexity": "basic",
+      "title": "Customer Insights Report",
+      "metadata": {
+        "subtitle": null,
+        "description": null,
+        "lastUpdated": "2025-11-17T10:59:27.407Z",
         "hasActions": true
       }
     }
@@ -551,7 +535,6 @@
     "company": [
       "amazon",
       "dsm",
-      "google",
       "microsoft",
       "pfizer"
     ],

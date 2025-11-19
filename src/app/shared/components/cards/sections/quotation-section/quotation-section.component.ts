@@ -27,6 +27,10 @@ export class QuotationSectionComponent extends BaseSectionComponent<QuotationFie
     return super.hasFields;
   }
 
+  override trackField(index: number, field: QuotationField): string {
+    return field.id || `${field.quote?.substring(0, 20)}-${index}` || String(index);
+  }
+
   onQuotationClick(field: QuotationField): void {
     this.emitFieldInteraction(field, { sectionTitle: this.section.title });
   }

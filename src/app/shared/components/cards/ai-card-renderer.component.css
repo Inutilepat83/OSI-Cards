@@ -73,3 +73,128 @@
   box-shadow: 0 4px 20px rgba(255, 121, 0, 0.3);
   backdrop-filter: blur(8px);
 }
+
+.ai-card-surface.streaming-active :where(
+  .info-row,
+  .section-card,
+  .list-card,
+  .event-timeline__item,
+  .product-card,
+  .solutions-card,
+  .contact-card,
+  .network-card__item,
+  .map-point,
+  .text-reference-entry,
+  .quote-card,
+  .overview-card__item
+) {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: field-enter 0.45s ease forwards;
+  will-change: opacity, transform;
+}
+
+.ai-card-surface.streaming-active :where(
+  .info-row,
+  .section-card,
+  .list-card,
+  .event-timeline__item,
+  .product-card,
+  .solutions-card,
+  .contact-card,
+  .network-card__item,
+  .map-point,
+  .text-reference-entry,
+  .quote-card,
+  .overview-card__item
+):nth-child(1) { animation-delay: 0s; }
+
+.ai-card-surface.streaming-active :where(
+  .info-row,
+  .section-card,
+  .list-card,
+  .event-timeline__item,
+  .product-card,
+  .solutions-card,
+  .contact-card,
+  .network-card__item,
+  .map-point,
+  .text-reference-entry,
+  .quote-card,
+  .overview-card__item
+):nth-child(2) { animation-delay: 0.05s; }
+
+.ai-card-surface.streaming-active :where(
+  .info-row,
+  .section-card,
+  .list-card,
+  .event-timeline__item,
+  .product-card,
+  .solutions-card,
+  .contact-card,
+  .network-card__item,
+  .map-point,
+  .text-reference-entry,
+  .quote-card,
+  .overview-card__item
+):nth-child(3) { animation-delay: 0.1s; }
+
+.ai-card-surface.streaming-active :where(
+  .info-row,
+  .section-card,
+  .list-card,
+  .event-timeline__item,
+  .product-card,
+  .solutions-card,
+  .contact-card,
+  .network-card__item,
+  .map-point,
+  .text-reference-entry,
+  .quote-card,
+  .overview-card__item
+):nth-child(4) { animation-delay: 0.15s; }
+
+.ai-card-surface.streaming-active :where(
+  .info-row,
+  .section-card,
+  .list-card,
+  .event-timeline__item,
+  .product-card,
+  .solutions-card,
+  .contact-card,
+  .network-card__item,
+  .map-point,
+  .text-reference-entry,
+  .quote-card,
+  .overview-card__item
+):nth-child(5) { animation-delay: 0.2s; }
+
+.ai-card-surface.streaming-active :where(
+  .info-row,
+  .section-card,
+  .list-card,
+  .event-timeline__item,
+  .product-card,
+  .solutions-card,
+  .contact-card,
+  .network-card__item,
+  .map-point,
+  .text-reference-entry,
+  .quote-card,
+  .overview-card__item
+):nth-child(n+6) { animation-delay: 0.24s; }
+
+@keyframes field-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

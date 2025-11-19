@@ -76,7 +76,7 @@ export function createMockStore<T extends AppState>(initialState?: Partial<T>): 
       currentCardId: null,
       cardType: 'company' as const,
       cardVariant: 1,
-      jsonInput: '{}',
+      toonInput: '',
       isGenerating: false,
       isFullscreen: false,
       error: null,
@@ -85,17 +85,20 @@ export function createMockStore<T extends AppState>(initialState?: Partial<T>): 
     ...initialState
   } as T;
 
-  const selectSpy = jasmine.createSpy('select').and.callFake((selector: any) => {
+  const selectSpy = jasmine.createSpy('select').and.callFake((selector: unknown) => {
     if (typeof selector === 'function') {
-      return of(selector(defaultState));
+      const typedSelector = selector as (state: T) => unknown;
+      return of(typedSelector(defaultState));
     }
     return of(defaultState);
   });
 
   const dispatchSpy = jasmine.createSpy('dispatch');
   const pipeSpy = jasmine.createSpy('pipe').and.returnValue(of(defaultState));
-  const subscribeSpy = jasmine.createSpy('subscribe').and.callFake((callback: any) => {
-    callback(defaultState);
+  const subscribeSpy = jasmine.createSpy('subscribe').and.callFake((callback: unknown) => {
+    if (typeof callback === 'function') {
+      (callback as (state: T) => void)(defaultState);
+    }
     return { unsubscribe: jasmine.createSpy('unsubscribe') };
   });
 
@@ -104,18 +107,18 @@ export function createMockStore<T extends AppState>(initialState?: Partial<T>): 
     dispatch: dispatchSpy,
     pipe: pipeSpy,
     subscribe: subscribeSpy
-  } as any;
+  } as unknown as Store<T>;
 }
 
 /**
  * Create a component fixture with common setup
  */
 export function createComponentFixture<T>(
-  component: new (...args: any[]) => T,
+  component: new (...args: unknown[]) => T,
   options?: {
-    imports?: any[];
-    providers?: any[];
-    declarations?: any[];
+    imports?: unknown[];
+    providers?: unknown[];
+    declarations?: unknown[];
   }
 ): ComponentFixture<T> {
   const imports = options?.imports || [];
@@ -134,7 +137,7 @@ export function createComponentFixture<T>(
 /**
  * Wait for async operations to complete
  */
-export async function waitForAsync(ms: number = 0): Promise<void> {
+export async function waitForAsync(ms = 0): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
@@ -142,7 +145,7 @@ export async function waitForAsync(ms: number = 0): Promise<void> {
  * Create a spy object with default methods (using Jasmine spies)
  */
 export function createSpyObject<T>(methods: string[]): jasmine.SpyObj<T> {
-  const obj: any = {};
+  const obj: Record<string, jasmine.Spy> = {};
   methods.forEach(method => {
     obj[method] = jasmine.createSpy(method);
   });

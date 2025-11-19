@@ -1,0 +1,22 @@
+cardTitle: Digital Transformation Forum 2025
+sections[2]:
+  - title: Event Overview
+    type: info
+    fields[8]{label,value}:
+      Event Type,Business Conference
+      Date,"June 10-12, 2025"
+      Location,"London, UK"
+      Venue,ExCeL London
+      Expected Attendance,"5,000+"
+      Duration,3 Days
+      Format,In-Person
+      Target Audience,"CIOs, CTOs, Digital Leaders"
+  - title: Registration & Engagement
+    type: analytics
+    fields[3]{label,value,percentage,performance,trend}:
+      Early Bird Registration,70% Complete,70,good,up
+      Speaker Confirmations,90% Complete,90,excellent,up
+      Sponsor Slots,85% Filled,85,excellent,up
+actions[2]{label,type,icon,action}:
+  Register Now,primary,🎫,#
+  View Agenda,primary,📅,#

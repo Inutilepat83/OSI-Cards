@@ -66,7 +66,7 @@ export class InfoSectionComponent extends BaseSectionComponent<InfoField> {
     return this.utils.formatChange(change);
   }
 
-  trackField(index: number, field: InfoField): string {
+  override trackField(index: number, field: InfoField): string {
     return field.id ?? `${field.label}-${index}`;
   }
 }

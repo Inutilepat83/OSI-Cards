@@ -142,13 +142,21 @@ $section-base-shadow: 0 18px 40px color-mix(in srgb, var(--foreground) 8%, trans
 
 .section-card__value {
   @extend %unified-card-value;
-  font-size: calc(var(--card-value-font-size) - 2px) !important;
+  font-size: calc(var(--card-value-font-size) + 4px) !important; /* Bigger font */
   font-weight: var(--card-value-font-weight) !important;
   letter-spacing: var(--card-value-letter-spacing) !important;
   line-height: var(--card-value-line-height) !important;
   color: var(--card-text-primary) !important;
   transition: color 0.25s ease;
   text-shadow: none;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--card-gap) * 0.75);
+  
+  > lucide-icon {
+    flex-shrink: 0;
+    opacity: 0.85;
+  }
 }
 
 .section-card__meta {

@@ -1,0 +1,21 @@
+cardTitle: Customer Insights Report
+sections[2]:
+  - title: Analytics Overview
+    type: info
+    fields[6]{label,value}:
+      Report Type,Customer Analytics
+      Data Source,Customer Database
+      Update Frequency,Weekly
+      Time Range,Last 90 Days
+      Metrics Tracked,20+ KPIs
+      Customer Base,"5,000+ Customers"
+  - title: Customer Metrics
+    type: analytics
+    fields[4]{label,value,percentage,performance,trend,change}:
+      Customer Satisfaction,4.6/5.0,92,excellent,up,3
+      Retention Rate,94%,94,excellent,up,2
+      NPS Score,"68",68,good,up,5
+      Churn Rate,2.5%,2.5,good,down,-1
+actions[2]{label,type,icon,action}:
+  View Full Report,primary,📊,#
+  Export Data,primary,📥,#

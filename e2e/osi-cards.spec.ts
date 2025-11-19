@@ -54,6 +54,72 @@ test.describe('OSI Cards Application', () => {
     // Verify card details opened
     await expect(page.locator('[data-testid="card-details"]')).toBeVisible();
   });
+
+  test('should populate the editor with the first TOON example on startup', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+
+    // Wait until the editor textarea contains some content (first TOON template applied)
+    await page.waitForFunction(() => {
+      const textarea = document.getElementById('toon-config-textarea') as HTMLTextAreaElement | null;
+      return !!textarea && textarea.value.trim().length > 0;
+    }, { timeout: 5000 });
+
+    const textareaValue = await page.evaluate(() => (document.getElementById('toon-config-textarea') as HTMLTextAreaElement).value);
+    expect(textareaValue.trim().length).toBeGreaterThan(0);
+  });
+
+  test('live streaming: typing in editor updates preview per token', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    // Ensure the editor is present
+    const textarea = page.locator('#toon-config-textarea');
+    await expect(textarea).toBeVisible();
+
+    // Type tokens slowly to simulate LLM stream-like behavior
+    const sample = 'cardTitle: StreamTest\n- title: Overview\n type: info\n fields[1]:\n Industry, Tech';
+    await textarea.click();
+    for (const ch of sample) {
+      await page.keyboard.type(ch);
+      // Small delay to simulate stream
+      await page.waitForTimeout(25);
+    }
+
+    // Expect preview to have the streamed title by the end
+    const previewTitle = await page.locator('app-ai-card-renderer h1').innerText();
+    expect(previewTitle.trim()).toBe('StreamTest');
+  });
+
+  test('LLM simulation: streaming persists sanitized generated card with section IDs', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    // Fill the editor with a sample TOON that omits IDs (so ensureCardIds will add them)
+    const textarea = page.locator('#toon-config-textarea');
+    await textarea.click();
+    await textarea.fill('cardTitle: E2E Persisted\n- title: Overview\n type: info\n fields[1]:\n Industry, Manufacturing\n- title: Contacts\n type: list\n - John Doe');
+
+    // Start LLM simulation
+    const simulateButton = page.getByRole('button', { name: /simulate llm/i });
+    await expect(simulateButton).toBeVisible();
+    await simulateButton.click();
+
+    // Wait for the state to show 'LLM simulation complete.' in the toolbar status
+    await page.waitForSelector('.editor-toolbar__status:has-text("LLM simulation complete")', { timeout: 20000 });
+
+    // After simulation completes, the preview should reflect the final card title
+    await page.waitForSelector('app-ai-card-renderer h1:has-text("E2E Persisted")', { timeout: 5000 });
+
+    // Verify persisted generated card metadata is exposed via test-only attributes
+    const previewContainer = page.locator('.card-preview-container');
+    const persistedCardId = await previewContainer.getAttribute('data-generated-card-id');
+    const persistedSectionCount = Number(await previewContainer.getAttribute('data-generated-card-sections') || '0');
+    expect(persistedCardId).toBeTruthy();
+    expect(persistedSectionCount).toBeGreaterThan(0);
+
+    // Also check at least one section element has an id set and matches the 'section-*' pattern
+    const sectionsWithId = await page.locator('[id^="section-"]').count();
+    expect(sectionsWithId).toBeGreaterThan(0);
+  });
 });
 
 test.describe('PWA Functionality', () => {

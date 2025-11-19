@@ -1,5 +1,6 @@
 import { ApplicationConfig } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, PreloadAllModules, withPreloading } from '@angular/router';
+import { SelectivePreloadStrategy } from './core/strategies/selective-preload.strategy';
 import { provideHttpClient } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
@@ -11,12 +12,16 @@ import { routes } from './app.routes';
 import { reducers } from './store/app.state';
 import { CardsEffects } from './store/cards/cards.effects';
 import { CARD_DATA_PROVIDER } from './core/services/card-data/card-data.service';
-import { JsonCardProvider } from './core/services/card-data/json-card-provider.service';
+import { ToonCardProvider } from './core/services/card-data/toon-card-provider.service';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
+import { HttpCacheInterceptor } from './core/interceptors/http-cache.interceptor';
 
 export const config: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withPreloading(PreloadAllModules) // Use PreloadAllModules for now, can switch to SelectivePreloadStrategy
+    ),
     provideHttpClient(),
     // Optimize change detection with event coalescing and run coalescing
     provideZoneChangeDetection({
@@ -31,11 +36,16 @@ export const config: ApplicationConfig = {
     }),
     {
       provide: CARD_DATA_PROVIDER,
-      useClass: JsonCardProvider
+      useClass: ToonCardProvider
     },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpCacheInterceptor,
       multi: true
     }
   ]

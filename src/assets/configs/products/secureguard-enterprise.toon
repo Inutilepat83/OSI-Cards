@@ -1,0 +1,54 @@
+cardTitle: SecureGuard Enterprise
+sections[6]:
+  - title: Product Overview
+    type: info
+    fields[8]{label,value}:
+      Category,Cybersecurity
+      Launch Date,"2022"
+      Version,3.2.1
+      Target Market,Enterprise & SMB
+      Pricing Model,Per Endpoint
+      Support Level,24/7 Enterprise
+      Deployment,Cloud + On-Premise
+      Compliance,"NIST, CIS, GDPR"
+  - title: Security Metrics
+    type: analytics
+    fields[4]{label,value,percentage,performance,trend,change}:
+      Threat Detection Rate,99.7%,99.7,excellent,up,1.2
+      False Positive Rate,0.03%,0.03,excellent,down,-25
+      Response Time,< 5 seconds,95,excellent,down,-30
+      Customer Retention,96%,96,excellent,up,3
+  - title: Security Features
+    type: info
+    fields[5]{label,value}:
+      Endpoint Protection,Next-Gen Antivirus
+      EDR/XDR,Advanced Threat Hunting
+      Zero Trust Network,Identity-Based Access
+      AI-Powered Detection,Machine Learning
+      Incident Response,Automated Playbooks
+  - title: Security Dashboard
+    type: chart
+    fields[4]{label,value,color}:
+      Protected Endpoints,500000,#DC2626
+      Threats Blocked (Daily),2500000,#EF4444
+      Active Incidents,45,#F87171
+      Mean Time to Respond,4.2,#FCA5A5
+  - title: Certifications & Compliance
+    type: info
+    fields[4]{label,value}:
+      ISO 27001,Certified
+      SOC 2 Type II,Certified
+      FedRAMP,Authorized
+      GDPR,Compliant
+  - title: Global Security Operations
+    type: map
+    fields[6]{name,x,y,type,address}:
+      Security Operations Center,25,35,headquarters,"Austin, TX, USA"
+      European SOC,48,28,regional-office,"London, UK"
+      Asia Pacific SOC,80,60,regional-office,Singapore
+      Threat Intelligence Lab,15,40,research,"Silicon Valley, CA, USA"
+      Incident Response Team,50,30,operations,"Frankfurt, Germany"
+      AI Research Center,82,55,research,"Tel Aviv, Israel"
+actions[2]{label,type,icon,action}:
+  Start Free Trial,primary,🛡️,"https://trial.secureguard.com"
+  Security Assessment,secondary,🔍,"https://assessment.secureguard.com"

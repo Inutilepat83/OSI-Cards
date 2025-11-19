@@ -1,0 +1,22 @@
+cardTitle: Security Transformation Initiative
+sections[2]:
+  - title: Opportunity Overview
+    type: info
+    fields[8]{label,value}:
+      Opportunity Type,Security & Compliance
+      Industry Focus,Healthcare
+      Estimated Value,$8M - $12M
+      Timeline,12-15 Months
+      Lead Source,Trade Show
+      Decision Maker,CISO
+      Competition Level,High
+      Success Probability,65%
+  - title: Implementation Progress
+    type: analytics
+    fields[3]{label,value,percentage,performance,trend}:
+      Requirements Gathering,100% Complete,100,excellent,up
+      Solution Design,80% Complete,80,good,up
+      Proposal Review,40% Complete,40,good,up
+actions[2]{label,type,icon,action}:
+  View Details,primary,📋,#
+  Contact Team,primary,📧,"mailto:sales@orange.com"

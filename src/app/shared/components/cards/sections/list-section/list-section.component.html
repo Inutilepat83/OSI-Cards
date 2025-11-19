@@ -13,10 +13,28 @@
     <ng-container *ngIf="items.length; else listEmpty">
       <div class="list-grid">
         <article
-          *ngFor="let item of items; trackBy: trackItem"
+          *ngFor="let item of items; trackBy: trackItem; let idx = index"
           class="list-card"
           role="button"
           tabindex="0"
+          [class.item-streaming]="getItemAnimationClass(getItemId(item, idx), idx) === 'item-streaming'"
+          [class.item-entered]="getItemAnimationClass(getItemId(item, idx), idx) === 'item-entered'"
+          [class.item-stagger-0]="getItemStaggerIndex(idx) === 0"
+          [class.item-stagger-1]="getItemStaggerIndex(idx) === 1"
+          [class.item-stagger-2]="getItemStaggerIndex(idx) === 2"
+          [class.item-stagger-3]="getItemStaggerIndex(idx) === 3"
+          [class.item-stagger-4]="getItemStaggerIndex(idx) === 4"
+          [class.item-stagger-5]="getItemStaggerIndex(idx) === 5"
+          [class.item-stagger-6]="getItemStaggerIndex(idx) === 6"
+          [class.item-stagger-7]="getItemStaggerIndex(idx) === 7"
+          [class.item-stagger-8]="getItemStaggerIndex(idx) === 8"
+          [class.item-stagger-9]="getItemStaggerIndex(idx) === 9"
+          [class.item-stagger-10]="getItemStaggerIndex(idx) === 10"
+          [class.item-stagger-11]="getItemStaggerIndex(idx) === 11"
+          [class.item-stagger-12]="getItemStaggerIndex(idx) === 12"
+          [class.item-stagger-13]="getItemStaggerIndex(idx) === 13"
+          [class.item-stagger-14]="getItemStaggerIndex(idx) === 14"
+          [class.item-stagger-15]="getItemStaggerIndex(idx) === 15"
           (click)="onItemClick(item)"
           (keydown.enter)="onItemClick(item)"
           (keydown.space)="$event.preventDefault(); onItemClick(item)"
@@ -28,10 +46,10 @@
                 {{ item.title || item.label }}
               </h3>
               <div class="list-card__badges" *ngIf="item.priority || item.status">
-                <span *ngIf="item.priority" class="list-card__badge list-card__badge--priority" [attr.data-priority]="item.priority">
+                <span *ngIf="item.priority" class="list-card__badge list-card__badge--priority" [attr.data-priority]="item.priority ? (item.priority + '') : null">
                   {{ item.priority }}
                 </span>
-                <span *ngIf="item.status" class="list-card__badge list-card__badge--status" [attr.data-status]="item.status">
+                <span *ngIf="item.status" class="list-card__badge list-card__badge--status" [attr.data-status]="item.status ? (item.status + '') : null">
                   {{ item.status }}
                 </span>
               </div>

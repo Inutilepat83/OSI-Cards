@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardAction, CardField, CardItem, CardSection } from '../../../../models';
 import { InfoSectionComponent, InfoSectionFieldInteraction } from '../sections/info-section.component';
@@ -16,6 +16,7 @@ import { OverviewSectionComponent } from '../sections/overview-section/overview-
 import { FallbackSectionComponent } from '../sections/fallback-section/fallback-section.component';
 import { QuotationSectionComponent } from '../sections/quotation-section/quotation-section.component';
 import { TextReferenceSectionComponent } from '../sections/text-reference-section/text-reference-section.component';
+import { BrandColorsSectionComponent } from '../sections/brand-colors-section/brand-colors-section.component';
 
 export interface SectionRenderEvent {
   type: 'field' | 'item' | 'action';
@@ -45,7 +46,8 @@ export interface SectionRenderEvent {
     OverviewSectionComponent,
     FallbackSectionComponent,
     QuotationSectionComponent,
-    TextReferenceSectionComponent
+    TextReferenceSectionComponent,
+    BrandColorsSectionComponent
   ],
   templateUrl: './section-renderer.component.html',
   styleUrls: ['./section-renderer.component.css'],
@@ -111,6 +113,9 @@ export class SectionRendererComponent {
     }
     if (type === 'text-reference' || type === 'reference' || type === 'text-ref') {
       return 'text-reference';
+    }
+    if (type === 'brand-colors' || type === 'brands' || type === 'colors') {
+      return 'brand-colors';
     }
     if (!type) {
       if (title.includes('overview')) {

@@ -1,0 +1,54 @@
+cardTitle: Digital Transformation Partnership
+sections[6]:
+  - title: Opportunity Overview
+    type: info
+    fields[8]{label,value}:
+      Opportunity Type,Strategic Partnership
+      Industry Focus,Manufacturing & Industrial
+      Estimated Value,$15M - $25M
+      Timeline,18-24 Months
+      Lead Source,Industry Conference
+      Decision Maker,CTO Level
+      Competition Level,Medium
+      Success Probability,65%
+  - title: Deal Progress
+    type: analytics
+    fields[4]{label,value,percentage,performance,trend,change}:
+      Discovery Phase,100% Complete,100,excellent,stable,0
+      Requirements Gathering,85% Complete,85,good,up,15
+      Proposal Development,60% Complete,60,good,up,20
+      Stakeholder Alignment,75% Complete,75,good,up,10
+  - title: Client Requirements
+    type: info
+    fields[5]{label,value}:
+      Legacy System Migration,SAP to Cloud-Native
+      IoT Integration,Smart Factory Implementation
+      Data Analytics Platform,Real-time Manufacturing Insights
+      Cybersecurity Enhancement,Zero-Trust Architecture
+      Change Management,Employee Training & Adoption
+  - title: Value Proposition
+    type: chart
+    fields[4]{label,value,color}:
+      Cost Reduction,35,#10B981
+      Efficiency Improvement,45,#34D399
+      Revenue Growth,25,#6EE7B7
+      Risk Mitigation,30,#A7F3D0
+  - title: Next Steps & Timeline
+    type: info
+    fields[4]{label,value}:
+      Technical Demo,"March 15, 2025"
+      Final Proposal,"March 30, 2025"
+      Contract Negotiation,April 2025
+      Project Kickoff,May 2025
+  - title: Stakeholder Locations
+    type: map
+    fields[6]{name,x,y,type,address}:
+      Client HQ,50,30,client,"Stuttgart, Germany"
+      Manufacturing Plant,48,28,facility,"Munich, Germany"
+      IT Department,52,25,office,"Berlin, Germany"
+      Our Office,48,28,partner,"Frankfurt, Germany"
+      Technical Team,25,35,team,"Boston, MA, USA"
+      Project Kickoff,50,30,meeting,"Stuttgart, Germany"
+actions[2]{label,type,icon,action}:
+  Schedule Technical Demo,primary,📅,"mailto:client@manufacturing.com?subject=Technical%20Demo%20Request"
+  View Proposal Draft,secondary,📋,"https://internal.company.com/opportunities/digital-transformation-001"

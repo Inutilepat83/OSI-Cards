@@ -3,7 +3,7 @@ import { Observable, BehaviorSubject, combineLatest, EMPTY } from 'rxjs';
 import { map, switchMap, shareReplay, startWith, filter } from 'rxjs/operators';
 import { AICardConfig, CardType, CardSection } from '../../../models';
 import { CardDataProvider } from './card-data-provider.interface';
-import { JsonCardProvider } from './json-card-provider.service';
+import { ToonCardProvider } from './toon-card-provider.service';
 
 /**
  * Injection token for card data provider
@@ -24,7 +24,7 @@ interface CardUpdate {
   providedIn: 'root'
 })
 export class CardDataService implements OnDestroy {
-  private provider = inject(CARD_DATA_PROVIDER, { optional: true }) || inject(JsonCardProvider);
+  private provider = inject(CARD_DATA_PROVIDER, { optional: true }) || inject(ToonCardProvider);
   private activeProviderSubject = new BehaviorSubject<CardDataProvider>(this.provider);
 
   // Cached observables for performance

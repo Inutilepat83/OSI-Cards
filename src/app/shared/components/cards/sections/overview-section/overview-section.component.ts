@@ -27,7 +27,7 @@ export class OverviewSectionComponent extends BaseSectionComponent<CardField> {
     this.emitFieldInteraction(field);
   }
 
-  trackField(index: number, field: CardField): string {
+  override trackField(index: number, field: CardField): string {
     return field.id ?? `${field.label}-${index}`;
   }
 

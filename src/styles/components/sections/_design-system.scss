@@ -162,26 +162,26 @@ $breakpoints: (
   font-weight: var(--card-label-font-weight);
   letter-spacing: var(--card-label-letter-spacing);
   text-transform: var(--card-label-text-transform);
-  color: var(--card-text-label);
+  color: color-mix(in srgb, var(--card-text-label) 85%, var(--color-brand) 15%);
   line-height: var(--card-label-line-height);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  text-shadow: var(--card-label-text-shadow);
 }
 
 // Value styling - used in all cards for field values - Uses CSS variables
 @mixin value-text {
   font-size: var(--card-value-font-size);
   font-weight: var(--card-value-font-weight);
-  color: var(--card-text-primary);
+  color: color-mix(in srgb, var(--card-text-primary) 90%, var(--color-brand) 10%);
   letter-spacing: var(--card-value-letter-spacing);
   line-height: var(--card-value-line-height);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  text-shadow: var(--card-value-text-shadow);
 }
 
 // Large value styling - for emphasis (analytics, stats) - Uses CSS variables
 @mixin value-text-lg {
   font-size: var(--card-value-font-size-large);
   font-weight: var(--card-value-font-weight);
-  color: color-mix(in srgb, var(--foreground) 95%, var(--color-brand) 5%);
+  color: color-mix(in srgb, var(--card-text-primary) 95%, var(--color-brand) 5%);
   letter-spacing: var(--card-value-letter-spacing);
   line-height: var(--card-value-line-height);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
@@ -191,10 +191,10 @@ $breakpoints: (
 @mixin card-title-text {
   font-size: var(--card-title-font-size);
   font-weight: var(--card-title-font-weight);
-  color: var(--card-text-primary);
+  color: color-mix(in srgb, var(--card-text-primary) 95%, var(--color-brand) 5%);
   letter-spacing: var(--card-title-letter-spacing);
   line-height: var(--card-title-line-height);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  text-shadow: var(--card-title-text-shadow);
   
   :root[data-theme='day'] & {
     text-shadow: none;

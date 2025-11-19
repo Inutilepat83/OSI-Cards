@@ -33,10 +33,35 @@
   min-height: auto;
   z-index: 1;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: var(--card-padding) !important;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(135deg, var(--card-background) 0%, color-mix(in srgb, var(--card-background) 98%, var(--section-accent) 2%) 100%);
+  overflow: hidden;
+
+  /* ENHANCED: Subtle accent indicator */
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--color-brand), transparent);
+    opacity: 0;
+    transition: opacity 0.22s ease;
+  }
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px color-mix(in srgb, var(--foreground) 18%, transparent);
+
+    &::before {
+      opacity: 1;
+    }
+
+    .event-card__title {
+      color: var(--color-brand);
+    }
   }
 
   &:focus-visible {
@@ -52,13 +77,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  border: 1px solid color-mix(in srgb, var(--color-brand) 50%, transparent);
-  background: color-mix(in srgb, var(--color-brand) 20%, transparent);
+  border: 2px solid var(--color-brand);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-brand) 15%, transparent), color-mix(in srgb, var(--color-brand) 8%, transparent));
   color: var(--color-brand);
   margin-top: 2px;
+  transition: all 0.22s ease;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand) 8%, transparent);
+}
+
+.event-card:hover .event-card__marker {
+  box-shadow: 0 0 12px color-mix(in srgb, var(--color-brand) 40%, transparent);
+  transform: scale(1.15);
 }
 
 .event-card__marker-icon {
@@ -101,6 +133,8 @@
   color: var(--card-text-primary);
   flex: 1;
   min-width: 0;
+  font-weight: 600;
+  transition: color 0.22s ease;
 }
 
 .event-card__badge {

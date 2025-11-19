@@ -1,4 +1,4 @@
-import { ActionReducer, MetaReducer } from '@ngrx/store';
+import { ActionReducer } from '@ngrx/store';
 import { AppState } from '../app.state';
 
 /**
@@ -19,7 +19,7 @@ export function localStorageSyncReducer(reducer: ActionReducer<AppState>): Actio
             currentCardId: nextState.cards.currentCardId,
             cardType: nextState.cards.cardType,
             cardVariant: nextState.cards.cardVariant,
-            jsonInput: nextState.cards.jsonInput,
+            toonInput: nextState.cards.toonInput,
             // Don't persist UI state
             isGenerating: false,
             isFullscreen: false,

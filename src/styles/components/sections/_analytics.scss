@@ -12,48 +12,111 @@
 
 .analytics-metric {
   @include card;
-  /* COMPACT: No minimum height */
+  /* ENHANCED: Flexible height with proper spacing */
   min-height: auto;
   justify-content: space-between;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--card-gap) * 0.75);
+  padding: var(--card-padding) !important;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  /* Gradient background with subtle brand accent */
+  background: linear-gradient(135deg, var(--card-background) 0%, color-mix(in srgb, var(--card-background) 98%, var(--section-accent) 2%) 100%);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--section-accent) 5%, transparent), transparent);
+    opacity: 0;
+    transition: opacity 0.22s ease;
+    pointer-events: none;
+  }
+
+  &:hover {
+    /* Subtle lift with enhanced shadow */
+    transform: translateY(-3px);
+    box-shadow: 0 16px 32px color-mix(in srgb, var(--foreground) 18%, transparent);
+
+    &::before {
+      opacity: 1;
+    }
+
+    .analytics-metric__value {
+      color: var(--color-brand);
+      animation: glowAccent 400ms ease-in-out;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
 
   &__header {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     gap: var(--card-gap);
-    /* OPTIMIZED: Tighter header spacing */
-    margin-bottom: calc(var(--card-gap) * 0.5);
+    /* ENHANCED: Better spacing */
+    margin-bottom: calc(var(--card-gap) * 0.25);
   }
 
   &__label {
     @include label-text;
-    /* OPTIMIZED: Proper hierarchy - labels are secondary */
+    /* ENHANCED: Better visual hierarchy */
     display: flex;
     align-items: center;
-    gap: calc(var(--card-gap) * 0.75);
+    gap: calc(var(--card-gap) * 0.6);
     margin: 0;
     flex-shrink: 0;
+    color: color-mix(in srgb, var(--card-text-secondary) 75%, var(--color-brand) 25%);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    font-size: calc(var(--card-label-font-size) + 0.5px);
 
     lucide-icon {
-      @include icon-base(12px);
+      @include icon-base(14px);
       flex-shrink: 0;
+      transition: color 0.22s ease;
     }
   }
 
   &__value {
     @include value-text-lg;
-    /* OPTIMIZED: Large values are primary - most prominent */
+    /* ENHANCED: Prominent, emphasized value */
     margin: 0;
-    line-height: 1.15;
-    text-align: right;
+    color: color-mix(in srgb, var(--card-text-primary) 95%, var(--color-brand) 5%);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    transition: color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: left;
     flex-shrink: 0;
+  }
+
+  &:hover .analytics-metric__label lucide-icon {
+    opacity: 1;
   }
 
   &__progress {
     @include progress-bar;
-    /* OPTIMIZED: Progress bar spacing */
-    margin-top: calc(var(--card-gap) * 0.75);
-    margin-bottom: calc(var(--card-gap) * 0.5);
+    /* ENHANCED: Better progress bar styling */
+    margin: calc(var(--card-gap) * 0.5) 0;
+    height: 8px;
+    border-radius: var(--card-border-radius);
+    background: color-mix(in srgb, var(--section-accent) 12%, transparent);
+    overflow: hidden;
+
+    .section-card__progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--color-brand) 0%, var(--color-brand) 80%, color-mix(in srgb, var(--color-brand) 70%, transparent) 100%);
+      border-radius: inherit;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
   }
 
   &__meta {
@@ -61,24 +124,28 @@
     justify-content: flex-start;
     align-items: center;
     flex-wrap: wrap;
-    gap: calc(var(--card-gap) * 0.75);
-    /* OPTIMIZED: Tighter meta spacing */
+    gap: calc(var(--card-gap) * 0.6);
+    /* ENHANCED: Better spacing */
     width: 100%;
     font-size: var(--card-meta-font-size) !important;
-    color: var(--card-text-muted) !important;
-    font-weight: var(--card-meta-font-weight) !important;
-    line-height: 1.2;
+    color: color-mix(in srgb, var(--card-text-muted) 90%, transparent) !important;
+    font-weight: 500 !important;
+    line-height: 1.3 !important;
+    padding: calc(var(--card-gap) * 0.25) calc(var(--card-gap) * 0.5);
+    background: color-mix(in srgb, var(--section-accent) 6%, transparent);
+    border-radius: calc(var(--card-border-radius) * 0.5);
 
     lucide-icon {
-      @include icon-base(11px);
+      @include icon-base(12px);
       @include trend-colors;
       flex-shrink: 0;
+      transition: transform 0.22s ease;
     }
   }
 
   &__meta-change {
     @include trend-colors;
-    font-weight: var(--card-meta-font-weight);
+    font-weight: 600;
     font-size: var(--card-meta-font-size);
   }
 }

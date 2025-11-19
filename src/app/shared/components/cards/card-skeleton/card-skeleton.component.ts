@@ -15,3 +15,5 @@ export class CardSkeletonComponent {
   @Input() isFullscreen = false;
 }
 
+
+

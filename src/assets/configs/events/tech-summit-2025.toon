@@ -1,0 +1,54 @@
+cardTitle: Tech Summit 2025
+sections[6]:
+  - title: Event Overview
+    type: info
+    fields[8]{label,value}:
+      Event Type,Technology Conference
+      Date,"March 15-17, 2025"
+      Location,"Las Vegas, NV, USA"
+      Venue,CES Convention Center
+      Expected Attendance,"150,000+"
+      Duration,3 Days
+      Format,In-Person + Virtual
+      Target Audience,Tech Professionals
+  - title: Registration & Engagement
+    type: analytics
+    fields[4]{label,value,percentage,performance,trend,change}:
+      Early Bird Registration,+92% Complete,92,excellent,up,28
+      Virtual Participation,55% of Attendees,55,excellent,up,35
+      Speaker Confirmations,98% Confirmed,98,excellent,stable,2
+      Global Sponsor Commitments,+85% Secured,85,excellent,up,42
+  - title: Event Features
+    type: info
+    fields[5]{label,value}:
+      Keynote Speakers,80+ Global Industry Leaders
+      Technical Sessions,350+ Specialized Workshops
+      Networking Events,40+ Curated Meetups
+      Innovation Showcase,1200+ Startups Exhibiting
+      AI Experience Zone,Immersive Hands-On Demo
+  - title: Event Statistics
+    type: chart
+    fields[4]{label,value,color}:
+      Total Sessions,350,#FF7900
+      Exhibitor Booths,1200,#FF9933
+      Square Footage,2500000,#CC5F00
+      Live Streams,25,#FFE6CC
+  - title: Logistics & Planning
+    type: info
+    fields[4]{label,value}:
+      Hotel Rooms Booked,"45,000"
+      Transportation Hubs,3 Major Airports
+      Security Personnel,500+ Officers
+      Medical Stations,12 On-Site
+  - title: Event Locations
+    type: map
+    fields[6]{name,x,y,type,address}:
+      Main Convention Center,18,38,venue,"Las Vegas, NV, USA"
+      Tech Innovation Hub,16,36,exhibition,Las Vegas Convention Center
+      Networking Pavilion,20,40,networking,Venetian Hotel
+      VR Experience Zone,19,37,experience,Park MGM
+      Keynote Theater,17,39,theater,Caesars Palace
+      Startup Showcase,21,41,exhibition,Bellagio
+actions[2]{label,type,icon,action}:
+  Register Now,primary,🎫,"https://techsummit2025.com/register"
+  View Agenda,secondary,📅,"https://techsummit2025.com/agenda"

@@ -28,24 +28,18 @@ const CARD_TYPE_MAPPING = {
  * Determine card priority based on size and type
  */
 function determinePriority(cardType, sizeInBytes) {
-  // Large enterprise cards get high priority
   if (sizeInBytes > 10000) {
     return 'high';
   }
-  // Company cards are typically shown first
   if (cardType === 'company') {
     return 'high';
   }
-  // Contact and product cards are medium priority
   if (['contact', 'product'].includes(cardType)) {
     return 'medium';
   }
   return 'low';
 }
 
-/**
- * Determine complexity based on section count and size
- */
 function determineComplexity(sectionCount, sizeInBytes) {
   if (sectionCount > 10 || sizeInBytes > 10000) {
     return 'enterprise';
@@ -56,10 +50,9 @@ function determineComplexity(sectionCount, sizeInBytes) {
   return 'basic';
 }
 
-/**
- * Generate manifest from config files
- */
-function generateManifest() {
+async function generateManifest() {
+  const { decode: decodeToon } = await import('@toon-format/toon');
+
   const manifest = {
     version: '1.0.0',
     generatedAt: new Date().toISOString(),
@@ -67,56 +60,62 @@ function generateManifest() {
     types: {}
   };
 
-  // Initialize type arrays
   Object.keys(CARD_TYPE_MAPPING).forEach(type => {
     manifest.types[type] = [];
   });
 
-  // Scan each card type directory
-  Object.entries(CARD_TYPE_MAPPING).forEach(([cardType, directory]) => {
+  for (const [cardType, directory] of Object.entries(CARD_TYPE_MAPPING)) {
     const dirPath = path.join(CONFIGS_DIR, directory);
-    
     if (!fs.existsSync(dirPath)) {
       console.warn(`Directory not found: ${dirPath}`);
-      return;
+      continue;
     }
 
-    const files = fs.readdirSync(dirPath).filter(file => file.endsWith('.json'));
+    const files = fs.readdirSync(dirPath).filter(file => file.endsWith('.toon'));
 
-    files.forEach(file => {
-      const filePath = path.join(dirPath, file);
-      const stats = fs.statSync(filePath);
-      const sizeInBytes = stats.size;
-      
+    for (const file of files) {
+      const cardId = file.replace(/\.toon$/, '');
+      const toonFile = path.join(dirPath, `${cardId}.toon`);
+      let cardData = null;
+      let sizeInBytes = 0;
+      let lastUpdated = new Date().toISOString();
+
       try {
-        const cardData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-        const cardId = path.basename(file, '.json');
-        const sectionCount = cardData.sections?.length || 0;
-        
-        const cardEntry = {
-          id: cardId,
-          type: cardType,
-          path: `${directory}/${file}`,
-          size: sizeInBytes,
-          priority: determinePriority(cardType, sizeInBytes),
-          sectionCount,
-          complexity: determineComplexity(sectionCount, sizeInBytes),
-          title: cardData.cardTitle || cardId,
-          metadata: {
-            subtitle: cardData.cardSubtitle || null,
-            description: cardData.description || null,
-            lastUpdated: stats.mtime.toISOString(),
-            hasActions: !!(cardData.actions && cardData.actions.length > 0)
-          }
-        };
-
-        manifest.cards.push(cardEntry);
-        manifest.types[cardType].push(cardId);
+        const stats = fs.statSync(toonFile);
+        sizeInBytes = stats.size;
+        lastUpdated = stats.mtime.toISOString();
+        const text = fs.readFileSync(toonFile, 'utf8');
+        cardData = decodeToon(text, { expandPaths: 'safe' });
       } catch (error) {
-        console.error(`Error processing ${filePath}:`, error.message);
+        console.error(`Error processing ${cardId} in ${directory}:`, error);
       }
-    });
-  });
+
+      if (!cardData) {
+        continue;
+      }
+
+      const sectionCount = cardData.sections?.length || 0;
+      const cardEntry = {
+        id: cardId,
+        type: cardType,
+        path: `${directory}/${cardId}.toon`,
+        size: sizeInBytes,
+        priority: determinePriority(cardType, sizeInBytes),
+        sectionCount,
+        complexity: determineComplexity(sectionCount, sizeInBytes),
+        title: cardData.cardTitle || cardId,
+        metadata: {
+          subtitle: cardData.cardSubtitle || null,
+          description: cardData.description || null,
+          lastUpdated,
+          hasActions: !!(cardData.actions && cardData.actions.length > 0)
+        }
+      };
+
+      manifest.cards.push(cardEntry);
+      manifest.types[cardType].push(cardId);
+    }
+  }
 
   // Sort cards by priority (high first), then by size (larger first)
   manifest.cards.sort((a, b) => {
@@ -145,12 +144,10 @@ function generateManifest() {
 
 // Run generator
 if (require.main === module) {
-  try {
-    generateManifest();
-  } catch (error) {
+  generateManifest().catch(error => {
     console.error('Error generating manifest:', error);
     process.exit(1);
-  }
+  });
 }
 
 module.exports = { generateManifest };

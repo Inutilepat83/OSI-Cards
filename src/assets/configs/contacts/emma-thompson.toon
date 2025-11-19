@@ -1,0 +1,54 @@
+cardTitle: Emma Thompson
+sections[6]:
+  - title: Professional Profile
+    type: info
+    fields[8]{label,value}:
+      Job Title,Chief Marketing Officer
+      Company,BrandForward Agency
+      Industry,Digital Marketing & Advertising
+      Location,"London, UK"
+      Experience,12+ Years
+      Education,"Oxford Marketing, Digital Strategy"
+      LinkedIn,emma-thompson-cmo
+      Languages,"English, French, German"
+  - title: Marketing Performance
+    type: analytics
+    fields[4]{label,value,percentage,performance,trend,change}:
+      Brand Awareness Growth,+185% YoY,185,excellent,up,35
+      Campaign ROI,420% Average,105,excellent,up,28
+      Social Media Engagement,3.5M Interactions,88,excellent,up,42
+      Lead Generation,+520% Growth,130,excellent,up,52
+  - title: Marketing Expertise
+    type: info
+    fields[5]{label,value}:
+      Specializations,"Digital Strategy, Content Marketing, Social Media"
+      Certifications,"Google Analytics, HubSpot, Facebook Blueprint"
+      Tools & Platforms,"Adobe Creative Suite, Google Ads, Meta Business"
+      Content Creation,"Video Production, Copywriting, Graphic Design"
+      Awards,Marketing Excellence Award 2024
+  - title: Marketing Reach
+    type: chart
+    fields[4]{label,value,color}:
+      Social Followers,920000,#7C3AED
+      Monthly Website Traffic,1500000,#8B5CF6
+      Email Subscribers,180000,#A78BFA
+      Brand Partnerships,85,#C4B5FD
+  - title: Current Campaigns & Projects
+    type: info
+    fields[4]{label,value}:
+      Active Campaigns,Global Brand Relaunch Influencer Marketing AI Integration
+      Content Strategy,Video-First Approach User-Generated Content Interactive
+      Team Leadership,120 Marketing Professionals Global
+      Industry Involvement,Marketing Council Member Conference Speaker Advisor
+  - title: Marketing Locations
+    type: map
+    fields[6]{name,x,y,type,address}:
+      BrandForward HQ,48,28,work,"London, UK"
+      Creative Studio,50,30,studio,"Manchester, UK"
+      European Office,52,25,regional-office,"Paris, France"
+      Client Presentation,28,32,business,"New York, NY, USA"
+      Marketing Summit,15,35,conference,"San Francisco, CA, USA"
+      Photo Shoot,25,35,creative,"Los Angeles, CA, USA"
+actions[2]{label,type,icon,action}:
+  Connect on LinkedIn,primary,💼,"https://linkedin.com/in/emma-thompson-cmo"
+  View Portfolio,secondary,🎨,"https://brandforward.agency/portfolio"

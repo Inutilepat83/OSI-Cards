@@ -1,0 +1,54 @@
+cardTitle: Cloud Migration Suite
+sections[6]:
+  - title: Product Overview
+    type: info
+    fields[8]{label,value}:
+      Category,Cloud Services
+      Launch Date,"2023"
+      Version,2.1.4
+      Target Market,Enterprise
+      Pricing Model,Subscription
+      Support Level,24/7 Premium
+      Deployment,SaaS
+      Compliance,"GDPR, SOC 2, ISO 27001"
+  - title: Performance Metrics
+    type: analytics
+    fields[4]{label,value,percentage,performance,trend,change}:
+      Migration Success Rate,98.5%,98.5,excellent,up,2.1
+      Average Migration Time,12 days,75,good,down,-15
+      Cost Savings,35%,35,excellent,up,8
+      User Satisfaction,4.8/5,96,excellent,stable,0.2
+  - title: Technical Specifications
+    type: info
+    fields[5]{label,value}:
+      Supported Platforms,"AWS, Azure, GCP"
+      API Endpoints,"REST, GraphQL"
+      Data Transfer Rate,Up to 10 Gbps
+      Encryption,"AES-256, TLS 1.3"
+      Backup Frequency,Real-time
+  - title: Usage Statistics
+    type: chart
+    fields[4]{label,value,color}:
+      Active Customers,2500,#FF7900
+      Data Migrated (PB),1250,#FF9933
+      API Calls (Monthly),50000000,#CC5F00
+      Uptime SLA,99.9,#FFE6CC
+  - title: Features & Capabilities
+    type: info
+    fields[4]{label,value}:
+      Automated Discovery,AI-Powered
+      Zero-Downtime Migration,Supported
+      Real-time Monitoring,Advanced Dashboard
+      Compliance Reporting,Automated
+  - title: Market Position
+    type: map
+    fields[6]{name,x,y,type,address}:
+      North America HQ,25,35,headquarters,"San Francisco, CA, USA"
+      Europe Office,48,28,regional-office,"London, UK"
+      Asia Pacific,80,60,regional-office,Singapore
+      Data Center US-West,15,40,datacenter,"Oregon, USA"
+      Data Center EU,50,30,datacenter,Ireland
+      Data Center Asia,82,55,datacenter,"Tokyo, Japan"
+actions[2]{label,type,icon,action}:
+  Try Free Demo,primary,🚀,"https://demo.cloudmigrationsuite.com"
+  Download Documentation,secondary,📋,"https://docs.cloudmigrationsuite.com"

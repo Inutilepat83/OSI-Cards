@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, NgZone, inject, OnDestroy } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 export interface MousePosition {
@@ -14,11 +14,11 @@ export interface TiltCalculations {
   reflectionOpacity: number;
 }
 
-const MAX_LIFT_PX = 0.5;
+const MAX_LIFT_PX = 1.0; // Doubled from 0.5 for stronger tilt effect
 const BASE_GLOW_BLUR = 8; // Reduced from 12 - tighter glow
 const MAX_GLOW_BLUR_OFFSET = 4; // Reduced from 6 - less spread
-const BASE_GLOW_OPACITY = 0.15; // Further reduced for subtler glow
-const MAX_GLOW_OPACITY_OFFSET = 0.12; // Further reduced for subtler glow
+const BASE_GLOW_OPACITY = 0.225; // Intensified by 50% (0.15 * 1.5)
+const MAX_GLOW_OPACITY_OFFSET = 0.18; // Intensified by 50% (0.12 * 1.5)
 const MAX_REFLECTION_OPACITY = 0.22;
 
 // Performance optimization: cache element dimensions
@@ -35,7 +35,7 @@ interface ElementCache {
 @Injectable({
   providedIn: 'root'
 })
-export class MagneticTiltService {
+export class MagneticTiltService implements OnDestroy {
   private tiltCalculationsSubject = new BehaviorSubject<TiltCalculations>({
     rotateX: 0,
     rotateY: 0,
@@ -47,18 +47,23 @@ export class MagneticTiltService {
   tiltCalculations$ = this.tiltCalculationsSubject.asObservable();
 
   // Performance: cache element dimensions to avoid repeated getBoundingClientRect calls
-  private elementCache: Map<HTMLElement, ElementCache> = new Map();
+  private elementCache: Map<HTMLElement, ElementCache> = new Map<HTMLElement, ElementCache>();
   private rafId: number | null = null;
   private pendingUpdate: { mousePosition: MousePosition; element: HTMLElement | null } | null = null;
   private lastCalculations: TiltCalculations | null = null;
   private readonly CACHE_DURATION = 100; // Recalculate rect every 100ms max
-
-  constructor(private ngZone: NgZone) {}
+  private readonly ngZone = inject(NgZone);
 
   calculateTilt(mousePosition: MousePosition, element: HTMLElement | null): void {
     if (!element) {
       this.resetTilt();
       return;
+    }
+
+    // Cancel any ongoing reset animation when mouse re-enters
+    if (this.resetTimeoutId !== null) {
+      clearTimeout(this.resetTimeoutId);
+      this.resetTimeoutId = null;
     }
 
     // Store pending update for RAF batching
@@ -165,21 +170,85 @@ export class MagneticTiltService {
     );
   }
 
-  resetTilt(): void {
+  private resetTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private readonly RESET_TRANSITION_DURATION_MS = 500; // Smooth exit transition duration
+
+  resetTilt(smooth = true): void {
+    // Cancel any pending tilt calculations
     if (this.rafId !== null) {
       cancelAnimationFrame(this.rafId);
       this.rafId = null;
     }
     this.pendingUpdate = null;
-    this.lastCalculations = null;
     
-    this.tiltCalculationsSubject.next({
-      rotateX: 0,
-      rotateY: 0,
-      glowBlur: BASE_GLOW_BLUR,
-      glowOpacity: BASE_GLOW_OPACITY,
-      reflectionOpacity: 0
-    });
+    // Clear any existing reset timeout
+    if (this.resetTimeoutId !== null) {
+      clearTimeout(this.resetTimeoutId);
+      this.resetTimeoutId = null;
+    }
+    
+    if (smooth) {
+      // Smooth reset: gradually transition to zero over the transition duration
+      // This allows the CSS transition to complete smoothly even if mouse leaves quickly
+      const startTime = performance.now();
+      const startCalculations = this.lastCalculations || {
+        rotateX: 0,
+        rotateY: 0,
+        glowBlur: BASE_GLOW_BLUR,
+        glowOpacity: BASE_GLOW_OPACITY,
+        reflectionOpacity: 0
+      };
+      
+      const animateReset = () => {
+        const elapsed = performance.now() - startTime;
+        const progress = Math.min(elapsed / this.RESET_TRANSITION_DURATION_MS, 1);
+        
+        // Ease-out function for smooth deceleration
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        
+        const currentCalculations: TiltCalculations = {
+          rotateX: startCalculations.rotateX * (1 - easeOut),
+          rotateY: startCalculations.rotateY * (1 - easeOut),
+          glowBlur: BASE_GLOW_BLUR + (startCalculations.glowBlur - BASE_GLOW_BLUR) * (1 - easeOut),
+          glowOpacity: BASE_GLOW_OPACITY + (startCalculations.glowOpacity - BASE_GLOW_OPACITY) * (1 - easeOut),
+          reflectionOpacity: startCalculations.reflectionOpacity * (1 - easeOut)
+        };
+        
+        this.lastCalculations = currentCalculations;
+        this.ngZone.runOutsideAngular(() => {
+          this.tiltCalculationsSubject.next(currentCalculations);
+        });
+        
+        if (progress < 1) {
+          // Continue animation
+          this.resetTimeoutId = window.setTimeout(animateReset, 16); // ~60fps
+        } else {
+          // Animation complete - set final values
+          this.lastCalculations = null;
+          this.tiltCalculationsSubject.next({
+            rotateX: 0,
+            rotateY: 0,
+            glowBlur: BASE_GLOW_BLUR,
+            glowOpacity: BASE_GLOW_OPACITY,
+            reflectionOpacity: 0
+          });
+          this.resetTimeoutId = null;
+        }
+      };
+      
+      // Start smooth reset animation
+      animateReset();
+    } else {
+      // Immediate reset (for cleanup)
+      this.lastCalculations = null;
+      this.tiltCalculationsSubject.next({
+        rotateX: 0,
+        rotateY: 0,
+        glowBlur: BASE_GLOW_BLUR,
+        glowOpacity: BASE_GLOW_OPACITY,
+        reflectionOpacity: 0
+      });
+    }
   }
 
   // Cleanup cached elements when component is destroyed
@@ -188,6 +257,18 @@ export class MagneticTiltService {
       this.elementCache.delete(element);
     } else {
       this.elementCache.clear();
+    }
+  }
+
+  // Cleanup method for service destruction
+  ngOnDestroy(): void {
+    if (this.resetTimeoutId !== null) {
+      clearTimeout(this.resetTimeoutId);
+      this.resetTimeoutId = null;
+    }
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
     }
   }
 }
