@@ -66,6 +66,17 @@ export class InfoSectionComponent extends BaseSectionComponent<InfoField> {
     return this.utils.formatChange(change);
   }
 
+  /**
+   * Get display value, hiding "Streaming…" placeholder text
+   */
+  getDisplayValue(field: InfoField): string {
+    const value = field.value;
+    if (value === 'Streaming…' || value === 'Streaming...') {
+      return '';
+    }
+    return value != null ? String(value) : '';
+  }
+
   override trackField(index: number, field: InfoField): string {
     return field.id ?? `${field.label}-${index}`;
   }

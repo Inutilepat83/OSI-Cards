@@ -1,0 +1,28 @@
+/* Configuration panel layout for card customization controls */
+
+.config-panel {
+  position: sticky;
+  top: 1rem;
+  padding: 1rem;
+  background-color: var(--card);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.config-group {
+  margin-bottom: 1rem;
+}
+
+.config-group:last-child {
+  margin-bottom: 0;
+}
+
+.config-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.config-control {
+  width: 100%;
+}

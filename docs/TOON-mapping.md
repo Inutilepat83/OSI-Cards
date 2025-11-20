@@ -17,7 +17,7 @@ This document captures how the existing `AICardConfig`/`CardSection`/`CardField`
 - Numeric values stay numeric; strings that include commas or structural tokens must be quoted per TOON quoting rules.
 - Use `keyFolding: 'safe'` when encoding so single-key wrappers collapse (e.g., `metadata.category` becomes `metadata.category:`).
 
-## 4. Sample conversion (see `analytics/operational-efficiency.toon`)
+## 4. Sample conversion (derived from the analytics JSON templates, e.g. `src/assets/configs/analytics/analytics-enterprise-v3.json`)
 
 ```
 cardTitle: Operational Efficiency Analytics
@@ -45,7 +45,7 @@ actions[2]{label,type,icon,action}:
 
 ## 5. Tooling & workflow
 - Run `npm run convert:toon` to regenerate TOON files from `src/assets/configs/**/*.json`. The script accepts substring filters (e.g., `npm run convert:toon analytics`) and `--dry-run` for validation before writing.
-- Encourage contributors to keep both `.json` (source-of-truth) and `.toon` artifacts synchronized via this script. The TOON files can live alongside the JSON artifacts so pre-built assets stay available for offline use.
+- Encourage contributors to keep the JSON artifacts aligned with the manifest; the `scripts/convert-configs-to-toon.js` utility can still regenerate `.toon` artifacts on demand when a TOON sample is required for documentation or export.
 
 ## 6. Future runtime mapping
 - When consuming TOON payloads, decode them via `decode` from `@toon-format/toon`, then normalize into `AICardConfig` using `CardUtils.sanitizeCardConfig`. Maintain `ensureCardIds`, `removeAllIds`, and NgRx actions (`generateCard`, `loadTemplate`, `searchCards`) so selectors and effects remain stable.

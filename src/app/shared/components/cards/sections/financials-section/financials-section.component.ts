@@ -64,6 +64,17 @@ export class FinancialsSectionComponent {
     return 'text-amber-400';
   }
 
+  /**
+   * Get display value, hiding "Streaming…" placeholder text
+   */
+  getDisplayValue(field: FinancialField): string {
+    const value = field.value;
+    if (value === 'Streaming…' || value === 'Streaming...') {
+      return '';
+    }
+    return value != null ? String(value) : '';
+  }
+
   trackField(index: number, field: FinancialField): string {
     return field.id ?? `${field.label}-${index}`;
   }

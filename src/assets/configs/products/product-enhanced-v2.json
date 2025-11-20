@@ -1,0 +1,105 @@
+{
+  "cardTitle": "SecureGuard Enterprise",
+  "cardSubtitle": "Enterprise Cybersecurity Platform",
+  "cardType": "product",
+  "sections": [
+    {
+      "title": "Product Overview",
+      "type": "overview",
+      "fields": [
+        { "label": "Category", "value": "Cybersecurity" },
+        { "label": "Launch Date", "value": "2022" },
+        { "label": "Version", "value": "3.2.1" },
+        { "label": "Target Market", "value": "Enterprise & SMB" },
+        { "label": "Pricing Model", "value": "Per Endpoint" },
+        { "label": "Support Level", "value": "24/7 Enterprise" },
+        { "label": "Deployment", "value": "Cloud + On-Premise" },
+        { "label": "Compliance", "value": "NIST, CIS, GDPR" }
+      ]
+    },
+    {
+      "title": "Security Metrics",
+      "type": "analytics",
+      "fields": [
+        { "label": "Threat Detection Rate", "value": "99.7%", "percentage": 99.7, "performance": "excellent", "trend": "up" },
+        { "label": "False Positive Rate", "value": "0.03%", "percentage": 0.03, "performance": "excellent", "trend": "down" },
+        { "label": "Response Time", "value": "< 5 seconds", "percentage": 95, "performance": "excellent", "trend": "down" },
+        { "label": "Customer Retention", "value": "96%", "percentage": 96, "performance": "excellent", "trend": "up" }
+      ]
+    },
+    {
+      "title": "Security Dashboard",
+      "type": "chart",
+      "chartType": "doughnut",
+      "chartData": {
+        "labels": ["Protected", "Threats Blocked", "Active Incidents"],
+        "datasets": [
+          {
+            "label": "Security Status",
+            "data": [98, 1.5, 0.5],
+            "backgroundColor": ["#10b981", "#ef4444", "#f59e0b"]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Core Features",
+      "type": "product",
+      "fields": [
+        { "label": "Endpoint Protection", "value": "Next-Gen Antivirus with AI", "icon": "🛡️" },
+        { "label": "EDR/XDR", "value": "Advanced Threat Hunting & Response", "icon": "🔍" },
+        { "label": "Zero Trust Network", "value": "Identity-Based Access Control", "icon": "🔐" },
+        { "label": "AI-Powered Detection", "value": "Machine Learning Threat Analysis", "icon": "🤖" }
+      ]
+    },
+    {
+      "title": "Security Solutions",
+      "type": "solutions",
+      "fields": [
+        {
+          "label": "Endpoint Security",
+          "value": "Comprehensive endpoint protection",
+          "benefits": ["Real-time threat detection", "Automated response", "Behavioral analysis"]
+        },
+        {
+          "label": "Network Security",
+          "value": "Zero Trust architecture",
+          "benefits": ["Micro-segmentation", "Identity verification", "Continuous monitoring"]
+        }
+      ]
+    },
+    {
+      "title": "Product Support",
+      "type": "contact-card",
+      "fields": [
+        {
+          "label": "Security Support",
+          "title": "Security Team",
+          "value": "24/7 Security Operations",
+          "email": "security@secureguard.com",
+          "phone": "+1 555 SECURITY",
+          "role": "Support",
+          "department": "Security"
+        },
+        {
+          "label": "Sales Team",
+          "title": "Enterprise Sales",
+          "value": "Enterprise Solutions",
+          "email": "sales@secureguard.com",
+          "phone": "+1 555 SALES",
+          "role": "Sales",
+          "department": "Sales"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Start Free Trial", "type": "primary", "icon": "🛡️", "action": "#" },
+    { "label": "Security Assessment", "type": "secondary", "icon": "🔍", "action": "#" }
+  ],
+  "metadata": {
+    "category": "product",
+    "variant": "enhanced",
+    "complexity": "enhanced"
+  }
+}

@@ -1,0 +1,134 @@
+.card-skeleton {
+  width: 100%;
+  min-height: 400px;
+  background: var(--card-background, var(--background));
+  border: 1px solid var(--border);
+  border-radius: var(--card-border-radius, 1rem);
+  padding: var(--card-main-padding, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-skeleton--fullscreen {
+  min-height: 100%;
+  border-radius: 0;
+}
+
+.card-skeleton-header {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.skeleton-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--foreground);
+  min-height: 2rem;
+  display: flex;
+  align-items: center;
+}
+
+.skeleton-title-placeholder {
+  width: 60%;
+  height: 2rem;
+  background: linear-gradient(
+    90deg,
+    var(--muted) 0%,
+    var(--muted-foreground) 20%,
+    var(--muted) 40%,
+    var(--muted) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: 0.5rem;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+.card-skeleton-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.skeleton-section {
+  opacity: 0;
+  animation: skeleton-fade-in 0.4s ease-out forwards;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--card-background, var(--background));
+}
+
+.skeleton-section-header {
+  margin-bottom: 0.75rem;
+}
+
+.skeleton-section-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.skeleton-line {
+  height: 1rem;
+  background: linear-gradient(
+    90deg,
+    var(--muted) 0%,
+    var(--muted-foreground) 20%,
+    var(--muted) 40%,
+    var(--muted) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: 0.25rem;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-line--title {
+  width: 40%;
+  height: 1.25rem;
+}
+
+.skeleton-line:not(.skeleton-line--title) {
+  width: 100%;
+}
+
+.skeleton-line:not(.skeleton-line--title):nth-child(2) {
+  width: 80%;
+}
+
+.card-skeleton-empty {
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.skeleton-line--empty {
+  width: 60%;
+  height: 1.5rem;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes skeleton-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

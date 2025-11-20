@@ -5,7 +5,7 @@
 
 /* Masonry container loading states */
 .masonry-container {
-  transition: opacity 0.25s ease;
+  transition: opacity 0.25s ease, height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   opacity: 1;
   min-height: 400px;
   /* Better containment for absolute positioned items */
@@ -18,37 +18,25 @@
 
 /* Masonry items with smooth positioning */
 .masonry-item {
-  will-change: top, left;
-  transition: top 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
-              left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: top, left, width;
+  /* No transitions initially - will be enabled when ready */
+  transition: opacity 0.4s ease;
+  opacity: 0.3;
   /* Better rendering performance */
   backface-visibility: hidden;
   transform: translateZ(0);
-}
-
-/* Section streaming animation takes precedence over default opacity */
-.masonry-item.section-streaming {
-  /* Animation is handled by .section-streaming class from animations.scss */
-  transition: top 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
-              left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.masonry-item.section-entered {
-  /* Animation complete - ensure full opacity */
-  opacity: 1;
-  transition: top 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
-              left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Smooth repositioning */
+  pointer-events: auto;
 }
 
 .masonry-item--ready {
-  /* Only apply default opacity transition if not using section streaming animation */
-  transition: top 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
-              left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.45s ease 0.1s;
-}
-
-.masonry-item--ready:not(.section-streaming):not(.section-entered) {
   opacity: 1;
+  /* Enable smooth transitions for position changes once layout is ready */
+  transition: top 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+              left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              opacity 0.5s ease 0.1s,
+              transform 0.3s ease;
 }
 
 /* Ensure sections have proper containment */
@@ -66,15 +54,14 @@
   
   .masonry-item {
     /* Faster transitions on mobile for better responsiveness */
-    transition: top 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
-                left 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-                opacity 0.2s ease;
+    transition: opacity 0.3s ease;
   }
   
   .masonry-item--ready {
-    transition: top 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
-                left 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-                opacity 0.3s ease 0.05s;
+    transition: top 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity 0.4s ease 0.05s;
   }
 }
 

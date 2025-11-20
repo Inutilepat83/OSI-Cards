@@ -1,0 +1,63 @@
+/* JSON editor styling */
+.json-editor {
+  font-family: 'Courier New', monospace;
+  background: var(--input-background);
+  border: none !important;
+  border-radius: var(--radius);
+  padding: 1rem;
+  color: var(--foreground);
+  max-height: 600px;
+  overflow-y: auto;
+  resize: none;
+}
+
+.json-editor-textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--card-border-radius);
+  background: var(--card-background);
+  /* NO BORDER - per design requirements */
+  border: none !important;
+  color: var(--foreground);
+  transition: border-color 0.2s ease, background 0.2s ease;
+  font-family: monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+
+  &:focus {
+    outline: none;
+    background: var(--card-hover-background);
+    box-shadow: 0 0 0 2px rgba(255, 121, 0, 0.1);
+  }
+}
+
+.json-editor:focus {
+  outline: none;
+  box-shadow: none !important;
+}
+
+.json-valid {
+  border: none !important;
+}
+
+.json-invalid {
+  border: none !important;
+}
+
+.json-editor::-webkit-scrollbar {
+  width: 8px;
+}
+
+.json-editor::-webkit-scrollbar-track {
+  background: color-mix(in srgb, var(--color-white) 10%, transparent);
+  border-radius: 4px;
+}
+
+.json-editor::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-brand) 60%, transparent);
+  border-radius: 4px;
+}
+
+.json-editor::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-brand) 80%, transparent);
+}

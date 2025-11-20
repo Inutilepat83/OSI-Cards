@@ -29,6 +29,17 @@ export class NewsSectionComponent extends BaseSectionComponent<CardItem> {
     return typeof timestamp === 'string' ? timestamp : '';
   }
 
+  /**
+   * Get display description, hiding "Streaming…" placeholder text
+   */
+  getDisplayDescription(item: CardItem): string {
+    const description = item.description;
+    if (description === 'Streaming…' || description === 'Streaming...') {
+      return '';
+    }
+    return description ?? '';
+  }
+
   override trackItem(index: number, item: CardItem): string {
     return item.id ?? `news-item-${index}-${this.formatSource(item)}`;
   }

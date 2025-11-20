@@ -10,13 +10,13 @@ Keep every change synchronized with the Angular migration’s section-driven car
 
 ## Data + State Flow
 - `CardDataService` (see `core/services/card-data/card-data.service.ts`) keeps a `BehaviorSubject` of the active `CARD_DATA_PROVIDER` and exposes `getAllCards`, `getCardsByType`, and real-time streams with `shareReplay(1)` caching. If you bypass it, explain how caching and `ensureCardIds`/`removeAllIds` stay in sync with the store.
-- The default provider is `ToonCardProvider` (assets under `assets/configs/*`), but the WebSocket provider (`websocket-card-provider.service.ts`) can be swapped via `switchProvider` for live edits. Document any provider switch and whether it supports `subscribeToUpdates`.
+- The default provider is `JsonFileCardProvider` (assets under `assets/configs/*`), but the WebSocket provider (`websocket-card-provider.service.ts`) can be swapped via `switchProvider` for live edits. Document any provider switch and whether it supports `subscribeToUpdates`.
 - The `cards` state bundle (`src/app/store/cards/cards.state.ts`) uses an entity adapter; keep reducers immutable, reuse `ensureCardIds` before upserting, and flow new actions through `generateCard`/`loadTemplate`/`searchCards` so selectors and effects stay stable.
 
 ## Section Development Checklist
 1. Add the new section component under `shared/components/cards/sections/`, import `CommonModule` + `LucideIconsModule`, use `@include card`/`section-grid`, and wire `fieldInteraction` outputs the same way existing sections do (see `info`, `analytics`, `list`).
 2. Register it in `SectionRendererComponent` (import, add to `imports`, append `*ngSwitchCase` and update `resolvedType` if needed). Explain any `title`-based overrides when adding new cases.
-3. Update `CardSection['type']` union in `src/app/models/card.model.ts` and ensure TOON templates under `assets/configs` map to the correct `type` string.
+3. Update `CardSection['type']` union in `src/app/models/card.model.ts` and ensure JSON configurations under `assets/configs` map to the correct `type` string.
 4. Import the new SCSS file (naming: `_your-section.scss`) via `styles.scss`, include the shared mixins, and avoid inline font sizes—always use `var(--card-*)` tokens in `_variables.scss`.
 
 ## Styling & Tokens

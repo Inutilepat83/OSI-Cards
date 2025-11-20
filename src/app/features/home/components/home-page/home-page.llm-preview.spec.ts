@@ -124,8 +124,8 @@ describe('HomePageComponent LLM preview & fallback', () => {
     expect((component as any).llmPreviewCard?.sections.length).toBe(count);
   });
 
-  it('shows Live edit badge when toonInput is populated and not simulating', () => {
-    component.toonInput = 'cardTitle: Hello';
+  it('shows Live edit badge when jsonInput is populated and not simulating', () => {
+    component.jsonInput = '{"cardTitle": "Hello"}';
     (component as any).llmStreamState = { ...((component as any).llmStreamState), isSimulating: false } as any;
     fixture.detectChanges();
     const el = fixture.nativeElement.querySelector('.ml-2');
@@ -133,9 +133,9 @@ describe('HomePageComponent LLM preview & fallback', () => {
   });
 
   it('editor-driven fallback shows parsed title in preview', () => {
-    component.toonInput = 'cardTitle: FallbackTest\n- title: Overview\n type: info\n fields[1]:\n Industry, Tech';
+    component.jsonInput = '{"cardTitle": "FallbackTest", "sections": [{"title": "Overview", "type": "info", "fields": [{"label": "Industry", "value": "Tech"}]}]}';
     // ensure live preview was updated
-    (component as any).processToonInputImmediate(component.toonInput);
+    (component as any).processJsonInputImmediate(component.jsonInput);
     fixture.detectChanges();
     const titleEl = fixture.nativeElement.querySelector('app-ai-card-renderer h1');
     // The renderer should display fallback cardTitle
@@ -143,16 +143,16 @@ describe('HomePageComponent LLM preview & fallback', () => {
   });
 
   it('LLM simulation updates card via editor tokens', () => {
-    spyOn(component, 'onToonInputChange').and.callThrough();
-    (component as any).startLlmSimulation('{\n  cardTitle: Test\n  sections[1]:\n  - title: SimSection\n    type: info\n    fields[1]:\n    Industry, Tech\n}');
+    spyOn(component, 'onJsonInputChange').and.callThrough();
+    (component as any).startLlmSimulation('{"cardTitle": "Test", "sections": [{"title": "SimSection", "type": "info", "fields": [{"label": "Industry", "value": "Tech"}]}]}');
     // Directly schedule a chunk to simulate tokens arriving
-    (component as any).llmBuffer = 'cardTitle: Streamed Test\n';
-    (component as any).processToonInputImmediate((component as any).llmBuffer);
+    (component as any).llmBuffer = '{"cardTitle": "Streamed Test"}';
+    (component as any).processJsonInputImmediate((component as any).llmBuffer);
     fixture.detectChanges();
     const titleEl = fixture.nativeElement.querySelector('app-ai-card-renderer h1');
     expect(titleEl?.textContent?.trim()).toBe('Streamed Test');
     // Ensure the component used the editor update path
-    expect((component as any).onToonInputChange).toHaveBeenCalled();
+    expect((component as any).onJsonInputChange).toHaveBeenCalled();
   });
 
   it('re-checks and sanitizes live preview on structural changes', () => {
@@ -185,7 +185,7 @@ describe('HomePageComponent LLM preview & fallback', () => {
     const dispatchSpy = spyOn((component as any).store, 'dispatch');
     (component as any).finishLlmSimulation();
     // Simulate the debounced final step by invoking the processing method directly
-    (component as any).processToonInput((component as any).toonInput);
+    (component as any).processJsonInput((component as any).jsonInput);
     expect(dispatchSpy).toHaveBeenCalled();
     const calledWith = dispatchSpy.calls.mostRecent().args[0] as any;
     expect(calledWith.type).toContain('generateCardSuccess');

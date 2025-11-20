@@ -1,0 +1,111 @@
+{
+  "cardTitle": "Top Orange Business Solutions",
+  "cardSubtitle": "Recommended Solutions for Financial Services Client",
+  "sections": [
+    {
+      "title": "Recommended Solutions",
+      "type": "solutions",
+      "fields": [
+        {
+          "title": "Secure Cloud Banking Platform",
+          "description": "Compliant cloud infrastructure designed for financial services with enhanced security and regulatory compliance",
+          "category": "Infrastructure",
+          "complexity": "high",
+          "benefits": [
+            "Regulatory compliance",
+            "Enhanced security",
+            "Scalability",
+            "Disaster recovery"
+          ],
+          "deliveryTime": "10-12 weeks"
+        },
+        {
+          "title": "Fraud Detection & Prevention",
+          "description": "AI-powered fraud detection system with real-time monitoring and automated alerts",
+          "category": "Security",
+          "complexity": "high",
+          "benefits": [
+            "Real-time detection",
+            "AI-powered analysis",
+            "Reduced false positives",
+            "Compliance ready"
+          ],
+          "deliveryTime": "8-10 weeks"
+        },
+        {
+          "title": "Data Analytics & Reporting",
+          "description": "Advanced analytics platform for risk management, customer insights, and regulatory reporting",
+          "category": "Analytics",
+          "complexity": "medium",
+          "benefits": [
+            "Risk management",
+            "Customer insights",
+            "Regulatory reporting",
+            "Real-time dashboards"
+          ],
+          "deliveryTime": "6-8 weeks"
+        },
+        {
+          "title": "Secure Network Connectivity",
+          "description": "Dedicated secure network connections for financial transactions and data exchange",
+          "category": "Networking",
+          "complexity": "medium",
+          "benefits": [
+            "Secure connectivity",
+            "Low latency",
+            "High availability",
+            "Global reach"
+          ],
+          "deliveryTime": "4-6 weeks"
+        }
+      ]
+    },
+    {
+      "title": "Client Contact",
+      "type": "contact-card",
+      "fields": [
+        {
+          "label": "Primary Contact",
+          "title": "Financial Services Client",
+          "value": "CIO",
+          "email": "client@financial.com",
+          "phone": "+1 555 0300",
+          "role": "Executive",
+          "department": "Technology"
+        },
+        {
+          "label": "Company",
+          "title": "Financial Services Group",
+          "value": "Financial Services",
+          "email": "info@financial.com",
+          "phone": "+1 555 0000",
+          "role": "Organization",
+          "department": "Corporate"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Create Presentation",
+      "type": "primary",
+      "icon": "📊",
+      "action": "#presentation"
+    },
+    {
+      "label": "Send Email to Client",
+      "type": "primary",
+      "icon": "📧",
+      "email": {
+        "contact": {
+          "name": "Financial Services Client",
+          "email": "client@financial.com",
+          "role": "CIO"
+        },
+        "subject": "Orange Business Solutions - Financial Services Industry Solutions",
+        "body": "Dear Financial Services Client,\n\nI am pleased to present the top Orange Business Solutions tailored for financial services organizations:\n\n1. Secure Cloud Banking Platform\n   Compliant cloud infrastructure with enhanced security\n\n2. Fraud Detection & Prevention\n   AI-powered fraud detection with real-time monitoring\n\n3. Data Analytics & Reporting\n   Advanced analytics for risk management and regulatory reporting\n\n4. Secure Network Connectivity\n   Dedicated secure network connections for financial transactions\n\nThese solutions are designed to meet the strict regulatory and security requirements of the financial services industry.\n\nI would be delighted to schedule a meeting to discuss these solutions in detail.\n\nBest regards,\nOrange Business Sales Team"
+      }
+    }
+  ]
+}
+

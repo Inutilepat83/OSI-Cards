@@ -34,4 +34,15 @@ export class OverviewSectionComponent extends BaseSectionComponent<CardField> {
   getStatusClasses(status?: string): string {
     return this.utils.getStatusClasses(status);
   }
+
+  /**
+   * Get display value, hiding "Streaming…" placeholder text
+   */
+  getDisplayValue(field: CardField): string {
+    const value = field.value;
+    if (value === 'Streaming…' || value === 'Streaming...') {
+      return '';
+    }
+    return value != null ? String(value) : '';
+  }
 }

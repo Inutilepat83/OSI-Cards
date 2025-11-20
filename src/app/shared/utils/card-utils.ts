@@ -45,6 +45,185 @@ export function ensureCardIds(config: AICardConfig): AICardConfig {
   return card;
 }
 
+/**
+ * Validate if an object has the required properties of an AICardConfig
+ * @param obj - Object to validate
+ * @returns true if object has required card properties
+ */
+export function isValidCardConfig(obj: unknown): obj is Partial<AICardConfig> {
+  if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
+    return false;
+  }
+
+  const config = obj as Record<string, unknown>;
+
+  // Check required fields for a card
+  return (
+    typeof config['cardTitle'] === 'string' &&
+    Array.isArray(config['sections'])
+  );
+}
+
+/**
+ * Validate if an object is a valid CardSection
+ * @param obj - Object to validate
+ * @returns true if object has required section properties
+ */
+export function isValidCardSection(obj: unknown): obj is Partial<CardSection> {
+  if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
+    return false;
+  }
+
+  const section = obj as Record<string, unknown>;
+
+  // Check required section properties
+  return (
+    typeof section['type'] === 'string' &&
+    ['info', 'timeline', 'table', 'list', 'analytics', 'custom'].includes(
+      section['type'] as string
+    )
+  );
+}
+
+/**
+ * Validate if an object is a valid CardField
+ * @param obj - Object to validate
+ * @returns true if object has required field properties
+ */
+export function isValidCardField(obj: unknown): obj is Partial<CardField> {
+  if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
+    return false;
+  }
+
+  const field = obj as Record<string, unknown>;
+
+  // Fields need at least a label or name
+  return (
+    (typeof field['label'] === 'string' || typeof field['name'] === 'string') &&
+    (typeof field['value'] === 'string' || typeof field['value'] === 'number' || 
+     typeof field['value'] === 'boolean' || typeof field['value'] === 'object')
+  );
+}
+
+/**
+ * Validate JSON string against AICardConfig structure
+ * @param jsonString - JSON string to validate
+ * @returns Parsed object if valid, null otherwise
+ */
+export function validateCardJson(jsonString: string): Partial<AICardConfig> | null {
+  try {
+    // Validate input
+    if (typeof jsonString !== 'string' || jsonString.trim().length === 0) {
+      console.warn('CardUtils: Empty JSON string provided');
+      return null;
+    }
+
+    // Parse JSON
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(jsonString);
+    } catch (parseError: unknown) {
+      const msg = parseError instanceof Error ? parseError.message : 'Unknown error';
+      console.error(`CardUtils: JSON parse failed: ${msg}`);
+      return null;
+    }
+
+    // Validate structure
+    if (!isValidCardConfig(parsed)) {
+      console.error('CardUtils: Parsed JSON does not match AICardConfig structure');
+      return null;
+    }
+
+    return parsed as Partial<AICardConfig>;
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`CardUtils: Unexpected error in validateCardJson: ${msg}`);
+    return null;
+  }
+}
+
+/**
+ * Validate entire card configuration recursively
+ * @param config - Card configuration to validate
+ * @returns true if all nested structures are valid
+ */
+export function validateCardStructure(config: Partial<AICardConfig>): boolean {
+  try {
+    // Check root level
+    if (!isValidCardConfig(config)) {
+      return false;
+    }
+
+    // Check sections
+    if (!Array.isArray(config.sections)) {
+      return false;
+    }
+
+    for (const section of config.sections) {
+      if (!isValidCardSection(section)) {
+        return false;
+      }
+
+      // Check fields in section
+      if (Array.isArray(section.fields)) {
+        for (const field of section.fields) {
+          if (!isValidCardField(field)) {
+            return false;
+          }
+        }
+      }
+
+      // Check items in section
+      if (Array.isArray(section.items)) {
+        for (const item of section.items) {
+          if (typeof item !== 'object' || item === null) {
+            return false;
+          }
+        }
+      }
+    }
+
+    return true;
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`CardUtils: Error validating card structure: ${msg}`);
+    return false;
+  }
+}
+
+/**
+ * Sanitize card configuration to remove any potentially unsafe properties
+ * @param config - Card configuration to sanitize
+ * @returns Sanitized copy of configuration
+ */
+export function sanitizeCardConfig(config: Partial<AICardConfig>): Partial<AICardConfig> {
+  try {
+    // Deep clone to avoid mutating original
+    const sanitized: Partial<AICardConfig> = JSON.parse(
+      JSON.stringify(config)
+    );
+
+    // Remove any properties that shouldn't be in the card
+    const allowedRootKeys = [
+      'id', 'cardTitle', 'cardType', 'sections', 'actions', 
+      'metadata', 'tags', 'priority', 'complexity'
+    ];
+
+    const cleanedRoot: Record<string, unknown> = {};
+    for (const key of allowedRootKeys) {
+      if (key in sanitized) {
+        cleanedRoot[key] = sanitized[key as keyof AICardConfig];
+      }
+    }
+
+    return cleanedRoot as Partial<AICardConfig>;
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`CardUtils: Error sanitizing card config: ${msg}`);
+    return config; // Return original if sanitization fails
+  }
+}
+
 function ensureSectionIds(section: CardSection, sectionIndex: number): CardSection {
   const nextSection = { ...section };
 

@@ -1,0 +1,178 @@
+/* Analytics metric cards with progress and trend indicators */
+/* OPTIMIZED: Compact design with clear visual hierarchy */
+
+@import 'design-system';
+
+
+.analytics-metrics {
+  @include section-responsive-grid(var(--section-grid-min-width), var(--section-card-gap));
+  /* GLOBALLY ENFORCED: Grid gap */
+  gap: var(--section-card-gap) !important;
+}
+
+.analytics-metric {
+  @include card;
+  /* COMPACT: No minimum height */
+  min-height: auto;
+  justify-content: space-between;
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--card-gap);
+    /* OPTIMIZED: Tighter header spacing */
+    margin-bottom: calc(var(--card-gap) * 0.5);
+  }
+
+  &__label {
+    @include label-text;
+    /* OPTIMIZED: Proper hierarchy - labels are secondary */
+    display: flex;
+    align-items: center;
+    gap: calc(var(--card-gap) * 0.75);
+    margin: 0;
+    flex-shrink: 0;
+
+    lucide-icon {
+      @include icon-base(12px);
+      flex-shrink: 0;
+    }
+  }
+
+  &__value {
+    @include value-text-lg;
+    /* OPTIMIZED: Large values are primary - most prominent */
+    margin: 0;
+    line-height: 1.15;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  &__progress {
+    @include progress-bar;
+    /* OPTIMIZED: Progress bar spacing */
+    margin-top: calc(var(--card-gap) * 0.75);
+    margin-bottom: calc(var(--card-gap) * 0.5);
+  }
+
+  &__meta {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: calc(var(--card-gap) * 0.75);
+    /* OPTIMIZED: Tighter meta spacing */
+    width: 100%;
+    font-size: var(--card-meta-font-size) !important;
+    color: var(--card-text-muted) !important;
+    font-weight: var(--card-meta-font-weight) !important;
+    line-height: 1.2;
+
+    lucide-icon {
+      @include icon-base(11px);
+      @include trend-colors;
+      flex-shrink: 0;
+    }
+  }
+
+  &__meta-change {
+    @include trend-colors;
+    font-weight: var(--card-meta-font-weight);
+    font-size: var(--card-meta-font-size);
+  }
+}
+
+.analytics-progress {
+  @include progress-bar;
+
+  &::after {
+    width: var(--progress-width, 0%);
+    background: linear-gradient(90deg,
+      rgba(255, 121, 0, 0.6),
+      rgba(255, 121, 0, 0.8));
+  }
+}
+
+/* Empty state */
+.analytics-empty {
+  @include empty-state;
+}
+
+/* Removed media queries - grid uses auto-fit with min() for continuous responsiveness */
+/* Removed forced 2-column layout - now controlled by section-responsive-grid mixin */
+
+/* Fullscreen mode - ultra compact */
+.ai-card-surface--fullscreen {
+  .analytics-metrics {
+    gap: var(--card-gap) !important;
+  }
+  
+  .analytics-metric {
+    padding: var(--card-padding) !important; /* COMPACT: Use main variable */
+    
+    &__label {
+      gap: var(--card-gap) !important;
+      margin-bottom: 4px !important;
+      
+      lucide-icon {
+        width: 12px !important;
+        height: 12px !important;
+      }
+    }
+    
+    &__value {
+    }
+    
+    &__progress {
+      margin-top: 6px !important;
+      height: 4px !important;
+    }
+    
+    &__meta {
+      gap: var(--card-gap) !important;
+      margin-top: 6px !important;
+      
+      lucide-icon {
+        width: 11px !important;
+        height: 11px !important;
+      }
+    }
+  }
+}
+
+/* Light theme overrides */
+:root[data-theme='day'] {
+  .analytics-metric {
+    &__label {
+      color: #6b7280;
+    }
+    
+    &:hover &__label {
+      color: #4b5563;
+    }
+    
+    &__value {
+      color: #1a1a1a;
+    }
+    
+    &:hover &__value {
+      color: var(--primary);
+      text-shadow: 0 2px 6px rgba(255, 121, 0, 0.2);
+    }
+    
+    &__meta {
+      color: #6b7280;
+    }
+  }
+  
+  .analytics-progress {
+    background: rgba(200, 200, 200, 0.2);
+    
+    &::after {
+      background: linear-gradient(90deg,
+        rgba(255, 121, 0, 0.8),
+        rgba(255, 121, 0, 1));
+    }
+  }
+}

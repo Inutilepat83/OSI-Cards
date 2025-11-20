@@ -82,7 +82,6 @@
   padding: 0 !important;
   margin: 0 !important;
   flex: 1 !important;
-  
   /* Default: grid layout for card-based sections */
   display: grid !important;
   grid-template-columns: repeat(auto-fit, minmax(var(--section-grid-min-width), 1fr)) !important;
@@ -117,18 +116,12 @@
 /* Also target any div with grid classes inside masonry-item body */
 .masonry-item .ai-section__body > div[class*="grid"],
 .masonry-item .ai-section__body > div.grid {
-  /* Make wrapper transparent - flatten hierarchy completely */
-  /* display: contents makes the wrapper disappear from layout */
-  display: contents !important;
   padding: 0 !important;
   margin: 0 !important;
   border: none !important;
   background: transparent !important;
   box-shadow: none !important;
-  gap: 0 !important;
-  /* Override any Tailwind classes */
-  grid-template-columns: none !important;
-  grid-columns: none !important;
+  gap: var(--section-card-gap) !important;
 }
 
 /* For list sections, make wrapper transparent */

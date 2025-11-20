@@ -22,24 +22,6 @@ export abstract class CardDataProvider {
   abstract getCardById(id: string): Observable<AICardConfig | null>;
 
   /**
-   * Get all cards with streaming (progressive loading)
-   * Optional - defaults to blocking getAllCards() if not implemented
-   */
-  getAllCardsStreaming?(): Observable<AICardConfig>;
-
-  /**
-   * Get cards by type with streaming (progressive loading)
-   * Optional - defaults to blocking getCardsByType() if not implemented
-   */
-  getCardsByTypeStreaming?(cardType: CardType): Observable<AICardConfig>;
-
-  /**
-   * Get card sections with streaming (progressive section loading)
-   * Optional - for section-level streaming support
-   */
-  getCardSectionsStreaming?(cardId: string): Observable<CardSection>;
-
-  /**
    * Initialize the provider (optional)
    */
   initialize?(): void;

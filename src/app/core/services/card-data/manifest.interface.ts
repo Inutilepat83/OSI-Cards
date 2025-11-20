@@ -11,6 +11,7 @@ export interface CardManifestEntry {
   sectionCount: number;
   complexity: 'basic' | 'enhanced' | 'enterprise';
   title: string;
+  format?: 'json'; // Optional: format of the card file (defaults to 'json')
   metadata: {
     subtitle?: string | null;
     description?: string | null;

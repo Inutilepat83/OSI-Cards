@@ -28,7 +28,7 @@
             <div class="financial-card__value-wrapper">
               <span class="financial-card__value" [ngClass]="{'financial-card__value--currency': field.format === 'currency'}">
                 <lucide-icon *ngIf="field.format === 'currency'" name="dollar-sign" size="16" class="financial-card__currency-icon"></lucide-icon>
-                {{ field.value }}
+                {{ getDisplayValue(field) }}
               </span>
               <lucide-icon
                 *ngIf="getTrendIcon(field) as trendIcon"

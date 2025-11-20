@@ -76,7 +76,7 @@ export function createMockStore<T extends AppState>(initialState?: Partial<T>): 
       currentCardId: null,
       cardType: 'company' as const,
       cardVariant: 1,
-      toonInput: '',
+      jsonInput: '',
       isGenerating: false,
       isFullscreen: false,
       error: null,

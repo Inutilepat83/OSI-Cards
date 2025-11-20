@@ -37,7 +37,7 @@
         >
           <div class="info-row__primary">
             <span class="info-row__label">{{ field.label }}</span>
-            <span class="info-row__value">{{ field.value }}</span>
+            <span class="info-row__value">{{ getDisplayValue(field) }}</span>
           </div>
 
           <div class="info-row__meta" *ngIf="field.description || field.change !== undefined">

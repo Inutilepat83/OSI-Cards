@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import { decode, encode } from '@toon-format/toon';
 import { AICardConfig, CardType, CardTypeGuards, CardSection, CardField, CardItem } from '../../../../models';
 import * as CardActions from '../../../../store/cards/cards.state';
 import * as CardSelectors from '../../../../store/cards/cards.selectors';
@@ -11,8 +10,9 @@ import { AppState } from '../../../../store/app.state';
 import { CardDiffUtil, CardChangeType } from '../../../../shared/utils/card-diff.util';
 
 // Import standalone components
-import { AICardRendererComponent, CardPreviewComponent, LlmStreamState } from '../../../../shared/components/cards';
-import { ToonEditorComponent, ensureCardIds } from '../../../../shared';
+import { AICardRendererComponent, CardPreviewComponent } from '../../../../shared/components/cards';
+import { ensureCardIds, removeAllIds } from '../../../../shared';
+import { FormsModule } from '@angular/forms';
 import { LucideIconsModule } from '../../../../shared/icons/lucide-icons.module';
 
 @Component({
@@ -20,9 +20,9 @@ import { LucideIconsModule } from '../../../../shared/icons/lucide-icons.module'
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     AICardRendererComponent,
     CardPreviewComponent,
-    ToonEditorComponent,
     LucideIconsModule
   ],
   templateUrl: './home-page.component.html',
@@ -37,8 +37,9 @@ export class HomePageComponent implements OnInit {
   
   // Batch section completions to prevent excessive dispatches
   private completionBatchTimer: ReturnType<typeof setTimeout> | null = null;
-  private readonly COMPLETION_BATCH_DELAY_MS = 300; // Batch completions every 300ms
+  private readonly COMPLETION_BATCH_DELAY_MS = 100; // Batch completions every 100ms for more responsive updates
   private pendingCompletedSectionIndices: number[] = []; // Track sections that completed in this batch
+  private pendingStructuralChanges = false; // Track if we have structural changes pending
   
   // Phase 1: Current streaming update for direct channel
   currentStreamingUpdate: { card: AICardConfig; changeType: CardChangeType; completedSections?: number[] } | null = null;
@@ -47,9 +48,9 @@ export class HomePageComponent implements OnInit {
   private sectionStateLogInterval: ReturnType<typeof setInterval> | null = null;
   private readonly ENABLE_SECTION_STATE_LOGGING = true; // Set to false to disable
 
-  @ViewChild(ToonEditorComponent) private toonEditorComponent?: ToonEditorComponent;
   @ViewChild('previewRegion') private previewRegion?: ElementRef<HTMLDivElement>;
   @ViewChild(CardPreviewComponent) private cardPreviewComponent?: CardPreviewComponent;
+  @ViewChild('jsonTextareaRef') private jsonTextareaRef?: ElementRef<HTMLTextAreaElement>;
   
   // Phase 1: Direct Update Channel - bypass store for streaming updates
   @Output() streamingCardUpdate = new EventEmitter<{
@@ -66,16 +67,18 @@ export class HomePageComponent implements OnInit {
   isInitialized = false;
   isFullscreen = false;
   lastChangeType: CardChangeType = 'structural';
-  toonInput = '';
-  toonError = '';
-  isToonValid = true;
+  jsonInput = '';
+  jsonError = '';
+  jsonErrorPosition: number | null = null;
+  jsonErrorSuggestion = '';
+  isJsonValid = true;
   switchingType = false;
   systemStats = { totalFiles: 18 };
-  isSimulatingLLM = false;
-  llmStreamState: LlmStreamState = this.createIdleStreamState();
-  llmPreviewCard: AICardConfig | null = null;
   livePreviewCard: AICardConfig | null = null;
   livePreviewChangeType: CardChangeType = 'structural';
+  // LLM simulation properties
+  isSimulatingLLM = false;
+  private llmPreviewCard: AICardConfig | null = null;
   private readonly simulationFallbackCard: AICardConfig = {
     cardTitle: 'Simulated Opportunity',
     cardSubtitle: 'LLM Draft',
@@ -108,14 +111,15 @@ export class HomePageComponent implements OnInit {
   private previousLoading = false;
   private previousError = '';
   
-  // Dual-stream TOON input processing:
+  // Dual-stream JSON input processing:
   // - Immediate stream: Live preview updates (50ms debounce for responsiveness)
   // - Debounced stream: Final validation and merging (300ms debounce for performance)
-  private toonInputSubject = new Subject<string>();
-  private immediateToonSubject = new Subject<string>();
-  private lastProcessedToon = '';
-  private lastImmediateToon = '';
-  private llmTargetToon = '';
+  private jsonInputSubject = new Subject<string>();
+  private immediateJsonSubject = new Subject<string>();
+  private lastProcessedJson = '';
+  private lastImmediateJson = '';
+  private lastJsonHash = ''; // Track JSON hash to detect actual changes
+  private llmTargetJson = '';
   private llmBuffer = '';
   private llmChunksQueue: string[] = [];
   private llmThinkingTimer: ReturnType<typeof setTimeout> | null = null;
@@ -129,7 +133,7 @@ export class HomePageComponent implements OnInit {
   private llmPlaceholderCard: AICardConfig | null = null;
   private lastKnownSectionCount = 0;
   private sectionCompletionStates = new Map<string, boolean>(); // Track which sections are complete
-  private pendingMasonryRecalculation = false;
+  private sectionCompletionPercentages = new Map<string, number>(); // Track partial completion (0-1)
   private lastDispatchedCardHash = ''; // Track last dispatched card to avoid duplicate dispatches
   private readonly sectionHashCache = new WeakMap<CardSection, string>();
   private readonly fieldHashCache = new WeakMap<CardField, string>();
@@ -147,7 +151,7 @@ export class HomePageComponent implements OnInit {
       .subscribe(card => {
         const cardChanged = this.generatedCard !== card;
         this.generatedCard = card;
-        if (cardChanged && card && !this.isGenerating && !this.toonError) {
+        if (cardChanged && card && !this.isGenerating && !this.jsonError) {
           const cardTypeLabel = card.cardType ? `${card.cardType} ` : '';
           this.announceStatus(`${cardTypeLabel}card preview updated.`);
         }
@@ -161,21 +165,20 @@ export class HomePageComponent implements OnInit {
         this.cd.markForCheck();
       });
 
-    this.store.select(CardSelectors.selectToonInput)
+    // Subscribe to current card to populate JSON editor
+    this.store.select(CardSelectors.selectCurrentCard)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(toonInput => {
-        this.toonInput = toonInput;
-        // When TOON comes from store (e.g., on initial load), ensure we process it
-        // so the preview renders even without a user-initiated change.
-        if (typeof toonInput === 'string' && toonInput !== this.lastProcessedToon) {
-          // Immediate preview update (skip while LLM is streaming)
-          if (toonInput !== this.lastImmediateToon) {
-            this.lastImmediateToon = toonInput;
-            this.processToonInputImmediate(toonInput);
-          }
-          // Debounced full processing when allowed
-          if (this.shouldTriggerDebouncedProcessing()) {
-            this.toonInputSubject.next(toonInput);
+      .subscribe(card => {
+        if (card) {
+          // Update JSON editor with the loaded card (remove IDs for clean JSON)
+          const cardWithoutIds = removeAllIds(card);
+          const cardJson = JSON.stringify(cardWithoutIds, null, 2);
+          if (cardJson !== this.jsonInput) {
+            this.jsonInput = cardJson;
+            this.lastProcessedJson = cardJson;
+            this.lastImmediateJson = cardJson;
+            this.isJsonValid = true;
+            this.jsonError = '';
           }
         }
         this.cd.markForCheck();
@@ -184,14 +187,13 @@ export class HomePageComponent implements OnInit {
     this.store.select(CardSelectors.selectError)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(error => {
-        this.toonError = error || '';
-        this.isToonValid = !error;
+        this.jsonError = error || '';
+        this.isJsonValid = !error;
         if (error && error !== this.previousError) {
-          this.announceStatus(`TOON error: ${error}`, true);
-          this.focusToonEditor();
+          this.announceStatus(`JSON error: ${error}`, true);
         }
         if (!error && this.previousError) {
-          this.announceStatus('TOON issues resolved. Card preview will refresh shortly.');
+          this.announceStatus('JSON issues resolved. Card preview will refresh shortly.');
         }
         this.previousError = error || '';
         this.cd.markForCheck();
@@ -204,7 +206,7 @@ export class HomePageComponent implements OnInit {
         this.isGenerating = loading;
         if (loading && !this.previousLoading) {
           this.announceStatus('Generating card preview. Please wait.');
-        } else if (!loading && this.previousLoading && !this.toonError) {
+        } else if (!loading && this.previousLoading && !this.jsonError) {
           this.announceStatus('Card generation complete. Preview ready.');
         }
         this.previousLoading = loading;
@@ -221,46 +223,44 @@ export class HomePageComponent implements OnInit {
     // Initialize system and load initial company card
     this.initializeSystem();
     
-    // Setup immediate TOON processing for live preview updates
-    // Very short debounce (50ms) for responsive feel while still batching rapid changes
-    this.immediateToonSubject.pipe(
-      debounceTime(50), // 50ms for near-instant visual feedback
+    // Setup immediate JSON processing for live preview updates
+    // Very short debounce (25ms) for faster feedback while still batching rapid changes
+    this.immediateJsonSubject.pipe(
+      debounceTime(25), // 25ms for near-instant visual feedback
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(toonInput => {
-      // Skip if this TOON was already processed immediately (prevents loops)
-      if (toonInput === this.lastImmediateToon) {
+    ).subscribe(jsonInput => {
+      // Skip if this JSON was already processed immediately (prevents loops)
+      if (jsonInput === this.lastImmediateJson) {
         return;
       }
       // Mark as processed and update card immediately
-      this.lastImmediateToon = toonInput;
-      this.processToonInputImmediate(toonInput);
+      this.lastImmediateJson = jsonInput;
+      this.processJsonInputImmediate(jsonInput);
     });
     
-    // Setup debounced TOON processing for final validation and merging
+    // Setup debounced JSON processing for final validation and merging
     // Longer debounce (300ms) for expensive operations like diffing
-    this.toonInputSubject.pipe(
+    this.jsonInputSubject.pipe(
       debounceTime(300), // 300ms debounce for final processing
-      distinctUntilChanged(), // Only process if TOON actually changed
+      distinctUntilChanged(), // Only process if JSON actually changed
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(toonInput => {
-      // Skip if this TOON was already processed (prevents loops)
-      if (toonInput === this.lastProcessedToon) {
+    ).subscribe(jsonInput => {
+      // Skip if this JSON was already processed (prevents loops)
+      if (jsonInput === this.lastProcessedJson) {
         return;
       }
       // Mark as processed and update card with full validation
-      this.lastProcessedToon = toonInput;
-      this.processToonInput(toonInput);
+      this.lastProcessedJson = jsonInput;
+      this.processJsonInput(jsonInput);
     });
 
-    this.destroyRef.onDestroy(() => {
-      this.cancelLlmSimulation();
-    });
+    // Cleanup on destroy
   }
 
   private initializeSystem(): void {
     // Pre-load initial card immediately
     this.isInitialized = true;
-    this.announceStatus('Loading the first TOON example.');
+    this.announceStatus('Loading the first JSON example.');
     this.store.dispatch(CardActions.loadFirstCardExample());
   }
 
@@ -272,28 +272,109 @@ export class HomePageComponent implements OnInit {
     this.switchCardVariant(variant);
   }
 
-  onToonInputChange(toonInput: string): void {
-    this.toonInput = toonInput;
-    // Update store immediately for UI feedback
-    this.store.dispatch(CardActions.updateToonInput({ toonInput }));
+  onJsonInputChange(jsonInput: string): void {
+    this.jsonInput = jsonInput;
+    
+    // Validate JSON syntax immediately for error display
+    this.validateJsonSyntax(jsonInput);
     
     // Process through both streams:
     // 1. Immediate stream for live preview (50ms debounce)
-    this.immediateToonSubject.next(toonInput);
+    this.immediateJsonSubject.next(jsonInput);
     // 2. Debounced stream for final validation (300ms debounce)
     if (this.shouldTriggerDebouncedProcessing()) {
-      this.toonInputSubject.next(toonInput);
+      this.jsonInputSubject.next(jsonInput);
     }
+  }
+  
+  private validateJsonSyntax(jsonInput: string): void {
+    if (!jsonInput || jsonInput.trim() === '') {
+      this.isJsonValid = true;
+      this.jsonError = '';
+      this.jsonErrorPosition = null;
+      this.jsonErrorSuggestion = '';
+      return;
+    }
+    
+    try {
+      JSON.parse(jsonInput);
+      this.isJsonValid = true;
+      this.jsonError = '';
+      this.jsonErrorPosition = null;
+      this.jsonErrorSuggestion = '';
+    } catch (e) {
+      this.isJsonValid = false;
+      const errorMessage = e instanceof Error ? e.message : 'Invalid JSON syntax';
+      this.jsonError = errorMessage;
+      
+      // Extract position from error message if available
+      const positionMatch = errorMessage.match(/position (\d+)/i);
+      if (positionMatch) {
+        this.jsonErrorPosition = parseInt(positionMatch[1], 10);
+      } else {
+        // Try to find common error patterns
+        if (errorMessage.includes('Unexpected token')) {
+          this.jsonErrorPosition = jsonInput.length - 1;
+        } else {
+          this.jsonErrorPosition = null;
+        }
+      }
+      
+      // Generate suggestions based on error type
+      this.jsonErrorSuggestion = this.generateJsonErrorSuggestion(errorMessage, jsonInput);
+    }
+    this.cd.markForCheck();
+  }
+
+  /**
+   * Generate helpful suggestions based on JSON error type
+   */
+  private generateJsonErrorSuggestion(errorMessage: string, jsonInput: string): string {
+    const lowerError = errorMessage.toLowerCase();
+    
+    if (lowerError.includes('unexpected token')) {
+      if (lowerError.includes('in json')) {
+        return 'Check for missing commas, quotes, or brackets';
+      }
+      return 'Unexpected character found. Check for typos or missing punctuation';
+    }
+    
+    if (lowerError.includes('unexpected end')) {
+      return 'JSON appears incomplete. Check for missing closing brackets or braces';
+    }
+    
+    if (lowerError.includes('expected')) {
+      return 'Missing required syntax. Check for missing commas, colons, or quotes';
+    }
+    
+    if (lowerError.includes('trailing comma')) {
+      return 'Remove the trailing comma before the closing bracket or brace';
+    }
+    
+    // Check for common issues
+    const openBraces = (jsonInput.match(/{/g) || []).length;
+    const closeBraces = (jsonInput.match(/}/g) || []).length;
+    const openBrackets = (jsonInput.match(/\[/g) || []).length;
+    const closeBrackets = (jsonInput.match(/\]/g) || []).length;
+    
+    if (openBraces > closeBraces) {
+      return `Missing ${openBraces - closeBraces} closing brace(s)`;
+    }
+    
+    if (openBrackets > closeBrackets) {
+      return `Missing ${openBrackets - closeBrackets} closing bracket(s)`;
+    }
+    
+    return 'Check JSON syntax and try again';
   }
 
   private switchCardType(type: CardType): void {
     if (this.switchingType) return;
     this.switchingType = true;
-    this.cancelLlmSimulation();
     this.cardType = type;
-    // Reset processed TOON payloads before loading template to ensure updates
-    this.lastProcessedToon = '';
-    this.lastImmediateToon = '';
+    // Reset processed JSON payloads before loading template to ensure updates
+    this.lastProcessedJson = '';
+    this.lastImmediateJson = '';
     // Update state and load template
     this.store.dispatch(CardActions.setCardType({ cardType: type }));
     this.store.dispatch(CardActions.loadTemplate({ cardType: type, variant: this.cardVariant }));
@@ -303,26 +384,49 @@ export class HomePageComponent implements OnInit {
   private switchCardVariant(variant: number): void {
     if (variant < 1 || variant > 3) return; // Ensure variant is within valid range
     this.cardVariant = variant as 1 | 2 | 3;
-    // Reset processed TOON payloads before switching to ensure updates
-    this.lastProcessedToon = '';
-    this.lastImmediateToon = '';
-    this.cancelLlmSimulation();
+    // Reset processed JSON payloads before switching to ensure updates
+    this.lastProcessedJson = '';
+    this.lastImmediateJson = '';
     this.store.dispatch(CardActions.setCardVariant({ variant }));
     this.switchCardType(this.cardType);
   }
 
   /**
-   * Immediate TOON processing for live preview updates.
-   * Lightweight parsing with ALL TOON content displayed in real-time.
-   * Very permissive - accepts partial/incomplete TOON for instant visual feedback.
+   * Calculate a simple hash of JSON content (ignoring whitespace differences)
+   * Used to detect actual structural/content changes vs just whitespace
    */
-  private processToonInputImmediate(toonInput: string): void {
+  private calculateJsonHash(jsonInput: string): string {
+    // Normalize whitespace for comparison
+    const normalized = jsonInput.replace(/\s+/g, ' ').trim();
+    // Simple hash function
+    let hash = 0;
+    for (let i = 0; i < normalized.length; i++) {
+      const char = normalized.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    return String(hash);
+  }
+
+  /**
+   * Immediate JSON processing for live preview updates.
+   * Lightweight parsing with ALL JSON content displayed in real-time.
+   * Very permissive - accepts partial/incomplete JSON for instant visual feedback.
+   * Only updates when actual structural/content changes are detected (not whitespace).
+   */
+  private processJsonInputImmediate(jsonInput: string): void {
     if (!this.isInitialized) return;
 
-    // Always allow immediate preview updates - even during LLM simulation
+    // Calculate hash to detect actual changes (ignoring whitespace)
+    const currentHash = this.calculateJsonHash(jsonInput);
+    if (currentHash === this.lastJsonHash && jsonInput.trim() !== '') {
+      // No actual changes detected, skip update
+      return;
+    }
+    this.lastJsonHash = currentHash;
 
     // Quick validation - check if empty
-    if (!toonInput || toonInput.trim() === '') {
+    if (!jsonInput || jsonInput.trim() === '') {
       // Show empty card immediately for live feedback
       const emptyCard: AICardConfig = {
         cardTitle: '',
@@ -332,52 +436,252 @@ export class HomePageComponent implements OnInit {
       return;
     }
 
-    // Parse TOON in a try-catch for performance
+    // Try to parse JSON - if it fails, try to extract partial data
     let data: unknown;
     try {
-      data = decode(toonInput, { expandPaths: 'safe' });
+      data = JSON.parse(jsonInput);
     } catch {
-      // Even while simulating, we should show partial editor content as fallback
-      this.updateLivePreviewCard(this.createFallbackPreviewCard(toonInput), 'structural');
-      return;
+      // JSON is incomplete - try to extract partial data
+      data = this.tryParsePartialJson(jsonInput);
+      if (!data) {
+        // Couldn't extract any partial data - keep showing last valid card
+        return;
+      }
     }
 
     // Validate that data is an object
     if (!data || typeof data !== 'object' || Array.isArray(data)) {
-      this.updateLivePreviewCard(this.createFallbackPreviewCard(toonInput), 'structural');
+      // Invalid structure - don't update preview
       return;
     }
 
     const cardData = data as Partial<AICardConfig> & Record<string, unknown>;
 
     // Create a complete card config with defaults for missing required fields
-    // This ensures ALL TOON content is preserved and displayed, even if incomplete
     const liveCard: AICardConfig = {
-      // Preserve all existing properties from TOON payload (cardSubtitle, description, columns, actions, meta, etc.)
+      // Preserve all existing properties from JSON payload
       ...cardData,
       // Ensure required fields are always set (provide defaults if missing)
       cardTitle: typeof cardData.cardTitle === 'string' ? cardData.cardTitle : '',
       sections: Array.isArray(cardData.sections) ? cardData.sections : []
     };
 
-    // Lightweight processing - ensure IDs exist for rendering
-    const sanitized = this.recheckCardStructure(liveCard) ?? liveCard;
-    this.updateLivePreviewCard(sanitized);
+    // Only update if we have a valid card structure
+    if (CardTypeGuards.isAICardConfig(liveCard)) {
+      // Lightweight processing - ensure IDs exist for rendering
+      const sanitized = this.recheckCardStructure(liveCard) ?? liveCard;
+      this.updateLivePreviewCard(sanitized, 'content'); // Use 'content' for live updates to avoid layout recalculation
+    }
+  }
+
+  /**
+   * Try to extract partial data from incomplete JSON.
+   * This allows showing partial results even when JSON is not fully complete.
+   * Enhanced to handle more edge cases: trailing commas, incomplete strings, nested structures.
+   */
+  private tryParsePartialJson(jsonInput: string): Partial<AICardConfig> | null {
+    try {
+      // Try to close incomplete JSON by adding missing closing braces/brackets
+      let sanitized = jsonInput.trim();
+      
+      // Remove trailing commas before closing braces/brackets (common in incomplete JSON)
+      sanitized = sanitized.replace(/,(\s*[}\]])/g, '$1');
+      
+      // Count open/close braces and brackets
+      const openBraces = (sanitized.match(/{/g) || []).length;
+      const closeBraces = (sanitized.match(/}/g) || []).length;
+      const openBrackets = (sanitized.match(/\[/g) || []).length;
+      const closeBrackets = (sanitized.match(/\]/g) || []).length;
+      
+      // Add missing closing brackets first (for arrays), then braces (for objects)
+      let tempJson = sanitized;
+      
+      // Handle incomplete strings - close any unclosed strings
+      let inString = false;
+      let escapeNext = false;
+      for (let i = 0; i < tempJson.length; i++) {
+        const char = tempJson[i];
+        if (escapeNext) {
+          escapeNext = false;
+          continue;
+        }
+        if (char === '\\') {
+          escapeNext = true;
+          continue;
+        }
+        if (char === '"') {
+          inString = !inString;
+        }
+      }
+      if (inString) {
+        tempJson += '"';
+      }
+      
+      // If the string doesn't end with a comma, add one before closing (if needed)
+      const lastChar = tempJson.trim().slice(-1);
+      if (lastChar && !/[}\],]/.test(lastChar)) {
+        // Check if we're in the middle of a value (not a key)
+        const lastQuote = tempJson.lastIndexOf('"');
+        const lastColon = tempJson.lastIndexOf(':');
+        if (lastColon > lastQuote && !inString) {
+          // We're in a value, might need to close it
+          // But let's be conservative and just add closing brackets/braces
+        }
+      }
+      
+      // Add missing closing brackets/braces in reverse order (inner to outer)
+      for (let i = 0; i < openBrackets - closeBrackets; i++) {
+        tempJson += ']';
+      }
+      for (let i = 0; i < openBraces - closeBraces; i++) {
+        tempJson += '}';
+      }
+      
+      // Try to parse the sanitized JSON
+      const parsed = JSON.parse(tempJson);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        return parsed as Partial<AICardConfig>;
+      }
+    } catch {
+      // If that fails, try to extract key-value pairs using regex
+      try {
+        const cardData: Partial<AICardConfig> = {};
+        
+        // Extract cardTitle (handle both string and unquoted values)
+        const titleMatch = jsonInput.match(/"cardTitle"\s*:\s*"([^"]*)"/) || 
+                          jsonInput.match(/'cardTitle'\s*:\s*'([^']*)'/);
+        if (titleMatch) {
+          cardData.cardTitle = titleMatch[1];
+        }
+        
+        // Try to extract sections array (even if incomplete)
+        // Look for "sections": [ and try to extract complete section objects
+        const sectionsMatch = jsonInput.match(/"sections"\s*:\s*\[([\s\S]*)/);
+        if (sectionsMatch) {
+          const sectionsContent = sectionsMatch[1];
+          const sections: any[] = [];
+          
+          // Try to find complete section objects by matching braces
+          let depth = 0;
+          let currentSection = '';
+          let inString = false;
+          let escapeNext = false;
+          
+          for (let i = 0; i < sectionsContent.length; i++) {
+            const char = sectionsContent[i];
+            
+            if (escapeNext) {
+              currentSection += char;
+              escapeNext = false;
+              continue;
+            }
+            
+            if (char === '\\') {
+              escapeNext = true;
+              currentSection += char;
+              continue;
+            }
+            
+            if (char === '"') {
+              inString = !inString;
+              currentSection += char;
+              continue;
+            }
+            
+            if (inString) {
+              currentSection += char;
+              continue;
+            }
+            
+            if (char === '{') {
+              if (depth === 0) {
+                currentSection = '{';
+              } else {
+                currentSection += char;
+              }
+              depth++;
+            } else if (char === '}') {
+              currentSection += char;
+              depth--;
+              if (depth === 0) {
+                // Complete section object found
+                try {
+                  const section = JSON.parse(currentSection);
+                  if (section && typeof section === 'object') {
+                    sections.push(section);
+                  }
+                } catch {
+                  // Try to fix common issues in incomplete sections
+                  try {
+                    // Add missing closing braces if needed
+                    let fixedSection = currentSection;
+                    let openCount = (fixedSection.match(/{/g) || []).length;
+                    let closeCount = (fixedSection.match(/}/g) || []).length;
+                    for (let j = 0; j < openCount - closeCount; j++) {
+                      fixedSection += '}';
+                    }
+                    const section = JSON.parse(fixedSection);
+                    if (section && typeof section === 'object') {
+                      sections.push(section);
+                    }
+                  } catch {
+                    // Skip this section
+                  }
+                }
+                currentSection = '';
+              }
+            } else if (depth > 0) {
+              currentSection += char;
+            }
+          }
+          
+          // Try to parse the last incomplete section if we have one
+          if (currentSection.trim() && depth > 0) {
+            try {
+              // Close the incomplete section
+              let fixedSection = currentSection;
+              for (let j = 0; j < depth; j++) {
+                fixedSection += '}';
+              }
+              const section = JSON.parse(fixedSection);
+              if (section && typeof section === 'object') {
+                sections.push(section);
+              }
+            } catch {
+              // Skip incomplete section
+            }
+          }
+          
+          if (sections.length > 0) {
+            cardData.sections = sections;
+          }
+        }
+        
+        // Only return if we extracted at least some data
+        if (cardData.cardTitle || (cardData.sections && cardData.sections.length > 0)) {
+          return cardData;
+        }
+      } catch {
+        // Couldn't extract partial data
+      }
+    }
+    
+    return null;
   }
 
   /**
    * Fast fallback processing used for per-token updates when streaming.
    * Avoids the cost of full decode and uses the fallback parser for instant updates.
    */
-  private processToonInputFast(toonInput: string): void {
+  private processJsonInputFast(jsonInput: string): void {
     if (!this.isInitialized) return;
-    if (!toonInput || toonInput.trim() === '') {
+    if (!jsonInput || jsonInput.trim() === '') {
       const emptyCard: AICardConfig = { cardTitle: '', sections: [] };
       this.updateLivePreviewCard(this.recheckCardStructure(emptyCard) ?? emptyCard, 'structural');
       return;
     }
     // Use fallback parser for fast incremental rendering
-    const fallback = this.createFallbackPreviewCard(toonInput);
+    const fallback = this.createFallbackPreviewCard(jsonInput);
     this.updateLivePreviewCard(fallback);
   }
 
@@ -403,8 +707,8 @@ export class HomePageComponent implements OnInit {
     this.cd.markForCheck();
   }
 
-  private createFallbackPreviewCard(toonInput: string): AICardConfig {
-    const lines = toonInput.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  private createFallbackPreviewCard(jsonInput: string): AICardConfig {
+    const lines = jsonInput.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
 
     // Card title
     const titleMatch = lines.find(l => /^cardTitle\s*:\s*/i.test(l));
@@ -623,14 +927,14 @@ export class HomePageComponent implements OnInit {
   }
 
   /**
-   * Debounced TOON processing for final validation and merging.
+   * Debounced JSON processing for final validation and merging.
    * Full validation, error handling, and smart merging with existing card.
    */
-  private processToonInput(toonInput: string): void {
+  private processJsonInput(jsonInput: string): void {
     if (!this.isInitialized) return;
 
     // Quick validation - check if empty
-    if (!toonInput || toonInput.trim() === '') {
+    if (!jsonInput || jsonInput.trim() === '') {
       const defaultCard: AICardConfig = {
         cardTitle: 'Empty Card',
         sections: []
@@ -639,18 +943,19 @@ export class HomePageComponent implements OnInit {
       return;
     }
 
-    // Parse TOON in a try-catch for performance
+    // Parse JSON in a try-catch for performance
     let data: unknown;
     try {
-      data = decode(toonInput, { expandPaths: 'safe' });
-    } catch {
-      this.store.dispatch(CardActions.generateCardFailure({ error: 'Invalid TOON format. Please check your syntax.' }));
+      data = JSON.parse(jsonInput);
+    } catch (e) {
+      const error = e instanceof Error ? e.message : 'Invalid JSON format';
+      this.store.dispatch(CardActions.generateCardFailure({ error: `Invalid JSON: ${error}` }));
       return;
     }
 
     // Validate that data is an object
     if (!data || typeof data !== 'object' || Array.isArray(data)) {
-      this.store.dispatch(CardActions.generateCardFailure({ error: 'Card configuration must be a valid object.' }));
+      this.store.dispatch(CardActions.generateCardFailure({ error: 'Card configuration must be a valid JSON object.' }));
       return;
     }
 
@@ -700,7 +1005,7 @@ export class HomePageComponent implements OnInit {
   onSimulateLLMStart(): void {
     const payload = this.getSimulationPayload();
     if (!payload) {
-      this.announceStatus('Provide TOON or select a card before starting the LLM simulation.', true);
+      this.announceStatus('Provide JSON or select a card before starting the LLM simulation.', true);
       return;
     }
     this.startLlmSimulation(payload);
@@ -710,7 +1015,7 @@ export class HomePageComponent implements OnInit {
     this.cancelLlmSimulation('Simulation cancelled.');
   }
 
-  private startLlmSimulation(targetToon: string): void {
+  private startLlmSimulation(targetJson: string): void {
     this.cancelLlmSimulation();
     this.store.dispatch(CardActions.clearError());
     this.isSimulatingLLM = true;
@@ -719,53 +1024,63 @@ export class HomePageComponent implements OnInit {
     if (this.ENABLE_SECTION_STATE_LOGGING) {
       this.startSectionStateLogging();
     }
-    this.llmTargetToon = targetToon;
+    this.llmTargetJson = targetJson;
     this.llmBuffer = '';
-    this.llmChunksQueue = this.createLlmChunks(targetToon);
+    this.llmChunksQueue = this.createLlmChunks(targetJson);
     this.llmParsedCard = null;
-    this.llmPreviewCard = null;
     this.llmPreviewSectionCount = 0;
     this.llmPreviewChangeType = 'structural';
     if (!this.llmChunksQueue.length) {
       this.isSimulatingLLM = false;
-      this.announceStatus('Nothing to stream — TOON payload is empty.', true);
+      this.announceStatus('Nothing to stream — JSON payload is empty.', true);
       return;
     }
 
+    // Update LLM state FIRST to trigger card display immediately
     const thinkingHint = this.llmParsedCard
       ? 'Expect the first tokens in about five seconds.'
-      : 'TOON must remain text-only until it parses successfully.';
+      : 'JSON must remain text-only until it parses successfully.';
 
-    this.updateLlmState({
-      isSimulating: true,
-      stage: 'thinking',
-      statusLabel: 'LLM is thinking…',
-      hint: thinkingHint,
-      progress: 0,
-      tokensPushed: 0,
-      totalTokens: targetToon.length,
-      error: undefined
-    });
+    // LLM state update removed
 
-    // Clear the editor and begin streaming after the thinking delay
-    this.onToonInputChange('');
-    this.llmThinkingTimer = setTimeout(() => {
-      this.updateLlmState({
-        stage: 'streaming',
-        statusLabel: 'Streaming TOON chunks…',
-        hint: 'Card sections unlock from top to bottom while data streams.',
-        progress: 0
+    // Create empty card structure immediately for visual feedback
+    const emptyCard: AICardConfig = {
+      cardTitle: 'Generating card…',
+      sections: []
+    };
+    this.llmPreviewCard = this.recheckCardStructure(ensureCardIds(emptyCard));
+    
+    // Dispatch empty card to store immediately
+    if (this.llmPreviewCard) {
+      this.ngZone.run(() => {
+        this.store.dispatch(CardActions.generateCardSuccess({ 
+          card: this.llmPreviewCard!, 
+          changeType: 'structural'
+        }));
+        this.cd.markForCheck();
       });
+    }
+
+    // Begin streaming after the thinking delay (preserve existing JSON for live editing)
+    this.llmThinkingTimer = setTimeout(() => {
+      // LLM state update removed
       this.scheduleNextLlmChunk();
     }, 5000);
   }
 
+  /**
+   * Get the simulation payload from user input.
+   * Works with complete or incomplete JSON - the simulation will handle parsing
+   * as the JSON becomes complete during streaming.
+   */
   private getSimulationPayload(): string {
-    const trimmed = this.toonInput?.trim();
+    const trimmed = this.jsonInput?.trim();
+    // Return any input, even if incomplete JSON - simulation handles it gracefully
     if (trimmed) {
       return trimmed;
     }
-    return `${encode(this.simulationFallbackCard, { indent: 2, keyFolding: 'safe' })}`;
+    // Fallback to default card if no input
+    return JSON.stringify(this.simulationFallbackCard, null, 2);
   }
 
   private scheduleNextLlmChunk(): void {
@@ -773,8 +1088,18 @@ export class HomePageComponent implements OnInit {
       return;
     }
 
+    // Add timeout detection for stalled streams (30 seconds)
+    const streamStartTime = Date.now();
+    const STREAM_TIMEOUT_MS = 30000;
+    
     if (!this.llmChunksQueue.length) {
       this.llmChunkTimer = setTimeout(() => this.finishLlmSimulation(), 600);
+      return;
+    }
+    
+    // Check for timeout
+    if (Date.now() - streamStartTime > STREAM_TIMEOUT_MS) {
+      this.cancelLlmSimulation('Stream timeout - no data received for 30 seconds');
       return;
     }
 
@@ -783,8 +1108,7 @@ export class HomePageComponent implements OnInit {
     const hasMore = this.llmChunksQueue.length > 0;
     
     // Update editor buffer (silent - no change detection)
-    this.toonInput = this.llmBuffer;
-    this.store.dispatch(CardActions.updateToonInput({ toonInput: this.llmBuffer }));
+      this.jsonInput = this.llmBuffer;
     
     // Parse and check for section completions ONLY
     // Do NOT update card during streaming - only check for completions
@@ -817,21 +1141,32 @@ export class HomePageComponent implements OnInit {
       if (this.llmPlaceholderCard) {
         const completedSections = this.checkSectionCompletions(parsed);
         
+        // Step 2b: Check for field-level completions for smoother progressive rendering
+        const completedFields = this.checkFieldCompletions(parsed);
+        
         // Debug logging
-        if (this.ENABLE_SECTION_STATE_LOGGING && completedSections.length > 0) {
-          console.log('✅ [HomePage] Sections completed', {
+        if (this.ENABLE_SECTION_STATE_LOGGING && (completedSections.length > 0 || completedFields.length > 0)) {
+          console.log('✅ [HomePage] Sections/Fields completed', {
             timestamp: new Date().toISOString(),
-            completedIndices: completedSections,
+            completedSectionIndices: completedSections,
+            completedFieldCount: completedFields.length,
             totalSections: this.llmPlaceholderCard.sections?.length ?? 0,
             bufferLength: this.llmBuffer.length,
-            progress: Math.floor((this.llmBuffer.length / (this.llmTargetToon.length || 1)) * 100) + '%'
+            progress: Math.floor((this.llmBuffer.length / (this.llmTargetJson.length || 1)) * 100) + '%'
           });
         }
         
-        // ONLY update if sections completed
-        if (completedSections.length > 0) {
+        // Update if sections or fields completed
+        if (completedSections.length > 0 || completedFields.length > 0) {
           // Update only completed sections IN-PLACE (preserves object references)
-          this.updateCompletedSectionsOnly(parsed, completedSections);
+          if (completedSections.length > 0) {
+            this.updateCompletedSectionsOnly(parsed, completedSections);
+          }
+          
+          // Update completed fields in-place for smoother progressive rendering
+          if (completedFields.length > 0) {
+            this.updateCompletedFieldsOnly(parsed, completedFields);
+          }
           
           // Track completed sections for this batch
           this.pendingCompletedSectionIndices.push(...completedSections);
@@ -843,29 +1178,7 @@ export class HomePageComponent implements OnInit {
       // If no completions and no new placeholders, do NOTHING - no updates, no dispatches, no change detection
     }
 
-    // Update progress state (minimal - only progress percentage)
-    const tokensPushed = this.llmBuffer.length;
-    const totalTokens = this.llmTargetToon.length || 1;
-    const progress = Math.min(1, tokensPushed / totalTokens);
-    const stage = hasMore ? 'streaming' : 'complete';
-    
-    // Only update state if progress changed significantly (every 5%)
-    const currentProgressPercent = Math.floor((this.llmStreamState.progress || 0) * 100);
-    const newProgressPercent = Math.floor(progress * 100);
-    
-    if (newProgressPercent !== currentProgressPercent && newProgressPercent % 5 === 0) {
-      this.ngZone.run(() => {
-        this.llmStreamState = {
-          ...this.llmStreamState,
-          stage,
-          statusLabel: stage === 'streaming' ? `Streaming TOON (${newProgressPercent}%)` : 'LLM simulation complete.',
-          progress,
-          tokensPushed,
-          totalTokens
-        };
-        this.cd.markForCheck();
-      });
-    }
+    // Progress tracking removed - no longer needed without streaming
 
     const delay = hasMore ? this.computeChunkDelay(nextChunk) : 100;
     this.llmChunkTimer = setTimeout(() => {
@@ -919,44 +1232,13 @@ export class HomePageComponent implements OnInit {
     this.llmPreviewChangeType = 'structural';
     this.lastKnownSectionCount = 0;
     this.sectionCompletionStates.clear();
-    this.pendingMasonryRecalculation = false;
     this.lastDispatchedCardHash = '';
-    this.updateLlmState({
-      isSimulating: false,
-      stage: 'complete',
-      statusLabel: 'LLM simulation complete.',
-      hint: 'You can now edit the streamed TOON.',
-      progress: 1,
-      tokensPushed: this.llmTargetToon.length,
-      totalTokens: this.llmTargetToon.length,
-      error: undefined
-    });
-    this.toonInputSubject.next(this.toonInput);
+    // LLM state update removed
+      this.jsonInputSubject.next(this.jsonInput);
   }
 
   private cancelLlmSimulation(reason?: string): void {
-    this.clearLlmTimers();
-    if (!this.isSimulatingLLM && this.llmStreamState.stage === 'idle') {
-      return;
-    }
-    this.isSimulatingLLM = false;
-    this.llmChunksQueue = [];
-    this.llmTargetToon = '';
-    this.llmParsedCard = null;
-    this.llmPreviewCard = null;
-    this.llmPreviewSectionCount = 0;
-    this.llmPreviewChangeType = 'structural';
-    this.lastKnownSectionCount = 0;
-    this.sectionCompletionStates.clear();
-    this.pendingCompletedSectionIndices = [];
-    this.pendingMasonryRecalculation = false;
-    this.lastDispatchedCardHash = '';
-    this.updateLlmState({
-      ...this.createIdleStreamState(),
-      stage: reason ? 'aborted' : 'idle',
-      statusLabel: reason ?? '',
-      hint: ''
-    });
+    // LLM simulation removed - method kept for compatibility but does nothing
   }
 
   private createLlmChunks(payload: string): string[] {
@@ -985,23 +1267,24 @@ export class HomePageComponent implements OnInit {
   }
 
   /**
-   * Compute delay for chunk to achieve 30 tokens per second
-   * Approximate: 1 token ≈ 4 characters, so 30 tokens/sec = 120 chars/sec = ~8.33ms per char
+   * Compute delay for chunk to achieve 100 tokens per second
+   * Approximate: 1 token ≈ 4 characters, so 100 tokens/sec = 400 chars/sec = ~2.5ms per char
    * For smooth streaming, use chunk length to calculate delay
    */
   private computeChunkDelay(chunk: string): number {
-    // 30 tokens per second = 33.33ms per token
-    // Approximate 1 token = 4 characters, so ~8.33ms per character
+    // 100 tokens per second = 10ms per token
+    // Approximate 1 token = 4 characters, so ~2.5ms per character
     const charsPerToken = 4;
-    const tokensPerSecond = 30;
-    const msPerToken = 1000 / tokensPerSecond; // ~33.33ms per token
+    const tokensPerSecond = 100;
+    const msPerToken = 1000 / tokensPerSecond; // 10ms per token
     const tokensInChunk = Math.max(1, chunk.length / charsPerToken);
     return Math.round(tokensInChunk * msPerToken);
   }
 
   /**
    * Phase 1: Batch section completions and emit direct updates (bypass store)
-   * Only dispatches every 300ms, allowing multiple sections to complete together
+   * Only dispatches every 100ms, allowing multiple sections to complete together
+   * Uses requestAnimationFrame for visual updates to align with browser paint cycles
    */
   private batchSectionCompletions(): void {
     // Clear existing timer
@@ -1009,52 +1292,61 @@ export class HomePageComponent implements OnInit {
       clearTimeout(this.completionBatchTimer);
     }
     
-    // Schedule batched dispatch
+    // Schedule batched dispatch with smart prioritization
     this.completionBatchTimer = setTimeout(() => {
       if (this.llmPlaceholderCard && this.pendingCompletedSectionIndices.length > 0) {
-        // CRITICAL: Create new object references ONLY for completed sections
-        // This ensures Angular detects changes while minimizing object creation
-        const completedSet = new Set(this.pendingCompletedSectionIndices);
-        const updatedCard: AICardConfig = {
-          ...this.llmPlaceholderCard,
-          sections: this.llmPlaceholderCard.sections?.map((section, index) => {
-            // Only create new reference for completed sections
-            if (completedSet.has(index)) {
-              return {
-                ...section,
-                fields: section.fields?.map(field => ({ ...field })),
-                items: section.items?.map(item => ({ ...item }))
-              };
-            }
-            // Keep existing reference for unchanged sections
-            return section;
-          })
-        };
-        
-        // Update the placeholder card reference to the new object
-        this.llmPlaceholderCard = updatedCard;
-        
-        // Phase 1: Update current streaming update (triggers @Input setter in CardPreview)
-        this.currentStreamingUpdate = {
-          card: updatedCard,
-          changeType: 'content', // Content update, not structural - no layout recalculation
-          completedSections: [...this.pendingCompletedSectionIndices] // Pass completed sections for potential optimization
-        };
-        
-        // Also emit event for backwards compatibility
-        this.streamingCardUpdate.emit(this.currentStreamingUpdate);
-        
-        // Also update local preview card reference
-        this.llmPreviewCard = updatedCard;
-        
-        // Clear pending completed sections
-        this.pendingCompletedSectionIndices = [];
-        
-        // Trigger change detection to update @Input binding
-        this.cd.markForCheck();
-        
-        // Only dispatch to store for initial placeholders (structural change)
-        // Content updates go directly to CardPreview via streamingCardUpdate
+        // Use requestAnimationFrame for visual updates to align with browser paint cycles
+        requestAnimationFrame(() => {
+          // CRITICAL: Create new object references ONLY for completed sections
+          // This ensures Angular detects changes while minimizing object creation
+          const completedSet = new Set(this.pendingCompletedSectionIndices);
+          // CRITICAL: When sections complete during streaming, always use 'structural' change type
+          // This ensures masonry grid properly recalculates layout regardless of field updates
+          const changeType: CardChangeType = this.pendingCompletedSectionIndices.length > 0 ? 'structural' : (this.pendingStructuralChanges ? 'structural' : 'content');
+          const updatedCard: AICardConfig = {
+            ...this.llmPlaceholderCard!,
+            cardTitle: this.llmPlaceholderCard!.cardTitle || '',
+            sections: (this.llmPlaceholderCard?.sections || []).map((section, index) => {
+              // Only create new reference for completed sections
+              if (completedSet.has(index)) {
+                return {
+                  ...section,
+                  fields: section.fields?.map(field => ({ ...field })),
+                  items: section.items?.map(item => ({ ...item }))
+                };
+              }
+              // Keep existing reference for unchanged sections
+              return section;
+            })
+          };
+          
+          // Update the placeholder card reference to the new object
+          this.llmPlaceholderCard = updatedCard;
+          
+          // Phase 1: Update current streaming update (triggers @Input setter in CardPreview)
+          // Use 'structural' change type when sections complete to trigger layout recalculation
+          this.currentStreamingUpdate = {
+            card: updatedCard,
+            changeType: changeType,
+            completedSections: [...this.pendingCompletedSectionIndices] // Pass completed sections for potential optimization
+          };
+          
+          // Also emit event for backwards compatibility
+          this.streamingCardUpdate.emit(this.currentStreamingUpdate);
+          
+          // Also update local preview card reference
+          this.llmPreviewCard = updatedCard;
+          
+          // Clear pending completed sections and structural change flag
+          this.pendingCompletedSectionIndices = [];
+          this.pendingStructuralChanges = false;
+          
+          // Trigger change detection to update @Input binding
+          this.cd.markForCheck();
+          
+          // Only dispatch to store for initial placeholders (structural change)
+          // Content updates go directly to CardPreview via streamingCardUpdate
+        });
       }
       this.completionBatchTimer = null;
     }, this.COMPLETION_BATCH_DELAY_MS);
@@ -1075,26 +1367,31 @@ export class HomePageComponent implements OnInit {
     }
   }
 
-  private createIdleStreamState(): LlmStreamState {
-    return {
-      isSimulating: false,
-      stage: 'idle',
-      progress: 0,
-      tokensPushed: 0,
-      totalTokens: 0,
-      statusLabel: '',
-      hint: undefined,
-      error: undefined
-    };
+  /**
+   * Update per-section progress information for visual indicators
+   */
+  private updateSectionProgress(parsed: AICardConfig): void {
+    if (!this.llmPlaceholderCard) {
+      return;
+    }
+
+    const sections = parsed.sections ?? [];
+    const sectionProgress = sections.map((section, index) => {
+      const sectionKey = section.id || `section-${index}`;
+      const progress = this.sectionCompletionPercentages.get(sectionKey) || 0;
+      const isComplete = this.sectionCompletionStates.get(sectionKey) || false;
+      
+      return {
+        sectionId: sectionKey,
+        sectionIndex: index,
+        progress: Math.min(1, Math.max(0, progress)),
+        isComplete
+      };
+    });
+
+    // LLM state update removed
   }
 
-  private updateLlmState(patch: Partial<LlmStreamState>): void {
-    this.llmStreamState = {
-      ...this.llmStreamState,
-      ...patch
-    };
-    this.cd.markForCheck();
-  }
 
   // Removed updateLlmPreviewCard - card updates now happen directly in scheduleNextLlmChunk
   // This ensures values are never modified once displayed
@@ -1216,7 +1513,7 @@ export class HomePageComponent implements OnInit {
 
   private tryParseLlmBuffer(): AICardConfig | null {
     try {
-      const parsed = decode(this.llmBuffer, { expandPaths: 'safe' }) as unknown;
+      const parsed = JSON.parse(this.llmBuffer) as unknown;
       if (CardTypeGuards.isAICardConfig(parsed)) {
         return this.recheckCardStructure(parsed) ?? parsed as AICardConfig;
       }
@@ -1228,7 +1525,7 @@ export class HomePageComponent implements OnInit {
 
   /**
    * Initialize placeholders when sections are first declared
-   * This is called ONCE when sections appear in the TOON
+   * This is called ONCE when sections appear in the JSON
    */
   private initializePlaceholdersIfNeeded(parsed: AICardConfig): boolean {
     const sanitized = this.recheckCardStructure(parsed) as AICardConfig;
@@ -1256,6 +1553,7 @@ export class HomePageComponent implements OnInit {
   /**
    * Check which sections are complete (all fields/items have real values)
    * Returns array of section indices that are newly complete
+   * Also tracks partial completion percentage for smoother progressive rendering
    */
   private checkSectionCompletions(parsed: AICardConfig): number[] {
     const sections = parsed.sections ?? [];
@@ -1269,16 +1567,148 @@ export class HomePageComponent implements OnInit {
         return; // Already marked as complete
       }
 
+      // Calculate completion percentage for partial updates
+      const completionPercentage = this.calculateSectionCompletionPercentage(section);
+      this.sectionCompletionPercentages.set(sectionKey, completionPercentage);
+
       // Check if section is complete (all fields and items have real values)
       const isComplete = this.isSectionComplete(section);
 
       if (isComplete) {
         this.sectionCompletionStates.set(sectionKey, true);
+        this.sectionCompletionPercentages.set(sectionKey, 1.0);
         newlyCompleted.push(index);
+      } else if (completionPercentage > 0) {
+        // Section is partially complete - emit update even if not fully complete
+        // This allows progressive rendering of partial content
+        const previousPercentage = this.sectionCompletionPercentages.get(sectionKey) || 0;
+        if (completionPercentage > previousPercentage + 0.1) {
+          // Only update if completion increased by at least 10% to avoid excessive updates
+          newlyCompleted.push(index);
+        }
       }
     });
 
     return newlyCompleted;
+  }
+
+  /**
+   * Check which fields have completed (have real values, not placeholders)
+   * Returns array of field identifiers: { sectionIndex, fieldIndex }
+   */
+  private checkFieldCompletions(parsed: AICardConfig): Array<{ sectionIndex: number; fieldIndex: number }> {
+    const sections = parsed.sections ?? [];
+    const completedFields: Array<{ sectionIndex: number; fieldIndex: number }> = [];
+
+    sections.forEach((section, sectionIndex) => {
+      const fields = section.fields ?? [];
+      fields.forEach((field, fieldIndex) => {
+        const meta = field.meta as Record<string, unknown> | undefined;
+        const isPlaceholder = field.value === 'Streaming…' || 
+                             field.value === undefined ||
+                             field.value === null ||
+                             (meta && meta['placeholder'] === true);
+        
+        // Check if this field was previously a placeholder and now has a real value
+        if (!isPlaceholder && field.value !== '') {
+          const placeholderSection = this.llmPlaceholderCard?.sections?.[sectionIndex];
+          const placeholderField = placeholderSection?.fields?.[fieldIndex];
+          if (placeholderField) {
+            const placeholderMeta = placeholderField.meta as Record<string, unknown> | undefined;
+            const wasPlaceholder = placeholderField.value === 'Streaming…' ||
+                                  placeholderMeta?.['placeholder'] === true;
+            if (wasPlaceholder) {
+              completedFields.push({ sectionIndex, fieldIndex });
+            }
+          }
+        }
+      });
+    });
+
+    return completedFields;
+  }
+
+  /**
+   * Update only completed fields IN-PLACE for smoother progressive rendering
+   */
+  private updateCompletedFieldsOnly(incoming: AICardConfig, completedFields: Array<{ sectionIndex: number; fieldIndex: number }>): void {
+    if (!this.llmPlaceholderCard) {
+      return;
+    }
+
+    const incomingSections = incoming.sections ?? [];
+    const placeholderSections = this.llmPlaceholderCard.sections ?? [];
+
+    completedFields.forEach(({ sectionIndex, fieldIndex }) => {
+      const placeholderSection = placeholderSections[sectionIndex];
+      const incomingSection = incomingSections[sectionIndex];
+      
+      if (!placeholderSection || !incomingSection) {
+        return;
+      }
+
+      const placeholderFields = placeholderSection.fields ?? [];
+      const incomingFields = incomingSection.fields ?? [];
+      const placeholderField = placeholderFields[fieldIndex];
+      const incomingField = incomingFields[fieldIndex];
+
+      if (!placeholderField || !incomingField) {
+        return;
+      }
+
+      // Update field properties in-place (preserve object reference)
+      placeholderField.label = incomingField.label ?? placeholderField.label;
+      placeholderField.value = incomingField.value ?? placeholderField.value;
+      placeholderField.type = incomingField.type ?? placeholderField.type;
+      placeholderField.format = incomingField.format ?? placeholderField.format;
+      
+      // Remove placeholder flag
+      const meta = placeholderField.meta as Record<string, unknown> | undefined;
+      if (meta) {
+        meta['placeholder'] = false;
+      }
+    });
+  }
+
+  /**
+   * Calculate completion percentage for a section (0-1)
+   * Based on how many fields/items have real values vs placeholders
+   */
+  private calculateSectionCompletionPercentage(section: CardSection): number {
+    const fields = section.fields ?? [];
+    const items = section.items ?? [];
+    const totalElements = fields.length + items.length;
+
+    if (totalElements === 0) {
+      // Section with no fields/items is considered complete if it has metadata
+      return section.title ? 0.5 : 0;
+    }
+
+    let completedCount = 0;
+
+    // Check fields
+    fields.forEach(field => {
+      const meta = field.meta as Record<string, unknown> | undefined;
+      const isPlaceholder = field.value === 'Streaming…' || 
+                           field.value === undefined ||
+                           field.value === null ||
+                           (meta && meta['placeholder'] === true);
+      if (!isPlaceholder && field.value !== '') {
+        completedCount++;
+      }
+    });
+
+    // Check items
+    items.forEach(item => {
+      const meta = item.meta as Record<string, unknown> | undefined;
+      const isPlaceholder = (meta && meta['placeholder'] === true) ||
+                           (item.title === 'Item' && !item.description);
+      if (!isPlaceholder && item.title) {
+        completedCount++;
+      }
+    });
+
+    return totalElements > 0 ? completedCount / totalElements : 0;
   }
 
   /**
@@ -1336,11 +1766,12 @@ export class HomePageComponent implements OnInit {
     // Extend array if needed
     while (existing.length < maxLength) {
       const fieldIndex = existing.length;
+      const incomingField = incoming[fieldIndex];
       existing.push({
-        id: `llm-field-${sectionIndex}-${fieldIndex}`,
-        label: `Field ${fieldIndex + 1}`,
-        value: 'Streaming…',
-        meta: { placeholder: true }
+        id: incomingField?.id ?? `llm-field-${sectionIndex}-${fieldIndex}`,
+        label: incomingField?.label ?? `Field ${fieldIndex + 1}`,
+        value: incomingField?.value ?? '', // Use actual value from JSON if available
+        meta: { placeholder: true, ...(incomingField?.meta ?? {}) }
       } as CardField);
     }
 
@@ -1386,11 +1817,12 @@ export class HomePageComponent implements OnInit {
     // Extend array if needed
     while (existing.length < maxLength) {
       const itemIndex = existing.length;
+      const incomingItem = incoming[itemIndex];
       existing.push({
-        id: `llm-item-${sectionIndex}-${itemIndex}`,
-        title: `Item ${itemIndex + 1}`,
-        description: 'Streaming…',
-        meta: { placeholder: true }
+        id: incomingItem?.id ?? `llm-item-${sectionIndex}-${itemIndex}`,
+        title: incomingItem?.title ?? `Item ${itemIndex + 1}`,
+        description: incomingItem?.description ?? '', // Use actual description from JSON if available
+        meta: { placeholder: true, ...(incomingItem?.meta ?? {}) }
       } as CardItem);
     }
 
@@ -1536,9 +1968,9 @@ export class HomePageComponent implements OnInit {
       ...field,
       id: field.id ?? `llm-field-${sectionIndex}-${fieldIndex}`,
       label: field.label || field.title || `Field ${fieldIndex + 1}`,
-      value: 'Streaming…',
-      percentage: undefined,
-      trend: undefined,
+      value: field.value ?? '', // Use actual value from JSON if available
+      percentage: field.percentage,
+      trend: field.trend,
       meta: { ...(field.meta ?? {}), placeholder: true }
     };
   }
@@ -1548,7 +1980,7 @@ export class HomePageComponent implements OnInit {
       ...item,
       id: item.id ?? `llm-item-${sectionIndex}-${itemIndex}`,
       title: item.title || `Item ${itemIndex + 1}`,
-      description: item.description || 'Streaming…',
+      description: item.description ?? '', // Use actual description from JSON if available
       meta: { ...(item.meta ?? {}), placeholder: true }
     };
   }
@@ -1609,7 +2041,7 @@ export class HomePageComponent implements OnInit {
         nextFields.push({
           ...existingField,
           label: incomingField?.label ?? existingField.label ?? `Field ${fieldIndex + 1}`,
-          value: 'Streaming…',
+          value: incomingField?.value ?? existingField.value ?? '', // Use actual value from JSON if available
           meta: { ...(existingField.meta ?? {}), placeholder: true }
         });
         continue;
@@ -1633,7 +2065,7 @@ export class HomePageComponent implements OnInit {
         nextItems.push({
           ...existingItem,
           title: incomingItem?.title ?? existingItem.title ?? `Item ${itemIndex + 1}`,
-          description: unlocked ? incomingItem?.description : 'Streaming…',
+          description: incomingItem?.description ?? existingItem.description ?? '', // Use actual description from JSON if available
           meta: { ...(existingItem.meta ?? {}), placeholder: true }
         });
         continue;
@@ -1651,7 +2083,8 @@ export class HomePageComponent implements OnInit {
     if (!this.isSimulatingLLM) {
       return false;
     }
-    const stage = this.llmStreamState?.stage;
+    // LLM stage removed
+    const stage = undefined;
     return stage !== 'complete' && stage !== 'aborted' && stage !== 'error';
   }
 
@@ -1704,7 +2137,8 @@ export class HomePageComponent implements OnInit {
     if (!this.isSimulatingLLM) {
       return true;
     }
-    return this.llmStreamState.stage === 'complete' || this.llmStreamState.stage === 'aborted' || this.llmStreamState.stage === 'error';
+    // LLM state check removed
+    return false;
   }
 
   get previewCard(): AICardConfig | null {
@@ -1713,12 +2147,20 @@ export class HomePageComponent implements OnInit {
       return this.livePreviewCard;
     }
     // If no live preview but editor has text, parse a fallback preview so the right column stays in sync
-    if (this.toonInput && this.toonInput.trim() !== '') {
-      return this.createFallbackPreviewCard(this.toonInput);
+    if (this.jsonInput && this.jsonInput.trim() !== '') {
+      // Try to parse JSON for preview
+      try {
+        const parsed = JSON.parse(this.jsonInput);
+        if (CardTypeGuards.isAICardConfig(parsed)) {
+          return this.recheckCardStructure(parsed) ?? parsed;
+        }
+      } catch {
+        // Invalid JSON, return null
+      }
     }
     // During simulation, fall back to parsed LLM preview; otherwise use generated card
     if (this.isLlmStreamingActive()) {
-      return this.llmPreviewCard ?? this.generatedCard;
+      return this.generatedCard;
     }
     return this.generatedCard ?? null;
   }
@@ -1776,9 +2218,6 @@ export class HomePageComponent implements OnInit {
     }
   }
 
-  private focusToonEditor(): void {
-    this.toonEditorComponent?.focusEditor(true);
-  }
 
   private focusPreviewRegion(): void {
     if (!this.previewRegion) return;
@@ -1794,6 +2233,27 @@ export class HomePageComponent implements OnInit {
     this.cd.markForCheck();
   }
 
+  formatJson(): void {
+    try {
+      const parsed = JSON.parse(this.jsonInput);
+      // Remove IDs before formatting
+      const cleaned = removeAllIds(parsed);
+      this.jsonInput = JSON.stringify(cleaned, null, 2) + '\n';
+      this.onJsonInputChange(this.jsonInput);
+      this.announceStatus('JSON formatted successfully.');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown formatting issue.';
+      this.announceStatus(`Unable to format JSON: ${message}`, true);
+    }
+  }
+
+  onTextareaKeydown(event: KeyboardEvent): void {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+      event.preventDefault();
+      this.formatJson();
+    }
+  }
+
   get liveStatusTone(): 'polite' | 'assertive' {
     return this.statusTone;
   }
@@ -1807,7 +2267,8 @@ export class HomePageComponent implements OnInit {
     this.stopSectionStateLogging();
     
     this.clearLlmTimers();
-    this.toonInputSubject.complete();
+    this.jsonInputSubject.complete();
+    this.immediateJsonSubject.complete();
   }
   
   /**
@@ -1927,10 +2388,10 @@ export class HomePageComponent implements OnInit {
     const logData = {
       timestamp,
       isSimulating: this.isSimulatingLLM,
-      stage: this.llmStreamState.stage,
+      // stage removed
       bufferLength: this.llmBuffer.length,
-      targetLength: this.llmTargetToon.length,
-      progress: Math.floor((this.llmBuffer.length / (this.llmTargetToon.length || 1)) * 100) + '%',
+      targetLength: this.llmTargetJson.length,
+      progress: Math.floor((this.llmBuffer.length / (this.llmTargetJson.length || 1)) * 100) + '%',
       placeholderCardId: placeholderCard.id,
       placeholderSectionCount: placeholderCard.sections?.length ?? 0,
       parsedCardId: parsedCard?.id,
@@ -1944,7 +2405,7 @@ export class HomePageComponent implements OnInit {
     console.group(`📊 [HomePage] Section States - ${timestamp}`);
     console.log('Streaming Status:', {
       isSimulating: logData.isSimulating,
-      stage: logData.stage,
+      // stage removed
       progress: logData.progress,
       bufferLength: logData.bufferLength,
       targetLength: logData.targetLength

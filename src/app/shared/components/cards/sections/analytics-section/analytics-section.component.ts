@@ -42,6 +42,17 @@ export class AnalyticsSectionComponent extends BaseSectionComponent<AnalyticsFie
     return this.utils.formatChange(change);
   }
 
+  /**
+   * Get display value, hiding "Streaming…" placeholder text
+   */
+  getDisplayValue(field: AnalyticsField): string {
+    const value = field.value;
+    if (value === 'Streaming…' || value === 'Streaming...') {
+      return '';
+    }
+    return value != null ? String(value) : '';
+  }
+
   override trackField(index: number, field: AnalyticsField): string {
     return field.id ?? `${field.label}-${index}`;
   }

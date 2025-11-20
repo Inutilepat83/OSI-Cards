@@ -1,6 +1,6 @@
 # OSI Cards
 
-**OSI Cards** is a modern, token-driven Angular 17+ dashboard framework that transforms any dataset into a visually rich stack of *Toon* cards rendered within a responsive masonry grid. Built for flexibility, accessibility, and performance, OSI Cards empowers developers to compose diverse data experiences with minimal friction.
+**OSI Cards** is a modern, token-driven Angular 17+ dashboard framework that transforms any dataset into a visually rich stack of interactive cards rendered within a responsive masonry grid. Built for flexibility, accessibility, and performance, OSI Cards empowers developers to compose diverse data experiences with minimal friction.
 
 Each card is composed of one or more **sections**—standalone, configurable components orchestrated by `AICardRendererComponent` ⟶ `SectionRendererComponent` ⟶ `MasonryGridComponent`. This architecture enables seamless combination of layouts, real-time streaming updates, and rich interactions.
 
@@ -30,24 +30,31 @@ npm start
 
 ### Create Your First Card
 
-Add a TOON card configuration to `src/assets/configs/companies/` or `src/assets/configs/contacts/`:
+Add a JSON card configuration to `src/assets/configs/companies/` or `src/assets/configs/contacts/`:
 
-```toon
-```toon
-cardTitle: Your Company
-sections[2]:
-  - title: Company Info
-    type: info
-    fields[3]{label,value}:
-      Industry,Technology
-      Employees,1000+
-      Founded,2020
-  - title: Key Metrics
-    type: analytics
-    fields[2]{label,value,percentage}:
-      Growth,85%,85
-      ROI,120%,120
-```
+```json
+{
+  "cardTitle": "Your Company",
+  "sections": [
+    {
+      "title": "Company Info",
+      "type": "info",
+      "fields": [
+        { "label": "Industry", "value": "Technology" },
+        { "label": "Employees", "value": "1000+" },
+        { "label": "Founded", "value": "2020" }
+      ]
+    },
+    {
+      "title": "Key Metrics",
+      "type": "analytics",
+      "fields": [
+        { "label": "Growth", "value": "85%", "percentage": 85 },
+        { "label": "ROI", "value": "120%", "percentage": 120 }
+      ]
+    }
+  ]
+}
 ```
 
 The card will automatically appear in the masonry grid on page load.
@@ -69,9 +76,9 @@ The card will automatically appear in the masonry grid on page load.
 ### Data Flow
 
 ```
-TOON Config (assets/configs/*)
+JSON Config (assets/configs/*)
     ↓
-ToonCardProvider (CardDataService)
+JsonFileCardProvider (CardDataService)
     ↓
 NgRx Cards Store (ensureCardIds + entity adapter)
     ↓
@@ -86,7 +93,7 @@ MasonryGridComponent (layout + animation)
 
 ### State Management
 
-- **`CardDataService`** (`core/services/card-data/`): Manages providers (default: `ToonCardProvider`), caching via `shareReplay(1)`, and provider switching.
+- **`CardDataService`** (`core/services/card-data/`): Manages providers (default: `JsonFileCardProvider`), caching via `shareReplay(1)`, and provider switching.
 - **`CardState`** (`store/cards/`): NgRx entity adapter using `ensureCardIds` for deterministic IDs and `mergeCardPreservingValues()` to prevent placeholder overwrites during streaming.
 - **Streaming Channel**: Direct `@Input` bypass for performance during LLM simulation; final state still persists to the store.
 
@@ -169,35 +176,48 @@ interface CardSection {
 - **`fields`**: Best for definition lists (label-value pairs). Used by Info, Overview, Analytics, Financials.
 - **`items`**: Best for lists/arrays. Used by List, Event, News, Social Media, Product.
 
-### 3. Write TOON Syntax (Recommended)
+### 3. Write JSON Syntax (Recommended)
 
-TOON is a human-friendly card format. Here's the anatomy:
+JSON is the standard format for card configurations. Here's the anatomy:
 
-```toon
-cardTitle: Company Name
-cardSubtitle: Optional tagline
-sections[3]:  # Number of sections
-  - title: Section 1 Title
-    type: info
-    description: Optional section description
-    fields[4]{label,value}:  # 4 fields with label and value
-      Label A,Value A
-      Label B,Value B
-      Label C,Value C
-      Label D,Value D
-  - title: Section 2 Title
-    type: analytics
-    fields[2]{label,value,percentage,trend,change}:  # 2 fields with extra properties
-      Growth Rate,85%,85,up,12
-      Conversion,65%,65,up,8
-  - title: Section 3 Title
-    type: list
-    items[2]{title,description,status}:  # 2 items
-      First Item,Description text,active
-      Second Item,More description,pending
-actions[2]{label,type,icon,action}:  # 2 CTA actions
-  Primary Button,primary,🚀,https://example.com
-  Secondary Button,secondary,📖,https://docs.example.com
+```json
+{
+  "cardTitle": "Company Name",
+  "cardSubtitle": "Optional tagline",
+  "sections": [
+    {
+      "title": "Section 1 Title",
+      "type": "info",
+      "description": "Optional section description",
+      "fields": [
+        { "label": "Label A", "value": "Value A" },
+        { "label": "Label B", "value": "Value B" },
+        { "label": "Label C", "value": "Value C" },
+        { "label": "Label D", "value": "Value D" }
+      ]
+    },
+    {
+      "title": "Section 2 Title",
+      "type": "analytics",
+      "fields": [
+        { "label": "Growth Rate", "value": "85%", "percentage": 85, "trend": "up", "change": 12 },
+        { "label": "Conversion", "value": "65%", "percentage": 65, "trend": "up", "change": 8 }
+      ]
+    },
+    {
+      "title": "Section 3 Title",
+      "type": "list",
+      "items": [
+        { "title": "First Item", "description": "Description text", "status": "active" },
+        { "title": "Second Item", "description": "More description", "status": "pending" }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Primary Button", "type": "primary", "icon": "🚀", "action": "https://example.com" },
+    { "label": "Secondary Button", "type": "secondary", "icon": "📖", "action": "https://docs.example.com" }
+  ]
+}
 ```
 
 ### 4. Field Types & Properties
@@ -222,11 +242,12 @@ interface CardField {
 
 #### Example: Multi-Property Fields
 
-```toon
-fields[3]{label,value,format,trend,change}:
-  Revenue,$2.5M,currency,up,18
-  Growth Rate,35%,percentage,up,5
-  Churn Rate,2.1%,percentage,down,-0.3
+```json
+"fields": [
+  { "label": "Revenue", "value": "$2.5M", "format": "currency", "trend": "up", "change": 18 },
+  { "label": "Growth Rate", "value": "35%", "format": "percentage", "trend": "up", "change": 5 },
+  { "label": "Churn Rate", "value": "2.1%", "format": "percentage", "trend": "down", "change": -0.3 }
+]
 ```
 
 ### 5. Item Types & Properties
@@ -252,10 +273,27 @@ interface CardItem {
 
 #### Example: News Items
 
-```toon
-items[2]{title,description,status,meta.source,meta.publishedAt}:
-  Breaking News,"Important announcement",active,TechCrunch,2025-11-19
-  Market Update,"quarterly earnings","completed",Reuters,2025-11-18
+```json
+"items": [
+  {
+    "title": "Breaking News",
+    "description": "Important announcement",
+    "status": "active",
+    "meta": {
+      "source": "TechCrunch",
+      "publishedAt": "2025-11-19"
+    }
+  },
+  {
+    "title": "Market Update",
+    "description": "quarterly earnings",
+    "status": "completed",
+    "meta": {
+      "source": "Reuters",
+      "publishedAt": "2025-11-18"
+    }
+  }
+]
 ```
 
 ### 6. Adding Actions (CTA Buttons)
@@ -271,92 +309,126 @@ interface CardAction {
 }
 ```
 
-```toon
-actions[3]{label,type,icon,action}:
-  Visit Website,primary,🌐,https://example.com
-  Email Support,secondary,📧,mailto:support@example.com
-  Download PDF,secondary,📄,https://example.com/docs.pdf
+```json
+"actions": [
+  { "label": "Visit Website", "type": "primary", "icon": "🌐", "action": "https://example.com" },
+  { "label": "Email Support", "type": "secondary", "icon": "📧", "action": "mailto:support@example.com" },
+  { "label": "Download PDF", "type": "secondary", "icon": "📄", "action": "https://example.com/docs.pdf" }
+]
 ```
 
 ### 7. Real-World Examples
 
 #### Example 1: Company Overview Card
 
-```toon
-cardTitle: Acme Corporation
-cardType: company
-cardSubtitle: Enterprise Solutions
-sections[3]:
-  - title: Company Info
-    type: info
-    fields[4]{label,value}:
-      Industry,Enterprise Software
-      Employees,5000+
-      Founded,2010
-      HQ,San Francisco, CA
-  - title: Financial Performance
-    type: analytics
-    fields[3]{label,value,percentage,trend}:
-      Annual Revenue,$500M,100,up
-      YoY Growth,22%,22,up
-      Market Cap,$2.5B,100,stable
-  - title: Leadership
-    type: contact-card
-    items[2]{title,role,email,phone}:
-      John Smith,CEO,john@acme.com,+1-555-0100
-      Jane Doe,CFO,jane@acme.com,+1-555-0101
-actions[2]{label,type,icon,action}:
-  View Reports,primary,📊,https://acme.com/reports
-  Contact Sales,secondary,📞,mailto:sales@acme.com
+```json
+{
+  "cardTitle": "Acme Corporation",
+  "cardType": "company",
+  "cardSubtitle": "Enterprise Solutions",
+  "sections": [
+    {
+      "title": "Company Info",
+      "type": "info",
+      "fields": [
+        { "label": "Industry", "value": "Enterprise Software" },
+        { "label": "Employees", "value": "5000+" },
+        { "label": "Founded", "value": "2010" },
+        { "label": "HQ", "value": "San Francisco, CA" }
+      ]
+    },
+    {
+      "title": "Financial Performance",
+      "type": "analytics",
+      "fields": [
+        { "label": "Annual Revenue", "value": "$500M", "percentage": 100, "trend": "up" },
+        { "label": "YoY Growth", "value": "22%", "percentage": 22, "trend": "up" },
+        { "label": "Market Cap", "value": "$2.5B", "percentage": 100, "trend": "stable" }
+      ]
+    },
+    {
+      "title": "Leadership",
+      "type": "contact-card",
+      "items": [
+        { "title": "John Smith", "role": "CEO", "email": "john@acme.com", "phone": "+1-555-0100" },
+        { "title": "Jane Doe", "role": "CFO", "email": "jane@acme.com", "phone": "+1-555-0101" }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "View Reports", "type": "primary", "icon": "📊", "action": "https://acme.com/reports" },
+    { "label": "Contact Sales", "type": "secondary", "icon": "📞", "action": "mailto:sales@acme.com" }
+  ]
+}
 ```
 
 #### Example 2: Product Card
 
-```toon
-cardTitle: CloudSync Pro
-cardType: product
-cardSubtitle: Real-time Data Synchronization
-sections[2]:
-  - title: Features
-    type: product
-    items[4]{title,description}:
-      Real-time Sync,Instant data updates across all devices
-      End-to-End Encryption,Military-grade security
-      Auto-scaling,Handles millions of transactions
-      99.99% Uptime,Enterprise SLA guaranteed
-  - title: Pricing
-    type: financials
-    fields[3]{label,value,format}:
-      Starter Plan,$29/mo,currency
-      Pro Plan,$99/mo,currency
-      Enterprise,Custom,text
-actions[2]{label,type,icon,action}:
-  Start Free Trial,primary,🚀,https://cloudsync.com/trial
-  View Pricing,secondary,💰,https://cloudsync.com/pricing
+```json
+{
+  "cardTitle": "CloudSync Pro",
+  "cardType": "product",
+  "cardSubtitle": "Real-time Data Synchronization",
+  "sections": [
+    {
+      "title": "Features",
+      "type": "product",
+      "items": [
+        { "title": "Real-time Sync", "description": "Instant data updates across all devices" },
+        { "title": "End-to-End Encryption", "description": "Military-grade security" },
+        { "title": "Auto-scaling", "description": "Handles millions of transactions" },
+        { "title": "99.99% Uptime", "description": "Enterprise SLA guaranteed" }
+      ]
+    },
+    {
+      "title": "Pricing",
+      "type": "financials",
+      "fields": [
+        { "label": "Starter Plan", "value": "$29/mo", "format": "currency" },
+        { "label": "Pro Plan", "value": "$99/mo", "format": "currency" },
+        { "label": "Enterprise", "value": "Custom", "format": "text" }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Start Free Trial", "type": "primary", "icon": "🚀", "action": "https://cloudsync.com/trial" },
+    { "label": "View Pricing", "type": "secondary", "icon": "💰", "action": "https://cloudsync.com/pricing" }
+  ]
+}
 ```
 
 #### Example 3: Event Card
 
-```toon
-cardTitle: Tech Conference 2025
-cardType: event
-sections[2]:
-  - title: Event Details
-    type: info
-    fields[4]{label,value}:
-      Date,June 15-17 2025
-      Location,San Francisco Convention Center
-      Attendees,5000+
-      Speakers,150+ international experts
-  - title: Schedule
-    type: event
-    items[3]{title,description,status}:
-      Opening Keynote,"9:00 AM - Main Hall","active"
-      Workshop Track,"10:30 AM - Multiple venues","pending"
-      Networking Dinner,"6:00 PM - Rooftop","pending"
-actions[2]{label,type,icon,action}:
-  Register Now,primary,🎫,https://techconf.com/register
-  View Agenda,secondary,📋,https://techconf.com/agenda
+```json
+{
+  "cardTitle": "Tech Conference 2025",
+  "cardType": "event",
+  "sections": [
+    {
+      "title": "Event Details",
+      "type": "info",
+      "fields": [
+        { "label": "Date", "value": "June 15-17 2025" },
+        { "label": "Location", "value": "San Francisco Convention Center" },
+        { "label": "Attendees", "value": "5000+" },
+        { "label": "Speakers", "value": "150+ international experts" }
+      ]
+    },
+    {
+      "title": "Schedule",
+      "type": "event",
+      "items": [
+        { "title": "Opening Keynote", "description": "9:00 AM - Main Hall", "status": "active" },
+        { "title": "Workshop Track", "description": "10:30 AM - Multiple venues", "status": "pending" },
+        { "title": "Networking Dinner", "description": "6:00 PM - Rooftop", "status": "pending" }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Register Now", "type": "primary", "icon": "🎫", "action": "https://techconf.com/register" },
+    { "label": "View Agenda", "type": "secondary", "icon": "📋", "action": "https://techconf.com/agenda" }
+  ]
+}
 ```
 
 ### 8. Best Practices for Diverse Cards
@@ -478,7 +550,7 @@ ENABLE_POSITION_LOGGING = true;           // Track layout calculations
 Switch data sources on-the-fly:
 
 ```typescript
-// Default: ToonCardProvider (assets/configs/*)
+// Default: JsonFileCardProvider (assets/configs/*)
 cardDataService.switchProvider(new WebsocketCardProvider());
 cardDataService.switchProvider(new ApiCardProvider(http));
 ```
@@ -649,7 +721,7 @@ A: Yes. Cards are provider-agnostic. Load from files, APIs, WebSocket, or anywhe
 A: Listen to `SectionRenderEvent` emitted from `SectionRendererComponent`. Events include section, field, item, action, and metadata.
 
 **Q: Does OSI Cards work offline?**  
-A: Yes. The default `ToonCardProvider` loads static files. The app works entirely offline when using static configs.
+A: Yes. The default `JsonFileCardProvider` loads static files. The app works entirely offline when using static configs.
 
 ---
 

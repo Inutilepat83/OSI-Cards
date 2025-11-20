@@ -66,19 +66,24 @@
   }
 
   &:hover {
-    /* Subtle background enhancement */
+    /* Enhanced background with refined gradient */
     background: linear-gradient(135deg, 
-      color-mix(in srgb, var(--section-item-background) 99%, rgba(255, 121, 0, 0.01)) 0%, 
-      color-mix(in srgb, var(--section-item-background) 98%, rgba(255, 121, 0, 0.03)) 100%);
-    /* Enhanced shadow on hover */
-    box-shadow: var(--section-item-box-shadow-hover);
+      color-mix(in srgb, var(--section-item-background) 98%, rgba(255, 121, 0, 0.02)) 0%, 
+      color-mix(in srgb, var(--section-item-background) 97%, rgba(255, 121, 0, 0.04)) 100%);
+    /* Enhanced shadow on hover with subtle border glow */
+    box-shadow: var(--section-item-box-shadow-hover),
+                0 0 0 1px color-mix(in srgb, rgba(255, 121, 0, 0.12), transparent);
     transform: var(--section-item-hover-transform);
-    border-color: rgba(255, 121, 0, 0.15);
+    border-color: color-mix(in srgb, rgba(255, 121, 0, 0.18), transparent);
     will-change: background, box-shadow, border-color;
     
-    /* Accent line appears on hover */
+    /* Accent line appears on hover with enhanced visibility */
     &::before {
       opacity: 1;
+      width: 3px;
+      background: linear-gradient(180deg, 
+        color-mix(in srgb, rgba(255, 121, 0, 0.6), transparent), 
+        color-mix(in srgb, rgba(255, 121, 0, 0.2), transparent));
     }
   }
   

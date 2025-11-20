@@ -1,0 +1,172 @@
+/* Fallback section styling - Generic section for unmapped types */
+
+@import 'sections-base';
+
+.fallback-section {
+  @include card;
+
+  .fallback-content {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from full gap */
+    align-items: center;
+    justify-content: center;
+    padding: calc(var(--card-padding) * 0.75) 0; /* COMPACT: Reduced padding */
+    text-align: center;
+    min-height: auto; /* COMPACT: No minimum height */
+    margin: 0;
+  }
+
+  .fallback-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--icon-size-xl);
+    height: var(--icon-size-xl);
+    border-radius: 50%;
+    background: var(--card-background);
+    color: rgba(255, 180, 91, 1);
+    font-size: var(--icon-size-lg);
+  }
+
+  .fallback-message {
+    font-size: var(--font-section-value);
+    font-weight: 600;
+    color: var(--foreground);
+    line-height: 1.2;
+  }
+
+  .fallback-description {
+    font-size: var(--font-section-description);
+    color: color-mix(in srgb, var(--foreground) 85%, transparent);
+    line-height: 1.2; /* COMPACT: Reduced from 1.3 */
+    max-width: 100%;
+  }
+
+  .fallback-type-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from full gap */
+    padding: calc(var(--tag-padding-y-sm) * 0.75) calc(var(--tag-padding-x) * 0.875); /* COMPACT: Reduced padding */
+    border-radius: var(--section-card-border-radius);
+    border: none !important; /* CLEAN: No borders on hints - only cards have borders */
+    background: color-mix(in srgb, var(--card-background) 60%, transparent);
+    font-size: var(--card-label-font-size);
+    color: color-mix(in srgb, var(--foreground) 88%, transparent);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+
+    .hint-label {
+      font-weight: 600;
+    }
+
+    .hint-value {
+      font-weight: 500;
+      color: color-mix(in srgb, var(--foreground) 85%, transparent);
+    }
+  }
+
+  .fallback-fields {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--section-card-gap) * 0.75); /* COMPACT: Reduced from full gap */
+    width: 100%;
+  }
+
+  .fallback-field {
+    @include card; /* Use unified card mixin for consistency */
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from full gap */
+    margin: 0;
+
+    .field-label {
+      font-size: var(--font-section-label);
+      color: color-mix(in srgb, var(--foreground) 80%, transparent);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.2;
+    }
+
+    .field-value {
+      font-size: var(--font-section-value);
+      font-weight: 600;
+      color: var(--foreground);
+      line-height: 1.2;
+      word-break: break-word;
+    }
+  }
+
+  .fallback-info {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from full gap */
+    padding: calc(var(--card-padding) * 0.75); /* COMPACT: Reduced padding */
+    border-radius: var(--section-card-border-radius);
+    background: color-mix(in srgb, var(--card-background) 60%, transparent);
+    border: none !important; /* CLEAN: No borders on info elements - only cards have borders */
+    font-size: var(--font-section-meta);
+    color: color-mix(in srgb, var(--foreground) 88%, transparent);
+    line-height: 1.2; /* COMPACT: Tight line-height */
+
+    .info-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: var(--icon-size-md);
+      height: var(--icon-size-md);
+      border-radius: 50%;
+      background: var(--card-border);
+      color: rgba(255, 180, 91, 1);
+      font-size: var(--font-section-tag-sm);
+    }
+
+    .info-text {
+      flex: 1;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .fallback-section {
+    .fallback-content {
+      padding: calc(var(--card-padding) * 0.75) 0; /* COMPACT: Reduced padding */
+      min-height: auto; /* COMPACT: No minimum height */
+    }
+
+    .fallback-icon {
+      width: var(--icon-size-lg);
+      height: var(--icon-size-lg);
+      font-size: var(--icon-size-md);
+    }
+
+    .fallback-message {
+      font-size: var(--font-section-value-lg);
+    }
+
+    .fallback-description {
+      font-size: var(--font-section-description-mobile);
+    }
+
+    .fallback-fields {
+      gap: calc(var(--section-card-gap) * 0.75); /* COMPACT: Reduced from full gap */
+      margin-top: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced margin */
+    }
+
+    .fallback-field {
+      /* Padding is set by @include card */
+    }
+
+    .fallback-info {
+      font-size: var(--font-section-tag-sm);
+      margin-top: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced margin */
+
+      .info-icon {
+        width: var(--icon-size-sm);
+        height: var(--icon-size-sm);
+        font-size: var(--font-section-tag-sm);
+      }
+    }
+  }
+}

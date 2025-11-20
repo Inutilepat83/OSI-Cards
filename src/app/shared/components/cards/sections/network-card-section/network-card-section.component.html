@@ -25,8 +25,8 @@
             <span class="network-card__label">
               {{ field.label || field.title }}
             </span>
-            <span *ngIf="field.value" class="network-card__value">
-              {{ field.value }}
+            <span *ngIf="getDisplayValue(field)" class="network-card__value">
+              {{ getDisplayValue(field) }}
             </span>
           </div>
         </article>

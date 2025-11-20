@@ -28,7 +28,7 @@
             <span class="news-item__time" *ngIf="formatTimestamp(item)">{{ formatTimestamp(item) }}</span>
           </div>
           <p class="news-item__title">{{ item.title }}</p>
-          <p class="news-item__summary" *ngIf="item.description">{{ item.description }}</p>
+          <p class="news-item__summary" *ngIf="getDisplayDescription(item)">{{ getDisplayDescription(item) }}</p>
           <div class="news-item__meta" *ngIf="item.value">
             <span class="news-item__value">{{ item.value }}</span>
             <span class="news-item__indicator">Live</span>

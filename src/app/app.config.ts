@@ -7,17 +7,19 @@ import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { provideZoneChangeDetection } from '@angular/core';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { routes } from './app.routes';
 import { reducers } from './store/app.state';
 import { CardsEffects } from './store/cards/cards.effects';
 import { CARD_DATA_PROVIDER } from './core/services/card-data/card-data.service';
-import { ToonCardProvider } from './core/services/card-data/toon-card-provider.service';
+import { JsonFileCardProvider } from './core/services/card-data/json-file-card-provider.service';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { HttpCacheInterceptor } from './core/interceptors/http-cache.interceptor';
 
 export const config: ApplicationConfig = {
   providers: [
+    provideAnimations(),
     provideRouter(
       routes,
       withPreloading(PreloadAllModules) // Use PreloadAllModules for now, can switch to SelectivePreloadStrategy
@@ -36,7 +38,7 @@ export const config: ApplicationConfig = {
     }),
     {
       provide: CARD_DATA_PROVIDER,
-      useClass: ToonCardProvider
+      useClass: JsonFileCardProvider
     },
     {
       provide: HTTP_INTERCEPTORS,

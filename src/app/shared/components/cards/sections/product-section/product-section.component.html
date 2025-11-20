@@ -146,8 +146,8 @@
                       <p class="product-entry__title">
                         {{ field.title || field.label }}
                       </p>
-                      <span *ngIf="field.value" class="product-entry__value">
-                        {{ field.value }}
+                      <span *ngIf="getDisplayValue(field)" class="product-entry__value">
+                        {{ getDisplayValue(field) }}
                       </span>
                     </div>
 

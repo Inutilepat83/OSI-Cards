@@ -55,17 +55,17 @@ test.describe('OSI Cards Application', () => {
     await expect(page.locator('[data-testid="card-details"]')).toBeVisible();
   });
 
-  test('should populate the editor with the first TOON example on startup', async ({ page }) => {
+  test('should populate the editor with the first JSON example on startup', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    // Wait until the editor textarea contains some content (first TOON template applied)
+    // Wait until the editor textarea contains some content (first JSON template applied)
     await page.waitForFunction(() => {
-      const textarea = document.getElementById('toon-config-textarea') as HTMLTextAreaElement | null;
+      const textarea = document.getElementById('json-config-textarea') as HTMLTextAreaElement | null;
       return !!textarea && textarea.value.trim().length > 0;
     }, { timeout: 5000 });
 
-    const textareaValue = await page.evaluate(() => (document.getElementById('toon-config-textarea') as HTMLTextAreaElement).value);
+    const textareaValue = await page.evaluate(() => (document.getElementById('json-config-textarea') as HTMLTextAreaElement).value);
     expect(textareaValue.trim().length).toBeGreaterThan(0);
   });
 
@@ -73,11 +73,11 @@ test.describe('OSI Cards Application', () => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     // Ensure the editor is present
-    const textarea = page.locator('#toon-config-textarea');
+    const textarea = page.locator('#json-config-textarea');
     await expect(textarea).toBeVisible();
 
     // Type tokens slowly to simulate LLM stream-like behavior
-    const sample = 'cardTitle: StreamTest\n- title: Overview\n type: info\n fields[1]:\n Industry, Tech';
+    const sample = '{"cardTitle": "StreamTest", "sections": [{"title": "Overview", "type": "info", "fields": [{"label": "Industry", "value": "Tech"}]}]}';
     await textarea.click();
     for (const ch of sample) {
       await page.keyboard.type(ch);
@@ -93,10 +93,10 @@ test.describe('OSI Cards Application', () => {
   test('LLM simulation: streaming persists sanitized generated card with section IDs', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-    // Fill the editor with a sample TOON that omits IDs (so ensureCardIds will add them)
-    const textarea = page.locator('#toon-config-textarea');
+    // Fill the editor with a sample JSON that omits IDs (so ensureCardIds will add them)
+    const textarea = page.locator('#json-config-textarea');
     await textarea.click();
-    await textarea.fill('cardTitle: E2E Persisted\n- title: Overview\n type: info\n fields[1]:\n Industry, Manufacturing\n- title: Contacts\n type: list\n - John Doe');
+    await textarea.fill('{"cardTitle": "E2E Persisted", "sections": [{"title": "Overview", "type": "info", "fields": [{"label": "Industry", "value": "Manufacturing"}]}, {"title": "Contacts", "type": "list", "items": [{"title": "John Doe"}]}]}');
 
     // Start LLM simulation
     const simulateButton = page.getByRole('button', { name: /simulate llm/i });

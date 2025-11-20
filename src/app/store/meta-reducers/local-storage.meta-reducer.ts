@@ -19,7 +19,7 @@ export function localStorageSyncReducer(reducer: ActionReducer<AppState>): Actio
             currentCardId: nextState.cards.currentCardId,
             cardType: nextState.cards.cardType,
             cardVariant: nextState.cards.cardVariant,
-            toonInput: nextState.cards.toonInput,
+            jsonInput: nextState.cards.jsonInput,
             // Don't persist UI state
             isGenerating: false,
             isFullscreen: false,

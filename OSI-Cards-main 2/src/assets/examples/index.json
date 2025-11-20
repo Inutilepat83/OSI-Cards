@@ -1,0 +1,340 @@
+{
+  "name": "OSI Cards Example Library",
+  "description": "Comprehensive collection of example card configurations organized by category and complexity level",
+  "version": "1.0.0",
+  "lastUpdated": "2024-12-19",
+  "totalExamples": 18,
+  "categories": {
+    "company": {
+      "name": "Company Profiles",
+      "description": "Business and organization profile cards",
+      "count": 3,
+      "examples": [
+        {
+          "title": "Basic Company Profile",
+          "file": "basic-company-profile.json",
+          "complexity": "basic",
+          "description": "Essential company information with key metrics",
+          "features": [
+            "company overview",
+            "financial metrics",
+            "contact information",
+            "basic progress tracking"
+          ]
+        },
+        {
+          "title": "Enhanced Company Profile",
+          "file": "enhanced-company-profile.json",
+          "complexity": "medium",
+          "description": "Comprehensive company analysis with market positioning",
+          "features": [
+            "detailed company info",
+            "market analysis",
+            "competitive landscape",
+            "financial performance",
+            "strategic insights"
+          ]
+        },
+        {
+          "title": "Enterprise Company Dashboard",
+          "file": "enterprise-company-dashboard.json",
+          "complexity": "high",
+          "description": "Executive-level company intelligence and strategic analysis",
+          "features": [
+            "executive summary",
+            "market intelligence",
+            "strategic analysis",
+            "risk assessment",
+            "predictive insights",
+            "enterprise roadmap"
+          ]
+        }
+      ]
+    },
+    "contact": {
+      "name": "Contact Profiles",
+      "description": "Individual and professional contact cards",
+      "count": 3,
+      "examples": [
+        {
+          "title": "Basic Contact Information",
+          "file": "basic-contact-info.json",
+          "complexity": "basic",
+          "description": "Essential contact details and basic relationship tracking",
+          "features": [
+            "personal information",
+            "contact details",
+            "relationship status",
+            "basic interaction history"
+          ]
+        },
+        {
+          "title": "Professional Contact Profile",
+          "file": "professional-contact.json",
+          "complexity": "medium",
+          "description": "Professional contact with career and relationship insights",
+          "features": [
+            "professional background",
+            "career progression",
+            "relationship mapping",
+            "communication preferences",
+            "engagement metrics"
+          ]
+        },
+        {
+          "title": "Executive Contact Dashboard",
+          "file": "executive-contact.json",
+          "complexity": "high",
+          "description": "Executive-level contact management with strategic insights",
+          "features": [
+            "executive profile",
+            "strategic influence",
+            "decision-making patterns",
+            "relationship ecosystem",
+            "predictive engagement",
+            "executive roadmap"
+          ]
+        }
+      ]
+    },
+    "product": {
+      "name": "Product Catalogs",
+      "description": "Product and service offering cards",
+      "count": 3,
+      "examples": [
+        {
+          "title": "Basic Product Information",
+          "file": "basic-product-info.json",
+          "complexity": "basic",
+          "description": "Essential product details and basic performance metrics",
+          "features": [
+            "product overview",
+            "pricing information",
+            "basic specifications",
+            "performance metrics"
+          ]
+        },
+        {
+          "title": "Enhanced Product Catalog",
+          "file": "enhanced-product-catalog.json",
+          "complexity": "medium",
+          "description": "Comprehensive product catalog with market analysis",
+          "features": [
+            "detailed product info",
+            "market positioning",
+            "competitive analysis",
+            "customer feedback",
+            "performance analytics"
+          ]
+        },
+        {
+          "title": "Product Analytics Dashboard",
+          "file": "product-analytics-dashboard.json",
+          "complexity": "high",
+          "description": "Advanced product analytics with predictive insights",
+          "features": [
+            "product performance",
+            "market analysis",
+            "predictive forecasting",
+            "customer segmentation",
+            "strategic roadmap",
+            "risk assessment"
+          ]
+        }
+      ]
+    },
+    "project": {
+      "name": "Project Management",
+      "description": "Project tracking and management cards",
+      "count": 3,
+      "examples": [
+        {
+          "title": "Basic Project Status",
+          "file": "basic-project-status.json",
+          "complexity": "basic",
+          "description": "Essential project tracking with milestones and status",
+          "features": [
+            "project overview",
+            "milestone tracking",
+            "resource allocation",
+            "basic progress indicators"
+          ]
+        },
+        {
+          "title": "Project Management Dashboard",
+          "file": "project-management-dashboard.json",
+          "complexity": "medium",
+          "description": "Comprehensive project management with team coordination",
+          "features": [
+            "project metrics",
+            "team management",
+            "resource planning",
+            "risk monitoring",
+            "communication tracking"
+          ]
+        },
+        {
+          "title": "Project Analytics Dashboard",
+          "file": "project-analytics.json",
+          "complexity": "high",
+          "description": "Advanced project analytics with predictive insights",
+          "features": [
+            "performance analytics",
+            "budget analysis",
+            "risk assessment",
+            "predictive forecasting",
+            "milestone analysis",
+            "strategic insights"
+          ]
+        }
+      ]
+    },
+    "analytics": {
+      "name": "Business Analytics",
+      "description": "Business intelligence and analytics cards",
+      "count": 3,
+      "examples": [
+        {
+          "title": "Basic Analytics Dashboard",
+          "file": "basic-analytics-dashboard.json",
+          "complexity": "basic",
+          "description": "Essential business metrics and KPI tracking",
+          "features": [
+            "kpi overview",
+            "sales metrics",
+            "monthly trends",
+            "channel performance",
+            "progress indicators"
+          ]
+        },
+        {
+          "title": "Enhanced Analytics Dashboard",
+          "file": "enhanced-analytics-dashboard.json",
+          "complexity": "medium",
+          "description": "Advanced customer analytics with segmentation",
+          "features": [
+            "customer overview",
+            "behavior metrics",
+            "segmentation analysis",
+            "behavior patterns",
+            "predictive insights",
+            "customer journey"
+          ]
+        },
+        {
+          "title": "Business Intelligence Center",
+          "file": "analytics-dashboard.json",
+          "complexity": "high",
+          "description": "Enterprise BI platform with real-time monitoring",
+          "features": [
+            "executive summary",
+            "kpi dashboard",
+            "performance analysis",
+            "predictive analytics",
+            "real-time monitoring",
+            "strategic roadmap",
+            "risk intelligence"
+          ]
+        }
+      ]
+    },
+    "opportunity": {
+      "name": "Sales Opportunities",
+      "description": "Sales opportunity and pipeline management cards",
+      "count": 3,
+      "examples": [
+        {
+          "title": "Basic Opportunity Profile",
+          "file": "basic-opportunity-profile.json",
+          "complexity": "basic",
+          "description": "Essential deal tracking with stakeholder analysis",
+          "features": [
+            "deal overview",
+            "opportunity metrics",
+            "deal progress",
+            "stakeholder analysis",
+            "progress indicators"
+          ]
+        },
+        {
+          "title": "Enhanced Opportunity Profile",
+          "file": "enhanced-opportunity-profile.json",
+          "complexity": "medium",
+          "description": "Advanced opportunity management with competitive intelligence",
+          "features": [
+            "strategic overview",
+            "advanced metrics",
+            "competitive landscape",
+            "value proposition analysis",
+            "predictive insights",
+            "strategic roadmap",
+            "risk mitigation"
+          ]
+        },
+        {
+          "title": "Enterprise Opportunity Dashboard",
+          "file": "enterprise-opportunity-dashboard.json",
+          "complexity": "high",
+          "description": "Enterprise-level opportunity orchestration",
+          "features": [
+            "enterprise overview",
+            "enterprise metrics",
+            "multi-dimensional analysis",
+            "stakeholder ecosystem",
+            "predictive analytics dashboard",
+            "enterprise transformation roadmap",
+            "enterprise risk management"
+          ]
+        }
+      ]
+    }
+  },
+  "complexityLevels": {
+    "basic": {
+      "description": "Essential information and basic functionality",
+      "count": 6,
+      "typicalFeatures": [
+        "overview sections",
+        "basic metrics",
+        "essential information",
+        "simple progress tracking"
+      ]
+    },
+    "medium": {
+      "description": "Enhanced functionality with analysis and insights",
+      "count": 6,
+      "typicalFeatures": [
+        "detailed analysis",
+        "advanced metrics",
+        "trend analysis",
+        "relationship mapping",
+        "strategic insights"
+      ]
+    },
+    "high": {
+      "description": "Enterprise-level functionality with predictive analytics",
+      "count": 6,
+      "typicalFeatures": [
+        "predictive analytics",
+        "enterprise dashboards",
+        "strategic roadmaps",
+        "risk management",
+        "executive insights",
+        "comprehensive orchestration"
+      ]
+    }
+  },
+  "sectionTypes": {
+    "info": "Information display with key-value pairs and status indicators",
+    "metrics": "Performance metrics with trends and change indicators",
+    "table": "Tabular data with sorting, filtering, and analysis capabilities",
+    "progress": "Progress indicators and completion tracking",
+    "timeline": "Chronological event tracking and milestone visualization"
+  },
+  "usage": {
+    "gettingStarted": "Start with basic complexity examples to understand the structure, then progress to enhanced and enterprise variants",
+    "customization": "Use these examples as templates and customize sections, fields, and actions based on your specific needs",
+    "integration": "These examples work with the Angular card system and can be loaded dynamically based on user requirements",
+    "bestPractices": "Each complexity level demonstrates progressive enhancement while maintaining consistent data structures"
+  }
+}

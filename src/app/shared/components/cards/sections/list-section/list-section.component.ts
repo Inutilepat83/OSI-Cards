@@ -28,6 +28,17 @@ export class ListSectionComponent extends BaseSectionComponent<ListEntry> {
     this.emitItemInteraction(item);
   }
 
+  /**
+   * Get display description, hiding "Streaming…" placeholder text
+   */
+  getDisplayDescription(item: ListEntry): string {
+    const description = item.description;
+    if (description === 'Streaming…' || description === 'Streaming...') {
+      return '';
+    }
+    return description ?? '';
+  }
+
   override trackItem(index: number, item: ListEntry): string {
     return item.id ?? `${item.title ?? item.label}-${index}`;
   }

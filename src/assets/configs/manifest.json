@@ -1,585 +1,401 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2025-11-19T15:35:01.145Z",
+  "generatedAt": "2025-11-20T11:09:12.108Z",
   "cards": [
     {
-      "id": "dsm",
+      "id": "company-enterprise-v3",
       "type": "company",
-      "path": "companies/dsm.toon",
-      "size": 8058,
+      "path": "companies/company-enterprise-v3.json",
+      "format": "json",
+      "size": 5317,
       "priority": "high",
-      "sectionCount": 14,
+      "sectionCount": 7,
       "complexity": "enterprise",
-      "title": "DSM",
+      "title": "GlobalTech Industries",
       "metadata": {
-        "subtitle": "Nutrition, Health & Sustainable Living Leader",
+        "subtitle": "Leading Enterprise Technology Solutions Provider",
         "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.503Z",
+        "lastUpdated": "2025-11-20T10:46:11.238Z",
         "hasActions": true
       }
     },
     {
-      "id": "pfizer",
+      "id": "company-enhanced-v2",
       "type": "company",
-      "path": "companies/pfizer.toon",
-      "size": 1552,
+      "path": "companies/company-enhanced-v2.json",
+      "format": "json",
+      "size": 2205,
       "priority": "high",
       "sectionCount": 4,
-      "complexity": "basic",
-      "title": "Pfizer",
+      "complexity": "enhanced",
+      "title": "TechVenture Solutions",
       "metadata": {
-        "subtitle": null,
+        "subtitle": "Enterprise Technology Services",
         "description": null,
-        "lastUpdated": "2025-11-19T15:18:52.664Z",
+        "lastUpdated": "2025-11-20T10:46:10.249Z",
         "hasActions": true
       }
     },
     {
-      "id": "microsoft",
+      "id": "company-basic-v1",
       "type": "company",
-      "path": "companies/microsoft.toon",
-      "size": 1496,
+      "path": "companies/company-basic-v1.json",
+      "format": "json",
+      "size": 989,
       "priority": "high",
-      "sectionCount": 4,
+      "sectionCount": 2,
       "complexity": "basic",
-      "title": "Microsoft",
+      "title": "Acme Corporation",
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-19T15:18:52.659Z",
+        "lastUpdated": "2025-11-20T10:46:10.165Z",
         "hasActions": true
       }
     },
     {
-      "id": "amazon",
-      "type": "company",
-      "path": "companies/amazon.toon",
-      "size": 1480,
-      "priority": "high",
-      "sectionCount": 4,
-      "complexity": "basic",
-      "title": "Amazon",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-19T15:18:52.664Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "emma-thompson",
-      "type": "contact",
-      "path": "contacts/emma-thompson.toon",
-      "size": 2399,
-      "priority": "medium",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "Emma Thompson",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-19T15:18:52.664Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "marcus-rodriguez",
-      "type": "contact",
-      "path": "contacts/marcus-rodriguez.toon",
-      "size": 2296,
-      "priority": "medium",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "Marcus Rodriguez",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.509Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "sarah-chen",
-      "type": "contact",
-      "path": "contacts/sarah-chen.toon",
-      "size": 2262,
-      "priority": "medium",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "Sarah Chen",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.509Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "secureguard-enterprise",
+      "id": "product-enterprise-v3",
       "type": "product",
-      "path": "products/secureguard-enterprise.toon",
-      "size": 2051,
+      "path": "products/product-enterprise-v3.json",
+      "format": "json",
+      "size": 6698,
+      "priority": "medium",
+      "sectionCount": 7,
+      "complexity": "enterprise",
+      "title": "AI Insights Platform",
+      "metadata": {
+        "subtitle": "Enterprise AI Analytics & Intelligence",
+        "description": null,
+        "lastUpdated": "2025-11-20T10:46:11.263Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "contact-enterprise-v3",
+      "type": "contact",
+      "path": "contacts/contact-enterprise-v3.json",
+      "format": "json",
+      "size": 5191,
+      "priority": "medium",
+      "sectionCount": 8,
+      "complexity": "enterprise",
+      "title": "Alex Patel",
+      "metadata": {
+        "subtitle": "Chief Financial Officer",
+        "description": null,
+        "lastUpdated": "2025-11-20T10:46:11.342Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "product-enhanced-v2",
+      "type": "product",
+      "path": "products/product-enhanced-v2.json",
+      "format": "json",
+      "size": 3721,
       "priority": "medium",
       "sectionCount": 6,
       "complexity": "enhanced",
       "title": "SecureGuard Enterprise",
       "metadata": {
-        "subtitle": null,
+        "subtitle": "Enterprise Cybersecurity Platform",
         "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.521Z",
+        "lastUpdated": "2025-11-20T10:46:11.211Z",
         "hasActions": true
       }
     },
     {
-      "id": "ai-insights-platform",
-      "type": "product",
-      "path": "products/ai-insights-platform.toon",
-      "size": 2045,
-      "priority": "medium",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "AI Insights Platform",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.519Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "cloud-migration-suite",
-      "type": "product",
-      "path": "products/cloud-migration-suite.toon",
-      "size": 1997,
-      "priority": "medium",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "Cloud Migration Suite",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.520Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "john-smith",
+      "id": "contact-enhanced-v2",
       "type": "contact",
-      "path": "contacts/john-smith.toon",
-      "size": 1784,
+      "path": "contacts/contact-enhanced-v2.json",
+      "format": "json",
+      "size": 3557,
       "priority": "medium",
-      "sectionCount": 4,
+      "sectionCount": 5,
+      "complexity": "enhanced",
+      "title": "Sarah Chen",
+      "metadata": {
+        "subtitle": "Chief Marketing Officer",
+        "description": null,
+        "lastUpdated": "2025-11-20T10:46:11.313Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "product-basic-v1",
+      "type": "product",
+      "path": "products/product-basic-v1.json",
+      "format": "json",
+      "size": 1233,
+      "priority": "medium",
+      "sectionCount": 2,
+      "complexity": "basic",
+      "title": "Cloud Backup Solution",
+      "metadata": {
+        "subtitle": null,
+        "description": null,
+        "lastUpdated": "2025-11-20T10:46:11.149Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "contact-basic-v1",
+      "type": "contact",
+      "path": "contacts/contact-basic-v1.json",
+      "format": "json",
+      "size": 1077,
+      "priority": "medium",
+      "sectionCount": 2,
       "complexity": "basic",
       "title": "John Smith",
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-19T15:18:52.664Z",
+        "lastUpdated": "2025-11-20T10:46:11.288Z",
         "hasActions": true
       }
     },
     {
-      "id": "sophie-martin",
-      "type": "contact",
-      "path": "contacts/sophie-martin.toon",
-      "size": 1003,
-      "priority": "medium",
-      "sectionCount": 3,
-      "complexity": "basic",
-      "title": "Sophie Martin",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.510Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "enterprise-security-suite",
-      "type": "product",
-      "path": "products/enterprise-security-suite.toon",
-      "size": 734,
-      "priority": "medium",
-      "sectionCount": 2,
-      "complexity": "basic",
-      "title": "Enterprise Security Suite",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.521Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "data-analytics-platform",
-      "type": "product",
-      "path": "products/data-analytics-platform.toon",
-      "size": 718,
-      "priority": "medium",
-      "sectionCount": 2,
-      "complexity": "basic",
-      "title": "Data Analytics Platform",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.520Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "financial-services-solutions",
+      "id": "sko-enterprise-v3",
       "type": "sko",
-      "path": "sko/financial-services-solutions.toon",
-      "size": 3035,
+      "path": "sko/sko-enterprise-v3.json",
+      "format": "json",
+      "size": 9850,
       "priority": "low",
-      "sectionCount": 2,
-      "complexity": "basic",
+      "sectionCount": 9,
+      "complexity": "enterprise",
       "title": "Top Orange Business Solutions",
       "metadata": {
-        "subtitle": "Recommended Solutions for Financial Services Client",
+        "subtitle": "Recommended Solutions for Enterprise Manufacturing Client",
         "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.522Z",
+        "lastUpdated": "2025-11-20T10:46:12.047Z",
         "hasActions": true
       }
     },
     {
-      "id": "enterprise-client-solutions",
-      "type": "sko",
-      "path": "sko/enterprise-client-solutions.toon",
-      "size": 2949,
-      "priority": "low",
-      "sectionCount": 2,
-      "complexity": "basic",
-      "title": "Top Orange Business Solutions",
-      "metadata": {
-        "subtitle": "Recommended Solutions for Enterprise Client",
-        "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.522Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "manufacturing-client-solutions",
-      "type": "sko",
-      "path": "sko/manufacturing-client-solutions.toon",
-      "size": 2614,
-      "priority": "low",
-      "sectionCount": 2,
-      "complexity": "basic",
-      "title": "Top Orange Business Solutions",
-      "metadata": {
-        "subtitle": "Recommended Solutions for Manufacturing Client",
-        "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.523Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "enterprise-cloud-migration",
+      "id": "opportunity-enterprise-v3",
       "type": "opportunity",
-      "path": "opportunities/enterprise-cloud-migration.toon",
-      "size": 2195,
+      "path": "opportunities/opportunity-enterprise-v3.json",
+      "format": "json",
+      "size": 7687,
       "priority": "low",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "Enterprise Cloud Migration",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.518Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "digital-transformation-partnership",
-      "type": "opportunity",
-      "path": "opportunities/digital-transformation-partnership.toon",
-      "size": 2193,
-      "priority": "low",
-      "sectionCount": 6,
-      "complexity": "enhanced",
+      "sectionCount": 8,
+      "complexity": "enterprise",
       "title": "Digital Transformation Partnership",
       "metadata": {
-        "subtitle": null,
+        "subtitle": "Multi-Year Enterprise Digital Transformation",
         "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.517Z",
+        "lastUpdated": "2025-11-20T10:46:11.421Z",
         "hasActions": true
       }
     },
     {
-      "id": "investment-portfolio-q1",
-      "type": "financials",
-      "path": "financials/investment-portfolio-q1.toon",
-      "size": 2182,
-      "priority": "low",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "Investment Portfolio Q1 2025",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.513Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "ai-customer-service",
-      "type": "opportunity",
-      "path": "opportunities/ai-customer-service.toon",
-      "size": 2161,
-      "priority": "low",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "AI-Powered Customer Service",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-19T15:18:52.664Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "tech-summit-2025",
+      "id": "event-enterprise-v3",
       "type": "event",
-      "path": "events/tech-summit-2025.toon",
-      "size": 2104,
+      "path": "events/event-enterprise-v3.json",
+      "format": "json",
+      "size": 5887,
+      "priority": "low",
+      "sectionCount": 7,
+      "complexity": "enterprise",
+      "title": "Global Business Forum 2025",
+      "metadata": {
+        "subtitle": "World's Premier Business & Innovation Summit",
+        "description": null,
+        "lastUpdated": "2025-11-20T10:46:11.521Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "analytics-enterprise-v3",
+      "type": "analytics",
+      "path": "analytics/analytics-enterprise-v3.json",
+      "format": "json",
+      "size": 4636,
+      "priority": "low",
+      "sectionCount": 7,
+      "complexity": "enterprise",
+      "title": "Customer Health Scorecard",
+      "metadata": {
+        "subtitle": "Account Management Insights & Analytics",
+        "description": null,
+        "lastUpdated": "2025-11-20T10:46:11.604Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "sko-enhanced-v2",
+      "type": "sko",
+      "path": "sko/sko-enhanced-v2.json",
+      "format": "json",
+      "size": 4566,
+      "priority": "low",
+      "sectionCount": 4,
+      "complexity": "enhanced",
+      "title": "Top Orange Business Solutions",
+      "metadata": {
+        "subtitle": "Recommended Solutions for Healthcare Client",
+        "description": null,
+        "lastUpdated": "2025-11-20T10:46:11.670Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "event-enhanced-v2",
+      "type": "event",
+      "path": "events/event-enhanced-v2.json",
+      "format": "json",
+      "size": 4093,
       "priority": "low",
       "sectionCount": 6,
       "complexity": "enhanced",
       "title": "Tech Summit 2025",
       "metadata": {
-        "subtitle": null,
+        "subtitle": "Global Technology Innovation Conference",
         "description": null,
-        "lastUpdated": "2025-11-19T15:18:52.664Z",
+        "lastUpdated": "2025-11-20T10:46:11.471Z",
         "hasActions": true
       }
     },
     {
-      "id": "global-business-forum",
-      "type": "event",
-      "path": "events/global-business-forum.toon",
-      "size": 2069,
+      "id": "opportunity-enhanced-v2",
+      "type": "opportunity",
+      "path": "opportunities/opportunity-enhanced-v2.json",
+      "format": "json",
+      "size": 3918,
       "priority": "low",
       "sectionCount": 6,
       "complexity": "enhanced",
-      "title": "Global Business Forum",
+      "title": "Enterprise Cloud Migration",
       "metadata": {
-        "subtitle": null,
+        "subtitle": "Financial Services Cloud Transformation",
         "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.512Z",
+        "lastUpdated": "2025-11-20T10:46:11.397Z",
         "hasActions": true
       }
     },
     {
-      "id": "series-a-funding",
-      "type": "financials",
-      "path": "financials/series-a-funding.toon",
-      "size": 2053,
-      "priority": "low",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "Series A Funding Round",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.514Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "olympic-games-2025",
-      "type": "event",
-      "path": "events/olympic-games-2025.toon",
-      "size": 2029,
-      "priority": "low",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "Olympic Games 2025",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.512Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "q4-2024-report",
-      "type": "financials",
-      "path": "financials/q4-2024-report.toon",
-      "size": 1975,
-      "priority": "low",
-      "sectionCount": 6,
-      "complexity": "enhanced",
-      "title": "Q4 2024 Financial Report",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.514Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "sales-performance-dashboard",
+      "id": "analytics-enhanced-v2",
       "type": "analytics",
-      "path": "analytics/sales-performance-dashboard.toon",
-      "size": 901,
+      "path": "analytics/analytics-enhanced-v2.json",
+      "format": "json",
+      "size": 2777,
       "priority": "low",
-      "sectionCount": 3,
+      "sectionCount": 5,
+      "complexity": "enhanced",
+      "title": "Marketing Campaign ROI",
+      "metadata": {
+        "subtitle": "Holiday Season 2024 Campaign Analysis",
+        "description": null,
+        "lastUpdated": "2025-11-20T10:46:11.539Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "sko-basic-v1",
+      "type": "sko",
+      "path": "sko/sko-basic-v1.json",
+      "format": "json",
+      "size": 1147,
+      "priority": "low",
+      "sectionCount": 1,
+      "complexity": "basic",
+      "title": "Top Orange Business Solutions",
+      "metadata": {
+        "subtitle": "Recommended Solutions for Financial Services",
+        "description": null,
+        "lastUpdated": "2025-11-20T10:46:11.563Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "analytics-basic-v1",
+      "type": "analytics",
+      "path": "analytics/analytics-basic-v1.json",
+      "format": "json",
+      "size": 1120,
+      "priority": "low",
+      "sectionCount": 2,
       "complexity": "basic",
       "title": "Sales Performance Dashboard",
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.496Z",
+        "lastUpdated": "2025-11-20T10:46:11.497Z",
         "hasActions": true
       }
     },
     {
-      "id": "cloud-migration-enterprise",
-      "type": "opportunity",
-      "path": "opportunities/cloud-migration-enterprise.toon",
-      "size": 789,
-      "priority": "low",
-      "sectionCount": 2,
-      "complexity": "basic",
-      "title": "Enterprise Cloud Migration",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.516Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "security-transformation",
-      "type": "opportunity",
-      "path": "opportunities/security-transformation.toon",
-      "size": 770,
-      "priority": "low",
-      "sectionCount": 2,
-      "complexity": "basic",
-      "title": "Security Transformation Initiative",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.519Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "digital-transformation-forum",
+      "id": "event-basic-v1",
       "type": "event",
-      "path": "events/digital-transformation-forum.toon",
-      "size": 746,
+      "path": "events/event-basic-v1.json",
+      "format": "json",
+      "size": 1103,
       "priority": "low",
       "sectionCount": 2,
       "complexity": "basic",
-      "title": "Digital Transformation Forum 2025",
+      "title": "Tech Summit 2025",
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.511Z",
+        "lastUpdated": "2025-11-20T10:46:11.438Z",
         "hasActions": true
       }
     },
     {
-      "id": "cloud-innovation-summit",
-      "type": "event",
-      "path": "events/cloud-innovation-summit.toon",
-      "size": 743,
+      "id": "opportunity-basic-v1",
+      "type": "opportunity",
+      "path": "opportunities/opportunity-basic-v1.json",
+      "format": "json",
+      "size": 1055,
       "priority": "low",
       "sectionCount": 2,
       "complexity": "basic",
-      "title": "Cloud Innovation Summit 2025",
+      "title": "Cloud Migration Project",
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-17T12:35:25.511Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "operational-efficiency",
-      "type": "analytics",
-      "path": "analytics/operational-efficiency.toon",
-      "size": 731,
-      "priority": "low",
-      "sectionCount": 2,
-      "complexity": "basic",
-      "title": "Operational Efficiency Analytics",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-17T12:44:42.968Z",
-        "hasActions": true
-      }
-    },
-    {
-      "id": "customer-insights-report",
-      "type": "analytics",
-      "path": "analytics/customer-insights-report.toon",
-      "size": 705,
-      "priority": "low",
-      "sectionCount": 2,
-      "complexity": "basic",
-      "title": "Customer Insights Report",
-      "metadata": {
-        "subtitle": null,
-        "description": null,
-        "lastUpdated": "2025-11-17T10:59:27.407Z",
+        "lastUpdated": "2025-11-20T10:46:11.371Z",
         "hasActions": true
       }
     }
   ],
   "types": {
     "company": [
-      "amazon",
-      "dsm",
-      "microsoft",
-      "pfizer"
+      "company-basic-v1",
+      "company-enhanced-v2",
+      "company-enterprise-v3"
     ],
     "contact": [
-      "emma-thompson",
-      "john-smith",
-      "marcus-rodriguez",
-      "sarah-chen",
-      "sophie-martin"
+      "contact-basic-v1",
+      "contact-enhanced-v2",
+      "contact-enterprise-v3"
     ],
     "product": [
-      "ai-insights-platform",
-      "cloud-migration-suite",
-      "data-analytics-platform",
-      "enterprise-security-suite",
-      "secureguard-enterprise"
+      "product-basic-v1",
+      "product-enhanced-v2",
+      "product-enterprise-v3"
     ],
     "opportunity": [
-      "ai-customer-service",
-      "cloud-migration-enterprise",
-      "digital-transformation-partnership",
-      "enterprise-cloud-migration",
-      "security-transformation"
+      "opportunity-basic-v1",
+      "opportunity-enhanced-v2",
+      "opportunity-enterprise-v3"
     ],
     "event": [
-      "cloud-innovation-summit",
-      "digital-transformation-forum",
-      "global-business-forum",
-      "olympic-games-2025",
-      "tech-summit-2025"
+      "event-basic-v1",
+      "event-enhanced-v2",
+      "event-enterprise-v3"
     ],
     "analytics": [
-      "customer-insights-report",
-      "operational-efficiency",
-      "sales-performance-dashboard"
+      "analytics-basic-v1",
+      "analytics-enhanced-v2",
+      "analytics-enterprise-v3"
     ],
-    "financials": [
-      "investment-portfolio-q1",
-      "q4-2024-report",
-      "series-a-funding"
-    ],
+    "financials": [],
     "sko": [
-      "enterprise-client-solutions",
-      "financial-services-solutions",
-      "manufacturing-client-solutions"
+      "sko-basic-v1",
+      "sko-enhanced-v2",
+      "sko-enterprise-v3"
     ]
   }
 }

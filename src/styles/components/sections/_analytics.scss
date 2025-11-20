@@ -37,9 +37,10 @@
   }
 
   &:hover {
-    /* Subtle lift with enhanced shadow */
-    transform: translateY(-3px);
-    box-shadow: 0 16px 32px color-mix(in srgb, var(--foreground) 18%, transparent);
+    /* Enhanced lift with refined shadow and border */
+    transform: translateY(-4px);
+    box-shadow: 0 18px 36px color-mix(in srgb, var(--foreground) 20%, transparent),
+                0 0 0 1px color-mix(in srgb, var(--color-brand) 18%, transparent);
 
     &::before {
       opacity: 1;
@@ -47,7 +48,12 @@
 
     .analytics-metric__value {
       color: var(--color-brand);
-      animation: glowAccent 400ms ease-in-out;
+      text-shadow: 0 2px 10px color-mix(in srgb, var(--color-brand) 35%, transparent);
+      transform: scale(1.02);
+    }
+    
+    .analytics-metric__label {
+      color: color-mix(in srgb, var(--card-text-secondary) 90%, var(--color-brand) 10%);
     }
   }
 
@@ -104,19 +110,30 @@
 
   &__progress {
     @include progress-bar;
-    /* ENHANCED: Better progress bar styling */
-    margin: calc(var(--card-gap) * 0.5) 0;
-    height: 8px;
-    border-radius: var(--card-border-radius);
-    background: color-mix(in srgb, var(--section-accent) 12%, transparent);
+    /* ENHANCED: Refined progress bar with better visual depth */
+    margin: calc(var(--card-gap) * 0.75) 0;
+    height: 6px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--section-accent) 14%, transparent);
     overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.12);
 
     .section-card__progress-bar {
       height: 100%;
-      background: linear-gradient(90deg, var(--color-brand) 0%, var(--color-brand) 80%, color-mix(in srgb, var(--color-brand) 70%, transparent) 100%);
+      background: linear-gradient(90deg, 
+        color-mix(in srgb, var(--color-brand) 90%, transparent) 0%, 
+        var(--color-brand) 50%,
+        color-mix(in srgb, var(--color-brand) 85%, transparent) 100%);
       border-radius: inherit;
-      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 10px color-mix(in srgb, var(--color-brand) 45%, transparent),
+                  0 1px 2px rgba(0, 0, 0, 0.1);
     }
+  }
+  
+  &:hover .analytics-metric__progress .section-card__progress-bar {
+    box-shadow: 0 0 14px color-mix(in srgb, var(--color-brand) 55%, transparent),
+                0 1px 3px rgba(0, 0, 0, 0.15);
   }
 
   &__meta {
@@ -125,21 +142,36 @@
     align-items: center;
     flex-wrap: wrap;
     gap: calc(var(--card-gap) * 0.6);
-    /* ENHANCED: Better spacing */
+    /* ENHANCED: Better spacing and visual refinement */
     width: 100%;
     font-size: var(--card-meta-font-size) !important;
     color: color-mix(in srgb, var(--card-text-muted) 90%, transparent) !important;
     font-weight: 500 !important;
     line-height: 1.3 !important;
-    padding: calc(var(--card-gap) * 0.25) calc(var(--card-gap) * 0.5);
-    background: color-mix(in srgb, var(--section-accent) 6%, transparent);
-    border-radius: calc(var(--card-border-radius) * 0.5);
+    padding: calc(var(--card-gap) * 0.4) calc(var(--card-gap) * 0.75);
+    background: linear-gradient(135deg, 
+      color-mix(in srgb, var(--section-accent) 8%, transparent),
+      color-mix(in srgb, var(--section-accent) 5%, transparent));
+    border-radius: calc(var(--card-border-radius) * 0.6);
+    transition: background 0.3s ease, transform 0.2s ease;
 
     lucide-icon {
       @include icon-base(12px);
       @include trend-colors;
       flex-shrink: 0;
-      transition: transform 0.22s ease;
+      transition: transform 0.22s ease, opacity 0.22s ease;
+    }
+  }
+  
+  &:hover .analytics-metric__meta {
+    background: linear-gradient(135deg, 
+      color-mix(in srgb, var(--section-accent) 12%, transparent),
+      color-mix(in srgb, var(--section-accent) 8%, transparent));
+    transform: translateY(-1px);
+    
+    lucide-icon {
+      transform: scale(1.1);
+      opacity: 1;
     }
   }
 

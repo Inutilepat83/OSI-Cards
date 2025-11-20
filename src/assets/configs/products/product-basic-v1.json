@@ -1,0 +1,35 @@
+{
+  "cardTitle": "Cloud Backup Solution",
+  "cardType": "product",
+  "sections": [
+    {
+      "title": "Product Details",
+      "type": "info",
+      "fields": [
+        { "label": "Category", "value": "Backup & Recovery" },
+        { "label": "Version", "value": "3.5.0" },
+        { "label": "Release Date", "value": "March 2024" },
+        { "label": "Storage Options", "value": "AWS, Azure, Google Cloud" },
+        { "label": "Encryption", "value": "AES-256" },
+        { "label": "Pricing Model", "value": "Subscription-based" }
+      ]
+    },
+    {
+      "title": "Performance Metrics",
+      "type": "analytics",
+      "fields": [
+        { "label": "Restore Success Rate", "value": "99.98%", "percentage": 99.98, "performance": "excellent", "trend": "stable" },
+        { "label": "Backup Speed", "value": "500 GB/hour", "percentage": 95, "performance": "excellent", "trend": "up" },
+        { "label": "Uptime", "value": "99.99%", "percentage": 99.99, "performance": "excellent", "trend": "stable" }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Try Free Trial", "type": "primary", "icon": "🚀", "action": "#" }
+  ],
+  "metadata": {
+    "category": "product",
+    "variant": "basic",
+    "complexity": "basic"
+  }
+}

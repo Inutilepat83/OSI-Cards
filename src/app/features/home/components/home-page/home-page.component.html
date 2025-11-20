@@ -40,7 +40,7 @@
             </div>
             <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-foreground">Instant Generation</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
-              Real-time conversion from TOON data to interactive business cards
+              Real-time conversion from JSON data to interactive business cards
             </p>
           </div>
         </div>
@@ -51,9 +51,9 @@
             <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
               <lucide-icon name="code-2" [size]="32" class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"></lucide-icon>
             </div>
-            <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-foreground">TOON Configuration</h3>
+            <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-foreground">JSON Configuration</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
-              Simple, powerful TOON-driven card creation and customization
+              Simple, powerful JSON-driven card creation and customization
             </p>
           </div>
         </div>
@@ -107,9 +107,9 @@
           <div class="flex items-center gap-2 mb-5 flex-shrink-0 min-h-[28px]">
             <lucide-icon name="sparkles" [size]="20" class="text-[var(--color-brand)]" aria-hidden="true"></lucide-icon>
             <span class="font-semibold">Live Preview</span>
-            <span *ngIf="toonInput?.trim() !== '' && !llmStreamState?.isSimulating" class="ml-2 px-2 py-1 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded text-xs">Live edit</span>
-            <span *ngIf="previewCard?.cardType" class="text-sm text-muted-foreground">
-              • {{ previewCard?.cardType }} Card
+            <span *ngIf="jsonInput?.trim() !== ''" class="ml-2 px-2 py-1 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded text-xs">Live edit</span>
+            <span *ngIf="generatedCard?.cardType" class="text-sm text-muted-foreground">
+              • {{ generatedCard?.cardType }} Card
             </span>
             <span *ngIf="isFullscreen" class="bg-primary/20 text-primary border border-primary/30 ml-2 px-2 py-1 rounded text-xs font-semibold">
               Fullscreen Mode
@@ -119,14 +119,10 @@
           <div class="flex-1">
             <div [ngClass]="'w-full ' + (isFullscreen ? 'max-w-none' : '')">
               <app-card-preview
-                [generatedCard]="previewCard"
+                [generatedCard]="generatedCard"
                 [isGenerating]="isGenerating"
                 [isInitialized]="isInitialized"
                 [isFullscreen]="isFullscreen"
-                [changeType]="previewChangeType"
-                [llmStreamState]="llmStreamState"
-                [llmPreviewCard]="llmPreviewCard"
-                [streamingCardUpdate]="currentStreamingUpdate"
                 (fieldInteraction)="onFieldInteraction($event)"
                 (cardInteraction)="onCardInteraction($event)"
                 (fullscreenToggle)="onFullscreenToggle($event)">
@@ -135,31 +131,115 @@
           </div>
         </div>
 
-        <!-- TOON Configuration - Full width when fullscreen, otherwise responsive -->
+        <!-- JSON Configuration - Full width when fullscreen, otherwise responsive -->
         <div [ngClass]="'flex flex-col ' + (isFullscreen ? 'order-2 w-full' : 'lg:col-span-2 order-1 lg:order-1')">
           <div class="flex items-center gap-2 mb-5 flex-shrink-0 min-h-[28px]">
             <lucide-icon name="code-2" [size]="20" class="text-[var(--color-brand)]" aria-hidden="true"></lucide-icon>
-            <span class="font-semibold">TOON Configuration</span>
-            <span *ngIf="!isToonValid" class="bg-destructive/10 text-destructive border border-destructive/20 px-2 py-1 rounded text-xs font-semibold">
-              Invalid TOON
+            <span class="font-semibold">JSON Configuration</span>
+            <span *ngIf="!isJsonValid" class="bg-destructive/10 text-destructive border border-destructive/20 px-2 py-1 rounded text-xs font-semibold">
+              Invalid JSON
             </span>
           </div>
           
-          <!-- TOON Editor Card -->
-          <div class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg p-4" style="height: calc(100vh - 80px);">
-            <app-toon-editor
-              [toonInput]="toonInput"
-              [toonError]="toonError"
-              [isToonValid]="isToonValid"
-              [isSimulatingLLM]="isSimulatingLLM"
-              [llmStatusMessage]="llmStreamState.statusLabel"
-              (toonInputChange)="onToonInputChange($event)"
-              (simulateLLMStart)="onSimulateLLMStart()"
-              (simulateLLMCancel)="onSimulateLLMCancel()">
-            </app-toon-editor>
-            
-            <div *ngIf="toonError" class="mt-4 p-2 bg-red-500/10 border border-red-500/20 rounded text-sm text-red-400">
-              <strong>TOON Error:</strong> {{ toonError }}
+          <!-- JSON Editor Card -->
+          <div class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg p-4 flex flex-col flex-1" style="height: calc(100vh - 80px);">
+            <div class="json-editor flex flex-col h-full">
+              <!-- JSON Configuration Header -->
+              <div class="editor-toolbar" role="group" aria-label="JSON editor controls">
+                <label for="json-config-textarea" class="flex items-center gap-2">
+                  <div class="file-text-icon w-5 h-5" aria-hidden="true"></div>
+                </label>
+
+                <div class="editor-toolbar__actions">
+                  <div class="editor-toolbar__hint-stack">
+                    <p id="json-editor-instructions" class="editor-toolbar__hint">
+                      Tip: Press <span class="kbd">⌘⏎</span> or <span class="kbd">Ctrl⏎</span> to format JSON.
+                    </p>
+                  </div>
+                  <div class="editor-toolbar__buttons">
+                    <button
+                      type="button"
+                      class="editor-toolbar__button editor-toolbar__button--brand"
+                      (click)="onSimulateLLMStart()"
+                      [attr.aria-pressed]="isSimulatingLLM"
+                      [disabled]="isSimulatingLLM"
+                      [attr.aria-label]="isSimulatingLLM ? 'Stop LLM simulation' : 'Simulate LLM generation'"
+                      title="Simulate LLM generation (works with complete or incomplete JSON)">
+                      <span class="editor-toolbar__spinner" *ngIf="isSimulatingLLM" aria-hidden="true"></span>
+                      <span>{{ isSimulatingLLM ? 'Stop Simulation' : 'Simulate LLM' }}</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="editor-toolbar__button"
+                      (click)="formatJson()"
+                      [attr.aria-label]="'Format JSON'"
+                      title="Format JSON">
+                      <span>Format</span>
+                    </button>
+                  </div>
+                </div>
+
+                <span class="badge-destructive" *ngIf="!isJsonValid">Invalid JSON</span>
+              </div>
+
+              <!-- JSON Textarea -->
+              <div class="json-editor-overlay" *ngIf="isGenerating" aria-hidden="true">
+                <div class="json-editor-overlay__inner">
+                  <svg class="spinner" viewBox="0 0 50 50" fill="none" stroke="currentColor" width="24" height="24">
+                    <circle cx="25" cy="25" r="20" stroke-width="5" stroke-opacity="0.25"></circle>
+                    <path d="M45 25a20 20 0 0 1-20 20" stroke-width="5" stroke-linecap="round"></path>
+                  </svg>
+                  <span>Loading template…</span>
+                </div>
+              </div>
+              <textarea
+                id="json-config-textarea"
+                #jsonTextareaRef
+                [(ngModel)]="jsonInput"
+                (ngModelChange)="onJsonInputChange($event)"
+                (keydown)="onTextareaKeydown($event)"
+                [ngClass]="{
+                  'json-editor-textarea': true,
+                  'font-mono': true,
+                  'text-sm': true,
+                  'resize-none': true,
+                  'overflow-y-auto': true,
+                  'transition-all': true,
+                  'duration-300': true,
+                  'w-full': true,
+                  'text-foreground': true,
+                  'border-gray-600': isJsonValid,
+                  'border-red-500/50': !isJsonValid
+                }"
+                style="height: 700px;"
+                [attr.aria-invalid]="!isJsonValid"
+                [attr.aria-describedby]="jsonError ? 'json-error-message' : 'json-editor-instructions'"
+                [attr.aria-live]="isSimulatingLLM ? 'polite' : 'off'"
+                placeholder="Enter your card configuration JSON here..."
+                aria-label="JSON configuration editor for card customization"
+                aria-multiline="true"
+                spellcheck="false"></textarea>
+            </div>
+
+            <!-- Error Message -->
+            <div
+              id="json-error-message"
+              class="p-3 bg-red-500/10 border border-red-500/20 rounded text-sm text-red-400 mt-3"
+              *ngIf="jsonError"
+              role="alert"
+              aria-live="assertive">
+              <div class="flex items-start gap-2">
+                <strong class="font-semibold">JSON Error:</strong>
+                <div class="flex-1">
+                  <div>{{ jsonError }}</div>
+                  <div *ngIf="jsonErrorPosition !== null" class="mt-1 text-xs text-red-300">
+                    Position: {{ jsonErrorPosition }}
+                  </div>
+                  <div *ngIf="jsonErrorSuggestion" class="mt-2 text-xs text-red-200 italic">
+                    💡 {{ jsonErrorSuggestion }}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -186,7 +266,7 @@
             </div>
             <h4 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Real-time Generation</h4>
             <p class="text-muted-foreground text-sm leading-relaxed">
-              Instant card generation with live preview and TOON validation
+              Instant card generation with live preview and JSON validation
             </p>
           </div>
         </div>

@@ -37,4 +37,15 @@ export class NetworkCardSectionComponent {
     });
   }
 
+  /**
+   * Get display value, hiding "Streaming…" placeholder text
+   */
+  getDisplayValue(field: NetworkField): string {
+    const value = field.value;
+    if (value === 'Streaming…' || value === 'Streaming...') {
+      return '';
+    }
+    return value != null ? String(value) : '';
+  }
+
 }

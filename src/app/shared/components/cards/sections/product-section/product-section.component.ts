@@ -171,4 +171,15 @@ export class ProductSectionComponent {
         return 'product-card__icon--default';
     }
   }
+
+  /**
+   * Get display value, hiding "Streaming…" placeholder text
+   */
+  getDisplayValue(field: ProductField): string {
+    const value = field.value;
+    if (value === 'Streaming…' || value === 'Streaming...') {
+      return '';
+    }
+    return value != null ? String(value) : '';
+  }
 }

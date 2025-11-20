@@ -1,0 +1,94 @@
+<div
+  *ngIf="cardConfig"
+  #cardContainer
+  [ngClass]="{ 'w-full max-w-none': isFullscreen }"
+  (mouseenter)="onMouseEnter($event)"
+  (mouseleave)="onMouseLeave()"
+  (mousemove)="onMouseMove($event)"
+>
+  <div class="tilt-container glow-container" 
+       [ngClass]="{ 'w-full max-w-none': isFullscreen }"
+       #tiltContainer 
+       [ngStyle]="tiltStyle">
+      <article
+        class="ai-card-surface"
+        [ngClass]="{ 'ai-card-surface--fullscreen': isFullscreen }"
+      >
+        <!-- Title and button at the top of the card -->
+        <div class="flex items-center justify-between mb-4">
+          <h1 class="text-2xl font-bold text-foreground">
+            {{ cardConfig.cardTitle }}
+          </h1>
+          <button
+            type="button"
+            class="ai-card-fullscreen-btn"
+            [attr.aria-label]="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
+            (click)="toggleFullscreen()"
+          >
+            <lucide-icon [name]="isFullscreen ? 'minimize-2' : 'maximize-2'" [size]="16" aria-hidden="true"></lucide-icon>
+          </button>
+        </div>
+
+        <p *ngIf="cardConfig.cardSubtitle" class="ai-card-subtitle">
+          {{ cardConfig.cardSubtitle }}
+        </p>
+
+        <div *ngIf="cardConfig.metadata" class="ai-card-meta">
+          <span *ngIf="cardConfig.metadata.category" class="ai-card-meta__chip">
+            <span class="ai-card-meta__chip-dot ai-card-meta__chip-dot--primary" aria-hidden="true"></span>
+            <span>{{ cardConfig.metadata.category }}</span>
+          </span>
+          <span *ngIf="cardConfig.metadata.variant" class="ai-card-meta__chip">
+            <span class="ai-card-meta__chip-dot ai-card-meta__chip-dot--secondary" aria-hidden="true"></span>
+            <span>{{ cardConfig.metadata.variant }}</span>
+          </span>
+          <span *ngIf="cardConfig.metadata.complexity" class="ai-card-meta__chip">
+            <span class="ai-card-meta__chip-dot ai-card-meta__chip-dot--tertiary" aria-hidden="true"></span>
+            <span>{{ cardConfig.metadata.complexity }}</span>
+          </span>
+        </div>
+        <ng-container *ngIf="processedSections.length; else emptyState">
+          <app-masonry-grid
+            [sections]="processedSections"
+            [gap]="12"
+            [minColumnWidth]="280"
+            class="w-full"
+            (sectionEvent)="onSectionEvent($event)"
+            (layoutChange)="onLayoutChange($event)"
+          ></app-masonry-grid>
+        </ng-container>
+
+        <ng-template #emptyState>
+          <div class="flex h-full flex-col items-center justify-center rounded-3xl border border-dashed border-border/40 bg-background/40 p-12 text-center text-muted-foreground">
+            <lucide-icon name="alert-circle" [size]="32" class="mb-4 text-muted-foreground/70"></lucide-icon>
+            <span class="sr-only">No sections available for this configuration</span>
+            <p class="text-base font-medium">No sections available for this configuration.</p>
+            <p class="mt-1 text-sm text-muted-foreground/80">Add sections to the card to visualize insights and data.</p>
+          </div>
+        </ng-template>
+
+        <!-- Action Buttons -->
+        <div class="mt-auto" style="margin-top: var(--section-card-gap, 12px); padding-bottom: 16px;">
+          <div class="flex flex-wrap items-center gap-3" style="margin-left: 4px; margin-right: 4px;">
+            <button
+              *ngFor="let action of cardConfig.actions; trackBy: trackAction"
+              type="button"
+              [ngClass]="'px-5 py-2.5 text-sm transition-all duration-200 flex items-center gap-2 cursor-pointer ' + getActionButtonClasses(action)"
+              [style.border-radius]="'var(--section-card-border-radius, 10px)'"
+              (click)="onActionClick(action)"
+              (keydown.enter)="onActionClick(action)"
+              (keydown.space)="$event.preventDefault(); onActionClick(action)"
+            >
+              <span *ngIf="action.icon" aria-hidden="true">{{ action.icon }}</span>
+              <span>{{ action.label }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Signature at bottom of card -->
+        <div class="pt-4 text-xs text-muted-foreground/60 text-center">
+          Powered by Orange Sales Intelligence
+        </div>
+      </article>
+  </div>
+</div>

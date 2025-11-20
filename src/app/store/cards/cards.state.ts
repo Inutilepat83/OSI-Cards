@@ -1,7 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { createReducer, on } from '@ngrx/store';
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
-import { encode } from '@toon-format/toon';
 import { AICardConfig, CardType } from '../../models/card.model';
 import { ensureCardIds, removeAllIds } from '../../shared/utils/card-utils';
 import { CardChangeType } from '../../shared/utils/card-diff.util';
@@ -41,10 +40,10 @@ export const setCardVariant = createAction(
   props<{ variant: number }>()
 );
 
-// TOON Input and Card Generation Actions
-export const updateToonInput = createAction(
-  '[Cards] Update TOON Input',
-  props<{ toonInput: string }>()
+// JSON Input and Card Generation Actions
+export const updateJsonInput = createAction(
+  '[Cards] Update JSON Input',
+  props<{ jsonInput: string }>()
 );
 export const generateCard = createAction(
   '[Cards] Generate Card',
@@ -120,7 +119,7 @@ export interface CardsState extends EntityState<AICardConfig> {
   currentCardId: string | null;
   cardType: CardType;
   cardVariant: number;
-  toonInput: string;
+  jsonInput: string;
   isGenerating: boolean;
   isFullscreen: boolean;
   error: string | null;
@@ -134,7 +133,7 @@ export const initialState: CardsState = cardsAdapter.getInitialState({
   currentCardId: null,
   cardType: 'company',
   cardVariant: 1,
-  toonInput: '',
+  jsonInput: '',
   isGenerating: false,
   isFullscreen: false,
   error: null,
@@ -168,17 +167,17 @@ const removeNullValues = (value: unknown): unknown => {
   return value;
 };
 
-const formatToonPayload = (value: unknown): string => {
+const formatJsonPayload = (value: unknown): string => {
   try {
     const cleaned = removeNullValues(value);
-    return `${encode(cleaned ?? value, { indent: 2, keyFolding: 'safe' })}\n`;
+    return `${JSON.stringify(cleaned ?? value, null, 2)}\n`;
   } catch {
     return '';
   }
 };
 
 /**
- * Fast hash function for card comparison (replaces expensive TOON encoding)
+ * Fast hash function for card comparison (replaces expensive JSON encoding)
  * Uses shallow hash based on key properties for O(1) comparison
  */
 function hashString(str: string): number {
@@ -202,12 +201,12 @@ function getCardHash(card: AICardConfig): string {
 }
 
 /**
- * Check if TOON input should be updated
- * Only update when structure changes or TOON editor is active
+ * Check if JSON input should be updated
+ * Only update when structure changes or JSON editor is active
  */
-function shouldUpdateToonInput(state: CardsState, newCard: AICardConfig): boolean {
-  // Only update if structure changed or TOON input is empty
-  return state.lastChangeType === 'structural' || !state.toonInput;
+function shouldUpdateJsonInput(state: CardsState, newCard: AICardConfig): boolean {
+  // Only update if structure changed or JSON input is empty
+  return state.lastChangeType === 'structural' || !state.jsonInput;
 }
 
 /**
@@ -308,7 +307,7 @@ export const reducer = createReducer(
   on(setCardType, (state, { cardType }) => ({ ...state, cardType })),
   on(setCardVariant, (state, { variant }) => ({ ...state, cardVariant: variant })),
 
-  on(updateToonInput, (state, { toonInput }) => ({ ...state, toonInput })),
+  on(updateJsonInput, (state, { jsonInput }) => ({ ...state, jsonInput })),
   on(generateCard, (state) => ({ ...state, isGenerating: true, error: null })),
   on(generateCardSuccess, (state, { card, changeType = 'structural' }) => {
     const cardWithId = ensureCardIds(card);
@@ -322,13 +321,13 @@ export const reducer = createReducer(
     // Merge card preserving existing displayed values
     const mergedCard = mergeCardPreservingValues(existingCard, cardWithId);
     
-    // Fast path: hash-based comparison (replaces expensive TOON encoding)
+    // Fast path: hash-based comparison (replaces expensive JSON encoding)
     if (existingCard && existingCard.id === mergedCard.id) {
       // Compare key properties first (cheapest check)
       if (existingCard.cardTitle === mergedCard.cardTitle &&
           existingCard.cardSubtitle === mergedCard.cardSubtitle &&
           existingCard.sections?.length === mergedCard.sections?.length) {
-        // Use hash-based comparison instead of expensive TOON encoding
+        // Use hash-based comparison instead of expensive JSON encoding
         const existingHash = getCardHash(existingCard);
         const newHash = getCardHash(mergedCard);
         if (existingHash === newHash) {
@@ -337,16 +336,16 @@ export const reducer = createReducer(
       }
     }
     
-    // Only encode TOON when actually needed (lazy evaluation)
+    // Only encode JSON when actually needed (lazy evaluation)
     const cardWithoutIds = removeAllIds(mergedCard);
-    const toonInput = shouldUpdateToonInput(state, mergedCard) 
-      ? formatToonPayload(cardWithoutIds)
-      : state.toonInput;
+    const jsonInput = shouldUpdateJsonInput(state, mergedCard) 
+      ? formatJsonPayload(cardWithoutIds)
+      : state.jsonInput;
     
     return {
       ...cardsAdapter.upsertOne(mergedCard, state),
       currentCardId: mergedCard.id ?? null,
-      toonInput,
+      jsonInput,
       isGenerating: false,
       lastChangeType: changeType
     };
@@ -391,11 +390,13 @@ export const reducer = createReducer(
   on(loadTemplateSuccess, (state, { template }) => {
     const templateWithId = ensureCardIds(template);
     const templateWithoutIds = removeAllIds(template);
+    const updatedState = cardsAdapter.upsertOne(templateWithId, state);
     return {
-      ...cardsAdapter.upsertOne(templateWithId, state),
+      ...updatedState,
       currentCardId: templateWithId.id ?? null,
-      toonInput: formatToonPayload(templateWithoutIds),
+      jsonInput: formatJsonPayload(templateWithoutIds),
       loading: false,
+      lastChangeType: 'structural' as CardChangeType
     };
   }),
   on(loadTemplateFailure, (state, { error }) => ({

@@ -22,13 +22,19 @@
   position: relative;
   background: linear-gradient(135deg, var(--card-background) 0%, color-mix(in srgb, var(--card-background) 98%, var(--section-accent) 2%) 100%);
 
-  /* VISUAL ENHANCEMENT: Hover elevation */
+  /* VISUAL ENHANCEMENT: Refined hover elevation */
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 24px color-mix(in srgb, var(--foreground) 15%, transparent);
+    transform: translateY(-3px);
+    box-shadow: 0 14px 28px color-mix(in srgb, var(--foreground) 18%, transparent),
+                0 0 0 1px color-mix(in srgb, var(--color-brand) 15%, transparent);
 
     .overview-card__value {
       color: var(--color-brand);
+      text-shadow: 0 2px 8px color-mix(in srgb, var(--color-brand) 30%, transparent);
+    }
+    
+    .overview-card__label {
+      color: color-mix(in srgb, var(--foreground) 85%, transparent);
     }
   }
 
@@ -78,22 +84,37 @@
     display: flex;
     align-items: center;
     gap: calc(var(--card-gap) * 0.6);
-    /* ENHANCED: Better spacing */
+    /* ENHANCED: Better spacing and visual polish */
     font-size: var(--card-meta-font-size) !important;
     color: color-mix(in srgb, var(--card-text-muted) 90%, transparent) !important;
     line-height: 1.3 !important;
     font-weight: 500 !important;
-    margin-top: calc(var(--card-gap) * 0.25);
+    margin-top: calc(var(--card-gap) * 0.5);
     order: 3;
-    padding: calc(var(--card-gap) * 0.25) calc(var(--card-gap) * 0.5);
-    background: color-mix(in srgb, var(--section-accent) 6%, transparent);
-    border-radius: calc(var(--card-border-radius) * 0.5);
+    padding: calc(var(--card-gap) * 0.4) calc(var(--card-gap) * 0.75);
+    background: linear-gradient(135deg, 
+      color-mix(in srgb, var(--section-accent) 8%, transparent),
+      color-mix(in srgb, var(--section-accent) 5%, transparent));
+    border-radius: calc(var(--card-border-radius) * 0.6);
+    transition: background 0.3s ease, transform 0.2s ease;
 
     lucide-icon {
       @include icon-base(12px);
       @include trend-colors;
       flex-shrink: 0;
-      transition: transform 0.22s ease;
+      transition: transform 0.22s ease, opacity 0.22s ease;
+    }
+  }
+  
+  &:hover .overview-card__meta {
+    background: linear-gradient(135deg, 
+      color-mix(in srgb, var(--section-accent) 12%, transparent),
+      color-mix(in srgb, var(--section-accent) 8%, transparent));
+    transform: translateY(-1px);
+    
+    lucide-icon {
+      transform: scale(1.1);
+      opacity: 1;
     }
   }
 

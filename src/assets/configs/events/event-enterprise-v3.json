@@ -1,0 +1,159 @@
+{
+  "cardTitle": "Global Business Forum 2025",
+  "cardSubtitle": "World's Premier Business & Innovation Summit",
+  "cardType": "event",
+  "sections": [
+    {
+      "title": "Event Overview",
+      "type": "overview",
+      "fields": [
+        { "label": "Event Type", "value": "Business & Innovation Summit" },
+        { "label": "Date", "value": "June 10-13, 2025" },
+        { "label": "Location", "value": "Davos, Switzerland" },
+        { "label": "Venue", "value": "Congress Centre Davos" },
+        { "label": "Expected Attendance", "value": "3,000+ Executives" },
+        { "label": "Duration", "value": "4 Days" },
+        { "label": "Format", "value": "In-Person + Virtual + Hybrid" },
+        { "label": "Target Audience", "value": "C-Suite Executives, Investors, Policy Makers" }
+      ]
+    },
+    {
+      "title": "Registration & Engagement",
+      "type": "analytics",
+      "fields": [
+        { "label": "VIP Registration", "value": "98% Complete", "percentage": 98, "performance": "excellent", "trend": "stable" },
+        { "label": "Virtual Participation", "value": "40% of Attendees", "percentage": 40, "performance": "excellent", "trend": "up" },
+        { "label": "Speaker Confirmations", "value": "100% Confirmed", "percentage": 100, "performance": "excellent", "trend": "stable" },
+        { "label": "Sponsor Commitments", "value": "95% Secured", "percentage": 95, "performance": "excellent", "trend": "up" },
+        { "label": "Media Coverage", "value": "500+ Journalists", "percentage": 95, "performance": "excellent", "trend": "up" }
+      ]
+    },
+    {
+      "title": "Attendance Trends",
+      "type": "chart",
+      "chartType": "line",
+      "chartData": {
+        "labels": ["2022", "2023", "2024", "2025 (Projected)"],
+        "datasets": [
+          {
+            "label": "VIP Attendees",
+            "data": [2500, 2700, 2900, 3000],
+            "borderColor": "#3b82f6",
+            "backgroundColor": "rgba(59, 130, 246, 0.1)"
+          },
+          {
+            "label": "Virtual Participants",
+            "data": [800, 1000, 1200, 1500],
+            "borderColor": "#10b981",
+            "backgroundColor": "rgba(16, 185, 129, 0.1)"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Event Agenda",
+      "type": "event",
+      "fields": [
+        {
+          "label": "Opening Ceremony",
+          "value": "June 10, 2025 - 10:00 AM",
+          "date": "2025-06-10",
+          "time": "10:00",
+          "category": "Ceremony",
+          "status": "confirmed",
+          "attendees": 3000
+        },
+        {
+          "label": "Keynote Sessions",
+          "value": "June 10-13, 2025 - Daily",
+          "date": "2025-06-10",
+          "category": "Keynote",
+          "status": "confirmed",
+          "attendees": 2500
+        },
+        {
+          "label": "Panel Discussions",
+          "value": "June 11-12, 2025 - Multiple Sessions",
+          "date": "2025-06-11",
+          "category": "Panel",
+          "status": "confirmed",
+          "attendees": 1500
+        },
+        {
+          "label": "Closing Summit",
+          "value": "June 13, 2025 - 5:00 PM",
+          "date": "2025-06-13",
+          "time": "17:00",
+          "category": "Summit",
+          "status": "confirmed",
+          "attendees": 3000
+        }
+      ]
+    },
+    {
+      "title": "Event Organizers",
+      "type": "contact-card",
+      "fields": [
+        {
+          "label": "Event Director",
+          "title": "Dr. Thomas Schmidt",
+          "value": "Global Forum Director",
+          "email": "thomas.schmidt@businessforum.com",
+          "phone": "+41 81 555 1000",
+          "role": "Executive",
+          "department": "Event Management",
+          "location": "Davos, Switzerland"
+        },
+        {
+          "label": "Program Director",
+          "title": "Maria Rodriguez",
+          "value": "Program & Content Director",
+          "email": "maria.rodriguez@businessforum.com",
+          "phone": "+41 81 555 1001",
+          "role": "Management",
+          "department": "Programs",
+          "location": "Davos, Switzerland"
+        },
+        {
+          "label": "Partnership Director",
+          "title": "James Wilson",
+          "value": "Sponsorship & Partnerships",
+          "email": "james.wilson@businessforum.com",
+          "phone": "+41 81 555 1002",
+          "role": "Management",
+          "department": "Partnerships",
+          "location": "Davos, Switzerland"
+        }
+      ]
+    },
+    {
+      "title": "Key Topics",
+      "type": "list",
+      "items": [
+        { "title": "Digital Transformation", "description": "AI, Cloud, IoT Strategies for Enterprise", "icon": "🤖", "status": "active" },
+        { "title": "Sustainability", "description": "ESG, Net-Zero, Circular Economy Initiatives", "icon": "🌱", "status": "active" },
+        { "title": "Global Economy", "description": "Trade, Investment, Geopolitical Analysis", "icon": "🌍", "status": "active" }
+      ]
+    },
+    {
+      "title": "Event Locations",
+      "type": "map",
+      "fields": [
+        { "name": "Congress Centre", "x": 52, "y": 28, "type": "venue", "address": "Davos, Switzerland" },
+        { "name": "Exhibition Hall", "x": 52, "y": 29, "type": "exhibition", "address": "Davos, Switzerland" },
+        { "name": "Networking Pavilion", "x": 52, "y": 27, "type": "networking", "address": "Davos, Switzerland" },
+        { "name": "VIP Lounge", "x": 52, "y": 28.5, "type": "venue", "address": "Davos, Switzerland" }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Register Now", "type": "primary", "icon": "🎫", "action": "#" },
+    { "label": "View Full Agenda", "type": "primary", "icon": "📅", "action": "#" },
+    { "label": "Become a Sponsor", "type": "secondary", "icon": "🤝", "action": "#" }
+  ],
+  "metadata": {
+    "category": "event",
+    "variant": "enterprise",
+    "complexity": "enterprise"
+  }
+}

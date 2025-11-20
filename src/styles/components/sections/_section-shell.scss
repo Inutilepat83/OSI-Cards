@@ -99,25 +99,29 @@
     width: var(--section-title-underline-length, 42px);
     height: var(--section-title-underline-height, 3px);
     background: linear-gradient(90deg, 
-      rgba(255, 121, 0, 0.9), 
-      rgba(255, 121, 0, 0.4));
-    border-radius: 2px;
-    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+      color-mix(in srgb, var(--section-accent, var(--accent)) 95%, transparent), 
+      color-mix(in srgb, var(--section-accent, var(--accent)) 50%, transparent));
+    border-radius: 3px;
+    transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), 
                 opacity 0.3s ease,
                 transform 0.3s ease,
                 box-shadow 0.3s ease;
     transform-origin: left;
-    box-shadow: 0 2px 8px rgba(255, 121, 0, 0.3);
+    box-shadow: 0 2px 10px color-mix(in srgb, var(--section-accent, var(--accent)) 35%, transparent),
+                0 0 4px color-mix(in srgb, var(--section-accent, var(--accent)) 20%, transparent);
   }
   
-  // Use color change and shadow enhancement instead of transform
+  // Enhanced hover with refined color and shadow
   &:hover {
     color: var(--section-title-hover-color, rgba(255, 180, 100, 1));
+    text-shadow: 0 2px 6px color-mix(in srgb, var(--section-accent, var(--accent)) 25%, transparent);
     
     &::before {
       width: var(--section-title-underline-hover-length, 60px);
       opacity: 1;
-      box-shadow: 0 3px 12px rgba(255, 121, 0, 0.4);
+      box-shadow: 0 3px 14px color-mix(in srgb, var(--section-accent, var(--accent)) 45%, transparent),
+                  0 0 6px color-mix(in srgb, var(--section-accent, var(--accent)) 25%, transparent);
+      transform: scaleY(1.2);
     }
   }
 }
@@ -163,7 +167,9 @@
 /* Show badge for sections that need it */
 .ai-section--contact-card .ai-section__badge,
 .ai-section--solutions .ai-section__badge,
-.ai-section--event .ai-section__badge {
+.ai-section--event .ai-section__badge,
+.ai-section--chart .ai-section__badge,
+.ai-section--financials .ai-section__badge {
   display: inline-flex;
   align-items: center;
   /* COMPACT: Reduced padding for badges */

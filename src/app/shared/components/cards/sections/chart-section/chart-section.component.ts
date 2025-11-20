@@ -96,6 +96,18 @@ export class ChartSectionComponent {
     return field.color ?? this.palette[index % this.palette.length];
   }
 
+  /**
+   * Get display value, hiding "Streaming…" placeholder text
+   */
+  getDisplayValue(field: ChartField): string {
+    const value = field.value;
+    // Chart values are numbers, but check string representation just in case
+    if (typeof value === 'string' && (value === 'Streaming…' || value === 'Streaming...')) {
+      return '';
+    }
+    return String(value ?? '');
+  }
+
   trackField(index: number, field: ChartField): string {
     return field.id ?? `${field.label ?? field.title}-${index}`;
   }

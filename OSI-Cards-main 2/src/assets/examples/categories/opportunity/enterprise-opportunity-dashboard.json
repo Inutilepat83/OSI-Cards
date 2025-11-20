@@ -1,0 +1,651 @@
+{
+  "cardTitle": "Global Enterprise Transformation",
+  "cardSubtitle": "Multi-Billion Dollar Digital Transformation Initiative",
+  "cardType": "opportunity",
+  "description": "Enterprise-level opportunity dashboard with comprehensive analytics, stakeholder management, and strategic orchestration",
+  "sections": [
+    {
+      "title": "Enterprise Opportunity Overview",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Total Contract Value",
+          "value": 15000000,
+          "type": "currency",
+          "icon": "fas fa-dollar-sign"
+        },
+        {
+          "label": "Annual Recurring Revenue",
+          "value": 4200000,
+          "type": "currency",
+          "icon": "fas fa-sync-alt"
+        },
+        {
+          "label": "Win Probability",
+          "value": 82,
+          "type": "percentage",
+          "icon": "fas fa-trophy"
+        },
+        {
+          "label": "Strategic Priority",
+          "value": "Critical",
+          "type": "status",
+          "backgroundColor": "#7c3aed",
+          "valueColor": "#ffffff",
+          "icon": "fas fa-star"
+        }
+      ]
+    },
+    {
+      "title": "Enterprise Performance Metrics",
+      "description": "Comprehensive metrics dashboard for enterprise opportunity management",
+      "type": "metrics",
+      "metrics": [
+        {
+          "label": "Deal Complexity Score",
+          "value": 9.2,
+          "format": "rating",
+          "change": 0.1,
+          "changeType": "absolute",
+          "trend": "neutral",
+          "icon": "fas fa-layer-group"
+        },
+        {
+          "label": "Stakeholder Engagement",
+          "value": 88,
+          "format": "percentage",
+          "change": 5,
+          "changeType": "percentage",
+          "trend": "up",
+          "icon": "fas fa-users"
+        },
+        {
+          "label": "Competitive Differentiation",
+          "value": 4.8,
+          "format": "rating",
+          "change": 0.3,
+          "changeType": "absolute",
+          "trend": "up",
+          "icon": "fas fa-award"
+        },
+        {
+          "label": "Strategic Alignment",
+          "value": 9.1,
+          "format": "rating",
+          "change": 0.2,
+          "changeType": "absolute",
+          "trend": "up",
+          "icon": "fas fa-bullseye"
+        },
+        {
+          "label": "Financial Viability",
+          "value": 92,
+          "format": "percentage",
+          "change": 3,
+          "changeType": "percentage",
+          "trend": "up",
+          "icon": "fas fa-chart-pie"
+        },
+        {
+          "label": "Execution Readiness",
+          "value": 85,
+          "format": "percentage",
+          "change": 7,
+          "changeType": "percentage",
+          "trend": "up",
+          "icon": "fas fa-rocket"
+        }
+      ]
+    },
+    {
+      "title": "Multi-Dimensional Opportunity Analysis",
+      "description": "Comprehensive analysis across strategic, financial, operational, and risk dimensions",
+      "type": "table",
+      "columns": [
+        {
+          "key": "dimension",
+          "label": "Analysis Dimension",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "currentScore",
+          "label": "Current Score",
+          "type": "rating",
+          "sortable": true,
+          "align": "center"
+        },
+        {
+          "key": "targetScore",
+          "label": "Target Score",
+          "type": "rating",
+          "sortable": true,
+          "align": "center"
+        },
+        {
+          "key": "gap",
+          "label": "Gap Analysis",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "actionItems",
+          "label": "Key Action Items",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "timeline",
+          "label": "Timeline",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "owner",
+          "label": "Owner",
+          "type": "text",
+          "sortable": true
+        }
+      ],
+      "data": [
+        {
+          "dimension": "Strategic Alignment",
+          "currentScore": 9.1,
+          "targetScore": 9.5,
+          "gap": "Minor alignment refinements needed",
+          "actionItems": "Executive alignment session, strategic roadmap validation",
+          "timeline": "Q3 2024",
+          "owner": "Enterprise Sales Director"
+        },
+        {
+          "dimension": "Financial Viability",
+          "currentScore": 9.2,
+          "targetScore": 9.8,
+          "gap": "ROI model refinement required",
+          "actionItems": "Enhanced ROI analysis, cost-benefit optimization",
+          "timeline": "Q3 2024",
+          "owner": "Financial Analyst"
+        },
+        {
+          "dimension": "Technical Feasibility",
+          "currentScore": 8.8,
+          "targetScore": 9.5,
+          "gap": "Integration architecture validation",
+          "actionItems": "Technical deep-dive, proof of concept completion",
+          "timeline": "Q4 2024",
+          "owner": "Solutions Architect"
+        },
+        {
+          "dimension": "Operational Readiness",
+          "currentScore": 8.5,
+          "targetScore": 9.2,
+          "gap": "Change management framework",
+          "actionItems": "Stakeholder engagement plan, training program design",
+          "timeline": "Q4 2024",
+          "owner": "Customer Success Manager"
+        },
+        {
+          "dimension": "Risk Mitigation",
+          "currentScore": 8.9,
+          "targetScore": 9.5,
+          "gap": "Contingency planning enhancement",
+          "actionItems": "Risk assessment completion, mitigation strategy finalization",
+          "timeline": "Q3 2024",
+          "owner": "Risk Management Team"
+        },
+        {
+          "dimension": "Competitive Positioning",
+          "currentScore": 9.3,
+          "targetScore": 9.8,
+          "gap": "Differentiation messaging",
+          "actionItems": "Competitive analysis completion, value proposition refinement",
+          "timeline": "Q3 2024",
+          "owner": "Competitive Intelligence"
+        }
+      ]
+    },
+    {
+      "title": "Stakeholder Ecosystem Analysis",
+      "description": "Comprehensive stakeholder mapping and influence analysis",
+      "type": "table",
+      "columns": [
+        {
+          "key": "stakeholder",
+          "label": "Stakeholder",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "role",
+          "label": "Role & Level",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "influence",
+          "label": "Influence",
+          "type": "rating",
+          "sortable": true,
+          "align": "center"
+        },
+        {
+          "key": "support",
+          "label": "Support Level",
+          "type": "rating",
+          "sortable": true,
+          "align": "center"
+        },
+        {
+          "key": "engagement",
+          "label": "Engagement Level",
+          "type": "rating",
+          "sortable": true,
+          "align": "center"
+        },
+        {
+          "key": "keyConcerns",
+          "label": "Key Concerns",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "engagementStrategy",
+          "label": "Engagement Strategy",
+          "type": "text",
+          "sortable": true
+        }
+      ],
+      "data": [
+        {
+          "stakeholder": "Elena Rodriguez",
+          "role": "CEO",
+          "influence": 5,
+          "support": 4,
+          "engagement": 4,
+          "keyConcerns": "Strategic ROI, market positioning",
+          "engagementStrategy": "Executive briefings, strategic alignment sessions"
+        },
+        {
+          "stakeholder": "Marcus Chen",
+          "role": "CFO",
+          "influence": 5,
+          "support": 4,
+          "engagement": 5,
+          "keyConcerns": "Financial metrics, ROI timeline",
+          "engagementStrategy": "Financial modeling sessions, ROI presentations"
+        },
+        {
+          "stakeholder": "Dr. Sarah Kim",
+          "role": "CTO",
+          "influence": 5,
+          "support": 5,
+          "engagement": 5,
+          "keyConcerns": "Technical architecture, innovation roadmap",
+          "engagementStrategy": "Technical deep-dives, innovation workshops"
+        },
+        {
+          "stakeholder": "James Wilson",
+          "role": "VP Operations",
+          "influence": 4,
+          "support": 4,
+          "engagement": 4,
+          "keyConcerns": "Operational efficiency, change management",
+          "engagementStrategy": "Process optimization workshops, change management planning"
+        },
+        {
+          "stakeholder": "Lisa Thompson",
+          "role": "Chief Information Officer",
+          "influence": 4,
+          "support": 4,
+          "engagement": 4,
+          "keyConcerns": "Data security, system integration",
+          "engagementStrategy": "Security assessments, integration planning sessions"
+        },
+        {
+          "stakeholder": "Robert Davis",
+          "role": "VP Sales & Marketing",
+          "influence": 4,
+          "support": 3,
+          "engagement": 3,
+          "keyConcerns": "Market disruption, competitive advantage",
+          "engagementStrategy": "Market analysis presentations, competitive positioning"
+        },
+        {
+          "stakeholder": "Maria Gonzalez",
+          "role": "VP Human Resources",
+          "influence": 3,
+          "support": 4,
+          "engagement": 3,
+          "keyConcerns": "Employee impact, organizational change",
+          "engagementStrategy": "HR impact assessments, change management workshops"
+        },
+        {
+          "stakeholder": "David Park",
+          "role": "Board Member",
+          "influence": 5,
+          "support": 4,
+          "engagement": 2,
+          "keyConcerns": "Strategic direction, shareholder value",
+          "engagementStrategy": "Board presentations, strategic updates"
+        }
+      ]
+    },
+    {
+      "title": "Predictive Analytics Dashboard",
+      "description": "AI-powered predictions and strategic insights for enterprise opportunity",
+      "type": "progress",
+      "progressItems": [
+        {
+          "label": "Win Probability Forecast",
+          "value": 82,
+          "max": 100,
+          "format": "percentage",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "82% win probability with 95% confidence interval"
+        },
+        {
+          "label": "Deal Velocity Optimization",
+          "value": 91,
+          "max": 100,
+          "format": "percentage",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "91% of optimal deal velocity achieved"
+        },
+        {
+          "label": "Stakeholder Satisfaction Index",
+          "value": 87,
+          "max": 100,
+          "format": "percentage",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "87% overall stakeholder satisfaction"
+        },
+        {
+          "label": "Competitive Threat Assessment",
+          "value": 23,
+          "max": 100,
+          "format": "percentage",
+          "color": "#3b82f6",
+          "showValue": true,
+          "description": "23% competitive threat level"
+        },
+        {
+          "label": "Budget Approval Confidence",
+          "value": 94,
+          "max": 100,
+          "format": "percentage",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "94% confidence in budget approval"
+        },
+        {
+          "label": "Execution Risk Assessment",
+          "value": 18,
+          "max": 100,
+          "format": "percentage",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "18% execution risk assessment"
+        },
+        {
+          "label": "Strategic Value Creation",
+          "value": 89,
+          "max": 100,
+          "format": "percentage",
+          "color": "#10b981",
+          "showValue": true,
+          "description": "89% strategic value creation potential"
+        },
+        {
+          "label": "Market Timing Optimization",
+          "value": 76,
+          "max": 100,
+          "format": "percentage",
+          "color": "#f59e0b",
+          "showValue": true,
+          "description": "76% optimal market timing achieved"
+        }
+      ]
+    },
+    {
+      "title": "Enterprise Transformation Roadmap",
+      "description": "Comprehensive roadmap for enterprise digital transformation initiative",
+      "type": "timeline",
+      "events": [
+        {
+          "title": "Strategic Assessment & Planning",
+          "description": "Comprehensive business case development and strategic alignment",
+          "date": "Q2-Q3 2024",
+          "icon": "fas fa-search",
+          "status": "completed"
+        },
+        {
+          "title": "Pilot Implementation Phase",
+          "description": "Initial pilot programs across 2-3 business units",
+          "date": "Q4 2024",
+          "icon": "fas fa-flask",
+          "status": "in-progress"
+        },
+        {
+          "title": "Enterprise Rollout Planning",
+          "description": "Detailed implementation planning and resource allocation",
+          "date": "Q1 2025",
+          "icon": "fas fa-map-marked-alt",
+          "status": "planned"
+        },
+        {
+          "title": "Phase 1 Enterprise Rollout",
+          "description": "Core business units transformation (40% of organization)",
+          "date": "Q2-Q3 2025",
+          "icon": "fas fa-cogs",
+          "status": "planned"
+        },
+        {
+          "title": "Phase 2 Expansion",
+          "description": "Remaining business units and global expansion",
+          "date": "Q4 2025 - Q1 2026",
+          "icon": "fas fa-expand-arrows-alt",
+          "status": "planned"
+        },
+        {
+          "title": "Optimization & Innovation",
+          "description": "Performance optimization and advanced feature adoption",
+          "date": "Q2-Q4 2026",
+          "icon": "fas fa-chart-line",
+          "status": "planned"
+        },
+        {
+          "title": "Strategic Growth & Expansion",
+          "description": "Market expansion and ecosystem development",
+          "date": "2027-2028",
+          "icon": "fas fa-rocket",
+          "status": "planned"
+        },
+        {
+          "title": "Industry Leadership",
+          "description": "Establishing industry leadership and thought leadership",
+          "date": "2029+",
+          "icon": "fas fa-crown",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "title": "Enterprise Risk Management Framework",
+      "description": "Comprehensive risk assessment and mitigation for enterprise opportunity",
+      "type": "table",
+      "columns": [
+        {
+          "key": "riskCategory",
+          "label": "Risk Category",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "riskLevel",
+          "label": "Risk Level",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "probability",
+          "label": "Probability",
+          "type": "percentage",
+          "sortable": true,
+          "align": "right"
+        },
+        {
+          "key": "impact",
+          "label": "Impact",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "mitigationStrategy",
+          "label": "Mitigation Strategy",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "contingencyPlan",
+          "label": "Contingency Plan",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "monitoring",
+          "label": "Monitoring",
+          "type": "text",
+          "sortable": true
+        },
+        {
+          "key": "owner",
+          "label": "Risk Owner",
+          "type": "text",
+          "sortable": true
+        }
+      ],
+      "data": [
+        {
+          "riskCategory": "Executive Commitment",
+          "riskLevel": "Medium",
+          "probability": 20,
+          "impact": "Critical",
+          "mitigationStrategy": "Executive sponsorship program, regular strategic alignment",
+          "contingencyPlan": "Alternative executive champion identification",
+          "monitoring": "Monthly executive check-ins",
+          "owner": "Enterprise Sales Director"
+        },
+        {
+          "riskCategory": "Budget Allocation",
+          "riskLevel": "Low",
+          "probability": 15,
+          "impact": "High",
+          "mitigationStrategy": "Multi-year budget planning, ROI validation",
+          "contingencyPlan": "Phased implementation approach",
+          "monitoring": "Quarterly budget reviews",
+          "owner": "Financial Planning"
+        },
+        {
+          "riskCategory": "Technical Complexity",
+          "riskLevel": "Medium",
+          "probability": 25,
+          "impact": "High",
+          "mitigationStrategy": "Technical architecture review, proof of concept",
+          "contingencyPlan": "Modular implementation strategy",
+          "monitoring": "Technical milestone reviews",
+          "owner": "Solutions Architecture"
+        },
+        {
+          "riskCategory": "Organizational Change",
+          "riskLevel": "High",
+          "probability": 35,
+          "impact": "High",
+          "mitigationStrategy": "Comprehensive change management program",
+          "contingencyPlan": "Enhanced training and communication",
+          "monitoring": "Change readiness assessments",
+          "owner": "Change Management"
+        },
+        {
+          "riskCategory": "Competitive Response",
+          "riskLevel": "Medium",
+          "probability": 30,
+          "impact": "Medium",
+          "mitigationStrategy": "Competitive intelligence, differentiation strategy",
+          "contingencyPlan": "Accelerated timeline execution",
+          "monitoring": "Competitive landscape monitoring",
+          "owner": "Competitive Intelligence"
+        },
+        {
+          "riskCategory": "Regulatory Compliance",
+          "riskLevel": "Low",
+          "probability": 10,
+          "impact": "Critical",
+          "mitigationStrategy": "Legal and compliance review, regulatory monitoring",
+          "contingencyPlan": "Compliance framework adaptation",
+          "monitoring": "Regulatory change tracking",
+          "owner": "Legal & Compliance"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Executive Dashboard",
+      "icon": "fas fa-chart-bar"
+    },
+    {
+      "label": "Strategic Planning",
+      "icon": "fas fa-map-marked-alt"
+    },
+    {
+      "label": "Risk Management",
+      "icon": "fas fa-shield-alt"
+    },
+    {
+      "label": "Stakeholder Management",
+      "icon": "fas fa-users"
+    },
+    {
+      "label": "Financial Modeling",
+      "icon": "fas fa-calculator"
+    },
+    {
+      "label": "Technical Architecture",
+      "icon": "fas fa-cogs"
+    },
+    {
+      "label": "Change Management",
+      "icon": "fas fa-sync-alt"
+    },
+    {
+      "label": "Competitive Intelligence",
+      "icon": "fas fa-eye"
+    },
+    {
+      "label": "Predictive Analytics",
+      "icon": "fas fa-brain"
+    },
+    {
+      "label": "Executive Briefing",
+      "icon": "fas fa-briefcase"
+    }
+  ],
+  "metadata": {
+    "category": "opportunity",
+    "variant": "enterprise",
+    "complexity": "expert",
+    "useCase": "Enterprise-level opportunity management with comprehensive analytics, stakeholder orchestration, and strategic transformation planning",
+    "features": [
+      "enterprise overview",
+      "enterprise metrics",
+      "multi-dimensional analysis",
+      "stakeholder ecosystem",
+      "predictive analytics dashboard",
+      "enterprise transformation roadmap",
+      "enterprise risk management"
+    ]
+  }
+}

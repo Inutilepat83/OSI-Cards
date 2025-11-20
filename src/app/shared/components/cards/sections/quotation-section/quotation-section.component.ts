@@ -34,5 +34,19 @@ export class QuotationSectionComponent extends BaseSectionComponent<QuotationFie
   onQuotationClick(field: QuotationField): void {
     this.emitFieldInteraction(field, { sectionTitle: this.section.title });
   }
+
+  /**
+   * Get display quote, hiding "Streaming…" placeholder text
+   */
+  getDisplayQuote(field: QuotationField): string {
+    const quote = field.quote || field.value;
+    if (quote === 'Streaming…' || quote === 'Streaming...') {
+      return '';
+    }
+    if (quote != null) {
+      return String(quote);
+    }
+    return '';
+  }
 }
 

@@ -1,0 +1,88 @@
+{
+  "cardTitle": "Customer Insights Report",
+  "sections": [
+    {
+      "title": "Analytics Overview",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Report Type",
+          "value": "Customer Analytics"
+        },
+        {
+          "label": "Data Source",
+          "value": "Customer Database"
+        },
+        {
+          "label": "Update Frequency",
+          "value": "Weekly"
+        },
+        {
+          "label": "Time Range",
+          "value": "Last 90 Days"
+        },
+        {
+          "label": "Metrics Tracked",
+          "value": "20+ KPIs"
+        },
+        {
+          "label": "Customer Base",
+          "value": "5,000+ Customers"
+        }
+      ]
+    },
+    {
+      "title": "Customer Metrics",
+      "type": "analytics",
+      "fields": [
+        {
+          "label": "Customer Satisfaction",
+          "value": "4.6/5.0",
+          "percentage": 92,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 3
+        },
+        {
+          "label": "Retention Rate",
+          "value": "94%",
+          "percentage": 94,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 2
+        },
+        {
+          "label": "NPS Score",
+          "value": "68",
+          "percentage": 68,
+          "performance": "good",
+          "trend": "up",
+          "change": 5
+        },
+        {
+          "label": "Churn Rate",
+          "value": "2.5%",
+          "percentage": 2.5,
+          "performance": "good",
+          "trend": "down",
+          "change": -1
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "View Full Report",
+      "type": "primary",
+      "icon": "📊",
+      "action": "#"
+    },
+    {
+      "label": "Export Data",
+      "type": "primary",
+      "icon": "📥",
+      "action": "#"
+    }
+  ]
+}
+

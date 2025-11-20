@@ -1,0 +1,109 @@
+{
+  "cardTitle": "Sales Performance Dashboard",
+  "sections": [
+    {
+      "title": "Analytics Overview",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Dashboard Type",
+          "value": "Sales Analytics"
+        },
+        {
+          "label": "Data Source",
+          "value": "CRM Integration"
+        },
+        {
+          "label": "Update Frequency",
+          "value": "Real-time"
+        },
+        {
+          "label": "Time Range",
+          "value": "Q1 2025"
+        },
+        {
+          "label": "Metrics Tracked",
+          "value": "15+ KPIs"
+        },
+        {
+          "label": "User Access",
+          "value": "50+ Users"
+        }
+      ]
+    },
+    {
+      "title": "Key Performance Indicators",
+      "type": "analytics",
+      "fields": [
+        {
+          "label": "Revenue Target",
+          "value": "$25M Achieved",
+          "percentage": 105,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 8
+        },
+        {
+          "label": "Conversion Rate",
+          "value": "32%",
+          "percentage": 32,
+          "performance": "good",
+          "trend": "up",
+          "change": 5
+        },
+        {
+          "label": "Pipeline Value",
+          "value": "$45M",
+          "percentage": 180,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 12
+        },
+        {
+          "label": "Average Deal Size",
+          "value": "$125K",
+          "percentage": 100,
+          "performance": "good",
+          "trend": "stable",
+          "change": 2
+        }
+      ]
+    },
+    {
+      "title": "Performance Trends",
+      "type": "chart",
+      "fields": [
+        {
+          "label": "Monthly Revenue",
+          "value": 8500000,
+          "color": "#FF7900"
+        },
+        {
+          "label": "New Deals",
+          "value": 45,
+          "color": "#FF9933"
+        },
+        {
+          "label": "Closed Deals",
+          "value": 28,
+          "color": "#CC5F00"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "View Full Dashboard",
+      "type": "primary",
+      "icon": "📊",
+      "action": "#"
+    },
+    {
+      "label": "Export Report",
+      "type": "primary",
+      "icon": "📥",
+      "action": "#"
+    }
+  ]
+}
+

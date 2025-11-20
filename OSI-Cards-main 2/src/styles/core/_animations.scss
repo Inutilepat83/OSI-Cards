@@ -1,0 +1,389 @@
+/* ===================================================================
+   ANIMATION KEYFRAMES
+   Performance-optimized animations with hardware acceleration
+   =================================================================== */
+
+/* Entry Animations - For components appearing on screen */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--motion-distance-lg), 0); /* Hardware acceleration */
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0, 0); /* Hardware acceleration */
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes fadeInSoft {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--motion-distance-sm), 0) scale(var(--motion-scale-soft-start));
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(var(--motion-scale-soft-end));
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translate3d(0, var(--motion-distance-xl), 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translate3d(0, calc(var(--motion-distance-xl) * -1), 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translate3d(calc(var(--motion-distance-xl) * -1), 0, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translate3d(var(--motion-distance-xl), 0, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUpSoft {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--motion-distance-md), 0) scale(var(--motion-scale-soft-start));
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(var(--motion-scale-soft-end));
+  }
+}
+
+/* Scale Animations - For interactive feedback */
+@keyframes scale {
+  0% {
+    transform: scale(var(--motion-scale-pulse-min)) translate3d(0, 0, 0);
+  }
+  70% {
+    transform: scale(var(--motion-scale-pop)) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: scale(var(--motion-scale-soft-end)) translate3d(0, 0, 0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(var(--motion-scale-soft-start)) translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(var(--motion-scale-soft-end)) translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInScaleSoft {
+  from {
+    opacity: 0;
+    transform: scale(var(--motion-scale-soft-start)) translate3d(0, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(var(--motion-scale-soft-end)) translate3d(0, 0, 0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(var(--motion-scale-soft-end)) translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(var(--motion-scale-pop)) translate3d(0, 0, 0);
+    opacity: 0.8;
+  }
+}
+
+/* Glow & Effect Animations - For visual enhancements */
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.6;
+    filter: blur(25px);
+  }
+  50% {
+    opacity: 1;
+    filter: blur(30px);
+  }
+}
+
+@keyframes glowDrift {
+  0%, 100% {
+    opacity: 0.7;
+    transform: translate3d(0, 0, 0);
+  }
+  25% {
+    opacity: 0.8;
+    transform: translate3d(5px, -5px, 0);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translate3d(0, 5px, 0);
+  }
+  75% {
+    opacity: 0.8;
+    transform: translate3d(-5px, 0, 0);
+  }
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Rotation Animations - For loaders and indicators */
+@keyframes spin {
+  from {
+    transform: rotate(0deg) translateZ(0);
+  }
+  to {
+    transform: rotate(360deg) translateZ(0);
+  }
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg) translateZ(0);
+  }
+  to {
+    transform: rotate(360deg) translateZ(0);
+  }
+}
+
+/* Shake & Attention Animations */
+@keyframes shake {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translate3d(calc(var(--motion-distance-sm) * -1), 0, 0);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translate3d(var(--motion-distance-sm), 0, 0);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translate3d(0, calc(var(--motion-distance-lg) * -1), 0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+/* ===================================================================
+   ANIMATION UTILITY CLASSES
+   Pre-configured animations using design system variables
+   =================================================================== */
+
+/* Entry Animations */
+.animate-fade-in {
+  animation: fadeIn var(--duration-moderate) var(--ease-out-smooth);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp var(--duration-moderate) var(--ease-out-smooth);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+.animate-fade-in-soft {
+  animation: fadeInSoft var(--duration-slow) var(--ease-out-smooth);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+.animate-fade-in-up-soft {
+  animation: fadeInUpSoft var(--duration-slow) var(--ease-out-smooth);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+.animate-fade-in-scale-soft {
+  animation: fadeInScaleSoft var(--duration-moderate) var(--ease-out-smooth);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+.animate-slide-up {
+  animation: slideUp var(--duration-moderate) var(--ease-out-smooth);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+.animate-slide-down {
+  animation: slideDown var(--duration-moderate) var(--ease-out-smooth);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft var(--duration-moderate) var(--ease-out-smooth);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+.animate-slide-in-right {
+  animation: slideInRight var(--duration-moderate) var(--ease-out-smooth);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+/* Scale Animations */
+.animate-scale {
+  animation: scale var(--duration-moderate) var(--ease-spring);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+.animate-scale-in {
+  animation: scaleIn var(--duration-moderate) var(--ease-out-smooth);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+.animate-pulse {
+  animation: pulse var(--duration-slow) var(--ease-in-out-smooth) infinite;
+}
+
+/* Rotation Animations */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-spin-slow {
+  animation: spinSlow 3s linear infinite;
+}
+
+/* Attention Animations */
+.animate-shake {
+  animation: shake var(--duration-slow) var(--ease-in-out-smooth);
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+/* Stagger Animation Delays - For sequential animations */
+.animate-delay-1 {
+  animation-delay: calc(var(--stagger-delay-base) * 1);
+}
+
+.animate-delay-2 {
+  animation-delay: calc(var(--stagger-delay-base) * 2);
+}
+
+.animate-delay-3 {
+  animation-delay: calc(var(--stagger-delay-base) * 3);
+}
+
+.animate-delay-4 {
+  animation-delay: calc(var(--stagger-delay-base) * 4);
+}
+
+.animate-delay-5 {
+  animation-delay: calc(var(--stagger-delay-base) * 5);
+}
+
+/* ===================================================================
+   PERFORMANCE OPTIMIZATION
+   Hardware acceleration hints for smooth animations
+   =================================================================== */
+
+/* Apply to animated elements for better performance */
+.will-animate {
+  will-change: transform, opacity;
+}
+
+.will-animate-transform {
+  will-change: transform;
+}
+
+.will-animate-opacity {
+  will-change: opacity;
+}
+
+/* Remove will-change after animation to free resources */
+.animation-complete {
+  will-change: auto;
+}
+
+/* Hardware acceleration hint */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* ===================================================================
+   REDUCED MOTION SUPPORT
+   Respect user preferences for reduced motion
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Disable all custom animations */
+  .animate-fade-in,
+  .animate-fade-in-up,
+  .animate-slide-up,
+  .animate-slide-down,
+  .animate-slide-in-left,
+  .animate-slide-in-right,
+  .animate-scale,
+  .animate-scale-in,
+  .animate-pulse,
+  .animate-spin,
+  .animate-spin-slow,
+  .animate-shake,
+  .animate-bounce {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  /* Remove will-change hints */
+  .will-animate,
+  .will-animate-transform,
+  .will-animate-opacity {
+    will-change: auto !important;
+  }
+}

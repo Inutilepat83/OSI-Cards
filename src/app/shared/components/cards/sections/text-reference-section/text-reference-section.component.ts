@@ -39,5 +39,19 @@ export class TextReferenceSectionComponent extends BaseSectionComponent<TextRefe
       window.open(field.url, '_blank', 'noopener,noreferrer');
     }
   }
+
+  /**
+   * Get display text, hiding "Streaming…" placeholder text
+   */
+  getDisplayText(field: TextReferenceField): string {
+    const text = field.text || field.value;
+    if (text === 'Streaming…' || text === 'Streaming...') {
+      return '';
+    }
+    if (text != null) {
+      return String(text);
+    }
+    return '';
+  }
 }
 

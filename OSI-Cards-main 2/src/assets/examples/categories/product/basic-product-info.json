@@ -1,0 +1,144 @@
+{
+  "cardTitle": "CloudSync Pro",
+  "cardSubtitle": "File Synchronization Software",
+  "cardType": "product",
+  "description": "Basic product information card with essential specifications and pricing",
+  "sections": [
+    {
+      "title": "Product Overview",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Category",
+          "value": "Productivity Software",
+          "type": "text",
+          "icon": "fas fa-tag"
+        },
+        {
+          "label": "Current Version",
+          "value": "v2.1.4",
+          "type": "text",
+          "icon": "fas fa-code-branch"
+        },
+        {
+          "label": "Release Date",
+          "value": "2024-03-15",
+          "type": "date",
+          "icon": "fas fa-calendar"
+        },
+        {
+          "label": "Platform",
+          "value": "Cross-platform (Windows, macOS, Linux)",
+          "type": "text",
+          "icon": "fas fa-desktop"
+        }
+      ]
+    },
+    {
+      "title": "Pricing Information",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Price",
+          "value": 29.99,
+          "type": "currency",
+          "icon": "fas fa-dollar-sign"
+        },
+        {
+          "label": "Billing Cycle",
+          "value": "Monthly subscription",
+          "type": "text",
+          "icon": "fas fa-calendar-alt"
+        },
+        {
+          "label": "Free Trial",
+          "value": "14 days",
+          "type": "text",
+          "icon": "fas fa-clock"
+        }
+      ]
+    },
+    {
+      "title": "Key Features",
+      "type": "list",
+      "items": [
+        {
+          "title": "Real-time Sync",
+          "description": "Instant file synchronization across devices",
+          "icon": "fas fa-sync"
+        },
+        {
+          "title": "Secure Encryption",
+          "description": "End-to-end encryption for all data",
+          "icon": "fas fa-shield-alt"
+        },
+        {
+          "title": "Version Control",
+          "description": "Keep multiple versions of your files",
+          "icon": "fas fa-history"
+        },
+        {
+          "title": "Collaboration Tools",
+          "description": "Share and collaborate on files with teams",
+          "icon": "fas fa-users"
+        }
+      ]
+    },
+    {
+      "title": "System Requirements",
+      "type": "list",
+      "items": [
+        {
+          "title": "Operating System",
+          "description": "Windows 10+, macOS 10.15+, Ubuntu 18.04+",
+          "icon": "fas fa-cogs"
+        },
+        {
+          "title": "RAM",
+          "description": "Minimum 4GB, Recommended 8GB",
+          "icon": "fas fa-memory"
+        },
+        {
+          "title": "Storage",
+          "description": "500MB available disk space",
+          "icon": "fas fa-hdd"
+        },
+        {
+          "title": "Internet",
+          "description": "Broadband connection for sync features",
+          "icon": "fas fa-wifi"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Download Free Trial",
+      "icon": "fas fa-download"
+    },
+    {
+      "label": "Purchase Now",
+      "icon": "fas fa-shopping-cart"
+    },
+    {
+      "label": "View Documentation",
+      "icon": "fas fa-book"
+    },
+    {
+      "label": "Contact Sales",
+      "icon": "fas fa-envelope"
+    }
+  ],
+  "metadata": {
+    "category": "product",
+    "variant": "basic",
+    "complexity": "low",
+    "useCase": "Simple product information display with specifications and pricing",
+    "features": [
+      "product overview",
+      "pricing info",
+      "key features",
+      "system requirements"
+    ]
+  }
+}

@@ -25,23 +25,30 @@
   position: relative;
   overflow: hidden;
 
-  /* VISUAL ENHANCEMENT: Premium hover effect */
+  /* VISUAL ENHANCEMENT: Refined premium hover effect */
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 16px 36px color-mix(in srgb, var(--foreground) 20%, transparent);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px color-mix(in srgb, var(--foreground) 22%, transparent),
+                0 0 0 1px color-mix(in srgb, var(--color-brand) 20%, transparent);
 
     .contact-card__name {
       color: var(--color-brand);
       letter-spacing: -0.015em;
+      text-shadow: 0 2px 8px color-mix(in srgb, var(--color-brand) 30%, transparent);
     }
 
     .contact-card__avatar {
-      box-shadow: 0 8px 20px color-mix(in srgb, var(--color-brand) 35%, transparent);
-      transform: scale(1.12);
+      box-shadow: 0 10px 24px color-mix(in srgb, var(--color-brand) 40%, transparent),
+                  0 0 0 2px color-mix(in srgb, var(--color-brand) 25%, transparent);
+      transform: scale(1.15);
     }
     
     .contact-card__header {
-      border-bottom-color: rgba(255, 121, 0, 0.2);
+      border-bottom-color: color-mix(in srgb, var(--color-brand) 25%, transparent);
+    }
+    
+    .contact-card__role {
+      color: color-mix(in srgb, var(--card-text-secondary) 95%, transparent);
     }
   }
 
@@ -63,17 +70,20 @@
 
 .contact-card__avatar {
   flex-shrink: 0;
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--color-brand) 20%, transparent), color-mix(in srgb, var(--color-brand) 10%, transparent));
+  background: linear-gradient(135deg, 
+    color-mix(in srgb, var(--color-brand) 22%, transparent), 
+    color-mix(in srgb, var(--color-brand) 12%, transparent));
   overflow: hidden;
-  border: 2px solid var(--color-brand);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-brand) 15%, transparent);
-  transition: all 0.22s ease;
+  border: 2.5px solid color-mix(in srgb, var(--color-brand) 60%, transparent);
+  box-shadow: 0 5px 15px color-mix(in srgb, var(--color-brand) 18%, transparent),
+              inset 0 1px 2px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .contact-card__avatar-img {
@@ -143,16 +153,19 @@
   color: var(--card-text-secondary) !important;
   text-decoration: none;
   min-width: 0;
-  transition: color 0.2s ease;
-  padding: calc(var(--card-gap) * 0.25) 0;
+  transition: color 0.25s ease, transform 0.2s ease;
+  padding: calc(var(--card-gap) * 0.35) 0;
+  border-radius: 4px;
 
   &:hover {
     color: var(--card-text-hover) !important;
+    transform: translateX(2px);
+    background: color-mix(in srgb, var(--color-brand) 5%, transparent);
 
     .contact-card__meta-icon {
       opacity: 1;
       color: var(--card-text-hover);
-      transform: scale(1.05);
+      transform: scale(1.1) translateX(1px);
     }
   }
 

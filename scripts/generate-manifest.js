@@ -40,7 +40,24 @@ function determinePriority(cardType, sizeInBytes) {
   return 'low';
 }
 
-function determineComplexity(sectionCount, sizeInBytes) {
+/**
+ * Determine complexity from filename pattern (more reliable than heuristics)
+ * Supports patterns: *-basic-v*, *-enhanced-v*, *-enterprise-v*
+ */
+function determineComplexity(filename, sectionCount, sizeInBytes) {
+  // First, try to extract from filename pattern (most reliable)
+  const lowerFilename = filename.toLowerCase();
+  if (lowerFilename.includes('-enterprise-') || lowerFilename.includes('-enterprise.')) {
+    return 'enterprise';
+  }
+  if (lowerFilename.includes('-enhanced-') || lowerFilename.includes('-enhanced.')) {
+    return 'enhanced';
+  }
+  if (lowerFilename.includes('-basic-') || lowerFilename.includes('-basic.')) {
+    return 'basic';
+  }
+  
+  // Fallback to heuristics if filename doesn't match pattern
   if (sectionCount > 10 || sizeInBytes > 10000) {
     return 'enterprise';
   }
@@ -51,7 +68,6 @@ function determineComplexity(sectionCount, sizeInBytes) {
 }
 
 async function generateManifest() {
-  const { decode: decodeToon } = await import('@toon-format/toon');
 
   const manifest = {
     version: '1.0.0',
@@ -71,21 +87,23 @@ async function generateManifest() {
       continue;
     }
 
-    const files = fs.readdirSync(dirPath).filter(file => file.endsWith('.toon'));
-
-    for (const file of files) {
-      const cardId = file.replace(/\.toon$/, '');
-      const toonFile = path.join(dirPath, `${cardId}.toon`);
+    // Process JSON files only
+    const jsonFiles = fs.readdirSync(dirPath).filter(file => file.endsWith('.json'));
+    
+    // Process JSON files
+    for (const file of jsonFiles) {
+      const cardId = file.replace(/\.json$/, '');
+      const jsonFile = path.join(dirPath, `${cardId}.json`);
       let cardData = null;
       let sizeInBytes = 0;
       let lastUpdated = new Date().toISOString();
 
       try {
-        const stats = fs.statSync(toonFile);
+        const stats = fs.statSync(jsonFile);
         sizeInBytes = stats.size;
         lastUpdated = stats.mtime.toISOString();
-        const text = fs.readFileSync(toonFile, 'utf8');
-        cardData = decodeToon(text, { expandPaths: 'safe' });
+        const text = fs.readFileSync(jsonFile, 'utf8');
+        cardData = JSON.parse(text);
       } catch (error) {
         console.error(`Error processing ${cardId} in ${directory}:`, error);
       }
@@ -98,11 +116,12 @@ async function generateManifest() {
       const cardEntry = {
         id: cardId,
         type: cardType,
-        path: `${directory}/${cardId}.toon`,
+        path: `${directory}/${cardId}.json`,
+        format: 'json',
         size: sizeInBytes,
         priority: determinePriority(cardType, sizeInBytes),
         sectionCount,
-        complexity: determineComplexity(sectionCount, sizeInBytes),
+        complexity: determineComplexity(file, sectionCount, sizeInBytes),
         title: cardData.cardTitle || cardId,
         metadata: {
           subtitle: cardData.cardSubtitle || null,

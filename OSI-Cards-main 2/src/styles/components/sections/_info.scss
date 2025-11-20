@@ -1,0 +1,74 @@
+/* Detailed info cards shown in the company information section */
+/* OPTIMIZED: Compact design with proper typography hierarchy */
+
+@import 'design-system';
+
+.info-matrix {
+  @include section-responsive-grid(var(--section-grid-min-width), var(--section-card-gap));
+  /* GLOBALLY ENFORCED: Grid gap */
+  gap: var(--section-card-gap) !important;
+  padding: 0;
+}
+
+.info-row {
+  @include card;
+  appearance: none;
+  font: inherit;
+  /* COMPACT: Tight line-height */
+  line-height: 1.15;
+  /* COMPACT: No minimum height */
+  min-height: auto;
+
+  &__primary {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--card-gap);
+    /* OPTIMIZED: Tighter spacing */
+  }
+
+  &__label {
+    @include label-text;
+    /* OPTIMIZED: Proper hierarchy - labels are smallest */
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  &__value {
+    @include value-text;
+    /* OPTIMIZED: Values align to end for clean layout */
+    margin-left: auto;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--card-gap) * 0.5);
+    /* COMPACT: Tighter meta spacing */
+    margin-top: calc(var(--card-gap) * 0.25);
+  }
+
+  &__description {
+    @include card-subtitle-text;
+    /* COMPACT: Tight line-height */
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  &__change {
+    @include card-meta-text;
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--card-gap) * 0.5);
+    /* COMPACT: Tighter spacing for change indicator */
+    font-weight: var(--card-meta-font-weight);
+    align-self: flex-start;
+    white-space: nowrap;
+    line-height: 1.2;
+  }
+}
+
+/* Theme overrides removed - handled by global enforcement */
+/* Global enforcement ensures consistent background and border for all section items */

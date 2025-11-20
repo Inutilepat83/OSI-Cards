@@ -267,12 +267,13 @@ $breakpoints: (
   }
 
   &:hover {
-    /* Only darken background by 1%, no border changes */
-    background: color-mix(in srgb, var(--section-background, transparent) 99%, black);
+    /* Enhanced hover: subtle background shift with refined shadow */
+    background: color-mix(in srgb, var(--section-background, transparent) 98%, rgba(255, 121, 0, 0.02));
     box-shadow: var(--card-box-shadow-hover);
+    border-color: color-mix(in srgb, var(--section-accent, var(--accent)) 20%, transparent);
 
     &::before {
-      opacity: var(--section-glow-opacity-hover, 0.6);
+      opacity: var(--section-glow-opacity-hover, 0.8);
     }
   }
 }
@@ -293,7 +294,8 @@ $breakpoints: (
   letter-spacing: var(--section-title-letter-spacing);
   text-transform: capitalize;
   line-height: var(--section-title-line-height);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1), text-shadow 0.3s ease;
 }
 
 // Section body styling
@@ -309,21 +311,23 @@ $breakpoints: (
 
 @mixin progress-bar {
   width: 100%;
-  height: 3px;
-  background: rgba(255, 121, 0, 0.15);
-  border-radius: 2px;
+  height: 4px;
+  background: color-mix(in srgb, var(--section-accent, var(--accent)) 12%, transparent);
+  border-radius: 3px;
   overflow: hidden;
-  margin-top: 4px;
+  margin-top: 6px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 
   &::after {
     content: '';
     display: block;
     height: 100%;
     background: linear-gradient(90deg,
-      rgba(255, 121, 0, 0.6),
-      rgba(255, 121, 0, 0.8));
+      color-mix(in srgb, var(--section-accent, var(--accent)) 85%, transparent),
+      color-mix(in srgb, var(--section-accent, var(--accent)) 95%, transparent));
     border-radius: inherit;
-    transition: width 0.3s ease;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--section-accent, var(--accent)) 40%, transparent);
   }
 }
 

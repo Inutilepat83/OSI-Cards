@@ -40,7 +40,7 @@
         <div class="quotation-card__quote">
           <lucide-icon name="quote" [size]="24" class="quotation-card__icon" aria-hidden="true"></lucide-icon>
           <blockquote class="quotation-card__text">
-            {{ field.quote || field.value }}
+            {{ getDisplayQuote(field) }}
           </blockquote>
         </div>
 

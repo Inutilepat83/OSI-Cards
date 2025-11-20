@@ -198,3 +198,567 @@
     transform: translateY(0) scale(1);
   }
 }
+
+
+
+.loading-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--color-brand);
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: particle-float 3s ease-in-out infinite;
+  box-shadow: 0 0 12px var(--color-brand);
+}
+
+.particle:nth-child(1) { top: 10%; left: 20%; }
+.particle:nth-child(2) { top: 20%; left: 80%; animation-delay: 0.3s; }
+.particle:nth-child(3) { top: 60%; left: 15%; animation-delay: 0.6s; }
+.particle:nth-child(4) { top: 80%; left: 70%; animation-delay: 0.9s; }
+.particle:nth-child(5) { top: 30%; left: 50%; animation-delay: 1.2s; }
+.particle:nth-child(6) { top: 70%; left: 40%; animation-delay: 1.5s; }
+.particle:nth-child(7) { top: 50%; left: 90%; animation-delay: 1.8s; }
+.particle:nth-child(8) { top: 15%; left: 60%; animation-delay: 2.1s; }
+
+@keyframes particle-float {
+  0%, 100% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0.3;
+  }
+  25% {
+    transform: translateY(-30px) translateX(20px) scale(1.2);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(-60px) translateX(-10px) scale(0.8);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(-30px) translateX(15px) scale(1.1);
+    opacity: 0.6;
+  }
+}
+
+.loading-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.loading-spinner {
+  width: 64px;
+  height: 64px;
+  position: relative;
+}
+
+.spinner-svg {
+  width: 100%;
+  height: 100%;
+  animation: spinner-rotate 1.5s linear infinite;
+  transform-origin: center;
+}
+
+.spinner-circle {
+  stroke-dasharray: 125.6;
+  stroke-dashoffset: 31.4;
+  stroke: var(--color-brand);
+  animation: spinner-dash 1.5s ease-in-out infinite;
+}
+
+@keyframes spinner-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinner-dash {
+  0% {
+    stroke-dasharray: 1, 125.6;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 94.2, 125.6;
+    stroke-dashoffset: -31.4;
+  }
+  100% {
+    stroke-dasharray: 94.2, 125.6;
+    stroke-dashoffset: -125.6;
+  }
+}
+
+.loading-text {
+  text-align: center;
+}
+
+.loading-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, 
+    var(--foreground) 0%,
+    var(--color-brand) 50%,
+    var(--foreground) 100%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-shimmer 2s ease-in-out infinite;
+}
+
+.loading-subtitle {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+@keyframes text-shimmer {
+  0%, 100% {
+    background-position: -200% 0;
+  }
+  50% {
+    background-position: 200% 0;
+  }
+}
+
+.loading-wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--color-brand) 25%,
+    var(--color-brand) 75%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: wave-slide 2s ease-in-out infinite;
+}
+
+@keyframes wave-slide {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Generating State - fills entire card surface */
+.ai-card-surface.has-loading-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 500px;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 121, 0, 0.05) 0%,
+    transparent 70%
+  );
+  animation: generating-bg-pulse 3s ease-in-out infinite, card-generating-pulse 2s ease-in-out infinite;
+}
+
+@keyframes card-generating-pulse {
+  0%, 100% {
+    box-shadow: 
+      inset 0 1px 3px rgba(255, 121, 0, 0.08),
+      0 4px 20px rgba(0, 0, 0, 0.15),
+      0 0 0 rgba(255, 121, 0, 0);
+  }
+  50% {
+    box-shadow: 
+      inset 0 1px 3px rgba(255, 121, 0, 0.15),
+      0 4px 20px rgba(0, 0, 0, 0.15),
+      0 0 30px rgba(255, 121, 0, 0.2);
+  }
+}
+
+@keyframes generating-bg-pulse {
+  0%, 100% {
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 121, 0, 0.05) 0%,
+      transparent 70%
+    );
+  }
+  50% {
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 121, 0, 0.12) 0%,
+      transparent 70%
+    );
+  }
+}
+
+.generating-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.generating-shimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 121, 0, 0.15) 50%,
+    transparent 100%
+  );
+  animation: shimmer-sweep 2.5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes shimmer-sweep {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.generating-text {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0;
+  background: linear-gradient(
+    90deg,
+    var(--foreground) 0%,
+    var(--color-brand) 50%,
+    var(--foreground) 100%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-shimmer-flow 2.5s ease-in-out infinite;
+  position: relative;
+  z-index: 2;
+  letter-spacing: 0.02em;
+}
+
+@keyframes text-shimmer-flow {
+  0%, 100% {
+    background-position: -200% 0;
+  }
+  50% {
+    background-position: 200% 0;
+  }
+}
+
+/* Animated Empty State */
+.card-empty-state {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  height: 100%;
+  padding: 3rem 2rem;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  border: 1px dashed color-mix(in srgb, var(--color-brand) 30%, transparent);
+  background: color-mix(in srgb, var(--background) 95%, transparent);
+  transition: all 0.3s ease;
+  flex: 1;
+}
+
+/* Make card surface full height when showing empty state */
+:host ::ng-deep .ai-card-surface--empty-state {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 100% !important;
+  height: 100% !important;
+}
+
+:host ::ng-deep .ai-card-surface--empty-state .card-empty-state {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+}
+
+.card-empty-state:hover {
+  border-color: color-mix(in srgb, var(--color-brand) 50%, transparent);
+  background: color-mix(in srgb, var(--background) 98%, transparent);
+}
+
+.empty-state-background {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.empty-state-gradient {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-brand) 8%, transparent) 0%,
+    color-mix(in srgb, var(--color-brand) 4%, transparent) 40%,
+    transparent 70%
+  );
+  animation: gradient-pulse 4s ease-in-out infinite;
+}
+
+@keyframes gradient-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+.empty-state-particles {
+  position: absolute;
+  inset: 0;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-brand) 60%, transparent);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--color-brand) 50%, transparent);
+  transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s ease;
+  will-change: transform, opacity;
+  top: 50%;
+  left: 50%;
+  margin-left: -1.5px;
+  margin-top: -1.5px;
+  pointer-events: none;
+}
+
+/* Particles are positioned dynamically via JavaScript with smooth CSS transitions */
+.particle {
+  filter: blur(0.5px);
+}
+
+.particle:nth-child(odd) {
+  background: color-mix(in srgb, var(--color-brand) 70%, transparent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--color-brand) 60%, transparent);
+}
+
+.particle:nth-child(even) {
+  background: color-mix(in srgb, var(--color-brand) 50%, transparent);
+  box-shadow: 0 0 4px color-mix(in srgb, var(--color-brand) 40%, transparent);
+}
+
+.empty-state-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.5rem;
+  max-width: 400px;
+  transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+.empty-state-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+}
+
+.empty-state-icon-ring {
+  position: absolute;
+  inset: -10px;
+  border: 2px solid color-mix(in srgb, var(--color-brand) 30%, transparent);
+  border-radius: 50%;
+  animation: ring-pulse 2s ease-in-out infinite;
+}
+
+.empty-state-icon-pulse {
+  position: absolute;
+  inset: -20px;
+  border: 1px solid color-mix(in srgb, var(--color-brand) 20%, transparent);
+  border-radius: 50%;
+  animation: ring-pulse 2s ease-in-out infinite 0.5s;
+}
+
+@keyframes ring-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+}
+
+.empty-state-icon {
+  position: relative;
+  z-index: 1;
+  color: var(--color-brand);
+  animation: icon-float 3s ease-in-out infinite;
+  filter: drop-shadow(0 4px 12px color-mix(in srgb, var(--color-brand) 30%, transparent));
+}
+
+@keyframes icon-float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-8px) rotate(-5deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-8px) rotate(5deg);
+  }
+}
+
+.empty-state-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.empty-state-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+  letter-spacing: -0.02em;
+  animation: fade-in-up 0.6s ease-out 0.2s both;
+}
+
+.empty-state-message-container {
+  min-height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.empty-state-message {
+  font-size: 0.95rem;
+  color: color-mix(in srgb, var(--color-brand) 80%, transparent);
+  margin: 0;
+  line-height: 1.5;
+  font-weight: 500;
+  font-style: italic;
+  animation: fade-in-up 0.6s ease-out 0.4s both;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hints removed per user request */
+
+/* Legacy empty state (kept for backward compatibility) */
+.card-empty-state-legacy {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+}
+
+.empty-state-icon {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.empty-state-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  background: var(--color-brand);
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: dot-pulse 2s ease-in-out infinite;
+}
+
+.empty-state-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  border: 2px solid var(--color-brand);
+  border-radius: 50%;
+  opacity: 0.2;
+  animation: ring-expand 2s ease-in-out infinite;
+}
+
+@keyframes dot-pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0.3;
+  }
+}
+
+@keyframes ring-expand {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0;
+  }
+}

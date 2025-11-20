@@ -1,0 +1,217 @@
+{
+  "cardTitle": "Enterprise Cloud Migration",
+  "sections": [
+    {
+      "title": "Opportunity Overview",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Opportunity Type",
+          "value": "Cloud Migration Project"
+        },
+        {
+          "label": "Industry Focus",
+          "value": "Financial Services"
+        },
+        {
+          "label": "Estimated Value",
+          "value": "$8M - $12M"
+        },
+        {
+          "label": "Timeline",
+          "value": "12-15 Months"
+        },
+        {
+          "label": "Lead Source",
+          "value": "Existing Client Referral"
+        },
+        {
+          "label": "Decision Maker",
+          "value": "CIO Level"
+        },
+        {
+          "label": "Competition Level",
+          "value": "High"
+        },
+        {
+          "label": "Success Probability",
+          "value": "75%"
+        }
+      ]
+    },
+    {
+      "title": "Project Progress",
+      "type": "analytics",
+      "fields": [
+        {
+          "label": "Assessment Phase",
+          "value": "100% Complete",
+          "percentage": 100,
+          "performance": "excellent",
+          "trend": "stable",
+          "change": 0
+        },
+        {
+          "label": "Migration Planning",
+          "value": "90% Complete",
+          "percentage": 90,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 10
+        },
+        {
+          "label": "Resource Allocation",
+          "value": "70% Complete",
+          "percentage": 70,
+          "performance": "good",
+          "trend": "up",
+          "change": 15
+        },
+        {
+          "label": "Risk Assessment",
+          "value": "85% Complete",
+          "percentage": 85,
+          "performance": "good",
+          "trend": "up",
+          "change": 5
+        }
+      ]
+    },
+    {
+      "title": "Migration Scope",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Applications to Migrate",
+          "value": "45 Core Business Apps"
+        },
+        {
+          "label": "Data Volume",
+          "value": "50TB Structured Data"
+        },
+        {
+          "label": "Target Cloud Platform",
+          "value": "AWS + Azure Hybrid"
+        },
+        {
+          "label": "Security Requirements",
+          "value": "SOC 2, PCI DSS Compliance"
+        },
+        {
+          "label": "Business Continuity",
+          "value": "99.9% Uptime SLA"
+        }
+      ]
+    },
+    {
+      "title": "Business Impact",
+      "type": "chart",
+      "fields": [
+        {
+          "label": "Cost Savings (Annual)",
+          "value": 40,
+          "color": "#3B82F6"
+        },
+        {
+          "label": "Performance Improvement",
+          "value": 60,
+          "color": "#1D4ED8"
+        },
+        {
+          "label": "Scalability Enhancement",
+          "value": 80,
+          "color": "#1E3A8A"
+        },
+        {
+          "label": "Innovation Enablement",
+          "value": 70,
+          "color": "#60A5FA"
+        }
+      ]
+    },
+    {
+      "title": "Project Milestones",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Pilot Migration",
+          "value": "April 2025"
+        },
+        {
+          "label": "Phase 1 Migration",
+          "value": "June - August 2025"
+        },
+        {
+          "label": "Phase 2 Migration",
+          "value": "September - November 2025"
+        },
+        {
+          "label": "Go-Live & Optimization",
+          "value": "December 2025"
+        }
+      ]
+    },
+    {
+      "title": "Project Locations",
+      "type": "map",
+      "fields": [
+        {
+          "name": "Bank HQ",
+          "x": 25,
+          "y": 35,
+          "type": "client",
+          "address": "New York, NY, USA"
+        },
+        {
+          "name": "Data Center Primary",
+          "x": 28,
+          "y": 32,
+          "type": "datacenter",
+          "address": "New Jersey, USA"
+        },
+        {
+          "name": "Data Center Backup",
+          "x": 18,
+          "y": 38,
+          "type": "datacenter",
+          "address": "Virginia, USA"
+        },
+        {
+          "name": "Our Delivery Center",
+          "x": 15,
+          "y": 35,
+          "type": "partner",
+          "address": "San Francisco, CA, USA"
+        },
+        {
+          "name": "Client Team Office",
+          "x": 25,
+          "y": 35,
+          "type": "office",
+          "address": "New York, NY, USA"
+        },
+        {
+          "name": "AWS Region",
+          "x": 20,
+          "y": 40,
+          "type": "cloud",
+          "address": "Oregon, USA"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Review Migration Plan",
+      "type": "primary",
+      "icon": "📋",
+      "action": "https://internal.company.com/opportunities/cloud-migration-002"
+    },
+    {
+      "label": "Schedule Architecture Review",
+      "type": "secondary",
+      "icon": "🏗️",
+      "action": "mailto:cio@bank.com?subject=Cloud%20Migration%20Architecture%20Review"
+    }
+  ]
+}

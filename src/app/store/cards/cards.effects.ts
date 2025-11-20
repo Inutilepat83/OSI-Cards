@@ -3,7 +3,6 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { map, mergeMap, catchError, tap, take, finalize } from 'rxjs/operators';
-import { encode } from '@toon-format/toon';
 import * as CardsActions from './cards.state';
 import { CardDataService, PerformanceService } from '../../core';
 import { AICardConfig, CardType } from '../../models/card.model';
@@ -26,44 +25,25 @@ export class CardsEffects {
       ofType(CardsActions.loadCards),
       mergeMap(() => {
         const startTime = performance.now();
-        let cardCount = 0;
-        let totalSize = 0;
         
-        // Use streaming API for progressive loading
-        return this.cardConfigService.getAllCardsStreaming().pipe(
-          // Dispatch incremental updates as cards load
-          mergeMap((card: AICardConfig) => {
-            cardCount++;
-            const cardLoadTime = performance.now() - startTime;
-            const cardSize = encode(card, { indent: 2, keyFolding: 'safe' }).length;
-            totalSize += cardSize;
-            
-            // Record per-card metrics
-            this.performanceService.recordMetric('loadCard', cardLoadTime, {
-              cardId: card.id,
-              cardIndex: cardCount,
-              cardSize
-            });
-            
-            // Dispatch incremental success for immediate UI update
-            return of(CardsActions.loadCardIncremental({ card }));
-          }),
-          // Complete when all cards loaded
-          finalize(() => {
+        return this.cardConfigService.getAllCards().pipe(
+          map((cards: AICardConfig[]) => {
             const totalDuration = performance.now() - startTime;
+            const totalSize = cards.reduce((sum, card) => sum + JSON.stringify(card).length, 0);
+            
             this.performanceService.recordMetric('loadCards', totalDuration, {
-              totalCards: cardCount,
+              totalCards: cards.length,
               totalSize,
-              avgSize: cardCount > 0 ? totalSize / cardCount : 0
+              avgSize: cards.length > 0 ? totalSize / cards.length : 0
             });
-            // Dispatch completion action
-            this.store.dispatch(CardsActions.loadCardsComplete());
+            
+            // Dispatch all cards at once
+            return CardsActions.loadCardsSuccess({ cards });
           }),
           catchError((error) => {
             const duration = performance.now() - startTime;
             this.performanceService.recordMetric('loadCards', duration, { 
-              error: true,
-              cardsLoaded: cardCount
+              error: true
             });
             return of(CardsActions.loadCardsFailure({ error: String(error) }));
           })
@@ -113,7 +93,7 @@ export class CardsEffects {
             this.performanceService.recordMetric('loadTemplate', duration, {
               cardType,
               variant,
-              cardSize: encode(template, { indent: 2, keyFolding: 'safe' }).length,
+              cardSize: JSON.stringify(template).length,
               processingTime
             });
 
@@ -138,35 +118,43 @@ export class CardsEffects {
       ofType(CardsActions.loadFirstCardExample),
       mergeMap(() => {
         const startTime = performance.now();
-        // Use streaming to get the first card quickly and then compute variant index
-        return this.cardConfigService.getAllCardsStreaming().pipe(
+        // Get all cards and use the first one
+        return this.cardConfigService.getAllCards().pipe(
           take(1),
-          mergeMap((firstCard) => {
+          mergeMap((cards: AICardConfig[]) => {
+            if (!cards || cards.length === 0) {
+              return of(CardsActions.loadTemplateFailure({ error: 'No cards available' }));
+            }
+            
+            const firstCard = cards[0];
             const cardType = (firstCard.cardType || 'company') as CardType;
-            // load other cards of same type to find index -> variant
+            
+            // Load other cards of same type to find index -> variant
             return this.cardConfigService.getCardsByType(cardType).pipe(
               take(1),
-              map((cardsByType) => ({ firstCard, cardsByType }))
+              map((cardsByType: AICardConfig[]) => {
+                const scrubbed = removeAllIds(firstCard);
+                const hydrated = ensureCardIds({ ...scrubbed });
+                delete hydrated.cardSubtitle;
+
+                const duration = performance.now() - startTime;
+                this.performanceService.recordMetric('loadFirstExample', duration, {
+                  cardType: firstCard.cardType,
+                  cardSize: JSON.stringify(firstCard).length
+                });
+
+                const typeAction = CardsActions.setCardType({ cardType: (firstCard.cardType || 'company') as CardType });
+                // compute variant index (1-based) from array position
+                const variantIndex = Math.max(1, (cardsByType.findIndex((c: AICardConfig) => c.id === firstCard.id) + 1) || 1);
+                const variantAction = CardsActions.setCardVariant({ variant: Math.min(Math.max(1, variantIndex), 3) });
+                const successAction = CardsActions.loadTemplateSuccess({ template: hydrated });
+
+                return { typeAction, variantAction, successAction };
+              }),
+              mergeMap(({ typeAction, variantAction, successAction }) => 
+                of(typeAction, variantAction, successAction)
+              )
             );
-          }),
-          mergeMap(({ firstCard, cardsByType }) => {
-            const scrubbed = removeAllIds(firstCard);
-            const hydrated = ensureCardIds({ ...scrubbed });
-            delete hydrated.cardSubtitle;
-
-            const duration = performance.now() - startTime;
-            this.performanceService.recordMetric('loadFirstExample', duration, {
-              cardType: firstCard.cardType,
-              cardSize: encode(firstCard, { indent: 2, keyFolding: 'safe' }).length
-            });
-
-            const typeAction = CardsActions.setCardType({ cardType: (firstCard.cardType || 'company') as CardType });
-            // compute variant index (1-based) from array position
-            const variantIndex = Math.max(1, (cardsByType.findIndex(c => c.id === firstCard.id) + 1) || 1);
-            const variantAction = CardsActions.setCardVariant({ variant: Math.min(Math.max(1, variantIndex), 3) });
-            const successAction = CardsActions.loadTemplateSuccess({ template: hydrated });
-
-            return of(typeAction, variantAction, successAction);
           }),
           catchError((error: unknown) => {
             const duration = performance.now() - startTime;

@@ -1,0 +1,141 @@
+{
+  "cardTitle": "Alex Patel",
+  "cardSubtitle": "Chief Financial Officer",
+  "cardType": "contact",
+  "sections": [
+    {
+      "title": "Professional Profile",
+      "type": "info",
+      "fields": [
+        { "label": "Job Title", "value": "Chief Financial Officer" },
+        { "label": "Company", "value": "EuroBank Holdings" },
+        { "label": "Industry", "value": "Financial Services" },
+        { "label": "Location", "value": "Frankfurt, Germany" },
+        { "label": "Experience", "value": "18+ Years" },
+        { "label": "Education", "value": "INSEAD MBA Finance" },
+        { "label": "LinkedIn", "value": "alex-patel-cfo" },
+        { "label": "Languages", "value": "English, German, Hindi" },
+        { "label": "Email", "value": "alex.patel@eurobank.com" }
+      ]
+    },
+    {
+      "title": "Professional Achievements",
+      "type": "analytics",
+      "fields": [
+        { "label": "Cost Reduction", "value": "€245M Achieved", "percentage": 78, "performance": "excellent", "trend": "down" },
+        { "label": "Revenue Growth", "value": "€1.2B YoY", "percentage": 105, "performance": "excellent", "trend": "up" },
+        { "label": "Team Leadership", "value": "120 professionals", "percentage": 80, "performance": "excellent", "trend": "stable" },
+        { "label": "M&A Deals", "value": "8 successful deals", "percentage": 95, "performance": "excellent", "trend": "up" }
+      ]
+    },
+    {
+      "title": "Financial Impact Trend",
+      "type": "chart",
+      "chartType": "line",
+      "chartData": {
+        "labels": ["2021", "2022", "2023", "2024"],
+        "datasets": [
+          {
+            "label": "Revenue Growth (€B)",
+            "data": [8.5, 9.2, 10.1, 11.3],
+            "borderColor": "#10b981",
+            "backgroundColor": "rgba(16, 185, 129, 0.1)"
+          },
+          {
+            "label": "Cost Savings (€M)",
+            "data": [180, 210, 230, 245],
+            "borderColor": "#3b82f6",
+            "backgroundColor": "rgba(59, 130, 246, 0.1)"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Contact Information",
+      "type": "contact-card",
+      "fields": [
+        {
+          "label": "CFO",
+          "title": "Alex Patel",
+          "value": "Chief Financial Officer",
+          "email": "alex.patel@eurobank.com",
+          "phone": "+49 69 1234 5678",
+          "role": "Executive",
+          "department": "Finance",
+          "location": "Frankfurt, Germany"
+        },
+        {
+          "label": "Executive Assistant",
+          "title": "Maria Schmidt",
+          "value": "Executive Assistant",
+          "email": "maria.schmidt@eurobank.com",
+          "phone": "+49 69 1234 5679",
+          "role": "Administrative",
+          "department": "Finance",
+          "location": "Frankfurt, Germany"
+        }
+      ]
+    },
+    {
+      "title": "Professional Network",
+      "type": "network-card",
+      "fields": [
+        { "label": "CFO Network Europe", "value": "Industry Leadership Group", "connections": 45, "strength": 95 },
+        { "label": "Board Positions", "value": "3 Advisory Boards", "connections": 12, "strength": 90 },
+        { "label": "Industry Forums", "value": "Financial Services Council", "connections": 80, "strength": 85 }
+      ]
+    },
+    {
+      "title": "Upcoming Events",
+      "type": "event",
+      "fields": [
+        {
+          "label": "Q4 Financial Review",
+          "value": "December 15, 2024",
+          "date": "2024-12-15",
+          "time": "14:00",
+          "category": "Meeting",
+          "status": "confirmed",
+          "attendees": 25
+        },
+        {
+          "label": "Investor Relations Call",
+          "value": "December 20, 2024",
+          "date": "2024-12-20",
+          "time": "10:00",
+          "category": "Call",
+          "status": "confirmed",
+          "attendees": 15
+        }
+      ]
+    },
+    {
+      "title": "Recent Activities",
+      "type": "list",
+      "items": [
+        { "title": "M&A Deal Completion", "description": "Successfully closed €500M acquisition deal", "icon": "✅", "status": "completed" },
+        { "title": "Cost Optimization Initiative", "description": "Led €45M annual cost reduction program", "icon": "💰", "status": "completed" },
+        { "title": "Financial Strategy Planning", "description": "Developed 3-year financial roadmap", "icon": "📊", "status": "in-progress" }
+      ]
+    },
+    {
+      "title": "Work Locations",
+      "type": "map",
+      "fields": [
+        { "name": "Frankfurt Office", "x": 52, "y": 28, "type": "work", "address": "Frankfurt, Germany" },
+        { "name": "London Office", "x": 48, "y": 28, "type": "work", "address": "London, UK" },
+        { "name": "Zurich Office", "x": 50, "y": 26, "type": "work", "address": "Zurich, Switzerland" }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Schedule Call", "type": "primary", "icon": "☎️", "action": "#" },
+    { "label": "Send Proposal", "type": "primary", "icon": "📧", "action": "#" },
+    { "label": "View LinkedIn", "type": "secondary", "icon": "💼", "action": "#" }
+  ],
+  "metadata": {
+    "category": "contact",
+    "variant": "enterprise",
+    "complexity": "enterprise"
+  }
+}
