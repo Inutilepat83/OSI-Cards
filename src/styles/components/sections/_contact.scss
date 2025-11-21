@@ -25,30 +25,23 @@
   position: relative;
   overflow: hidden;
 
-  /* VISUAL ENHANCEMENT: Refined premium hover effect */
+  /* Minimalistic hover effect */
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px color-mix(in srgb, var(--foreground) 22%, transparent),
-                0 0 0 1px color-mix(in srgb, var(--color-brand) 20%, transparent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px color-mix(in srgb, var(--foreground) 12%, transparent),
+                0 0 0 1px color-mix(in srgb, var(--color-brand) 15%, transparent);
 
     .contact-card__name {
-      color: var(--color-brand);
-      letter-spacing: -0.015em;
-      text-shadow: 0 2px 8px color-mix(in srgb, var(--color-brand) 30%, transparent);
+      color: color-mix(in srgb, var(--foreground) 90%, var(--color-brand) 10%);
     }
 
     .contact-card__avatar {
-      box-shadow: 0 10px 24px color-mix(in srgb, var(--color-brand) 40%, transparent),
-                  0 0 0 2px color-mix(in srgb, var(--color-brand) 25%, transparent);
-      transform: scale(1.15);
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--color-brand) 20%, transparent);
+      transform: scale(1.05);
     }
     
     .contact-card__header {
-      border-bottom-color: color-mix(in srgb, var(--color-brand) 25%, transparent);
-    }
-    
-    .contact-card__role {
-      color: color-mix(in srgb, var(--card-text-secondary) 95%, transparent);
+      border-bottom-color: color-mix(in srgb, var(--color-brand) 20%, transparent);
     }
   }
 
@@ -61,8 +54,8 @@
 /* Card Header */
 .contact-card__header {
   display: flex;
-  align-items: flex-start;
-  gap: calc(var(--card-gap) * 0.875);
+  align-items: stretch;
+  gap: 8px;
   margin: 0;
   padding-bottom: var(--card-gap);
   border-bottom: 1px solid color-mix(in srgb, var(--card-text-secondary) 10%, transparent);
@@ -70,8 +63,10 @@
 
 .contact-card__avatar {
   flex-shrink: 0;
-  width: 56px;
-  height: 56px;
+  width: auto;
+  height: 100%;
+  min-height: 0;
+  aspect-ratio: 1;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -84,6 +79,7 @@
   box-shadow: 0 5px 15px color-mix(in srgb, var(--color-brand) 18%, transparent),
               inset 0 1px 2px rgba(255, 255, 255, 0.1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  align-self: stretch;
 }
 
 .contact-card__avatar-img {

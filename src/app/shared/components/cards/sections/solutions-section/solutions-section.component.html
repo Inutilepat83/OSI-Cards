@@ -13,7 +13,7 @@
     <ng-container *ngIf="hasFields; else solutionsEmpty">
       <div class="solutions-grid">
         <article
-          *ngFor="let field of fields; trackBy: trackByField"
+          *ngFor="let field of fields; trackBy: trackField"
           class="solution-card"
           role="button"
           tabindex="0"

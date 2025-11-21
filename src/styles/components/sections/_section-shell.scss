@@ -89,7 +89,7 @@
   /* GLOBALLY ENFORCED: Use standard transition */
   transition: color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   padding: 0 !important;
-  margin: 0 !important;
+  margin: 0 0 8px 0 !important;
   
   &::before {
     content: '';
@@ -312,6 +312,17 @@
     --section-title-underline-hover-length: 40px;
     --section-title-underline-height: 2px;
     --section-title-underline-offset: -8px;
+    --section-box-shadow: none !important;
+    --section-box-shadow-hover: none !important;
+  }
+  
+  /* Remove box-shadow from masonry items (sections) in fullscreen */
+  .masonry-item {
+    box-shadow: none !important;
+    
+    &:hover {
+      box-shadow: none !important;
+    }
   }
   
   .ai-section__header {

@@ -1,6 +1,5 @@
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter, PreloadAllModules, withPreloading } from '@angular/router';
-import { SelectivePreloadStrategy } from './core/strategies/selective-preload.strategy';
 import { provideHttpClient } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
@@ -22,7 +21,7 @@ export const config: ApplicationConfig = {
     provideAnimations(),
     provideRouter(
       routes,
-      withPreloading(PreloadAllModules) // Use PreloadAllModules for now, can switch to SelectivePreloadStrategy
+      withPreloading(PreloadAllModules)
     ),
     provideHttpClient(),
     // Optimize change detection with event coalescing and run coalescing

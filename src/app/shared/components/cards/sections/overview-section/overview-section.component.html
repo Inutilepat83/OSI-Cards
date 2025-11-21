@@ -8,22 +8,24 @@
 
   <div class="ai-section__body">
     <ng-container *ngIf="hasFields; else overviewEmpty">
-      <div class="section-grid section-grid--metrics">
+      <div class="overview-grid">
         <article
           *ngFor="let field of fields; trackBy: trackField"
-          class="section-card section-card--metric"
+          class="overview-card"
           role="button"
           tabindex="0"
           (click)="onFieldClick(field)"
           (keydown.enter)="onFieldClick(field)"
           (keydown.space)="$event.preventDefault(); onFieldClick(field)"
         >
-          <span class="section-card__label">
-            {{ field.label || field.title }}
-          </span>
-          <span class="section-card__value">
-            {{ getDisplayValue(field) }}
-          </span>
+          <div class="overview-card__content">
+            <span class="overview-card__label">
+              {{ field.label || field.title }}
+            </span>
+            <span class="overview-card__value">
+              {{ getDisplayValue(field) }}
+            </span>
+          </div>
         </article>
       </div>
     </ng-container>

@@ -31,6 +31,7 @@ export class NewsSectionComponent extends BaseSectionComponent<CardItem> {
 
   /**
    * Get display description, hiding "Streaming…" placeholder text
+   * Inline implementation to avoid TypeScript override conflicts
    */
   getDisplayDescription(item: CardItem): string {
     const description = item.description;

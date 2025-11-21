@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardField, CardSection } from '../../../../../models';
+import { CardField } from '../../../../../models';
 import { LucideIconsModule } from '../../../../icons/lucide-icons.module';
+import { BaseSectionComponent } from '../base-section.component';
 
 interface ProductField extends CardField {
   category?: 'pricing' | 'features' | 'process' | 'references' | 'contacts' | 'advantages' | string;
@@ -23,11 +24,6 @@ interface ProductField extends CardField {
   };
 }
 
-interface ProductFieldInteraction {
-  field: ProductField;
-  metadata?: Record<string, unknown>;
-}
-
 interface ProductCategoryGroup {
   key: string;
   title: string;
@@ -42,9 +38,7 @@ interface ProductCategoryGroup {
   templateUrl: './product-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProductSectionComponent {
-  @Input({ required: true }) section!: CardSection;
-  @Output() fieldInteraction = new EventEmitter<ProductFieldInteraction>();
+export class ProductSectionComponent extends BaseSectionComponent<ProductField> {
 
   private readonly categoryOrder: string[] = ['references', 'pricing', 'features', 'advantages', 'process', 'contacts'];
 
@@ -61,11 +55,11 @@ export class ProductSectionComponent {
   readonly referenceStars = [1, 2, 3, 4, 5];
 
   get fields(): ProductField[] {
-    return (this.section.fields as ProductField[]) ?? [];
+    return super.getFields() as ProductField[];
   }
 
-  get hasFields(): boolean {
-    return this.fields.length > 0;
+  override get hasFields(): boolean {
+    return super.hasFields;
   }
 
   get categoryGroups(): ProductCategoryGroup[] {
@@ -135,19 +129,12 @@ export class ProductSectionComponent {
   }
 
   onFieldClick(field: ProductField): void {
-    this.fieldInteraction.emit({
-      field,
-      metadata: {
-        sectionId: this.section.id,
-        sectionTitle: this.section.title,
-        category: field.category
-      }
-    });
+    this.emitFieldInteraction(field, { category: field.category });
   }
 
   trackGroup = (_index: number, group: ProductCategoryGroup): string => group.key;
 
-  trackField = (_index: number, field: ProductField): string => field.id ?? field.label ?? `product-field-${_index}`;
+  override trackField = (_index: number, field: ProductField): string => field.id ?? field.label ?? `product-field-${_index}`;
 
   getGroupBadgeLabel(group: ProductCategoryGroup): string {
     return `${group.fields.length} ${group.fields.length === 1 ? 'item' : 'items'}`;
@@ -174,6 +161,7 @@ export class ProductSectionComponent {
 
   /**
    * Get display value, hiding "Streaming…" placeholder text
+   * Inline implementation to avoid TypeScript override conflicts
    */
   getDisplayValue(field: ProductField): string {
     const value = field.value;

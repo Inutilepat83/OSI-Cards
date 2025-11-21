@@ -26,25 +26,22 @@
   text-align: left;
   width: 100%;
 
-  /* VISUAL ENHANCEMENT: Refined hover lift with enhanced shadow and border */
+  /* Minimalistic hover effect */
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 24px color-mix(in srgb, var(--foreground) 15%, transparent),
-                0 4px 8px color-mix(in srgb, var(--foreground) 8%, transparent),
-                0 0 0 1px color-mix(in srgb, var(--color-brand) 20%, transparent);
-    background: color-mix(in srgb, var(--card-background) 98%, var(--color-brand) 2%);
+    box-shadow: 0 8px 16px color-mix(in srgb, var(--foreground) 12%, transparent),
+                0 0 0 1px color-mix(in srgb, var(--color-brand) 15%, transparent);
     
     .info-row__value {
-      color: var(--color-brand);
-      transform: translateX(2px);
+      color: color-mix(in srgb, var(--foreground) 90%, var(--color-brand) 10%);
     }
     
     .info-row__label {
-      color: color-mix(in srgb, var(--card-text-label) 85%, var(--color-brand) 15%);
+      color: color-mix(in srgb, var(--card-text-label) 80%, var(--color-brand) 20%);
     }
 
     &::before {
-      opacity: 1;
+      opacity: 0.6;
     }
   }
 
@@ -99,22 +96,22 @@
 
   &__label {
     @include label-text;
-    /* ENHANCED: Better readability with badge-like styling */
+    /* Minimalistic label styling */
     margin: 0;
     display: inline-block;
-    color: color-mix(in srgb, var(--card-text-label) 75%, var(--color-brand) 25%);
+    color: var(--card-text-label);
     font-weight: 600;
     font-size: calc(var(--card-label-font-size) - 1px);
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
     word-wrap: break-word;
     overflow-wrap: break-word;
     line-height: 1.3;
-    padding: calc(var(--card-gap) * 0.25) calc(var(--card-gap) * 0.6);
-    background: color-mix(in srgb, var(--color-brand) 8%, transparent);
-    border-radius: calc(var(--card-border-radius) * 0.5);
+    padding: calc(var(--card-gap) * 0.2) calc(var(--card-gap) * 0.5);
+    background: color-mix(in srgb, var(--color-brand) 6%, transparent);
+    border-radius: calc(var(--card-border-radius) * 0.4);
     align-self: flex-start;
-    transition: all 0.25s ease;
+    transition: background 0.25s ease, color 0.25s ease;
   }
 
   &__value {
@@ -155,18 +152,14 @@
     display: inline-flex;
     align-items: center;
     gap: calc(var(--card-gap) * 0.4);
-    /* ENHANCED: Better spacing and visual polish for indicator */
     font-weight: 600;
     align-self: flex-start;
     white-space: nowrap;
-    line-height: 1.3;
-    padding: calc(var(--card-gap) * 0.35) calc(var(--card-gap) * 0.75);
-    border-radius: calc(var(--card-border-radius) * 0.6);
-    background: linear-gradient(135deg, 
-      color-mix(in srgb, var(--section-accent) 10%, transparent),
-      color-mix(in srgb, var(--section-accent) 6%, transparent));
-    transition: all 0.25s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    line-height: 1.4;
+    padding: calc(var(--card-gap) * 0.25) calc(var(--card-gap) * 0.6);
+    border-radius: calc(var(--card-border-radius) * 0.4);
+    background: color-mix(in srgb, var(--section-accent) 6%, transparent);
+    transition: background 0.25s ease;
 
     &.trend-up {
       color: var(--color-success, #10b981);
@@ -179,11 +172,6 @@
     &.trend-stable {
       color: var(--card-text-muted);
     }
-  }
-  
-  &:hover .info-row__change {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   }
 }
 

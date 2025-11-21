@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, forkJoin, merge, EMPTY } from 'rxjs';
-import { map, catchError, switchMap, filter, shareReplay, concatMap, delay } from 'rxjs/operators';
-import { AICardConfig, CardSection } from '../../../models';
+import { Observable, of, forkJoin } from 'rxjs';
+import { map, catchError, switchMap, shareReplay } from 'rxjs/operators';
+import { AICardConfig } from '../../../models';
 import { CardDataProvider } from './card-data-provider.interface';
 import { CardManifest, CardManifestEntry } from './manifest.interface';
 import { validateCardJson, sanitizeCardConfig } from '../../../shared/utils/card-utils';
@@ -58,7 +58,7 @@ export class JsonFileCardProvider extends CardDataProvider {
     
     return this.http.get(`/assets/configs/${jsonPath}`, { responseType: 'text' as const }).pipe(
       map((text) => this.decodeJsonToCard(text as string)),
-      catchError(error => {
+      catchError(() => {
         console.debug(`JSON format not available for ${jsonPath}`);
         return of(null);
       })

@@ -92,12 +92,14 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     
     if (!this._cardConfig?.sections?.length) {
       this.resetProcessedSections();
+      this.cdr.markForCheck();
       return;
     }
 
     const sectionsHash = this.hashSections(this._cardConfig.sections);
-    const shouldForceStructural = sectionsHash !== this.previousSectionsHash;
+    const shouldForceStructural = sectionsHash !== this.previousSectionsHash || this._updateSource === 'liveEdit';
     this.refreshProcessedSections(shouldForceStructural);
+    this.cdr.markForCheck();
   }
 
   get cardConfig(): AICardConfig | undefined {

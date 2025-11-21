@@ -37,6 +37,7 @@ export class OverviewSectionComponent extends BaseSectionComponent<CardField> {
 
   /**
    * Get display value, hiding "Streaming…" placeholder text
+   * Inline implementation to avoid TypeScript override conflicts
    */
   getDisplayValue(field: CardField): string {
     const value = field.value;

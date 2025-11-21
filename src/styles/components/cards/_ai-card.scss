@@ -79,6 +79,15 @@
     display: none !important;
   }
   
+  /* Remove box-shadow glow from masonry items (sections) in fullscreen */
+  .masonry-item {
+    box-shadow: none !important;
+    
+    &:hover {
+      box-shadow: none !important;
+    }
+  }
+  
   /* Compact header - invisible container */
   .ai-card-header {
     padding: 0 !important;

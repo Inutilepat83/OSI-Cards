@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, BehaviorSubject, NEVER, from } from 'rxjs';
+import { Observable, Subject, BehaviorSubject, NEVER } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { map, catchError, retry, concatMap, delay } from 'rxjs/operators';
-import { AICardConfig, CardSection } from '../../../models';
+import { map, catchError, retry } from 'rxjs/operators';
+import { AICardConfig } from '../../../models';
 import { CardDataProvider } from './card-data-provider.interface';
 
 interface AllCardsMessage {

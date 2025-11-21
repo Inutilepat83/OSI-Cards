@@ -30,6 +30,7 @@ export class ListSectionComponent extends BaseSectionComponent<ListEntry> {
 
   /**
    * Get display description, hiding "Streaming…" placeholder text
+   * Inline implementation to avoid TypeScript override conflicts
    */
   getDisplayDescription(item: ListEntry): string {
     const description = item.description;

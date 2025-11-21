@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2025-11-20T11:09:12.108Z",
+  "generatedAt": "2025-11-20T15:43:59.663Z",
   "cards": [
     {
       "id": "company-enterprise-v3",
@@ -32,7 +32,7 @@
       "metadata": {
         "subtitle": "Enterprise Technology Services",
         "description": null,
-        "lastUpdated": "2025-11-20T10:46:10.249Z",
+        "lastUpdated": "2025-11-20T13:38:16.615Z",
         "hasActions": true
       }
     },
@@ -49,7 +49,7 @@
       "metadata": {
         "subtitle": null,
         "description": null,
-        "lastUpdated": "2025-11-20T10:46:10.165Z",
+        "lastUpdated": "2025-11-20T13:38:16.615Z",
         "hasActions": true
       }
     },

@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardField, CardItem, CardSection } from '../../../../../models';
+import { CardField, CardItem } from '../../../../../models';
 import { LucideIconsModule } from '../../../../icons/lucide-icons.module';
+import { BaseSectionComponent } from '../base-section.component';
 
 type MapLocation = (CardField & CardItem) & {
   coordinates?: {
@@ -13,11 +14,6 @@ type MapLocation = (CardField & CardItem) & {
   type?: string;
 };
 
-interface MapInteraction {
-  item: MapLocation;
-  metadata?: Record<string, unknown>;
-}
-
 @Component({
   selector: 'app-map-section',
   standalone: true,
@@ -25,12 +21,9 @@ interface MapInteraction {
   templateUrl: './map-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MapSectionComponent {
-  @Input({ required: true }) section!: CardSection;
-  @Output() itemInteraction = new EventEmitter<MapInteraction>();
-
+export class MapSectionComponent extends BaseSectionComponent<MapLocation> {
   get locations(): MapLocation[] {
-    const fromFields = (this.section.fields as MapLocation[]) ?? [];
+    const fromFields = super.getFields() as MapLocation[];
     const mappedFields = fromFields
       .map((field) => ({
         ...field,
@@ -38,8 +31,9 @@ export class MapSectionComponent {
       }))
       .filter((field): field is MapLocation => !!field.name && typeof field.name === 'string');
 
-    if (Array.isArray(this.section.items) && this.section.items.length) {
-      const mappedItems = (this.section.items as MapLocation[])
+    const items = super.getItems() as MapLocation[];
+    if (items.length) {
+      const mappedItems = items
         .map((item) => ({
           ...item,
           name: item.name || item.title || item.id || 'Unknown Location'
@@ -52,20 +46,13 @@ export class MapSectionComponent {
     return mappedFields;
   }
 
-  get hasLocations(): boolean {
+  override get hasItems(): boolean {
     return this.locations.length > 0;
   }
 
   onLocationClick(location: MapLocation): void {
-    this.itemInteraction.emit({
-      item: location,
-      metadata: {
-        sectionId: this.section.id,
-        sectionTitle: this.section.title
-      }
-    });
+    this.emitItemInteraction(location);
   }
-
 
   formatCoordinates(location: MapLocation): string | null {
     if (!location.coordinates) {
@@ -75,7 +62,7 @@ export class MapSectionComponent {
     return `${lat.toFixed(2)}, ${lng.toFixed(2)}`;
   }
 
-  trackLocation(index: number, location: MapLocation): string {
+  override trackItem(index: number, location: MapLocation): string {
     return location.id ?? `${location.name}-${index}`;
   }
 }

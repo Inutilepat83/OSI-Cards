@@ -1,17 +1,13 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardField, CardSection } from '../../../../../models';
+import { CardField } from '../../../../../models';
 import { LucideIconsModule } from '../../../../icons/lucide-icons.module';
+import { BaseSectionComponent } from '../base-section.component';
 
 type ChartField = CardField & {
   value: number;
   color?: string;
 };
-
-interface ChartInteraction {
-  field: ChartField;
-  metadata?: Record<string, unknown>;
-}
 
 @Component({
   selector: 'app-chart-section',
@@ -20,9 +16,7 @@ interface ChartInteraction {
   templateUrl: './chart-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChartSectionComponent {
-  @Input({ required: true }) section!: CardSection;
-  @Output() fieldInteraction = new EventEmitter<ChartInteraction>();
+export class ChartSectionComponent extends BaseSectionComponent<ChartField> {
 
   private readonly palette: string[] = ['#FF7900', '#FF9A3C', '#CC5F00', '#FFB873', '#FFD8B0'];
 
@@ -31,10 +25,14 @@ export class ChartSectionComponent {
   }
 
   get fields(): ChartField[] {
-    const data = (this.section.fields as CardField[]) ?? [];
+    const data = super.getFields();
     return data
       .filter((field): field is ChartField => typeof field.value === 'number')
       .map((field) => ({ ...field, value: Number(field.value) }));
+  }
+
+  override get hasFields(): boolean {
+    return this.fields.length > 0;
   }
 
   get hasData(): boolean {
@@ -56,13 +54,7 @@ export class ChartSectionComponent {
   }
 
   onFieldClick(field: ChartField): void {
-    this.fieldInteraction.emit({
-      field,
-      metadata: {
-        sectionId: this.section.id,
-        sectionTitle: this.section.title
-      }
-    });
+    this.emitFieldInteraction(field);
   }
 
   getBarWidth(field: ChartField): string {
@@ -98,6 +90,7 @@ export class ChartSectionComponent {
 
   /**
    * Get display value, hiding "Streaming…" placeholder text
+   * Inline implementation to avoid TypeScript override conflicts
    */
   getDisplayValue(field: ChartField): string {
     const value = field.value;
@@ -108,7 +101,7 @@ export class ChartSectionComponent {
     return String(value ?? '');
   }
 
-  trackField(index: number, field: ChartField): string {
+  override trackField(index: number, field: ChartField): string {
     return field.id ?? `${field.label ?? field.title}-${index}`;
   }
 }

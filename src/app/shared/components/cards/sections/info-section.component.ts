@@ -68,6 +68,7 @@ export class InfoSectionComponent extends BaseSectionComponent<InfoField> {
 
   /**
    * Get display value, hiding "Streaming…" placeholder text
+   * Inline implementation to avoid TypeScript override conflicts
    */
   getDisplayValue(field: InfoField): string {
     const value = field.value;

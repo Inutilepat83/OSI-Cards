@@ -336,5 +336,42 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
     return item.id || `item-${index}-${item.title || ''}`;
   }
 
+  // Display methods removed - each component now implements its own to avoid TypeScript override conflicts
+  // The logic is consistent: filter out "Streaming…" placeholder text
+
+  /**
+   * Safe value accessor - extracts value from field with fallback options
+   * Handles field.value, field.text, field.quote based on field type
+   */
+  protected getFieldValue(field: CardField): string | number | boolean | undefined | null {
+    // Try value first (most common)
+    if (field.value !== undefined && field.value !== null) {
+      return field.value;
+    }
+    // Try text (for text-reference fields)
+    if ('text' in field && (field as any).text !== undefined && (field as any).text !== null) {
+      return (field as any).text;
+    }
+    // Try quote (for quotation fields)
+    if ('quote' in field && (field as any).quote !== undefined && (field as any).quote !== null) {
+      return (field as any).quote;
+    }
+    return undefined;
+  }
+
+  /**
+   * Safe metadata accessor - extracts metadata value safely
+   */
+  protected getMetaValue(field: CardField, key: string): unknown {
+    return field.meta?.[key];
+  }
+
+  /**
+   * Check if a value represents streaming placeholder
+   */
+  protected isStreamingPlaceholder(value: unknown): boolean {
+    return value === 'Streaming…' || value === 'Streaming...';
+  }
+
 }
 

@@ -39,7 +39,7 @@
           ></div>
         </div>
 
-        <div *ngIf="field.percentage !== undefined" class="section-card__meta">
+        <div *ngIf="shouldShowPercentage(field)" class="section-card__meta">
           <span>{{ field.percentage }}%</span>
         </div>
 

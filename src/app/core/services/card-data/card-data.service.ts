@@ -1,7 +1,7 @@
 import { Injectable, inject, InjectionToken, OnDestroy } from '@angular/core';
 import { Observable, BehaviorSubject, combineLatest, EMPTY } from 'rxjs';
 import { map, switchMap, shareReplay, startWith, filter } from 'rxjs/operators';
-import { AICardConfig, CardType, CardSection } from '../../../models';
+import { AICardConfig, CardType } from '../../../models';
 import { CardDataProvider } from './card-data-provider.interface';
 import { JsonFileCardProvider } from './json-file-card-provider.service';
 

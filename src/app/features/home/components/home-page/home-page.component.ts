@@ -149,13 +149,21 @@ export class HomePageComponent implements OnInit {
     this.store.select(CardSelectors.selectCurrentCard)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(card => {
-        const cardChanged = this.generatedCard !== card;
-        this.generatedCard = card;
-        if (cardChanged && card && !this.isGenerating && !this.jsonError) {
-          const cardTypeLabel = card.cardType ? `${card.cardType} ` : '';
-          this.announceStatus(`${cardTypeLabel}card preview updated.`);
+        // Only update from store if user is not actively editing (no live preview)
+        // This ensures live edits take precedence over store updates
+        if (!this.livePreviewCard && !this.jsonInput?.trim()) {
+          const cardChanged = this.generatedCard !== card;
+          this.generatedCard = card;
+          if (cardChanged && card && !this.isGenerating && !this.jsonError) {
+            const cardTypeLabel = card.cardType ? `${card.cardType} ` : '';
+            this.announceStatus(`${cardTypeLabel}card preview updated.`);
+          }
+          this.cd.markForCheck();
+        } else if (!this.livePreviewCard && card) {
+          // If there's no live preview but there's a card from store, use it as fallback
+          this.generatedCard = card;
+          this.cd.markForCheck();
         }
-        this.cd.markForCheck();
       });
 
     this.store.select(CardSelectors.selectIsFullscreen)
@@ -224,18 +232,17 @@ export class HomePageComponent implements OnInit {
     this.initializeSystem();
     
     // Setup immediate JSON processing for live preview updates
-    // Very short debounce (25ms) for faster feedback while still batching rapid changes
+    // Very short debounce (10ms) for near-instant visual feedback
     this.immediateJsonSubject.pipe(
-      debounceTime(25), // 25ms for near-instant visual feedback
+      debounceTime(10), // 10ms for near-instant visual feedback
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(jsonInput => {
-      // Skip if this JSON was already processed immediately (prevents loops)
-      if (jsonInput === this.lastImmediateJson) {
-        return;
-      }
-      // Mark as processed and update card immediately
+      // Always process to ensure live updates work
       this.lastImmediateJson = jsonInput;
-      this.processJsonInputImmediate(jsonInput);
+      // Run inside Angular zone to ensure change detection works
+      this.ngZone.run(() => {
+        this.processJsonInputImmediate(jsonInput);
+      });
     });
     
     // Setup debounced JSON processing for final validation and merging
@@ -417,22 +424,25 @@ export class HomePageComponent implements OnInit {
   private processJsonInputImmediate(jsonInput: string): void {
     if (!this.isInitialized) return;
 
-    // Calculate hash to detect actual changes (ignoring whitespace)
+    // Always process for live updates - don't skip based on hash
+    // This ensures every keystroke triggers an update
     const currentHash = this.calculateJsonHash(jsonInput);
-    if (currentHash === this.lastJsonHash && jsonInput.trim() !== '') {
-      // No actual changes detected, skip update
-      return;
-    }
     this.lastJsonHash = currentHash;
 
     // Quick validation - check if empty
     if (!jsonInput || jsonInput.trim() === '') {
+      // Clear live preview when JSON is empty so store updates can come through
+      this.livePreviewCard = null;
       // Show empty card immediately for live feedback
       const emptyCard: AICardConfig = {
         cardTitle: '',
         sections: []
       };
-      this.updateLivePreviewCard(this.recheckCardStructure(emptyCard) ?? emptyCard, 'structural');
+      this.generatedCard = emptyCard;
+      // Force immediate change detection
+      this.ngZone.run(() => {
+        this.cd.detectChanges();
+      });
       return;
     }
 
@@ -444,7 +454,16 @@ export class HomePageComponent implements OnInit {
       // JSON is incomplete - try to extract partial data
       data = this.tryParsePartialJson(jsonInput);
       if (!data) {
-        // Couldn't extract any partial data - keep showing last valid card
+        // If we can't parse at all, try to show what we can from the last valid card
+        // but merge in any visible changes from the current JSON string
+        if (this.generatedCard) {
+          // Try to extract cardTitle if visible in JSON
+          const titleMatch = jsonInput.match(/"cardTitle"\s*:\s*"([^"]*)"/);
+          if (titleMatch) {
+            const newCard = { ...this.generatedCard, cardTitle: titleMatch[1] };
+            this.updateLivePreviewCard(newCard, 'content');
+          }
+        }
         return;
       }
     }
@@ -458,20 +477,23 @@ export class HomePageComponent implements OnInit {
     const cardData = data as Partial<AICardConfig> & Record<string, unknown>;
 
     // Create a complete card config with defaults for missing required fields
+    // Always create new object and array references to ensure change detection
     const liveCard: AICardConfig = {
       // Preserve all existing properties from JSON payload
       ...cardData,
       // Ensure required fields are always set (provide defaults if missing)
-      cardTitle: typeof cardData.cardTitle === 'string' ? cardData.cardTitle : '',
-      sections: Array.isArray(cardData.sections) ? cardData.sections : []
+      cardTitle: typeof cardData.cardTitle === 'string' ? cardData.cardTitle : (this.generatedCard?.cardTitle || ''),
+      // Always create new array reference to ensure change detection
+      sections: Array.isArray(cardData.sections) 
+        ? cardData.sections.map(s => ({ ...s })) // Deep clone sections
+        : (this.generatedCard?.sections ? [...this.generatedCard.sections] : [])
     };
 
-    // Only update if we have a valid card structure
-    if (CardTypeGuards.isAICardConfig(liveCard)) {
-      // Lightweight processing - ensure IDs exist for rendering
-      const sanitized = this.recheckCardStructure(liveCard) ?? liveCard;
-      this.updateLivePreviewCard(sanitized, 'content'); // Use 'content' for live updates to avoid layout recalculation
-    }
+    // Always update - don't check if it's valid, just try to render what we have
+    // Lightweight processing - ensure IDs exist for rendering
+    const sanitized = this.recheckCardStructure(liveCard) ?? liveCard;
+    // Always update to ensure live preview works
+    this.updateLivePreviewCard(sanitized, 'content');
   }
 
   /**
@@ -686,25 +708,29 @@ export class HomePageComponent implements OnInit {
   }
 
   private updateLivePreviewCard(nextCard: AICardConfig, changeTypeOverride?: CardChangeType): void {
-    if (!this.livePreviewCard) {
-      this.livePreviewCard = nextCard;
-      this.livePreviewChangeType = changeTypeOverride ?? 'structural';
-      this.cd.markForCheck();
-      return;
-    }
-
-    const { card, changeType } = CardDiffUtil.mergeCardUpdates(this.livePreviewCard, nextCard);
-    if (card === this.livePreviewCard) {
-      return;
-    }
-
-    this.livePreviewCard = card;
-    this.livePreviewChangeType = changeTypeOverride ?? changeType;
-    // If the change is structural (eg. a new section was built), recheck and sanitize the card structure.
-    if (this.livePreviewChangeType === 'structural') {
-      this.livePreviewCard = this.recheckCardStructure(this.livePreviewCard);
-    }
-    this.cd.markForCheck();
+    // Always create a completely new card object to ensure reference change
+    // This is critical for Angular's OnPush change detection
+    const createNewReference = (card: AICardConfig): AICardConfig => {
+      if (typeof structuredClone !== 'undefined') {
+        return structuredClone(card);
+      }
+      // Fallback: deep clone via JSON
+      return JSON.parse(JSON.stringify(card));
+    };
+    
+    const newCard: AICardConfig = createNewReference(nextCard);
+    
+    // Update generatedCard directly with new reference - this is what the template uses
+    // Always assign new reference to trigger change detection
+    this.generatedCard = newCard;
+    this.livePreviewCard = newCard;
+    this.livePreviewChangeType = changeTypeOverride ?? 'content';
+    
+    // Force change detection immediately - use detectChanges for immediate update
+    // Run in zone to ensure it happens in the correct context
+    this.ngZone.run(() => {
+      this.cd.detectChanges();
+    });
   }
 
   private createFallbackPreviewCard(jsonInput: string): AICardConfig {

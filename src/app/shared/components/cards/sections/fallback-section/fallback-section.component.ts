@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardSection } from '../../../../../models';
+import { CardField } from '../../../../../models';
 import { LucideIconsModule } from '../../../../icons/lucide-icons.module';
+import { BaseSectionComponent } from '../base-section.component';
 
 @Component({
   selector: 'app-fallback-section',
@@ -10,6 +11,6 @@ import { LucideIconsModule } from '../../../../icons/lucide-icons.module';
   templateUrl: './fallback-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FallbackSectionComponent {
-  @Input({ required: true }) section!: CardSection;
+export class FallbackSectionComponent extends BaseSectionComponent<CardField> {
+  // Fallback section - minimal implementation, inherits all base functionality
 }

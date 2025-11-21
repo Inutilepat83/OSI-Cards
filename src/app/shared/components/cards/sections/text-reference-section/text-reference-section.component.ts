@@ -42,16 +42,14 @@ export class TextReferenceSectionComponent extends BaseSectionComponent<TextRefe
 
   /**
    * Get display text, hiding "Streaming…" placeholder text
+   * Inline implementation to avoid TypeScript override conflicts
    */
   getDisplayText(field: TextReferenceField): string {
     const text = field.text || field.value;
     if (text === 'Streaming…' || text === 'Streaming...') {
       return '';
     }
-    if (text != null) {
-      return String(text);
-    }
-    return '';
+    return text != null ? String(text) : '';
   }
 }
 

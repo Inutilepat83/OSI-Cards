@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { AICardConfig, CardType, CardSection } from '../../../models';
+import { AICardConfig, CardType } from '../../../models';
 
 /**
  * Abstract interface for card data providers

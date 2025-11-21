@@ -19,14 +19,18 @@
   gap: var(--card-gap);
   min-height: auto;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  border: 1px solid #FF7900 !important;
 
   &:hover {
     transform: translateY(-2px);
+    border-color: #FF7900 !important;
+    box-shadow: 0 8px 24px color-mix(in srgb, #FF7900 20%, transparent),
+                0 0 0 1px color-mix(in srgb, #FF7900 30%, transparent);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--color-brand);
+    outline: 2px solid #FF7900;
     outline-offset: 2px;
   }
 }
@@ -108,7 +112,7 @@
 
 .solution-card__benefit {
   display: flex;
-  align-items: flex-start;
+  align-items: baseline;
   gap: calc(var(--card-gap) * 0.75);
   margin: 0;
   padding: 0;
@@ -118,9 +122,12 @@
   flex-shrink: 0;
   width: 14px;
   height: 14px;
-  margin-top: 0.15em;
-  color: var(--card-text-secondary);
-  opacity: 0.7;
+  margin-top: 0;
+  color: #FF7900;
+  opacity: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .solution-card__benefit-text {
@@ -152,8 +159,11 @@
   flex-shrink: 0;
   width: 14px;
   height: 14px;
-  opacity: 0.6;
-  color: var(--card-text-muted);
+  opacity: 1;
+  color: #FF7900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .solution-card__meta-text {

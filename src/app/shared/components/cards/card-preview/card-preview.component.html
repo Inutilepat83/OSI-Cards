@@ -26,6 +26,7 @@
           <div class="card-preview-container">
             <app-ai-card-renderer
               [cardConfig]="generatedCard"
+              [updateSource]="'liveEdit'"
               [isFullscreen]="isFullscreen"
               (cardInteraction)="onCardInteraction($event)"
               (fieldInteraction)="onFieldInteraction($event)"

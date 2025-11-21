@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardField, CardSection } from '../../../../../models';
+import { CardField } from '../../../../../models';
 import { LucideIconsModule } from '../../../../icons/lucide-icons.module';
+import { BaseSectionComponent } from '../base-section.component';
 
 interface SolutionField extends CardField {
   category?: 'consulting' | 'technology' | 'managed' | 'training' | 'support' | string;
@@ -12,11 +13,6 @@ interface SolutionField extends CardField {
   outcomes?: string[];
 }
 
-interface SolutionInteraction {
-  item: SolutionField;
-  metadata?: Record<string, unknown>;
-}
-
 @Component({
   selector: 'app-solutions-section',
   standalone: true,
@@ -24,32 +20,21 @@ interface SolutionInteraction {
   templateUrl: './solutions-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SolutionsSectionComponent {
-  @Input({ required: true }) section!: CardSection;
-  @Output() itemInteraction = new EventEmitter<SolutionInteraction>();
-
-
+export class SolutionsSectionComponent extends BaseSectionComponent<SolutionField> {
   get fields(): SolutionField[] {
-    return (this.section.fields as SolutionField[]) ?? [];
+    return super.getFields() as SolutionField[];
   }
 
-  get hasFields(): boolean {
-    return this.fields.length > 0;
+  override get hasFields(): boolean {
+    return super.hasFields;
   }
 
-  trackByField(index: number, field: SolutionField): string {
+  override trackField(index: number, field: SolutionField): string {
     return field.id || field.title || field.label || index.toString();
   }
 
   onSolutionClick(field: SolutionField): void {
-    this.itemInteraction.emit({
-      item: field,
-      metadata: {
-        sectionId: this.section.id,
-        sectionTitle: this.section.title,
-        category: field.category
-      }
-    });
+    // Solutions are treated as items in the template
+    this.emitItemInteraction(field, { category: field.category });
   }
-
 }

@@ -10,7 +10,7 @@ interface ColSpanThresholds {
 }
 
 const SECTION_COL_SPAN_THRESHOLDS: Record<string, ColSpanThresholds> = {
-  overview: { two: 2, three: 5 },
+  overview: { two: 8, three: 12 },
   map: { two: 3 },
   chart: { two: 3 },
   quotation: { two: 4 },
@@ -370,10 +370,6 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
     const type = (section.type ?? '').toLowerCase();
     const title = (section.title ?? '').toLowerCase();
-
-    if (title.includes('overview') || type === 'overview') {
-      return Math.min(2, this.maxColumns);
-    }
 
     if (type === 'project') {
       return 1;
