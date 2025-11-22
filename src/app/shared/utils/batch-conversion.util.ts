@@ -185,15 +185,6 @@ export class BatchConversionUtil {
     return cards.filter(card => card.cardType === cardType);
   }
 
-  /**
-   * Filter cards by complexity level
-   */
-  static filterCardsByComplexity(
-    cards: AICardConfig[],
-    complexity: 'basic' | 'enhanced' | 'enterprise'
-  ): AICardConfig[] {
-    return cards.filter(card => (card as any).complexity === complexity);
-  }
 
   /**
    * Sort cards by priority
@@ -276,26 +267,18 @@ export class BatchConversionUtil {
   static getCollectionStats(cards: AICardConfig[]): {
     totalCards: number;
     byType: Record<string, number>;
-    byComplexity: Record<string, number>;
     totalSections: number;
     avgSectionsPerCard: number;
     cardsWithActions: number;
-    cardsWithMetadata: number;
   } {
     const byType: Record<string, number> = {};
-    const byComplexity: Record<string, number> = {};
     let totalSections = 0;
     let cardsWithActions = 0;
-    let cardsWithMetadata = 0;
 
     cards.forEach(card => {
       // Count by type
       const type = card.cardType || 'unknown';
       byType[type] = (byType[type] || 0) + 1;
-
-      // Count by complexity
-      const complexity = (card as any).complexity || 'unknown';
-      byComplexity[complexity] = (byComplexity[complexity] || 0) + 1;
 
       // Count sections
       totalSections += card.sections?.length || 0;
@@ -304,21 +287,14 @@ export class BatchConversionUtil {
       if (card.actions && card.actions.length > 0) {
         cardsWithActions++;
       }
-
-      // Count cards with metadata
-      if (card.metadata) {
-        cardsWithMetadata++;
-      }
     });
 
     return {
       totalCards: cards.length,
       byType,
-      byComplexity,
       totalSections,
       avgSectionsPerCard: cards.length > 0 ? totalSections / cards.length : 0,
-      cardsWithActions,
-      cardsWithMetadata
+      cardsWithActions
     };
   }
 
@@ -368,11 +344,9 @@ export class BatchConversionUtil {
     stats: {
       totalCards: number;
       byType: Record<string, number>;
-      byComplexity: Record<string, number>;
       totalSections: number;
       avgSectionsPerCard: number;
       cardsWithActions: number;
-      cardsWithMetadata: number;
     };
     duplicates: Array<{ title: string; count: number; cardIds: string[] }>;
     issues: string[];

@@ -1,0 +1,115 @@
+/* Network Section - Modern, Clean Design */
+
+@import 'sections/sections-base';
+@import 'unified-cards';
+
+/* Network Grid Layout */
+.network-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--section-card-gap);
+  width: 100%;
+  
+  @media (max-width: 820px) {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Network Card */
+.network-card {
+  @include card;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--card-gap);
+  min-height: auto;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  position: relative;
+  border: 1px solid color-mix(in srgb, var(--color-brand) 20%, transparent);
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--color-brand);
+    opacity: 0.8;
+    transition: opacity 0.22s ease, width 0.22s ease;
+    border-radius: 0 2px 2px 0;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-brand);
+    background: color-mix(in srgb, var(--card-background) 95%, var(--color-brand) 2%);
+    box-shadow: 0 8px 16px color-mix(in srgb, var(--foreground) 12%, transparent),
+                0 0 0 1px color-mix(in srgb, var(--color-brand) 15%, transparent);
+    
+    &::before {
+      opacity: 1;
+      width: 4px;
+    }
+    
+    .network-card__value {
+      color: color-mix(in srgb, var(--foreground) 90%, var(--color-brand) 10%);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+}
+
+/* Card Content */
+.network-card__content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--card-gap) * 0.6);
+  align-items: flex-start;
+}
+
+.network-card__label {
+  @include label-text;
+  margin: 0;
+  color: var(--card-text-label);
+  line-height: 1.2;
+}
+
+.network-card__value {
+  @include value-text;
+  font-size: calc(var(--card-value-font-size) * 1.2) !important;
+  font-weight: 700 !important;
+  letter-spacing: var(--card-value-letter-spacing) !important;
+  line-height: var(--card-value-line-height) !important;
+  color: var(--color-brand) !important;
+  margin: 0;
+  transition: color 0.22s ease;
+}
+
+/* Empty State */
+.section-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--card-padding) * 3);
+  text-align: center;
+  color: var(--card-text-muted);
+}
+
+.section-empty__icon {
+  margin-bottom: calc(var(--card-gap) * 1.5);
+  opacity: 0.5;
+}
+
+.section-empty__text {
+  @include card-meta-text;
+  margin: 0;
+  color: var(--card-text-muted);
+}

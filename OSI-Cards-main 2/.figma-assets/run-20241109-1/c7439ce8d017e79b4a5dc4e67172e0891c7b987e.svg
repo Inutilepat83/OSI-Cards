@@ -1,7 +1,0 @@
-<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="Layer_72">
-<circle id="Oval" cx="10" cy="10" r="1" fill="var(--fill-0, #4BB4E6)"/>
-<circle id="Oval_2" cx="14" cy="10" r="1" fill="var(--fill-0, #4BB4E6)"/>
-<path id="Shape" fill-rule="evenodd" clip-rule="evenodd" d="M3 0H17C18.6569 0 20 1.34315 20 3V13C20 14.6569 18.6569 16 17 16H3C1.34315 16 0 14.6569 0 13V3C0 1.34315 1.34315 0 3 0ZM12 12.22C12.5476 12.7178 13.2599 12.9956 14 13C15.6569 13 17 11.6569 17 10C17 8.34315 15.6569 7 14 7C13.2599 7.00441 12.5476 7.28221 12 7.78C11.4524 7.28221 10.7401 7.00441 10 7C8.34315 7 7 8.34315 7 10C7 11.6569 8.34315 13 10 13C10.7401 12.9956 11.4524 12.7178 12 12.22Z" fill="var(--fill-0, #4BB4E6)"/>
-</g>
-</svg>

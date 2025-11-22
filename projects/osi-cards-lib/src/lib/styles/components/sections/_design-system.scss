@@ -1,0 +1,540 @@
+/* =====================================================================
+   UNIFIED DESIGN SYSTEM FOR ALL SECTIONS
+   ===================================================================== */
+
+/* This file consolidates ALL design patterns, tokens, and mixins used
+   across all section types. This is the single source of truth for
+   section styling consistency. */
+
+/* Import sections-base to access unified card mixin */
+@import 'sections/sections-base';
+
+/* ===== DESIGN TOKENS ===== */
+
+// Spacing scale - use consistently across all sections
+$spacing-tokens: (
+  'xs': 4px,
+  'sm': 8px,
+  'md': 12px,
+  'lg': 16px,
+  'xl': 20px,
+  '2xl': 24px,
+  '3xl': 32px
+);
+
+// Typography scale - IMPROVED for better hierarchy and readability
+$font-sizes: (
+  'label': 0.65rem,           // Slightly larger for readability
+  'value': 0.92rem,           // More prominent value display
+  'value-lg': 1.4rem,         // Better visual emphasis for analytics
+  'section-title': 1.0rem,    // Clearer section headers
+  'section-description': 0.82rem,
+  'list-title': 0.95rem,      // Improved list item titles
+  'list-subtitle': 0.78rem
+);
+
+// Border and radius
+$border-radius: (
+  'sm': 4px,
+  'md': 6px,
+  'lg': 8px,
+  'xl': 10px,
+  '2xl': 12px
+);
+
+$border-width: 1px;
+
+// Responsive breakpoints - consistent across all sections
+$breakpoints: (
+  'mobile': 520px,
+  'tablet': 640px,
+  'lg': 820px,
+  'desktop': 1024px,
+  'wide': 1280px
+);
+
+/* ===== GRID LAYOUT PATTERNS ===== */
+
+// Unified responsive grid that adapts to masonry grid's calculated column count
+// This is the SINGLE SOURCE OF TRUTH for section grids
+@mixin section-responsive-grid($min-width: var(--section-grid-min-width), $gap: var(--section-card-gap)) {
+  display: grid !important;
+  // Use CSS auto-fit with minmax to match masonry's responsive behavior
+  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
+  gap: var(--section-card-gap, $gap);
+  width: 100%;
+  min-height: 0;
+
+  // On extremely narrow viewports, force single column
+  @media (max-width: 360px) {
+    grid-template-columns: 1fr !important;
+    gap: calc($gap * 0.75);
+  }
+}
+
+// Legacy grid-2col mixin - now uses responsive approach
+// Kept for backward compatibility but refactored to be responsive
+@mixin grid-2col($gap: var(--section-card-gap), $min-width: var(--section-grid-min-width)) {
+  @include section-responsive-grid($min-width, $gap);
+}
+
+// Auto-fit grid for flexible item wrapping
+@mixin grid-auto-fit($min-width: var(--section-grid-min-width), $gap: var(--section-card-gap)) {
+  @include section-responsive-grid($min-width, $gap);
+}
+
+// Flex list for vertical stacking (contacts, events, list items)
+@mixin list-stack($gap: var(--section-card-gap)) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-stack-gap, $gap);
+  width: 100%;
+
+  @media (max-width: map-get($breakpoints, 'tablet')) {
+    gap: var(--section-stack-gap-mobile, calc($gap * 0.75));
+  }
+}
+
+/* Compact grid for uniform section layouts */
+@mixin section-compact-grid($min-width: 220px, $gap: var(--section-card-gap)) {
+  @include section-responsive-grid($min-width, $gap);
+}
+
+/* Compact card layout helpers */
+@mixin compact-card-layout($padding-vertical: calc(var(--card-padding-vertical) - 2px), $padding-horizontal: calc(var(--card-padding-horizontal) - 2px)) {
+  gap: var(--card-gap);
+  padding: $padding-vertical $padding-horizontal;
+  min-height: auto;
+  align-items: flex-start;
+}
+
+@mixin compact-card-header($gap: var(--card-gap)) {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: $gap;
+  width: 100%;
+}
+
+@mixin compact-card-meta($gap: var(--card-gap)) {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: $gap;
+  width: 100%;
+  font-size: var(--card-label-font-size);
+  color: var(--card-text-muted);
+  opacity: 0.6;
+}
+
+/* ===== CARD COMPONENT PATTERNS ===== */
+
+// ===== DEPRECATED MIXINS - USE @mixin card INSTEAD =====
+// These mixins are deprecated and will be removed in a future version.
+// All sections should use @mixin card from _sections-base.scss for consistency.
+// See UNIFIED_CARD_DESIGN.md for migration guide.
+
+// DEPRECATED: Use @mixin card instead
+// This mixin now simply calls the unified card mixin for backward compatibility
+@mixin compact-card($accent: var(--section-accent, var(--accent))) {
+  @include card;
+  
+  // Note: Old transform and glow effects have been removed for consistency.
+  // All cards now use the unified hover states (border, background, shadow only).
+  // If you need custom styling, extend the card with specific child element styles.
+}
+
+// DEPRECATED: Use @mixin card instead
+// This mixin now simply calls the unified card mixin for backward compatibility
+@mixin list-card($accent: var(--section-accent, var(--accent))) {
+  @include card;
+  
+  // Note: Old transform, accent bar, and slide effects have been removed for consistency.
+  // All cards now use the unified hover states (border, background, shadow only).
+  // If you need custom styling, extend the card with specific child element styles.
+}
+
+/* ===== TYPOGRAPHY PATTERNS ===== */
+
+// Label styling - used in all cards for field names - Uses CSS variables
+@mixin label-text {
+  font-size: var(--card-label-font-size);
+  font-weight: var(--card-label-font-weight);
+  letter-spacing: var(--card-label-letter-spacing);
+  text-transform: var(--card-label-text-transform);
+  color: color-mix(in srgb, var(--card-text-label) 85%, var(--color-brand) 15%);
+  line-height: var(--card-label-line-height);
+  text-shadow: var(--card-label-text-shadow);
+}
+
+// Value styling - used in all cards for field values - Uses CSS variables
+@mixin value-text {
+  font-size: var(--card-value-font-size);
+  font-weight: var(--card-value-font-weight);
+  color: color-mix(in srgb, var(--card-text-primary) 90%, var(--color-brand) 10%);
+  letter-spacing: var(--card-value-letter-spacing);
+  line-height: var(--card-value-line-height);
+  text-shadow: var(--card-value-text-shadow);
+}
+
+// Large value styling - for emphasis (analytics, stats) - Uses CSS variables
+@mixin value-text-lg {
+  font-size: var(--card-value-font-size-large);
+  font-weight: var(--card-value-font-weight);
+  color: color-mix(in srgb, var(--card-text-primary) 95%, var(--color-brand) 5%);
+  letter-spacing: var(--card-value-letter-spacing);
+  line-height: var(--card-value-line-height);
+  text-shadow: none;
+}
+
+// Card title styling (within cards) - Uses CSS variables
+@mixin card-title-text {
+  font-size: var(--card-title-font-size);
+  font-weight: var(--card-title-font-weight);
+  color: color-mix(in srgb, var(--card-text-primary) 95%, var(--color-brand) 5%);
+  letter-spacing: var(--card-title-letter-spacing);
+  line-height: var(--card-title-line-height);
+  text-shadow: var(--card-title-text-shadow);
+  
+  :root[data-theme='day'] & {
+    text-shadow: none;
+  }
+}
+
+// Card subtitle/description styling - Uses CSS variables
+@mixin card-subtitle-text {
+  font-size: var(--card-subtitle-font-size);
+  font-weight: var(--card-subtitle-font-weight);
+  color: var(--card-text-secondary);
+  letter-spacing: var(--card-subtitle-letter-spacing);
+  line-height: var(--card-subtitle-line-height);
+}
+
+// Card meta text (small descriptive text) - Uses CSS variables
+@mixin card-meta-text {
+  font-size: var(--card-meta-font-size);
+  font-weight: var(--card-meta-font-weight);
+  color: var(--card-meta-color);
+  line-height: 1.2; /* COMPACT: Reduced from 1.3 */
+}
+
+// Legacy alias - section-title-text
+@mixin section-title-text {
+  @include card-title-text;
+}
+
+// Legacy alias - section-description-text
+@mixin section-description-text {
+  @include card-subtitle-text;
+}
+
+/* ===== SECTION CONTAINER ===== */
+
+// Base section wrapper styling - COMPACT DESIGN - uses main variables ONLY
+// NOTE: This mixin is used for standalone sections (not inside masonry-item)
+// When inside masonry-item, the masonry-item itself has the border/padding/background
+@mixin section-wrapper($accent: var(--section-accent, var(--accent))) {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* COMPACT: Reduced padding and gaps */
+  gap: var(--section-card-gap);
+  padding: var(--section-padding); /* COMPACT: Reduced padding */
+  border-radius: var(--card-border-radius); /* COMPACT: Reduced radius */
+  border: var(--card-border); /* CLEAN: Only standalone sections have borders */
+  background: var(--section-background, transparent);
+  box-shadow: var(--card-box-shadow);
+  overflow: hidden;
+  /* Smooth transitions for natural feel */
+  transition: background 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100%;
+  backdrop-filter: var(--section-backdrop-filter, none);
+
+  &:hover {
+    /* Minimalistic hover: subtle background shift */
+    background: color-mix(in srgb, var(--section-background, transparent) 98%, rgba(255, 121, 0, 0.02));
+    box-shadow: var(--card-box-shadow-hover);
+    border-color: color-mix(in srgb, var(--section-accent, var(--accent)) 20%, transparent);
+  }
+}
+
+// Section header styling - COMPACT
+@mixin section-header($direction: column, $gap: calc(var(--card-gap) * 0.75)) {
+  display: flex;
+  flex-direction: $direction;
+  gap: $gap;
+  flex-shrink: 0;
+}
+
+// Section heading typography - shares the centralized section tokens
+@mixin section-heading-text {
+  font-size: var(--section-title-font-size);
+  font-weight: var(--section-title-font-weight);
+  color: var(--card-text-primary);
+  letter-spacing: var(--section-title-letter-spacing);
+  text-transform: capitalize;
+  line-height: var(--section-title-line-height);
+  text-shadow: none;
+  transition: color 0.22s ease;
+}
+
+// Section body styling
+@mixin section-body($gap: var(--section-card-gap)) {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+  min-height: 0;
+}
+
+/* ===== PROGRESS BAR PATTERN ===== */
+
+@mixin progress-bar {
+  width: 100%;
+  height: 4px;
+  background: color-mix(in srgb, var(--section-accent, var(--accent)) 10%, transparent);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 6px;
+
+  &::after {
+    content: '';
+    display: block;
+    height: 100%;
+    background: var(--section-accent, var(--accent));
+    border-radius: inherit;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* ===== ICON PATTERNS ===== */
+
+@mixin icon-base($size: 16px, $accent: var(--section-accent, var(--accent))) {
+  width: $size;
+  height: $size;
+  flex-shrink: 0;
+  color: color-mix(in srgb, #{$accent} 75%, transparent);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+@mixin icon-button-base($size: 20px, $accent: var(--section-accent, var(--accent))) {
+  width: $size;
+  height: $size;
+  border-radius: map-get($border-radius, 'sm');
+  background: color-mix(in srgb, #{$accent} 20%, transparent);
+  color: color-mix(in srgb, #{$accent} 80%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+    background: color-mix(in srgb, #{$accent} 30%, transparent);
+  }
+}
+
+/* ===== STATUS AND TREND COLORS ===== */
+
+// Trend indicator colors
+@mixin trend-colors {
+  &.trend--up {
+    color: #4ade80 !important;
+  }
+
+  &.trend--down {
+    color: #f87171 !important;
+  }
+
+  &.trend--stable {
+    color: #facc15 !important;
+  }
+
+  &.trend--neutral {
+    color: #94a3b8 !important;
+  }
+}
+
+// Status colors
+@mixin status-colors {
+  &.status--completed,
+  &.status--success {
+    border-color: rgba(74, 222, 128, 0.4) !important;
+    color: rgba(134, 239, 172, 1) !important;
+    background: color-mix(in srgb, rgba(34, 197, 94, 0.15), transparent) !important;
+  }
+
+  &.status--active,
+  &.status--in-progress {
+    border-color: rgba(255, 121, 0, 0.4) !important;
+    color: rgba(255, 180, 110, 1) !important;
+    background: color-mix(in srgb, rgba(255, 121, 0, 0.15), transparent) !important;
+  }
+
+  &.status--pending,
+  &.status--warning {
+    border-color: rgba(251, 191, 36, 0.4) !important;
+    color: rgba(253, 224, 71, 1) !important;
+    background: color-mix(in srgb, rgba(253, 186, 116, 0.15), transparent) !important;
+  }
+
+  &.status--blocked,
+  &.status--cancelled,
+  &.status--delayed,
+  &.status--inactive,
+  &.status--error {
+    border-color: rgba(248, 113, 113, 0.4) !important;
+    color: rgba(252, 165, 165, 1) !important;
+    background: color-mix(in srgb, rgba(239, 68, 68, 0.15), transparent) !important;
+  }
+}
+
+/* ===== EMPTY STATE PATTERN ===== */
+
+@mixin empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* COMPACT: Reduced padding */
+  padding: calc(var(--card-padding) * 2) var(--card-padding);
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  border: none !important;
+  /* CLEAN: No borders on empty states - only sections and cards have borders */
+  border-radius: var(--section-card-border-radius);
+  background: rgba(255, 121, 0, 0.02);
+  min-height: auto;
+  /* COMPACT: No minimum height */
+
+  lucide-icon {
+    opacity: 0.5;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: var(--card-meta-font-size);
+    line-height: 1.2; /* COMPACT: Reduced from 1.3 */
+  }
+}
+
+/* ===== BADGE MIXIN ===== */
+// Standard badge styling used across sections
+// COMPACT DESIGN - NO BORDERS - Only sections and cards have borders
+@mixin standard-badge {
+  display: inline-flex;
+  align-items: center;
+  /* COMPACT: Reduced padding */
+  padding: calc(var(--tag-padding-y-sm) * 0.75) calc(var(--tag-padding-x) * 0.875);
+  border-radius: var(--section-card-border-radius);
+  border: none !important;
+  /* CLEAN: No borders on badges - only sections and cards have borders */
+  background: color-mix(in srgb, var(--card-background) 60%, transparent);
+  font-size: var(--card-meta-font-size);
+  font-weight: var(--card-meta-font-weight);
+  letter-spacing: var(--card-label-letter-spacing);
+  text-transform: var(--card-label-text-transform);
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+/* ===== ICON MIXIN ===== */
+// Standard icon styling for all sections
+@mixin standard-icon($size: 16px) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $size;
+  height: $size;
+  color: color-mix(in srgb, var(--section-accent, var(--color-brand)) 70%, transparent);
+  transition: color 0.2s ease;
+}
+
+/* ===== PROGRESS MIXIN ===== */
+// Standard progress bar container
+@mixin standard-progress {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 121, 0, 0.15);
+  overflow: hidden;
+  position: relative;
+}
+
+/* ===== PROGRESS BAR MIXIN ===== */
+// Standard progress bar fill
+@mixin standard-progress-bar {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(255, 121, 0, 0.7), rgba(255, 121, 0, 0.9));
+  transition: width 0.3s ease;
+  width: var(--progress-width, 0%);
+}
+
+/* ===== TRANSITION MIXIN ===== */
+// Standard smooth transitions
+@mixin standard-transition($duration: 0.22s, $properties: all) {
+  transition: $properties $duration cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== FAST & SLOW TRANSITIONS ===== */
+// Fast transition for micro-interactions
+@mixin fast-transition($properties: all) {
+  transition: $properties 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// Slow transition for larger movements
+@mixin slow-transition($properties: all) {
+  transition: $properties 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== LEGACY ALIASES FOR COMPATIBILITY ===== */
+// metric-label - alias for label-text
+@mixin metric-label {
+  @include label-text;
+}
+
+// metric-value - alias for value-text
+@mixin metric-value {
+  @include value-text;
+}
+
+// section-label - alias for label-text
+@mixin section-label {
+  @include label-text;
+}
+
+// section-empty-state - alias for empty-state
+@mixin section-empty-state {
+  @include empty-state;
+}
+
+// section-empty-icon styling
+@mixin section-empty-icon($size: 32px) {
+  width: $size;
+  height: $size;
+  opacity: 0.4;
+  margin-bottom: 12px;
+}
+
+// section-card-base - deprecated, use @mixin card instead
+@mixin section-card-base($accent: var(--section-accent, var(--accent))) {
+  @include card;
+}
+
+// section-card-mobile - deprecated, handled via @media
+@mixin section-card-mobile {
+  @media (max-width: 768px) {
+    padding: var(--card-padding) !important; /* COMPACT: Use main variable */
+  }
+}
+
+// accent-border - DEPRECATED - NO BORDERS on non-card elements
+// Only sections and cards should have borders
+@mixin accent-border($accent: var(--section-accent, var(--color-brand))) {
+  border: none !important;
+  /* NO BORDER (only cards have borders) */
+}

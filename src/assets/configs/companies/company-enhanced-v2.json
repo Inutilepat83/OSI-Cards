@@ -51,14 +51,9 @@
     }
   ],
   "actions": [
-    { "label": "Visit Website", "type": "primary", "icon": "🌐", "action": "#" },
-    { "label": "Contact Sales", "type": "secondary", "icon": "📧", "action": "#" }
-  ],
-  "metadata": {
-    "category": "company",
-    "variant": "enhanced",
-    "complexity": "enhanced"
-  }
+    { "label": "Visit Website", "type": "website", "variant": "primary", "icon": "🌐", "url": "https://www.techventure.com" },
+    { "label": "Contact Sales", "type": "mail", "variant": "secondary", "icon": "📧", "email": { "to": "sales@techventure.com", "subject": "Sales Inquiry" } }
+  ]
 }
 
 

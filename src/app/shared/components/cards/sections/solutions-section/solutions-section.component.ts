@@ -8,7 +8,6 @@ interface SolutionField extends CardField {
   category?: 'consulting' | 'technology' | 'managed' | 'training' | 'support' | string;
   benefits?: string[];
   deliveryTime?: string;
-  complexity?: 'low' | 'medium' | 'high';
   teamSize?: string;
   outcomes?: string[];
 }

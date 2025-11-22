@@ -1,0 +1,494 @@
+/* Chart visualization cards with unified styling */
+
+@import 'sections/sections-base';
+@import 'unified-cards';
+
+.chart-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-card-gap);
+  width: 100%;
+}
+
+.chart-section__split {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--section-card-gap) !important;
+  width: 100%;
+  
+  @media (max-width: 820px) {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.chart-section__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-card-gap) !important;
+  width: 100%;
+}
+
+.chart-card {
+  @include card;
+  appearance: none;
+  text-align: left;
+  width: 100%;
+  display: flex;
+  /* COMPACT: No minimum height */
+  min-height: auto;
+  /* Border, background, padding, border-radius, and hover states are set by @include card */
+  position: relative;
+  overflow: hidden;
+  background: var(--card-background);
+
+  /* Minimalistic hover - no glow effects */
+  &:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-brand);
+  }
+  
+  /* Accent border for active/selected charts */
+  &.chart-card--active {
+    border: 2px solid var(--color-brand);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--card-hover-border);
+    outline-offset: 2px;
+  }
+  
+  /* Default: vertical layout for bar charts and summary cards */
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--card-gap) * 0.5);
+  /* COMPACT: Tighter card gap */
+  
+  /* Progress bar always at bottom */
+  &.chart-card--with-progress {
+    position: relative;
+    min-height: 80px; /* Ensure minimum height for proper layout */
+    
+    .chart-card__content-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-width: 0;
+    }
+    
+    .chart-card__progress-wrapper {
+      margin-top: auto;
+      width: 100%;
+      padding-top: calc(var(--card-gap) * 0.75);
+    }
+  }
+  
+  /* For pie chart cards - horizontal layout */
+  &.chart-card--pie {
+    flex-direction: row;
+    align-items: center;
+    gap: calc(var(--card-gap) * 0.5);
+    /* COMPACT: Tighter pie card gap */
+  }
+
+  &__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: calc(var(--card-gap) * 0.5);
+    /* COMPACT: Tighter row spacing */
+    width: 100%;
+  }
+
+  &__label {
+    @include label-text;
+    /* OPTIMIZED: Use mixin for consistency - labels are smallest */
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  &__value {
+    @include value-text;
+    /* OPTIMIZED: Values are primary - larger */
+    font-size: calc(var(--card-value-font-size) * 1.2) !important;
+    font-weight: 700;
+    color: var(--color-brand);
+    margin: 0;
+    text-align: right;
+    flex-shrink: 0;
+    line-height: 1.2;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--card-gap) * 0.5);
+    /* COMPACT: Tighter content spacing */
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__meta {
+    @include card-meta-text;
+    /* COMPACT: Tight line-height */
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  &__legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid var(--section-accent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-white) 10%, transparent),
+                0 0 4px color-mix(in srgb, var(--color-brand) 25%, transparent);
+    @include slow-transition;
+  }
+
+  &__progress {
+    @include standard-progress;
+    transition: height 0.28s ease;
+    background: color-mix(in srgb, var(--color-brand) 12%, transparent);
+    height: 6px;
+  }
+
+  &__progress-bar {
+    @include standard-progress-bar;
+    background: linear-gradient(90deg, var(--color-brand), color-mix(in srgb, var(--color-brand) 60%, transparent));
+    box-shadow: 0 0 8px color-mix(in srgb, var(--color-brand) 20%, transparent);
+  }
+}
+
+.chart-card--legend {
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+}
+
+.chart-section__summary {
+  @include card;
+  cursor: default;
+  pointer-events: none;
+  min-height: auto;
+}
+
+.chart-section__summary-total {
+  font-size: var(--card-label-font-size);
+  text-transform: var(--card-label-text-transform);
+  letter-spacing: var(--card-label-letter-spacing);
+  color: var(--card-text-label);
+}
+
+.chart-section__summary-value {
+  font-size: calc(var(--card-value-font-size-large, var(--card-value-font-size)) * 1.15);
+  font-weight: 700;
+  color: var(--color-brand);
+  letter-spacing: var(--card-value-letter-spacing);
+}
+
+.chart-section__summary-hint {
+  font-size: var(--card-meta-font-size);
+  color: var(--card-meta-color);
+  line-height: 1.2;
+  /* COMPACT: Tight line-height */
+}
+
+.chart-section__empty {
+  @include section-empty-state;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--section-card-gap) * 0.5);
+  /* COMPACT: Tighter empty state spacing */
+  padding: calc(var(--card-padding) * 1.5);
+  /* COMPACT: Reduced padding */
+  border-radius: var(--card-border-radius);
+
+  lucide-icon {
+    opacity: 0.65;
+  }
+}
+
+.chart-section__empty-title {
+  font-size: var(--card-title-font-size);
+  font-weight: var(--card-title-font-weight);
+  color: var(--card-text-primary);
+}
+
+.chart-section__empty-hint {
+  font-size: var(--card-meta-font-size);
+  color: var(--card-meta-color);
+}
+
+@media (max-width: 768px) {
+  .chart-card {
+    @include card;
+
+    &__label {
+      font-size: var(--font-section-label-mobile);
+    }
+
+    &__value {
+      font-size: var(--font-chart-value-mobile);
+    }
+
+    &__meta {
+      font-size: var(--font-section-meta);
+    }
+  }
+
+  .chart-card--legend {
+    align-items: flex-start;
+  }
+
+  .chart-card__progress {
+    height: 3px;
+  }
+
+  .chart-section__summary {
+    text-align: center;
+    align-items: center;
+  }
+}
+
+@media (max-width: 500px) {
+  .chart-section {
+    gap: calc(var(--section-card-gap) * 0.75); /* COMPACT: Reduced from section-grid-gap-mobile */
+  }
+
+  .chart-section__list {
+    gap: calc(var(--section-card-gap) * 0.75); /* COMPACT: Reduced from section-grid-gap-mobile */
+    grid-template-columns: 1fr !important;
+  }
+
+  .chart-card {
+    gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from section-grid-gap-mobile */
+
+    &__row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from full gap */
+    }
+
+    &__value {
+      font-size: var(--card-value-font-size);
+    }
+  }
+
+  .chart-card--legend {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from full gap */
+  }
+
+  .chart-card__progress {
+    height: var(--progress-height);
+  }
+
+  .chart-section__summary-value {
+    font-size: var(--font-section-value-xl);
+  }
+
+  .chart-card__legend-dot {
+    width: var(--icon-size-xs);
+    height: var(--icon-size-xs);
+  }
+
+  .chart-section__summary {
+    gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from full gap */
+  }
+
+  .chart-section__summary-hint {
+    font-size: var(--font-chart-meta);
+  }
+}
+
+.chart-card--legend {
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+  gap: calc(var(--card-gap) * 0.5);
+  /* COMPACT: Tighter legend spacing */
+}
+
+.chart-section__summary {
+  @include section-card-base;
+  cursor: default;
+  gap: calc(var(--card-gap) * 0.5);
+  /* COMPACT: Tighter summary spacing */
+  pointer-events: none;
+  min-height: auto;
+}
+
+.chart-section__summary-total {
+  @include section-label;
+  text-transform: uppercase;
+}
+
+.chart-section__summary-value {
+  font-size: var(--font-section-value-2xl);
+  font-weight: 700;
+  color: var(--foreground);
+  letter-spacing: -0.01em;
+}
+
+.chart-section__summary-hint {
+  font-size: var(--font-chart-meta);
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
+  line-height: 1.2;
+  /* COMPACT: Tight line-height */
+}
+
+.chart-section__empty {
+  @include section-empty-state;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--card-gap) * 0.5);
+  /* COMPACT: Tighter empty state spacing */
+  padding: calc(var(--card-padding) * 1.5);
+  /* COMPACT: Reduced padding */
+
+  lucide-icon {
+    @include section-empty-icon;
+  }
+}
+
+.chart-section__empty-title {
+  font-size: var(--font-section-value-lg);
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.chart-section__empty-hint {
+  font-size: var(--font-chart-meta);
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
+}
+
+@media (max-width: 768px) {
+  .chart-card {
+    @include section-card-mobile;
+
+    &__label {
+      font-size: var(--font-section-value-lg);
+    }
+
+    &__value {
+      font-size: var(--font-chart-value);
+    }
+
+    &__meta {
+      font-size: var(--font-section-label);
+    }
+  }
+
+  .chart-card--legend {
+    align-items: flex-start;
+  }
+
+  .chart-card__progress {
+    height: var(--progress-height);
+  }
+
+  .chart-section__summary {
+    text-align: center;
+    align-items: center;
+  }
+}
+
+@media (max-width: 620px) {
+  .chart-section {
+    gap: calc(var(--section-card-gap) * 0.75); /* COMPACT: Reduced from full gap */
+  }
+
+  .chart-section__list {
+    gap: calc(var(--section-card-gap) * 0.75); /* COMPACT: Reduced from list-item-gap */
+    grid-template-columns: 1fr !important;
+  }
+
+  .chart-card {
+    /* Padding is set by @include card */
+    gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from list-item-gap */
+
+    &__row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from full gap */
+    }
+
+    &__value {
+      font-size: var(--font-section-value-lg);
+    }
+  }
+
+  .chart-card--legend {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from full gap */
+  }
+
+  .chart-card__progress {
+    height: var(--progress-height);
+  }
+
+  .chart-section__summary-value {
+    font-size: var(--font-section-value-xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-card {
+    /* Padding is set by @include card */
+
+    &__label {
+      font-size: var(--font-section-label-mobile);
+    }
+
+    &__value {
+      font-size: var(--font-chart-value-mobile);
+    }
+
+    &__meta {
+      font-size: var(--font-section-meta);
+    }
+  }
+
+  .chart-card--legend {
+    gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from list-item-gap */
+  }
+
+  .chart-card__legend-dot {
+    width: var(--icon-size-xs);
+    height: var(--icon-size-xs);
+  }
+
+  .chart-section__summary {
+    gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from full gap */
+  }
+
+  .chart-section__summary-hint {
+    font-size: var(--font-section-label);
+  }
+}
+
+/* Light theme overrides - text colors only */
+/* Background and border are handled by global enforcement */
+:root[data-theme='day'] {
+  .chart-card {
+    /* Background and border removed - handled by global enforcement */
+    
+    &__label {
+      color: #6b7280;
+    }
+    
+    &__value {
+      color: #1a1a1a;
+    }
+  }
+  
+  .chart-section__summary {
+    /* Summary is a nested element, not a card - styling handled by component */
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-color: rgba(200, 200, 200, 0.6) !important;
+  }
+}

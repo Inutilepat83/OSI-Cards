@@ -23,13 +23,8 @@
     }
   ],
   "actions": [
-    { "label": "View Website", "type": "primary", "icon": "🌐", "action": "#" }
-  ],
-  "metadata": {
-    "category": "company",
-    "variant": "basic",
-    "complexity": "basic"
-  }
+    { "label": "View Website", "type": "website", "variant": "primary", "icon": "🌐", "url": "https://www.acmecorp.com" }
+  ]
 }
 
 

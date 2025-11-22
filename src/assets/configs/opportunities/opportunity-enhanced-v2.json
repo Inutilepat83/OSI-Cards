@@ -104,12 +104,7 @@
     }
   ],
   "actions": [
-    { "label": "Review Migration Plan", "type": "primary", "icon": "📋", "action": "#" },
-    { "label": "Schedule Review", "type": "secondary", "icon": "🏗️", "action": "#" }
-  ],
-  "metadata": {
-    "category": "opportunity",
-    "variant": "enhanced",
-    "complexity": "enhanced"
-  }
+    { "label": "Review Migration Plan", "type": "question", "variant": "primary", "icon": "📋", "question": "Can you show me the migration plan details?" },
+    { "label": "Schedule Review", "type": "agent", "variant": "secondary", "icon": "🏗️", "agentId": "calendar-agent", "agentContext": { "action": "schedule_review" } }
+  ]
 }

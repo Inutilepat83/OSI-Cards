@@ -1,0 +1,214 @@
+/* ===================================================================
+   TILT & GLOW ANIMATIONS
+   Performance-optimized 3D tilt effects with dynamic lighting
+   =================================================================== */
+
+/* Base tilt container with 3D perspective - Optimized for performance */
+.tilt-container {
+  /* 3D transform with hardware acceleration */
+  transform: perspective(1000px)
+             rotateX(var(--tilt-x, 0deg))
+             rotateY(var(--tilt-y, 0deg))
+             scale(var(--tilt-scale, 1))
+             translateZ(0); /* Force GPU acceleration */
+  
+  /* Smooth transitions for natural feel - longer duration for smooth exit */
+  /* Enter: faster (200ms), Exit: slower (500ms) for smooth completion */
+  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Enable 3D rendering */
+  transform-style: preserve-3d;
+  backface-visibility: hidden; /* Prevent flickering */
+  
+  position: relative;
+  border-radius: var(--card-border-radius);
+  
+  /* Performance optimizations */
+  contain: layout style paint; /* Strong containment for better performance */
+  isolation: isolate; /* Create new stacking context */
+  will-change: transform; /* Hint browser about upcoming transforms */
+  
+  /* Optimize compositing */
+  transform-origin: center center;
+}
+
+/* Smooth exit transition - longer duration when mouse leaves */
+.tilt-container:not(:hover) {
+  transition: transform 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+              box-shadow 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: auto;
+}
+
+.tilt-container:hover {
+  /* Hint browser about upcoming transform changes */
+  will-change: transform;
+  /* Orange glow only - no dark shadows, intensified by 50% */
+  box-shadow: 
+    0 0 var(--glow-blur, 18px) var(--glow-color, rgba(255, 121, 0, 0.375));
+  /* Faster enter transition for responsive feel */
+  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Glow container for filter-based effects */
+.glow-container {
+  position: relative;
+  /* Always show base glow - smooth transitions, intensified by 50% */
+  filter: drop-shadow(0 0 var(--glow-blur, 12px) var(--glow-color, rgba(255, 121, 0, 0.225)));
+  transition: filter 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: filter;
+  
+  /* Performance optimizations */
+  contain: layout style; /* Don't use paint - it clips shadows */
+  isolation: isolate; /* Create new stacking context */
+  
+  /* Optimize compositing */
+  transform: translateZ(0); /* Force GPU layer */
+}
+
+.glow-container:hover {
+  will-change: filter;
+  /* Faster enter transition */
+  transition: filter 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glow-container:not(:hover) {
+  will-change: auto;
+  /* Smooth exit transition - longer duration for smooth completion */
+  transition: filter 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Card reflection overlay */
+.card-reflection {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  opacity: var(--reflection-opacity, 0.08);
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  border-radius: inherit;
+  
+  /* Optimize as overlay */
+  will-change: opacity;
+  backface-visibility: hidden;
+}
+
+/* Smooth exit transition for reflection */
+.tilt-container:not(:hover) .card-reflection {
+  transition: opacity 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Wrapper for nested 3D transforms */
+.tilt-wrapper {
+  transform-style: preserve-3d;
+  transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  backface-visibility: hidden;
+  
+  /* Optimize transforms */
+  contain: layout style;
+}
+
+/* Content inside tilt effect */
+.tilt-content {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+/* Glare/highlight effect that follows mouse */
+.tilt-glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: transparent;
+  opacity: var(--glare-opacity, 0);
+  transition: opacity var(--glow-duration) var(--ease-out-smooth);
+  
+  /* Optimize as overlay */
+  will-change: opacity;
+  backface-visibility: hidden;
+}
+
+/* ===================================================================
+   MOBILE OPTIMIZATIONS
+   Reduce tilt intensity on smaller screens for better performance
+   =================================================================== */
+
+@media (max-width: 768px) {
+  .tilt-container {
+    /* Reduce perspective for subtler effect on mobile, but keep doubled tilt */
+    transform: perspective(800px)
+               rotateX(calc(var(--tilt-x, 0deg) * 0.7))
+               rotateY(calc(var(--tilt-y, 0deg) * 0.7))
+               scale(var(--tilt-scale, 1))
+               translateZ(0);
+  }
+  
+  .tilt-container:hover {
+    /* Orange glow only - no dark shadows, intensified by 50% */
+    box-shadow: 
+      0 0 var(--glow-blur, 18px) var(--glow-color, rgba(255, 121, 0, 0.375));
+  }
+}
+
+/* ===================================================================
+   FULLSCREEN MODE - DISABLE TILT
+   Tilt effects disabled in fullscreen for better usability
+   =================================================================== */
+
+.ai-card-surface--fullscreen {
+  .tilt-container {
+    /* Reset all tilt transforms in fullscreen */
+    transform: perspective(1000px) translateZ(0) !important;
+    box-shadow: none !important;
+    will-change: auto !important;
+  }
+  
+  .glow-container {
+    filter: none !important;
+    will-change: auto !important;
+  }
+  
+  .card-reflection,
+  .tilt-glare {
+    opacity: 0 !important;
+    display: none; /* Completely remove from rendering */
+  }
+}
+
+/* ===================================================================
+   REDUCED MOTION SUPPORT
+   Disable tilt effects for accessibility
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .tilt-container,
+  .tilt-wrapper {
+    transform: none !important;
+    transition: none !important;
+  }
+  
+  .tilt-container:hover {
+    box-shadow: none !important;
+  }
+  
+  .glow-container {
+    filter: none !important;
+    transition: none !important;
+  }
+  
+  .card-reflection,
+  .tilt-glare {
+    opacity: 0 !important;
+    transition: none !important;
+  }
+  
+  /* Remove will-change hints */
+  .tilt-container,
+  .glow-container,
+  .card-reflection,
+  .tilt-glare {
+    will-change: auto !important;
+  }
+}

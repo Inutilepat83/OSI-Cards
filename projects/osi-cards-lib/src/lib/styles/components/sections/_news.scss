@@ -1,0 +1,81 @@
+@import 'sections/sections-base';
+
+/* News section styling - uses general design variables for spacing, color, and layout */
+.ai-section--news {
+  --section-accent: color-mix(in srgb, var(--color-brand) 68%, var(--foreground) 32%);
+  --section-background: color-mix(in srgb, var(--card) 92%, transparent);
+  --section-card-grid-min: 220px;
+}
+
+.news-feed {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--card-gap);
+  width: 100%;
+}
+
+.news-item {
+  @include card;
+  border: 1px solid color-mix(in srgb, var(--section-accent, var(--accent)) 25%, transparent);
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--card-gap) * 0.5);
+  padding: var(--card-padding);
+  text-align: left;
+  background: var(--section-item-background);
+}
+
+.news-item__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-size: var(--font-section-meta);
+  color: var(--card-text-muted);
+}
+
+.news-item__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--card-gap) * 0.4);
+  font-size: var(--font-section-meta);
+  color: var(--section-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.news-item__title {
+  font-size: var(--card-value-font-size);
+  font-weight: 600;
+  color: var(--card-text-primary);
+  margin: 0;
+}
+
+.news-item__summary {
+  font-size: var(--font-section-description);
+  margin: 0;
+  color: color-mix(in srgb, var(--foreground) 65%, transparent);
+}
+
+.news-item__meta {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: var(--font-section-meta);
+  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+}
+
+.news-item__value {
+  font-weight: 600;
+  color: var(--section-accent);
+}
+
+.news-item__indicator {
+  font-size: var(--font-section-meta);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--section-accent) 60%, transparent);
+}

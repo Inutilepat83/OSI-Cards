@@ -11,7 +11,6 @@
           "title": "Secure Cloud Banking Platform",
           "description": "Compliant cloud infrastructure for financial services",
           "category": "Infrastructure",
-          "complexity": "high",
           "benefits": ["Regulatory compliance", "Enhanced security", "Scalability"],
           "deliveryTime": "10-12 weeks"
         },
@@ -19,7 +18,6 @@
           "title": "Fraud Detection & Prevention",
           "description": "AI-powered fraud detection system",
           "category": "Security",
-          "complexity": "high",
           "benefits": ["Real-time detection", "AI-powered analysis", "Compliance ready"],
           "deliveryTime": "8-10 weeks"
         }
@@ -27,11 +25,6 @@
     }
   ],
   "actions": [
-    { "label": "Create Presentation", "type": "primary", "icon": "📊", "action": "#" }
-  ],
-  "metadata": {
-    "category": "sko",
-    "variant": "basic",
-    "complexity": "basic"
-  }
+    { "label": "Create Presentation", "type": "agent", "variant": "primary", "icon": "📊", "agentId": "presentation-agent", "agentContext": { "action": "create_presentation" } }
+  ]
 }

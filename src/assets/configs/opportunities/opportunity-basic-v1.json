@@ -23,11 +23,6 @@
     }
   ],
   "actions": [
-    { "label": "View Details", "type": "primary", "icon": "📋", "action": "#" }
-  ],
-  "metadata": {
-    "category": "opportunity",
-    "variant": "basic",
-    "complexity": "basic"
-  }
+    { "label": "View Details", "type": "question", "variant": "primary", "icon": "📋", "question": "What are the details of this opportunity?" }
+  ]
 }

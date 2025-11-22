@@ -9,6 +9,10 @@
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--section-card-gap) !important;
   width: 100%;
+  
+  @media (max-width: 820px) {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 /* Map Card */
@@ -19,10 +23,23 @@
   gap: var(--card-gap) !important;
   min-height: auto;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  border: 1px solid color-mix(in srgb, var(--color-brand) 20%, transparent);
+  align-items: flex-start;
 
   &:hover {
     transform: translateY(-2px);
+    border-color: var(--color-brand);
+    box-shadow: 0 8px 16px color-mix(in srgb, var(--foreground) 12%, transparent),
+                0 0 0 1px color-mix(in srgb, var(--color-brand) 15%, transparent);
+    
+    .map-card__title {
+      color: color-mix(in srgb, var(--foreground) 90%, var(--color-brand) 10%);
+    }
+    
+    .map-card__badge {
+      opacity: 1;
+    }
   }
 
   &:focus-visible {
@@ -49,14 +66,15 @@
 
 .map-card__title {
   @include card-title-text;
-  font-size: calc(var(--card-value-font-size) - 2px) !important;
-  font-weight: var(--card-value-font-weight) !important;
-  letter-spacing: var(--card-value-letter-spacing) !important;
-  line-height: var(--card-value-line-height) !important;
+  font-size: calc(var(--card-title-font-size) * 1.15) !important;
+  font-weight: 700 !important;
+  letter-spacing: var(--card-title-letter-spacing) !important;
+  line-height: var(--card-title-line-height) !important;
   color: var(--card-text-primary) !important;
   margin: 0;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  transition: color 0.22s ease;
 }
 
 .map-card__badges {
@@ -69,16 +87,16 @@
 .map-card__badge {
   display: inline-flex;
   align-items: center;
-  padding: calc(var(--tag-padding-y-sm) * 0.5) calc(var(--tag-padding-x) * 0.75);
-  border-radius: calc(var(--section-card-border-radius) * 0.5);
-  font-size: calc(var(--card-text-small-font-size) + 2px) !important; /* Bigger font */
+  padding: 0;
+  border-radius: 0;
+  font-size: calc(var(--card-text-small-font-size) + 3px) !important; /* Bigger font */
   font-weight: 600 !important; /* Bolder */
   line-height: 1.2;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   white-space: nowrap;
-  color: var(--card-text-muted) !important;
-  background: color-mix(in srgb, var(--card-text-secondary) 5%, transparent);
+  color: var(--color-brand) !important;
+  background: transparent !important;
   border: none !important;
   opacity: 0.9;
 }
@@ -92,11 +110,16 @@
 
 .map-card__address-icon {
   flex-shrink: 0;
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   margin-top: 0.2em;
   opacity: 0.7;
-  color: var(--card-text-muted);
+  color: var(--color-brand);
+  transition: opacity 0.22s ease, color 0.22s ease;
+  
+  .map-card:hover & {
+    opacity: 1;
+  }
 }
 
 .map-card__address {

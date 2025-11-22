@@ -12,6 +12,7 @@
   /* COMPACT: No minimum height */
   min-height: auto;
   gap: var(--card-gap);
+  background: color-mix(in srgb, var(--card-background) 98%, var(--color-brand) 1%);
 }
 
 .quotation-card__quote {
@@ -23,11 +24,13 @@
 }
 
 .quotation-card__icon {
-  color: color-mix(in srgb, var(--color-brand) 70%, transparent);
+  color: var(--color-brand);
   opacity: 0.7;
   align-self: flex-start;
   flex-shrink: 0;
-  transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 24px;
+  height: 24px;
+  transition: opacity 0.22s ease, color 0.22s ease;
   
   // Use opacity and color changes instead of transform
   .section-card--quotation:hover & {
@@ -40,13 +43,15 @@
   @include card-title-text;
   /* COMPACT: Tight line-height */
   font-style: italic;
-  line-height: 1.2; /* COMPACT: Reduced from 1.3 */
+  font-size: calc(var(--card-title-font-size) * 1.15);
+  line-height: 1.4;
   color: var(--card-text-primary);
   margin: 0;
   padding-left: calc(var(--card-padding) * 0.75);
   /* COMPACT: Reduced padding */
   position: relative;
   transition: color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.01em;
 
   &::before {
     content: '';
@@ -54,11 +59,10 @@
     left: 0;
     top: 0;
     bottom: 0;
-    width: 3px;
-    /* OPTIMIZED: Thinner accent bar */
-    background: linear-gradient(180deg, 
-      var(--color-brand),
-      color-mix(in srgb, var(--color-brand) 65%, transparent));
+    width: 4px;
+    /* OPTIMIZED: Thicker accent bar */
+    background: var(--color-brand);
+    opacity: 1;
     border-radius: var(--radius-xs);
     transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -68,7 +72,7 @@
     
     &::before {
       width: 4px;
-      opacity: 0.9;
+      opacity: 1;
     }
   }
 }
@@ -76,13 +80,13 @@
 .quotation-card__footer {
   display: flex;
   flex-direction: column;
-  gap: calc(var(--card-gap) * 0.5);
+  gap: calc(var(--card-gap) * 0.7);
   /* COMPACT: Tighter footer spacing */
-  padding-top: calc(var(--card-padding) * 0.5);
+  padding-top: calc(var(--card-padding) * 0.6);
   /* COMPACT: Reduced padding */
   border-top: none !important;
   /* CLEAN: No borders on footers - only cards have borders */
-  margin-top: calc(var(--card-gap) * 0.125);
+  margin-top: calc(var(--card-gap) * 0.25);
   /* COMPACT: Reduced margin */
 }
 
@@ -96,9 +100,11 @@
 .quotation-card__author-name {
   @include card-subtitle-text;
   /* OPTIMIZED: Use typography mixin - names are secondary */
-  color: var(--card-text-primary);
+  color: var(--color-brand);
   margin: 0;
   line-height: 1.2;
+  font-weight: 700;
+  font-size: calc(var(--card-subtitle-font-size) + 2px);
 }
 
 .quotation-card__author-role {

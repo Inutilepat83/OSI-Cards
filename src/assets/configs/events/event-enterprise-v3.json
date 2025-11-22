@@ -147,13 +147,8 @@
     }
   ],
   "actions": [
-    { "label": "Register Now", "type": "primary", "icon": "🎫", "action": "#" },
-    { "label": "View Full Agenda", "type": "primary", "icon": "📅", "action": "#" },
-    { "label": "Become a Sponsor", "type": "secondary", "icon": "🤝", "action": "#" }
-  ],
-  "metadata": {
-    "category": "event",
-    "variant": "enterprise",
-    "complexity": "enterprise"
-  }
+    { "label": "Register Now", "type": "website", "variant": "primary", "icon": "🎫", "url": "https://techsummit.com/register" },
+    { "label": "View Full Agenda", "type": "website", "variant": "primary", "icon": "📅", "url": "https://techsummit.com/agenda" },
+    { "label": "Become a Sponsor", "type": "mail", "variant": "secondary", "icon": "🤝", "email": { "to": "sponsors@techsummit.com", "subject": "Sponsorship Inquiry" } }
+  ]
 }

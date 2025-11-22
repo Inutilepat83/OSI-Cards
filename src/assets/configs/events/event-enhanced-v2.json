@@ -89,10 +89,11 @@
     }
   ],
   "actions": [
-    { "label": "Register Now", "type": "primary", "icon": "🎫", "action": "#" },
+    { "label": "Register Now", "type": "website", "variant": "primary", "icon": "🎫", "url": "https://techsummit.com/register" },
     {
       "label": "Contact Organizers",
-      "type": "secondary",
+      "type": "mail",
+      "variant": "secondary",
       "icon": "📧",
       "email": {
         "contact": {
@@ -104,11 +105,6 @@
         "body": "Dear Jennifer Martinez,\n\nI am interested in attending Tech Summit 2025 and would like to learn more about:\n\n• Event registration options\n• Available sponsorship opportunities\n• Speaker submission process\n• Networking event details\n\n**Event Details:**\n• Date: March 15-17, 2025\n• Location: CES Convention Center, Las Vegas, NV\n• Expected Attendance: 150,000+\n• Format: In-Person + Virtual\n\nI look forward to hearing from you.\n\nBest regards"
       }
     },
-    { "label": "View Agenda", "type": "secondary", "icon": "📅", "action": "#" }
-  ],
-  "metadata": {
-    "category": "event",
-    "variant": "enhanced",
-    "complexity": "enhanced"
-  }
+    { "label": "View Agenda", "type": "website", "variant": "secondary", "icon": "📅", "url": "https://techsummit.com/agenda" }
+  ]
 }

@@ -191,21 +191,11 @@ import { validateCardJson, validateCardStructure } from '../../utils';
               <dd>{{ analysisResult.stats.avgSectionsPerCard.toFixed(2) }}</dd>
               <dt>Cards with Actions:</dt>
               <dd>{{ analysisResult.stats.cardsWithActions }}</dd>
-              <dt>Cards with Metadata:</dt>
-              <dd>{{ analysisResult.stats.cardsWithMetadata }}</dd>
             </dl>
 
             <h4>Cards by Type</h4>
             <dl>
               <template *ngFor="let entry of typeEntries">
-                <dt>{{ entry.key }}:</dt>
-                <dd>{{ entry.value }}</dd>
-              </template>
-            </dl>
-
-            <h4>Cards by Complexity</h4>
-            <dl>
-              <template *ngFor="let entry of complexityEntries">
                 <dt>{{ entry.key }}:</dt>
                 <dd>{{ entry.value }}</dd>
               </template>
@@ -504,7 +494,6 @@ export class CardImportExportComponent implements OnInit, OnDestroy {
   // Analysis state
   analysisResult: any = null;
   typeEntries: Array<{ key: string; value: number }> = [];
-  complexityEntries: Array<{ key: string; value: number }> = [];
 
   globalError: string | null = null;
   private destroy$ = new Subject<void>();
@@ -661,12 +650,6 @@ export class CardImportExportComponent implements OnInit, OnDestroy {
       value: value as number
     }));
 
-    this.complexityEntries = Object.entries(this.analysisResult.stats.byComplexity).map(
-      ([key, value]) => ({
-        key,
-        value: value as number
-      })
-    );
   }
 
   clearError(): void {

@@ -9,25 +9,6 @@ interface ColSpanThresholds {
   three?: number;
 }
 
-const SECTION_COL_SPAN_THRESHOLDS: Record<string, ColSpanThresholds> = {
-  overview: { two: 8, three: 12 },
-  map: { two: 3 },
-  chart: { two: 3 },
-  quotation: { two: 4 },
-  'text-reference': { two: 4 },
-  solutions: { two: 4 },
-  info: { two: 4, three: 9 },
-  analytics: { two: 4 },
-  stats: { two: 4 },
-  financials: { two: 4 },
-  'contact-card': { two: 4 },
-  'network-card': { two: 4 },
-  list: { two: 5 },
-  event: { two: 5 },
-  product: { two: 4 },
-  locations: { two: 3 }
-};
-
 const DEFAULT_COL_SPAN_THRESHOLD: ColSpanThresholds = { two: 6 };
 
 export interface MasonryLayoutInfo {
@@ -380,7 +361,9 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     const descriptionDensity = this.getDescriptionDensity(section.description);
     const baseScore = fieldCount + itemCount + descriptionDensity;
 
-    const thresholds = this.getColSpanThreshold(type);
+    // Get thresholds from section's meta (set during normalization)
+    // This allows each section to have its own column logic
+    const thresholds = this.getColSpanThresholds(section);
     if (thresholds.three && baseScore >= thresholds.three) {
       return Math.min(3, this.maxColumns);
     }
@@ -392,8 +375,20 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     return 1;
   }
 
-  private getColSpanThreshold(type: string): ColSpanThresholds {
-    return SECTION_COL_SPAN_THRESHOLDS[type] ?? DEFAULT_COL_SPAN_THRESHOLD;
+  /**
+   * Get column span thresholds for a section
+   * First checks section's meta (set during normalization), then falls back to default
+   */
+  private getColSpanThresholds(section: CardSection): ColSpanThresholds {
+    const meta = section.meta as Record<string, unknown> | undefined;
+    const thresholds = meta?.['colSpanThresholds'] as ColSpanThresholds | undefined;
+    
+    if (thresholds && typeof thresholds === 'object' && 'two' in thresholds) {
+      return thresholds;
+    }
+    
+    // Fallback to default if not found in meta
+    return DEFAULT_COL_SPAN_THRESHOLD;
   }
 
   private getDescriptionDensity(description?: string): number {

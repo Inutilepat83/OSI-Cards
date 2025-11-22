@@ -67,10 +67,11 @@
     }
   ],
   "actions": [
-    { "label": "Connect on LinkedIn", "type": "primary", "icon": "💼", "action": "#" },
+    { "label": "Connect on LinkedIn", "type": "website", "variant": "primary", "icon": "💼", "url": "https://www.linkedin.com/in/sarah-chen-cmo" },
     {
       "label": "Send Email",
-      "type": "secondary",
+      "type": "mail",
+      "variant": "secondary",
       "icon": "📧",
       "email": {
         "contact": {
@@ -82,10 +83,5 @@
         "body": "Dear Sarah Chen,\n\nI hope this email finds you well. I wanted to reach out regarding a potential marketing collaboration opportunity.\n\nBased on your impressive track record:\n• +185% Brand Awareness Growth YoY\n• 420% Average Campaign ROI\n• +520% Lead Generation Growth\n• 920K Social Followers\n• 1.5M Monthly Traffic\n• 180K Email Subscribers\n\nI believe there could be significant synergies between our organizations. I would welcome the opportunity to discuss potential collaboration initiatives that could benefit both parties.\n\nWould you be available for a brief call next week to explore this further?\n\nBest regards"
       }
     }
-  ],
-  "metadata": {
-    "category": "contact",
-    "variant": "enhanced",
-    "complexity": "enhanced"
-  }
+  ]
 }

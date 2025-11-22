@@ -2217,8 +2217,20 @@ export class HomePageComponent implements OnInit {
 
   onFullscreenToggle(isFullscreen: boolean): void {
     this.isFullscreen = isFullscreen;
-    this.store.dispatch(CardActions.setFullscreen({ fullscreen: isFullscreen }));
-    this.focusPreviewRegion();
+  }
+
+  onAgentAction(event: { action: any; card: AICardConfig; agentId?: string; context?: Record<string, unknown> }): void {
+    // Handle agent action - trigger agent with the provided context
+    console.log('Agent action triggered:', event);
+    // TODO: Implement agent triggering logic
+    // Example: this.agentService.triggerAgent(event.agentId, event.context);
+  }
+
+  onQuestionAction(event: { action: any; card: AICardConfig; question?: string }): void {
+    // Handle question action - write a new message to the chat
+    console.log('Question action triggered:', event);
+    // TODO: Implement chat message logic
+    // Example: this.chatService.sendMessage(event.question || event.action.label);
   }
 
   toggleFullscreen(): void {

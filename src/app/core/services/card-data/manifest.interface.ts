@@ -9,7 +9,6 @@ export interface CardManifestEntry {
   size: number;
   priority: 'high' | 'medium' | 'low';
   sectionCount: number;
-  complexity: 'basic' | 'enhanced' | 'enterprise';
   title: string;
   format?: 'json'; // Optional: format of the card file (defaults to 'json')
   metadata: {

@@ -114,13 +114,8 @@
     }
   ],
   "actions": [
-    { "label": "Visit Website", "type": "primary", "icon": "🌐", "action": "#" },
-    { "label": "Contact Sales", "type": "primary", "icon": "📧", "action": "#" },
-    { "label": "View Annual Report", "type": "secondary", "icon": "📄", "action": "#" }
-  ],
-  "metadata": {
-    "category": "company",
-    "variant": "enterprise",
-    "complexity": "enterprise"
-  }
+    { "label": "Visit Website", "type": "website", "variant": "primary", "icon": "🌐", "url": "https://www.techcorp.com" },
+    { "label": "Contact Sales", "type": "mail", "variant": "primary", "icon": "📧", "email": { "to": "sales@techcorp.com", "subject": "Sales Inquiry" } },
+    { "label": "View Annual Report", "type": "website", "variant": "secondary", "icon": "📄", "url": "https://www.techcorp.com/annual-report" }
+  ]
 }

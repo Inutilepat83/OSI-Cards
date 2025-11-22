@@ -94,12 +94,7 @@
     }
   ],
   "actions": [
-    { "label": "Start Free Trial", "type": "primary", "icon": "🛡️", "action": "#" },
-    { "label": "Security Assessment", "type": "secondary", "icon": "🔍", "action": "#" }
-  ],
-  "metadata": {
-    "category": "product",
-    "variant": "enhanced",
-    "complexity": "enhanced"
-  }
+    { "label": "Start Free Trial", "type": "question", "variant": "primary", "icon": "🛡️", "question": "How do I start a free trial?" },
+    { "label": "Security Assessment", "type": "agent", "variant": "secondary", "icon": "🔍", "agentId": "security-agent", "agentContext": { "action": "security_assessment" } }
+  ]
 }

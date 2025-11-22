@@ -1,0 +1,68 @@
+<div class="ai-section ai-section--map">
+  <div class="ai-section__header">
+    <div class="ai-section__details">
+      <h3 class="ai-section__title">{{ section.title }}</h3>
+      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
+    </div>
+    <span *ngIf="hasItems" class="ai-section__badge">
+      {{ locations.length }} {{ locations.length === 1 ? 'location' : 'locations' }}
+    </span>
+  </div>
+
+  <div class="ai-section__body">
+    <ng-container *ngIf="hasItems; else mapEmpty">
+      <div class="map-grid">
+        <article
+          *ngFor="let location of locations; trackBy: trackItem"
+          class="map-card"
+          role="button"
+          tabindex="0"
+          (click)="onLocationClick(location)"
+          (keydown.enter)="onLocationClick(location)"
+          (keydown.space)="$event.preventDefault(); onLocationClick(location)"
+        >
+          <!-- Header: Title and Badge -->
+          <header class="map-card__header">
+            <div class="map-card__header-content">
+              <h3 class="map-card__title">
+                {{ location.name }}
+              </h3>
+              <div class="map-card__badges" *ngIf="location.type">
+                <span class="map-card__badge">
+                  {{ location.type }}
+                </span>
+              </div>
+            </div>
+          </header>
+
+          <!-- Address -->
+          <div *ngIf="location.address" class="map-card__address-wrapper">
+            <lucide-icon name="map-pin" size="14" class="map-card__address-icon"></lucide-icon>
+            <p class="map-card__address">
+              {{ location.address }}
+            </p>
+          </div>
+
+          <!-- Meta Information -->
+          <footer *ngIf="formatCoordinates(location) || location.value" class="map-card__footer">
+            <div *ngIf="formatCoordinates(location) as coords" class="map-card__meta">
+              <lucide-icon name="map-pin" size="14" class="map-card__meta-icon"></lucide-icon>
+              <span class="map-card__meta-text">{{ coords }}</span>
+            </div>
+            <div *ngIf="location.value" class="map-card__meta">
+              <lucide-icon name="activity" size="14" class="map-card__meta-icon"></lucide-icon>
+              <span class="map-card__meta-text">{{ location.value }}</span>
+            </div>
+          </footer>
+        </article>
+      </div>
+    </ng-container>
+
+    <ng-template #mapEmpty>
+      <div class="section-empty">
+        <lucide-icon name="map-pin" size="32" class="section-empty__icon"></lucide-icon>
+        <p class="section-empty__text">No location data provided</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

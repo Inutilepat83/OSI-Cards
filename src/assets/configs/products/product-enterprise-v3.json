@@ -129,11 +129,12 @@
     }
   ],
   "actions": [
-    { "label": "Start Free Trial", "type": "primary", "icon": "🚀", "action": "#" },
-    { "label": "View Documentation", "type": "primary", "icon": "📚", "action": "#" },
+    { "label": "Start Free Trial", "type": "question", "variant": "primary", "icon": "🚀", "question": "How can I start a free trial?" },
+    { "label": "View Documentation", "type": "website", "variant": "primary", "icon": "📚", "url": "https://docs.ai-insights.com" },
     {
       "label": "Contact Sales Team",
-      "type": "secondary",
+      "type": "mail",
+      "variant": "secondary",
       "icon": "📧",
       "email": {
         "contact": {
@@ -145,10 +146,5 @@
         "body": "Hello,\n\nI am interested in learning more about the AI Insights Platform for our organization.\n\n**Key Areas of Interest:**\n• Machine Learning capabilities\n• Real-time data processing (10M records/min)\n• Custom AI model training\n• 100+ data source integrations\n• 98.5% accuracy rate\n• 99.99% uptime SLA\n\n**Organization Details:**\n• Industry: [Your Industry]\n• Size: [Your Organization Size]\n• Use Case: [Your Use Case]\n\nI would appreciate the opportunity to:\n1. Schedule a personalized demo\n2. Discuss enterprise pricing and licensing options\n3. Learn more about implementation and support services\n\nPlease let me know your availability for a call or meeting.\n\nThank you for your time and consideration.\n\nBest regards"
       }
     }
-  ],
-  "metadata": {
-    "category": "product",
-    "variant": "enterprise",
-    "complexity": "enterprise"
-  }
+  ]
 }

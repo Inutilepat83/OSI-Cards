@@ -8,7 +8,6 @@ import { CardManifest, CardManifestEntry } from './manifest.interface';
 import { validateCardJson, sanitizeCardConfig } from '../../../shared/utils/card-utils';
 
 const PRIORITY_ORDER = { high: 3, medium: 2, low: 1 };
-const COMPLEXITY_ORDER = { basic: 1, enhanced: 2, enterprise: 3 };
 
 /**
  * JSON file-based card data provider
@@ -142,14 +141,8 @@ export class JsonFileCardProvider extends CardDataProvider {
           return of([] as AICardConfig[]);
         }
 
-        // Sort by complexity first (basic=1, enhanced=2, enterprise=3) to match variant numbers
-        // Then by priority as secondary sort
+        // Sort by priority (high priority first)
         const sortedCards = [...typeCards].sort((a, b) => {
-          const complexityDiff = (COMPLEXITY_ORDER[a.complexity] || 0) - (COMPLEXITY_ORDER[b.complexity] || 0);
-          if (complexityDiff !== 0) {
-            return complexityDiff;
-          }
-          // Secondary sort by priority (high priority first)
           return (PRIORITY_ORDER[b.priority] || 0) - (PRIORITY_ORDER[a.priority] || 0);
         });
 

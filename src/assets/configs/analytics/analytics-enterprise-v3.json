@@ -108,13 +108,8 @@
     }
   ],
   "actions": [
-    { "label": "Update Account Status", "type": "primary", "icon": "💾", "action": "#" },
-    { "label": "Plan Renewal", "type": "primary", "icon": "📅", "action": "#" },
-    { "label": "Export Report", "type": "secondary", "icon": "📥", "action": "#" }
-  ],
-  "metadata": {
-    "category": "analytics",
-    "variant": "enterprise",
-    "complexity": "enterprise"
-  }
+    { "label": "Update Account Status", "type": "agent", "variant": "primary", "icon": "💾", "agentId": "account-agent", "agentContext": { "action": "update_account_status" } },
+    { "label": "Plan Renewal", "type": "agent", "variant": "primary", "icon": "📅", "agentId": "billing-agent", "agentContext": { "action": "plan_renewal" } },
+    { "label": "Export Report", "type": "question", "variant": "secondary", "icon": "📥", "question": "How can I export this report?" }
+  ]
 }

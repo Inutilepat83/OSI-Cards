@@ -1,0 +1,77 @@
+<div class="ai-section ai-section--chart">
+  <div class="ai-section__header">
+    <div class="ai-section__details">
+      <h3 class="ai-section__title">{{ section.title }}</h3>
+      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
+    </div>
+    <span *ngIf="fields.length" class="ai-section__badge">
+      {{ fields.length }} {{ fields.length === 1 ? 'item' : 'items' }}
+    </span>
+  </div>
+
+  <div class="ai-section__body">
+    <ng-container *ngIf="hasData; else chartEmpty">
+      <ng-container [ngSwitch]="chartType">
+      <div *ngSwitchCase="'pie'" class="chart-section__split">
+        <div class="chart-section__list">
+          <article
+            *ngFor="let field of fields; trackBy: trackField; let idx = index"
+            class="chart-card chart-card--pie"
+            role="button"
+            tabindex="0"
+            (click)="onFieldClick(field)"
+            (keydown.enter)="onFieldClick(field)"
+            (keydown.space)="$event.preventDefault(); onFieldClick(field)"
+          >
+            <div class="h-3 w-3 rounded-full flex-shrink-0" [ngStyle]="{ backgroundColor: getColor(field, idx) }"></div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-foreground">{{ field.label || field.title }}</p>
+              <p class="text-xs text-muted-foreground">{{ getPercentage(field) }} &middot; {{ getDisplayValue(field) }}</p>
+            </div>
+          </article>
+        </div>
+        <div class="chart-card">
+          <p>Total: <span class="font-semibold text-foreground">{{ totalValue }}</span></p>
+          <p class="mt-2">Tap any segment to focus on the underlying metric.</p>
+        </div>
+      </div>
+
+      <div *ngSwitchDefault class="chart-section__list">
+        <article
+          *ngFor="let field of fields; trackBy: trackField; let idx = index"
+          class="chart-card chart-card--with-progress"
+          role="button"
+          tabindex="0"
+          (click)="onFieldClick(field)"
+          (keydown.enter)="onFieldClick(field)"
+          (keydown.space)="$event.preventDefault(); onFieldClick(field)"
+        >
+          <div class="chart-card__content-wrapper">
+            <div class="flex items-center justify-between gap-4 w-full">
+              <p class="text-sm font-semibold text-foreground">
+                {{ field.label || field.title }}
+              </p>
+              <span class="text-sm text-muted-foreground">{{ field.value }}</span>
+            </div>
+          </div>
+          <div class="chart-card__progress-wrapper">
+            <div class="h-2 w-full rounded-full bg-muted/30">
+              <div
+                class="h-full rounded-full transition-all duration-500"
+                [ngStyle]="{ width: getBarWidth(field), backgroundColor: getColor(field, idx) }"
+              ></div>
+            </div>
+          </div>
+        </article>
+      </div>
+      </ng-container>
+    </ng-container>
+
+    <ng-template #chartEmpty>
+      <div class="section-empty">
+        <lucide-icon name="activity" size="32" class="mb-3 opacity-60"></lucide-icon>
+        <p class="text-sm">No chart data available.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

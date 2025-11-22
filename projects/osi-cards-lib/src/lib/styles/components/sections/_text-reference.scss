@@ -1,0 +1,158 @@
+@import 'sections/sections-base';
+@import 'unified-cards';
+
+.section-block--reference {
+  --section-card-grid-min: 300px; /* Wider cards for text references */
+}
+
+.section-card--reference {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  /* COMPACT: No minimum height */
+  min-height: auto;
+  gap: var(--card-gap);
+  border: 1px solid color-mix(in srgb, var(--color-brand) 20%, transparent);
+}
+
+.reference-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--card-gap) * 0.5);
+  /* COMPACT: Tighter content spacing */
+}
+
+.reference-card__text {
+  @include card-subtitle-text;
+  /* COMPACT: Tight line-height */
+  font-size: calc(var(--card-subtitle-font-size) * 1.1);
+  line-height: 1.4;
+  color: var(--card-text-primary);
+  margin: 0;
+}
+
+.reference-card__footer {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--card-gap) * 0.5);
+  /* COMPACT: Tighter footer spacing */
+  padding-top: calc(var(--card-padding) * 0.5);
+  /* COMPACT: Reduced padding */
+  border-top: none !important;
+  /* CLEAN: No borders on footers - only cards have borders */
+  margin-top: calc(var(--card-gap) * 0.125);
+  /* COMPACT: Reduced margin */
+}
+
+.reference-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--card-gap) * 0.75);
+  /* COMPACT: Tighter meta spacing */
+  align-items: center;
+}
+
+.reference-card__category {
+  /* OPTIMIZED: Compact badge styling - NO BORDER (only cards have borders) */
+  display: inline-flex;
+  align-items: center;
+  padding: calc(var(--tag-padding-y-sm) * 1) calc(var(--tag-padding-x) * 1);
+  border-radius: var(--section-card-border-radius);
+  border: none !important;
+  background: color-mix(in srgb, var(--color-brand) 12%, transparent);
+  @include label-text;
+  font-size: calc(var(--card-meta-font-size) + 1px);
+  font-weight: 700;
+  color: var(--color-brand);
+  --accent: var(--color-brand);
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.reference-card__source,
+.reference-card__reference {
+  @include card-meta-text;
+  /* COMPACT: Tight line-height */
+  margin: 0;
+  line-height: 1.2;
+}
+
+.reference-card__date {
+  @include card-meta-text;
+  /* COMPACT: Tight line-height */
+  margin-left: auto;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.reference-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--card-gap) * 0.5);
+  /* COMPACT: Tighter link spacing */
+  @include card-meta-text;
+  color: var(--color-brand);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.22s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s ease;
+  line-height: 1.2;
+  /* COMPACT: Tight line-height */
+
+  // Use color and opacity changes instead of transform
+  &:hover {
+    color: var(--color-brand-dark, color-mix(in srgb, var(--color-brand) 80%, black));
+    opacity: 1;
+    transform: translateX(2px);
+    
+    lucide-icon {
+      opacity: 1;
+      transform: translateX(2px);
+    }
+  }
+
+  lucide-icon {
+    width: 12px;
+    height: 12px;
+    /* OPTIMIZED: Smaller icon */
+    transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s ease;
+    flex-shrink: 0;
+  }
+}
+
+/* Removed redundant 768px media query - continuous responsive design via base system */
+
+/* Light theme overrides - text colors only */
+/* Background and border are handled by global enforcement */
+:root[data-theme='day'] {
+  .reference-card {
+    &__text {
+      color: #4b5563;
+    }
+    
+    &__category {
+      /* Badge background/border handled by component styles - only text color here */
+      color: var(--primary) !important;
+    }
+    
+    &__source {
+      color: #6b7280;
+    }
+    
+    &__date {
+      color: #9ca3af;
+    }
+    
+    &__link {
+      color: var(--primary);
+      
+      &:hover {
+        color: var(--primary);
+      }
+    }
+  }
+  
+  .section-card--reference {
+    /* Background and border removed - handled by global enforcement */
+  }
+}
+

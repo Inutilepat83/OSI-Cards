@@ -1,0 +1,212 @@
+:root {
+  /* === BRAND & CORE COLORS === */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-brand: #ff7900;
+  --color-brand-dark: #CC5F00;
+  --color-brand-light: #FF9933;
+
+  /* Grayscale ramp */
+  --color-gray-50: #ffffff;
+  --color-gray-100: #fcfcfc;
+  --color-gray-150: #f7f7f7;
+  --color-gray-200: #f0f0f1;
+  --color-gray-300: #e9e9e9;
+  --color-gray-400: #92999e;
+  --color-gray-500: #5a5f62;
+  --color-gray-600: #343541;
+  --color-gray-700: #2a2a2a;
+  --color-gray-800: #232323;
+  --color-gray-850: #171717;
+  --color-gray-900: #000000;
+
+  --background: #ffffff;
+  --surface-contrast-color: #000000;
+
+  /* Default surface tokens (override per theme via data-theme) */
+  --theme-ai-card-border: 0.5px solid color-mix(in srgb, var(--color-brand) 49%, transparent);
+  --theme-ai-card-border-hover: 0.5px solid var(--color-brand);
+  --theme-ai-card-background: color-mix(in srgb, var(--background) 99%, var(--surface-contrast-color) 1%);
+  --theme-ai-card-background-hover: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --theme-ai-card-box-shadow: 0 0 18px rgba(255, 121, 0, 0.3); /* Orange glow only, intensified by 50% */
+  --theme-ai-card-box-shadow-hover: 0 0 24px rgba(255, 121, 0, 0.45); /* Orange glow only, intensified by 50% */
+  --theme-ai-card-transition: border 0.38s cubic-bezier(0.4, 0, 0.2, 1), background 0.38s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  --theme-card-border: 1px solid rgba(0, 0, 0, 0.16);
+  --theme-card-border-hover: var(--color-brand);
+  --theme-card-hover-border: var(--color-brand);
+  --theme-card-background: color-mix(in srgb, var(--background) 99%, var(--surface-contrast-color) 1%);
+  --theme-card-background-hover: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --theme-card-box-shadow: 0 4px 14px rgba(15, 15, 20, 0.06);
+  --theme-card-box-shadow-hover: 0 10px 24px rgba(10, 10, 16, 0.1);
+  --theme-card-box-shadow-hover-lift: 0 14px 32px rgba(6, 6, 10, 0.12);
+  --theme-card-hover-background: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --theme-card-hover-shadow: 0 14px 30px rgba(8, 8, 12, 0.12);
+
+  --theme-section-border: 1px solid rgba(0, 0, 0, 0.08);
+  --theme-section-border-hover: 1px solid rgba(0, 0, 0, 0.1);
+  --theme-section-box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+  --theme-section-box-shadow-hover: 0 18px 40px rgba(0, 0, 0, 0.12);
+  --theme-section-transition: border-color 0.32s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  --section-background: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --section-background-hover: color-mix(in srgb, var(--background) 97%, var(--surface-contrast-color) 3%);
+  --section-surface: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --section-surface-hover: color-mix(in srgb, var(--background) 97%, var(--surface-contrast-color) 3%);
+
+  --theme-section-item-border: 1px solid rgba(0, 0, 0, 0.14);
+  --theme-section-item-border-hover: 1px solid rgba(0, 0, 0, 0.22);
+  --theme-section-item-background: var(--section-surface);
+  --theme-section-item-background-hover: color-mix(in srgb, var(--background) 97%, var(--surface-contrast-color) 3%);
+  --theme-section-item-box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+  --theme-section-item-box-shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.12);
+  --theme-section-item-hover-transform: none;
+  --theme-section-item-transition: border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), background 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* === DARK THEME (Night Mode - React Design) === */
+:root[data-theme='night'] {
+  --background: #0a0a0a;
+  --surface-contrast-color: #ffffff;
+  --foreground: #ffffff;
+  --muted: #242424;
+  --muted-foreground: #aaaaaa;
+  --card: color-mix(in srgb, var(--background) 99%, var(--surface-contrast-color) 1%);
+  --card-foreground: #ffffff;
+  --card-surface: var(--card);
+  --card-surface-hover: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --card-section-bg: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --card-section-card-bg: color-mix(in srgb, var(--card-section-bg) 90%, var(--surface-contrast-color) 10%);
+  --theme-ai-card-border: 0.5px solid color-mix(in srgb, var(--color-brand) 49%, transparent);
+  --theme-ai-card-border-hover: 0.5px solid var(--color-brand);
+  --theme-ai-card-background: color-mix(in srgb, var(--background) 99%, var(--surface-contrast-color) 1%);
+  --theme-ai-card-background-hover: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --theme-ai-card-box-shadow: 0 0 18px rgba(255, 121, 0, 0.3); /* Orange glow only, intensified by 50% */
+  --theme-ai-card-box-shadow-hover: 0 0 24px rgba(255, 121, 0, 0.45); /* Orange glow only, intensified by 50% */
+
+  --theme-card-border: 1px solid rgba(0, 0, 0, 0.16);
+  --theme-card-border-hover: var(--color-brand);
+  --theme-card-hover-border: var(--color-brand);
+  --theme-card-background: color-mix(in srgb, var(--background) 99%, var(--surface-contrast-color) 1%);
+  --theme-card-background-hover: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --theme-card-box-shadow: 0 6px 22px rgba(0, 0, 0, 0.58);
+  --theme-card-box-shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.68);
+  --theme-card-box-shadow-hover-lift: 0 18px 42px rgba(0, 0, 0, 0.72);
+  --theme-card-hover-background: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --theme-card-hover-shadow: 0 20px 44px rgba(0, 0, 0, 0.76);
+  /* Sections lift off the darker card */
+  --section-background: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --section-background-hover: color-mix(in srgb, var(--background) 97%, var(--surface-contrast-color) 3%);
+  --section-surface: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --section-surface-hover: color-mix(in srgb, var(--background) 97%, var(--surface-contrast-color) 3%);
+  --popover: #111111;
+  --popover-foreground: #ffffff;
+  --primary: #FF7900;
+  --primary-foreground: #ffffff;
+  --secondary: #333333;
+  --secondary-foreground: #ffffff;
+  --accent: #FF7900;
+  --accent-foreground: #000000;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(200, 200, 200, 0.3);
+  --input: transparent;
+  --input-background: #222222;
+  --switch-background: #333333;
+  --ring: rgba(255, 121, 0, 0.6);
+  --chart-1: #FF7900;
+  --chart-2: #FF9933;
+  --chart-3: #CC5F00;
+  --chart-4: #FFE6CC;
+  --chart-5: #FF4500;
+  
+  /* Theme-specific overrides for 5 element types - Dark theme */
+  --hero-card-border: 1px solid rgba(233, 233, 233, 0.3);
+  --hero-card-border-hover: rgba(233, 233, 233, 0.6);
+  --theme-section-border: 1px solid rgba(255, 255, 255, 0.08);
+  --theme-section-border-hover: 1px solid rgba(255, 255, 255, 0.08);
+  --theme-section-box-shadow: 0 12px 34px rgba(0, 0, 0, 0.6);
+  --theme-section-box-shadow-hover: 0 24px 48px rgba(0, 0, 0, 0.75);
+  --theme-section-item-border: 1px solid rgba(255, 255, 255, 0.16);
+  --theme-section-item-border-hover: 1px solid rgba(255, 255, 255, 0.28);
+  --theme-section-item-background: var(--section-surface);
+  --theme-section-item-background-hover: color-mix(in srgb, var(--background) 97%, var(--surface-contrast-color) 3%);
+  --theme-section-item-box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
+  --theme-section-item-box-shadow-hover: 0 16px 34px rgba(0, 0, 0, 0.7);
+  --theme-section-item-hover-transform: none;
+}
+
+/* === LIGHT THEME (Day Mode - Inverted React Design) === */
+:root[data-theme='day'] {
+  --background: #ffffff;
+  --foreground: #1c1c1f;
+  --muted: #f4f4f6;
+  --muted-foreground: #555861;
+  --card: color-mix(in srgb, var(--background) 99%, var(--surface-contrast-color) 1%);
+  --card-foreground: #1c1c1f;
+  --card-surface: var(--card);
+  --card-surface-hover: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --card-section-bg: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --card-section-card-bg: color-mix(in srgb, var(--card-section-bg) 88%, #ffffff);
+  --theme-ai-card-border: 0.5px solid color-mix(in srgb, var(--color-brand) 52%, transparent);
+  --theme-ai-card-border-hover: 0.5px solid var(--color-brand);
+  --theme-ai-card-background: color-mix(in srgb, var(--background) 99%, var(--surface-contrast-color) 1%);
+  --theme-ai-card-background-hover: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --theme-ai-card-box-shadow: 0 0 18px rgba(255, 121, 0, 0.3); /* Orange glow only, intensified by 50% */
+  --theme-ai-card-box-shadow-hover: 0 0 24px rgba(255, 121, 0, 0.45); /* Orange glow only, intensified by 50% */
+
+  --theme-card-border: 1px solid rgba(255, 255, 255, 0.22);
+  --theme-card-border-hover: var(--color-brand);
+  --theme-card-hover-border: var(--color-brand);
+  --theme-card-background: color-mix(in srgb, var(--background) 99%, var(--surface-contrast-color) 1%);
+  --theme-card-background-hover: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --theme-card-box-shadow: 0 4px 14px rgba(15, 15, 20, 0.06);
+  --theme-card-box-shadow-hover: 0 10px 24px rgba(10, 10, 16, 0.1);
+  --theme-card-box-shadow-hover-lift: 0 14px 32px rgba(6, 6, 10, 0.12);
+  --theme-card-hover-background: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --theme-card-hover-shadow: 0 14px 30px rgba(8, 8, 12, 0.12);
+  --section-background: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --section-background-hover: color-mix(in srgb, var(--background) 97%, var(--surface-contrast-color) 3%);
+  --section-surface: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --section-surface-hover: color-mix(in srgb, var(--background) 97%, var(--surface-contrast-color) 3%);
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
+  --primary: #FF7900;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #1a1a1a;
+  --accent: #FF7900;
+  --accent-foreground: #ffffff;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(200, 200, 200, 0.5);
+  --input: transparent;
+  --input-background: #f9f9f9;
+  --switch-background: #e5e5e5;
+  --ring: rgba(255, 121, 0, 0.4);
+  --chart-1: #FF7900;
+  --chart-2: #FF9933;
+  --chart-3: #CC5F00;
+  --chart-4: #FFE6CC;
+  --chart-5: #FF4500;
+  
+  /* Light theme specific overrides for sections */
+  --color-gray-700: #e0e0e0;
+  --color-gray-600: #d0d0d0;
+  --card-section-card-bg: color-mix(in srgb, var(--card-section-bg) 85%, #ffffff);
+  
+  /* Theme-specific overrides for 5 element types - Light theme */
+  --hero-card-border: 1px solid rgba(146, 153, 158, 0.4);
+  --hero-card-border-hover: rgba(146, 153, 158, 0.7);
+  --theme-section-border: 1px solid rgba(0, 0, 0, 0.08);
+  --theme-section-border-hover: 1px solid rgba(0, 0, 0, 0.1);
+  --theme-section-box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+  --theme-section-box-shadow-hover: 0 18px 40px rgba(0, 0, 0, 0.12);
+  --theme-section-item-border: 1px solid rgba(0, 0, 0, 0.14);
+  --theme-section-item-border-hover: 1px solid rgba(0, 0, 0, 0.22);
+  --theme-section-item-background: var(--section-surface);
+  --theme-section-item-background-hover: color-mix(in srgb, var(--background) 97%, var(--surface-contrast-color) 3%);
+  --theme-section-item-box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+  --theme-section-item-box-shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.12);
+  --theme-section-item-hover-transform: none;
+}
+

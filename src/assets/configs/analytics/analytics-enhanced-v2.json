@@ -59,12 +59,7 @@
     }
   ],
   "actions": [
-    { "label": "Export Full Report", "type": "primary", "icon": "📥", "action": "#" },
-    { "label": "Schedule Review", "type": "secondary", "icon": "📞", "action": "#" }
-  ],
-  "metadata": {
-    "category": "analytics",
-    "variant": "enhanced",
-    "complexity": "enhanced"
-  }
+    { "label": "Export Full Report", "type": "question", "variant": "primary", "icon": "📥", "question": "How can I export the full report?" },
+    { "label": "Schedule Review", "type": "agent", "variant": "secondary", "icon": "📞", "agentId": "calendar-agent", "agentContext": { "action": "schedule_review" } }
+  ]
 }

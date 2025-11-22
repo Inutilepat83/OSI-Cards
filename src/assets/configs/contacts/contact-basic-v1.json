@@ -24,11 +24,6 @@
     }
   ],
   "actions": [
-    { "label": "Send Email", "type": "primary", "icon": "📧", "action": "#" }
-  ],
-  "metadata": {
-    "category": "contact",
-    "variant": "basic",
-    "complexity": "basic"
-  }
+    { "label": "Send Email", "type": "mail", "variant": "primary", "icon": "📧", "email": { "to": "john.smith@techcorp.com", "subject": "Hello", "body": "Dear John Smith,\n\n" } }
+  ]
 }

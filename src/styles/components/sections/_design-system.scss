@@ -184,7 +184,7 @@ $breakpoints: (
   color: color-mix(in srgb, var(--card-text-primary) 95%, var(--color-brand) 5%);
   letter-spacing: var(--card-value-letter-spacing);
   line-height: var(--card-value-line-height);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  text-shadow: none;
 }
 
 // Card title styling (within cards) - Uses CSS variables
@@ -251,30 +251,11 @@ $breakpoints: (
   height: 100%;
   backdrop-filter: var(--section-backdrop-filter, none);
 
-  // Subtle glow effect - optional decorative element
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: var(--section-glow-background,
-      radial-gradient(circle at top right,
-        color-mix(in srgb, #{$accent} 25%, transparent) 0%,
-        transparent 65%));
-    opacity: var(--section-glow-opacity, 0);
-    transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none;
-  }
-
   &:hover {
-    /* Enhanced hover: subtle background shift with refined shadow */
+    /* Minimalistic hover: subtle background shift */
     background: color-mix(in srgb, var(--section-background, transparent) 98%, rgba(255, 121, 0, 0.02));
     box-shadow: var(--card-box-shadow-hover);
     border-color: color-mix(in srgb, var(--section-accent, var(--accent)) 20%, transparent);
-
-    &::before {
-      opacity: var(--section-glow-opacity-hover, 0.8);
-    }
   }
 }
 
@@ -294,8 +275,8 @@ $breakpoints: (
   letter-spacing: var(--section-title-letter-spacing);
   text-transform: capitalize;
   line-height: var(--section-title-line-height);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1), text-shadow 0.3s ease;
+  text-shadow: none;
+  transition: color 0.22s ease;
 }
 
 // Section body styling
@@ -312,22 +293,18 @@ $breakpoints: (
 @mixin progress-bar {
   width: 100%;
   height: 4px;
-  background: color-mix(in srgb, var(--section-accent, var(--accent)) 12%, transparent);
-  border-radius: 3px;
+  background: color-mix(in srgb, var(--section-accent, var(--accent)) 10%, transparent);
+  border-radius: 2px;
   overflow: hidden;
   margin-top: 6px;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 
   &::after {
     content: '';
     display: block;
     height: 100%;
-    background: linear-gradient(90deg,
-      color-mix(in srgb, var(--section-accent, var(--accent)) 85%, transparent),
-      color-mix(in srgb, var(--section-accent, var(--accent)) 95%, transparent));
+    background: var(--section-accent, var(--accent));
     border-radius: inherit;
     transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 0 8px color-mix(in srgb, var(--section-accent, var(--accent)) 40%, transparent);
   }
 }
 
@@ -366,22 +343,18 @@ $breakpoints: (
 @mixin trend-colors {
   &.trend--up {
     color: #4ade80 !important;
-    text-shadow: 0 1px 3px rgba(74, 222, 128, 0.32);
   }
 
   &.trend--down {
     color: #f87171 !important;
-    text-shadow: 0 1px 3px rgba(248, 113, 113, 0.32);
   }
 
   &.trend--stable {
     color: #facc15 !important;
-    text-shadow: 0 1px 3px rgba(250, 204, 21, 0.28);
   }
 
   &.trend--neutral {
     color: #94a3b8 !important;
-    text-shadow: 0 1px 3px rgba(148, 163, 184, 0.26);
   }
 }
 
@@ -391,21 +364,21 @@ $breakpoints: (
   &.status--success {
     border-color: rgba(74, 222, 128, 0.4) !important;
     color: rgba(134, 239, 172, 1) !important;
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.18), rgba(34, 197, 94, 0.1)) !important;
+    background: color-mix(in srgb, rgba(34, 197, 94, 0.15), transparent) !important;
   }
 
   &.status--active,
   &.status--in-progress {
-    border-color: rgba(255, 121, 0, 0.45) !important;
+    border-color: rgba(255, 121, 0, 0.4) !important;
     color: rgba(255, 180, 110, 1) !important;
-    background: linear-gradient(135deg, rgba(255, 121, 0, 0.28), rgba(255, 121, 0, 0.16)) !important;
+    background: color-mix(in srgb, rgba(255, 121, 0, 0.15), transparent) !important;
   }
 
   &.status--pending,
   &.status--warning {
-    border-color: rgba(251, 191, 36, 0.45) !important;
+    border-color: rgba(251, 191, 36, 0.4) !important;
     color: rgba(253, 224, 71, 1) !important;
-    background: linear-gradient(135deg, rgba(253, 186, 116, 0.2), rgba(253, 186, 116, 0.12)) !important;
+    background: color-mix(in srgb, rgba(253, 186, 116, 0.15), transparent) !important;
   }
 
   &.status--blocked,
@@ -413,9 +386,9 @@ $breakpoints: (
   &.status--delayed,
   &.status--inactive,
   &.status--error {
-    border-color: rgba(248, 113, 113, 0.48) !important;
+    border-color: rgba(248, 113, 113, 0.4) !important;
     color: rgba(252, 165, 165, 1) !important;
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.22), rgba(239, 68, 68, 0.14)) !important;
+    background: color-mix(in srgb, rgba(239, 68, 68, 0.15), transparent) !important;
   }
 }
 

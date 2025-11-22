@@ -23,11 +23,6 @@
     }
   ],
   "actions": [
-    { "label": "View Full Dashboard", "type": "primary", "icon": "📊", "action": "#" }
-  ],
-  "metadata": {
-    "category": "analytics",
-    "variant": "basic",
-    "complexity": "basic"
-  }
+    { "label": "View Full Dashboard", "type": "website", "variant": "primary", "icon": "📊", "url": "https://dashboard.example.com" }
+  ]
 }

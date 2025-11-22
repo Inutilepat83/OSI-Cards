@@ -73,7 +73,6 @@ export class CardDiffUtil {
           cardType: newCard.cardType,
           description: newCard.description,
           columns: newCard.columns,
-          metadata: newCard.metadata,
           actions: newCard.actions,
           // Keep same sections reference
           sections: oldCard.sections
@@ -97,7 +96,6 @@ export class CardDiffUtil {
         cardType: newCard.cardType,
         description: newCard.description,
         columns: newCard.columns,
-        metadata: newCard.metadata,
         actions: newCard.actions,
         sections: mergedSections
       },

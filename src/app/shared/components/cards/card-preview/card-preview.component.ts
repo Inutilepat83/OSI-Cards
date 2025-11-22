@@ -21,6 +21,8 @@ export class CardPreviewComponent implements OnInit, OnChanges, OnDestroy {
   @Output() cardInteraction = new EventEmitter<{ action: string; card: AICardConfig }>();
   @Output() fieldInteraction = new EventEmitter<CardFieldInteractionEvent>();
   @Output() fullscreenToggle = new EventEmitter<boolean>();
+  @Output() agentAction = new EventEmitter<{ action: any; card: AICardConfig; agentId?: string; context?: Record<string, unknown> }>();
+  @Output() questionAction = new EventEmitter<{ action: any; card: AICardConfig; question?: string }>();
 
   constructor(private cdr: ChangeDetectorRef) {}
 
@@ -52,5 +54,13 @@ export class CardPreviewComponent implements OnInit, OnChanges, OnDestroy {
 
   onFullscreenToggle(isFullscreen: boolean): void {
     this.fullscreenToggle.emit(isFullscreen);
+  }
+
+  onAgentAction(event: { action: any; card: AICardConfig; agentId?: string; context?: Record<string, unknown> }): void {
+    this.agentAction.emit(event);
+  }
+
+  onQuestionAction(event: { action: any; card: AICardConfig; question?: string }): void {
+    this.questionAction.emit(event);
   }
 }

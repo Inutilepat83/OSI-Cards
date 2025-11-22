@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, inject } from '@angular/core';
 import { CommonModule, ViewportScroller } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { AICardConfig, CardSection, CardField, CardItem, CardAction } from '../../../models';
+import { AICardConfig, CardSection, CardField, CardItem, CardAction, MailCardAction } from '../../../models';
 import { Subject, takeUntil, fromEvent, filter, delay, interval } from 'rxjs';
 import { MagneticTiltService, MousePosition, TiltCalculations } from '../../../core';
 import { IconService } from '../../services/icon.service';
@@ -180,6 +180,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   @Output() fieldInteraction = new EventEmitter<CardFieldInteractionEvent>();
   @Output() cardInteraction = new EventEmitter<{ action: string, card: AICardConfig }>();
   @Output() fullscreenToggle = new EventEmitter<boolean>();
+  @Output() agentAction = new EventEmitter<{ action: CardAction; card: AICardConfig; agentId?: string; context?: Record<string, unknown> }>();
+  @Output() questionAction = new EventEmitter<{ action: CardAction; card: AICardConfig; question?: string }>();
   
   @ViewChild('cardContainer') cardContainer!: ElementRef<HTMLElement>;
   @ViewChild('tiltContainer') tiltContainerRef!: ElementRef<HTMLDivElement>;
@@ -575,9 +577,67 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     });
   }
 
+  /**
+   * Type guard to check if action has email property
+   */
+  private hasEmailProperty(action: CardAction): action is CardAction & { email: any } {
+    return 'email' in action && action.email !== undefined;
+  }
+
   onActionClick(actionObj: CardAction): void {
-    // Handle email actions
-    if (actionObj.email) {
+    if (!this.cardConfig) {
+      return;
+    }
+
+    // Handle button types based on 'type' field from JSON
+    // Check if type is a button behavior type (not legacy styling value)
+    if (actionObj.type && ['mail', 'website', 'agent', 'question'].includes(actionObj.type)) {
+      switch (actionObj.type) {
+        case 'mail':
+          if (this.hasEmailProperty(actionObj)) {
+            this.handleEmailAction(actionObj);
+          } else {
+            console.error('Mail action requires email configuration');
+          }
+          return;
+
+        case 'website':
+          // Use url property if available, otherwise fall back to action property
+          const url = actionObj.url || actionObj.action;
+          if (url && url !== '#' && (url.startsWith('http://') || url.startsWith('https://'))) {
+            window.open(url, '_blank', 'noopener,noreferrer');
+          } else {
+            console.warn('No valid URL provided for website button type');
+          }
+          return;
+
+        case 'agent':
+          this.agentAction.emit({
+            action: actionObj,
+            card: this.cardConfig,
+            agentId: actionObj.agentId,
+            context: actionObj.agentContext || actionObj.meta
+          });
+          return;
+
+        case 'question':
+          this.questionAction.emit({
+            action: actionObj,
+            card: this.cardConfig,
+            question: actionObj.question || actionObj.label
+          });
+          return;
+
+        default:
+          // Should not reach here, but fall through to legacy handling
+          break;
+      }
+    }
+
+    // Legacy handling for backwards compatibility
+    // If type is 'primary' or 'secondary' (legacy styling), treat as regular action
+    // Handle email actions (email property present)
+    if (this.hasEmailProperty(actionObj)) {
       this.handleEmailAction(actionObj);
       return;
     }
@@ -589,19 +649,41 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     // Handle regular actions (emit event for custom handling)
-    if (this.cardConfig) {
-      const action = actionObj.action || actionObj.label;
-      this.cardInteraction.emit({
-        action: action,
-        card: this.cardConfig
-      });
-    }
+    const action = actionObj.action || actionObj.label;
+    this.cardInteraction.emit({
+      action: action,
+      card: this.cardConfig
+    });
   }
 
-  private handleEmailAction(action: CardAction): void {
-    if (!action.email) return;
+  private handleEmailAction(action: CardAction & { email: any }): void {
+    // Validate that email configuration exists
+    if (!action.email) {
+      console.error('Email action requires email configuration');
+      return;
+    }
 
     const email = action.email;
+    
+    // Validate required fields for mail type
+    if (action.type === 'mail') {
+      if (!email.contact) {
+        console.error('Mail action requires email.contact with name, email, and role');
+        return;
+      }
+      if (!email.contact.name || !email.contact.email || !email.contact.role) {
+        console.error('Mail action requires email.contact.name, email.contact.email, and email.contact.role');
+        return;
+      }
+      if (!email.subject) {
+        console.error('Mail action requires email.subject');
+        return;
+      }
+      if (!email.body) {
+        console.error('Mail action requires email.body');
+        return;
+      }
+    }
     
     // Determine recipient email address - prioritize to, then contact.email
     let recipientEmail = '';
@@ -631,9 +713,11 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       params.push(`bcc=${encodeURIComponent(bcc)}`);
     }
 
-    // Add subject if provided
+    // Add subject - required for mail type, optional for legacy
     if (email.subject) {
       params.push(`subject=${encodeURIComponent(email.subject)}`);
+    } else if (action.type === 'mail') {
+      console.warn('Email subject is missing for mail action');
     }
 
     // Process body - replace placeholders with contact information if available
@@ -656,13 +740,15 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       }
     }
 
-    // Add body if provided - encode properly with newlines as %0D%0A
+    // Add body - required for mail type, optional for legacy
     if (processedBody) {
       // Replace newlines with %0D%0A (CRLF) for proper email formatting
       // Then encode the rest of the content
       const bodyWithLineBreaks = processedBody.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
       const encodedBody = encodeURIComponent(bodyWithLineBreaks).replace(/%0A/g, '%0D%0A');
       params.push(`body=${encodedBody}`);
+    } else if (action.type === 'mail') {
+      console.warn('Email body is missing for mail action');
     }
 
     // Construct mailto link
@@ -750,10 +836,101 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
 
 
   getActionIconName(action: CardAction): string {
+    // If icon is explicitly provided, use it
     if (action.icon) {
       return this.iconService.getFieldIcon(action.icon);
     }
+    
+    // If type is specified and it's a button behavior type (not legacy styling), use default icons
+    if (action.type && ['mail', 'website', 'agent', 'question'].includes(action.type)) {
+      switch (action.type) {
+        case 'mail':
+          return 'mail';
+        case 'website':
+          return 'external-link';
+        case 'agent':
+          return 'user';
+        case 'question':
+          return 'message-circle';
+        default:
+          break;
+      }
+    }
+    
+    // Fallback to deriving icon from label
     return this.iconService.getFieldIcon(action.label);
+  }
+  
+  /**
+   * Get the default icon name for a button type (returns lucide icon name)
+   * Uses 'type' field from JSON for button behavior
+   */
+  getDefaultIconForButtonType(buttonType?: string): string | null {
+    if (!buttonType || !['mail', 'website', 'agent', 'question'].includes(buttonType)) {
+      return null;
+    }
+    
+    switch (buttonType) {
+      case 'mail':
+        return 'mail';
+      case 'website':
+        return 'external-link';
+      case 'agent':
+        return 'user';
+      case 'question':
+        return 'message-circle';
+      default:
+        return null;
+    }
+  }
+  
+  /**
+   * Get the icon name to display for an action button
+   * Returns the icon name (lucide icon name) or null if no icon should be shown
+   */
+  getActionIconNameForDisplay(action: CardAction): string | null {
+    // If explicit icon is provided and it's a URL, return null (will be handled as image)
+    if (action.icon && action.icon.startsWith('http')) {
+      return null;
+    }
+    
+    // If explicit icon is provided and it's a lucide icon name, use it
+    if (action.icon && !action.icon.startsWith('http')) {
+      // Check if it's a lucide icon name (simple string like 'mail', 'user', etc.)
+      if (/^[a-z-]+$/i.test(action.icon)) {
+        return this.getActionIconName(action);
+      }
+      // Otherwise it's a text icon, return null (will be handled as text)
+      return null;
+    }
+    
+    // If no explicit icon, check if type is a button behavior type with default icon
+    if (action.type && ['mail', 'website', 'agent', 'question'].includes(action.type)) {
+      return this.getDefaultIconForButtonType(action.type);
+    }
+    
+    // Fallback: try to derive icon from label
+    const derivedIcon = this.getActionIconName(action);
+    // Only use if it's a valid lucide icon name (simple string)
+    if (derivedIcon && /^[a-z-]+$/i.test(derivedIcon)) {
+      return derivedIcon;
+    }
+    
+    return null;
+  }
+  
+  /**
+   * Check if action has a text icon (non-lucide, non-URL)
+   */
+  hasTextIcon(action: CardAction): boolean {
+    return !!(action.icon && !action.icon.startsWith('http') && !/^[a-z-]+$/i.test(action.icon));
+  }
+  
+  /**
+   * Check if action has an image icon (URL)
+   */
+  hasImageIcon(action: CardAction): boolean {
+    return !!(action.icon && action.icon.startsWith('http'));
   }
 
   getActionButtonClasses(action: CardAction): string {
@@ -761,7 +938,10 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     const outlineClasses = 'text-[var(--color-brand)] border border-[var(--color-brand)] bg-transparent font-semibold hover:bg-[var(--color-brand)]/10 active:scale-95';
     const ghostClasses = 'text-[var(--color-brand)] bg-transparent border-0 font-semibold hover:bg-[var(--color-brand)]/10 active:scale-95';
 
-    switch (action.variant) {
+    // Use variant field if present, otherwise check legacy type field for styling
+    const styleVariant = action.variant || (action.type === 'primary' || action.type === 'secondary' ? action.type : 'primary');
+
+    switch (styleVariant) {
       case 'secondary':
       case 'outline':
         return outlineClasses;

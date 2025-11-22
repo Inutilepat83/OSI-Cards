@@ -1,0 +1,30 @@
+{
+  "name": "@osi/cards-lib",
+  "version": "1.0.0",
+  "description": "Standalone OSI Cards library for Angular applications",
+  "keywords": [
+    "angular",
+    "cards",
+    "ui",
+    "components"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "@angular/common": "^17.0.0",
+    "@angular/core": "^17.0.0",
+    "@angular/animations": "^17.0.0",
+    "@angular/platform-browser": "^17.0.0",
+    "lucide-angular": "^0.548.0",
+    "rxjs": "~7.8.0"
+  },
+  "optionalDependencies": {
+    "chart.js": "^4.4.0",
+    "leaflet": "^1.9.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  }
+}
+

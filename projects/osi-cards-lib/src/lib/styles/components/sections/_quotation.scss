@@ -1,0 +1,151 @@
+@import 'sections/sections-base';
+@import 'unified-cards';
+
+.section-block--quotation {
+  --section-card-grid-min: 280px; /* Wider cards for quotations */
+}
+
+.section-card--quotation {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  /* COMPACT: No minimum height */
+  min-height: auto;
+  gap: var(--card-gap);
+  background: color-mix(in srgb, var(--card-background) 98%, var(--color-brand) 1%);
+}
+
+.quotation-card__quote {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--card-gap) * 0.5);
+  /* COMPACT: Tighter quote spacing */
+  position: relative;
+}
+
+.quotation-card__icon {
+  color: var(--color-brand);
+  opacity: 0.7;
+  align-self: flex-start;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  transition: opacity 0.22s ease, color 0.22s ease;
+  
+  // Use opacity and color changes instead of transform
+  .section-card--quotation:hover & {
+    opacity: 0.9;
+    color: var(--color-brand);
+  }
+}
+
+.quotation-card__text {
+  @include card-title-text;
+  /* COMPACT: Tight line-height */
+  font-style: italic;
+  font-size: calc(var(--card-title-font-size) * 1.15);
+  line-height: 1.4;
+  color: var(--card-text-primary);
+  margin: 0;
+  padding-left: calc(var(--card-padding) * 0.75);
+  /* COMPACT: Reduced padding */
+  position: relative;
+  transition: color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.01em;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    /* OPTIMIZED: Thicker accent bar */
+    background: var(--color-brand);
+    opacity: 1;
+    border-radius: var(--radius-xs);
+    transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .section-card--quotation:hover & {
+    color: color-mix(in srgb, var(--foreground) 95%, transparent);
+    
+    &::before {
+      width: 4px;
+      opacity: 1;
+    }
+  }
+}
+
+.quotation-card__footer {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--card-gap) * 0.7);
+  /* COMPACT: Tighter footer spacing */
+  padding-top: calc(var(--card-padding) * 0.6);
+  /* COMPACT: Reduced padding */
+  border-top: none !important;
+  /* CLEAN: No borders on footers - only cards have borders */
+  margin-top: calc(var(--card-gap) * 0.25);
+  /* COMPACT: Reduced margin */
+}
+
+.quotation-card__author {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--card-gap) * 0.5);
+  /* OPTIMIZED: Tighter author spacing */
+}
+
+.quotation-card__author-name {
+  @include card-subtitle-text;
+  /* OPTIMIZED: Use typography mixin - names are secondary */
+  color: var(--color-brand);
+  margin: 0;
+  line-height: 1.2;
+  font-weight: 700;
+  font-size: calc(var(--card-subtitle-font-size) + 2px);
+}
+
+.quotation-card__author-role {
+  @include card-meta-text;
+  /* COMPACT: Tight line-height */
+  margin: 0;
+  line-height: 1.2;
+}
+
+.quotation-card__date {
+  @include card-meta-text;
+  /* COMPACT: Tight line-height */
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Removed redundant 768px media query - continuous responsive design via base system */
+
+/* Light theme overrides - text colors only */
+/* Background and border are handled by global enforcement */
+:root[data-theme='day'] {
+  .quotation-card {
+    &__text {
+      color: #4b5563;
+    }
+    
+    &__author-name {
+      color: #1a1a1a;
+    }
+    
+    &__author-role {
+      color: #6b7280;
+    }
+    
+    &__date {
+      color: #9ca3af;
+    }
+  }
+  
+  .section-card--quotation {
+    /* Background and border removed - handled by global enforcement */
+  }
+}
+

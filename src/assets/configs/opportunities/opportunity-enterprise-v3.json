@@ -140,11 +140,12 @@
     }
   ],
   "actions": [
-    { "label": "View Full Proposal", "type": "primary", "icon": "📋", "action": "#" },
-    { "label": "Schedule Executive Review", "type": "primary", "icon": "📅", "action": "#" },
+    { "label": "View Full Proposal", "type": "question", "variant": "primary", "icon": "📋", "question": "Can you show me the full proposal details?" },
+    { "label": "Schedule Executive Review", "type": "agent", "variant": "primary", "icon": "📅", "agentId": "calendar-agent", "agentContext": { "action": "schedule_executive_review" } },
     {
       "label": "Contact Decision Maker",
-      "type": "secondary",
+      "type": "mail",
+      "variant": "secondary",
       "icon": "📧",
       "email": {
         "contact": {
@@ -156,10 +157,5 @@
         "body": "Dear Robert Anderson,\n\nI hope this email finds you well. I wanted to follow up on our recent discussions regarding the Digital Transformation Partnership opportunity for your organization.\n\nAs discussed, we are proposing a comprehensive 36-month digital transformation initiative that will:\n\n• Modernize infrastructure across 5 major divisions\n• Migrate 120+ enterprise applications to a multi-cloud strategy\n• Process 500TB+ of data migration\n• Implement AI-powered analytics and automation\n• Enhance security with zero trust architecture\n• Automate 80% of manual processes\n\n**Expected Business Impact:**\n• 35% operational cost reduction\n• 50% efficiency improvement\n• 25% revenue growth potential\n• 80% faster innovation enablement\n\n**Financial Summary:**\n• Total Opportunity Value: $30M\n• Expected Annual Cost Savings: $10.5M\n• Expected Revenue Growth: $7.5M annually\n• Projected ROI: 320%\n• Payback Period: 18 months\n\nI would welcome the opportunity to schedule an executive review meeting to present the full proposal and discuss how this transformation aligns with your strategic objectives.\n\nPlease let me know your availability, and I'll coordinate with my team to schedule a convenient time.\n\nBest regards,\nOrange Business Sales Team"
       }
     }
-  ],
-  "metadata": {
-    "category": "opportunity",
-    "variant": "enterprise",
-    "complexity": "enterprise"
-  }
+  ]
 }

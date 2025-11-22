@@ -36,12 +36,15 @@
   width: var(--icon-size-xl);
   height: var(--icon-size-xl);
   border-radius: var(--section-card-border-radius);
-  transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid var(--section-accent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--section-accent) 20%, transparent);
+  transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   
   // Subtle shadow enhancement on card hover instead of transform
   .product-card:hover & {
-    box-shadow: var(--card-box-shadow-hover);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--section-accent) 30%, transparent);
     opacity: 1;
+    transform: scale(1.05);
   }
 }
 
@@ -64,9 +67,9 @@
 }
 
 .product-card__icon--references {
-  background: color-mix(in srgb, var(--accent) 20%, transparent);
-  border-color: color-mix(in srgb, var(--accent) 38%, transparent);
-  color: color-mix(in srgb, var(--accent) 92%, transparent);
+  background: color-mix(in srgb, var(--color-brand) 20%, transparent);
+  border-color: color-mix(in srgb, var(--color-brand) 40%, transparent);
+  color: color-mix(in srgb, var(--color-brand) 95%, transparent);
 }
 
 .product-card__icon--contacts {
@@ -82,9 +85,9 @@
 }
 
 .product-card__icon--default {
-  background: color-mix(in srgb, var(--accent) 16%, transparent);
-  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
-  color: color-mix(in srgb, var(--accent) 92%, transparent);
+  background: color-mix(in srgb, var(--color-brand) 18%, transparent);
+  border-color: color-mix(in srgb, var(--color-brand) 35%, transparent);
+  color: color-mix(in srgb, var(--color-brand) 95%, transparent);
 }
 
 .product-card__headline {
@@ -103,6 +106,8 @@
   overflow-wrap: break-word;
   margin: 0;
   line-height: 1.2;
+  font-size: calc(var(--card-title-font-size) * 1.15);
+  font-weight: 700;
 }
 
 .product-card--references .product-card__title {
@@ -128,15 +133,21 @@
   font-size: var(--card-label-font-size);
   letter-spacing: var(--card-label-letter-spacing);
   text-transform: var(--card-label-text-transform);
-  color: color-mix(in srgb, var(--accent) 95%, transparent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
   border: none !important;
   /* NO BORDER (only cards have borders) */
+  display: none !important;
 }
 
 .product-card__body {
-  @include section-responsive-grid(var(--section-grid-min-width), var(--section-card-gap));
-  /* GLOBALLY ENFORCED: Grid gap */
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
   gap: var(--section-card-gap) !important;
+  
+  @media (max-width: 820px) {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 .product-card__illustration {
@@ -159,8 +170,11 @@
 .product-card__spotlight {
   display: flex;
   flex-direction: column;
-  gap: calc(var(--card-gap) * 0.5);
+  gap: calc(var(--card-gap) * 0.75);
   /* COMPACT: Tighter spotlight spacing */
+  background: color-mix(in srgb, var(--foreground) 3%, transparent);
+  padding: var(--card-padding);
+  border-radius: var(--section-card-border-radius);
 }
 
 .product-card__spotlight-heading {
@@ -223,11 +237,14 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  border: 1px solid color-mix(in srgb, var(--section-accent) 20%, transparent);
   /* Padding, gap, border, background, border-radius, and hover states are set by @include card */
   
   // Hover effects are handled by @mixin card (border, background, shadow only)
   // Child elements can have subtle visual feedback
   &:hover {
+    border-color: var(--section-accent);
+    
     .product-reference__avatar {
       box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 25%, transparent);
       opacity: 1;
@@ -437,7 +454,7 @@
 }
 
 .product-entry__title {
-  font-size: var(--card-title-font-size);
+  font-size: calc(var(--card-title-font-size) * 0.85);
   font-weight: var(--card-title-font-weight);
   color: var(--card-text-primary);
   letter-spacing: var(--card-title-letter-spacing);
@@ -681,7 +698,7 @@
 }
 
 .product-grid {
-  @include section-responsive-grid(var(--section-grid-min-width), var(--section-card-gap));
+  @include section-responsive-grid(260px, var(--section-card-gap));
 }
 
 .product-grid--single {
@@ -692,7 +709,7 @@
   @include section-responsive-grid(var(--section-grid-min-width), var(--section-card-gap));
   border-radius: var(--radius-lg);
   padding: calc(var(--card-padding) * 2); /* COMPACT: Reduced from * 4 */
-  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  background: var(--color-brand) !important;
   border: none !important;
   /* NO BORDER (only cards have borders) */
 }
@@ -707,7 +724,7 @@
 .product-summary__value {
   font-size: var(--font-section-value-2xl);
   font-weight: 600;
-  color: color-mix(in srgb, var(--accent) 95%, transparent);
+  color: #ffffff !important;
   letter-spacing: 0.04em;
 }
 
@@ -715,7 +732,7 @@
   font-size: var(--font-section-tag);
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  color: color-mix(in srgb, var(--foreground) 78%, transparent);
+  color: #ffffff !important;
   font-weight: 500;
 }
 
@@ -835,14 +852,23 @@
   /* Product summary styling for light mode */
   .product-summary {
     /* Summary background handled by component - nested element, not a card */
+    background: var(--color-brand) !important;
+    
+    &__value {
+      color: #ffffff !important;
+    }
+    
+    &__label {
+      color: #ffffff !important;
+    }
     
     &__metric {
       &-value {
-        color: var(--primary) !important;
+        color: #ffffff !important;
       }
       
       &-label {
-        color: #6b7280 !important;
+        color: #ffffff !important;
       }
     }
   }

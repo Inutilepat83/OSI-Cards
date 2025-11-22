@@ -1,6 +1,63 @@
 import { Injectable } from '@angular/core';
 import { CardSection } from '../../models/card.model';
 
+interface ColSpanThresholds {
+  two: number;
+  three?: number;
+}
+
+/**
+ * Column span thresholds for each section type
+ * These define when a section should span 2 or 3 columns based on content density
+ * Lower thresholds = sections span 2 columns more easily (with less content)
+ * 
+ * Threshold calculation: fieldCount + itemCount + descriptionDensity >= threshold
+ * - two: minimum score to span 2 columns
+ * - three: minimum score to span 3 columns (optional)
+ */
+const SECTION_COL_SPAN_THRESHOLDS: Record<string, ColSpanThresholds> = {
+  // Overview sections typically have 6-10 key-value pairs, should span 2 columns easily
+  overview: { two: 5, three: 10 },
+  
+  // Charts and maps need space, should span 2 columns with minimal content
+  chart: { two: 2 },
+  map: { two: 2 },
+  locations: { two: 2 },
+  
+  // Contact cards typically have 3-4 contacts, should span 2 columns easily
+  'contact-card': { two: 3 },
+  'network-card': { two: 3 },
+  
+  // Analytics/Stats typically have 3-4 metrics, should span 2 columns
+  analytics: { two: 3 },
+  stats: { two: 3 },
+  
+  // Financials typically have 3-5 fields, should span 2 columns
+  financials: { two: 3 },
+  
+  // Info sections with key-value pairs, should span 2 columns with 4+ fields
+  info: { two: 4, three: 8 },
+  
+  // Solutions typically have 3-4 items, should span 2 columns
+  solutions: { two: 3 },
+  product: { two: 3 },
+  
+  // Lists typically have 4-6 items, should span 2 columns
+  list: { two: 4 },
+  
+  // Events/Timelines typically have 3-5 phases, should span 2 columns
+  event: { two: 3 },
+  
+  // Text-heavy sections should span 2 columns for readability
+  quotation: { two: 3 },
+  'text-reference': { two: 3 },
+  
+  // Projects always span 1 column (special case handled in masonry grid)
+  project: { two: 999 } // Effectively always 1 column
+};
+
+const DEFAULT_COL_SPAN_THRESHOLD: ColSpanThresholds = { two: 6 };
+
 @Injectable({
   providedIn: 'root'
 })
@@ -55,7 +112,26 @@ export class SectionNormalizationService {
       normalized.description = section.subtitle;
     }
 
+    // Add column span thresholds to section meta if not already present
+    // This allows each section to have its own column logic
+    const existingMeta = normalized.meta as Record<string, unknown> | undefined;
+    const colSpanThresholds = this.getColSpanThresholdsForType(resolvedType);
+    
+    normalized.meta = {
+      ...existingMeta,
+      // Only add if not already defined (allows sections to override)
+      colSpanThresholds: existingMeta?.['colSpanThresholds'] ?? colSpanThresholds
+    };
+
     return normalized;
+  }
+
+  /**
+   * Get column span thresholds for a section type
+   * This is the default logic for each section type
+   */
+  private getColSpanThresholdsForType(type: string): ColSpanThresholds {
+    return SECTION_COL_SPAN_THRESHOLDS[type] ?? DEFAULT_COL_SPAN_THRESHOLD;
   }
 
   /**

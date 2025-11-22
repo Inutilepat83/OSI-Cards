@@ -40,32 +40,6 @@ function determinePriority(cardType, sizeInBytes) {
   return 'low';
 }
 
-/**
- * Determine complexity from filename pattern (more reliable than heuristics)
- * Supports patterns: *-basic-v*, *-enhanced-v*, *-enterprise-v*
- */
-function determineComplexity(filename, sectionCount, sizeInBytes) {
-  // First, try to extract from filename pattern (most reliable)
-  const lowerFilename = filename.toLowerCase();
-  if (lowerFilename.includes('-enterprise-') || lowerFilename.includes('-enterprise.')) {
-    return 'enterprise';
-  }
-  if (lowerFilename.includes('-enhanced-') || lowerFilename.includes('-enhanced.')) {
-    return 'enhanced';
-  }
-  if (lowerFilename.includes('-basic-') || lowerFilename.includes('-basic.')) {
-    return 'basic';
-  }
-  
-  // Fallback to heuristics if filename doesn't match pattern
-  if (sectionCount > 10 || sizeInBytes > 10000) {
-    return 'enterprise';
-  }
-  if (sectionCount > 5 || sizeInBytes > 5000) {
-    return 'enhanced';
-  }
-  return 'basic';
-}
 
 async function generateManifest() {
 
@@ -121,7 +95,6 @@ async function generateManifest() {
         size: sizeInBytes,
         priority: determinePriority(cardType, sizeInBytes),
         sectionCount,
-        complexity: determineComplexity(file, sectionCount, sizeInBytes),
         title: cardData.cardTitle || cardId,
         metadata: {
           subtitle: cardData.cardSubtitle || null,

@@ -138,7 +138,9 @@
                 [isFullscreen]="isFullscreen"
                 (fieldInteraction)="onFieldInteraction($event)"
                 (cardInteraction)="onCardInteraction($event)"
-                (fullscreenToggle)="onFullscreenToggle($event)">
+                (fullscreenToggle)="onFullscreenToggle($event)"
+                (agentAction)="onAgentAction($event)"
+                (questionAction)="onQuestionAction($event)">
               </app-card-preview>
             </div>
           </div>

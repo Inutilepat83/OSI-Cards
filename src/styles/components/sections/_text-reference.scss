@@ -12,6 +12,7 @@
   /* COMPACT: No minimum height */
   min-height: auto;
   gap: var(--card-gap);
+  border: 1px solid color-mix(in srgb, var(--color-brand) 20%, transparent);
 }
 
 .reference-card__content {
@@ -24,7 +25,8 @@
 .reference-card__text {
   @include card-subtitle-text;
   /* COMPACT: Tight line-height */
-  line-height: 1.2; /* COMPACT: Reduced from 1.3 */
+  font-size: calc(var(--card-subtitle-font-size) * 1.1);
+  line-height: 1.4;
   color: var(--card-text-primary);
   margin: 0;
 }
@@ -45,7 +47,7 @@
 .reference-card__meta {
   display: flex;
   flex-wrap: wrap;
-  gap: calc(var(--card-gap) * 0.5);
+  gap: calc(var(--card-gap) * 0.75);
   /* COMPACT: Tighter meta spacing */
   align-items: center;
 }
@@ -54,12 +56,13 @@
   /* OPTIMIZED: Compact badge styling - NO BORDER (only cards have borders) */
   display: inline-flex;
   align-items: center;
-  padding: calc(var(--tag-padding-y-sm) * 0.75) calc(var(--tag-padding-x) * 0.875);
+  padding: calc(var(--tag-padding-y-sm) * 1) calc(var(--tag-padding-x) * 1);
   border-radius: var(--section-card-border-radius);
   border: none !important;
-  background: rgba(255, 121, 0, 0.08);
+  background: color-mix(in srgb, var(--color-brand) 12%, transparent);
   @include label-text;
-  font-size: var(--card-meta-font-size);
+  font-size: calc(var(--card-meta-font-size) + 1px);
+  font-weight: 700;
   color: var(--color-brand);
   --accent: var(--color-brand);
   line-height: 1.2;
@@ -89,18 +92,21 @@
   /* COMPACT: Tighter link spacing */
   @include card-meta-text;
   color: var(--color-brand);
+  font-weight: 600;
   text-decoration: none;
-  transition: color 0.22s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: color 0.22s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s ease;
   line-height: 1.2;
   /* COMPACT: Tight line-height */
 
   // Use color and opacity changes instead of transform
   &:hover {
-    color: color-mix(in srgb, var(--color-brand) 90%, transparent);
+    color: var(--color-brand-dark, color-mix(in srgb, var(--color-brand) 80%, black));
     opacity: 1;
+    transform: translateX(2px);
     
     lucide-icon {
       opacity: 1;
+      transform: translateX(2px);
     }
   }
 
@@ -108,7 +114,7 @@
     width: 12px;
     height: 12px;
     /* OPTIMIZED: Smaller icon */
-    transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s ease;
     flex-shrink: 0;
   }
 }

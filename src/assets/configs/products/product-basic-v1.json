@@ -25,11 +25,6 @@
     }
   ],
   "actions": [
-    { "label": "Try Free Trial", "type": "primary", "icon": "🚀", "action": "#" }
-  ],
-  "metadata": {
-    "category": "product",
-    "variant": "basic",
-    "complexity": "basic"
-  }
+    { "label": "Try Free Trial", "type": "question", "variant": "primary", "icon": "🚀", "question": "How can I start a free trial?" }
+  ]
 }
