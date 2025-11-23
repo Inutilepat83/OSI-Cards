@@ -25,6 +25,24 @@
   "repository": {
     "type": "git",
     "url": ""
-  }
+  },
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./index.d.ts",
+      "esm2022": "./esm2022/osi-cards-lib.mjs",
+      "esm": "./esm2022/osi-cards-lib.mjs",
+      "default": "./fesm2022/osi-cards-lib.mjs"
+    },
+    "./styles/_styles": {
+      "default": "./styles/_styles.scss"
+    },
+    "./styles/_styles.scss": {
+      "default": "./styles/_styles.scss"
+    }
+  },
+  "sideEffects": false
 }
 

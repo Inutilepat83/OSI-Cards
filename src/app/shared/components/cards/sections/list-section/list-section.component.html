@@ -17,6 +17,8 @@
           class="list-card"
           role="button"
           tabindex="0"
+          [attr.aria-label]="(item.title || item.label || 'Item') + (item.description ? ': ' + item.description : '')"
+          [attr.aria-describedby]="item.description ? 'item-desc-' + trackItem(idx, item) : null"
           [class.item-streaming]="getItemAnimationClass(getItemId(item, idx), idx) === 'item-streaming'"
           [class.item-entered]="getItemAnimationClass(getItemId(item, idx), idx) === 'item-entered'"
           [class.item-stagger-0]="getItemStaggerIndex(idx) === 0"

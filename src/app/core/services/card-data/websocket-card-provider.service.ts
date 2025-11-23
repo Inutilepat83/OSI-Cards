@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, Subject, BehaviorSubject, NEVER } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { map, catchError, retry } from 'rxjs/operators';
 import { AICardConfig } from '../../../models';
 import { CardDataProvider } from './card-data-provider.interface';
+import { LoggingService } from '../logging.service';
 
 interface AllCardsMessage {
   type: 'all_cards';
@@ -68,6 +69,7 @@ type SocketMessage = InboundSocketMessage | OutboundSocketMessage;
   providedIn: 'root'
 })
 export class WebSocketCardProvider extends CardDataProvider {
+  private readonly logger = inject(LoggingService);
   private socket$?: WebSocketSubject<SocketMessage>;
   private cardsSubject = new BehaviorSubject<AICardConfig[]>([]);
   private updatesSubject = new Subject<{
@@ -97,7 +99,7 @@ export class WebSocketCardProvider extends CardDataProvider {
       url: this.wsUrl,
       openObserver: {
         next: () => {
-          console.log('WebSocket connection opened');
+          this.logger.info('WebSocket connection opened', 'WebSocketCardProvider');
           this.isConnected = true;
           // Request initial card data
           this.sendMessage({ type: 'get_all_cards' });
@@ -105,7 +107,7 @@ export class WebSocketCardProvider extends CardDataProvider {
       },
       closeObserver: {
         next: () => {
-          console.log('WebSocket connection closed');
+          this.logger.info('WebSocket connection closed', 'WebSocketCardProvider');
           this.isConnected = false;
         }
       }
@@ -115,7 +117,7 @@ export class WebSocketCardProvider extends CardDataProvider {
     this.socket$.pipe(
       retry({ delay: 5000, count: 5 }),
       catchError(error => {
-        console.error('WebSocket error:', error);
+        this.logger.error('WebSocket error', 'WebSocketCardProvider', error);
         this.isConnected = false;
         return NEVER;
       })
@@ -124,11 +126,11 @@ export class WebSocketCardProvider extends CardDataProvider {
         if (this.isInboundMessage(message)) {
           this.handleMessage(message);
         } else {
-          console.warn('Received unexpected WebSocket payload:', message);
+          this.logger.warn('Received unexpected WebSocket payload', 'WebSocketCardProvider', message);
         }
       },
       error: subscriptionError => {
-        console.error('WebSocket subscription error:', subscriptionError);
+        this.logger.error('WebSocket subscription error', 'WebSocketCardProvider', subscriptionError);
         this.isConnected = false;
       }
     });
@@ -200,7 +202,7 @@ export class WebSocketCardProvider extends CardDataProvider {
 
       default: {
         const exhaustiveCheck: never = message;
-        console.warn('Unknown WebSocket message payload:', exhaustiveCheck);
+        this.logger.warn('Unknown WebSocket message payload', 'WebSocketCardProvider', exhaustiveCheck);
       }
     }
   }

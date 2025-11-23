@@ -4,6 +4,9 @@
   [class.masonry-container--loading]="!isLayoutReady"
   [style.height.px]="containerHeight"
   [style.gap.px]="gap"
+  role="region"
+  [attr.aria-label]="'Card sections grid with ' + sections.length + ' section' + (sections.length !== 1 ? 's' : '')"
+  [attr.aria-busy]="!isLayoutReady"
 >
   <div
     *ngFor="let item of positionedSections; trackBy: trackItem; let idx = index"

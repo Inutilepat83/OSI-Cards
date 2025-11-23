@@ -11,6 +11,7 @@ import { MasonryGridComponent, MasonryLayoutInfo } from './masonry-grid/masonry-
 import { SectionRenderEvent } from './section-renderer/section-renderer.component';
 import { CardChangeType } from '../../utils/card-diff.util';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { LoggingService } from '../../../core/services/logging.service';
 
 export interface CardFieldInteractionEvent {
   field?: CardField;
@@ -42,6 +43,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   private _cardConfig?: AICardConfig;
   private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly logger = inject(LoggingService);
   
   // Expose Math for template
   Math = Math;
@@ -597,7 +599,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
           if (this.hasEmailProperty(actionObj)) {
             this.handleEmailAction(actionObj);
           } else {
-            console.error('Mail action requires email configuration');
+            this.logger.error('Mail action requires email configuration', 'AICardRendererComponent');
           }
           return;
 
@@ -607,7 +609,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
           if (url && url !== '#' && (url.startsWith('http://') || url.startsWith('https://'))) {
             window.open(url, '_blank', 'noopener,noreferrer');
           } else {
-            console.warn('No valid URL provided for website button type');
+            this.logger.warn('No valid URL provided for website button type', 'AICardRendererComponent');
           }
           return;
 
@@ -659,7 +661,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   private handleEmailAction(action: CardAction & { email: any }): void {
     // Validate that email configuration exists
     if (!action.email) {
-      console.error('Email action requires email configuration');
+      this.logger.error('Email action requires email configuration', 'AICardRendererComponent');
       return;
     }
 
@@ -668,19 +670,19 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     // Validate required fields for mail type
     if (action.type === 'mail') {
       if (!email.contact) {
-        console.error('Mail action requires email.contact with name, email, and role');
+        this.logger.error('Mail action requires email.contact with name, email, and role', 'AICardRendererComponent');
         return;
       }
       if (!email.contact.name || !email.contact.email || !email.contact.role) {
-        console.error('Mail action requires email.contact.name, email.contact.email, and email.contact.role');
+        this.logger.error('Mail action requires email.contact.name, email.contact.email, and email.contact.role', 'AICardRendererComponent');
         return;
       }
       if (!email.subject) {
-        console.error('Mail action requires email.subject');
+        this.logger.error('Mail action requires email.subject', 'AICardRendererComponent');
         return;
       }
       if (!email.body) {
-        console.error('Mail action requires email.body');
+        this.logger.error('Mail action requires email.body', 'AICardRendererComponent');
         return;
       }
     }
@@ -694,7 +696,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     }
     
     if (!recipientEmail) {
-      console.warn('No email address provided for email action');
+      this.logger.warn('No email address provided for email action', 'AICardRendererComponent');
       return;
     }
 
@@ -717,7 +719,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     if (email.subject) {
       params.push(`subject=${encodeURIComponent(email.subject)}`);
     } else if (action.type === 'mail') {
-      console.warn('Email subject is missing for mail action');
+      this.logger.warn('Email subject is missing for mail action', 'AICardRendererComponent');
     }
 
     // Process body - replace placeholders with contact information if available
@@ -748,7 +750,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       const encodedBody = encodeURIComponent(bodyWithLineBreaks).replace(/%0A/g, '%0D%0A');
       params.push(`body=${encodedBody}`);
     } else if (action.type === 'mail') {
-      console.warn('Email body is missing for mail action');
+      this.logger.warn('Email body is missing for mail action', 'AICardRendererComponent');
     }
 
     // Construct mailto link

@@ -1,3 +1,21 @@
+/**
+ * Icon service for mapping field names and action types to Lucide icons
+ * 
+ * Provides intelligent icon mapping based on field names, action types, and keywords.
+ * Supports both exact matches and partial keyword matching for flexible icon selection.
+ * 
+ * @example
+ * ```typescript
+ * const iconService = inject(IconService);
+ * 
+ * // Get icon for field
+ * const icon = iconService.getFieldIcon('email'); // "mail"
+ * const icon = iconService.getFieldIcon('revenue'); // "dollar-sign"
+ * 
+ * // Get CSS class for field icon
+ * const className = iconService.getFieldIconClass('email'); // "text-blue-500"
+ * ```
+ */
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -121,6 +139,22 @@ export class IconService {
     'default': 'text-gray-500'
   };
 
+  /**
+   * Get icon name for a field based on its name
+   * 
+   * Uses intelligent matching to find the most appropriate icon for a field name.
+   * Tries exact match first, then partial keyword matching.
+   * 
+   * @param fieldName - The name of the field to get an icon for
+   * @returns Lucide icon name, or 'circle' as default
+   * 
+   * @example
+   * ```typescript
+   * const icon = iconService.getFieldIcon('email'); // "mail"
+   * const icon = iconService.getFieldIcon('userEmail'); // "mail" (partial match)
+   * const icon = iconService.getFieldIcon('unknown'); // "circle" (default)
+   * ```
+   */
   getFieldIcon(fieldName: string): string {
     const normalizedName = fieldName.toLowerCase().replace(/[^a-z0-9]/g, '');
     
@@ -139,6 +173,21 @@ export class IconService {
     return this.iconMap['default'];
   }
 
+  /**
+   * Get CSS class for a field icon based on its name
+   * 
+   * Returns appropriate color classes for field icons based on semantic meaning.
+   * Uses the same matching logic as getFieldIcon.
+   * 
+   * @param fieldName - The name of the field to get a class for
+   * @returns CSS class string, or 'text-gray-500' as default
+   * 
+   * @example
+   * ```typescript
+   * const className = iconService.getFieldIconClass('email'); // "text-blue-500"
+   * const className = iconService.getFieldIconClass('revenue'); // "text-green-500"
+   * ```
+   */
   getFieldIconClass(fieldName: string): string {
     const normalizedName = fieldName.toLowerCase().replace(/[^a-z0-9]/g, '');
     

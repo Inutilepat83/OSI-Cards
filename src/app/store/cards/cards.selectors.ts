@@ -56,3 +56,57 @@ export const selectHasCards = createSelector(
   selectCardTotal,
   (count) => count > 0
 );
+
+// Filtered and sorted selectors
+export const selectFilteredCards = (searchTerm: string) => createSelector(
+  selectCards,
+  (cards) => {
+    if (!searchTerm) return cards;
+    const term = searchTerm.toLowerCase();
+    return cards.filter(card => 
+      card.cardTitle?.toLowerCase().includes(term) ||
+      card.cardSubtitle?.toLowerCase().includes(term) ||
+      card.sections?.some(section => 
+        section.title?.toLowerCase().includes(term) ||
+        section.description?.toLowerCase().includes(term)
+      )
+    );
+  }
+);
+
+export const selectSortedCards = (sortBy: 'title' | 'type' | 'date' = 'title', order: 'asc' | 'desc' = 'asc') => createSelector(
+  selectCards,
+  (cards) => {
+    const sorted = [...cards].sort((a, b) => {
+      let comparison = 0;
+      
+      switch (sortBy) {
+        case 'title':
+          comparison = (a.cardTitle || '').localeCompare(b.cardTitle || '');
+          break;
+        case 'type':
+          comparison = (a.cardType || '').localeCompare(b.cardType || '');
+          break;
+        case 'date':
+          // Assuming cards have a date field or use creation order
+          comparison = 0; // Implement date comparison if needed
+          break;
+      }
+      
+      return order === 'asc' ? comparison : -comparison;
+    });
+    return sorted;
+  }
+);
+
+export const selectCardsByTypeCount = createSelector(
+  selectCards,
+  (cards) => {
+    const counts: Record<string, number> = {};
+    cards.forEach(card => {
+      const type = card.cardType || 'unknown';
+      counts[type] = (counts[type] || 0) + 1;
+    });
+    return counts;
+  }
+);

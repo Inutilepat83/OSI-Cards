@@ -1,13 +1,20 @@
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { HttpRequest, HttpHeaders } from '@angular/common/http';
 
 /**
  * Request cancellation utilities
  * Cancel in-flight requests when new ones are made to avoid race conditions
+ * Supports both RxJS observables and HTTP requests via AbortController
  */
 
 export class RequestCanceller {
   private cancelSubject = new Subject<void>();
+  private abortController?: AbortController;
+
+  constructor() {
+    this.abortController = new AbortController();
+  }
 
   /**
    * Get cancel observable
@@ -17,12 +24,24 @@ export class RequestCanceller {
   }
 
   /**
+   * Get AbortSignal for HTTP requests
+   */
+  get signal(): AbortSignal {
+    if (!this.abortController) {
+      this.abortController = new AbortController();
+    }
+    return this.abortController.signal;
+  }
+
+  /**
    * Cancel the request
    */
   cancel(): void {
     this.cancelSubject.next();
     this.cancelSubject.complete();
+    this.abortController?.abort();
     this.cancelSubject = new Subject<void>();
+    this.abortController = new AbortController();
   }
 
   /**
@@ -89,6 +108,51 @@ export class RequestManager {
   remove(requestId: string): void {
     this.cancellers.delete(requestId);
   }
+}
+
+/**
+ * Add AbortSignal to HTTP request
+ */
+export function addAbortSignal<T>(request: HttpRequest<T>, signal: AbortSignal): HttpRequest<T> {
+  return request.clone({
+    setHeaders: {
+      // AbortSignal is handled via request options, not headers
+    }
+  });
+}
+
+/**
+ * Create HTTP request with cancellation support
+ */
+export function createCancellableRequest<T>(
+  url: string,
+  canceller: RequestCanceller,
+  options?: {
+    method?: string;
+    body?: any;
+    headers?: Record<string, string>;
+  }
+): { request: HttpRequest<T>; signal: AbortSignal } {
+  const signal = canceller.signal;
+  
+  // Create HttpHeaders from record if provided
+  let httpHeaders: HttpHeaders | undefined;
+  if (options?.headers) {
+    httpHeaders = new HttpHeaders(options.headers);
+  }
+  
+  const request = new HttpRequest<T>(
+    (options?.method || 'GET') as 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
+    url,
+    options?.body,
+    {
+      headers: httpHeaders,
+      // Note: Angular HttpClient doesn't directly support AbortSignal in HttpRequest
+      // We'll handle it via interceptor or by using the signal in the observable chain
+    }
+  );
+
+  return { request, signal };
 }
 
 

@@ -26,6 +26,35 @@ interface PositionedSection {
   width: string;
 }
 
+/**
+ * Masonry Grid Component
+ * 
+ * Intelligent layout engine that arranges card sections in a responsive masonry grid.
+ * 
+ * Features:
+ * - Responsive column calculation (1-4 columns based on container width)
+ * - Dynamic column span calculation based on content density
+ * - Staggered animations for section appearance
+ * - Real-time layout updates on resize
+ * - Optimized performance with RAF batching and throttling
+ * 
+ * The component uses a sophisticated layout algorithm:
+ * 1. Calculates optimal column count based on container width and minColumnWidth
+ * 2. Determines column span for each section using density heuristics
+ * 3. Positions sections using absolute positioning
+ * 4. Reflows layout when sections change or container resizes
+ * 
+ * @example
+ * ```html
+ * <app-masonry-grid
+ *   [sections]="cardSections"
+ *   [gap]="12"
+ *   [minColumnWidth]="280"
+ *   (sectionEvent)="onSectionEvent($event)"
+ *   (layoutChange)="onLayoutChange($event)">
+ * </app-masonry-grid>
+ * ```
+ */
 @Component({
   selector: 'app-masonry-grid',
   standalone: true,
@@ -180,6 +209,15 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     });
   }
 
+  /**
+   * Compute initial layout for sections
+   * 
+   * Creates an initial vertical stack of sections to prevent overlap.
+   * This is a fast approximation that will be refined by reflowWithActualHeights()
+   * once actual DOM heights are available.
+   * 
+   * Uses estimated heights (300px + gap) for initial positioning.
+   */
   private computeInitialLayout(): void {
     const resolvedSections = this.sections ?? [];
     this.reflowCount = 0;
@@ -206,6 +244,19 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     this.cdr.markForCheck();
   }
 
+  /**
+   * Reflow layout using actual DOM element heights
+   * 
+   * This is the core layout algorithm that:
+   * 1. Calculates optimal column count based on container width
+   * 2. Determines column span for each section using density heuristics
+   * 3. Finds the best column position for each section (shortest column)
+   * 4. Positions sections using absolute positioning with calculated left/top/width
+   * 5. Updates container height to accommodate all sections
+   * 
+   * Uses a "shortest column" algorithm to minimize gaps and create a balanced layout.
+   * Automatically retries if zero heights are detected (up to MAX_REFLOWS times).
+   */
   private reflowWithActualHeights(): void {
     if (!this.containerRef?.nativeElement || this.reflowCount >= this.MAX_REFLOWS) {
       return;
@@ -343,6 +394,21 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     );
   }
 
+  /**
+   * Calculate column span for a section based on content density
+   * 
+   * Uses heuristics to determine how many columns a section should span:
+   * - Field count + item count + description density = base score
+   * - Compares score against thresholds for section type
+   * - Returns 1, 2, or 3 columns (up to maxColumns)
+   * 
+   * Special cases:
+   * - Project sections always span 1 column
+   * - Explicit colSpan in section config takes precedence
+   * 
+   * @param section - The section to calculate colSpan for
+   * @returns Column span (1-3, up to maxColumns)
+   */
   private getSectionColSpan(section: CardSection): number {
     // Explicit colSpan always takes precedence
     if (section.colSpan) {

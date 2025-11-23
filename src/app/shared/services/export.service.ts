@@ -1,6 +1,28 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { AICardConfig } from '../../models';
 import { removeAllIds } from '../utils/card-utils';
+import { LoggingService } from '../../core/services/logging.service';
+
+/**
+ * PDF export options
+ */
+export interface PdfExportOptions {
+  format?: 'a4' | 'letter' | [number, number]; // Page size
+  orientation?: 'portrait' | 'landscape';
+  margin?: number;
+  title?: string;
+  includeMetadata?: boolean;
+}
+
+/**
+ * Image export options
+ */
+export interface ImageExportOptions {
+  format?: 'png' | 'svg' | 'jpeg';
+  quality?: number; // 0-1 for JPEG
+  scale?: number; // Scale factor for higher resolution
+  backgroundColor?: string;
+}
 
 /**
  * Export service for exporting cards in various formats
@@ -10,6 +32,8 @@ import { removeAllIds } from '../utils/card-utils';
   providedIn: 'root'
 })
 export class ExportService {
+  private readonly logger = inject(LoggingService);
+
   /**
    * Export card as JSON
    */
@@ -69,7 +93,7 @@ export class ExportService {
       await navigator.clipboard.writeText(json);
       return true;
     } catch (error) {
-      console.error('Failed to copy to clipboard:', error);
+      this.logger.error('Failed to copy to clipboard', 'ExportService', error);
       return false;
     }
   }
@@ -114,6 +138,210 @@ export class ExportService {
     });
 
     this.downloadFile(csv, filename || `${card.cardTitle || 'card'}.csv`, 'text/csv');
+  }
+
+  /**
+   * Export card as PDF
+   * Requires jsPDF library (optional dependency)
+   */
+  async exportAsPdf(
+    card: AICardConfig,
+    element: HTMLElement,
+    options: PdfExportOptions = {},
+    filename?: string
+  ): Promise<void> {
+    try {
+      // Dynamic import of jsPDF (optional dependency)
+      // Using type assertion to avoid TypeScript errors when package is not installed
+      let jsPDF: any;
+      try {
+        const jsPDFModule = await import('jspdf' as any);
+        jsPDF = jsPDFModule.jsPDF || jsPDFModule.default?.jsPDF || jsPDFModule.default;
+      } catch (importError) {
+        throw new Error('jsPDF is not installed. Install with: npm install jspdf');
+      }
+      
+      const {
+        format = 'a4',
+        orientation = 'portrait',
+        margin = 20,
+        title = card.cardTitle || 'Card',
+        includeMetadata = true
+      } = options;
+
+      const pdf = new jsPDF({
+        orientation,
+        unit: 'mm',
+        format
+      });
+
+      // Add metadata
+      if (includeMetadata) {
+        pdf.setProperties({
+          title,
+          subject: 'OSI Card Export',
+          author: 'OSI Cards',
+          creator: 'OSI Cards Application'
+        });
+      }
+
+      // Add title
+      pdf.setFontSize(18);
+      pdf.text(title, margin, margin + 10);
+
+      // Convert element to image and add to PDF
+      const imageData = await this.elementToImage(element, { format: 'png', scale: 2 });
+      const imgWidth = pdf.internal.pageSize.getWidth() - (margin * 2);
+      const imgHeight = (element.offsetHeight * imgWidth) / element.offsetWidth;
+      
+      pdf.addImage(imageData, 'PNG', margin, margin + 20, imgWidth, imgHeight);
+
+      // Save PDF
+      pdf.save(filename || `${title}.pdf`);
+      this.logger.info('Card exported as PDF', 'ExportService');
+    } catch (error) {
+      this.logger.error('Failed to export as PDF. jsPDF may not be installed.', 'ExportService', error);
+      throw new Error('PDF export requires jsPDF library. Install with: npm install jspdf');
+    }
+  }
+
+  /**
+   * Export card as image (PNG/SVG/JPEG)
+   * Requires html2canvas library (optional dependency)
+   */
+  async exportAsImage(
+    element: HTMLElement,
+    options: ImageExportOptions = {},
+    filename?: string
+  ): Promise<void> {
+    try {
+      const {
+        format = 'png',
+        quality = 0.92,
+        scale = 2,
+        backgroundColor = '#ffffff'
+      } = options;
+
+      const imageData = await this.elementToImage(element, { format, quality, scale, backgroundColor });
+      
+      // Determine MIME type
+      const mimeType = format === 'png' ? 'image/png' : 
+                      format === 'jpeg' ? 'image/jpeg' : 
+                      'image/svg+xml';
+
+      // Download image
+      this.downloadFile(imageData, filename || `card.${format}`, mimeType);
+      this.logger.info(`Card exported as ${format.toUpperCase()}`, 'ExportService');
+    } catch (error) {
+      this.logger.error('Failed to export as image. html2canvas may not be installed.', 'ExportService', error);
+      throw new Error('Image export requires html2canvas library. Install with: npm install html2canvas');
+    }
+  }
+
+  /**
+   * Export multiple cards as PDF
+   */
+  async exportMultipleAsPdf(
+    cards: AICardConfig[],
+    elements: HTMLElement[],
+    options: PdfExportOptions = {},
+    filename?: string
+  ): Promise<void> {
+    try {
+      // Dynamic import of jsPDF (optional dependency)
+      // Using type assertion to avoid TypeScript errors when package is not installed
+      let jsPDF: any;
+      try {
+        const jsPDFModule = await import('jspdf' as any);
+        jsPDF = jsPDFModule.jsPDF || jsPDFModule.default?.jsPDF || jsPDFModule.default;
+      } catch (importError) {
+        throw new Error('jsPDF is not installed. Install with: npm install jspdf');
+      }
+      
+      const {
+        format = 'a4',
+        orientation = 'portrait',
+        margin = 20
+      } = options;
+
+      const pdf = new jsPDF({
+        orientation,
+        unit: 'mm',
+        format
+      });
+
+      for (let i = 0; i < elements.length; i++) {
+        if (i > 0) {
+          pdf.addPage();
+        }
+
+        const card = cards[i];
+        const element = elements[i];
+
+        // Add card title
+        pdf.setFontSize(18);
+        pdf.text(card.cardTitle || `Card ${i + 1}`, margin, margin + 10);
+
+        // Convert element to image
+        const imageData = await this.elementToImage(element, { format: 'png', scale: 2 });
+        const imgWidth = pdf.internal.pageSize.getWidth() - (margin * 2);
+        const imgHeight = (element.offsetHeight * imgWidth) / element.offsetWidth;
+        
+        pdf.addImage(imageData, 'PNG', margin, margin + 20, imgWidth, imgHeight);
+      }
+
+      pdf.save(filename || 'cards.pdf');
+      this.logger.info(`Exported ${cards.length} cards as PDF`, 'ExportService');
+    } catch (error) {
+      this.logger.error('Failed to export multiple cards as PDF', 'ExportService', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Convert HTML element to image data URL
+   */
+  private async elementToImage(
+    element: HTMLElement,
+    options: {
+      format?: 'png' | 'svg' | 'jpeg';
+      quality?: number;
+      scale?: number;
+      backgroundColor?: string;
+    }
+  ): Promise<string> {
+    const { format = 'png', quality = 0.92, scale = 2, backgroundColor = '#ffffff' } = options;
+
+    if (format === 'svg') {
+      // For SVG, serialize the element
+      const serializer = new XMLSerializer();
+      const svgString = serializer.serializeToString(element);
+      const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+      return URL.createObjectURL(svgBlob);
+    }
+
+    // For PNG/JPEG, use html2canvas (optional dependency)
+    // Using type assertion to avoid TypeScript errors when package is not installed
+    try {
+      let html2canvas: any;
+      try {
+        const html2canvasModule = await import('html2canvas' as any);
+        html2canvas = html2canvasModule.default || html2canvasModule;
+      } catch (importError) {
+        throw new Error('html2canvas is not installed. Install with: npm install html2canvas');
+      }
+      const canvas = await html2canvas(element, {
+        scale,
+        backgroundColor,
+        useCORS: true,
+        logging: false
+      });
+
+      return canvas.toDataURL(`image/${format}`, quality);
+    } catch (error) {
+      this.logger.error('html2canvas not available', 'ExportService', error);
+      throw new Error('html2canvas is required for image export');
+    }
   }
 }
 

@@ -2,6 +2,7 @@ export * from './card-utils';
 export * from './card-diff.util';
 export * from './batch-conversion.util';
 export * from './responsive.util';
+export * from '../decorators/validation.decorator';
 export * from './validation.util';
 export * from './memoization.util';
 export * from './performance.util';
@@ -30,7 +31,7 @@ export * from './facade-pattern.util';
 export * from './dependency-injection-tokens.util';
 export * from './base-classes.util';
 export * from './interface-segregation.util';
-export * from './input-validation-decorators.util';
+// Note: input-validation-decorators.util exports are intentionally excluded to avoid conflicts with validation.decorator
 export * from './type-guards-enhanced.util';
 export * from './security-headers.util';
 export * from './virtual-scrolling.util';

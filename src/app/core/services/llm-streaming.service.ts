@@ -1,10 +1,12 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, OnDestroy, DestroyRef } from '@angular/core';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AICardConfig, CardSection, CardField, CardItem } from '../../models';
 import { CardChangeType } from '../../shared/utils/card-diff.util';
 import { AppConfigService } from './app-config.service';
 import { ensureCardIds } from '../../shared/utils/card-utils';
 import { CardTypeGuards } from '../../models';
+import { RequestCanceller } from '../../shared/utils/request-cancellation.util';
 
 export interface LLMStreamingState {
   isActive: boolean;
@@ -28,8 +30,10 @@ export interface SectionCompletionInfo {
 @Injectable({
   providedIn: 'root'
 })
-export class LLMStreamingService {
+export class LLMStreamingService implements OnDestroy {
   private readonly config = inject(AppConfigService);
+  private readonly destroyRef = inject(DestroyRef);
+  private requestCanceller = new RequestCanceller();
 
   private readonly stateSubject = new BehaviorSubject<LLMStreamingState>({
     isActive: false,
@@ -112,10 +116,11 @@ export class LLMStreamingService {
    * Stop LLM simulation
    */
   stop(): void {
+    this.requestCanceller.cancel();
     this.clearTimers();
     this.updateState({
       isActive: false,
-      stage: 'idle',
+      stage: 'aborted',
       progress: 0,
       bufferLength: 0,
       targetLength: 0
@@ -128,6 +133,13 @@ export class LLMStreamingService {
     this.sectionCompletionStates.clear();
     this.sectionCompletionPercentages.clear();
     this.pendingCompletedSectionIndices = [];
+  }
+
+  /**
+   * Cleanup on destroy
+   */
+  ngOnDestroy(): void {
+    this.stop();
   }
 
   /**

@@ -8,6 +8,7 @@ import * as CardActions from '../../../../store/cards/cards.state';
 import * as CardSelectors from '../../../../store/cards/cards.selectors';
 import { AppState } from '../../../../store/app.state';
 import { CardDiffUtil, CardChangeType } from '../../../../shared/utils/card-diff.util';
+import { LoggingService } from '../../../../core/services/logging.service';
 
 // Import standalone components
 import { AICardRendererComponent, CardPreviewComponent } from '../../../../shared/components/cards';
@@ -34,6 +35,7 @@ export class HomePageComponent implements OnInit {
   private readonly cd = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly ngZone = inject(NgZone);
+  private readonly logger = inject(LoggingService);
   
   // Batch section completions to prevent excessive dispatches
   private completionBatchTimer: ReturnType<typeof setTimeout> | null = null;
@@ -1172,7 +1174,7 @@ export class HomePageComponent implements OnInit {
         
         // Debug logging
         if (this.ENABLE_SECTION_STATE_LOGGING && (completedSections.length > 0 || completedFields.length > 0)) {
-          console.log('✅ [HomePage] Sections/Fields completed', {
+          this.logger.info('✅ Sections/Fields completed', 'HomePageComponent', {
             timestamp: new Date().toISOString(),
             completedSectionIndices: completedSections,
             completedFieldCount: completedFields.length,
@@ -2221,14 +2223,14 @@ export class HomePageComponent implements OnInit {
 
   onAgentAction(event: { action: any; card: AICardConfig; agentId?: string; context?: Record<string, unknown> }): void {
     // Handle agent action - trigger agent with the provided context
-    console.log('Agent action triggered:', event);
+    this.logger.info('Agent action triggered', 'HomePageComponent', event);
     // TODO: Implement agent triggering logic
     // Example: this.agentService.triggerAgent(event.agentId, event.context);
   }
 
   onQuestionAction(event: { action: any; card: AICardConfig; question?: string }): void {
     // Handle question action - write a new message to the chat
-    console.log('Question action triggered:', event);
+    this.logger.info('Question action triggered', 'HomePageComponent', event);
     // TODO: Implement chat message logic
     // Example: this.chatService.sendMessage(event.question || event.action.label);
   }
@@ -2350,7 +2352,7 @@ export class HomePageComponent implements OnInit {
     const parsedCard = this.llmParsedCard;
     
     if (!placeholderCard) {
-      console.log('⚠️ [HomePage] No placeholder card yet', { timestamp });
+      this.logger.warn('⚠️ No placeholder card yet', 'HomePageComponent', { timestamp });
       return;
     }
     
@@ -2440,46 +2442,44 @@ export class HomePageComponent implements OnInit {
       sections
     };
     
-    console.group(`📊 [HomePage] Section States - ${timestamp}`);
-    console.log('Streaming Status:', {
-      isSimulating: logData.isSimulating,
-      // stage removed
-      progress: logData.progress,
-      bufferLength: logData.bufferLength,
-      targetLength: logData.targetLength
+    this.logger.debug(`📊 Section States - ${timestamp}`, 'HomePageComponent', {
+      streamingStatus: {
+        isSimulating: logData.isSimulating,
+        progress: logData.progress,
+        bufferLength: logData.bufferLength,
+        targetLength: logData.targetLength
+      },
+      cardState: {
+        placeholderCardId: logData.placeholderCardId,
+        placeholderSections: logData.placeholderSectionCount,
+        parsedCardId: logData.parsedCardId,
+        parsedSections: logData.parsedSectionCount,
+        lastKnownCount: logData.lastKnownSectionCount
+      },
+      completionSummary: {
+        total: logData.totalSections,
+        completed: logData.completedSections,
+        pending: logData.totalSections - logData.completedSections
+      },
+      sections: sections.map(s => ({
+        index: s.index,
+        id: s.id,
+        title: s.title,
+        type: s.type,
+        isComplete: s.isComplete,
+        shouldBeComplete: s.shouldBeComplete,
+        completionMismatch: s.completionMismatch,
+        fieldCount: s.fieldCount,
+        itemCount: s.itemCount,
+        fieldsComplete: s.fields.filter(f => !f.isPlaceholder).length + '/' + s.fieldCount,
+        itemsComplete: s.items.filter(i => !i.isPlaceholder).length + '/' + s.itemCount
+      }))
     });
-    console.log('Card State:', {
-      placeholderCardId: logData.placeholderCardId,
-      placeholderSections: logData.placeholderSectionCount,
-      parsedCardId: logData.parsedCardId,
-      parsedSections: logData.parsedSectionCount,
-      lastKnownCount: logData.lastKnownSectionCount
-    });
-    console.log('Completion Summary:', {
-      total: logData.totalSections,
-      completed: logData.completedSections,
-      pending: logData.totalSections - logData.completedSections
-    });
-    console.table(sections.map(s => ({
-      Index: s.index,
-      ID: s.id,
-      Title: s.title,
-      Type: s.type,
-      'Is Complete': s.isComplete ? '✅' : '⏳',
-      'Should Complete': s.shouldBeComplete ? '✅' : '⏳',
-      'Mismatch': s.completionMismatch ? '⚠️' : '✓',
-      Fields: s.fieldCount,
-      Items: s.itemCount,
-      'Fields Complete': s.fields.filter(f => !f.isPlaceholder).length + '/' + s.fieldCount,
-      'Items Complete': s.items.filter(i => !i.isPlaceholder).length + '/' + s.itemCount
-    })));
     
     // Log sections with mismatches
     const mismatches = sections.filter(s => s.completionMismatch);
     if (mismatches.length > 0) {
-      console.warn('⚠️ Completion Mismatches:', mismatches);
+      this.logger.warn('⚠️ Completion Mismatches', 'HomePageComponent', mismatches);
     }
-    
-    console.groupEnd();
   }
 }

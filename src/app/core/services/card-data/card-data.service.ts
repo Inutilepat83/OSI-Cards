@@ -1,9 +1,11 @@
-import { Injectable, inject, InjectionToken, OnDestroy } from '@angular/core';
+import { Injectable, inject, InjectionToken, OnDestroy, DestroyRef } from '@angular/core';
 import { Observable, BehaviorSubject, combineLatest, EMPTY } from 'rxjs';
-import { map, switchMap, shareReplay, startWith, filter } from 'rxjs/operators';
+import { map, switchMap, shareReplay, startWith, filter, takeUntil } from 'rxjs/operators';
 import { AICardConfig, CardType } from '../../../models';
 import { CardDataProvider } from './card-data-provider.interface';
 import { JsonFileCardProvider } from './json-file-card-provider.service';
+import { RequestCanceller } from '../../../shared/utils/request-cancellation.util';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 /**
  * Injection token for card data provider
@@ -18,18 +20,50 @@ interface CardUpdate {
 
 /**
  * Main card data service that orchestrates different data providers
- * Provides a unified interface for card data operations
+ * 
+ * Provides a unified interface for card data operations, allowing seamless switching
+ * between different data sources (JSON files, WebSocket, API, etc.). Uses the provider
+ * pattern to abstract data access and enable pluggable data sources.
+ * 
+ * Features:
+ * - Provider-based architecture for flexible data sources
+ * - Cached observables with shareReplay for performance
+ * - Real-time updates support (when provider supports it)
+ * - Automatic provider initialization
+ * 
+ * @example
+ * ```typescript
+ * const cardData = inject(CardDataService);
+ * 
+ * // Get all cards
+ * cardData.getAllCards().subscribe(cards => {
+ *   console.log('Cards:', cards);
+ * });
+ * 
+ * // Get cards by type
+ * cardData.getCardsByType('company').subscribe(cards => {
+ *   console.log('Company cards:', cards);
+ * });
+ * 
+ * // Switch to a different provider
+ * const wsProvider = inject(WebSocketCardProvider);
+ * cardData.switchProvider(wsProvider);
+ * ```
  */
 @Injectable({
   providedIn: 'root'
 })
 export class CardDataService implements OnDestroy {
+  private readonly destroyRef = inject(DestroyRef);
   private provider = inject(CARD_DATA_PROVIDER, { optional: true }) || inject(JsonFileCardProvider);
   private activeProviderSubject = new BehaviorSubject<CardDataProvider>(this.provider);
+  private requestCanceller = new RequestCanceller();
 
   // Cached observables for performance
   private allCards$ = this.activeProviderSubject.pipe(
-    switchMap(provider => provider.getAllCards()),
+    switchMap(provider => provider.getAllCards().pipe(
+      takeUntil(this.requestCanceller.cancel$)
+    )),
     shareReplay(1)
   );
 
@@ -191,9 +225,17 @@ export class CardDataService implements OnDestroy {
   }
 
   /**
+   * Cancel all in-flight requests
+   */
+  cancelRequests(): void {
+    this.requestCanceller.cancel();
+  }
+
+  /**
    * Clean up resources
    */
   ngOnDestroy(): void {
+    this.cancelRequests();
     const provider = this.activeProviderSubject.value;
     if (provider.destroy) {
       provider.destroy();

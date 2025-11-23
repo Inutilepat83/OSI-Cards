@@ -1,3 +1,14 @@
+/**
+ * Public API Surface of OSI Cards Library
+ * 
+ * This file exports all public APIs that can be imported by other Angular projects.
+ * 
+ * @example
+ * ```typescript
+ * import { AICardRendererComponent, CardDataService } from '@osi/cards-lib';
+ * ```
+ */
+
 // Models
 export * from './lib/models';
 
@@ -39,5 +50,14 @@ export * from './lib/components/sections/social-media-section/social-media-secti
 export * from './lib/components/sections/solutions-section/solutions-section.component';
 export * from './lib/components/sections/text-reference-section/text-reference-section.component';
 
-// Styles entry point - import from '@osi/cards-lib/styles/_styles.scss'
-
+/**
+ * Note: For full functionality including:
+ * - CardDataService and other core services
+ * - NgRx store (actions, selectors, reducers, effects)
+ * - Additional utilities and providers
+ * 
+ * You may need to import from the main application source or
+ * extend the library exports. See integration documentation for details.
+ * 
+ * Styles entry point: '@osi/cards-lib/styles/_styles.scss'
+ */

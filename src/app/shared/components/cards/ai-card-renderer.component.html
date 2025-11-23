@@ -14,10 +14,13 @@
       <article
         class="ai-card-surface"
         [ngClass]="{ 'ai-card-surface--fullscreen': isFullscreen, 'ai-card-surface--empty-state': !processedSections.length }"
+        [attr.aria-label]="(cardConfig && cardConfig.cardTitle) || 'Card'"
+        [attr.aria-describedby]="(cardConfig && cardConfig.cardSubtitle) ? 'card-subtitle' : null"
+        role="article"
       >
           <!-- Title and button at the top of the card -->
           <div *ngIf="processedSections.length" class="flex items-center justify-between mb-4">
-            <h1 class="text-2xl font-bold text-foreground">
+            <h1 class="text-2xl font-bold text-foreground" id="card-title">
               {{ cardConfig.cardTitle }}
             </h1>
             <button
@@ -30,7 +33,7 @@
             </button>
           </div>
 
-          <p *ngIf="processedSections.length && cardConfig.cardSubtitle" class="ai-card-subtitle">
+          <p *ngIf="processedSections.length && cardConfig.cardSubtitle" class="ai-card-subtitle" id="card-subtitle">
             {{ cardConfig.cardSubtitle }}
           </p>
 
@@ -40,6 +43,7 @@
               [gap]="12"
               [minColumnWidth]="280"
               class="w-full"
+              [attr.aria-label]="'Card sections: ' + processedSections.length + ' section' + (processedSections.length !== 1 ? 's' : '')"
               (sectionEvent)="onSectionEvent($event)"
               (layoutChange)="onLayoutChange($event)"
             ></app-masonry-grid>
@@ -85,6 +89,8 @@
               class="px-5 py-2.5 text-sm transition-all duration-200 flex items-center gap-2 cursor-pointer"
               [ngClass]="getActionButtonClasses(action)"
               [style.border-radius]="'var(--section-card-border-radius, 10px)'"
+              [attr.aria-label]="action.label + (action.type === 'website' && action.url ? ': ' + action.url : '')"
+              [attr.aria-describedby]="action.type === 'mail' ? 'action-mail-hint' : null"
               (click)="onActionClick(action)"
               (keydown.enter)="onActionClick(action)"
               (keydown.space)="$event.preventDefault(); onActionClick(action)"

@@ -28,6 +28,21 @@ export class JsonProcessingService {
 
   /**
    * Validate JSON syntax and return error information
+   * 
+   * Validates JSON syntax without parsing the full structure.
+   * Provides detailed error information including position and suggestions.
+   * 
+   * @param jsonInput - The JSON string to validate
+   * @returns Validation result with error details if invalid
+   * 
+   * @example
+   * ```typescript
+   * const validation = jsonProcessing.validateJsonSyntax(jsonString);
+   * if (!validation.isValid) {
+   *   console.error(`Error at position ${validation.position}: ${validation.error}`);
+   *   console.log(`Suggestion: ${validation.suggestion}`);
+   * }
+   * ```
    */
   validateJsonSyntax(jsonInput: string): {
     isValid: boolean;
@@ -104,7 +119,24 @@ export class JsonProcessingService {
 
   /**
    * Try to parse partial/incomplete JSON for live preview
-   * Returns partial card data if parsing succeeds, null otherwise
+   * 
+   * Attempts to parse incomplete JSON input for real-time preview updates.
+   * Handles common issues like:
+   * - Trailing commas
+   * - Missing closing braces/brackets
+   * - Incomplete strings
+   * - Partial section arrays
+   * 
+   * Falls back to regex-based extraction if full parsing fails.
+   * 
+   * @param jsonInput - The potentially incomplete JSON string
+   * @returns Partial card configuration if parsing succeeds, null otherwise
+   * 
+   * @example
+   * ```typescript
+   * const partial = jsonProcessing.tryParsePartialJson('{"cardTitle": "Test"');
+   * // Returns: { cardTitle: "Test" } even though JSON is incomplete
+   * ```
    */
   tryParsePartialJson(jsonInput: string): Partial<AICardConfig> | null {
     try {
@@ -295,6 +327,13 @@ export class JsonProcessingService {
 
   /**
    * Extract error position from error message
+   * 
+   * Attempts to extract the character position where a JSON parsing error occurred.
+   * This helps provide better error feedback to users.
+   * 
+   * @param errorMessage - The error message from JSON.parse
+   * @param jsonInput - The JSON input string
+   * @returns Character position of the error, or undefined if not found
    */
   private extractErrorPosition(errorMessage: string, jsonInput: string): number | undefined {
     const positionMatch = errorMessage.match(/position (\d+)/i);
@@ -353,6 +392,18 @@ export class JsonProcessingService {
 
   /**
    * Format JSON with proper indentation
+   * 
+   * Formats a JSON string with 2-space indentation for readability.
+   * Returns the original string if parsing fails.
+   * 
+   * @param jsonInput - The JSON string to format
+   * @returns Formatted JSON string with indentation, or original string if invalid
+   * 
+   * @example
+   * ```typescript
+   * const formatted = jsonProcessing.formatJson('{"a":1,"b":2}');
+   * // Returns: "{\n  \"a\": 1,\n  \"b\": 2\n}\n"
+   * ```
    */
   formatJson(jsonInput: string): string {
     try {
@@ -365,6 +416,19 @@ export class JsonProcessingService {
 
   /**
    * Calculate a simple hash of JSON content (ignoring whitespace differences)
+   * 
+   * Creates a hash value for JSON content that ignores whitespace differences.
+   * Useful for detecting content changes without formatting differences.
+   * 
+   * @param jsonInput - The JSON string to hash
+   * @returns Hash string representing the JSON content
+   * 
+   * @example
+   * ```typescript
+   * const hash1 = jsonProcessing.calculateJsonHash('{"a":1}');
+   * const hash2 = jsonProcessing.calculateJsonHash('{ "a": 1 }');
+   * // hash1 === hash2 (whitespace ignored)
+   * ```
    */
   calculateJsonHash(jsonInput: string): string {
     const normalized = jsonInput.replace(/\s+/g, ' ').trim();

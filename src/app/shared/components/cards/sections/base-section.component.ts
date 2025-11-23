@@ -12,7 +12,30 @@ export interface SectionInteraction<T = CardField | CardItem> {
 
 /**
  * Base component class for all section components
- * Provides common functionality and ensures consistency
+ * 
+ * Provides common functionality and ensures consistency across all section types.
+ * All section components should extend this class to inherit:
+ * - Animation state management (staggered field/item animations)
+ * - Interaction event handling (fieldInteraction, itemInteraction)
+ * - TrackBy functions for optimal *ngFor performance
+ * - Change detection optimization (OnPush strategy with batched updates)
+ * - Standardized data access patterns (getFields, getItems)
+ * 
+ * @template T - The type of field/item this section handles (CardField or CardItem)
+ * 
+ * @example
+ * ```typescript
+ * @Component({
+ *   selector: 'app-my-section',
+ *   standalone: true,
+ *   imports: [CommonModule],
+ *   templateUrl: './my-section.component.html',
+ *   changeDetection: ChangeDetectionStrategy.OnPush
+ * })
+ * export class MySectionComponent extends BaseSectionComponent<CardField> {
+ *   // Component-specific logic here
+ * }
+ * ```
  */
 @Component({
   template: '',
@@ -45,6 +68,19 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
 
   /**
    * Get fields from section (standardized access pattern)
+   * 
+   * Returns the fields array from the section, or an empty array if not available.
+   * This method provides a consistent way to access fields across all section components.
+   * 
+   * @returns Array of CardField objects from the section
+   * 
+   * @example
+   * ```typescript
+   * const fields = this.getFields();
+   * fields.forEach(field => {
+   *   // Process each field
+   * });
+   * ```
    */
   protected getFields(): CardField[] {
     return (this.section.fields as CardField[]) ?? [];
@@ -52,7 +88,20 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
 
   /**
    * Get items from section (standardized access pattern)
-   * Falls back to fields if items are not available
+   * 
+   * Returns the items array from the section, or falls back to fields if items are not available.
+   * This method provides a consistent way to access items across all section components.
+   * If items are not available, it converts fields to items by mapping field properties.
+   * 
+   * @returns Array of CardItem objects from the section, or converted from fields
+   * 
+   * @example
+   * ```typescript
+   * const items = this.getItems();
+   * items.forEach(item => {
+   *   // Process each item
+   * });
+   * ```
    */
   protected getItems(): CardItem[] {
     if (Array.isArray(this.section.items) && this.section.items.length > 0) {
@@ -100,6 +149,21 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
 
   /**
    * Get animation class for a field based on its appearance state
+   * 
+   * Returns the appropriate CSS class for field animations based on the field's
+   * current animation state (entering, entered, or none). Automatically marks new
+   * fields as entering if they haven't been seen before.
+   * 
+   * @param fieldId - Unique identifier for the field
+   * @param index - Index of the field in the array (used for stagger delay)
+   * @returns CSS class name for the animation state ('field-streaming', 'field-entered', or '')
+   * 
+   * @example
+   * ```html
+   * <div [ngClass]="getFieldAnimationClass(getFieldId(field, i), i)">
+   *   {{ field.value }}
+   * </div>
+   * ```
    */
   getFieldAnimationClass(fieldId: string, index: number): string {
     const state = this.fieldAnimationStates.get(fieldId);
@@ -294,6 +358,19 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
 
   /**
    * Emit field interaction event (standardized pattern)
+   * 
+   * Emits a fieldInteraction event with the field data and metadata.
+   * Automatically includes section ID and title in the metadata.
+   * 
+   * @param field - The field that was interacted with
+   * @param metadata - Optional additional metadata to include
+   * 
+   * @example
+   * ```typescript
+   * onFieldClick(field: CardField): void {
+   *   this.emitFieldInteraction(field, { action: 'click' });
+   * }
+   * ```
    */
   protected emitFieldInteraction(field: T, metadata?: Record<string, unknown>): void {
     this.fieldInteraction.emit({
@@ -321,8 +398,24 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
   }
 
   /**
-   * Phase 5: Perfect trackBy function for fields - uses stable field ID
-   * Can be overridden by child classes for custom tracking
+   * TrackBy function for fields - uses stable field ID for optimal *ngFor performance
+   * 
+   * This function should be used with *ngFor trackBy to prevent unnecessary
+   * DOM re-renders when the fields array changes. Uses the field's ID if available,
+   * otherwise generates a stable ID from the index and label.
+   * 
+   * Can be overridden by child classes for custom tracking logic.
+   * 
+   * @param index - Index of the field in the array
+   * @param field - The field object
+   * @returns A stable identifier for the field
+   * 
+   * @example
+   * ```html
+   * <div *ngFor="let field of fields; trackBy: trackField">
+   *   {{ field.value }}
+   * </div>
+   * ```
    */
   protected trackField(index: number, field: CardField): string {
     return field.id || `field-${index}-${field.label || ''}`;

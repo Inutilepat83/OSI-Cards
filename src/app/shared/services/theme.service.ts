@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { LoggingService } from '../../core/services/logging.service';
 
 export type Theme = 'light' | 'dark' | 'auto';
 
@@ -10,6 +11,7 @@ export type Theme = 'light' | 'dark' | 'auto';
   providedIn: 'root'
 })
 export class ThemeService {
+  private readonly logger = inject(LoggingService);
   private readonly themeSubject = new BehaviorSubject<Theme>(this.getStoredTheme() || 'auto');
   readonly theme$: Observable<Theme> = this.themeSubject.asObservable();
 
@@ -104,7 +106,7 @@ export class ThemeService {
     try {
       localStorage.setItem('theme', theme);
     } catch (error) {
-      console.error('Failed to store theme:', error);
+      this.logger.error('Failed to store theme', 'ThemeService', error);
     }
   }
 
@@ -118,7 +120,7 @@ export class ThemeService {
         return stored as Theme;
       }
     } catch (error) {
-      console.error('Failed to get stored theme:', error);
+      this.logger.error('Failed to get stored theme', 'ThemeService', error);
     }
     return null;
   }

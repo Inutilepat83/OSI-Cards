@@ -15,6 +15,7 @@ import { CARD_DATA_PROVIDER } from './core/services/card-data/card-data.service'
 import { JsonFileCardProvider } from './core/services/card-data/json-file-card-provider.service';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { HttpCacheInterceptor } from './core/interceptors/http-cache.interceptor';
+import { RateLimitInterceptor } from './core/interceptors/rate-limit.interceptor';
 
 export const config: ApplicationConfig = {
   providers: [
@@ -47,6 +48,11 @@ export const config: ApplicationConfig = {
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpCacheInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: RateLimitInterceptor,
       multi: true
     }
   ]

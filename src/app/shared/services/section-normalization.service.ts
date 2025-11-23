@@ -58,6 +58,23 @@ const SECTION_COL_SPAN_THRESHOLDS: Record<string, ColSpanThresholds> = {
 
 const DEFAULT_COL_SPAN_THRESHOLD: ColSpanThresholds = { two: 6 };
 
+/**
+ * Service for normalizing and resolving section types
+ * 
+ * Handles section type resolution, column span calculations, and section sorting.
+ * Provides intelligent type matching based on section type and title patterns.
+ * 
+ * @example
+ * ```typescript
+ * const normalized = sectionNormalization.normalizeSection({
+ *   title: 'Company Info',
+ *   type: 'info',
+ *   fields: [...]
+ * });
+ * 
+ * const colSpan = sectionNormalization.calculateColSpan(normalized, 4);
+ * ```
+ */
 @Injectable({
   providedIn: 'root'
 })

@@ -67,6 +67,18 @@ export const updateCard = createAction(
   '[Cards] Update Card',
   props<{ id: string; changes: Partial<AICardConfig> }>()
 );
+export const updateCardOptimistic = createAction(
+  '[Cards] Update Card Optimistic',
+  props<{ id: string; changes: Partial<AICardConfig> }>()
+);
+export const updateCardSuccess = createAction(
+  '[Cards] Update Card Success',
+  props<{ id: string; card: AICardConfig }>()
+);
+export const updateCardFailure = createAction(
+  '[Cards] Update Card Failure',
+  props<{ id: string; error: string }>()
+);
 export const upsertCard = createAction(
   '[Cards] Upsert Card',
   props<{ card: AICardConfig }>()
@@ -362,6 +374,20 @@ export const reducer = createReducer(
   }),
   on(updateCard, (state, { id, changes }) => {
     return cardsAdapter.updateOne({ id, changes }, state);
+  }),
+  on(updateCardOptimistic, (state, { id, changes }) => {
+    // Optimistic update - apply changes immediately
+    return cardsAdapter.updateOne({ id, changes }, state);
+  }),
+  on(updateCardSuccess, (state, { id, card }) => {
+    // Confirm optimistic update
+    return cardsAdapter.upsertOne(card, state);
+  }),
+  on(updateCardFailure, (state, { id }) => {
+    // Revert optimistic update - restore original value
+    // Note: Original value should be restored by OptimisticUpdatesService
+    // This action is mainly for logging/error handling
+    return state;
   }),
   on(upsertCard, (state, { card }) => {
     const cardWithId = ensureCardIds(card);

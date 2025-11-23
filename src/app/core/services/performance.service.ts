@@ -1,4 +1,5 @@
-import { Injectable, isDevMode, OnDestroy } from '@angular/core';
+import { Injectable, isDevMode, OnDestroy, inject } from '@angular/core';
+import { LoggingService } from './logging.service';
 
 export interface PerformanceMetric {
   name: string;
@@ -20,12 +21,36 @@ export interface PerformanceBudget {
 
 /**
  * Consolidated Performance Service
- * Merges functionality from PerformanceService, PerformanceMonitorService, and PerformanceBudgetService
+ * 
+ * Merges functionality from PerformanceService, PerformanceMonitorService, and PerformanceBudgetService.
+ * Provides comprehensive performance monitoring including:
+ * - Custom metric tracking
+ * - Web Vitals (LCP, FID, CLS, FCP, TTI)
+ * - Memory usage monitoring
+ * - Performance budget enforcement
+ * - Slow operation detection
+ * 
+ * @example
+ * ```typescript
+ * // Measure a function execution
+ * const result = performanceService.measure('loadCards', () => {
+ *   return this.loadCards();
+ * });
+ * 
+ * // Measure async operation
+ * const data = await performanceService.measureAsync('fetchData', async () => {
+ *   return await this.http.get('/api/data').toPromise();
+ * });
+ * 
+ * // Initialize Web Vitals tracking
+ * performanceService.initialize();
+ * ```
  */
 @Injectable({
   providedIn: 'root'
 })
 export class PerformanceService implements OnDestroy {
+  private readonly logger = inject(LoggingService);
   private metrics: PerformanceMetric[] = [];
   private readonly MAX_METRICS = 100;
   private observers: PerformanceObserver[] = [];
@@ -144,7 +169,7 @@ export class PerformanceService implements OnDestroy {
 
     // Log slow operations in development
     if (duration > 100 && isDevMode()) {
-      console.warn(`Slow operation detected: ${name} took ${duration.toFixed(2)}ms`, metadata);
+      this.logger.warn(`Slow operation detected: ${name} took ${duration.toFixed(2)}ms`, 'PerformanceService', metadata);
     }
   }
 
@@ -271,7 +296,7 @@ export class PerformanceService implements OnDestroy {
         });
 
         if (isDevMode()) {
-          console.log(`LCP: ${lcp.toFixed(2)}ms`);
+          this.logger.info(`LCP: ${lcp.toFixed(2)}ms`, 'PerformanceService');
         }
       });
 
@@ -279,7 +304,7 @@ export class PerformanceService implements OnDestroy {
       this.observers.push(observer);
     } catch (error) {
       if (isDevMode()) {
-        console.warn('LCP tracking not supported:', error);
+        this.logger.warn('LCP tracking not supported', 'PerformanceService', error);
       }
     }
   }
@@ -300,7 +325,7 @@ export class PerformanceService implements OnDestroy {
           });
 
           if (isDevMode()) {
-            console.log(`FID: ${fid.toFixed(2)}ms`);
+            this.logger.info(`FID: ${fid.toFixed(2)}ms`, 'PerformanceService');
           }
         });
       });
@@ -309,7 +334,7 @@ export class PerformanceService implements OnDestroy {
       this.observers.push(observer);
     } catch (error) {
       if (isDevMode()) {
-        console.warn('FID tracking not supported:', error);
+        this.logger.warn('FID tracking not supported', 'PerformanceService', error);
       }
     }
   }
@@ -337,7 +362,7 @@ export class PerformanceService implements OnDestroy {
           });
 
           if (isDevMode()) {
-            console.log(`CLS: ${clsValue.toFixed(4)}`);
+            this.logger.info(`CLS: ${clsValue.toFixed(4)}`, 'PerformanceService');
           }
         }
       });
@@ -346,7 +371,7 @@ export class PerformanceService implements OnDestroy {
       this.observers.push(observer);
     } catch (error) {
       if (isDevMode()) {
-        console.warn('CLS tracking not supported:', error);
+        this.logger.warn('CLS tracking not supported', 'PerformanceService', error);
       }
     }
   }
@@ -366,7 +391,7 @@ export class PerformanceService implements OnDestroy {
           });
 
           if (isDevMode()) {
-            console.log(`FCP: ${fcp.toFixed(2)}ms`);
+            this.logger.info(`FCP: ${fcp.toFixed(2)}ms`, 'PerformanceService');
           }
         });
       });
@@ -375,7 +400,7 @@ export class PerformanceService implements OnDestroy {
       this.observers.push(observer);
     } catch (error) {
       if (isDevMode()) {
-        console.warn('FCP tracking not supported:', error);
+        this.logger.warn('FCP tracking not supported', 'PerformanceService', error);
       }
     }
   }
@@ -400,7 +425,7 @@ export class PerformanceService implements OnDestroy {
           });
 
           if (isDevMode()) {
-            console.log(`TTI: ${tti.toFixed(2)}ms`);
+            this.logger.info(`TTI: ${tti.toFixed(2)}ms`, 'PerformanceService');
           }
         }
       }, 0);
@@ -428,7 +453,7 @@ export class PerformanceService implements OnDestroy {
       });
 
       if (usedMB > limitMB * 0.9) {
-        console.warn(`High memory usage: ${usedMB.toFixed(2)}MB / ${limitMB.toFixed(2)}MB`);
+        this.logger.warn(`High memory usage: ${usedMB.toFixed(2)}MB / ${limitMB.toFixed(2)}MB`, 'PerformanceService');
       }
     };
 
@@ -502,9 +527,9 @@ export class PerformanceService implements OnDestroy {
                    `Actual: ${actual.toFixed(2)}ms, Threshold: ${threshold}ms`;
     
     if (severity === 'error') {
-      console.error(message);
+      this.logger.error(message, 'PerformanceService');
     } else {
-      console.warn(message);
+      this.logger.warn(message, 'PerformanceService');
     }
 
     if (this.violations.length > 100) {
@@ -558,7 +583,7 @@ export class PerformanceService implements OnDestroy {
     }
 
     if (metadata && isDevMode()) {
-      console.debug(`Budget metadata for ${name}:`, metadata);
+      this.logger.debug(`Budget metadata for ${name}`, 'PerformanceService', metadata);
     }
 
     if (value > budget.error) {

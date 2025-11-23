@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardField } from '../../../../../models';
 import { LucideIconsModule } from '../../../../icons/lucide-icons.module';
 import { BaseSectionComponent } from '../base-section.component';
+import { LoggingService } from '../../../../../core/services/logging.service';
 
 interface BrandColor {
   id: string;
@@ -20,6 +21,7 @@ interface BrandColor {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BrandColorsSectionComponent extends BaseSectionComponent<CardField> {
+  private readonly logger = inject(LoggingService);
   brandColors: BrandColor[] = [];
   copiedColorId: string | null = null;
 
@@ -80,7 +82,7 @@ export class BrandColorsSectionComponent extends BaseSectionComponent<CardField>
       
       this.cdr.markForCheck();
     } catch (err) {
-      console.error('Failed to copy to clipboard:', err);
+      this.logger.error('Failed to copy to clipboard', 'BrandColorsSectionComponent', err);
     }
   }
 

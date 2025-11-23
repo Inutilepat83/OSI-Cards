@@ -2,16 +2,19 @@ import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
-import { map, mergeMap, catchError, tap, take, finalize } from 'rxjs/operators';
+import { map, mergeMap, catchError, tap, take, finalize, withLatestFrom } from 'rxjs/operators';
 import * as CardsActions from './cards.state';
 import { CardDataService, PerformanceService } from '../../core';
 import { AICardConfig, CardType } from '../../models/card.model';
 import { ensureCardIds, removeAllIds } from '../../shared';
+import { OptimisticUpdatesService } from '../../shared/services/optimistic-updates.service';
+import * as CardsSelectors from './cards.selectors';
 
 type GenerateCardAction = ReturnType<typeof CardsActions.generateCard>;
 type LoadTemplateAction = ReturnType<typeof CardsActions.loadTemplate>;
 type DeleteCardAction = ReturnType<typeof CardsActions.deleteCard>;
 type SearchCardsAction = ReturnType<typeof CardsActions.searchCards>;
+type UpdateCardAction = ReturnType<typeof CardsActions.updateCard>;
 
 @Injectable()
 export class CardsEffects {
@@ -19,6 +22,7 @@ export class CardsEffects {
   private readonly cardConfigService = inject(CardDataService);
   private readonly performanceService = inject(PerformanceService);
   private readonly store = inject(Store);
+  private readonly optimisticUpdates = inject(OptimisticUpdatesService);
 
   loadCards$ = createEffect(() =>
     this.actions$.pipe(
@@ -203,6 +207,60 @@ export class CardsEffects {
               error: error instanceof Error ? error.message : String(error)
             }));
           })
+        );
+      })
+    )
+  );
+
+  /**
+   * Update card with optimistic updates
+   * Shows UI changes immediately, then confirms or reverts based on server response
+   */
+  updateCard$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(CardsActions.updateCard),
+      withLatestFrom(this.store.select(CardsSelectors.selectCards)),
+      mergeMap(([{ id, changes }, cards]: [UpdateCardAction, AICardConfig[]]) => {
+        const originalCard = cards.find(c => c.id === id);
+        if (!originalCard) {
+          return of(CardsActions.updateCardFailure({ id, error: 'Card not found' }));
+        }
+
+        const optimisticCard = { ...originalCard, ...changes };
+        
+        // Apply optimistic update
+        this.optimisticUpdates.applyUpdate(id, optimisticCard, originalCard, {
+          maxRetries: 3,
+          conflictResolver: {
+            resolve: (serverValue, optimisticValue) => {
+              // Merge strategy: prefer optimistic changes for user experience
+              return { ...serverValue, ...changes };
+            },
+            description: 'Merge optimistic changes with server value'
+          }
+        });
+
+        // Dispatch optimistic update to store immediately
+        const optimisticAction = CardsActions.updateCardOptimistic({ id, changes });
+
+        // Simulate API call (in real app, this would be an HTTP request)
+        // For now, we'll use a timeout to simulate network delay
+        return of(null).pipe(
+          mergeMap(() => {
+            // Simulate successful update
+            // In real implementation, this would be: return this.cardDataService.updateCard(id, changes)
+            return of(CardsActions.updateCardSuccess({ id, card: optimisticCard }));
+          }),
+          catchError((error: unknown) => {
+            // Revert optimistic update on failure
+            this.optimisticUpdates.revertUpdate(id, error);
+            return of(CardsActions.updateCardFailure({
+              id,
+              error: error instanceof Error ? error.message : String(error)
+            }));
+          }),
+          // Emit optimistic action first, then success/failure
+          mergeMap((result) => [optimisticAction, result])
         );
       })
     )

@@ -9,13 +9,14 @@ Each card is composed of one or more **sections**—standalone, configurable com
 ## Table of Contents
 
 1. [Quick Start](#quick-start)
-2. [Core Architecture](#core-architecture)
-3. [Section Types Catalog](#section-types-catalog---all-20-components)
-4. [Creating Cards: Complete Guide](#creating-cards-complete-guide)
-5. [Design System & Tokens](#design-system--tokens)
-6. [Advanced Features](#advanced-features)
-7. [Development](#development)
-8. [Appendix](#appendix)
+2. [Using OSI Cards in Your Project](#using-osi-cards-in-your-project)
+3. [Core Architecture](#core-architecture)
+4. [Section Types Catalog](#section-types-catalog---all-20-components)
+5. [Creating Cards: Complete Guide](#creating-cards-complete-guide)
+6. [Design System & Tokens](#design-system--tokens)
+7. [Advanced Features](#advanced-features)
+8. [Development](#development)
+9. [Appendix](#appendix)
 
 ---
 
@@ -58,6 +59,54 @@ Add a JSON card configuration to `src/assets/configs/companies/` or `src/assets/
 ```
 
 The card will automatically appear in the masonry grid on page load.
+
+---
+
+## Using OSI Cards in Your Project
+
+OSI Cards can be imported and used as a library in other Angular projects.
+
+> 📖 **For detailed integration instructions, see [README_INTEGRATION.md](./README_INTEGRATION.md)**
+
+### Quick Integration
+
+1. **Build the library:**
+   ```bash
+   npm run build:lib
+   ```
+
+2. **Install in your project:**
+   ```bash
+   npm install /path/to/OSI-Cards-1/dist/osi-cards
+   ```
+
+3. **Configure your app:**
+   ```typescript
+   import { provideOSICards } from 'osi-cards';
+   
+   export const appConfig: ApplicationConfig = {
+     providers: [
+       provideOSICards({ enableLogging: true })
+     ]
+   };
+   ```
+
+4. **Use components:**
+   ```typescript
+   import { AICardRendererComponent } from 'osi-cards';
+   
+   @Component({
+     imports: [AICardRendererComponent],
+     template: `<app-ai-card-renderer [card]="myCard"></app-ai-card-renderer>`
+   })
+   ```
+
+### Full Documentation
+
+- **[Quick Integration Guide](./README_INTEGRATION.md)** - Quick start guide for integrating OSI Cards
+- **[Integration Guide](./docs/INTEGRATION_GUIDE.md)** - Complete integration documentation
+- **[Integration Example](./docs/INTEGRATION_EXAMPLE.md)** - Working example project
+- **[Integration Checklist](./docs/INTEGRATION_CHECKLIST.md)** - Step-by-step checklist
 
 ---
 
@@ -698,10 +747,10 @@ src/
 
 ### Resources
 
-- **Copilot Instructions**: See `.github/copilot-instructions.md` for architectural guidelines
-- **Architecture**: See `ARCHITECTURE_IMPROVEMENTS.md` for recent enhancements
-- **Performance**: See `PERFORMANCE_IMPROVEMENTS.md` for optimization strategies
-- **Streaming**: See `STREAMING_FIX_PLAN.md` for LLM streaming implementation
+- **Architecture**: See [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) for architectural details
+- **Developer Guide**: See [docs/DEVELOPER_GUIDE.md](./docs/DEVELOPER_GUIDE.md) for development guidelines
+- **Examples**: See [docs/EXAMPLES.md](./docs/EXAMPLES.md) for code examples
+- **Integration**: See [README_INTEGRATION.md](./README_INTEGRATION.md) for integration guide
 
 ### FAQ
 
@@ -725,4 +774,4 @@ A: Yes. The default `JsonFileCardProvider` loads static files. The app works ent
 
 ---
 
-**Questions or contributions?** See `.github/copilot-instructions.md` for coding standards and submission guidelines.
+**Questions or contributions?** See [docs/DEVELOPER_GUIDE.md](./docs/DEVELOPER_GUIDE.md) for development guidelines and best practices.

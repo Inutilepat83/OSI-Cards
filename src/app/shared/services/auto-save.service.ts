@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { AppConfigService } from '../../core/services/app-config.service';
+import { LoggingService } from '../../core/services/logging.service';
 
 export interface AutoSaveState {
   isSaving: boolean;
@@ -18,6 +19,7 @@ export interface AutoSaveState {
 })
 export class AutoSaveService {
   private readonly config = inject(AppConfigService);
+  private readonly logger = inject(LoggingService);
   private readonly saveSubject = new Subject<any>();
   private readonly stateSubject = new Subject<AutoSaveState>();
 
@@ -70,7 +72,7 @@ export class AutoSaveService {
       this.currentState.hasUnsavedChanges = false;
       this.updateState();
     } catch (error) {
-      console.error('Auto-save failed:', error);
+      this.logger.error('Auto-save failed', 'AutoSaveService', error);
       this.currentState.isSaving = false;
       this.updateState();
     }
@@ -88,7 +90,7 @@ export class AutoSaveService {
         return parsed.data;
       }
     } catch (error) {
-      console.error('Failed to get auto-saved data:', error);
+      this.logger.error('Failed to get auto-saved data', 'AutoSaveService', error);
     }
     return null;
   }
@@ -104,7 +106,7 @@ export class AutoSaveService {
       this.currentState.lastSaved = null;
       this.updateState();
     } catch (error) {
-      console.error('Failed to clear auto-saved data:', error);
+      this.logger.error('Failed to clear auto-saved data', 'AutoSaveService', error);
     }
   }
 

@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AICardConfig } from '../../models';
 import { validateCardJson, sanitizeCardConfig } from '../../shared/utils';
+import { LoggingService } from './logging.service';
 
 /**
  * JSON file storage service for client-side card persistence
@@ -11,6 +12,7 @@ import { validateCardJson, sanitizeCardConfig } from '../../shared/utils';
   providedIn: 'root'
 })
 export class JsonFileStorageService {
+  private readonly logger = inject(LoggingService);
   private readonly STORAGE_PREFIX = 'osi_card_';
   private readonly STORAGE_INDEX_KEY = 'osi_card_index';
   private readonly DB_NAME = 'OSICardsDB';
@@ -32,7 +34,7 @@ export class JsonFileStorageService {
       this.loadAllCards();
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : 'Unknown error';
-      console.warn(`Failed to initialize storage: ${msg}`);
+      this.logger.warn(`Failed to initialize storage: ${msg}`, 'JsonFileStorageService');
       this.storageError$.next(`Storage initialization failed: ${msg}`);
     }
   }
@@ -134,7 +136,7 @@ export class JsonFileStorageService {
         );
       } catch (error: unknown) {
         const msg = error instanceof Error ? error.message : 'Unknown error';
-        console.error(`Error loading card ${cardId}: ${msg}`);
+        this.logger.error(`Error loading card ${cardId}: ${msg}`, 'JsonFileStorageService');
         observer.next(null);
         observer.complete();
       }
@@ -171,7 +173,7 @@ export class JsonFileStorageService {
         observer.complete();
       } catch (error: unknown) {
         const msg = error instanceof Error ? error.message : 'Unknown error';
-        console.error(`Error loading all cards: ${msg}`);
+        this.logger.error(`Error loading all cards: ${msg}`, 'JsonFileStorageService');
         observer.next([]);
         observer.complete();
       }
@@ -235,7 +237,7 @@ export class JsonFileStorageService {
       URL.revokeObjectURL(url);
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : 'Unknown error';
-      console.error(`Export failed: ${msg}`);
+      this.logger.error(`Export failed: ${msg}`, 'JsonFileStorageService');
       this.storageError$.next(`Export failed: ${msg}`);
     }
   }
@@ -248,7 +250,7 @@ export class JsonFileStorageService {
       // Note: This requires JSZip library - check if available
       const jsZip = (window as any).JSZip;
       if (!jsZip) {
-        console.warn('JSZip not available. Export as individual files or add JSZip library.');
+        this.logger.warn('JSZip not available. Export as individual files or add JSZip library.', 'JsonFileStorageService');
         return;
       }
 
@@ -272,7 +274,7 @@ export class JsonFileStorageService {
       });
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : 'Unknown error';
-      console.error(`Batch export failed: ${msg}`);
+      this.logger.error(`Batch export failed: ${msg}`, 'JsonFileStorageService');
       this.storageError$.next(`Batch export failed: ${msg}`);
     }
   }
@@ -351,7 +353,7 @@ export class JsonFileStorageService {
           });
           observer.complete();
         }).catch(error => {
-          console.warn('Storage estimate not available:', error);
+          this.logger.warn('Storage estimate not available', 'JsonFileStorageService', error);
           observer.next({
             estimatedUsage: 0,
             estimatedQuota: 0,

@@ -8,7 +8,7 @@ export interface ValidationRule {
   message: string;
 }
 
-export interface ValidationResult {
+export interface InputValidationResult {
   isValid: boolean;
   errors: string[];
 }
@@ -84,7 +84,7 @@ export function validatePattern(value: string, pattern: RegExp): boolean {
  * Create validator with multiple rules
  */
 export function createValidator(rules: ValidationRule[]) {
-  return (value: any): ValidationResult => {
+  return (value: any): InputValidationResult => {
     const errors: string[] = [];
 
     for (const rule of rules) {
@@ -103,7 +103,7 @@ export function createValidator(rules: ValidationRule[]) {
 /**
  * Validate card title
  */
-export function validateCardTitle(title: string): ValidationResult {
+export function validateCardTitle(title: string): InputValidationResult {
   const validator = createValidator([
     {
       validate: (v) => validateRequired(v),
@@ -121,7 +121,7 @@ export function validateCardTitle(title: string): ValidationResult {
 /**
  * Validate JSON string
  */
-export function validateJsonString(json: string): ValidationResult {
+export function validateJsonString(json: string): InputValidationResult {
   const errors: string[] = [];
 
   if (!validateRequired(json)) {
