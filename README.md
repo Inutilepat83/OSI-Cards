@@ -1,6 +1,6 @@
 # OSI Cards
 
-**OSI Cards** is a modern, token-driven Angular 17+ dashboard framework that transforms any dataset into a visually rich stack of interactive cards rendered within a responsive masonry grid. Built for flexibility, accessibility, and performance, OSI Cards empowers developers to compose diverse data experiences with minimal friction.
+**OSI Cards** is a modern, token-driven Angular 20+ dashboard framework that transforms any dataset into a visually rich stack of interactive cards rendered within a responsive masonry grid. Built for flexibility, accessibility, and performance, OSI Cards empowers developers to compose diverse data experiences with minimal friction.
 
 Each card is composed of one or more **sections**—standalone, configurable components orchestrated by `AICardRendererComponent` ⟶ `SectionRendererComponent` ⟶ `MasonryGridComponent`. This architecture enables seamless combination of layouts, real-time streaming updates, and rich interactions.
 
@@ -68,37 +68,110 @@ OSI Cards can be imported and used as a library in other Angular projects.
 
 > 📖 **For detailed integration instructions, see [README_INTEGRATION.md](./README_INTEGRATION.md)**
 
-### Quick Integration
+### Installation Options
 
-1. **Build the library:**
+#### Option 1: Install from GitHub (Recommended)
+
+Install the library directly from the GitHub repository:
+
+```bash
+npm install git+https://github.com/Inutilepat83/OSI-Cards.git
+```
+
+Or add to your `package.json`:
+
+```json
+{
+  "dependencies": {
+    "@osi/cards-lib": "git+https://github.com/Inutilepat83/OSI-Cards.git#main"
+  }
+}
+```
+
+**Note:** When installing from git, you'll need to build the library first:
+
+```bash
+# After npm install, navigate to the installed package
+cd node_modules/@osi/cards-lib
+npm install
+npm run build:lib
+```
+
+Or install from a specific branch/tag:
+
+```bash
+npm install git+https://github.com/Inutilepat83/OSI-Cards.git#branch-name
+npm install git+https://github.com/Inutilepat83/OSI-Cards.git#v1.0.0
+```
+
+#### Option 2: Install from Local Path
+
+1. **Clone the repository:**
    ```bash
+   git clone https://github.com/Inutilepat83/OSI-Cards.git
+   cd OSI-Cards
+   ```
+
+2. **Build the library:**
+   ```bash
+   npm install
    npm run build:lib
    ```
 
-2. **Install in your project:**
+3. **Install in your project:**
    ```bash
-   npm install /path/to/OSI-Cards-1/dist/osi-cards
+   npm install /path/to/OSI-Cards/dist/osi-cards-lib
    ```
 
-3. **Configure your app:**
-   ```typescript
-   import { provideOSICards } from 'osi-cards';
-   
-   export const appConfig: ApplicationConfig = {
-     providers: [
-       provideOSICards({ enableLogging: true })
-     ]
-   };
+   Or add to your `package.json`:
+   ```json
+   {
+     "dependencies": {
+       "@osi/cards-lib": "file:../OSI-Cards/dist/osi-cards-lib"
+     }
+   }
    ```
 
-4. **Use components:**
+### Quick Integration
+
+1. **Install peer dependencies:**
+   ```bash
+   npm install @angular/common@^20.0.0 @angular/core@^20.0.0 @angular/animations@^20.0.0 @angular/platform-browser@^20.0.0 lucide-angular@^0.548.0 rxjs@~7.8.0
+   ```
+
+2. **Import styles in your `src/styles.scss`:**
+   ```scss
+   @import '@osi/cards-lib/styles/_styles';
+   ```
+
+3. **Use components in your Angular component:**
    ```typescript
-   import { AICardRendererComponent } from 'osi-cards';
+   import { Component } from '@angular/core';
+   import { AICardRendererComponent, AICardConfig } from '@osi/cards-lib';
    
    @Component({
+     selector: 'app-my-component',
+     standalone: true,
      imports: [AICardRendererComponent],
-     template: `<app-ai-card-renderer [card]="myCard"></app-ai-card-renderer>`
+     template: `
+       <app-ai-card-renderer [cardConfig]="cardConfig"></app-ai-card-renderer>
+     `
    })
+   export class MyComponent {
+     cardConfig: AICardConfig = {
+       cardTitle: 'My Card',
+       sections: [
+         {
+           title: 'Overview',
+           type: 'info',
+           fields: [
+             { label: 'Name', value: 'Example' },
+             { label: 'Status', value: 'Active' }
+           ]
+         }
+       ]
+     };
+   }
    ```
 
 ### Full Documentation
