@@ -1,5 +1,5 @@
 import { Injectable, inject, OnDestroy, DestroyRef } from '@angular/core';
-import { HttpClient, HttpRequest, HttpResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, of, forkJoin, throwError, timer } from 'rxjs';
 import { map, catchError, switchMap, shareReplay, takeUntil, filter, retryWhen, mergeMap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -94,92 +94,153 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
     return this.indexedDBCache.get(fullUrl).pipe(
       switchMap((indexedEntry: any) => {
         if (indexedEntry && (now - indexedEntry.timestamp) < this.CACHE_TTL) {
-          // Decode and cache in memory for instant access next time
-          const cardData = this.decodeJsonToCard(indexedEntry.data);
-          this.memoryCache.set(fullUrl, { data: cardData, timestamp: indexedEntry.timestamp });
-          return of(cardData);
+          try {
+            // Ensure data is a string - handle both string and object cases
+            let jsonText: string;
+            if (typeof indexedEntry.data === 'string') {
+              jsonText = indexedEntry.data;
+            } else if (typeof indexedEntry.data === 'object') {
+              // If it was stored as an object, stringify it
+              jsonText = JSON.stringify(indexedEntry.data);
+            } else {
+              this.logger.warn(`Invalid cached data type for ${fullUrl}`, 'JsonFileCardProvider');
+              throw new Error('Invalid cached data format');
+            }
+            
+            // Decode and cache in memory for instant access next time
+            const cardData = this.decodeJsonToCard(jsonText);
+            if (cardData) {
+              this.memoryCache.set(fullUrl, { data: cardData, timestamp: indexedEntry.timestamp });
+              return of(cardData);
+            } else {
+              // Cached data is invalid, clear it and fetch fresh
+              this.indexedDBCache.delete(fullUrl).subscribe();
+              throw new Error('Invalid cached data');
+            }
+          } catch (error) {
+            // Cached data is corrupted, clear it and fetch fresh
+            this.logger.warn(`Cached data invalid for ${fullUrl}, fetching fresh`, 'JsonFileCardProvider', error);
+            this.indexedDBCache.delete(fullUrl).subscribe();
+            // Fall through to HTTP request
+          }
         }
         
         // Not in any cache - make HTTP request (bypass queue for templates to reduce latency)
-        const request = new HttpRequest('GET', fullUrl, {
-          responseType: 'text'
-        });
-        
-        // For template loading, use higher priority and bypass queue for faster response
+        // Use HttpClient.get directly with responseType: 'text' for simpler handling
         const priority = PRIORITY_ORDER[card.priority] || 0;
         const isTemplate = card.priority === 'high'; // High priority cards are typically templates
         
-        if (isTemplate) {
-          // Direct HTTP request for templates (no queue delay)
-          return this.http.request(request).pipe(
-            map((response) => {
-              const text = response instanceof HttpResponse ? response.body : response;
-              const cardData = this.decodeJsonToCard(text as string);
+        const makeHttpRequest = () => {
+          return this.http.get(fullUrl, { responseType: 'text' }).pipe(
+            map((text: string) => {
+              if (!text || typeof text !== 'string') {
+                throw new Error(`Invalid response type: expected string, got ${typeof text}`);
+              }
+              
+              const cardData = this.decodeJsonToCard(text);
+              
+              if (!cardData) {
+                throw new Error('Failed to decode JSON card');
+              }
               
               // Cache immediately for next time
               this.memoryCache.set(fullUrl, { data: cardData, timestamp: now });
               this.indexedDBCache.set(fullUrl, text, now).subscribe({
-                error: () => {} // Silent fail
+                error: (err) => {
+                  this.logger.debug('Failed to cache in IndexedDB (non-critical)', 'JsonFileCardProvider', err);
+                }
               });
               
               return cardData;
             }),
             takeUntil(this.requestCanceller.cancel$),
-            catchError((error) => {
-              if (error.name === 'AbortError') {
+            catchError((error: unknown) => {
+              const errorMessage = error instanceof Error ? error.message : String(error);
+              const errorName = error && typeof error === 'object' && 'name' in error ? error.name : '';
+              
+              if (errorName === 'AbortError') {
+                this.logger.debug(`Request cancelled for ${fullUrl}`, 'JsonFileCardProvider');
                 return of(null);
               }
+              
+              // Log detailed error information
+              const statusCode = error && typeof error === 'object' && 'status' in error ? (error as any).status : 'unknown';
+              this.logger.error(
+                `Failed to load JSON card from ${fullUrl}: ${errorMessage} (status: ${statusCode})`,
+                'JsonFileCardProvider',
+                error
+              );
+              
               return of(null);
             })
           );
+        };
+        
+        if (isTemplate) {
+          // Direct HTTP request for templates (no queue delay)
+          return makeHttpRequest();
         }
         
         // For non-templates, use queue
         return this.requestQueue.enqueue(() => {
-          return this.http.request(request).pipe(
+          return makeHttpRequest().pipe(
             retryWhen(errors =>
               errors.pipe(
                 mergeMap((error, index) => {
                   const retryAttempt = index + 1;
                   const maxRetries = 3;
                   
-                  if (error.name === 'AbortError' || (error.status === 404)) {
+                  const errorName = error && typeof error === 'object' && 'name' in error ? error.name : '';
+                  const statusCode = error && typeof error === 'object' && 'status' in error ? (error as any).status : null;
+                  
+                  if (errorName === 'AbortError' || statusCode === 404) {
                     return throwError(() => error);
                   }
                   
                   if (retryAttempt > maxRetries) {
+                    this.logger.warn(
+                      `Max retries reached for ${fullUrl} after ${retryAttempt} attempts`,
+                      'JsonFileCardProvider'
+                    );
                     return throwError(() => error);
                   }
                   
                   const delay = Math.min(1000 * Math.pow(2, retryAttempt - 1), 4000);
+                  this.logger.debug(
+                    `Retrying ${fullUrl} (attempt ${retryAttempt}/${maxRetries}) after ${delay}ms`,
+                    'JsonFileCardProvider'
+                  );
                   return timer(delay);
                 })
               )
-            ),
-            map((response) => {
-              const text = response instanceof HttpResponse ? response.body : response;
-              const cardData = this.decodeJsonToCard(text as string);
-              this.memoryCache.set(fullUrl, { data: cardData, timestamp: now });
-              this.indexedDBCache.set(fullUrl, text, now).subscribe({ error: () => {} });
-              return cardData;
-            }),
-            takeUntil(this.requestCanceller.cancel$),
-            catchError(() => of(null))
+            )
           );
         }, priority);
       }),
-      catchError(() => {
+      catchError((error: unknown) => {
         // Fallback: direct HTTP request if IndexedDB fails
-        const request = new HttpRequest('GET', fullUrl, { responseType: 'text' });
-        return this.http.request(request).pipe(
-          map((response) => {
-            const text = response instanceof HttpResponse ? response.body : response;
-            const cardData = this.decodeJsonToCard(text as string);
-            this.memoryCache.set(fullUrl, { data: cardData, timestamp: Date.now() });
+        this.logger.warn(`IndexedDB lookup failed for ${fullUrl}, using direct HTTP`, 'JsonFileCardProvider', error);
+        return this.http.get(fullUrl, { responseType: 'text' }).pipe(
+          map((text: string) => {
+            if (!text || typeof text !== 'string') {
+              throw new Error(`Invalid response type: expected string, got ${typeof text}`);
+            }
+            const cardData = this.decodeJsonToCard(text);
+            if (cardData) {
+              this.memoryCache.set(fullUrl, { data: cardData, timestamp: Date.now() });
+            }
             return cardData;
           }),
           takeUntil(this.requestCanceller.cancel$),
-          catchError(() => of(null))
+          catchError((httpError: unknown) => {
+            const errorMessage = httpError instanceof Error ? httpError.message : String(httpError);
+            this.logger.error(
+              `Fallback HTTP request failed for ${fullUrl}: ${errorMessage}`,
+              'JsonFileCardProvider',
+              httpError
+            );
+            return of(null);
+          })
         );
       })
     );
@@ -189,21 +250,78 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
    * Decode JSON text to AICardConfig
    */
   private decodeJsonToCard(text: string): AICardConfig | null {
+    if (!text || typeof text !== 'string') {
+      this.logger.error('Invalid input: expected string', 'JsonFileCardProvider', { type: typeof text });
+      return null;
+    }
+
+    const trimmed = text.trim();
+    if (trimmed.length === 0) {
+      this.logger.error('Empty JSON string provided', 'JsonFileCardProvider');
+      return null;
+    }
+
     try {
-      // Validate JSON structure
-      const cardConfig = validateCardJson(text);
+      // First, try to parse as JSON
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(trimmed);
+      } catch (parseError: unknown) {
+        const parseMsg = parseError instanceof Error ? parseError.message : 'Unknown parse error';
+        this.logger.error(`JSON parse failed: ${parseMsg}`, 'JsonFileCardProvider', {
+          error: parseError,
+          preview: trimmed.substring(0, 200)
+        });
+        return null;
+      }
+
+      // Validate that it's an object
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        this.logger.error('Parsed JSON is not an object', 'JsonFileCardProvider', {
+          type: typeof parsed,
+          isArray: Array.isArray(parsed)
+        });
+        return null;
+      }
+
+      // Validate JSON structure using validateCardJson
+      const cardConfig = validateCardJson(trimmed);
       
       if (!cardConfig) {
-        this.logger.error('JSON validation failed for card', 'JsonFileCardProvider');
+        // Try to provide more helpful error message
+        const hasTitle = 'cardTitle' in parsed || 'title' in parsed;
+        const hasSections = 'sections' in parsed && Array.isArray((parsed as any).sections);
+        
+        this.logger.error('JSON validation failed for card', 'JsonFileCardProvider', {
+          hasTitle,
+          hasSections,
+          keys: Object.keys(parsed),
+          preview: JSON.stringify(parsed).substring(0, 500)
+        });
         return null;
       }
 
       // Sanitize and ensure IDs
       const sanitized = sanitizeCardConfig(cardConfig);
+      
+      // Ensure it has required fields after sanitization
+      if (!sanitized.cardTitle || !Array.isArray(sanitized.sections)) {
+        this.logger.error('Sanitized card missing required fields', 'JsonFileCardProvider', {
+          hasTitle: !!sanitized.cardTitle,
+          hasSections: Array.isArray(sanitized.sections)
+        });
+        return null;
+      }
+      
       return sanitized as AICardConfig;
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : 'Unknown error';
-      this.logger.error(`Failed to decode JSON card: ${msg}`, 'JsonFileCardProvider');
+      const stack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Failed to decode JSON card: ${msg}`, 'JsonFileCardProvider', {
+        error,
+        stack,
+        preview: trimmed.substring(0, 200)
+      });
       return null;
     }
   }

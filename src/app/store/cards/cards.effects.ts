@@ -87,38 +87,76 @@ export class CardsEffects {
                 lazyLoaded: true,
                 cached: false
               });
-              return CardsActions.loadTemplateFailure({ error: `No templates available for card type "${cardType}" variant ${variant}.` });
+              return CardsActions.loadTemplateFailure({ 
+                error: `No templates available for card type "${cardType}" variant ${variant}. The JSON file may be missing or invalid.` 
+              });
             }
 
-            const templateStartTime = performance.now();
-            const scrubbed = removeAllIds(template);
-            const hydrated = ensureCardIds({ ...scrubbed });
-            delete hydrated.cardSubtitle;
-            
-            const duration = performance.now() - startTime;
-            const processingTime = performance.now() - templateStartTime;
-            const isCached = duration < 10; // If loaded in < 10ms, it was from cache
-            
-            this.performanceService.recordMetric('loadTemplate', duration, {
-              cardType,
-              variant,
-              cardSize: JSON.stringify(template).length,
-              processingTime,
-              lazyLoaded: true,
-              cached: isCached
-            });
+            try {
+              const templateStartTime = performance.now();
+              const scrubbed = removeAllIds(template);
+              const hydrated = ensureCardIds({ ...scrubbed });
+              delete hydrated.cardSubtitle;
+              
+              const duration = performance.now() - startTime;
+              const processingTime = performance.now() - templateStartTime;
+              const isCached = duration < 10; // If loaded in < 10ms, it was from cache
+              
+              this.performanceService.recordMetric('loadTemplate', duration, {
+                cardType,
+                variant,
+                cardSize: JSON.stringify(template).length,
+                processingTime,
+                lazyLoaded: true,
+                cached: isCached
+              });
 
-            return CardsActions.loadTemplateSuccess({ template: hydrated });
+              return CardsActions.loadTemplateSuccess({ template: hydrated });
+            } catch (processingError: unknown) {
+              const errorMessage = processingError instanceof Error 
+                ? processingError.message 
+                : 'Failed to process template';
+              const duration = performance.now() - startTime;
+              this.performanceService.recordMetric('loadTemplate', duration, { 
+                cardType, 
+                variant, 
+                error: 'processing_failed',
+                lazyLoaded: true
+              });
+              return CardsActions.loadTemplateFailure({ 
+                error: `Failed to process template: ${errorMessage}` 
+              });
+            }
           }),
           catchError((error: unknown) => {
             const duration = performance.now() - startTime;
+            const errorMessage = error instanceof Error 
+              ? error.message 
+              : String(error);
+            const statusCode = error && typeof error === 'object' && 'status' in error 
+              ? (error as any).status 
+              : null;
+            
             this.performanceService.recordMetric('loadTemplate', duration, { 
               cardType, 
               variant, 
               error: true,
+              errorMessage,
+              statusCode,
               lazyLoaded: true
             });
-            return of(CardsActions.loadTemplateFailure({ error: String(error) }));
+            
+            // Provide more helpful error messages
+            let userFriendlyError = errorMessage;
+            if (statusCode === 404) {
+              userFriendlyError = `Template file not found for card type "${cardType}" variant ${variant}.`;
+            } else if (statusCode === 0 || errorMessage.includes('NetworkError') || errorMessage.includes('Failed to fetch')) {
+              userFriendlyError = `Network error: Unable to load template. Please check your connection.`;
+            } else if (errorMessage.includes('JSON') || errorMessage.includes('parse')) {
+              userFriendlyError = `Invalid JSON in template file: ${errorMessage}`;
+            }
+            
+            return of(CardsActions.loadTemplateFailure({ error: userFriendlyError }));
           })
         );
       })
@@ -136,16 +174,52 @@ export class CardsEffects {
             if (!firstCard) {
               const duration = performance.now() - startTime;
               this.performanceService.recordMetric('loadFirstExample', duration, { error: 'no_cards_available' });
-              return of(CardsActions.loadTemplateFailure({ error: 'No cards available' }));
+              return of(CardsActions.loadTemplateFailure({ 
+                error: 'No cards available. Please check that JSON files exist in the assets/configs directory.' 
+              }));
             }
             
-            const cardType = (firstCard.cardType || 'company') as CardType;
-            
-            // Get manifest entries for the same type to find variant index (without loading full cards)
-            const provider = this.cardConfigService.getCurrentProvider();
-            if (provider && 'getManifestEntriesByType' in provider && typeof provider.getManifestEntriesByType === 'function') {
-              return (provider as any).getManifestEntriesByType(cardType).pipe(
-                map((manifestEntries: any[]): Action[] => {
+            try {
+              const cardType = (firstCard.cardType || 'company') as CardType;
+              
+              // Get manifest entries for the same type to find variant index (without loading full cards)
+              const provider = this.cardConfigService.getCurrentProvider();
+              if (provider && 'getManifestEntriesByType' in provider && typeof provider.getManifestEntriesByType === 'function') {
+                return (provider as any).getManifestEntriesByType(cardType).pipe(
+                  map((manifestEntries: any[]): Action[] => {
+                    const scrubbed = removeAllIds(firstCard);
+                    const hydrated = ensureCardIds({ ...scrubbed });
+                    delete hydrated.cardSubtitle;
+
+                    const duration = performance.now() - startTime;
+                    this.performanceService.recordMetric('loadFirstExample', duration, {
+                      cardType: firstCard.cardType,
+                      cardSize: JSON.stringify(firstCard).length,
+                      lazyLoaded: true
+                    });
+
+                    const typeAction = CardsActions.setCardType({ cardType });
+                    // Find variant index from manifest entries (1-based)
+                    const variantIndex = Math.max(1, (manifestEntries.findIndex((e: any) => e.id === firstCard.id) + 1) || 1);
+                    const variantAction = CardsActions.setCardVariant({ variant: Math.min(Math.max(1, variantIndex), 3) });
+                    const successAction = CardsActions.loadTemplateSuccess({ template: hydrated });
+
+                    return [typeAction, variantAction, successAction];
+                  }),
+                  mergeMap((actions: Action[]) => of(...actions)),
+                  catchError((error: unknown) => {
+                    const errorMessage = error instanceof Error ? error.message : String(error);
+                    return of(CardsActions.loadTemplateFailure({ 
+                      error: `Failed to load first card example: ${errorMessage}` 
+                    }));
+                  })
+                );
+              }
+              
+              // Fallback: if provider doesn't support manifest entries, use the old method
+              return this.cardConfigService.getCardsByType(cardType).pipe(
+                take(1),
+                map((cardsByType: AICardConfig[]): Action[] => {
                   const scrubbed = removeAllIds(firstCard);
                   const hydrated = ensureCardIds({ ...scrubbed });
                   delete hydrated.cardSubtitle;
@@ -154,50 +228,57 @@ export class CardsEffects {
                   this.performanceService.recordMetric('loadFirstExample', duration, {
                     cardType: firstCard.cardType,
                     cardSize: JSON.stringify(firstCard).length,
-                    lazyLoaded: true
+                    lazyLoaded: false
                   });
 
                   const typeAction = CardsActions.setCardType({ cardType });
-                  // Find variant index from manifest entries (1-based)
-                  const variantIndex = Math.max(1, (manifestEntries.findIndex((e: any) => e.id === firstCard.id) + 1) || 1);
+                  const variantIndex = Math.max(1, (cardsByType.findIndex((c: AICardConfig) => c.id === firstCard.id) + 1) || 1);
                   const variantAction = CardsActions.setCardVariant({ variant: Math.min(Math.max(1, variantIndex), 3) });
                   const successAction = CardsActions.loadTemplateSuccess({ template: hydrated });
 
                   return [typeAction, variantAction, successAction];
                 }),
-                mergeMap((actions: Action[]) => of(...actions))
+                mergeMap((actions: Action[]) => of(...actions)),
+                catchError((error: unknown) => {
+                  const errorMessage = error instanceof Error ? error.message : String(error);
+                  return of(CardsActions.loadTemplateFailure({ 
+                    error: `Failed to load cards by type: ${errorMessage}` 
+                  }));
+                })
               );
+            } catch (processingError: unknown) {
+              const errorMessage = processingError instanceof Error 
+                ? processingError.message 
+                : 'Failed to process first card';
+              return of(CardsActions.loadTemplateFailure({ 
+                error: `Failed to process first card: ${errorMessage}` 
+              }));
             }
-            
-            // Fallback: if provider doesn't support manifest entries, use the old method
-            return this.cardConfigService.getCardsByType(cardType).pipe(
-              take(1),
-              map((cardsByType: AICardConfig[]): Action[] => {
-                const scrubbed = removeAllIds(firstCard);
-                const hydrated = ensureCardIds({ ...scrubbed });
-                delete hydrated.cardSubtitle;
-
-                const duration = performance.now() - startTime;
-                this.performanceService.recordMetric('loadFirstExample', duration, {
-                  cardType: firstCard.cardType,
-                  cardSize: JSON.stringify(firstCard).length,
-                  lazyLoaded: false
-                });
-
-                const typeAction = CardsActions.setCardType({ cardType });
-                const variantIndex = Math.max(1, (cardsByType.findIndex((c: AICardConfig) => c.id === firstCard.id) + 1) || 1);
-                const variantAction = CardsActions.setCardVariant({ variant: Math.min(Math.max(1, variantIndex), 3) });
-                const successAction = CardsActions.loadTemplateSuccess({ template: hydrated });
-
-                return [typeAction, variantAction, successAction];
-              }),
-              mergeMap((actions: Action[]) => of(...actions))
-            );
           }),
           catchError((error: unknown): Observable<Action> => {
             const duration = performance.now() - startTime;
-            this.performanceService.recordMetric('loadFirstExample', duration, { error: true });
-            return of(CardsActions.loadTemplateFailure({ error: error instanceof Error ? error.message : String(error) }));
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            const statusCode = error && typeof error === 'object' && 'status' in error 
+              ? (error as any).status 
+              : null;
+            
+            this.performanceService.recordMetric('loadFirstExample', duration, { 
+              error: true,
+              errorMessage,
+              statusCode
+            });
+            
+            // Provide more helpful error messages
+            let userFriendlyError = errorMessage;
+            if (statusCode === 404) {
+              userFriendlyError = 'Manifest or card files not found. Please check that JSON files exist in assets/configs.';
+            } else if (statusCode === 0 || errorMessage.includes('NetworkError') || errorMessage.includes('Failed to fetch')) {
+              userFriendlyError = 'Network error: Unable to load cards. Please check your connection.';
+            } else if (errorMessage.includes('JSON') || errorMessage.includes('parse')) {
+              userFriendlyError = `Invalid JSON in card files: ${errorMessage}`;
+            }
+            
+            return of(CardsActions.loadTemplateFailure({ error: userFriendlyError }));
           })
         );
       })

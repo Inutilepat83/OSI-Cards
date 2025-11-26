@@ -58,10 +58,17 @@ export function isValidCardConfig(obj: unknown): obj is Partial<AICardConfig> {
   const config = obj as Record<string, unknown>;
 
   // Check required fields for a card
-  return (
-    typeof config['cardTitle'] === 'string' &&
-    Array.isArray(config['sections'])
-  );
+  // Be lenient: accept either cardTitle or title, and ensure sections is an array (even if empty)
+  const hasTitle = typeof config['cardTitle'] === 'string' || typeof config['title'] === 'string';
+  const hasSections = Array.isArray(config['sections']);
+  
+  // If sections is missing or not an array, try to create an empty array
+  if (!hasSections && config['sections'] === undefined) {
+    // This is acceptable - we can add sections later
+    return hasTitle;
+  }
+  
+  return hasTitle && hasSections;
 }
 
 /**
@@ -124,20 +131,52 @@ export function validateCardJson(jsonString: string): Partial<AICardConfig> | nu
       parsed = JSON.parse(jsonString);
     } catch (parseError: unknown) {
       const msg = parseError instanceof Error ? parseError.message : 'Unknown error';
-      console.error(`CardUtils: JSON parse failed: ${msg}`);
+      const position = parseError instanceof SyntaxError && 'position' in parseError 
+        ? (parseError as any).position 
+        : null;
+      console.error(`CardUtils: JSON parse failed: ${msg}${position ? ` at position ${position}` : ''}`);
       return null;
     }
 
     // Validate structure
     if (!isValidCardConfig(parsed)) {
-      console.error('CardUtils: Parsed JSON does not match AICardConfig structure');
+      const config = parsed as Record<string, unknown>;
+      const hasTitle = typeof config['cardTitle'] === 'string' || typeof config['title'] === 'string';
+      const hasSections = Array.isArray(config['sections']);
+      const sectionsType = config['sections'] !== undefined ? typeof config['sections'] : 'undefined';
+      
+      console.error('CardUtils: Parsed JSON does not match AICardConfig structure', {
+        hasTitle,
+        hasSections,
+        sectionsType,
+        keys: Object.keys(config),
+        preview: JSON.stringify(parsed).substring(0, 200)
+      });
+      
+      // Try to fix common issues: normalize title field
+      if (!hasTitle && typeof config['title'] === 'string') {
+        config['cardTitle'] = config['title'];
+        delete config['title'];
+      }
+      
+      // Try to fix missing sections
+      if (!hasSections && config['sections'] === undefined) {
+        config['sections'] = [];
+      }
+      
+      // Re-validate after fixes
+      if (isValidCardConfig(config)) {
+        console.warn('CardUtils: Fixed common issues in JSON structure');
+        return config as Partial<AICardConfig>;
+      }
+      
       return null;
     }
 
     return parsed as Partial<AICardConfig>;
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : 'Unknown error';
-    console.error(`CardUtils: Unexpected error in validateCardJson: ${msg}`);
+    console.error(`CardUtils: Unexpected error in validateCardJson: ${msg}`, error);
     return null;
   }
 }
