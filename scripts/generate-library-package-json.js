@@ -42,16 +42,16 @@ const libraryPackageJson = {
   },
   homepage: libPackageJson.homepage || 'https://github.com/Inutilepat83/OSI-Cards#readme',
   peerDependencies: {
-    '@angular/core': '^20.0.0',
-    '@angular/common': '^20.0.0',
-    '@angular/forms': '^20.0.0',
-    '@angular/router': '^20.0.0',
-    '@angular/platform-browser': '^20.0.0',
-    '@ngrx/store': '^18.0.0',
-    '@ngrx/effects': '^18.0.0',
-    '@ngrx/entity': '^18.0.0',
+    '@angular/core': '^18.0.0 || ^20.0.0',
+    '@angular/common': '^18.0.0 || ^20.0.0',
+    '@angular/forms': '^18.0.0 || ^20.0.0',
+    '@angular/router': '^18.0.0 || ^20.0.0',
+    '@angular/platform-browser': '^18.0.0 || ^20.0.0',
+    '@ngrx/store': '^17.0.0 || ^18.0.0',
+    '@ngrx/effects': '^17.0.0 || ^18.0.0',
+    '@ngrx/entity': '^17.0.0 || ^18.0.0',
     'rxjs': '~7.8.0',
-    'zone.js': '~0.15.0'
+    'zone.js': '~0.14.0 || ~0.15.0'
   },
   dependencies: {
     'lucide-angular': '^0.548.0',
