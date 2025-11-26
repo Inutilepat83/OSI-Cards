@@ -14,7 +14,7 @@ import { CommandService } from '../../../../shared/services/command.service';
 import { LLMStreamingService } from '../../../../core/services/llm-streaming.service';
 
 // Import standalone components
-import { AICardRendererComponent, CardPreviewComponent } from '../../../../shared/components/cards';
+import { CardPreviewComponent } from '../../../../shared/components/cards';
 import { ensureCardIds, removeAllIds } from '../../../../shared';
 import { FormsModule } from '@angular/forms';
 import { LucideIconsModule } from '../../../../shared/icons/lucide-icons.module';
@@ -22,7 +22,6 @@ import { JsonEditorComponent } from '../../../../shared/components/json-editor/j
 import { CardTypeSelectorComponent } from '../../../../shared/components/card-type-selector/card-type-selector.component';
 import { LLMSimulationControlsComponent } from '../../../../shared/components/llm-simulation-controls/llm-simulation-controls.component';
 import { PreviewControlsComponent } from '../../../../shared/components/preview-controls/preview-controls.component';
-import { SystemStatsComponent } from '../../../../shared/components/system-stats/system-stats.component';
 
 @Component({
   selector: 'app-home-page',
@@ -30,14 +29,12 @@ import { SystemStatsComponent } from '../../../../shared/components/system-stats
   imports: [
     CommonModule,
     FormsModule,
-    AICardRendererComponent,
     CardPreviewComponent,
     LucideIconsModule,
     JsonEditorComponent,
     CardTypeSelectorComponent,
     LLMSimulationControlsComponent,
-    PreviewControlsComponent,
-    SystemStatsComponent
+    PreviewControlsComponent
   ],
   templateUrl: './home-page.component.html',
   styleUrls: ['./home-page.component.scss'],

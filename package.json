@@ -69,7 +69,9 @@
   "optionalDependencies": {
     "chart.js": "^4.4.0",
     "leaflet": "^1.9.4",
-    "primeng": "^20.0.0"
+    "primeng": "^20.0.0",
+    "jspdf": "^2.5.1",
+    "html2canvas": "^1.4.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^20.0.0",
