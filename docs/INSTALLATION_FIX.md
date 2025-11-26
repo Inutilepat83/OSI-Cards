@@ -17,27 +17,46 @@ npm install osi-cards-lib
 npm install @osi/cards-lib  # ❌ This won't work
 ```
 
-## About the Peer Dependency Error
+## About Peer Dependency Errors
 
-If you see a peer dependency error about `@angular-slider/ngx-slider@18.0.0`, this is **not** related to `osi-cards-lib`. 
+If you see peer dependency errors about packages like:
+- `@angular-slider/ngx-slider@18.0.0`
+- `@ng-select/ng-select@13.9.1`
+- Other packages requiring Angular 18
 
-The error is because:
-- Your project uses Angular 20.2.2
-- `@angular-slider/ngx-slider@18.0.0` requires Angular 18
+This is **not** related to `osi-cards-lib`. The error occurs because:
+- Your project uses Angular 20.2.2 ✅
+- `osi-cards-lib` requires Angular 20 ✅ (compatible)
+- Other packages require Angular 18 ❌ (incompatible with your project)
 
-### Solutions for the Angular Slider Issue
+### Recommended Solution: Use --legacy-peer-deps
 
-1. **Update the slider package** (if available):
+```bash
+npm install osi-cards-lib --legacy-peer-deps
+```
+
+**Why this is safe:**
+- Your project already has Angular 20
+- `osi-cards-lib` requires Angular 20 (matches your project)
+- The conflict is with other packages, not `osi-cards-lib`
+- The library will work correctly because Angular versions match
+
+### Alternative Solutions
+
+1. **Update incompatible packages** (if Angular 20 versions exist):
    ```bash
-   npm install @angular-slider/ngx-slider@latest
+   npm install @ng-select/ng-select@latest --legacy-peer-deps
+   npm install @angular-slider/ngx-slider@latest --legacy-peer-deps
    ```
 
-2. **Use --legacy-peer-deps** (not recommended for production):
-   ```bash
-   npm install osi-cards-lib --legacy-peer-deps
+2. **Configure npm globally** (add to `.npmrc`):
+   ```
+   legacy-peer-deps=true
    ```
 
-3. **Remove or replace the slider package** if it's not compatible with Angular 20
+3. **Remove or replace incompatible packages** if they're not essential
+
+See [PEER_DEPENDENCY_CONFLICTS.md](./PEER_DEPENDENCY_CONFLICTS.md) for detailed information.
 
 ## Installing osi-cards-lib
 

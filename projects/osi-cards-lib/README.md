@@ -14,6 +14,42 @@ The package is available on npm and can be installed directly. This is the easie
 
 **Package published at:** https://www.npmjs.com/package/osi-cards-lib
 
+### Handling Peer Dependency Conflicts
+
+If you encounter peer dependency conflicts (e.g., with `@ng-select/ng-select`, `@angular-slider/ngx-slider`, or other packages that require Angular 18), you have several options:
+
+#### Option 1: Use --legacy-peer-deps (Recommended for mixed Angular versions)
+
+```bash
+npm install osi-cards-lib --legacy-peer-deps
+```
+
+This allows npm to ignore peer dependency conflicts. The library will work correctly even if other packages in your project require different Angular versions.
+
+#### Option 2: Update Incompatible Packages
+
+If possible, update packages that require Angular 18 to versions compatible with Angular 20:
+
+```bash
+# Check for Angular 20 compatible versions
+npm view @ng-select/ng-select versions --json
+npm view @angular-slider/ngx-slider versions --json
+
+# Install compatible versions if available
+npm install @ng-select/ng-select@latest --legacy-peer-deps
+npm install @angular-slider/ngx-slider@latest --legacy-peer-deps
+```
+
+#### Option 3: Use --force (Use with caution)
+
+```bash
+npm install osi-cards-lib --force
+```
+
+**Note:** `osi-cards-lib` requires Angular 20.0.0 or higher. If your project uses Angular 20, the library will work correctly even if you use `--legacy-peer-deps` to resolve conflicts with other packages.
+
+**Package published at:** https://www.npmjs.com/package/osi-cards-lib
+
 ## Peer Dependencies
 
 The library requires the following peer dependencies:
