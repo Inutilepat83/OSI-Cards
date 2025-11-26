@@ -40,7 +40,7 @@ Or in `package.json`:
 ### Install Peer Dependencies
 
 ```bash
-npm install @angular/common@^17.0.0 @angular/core@^17.0.0 @angular/animations@^17.0.0 @angular/platform-browser@^17.0.0 lucide-angular@^0.548.0 rxjs@~7.8.0
+npm install @angular/common@^20.0.0 @angular/core@^20.0.0 @angular/animations@^20.0.0 @angular/platform-browser@^20.0.0 lucide-angular@^0.548.0 rxjs@~7.8.0
 ```
 
 ### Optional Dependencies (for charts and maps)
@@ -508,7 +508,7 @@ export class CompleteExampleComponent {
 
 **Solution**:
 1. Verify all peer dependencies are installed
-2. Check Angular version compatibility (requires Angular 17+)
+2. Check Angular version compatibility (requires Angular 20+)
 3. Ensure all imports use the correct paths
 4. Clear `node_modules` and reinstall: `rm -rf node_modules && npm install`
 

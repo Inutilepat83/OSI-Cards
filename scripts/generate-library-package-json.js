@@ -34,16 +34,16 @@ const libraryPackageJson = {
   bugs: rootPackageJson.bugs || {},
   homepage: rootPackageJson.homepage || '',
   peerDependencies: {
-    '@angular/core': '^17.0.0',
-    '@angular/common': '^17.0.0',
-    '@angular/forms': '^17.0.0',
-    '@angular/router': '^17.0.0',
-    '@angular/platform-browser': '^17.0.0',
-    '@ngrx/store': '^17.0.0',
-    '@ngrx/effects': '^17.0.0',
-    '@ngrx/entity': '^17.0.0',
+    '@angular/core': '^20.0.0',
+    '@angular/common': '^20.0.0',
+    '@angular/forms': '^20.0.0',
+    '@angular/router': '^20.0.0',
+    '@angular/platform-browser': '^20.0.0',
+    '@ngrx/store': '^18.0.0',
+    '@ngrx/effects': '^18.0.0',
+    '@ngrx/entity': '^18.0.0',
     'rxjs': '~7.8.0',
-    'zone.js': '~0.14.0'
+    'zone.js': '~0.15.0'
   },
   dependencies: {
     'lucide-angular': '^0.548.0',
@@ -52,7 +52,7 @@ const libraryPackageJson = {
   optionalDependencies: {
     'chart.js': '^4.4.0',
     'leaflet': '^1.9.4',
-    'primeng': '^17.0.0'
+    'primeng': '^20.0.0'
   },
   main: './public-api.js',
   typings: './public-api.d.ts',

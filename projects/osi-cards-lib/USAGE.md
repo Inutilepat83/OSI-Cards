@@ -566,7 +566,7 @@ Make sure `LucideIconsModule` is imported. The library includes it, but if you'r
 Ensure all peer dependencies are installed:
 
 ```bash
-npm install @angular/common@^17.0.0 @angular/core@^17.0.0 @angular/animations@^17.0.0 lucide-angular@^0.548.0 rxjs@~7.8.0
+npm install @angular/common@^20.0.0 @angular/core@^20.0.0 @angular/animations@^20.0.0 lucide-angular@^0.548.0 rxjs@~7.8.0
 ```
 
 ## Support

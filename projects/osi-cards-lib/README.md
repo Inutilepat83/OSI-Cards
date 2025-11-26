@@ -14,10 +14,10 @@ The library requires the following peer dependencies:
 
 ```json
 {
-  "@angular/common": "^17.0.0",
-  "@angular/core": "^17.0.0",
-  "@angular/animations": "^17.0.0",
-  "@angular/platform-browser": "^17.0.0",
+  "@angular/common": "^20.0.0",
+  "@angular/core": "^20.0.0",
+  "@angular/animations": "^20.0.0",
+  "@angular/platform-browser": "^20.0.0",
   "lucide-angular": "^0.548.0",
   "rxjs": "~7.8.0"
 }
@@ -64,7 +64,7 @@ Or add to your `package.json`:
 The library requires these peer dependencies. Install them if not already present:
 
 ```bash
-npm install @angular/common@^17.0.0 @angular/core@^17.0.0 @angular/animations@^17.0.0 @angular/platform-browser@^17.0.0 lucide-angular@^0.548.0 rxjs@~7.8.0
+npm install @angular/common@^20.0.0 @angular/core@^20.0.0 @angular/animations@^20.0.0 @angular/platform-browser@^20.0.0 lucide-angular@^0.548.0 rxjs@~7.8.0
 ```
 
 ### Step 3: Import Styles
@@ -566,7 +566,7 @@ Use path references in `package.json`:
 - Restart TypeScript server in your IDE (VS Code: Cmd/Ctrl + Shift + P → "TypeScript: Restart TS Server")
 - Verify the library was built correctly: `ng build osi-cards-lib`
 - Check that `@osi/cards-lib` is accessible in `node_modules`
-- Ensure your Angular version is 17.0.0 or higher
+- Ensure your Angular version is 20.0.0 or higher
 
 ### Build Errors
 
@@ -574,7 +574,7 @@ Use path references in `package.json`:
 
 **Solutions**:
 - Verify all peer dependencies are installed
-- Check Angular version compatibility (requires Angular 17+)
+- Check Angular version compatibility (requires Angular 20+)
 - Ensure all imports use the correct paths
 - Clear build cache: `rm -rf .angular && ng build`
 
@@ -645,7 +645,7 @@ After importing the library, verify:
 - Restart TypeScript server in your IDE (VS Code: Cmd/Ctrl + Shift + P → "TypeScript: Restart TS Server")
 - Verify the library was built correctly: `ng build osi-cards-lib`
 - Check that `@osi/cards-lib` is accessible in `node_modules`
-- Ensure your Angular version is 17.0.0 or higher
+- Ensure your Angular version is 20.0.0 or higher
 
 ### Build Errors
 
@@ -653,7 +653,7 @@ After importing the library, verify:
 
 **Solutions**:
 - Verify all peer dependencies are installed
-- Check Angular version compatibility (requires Angular 17+)
+- Check Angular version compatibility (requires Angular 20+)
 - Ensure all imports use the correct paths
 - Clear build cache: `rm -rf .angular && ng build`
 
