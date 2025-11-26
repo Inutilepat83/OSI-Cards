@@ -78,7 +78,17 @@ Install the library directly from npm:
 npm install osi-cards-lib
 ```
 
-This is the easiest and recommended way to use the library. The package is published to npm and ready to use.
+**If you encounter peer dependency conflicts** (e.g., with `@ng-select/ng-select` or `@angular-slider/ngx-slider`), use:
+
+```bash
+npm install osi-cards-lib --legacy-peer-deps
+```
+
+This is safe because `osi-cards-lib` requires Angular 20, which matches your project. The conflict is with other packages that haven't been updated to Angular 20 yet.
+
+**Package URL:** https://www.npmjs.com/package/osi-cards-lib
+
+📖 **See [docs/PEER_DEPENDENCY_CONFLICTS.md](./docs/PEER_DEPENDENCY_CONFLICTS.md) for detailed conflict resolution guide.**
 
 #### Option 2: Install from GitHub
 
