@@ -74,16 +74,12 @@
           <!-- Card Type Selector with Label -->
           <div class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
             <span class="text-sm font-semibold text-muted-foreground">Card Type:</span>
-            <div class="card-type-selector">
-              <button
-                *ngFor="let type of cardTypes"
-                (click)="onCardTypeChange(type)"
-                [class.active]="cardType === type"
-                [disabled]="switchingType"
-                type="button">
-                  {{ type === 'sko' ? 'SKO' : type.charAt(0).toUpperCase() + type.slice(1) }}
-              </button>
-            </div>
+            <app-card-type-selector
+              [selectedType]="cardType"
+              [cardTypes]="cardTypes"
+              [disabled]="switchingType"
+              (typeChange)="onCardTypeChange($event)">
+            </app-card-type-selector>
           </div>
 
           <!-- Variant Selector -->
@@ -107,26 +103,28 @@
         
         <!-- Card Preview - Full width when fullscreen, otherwise responsive -->
         <div [ngClass]="'flex flex-col ' + (isFullscreen ? 'order-1 w-full' : 'lg:col-span-3 order-2 lg:order-2')">
-          <div class="preview-header-enhanced flex items-center gap-3 mb-6 flex-shrink-0 min-h-[32px]" style="margin-bottom: 12px;">
-            <div class="flex items-center gap-2">
-              <lucide-icon name="sparkles" [size]="22" class="text-[#FF7900]" aria-hidden="true"></lucide-icon>
-              <span class="font-bold text-lg" style="letter-spacing: -0.01em;">Live Preview</span>
+          <div class="preview-header-enhanced flex items-center justify-between gap-3 mb-6 flex-shrink-0 min-h-[32px]" style="margin-bottom: 12px;">
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-2">
+                <lucide-icon name="sparkles" [size]="22" class="text-[#FF7900]" aria-hidden="true"></lucide-icon>
+                <span class="font-bold text-lg" style="letter-spacing: -0.01em;">Live Preview</span>
+              </div>
+              <span *ngIf="jsonInput?.trim() !== ''" class="status-badge status-badge--live-edit">
+                <span class="status-badge-dot"></span>
+                Live edit
+              </span>
+              <span *ngIf="generatedCard?.cardType" class="status-badge status-badge--info">
+                {{ generatedCard?.cardType }} Card
+              </span>
+              <span *ngIf="isGenerating" class="status-badge status-badge--generating">
+                <span class="status-badge-spinner"></span>
+                Generating...
+              </span>
             </div>
-            <span *ngIf="jsonInput?.trim() !== ''" class="status-badge status-badge--live-edit">
-              <span class="status-badge-dot"></span>
-              Live edit
-            </span>
-            <span *ngIf="generatedCard?.cardType" class="status-badge status-badge--info">
-              {{ generatedCard?.cardType }} Card
-            </span>
-            <span *ngIf="isFullscreen" class="status-badge status-badge--fullscreen">
-              <lucide-icon name="maximize-2" [size]="12" aria-hidden="true"></lucide-icon>
-              Fullscreen
-            </span>
-            <span *ngIf="isGenerating" class="status-badge status-badge--generating">
-              <span class="status-badge-spinner"></span>
-              Generating...
-            </span>
+            <app-preview-controls
+              [isFullscreen]="isFullscreen"
+              (toggleFullscreen)="toggleFullscreen()">
+            </app-preview-controls>
           </div>
 
           <div class="flex-1">
@@ -139,6 +137,7 @@
                 (fieldInteraction)="onFieldInteraction($event)"
                 (cardInteraction)="onCardInteraction($event)"
                 (fullscreenToggle)="onFullscreenToggle($event)"
+                (export)="onExportCard()"
                 (agentAction)="onAgentAction($event)"
                 (questionAction)="onQuestionAction($event)">
               </app-card-preview>
@@ -174,29 +173,15 @@
                   </p>
                 </div>
                 <div class="editor-toolbar__buttons">
-                  <button
-                    type="button"
-                    class="editor-toolbar__button editor-toolbar__button--brand"
-                    (click)="onSimulateLLMStart()"
-                    [attr.aria-pressed]="isSimulatingLLM"
-                    [disabled]="isSimulatingLLM"
-                    [attr.aria-label]="isSimulatingLLM ? 'Stop LLM simulation' : 'Simulate LLM generation'"
-                    title="Simulate LLM generation (works with complete or incomplete JSON)">
-                    <span class="editor-toolbar__spinner" *ngIf="isSimulatingLLM" aria-hidden="true"></span>
-                    <span>{{ isSimulatingLLM ? 'Stop Simulation' : 'Simulate LLM' }}</span>
-                  </button>
-                  <button
-                    type="button"
-                    class="editor-toolbar__button"
-                    (click)="formatJson()"
-                    [attr.aria-label]="'Format JSON'"
-                    title="Format JSON">
-                    <span>Format</span>
-                  </button>
+                  <app-llm-simulation-controls
+                    [isSimulating]="isSimulatingLLM"
+                    [disabled]="isGenerating"
+                    (simulationToggle)="onSimulateLLMStart()">
+                  </app-llm-simulation-controls>
                 </div>
               </div>
 
-              <!-- JSON Textarea -->
+              <!-- JSON Editor Component -->
               <div class="json-editor-overlay" *ngIf="isGenerating" aria-hidden="true">
                 <div class="json-editor-overlay__inner">
                   <svg class="spinner" viewBox="0 0 50 50" fill="none" stroke="currentColor" width="24" height="24">
@@ -206,54 +191,13 @@
                   <span>Loading template…</span>
                 </div>
               </div>
-              <textarea
-                id="json-config-textarea"
-                #jsonTextareaRef
-                [(ngModel)]="jsonInput"
-                (ngModelChange)="onJsonInputChange($event)"
-                (keydown)="onTextareaKeydown($event)"
-                [ngClass]="{
-                  'json-editor-textarea': true,
-                  'font-mono': true,
-                  'text-sm': true,
-                  'resize-none': true,
-                  'overflow-y-auto': true,
-                  'transition-all': true,
-                  'duration-300': true,
-                  'w-full': true,
-                  'text-foreground': true,
-                  'border-gray-600': isJsonValid,
-                  'border-red-500/50': !isJsonValid
-                }"
-                style="height: 700px;"
-                [attr.aria-invalid]="!isJsonValid"
-                [attr.aria-describedby]="jsonError ? 'json-error-message' : 'json-editor-instructions'"
-                [attr.aria-live]="isSimulatingLLM ? 'polite' : 'off'"
-                placeholder="Enter your card configuration JSON here..."
-                aria-label="JSON configuration editor for card customization"
-                aria-multiline="true"
-                spellcheck="false"></textarea>
-            </div>
-
-            <!-- Error Message -->
-            <div
-              id="json-error-message"
-              class="p-3 bg-red-500/10 border border-red-500/20 rounded text-sm text-red-400 mt-3"
-              *ngIf="jsonError"
-              role="alert"
-              aria-live="assertive">
-              <div class="flex items-start gap-2">
-                <strong class="font-semibold">JSON Error:</strong>
-                <div class="flex-1">
-                  <div>{{ jsonError }}</div>
-                  <div *ngIf="jsonErrorPosition !== null" class="mt-1 text-xs text-red-300">
-                    Position: {{ jsonErrorPosition }}
-                  </div>
-                  <div *ngIf="jsonErrorSuggestion" class="mt-2 text-xs text-red-200 italic">
-                    💡 {{ jsonErrorSuggestion }}
-                  </div>
-                </div>
-              </div>
+              <app-json-editor
+                [jsonInput]="jsonInput"
+                (jsonInputChange)="onJsonInputChange($event)"
+                (jsonValid)="onJsonValidChange($event)"
+                (jsonErrorChange)="onJsonErrorChange($event)"
+                (jsonErrorDetailsChange)="onJsonErrorDetailsChange($event)">
+              </app-json-editor>
             </div>
           </div>
         </div>
@@ -351,4 +295,5 @@
       </div>
     </div>
   </div>
+
 </main>

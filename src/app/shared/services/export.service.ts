@@ -206,6 +206,149 @@ export class ExportService {
   }
 
   /**
+   * Export card as PNG using native browser APIs (SVG foreignObject + Canvas)
+   * No external libraries required - uses only native browser APIs
+   */
+  async exportAsPngNative(element: HTMLElement, filename?: string, scale: number = 2): Promise<void> {
+    try {
+      if (!element) {
+        throw new Error('Element is required for PNG export');
+      }
+
+      // Get dimensions
+      const width = element.offsetWidth || element.clientWidth;
+      const height = element.offsetHeight || element.clientHeight;
+
+      if (width === 0 || height === 0) {
+        throw new Error('Element has no dimensions');
+      }
+
+      const scaledWidth = width * scale;
+      const scaledHeight = height * scale;
+
+      // Clone the element to avoid modifying the original
+      const clonedElement = element.cloneNode(true) as HTMLElement;
+      
+      // Apply scaling to the cloned element using CSS transform
+      clonedElement.style.transform = `scale(${scale})`;
+      clonedElement.style.transformOrigin = 'top left';
+      clonedElement.style.width = `${width}px`;
+      clonedElement.style.height = `${height}px`;
+      
+      // Create a container for the cloned element with scaled dimensions
+      const container = document.createElement('div');
+      container.style.width = `${scaledWidth}px`;
+      container.style.height = `${scaledHeight}px`;
+      container.style.position = 'relative';
+      container.style.overflow = 'hidden';
+      container.appendChild(clonedElement);
+
+      // Create SVG element with foreignObject
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('width', String(scaledWidth));
+      svg.setAttribute('height', String(scaledHeight));
+      svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+      // Create foreignObject to embed HTML
+      const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+      foreignObject.setAttribute('width', String(scaledWidth));
+      foreignObject.setAttribute('height', String(scaledHeight));
+      foreignObject.setAttribute('x', '0');
+      foreignObject.setAttribute('y', '0');
+
+      // Append container to foreignObject
+      foreignObject.appendChild(container);
+      svg.appendChild(foreignObject);
+
+      // Serialize SVG to string
+      const serializer = new XMLSerializer();
+      const svgString = serializer.serializeToString(svg);
+      
+      // Create data URL from SVG
+      const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+      const svgDataUrl = URL.createObjectURL(svgBlob);
+
+      // Create image element and load SVG
+      return new Promise<void>((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        
+        img.onload = () => {
+          try {
+            // Create canvas and draw image
+            const canvas = document.createElement('canvas');
+            canvas.width = width * scale;
+            canvas.height = height * scale;
+            const ctx = canvas.getContext('2d');
+            
+            if (!ctx) {
+              reject(new Error('Failed to get canvas context'));
+              return;
+            }
+
+            // Fill background (white by default)
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw the image onto canvas
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            // Convert canvas to PNG data URL
+            const pngDataUrl = canvas.toDataURL('image/png');
+
+            // Convert data URL to blob for download
+            this.dataUrlToBlob(pngDataUrl, (blob) => {
+              // Download the PNG file
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = filename || 'card.png';
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+              URL.revokeObjectURL(svgDataUrl);
+
+              this.logger.info('Card exported as PNG', 'ExportService');
+              resolve();
+            });
+          } catch (error) {
+            URL.revokeObjectURL(svgDataUrl);
+            this.logger.error('Failed to export as PNG', 'ExportService', error);
+            reject(error);
+          }
+        };
+
+        img.onerror = (error) => {
+          URL.revokeObjectURL(svgDataUrl);
+          this.logger.error('Failed to load SVG for PNG export', 'ExportService', error);
+          reject(new Error('Failed to load SVG image'));
+        };
+
+        img.src = svgDataUrl;
+      });
+    } catch (error) {
+      this.logger.error('Failed to export as PNG', 'ExportService', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Convert data URL to Blob
+   */
+  private dataUrlToBlob(dataUrl: string, callback: (blob: Blob) => void): void {
+    const arr = dataUrl.split(',');
+    const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/png';
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    callback(new Blob([u8arr], { type: mime }));
+  }
+
+  /**
    * Export card as image (PNG/SVG/JPEG)
    * Requires html2canvas library (optional dependency)
    */

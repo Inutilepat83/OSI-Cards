@@ -25,11 +25,12 @@
             </h1>
             <button
               type="button"
-              class="ai-card-fullscreen-btn"
-              [attr.aria-label]="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
-              (click)="toggleFullscreen()"
+              class="ai-card-export-btn"
+              aria-label="Export card"
+              title="Export card"
+              (click)="onExport()"
             >
-              <lucide-icon [name]="isFullscreen ? 'minimize-2' : 'maximize-2'" [size]="16" aria-hidden="true"></lucide-icon>
+              <lucide-icon name="download" [size]="16" aria-hidden="true"></lucide-icon>
             </button>
           </div>
 

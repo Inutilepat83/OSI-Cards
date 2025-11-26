@@ -24,13 +24,13 @@ $spacing-tokens: (
 
 // Typography scale - IMPROVED for better hierarchy and readability
 $font-sizes: (
-  'label': 0.65rem,           // Slightly larger for readability
-  'value': 0.92rem,           // More prominent value display
-  'value-lg': 1.4rem,         // Better visual emphasis for analytics
-  'section-title': 1.0rem,    // Clearer section headers
-  'section-description': 0.82rem,
-  'list-title': 0.95rem,      // Improved list item titles
-  'list-subtitle': 0.78rem
+  'label': 0.525rem,           // Slightly larger for readability
+  'value': 0.795rem,           // More prominent value display
+  'value-lg': 1.275rem,         // Better visual emphasis for analytics
+  'section-title': 0.875rem,    // Clearer section headers
+  'section-description': 0.695rem,
+  'list-title': 0.825rem,      // Improved list item titles
+  'list-subtitle': 0.655rem
 );
 
 // Border and radius

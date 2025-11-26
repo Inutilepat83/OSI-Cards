@@ -65,13 +65,25 @@ class TokenBucket {
 }
 
 /**
+ * Per-endpoint rate limit configuration
+ */
+export interface EndpointRateLimit {
+  pattern: string | RegExp; // URL pattern to match
+  capacity: number;
+  refillRate: number;
+}
+
+/**
  * Rate limit configuration
  */
 export interface RateLimitConfig {
-  capacity: number; // Maximum tokens in bucket
-  refillRate: number; // Tokens per second
+  capacity: number; // Maximum tokens in bucket (default)
+  refillRate: number; // Tokens per second (default)
   enabled?: boolean;
   retryAfterHeader?: string; // Header name for retry-after (default: 'Retry-After')
+  endpoints?: EndpointRateLimit[]; // Per-endpoint limits
+  maxRetries?: number; // Maximum retry attempts (default: 3)
+  retryBackoff?: 'linear' | 'exponential'; // Retry backoff strategy
 }
 
 /**
@@ -81,7 +93,10 @@ const DEFAULT_CONFIG: RateLimitConfig = {
   capacity: 10,
   refillRate: 2, // 2 requests per second
   enabled: true,
-  retryAfterHeader: 'Retry-After'
+  retryAfterHeader: 'Retry-After',
+  endpoints: [],
+  maxRetries: 3,
+  retryBackoff: 'exponential'
 };
 
 /**
@@ -108,9 +123,28 @@ export class RateLimitInterceptor implements HttpInterceptor {
     }
 
     const bucket = this.getBucket(request.url);
+    const retryCount = this.getRetryCount(request);
     
     if (!bucket.tryConsume()) {
       const waitTime = bucket.getTimeUntilNextToken();
+      
+      // Check if we've exceeded max retries
+      if (retryCount >= (this.config.maxRetries || 3)) {
+        const error = new HttpErrorResponse({
+          error: 'Rate limit exceeded. Maximum retries reached.',
+          status: 429,
+          statusText: 'Too Many Requests',
+          url: request.url
+        });
+
+        this.logger.error(
+          `Rate limit exceeded for ${request.url} after ${retryCount} retries`,
+          'RateLimitInterceptor'
+        );
+
+        return throwError(() => error);
+      }
+
       const error = new HttpErrorResponse({
         error: 'Rate limit exceeded',
         status: 429,
@@ -119,15 +153,24 @@ export class RateLimitInterceptor implements HttpInterceptor {
       });
 
       this.logger.warn(
-        `Rate limit exceeded for ${request.url}. Retry after ${waitTime}ms`,
+        `Rate limit exceeded for ${request.url}. Retry ${retryCount + 1}/${this.config.maxRetries || 3} after ${waitTime}ms`,
         'RateLimitInterceptor'
       );
 
-      // Retry after wait time
-      return timer(waitTime).pipe(
+      // Calculate backoff delay
+      const backoffDelay = this.calculateBackoffDelay(waitTime, retryCount);
+
+      // Retry after wait time with backoff
+      return timer(backoffDelay).pipe(
         mergeMap(() => {
           if (bucket.tryConsume()) {
-            return next.handle(request);
+            // Add retry header to track retries
+            const retryRequest = request.clone({
+              setHeaders: {
+                'X-RateLimit-Retry': String(retryCount + 1)
+              }
+            });
+            return next.handle(retryRequest);
           }
           return throwError(() => error);
         })
@@ -140,14 +183,31 @@ export class RateLimitInterceptor implements HttpInterceptor {
         if (error.status === 429) {
           const retryAfter = error.headers.get(this.config.retryAfterHeader || 'Retry-After');
           const waitTime = retryAfter ? parseInt(retryAfter, 10) * 1000 : 1000;
+          const retryCount = this.getRetryCount(request);
+          
+          if (retryCount >= (this.config.maxRetries || 3)) {
+            this.logger.error(
+              `Server rate limit exceeded. Maximum retries reached for ${request.url}`,
+              'RateLimitInterceptor'
+            );
+            return throwError(() => error);
+          }
           
           this.logger.warn(
-            `Server rate limit exceeded. Retry after ${waitTime}ms`,
+            `Server rate limit exceeded. Retry ${retryCount + 1}/${this.config.maxRetries || 3} after ${waitTime}ms`,
             'RateLimitInterceptor'
           );
 
-          return timer(waitTime).pipe(
-            mergeMap(() => next.handle(request))
+          const backoffDelay = this.calculateBackoffDelay(waitTime, retryCount);
+          return timer(backoffDelay).pipe(
+            mergeMap(() => {
+              const retryRequest = request.clone({
+                setHeaders: {
+                  'X-RateLimit-Retry': String(retryCount + 1)
+                }
+              });
+              return next.handle(retryRequest);
+            })
           );
         }
 
@@ -157,10 +217,53 @@ export class RateLimitInterceptor implements HttpInterceptor {
   }
 
   /**
+   * Get retry count from request headers
+   */
+  private getRetryCount(request: HttpRequest<unknown>): number {
+    const retryHeader = request.headers.get('X-RateLimit-Retry');
+    return retryHeader ? parseInt(retryHeader, 10) : 0;
+  }
+
+  /**
+   * Calculate backoff delay based on strategy
+   */
+  private calculateBackoffDelay(baseDelay: number, retryCount: number): number {
+    const strategy = this.config.retryBackoff || 'exponential';
+    
+    if (strategy === 'exponential') {
+      // Exponential backoff: baseDelay * 2^retryCount
+      return baseDelay * Math.pow(2, retryCount);
+    } else {
+      // Linear backoff: baseDelay * (retryCount + 1)
+      return baseDelay * (retryCount + 1);
+    }
+  }
+
+  /**
    * Get or create token bucket for a URL pattern
+   * Checks for per-endpoint limits first, then falls back to default
    */
   private getBucket(url: string): TokenBucket {
-    // Use domain as bucket key
+    // Check for per-endpoint configuration
+    if (this.config.endpoints && this.config.endpoints.length > 0) {
+      for (const endpoint of this.config.endpoints) {
+        const pattern = endpoint.pattern;
+        const matches = typeof pattern === 'string' 
+          ? url.includes(pattern)
+          : pattern.test(url);
+        
+        if (matches) {
+          // Use endpoint-specific bucket
+          const key = `endpoint:${pattern}`;
+          if (!this.buckets.has(key)) {
+            this.buckets.set(key, new TokenBucket(endpoint.capacity, endpoint.refillRate));
+          }
+          return this.buckets.get(key)!;
+        }
+      }
+    }
+
+    // Use domain as bucket key for default limits
     let key: string;
     try {
       const urlObj = new URL(url);
@@ -177,6 +280,9 @@ export class RateLimitInterceptor implements HttpInterceptor {
     return this.buckets.get(key)!;
   }
 }
+
+
+
 
 
 

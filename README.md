@@ -751,6 +751,10 @@ src/
 - **Developer Guide**: See [docs/DEVELOPER_GUIDE.md](./docs/DEVELOPER_GUIDE.md) for development guidelines
 - **Examples**: See [docs/EXAMPLES.md](./docs/EXAMPLES.md) for code examples
 - **Integration**: See [README_INTEGRATION.md](./README_INTEGRATION.md) for integration guide
+- **Accessibility**: See [docs/ACCESSIBILITY_GUIDE.md](./docs/ACCESSIBILITY_GUIDE.md) for accessibility features and best practices
+- **Security**: See [docs/SECURITY_BEST_PRACTICES.md](./docs/SECURITY_BEST_PRACTICES.md) for security guidelines
+- **Performance**: See [docs/BUNDLE_OPTIMIZATION.md](./docs/BUNDLE_OPTIMIZATION.md) for bundle optimization strategies
+- **Testing**: See [docs/TEST_COVERAGE_IMPROVEMENTS.md](./docs/TEST_COVERAGE_IMPROVEMENTS.md) for test coverage information
 
 ### FAQ
 

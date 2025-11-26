@@ -23,7 +23,7 @@
       <ng-template #cardContent>
         <!-- Show card if we have generatedCard -->
         <ng-container *ngIf="generatedCard; else previewEmpty">
-          <div class="card-preview-container">
+          <div class="card-preview-container" #cardElement>
             <app-ai-card-renderer
               [cardConfig]="generatedCard"
               [updateSource]="'liveEdit'"
@@ -31,6 +31,7 @@
               (cardInteraction)="onCardInteraction($event)"
               (fieldInteraction)="onFieldInteraction($event)"
               (fullscreenToggle)="onFullscreenToggle($event)"
+              (export)="onExport()"
               (agentAction)="onAgentAction($event)"
               (questionAction)="onQuestionAction($event)">
             </app-ai-card-renderer>

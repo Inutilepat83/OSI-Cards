@@ -6,21 +6,21 @@
 :root[data-theme='night'],
 :root[data-theme='day'] {
   /* ===== BASE DESIGN TOKENS ===== */
-  --font-size-base: 14px;
+  --font-size-base: 13px;
   --radius-base: 0.625rem;
   --spacing-base: 0.25rem;
   
   /* Base text scale - for reference and general use */
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.25rem;
-  --text-2xl: 1.5rem;
-  --text-3xl: 1.875rem;
-  --text-4xl: 2.25rem;
-  --text-5xl: 3rem;
-  --text-7xl: 4.5rem;
+  --text-xs: 0.625rem;
+  --text-sm: 0.75rem;
+  --text-base: 0.875rem;
+  --text-lg: 1rem;
+  --text-xl: 1.125rem;
+  --text-2xl: 1.375rem;
+  --text-3xl: 1.75rem;
+  --text-4xl: 2.125rem;
+  --text-5xl: 2.875rem;
+  --text-7xl: 4.375rem;
   
   /* Base radius scale */
   --radius-xs: 0.25rem;
@@ -147,7 +147,7 @@
   /* Enhanced with strategic emphasis and visual hierarchy */
   
   /* Section Titles (e.g., "Key Contacts", "Company Overview") - PREMIUM */
-  --section-title-font-size: clamp(1.3rem, 1.15rem + 0.4vw, 1.6rem);
+  --section-title-font-size: clamp(1.175rem, 1.025rem + 0.4vw, 1.475rem);
   --section-title-font-weight: 700;
   --section-title-letter-spacing: -0.02em;
   --section-title-line-height: 1.3;
@@ -155,20 +155,20 @@
   --font-size-section-header: var(--section-title-font-size);
   
   /* Card Titles (individual cards within sections) - PROMINENT */
-  --card-title-font-size: clamp(1.05rem, 0.95rem + 0.3vw, 1.2rem);
+  --card-title-font-size: clamp(0.925rem, 0.825rem + 0.3vw, 1.075rem);
   --card-title-font-weight: 700;
   --card-title-letter-spacing: -0.01em;
   --card-title-line-height: 1.4;
   --card-title-text-shadow: 0 1px 1px rgba(0, 0, 0, 0.06);
   
   /* Card Subtitles/Roles - REFINED */
-  --card-subtitle-font-size: clamp(0.75rem, 0.67rem + 0.16vw, 0.9rem);
+  --card-subtitle-font-size: clamp(0.625rem, 0.545rem + 0.16vw, 0.775rem);
   --card-subtitle-font-weight: 600;
   --card-subtitle-letter-spacing: 0.015em;
   --card-subtitle-line-height: 1.3;
   
   /* Card Labels (e.g., "INDUSTRY", "FOUNDED") - CRISP & BOLD */
-  --card-label-font-size: clamp(0.58rem, 0.52rem + 0.16vw, 0.72rem);
+  --card-label-font-size: clamp(0.455rem, 0.395rem + 0.16vw, 0.595rem);
   --card-label-font-weight: 800;
   --card-label-letter-spacing: 0.065em;
   --card-label-line-height: 1.25;
@@ -176,21 +176,21 @@
   --card-label-text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
   
   /* Card Values - EMPHASIZED */
-  --card-value-font-size: clamp(0.93rem, 0.85rem + 0.3vw, 1.08rem);
-  --card-value-font-size-large: clamp(1.35rem, 1.2rem + 0.5vw, 1.65rem);
-  --card-value-font-size-xl: clamp(1.8rem, 1.6rem + 0.6vw, 2.1rem);
+  --card-value-font-size: clamp(0.805rem, 0.725rem + 0.3vw, 0.955rem);
+  --card-value-font-size-large: clamp(1.225rem, 1.075rem + 0.5vw, 1.525rem);
+  --card-value-font-size-xl: clamp(1.675rem, 1.475rem + 0.6vw, 1.975rem);
   --card-value-font-weight: 700;
   --card-value-letter-spacing: -0.015em;
   --card-value-line-height: 1.35;
   --card-value-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   
   /* Card Meta/Description Text - SUBTLE */
-  --card-meta-font-size: clamp(0.68rem, 0.6rem + 0.16vw, 0.84rem);
+  --card-meta-font-size: clamp(0.555rem, 0.475rem + 0.16vw, 0.715rem);
   --card-meta-font-weight: 500;
   --card-meta-line-height: 1.3;
   
   /* Smallest text size - for compact lists and features */
-  --card-text-small-font-size: clamp(0.48rem, 0.42rem + 0.13vw, 0.58rem);
+  --card-text-small-font-size: clamp(0.355rem, 0.295rem + 0.13vw, 0.455rem);
   
   /* Card Colors - Standardized text colors (theme-aware, set in theme files) */
   --card-text-primary: var(--foreground);

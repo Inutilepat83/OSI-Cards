@@ -14,10 +14,20 @@
   <meta http-equiv="X-XSS-Protection" content="1; mode=block">
   
   <!-- Resource Hints for Performance -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <!-- DNS Prefetch for external domains -->
   <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  
+  <!-- Preconnect for critical external resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Preload critical assets -->
   <link rel="preload" href="/assets/fonts/MaterialIcons-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/configs/manifest.json" as="fetch" crossorigin>
+  
+  <!-- Prefetch for likely next resources (optional, can be added dynamically) -->
+  <link rel="prefetch" href="/assets/configs/companies/" as="document">
     <!-- Removed remote Material Icons link to avoid build-time inlining network fetch errors.
       If you need local material icons, add the font files under `src/assets/fonts` and reference
       them in your stylesheets using @font-face instead. Lucide icons are used across the UI.

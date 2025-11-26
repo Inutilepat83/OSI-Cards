@@ -109,6 +109,44 @@ export class CardDataService implements OnDestroy {
   }
 
   /**
+   * Get card by type and variant index (1-based)
+   * More efficient than loading all cards of a type
+   * Only works with JsonFileCardProvider
+   */
+  getCardByTypeAndVariant(cardType: CardType, variant: number): Observable<AICardConfig | null> {
+    const provider = this.getCurrentProvider();
+    if (provider && 'getCardByTypeAndVariant' in provider && typeof provider.getCardByTypeAndVariant === 'function') {
+      return (provider as any).getCardByTypeAndVariant(cardType, variant);
+    }
+    // Fallback to getCardsByType if method not available
+    return this.getCardsByType(cardType).pipe(
+      map(cards => {
+        if (!cards || cards.length === 0) {
+          return null;
+        }
+        const cardIndex = Math.min(variant - 1, cards.length - 1);
+        return cards[cardIndex] || null;
+      })
+    );
+  }
+
+  /**
+   * Get the first card from manifest (sorted by priority)
+   * More efficient than loading all cards
+   * Only works with JsonFileCardProvider
+   */
+  getFirstCard(): Observable<AICardConfig | null> {
+    const provider = this.getCurrentProvider();
+    if (provider && 'getFirstCard' in provider && typeof provider.getFirstCard === 'function') {
+      return (provider as any).getFirstCard();
+    }
+    // Fallback to getAllCards if method not available
+    return this.getAllCards().pipe(
+      map(cards => (cards && cards.length > 0) ? cards[0] : null)
+    );
+  }
+
+  /**
    * Get unique card types from all available cards
    */
   getAvailableCardTypes(): Observable<CardType[]> {
@@ -122,6 +160,21 @@ export class CardDataService implements OnDestroy {
 
   /**
    * Search cards by title or content
+   * 
+   * Performs a case-insensitive search across:
+   * - Card titles
+   * - Section titles
+   * - Field labels and values
+   * 
+   * @param query - Search query string (case-insensitive)
+   * @returns Observable of matching cards
+   * 
+   * @example
+   * ```typescript
+   * cardData.searchCards('company').subscribe(cards => {
+   *   console.log(`Found ${cards.length} matching cards`);
+   * });
+   * ```
    */
   searchCards(query: string): Observable<AICardConfig[]> {
     if (!query.trim()) {
@@ -163,6 +216,19 @@ export class CardDataService implements OnDestroy {
 
   /**
    * Switch to a different data provider
+   * 
+   * Automatically:
+   * - Cleans up the current provider (calls destroy if available)
+   * - Initializes the new provider (calls initialize if available)
+   * - Cancels all in-flight requests from the previous provider
+   * 
+   * @param newProvider - The new card data provider to use
+   * 
+   * @example
+   * ```typescript
+   * const apiProvider = inject(ApiCardProvider);
+   * cardData.switchProvider(apiProvider);
+   * ```
    */
   switchProvider(newProvider: CardDataProvider): void {
     // Clean up current provider
@@ -226,6 +292,16 @@ export class CardDataService implements OnDestroy {
 
   /**
    * Cancel all in-flight requests
+   * 
+   * Useful for cleanup or when switching contexts.
+   * Automatically called on service destruction.
+   * 
+   * @example
+   * ```typescript
+   * // Cancel all requests before switching providers
+   * cardData.cancelRequests();
+   * cardData.switchProvider(newProvider);
+   * ```
    */
   cancelRequests(): void {
     this.requestCanceller.cancel();

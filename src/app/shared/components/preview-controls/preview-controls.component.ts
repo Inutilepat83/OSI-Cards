@@ -22,15 +22,6 @@ import { LucideIconsModule } from '../../icons/lucide-icons.module';
         <lucide-icon [name]="isFullscreen ? 'minimize-2' : 'maximize-2'" [size]="18"></lucide-icon>
         <span>{{ isFullscreen ? 'Exit' : 'Fullscreen' }}</span>
       </button>
-      <button
-        type="button"
-        class="control-button"
-        (click)="onExport()"
-        aria-label="Export card"
-        title="Export card">
-        <lucide-icon name="download" [size]="18"></lucide-icon>
-        <span>Export</span>
-      </button>
     </div>
   `,
   styles: [`
@@ -68,16 +59,14 @@ import { LucideIconsModule } from '../../icons/lucide-icons.module';
 export class PreviewControlsComponent {
   @Input() isFullscreen = false;
   @Output() toggleFullscreen = new EventEmitter<void>();
-  @Output() export = new EventEmitter<void>();
 
   onToggleFullscreen(): void {
     this.toggleFullscreen.emit();
   }
-
-  onExport(): void {
-    this.export.emit();
-  }
 }
+
+
+
 
 
 

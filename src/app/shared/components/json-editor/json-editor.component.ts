@@ -101,15 +101,16 @@ import { AppConfigService } from '../../../core/services/app-config.service';
       width: 100%;
       flex: 1;
       padding: 0.75rem;
-      background: rgba(20, 30, 50, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: var(--card-background);
+      border: 2px solid color-mix(in srgb, var(--border) 60%, transparent);
       border-radius: 0.5rem;
-      color: var(--card-text-primary, #FFFFFF);
+      color: var(--foreground);
       font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
       font-size: 0.875rem;
       line-height: 1.5;
       resize: vertical;
       min-height: 200px;
+      box-shadow: 0 2px 4px color-mix(in srgb, var(--foreground) 5%, transparent);
     }
 
     .json-textarea:focus {
@@ -171,6 +172,11 @@ export class JsonEditorComponent {
   @Output() jsonInputChange = new EventEmitter<string>();
   @Output() jsonValid = new EventEmitter<boolean>();
   @Output() jsonErrorChange = new EventEmitter<string | null>();
+  @Output() jsonErrorDetailsChange = new EventEmitter<{
+    error: string | null;
+    position: number | null;
+    suggestion: string;
+  }>();
 
   isJsonValid = true;
   jsonErrorText = '';
@@ -189,6 +195,11 @@ export class JsonEditorComponent {
     this.jsonInputChange.emit(value);
     this.jsonValid.emit(this.isJsonValid);
     this.jsonErrorChange.emit(this.jsonErrorText || null);
+    this.jsonErrorDetailsChange.emit({
+      error: this.jsonErrorText || null,
+      position: this.jsonErrorPosition,
+      suggestion: this.jsonErrorSuggestion
+    });
   }
 
   formatJson(): void {

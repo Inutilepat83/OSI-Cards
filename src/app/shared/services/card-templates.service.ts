@@ -1,20 +1,182 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { map, shareReplay, catchError } from 'rxjs/operators';
 import { AICardConfig, CardType } from '../../models';
+import { CardDataService } from '../../core/services/card-data/card-data.service';
+import { LoggingService } from '../../core/services/logging.service';
+import { ensureCardIds, removeAllIds } from '../utils/card-utils';
 
 /**
  * Card templates service
- * Provides pre-built card templates for common use cases
+ * 
+ * Handles template loading, caching, and management for card templates.
+ * Supports both file-based templates (from CardDataService) and built-in templates.
+ * 
+ * Features:
+ * - Template caching for performance
+ * - Variant selection (1-3)
+ * - Template validation and sanitization
+ * - Fallback to built-in templates
+ * 
+ * @example
+ * ```typescript
+ * const templateService = inject(CardTemplatesService);
+ * 
+ * // Load template from files
+ * templateService.loadTemplate('company', 1).subscribe(template => {
+ *   console.log('Template loaded:', template);
+ * });
+ * 
+ * // Get cached template
+ * const cached = templateService.getCachedTemplate('company', 1);
+ * ```
  */
 @Injectable({
   providedIn: 'root'
 })
 export class CardTemplatesService {
+  private readonly cardDataService = inject(CardDataService);
+  private readonly logger = inject(LoggingService);
+  
+  // Template cache: Map<`${cardType}-${variant}`, AICardConfig>
+  private readonly templateCache = new Map<string, AICardConfig>();
+  
+  // Observable cache for async loading
+  private readonly templateObservables = new Map<string, Observable<AICardConfig | null>>();
   /**
-   * Get template by type and variant
+   * Load template by type and variant
+   * 
+   * First tries to load from file-based templates (via CardDataService),
+   * then falls back to built-in templates if no file templates are available.
+   * 
+   * @param cardType - The card type to load
+   * @param variant - The variant number (1-3)
+   * @returns Observable of the template, or null if not found
+   * 
+   * @example
+   * ```typescript
+   * templateService.loadTemplate('company', 1).subscribe(template => {
+   *   if (template) {
+   *     console.log('Template loaded:', template.cardTitle);
+   *   }
+   * });
+   * ```
    */
-  getTemplate(cardType: CardType, variant: number = 1): AICardConfig | null {
+  loadTemplate(cardType: CardType, variant: number = 1): Observable<AICardConfig | null> {
+    const cacheKey = `${cardType}-${variant}`;
+    
+    // Check cache first
+    const cached = this.templateCache.get(cacheKey);
+    if (cached) {
+      return of(cached);
+    }
+    
+    // Check if we already have an observable for this template
+    const existingObservable = this.templateObservables.get(cacheKey);
+    if (existingObservable) {
+      return existingObservable;
+    }
+    
+    // Load from file-based templates
+    const template$ = this.cardDataService.getCardsByType(cardType).pipe(
+      map(cards => {
+        if (!cards || cards.length === 0) {
+          // Fallback to built-in templates
+          return this.getBuiltInTemplate(cardType, variant);
+        }
+        
+        // Select variant (1-based index)
+        const template = cards[Math.min(variant - 1, cards.length - 1)] ?? cards[0];
+        
+        // Sanitize template (remove IDs, ensure structure)
+        const scrubbed = removeAllIds(template);
+        const sanitized = ensureCardIds({ ...scrubbed });
+        
+        // Cache the template
+        this.templateCache.set(cacheKey, sanitized);
+        
+        return sanitized;
+      }),
+      catchError((error) => {
+        this.logger.warn(`Failed to load template ${cardType}-${variant}`, 'CardTemplatesService', error);
+        // Fallback to built-in template
+        return of(this.getBuiltInTemplate(cardType, variant));
+      }),
+      shareReplay(1)
+    );
+    
+    // Cache the observable
+    this.templateObservables.set(cacheKey, template$);
+    
+    return template$;
+  }
+
+  /**
+   * Get cached template (synchronous)
+   * 
+   * @param cardType - The card type
+   * @param variant - The variant number (1-3)
+   * @returns Cached template or null
+   */
+  getCachedTemplate(cardType: CardType, variant: number = 1): AICardConfig | null {
+    const cacheKey = `${cardType}-${variant}`;
+    return this.templateCache.get(cacheKey) || null;
+  }
+
+  /**
+   * Clear template cache
+   * 
+   * Useful when templates need to be reloaded (e.g., after file updates)
+   */
+  clearCache(): void {
+    this.templateCache.clear();
+    this.templateObservables.clear();
+    this.logger.debug('Template cache cleared', 'CardTemplatesService');
+  }
+
+  /**
+   * Clear cache for specific card type
+   * 
+   * @param cardType - The card type to clear from cache
+   */
+  clearCacheForType(cardType: CardType): void {
+    const keysToDelete: string[] = [];
+    this.templateCache.forEach((_, key) => {
+      if (key.startsWith(`${cardType}-`)) {
+        keysToDelete.push(key);
+      }
+    });
+    
+    keysToDelete.forEach(key => {
+      this.templateCache.delete(key);
+      this.templateObservables.delete(key);
+    });
+    
+    this.logger.debug(`Cache cleared for type: ${cardType}`, 'CardTemplatesService');
+  }
+
+  /**
+   * Get built-in template (fallback)
+   * 
+   * @param cardType - The card type
+   * @param variant - The variant number
+   * @returns Built-in template or null
+   */
+  private getBuiltInTemplate(cardType: CardType, variant: number): AICardConfig | null {
     const templates = this.getTemplatesByType(cardType);
     return templates[variant - 1] || templates[0] || null;
+  }
+
+  /**
+   * Get template by type and variant (synchronous, built-in only)
+   * 
+   * @deprecated Use loadTemplate() for file-based templates
+   * @param cardType - The card type
+   * @param variant - The variant number
+   * @returns Built-in template or null
+   */
+  getTemplate(cardType: CardType, variant: number = 1): AICardConfig | null {
+    return this.getBuiltInTemplate(cardType, variant);
   }
 
   /**
@@ -174,6 +336,32 @@ export class CardTemplatesService {
         ]
       }
     ];
+  }
+
+  /**
+   * Get available variants for a card type
+   * 
+   * @param cardType - The card type
+   * @returns Number of available variants
+   */
+  getAvailableVariants(cardType: CardType): Observable<number> {
+    return this.cardDataService.getCardsByType(cardType).pipe(
+      map(cards => Math.max(cards.length, 3)), // At least 3 variants
+      catchError(() => of(this.getTemplatesByType(cardType).length || 1))
+    );
+  }
+
+  /**
+   * Check if template exists for type and variant
+   * 
+   * @param cardType - The card type
+   * @param variant - The variant number
+   * @returns Observable of boolean indicating if template exists
+   */
+  templateExists(cardType: CardType, variant: number): Observable<boolean> {
+    return this.loadTemplate(cardType, variant).pipe(
+      map(template => template !== null)
+    );
   }
 }
 

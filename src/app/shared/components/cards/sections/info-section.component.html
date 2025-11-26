@@ -1,8 +1,8 @@
-<div class="ai-section ai-section--info">
+<div class="ai-section ai-section--info" role="region" [attr.aria-labelledby]="'section-title-' + section.id" [attr.aria-describedby]="section.description ? 'section-desc-' + section.id : null">
   <div class="ai-section__header">
     <div class="ai-section__details">
-      <h3 class="ai-section__title">{{ section.title }}</h3>
-      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
+      <h3 class="ai-section__title" [id]="'section-title-' + section.id">{{ section.title }}</h3>
+      <p *ngIf="section.description" class="ai-section__description" [id]="'section-desc-' + section.id">{{ section.description }}</p>
     </div>
   </div>
 
@@ -13,6 +13,11 @@
           *ngFor="let field of fields; trackBy: trackField; let idx = index"
           type="button"
           class="info-row"
+          role="button"
+          [attr.aria-label]="(field.label || 'Field') + ': ' + (getDisplayValue(field) || 'No value') + (field.description ? '. ' + field.description : '')"
+          [attr.aria-describedby]="field.description ? 'field-desc-' + getFieldId(field, idx) : null"
+          [attr.aria-posinset]="idx + 1"
+          [attr.aria-setsize]="fields.length"
           [class.field-streaming]="getFieldAnimationClass(getFieldId(field, idx), idx) === 'field-streaming'"
           [class.field-entered]="getFieldAnimationClass(getFieldId(field, idx), idx) === 'field-entered'"
           [class.field-stagger-0]="getFieldStaggerIndex(idx) === 0"
@@ -41,7 +46,7 @@
           </div>
 
           <div class="info-row__meta" *ngIf="field.description || field.change !== undefined">
-            <p class="info-row__description" *ngIf="field.description">
+            <p class="info-row__description" *ngIf="field.description" [id]="'field-desc-' + getFieldId(field, idx)">
               {{ field.description }}
             </p>
             <span class="info-row__change" *ngIf="field.change !== undefined" [ngClass]="getTrendClass(field)">

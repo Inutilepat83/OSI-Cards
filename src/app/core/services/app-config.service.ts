@@ -29,19 +29,19 @@ export class AppConfigService {
 
   // LLM Simulation Configuration
   readonly LLM_SIMULATION = {
-    THINKING_DELAY_MS: 5000,
+    THINKING_DELAY_MS: 3500, // Reduced by 30% (from 5000ms) for faster generation
     CHUNK_DELAY_BASE_MS: 10,
     MIN_CHUNK_SIZE: 18,
     MAX_CHUNK_SIZE: 64,
-    TOKENS_PER_SECOND: 100,
+    TOKENS_PER_SECOND: 130, // Increased by 30% (from 100) for faster generation
     CHARS_PER_TOKEN: 4,
     STREAM_TIMEOUT_MS: 30000,
-    COMPLETION_BATCH_DELAY_MS: 100
+    COMPLETION_BATCH_DELAY_MS: 70 // Reduced by 30% (from 100ms) for faster generation
   };
 
   // Section Completion Configuration
   readonly SECTION_COMPLETION = {
-    BATCH_DELAY_MS: 100,
+    BATCH_DELAY_MS: 70, // Reduced by 30% (from 100ms) for faster generation
     PROGRESS_UPDATE_THRESHOLD: 0.1,
     PLACEHOLDER_VALUE: 'Streaming…'
   };

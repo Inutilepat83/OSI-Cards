@@ -49,8 +49,11 @@ export class LLMStreamingService implements OnDestroy {
     completedSections?: number[];
   }>();
 
+  private readonly bufferUpdateSubject = new Subject<string>();
+
   readonly state$ = this.stateSubject.asObservable();
   readonly cardUpdates$ = this.cardUpdateSubject.asObservable();
+  readonly bufferUpdates$ = this.bufferUpdateSubject.asObservable();
 
   private targetJson = '';
   private buffer = '';
@@ -199,6 +202,9 @@ export class LLMStreamingService implements OnDestroy {
     const nextChunk = this.chunksQueue.shift() ?? '';
     this.buffer += nextChunk;
     const hasMore = this.chunksQueue.length > 0;
+    
+    // Emit buffer update for JSON editor synchronization
+    this.bufferUpdateSubject.next(this.buffer);
 
     // Parse and check for section completions
     const parsed = this.tryParseBuffer();

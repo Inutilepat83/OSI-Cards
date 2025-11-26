@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AICardConfig } from '../../../../models';
 import { AICardRendererComponent, CardFieldInteractionEvent } from '../ai-card-renderer.component';
@@ -21,8 +21,11 @@ export class CardPreviewComponent implements OnInit, OnChanges, OnDestroy {
   @Output() cardInteraction = new EventEmitter<{ action: string; card: AICardConfig }>();
   @Output() fieldInteraction = new EventEmitter<CardFieldInteractionEvent>();
   @Output() fullscreenToggle = new EventEmitter<boolean>();
+  @Output() export = new EventEmitter<void>();
   @Output() agentAction = new EventEmitter<{ action: any; card: AICardConfig; agentId?: string; context?: Record<string, unknown> }>();
   @Output() questionAction = new EventEmitter<{ action: any; card: AICardConfig; question?: string }>();
+
+  @ViewChild('cardElement') cardElementRef?: ElementRef<HTMLDivElement>;
 
   constructor(private cdr: ChangeDetectorRef) {}
 
@@ -56,11 +59,22 @@ export class CardPreviewComponent implements OnInit, OnChanges, OnDestroy {
     this.fullscreenToggle.emit(isFullscreen);
   }
 
+  onExport(): void {
+    this.export.emit();
+  }
+
   onAgentAction(event: { action: any; card: AICardConfig; agentId?: string; context?: Record<string, unknown> }): void {
     this.agentAction.emit(event);
   }
 
   onQuestionAction(event: { action: any; card: AICardConfig; question?: string }): void {
     this.questionAction.emit(event);
+  }
+
+  /**
+   * Get the card element for export purposes
+   */
+  getCardElement(): HTMLElement | null {
+    return this.cardElementRef?.nativeElement ?? null;
   }
 }

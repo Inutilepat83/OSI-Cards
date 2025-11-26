@@ -6,6 +6,7 @@ import * as CardActions from '../../store/cards/cards.state';
 import { ensureCardIds } from '../../shared/utils/card-utils';
 import { CardDiffUtil, CardChangeType } from '../../shared/utils/card-diff.util';
 import { JsonProcessingService } from './json-processing.service';
+import { ValidateCardType, validateObject } from '../../shared/decorators/validation.decorator';
 
 /**
  * Service for card generation logic
@@ -96,12 +97,33 @@ export class CardGenerationService {
 
   /**
    * Load a card template
-   * @param cardType - The type of card to load
+   * @param cardType - The type of card to load (validated)
    * @param variant - The variant number (1-3)
    */
   loadTemplate(cardType: CardType, variant: number): void {
-    this.store.dispatch(CardActions.setCardType({ cardType }));
-    this.store.dispatch(CardActions.loadTemplate({ cardType, variant }));
+    // Validate card type using decorator pattern
+    try {
+      const validationResult = ValidateCardType();
+      const validator = (validationResult as any).prototype?.constructor || validationResult;
+      // Runtime validation
+      const validTypes: CardType[] = ['company', 'contact', 'opportunity', 'product', 'analytics', 'event', 'sko'];
+      if (!validTypes.includes(cardType)) {
+        throw new Error(`Invalid card type: ${cardType}`);
+      }
+      
+      // Validate variant
+      if (variant < 1 || variant > 3) {
+        throw new Error(`Invalid variant: ${variant}. Must be between 1 and 3`);
+      }
+      
+      this.store.dispatch(CardActions.setCardType({ cardType }));
+      this.store.dispatch(CardActions.loadTemplate({ cardType, variant }));
+    } catch (error) {
+      console.error('Template loading validation failed:', error);
+      // Fallback to company type
+      this.store.dispatch(CardActions.setCardType({ cardType: 'company' }));
+      this.store.dispatch(CardActions.loadTemplate({ cardType: 'company', variant: 1 }));
+    }
   }
 
   /**

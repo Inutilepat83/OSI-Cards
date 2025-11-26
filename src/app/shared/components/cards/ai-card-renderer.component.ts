@@ -182,6 +182,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   @Output() fieldInteraction = new EventEmitter<CardFieldInteractionEvent>();
   @Output() cardInteraction = new EventEmitter<{ action: string, card: AICardConfig }>();
   @Output() fullscreenToggle = new EventEmitter<boolean>();
+  @Output() export = new EventEmitter<void>();
   @Output() agentAction = new EventEmitter<{ action: CardAction; card: AICardConfig; agentId?: string; context?: Record<string, unknown> }>();
   @Output() questionAction = new EventEmitter<{ action: CardAction; card: AICardConfig; question?: string }>();
   
@@ -770,6 +771,10 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   toggleFullscreen(): void {
     this.fullscreenToggle.emit(!this.isFullscreen);
     // Immediate reset when toggling fullscreen (no smooth transition needed)
+  }
+
+  onExport(): void {
+    this.export.emit();
     this.magneticTiltService.resetTilt(false);
   }
 

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2025-11-22T07:18:09.977Z",
+  "generatedAt": "2025-11-26T08:22:15.769Z",
   "cards": [
     {
       "id": "company-enterprise-v3",
@@ -147,22 +147,6 @@
       }
     },
     {
-      "id": "sko-enterprise-v3",
-      "type": "sko",
-      "path": "sko/sko-enterprise-v3.json",
-      "format": "json",
-      "size": 8853,
-      "priority": "low",
-      "sectionCount": 7,
-      "title": "Top Orange Business Solutions",
-      "metadata": {
-        "subtitle": "Recommended Solutions for Enterprise Manufacturing Client",
-        "description": null,
-        "lastUpdated": "2025-11-22T05:42:12.088Z",
-        "hasActions": true
-      }
-    },
-    {
       "id": "opportunity-enterprise-v3",
       "type": "opportunity",
       "path": "opportunities/opportunity-enterprise-v3.json",
@@ -175,6 +159,22 @@
         "subtitle": "Multi-Year Enterprise Digital Transformation",
         "description": null,
         "lastUpdated": "2025-11-22T05:42:12.078Z",
+        "hasActions": true
+      }
+    },
+    {
+      "id": "sko-enterprise-v3",
+      "type": "sko",
+      "path": "sko/sko-enterprise-v3.json",
+      "format": "json",
+      "size": 7528,
+      "priority": "low",
+      "sectionCount": 5,
+      "title": "Top Orange Business Solutions",
+      "metadata": {
+        "subtitle": "Recommended Solutions for Enterprise Manufacturing Client",
+        "description": null,
+        "lastUpdated": "2025-11-25T07:17:24.622Z",
         "hasActions": true
       }
     },

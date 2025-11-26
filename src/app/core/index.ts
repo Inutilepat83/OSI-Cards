@@ -10,6 +10,8 @@ export * from './services/logging.service';
 export * from './services/json-validation.service';
 export * from './services/card-generation.service';
 export * from './services/feature-flag.service';
+export * from './services/indexeddb-cache.service';
+export * from './services/request-queue.service';
 export * from './interceptors/error.interceptor';
 export * from './interceptors/http-cache.interceptor';
 export * from './guards/card-exists.guard';

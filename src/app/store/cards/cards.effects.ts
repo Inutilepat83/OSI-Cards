@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { of } from 'rxjs';
+import { of, Observable } from 'rxjs';
 import { map, mergeMap, catchError, tap, take, finalize, withLatestFrom } from 'rxjs/operators';
+import { Action } from '@ngrx/store';
 import * as CardsActions from './cards.state';
 import { CardDataService, PerformanceService } from '../../core';
 import { AICardConfig, CardType } from '../../models/card.model';
@@ -73,32 +74,38 @@ export class CardsEffects {
       ofType(CardsActions.loadTemplate),
       mergeMap(({ cardType, variant }: LoadTemplateAction) => {
         const startTime = performance.now();
-        return this.cardConfigService.getCardsByType(cardType).pipe(
-          map((cards) => {
-            if (!cards.length) {
+        // Use lazy loading: get specific card by type and variant instead of loading all cards of that type
+        // This now uses instant cache-first loading
+        return this.cardConfigService.getCardByTypeAndVariant(cardType, variant).pipe(
+          map((template) => {
+            if (!template) {
               const duration = performance.now() - startTime;
               this.performanceService.recordMetric('loadTemplate', duration, { 
                 cardType, 
                 variant, 
-                error: 'no_cards_found' 
+                error: 'no_cards_found',
+                lazyLoaded: true,
+                cached: false
               });
-              return CardsActions.loadTemplateFailure({ error: `No templates available for card type "${cardType}".` });
+              return CardsActions.loadTemplateFailure({ error: `No templates available for card type "${cardType}" variant ${variant}.` });
             }
 
             const templateStartTime = performance.now();
-            const template = cards[Math.min(variant - 1, cards.length - 1)] ?? cards[0];
             const scrubbed = removeAllIds(template);
             const hydrated = ensureCardIds({ ...scrubbed });
             delete hydrated.cardSubtitle;
             
             const duration = performance.now() - startTime;
             const processingTime = performance.now() - templateStartTime;
+            const isCached = duration < 10; // If loaded in < 10ms, it was from cache
             
             this.performanceService.recordMetric('loadTemplate', duration, {
               cardType,
               variant,
               cardSize: JSON.stringify(template).length,
-              processingTime
+              processingTime,
+              lazyLoaded: true,
+              cached: isCached
             });
 
             return CardsActions.loadTemplateSuccess({ template: hydrated });
@@ -108,7 +115,8 @@ export class CardsEffects {
             this.performanceService.recordMetric('loadTemplate', duration, { 
               cardType, 
               variant, 
-              error: true 
+              error: true,
+              lazyLoaded: true
             });
             return of(CardsActions.loadTemplateFailure({ error: String(error) }));
           })
@@ -122,21 +130,49 @@ export class CardsEffects {
       ofType(CardsActions.loadFirstCardExample),
       mergeMap(() => {
         const startTime = performance.now();
-        // Get all cards and use the first one
-        return this.cardConfigService.getAllCards().pipe(
-          take(1),
-          mergeMap((cards: AICardConfig[]) => {
-            if (!cards || cards.length === 0) {
+        // Use lazy loading: get first card directly from manifest instead of loading all cards
+        return this.cardConfigService.getFirstCard().pipe(
+          mergeMap((firstCard: AICardConfig | null): Observable<Action> => {
+            if (!firstCard) {
+              const duration = performance.now() - startTime;
+              this.performanceService.recordMetric('loadFirstExample', duration, { error: 'no_cards_available' });
               return of(CardsActions.loadTemplateFailure({ error: 'No cards available' }));
             }
             
-            const firstCard = cards[0];
             const cardType = (firstCard.cardType || 'company') as CardType;
             
-            // Load other cards of same type to find index -> variant
+            // Get manifest entries for the same type to find variant index (without loading full cards)
+            const provider = this.cardConfigService.getCurrentProvider();
+            if (provider && 'getManifestEntriesByType' in provider && typeof provider.getManifestEntriesByType === 'function') {
+              return (provider as any).getManifestEntriesByType(cardType).pipe(
+                map((manifestEntries: any[]): Action[] => {
+                  const scrubbed = removeAllIds(firstCard);
+                  const hydrated = ensureCardIds({ ...scrubbed });
+                  delete hydrated.cardSubtitle;
+
+                  const duration = performance.now() - startTime;
+                  this.performanceService.recordMetric('loadFirstExample', duration, {
+                    cardType: firstCard.cardType,
+                    cardSize: JSON.stringify(firstCard).length,
+                    lazyLoaded: true
+                  });
+
+                  const typeAction = CardsActions.setCardType({ cardType });
+                  // Find variant index from manifest entries (1-based)
+                  const variantIndex = Math.max(1, (manifestEntries.findIndex((e: any) => e.id === firstCard.id) + 1) || 1);
+                  const variantAction = CardsActions.setCardVariant({ variant: Math.min(Math.max(1, variantIndex), 3) });
+                  const successAction = CardsActions.loadTemplateSuccess({ template: hydrated });
+
+                  return [typeAction, variantAction, successAction];
+                }),
+                mergeMap((actions: Action[]) => of(...actions))
+              );
+            }
+            
+            // Fallback: if provider doesn't support manifest entries, use the old method
             return this.cardConfigService.getCardsByType(cardType).pipe(
               take(1),
-              map((cardsByType: AICardConfig[]) => {
+              map((cardsByType: AICardConfig[]): Action[] => {
                 const scrubbed = removeAllIds(firstCard);
                 const hydrated = ensureCardIds({ ...scrubbed });
                 delete hydrated.cardSubtitle;
@@ -144,23 +180,21 @@ export class CardsEffects {
                 const duration = performance.now() - startTime;
                 this.performanceService.recordMetric('loadFirstExample', duration, {
                   cardType: firstCard.cardType,
-                  cardSize: JSON.stringify(firstCard).length
+                  cardSize: JSON.stringify(firstCard).length,
+                  lazyLoaded: false
                 });
 
-                const typeAction = CardsActions.setCardType({ cardType: (firstCard.cardType || 'company') as CardType });
-                // compute variant index (1-based) from array position
+                const typeAction = CardsActions.setCardType({ cardType });
                 const variantIndex = Math.max(1, (cardsByType.findIndex((c: AICardConfig) => c.id === firstCard.id) + 1) || 1);
                 const variantAction = CardsActions.setCardVariant({ variant: Math.min(Math.max(1, variantIndex), 3) });
                 const successAction = CardsActions.loadTemplateSuccess({ template: hydrated });
 
-                return { typeAction, variantAction, successAction };
+                return [typeAction, variantAction, successAction];
               }),
-              mergeMap(({ typeAction, variantAction, successAction }) => 
-                of(typeAction, variantAction, successAction)
-              )
+              mergeMap((actions: Action[]) => of(...actions))
             );
           }),
-          catchError((error: unknown) => {
+          catchError((error: unknown): Observable<Action> => {
             const duration = performance.now() - startTime;
             this.performanceService.recordMetric('loadFirstExample', duration, { error: true });
             return of(CardsActions.loadTemplateFailure({ error: error instanceof Error ? error.message : String(error) }));

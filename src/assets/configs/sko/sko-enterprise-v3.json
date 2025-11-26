@@ -54,26 +54,6 @@
       ]
     },
     {
-      "title": "Solution Performance Metrics",
-      "type": "analytics",
-      "fields": [
-        { "label": "Expected ROI", "value": "280%", "percentage": 280, "performance": "excellent", "trend": "up" },
-        { "label": "Cost Savings", "value": "25% annually", "percentage": 25, "performance": "excellent", "trend": "up" },
-        { "label": "Efficiency Improvement", "value": "30%", "percentage": 30, "performance": "excellent", "trend": "up" },
-        { "label": "Quality Improvement", "value": "40%", "percentage": 40, "performance": "excellent", "trend": "up" }
-      ]
-    },
-    {
-      "title": "Financial Impact",
-      "type": "financials",
-      "fields": [
-        { "label": "Total Investment", "value": "$6.5M", "format": "currency", "change": 0, "trend": "stable" },
-        { "label": "Expected Annual Savings", "value": "$4.5M", "format": "currency", "change": 25, "trend": "up" },
-        { "label": "ROI Projection", "value": "280%", "format": "percentage", "change": 28, "trend": "up" },
-        { "label": "Payback Period", "value": "18 months", "format": "text", "trend": "stable" }
-      ]
-    },
-    {
       "title": "Client Contacts",
       "type": "contact-card",
       "fields": [
@@ -160,7 +140,6 @@
         "subject": "Orange Business Solutions - Recommended Solutions for Manufacturing Corp",
         "body": "Dear Robert Chen,\n\nI am pleased to present the top Orange Business Solutions tailored for Manufacturing Corp:\n\n1. IoT Manufacturing Platform\n   Connected devices and sensors for smart manufacturing and predictive maintenance\n   - Real-time monitoring\n   - Predictive maintenance\n   - Energy optimization\n   - Quality control\n   Expected outcomes: 30% reduction in downtime, 25% energy savings, 40% quality improvement\n\n2. Industrial Cloud Infrastructure\n   Secure, scalable cloud platform for manufacturing operations and data analytics\n   - 99.9% uptime SLA\n   - Global edge network\n   - Auto-scaling capabilities\n   - Disaster recovery\n   Expected outcomes: 50% faster processing, 99.9% availability, 60% cost reduction\n\n3. Supply Chain Analytics\n   AI-powered analytics for supply chain optimization and demand forecasting\n   - Demand forecasting\n   - Inventory optimization\n   - Real-time insights\n   - Cost reduction\n   Expected outcomes: 35% inventory reduction, 20% cost savings, 90% forecast accuracy\n\n4. Secure Network Connectivity\n   Dedicated secure network for manufacturing facilities and remote monitoring\n   - Secure connectivity\n   - Low latency\n   - High availability\n   - Global reach\n   Expected outcomes: 100% secure connections, < 10ms latency, 99.99% availability\n\nExpected ROI: 280%\nTotal Investment: $6.5M\nExpected Annual Savings: $4.5M\nPayback Period: 18 months\n\nI would be happy to schedule a call to discuss these solutions in detail and answer any questions you may have.\n\nBest regards,\nOrange Business Sales Team"
       }
-    },
-    { "label": "Schedule Executive Review", "type": "agent", "variant": "secondary", "icon": "📅", "agentId": "calendar-agent", "agentContext": { "action": "schedule_executive_review" } }
+    }
   ]
 }

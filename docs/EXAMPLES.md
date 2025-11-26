@@ -200,6 +200,154 @@ trackByCardId(index: number, card: AICardConfig): string {
 ENABLE_SECTION_STATE_LOGGING = true;
 ```
 
+## Section Type Examples
+
+### Analytics Section with Trends
+
+```json
+{
+  "title": "Performance Metrics",
+  "type": "analytics",
+  "fields": [
+    {
+      "label": "Revenue Growth",
+      "value": "25%",
+      "percentage": 25,
+      "trend": "up",
+      "change": 5
+    },
+    {
+      "label": "Customer Satisfaction",
+      "value": "92%",
+      "percentage": 92,
+      "trend": "stable",
+      "change": 0
+    }
+  ]
+}
+```
+
+### Contact Card Section
+
+```json
+{
+  "title": "Team Members",
+  "type": "contact-card",
+  "items": [
+    {
+      "title": "John Doe",
+      "description": "CEO",
+      "meta": {
+        "email": "john@example.com",
+        "phone": "+1-555-0100",
+        "avatar": "https://example.com/avatar.jpg"
+      }
+    }
+  ]
+}
+```
+
+### Map Section with Locations
+
+```json
+{
+  "title": "Office Locations",
+  "type": "map",
+  "items": [
+    {
+      "title": "Headquarters",
+      "description": "San Francisco, CA",
+      "meta": {
+        "latitude": 37.7749,
+        "longitude": -122.4194
+      }
+    }
+  ]
+}
+```
+
+### Chart Section
+
+```json
+{
+  "title": "Sales Data",
+  "type": "chart",
+  "chartType": "bar",
+  "chartData": {
+    "labels": ["Q1", "Q2", "Q3", "Q4"],
+    "datasets": [{
+      "label": "Revenue",
+      "data": [100, 150, 200, 250],
+      "backgroundColor": "#FF7900"
+    }]
+  }
+}
+```
+
+### Network Card Section
+
+```json
+{
+  "title": "Connections",
+  "type": "network-card",
+  "items": [
+    {
+      "title": "Partner Company",
+      "description": "Strategic Partner",
+      "meta": {
+        "influence": 85,
+        "connections": 12
+      }
+    }
+  ]
+}
+```
+
+## Using Request Cancellation
+
+```typescript
+import { RequestCanceller } from '@shared/utils/request-cancellation.util';
+import { takeUntil } from 'rxjs/operators';
+
+export class MyComponent {
+  private requestCanceller = new RequestCanceller();
+
+  loadData(): void {
+    this.dataService.getData().pipe(
+      takeUntil(this.requestCanceller.cancel$)
+    ).subscribe(data => {
+      // Handle data
+    });
+  }
+
+  ngOnDestroy(): void {
+    // Cancel all requests on destroy
+    this.requestCanceller.cancel();
+  }
+}
+```
+
+## Using Export Service
+
+```typescript
+import { ExportService } from '@shared/services/export.service';
+
+export class MyComponent {
+  private exportService = inject(ExportService);
+
+  exportCard(card: AICardConfig): void {
+    // Export as JSON
+    this.exportService.exportAsJson(card, 'my-card.json');
+    
+    // Export as text
+    this.exportService.exportAsText(card, 'my-card.txt');
+    
+    // Copy to clipboard
+    this.exportService.copyToClipboard(card);
+  }
+}
+```
+
 ## Migration Guides
 
 ### Migrating from Console to LoggingService
@@ -306,6 +454,9 @@ rateLimitInterceptor.configure({
   enabled: true
 });
 ```
+
+
+
 
 
 
