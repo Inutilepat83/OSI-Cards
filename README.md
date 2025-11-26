@@ -1,6 +1,6 @@
 # OSI Cards
 
-**OSI Cards** is a modern, token-driven Angular 20+ dashboard framework that transforms any dataset into a visually rich stack of interactive cards rendered within a responsive masonry grid. Built for flexibility, accessibility, and performance, OSI Cards empowers developers to compose diverse data experiences with minimal friction.
+**OSI Cards** is a modern, token-driven Angular dashboard framework (supports Angular 18 and 20) that transforms any dataset into a visually rich stack of interactive cards rendered within a responsive masonry grid. Built for flexibility, accessibility, and performance, OSI Cards empowers developers to compose diverse data experiences with minimal friction.
 
 Each card is composed of one or more **sections**—standalone, configurable components orchestrated by `AICardRendererComponent` ⟶ `SectionRendererComponent` ⟶ `MasonryGridComponent`. This architecture enables seamless combination of layouts, real-time streaming updates, and rich interactions.
 
@@ -78,13 +78,11 @@ Install the library directly from npm:
 npm install osi-cards-lib
 ```
 
-**If you encounter peer dependency conflicts** (e.g., with `@ng-select/ng-select` or `@angular-slider/ngx-slider`), use:
+The library supports both Angular 18 and Angular 20, which should resolve most peer dependency conflicts. If you still encounter issues, use:
 
 ```bash
 npm install osi-cards-lib --legacy-peer-deps
 ```
-
-This is safe because `osi-cards-lib` requires Angular 20, which matches your project. The conflict is with other packages that haven't been updated to Angular 20 yet.
 
 **Package URL:** https://www.npmjs.com/package/osi-cards-lib
 

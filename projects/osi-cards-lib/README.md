@@ -14,17 +14,19 @@ The package is available on npm and can be installed directly. This is the easie
 
 **Package published at:** https://www.npmjs.com/package/osi-cards-lib
 
-### Handling Peer Dependency Conflicts
+### Installation
 
-If you encounter peer dependency conflicts (e.g., with `@ng-select/ng-select`, `@angular-slider/ngx-slider`, or other packages that require Angular 18), you have several options:
+The library now supports both Angular 18 and Angular 20, which should resolve most peer dependency conflicts. Simply install:
 
-#### Option 1: Use --legacy-peer-deps (Recommended for mixed Angular versions)
+```bash
+npm install osi-cards-lib
+```
+
+If you still encounter conflicts, you can use:
 
 ```bash
 npm install osi-cards-lib --legacy-peer-deps
 ```
-
-This allows npm to ignore peer dependency conflicts. The library will work correctly even if other packages in your project require different Angular versions.
 
 #### Option 2: Update Incompatible Packages
 
@@ -46,24 +48,26 @@ npm install @angular-slider/ngx-slider@latest --legacy-peer-deps
 npm install osi-cards-lib --force
 ```
 
-**Note:** `osi-cards-lib` requires Angular 20.0.0 or higher. If your project uses Angular 20, the library will work correctly even if you use `--legacy-peer-deps` to resolve conflicts with other packages.
+**Note:** `osi-cards-lib` supports both Angular 18 and Angular 20, making it compatible with a wider range of projects and reducing peer dependency conflicts.
 
 **Package published at:** https://www.npmjs.com/package/osi-cards-lib
 
 ## Peer Dependencies
 
-The library requires the following peer dependencies:
+The library supports both Angular 18 and Angular 20. It requires the following peer dependencies:
 
 ```json
 {
-  "@angular/common": "^20.0.0",
-  "@angular/core": "^20.0.0",
-  "@angular/animations": "^20.0.0",
-  "@angular/platform-browser": "^20.0.0",
+  "@angular/common": "^18.0.0 || ^20.0.0",
+  "@angular/core": "^18.0.0 || ^20.0.0",
+  "@angular/animations": "^18.0.0 || ^20.0.0",
+  "@angular/platform-browser": "^18.0.0 || ^20.0.0",
   "lucide-angular": "^0.548.0",
   "rxjs": "~7.8.0"
 }
 ```
+
+**Note:** The library is compatible with both Angular 18 and Angular 20, which helps avoid peer dependency conflicts with other packages in your project.
 
 ### Optional Dependencies
 
@@ -107,6 +111,8 @@ The library requires these peer dependencies. Install them if not already presen
 
 ```bash
 npm install osi-cards-lib
+npm install @angular/common@^18.0.0 @angular/core@^18.0.0 @angular/animations@^18.0.0 @angular/platform-browser@^18.0.0 lucide-angular@^0.548.0 rxjs@~7.8.0
+# OR for Angular 20:
 npm install @angular/common@^20.0.0 @angular/core@^20.0.0 @angular/animations@^20.0.0 @angular/platform-browser@^20.0.0 lucide-angular@^0.548.0 rxjs@~7.8.0
 ```
 
@@ -609,7 +615,7 @@ Use path references in `package.json`:
 - Restart TypeScript server in your IDE (VS Code: Cmd/Ctrl + Shift + P → "TypeScript: Restart TS Server")
 - Verify the library was built correctly: `ng build osi-cards-lib`
 - Check that `osi-cards-lib` is accessible in `node_modules`
-- Ensure your Angular version is 20.0.0 or higher
+- Ensure your Angular version is 18.0.0 or higher (18.x or 20.x supported)
 
 ### Build Errors
 
@@ -617,7 +623,7 @@ Use path references in `package.json`:
 
 **Solutions**:
 - Verify all peer dependencies are installed
-- Check Angular version compatibility (requires Angular 20+)
+- Check Angular version compatibility (requires Angular 18+ or 20+)
 - Ensure all imports use the correct paths
 - Clear build cache: `rm -rf .angular && ng build`
 
@@ -688,7 +694,7 @@ After importing the library, verify:
 - Restart TypeScript server in your IDE (VS Code: Cmd/Ctrl + Shift + P → "TypeScript: Restart TS Server")
 - Verify the library was built correctly: `ng build osi-cards-lib`
 - Check that `osi-cards-lib` is accessible in `node_modules`
-- Ensure your Angular version is 20.0.0 or higher
+- Ensure your Angular version is 18.0.0 or higher (18.x or 20.x supported)
 
 ### Build Errors
 
@@ -696,7 +702,7 @@ After importing the library, verify:
 
 **Solutions**:
 - Verify all peer dependencies are installed
-- Check Angular version compatibility (requires Angular 20+)
+- Check Angular version compatibility (requires Angular 18+ or 20+)
 - Ensure all imports use the correct paths
 - Clear build cache: `rm -rf .angular && ng build`
 
