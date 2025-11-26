@@ -24,7 +24,7 @@ cd dist/osi-cards-lib
 npm link
 
 # In your project
-npm link @osi/cards-lib
+npm link osi-cards-lib
 ```
 
 ### 3. Configure Your App
@@ -32,7 +32,7 @@ npm link @osi/cards-lib
 ```typescript
 // app.config.ts
 import { ApplicationConfig } from '@angular/core';
-import { provideOSICards } from '@osi/cards-lib';
+import { provideOSICards } from 'osi-cards-lib';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -49,7 +49,7 @@ export const appConfig: ApplicationConfig = {
 ```typescript
 // my-component.ts
 import { Component } from '@angular/core';
-import { AICardRendererComponent, AICardConfig } from '@osi/cards-lib';
+import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-my-cards',
@@ -75,14 +75,14 @@ Add to `angular.json`:
 ```json
 {
   "styles": [
-    "node_modules/@osi/cards-lib/styles/_styles.scss"
+    "node_modules/osi-cards-lib/styles/_styles.scss"
   ]
 }
 ```
 
 Or in `styles.scss`:
 ```scss
-@import '@osi/cards-lib/styles/_styles';
+@import 'osi-cards-lib/styles/_styles';
 ```
 
 ## Full Documentation

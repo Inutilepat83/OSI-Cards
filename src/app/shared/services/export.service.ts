@@ -215,118 +215,153 @@ export class ExportService {
         throw new Error('Element is required for PNG export');
       }
 
-      // Get dimensions
-      const width = element.offsetWidth || element.clientWidth;
-      const height = element.offsetHeight || element.clientHeight;
+      this.logger.info('Starting PNG export', 'ExportService', { 
+        elementTag: element.tagName,
+        elementClass: element.className 
+      });
+
+      // Get dimensions - use getBoundingClientRect for more accurate measurements
+      const rect = element.getBoundingClientRect();
+      const width = Math.max(rect.width, element.offsetWidth || element.clientWidth || 0);
+      const height = Math.max(rect.height, element.offsetHeight || element.clientHeight || 0);
 
       if (width === 0 || height === 0) {
-        throw new Error('Element has no dimensions');
+        throw new Error(`Element has no dimensions: width=${width}, height=${height}`);
       }
 
-      const scaledWidth = width * scale;
-      const scaledHeight = height * scale;
+      this.logger.info('Element dimensions', 'ExportService', { width, height, scale });
 
-      // Clone the element to avoid modifying the original
+      const scaledWidth = Math.floor(width * scale);
+      const scaledHeight = Math.floor(height * scale);
+
+      // Clone the element deeply to preserve all styles
       const clonedElement = element.cloneNode(true) as HTMLElement;
       
-      // Apply scaling to the cloned element using CSS transform
-      clonedElement.style.transform = `scale(${scale})`;
-      clonedElement.style.transformOrigin = 'top left';
+      // Create an off-screen container to render the cloned element
+      const offscreenContainer = document.createElement('div');
+      offscreenContainer.style.position = 'absolute';
+      offscreenContainer.style.left = '-9999px';
+      offscreenContainer.style.top = '0';
+      offscreenContainer.style.width = `${scaledWidth}px`;
+      offscreenContainer.style.height = `${scaledHeight}px`;
+      offscreenContainer.style.overflow = 'hidden';
+      offscreenContainer.style.backgroundColor = '#ffffff';
+      
+      // Style the cloned element
       clonedElement.style.width = `${width}px`;
       clonedElement.style.height = `${height}px`;
+      clonedElement.style.transform = `scale(${scale})`;
+      clonedElement.style.transformOrigin = 'top left';
+      clonedElement.style.position = 'relative';
       
-      // Create a container for the cloned element with scaled dimensions
-      const container = document.createElement('div');
-      container.style.width = `${scaledWidth}px`;
-      container.style.height = `${scaledHeight}px`;
-      container.style.position = 'relative';
-      container.style.overflow = 'hidden';
-      container.appendChild(clonedElement);
+      // Append to offscreen container and document
+      offscreenContainer.appendChild(clonedElement);
+      document.body.appendChild(offscreenContainer);
 
-      // Create SVG element with foreignObject
-      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      svg.setAttribute('width', String(scaledWidth));
-      svg.setAttribute('height', String(scaledHeight));
-      svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+      // Wait for rendering
+      await new Promise(resolve => setTimeout(resolve, 100));
 
-      // Create foreignObject to embed HTML
-      const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
-      foreignObject.setAttribute('width', String(scaledWidth));
-      foreignObject.setAttribute('height', String(scaledHeight));
-      foreignObject.setAttribute('x', '0');
-      foreignObject.setAttribute('y', '0');
+      try {
+        // Create SVG with foreignObject
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', String(scaledWidth));
+        svg.setAttribute('height', String(scaledHeight));
+        svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
-      // Append container to foreignObject
-      foreignObject.appendChild(container);
-      svg.appendChild(foreignObject);
+        const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+        foreignObject.setAttribute('width', String(scaledWidth));
+        foreignObject.setAttribute('height', String(scaledHeight));
+        foreignObject.setAttribute('x', '0');
+        foreignObject.setAttribute('y', '0');
 
-      // Serialize SVG to string
-      const serializer = new XMLSerializer();
-      const svgString = serializer.serializeToString(svg);
-      
-      // Create data URL from SVG
-      const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-      const svgDataUrl = URL.createObjectURL(svgBlob);
+        // Clone again for SVG (need fresh clone)
+        const svgClone = offscreenContainer.cloneNode(true) as HTMLElement;
+        svgClone.style.position = 'static';
+        svgClone.style.left = 'auto';
+        svgClone.style.top = 'auto';
+        foreignObject.appendChild(svgClone);
+        svg.appendChild(foreignObject);
 
-      // Create image element and load SVG
-      return new Promise<void>((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
+        // Serialize SVG
+        const serializer = new XMLSerializer();
+        const svgString = serializer.serializeToString(svg);
         
-        img.onload = () => {
-          try {
-            // Create canvas and draw image
-            const canvas = document.createElement('canvas');
-            canvas.width = width * scale;
-            canvas.height = height * scale;
-            const ctx = canvas.getContext('2d');
-            
-            if (!ctx) {
-              reject(new Error('Failed to get canvas context'));
-              return;
-            }
+        // Create SVG data URL
+        const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+        const svgDataUrl = URL.createObjectURL(svgBlob);
 
-            // Fill background (white by default)
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Convert SVG to PNG via canvas
+        return new Promise<void>((resolve, reject) => {
+          const img = new Image();
+          
+          img.onload = () => {
+            try {
+              const canvas = document.createElement('canvas');
+              canvas.width = scaledWidth;
+              canvas.height = scaledHeight;
+              const ctx = canvas.getContext('2d', { willReadFrequently: false });
+              
+              if (!ctx) {
+                throw new Error('Failed to get canvas context');
+              }
 
-            // Draw the image onto canvas
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              // Fill white background
+              ctx.fillStyle = '#ffffff';
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Convert canvas to PNG data URL
-            const pngDataUrl = canvas.toDataURL('image/png');
+              // Draw the image
+              ctx.drawImage(img, 0, 0, scaledWidth, scaledHeight);
 
-            // Convert data URL to blob for download
-            this.dataUrlToBlob(pngDataUrl, (blob) => {
-              // Download the PNG file
-              const url = URL.createObjectURL(blob);
-              const link = document.createElement('a');
-              link.href = url;
-              link.download = filename || 'card.png';
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-              URL.revokeObjectURL(url);
+              // Convert to PNG
+              canvas.toBlob((blob) => {
+                // Cleanup
+                document.body.removeChild(offscreenContainer);
+                URL.revokeObjectURL(svgDataUrl);
+
+                if (!blob) {
+                  reject(new Error('Failed to create PNG blob'));
+                  return;
+                }
+
+                // Download
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename || 'card.png';
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                
+                // Cleanup after a delay to ensure download starts
+                setTimeout(() => {
+                  document.body.removeChild(link);
+                  URL.revokeObjectURL(url);
+                }, 100);
+
+                this.logger.info('Card exported as PNG successfully', 'ExportService', { filename });
+                resolve();
+              }, 'image/png');
+            } catch (error) {
+              document.body.removeChild(offscreenContainer);
               URL.revokeObjectURL(svgDataUrl);
+              this.logger.error('Failed to create PNG from canvas', 'ExportService', error);
+              reject(error);
+            }
+          };
 
-              this.logger.info('Card exported as PNG', 'ExportService');
-              resolve();
-            });
-          } catch (error) {
+          img.onerror = (error) => {
+            document.body.removeChild(offscreenContainer);
             URL.revokeObjectURL(svgDataUrl);
-            this.logger.error('Failed to export as PNG', 'ExportService', error);
-            reject(error);
-          }
-        };
+            this.logger.error('Failed to load SVG image', 'ExportService', error);
+            reject(new Error('Failed to load SVG image for conversion'));
+          };
 
-        img.onerror = (error) => {
-          URL.revokeObjectURL(svgDataUrl);
-          this.logger.error('Failed to load SVG for PNG export', 'ExportService', error);
-          reject(new Error('Failed to load SVG image'));
-        };
-
-        img.src = svgDataUrl;
-      });
+          img.src = svgDataUrl;
+        });
+      } catch (error) {
+        document.body.removeChild(offscreenContainer);
+        throw error;
+      }
     } catch (error) {
       this.logger.error('Failed to export as PNG', 'ExportService', error);
       throw error;

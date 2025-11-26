@@ -214,7 +214,7 @@ Action button configuration.
 Maps field names to icon names.
 
 ```typescript
-import { IconService } from '@osi/cards-lib';
+import { IconService } from 'osi-cards-lib';
 
 constructor(private iconService: IconService) {}
 
@@ -228,7 +228,7 @@ getIcon(fieldName: string): string {
 Normalizes and sorts sections.
 
 ```typescript
-import { SectionNormalizationService } from '@osi/cards-lib';
+import { SectionNormalizationService } from 'osi-cards-lib';
 
 constructor(private normalizationService: SectionNormalizationService) {}
 
@@ -242,7 +242,7 @@ normalizeSections(sections: CardSection[]): CardSection[] {
 Provides tilt calculations for magnetic tilt effect.
 
 ```typescript
-import { MagneticTiltService } from '@osi/cards-lib';
+import { MagneticTiltService } from 'osi-cards-lib';
 
 constructor(private tiltService: MagneticTiltService) {}
 
@@ -257,7 +257,7 @@ this.tiltService.tiltCalculations$.subscribe(calculations => {
 Utility methods for sections (trends, status, formatting).
 
 ```typescript
-import { SectionUtilsService } from '@osi/cards-lib';
+import { SectionUtilsService } from 'osi-cards-lib';
 
 constructor(private utils: SectionUtilsService) {}
 
@@ -276,7 +276,7 @@ formatChange(change: number): string {
 
 ```scss
 // In your main styles.scss
-@import '@osi/cards-lib/styles/_styles';
+@import 'osi-cards-lib/styles/_styles';
 ```
 
 ### Customization
@@ -303,7 +303,7 @@ If you use Tailwind CSS, include it in your main styles:
 @tailwind components;
 @tailwind utilities;
 
-@import '@osi/cards-lib/styles';
+@import 'osi-cards-lib/styles';
 ```
 
 ## Examples
@@ -312,8 +312,8 @@ If you use Tailwind CSS, include it in your main styles:
 
 ```typescript
 import { Component } from '@angular/core';
-import { AICardRendererComponent } from '@osi/cards-lib';
-import { AICardConfig } from '@osi/cards-lib';
+import { AICardRendererComponent } from 'osi-cards-lib';
+import { AICardConfig } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-card-example',
@@ -536,7 +536,7 @@ import {
   CardAction,
   CardTypeGuards,
   CardUtils
-} from '@osi/cards-lib';
+} from 'osi-cards-lib';
 
 // Type guards
 if (CardTypeGuards.isAICardConfig(data)) {
@@ -554,7 +554,7 @@ const sanitized = CardUtils.sanitizeCardConfig(rawData);
 Ensure you've imported the styles in your `angular.json` or main `styles.scss`:
 
 ```scss
-@import '@osi/cards-lib/styles';
+@import 'osi-cards-lib/styles';
 ```
 
 ### Icons Not Showing

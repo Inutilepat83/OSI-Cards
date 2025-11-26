@@ -1516,15 +1516,21 @@ export class HomePageComponent implements OnInit {
   }
 
   async onExportCard(): Promise<void> {
+    console.log('onExportCard called');
+    this.logger.info('Export button clicked', 'HomePageComponent');
+    
     if (!this.generatedCard) {
       this.announceStatus('No card to export', true);
+      this.logger.warn('No card to export', 'HomePageComponent');
       return;
     }
 
     // Wait a tick to ensure the view is updated
-    await new Promise(resolve => setTimeout(resolve, 0));
+    await new Promise(resolve => setTimeout(resolve, 100));
 
     const containerElement = this.cardPreviewComponent?.getCardElement();
+    console.log('Container element:', containerElement);
+    
     if (!containerElement) {
       this.announceStatus('Card element not found', true);
       this.logger.warn('Card container element not found', 'HomePageComponent');
@@ -1534,35 +1540,49 @@ export class HomePageComponent implements OnInit {
     // Find the actual card article element inside the container
     // Try multiple selectors to find the card element
     let cardElement: HTMLElement | null = containerElement.querySelector('article.ai-card-surface');
+    console.log('Card element (article):', cardElement);
     
     if (!cardElement) {
       // Fallback 1: try tilt-container
       cardElement = containerElement.querySelector('.tilt-container') as HTMLElement;
+      console.log('Card element (tilt-container):', cardElement);
     }
     
     if (!cardElement) {
       // Fallback 2: try any article element
       cardElement = containerElement.querySelector('article') as HTMLElement;
+      console.log('Card element (any article):', cardElement);
     }
     
     if (!cardElement) {
       // Fallback 3: use the container itself
       cardElement = containerElement;
       this.logger.warn('Using container element for export (card article not found)', 'HomePageComponent');
+      console.log('Using container as card element');
     }
 
     try {
       const filename = `${this.generatedCard.cardTitle || 'card'}.png`.replace(/[^a-z0-9.-]/gi, '_');
+      console.log('Starting PNG export with:', { 
+        element: cardElement.tagName, 
+        className: cardElement.className,
+        filename,
+        width: cardElement.offsetWidth,
+        height: cardElement.offsetHeight
+      });
       this.logger.info('Exporting card as PNG', 'HomePageComponent', { 
         element: cardElement.tagName, 
         className: cardElement.className,
-        filename 
+        filename,
+        dimensions: { width: cardElement.offsetWidth, height: cardElement.offsetHeight }
       });
       await this.exportService.exportAsPngNative(cardElement, filename, 2);
+      console.log('PNG export completed successfully');
       this.announceStatus('Card exported as PNG');
     } catch (error) {
+      console.error('PNG export failed:', error);
       this.logger.error('Failed to export card as PNG', 'HomePageComponent', error);
-      this.announceStatus('Failed to export PNG', true);
+      this.announceStatus('Failed to export PNG: ' + (error instanceof Error ? error.message : 'Unknown error'), true);
     }
   }
 

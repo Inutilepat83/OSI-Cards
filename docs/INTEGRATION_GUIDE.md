@@ -18,7 +18,7 @@ This guide explains how to import and use the OSI Cards module in your Angular p
 ### Option 1: Install from NPM (when published)
 
 ```bash
-npm install @osi/cards-lib
+npm install osi-cards-lib
 ```
 
 ### Option 2: Install from Local Path
@@ -64,7 +64,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { 
   provideOSICards,
   OSICardsConfig 
-} from '@osi/cards-lib';
+} from 'osi-cards-lib';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -111,8 +111,8 @@ The main component for rendering cards:
 
 ```typescript
 import { Component } from '@angular/core';
-import { AICardRendererComponent } from '@osi/cards-lib';
-import { AICardConfig } from '@osi/cards-lib';
+import { AICardRendererComponent } from 'osi-cards-lib';
+import { AICardConfig } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-my-cards',
@@ -159,7 +159,7 @@ export class MyCardsComponent {
 Preview a card with loading states:
 
 ```typescript
-import { CardPreviewComponent } from '@osi/cards-lib';
+import { CardPreviewComponent } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-card-preview',
@@ -189,7 +189,7 @@ export class CardPreviewComponent {
 Edit card JSON:
 
 ```typescript
-import { JsonEditorComponent } from '@osi/cards-lib';
+import { JsonEditorComponent } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-json-editor',
@@ -220,8 +220,8 @@ Load and manage cards:
 
 ```typescript
 import { Component, inject, OnInit } from '@angular/core';
-import { CardDataService } from '@osi/cards-lib';
-import { AICardConfig } from '@osi/cards-lib';
+import { CardDataService } from 'osi-cards-lib';
+import { AICardConfig } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-card-loader',
@@ -249,8 +249,8 @@ Export cards to various formats:
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { ExportService } from '@osi/cards-lib';
-import { AICardConfig } from '@osi/cards-lib';
+import { ExportService } from 'osi-cards-lib';
+import { AICardConfig } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-export',
@@ -283,7 +283,7 @@ Search and filter cards:
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { SearchFilterService, AICardConfig } from '@osi/cards-lib';
+import { SearchFilterService, AICardConfig } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-search',
@@ -317,8 +317,8 @@ export class SearchComponent {
 ```typescript
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
-import { reducers } from '@osi/cards-lib';
-import { CardsEffects } from '@osi/cards-lib';
+import { reducers } from 'osi-cards-lib';
+import { CardsEffects } from 'osi-cards-lib';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -333,7 +333,7 @@ export const appConfig: ApplicationConfig = {
 ```typescript
 import { Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectCards, selectCurrentCard } from '@osi/cards-lib';
+import { selectCards, selectCurrentCard } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-cards-list',
@@ -356,7 +356,7 @@ export class CardsListComponent {
 ```typescript
 import { Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { loadCards, generateCard } from '@osi/cards-lib';
+import { loadCards, generateCard } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-card-manager',
@@ -392,7 +392,7 @@ export class CardManagerComponent {
 Configure the library:
 
 ```typescript
-import { AppConfigService } from '@osi/cards-lib';
+import { AppConfigService } from 'osi-cards-lib';
 
 // In your app initialization
 const config = inject(AppConfigService);

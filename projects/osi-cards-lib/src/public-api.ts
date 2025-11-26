@@ -5,7 +5,7 @@
  * 
  * @example
  * ```typescript
- * import { AICardRendererComponent, CardDataService } from '@osi/cards-lib';
+ * import { AICardRendererComponent, CardDataService } from 'osi-cards-lib';
  * ```
  */
 
@@ -59,5 +59,5 @@ export * from './lib/components/sections/text-reference-section/text-reference-s
  * You may need to import from the main application source or
  * extend the library exports. See integration documentation for details.
  * 
- * Styles entry point: '@osi/cards-lib/styles/_styles.scss'
+ * Styles entry point: 'osi-cards-lib/styles/_styles.scss'
  */

@@ -18,7 +18,7 @@ This document provides comprehensive examples for importing and using the OSI Ca
 ### Via npm (when published)
 
 ```bash
-npm install @osi/cards-lib
+npm install osi-cards-lib
 ```
 
 ### Via Local Path (Development)
@@ -32,7 +32,7 @@ Or in `package.json`:
 ```json
 {
   "dependencies": {
-    "@osi/cards-lib": "file:../OSI-Cards-1/dist/osi-cards-lib"
+    "osi-cards-lib": "file:../OSI-Cards-1/dist/osi-cards-lib"
   }
 }
 ```
@@ -54,19 +54,19 @@ npm install chart.js leaflet
 ### Import Component
 
 ```typescript
-import { AICardRendererComponent } from '@osi/cards-lib';
+import { AICardRendererComponent } from 'osi-cards-lib';
 ```
 
 ### Import Types
 
 ```typescript
-import { AICardConfig, CardSection, CardField } from '@osi/cards-lib';
+import { AICardConfig, CardSection, CardField } from 'osi-cards-lib';
 ```
 
 ### Import Services
 
 ```typescript
-import { IconService, SectionNormalizationService, MagneticTiltService } from '@osi/cards-lib';
+import { IconService, SectionNormalizationService, MagneticTiltService } from 'osi-cards-lib';
 ```
 
 ## Standalone Component Usage
@@ -75,8 +75,8 @@ import { IconService, SectionNormalizationService, MagneticTiltService } from '@
 
 ```typescript
 import { Component } from '@angular/core';
-import { AICardRendererComponent } from '@osi/cards-lib';
-import { AICardConfig } from '@osi/cards-lib';
+import { AICardRendererComponent } from 'osi-cards-lib';
+import { AICardConfig } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-example',
@@ -107,7 +107,7 @@ export class ExampleComponent {
 
 ```typescript
 import { Component } from '@angular/core';
-import { AICardRendererComponent, AICardConfig, CardFieldInteractionEvent } from '@osi/cards-lib';
+import { AICardRendererComponent, AICardConfig, CardFieldInteractionEvent } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-card-example',
@@ -150,7 +150,7 @@ export class CardExampleComponent {
 
 ```typescript
 import { Component } from '@angular/core';
-import { AICardRendererComponent, AICardConfig } from '@osi/cards-lib';
+import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -186,7 +186,7 @@ export class MultipleCardsComponent {
 
 ```scss
 // In your src/styles.scss
-@import '@osi/cards-lib/styles/_styles';
+@import 'osi-cards-lib/styles/_styles';
 ```
 
 ### Option 2: Import in angular.json
@@ -199,7 +199,7 @@ export class MultipleCardsComponent {
         "build": {
           "options": {
             "styles": [
-              "node_modules/@osi/cards-lib/styles/_styles.scss",
+              "node_modules/osi-cards-lib/styles/_styles.scss",
               "src/styles.scss"
             ]
           }
@@ -217,7 +217,7 @@ export class MultipleCardsComponent {
 @tailwind components;
 @tailwind utilities;
 
-@import '@osi/cards-lib/styles/_styles';
+@import 'osi-cards-lib/styles/_styles';
 ```
 
 ## With Optional Dependencies
@@ -227,7 +227,7 @@ export class MultipleCardsComponent {
 If you have `chart.js` installed:
 
 ```typescript
-import { AICardConfig } from '@osi/cards-lib';
+import { AICardConfig } from 'osi-cards-lib';
 
 const cardWithChart: AICardConfig = {
   cardTitle: 'Analytics Dashboard',
@@ -251,7 +251,7 @@ const cardWithChart: AICardConfig = {
 If you have `leaflet` installed:
 
 ```typescript
-import { AICardConfig } from '@osi/cards-lib';
+import { AICardConfig } from 'osi-cards-lib';
 
 const cardWithMap: AICardConfig = {
   cardTitle: 'Locations',
@@ -286,7 +286,7 @@ import {
   CardAction,
   CardType,
   SectionType
-} from '@osi/cards-lib';
+} from 'osi-cards-lib';
 ```
 
 ### Import Component Types
@@ -296,7 +296,7 @@ import {
   AICardRendererComponent,
   CardFieldInteractionEvent,
   StreamingStage
-} from '@osi/cards-lib';
+} from 'osi-cards-lib';
 ```
 
 ### Import Service Types
@@ -307,7 +307,7 @@ import {
   SectionNormalizationService,
   MagneticTiltService,
   SectionUtilsService
-} from '@osi/cards-lib';
+} from 'osi-cards-lib';
 ```
 
 ## Service Usage
@@ -316,7 +316,7 @@ import {
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { IconService } from '@osi/cards-lib';
+import { IconService } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-icon-example',
@@ -333,7 +333,7 @@ export class IconExampleComponent {
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { SectionNormalizationService, CardSection } from '@osi/cards-lib';
+import { SectionNormalizationService, CardSection } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-normalize-example',
@@ -353,7 +353,7 @@ export class NormalizeExampleComponent {
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { SectionUtilsService } from '@osi/cards-lib';
+import { SectionUtilsService } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-utils-example',
@@ -382,7 +382,7 @@ import {
   AICardRendererComponent,
   AICardConfig,
   CardFieldInteractionEvent
-} from '@osi/cards-lib';
+} from 'osi-cards-lib';
 
 @Component({
   selector: 'app-complete-example',
@@ -460,10 +460,10 @@ export class CompleteExampleComponent {
 
 ### Issue: Module not found
 
-**Error**: `Cannot find module '@osi/cards-lib'`
+**Error**: `Cannot find module 'osi-cards-lib'`
 
 **Solution**:
-1. Ensure the library is installed: `npm install @osi/cards-lib`
+1. Ensure the library is installed: `npm install osi-cards-lib`
 2. If using local path, verify the path is correct
 3. Restart your development server
 
@@ -473,7 +473,7 @@ export class CompleteExampleComponent {
 
 **Solution**:
 1. Verify styles are imported in `styles.scss` or `angular.json`
-2. Check the import path: `@import '@osi/cards-lib/styles/_styles';`
+2. Check the import path: `@import 'osi-cards-lib/styles/_styles';`
 3. Ensure SCSS is configured in your Angular project
 
 ### Issue: Icons not showing
@@ -489,7 +489,7 @@ export class CompleteExampleComponent {
 **Error**: TypeScript cannot find types
 
 **Solution**:
-1. Ensure `@osi/cards-lib` is in your `tsconfig.json` paths (if using local path)
+1. Ensure `osi-cards-lib` is in your `tsconfig.json` paths (if using local path)
 2. Restart TypeScript server in your IDE
 3. Verify the library was built correctly
 
@@ -516,7 +516,7 @@ export class CompleteExampleComponent {
 
 After importing the library, verify:
 
-- [ ] Library is installed in `node_modules/@osi/cards-lib`
+- [ ] Library is installed in `node_modules/osi-cards-lib`
 - [ ] Components can be imported without errors
 - [ ] Styles are imported and applied
 - [ ] Icons are displaying correctly

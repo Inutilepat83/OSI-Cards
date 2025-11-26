@@ -1,0 +1,54 @@
+# Source files
+src/
+tsconfig*.json
+ng-package.json
+karma.conf.js
+
+# Development files
+*.spec.ts
+*.spec.js
+test/
+tests/
+e2e/
+*.test.ts
+*.test.js
+
+# Build artifacts (keep dist output)
+*.map
+*.log
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation (keep README.md)
+docs/
+*.md
+!README.md
+
+# Config files
+.eslintrc*
+.prettierrc*
+.editorconfig
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Dependencies (should not be included)
+node_modules/
+package-lock.json
+yarn.lock
+

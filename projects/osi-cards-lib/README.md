@@ -4,9 +4,15 @@ A standalone Angular library for rendering beautiful, interactive AI-powered car
 
 ## Installation
 
+### From npm (Recommended)
+
 ```bash
-npm install @osi/cards-lib
+npm install osi-cards-lib
 ```
+
+The package is available on npm and can be installed directly. This is the easiest and recommended way to use the library.
+
+**Package published at:** https://www.npmjs.com/package/osi-cards-lib
 
 ## Peer Dependencies
 
@@ -40,7 +46,7 @@ These are optional - the library works without them, but chart and map sections 
 Install the library using npm:
 
 ```bash
-npm install @osi/cards-lib
+npm install osi-cards-lib
 ```
 
 **For local development** (if using the library from a local path):
@@ -54,7 +60,7 @@ Or add to your `package.json`:
 ```json
 {
   "dependencies": {
-    "@osi/cards-lib": "file:../OSI-Cards-1/dist/osi-cards-lib"
+    "osi-cards-lib": "file:../OSI-Cards-1/dist/osi-cards-lib"
   }
 }
 ```
@@ -64,6 +70,7 @@ Or add to your `package.json`:
 The library requires these peer dependencies. Install them if not already present:
 
 ```bash
+npm install osi-cards-lib
 npm install @angular/common@^20.0.0 @angular/core@^20.0.0 @angular/animations@^20.0.0 @angular/platform-browser@^20.0.0 lucide-angular@^0.548.0 rxjs@~7.8.0
 ```
 
@@ -74,7 +81,7 @@ npm install @angular/common@^20.0.0 @angular/core@^20.0.0 @angular/animations@^2
 Add this to your `src/styles.scss` (or `styles.css`):
 
 ```scss
-@import '@osi/cards-lib/styles/_styles';
+@import 'osi-cards-lib/styles/_styles';
 ```
 
 **Option B: Add to angular.json**
@@ -89,7 +96,7 @@ Add the styles path to your `angular.json`:
         "build": {
           "options": {
             "styles": [
-              "node_modules/@osi/cards-lib/styles/_styles.scss",
+              "node_modules/osi-cards-lib/styles/_styles.scss",
               "src/styles.scss"
             ]
           }
@@ -108,7 +115,7 @@ Add the styles path to your `angular.json`:
 
 ```typescript
 import { Component } from '@angular/core';
-import { AICardRendererComponent, AICardConfig } from '@osi/cards-lib';
+import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-my-component',
@@ -149,7 +156,7 @@ import {
   AICardRendererComponent, 
   AICardConfig,
   CardFieldInteractionEvent 
-} from '@osi/cards-lib';
+} from 'osi-cards-lib';
 
 @Component({
   selector: 'app-card-example',
@@ -234,14 +241,14 @@ import {
   CardAction,        // Action configuration type
   CardType,          // Card type enum
   SectionType        // Section type union
-} from '@osi/cards-lib';
+} from 'osi-cards-lib';
 ```
 
 ### Step 6: Verify Installation
 
 After completing the steps above, verify everything is working:
 
-1. ✅ Check that `node_modules/@osi/cards-lib` exists
+1. ✅ Check that `node_modules/osi-cards-lib` exists
 2. ✅ Verify components can be imported without TypeScript errors
 3. ✅ Ensure styles are applied (check browser DevTools)
 4. ✅ Test rendering a simple card in your application
@@ -256,7 +263,7 @@ import {
   AICardRendererComponent,
   MasonryGridComponent,
   CardSkeletonComponent 
-} from '@osi/cards-lib';
+} from 'osi-cards-lib';
 ```
 
 #### Importing Services
@@ -266,7 +273,7 @@ import {
   IconService,
   SectionNormalizationService,
   MagneticTiltService 
-} from '@osi/cards-lib';
+} from 'osi-cards-lib';
 ```
 
 #### Importing Utilities
@@ -274,7 +281,7 @@ import {
 ```typescript
 import { 
   // Utility functions are available through the main export
-} from '@osi/cards-lib';
+} from 'osi-cards-lib';
 ```
 
 See [IMPORT_EXAMPLE.md](./IMPORT_EXAMPLE.md) for comprehensive import examples and advanced usage patterns.
@@ -286,7 +293,7 @@ See [IMPORT_EXAMPLE.md](./IMPORT_EXAMPLE.md) for comprehensive import examples a
 The card component accepts a `cardConfig` input of type `AICardConfig`. Here's a basic example:
 
 ```typescript
-import { AICardConfig } from '@osi/cards-lib';
+import { AICardConfig } from 'osi-cards-lib';
 
 const card: AICardConfig = {
   cardTitle: 'Company Profile',
@@ -522,7 +529,7 @@ Use path references in `package.json`:
 ```json
 {
   "dependencies": {
-    "@osi/cards-lib": "file:../osi-cards-lib/dist/osi-cards-lib"
+    "osi-cards-lib": "file:../osi-cards-lib/dist/osi-cards-lib"
   }
 }
 ```
@@ -531,10 +538,10 @@ Use path references in `package.json`:
 
 ### Module Not Found
 
-**Error**: `Cannot find module '@osi/cards-lib'`
+**Error**: `Cannot find module 'osi-cards-lib'`
 
 **Solutions**:
-- Ensure the library is installed: `npm install @osi/cards-lib`
+- Ensure the library is installed: `npm install osi-cards-lib`
 - If using local path, verify the path in `package.json` is correct
 - Restart your development server after installation
 - Clear `node_modules` and reinstall: `rm -rf node_modules && npm install`
@@ -545,7 +552,7 @@ Use path references in `package.json`:
 
 **Solutions**:
 - Verify styles are imported in `styles.scss` or `angular.json`
-- Check the import path: `@import '@osi/cards-lib/styles/_styles';`
+- Check the import path: `@import 'osi-cards-lib/styles/_styles';`
 - Ensure SCSS is configured in your Angular project
 - Restart the development server after adding styles
 
@@ -565,7 +572,7 @@ Use path references in `package.json`:
 **Solutions**:
 - Restart TypeScript server in your IDE (VS Code: Cmd/Ctrl + Shift + P → "TypeScript: Restart TS Server")
 - Verify the library was built correctly: `ng build osi-cards-lib`
-- Check that `@osi/cards-lib` is accessible in `node_modules`
+- Check that `osi-cards-lib` is accessible in `node_modules`
 - Ensure your Angular version is 20.0.0 or higher
 
 ### Build Errors
@@ -592,7 +599,7 @@ Use path references in `package.json`:
 
 After importing the library, verify:
 
-- [ ] Library is installed in `node_modules/@osi/cards-lib`
+- [ ] Library is installed in `node_modules/osi-cards-lib`
 - [ ] All peer dependencies are installed
 - [ ] Components can be imported without TypeScript errors
 - [ ] Styles are imported and applied correctly
@@ -610,10 +617,10 @@ After importing the library, verify:
 
 ### Module Not Found
 
-**Error**: `Cannot find module '@osi/cards-lib'`
+**Error**: `Cannot find module 'osi-cards-lib'`
 
 **Solutions**:
-- Ensure the library is installed: `npm install @osi/cards-lib`
+- Ensure the library is installed: `npm install osi-cards-lib`
 - If using local path, verify the path in `package.json` is correct
 - Restart your development server after installation
 - Clear `node_modules` and reinstall: `rm -rf node_modules && npm install`
@@ -624,7 +631,7 @@ After importing the library, verify:
 
 **Solutions**:
 - Verify styles are imported in `styles.scss` or `angular.json`
-- Check the import path: `@import '@osi/cards-lib/styles/_styles';`
+- Check the import path: `@import 'osi-cards-lib/styles/_styles';`
 - Ensure SCSS is configured in your Angular project
 - Restart the development server after adding styles
 
@@ -644,7 +651,7 @@ After importing the library, verify:
 **Solutions**:
 - Restart TypeScript server in your IDE (VS Code: Cmd/Ctrl + Shift + P → "TypeScript: Restart TS Server")
 - Verify the library was built correctly: `ng build osi-cards-lib`
-- Check that `@osi/cards-lib` is accessible in `node_modules`
+- Check that `osi-cards-lib` is accessible in `node_modules`
 - Ensure your Angular version is 20.0.0 or higher
 
 ### Build Errors
@@ -675,7 +682,7 @@ If you're migrating from using the app directly to using the library:
 
 1. **Install the library**:
    ```bash
-   npm install @osi/cards-lib
+   npm install osi-cards-lib
    ```
 
 2. **Update imports**:
@@ -684,12 +691,12 @@ If you're migrating from using the app directly to using the library:
    import { AICardRendererComponent } from './shared/components/cards';
    
    // After
-   import { AICardRendererComponent } from '@osi/cards-lib';
+   import { AICardRendererComponent } from 'osi-cards-lib';
    ```
 
 3. **Import styles**:
    ```scss
-   @import '@osi/cards-lib/styles/_styles';
+   @import 'osi-cards-lib/styles/_styles';
    ```
 
 4. **Update service usage**:
@@ -717,7 +724,7 @@ If you're migrating from using the app directly to using the library:
 To add custom section types, extend the library components or create your own:
 
 ```typescript
-import { BaseSectionComponent } from '@osi/cards-lib';
+import { BaseSectionComponent } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-custom-section',

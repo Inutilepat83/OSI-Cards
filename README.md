@@ -70,7 +70,17 @@ OSI Cards can be imported and used as a library in other Angular projects.
 
 ### Installation Options
 
-#### Option 1: Install from GitHub (Recommended)
+#### Option 1: Install from npm (Recommended)
+
+Install the library directly from npm:
+
+```bash
+npm install osi-cards-lib
+```
+
+This is the easiest and recommended way to use the library. The package is published to npm and ready to use.
+
+#### Option 2: Install from GitHub
 
 Install the library directly from the GitHub repository:
 
@@ -83,7 +93,7 @@ Or add to your `package.json`:
 ```json
 {
   "dependencies": {
-    "@osi/cards-lib": "git+https://github.com/Inutilepat83/OSI-Cards.git#main"
+    "osi-cards-lib": "git+https://github.com/Inutilepat83/OSI-Cards.git#main"
   }
 }
 ```
@@ -92,7 +102,7 @@ Or add to your `package.json`:
 
 ```bash
 # After npm install, navigate to the installed package
-cd node_modules/@osi/cards-lib
+cd node_modules/osi-cards-lib
 npm install
 npm run build:lib
 ```
@@ -104,7 +114,7 @@ npm install git+https://github.com/Inutilepat83/OSI-Cards.git#branch-name
 npm install git+https://github.com/Inutilepat83/OSI-Cards.git#v1.0.0
 ```
 
-#### Option 2: Install from Local Path
+#### Option 3: Install from Local Path
 
 1. **Clone the repository:**
    ```bash
@@ -127,7 +137,7 @@ npm install git+https://github.com/Inutilepat83/OSI-Cards.git#v1.0.0
    ```json
    {
      "dependencies": {
-       "@osi/cards-lib": "file:../OSI-Cards/dist/osi-cards-lib"
+       "osi-cards-lib": "file:../OSI-Cards/dist/osi-cards-lib"
      }
    }
    ```
@@ -141,13 +151,13 @@ npm install git+https://github.com/Inutilepat83/OSI-Cards.git#v1.0.0
 
 2. **Import styles in your `src/styles.scss`:**
    ```scss
-   @import '@osi/cards-lib/styles/_styles';
+   @import 'osi-cards-lib/styles/_styles';
    ```
 
 3. **Use components in your Angular component:**
    ```typescript
    import { Component } from '@angular/core';
-   import { AICardRendererComponent, AICardConfig } from '@osi/cards-lib';
+   import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
    
    @Component({
      selector: 'app-my-component',

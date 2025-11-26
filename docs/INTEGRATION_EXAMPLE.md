@@ -51,7 +51,7 @@ import {
   provideOSICards,
   reducers,
   CardsEffects
-} from '@osi/cards-lib';
+} from 'osi-cards-lib';
 
 import { routes } from './app.routes';
 
@@ -84,7 +84,7 @@ export const appConfig: ApplicationConfig = {
         "build": {
           "options": {
             "styles": [
-              "node_modules/@osi/cards-lib/styles/_styles.scss",
+              "node_modules/osi-cards-lib/styles/_styles.scss",
               "src/styles.scss"
             ]
           }
@@ -97,7 +97,7 @@ export const appConfig: ApplicationConfig = {
 
 Or in **styles.scss:**
 ```scss
-@import '@osi/cards-lib/styles/_styles';
+@import 'osi-cards-lib/styles/_styles';
 ```
 
 ### 5. Create a Card Component
@@ -114,7 +114,7 @@ import {
   loadCards,
   generateCard,
   AICardConfig
-} from '@osi/cards-lib';
+} from 'osi-cards-lib';
 
 @Component({
   selector: 'app-card-viewer',
@@ -325,7 +325,7 @@ You can also use OSI Cards services without NgRx:
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { CardDataService, ExportService } from '@osi/cards-lib';
+import { CardDataService, ExportService } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-my-component',
@@ -365,7 +365,7 @@ npm install ../OSI-Cards-1/dist/osi-cards-lib
 ### Issue: Styles not loading
 **Solution:** Check that styles are imported in `angular.json` or `styles.scss`:
 ```scss
-@import '@osi/cards-lib/styles/_styles';
+@import 'osi-cards-lib/styles/_styles';
 ```
 
 ### Issue: NgRx errors

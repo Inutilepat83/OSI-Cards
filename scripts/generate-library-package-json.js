@@ -2,37 +2,45 @@
 
 /**
  * Generate package.json for the built library
- * This script creates a package.json file in dist/osi-cards/ with proper metadata
+ * This script creates a package.json file in dist/osi-cards-lib/ with proper metadata
  */
 
 const fs = require('fs');
 const path = require('path');
 
 const rootPackageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-const distPath = path.join(__dirname, '..', 'dist', 'osi-cards');
+const distPath = path.join(__dirname, '..', 'dist', 'osi-cards-lib');
 
 // Create dist directory if it doesn't exist
 if (!fs.existsSync(distPath)) {
   fs.mkdirSync(distPath, { recursive: true });
 }
 
+// Read the source library package.json to get the correct name and metadata
+const libPackageJsonPath = path.join(__dirname, '..', 'projects', 'osi-cards-lib', 'package.json');
+const libPackageJson = JSON.parse(fs.readFileSync(libPackageJsonPath, 'utf8'));
+
 const libraryPackageJson = {
-  name: '@osi-cards/core',
-  version: rootPackageJson.version || '0.0.1',
-  description: 'OSI Cards - Angular component library for rendering AI-generated card interfaces',
-  keywords: [
+  name: libPackageJson.name || 'osi-cards-lib',
+  version: libPackageJson.version || rootPackageJson.version || '1.0.0',
+  description: libPackageJson.description || 'Standalone OSI Cards library for Angular applications',
+  keywords: libPackageJson.keywords || [
     'angular',
     'cards',
     'ui',
     'components',
-    'ngrx',
-    'ai'
+    'angular-20'
   ],
-  author: rootPackageJson.author || '',
-  license: rootPackageJson.license || 'MIT',
-  repository: rootPackageJson.repository || {},
-  bugs: rootPackageJson.bugs || {},
-  homepage: rootPackageJson.homepage || '',
+  author: libPackageJson.author || rootPackageJson.author || '',
+  license: libPackageJson.license || rootPackageJson.license || 'MIT',
+  repository: libPackageJson.repository || {
+    type: 'git',
+    url: 'git+https://github.com/Inutilepat83/OSI-Cards.git'
+  },
+  bugs: libPackageJson.bugs || {
+    url: 'https://github.com/Inutilepat83/OSI-Cards/issues'
+  },
+  homepage: libPackageJson.homepage || 'https://github.com/Inutilepat83/OSI-Cards#readme',
   peerDependencies: {
     '@angular/core': '^20.0.0',
     '@angular/common': '^20.0.0',
@@ -47,15 +55,33 @@ const libraryPackageJson = {
   },
   dependencies: {
     'lucide-angular': '^0.548.0',
-    'lucide': '^0.548.0'
+    'lucide': '^0.548.0',
+    'tslib': '^2.3.0'
   },
-  optionalDependencies: {
+  optionalDependencies: libPackageJson.optionalDependencies || {
     'chart.js': '^4.4.0',
-    'leaflet': '^1.9.4',
-    'primeng': '^20.0.0'
+    'leaflet': '^1.9.4'
   },
-  main: './public-api.js',
-  typings: './public-api.d.ts',
+  exports: libPackageJson.exports || {
+    './package.json': {
+      default: './package.json'
+    },
+    '.': {
+      types: './index.d.ts',
+      esm2022: './esm2022/osi-cards-lib.mjs',
+      esm: './esm2022/osi-cards-lib.mjs',
+      default: './fesm2022/osi-cards-lib.mjs'
+    },
+    './styles/_styles': {
+      default: './styles/_styles.scss'
+    },
+    './styles/_styles.scss': {
+      default: './styles/_styles.scss'
+    }
+  },
+  main: './fesm2022/osi-cards-lib.mjs',
+  module: './fesm2022/osi-cards-lib.mjs',
+  typings: './index.d.ts',
   sideEffects: false
 };
 

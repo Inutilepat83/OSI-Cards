@@ -8,7 +8,7 @@ This guide covers integrating OSI Cards as a complete library with all services,
 
 The built library at `dist/osi-cards-lib` provides components and basic services. This is the simplest integration.
 
-**Package Name**: `@osi/cards-lib`
+**Package Name**: `osi-cards-lib`
 
 **What's Included**:
 - All card components (AICardRendererComponent, SectionRendererComponent, etc.)
@@ -54,7 +54,7 @@ In `angular.json`:
 ```json
 {
   "styles": [
-    "node_modules/@osi/cards-lib/styles/_styles.scss"
+    "node_modules/osi-cards-lib/styles/_styles.scss"
   ]
 }
 ```
@@ -63,7 +63,7 @@ In `angular.json`:
 
 ```typescript
 import { Component } from '@angular/core';
-import { AICardRendererComponent, AICardConfig } from '@osi/cards-lib';
+import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-cards',
@@ -96,7 +96,7 @@ Since CardDataService is not included, you'll manage data yourself:
 ```typescript
 import { Component, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AICardRendererComponent, AICardConfig } from '@osi/cards-lib';
+import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-card-loader',
