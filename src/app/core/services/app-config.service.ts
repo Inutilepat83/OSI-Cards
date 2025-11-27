@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { environment } from '../../../environments/environment';
 
 /**
  * Centralized application configuration service
@@ -95,7 +96,64 @@ export class AppConfigService {
   readonly LOGGING = {
     ENABLE_SECTION_STATE_LOGGING: true,
     ENABLE_POSITION_LOGGING: false,
-    LOG_LEVEL: 'info' as 'debug' | 'info' | 'warn' | 'error'
+    LOG_LEVEL: (environment.logLevel || 'info') as 'debug' | 'info' | 'warn' | 'error',
+    ENABLE_DEBUG: environment.enableDebug ?? false,
+    ENABLE_PERFORMANCE_LOGGING: environment.enablePerformanceLogging ?? false,
+    ENABLE_STATE_LOGGING: environment.enableStateLogging ?? false
   };
+
+  // Environment Configuration
+  readonly ENV = {
+    PRODUCTION: environment.production,
+    ENVIRONMENT_NAME: environment.environmentName,
+    API_URL: environment.apiUrl,
+    API_TIMEOUT: environment.apiTimeout
+  };
+
+  // Feature Flags
+  readonly FEATURES = {
+    EXPERIMENTAL: environment.features?.enableExperimentalFeatures ?? false,
+    BETA_COMPONENTS: environment.features?.enableBetaComponents ?? false,
+    ADVANCED_ANALYTICS: environment.features?.enableAdvancedAnalytics ?? false,
+    OFFLINE_MODE: environment.features?.enableOfflineMode ?? false
+  };
+
+  // Card Limits
+  readonly CARD_LIMITS = {
+    MAX_SECTIONS: environment.cardLimits?.maxSections ?? 20,
+    MAX_ACTIONS: environment.cardLimits?.maxActions ?? 10,
+    MAX_FIELDS_PER_SECTION: environment.cardLimits?.maxFieldsPerSection ?? 50,
+    MAX_TITLE_LENGTH: environment.cardLimits?.maxTitleLength ?? 200,
+    MAX_DESCRIPTION_LENGTH: environment.cardLimits?.maxDescriptionLength ?? 1000
+  };
+
+  // Performance Configuration (from environment)
+  readonly PERFORMANCE_ENV = {
+    ENABLE_CHANGE_DETECTION_PROFILING: environment.performance?.enableChangeDetectionProfiling ?? false,
+    ENABLE_BUNDLE_ANALYSIS: environment.performance?.enableBundleAnalysis ?? false,
+    CACHE_TIMEOUT: environment.performance?.cacheTimeout ?? 3600000,
+    DEBOUNCE_TIME: environment.performance?.debounceTime ?? 300
+  };
+
+  // Dev Tools Configuration
+  readonly DEV_TOOLS = {
+    ENABLE_REDUX_DEVTOOLS: environment.devTools?.enableReduxDevTools ?? false,
+    ENABLE_ANGULAR_DEVTOOLS: environment.devTools?.enableAngularDevTools ?? false,
+    SHOW_PERFORMANCE_METRICS: environment.devTools?.showPerformanceMetrics ?? false
+  };
+
+  /**
+   * Check if running in production
+   */
+  get isProduction(): boolean {
+    return this.ENV.PRODUCTION;
+  }
+
+  /**
+   * Check if a feature is enabled
+   */
+  isFeatureEnabled(feature: keyof typeof this.FEATURES): boolean {
+    return this.FEATURES[feature];
+  }
 }
 

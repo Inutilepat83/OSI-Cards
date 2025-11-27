@@ -5,6 +5,7 @@
     {
       "name": "app",
       "installMode": "prefetch",
+      "updateMode": "prefetch",
       "resources": {
         "files": [
           "/favicon.ico",
@@ -23,6 +24,17 @@
         "files": [
           "/assets/**",
           "/favicon.ico"
+        ]
+      }
+    },
+    {
+      "name": "fonts",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "urls": [
+          "https://fonts.googleapis.com/**",
+          "https://fonts.gstatic.com/**"
         ]
       }
     }
@@ -48,10 +60,44 @@
       "cacheConfig": {
         "strategy": "performance",
         "maxSize": 100,
-        "maxAge": "7d",
+        "maxAge": "30d",
+        "timeout": "5s"
+      }
+    },
+    {
+      "name": "images",
+      "urls": [
+        "/assets/**/*.jpg",
+        "/assets/**/*.jpeg",
+        "/assets/**/*.png",
+        "/assets/**/*.webp",
+        "/assets/**/*.svg"
+      ],
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 200,
+        "maxAge": "30d",
+        "timeout": "10s"
+      }
+    },
+    {
+      "name": "offline-fallback",
+      "urls": [
+        "/**"
+      ],
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 10,
+        "maxAge": "1d",
         "timeout": "5s"
       }
     }
+  ],
+  "navigationUrls": [
+    "/**",
+    "!/**/*.*",
+    "!/**/*__*",
+    "!/**/*__*/**"
   ]
 }
 

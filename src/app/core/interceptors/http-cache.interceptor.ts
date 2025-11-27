@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpResponse } from '@angular/common/http';
 import { Observable, of, from } from 'rxjs';
 import { tap, switchMap, map, catchError } from 'rxjs/operators';
-import { environment } from '../../../environments/environment';
+import { AppConfigService } from '../services/app-config.service';
 import { IndexedDBCacheService } from '../services/indexeddb-cache.service';
 
 interface CacheEntry {
@@ -19,8 +19,9 @@ interface CacheEntry {
 export class HttpCacheInterceptor implements HttpInterceptor {
   private cache = new Map<string, CacheEntry>();
   private readonly indexedDBCache = inject(IndexedDBCacheService);
-  // Use environment config or default to 1 hour (3600000 ms)
-  private readonly TTL = (environment.performance?.cacheTimeout || 60 * 60 * 1000); // 1 hour default
+  private readonly config = inject(AppConfigService);
+  // Use config service or default to 1 hour (3600000 ms)
+  private readonly TTL = this.config.PERFORMANCE_ENV.CACHE_TIMEOUT || 60 * 60 * 1000; // 1 hour default
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Only cache GET requests for card configs

@@ -4,12 +4,17 @@
 </div>
 <div class="cards-container">
   <h1>OSI Cards Examples</h1>
-  <div class="cards-grid">
+  <!-- Virtual scrolling for large card lists -->
+  <cdk-virtual-scroll-viewport
+    [itemSize]="itemHeight"
+    [minBufferPx]="minBufferPx"
+    [maxBufferPx]="maxBufferPx"
+    class="cards-viewport">
     <app-ai-card-renderer
-      *ngFor="let card of cards; trackBy: trackByCardId"
+      *cdkVirtualFor="let card of cards; trackBy: trackByCardId"
       [cardConfig]="card"
       [tiltEnabled]="true"
       class="card-item">
     </app-ai-card-renderer>
-  </div>
+  </cdk-virtual-scroll-viewport>
 </div>

@@ -1,7 +1,8 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, DestroyRef } from '@angular/core';
 import { Observable, Subject, BehaviorSubject, NEVER } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { map, catchError, retry } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AICardConfig } from '../../../models';
 import { CardDataProvider } from './card-data-provider.interface';
 import { LoggingService } from '../logging.service';
@@ -70,6 +71,7 @@ type SocketMessage = InboundSocketMessage | OutboundSocketMessage;
 })
 export class WebSocketCardProvider extends CardDataProvider {
   private readonly logger = inject(LoggingService);
+  private readonly destroyRef = inject(DestroyRef);
   private socket$?: WebSocketSubject<SocketMessage>;
   private cardsSubject = new BehaviorSubject<AICardConfig[]>([]);
   private updatesSubject = new Subject<{
@@ -120,7 +122,8 @@ export class WebSocketCardProvider extends CardDataProvider {
         this.logger.error('WebSocket error', 'WebSocketCardProvider', error);
         this.isConnected = false;
         return NEVER;
-      })
+      }),
+      takeUntilDestroyed(this.destroyRef)
     ).subscribe({
       next: message => {
         if (this.isInboundMessage(message)) {

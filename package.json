@@ -114,5 +114,11 @@
       "pre-commit": "lint-staged",
       "pre-push": "npm test && npm run lint"
     }
-  }
+  },
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss",
+    "src/polyfills.ts",
+    "src/main.ts"
+  ]
 }

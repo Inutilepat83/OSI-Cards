@@ -432,8 +432,13 @@ export class PerformanceService implements OnDestroy {
     });
   }
 
+  private memoryCheckInterval?: number;
+  private memorySnapshots: Array<{ timestamp: number; usedMB: number; totalMB: number }> = [];
+  private readonly MAX_MEMORY_SNAPSHOTS = 50;
+
   /**
    * Track memory usage (Chrome only)
+   * Enhanced with memory leak detection
    */
   private trackMemory(): void {
     if (typeof (performance as any).memory === 'undefined') {
@@ -446,6 +451,25 @@ export class PerformanceService implements OnDestroy {
       const totalMB = memory.totalJSHeapSize / 1048576;
       const limitMB = memory.jsHeapSizeLimit / 1048576;
 
+      // Store snapshot for leak detection
+      this.memorySnapshots.push({
+        timestamp: Date.now(),
+        usedMB,
+        totalMB
+      });
+      if (this.memorySnapshots.length > this.MAX_MEMORY_SNAPSHOTS) {
+        this.memorySnapshots.shift();
+      }
+
+      // Detect memory leaks (growing trend over last 5 minutes)
+      if (this.memorySnapshots.length >= 10) {
+        const recent = this.memorySnapshots.slice(-10);
+        const trend = recent[recent.length - 1].usedMB - recent[0].usedMB;
+        if (trend > 10) { // 10MB growth in recent period
+          this.logger.warn(`Potential memory leak detected: ${trend.toFixed(2)}MB growth`, 'PerformanceService');
+        }
+      }
+
       this.recordMetric('memory', usedMB, {
         total: totalMB,
         limit: limitMB,
@@ -457,8 +481,15 @@ export class PerformanceService implements OnDestroy {
       }
     };
 
-    setInterval(checkMemory, 30000); // Every 30 seconds
+    this.memoryCheckInterval = window.setInterval(checkMemory, 30000); // Every 30 seconds
     checkMemory(); // Initial check
+  }
+
+  /**
+   * Get memory snapshots for analysis
+   */
+  getMemorySnapshots(): Array<{ timestamp: number; usedMB: number; totalMB: number }> {
+    return [...this.memorySnapshots];
   }
 
   // ===== Budget Monitoring (from PerformanceBudgetService) =====
@@ -606,6 +637,10 @@ export class PerformanceService implements OnDestroy {
     
     if (this.budgetCheckInterval) {
       clearInterval(this.budgetCheckInterval);
+    }
+    
+    if (this.memoryCheckInterval) {
+      clearInterval(this.memoryCheckInterval);
     }
   }
 }

@@ -25,7 +25,12 @@
           <header class="contact-card__header">
             <div class="contact-card__avatar">
               <ng-container *ngIf="getContactAvatar(contact) as avatar; else contactInitials">
-                <img [src]="avatar" [alt]="getContactName(contact)" class="contact-card__avatar-img" />
+                <img 
+                  [src]="avatar" 
+                  [alt]="getContactName(contact)" 
+                  class="contact-card__avatar-img"
+                  loading="lazy"
+                  decoding="async" />
               </ng-container>
               <ng-template #contactInitials>
                 <span class="contact-card__initials">

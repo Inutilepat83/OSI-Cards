@@ -1,11 +1,12 @@
 import { Injectable, inject, InjectionToken, OnDestroy, DestroyRef } from '@angular/core';
-import { Observable, BehaviorSubject, combineLatest, EMPTY } from 'rxjs';
-import { map, switchMap, shareReplay, startWith, filter, takeUntil } from 'rxjs/operators';
+import { Observable, BehaviorSubject, combineLatest, EMPTY, Subject } from 'rxjs';
+import { map, switchMap, shareReplay, startWith, filter, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AICardConfig, CardType } from '../../../models';
 import { CardDataProvider } from './card-data-provider.interface';
 import { JsonFileCardProvider } from './json-file-card-provider.service';
 import { RequestCanceller } from '../../../shared/utils/request-cancellation.util';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CardRepository } from './card-repository.service';
 
 /**
  * Injection token for card data provider
@@ -58,6 +59,7 @@ export class CardDataService implements OnDestroy {
   private provider = inject(CARD_DATA_PROVIDER, { optional: true }) || inject(JsonFileCardProvider);
   private activeProviderSubject = new BehaviorSubject<CardDataProvider>(this.provider);
   private requestCanceller = new RequestCanceller();
+  private readonly repository = inject(CardRepository);
 
   // Cached observables for performance
   private allCards$ = this.activeProviderSubject.pipe(
@@ -85,49 +87,35 @@ export class CardDataService implements OnDestroy {
 
   /**
    * Get all available cards
+   * Uses repository pattern for data access
    */
   getAllCards(): Observable<AICardConfig[]> {
-    return this.allCards$;
+    return this.repository.findAll();
   }
 
   /**
    * Get cards filtered by type
+   * Uses repository pattern for data access
    */
   getCardsByType(cardType: CardType): Observable<AICardConfig[]> {
-    return this.activeProviderSubject.pipe(
-      switchMap(provider => provider.getCardsByType(cardType))
-    );
+    return this.repository.findByType(cardType);
   }
 
   /**
    * Get a specific card by ID
+   * Uses repository pattern for data access
    */
   getCardById(id: string): Observable<AICardConfig | null> {
-    return this.activeProviderSubject.pipe(
-      switchMap(provider => provider.getCardById(id))
-    );
+    return this.repository.findById(id);
   }
 
   /**
    * Get card by type and variant index (1-based)
    * More efficient than loading all cards of a type
-   * Only works with JsonFileCardProvider
+   * Uses repository pattern for data access
    */
   getCardByTypeAndVariant(cardType: CardType, variant: number): Observable<AICardConfig | null> {
-    const provider = this.getCurrentProvider();
-    if (provider && 'getCardByTypeAndVariant' in provider && typeof provider.getCardByTypeAndVariant === 'function') {
-      return (provider as any).getCardByTypeAndVariant(cardType, variant);
-    }
-    // Fallback to getCardsByType if method not available
-    return this.getCardsByType(cardType).pipe(
-      map(cards => {
-        if (!cards || cards.length === 0) {
-          return null;
-        }
-        const cardIndex = Math.min(variant - 1, cards.length - 1);
-        return cards[cardIndex] || null;
-      })
-    );
+    return this.repository.findByTypeAndVariant(cardType, variant);
   }
 
   /**
@@ -148,15 +136,24 @@ export class CardDataService implements OnDestroy {
 
   /**
    * Get unique card types from all available cards
+   * Uses repository pattern for data access
    */
   getAvailableCardTypes(): Observable<CardType[]> {
-    return this.allCards$.pipe(
-      map(cards => {
-        const types = new Set(cards.map(card => card.cardType));
-        return Array.from(types).sort() as CardType[];
-      })
-    );
+    return this.repository.getAvailableTypes();
   }
+
+  private searchSubject = new Subject<string>();
+  private searchResults$ = this.searchSubject.pipe(
+    debounceTime(300),
+    distinctUntilChanged(),
+    switchMap(query => {
+      if (!query.trim()) {
+        return this.repository.findAll();
+      }
+      return this.repository.search(query);
+    }),
+    shareReplay(1)
+  );
 
   /**
    * Search cards by title or content
@@ -165,6 +162,8 @@ export class CardDataService implements OnDestroy {
    * - Card titles
    * - Section titles
    * - Field labels and values
+   * 
+   * Uses repository pattern for data access with debouncing
    * 
    * @param query - Search query string (case-insensitive)
    * @returns Observable of matching cards
@@ -177,23 +176,8 @@ export class CardDataService implements OnDestroy {
    * ```
    */
   searchCards(query: string): Observable<AICardConfig[]> {
-    if (!query.trim()) {
-      return this.allCards$;
-    }
-
-    const searchTerm = query.toLowerCase();
-    return this.allCards$.pipe(
-      map(cards => cards.filter(card => 
-        card.cardTitle.toLowerCase().includes(searchTerm) ||
-        card.sections?.some(section => 
-          section.title?.toLowerCase().includes(searchTerm) ||
-          section.fields?.some(field => 
-            field.label?.toLowerCase().includes(searchTerm) ||
-            String(field.value).toLowerCase().includes(searchTerm)
-          )
-        )
-      ))
-    );
+    this.searchSubject.next(query);
+    return this.searchResults$;
   }
 
   /**

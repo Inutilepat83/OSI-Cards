@@ -145,6 +145,25 @@ function analyzeBundle() {
 
   console.log('\n' + '='.repeat(60) + '\n');
 
+  // Generate JSON report for CI/CD
+  const report = {
+    timestamp: new Date().toISOString(),
+    totalJs: totalJs,
+    totalCss: totalCss,
+    initialSize: initialSize,
+    limit: MAX_INITIAL_BYTES,
+    passed: initialSize <= MAX_INITIAL_BYTES,
+    files: {
+      js: jsSizes.map(f => ({ file: f.file, size: f.size })),
+      css: cssSizes.map(f => ({ file: f.file, size: f.size }))
+    }
+  };
+
+  // Write report to file for CI/CD
+  const reportPath = path.join(__dirname, '..', 'bundle-report.json');
+  fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
+  console.log(`📄 Bundle report written to: ${reportPath}`);
+
   // Exit with error if limit exceeded
   if (initialSize > MAX_INITIAL_BYTES) {
     console.error('❌ Bundle size gate failed.');

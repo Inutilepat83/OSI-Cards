@@ -1,4 +1,4 @@
-import { ApplicationConfig } from '@angular/core';
+import { ApplicationConfig, isDevMode } from '@angular/core';
 import { provideRouter, PreloadAllModules, withPreloading } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
@@ -7,6 +7,7 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { provideZoneChangeDetection } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideServiceWorker } from '@angular/service-worker';
 
 import { routes } from './app.routes';
 import { reducers } from './store/app.state';
@@ -54,6 +55,11 @@ export const config: ApplicationConfig = {
       provide: HTTP_INTERCEPTORS,
       useClass: RateLimitInterceptor,
       multi: true
-    }
+    },
+    // Service Worker for offline support and PWA features
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000'
+    })
   ]
 };

@@ -83,6 +83,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
   private resizeObserver?: ResizeObserver;
   private itemObserver?: ResizeObserver;
+  private intersectionObserver?: IntersectionObserver;
   private pendingAnimationFrame?: number;
   private reflowCount = 0;
   private readonly MAX_REFLOWS = 3; // Reduced for faster initial layout
@@ -90,6 +91,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private readonly RESIZE_THROTTLE_MS = 16; // ~1 frame at 60fps for minimal throttling
   private lastLayoutInfo?: MasonryLayoutInfo;
   private rafId?: number;
+  private visibleSections = new Set<string>(); // Track visible sections
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['sections']) {
@@ -104,6 +106,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     this.computeInitialLayout();
     this.observeContainer();
     this.observeItems();
+    this.setupIntersectionObserver();
     
     // Immediate reflow using RAF chain for fastest layout
     requestAnimationFrame(() => {
@@ -123,6 +126,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     if (this.pendingAnimationFrame) {
       cancelAnimationFrame(this.pendingAnimationFrame);
     }
+    // Clear memoization cache
+    this.colSpanCache.clear();
     if (this.rafId) {
       cancelAnimationFrame(this.rafId);
     }
@@ -175,6 +180,58 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     });
 
     this.itemRefs.forEach((item) => this.itemObserver?.observe(item.nativeElement));
+  }
+
+  /**
+   * Setup Intersection Observer to defer rendering of sections until visible
+   * Improves initial render performance by only rendering visible sections
+   */
+  private setupIntersectionObserver(): void {
+    if (typeof IntersectionObserver === 'undefined') {
+      return;
+    }
+
+    this.intersectionObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          const sectionId = entry.target.getAttribute('id');
+          if (sectionId) {
+            if (entry.isIntersecting) {
+              this.visibleSections.add(sectionId);
+            } else {
+              this.visibleSections.delete(sectionId);
+            }
+          }
+        });
+        this.cdr.markForCheck();
+      },
+      {
+        rootMargin: '50px' // Start loading 50px before section enters viewport
+      }
+    );
+
+    // Observe all section items
+    this.itemRefs.forEach((item) => {
+      if (item.nativeElement) {
+        this.intersectionObserver?.observe(item.nativeElement);
+      }
+    });
+
+    // Observe new items when they're added
+    this.itemRefs.changes.subscribe((items: QueryList<ElementRef<HTMLDivElement>>) => {
+      items.forEach((item) => {
+        if (item.nativeElement && !this.visibleSections.has(item.nativeElement.id)) {
+          this.intersectionObserver?.observe(item.nativeElement);
+        }
+      });
+    });
+  }
+
+  /**
+   * Check if a section is visible in viewport
+   */
+  isSectionVisible(sectionId: string): boolean {
+    return this.visibleSections.has(sectionId);
   }
 
   private throttledScheduleLayoutUpdate(): void {
@@ -409,10 +466,21 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
    * @param section - The section to calculate colSpan for
    * @returns Column span (1-3, up to maxColumns)
    */
+  // Memoized colSpan calculation
+  private colSpanCache = new Map<string, number>();
+  
   private getSectionColSpan(section: CardSection): number {
+    // Create cache key from section properties
+    const cacheKey = `${section.type}-${section.title}-${section.colSpan}-${this.maxColumns}`;
+    
+    if (this.colSpanCache.has(cacheKey)) {
+      return this.colSpanCache.get(cacheKey)!;
+    }
     // Explicit colSpan always takes precedence
     if (section.colSpan) {
-      return Math.min(section.colSpan, this.maxColumns);
+      const result = Math.min(section.colSpan, this.maxColumns);
+      this.colSpanCache.set(cacheKey, result);
+      return result;
     }
 
     const type = (section.type ?? '').toLowerCase();
@@ -435,10 +503,14 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     }
 
     if (baseScore >= thresholds.two) {
-      return Math.min(2, this.maxColumns);
+      const result = Math.min(2, this.maxColumns);
+      this.colSpanCache.set(cacheKey, result);
+      return result;
     }
 
-    return 1;
+    const result = 1;
+    this.colSpanCache.set(cacheKey, result);
+    return result;
   }
 
   /**

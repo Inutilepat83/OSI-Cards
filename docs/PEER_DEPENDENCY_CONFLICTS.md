@@ -150,3 +150,4 @@ npm install @angular/common@^20.0.0 @angular/core@^20.0.0 @angular/animations@^2
 - ✅ Use `--legacy-peer-deps` to resolve conflicts
 - ✅ The library will work correctly with Angular 20
 
+

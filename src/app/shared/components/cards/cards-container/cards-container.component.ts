@@ -1,5 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { AICardConfig } from '../../../../models';
 import { CardDataService } from '../../../../core';
 import { ErrorHandlingService } from '../../../../core/services/error-handling.service';
@@ -10,10 +11,15 @@ import { AICardRendererComponent } from '../ai-card-renderer.component';
   templateUrl: './cards-container.component.html',
   styleUrls: ['./cards-container.component.css'],
   standalone: true,
-  imports: [CommonModule, AICardRendererComponent]
+  imports: [CommonModule, AICardRendererComponent, ScrollingModule],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CardsContainerComponent implements OnInit {
   cards: AICardConfig[] = [];
+  readonly itemHeight = 400; // Estimated card height in pixels
+  readonly minBufferPx = 200; // Minimum buffer before loading more items
+  readonly maxBufferPx = 400; // Maximum buffer before unloading items
+  
   private cardService = inject(CardDataService);
   private errorHandler = inject(ErrorHandlingService);
 

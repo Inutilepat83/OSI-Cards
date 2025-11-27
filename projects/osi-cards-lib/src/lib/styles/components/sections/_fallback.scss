@@ -1,6 +1,6 @@
 /* Fallback section styling - Generic section for unmapped types */
 
-@import 'sections/sections-base';
+@import 'sections-base';
 
 .fallback-section {
   @include card;

@@ -147,5 +147,9 @@
         }
       ]
     }
+  },
+  "offline_enabled": true,
+  "background_sync": {
+    "enabled": true
   }
 }

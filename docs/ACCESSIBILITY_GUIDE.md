@@ -133,3 +133,4 @@ All section components extend `BaseSectionComponent` which provides:
 - Improved keyboard navigation
 - Screen reader testing
 
+

@@ -3,6 +3,17 @@
   text-align: center;
 }
 
+.cards-viewport {
+  height: calc(100vh - 200px);
+  min-height: 600px;
+}
+
+.cards-viewport .card-item {
+  margin-bottom: 20px;
+  display: block;
+}
+
+/* Fallback for non-virtual scrolling */
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));

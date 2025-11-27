@@ -1,22 +1,9 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewContainerRef, ViewChild, OnInit, OnDestroy, OnChanges, SimpleChanges, inject, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardAction, CardField, CardItem, CardSection } from '../../../../models';
-import { InfoSectionComponent, InfoSectionFieldInteraction } from '../sections/info-section.component';
-import { AnalyticsSectionComponent } from '../sections/analytics-section/analytics-section.component';
-import { FinancialsSectionComponent } from '../sections/financials-section/financials-section.component';
-import { ListSectionComponent } from '../sections/list-section/list-section.component';
-import { EventSectionComponent } from '../sections/event-section/event-section.component';
-import { ProductSectionComponent } from '../sections/product-section/product-section.component';
-import { SolutionsSectionComponent } from '../sections/solutions-section/solutions-section.component';
-import { ContactCardSectionComponent } from '../sections/contact-card-section/contact-card-section.component';
-import { NetworkCardSectionComponent } from '../sections/network-card-section/network-card-section.component';
-import { MapSectionComponent } from '../sections/map-section/map-section.component';
-import { ChartSectionComponent } from '../sections/chart-section/chart-section.component';
-import { OverviewSectionComponent } from '../sections/overview-section/overview-section.component';
-import { FallbackSectionComponent } from '../sections/fallback-section/fallback-section.component';
-import { QuotationSectionComponent } from '../sections/quotation-section/quotation-section.component';
-import { TextReferenceSectionComponent } from '../sections/text-reference-section/text-reference-section.component';
-import { BrandColorsSectionComponent } from '../sections/brand-colors-section/brand-colors-section.component';
+import { InfoSectionFieldInteraction } from '../sections/info-section.component';
+import { SectionLoaderService } from './section-loader.service';
+import { SectionTypeResolverService } from './section-type-resolver.service';
 
 export interface SectionRenderEvent {
   type: 'field' | 'item' | 'action';
@@ -30,32 +17,23 @@ export interface SectionRenderEvent {
 @Component({
   selector: 'app-section-renderer',
   standalone: true,
-  imports: [
-    CommonModule,
-    InfoSectionComponent,
-    AnalyticsSectionComponent,
-    FinancialsSectionComponent,
-    ListSectionComponent,
-    EventSectionComponent,
-    ProductSectionComponent,
-    SolutionsSectionComponent,
-    ContactCardSectionComponent,
-    NetworkCardSectionComponent,
-    MapSectionComponent,
-    ChartSectionComponent,
-    OverviewSectionComponent,
-    FallbackSectionComponent,
-    QuotationSectionComponent,
-    TextReferenceSectionComponent,
-    BrandColorsSectionComponent
-  ],
+  imports: [CommonModule],
   templateUrl: './section-renderer.component.html',
   styleUrls: ['./section-renderer.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SectionRendererComponent {
+export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @Input({ required: true }) section!: CardSection;
   @Output() sectionEvent = new EventEmitter<SectionRenderEvent>();
+  
+  @ViewChild('dynamicComponent', { read: ViewContainerRef }) dynamicComponent!: ViewContainerRef;
+  
+  private readonly sectionLoader = inject(SectionLoaderService);
+  private readonly typeResolver = inject(SectionTypeResolverService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private loadedComponent: any = null;
+  private viewInitialized = false;
+  private lastSectionType: string | null = null;
 
   // Removed @HostBinding - will be set in template instead to avoid setAttribute errors
   get sectionTypeAttribute(): string {
@@ -86,47 +64,7 @@ export class SectionRendererComponent {
     if (!this.section) {
       return 'unknown';
     }
-    try {
-      const type = (this.section.type ?? '').toLowerCase();
-      const title = (this.section.title ?? '').toLowerCase();
-
-    if (type === 'info' && title.includes('overview')) {
-      return 'overview';
-    }
-    if (type === 'timeline') {
-      return 'event';
-    }
-    if (type === 'metrics' || type === 'stats') {
-      return 'analytics';
-    }
-    if (type === 'table') {
-      return 'list';
-    }
-    if (type === 'project') {
-      return 'info';
-    }
-    if (type === 'locations') {
-      return 'map';
-    }
-    if (type === 'quotation' || type === 'quote') {
-      return 'quotation';
-    }
-    if (type === 'text-reference' || type === 'reference' || type === 'text-ref') {
-      return 'text-reference';
-    }
-    if (type === 'brand-colors' || type === 'brands' || type === 'colors') {
-      return 'brand-colors';
-    }
-    if (!type) {
-      if (title.includes('overview')) {
-        return 'overview';
-      }
-      return 'fallback';
-    }
-    return type;
-    } catch {
-      return 'unknown';
-    }
+    return this.typeResolver.resolve(this.section);
   }
 
   onInfoFieldInteraction(event: InfoSectionFieldInteraction): void {
@@ -171,5 +109,98 @@ export class SectionRendererComponent {
       action,
       metadata
     });
+  }
+
+  ngOnInit(): void {
+    // Component initialization - load after view init
+  }
+
+  ngAfterViewInit(): void {
+    this.viewInitialized = true;
+    this.loadComponent();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['section'] && this.viewInitialized) {
+      const newType = this.resolvedType;
+      // Reload component if section type changed or if component not loaded yet
+      if (newType !== this.lastSectionType || !this.loadedComponent) {
+        this.lastSectionType = newType;
+        this.loadComponent();
+      } else if (this.loadedComponent) {
+        // Just update the section input
+        this.loadedComponent.instance.section = this.section;
+        this.cdr.markForCheck();
+      }
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.loadedComponent) {
+      this.dynamicComponent?.clear();
+      this.loadedComponent = null;
+    }
+  }
+
+  /**
+   * Load component dynamically based on section type
+   */
+  private async loadComponent(): Promise<void> {
+    if (!this.viewInitialized || !this.dynamicComponent) {
+      return;
+    }
+
+    const sectionType = this.resolvedType;
+    try {
+      const ComponentType = await this.sectionLoader.getComponentType(sectionType);
+      
+      // Clear previous component
+      this.dynamicComponent.clear();
+      
+      // Create new component
+      const componentRef = this.dynamicComponent.createComponent(ComponentType);
+      componentRef.instance.section = this.section;
+      
+      // Subscribe to component events - use EventEmitter's subscribe
+      if (componentRef.instance.fieldInteraction) {
+        componentRef.instance.fieldInteraction.subscribe((event: any) => {
+          if (event?.field) {
+            this.emitFieldInteraction(event.field, event.metadata);
+          }
+        });
+      }
+      
+      if (componentRef.instance.itemInteraction) {
+        componentRef.instance.itemInteraction.subscribe((event: any) => {
+          if (event?.item) {
+            this.emitItemInteraction(event.item, event.metadata);
+          }
+        });
+      }
+      
+      // Special handling for InfoSectionComponent
+      if (componentRef.instance.infoFieldInteraction) {
+        componentRef.instance.infoFieldInteraction.subscribe((event: InfoSectionFieldInteraction) => {
+          this.onInfoFieldInteraction(event);
+        });
+      }
+      
+      this.loadedComponent = componentRef;
+      this.lastSectionType = sectionType;
+      this.cdr.markForCheck();
+    } catch (error) {
+      console.error('Failed to load section component:', error);
+      // Load fallback component
+      try {
+        const FallbackComponent = await this.sectionLoader.getComponentType('fallback');
+        const componentRef = this.dynamicComponent.createComponent(FallbackComponent);
+        componentRef.instance.section = this.section;
+        this.loadedComponent = componentRef;
+        this.lastSectionType = 'fallback';
+        this.cdr.markForCheck();
+      } catch (fallbackError) {
+        console.error('Failed to load fallback component:', fallbackError);
+      }
+    }
   }
 }
