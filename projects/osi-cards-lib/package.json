@@ -1,6 +1,6 @@
 {
   "name": "osi-cards-lib",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Standalone OSI Cards library for Angular applications",
   "keywords": [
     "angular",
