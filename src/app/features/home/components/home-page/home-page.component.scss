@@ -6,10 +6,10 @@
 .hero-section {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(180deg, #f5f5f5 0%, #e8e8e8 50%, #dcdcdc 100%);
+  background: var(--background);
   animation: fadeIn 0.8s ease-out;
   
-  /* Subtle animated background gradient */
+  /* Subtle animated background gradient - Brand gradient overlay */
   &::before {
     content: '';
     position: absolute;
@@ -19,7 +19,7 @@
     height: 200%;
     background: radial-gradient(
       circle at 50% 50%,
-      rgba(255, 121, 0, 0.08) 0%,
+      rgba(255, 121, 0, 0.15) 0%,
       transparent 60%
     );
     animation: gradientShift 20s ease-in-out infinite;
@@ -37,7 +37,7 @@
     background: linear-gradient(
       180deg,
       transparent 0%,
-      #f5f5f5 100%
+      var(--background) 100%
     );
     pointer-events: none;
     z-index: 0;
