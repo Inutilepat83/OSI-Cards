@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { CardSection } from '../../../../models';
 import { ISectionTypeResolver } from './section-type-resolver.interface';
 import { DefaultSectionTypeResolver } from './section-type-resolver.strategies';
@@ -12,7 +12,7 @@ import { DefaultSectionTypeResolver } from './section-type-resolver.strategies';
   providedIn: 'root'
 })
 export class SectionTypeResolverService {
-  private resolver: ISectionTypeResolver = inject(DefaultSectionTypeResolver);
+  private resolver: ISectionTypeResolver = new DefaultSectionTypeResolver();
 
   /**
    * Resolve section type using current strategy

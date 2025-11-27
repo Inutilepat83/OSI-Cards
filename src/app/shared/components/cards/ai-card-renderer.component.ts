@@ -99,7 +99,9 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     const sectionsHash = this.hashSections(this._cardConfig.sections);
-    const shouldForceStructural = sectionsHash !== this.previousSectionsHash || this._updateSource === 'liveEdit';
+    // Don't force structural rebuild for liveEdit - let hash determine if structure changed
+    // This allows content-only updates to preserve references
+    const shouldForceStructural = sectionsHash !== this.previousSectionsHash;
     this.refreshProcessedSections(shouldForceStructural);
     this.cdr.markForCheck();
   }
@@ -974,8 +976,10 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       this._changeType === 'structural' ||
       !this.processedSections.length;
 
-    // Removed excessive logging for performance
+    // For content-only updates, we still need to normalize (in case type resolution is needed)
+    // but we'll preserve references when possible
 
+    // For structural changes, rebuild everything
     if (requiresStructuralRebuild) {
       this.normalizedSectionCache = new WeakMap<CardSection, CardSection>();
     }
@@ -983,15 +987,60 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     const normalizedSections = sections.map(section => this.getNormalizedSection(section, requiresStructuralRebuild));
     const orderedSections = requiresStructuralRebuild
       ? this.sectionNormalizationService.sortSections(normalizedSections)
-      : this.mergeWithPreviousOrder(normalizedSections);
+      : this.mergeWithPreviousOrderPreservingReferences(normalizedSections);
 
     this.processedSections = orderedSections;
     this.sectionOrderKeys = orderedSections.map(section => this.getSectionKey(section));
     this.previousSectionsHash = nextHash;
     
-    // Removed excessive logging for performance
-    
     this.cdr.markForCheck();
+  }
+  
+  /**
+   * Merge with previous order while preserving section references when possible
+   */
+  private mergeWithPreviousOrderPreservingReferences(normalizedSections: CardSection[]): CardSection[] {
+    if (!this.sectionOrderKeys.length) {
+      return normalizedSections;
+    }
+
+    const nextByKey = new Map<string, CardSection>();
+    normalizedSections.forEach(section => {
+      nextByKey.set(this.getSectionKey(section), section);
+    });
+
+    // Try to preserve processedSections array reference and section references
+    const ordered: CardSection[] = [];
+    let allReferencesPreserved = true;
+    
+    this.sectionOrderKeys.forEach(key => {
+      const match = nextByKey.get(key);
+      if (match) {
+        // Try to find the same section in processedSections by reference
+        const existingSection = this.processedSections.find(s => this.getSectionKey(s) === key);
+        if (existingSection && existingSection === match) {
+          // Same reference, preserve it
+          ordered.push(existingSection);
+        } else {
+          // Different reference, use new one
+          ordered.push(match);
+          allReferencesPreserved = false;
+        }
+        nextByKey.delete(key);
+      }
+    });
+
+    // Add any new sections
+    nextByKey.forEach(section => ordered.push(section));
+
+    // If all references are preserved and order is the same, return existing array
+    if (allReferencesPreserved && 
+        ordered.length === this.processedSections.length &&
+        ordered.every((section, index) => section === this.processedSections[index])) {
+      return this.processedSections;
+    }
+
+    return ordered;
   }
 
   private getNormalizedSection(section: CardSection, forceRebuild: boolean): CardSection {
@@ -1008,26 +1057,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   private mergeWithPreviousOrder(normalizedSections: CardSection[]): CardSection[] {
-    if (!this.sectionOrderKeys.length) {
-      return normalizedSections;
-    }
-
-    const nextByKey = new Map<string, CardSection>();
-    normalizedSections.forEach(section => {
-      nextByKey.set(this.getSectionKey(section), section);
-    });
-
-    const ordered: CardSection[] = [];
-    this.sectionOrderKeys.forEach(key => {
-      const match = nextByKey.get(key);
-      if (match) {
-        ordered.push(match);
-        nextByKey.delete(key);
-      }
-    });
-
-    nextByKey.forEach(section => ordered.push(section));
-    return ordered;
+    // Use the new method that preserves references
+    return this.mergeWithPreviousOrderPreservingReferences(normalizedSections);
   }
 
   private getSectionKey(section: CardSection): string {

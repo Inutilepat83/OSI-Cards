@@ -111,13 +111,25 @@ export class SectionNormalizationService {
 
     const resolvedType = this.resolveSectionType(rawType, title);
 
+    // Check if normalization is actually needed
+    const needsTypeResolution = rawType !== resolvedType;
+    const needsMetricsConversion = resolvedType === 'analytics' && (!section.fields || !section.fields.length) && (section as Record<string, unknown>)['metrics'];
+    const needsDescriptionFromSubtitle = !section.description && section.subtitle;
+    const needsMetaUpdate = !section.meta || !(section.meta as Record<string, unknown>)?.['colSpanThresholds'];
+
+    // If nothing needs to change, return original section to preserve reference
+    if (!needsTypeResolution && !needsMetricsConversion && !needsDescriptionFromSubtitle && !needsMetaUpdate) {
+      return section;
+    }
+
+    // Only create new object if normalization is actually needed
     const normalized: CardSection = {
       ...section,
       type: resolvedType
     };
 
     // Handle analytics sections with metrics array
-    if (resolvedType === 'analytics' && (!normalized.fields || !normalized.fields.length)) {
+    if (needsMetricsConversion) {
       const metrics = (section as Record<string, unknown>)['metrics'];
       if (Array.isArray(metrics)) {
         normalized.fields = metrics as typeof normalized.fields;
@@ -125,20 +137,21 @@ export class SectionNormalizationService {
     }
 
     // Use subtitle as description if description is missing
-    if (!normalized.description && section.subtitle) {
+    if (needsDescriptionFromSubtitle) {
       normalized.description = section.subtitle;
     }
 
     // Add column span thresholds to section meta if not already present
-    // This allows each section to have its own column logic
-    const existingMeta = normalized.meta as Record<string, unknown> | undefined;
-    const colSpanThresholds = this.getColSpanThresholdsForType(resolvedType);
-    
-    normalized.meta = {
-      ...existingMeta,
-      // Only add if not already defined (allows sections to override)
-      colSpanThresholds: existingMeta?.['colSpanThresholds'] ?? colSpanThresholds
-    };
+    if (needsMetaUpdate) {
+      const existingMeta = normalized.meta as Record<string, unknown> | undefined;
+      const colSpanThresholds = this.getColSpanThresholdsForType(resolvedType);
+      
+      normalized.meta = {
+        ...existingMeta,
+        // Only add if not already defined (allows sections to override)
+        colSpanThresholds: existingMeta?.['colSpanThresholds'] ?? colSpanThresholds
+      };
+    }
 
     return normalized;
   }

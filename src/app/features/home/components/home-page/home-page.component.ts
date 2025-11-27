@@ -234,17 +234,15 @@ export class HomePageComponent implements OnInit {
     this.initializeSystem();
     
     // Setup immediate JSON processing for live preview updates
-    // Very short debounce (10ms) for near-instant visual feedback
+    // Balanced debounce (75ms) for responsive updates without excessive re-renders
     this.immediateJsonSubject.pipe(
-      debounceTime(10), // 10ms for near-instant visual feedback
+      debounceTime(75), // 75ms for responsive updates without blinking
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(jsonInput => {
       // Always process to ensure live updates work
       this.lastImmediateJson = jsonInput;
-      // Run inside Angular zone to ensure change detection works
-      this.ngZone.run(() => {
-        this.processJsonInputImmediate(jsonInput);
-      });
+      // Process directly - markForCheck handles change detection timing
+      this.processJsonInputImmediate(jsonInput);
     });
     
     // Setup debounced JSON processing for final validation and merging
@@ -315,8 +313,11 @@ export class HomePageComponent implements OnInit {
     this.llmStreamingService.bufferUpdates$.pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(buffer => {
-      // Update JSON input during streaming (silent - no change detection trigger)
+      // Update JSON input during streaming
       this.jsonInput = buffer;
+      // Trigger immediate processing for live preview updates (both title and sections)
+      // This ensures the card preview updates in real-time as streaming progresses
+      this.immediateJsonSubject.next(buffer);
     });
 
     // Cleanup on destroy
@@ -447,11 +448,11 @@ export class HomePageComponent implements OnInit {
         cardTitle: '',
         sections: []
       };
-      this.generatedCard = emptyCard;
-      // Force immediate change detection
-      this.ngZone.run(() => {
-        this.cd.detectChanges();
-      });
+      // Only update if card actually changed
+      if (this.generatedCard?.cardTitle || this.generatedCard?.sections?.length) {
+        this.generatedCard = emptyCard;
+        this.cd.markForCheck();
+      }
       return;
     }
 
@@ -468,9 +469,25 @@ export class HomePageComponent implements OnInit {
         if (this.generatedCard) {
           // Try to extract cardTitle if visible in JSON
           const titleMatch = jsonInput.match(/"cardTitle"\s*:\s*"([^"]*)"/);
-          if (titleMatch) {
-            const newCard = { ...this.generatedCard, cardTitle: titleMatch[1] };
-            this.updateLivePreviewCard(newCard, 'content');
+          // Try to extract sections even from incomplete JSON
+          const sectionsMatch = jsonInput.match(/"sections"\s*:\s*\[/);
+          if (titleMatch || sectionsMatch) {
+            const newCard: AICardConfig = {
+              ...this.generatedCard,
+              cardTitle: titleMatch ? titleMatch[1] : this.generatedCard.cardTitle
+            };
+            // If sections are being written, try to extract them
+            if (sectionsMatch) {
+              const partialData = this.tryParsePartialJson(jsonInput);
+              if (partialData && Array.isArray(partialData.sections)) {
+                newCard.sections = partialData.sections.map(s => this.ensureSectionStructure(s));
+              }
+            }
+            // Check if card actually changed before updating
+            const diffResult = CardDiffUtil.diffCards(this.generatedCard, newCard);
+            if (diffResult.hasChanges) {
+              this.updateLivePreviewCard(newCard, 'content');
+            }
           }
         }
         return;
@@ -493,16 +510,127 @@ export class HomePageComponent implements OnInit {
       // Ensure required fields are always set (provide defaults if missing)
       cardTitle: typeof cardData.cardTitle === 'string' ? cardData.cardTitle : (this.generatedCard?.cardTitle || ''),
       // Always create new array reference to ensure change detection
+      // Deep clone sections and their nested structures (fields, items) for proper change detection
       sections: Array.isArray(cardData.sections) 
-        ? cardData.sections.map(s => ({ ...s })) // Deep clone sections
-        : (this.generatedCard?.sections ? [...this.generatedCard.sections] : [])
+        ? cardData.sections.map(s => this.ensureSectionStructure(s))
+        : (this.generatedCard?.sections ? this.generatedCard.sections.map(s => this.ensureSectionStructure(s)) : [])
     };
 
-    // Always update - don't check if it's valid, just try to render what we have
     // Lightweight processing - ensure IDs exist for rendering
     const sanitized = this.recheckCardStructure(liveCard) ?? liveCard;
-    // Always update to ensure live preview works
-    this.updateLivePreviewCard(sanitized, 'content');
+    
+    // Check if card actually changed before updating to prevent unnecessary re-renders
+    if (this.generatedCard) {
+      const diffResult = CardDiffUtil.diffCards(this.generatedCard, sanitized);
+      if (!diffResult.hasChanges) {
+        // No actual changes, skip update to prevent unnecessary re-renders
+        return;
+      }
+    }
+    
+    // Detect if sections have changed compared to current preview
+    const sectionsChanged = this.detectSectionsChange(
+      this.generatedCard?.sections || [],
+      sanitized.sections
+    );
+    
+    // Determine change type based on whether structure changed
+    const changeType: CardChangeType = sectionsChanged.structureChanged ? 'structural' : 'content';
+    
+    // Update only when there are actual changes
+    this.updateLivePreviewCard(sanitized, changeType);
+  }
+
+  /**
+   * Detect if sections have changed between old and new sections arrays
+   * Returns information about whether sections changed and if structure changed
+   */
+  private detectSectionsChange(
+    oldSections: CardSection[],
+    newSections: CardSection[]
+  ): { hasChanges: boolean; structureChanged: boolean } {
+    // If section count changed, structure definitely changed
+    if (oldSections.length !== newSections.length) {
+      return { hasChanges: true, structureChanged: true };
+    }
+
+    // If no sections in either, no changes
+    if (oldSections.length === 0 && newSections.length === 0) {
+      return { hasChanges: false, structureChanged: false };
+    }
+
+    let hasChanges = false;
+    let structureChanged = false;
+
+    // Compare each section
+    for (let i = 0; i < newSections.length; i++) {
+      const oldSection = oldSections[i];
+      const newSection = newSections[i];
+
+      // If section doesn't exist in old, structure changed
+      if (!oldSection) {
+        structureChanged = true;
+        hasChanges = true;
+        continue;
+      }
+
+      // Check if section title, type, or other properties changed
+      if (
+        oldSection.title !== newSection.title ||
+        oldSection.type !== newSection.type ||
+        oldSection.subtitle !== newSection.subtitle
+      ) {
+        hasChanges = true;
+        // Type change is structural
+        if (oldSection.type !== newSection.type) {
+          structureChanged = true;
+        }
+      }
+
+      // Check if fields changed
+      const oldFields = oldSection.fields || [];
+      const newFields = newSection.fields || [];
+      if (oldFields.length !== newFields.length) {
+        structureChanged = true;
+        hasChanges = true;
+      } else {
+        // Compare field values
+        for (let j = 0; j < newFields.length; j++) {
+          const oldField = oldFields[j];
+          const newField = newFields[j];
+          if (
+            oldField?.label !== newField?.label ||
+            oldField?.value !== newField?.value ||
+            oldField?.type !== newField?.type
+          ) {
+            hasChanges = true;
+          }
+        }
+      }
+
+      // Check if items changed
+      const oldItems = oldSection.items || [];
+      const newItems = newSection.items || [];
+      if (oldItems.length !== newItems.length) {
+        structureChanged = true;
+        hasChanges = true;
+      } else {
+        // Compare item values
+        for (let j = 0; j < newItems.length; j++) {
+          const oldItem = oldItems[j];
+          const newItem = newItems[j];
+          if (
+            oldItem?.title !== newItem?.title ||
+            oldItem?.description !== newItem?.description ||
+            oldItem?.value !== newItem?.value
+          ) {
+            hasChanges = true;
+          }
+        }
+      }
+    }
+
+    return { hasChanges, structureChanged };
   }
 
   /**
@@ -679,7 +807,20 @@ export class HomePageComponent implements OnInit {
                 sections.push(section);
               }
             } catch {
-              // Skip incomplete section
+              // Try to extract partial section data even if incomplete
+              const partialSection = this.extractPartialSection(currentSection);
+              if (partialSection) {
+                sections.push(partialSection);
+              }
+            }
+          }
+          
+          // Also try to extract sections that might be partially written
+          // This handles cases where sections array is incomplete
+          if (sections.length === 0) {
+            const partialSections = this.extractPartialSectionsFromJson(jsonInput);
+            if (partialSections.length > 0) {
+              sections.push(...partialSections);
             }
           }
           
@@ -701,6 +842,353 @@ export class HomePageComponent implements OnInit {
   }
 
   /**
+   * Extract partial section data from incomplete section JSON string
+   * Handles cases where section object is incomplete (missing closing braces, incomplete fields/items)
+   */
+  private extractPartialSection(sectionStr: string): Partial<CardSection> | null {
+    try {
+      const section: Partial<CardSection> = {};
+      
+      // Extract title
+      const titleMatch = sectionStr.match(/"title"\s*:\s*"([^"]*)"/);
+      if (titleMatch) {
+        section.title = titleMatch[1];
+      }
+      
+      // Extract type
+      const typeMatch = sectionStr.match(/"type"\s*:\s*"([^"]*)"/);
+      if (typeMatch) {
+        section.type = typeMatch[1] as any;
+      }
+      
+      // Extract subtitle
+      const subtitleMatch = sectionStr.match(/"subtitle"\s*:\s*"([^"]*)"/);
+      if (subtitleMatch) {
+        section.subtitle = subtitleMatch[1];
+      }
+      
+      // Extract description
+      const descMatch = sectionStr.match(/"description"\s*:\s*"([^"]*)"/);
+      if (descMatch) {
+        section.description = descMatch[1];
+      }
+      
+      // Try to extract fields array (even if incomplete)
+      const fieldsMatch = sectionStr.match(/"fields"\s*:\s*\[([\s\S]*?)(?:\]|$)/);
+      if (fieldsMatch) {
+        const fieldsContent = fieldsMatch[1];
+        const fields = this.extractPartialFields(fieldsContent);
+        if (fields.length > 0) {
+          section.fields = fields;
+        }
+      }
+      
+      // Try to extract items array (even if incomplete)
+      const itemsMatch = sectionStr.match(/"items"\s*:\s*\[([\s\S]*?)(?:\]|$)/);
+      if (itemsMatch) {
+        const itemsContent = itemsMatch[1];
+        const partialItems = this.extractPartialItems(itemsContent);
+        // Filter out items without required 'title' property and ensure they match CardItem type
+        const items: CardItem[] = partialItems
+          .filter((item): item is CardItem => typeof item.title === 'string' && item.title.length > 0)
+          .map(item => ({
+            ...item,
+            title: item.title! // We know title exists due to filter
+          }));
+        if (items.length > 0) {
+          section.items = items;
+        }
+      }
+      
+      // Only return if we extracted at least title or type
+      if (section.title || section.type) {
+        return section;
+      }
+    } catch {
+      // Failed to extract partial section
+    }
+    
+    return null;
+  }
+
+  /**
+   * Extract partial fields from incomplete fields array JSON
+   */
+  private extractPartialFields(fieldsContent: string): Partial<CardField>[] {
+    const fields: Partial<CardField>[] = [];
+    
+    // Try to find field objects by matching braces
+    let depth = 0;
+    let currentField = '';
+    let inString = false;
+    let escapeNext = false;
+    
+    for (let i = 0; i < fieldsContent.length; i++) {
+      const char = fieldsContent[i];
+      
+      if (escapeNext) {
+        currentField += char;
+        escapeNext = false;
+        continue;
+      }
+      
+      if (char === '\\') {
+        escapeNext = true;
+        currentField += char;
+        continue;
+      }
+      
+      if (char === '"') {
+        inString = !inString;
+        currentField += char;
+        continue;
+      }
+      
+      if (inString) {
+        currentField += char;
+        continue;
+      }
+      
+      if (char === '{') {
+        if (depth === 0) {
+          currentField = '{';
+        } else {
+          currentField += char;
+        }
+        depth++;
+      } else if (char === '}') {
+        currentField += char;
+        depth--;
+        if (depth === 0) {
+          // Complete or partial field found
+          try {
+            const field = JSON.parse(currentField);
+            if (field && typeof field === 'object') {
+              fields.push(field);
+            }
+          } catch {
+            // Try to extract partial field
+            const partialField = this.extractPartialField(currentField);
+            if (partialField) {
+              fields.push(partialField);
+            }
+          }
+          currentField = '';
+        }
+      } else if (depth > 0) {
+        currentField += char;
+      }
+    }
+    
+    // Handle last incomplete field
+    if (currentField.trim() && depth > 0) {
+      try {
+        let fixedField = currentField;
+        for (let j = 0; j < depth; j++) {
+          fixedField += '}';
+        }
+        const field = JSON.parse(fixedField);
+        if (field && typeof field === 'object') {
+          fields.push(field);
+        }
+      } catch {
+        const partialField = this.extractPartialField(currentField);
+        if (partialField) {
+          fields.push(partialField);
+        }
+      }
+    }
+    
+    return fields;
+  }
+
+  /**
+   * Extract partial field data from incomplete field JSON string
+   */
+  private extractPartialField(fieldStr: string): Partial<CardField> | null {
+    try {
+      const field: Partial<CardField> = {};
+      
+      // Extract label
+      const labelMatch = fieldStr.match(/"label"\s*:\s*"([^"]*)"/);
+      if (labelMatch) {
+        field.label = labelMatch[1];
+      }
+      
+      // Extract value
+      const valueMatch = fieldStr.match(/"value"\s*:\s*"([^"]*)"/);
+      if (valueMatch) {
+        field.value = valueMatch[1];
+      }
+      
+      // Extract type
+      const typeMatch = fieldStr.match(/"type"\s*:\s*"([^"]*)"/);
+      if (typeMatch) {
+        field.type = typeMatch[1] as any;
+      }
+      
+      // Only return if we extracted at least label or value
+      if (field.label || field.value !== undefined) {
+        return field;
+      }
+    } catch {
+      // Failed to extract partial field
+    }
+    
+    return null;
+  }
+
+  /**
+   * Extract partial items from incomplete items array JSON
+   */
+  private extractPartialItems(itemsContent: string): Partial<CardItem>[] {
+    const items: Partial<CardItem>[] = [];
+    
+    // Try to find item objects by matching braces
+    let depth = 0;
+    let currentItem = '';
+    let inString = false;
+    let escapeNext = false;
+    
+    for (let i = 0; i < itemsContent.length; i++) {
+      const char = itemsContent[i];
+      
+      if (escapeNext) {
+        currentItem += char;
+        escapeNext = false;
+        continue;
+      }
+      
+      if (char === '\\') {
+        escapeNext = true;
+        currentItem += char;
+        continue;
+      }
+      
+      if (char === '"') {
+        inString = !inString;
+        currentItem += char;
+        continue;
+      }
+      
+      if (inString) {
+        currentItem += char;
+        continue;
+      }
+      
+      if (char === '{') {
+        if (depth === 0) {
+          currentItem = '{';
+        } else {
+          currentItem += char;
+        }
+        depth++;
+      } else if (char === '}') {
+        currentItem += char;
+        depth--;
+        if (depth === 0) {
+          // Complete or partial item found
+          try {
+            const item = JSON.parse(currentItem);
+            if (item && typeof item === 'object') {
+              items.push(item);
+            }
+          } catch {
+            // Try to extract partial item
+            const partialItem = this.extractPartialItem(currentItem);
+            if (partialItem) {
+              items.push(partialItem);
+            }
+          }
+          currentItem = '';
+        }
+      } else if (depth > 0) {
+        currentItem += char;
+      }
+    }
+    
+    // Handle last incomplete item
+    if (currentItem.trim() && depth > 0) {
+      try {
+        let fixedItem = currentItem;
+        for (let j = 0; j < depth; j++) {
+          fixedItem += '}';
+        }
+        const item = JSON.parse(fixedItem);
+        if (item && typeof item === 'object') {
+          items.push(item);
+        }
+      } catch {
+        const partialItem = this.extractPartialItem(currentItem);
+        if (partialItem) {
+          items.push(partialItem);
+        }
+      }
+    }
+    
+    return items;
+  }
+
+  /**
+   * Extract partial item data from incomplete item JSON string
+   */
+  private extractPartialItem(itemStr: string): Partial<CardItem> | null {
+    try {
+      const item: Partial<CardItem> = {};
+      
+      // Extract title
+      const titleMatch = itemStr.match(/"title"\s*:\s*"([^"]*)"/);
+      if (titleMatch) {
+        item.title = titleMatch[1];
+      }
+      
+      // Extract description
+      const descMatch = itemStr.match(/"description"\s*:\s*"([^"]*)"/);
+      if (descMatch) {
+        item.description = descMatch[1];
+      }
+      
+      // Extract value
+      const valueMatch = itemStr.match(/"value"\s*:\s*"([^"]*)"/);
+      if (valueMatch) {
+        item.value = valueMatch[1];
+      }
+      
+      // Only return if we extracted at least title
+      if (item.title) {
+        return item;
+      }
+    } catch {
+      // Failed to extract partial item
+    }
+    
+    return null;
+  }
+
+  /**
+   * Extract partial sections directly from JSON string using regex patterns
+   * This is a fallback when the main parsing fails
+   */
+  private extractPartialSectionsFromJson(jsonInput: string): Partial<CardSection>[] {
+    const sections: Partial<CardSection>[] = [];
+    
+    // Look for section-like patterns in the JSON
+    // Match patterns like: "title": "Section Name" followed by other properties
+    const sectionPattern = /"title"\s*:\s*"([^"]*)"[^}]*"type"\s*:\s*"([^"]*)"/g;
+    let match;
+    
+    while ((match = sectionPattern.exec(jsonInput)) !== null) {
+      const section: Partial<CardSection> = {
+        title: match[1],
+        type: match[2] as any
+      };
+      sections.push(section);
+    }
+    
+    return sections;
+  }
+
+  /**
    * Fast fallback processing used for per-token updates when streaming.
    * Avoids the cost of full decode and uses the fallback parser for instant updates.
    */
@@ -717,29 +1205,169 @@ export class HomePageComponent implements OnInit {
   }
 
   private updateLivePreviewCard(nextCard: AICardConfig, changeTypeOverride?: CardChangeType): void {
-    // Always create a completely new card object to ensure reference change
-    // This is critical for Angular's OnPush change detection
-    const createNewReference = (card: AICardConfig): AICardConfig => {
-      if (typeof structuredClone !== 'undefined') {
-        return structuredClone(card);
+    const currentCard = this.generatedCard;
+    
+    // If no existing card, create new one (structural change)
+    if (!currentCard) {
+      this.generatedCard = nextCard;
+      this.livePreviewCard = nextCard;
+      this.livePreviewChangeType = changeTypeOverride ?? 'structural';
+      this.cd.markForCheck();
+      return;
+    }
+    
+    // Check if structure changed (sections added/removed/reordered)
+    const structureChanged = this.didStructureChange(currentCard.sections, nextCard.sections);
+    const changeType: CardChangeType = changeTypeOverride ?? (structureChanged ? 'structural' : 'content');
+    
+    // For structural changes, we need new references
+    if (structureChanged) {
+      // Use merge for structural changes to preserve what we can
+      const mergeResult = CardDiffUtil.mergeCardUpdates(currentCard, nextCard);
+      this.generatedCard = mergeResult.card;
+      this.livePreviewCard = mergeResult.card;
+      this.livePreviewChangeType = changeType;
+      this.cd.markForCheck();
+      return;
+    }
+    
+    // For content-only updates: mutate in-place to preserve all references
+    // Update top-level properties in-place
+    if (nextCard.cardTitle !== undefined) {
+      currentCard.cardTitle = nextCard.cardTitle;
+    }
+    if (nextCard.cardSubtitle !== undefined) {
+      currentCard.cardSubtitle = nextCard.cardSubtitle;
+    }
+    if (nextCard.cardType !== undefined) {
+      currentCard.cardType = nextCard.cardType;
+    }
+    if (nextCard.description !== undefined) {
+      currentCard.description = nextCard.description;
+    }
+    if (nextCard.columns !== undefined) {
+      currentCard.columns = nextCard.columns;
+    }
+    if (nextCard.actions !== undefined) {
+      currentCard.actions = nextCard.actions;
+    }
+    
+    // Update sections in-place (preserves sections array reference)
+    this.updateSectionsInPlace(currentCard.sections, nextCard.sections);
+    
+    // Update live preview tracking
+    this.livePreviewCard = currentCard;
+    this.livePreviewChangeType = changeType;
+    
+    // Mark for check to trigger change detection (but references are stable)
+    this.cd.markForCheck();
+  }
+  
+  /**
+   * Check if structure changed (sections added/removed/reordered)
+   */
+  private didStructureChange(oldSections: CardSection[], newSections: CardSection[]): boolean {
+    if (oldSections.length !== newSections.length) {
+      return true;
+    }
+    return oldSections.some((oldSection, index) => {
+      const newSection = newSections[index];
+      if (!newSection) {
+        return true;
       }
-      // Fallback: deep clone via JSON
-      return JSON.parse(JSON.stringify(card));
-    };
-    
-    const newCard: AICardConfig = createNewReference(nextCard);
-    
-    // Update generatedCard directly with new reference - this is what the template uses
-    // Always assign new reference to trigger change detection
-    this.generatedCard = newCard;
-    this.livePreviewCard = newCard;
-    this.livePreviewChangeType = changeTypeOverride ?? 'content';
-    
-    // Force change detection immediately - use detectChanges for immediate update
-    // Run in zone to ensure it happens in the correct context
-    this.ngZone.run(() => {
-      this.cd.detectChanges();
+      // Check if section ID changed (reordering)
+      if ((oldSection.id || index) !== (newSection.id || index)) {
+        return true;
+      }
+      // Check if section type changed
+      if (oldSection.type !== newSection.type) {
+        return true;
+      }
+      // Check if field/item count changed
+      const oldFieldsLength = oldSection.fields?.length ?? 0;
+      const newFieldsLength = newSection.fields?.length ?? 0;
+      const oldItemsLength = oldSection.items?.length ?? 0;
+      const newItemsLength = newSection.items?.length ?? 0;
+      return oldFieldsLength !== newFieldsLength || newItemsLength !== oldItemsLength;
     });
+  }
+  
+  /**
+   * Update sections array in-place to preserve object references
+   * Only mutates existing sections, preserves all references for unchanged sections
+   */
+  private updateSectionsInPlace(existingSections: CardSection[], incomingSections: CardSection[]): void {
+    const maxLength = Math.max(existingSections.length, incomingSections.length);
+    
+    // Extend array if needed (only for new sections)
+    while (existingSections.length < maxLength) {
+      const sectionIndex = existingSections.length;
+      const incomingSection = incomingSections[sectionIndex];
+      if (incomingSection) {
+        existingSections.push(incomingSection);
+      }
+    }
+    
+    // Update existing sections in-place
+    for (let i = 0; i < Math.min(existingSections.length, incomingSections.length); i++) {
+      const existingSection = existingSections[i];
+      const incomingSection = incomingSections[i];
+      
+      if (!existingSection || !incomingSection) {
+        continue;
+      }
+      
+      // Update section properties in-place (preserve object reference)
+      if (incomingSection.title !== undefined) {
+        existingSection.title = incomingSection.title;
+      }
+      if (incomingSection.subtitle !== undefined) {
+        existingSection.subtitle = incomingSection.subtitle;
+      }
+      if (incomingSection.type !== undefined) {
+        existingSection.type = incomingSection.type;
+      }
+      if (incomingSection.description !== undefined) {
+        existingSection.description = incomingSection.description;
+      }
+      if (incomingSection.emoji !== undefined) {
+        existingSection.emoji = incomingSection.emoji;
+      }
+      if (incomingSection.columns !== undefined) {
+        existingSection.columns = incomingSection.columns;
+      }
+      if (incomingSection.colSpan !== undefined) {
+        existingSection.colSpan = incomingSection.colSpan;
+      }
+      if (incomingSection.collapsed !== undefined) {
+        existingSection.collapsed = incomingSection.collapsed;
+      }
+      if (incomingSection.chartType !== undefined) {
+        existingSection.chartType = incomingSection.chartType;
+      }
+      if (incomingSection.chartData !== undefined) {
+        existingSection.chartData = incomingSection.chartData;
+      }
+      if (incomingSection.meta !== undefined) {
+        existingSection.meta = incomingSection.meta;
+      }
+      
+      // Update fields in-place (preserves fields array reference)
+      if (incomingSection.fields !== undefined) {
+        if (!existingSection.fields) {
+          existingSection.fields = [];
+        }
+        this.updateFieldsInPlace(existingSection.fields, incomingSection.fields, i);
+      }
+      
+      // Update items in-place (preserves items array reference)
+      if (incomingSection.items !== undefined) {
+        if (!existingSection.items) {
+          existingSection.items = [];
+        }
+        this.updateItemsInPlace(existingSection.items, incomingSection.items, i);
+      }
+    }
   }
 
   private createFallbackPreviewCard(jsonInput: string): AICardConfig {
@@ -1202,6 +1830,29 @@ export class HomePageComponent implements OnInit {
   // Old LLM methods removed - now handled by LLMStreamingService
   // All LLM simulation logic (chunking, parsing, placeholder management, completion tracking)
   // has been moved to LLMStreamingService for better separation of concerns and testability
+
+  /**
+   * Ensure section structure is properly cloned with all nested arrays (fields, items)
+   * This is critical for Angular change detection to detect section updates
+   */
+  private ensureSectionStructure(section: Partial<CardSection> | CardSection): CardSection {
+    // Create a new section object to ensure reference change
+    const newSection: CardSection = {
+      ...section,
+      id: section.id || `section-${Date.now()}`,
+      type: section.type || 'info',
+      title: section.title || '',
+      // Deep clone fields array to ensure change detection
+      fields: Array.isArray(section.fields)
+        ? section.fields.map(f => ({ ...f, id: f.id || `field-${Date.now()}-${Math.random()}` }))
+        : [],
+      // Deep clone items array to ensure change detection
+      items: Array.isArray(section.items)
+        ? section.items.map(i => ({ ...i, id: i.id || `item-${Date.now()}-${Math.random()}` }))
+        : []
+    };
+    return newSection;
+  }
 
   private recheckCardStructure(card: AICardConfig | null): AICardConfig | null {
     if (!card) return null;

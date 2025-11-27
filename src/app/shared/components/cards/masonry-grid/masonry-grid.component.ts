@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CardSection } from '../../../../models';
 import { SectionRendererComponent, SectionRenderEvent } from '../section-renderer/section-renderer.component';
 import { Breakpoint, getBreakpointFromWidth } from '../../../utils/responsive.util';
+import { SectionTypeResolverService } from '../section-renderer/section-type-resolver.service';
 
 interface ColSpanThresholds {
   two: number;
@@ -76,6 +77,10 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   @ViewChildren('itemRef') itemRefs!: QueryList<ElementRef<HTMLDivElement>>;
 
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly typeResolver = inject(SectionTypeResolverService);
+  
+  // Diagnostic mode flag - set to true to enable detailed logging
+  private readonly DEBUG_MODE = false;
 
   positionedSections: PositionedSection[] = [];
   containerHeight = 0;
@@ -95,9 +100,31 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['sections']) {
+      // Ensure sections is always an array and filter out null/undefined
+      if (!Array.isArray(this.sections)) {
+        this.sections = [];
+      }
+      
+      // Diagnostic logging
+      if (this.DEBUG_MODE) {
+        console.log('[MasonryGrid] Sections received:', this.sections.length, this.sections);
+      }
+      
+      // Check if structure changed (length change indicates structural change)
+      const previousLength = changes['sections'].previousValue?.length ?? 0;
+      const currentLength = this.sections.length;
+      const structureChanged = previousLength !== currentLength;
+      
+      // Force recomputation of layout
       this.computeInitialLayout();
       // Schedule immediate layout update for section changes
       this.scheduleLayoutUpdate();
+      
+      // Only force change detection for structural changes (sections added/removed)
+      // For content-only updates, use markForCheck to let Angular handle timing
+      if (structureChanged) {
+        this.cdr.detectChanges();
+      }
       this.cdr.markForCheck();
     }
   }
@@ -108,14 +135,23 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     this.observeItems();
     this.setupIntersectionObserver();
     
-    // Immediate reflow using RAF chain for fastest layout
+    // Force change detection to ensure DOM elements are created
+    this.cdr.detectChanges();
+    
+    // Wait for DOM to be fully ready before first reflow
     requestAnimationFrame(() => {
-      this.reflowWithActualHeights();
+      // First frame: DOM should be created
+      this.cdr.detectChanges();
       requestAnimationFrame(() => {
+        // Second frame: DOM should be fully rendered
         this.reflowWithActualHeights();
-        // Mark layout as ready after second reflow
-        this.isLayoutReady = true;
-        this.cdr.markForCheck();
+        requestAnimationFrame(() => {
+          // Third frame: Final reflow with actual heights
+          this.reflowWithActualHeights();
+          this.isLayoutReady = true;
+          this.cdr.detectChanges();
+          this.cdr.markForCheck();
+        });
       });
     });
   }
@@ -136,7 +172,12 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     }
   }
 
-  trackItem = (_: number, item: PositionedSection) => item.key;
+  trackItem = (_: number, item: PositionedSection | null | undefined): string => {
+    if (!item) {
+      return `null-item-${_}`; // Unique identifier for null items
+    }
+    return item.key ?? `item-${_}`; // Fallback to index if key is missing
+  };
 
   onSectionEvent(event: SectionRenderEvent): void {
     this.sectionEvent.emit(event);
@@ -145,7 +186,10 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   /**
    * Gets a unique section ID for scrolling
    */
-  getSectionId(section: CardSection): string {
+  getSectionId(section: CardSection | null | undefined): string {
+    if (!section) {
+      return 'section-unknown';
+    }
     return `section-${this.sanitizeSectionId(section.title || section.id || 'unknown')}`;
   }
 
@@ -210,17 +254,19 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       }
     );
 
-    // Observe all section items
-    this.itemRefs.forEach((item) => {
-      if (item.nativeElement) {
-        this.intersectionObserver?.observe(item.nativeElement);
-      }
-    });
+    // Observe all section items with null checks
+    if (this.itemRefs && this.itemRefs.length > 0) {
+      this.itemRefs.forEach((item) => {
+        if (item?.nativeElement) {
+          this.intersectionObserver?.observe(item.nativeElement);
+        }
+      });
+    }
 
     // Observe new items when they're added
     this.itemRefs.changes.subscribe((items: QueryList<ElementRef<HTMLDivElement>>) => {
       items.forEach((item) => {
-        if (item.nativeElement && !this.visibleSections.has(item.nativeElement.id)) {
+        if (item?.nativeElement && !this.visibleSections.has(item.nativeElement.id)) {
           this.intersectionObserver?.observe(item.nativeElement);
         }
       });
@@ -276,17 +322,81 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
    * Uses estimated heights (300px + gap) for initial positioning.
    */
   private computeInitialLayout(): void {
-    const resolvedSections = this.sections ?? [];
+    const resolvedSections = (this.sections ?? [])
+      .filter(section => 
+        section != null && 
+        typeof section === 'object' && 
+        (section.id || section.title || section.type)
+      );
+    
+    // Diagnostic logging
+    if (this.DEBUG_MODE) {
+      console.log('[MasonryGrid] Resolved sections after initial filter:', resolvedSections.length, resolvedSections);
+    }
+    
+    // Additional validation: ensure section has required properties
+    // Use type resolver to get fallback type if section.type is missing
+    // IMPORTANT: Create copies of sections when adding missing types to avoid mutating input
+    // This preserves live edit functionality and change detection
+    const validSections = resolvedSections.map(section => {
+      if (!section || typeof section !== 'object') {
+        return null;
+      }
+      
+      // Must have at least id, title, or type
+      if (!section.id && !section.title && !section.type) {
+        if (this.DEBUG_MODE) {
+          console.warn('[MasonryGrid] Section filtered out - missing id, title, and type:', section);
+        }
+        return null;
+      }
+      
+      // If type is missing, create a copy with resolved type to avoid mutating input
+      if (!section.type) {
+        const resolvedType = this.typeResolver.resolve(section);
+        let finalType: CardSection['type'];
+        
+        if (resolvedType && resolvedType !== 'unknown' && resolvedType !== 'fallback') {
+          finalType = resolvedType as CardSection['type'];
+          if (this.DEBUG_MODE) {
+            console.log('[MasonryGrid] Resolved missing type for section:', section.title, '->', resolvedType);
+          }
+        } else {
+          // Try to infer from title or use 'info' as default
+          finalType = this.inferSectionType(section);
+          if (this.DEBUG_MODE) {
+            console.log('[MasonryGrid] Inferred type for section:', section.title, '->', finalType);
+          }
+        }
+        
+        // Create a shallow copy with the resolved type to avoid mutating the original
+        // This is important for live edit functionality
+        return { ...section, type: finalType };
+      }
+      
+      // Section already has type, return as-is
+      return section;
+    }).filter((section): section is CardSection => section !== null);
+    
+    // Diagnostic logging
+    if (this.DEBUG_MODE) {
+      console.log('[MasonryGrid] Valid sections after validation:', validSections.length, validSections);
+      const filteredCount = resolvedSections.length - validSections.length;
+      if (filteredCount > 0) {
+        console.warn('[MasonryGrid] Filtered out', filteredCount, 'invalid sections');
+      }
+    }
+    
     this.reflowCount = 0;
     this.containerHeight = 0;
     this.isLayoutReady = false; // Reset layout ready state
     
     // Stack sections vertically initially to prevent overlap
     let cumulativeTop = 0;
-    this.positionedSections = resolvedSections.map((section, index) => {
-      const item = {
+    this.positionedSections = validSections.map((section, index) => {
+      const item: PositionedSection = {
         section,
-        key: section.id ?? `${section.title}-${index}`,
+        key: section.id ?? `${section.title ?? section.type ?? 'section'}-${index}`,
         colSpan: this.getSectionColSpan(section),
         left: '0px',
         top: cumulativeTop,
@@ -298,7 +408,35 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     });
     
     this.containerHeight = cumulativeTop;
+    
+    // Diagnostic logging
+    if (this.DEBUG_MODE) {
+      console.log('[MasonryGrid] Positioned sections:', this.positionedSections.length, {
+        containerHeight: this.containerHeight,
+        sections: this.positionedSections.map(p => ({
+          key: p.key,
+          title: p.section.title,
+          type: p.section.type
+        }))
+      });
+    }
+    
+    // Always mark for check to ensure template updates
     this.cdr.markForCheck();
+  }
+  
+  /**
+   * Infer section type from section properties when type is missing
+   */
+  private inferSectionType(section: CardSection): CardSection['type'] {
+    // Use type resolver first
+    const resolved = this.typeResolver.resolve(section);
+    if (resolved && resolved !== 'unknown' && resolved !== 'fallback') {
+      return resolved as CardSection['type'];
+    }
+    
+    // Fallback to 'info' as default - it's the most generic section type
+    return 'info';
   }
 
   /**
@@ -348,11 +486,33 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     let hasZeroHeights = false;
     const itemRefArray = this.itemRefs?.toArray() ?? [];
     
+    // Guard: If positionedSections exist but DOM elements don't, wait for next frame
+    if (this.positionedSections.length > 0 && itemRefArray.length === 0) {
+      // DOM hasn't rendered yet, schedule retry
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          this.reflowWithActualHeights();
+        });
+      });
+      return;
+    }
+    
+    // Ensure itemRefArray length matches positionedSections length
+    if (itemRefArray.length !== this.positionedSections.length) {
+      // Mismatch - wait for DOM to catch up
+      requestAnimationFrame(() => {
+        this.reflowWithActualHeights();
+      });
+      return;
+    }
+    
     // Pre-calculate gap and column width expressions once
     const gapTotal = this.gap * (columns - 1);
     const columnWidthExpr = `calc((100% - ${gapTotal}px) / ${columns})`;
 
-    const updated: PositionedSection[] = this.positionedSections.map((item, index) => {
+    const updated: PositionedSection[] = this.positionedSections
+      .filter(item => item != null && item.section != null)
+      .map((item, index) => {
       const colSpan = Math.min(item.colSpan, columns);
       let bestColumn = 0;
       let minHeight = Number.MAX_VALUE;
@@ -377,19 +537,27 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
         : `calc(${columnWidthExpr} * ${colSpan} + ${this.gap * (colSpan - 1)}px)`;
       const leftExpr = `calc((${columnWidthExpr} + ${this.gap}px) * ${bestColumn})`;
 
-      // Get actual rendered height from DOM element
+      // Safe access with null check
       const itemElement = itemRefArray[index]?.nativeElement;
-      let height = itemElement?.offsetHeight ?? 0;
+      let height = 0;
       
-      // If height is 0, try to get the first child's height (the section renderer content)
-      if (height === 0 && itemElement?.firstElementChild) {
-        height = (itemElement.firstElementChild as HTMLElement).offsetHeight ?? 0;
-      }
-      
-      // Still 0? Use a reasonable minimum
-      if (height === 0) {
+      if (!itemElement) {
+        // Element doesn't exist, use estimated height
         height = 200;
         hasZeroHeights = true;
+      } else {
+        height = itemElement.offsetHeight ?? 0;
+        
+        // If height is 0, try to get the first child's height (the section renderer content)
+        if (height === 0 && itemElement.firstElementChild) {
+          height = (itemElement.firstElementChild as HTMLElement).offsetHeight ?? 0;
+        }
+        
+        // Still 0? Use a reasonable minimum
+        if (height === 0) {
+          height = 200;
+          hasZeroHeights = true;
+        }
       }
 
       // Update column heights

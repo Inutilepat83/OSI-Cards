@@ -13,16 +13,17 @@
     #itemRef
     class="absolute masonry-item"
     [class.masonry-item--ready]="isLayoutReady"
-    [attr.id]="getSectionId(item.section)"
+    [attr.id]="getSectionId(item?.section)"
     [ngStyle]="{
       position: 'absolute',
-      left: item.left,
-      top: item.top + 'px',
-      width: item.width,
+      left: item?.left || '0px',
+      top: (item?.top || 0) + 'px',
+      width: item?.width || '100%',
       zIndex: idx
     }"
   >
     <app-section-renderer
+      *ngIf="item?.section"
       [section]="item.section"
       (sectionEvent)="onSectionEvent($event)"
     ></app-section-renderer>

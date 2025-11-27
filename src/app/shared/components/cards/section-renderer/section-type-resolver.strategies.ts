@@ -5,8 +5,8 @@ import { ISectionTypeResolver } from './section-type-resolver.interface';
 /**
  * Default section type resolver strategy
  * Resolves type based on section.type and section.title
+ * Note: This is a simple class without dependencies, so it doesn't need @Injectable
  */
-@Injectable()
 export class DefaultSectionTypeResolver implements ISectionTypeResolver {
   resolve(section: CardSection): string {
     if (!section) {
