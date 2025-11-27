@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- TBD
+
+## [1.1.3] - 2025-11-27
+
+### Added
 - Command pattern for undo/redo functionality with keyboard shortcuts (Ctrl+Z, Ctrl+Y)
 - Input validation decorators for runtime validation of card inputs and section types
 - Automatic retry logic and fallback strategies in ErrorHandlingService
