@@ -36,7 +36,6 @@
 @import 'components/sections/fallback';
 @import 'components/sections/unified-cards'; /* Must be last to override all section-specific styles */
 @import 'components/sections/global-enforcement'; /* GLOBAL ENFORCEMENT - MUST BE ABSOLUTELY LAST to enforce all settings */
-@import 'components/ai-card-renderer';
 
 /* FINAL OVERRIDE - ABSOLUTELY NO BORDERS OR BORDER-LIKE EFFECTS */
 h1.ai-card-title,

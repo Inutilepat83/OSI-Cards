@@ -13,15 +13,19 @@
 
 .overview-card {
   @include card;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  min-height: auto;
-  padding: calc(var(--card-padding) * 0.625) calc(var(--card-padding) * 0.875) !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  background: var(--card-background);
+  
+  /* Property declarations after mixin (which contains nested rules) must be wrapped in & {} */
+  & {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-height: auto;
+    padding: calc(var(--card-padding) * 0.625) calc(var(--card-padding) * 0.875) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    background: var(--card-background);
+  }
   
   /* Left accent border */
   &::before {
