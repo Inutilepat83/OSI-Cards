@@ -20,9 +20,12 @@ if (!fs.existsSync(distPath)) {
 const libPackageJsonPath = path.join(__dirname, '..', 'projects', 'osi-cards-lib', 'package.json');
 const libPackageJson = JSON.parse(fs.readFileSync(libPackageJsonPath, 'utf8'));
 
+// Use library version as source of truth, fallback to root version
+const version = libPackageJson.version || rootPackageJson.version || '1.0.0';
+
 const libraryPackageJson = {
   name: libPackageJson.name || 'osi-cards-lib',
-  version: libPackageJson.version || rootPackageJson.version || '1.0.0',
+  version: version,
   description: libPackageJson.description || 'Standalone OSI Cards library for Angular applications',
   keywords: libPackageJson.keywords || [
     'angular',

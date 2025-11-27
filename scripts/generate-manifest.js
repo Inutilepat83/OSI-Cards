@@ -11,6 +11,7 @@ const path = require('path');
 
 const CONFIGS_DIR = path.join(__dirname, '../src/assets/configs');
 const MANIFEST_PATH = path.join(CONFIGS_DIR, 'manifest.json');
+const PACKAGE_JSON = path.join(__dirname, '..', 'package.json');
 
 // Card type to directory mapping
 const CARD_TYPE_MAPPING = {
@@ -42,9 +43,17 @@ function determinePriority(cardType, sizeInBytes) {
 
 
 async function generateManifest() {
+  // Read version from package.json
+  let version = '1.0.0';
+  try {
+    const packageJson = JSON.parse(fs.readFileSync(PACKAGE_JSON, 'utf8'));
+    version = packageJson.version || version;
+  } catch (error) {
+    console.warn('Could not read package.json version, using default:', error.message);
+  }
 
   const manifest = {
-    version: '1.0.0',
+    version: version,
     generatedAt: new Date().toISOString(),
     cards: [],
     types: {}

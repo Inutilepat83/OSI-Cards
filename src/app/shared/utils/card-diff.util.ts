@@ -50,6 +50,42 @@ const itemHashCache = new WeakMap<CardItem, string>();
  */
 export class CardDiffUtil {
   /**
+   * Compares two cards and returns change information
+   * @param oldCard The previous card state (can be null)
+   * @param newCard The new card state
+   * @returns Object with changeType and hasChanges flag
+   */
+  static diffCards(
+    oldCard: AICardConfig | null,
+    newCard: AICardConfig
+  ): { changeType: CardChangeType; hasChanges: boolean } {
+    // If no old card, everything is new (structural change)
+    if (!oldCard) {
+      return { changeType: 'structural', hasChanges: true };
+    }
+
+    // Check if cards are equal
+    if (this.areCardsEqual(oldCard, newCard)) {
+      return { changeType: 'content', hasChanges: false };
+    }
+
+    // Check if structure changed (sections added/removed/reordered, types changed)
+    const structureChanged = this.didStructureChange(oldCard.sections, newCard.sections);
+    
+    // Check if sections content changed
+    const sectionsChanged = !this.areSectionsEqual(oldCard.sections, newCard.sections);
+
+    // Determine change type
+    const changeType: CardChangeType = structureChanged ? 'structural' : 'content';
+    const hasChanges = sectionsChanged || 
+                       oldCard.cardTitle !== newCard.cardTitle ||
+                       oldCard.cardSubtitle !== newCard.cardSubtitle ||
+                       oldCard.cardType !== newCard.cardType;
+
+    return { changeType, hasChanges };
+  }
+
+  /**
    * Creates an updated card with only changed sections/fields updated
    * Preserves references to unchanged sections for optimal performance
    */
