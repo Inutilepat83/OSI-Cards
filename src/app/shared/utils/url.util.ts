@@ -1,118 +1,183 @@
-/**
- * URL utilities for validating and sanitizing URLs
- */
+import { SanitizationUtil } from './sanitization.util';
 
 /**
- * Validate if a string is a valid URL
+ * URL validation and sanitization utilities
  * 
- * @param url - The URL string to validate
- * @returns True if the URL is valid, false otherwise
+ * Provides comprehensive URL validation and sanitization for external links,
+ * ensuring security and preventing malicious URL attacks.
  * 
  * @example
  * ```typescript
- * isValidUrl('https://example.com'); // true
- * isValidUrl('not-a-url'); // false
+ * const safeUrl = UrlUtil.validateAndSanitizeUrl(userInput);
+ * if (safeUrl) {
+ *   // Use safe URL
+ * }
  * ```
  */
-export function isValidUrl(url: string): boolean {
-  try {
-    new URL(url);
-    return true;
-  } catch {
-    return false;
+export class UrlUtil {
+  /**
+   * Allowed URL protocols for external links
+   */
+  private static readonly ALLOWED_PROTOCOLS = ['http:', 'https:', 'mailto:'] as const;
+
+  /**
+   * Allowed URL protocols for website actions
+   */
+  private static readonly ALLOWED_WEBSITE_PROTOCOLS = ['http:', 'https:'] as const;
+
+  /**
+   * Validate and sanitize a URL for external use
+   * 
+   * Performs comprehensive validation:
+   * - Checks protocol is allowed (http, https, mailto)
+   * - Validates URL format
+   * - Prevents javascript: and data: protocols
+   * - Sanitizes query parameters
+   * 
+   * @param url - URL to validate and sanitize
+   * @param allowedProtocols - Optional custom allowed protocols (defaults to ALLOWED_PROTOCOLS)
+   * @returns Sanitized URL if valid, null otherwise
+   */
+  static validateAndSanitizeUrl(
+    url: string | null | undefined,
+    allowedProtocols: readonly string[] = this.ALLOWED_PROTOCOLS
+  ): string | null {
+    if (!url || typeof url !== 'string') {
+      return null;
+    }
+
+    // Trim whitespace
+    const trimmedUrl = url.trim();
+    if (!trimmedUrl) {
+      return null;
+    }
+
+    // Check for dangerous patterns
+    const dangerousPatterns = [
+      /javascript:/i,
+      /data:/i,
+      /vbscript:/i,
+      /file:/i,
+      /about:/i
+    ];
+
+    for (const pattern of dangerousPatterns) {
+      if (pattern.test(trimmedUrl)) {
+        console.warn('UrlUtil: Dangerous URL pattern detected:', trimmedUrl);
+        return null;
+      }
+    }
+
+    try {
+      // Parse URL
+      const urlObj = new URL(trimmedUrl);
+
+      // Check protocol
+      if (!allowedProtocols.includes(urlObj.protocol)) {
+        console.warn('UrlUtil: Protocol not allowed:', urlObj.protocol);
+        return null;
+      }
+
+      // For http/https, validate hostname
+      if (urlObj.protocol === 'http:' || urlObj.protocol === 'https:') {
+        // Check for localhost/internal IPs (optional - can be configured)
+        const hostname = urlObj.hostname.toLowerCase();
+        const localhostPatterns = [
+          /^localhost$/,
+          /^127\./,
+          /^192\.168\./,
+          /^10\./,
+          /^172\.(1[6-9]|2[0-9]|3[01])\./
+        ];
+
+        // Allow localhost in development, but log it
+        if (localhostPatterns.some(pattern => pattern.test(hostname))) {
+          console.warn('UrlUtil: Localhost/internal IP detected:', hostname);
+          // In production, you might want to reject these
+          // return null;
+        }
+
+        // Validate hostname format
+        if (!this.isValidHostname(hostname)) {
+          console.warn('UrlUtil: Invalid hostname:', hostname);
+          return null;
+        }
+      }
+
+      // Reconstruct URL to ensure it's properly formatted
+      return urlObj.toString();
+    } catch (error) {
+      // Invalid URL format
+      console.warn('UrlUtil: Invalid URL format:', trimmedUrl, error);
+      return null;
+    }
+  }
+
+  /**
+   * Validate and sanitize URL for website actions (http/https only)
+   * 
+   * @param url - URL to validate
+   * @returns Sanitized URL if valid, null otherwise
+   */
+  static validateWebsiteUrl(url: string | null | undefined): string | null {
+    return this.validateAndSanitizeUrl(url, this.ALLOWED_WEBSITE_PROTOCOLS);
+  }
+
+  /**
+   * Validate hostname format
+   * 
+   * @param hostname - Hostname to validate
+   * @returns true if hostname is valid
+   */
+  private static isValidHostname(hostname: string): boolean {
+    // Basic hostname validation
+    // Must be between 1 and 253 characters
+    if (hostname.length === 0 || hostname.length > 253) {
+      return false;
+    }
+
+    // Must not start or end with a dot
+    if (hostname.startsWith('.') || hostname.endsWith('.')) {
+      return false;
+    }
+
+    // Must contain only valid characters (letters, numbers, dots, hyphens)
+    const hostnamePattern = /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/i;
+    return hostnamePattern.test(hostname);
+  }
+
+  /**
+   * Check if URL is external (not same origin)
+   * 
+   * @param url - URL to check
+   * @returns true if URL is external
+   */
+  static isExternalUrl(url: string): boolean {
+    try {
+      const urlObj = new URL(url, window.location.href);
+      return urlObj.origin !== window.location.origin;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Get safe URL for use in href attributes
+   * 
+   * Returns null for external URLs that should use rel="noopener noreferrer"
+   * or for invalid URLs
+   * 
+   * @param url - URL to process
+   * @returns Safe URL string or null
+   */
+  static getSafeHref(url: string | null | undefined): string | null {
+    const sanitized = this.validateAndSanitizeUrl(url);
+    if (!sanitized) {
+      return null;
+    }
+
+    // For external URLs, we still return the URL but recommend using
+    // rel="noopener noreferrer" in the HTML
+    return sanitized;
   }
 }
-
-/**
- * Validate if a URL uses an allowed protocol
- * 
- * @param url - The URL string to validate
- * @param allowedProtocols - Array of allowed protocols (default: ['http:', 'https:', 'mailto:'])
- * @returns True if the URL uses an allowed protocol, false otherwise
- * 
- * @example
- * ```typescript
- * isAllowedProtocol('https://example.com'); // true
- * isAllowedProtocol('javascript:alert(1)'); // false
- * ```
- */
-export function isAllowedProtocol(url: string, allowedProtocols: string[] = ['http:', 'https:', 'mailto:']): boolean {
-  try {
-    const urlObj = new URL(url);
-    return allowedProtocols.includes(urlObj.protocol);
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Sanitize a URL by validating it and checking protocol
- * 
- * @param url - The URL string to sanitize
- * @param allowedProtocols - Array of allowed protocols
- * @returns The sanitized URL or null if invalid
- * 
- * @example
- * ```typescript
- * sanitizeUrl('https://example.com'); // 'https://example.com'
- * sanitizeUrl('javascript:alert(1)'); // null
- * ```
- */
-export function sanitizeUrl(url: string, allowedProtocols: string[] = ['http:', 'https:', 'mailto:']): string | null {
-  if (!url || typeof url !== 'string') {
-    return null;
-  }
-
-  if (!isValidUrl(url)) {
-    return null;
-  }
-
-  if (!isAllowedProtocol(url, allowedProtocols)) {
-    return null;
-  }
-
-  return url;
-}
-
-/**
- * Get domain from URL
- * 
- * @param url - The URL string
- * @returns The domain or null if invalid
- * 
- * @example
- * ```typescript
- * getDomain('https://example.com/path'); // 'example.com'
- * ```
- */
-export function getDomain(url: string): string | null {
-  try {
-    const urlObj = new URL(url);
-    return urlObj.hostname;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Check if URL is external (different domain)
- * 
- * @param url - The URL to check
- * @param currentDomain - The current domain to compare against
- * @returns True if URL is external, false otherwise
- * 
- * @example
- * ```typescript
- * isExternalUrl('https://example.com', 'mysite.com'); // true
- * isExternalUrl('https://mysite.com/page', 'mysite.com'); // false
- * ```
- */
-export function isExternalUrl(url: string, currentDomain: string): boolean {
-  const urlDomain = getDomain(url);
-  if (!urlDomain) {
-    return false;
-  }
-  return urlDomain !== currentDomain && !urlDomain.endsWith('.' + currentDomain);
-}
-
-

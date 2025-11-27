@@ -2,8 +2,25 @@ import { Directive, Input, ElementRef, AfterViewInit, OnDestroy, inject } from '
 import { FocusTrap, FocusTrapFactory } from '@angular/cdk/a11y';
 
 /**
- * Directive for trapping focus within a container (useful for modals, dialogs)
- * Improves keyboard navigation and accessibility
+ * Focus Trap Directive
+ * 
+ * Traps keyboard focus within a container element, preventing focus from escaping.
+ * Essential for modals, dialogs, and other overlay components to maintain proper
+ * keyboard navigation and accessibility.
+ * 
+ * Features:
+ * - Automatic focus trapping on mount
+ * - Initial element focus
+ * - Cleanup on destroy
+ * - Optional enable/disable via input
+ * 
+ * @example
+ * ```html
+ * <div appFocusTrap class="modal">
+ *   <button>First focusable</button>
+ *   <button>Last focusable</button>
+ * </div>
+ * ```
  */
 @Directive({
   selector: '[appFocusTrap]',

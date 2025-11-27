@@ -26,7 +26,38 @@ export interface ImageExportOptions {
 
 /**
  * Export service for exporting cards in various formats
- * Allows users to export cards as JSON, PDF, or images
+ * 
+ * Provides comprehensive export functionality for OSI Cards, supporting multiple
+ * formats including JSON, PDF, PNG, SVG, JPEG, CSV, and text. Handles both single
+ * card and batch exports with configurable options.
+ * 
+ * Features:
+ * - Multiple export formats (JSON, PDF, PNG, SVG, JPEG, CSV, text)
+ * - Batch export support for multiple cards
+ * - Clipboard integration for quick sharing
+ * - Optional dependency support (jsPDF, html2canvas)
+ * - High-resolution exports with configurable scaling
+ * - Native browser API support (no dependencies for PNG export)
+ * 
+ * @example
+ * ```typescript
+ * const exportService = inject(ExportService);
+ * 
+ * // Export as JSON
+ * exportService.exportAsJson(card, 'my-card.json');
+ * 
+ * // Export as PNG (native, no dependencies)
+ * await exportService.exportAsPngNative(element, 'card.png', 2);
+ * 
+ * // Export as PDF (requires jsPDF)
+ * await exportService.exportAsPdf(card, element, {
+ *   format: 'a4',
+ *   orientation: 'portrait'
+ * }, 'card.pdf');
+ * 
+ * // Copy to clipboard
+ * await exportService.copyToClipboard(card);
+ * ```
  */
 @Injectable({
   providedIn: 'root'
@@ -153,7 +184,9 @@ export class ExportService {
     try {
       // Dynamic import of jsPDF (optional dependency)
       // Using type assertion to avoid TypeScript errors when package is not installed
-      let jsPDF: any;
+      // Dynamic import for optional dependency
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let jsPDF: typeof import('jspdf').jsPDF | null = null;
       try {
         const jsPDFModule = await import('jspdf' as any);
         jsPDF = jsPDFModule.jsPDF || jsPDFModule.default?.jsPDF || jsPDFModule.default;
@@ -168,6 +201,10 @@ export class ExportService {
         title = card.cardTitle || 'Card',
         includeMetadata = true
       } = options;
+
+      if (!jsPDF) {
+        throw new Error('jsPDF is not available');
+      }
 
       const pdf = new jsPDF({
         orientation,
@@ -428,7 +465,9 @@ export class ExportService {
     try {
       // Dynamic import of jsPDF (optional dependency)
       // Using type assertion to avoid TypeScript errors when package is not installed
-      let jsPDF: any;
+      // Dynamic import for optional dependency
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let jsPDF: typeof import('jspdf').jsPDF | null = null;
       try {
         const jsPDFModule = await import('jspdf' as any);
         jsPDF = jsPDFModule.jsPDF || jsPDFModule.default?.jsPDF || jsPDFModule.default;
@@ -441,6 +480,10 @@ export class ExportService {
         orientation = 'portrait',
         margin = 20
       } = options;
+
+      if (!jsPDF) {
+        throw new Error('jsPDF is not available');
+      }
 
       const pdf = new jsPDF({
         orientation,
@@ -501,13 +544,20 @@ export class ExportService {
     // For PNG/JPEG, use html2canvas (optional dependency)
     // Using type assertion to avoid TypeScript errors when package is not installed
     try {
-      let html2canvas: any;
+      // Dynamic import for optional dependency
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let html2canvas: ((element: HTMLElement, options?: any) => Promise<HTMLCanvasElement>) | null = null;
       try {
         const html2canvasModule = await import('html2canvas' as any);
         html2canvas = html2canvasModule.default || html2canvasModule;
       } catch (importError) {
         throw new Error('html2canvas is not installed. Install with: npm install html2canvas');
       }
+      
+      if (!html2canvas || typeof html2canvas !== 'function') {
+        throw new Error('html2canvas is not available or is not a function');
+      }
+      
       const canvas = await html2canvas(element, {
         scale,
         backgroundColor,

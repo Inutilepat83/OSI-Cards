@@ -1,10 +1,10 @@
-<div class="ai-section ai-section--contact">
+<div class="ai-section ai-section--contact" role="region" [attr.aria-labelledby]="'contact-section-title-' + section.id" [attr.aria-describedby]="section.description ? 'contact-section-desc-' + section.id : null">
   <div class="ai-section__header">
     <div class="ai-section__details">
-      <h3 class="ai-section__title">{{ section.title }}</h3>
-      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
+      <h3 class="ai-section__title" [id]="'contact-section-title-' + section.id">{{ section.title }}</h3>
+      <p *ngIf="section.description" class="ai-section__description" [id]="'contact-section-desc-' + section.id">{{ section.description }}</p>
     </div>
-    <span *ngIf="hasContacts" class="ai-section__badge">
+    <span *ngIf="hasContacts" class="ai-section__badge" aria-label="{{ contacts.length }} {{ contacts.length === 1 ? 'contact' : 'contacts' }}">
       {{ contacts.length }} {{ contacts.length === 1 ? 'contact' : 'contacts' }}
     </span>
   </div>
@@ -13,10 +13,13 @@
     <ng-container *ngIf="hasContacts; else contactEmpty">
       <div class="contact-grid">
         <article
-          *ngFor="let contact of contacts; trackBy: trackContact"
+          *ngFor="let contact of contacts; trackBy: trackContact; let idx = index"
           class="contact-card"
           role="button"
           tabindex="0"
+          [attr.aria-label]="getContactName(contact) + (getContactRole(contact) ? ', ' + getContactRole(contact) : '') + (getContactEmail(contact) ? '. Email: ' + getContactEmail(contact) : '') + (getContactPhone(contact) ? '. Phone: ' + getContactPhone(contact) : '')"
+          [attr.aria-posinset]="idx + 1"
+          [attr.aria-setsize]="contacts.length"
           (click)="onContactClick(contact)"
           (keydown.enter)="onContactClick(contact)"
           (keydown.space)="$event.preventDefault(); onContactClick(contact)"
@@ -50,9 +53,10 @@
               *ngIf="getContactEmail(contact) as email"
               class="contact-card__meta-item contact-card__meta-item--link"
               href="mailto:{{ email }}"
+              [attr.aria-label]="'Send email to ' + getContactName(contact) + ' at ' + email"
               (click)="$event.stopPropagation()"
             >
-              <lucide-icon name="mail" size="14" class="contact-card__meta-icon"></lucide-icon>
+              <lucide-icon name="mail" size="14" class="contact-card__meta-icon" aria-hidden="true"></lucide-icon>
               <span class="contact-card__meta-text">{{ email }}</span>
             </a>
 
@@ -60,19 +64,20 @@
               *ngIf="getContactPhone(contact) as phone"
               class="contact-card__meta-item contact-card__meta-item--link"
               href="tel:{{ phone }}"
+              [attr.aria-label]="'Call ' + getContactName(contact) + ' at ' + phone"
               (click)="$event.stopPropagation()"
             >
-              <lucide-icon name="phone" size="14" class="contact-card__meta-icon"></lucide-icon>
+              <lucide-icon name="phone" size="14" class="contact-card__meta-icon" aria-hidden="true"></lucide-icon>
               <span class="contact-card__meta-text">{{ phone }}</span>
             </a>
 
             <div *ngIf="contact.department" class="contact-card__meta-item">
-              <lucide-icon name="building" size="14" class="contact-card__meta-icon"></lucide-icon>
+              <lucide-icon name="building" size="14" class="contact-card__meta-icon" aria-hidden="true"></lucide-icon>
               <span class="contact-card__meta-text">{{ contact.department }}</span>
             </div>
 
             <div *ngIf="contact.location" class="contact-card__meta-item">
-              <lucide-icon name="map-pin" size="14" class="contact-card__meta-icon"></lucide-icon>
+              <lucide-icon name="map-pin" size="14" class="contact-card__meta-icon" aria-hidden="true"></lucide-icon>
               <span class="contact-card__meta-text">{{ contact.location }}</span>
             </div>
           </div>
@@ -81,8 +86,8 @@
     </ng-container>
 
     <ng-template #contactEmpty>
-      <div class="section-empty">
-        <lucide-icon name="user" size="32" class="section-empty__icon"></lucide-icon>
+      <div class="section-empty" role="status" aria-live="polite">
+        <lucide-icon name="user" size="32" class="section-empty__icon" aria-hidden="true"></lucide-icon>
         <p class="section-empty__text">No contacts available</p>
       </div>
     </ng-template>

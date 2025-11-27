@@ -23,6 +23,36 @@ export interface CardFieldInteractionEvent {
 
 export type StreamingStage = 'idle' | 'thinking' | 'streaming' | 'complete' | 'aborted' | 'error' | undefined;
 
+/**
+ * AI Card Renderer Component
+ * 
+ * Main component for rendering OSI Cards with interactive features and animations.
+ * Orchestrates the rendering of card sections through the masonry grid layout engine.
+ * 
+ * Features:
+ * - Card configuration rendering with section normalization
+ * - Magnetic tilt effect for interactive cards
+ * - Empty state with animated messages
+ * - Section event handling and propagation
+ * - Layout change detection and optimization
+ * - Export functionality integration
+ * - Fullscreen mode support
+ * 
+ * The component processes card configurations, normalizes sections, and delegates
+ * rendering to the MasonryGridComponent which handles responsive layout.
+ * 
+ * @example
+ * ```html
+ * <app-ai-card-renderer
+ *   [cardConfig]="myCard"
+ *   [tiltEnabled]="true"
+ *   [isFullscreen]="false"
+ *   (sectionEvent)="onSectionEvent($event)"
+ *   (layoutChange)="onLayoutChange($event)"
+ *   (export)="onExport()">
+ * </app-ai-card-renderer>
+ * ```
+ */
 @Component({
   selector: 'app-ai-card-renderer',
   standalone: true,
@@ -585,7 +615,10 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   /**
    * Type guard to check if action has email property
    */
-  private hasEmailProperty(action: CardAction): action is CardAction & { email: any } {
+  /**
+   * Type guard to check if action has email property with proper structure
+   */
+  private hasEmailProperty(action: CardAction): action is MailCardAction {
     return 'email' in action && action.email !== undefined;
   }
 
@@ -661,7 +694,10 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     });
   }
 
-  private handleEmailAction(action: CardAction & { email: any }): void {
+  /**
+   * Handle email action with proper type safety
+   */
+  private handleEmailAction(action: MailCardAction): void {
     // Validate that email configuration exists
     if (!action.email) {
       this.logger.error('Email action requires email configuration', 'AICardRendererComponent');

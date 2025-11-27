@@ -1,8 +1,27 @@
-import { Directive, Input, ElementRef, OnInit, Renderer2 } from '@angular/core';
+import { Directive, Input, ElementRef, OnInit, Renderer2, inject } from '@angular/core';
 
 /**
- * Directive for creating skip navigation links
- * Improves keyboard navigation and accessibility
+ * Skip Link Directive
+ * 
+ * Creates accessible skip navigation links that allow keyboard users to bypass
+ * repetitive navigation and jump directly to main content. Essential for WCAG
+ * 2.1 AA compliance and improved keyboard navigation.
+ * 
+ * Features:
+ * - Automatically positioned off-screen until focused
+ * - Smooth focus/blur transitions
+ * - Customizable target and text
+ * - High z-index to appear above all content
+ * 
+ * @example
+ * ```html
+ * <div appSkipLink="main-content" skipLinkText="Skip to main content">
+ *   <!-- Navigation content -->
+ * </div>
+ * <main id="main-content">
+ *   <!-- Main content -->
+ * </main>
+ * ```
  */
 @Directive({
   selector: '[appSkipLink]',
@@ -12,10 +31,8 @@ export class SkipLinkDirective implements OnInit {
   @Input() appSkipLink?: string;
   @Input() skipLinkText: string = 'Skip to main content';
 
-  constructor(
-    private readonly elementRef: ElementRef,
-    private readonly renderer: Renderer2
-  ) {}
+  private readonly elementRef = inject(ElementRef);
+  private readonly renderer = inject(Renderer2);
 
   ngOnInit(): void {
     const element = this.elementRef.nativeElement as HTMLElement;

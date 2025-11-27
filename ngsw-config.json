@@ -59,9 +59,27 @@
       ],
       "cacheConfig": {
         "strategy": "performance",
-        "maxSize": 100,
+        "maxSize": 200,
         "maxAge": "30d",
         "timeout": "5s"
+      }
+    },
+    {
+      "name": "card-configs",
+      "urls": [
+        "/assets/configs/companies/**",
+        "/assets/configs/contacts/**",
+        "/assets/configs/events/**",
+        "/assets/configs/opportunities/**",
+        "/assets/configs/products/**",
+        "/assets/configs/sko/**",
+        "/assets/configs/financials/**"
+      ],
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 500,
+        "maxAge": "7d",
+        "timeout": "10s"
       }
     },
     {

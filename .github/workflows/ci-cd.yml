@@ -222,6 +222,10 @@ jobs:
             npm run build:analyze
           fi
 
+      - name: Bundle Size Check
+        if: ${{ matrix.build_config == 'production' }}
+        run: npm run size:check
+
       - name: Bundle Size Analysis
         if: ${{ matrix.build_config == 'analyze' }}
         run: |

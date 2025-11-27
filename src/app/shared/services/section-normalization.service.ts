@@ -64,15 +64,29 @@ const DEFAULT_COL_SPAN_THRESHOLD: ColSpanThresholds = { two: 6 };
  * Handles section type resolution, column span calculations, and section sorting.
  * Provides intelligent type matching based on section type and title patterns.
  * 
+ * Features:
+ * - Section type resolution with fallbacks
+ * - Column span threshold calculations
+ * - Section priority-based sorting
+ * - Streaming order support
+ * - Metadata normalization
+ * 
  * @example
  * ```typescript
+ * const sectionNormalization = inject(SectionNormalizationService);
+ * 
+ * // Normalize a section
  * const normalized = sectionNormalization.normalizeSection({
  *   title: 'Company Info',
  *   type: 'info',
  *   fields: [...]
  * });
  * 
- * const colSpan = sectionNormalization.calculateColSpan(normalized, 4);
+ * // Get section priority for sorting
+ * const priority = sectionNormalization.getSectionPriority(normalized);
+ * 
+ * // Normalize and sort multiple sections
+ * const sorted = sectionNormalization.normalizeAndSortSections(sections);
  * ```
  */
 @Injectable({
@@ -208,7 +222,32 @@ export class SectionNormalizationService {
 
   /**
    * Get section priority for sorting
-   * Lower numbers appear first
+   * 
+   * Returns a numeric priority value where lower numbers indicate higher priority.
+   * Sections are sorted by priority to ensure consistent ordering across cards.
+   * 
+   * Priority order:
+   * 1. Contact cards
+   * 2. Overview sections
+   * 3. Analytics/Stats
+   * 4. Products
+   * 5. Solutions
+   * 6. Maps
+   * 7. Financials
+   * 8. Charts
+   * 9. Lists
+   * 10. Events
+   * 11. Info sections
+   * 12. Other (default)
+   * 
+   * @param section - Section to get priority for
+   * @returns Priority number (lower = higher priority)
+   * 
+   * @example
+   * ```typescript
+   * const priority = sectionNormalization.getSectionPriority(section);
+   * // Returns 1-12 based on section type
+   * ```
    */
   getSectionPriority(section: CardSection): number {
     const type = section.type?.toLowerCase() ?? '';
@@ -230,7 +269,20 @@ export class SectionNormalizationService {
   }
 
   /**
-   * Sort sections by priority
+   * Sort sections by priority and streaming order
+   * 
+   * Sorts sections first by streaming order (if present), then by priority.
+   * This ensures sections appear in the correct order during streaming updates
+   * while maintaining consistent priority-based ordering.
+   * 
+   * @param sections - Array of sections to sort
+   * @returns Sorted array of sections
+   * 
+   * @example
+   * ```typescript
+   * const sorted = sectionNormalization.sortSections(sections);
+   * // Sections are now ordered by priority and streaming order
+   * ```
    */
   sortSections(sections: CardSection[]): CardSection[] {
     return [...sections].sort((a, b) => {
@@ -281,6 +333,18 @@ export class SectionNormalizationService {
 
   /**
    * Normalize and sort sections
+   * 
+   * Convenience method that normalizes all sections and then sorts them.
+   * This is the recommended way to prepare sections for rendering.
+   * 
+   * @param sections - Array of sections to normalize and sort
+   * @returns Normalized and sorted array of sections
+   * 
+   * @example
+   * ```typescript
+   * const processed = sectionNormalization.normalizeAndSortSections(rawSections);
+   * // Sections are now normalized and sorted
+   * ```
    */
   normalizeAndSortSections(sections: CardSection[]): CardSection[] {
     const normalized = sections.map(section => this.normalizeSection(section));

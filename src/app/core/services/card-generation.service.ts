@@ -9,8 +9,32 @@ import { JsonProcessingService } from './json-processing.service';
 import { ValidateCardType, validateObject } from '../../shared/decorators/validation.decorator';
 
 /**
- * Service for card generation logic
- * Extracted from HomePageComponent for better separation of concerns
+ * Card Generation Service
+ * 
+ * Handles card generation from JSON input, validation, and merging with existing cards.
+ * Provides a clean separation of concerns for card generation logic, making it easier
+ * to test and maintain.
+ * 
+ * Features:
+ * - JSON parsing and validation
+ * - Card ID generation
+ * - Card merging with change detection
+ * - NgRx store integration
+ * - Template loading support
+ * 
+ * @example
+ * ```typescript
+ * const cardGen = inject(CardGenerationService);
+ * 
+ * // Generate card from JSON
+ * const card = cardGen.generateCardFromJson(jsonString);
+ * if (card) {
+ *   cardGen.dispatchCard(card, 'content');
+ * }
+ * 
+ * // Merge with existing card
+ * const merged = cardGen.mergeCard(newCard, existingCard);
+ * ```
  */
 @Injectable({
   providedIn: 'root'

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
@@ -497,8 +497,7 @@ export class CardImportExportComponent implements OnInit, OnDestroy {
 
   globalError: string | null = null;
   private destroy$ = new Subject<void>();
-
-  constructor(private storageService: JsonFileStorageService) {}
+  private readonly storageService = inject(JsonFileStorageService);
 
   ngOnInit(): void {
     this.loadStoredCards();

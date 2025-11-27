@@ -49,7 +49,9 @@
     "pwa:validate": "echo 'PWA validation placeholder'",
     "performance:report": "echo 'Performance report placeholder'",
     "serve:prod": "npx ng serve --configuration production",
-    "clean": "rm -rf dist/ node_modules/.cache/ .angular/"
+    "clean": "rm -rf dist/ node_modules/.cache/ .angular/",
+    "docs:generate": "typedoc",
+    "docs:serve": "npx http-server docs/api -p 8080 -o"
   },
   "dependencies": {
     "@angular/animations": "^20.0.0",

@@ -6,14 +6,37 @@ import { AppConfigService } from '../services/app-config.service';
 import { IndexedDBCacheService } from '../services/indexeddb-cache.service';
 
 interface CacheEntry {
-  data: any;
+  data: unknown;
   timestamp: number;
 }
 
 /**
- * HTTP cache interceptor for card configs
- * Caches GET requests to /assets/configs/ for improved performance
- * Uses both in-memory cache and IndexedDB for persistent caching
+ * HTTP Cache Interceptor
+ * 
+ * HTTP interceptor that caches GET requests to improve performance and reduce
+ * network traffic. Uses a two-tier caching strategy: in-memory cache for fast
+ * access and IndexedDB for persistent caching across page reloads.
+ * 
+ * Features:
+ * - Two-tier caching (in-memory + IndexedDB)
+ * - Configurable TTL (Time To Live) for cache entries
+ * - Automatic cache invalidation
+ * - Selective caching (only /assets/configs/ endpoints)
+ * - Cache management utilities
+ * 
+ * @example
+ * ```typescript
+ * const interceptor = inject(HttpCacheInterceptor);
+ * 
+ * // Clear cache for specific URL
+ * interceptor.clearCache('/assets/configs/cards.json');
+ * 
+ * // Clear all cache
+ * interceptor.clearAllCache();
+ * 
+ * // Get cache size
+ * const size = interceptor.getCacheSize();
+ * ```
  */
 @Injectable()
 export class HttpCacheInterceptor implements HttpInterceptor {

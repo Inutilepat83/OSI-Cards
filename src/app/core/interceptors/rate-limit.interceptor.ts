@@ -84,10 +84,18 @@ export interface RateLimitConfig {
   endpoints?: EndpointRateLimit[]; // Per-endpoint limits
   maxRetries?: number; // Maximum retry attempts (default: 3)
   retryBackoff?: 'linear' | 'exponential'; // Retry backoff strategy
+  strategy?: RateLimitStrategy; // Rate limiting algorithm (default: TOKEN_BUCKET)
+  burstAllowance?: number; // Allow burst of requests beyond capacity (default: 0)
+  priorityQueuing?: boolean; // Enable priority-based request queuing (default: false)
 }
 
 /**
  * Default rate limit configuration
+ * 
+ * Uses conservative defaults to prevent API overload:
+ * - 10 requests capacity with 2 requests/second refill rate
+ * - Exponential backoff for retries (more aggressive than linear)
+ * - Per-endpoint configuration support for fine-grained control
  */
 const DEFAULT_CONFIG: RateLimitConfig = {
   capacity: 10,
@@ -100,8 +108,48 @@ const DEFAULT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * Rate limiting HTTP interceptor
- * Implements token bucket algorithm to limit API call rate
+ * Advanced rate limit strategies
+ */
+export enum RateLimitStrategy {
+  /** Token bucket algorithm (default) */
+  TOKEN_BUCKET = 'token-bucket',
+  /** Sliding window algorithm */
+  SLIDING_WINDOW = 'sliding-window',
+  /** Fixed window algorithm */
+  FIXED_WINDOW = 'fixed-window'
+}
+
+/**
+ * Rate Limit Interceptor
+ * 
+ * HTTP interceptor that implements rate limiting using the token bucket algorithm.
+ * Prevents API overload by limiting the number of requests per time period. Supports
+ * per-endpoint configuration, automatic retries with backoff, and server-side rate
+ * limit handling.
+ * 
+ * Features:
+ * - Token bucket algorithm for rate limiting
+ * - Per-endpoint rate limit configuration
+ * - Automatic retry with exponential/linear backoff
+ * - Server-side rate limit detection (429 responses)
+ * - Configurable capacity and refill rates
+ * - Request queuing and throttling
+ * 
+ * @example
+ * ```typescript
+ * const interceptor = inject(RateLimitInterceptor);
+ * 
+ * // Configure rate limiting
+ * interceptor.configure({
+ *   capacity: 10,
+ *   refillRate: 2, // 2 requests per second
+ *   maxRetries: 3,
+ *   retryBackoff: 'exponential',
+ *   endpoints: [
+ *     { pattern: '/api/search', capacity: 5, refillRate: 1 }
+ *   ]
+ * });
+ * ```
  */
 @Injectable()
 export class RateLimitInterceptor implements HttpInterceptor {

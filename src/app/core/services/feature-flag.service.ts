@@ -7,8 +7,36 @@ export interface FeatureFlags {
 }
 
 /**
- * Service for managing feature flags
- * Allows toggling features on/off at runtime and via environment configuration
+ * Feature Flag Service
+ * 
+ * Manages feature flags for enabling/disabling features at runtime. Supports
+ * environment-based configuration, localStorage persistence, and reactive updates.
+ * Essential for A/B testing, gradual rollouts, and feature toggling.
+ * 
+ * Features:
+ * - Runtime feature toggling
+ * - Environment-based defaults
+ * - localStorage persistence
+ * - Reactive flag updates via observables
+ * - Multiple flag sources (defaults, environment, localStorage)
+ * 
+ * @example
+ * ```typescript
+ * const flags = inject(FeatureFlagService);
+ * 
+ * // Check if feature is enabled
+ * if (flags.isEnabled('exportToPdf')) {
+ *   this.exportToPdf();
+ * }
+ * 
+ * // Toggle a feature
+ * flags.toggle('darkMode');
+ * 
+ * // Subscribe to flag changes
+ * flags.flags$.subscribe(flags => {
+ *   console.log('Feature flags updated:', flags);
+ * });
+ * ```
  */
 @Injectable({
   providedIn: 'root'

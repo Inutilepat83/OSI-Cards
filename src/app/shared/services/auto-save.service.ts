@@ -35,7 +35,7 @@ export class AutoSaveService {
   private saveSubscription: any;
 
   constructor() {
-    // Setup debounced save subscription
+    // Setup debounced save subscription in constructor to ensure it's active immediately
     this.saveSubject.pipe(
       debounceTime(this.config.UI.DEBOUNCE_SEARCH_MS)
     ).subscribe((data) => {

@@ -5,6 +5,26 @@ import { LucideIconsModule } from '../../../../icons/lucide-icons.module';
 import { BaseSectionComponent } from '../base-section.component';
 import { SectionUtilsService } from '../../../../services/section-utils.service';
 
+/**
+ * Overview Section Component
+ * 
+ * Displays high-level overview information with key metrics and status indicators.
+ * Optimized for executive summaries and dashboard-style data presentation.
+ * 
+ * Features:
+ * - Key metrics display
+ * - Status badge support
+ * - Field interaction events
+ * - Streaming placeholder handling
+ * 
+ * @example
+ * ```html
+ * <app-overview-section
+ *   [section]="overviewSection"
+ *   (fieldInteraction)="onFieldClick($event)">
+ * </app-overview-section>
+ * ```
+ */
 @Component({
   selector: 'app-overview-section',
   standalone: true,

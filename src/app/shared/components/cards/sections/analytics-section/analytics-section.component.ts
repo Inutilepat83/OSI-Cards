@@ -5,12 +5,36 @@ import { LucideIconsModule } from '../../../../icons/lucide-icons.module';
 import { BaseSectionComponent } from '../base-section.component';
 import { SectionUtilsService } from '../../../../services/section-utils.service';
 
+/**
+ * Extended field type for analytics sections with trend and percentage data
+ */
 type AnalyticsField = CardField & {
   change?: number;
   trend?: 'up' | 'down' | 'stable';
   percentage?: number;
 };
 
+/**
+ * Analytics Section Component
+ * 
+ * Displays analytics metrics with trend indicators, spark lines, and percentage
+ * values. Optimized for performance metrics, growth rates, and statistical data.
+ * 
+ * Features:
+ * - Trend indicators with icons (up, down, stable)
+ * - Percentage display with formatting
+ * - Change value display with +/- indicators
+ * - Spark line visualization support
+ * - Field interaction events
+ * 
+ * @example
+ * ```html
+ * <app-analytics-section
+ *   [section]="analyticsSection"
+ *   (fieldInteraction)="onFieldClick($event)">
+ * </app-analytics-section>
+ * ```
+ */
 @Component({
   selector: 'app-analytics-section',
   standalone: true,

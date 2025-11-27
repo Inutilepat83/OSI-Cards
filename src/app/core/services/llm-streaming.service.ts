@@ -24,8 +24,41 @@ export interface SectionCompletionInfo {
 }
 
 /**
- * Service for managing LLM streaming simulation
- * Handles chunking, parsing, and progressive card updates
+ * LLM Streaming Service
+ * 
+ * Simulates LLM (Large Language Model) streaming behavior for progressive card generation.
+ * Provides realistic streaming experience with chunked updates, thinking delays, and
+ * progressive section completion. Essential for creating an engaging user experience
+ * during card generation.
+ * 
+ * Features:
+ * - Realistic streaming simulation with configurable chunk sizes
+ * - Thinking delay simulation before streaming starts
+ * - Progressive section completion tracking
+ * - Buffer management and JSON parsing
+ * - State management with observables
+ * - Automatic cleanup and cancellation
+ * 
+ * @example
+ * ```typescript
+ * const streamingService = inject(LLMStreamingService);
+ * 
+ * // Start streaming
+ * streamingService.start(targetJson);
+ * 
+ * // Subscribe to card updates
+ * streamingService.cardUpdates$.subscribe(update => {
+ *   console.log('Card updated:', update.card);
+ * });
+ * 
+ * // Subscribe to state changes
+ * streamingService.state$.subscribe(state => {
+ *   console.log('Streaming state:', state);
+ * });
+ * 
+ * // Stop streaming
+ * streamingService.stop();
+ * ```
  */
 @Injectable({
   providedIn: 'root'

@@ -4,6 +4,7 @@ import { CardSection } from '../../../../models';
 import { SectionRendererComponent, SectionRenderEvent } from '../section-renderer/section-renderer.component';
 import { Breakpoint, getBreakpointFromWidth } from '../../../utils/responsive.util';
 import { SectionTypeResolverService } from '../section-renderer/section-type-resolver.service';
+import { AppConfigService } from '../../../../core/services/app-config.service';
 
 interface ColSpanThresholds {
   two: number;
@@ -78,9 +79,14 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly typeResolver = inject(SectionTypeResolverService);
+  private readonly appConfig = inject(AppConfigService);
   
-  // Diagnostic mode flag - set to true to enable detailed logging
-  private readonly DEBUG_MODE = false;
+  /**
+   * Check if debug mode is enabled via environment configuration
+   */
+  private get isDebugMode(): boolean {
+    return this.appConfig.LOGGING.ENABLE_DEBUG;
+  }
 
   positionedSections: PositionedSection[] = [];
   containerHeight = 0;
@@ -106,7 +112,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       }
       
       // Diagnostic logging
-      if (this.DEBUG_MODE) {
+      if (this.isDebugMode) {
         console.log('[MasonryGrid] Sections received:', this.sections.length, this.sections);
       }
       
@@ -315,11 +321,22 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   /**
    * Compute initial layout for sections
    * 
-   * Creates an initial vertical stack of sections to prevent overlap.
-   * This is a fast approximation that will be refined by reflowWithActualHeights()
-   * once actual DOM heights are available.
+   * Algorithm Overview:
+   * 1. Filters and validates sections (removes null/undefined, ensures required properties)
+   * 2. Resolves missing section types using type resolver or inference
+   * 3. Creates initial vertical stack to prevent overlap (fast approximation)
+   * 4. Uses estimated heights (300px + gap) for initial positioning
+   * 5. Refined by reflowWithActualHeights() once actual DOM heights are available
    * 
-   * Uses estimated heights (300px + gap) for initial positioning.
+   * Performance Notes:
+   * - Creates shallow copies when adding types to avoid mutating input (important for live edits)
+   * - Uses type resolver cache for efficient type resolution
+   * - Initial layout is O(n) where n is number of sections
+   * 
+   * Edge Cases Handled:
+   * - Sections without type: resolved via type resolver or inferred from title
+   * - Sections without id/title: filtered out with warning
+   * - Null/undefined sections: filtered out silently
    */
   private computeInitialLayout(): void {
     const resolvedSections = (this.sections ?? [])
@@ -330,7 +347,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       );
     
     // Diagnostic logging
-    if (this.DEBUG_MODE) {
+    if (this.isDebugMode) {
       console.log('[MasonryGrid] Resolved sections after initial filter:', resolvedSections.length, resolvedSections);
     }
     
@@ -345,7 +362,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       
       // Must have at least id, title, or type
       if (!section.id && !section.title && !section.type) {
-        if (this.DEBUG_MODE) {
+        if (this.isDebugMode) {
           console.warn('[MasonryGrid] Section filtered out - missing id, title, and type:', section);
         }
         return null;
@@ -358,13 +375,13 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
         
         if (resolvedType && resolvedType !== 'unknown' && resolvedType !== 'fallback') {
           finalType = resolvedType as CardSection['type'];
-          if (this.DEBUG_MODE) {
+          if (this.isDebugMode) {
             console.log('[MasonryGrid] Resolved missing type for section:', section.title, '->', resolvedType);
           }
         } else {
           // Try to infer from title or use 'info' as default
           finalType = this.inferSectionType(section);
-          if (this.DEBUG_MODE) {
+          if (this.isDebugMode) {
             console.log('[MasonryGrid] Inferred type for section:', section.title, '->', finalType);
           }
         }
@@ -379,7 +396,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     }).filter((section): section is CardSection => section !== null);
     
     // Diagnostic logging
-    if (this.DEBUG_MODE) {
+    if (this.isDebugMode) {
       console.log('[MasonryGrid] Valid sections after validation:', validSections.length, validSections);
       const filteredCount = resolvedSections.length - validSections.length;
       if (filteredCount > 0) {
@@ -410,7 +427,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     this.containerHeight = cumulativeTop;
     
     // Diagnostic logging
-    if (this.DEBUG_MODE) {
+    if (this.isDebugMode) {
       console.log('[MasonryGrid] Positioned sections:', this.positionedSections.length, {
         containerHeight: this.containerHeight,
         sections: this.positionedSections.map(p => ({
@@ -442,15 +459,44 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   /**
    * Reflow layout using actual DOM element heights
    * 
-   * This is the core layout algorithm that:
-   * 1. Calculates optimal column count based on container width
-   * 2. Determines column span for each section using density heuristics
-   * 3. Finds the best column position for each section (shortest column)
-   * 4. Positions sections using absolute positioning with calculated left/top/width
-   * 5. Updates container height to accommodate all sections
+   * Core Layout Algorithm (Masonry Grid):
    * 
-   * Uses a "shortest column" algorithm to minimize gaps and create a balanced layout.
-   * Automatically retries if zero heights are detected (up to MAX_REFLOWS times).
+   * Step 1: Calculate optimal column count
+   *   - Formula: columns = min(maxColumns, max(1, floor((containerWidth + gap) / (minColumnWidth + gap))))
+   *   - Ensures columns fit within container while respecting minColumnWidth constraint
+   * 
+   * Step 2: Initialize column heights array
+   *   - Tracks current height of each column (starts at 0)
+   *   - Used to find shortest column for next section placement
+   * 
+   * Step 3: For each section, find optimal position
+   *   a) Calculate column span (how many columns section occupies)
+   *   b) Find best starting column using "shortest column" heuristic:
+   *      - For each possible starting position (0 to columns - colSpan)
+   *      - Calculate max height across all columns section would occupy
+   *      - Choose position with minimum max height (shortest column)
+   *   c) Calculate position:
+   *      - left: bestColumn * (columnWidth + gap)
+   *      - top: max height of columns section occupies
+   *      - width: colSpan * columnWidth + (colSpan - 1) * gap
+   *   d) Update column heights for occupied columns
+   * 
+   * Step 4: Update container height
+   *   - Set to maximum column height to accommodate all sections
+   * 
+   * Performance Optimizations:
+   * - Pre-calculates gap and column width expressions once
+   * - Uses memoized column span calculations
+   * - Batches DOM reads/writes using RAF
+   * - Retries automatically if heights are zero (DOM not ready)
+   * 
+   * Edge Cases:
+   * - Zero heights: Retries up to MAX_REFLOWS times
+   * - DOM mismatch: Waits for DOM to catch up with sections array
+   * - Empty sections: Returns early
+   * 
+   * Time Complexity: O(n * c) where n = sections, c = columns
+   * Space Complexity: O(n + c) for positioned sections and column heights
    */
   private reflowWithActualHeights(): void {
     if (!this.containerRef?.nativeElement || this.reflowCount >= this.MAX_REFLOWS) {
@@ -517,14 +563,31 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       let bestColumn = 0;
       let minHeight = Number.MAX_VALUE;
 
-      // Optimized: Find best column more efficiently
+      /**
+       * Shortest Column Algorithm:
+       * 
+       * For each possible starting column position (0 to columns - colSpan):
+       * 1. Calculate the maximum height across all columns the section would occupy
+       * 2. Choose the position with the minimum maximum height
+       * 
+       * This ensures sections are placed in the shortest available space,
+       * minimizing gaps and creating a balanced masonry layout.
+       * 
+       * Example: If colSpan=2 and columns=4, we check positions:
+       * - Position 0: columns [0,1] -> max height
+       * - Position 1: columns [1,2] -> max height
+       * - Position 2: columns [2,3] -> max height
+       * Choose position with minimum max height
+       */
       for (let col = 0; col <= columns - colSpan; col += 1) {
         let maxColHeight = 0;
+        // Find maximum height across all columns this section would occupy
         for (let c = col; c < col + colSpan; c++) {
           if (colHeights[c] > maxColHeight) {
             maxColHeight = colHeights[c];
           }
         }
+        // Update best position if this is shorter
         if (maxColHeight < minHeight) {
           minHeight = maxColHeight;
           bestColumn = col;

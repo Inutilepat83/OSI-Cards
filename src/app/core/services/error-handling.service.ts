@@ -1,8 +1,15 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError, timer } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError, timer, from } from 'rxjs';
 import { retry, retryWhen, delayWhen, take, catchError, mergeMap } from 'rxjs/operators';
 import { LoggingService } from './logging.service';
+import { 
+  ApplicationError, 
+  ErrorFactory, 
+  ErrorCategory, 
+  RecoveryStrategy 
+} from '../models/error.model';
 
+// Legacy types for backward compatibility
 export enum ErrorType {
   NETWORK = 'NETWORK',
   VALIDATION = 'VALIDATION',
@@ -10,6 +17,9 @@ export enum ErrorType {
   UNKNOWN = 'UNKNOWN'
 }
 
+/**
+ * @deprecated Use ApplicationError from error.model.ts instead
+ */
 export interface AppError {
   type: ErrorType;
   message: string;
@@ -34,27 +44,185 @@ export interface FallbackStrategy<T = unknown> {
   description?: string;
 }
 
+/**
+ * Error Handling Service
+ * 
+ * Comprehensive error handling service with automatic retry logic, fallback strategies,
+ * and error categorization. Provides centralized error management for the application.
+ * 
+ * Features:
+ * - Automatic error categorization (Network, Validation, Business Logic, Unknown)
+ * - Configurable retry strategies with exponential/linear backoff
+ * - Fallback strategy support for graceful degradation
+ * - Error observables for reactive error handling
+ * - Retryable error detection
+ * 
+ * @example
+ * ```typescript
+ * const errorService = inject(ErrorHandlingService);
+ * 
+ * // Handle error with automatic retry
+ * errorService.handleErrorWithRetry(error, {
+ *   maxRetries: 3,
+ *   delay: 1000,
+ *   backoff: 'exponential'
+ * });
+ * 
+ * // Subscribe to errors
+ * errorService.error$.subscribe(appError => {
+ *   if (appError) {
+ *     console.error('Error occurred:', appError);
+ *   }
+ * });
+ * ```
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class ErrorHandlingService {
   private readonly logger = inject(LoggingService);
   private errorSubject = new BehaviorSubject<AppError | null>(null);
+  private applicationErrorSubject = new BehaviorSubject<ApplicationError | null>(null);
   private fallbackStrategies: FallbackStrategy[] = [];
   error$: Observable<AppError | null> = this.errorSubject.asObservable();
+  applicationError$: Observable<ApplicationError | null> = this.applicationErrorSubject.asObservable();
 
   constructor() {
+    // Setup default fallbacks in constructor to ensure they're available immediately
     this.setupDefaultFallbacks();
   }
 
   /**
    * Handle and categorize an error
+   * 
+   * @param error - Error to handle
+   * @param context - Context where error occurred
+   * @returns Legacy AppError for backward compatibility
    */
   handleError(error: unknown, context?: string): AppError {
     const appError = this.createAppError(error, context);
     this.logger.error(`Error in ${context || 'ErrorHandlingService'}`, context || 'ErrorHandlingService', appError);
     this.errorSubject.next(appError);
+    
+    // Also emit as ApplicationError for new code
+    const applicationError = this.createApplicationError(error, context);
+    this.applicationErrorSubject.next(applicationError);
+    
     return appError;
+  }
+
+  /**
+   * Handle error using new ApplicationError type
+   * 
+   * @param error - Error to handle
+   * @param context - Context where error occurred
+   * @returns ApplicationError with enhanced information
+   */
+  handleApplicationError(error: unknown, context?: string): ApplicationError {
+    const applicationError = this.createApplicationError(error, context);
+    this.logger.error(
+      `Error in ${context || 'ErrorHandlingService'}: ${applicationError.message}`,
+      context || 'ErrorHandlingService',
+      {
+        category: applicationError.category,
+        severity: applicationError.severity,
+        code: applicationError.code,
+        recoveryStrategy: applicationError.recoveryStrategy,
+        userAction: applicationError.userAction,
+        details: applicationError.details
+      }
+    );
+    this.applicationErrorSubject.next(applicationError);
+    return applicationError;
+  }
+
+  /**
+   * Create ApplicationError from various error types
+   */
+  private createApplicationError(error: unknown, context?: string): ApplicationError {
+    if (error instanceof Error) {
+      // Check for HTTP errors
+      if ('status' in error || 'statusCode' in error) {
+        const status = ('status' in error ? error.status : error.statusCode) as number;
+        return ErrorFactory.networkError(
+          error.message || `HTTP ${status} error`,
+          {
+            statusCode: status,
+            originalError: error,
+            context
+          }
+        );
+      }
+
+      // Check for validation errors
+      if (error.message.includes('validation') || error.message.includes('invalid')) {
+        return ErrorFactory.validationError(
+          error.message,
+          {
+            originalError: error,
+            context,
+            suggestions: this.extractSuggestions(error)
+          }
+        );
+      }
+
+      // Check for security errors
+      if (error.message.includes('security') || error.message.includes('unauthorized') || error.message.includes('forbidden')) {
+        return ErrorFactory.securityError(
+          error.message,
+          {
+            originalError: error,
+            context
+          }
+        );
+      }
+
+      // Default to system error
+      return ErrorFactory.systemError(
+        error.message,
+        {
+          originalError: error,
+          context
+        }
+      );
+    }
+
+    // Handle string errors
+    if (typeof error === 'string') {
+      return ErrorFactory.unknownError(error, { context });
+    }
+
+    // Handle unknown errors
+    return ErrorFactory.unknownError(
+      'An unexpected error occurred',
+      {
+        originalError: error,
+        context
+      }
+    );
+  }
+
+  /**
+   * Extract suggestions from error message
+   */
+  private extractSuggestions(error: Error): string[] {
+    const suggestions: string[] = [];
+    const message = error.message.toLowerCase();
+
+    if (message.includes('required')) {
+      suggestions.push('Please ensure all required fields are filled in');
+    }
+    if (message.includes('format')) {
+      suggestions.push('Please check the format of your input');
+    }
+    if (message.includes('length') || message.includes('too long')) {
+      suggestions.push('Please shorten your input');
+    }
+    if (message.includes('invalid')) {
+      suggestions.push('Please check that your input is valid');
+    }
+
+    return suggestions;
   }
 
   /**

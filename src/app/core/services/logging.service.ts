@@ -9,6 +9,9 @@ export interface LogEntry {
   context?: string;
   data?: unknown;
   timestamp: Date;
+  correlationId?: string;
+  userId?: string;
+  sessionId?: string;
 }
 
 /**
@@ -22,6 +25,8 @@ export class LoggingService {
   private readonly config = inject(AppConfigService);
   private readonly logHistory: LogEntry[] = [];
   private readonly maxHistorySize = 1000;
+  private correlationId: string | null = null;
+  private sessionId: string = this.generateSessionId();
 
   /**
    * Log a debug message
@@ -52,6 +57,34 @@ export class LoggingService {
   }
 
   /**
+   * Set correlation ID for request tracing
+   */
+  setCorrelationId(id: string): void {
+    this.correlationId = id;
+  }
+
+  /**
+   * Get current correlation ID
+   */
+  getCorrelationId(): string | null {
+    return this.correlationId;
+  }
+
+  /**
+   * Generate a new session ID
+   */
+  private generateSessionId(): string {
+    return `session_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+  }
+
+  /**
+   * Get current session ID
+   */
+  getSessionId(): string {
+    return this.sessionId;
+  }
+
+  /**
    * Internal log method
    */
   private log(level: LogLevel, message: string, context?: string, data?: unknown): void {
@@ -73,7 +106,9 @@ export class LoggingService {
       message,
       context,
       data,
-      timestamp: new Date()
+      timestamp: new Date(),
+      correlationId: this.correlationId || undefined,
+      sessionId: this.sessionId
     };
 
     // Add to history

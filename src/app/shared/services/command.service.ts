@@ -39,6 +39,7 @@ export class CommandService {
   readonly state$: Observable<CommandHistoryState> = this.stateSubject.asObservable();
 
   constructor() {
+    // Register keyboard shortcuts in constructor to ensure they're active immediately
     this.registerKeyboardShortcuts();
   }
 

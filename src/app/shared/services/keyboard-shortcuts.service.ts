@@ -28,6 +28,7 @@ export class KeyboardShortcutsService {
   readonly shortcutTriggered: Observable<KeyboardShortcut> = this.shortcutTriggered$.asObservable();
 
   constructor() {
+    // Setup global listener in constructor to ensure shortcuts are active immediately
     this.setupGlobalListener();
   }
 

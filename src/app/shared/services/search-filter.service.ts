@@ -60,6 +60,7 @@ export class SearchFilterService {
   readonly presets$: Observable<FilterPreset[]> = this.presetsSubject.asObservable();
 
   constructor() {
+    // Load presets in constructor to ensure they're available immediately
     this.loadPresets();
   }
   /**

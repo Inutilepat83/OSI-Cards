@@ -14,7 +14,33 @@ export interface CardPreviewState {
 
 /**
  * Service for managing card preview state
- * Extracted from HomePageComponent for better separation of concerns
+ * 
+ * Provides centralized state management for card preview functionality, including
+ * live preview updates, fullscreen mode, and generation status. Extracted from
+ * HomePageComponent for better separation of concerns and reusability.
+ * 
+ * Features:
+ * - Reactive state management with BehaviorSubject
+ * - Live preview support for real-time editing
+ * - Fullscreen mode management
+ * - Generation status tracking
+ * - Change type tracking for optimized updates
+ * 
+ * @example
+ * ```typescript
+ * const previewService = inject(CardPreviewService);
+ * 
+ * // Subscribe to preview state changes
+ * previewService.state$.subscribe(state => {
+ *   console.log('Preview state:', state);
+ * });
+ * 
+ * // Update preview card
+ * previewService.updateCard(myCard, 'content');
+ * 
+ * // Toggle fullscreen
+ * previewService.toggleFullscreen();
+ * ```
  */
 @Injectable({
   providedIn: 'root'

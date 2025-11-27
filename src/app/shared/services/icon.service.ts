@@ -4,6 +4,12 @@
  * Provides intelligent icon mapping based on field names, action types, and keywords.
  * Supports both exact matches and partial keyword matching for flexible icon selection.
  * 
+ * Features:
+ * - Intelligent icon matching (exact and partial)
+ * - Semantic color classes for icons
+ * - Extensible icon map
+ * - Fallback to default icons
+ * 
  * @example
  * ```typescript
  * const iconService = inject(IconService);

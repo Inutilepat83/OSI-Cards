@@ -718,7 +718,7 @@ export class HomePageComponent implements OnInit {
         const sectionsMatch = jsonInput.match(/"sections"\s*:\s*\[([\s\S]*)/);
         if (sectionsMatch) {
           const sectionsContent = sectionsMatch[1];
-          const sections: any[] = [];
+          const sections: CardSection[] = [];
           
           // Try to find complete section objects by matching braces
           let depth = 0;
@@ -809,8 +809,8 @@ export class HomePageComponent implements OnInit {
             } catch {
               // Try to extract partial section data even if incomplete
               const partialSection = this.extractPartialSection(currentSection);
-              if (partialSection) {
-                sections.push(partialSection);
+              if (partialSection && partialSection.title && partialSection.type) {
+                sections.push(partialSection as CardSection);
               }
             }
           }
@@ -819,8 +819,10 @@ export class HomePageComponent implements OnInit {
           // This handles cases where sections array is incomplete
           if (sections.length === 0) {
             const partialSections = this.extractPartialSectionsFromJson(jsonInput);
-            if (partialSections.length > 0) {
-              sections.push(...partialSections);
+            // Filter to only include sections with required properties
+            const validSections = partialSections.filter(s => s.title && s.type) as CardSection[];
+            if (validSections.length > 0) {
+              sections.push(...validSections);
             }
           }
           
@@ -1436,7 +1438,7 @@ export class HomePageComponent implements OnInit {
         if (csvMatch) {
           const label = (csvMatch[1] || csvMatch[2] || '').trim();
           const rawValue = (csvMatch[3] || csvMatch[4] || '').trim();
-          const field: any = { label };
+          const field: CardField = { label };
           // Percentage handling
           const percentMatch = rawValue.match(/([0-9,.]+)\s*%/);
           if (percentMatch) {

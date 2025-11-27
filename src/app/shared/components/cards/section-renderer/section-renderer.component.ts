@@ -1,10 +1,15 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewContainerRef, ViewChild, OnInit, OnDestroy, OnChanges, SimpleChanges, inject, AfterViewInit, ChangeDetectorRef, Injector } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewContainerRef, ViewChild, OnInit, OnDestroy, OnChanges, SimpleChanges, inject, AfterViewInit, ChangeDetectorRef, Injector, ComponentRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardAction, CardField, CardItem, CardSection } from '../../../../models';
 import { InfoSectionFieldInteraction } from '../sections/info-section.component';
 import { SectionLoaderService } from './section-loader.service';
 import { SectionTypeResolverService } from './section-type-resolver.service';
+import { AppConfigService } from '../../../../core/services/app-config.service';
+import { SectionInteraction } from '../sections/base-section.component';
 
+/**
+ * Event emitted when a section element is interacted with
+ */
 export interface SectionRenderEvent {
   type: 'field' | 'item' | 'action';
   section: CardSection;
@@ -14,6 +19,31 @@ export interface SectionRenderEvent {
   metadata?: Record<string, unknown>;
 }
 
+/**
+ * Section Renderer Component
+ * 
+ * Smart router component that dynamically loads and renders the appropriate section
+ * component based on section type. Uses lazy loading for optimal bundle size and
+ * provides a unified interface for section interactions.
+ * 
+ * Features:
+ * - Dynamic component loading based on section type
+ * - Type resolution with fallback handling
+ * - Event aggregation and propagation
+ * - Lazy loading for section components
+ * - Change detection optimization
+ * 
+ * The component resolves section types using SectionTypeResolverService and loads
+ * the appropriate section component dynamically using SectionLoaderService.
+ * 
+ * @example
+ * ```html
+ * <app-section-renderer
+ *   [section]="mySection"
+ *   (sectionEvent)="onSectionEvent($event)">
+ * </app-section-renderer>
+ * ```
+ */
 @Component({
   selector: 'app-section-renderer',
   standalone: true,
@@ -32,12 +62,26 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
   private readonly typeResolver = inject(SectionTypeResolverService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly injector = inject(Injector);
-  private loadedComponent: any = null;
+  private readonly appConfig = inject(AppConfigService);
+  /**
+   * Type for dynamically loaded section component instances
+   * All section components extend BaseSectionComponent and have these properties
+   */
+  private loadedComponent: ComponentRef<{
+    section: CardSection;
+    fieldInteraction?: EventEmitter<SectionInteraction<CardField>>;
+    itemInteraction?: EventEmitter<SectionInteraction<CardItem>>;
+    infoFieldInteraction?: EventEmitter<InfoSectionFieldInteraction>;
+  }> | null = null;
   private viewInitialized = false;
   private lastSectionType: string | null = null;
   
-  // Diagnostic mode flag - set to true to enable detailed logging
-  private readonly DEBUG_MODE = false;
+  /**
+   * Check if debug mode is enabled via environment configuration
+   */
+  private get isDebugMode(): boolean {
+    return this.appConfig.LOGGING.ENABLE_DEBUG;
+  }
 
   // Removed @HostBinding - will be set in template instead to avoid setAttribute errors
   get sectionTypeAttribute(): string {
@@ -122,7 +166,7 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
   ngOnInit(): void {
     // Component initialization - load after view init
     // If section is already set before view init, we'll load it in ngAfterViewInit
-    if (this.section && this.DEBUG_MODE) {
+    if (this.section && this.isDebugMode) {
       console.log('[SectionRenderer] ngOnInit - section already set:', this.section.title);
     }
   }
@@ -167,7 +211,7 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
       
       // If view is not initialized yet, wait for ngAfterViewInit
       if (!this.viewInitialized) {
-        if (this.DEBUG_MODE) {
+        if (this.isDebugMode) {
           console.log('[SectionRenderer] Section set before view init, will load in ngAfterViewInit');
         }
         return;
@@ -176,7 +220,7 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
       const newType = this.resolvedType;
       
       // Diagnostic logging
-      if (this.DEBUG_MODE) {
+      if (this.isDebugMode) {
         console.log('[SectionRenderer] Section changed:', {
           sectionTitle: this.section.title,
           sectionType: this.section.type,
@@ -197,7 +241,7 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
           this.cdr.markForCheck();
         } else {
           // Component instance is null, reload component
-          if (this.DEBUG_MODE) {
+          if (this.isDebugMode) {
             console.warn('[SectionRenderer] Component instance is null, reloading component');
           }
           this.loadComponent();
@@ -218,21 +262,21 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
    */
   private async loadComponent(): Promise<void> {
     if (!this.viewInitialized) {
-      if (this.DEBUG_MODE) {
+      if (this.isDebugMode) {
         console.warn('[SectionRenderer] Cannot load component - view not initialized');
       }
       return;
     }
     
     if (!this.dynamicComponent) {
-      if (this.DEBUG_MODE) {
+      if (this.isDebugMode) {
         console.warn('[SectionRenderer] Cannot load component - ViewContainerRef not available');
       }
       return;
     }
     
     if (!this.section) {
-      if (this.DEBUG_MODE) {
+      if (this.isDebugMode) {
         console.warn('[SectionRenderer] Cannot load component - section is null');
       }
       return;
@@ -241,7 +285,7 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
     const sectionType = this.resolvedType;
     
     // Diagnostic logging
-    if (this.DEBUG_MODE) {
+    if (this.isDebugMode) {
       console.log('[SectionRenderer] Loading component for type:', sectionType, {
         sectionTitle: this.section.title,
         sectionId: this.section.id,
@@ -275,7 +319,7 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
       
       // Subscribe to component events - use EventEmitter's subscribe
       if (componentRef.instance.fieldInteraction) {
-        componentRef.instance.fieldInteraction.subscribe((event: any) => {
+        componentRef.instance.fieldInteraction.subscribe((event: SectionInteraction<CardField>) => {
           if (event?.field) {
             this.emitFieldInteraction(event.field, event.metadata);
           }
@@ -283,7 +327,7 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
       }
       
       if (componentRef.instance.itemInteraction) {
-        componentRef.instance.itemInteraction.subscribe((event: any) => {
+        componentRef.instance.itemInteraction.subscribe((event: SectionInteraction<CardItem>) => {
           if (event?.item) {
             this.emitItemInteraction(event.item, event.metadata);
           }
@@ -301,7 +345,7 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
       this.lastSectionType = sectionType;
       
       // Diagnostic logging
-      if (this.DEBUG_MODE) {
+      if (this.isDebugMode) {
         console.log('[SectionRenderer] Successfully loaded component:', sectionType);
       }
       
@@ -317,7 +361,7 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
       
       // Load fallback component
       try {
-        if (this.DEBUG_MODE) {
+        if (this.isDebugMode) {
           console.log('[SectionRenderer] Attempting to load fallback component');
         }
         
@@ -341,7 +385,7 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
         this.loadedComponent = componentRef;
         this.lastSectionType = 'fallback';
         
-        if (this.DEBUG_MODE) {
+        if (this.isDebugMode) {
           console.log('[SectionRenderer] Successfully loaded fallback component');
         }
         

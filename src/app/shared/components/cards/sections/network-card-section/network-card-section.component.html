@@ -1,10 +1,10 @@
-<div class="ai-section ai-section--network-card">
+<div class="ai-section ai-section--network-card" role="region" [attr.aria-labelledby]="'network-section-title-' + section.id" [attr.aria-describedby]="section.description ? 'network-section-desc-' + section.id : null">
   <div class="ai-section__header">
     <div class="ai-section__details">
-      <h3 class="ai-section__title">{{ section.title }}</h3>
-      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
+      <h3 class="ai-section__title" [id]="'network-section-title-' + section.id">{{ section.title }}</h3>
+      <p *ngIf="section.description" class="ai-section__description" [id]="'network-section-desc-' + section.id">{{ section.description }}</p>
     </div>
-    <span *ngIf="fields.length" class="ai-section__badge">
+    <span *ngIf="fields.length" class="ai-section__badge" aria-label="{{ fields.length }} {{ fields.length === 1 ? 'metric' : 'metrics' }}">
       {{ fields.length }} {{ fields.length === 1 ? 'metric' : 'metrics' }}
     </span>
   </div>
@@ -13,10 +13,14 @@
     <ng-container *ngIf="fields.length; else networkEmpty">
       <div class="network-grid">
         <article
-          *ngFor="let field of fields; trackBy: trackField"
+          *ngFor="let field of fields; trackBy: trackField; let idx = index"
           class="network-card"
           role="button"
           tabindex="0"
+          [attr.aria-label]="(field.label || field.title || 'Network metric') + ': ' + (getDisplayValue(field) || 'No value')"
+          [attr.aria-describedby]="field.description ? 'network-field-desc-' + trackField(idx, field) : null"
+          [attr.aria-posinset]="idx + 1"
+          [attr.aria-setsize]="fields.length"
           (click)="onItemClick(field)"
           (keydown.enter)="onItemClick(field)"
           (keydown.space)="$event.preventDefault(); onItemClick(field)"
@@ -28,14 +32,15 @@
             <span *ngIf="getDisplayValue(field)" class="network-card__value">
               {{ getDisplayValue(field) }}
             </span>
+            <p *ngIf="field.description" class="sr-only" [id]="'network-field-desc-' + trackField(idx, field)">{{ field.description }}</p>
           </div>
         </article>
       </div>
     </ng-container>
 
     <ng-template #networkEmpty>
-      <div class="section-empty">
-        <lucide-icon name="network" size="32" class="section-empty__icon"></lucide-icon>
+      <div class="section-empty" role="status" aria-live="polite">
+        <lucide-icon name="network" size="32" class="section-empty__icon" aria-hidden="true"></lucide-icon>
         <p class="section-empty__text">No network data available</p>
       </div>
     </ng-template>

@@ -1,7 +1,22 @@
 import { AICardConfig, CardSection, CardField, CardItem, CardAction } from '../../models';
+import { SIZE_CONSTANTS, ID_CONSTANTS } from './constants';
+import { SanitizationUtil } from './sanitization.util';
+import { ValidationUtil } from './validation.util';
 
 /**
  * Recursively remove `id` properties from complex card payloads while preserving shape.
+ * 
+ * Useful for cleaning card configurations before export or when IDs should not be
+ * persisted. Preserves all other properties and structure.
+ * 
+ * @param value - The value to remove IDs from (can be card, section, field, item, or nested object)
+ * @returns A new object with all `id` properties removed
+ * 
+ * @example
+ * ```typescript
+ * const cardWithoutIds = removeAllIds(myCard);
+ * // All id properties removed recursively
+ * ```
  */
 export function removeAllIds<T>(value: T): T {
   if (Array.isArray(value)) {
@@ -26,7 +41,22 @@ export function removeAllIds<T>(value: T): T {
 
 /**
  * Automatically generate IDs for cards, sections, fields, items, and actions that don't have them.
- * This allows users to create cards without manually specifying IDs.
+ * 
+ * This allows users to create cards without manually specifying IDs. IDs are generated
+ * using a combination of prefix, timestamp, and random string for uniqueness.
+ * 
+ * @param config - The card configuration to ensure IDs for
+ * @returns A new card configuration with all IDs generated
+ * 
+ * @example
+ * ```typescript
+ * const cardWithoutIds = {
+ *   cardTitle: 'My Card',
+ *   sections: [{ title: 'Section 1', type: 'info' }]
+ * };
+ * const cardWithIds = ensureCardIds(cardWithoutIds);
+ * // cardWithIds.id, cardWithIds.sections[0].id are now generated
+ * ```
  */
 export function ensureCardIds(config: AICardConfig): AICardConfig {
   const card = { ...config };
@@ -47,6 +77,10 @@ export function ensureCardIds(config: AICardConfig): AICardConfig {
 
 /**
  * Validate if an object has the required properties of an AICardConfig
+ * 
+ * @deprecated Use CardValidationService instead for better testability and maintainability.
+ * These functions are kept for backward compatibility. For new code, inject CardValidationService directly.
+ * 
  * @param obj - Object to validate
  * @returns true if object has required card properties
  */
@@ -55,11 +89,12 @@ export function isValidCardConfig(obj: unknown): obj is Partial<AICardConfig> {
     return false;
   }
 
-  const config = obj as Record<string, unknown>;
+  // Use proper interface instead of Record<string, unknown>
+  const config = obj as Partial<AICardConfig> & { title?: string };
 
   // Check required fields for a card
   // Be lenient: accept either cardTitle or title, and ensure sections is an array (even if empty)
-  const hasTitle = typeof config['cardTitle'] === 'string' || typeof config['title'] === 'string';
+  const hasTitle = typeof config.cardTitle === 'string' || typeof config.title === 'string';
   const hasSections = Array.isArray(config['sections']);
   
   // If sections is missing or not an array, try to create an empty array
@@ -73,6 +108,9 @@ export function isValidCardConfig(obj: unknown): obj is Partial<AICardConfig> {
 
 /**
  * Validate if an object is a valid CardSection
+ * 
+ * @deprecated Use CardValidationService instead
+ * 
  * @param obj - Object to validate
  * @returns true if object has required section properties
  */
@@ -81,7 +119,8 @@ export function isValidCardSection(obj: unknown): obj is Partial<CardSection> {
     return false;
   }
 
-  const section = obj as Record<string, unknown>;
+  // Use proper interface instead of Record<string, unknown>
+  const section = obj as Partial<CardSection>;
 
   // Check required section properties
   return (
@@ -94,6 +133,9 @@ export function isValidCardSection(obj: unknown): obj is Partial<CardSection> {
 
 /**
  * Validate if an object is a valid CardField
+ * 
+ * @deprecated Use CardValidationService instead
+ * 
  * @param obj - Object to validate
  * @returns true if object has required field properties
  */
@@ -102,7 +144,8 @@ export function isValidCardField(obj: unknown): obj is Partial<CardField> {
     return false;
   }
 
-  const field = obj as Record<string, unknown>;
+  // Use proper interface instead of Record<string, unknown>
+  const field = obj as Partial<CardField>;
 
   // Fields need at least a label or name
   return (
@@ -114,6 +157,9 @@ export function isValidCardField(obj: unknown): obj is Partial<CardField> {
 
 /**
  * Validate JSON string against AICardConfig structure
+ * 
+ * @deprecated Use CardValidationService instead
+ * 
  * @param jsonString - JSON string to validate
  * @returns Parsed object if valid, null otherwise
  */
@@ -132,7 +178,7 @@ export function validateCardJson(jsonString: string): Partial<AICardConfig> | nu
     } catch (parseError: unknown) {
       const msg = parseError instanceof Error ? parseError.message : 'Unknown error';
       const position = parseError instanceof SyntaxError && 'position' in parseError 
-        ? (parseError as any).position 
+        ? (parseError as { position?: number }).position 
         : null;
       console.error(`CardUtils: JSON parse failed: ${msg}${position ? ` at position ${position}` : ''}`);
       return null;
@@ -150,7 +196,7 @@ export function validateCardJson(jsonString: string): Partial<AICardConfig> | nu
         hasSections,
         sectionsType,
         keys: Object.keys(config),
-        preview: JSON.stringify(parsed).substring(0, 200)
+        preview: JSON.stringify(parsed).substring(0, SIZE_CONSTANTS.JSON_PREVIEW_LENGTH)
       });
       
       // Try to fix common issues: normalize title field
@@ -183,6 +229,9 @@ export function validateCardJson(jsonString: string): Partial<AICardConfig> | nu
 
 /**
  * Validate entire card configuration recursively
+ * 
+ * @deprecated Use CardValidationService instead
+ * 
  * @param config - Card configuration to validate
  * @returns true if all nested structures are valid
  */
@@ -231,7 +280,15 @@ export function validateCardStructure(config: Partial<AICardConfig>): boolean {
 }
 
 /**
- * Sanitize card configuration to remove any potentially unsafe properties
+ * Sanitize card configuration to remove any potentially unsafe properties and prevent XSS
+ * 
+ * This function performs comprehensive sanitization:
+ * - Removes disallowed properties
+ * - Sanitizes all string values to prevent XSS
+ * - Validates and sanitizes URLs in actions
+ * - Limits string lengths to prevent DoS
+ * - Recursively sanitizes nested objects
+ * 
  * @param config - Card configuration to sanitize
  * @returns Sanitized copy of configuration
  */
@@ -244,23 +301,246 @@ export function sanitizeCardConfig(config: Partial<AICardConfig>): Partial<AICar
 
     // Remove any properties that shouldn't be in the card
     const allowedRootKeys = [
-      'id', 'cardTitle', 'cardType', 'sections', 'actions', 
-      'metadata', 'tags', 'priority', 'complexity'
+      'id', 'cardTitle', 'cardSubtitle', 'cardType', 'sections', 'actions', 
+      'metadata', 'tags', 'priority', 'complexity', 'description', 'columns', 'processedAt'
     ];
 
-    const cleanedRoot: Record<string, unknown> = {};
-    for (const key of allowedRootKeys) {
+    const cleanedRoot: Partial<AICardConfig> = {};
+    
+    // Sanitize card title
+    if ('cardTitle' in sanitized && typeof sanitized.cardTitle === 'string') {
+      cleanedRoot.cardTitle = SanitizationUtil.sanitizeCardTitle(
+        sanitized.cardTitle.substring(0, SIZE_CONSTANTS.MAX_CARD_TITLE_LENGTH)
+      );
+    }
+    
+    // Sanitize card subtitle
+    if ('cardSubtitle' in sanitized && typeof sanitized.cardSubtitle === 'string') {
+      cleanedRoot.cardSubtitle = SanitizationUtil.sanitizeCardTitle(
+        sanitized.cardSubtitle.substring(0, SIZE_CONSTANTS.MAX_CARD_SUBTITLE_LENGTH)
+      );
+    }
+    
+    // Sanitize description
+    if ('description' in sanitized && typeof sanitized.description === 'string') {
+      cleanedRoot.description = ValidationUtil.sanitizeString(
+        sanitized.description.substring(0, 1000)
+      );
+    }
+    
+    // Copy safe primitive values
+    for (const key of ['id', 'cardType', 'columns', 'processedAt'] as const) {
       if (key in sanitized) {
-        cleanedRoot[key] = sanitized[key as keyof AICardConfig];
+        const value = sanitized[key];
+        if (value !== null && value !== undefined) {
+          (cleanedRoot as Record<string, unknown>)[key] = value;
+        }
       }
     }
+    
+    // Sanitize sections recursively
+    if (Array.isArray(sanitized.sections)) {
+      cleanedRoot.sections = sanitized.sections.map(section => sanitizeSection(section));
+    }
+    
+    // Sanitize actions
+    if (Array.isArray(sanitized.actions)) {
+      cleanedRoot.actions = sanitized.actions.map(action => sanitizeAction(action));
+    }
+    
+    // Sanitize metadata if present
+    if (sanitized.meta && typeof sanitized.meta === 'object') {
+      cleanedRoot.meta = SanitizationUtil.sanitizeObject(sanitized.meta);
+    }
 
-    return cleanedRoot as Partial<AICardConfig>;
+    return cleanedRoot;
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : 'Unknown error';
-    console.error(`CardUtils: Error sanitizing card config: ${msg}`);
-    return config; // Return original if sanitization fails
+    console.error(`CardUtils: Error sanitizing card config: ${msg}`, error);
+    // Return empty safe config instead of original to prevent XSS
+    return {
+      cardTitle: '',
+      sections: []
+    };
   }
+}
+
+/**
+ * Sanitize a card section
+ */
+function sanitizeSection(section: CardSection): CardSection {
+  const sanitized: CardSection = {
+    ...section,
+    title: typeof section.title === 'string' 
+      ? SanitizationUtil.sanitizeSectionTitle(section.title.substring(0, 100))
+      : '',
+    type: section.type || 'info'
+  };
+  
+  // Sanitize description
+  if (typeof section.description === 'string') {
+    sanitized.description = ValidationUtil.sanitizeString(section.description.substring(0, 500));
+  }
+  
+  // Sanitize subtitle
+  if (typeof section.subtitle === 'string') {
+    sanitized.subtitle = ValidationUtil.sanitizeString(section.subtitle.substring(0, 200));
+  }
+  
+  // Sanitize fields
+  if (Array.isArray(section.fields)) {
+    sanitized.fields = section.fields.map(field => sanitizeField(field));
+  }
+  
+  // Sanitize items
+  if (Array.isArray(section.items)) {
+    sanitized.items = section.items.map(item => sanitizeItem(item));
+  }
+  
+  // Sanitize meta
+  if (section.meta && typeof section.meta === 'object') {
+    sanitized.meta = SanitizationUtil.sanitizeObject(section.meta);
+  }
+  
+  return sanitized;
+}
+
+/**
+ * Sanitize a card field
+ */
+function sanitizeField(field: CardField): CardField {
+  const sanitized: CardField = { ...field };
+  
+  // Sanitize label
+  if (typeof field.label === 'string') {
+    sanitized.label = ValidationUtil.sanitizeString(field.label.substring(0, 200));
+  }
+  
+  // Sanitize title
+  if (typeof field.title === 'string') {
+    sanitized.title = ValidationUtil.sanitizeString(field.title.substring(0, 200));
+  }
+  
+  // Sanitize value
+  if (field.value !== null && field.value !== undefined) {
+    sanitized.value = SanitizationUtil.sanitizeFieldValue(field.value);
+  }
+  
+  // Sanitize description
+  if (typeof field.description === 'string') {
+    sanitized.description = ValidationUtil.sanitizeString(field.description.substring(0, 500));
+  }
+  
+  // Sanitize URLs
+  if (typeof field.link === 'string') {
+    sanitized.link = SanitizationUtil.sanitizeUrl(field.link) || undefined;
+  }
+  
+  // Sanitize email
+  if (typeof field.email === 'string') {
+    sanitized.email = SanitizationUtil.sanitizeEmail(field.email) || undefined;
+  }
+  
+  // Sanitize meta
+  if (field.meta && typeof field.meta === 'object') {
+    sanitized.meta = SanitizationUtil.sanitizeObject(field.meta);
+  }
+  
+  return sanitized;
+}
+
+/**
+ * Sanitize a card item
+ */
+function sanitizeItem(item: CardItem): CardItem {
+  const sanitized: CardItem = {
+    ...item,
+    title: typeof item.title === 'string'
+      ? ValidationUtil.sanitizeString(item.title.substring(0, 200))
+      : ''
+  };
+  
+  // Sanitize description
+  if (typeof item.description === 'string') {
+    sanitized.description = ValidationUtil.sanitizeString(item.description.substring(0, 500));
+  }
+  
+  // Sanitize value
+  if (item.value !== null && item.value !== undefined) {
+    sanitized.value = typeof item.value === 'string'
+      ? ValidationUtil.sanitizeString(item.value.substring(0, 200))
+      : item.value;
+  }
+  
+  // Sanitize meta
+  if (item.meta && typeof item.meta === 'object') {
+    sanitized.meta = SanitizationUtil.sanitizeObject(item.meta);
+  }
+  
+  return sanitized;
+}
+
+/**
+ * Sanitize a card action
+ */
+function sanitizeAction(action: CardAction): CardAction {
+  const sanitized: CardAction = {
+    ...action,
+    label: typeof action.label === 'string'
+      ? ValidationUtil.sanitizeString(action.label.substring(0, 100))
+      : ''
+  };
+  
+  // Sanitize icon
+  if (typeof action.icon === 'string') {
+    sanitized.icon = ValidationUtil.sanitizeString(action.icon.substring(0, 50));
+  }
+  
+  // Sanitize URL for website actions
+  if ('url' in action && typeof action.url === 'string') {
+    (sanitized as { url?: string }).url = SanitizationUtil.sanitizeUrl(action.url) || undefined;
+  }
+  
+  // Sanitize action string
+  if (typeof action.action === 'string') {
+    const sanitizedAction = SanitizationUtil.sanitizeUrl(action.action);
+    if (sanitizedAction) {
+      sanitized.action = sanitizedAction;
+    }
+  }
+  
+  // Sanitize email config for mail actions
+  if ('email' in action && action.email && typeof action.email === 'object') {
+    const emailConfig = action.email as Record<string, unknown>;
+    const sanitizedEmail: Record<string, unknown> = {};
+    
+    // Sanitize contact
+    if (emailConfig['contact'] && typeof emailConfig['contact'] === 'object') {
+      const contact = emailConfig['contact'] as Record<string, unknown>;
+      sanitizedEmail['contact'] = {
+        name: typeof contact['name'] === 'string' ? ValidationUtil.sanitizeString(contact['name']) : '',
+        email: typeof contact['email'] === 'string' ? SanitizationUtil.sanitizeEmail(contact['email']) || '' : '',
+        role: typeof contact['role'] === 'string' ? ValidationUtil.sanitizeString(contact['role']) : ''
+      };
+    }
+    
+    // Sanitize subject and body
+    if (typeof emailConfig['subject'] === 'string') {
+      sanitizedEmail['subject'] = ValidationUtil.sanitizeString(emailConfig['subject'].substring(0, 200));
+    }
+    if (typeof emailConfig['body'] === 'string') {
+      sanitizedEmail['body'] = ValidationUtil.sanitizeString(emailConfig['body'].substring(0, 5000));
+    }
+    
+    (sanitized as { email?: unknown }).email = sanitizedEmail;
+  }
+  
+  // Sanitize meta
+  if (action.meta && typeof action.meta === 'object') {
+    sanitized.meta = SanitizationUtil.sanitizeObject(action.meta);
+  }
+  
+  return sanitized;
 }
 
 function ensureSectionIds(section: CardSection, sectionIndex: number): CardSection {
@@ -336,6 +616,17 @@ function ensureActionIds(action: CardAction, actionIndex: number): CardAction {
   return nextAction;
 }
 
-function generateId(prefix: string): string {
-  return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+/**
+ * Generate unique ID with optional prefix
+ * 
+ * Uses timestamp and random string for uniqueness. This function is exported
+ * and should be used consistently across the application instead of creating
+ * duplicate implementations.
+ * 
+ * @param prefix - ID prefix (default: 'item')
+ * @returns Unique ID string in format: {prefix}_{timestamp}_{random}
+ */
+export function generateId(prefix: string = ID_CONSTANTS.DEFAULT_ID_PREFIX): string {
+  const randomString = Math.random().toString(36).slice(2, 2 + ID_CONSTANTS.RANDOM_STRING_LENGTH);
+  return `${prefix}_${Date.now()}_${randomString}`;
 }

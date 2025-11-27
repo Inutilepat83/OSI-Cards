@@ -61,7 +61,14 @@
                   "maximumError": "1mb"
                 }
               ],
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              },
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
@@ -69,7 +76,24 @@
               "extractLicenses": true,
               "vendorChunk": true,
               "buildOptimizer": true,
-              "commonChunk": true
+              "commonChunk": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                },
+                {
+                  "type": "bundle",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                }
+              ]
             }
           }
         },

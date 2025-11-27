@@ -1,10 +1,10 @@
-<div class="ai-section ai-section--map">
+<div class="ai-section ai-section--map" role="region" [attr.aria-labelledby]="'map-section-title-' + section.id" [attr.aria-describedby]="section.description ? 'map-section-desc-' + section.id : null">
   <div class="ai-section__header">
     <div class="ai-section__details">
-      <h3 class="ai-section__title">{{ section.title }}</h3>
-      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
+      <h3 class="ai-section__title" [id]="'map-section-title-' + section.id">{{ section.title }}</h3>
+      <p *ngIf="section.description" class="ai-section__description" [id]="'map-section-desc-' + section.id">{{ section.description }}</p>
     </div>
-    <span *ngIf="hasItems" class="ai-section__badge">
+    <span *ngIf="hasItems" class="ai-section__badge" aria-label="{{ locations.length }} {{ locations.length === 1 ? 'location' : 'locations' }}">
       {{ locations.length }} {{ locations.length === 1 ? 'location' : 'locations' }}
     </span>
   </div>
@@ -13,10 +13,13 @@
     <ng-container *ngIf="hasItems; else mapEmpty">
       <div class="map-grid">
         <article
-          *ngFor="let location of locations; trackBy: trackItem"
+          *ngFor="let location of locations; trackBy: trackItem; let idx = index"
           class="map-card"
           role="button"
           tabindex="0"
+          [attr.aria-label]="location.name + (location.address ? ' at ' + location.address : '') + (location.type ? '. Type: ' + location.type : '') + (formatCoordinates(location) ? '. Coordinates: ' + formatCoordinates(location) : '')"
+          [attr.aria-posinset]="idx + 1"
+          [attr.aria-setsize]="locations.length"
           (click)="onLocationClick(location)"
           (keydown.enter)="onLocationClick(location)"
           (keydown.space)="$event.preventDefault(); onLocationClick(location)"
@@ -37,7 +40,7 @@
 
           <!-- Address -->
           <div *ngIf="location.address" class="map-card__address-wrapper">
-            <lucide-icon name="map-pin" size="14" class="map-card__address-icon"></lucide-icon>
+            <lucide-icon name="map-pin" size="14" class="map-card__address-icon" aria-hidden="true"></lucide-icon>
             <p class="map-card__address">
               {{ location.address }}
             </p>
@@ -46,11 +49,11 @@
           <!-- Meta Information -->
           <footer *ngIf="formatCoordinates(location) || location.value" class="map-card__footer">
             <div *ngIf="formatCoordinates(location) as coords" class="map-card__meta">
-              <lucide-icon name="map-pin" size="14" class="map-card__meta-icon"></lucide-icon>
+              <lucide-icon name="map-pin" size="14" class="map-card__meta-icon" aria-hidden="true"></lucide-icon>
               <span class="map-card__meta-text">{{ coords }}</span>
             </div>
             <div *ngIf="location.value" class="map-card__meta">
-              <lucide-icon name="activity" size="14" class="map-card__meta-icon"></lucide-icon>
+              <lucide-icon name="activity" size="14" class="map-card__meta-icon" aria-hidden="true"></lucide-icon>
               <span class="map-card__meta-text">{{ location.value }}</span>
             </div>
           </footer>
@@ -59,8 +62,8 @@
     </ng-container>
 
     <ng-template #mapEmpty>
-      <div class="section-empty">
-        <lucide-icon name="map-pin" size="32" class="section-empty__icon"></lucide-icon>
+      <div class="section-empty" role="status" aria-live="polite">
+        <lucide-icon name="map-pin" size="32" class="section-empty__icon" aria-hidden="true"></lucide-icon>
         <p class="section-empty__text">No location data provided</p>
       </div>
     </ng-template>

@@ -10,8 +10,33 @@ interface QueuedRequest<T> {
 }
 
 /**
- * Request queue service for managing concurrent HTTP requests
- * Limits concurrent requests to prevent network overload
+ * Request Queue Service
+ * 
+ * Manages concurrent HTTP requests with priority-based queuing to prevent network
+ * overload and ensure optimal request ordering. Limits concurrent requests to a
+ * configurable maximum and processes them in priority order.
+ * 
+ * Features:
+ * - Priority-based request queuing
+ * - Configurable concurrency limits
+ * - Automatic queue processing
+ * - Request lifecycle management
+ * - Performance tracking
+ * 
+ * @example
+ * ```typescript
+ * const queue = inject(RequestQueueService);
+ * 
+ * // Enqueue a high-priority request
+ * queue.enqueue(() => this.http.get('/api/data'), 10).subscribe(data => {
+ *   console.log('Data received:', data);
+ * });
+ * 
+ * // Enqueue a low-priority request
+ * queue.enqueue(() => this.http.get('/api/stats'), 0).subscribe(stats => {
+ *   console.log('Stats received:', stats);
+ * });
+ * ```
  */
 @Injectable({
   providedIn: 'root'
@@ -19,13 +44,8 @@ interface QueuedRequest<T> {
 export class RequestQueueService {
   private queue: QueuedRequest<any>[] = [];
   private activeRequests = 0;
-  private readonly maxConcurrency: number;
+  private readonly maxConcurrency = 4; // Default to 4 concurrent requests, can be configured
   private requestIdCounter = 0;
-
-  constructor() {
-    // Default to 4 concurrent requests, can be configured
-    this.maxConcurrency = 4;
-  }
 
   /**
    * Enqueue a request with optional priority

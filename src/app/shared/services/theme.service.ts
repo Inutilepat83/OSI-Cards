@@ -6,6 +6,39 @@ export type Theme = 'light' | 'dark' | 'auto';
 
 /**
  * Theme service for managing dark mode and theme switching
+ * 
+ * Provides comprehensive theme management with support for light, dark, and
+ * automatic theme modes. Automatically syncs with system preferences and
+ * persists user selections in localStorage.
+ * 
+ * Features:
+ * - Three theme modes: light, dark, auto (system preference)
+ * - Automatic system theme detection and syncing
+ * - Persistent theme storage in localStorage
+ * - Reactive theme stream for UI updates
+ * - CSS class and data attribute management
+ * 
+ * @example
+ * ```typescript
+ * const themeService = inject(ThemeService);
+ * 
+ * // Get current theme
+ * const currentTheme = themeService.getTheme();
+ * 
+ * // Set theme
+ * themeService.setTheme('dark');
+ * 
+ * // Toggle between light and dark
+ * themeService.toggleTheme();
+ * 
+ * // Check if dark mode is active
+ * const isDark = themeService.isDarkMode();
+ * 
+ * // Subscribe to theme changes
+ * themeService.theme$.subscribe(theme => {
+ *   console.log('Theme changed to:', theme);
+ * });
+ * ```
  */
 @Injectable({
   providedIn: 'root'
@@ -16,6 +49,7 @@ export class ThemeService {
   readonly theme$: Observable<Theme> = this.themeSubject.asObservable();
 
   constructor() {
+    // Initialize theme in constructor to ensure it's applied immediately
     this.applyTheme(this.themeSubject.value);
     this.watchSystemTheme();
   }

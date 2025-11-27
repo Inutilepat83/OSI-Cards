@@ -23,6 +23,7 @@ export class JsonFileStorageService {
   private storageError$ = new BehaviorSubject<string | null>(null);
 
   constructor() {
+    // Initialize storage in constructor to ensure cards are loaded immediately
     this.initializeStorage();
   }
 

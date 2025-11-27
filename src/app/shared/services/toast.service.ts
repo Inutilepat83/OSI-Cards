@@ -14,7 +14,33 @@ export interface Toast {
 
 /**
  * Toast notification service
- * Replaces console logs with user-visible toast notifications
+ * 
+ * Provides user-visible toast notifications for application feedback. Replaces
+ * console logs with accessible, dismissible toast messages that inform users
+ * of application state changes, errors, and success messages.
+ * 
+ * Features:
+ * - Multiple toast types (success, error, warning, info)
+ * - Auto-dismiss with configurable duration
+ * - Observable stream for reactive UI updates
+ * - Unique ID tracking for individual toast management
+ * - Configurable duration from app config
+ * 
+ * @example
+ * ```typescript
+ * const toastService = inject(ToastService);
+ * 
+ * // Show success toast
+ * toastService.success('Card saved successfully');
+ * 
+ * // Show error toast with custom duration
+ * toastService.error('Failed to load card', 5000);
+ * 
+ * // Subscribe to toast stream
+ * toastService.toasts$.subscribe(toasts => {
+ *   console.log('Active toasts:', toasts);
+ * });
+ * ```
  */
 @Injectable({
   providedIn: 'root'

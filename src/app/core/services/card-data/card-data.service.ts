@@ -79,7 +79,7 @@ export class CardDataService implements OnDestroy {
   );
 
   constructor() {
-    // Initialize the active provider
+    // Initialize the active provider in constructor to ensure it's ready immediately
     if (this.provider.initialize) {
       this.provider.initialize();
     }

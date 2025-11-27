@@ -4,6 +4,32 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ErrorHandlingService } from '../services/error-handling.service';
 
+/**
+ * Error Interceptor
+ * 
+ * HTTP interceptor that catches and handles HTTP errors globally. Transforms HTTP
+ * error responses into user-friendly error messages and integrates with the
+ * ErrorHandlingService for centralized error management.
+ * 
+ * Features:
+ * - Automatic error categorization by HTTP status code
+ * - User-friendly error messages
+ * - Network error detection
+ * - Integration with ErrorHandlingService
+ * - Client-side and server-side error handling
+ * 
+ * @example
+ * ```typescript
+ * // Automatically intercepts all HTTP errors
+ * this.http.get('/api/data').subscribe({
+ *   next: data => console.log(data),
+ *   error: error => {
+ *     // Error is already processed by interceptor
+ *     console.error('Error:', error);
+ *   }
+ * });
+ * ```
+ */
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
   private readonly errorHandlingService = inject(ErrorHandlingService);

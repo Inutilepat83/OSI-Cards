@@ -11,11 +11,36 @@ type InfoField = CardField & {
   trend?: 'up' | 'down' | 'stable' | 'neutral';
 };
 
+/**
+ * Event interface for info section field interactions
+ */
 export interface InfoSectionFieldInteraction {
   sectionTitle?: string;
   field: CardField;
 }
 
+/**
+ * Info Section Component
+ * 
+ * Displays key-value pairs in a clean, scannable format. Ideal for metadata,
+ * contact information, and general data display. Supports trend indicators
+ * and change values for dynamic data visualization.
+ * 
+ * Features:
+ * - Key-value pair display with labels and values
+ * - Trend indicators (up, down, stable, neutral)
+ * - Change percentage display
+ * - Field interaction events
+ * - Streaming placeholder handling
+ * 
+ * @example
+ * ```html
+ * <app-info-section
+ *   [section]="infoSection"
+ *   (fieldInteraction)="onFieldClick($event)">
+ * </app-info-section>
+ * ```
+ */
 @Component({
   selector: 'app-info-section',
   standalone: true,

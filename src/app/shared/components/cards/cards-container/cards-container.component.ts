@@ -6,6 +6,25 @@ import { CardDataService } from '../../../../core';
 import { ErrorHandlingService } from '../../../../core/services/error-handling.service';
 import { AICardRendererComponent } from '../ai-card-renderer.component';
 
+/**
+ * Cards Container Component
+ * 
+ * Container component for displaying multiple cards in a virtual scrolling viewport.
+ * Optimized for performance when rendering large numbers of cards using Angular CDK
+ * virtual scrolling.
+ * 
+ * Features:
+ * - Virtual scrolling for efficient rendering of large card lists
+ * - Automatic card loading from CardDataService
+ * - Error handling integration
+ * - Optimized trackBy function for change detection
+ * - Configurable buffer sizes for virtual scrolling
+ * 
+ * @example
+ * ```html
+ * <app-cards-container></app-cards-container>
+ * ```
+ */
 @Component({
   selector: 'app-cards-container',
   templateUrl: './cards-container.component.html',

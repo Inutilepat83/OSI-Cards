@@ -4,12 +4,36 @@ import { CardField, CardItem } from '../../../../../models';
 import { LucideIconsModule } from '../../../../icons/lucide-icons.module';
 import { BaseSectionComponent } from '../base-section.component';
 
+/**
+ * Extended type for list entries with additional metadata
+ */
 type ListEntry = (CardItem & CardField) & {
   priority?: string;
   assignee?: string;
   date?: string;
 };
 
+/**
+ * List Section Component
+ * 
+ * Displays items in a list format with titles, descriptions, and optional metadata.
+ * Ideal for task lists, product catalogs, and any collection of items.
+ * 
+ * Features:
+ * - Item list display with titles and descriptions
+ * - Priority and assignee support
+ * - Date display
+ * - Item interaction events
+ * - Streaming placeholder handling
+ * 
+ * @example
+ * ```html
+ * <app-list-section
+ *   [section]="listSection"
+ *   (itemInteraction)="onItemClick($event)">
+ * </app-list-section>
+ * ```
+ */
 @Component({
   selector: 'app-list-section',
   standalone: true,
