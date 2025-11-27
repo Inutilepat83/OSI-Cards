@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { LoggingService } from './logging.service';
 import { inject } from '@angular/core';
+import { CSPNonceService } from './csp-nonce.service';
+import { environment } from '@environments/environment';
 
 /**
  * Security Headers Service
@@ -32,6 +34,7 @@ import { inject } from '@angular/core';
 })
 export class SecurityHeadersService {
   private readonly logger = inject(LoggingService);
+  private readonly cspNonceService = inject(CSPNonceService);
   private securityHeaders: Map<string, string> = new Map();
 
   constructor() {
@@ -69,22 +72,30 @@ export class SecurityHeadersService {
    * - Prevents XSS attacks
    * - Restricts resource loading
    * - Prevents data exfiltration
-   * - Allows necessary inline styles/scripts with nonces (should be implemented server-side)
+   * - Uses nonces in production, falls back to unsafe-inline in development
    */
   private setComprehensiveCSP(): void {
-    const cspDirectives = [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Note: unsafe-inline/unsafe-eval should be replaced with nonces in production
-      "style-src 'self' 'unsafe-inline'", // Note: unsafe-inline should be replaced with nonces in production
-      "img-src 'self' data: https:",
-      "font-src 'self' data: https:",
-      "connect-src 'self' https:",
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-      "object-src 'none'",
-      "upgrade-insecure-requests"
-    ].join('; ');
+    let cspDirectives: string;
+
+    if (environment.production) {
+      // Use nonces in production for better security
+      cspDirectives = this.cspNonceService.generateCSPHeader();
+    } else {
+      // Development mode: allow unsafe-inline for easier development
+      cspDirectives = [
+        "default-src 'self'",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+        "style-src 'self' 'unsafe-inline'",
+        "img-src 'self' data: https:",
+        "font-src 'self' data: https:",
+        "connect-src 'self' https:",
+        "frame-ancestors 'none'",
+        "base-uri 'self'",
+        "form-action 'self'",
+        "object-src 'none'",
+        "upgrade-insecure-requests"
+      ].join('; ');
+    }
 
     this.setCSPHeader(cspDirectives);
   }

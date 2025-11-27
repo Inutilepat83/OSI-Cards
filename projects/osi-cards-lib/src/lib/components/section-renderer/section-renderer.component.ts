@@ -1,6 +1,9 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject, Type } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardAction, CardField, CardItem, CardSection } from '../../models';
+import { SectionPluginRegistry } from '../../services/section-plugin-registry.service';
+import { BaseSectionComponent } from '../sections/base-section.component';
+import { PluginSectionWrapperComponent } from './plugin-section-wrapper.component';
 import { InfoSectionComponent, InfoSectionFieldInteraction } from '../sections/info-section.component';
 import { AnalyticsSectionComponent } from '../sections/analytics-section/analytics-section.component';
 import { FinancialsSectionComponent } from '../sections/financials-section/financials-section.component';
@@ -32,6 +35,7 @@ export interface SectionRenderEvent {
   standalone: true,
   imports: [
     CommonModule,
+    PluginSectionWrapperComponent,
     InfoSectionComponent,
     AnalyticsSectionComponent,
     FinancialsSectionComponent,
@@ -56,6 +60,8 @@ export interface SectionRenderEvent {
 export class SectionRendererComponent {
   @Input({ required: true }) section!: CardSection;
   @Output() sectionEvent = new EventEmitter<SectionRenderEvent>();
+
+  private readonly pluginRegistry = inject(SectionPluginRegistry);
 
   // Removed @HostBinding - will be set in template instead to avoid setAttribute errors
   get sectionTypeAttribute(): string {
@@ -82,7 +88,40 @@ export class SectionRendererComponent {
     }
   }
 
+  /**
+   * Get the component type for the current section, checking plugins first
+   */
+  get sectionComponent(): Type<BaseSectionComponent> | null {
+    if (!this.section) {
+      return null;
+    }
+
+    // Check if a plugin is registered for this section type
+    const pluginComponent = this.pluginRegistry.getComponentForSection(this.section);
+    if (pluginComponent) {
+      return pluginComponent;
+    }
+
+    // Fall back to built-in sections (handled by resolvedType in template)
+    return null;
+  }
+
+  /**
+   * Check if current section uses a plugin
+   */
+  get usesPlugin(): boolean {
+    if (!this.section?.type) {
+      return false;
+    }
+    return this.pluginRegistry.hasPlugin(this.section.type.toLowerCase());
+  }
+
   get resolvedType(): string {
+    // If a plugin is registered, don't resolve type (plugin handles it)
+    if (this.usesPlugin) {
+      return this.section.type?.toLowerCase() || 'unknown';
+    }
+
     if (!this.section) {
       return 'unknown';
     }
@@ -172,4 +211,12 @@ export class SectionRendererComponent {
       metadata
     });
   }
+
+  /**
+   * Handle events from plugin components
+   */
+  onPluginSectionEvent(event: SectionRenderEvent): void {
+    this.sectionEvent.emit(event);
+  }
+
 }

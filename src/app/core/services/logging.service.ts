@@ -85,7 +85,7 @@ export class LoggingService {
   }
 
   /**
-   * Internal log method
+   * Internal log method with enhanced structured logging
    */
   private log(level: LogLevel, message: string, context?: string, data?: unknown): void {
     const configLevel = this.config.LOGGING.LOG_LEVEL;
@@ -99,6 +99,11 @@ export class LoggingService {
     // Only log if level is at or above configured level
     if (levelPriority[level] < levelPriority[configLevel]) {
       return;
+    }
+
+    // Generate correlation ID if not set (for request tracing)
+    if (!this.correlationId && level === 'error') {
+      this.correlationId = `corr_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
     }
 
     const entry: LogEntry = {
@@ -117,24 +122,55 @@ export class LoggingService {
       this.logHistory.shift();
     }
 
-    // Output to console based on level
+    // Enhanced structured logging with correlation ID
+    const structuredLog: Record<string, unknown> = {
+      level,
+      message,
+      timestamp: entry.timestamp.toISOString(),
+      sessionId: this.sessionId
+    };
+    
+    if (context) {
+      structuredLog['context'] = context;
+    }
+    
+    if (this.correlationId) {
+      structuredLog['correlationId'] = this.correlationId;
+    }
+    
+    if (data) {
+      structuredLog['data'] = data;
+    }
+
+    // Output to console based on level with structured format
     const logMessage = context ? `[${context}] ${message}` : message;
     const logData = data ? [logMessage, data] : [logMessage];
+    
+    // Also log structured format for better debugging
+    const structuredMessage = `[${level.toUpperCase()}] ${JSON.stringify(structuredLog, null, 2)}`;
 
     switch (level) {
       case 'debug':
         if (this.config.LOGGING.ENABLE_SECTION_STATE_LOGGING) {
           console.debug(...logData);
+          if (this.config.LOGGING.ENABLE_DEBUG) {
+            console.debug(structuredMessage);
+          }
         }
         break;
       case 'info':
         console.info(...logData);
+        if (this.config.LOGGING.ENABLE_DEBUG) {
+          console.info(structuredMessage);
+        }
         break;
       case 'warn':
         console.warn(...logData);
+        console.warn(structuredMessage);
         break;
       case 'error':
         console.error(...logData);
+        console.error(structuredMessage);
         break;
     }
   }

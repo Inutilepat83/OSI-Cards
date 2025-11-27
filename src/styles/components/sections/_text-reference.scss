@@ -24,11 +24,11 @@
 
 .reference-card__text {
   @include card-subtitle-text;
-  /* COMPACT: Tight line-height */
-  font-size: calc(var(--card-subtitle-font-size) * 1.1);
+  font-size: var(--card-subtitle-font-size);
   line-height: 1.4;
-  color: var(--card-text-primary);
+  color: color-mix(in srgb, var(--foreground) 75%, transparent);
   margin: 0;
+  font-weight: 400;
 }
 
 .reference-card__footer {

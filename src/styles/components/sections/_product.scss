@@ -101,13 +101,13 @@
 
 .product-card__title {
   @include card-title-text;
-  /* COMPACT: Tight line-height */
   word-wrap: break-word;
   overflow-wrap: break-word;
   margin: 0;
   line-height: 1.2;
-  font-size: calc(var(--card-title-font-size) * 1.15);
+  font-size: var(--card-title-font-size);
   font-weight: 700;
+  color: color-mix(in srgb, var(--foreground) 93%, transparent);
 }
 
 .product-card--references .product-card__title {

@@ -25,6 +25,10 @@ export class CardRepository implements ICardRepository {
   }
 
   findByType(type: CardType): Observable<AICardConfig[]> {
+    // If type is 'all', return all cards; otherwise filter by type
+    if (type === 'all') {
+      return this.findAll();
+    }
     return this.provider.getCardsByType(type);
   }
 
@@ -34,7 +38,9 @@ export class CardRepository implements ICardRepository {
       return (this.provider as any).getCardByTypeAndVariant(type, variant);
     }
     // Fallback implementation
-    return this.findByType(type).pipe(
+    // If type is 'all', use findAll; otherwise use findByType
+    const cards$ = type === 'all' ? this.findAll() : this.findByType(type);
+    return cards$.pipe(
       map(cards => {
         if (!cards || cards.length === 0) {
           return null;
@@ -70,7 +76,18 @@ export class CardRepository implements ICardRepository {
     return this.findAll().pipe(
       map(cards => {
         const types = new Set(cards.map(card => card.cardType));
-        return Array.from(types).sort() as CardType[];
+        const sortedTypes = Array.from(types).sort() as CardType[];
+        // Add 'all' at the beginning if it's not already there
+        if (!sortedTypes.includes('all' as CardType)) {
+          return ['all' as CardType, ...sortedTypes];
+        }
+        // Move 'all' to the beginning if it exists
+        const allIndex = sortedTypes.indexOf('all' as CardType);
+        if (allIndex > 0) {
+          sortedTypes.splice(allIndex, 1);
+          return ['all' as CardType, ...sortedTypes];
+        }
+        return sortedTypes;
       })
     );
   }
@@ -99,5 +116,6 @@ export class CardRepository implements ICardRepository {
     });
   }
 }
+
 
 

@@ -12,11 +12,15 @@ import { LoggingService } from '../../../../core/services/logging.service';
 import { ExportService } from '../../../../shared/services/export.service';
 import { CommandService } from '../../../../shared/services/command.service';
 import { LLMStreamingService } from '../../../../core/services/llm-streaming.service';
+import { CardDataService } from '../../../../core/services/card-data/card-data.service';
+import { AgentService } from '../../../../core/services/agent.service';
+import { ChatService } from '../../../../core/services/chat.service';
 
 // Import standalone components
 import { CardPreviewComponent } from '../../../../shared/components/cards';
 import { ensureCardIds, removeAllIds } from '../../../../shared';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { LucideIconsModule } from '../../../../shared/icons/lucide-icons.module';
 import { JsonEditorComponent } from '../../../../shared/components/json-editor/json-editor.component';
 import { CardTypeSelectorComponent } from '../../../../shared/components/card-type-selector/card-type-selector.component';
@@ -29,6 +33,7 @@ import { PreviewControlsComponent } from '../../../../shared/components/preview-
   imports: [
     CommonModule,
     FormsModule,
+    RouterModule,
     CardPreviewComponent,
     LucideIconsModule,
     JsonEditorComponent,
@@ -49,6 +54,9 @@ export class HomePageComponent implements OnInit {
   private readonly exportService = inject(ExportService);
   private readonly commandService = inject(CommandService);
   private readonly llmStreamingService = inject(LLMStreamingService);
+  private readonly cardDataService = inject(CardDataService);
+  private readonly agentService = inject(AgentService);
+  private readonly chatService = inject(ChatService);
   
   // Batch section completions to prevent excessive dispatches
   private completionBatchTimer: ReturnType<typeof setTimeout> | null = null;
@@ -75,7 +83,7 @@ export class HomePageComponent implements OnInit {
   }>();
 
   // Component properties
-  cardType: CardType = 'company';
+  cardType: CardType = 'all';
   cardVariant = 1;
   generatedCard: AICardConfig | null = null;
   isGenerating = false;
@@ -117,7 +125,16 @@ export class HomePageComponent implements OnInit {
     ]
   };
 
-  cardTypes: CardType[] = ['company', 'contact', 'opportunity', 'product', 'analytics', 'event', 'sko'];
+  cardTypes: CardType[] = []; // Dynamically loaded from examples
+  
+  // Track available variants for each card type
+  availableVariants: Map<CardType, number> = new Map();
+  
+  // Get available variants for current card type
+  get variants(): number[] {
+    const maxVariants = this.availableVariants.get(this.cardType) || 1;
+    return Array.from({ length: maxVariants }, (_, i) => i + 1);
+  }
 
   statusMessage = '';
   private statusTone: 'polite' | 'assertive' = 'polite';
@@ -157,8 +174,7 @@ export class HomePageComponent implements OnInit {
           const cardChanged = this.generatedCard !== card;
           this.generatedCard = card;
           if (cardChanged && card && !this.isGenerating && !this.jsonError) {
-            const cardTypeLabel = card.cardType ? `${card.cardType} ` : '';
-            this.announceStatus(`${cardTypeLabel}card preview updated.`);
+            this.announceStatus('Card preview updated.');
           }
           this.cd.markForCheck();
         } else if (!this.livePreviewCard && card) {
@@ -180,8 +196,9 @@ export class HomePageComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(card => {
         if (card) {
-          // Update JSON editor with the loaded card (remove IDs for clean JSON)
+          // Update JSON editor with the loaded card (remove IDs and cardType for clean JSON)
           const cardWithoutIds = removeAllIds(card);
+          delete cardWithoutIds.cardType;
           const cardJson = JSON.stringify(cardWithoutIds, null, 2);
           if (cardJson !== this.jsonInput) {
             this.jsonInput = cardJson;
@@ -232,6 +249,9 @@ export class HomePageComponent implements OnInit {
 
     // Initialize system and load initial company card
     this.initializeSystem();
+    
+    // Load available variants for each card type
+    this.loadAvailableVariants();
     
     // Setup immediate JSON processing for live preview updates
     // Balanced debounce (75ms) for responsive updates without excessive re-renders
@@ -330,6 +350,35 @@ export class HomePageComponent implements OnInit {
     this.store.dispatch(CardActions.loadFirstCardExample());
   }
 
+  private loadAvailableVariants(): void {
+    // First, load available card types from the manifest/examples
+    this.cardDataService.getAvailableCardTypes().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(types => {
+      // Set card types dynamically from examples
+      this.cardTypes = types.length > 0 ? types : ['all']; // Fallback to all if none found
+      
+      // Then load variant counts for each card type
+      this.cardTypes.forEach(cardType => {
+        if (cardType === 'all') {
+          // 'all' type always has exactly 1 variant
+          this.availableVariants.set('all', 1);
+        } else {
+          // For other types, count available cards
+          this.cardDataService.getCardsByType(cardType).pipe(
+            takeUntilDestroyed(this.destroyRef)
+          ).subscribe(cards => {
+            const count = Math.max(cards.length, 1); // At least 1 variant
+            this.availableVariants.set(cardType, count);
+            this.cd.markForCheck();
+          });
+        }
+      });
+      
+      this.cd.markForCheck();
+    });
+  }
+
   onCardTypeChange(type: CardType): void {
     this.switchCardType(type);
   }
@@ -387,8 +436,19 @@ export class HomePageComponent implements OnInit {
 
   private switchCardType(type: CardType): void {
     if (this.switchingType) return;
+    
+    // Stop simulation if active when switching cards
+    if (this.isSimulatingLLM) {
+      this.stopSimulation();
+    }
+    
     this.switchingType = true;
     this.cardType = type;
+    // Reset variant to 1 if current variant exceeds available variants for new type
+    const maxVariants = this.availableVariants.get(type) || 1;
+    if (this.cardVariant > maxVariants) {
+      this.cardVariant = 1;
+    }
     // Reset processed JSON payloads before loading template to ensure updates
     this.lastProcessedJson = '';
     this.lastImmediateJson = '';
@@ -399,8 +459,9 @@ export class HomePageComponent implements OnInit {
   }
 
   private switchCardVariant(variant: number): void {
-    if (variant < 1 || variant > 3) return; // Ensure variant is within valid range
-    this.cardVariant = variant as 1 | 2 | 3;
+    const maxVariants = this.availableVariants.get(this.cardType) || 1;
+    if (variant < 1 || variant > maxVariants) return; // Ensure variant is within valid range
+    this.cardVariant = variant;
     // Reset processed JSON payloads before switching to ensure updates
     this.lastProcessedJson = '';
     this.lastImmediateJson = '';
@@ -474,7 +535,7 @@ export class HomePageComponent implements OnInit {
           if (titleMatch || sectionsMatch) {
             const newCard: AICardConfig = {
               ...this.generatedCard,
-              cardTitle: titleMatch ? titleMatch[1] : this.generatedCard.cardTitle
+              cardTitle: (titleMatch && titleMatch[1]) ? titleMatch[1]! : this.generatedCard.cardTitle
             };
             // If sections are being written, try to extract them
             if (sectionsMatch) {
@@ -574,6 +635,12 @@ export class HomePageComponent implements OnInit {
         continue;
       }
 
+      if (!newSection) {
+        structureChanged = true;
+        hasChanges = true;
+        continue;
+      }
+
       // Check if section title, type, or other properties changed
       if (
         oldSection.title !== newSection.title ||
@@ -589,7 +656,7 @@ export class HomePageComponent implements OnInit {
 
       // Check if fields changed
       const oldFields = oldSection.fields || [];
-      const newFields = newSection.fields || [];
+      const newFields = newSection?.fields || [];
       if (oldFields.length !== newFields.length) {
         structureChanged = true;
         hasChanges = true;
@@ -610,7 +677,7 @@ export class HomePageComponent implements OnInit {
 
       // Check if items changed
       const oldItems = oldSection.items || [];
-      const newItems = newSection.items || [];
+      const newItems = newSection?.items || [];
       if (oldItems.length !== newItems.length) {
         structureChanged = true;
         hasChanges = true;
@@ -716,7 +783,7 @@ export class HomePageComponent implements OnInit {
         // Try to extract sections array (even if incomplete)
         // Look for "sections": [ and try to extract complete section objects
         const sectionsMatch = jsonInput.match(/"sections"\s*:\s*\[([\s\S]*)/);
-        if (sectionsMatch) {
+        if (sectionsMatch && sectionsMatch[1]) {
           const sectionsContent = sectionsMatch[1];
           const sections: CardSection[] = [];
           
@@ -877,28 +944,32 @@ export class HomePageComponent implements OnInit {
       
       // Try to extract fields array (even if incomplete)
       const fieldsMatch = sectionStr.match(/"fields"\s*:\s*\[([\s\S]*?)(?:\]|$)/);
-      if (fieldsMatch) {
+      if (fieldsMatch && fieldsMatch[1]) {
         const fieldsContent = fieldsMatch[1];
-        const fields = this.extractPartialFields(fieldsContent);
-        if (fields.length > 0) {
-          section.fields = fields;
+        if (fieldsContent) {
+          const fields = this.extractPartialFields(fieldsContent);
+          if (fields.length > 0) {
+            section.fields = fields;
+          }
         }
       }
       
       // Try to extract items array (even if incomplete)
       const itemsMatch = sectionStr.match(/"items"\s*:\s*\[([\s\S]*?)(?:\]|$)/);
-      if (itemsMatch) {
+      if (itemsMatch && itemsMatch[1]) {
         const itemsContent = itemsMatch[1];
-        const partialItems = this.extractPartialItems(itemsContent);
-        // Filter out items without required 'title' property and ensure they match CardItem type
-        const items: CardItem[] = partialItems
+        if (itemsContent) {
+          const partialItems = this.extractPartialItems(itemsContent);
+          // Filter out items without required 'title' property and ensure they match CardItem type
+          const items: CardItem[] = partialItems
           .filter((item): item is CardItem => typeof item.title === 'string' && item.title.length > 0)
           .map(item => ({
             ...item,
             title: item.title! // We know title exists due to filter
           }));
-        if (items.length > 0) {
-          section.items = items;
+          if (items.length > 0) {
+            section.items = items;
+          }
         }
       }
       
@@ -1241,9 +1312,6 @@ export class HomePageComponent implements OnInit {
     if (nextCard.cardSubtitle !== undefined) {
       currentCard.cardSubtitle = nextCard.cardSubtitle;
     }
-    if (nextCard.cardType !== undefined) {
-      currentCard.cardType = nextCard.cardType;
-    }
     if (nextCard.description !== undefined) {
       currentCard.description = nextCard.description;
     }
@@ -1389,22 +1457,28 @@ export class HomePageComponent implements OnInit {
       const line = rawLine.trim();
       // section header: '- title: Name' or 'title: Name' within a section
       const sectionMatch = line.match(/^-?\s*title\s*:\s*(.+)$/i);
-      if (sectionMatch) {
-        // start new section
-        currentSection = {
-          title: sectionMatch[1].trim(),
-          type: 'info',
-          fields: []
-        } as CardSection;
-        sections.push(currentSection);
-        inFieldsBlock = false;
-        continue;
+      if (sectionMatch && sectionMatch[1]) {
+        const titleMatch = sectionMatch[1];
+        if (titleMatch) {
+          // start new section
+          currentSection = {
+            title: titleMatch.trim(),
+            type: 'info',
+            fields: []
+          } as CardSection;
+          sections.push(currentSection);
+          inFieldsBlock = false;
+          continue;
+        }
       }
 
       // type line within a section
       const typeMatch = line.match(/^type\s*:\s*([a-zA-Z-]+)/i);
-      if (typeMatch && currentSection) {
-        currentSection.type = typeMatch[1].trim() as any;
+      if (typeMatch && typeMatch[1] && currentSection) {
+        const typeValue = typeMatch[1];
+        if (typeValue) {
+          currentSection.type = typeValue.trim() as any;
+        }
         continue;
       }
 
@@ -1422,13 +1496,16 @@ export class HomePageComponent implements OnInit {
           inFieldsBlock = false;
           // re-evaluate this line for section start
           const maybeSection = line.match(/^-?\s*title\s*:\s*(.+)$/i);
-          if (maybeSection) {
-            currentSection = {
-              title: maybeSection[1].trim(),
-              type: 'info',
-              fields: []
-            } as CardSection;
-            sections.push(currentSection);
+          if (maybeSection && maybeSection[1]) {
+            const maybeTitle = maybeSection[1];
+            if (maybeTitle) {
+              currentSection = {
+                title: maybeTitle.trim(),
+                type: 'info',
+                fields: []
+              } as CardSection;
+              sections.push(currentSection);
+            }
           }
           continue;
         }
@@ -1441,9 +1518,12 @@ export class HomePageComponent implements OnInit {
           const field: CardField = { label };
           // Percentage handling
           const percentMatch = rawValue.match(/([0-9,.]+)\s*%/);
-          if (percentMatch) {
-            field.value = percentMatch[1];
-            field.percentage = parseFloat(percentMatch[1].replace(/,/g, '.'));
+          if (percentMatch && percentMatch[1]) {
+            const percentValue = percentMatch[1];
+            if (percentValue) {
+              field.value = percentValue;
+              field.percentage = parseFloat(percentValue.replace(/,/g, '.'));
+            }
             field.format = 'percentage';
           } else if (/^[0-9,.]+$/.test(rawValue)) {
             // Numeric KPI
@@ -1460,85 +1540,115 @@ export class HomePageComponent implements OnInit {
 
         // generic dash-item within fields (e.g., '- Industry: Value')
         const dashField = line.match(/^[-*]\s*(.+?)\s*[:=]\s*(.+)$/);
-        if (dashField) {
-          const label = dashField[1].trim();
-          const value = dashField[2].trim();
-          currentSection.fields = currentSection.fields || [];
-          currentSection.fields.push({ label, value } as any);
-          continue;
+        if (dashField && dashField[1] && dashField[2]) {
+          const labelStr = dashField[1];
+          const valueStr = dashField[2];
+          if (labelStr && valueStr) {
+            const label = labelStr.trim();
+            const value = valueStr.trim();
+            currentSection.fields = currentSection.fields || [];
+            currentSection.fields.push({ label, value } as any);
+            continue;
+          }
         }
         // item with details (e.g. '- John Doe | CTO | cto@example.com') -> CardItem
         const itemDetailMatch = line.match(/^[-*]\s*(.+?)\s*\|\s*(.+?)\s*\|\s*(.+)$/);
-        if (itemDetailMatch && currentSection) {
-          let title = itemDetailMatch[1].trim();
-          // icon prefix in the title e.g., '[TL] John Doe' -> icon 'TL'
-          const iconPrefix = title.match(/^\[([A-Za-z0-9_-]+)\]\s*(.+)$/);
-          let icon: string | undefined;
-          if (iconPrefix) {
-            icon = iconPrefix[1];
-            title = iconPrefix[2];
+        if (itemDetailMatch && itemDetailMatch[1] && itemDetailMatch[2] && itemDetailMatch[3] && currentSection) {
+          const titleStr = itemDetailMatch[1];
+          const subtitleStr = itemDetailMatch[2];
+          const metaValStr = itemDetailMatch[3];
+          if (titleStr && subtitleStr && metaValStr) {
+            let title = titleStr.trim();
+            // icon prefix in the title e.g., '[TL] John Doe' -> icon 'TL'
+            const iconPrefix = title.match(/^\[([A-Za-z0-9_-]+)\]\s*(.+)$/);
+            let icon: string | undefined;
+            if (iconPrefix && iconPrefix[1] && iconPrefix[2]) {
+              const iconValue = iconPrefix[1];
+              const titleValue = iconPrefix[2];
+              if (iconValue && titleValue) {
+                icon = iconValue;
+                title = titleValue;
+              }
+            }
+            const subtitle = subtitleStr.trim();
+            const metaVal = metaValStr.trim();
+            currentSection.items = currentSection.items || [];
+            currentSection.items.push({ title, description: subtitle, meta: { contact: metaVal }, icon } as CardItem);
+            continue;
           }
-          const subtitle = itemDetailMatch[2].trim();
-          const metaVal = itemDetailMatch[3].trim();
-          currentSection.items = currentSection.items || [];
-          currentSection.items.push({ title, description: subtitle, meta: { contact: metaVal }, icon } as CardItem);
-          continue;
         }
         // item with two parts (e.g. '- John Doe | CTO')
         const itemTwoParts = line.match(/^[-*]\s*(.+?)\s*\|\s*(.+)$/);
-        if (itemTwoParts && currentSection) {
-          const title = itemTwoParts[1].trim();
-          const subtitle = itemTwoParts[2].trim();
-          currentSection.items = currentSection.items || [];
-          currentSection.items.push({ title, description: subtitle } as CardItem);
-          continue;
+        if (itemTwoParts && itemTwoParts[1] && itemTwoParts[2] && currentSection) {
+          const titleStr = itemTwoParts[1];
+          const subtitleStr = itemTwoParts[2];
+          if (titleStr && subtitleStr) {
+            const title = titleStr.trim();
+            const subtitle = subtitleStr.trim();
+            currentSection.items = currentSection.items || [];
+            currentSection.items.push({ title, description: subtitle } as CardItem);
+            continue;
+          }
         }
         // List item in a list section: '- John Doe' -> CardItem
         const listItemMatch = line.match(/^[-*]\s+([^:]+)$/);
-        if (listItemMatch && currentSection && /list|timeline|event/i.test(String(currentSection.type))) {
-          const title = listItemMatch[1].trim();
-          currentSection.items = currentSection.items || [];
-          currentSection.items.push({ title } as any);
-          continue;
+        if (listItemMatch && listItemMatch[1] && currentSection && /list|timeline|event/i.test(String(currentSection.type))) {
+          const titleStr = listItemMatch[1];
+          if (titleStr) {
+            const title = titleStr.trim();
+            currentSection.items = currentSection.items || [];
+            currentSection.items.push({ title } as any);
+            continue;
+          }
         }
       }
 
       // Dash item outside of fields block (for list-type sections)
       if (!inFieldsBlock && currentSection && /^[-*]\s+([^:]+)$/.test(line) && /list|timeline|event/i.test(String(currentSection.type))) {
         const m = line.match(/^[-*]\s+([^:]+)$/);
-        if (m) {
-          const title = m[1].trim();
-          currentSection.items = currentSection.items || [];
-          currentSection.items.push({ title } as any);
+        if (m && m[1]) {
+          const titleStr = m[1];
+          if (titleStr) {
+            const title = titleStr.trim();
+            currentSection.items = currentSection.items || [];
+            currentSection.items.push({ title } as any);
+          }
         }
       }
 
       // KPI-like lines outside fields block: 'ARR: 12.5' or 'Growth: 23% ▲'
       const kpiMatch = line.match(/^([A-Za-z0-9 _-]+)\s*[:=]\s*(.+)$/);
-      if (kpiMatch && currentSection) {
-        const label = kpiMatch[1].trim();
-        const rawValue = kpiMatch[2].trim();
-        const field: any = { label };
-        const percentMatch = rawValue.match(/([0-9.,]+)\s*%/);
-        if (percentMatch) {
-          field.value = percentMatch[1];
-          field.percentage = parseFloat(percentMatch[1].replace(/,/g, '.'));
-          field.format = 'percentage';
-        } else if (/^[0-9.,]+$/.test(rawValue)) {
-          const numeric = parseFloat(rawValue.replace(/,/g, ''));
-          field.value = numeric;
-          field.format = 'number';
-        } else {
-          field.value = rawValue;
+      if (kpiMatch && kpiMatch[1] && kpiMatch[2] && currentSection) {
+        const labelStr = kpiMatch[1];
+        const rawValueStr = kpiMatch[2];
+        if (labelStr && rawValueStr) {
+          const label = labelStr.trim();
+          const rawValue = rawValueStr.trim();
+          const field: any = { label };
+          const percentMatch = rawValue.match(/([0-9.,]+)\s*%/);
+          if (percentMatch && percentMatch[1]) {
+            const percentValue = percentMatch[1];
+            if (percentValue) {
+              field.value = percentValue;
+              field.percentage = parseFloat(percentValue.replace(/,/g, '.'));
+              field.format = 'percentage';
+            }
+          } else if (/^[0-9.,]+$/.test(rawValue)) {
+            const numeric = parseFloat(rawValue.replace(/,/g, ''));
+            field.value = numeric;
+            field.format = 'number';
+          } else {
+            field.value = rawValue;
+          }
+          // detect performance markers
+          if (rawValue.includes('▲') || /up/i.test(rawValue)) {
+            field.performance = 'up';
+          } else if (rawValue.includes('▼') || /down/i.test(rawValue)) {
+            field.performance = 'down';
+          }
+          currentSection.fields = currentSection.fields || [];
+          currentSection.fields.push(field as any);
         }
-        // detect performance markers
-        if (rawValue.includes('▲') || /up/i.test(rawValue)) {
-          field.performance = 'up';
-        } else if (rawValue.includes('▼') || /down/i.test(rawValue)) {
-          field.performance = 'down';
-        }
-        currentSection.fields = currentSection.fields || [];
-        currentSection.fields.push(field as any);
       }
     }
 
@@ -1556,10 +1666,13 @@ export class HomePageComponent implements OnInit {
       // Build simple table as chartData: first row as labels, rest as rows
       const tableRows = lines.filter(l => tableRegex.test(l)).map(r => r.split('|').map(c => c.trim()));
       if (tableRows.length > 0) {
-        const headers = tableRows[0].map(h => h.trim());
-        const datasets = tableRows.slice(1).map(row => ({ label: row[0], data: row.slice(1).map(v => ({ value: v })) }));
-        previewCard.sections = previewCard.sections || [];
-        previewCard.sections.push({ title: 'Table', type: 'table', chartData: { labels: headers.slice(1), datasets: datasets.map(d => ({ label: d.label, data: d.data.map(x => Number(x.value) || 0) })) } as any } as any);
+        const firstRow = tableRows[0];
+        if (firstRow && firstRow.length > 0) {
+          const headers = firstRow.filter((h): h is string => h !== undefined).map(h => h.trim());
+          const datasets = tableRows.slice(1).map(row => ({ label: row[0], data: row.slice(1).map(v => ({ value: v })) }));
+          previewCard.sections = previewCard.sections || [];
+          previewCard.sections.push({ title: 'Table', type: 'table', chartData: { labels: headers.slice(1), datasets: datasets.map(d => ({ label: d.label, data: d.data.map(x => Number(x.value) || 0) })) } as any } as any);
+        }
       }
     }
 
@@ -1567,7 +1680,8 @@ export class HomePageComponent implements OnInit {
     const chartTypeLine = lines.find(l => /^chartType\s*:\s*\w+/i.test(l));
     const chartLabelsLine = lines.find(l => /^labels\s*:\s*\[.*\]/i.test(l));
     if (chartTypeLine && chartLabelsLine) {
-      const chartType = (chartTypeLine.split(':')[1] || 'bar').trim();
+      const chartTypePart = chartTypeLine.split(':')[1];
+      const chartType = (chartTypePart || 'bar').trim();
       const labelsPart = chartLabelsLine.replace(/labels\s*:\s*\[(.*)\]/i, '$1');
       const labels = labelsPart.split(',').map(s => s.trim().replace(/^"|"$/g, ''));
       // Try to parse datasets lines after the labelsLine in the input
@@ -1575,11 +1689,16 @@ export class HomePageComponent implements OnInit {
       const labelIndex = lines.indexOf(chartLabelsLine);
       for (let idx = labelIndex + 1; idx < Math.min(labelIndex + 10, lines.length); idx++) {
         const line = lines[idx];
+        if (!line) continue;
         const dsMatch = line.match(/^([^:]+):\s*\[(.*)\]$/);
-        if (dsMatch) {
-          const dsLabel = dsMatch[1].trim();
-          const values = dsMatch[2].split(',').map(v => Number(v.trim().replace(/[^0-9.-]+/g, '')) || 0);
-          datasets.push({ label: dsLabel, data: values });
+        if (dsMatch && dsMatch[1] && dsMatch[2]) {
+          const dsLabelStr = dsMatch[1];
+          const dsValuesStr = dsMatch[2];
+          if (dsLabelStr && dsValuesStr) {
+            const dsLabel = dsLabelStr.trim();
+            const values = dsValuesStr.split(',').map(v => Number(v.trim().replace(/[^0-9.-]+/g, '')) || 0);
+            datasets.push({ label: dsLabel, data: values });
+          }
         }
       }
       if (datasets.length) {
@@ -1588,13 +1707,15 @@ export class HomePageComponent implements OnInit {
       }
     }
 
-    return this.recheckCardStructure(previewCard) ?? previewCard;
+    // Recheck and return the card structure
+    // Always return previewCard if recheckCardStructure returns null
+    const rechecked: AICardConfig | null = this.recheckCardStructure(previewCard);
+    if (rechecked === null) {
+      return previewCard;
+    }
+    return rechecked;
   }
 
-  /**
-   * Debounced JSON processing for final validation and merging.
-   * Full validation, error handling, and smart merging with existing card.
-   */
   private processJsonInput(jsonInput: string): void {
     if (!this.isInitialized) return;
 
@@ -1668,6 +1789,12 @@ export class HomePageComponent implements OnInit {
   }
 
   onSimulateLLMStart(): void {
+    // Toggle simulation: if already simulating, stop it
+    if (this.isSimulatingLLM) {
+      this.stopSimulation();
+      return;
+    }
+
     const payload = this.getSimulationPayload();
     if (!payload) {
       this.announceStatus('Provide JSON or select a card before starting the LLM simulation.', true);
@@ -1696,10 +1823,72 @@ export class HomePageComponent implements OnInit {
     }
   }
 
-  onSimulateLLMCancel(): void {
+  private stopSimulation(): void {
     this.llmStreamingService.stop();
     this.stopSectionStateLogging();
-    this.announceStatus('Simulation cancelled.');
+    
+    // Get the current card from streaming or other sources
+    const currentCard = this.llmPlaceholderCard || this.generatedCard || this.livePreviewCard;
+    
+    // If we have a card, load the full JSON into the editor
+    if (currentCard) {
+      try {
+        // Format card for editor (remove IDs and cardType, just like when loading from store)
+        const cardWithoutIds = removeAllIds(currentCard);
+        delete cardWithoutIds.cardType;
+        const cardJson = JSON.stringify(cardWithoutIds, null, 2);
+        
+        // Update the editor with the full JSON
+        this.jsonInput = cardJson;
+        this.lastProcessedJson = cardJson;
+        this.lastImmediateJson = cardJson;
+        this.isJsonValid = true;
+        this.jsonError = '';
+        
+        // Ensure card has IDs and dispatch to store
+        const card = ensureCardIds(currentCard);
+        this.ngZone.run(() => {
+          this.store.dispatch(CardActions.generateCardSuccess({ 
+            card, 
+            changeType: 'structural'
+          }));
+          this.cd.markForCheck();
+        });
+        
+        this.announceStatus('Simulation stopped. Card loaded into editor.');
+        return;
+      } catch (error) {
+        this.logger.error('Error loading card into editor after stopping simulation', 'HomePageComponent', error);
+      }
+    }
+    
+    // Fallback: If there's complete JSON in the input, try to load it
+    const trimmed = this.jsonInput?.trim();
+    if (trimmed) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (CardTypeGuards.isAICardConfig(parsed)) {
+          const card = ensureCardIds(parsed);
+          this.ngZone.run(() => {
+            this.store.dispatch(CardActions.generateCardSuccess({ 
+              card, 
+              changeType: 'structural'
+            }));
+            this.cd.markForCheck();
+          });
+          this.announceStatus('Simulation stopped. Card loaded.');
+          return;
+        }
+      } catch {
+        // JSON is incomplete or invalid, just stop simulation
+      }
+    }
+    
+    this.announceStatus('Simulation stopped.');
+  }
+
+  onSimulateLLMCancel(): void {
+    this.stopSimulation();
   }
 
   // LLM simulation logic moved to LLMStreamingService
@@ -2148,15 +2337,22 @@ export class HomePageComponent implements OnInit {
   onAgentAction(event: { action: any; card: AICardConfig; agentId?: string; context?: Record<string, unknown> }): void {
     // Handle agent action - trigger agent with the provided context
     this.logger.info('Agent action triggered', 'HomePageComponent', event);
-    // TODO: Implement agent triggering logic
-    // Example: this.agentService.triggerAgent(event.agentId, event.context);
+    this.agentService.triggerAgent(event.agentId, event.context).catch(error => {
+      this.logger.error('Failed to trigger agent', 'HomePageComponent', error);
+    });
   }
 
   onQuestionAction(event: { action: any; card: AICardConfig; question?: string }): void {
     // Handle question action - write a new message to the chat
     this.logger.info('Question action triggered', 'HomePageComponent', event);
-    // TODO: Implement chat message logic
-    // Example: this.chatService.sendMessage(event.question || event.action.label);
+    const message = event.question || event.action?.label || '';
+    if (message) {
+      this.chatService.sendMessage(message, {
+        cardId: event.card.id,
+        cardTitle: event.card.cardTitle,
+        actionType: event.action?.type
+      });
+    }
   }
 
   toggleFullscreen(): void {
@@ -2166,7 +2362,6 @@ export class HomePageComponent implements OnInit {
   }
 
   async onExportCard(): Promise<void> {
-    console.log('onExportCard called');
     this.logger.info('Export button clicked', 'HomePageComponent');
     
     if (!this.generatedCard) {
@@ -2179,7 +2374,6 @@ export class HomePageComponent implements OnInit {
     await new Promise(resolve => setTimeout(resolve, 100));
 
     const containerElement = this.cardPreviewComponent?.getCardElement();
-    console.log('Container element:', containerElement);
     
     if (!containerElement) {
       this.announceStatus('Card element not found', true);
@@ -2190,36 +2384,25 @@ export class HomePageComponent implements OnInit {
     // Find the actual card article element inside the container
     // Try multiple selectors to find the card element
     let cardElement: HTMLElement | null = containerElement.querySelector('article.ai-card-surface');
-    console.log('Card element (article):', cardElement);
     
     if (!cardElement) {
       // Fallback 1: try tilt-container
       cardElement = containerElement.querySelector('.tilt-container') as HTMLElement;
-      console.log('Card element (tilt-container):', cardElement);
     }
     
     if (!cardElement) {
       // Fallback 2: try any article element
       cardElement = containerElement.querySelector('article') as HTMLElement;
-      console.log('Card element (any article):', cardElement);
     }
     
     if (!cardElement) {
       // Fallback 3: use the container itself
       cardElement = containerElement;
       this.logger.warn('Using container element for export (card article not found)', 'HomePageComponent');
-      console.log('Using container as card element');
     }
 
     try {
       const filename = `${this.generatedCard.cardTitle || 'card'}.png`.replace(/[^a-z0-9.-]/gi, '_');
-      console.log('Starting PNG export with:', { 
-        element: cardElement.tagName, 
-        className: cardElement.className,
-        filename,
-        width: cardElement.offsetWidth,
-        height: cardElement.offsetHeight
-      });
       this.logger.info('Exporting card as PNG', 'HomePageComponent', { 
         element: cardElement.tagName, 
         className: cardElement.className,
@@ -2227,10 +2410,9 @@ export class HomePageComponent implements OnInit {
         dimensions: { width: cardElement.offsetWidth, height: cardElement.offsetHeight }
       });
       await this.exportService.exportAsPngNative(cardElement, filename, 2);
-      console.log('PNG export completed successfully');
+      this.logger.info('PNG export completed successfully', 'HomePageComponent');
       this.announceStatus('Card exported as PNG');
     } catch (error) {
-      console.error('PNG export failed:', error);
       this.logger.error('Failed to export card as PNG', 'HomePageComponent', error);
       this.announceStatus('Failed to export PNG: ' + (error instanceof Error ? error.message : 'Unknown error'), true);
     }

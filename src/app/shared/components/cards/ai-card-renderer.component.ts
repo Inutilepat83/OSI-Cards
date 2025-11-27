@@ -12,6 +12,7 @@ import { SectionRenderEvent } from './section-renderer/section-renderer.componen
 import { CardChangeType } from '../../utils/card-diff.util';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { LoggingService } from '../../../core/services/logging.service';
+import { ErrorBoundaryComponent } from '../../../core/error-boundary/error-boundary.component';
 
 export interface CardFieldInteractionEvent {
   field?: CardField;
@@ -56,15 +57,23 @@ export type StreamingStage = 'idle' | 'thinking' | 'streaming' | 'complete' | 'a
 @Component({
   selector: 'app-ai-card-renderer',
   standalone: true,
-  imports: [CommonModule, LucideIconsModule, MasonryGridComponent],
+  imports: [CommonModule, LucideIconsModule, MasonryGridComponent, ErrorBoundaryComponent],
   templateUrl: './ai-card-renderer.component.html',
   styleUrls: ['./ai-card-renderer.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('messageAnimation', [
       transition('* => *', [
-        style({ opacity: 0, transform: 'translateY(10px)' }),
-        animate('0.4s ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+        style({ 
+          opacity: 0, 
+          transform: 'translateY(10px)',
+          willChange: 'opacity, transform' // Optimize for GPU acceleration
+        }),
+        animate('0.4s ease-out', style({ 
+          opacity: 1, 
+          transform: 'translateY(0)',
+          willChange: 'auto' // Remove will-change after animation
+        }))
       ])
     ])
   ]
@@ -227,8 +236,14 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   isHovered = false;
   mousePosition: MousePosition = { x: 0, y: 0 };
   
-  // CSS variables for the tilt effect
-  tiltStyle: Record<string, string | number> = {};
+  // CSS variables for the tilt effect - initialize with no transform to prevent lift
+  tiltStyle: Record<string, string | number> = {
+    '--tilt-x': '0deg',
+    '--tilt-y': '0deg',
+    '--glow-blur': '8px',
+    '--glow-color': 'rgba(255,121,0,0.225)',
+    '--reflection-opacity': 0
+  };
   
   // Performance: RAF batching for mouse moves
   private mouseMoveRafId: number | null = null;
@@ -317,7 +332,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         if (tiltRafId === null) {
           tiltRafId = requestAnimationFrame(() => {
             if (pendingCalculations) {
-              // Always update glow values for smooth transitions
+              // Update CSS variables for smooth CSS transitions - transform handled by CSS
+              // Both horizontal (rotateY) and vertical (rotateX) rotation for 3D effect
               this.tiltStyle = {
                 '--tilt-x': `${pendingCalculations.rotateX}deg`,
                 '--tilt-y': `${pendingCalculations.rotateY}deg`,
@@ -415,14 +431,16 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   private startMessageRotation(): void {
-    this.currentMessage = this.funnyMessages[0];
+    const firstMessage = this.funnyMessages[0];
+    this.currentMessage = firstMessage ?? 'Loading...';
     this.currentMessageIndex = 0;
     
     interval(2500) // Change message every 2.5 seconds
       .pipe(takeUntil(this.destroyed$))
       .subscribe(() => {
         this.currentMessageIndex = (this.currentMessageIndex + 1) % this.funnyMessages.length;
-        this.currentMessage = this.funnyMessages[this.currentMessageIndex];
+        const message = this.funnyMessages[this.currentMessageIndex];
+        this.currentMessage = message ?? 'Loading...';
         this.cdr.markForCheck();
       });
   }
@@ -582,13 +600,20 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       return;
     }
     
-    // Store latest mouse position
+    // Always update mouse position immediately for responsive feel
+    this.mousePosition = { 
+      x: event.clientX, 
+      y: event.clientY 
+    };
+    
+    // Store latest mouse position for RAF batching
     this.pendingMouseMove = event;
     
-    // Throttle with RAF for 60fps smooth updates
+    // Throttle with RAF for 60fps smooth updates (prevents lag over interactive elements)
     if (this.mouseMoveRafId === null) {
       this.mouseMoveRafId = requestAnimationFrame(() => {
         if (this.pendingMouseMove && this.tiltContainerRef?.nativeElement) {
+          // Use latest position for ultra-smooth updates
           this.mousePosition = { 
             x: this.pendingMouseMove.clientX, 
             y: this.pendingMouseMove.clientY 

@@ -6,7 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { AICardConfig } from '../../../models';
 import { JsonFileStorageService } from '../../../core/services/json-file-storage.service';
 import { BatchConversionUtil } from '../../utils/batch-conversion.util';
-import { validateCardJson, validateCardStructure } from '../../utils';
+import { CardValidationService } from '../../services/card-validation.service';
 
 /**
  * Import/Export component for managing JSON card files
@@ -498,6 +498,7 @@ export class CardImportExportComponent implements OnInit, OnDestroy {
   globalError: string | null = null;
   private destroy$ = new Subject<void>();
   private readonly storageService = inject(JsonFileStorageService);
+  private readonly validationService = inject(CardValidationService);
 
   ngOnInit(): void {
     this.loadStoredCards();
@@ -551,7 +552,7 @@ export class CardImportExportComponent implements OnInit, OnDestroy {
 
     Promise.all(readers)
       .then((contents) => {
-        const result = BatchConversionUtil.validateMultipleCards(contents);
+        const result = BatchConversionUtil.validateMultipleCards(contents, this.validationService);
 
         // Save valid cards
         result.valid.forEach((card: AICardConfig) => {
@@ -642,7 +643,7 @@ export class CardImportExportComponent implements OnInit, OnDestroy {
 
   analyzeCards(): void {
     const jsonStrings = this.storedCards.map((card) => JSON.stringify(card));
-    this.analysisResult = BatchConversionUtil.analyzeCollection(jsonStrings);
+    this.analysisResult = BatchConversionUtil.analyzeCollection(jsonStrings, this.validationService);
 
     this.typeEntries = Object.entries(this.analysisResult.stats.byType).map(([key, value]) => ({
       key,

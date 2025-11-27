@@ -1,10 +1,12 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, Output, QueryList, SimpleChanges, ViewChild, ViewChildren, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, OnDestroy, Output, QueryList, SimpleChanges, ViewChild, ViewChildren, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardSection } from '../../../../models';
 import { SectionRendererComponent, SectionRenderEvent } from '../section-renderer/section-renderer.component';
 import { Breakpoint, getBreakpointFromWidth } from '../../../utils/responsive.util';
 import { SectionTypeResolverService } from '../section-renderer/section-type-resolver.service';
 import { AppConfigService } from '../../../../core/services/app-config.service';
+import { ErrorBoundaryComponent } from '../../../../core/error-boundary/error-boundary.component';
+import { LoggingService } from '../../../../core/services/logging.service';
 
 interface ColSpanThresholds {
   two: number;
@@ -60,16 +62,83 @@ interface PositionedSection {
 @Component({
   selector: 'app-masonry-grid',
   standalone: true,
-  imports: [CommonModule, SectionRendererComponent],
+  imports: [CommonModule, SectionRendererComponent, ErrorBoundaryComponent],
   templateUrl: './masonry-grid.component.html',
   styleUrls: ['./masonry-grid.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy {
-  @Input() sections: CardSection[] = [];
-  @Input() gap = 12; // Harmonize with section grid tokens for consistent gutters
-  @Input() minColumnWidth = 260; // Keep cards readable when columns increase
-  @Input() maxColumns = 4; // Allow wider canvases to display four columns for better uniformity
+  @Input() 
+  set sections(value: CardSection[]) {
+    // Validate sections array
+    if (!Array.isArray(value)) {
+      this.logger.warn('Invalid sections input: expected array', 'MasonryGridComponent', { value });
+      this._sections = [];
+      return;
+    }
+    this._sections = value;
+  }
+  get sections(): CardSection[] {
+    return this._sections;
+  }
+  private _sections: CardSection[] = [];
+
+  @Input() 
+  set gap(value: number) {
+    // Validate gap is a positive number
+    if (typeof value !== 'number' || value < 0 || !isFinite(value)) {
+      this.logger.warn('Invalid gap input: expected positive number', 'MasonryGridComponent', { value });
+      this._gap = 12;
+      return;
+    }
+    this._gap = value;
+  }
+  get gap(): number {
+    return this._gap;
+  }
+  private _gap = 12; // Harmonize with section grid tokens for consistent gutters
+
+  @Input() 
+  set minColumnWidth(value: number) {
+    // Validate minColumnWidth is a positive number
+    if (typeof value !== 'number' || value <= 0 || !isFinite(value)) {
+      this.logger.warn('Invalid minColumnWidth input: expected positive number', 'MasonryGridComponent', { value });
+      this._minColumnWidth = 260;
+      return;
+    }
+    this._minColumnWidth = value;
+  }
+  get minColumnWidth(): number {
+    return this._minColumnWidth;
+  }
+  private _minColumnWidth = 260; // Keep cards readable when columns increase
+
+  @Input() 
+  set maxColumns(value: number) {
+    // Validate maxColumns is a positive integer
+    if (typeof value !== 'number' || value <= 0 || !Number.isInteger(value) || !isFinite(value)) {
+      this.logger.warn('Invalid maxColumns input: expected positive integer', 'MasonryGridComponent', { value });
+      this._maxColumns = 4;
+      return;
+    }
+    this._maxColumns = value;
+  }
+  get maxColumns(): number {
+    return this._maxColumns;
+  }
+  private _maxColumns = 4; // Allow wider canvases to display four columns for better uniformity
+
+  /**
+   * Enable virtual scrolling for large lists
+   * When enabled, only sections in or near the viewport are rendered
+   */
+  @Input() enableVirtualScrolling = false;
+
+  /**
+   * Viewport buffer for virtual scrolling (in pixels)
+   * Sections within this distance from viewport are rendered
+   */
+  @Input() virtualScrollBuffer = 500;
 
   @Output() sectionEvent = new EventEmitter<SectionRenderEvent>();
   @Output() layoutChange = new EventEmitter<MasonryLayoutInfo>();
@@ -80,6 +149,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly typeResolver = inject(SectionTypeResolverService);
   private readonly appConfig = inject(AppConfigService);
+  private readonly logger = inject(LoggingService);
   
   /**
    * Check if debug mode is enabled via environment configuration
@@ -89,6 +159,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   positionedSections: PositionedSection[] = [];
+  visibleSections: PositionedSection[] = []; // Sections visible in viewport (for virtual scrolling)
   containerHeight = 0;
   isLayoutReady = false; // Prevent FOUC (Flash of Unstyled Content)
 
@@ -102,7 +173,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private readonly RESIZE_THROTTLE_MS = 16; // ~1 frame at 60fps for minimal throttling
   private lastLayoutInfo?: MasonryLayoutInfo;
   private rafId?: number;
-  private visibleSections = new Set<string>(); // Track visible sections
+  private visibleSectionIds = new Set<string>(); // Track visible section IDs
+  private scrollListener?: () => void;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['sections']) {
@@ -113,7 +185,10 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       
       // Diagnostic logging
       if (this.isDebugMode) {
-        console.log('[MasonryGrid] Sections received:', this.sections.length, this.sections);
+        this.logger.debug('Sections received', 'MasonryGridComponent', {
+          count: this.sections.length,
+          sections: this.sections
+        });
       }
       
       // Check if structure changed (length change indicates structural change)
@@ -165,6 +240,13 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   ngOnDestroy(): void {
     this.resizeObserver?.disconnect();
     this.itemObserver?.disconnect();
+    this.intersectionObserver?.disconnect();
+    if (this.scrollListener) {
+      window.removeEventListener('scroll', this.scrollListener);
+      if (this.containerRef?.nativeElement) {
+        this.containerRef.nativeElement.removeEventListener('scroll', this.scrollListener);
+      }
+    }
     if (this.pendingAnimationFrame) {
       cancelAnimationFrame(this.pendingAnimationFrame);
     }
@@ -187,6 +269,70 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
   onSectionEvent(event: SectionRenderEvent): void {
     this.sectionEvent.emit(event);
+  }
+
+  /**
+   * Handle keyboard navigation for sections
+   * Allows arrow key navigation between sections
+   */
+  @HostListener('keydown', ['$event'])
+  onKeydown(event: KeyboardEvent): void {
+    const sections = this.positionedSections;
+    if (sections.length === 0) {
+      return;
+    }
+
+    const currentElement = event.target as HTMLElement;
+    const currentSectionElement = currentElement.closest('[id^="section-"]') as HTMLElement;
+    
+    if (!currentSectionElement) {
+      return;
+    }
+
+    const currentSectionId = currentSectionElement.id;
+    const currentIndex = sections.findIndex(s => this.getSectionId(s.section) === currentSectionId);
+
+    if (currentIndex === -1) {
+      return;
+    }
+
+    let nextIndex = currentIndex;
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        nextIndex = (currentIndex + 1) % sections.length;
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        nextIndex = currentIndex === 0 ? sections.length - 1 : currentIndex - 1;
+        break;
+      case 'Home':
+        event.preventDefault();
+        nextIndex = 0;
+        break;
+      case 'End':
+        event.preventDefault();
+        nextIndex = sections.length - 1;
+        break;
+      default:
+        return;
+    }
+
+    // Focus the next section
+    const nextSectionId = this.getSectionId(sections[nextIndex]?.section);
+    const nextSectionElement = document.getElementById(nextSectionId);
+    if (nextSectionElement) {
+      // Find first focusable element in the section
+      const focusable = nextSectionElement.querySelector<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable) {
+        focusable.focus();
+      } else {
+        nextSectionElement.focus();
+      }
+    }
   }
 
   /**
@@ -247,13 +393,18 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
           const sectionId = entry.target.getAttribute('id');
           if (sectionId) {
             if (entry.isIntersecting) {
-              this.visibleSections.add(sectionId);
+              this.visibleSectionIds.add(sectionId);
             } else {
-              this.visibleSections.delete(sectionId);
+              this.visibleSectionIds.delete(sectionId);
             }
           }
         });
-        this.cdr.markForCheck();
+        // Update visible sections array if virtual scrolling is enabled
+        if (this.enableVirtualScrolling) {
+          this.updateVisibleSections();
+        } else {
+          this.cdr.markForCheck();
+        }
       },
       {
         rootMargin: '50px' // Start loading 50px before section enters viewport
@@ -272,7 +423,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     // Observe new items when they're added
     this.itemRefs.changes.subscribe((items: QueryList<ElementRef<HTMLDivElement>>) => {
       items.forEach((item) => {
-        if (item?.nativeElement && !this.visibleSections.has(item.nativeElement.id)) {
+        if (item?.nativeElement && !this.visibleSectionIds.has(item.nativeElement.id)) {
           this.intersectionObserver?.observe(item.nativeElement);
         }
       });
@@ -283,7 +434,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
    * Check if a section is visible in viewport
    */
   isSectionVisible(sectionId: string): boolean {
-    return this.visibleSections.has(sectionId);
+    return this.visibleSectionIds.has(sectionId);
   }
 
   private throttledScheduleLayoutUpdate(): void {
@@ -314,6 +465,10 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       this.pendingAnimationFrame = requestAnimationFrame(() => {
         this.pendingAnimationFrame = undefined;
         this.reflowWithActualHeights();
+        // Update visible sections after reflow if virtual scrolling is enabled
+        if (this.enableVirtualScrolling) {
+          this.updateVisibleSections();
+        }
       });
     });
   }
@@ -348,7 +503,10 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     
     // Diagnostic logging
     if (this.isDebugMode) {
-      console.log('[MasonryGrid] Resolved sections after initial filter:', resolvedSections.length, resolvedSections);
+      this.logger.debug('Resolved sections after initial filter', 'MasonryGridComponent', {
+        count: resolvedSections.length,
+        sections: resolvedSections
+      });
     }
     
     // Additional validation: ensure section has required properties
@@ -363,7 +521,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       // Must have at least id, title, or type
       if (!section.id && !section.title && !section.type) {
         if (this.isDebugMode) {
-          console.warn('[MasonryGrid] Section filtered out - missing id, title, and type:', section);
+          this.logger.warn('Section filtered out - missing id, title, and type', 'MasonryGridComponent', { section });
         }
         return null;
       }
@@ -376,13 +534,19 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
         if (resolvedType && resolvedType !== 'unknown' && resolvedType !== 'fallback') {
           finalType = resolvedType as CardSection['type'];
           if (this.isDebugMode) {
-            console.log('[MasonryGrid] Resolved missing type for section:', section.title, '->', resolvedType);
+            this.logger.debug('Resolved missing type for section', 'MasonryGridComponent', {
+              sectionTitle: section.title,
+              resolvedType
+            });
           }
         } else {
           // Try to infer from title or use 'info' as default
           finalType = this.inferSectionType(section);
           if (this.isDebugMode) {
-            console.log('[MasonryGrid] Inferred type for section:', section.title, '->', finalType);
+            this.logger.debug('Inferred type for section', 'MasonryGridComponent', {
+              sectionTitle: section.title,
+              inferredType: finalType
+            });
           }
         }
         
@@ -397,10 +561,15 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     
     // Diagnostic logging
     if (this.isDebugMode) {
-      console.log('[MasonryGrid] Valid sections after validation:', validSections.length, validSections);
+      this.logger.debug('Valid sections after validation', 'MasonryGridComponent', {
+        count: validSections.length,
+        sections: validSections
+      });
       const filteredCount = resolvedSections.length - validSections.length;
       if (filteredCount > 0) {
-        console.warn('[MasonryGrid] Filtered out', filteredCount, 'invalid sections');
+        this.logger.warn(`Filtered out ${filteredCount} invalid sections`, 'MasonryGridComponent', {
+          filteredCount
+        });
       }
     }
     
@@ -428,7 +597,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     
     // Diagnostic logging
     if (this.isDebugMode) {
-      console.log('[MasonryGrid] Positioned sections:', this.positionedSections.length, {
+      this.logger.debug('Positioned sections', 'MasonryGridComponent', {
+        count: this.positionedSections.length,
         containerHeight: this.containerHeight,
         sections: this.positionedSections.map(p => ({
           key: p.key,
@@ -771,5 +941,24 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     }
 
     return Math.ceil(trimmedLength / 120);
+  }
+
+  /**
+   * Update visible sections array based on visible section IDs
+   * Filters positionedSections to only include sections that are in the viewport
+   * Used for virtual scrolling to reduce DOM elements
+   */
+  private updateVisibleSections(): void {
+    if (!this.enableVirtualScrolling) {
+      return;
+    }
+
+    // Filter positioned sections to only include those with visible IDs
+    this.visibleSections = this.positionedSections.filter(item => {
+      const sectionId = this.getSectionId(item.section);
+      return this.visibleSectionIds.has(sectionId);
+    });
+
+    this.cdr.markForCheck();
   }
 }

@@ -63,7 +63,8 @@ export class UrlUtil {
 
     for (const pattern of dangerousPatterns) {
       if (pattern.test(trimmedUrl)) {
-        console.warn('UrlUtil: Dangerous URL pattern detected:', trimmedUrl);
+        // Note: Cannot use LoggingService here as this is a static utility class without DI context
+        // This is acceptable as URL validation failures are handled by returning null
         return null;
       }
     }
@@ -74,7 +75,8 @@ export class UrlUtil {
 
       // Check protocol
       if (!allowedProtocols.includes(urlObj.protocol)) {
-        console.warn('UrlUtil: Protocol not allowed:', urlObj.protocol);
+        // Note: Cannot use LoggingService here as this is a static utility class without DI context
+        // This is acceptable as URL validation failures are handled by returning null
         return null;
       }
 
@@ -92,14 +94,15 @@ export class UrlUtil {
 
         // Allow localhost in development, but log it
         if (localhostPatterns.some(pattern => pattern.test(hostname))) {
-          console.warn('UrlUtil: Localhost/internal IP detected:', hostname);
+          // Note: Cannot use LoggingService here as this is a static utility class without DI context
           // In production, you might want to reject these
           // return null;
         }
 
         // Validate hostname format
         if (!this.isValidHostname(hostname)) {
-          console.warn('UrlUtil: Invalid hostname:', hostname);
+          // Note: Cannot use LoggingService here as this is a static utility class without DI context
+          // This is acceptable as URL validation failures are handled by returning null
           return null;
         }
       }
@@ -108,7 +111,8 @@ export class UrlUtil {
       return urlObj.toString();
     } catch (error) {
       // Invalid URL format
-      console.warn('UrlUtil: Invalid URL format:', trimmedUrl, error);
+      // Note: Cannot use LoggingService here as this is a static utility class without DI context
+      // This is acceptable as URL validation failures are handled by returning null
       return null;
     }
   }

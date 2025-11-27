@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run lint-staged (handles linting and formatting)
+npm run pre-commit
+
+# Check file sizes for staged files
+staged_files=$(git diff --cached --name-only --diff-filter=ACM)
+if [ -n "$staged_files" ]; then
+  node scripts/check-file-sizes.js $staged_files
+fi
+
+# Check dependencies (warn only, don't block commit)
+if command -v node >/dev/null 2>&1; then
+  if [ -f "scripts/check-dependencies.js" ]; then
+    node scripts/check-dependencies.js outdated || true
+  fi
+fi
+

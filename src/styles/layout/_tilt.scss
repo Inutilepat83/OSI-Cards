@@ -3,19 +3,73 @@
    Performance-optimized 3D tilt effects with dynamic lighting
    =================================================================== */
 
-/* Base tilt container with 3D perspective - Optimized for performance */
+/* Card container wrapper - ensures overflow visible for glow */
+.card-container-wrapper {
+  overflow: visible !important;
+  /* Ensure no clipping of glow effects */
+  position: relative;
+  /* Removed margin-top to align with JSON editor at top */
+  /* Visual lift effect handled by enhanced box-shadow instead */
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Allow flex shrinking */
+  height: 100%; /* Fill available space */
+}
+
+/* Glow container wrapper - applies filter effect */
+.glow-container {
+  position: relative;
+  /* Always show base glow - smooth transitions, intensified by 50% */
+  filter: drop-shadow(0 0 var(--glow-blur, 12px) var(--glow-color, rgba(255, 121, 0, 0.225)));
+  /* Ultra-smooth transition curve for glow transitions */
+  transition: filter 300ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  will-change: filter;
+  
+  /* Performance optimizations */
+  contain: layout style; /* Don't use paint - it clips shadows */
+  isolation: isolate; /* Create new stacking context */
+  
+  /* Ensure overflow visible for glow */
+  overflow: visible;
+  
+  /* Flex layout to fill available space */
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0; /* Allow flex shrinking */
+}
+
+.glow-container:hover {
+  will-change: filter;
+  /* Ultra-smooth enter transition */
+  transition: filter 300ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.glow-container:not(:hover) {
+  will-change: auto;
+  /* Ultra-smooth exit transition - longer duration for smooth completion */
+  /* Optimized ease-out curve matching JavaScript reset animation */
+  transition: filter 800ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* Base tilt container with 3D perspective - Optimized for smooth mouse following */
 .tilt-container {
-  /* 3D transform with hardware acceleration */
+  /* 3D transform with hardware acceleration - using CSS variables for smooth updates */
+  /* Use !important to override any conflicting transforms from child elements */
   transform: perspective(1000px)
              rotateX(var(--tilt-x, 0deg))
              rotateY(var(--tilt-y, 0deg))
-             scale(var(--tilt-scale, 1))
-             translateZ(0); /* Force GPU acceleration */
+             translateZ(0) !important; /* Force GPU acceleration, no vertical lift */
   
-  /* Smooth transitions for natural feel - longer duration for smooth exit */
-  /* Enter: faster (200ms), Exit: slower (500ms) for smooth completion */
-  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1), 
-              box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* Flex layout to fill available space */
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0; /* Allow flex shrinking */
+  
+  /* No CSS transitions on transform - JavaScript handles smooth updates */
+  /* Only transition box-shadow for glow effect */
+  transition: box-shadow 200ms cubic-bezier(0.2, 0, 0.2, 1);
   
   /* Enable 3D rendering */
   transform-style: preserve-3d;
@@ -24,60 +78,37 @@
   position: relative;
   border-radius: var(--card-border-radius);
   
-  /* Performance optimizations */
-  contain: layout style paint; /* Strong containment for better performance */
+  /* Performance optimizations - no paint to prevent glow clipping */
+  contain: layout style; /* Don't use paint - it clips shadows/glow */
   isolation: isolate; /* Create new stacking context */
-  will-change: transform; /* Hint browser about upcoming transforms */
   
-  /* Optimize compositing */
+  /* Optimize compositing - prevent lag */
   transform-origin: center center;
+  /* Force GPU layer for smooth updates */
+  will-change: transform;
 }
 
 /* Smooth exit transition - longer duration when mouse leaves */
 .tilt-container:not(:hover) {
-  transition: transform 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-              box-shadow 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Smooth exit for glow only - transform handled by JavaScript */
+  transition: box-shadow 800ms cubic-bezier(0.22, 0.61, 0.36, 1);
   will-change: auto;
 }
 
 .tilt-container:hover {
-  /* Hint browser about upcoming transform changes */
-  will-change: transform;
-  /* Orange glow only - no dark shadows, intensified by 50% */
+  /* Orange glow - increased visibility */
   box-shadow: 
-    0 0 var(--glow-blur, 18px) var(--glow-color, rgba(255, 121, 0, 0.375));
-  /* Faster enter transition for responsive feel */
-  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1), 
-              box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    0 0 var(--glow-blur, 20px) var(--glow-color, rgba(255, 121, 0, 0.4));
+  /* Smooth transition for glow only - transform handled by JavaScript */
+  transition: box-shadow 200ms cubic-bezier(0.2, 0, 0.2, 1);
+  will-change: transform;
+  /* Force GPU acceleration to prevent lag */
+  transform: perspective(1000px)
+             rotateX(var(--tilt-x, 0deg))
+             rotateY(var(--tilt-y, 0deg))
+             translateZ(0) !important;
 }
 
-/* Glow container for filter-based effects */
-.glow-container {
-  position: relative;
-  /* Always show base glow - smooth transitions, intensified by 50% */
-  filter: drop-shadow(0 0 var(--glow-blur, 12px) var(--glow-color, rgba(255, 121, 0, 0.225)));
-  transition: filter 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: filter;
-  
-  /* Performance optimizations */
-  contain: layout style; /* Don't use paint - it clips shadows */
-  isolation: isolate; /* Create new stacking context */
-  
-  /* Optimize compositing */
-  transform: translateZ(0); /* Force GPU layer */
-}
-
-.glow-container:hover {
-  will-change: filter;
-  /* Faster enter transition */
-  transition: filter 200ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.glow-container:not(:hover) {
-  will-change: auto;
-  /* Smooth exit transition - longer duration for smooth completion */
-  transition: filter 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
 
 /* Card reflection overlay */
 .card-reflection {
@@ -85,7 +116,8 @@
   inset: 0;
   background: transparent;
   opacity: var(--reflection-opacity, 0.08);
-  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* Ultra-smooth transition for reflection opacity changes */
+  transition: opacity 300ms cubic-bezier(0.25, 0.1, 0.25, 1);
   pointer-events: none;
   border-radius: inherit;
   
@@ -96,7 +128,8 @@
 
 /* Smooth exit transition for reflection */
 .tilt-container:not(:hover) .card-reflection {
-  transition: opacity 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Ultra-smooth ease-out curve matching reset animation */
+  transition: opacity 800ms cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 /* Wrapper for nested 3D transforms */
@@ -137,18 +170,22 @@
 
 @media (max-width: 768px) {
   .tilt-container {
-    /* Reduce perspective for subtler effect on mobile, but keep doubled tilt */
+    /* Reduce perspective for subtler effect on mobile */
     transform: perspective(800px)
                rotateX(calc(var(--tilt-x, 0deg) * 0.7))
                rotateY(calc(var(--tilt-y, 0deg) * 0.7))
-               scale(var(--tilt-scale, 1))
-               translateZ(0);
+               translateZ(0) !important;
+    /* Keep ultra-smooth transitions on mobile */
+    transition: transform 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                box-shadow 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
   
   .tilt-container:hover {
-    /* Orange glow only - no dark shadows, intensified by 50% */
+    /* Orange glow - 50% more visible */
     box-shadow: 
-      0 0 var(--glow-blur, 18px) var(--glow-color, rgba(255, 121, 0, 0.375));
+      0 0 var(--glow-blur, 18px) var(--glow-color, rgba(255, 121, 0, 0.35));
+    transition: transform 150ms cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                box-shadow 180ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 }
 
@@ -159,8 +196,11 @@
 
 .ai-card-surface--fullscreen {
   .tilt-container {
-    /* Reset all tilt transforms in fullscreen */
-    transform: perspective(1000px) translateZ(0) !important;
+    /* Reset all tilt transforms in fullscreen - remove lift in fullscreen */
+    transform: perspective(1000px) 
+               rotateX(0deg) 
+               rotateY(0deg) 
+               translateZ(0) !important;
     box-shadow: none !important;
     will-change: auto !important;
   }

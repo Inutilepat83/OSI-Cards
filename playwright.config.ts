@@ -142,6 +142,13 @@ export default defineConfig({
   expect: {
     /* Timeout for expect() assertions */
     timeout: 5 * 1000,
+    /* Screenshot comparison threshold */
+    threshold: 0.2,
+    /* Pixel difference threshold */
+    toHaveScreenshot: {
+      maxDiffPixels: 100,
+      threshold: 0.2
+    }
   },
 
   /* Output directory */

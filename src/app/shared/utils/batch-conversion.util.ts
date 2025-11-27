@@ -1,5 +1,6 @@
-import { validateCardJson, validateCardStructure, sanitizeCardConfig } from './card-utils';
+import { sanitizeCardConfig } from './card-utils';
 import { AICardConfig } from '../../models';
+import { CardValidationService } from '../services/card-validation.service';
 
 /**
  * Batch conversion utility for processing multiple cards
@@ -11,7 +12,8 @@ export class BatchConversionUtil {
    * Returns validation results with success count and failures
    */
   static validateMultipleCards(
-    jsonStrings: string[]
+    jsonStrings: string[],
+    validationService: CardValidationService
   ): {
     valid: AICardConfig[];
     invalid: Array<{ index: number; error: string; content: string }>;
@@ -22,7 +24,7 @@ export class BatchConversionUtil {
 
     jsonStrings.forEach((jsonString, index) => {
       try {
-        const card = validateCardJson(jsonString);
+        const card = validationService.validateCardJson(jsonString);
 
         if (!card) {
           invalid.push({
@@ -33,7 +35,7 @@ export class BatchConversionUtil {
           return;
         }
 
-        if (!validateCardStructure(card as Partial<AICardConfig>)) {
+        if (!validationService.validateCardStructure(card)) {
           invalid.push({
             index,
             error: 'Card structure validation failed',
@@ -81,7 +83,8 @@ export class BatchConversionUtil {
    * Ensures all cards meet structure requirements
    */
   static convertAndValidateCards(
-    jsonStrings: string[]
+    jsonStrings: string[],
+    validationService: CardValidationService
   ): {
     converted: AICardConfig[];
     results: Array<{
@@ -99,7 +102,7 @@ export class BatchConversionUtil {
 
     jsonStrings.forEach(jsonString => {
       try {
-        const card = validateCardJson(jsonString);
+        const card = validationService.validateCardJson(jsonString);
 
         if (!card) {
           results.push({
@@ -109,7 +112,7 @@ export class BatchConversionUtil {
           return;
         }
 
-        if (!validateCardStructure(card as Partial<AICardConfig>)) {
+        if (!validationService.validateCardStructure(card)) {
           results.push({
             success: false,
             cardId: (card as any).id || 'unknown',
@@ -216,7 +219,10 @@ export class BatchConversionUtil {
   /**
    * Import from JSON array
    */
-  static importFromJsonArray(jsonString: string): {
+  static importFromJsonArray(
+    jsonString: string,
+    validationService: CardValidationService
+  ): {
     cards: AICardConfig[];
     errors: Array<{ index: number; error: string }>;
   } {
@@ -233,14 +239,14 @@ export class BatchConversionUtil {
       parsed.forEach((item, index) => {
         try {
           if (typeof item === 'string') {
-            const card = validateCardJson(item);
-            if (card && validateCardStructure(card as Partial<AICardConfig>)) {
+            const card = validationService.validateCardJson(item);
+            if (card && validationService.validateCardStructure(card)) {
               cards.push(sanitizeCardConfig(card as any) as AICardConfig);
             } else {
               errors.push({ index, error: 'Invalid card structure' });
             }
           } else if (typeof item === 'object') {
-            if (validateCardStructure(item as Partial<AICardConfig>)) {
+            if (validationService.validateCardStructure(item as Partial<AICardConfig>)) {
               cards.push(sanitizeCardConfig(item as any) as AICardConfig);
             } else {
               errors.push({ index, error: 'Invalid card structure' });
@@ -327,7 +333,10 @@ export class BatchConversionUtil {
         });
       }
       // Keep first occurrence
-      unique.push(cardsWithTitle[0]);
+      const firstCard = cardsWithTitle[0];
+      if (firstCard) {
+        unique.push(firstCard);
+      }
     });
 
     return { unique, duplicates };
@@ -337,7 +346,8 @@ export class BatchConversionUtil {
    * Validate and report comprehensive collection info
    */
   static analyzeCollection(
-    jsonStrings: string[]
+    jsonStrings: string[],
+    validationService: CardValidationService
   ): {
     validCards: AICardConfig[];
     invalidCards: number;
@@ -351,7 +361,7 @@ export class BatchConversionUtil {
     duplicates: Array<{ title: string; count: number; cardIds: string[] }>;
     issues: string[];
   } {
-    const { valid, invalid } = this.validateMultipleCards(jsonStrings);
+    const { valid, invalid } = this.validateMultipleCards(jsonStrings, validationService);
     const { unique, duplicates } = this.deduplicateByTitle(valid);
     const stats = this.getCollectionStats(unique);
     const issues: string[] = [];

@@ -10,6 +10,11 @@ import { AICardConfig } from '../../models';
 })
 export class JsonValidationService {
   /**
+   * Maximum allowed JSON input size (1MB)
+   */
+  private readonly MAX_JSON_SIZE = 1024 * 1024; // 1MB
+
+  /**
    * Validate JSON syntax and return error information
    * @param jsonInput - The JSON string to validate
    * @returns Object containing validation result, error message, position, and suggestion
@@ -29,6 +34,17 @@ export class JsonValidationService {
       };
     }
 
+    // Check size limit to prevent DoS attacks
+    const sizeInBytes = new Blob([jsonInput]).size;
+    if (sizeInBytes > this.MAX_JSON_SIZE) {
+      return {
+        isValid: false,
+        error: `JSON input size (${(sizeInBytes / 1024).toFixed(2)} KB) exceeds maximum allowed size (${(this.MAX_JSON_SIZE / 1024).toFixed(2)} KB)`,
+        position: null,
+        suggestion: 'Please reduce the size of your JSON input. Consider splitting large cards into multiple smaller cards.'
+      };
+    }
+
     try {
       JSON.parse(jsonInput);
       return {
@@ -43,8 +59,11 @@ export class JsonValidationService {
 
       // Extract position from error message if available
       const positionMatch = errorMessage.match(/position (\d+)/i);
-      if (positionMatch) {
-        position = parseInt(positionMatch[1], 10);
+      if (positionMatch && positionMatch[1]) {
+        const positionStr = positionMatch[1];
+        if (positionStr) {
+          position = parseInt(positionStr, 10);
+        }
       } else {
         // Try to find common error patterns
         if (errorMessage.includes('Unexpected token')) {
@@ -173,14 +192,14 @@ export class JsonValidationService {
         // Extract cardTitle (handle both string and unquoted values)
         const titleMatch = jsonInput.match(/"cardTitle"\s*:\s*"([^"]*)"/) ||
           jsonInput.match(/'cardTitle'\s*:\s*'([^']*)'/);
-        if (titleMatch) {
+        if (titleMatch && titleMatch[1]) {
           cardData.cardTitle = titleMatch[1];
         }
 
         // Try to extract sections array (even if incomplete)
         // Look for "sections": [ and try to extract complete section objects
         const sectionsMatch = jsonInput.match(/"sections"\s*:\s*\[([\s\S]*)/);
-        if (sectionsMatch) {
+        if (sectionsMatch && sectionsMatch[1]) {
           const sectionsContent = sectionsMatch[1];
           const sections: any[] = [];
 
@@ -190,10 +209,12 @@ export class JsonValidationService {
           let inString = false;
           let escapeNext = false;
 
-          for (let i = 0; i < sectionsContent.length; i++) {
-            const char = sectionsContent[i];
+          if (sectionsContent) {
+            for (let i = 0; i < sectionsContent.length; i++) {
+              const char = sectionsContent[i];
+              if (char === undefined) continue;
 
-            if (escapeNext) {
+              if (escapeNext) {
               currentSection += char;
               escapeNext = false;
               continue;
@@ -256,6 +277,7 @@ export class JsonValidationService {
             } else if (depth > 0) {
               currentSection += char;
             }
+            }
           }
 
           // Try to parse the last incomplete section if we have one
@@ -311,6 +333,7 @@ export class JsonValidationService {
     return String(hash);
   }
 }
+
 
 
 

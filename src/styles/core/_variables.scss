@@ -146,46 +146,50 @@
   /* Consistent font sizing across ALL card types and sections */
   /* Enhanced with strategic emphasis and visual hierarchy */
   
-  /* Section Titles (e.g., "Key Contacts", "Company Overview") - PREMIUM */
-  --section-title-font-size: clamp(1.175rem, 1.025rem + 0.4vw, 1.475rem);
+  /* ===== HARMONIOUS TYPOGRAPHY SYSTEM ===== */
+  /* Unified, harmonious typography scale across all sections */
+  /* Subtle size variations (0.05-0.15rem), differentiation through weight and grey levels */
+  
+  /* Section Titles - Harmonious base: 1.0rem - 1.15rem */
+  --section-title-font-size: clamp(1.0rem, 0.95rem + 0.2vw, 1.15rem);
   --section-title-font-weight: 700;
   --section-title-letter-spacing: -0.02em;
   --section-title-line-height: 1.3;
   --section-title-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   --font-size-section-header: var(--section-title-font-size);
   
-  /* Card Titles (individual cards within sections) - PROMINENT */
-  --card-title-font-size: clamp(0.925rem, 0.825rem + 0.3vw, 1.075rem);
+  /* Card Titles/Names - Harmonious: 0.95rem - 1.05rem */
+  --card-title-font-size: clamp(0.95rem, 0.9rem + 0.15vw, 1.05rem);
   --card-title-font-weight: 700;
   --card-title-letter-spacing: -0.01em;
   --card-title-line-height: 1.4;
   --card-title-text-shadow: 0 1px 1px rgba(0, 0, 0, 0.06);
   
-  /* Card Subtitles/Roles - REFINED */
-  --card-subtitle-font-size: clamp(0.625rem, 0.545rem + 0.16vw, 0.775rem);
-  --card-subtitle-font-weight: 600;
+  /* Card Subtitles/Roles - Harmonious: 0.65rem - 0.7rem */
+  --card-subtitle-font-size: clamp(0.65rem, 0.625rem + 0.1vw, 0.7rem);
+  --card-subtitle-font-weight: 500;
   --card-subtitle-letter-spacing: 0.015em;
   --card-subtitle-line-height: 1.3;
   
-  /* Card Labels (e.g., "INDUSTRY", "FOUNDED") - CRISP & BOLD */
-  --card-label-font-size: clamp(0.455rem, 0.395rem + 0.16vw, 0.595rem);
-  --card-label-font-weight: 800;
+  /* Card Labels - Harmonious: 0.5rem (consistent) */
+  --card-label-font-size: clamp(0.5rem, 0.48rem + 0.05vw, 0.5rem);
+  --card-label-font-weight: 700;
   --card-label-letter-spacing: 0.065em;
   --card-label-line-height: 1.25;
   --card-label-text-transform: uppercase;
   --card-label-text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
   
-  /* Card Values - EMPHASIZED */
-  --card-value-font-size: clamp(0.805rem, 0.725rem + 0.3vw, 0.955rem);
-  --card-value-font-size-large: clamp(1.225rem, 1.075rem + 0.5vw, 1.525rem);
-  --card-value-font-size-xl: clamp(1.675rem, 1.475rem + 0.6vw, 1.975rem);
-  --card-value-font-weight: 700;
+  /* Card Values - Harmonious: 1.0rem - 1.25rem */
+  --card-value-font-size: clamp(1.0rem, 0.95rem + 0.2vw, 1.0rem);
+  --card-value-font-size-large: clamp(1.2rem, 1.15rem + 0.2vw, 1.25rem);
+  --card-value-font-size-xl: clamp(1.25rem, 1.2rem + 0.2vw, 1.25rem);
+  --card-value-font-weight: 600;
   --card-value-letter-spacing: -0.015em;
   --card-value-line-height: 1.35;
   --card-value-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   
-  /* Card Meta/Description Text - SUBTLE */
-  --card-meta-font-size: clamp(0.555rem, 0.475rem + 0.16vw, 0.715rem);
+  /* Card Meta/Description Text - Harmonious: 0.55rem - 0.6rem */
+  --card-meta-font-size: clamp(0.55rem, 0.525rem + 0.1vw, 0.6rem);
   --card-meta-font-weight: 500;
   --card-meta-line-height: 1.3;
   

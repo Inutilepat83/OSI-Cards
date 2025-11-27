@@ -90,7 +90,18 @@ export class CardTemplatesService {
         
         // Sanitize template (remove IDs, ensure structure)
         const scrubbed = removeAllIds(template);
-        const sanitized = ensureCardIds({ ...scrubbed });
+        if (!scrubbed) {
+          // Fallback to built-in templates if scrubbing fails
+          return this.getBuiltInTemplate(cardType, variant);
+        }
+        // Ensure cardTitle exists
+        if (!scrubbed.cardTitle) {
+          scrubbed.cardTitle = 'Untitled Card';
+        }
+        const sanitized = ensureCardIds({
+          ...scrubbed,
+          cardTitle: scrubbed.cardTitle
+        });
         
         // Cache the template
         this.templateCache.set(cacheKey, sanitized);

@@ -47,11 +47,10 @@
   overflow: hidden;
   box-shadow: var(--section-item-box-shadow);
   
-  /* Minimalistic transitions */
+  /* Minimalistic transitions - removed transform to prevent lift animation */
   transition: background 0.22s ease, 
               box-shadow 0.22s ease,
-              border-color 0.22s ease,
-              transform 0.22s ease;
+              border-color 0.22s ease;
   
   /* Minimalistic accent line on left */
   &::before {
@@ -68,10 +67,11 @@
   }
 
   &:hover {
-    /* Minimalistic hover */
+    /* Minimalistic hover - no lift effect */
     box-shadow: var(--section-item-box-shadow-hover),
                 0 0 0 1px color-mix(in srgb, rgba(255, 121, 0, 0.15), transparent);
-    transform: translateY(-2px) var(--section-item-hover-transform);
+    /* Explicitly set to none to prevent any vertical movement */
+    transform: none !important;
     border-color: color-mix(in srgb, rgba(255, 121, 0, 0.2), transparent);
     
     /* Accent line appears on hover */

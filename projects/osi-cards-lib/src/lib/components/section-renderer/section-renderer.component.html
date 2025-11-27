@@ -1,4 +1,12 @@
-<ng-container [ngSwitch]="resolvedType">
+<!-- Plugin components are rendered dynamically via wrapper component -->
+<app-plugin-section-wrapper
+  *ngIf="usesPlugin"
+  [section]="section"
+  (sectionEvent)="onPluginSectionEvent($event)">
+</app-plugin-section-wrapper>
+
+<!-- Built-in sections rendered via switch statement -->
+<ng-container *ngIf="!usesPlugin" [ngSwitch]="resolvedType">
   <app-overview-section
     *ngSwitchCase="'overview'"
     [section]="section"

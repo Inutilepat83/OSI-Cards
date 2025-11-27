@@ -18,3 +18,4 @@ export const CARD_DATA_SERVICE = new InjectionToken<CardDataService>('CardDataSe
 export const CARD_REPOSITORY = new InjectionToken<ICardRepository>('CardRepository');
 
 
+

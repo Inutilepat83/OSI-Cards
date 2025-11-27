@@ -25,6 +25,10 @@
     "test:integration": "playwright test --config=playwright.config.ts --grep @integration",
     "test:performance": "lighthouse http://localhost:4200 --output=html --output-path=./performance-reports/lighthouse.html --quiet || echo 'Lighthouse not installed. Install with: npm install -g lighthouse'",
     "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:visual": "playwright test e2e/visual-regression.spec.ts",
+    "test:visual:update": "playwright test e2e/visual-regression.spec.ts --update-snapshots",
     "test:smoke": "echo 'Smoke tests placeholder'",
     "test:health": "echo 'Health checks placeholder'",
     "lint": "npx ng lint",
@@ -51,7 +55,20 @@
     "serve:prod": "npx ng serve --configuration production",
     "clean": "rm -rf dist/ node_modules/.cache/ .angular/",
     "docs:generate": "typedoc",
-    "docs:serve": "npx http-server docs/api -p 8080 -o"
+    "docs:serve": "npx http-server docs/api -p 8080 -o",
+    "docs:build": "npm run docs:generate && echo 'API documentation generated in docs/api/'",
+    "dev": "npm run start",
+    "dev:watch": "npm run start",
+    "dev:hot": "npx ng serve --hmr --configuration development",
+    "check:deps": "node scripts/check-dependencies.js",
+    "check:files": "node scripts/check-file-sizes.js",
+    "check:security": "npm audit --audit-level=moderate",
+    "check:change-detection": "node scripts/audit-change-detection.js",
+    "audit:input-sanitization": "node scripts/audit-input-sanitization.js",
+    "bundle:baseline": "node scripts/bundle-size-monitor.js baseline",
+    "bundle:monitor": "node scripts/bundle-size-monitor.js check",
+    "test:a11y": "node scripts/accessibility-test.js",
+    "check:all": "npm run lint && npm run test:unit && npm run check:deps && npm run check:security && npm run check:change-detection"
   },
   "dependencies": {
     "@angular/animations": "^20.0.0",
@@ -71,16 +88,18 @@
     "@ngrx/store-devtools": "^18.0.0",
     "lucide": "^0.548.0",
     "lucide-angular": "^0.548.0",
+    "marked": "^17.0.1",
+    "prismjs": "^1.30.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
   "optionalDependencies": {
     "chart.js": "^4.4.0",
-    "leaflet": "^1.9.4",
-    "primeng": "^20.0.0",
+    "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
-    "html2canvas": "^1.4.1"
+    "leaflet": "^1.9.4",
+    "primeng": "^20.0.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^20.0.0",
@@ -89,6 +108,7 @@
     "@playwright/test": "^1.48.0",
     "@types/jasmine": "^5.1.9",
     "@types/leaflet": "^1.9.0",
+    "@types/prismjs": "^1.26.5",
     "angular-eslint": "20.2.0",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.33.0",
@@ -116,12 +136,15 @@
     ],
     "*.{html,css,scss,json,md}": [
       "prettier --write"
+    ],
+    "*.ts": [
+      "bash -c 'npx tsc --noEmit --project tsconfig.json || true'"
     ]
   },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "pre-push": "npm test && npm run lint"
+      "pre-push": "npm run lint && npm run test:unit && npm run check:security && npm run size:check"
     }
   },
   "sideEffects": [

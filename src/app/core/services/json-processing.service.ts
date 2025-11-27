@@ -72,6 +72,64 @@ export class JsonProcessingService {
   }
 
   /**
+   * Enhanced validation to detect potential injection attacks
+   */
+  private detectInjectionAttempts(jsonInput: string): {
+    isSafe: boolean;
+    threat?: string;
+  } {
+    // Check for script injection patterns
+    const scriptPatterns = [
+      /<script[^>]*>/i,
+      /javascript:/i,
+      /on\w+\s*=/i, // Event handlers like onclick=
+      /eval\s*\(/i,
+      /expression\s*\(/i,
+      /vbscript:/i,
+      /data:text\/html/i
+    ];
+
+    for (const pattern of scriptPatterns) {
+      if (pattern.test(jsonInput)) {
+        return {
+          isSafe: false,
+          threat: 'Potential script injection detected'
+        };
+      }
+    }
+
+    // Check for suspiciously long strings (potential DoS)
+    const maxStringLength = 100000; // 100KB per string
+    try {
+      const parsed = JSON.parse(jsonInput);
+      const checkObject = (obj: any, depth = 0): boolean => {
+        if (depth > 50) return false; // Prevent deep nesting DoS
+        if (typeof obj === 'string' && obj.length > maxStringLength) {
+          return false;
+        }
+        if (typeof obj === 'object' && obj !== null) {
+          for (const key in obj) {
+            if (!checkObject(obj[key], depth + 1)) {
+              return false;
+            }
+          }
+        }
+        return true;
+      };
+      if (!checkObject(parsed)) {
+        return {
+          isSafe: false,
+          threat: 'Potential DoS attack detected (excessive string length or nesting)'
+        };
+      }
+    } catch {
+      // JSON parse will be handled by validateJsonSyntax
+    }
+
+    return { isSafe: true };
+  }
+
+  /**
    * Parse JSON and validate as AICardConfig
    */
   parseAndValidate(jsonInput: string): {
@@ -83,6 +141,15 @@ export class JsonProcessingService {
       return {
         success: false,
         error: 'JSON input is empty'
+      };
+    }
+
+    // Check for injection attempts first
+    const injectionCheck = this.detectInjectionAttempts(jsonInput);
+    if (!injectionCheck.isSafe) {
+      return {
+        success: false,
+        error: `Security validation failed: ${injectionCheck.threat}`
       };
     }
 
@@ -209,12 +276,13 @@ export class JsonProcessingService {
 
       // Try to extract sections array
       const sectionsMatch = jsonInput.match(/"sections"\s*:\s*\[([\s\S]*)/);
-      if (sectionsMatch) {
+      if (sectionsMatch && sectionsMatch[1]) {
         const sectionsContent = sectionsMatch[1];
-        const sections = this.extractSections(sectionsContent);
-
-        if (sections.length > 0) {
-          cardData.sections = sections;
+        if (sectionsContent) {
+          const sections = this.extractSections(sectionsContent);
+          if (sections.length > 0) {
+            cardData.sections = sections;
+          }
         }
       }
 
@@ -337,8 +405,11 @@ export class JsonProcessingService {
    */
   private extractErrorPosition(errorMessage: string, jsonInput: string): number | undefined {
     const positionMatch = errorMessage.match(/position (\d+)/i);
-    if (positionMatch) {
-      return parseInt(positionMatch[1], 10);
+    if (positionMatch && positionMatch[1]) {
+      const positionStr = positionMatch[1];
+      if (positionStr) {
+        return parseInt(positionStr, 10);
+      }
     }
 
     if (errorMessage.includes('Unexpected token')) {

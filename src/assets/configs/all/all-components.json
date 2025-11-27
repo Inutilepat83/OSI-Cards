@@ -1,0 +1,203 @@
+{
+  "cardTitle": "All Sections Demo",
+  "cardSubtitle": "Complete Component Showcase",
+  "cardType": "company",
+  "description": "This card demonstrates all available section types in the OSI Cards library",
+  "sections": [
+    {
+      "title": "Info Section",
+      "type": "info",
+      "fields": [
+        { "label": "Component Type", "value": "Info Section" },
+        { "label": "Purpose", "value": "Display key-value pairs" },
+        { "label": "Use Case", "value": "General information display" }
+      ]
+    },
+    {
+      "title": "Analytics Section",
+      "type": "analytics",
+      "fields": [
+        { "label": "Performance Score", "value": "95%", "percentage": 95, "performance": "excellent", "trend": "up" },
+        { "label": "Growth Rate", "value": "25% YoY", "percentage": 25, "performance": "good", "trend": "up" }
+      ]
+    },
+    {
+      "title": "Contact Card Section",
+      "type": "contact-card",
+      "fields": [
+        {
+          "label": "Primary Contact",
+          "title": "Jane Doe",
+          "value": "Product Manager",
+          "email": "jane.doe@example.com",
+          "phone": "+1 555 0100",
+          "role": "Product Manager",
+          "department": "Product"
+        }
+      ]
+    },
+    {
+      "title": "Network Card Section",
+      "type": "network-card",
+      "items": [
+        {
+          "title": "Partner Company",
+          "description": "Strategic Partner",
+          "meta": {
+            "influence": 85,
+            "connections": 12
+          }
+        }
+      ]
+    },
+    {
+      "title": "Map Section",
+      "type": "map",
+      "fields": [
+        {
+          "name": "Headquarters",
+          "x": 25,
+          "y": 36,
+          "type": "office",
+          "address": "San Francisco, CA, USA"
+        }
+      ]
+    },
+    {
+      "title": "Financials Section",
+      "type": "financials",
+      "fields": [
+        { "label": "Annual Revenue", "value": "$50M", "format": "currency", "change": 15, "trend": "up" },
+        { "label": "Operating Margin", "value": "18%", "format": "percentage", "change": 3.2, "trend": "up" }
+      ]
+    },
+    {
+      "title": "Locations Section",
+      "type": "locations",
+      "fields": [
+        {
+          "name": "Office Location",
+          "address": "New York, NY",
+          "coordinates": {
+            "lat": 40.7128,
+            "lng": -74.0060
+          }
+        }
+      ]
+    },
+    {
+      "title": "Event Section",
+      "type": "event",
+      "fields": [
+        {
+          "label": "Upcoming Event",
+          "value": "Product Launch - March 15, 2025",
+          "date": "2025-03-15",
+          "time": "10:00",
+          "category": "Launch",
+          "status": "confirmed"
+        }
+      ]
+    },
+    {
+      "title": "Project Section",
+      "type": "project",
+      "items": [
+        {
+          "title": "Q1 Initiative",
+          "description": "Product development project",
+          "status": "in-progress",
+          "icon": "🚀"
+        }
+      ]
+    },
+    {
+      "title": "List Section",
+      "type": "list",
+      "items": [
+        { "title": "Feature 1", "description": "Core functionality", "icon": "✓", "status": "completed" },
+        { "title": "Feature 2", "description": "Advanced features", "icon": "⚡", "status": "in-progress" }
+      ]
+    },
+    {
+      "title": "Chart Section",
+      "type": "chart",
+      "chartType": "bar",
+      "chartData": {
+        "labels": ["Q1", "Q2", "Q3", "Q4"],
+        "datasets": [
+          {
+            "label": "Revenue",
+            "data": [100, 150, 200, 250],
+            "backgroundColor": "#FF7900"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Product Section",
+      "type": "product",
+      "fields": [
+        { "label": "Product Name", "value": "Enterprise Solution" },
+        { "label": "Version", "value": "2.0" },
+        { "label": "Category", "value": "Software" }
+      ]
+    },
+    {
+      "title": "Solutions Section",
+      "type": "solutions",
+      "fields": [
+        {
+          "title": "Cloud Migration Service",
+          "description": "Complete cloud infrastructure migration",
+          "category": "Infrastructure",
+          "benefits": ["Scalability", "Cost reduction", "Security"],
+          "deliveryTime": "8-10 weeks"
+        }
+      ]
+    },
+    {
+      "title": "Overview Section",
+      "type": "overview",
+      "fields": [
+        { "label": "Company Overview", "value": "Technology leader" },
+        { "label": "Industry", "value": "Enterprise Software" },
+        { "label": "Founded", "value": "2010" }
+      ]
+    },
+    {
+      "title": "Stats Section",
+      "type": "stats",
+      "fields": [
+        { "label": "Total Users", "value": "1M+", "trend": "up" },
+        { "label": "Active Sessions", "value": "50K", "trend": "stable" }
+      ]
+    },
+    {
+      "title": "Quotation Section",
+      "type": "quotation",
+      "fields": [
+        {
+          "label": "Customer Testimonial",
+          "value": "\"This solution transformed our business operations.\"",
+          "description": "CEO, TechCorp Inc."
+        }
+      ]
+    },
+    {
+      "title": "Text Reference Section",
+      "type": "text-reference",
+      "fields": [
+        {
+          "label": "Reference Document",
+          "value": "Technical Specification v2.1",
+          "description": "Latest documentation"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    { "label": "Learn More", "type": "website", "variant": "primary", "icon": "🌐", "url": "https://example.com" }
+  ]
+}
+

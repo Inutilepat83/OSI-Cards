@@ -1,7 +1,23 @@
 {
-  "version": "1.0.0",
-  "generatedAt": "2025-11-26T15:08:57.487Z",
+  "version": "1.2.0",
+  "generatedAt": "2025-11-27T17:45:58.276Z",
   "cards": [
+    {
+      "id": "all-components",
+      "type": "all",
+      "path": "all/all-components.json",
+      "format": "json",
+      "size": 5523,
+      "priority": "high",
+      "sectionCount": 17,
+      "title": "All Sections Demo",
+      "metadata": {
+        "subtitle": "Complete Component Showcase",
+        "description": "This card demonstrates all available section types in the OSI Cards library",
+        "lastUpdated": "2025-11-27T15:56:22.779Z",
+        "hasActions": true
+      }
+    },
     {
       "id": "company-enterprise-v3",
       "type": "company",
@@ -375,6 +391,9 @@
       "sko-basic-v1",
       "sko-enhanced-v2",
       "sko-enterprise-v3"
+    ],
+    "all": [
+      "all-components"
     ]
   }
 }

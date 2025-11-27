@@ -1,11 +1,12 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { AppState } from '../../../store/app.state';
 import { selectError } from '../../../store/cards/cards.selectors';
 import * as CardActions from '../../../store/cards/cards.state';
 import { ErrorHandlingService } from '../../../core/services/error-handling.service';
+import { generateUserFriendlyError, formatErrorMessage } from '../../../shared/utils/improved-error-messages.util';
 
 @Component({
   selector: 'app-error-display',
@@ -40,8 +41,11 @@ import { ErrorHandlingService } from '../../../core/services/error-handling.serv
           </svg>
         </div>
         <div class="error-message">
-          <h3 class="error-title">Error</h3>
-          <p class="error-text">{{ error }}</p>
+          <h3 class="error-title">{{ friendlyError.title }}</h3>
+          <p class="error-text">{{ friendlyError.message }}</p>
+          <ul class="error-suggestions" *ngIf="friendlyError.suggestions.length > 0">
+            <li *ngFor="let suggestion of friendlyError.suggestions">{{ suggestion }}</li>
+          </ul>
         </div>
         <button
           class="error-close"
@@ -122,10 +126,22 @@ import { ErrorHandlingService } from '../../../core/services/error-handling.serv
     }
 
     .error-text {
-      margin: 0;
+      margin: 0 0 var(--spacing-md) 0;
       font-size: var(--text-sm);
       color: var(--muted-foreground);
       word-wrap: break-word;
+    }
+
+    .error-suggestions {
+      margin: var(--spacing-md) 0 0 0;
+      padding-left: var(--spacing-2xl);
+      list-style-type: disc;
+    }
+
+    .error-suggestions li {
+      margin-bottom: var(--spacing-sm);
+      font-size: var(--text-sm);
+      color: var(--muted-foreground);
     }
 
     .error-close {
@@ -186,7 +202,20 @@ export class ErrorDisplayComponent {
   private readonly errorHandlingService = inject(ErrorHandlingService);
 
   error$: Observable<string | null> = this.store.select(selectError);
+  friendlyError$: Observable<ReturnType<typeof generateUserFriendlyError>> = this.error$.pipe(
+    map(error => error ? generateUserFriendlyError(error, 'ErrorDisplayComponent') : generateUserFriendlyError('', 'ErrorDisplayComponent'))
+  );
   canRetry = false; // Could be enhanced to check error type
+
+  // Expose for template
+  friendlyError = generateUserFriendlyError('', 'ErrorDisplayComponent');
+
+  constructor() {
+    // Subscribe to friendly errors for template
+    this.friendlyError$.subscribe(err => {
+      this.friendlyError = err;
+    });
+  }
 
   clearError(): void {
     this.store.dispatch(CardActions.clearError());

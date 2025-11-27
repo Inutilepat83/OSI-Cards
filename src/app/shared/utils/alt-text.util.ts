@@ -27,7 +27,13 @@ export function generateAltText(
   // Try to extract meaningful name from URL
   const urlParts = imageUrl.split('/');
   const filename = urlParts[urlParts.length - 1];
+  if (!filename) {
+    return 'Image';
+  }
   const nameWithoutExt = filename.split('.')[0];
+  if (!nameWithoutExt) {
+    return 'Image';
+  }
 
   // Clean up filename (remove dashes, underscores, etc.)
   const cleanName = nameWithoutExt
@@ -69,7 +75,13 @@ export function validateAltText(altText: string | null | undefined): boolean {
 export function getDefaultAltText(imageUrl: string, fallback: string = 'Image'): string {
   const urlParts = imageUrl.split('/');
   const filename = urlParts[urlParts.length - 1];
+  if (!filename) {
+    return 'Image';
+  }
   const nameWithoutExt = filename.split('.')[0];
+  if (!nameWithoutExt) {
+    return 'Image';
+  }
 
   if (nameWithoutExt && nameWithoutExt !== filename) {
     return nameWithoutExt.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());

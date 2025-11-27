@@ -9,7 +9,7 @@
   [attr.aria-busy]="!isLayoutReady"
 >
   <div
-    *ngFor="let item of positionedSections; trackBy: trackItem; let idx = index"
+    *ngFor="let item of (enableVirtualScrolling ? visibleSections : positionedSections); trackBy: trackItem; let idx = index"
     #itemRef
     class="absolute masonry-item"
     [class.masonry-item--ready]="isLayoutReady"
@@ -22,10 +22,12 @@
       zIndex: idx
     }"
   >
-    <app-section-renderer
-      *ngIf="item?.section"
-      [section]="item.section"
-      (sectionEvent)="onSectionEvent($event)"
-    ></app-section-renderer>
+    <app-error-boundary>
+      <app-section-renderer
+        *ngIf="item?.section"
+        [section]="item.section"
+        (sectionEvent)="onSectionEvent($event)"
+      ></app-section-renderer>
+    </app-error-boundary>
   </div>
 </div>

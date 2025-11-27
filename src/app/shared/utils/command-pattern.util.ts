@@ -58,6 +58,9 @@ export class CommandManager {
     }
 
     const command = this.history.commands[this.history.currentIndex];
+    if (!command) {
+      return false;
+    }
     command.undo();
     this.history.currentIndex--;
     return true;
@@ -73,6 +76,9 @@ export class CommandManager {
 
     this.history.currentIndex++;
     const command = this.history.commands[this.history.currentIndex];
+    if (!command) {
+      return false;
+    }
     command.redo();
     return true;
   }

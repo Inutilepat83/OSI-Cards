@@ -13,7 +13,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.0] - 2025-11-27
 
 ### Added
-- TBD
+- Agent service for AI-powered interactions and chat functionality
+- Chat service for conversational interfaces
+- Web Vitals service for comprehensive performance monitoring
+- CSP nonce service for enhanced security headers
+- Focus management service for improved accessibility
+- Toast service for user notifications
+- Error boundary utilities for better error handling
+- Image optimization utilities for performance
+- Error messages utilities for consistent error handling
+- Live region directive for accessibility announcements
+- WebP image pipe for optimized image loading
+- Dev tools components for development assistance
+- Performance dashboard components
+- Enhanced E2E test coverage with Playwright
+- Comprehensive documentation in docs/ directory
+- Library documentation in projects/osi-cards-lib/docs/
+- Plugin system architecture for extensible section types
+- Card spawner utilities for dynamic card generation
+- Style validator utilities for runtime validation
+- Event middleware service for event handling
+- Section plugin registry service for plugin management
+- Preset configurations for common card types
+- Theme system for customizable styling
+- Card body, header, and footer components for better structure
+- Example implementations in library
+
+### Changed
+- Improved library structure with better component organization
+- Enhanced TypeScript strict mode compliance
+- Updated all documentation to reflect current architecture
+- Improved error handling across all services
+- Enhanced logging with structured logging service
+- Better separation of concerns with modular components
+- Updated build scripts and configuration
+- Improved test coverage and test utilities
+
+### Fixed
+- TypeScript compilation errors
+- Import/export issues in library
+- Documentation inconsistencies
+- Build and deployment scripts
 
 ## [1.1.3] - 2025-11-27
 

@@ -55,7 +55,7 @@
   }
 
   &:hover {
-    transform: translateY(-2px);
+    transform: none;
     box-shadow: 0 8px 16px color-mix(in srgb, var(--foreground) 12%, transparent),
                 0 0 0 1px color-mix(in srgb, var(--color-brand) 15%, transparent);
     border-color: color-mix(in srgb, var(--color-brand) 30%, transparent);
@@ -90,19 +90,19 @@
 .financial-card__label {
   @include label-text;
   margin: 0;
-  color: var(--card-text-label);
+  color: color-mix(in srgb, var(--foreground) 52%, transparent);
   line-height: 1.3;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.04em;
   display: flex;
   align-items: center;
   gap: calc(var(--card-gap) * 0.375);
   transition: color 0.22s ease;
   text-transform: uppercase;
-  font-size: calc(var(--card-label-font-size) * 0.95);
+  font-size: var(--card-label-font-size);
 
   .financial-card:hover & {
-    color: color-mix(in srgb, var(--card-text-label) 90%, #FF7900 10%);
+    color: color-mix(in srgb, var(--foreground) 60%, var(--color-brand) 10%);
   }
 }
 
@@ -122,7 +122,7 @@
   align-items: baseline;
   gap: calc(var(--card-gap) * 0.375);
   font-weight: 700;
-  font-size: calc(var(--card-value-font-size) * 1.3) !important;
+  font-size: var(--card-value-font-size-large) !important;
   letter-spacing: -0.01em;
   transition: color 0.22s ease;
 

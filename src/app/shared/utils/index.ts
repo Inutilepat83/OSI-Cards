@@ -17,6 +17,7 @@ export * from './form-labels.util';
 
 // ===== Performance & Optimization =====
 export * from './memoization.util';
+// Note: memoization-enhanced.util.ts is deprecated - use memoization.util.ts instead
 export * from './performance.util';
 export * from './performance-budgets.util';
 export * from './cache.util';
@@ -56,6 +57,7 @@ export * from './color-contrast.util';
 export * from './alt-text.util';
 export * from './pagination.util';
 export * from './drag-drop.util';
+export * from './image-optimization.util';
 
 // ===== Design Patterns =====
 export * from './event-bus.util';

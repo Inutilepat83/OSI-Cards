@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpResponse } from '@angular/common/http';
-import { Observable, of, from } from 'rxjs';
-import { tap, switchMap, map, catchError } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { tap, switchMap, catchError } from 'rxjs/operators';
 import { AppConfigService } from '../services/app-config.service';
 import { IndexedDBCacheService } from '../services/indexeddb-cache.service';
 

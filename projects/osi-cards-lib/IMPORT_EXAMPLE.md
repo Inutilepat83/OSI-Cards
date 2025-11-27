@@ -51,6 +51,24 @@ npm install chart.js leaflet
 
 ## Basic Import
 
+### Import Provider Function (REQUIRED)
+
+**⚠️ IMPORTANT**: Before using components, you must configure providers in your `app.config.ts`:
+
+```typescript
+import { ApplicationConfig } from '@angular/core';
+import { provideOSICards } from 'osi-cards-lib';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideOSICards(), // Required for animations and library functionality
+    // ... your other providers
+  ]
+};
+```
+
+See [Provider Configuration](#provider-configuration) section for detailed options.
+
 ### Import Component
 
 ```typescript
@@ -68,6 +86,58 @@ import { AICardConfig, CardSection, CardField } from 'osi-cards-lib';
 ```typescript
 import { IconService, SectionNormalizationService, MagneticTiltService } from 'osi-cards-lib';
 ```
+
+## Provider Configuration
+
+### Using Library Provider Function (Recommended)
+
+The simplest way to configure the library is to use the provided function:
+
+```typescript
+import { ApplicationConfig } from '@angular/core';
+import { provideOSICards } from 'osi-cards-lib';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideOSICards(), // Provides required animations and configuration
+    // ... your other providers
+  ]
+};
+```
+
+### Disable Animations
+
+For testing or when animations are not desired:
+
+```typescript
+import { ApplicationConfig } from '@angular/core';
+import { provideOSICards } from 'osi-cards-lib';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideOSICards({ enableAnimations: false }), // Uses noop animations
+    // ... your other providers
+  ]
+};
+```
+
+### Manual Provider Configuration
+
+If you prefer manual configuration:
+
+```typescript
+import { ApplicationConfig } from '@angular/core';
+import { provideAnimations } from '@angular/platform-browser/animations';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideAnimations(), // Required for component animations
+    // ... your other providers
+  ]
+};
+```
+
+**Note**: Services (MagneticTiltService, IconService, etc.) use `providedIn: 'root'` and are automatically available without explicit providers.
 
 ## Standalone Component Usage
 
@@ -457,6 +527,43 @@ export class CompleteExampleComponent {
 ```
 
 ## Troubleshooting
+
+### Issue: Animations not working
+
+**Error**: Components render but animations don't play, or you see errors about missing animation providers
+
+**Symptoms**:
+- Card entrance animations don't work
+- Transitions between states are instant
+- Console errors about `BrowserAnimationsModule` or animation providers
+
+**Solution**:
+1. **Verify provider is configured**: Ensure you've added `provideOSICards()` to your `app.config.ts`:
+   ```typescript
+   import { ApplicationConfig } from '@angular/core';
+   import { provideOSICards } from 'osi-cards-lib';
+   
+   export const appConfig: ApplicationConfig = {
+     providers: [
+       provideOSICards(), // Must be included!
+     ]
+   };
+   ```
+
+2. **Restart dev server**: After adding providers, restart your development server
+
+3. **Check provider order**: Make sure `provideOSICards()` is included before components are used
+
+4. **Testing setup**: In tests, use `provideNoopAnimations()`:
+   ```typescript
+   import { provideNoopAnimations } from '@angular/platform-browser/animations';
+   
+   TestBed.configureTestingModule({
+     providers: [provideNoopAnimations()]
+   });
+   ```
+
+**Why this happens**: Angular's animation system requires providers to be configured at the application level. The library components declare animations but cannot work without the animation providers being available.
 
 ### Issue: Module not found
 

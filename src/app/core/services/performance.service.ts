@@ -200,6 +200,15 @@ export class PerformanceService implements OnDestroy {
   }
 
   /**
+   * Get recent metrics (last N metrics)
+   */
+  getRecentMetrics(count: number = 10): PerformanceMetric[] {
+    return [...this.metrics]
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .slice(0, count);
+  }
+
+  /**
    * Clear all metrics
    */
   clearMetrics(): void {
@@ -464,9 +473,13 @@ export class PerformanceService implements OnDestroy {
       // Detect memory leaks (growing trend over last 5 minutes)
       if (this.memorySnapshots.length >= 10) {
         const recent = this.memorySnapshots.slice(-10);
-        const trend = recent[recent.length - 1].usedMB - recent[0].usedMB;
-        if (trend > 10) { // 10MB growth in recent period
-          this.logger.warn(`Potential memory leak detected: ${trend.toFixed(2)}MB growth`, 'PerformanceService');
+        const last = recent[recent.length - 1];
+        const first = recent[0];
+        if (last !== undefined && first !== undefined) {
+          const trend = last.usedMB - first.usedMB;
+          if (trend > 10) { // 10MB growth in recent period
+            this.logger.warn(`Potential memory leak detected: ${trend.toFixed(2)}MB growth`, 'PerformanceService');
+          }
         }
       }
 
@@ -508,19 +521,28 @@ export class PerformanceService implements OnDestroy {
     });
 
     // Check each budget
-    this.budgets.forEach(budget => {
+    for (const budget of this.budgets) {
       const metricValues = metricsByName.get(budget.name) || [];
       
       if (metricValues.length === 0) {
-        return;
+        continue;
       }
 
-      let value: number;
+      let value: number | undefined;
       
       if (budget.type === 'duration') {
         value = metricValues.reduce((sum, v) => sum + v, 0) / metricValues.length;
       } else {
-        value = metricValues[metricValues.length - 1];
+        const lastValue = metricValues[metricValues.length - 1];
+        if (lastValue === undefined) {
+          // Skip if no value available
+          continue;
+        }
+        value = lastValue;
+      }
+      
+      if (value === undefined) {
+        continue;
       }
 
       if (value > budget.error) {
@@ -528,7 +550,7 @@ export class PerformanceService implements OnDestroy {
       } else if (value > budget.warning) {
         this.recordViolation(budget.name, value, budget.warning, 'warning');
       }
-    });
+    }
   }
 
   /**

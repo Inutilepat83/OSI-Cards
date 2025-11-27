@@ -846,6 +846,7 @@ src/
 - **Security**: See [docs/SECURITY_BEST_PRACTICES.md](./docs/SECURITY_BEST_PRACTICES.md) for security guidelines
 - **Performance**: See [docs/BUNDLE_OPTIMIZATION.md](./docs/BUNDLE_OPTIMIZATION.md) for bundle optimization strategies
 - **Testing**: See [docs/TEST_COVERAGE_IMPROVEMENTS.md](./docs/TEST_COVERAGE_IMPROVEMENTS.md) for test coverage information
+- **Improvement Plan**: See [docs/IMPROVEMENT_PLAN.md](./docs/IMPROVEMENT_PLAN.md) for the comprehensive 30-point improvement roadmap
 
 ### FAQ
 

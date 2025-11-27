@@ -112,5 +112,27 @@ export const CARD_LIMITS = {
   MIN_SECTION_TITLE_LENGTH: 1,
   /** Maximum section title length */
   MAX_SECTION_TITLE_LENGTH: 200,
+  /** Maximum section description length */
+  MAX_SECTION_DESCRIPTION_LENGTH: 500,
+  /** Maximum section subtitle length */
+  MAX_SECTION_SUBTITLE_LENGTH: 200,
+  /** Maximum field description length */
+  MAX_FIELD_DESCRIPTION_LENGTH: 500,
+  /** Maximum email body length */
+  MAX_EMAIL_BODY_LENGTH: 5000,
+} as const;
+
+/**
+ * Retry and delay constants
+ */
+export const RETRY_CONSTANTS = {
+  /** Default retry delay in milliseconds */
+  DEFAULT_RETRY_DELAY: 1000,
+  /** Maximum retry delay in milliseconds */
+  MAX_RETRY_DELAY: 4000,
+  /** Default maximum retries */
+  DEFAULT_MAX_RETRIES: 3,
+  /** Exponential backoff base multiplier */
+  EXPONENTIAL_BACKOFF_BASE: 2,
 } as const;
 

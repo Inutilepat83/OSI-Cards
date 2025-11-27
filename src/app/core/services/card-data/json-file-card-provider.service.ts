@@ -6,7 +6,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AICardConfig } from '../../../models';
 import { CardDataProvider } from './card-data-provider.interface';
 import { CardManifest, CardManifestEntry } from './manifest.interface';
-import { validateCardJson, sanitizeCardConfig } from '../../../shared/utils/card-utils';
+import { sanitizeCardConfig } from '../../../shared/utils/card-utils';
+import { CardValidationService } from '../../../shared/services/card-validation.service';
 import { LoggingService } from '../logging.service';
 import { RequestCanceller } from '../../../shared/utils/request-cancellation.util';
 import { RequestQueueService } from '../request-queue.service';
@@ -29,6 +30,7 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
   private destroyRef = inject(DestroyRef);
   private requestQueue = inject(RequestQueueService);
   private indexedDBCache = inject(IndexedDBCacheService);
+  private validationService = inject(CardValidationService);
   private manifestCache$?: Observable<CardManifest>;
   private requestCanceller = new RequestCanceller();
   // In-memory cache for instant access (bypasses HTTP for cached items)
@@ -284,8 +286,8 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
         return null;
       }
 
-      // Validate JSON structure using validateCardJson
-      const cardConfig = validateCardJson(trimmed);
+      // Validate JSON structure using CardValidationService
+      const cardConfig = this.validationService.validateCardJson(trimmed);
       
       if (!cardConfig) {
         // Try to provide more helpful error message
@@ -455,11 +457,13 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
         }
 
         // Filter by type and sort by priority
-        const typeCards = manifest.cards
-          .filter(card => card.type === cardType)
-          .sort((a, b) => {
-            return (PRIORITY_ORDER[b.priority] || 0) - (PRIORITY_ORDER[a.priority] || 0);
-          });
+        // If cardType is 'all', return all cards; otherwise filter by type
+        const typeCards = (cardType === 'all' 
+          ? manifest.cards 
+          : manifest.cards.filter(card => card.type === cardType)
+        ).sort((a, b) => {
+          return (PRIORITY_ORDER[b.priority] || 0) - (PRIORITY_ORDER[a.priority] || 0);
+        });
 
         if (typeCards.length === 0) {
           this.logger.debug(`No cards found for type: ${cardType}`, 'JsonFileCardProvider');

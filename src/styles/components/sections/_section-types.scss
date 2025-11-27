@@ -57,9 +57,9 @@ $section-base-shadow: 0 18px 40px color-mix(in srgb, var(--foreground) 8%, trans
     }
   }
 
-  /* Minimalistic hover effect */
+  /* Minimalistic hover effect - no vertical movement */
   &:hover {
-    transform: translateY(-2px);
+    transform: none;
     box-shadow: var(--card-box-shadow-hover),
                 0 0 0 1px color-mix(in srgb, var(--section-accent) 15%, transparent);
     border-color: color-mix(in srgb, var(--section-accent) 30%, transparent);
@@ -147,22 +147,23 @@ $section-base-shadow: 0 18px 40px color-mix(in srgb, var(--foreground) 8%, trans
   @extend %unified-card-label;
   display: flex;
   align-items: center;
-  gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from full gap */
+  gap: calc(var(--card-gap) * 0.75);
   text-transform: capitalize;
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
 
   > lucide-icon {
     color: color-mix(in srgb, var(--section-accent) 70%, transparent);
-    filter: none; /* Removed drop-shadow */
+    filter: none;
   }
 }
 
 .section-card__value {
   @extend %unified-card-value;
-  font-size: calc(var(--card-value-font-size) + 4px) !important; /* Bigger font */
+  font-size: var(--card-value-font-size) !important;
   font-weight: var(--card-value-font-weight) !important;
   letter-spacing: var(--card-value-letter-spacing) !important;
   line-height: var(--card-value-line-height) !important;
-  color: var(--card-text-primary) !important;
+  color: var(--color-brand) !important;
   transition: color 0.25s ease;
   text-shadow: none;
   display: flex;
@@ -215,61 +216,62 @@ $section-base-shadow: 0 18px 40px color-mix(in srgb, var(--foreground) 8%, trans
 /* Section Type Modifiers                                                     */
 /* -------------------------------------------------------------------------- */
 
+/* All sections use brand orange as primary accent - differentiated by typography and grey levels */
 .section-block--metrics {
   --section-accent: var(--color-brand);
-  --section-background: var(--card-section-bg); /* Theme-aware: grey-800 (night) or grey-50 (day) */
-  --section-card-background: var(--card-section-card-bg); /* Theme-aware: grey-700 (night) or grey-100 (day) - more contrasty */
+  --section-background: var(--card-section-bg);
+  --section-card-background: var(--card-section-card-bg);
 }
 
 .section-block--insights {
-  --section-accent: color-mix(in srgb, var(--color-brand) 65%, var(--foreground) 35%);
-  --section-background: color-mix(in srgb, var(--card) 94%, transparent);
-  --section-card-background: var(--card-section-card-bg); /* Theme-aware: grey-700 (night) or grey-100 (day) - more contrasty */
+  --section-accent: var(--color-brand);
+  --section-background: var(--card-section-bg);
+  --section-card-background: var(--card-section-card-bg);
 }
 
 .section-block--list {
-  --section-accent: color-mix(in srgb, var(--color-brand) 45%, var(--foreground) 55%);
+  --section-accent: var(--color-brand);
   --section-card-grid-min: 180px;
-  --section-background: color-mix(in srgb, var(--card) 93%, transparent);
+  --section-background: var(--card-section-bg);
 }
 
 .section-block--contacts {
-  --section-accent: color-mix(in srgb, var(--color-brand) 70%, var(--foreground) 30%);
-  --section-card-grid-min: 180px; /* More compact */
-  --section-card-background: var(--card-section-card-bg); /* Theme-aware: grey-700 (night) or grey-100 (day) - more contrasty */
+  --section-accent: var(--color-brand);
+  --section-card-grid-min: 180px;
+  --section-card-background: var(--card-section-card-bg);
 }
 
 .section-block--timeline {
-  --section-accent: color-mix(in srgb, var(--color-brand) 55%, var(--foreground) 45%);
-  --section-card-grid-min: 200px; /* More compact */
+  --section-accent: var(--color-brand);
+  --section-card-grid-min: 200px;
 }
 
 .section-block--map {
-  --section-accent: color-mix(in srgb, var(--color-brand) 50%, var(--foreground) 50%);
-  --section-card-grid-min: 220px; /* More compact */
-  --section-background: color-mix(in srgb, var(--card) 90%, transparent);
+  --section-accent: var(--color-brand);
+  --section-card-grid-min: 220px;
+  --section-background: var(--card-section-bg);
 }
 
 .section-block--network {
-  --section-accent: color-mix(in srgb, var(--color-brand) 60%, var(--foreground) 40%);
-  --section-card-grid-min: 200px; /* More compact */
+  --section-accent: var(--color-brand);
+  --section-card-grid-min: 200px;
 }
 
 .section-block--product {
-  --section-accent: color-mix(in srgb, var(--color-brand) 75%, var(--foreground) 25%);
-  --section-background: color-mix(in srgb, var(--card) 88%, transparent);
-  --section-card-background: var(--card-section-card-bg); /* Theme-aware: grey-700 (night) or grey-100 (day) - more contrasty */
+  --section-accent: var(--color-brand);
+  --section-background: var(--card-section-bg);
+  --section-card-background: var(--card-section-card-bg);
 }
 
 .section-block--financial {
-  --section-accent: color-mix(in srgb, var(--color-brand) 40%, var(--foreground) 60%);
-  --section-card-background: var(--card-section-card-bg); /* Theme-aware: grey-700 (night) or grey-100 (day) - more contrasty */
+  --section-accent: var(--color-brand);
+  --section-card-background: var(--card-section-card-bg);
 }
 
 .section-block--solutions {
-  --section-accent: color-mix(in srgb, var(--color-brand) 65%, var(--foreground) 35%);
-  --section-card-grid-min: 220px; /* More compact */
-  --section-card-background: var(--card-section-card-bg); /* Theme-aware: grey-700 (night) or grey-100 (day) - more contrasty */
+  --section-accent: var(--color-brand);
+  --section-card-grid-min: 220px;
+  --section-card-background: var(--card-section-card-bg);
 }
 
 @media (max-width: 768px) {

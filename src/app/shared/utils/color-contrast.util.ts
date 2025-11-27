@@ -16,7 +16,10 @@ export function getLuminance(r: number, g: number, b: number): number {
     val = val / 255;
     return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
   });
-  return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+  const rsValue = rs ?? 0;
+  const gsValue = gs ?? 0;
+  const bsValue = bs ?? 0;
+  return 0.2126 * rsValue + 0.7152 * gsValue + 0.0722 * bsValue;
 }
 
 /**
@@ -27,13 +30,20 @@ export function getLuminance(r: number, g: number, b: number): number {
  */
 export function hexToRgb(hex: string): [number, number, number] | null {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result
-    ? [
-        parseInt(result[1], 16),
-        parseInt(result[2], 16),
-        parseInt(result[3], 16)
-      ]
-    : null;
+  if (!result || !result[1] || !result[2] || !result[3]) {
+    return null;
+  }
+  const rStr = result[1];
+  const gStr = result[2];
+  const bStr = result[3];
+  if (!rStr || !gStr || !bStr) {
+    return null;
+  }
+  return [
+    parseInt(rStr, 16),
+    parseInt(gStr, 16),
+    parseInt(bStr, 16)
+  ];
 }
 
 /**

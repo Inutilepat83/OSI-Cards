@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, inject } from '@angular/core';
+import { Component, ElementRef, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, inject, Injector, isDevMode, PLATFORM_ID } from '@angular/core';
 import { CommonModule, ViewportScroller } from '@angular/common';
 import { AICardConfig, CardSection, CardField, CardItem, CardAction, MailCardAction } from '../../models';
 import { Subject, takeUntil, fromEvent, filter, delay, interval } from 'rxjs';
@@ -8,7 +8,8 @@ import { LucideIconsModule } from '../../icons';
 import { MasonryGridComponent, MasonryLayoutInfo } from '../masonry-grid/masonry-grid.component';
 import { SectionRenderEvent } from '../section-renderer/section-renderer.component';
 import { CardChangeType } from '../../utils';
-import { trigger, transition, style, animate } from '@angular/animations';
+import { trigger, transition, style, animate, AnimationBuilder } from '@angular/animations';
+import { isPlatformBrowser } from '@angular/common';
 
 export interface CardFieldInteractionEvent {
   field?: CardField;
@@ -40,6 +41,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   private _cardConfig?: AICardConfig;
   private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly injector = inject(Injector);
+  private readonly platformId = inject(PLATFORM_ID);
   
   // Expose Math for template
   Math = Math;
@@ -239,6 +242,11 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   };
 
   ngOnInit(): void {
+    // Validate animations provider in development mode
+    if (isDevMode() && isPlatformBrowser(this.platformId)) {
+      this.validateAnimationsProvider();
+    }
+    
     // Initialize particles
     this.initializeParticles();
     
@@ -1020,5 +1028,37 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     this.previousSectionsHash = '';
     this.normalizedSectionCache = new WeakMap<CardSection, CardSection>();
     this.cdr.markForCheck();
+  }
+
+  /**
+   * Validates that animation providers are configured.
+   * Warns in development mode if animations are not available.
+   */
+  private validateAnimationsProvider(): void {
+    try {
+      // Try to inject AnimationBuilder - if animations are not provided, this will throw
+      const animationBuilder = this.injector.get(AnimationBuilder, null, { optional: true });
+      
+      if (!animationBuilder) {
+        console.warn(
+          '⚠️ OSI Cards Library: Animation providers may not be configured.\n' +
+          'The library requires animation providers to function correctly.\n' +
+          'Please add provideOSICards() to your app.config.ts providers array:\n\n' +
+          '  import { provideOSICards } from \'osi-cards-lib\';\n' +
+          '  export const appConfig: ApplicationConfig = {\n' +
+          '    providers: [provideOSICards(), ...]\n' +
+          '  };\n\n' +
+          'See https://github.com/Inutilepat83/OSI-Cards for more information.'
+        );
+      }
+    } catch (error) {
+      // AnimationBuilder injection failed - likely no animations provider
+      console.warn(
+        '⚠️ OSI Cards Library: Animation providers are not configured.\n' +
+        'The library requires animation providers for proper functionality.\n' +
+        'Please add provideOSICards() to your app.config.ts providers array.\n' +
+        'See documentation for setup instructions.'
+      );
+    }
   }
 }

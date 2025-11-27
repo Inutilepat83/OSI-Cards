@@ -143,7 +143,7 @@ export interface CardsState extends EntityState<AICardConfig> {
 
 export const initialState: CardsState = cardsAdapter.getInitialState({
   currentCardId: null,
-  cardType: 'company',
+  cardType: 'all',
   cardVariant: 1,
   jsonInput: '',
   isGenerating: false,

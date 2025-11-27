@@ -3,42 +3,38 @@
   "entryPoints": [
     "src/app/core/**/*.ts",
     "src/app/shared/**/*.ts",
-    "src/app/models/**/*.ts"
+    "src/app/features/**/*.ts"
   ],
   "exclude": [
     "**/*.spec.ts",
     "**/*.test.ts",
     "**/node_modules/**",
-    "**/dist/**"
+    "**/dist/**",
+    "**/e2e/**",
+    "docs/IMPLEMENTATION_SUMMARY.md",
+    "docs/IMPROVEMENT_PLAN.md",
+    "docs/IMPROVEMENTS_IMPLEMENTED.md",
+    "docs/TYPESCRIPT_STRICT_MIGRATION.md"
   ],
   "out": "docs/api",
   "theme": "default",
   "name": "OSI Cards API Documentation",
   "readme": "README.md",
   "includeVersion": true,
-  "excludePrivate": true,
+  "gitRevision": "main",
+  "excludePrivate": false,
   "excludeProtected": false,
   "excludeInternal": false,
+  "includeSources": true,
+  "sourceLinkTemplate": "https://github.com/your-org/osi-cards/blob/{gitRevision}/{path}#L{line}",
   "categorizeByGroup": true,
   "categoryOrder": [
-    "Services",
-    "Components",
-    "Directives",
-    "Pipes",
-    "Interceptors",
+    "Core Services",
+    "Shared Components",
+    "Features",
     "Models",
     "Utilities",
-    "Decorators"
-  ],
-  "searchInComments": true,
-  "validation": {
-    "invalidLink": true,
-    "notDocumented": false
-  },
-  "gitRevision": "main",
-  "gitRemote": "origin",
-  "sort": [
-    "source-order"
+    "*"
   ],
   "kindSortOrder": [
     "Project",
@@ -48,12 +44,27 @@
     "Class",
     "Interface",
     "Type alias",
-    "Constructor",
-    "Property",
-    "Method",
-    "Accessor",
     "Function",
     "Variable"
-  ]
+  ],
+  "navigation": {
+    "includeCategories": true,
+    "includeGroups": true
+  },
+  "searchInComments": true,
+  "validation": {
+    "invalidLink": true,
+    "notDocumented": false
+  },
+  "plugin": [
+    "typedoc-plugin-markdown",
+    "typedoc-plugin-example-tag"
+  ],
+  "markdown": {
+    "gitbook": false,
+    "hideBreadcrumbs": false,
+    "hidePageHeader": false,
+    "hidePageTitle": false,
+    "hideSources": false
+  }
 }
-

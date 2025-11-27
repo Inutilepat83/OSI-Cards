@@ -41,17 +41,16 @@
 
 .quotation-card__text {
   @include card-title-text;
-  /* COMPACT: Tight line-height */
   font-style: italic;
-  font-size: calc(var(--card-title-font-size) * 1.15);
+  font-size: var(--card-title-font-size);
   line-height: 1.4;
-  color: var(--card-text-primary);
+  color: color-mix(in srgb, var(--foreground) 85%, transparent);
   margin: 0;
   padding-left: calc(var(--card-padding) * 0.75);
-  /* COMPACT: Reduced padding */
   position: relative;
   transition: color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   letter-spacing: 0.01em;
+  font-weight: 500;
 
   &::before {
     content: '';
@@ -99,12 +98,11 @@
 
 .quotation-card__author-name {
   @include card-subtitle-text;
-  /* OPTIMIZED: Use typography mixin - names are secondary */
   color: var(--color-brand);
   margin: 0;
   line-height: 1.2;
-  font-weight: 700;
-  font-size: calc(var(--card-subtitle-font-size) + 2px);
+  font-weight: 600;
+  font-size: var(--card-subtitle-font-size);
 }
 
 .quotation-card__author-role {

@@ -89,10 +89,20 @@ export class ProductSectionComponent extends BaseSectionComponent<ProductField> 
 
     return orderedKeys.map((key) => {
       const config = this.categoryConfig[key] ?? this.categoryConfig['default'];
+      if (!config) {
+        return {
+          key,
+          title: 'Unknown',
+          icon: 'box',
+          fields: groups.get(key) ?? []
+        };
+      }
+      const configTitle = config.title;
+      const configIcon = config.icon;
       return {
         key,
-        title: config.title,
-        icon: config.icon,
+        title: configTitle ?? 'Unknown',
+        icon: configIcon ?? 'box',
         fields: groups.get(key) ?? []
       };
     });

@@ -22,7 +22,8 @@ const CARD_TYPE_MAPPING = {
   event: 'events',
   analytics: 'analytics',
   financials: 'financials',
-  sko: 'sko'
+  sko: 'sko',
+  all: 'all'
 };
 
 /**
@@ -32,7 +33,7 @@ function determinePriority(cardType, sizeInBytes) {
   if (sizeInBytes > 10000) {
     return 'high';
   }
-  if (cardType === 'company') {
+  if (cardType === 'company' || cardType === 'all') {
     return 'high';
   }
   if (['contact', 'product'].includes(cardType)) {

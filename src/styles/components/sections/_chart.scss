@@ -41,9 +41,9 @@
   overflow: hidden;
   background: var(--card-background);
 
-  /* Minimalistic hover - no glow effects */
+  /* Minimalistic hover - no glow effects, no vertical movement */
   &:hover {
-    transform: translateY(-2px);
+    transform: none;
     border-color: var(--color-brand);
   }
   
@@ -109,9 +109,8 @@
 
   &__value {
     @include value-text;
-    /* OPTIMIZED: Values are primary - larger */
-    font-size: calc(var(--card-value-font-size) * 1.2) !important;
-    font-weight: 700;
+    font-size: var(--card-value-font-size) !important;
+    font-weight: 600;
     color: var(--color-brand);
     margin: 0;
     text-align: right;

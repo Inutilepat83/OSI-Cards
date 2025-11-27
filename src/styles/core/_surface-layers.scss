@@ -72,5 +72,6 @@
   /* Only darken background by 1%, no border changes */
   background: color-mix(in srgb, var(--section-item-background) 99%, black) !important;
   box-shadow: var(--section-item-box-shadow-hover) !important;
-  transform: var(--section-item-hover-transform) !important;
+  /* Explicitly set to none to prevent any vertical movement */
+  transform: none !important;
 }

@@ -410,8 +410,15 @@ export class ExportService {
    */
   private dataUrlToBlob(dataUrl: string, callback: (blob: Blob) => void): void {
     const arr = dataUrl.split(',');
-    const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/png';
-    const bstr = atob(arr[1]);
+    const firstPart = arr[0];
+    const secondPart = arr[1];
+    if (!firstPart || !secondPart) {
+      callback(new Blob());
+      return;
+    }
+    const mimeMatch = firstPart.match(/:(.*?);/);
+    const mime = mimeMatch?.[1] || 'image/png';
+    const bstr = atob(secondPart);
     let n = bstr.length;
     const u8arr = new Uint8Array(n);
     while (n--) {
@@ -498,6 +505,9 @@ export class ExportService {
 
         const card = cards[i];
         const element = elements[i];
+        if (!element || !card) {
+          continue;
+        }
 
         // Add card title
         pdf.setFontSize(18);

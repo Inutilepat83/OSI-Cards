@@ -6,17 +6,20 @@
 
 /* Force border to be visible on card surface - override any resets */
 :host ::ng-deep .ai-card-surface {
-  border: 0.5px solid color-mix(in srgb, var(--color-brand) 49%, transparent) !important;
-  border-width: 0.5px !important;
-  border-style: solid !important;
-  border-color: color-mix(in srgb, var(--color-brand) 49%, transparent) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(20, 20, 20, 0.6) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  /* Transform is handled by parent .tilt-container - don't override */
 }
 
 :host ::ng-deep .ai-card-surface:hover {
-  border: 0.5px solid var(--color-brand) !important;
-  border-width: 0.5px !important;
-  border-style: solid !important;
-  border-color: var(--color-brand) !important;
+  border-color: rgba(255, 121, 0, 0.5) !important;
+  background: rgba(30, 30, 30, 0.8) !important;
+  /* Transform is handled by parent .tilt-container - don't override */
+  box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 121, 0, 0.2) !important;
 }
 
 /* Use Tailwind classes for styling - minimal custom CSS */

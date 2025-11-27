@@ -7,7 +7,8 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow: hidden;
+  /* Changed from hidden to visible to prevent shadow clipping */
+  overflow: visible;
   /* Card has its own background distinct from sections */
   @include surface-ai-card-base;
   /* Force border to be visible - override any resets */
@@ -16,13 +17,20 @@
   border-style: solid !important;
   border-color: color-mix(in srgb, var(--color-brand) 49%, transparent) !important;
   padding: var(--card-main-padding, 16px) !important;
+  /* Ensure bottom padding is adequate */
+  padding-bottom: var(--card-main-padding, 16px) !important;
   
   /* Gap between header and body - defined at card level */
   gap: var(--section-card-gap) !important;
   
-  /* Smooth transitions for content updates */
+  /* Smooth transitions for content updates - removed transform to prevent lift */
   transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+              border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              background 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Transform is handled by parent .tilt-container - don't override */
+  /* transform: none !important; - Removed to allow tilt transforms */
   
   /* Enhanced text sharpness */
   -webkit-font-smoothing: antialiased;
@@ -36,9 +44,9 @@
     text-rendering: optimizeLegibility;
   }
   
-  /* Smooth transitions for card title and subtitle updates */
+  /* Smooth transitions for card title and subtitle updates - removed transform to prevent lift */
   h1, .ai-card-subtitle {
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: opacity 0.2s ease;
   }
 }
 
@@ -49,7 +57,8 @@
   border-width: 0.5px !important;
   border-style: solid !important;
   border-color: var(--color-brand) !important;
-  transform: none !important;
+  /* Transform is handled by parent .tilt-container - don't override */
+  /* transform: none !important; - Removed to allow tilt transforms */
 }
 
 .ai-card-surface--fullscreen {
@@ -453,10 +462,13 @@
   padding-inline-start: 0 !important;
   padding-inline-end: 0 !important;
   margin: 0 !important;
+  margin-bottom: 0 !important;
   display: flex;
   flex-direction: column;
   gap: 12px; /* Constant gap between sections */
   min-height: 0;
+  /* Allow content to flow properly - no overflow clipping */
+  overflow: visible;
   /* NO BORDER - completely invisible */
   border: none !important;
   border-top: none !important;
@@ -660,8 +672,11 @@
 
 .ai-card-footnote {
   margin-top: auto;
+  /* Add bottom margin for proper spacing */
+  margin-bottom: 0 !important;
   /* NO PADDING - compact design */
   padding: 0 !important;
+  padding-bottom: 0 !important;
   /* NO BORDER - removed border */
   border: none !important;
   border-top: none !important;
@@ -695,16 +710,19 @@
 /* Light theme overrides */
 :root[data-theme='day'] {
   .ai-card-surface {
-    background: rgba(255, 255, 255, 0.9);
-    border: 0.5px solid rgba(255, 121, 0, 0.25); /* Brand border in light mode too */
-    box-shadow: 0 0 18px rgba(255, 121, 0, 0.3); /* Orange glow only, intensified by 50% */
+    /* White background in light theme */
+    background: #ffffff !important;
+    border: 0.5px solid rgba(255, 121, 0, 0.25) !important; /* Brand border in light mode too */
+    /* Orange glow only - no dark shadows */
+    box-shadow: 0 0 18px rgba(255, 121, 0, 0.3) !important;
   }
   
   .ai-card-surface:hover {
-    background: rgba(255, 255, 255, 1);
-    border-color: rgba(255, 121, 0, 0.4);
-    /* Orange glow only - no dark shadows, intensified by 50% */
-    box-shadow: 0 0 24px rgba(255, 121, 0, 0.45);
+    /* Pure white background on hover */
+    background: #ffffff !important;
+    border-color: rgba(255, 121, 0, 0.4) !important;
+    /* Orange glow only - no dark shadows */
+    box-shadow: 0 0 24px rgba(255, 121, 0, 0.45) !important;
   }
   
   .ai-card-surface--fullscreen {

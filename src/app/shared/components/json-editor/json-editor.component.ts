@@ -16,17 +16,6 @@ import { AppConfigService } from '../../../core/services/app-config.service';
     <div class="json-editor-container">
       <div class="json-editor-header">
         <label for="json-textarea" class="json-editor-label">JSON Editor</label>
-        <div class="json-editor-actions">
-          <button
-            type="button"
-            class="format-button"
-            (click)="formatJson()"
-            [disabled]="!jsonInput"
-            title="Format JSON (Ctrl/Cmd + Enter)"
-          >
-            Format
-          </button>
-        </div>
       </div>
       <textarea
         #jsonTextareaRef
@@ -35,7 +24,6 @@ import { AppConfigService } from '../../../core/services/app-config.service';
         [class.error]="!isJsonValid"
         [(ngModel)]="jsonInput"
         (ngModelChange)="onJsonInputChange($event)"
-        (keydown)="onKeydown($event)"
         placeholder="Enter JSON card configuration..."
         rows="20"
         spellcheck="false"
@@ -72,34 +60,9 @@ import { AppConfigService } from '../../../core/services/app-config.service';
       color: var(--card-text-primary, #FFFFFF);
     }
 
-    .json-editor-actions {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .format-button {
-      padding: 0.375rem 0.75rem;
-      background: var(--color-brand, #FF7900);
-      color: white;
-      border: none;
-      border-radius: 0.375rem;
-      font-size: 0.875rem;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-
-    .format-button:hover:not(:disabled) {
-      opacity: 0.9;
-    }
-
-    .format-button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
     .json-textarea {
       width: 100%;
-      flex: 1;
+      height: 750px;
       padding: 0.75rem;
       background: var(--card-background);
       border: 2px solid color-mix(in srgb, var(--border) 60%, transparent);
@@ -109,7 +72,6 @@ import { AppConfigService } from '../../../core/services/app-config.service';
       font-size: 0.875rem;
       line-height: 1.5;
       resize: vertical;
-      min-height: 200px;
       box-shadow: 0 2px 4px color-mix(in srgb, var(--foreground) 5%, transparent);
     }
 
@@ -202,25 +164,6 @@ export class JsonEditorComponent {
     });
   }
 
-  formatJson(): void {
-    try {
-      const formatted = this.jsonProcessingService.formatJson(this.jsonInput);
-      this.jsonInput = formatted;
-      this.onJsonInputChange(formatted);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown formatting issue.';
-      this.jsonErrorText = `Unable to format JSON: ${message}`;
-      this.isJsonValid = false;
-      this.jsonErrorChange.emit(this.jsonErrorText);
-    }
-  }
-
-  onKeydown(event: KeyboardEvent): void {
-    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
-      event.preventDefault();
-      this.formatJson();
-    }
-  }
 
   get jsonError(): string {
     return this.jsonErrorText;

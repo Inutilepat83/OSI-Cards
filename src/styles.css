@@ -263,28 +263,9 @@
 }
 
 /* OSI Cards specific styles */
-.tilt-container {
-  transform: perspective(1000px)
-             rotateX(var(--tilt-x, 0deg))
-             rotateY(var(--tilt-y, 0deg));
-  transition: transform 0.15s ease-out;
-  transform-style: preserve-3d;
-  position: relative;
-  border-radius: 12px; /* This creates the rounded shape for the drop-shadow */
-  /* Removed overflow: hidden - it was clipping the shadow */
-  background: transparent;
-  /* Add padding to allow shadow to show */
-  padding: 0;
-}
-
-.tilt-container:hover {
-  /* Removed will-change to prevent blinking/flickering */
-}
-
-.glow-container {
-  /* Container for tilt - no shadow here */
-  position: relative;
-}
+/* Note: .tilt-container and .glow-container styles are defined in src/styles/layout/_tilt.scss */
+/* Removed conflicting CSS rules here to prevent transform transition conflicts */
+/* Transform transitions are handled via JavaScript for precise control */
 
 
 /* Remove .card-reflection - it was causing the drop-shadow to follow a rectangular shape */

@@ -28,7 +28,7 @@
   align-items: flex-start;
 
   &:hover {
-    transform: translateY(-2px);
+    transform: none;
     border-color: var(--color-brand);
     box-shadow: 0 8px 16px color-mix(in srgb, var(--foreground) 12%, transparent),
                 0 0 0 1px color-mix(in srgb, var(--color-brand) 15%, transparent);
@@ -66,11 +66,11 @@
 
 .map-card__title {
   @include card-title-text;
-  font-size: calc(var(--card-title-font-size) * 1.15) !important;
+  font-size: var(--card-title-font-size) !important;
   font-weight: 700 !important;
   letter-spacing: var(--card-title-letter-spacing) !important;
   line-height: var(--card-title-line-height) !important;
-  color: var(--card-text-primary) !important;
+  color: color-mix(in srgb, var(--foreground) 88%, transparent) !important;
   margin: 0;
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -89,13 +89,13 @@
   align-items: center;
   padding: 0;
   border-radius: 0;
-  font-size: calc(var(--card-text-small-font-size) + 3px) !important; /* Bigger font */
-  font-weight: 600 !important; /* Bolder */
+  font-size: var(--card-label-font-size) !important;
+  font-weight: 600 !important;
   line-height: 1.2;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   white-space: nowrap;
-  color: var(--color-brand) !important;
+  color: color-mix(in srgb, var(--foreground) 50%, transparent) !important;
   background: transparent !important;
   border: none !important;
   opacity: 0.9;

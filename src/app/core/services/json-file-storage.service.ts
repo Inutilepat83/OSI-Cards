@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AICardConfig } from '../../models';
-import { validateCardJson, sanitizeCardConfig } from '../../shared/utils';
+import { sanitizeCardConfig } from '../../shared/utils';
+import { CardValidationService } from '../../shared/services/card-validation.service';
 import { LoggingService } from './logging.service';
 
 /**
@@ -13,6 +14,7 @@ import { LoggingService } from './logging.service';
 })
 export class JsonFileStorageService {
   private readonly logger = inject(LoggingService);
+  private readonly validationService = inject(CardValidationService);
   private readonly STORAGE_PREFIX = 'osi_card_';
   private readonly STORAGE_INDEX_KEY = 'osi_card_index';
   private readonly DB_NAME = 'OSICardsDB';
@@ -43,6 +45,11 @@ export class JsonFileStorageService {
   /**
    * Save a single card to localStorage
    * Falls back to IndexedDB for larger files
+   * 
+   * Security measures:
+   * - Validates and sanitizes card data before storage
+   * - Checks storage quota before attempting save
+   * - Handles storage errors gracefully
    */
   saveCard(card: AICardConfig): Observable<{ success: boolean; error?: string }> {
     return new Observable(observer => {
@@ -55,8 +62,25 @@ export class JsonFileStorageService {
         }
 
         const sanitized = sanitizeCardConfig(card as any) as AICardConfig;
+        
+        // Additional security: Validate card structure before storage
+        if (!this.validationService.validateCardStructure(sanitized)) {
+          observer.next({ success: false, error: 'Card validation failed - invalid structure' });
+          observer.complete();
+          return;
+        }
+        
         const cardString = JSON.stringify(sanitized);
         const cardId = sanitized.id || 'unknown';
+        
+        // Check estimated size before storage (prevent DoS)
+        const estimatedSize = new Blob([cardString]).size;
+        const MAX_CARD_SIZE = 5 * 1024 * 1024; // 5MB per card
+        if (estimatedSize > MAX_CARD_SIZE) {
+          observer.next({ success: false, error: 'Card size exceeds maximum allowed (5MB)' });
+          observer.complete();
+          return;
+        }
 
         // Try localStorage first (up to 5MB limit)
         try {
@@ -112,7 +136,7 @@ export class JsonFileStorageService {
         const cardString = localStorage.getItem(key);
 
         if (cardString) {
-          const card = validateCardJson(cardString);
+          const card = this.validationService.validateCardJson(cardString);
           if (card) {
             const cached = this.storedCards$.value;
             cached.set(cardId, card as AICardConfig);
@@ -158,7 +182,7 @@ export class JsonFileStorageService {
           const cardString = localStorage.getItem(key);
           
           if (cardString) {
-            const card = validateCardJson(cardString);
+            const card = this.validationService.validateCardJson(cardString);
             if (card) {
               cards.push(card as AICardConfig);
             }

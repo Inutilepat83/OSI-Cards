@@ -1,26 +1,14 @@
-import { Directive, Input, ElementRef, OnInit, Renderer2, inject } from '@angular/core';
+import { Directive, ElementRef, HostListener, inject, OnInit, Renderer2 } from '@angular/core';
 
 /**
  * Skip Link Directive
  * 
- * Creates accessible skip navigation links that allow keyboard users to bypass
- * repetitive navigation and jump directly to main content. Essential for WCAG
- * 2.1 AA compliance and improved keyboard navigation.
- * 
- * Features:
- * - Automatically positioned off-screen until focused
- * - Smooth focus/blur transitions
- * - Customizable target and text
- * - High z-index to appear above all content
+ * Provides skip navigation links for keyboard users to jump to main content areas.
+ * Improves accessibility by allowing users to bypass repetitive navigation.
  * 
  * @example
  * ```html
- * <div appSkipLink="main-content" skipLinkText="Skip to main content">
- *   <!-- Navigation content -->
- * </div>
- * <main id="main-content">
- *   <!-- Main content -->
- * </main>
+ * <a appSkipLink="#main-content">Skip to main content</a>
  * ```
  */
 @Directive({
@@ -28,46 +16,66 @@ import { Directive, Input, ElementRef, OnInit, Renderer2, inject } from '@angula
   standalone: true
 })
 export class SkipLinkDirective implements OnInit {
-  @Input() appSkipLink?: string;
-  @Input() skipLinkText: string = 'Skip to main content';
+  @HostListener('click', ['$event'])
+  onClick(event: Event): void {
+    event.preventDefault();
+    const targetId = this.getTargetId();
+    if (targetId) {
+      this.navigateToTarget(targetId);
+    }
+  }
 
-  private readonly elementRef = inject(ElementRef);
+  @HostListener('keydown', ['$event'])
+  onKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      const targetId = this.getTargetId();
+      if (targetId) {
+        this.navigateToTarget(targetId);
+      }
+    }
+  }
+
+  private readonly el = inject(ElementRef<HTMLElement>);
   private readonly renderer = inject(Renderer2);
 
   ngOnInit(): void {
-    const element = this.elementRef.nativeElement as HTMLElement;
-    const targetId = this.appSkipLink || 'main-content';
+    // Ensure skip link is accessible
+    const element = this.el.nativeElement;
+    if (element.tagName.toLowerCase() !== 'a') {
+      this.renderer.setAttribute(element, 'role', 'link');
+      this.renderer.setAttribute(element, 'tabindex', '0');
+    }
+    
+    // Add skip link styling
+    this.renderer.addClass(element, 'skip-link');
+  }
 
-    // Create skip link
-    const skipLink = this.renderer.createElement('a');
-    this.renderer.setAttribute(skipLink, 'href', `#${targetId}`);
-    this.renderer.setAttribute(skipLink, 'class', 'skip-link');
-    this.renderer.setAttribute(skipLink, 'aria-label', this.skipLinkText);
-    this.renderer.setProperty(skipLink, 'textContent', this.skipLinkText);
+  private getTargetId(): string | null {
+    const element = this.el.nativeElement;
+    const href = element.getAttribute('href') || element.getAttribute('appSkipLink');
+    
+    if (href) {
+      // Remove # if present
+      return href.startsWith('#') ? href.substring(1) : href;
+    }
+    
+    return null;
+  }
 
-    // Add styles
-    this.renderer.setStyle(skipLink, 'position', 'absolute');
-    this.renderer.setStyle(skipLink, 'top', '-40px');
-    this.renderer.setStyle(skipLink, 'left', '0');
-    this.renderer.setStyle(skipLink, 'background', 'var(--color-brand, #FF7900)');
-    this.renderer.setStyle(skipLink, 'color', 'white');
-    this.renderer.setStyle(skipLink, 'padding', '0.5rem 1rem');
-    this.renderer.setStyle(skipLink, 'text-decoration', 'none');
-    this.renderer.setStyle(skipLink, 'z-index', '1000');
-    this.renderer.setStyle(skipLink, 'border-radius', '0 0 0.25rem 0');
-
-    skipLink.addEventListener('focus', () => {
-      this.renderer.setStyle(skipLink, 'top', '0');
-    });
-
-    skipLink.addEventListener('blur', () => {
-      this.renderer.setStyle(skipLink, 'top', '-40px');
-    });
-
-    // Insert skip link
-    const parent = this.renderer.parentNode(element);
-    this.renderer.insertBefore(parent, skipLink, element);
+  private navigateToTarget(targetId: string): void {
+    const target = document.getElementById(targetId);
+    
+    if (target) {
+      // Focus the target element
+      target.focus();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      
+      // Add temporary focus indicator
+      target.classList.add('skip-link-target');
+      setTimeout(() => {
+        target.classList.remove('skip-link-target');
+      }, 2000);
+    }
   }
 }
-
-

@@ -1,0 +1,72 @@
+<div class="doc-viewer">
+  <!-- Minimal Header -->
+  <header class="doc-header">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a routerLink="/docs" class="breadcrumb-link">
+        <lucide-icon name="arrow-left" [size]="16"></lucide-icon>
+        <span>Docs</span>
+      </a>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-current">{{ docMetadata?.title || (docName | titlecase) }}</span>
+    </nav>
+    
+    <h1 class="doc-title">{{ docMetadata?.title || (docName | titlecase) }}</h1>
+    <p *ngIf="docMetadata?.description" class="doc-description">{{ docMetadata?.description }}</p>
+  </header>
+
+  <!-- Content Layout -->
+  <div class="doc-layout">
+    <!-- Main Content -->
+    <main class="doc-main">
+      <div *ngIf="isLoading" class="loading">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+      </div>
+
+      <div *ngIf="error" class="error">
+        <lucide-icon name="alert-circle" [size]="24"></lucide-icon>
+        <p>{{ error }}</p>
+      </div>
+
+      <article
+        *ngIf="!isLoading && !error"
+        #docContent
+        class="doc-content markdown-body"
+        [innerHTML]="sanitizedContent">
+      </article>
+
+      <!-- Navigation -->
+      <nav *ngIf="!isLoading && !error && (previousDoc || nextDoc)" class="doc-nav">
+        <a *ngIf="previousDoc" [routerLink]="['/docs', previousDoc.id]" class="nav-link nav-prev">
+          <lucide-icon name="chevron-left" [size]="18"></lucide-icon>
+          <div class="nav-content">
+            <span class="nav-label">Previous</span>
+            <span class="nav-title">{{ previousDoc.title }}</span>
+          </div>
+        </a>
+        <a *ngIf="nextDoc" [routerLink]="['/docs', nextDoc.id]" class="nav-link nav-next">
+          <div class="nav-content">
+            <span class="nav-label">Next</span>
+            <span class="nav-title">{{ nextDoc.title }}</span>
+          </div>
+          <lucide-icon name="chevron-right" [size]="18"></lucide-icon>
+        </a>
+      </nav>
+    </main>
+
+    <!-- Minimal TOC Sidebar -->
+    <aside *ngIf="tableOfContents.length > 0" class="doc-toc">
+      <h3 class="toc-title">On this page</h3>
+      <nav class="toc-nav">
+        <a
+          *ngFor="let item of tableOfContents; trackBy: trackByTocItem"
+          [href]="'#' + item.id"
+          [class.active]="isActiveHeading(item.id)"
+          [class]="'toc-link toc-level-' + item.level"
+          (click)="scrollToHeading(item.id); $event.preventDefault()">
+          {{ item.text }}
+        </a>
+      </nav>
+    </aside>
+  </div>
+</div>

@@ -176,7 +176,8 @@ export class IconService {
       }
     }
     
-    return this.iconMap['default'];
+    const defaultIcon = this.iconMap['default'];
+    return defaultIcon !== undefined ? defaultIcon : 'help-circle';
   }
 
   /**
@@ -209,6 +210,7 @@ export class IconService {
       }
     }
     
-    return this.classMap['default'];
+    const defaultClass = this.classMap['default'];
+    return defaultClass !== undefined ? defaultClass : '';
   }
 }

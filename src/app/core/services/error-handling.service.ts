@@ -1,35 +1,12 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError, timer, from } from 'rxjs';
-import { retry, retryWhen, delayWhen, take, catchError, mergeMap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, throwError, timer } from 'rxjs';
+import { retryWhen, catchError, mergeMap } from 'rxjs/operators';
 import { LoggingService } from './logging.service';
 import { 
   ApplicationError, 
   ErrorFactory, 
-  ErrorCategory, 
-  RecoveryStrategy 
+  ErrorCategory
 } from '../models/error.model';
-
-// Legacy types for backward compatibility
-export enum ErrorType {
-  NETWORK = 'NETWORK',
-  VALIDATION = 'VALIDATION',
-  BUSINESS_LOGIC = 'BUSINESS_LOGIC',
-  UNKNOWN = 'UNKNOWN'
-}
-
-/**
- * @deprecated Use ApplicationError from error.model.ts instead
- */
-export interface AppError {
-  type: ErrorType;
-  message: string;
-  code?: string;
-  details?: unknown;
-  retryable?: boolean;
-  timestamp: number;
-  retryCount?: number;
-  maxRetries?: number;
-}
 
 export interface RetryOptions {
   maxRetries?: number;
@@ -81,11 +58,9 @@ export interface FallbackStrategy<T = unknown> {
 })
 export class ErrorHandlingService {
   private readonly logger = inject(LoggingService);
-  private errorSubject = new BehaviorSubject<AppError | null>(null);
   private applicationErrorSubject = new BehaviorSubject<ApplicationError | null>(null);
   private fallbackStrategies: FallbackStrategy[] = [];
-  error$: Observable<AppError | null> = this.errorSubject.asObservable();
-  applicationError$: Observable<ApplicationError | null> = this.applicationErrorSubject.asObservable();
+  error$: Observable<ApplicationError | null> = this.applicationErrorSubject.asObservable();
 
   constructor() {
     // Setup default fallbacks in constructor to ensure they're available immediately
@@ -97,28 +72,9 @@ export class ErrorHandlingService {
    * 
    * @param error - Error to handle
    * @param context - Context where error occurred
-   * @returns Legacy AppError for backward compatibility
-   */
-  handleError(error: unknown, context?: string): AppError {
-    const appError = this.createAppError(error, context);
-    this.logger.error(`Error in ${context || 'ErrorHandlingService'}`, context || 'ErrorHandlingService', appError);
-    this.errorSubject.next(appError);
-    
-    // Also emit as ApplicationError for new code
-    const applicationError = this.createApplicationError(error, context);
-    this.applicationErrorSubject.next(applicationError);
-    
-    return appError;
-  }
-
-  /**
-   * Handle error using new ApplicationError type
-   * 
-   * @param error - Error to handle
-   * @param context - Context where error occurred
    * @returns ApplicationError with enhanced information
    */
-  handleApplicationError(error: unknown, context?: string): ApplicationError {
+  handleError(error: unknown, context?: string): ApplicationError {
     const applicationError = this.createApplicationError(error, context);
     this.logger.error(
       `Error in ${context || 'ErrorHandlingService'}: ${applicationError.message}`,
@@ -134,6 +90,17 @@ export class ErrorHandlingService {
     );
     this.applicationErrorSubject.next(applicationError);
     return applicationError;
+  }
+
+  /**
+   * Handle error using ApplicationError type (alias for handleError for consistency)
+   * 
+   * @param error - Error to handle
+   * @param context - Context where error occurred
+   * @returns ApplicationError with enhanced information
+   */
+  handleApplicationError(error: unknown, context?: string): ApplicationError {
+    return this.handleError(error, context);
   }
 
   /**
@@ -226,94 +193,6 @@ export class ErrorHandlingService {
   }
 
   /**
-   * Create an AppError from various error types
-   */
-  private createAppError(error: unknown, context?: string): AppError {
-    if (error instanceof Error) {
-      return {
-        type: this.categorizeError(error),
-        message: error.message,
-        code: this.extractErrorCode(error),
-        details: { stack: error.stack, context },
-        retryable: this.isRetryable(error),
-        timestamp: Date.now()
-      };
-    }
-
-    if (typeof error === 'string') {
-      return {
-        type: ErrorType.UNKNOWN,
-        message: error,
-        details: { context },
-        retryable: false,
-        timestamp: Date.now()
-      };
-    }
-
-    if (this.isErrorWithMessage(error)) {
-      return {
-        type: ErrorType.UNKNOWN,
-        message: this.normalizeMessage(error.message),
-        code: this.normalizeCode(error.code),
-        details: { original: error, context },
-        retryable: false,
-        timestamp: Date.now()
-      };
-    }
-
-    return {
-      type: ErrorType.UNKNOWN,
-      message: 'An unknown error occurred',
-      details: { original: error, context },
-      retryable: false,
-      timestamp: Date.now()
-    };
-  }
-
-  /**
-   * Categorize error type based on error properties
-   */
-  private categorizeError(error: Error): ErrorType {
-    const message = error.message.toLowerCase();
-    const name = error.name.toLowerCase();
-
-    if (name.includes('network') || name.includes('http') || message.includes('network') || message.includes('fetch')) {
-      return ErrorType.NETWORK;
-    }
-
-    if (name.includes('validation') || name.includes('invalid') || message.includes('validation') || message.includes('invalid')) {
-      return ErrorType.VALIDATION;
-    }
-
-    if (message.includes('business') || message.includes('logic')) {
-      return ErrorType.BUSINESS_LOGIC;
-    }
-
-    return ErrorType.UNKNOWN;
-  }
-
-  /**
-   * Determine if error is retryable
-   */
-  private isRetryable(error: Error): boolean {
-    const message = error.message.toLowerCase();
-    const name = error.name.toLowerCase();
-
-    // Network errors are usually retryable
-    if (name.includes('network') || name.includes('timeout') || message.includes('network') || message.includes('timeout')) {
-      return true;
-    }
-
-    // Validation errors are not retryable
-    if (name.includes('validation') || message.includes('validation')) {
-      return false;
-    }
-
-    // Default: unknown errors are not retryable
-    return false;
-  }
-
-  /**
    * Extract user-friendly error message
    */
   extractErrorMessage(error: unknown): string {
@@ -333,14 +212,14 @@ export class ErrorHandlingService {
    * Clear current error
    */
   clearError(): void {
-    this.errorSubject.next(null);
+    this.applicationErrorSubject.next(null);
   }
 
   /**
    * Get current error
    */
-  getCurrentError(): AppError | null {
-    return this.errorSubject.value;
+  getCurrentError(): ApplicationError | null {
+    return this.applicationErrorSubject.value;
   }
 
   private isErrorWithMessage(value: unknown): value is { message?: unknown; code?: unknown } {
@@ -383,8 +262,8 @@ export class ErrorHandlingService {
     // Network error fallback - return empty data
     this.addFallbackStrategy({
       condition: (error) => {
-        const appError = this.createAppError(error);
-        return appError.type === ErrorType.NETWORK;
+        const appError = this.createApplicationError(error);
+        return appError.category === ErrorCategory.NETWORK;
       },
       fallback: () => {
         this.logger.warn('Network error - using fallback: empty data', 'ErrorHandlingService');
@@ -433,8 +312,8 @@ export class ErrorHandlingService {
       delay = 1000,
       backoff = 'exponential',
       retryable = (error) => {
-        const appError = this.createAppError(error);
-        return appError.retryable ?? false;
+        const appError = this.createApplicationError(error);
+        return appError.retryable;
       }
     } = options;
 
@@ -461,10 +340,8 @@ export class ErrorHandlingService {
               return throwError(() => error);
             }
 
-            const appError = this.createAppError(error);
-            appError.retryCount = retryCount;
-            appError.maxRetries = maxRetries;
-            this.errorSubject.next(appError);
+            const appError = this.createApplicationError(error);
+            this.applicationErrorSubject.next(appError);
 
             const delayTime = backoff === 'exponential'
               ? delay * Math.pow(2, index)
@@ -506,8 +383,8 @@ export class ErrorHandlingService {
         }
 
         // No fallback found, throw original error
-        const appError = this.createAppError(error);
-        this.errorSubject.next(appError);
+        const appError = this.createApplicationError(error);
+        this.applicationErrorSubject.next(appError);
         return throwError(() => error);
       })
     );
@@ -527,7 +404,7 @@ export class ErrorHandlingService {
     error: unknown,
     context?: string,
     recoveryFn?: () => T | Promise<T>
-  ): AppError {
+  ): ApplicationError {
     const appError = this.handleError(error, context);
 
     if (recoveryFn && appError.retryable) {

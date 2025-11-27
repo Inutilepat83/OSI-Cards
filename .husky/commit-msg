@@ -1,0 +1,42 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Commit message validation
+# Enforces conventional commit format: type(scope): subject
+# Types: feat, fix, docs, style, refactor, test, chore, perf, ci, build
+
+commit_msg=$(cat "$1")
+
+# Check if commit message matches conventional commit format
+if ! echo "$commit_msg" | grep -qE "^(feat|fix|docs|style|refactor|test|chore|perf|ci|build)(\(.+\))?: .+"; then
+  echo "❌ Invalid commit message format!"
+  echo ""
+  echo "Commit message must follow conventional commit format:"
+  echo "  type(scope): subject"
+  echo ""
+  echo "Types: feat, fix, docs, style, refactor, test, chore, perf, ci, build"
+  echo ""
+  echo "Examples:"
+  echo "  feat(cards): add new card type"
+  echo "  fix(validation): resolve JSON parsing error"
+  echo "  docs(readme): update installation instructions"
+  echo ""
+  echo "Your message:"
+  echo "  $commit_msg"
+  exit 1
+fi
+
+# Check minimum message length (excluding type/scope)
+subject=$(echo "$commit_msg" | sed -E 's/^[^:]+: //' | head -n1)
+if [ ${#subject} -lt 10 ]; then
+  echo "❌ Commit message subject is too short (minimum 10 characters)"
+  echo "Your subject: $subject"
+  exit 1
+fi
+
+# Check maximum message length
+if [ ${#commit_msg} -gt 100 ]; then
+  echo "⚠️  Warning: Commit message is longer than 100 characters"
+  echo "Consider using the body for longer descriptions"
+fi
+

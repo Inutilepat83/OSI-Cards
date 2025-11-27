@@ -3,19 +3,18 @@
    Performance-optimized 3D tilt effects with dynamic lighting
    =================================================================== */
 
-/* Base tilt container with 3D perspective - Optimized for performance */
+/* Base tilt container with 3D perspective - Optimized for smooth mouse following */
 .tilt-container {
-  /* 3D transform with hardware acceleration */
+  /* 3D transform with hardware acceleration - using CSS variables for smooth updates */
   transform: perspective(1000px)
              rotateX(var(--tilt-x, 0deg))
              rotateY(var(--tilt-y, 0deg))
              scale(var(--tilt-scale, 1))
-             translateZ(0); /* Force GPU acceleration */
+             translateZ(0) !important; /* Force GPU acceleration */
   
-  /* Smooth transitions for natural feel - longer duration for smooth exit */
-  /* Enter: faster (200ms), Exit: slower (500ms) for smooth completion */
-  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1), 
-              box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* No CSS transitions on transform - JavaScript handles smooth updates */
+  /* Only transition box-shadow for glow effect */
+  transition: box-shadow 200ms cubic-bezier(0.2, 0, 0.2, 1);
   
   /* Enable 3D rendering */
   transform-style: preserve-3d;
@@ -24,8 +23,8 @@
   position: relative;
   border-radius: var(--card-border-radius);
   
-  /* Performance optimizations */
-  contain: layout style paint; /* Strong containment for better performance */
+  /* Performance optimizations - no paint to prevent glow clipping */
+  contain: layout style; /* Don't use paint - it clips shadows/glow */
   isolation: isolate; /* Create new stacking context */
   will-change: transform; /* Hint browser about upcoming transforms */
   
@@ -35,8 +34,8 @@
 
 /* Smooth exit transition - longer duration when mouse leaves */
 .tilt-container:not(:hover) {
-  transition: transform 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-              box-shadow 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Smooth exit for glow only - transform handled by JavaScript */
+  transition: box-shadow 800ms cubic-bezier(0.22, 0.61, 0.36, 1);
   will-change: auto;
 }
 
@@ -46,9 +45,8 @@
   /* Orange glow only - no dark shadows, intensified by 50% */
   box-shadow: 
     0 0 var(--glow-blur, 18px) var(--glow-color, rgba(255, 121, 0, 0.375));
-  /* Faster enter transition for responsive feel */
-  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1), 
-              box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* Smooth transition for glow only - transform handled by JavaScript */
+  transition: box-shadow 200ms cubic-bezier(0.2, 0, 0.2, 1);
 }
 
 /* Glow container for filter-based effects */

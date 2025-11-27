@@ -25,6 +25,8 @@ export class LazyImageDirective implements OnInit, OnDestroy {
   @Input() threshold = 0.1;
   @Input() retryAttempts = 2;
   @Input() retryDelay = 1000;
+  @Input() enableWebP = true;
+  @Input() enableProgressive = true;
 
   private readonly el = inject(ElementRef<HTMLImageElement>);
   private readonly renderer = inject(Renderer2);
@@ -86,11 +88,19 @@ export class LazyImageDirective implements OnInit, OnDestroy {
     }
 
     const img = this.el.nativeElement;
-    const src = this.appLazyImage || img.src;
+    let src = this.appLazyImage || img.src;
 
     if (!src) {
       this.logger.warn('LazyImageDirective: No image source provided', 'LazyImageDirective');
       return;
+    }
+
+    // Try WebP format if supported and enabled
+    if (this.enableWebP && this.supportsWebP()) {
+      const webpSrc = this.getWebPSource(src);
+      if (webpSrc) {
+        src = webpSrc;
+      }
     }
 
     this.loading = true;
@@ -98,6 +108,14 @@ export class LazyImageDirective implements OnInit, OnDestroy {
     // Set loading state
     this.renderer.addClass(img, 'lazy-loading');
     this.renderer.setAttribute(img, 'loading', 'lazy');
+
+    // Progressive loading: load low-quality placeholder first if enabled
+    if (this.enableProgressive) {
+      const placeholderSrc = this.getPlaceholderSource(src);
+      if (placeholderSrc) {
+        this.renderer.setAttribute(img, 'src', placeholderSrc);
+      }
+    }
 
     // Create new image to preload
     const imageLoader = new Image();
@@ -142,6 +160,50 @@ export class LazyImageDirective implements OnInit, OnDestroy {
 
     // Set src to start loading
     imageLoader.src = src;
+  }
+
+  /**
+   * Check if browser supports WebP format
+   */
+  private supportsWebP(): boolean {
+    const canvas = document.createElement('canvas');
+    return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+  }
+
+  /**
+   * Get WebP version of image source if available
+   */
+  private getWebPSource(src: string): string | null {
+    // Check if source already has an extension
+    const lastDot = src.lastIndexOf('.');
+    if (lastDot === -1) {
+      return null;
+    }
+
+    const extension = src.substring(lastDot + 1).toLowerCase();
+    if (extension === 'webp') {
+      return null; // Already WebP
+    }
+
+    // Try to find WebP version
+    const basePath = src.substring(0, lastDot);
+    return `${basePath}.webp`;
+  }
+
+  /**
+   * Get placeholder source for progressive loading
+   * Returns a low-quality version if available (e.g., image.jpg?w=20)
+   */
+  private getPlaceholderSource(src: string): string | null {
+    // For progressive loading, we can use a query parameter approach
+    // or a separate low-quality image
+    // This is a simple implementation - can be enhanced with actual image processing
+    if (src.includes('?')) {
+      return null; // Already has query params
+    }
+    // Return null to skip placeholder for now
+    // Can be enhanced to use actual low-quality images
+    return null;
   }
 }
 

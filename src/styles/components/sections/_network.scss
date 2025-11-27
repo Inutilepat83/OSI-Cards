@@ -42,7 +42,7 @@
   }
 
   &:hover {
-    transform: translateY(-2px);
+    transform: none;
     border-color: var(--color-brand);
     background: color-mix(in srgb, var(--card-background) 95%, var(--color-brand) 2%);
     box-shadow: 0 8px 16px color-mix(in srgb, var(--foreground) 12%, transparent),
@@ -83,7 +83,7 @@
 
 .network-card__value {
   @include value-text;
-  font-size: calc(var(--card-value-font-size) * 1.2) !important;
+  font-size: var(--card-value-font-size) !important;
   font-weight: 700 !important;
   letter-spacing: var(--card-value-letter-spacing) !important;
   line-height: var(--card-value-line-height) !important;

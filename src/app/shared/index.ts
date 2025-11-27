@@ -7,6 +7,7 @@ export * from './components/llm-simulation-controls/llm-simulation-controls.comp
 export * from './components/preview-controls/preview-controls.component';
 export * from './components/system-stats/system-stats.component';
 export * from './components/card-templates-gallery/card-templates-gallery.component';
+export * from './components/performance-dashboard/performance-dashboard.component';
 export * from './services/section-normalization.service';
 export * from './services/section-completion.service';
 export * from './services/card-diff.service';

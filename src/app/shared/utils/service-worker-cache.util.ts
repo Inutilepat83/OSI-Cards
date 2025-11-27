@@ -38,16 +38,26 @@ export const CACHE_STRATEGIES: Record<string, CacheStrategy> = {
  * Get cache strategy for a URL
  */
 export function getCacheStrategy(url: string): CacheStrategy {
+  const defaultStrategy: CacheStrategy = { strategy: 'network-first', maxAge: 3600000, name: 'default' };
+  
   if (url.includes('/assets/configs/')) {
-    return CACHE_STRATEGIES['card-configs'];
+    const cardConfigs = CACHE_STRATEGIES['card-configs'];
+    if (cardConfigs) return cardConfigs;
+    const api = CACHE_STRATEGIES['api'];
+    return api ?? defaultStrategy;
   }
   if (url.includes('/assets/')) {
-    return CACHE_STRATEGIES['assets'];
+    const assets = CACHE_STRATEGIES['assets'];
+    if (assets) return assets;
+    const api = CACHE_STRATEGIES['api'];
+    return api ?? { strategy: 'cache-first', maxAge: 86400000, name: 'assets-fallback' };
   }
   if (url.includes('/api/')) {
-    return CACHE_STRATEGIES['api'];
+    const api = CACHE_STRATEGIES['api'];
+    return api ?? defaultStrategy;
   }
-  return CACHE_STRATEGIES['api']; // Default
+  const api = CACHE_STRATEGIES['api'];
+  return api ?? defaultStrategy; // Default
 }
 
 /**

@@ -1,18 +1,29 @@
 <div
   *ngIf="cardConfig"
   #cardContainer
-  class="w-full"
+  class="w-full h-full card-container-wrapper"
   [class.max-w-none]="isFullscreen"
+  [style.display]="'flex'"
+  [style.flex-direction]="'column'"
+  [style.min-height]="'0'"
   (mouseenter)="onMouseEnter($event)"
   (mouseleave)="onMouseLeave()"
   (mousemove)="onMouseMove($event)"
 >
-  <div class="tilt-container glow-container w-full" 
+  <div class="glow-container w-full flex-1 min-h-0" 
        [ngClass]="{ 'max-w-none': isFullscreen }"
-       #tiltContainer
-       [ngStyle]="tiltStyle">
+       [style.display]="'flex'"
+       [style.flex-direction]="'column'">
+    <div class="tilt-container w-full flex-1 min-h-0" 
+         [ngClass]="{ 'max-w-none': isFullscreen }"
+         [style.display]="'flex'"
+         [style.flex-direction]="'column'"
+         #tiltContainer
+         [ngStyle]="tiltStyle">
       <article
-        class="ai-card-surface"
+        class="ai-card-surface flex-1 min-h-0"
+        [style.display]="'flex'"
+        [style.flex-direction]="'column'"
         [ngClass]="{ 'ai-card-surface--fullscreen': isFullscreen, 'ai-card-surface--empty-state': !processedSections.length }"
         [attr.aria-label]="(cardConfig && cardConfig.cardTitle) || 'Card'"
         [attr.aria-describedby]="(cardConfig && cardConfig.cardSubtitle) ? 'card-subtitle' : null"
@@ -39,15 +50,17 @@
           </p>
 
           <ng-container *ngIf="processedSections.length; else emptyState">
-            <app-masonry-grid
-              [sections]="processedSections"
-              [gap]="12"
-              [minColumnWidth]="280"
-              class="w-full"
-              [attr.aria-label]="'Card sections: ' + processedSections.length + ' section' + (processedSections.length !== 1 ? 's' : '')"
-              (sectionEvent)="onSectionEvent($event)"
-              (layoutChange)="onLayoutChange($event)"
-            ></app-masonry-grid>
+            <app-error-boundary>
+              <app-masonry-grid
+                [sections]="processedSections"
+                [gap]="12"
+                [minColumnWidth]="280"
+                class="w-full"
+                [attr.aria-label]="'Card sections: ' + processedSections.length + ' section' + (processedSections.length !== 1 ? 's' : '')"
+                (sectionEvent)="onSectionEvent($event)"
+                (layoutChange)="onLayoutChange($event)"
+              ></app-masonry-grid>
+            </app-error-boundary>
           </ng-container>
 
           <ng-template #emptyState>
@@ -123,5 +136,6 @@
           Powered by Orange Sales Intelligence
         </div>
       </article>
+    </div>
   </div>
 </div>

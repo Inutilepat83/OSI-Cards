@@ -132,9 +132,10 @@ describe('AICardRendererComponent', () => {
     } as any;
 
     tiltService.calculateTilt.and.returnValue({
-      rotateX: 5,
       rotateY: 10,
-      scale: 1.02
+      glowBlur: 8,
+      glowOpacity: 0.225,
+      reflectionOpacity: 0
     });
 
     component.onMouseEnter(mockEvent);
@@ -156,9 +157,10 @@ describe('AICardRendererComponent', () => {
     } as any;
 
     tiltService.calculateTilt.and.returnValue({
-      rotateX: 3,
       rotateY: 7,
-      scale: 1.01
+      glowBlur: 8,
+      glowOpacity: 0.225,
+      reflectionOpacity: 0
     });
 
     component.onMouseMove(mockEvent);
@@ -247,4 +249,5 @@ describe('AICardRendererComponent', () => {
     expect(() => component.ngOnDestroy()).not.toThrow();
   });
 });
+
 

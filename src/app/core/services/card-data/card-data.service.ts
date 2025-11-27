@@ -130,7 +130,12 @@ export class CardDataService implements OnDestroy {
     }
     // Fallback to getAllCards if method not available
     return this.getAllCards().pipe(
-      map(cards => (cards && cards.length > 0) ? cards[0] : null)
+      map(cards => {
+        if (!cards || cards.length === 0) return null;
+        const firstCard = cards[0];
+        return firstCard ?? null;
+      }),
+      map(card => card ?? null) // Ensure we return null, not undefined
     );
   }
 

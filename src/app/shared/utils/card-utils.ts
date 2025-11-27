@@ -1,24 +1,48 @@
 import { AICardConfig, CardSection, CardField, CardItem, CardAction } from '../../models';
-import { SIZE_CONSTANTS, ID_CONSTANTS } from './constants';
+import { SIZE_CONSTANTS, ID_CONSTANTS, CARD_LIMITS } from './constants';
 import { SanitizationUtil } from './sanitization.util';
 import { ValidationUtil } from './validation.util';
+import { inject } from '@angular/core';
+import { CardValidationService } from '../services/card-validation.service';
 
 /**
  * Recursively remove `id` properties from complex card payloads while preserving shape.
  * 
  * Useful for cleaning card configurations before export or when IDs should not be
- * persisted. Preserves all other properties and structure.
+ * persisted. Preserves all other properties and structure. This function creates a
+ * deep copy of the input, so the original object is not modified.
  * 
  * @param value - The value to remove IDs from (can be card, section, field, item, or nested object)
- * @returns A new object with all `id` properties removed
+ * @returns A new object with all `id` properties removed recursively
  * 
  * @example
  * ```typescript
- * const cardWithoutIds = removeAllIds(myCard);
- * // All id properties removed recursively
+ * const card = {
+ *   id: 'card-1',
+ *   cardTitle: 'My Card',
+ *   sections: [{
+ *     id: 'section-1',
+ *     title: 'Section',
+ *     fields: [{ id: 'field-1', label: 'Field', value: 'Value' }]
+ *   }]
+ * };
+ * const cardWithoutIds = removeAllIds(card);
+ * // Result: { cardTitle: 'My Card', sections: [{ title: 'Section', fields: [{ label: 'Field', value: 'Value' }] }] }
+ * ```
+ * 
+ * @example
+ * ```typescript
+ * // Works with arrays
+ * const sections = [{ id: 's1', title: 'S1' }, { id: 's2', title: 'S2' }];
+ * const cleaned = removeAllIds(sections);
+ * // Result: [{ title: 'S1' }, { title: 'S2' }]
  * ```
  */
 export function removeAllIds<T>(value: T): T {
+  // Handle null or undefined
+  if (value === null || value === undefined) {
+    return value;
+  }
   if (Array.isArray(value)) {
     return value.map((item) => removeAllIds(item)) as unknown as T;
   }
@@ -43,10 +67,12 @@ export function removeAllIds<T>(value: T): T {
  * Automatically generate IDs for cards, sections, fields, items, and actions that don't have them.
  * 
  * This allows users to create cards without manually specifying IDs. IDs are generated
- * using a combination of prefix, timestamp, and random string for uniqueness.
+ * using a combination of prefix, timestamp, and random string for uniqueness. This function
+ * creates a new object and does not modify the original configuration.
  * 
- * @param config - The card configuration to ensure IDs for
+ * @param config - The card configuration to ensure IDs for (must be a valid AICardConfig)
  * @returns A new card configuration with all IDs generated
+ * @throws Will throw an error if config is null, undefined, or invalid
  * 
  * @example
  * ```typescript
@@ -55,10 +81,28 @@ export function removeAllIds<T>(value: T): T {
  *   sections: [{ title: 'Section 1', type: 'info' }]
  * };
  * const cardWithIds = ensureCardIds(cardWithoutIds);
- * // cardWithIds.id, cardWithIds.sections[0].id are now generated
+ * // cardWithIds.id is now generated (e.g., 'card_1234567890_abc1234')
+ * // cardWithIds.sections[0].id is now generated (e.g., 'section_0_1234567890_abc1234')
+ * ```
+ * 
+ * @example
+ * ```typescript
+ * // Preserves existing IDs
+ * const cardWithSomeIds = {
+ *   id: 'existing-card-id',
+ *   cardTitle: 'My Card',
+ *   sections: [{ id: 'existing-section', title: 'Section', type: 'info' }]
+ * };
+ * const result = ensureCardIds(cardWithSomeIds);
+ * // result.id === 'existing-card-id' (preserved)
+ * // result.sections[0].id === 'existing-section' (preserved)
  * ```
  */
 export function ensureCardIds(config: AICardConfig): AICardConfig {
+  if (!config || typeof config !== 'object') {
+    throw new Error('ensureCardIds: config must be a valid AICardConfig object');
+  }
+  
   const card = { ...config };
 
   // Auto-generate card ID if not provided
@@ -79,30 +123,27 @@ export function ensureCardIds(config: AICardConfig): AICardConfig {
  * Validate if an object has the required properties of an AICardConfig
  * 
  * @deprecated Use CardValidationService instead for better testability and maintainability.
- * These functions are kept for backward compatibility. For new code, inject CardValidationService directly.
+ * This function delegates to CardValidationService for backward compatibility.
  * 
  * @param obj - Object to validate
  * @returns true if object has required card properties
  */
 export function isValidCardConfig(obj: unknown): obj is Partial<AICardConfig> {
+  // Lazy inject to avoid circular dependencies
+  const validationService = inject(CardValidationService, { optional: true });
+  if (validationService) {
+    return validationService.isValidCardConfig(obj);
+  }
+  // Fallback implementation if service not available (should not happen in normal usage)
   if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
     return false;
   }
-
-  // Use proper interface instead of Record<string, unknown>
   const config = obj as Partial<AICardConfig> & { title?: string };
-
-  // Check required fields for a card
-  // Be lenient: accept either cardTitle or title, and ensure sections is an array (even if empty)
   const hasTitle = typeof config.cardTitle === 'string' || typeof config.title === 'string';
   const hasSections = Array.isArray(config['sections']);
-  
-  // If sections is missing or not an array, try to create an empty array
   if (!hasSections && config['sections'] === undefined) {
-    // This is acceptable - we can add sections later
     return hasTitle;
   }
-  
   return hasTitle && hasSections;
 }
 
@@ -110,19 +151,21 @@ export function isValidCardConfig(obj: unknown): obj is Partial<AICardConfig> {
  * Validate if an object is a valid CardSection
  * 
  * @deprecated Use CardValidationService instead
+ * This function delegates to CardValidationService for backward compatibility.
  * 
  * @param obj - Object to validate
  * @returns true if object has required section properties
  */
 export function isValidCardSection(obj: unknown): obj is Partial<CardSection> {
+  const validationService = inject(CardValidationService, { optional: true });
+  if (validationService) {
+    return validationService.isValidCardSection(obj);
+  }
+  // Fallback implementation
   if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
     return false;
   }
-
-  // Use proper interface instead of Record<string, unknown>
   const section = obj as Partial<CardSection>;
-
-  // Check required section properties
   return (
     typeof section['type'] === 'string' &&
     ['info', 'timeline', 'table', 'list', 'analytics', 'custom'].includes(
@@ -135,19 +178,21 @@ export function isValidCardSection(obj: unknown): obj is Partial<CardSection> {
  * Validate if an object is a valid CardField
  * 
  * @deprecated Use CardValidationService instead
+ * This function delegates to CardValidationService for backward compatibility.
  * 
  * @param obj - Object to validate
  * @returns true if object has required field properties
  */
 export function isValidCardField(obj: unknown): obj is Partial<CardField> {
+  const validationService = inject(CardValidationService, { optional: true });
+  if (validationService) {
+    return validationService.isValidCardField(obj);
+  }
+  // Fallback implementation
   if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
     return false;
   }
-
-  // Use proper interface instead of Record<string, unknown>
   const field = obj as Partial<CardField>;
-
-  // Fields need at least a label or name
   return (
     (typeof field['label'] === 'string' || typeof field['name'] === 'string') &&
     (typeof field['value'] === 'string' || typeof field['value'] === 'number' || 
@@ -159,70 +204,58 @@ export function isValidCardField(obj: unknown): obj is Partial<CardField> {
  * Validate JSON string against AICardConfig structure
  * 
  * @deprecated Use CardValidationService instead
+ * This function delegates to CardValidationService for backward compatibility.
  * 
- * @param jsonString - JSON string to validate
+ * @param jsonString - JSON string to validate (must be a non-empty string)
  * @returns Parsed object if valid, null otherwise
+ * 
+ * @example
+ * ```typescript
+ * const validJson = '{"cardTitle": "My Card", "sections": []}';
+ * const result = validateCardJson(validJson);
+ * // Returns: { cardTitle: "My Card", sections: [] }
+ * ```
+ * 
+ * @example
+ * ```typescript
+ * const invalidJson = '{"invalid": "data"}';
+ * const result = validateCardJson(invalidJson);
+ * // Returns: null (invalid card structure)
+ * ```
+ * 
+ * @example
+ * ```typescript
+ * const malformedJson = '{invalid json}';
+ * const result = validateCardJson(malformedJson);
+ * // Returns: null (JSON parse error)
+ * ```
  */
 export function validateCardJson(jsonString: string): Partial<AICardConfig> | null {
+  // Input validation
+  if (typeof jsonString !== 'string') {
+    return null;
+  }
+  
+  const trimmed = jsonString.trim();
+  if (trimmed.length === 0) {
+    return null;
+  }
+  
+  const validationService = inject(CardValidationService, { optional: true });
+  if (validationService) {
+    return validationService.validateCardJson(jsonString);
+  }
+  // Fallback implementation (should not happen in normal usage)
+  // Note: Cannot use LoggingService here as this is a utility function without DI context
+  // This warning is acceptable as it indicates a configuration issue
   try {
-    // Validate input
-    if (typeof jsonString !== 'string' || jsonString.trim().length === 0) {
-      console.warn('CardUtils: Empty JSON string provided');
-      return null;
+    const parsed = JSON.parse(jsonString);
+    if (isValidCardConfig(parsed)) {
+      return parsed as Partial<AICardConfig>;
     }
-
-    // Parse JSON
-    let parsed: unknown;
-    try {
-      parsed = JSON.parse(jsonString);
-    } catch (parseError: unknown) {
-      const msg = parseError instanceof Error ? parseError.message : 'Unknown error';
-      const position = parseError instanceof SyntaxError && 'position' in parseError 
-        ? (parseError as { position?: number }).position 
-        : null;
-      console.error(`CardUtils: JSON parse failed: ${msg}${position ? ` at position ${position}` : ''}`);
-      return null;
-    }
-
-    // Validate structure
-    if (!isValidCardConfig(parsed)) {
-      const config = parsed as Record<string, unknown>;
-      const hasTitle = typeof config['cardTitle'] === 'string' || typeof config['title'] === 'string';
-      const hasSections = Array.isArray(config['sections']);
-      const sectionsType = config['sections'] !== undefined ? typeof config['sections'] : 'undefined';
-      
-      console.error('CardUtils: Parsed JSON does not match AICardConfig structure', {
-        hasTitle,
-        hasSections,
-        sectionsType,
-        keys: Object.keys(config),
-        preview: JSON.stringify(parsed).substring(0, SIZE_CONSTANTS.JSON_PREVIEW_LENGTH)
-      });
-      
-      // Try to fix common issues: normalize title field
-      if (!hasTitle && typeof config['title'] === 'string') {
-        config['cardTitle'] = config['title'];
-        delete config['title'];
-      }
-      
-      // Try to fix missing sections
-      if (!hasSections && config['sections'] === undefined) {
-        config['sections'] = [];
-      }
-      
-      // Re-validate after fixes
-      if (isValidCardConfig(config)) {
-        console.warn('CardUtils: Fixed common issues in JSON structure');
-        return config as Partial<AICardConfig>;
-      }
-      
-      return null;
-    }
-
-    return parsed as Partial<AICardConfig>;
-  } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : 'Unknown error';
-    console.error(`CardUtils: Unexpected error in validateCardJson: ${msg}`, error);
+    return null;
+  } catch (error) {
+    // Silently return null for parse errors - caller should handle validation failures
     return null;
   }
 }
@@ -230,51 +263,67 @@ export function validateCardJson(jsonString: string): Partial<AICardConfig> | nu
 /**
  * Validate entire card configuration recursively
  * 
- * @deprecated Use CardValidationService instead
+ * Validates the card configuration and all nested structures (sections, fields, items).
+ * This performs a deep validation to ensure the entire card structure is valid.
  * 
- * @param config - Card configuration to validate
- * @returns true if all nested structures are valid
+ * @deprecated Use CardValidationService instead
+ * This function delegates to CardValidationService for backward compatibility.
+ * 
+ * @param config - Card configuration to validate (can be partial)
+ * @returns true if all nested structures are valid, false otherwise
+ * 
+ * @example
+ * ```typescript
+ * const validCard = {
+ *   cardTitle: 'My Card',
+ *   sections: [
+ *     { title: 'Section 1', type: 'info', fields: [{ label: 'Field', value: 'Value' }] }
+ *   ]
+ * };
+ * const isValid = validateCardStructure(validCard);
+ * // Returns: true
+ * ```
+ * 
+ * @example
+ * ```typescript
+ * const invalidCard = {
+ *   cardTitle: 'My Card',
+ *   sections: [
+ *     { type: 'info' } // Missing required 'title' field
+ *   ]
+ * };
+ * const isValid = validateCardStructure(invalidCard);
+ * // Returns: false
+ * ```
  */
 export function validateCardStructure(config: Partial<AICardConfig>): boolean {
+  // Input validation
+  if (!config || typeof config !== 'object') {
+    return false;
+  }
+  
+  const validationService = inject(CardValidationService, { optional: true });
+  if (validationService) {
+    return validationService.validateCardStructure(config);
+  }
+  // Fallback implementation (should not happen in normal usage)
+  // Note: Cannot use LoggingService here as this is a utility function without DI context
+  // This warning is acceptable as it indicates a configuration issue
   try {
-    // Check root level
     if (!isValidCardConfig(config)) {
       return false;
     }
-
-    // Check sections
     if (!Array.isArray(config.sections)) {
       return false;
     }
-
     for (const section of config.sections) {
       if (!isValidCardSection(section)) {
         return false;
       }
-
-      // Check fields in section
-      if (Array.isArray(section.fields)) {
-        for (const field of section.fields) {
-          if (!isValidCardField(field)) {
-            return false;
-          }
-        }
-      }
-
-      // Check items in section
-      if (Array.isArray(section.items)) {
-        for (const item of section.items) {
-          if (typeof item !== 'object' || item === null) {
-            return false;
-          }
-        }
-      }
     }
-
     return true;
-  } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : 'Unknown error';
-    console.error(`CardUtils: Error validating card structure: ${msg}`);
+  } catch (error) {
+    // Silently return false for validation errors
     return false;
   }
 }
@@ -324,7 +373,7 @@ export function sanitizeCardConfig(config: Partial<AICardConfig>): Partial<AICar
     // Sanitize description
     if ('description' in sanitized && typeof sanitized.description === 'string') {
       cleanedRoot.description = ValidationUtil.sanitizeString(
-        sanitized.description.substring(0, 1000)
+        sanitized.description.substring(0, CARD_LIMITS.MAX_DESCRIPTION_LENGTH)
       );
     }
     
@@ -356,7 +405,8 @@ export function sanitizeCardConfig(config: Partial<AICardConfig>): Partial<AICar
     return cleanedRoot;
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : 'Unknown error';
-    console.error(`CardUtils: Error sanitizing card config: ${msg}`, error);
+    // Note: Cannot use LoggingService here as this is a utility function without DI context
+    // Error is still thrown/handled appropriately by returning safe fallback
     // Return empty safe config instead of original to prevent XSS
     return {
       cardTitle: '',
@@ -379,12 +429,12 @@ function sanitizeSection(section: CardSection): CardSection {
   
   // Sanitize description
   if (typeof section.description === 'string') {
-    sanitized.description = ValidationUtil.sanitizeString(section.description.substring(0, 500));
+    sanitized.description = ValidationUtil.sanitizeString(section.description.substring(0, CARD_LIMITS.MAX_SECTION_DESCRIPTION_LENGTH));
   }
   
   // Sanitize subtitle
   if (typeof section.subtitle === 'string') {
-    sanitized.subtitle = ValidationUtil.sanitizeString(section.subtitle.substring(0, 200));
+    sanitized.subtitle = ValidationUtil.sanitizeString(section.subtitle.substring(0, CARD_LIMITS.MAX_SECTION_SUBTITLE_LENGTH));
   }
   
   // Sanitize fields
@@ -413,12 +463,12 @@ function sanitizeField(field: CardField): CardField {
   
   // Sanitize label
   if (typeof field.label === 'string') {
-    sanitized.label = ValidationUtil.sanitizeString(field.label.substring(0, 200));
+    sanitized.label = ValidationUtil.sanitizeString(field.label.substring(0, CARD_LIMITS.MAX_FIELD_LABEL_LENGTH));
   }
   
   // Sanitize title
   if (typeof field.title === 'string') {
-    sanitized.title = ValidationUtil.sanitizeString(field.title.substring(0, 200));
+    sanitized.title = ValidationUtil.sanitizeString(field.title.substring(0, CARD_LIMITS.MAX_FIELD_LABEL_LENGTH));
   }
   
   // Sanitize value
@@ -428,7 +478,7 @@ function sanitizeField(field: CardField): CardField {
   
   // Sanitize description
   if (typeof field.description === 'string') {
-    sanitized.description = ValidationUtil.sanitizeString(field.description.substring(0, 500));
+    sanitized.description = ValidationUtil.sanitizeString(field.description.substring(0, CARD_LIMITS.MAX_FIELD_DESCRIPTION_LENGTH));
   }
   
   // Sanitize URLs
@@ -456,19 +506,19 @@ function sanitizeItem(item: CardItem): CardItem {
   const sanitized: CardItem = {
     ...item,
     title: typeof item.title === 'string'
-      ? ValidationUtil.sanitizeString(item.title.substring(0, 200))
+      ? ValidationUtil.sanitizeString(item.title.substring(0, CARD_LIMITS.MAX_ITEM_TITLE_LENGTH))
       : ''
   };
   
   // Sanitize description
   if (typeof item.description === 'string') {
-    sanitized.description = ValidationUtil.sanitizeString(item.description.substring(0, 500));
+    sanitized.description = ValidationUtil.sanitizeString(item.description.substring(0, CARD_LIMITS.MAX_ITEM_DESCRIPTION_LENGTH));
   }
   
   // Sanitize value
   if (item.value !== null && item.value !== undefined) {
     sanitized.value = typeof item.value === 'string'
-      ? ValidationUtil.sanitizeString(item.value.substring(0, 200))
+      ? ValidationUtil.sanitizeString(item.value.substring(0, CARD_LIMITS.MAX_ITEM_VALUE_LENGTH))
       : item.value;
   }
   
@@ -493,7 +543,7 @@ function sanitizeAction(action: CardAction): CardAction {
   
   // Sanitize icon
   if (typeof action.icon === 'string') {
-    sanitized.icon = ValidationUtil.sanitizeString(action.icon.substring(0, 50));
+    sanitized.icon = ValidationUtil.sanitizeString(action.icon.substring(0, CARD_LIMITS.MAX_ACTION_ICON_LENGTH));
   }
   
   // Sanitize URL for website actions
@@ -526,10 +576,10 @@ function sanitizeAction(action: CardAction): CardAction {
     
     // Sanitize subject and body
     if (typeof emailConfig['subject'] === 'string') {
-      sanitizedEmail['subject'] = ValidationUtil.sanitizeString(emailConfig['subject'].substring(0, 200));
+      sanitizedEmail['subject'] = ValidationUtil.sanitizeString(emailConfig['subject'].substring(0, CARD_LIMITS.MAX_FIELD_LABEL_LENGTH));
     }
     if (typeof emailConfig['body'] === 'string') {
-      sanitizedEmail['body'] = ValidationUtil.sanitizeString(emailConfig['body'].substring(0, 5000));
+      sanitizedEmail['body'] = ValidationUtil.sanitizeString(emailConfig['body'].substring(0, CARD_LIMITS.MAX_EMAIL_BODY_LENGTH));
     }
     
     (sanitized as { email?: unknown }).email = sanitizedEmail;
@@ -621,12 +671,40 @@ function ensureActionIds(action: CardAction, actionIndex: number): CardAction {
  * 
  * Uses timestamp and random string for uniqueness. This function is exported
  * and should be used consistently across the application instead of creating
- * duplicate implementations.
+ * duplicate implementations. The generated ID format is: {prefix}_{timestamp}_{random}
  * 
- * @param prefix - ID prefix (default: 'item')
+ * @param prefix - ID prefix (default: 'item'). Must be a non-empty string.
  * @returns Unique ID string in format: {prefix}_{timestamp}_{random}
+ * 
+ * @example
+ * ```typescript
+ * const id1 = generateId('card');
+ * // Returns: 'card_1234567890_abc1234'
+ * 
+ * const id2 = generateId('section');
+ * // Returns: 'section_1234567891_def5678'
+ * 
+ * const id3 = generateId(); // Uses default prefix
+ * // Returns: 'item_1234567892_ghi9012'
+ * ```
+ * 
+ * @example
+ * ```typescript
+ * // IDs are guaranteed to be unique (timestamp + random)
+ * const id1 = generateId('test');
+ * const id2 = generateId('test');
+ * // id1 !== id2 (different timestamps and random strings)
+ * ```
  */
 export function generateId(prefix: string = ID_CONSTANTS.DEFAULT_ID_PREFIX): string {
+  // Input validation
+  if (typeof prefix !== 'string' || prefix.trim().length === 0) {
+    prefix = ID_CONSTANTS.DEFAULT_ID_PREFIX;
+  }
+  
+  // Sanitize prefix to ensure it's safe for use in IDs
+  const sanitizedPrefix = prefix.replace(/[^a-zA-Z0-9_-]/g, '_');
+  
   const randomString = Math.random().toString(36).slice(2, 2 + ID_CONSTANTS.RANDOM_STRING_LENGTH);
-  return `${prefix}_${Date.now()}_${randomString}`;
+  return `${sanitizedPrefix}_${Date.now()}_${randomString}`;
 }

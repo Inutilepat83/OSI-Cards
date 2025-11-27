@@ -106,6 +106,11 @@ export class CardValidationService {
   }
 
   /**
+   * Maximum allowed JSON input size (1MB)
+   */
+  private readonly MAX_JSON_SIZE = 1024 * 1024; // 1MB
+
+  /**
    * Validate JSON string against AICardConfig structure
    * @param jsonString - JSON string to validate
    * @returns Parsed object if valid, null otherwise
@@ -115,6 +120,13 @@ export class CardValidationService {
       // Validate input
       if (typeof jsonString !== 'string' || jsonString.trim().length === 0) {
         console.warn('CardValidationService: Empty JSON string provided');
+        return null;
+      }
+
+      // Check size limit to prevent DoS attacks
+      const sizeInBytes = new Blob([jsonString]).size;
+      if (sizeInBytes > this.MAX_JSON_SIZE) {
+        console.error(`CardValidationService: JSON input size (${sizeInBytes} bytes) exceeds maximum allowed size (${this.MAX_JSON_SIZE} bytes)`);
         return null;
       }
 
@@ -258,4 +270,5 @@ export class CardValidationService {
     return title.length >= minLength && title.length <= maxLength;
   }
 }
+
 

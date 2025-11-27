@@ -54,8 +54,8 @@
   }
 
   &:hover {
-    /* Minimalistic hover - subtle lift */
-    transform: translateY(-2px);
+    /* Minimalistic hover - no vertical movement */
+    transform: none;
     box-shadow: 0 8px 16px color-mix(in srgb, var(--foreground) 12%, transparent),
                 0 0 0 1px color-mix(in srgb, var(--color-brand) 15%, transparent);
 
@@ -97,8 +97,8 @@
     gap: calc(var(--card-gap) * 0.5);
     margin: 0;
     flex-shrink: 0;
-    color: var(--card-text-label);
-    font-weight: 600;
+    color: color-mix(in srgb, var(--foreground) 50%, transparent);
+    font-weight: 700;
     letter-spacing: 0.04em;
     font-size: var(--card-label-font-size);
     line-height: 1.3;
@@ -116,7 +116,7 @@
     margin: 0;
     color: var(--color-brand);
     font-weight: 700;
-    font-size: calc(var(--card-value-font-size-large, var(--card-value-font-size)) * 1.3) !important;
+    font-size: var(--card-value-font-size-large) !important;
     letter-spacing: -0.01em;
     line-height: 1.2;
     transition: color 0.22s ease;

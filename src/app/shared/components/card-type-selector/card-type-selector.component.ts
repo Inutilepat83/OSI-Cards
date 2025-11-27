@@ -20,7 +20,7 @@ import { CardType } from '../../../models';
         type="button"
         [attr.aria-pressed]="selectedType === type"
         [attr.aria-label]="'Select ' + type + ' card type'">
-        {{ type === 'sko' ? 'SKO' : type.charAt(0).toUpperCase() + type.slice(1) }}
+        {{ type === 'all' ? 'All Sections' : type === 'sko' ? 'SKO' : type.charAt(0).toUpperCase() + type.slice(1) }}
       </button>
     </div>
   `,

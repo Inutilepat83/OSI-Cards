@@ -1,0 +1,109 @@
+<div class="docs-layout">
+  <!-- Mobile Menu Toggle -->
+  <button 
+    class="mobile-toggle" 
+    (click)="toggleMobileMenu()" 
+    type="button" 
+    aria-label="Toggle menu">
+    <lucide-icon name="menu" [size]="20"></lucide-icon>
+  </button>
+
+  <!-- Mobile Overlay -->
+  <div
+    *ngIf="isMobileMenuOpen"
+    class="mobile-overlay"
+    (click)="closeMobileMenu()"
+    [attr.aria-hidden]="!isMobileMenuOpen">
+  </div>
+
+  <!-- Minimal Sidebar -->
+  <aside class="docs-sidebar" [class.mobile-open]="isMobileMenuOpen">
+    <div class="sidebar-header">
+      <a routerLink="/docs" class="sidebar-logo" (click)="closeMobileMenu()">
+        <lucide-icon name="book-open" [size]="20"></lucide-icon>
+        <span>Documentation</span>
+      </a>
+      <button class="sidebar-close" (click)="closeMobileMenu()" type="button" aria-label="Close menu">
+        <lucide-icon name="x" [size]="18"></lucide-icon>
+      </button>
+    </div>
+
+    <!-- Search -->
+    <div class="sidebar-search">
+      <div class="search-wrapper">
+        <lucide-icon name="search" [size]="16" class="search-icon"></lucide-icon>
+        <input
+          #searchInput
+          type="text"
+          placeholder="Search docs..."
+          [(ngModel)]="searchQuery"
+          (input)="onSearchChange($any($event.target).value)"
+          (keydown.escape)="clearSearch()"
+          class="search-input"
+          autocomplete="off"
+          aria-label="Search documentation">
+        <button
+          *ngIf="searchQuery"
+          (click)="clearSearch()"
+          class="search-clear"
+          type="button"
+          aria-label="Clear search">
+          <lucide-icon name="x" [size]="14"></lucide-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+      <div 
+        *ngFor="let category of getCategories(); trackBy: trackByCategory" 
+        class="nav-category"
+        [class.has-active]="hasActiveDoc(category)">
+        <button
+          type="button"
+          class="category-header"
+          (click)="toggleCategory(category)"
+          [attr.aria-expanded]="!isCategoryCollapsed(category)">
+          <span class="category-title">{{ category }}</span>
+          <lucide-icon
+            [name]="isCategoryCollapsed(category) ? 'chevron-right' : 'chevron-down'"
+            [size]="16"
+            class="category-icon">
+          </lucide-icon>
+        </button>
+        <ul *ngIf="!isCategoryCollapsed(category)" class="nav-list">
+          <li *ngFor="let doc of getFilteredDocs()[category]; trackBy: trackByDoc" class="nav-item">
+            <a
+              [routerLink]="['/docs', doc.id]"
+              [class.active]="isActive(doc.id)"
+              (click)="closeMobileMenu()"
+              class="nav-link"
+              [attr.aria-current]="isActive(doc.id) ? 'page' : null">
+              {{ doc.title }}
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- No results -->
+      <div *ngIf="hasNoResults()" class="no-results">
+        <lucide-icon name="search-x" [size]="24"></lucide-icon>
+        <p>No results found</p>
+        <button (click)="clearSearch()" class="clear-btn" type="button">Clear search</button>
+      </div>
+    </nav>
+
+    <!-- Footer -->
+    <div class="sidebar-footer">
+      <a routerLink="/" class="footer-link">
+        <lucide-icon name="arrow-left" [size]="14"></lucide-icon>
+        <span>Back to Home</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="docs-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

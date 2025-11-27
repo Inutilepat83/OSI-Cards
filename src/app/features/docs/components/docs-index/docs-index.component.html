@@ -1,0 +1,38 @@
+<div class="docs-index">
+  <!-- Minimal Hero -->
+  <header class="index-hero">
+    <h1 class="hero-title">Documentation</h1>
+    <p class="hero-subtitle">
+      Complete guide to building interactive card-based dashboards with Angular
+    </p>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-value">{{ totalDocs }}</span>
+        <span class="stat-label">Pages</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">{{ totalCategories }}</span>
+        <span class="stat-label">Categories</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Documentation by Category -->
+  <div class="docs-sections">
+    <section *ngFor="let category of getCategories(); trackBy: trackByCategory" class="docs-section">
+      <h2 class="section-title">{{ category }}</h2>
+      <div class="docs-grid">
+        <a
+          *ngFor="let doc of getDocsByCategory()[category]; trackBy: trackByDoc"
+          [routerLink]="['/docs', doc.id]"
+          class="doc-card">
+          <div class="doc-card-content">
+            <h3 class="doc-card-title">{{ doc.title }}</h3>
+            <p *ngIf="doc.description" class="doc-card-description">{{ doc.description }}</p>
+          </div>
+          <lucide-icon name="arrow-right" [size]="16" class="doc-card-icon"></lucide-icon>
+        </a>
+      </div>
+    </section>
+  </div>
+</div>

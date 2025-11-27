@@ -16,11 +16,23 @@ export * from './lib/models';
 export * from './lib/services';
 export * from './lib/services/section-utils.service';
 
+// Interfaces
+export * from './lib/interfaces';
+
 // Utils
 export * from './lib/utils';
 
 // Icons
 export * from './lib/icons';
+
+// Providers
+export * from './lib/providers';
+
+// Themes
+export * from './lib/themes';
+
+// Presets
+export * from './lib/presets';
 
 // Main Components
 export * from './lib/components/ai-card-renderer/ai-card-renderer.component';
@@ -28,6 +40,11 @@ export * from './lib/components/section-renderer/section-renderer.component';
 export * from './lib/components/masonry-grid/masonry-grid.component';
 export * from './lib/components/card-skeleton/card-skeleton.component';
 export * from './lib/components/card-preview/card-preview.component';
+
+// Composable Components
+export * from './lib/components/card-header/card-header.component';
+export * from './lib/components/card-body/card-body.component';
+export * from './lib/components/card-footer/card-footer.component';
 
 // Section Components
 export * from './lib/components/sections/base-section.component';

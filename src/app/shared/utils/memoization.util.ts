@@ -3,7 +3,7 @@
  * 
  * Provides various memoization strategies to improve performance by caching
  * function results. Supports standard memoization, WeakMap-based memoization,
- * and TTL (time-to-live) based memoization.
+ * TTL (time-to-live) based memoization, and cache size limits.
  * 
  * @example
  * ```typescript
@@ -16,10 +16,22 @@
  * // WeakMap memoization for object keys
  * const objFn = memoizeWeak((obj: { value: number }) => obj.value * 2);
  * 
- * // TTL-based memoization
- * const cachedFn = memoizeWithTTL((x: number) => x * 2, 5000); // 5 second TTL
+ * // TTL-based memoization with size limit
+ * const cachedFn = memoizeWithTTL((x: number) => x * 2, { ttl: 5000, maxSize: 100 });
  * ```
  */
+
+/**
+ * Memoization options
+ */
+export interface MemoizeOptions {
+  /** Time-to-live in milliseconds */
+  ttl?: number;
+  /** Maximum cache size */
+  maxSize?: number;
+  /** Custom key generator */
+  keyGenerator?: (...args: unknown[]) => string;
+}
 
 export type MemoizedFunction<T extends (...args: any[]) => any> = T & {
   clear: () => void;
@@ -116,19 +128,25 @@ export function memoizeWeak<T extends (arg: object) => any>(
 }
 
 /**
- * Create a memoized function with TTL (time-to-live)
+ * Create a memoized function with TTL (time-to-live) and optional size limits
  * 
  * Results expire after the specified time, allowing cache entries to
  * automatically become stale. Useful for data that changes over time.
+ * Supports cache size limits to prevent memory issues.
  * 
  * @param fn - The function to memoize
- * @param ttlMs - Time-to-live in milliseconds
- * @param keyGenerator - Optional function to generate cache keys
+ * @param options - TTL in milliseconds (number) or options object with ttl, maxSize, and keyGenerator
+ * @param keyGenerator - Optional function to generate cache keys (deprecated, use options.keyGenerator)
  * @returns Memoized function with clear() method and cache property
  * 
  * @example
  * ```typescript
+ * // Simple TTL
  * const fn = memoizeWithTTL((x: number) => fetchData(x), 60000); // 1 minute TTL
+ * 
+ * // TTL with size limit
+ * const fn2 = memoizeWithTTL((x: number) => fetchData(x), { ttl: 60000, maxSize: 100 });
+ * 
  * fn(5); // Fetches and caches
  * fn(5); // Returns cached result (if within TTL)
  * // After 60 seconds, cache expires and function is called again
@@ -136,25 +154,48 @@ export function memoizeWeak<T extends (arg: object) => any>(
  */
 export function memoizeWithTTL<T extends (...args: any[]) => any>(
   fn: T,
-  ttlMs: number,
+  optionsOrTtl: number | MemoizeOptions,
   keyGenerator?: (...args: Parameters<T>) => string
 ): MemoizedFunction<T> {
-  const cache = new Map<string, { value: ReturnType<T>; expires: number }>();
+  // Handle backward compatibility: number as first arg
+  const options: MemoizeOptions = typeof optionsOrTtl === 'number'
+    ? { ttl: optionsOrTtl, keyGenerator: keyGenerator as ((...args: unknown[]) => string) | undefined }
+    : optionsOrTtl;
+
+  const { ttl, maxSize = 1000, keyGenerator: optKeyGenerator } = options;
+  const keyGen = optKeyGenerator || keyGenerator || ((...args: Parameters<T>) => JSON.stringify(args));
+
+  const cache = new Map<string, { value: ReturnType<T>; expires: number; timestamp: number }>();
 
   const memoized = ((...args: Parameters<T>): ReturnType<T> => {
-    const key = keyGenerator
-      ? keyGenerator(...args)
-      : JSON.stringify(args);
+    const key = keyGen(...args);
 
+    // Check cache
     const cached = cache.get(key);
-    if (cached && cached.expires > Date.now()) {
-      return cached.value;
+    if (cached) {
+      if (!ttl || cached.expires > Date.now()) {
+        return cached.value;
+      }
+      // Entry expired, remove it
+      cache.delete(key);
     }
 
+    // Compute value
     const result = fn(...args);
+
+    // Check cache size and evict if necessary (LRU: remove oldest)
+    if (cache.size >= maxSize) {
+      const firstKey = cache.keys().next().value;
+      if (firstKey) {
+        cache.delete(firstKey);
+      }
+    }
+
+    // Store in cache
     cache.set(key, {
       value: result,
-      expires: Date.now() + ttlMs
+      expires: ttl ? Date.now() + ttl : Number.MAX_SAFE_INTEGER,
+      timestamp: Date.now()
     });
 
     return result;
@@ -164,23 +205,34 @@ export function memoizeWithTTL<T extends (...args: any[]) => any>(
     cache.clear();
   };
 
+  // Create cache view for compatibility (only non-expired entries)
   memoized.cache = new Map<string, ReturnType<T>>();
-  // Sync cache for compatibility
-  cache.forEach((entry, key) => {
-    if (entry.expires > Date.now()) {
-      memoized.cache.set(key, entry.value);
-    }
-  });
-
-  // Cleanup expired entries periodically
-  setInterval(() => {
+  const syncCache = () => {
+    memoized.cache.clear();
     const now = Date.now();
     cache.forEach((entry, key) => {
-      if (entry.expires <= now) {
-        cache.delete(key);
+      if (!ttl || entry.expires > now) {
+        memoized.cache.set(key, entry.value);
       }
     });
-  }, Math.min(ttlMs, 60000)); // Cleanup at most every minute
+  };
+
+  // Cleanup expired entries periodically (if TTL is set)
+  let cleanupInterval: ReturnType<typeof setInterval> | null = null;
+  if (ttl) {
+    cleanupInterval = setInterval(() => {
+      const now = Date.now();
+      cache.forEach((entry, key) => {
+        if (entry.expires <= now) {
+          cache.delete(key);
+        }
+      });
+      syncCache();
+    }, Math.min(ttl, 60000)); // Cleanup at most every minute
+  }
+
+  // Initial cache sync
+  syncCache();
 
   return memoized;
 }

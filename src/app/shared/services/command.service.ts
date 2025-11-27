@@ -102,6 +102,9 @@ export class CommandService {
     }
 
     const command = this.history[this.currentIndex];
+    if (!command) {
+      return false;
+    }
     command.undo();
     this.currentIndex--;
     this.updateState();
@@ -119,6 +122,9 @@ export class CommandService {
 
     this.currentIndex++;
     const command = this.history[this.currentIndex];
+    if (!command) {
+      return false;
+    }
     command.execute();
     this.updateState();
     this.logger.debug(`Command redone: ${command.getDescription()}`, 'CommandService');
@@ -223,9 +229,12 @@ export class CommandService {
       canRedo: this.canRedo(),
       historySize: this.history.length,
       currentIndex: this.currentIndex,
-      lastCommand: this.currentIndex >= 0 
-        ? this.history[this.currentIndex].metadata 
-        : undefined
+      lastCommand: (() => {
+        if (this.currentIndex >= 0 && this.history[this.currentIndex]) {
+          return this.history[this.currentIndex]?.metadata;
+        }
+        return undefined;
+      })()
     };
 
     this.stateSubject.next(state);

@@ -19,20 +19,24 @@ export function compressString(data: string): string {
     if (data[i] === current && count < 255) {
       count++;
     } else {
-      if (count > 3) {
-        compressed += `[${count}${current}]`;
-      } else {
-        compressed += current.repeat(count);
+      if (current) {
+        if (count > 3) {
+          compressed += `[${count}${current}]`;
+        } else {
+          compressed += current.repeat(count);
+        }
       }
       current = data[i];
       count = 1;
     }
   }
 
-  if (count > 3) {
-    compressed += `[${count}${current}]`;
-  } else {
-    compressed += current.repeat(count);
+  if (current) {
+    if (count > 3) {
+      compressed += `[${count}${current}]`;
+    } else {
+      compressed += current.repeat(count);
+    }
   }
 
   return compressed;
@@ -48,10 +52,13 @@ export function decompressString(compressed: string): string {
   while (i < compressed.length) {
     if (compressed[i] === '[') {
       const match = compressed.substring(i).match(/^\[(\d+)(.)\]/);
-      if (match) {
-        const count = parseInt(match[1], 10);
+      if (match && match[1] && match[2]) {
+        const countStr = match[1];
         const char = match[2];
-        decompressed += char.repeat(count);
+        if (countStr && char) {
+          const count = parseInt(countStr, 10);
+          decompressed += char.repeat(count);
+        }
         i += match[0].length;
       } else {
         decompressed += compressed[i];

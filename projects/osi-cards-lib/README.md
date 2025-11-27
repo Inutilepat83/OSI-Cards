@@ -151,7 +151,59 @@ Add the styles path to your `angular.json`:
 
 **Note:** If you're using Tailwind CSS, you may need to include Tailwind directives in your main styles file. The library styles work independently but some utility classes may require Tailwind.
 
-### Step 4: Import and Use the Card Component
+### Step 4: Configure Providers (REQUIRED)
+
+**⚠️ IMPORTANT**: The library requires animation providers to function correctly. You must add the provider function to your `app.config.ts`.
+
+#### Option A: Using the Library Provider Function (Recommended)
+
+Add `provideOSICards()` to your `app.config.ts`:
+
+```typescript
+import { ApplicationConfig } from '@angular/core';
+import { provideOSICards } from 'osi-cards-lib';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideOSICards(), // This provides required animation support
+    // ... your other providers
+  ]
+};
+```
+
+This automatically provides all required dependencies including animations.
+
+#### Option B: Manual Provider Configuration
+
+If you prefer to configure providers manually, you can use Angular's animation providers directly:
+
+```typescript
+import { ApplicationConfig } from '@angular/core';
+import { provideAnimations } from '@angular/platform-browser/animations';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideAnimations(), // Required for component animations
+    // ... your other providers
+  ]
+};
+```
+
+**Note**: For testing or when animations are not desired, you can use `provideNoopAnimations()` instead:
+
+```typescript
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideOSICards({ enableAnimations: false }), // Uses noop animations
+    // OR manually:
+    // provideNoopAnimations(),
+  ]
+};
+```
+
+### Step 5: Import and Use the Card Component
 
 #### In a Standalone Component
 
@@ -643,9 +695,11 @@ After importing the library, verify:
 
 - [ ] Library is installed in `node_modules/osi-cards-lib`
 - [ ] All peer dependencies are installed
+- [ ] **Providers are configured** - `provideOSICards()` added to `app.config.ts`
 - [ ] Components can be imported without TypeScript errors
 - [ ] Styles are imported and applied correctly
 - [ ] Icons are displaying properly
+- [ ] Animations are working (check component entrance animations)
 - [ ] TypeScript types are available and working
 - [ ] No console errors in browser
 - [ ] Components render correctly in the application

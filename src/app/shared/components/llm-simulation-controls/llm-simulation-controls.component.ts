@@ -19,7 +19,7 @@ import { LucideIconsModule } from '../../icons/lucide-icons.module';
         [class.active]="isSimulating"
         [class.disabled]="disabled"
         (click)="onToggleSimulation()"
-        [disabled]="disabled || isSimulating"
+        [disabled]="disabled"
         [attr.aria-pressed]="isSimulating"
         [attr.aria-label]="isSimulating ? 'Stop LLM simulation' : 'Simulate LLM generation'"
         [title]="isSimulating ? 'Stop simulation' : 'Simulate LLM generation (works with complete or incomplete JSON)'">
@@ -37,25 +37,27 @@ import { LucideIconsModule } from '../../icons/lucide-icons.module';
     .simulation-button {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: var(--color-brand, #FF7900);
-      color: white;
-      border: none;
+      gap: 0.375rem;
+      padding: 0.375rem 0.75rem;
+      background: var(--card-background);
+      color: var(--foreground);
+      border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
       border-radius: 0.375rem;
-      font-size: 0.875rem;
+      font-size: 0.75rem;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s;
     }
 
     .simulation-button:hover:not(:disabled):not(.active) {
-      opacity: 0.9;
-      transform: translateY(-1px);
+      background: color-mix(in srgb, var(--card-background) 95%, var(--foreground) 5%);
+      border-color: color-mix(in srgb, var(--border) 80%, transparent);
     }
 
     .simulation-button.active {
-      background: #ef4444;
+      background: color-mix(in srgb, #ef4444 15%, transparent);
+      color: #ef4444;
+      border-color: color-mix(in srgb, #ef4444 40%, transparent);
     }
 
     .simulation-button:disabled {
@@ -64,10 +66,10 @@ import { LucideIconsModule } from '../../icons/lucide-icons.module';
     }
 
     .spinner {
-      width: 1rem;
-      height: 1rem;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-top-color: white;
+      width: 0.875rem;
+      height: 0.875rem;
+      border: 2px solid color-mix(in srgb, var(--foreground) 30%, transparent);
+      border-top-color: var(--foreground);
       border-radius: 50%;
       animation: spin 0.6s linear infinite;
     }
@@ -89,6 +91,7 @@ export class LLMSimulationControlsComponent {
     }
   }
 }
+
 
 
 

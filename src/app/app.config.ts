@@ -1,4 +1,4 @@
-import { ApplicationConfig, isDevMode } from '@angular/core';
+import { ApplicationConfig, isDevMode, inject, APP_INITIALIZER } from '@angular/core';
 import { provideRouter, PreloadAllModules, withPreloading } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
@@ -17,6 +17,7 @@ import { JsonFileCardProvider } from './core/services/card-data/json-file-card-p
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 import { HttpCacheInterceptor } from './core/interceptors/http-cache.interceptor';
 import { RateLimitInterceptor } from './core/interceptors/rate-limit.interceptor';
+import { WebVitalsService } from './core/services/web-vitals.service';
 
 export const config: ApplicationConfig = {
   providers: [
@@ -40,6 +41,15 @@ export const config: ApplicationConfig = {
     {
       provide: CARD_DATA_PROVIDER,
       useClass: JsonFileCardProvider
+    },
+    // Initialize Web Vitals monitoring
+    {
+      provide: APP_INITIALIZER,
+      useFactory: () => {
+        const webVitals = inject(WebVitalsService);
+        return () => webVitals.initialize();
+      },
+      multi: true
     },
     {
       provide: HTTP_INTERCEPTORS,

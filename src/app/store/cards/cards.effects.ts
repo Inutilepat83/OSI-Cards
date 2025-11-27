@@ -97,6 +97,7 @@ export class CardsEffects {
               const scrubbed = removeAllIds(template);
               const hydrated = ensureCardIds({ ...scrubbed });
               delete hydrated.cardSubtitle;
+              delete hydrated.cardType;
               
               const duration = performance.now() - startTime;
               const processingTime = performance.now() - templateStartTime;

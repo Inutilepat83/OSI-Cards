@@ -27,7 +27,7 @@
   border: 1px solid color-mix(in srgb, var(--color-brand) 30%, transparent) !important;
 
   &:hover {
-    transform: translateY(-2px);
+    transform: none;
     border-color: var(--color-brand) !important;
     box-shadow: 0 8px 16px color-mix(in srgb, var(--foreground) 12%, transparent),
                 0 0 0 1px color-mix(in srgb, var(--color-brand) 15%, transparent);
@@ -48,11 +48,11 @@
 
 .solution-card__title {
   @include card-title-text;
-  font-size: calc(var(--card-title-font-size) * 1.15) !important;
+  font-size: var(--card-title-font-size) !important;
   font-weight: 700 !important;
   letter-spacing: var(--card-title-letter-spacing) !important;
   line-height: var(--card-title-line-height) !important;
-  color: var(--card-text-primary) !important;
+  color: color-mix(in srgb, var(--foreground) 94%, transparent) !important;
   margin: 0;
 }
 

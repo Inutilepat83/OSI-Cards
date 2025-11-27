@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, timer } from 'rxjs';
-import { catchError, mergeMap, retryWhen } from 'rxjs/operators';
+import { catchError, mergeMap } from 'rxjs/operators';
 import { LoggingService } from '../services/logging.service';
 
 /**
@@ -165,9 +165,34 @@ export class RateLimitInterceptor implements HttpInterceptor {
     this.logger.info('Rate limiting configured', 'RateLimitInterceptor', this.config);
   }
 
+  /**
+   * Maximum allowed request body size (1MB)
+   */
+  private readonly MAX_REQUEST_SIZE = 1024 * 1024; // 1MB
+
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     if (!this.config.enabled) {
       return next.handle(request);
+    }
+
+    // Check request size limit to prevent DoS attacks
+    if (request.body) {
+      const bodySize = new Blob([JSON.stringify(request.body)]).size;
+      if (bodySize > this.MAX_REQUEST_SIZE) {
+        const error = new HttpErrorResponse({
+          error: `Request body size (${(bodySize / 1024).toFixed(2)} KB) exceeds maximum allowed size (${(this.MAX_REQUEST_SIZE / 1024).toFixed(2)} KB)`,
+          status: 413,
+          statusText: 'Payload Too Large',
+          url: request.url
+        });
+
+        this.logger.error(
+          `Request size limit exceeded for ${request.url}: ${bodySize} bytes`,
+          'RateLimitInterceptor'
+        );
+
+        return throwError(() => error);
+      }
     }
 
     const bucket = this.getBucket(request.url);

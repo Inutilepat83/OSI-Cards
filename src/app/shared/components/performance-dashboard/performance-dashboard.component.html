@@ -1,0 +1,140 @@
+<div class="performance-dashboard">
+  <div class="dashboard-header">
+    <h2 class="dashboard-title">Performance Monitoring</h2>
+    <div class="dashboard-actions">
+      <button class="btn btn-secondary" (click)="loadMetrics()" title="Refresh metrics">
+        🔄 Refresh
+      </button>
+      <button class="btn btn-secondary" (click)="clearMetrics()" title="Clear all metrics">
+        🗑️ Clear
+      </button>
+      <button class="btn btn-secondary" (click)="exportMetrics()" title="Export metrics">
+        📥 Export
+      </button>
+    </div>
+  </div>
+
+  <!-- Web Vitals Section -->
+  <section class="dashboard-section">
+    <h3 class="section-title">Web Vitals</h3>
+    <div class="web-vitals-grid">
+      <div class="vital-card">
+        <div class="vital-label">LCP</div>
+        <div class="vital-value" [class]="getStatusClass(getWebVitalStatus(webVitals.lcp, { good: 2500, poor: 4000 }))">
+          {{ formatDuration(webVitals.lcp) }}
+        </div>
+        <div class="vital-description">Largest Contentful Paint</div>
+      </div>
+
+      <div class="vital-card">
+        <div class="vital-label">FID</div>
+        <div class="vital-value" [class]="getStatusClass(getWebVitalStatus(webVitals.fid, { good: 100, poor: 300 }))">
+          {{ formatDuration(webVitals.fid) }}
+        </div>
+        <div class="vital-description">First Input Delay</div>
+      </div>
+
+      <div class="vital-card">
+        <div class="vital-label">CLS</div>
+        <div class="vital-value" [class]="getStatusClass(getWebVitalStatus(webVitals.cls, { good: 0.1, poor: 0.25 }))">
+          {{ webVitals.cls?.toFixed(3) || 'N/A' }}
+        </div>
+        <div class="vital-description">Cumulative Layout Shift</div>
+      </div>
+
+      <div class="vital-card">
+        <div class="vital-label">FCP</div>
+        <div class="vital-value" [class]="getStatusClass(getWebVitalStatus(webVitals.fcp, { good: 1800, poor: 3000 }))">
+          {{ formatDuration(webVitals.fcp) }}
+        </div>
+        <div class="vital-description">First Contentful Paint</div>
+      </div>
+
+      <div class="vital-card">
+        <div class="vital-label">TTI</div>
+        <div class="vital-value" [class]="getStatusClass(getWebVitalStatus(webVitals.tti, { good: 3800, poor: 7300 }))">
+          {{ formatDuration(webVitals.tti) }}
+        </div>
+        <div class="vital-description">Time to Interactive</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Memory Usage Section -->
+  <section class="dashboard-section" *ngIf="memoryUsage.used">
+    <h3 class="section-title">Memory Usage</h3>
+    <div class="memory-info">
+      <div class="memory-item">
+        <span class="memory-label">Used:</span>
+        <span class="memory-value">{{ formatMemory(memoryUsage.used) }}</span>
+      </div>
+      <div class="memory-item">
+        <span class="memory-label">Total:</span>
+        <span class="memory-value">{{ formatMemory(memoryUsage.total) }}</span>
+      </div>
+      <div class="memory-item">
+        <span class="memory-label">Limit:</span>
+        <span class="memory-value">{{ formatMemory(memoryUsage.limit) }}</span>
+      </div>
+      <div class="memory-bar">
+        <div class="memory-bar-fill" [style.width.%]="(memoryUsage.used! / memoryUsage.limit!) * 100"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Summary Section -->
+  <section class="dashboard-section" *ngIf="summary">
+    <h3 class="section-title">Summary</h3>
+    <div class="summary-grid">
+      <div class="summary-item">
+        <span class="summary-label">Total Metrics:</span>
+        <span class="summary-value">{{ summary.totalMetrics }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Average Duration:</span>
+        <span class="summary-value">{{ formatDuration(summary.averageDuration) }}</span>
+      </div>
+      <div class="summary-item" *ngIf="summary.violations">
+        <span class="summary-label">Budget Violations:</span>
+        <span class="summary-value" [class.has-violations]="summary.violations.total > 0">
+          {{ summary.violations.total }} ({{ summary.violations.errors }} errors, {{ summary.violations.warnings }} warnings)
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Metrics Section -->
+  <section class="dashboard-section" *ngIf="recentMetrics.length > 0">
+    <h3 class="section-title">Recent Metrics</h3>
+    <div class="metrics-table">
+      <div class="metrics-row header">
+        <div class="metric-cell">Name</div>
+        <div class="metric-cell">Duration</div>
+        <div class="metric-cell">Timestamp</div>
+      </div>
+      <div class="metrics-row" *ngFor="let metric of recentMetrics">
+        <div class="metric-cell">{{ metric.name }}</div>
+        <div class="metric-cell">{{ formatDuration(metric.duration) }}</div>
+        <div class="metric-cell">{{ formatTimestamp(metric.timestamp) }}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Budget Violations Section -->
+  <section class="dashboard-section" *ngIf="budgetViolations.length > 0">
+    <h3 class="section-title">Budget Violations</h3>
+    <div class="violations-list">
+      <div class="violation-item" *ngFor="let violation of budgetViolations" [class]="'violation-' + violation.severity">
+        <div class="violation-header">
+          <span class="violation-budget">{{ violation.budget }}</span>
+          <span class="violation-severity">{{ violation.severity }}</span>
+        </div>
+        <div class="violation-details">
+          Actual: {{ violation.actual }} | Threshold: {{ violation.threshold }}
+        </div>
+        <div class="violation-time">{{ formatTimestampWithDate(violation.timestamp) }}</div>
+      </div>
+    </div>
+  </section>
+</div>
+

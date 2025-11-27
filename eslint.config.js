@@ -58,6 +58,21 @@ module.exports = tseslint.config(
       "no-empty-function": ["warn", { allow: ["constructors"] }],
       // Require use of OnPush change detection strategy
       "@angular-eslint/prefer-on-push-component-change-detection": "warn",
+      // Unused imports and variables
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_"
+        }
+      ],
+      "no-unused-vars": "off", // Turn off base rule as it conflicts with TypeScript version
+      // Error handling patterns
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-floating-promises": "warn",
+      "no-throw-literal": "warn",
+      "@typescript-eslint/only-throw-error": "warn",
     },
   },
   {

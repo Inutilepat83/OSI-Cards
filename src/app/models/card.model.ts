@@ -1,7 +1,8 @@
 /**
  * Card type identifier for categorizing cards
+ * Dynamically determined from available examples in the configs folder
  */
-export type CardType = 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'event' | 'project' | 'sko';
+export type CardType = string;
 
 /**
  * AI Card Configuration
@@ -425,10 +426,39 @@ export type CardAction = MailCardAction | WebsiteCardAction | AgentCardAction | 
 export class CardTypeGuards {
   /**
    * Type guard for AICardConfig
-   * Validates that an object has the required properties of an AICardConfig
+   * 
+   * Validates that an object has the required properties of an AICardConfig:
+   * - cardTitle: non-empty string
+   * - sections: array (can be empty)
+   * 
+   * @param obj - The object to validate
+   * @returns true if obj is a valid AICardConfig, false otherwise
+   * 
+   * @example
+   * ```typescript
+   * const data: unknown = {
+   *   cardTitle: 'My Card',
+   *   sections: []
+   * };
+   * 
+   * if (CardTypeGuards.isAICardConfig(data)) {
+   *   // TypeScript now knows data is AICardConfig
+   *   console.log(data.cardTitle); // Type-safe access
+   *   console.log(data.sections.length);
+   * }
+   * ```
+   * 
+   * @example
+   * ```typescript
+   * // Returns false for invalid objects
+   * CardTypeGuards.isAICardConfig(null); // false
+   * CardTypeGuards.isAICardConfig({}); // false (missing cardTitle)
+   * CardTypeGuards.isAICardConfig({ cardTitle: '' }); // false (empty title)
+   * CardTypeGuards.isAICardConfig({ cardTitle: 'Title' }); // false (missing sections)
+   * ```
    */
   static isAICardConfig(obj: unknown): obj is AICardConfig {
-    if (!obj || typeof obj !== 'object') return false;
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return false;
     const card = obj as Record<string, unknown>;
     return (
       typeof card['cardTitle'] === 'string' &&
@@ -439,7 +469,39 @@ export class CardTypeGuards {
 
   /**
    * Type guard for CardSection
-   * Validates that an object has the required properties of a CardSection
+   * 
+   * Validates that an object has the required properties of a CardSection:
+   * - title: non-empty string
+   * - type: valid section type string
+   * - fields: optional array (if present, must be an array)
+   * - items: optional array (if present, must be an array)
+   * 
+   * @param obj - The object to validate
+   * @returns true if obj is a valid CardSection, false otherwise
+   * 
+   * @example
+   * ```typescript
+   * const data: unknown = {
+   *   title: 'Company Info',
+   *   type: 'info',
+   *   fields: [{ label: 'Industry', value: 'Tech' }]
+   * };
+   * 
+   * if (CardTypeGuards.isCardSection(data)) {
+   *   // TypeScript now knows data is CardSection
+   *   console.log(data.title); // Type-safe access
+   *   console.log(data.type); // 'info'
+   * }
+   * ```
+   * 
+   * @example
+   * ```typescript
+   * // Returns false for invalid objects
+   * CardTypeGuards.isCardSection(null); // false
+   * CardTypeGuards.isCardSection({ title: '', type: 'info' }); // false (empty title)
+   * CardTypeGuards.isCardSection({ title: 'Section', type: 'invalid' }); // false (invalid type)
+   * CardTypeGuards.isCardSection({ title: 'Section', fields: 'not-array' }); // false (fields not array)
+   * ```
    */
   static isCardSection(obj: unknown): obj is CardSection {
     if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return false;
@@ -479,7 +541,36 @@ export class CardTypeGuards {
 
   /**
    * Type guard for CardField
-   * Validates that an object is a valid CardField with at least label/name and value
+   * 
+   * Validates that an object is a valid CardField with:
+   * - label or name: at least one must be a string
+   * - value: must be present (can be string, number, boolean, or object)
+   * 
+   * @param obj - The object to validate
+   * @returns true if obj is a valid CardField, false otherwise
+   * 
+   * @example
+   * ```typescript
+   * const data: unknown = {
+   *   label: 'Revenue',
+   *   value: 1000000
+   * };
+   * 
+   * if (CardTypeGuards.isCardField(data)) {
+   *   // TypeScript now knows data is CardField
+   *   console.log(data.label); // Type-safe access
+   *   console.log(data.value); // 1000000
+   * }
+   * ```
+   * 
+   * @example
+   * ```typescript
+   * // Returns false for invalid objects
+   * CardTypeGuards.isCardField(null); // false
+   * CardTypeGuards.isCardField({ value: 'Value' }); // false (no label or name)
+   * CardTypeGuards.isCardField({ label: 'Label' }); // false (no value)
+   * CardTypeGuards.isCardField({ label: 'Label', value: null }); // false (value is null)
+   * ```
    */
   static isCardField(obj: unknown): obj is CardField {
     if (!obj || typeof obj !== 'object') return false;
@@ -496,7 +587,36 @@ export class CardTypeGuards {
 
   /**
    * Type guard for CardItem
-   * Validates that an object is a valid CardItem
+   * 
+   * Validates that an object is a valid CardItem with:
+   * - title: non-empty string (required)
+   * 
+   * @param obj - The object to validate
+   * @returns true if obj is a valid CardItem, false otherwise
+   * 
+   * @example
+   * ```typescript
+   * const data: unknown = {
+   *   title: 'Project Alpha',
+   *   description: 'Q4 2024 initiative',
+   *   status: 'in-progress'
+   * };
+   * 
+   * if (CardTypeGuards.isCardItem(data)) {
+   *   // TypeScript now knows data is CardItem
+   *   console.log(data.title); // Type-safe access
+   *   console.log(data.description); // Optional property
+   * }
+   * ```
+   * 
+   * @example
+   * ```typescript
+   * // Returns false for invalid objects
+   * CardTypeGuards.isCardItem(null); // false
+   * CardTypeGuards.isCardItem({}); // false (no title)
+   * CardTypeGuards.isCardItem({ title: '' }); // false (empty title)
+   * CardTypeGuards.isCardItem({ title: 123 }); // false (title not string)
+   * ```
    */
   static isCardItem(obj: unknown): obj is CardItem {
     if (!obj || typeof obj !== 'object') return false;
@@ -508,7 +628,37 @@ export class CardTypeGuards {
 
   /**
    * Type guard for CardAction
-   * Validates that an object is a valid CardAction
+   * 
+   * Validates that an object is a valid CardAction with:
+   * - label: non-empty string (required)
+   * - type: optional, but if present must be a valid action type
+   * 
+   * @param obj - The object to validate
+   * @returns true if obj is a valid CardAction, false otherwise
+   * 
+   * @example
+   * ```typescript
+   * const data: unknown = {
+   *   label: 'Contact Us',
+   *   type: 'website',
+   *   url: 'https://example.com'
+   * };
+   * 
+   * if (CardTypeGuards.isCardAction(data)) {
+   *   // TypeScript now knows data is CardAction
+   *   console.log(data.label); // Type-safe access
+   *   console.log(data.type); // 'website'
+   * }
+   * ```
+   * 
+   * @example
+   * ```typescript
+   * // Returns false for invalid objects
+   * CardTypeGuards.isCardAction(null); // false
+   * CardTypeGuards.isCardAction({}); // false (no label)
+   * CardTypeGuards.isCardAction({ label: '' }); // false (empty label)
+   * CardTypeGuards.isCardAction({ label: 'Action', type: 'invalid' }); // false (invalid type)
+   * ```
    */
   static isCardAction(obj: unknown): obj is CardAction {
     if (!obj || typeof obj !== 'object') return false;
@@ -532,7 +682,36 @@ export class CardTypeGuards {
 
   /**
    * Type guard for WebsiteCardAction
-   * Validates that an action is a valid website action
+   * 
+   * Validates that an action is a valid website action with:
+   * - type: must be 'website'
+   * - url or action: must be a valid URL string
+   * 
+   * @param obj - The object to validate
+   * @returns true if obj is a valid WebsiteCardAction, false otherwise
+   * 
+   * @example
+   * ```typescript
+   * const data: unknown = {
+   *   label: 'Visit Website',
+   *   type: 'website',
+   *   url: 'https://example.com'
+   * };
+   * 
+   * if (CardTypeGuards.isWebsiteAction(data)) {
+   *   // TypeScript now knows data is WebsiteCardAction
+   *   console.log(data.url); // Type-safe access
+   *   window.open(data.url); // Safe to use
+   * }
+   * ```
+   * 
+   * @example
+   * ```typescript
+   * // Returns false for invalid objects
+   * CardTypeGuards.isWebsiteAction({ type: 'mail' }); // false (wrong type)
+   * CardTypeGuards.isWebsiteAction({ type: 'website' }); // false (no URL)
+   * CardTypeGuards.isWebsiteAction({ type: 'website', url: 'not-a-url' }); // false (invalid URL)
+   * ```
    */
   static isWebsiteAction(obj: unknown): obj is WebsiteCardAction {
     if (!obj || typeof obj !== 'object') return false;
@@ -577,7 +756,47 @@ export class CardTypeGuards {
 
   /**
    * Type guard to check if an action is a valid mail action
-   * Validates that required fields (contact, subject, body) are present
+   * 
+   * Validates that required fields are present:
+   * - type: must be 'mail'
+   * - email.contact: must have name, email, and role (all strings)
+   * - email.subject: must be a non-empty string
+   * - email.body: must be a non-empty string
+   * 
+   * @param obj - The object to validate
+   * @returns true if obj is a valid MailCardAction, false otherwise
+   * 
+   * @example
+   * ```typescript
+   * const data: unknown = {
+   *   label: 'Send Email',
+   *   type: 'mail',
+   *   email: {
+   *     contact: {
+   *       name: 'John Doe',
+   *       email: 'john@example.com',
+   *       role: 'CEO'
+   *     },
+   *     subject: 'Hello',
+   *     body: 'Message body'
+   *   }
+   * };
+   * 
+   * if (CardTypeGuards.isMailAction(data)) {
+   *   // TypeScript now knows data is MailCardAction
+   *   console.log(data.email.contact.email); // Type-safe access
+   *   console.log(data.email.subject); // 'Hello'
+   * }
+   * ```
+   * 
+   * @example
+   * ```typescript
+   * // Returns false for invalid objects
+   * CardTypeGuards.isMailAction({ type: 'website' }); // false (wrong type)
+   * CardTypeGuards.isMailAction({ type: 'mail' }); // false (no email config)
+   * CardTypeGuards.isMailAction({ type: 'mail', email: { contact: {} } }); // false (incomplete contact)
+   * CardTypeGuards.isMailAction({ type: 'mail', email: { contact: {...}, subject: '' } }); // false (empty subject)
+   * ```
    */
   static isMailAction(obj: unknown): obj is MailCardAction {
     if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return false;
@@ -678,11 +897,12 @@ export class CardUtils {
    * @param prefix - ID prefix (default: 'item')
    * @returns Unique ID string
    * @deprecated Use generateId from card-utils.ts instead for consistency
+   * This method delegates to card-utils.generateId to avoid circular dependencies
    */
   static generateId(prefix = 'item'): string {
-    // Delegate to the centralized implementation
-    // Import would create circular dependency, so we keep implementation but mark as deprecated
-    const randomString = Math.random().toString(36).slice(2, 9);
+    // Use the same implementation as card-utils.ts to maintain consistency
+    // Import would create circular dependency, so we replicate the logic
+    const randomString = Math.random().toString(36).slice(2, 2 + 7);
     return `${prefix}_${Date.now()}_${randomString}`;
   }
 

@@ -26,8 +26,10 @@ describe('MagneticTiltService', () => {
       
       service.tiltCalculations$.subscribe(calculations => {
         expect(calculations).toBeDefined();
-        expect(calculations.rotateX).toBeDefined();
         expect(calculations.rotateY).toBeDefined();
+        expect(calculations.glowBlur).toBeDefined();
+        expect(calculations.glowOpacity).toBeDefined();
+        expect(calculations.reflectionOpacity).toBeDefined();
         document.body.removeChild(element);
         done();
       });
@@ -39,8 +41,10 @@ describe('MagneticTiltService', () => {
       service.calculateTilt(mousePos, null);
       
       service.tiltCalculations$.subscribe(calculations => {
-        expect(calculations.rotateX).toBe(0);
         expect(calculations.rotateY).toBe(0);
+        expect(calculations.glowBlur).toBeDefined();
+        expect(calculations.glowOpacity).toBeDefined();
+        expect(calculations.reflectionOpacity).toBe(0);
         done();
       });
     });
@@ -50,7 +54,6 @@ describe('MagneticTiltService', () => {
     it('should emit tilt calculations', (done) => {
       service.tiltCalculations$.subscribe(calculations => {
         expect(calculations).toBeDefined();
-        expect(calculations).toHaveProperty('rotateX');
         expect(calculations).toHaveProperty('rotateY');
         expect(calculations).toHaveProperty('glowBlur');
         expect(calculations).toHaveProperty('glowOpacity');
