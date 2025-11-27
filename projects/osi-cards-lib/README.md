@@ -1,6 +1,6 @@
-# OSI Cards Library
+# OrangeSales Intelligence OSI Cards Library
 
-A standalone Angular library for rendering beautiful, interactive AI-powered cards with full functionality including all section types, animations, and styling.
+A standalone Angular library for rendering beautiful, interactive AI-powered cards with full functionality including all section types, animations, and styling. OrangeSales Intelligence OSI Cards is a versatile card generator used by sales intelligence agents, featuring structured formatting that can design cards for any form of business intelligence data.
 
 ## Installation
 

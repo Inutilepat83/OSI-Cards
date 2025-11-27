@@ -1,6 +1,6 @@
-# OSI Cards
+# OrangeSales Intelligence OSI Cards
 
-**OSI Cards** is a modern, token-driven Angular dashboard framework (supports Angular 18 and 20) that transforms any dataset into a visually rich stack of interactive cards rendered within a responsive masonry grid. Built for flexibility, accessibility, and performance, OSI Cards empowers developers to compose diverse data experiences with minimal friction.
+**OrangeSales Intelligence OSI Cards** is a versatile card generator used by sales intelligence agents. It features structured formatting that can design cards for any form of business intelligence data. Built as a modern, token-driven Angular dashboard framework (supports Angular 18 and 20), OSI Cards transforms any dataset into a visually rich stack of interactive cards rendered within a responsive masonry grid. Built for flexibility, accessibility, and performance, OSI Cards empowers developers to compose diverse data experiences with minimal friction.
 
 Each card is composed of one or more **sections**—standalone, configurable components orchestrated by `AICardRendererComponent` ⟶ `SectionRendererComponent` ⟶ `MasonryGridComponent`. This architecture enables seamless combination of layouts, real-time streaming updates, and rich interactions.
 
