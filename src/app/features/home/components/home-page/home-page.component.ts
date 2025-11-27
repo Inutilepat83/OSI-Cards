@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, ElementRef, HostListener, OnInit, ViewChild, inject, NgZone, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -57,6 +57,9 @@ export class HomePageComponent implements OnInit {
   private readonly cardDataService = inject(CardDataService);
   private readonly agentService = inject(AgentService);
   private readonly chatService = inject(ChatService);
+  private readonly document = inject(DOCUMENT);
+  
+  theme: 'day' | 'night' = 'night';
   
   // Batch section completions to prevent excessive dispatches
   private completionBatchTimer: ReturnType<typeof setTimeout> | null = null;
@@ -164,6 +167,15 @@ export class HomePageComponent implements OnInit {
   private lastPersistedFingerprint: string | null = null;
 
   ngOnInit(): void {
+    // Initialize theme
+    if (typeof window !== 'undefined') {
+      const storedTheme = localStorage.getItem('osi-theme');
+      if (storedTheme === 'day' || storedTheme === 'night') {
+        this.theme = storedTheme;
+      }
+    }
+    this.applyTheme();
+    
     // Subscribe to store selectors
     this.store.select(CardSelectors.selectCurrentCard)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -2626,6 +2638,23 @@ export class HomePageComponent implements OnInit {
     const mismatches = sections.filter(s => s.completionMismatch);
     if (mismatches.length > 0) {
       this.logger.warn('⚠️ Completion Mismatches', 'HomePageComponent', mismatches);
+    }
+  }
+
+  toggleTheme(): void {
+    this.theme = this.theme === 'night' ? 'day' : 'night';
+    this.applyTheme();
+    this.cd.markForCheck();
+  }
+
+  private applyTheme(): void {
+    const root = this.document.documentElement;
+    root.dataset['theme'] = this.theme;
+    localStorage.setItem('osi-theme', this.theme);
+    if (typeof window !== 'undefined') {
+      const styles = getComputedStyle(root);
+      this.document.body.style.background = styles.getPropertyValue('--background');
+      this.document.body.style.color = styles.getPropertyValue('--foreground');
     }
   }
 }
