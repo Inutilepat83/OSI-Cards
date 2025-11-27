@@ -369,14 +369,18 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   private startMessageRotation(): void {
-    this.currentMessage = this.funnyMessages[0];
+    if (this.funnyMessages.length === 0) {
+      this.currentMessage = 'Loading...';
+      return;
+    }
+    this.currentMessage = this.funnyMessages[0] || 'Loading...';
     this.currentMessageIndex = 0;
     
     interval(2500) // Change message every 2.5 seconds
       .pipe(takeUntil(this.destroyed$))
       .subscribe(() => {
         this.currentMessageIndex = (this.currentMessageIndex + 1) % this.funnyMessages.length;
-        this.currentMessage = this.funnyMessages[this.currentMessageIndex];
+        this.currentMessage = this.funnyMessages[this.currentMessageIndex] || 'Loading...';
         this.cdr.markForCheck();
       });
   }

@@ -165,9 +165,11 @@ export class CardFooterComponent {
   }
 
   hasTextIcon(action: CardAction): boolean {
-    return !!action.icon && typeof action.icon === 'string' && 
-           !action.icon.startsWith('http') && 
-           (action.icon.match(/[\u{1F300}-\u{1F9FF}]/u) || action.icon.length <= 2);
+    if (!action.icon || typeof action.icon !== 'string' || action.icon.startsWith('http')) {
+      return false;
+    }
+    const emojiMatch = action.icon.match(/[\u{1F300}-\u{1F9FF}]/u);
+    return !!emojiMatch || action.icon.length <= 2;
   }
 
   onActionClick(action: CardAction): void {

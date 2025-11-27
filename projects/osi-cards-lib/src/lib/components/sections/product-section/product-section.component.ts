@@ -88,11 +88,11 @@ export class ProductSectionComponent extends BaseSectionComponent<ProductField> 
     });
 
     return orderedKeys.map((key) => {
-      const config = this.categoryConfig[key] ?? this.categoryConfig['default'];
+      const config = this.categoryConfig[key] ?? this.categoryConfig['default'] ?? { title: key, icon: 'circle' };
       return {
         key,
-        title: config.title,
-        icon: config.icon,
+        title: config.title || key,
+        icon: config.icon || 'circle',
         fields: groups.get(key) ?? []
       };
     });

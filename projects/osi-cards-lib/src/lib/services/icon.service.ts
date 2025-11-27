@@ -136,7 +136,7 @@ export class IconService {
       }
     }
     
-    return this.iconMap['default'];
+    return this.iconMap['default'] || 'circle';
   }
 
   getFieldIconClass(fieldName: string): string {
@@ -154,7 +154,7 @@ export class IconService {
       }
     }
     
-    return this.classMap['default'];
+    return this.classMap['default'] || 'text-gray-500';
   }
 }
 

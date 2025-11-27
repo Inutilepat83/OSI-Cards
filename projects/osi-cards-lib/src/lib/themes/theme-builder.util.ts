@@ -48,8 +48,13 @@ export function mergeThemes(...themes: OSICardsThemeConfig[]): OSICardsThemeConf
     throw new Error('At least one theme is required');
   }
 
+  const firstTheme = themes[0];
+  if (!firstTheme) {
+    throw new Error('At least one theme is required');
+  }
+  
   const merged: OSICardsThemeConfig = {
-    name: themes[0].name,
+    name: firstTheme.name,
     preset: false,
     variables: {}
   };

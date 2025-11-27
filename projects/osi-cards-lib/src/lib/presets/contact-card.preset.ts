@@ -70,7 +70,7 @@ export function createContactCard(options: ContactCardOptions): AICardConfig {
     customActions = []
   } = options;
 
-  const sections: CardSection[] = [
+  const sections = [
     {
       id: 'professional-profile',
       title: 'Professional Profile',
@@ -97,7 +97,7 @@ export function createContactCard(options: ContactCardOptions): AICardConfig {
       }))
     }] : []),
     ...customSections
-  ].filter(Boolean);
+  ].filter(Boolean) as CardSection[];
 
   const actions: CardAction[] = [
     ...(email ? [{

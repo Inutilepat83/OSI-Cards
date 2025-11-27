@@ -85,7 +85,7 @@ export class ChartSectionComponent extends BaseSectionComponent<ChartField> {
   }
 
   getColor(field: ChartField, index: number): string {
-    return field.color ?? this.palette[index % this.palette.length];
+    return field.color ?? (this.palette[index % this.palette.length] || '#FF7900');
   }
 
   /**

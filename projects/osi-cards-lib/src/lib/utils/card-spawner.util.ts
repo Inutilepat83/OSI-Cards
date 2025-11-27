@@ -155,6 +155,30 @@ function mergeItems(
 }
 
 /**
+ * Merges actions arrays, avoiding duplicates by ID or label
+ */
+function mergeActions(
+  existing: any[],
+  updates: any[]
+): any[] {
+  const actionMap = new Map<string, any>();
+
+  // Add existing actions
+  existing.forEach(action => {
+    const key = action.id || action.label || String(action);
+    actionMap.set(key, action);
+  });
+
+  // Add or update actions
+  updates.forEach(update => {
+    const key = update.id || update.label || String(update);
+    actionMap.set(key, update);
+  });
+
+  return Array.from(actionMap.values());
+}
+
+/**
  * Gets a unique key for a section (for merging)
  */
 function getSectionKey(section: CardSection): string {
@@ -223,7 +247,7 @@ export function isCardComplete(card: Partial<AICardConfig>): boolean {
     card.sections.every(section => 
       section.title && 
       section.type &&
-      (section.fields?.length > 0 || section.items?.length > 0)
+      ((section.fields && section.fields.length > 0) || (section.items && section.items.length > 0))
     )
   );
 }

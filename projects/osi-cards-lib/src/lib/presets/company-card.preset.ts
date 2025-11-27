@@ -68,7 +68,7 @@ export function createCompanyCard(options: CompanyCardOptions): AICardConfig {
     customActions = []
   } = options;
 
-  const sections: CardSection[] = [
+  const sections = [
     {
       id: 'company-overview',
       title: 'Company Overview',
@@ -105,7 +105,7 @@ export function createCompanyCard(options: CompanyCardOptions): AICardConfig {
       ]
     }] : []),
     ...customSections
-  ].filter(Boolean);
+  ].filter(Boolean) as CardSection[];
 
   const actions: CardAction[] = [
     ...(websiteUrl ? [{
