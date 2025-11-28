@@ -1,7 +1,8 @@
 /* Detailed info cards shown in the company information section */
 /* OPTIMIZED: Compact design with proper typography hierarchy */
 
-@import 'design-system';
+@use 'design-system' as *;
+@use 'sections-base';
 
 .info-matrix {
   display: grid !important;
@@ -15,7 +16,6 @@
 }
 
 .info-row {
-  @include card;
   appearance: none;
   font: inherit;
   /* ENHANCED: Improved spacing and visual hierarchy */
@@ -26,6 +26,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  @include sections-base.card;
   cursor: pointer;
   text-align: left;
   width: 100%;

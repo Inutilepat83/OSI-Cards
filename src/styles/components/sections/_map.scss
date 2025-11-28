@@ -1,7 +1,8 @@
 /* Map Section - Modern, Clean Design */
 
-@import 'sections-base';
-@import 'unified-cards';
+@use 'design-system' as *;
+@use 'sections-base';
+@use 'unified-cards' as *;
 
 /* Map Grid Layout */
 .map-grid {
@@ -17,13 +18,13 @@
 
 /* Map Card */
 .map-card {
-  @include card;
   display: flex;
   flex-direction: column;
   gap: var(--card-gap) !important;
   min-height: auto;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  @include sections-base.card;
   border: 1px solid color-mix(in srgb, var(--color-brand) 20%, transparent);
   align-items: flex-start;
 

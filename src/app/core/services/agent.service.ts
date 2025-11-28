@@ -18,17 +18,46 @@ export interface AgentTriggerResult {
 }
 
 /**
- * Agent Service
+ * @ngDoc AgentService
+ * @name AgentService
+ * @description
+ * Agent Service for LLM agent integration and card generation.
  * 
- * Handles agent triggering and execution based on card actions.
- * This service can be extended to integrate with external agent systems,
- * LLM services, or workflow automation tools.
+ * Handles agent triggering and execution based on card actions. This service
+ * integrates with external agent systems, LLM services, and workflow automation
+ * tools to generate cards dynamically.
+ * 
+ * ## Features
+ * - Agent triggering with context
+ * - API integration for external agent systems
+ * - Error handling and logging
+ * - Execution tracking
+ * 
+ * ## LLM Integration
+ * This service works with LLM agents to generate card configurations.
+ * Agents can be triggered from card actions or programmatically.
  * 
  * @example
  * ```typescript
+ * import { inject } from '@angular/core';
+ * import { AgentService } from './core/services/agent.service';
+ * 
  * const agentService = inject(AgentService);
- * agentService.triggerAgent('agent-123', { context: 'user-action' });
+ * 
+ * // Trigger an agent with context
+ * const result = await agentService.triggerAgent('card-generator', {
+ *   prompt: 'Generate a company card for Acme Corp',
+ *   cardType: 'company'
+ * });
+ * 
+ * if (result.success) {
+ *   console.log('Agent executed:', result.executionId);
+ * }
  * ```
+ * 
+ * @see {@link LLMStreamingService} for streaming card generation
+ * @see {@link ChatService} for chat-based interactions
+ * @since 1.0.0
  */
 @Injectable({
   providedIn: 'root'

@@ -1,7 +1,8 @@
 /* Financials Section - Enhanced Modern Design */
 
-@import 'sections-base';
-@import 'unified-cards';
+@use 'design-system' as *;
+@use 'sections-base';
+@use 'unified-cards' as *;
 
 /* Financials Grid Layout */
 .financials-grid {
@@ -22,7 +23,6 @@
 
 /* Financial Card - Minimalistic Design */
 .financial-card {
-  @include card;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -31,6 +31,7 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  @include sections-base.card;
   transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid color-mix(in srgb, var(--color-brand) 20%, transparent);
   

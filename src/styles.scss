@@ -1,59 +1,66 @@
+@use 'styles/core/variables' as *;
+@use 'styles/core/mixins' as *;
+@use 'styles/core/surface-layers' as *;
+@use 'styles/core/global' as *;
+@use 'styles/core/utilities' as *;
+@use 'styles/core/animations' as *;
+
+/* Layout styles */
+@use 'styles/layout/tilt' as *;
+@use 'styles/layout/masonry' as *;
+
+/* Component styles */
+@use 'styles/components/cards/ai-card' as *;
+@use 'styles/components/sections/design-system' as *; /* Master design system - must import first */
+@use 'styles/components/sections/sections-base' as *;
+@use 'styles/components/sections/section-types' as *;
+@use 'styles/components/sections/section-shell' as *;
+@use 'styles/components/sections/overview' as *;
+@use 'styles/components/sections/analytics' as *;
+@use 'styles/components/sections/news' as *;
+@use 'styles/components/sections/social-media' as *;
+@use 'styles/components/sections/info' as *;
+@use 'styles/components/sections/map' as *;
+@use 'styles/components/sections/list' as *;
+@use 'styles/components/sections/contact' as *;
+@use 'styles/components/sections/network' as *;
+@use 'styles/components/sections/product' as *;
+@use 'styles/components/sections/chart' as *;
+@use 'styles/components/sections/event' as *;
+@use 'styles/components/sections/financials' as *;
+@use 'styles/components/sections/solutions' as *;
+@use 'styles/components/sections/quotation' as *;
+@use 'styles/components/sections/text-reference' as *;
+@use 'styles/components/sections/brand-colors' as *;
+@use 'styles/components/sections/fallback' as *;
+@use 'styles/components/sections/unified-cards' as *; /* Must be last to override all section-specific styles */
+@use 'styles/components/sections/global-enforcement' as *; /* GLOBAL ENFORCEMENT - MUST BE ABSOLUTELY LAST to enforce all settings */
+@use 'styles/components/badges' as *;
+@use 'styles/components/config-panel' as *;
+@use 'styles/components/ai-card-renderer' as *;
+@use 'styles/components/image-fallback' as *;
+
+/* Page styles */
+@use 'styles/pages/home' as *;
+@use 'styles/ng-doc-overrides' as *;
+
+/* Tailwind directives - must come after @use */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* CSS files - Keep as @import (cannot use @use for CSS files) */
+/* Override deprecated color-adjust in prismjs (fixes PostCSS warning) - must be before prismjs imports */
+@import 'styles/prismjs-overrides.css';
 /* Prism.js syntax highlighting */
 @import 'prismjs/themes/prism-tomorrow.css';
 @import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
 @import 'prismjs/plugins/line-highlight/prism-line-highlight.css';
 
-@import 'styles/core/variables';
-@import 'styles/core/mixins';
-@import 'styles/core/surface-layers';
-@import 'styles/core/global';
-@import 'styles/core/utilities';
-@import 'styles/core/animations';
-
-@import 'styles/layout/tilt';
-@import 'styles/layout/masonry';
-
-@import 'styles/components/cards/ai-card';
-@import 'styles/components/sections/design-system'; /* Master design system - must import first */
-@import 'styles/components/sections/sections-base';
-@import 'styles/components/sections/section-types';
-@import 'styles/components/sections/section-shell';
-@import 'styles/components/sections/overview';
-@import 'styles/components/sections/analytics';
-@import 'styles/components/sections/news';
-@import 'styles/components/sections/social-media';
-@import 'styles/components/sections/info';
-@import 'styles/components/sections/map';
-@import 'styles/components/sections/list';
-@import 'styles/components/sections/contact';
-@import 'styles/components/sections/network';
-@import 'styles/components/sections/product';
-@import 'styles/components/sections/chart';
-@import 'styles/components/sections/event';
-@import 'styles/components/sections/financials';
-@import 'styles/components/sections/solutions';
-@import 'styles/components/sections/quotation';
-@import 'styles/components/sections/text-reference';
-@import 'styles/components/sections/brand-colors';
-@import 'styles/components/sections/fallback';
-@import 'styles/components/sections/unified-cards'; /* Must be last to override all section-specific styles */
-@import 'styles/components/sections/global-enforcement'; /* GLOBAL ENFORCEMENT - MUST BE ABSOLUTELY LAST to enforce all settings */
-@import 'styles/components/badges';
-@import 'styles/components/config-panel';
-@import 'styles/components/ai-card-renderer';
-@import 'styles/components/image-fallback';
-
-@import 'styles/pages/home';
-
-/* NgDoc styles - Import last to ensure they take precedence */
+/* NgDoc styles */
 @import '@ng-doc/app/styles/main.css';
 @import '@ng-doc/app/styles/global.css';
 @import '@ng-doc/app/styles/themes/dark.css';
-@import 'styles/ng-doc-overrides';
 
 /* Optional local Material Icons: place fonts in src/assets/fonts/MaterialIcons-Regular.woff2 */
 @font-face {

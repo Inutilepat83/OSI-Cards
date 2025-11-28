@@ -1,0 +1,99 @@
+{
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "retry": "Réessayer",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "warning": "Avertissement",
+    "info": "Information",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "reset": "Réinitialiser",
+    "apply": "Appliquer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "finish": "Terminer",
+    "skip": "Ignorer",
+    "continue": "Continuer",
+    "items": "{{count}} élément",
+    "items_plural": "{{count}} éléments"
+  },
+  "navigation": {
+    "skipToMainContent": "Aller au contenu principal",
+    "skipToCardPreview": "Aller à l'aperçu de la carte",
+    "skipToJsonEditor": "Aller à l'éditeur JSON",
+    "home": "Accueil",
+    "features": "Fonctionnalités",
+    "documentation": "Documentation"
+  },
+  "cards": {
+    "title": "Exemples de cartes OSI",
+    "empty": "Aucune carte disponible",
+    "loading": "Chargement des cartes...",
+    "error": "Échec du chargement des cartes",
+    "reorder": "Réorganiser les cartes",
+    "dragToReorder": "Glisser pour réorganiser les cartes",
+    "card": "Carte",
+    "cards": "Cartes"
+  },
+  "sections": {
+    "empty": "Aucun élément disponible",
+    "emptyDescription": "Cette section est actuellement vide",
+    "field": "Champ",
+    "item": "Élément",
+    "noValue": "Aucune valeur",
+    "items": "{{count}} élément",
+    "items_plural": "{{count}} éléments"
+  },
+  "errors": {
+    "title": "Une erreur s'est produite",
+    "close": "Fermer le message d'erreur",
+    "retry": "Réessayer",
+    "generic": "Une erreur s'est produite. Veuillez réessayer.",
+    "network": "Erreur réseau. Veuillez vérifier votre connexion.",
+    "notFound": "La ressource demandée est introuvable.",
+    "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action.",
+    "forbidden": "Accès refusé.",
+    "serverError": "Erreur serveur. Veuillez réessayer plus tard.",
+    "timeout": "Délai d'attente dépassé. Veuillez réessayer.",
+    "unknown": "Une erreur inconnue s'est produite."
+  },
+  "actions": {
+    "contact": "Contacter",
+    "email": "Email",
+    "call": "Appeler",
+    "visit": "Visiter le site web",
+    "download": "Télécharger",
+    "share": "Partager",
+    "copy": "Copier",
+    "view": "Voir",
+    "edit": "Modifier",
+    "delete": "Supprimer"
+  },
+  "cardTypes": {
+    "all": "Toutes les cartes",
+    "company": "Entreprise",
+    "person": "Personne",
+    "product": "Produit",
+    "project": "Projet",
+    "event": "Événement",
+    "location": "Lieu"
+  },
+  "accessibility": {
+    "loading": "Chargement",
+    "error": "Erreur",
+    "success": "Succès",
+    "information": "Information",
+    "warning": "Avertissement"
+  }
+}
+

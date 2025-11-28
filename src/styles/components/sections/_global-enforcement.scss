@@ -4,6 +4,8 @@
 /* This file enforces global settings across ALL sections */
 /* Sections MUST NOT override these settings */
 /* IMPORTANT: This file MUST be imported LAST to override all sections */
+
+@use '../../core/surface-layers' as *;
 /* 
  * UNIFIED CARD SYSTEM:
  * ====================

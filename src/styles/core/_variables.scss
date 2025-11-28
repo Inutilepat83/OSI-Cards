@@ -1,5 +1,4 @@
-/* Import theme colors first - this defines :root with theme system */
-@import 'variables/colors';
+@use 'variables/colors' as *;
 
 /* Additional design tokens that extend the theme system */
 :root,

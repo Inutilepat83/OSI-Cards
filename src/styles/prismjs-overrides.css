@@ -1,0 +1,24 @@
+/* Override deprecated color-adjust in prismjs styles */
+/* This file fixes the PostCSS autoprefixer warning about color-adjust deprecation */
+
+/* Override for all Prism.js elements that use color-adjust */
+.line-highlight,
+.line-highlight *,
+pre[class*="language-"],
+code[class*="language-"] {
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+@media print {
+  .line-highlight,
+  .line-highlight *,
+  pre[class*="language-"],
+  code[class*="language-"] {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    /* Remove deprecated color-adjust */
+    color-adjust: unset !important;
+  }
+}
+

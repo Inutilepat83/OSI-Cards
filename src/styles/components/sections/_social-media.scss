@@ -1,4 +1,4 @@
-@import 'sections-base';
+@use 'sections-base' as *;
 
 /* Social media section adhering to shared token system */
 .ai-section--social-media {

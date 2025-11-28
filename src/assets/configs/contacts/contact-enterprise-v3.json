@@ -130,7 +130,7 @@
   ],
   "actions": [
     { "label": "Schedule Call", "type": "agent", "variant": "primary", "icon": "☎️", "agentId": "calendar-agent", "agentContext": { "action": "schedule_call" } },
-    { "label": "Send Proposal", "type": "mail", "variant": "primary", "icon": "📧", "email": { "subject": "Business Proposal" } },
+    { "label": "Send Proposal", "type": "mail", "variant": "primary", "icon": "📧", "email": { "to": "alex.patel@eurobank.com", "subject": "Business Proposal" } },
     { "label": "View LinkedIn", "type": "website", "variant": "secondary", "icon": "💼", "url": "https://www.linkedin.com" }
   ]
 }

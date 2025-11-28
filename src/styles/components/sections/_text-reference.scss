@@ -1,18 +1,19 @@
-@import 'sections-base';
-@import 'unified-cards';
+@use 'design-system' as *;
+@use 'sections-base';
+@use 'unified-cards' as *;
 
 .section-block--reference {
   --section-card-grid-min: 300px; /* Wider cards for text references */
 }
 
 .section-card--reference {
-  @include card;
   display: flex;
   flex-direction: column;
   /* COMPACT: No minimum height */
   min-height: auto;
   gap: var(--card-gap);
   border: 1px solid color-mix(in srgb, var(--color-brand) 20%, transparent);
+  @include sections-base.card;
 }
 
 .reference-card__content {

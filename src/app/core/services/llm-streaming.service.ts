@@ -24,14 +24,17 @@ export interface SectionCompletionInfo {
 }
 
 /**
- * LLM Streaming Service
+ * @ngDoc LLMStreamingService
+ * @name LLMStreamingService
+ * @description
+ * LLM Streaming Service for progressive card generation.
  * 
  * Simulates LLM (Large Language Model) streaming behavior for progressive card generation.
  * Provides realistic streaming experience with chunked updates, thinking delays, and
  * progressive section completion. Essential for creating an engaging user experience
  * during card generation.
  * 
- * Features:
+ * ## Features
  * - Realistic streaming simulation with configurable chunk sizes
  * - Thinking delay simulation before streaming starts
  * - Progressive section completion tracking
@@ -39,26 +42,43 @@ export interface SectionCompletionInfo {
  * - State management with observables
  * - Automatic cleanup and cancellation
  * 
+ * ## LLM Integration
+ * This service is designed to work with LLM APIs that stream JSON responses.
+ * It handles the progressive parsing and merging of card data as it arrives.
+ * 
  * @example
  * ```typescript
+ * import { inject } from '@angular/core';
+ * import { LLMStreamingService } from './core/services/llm-streaming.service';
+ * 
  * const streamingService = inject(LLMStreamingService);
  * 
- * // Start streaming
+ * // Start streaming from LLM response
+ * const targetJson = JSON.stringify({
+ *   cardTitle: 'Company Profile',
+ *   sections: [...]
+ * });
  * streamingService.start(targetJson);
  * 
- * // Subscribe to card updates
+ * // Subscribe to card updates as they stream in
  * streamingService.cardUpdates$.subscribe(update => {
  *   console.log('Card updated:', update.card);
+ *   console.log('Change type:', update.changeType);
  * });
  * 
  * // Subscribe to state changes
  * streamingService.state$.subscribe(state => {
- *   console.log('Streaming state:', state);
+ *   console.log('Streaming state:', state.stage);
+ *   console.log('Progress:', state.progress);
  * });
  * 
- * // Stop streaming
+ * // Stop streaming if needed
  * streamingService.stop();
  * ```
+ * 
+ * @see {@link AgentService} for LLM agent integration
+ * @see {@link ChatService} for chat-based card generation
+ * @since 1.0.0
  */
 @Injectable({
   providedIn: 'root'

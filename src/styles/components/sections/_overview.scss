@@ -1,7 +1,8 @@
 /* Overview section - Single column premium design */
 /* ENHANCED: Clean, elegant single-column layout with refined styling */
 
-@import 'design-system';
+@use 'design-system' as *;
+@use 'sections-base';
 
 .overview-grid {
   display: flex !important;
@@ -12,16 +13,20 @@
 }
 
 .overview-card {
-  @include card;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  min-height: auto;
-  padding: calc(var(--card-padding) * 0.625) calc(var(--card-padding) * 0.875) !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  background: var(--card-background);
+  @include sections-base.card;
+  
+  /* Move declarations before nested rules to fix Sass deprecation warning */
+  & {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-height: auto;
+    padding: calc(var(--card-padding) * 0.625) calc(var(--card-padding) * 0.875) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    background: var(--card-background);
+  }
   
   /* Left accent border */
   &::before {

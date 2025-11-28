@@ -143,6 +143,7 @@ All OSI Cards styles are scoped within `.osi-cards-container`:
 - ✅ CSS variables (scoped to container, won't conflict with your app)
 - ✅ Focus styles (only for elements inside container)
 - ✅ All component styles (cards, sections, etc.)
+- ✅ Bootstrap style isolation (Bootstrap variables and styles are reset within containers)
 
 ## Benefits
 
@@ -150,6 +151,7 @@ All OSI Cards styles are scoped within `.osi-cards-container`:
 2. **No Variable Conflicts**: CSS variables are scoped, won't override your app's variables
 3. **Isolated Styling**: Each instance can have its own theme
 4. **Backward Compatible**: Global stylesheet still available if needed
+5. **Bootstrap Isolation**: Bootstrap CSS variables and styles are automatically reset within card containers, preventing conflicts when integrating into Bootstrap-based applications
 
 ## Troubleshooting
 
@@ -260,6 +262,49 @@ export class AppComponent {
 4. **Test CSS isolation** by checking that OSI Cards styles don't affect your app
 5. **Use multiple containers** if you need different themes on the same page
 
+## Bootstrap Integration
+
+OSI Cards automatically isolates itself from Bootstrap styles when using the scoped stylesheet. This means:
+
+- **Bootstrap CSS variables are reset**: All `--bs-*` variables are set to `unset` within `.osi-cards-container`
+- **Bootstrap utility classes don't affect cards**: Card components use CSS isolation to prevent Bootstrap styles from leaking in
+- **No manual configuration needed**: Bootstrap isolation is automatic when using scoped styles
+
+### Example: Using OSI Cards in a Bootstrap Application
+
+```html
+<!-- Your Bootstrap application -->
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <!-- Bootstrap content -->
+      <h1>My Bootstrap App</h1>
+    </div>
+    <div class="col-md-4">
+      <!-- OSI Cards - isolated from Bootstrap -->
+      <div class="osi-cards-container">
+        <app-ai-card-renderer [cardConfig]="card"></app-ai-card-renderer>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+The OSI Cards will render with their own styling, completely isolated from Bootstrap's CSS variables and utility classes.
+
+### What Gets Reset?
+
+When using scoped styles, the following Bootstrap variables are automatically reset within card containers:
+
+- All `--bs-*` color variables (primary, secondary, success, etc.)
+- Bootstrap typography variables (`--bs-body-font-family`, `--bs-body-font-size`, etc.)
+- Bootstrap spacing variables (`--bs-gutter-x`, `--bs-gutter-y`)
+- Bootstrap border and shadow variables
+- Bootstrap form and table variables
+- DataTables variables (`--dt-*`)
+
+This ensures that cards maintain their intended appearance regardless of the Bootstrap version or configuration used in the host application.
+
 ## Support
 
 If you encounter issues with CSS encapsulation:
@@ -267,4 +312,5 @@ If you encounter issues with CSS encapsulation:
 2. Verify your stylesheet imports are correct
 3. Ensure the container class is applied correctly
 4. Check browser DevTools to see if styles are being scoped properly
+5. For Bootstrap conflicts, verify you're using the scoped stylesheet (`_styles-scoped.scss`)
 

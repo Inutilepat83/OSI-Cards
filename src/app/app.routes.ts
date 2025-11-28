@@ -33,10 +33,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/support/support.component').then(m => m.SupportComponent)
   },
   // NgDoc documentation routes
-  // NgDocRootComponent handles routing internally when routes are generated
+  // Routes are auto-generated from page files
   {
     path: 'docs',
-    loadComponent: () => import('@ng-doc/app').then(m => m.NgDocRootComponent)
+    loadComponent: () => import('./features/documentation/docs-wrapper.component').then(m => m.DocsWrapperComponent),
+    loadChildren: () => import('./features/documentation/ng-doc.routes').then(m => m.NG_DOC_ROUTING)
   },
   
   // Company routes

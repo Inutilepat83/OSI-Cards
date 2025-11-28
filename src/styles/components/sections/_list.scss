@@ -1,7 +1,8 @@
 /* List Section - Modern, Clean Design */
 
-@import 'sections-base';
-@import 'unified-cards';
+@use 'design-system' as *;
+@use 'sections-base';
+@use 'unified-cards' as *;
 
 /* List Grid Layout */
 .list-grid {
@@ -17,13 +18,13 @@
 
 /* List Card */
 .list-card {
-  @include card;
   display: flex;
   flex-direction: column;
   gap: var(--card-gap);
   min-height: auto;
   cursor: pointer;
   padding: var(--card-padding) !important;
+  @include sections-base.card;
   transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   background: var(--card-background);
   position: relative;

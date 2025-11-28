@@ -9,7 +9,16 @@ import { CardChangeType } from '../../shared/utils/card-diff.util';
 
 export const cardsAdapter = createEntityAdapter<AICardConfig>({
   selectId: (card) => card.id ?? ensureCardIds(card).id!,
-  sortComparer: (a, b) => a.cardTitle.localeCompare(b.cardTitle)
+  sortComparer: (a, b) => {
+    // First sort by displayOrder if available
+    const orderA = a.displayOrder ?? Number.MAX_SAFE_INTEGER;
+    const orderB = b.displayOrder ?? Number.MAX_SAFE_INTEGER;
+    if (orderA !== orderB) {
+      return orderA - orderB;
+    }
+    // Fallback to title sorting if displayOrder is not set
+    return a.cardTitle.localeCompare(b.cardTitle);
+  }
 });
 
 // ===== ACTIONS =====
@@ -124,6 +133,16 @@ export const trackPerformance = createAction(
 export const searchCards = createAction('[Cards] Search Cards', props<{ query: string }>());
 export const searchCardsSuccess = createAction('[Cards] Search Cards Success', props<{ query: string; results: AICardConfig[] }>());
 export const searchCardsFailure = createAction('[Cards] Search Cards Failure', props<{ query: string; error: string }>());
+
+// Card Reordering Actions
+export const reorderCards = createAction(
+  '[Cards] Reorder Cards',
+  props<{ previousIndex: number; currentIndex: number }>()
+);
+export const reorderCardsSuccess = createAction(
+  '[Cards] Reorder Cards Success',
+  props<{ cards: AICardConfig[] }>()
+);
 
 // ===== STATE INTERFACE =====
 
@@ -306,7 +325,14 @@ export const reducer = createReducer(
   initialState,
   on(loadCards, (state) => ({ ...state, loading: true })),
   on(loadCardsSuccess, (state, { cards }) => {
-    const cardsWithIds = cards.map(card => ensureCardIds(card));
+    const cardsWithIds = cards.map((card, index) => {
+      const cardWithId = ensureCardIds(card);
+      // Initialize displayOrder if not present
+      if (cardWithId.displayOrder === undefined) {
+        return { ...cardWithId, displayOrder: index };
+      }
+      return cardWithId;
+    });
     return cardsAdapter.setAll(cardsWithIds, { ...state, loading: false });
   }),
   on(loadCardIncremental, (state, { card }) => {
@@ -441,5 +467,50 @@ export const reducer = createReducer(
   on(searchCardsFailure, (state, { error }) => ({
     ...state,
     error: error as string,
-  }))
+  })),
+
+  on(reorderCards, (state, { previousIndex, currentIndex }) => {
+    // Get all cards sorted by displayOrder (or by title as fallback)
+    const allCards = state.ids
+      .map(id => state.entities[id])
+      .filter((card): card is AICardConfig => card !== undefined)
+      .sort((a, b) => {
+        const orderA = a.displayOrder ?? Number.MAX_SAFE_INTEGER;
+        const orderB = b.displayOrder ?? Number.MAX_SAFE_INTEGER;
+        if (orderA !== orderB) {
+          return orderA - orderB;
+        }
+        // Fallback to title sorting if displayOrder is not set
+        return a.cardTitle.localeCompare(b.cardTitle);
+      });
+
+    // Perform array reordering
+    if (previousIndex < 0 || previousIndex >= allCards.length || 
+        currentIndex < 0 || currentIndex >= allCards.length) {
+      return state; // Invalid indices, return unchanged state
+    }
+
+    const movedCard = allCards[previousIndex];
+    if (!movedCard) {
+      return state; // Card not found, return unchanged state
+    }
+
+    const newCards = [...allCards];
+    newCards.splice(previousIndex, 1);
+    newCards.splice(currentIndex, 0, movedCard);
+
+    // Update displayOrder for all cards based on new positions
+    const updatedCards = newCards.map((card, index) => ({
+      ...card,
+      displayOrder: index
+    }));
+
+    // Upsert all cards with new displayOrder
+    const cardsWithIds = updatedCards.map(card => ensureCardIds(card));
+    return cardsAdapter.setAll(cardsWithIds, state);
+  }),
+  on(reorderCardsSuccess, (state, { cards }) => {
+    const cardsWithIds = cards.map(card => ensureCardIds(card));
+    return cardsAdapter.setAll(cardsWithIds, state);
+  })
 );

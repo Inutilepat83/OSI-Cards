@@ -1,4 +1,4 @@
-@import 'sections-base';
+@use 'sections-base' as *;
 
 /* News section styling - uses general design variables for spacing, color, and layout */
 .ai-section--news {

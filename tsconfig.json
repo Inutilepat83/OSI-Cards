@@ -87,6 +87,8 @@
     "src/app/store/index.ts",
     "src/app/shared/components/cards/sections/archive/**/*",
     "src/styles/components/sections/archive/**/*",
+    "**/*.stories.ts",
+    ".storybook/**/*",
     "node_modules",
     "Orange Sales Intelligence Cards System 3"
   ]

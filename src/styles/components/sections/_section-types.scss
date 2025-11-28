@@ -1,5 +1,6 @@
-@import 'sections-base';
-@import 'unified-cards';
+@use 'design-system' as *;
+@use 'sections-base';
+@use 'unified-cards' as *;
 
 /**
  * Section Type System
@@ -124,7 +125,7 @@ $section-base-shadow: 0 18px 40px color-mix(in srgb, var(--foreground) 8%, trans
 }
 
 .section-card {
-  @include card;
+  @include sections-base.card;
   /* All properties (padding, border, background, border-radius, hover) are set by @include card */
   /* Matches: rounded-3xl border border-border/40 bg-card/70 p-5 */
   /* Background is forced by @include card with !important */

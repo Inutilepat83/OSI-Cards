@@ -1,7 +1,8 @@
 /* Chart visualization cards with unified styling */
 
-@import 'sections-base';
-@import 'unified-cards';
+@use 'design-system' as *;
+@use 'sections-base';
+@use 'unified-cards' as *;
 
 .chart-section {
   display: flex;
@@ -29,7 +30,6 @@
 }
 
 .chart-card {
-  @include card;
   appearance: none;
   text-align: left;
   width: 100%;
@@ -40,6 +40,7 @@
   position: relative;
   overflow: hidden;
   background: var(--card-background);
+  @include sections-base.card;
 
   /* Minimalistic hover - no glow effects, no vertical movement */
   &:hover {
@@ -165,10 +166,10 @@
 }
 
 .chart-section__summary {
-  @include card;
   cursor: default;
   pointer-events: none;
   min-height: auto;
+  @include sections-base.card;
 }
 
 .chart-section__summary-total {
@@ -221,8 +222,6 @@
 
 @media (max-width: 768px) {
   .chart-card {
-    @include card;
-
     &__label {
       font-size: var(--font-section-label-mobile);
     }

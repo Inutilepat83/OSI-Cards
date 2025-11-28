@@ -5,27 +5,49 @@
 export type CardType = string;
 
 /**
- * AI Card Configuration
+ * @ngDoc AICardConfig
+ * @name AICardConfig
+ * @description
+ * Main configuration interface for AI-generated cards.
  * 
- * Main configuration interface for AI-generated cards. Represents a complete card
- * with title, sections, actions, and metadata. This is the root interface for
- * all card data structures.
+ * Represents a complete card with title, sections, actions, and metadata.
+ * This is the root interface for all card data structures. Used by LLMs to
+ * generate card configurations and by components to render cards.
+ * 
+ * ## Structure
+ * - **cardTitle**: Required main title
+ * - **sections**: Required array of card sections
+ * - **actions**: Optional array of action buttons
+ * - **meta**: Optional metadata for custom use cases
  * 
  * @example
  * ```typescript
+ * import { AICardConfig } from './models';
+ * 
  * const card: AICardConfig = {
  *   id: 'card-123',
  *   cardTitle: 'Company Overview',
  *   cardSubtitle: 'Q4 2024',
  *   cardType: 'company',
  *   sections: [
- *     { title: 'Company Info', type: 'info', fields: [...] }
+ *     { 
+ *       title: 'Company Info', 
+ *       type: 'info', 
+ *       fields: [
+ *         { label: 'Industry', value: 'Technology' },
+ *         { label: 'Employees', value: 500 }
+ *       ]
+ *     }
  *   ],
  *   actions: [
- *     { label: 'Contact', type: 'mail', email: {...} }
+ *     { label: 'Contact', type: 'primary', action: 'mailto:contact@example.com' }
  *   ]
  * };
  * ```
+ * 
+ * @see {@link CardSection} for section structure
+ * @see {@link CardAction} for action structure
+ * @since 1.0.0
  */
 export interface AICardConfig {
   /** Unique identifier for the card (auto-generated if not provided) */
@@ -48,27 +70,60 @@ export interface AICardConfig {
   meta?: Record<string, unknown>;
   /** Timestamp when card was processed */
   processedAt?: number;
+  /** Display order for drag-and-drop reordering (lower numbers appear first) */
+  displayOrder?: number;
 }
 
 /**
- * Card Section
+ * @ngDoc CardSection
+ * @name CardSection
+ * @description
+ * Represents a section within a card.
  * 
- * Represents a section within a card. Sections can contain fields, items, charts,
- * or other content depending on the section type. Each section has a type that
- * determines how it's rendered.
+ * Sections can contain fields, items, charts, or other content depending on
+ * the section type. Each section has a type that determines how it's rendered.
+ * 
+ * ## Section Types
+ * Available section types include: `info`, `analytics`, `news`, `list`, `chart`,
+ * `map`, `contact-card`, `network-card`, and many more. See the section types
+ * documentation for complete list.
+ * 
+ * ## Data Structure
+ * - Use `fields` for key-value pairs (info, analytics sections)
+ * - Use `items` for lists and arrays (list, news, event sections)
+ * - Use `chart` for chart configurations
  * 
  * @example
  * ```typescript
- * const section: CardSection = {
+ * import { CardSection } from './models';
+ * 
+ * // Info section with fields
+ * const infoSection: CardSection = {
  *   id: 'section-1',
  *   title: 'Company Information',
  *   type: 'info',
  *   fields: [
  *     { label: 'Industry', value: 'Technology' },
- *     { label: 'Employees', value: 500 }
+ *     { label: 'Employees', value: 500 },
+ *     { label: 'Founded', value: '2020' }
+ *   ]
+ * };
+ * 
+ * // List section with items
+ * const listSection: CardSection = {
+ *   title: 'Products',
+ *   type: 'list',
+ *   items: [
+ *     { title: 'Product A', description: 'Description A' },
+ *     { title: 'Product B', description: 'Description B' }
  *   ]
  * };
  * ```
+ * 
+ * @see Section Types documentation for all available types
+ * @see {@link CardField} for field structure
+ * @see {@link CardItem} for item structure
+ * @since 1.0.0
  */
 export interface CardSection {
   /** Unique identifier for the section (auto-generated if not provided) */

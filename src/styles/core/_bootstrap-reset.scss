@@ -1,0 +1,293 @@
+/* ===================================================================
+   BOOTSTRAP STYLE ISOLATION - Reset Bootstrap Variables and Styles
+   =================================================================== */
+/* 
+ * This file resets all Bootstrap CSS variables and common Bootstrap styles
+ * within OSI Cards containers to prevent style conflicts when cards are
+ * imported into applications that use Bootstrap.
+ * 
+ * Usage:
+ *   This file is automatically imported in scoped stylesheets.
+ *   All Bootstrap variables are reset to 'unset' within .osi-cards-container
+ *   and .ai-card-surface to ensure complete isolation.
+ */
+
+/* Reset all Bootstrap CSS variables within card containers */
+.osi-cards-container,
+.ai-card-surface,
+article.ai-card-surface {
+  /* Reset Bootstrap color variables */
+  --bs-blue: unset;
+  --bs-indigo: unset;
+  --bs-purple: unset;
+  --bs-pink: unset;
+  --bs-red: unset;
+  --bs-orange: unset;
+  --bs-yellow: unset;
+  --bs-green: unset;
+  --bs-teal: unset;
+  --bs-cyan: unset;
+  --bs-black: unset;
+  --bs-white: unset;
+  --bs-gray: unset;
+  --bs-gray-dark: unset;
+  --bs-gray-100: unset;
+  --bs-gray-200: unset;
+  --bs-gray-300: unset;
+  --bs-gray-400: unset;
+  --bs-gray-500: unset;
+  --bs-gray-600: unset;
+  --bs-gray-700: unset;
+  --bs-gray-800: unset;
+  --bs-gray-900: unset;
+  --bs-gray-950: unset;
+  
+  /* Reset Bootstrap semantic color variables */
+  --bs-primary: unset;
+  --bs-secondary: unset;
+  --bs-success: unset;
+  --bs-info: unset;
+  --bs-warning: unset;
+  --bs-danger: unset;
+  --bs-light: unset;
+  --bs-dark: unset;
+  
+  /* Reset Bootstrap RGB color variables */
+  --bs-primary-rgb: unset;
+  --bs-secondary-rgb: unset;
+  --bs-success-rgb: unset;
+  --bs-info-rgb: unset;
+  --bs-warning-rgb: unset;
+  --bs-danger-rgb: unset;
+  --bs-light-rgb: unset;
+  --bs-dark-rgb: unset;
+  --bs-white-rgb: unset;
+  --bs-black-rgb: unset;
+  
+  /* Reset Bootstrap text emphasis variables */
+  --bs-primary-text-emphasis: unset;
+  --bs-secondary-text-emphasis: unset;
+  --bs-success-text-emphasis: unset;
+  --bs-info-text-emphasis: unset;
+  --bs-warning-text-emphasis: unset;
+  --bs-danger-text-emphasis: unset;
+  --bs-light-text-emphasis: unset;
+  --bs-dark-text-emphasis: unset;
+  
+  /* Reset Bootstrap background subtle variables */
+  --bs-primary-bg-subtle: unset;
+  --bs-secondary-bg-subtle: unset;
+  --bs-success-bg-subtle: unset;
+  --bs-info-bg-subtle: unset;
+  --bs-warning-bg-subtle: unset;
+  --bs-danger-bg-subtle: unset;
+  --bs-light-bg-subtle: unset;
+  --bs-dark-bg-subtle: unset;
+  
+  /* Reset Bootstrap border subtle variables */
+  --bs-primary-border-subtle: unset;
+  --bs-secondary-border-subtle: unset;
+  --bs-success-border-subtle: unset;
+  --bs-info-border-subtle: unset;
+  --bs-warning-border-subtle: unset;
+  --bs-danger-border-subtle: unset;
+  --bs-light-border-subtle: unset;
+  --bs-dark-border-subtle: unset;
+  
+  /* Reset Bootstrap typography variables */
+  --bs-font-sans-serif: unset;
+  --bs-font-monospace: unset;
+  --bs-body-font-family: unset;
+  --bs-body-font-size: unset;
+  --bs-body-font-weight: unset;
+  --bs-body-line-height: unset;
+  --bs-body-color: unset;
+  --bs-body-color-rgb: unset;
+  --bs-body-bg: unset;
+  --bs-body-bg-rgb: unset;
+  
+  /* Reset Bootstrap emphasis and secondary colors */
+  --bs-emphasis-color: unset;
+  --bs-emphasis-color-rgb: unset;
+  --bs-secondary-color: unset;
+  --bs-secondary-color-rgb: unset;
+  --bs-secondary-bg: unset;
+  --bs-secondary-bg-rgb: unset;
+  --bs-tertiary-color: unset;
+  --bs-tertiary-color-rgb: unset;
+  --bs-tertiary-bg: unset;
+  --bs-tertiary-bg-rgb: unset;
+  --bs-heading-color: unset;
+  
+  /* Reset Bootstrap link variables */
+  --bs-link-color: unset;
+  --bs-link-color-rgb: unset;
+  --bs-link-decoration: unset;
+  --bs-link-hover-color: unset;
+  --bs-link-hover-color-rgb: unset;
+  
+  /* Reset Bootstrap code and highlight variables */
+  --bs-code-color: unset;
+  --bs-highlight-color: unset;
+  --bs-highlight-bg: unset;
+  --bs-disabled-color: unset;
+  --bs-tertiary-active-bg: unset;
+  
+  /* Reset Bootstrap border variables */
+  --bs-border-width: unset;
+  --bs-border-style: unset;
+  --bs-border-color: unset;
+  --bs-border-color-subtle: unset;
+  --bs-border-color-translucent: unset;
+  --bs-border-radius: unset;
+  --bs-border-radius-sm: unset;
+  --bs-border-radius-lg: unset;
+  --bs-border-radius-xl: unset;
+  --bs-border-radius-xxl: unset;
+  --bs-border-radius-2xl: unset;
+  --bs-border-radius-pill: unset;
+  
+  /* Reset Bootstrap box shadow variables */
+  --bs-box-shadow: unset;
+  --bs-box-shadow-sm: unset;
+  --bs-box-shadow-lg: unset;
+  --bs-box-shadow-inset: unset;
+  
+  /* Reset Bootstrap focus variables */
+  --bs-focus-visible-inner-color: unset;
+  --bs-focus-visible-outer-color: unset;
+  --bs-focus-ring-width: unset;
+  --bs-focus-ring-opacity: unset;
+  --bs-focus-ring-color: unset;
+  
+  /* Reset Bootstrap form variables */
+  --bs-form-valid-color: unset;
+  --bs-form-valid-border-color: unset;
+  --bs-form-invalid-color: unset;
+  --bs-form-invalid-border-color: unset;
+  --bs-form-check-filter: unset;
+  --bs-form-check-input-disabled-color: unset;
+  --bs-form-color-disabled-filter: unset;
+  --bs-form-select-indicator: unset;
+  --bs-form-select-disabled-indicator: unset;
+  --bs-form-switch-square-bg: unset;
+  --bs-form-switch-unchecked-invalid-border-color: unset;
+  
+  /* Reset Bootstrap table variables */
+  --bs-table-active-bg-factor: unset;
+  --bs-table-hover-bg-factor: unset;
+  --bs-table-striped-bg-factor: unset;
+  
+  /* Reset Bootstrap DataTables variables */
+  --dt-row-selected: unset;
+  --dt-row-selected-text: unset;
+  --dt-row-selected-link: unset;
+  --dt-row-stripe: unset;
+  --dt-row-hover: unset;
+  --dt-column-ordering: unset;
+  --dt-header-align-items: unset;
+  --dt-header-vertical-align: unset;
+  --dt-html-background: unset;
+  --dt-row-hover-alpha: unset;
+  --dt-row-stripe-alpha: unset;
+  --dt-column-ordering-alpha: unset;
+  --dt-row-selected-stripe-alpha: unset;
+  --dt-row-selected-column-ordering-alpha: unset;
+  
+  /* Reset Bootstrap gradient */
+  --bs-gradient: unset;
+  
+  /* Reset Bootstrap gutter variables */
+  --bs-gutter-y: unset;
+  --bs-gutter-x: unset;
+  
+  /* Reset Bootstrap breakpoint variables */
+  --bs-breakpoint-xs: unset;
+  --bs-breakpoint-sm: unset;
+  --bs-breakpoint-md: unset;
+  --bs-breakpoint-lg: unset;
+  --bs-breakpoint-xl: unset;
+  --bs-breakpoint-xxl: unset;
+  
+  /* Reset Bootstrap icon variables */
+  --bs-chevron-icon: unset;
+  --bs-close-icon: unset;
+  --bs-check-icon: unset;
+  --bs-success-icon: unset;
+  --bs-error-icon: unset;
+  
+  /* Reset Bootstrap breadcrumb variables */
+  --bs-breadcrumb-divider-filter: unset;
+  
+  /* CSS Isolation - Create new stacking context */
+  isolation: isolate;
+  
+  /* Prevent inheritance of Bootstrap utility classes */
+  /* Reset common Bootstrap-affected properties */
+  font-family: inherit;
+  font-synthesis: none;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: inherit;
+  text-rendering: inherit;
+  color-scheme: inherit;
+  box-sizing: border-box;
+  
+  /* Override Bootstrap's default text alignment if inherited */
+  text-align: inherit !important;
+  
+  /* Reset Bootstrap's default display and width constraints */
+  display: inherit;
+  width: inherit;
+  height: inherit;
+  
+  /* Ensure Bootstrap's global styles don't affect card content */
+  * {
+    /* Reset any Bootstrap-inherited font properties */
+    font-family: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
+    
+    /* Prevent Bootstrap utility class inheritance */
+    text-align: inherit;
+    color: inherit;
+  }
+}
+
+/* Additional isolation for nested elements */
+.osi-cards-container *,
+.ai-card-surface *,
+article.ai-card-surface * {
+  /* Reset Bootstrap-specific properties that might leak through */
+  --bs-body-font-family: unset;
+  --bs-body-font-size: unset;
+  --bs-body-font-weight: unset;
+  --bs-body-line-height: unset;
+  --bs-body-color: unset;
+  --bs-body-bg: unset;
+}
+
+/* Prevent Bootstrap utility classes from affecting card elements */
+.osi-cards-container,
+.ai-card-surface,
+article.ai-card-surface {
+  /* Override Bootstrap's default margin/padding resets */
+  & > * {
+    margin: revert;
+    padding: revert;
+  }
+  
+  /* Ensure Bootstrap's container classes don't affect layout */
+  &[class*="container"],
+  &[class*="row"],
+  &[class*="col"] {
+    /* Reset Bootstrap grid system properties */
+    --bs-gutter-x: unset;
+    --bs-gutter-y: unset;
+  }
+}
+

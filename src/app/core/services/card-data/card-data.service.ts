@@ -20,20 +20,27 @@ interface CardUpdate {
 }
 
 /**
- * Main card data service that orchestrates different data providers
+ * @ngDoc CardDataService
+ * @name CardDataService
+ * @description
+ * Main card data service that orchestrates different data providers.
  * 
  * Provides a unified interface for card data operations, allowing seamless switching
  * between different data sources (JSON files, WebSocket, API, etc.). Uses the provider
  * pattern to abstract data access and enable pluggable data sources.
  * 
- * Features:
+ * ## Features
  * - Provider-based architecture for flexible data sources
  * - Cached observables with shareReplay for performance
  * - Real-time updates support (when provider supports it)
  * - Automatic provider initialization
+ * - Repository pattern for data access
  * 
  * @example
  * ```typescript
+ * import { inject } from '@angular/core';
+ * import { CardDataService } from './core/services/card-data/card-data.service';
+ * 
  * const cardData = inject(CardDataService);
  * 
  * // Get all cards
@@ -46,10 +53,15 @@ interface CardUpdate {
  *   console.log('Company cards:', cards);
  * });
  * 
- * // Switch to a different provider
+ * // Switch to a different provider (e.g., WebSocket for real-time updates)
  * const wsProvider = inject(WebSocketCardProvider);
  * cardData.switchProvider(wsProvider);
  * ```
+ * 
+ * @see {@link CardDataProvider} for provider interface
+ * @see {@link JsonFileCardProvider} for JSON file provider
+ * @see {@link WebSocketCardProvider} for WebSocket provider
+ * @since 1.0.0
  */
 @Injectable({
   providedIn: 'root'

@@ -1,7 +1,8 @@
 /* Network Section - Modern, Clean Design */
 
-@import 'sections-base';
-@import 'unified-cards';
+@use 'design-system' as *;
+@use 'sections-base';
+@use 'unified-cards' as *;
 
 /* Network Grid Layout */
 .network-grid {
@@ -17,13 +18,13 @@
 
 /* Network Card */
 .network-card {
-  @include card;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--card-gap);
   min-height: auto;
   cursor: pointer;
+  @include sections-base.card;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
   position: relative;
   border: 1px solid color-mix(in srgb, var(--color-brand) 20%, transparent);

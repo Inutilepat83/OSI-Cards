@@ -1,0 +1,16 @@
+{
+  "$schema": "../../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "section": {
+      "description": "Generate a new OSI Cards section component",
+      "factory": "./section/index#sectionSchematic",
+      "schema": "./section/schema.json"
+    },
+    "card-template": {
+      "description": "Generate a new OSI Cards template configuration",
+      "factory": "./card-template/index#cardTemplateSchematic",
+      "schema": "./card-template/schema.json"
+    }
+  }
+}
+

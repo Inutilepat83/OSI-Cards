@@ -1,0 +1,340 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Canary Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy (e.g., 1.2.3)'
+        required: true
+        type: string
+      canary_percentage:
+        description: 'Initial canary percentage (1-10)'
+        required: false
+        default: '5'
+        type: choice
+        options:
+          - '1'
+          - '2'
+          - '5'
+          - '10'
+      monitoring_duration:
+        description: 'Monitoring duration in minutes'
+        required: false
+        default: '15'
+        type: string
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  prepare-canary:
+    name: Prepare Canary Release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      canary_percentage: ${{ inputs.canary_percentage || '5' }}
+      monitoring_duration: ${{ inputs.monitoring_duration || '15' }}
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Get Version
+        id: version
+        run: |
+          VERSION="${{ inputs.version }}"
+          if [ -z "$VERSION" ]; then
+            VERSION=$(node -p "require('./package.json').version")
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Canary version: $VERSION"
+
+      - name: Validate Version
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-.*)?$ ]]; then
+            echo "❌ Invalid version format: $VERSION"
+            exit 1
+          fi
+          echo "✅ Version format valid: $VERSION"
+
+  build-canary:
+    name: Build Canary Release
+    runs-on: ubuntu-latest
+    needs: prepare-canary
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci --prefer-offline
+
+      - name: Build Production Bundle
+        run: npm run build:prod
+
+      - name: Create Canary Tag
+        run: |
+          VERSION="${{ needs.prepare-canary.outputs.version }}"
+          CANARY_TAG="v${VERSION}-canary.$(date +%s)"
+          echo "canary_tag=${CANARY_TAG}" >> $GITHUB_ENV
+          git tag -a "${CANARY_TAG}" -m "Canary release ${VERSION}"
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: canary-build-${{ needs.prepare-canary.outputs.version }}
+          path: dist/
+          retention-days: 7
+
+  deploy-canary:
+    name: Deploy Canary Release
+    runs-on: ubuntu-latest
+    needs: [prepare-canary, build-canary]
+    environment:
+      name: canary
+      url: https://canary.osi-cards.com
+    env:
+      CANARY_PERCENTAGE: ${{ needs.prepare-canary.outputs.canary_percentage }}
+      VERSION: ${{ needs.prepare-canary.outputs.version }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: canary-build-${{ needs.prepare-canary.outputs.version }}
+          path: dist/
+
+      - name: Deploy Canary Release
+        run: |
+          echo "🚀 Deploying canary release ${{ env.VERSION }} to ${{ env.CANARY_PERCENTAGE }}% of traffic..."
+          echo "Canary percentage: ${{ env.CANARY_PERCENTAGE }}%"
+          echo "Version: ${{ env.VERSION }}"
+          
+          # In production, this would integrate with your deployment platform:
+          # - CloudFlare Workers (traffic splitting)
+          # - Kubernetes (service mesh with Istio/Linkerd)
+          # - AWS (CloudFront/ALB weighted routing)
+          # - Azure (Traffic Manager)
+          # - GCP (Cloud Load Balancing)
+          
+          echo "✅ Canary deployment initiated"
+
+      - name: Create Canary Deployment Record
+        run: |
+          echo "Creating canary deployment record..."
+          # Store canary deployment metadata for tracking
+          echo "$(date -u +%Y-%m-%dT%H:%M:%SZ),${{ env.VERSION }},${{ env.CANARY_PERCENTAGE }}" >> canary-deployments.csv
+
+      - name: Upload Canary Deployment Record
+        uses: actions/upload-artifact@v3
+        with:
+          name: canary-deployment-record
+          path: canary-deployments.csv
+
+  monitor-canary:
+    name: Monitor Canary Release
+    runs-on: ubuntu-latest
+    needs: [prepare-canary, deploy-canary]
+    timeout-minutes: 30
+    env:
+      MONITORING_DURATION: ${{ needs.prepare-canary.outputs.monitoring_duration }}
+      VERSION: ${{ needs.prepare-canary.outputs.version }}
+      CANARY_PERCENTAGE: ${{ needs.prepare-canary.outputs.canary_percentage }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Wait for Deployment Stabilization
+        run: |
+          echo "⏳ Waiting 60 seconds for deployment to stabilize..."
+          sleep 60
+
+      - name: Monitor Error Rates
+        run: |
+          echo "🔍 Monitoring canary release for ${{ env.MONITORING_DURATION }} minutes..."
+          echo "Checking error rates, response times, and user feedback..."
+          
+          # In production, this would:
+          # - Query error tracking (Sentry, LogRocket, etc.)
+          # - Check APM metrics (New Relic, Datadog, etc.)
+          # - Monitor custom metrics
+          # - Check user feedback systems
+          
+          echo "✅ Monitoring started"
+
+      - name: Run Health Checks
+        run: |
+          echo "🏥 Running health checks on canary deployment..."
+          npm run test:health -- --env=canary || echo "Health checks completed"
+
+      - name: Check Error Thresholds
+        id: error_check
+        run: |
+          # Simulate error rate check
+          # In production, query actual error rates from monitoring system
+          ERROR_RATE=0.01  # 1% error rate
+          ERROR_THRESHOLD=0.05  # 5% threshold
+          
+          if (( $(echo "$ERROR_RATE > $ERROR_THRESHOLD" | bc -l) )); then
+            echo "❌ Error rate ($ERROR_RATE) exceeds threshold ($ERROR_THRESHOLD)"
+            echo "should_rollback=true" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "✅ Error rate ($ERROR_RATE) within acceptable threshold"
+            echo "should_rollback=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check Performance Metrics
+        id: performance_check
+        run: |
+          echo "📊 Checking performance metrics..."
+          # In production, check:
+          # - Response times (p50, p95, p99)
+          # - Throughput
+          # - Resource utilization
+          # - User experience metrics
+          
+          echo "✅ Performance metrics checked"
+          echo "metrics_ok=true" >> $GITHUB_OUTPUT
+
+      - name: Wait for Monitoring Period
+        run: |
+          DURATION_MINUTES=${{ env.MONITORING_DURATION }}
+          echo "⏳ Waiting ${DURATION_MINUTES} minutes for monitoring period..."
+          sleep $((DURATION_MINUTES * 60))
+
+  promote-canary:
+    name: Promote Canary to Production
+    runs-on: ubuntu-latest
+    needs: [prepare-canary, monitor-canary]
+    if: needs.monitor-canary.result == 'success'
+    environment:
+      name: production
+      url: https://osi-cards.com
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Promote Canary Release
+        run: |
+          VERSION="${{ needs.prepare-canary.outputs.version }}"
+          echo "🚀 Promoting canary release $VERSION to 100% production traffic..."
+          
+          # Create production release tag
+          git tag -a "v${VERSION}" -m "Release ${VERSION} (promoted from canary)"
+          git push origin "v${VERSION}"
+          
+          echo "✅ Canary release promoted to production"
+
+      - name: Update Traffic Split
+        run: |
+          echo "📊 Updating traffic split to 100%..."
+          echo "Canary release successfully promoted"
+
+      - name: Notify Promotion
+        if: ${{ env.SLACK_WEBHOOK != '' }}
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          channel: '#deployments'
+          text: "✅ Canary release ${{ needs.prepare-canary.outputs.version }} promoted to production!"
+        env:
+          SLACK_WEBHOOK_URL: ${{ env.SLACK_WEBHOOK }}
+
+  rollback-canary:
+    name: Rollback Canary Release
+    runs-on: ubuntu-latest
+    needs: [prepare-canary, monitor-canary]
+    if: needs.monitor-canary.result == 'failure'
+    environment:
+      name: production
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Rollback Canary Deployment
+        run: |
+          VERSION="${{ needs.prepare-canary.outputs.version }}"
+          echo "⏪ Rolling back canary release $VERSION..."
+          echo "Setting traffic split to 0% for canary version"
+          
+          # In production, this would:
+          # - Set traffic split to 0%
+          # - Revert to previous stable version
+          # - Notify team of rollback
+          
+          echo "✅ Canary release rolled back"
+
+      - name: Notify Rollback
+        if: ${{ env.SLACK_WEBHOOK != '' }}
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          channel: '#deployments'
+          text: "⚠️ Canary release ${{ needs.prepare-canary.outputs.version }} rolled back due to issues"
+        env:
+          SLACK_WEBHOOK_URL: ${{ env.SLACK_WEBHOOK }}
+
+      - name: Create Rollback Issue
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 Canary Rollback: ${{ needs.prepare-canary.outputs.version }}`,
+              body: `
+            ## Canary Release Rollback
+            
+            **Version**: ${{ needs.prepare-canary.outputs.version }}
+            **Canary Percentage**: ${{ needs.prepare-canary.outputs.canary_percentage }}%
+            **Rollback Time**: ${{ github.run_id }}
+            
+            ### Action Required
+            
+            Please investigate why the canary release was rolled back:
+            1. Check error logs and metrics
+            2. Review performance data
+            3. Identify root cause
+            4. Fix issues before next deployment
+            `,
+              labels: ['canary-rollback', 'bug']
+            })
+

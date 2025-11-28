@@ -1,0 +1,39 @@
+@import '../../../../../../styles/components/sections/sections-base';
+
+.ai-section--<%= name %> {
+  @include card;
+  
+  .<%= name %>-grid,
+  .<%= name %>-list {
+    display: grid;
+    gap: var(--section-card-gap);
+    grid-template-columns: repeat(auto-fill, minmax(var(--section-card-grid-min), 1fr));
+  }
+
+  .<%= name %>-item {
+    @include section-card;
+    
+    &__label {
+      @include label-text;
+    }
+
+    &__value {
+      @include value-text;
+    }
+
+    &__title {
+      @include title-text;
+    }
+
+    &__description {
+      @include description-text;
+    }
+  }
+
+  .ai-section__empty {
+    text-align: center;
+    padding: var(--spacing-lg);
+    color: var(--color-gray-500);
+  }
+}
+

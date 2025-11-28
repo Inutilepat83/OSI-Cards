@@ -1,18 +1,19 @@
-@import 'sections-base';
-@import 'unified-cards';
+@use 'design-system' as *;
+@use 'sections-base';
+@use 'unified-cards' as *;
 
 .section-block--quotation {
   --section-card-grid-min: 280px; /* Wider cards for quotations */
 }
 
 .section-card--quotation {
-  @include card;
   display: flex;
   flex-direction: column;
   /* COMPACT: No minimum height */
   min-height: auto;
   gap: var(--card-gap);
   background: color-mix(in srgb, var(--card-background) 98%, var(--color-brand) 1%);
+  @include sections-base.card;
 }
 
 .quotation-card__quote {

@@ -1,7 +1,8 @@
 /* Analytics metric cards with progress and trend indicators */
 /* OPTIMIZED: Compact design with clear visual hierarchy */
 
-@import 'design-system';
+@use 'design-system' as *;
+@use 'sections-base';
 
 
 .analytics-metrics {
@@ -15,7 +16,6 @@
 }
 
 .analytics-metric {
-  @include card;
   /* ENHANCED: Flexible height with proper spacing */
   min-height: auto;
   justify-content: space-between;
@@ -26,9 +26,9 @@
   transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-
   /* Minimalistic background */
   background: var(--card-background);
+  @include sections-base.card;
 
   &::before {
     content: '';

@@ -8,6 +8,10 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  
+  /* CSS Isolation - Prevent Bootstrap and external styles from affecting cards */
+  isolation: isolate;
+  
   /* Card has its own background distinct from sections */
   @include surface-ai-card-base;
   /* Force border to be visible - override any resets */

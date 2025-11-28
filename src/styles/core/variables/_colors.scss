@@ -1,4 +1,10 @@
 :root {
+  /* === THEME OPTIMIZATIONS === */
+  /* Enable native browser optimizations for theme switching */
+  color-scheme: light dark;
+  
+  /* No transitions for theme switching - instant change for better performance */
+  
   /* === BRAND & CORE COLORS === */
   --color-white: #ffffff;
   --color-black: #000000;
@@ -65,6 +71,7 @@
 
 /* === DARK THEME (Night Mode - React Design) === */
 :root[data-theme='night'] {
+  color-scheme: dark;
   --background: #030303;
   --surface-contrast-color: #ffffff;
   --foreground: #ffffff;
@@ -138,6 +145,7 @@
 
 /* === LIGHT THEME (Day Mode - Inverted React Design) === */
 :root[data-theme='day'] {
+  color-scheme: light;
   --background: #ffffff;
   --foreground: #1c1c1f;
   --muted: #f4f4f6;

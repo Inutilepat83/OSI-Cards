@@ -8,8 +8,8 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { provideZoneChangeDetection } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideServiceWorker } from '@angular/service-worker';
-// NgDoc - conditionally imported to avoid initialization errors if routes aren't generated
-// import { provideNgDocApp } from '@ng-doc/app';
+// NgDoc - provides ng-doc app functionality
+import { provideNgDocApp } from '@ng-doc/app';
 
 import { routes } from './app.routes';
 import { reducers } from './store/app.state';
@@ -30,9 +30,8 @@ export const config: ApplicationConfig = {
       routes,
       withPreloading(PreloadAllModules)
     ),
-    // NgDoc - temporarily disabled to fix NG0201 error
-    // NgDoc routes are lazy-loaded, so this provider is not required for the /docs route to work
-    // Uncomment after generating NgDoc routes: npx ng-doc
+    // NgDoc - provides ng-doc app functionality
+    // Note: Only provide when documentation routes are accessed
     // provideNgDocApp(),
     // Optimize change detection with event coalescing and run coalescing
     provideZoneChangeDetection({

@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "OSICardsCardTemplateSchematic",
+  "title": "OSI Cards Template Schematic",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the card template",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "What is the name of the card template?"
+    },
+    "cardType": {
+      "type": "string",
+      "description": "The card type (e.g., 'company', 'product', 'contact')",
+      "x-prompt": "What is the card type?"
+    },
+    "path": {
+      "type": "string",
+      "format": "path",
+      "description": "The path to create the template",
+      "visible": false,
+      "default": "src/assets/configs"
+    },
+    "sectionCount": {
+      "type": "number",
+      "description": "Number of sections to include",
+      "default": 3,
+      "x-prompt": {
+        "message": "How many sections should the template have?",
+        "type": "number",
+        "default": 3
+      }
+    }
+  },
+  "required": ["name", "cardType"]
+}
+

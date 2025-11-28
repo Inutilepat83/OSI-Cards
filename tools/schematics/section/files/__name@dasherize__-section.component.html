@@ -1,0 +1,80 @@
+<div 
+  class="ai-section ai-section--<%= name %>" 
+  role="region" 
+  [attr.aria-labelledby]="'section-title-' + section.id" 
+  [attr.aria-describedby]="section.description ? 'section-desc-' + section.id : null">
+  
+  <div class="ai-section__header">
+    <div class="ai-section__details">
+      <h3 class="ai-section__title" [id]="'section-title-' + section.id">
+        {{ section.title }}
+      </h3>
+      <p *ngIf="section.description" class="ai-section__description" [id]="'section-desc-' + section.id">
+        {{ section.description }}
+      </p>
+    </div>
+  </div>
+
+  <div class="ai-section__body">
+    <% if (usesFields && !usesItems) { %>
+    <ng-container *ngIf="hasFields; else <%= name %>Empty">
+      <div class="<%= name %>-grid">
+        <button
+          *ngFor="let field of fields; trackBy: trackByField; let idx = index"
+          type="button"
+          class="<%= name %>-item"
+          role="button"
+          [attr.aria-label]="(field.label || 'Field') + ': ' + (field.value || 'No value')"
+          [attr.aria-posinset]="idx + 1"
+          [attr.aria-setsize]="fields.length"
+          (click)="onFieldClick(field)"
+          (keydown.enter)="onFieldClick(field)"
+          (keydown.space)="$event.preventDefault(); onFieldClick(field)">
+          <span class="<%= name %>-item__label">{{ field.label }}</span>
+          <span class="<%= name %>-item__value">{{ field.value }}</span>
+        </button>
+      </div>
+    </ng-container>
+
+    <ng-template #<%= name %>Empty>
+      <div class="ai-section__empty">
+        <p>No fields available</p>
+      </div>
+    </ng-template>
+    <% } else if (usesItems && !usesFields) { %>
+    <ng-container *ngIf="hasItems; else <%= name %>Empty">
+      <div class="<%= name %>-list">
+        <article
+          *ngFor="let item of items; trackBy: trackByItem; let idx = index"
+          class="<%= name %>-item"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="item.title + (item.description ? ': ' + item.description : '')"
+          [attr.aria-posinset]="idx + 1"
+          [attr.aria-setsize]="items.length"
+          (click)="onItemClick(item)"
+          (keydown.enter)="onItemClick(item)"
+          (keydown.space)="$event.preventDefault(); onItemClick(item)">
+          <h4 class="<%= name %>-item__title">{{ item.title }}</h4>
+          <p *ngIf="item.description" class="<%= name %>-item__description">
+            {{ item.description }}
+          </p>
+          <span *ngIf="item.value" class="<%= name %>-item__value">
+            {{ item.value }}
+          </span>
+        </article>
+      </div>
+    </ng-container>
+
+    <ng-template #<%= name %>Empty>
+      <div class="ai-section__empty">
+        <p>No items available</p>
+      </div>
+    </ng-template>
+    <% } else { %>
+    <div class="ai-section__content">
+      <!-- Add your custom content here -->
+    </div>
+    <% } %>
+  </div>
+</div>

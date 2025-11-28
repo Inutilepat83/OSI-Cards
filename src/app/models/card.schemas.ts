@@ -18,10 +18,10 @@ export const cardFieldSchema = z.object({
   format: z.enum(['currency', 'percentage', 'number', 'text', 'date', 'datetime']).optional(),
   trend: z.enum(['up', 'down', 'stable', 'neutral']).optional(),
   change: z.number().optional(),
-  percentage: z.number().min(0).max(100).optional(),
+  percentage: z.number().min(0).optional(), // Removed max(100) to allow values > 100 (e.g., 120%, 185%)
   performance: z.string().optional(),
   description: z.string().optional(),
-  status: z.enum(['completed', 'in-progress', 'pending', 'error']).optional(),
+  status: z.enum(['completed', 'in-progress', 'pending', 'error', 'confirmed']).optional(),
   priority: z.enum(['high', 'medium', 'low']).optional(),
   type: z.string().optional(),
   meta: z.record(z.unknown()).optional()
@@ -53,24 +53,65 @@ export const cardItemSchema = z.object({
 
 /**
  * Card Action Schema
+ * Supports multiple action types: website, agent, question, mail, and legacy types
  */
 export const cardActionSchema = z.object({
   id: z.string().optional(),
   label: z.string(),
-  type: z.enum(['primary', 'secondary', 'tertiary', 'link', 'mail', 'phone', 'url', 'command']),
+  type: z.enum(['primary', 'secondary', 'tertiary', 'link', 'mail', 'phone', 'url', 'command', 'website', 'agent', 'question']),
   icon: z.string().optional(),
-  action: z.string(),
+  variant: z.enum(['primary', 'secondary', 'outline', 'ghost']).optional(),
+  // action is optional - only required for legacy types (primary, secondary, link, etc.)
+  action: z.string().optional(),
+  // Email configuration - supports both legacy (to) and new (contact) structures
   email: z.object({
-    to: z.string().email(),
+    // Legacy structure: direct 'to' field
+    to: z.string().email().optional(),
+    // New structure: contact object with email
+    contact: z.object({
+      name: z.string().optional(),
+      email: z.string().email(),
+      role: z.string().optional()
+    }).optional(),
     subject: z.string().optional(),
-    body: z.string().optional()
-  }).optional(),
+    body: z.string().optional(),
+    cc: z.union([z.string().email(), z.array(z.string().email())]).optional(),
+    bcc: z.union([z.string().email(), z.array(z.string().email())]).optional()
+  }).refine(
+    (data) => {
+      // Either 'to' or 'contact.email' must be present
+      return data.to !== undefined || data.contact?.email !== undefined;
+    },
+    { message: "Email must have either 'to' or 'contact.email'" }
+  ).optional(),
   phone: z.string().optional(),
   url: z.string().url().optional(),
   command: z.string().optional(),
+  // Agent-specific fields
+  agentId: z.string().optional(),
+  agentContext: z.record(z.unknown()).optional(),
+  // Question-specific fields
+  question: z.string().optional(),
   disabled: z.boolean().optional(),
   meta: z.record(z.unknown()).optional()
-}).passthrough();
+}).passthrough().refine(
+  (data) => {
+    // For website type, url or action must be present
+    if (data.type === 'website') {
+      return data.url !== undefined || data.action !== undefined;
+    }
+    // For mail type, email must be present
+    if (data.type === 'mail') {
+      return data.email !== undefined;
+    }
+    // For legacy types (primary, secondary, link, etc.), action should be present
+    if (['primary', 'secondary', 'tertiary', 'link', 'phone', 'url', 'command'].includes(data.type)) {
+      return data.action !== undefined;
+    }
+    return true;
+  },
+  { message: "Action type requires corresponding fields (url for website, email for mail, action for legacy types)" }
+);
 
 /**
  * Card Section Schema

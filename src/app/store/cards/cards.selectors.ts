@@ -110,3 +110,19 @@ export const selectCardsByTypeCount = createSelector(
     return counts;
   }
 );
+
+// Selector for cards sorted by displayOrder
+export const selectCardsByDisplayOrder = createSelector(
+  selectCards,
+  (cards) => {
+    return [...cards].sort((a, b) => {
+      const orderA = a.displayOrder ?? Number.MAX_SAFE_INTEGER;
+      const orderB = b.displayOrder ?? Number.MAX_SAFE_INTEGER;
+      if (orderA !== orderB) {
+        return orderA - orderB;
+      }
+      // Fallback to title sorting if displayOrder is not set
+      return a.cardTitle.localeCompare(b.cardTitle);
+    });
+  }
+);

@@ -1,7 +1,8 @@
 /* Event Section - Timeline Design (Keeping the style you liked) */
 
-@import 'sections-base';
-@import 'unified-cards';
+@use 'design-system' as *;
+@use 'sections-base';
+@use 'unified-cards' as *;
 
 /* Event Timeline Container */
 .event-timeline {
@@ -25,7 +26,6 @@
 
 /* Event Card */
 .event-card {
-  @include card;
   position: relative;
   display: flex;
   align-items: flex-start;
@@ -37,6 +37,7 @@
   transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   background: var(--card-background);
   overflow: hidden;
+  @include sections-base.card;
 
   /* ENHANCED: Subtle accent indicator */
   &::before {

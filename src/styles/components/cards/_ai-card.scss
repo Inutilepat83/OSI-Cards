@@ -1,7 +1,4 @@
-/* -------------------------------------------------------------------------- */
-/* AI Card Design System                                                      */
-/* -------------------------------------------------------------------------- */
-
+@use '../../core/surface-layers' as *;
 .ai-card-surface {
   position: relative;
   display: flex;
@@ -9,6 +6,10 @@
   height: 100%;
   /* Changed from hidden to visible to prevent shadow clipping */
   overflow: visible;
+  
+  /* CSS Isolation - Prevent Bootstrap and external styles from affecting cards */
+  isolation: isolate;
+  
   /* Card has its own background distinct from sections */
   @include surface-ai-card-base;
   /* Force border to be visible - override any resets */

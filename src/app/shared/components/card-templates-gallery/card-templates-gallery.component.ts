@@ -76,7 +76,7 @@ import { CardPreviewComponent } from '../cards/card-preview/card-preview.compone
             <div class="template-stats">
               <span class="stat">
                 <lucide-icon name="layers" [size]="14"></lucide-icon>
-                {{ (template.sections?.length || 0) }} sections
+                {{ (template.sections.length || 0) }} sections
               </span>
             </div>
           </div>

@@ -16,7 +16,10 @@
  */
 
 .osi-cards-container {
-  // Core variables and mixins (must come first)
+  // Bootstrap isolation - must come first to reset external Bootstrap variables
+  @import 'core/bootstrap-reset';
+  
+  // Core variables and mixins (must come after bootstrap reset)
   @import 'core/variables-scoped';
   @import 'core/mixins';
   @import 'core/surface-layers';

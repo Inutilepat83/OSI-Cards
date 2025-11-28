@@ -1,6 +1,7 @@
 /* Product section layout covering spotlight, entries, and references */
 
-@import 'sections-base';
+@use 'design-system' as *;
+@use 'sections-base';
 
 .product-layout {
   display: flex;
@@ -10,7 +11,6 @@
 }
 
 .product-card {
-  @include card;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -19,6 +19,7 @@
   min-height: auto;
   gap: var(--card-gap);
   /* Padding, gap, border, background, border-radius, and hover states are set by @include card */
+  @include sections-base.card;
 }
 
 .product-card--references {
@@ -233,12 +234,12 @@
 }
 
 .product-reference {
-  @include card;
   display: flex;
   flex-direction: row;
   align-items: center;
   border: 1px solid color-mix(in srgb, var(--section-accent) 20%, transparent);
   /* Padding, gap, border, background, border-radius, and hover states are set by @include card */
+  @include sections-base.card;
   
   // Hover effects are handled by @mixin card (border, background, shadow only)
   // Child elements can have subtle visual feedback
@@ -405,10 +406,10 @@
 }
 
 .product-entry {
-  @include card;
   display: flex;
   flex-direction: column;
   /* Padding, gap, border, background, border-radius, and hover states are set by @include card */
+  @include sections-base.card;
 }
 
 .product-entry__meta-item--tone-positive {

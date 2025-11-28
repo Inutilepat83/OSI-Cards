@@ -30,7 +30,7 @@ import { VERSION_INFO, getVersionString } from '../version';
       color: var(--foreground);
       display: flex;
       flex-direction: column;
-      transition: background 0.3s ease, color 0.3s ease;
+      /* No transition for instant theme switching */
     }
 
 
@@ -75,13 +75,17 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private applyTheme(): void {
-    const root = this.document.documentElement;
-    root.dataset['theme'] = this.theme;
-    localStorage.setItem('osi-theme', this.theme);
-    if (typeof window !== 'undefined') {
-      const styles = getComputedStyle(root);
-      this.document.body.style.background = styles.getPropertyValue('--background');
-      this.document.body.style.color = styles.getPropertyValue('--foreground');
+    if (typeof window === 'undefined') {
+      return;
     }
+
+    // Batch DOM updates with requestAnimationFrame for smooth theme switching
+    requestAnimationFrame(() => {
+      const root = this.document.documentElement;
+      root.dataset['theme'] = this.theme;
+      localStorage.setItem('osi-theme', this.theme);
+      // CSS variables and transitions handle styling automatically
+      // No need for getComputedStyle() or manual body styling
+    });
   }
 }

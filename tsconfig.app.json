@@ -13,6 +13,7 @@
   ],
   "exclude": [
     "**/*.spec.ts",
+    "**/*.stories.ts",
     "src/test.ts",
     "src/app/testing/**/*",
     "example/**/*",
@@ -21,6 +22,7 @@
     "src/app/features/home/index.ts",
     "src/app/store/index.ts",
     "src/app/shared/components/cards/sections/archive/**/*",
-    "src/styles/components/sections/archive/**/*"
+    "src/styles/components/sections/archive/**/*",
+    ".storybook/**/*"
   ]
 }

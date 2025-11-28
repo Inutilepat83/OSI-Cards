@@ -1,7 +1,7 @@
 /* Base AI section container styling shared across card sections */
 /* =========================================================== */
 /* Consistent spacing across ALL sections - GLOBALLY ENFORCED */
-@import 'design-system';
+@use 'design-system' as *;
 .ai-section {
   --section-accent: var(--accent);
   /* GLOBALLY ENFORCED: Use main variables - NO CUSTOM OVERRIDES */

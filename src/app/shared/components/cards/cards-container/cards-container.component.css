@@ -13,14 +13,54 @@
   display: block;
 }
 
-/* Fallback for non-virtual scrolling */
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+/* Drag-and-drop styles */
+.cards-drag-list {
+  display: flex;
+  flex-direction: column;
   gap: 20px;
   margin-top: 20px;
 }
 
+.card-drag-item {
+  cursor: move;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.card-drag-item.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cards-drag-list.cdk-drop-list-dragging .card-drag-item:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.card-placeholder {
+  background: rgba(var(--foreground-rgb, 0, 0, 0), 0.05);
+  border: 2px dashed var(--border, #ccc);
+  border-radius: 8px;
+  min-height: 100px;
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  opacity: 0.5;
+}
+
+.card-preview {
+  opacity: 0.8;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  transform: rotate(2deg);
+}
+
 .card-item {
   display: block;
+}
+
+/* Accessibility: Keyboard navigation */
+.card-drag-item:focus-visible {
+  outline: 2px solid var(--color-brand, #007bff);
+  outline-offset: 2px;
+}
+
+/* Disable tilt during drag */
+.cdk-drag-dragging .card-item {
+  pointer-events: none;
 }
