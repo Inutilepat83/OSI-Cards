@@ -19,7 +19,7 @@ import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
   imports: [AICardRendererComponent],
   template: `
     <app-ai-card-renderer [cardConfig]="card"></app-ai-card-renderer>
-  `
+  `,
 })
 export class ExampleComponent {
   card: AICardConfig = {
@@ -28,11 +28,9 @@ export class ExampleComponent {
       {
         title: 'Info',
         type: 'info',
-        fields: [
-          { label: 'Name', value: 'Example' }
-        ]
-      }
-    ]
+        fields: [{ label: 'Name', value: 'Example' }],
+      },
+    ],
   };
 }
 ```
@@ -43,4 +41,4 @@ For complete documentation, visit: https://github.com/Inutilepat83/OSI-Cards
 
 ## Version
 
-1.3.0
+1.4.0
