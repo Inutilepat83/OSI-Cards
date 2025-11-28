@@ -1,6 +1,6 @@
 {
   "name": "osi-cards-lib",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "description": "Standalone OSI Cards library for Angular applications",
   "keywords": [
     "angular",
@@ -45,6 +45,12 @@
     },
     "./styles/_styles.scss": {
       "default": "./styles/_styles.scss"
+    },
+    "./styles/_styles-scoped": {
+      "default": "./styles/_styles-scoped.scss"
+    },
+    "./styles/_styles-scoped.scss": {
+      "default": "./styles/_styles-scoped.scss"
     }
   },
   "sideEffects": false

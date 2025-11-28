@@ -18,11 +18,12 @@ Each card is composed of one or more **sections**—standalone, configurable com
    - [Detailed Section Type Specifications](#detailed-section-type-specifications)
    - [Data Structure Schemes](#data-structure-schemes)
 5. [AI Card Generation - How LLMs Generate Cards](#ai-card-generation---how-llms-generate-cards)
-6. [Creating Cards: Complete Guide](#creating-cards-complete-guide)
-7. [Design System & Tokens](#design-system--tokens)
-8. [Advanced Features](#advanced-features)
-9. [Development](#development)
-10. [Appendix](#appendix)
+6. [LLM Prompt for Card Generation](#llm-prompt-for-card-generation)
+7. [Creating Cards: Complete Guide](#creating-cards-complete-guide)
+8. [Design System & Tokens](#design-system--tokens)
+9. [Advanced Features](#advanced-features)
+10. [Development](#development)
+11. [Appendix](#appendix)
 
 ---
 
@@ -164,21 +165,34 @@ npm install git+https://github.com/Inutilepat83/OSI-Cards.git#v1.0.0
    ```
 
 2. **Import styles in your `src/styles.scss`:**
+   
+   **For scoped styles (recommended to prevent CSS leakage):**
+   ```scss
+   @import 'osi-cards-lib/styles/_styles-scoped';
+   ```
+   
+   **Or for global styles (may affect your entire app):**
    ```scss
    @import 'osi-cards-lib/styles/_styles';
    ```
+   
+   📖 **See [CSS Encapsulation](#css-encapsulation-prevent-style-leakage) section for details**
 
 3. **Use components in your Angular component:**
+   
+   **With scoped styles (recommended):**
    ```typescript
    import { Component } from '@angular/core';
-   import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
+   import { AICardRendererComponent, OsiCardsContainerComponent, AICardConfig } from 'osi-cards-lib';
    
    @Component({
      selector: 'app-my-component',
      standalone: true,
-     imports: [AICardRendererComponent],
+     imports: [AICardRendererComponent, OsiCardsContainerComponent],
      template: `
-       <app-ai-card-renderer [cardConfig]="cardConfig"></app-ai-card-renderer>
+       <osi-cards-container>
+         <app-ai-card-renderer [cardConfig]="cardConfig"></app-ai-card-renderer>
+       </osi-cards-container>
      `
    })
    export class MyComponent {
@@ -197,6 +211,67 @@ npm install git+https://github.com/Inutilepat83/OSI-Cards.git#v1.0.0
      };
    }
    ```
+   
+   **Or with manual container class:**
+   ```typescript
+   import { Component } from '@angular/core';
+   import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
+   
+   @Component({
+     selector: 'app-my-component',
+     standalone: true,
+     imports: [AICardRendererComponent],
+     template: `
+       <div class="osi-cards-container">
+         <app-ai-card-renderer [cardConfig]="cardConfig"></app-ai-card-renderer>
+       </div>
+     `
+   })
+   export class MyComponent {
+     cardConfig: AICardConfig = { /* ... */ };
+   }
+   ```
+
+### CSS Encapsulation (Prevent Style Leakage)
+
+By default, OSI Cards exports global styles that can affect your entire application. To prevent CSS leakage, use the **scoped stylesheet**:
+
+**Option 1: Scoped Stylesheet (Recommended)**
+
+```scss
+// In your styles.scss
+@import 'osi-cards-lib/styles/_styles-scoped';
+```
+
+Then wrap your components:
+
+```html
+<div class="osi-cards-container">
+  <app-ai-card-renderer [cardConfig]="cardConfig"></app-ai-card-renderer>
+</div>
+```
+
+**Option 2: Wrapper Component (Easiest)**
+
+```typescript
+import { OsiCardsContainerComponent } from 'osi-cards-lib';
+```
+
+```html
+<osi-cards-container>
+  <app-ai-card-renderer [cardConfig]="cardConfig"></app-ai-card-renderer>
+</osi-cards-container>
+```
+
+**With theme support:**
+
+```html
+<osi-cards-container [theme]="'night'">
+  <app-ai-card-renderer [cardConfig]="cardConfig"></app-ai-card-renderer>
+</osi-cards-container>
+```
+
+📖 **For complete CSS encapsulation guide, see [docs/CSS_ENCAPSULATION.md](./docs/CSS_ENCAPSULATION.md)**
 
 ### Full Documentation
 
@@ -204,6 +279,7 @@ npm install git+https://github.com/Inutilepat83/OSI-Cards.git#v1.0.0
 - **[Integration Guide](./docs/INTEGRATION_GUIDE.md)** - Complete integration documentation
 - **[Integration Example](./docs/INTEGRATION_EXAMPLE.md)** - Working example project
 - **[Integration Checklist](./docs/INTEGRATION_CHECKLIST.md)** - Step-by-step checklist
+- **[CSS Encapsulation Guide](./docs/CSS_ENCAPSULATION.md)** - Prevent CSS leakage with scoped styles
 
 ---
 
@@ -1227,6 +1303,27 @@ This enables:
 - Omit required properties (e.g., chartData for chart sections)
 - Generate invalid JSON structures
 - Create cards without proper section organization
+
+---
+
+## LLM Prompt for Card Generation
+
+> **📋 Copy-Paste Ready Prompt:** A complete, ready-to-use prompt for LLMs to generate OSI Cards is available in [`docs/LLM_PROMPT.md`](./docs/LLM_PROMPT.md). This prompt includes all section types, data schemas, examples, and generation rules in a format optimized for LLM consumption.
+
+**Quick Access:**
+- **[Full LLM Prompt](./docs/LLM_PROMPT.md)** - Complete copy-paste ready prompt with all specifications
+- Simply copy the prompt and paste it into ChatGPT, Claude, or any LLM
+- Add your business context at the end
+- Get a complete, valid OSI Card JSON configuration
+
+The prompt includes:
+- ✅ All 18 section types with examples
+- ✅ Complete data structure schemas
+- ✅ Field and item property specifications
+- ✅ Action button configurations
+- ✅ Generation rules and best practices
+- ✅ Real-world examples
+- ✅ Step-by-step instructions
 
 ---
 

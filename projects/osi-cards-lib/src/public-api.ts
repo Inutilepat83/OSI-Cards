@@ -40,6 +40,7 @@ export * from './lib/components/section-renderer/section-renderer.component';
 export * from './lib/components/masonry-grid/masonry-grid.component';
 export * from './lib/components/card-skeleton/card-skeleton.component';
 export * from './lib/components/card-preview/card-preview.component';
+export * from './lib/components/osi-cards-container';
 
 // Composable Components
 export * from './lib/components/card-header/card-header.component';
@@ -76,5 +77,9 @@ export * from './lib/components/sections/text-reference-section/text-reference-s
  * You may need to import from the main application source or
  * extend the library exports. See integration documentation for details.
  * 
- * Styles entry point: 'osi-cards-lib/styles/_styles.scss'
+ * Styles entry points:
+ * - 'osi-cards-lib/styles/_styles.scss' (global styles - may affect host app)
+ * - 'osi-cards-lib/styles/_styles-scoped.scss' (scoped styles - recommended for integration)
+ * 
+ * For scoped styles, wrap components in <osi-cards-container> or use class="osi-cards-container"
  */

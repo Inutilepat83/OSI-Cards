@@ -1,0 +1,107 @@
+/* ===================================================================
+   SCOPED OSI CARDS STYLES - Encapsulated to Prevent CSS Leakage
+   =================================================================== */
+/* 
+ * This stylesheet wraps all OSI Cards styles in .osi-cards-container
+ * to prevent CSS from affecting the host application.
+ * 
+ * Usage:
+ *   1. Import this file instead of _styles.scss
+ *   2. Wrap your OSI Cards components in <div class="osi-cards-container">
+ * 
+ * Example:
+ *   <div class="osi-cards-container">
+ *     <app-ai-card-renderer [cardConfig]="card"></app-ai-card-renderer>
+ *   </div>
+ */
+
+.osi-cards-container {
+  // Core variables and mixins (must come first)
+  @import 'core/variables-scoped';
+  @import 'core/mixins';
+  @import 'core/surface-layers';
+  @import 'core/global-scoped';
+  @import 'core/utilities';
+  @import 'core/animations';
+
+  // Layout styles
+  @import 'layout/tilt';
+  @import 'layout/masonry';
+
+  // Component styles
+  @import 'components/cards/ai-card';
+  @import 'components/sections/design-system'; /* Master design system - must import first */
+  @import 'components/sections/sections-base';
+  @import 'components/sections/section-types';
+  @import 'components/sections/section-shell';
+  @import 'components/sections/overview';
+  @import 'components/sections/analytics';
+  @import 'components/sections/news';
+  @import 'components/sections/social-media';
+  @import 'components/sections/info';
+  @import 'components/sections/map';
+  @import 'components/sections/list';
+  @import 'components/sections/contact';
+  @import 'components/sections/network';
+  @import 'components/sections/product';
+  @import 'components/sections/chart';
+  @import 'components/sections/event';
+  @import 'components/sections/financials';
+  @import 'components/sections/solutions';
+  @import 'components/sections/quotation';
+  @import 'components/sections/text-reference';
+  @import 'components/sections/brand-colors';
+  @import 'components/sections/fallback';
+  @import 'components/sections/unified-cards'; /* Must be last to override all section-specific styles */
+  @import 'components/sections/global-enforcement'; /* GLOBAL ENFORCEMENT - MUST BE ABSOLUTELY LAST to enforce all settings */
+
+  /* FINAL OVERRIDE - ABSOLUTELY NO BORDERS OR BORDER-LIKE EFFECTS */
+  h1.ai-card-title,
+  .ai-card-title,
+  article.ai-card-surface h1,
+  .ai-card-surface > h1,
+  .ai-card-surface .ai-card-title {
+    border: 0 !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    border-top-width: 0 !important;
+    border-right-width: 0 !important;
+    border-bottom-width: 0 !important;
+    border-left-width: 0 !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+    outline-width: 0 !important;
+    text-decoration: none !important;
+    background-image: none !important;
+    
+    &::before,
+    &::after {
+      display: none !important;
+      content: none !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      background: none !important;
+    }
+  }
+
+  /* Remove all styling from parent container */
+  .relative.h-full,
+  div[class*="relative"][class*="h-full"] {
+    position: static !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Also ensure article itself has no borders */
+  article.ai-card-surface,
+  .ai-card-surface {
+    border: 0 !important;
+    border-width: 0 !important;
+    outline: 0 !important;
+  }
+}
+
