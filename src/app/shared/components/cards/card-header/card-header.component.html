@@ -1,0 +1,21 @@
+<div *ngIf="cardTitle" class="flex items-center justify-between mb-4">
+  <h1 class="text-2xl font-bold text-foreground" id="card-title" [attr.aria-level]="1">
+    {{ cardTitle }}
+  </h1>
+  <button
+    *ngIf="showExport"
+    type="button"
+    class="ai-card-export-btn"
+    [attr.aria-label]="'Export card: ' + cardTitle"
+    [attr.aria-describedby]="'card-title'"
+    title="Export card"
+    (click)="onExport()"
+    (keydown.enter)="onExport()"
+    (keydown.space)="$event.preventDefault(); onExport()"
+  >
+    <lucide-icon name="download" [size]="16" aria-hidden="true"></lucide-icon>
+  </button>
+</div>
+<p *ngIf="cardSubtitle" class="ai-card-subtitle" id="card-subtitle" [attr.aria-label]="'Card subtitle: ' + cardSubtitle">
+  {{ cardSubtitle }}
+</p>

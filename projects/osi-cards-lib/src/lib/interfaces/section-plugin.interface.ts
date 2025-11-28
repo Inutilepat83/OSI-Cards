@@ -79,3 +79,4 @@ export interface RegisteredSectionPlugin extends SectionPluginMetadata {
   priority: number;
 }
 
+

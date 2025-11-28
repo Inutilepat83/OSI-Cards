@@ -1,28 +1,149 @@
-import { Injectable, Type } from '@angular/core';
+import { Injectable, Type, inject } from '@angular/core';
 import { CardSection } from '../../../../models';
+import { SectionComponentRegistryService, ISectionComponentLoader } from './section-component-registry.service';
+import { SectionComponentInstance } from './section-component.interface';
 
 /**
  * Section component loader service
- * Handles lazy loading of section components to reduce initial bundle size
+ * Handles lazy loading of section components to reduce initial bundle size.
+ * Now uses registry-based strategy pattern instead of switch statement.
  */
 @Injectable({
   providedIn: 'root'
 })
 export class SectionLoaderService {
-  private componentCache = new Map<string, Promise<Type<any>>>();
+  private componentCache = new Map<string, Promise<Type<SectionComponentInstance>>>();
+  private readonly registry = inject(SectionComponentRegistryService);
+
+  constructor() {
+    this.initializeRegistry();
+  }
+
+  /**
+   * Initialize the component registry with all section types
+   */
+  private initializeRegistry(): void {
+    // Info section
+    this.registry.register('info', {
+      canHandle: () => true,
+      loadComponent: async () => (await import('../sections/info-section.component')).InfoSectionComponent
+    });
+
+    // Analytics section
+    this.registry.register('analytics', {
+      canHandle: () => true,
+      loadComponent: async () => (await import('../sections/analytics-section/analytics-section.component')).AnalyticsSectionComponent
+    }, ['metrics', 'stats']);
+
+    // Financials section
+    this.registry.register('financials', {
+      canHandle: () => true,
+      loadComponent: async () => (await import('../sections/financials-section/financials-section.component')).FinancialsSectionComponent
+    });
+
+    // List section
+    this.registry.register('list', {
+      canHandle: () => true,
+      loadComponent: async () => (await import('../sections/list-section/list-section.component')).ListSectionComponent
+    }, ['table']);
+
+    // Event section
+    this.registry.register('event', {
+      canHandle: () => true,
+      loadComponent: async () => (await import('../sections/event-section/event-section.component')).EventSectionComponent
+    }, ['timeline']);
+
+    // Product section
+    this.registry.register('product', {
+      canHandle: () => true,
+      loadComponent: async () => (await import('../sections/product-section/product-section.component')).ProductSectionComponent
+    });
+
+    // Solutions section
+    this.registry.register('solutions', {
+      canHandle: () => true,
+      loadComponent: async () => (await import('../sections/solutions-section/solutions-section.component')).SolutionsSectionComponent
+    });
+
+    // Contact card section
+    this.registry.register('contact-card', {
+      canHandle: () => true,
+      loadComponent: async () => (await import('../sections/contact-card-section/contact-card-section.component')).ContactCardSectionComponent
+    });
+
+    // Network card section
+    this.registry.register('network-card', {
+      canHandle: () => true,
+      loadComponent: async () => (await import('../sections/network-card-section/network-card-section.component')).NetworkCardSectionComponent
+    });
+
+    // Map section
+    this.registry.register('map', {
+      canHandle: () => true,
+      loadComponent: async () => (await import('../sections/map-section/map-section.component')).MapSectionComponent
+    }, ['locations']);
+
+    // Chart section
+    this.registry.register('chart', {
+      canHandle: () => true,
+      loadComponent: async () => (await import('../sections/chart-section/chart-section.component')).ChartSectionComponent
+    });
+
+    // Overview section
+    this.registry.register('overview', {
+      canHandle: () => true,
+      loadComponent: async () => (await import('../sections/overview-section/overview-section.component')).OverviewSectionComponent
+    });
+
+    // Quotation section
+    this.registry.register('quotation', {
+      canHandle: () => true,
+      loadComponent: async () => (await import('../sections/quotation-section/quotation-section.component')).QuotationSectionComponent
+    }, ['quote']);
+
+    // Text reference section
+    this.registry.register('text-reference', {
+      canHandle: () => true,
+      loadComponent: async () => (await import('../sections/text-reference-section/text-reference-section.component')).TextReferenceSectionComponent
+    }, ['reference', 'text-ref']);
+
+    // Brand colors section
+    this.registry.register('brand-colors', {
+      canHandle: () => true,
+      loadComponent: async () => (await import('../sections/brand-colors-section/brand-colors-section.component')).BrandColorsSectionComponent
+    }, ['brands', 'colors']);
+
+    // News section
+    this.registry.register('news', {
+      canHandle: () => true,
+      loadComponent: async () => (await import('../sections/news-section/news-section.component')).NewsSectionComponent
+    });
+
+    // Social media section
+    this.registry.register('social-media', {
+      canHandle: () => true,
+      loadComponent: async () => (await import('../sections/social-media-section/social-media-section.component')).SocialMediaSectionComponent
+    });
+
+    // Fallback section
+    this.registry.register('fallback', {
+      canHandle: () => true,
+      loadComponent: async () => (await import('../sections/fallback-section/fallback-section.component')).FallbackSectionComponent
+    });
+  }
 
   /**
    * Get component type for a section type
    * Returns a promise that resolves to the component class
    */
-  async getComponentType(sectionType: string): Promise<Type<any>> {
+  async getComponentType(sectionType: string): Promise<Type<SectionComponentInstance>> {
     // Check cache first
     if (this.componentCache.has(sectionType)) {
       return this.componentCache.get(sectionType)!;
     }
 
-    // Load component dynamically
-    const componentPromise = this.loadComponent(sectionType);
+    // Load component dynamically using registry
+    const componentPromise = this.registry.getComponentType(sectionType);
     this.componentCache.set(sectionType, componentPromise);
 
     try {
@@ -30,70 +151,8 @@ export class SectionLoaderService {
     } catch (error) {
       // If loading fails, return fallback component
       console.error(`Failed to load component for type: ${sectionType}`, error);
-      return this.loadFallbackComponent();
+      return this.registry.getComponentType('fallback');
     }
-  }
-
-  /**
-   * Load component based on section type
-   */
-  private async loadComponent(sectionType: string): Promise<Type<any>> {
-    switch (sectionType) {
-      case 'info':
-        return (await import('../sections/info-section.component')).InfoSectionComponent;
-      case 'analytics':
-      case 'metrics':
-      case 'stats':
-        return (await import('../sections/analytics-section/analytics-section.component')).AnalyticsSectionComponent;
-      case 'financials':
-        return (await import('../sections/financials-section/financials-section.component')).FinancialsSectionComponent;
-      case 'list':
-      case 'table':
-        return (await import('../sections/list-section/list-section.component')).ListSectionComponent;
-      case 'event':
-      case 'timeline':
-        return (await import('../sections/event-section/event-section.component')).EventSectionComponent;
-      case 'product':
-        return (await import('../sections/product-section/product-section.component')).ProductSectionComponent;
-      case 'solutions':
-        return (await import('../sections/solutions-section/solutions-section.component')).SolutionsSectionComponent;
-      case 'contact-card':
-        return (await import('../sections/contact-card-section/contact-card-section.component')).ContactCardSectionComponent;
-      case 'network-card':
-        return (await import('../sections/network-card-section/network-card-section.component')).NetworkCardSectionComponent;
-      case 'map':
-      case 'locations':
-        return (await import('../sections/map-section/map-section.component')).MapSectionComponent;
-      case 'chart':
-        return (await import('../sections/chart-section/chart-section.component')).ChartSectionComponent;
-      case 'overview':
-        return (await import('../sections/overview-section/overview-section.component')).OverviewSectionComponent;
-      case 'quotation':
-      case 'quote':
-        return (await import('../sections/quotation-section/quotation-section.component')).QuotationSectionComponent;
-      case 'text-reference':
-      case 'reference':
-      case 'text-ref':
-        return (await import('../sections/text-reference-section/text-reference-section.component')).TextReferenceSectionComponent;
-      case 'brand-colors':
-      case 'brands':
-      case 'colors':
-        return (await import('../sections/brand-colors-section/brand-colors-section.component')).BrandColorsSectionComponent;
-      case 'news':
-        return (await import('../sections/news-section/news-section.component')).NewsSectionComponent;
-      case 'social-media':
-        return (await import('../sections/social-media-section/social-media-section.component')).SocialMediaSectionComponent;
-      default:
-        return this.loadFallbackComponent();
-    }
-  }
-
-  /**
-   * Load fallback component
-   */
-  private async loadFallbackComponent(): Promise<Type<any>> {
-    const module = await import('../sections/fallback-section/fallback-section.component');
-    return module.FallbackSectionComponent;
   }
 
   /**
@@ -103,6 +162,7 @@ export class SectionLoaderService {
     this.componentCache.clear();
   }
 }
+
 
 
 

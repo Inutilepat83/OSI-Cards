@@ -1,0 +1,142 @@
+/* NgDoc Custom Overrides */
+/* Ensure ng-doc styles work properly and don't conflict with app styles */
+
+/* NgDoc CSS Variables - Match app theme */
+:root[data-theme='dark'],
+:root {
+  --ng-doc-background: #0a0a0a;
+  --ng-doc-surface: #1a1a1a;
+  --ng-doc-text-primary: #ffffff;
+  --ng-doc-text-secondary: rgba(255, 255, 255, 0.7);
+  --ng-doc-border-color: rgba(255, 255, 255, 0.1);
+  --ng-doc-accent-color: #ff7900;
+  --ng-doc-link-color: #4a9eff;
+  --ng-doc-code-background: #1e1e1e;
+  --ng-doc-code-text: #d4d4d4;
+  --ng-doc-sidebar-width: 280px;
+  --ng-doc-navbar-height: 64px;
+  --ng-doc-app-max-width: 1400px;
+  --ng-doc-app-horizontal-padding: 2rem;
+}
+
+/* Isolate ng-doc from app styles */
+ng-doc-app {
+  isolation: isolate;
+  position: relative;
+  z-index: 1;
+  
+  /* Ensure full height */
+  min-height: 100vh;
+  display: block;
+}
+
+/* Scope ng-doc styles to prevent conflicts */
+ng-doc-app,
+[ng-doc-app],
+.ng-doc-root {
+  /* Reset any conflicting styles */
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Ensure proper typography */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  
+  /* Override any Tailwind resets that might interfere */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.25;
+    margin-top: 0;
+  }
+
+  p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  code {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+    font-size: 0.9em;
+  }
+
+  pre {
+    background: var(--ng-doc-code-background, #1e1e1e);
+    border-radius: 6px;
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  /* Ensure links are styled properly */
+  a {
+    color: var(--ng-doc-link-color, #4a9eff);
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  /* Table styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    
+    th, td {
+      padding: 0.75rem;
+      border: 1px solid var(--ng-doc-border-color, rgba(255, 255, 255, 0.1));
+    }
+    
+    th {
+      background: var(--ng-doc-table-header-background, rgba(255, 255, 255, 0.05));
+      font-weight: 600;
+    }
+  }
+
+  /* Blockquote styling */
+  blockquote {
+    border-left: 4px solid var(--ng-doc-accent-color, #4a9eff);
+    padding-left: 1rem;
+    margin: 1rem 0;
+    color: var(--ng-doc-text-secondary, rgba(255, 255, 255, 0.7));
+    background: rgba(255, 255, 255, 0.02);
+    padding: 1rem;
+    border-radius: 4px;
+  }
+
+  /* List styling */
+  ul, ol {
+    margin: 1rem 0;
+    padding-left: 2rem;
+    
+    li {
+      margin: 0.5rem 0;
+      line-height: 1.6;
+    }
+  }
+
+  /* Image styling */
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin: 1rem 0;
+  }
+
+  /* Horizontal rule */
+  hr {
+    border: none;
+    border-top: 1px solid var(--ng-doc-border-color, rgba(255, 255, 255, 0.1));
+    margin: 2rem 0;
+  }
+}
+
+/* Prevent app styles from affecting ng-doc */
+ng-doc-app * {
+  /* Reset any global app styles that might interfere */
+  &::before,
+  &::after {
+    box-sizing: border-box;
+  }
+}
+

@@ -331,7 +331,7 @@ describe('SectionRendererComponent', () => {
       component['loadComponent']();
       
       expect(sectionLoaderService.getComponentType).not.toHaveBeenCalled();
-    }));
+    });
 
     it('should not load component if ViewContainerRef not available', () => {
       const section = SectionBuilder.create()
@@ -346,7 +346,7 @@ describe('SectionRendererComponent', () => {
       component['loadComponent']();
       
       expect(sectionLoaderService.getComponentType).not.toHaveBeenCalled();
-    }));
+    });
 
     it('should not load component if section is null', () => {
       component.section = null;
@@ -355,7 +355,7 @@ describe('SectionRendererComponent', () => {
       component['loadComponent']();
       
       expect(sectionLoaderService.getComponentType).not.toHaveBeenCalled();
-    }));
+    });
 
     it('should reload component when section type changes', fakeAsync(() => {
       const section1 = SectionBuilder.create()
@@ -554,7 +554,7 @@ describe('SectionRendererComponent', () => {
           custom: 'metadata'
         })
       });
-    }));
+    });
 
     it('should not emit field interaction when section is null', () => {
       component.section = null;
@@ -568,7 +568,7 @@ describe('SectionRendererComponent', () => {
       component.emitFieldInteraction(field);
       
       expect(component.sectionEvent.emit).not.toHaveBeenCalled();
-    }));
+    });
 
     it('should emit item interaction event', () => {
       const section = SectionBuilder.create()
@@ -596,7 +596,7 @@ describe('SectionRendererComponent', () => {
           custom: 'metadata'
         })
       });
-    }));
+    });
 
     it('should not emit item interaction when section is null', () => {
       component.section = null;
@@ -609,7 +609,7 @@ describe('SectionRendererComponent', () => {
       component.emitItemInteraction(item);
       
       expect(component.sectionEvent.emit).not.toHaveBeenCalled();
-    }));
+    });
 
     it('should emit action interaction event', () => {
       const section = SectionBuilder.create()
@@ -634,7 +634,7 @@ describe('SectionRendererComponent', () => {
         action,
         metadata: { custom: 'metadata' }
       });
-    }));
+    });
 
     it('should not emit action interaction when section is null', () => {
       component.section = null;
@@ -648,7 +648,7 @@ describe('SectionRendererComponent', () => {
       component.emitActionInteraction(action);
       
       expect(component.sectionEvent.emit).not.toHaveBeenCalled();
-    }));
+    });
 
     it('should handle info field interaction', () => {
       const section = SectionBuilder.create()
@@ -677,7 +677,7 @@ describe('SectionRendererComponent', () => {
         field,
         metadata: { sectionTitle: 'Test Section' }
       });
-    }));
+    });
 
     it('should not handle info field interaction when section is null', () => {
       component.section = null;
@@ -696,7 +696,7 @@ describe('SectionRendererComponent', () => {
       component.onInfoFieldInteraction(infoEvent);
       
       expect(component.sectionEvent.emit).not.toHaveBeenCalled();
-    }));
+    });
   });
 
   describe('Component Event Subscriptions', () => {
@@ -826,7 +826,7 @@ describe('SectionRendererComponent', () => {
       
       // Should not load component yet
       expect(sectionLoaderService.getComponentType).not.toHaveBeenCalled();
-    }));
+    });
 
     it('should clear component when section becomes null', fakeAsync(() => {
       const section = SectionBuilder.create()

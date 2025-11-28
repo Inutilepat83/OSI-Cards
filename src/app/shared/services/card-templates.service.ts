@@ -1,9 +1,11 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 import { map, shareReplay, catchError } from 'rxjs/operators';
 import { AICardConfig, CardType } from '../../models';
 import { CardDataService } from '../../core/services/card-data/card-data.service';
 import { LoggingService } from '../../core/services/logging.service';
+import { ExportService } from '../../core/services/export.service';
+import { ValidationService } from '../../core/services/validation.service';
 import { ensureCardIds, removeAllIds } from '../utils/card-utils';
 
 /**
@@ -31,18 +33,45 @@ import { ensureCardIds, removeAllIds } from '../utils/card-utils';
  * const cached = templateService.getCachedTemplate('company', 1);
  * ```
  */
+
+export interface TemplateMetadata {
+  id: string;
+  name: string;
+  description?: string;
+  cardType: CardType;
+  variant: number;
+  tags?: string[];
+  createdAt: Date;
+  updatedAt: Date;
+  createdBy?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class CardTemplatesService {
   private readonly cardDataService = inject(CardDataService);
   private readonly logger = inject(LoggingService);
+  private readonly exportService = inject(ExportService);
+  private readonly validationService = inject(ValidationService);
   
   // Template cache: Map<`${cardType}-${variant}`, AICardConfig>
   private readonly templateCache = new Map<string, AICardConfig>();
   
+  // Template metadata cache
+  private readonly templateMetadata = new Map<string, TemplateMetadata>();
+  
+  // User-created templates (stored in localStorage)
+  private readonly userTemplatesKey = 'osi-cards-user-templates';
+  private readonly userTemplatesSubject = new BehaviorSubject<AICardConfig[]>([]);
+  public readonly userTemplates$ = this.userTemplatesSubject.asObservable();
+  
   // Observable cache for async loading
   private readonly templateObservables = new Map<string, Observable<AICardConfig | null>>();
+  
+  constructor() {
+    this.loadUserTemplates();
+  }
   /**
    * Load template by type and variant
    * 
@@ -373,6 +402,272 @@ export class CardTemplatesService {
     return this.loadTemplate(cardType, variant).pipe(
       map(template => template !== null)
     );
+  }
+
+  /**
+   * Create a new template from a card
+   */
+  createTemplate(card: AICardConfig, metadata: Omit<TemplateMetadata, 'id' | 'createdAt' | 'updatedAt'>): string {
+    // Validate card
+    const validation = this.validationService.validateCard(card);
+    if (!validation.success) {
+      throw new Error(`Invalid card: ${validation.errorMessages?.join(', ')}`);
+    }
+
+    // Generate template ID
+    const templateId = `template_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    
+    // Create template metadata
+    const templateMeta: TemplateMetadata = {
+      id: templateId,
+      ...metadata,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    // Remove IDs and sanitize
+    const scrubbed = removeAllIds(card);
+    const template: AICardConfig = {
+      ...scrubbed,
+      cardType: metadata.cardType,
+      id: templateId
+    };
+
+    // Store in user templates
+    const userTemplates = this.getUserTemplates();
+    userTemplates.push(template);
+    this.saveUserTemplates(userTemplates);
+    
+    // Store metadata
+    this.templateMetadata.set(templateId, templateMeta);
+    this.saveTemplateMetadata();
+
+    this.logger.info('Template created', 'CardTemplatesService', { templateId, name: metadata.name });
+    return templateId;
+  }
+
+  /**
+   * Update an existing template
+   */
+  updateTemplate(templateId: string, card: AICardConfig, updates?: Partial<TemplateMetadata>): void {
+    const userTemplates = this.getUserTemplates();
+    const index = userTemplates.findIndex(t => t.id === templateId);
+    
+    if (index === -1) {
+      throw new Error(`Template not found: ${templateId}`);
+    }
+
+    // Validate card
+    const validation = this.validationService.validateCard(card);
+    if (!validation.success) {
+      throw new Error(`Invalid card: ${validation.errorMessages?.join(', ')}`);
+    }
+
+    // Update template
+    const scrubbed = removeAllIds(card);
+    userTemplates[index] = {
+      ...scrubbed,
+      id: templateId
+    };
+    this.saveUserTemplates(userTemplates);
+
+    // Update metadata
+    const meta = this.templateMetadata.get(templateId);
+    if (meta) {
+      this.templateMetadata.set(templateId, {
+        ...meta,
+        ...updates,
+        updatedAt: new Date()
+      });
+      this.saveTemplateMetadata();
+    }
+
+    this.logger.info('Template updated', 'CardTemplatesService', { templateId });
+  }
+
+  /**
+   * Delete a template
+   */
+  deleteTemplate(templateId: string): void {
+    const userTemplates = this.getUserTemplates();
+    const filtered = userTemplates.filter(t => t.id !== templateId);
+    this.saveUserTemplates(filtered);
+    
+    this.templateMetadata.delete(templateId);
+    this.saveTemplateMetadata();
+
+    this.logger.info('Template deleted', 'CardTemplatesService', { templateId });
+  }
+
+  /**
+   * Export template
+   */
+  async exportTemplate(templateId: string, format: 'json' | 'pdf' = 'json'): Promise<void> {
+    const userTemplates = this.getUserTemplates();
+    const template = userTemplates.find(t => t.id === templateId);
+    
+    if (!template) {
+      throw new Error(`Template not found: ${templateId}`);
+    }
+
+    await this.exportService.exportCard(template, {
+      format,
+      filename: `${this.sanitizeFilename(template.cardTitle || 'template')}.${format}`,
+      includeMetadata: true,
+      prettyPrint: true
+    });
+  }
+
+  /**
+   * Import template from JSON
+   */
+  importTemplate(jsonString: string, metadata?: Partial<TemplateMetadata>): string {
+    try {
+      const parsed = JSON.parse(jsonString);
+      const validation = this.validationService.validateCard(parsed);
+      
+      if (!validation.success || !validation.data) {
+        throw new Error(`Invalid template: ${validation.errorMessages?.join(', ')}`);
+      }
+
+      const card = validation.data;
+      const templateId = `template_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+      
+      const templateMeta: TemplateMetadata = {
+        id: templateId,
+        name: metadata?.name || card.cardTitle || 'Imported Template',
+        description: metadata?.description,
+        cardType: metadata?.cardType || (card.cardType as CardType) || 'all',
+        variant: metadata?.variant || 1,
+        tags: metadata?.tags,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: metadata?.createdBy
+      };
+
+      const userTemplates = this.getUserTemplates();
+      userTemplates.push({ ...card, id: templateId });
+      this.saveUserTemplates(userTemplates);
+      
+      this.templateMetadata.set(templateId, templateMeta);
+      this.saveTemplateMetadata();
+
+      this.logger.info('Template imported', 'CardTemplatesService', { templateId });
+      return templateId;
+    } catch (error) {
+      this.logger.error('Failed to import template', 'CardTemplatesService', { error });
+      throw new Error(`Failed to import template: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  /**
+   * Get all user-created templates
+   */
+  getUserTemplates(): AICardConfig[] {
+    try {
+      const stored = localStorage.getItem(this.userTemplatesKey);
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    } catch (error) {
+      this.logger.error('Failed to load user templates', 'CardTemplatesService', { error });
+    }
+    return [];
+  }
+
+  /**
+   * Get template metadata
+   */
+  getTemplateMetadata(templateId: string): TemplateMetadata | null {
+    return this.templateMetadata.get(templateId) || null;
+  }
+
+  /**
+   * Get all template metadata
+   */
+  getAllTemplateMetadata(): TemplateMetadata[] {
+    return Array.from(this.templateMetadata.values());
+  }
+
+  /**
+   * Search templates
+   */
+  searchTemplates(query: string): AICardConfig[] {
+    const userTemplates = this.getUserTemplates();
+    const lowerQuery = query.toLowerCase();
+    
+    return userTemplates.filter(template => {
+      const title = template.cardTitle?.toLowerCase() || '';
+      const subtitle = template.cardSubtitle?.toLowerCase() || '';
+      const description = template.description?.toLowerCase() || '';
+      const type = template.cardType?.toLowerCase() || '';
+      
+      return title.includes(lowerQuery) ||
+             subtitle.includes(lowerQuery) ||
+             description.includes(lowerQuery) ||
+             type.includes(lowerQuery);
+    });
+  }
+
+  /**
+   * Load user templates from localStorage
+   */
+  private loadUserTemplates(): void {
+    const templates = this.getUserTemplates();
+    this.userTemplatesSubject.next(templates);
+    
+    // Load metadata
+    try {
+      const stored = localStorage.getItem('osi-cards-template-metadata');
+      if (stored) {
+        const metadata = JSON.parse(stored) as TemplateMetadata[];
+        metadata.forEach(meta => {
+          this.templateMetadata.set(meta.id, {
+            ...meta,
+            createdAt: new Date(meta.createdAt),
+            updatedAt: new Date(meta.updatedAt)
+          });
+        });
+      }
+    } catch (error) {
+      this.logger.error('Failed to load template metadata', 'CardTemplatesService', { error });
+    }
+  }
+
+  /**
+   * Save user templates to localStorage
+   */
+  private saveUserTemplates(templates: AICardConfig[]): void {
+    try {
+      localStorage.setItem(this.userTemplatesKey, JSON.stringify(templates));
+      this.userTemplatesSubject.next(templates);
+    } catch (error) {
+      this.logger.error('Failed to save user templates', 'CardTemplatesService', { error });
+    }
+  }
+
+  /**
+   * Save template metadata to localStorage
+   */
+  private saveTemplateMetadata(): void {
+    try {
+      const metadata = Array.from(this.templateMetadata.values());
+      localStorage.setItem('osi-cards-template-metadata', JSON.stringify(metadata));
+    } catch (error) {
+      this.logger.error('Failed to save template metadata', 'CardTemplatesService', { error });
+    }
+  }
+
+  /**
+   * Sanitize filename
+   */
+  private sanitizeFilename(filename: string): string {
+    return filename
+      .replace(/[^a-z0-9]/gi, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+      .toLowerCase()
+      .substring(0, 50);
   }
 }
 

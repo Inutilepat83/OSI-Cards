@@ -1,0 +1,113 @@
+<div class="documentation-page">
+  <!-- Mobile sidebar overlay -->
+  <div
+    *ngIf="sidebarOpen()"
+    class="sidebar-overlay"
+    (click)="closeSidebar()"
+    aria-label="Close sidebar">
+  </div>
+
+  <!-- Sidebar Navigation -->
+  <aside
+    class="documentation-sidebar"
+    [class.sidebar-open]="sidebarOpen()"
+    aria-label="Documentation navigation">
+    <div class="sidebar-header">
+      <h2 class="sidebar-title">Documentation</h2>
+      <button
+        class="sidebar-close-btn"
+        (click)="closeSidebar()"
+        aria-label="Close sidebar">
+        <lucide-icon name="x" size="20"></lucide-icon>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <!-- Document Navigation -->
+      <ng-container *ngFor="let category of categories()">
+        <div class="nav-category">
+          <h3 class="nav-category-title">{{ category.name }}</h3>
+          <ul class="nav-list">
+            <li *ngFor="let item of category.items">
+              <a
+                class="nav-item"
+                [class.active]="isActiveDoc(item.id)"
+                (click)="navigateToDoc(item.id)"
+                [attr.aria-current]="isActiveDoc(item.id) ? 'page' : null">
+                <span class="nav-item-title">{{ item.title }}</span>
+                <span *ngIf="item.description" class="nav-item-description">{{ item.description }}</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </ng-container>
+
+      <!-- Table of Contents -->
+      <div *ngIf="tableOfContents().length > 0" class="toc-section">
+        <h3 class="nav-category-title">Table of Contents</h3>
+        <ul class="toc-list">
+          <li *ngFor="let item of tableOfContents()" [class]="'toc-item toc-level-' + item.level">
+            <a
+              class="toc-link"
+              (click)="scrollToSection(item.id)"
+              [attr.href]="'#' + item.id">
+              {{ item.text }}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="documentation-content">
+    <!-- Mobile header with menu button -->
+    <header class="content-header">
+      <button
+        class="menu-toggle"
+        (click)="toggleSidebar()"
+        aria-label="Toggle sidebar"
+        aria-expanded="false">
+        <lucide-icon name="menu" size="24"></lucide-icon>
+      </button>
+      <h1 class="content-title" *ngIf="activeDoc()">{{ activeDoc()!.title }}</h1>
+    </header>
+
+    <!-- Content -->
+    <div class="content-wrapper">
+      <!-- Loading state -->
+      <div *ngIf="isLoading()" class="loading-state">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading documentation...</p>
+      </div>
+
+      <!-- Error state -->
+      <div *ngIf="error() && !isLoading()" class="error-state">
+        <lucide-icon name="alert-circle" size="48" class="error-icon"></lucide-icon>
+        <h2 class="error-title">Error Loading Documentation</h2>
+        <p class="error-message">{{ error() }}</p>
+        <button class="error-retry-btn" (click)="loadDocument(activeDocId())">
+          <lucide-icon name="refresh-cw" size="16"></lucide-icon>
+          Retry
+        </button>
+      </div>
+
+      <!-- Markdown content -->
+      <div *ngIf="!isLoading() && !error() && markdownContent()" class="markdown-content">
+        <app-markdown-renderer
+          [markdown]="markdownContent()"
+          (tocChange)="onTocChange($event)"
+          #markdownRenderer>
+        </app-markdown-renderer>
+      </div>
+
+      <!-- Empty state -->
+      <div *ngIf="!isLoading() && !error() && !markdownContent()" class="empty-state">
+        <lucide-icon name="file-text" size="48" class="empty-icon"></lucide-icon>
+        <h2 class="empty-title">No Documentation Selected</h2>
+        <p class="empty-message">Select a document from the sidebar to view its content.</p>
+      </div>
+    </div>
+  </main>
+</div>
+

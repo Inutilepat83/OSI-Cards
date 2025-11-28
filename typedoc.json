@@ -3,7 +3,8 @@
   "entryPoints": [
     "src/app/core/**/*.ts",
     "src/app/shared/**/*.ts",
-    "src/app/features/**/*.ts"
+    "src/app/features/**/*.ts",
+    "src/app/models/**/*.ts"
   ],
   "exclude": [
     "**/*.spec.ts",

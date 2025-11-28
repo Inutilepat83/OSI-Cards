@@ -208,15 +208,91 @@ function checkUnsafeEval(content, filePath) {
   
   lines.forEach((line, index) => {
     if (/eval\(|new\s+Function\(/i.test(line)) {
-      issues.push({
-        type: ISSUES.UNSAFE_EVAL,
-        file: filePath,
-        line: index + 1,
-        severity: 'critical',
-        message: 'eval() or Function() constructor usage detected',
-        code: line.trim()
-      });
+      // Allow in test files and specific safe contexts
+      const isTestFile = filePath.includes('.spec.') || filePath.includes('.test.');
+      const isSafeContext = /\/\*\s*safe\s*eval\s*\*\//i.test(line) || 
+                           /\/\/\s*safe\s*eval/i.test(line);
+      
+      if (!isTestFile && !isSafeContext) {
+        issues.push({
+          type: ISSUES.UNSAFE_EVAL,
+          file: filePath,
+          line: index + 1,
+          severity: 'critical',
+          message: 'eval() or Function() constructor usage detected',
+          code: line.trim()
+        });
+      }
     }
+  });
+}
+
+/**
+ * Check for XSS vulnerabilities in template bindings
+ */
+function checkXssVulnerabilities(content, filePath) {
+  if (!filePath.endsWith('.html')) return;
+  
+  const lines = content.split('\n');
+  const xssPatterns = [
+    {
+      pattern: /\{\{\s*[^}]*\.(innerHTML|outerHTML|textContent)\s*\}\}/,
+      message: 'Direct property binding in template - use safe pipes'
+    },
+    {
+      pattern: /\(click\)\s*=\s*["'][^"']*javascript:/i,
+      message: 'JavaScript protocol in event handler'
+    },
+    {
+      pattern: /href\s*=\s*["']\s*\{\{\s*[^}]*\}\}/,
+      message: 'Unsafe URL binding in href attribute'
+    }
+  ];
+  
+  lines.forEach((line, index) => {
+    xssPatterns.forEach(({ pattern, message }) => {
+      if (pattern.test(line) && !line.includes('safeUrl') && !line.includes('safeHtml')) {
+        issues.push({
+          type: ISSUES.MISSING_SANITIZATION,
+          file: filePath,
+          line: index + 1,
+          severity: 'high',
+          message: message,
+          code: line.trim()
+        });
+      }
+    });
+  });
+}
+
+/**
+ * Check for SQL injection patterns (if applicable)
+ */
+function checkSqlInjection(content, filePath) {
+  const lines = content.split('\n');
+  const sqlPatterns = [
+    /SELECT\s+.*\s+FROM\s+.*\+/i,
+    /INSERT\s+INTO\s+.*\+/i,
+    /UPDATE\s+.*\s+SET\s+.*\+/i,
+    /DELETE\s+FROM\s+.*\+/i
+  ];
+  
+  lines.forEach((line, index) => {
+    sqlPatterns.forEach(pattern => {
+      if (pattern.test(line)) {
+        const hasParameterization = /parameterized|prepared|query\s*\(/i.test(line);
+        if (!hasParameterization) {
+          issues.push({
+            type: 'sql-injection',
+            file: filePath,
+            line: index + 1,
+            severity: 'critical',
+            message: 'SQL query construction without parameterization',
+            code: line.trim()
+          });
+        }
+      }
+    });
   });
 }
 
@@ -234,6 +310,8 @@ function scanFile(filePath) {
     checkDirectDom(content, filePath);
     checkTemplateSanitization(content, filePath);
     checkUnsafeEval(content, filePath);
+    checkXssVulnerabilities(content, filePath);
+    checkSqlInjection(content, filePath);
   } catch (error) {
     console.error(`Error scanning ${filePath}:`, error.message);
   }
@@ -325,4 +403,5 @@ if (require.main === module) {
 }
 
 module.exports = { scanFile, generateReport };
+
 

@@ -49,6 +49,12 @@
 
 @import 'styles/pages/home';
 
+/* NgDoc styles - Import last to ensure they take precedence */
+@import '@ng-doc/app/styles/main.css';
+@import '@ng-doc/app/styles/global.css';
+@import '@ng-doc/app/styles/themes/dark.css';
+@import 'styles/ng-doc-overrides';
+
 /* Optional local Material Icons: place fonts in src/assets/fonts/MaterialIcons-Regular.woff2 */
 @font-face {
   font-family: 'Material Icons';

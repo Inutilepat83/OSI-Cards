@@ -113,6 +113,18 @@
         "maxAge": "1d",
         "timeout": "5s"
       }
+    },
+    {
+      "name": "user-templates",
+      "urls": [
+        "/**"
+      ],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "maxSize": 100,
+        "maxAge": "7d",
+        "timeout": "5s"
+      }
     }
   ],
   "navigationUrls": [

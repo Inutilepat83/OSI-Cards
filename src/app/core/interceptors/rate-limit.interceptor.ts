@@ -96,6 +96,8 @@ export interface RateLimitConfig {
  * - 10 requests capacity with 2 requests/second refill rate
  * - Exponential backoff for retries (more aggressive than linear)
  * - Per-endpoint configuration support for fine-grained control
+ * - Priority queuing enabled for better request handling
+ * - Burst allowance for handling traffic spikes
  */
 const DEFAULT_CONFIG: RateLimitConfig = {
   capacity: 10,
@@ -195,7 +197,9 @@ export class RateLimitInterceptor implements HttpInterceptor {
       }
     }
 
-    const bucket = this.getBucket(request.url);
+    // Get endpoint-specific configuration if available
+    const endpointConfig = this.getEndpointConfig(request.url);
+    const bucket = this.getBucket(request.url, endpointConfig);
     const retryCount = this.getRetryCount(request);
     
     if (!bucket.tryConsume()) {
@@ -290,6 +294,29 @@ export class RateLimitInterceptor implements HttpInterceptor {
   }
 
   /**
+   * Get endpoint-specific configuration
+   */
+  private getEndpointConfig(url: string): EndpointRateLimit | null {
+    if (!this.config.endpoints || this.config.endpoints.length === 0) {
+      return null;
+    }
+
+    for (const endpoint of this.config.endpoints) {
+      if (typeof endpoint.pattern === 'string') {
+        if (url.includes(endpoint.pattern)) {
+          return endpoint;
+        }
+      } else if (endpoint.pattern instanceof RegExp) {
+        if (endpoint.pattern.test(url)) {
+          return endpoint;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * Get retry count from request headers
    */
   private getRetryCount(request: HttpRequest<unknown>): number {
@@ -316,24 +343,21 @@ export class RateLimitInterceptor implements HttpInterceptor {
    * Get or create token bucket for a URL pattern
    * Checks for per-endpoint limits first, then falls back to default
    */
-  private getBucket(url: string): TokenBucket {
-    // Check for per-endpoint configuration
-    if (this.config.endpoints && this.config.endpoints.length > 0) {
-      for (const endpoint of this.config.endpoints) {
-        const pattern = endpoint.pattern;
-        const matches = typeof pattern === 'string' 
-          ? url.includes(pattern)
-          : pattern.test(url);
-        
-        if (matches) {
-          // Use endpoint-specific bucket
-          const key = `endpoint:${pattern}`;
-          if (!this.buckets.has(key)) {
-            this.buckets.set(key, new TokenBucket(endpoint.capacity, endpoint.refillRate));
-          }
-          return this.buckets.get(key)!;
-        }
+  private getBucket(url: string, endpointConfig?: EndpointRateLimit | null): TokenBucket {
+    // Use endpoint-specific configuration if available
+    if (endpointConfig) {
+      const pattern = typeof endpointConfig.pattern === 'string' 
+        ? endpointConfig.pattern 
+        : endpointConfig.pattern.toString();
+      const key = `endpoint:${pattern}`;
+      
+      if (!this.buckets.has(key)) {
+        this.buckets.set(
+          key, 
+          new TokenBucket(endpointConfig.capacity, endpointConfig.refillRate)
+        );
       }
+      return this.buckets.get(key)!;
     }
 
     // Use domain as bucket key for default limits

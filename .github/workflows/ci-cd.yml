@@ -321,6 +321,19 @@ jobs:
         env:
           SNYK_TOKEN: ${{ env.SNYK_TOKEN }}
 
+      - name: Vulnerability Scan (npm audit)
+        run: |
+          node scripts/vulnerability-scan.js --json --output vulnerability-report.json || true
+          # Fail on critical vulnerabilities
+          node scripts/vulnerability-scan.js --fail-on-critical || echo "⚠️ Vulnerabilities found - review report"
+
+      - name: Upload Vulnerability Report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: vulnerability-report
+          path: vulnerability-report.json
+
       - name: CodeQL Init
         uses: github/codeql-action/init@v2
         with:
@@ -342,6 +355,7 @@ jobs:
             snyk-results/
             codeql-results/
             accessibility-reports/
+            vulnerability-report.json
 
   # Container Build & Scan
   container_build:

@@ -285,10 +285,11 @@
 /* Removed obsolete section-card-mobile mixin - continuous responsive design via base system */
 
 /* ===================================================================
-   REDUCED MOTION SUPPORT
-   Global accessibility support for all sections
+   ACCESSIBILITY SUPPORT
+   Reduced motion, high contrast, and other accessibility features
    =================================================================== */
 
+/* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
   /* Disable all card animations and transitions */
   .unified-card,

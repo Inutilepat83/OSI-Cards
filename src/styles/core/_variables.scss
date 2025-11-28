@@ -417,6 +417,48 @@
   --font-weight-normal: 400;
 }
 
+/* ===== HIGH CONTRAST MODE SUPPORT ===== */
+/* Enhanced visibility for Windows High Contrast Mode and prefers-contrast */
+@media (prefers-contrast: high) {
+  :root,
+  :root[data-theme='night'],
+  :root[data-theme='day'] {
+    /* Increase contrast ratios for better visibility */
+    --foreground: #ffffff;
+    --background: #000000;
+    --muted-foreground: #ffffff;
+    --muted: #000000;
+    --border: #ffffff;
+    --card: #000000;
+    --card-foreground: #ffffff;
+    
+    /* Ensure borders are always visible */
+    --ai-card-border: 2px solid #ffffff;
+    --section-border: 2px solid #ffffff;
+    --button-border: 2px solid #ffffff;
+    
+    /* Remove transparency for high contrast */
+    --card-background: #000000;
+    --card-background-hover: #1a1a1a;
+    --section-item-background: #000000;
+    --section-item-background-hover: #1a1a1a;
+  }
+}
+
+/* Windows High Contrast Mode detection */
+@media (forced-colors: active) {
+  :root,
+  :root[data-theme='night'],
+  :root[data-theme='day'] {
+    /* Use system colors in forced-colors mode */
+    --foreground: ButtonText;
+    --background: Canvas;
+    --border: ButtonBorder;
+    --card: Canvas;
+    --card-foreground: ButtonText;
+  }
+}
+
 /* ===== RESPONSIVE ANIMATION PREFERENCES ===== */
 /* Reduced motion support for accessibility */
 @media (prefers-reduced-motion: reduce) {

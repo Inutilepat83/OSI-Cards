@@ -8,6 +8,7 @@ import { CardDataProvider } from './card-data-provider.interface';
 import { CardManifest, CardManifestEntry } from './manifest.interface';
 import { sanitizeCardConfig } from '../../../shared/utils/card-utils';
 import { CardValidationService } from '../../../shared/services/card-validation.service';
+import { ValidationService } from '../validation.service';
 import { LoggingService } from '../logging.service';
 import { RequestCanceller } from '../../../shared/utils/request-cancellation.util';
 import { RequestQueueService } from '../request-queue.service';
@@ -31,6 +32,7 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
   private requestQueue = inject(RequestQueueService);
   private indexedDBCache = inject(IndexedDBCacheService);
   private validationService = inject(CardValidationService);
+  private zodValidationService = inject(ValidationService);
   private manifestCache$?: Observable<CardManifest>;
   private requestCanceller = new RequestCanceller();
   // In-memory cache for instant access (bypasses HTTP for cached items)
@@ -301,6 +303,17 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
           preview: JSON.stringify(parsed).substring(0, 500)
         });
         return null;
+      }
+
+      // Additional runtime type validation using Zod
+      const zodResult = this.zodValidationService.validateCard(cardConfig);
+      if (!zodResult.success) {
+        this.logger.warn('Zod validation failed for card', 'JsonFileCardProvider', {
+          errors: zodResult.errorMessages,
+          cardTitle: cardConfig.cardTitle
+        });
+        // Continue with cardConfig even if Zod validation fails (non-blocking)
+        // This allows cards to work while we refine the schema
       }
 
       // Sanitize and ensure IDs

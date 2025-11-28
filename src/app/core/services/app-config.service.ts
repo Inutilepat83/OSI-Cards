@@ -102,6 +102,14 @@ export class AppConfigService {
     ENABLE_STATE_LOGGING: environment.enableStateLogging ?? false
   };
 
+  // Development Warnings Configuration
+  readonly DEV_WARNINGS = {
+    ENABLED: !environment.production,
+    MAX_WARNINGS_PER_SESSION: 50,
+    WARN_ON_MISSING_ONPUSH: true,
+    WARN_ON_PERFORMANCE_ANTI_PATTERNS: true
+  };
+
   // Environment Configuration
   readonly ENV = {
     PRODUCTION: environment.production,

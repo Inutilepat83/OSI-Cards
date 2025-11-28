@@ -1,0 +1,22 @@
+<ng-container *ngIf="sections.length; else emptyState">
+  <app-error-boundary>
+    <app-masonry-grid
+      [sections]="sections"
+      [gap]="12"
+      [minColumnWidth]="280"
+      class="w-full"
+      [attr.aria-label]="'Card sections: ' + sections.length + ' section' + (sections.length !== 1 ? 's' : '')"
+      [attr.aria-live]="'polite'"
+      role="region"
+      (sectionEvent)="onSectionEvent($event)"
+      (layoutChange)="onLayoutChange($event)"
+    ></app-masonry-grid>
+  </app-error-boundary>
+</ng-container>
+
+<ng-template #emptyState>
+  <div class="empty-sections-message">
+    <p>No sections available</p>
+  </div>
+</ng-template>
+

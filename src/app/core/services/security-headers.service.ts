@@ -61,6 +61,20 @@ export class SecurityHeadersService {
     // Permissions-Policy: Control browser features
     this.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
 
+    // Strict-Transport-Security: Force HTTPS (if served over HTTPS)
+    if (environment.production && typeof window !== 'undefined' && window.location.protocol === 'https:') {
+      this.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+    }
+
+    // Cross-Origin-Embedder-Policy: Isolate browsing context
+    this.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+
+    // Cross-Origin-Opener-Policy: Isolate browsing context
+    this.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+
+    // Cross-Origin-Resource-Policy: Control resource loading
+    this.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+
     // Comprehensive Content Security Policy
     this.setComprehensiveCSP();
   }

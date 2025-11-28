@@ -76,20 +76,99 @@ export class ErrorHandlingService {
    */
   handleError(error: unknown, context?: string): ApplicationError {
     const applicationError = this.createApplicationError(error, context);
+    
+    // Enhance error message with actionable guidance
+    const enhancedError = this.enhanceErrorMessage(applicationError, context);
+    
     this.logger.error(
-      `Error in ${context || 'ErrorHandlingService'}: ${applicationError.message}`,
+      `Error in ${context || 'ErrorHandlingService'}: ${enhancedError.message}`,
       context || 'ErrorHandlingService',
       {
-        category: applicationError.category,
-        severity: applicationError.severity,
-        code: applicationError.code,
-        recoveryStrategy: applicationError.recoveryStrategy,
-        userAction: applicationError.userAction,
-        details: applicationError.details
+        category: enhancedError.category,
+        severity: enhancedError.severity,
+        code: enhancedError.code,
+        recoveryStrategy: enhancedError.recoveryStrategy,
+        userAction: enhancedError.userAction,
+        details: enhancedError.details,
+        documentationUrl: enhancedError.details?.['documentationUrl'] as string | undefined
       }
     );
-    this.applicationErrorSubject.next(applicationError);
-    return applicationError;
+    this.applicationErrorSubject.next(enhancedError);
+    return enhancedError;
+  }
+
+  /**
+   * Enhance error message with actionable guidance and documentation links
+   */
+  private enhanceErrorMessage(error: ApplicationError, context?: string): ApplicationError {
+    const errorCode = error.code || 'OSI-UNKNOWN';
+    const category = error.category;
+    
+    // Add documentation URL based on error category
+    let documentationUrl: string | undefined;
+    let suggestions: string[] = [];
+
+    switch (category) {
+      case ErrorCategory.NETWORK:
+        documentationUrl = 'https://github.com/Inutulepat83/OSI-Cards/blob/main/docs/TROUBLESHOOTING.md#network-errors';
+        suggestions = [
+          'Check your internet connection',
+          'Verify the API endpoint is accessible',
+          'Check browser console for CORS errors',
+          'Try refreshing the page'
+        ];
+        break;
+
+      case ErrorCategory.VALIDATION:
+        documentationUrl = 'https://github.com/Inutulepat83/OSI-Cards/blob/main/README.md#creating-cards-complete-guide';
+        suggestions = [
+          'Verify all required fields are provided',
+          'Check JSON syntax is valid',
+          'Ensure section types are valid',
+          'See documentation for card configuration examples'
+        ];
+        break;
+
+      case ErrorCategory.BUSINESS_LOGIC:
+        documentationUrl = 'https://github.com/Inutulepat83/OSI-Cards/blob/main/docs/API_REFERENCE.md';
+        suggestions = [
+          'Check the error code for specific guidance',
+          'Verify your card configuration matches expected format',
+          'Review the API documentation',
+          'Check for recent changes in the library'
+        ];
+        break;
+
+      default:
+        documentationUrl = 'https://github.com/Inutulepat83/OSI-Cards/blob/main/docs/TROUBLESHOOTING.md';
+        suggestions = [
+          'Try refreshing the page',
+          'Check browser console for more details',
+          'Review the troubleshooting guide',
+          'If the problem persists, open an issue on GitHub'
+        ];
+    }
+
+    // Enhance error message with code and link
+    const enhancedMessage = error.message.includes(errorCode)
+      ? error.message
+      : `[${errorCode}] ${error.message}`;
+
+    // Add documentation link to details
+    const enhancedDetails = {
+      ...error.details,
+      documentationUrl,
+      suggestions,
+      errorCode,
+      context: context || 'unknown'
+    };
+
+    return {
+      ...error,
+      message: enhancedMessage,
+      details: enhancedDetails,
+      userAction: error.userAction || suggestions[0]
+    };
   }
 
   /**
@@ -283,6 +362,53 @@ export class ErrorHandlingService {
         return [];
       },
       description: 'Return empty array for card loading errors'
+    });
+
+    // Validation error fallback - return null with user-friendly message
+    this.addFallbackStrategy({
+      condition: (error) => {
+        const appError = this.createApplicationError(error);
+        return appError.category === ErrorCategory.VALIDATION;
+      },
+      fallback: () => {
+        this.logger.warn('Validation error - using fallback: null with message', 'ErrorHandlingService');
+        return null;
+      },
+      description: 'Return null for validation errors with user-friendly message'
+    });
+
+    // Timeout error fallback - retry with exponential backoff
+    this.addFallbackStrategy({
+      condition: (error) => {
+        const message = this.extractErrorMessage(error).toLowerCase();
+        return message.includes('timeout') || message.includes('timed out');
+      },
+      fallback: () => {
+        this.logger.warn('Timeout error - using fallback: retry with backoff', 'ErrorHandlingService');
+        // Return a retry signal
+        return { retry: true, delay: 2000 };
+      },
+      description: 'Retry with exponential backoff for timeout errors'
+    });
+
+    // Rate limit error fallback - wait and retry
+    this.addFallbackStrategy({
+      condition: (error) => {
+        // Check if it's an HTTP error response with 429 status
+        if (error && typeof error === 'object' && 'status' in error) {
+          const httpError = error as { status: number };
+          if (httpError.status === 429) {
+            return true;
+          }
+        }
+        const message = this.extractErrorMessage(error).toLowerCase();
+        return message.includes('rate limit') || message.includes('too many requests');
+      },
+      fallback: () => {
+        this.logger.warn('Rate limit error - using fallback: wait and retry', 'ErrorHandlingService');
+        return { retry: true, delay: 5000 };
+      },
+      description: 'Wait and retry for rate limit errors'
     });
   }
 

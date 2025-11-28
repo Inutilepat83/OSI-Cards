@@ -28,9 +28,12 @@ export * from './app/shared/services/toast.service';
 export * from './app/shared/services/keyboard-shortcuts.service';
 export * from './app/shared/services/command.service';
 export * from './app/shared/services/confirmation-dialog.service';
-export * from './app/shared/services/export.service';
+// ExportService is exported from core, not shared
+// // ExportService is exported from core, not shared
+// export * from './app/shared/services/export.service';
 export * from './app/shared/services/auto-save.service';
-export * from './app/shared/services/search-filter.service';
+// SearchResult is exported from core via card-search.service, not shared
+// export * from './app/shared/services/search-filter.service';
 export * from './app/shared/services/theme.service';
 export * from './app/shared/services/card-templates.service';
 export * from './app/shared/services/optimistic-updates.service';
@@ -82,7 +85,8 @@ export * from './app/shared/utils/improved-error-messages.util';
 export * from './app/shared/utils/test-utilities.util';
 export * from './app/shared/utils/snapshot-testing.util';
 export * from './app/shared/utils/contract-testing.util';
-export * from './app/shared/decorators/validation.decorator';
+// ValidationResult is exported from core via validation.service, not shared
+// export * from './app/shared/decorators/validation.decorator';
 
 // Note: The following utils are excluded due to naming conflicts with core exports:
 // - performance.util (conflicts with core/services/performance.service.ts PerformanceMetric)

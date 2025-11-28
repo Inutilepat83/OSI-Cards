@@ -40,3 +40,4 @@ if [ ${#commit_msg} -gt 100 ]; then
   echo "Consider using the body for longer descriptions"
 fi
 
+

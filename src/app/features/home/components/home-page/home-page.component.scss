@@ -9,7 +9,7 @@
   background: var(--background);
   animation: fadeIn 0.8s ease-out;
   
-  /* Subtle animated background gradient - Brand gradient overlay */
+  /* Subtle background gradient - Brand gradient overlay */
   &::before {
     content: '';
     position: absolute;
@@ -22,7 +22,6 @@
       rgba(255, 121, 0, 0.15) 0%,
       transparent 60%
     );
-    animation: gradientShift 20s ease-in-out infinite;
     pointer-events: none;
     z-index: 0;
   }
@@ -53,14 +52,6 @@
   }
 }
 
-@keyframes gradientShift {
-  0%, 100% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-  50% {
-    transform: translate(10%, 10%) rotate(180deg);
-  }
-}
 
 .hero-container {
   max-width: 1280px;

@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { homeRoutes } from './features/home/home.routes';
-import { docsRoutes } from './features/docs/docs.routes';
 
 /**
  * Main application routes
@@ -9,12 +8,6 @@ import { docsRoutes } from './features/docs/docs.routes';
 export const routes: Routes = [
   // Home feature routes
   ...homeRoutes,
-  
-  // Documentation routes
-  {
-    path: 'docs',
-    children: docsRoutes
-  },
   
   // Product routes
   {
@@ -39,6 +32,12 @@ export const routes: Routes = [
     path: 'support',
     loadComponent: () => import('./features/support/support.component').then(m => m.SupportComponent)
   },
+  // NgDoc documentation routes
+  // NgDocRootComponent handles routing internally when routes are generated
+  {
+    path: 'docs',
+    loadComponent: () => import('@ng-doc/app').then(m => m.NgDocRootComponent)
+  },
   
   // Company routes
   {
@@ -59,6 +58,13 @@ export const routes: Routes = [
     path: 'cards',
     loadComponent: () => import('./shared/components/cards/cards-container/cards-container.component').then(m => m.CardsContainerComponent),
     data: { preload: false } // Don't preload cards route
+  },
+  
+  // Health check route
+  {
+    path: 'health',
+    loadComponent: () => import('./shared/components/health-check/health-check.component').then(m => m.HealthCheckComponent),
+    data: { preload: false }
   },
   
   // Card detail route - uncomment when CardDetailComponent is created

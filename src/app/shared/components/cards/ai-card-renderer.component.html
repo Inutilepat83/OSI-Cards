@@ -27,41 +27,33 @@
         [ngClass]="{ 'ai-card-surface--fullscreen': isFullscreen, 'ai-card-surface--empty-state': !processedSections.length }"
         [attr.aria-label]="(cardConfig && cardConfig.cardTitle) || 'Card'"
         [attr.aria-describedby]="(cardConfig && cardConfig.cardSubtitle) ? 'card-subtitle' : null"
+        [attr.aria-live]="streamingStage === 'streaming' ? 'polite' : 'off'"
+        [attr.aria-busy]="streamingStage === 'streaming' || streamingStage === 'thinking'"
         role="article"
       >
-          <!-- Title and button at the top of the card -->
-          <div *ngIf="processedSections.length" class="flex items-center justify-between mb-4">
-            <h1 class="text-2xl font-bold text-foreground" id="card-title">
-              {{ cardConfig.cardTitle }}
-            </h1>
-            <button
-              type="button"
-              class="ai-card-export-btn"
-              aria-label="Export card"
-              title="Export card"
-              (click)="onExport()"
-            >
-              <lucide-icon name="download" [size]="16" aria-hidden="true"></lucide-icon>
-            </button>
-          </div>
+          <!-- Card Header -->
+          <app-card-header
+            *ngIf="processedSections.length"
+            [cardTitle]="cardConfig.cardTitle"
+            [cardSubtitle]="cardConfig.cardSubtitle"
+            [showExport]="true"
+            (export)="onExport()">
+          </app-card-header>
 
-          <p *ngIf="processedSections.length && cardConfig.cardSubtitle" class="ai-card-subtitle" id="card-subtitle">
-            {{ cardConfig.cardSubtitle }}
-          </p>
+          <!-- Streaming Indicator -->
+          <app-card-streaming-indicator
+            [streamingStage]="streamingStage"
+            [streamingProgress]="streamingProgress"
+            [streamingProgressLabel]="streamingProgressLabel">
+          </app-card-streaming-indicator>
 
-          <ng-container *ngIf="processedSections.length; else emptyState">
-            <app-error-boundary>
-              <app-masonry-grid
-                [sections]="processedSections"
-                [gap]="12"
-                [minColumnWidth]="280"
-                class="w-full"
-                [attr.aria-label]="'Card sections: ' + processedSections.length + ' section' + (processedSections.length !== 1 ? 's' : '')"
-                (sectionEvent)="onSectionEvent($event)"
-                (layoutChange)="onLayoutChange($event)"
-              ></app-masonry-grid>
-            </app-error-boundary>
-          </ng-container>
+          <!-- Card Section List -->
+          <app-card-section-list
+            *ngIf="processedSections.length; else emptyState"
+            [sections]="processedSections"
+            (sectionEvent)="onSectionEvent($event)"
+            (layoutChange)="onLayoutChange($event)">
+          </app-card-section-list>
 
           <ng-template #emptyState>
             <div 
@@ -94,42 +86,12 @@
             </div>
           </ng-template>
 
-        <!-- Action Buttons -->
-        <div *ngIf="processedSections.length" class="mt-auto" style="margin-top: var(--section-card-gap, 12px); padding-bottom: 16px;">
-          <div class="flex flex-wrap items-center gap-3" style="margin-left: 4px; margin-right: 4px;">
-            <button
-              *ngFor="let action of cardConfig.actions; trackBy: trackAction"
-              type="button"
-              class="px-5 py-2.5 text-sm transition-all duration-200 flex items-center gap-2 cursor-pointer"
-              [ngClass]="getActionButtonClasses(action)"
-              [style.border-radius]="'var(--section-card-border-radius, 10px)'"
-              [attr.aria-label]="action.label + (action.type === 'website' && action.url ? ': ' + action.url : '')"
-              [attr.aria-describedby]="action.type === 'mail' ? 'action-mail-hint' : null"
-              (click)="onActionClick(action)"
-              (keydown.enter)="onActionClick(action)"
-              (keydown.space)="$event.preventDefault(); onActionClick(action)"
-            >
-              <!-- Lucide icon (for type defaults or explicit lucide icon names) -->
-              <lucide-icon 
-                *ngIf="getActionIconNameForDisplay(action) as iconName"
-                [name]="iconName"
-                [size]="16"
-                aria-hidden="true">
-              </lucide-icon>
-              <!-- Image icon (for URL-based icons) -->
-              <img 
-                *ngIf="hasImageIcon(action)"
-                [src]="action.icon"
-                [alt]="action.label + ' icon'"
-                style="width: 16px; height: 16px;"
-                aria-hidden="true"
-              />
-              <!-- Text icon (for emoji or text-based icons) -->
-              <span *ngIf="hasTextIcon(action)" aria-hidden="true">{{ action.icon }}</span>
-              <span>{{ action.label }}</span>
-            </button>
-          </div>
-        </div>
+        <!-- Card Actions -->
+        <app-card-actions
+          *ngIf="processedSections.length && cardConfig.actions?.length"
+          [actions]="cardConfig.actions || []"
+          (actionClick)="onActionClick($event)">
+        </app-card-actions>
 
         <!-- Signature at bottom of card -->
         <div *ngIf="processedSections.length" class="text-xs text-muted-foreground/60 text-center">

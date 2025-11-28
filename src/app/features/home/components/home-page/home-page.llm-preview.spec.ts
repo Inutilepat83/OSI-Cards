@@ -156,7 +156,7 @@ describe('HomePageComponent LLM preview & fallback', () => {
   });
 
   it('re-checks and sanitizes live preview on structural changes', () => {
-    const unsanitized: AICardConfig = { cardTitle: 'LP', sections: [{ title: 'Overview', fields: [{ label: 'Industry', value: 'Tech' } as any } as any] } as any;
+    const unsanitized: AICardConfig = { cardTitle: 'LP', sections: [{ title: 'Overview', fields: [{ label: 'Industry', value: 'Tech' }] }] } as any;
     // Trigger structural set
     (component as any).updateLivePreviewCard(unsanitized, 'structural');
     const live = (component as any).livePreviewCard as AICardConfig;

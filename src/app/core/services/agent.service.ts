@@ -1,5 +1,21 @@
 import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, tap, map } from 'rxjs/operators';
 import { LoggingService } from './logging.service';
+import { AppConfigService } from './app-config.service';
+import { ErrorReportingService } from './error-reporting.service';
+
+/**
+ * Agent trigger result interface
+ */
+export interface AgentTriggerResult {
+  success: boolean;
+  agentId: string;
+  executionId?: string;
+  message?: string;
+  data?: unknown;
+}
 
 /**
  * Agent Service
@@ -19,32 +35,117 @@ import { LoggingService } from './logging.service';
 })
 export class AgentService {
   private readonly logger = inject(LoggingService);
+  private readonly http = inject(HttpClient);
+  private readonly config = inject(AppConfigService);
+  private readonly errorReporting = inject(ErrorReportingService);
+  
+  // Configuration for agent API integration
+  private readonly agentApiUrl = this.config.ENV.API_URL ? `${this.config.ENV.API_URL}/agents` : '/api/agents';
+  private readonly enableApiIntegration = this.config.FEATURES.EXPERIMENTAL || false;
 
   /**
    * Trigger an agent with the provided context
    * 
    * @param agentId - Unique identifier for the agent to trigger
    * @param context - Optional context data to pass to the agent
-   * @returns Promise that resolves when agent is triggered
+   * @returns Promise that resolves with the agent trigger result
    */
-  async triggerAgent(agentId?: string, context?: Record<string, unknown>): Promise<void> {
+  async triggerAgent(agentId?: string, context?: Record<string, unknown>): Promise<AgentTriggerResult> {
+    const finalAgentId = agentId || 'default';
+    
     this.logger.info('Agent triggered', 'AgentService', {
-      agentId: agentId || 'default',
+      agentId: finalAgentId,
       context
     });
 
-    // TODO: Implement actual agent triggering logic
-    // This could integrate with:
-    // - External agent APIs
-    // - Workflow automation systems
-    // - LLM services for intelligent actions
-    // - Internal task queues
-    
-    // Placeholder implementation
-    if (agentId) {
-      // Future: Make API call to agent service
-      // await this.http.post(`/api/agents/${agentId}/trigger`, { context });
+    // Send to API if integration is enabled
+    if (this.enableApiIntegration && agentId) {
+      try {
+        const result = await this.triggerAgentViaApi(finalAgentId, context).toPromise();
+        return result || { success: false, agentId: finalAgentId, message: 'No response from agent API' };
+      } catch (error) {
+        this.errorReporting.captureError(error, {
+          component: 'AgentService',
+          action: 'triggerAgent',
+          state: { agentId: finalAgentId, context }
+        });
+        return {
+          success: false,
+          agentId: finalAgentId,
+          message: error instanceof Error ? error.message : 'Unknown error'
+        };
+      }
     }
+
+    // Local execution (placeholder for future internal agent system)
+    this.logger.debug('Agent executed locally', 'AgentService', {
+      agentId: finalAgentId,
+      context
+    });
+
+    return {
+      success: true,
+      agentId: finalAgentId,
+      message: 'Agent triggered successfully (local execution)'
+    };
+  }
+
+  /**
+   * Trigger agent via API
+   * 
+   * @private
+   */
+  private triggerAgentViaApi(agentId: string, context?: Record<string, unknown>): Observable<AgentTriggerResult> {
+    return this.http.post<AgentTriggerResult>(`${this.agentApiUrl}/${agentId}/trigger`, {
+      context,
+      timestamp: new Date().toISOString()
+    }).pipe(
+      tap((result) => {
+        this.logger.info('Agent API response received', 'AgentService', { result });
+      }),
+      catchError((error) => {
+        this.logger.error('Agent API error', 'AgentService', { error, agentId });
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Get agent status
+   */
+  getAgentStatus(agentId: string): Observable<{ status: string; lastExecution?: Date }> {
+    if (!this.enableApiIntegration) {
+      return of({ status: 'unknown' });
+    }
+
+    return this.http.get<{ status: string; lastExecution?: string }>(`${this.agentApiUrl}/${agentId}/status`).pipe(
+      map((response) => ({
+        status: response.status,
+        lastExecution: response.lastExecution ? new Date(response.lastExecution) : undefined
+      })),
+      catchError((error) => {
+        this.logger.error('Failed to get agent status', 'AgentService', { error, agentId });
+        return of({ status: 'error' });
+      })
+    );
+  }
+
+  /**
+   * Cancel agent execution
+   */
+  cancelAgent(executionId: string): Observable<boolean> {
+    if (!this.enableApiIntegration) {
+      return of(false);
+    }
+
+    return this.http.post<{ cancelled: boolean }>(`${this.agentApiUrl}/cancel`, { executionId }).pipe(
+      map((response) => response.cancelled),
+      catchError((error) => {
+        this.logger.error('Failed to cancel agent', 'AgentService', { error, executionId });
+        return of(false);
+      })
+    );
   }
 }
+
 

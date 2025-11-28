@@ -12,6 +12,9 @@ import { LoggingService } from '../../../../core/services/logging.service';
 /**
  * Interface for dynamically loaded section component instances
  * All section components extend BaseSectionComponent and have these properties
+ * 
+ * @deprecated Use SectionComponentInstance from './section-component.interface' instead
+ * This local interface is kept for backward compatibility but will be removed
  */
 interface SectionComponentInstance {
   section: CardSection;
@@ -110,7 +113,7 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
   private readonly logger = inject(LoggingService);
   /**
    * Type for dynamically loaded section component instances
-   * All section components extend BaseSectionComponent and have these properties
+   * All section components implement SectionComponentInstance interface
    */
   private loadedComponent: ComponentRef<SectionComponentInstance> | null = null;
   private viewInitialized = false;
