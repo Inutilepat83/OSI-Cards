@@ -1,13 +1,8 @@
 {
   "name": "osi-cards-lib",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Standalone OSI Cards library for Angular applications",
-  "keywords": [
-    "angular",
-    "cards",
-    "ui",
-    "components"
-  ],
+  "keywords": ["angular", "cards", "ui", "components"],
   "author": "",
   "license": "MIT",
   "peerDependencies": {
