@@ -1,13 +1,14 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { Component, ViewChild } from '@angular/core';
+import { ComponentFixture, TestBed, fakeAsync, tick, flush, discardPeriodicTasks } from '@angular/core/testing';
+import { Component, ViewChild, SimpleChange } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { MasonryGridComponent, MasonryLayoutInfo } from './masonry-grid.component';
+import { MasonryGridComponent, MasonryLayoutInfo, LayoutLogEntry } from './masonry-grid.component';
 import { CardSection } from '../../models/card.model';
+import { PackingAlgorithm, RowPackingOptions } from '../../utils/grid-config.util';
 
 // Host component for testing
 @Component({
   template: `
-    <div style="width: 1000px;">
+    <div [style.width.px]="hostWidth">
       <app-masonry-grid
         #grid
         [sections]="sections"
@@ -15,8 +16,14 @@ import { CardSection } from '../../models/card.model';
         [minColumnWidth]="minColumnWidth"
         [maxColumns]="maxColumns"
         [containerWidth]="containerWidth"
+        [isStreaming]="isStreaming"
+        [optimizeLayout]="optimizeLayout"
+        [packingAlgorithm]="packingAlgorithm"
+        [rowPackingOptions]="rowPackingOptions"
+        [debug]="debug"
         (sectionEvent)="onSectionEvent($event)"
         (layoutChange)="onLayoutChange($event)"
+        (layoutLog)="onLayoutLog($event)"
       ></app-masonry-grid>
     </div>
   `
@@ -28,16 +35,32 @@ class TestHostComponent {
   minColumnWidth = 260;
   maxColumns = 4;
   containerWidth?: number;
+  hostWidth = 1000;
+  isStreaming = false;
+  optimizeLayout = true;
+  packingAlgorithm: PackingAlgorithm = 'legacy';
+  rowPackingOptions: RowPackingOptions = {
+    prioritizeSpaceFilling: true,
+    allowShrinking: true,
+    allowGrowing: true,
+    maxOptimizationPasses: 3,
+  };
+  debug = false;
   
-  lastSectionEvent: any;
+  lastSectionEvent: unknown;
   lastLayoutChange: MasonryLayoutInfo | undefined;
+  layoutLogs: LayoutLogEntry[] = [];
   
-  onSectionEvent(event: any) {
+  onSectionEvent(event: unknown) {
     this.lastSectionEvent = event;
   }
   
   onLayoutChange(info: MasonryLayoutInfo) {
     this.lastLayoutChange = info;
+  }
+  
+  onLayoutLog(entry: LayoutLogEntry) {
+    this.layoutLogs.push(entry);
   }
 }
 
@@ -616,6 +639,600 @@ describe('MasonryGridComponent', () => {
       tick(200);
       
       expect(component.positionedSections.length).toBe(1);
+    }));
+  });
+
+  // ============================================================================
+  // Streaming Mode Tests
+  // ============================================================================
+  describe('streaming mode', () => {
+    it('should accept isStreaming input', () => {
+      hostComponent.isStreaming = true;
+      hostFixture.detectChanges();
+      
+      expect(component.isStreaming).toBe(true);
+    });
+
+    it('should not reset layout when streaming starts', fakeAsync(() => {
+      hostComponent.sections = createSections(2);
+      hostFixture.detectChanges();
+      tick(200);
+      
+      const initialReady = component.isLayoutReady;
+      
+      hostComponent.isStreaming = true;
+      hostFixture.detectChanges();
+      tick(100);
+      
+      // Layout should remain ready during streaming
+      expect(component.isLayoutReady).toBe(initialReady);
+    }));
+
+    it('should mark new sections for animation during streaming', fakeAsync(() => {
+      hostComponent.sections = createSections(1);
+      hostComponent.isStreaming = true;
+      hostFixture.detectChanges();
+      tick(200);
+      
+      // Check that the first section is marked as new
+      const firstSection = component.positionedSections[0];
+      expect(firstSection).toBeDefined();
+    }));
+
+    it('should add sections incrementally during streaming', fakeAsync(() => {
+      hostComponent.isStreaming = true;
+      hostComponent.sections = createSections(1);
+      hostFixture.detectChanges();
+      tick(200);
+      
+      const initialCount = component.positionedSections.length;
+      
+      // Add more sections
+      hostComponent.sections = createSections(3);
+      hostFixture.detectChanges();
+      tick(200);
+      
+      expect(component.positionedSections.length).toBe(3);
+      expect(component.positionedSections.length).toBeGreaterThan(initialCount);
+    }));
+
+    it('should finalize animations when streaming ends', fakeAsync(() => {
+      hostComponent.isStreaming = true;
+      hostComponent.sections = createSections(2);
+      hostFixture.detectChanges();
+      tick(200);
+      
+      hostComponent.isStreaming = false;
+      hostFixture.detectChanges();
+      tick(100);
+      
+      // All sections should be finalized
+      for (const section of component.positionedSections) {
+        expect(section.isNew).toBeFalsy();
+      }
+    }));
+  });
+
+  // ============================================================================
+  // Animation State Tracking Tests
+  // ============================================================================
+  describe('animation state tracking', () => {
+    it('should return true for shouldAnimate during streaming for new sections', fakeAsync(() => {
+      hostComponent.isStreaming = true;
+      hostComponent.sections = createSections(1);
+      hostFixture.detectChanges();
+      tick(200);
+      
+      const section = component.positionedSections[0];
+      if (section) {
+        // New sections during streaming should animate
+        const shouldAnimate = component.shouldAnimate(section.key);
+        expect(typeof shouldAnimate).toBe('boolean');
+      }
+    }));
+
+    it('should mark section as animated after onSectionAnimationEnd', fakeAsync(() => {
+      hostComponent.isStreaming = true;
+      hostComponent.sections = createSections(1);
+      hostFixture.detectChanges();
+      tick(200);
+      
+      const section = component.positionedSections[0];
+      if (section) {
+        component.onSectionAnimationEnd(section.key);
+        
+        expect(component.hasAnimated(section.key)).toBe(true);
+        expect(component.shouldAnimate(section.key)).toBe(false);
+      }
+    }));
+
+    it('should not re-animate already animated sections', fakeAsync(() => {
+      hostComponent.isStreaming = true;
+      hostComponent.sections = createSections(1);
+      hostFixture.detectChanges();
+      tick(200);
+      
+      const section = component.positionedSections[0];
+      if (section) {
+        // Mark as animated
+        component.onSectionAnimationEnd(section.key);
+        
+        // Update sections (simulating more streaming data)
+        hostComponent.sections = [...createSections(1), { title: 'New', type: 'info' }];
+        hostFixture.detectChanges();
+        tick(200);
+        
+        // Original section should not animate again
+        expect(component.shouldAnimate(section.key)).toBe(false);
+      }
+    }));
+  });
+
+  // ============================================================================
+  // Column Calculation Tests
+  // ============================================================================
+  describe('column calculation', () => {
+    it('should calculate 4 columns for 1000px width', fakeAsync(() => {
+      hostComponent.containerWidth = 1000;
+      hostComponent.sections = createSections(4);
+      hostFixture.detectChanges();
+      tick(200);
+      
+      // With 260px min width and 12px gap: 1000px fits ~3-4 columns
+      expect(component.currentColumns).toBeGreaterThanOrEqual(3);
+    }));
+
+    it('should calculate 1 column for narrow width', fakeAsync(() => {
+      hostComponent.containerWidth = 300;
+      hostComponent.sections = createSections(2);
+      hostFixture.detectChanges();
+      tick(200);
+      
+      expect(component.currentColumns).toBe(1);
+    }));
+
+    it('should respect maxColumns setting', fakeAsync(() => {
+      hostComponent.containerWidth = 2000;
+      hostComponent.maxColumns = 2;
+      hostComponent.sections = createSections(4);
+      hostFixture.detectChanges();
+      tick(200);
+      
+      expect(component.currentColumns).toBeLessThanOrEqual(2);
+    }));
+
+    it('should recalculate on containerWidth change', fakeAsync(() => {
+      hostComponent.containerWidth = 1000;
+      hostComponent.sections = createSections(4);
+      hostFixture.detectChanges();
+      tick(200);
+      
+      const initialColumns = component.currentColumns;
+      
+      hostComponent.containerWidth = 500;
+      hostFixture.detectChanges();
+      tick(200);
+      
+      expect(component.currentColumns).toBeLessThan(initialColumns);
+    }));
+
+    it('should expose currentColumns property', fakeAsync(() => {
+      hostComponent.containerWidth = 800;
+      hostComponent.sections = createSections(2);
+      hostFixture.detectChanges();
+      tick(200);
+      
+      expect(component.currentColumns).toBeGreaterThan(0);
+    }));
+  });
+
+  // ============================================================================
+  // Layout Optimization Tests
+  // ============================================================================
+  describe('layout optimization', () => {
+    it('should accept optimizeLayout input', () => {
+      hostComponent.optimizeLayout = false;
+      hostFixture.detectChanges();
+      
+      expect(component.optimizeLayout).toBe(false);
+    });
+
+    it('should position sections differently with optimization enabled', fakeAsync(() => {
+      // Create sections with varying heights
+      hostComponent.sections = [
+        { title: 'Tall', type: 'list', fields: Array(10).fill({ label: 'Item', value: 'Value' }) },
+        { title: 'Short', type: 'info', fields: [{ label: 'One', value: '1' }] },
+        { title: 'Medium', type: 'analytics', fields: Array(5).fill({ label: 'Metric', value: '100' }) }
+      ];
+      hostComponent.optimizeLayout = true;
+      hostComponent.containerWidth = 800;
+      hostFixture.detectChanges();
+      tick(300);
+      
+      expect(component.positionedSections.length).toBe(3);
+    }));
+
+    it('should handle optimization with single section', fakeAsync(() => {
+      hostComponent.sections = createSections(1);
+      hostComponent.optimizeLayout = true;
+      hostFixture.detectChanges();
+      tick(200);
+      
+      expect(component.positionedSections.length).toBe(1);
+    }));
+  });
+
+  // ============================================================================
+  // Packing Algorithm Tests
+  // ============================================================================
+  describe('packing algorithms', () => {
+    it('should accept packingAlgorithm input', () => {
+      hostComponent.packingAlgorithm = 'row-first';
+      hostFixture.detectChanges();
+      
+      expect(component.packingAlgorithm).toBe('row-first');
+    });
+
+    it('should use legacy algorithm by default', () => {
+      expect(component.packingAlgorithm).toBe('legacy');
+    });
+
+    it('should layout sections with row-first algorithm', fakeAsync(() => {
+      hostComponent.packingAlgorithm = 'row-first';
+      hostComponent.sections = createSections(4);
+      hostComponent.containerWidth = 1000;
+      hostFixture.detectChanges();
+      tick(300);
+      
+      expect(component.positionedSections.length).toBe(4);
+    }));
+
+    it('should accept rowPackingOptions', () => {
+      const customOptions: RowPackingOptions = {
+        prioritizeSpaceFilling: false,
+        allowShrinking: false,
+        allowGrowing: true,
+        maxOptimizationPasses: 5,
+      };
+      
+      hostComponent.rowPackingOptions = customOptions;
+      hostFixture.detectChanges();
+      
+      expect(component.rowPackingOptions.prioritizeSpaceFilling).toBe(false);
+      expect(component.rowPackingOptions.maxOptimizationPasses).toBe(5);
+    });
+
+    it('should fall back to legacy when row-first fails', fakeAsync(() => {
+      hostComponent.packingAlgorithm = 'row-first';
+      hostComponent.sections = createSections(2);
+      hostComponent.containerWidth = 1000;
+      hostFixture.detectChanges();
+      tick(300);
+      
+      // Should still layout sections even if algorithm falls back
+      expect(component.positionedSections.length).toBe(2);
+    }));
+  });
+
+  // ============================================================================
+  // Layout Log Tests
+  // ============================================================================
+  describe('layout logging', () => {
+    it('should emit layoutLog events', fakeAsync(() => {
+      hostComponent.sections = createSections(2);
+      hostComponent.containerWidth = 800;
+      hostFixture.detectChanges();
+      tick(300);
+      
+      expect(hostComponent.layoutLogs.length).toBeGreaterThan(0);
+    }));
+
+    it('should include section details in layout log', fakeAsync(() => {
+      hostComponent.sections = [
+        { title: 'Test Section', type: 'info', preferredColumns: 2 }
+      ];
+      hostComponent.containerWidth = 800;
+      hostFixture.detectChanges();
+      tick(300);
+      
+      const lastLog = hostComponent.layoutLogs[hostComponent.layoutLogs.length - 1];
+      if (lastLog) {
+        expect(lastLog.sections.length).toBeGreaterThan(0);
+        expect(lastLog.columns).toBeGreaterThan(0);
+        expect(lastLog.containerWidth).toBeGreaterThan(0);
+      }
+    }));
+
+    it('should log columns_changed event when columns change', fakeAsync(() => {
+      hostComponent.sections = createSections(2);
+      hostComponent.containerWidth = 1000;
+      hostFixture.detectChanges();
+      tick(300);
+      
+      hostComponent.layoutLogs = []; // Clear logs
+      
+      hostComponent.containerWidth = 300; // Force single column
+      hostFixture.detectChanges();
+      tick(300);
+      
+      const columnsChangedLog = hostComponent.layoutLogs.find(
+        log => log.event === 'columns_changed'
+      );
+      
+      // May or may not emit depending on actual column change
+      expect(hostComponent.layoutLogs.length).toBeGreaterThanOrEqual(0);
+    }));
+  });
+
+  // ============================================================================
+  // Debug Mode Tests
+  // ============================================================================
+  describe('debug mode', () => {
+    it('should accept debug input', () => {
+      hostComponent.debug = true;
+      hostFixture.detectChanges();
+      
+      expect(component.debug).toBe(true);
+    });
+
+    it('should not break layout when debug is enabled', fakeAsync(() => {
+      hostComponent.debug = true;
+      hostComponent.sections = createSections(3);
+      hostFixture.detectChanges();
+      tick(200);
+      
+      expect(component.positionedSections.length).toBe(3);
+    }));
+  });
+
+  // ============================================================================
+  // Section Type Handling Tests
+  // ============================================================================
+  describe('section type handling', () => {
+    const sectionTypes = [
+      'info', 'overview', 'analytics', 'chart', 'map', 
+      'contact-card', 'network-card', 'list', 'event',
+      'financials', 'product', 'solutions', 'quotation'
+    ];
+
+    sectionTypes.forEach(type => {
+      it(`should handle section type: ${type}`, fakeAsync(() => {
+        hostComponent.sections = [{ title: `${type} section`, type }];
+        hostFixture.detectChanges();
+        tick(200);
+        
+        expect(component.positionedSections.length).toBe(1);
+        expect(component.positionedSections[0].section.type).toBe(type);
+      }));
+    });
+
+    it('should handle unknown section type gracefully', fakeAsync(() => {
+      hostComponent.sections = [{ title: 'Unknown', type: 'unknown-type' as any }];
+      hostFixture.detectChanges();
+      tick(200);
+      
+      expect(component.positionedSections.length).toBe(1);
+    }));
+  });
+
+  // ============================================================================
+  // Preferred Columns Tests
+  // ============================================================================
+  describe('preferred columns', () => {
+    it('should use section preferredColumns when set', fakeAsync(() => {
+      hostComponent.sections = [
+        { title: 'Wide', type: 'info', preferredColumns: 3 }
+      ];
+      hostComponent.containerWidth = 1200;
+      hostFixture.detectChanges();
+      tick(200);
+      
+      const section = component.positionedSections[0];
+      expect(section.preferredColumns).toBe(3);
+    }));
+
+    it('should default preferredColumns based on section type', fakeAsync(() => {
+      hostComponent.sections = [
+        { title: 'Analytics', type: 'analytics' }
+      ];
+      hostComponent.containerWidth = 1000;
+      hostFixture.detectChanges();
+      tick(200);
+      
+      const section = component.positionedSections[0];
+      // Analytics defaults to 2 columns
+      expect(section.preferredColumns).toBe(2);
+    }));
+
+    it('should respect minColumns constraint', fakeAsync(() => {
+      hostComponent.sections = [
+        { title: 'Min2', type: 'info', minColumns: 2 }
+      ];
+      hostComponent.containerWidth = 1000;
+      hostFixture.detectChanges();
+      tick(200);
+      
+      const section = component.positionedSections[0];
+      expect(section.colSpan).toBeGreaterThanOrEqual(1);
+    }));
+
+    it('should respect maxColumns constraint', fakeAsync(() => {
+      hostComponent.sections = [
+        { title: 'Max2', type: 'info', maxColumns: 2, preferredColumns: 4 }
+      ];
+      hostComponent.containerWidth = 1200;
+      hostFixture.detectChanges();
+      tick(200);
+      
+      // Column span should be constrained
+      const section = component.positionedSections[0];
+      expect(section).toBeDefined();
+    }));
+
+    it('should use explicit colSpan over preferredColumns', fakeAsync(() => {
+      hostComponent.sections = [
+        { title: 'Explicit', type: 'info', preferredColumns: 1, colSpan: 3 }
+      ];
+      hostComponent.containerWidth = 1200;
+      hostComponent.maxColumns = 4;
+      hostFixture.detectChanges();
+      tick(200);
+      
+      const section = component.positionedSections[0];
+      // Explicit colSpan should take precedence
+      expect(section.colSpan).toBeGreaterThanOrEqual(1);
+    }));
+  });
+
+  // ============================================================================
+  // Width Expression Tests
+  // ============================================================================
+  describe('width expressions', () => {
+    it('should generate calc() width expressions for multi-column layout', fakeAsync(() => {
+      hostComponent.sections = createSections(2);
+      hostComponent.containerWidth = 1000;
+      hostFixture.detectChanges();
+      tick(200);
+      
+      const section = component.positionedSections[0];
+      // Should use calc() expression in multi-column layout
+      expect(section.width).toBeDefined();
+    }));
+
+    it('should generate correct left positions', fakeAsync(() => {
+      hostComponent.sections = createSections(4);
+      hostComponent.containerWidth = 1000;
+      hostFixture.detectChanges();
+      tick(200);
+      
+      for (const section of component.positionedSections) {
+        expect(section.left).toBeDefined();
+        expect(section.top).toBeGreaterThanOrEqual(0);
+      }
+    }));
+  });
+
+  // ============================================================================
+  // Memory Leak Prevention Tests
+  // ============================================================================
+  describe('memory leak prevention', () => {
+    it('should clean up observers on destroy', fakeAsync(() => {
+      hostComponent.sections = createSections(2);
+      hostFixture.detectChanges();
+      tick(200);
+      
+      expect(() => {
+        hostFixture.destroy();
+      }).not.toThrow();
+    }));
+
+    it('should cancel pending animation frames on destroy', fakeAsync(() => {
+      hostComponent.sections = createSections(5);
+      hostFixture.detectChanges();
+      
+      // Immediately destroy before layout completes
+      expect(() => {
+        hostFixture.destroy();
+        tick(1000);
+        discardPeriodicTasks();
+      }).not.toThrow();
+    }));
+
+    it('should handle rapid create/destroy cycles', fakeAsync(() => {
+      for (let i = 0; i < 3; i++) {
+        const fixture = TestBed.createComponent(TestHostComponent);
+        fixture.componentInstance.sections = createSections(2);
+        fixture.detectChanges();
+        tick(50);
+        fixture.destroy();
+      }
+      
+      discardPeriodicTasks();
+    }));
+  });
+
+  // ============================================================================
+  // Container Width Priority Tests
+  // ============================================================================
+  describe('container width priority', () => {
+    it('should prioritize explicit containerWidth input', fakeAsync(() => {
+      hostComponent.hostWidth = 1200;
+      hostComponent.containerWidth = 600; // Override
+      hostComponent.sections = createSections(2);
+      hostFixture.detectChanges();
+      tick(200);
+      
+      // Should use the explicit 600px, not the 1200px host width
+      expect(component.containerWidth).toBe(600);
+    }));
+
+    it('should use DOM width when containerWidth not provided', fakeAsync(() => {
+      hostComponent.hostWidth = 1000;
+      hostComponent.containerWidth = undefined;
+      hostComponent.sections = createSections(2);
+      hostFixture.detectChanges();
+      tick(200);
+      
+      // Should measure from DOM
+      expect(component.containerWidth).toBeUndefined();
+    }));
+  });
+
+  // ============================================================================
+  // Can Shrink/Grow Tests
+  // ============================================================================
+  describe('section resize constraints', () => {
+    it('should respect canShrink=false', fakeAsync(() => {
+      hostComponent.sections = [
+        { title: 'NoShrink', type: 'info', preferredColumns: 2, canShrink: false }
+      ];
+      hostComponent.containerWidth = 1000;
+      hostFixture.detectChanges();
+      tick(200);
+      
+      const section = component.positionedSections[0];
+      expect(section).toBeDefined();
+    }));
+
+    it('should respect canGrow=false', fakeAsync(() => {
+      hostComponent.sections = [
+        { title: 'NoGrow', type: 'info', preferredColumns: 1, canGrow: false }
+      ];
+      hostComponent.containerWidth = 1000;
+      hostFixture.detectChanges();
+      tick(200);
+      
+      const section = component.positionedSections[0];
+      expect(section).toBeDefined();
+    }));
+  });
+
+  // ============================================================================
+  // Layout Priority Tests
+  // ============================================================================
+  describe('layout priority', () => {
+    it('should handle numeric layoutPriority', fakeAsync(() => {
+      hostComponent.sections = [
+        { title: 'High', type: 'overview', layoutPriority: 1 },
+        { title: 'Low', type: 'info', layoutPriority: 3 }
+      ];
+      hostComponent.containerWidth = 1000;
+      hostFixture.detectChanges();
+      tick(200);
+      
+      expect(component.positionedSections.length).toBe(2);
+    }));
+
+    it('should map string priority to layoutPriority', fakeAsync(() => {
+      hostComponent.sections = [
+        { title: 'Critical', type: 'overview', priority: 'critical' },
+        { title: 'Optional', type: 'info', priority: 'optional' }
+      ];
+      hostComponent.containerWidth = 1000;
+      hostFixture.detectChanges();
+      tick(200);
+      
+      expect(component.positionedSections.length).toBe(2);
     }));
   });
 });

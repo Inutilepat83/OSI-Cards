@@ -13,8 +13,8 @@
 
 // Worker context - use global self
 declare const self: {
-  postMessage(message: any, transfer?: Transferable[]): void;
-  onmessage: ((this: any, ev: MessageEvent) => any) | null;
+  postMessage(message: LayoutWorkerResponse, transfer?: Transferable[]): void;
+  onmessage: ((ev: MessageEvent<LayoutWorkerMessage>) => void) | null;
 };
 
 // ============================================================================
@@ -29,17 +29,44 @@ export type LayoutWorkerMessageType =
   | 'COMPUTE_HEIGHTS'
   | 'SKYLINE_PACK';
 
+/**
+ * Payload types for different worker message types
+ */
+export interface PackSectionsPayload {
+  sections: WorkerSection[];
+  columns: number;
+  gap?: number;
+  algorithm?: 'ffdh' | 'skyline';
+}
+
+export interface AnalyzeGapsPayload {
+  placements: PositionedSection[];
+  columns: number;
+  containerHeight: number;
+}
+
+export interface ComputeHeightsPayload {
+  sections: WorkerSection[];
+}
+
+export type LayoutWorkerPayload = PackSectionsPayload | AnalyzeGapsPayload | ComputeHeightsPayload;
+
 export interface LayoutWorkerMessage {
   type: LayoutWorkerMessageType;
   id: string;
-  payload: any;
+  payload: LayoutWorkerPayload;
 }
+
+/**
+ * Result types for different worker operations
+ */
+export type LayoutWorkerResult = PackResult | GapAnalysis | PositionedSection[] | Array<{ key: string; height: number }>;
 
 export interface LayoutWorkerResponse {
   type: LayoutWorkerMessageType;
   id: string;
   success: boolean;
-  result?: any;
+  result?: LayoutWorkerResult;
   error?: string;
   duration?: number;
 }
@@ -55,7 +82,7 @@ interface WorkerSection {
   description?: string;
   colSpan?: number;
   preferredColumns?: number;
-  fields?: Array<{ label?: string; value?: any }>;
+  fields?: Array<{ label?: string; value?: string | number | boolean | null }>;
   items?: Array<{ title?: string; description?: string }>;
 }
 
@@ -506,37 +533,37 @@ self.onmessage = (event: MessageEvent<LayoutWorkerMessage>) => {
   const startTime = performance.now();
 
   try {
-    let result: any;
+    let result: LayoutWorkerResult;
 
     switch (type) {
       case 'PACK_SECTIONS': {
-        const { sections, columns, gap } = payload;
-        result = packSections(sections, columns, gap ?? 12);
+        const p = payload as PackSectionsPayload;
+        result = packSections(p.sections, p.columns, p.gap ?? 12);
         break;
       }
 
       case 'SKYLINE_PACK': {
-        const { sections, columns, gap } = payload;
-        result = skylinePack(sections, columns, gap ?? 12);
+        const p = payload as PackSectionsPayload;
+        result = skylinePack(p.sections, p.columns, p.gap ?? 12);
         break;
       }
 
       case 'CALCULATE_POSITIONS': {
-        const { sections, columns, gap } = payload;
-        const packed = packSections(sections, columns, gap ?? 12);
+        const p = payload as PackSectionsPayload;
+        const packed = packSections(p.sections, p.columns, p.gap ?? 12);
         result = packed.placements;
         break;
       }
 
       case 'ANALYZE_GAPS': {
-        const { placements, columns, containerHeight } = payload;
-        result = analyzeGaps(placements, columns, containerHeight);
+        const p = payload as AnalyzeGapsPayload;
+        result = analyzeGaps(p.placements, p.columns, p.containerHeight);
         break;
       }
 
       case 'COMPUTE_HEIGHTS': {
-        const { sections } = payload;
-        result = sections.map((s: WorkerSection, i: number) => ({
+        const p = payload as ComputeHeightsPayload;
+        result = p.sections.map((s: WorkerSection, i: number) => ({
           key: getSectionKey(s, i),
           height: estimateHeight(s),
         }));
@@ -544,9 +571,9 @@ self.onmessage = (event: MessageEvent<LayoutWorkerMessage>) => {
       }
 
       case 'OPTIMIZE_LAYOUT': {
-        const { sections, columns, gap, algorithm } = payload;
-        const packFn = algorithm === 'skyline' ? skylinePack : packSections;
-        result = packFn(sections, columns, gap ?? 12);
+        const p = payload as PackSectionsPayload;
+        const packFn = p.algorithm === 'skyline' ? skylinePack : packSections;
+        result = packFn(p.sections, p.columns, p.gap ?? 12);
         break;
       }
 
@@ -564,12 +591,13 @@ self.onmessage = (event: MessageEvent<LayoutWorkerMessage>) => {
       duration,
     } as LayoutWorkerResponse);
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown worker error';
     self.postMessage({
       type,
       id,
       success: false,
-      error: error.message ?? 'Unknown worker error',
+      error: errorMessage,
       duration: performance.now() - startTime,
     } as LayoutWorkerResponse);
   }

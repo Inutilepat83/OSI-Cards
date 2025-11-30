@@ -1,18 +1,33 @@
-<div class="ai-section ai-section--info">
-  <div class="ai-section__header">
+<section 
+  class="ai-section ai-section--info"
+  [attr.aria-label]="section.title"
+  [attr.aria-describedby]="section.description ? 'info-desc-' + section.id : null"
+>
+  <header class="ai-section__header">
     <div class="ai-section__details">
-      <h3 class="ai-section__title">{{ section.title }}</h3>
-      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
+      <h3 class="ai-section__title" [id]="'info-title-' + section.id">{{ section.title }}</h3>
+      <p 
+        *ngIf="section.description" 
+        class="ai-section__description"
+        [id]="'info-desc-' + section.id"
+      >{{ section.description }}</p>
     </div>
-  </div>
+  </header>
 
-  <div class="ai-section__body">
+  <div 
+    class="ai-section__body"
+    role="list"
+    [attr.aria-label]="'Information fields for ' + section.title"
+  >
     <ng-container *ngIf="hasFields; else infoEmpty">
-      <div class="info-matrix">
+      <div class="info-matrix" role="presentation">
         <button
           *ngFor="let field of fields; trackBy: trackField; let idx = index"
           type="button"
           class="info-row"
+          role="listitem"
+          [attr.aria-label]="field.label + ': ' + getDisplayValue(field)"
+          [attr.aria-describedby]="field.description ? 'field-desc-' + idx : null"
           [class.field-streaming]="getFieldAnimationClass(getFieldId(field, idx), idx) === 'field-streaming'"
           [class.field-entered]="getFieldAnimationClass(getFieldId(field, idx), idx) === 'field-entered'"
           [class.field-stagger-0]="getFieldStaggerIndex(idx) === 0"
@@ -36,22 +51,31 @@
           (keydown.space)="$event.preventDefault(); onFieldClick(field)"
         >
           <div class="info-row__primary">
-            <span class="info-row__label">{{ field.label }}</span>
-            <span class="info-row__value">{{ getDisplayValue(field) }}</span>
+            <span class="info-row__label" aria-hidden="true">{{ field.label }}</span>
+            <span class="info-row__value" aria-hidden="true">{{ getDisplayValue(field) }}</span>
           </div>
 
           <div class="info-row__meta" *ngIf="field.description || field.change !== undefined">
-            <p class="info-row__description" *ngIf="field.description">
+            <p 
+              class="info-row__description" 
+              *ngIf="field.description"
+              [id]="'field-desc-' + idx"
+            >
               {{ field.description }}
             </p>
-            <span class="info-row__change" *ngIf="field.change !== undefined" [ngClass]="getTrendClass(field)">
+            <span 
+              class="info-row__change" 
+              *ngIf="field.change !== undefined" 
+              [ngClass]="getTrendClass(field)"
+              [attr.aria-label]="'Change: ' + formatChange(field.change)"
+            >
               <lucide-icon
                 *ngIf="getTrendIcon(field) as trendIcon"
                 [name]="trendIcon"
                 [size]="12"
                 aria-hidden="true"
               ></lucide-icon>
-              {{ formatChange(field.change) }}
+              <span aria-hidden="true">{{ formatChange(field.change) }}</span>
             </span>
           </div>
         </button>
@@ -59,10 +83,10 @@
     </ng-container>
 
     <ng-template #infoEmpty>
-      <div class="section-empty">
+      <div class="section-empty" role="status" aria-live="polite">
         <lucide-icon name="alert-circle" [size]="32" class="mb-4 opacity-50" aria-hidden="true"></lucide-icon>
         <p class="text-sm">No information available</p>
       </div>
     </ng-template>
   </div>
-</div>
+</section>

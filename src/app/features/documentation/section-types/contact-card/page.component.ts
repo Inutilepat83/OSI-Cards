@@ -1,9 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NgDocPageComponent, NgDocRootPage } from '@ng-doc/app';
-import { NgDocPageType } from '@ng-doc/core';
-import pageConfig from './contact-card.page';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { DocPageComponent } from '../../doc-page.component';
 
-const pageContent: string = `# Contact Card Section
+const pageContent = `# Contact Card Section
 
 Displays person information with avatars, roles, contact details, and social links.
 
@@ -115,25 +113,14 @@ The **Contact Card Section** (\`type: "contact-card"\`) is used for displays per
 `;
 
 @Component({
-  selector: 'ng-doc-page-contact-card',
-  template: `<ng-doc-page></ng-doc-page>`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgDocPageComponent],
-  providers: [
-    { provide: NgDocRootPage, useExisting: ContactCardPageComponent }
-  ],
-  standalone: true
+  selector: 'app-contact-card-page',
+  standalone: true,
+  imports: [DocPageComponent],
+  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ContactCardPageComponent extends NgDocRootPage {
-  readonly pageType: NgDocPageType = 'guide';
-  readonly pageContent: string = pageContent;
-  readonly editSourceFileUrl?: string;
-  readonly viewSourceFileUrl?: string;
-  override readonly page = pageConfig;
-
-  constructor() {
-    super();
-  }
+export class ContactCardPageComponent {
+  content = pageContent;
 }
 
 export default ContactCardPageComponent;

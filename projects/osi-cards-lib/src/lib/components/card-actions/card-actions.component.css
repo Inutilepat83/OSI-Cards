@@ -3,24 +3,22 @@
    
    ENFORCED DESIGN: These styles use !important to override any external 
    CSS and maintain consistent appearance across all host applications.
+   Buttons are rendered directly without wrapper containers.
    ======================================================================= */
 
 /* ============================================
-   Container Styles
+   Host Component Styles
    ============================================ */
-.osi-card-actions {
-  margin-top: var(--section-card-gap, 12px) !important;
-  padding-bottom: 16px !important;
-  font-family: Helvetica, 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
-}
-
-.osi-card-actions__container {
+:host {
   display: flex !important;
   flex-wrap: wrap !important;
   align-items: center !important;
   gap: 0.75rem !important;
+  margin-top: var(--section-card-gap, 12px) !important;
   margin-left: 4px !important;
   margin-right: 4px !important;
+  padding-bottom: 16px !important;
+  font-family: Helvetica, 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
 }
 
 /* ============================================
@@ -56,7 +54,7 @@
 }
 
 /* ============================================
-   PRIMARY Button - Orange Background
+   PRIMARY Button - Orange Background, WHITE text
    ============================================ */
 .osi-action-button--primary {
   background-color: #FF7900 !important;
@@ -65,14 +63,21 @@
   box-shadow: 0 2px 8px rgba(255, 121, 0, 0.25) !important;
 }
 
+/* Force white text on all children */
+.osi-action-button--primary * {
+  color: #ffffff !important;
+}
+
 .osi-action-button--primary:hover {
   background-color: #e66d00 !important;
+  color: #ffffff !important;
   box-shadow: 0 4px 16px rgba(255, 121, 0, 0.4) !important;
   transform: translateY(-1px) !important;
 }
 
 .osi-action-button--primary:active {
   background-color: #cc6000 !important;
+  color: #ffffff !important;
   transform: scale(0.98) translateY(0) !important;
   box-shadow: 0 2px 4px rgba(255, 121, 0, 0.2) !important;
 }
@@ -83,21 +88,28 @@
 }
 
 /* ============================================
-   SECONDARY Button - Orange Border
+   SECONDARY Button - Orange Border, WHITE text
    ============================================ */
 .osi-action-button--secondary {
   background-color: transparent !important;
-  color: #FF7900 !important;
+  color: #ffffff !important;
   border: 2px solid #FF7900 !important;
+}
+
+/* Force white text on all children */
+.osi-action-button--secondary * {
+  color: #ffffff !important;
 }
 
 .osi-action-button--secondary:hover {
   background-color: rgba(255, 121, 0, 0.1) !important;
+  color: #ffffff !important;
   box-shadow: 0 2px 8px rgba(255, 121, 0, 0.2) !important;
 }
 
 .osi-action-button--secondary:active {
   background-color: rgba(255, 121, 0, 0.15) !important;
+  color: #ffffff !important;
   transform: scale(0.98) !important;
 }
 
@@ -107,10 +119,10 @@
 }
 
 /* ============================================
-   Button Content Styles
+   Button Content Styles - Always WHITE
    ============================================ */
 .osi-action-button__label {
-  color: inherit !important;
+  color: #ffffff !important;
   font-family: inherit !important;
   font-size: inherit !important;
   font-weight: inherit !important;
@@ -130,19 +142,20 @@
 }
 
 /* ============================================
-   Lucide Icon Styles
+   Lucide Icon Styles - Always WHITE stroke
    ============================================ */
 .osi-action-button lucide-icon {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   flex-shrink: 0 !important;
+  color: #ffffff !important;
 }
 
 .osi-action-button lucide-icon svg {
   width: 16px !important;
   height: 16px !important;
-  stroke: currentColor !important;
+  stroke: #ffffff !important;
   fill: none !important;
   stroke-width: 2 !important;
   stroke-linecap: round !important;

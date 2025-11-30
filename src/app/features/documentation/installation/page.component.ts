@@ -1,167 +1,193 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NgDocPageComponent, NgDocRootPage } from '@ng-doc/app';
-import { NgDocPageType } from '@ng-doc/core';
-import pageConfig from './installation.page';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { DocPageComponent } from '../doc-page.component';
 
-const pageContent: string = `# Installation Guide
+const pageContent = `# Installation
 
-Complete installation instructions for OSI Cards library.
+This guide covers different ways to install and configure OSI Cards in your Angular project.
 
 ## Prerequisites
 
-- **Angular**: Version 18 or 20
-- **Node.js**: Version 18.x or higher
-- **npm**: Version 9.x or higher
+- Node.js 18+ 
+- Angular 18 or higher
+- npm or yarn
 
-## Installation Methods
+## npm Installation
 
-### Method 1: npm (Recommended)
+The recommended way to install OSI Cards:
 
-Install the library directly from npm:
-
-\\\`\\\`\\\`bash
+\`\`\`bash
 npm install osi-cards-lib
-\\\`\\\`\\\`
+\`\`\`
 
-**Package URL:** https://www.npmjs.com/package/osi-cards-lib
+Or with yarn:
 
-### Method 2: GitHub
-
-Install directly from the GitHub repository:
-
-\\\`\\\`\\\`bash
-npm install git+https://github.com/Inutilepat83/OSI-Cards.git
-\\\`\\\`\\\`
-
-Or add to your \\\`package.json\\\`:
-
-\\\`\\\`\\\`json
-{
-  "dependencies": {
-    "osi-cards-lib": "git+https://github.com/Inutilepat83/OSI-Cards.git#main"
-  }
-}
-\\\`\\\`\\\`
-
-### Method 3: Local Path
-
-For local development:
-
-\\\`\\\`\\\`bash
-npm install /path/to/OSI-Cards/dist/osi-cards-lib
-\\\`\\\`\\\`
+\`\`\`bash
+yarn add osi-cards-lib
+\`\`\`
 
 ## Peer Dependencies
 
-Install required peer dependencies:
+OSI Cards has the following peer dependencies that should already be in your Angular project:
 
-\\\`\\\`\\\`bash
-npm install @angular/common@^20.0.0 @angular/core@^20.0.0 @angular/animations@^20.0.0 @angular/platform-browser@^20.0.0 lucide-angular@^0.548.0 rxjs@~7.8.0
-\\\`\\\`\\\`
+\`\`\`json
+{
+  "@angular/common": "^18.0.0 || ^19.0.0 || ^20.0.0",
+  "@angular/core": "^18.0.0 || ^19.0.0 || ^20.0.0",
+  "rxjs": "^7.0.0"
+}
+\`\`\`
 
-## Handling Peer Dependency Conflicts
+### Optional Dependencies
 
-If you encounter peer dependency conflicts:
+For enhanced functionality:
 
-### Option 1: Use --legacy-peer-deps
+\`\`\`bash
+# For charts (ChartSection)
+npm install chart.js
 
-\\\`\\\`\\\`bash
-npm install osi-cards-lib --legacy-peer-deps
-\\\`\\\`\\\`
-
-### Option 2: Update Incompatible Packages
-
-Update packages that require Angular 18 to versions compatible with Angular 20:
-
-\\\`\\\`\\\`bash
-npm install @ng-select/ng-select@latest --legacy-peer-deps
-npm install @angular-slider/ngx-slider@latest --legacy-peer-deps
-\\\`\\\`\\\`
+# For icons (if not using defaults)
+npm install lucide-angular
+\`\`\`
 
 ## Configuration
 
-### 1. Import Styles
+### Standalone Components (Recommended)
 
-Add to your \\\`src/styles.scss\\\`:
+For Angular 18+ with standalone components:
 
-\\\`\\\`\\\`scss
-@import 'osi-cards-lib/styles/_styles';
-\\\`\\\`\\\`
-
-### 2. Configure Providers (Optional)
-
-In your \\\`app.config.ts\\\`:
-
-\\\`\\\`\\\`typescript
+\`\`\`typescript
+// app.config.ts
 import { ApplicationConfig } from '@angular/core';
-import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideOSICards } from 'osi-cards-lib';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideAnimations(),
-    // Other providers...
+    provideOSICards({
+      theme: 'default',
+      streaming: true
+    })
   ]
 };
-\\\`\\\`\\\`
+\`\`\`
 
-## Verification
+### Module-based (Legacy)
 
-Verify installation by importing a component:
+For projects using NgModules:
 
-\\\`\\\`\\\`typescript
-import { AICardRendererComponent } from 'osi-cards-lib';
+\`\`\`typescript
+// app.module.ts
+import { NgModule } from '@angular/core';
+import { OSICardsModule } from 'osi-cards-lib';
 
-// If this imports without errors, installation is successful
-\\\`\\\`\\\`
+@NgModule({
+  imports: [
+    OSICardsModule.forRoot({
+      theme: 'default'
+    })
+  ]
+})
+export class AppModule { }
+\`\`\`
+
+## Styles Setup
+
+### Option 1: Import in styles.scss
+
+\`\`\`scss
+// styles.scss
+@import 'osi-cards-lib/styles';
+\`\`\`
+
+### Option 2: Add to angular.json
+
+\`\`\`json
+{
+  "styles": [
+    "node_modules/osi-cards-lib/styles/index.css",
+    "src/styles.scss"
+  ]
+}
+\`\`\`
+
+### Option 3: CSS Custom Properties Only
+
+If you want to use your own base styles:
+
+\`\`\`scss
+@import 'osi-cards-lib/styles/variables';
+\`\`\`
+
+## Verify Installation
+
+Create a simple test to verify the installation:
+
+\`\`\`typescript
+import { Component } from '@angular/core';
+import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
+
+@Component({
+  selector: 'app-test',
+  standalone: true,
+  imports: [AICardRendererComponent],
+  template: \`
+    <app-ai-card-renderer [cardConfig]="testCard"></app-ai-card-renderer>
+  \`
+})
+export class TestComponent {
+  testCard: AICardConfig = {
+    cardTitle: 'Installation Test',
+    sections: [{
+      title: 'Success',
+      type: 'info',
+      fields: [{ label: 'Status', value: 'Working!' }]
+    }]
+  };
+}
+\`\`\`
 
 ## Troubleshooting
 
-### Issue: Module not found
+### "Module not found" error
 
-**Solution**: Ensure the library is installed and peer dependencies are satisfied.
+Make sure you've run \`npm install\` after adding the package:
 
-### Issue: Styles not loading
+\`\`\`bash
+rm -rf node_modules package-lock.json
+npm install
+\`\`\`
 
-**Solution**: Verify the style import path in your \\\`styles.scss\\\`.
+### Style issues
 
-### Issue: Peer dependency conflicts
+If styles aren't loading, check that you've imported them in your main styles file or angular.json.
 
-**Solution**: Use \\\`--legacy-peer-deps\\\` flag or update conflicting packages.
+### TypeScript errors
+
+Ensure your tsconfig.json has the correct module resolution:
+
+\`\`\`json
+{
+  "compilerOptions": {
+    "moduleResolution": "bundler"
+  }
+}
+\`\`\`
 
 ## Next Steps
 
-- [Library Usage Guide](/docs/library-usage)
-- [Quick Start](/docs/getting-started)
-- [API Reference](/docs/api)
-
-
-
-
-
-
-
+- [Getting Started](/docs/getting-started) - Quick start guide
+- [Section Types](/docs/section-types) - Learn about section types
+- [Streaming](/docs/streaming/overview) - Set up streaming
 `;
 
 @Component({
-  selector: 'ng-doc-page-installation',
-  template: `<ng-doc-page></ng-doc-page>`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgDocPageComponent],
-  providers: [
-    { provide: NgDocRootPage, useExisting: InstallationPageComponent }
-  ],
-  standalone: true
+  selector: 'app-installation-page',
+  standalone: true,
+  imports: [DocPageComponent],
+  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class InstallationPageComponent extends NgDocRootPage {
-  readonly pageType: NgDocPageType = 'guide';
-  readonly pageContent: string = pageContent;
-  readonly editSourceFileUrl?: string;
-  readonly viewSourceFileUrl?: string;
-  override readonly page = pageConfig;
-
-  constructor() {
-    super();
-  }
+export class InstallationPageComponent {
+  content = pageContent;
 }
 
 export default InstallationPageComponent;

@@ -1,29 +1,171 @@
-<div class="card-skeleton" [class.card-skeleton--fullscreen]="isFullscreen">
+<div 
+  class="card-skeleton" 
+  [class.card-skeleton--fullscreen]="isFullscreen"
+  [class.card-skeleton--animated]="animated"
+  role="status"
+  aria-busy="true"
+  aria-label="Loading card content"
+>
+  <!-- Card Header Skeleton -->
   <div class="card-skeleton-header">
     <div class="skeleton-title" *ngIf="cardTitle; else noTitle">
       {{ cardTitle }}
     </div>
     <ng-template #noTitle>
-      <div class="skeleton-title-placeholder"></div>
+      <div class="skeleton-title-placeholder skeleton-shimmer"></div>
     </ng-template>
   </div>
   
-  <div class="card-skeleton-sections" *ngIf="sectionCount > 0">
+  <!-- Typed Section Skeletons -->
+  <div class="card-skeleton-sections" *ngIf="effectiveSections.length > 0">
     <div 
-      *ngFor="let section of [].constructor(sectionCount); let i = index"
-      class="skeleton-section"
-      [style.animation-delay.ms]="i * 100">
+      *ngFor="let section of effectiveSections; let i = index; trackBy: trackBySection"
+      [ngClass]="getSectionClasses(section)"
+      [style.animation-delay.ms]="i * 100"
+    >
+      <!-- Section Header -->
       <div class="skeleton-section-header">
-        <div class="skeleton-line skeleton-line--title"></div>
+        <div class="skeleton-line skeleton-line--title skeleton-shimmer"></div>
+        <div class="skeleton-line skeleton-line--subtitle skeleton-shimmer" *ngIf="section.title"></div>
       </div>
-      <div class="skeleton-section-content">
-        <div class="skeleton-line" *ngFor="let line of [].constructor(2)"></div>
-      </div>
+      
+      <!-- Section Content (varies by type) -->
+      <ng-container [ngSwitch]="section.type">
+        
+        <!-- Analytics Section Skeleton -->
+        <div *ngSwitchCase="'analytics'" class="skeleton-section-content skeleton-section-content--analytics">
+          <div class="skeleton-metrics-grid">
+            <div class="skeleton-metric" *ngFor="let m of range(3); trackBy: trackByIndex">
+              <div class="skeleton-line skeleton-line--short skeleton-shimmer"></div>
+              <div class="skeleton-line skeleton-line--value skeleton-shimmer"></div>
+              <div class="skeleton-progress skeleton-shimmer"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Chart Section Skeleton -->
+        <div *ngSwitchCase="'chart'" class="skeleton-section-content skeleton-section-content--chart">
+          <div class="skeleton-chart skeleton-shimmer"></div>
+        </div>
+        
+        <!-- Contact Card Section Skeleton -->
+        <div *ngSwitchCase="'contact-card'" class="skeleton-section-content skeleton-section-content--contact">
+          <div class="skeleton-contacts-grid">
+            <div class="skeleton-contact" *ngFor="let c of range(2); trackBy: trackByIndex">
+              <div class="skeleton-avatar skeleton-shimmer"></div>
+              <div class="skeleton-contact-info">
+                <div class="skeleton-line skeleton-line--name skeleton-shimmer"></div>
+                <div class="skeleton-line skeleton-line--role skeleton-shimmer"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Network Card Section Skeleton -->
+        <div *ngSwitchCase="'network-card'" class="skeleton-section-content skeleton-section-content--network">
+          <div class="skeleton-network">
+            <div class="skeleton-avatar skeleton-avatar--large skeleton-shimmer"></div>
+            <div class="skeleton-line skeleton-line--name skeleton-shimmer"></div>
+            <div class="skeleton-line skeleton-line--connections skeleton-shimmer"></div>
+          </div>
+        </div>
+        
+        <!-- Map Section Skeleton -->
+        <div *ngSwitchCase="'map'" class="skeleton-section-content skeleton-section-content--map">
+          <div class="skeleton-map skeleton-shimmer">
+            <div class="skeleton-map-marker"></div>
+          </div>
+        </div>
+        
+        <!-- Event Section Skeleton -->
+        <div *ngSwitchCase="'event'" class="skeleton-section-content skeleton-section-content--event">
+          <div class="skeleton-events">
+            <div class="skeleton-event" *ngFor="let e of range(3); trackBy: trackByIndex">
+              <div class="skeleton-event-dot skeleton-shimmer"></div>
+              <div class="skeleton-event-content">
+                <div class="skeleton-line skeleton-line--date skeleton-shimmer"></div>
+                <div class="skeleton-line skeleton-line--event-title skeleton-shimmer"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Product Section Skeleton -->
+        <div *ngSwitchCase="'product'" class="skeleton-section-content skeleton-section-content--product">
+          <div class="skeleton-products-grid">
+            <div class="skeleton-product" *ngFor="let p of range(2); trackBy: trackByIndex">
+              <div class="skeleton-product-icon skeleton-shimmer"></div>
+              <div class="skeleton-line skeleton-line--product-name skeleton-shimmer"></div>
+              <div class="skeleton-line skeleton-line--product-desc skeleton-shimmer"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Overview Section Skeleton -->
+        <div *ngSwitchCase="'overview'" class="skeleton-section-content skeleton-section-content--overview">
+          <div class="skeleton-overview-rows">
+            <div class="skeleton-overview-row" *ngFor="let r of range(6); trackBy: trackByIndex">
+              <div class="skeleton-line skeleton-line--label skeleton-shimmer"></div>
+              <div class="skeleton-line skeleton-line--value skeleton-shimmer"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Financials Section Skeleton -->
+        <div *ngSwitchCase="'financials'" class="skeleton-section-content skeleton-section-content--financials">
+          <div class="skeleton-financials-grid">
+            <div class="skeleton-financial-item" *ngFor="let f of range(4); trackBy: trackByIndex">
+              <div class="skeleton-line skeleton-line--label skeleton-shimmer"></div>
+              <div class="skeleton-line skeleton-line--amount skeleton-shimmer"></div>
+              <div class="skeleton-line skeleton-line--change skeleton-shimmer"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- List Section Skeleton -->
+        <div *ngSwitchCase="'list'" class="skeleton-section-content skeleton-section-content--list">
+          <div class="skeleton-list">
+            <div class="skeleton-list-item" *ngFor="let l of range(5); trackBy: trackByIndex">
+              <div class="skeleton-bullet skeleton-shimmer"></div>
+              <div class="skeleton-line skeleton-shimmer"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Quotation Section Skeleton -->
+        <div *ngSwitchCase="'quotation'" class="skeleton-section-content skeleton-section-content--quotation">
+          <div class="skeleton-quote">
+            <div class="skeleton-quote-icon skeleton-shimmer"></div>
+            <div class="skeleton-line skeleton-line--quote skeleton-shimmer"></div>
+            <div class="skeleton-line skeleton-line--quote skeleton-shimmer"></div>
+            <div class="skeleton-line skeleton-line--author skeleton-shimmer"></div>
+          </div>
+        </div>
+        
+        <!-- Solutions Section Skeleton -->
+        <div *ngSwitchCase="'solutions'" class="skeleton-section-content skeleton-section-content--solutions">
+          <div class="skeleton-solutions">
+            <div class="skeleton-solution" *ngFor="let s of range(3); trackBy: trackByIndex">
+              <div class="skeleton-line skeleton-line--solution-title skeleton-shimmer"></div>
+              <div class="skeleton-line skeleton-shimmer"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Generic/Default Section Skeleton -->
+        <div *ngSwitchDefault class="skeleton-section-content">
+          <div class="skeleton-line skeleton-shimmer" *ngFor="let line of range(3); trackBy: trackByIndex"></div>
+        </div>
+        
+      </ng-container>
     </div>
   </div>
   
-  <!-- Show placeholder when no sections yet -->
-  <div class="card-skeleton-empty" *ngIf="sectionCount === 0">
-    <div class="skeleton-line skeleton-line--empty"></div>
+  <!-- Empty State -->
+  <div class="card-skeleton-empty" *ngIf="effectiveSections.length === 0 && sectionCount === 0">
+    <div class="skeleton-line skeleton-line--empty skeleton-shimmer"></div>
   </div>
+  
+  <!-- Screen Reader Text -->
+  <span class="sr-only">Loading card content, please wait...</span>
 </div>

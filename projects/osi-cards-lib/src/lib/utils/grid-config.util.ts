@@ -232,6 +232,284 @@ export const DEFAULT_SECTION_COLUMN_PREFERENCES: SectionColumnPreferences = {
 };
 
 // ============================================================================
+// SECTION EXPANSION LIMITS
+// ============================================================================
+
+/**
+ * Maximum column expansion allowed per section type.
+ * This limits how wide a section can grow when filling remaining row space.
+ * Prevents inappropriate expansion (e.g., contact cards becoming 4 columns wide).
+ * 
+ * Unlike preferredColumns (which is a starting point), these are hard limits
+ * that the expansion logic will not exceed.
+ */
+export interface SectionExpansionLimits {
+  [sectionType: string]: number;
+}
+
+/**
+ * Default maximum expansion limits per section type.
+ * These values represent the maximum sensible width for each section type,
+ * regardless of available space.
+ */
+export const SECTION_MAX_EXPANSION: SectionExpansionLimits = {
+  // Compact sections - should never expand much
+  'contact-card': 2,    // Contact cards look bad when too wide
+  'network-card': 2,    // Similar to contact cards
+  'project': 1,         // Projects should stay single column
+  'quotation': 2,       // Quotes are narrow content
+  
+  // Medium sections - can expand moderately
+  'info': 2,            // Info sections work at 1-2 columns
+  'list': 2,            // Lists are vertical, don't need width
+  'event': 2,           // Events are timeline-oriented
+  'timeline': 2,        // Timelines are vertical
+  'financials': 2,      // Financial data is typically narrow
+  'stats': 2,           // Stats are compact metrics
+  'product': 2,         // Products don't need full width
+  'solutions': 2,       // Solutions work at medium width
+  'text-reference': 2,  // Text references are narrow
+  
+  // Wide sections - can expand more
+  'analytics': 3,       // Analytics with multiple metrics can expand
+  'locations': 3,       // Location maps can be wider
+  
+  // Full-width capable sections
+  'chart': 4,           // Charts benefit from full width
+  'map': 4,             // Maps benefit from full width
+  'overview': 4,        // Overview sections can span full width
+  
+  // Conservative default for unknown types
+  'default': 2,
+};
+
+/**
+ * Content density threshold for expansion.
+ * Sections with density below this value will not be expanded,
+ * as sparse content looks bad when stretched across multiple columns.
+ */
+export const EXPANSION_DENSITY_THRESHOLD = 15;
+
+/**
+ * Gets the maximum expansion limit for a section type.
+ * 
+ * @param sectionType - The section type
+ * @param limits - Optional custom limits map
+ * @returns Maximum column span allowed for this section type
+ */
+export function getMaxExpansion(
+  sectionType: string,
+  limits: SectionExpansionLimits = SECTION_MAX_EXPANSION
+): number {
+  const type = sectionType?.toLowerCase() || 'default';
+  return limits[type] ?? limits['default'] ?? 2;
+}
+
+/**
+ * Section information needed for expansion decision
+ */
+export interface SectionExpansionInfo {
+  /** Section type (e.g., 'contact-card', 'chart') */
+  type?: string;
+  /** Whether section can grow (canGrow !== false) */
+  canGrow?: boolean;
+  /** Explicit max columns limit from section config */
+  maxColumns?: number;
+  /** Content density score (calculated from measureContentDensity) */
+  density?: number;
+}
+
+/**
+ * Context for expansion decision
+ */
+export interface ExpansionContext {
+  /** Current column span before expansion */
+  currentSpan: number;
+  /** Remaining columns in the row */
+  remainingColumns: number;
+  /** Total columns in the grid */
+  totalColumns: number;
+  /** Container width in pixels */
+  containerWidth: number;
+  /** Minimum column width in pixels */
+  minColumnWidth?: number;
+  /** Gap between columns in pixels */
+  gap?: number;
+  /** Whether any pending section can fit in remaining space */
+  canPendingFit?: boolean;
+}
+
+/**
+ * Result of expansion decision
+ */
+export interface ExpansionResult {
+  /** Whether the section should expand */
+  shouldExpand: boolean;
+  /** Final column span after potential expansion */
+  finalSpan: number;
+  /** Reason for the decision (for debugging) */
+  reason: string;
+}
+
+/**
+ * Determines whether a section should expand to fill remaining row space.
+ * Uses type-aware limits and content density checks to make intelligent decisions.
+ * 
+ * The function considers:
+ * 1. Whether the section allows growth (canGrow)
+ * 2. Type-based expansion limits
+ * 3. Explicit maxColumns constraint from section config
+ * 4. Content density (sparse content shouldn't expand)
+ * 5. Whether remaining space can fit another section
+ * 
+ * @param section - Section information
+ * @param context - Expansion context
+ * @returns Expansion decision with reasoning
+ */
+export function shouldExpandSection(
+  section: SectionExpansionInfo,
+  context: ExpansionContext
+): ExpansionResult {
+  const {
+    currentSpan,
+    remainingColumns,
+    totalColumns,
+    containerWidth,
+    minColumnWidth = MIN_COLUMN_WIDTH,
+    gap = GRID_GAP,
+    canPendingFit = false,
+  } = context;
+
+  // No expansion needed if no remaining space
+  if (remainingColumns <= 0) {
+    return {
+      shouldExpand: false,
+      finalSpan: currentSpan,
+      reason: 'No remaining columns to expand into',
+    };
+  }
+
+  // Check if section explicitly disallows growth
+  if (section.canGrow === false) {
+    return {
+      shouldExpand: false,
+      finalSpan: currentSpan,
+      reason: 'Section has canGrow=false',
+    };
+  }
+
+  // Calculate type-aware max expansion limit
+  const sectionType = section.type?.toLowerCase() || 'default';
+  const typeMaxExpansion = getMaxExpansion(sectionType);
+  
+  // Effective max is minimum of: type limit, explicit maxColumns, total columns
+  const effectiveMaxSpan = Math.min(
+    typeMaxExpansion,
+    section.maxColumns ?? totalColumns,
+    totalColumns
+  );
+
+  // Calculate potential expanded span
+  const potentialSpan = currentSpan + remainingColumns;
+
+  // Check if expansion would exceed type-aware limit
+  if (potentialSpan > effectiveMaxSpan) {
+    // Calculate how much we CAN expand
+    const allowedExpansion = effectiveMaxSpan - currentSpan;
+    
+    if (allowedExpansion <= 0) {
+      return {
+        shouldExpand: false,
+        finalSpan: currentSpan,
+        reason: `Type '${sectionType}' at max expansion limit (${effectiveMaxSpan})`,
+      };
+    }
+    
+    // Partial expansion up to the limit
+    return {
+      shouldExpand: true,
+      finalSpan: effectiveMaxSpan,
+      reason: `Partial expansion to type limit (${effectiveMaxSpan})`,
+    };
+  }
+
+  // Check content density - sparse content shouldn't expand
+  const density = section.density ?? 0;
+  if (density < EXPANSION_DENSITY_THRESHOLD && remainingColumns > 0) {
+    // Allow expansion only if remaining space is truly unusable
+    const gapTotal = gap * (totalColumns - 1);
+    const columnWidthPx = (containerWidth - gapTotal) / totalColumns;
+    const remainingWidthPx = remainingColumns * columnWidthPx + 
+      (remainingColumns > 0 ? (remainingColumns - 1) * gap : 0);
+    
+    // If another section COULD fit, don't expand sparse content
+    if (remainingWidthPx >= minColumnWidth || canPendingFit) {
+      return {
+        shouldExpand: false,
+        finalSpan: currentSpan,
+        reason: `Content density (${density}) below threshold (${EXPANSION_DENSITY_THRESHOLD})`,
+      };
+    }
+  }
+
+  // Check if remaining space can fit another section
+  const gapTotal = gap * (totalColumns - 1);
+  const columnWidthPx = (containerWidth - gapTotal) / totalColumns;
+  const remainingWidthPx = remainingColumns * columnWidthPx + 
+    (remainingColumns > 0 ? (remainingColumns - 1) * gap : 0);
+
+  // Expand only if:
+  // 1. Remaining space can't fit minimum width section, OR
+  // 2. No pending section can fit in the remaining columns
+  const spaceIsUnusable = remainingWidthPx < minColumnWidth;
+  const nothingCanFit = !canPendingFit;
+
+  if (spaceIsUnusable || nothingCanFit) {
+    return {
+      shouldExpand: true,
+      finalSpan: potentialSpan,
+      reason: spaceIsUnusable 
+        ? 'Remaining space too small for any section'
+        : 'No pending section can fit in remaining space',
+    };
+  }
+
+  // Default: don't expand, let other sections fill the space
+  return {
+    shouldExpand: false,
+    finalSpan: currentSpan,
+    reason: 'Space available for other sections',
+  };
+}
+
+/**
+ * Simple content density calculation for expansion decisions.
+ * This is a lightweight version that can be used standalone.
+ * For full density calculation, use measureContentDensity from smart-grid.util.
+ * 
+ * @param fields - Array of fields in the section
+ * @param items - Array of items in the section
+ * @param description - Section description text
+ * @returns Density score (higher = more content)
+ */
+export function calculateBasicDensity(
+  fields?: Array<{ label?: string; value?: unknown }>,
+  items?: unknown[],
+  description?: string
+): number {
+  const textLength = (description?.length ?? 0) + 
+    (fields?.reduce((acc, f) => acc + String(f.value ?? '').length + (f.label?.length ?? 0), 0) ?? 0);
+  const itemCount = items?.length ?? 0;
+  const fieldCount = fields?.length ?? 0;
+  
+  const textScore = textLength / 50;  // 1 point per 50 chars
+  const itemScore = itemCount * 3;     // 3 points per item
+  const fieldScore = fieldCount * 2;   // 2 points per field
+  
+  return Math.round(textScore + itemScore + fieldScore);
+}
+
+// ============================================================================
 // CALCULATION HELPERS
 // ============================================================================
 

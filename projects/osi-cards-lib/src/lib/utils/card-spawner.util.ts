@@ -1,4 +1,4 @@
-import { AICardConfig, CardSection } from '../models';
+import { AICardConfig, CardSection, CardField, CardItem, CardAction } from '../models';
 
 /**
  * Card Spawner Utilities
@@ -108,20 +108,20 @@ export function mergeSections(
  * Merges fields arrays, avoiding duplicates by ID or label
  */
 function mergeFields(
-  existing: any[],
-  updates: any[]
-): any[] {
-  const fieldMap = new Map<string, any>();
+  existing: CardField[],
+  updates: CardField[]
+): CardField[] {
+  const fieldMap = new Map<string, CardField>();
 
   // Add existing fields
   existing.forEach(field => {
-    const key = field.id || field.label || String(field);
+    const key = field.id ?? field.label ?? String(field);
     fieldMap.set(key, field);
   });
 
   // Add or update fields
   updates.forEach(update => {
-    const key = update.id || update.label || String(update);
+    const key = update.id ?? update.label ?? String(update);
     fieldMap.set(key, update);
   });
 
@@ -132,20 +132,20 @@ function mergeFields(
  * Merges items arrays, avoiding duplicates by ID or name
  */
 function mergeItems(
-  existing: any[],
-  updates: any[]
-): any[] {
-  const itemMap = new Map<string, any>();
+  existing: CardItem[],
+  updates: CardItem[]
+): CardItem[] {
+  const itemMap = new Map<string, CardItem>();
 
   // Add existing items
   existing.forEach(item => {
-    const key = item.id || item.name || String(item);
+    const key = item.id ?? item.title ?? String(item);
     itemMap.set(key, item);
   });
 
   // Add or update items
   updates.forEach(update => {
-    const key = update.id || update.name || String(update);
+    const key = update.id ?? update.title ?? String(update);
     itemMap.set(key, update);
   });
 
@@ -156,20 +156,20 @@ function mergeItems(
  * Merges actions arrays, avoiding duplicates by ID or label
  */
 function mergeActions(
-  existing: any[],
-  updates: any[]
-): any[] {
-  const actionMap = new Map<string, any>();
+  existing: CardAction[],
+  updates: CardAction[]
+): CardAction[] {
+  const actionMap = new Map<string, CardAction>();
 
   // Add existing actions
   existing.forEach(action => {
-    const key = action.id || action.label || String(action);
+    const key = action.id ?? action.label ?? String(action);
     actionMap.set(key, action);
   });
 
   // Add or update actions
   updates.forEach(update => {
-    const key = update.id || update.label || String(update);
+    const key = update.id ?? update.label ?? String(update);
     actionMap.set(key, update);
   });
 

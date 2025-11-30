@@ -229,7 +229,23 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private visibleSectionIds = new Set<string>(); // Track visible section IDs
   private scrollListener?: () => void;
 
+  /** Track previous streaming state for detecting state changes */
+  private previousStreamingState = false;
+
   ngOnChanges(changes: SimpleChanges): void {
+    // Track streaming state changes
+    if (changes['isStreaming']) {
+      const wasStreaming = this.previousStreamingState;
+      const nowStreaming = this.isStreaming;
+      
+      // Streaming ended - finalize all section animations
+      if (wasStreaming && !nowStreaming) {
+        this.finalizeStreamingAnimations();
+      }
+      
+      this.previousStreamingState = nowStreaming;
+    }
+    
     if (changes['sections']) {
       // Ensure sections is always an array and filter out null/undefined
       if (!Array.isArray(this.sections)) {
@@ -325,11 +341,62 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   /**
+   * Check if a section has already completed its entrance animation.
+   * Used by template to determine if section should have --animated class.
+   */
+  hasAnimated(key: string): boolean {
+    return this.animatedSectionKeys.has(key);
+  }
+
+  /**
    * Mark a section as having completed its animation.
    * Called from template on animationend event.
+   * 
+   * IMPORTANT: This method clears the `isNew` flag to prevent continuous animation
+   * and adds the key to `animatedSectionKeys` for persistent tracking.
    */
   onSectionAnimationEnd(key: string): void {
-    this.animatedSectionKeys.add(key);
+    if (key) {
+      this.animatedSectionKeys.add(key);
+      // Also update the positionedSections array
+      const section = this.positionedSections.find(s => s?.key === key);
+      if (section) {
+        section.isNew = false;
+      }
+      // Log in debug mode
+      if (this.isDebugMode) {
+        this.logger.debug(`Animation completed for section: ${key}`, 'MasonryGridComponent');
+      }
+      // Trigger change detection to update template bindings
+      this.cdr.markForCheck();
+    }
+  }
+
+  /**
+   * Finalizes all section animations when streaming ends.
+   * This ensures any sections that haven't completed their animation yet
+   * are properly marked as complete to prevent lingering animation states.
+   * 
+   * Called when `isStreaming` changes from true to false.
+   */
+  private finalizeStreamingAnimations(): void {
+    let hasChanges = false;
+    
+    // Mark all sections as animated and clear isNew flags
+    for (const section of this.positionedSections) {
+      if (section?.isNew) {
+        section.isNew = false;
+        this.animatedSectionKeys.add(section.key);
+        hasChanges = true;
+      }
+    }
+    
+    if (hasChanges) {
+      if (this.isDebugMode) {
+        this.logger.debug('Finalized streaming animations for all sections', 'MasonryGridComponent');
+      }
+      this.cdr.markForCheck();
+    }
   }
 
   /**

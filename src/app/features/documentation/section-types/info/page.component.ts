@@ -1,9 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NgDocPageComponent, NgDocRootPage } from '@ng-doc/app';
-import { NgDocPageType } from '@ng-doc/core';
-import pageConfig from './info.page';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { DocPageComponent } from '../../doc-page.component';
 
-const pageContent: string = `# Info Section
+const pageContent = `# Info Section
 
 Displays key-value pairs in a clean, scannable format. Ideal for metadata, contact information, and general data display.
 
@@ -120,25 +118,14 @@ The **Info Section** (\`type: "info"\`) is used for displays key-value pairs in 
 `;
 
 @Component({
-  selector: 'ng-doc-page-info',
-  template: `<ng-doc-page></ng-doc-page>`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgDocPageComponent],
-  providers: [
-    { provide: NgDocRootPage, useExisting: InfoPageComponent }
-  ],
-  standalone: true
+  selector: 'app-info-page',
+  standalone: true,
+  imports: [DocPageComponent],
+  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class InfoPageComponent extends NgDocRootPage {
-  readonly pageType: NgDocPageType = 'guide';
-  readonly pageContent: string = pageContent;
-  readonly editSourceFileUrl?: string;
-  readonly viewSourceFileUrl?: string;
-  override readonly page = pageConfig;
-
-  constructor() {
-    super();
-  }
+export class InfoPageComponent {
+  content = pageContent;
 }
 
 export default InfoPageComponent;

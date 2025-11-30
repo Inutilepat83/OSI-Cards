@@ -1,9 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NgDocPageComponent, NgDocRootPage } from '@ng-doc/app';
-import { NgDocPageType } from '@ng-doc/core';
-import pageConfig from './overview.page';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { DocPageComponent } from '../../doc-page.component';
 
-const pageContent: string = `# Overview Section
+const pageContent = `# Overview Section
 
 Displays high-level summaries, executive dashboards, and key highlights.
 
@@ -111,25 +109,14 @@ The **Overview Section** (\`type: "overview"\`) is used for displays high-level 
 `;
 
 @Component({
-  selector: 'ng-doc-page-overview',
-  template: `<ng-doc-page></ng-doc-page>`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgDocPageComponent],
-  providers: [
-    { provide: NgDocRootPage, useExisting: OverviewPageComponent }
-  ],
-  standalone: true
+  selector: 'app-overview-page',
+  standalone: true,
+  imports: [DocPageComponent],
+  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OverviewPageComponent extends NgDocRootPage {
-  readonly pageType: NgDocPageType = 'guide';
-  readonly pageContent: string = pageContent;
-  readonly editSourceFileUrl?: string;
-  readonly viewSourceFileUrl?: string;
-  override readonly page = pageConfig;
-
-  constructor() {
-    super();
-  }
+export class OverviewPageComponent {
+  content = pageContent;
 }
 
 export default OverviewPageComponent;

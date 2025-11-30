@@ -1,130 +1,135 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NgDocPageComponent, NgDocRootPage } from '@ng-doc/app';
-import { NgDocPageType } from '@ng-doc/core';
-import pageConfig from './getting-started.page';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { DocPageComponent } from '../doc-page.component';
 
-const pageContent: string = `# OrangeSales Intelligence OSI Cards
+const pageContent = `# Getting Started with OSI Cards
 
-**OrangeSales Intelligence OSI Cards** is a versatile card generator used by sales intelligence agents. It features structured formatting that can design cards for any form of business intelligence data. Built as a modern, token-driven Angular dashboard framework (supports Angular 18 and 20), OSI Cards transforms any dataset into a visually rich stack of interactive cards rendered within a responsive masonry grid. Built for flexibility, accessibility, and performance, OSI Cards empowers developers to compose diverse data experiences with minimal friction.
+Welcome to OSI Cards - a powerful Angular library for rendering AI-generated cards with streaming support.
 
-Each card is composed of one or more **sections**—standalone, configurable components orchestrated by \`AICardRendererComponent\` ⟶ \`SectionRendererComponent\` ⟶ \`MasonryGridComponent\`. This architecture enables seamless combination of layouts, real-time streaming updates, and rich interactions.
+## Overview
 
----
+OSI Cards provides a flexible, performant way to display structured content in card format. Whether you're building a chatbot interface, a knowledge base, or a dashboard, OSI Cards makes it easy to render dynamic, interactive cards.
 
-## Table of Contents
+## Key Features
 
-1. [Quick Start](#quick-start)
-2. [Using OSI Cards in Your Project](#using-osi-cards-in-your-project)
-3. [Core Architecture](#core-architecture)
-4. [Section Types Catalog](#section-types-catalog---all-20-components)
-5. [Creating Cards: Complete Guide](#creating-cards-complete-guide)
-6. [Design System & Tokens](#design-system--tokens)
-7. [Advanced Features](#advanced-features)
-8. [Development](#development)
-9. [Appendix](#appendix)
-
----
+- **18+ Section Types**: Info, Analytics, Contact, Network, Map, Financials, Event, List, Chart, Product, Solutions, and more
+- **Streaming Support**: Progressive rendering with real-time updates
+- **LLM Integration**: Designed for AI-generated content
+- **Angular 18-20 Support**: Works with the latest Angular versions
+- **Theming**: CSS custom properties for easy customization
+- **Accessibility**: WCAG compliant components
+- **Performance**: Optimized rendering with virtual scrolling
 
 ## Quick Start
 
-### Run the Development Server
-
-\`\`\`bash
-npm start
-# Navigate to http://localhost:4200
-\`\`\`
-
-### Create Your First Card
-
-Add a JSON card configuration to \`src/assets/configs/companies/\` or \`src/assets/configs/contacts/\`:
-
-\`\`\`json
-{
-  "cardTitle": "Your Company",
-  "sections": [
-    {
-      "title": "Company Info",
-      "type": "info",
-      "fields": [
-        { "label": "Industry", "value": "Technology" },
-        { "label": "Employees", "value": "1000+" },
-        { "label": "Founded", "value": "2020" }
-      ]
-    },
-    {
-      "title": "Key Metrics",
-      "type": "analytics",
-      "fields": [
-        { "label": "Growth", "value": "85%", "percentage": 85 },
-        { "label": "ROI", "value": "120%", "percentage": 120 }
-      ]
-    }
-  ]
-}
-\`\`\`
-
-The card will automatically appear in the masonry grid on page load.
-
----
-
-## Using OSI Cards in Your Project
-
-OSI Cards can be imported and used as a library in other Angular projects.
-
-> 📖 **For detailed integration instructions, see [README_INTEGRATION.md](./README_INTEGRATION.md)**
-
-### Installation Options
-
-#### Option 1: Install from npm (Recommended)
-
-Install the library directly from npm:
+### 1. Install the library
 
 \`\`\`bash
 npm install osi-cards-lib
 \`\`\`
 
-The library supports both Angular 18 and Angular 20, which should resolve most peer dependency conflicts. If you still encounter issues, use:
+### 2. Import the component
 
-\`\`\`bash
-npm install osi-cards-lib --legacy-peer-deps
+\`\`\`typescript
+import { Component } from '@angular/core';
+import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
+
+@Component({
+  selector: 'app-my-component',
+  standalone: true,
+  imports: [AICardRendererComponent],
+  template: \`
+    <app-ai-card-renderer [cardConfig]="cardConfig"></app-ai-card-renderer>
+  \`
+})
+export class MyComponent {
+  cardConfig: AICardConfig = {
+    cardTitle: 'My First Card',
+    sections: [
+      {
+        title: 'Overview',
+        type: 'info',
+        fields: [
+          { label: 'Name', value: 'Example' },
+          { label: 'Status', value: 'Active' }
+        ]
+      }
+    ]
+  };
+}
 \`\`\`
 
-**Package URL:** https://www.npmjs.com/package/osi-cards-lib
+### 3. Add styles (optional)
 
-📖 **See [docs/PEER_DEPENDENCY_CONFLICTS.md](./docs/PEER_DEPENDENCY_CONFLICTS.md) for detailed conflict resolution guide.**
+If you want to use the default themes:
 
-#### Option 2: Install from GitHub
-
-Install the library directly from the GitHub repository:
-
-\`\`\`bash
-npm install git+https://github.com/Inutilepat83/OSI-Cards.git
+\`\`\`scss
+@import 'osi-cards-lib/styles';
 \`\`\`
 
-Or add to your \`package.json\`:
+## What's Next?
 
+- [Installation Guide](/docs/installation) - Detailed installation instructions
+- [Section Types](/docs/section-types) - Explore all available section types
+- [Streaming](/docs/streaming/overview) - Learn about streaming support
+- [LLM Integration](/docs/llm-integration) - Integrate with AI systems
+- [Best Practices](/docs/best-practices) - Tips for optimal usage
+
+## Example Card
+
+Here's a more complete example showing multiple section types:
+
+\`\`\`typescript
+const cardConfig: AICardConfig = {
+  cardTitle: 'Company Overview',
+  sections: [
+    {
+      title: 'Basic Info',
+      type: 'info',
+      fields: [
+        { label: 'Company', value: 'Acme Corp' },
+        { label: 'Industry', value: 'Technology' },
+        { label: 'Founded', value: '2010' }
+      ]
+    },
+    {
+      title: 'Key Metrics',
+      type: 'analytics',
+      metrics: [
+        { label: 'Revenue', value: '$10M', trend: 'up' },
+        { label: 'Employees', value: '150', trend: 'up' },
+        { label: 'Growth', value: '25%', trend: 'up' }
+      ]
+    },
+    {
+      title: 'Contact',
+      type: 'contact-card',
+      name: 'John Smith',
+      role: 'CEO',
+      email: 'john@acme.com',
+      phone: '+1 555-0123'
+    }
+  ]
+};
+\`\`\`
+
+## Support
+
+- **Documentation**: You're looking at it!
+- **GitHub**: [github.com/anthropic/osi-cards](https://github.com/anthropic/osi-cards)
+- **Issues**: Report bugs or request features on GitHub
+
+Happy coding! 🎉
 `;
 
 @Component({
-  selector: 'ng-doc-page-getting-started',
-  template: `<ng-doc-page></ng-doc-page>`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgDocPageComponent],
-  providers: [
-    { provide: NgDocRootPage, useExisting: GettingStartedPageComponent }
-  ],
-  standalone: true
+  selector: 'app-getting-started-page',
+  standalone: true,
+  imports: [DocPageComponent],
+  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GettingStartedPageComponent extends NgDocRootPage {
-  readonly pageType: NgDocPageType = 'guide';
-  readonly pageContent: string = pageContent;
-  readonly editSourceFileUrl?: string;
-  readonly viewSourceFileUrl?: string;
-  override readonly page = pageConfig;
-
-  constructor() {
-    super();
-  }
+export class GettingStartedPageComponent {
+  content = pageContent;
 }
 
 export default GettingStartedPageComponent;

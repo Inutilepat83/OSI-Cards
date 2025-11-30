@@ -80,4 +80,29 @@ export class AnalyticsSectionComponent extends BaseSectionComponent<AnalyticsFie
   override trackField(index: number, field: AnalyticsField): string {
     return field.id ?? `${field.label}-${index}`;
   }
+
+  /**
+   * Generate accessible label for a metric field
+   * Includes value, percentage if available, and change/trend info
+   */
+  getMetricAriaLabel(field: AnalyticsField): string {
+    const parts: string[] = [];
+    
+    // Label and value
+    parts.push(`${field.label}: ${this.getDisplayValue(field) || 'No value'}`);
+    
+    // Percentage if available
+    if (field.percentage !== undefined) {
+      parts.push(`${field.percentage}%`);
+    }
+    
+    // Change/trend info
+    if (field.change !== undefined) {
+      const trend = field.trend ?? this.utils.calculateTrend(field.change);
+      const trendText = trend === 'up' ? 'increased' : trend === 'down' ? 'decreased' : 'unchanged';
+      parts.push(`${trendText} by ${this.formatChange(field.change)}`);
+    }
+    
+    return parts.join(', ');
+  }
 }

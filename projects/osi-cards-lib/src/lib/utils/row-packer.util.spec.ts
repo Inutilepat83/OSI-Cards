@@ -422,6 +422,83 @@ describe('Row Packer Utility', () => {
     });
   });
 
+  describe('Type-Aware Expansion', () => {
+    it('should not expand contact-card beyond type limit', () => {
+      // Contact cards have a max expansion of 2
+      const sections: CardSection[] = [
+        createSection({ 
+          type: 'contact-card', 
+          preferredColumns: 1, 
+          canGrow: true,
+          fields: [{ label: 'Name', value: 'Test' }]
+        }),
+      ];
+
+      const result = packSectionsIntoRows(sections, defaultConfig);
+
+      // Contact card should not expand beyond 2 even though 4 columns available
+      expect(result.rows[0]?.sections[0]?.finalWidth).toBeLessThanOrEqual(2);
+    });
+
+    it('should allow chart to expand to full width', () => {
+      // Charts have a max expansion of 4
+      const sections: CardSection[] = [
+        createSection({ 
+          type: 'chart', 
+          preferredColumns: 2, 
+          canGrow: true,
+          fields: Array(10).fill({ label: 'Data', value: '100' }) // Dense content
+        }),
+      ];
+
+      const result = packSectionsIntoRows(sections, defaultConfig);
+
+      // Chart can expand to fill 4 columns
+      expect(result.rows[0]?.sections[0]?.finalWidth).toBeLessThanOrEqual(4);
+    });
+
+    it('should respect type limits during Phase 2 expansion', () => {
+      // Two contact cards - even with gaps, shouldn't exceed type limit
+      const sections: CardSection[] = [
+        createSection({ 
+          type: 'contact-card', 
+          preferredColumns: 1, 
+          canGrow: true,
+          fields: [{ label: 'Name', value: 'Test' }]
+        }),
+        createSection({ 
+          type: 'contact-card', 
+          preferredColumns: 1, 
+          canGrow: true,
+          fields: [{ label: 'Name', value: 'Test' }]
+        }),
+      ];
+
+      const result = packSectionsIntoRows(sections, defaultConfig);
+
+      // Each contact card should be at most 2 columns
+      for (const section of result.rows[0]?.sections ?? []) {
+        expect(section.finalWidth).toBeLessThanOrEqual(2);
+      }
+    });
+
+    it('should respect type limits during Phase 4 distribution', () => {
+      // Single project section - should stay at 1 column
+      const sections: CardSection[] = [
+        createSection({ 
+          type: 'project', 
+          preferredColumns: 1, 
+          canGrow: true,
+        }),
+      ];
+
+      const result = packSectionsIntoRows(sections, defaultConfig);
+
+      // Project sections have max expansion of 1
+      expect(result.rows[0]?.sections[0]?.finalWidth).toBe(1);
+    });
+  });
+
   describe('Edge Cases', () => {
     it('should handle single column grid', () => {
       const singleColConfig: RowPackerConfig = {

@@ -24,7 +24,12 @@
  */
 
 import { CardSection, LayoutPriority, CardField } from '../models/card.model';
-import { generateWidthExpression, generateLeftExpression } from './grid-config.util';
+import { 
+  generateWidthExpression, 
+  generateLeftExpression,
+  getMaxExpansion,
+  EXPANSION_DENSITY_THRESHOLD
+} from './grid-config.util';
 
 // ============================================================================
 // HEIGHT ESTIMATION (copied from smart-grid to avoid circular dependencies)
@@ -413,13 +418,36 @@ function buildRow(
     // Sort by priority (lower = higher priority, expand last)
     // We want to expand low-priority sections first to preserve high-priority section widths
     const expandable = rowSections
-      .filter(s => s.canGrow && s.finalWidth < s.maxWidth)
+      .filter(s => {
+        // Check if section can grow
+        if (!s.canGrow) return false;
+        
+        // Calculate type-aware max expansion limit
+        const typeMaxExpansion = getMaxExpansion(s.section.type ?? 'default');
+        const effectiveMax = Math.min(s.maxWidth, typeMaxExpansion, totalColumns);
+        
+        // Check if already at effective max
+        if (s.finalWidth >= effectiveMax) return false;
+        
+        // Check content density - sparse content shouldn't expand
+        if (s.density < EXPANSION_DENSITY_THRESHOLD && gap > 1) {
+          // Allow expansion only if this is the only option (gap=1)
+          // or if there are no other expandable sections
+          return false;
+        }
+        
+        return true;
+      })
       .sort((a, b) => b.priority - a.priority); // 3 before 2 before 1
 
     for (const section of expandable) {
       if (gap === 0) break;
       
-      const expandBy = Math.min(gap, section.maxWidth - section.finalWidth);
+      // Calculate type-aware max expansion limit
+      const typeMaxExpansion = getMaxExpansion(section.section.type ?? 'default');
+      const effectiveMax = Math.min(section.maxWidth, typeMaxExpansion, totalColumns);
+      
+      const expandBy = Math.min(gap, effectiveMax - section.finalWidth);
       if (expandBy > 0) {
         section.finalWidth += expandBy;
         section.wasGrown = true;
@@ -464,15 +492,30 @@ function buildRow(
   }
 
   // Phase 4: If still have gap, try distributing it among growable sections
+  // This is a fallback for when Phase 2 couldn't fill the gap
+  // We're more lenient here since this is the last chance to fill gaps
   if (gap > 0 && config.allowGrowing) {
-    const growable = rowSections.filter(s => s.canGrow && s.finalWidth < s.maxWidth);
+    const growable = rowSections.filter(s => {
+      if (!s.canGrow) return false;
+      
+      // Calculate type-aware max expansion limit
+      const typeMaxExpansion = getMaxExpansion(s.section.type ?? 'default');
+      const effectiveMax = Math.min(s.maxWidth, typeMaxExpansion, totalColumns);
+      
+      return s.finalWidth < effectiveMax;
+    });
     
     while (gap > 0 && growable.length > 0) {
       let distributed = false;
       
       for (const section of growable) {
         if (gap === 0) break;
-        if (section.finalWidth < section.maxWidth) {
+        
+        // Calculate type-aware max expansion limit
+        const typeMaxExpansion = getMaxExpansion(section.section.type ?? 'default');
+        const effectiveMax = Math.min(section.maxWidth, typeMaxExpansion, totalColumns);
+        
+        if (section.finalWidth < effectiveMax) {
           section.finalWidth += 1;
           section.wasGrown = true;
           gap -= 1;

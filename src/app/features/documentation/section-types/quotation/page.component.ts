@@ -1,9 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NgDocPageComponent, NgDocRootPage } from '@ng-doc/app';
-import { NgDocPageType } from '@ng-doc/core';
-import pageConfig from './quotation.page';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { DocPageComponent } from '../../doc-page.component';
 
-const pageContent: string = `# Quotation Section
+const pageContent = `# Quotation Section
 
 Displays quotes, testimonials, highlighted text, and citations.
 
@@ -102,25 +100,14 @@ The **Quotation Section** (\`type: "quotation"\`) is used for displays quotes, t
 `;
 
 @Component({
-  selector: 'ng-doc-page-quotation',
-  template: `<ng-doc-page></ng-doc-page>`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgDocPageComponent],
-  providers: [
-    { provide: NgDocRootPage, useExisting: QuotationPageComponent }
-  ],
-  standalone: true
+  selector: 'app-quotation-page',
+  standalone: true,
+  imports: [DocPageComponent],
+  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class QuotationPageComponent extends NgDocRootPage {
-  readonly pageType: NgDocPageType = 'guide';
-  readonly pageContent: string = pageContent;
-  readonly editSourceFileUrl?: string;
-  readonly viewSourceFileUrl?: string;
-  override readonly page = pageConfig;
-
-  constructor() {
-    super();
-  }
+export class QuotationPageComponent {
+  content = pageContent;
 }
 
 export default QuotationPageComponent;

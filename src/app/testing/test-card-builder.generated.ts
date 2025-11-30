@@ -4,7 +4,7 @@
  * Run: npm run generate:tests
  */
 
-import { AICardConfig, CardSection, CardField, CardItem, CardAction } from '../../models';
+import { AICardConfig, CardSection, CardField, CardItem, CardAction } from '../models';
 
 /**
  * Section type fixtures for testing
@@ -1058,7 +1058,7 @@ export class TestCardBuilder {
   withSection(type: SectionFixtureType, variant: FixtureVariant = 'complete'): TestCardBuilder {
     const fixture = SECTION_FIXTURES[type]?.[variant];
     if (fixture) {
-      this.config.sections = [...(this.config.sections || []), fixture as CardSection];
+      this.config.sections = [...(this.config.sections || []), fixture as unknown as CardSection];
     }
     return this;
   }
@@ -1224,7 +1224,7 @@ export class RandomTestData {
       ...base,
       id: this.randomId(),
       title: `${base.title} ${this.randomId()}`
-    } as CardSection;
+    } as unknown as CardSection;
   }
 
   /**
@@ -1236,7 +1236,9 @@ export class RandomTestData {
     
     for (let i = 0; i < sectionCount; i++) {
       const type = types[this.randomInt(0, types.length - 1)];
-      builder.withCustomSection(this.randomSection(type));
+      if (type) {
+        builder.withCustomSection(this.randomSection(type));
+      }
     }
     
     return builder.build();

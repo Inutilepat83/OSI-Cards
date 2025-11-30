@@ -1,4 +1,4 @@
-import { AICardConfig, CardSection, CardAction } from '../models';
+import { AICardConfig, CardSection, CardAction, CardField } from '../models';
 
 /**
  * Contact Card Preset
@@ -70,34 +70,35 @@ export function createContactCard(options: ContactCardOptions): AICardConfig {
     customActions = []
   } = options;
 
-  const sections = [
+  const profileFields: CardField[] = [];
+  if (jobTitle) profileFields.push({ id: 'job-title', label: 'Job Title', value: jobTitle });
+  if (company) profileFields.push({ id: 'company', label: 'Company', value: company });
+  if (location) profileFields.push({ id: 'location', label: 'Location', value: location });
+  if (experience) profileFields.push({ id: 'experience', label: 'Experience', value: experience });
+  if (email) profileFields.push({ id: 'email', label: 'Email', value: email });
+  if (phone) profileFields.push({ id: 'phone', label: 'Phone', value: phone });
+
+  const sections: CardSection[] = [
     {
       id: 'professional-profile',
       title: 'Professional Profile',
       type: 'info',
-      fields: [
-        ...(jobTitle ? [{ id: 'job-title', label: 'Job Title', value: jobTitle }] : []),
-        ...(company ? [{ id: 'company', label: 'Company', value: company }] : []),
-        ...(location ? [{ id: 'location', label: 'Location', value: location }] : []),
-        ...(experience ? [{ id: 'experience', label: 'Experience', value: experience }] : []),
-        ...(email ? [{ id: 'email', label: 'Email', value: email }] : []),
-        ...(phone ? [{ id: 'phone', label: 'Phone', value: phone }] : [])
-      ].filter(Boolean) as any[]
+      fields: profileFields
     },
     ...(metrics.length > 0 ? [{
       id: 'performance-metrics',
       title: 'Performance Metrics',
       type: 'analytics' as const,
-      fields: metrics.map((m, i) => ({
+      fields: metrics.map((m, i): CardField => ({
         id: `metric-${i}`,
         label: m.label,
         value: m.value,
         percentage: m.percentage,
-        trend: m.trend || 'up'
+        trend: m.trend ?? 'up'
       }))
     }] : []),
     ...customSections
-  ].filter(Boolean) as CardSection[];
+  ];
 
   const actions: CardAction[] = [
     ...(email ? [{

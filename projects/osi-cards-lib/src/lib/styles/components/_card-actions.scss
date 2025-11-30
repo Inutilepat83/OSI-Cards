@@ -3,21 +3,18 @@
 // ============================================
 // These styles are included in the Shadow DOM bundle
 // to ensure proper button styling regardless of host app CSS.
+// Buttons are rendered directly without wrapper containers.
 
-// Container
-.osi-card-actions {
-  margin-top: 12px !important;
-  padding-bottom: 16px !important;
-  font-family: Helvetica, 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
-}
-
-.osi-card-actions__container {
+// Host component styles
+app-card-actions {
   display: flex !important;
   flex-wrap: wrap !important;
   align-items: center !important;
   gap: 0.75rem !important;
+  margin-top: 12px !important;
   margin-left: 4px !important;
   margin-right: 4px !important;
+  padding-bottom: 16px !important;
 }
 
 // Base Button Styles
@@ -26,80 +23,102 @@
   margin: 0 !important;
   -webkit-appearance: none !important;
   appearance: none !important;
-  
+
   // Layout
   display: inline-flex !important;
   align-items: center !important;
   gap: 0.5rem !important;
   padding: 0.625rem 1.25rem !important;
-  
+
   // Typography
-  font-family: Helvetica, 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
+  font-family:
+    Helvetica,
+    'Helvetica Neue',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Arial,
+    sans-serif !important;
   font-size: 0.875rem !important;
   font-weight: 600 !important;
   line-height: 1.25rem !important;
   text-decoration: none !important;
   white-space: nowrap !important;
-  
+
   // Interaction
   cursor: pointer !important;
-  
+
   // Visual
   border-radius: 10px !important;
   transition: all 200ms ease !important;
   box-sizing: border-box !important;
 }
 
-// Primary Button - Solid Orange Background
+// Primary Button - Solid Orange Background with WHITE text
 .osi-action-button--primary {
-  background-color: #FF7900 !important;
+  background-color: #ff7900 !important;
   color: #ffffff !important;
   border: none !important;
   box-shadow: 0 2px 8px rgba(255, 121, 0, 0.25) !important;
+
+  // Force white text on all child elements
+  * {
+    color: #ffffff !important;
+  }
 }
 
 .osi-action-button--primary:hover {
   background-color: #e66d00 !important;
+  color: #ffffff !important;
   box-shadow: 0 4px 16px rgba(255, 121, 0, 0.4) !important;
   transform: translateY(-1px) !important;
 }
 
 .osi-action-button--primary:active {
   background-color: #cc6000 !important;
+  color: #ffffff !important;
   transform: scale(0.98) translateY(0) !important;
   box-shadow: 0 2px 4px rgba(255, 121, 0, 0.2) !important;
 }
 
 .osi-action-button--primary:focus-visible {
-  outline: 2px solid #FF7900 !important;
+  outline: 2px solid #ff7900 !important;
   outline-offset: 2px !important;
 }
 
-// Secondary Button - Orange Border (Outline)
+// Secondary Button - Orange Border (Outline) with WHITE text
 .osi-action-button--secondary {
   background-color: transparent !important;
-  color: #FF7900 !important;
-  border: 2px solid #FF7900 !important;
+  color: #ffffff !important;
+  border: 2px solid #ff7900 !important;
+
+  // Force white text on all child elements
+  * {
+    color: #ffffff !important;
+  }
 }
 
 .osi-action-button--secondary:hover {
   background-color: rgba(255, 121, 0, 0.1) !important;
+  color: #ffffff !important;
   box-shadow: 0 2px 8px rgba(255, 121, 0, 0.2) !important;
 }
 
 .osi-action-button--secondary:active {
   background-color: rgba(255, 121, 0, 0.15) !important;
+  color: #ffffff !important;
   transform: scale(0.98) !important;
 }
 
 .osi-action-button--secondary:focus-visible {
-  outline: 2px solid #FF7900 !important;
+  outline: 2px solid #ff7900 !important;
   outline-offset: 2px !important;
 }
 
-// Button Content Elements
+// Button Content Elements - Always white
 .osi-action-button__label {
-  color: inherit !important;
+  color: #ffffff !important;
   font-family: inherit !important;
   font-size: inherit !important;
   font-weight: inherit !important;
@@ -148,4 +167,3 @@
   white-space: nowrap !important;
   border-width: 0 !important;
 }
-

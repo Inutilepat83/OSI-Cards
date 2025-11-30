@@ -1,9 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NgDocPageComponent, NgDocRootPage } from '@ng-doc/app';
-import { NgDocPageType } from '@ng-doc/core';
-import pageConfig from './product.page';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { DocPageComponent } from '../../doc-page.component';
 
-const pageContent: string = `# Product Section
+const pageContent = `# Product Section
 
 Displays product information, features, benefits, and pricing.
 
@@ -112,25 +110,14 @@ The **Product Section** (\`type: "product"\`) is used for displays product infor
 `;
 
 @Component({
-  selector: 'ng-doc-page-product',
-  template: `<ng-doc-page></ng-doc-page>`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgDocPageComponent],
-  providers: [
-    { provide: NgDocRootPage, useExisting: ProductPageComponent }
-  ],
-  standalone: true
+  selector: 'app-product-page',
+  standalone: true,
+  imports: [DocPageComponent],
+  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProductPageComponent extends NgDocRootPage {
-  readonly pageType: NgDocPageType = 'guide';
-  readonly pageContent: string = pageContent;
-  readonly editSourceFileUrl?: string;
-  readonly viewSourceFileUrl?: string;
-  override readonly page = pageConfig;
-
-  constructor() {
-    super();
-  }
+export class ProductPageComponent {
+  content = pageContent;
 }
 
 export default ProductPageComponent;

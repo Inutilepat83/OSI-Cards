@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ViewContainerRef, ComponentRef, inject, ChangeDetectorRef, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ViewContainerRef, ComponentRef, inject, ChangeDetectorRef, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardSection } from '../../models';
 import { BaseSectionComponent } from '../sections/base-section.component';
@@ -12,7 +12,8 @@ import { Subject, takeUntil } from 'rxjs';
   selector: 'app-plugin-section-wrapper',
   standalone: true,
   imports: [CommonModule],
-  template: `<!-- Plugin component rendered dynamically -->`
+  template: `<!-- Plugin component rendered dynamically -->`,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PluginSectionWrapperComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input({ required: true }) section!: CardSection;

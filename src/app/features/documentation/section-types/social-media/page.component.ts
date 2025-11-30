@@ -1,9 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NgDocPageComponent, NgDocRootPage } from '@ng-doc/app';
-import { NgDocPageType } from '@ng-doc/core';
-import pageConfig from './social-media.page';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { DocPageComponent } from '../../doc-page.component';
 
-const pageContent: string = `# Social Media Section
+const pageContent = `# Social Media Section
 
 Displays social media posts, engagement metrics, and social feed content.
 
@@ -110,25 +108,14 @@ The **Social Media Section** (\`type: "social-media"\`) is used for displays soc
 `;
 
 @Component({
-  selector: 'ng-doc-page-social-media',
-  template: `<ng-doc-page></ng-doc-page>`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgDocPageComponent],
-  providers: [
-    { provide: NgDocRootPage, useExisting: SocialMediaPageComponent }
-  ],
-  standalone: true
+  selector: 'app-social-media-page',
+  standalone: true,
+  imports: [DocPageComponent],
+  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SocialMediaPageComponent extends NgDocRootPage {
-  readonly pageType: NgDocPageType = 'guide';
-  readonly pageContent: string = pageContent;
-  readonly editSourceFileUrl?: string;
-  readonly viewSourceFileUrl?: string;
-  override readonly page = pageConfig;
-
-  constructor() {
-    super();
-  }
+export class SocialMediaPageComponent {
+  content = pageContent;
 }
 
 export default SocialMediaPageComponent;

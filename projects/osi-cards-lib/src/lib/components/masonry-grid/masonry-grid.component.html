@@ -1,17 +1,64 @@
 <div
   #container
   class="relative w-full masonry-container"
+  role="grid"
+  [attr.aria-label]="'Card sections grid with ' + positionedSections.length + ' sections'"
+  [attr.aria-busy]="!isLayoutReady || isStreaming"
+  [attr.aria-rowcount]="positionedSections.length"
+  [attr.aria-colcount]="currentColumns"
   [class.masonry-container--loading]="!isLayoutReady"
   [class.masonry-container--streaming]="isStreaming"
+  [class.masonry-container--virtual]="isVirtualScrollActive"
   [style.height.px]="containerHeight"
   [style.gap.px]="gap"
+  [attr.data-virtual-scroll]="isVirtualScrollActive ? 'active' : null"
+  [attr.data-total-sections]="positionedSections.length"
+  [attr.data-rendered-sections]="isVirtualScrollActive ? renderedSections.length : positionedSections.length"
 >
+  <!-- Screen reader live region for streaming updates -->
   <div
-    *ngFor="let item of positionedSections; trackBy: trackItem; let idx = index"
+    class="sr-only"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <span *ngIf="isStreaming && positionedSections.length > 0">
+      Loading section {{ positionedSections.length }} of card content
+    </span>
+    <span *ngIf="!isStreaming && isLayoutReady && positionedSections.length > 0">
+      Card loaded with {{ positionedSections.length }} sections
+    </span>
+  </div>
+
+  <!-- Virtual scroll spacer to maintain scroll height -->
+  <div
+    *ngIf="isVirtualScrollActive && virtualViewport"
+    class="masonry-virtual-spacer"
+    aria-hidden="true"
+    [style.height.px]="virtualViewport.totalHeight"
+    [style.position]="'absolute'"
+    [style.top]="0"
+    [style.left]="0"
+    [style.width]="'1px'"
+    [style.pointer-events]="'none'"
+    [style.visibility]="'hidden'"
+  ></div>
+
+  <!-- Render sections (all sections or visible subset when virtual scrolling) -->
+  <div
+    *ngFor="let item of isVirtualScrollActive ? renderedSections : positionedSections; trackBy: trackItem; let idx = index"
     #itemRef
     class="absolute masonry-item"
+    role="gridcell"
+    [attr.aria-label]="item.section?.title || 'Section ' + (idx + 1)"
+    [attr.aria-rowindex]="idx + 1"
+    [attr.aria-colindex]="1"
+    [attr.aria-colspan]="item.colSpan"
+    [attr.aria-busy]="item.isNew && isStreaming"
+    tabindex="0"
     [class.masonry-item--ready]="isLayoutReady"
-    [class.masonry-item--animating]="item.isNew"
+    [class.masonry-item--animating]="item.isNew && shouldAnimate(item.key)"
+    [class.masonry-item--animated]="item.hasAnimated || hasAnimated(item.key)"
     [class.masonry-item--vertical]="getOrientation(item.section) === 'vertical'"
     [class.masonry-item--horizontal]="getOrientation(item.section) === 'horizontal'"
     [class.masonry-item--auto]="getOrientation(item.section) === 'auto'"
@@ -19,17 +66,23 @@
     [class.masonry-item--priority-important]="item.section?.priority === 'important'"
     [class.masonry-item--sticky]="item.section?.sticky"
     [class.masonry-item--flex-grow]="item.section?.flexGrow"
+    [class.masonry-item--virtual]="isVirtualScrollActive"
     [attr.id]="getSectionId(item.section)"
     [attr.data-orientation]="getOrientation(item.section)"
     [attr.data-priority]="item.section?.priority || 'standard'"
     [attr.data-col-span]="item.colSpan"
+    [attr.data-section-key]="item.key"
+    [attr.data-animated]="item.hasAnimated || hasAnimated(item.key)"
+    [attr.data-virtual-index]="isVirtualScrollActive ? idx : null"
     [ngStyle]="{
       position: 'absolute',
       left: item.left,
       top: item.top + 'px',
       width: item.width,
-      zIndex: idx
+      zIndex: idx,
+      '--section-index': idx
     }"
+    (animationend)="onSectionAnimationEnd(item.key)"
   >
     <app-section-renderer
       [section]="item.section"

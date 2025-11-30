@@ -31,15 +31,23 @@ module.exports = function (config) {
         { type: 'html' },
         { type: 'text-summary' },
         { type: 'lcov' },
-        { type: 'json-summary' }
+        { type: 'json-summary' },
+        { type: 'cobertura' } // For CI/CD integration
       ],
       check: {
+        // Increased thresholds (Point 51)
         global: {
-          statements: 90,
-          branches: 85,
-          functions: 90,
-          lines: 90
+          statements: 95,
+          branches: 90,
+          functions: 95,
+          lines: 95
         }
+      },
+      watermarks: {
+        statements: [90, 95],
+        branches: [85, 90],
+        functions: [90, 95],
+        lines: [90, 95]
       }
     },
     reporters: ['progress', 'kjhtml'],

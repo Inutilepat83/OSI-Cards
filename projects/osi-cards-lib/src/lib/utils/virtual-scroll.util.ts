@@ -491,8 +491,8 @@ export class VirtualScrollManager<T = CardSection> {
     return this.config.estimatedItemHeight;
   }
 
-  private isCardSection(item: any): item is CardSection {
-    return item && typeof item === 'object' && ('type' in item || 'title' in item || 'fields' in item);
+  private isCardSection(item: T): item is T & CardSection {
+    return item !== null && typeof item === 'object' && ('type' in item || 'title' in item || 'fields' in item);
   }
 }
 

@@ -62,7 +62,7 @@
                 <div class="empty-state-gradient" [style.transform]="gradientTransform"></div>
                 <div class="empty-state-particles">
                   <div 
-                    *ngFor="let particle of particles; let i = index"
+                    *ngFor="let particle of particles; let i = index; trackBy: trackByParticle"
                     class="particle"
                     [class]="'particle-' + (i + 1)"
                     [style.transform]="particle.transform"

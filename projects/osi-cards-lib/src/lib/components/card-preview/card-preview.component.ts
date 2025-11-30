@@ -1,8 +1,27 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AICardConfig } from '../../models';
+import { AICardConfig, CardAction } from '../../models';
 import { AICardRendererComponent, CardFieldInteractionEvent } from '../ai-card-renderer/ai-card-renderer.component';
 import { CardSkeletonComponent } from '../card-skeleton/card-skeleton.component';
+
+/**
+ * Event payload for agent action triggered from card
+ */
+export interface AgentActionEvent {
+  action: CardAction;
+  card: AICardConfig;
+  agentId?: string;
+  context?: Record<string, unknown>;
+}
+
+/**
+ * Event payload for question action triggered from card
+ */
+export interface QuestionActionEvent {
+  action: CardAction;
+  card: AICardConfig;
+  question?: string;
+}
 
 @Component({
   selector: 'app-card-preview',
@@ -21,8 +40,8 @@ export class CardPreviewComponent implements OnInit, OnChanges, OnDestroy {
   @Output() cardInteraction = new EventEmitter<{ action: string; card: AICardConfig }>();
   @Output() fieldInteraction = new EventEmitter<CardFieldInteractionEvent>();
   @Output() fullscreenToggle = new EventEmitter<boolean>();
-  @Output() agentAction = new EventEmitter<{ action: any; card: AICardConfig; agentId?: string; context?: Record<string, unknown> }>();
-  @Output() questionAction = new EventEmitter<{ action: any; card: AICardConfig; question?: string }>();
+  @Output() agentAction = new EventEmitter<AgentActionEvent>();
+  @Output() questionAction = new EventEmitter<QuestionActionEvent>();
 
   constructor(private cdr: ChangeDetectorRef) {}
 
@@ -56,11 +75,11 @@ export class CardPreviewComponent implements OnInit, OnChanges, OnDestroy {
     this.fullscreenToggle.emit(isFullscreen);
   }
 
-  onAgentAction(event: { action: any; card: AICardConfig; agentId?: string; context?: Record<string, unknown> }): void {
+  onAgentAction(event: AgentActionEvent): void {
     this.agentAction.emit(event);
   }
 
-  onQuestionAction(event: { action: any; card: AICardConfig; question?: string }): void {
+  onQuestionAction(event: QuestionActionEvent): void {
     this.questionAction.emit(event);
   }
 }

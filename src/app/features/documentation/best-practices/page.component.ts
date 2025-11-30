@@ -1,284 +1,299 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NgDocPageComponent, NgDocRootPage } from '@ng-doc/app';
-import { NgDocPageType } from '@ng-doc/core';
-import pageConfig from './best-practices.page';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { DocPageComponent } from '../doc-page.component';
 
-const pageContent: string = `# Best Practices
+const pageContent = `# Best Practices
 
-Comprehensive best practices guide for using OSI Cards effectively.
+Follow these guidelines to get the most out of OSI Cards in your applications.
 
 ## Performance
 
 ### 1. Use OnPush Change Detection
 
-\\\`\\\`\\\`typescript
+All OSI Cards components use OnPush change detection. Ensure your parent components do too:
+
+\`\`\`typescript
 @Component({
-  selector: 'app-card-viewer',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  // ...
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-\\\`\\\`\\\`
+export class MyComponent { }
+\`\`\`
 
-### 2. Lazy Load Cards
+### 2. Limit Section Count
 
-\\\`\\\`\\\`typescript
-// Load cards on demand
-cardData.getCardsByType('company').pipe(
-  take(10), // Limit initial load
-  shareReplay(1) // Cache results
-).subscribe();
-\\\`\\\`\\\`
+Keep cards focused with 3-7 sections for optimal performance and UX:
 
-### 3. Virtual Scrolling for Large Lists
+\`\`\`typescript
+// Good: Focused card
+const card: AICardConfig = {
+  cardTitle: 'Company Overview',
+  sections: [
+    { type: 'info', ... },
+    { type: 'analytics', ... },
+    { type: 'contact-card', ... }
+  ]
+};
 
-\\\`\\\`\\\`typescript
-// Use Angular CDK virtual scrolling for many cards
-<cdk-virtual-scroll-viewport itemSize="400">
-  <app-ai-card-renderer
-    *cdkVirtualFor="let card of cards$"
-    [cardConfig]="card">
-  </app-ai-card-renderer>
-</cdk-virtual-scroll-viewport>
-\\\`\\\`\\\`
+// Avoid: Too many sections
+const card: AICardConfig = {
+  sections: [/* 15+ sections */]  // Consider splitting into multiple cards
+};
+\`\`\`
 
-## Data Management
+### 3. Use TrackBy with Lists
 
-### 1. Cache Card Data
+When rendering multiple cards, always use trackBy:
 
-\\\`\\\`\\\`typescript
-private cards$ = this.cardData.getAllCards().pipe(
-  shareReplay(1)
-);
-\\\`\\\`\\\`
+\`\`\`typescript
+@for (card of cards; track card.id) {
+  <app-ai-card-renderer [cardConfig]="card" />
+}
+\`\`\`
 
-### 2. Handle Loading States
+### 4. Lazy Load Sections
 
-\\\`\\\`\\\`typescript
-cards$ = this.cardData.getAllCards().pipe(
-  startWith(null),
-  map(cards => ({ cards, loading: cards === null }))
-);
-\\\`\\\`\\\`
+For complex sections like charts, the library handles lazy loading automatically. Ensure you're not importing heavy dependencies unnecessarily.
 
-### 3. Error Handling
+## Data Handling
 
-\\\`\\\`\\\`typescript
-cards$ = this.cardData.getAllCards().pipe(
+### 1. Validate Card Data
+
+Always validate card configurations before rendering:
+
+\`\`\`typescript
+import { isValidCardConfig, sanitizeCardConfig } from 'osi-cards-lib';
+
+if (isValidCardConfig(data)) {
+  this.cardConfig = sanitizeCardConfig(data);
+} else {
+  console.error('Invalid card config');
+}
+\`\`\`
+
+### 2. Handle Missing Fields Gracefully
+
+Use optional chaining and provide defaults:
+
+\`\`\`typescript
+const section = {
+  title: data.title || 'Untitled',
+  type: data.type || 'info',
+  fields: data.fields ?? []
+};
+\`\`\`
+
+### 3. Use Proper Types
+
+Leverage TypeScript for better developer experience:
+
+\`\`\`typescript
+import type { 
+  AICardConfig, 
+  CardSection, 
+  InfoSection,
+  AnalyticsSection 
+} from 'osi-cards-lib';
+\`\`\`
+
+## Streaming
+
+### 1. Implement Error Handling
+
+Always handle streaming errors:
+
+\`\`\`typescript
+streamingService.streamCard(prompt).pipe(
   catchError(error => {
-    console.error('Error loading cards:', error);
-    return of([]);
+    console.error('Streaming failed:', error);
+    return of(fallbackCard);
   })
-);
-\\\`\\\`\\\`
-
-## Section Types
-
-### 1. Choose Appropriate Section Types
-
-- **Info**: For key-value pairs and metadata
-- **Analytics**: For metrics and KPIs
-- **List**: For structured lists
-- **Chart**: For data visualization
-- **Map**: For geographic data
-
-### 2. Optimize Section Data
-
-\\\`\\\`\\\`typescript
-// Good: Structured data
-{
-  title: 'Metrics',
-  type: 'analytics',
-  fields: [
-    { label: 'Growth', value: '85%', percentage: 85 }
-  ]
-}
-
-// Avoid: Unstructured or excessive data
-{
-  title: 'Data',
-  type: 'info',
-  fields: [
-    // Too many fields without grouping
-  ]
-}
-\\\`\\\`\\\`
-
-## LLM Integration
-
-### 1. Structured Prompts
-
-\\\`\\\`\\\`
-Generate a card for [entity] with:
-- Title: [title]
-- Sections: [section types]
-- Actions: [actions]
-
-Return valid JSON following AICardConfig schema.
-\\\`\\\`\\\`
-
-### 2. Validate LLM Responses
-
-\\\`\\\`\\\`typescript
-try {
-  const card = JSON.parse(llmResponse);
-  if (isValidCardConfig(card)) {
-    this.cardConfig = card;
-  }
-} catch (error) {
-  console.error('Invalid card JSON:', error);
-}
-\\\`\\\`\\\`
-
-### 3. Progressive Updates
-
-\\\`\\\`\\\`typescript
-streamingService.cardUpdates$.subscribe(update => {
-  // Show partial card during streaming
-  this.cardConfig = update.card;
-  this.isStreaming = update.isComplete === false;
+).subscribe(card => {
+  this.cardConfig = card;
 });
-\\\`\\\`\\\`
+\`\`\`
 
-## Accessibility
+### 2. Show Loading States
 
-### 1. Semantic HTML
+Use the built-in skeleton while streaming:
 
-Cards use semantic HTML by default. Ensure proper heading hierarchy.
-
-### 2. ARIA Labels
-
-\\\`\\\`\\\`typescript
-<app-ai-card-renderer
-  [cardConfig]="card"
-  [attr.aria-label]="card.cardTitle">
+\`\`\`html
+<app-ai-card-renderer 
+  [cardConfig]="cardConfig"
+  [showSkeleton]="isLoading">
 </app-ai-card-renderer>
-\\\`\\\`\\\`
+\`\`\`
 
-### 3. Keyboard Navigation
+### 3. Debounce Rapid Updates
 
-All interactive elements support keyboard navigation out of the box.
+For high-frequency updates, consider debouncing:
+
+\`\`\`typescript
+cardUpdates$.pipe(
+  debounceTime(50),
+  distinctUntilChanged()
+).subscribe(update => {
+  this.applyUpdate(update);
+});
+\`\`\`
 
 ## Theming
 
-### 1. Use CSS Variables
+### 1. Use CSS Custom Properties
 
-\\\`\\\`\\\`scss
+Customize via CSS variables instead of overriding styles:
+
+\`\`\`css
 :root {
-  --color-brand: #ff7900;
-  --card-padding: 1.25rem;
-  --card-border-radius: 12px;
+  --osi-card-bg: #ffffff;
+  --osi-card-text: #1a1a2e;
+  --osi-card-border: #e5e7eb;
+  --osi-card-radius: 12px;
 }
-\\\`\\\`\\\`
+\`\`\`
 
-### 2. Consistent Spacing
+### 2. Support Dark Mode
 
-\\\`\\\`\\\`scss
-.card {
-  padding: var(--card-padding);
-  margin-bottom: var(--spacing-md);
+Implement dark mode support:
+
+\`\`\`css
+@media (prefers-color-scheme: dark) {
+  :root {
+    --osi-card-bg: #1a1a2e;
+    --osi-card-text: #e5e7eb;
+    --osi-card-border: #374151;
+  }
 }
-\\\`\\\`\\\`
+\`\`\`
 
-## Security
+### 3. Use Theme Service
 
-### 1. Sanitize User Input
+For dynamic theming:
 
-\\\`\\\`\\\`typescript
-import { DomSanitizer } from '@angular/platform-browser';
+\`\`\`typescript
+import { ThemeService } from 'osi-cards-lib';
 
-const sanitized = this.sanitizer.sanitize(
-  SecurityContext.HTML,
-  userInput
-);
-\\\`\\\`\\\`
+themeService.setTheme('dark');
+themeService.setAccentColor('#6366f1');
+\`\`\`
 
-### 2. Validate Card Data
+## Accessibility
 
-\\\`\\\`\\\`typescript
-function isValidCardConfig(card: any): card is AICardConfig {
-  return (
-    card &&
-    typeof card.cardTitle === 'string' &&
-    Array.isArray(card.sections) &&
-    card.sections.length > 0
-  );
+### 1. Provide Alt Text
+
+For cards with images:
+
+\`\`\`typescript
+const section = {
+  type: 'product',
+  imageUrl: 'product.jpg',
+  imageAlt: 'Product description for screen readers'
+};
+\`\`\`
+
+### 2. Use Semantic Actions
+
+Use appropriate action types:
+
+\`\`\`typescript
+const action = {
+  type: 'mail',
+  label: 'Contact Support',
+  ariaLabel: 'Send email to support team'
+};
+\`\`\`
+
+### 3. Test with Screen Readers
+
+Regularly test with VoiceOver, NVDA, or JAWS.
+
+## LLM Integration
+
+### 1. Provide Clear Prompts
+
+Include schema hints in your prompts:
+
+\`\`\`typescript
+const prompt = \`
+Generate a company info card with:
+- Info section (company details)
+- Analytics section (key metrics)
+- Contact section (primary contact)
+
+Return valid JSON matching AICardConfig schema.
+\`;
+\`\`\`
+
+### 2. Validate LLM Output
+
+Always validate AI-generated content:
+
+\`\`\`typescript
+const result = await llm.generate(prompt);
+const parsed = JSON.parse(result);
+const validated = validateAndSanitize(parsed);
+\`\`\`
+
+### 3. Handle Partial Responses
+
+When streaming, handle incomplete JSON:
+
+\`\`\`typescript
+try {
+  const partial = JSON.parse(buffer);
+  this.updateCard(partial);
+} catch {
+  // Buffer incomplete, wait for more data
 }
-\\\`\\\`\\\`
+\`\`\`
 
 ## Testing
 
-### 1. Unit Tests
+### 1. Unit Test Card Configurations
 
-\\\`\\\`\\\`typescript
-it('should render card', () => {
-  const card: AICardConfig = {
-    cardTitle: 'Test Card',
-    sections: [{ title: 'Test', type: 'info', fields: [] }]
-  };
-  
-  component.cardConfig = card;
-  fixture.detectChanges();
-  
-  expect(component).toBeTruthy();
+\`\`\`typescript
+describe('CardConfig', () => {
+  it('should have valid sections', () => {
+    expect(isValidCardConfig(testCard)).toBe(true);
+  });
 });
-\\\`\\\`\\\`
+\`\`\`
 
-### 2. Integration Tests
+### 2. Integration Test with Fixtures
 
-Test card generation from LLM responses and data providers.
+Use the section-registry fixtures for testing:
 
-## Common Pitfalls
+\`\`\`typescript
+import { sectionFixtures } from 'osi-cards-lib/testing';
 
-### 1. Over-nesting Sections
+it('should render info section', () => {
+  component.cardConfig = sectionFixtures.info;
+  fixture.detectChanges();
+  expect(compiled.querySelector('.info-section')).toBeTruthy();
+});
+\`\`\`
 
-Avoid too many nested sections. Keep structure flat when possible.
+### 3. Visual Regression Testing
 
-### 2. Missing Error Handling
+Use tools like Percy or Chromatic for visual testing.
 
-Always handle errors when loading cards or processing LLM responses.
+## Summary
 
-### 3. Ignoring Loading States
-
-Show loading indicators during card generation and data fetching.
-
-### 4. Not Caching Data
-
-Cache card data to avoid unnecessary API calls.
-
-## Related Documentation
-
-- [Section Types](/docs/section-types)
-- [LLM Integration](/docs/llm-integration)
-- [API Reference](/docs/api)
-
-
-
-
-
-
-
+- Keep cards focused (3-7 sections)
+- Validate all data
+- Handle errors gracefully
+- Use CSS custom properties for theming
+- Test thoroughly
+- Consider accessibility from the start
 `;
 
 @Component({
-  selector: 'ng-doc-page-best-practices',
-  template: `<ng-doc-page></ng-doc-page>`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgDocPageComponent],
-  providers: [
-    { provide: NgDocRootPage, useExisting: BestPracticesPageComponent }
-  ],
-  standalone: true
+  selector: 'app-best-practices-page',
+  standalone: true,
+  imports: [DocPageComponent],
+  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BestPracticesPageComponent extends NgDocRootPage {
-  readonly pageType: NgDocPageType = 'guide';
-  readonly pageContent: string = pageContent;
-  readonly editSourceFileUrl?: string;
-  readonly viewSourceFileUrl?: string;
-  override readonly page = pageConfig;
-
-  constructor() {
-    super();
-  }
+export class BestPracticesPageComponent {
+  content = pageContent;
 }
 
 export default BestPracticesPageComponent;

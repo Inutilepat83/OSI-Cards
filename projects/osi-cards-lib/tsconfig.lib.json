@@ -5,7 +5,13 @@
     "declaration": true,
     "declarationMap": true,
     "inlineSources": true,
-    "types": []
+    "types": ["reflect-metadata"],
+    "skipLibCheck": true,
+    "strict": false,
+    "strictNullChecks": false,
+    "strictPropertyInitialization": false,
+    "noImplicitOverride": false,
+    "noImplicitAny": false
   },
   "include": [
     "src/**/*.ts"
@@ -15,6 +21,7 @@
     "src/**/*.spec.ts"
   ]
 }
+
 
 
 

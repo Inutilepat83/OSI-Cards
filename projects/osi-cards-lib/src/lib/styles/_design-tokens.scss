@@ -1,0 +1,327 @@
+/**
+ * OSI Cards Design Tokens
+ * 
+ * Centralized design system tokens for consistent UI.
+ * These CSS custom properties can be overridden to customize the library.
+ * 
+ * @example
+ * ```css
+ * :root {
+ *   --osi-space-md: 20px;
+ *   --osi-color-accent: #ff6b00;
+ * }
+ * ```
+ */
+
+// ============================================================================
+// SPACING SCALE (Point 66)
+// Based on 4px base unit
+// ============================================================================
+
+:root {
+  // Base spacing scale
+  --osi-space-0: 0;
+  --osi-space-xxs: 4px;
+  --osi-space-xs: 8px;
+  --osi-space-sm: 12px;
+  --osi-space-md: 16px;
+  --osi-space-ml: 20px;
+  --osi-space-lg: 24px;
+  --osi-space-xl: 32px;
+  --osi-space-xxl: 48px;
+  --osi-space-huge: 64px;
+  --osi-space-massive: 96px;
+
+  // Component-specific spacing
+  --osi-card-padding: var(--osi-space-md);
+  --osi-card-padding-mobile: var(--osi-space-sm);
+  --osi-section-gap: var(--osi-space-md);
+  --osi-field-gap: var(--osi-space-xs);
+  --osi-item-gap: var(--osi-space-sm);
+  --osi-action-gap: var(--osi-space-xs);
+}
+
+// ============================================================================
+// COLOR TOKENS
+// ============================================================================
+
+:root {
+  // Brand colors
+  --osi-color-primary: #ff7900;
+  --osi-color-primary-hover: #e66e00;
+  --osi-color-primary-active: #cc6200;
+  --osi-color-secondary: #4a5568;
+  --osi-color-accent: #6366f1;
+
+  // Semantic colors
+  --osi-color-success: #10b981;
+  --osi-color-success-bg: rgba(16, 185, 129, 0.1);
+  --osi-color-warning: #f59e0b;
+  --osi-color-warning-bg: rgba(245, 158, 11, 0.1);
+  --osi-color-error: #ef4444;
+  --osi-color-error-bg: rgba(239, 68, 68, 0.1);
+  --osi-color-info: #3b82f6;
+  --osi-color-info-bg: rgba(59, 130, 246, 0.1);
+
+  // Trend colors
+  --osi-color-trend-up: #10b981;
+  --osi-color-trend-down: #ef4444;
+  --osi-color-trend-stable: #6b7280;
+  --osi-color-trend-neutral: #9ca3af;
+
+  // Surface colors
+  --osi-color-background: #ffffff;
+  --osi-color-surface: #f9fafb;
+  --osi-color-surface-hover: #f3f4f6;
+  --osi-color-surface-active: #e5e7eb;
+  --osi-color-border: #e5e7eb;
+  --osi-color-border-strong: #d1d5db;
+
+  // Text colors
+  --osi-color-text: #1f2937;
+  --osi-color-text-secondary: #6b7280;
+  --osi-color-text-muted: #9ca3af;
+  --osi-color-text-inverse: #ffffff;
+
+  // Overlay colors
+  --osi-color-overlay: rgba(0, 0, 0, 0.5);
+  --osi-color-backdrop: rgba(0, 0, 0, 0.3);
+}
+
+// Dark mode colors
+[data-theme="dark"],
+.osi-theme-dark {
+  --osi-color-background: #0f172a;
+  --osi-color-surface: #1e293b;
+  --osi-color-surface-hover: #334155;
+  --osi-color-surface-active: #475569;
+  --osi-color-border: #334155;
+  --osi-color-border-strong: #475569;
+  --osi-color-text: #f1f5f9;
+  --osi-color-text-secondary: #94a3b8;
+  --osi-color-text-muted: #64748b;
+  --osi-color-overlay: rgba(0, 0, 0, 0.7);
+  --osi-color-backdrop: rgba(0, 0, 0, 0.5);
+}
+
+// ============================================================================
+// TYPOGRAPHY TOKENS
+// ============================================================================
+
+:root {
+  // Font families
+  --osi-font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --osi-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  // Font sizes
+  --osi-text-xs: 0.75rem;    // 12px
+  --osi-text-sm: 0.875rem;   // 14px
+  --osi-text-base: 1rem;     // 16px
+  --osi-text-lg: 1.125rem;   // 18px
+  --osi-text-xl: 1.25rem;    // 20px
+  --osi-text-2xl: 1.5rem;    // 24px
+  --osi-text-3xl: 1.875rem;  // 30px
+
+  // Font weights
+  --osi-font-normal: 400;
+  --osi-font-medium: 500;
+  --osi-font-semibold: 600;
+  --osi-font-bold: 700;
+
+  // Line heights
+  --osi-leading-tight: 1.25;
+  --osi-leading-normal: 1.5;
+  --osi-leading-relaxed: 1.625;
+
+  // Letter spacing
+  --osi-tracking-tight: -0.025em;
+  --osi-tracking-normal: 0;
+  --osi-tracking-wide: 0.025em;
+}
+
+// ============================================================================
+// BORDER RADIUS TOKENS
+// ============================================================================
+
+:root {
+  --osi-radius-none: 0;
+  --osi-radius-sm: 4px;
+  --osi-radius-md: 8px;
+  --osi-radius-lg: 12px;
+  --osi-radius-xl: 16px;
+  --osi-radius-full: 9999px;
+
+  // Component radii
+  --osi-card-radius: var(--osi-radius-lg);
+  --osi-section-radius: var(--osi-radius-md);
+  --osi-button-radius: var(--osi-radius-md);
+  --osi-input-radius: var(--osi-radius-sm);
+  --osi-badge-radius: var(--osi-radius-full);
+}
+
+// ============================================================================
+// SHADOW TOKENS
+// ============================================================================
+
+:root {
+  --osi-shadow-none: none;
+  --osi-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --osi-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --osi-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --osi-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --osi-shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+  --osi-shadow-focus: 0 0 0 3px rgba(99, 102, 241, 0.3);
+
+  // Card shadows
+  --osi-card-shadow: var(--osi-shadow-md);
+  --osi-card-shadow-hover: var(--osi-shadow-lg);
+}
+
+// ============================================================================
+// ANIMATION TOKENS (Point 69)
+// ============================================================================
+
+:root {
+  // Durations
+  --osi-duration-instant: 50ms;
+  --osi-duration-fast: 150ms;
+  --osi-duration-normal: 200ms;
+  --osi-duration-slow: 300ms;
+  --osi-duration-slower: 500ms;
+
+  // Easing functions
+  --osi-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --osi-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --osi-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --osi-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --osi-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  // Component animations
+  --osi-transition-base: all var(--osi-duration-normal) var(--osi-ease-default);
+  --osi-transition-fast: all var(--osi-duration-fast) var(--osi-ease-default);
+  --osi-transition-slow: all var(--osi-duration-slow) var(--osi-ease-default);
+  --osi-transition-colors: color var(--osi-duration-fast) var(--osi-ease-default),
+                           background-color var(--osi-duration-fast) var(--osi-ease-default),
+                           border-color var(--osi-duration-fast) var(--osi-ease-default);
+  --osi-transition-transform: transform var(--osi-duration-normal) var(--osi-ease-out);
+  --osi-transition-opacity: opacity var(--osi-duration-normal) var(--osi-ease-default);
+
+  // Stagger delays
+  --osi-stagger-field: 40ms;
+  --osi-stagger-item: 40ms;
+  --osi-stagger-section: 80ms;
+  --osi-stagger-card: 120ms;
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --osi-duration-instant: 0ms;
+    --osi-duration-fast: 0ms;
+    --osi-duration-normal: 0ms;
+    --osi-duration-slow: 0ms;
+    --osi-duration-slower: 0ms;
+    --osi-stagger-field: 0ms;
+    --osi-stagger-item: 0ms;
+    --osi-stagger-section: 0ms;
+    --osi-stagger-card: 0ms;
+  }
+}
+
+// ============================================================================
+// FOCUS TOKENS (Point 68)
+// ============================================================================
+
+:root {
+  // Focus ring styles
+  --osi-focus-ring-width: 3px;
+  --osi-focus-ring-color: rgba(99, 102, 241, 0.5);
+  --osi-focus-ring-offset: 2px;
+  --osi-focus-ring: 0 0 0 var(--osi-focus-ring-width) var(--osi-focus-ring-color);
+}
+
+// Focus visible utility
+.osi-focus-visible:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 var(--osi-focus-ring-offset) var(--osi-color-background),
+              0 0 0 calc(var(--osi-focus-ring-offset) + var(--osi-focus-ring-width)) var(--osi-focus-ring-color);
+}
+
+// ============================================================================
+// Z-INDEX TOKENS
+// ============================================================================
+
+:root {
+  --osi-z-below: -1;
+  --osi-z-base: 0;
+  --osi-z-raised: 10;
+  --osi-z-dropdown: 100;
+  --osi-z-sticky: 200;
+  --osi-z-fixed: 300;
+  --osi-z-modal-backdrop: 400;
+  --osi-z-modal: 500;
+  --osi-z-popover: 600;
+  --osi-z-tooltip: 700;
+  --osi-z-toast: 800;
+  --osi-z-max: 9999;
+}
+
+// ============================================================================
+// BREAKPOINT TOKENS (Point 73)
+// ============================================================================
+
+:root {
+  --osi-breakpoint-xs: 0;
+  --osi-breakpoint-sm: 640px;
+  --osi-breakpoint-md: 768px;
+  --osi-breakpoint-lg: 1024px;
+  --osi-breakpoint-xl: 1280px;
+  --osi-breakpoint-2xl: 1536px;
+}
+
+// ============================================================================
+// UTILITY MIXINS
+// ============================================================================
+
+// Screen breakpoints
+@mixin screen-xs {
+  @media (max-width: 639px) { @content; }
+}
+
+@mixin screen-sm {
+  @media (min-width: 640px) { @content; }
+}
+
+@mixin screen-md {
+  @media (min-width: 768px) { @content; }
+}
+
+@mixin screen-lg {
+  @media (min-width: 1024px) { @content; }
+}
+
+@mixin screen-xl {
+  @media (min-width: 1280px) { @content; }
+}
+
+@mixin screen-2xl {
+  @media (min-width: 1536px) { @content; }
+}
+
+// Focus ring mixin
+@mixin focus-ring {
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--osi-focus-ring);
+  }
+}
+
+// Transition mixin
+@mixin transition($properties...) {
+  $transitions: ();
+  @each $prop in $properties {
+    $transitions: append($transitions, $prop var(--osi-duration-normal) var(--osi-ease-default), comma);
+  }
+  transition: $transitions;
+}
+

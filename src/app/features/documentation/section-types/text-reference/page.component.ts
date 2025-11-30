@@ -1,9 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NgDocPageComponent, NgDocRootPage } from '@ng-doc/app';
-import { NgDocPageType } from '@ng-doc/core';
-import pageConfig from './text-reference.page';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { DocPageComponent } from '../../doc-page.component';
 
-const pageContent: string = `# Text Reference Section
+const pageContent = `# Text Reference Section
 
 Displays long-form text, paragraphs, articles, and reference content.
 
@@ -111,25 +109,14 @@ The **Text Reference Section** (\`type: "text-reference"\`) is used for displays
 `;
 
 @Component({
-  selector: 'ng-doc-page-text-reference',
-  template: `<ng-doc-page></ng-doc-page>`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgDocPageComponent],
-  providers: [
-    { provide: NgDocRootPage, useExisting: TextReferencePageComponent }
-  ],
-  standalone: true
+  selector: 'app-text-reference-page',
+  standalone: true,
+  imports: [DocPageComponent],
+  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TextReferencePageComponent extends NgDocRootPage {
-  readonly pageType: NgDocPageType = 'guide';
-  readonly pageContent: string = pageContent;
-  readonly editSourceFileUrl?: string;
-  readonly viewSourceFileUrl?: string;
-  override readonly page = pageConfig;
-
-  constructor() {
-    super();
-  }
+export class TextReferencePageComponent {
+  content = pageContent;
 }
 
 export default TextReferencePageComponent;

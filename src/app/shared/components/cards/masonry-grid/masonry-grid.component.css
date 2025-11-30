@@ -39,7 +39,7 @@
 }
 
 /* Existing sections (not new) must remain COMPLETELY stable */
-.masonry-container--streaming .masonry-item:not(.masonry-item--new) {
+.masonry-container--streaming .masonry-item:not(.masonry-item--animating) {
   /* No animations whatsoever */
   animation: none !important;
   /* No visual effects */
@@ -49,14 +49,14 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   NEW SECTION ENTRANCE - Gentle Animation for New Sections Only
+   NEW SECTION ENTRANCE - Gentle Animation for Animating Sections Only
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Point 20: CSS-Only Entrance Animation for New Sections */
-/* Point 22: Staggered animations using CSS custom property --section-index */
-.masonry-container--streaming .masonry-item--new {
+/* Entrance Animation for Animating Sections - ONE-SHOT only */
+.masonry-container--streaming .masonry-item--animating {
   /* Simple fade-in with subtle slide - no blur, no bounce */
   animation: masonry-gentle-enter 0.3s ease-out forwards;
+  animation-iteration-count: 1;
   /* Staggered delay based on section index for cascade effect */
   animation-delay: calc(var(--section-index, 0) * 40ms);
   /* Enable pseudo-element positioning */
@@ -80,8 +80,8 @@
   }
 }
 
-/* Shimmer sweep overlay - more subtle */
-.masonry-container--streaming .masonry-item--new::after {
+/* Shimmer sweep overlay - more subtle - ONE-SHOT only */
+.masonry-container--streaming .masonry-item--animating::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -92,6 +92,7 @@
     transparent 60%
   );
   animation: shimmer-sweep 0.5s ease-out forwards;
+  animation-iteration-count: 1;
   pointer-events: none;
   border-radius: inherit;
   z-index: 10;
@@ -102,14 +103,15 @@
   100% { transform: translateX(100%); opacity: 0; }
 }
 
-/* Subtle inner highlight - reduced intensity */
-.masonry-container--streaming .masonry-item--new::before {
+/* Subtle inner highlight - reduced intensity - ONE-SHOT only */
+.masonry-container--streaming .masonry-item--animating::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
   box-shadow: inset 0 0 15px rgba(255, 149, 0, 0.15);
   animation: inner-flash 0.4s ease-out forwards;
+  animation-iteration-count: 1;
   pointer-events: none;
   z-index: 5;
 }
@@ -117,6 +119,64 @@
 @keyframes inner-flash {
   0% { opacity: 0.6; }
   100% { opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ANIMATED (COMPLETED) STATE - Sections that have finished their entrance
+   This prevents the "first section keeps blinking" issue
+   
+   CRITICAL: Uses both class AND data-attribute selectors for maximum specificity
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Once animation completes, ensure section remains stable - CLASS selector */
+.masonry-item--animated,
+.masonry-container--streaming .masonry-item:not(.masonry-item--animating) {
+  /* Force full opacity - animation is done */
+  opacity: 1 !important;
+  /* No more animations on this section */
+  animation: none !important;
+  /* Remove any filters */
+  filter: none !important;
+  /* Ensure stable positioning */
+  transform: translateZ(0) !important;
+  /* Ensure visibility */
+  visibility: visible !important;
+  /* Remove will-change */
+  will-change: auto !important;
+}
+
+/* DATA ATTRIBUTE FALLBACK - higher specificity */
+.masonry-item[data-animated="true"] {
+  opacity: 1 !important;
+  animation: none !important;
+  filter: none !important;
+  transform: translateZ(0) !important;
+  visibility: visible !important;
+  will-change: auto !important;
+}
+
+/* Hide pseudo-elements on animated sections - CLASS selector */
+.masonry-item--animated::before,
+.masonry-item--animated::after,
+.masonry-container--streaming .masonry-item:not(.masonry-item--animating)::before,
+.masonry-container--streaming .masonry-item:not(.masonry-item--animating)::after {
+  display: none !important;
+  animation: none !important;
+  opacity: 0 !important;
+}
+
+/* DATA ATTRIBUTE FALLBACK for pseudo-elements */
+.masonry-item[data-animated="true"]::before,
+.masonry-item[data-animated="true"]::after {
+  display: none !important;
+  animation: none !important;
+  opacity: 0 !important;
+}
+
+/* Ensure all children of animated sections are stable */
+.masonry-item--animated *,
+.masonry-item[data-animated="true"] * {
+  animation: none !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -148,7 +208,7 @@
 }
 
 /* During streaming, ready items should still have no position transitions */
-.masonry-container--streaming .masonry-item--ready:not(.masonry-item--new) {
+.masonry-container--streaming .masonry-item--ready:not(.masonry-item--animating) {
   transition: none !important;
 }
 
@@ -181,7 +241,7 @@
   }
   
   /* Faster entrance animation on mobile */
-  .masonry-container--streaming .masonry-item--new {
+  .masonry-container--streaming .masonry-item--animating {
     animation-duration: 0.4s;
   }
 }
@@ -203,13 +263,13 @@
   .masonry-container--streaming,
   .masonry-item,
   .masonry-item--ready,
-  .masonry-item--new {
+  .masonry-item--animating {
     animation: none !important;
     transition: none !important;
   }
   
-  .masonry-container--streaming .masonry-item--new::before,
-  .masonry-container--streaming .masonry-item--new::after {
+  .masonry-container--streaming .masonry-item--animating::before,
+  .masonry-container--streaming .masonry-item--animating::after {
     animation: none !important;
     display: none;
   }

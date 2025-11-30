@@ -1,0 +1,532 @@
+/**
+ * OSI Cards - Theme Presets
+ * 
+ * Beautiful, opinionated theme presets for OSI Cards.
+ */
+
+// ============================================
+// Light Theme (Default)
+// ============================================
+
+[data-theme="light"],
+:root {
+  // Base colors
+  --osi-card-background: #ffffff;
+  --osi-card-foreground: #1a1a2e;
+  --osi-card-muted: #64748b;
+  --osi-card-muted-foreground: #94a3b8;
+  
+  // Surface colors
+  --osi-card-surface: #f8fafc;
+  --osi-card-surface-hover: #f1f5f9;
+  --osi-card-surface-active: #e2e8f0;
+  
+  // Accent
+  --osi-card-accent: #6366f1;
+  --osi-card-accent-rgb: 99, 102, 241;
+  --osi-card-accent-foreground: #ffffff;
+  --osi-card-accent-hover: #4f46e5;
+  
+  // Borders
+  --osi-card-border: #e2e8f0;
+  --osi-card-border-hover: #cbd5e1;
+  --osi-card-ring: rgba(99, 102, 241, 0.3);
+  
+  // Status colors
+  --osi-card-success: #10b981;
+  --osi-card-success-bg: #ecfdf5;
+  --osi-card-warning: #f59e0b;
+  --osi-card-warning-bg: #fffbeb;
+  --osi-card-destructive: #ef4444;
+  --osi-card-destructive-bg: #fef2f2;
+  --osi-card-info: #3b82f6;
+  --osi-card-info-bg: #eff6ff;
+  
+  // Shadows
+  --osi-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --osi-card-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --osi-card-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08), 0 4px 6px rgba(0, 0, 0, 0.03);
+  --osi-card-shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
+}
+
+// ============================================
+// Dark Theme
+// ============================================
+
+[data-theme="dark"] {
+  // Base colors
+  --osi-card-background: #0f172a;
+  --osi-card-foreground: #f1f5f9;
+  --osi-card-muted: #94a3b8;
+  --osi-card-muted-foreground: #64748b;
+  
+  // Surface colors
+  --osi-card-surface: #1e293b;
+  --osi-card-surface-hover: #334155;
+  --osi-card-surface-active: #475569;
+  
+  // Accent
+  --osi-card-accent: #818cf8;
+  --osi-card-accent-rgb: 129, 140, 248;
+  --osi-card-accent-foreground: #0f172a;
+  --osi-card-accent-hover: #a5b4fc;
+  
+  // Borders
+  --osi-card-border: #334155;
+  --osi-card-border-hover: #475569;
+  --osi-card-ring: rgba(129, 140, 248, 0.4);
+  
+  // Status colors
+  --osi-card-success: #34d399;
+  --osi-card-success-bg: rgba(16, 185, 129, 0.1);
+  --osi-card-warning: #fbbf24;
+  --osi-card-warning-bg: rgba(245, 158, 11, 0.1);
+  --osi-card-destructive: #f87171;
+  --osi-card-destructive-bg: rgba(239, 68, 68, 0.1);
+  --osi-card-info: #60a5fa;
+  --osi-card-info-bg: rgba(59, 130, 246, 0.1);
+  
+  // Shadows
+  --osi-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --osi-card-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.15);
+  --osi-card-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3), 0 4px 6px rgba(0, 0, 0, 0.15);
+  --osi-card-shadow-glow: 0 0 30px rgba(129, 140, 248, 0.2);
+}
+
+// ============================================
+// Midnight Theme
+// ============================================
+
+[data-theme="midnight"] {
+  --osi-card-background: #0a0a0f;
+  --osi-card-foreground: #e4e4e7;
+  --osi-card-muted: #71717a;
+  --osi-card-muted-foreground: #52525b;
+  
+  --osi-card-surface: #18181b;
+  --osi-card-surface-hover: #27272a;
+  --osi-card-surface-active: #3f3f46;
+  
+  --osi-card-accent: #a78bfa;
+  --osi-card-accent-rgb: 167, 139, 250;
+  --osi-card-accent-foreground: #0a0a0f;
+  --osi-card-accent-hover: #c4b5fd;
+  
+  --osi-card-border: #27272a;
+  --osi-card-border-hover: #3f3f46;
+  --osi-card-ring: rgba(167, 139, 250, 0.4);
+  
+  --osi-card-shadow-glow: 0 0 40px rgba(167, 139, 250, 0.15);
+}
+
+// ============================================
+// Corporate Theme
+// ============================================
+
+[data-theme="corporate"] {
+  --osi-card-background: #ffffff;
+  --osi-card-foreground: #1e3a5f;
+  --osi-card-muted: #5a7fa3;
+  --osi-card-muted-foreground: #8ba8c7;
+  
+  --osi-card-surface: #f0f7ff;
+  --osi-card-surface-hover: #e1efff;
+  --osi-card-surface-active: #cfe2ff;
+  
+  --osi-card-accent: #0066cc;
+  --osi-card-accent-rgb: 0, 102, 204;
+  --osi-card-accent-foreground: #ffffff;
+  --osi-card-accent-hover: #0052a3;
+  
+  --osi-card-border: #d1e3f6;
+  --osi-card-border-hover: #a8cdef;
+  
+  // More subdued shadows for professional look
+  --osi-card-shadow: 0 1px 2px rgba(30, 58, 95, 0.05);
+  --osi-card-shadow-md: 0 2px 4px rgba(30, 58, 95, 0.08);
+  --osi-card-shadow-lg: 0 4px 8px rgba(30, 58, 95, 0.1);
+  
+  // Sharper corners for corporate feel
+  --osi-card-border-radius: 4px;
+}
+
+// ============================================
+// Nature Theme
+// ============================================
+
+[data-theme="nature"] {
+  --osi-card-background: #fefefe;
+  --osi-card-foreground: #1a3129;
+  --osi-card-muted: #5a7268;
+  --osi-card-muted-foreground: #8aa496;
+  
+  --osi-card-surface: #f0f7f4;
+  --osi-card-surface-hover: #e3f0ea;
+  --osi-card-surface-active: #d1e6db;
+  
+  --osi-card-accent: #059669;
+  --osi-card-accent-rgb: 5, 150, 105;
+  --osi-card-accent-foreground: #ffffff;
+  --osi-card-accent-hover: #047857;
+  
+  --osi-card-border: #d1e6db;
+  --osi-card-border-hover: #a7d4be;
+  --osi-card-ring: rgba(5, 150, 105, 0.3);
+  
+  --osi-card-success: #059669;
+  --osi-card-warning: #d97706;
+  --osi-card-destructive: #dc2626;
+}
+
+// ============================================
+// Sunset Theme
+// ============================================
+
+[data-theme="sunset"] {
+  --osi-card-background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  --osi-card-foreground: #fef3c7;
+  --osi-card-muted: #d4a574;
+  --osi-card-muted-foreground: #a87c4f;
+  
+  --osi-card-surface: rgba(255, 255, 255, 0.05);
+  --osi-card-surface-hover: rgba(255, 255, 255, 0.1);
+  --osi-card-surface-active: rgba(255, 255, 255, 0.15);
+  
+  --osi-card-accent: #f59e0b;
+  --osi-card-accent-rgb: 245, 158, 11;
+  --osi-card-accent-foreground: #1a1a2e;
+  --osi-card-accent-hover: #d97706;
+  
+  --osi-card-border: rgba(245, 158, 11, 0.2);
+  --osi-card-border-hover: rgba(245, 158, 11, 0.3);
+  --osi-card-ring: rgba(245, 158, 11, 0.4);
+  
+  --osi-card-shadow-glow: 0 0 40px rgba(245, 158, 11, 0.2);
+}
+
+// ============================================
+// Ocean Theme
+// ============================================
+
+[data-theme="ocean"] {
+  --osi-card-background: #0a192f;
+  --osi-card-foreground: #ccd6f6;
+  --osi-card-muted: #8892b0;
+  --osi-card-muted-foreground: #495670;
+  
+  --osi-card-surface: #112240;
+  --osi-card-surface-hover: #1d3461;
+  --osi-card-surface-active: #233554;
+  
+  --osi-card-accent: #64ffda;
+  --osi-card-accent-rgb: 100, 255, 218;
+  --osi-card-accent-foreground: #0a192f;
+  --osi-card-accent-hover: #4cd7b8;
+  
+  --osi-card-border: #233554;
+  --osi-card-border-hover: #2d4a6f;
+  --osi-card-ring: rgba(100, 255, 218, 0.3);
+  
+  --osi-card-shadow-glow: 0 0 50px rgba(100, 255, 218, 0.15);
+}
+
+// ============================================
+// Rose Theme
+// ============================================
+
+[data-theme="rose"] {
+  --osi-card-background: #fffbfc;
+  --osi-card-foreground: #4a1c2c;
+  --osi-card-muted: #9f6070;
+  --osi-card-muted-foreground: #c89aa6;
+  
+  --osi-card-surface: #fef1f4;
+  --osi-card-surface-hover: #fde4ea;
+  --osi-card-surface-active: #fbd2dc;
+  
+  --osi-card-accent: #e11d48;
+  --osi-card-accent-rgb: 225, 29, 72;
+  --osi-card-accent-foreground: #ffffff;
+  --osi-card-accent-hover: #be123c;
+  
+  --osi-card-border: #fbd2dc;
+  --osi-card-border-hover: #f9a8bb;
+  --osi-card-ring: rgba(225, 29, 72, 0.3);
+}
+
+// ============================================
+// Minimal Theme
+// ============================================
+
+[data-theme="minimal"] {
+  --osi-card-background: #ffffff;
+  --osi-card-foreground: #171717;
+  --osi-card-muted: #737373;
+  --osi-card-muted-foreground: #a3a3a3;
+  
+  --osi-card-surface: #fafafa;
+  --osi-card-surface-hover: #f5f5f5;
+  --osi-card-surface-active: #e5e5e5;
+  
+  --osi-card-accent: #171717;
+  --osi-card-accent-rgb: 23, 23, 23;
+  --osi-card-accent-foreground: #ffffff;
+  --osi-card-accent-hover: #404040;
+  
+  --osi-card-border: #e5e5e5;
+  --osi-card-border-hover: #d4d4d4;
+  --osi-card-ring: rgba(23, 23, 23, 0.2);
+  
+  // No shadows for minimal look
+  --osi-card-shadow: none;
+  --osi-card-shadow-md: none;
+  --osi-card-shadow-lg: none;
+  --osi-card-shadow-glow: none;
+  
+  // Sharp corners
+  --osi-card-border-radius: 0;
+}
+
+// ============================================
+// High Contrast Theme (Accessibility)
+// ============================================
+
+[data-theme="high-contrast"] {
+  --osi-card-background: #000000;
+  --osi-card-foreground: #ffffff;
+  --osi-card-muted: #ffffff;
+  --osi-card-muted-foreground: #d4d4d4;
+  
+  --osi-card-surface: #1a1a1a;
+  --osi-card-surface-hover: #2d2d2d;
+  --osi-card-surface-active: #404040;
+  
+  --osi-card-accent: #ffff00;
+  --osi-card-accent-rgb: 255, 255, 0;
+  --osi-card-accent-foreground: #000000;
+  --osi-card-accent-hover: #cccc00;
+  
+  --osi-card-border: #ffffff;
+  --osi-card-border-hover: #ffffff;
+  --osi-card-ring: rgba(255, 255, 0, 0.5);
+  
+  --osi-card-success: #00ff00;
+  --osi-card-warning: #ffff00;
+  --osi-card-destructive: #ff0000;
+  --osi-card-info: #00ffff;
+  
+  // Strong shadows for depth perception
+  --osi-card-shadow: 0 0 0 2px #ffffff;
+  --osi-card-shadow-md: 0 0 0 3px #ffffff;
+  --osi-card-shadow-lg: 0 0 0 4px #ffffff;
+}
+
+// ============================================
+// System Theme (Auto)
+// ============================================
+
+@media (prefers-color-scheme: dark) {
+  [data-theme="system"],
+  :root:not([data-theme]) {
+    --osi-card-background: #0f172a;
+    --osi-card-foreground: #f1f5f9;
+    --osi-card-muted: #94a3b8;
+    --osi-card-surface: #1e293b;
+    --osi-card-accent: #818cf8;
+    --osi-card-accent-rgb: 129, 140, 248;
+    --osi-card-border: #334155;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  [data-theme="system"],
+  :root:not([data-theme]) {
+    --osi-card-background: #ffffff;
+    --osi-card-foreground: #1a1a2e;
+    --osi-card-muted: #64748b;
+    --osi-card-surface: #f8fafc;
+    --osi-card-accent: #6366f1;
+    --osi-card-accent-rgb: 99, 102, 241;
+    --osi-card-border: #e2e8f0;
+  }
+}
+
+// ============================================
+// Theme Transition System
+// ============================================
+
+// CSS Custom Properties for transition configuration
+:root {
+  --osi-theme-transition-duration: 200ms;
+  --osi-theme-transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// Properties that should transition during theme changes
+$theme-transition-properties: (
+  background-color,
+  background,
+  border-color,
+  color,
+  fill,
+  stroke,
+  box-shadow,
+  opacity
+);
+
+// Properties that should NOT transition (prevent layout shift)
+$theme-no-transition-properties: (
+  width,
+  height,
+  margin,
+  padding,
+  transform,
+  font-size,
+  line-height
+);
+
+// Transitioning class - applied during theme switch
+.theme-transitioning,
+[data-theme-transition="true"] {
+  // Apply transitions to all elements
+  *,
+  *::before,
+  *::after {
+    transition-property: #{$theme-transition-properties};
+    transition-duration: var(--osi-theme-transition-duration);
+    transition-timing-function: var(--osi-theme-transition-timing);
+  }
+  
+  // Card-specific smoother transitions
+  .osi-card-container,
+  .ai-card-renderer,
+  .ai-section,
+  .masonry-item {
+    transition-duration: calc(var(--osi-theme-transition-duration) * 1.2);
+  }
+}
+
+// Respect reduced motion preference
+@media (prefers-reduced-motion: reduce) {
+  .theme-transitioning,
+  [data-theme-transition="true"] {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0ms !important;
+    }
+  }
+}
+
+// ============================================
+// Scoped Theme Container
+// ============================================
+
+.osi-scoped-theme {
+  // Inherit theme from data-theme attribute
+  container-type: inline-size;
+  
+  // Ensure CSS variables cascade properly
+  color: var(--osi-card-foreground);
+  background-color: var(--osi-card-background);
+}
+
+.osi-theme-container {
+  position: relative;
+  contain: layout style;
+  container-type: inline-size;
+  
+  // Reset background to theme
+  background-color: var(--osi-card-background);
+  color: var(--osi-card-foreground);
+}
+
+// ============================================
+// Theme Transition Utilities
+// ============================================
+
+// Instant transition (no animation)
+.theme-transition-none {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+}
+
+// Fast transition
+.theme-transition-fast {
+  --osi-theme-transition-duration: 100ms;
+}
+
+// Slow transition
+.theme-transition-slow {
+  --osi-theme-transition-duration: 400ms;
+}
+
+// Smooth easing
+.theme-transition-smooth {
+  --osi-theme-transition-timing: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+// ============================================
+// Color Scheme Indicator
+// ============================================
+
+// Visual indicator for current theme (useful for debugging)
+[data-theme]::before {
+  content: none; // Hidden by default
+}
+
+// Show theme indicator in debug mode
+[data-osi-debug="true"][data-theme]::before {
+  content: attr(data-theme);
+  position: fixed;
+  bottom: 8px;
+  right: 8px;
+  padding: 4px 8px;
+  font-size: 10px;
+  font-family: monospace;
+  background: var(--osi-card-surface);
+  color: var(--osi-card-muted);
+  border: 1px solid var(--osi-card-border);
+  border-radius: 4px;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+// ============================================
+// Dark/Light Mode Specific Adjustments
+// ============================================
+
+// Enhanced readability for dark themes
+[data-theme="dark"],
+[data-theme="midnight"],
+[data-theme="ocean"],
+[data-theme="sunset"] {
+  // Slightly increase font weight for better legibility on dark backgrounds
+  --osi-card-font-weight-normal: 400;
+  --osi-card-font-weight-medium: 500;
+  
+  // Enhance link visibility
+  a:not([class]) {
+    color: var(--osi-card-accent);
+    
+    &:hover {
+      color: var(--osi-card-accent-hover);
+    }
+  }
+}
+
+// Print mode - always use light theme
+@media print {
+  [data-theme] {
+    --osi-card-background: #ffffff !important;
+    --osi-card-foreground: #000000 !important;
+    --osi-card-muted: #666666 !important;
+    --osi-card-border: #cccccc !important;
+    --osi-card-shadow: none !important;
+    --osi-card-shadow-md: none !important;
+    --osi-card-shadow-lg: none !important;
+  }
+}
+

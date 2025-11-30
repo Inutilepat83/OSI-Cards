@@ -1,9 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NgDocPageComponent, NgDocRootPage } from '@ng-doc/app';
-import { NgDocPageType } from '@ng-doc/core';
-import pageConfig from './network-card.page';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { DocPageComponent } from '../../doc-page.component';
 
-const pageContent: string = `# Network Card Section
+const pageContent = `# Network Card Section
 
 Displays relationship graphs, network connections, and influence metrics.
 
@@ -116,25 +114,14 @@ The **Network Card Section** (\`type: "network-card"\`) is used for displays rel
 `;
 
 @Component({
-  selector: 'ng-doc-page-network-card',
-  template: `<ng-doc-page></ng-doc-page>`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgDocPageComponent],
-  providers: [
-    { provide: NgDocRootPage, useExisting: NetworkCardPageComponent }
-  ],
-  standalone: true
+  selector: 'app-network-card-page',
+  standalone: true,
+  imports: [DocPageComponent],
+  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NetworkCardPageComponent extends NgDocRootPage {
-  readonly pageType: NgDocPageType = 'guide';
-  readonly pageContent: string = pageContent;
-  readonly editSourceFileUrl?: string;
-  readonly viewSourceFileUrl?: string;
-  override readonly page = pageConfig;
-
-  constructor() {
-    super();
-  }
+export class NetworkCardPageComponent {
+  content = pageContent;
 }
 
 export default NetworkCardPageComponent;

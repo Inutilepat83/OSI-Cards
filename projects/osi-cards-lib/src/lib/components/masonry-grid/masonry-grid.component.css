@@ -3,6 +3,19 @@
   width: 100%;
 }
 
+/* Screen reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ============================================================
    MASONRY CONTAINER
    ============================================================ */
@@ -125,6 +138,77 @@
   100% { opacity: 0; }
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   ANIMATED (COMPLETED) STATE - Sections that have finished their entrance
+   This prevents the "first section keeps blinking" issue
+   
+   CRITICAL: Uses both class AND data-attribute selectors for maximum specificity
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Once animation completes, ensure section remains stable - CLASS selector */
+.masonry-item--animated {
+  /* Force full opacity - animation is done */
+  opacity: 1 !important;
+  /* No more animations on this section */
+  animation: none !important;
+  /* Remove any filters */
+  filter: none !important;
+  /* Ensure stable positioning */
+  transform: translateZ(0) !important;
+  /* Remove will-change to free up GPU memory */
+  will-change: auto !important;
+  /* Ensure visibility */
+  visibility: visible !important;
+}
+
+/* DATA ATTRIBUTE FALLBACK - higher specificity */
+.masonry-item[data-animated="true"] {
+  opacity: 1 !important;
+  animation: none !important;
+  filter: none !important;
+  transform: translateZ(0) !important;
+  will-change: auto !important;
+  visibility: visible !important;
+}
+
+/* Hide pseudo-elements on animated sections - CLASS selector */
+.masonry-item--animated::before,
+.masonry-item--animated::after {
+  display: none !important;
+  animation: none !important;
+  opacity: 0 !important;
+}
+
+/* Hide pseudo-elements on animated sections - DATA ATTRIBUTE fallback */
+.masonry-item[data-animated="true"]::before,
+.masonry-item[data-animated="true"]::after {
+  display: none !important;
+  animation: none !important;
+  opacity: 0 !important;
+}
+
+/* During streaming, animated sections should have NO visual effects - CLASS */
+.masonry-container--streaming .masonry-item--animated {
+  animation: none !important;
+  transition: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/* During streaming, animated sections - DATA ATTRIBUTE fallback */
+.masonry-container--streaming .masonry-item[data-animated="true"] {
+  animation: none !important;
+  transition: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/* Ensure all children of animated sections are also stable */
+.masonry-item--animated *,
+.masonry-item[data-animated="true"] * {
+  animation: none !important;
+}
+
 .masonry-container--streaming .masonry-item--ready {
   /* Keep position transitions disabled during streaming */
   transition: top 0s, left 0s, width 0s !important;
@@ -242,6 +326,56 @@
 }
 
 /* ============================================================
+   VIRTUAL SCROLLING SUPPORT
+   ============================================================ */
+
+.masonry-container--virtual {
+  /* Enable overflow for virtual scrolling */
+  overflow-y: auto;
+  overflow-x: hidden;
+  
+  /* Smooth scrolling behavior */
+  scroll-behavior: smooth;
+  
+  /* Optimizations for scroll performance */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.masonry-virtual-spacer {
+  /* Spacer maintains scroll height without affecting layout */
+  pointer-events: none;
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+}
+
+.masonry-item--virtual {
+  /* Virtual items need stronger containment */
+  contain: strict;
+  
+  /* Optimize for frequent show/hide */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 200px;
+}
+
+/* Disable transitions for virtual scroll items to improve performance */
+.masonry-container--virtual .masonry-item {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Re-enable position transitions only when not actively scrolling */
+.masonry-container--virtual:not(:active) .masonry-item--ready {
+  transition: 
+    top 0.3s ease,
+    left 0.3s ease,
+    width 0.3s ease;
+}
+
+/* ============================================================
    REDUCED MOTION SUPPORT
    ============================================================ */
 
@@ -264,5 +398,9 @@
   .masonry-item--animating::before,
   .masonry-item--animating::after {
     display: none;
+  }
+  
+  .masonry-container--virtual {
+    scroll-behavior: auto;
   }
 }

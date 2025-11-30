@@ -42,7 +42,7 @@ interface WorkerSection {
   description?: string;
   colSpan?: number;
   preferredColumns?: number;
-  fields?: Array<{ label?: string; value?: any }>;
+  fields?: Array<{ label?: string; value?: string | number | boolean | null }>;
   items?: Array<{ title?: string; description?: string }>;
 }
 
@@ -289,12 +289,13 @@ export class LayoutWorkerService implements OnDestroy {
       this.isSupported = true;
       this._status.next(this.getStatus());
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to initialize layout worker:', error);
       this.isSupported = false;
+      const errorMessage = error instanceof Error ? error.message : 'Worker initialization failed';
       this._status.next({
         ...this.getStatus(),
-        error: error.message ?? 'Worker initialization failed',
+        error: errorMessage,
       });
     }
   }
@@ -353,7 +354,7 @@ export class LayoutWorkerService implements OnDestroy {
     setTimeout(() => this.initializeWorker(), 1000);
   }
 
-  private sendMessage<T>(type: LayoutWorkerMessageType, payload: any): Promise<T> {
+  private sendMessage<T>(type: LayoutWorkerMessageType, payload: Record<string, unknown>): Promise<T> {
     return new Promise((resolve, reject) => {
       if (!this.worker) {
         reject(new Error('Worker not available'));
@@ -372,7 +373,7 @@ export class LayoutWorkerService implements OnDestroy {
         type,
         id,
         payload,
-      } as LayoutWorkerMessage);
+      } as unknown as LayoutWorkerMessage);
 
       this._status.next(this.getStatus());
 
@@ -421,7 +422,7 @@ export class LayoutWorkerService implements OnDestroy {
  * Creates a standalone layout worker (non-Angular usage)
  */
 export function createLayoutWorker(): {
-  pack: (sections: any[], columns: number, gap?: number) => Promise<WorkerPackResult>;
+  pack: (sections: WorkerSection[], columns: number, gap?: number) => Promise<WorkerPackResult>;
   terminate: () => void;
 } | null {
   if (typeof Worker === 'undefined') {
@@ -430,7 +431,7 @@ export function createLayoutWorker(): {
 
   let worker: Worker;
   let messageId = 0;
-  const pending = new Map<string, { resolve: Function; reject: Function }>();
+  const pending = new Map<string, { resolve: (value: any) => void; reject: (reason: Error) => void }>();
 
   try {
     worker = new Worker(

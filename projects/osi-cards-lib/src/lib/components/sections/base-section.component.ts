@@ -348,13 +348,15 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
     if (field.value !== undefined && field.value !== null) {
       return field.value;
     }
-    // Try text (for text-reference fields)
-    if ('text' in field && (field as any).text !== undefined && (field as any).text !== null) {
-      return (field as any).text;
+    // Try text (for text-reference fields) - use index signature
+    const textValue = field['text'];
+    if (textValue !== undefined && textValue !== null) {
+      return textValue as string | number | boolean;
     }
-    // Try quote (for quotation fields)
-    if ('quote' in field && (field as any).quote !== undefined && (field as any).quote !== null) {
-      return (field as any).quote;
+    // Try quote (for quotation fields) - use index signature
+    const quoteValue = field['quote'];
+    if (quoteValue !== undefined && quoteValue !== null) {
+      return quoteValue as string | number | boolean;
     }
     return undefined;
   }

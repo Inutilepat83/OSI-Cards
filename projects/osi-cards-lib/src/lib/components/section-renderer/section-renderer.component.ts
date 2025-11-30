@@ -11,16 +11,24 @@ import {
   OnChanges,
   SimpleChanges,
   ComponentRef,
-  DestroyRef,
-  Type
+  DestroyRef
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
 import { CardAction, CardField, CardItem, CardSection } from '../../models';
 import { SectionPluginRegistry } from '../../services/section-plugin-registry.service';
 import { BaseSectionComponent, SectionInteraction } from '../sections/base-section.component';
 import { DynamicSectionLoaderService } from './dynamic-section-loader.service';
 import { resolveSectionType, isValidSectionType, SectionTypeInput } from '../../models/generated-section-types';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+/**
+ * Interface for sections with custom field interaction output
+ * Used by InfoSectionComponent
+ */
+interface InfoSectionComponentLike extends BaseSectionComponent {
+  infoFieldInteraction?: Observable<{ field: CardField; sectionTitle?: string }>;
+}
 
 export interface SectionRenderEvent {
   type: 'field' | 'item' | 'action';
@@ -155,11 +163,11 @@ export class SectionRendererComponent implements OnChanges {
     }
 
     // Handle InfoSectionComponent's custom output
-    const anyInstance = instance as any;
-    if (anyInstance.infoFieldInteraction) {
-      anyInstance.infoFieldInteraction
+    const infoInstance = instance as InfoSectionComponentLike;
+    if (infoInstance.infoFieldInteraction) {
+      infoInstance.infoFieldInteraction
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((event: any) => {
+        .subscribe((event: { field: CardField; sectionTitle?: string }) => {
           this.emitFieldInteraction(event.field, { sectionTitle: event.sectionTitle });
         });
     }
@@ -252,7 +260,7 @@ export class SectionRendererComponent implements OnChanges {
       type: 'action',
       section: this.section,
       action,
-      metadata
+      metadata: metadata ?? {}
     });
   }
 

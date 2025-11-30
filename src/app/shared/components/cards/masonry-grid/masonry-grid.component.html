@@ -15,9 +15,11 @@
     class="absolute masonry-item"
     [class.masonry-item--ready]="isLayoutReady || isStreaming"
     [class.masonry-item--streaming]="isStreaming"
-    [class.masonry-item--new]="item?.isNew && shouldAnimate(item?.key || '')"
+    [class.masonry-item--animating]="item?.isNew && shouldAnimate(item?.key || '')"
+    [class.masonry-item--animated]="hasAnimated(item?.key || '') || !shouldAnimate(item?.key || '')"
     [attr.id]="getSectionId(item?.section)"
     [attr.data-section-key]="item?.key"
+    [attr.data-animated]="hasAnimated(item?.key || '') || !shouldAnimate(item?.key || '')"
     [ngStyle]="{
       position: 'absolute',
       left: item?.left || '0px',

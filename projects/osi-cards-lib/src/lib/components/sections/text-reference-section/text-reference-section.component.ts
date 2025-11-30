@@ -51,5 +51,12 @@ export class TextReferenceSectionComponent extends BaseSectionComponent<TextRefe
     }
     return text != null ? String(text) : '';
   }
+
+  /**
+   * TrackBy function for fields
+   */
+  trackByField(index: number, field: TextReferenceField): string {
+    return field.id ?? `field-${index}`;
+  }
 }
 

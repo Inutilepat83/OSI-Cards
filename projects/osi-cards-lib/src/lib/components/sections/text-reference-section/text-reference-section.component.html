@@ -10,7 +10,7 @@
     <ng-container *ngIf="hasFields; else referenceEmpty">
       <div class="section-grid section-grid--reference">
         <article
-        *ngFor="let field of fields"
+        *ngFor="let field of fields; trackBy: trackByField"
         class="section-card section-card--reference"
         role="button"
         tabindex="0"

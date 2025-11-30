@@ -18,7 +18,7 @@
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    // "exactOptionalPropertyTypes": true, // Temporarily disabled - requires extensive refactoring
+    "exactOptionalPropertyTypes": false,
     "sourceMap": true,
     "declaration": false,
     "downlevelIteration": true,

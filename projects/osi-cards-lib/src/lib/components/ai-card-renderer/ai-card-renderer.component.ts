@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, inject, Injector, isDevMode, PLATFORM_ID, ViewEncapsulation } from '@angular/core';
-import { CommonModule, ViewportScroller } from '@angular/common';
-import { AICardConfig, CardSection, CardField, CardItem, CardAction, MailCardAction } from '../../models';
-import { Subject, takeUntil, fromEvent, filter, delay, interval } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { AICardConfig, CardSection, CardField, CardItem, CardAction, LegacyCardAction } from '../../models';
+import { Subject, takeUntil, fromEvent, interval } from 'rxjs';
 import { MagneticTiltService, MousePosition, TiltCalculations } from '../../services';
 import { IconService, SectionNormalizationService } from '../../services';
 import { LucideIconsModule } from '../../icons';
@@ -12,7 +12,7 @@ import { CardSectionListComponent } from '../card-section-list/card-section-list
 import { CardActionsComponent } from '../card-actions/card-actions.component';
 import { CardChangeType } from '../../utils';
 import { trigger, transition, style, animate, AnimationBuilder } from '@angular/animations';
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, ViewportScroller } from '@angular/common';
 
 export interface CardFieldInteractionEvent {
   field?: CardField;
@@ -747,7 +747,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   /**
    * Type guard to check if action has email property
    */
-  private hasEmailProperty(action: CardAction): action is CardAction & { email: any } {
+  private hasEmailProperty(action: CardAction): action is CardAction & { email: NonNullable<LegacyCardAction['email']> } {
     return 'email' in action && action.email !== undefined;
   }
 
@@ -823,7 +823,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     });
   }
 
-  private handleEmailAction(action: CardAction & { email: any }): void {
+  private handleEmailAction(action: CardAction & { email: NonNullable<LegacyCardAction['email']> }): void {
     // Validate that email configuration exists
     if (!action.email) {
       console.error('Email action requires email configuration');
@@ -1213,6 +1213,13 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     this.previousSectionsHash = '';
     this.normalizedSectionCache = new WeakMap<CardSection, CardSection>();
     this.cdr.markForCheck();
+  }
+
+  /**
+   * TrackBy function for particle animations
+   */
+  trackByParticle(index: number): number {
+    return index;
   }
 
   /**

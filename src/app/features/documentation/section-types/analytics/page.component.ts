@@ -1,9 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NgDocPageComponent, NgDocRootPage } from '@ng-doc/app';
-import { NgDocPageType } from '@ng-doc/core';
-import pageConfig from './analytics.page';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { DocPageComponent } from '../../doc-page.component';
 
-const pageContent: string = `# Analytics Section
+const pageContent = `# Analytics Section
 
 Displays metrics with visual indicators, trends, and percentages. Perfect for KPIs, performance metrics, and statistical data.
 
@@ -126,25 +124,14 @@ The **Analytics Section** (\`type: "analytics"\`) is used for displays metrics w
 `;
 
 @Component({
-  selector: 'ng-doc-page-analytics',
-  template: `<ng-doc-page></ng-doc-page>`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgDocPageComponent],
-  providers: [
-    { provide: NgDocRootPage, useExisting: AnalyticsPageComponent }
-  ],
-  standalone: true
+  selector: 'app-analytics-page',
+  standalone: true,
+  imports: [DocPageComponent],
+  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AnalyticsPageComponent extends NgDocRootPage {
-  readonly pageType: NgDocPageType = 'guide';
-  readonly pageContent: string = pageContent;
-  readonly editSourceFileUrl?: string;
-  readonly viewSourceFileUrl?: string;
-  override readonly page = pageConfig;
-
-  constructor() {
-    super();
-  }
+export class AnalyticsPageComponent {
+  content = pageContent;
 }
 
 export default AnalyticsPageComponent;

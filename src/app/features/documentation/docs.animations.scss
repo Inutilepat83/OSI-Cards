@@ -1,0 +1,434 @@
+/**
+ * OSI Cards Documentation - Micro-Animations
+ * Implements A17-A25 from the 100-point plan:
+ * - A17: Consistent spacing scale (already in main styles)
+ * - A18: Section breathing room (already in main styles)
+ * - A19: Refined content width (already in main styles)
+ * - A20: Sticky elements spacing (already in main styles)
+ * - A21: Card-based layouts (already in main styles)
+ * - A22: Grid-based alignment (already in main styles)
+ * - A23: Smooth scroll behavior
+ * - A24: Link hover transitions
+ * - A25: Page load fade-in / staggered animations
+ */
+
+// =============================================================================
+// A23: SMOOTH SCROLL BEHAVIOR
+// =============================================================================
+
+// Already defined in :host but adding for clarity
+@mixin smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+// Scroll margin for anchors (accounting for sticky header)
+@mixin scroll-margin($top: 100px) {
+  scroll-margin-top: $top;
+}
+
+// =============================================================================
+// A24: LINK HOVER TRANSITIONS
+// =============================================================================
+
+@mixin link-underline-animation {
+  background: linear-gradient(to right, currentColor, currentColor);
+  background-size: 0% 2px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    background-size: 100% 2px;
+  }
+}
+
+// =============================================================================
+// A25: PAGE LOAD ANIMATIONS
+// =============================================================================
+
+// Fade in up animation
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Fade in animation
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Slide down animation
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    max-height: 2000px;
+    transform: translateY(0);
+  }
+}
+
+// Slide in from left
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Slide in from right
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Scale in animation
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Bounce animation
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+// Pulse animation
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// Spin animation
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Shimmer animation for loading states
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+// =============================================================================
+// STAGGERED ANIMATIONS
+// =============================================================================
+
+// Mixin for staggered children animations
+@mixin stagger-children($delay-base: 50ms, $max-children: 10) {
+  @for $i from 1 through $max-children {
+    &:nth-child(#{$i}) {
+      animation-delay: calc(#{$delay-base} * #{$i});
+    }
+  }
+}
+
+// Staggered fade in
+.stagger-fade-in {
+  > * {
+    opacity: 0;
+    animation: fadeInUp 0.4s ease forwards;
+    @include stagger-children(60ms, 15);
+  }
+}
+
+// Staggered slide in
+.stagger-slide-in {
+  > * {
+    opacity: 0;
+    animation: slideInLeft 0.4s ease forwards;
+    @include stagger-children(50ms, 15);
+  }
+}
+
+// =============================================================================
+// HOVER EFFECTS
+// =============================================================================
+
+// Lift effect
+@mixin hover-lift($distance: 2px, $shadow: true) {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-#{$distance});
+    @if $shadow {
+      box-shadow: var(--docs-shadow-md);
+    }
+  }
+}
+
+// Scale effect
+@mixin hover-scale($scale: 1.02) {
+  transition: transform 0.2s ease;
+  
+  &:hover {
+    transform: scale($scale);
+  }
+}
+
+// Glow effect
+@mixin hover-glow($color: var(--docs-primary)) {
+  transition: box-shadow 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 0 20px rgba($color, 0.3);
+  }
+}
+
+// =============================================================================
+// BUTTON ANIMATIONS
+// =============================================================================
+
+// Button press effect
+@mixin button-press {
+  transition: transform 0.1s ease;
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// Button ripple effect
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+// =============================================================================
+// LOADING ANIMATIONS
+// =============================================================================
+
+// Skeleton loading
+@mixin skeleton-loading {
+  background: linear-gradient(
+    90deg,
+    var(--docs-bg-secondary) 0%,
+    var(--docs-bg-tertiary) 50%,
+    var(--docs-bg-secondary) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+// Dots loading
+@keyframes dotsLoading {
+  0%, 80%, 100% {
+    transform: scale(0.6);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.loading-dots {
+  display: flex;
+  gap: 4px;
+  
+  span {
+    width: 8px;
+    height: 8px;
+    background: var(--docs-primary);
+    border-radius: 50%;
+    animation: dotsLoading 1.4s ease-in-out infinite;
+    
+    &:nth-child(1) { animation-delay: 0s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.4s; }
+  }
+}
+
+// =============================================================================
+// PROGRESS ANIMATIONS
+// =============================================================================
+
+// Progress bar animation
+@keyframes progressBar {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+// Indeterminate progress
+@keyframes indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+
+// =============================================================================
+// TOAST / NOTIFICATION ANIMATIONS
+// =============================================================================
+
+// Toast slide up
+@keyframes toastSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100%) translateX(-50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateX(-50%);
+  }
+}
+
+// Toast slide down (for exit)
+@keyframes toastSlideDown {
+  from {
+    opacity: 1;
+    transform: translateY(0) translateX(-50%);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100%) translateX(-50%);
+  }
+}
+
+// =============================================================================
+// MODAL ANIMATIONS
+// =============================================================================
+
+// Modal fade in
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Modal scale in
+@keyframes modalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+// =============================================================================
+// CODE BLOCK ANIMATIONS
+// =============================================================================
+
+// Line highlight pulse
+@keyframes lineHighlightPulse {
+  0%, 100% {
+    background-color: rgba(255, 121, 0, 0.1);
+  }
+  50% {
+    background-color: rgba(255, 121, 0, 0.2);
+  }
+}
+
+// Copy success checkmark
+@keyframes copySuccess {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+// =============================================================================
+// ICON ANIMATIONS
+// =============================================================================
+
+// Rotating icon
+.icon-spin {
+  animation: spin 1s linear infinite;
+}
+
+// Bouncing icon
+.icon-bounce {
+  animation: bounce 0.6s ease infinite;
+}
+
+// Pulsing icon
+.icon-pulse {
+  animation: pulse 1.5s ease infinite;
+}
+
+// =============================================================================
+// REDUCED MOTION
+// =============================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+

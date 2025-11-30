@@ -8,14 +8,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { provideZoneChangeDetection } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideServiceWorker } from '@angular/service-worker';
-// NgDoc - provides ng-doc app functionality
-import { 
-  provideNgDocApp, 
-  provideSearchEngine, 
-  NgDocDefaultSearchEngine,
-  providePageSkeleton,
-  NG_DOC_DEFAULT_PAGE_SKELETON
-} from '@ng-doc/app';
+// NgDoc imports removed - using custom documentation system for Angular 20 compatibility
 
 import { routes } from './app.routes';
 import { reducers } from './store/app.state';
@@ -36,10 +29,7 @@ export const config: ApplicationConfig = {
       routes,
       withPreloading(PreloadAllModules)
     ),
-    // NgDoc - temporarily disabled due to DI issue in Angular 20
-    // provideNgDocApp(),
-    // provideSearchEngine(NgDocDefaultSearchEngine),
-    // providePageSkeleton(NG_DOC_DEFAULT_PAGE_SKELETON),
+    // Documentation uses custom components (no NgDoc for Angular 20 compatibility)
     // Optimize change detection with event coalescing and run coalescing
     provideZoneChangeDetection({
       eventCoalescing: true,

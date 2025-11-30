@@ -1,4 +1,4 @@
-import { AICardConfig, CardSection, CardAction } from '../models';
+import { AICardConfig, CardSection, CardAction, CardField, CardItem } from '../models';
 
 /**
  * Company Card Preset
@@ -68,18 +68,19 @@ export function createCompanyCard(options: CompanyCardOptions): AICardConfig {
     customActions = []
   } = options;
 
-  const sections = [
+  const overviewFields: CardField[] = [];
+  if (industry) overviewFields.push({ id: 'industry', label: 'Industry', value: industry });
+  if (founded) overviewFields.push({ id: 'founded', label: 'Founded', value: founded });
+  if (employees) overviewFields.push({ id: 'employees', label: 'Employees', value: employees });
+  if (headquarters) overviewFields.push({ id: 'headquarters', label: 'Headquarters', value: headquarters });
+  if (revenue) overviewFields.push({ id: 'revenue', label: 'Annual Revenue', value: revenue });
+
+  const sections: CardSection[] = [
     {
       id: 'company-overview',
       title: 'Company Overview',
       type: 'info',
-      fields: [
-        ...(industry ? [{ id: 'industry', label: 'Industry', value: industry }] : []),
-        ...(founded ? [{ id: 'founded', label: 'Founded', value: founded }] : []),
-        ...(employees ? [{ id: 'employees', label: 'Employees', value: employees }] : []),
-        ...(headquarters ? [{ id: 'headquarters', label: 'Headquarters', value: headquarters }] : []),
-        ...(revenue ? [{ id: 'revenue', label: 'Annual Revenue', value: revenue }] : [])
-      ].filter(Boolean) as any[]
+      fields: overviewFields
     },
     ...(growthRate || marketShare ? [{
       id: 'key-metrics',
@@ -105,7 +106,7 @@ export function createCompanyCard(options: CompanyCardOptions): AICardConfig {
       ]
     }] : []),
     ...customSections
-  ].filter(Boolean) as CardSection[];
+  ];
 
   const actions: CardAction[] = [
     ...(websiteUrl ? [{
@@ -141,29 +142,31 @@ export function createEnhancedCompanyCard(options: CompanyCardOptions & {
 
   // Add financials section if provided
   if (financials.length > 0) {
+    const financialFields: CardField[] = financials.map((f, i) => ({
+      id: `financial-${i}`,
+      label: f.label,
+      value: f.value
+    }));
     baseCard.sections.push({
       id: 'financials',
       title: 'Financials',
       type: 'financials',
-      fields: financials.map((f, i) => ({
-        id: `financial-${i}`,
-        label: f.label,
-        value: f.value
-      })) as any[]
+      fields: financialFields
     });
   }
 
   // Add products section if provided
   if (products.length > 0) {
+    const productItems: CardItem[] = products.map((p, i) => ({
+      id: `product-${i}`,
+      title: p.name,
+      description: p.description
+    }));
     baseCard.sections.push({
       id: 'products',
       title: 'Products & Services',
       type: 'list',
-      items: products.map((p, i) => ({
-        id: `product-${i}`,
-        title: p.name,
-        description: p.description
-      })) as any[]
+      items: productItems
     });
   }
 

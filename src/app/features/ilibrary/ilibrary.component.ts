@@ -108,16 +108,15 @@ export class IlibraryComponent implements OnInit, OnDestroy {
 
   // Theme options
   readonly themeOptions: { id: ThemePreset; name: string }[] = [
-    { id: 'day', name: 'Day (Light)' },
-    { id: 'night', name: 'Night (Dark)' },
-    { id: 'osi-day', name: 'OSI Day (Light)' },
-    { id: 'osi-night', name: 'OSI Night (Dark)' }
+    { id: 'light', name: 'Light' },
+    { id: 'dark', name: 'Dark' },
+    { id: 'system', name: 'System' }
   ];
 
   // State
   selectedEnvironment: ClientEnvironment = this.environments[0]!;
   selectedTemplate: CardTemplate = this.cardTemplates[0]!;
-  selectedTheme: ThemePreset = 'night';
+  selectedTheme: ThemePreset = 'dark';
   
   // Streaming configuration
   useStreaming = true;

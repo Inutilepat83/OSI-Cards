@@ -1,9 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NgDocPageComponent, NgDocRootPage } from '@ng-doc/app';
-import { NgDocPageType } from '@ng-doc/core';
-import pageConfig from './library-usage.page';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { DocPageComponent } from '../doc-page.component';
 
-const pageContent: string = `# Library Usage Guide
+const pageContent = `# Library Usage Guide
 
 Complete guide on how to use OSI Cards library in your Angular application.
 
@@ -11,7 +9,7 @@ Complete guide on how to use OSI Cards library in your Angular application.
 
 ### 1. Import the Component
 
-\\\`\\\`\\\`typescript
+\`\`\`typescript
 import { Component } from '@angular/core';
 import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
 
@@ -38,184 +36,91 @@ export class MyComponent {
     ]
   };
 }
-\\\`\\\`\\\`
+\`\`\`
 
-## Component Integration
+## Handling Events
 
-### Standalone Component
-
-\\\`\\\`\\\`typescript
-import { Component, inject } from '@angular/core';
-import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
-import { CardDataService } from 'osi-cards-lib';
-
+\`\`\`typescript
 @Component({
-  selector: 'app-card-viewer',
-  standalone: true,
-  imports: [AICardRendererComponent],
   template: \\\`
     <app-ai-card-renderer
-      [cardConfig]="card$ | async"
-      (sectionEvent)="onSectionEvent($event)">
+      [cardConfig]="card"
+      (sectionEvent)="onSectionEvent($event)"
+      (actionEvent)="onActionEvent($event)">
     </app-ai-card-renderer>
   \\\`
 })
 export class CardViewerComponent {
-  private cardData = inject(CardDataService);
-  
-  card$ = this.cardData.getAllCards();
-  
-  onSectionEvent(event: any) {
+  onSectionEvent(event: SectionEvent) {
     console.log('Section event:', event);
   }
-}
-\\\`\\\`\\\`
-
-## Service Usage
-
-### CardDataService
-
-\\\`\\\`\\\`typescript
-import { inject } from '@angular/core';
-import { CardDataService } from 'osi-cards-lib';
-
-const cardData = inject(CardDataService);
-
-// Get all cards
-cardData.getAllCards().subscribe(cards => {
-  console.log('All cards:', cards);
-});
-
-// Get cards by type
-cardData.getCardsByType('company').subscribe(cards => {
-  console.log('Company cards:', cards);
-});
-
-// Get specific card
-cardData.getCardById('card-123').subscribe(card => {
-  console.log('Card:', card);
-});
-\\\`\\\`\\\`
-
-### LLMStreamingService
-
-\\\`\\\`\\\`typescript
-import { inject } from '@angular/core';
-import { LLMStreamingService } from 'osi-cards-lib';
-
-const streamingService = inject(LLMStreamingService);
-
-// Start streaming
-streamingService.start(llmJsonResponse);
-
-// Subscribe to updates
-streamingService.cardUpdates$.subscribe(update => {
-  console.log('Card updated:', update.card);
-});
-\\\`\\\`\\\`
-
-## Configuration Options
-
-### Card Configuration
-
-\\\`\\\`\\\`typescript
-const cardConfig: AICardConfig = {
-  cardTitle: 'Card Title',
-  cardSubtitle: 'Optional Subtitle',
-  cardType: 'company',
-  sections: [
-    {
-      title: 'Section Title',
-      type: 'info',
-      fields: [
-        { label: 'Label', value: 'Value' }
-      ]
-    }
-  ],
-  actions: [
-    {
-      label: 'Action',
-      type: 'primary',
-      action: 'https://example.com'
-    }
-  ]
-};
-\\\`\\\`\\\`
-
-## Event Handling
-
-### Section Events
-
-\\\`\\\`\\\`typescript
-onSectionEvent(event: SectionRenderEvent) {
-  const { type, section, field, item, action } = event;
   
-  if (type === 'field') {
-    console.log('Field clicked:', field?.label);
-  } else if (type === 'item') {
-    console.log('Item selected:', item?.title);
-  } else if (type === 'action') {
-    console.log('Action triggered:', action?.label);
+  onActionEvent(event: ActionEvent) {
+    switch(event.action.type) {
+      case 'mail':
+        window.location.href = \\\`mailto:\\\${event.action.email}\\\`;
+        break;
+      case 'website':
+        window.open(event.action.url, '_blank');
+        break;
+    }
   }
 }
-\\\`\\\`\\\`
+\`\`\`
 
-## Theming
+## Using MasonryGrid
 
-### Using CSS Variables
+For displaying multiple cards:
 
-\\\`\\\`\\\`scss
-:root {
-  --color-brand: #ff7900;
-  --card-padding: 1.25rem;
-  --card-border-radius: 12px;
+\`\`\`typescript
+import { MasonryGridComponent } from 'osi-cards-lib';
+
+@Component({
+  imports: [MasonryGridComponent],
+  template: \\\`
+    <app-masonry-grid [cards]="cards" [columns]="3"></app-masonry-grid>
+  \\\`
+})
+export class CardsPageComponent {
+  cards: AICardConfig[] = [];
 }
-\\\`\\\`\\\`
+\`\`\`
 
-## Best Practices
+## Streaming Support
 
-1. **Use OnPush Change Detection**: For better performance
-2. **Lazy Load Cards**: Load cards on demand
-3. **Cache Card Data**: Use shareReplay for caching
-4. **Handle Errors**: Implement error boundaries
-5. **Optimize Images**: Use lazy loading for images
+For progressive card rendering:
 
-## Examples
+\`\`\`typescript
+import { OSICardsStreamingService } from 'osi-cards-lib';
 
-See the [Examples](/docs/examples) section for complete working examples.
+@Component({...})
+export class StreamingComponent {
+  private streaming = inject(OSICardsStreamingService);
+  
+  async loadCard() {
+    const stream = this.streaming.createStream();
+    
+    stream.updates$.subscribe(update => {
+      this.cardConfig = update.card;
+    });
+    
+    await stream.start(jsonChunks);
+  }
+}
+\`\`\`
 
-## API Reference
-
-For complete API documentation, see [API Reference](/docs/api).
-
-
-
-
-
-
-
+See [Streaming Documentation](/docs/streaming/overview) for more details.
 `;
 
 @Component({
-  selector: 'ng-doc-page-library-usage',
-  template: `<ng-doc-page></ng-doc-page>`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgDocPageComponent],
-  providers: [
-    { provide: NgDocRootPage, useExisting: LibraryUsagePageComponent }
-  ],
-  standalone: true
+  selector: 'app-library-usage-page',
+  standalone: true,
+  imports: [DocPageComponent],
+  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LibraryUsagePageComponent extends NgDocRootPage {
-  readonly pageType: NgDocPageType = 'guide';
-  readonly pageContent: string = pageContent;
-  readonly editSourceFileUrl?: string;
-  readonly viewSourceFileUrl?: string;
-  override readonly page = pageConfig;
-
-  constructor() {
-    super();
-  }
+export class LibraryUsagePageComponent {
+  content = pageContent;
 }
 
 export default LibraryUsagePageComponent;

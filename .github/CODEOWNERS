@@ -1,0 +1,19 @@
+# OSI Cards Library - Code Owners
+# These owners will be requested for review when someone opens a pull request.
+
+# Default owners for everything
+* @Inutilepat83
+
+# Core library components
+/projects/osi-cards-lib/ @Inutilepat83
+
+# E2E tests
+/e2e/ @Inutilepat83
+
+# CI/CD Configuration
+/.github/ @Inutilepat83
+
+# Documentation
+/docs/ @Inutilepat83
+*.md @Inutilepat83
+

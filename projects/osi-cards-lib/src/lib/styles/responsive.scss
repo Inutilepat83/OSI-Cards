@@ -1,0 +1,327 @@
+/**
+ * OSI Cards - Responsive Design System
+ * 
+ * Breakpoints and responsive utilities for cards and sections.
+ */
+
+// ============================================
+// Breakpoint Variables
+// ============================================
+
+$breakpoints: (
+  'xs': 320px,
+  'sm': 480px,
+  'md': 768px,
+  'lg': 1024px,
+  'xl': 1280px,
+  '2xl': 1536px
+);
+
+// ============================================
+// Responsive Mixins
+// ============================================
+
+/// Media query for minimum width (mobile-first)
+@mixin responsive($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (min-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    @media (min-width: $breakpoint) {
+      @content;
+    }
+  }
+}
+
+/// Media query for maximum width
+@mixin responsive-down($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (max-width: #{map-get($breakpoints, $breakpoint) - 1px}) {
+      @content;
+    }
+  } @else {
+    @media (max-width: #{$breakpoint - 1px}) {
+      @content;
+    }
+  }
+}
+
+/// Media query for range
+@mixin responsive-between($min, $max) {
+  $min-width: if(map-has-key($breakpoints, $min), map-get($breakpoints, $min), $min);
+  $max-width: if(map-has-key($breakpoints, $max), map-get($breakpoints, $max), $max);
+  
+  @media (min-width: $min-width) and (max-width: #{$max-width - 1px}) {
+    @content;
+  }
+}
+
+// ============================================
+// Container Queries
+// ============================================
+
+@mixin container($name: card) {
+  container-type: inline-size;
+  container-name: $name;
+}
+
+@mixin container-query($name, $min-width: null, $max-width: null) {
+  @if $min-width and $max-width {
+    @container #{$name} (min-width: #{$min-width}) and (max-width: #{$max-width}) {
+      @content;
+    }
+  } @else if $min-width {
+    @container #{$name} (min-width: #{$min-width}) {
+      @content;
+    }
+  } @else if $max-width {
+    @container #{$name} (max-width: #{$max-width}) {
+      @content;
+    }
+  }
+}
+
+// ============================================
+// Card Responsive Styles
+// ============================================
+
+.osi-card-container {
+  @include container(card);
+  
+  // Base mobile styles
+  --card-padding: 0.75rem;
+  --card-gap: 0.5rem;
+  --card-title-size: 1rem;
+  --section-title-size: 0.875rem;
+  --field-label-size: 0.75rem;
+  --field-value-size: 0.875rem;
+  
+  @include responsive('sm') {
+    --card-padding: 1rem;
+    --card-gap: 0.75rem;
+    --card-title-size: 1.125rem;
+  }
+  
+  @include responsive('md') {
+    --card-padding: 1.25rem;
+    --card-gap: 1rem;
+    --card-title-size: 1.25rem;
+    --section-title-size: 1rem;
+  }
+  
+  @include responsive('lg') {
+    --card-padding: 1.5rem;
+    --card-gap: 1.25rem;
+    --card-title-size: 1.375rem;
+  }
+}
+
+// ============================================
+// Grid Responsive Utilities
+// ============================================
+
+.masonry-container {
+  // Mobile: 1 column
+  --masonry-columns: 1;
+  
+  @include responsive('sm') {
+    --masonry-columns: 2;
+  }
+  
+  @include responsive('lg') {
+    --masonry-columns: 3;
+  }
+  
+  @include responsive('xl') {
+    --masonry-columns: 4;
+  }
+}
+
+// Container query based columns
+.masonry-container--container-responsive {
+  @include container-query(card, $min-width: 400px) {
+    --masonry-columns: 2;
+  }
+  
+  @include container-query(card, $min-width: 700px) {
+    --masonry-columns: 3;
+  }
+  
+  @include container-query(card, $min-width: 1000px) {
+    --masonry-columns: 4;
+  }
+}
+
+// ============================================
+// Section Responsive Styles
+// ============================================
+
+.ai-section {
+  // Info section: stack fields on mobile
+  &--info {
+    .section-field-grid {
+      grid-template-columns: 1fr;
+      
+      @include responsive('sm') {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      @include responsive('lg') {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  }
+  
+  // Analytics section: adjust metric sizes
+  &--analytics {
+    .metric-grid {
+      grid-template-columns: 1fr;
+      
+      @include responsive('xs') {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      @include responsive('md') {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    .metric-value {
+      font-size: 1.5rem;
+      
+      @include responsive('md') {
+        font-size: 2rem;
+      }
+    }
+  }
+  
+  // Timeline section: horizontal on desktop
+  &--timeline {
+    .timeline-items {
+      flex-direction: column;
+      
+      @include responsive('lg') {
+        flex-direction: row;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        
+        > * {
+          scroll-snap-align: start;
+          min-width: 280px;
+        }
+      }
+    }
+  }
+  
+  // Contact section: adjust layout
+  &--contact {
+    .contact-grid {
+      grid-template-columns: 1fr;
+      
+      @include responsive('sm') {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  }
+}
+
+// ============================================
+// Typography Responsive Utilities
+// ============================================
+
+.text-responsive {
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  line-height: 1.5;
+}
+
+.heading-responsive {
+  font-size: clamp(1.25rem, 4vw, 2rem);
+  line-height: 1.2;
+}
+
+// ============================================
+// Spacing Responsive Utilities
+// ============================================
+
+.space-responsive {
+  padding: clamp(0.5rem, 2vw, 1.5rem);
+}
+
+.gap-responsive {
+  gap: clamp(0.5rem, 2vw, 1rem);
+}
+
+// ============================================
+// Touch Target Utilities
+// ============================================
+
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  
+  @include responsive('lg') {
+    min-height: 36px;
+    min-width: 36px;
+  }
+}
+
+// ============================================
+// Visibility Utilities
+// ============================================
+
+.hide-mobile {
+  @include responsive-down('md') {
+    display: none !important;
+  }
+}
+
+.hide-desktop {
+  @include responsive('md') {
+    display: none !important;
+  }
+}
+
+.show-mobile {
+  display: none !important;
+  
+  @include responsive-down('md') {
+    display: block !important;
+  }
+}
+
+.show-desktop {
+  display: none !important;
+  
+  @include responsive('md') {
+    display: block !important;
+  }
+}
+
+// ============================================
+// Print Styles
+// ============================================
+
+@media print {
+  .osi-card-container {
+    --card-padding: 1rem;
+    box-shadow: none;
+    border: 1px solid #ddd;
+    break-inside: avoid;
+  }
+  
+  .masonry-container {
+    --masonry-columns: 2;
+    display: block;
+    
+    .masonry-item {
+      break-inside: avoid;
+      margin-bottom: 1rem;
+    }
+  }
+  
+  .hide-print {
+    display: none !important;
+  }
+}
+

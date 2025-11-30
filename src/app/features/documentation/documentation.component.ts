@@ -15,7 +15,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
 import { MarkdownRendererComponent, TocItem } from '../../shared/components/markdown-renderer/markdown-renderer.component';
 import {
-  DOCUMENTATION_ITEMS,
   getDocumentationByCategory,
   getDocumentationById,
   DocItem,

@@ -1,9 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { NgDocPageComponent, NgDocRootPage } from '@ng-doc/app';
-import { NgDocPageType } from '@ng-doc/core';
-import pageConfig from './brand-colors.page';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { DocPageComponent } from '../../doc-page.component';
 
-const pageContent: string = `# Brand Colors Section
+const pageContent = `# Brand Colors Section
 
 Displays color swatches, brand palettes, and design system colors.
 
@@ -111,25 +109,14 @@ The **Brand Colors Section** (\`type: "brand-colors"\`) is used for displays col
 `;
 
 @Component({
-  selector: 'ng-doc-page-brand-colors',
-  template: `<ng-doc-page></ng-doc-page>`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgDocPageComponent],
-  providers: [
-    { provide: NgDocRootPage, useExisting: BrandColorsPageComponent }
-  ],
-  standalone: true
+  selector: 'app-brand-colors-page',
+  standalone: true,
+  imports: [DocPageComponent],
+  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BrandColorsPageComponent extends NgDocRootPage {
-  readonly pageType: NgDocPageType = 'guide';
-  readonly pageContent: string = pageContent;
-  readonly editSourceFileUrl?: string;
-  readonly viewSourceFileUrl?: string;
-  override readonly page = pageConfig;
-
-  constructor() {
-    super();
-  }
+export class BrandColorsPageComponent {
+  content = pageContent;
 }
 
 export default BrandColorsPageComponent;

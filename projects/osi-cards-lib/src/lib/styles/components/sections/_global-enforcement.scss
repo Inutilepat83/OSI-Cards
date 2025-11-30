@@ -670,3 +670,88 @@
   gap: var(--section-card-gap) !important;
 }
 
+/* ===================================================================
+   THEME OVERRIDES - GLOBALLY ENFORCED TEXT COLORS
+   =================================================================== */
+/* These ensure all text elements use proper colors for each theme */
+/* SCSS variables ($foreground-*) are light-theme-only at compile time */
+/* CSS custom properties (var(--*)) change at runtime with theme */
+
+/* Dark theme (Night Mode) - enforced text colors */
+:root[data-theme='night'],
+:host-context([data-theme='night']) {
+  /* Section titles and primary text */
+  .ai-section__title,
+  .section-block__title,
+  [class*="__title"]:not([class*="__subtitle"]),
+  [class*="__name"],
+  [class*="__value"] {
+    color: var(--card-text-primary, rgba(255, 255, 255, 0.95)) !important;
+  }
+  
+  /* Secondary text and descriptions */
+  .ai-section__description,
+  [class*="__description"],
+  [class*="__subtitle"],
+  [class*="__role"],
+  [class*="__summary"] {
+    color: var(--card-text-secondary, rgba(255, 255, 255, 0.7)) !important;
+  }
+  
+  /* Labels and meta text */
+  [class*="__label"],
+  [class*="__meta"],
+  [class*="__time"],
+  [class*="__date"],
+  .section-card__meta,
+  .section-empty {
+    color: var(--card-text-label, rgba(255, 255, 255, 0.6)) !important;
+  }
+
+  /* Hover states for descriptions */
+  .ai-section:hover .ai-section__description,
+  [class*="-card"]:hover [class*="__description"],
+  [class*="-item"]:hover [class*="__description"] {
+    color: var(--card-text-secondary, rgba(255, 255, 255, 0.85)) !important;
+  }
+}
+
+/* Light theme (Day Mode) - enforced text colors */
+:root[data-theme='day'],
+:host-context([data-theme='day']) {
+  /* Section titles and primary text */
+  .ai-section__title,
+  .section-block__title,
+  [class*="__title"]:not([class*="__subtitle"]),
+  [class*="__name"],
+  [class*="__value"] {
+    color: var(--card-text-primary, #1a1a1a) !important;
+  }
+  
+  /* Secondary text and descriptions */
+  .ai-section__description,
+  [class*="__description"],
+  [class*="__subtitle"],
+  [class*="__role"],
+  [class*="__summary"] {
+    color: var(--card-text-secondary, #4b5563) !important;
+  }
+  
+  /* Labels and meta text */
+  [class*="__label"],
+  [class*="__meta"],
+  [class*="__time"],
+  [class*="__date"],
+  .section-card__meta,
+  .section-empty {
+    color: var(--card-text-label, #6b7280) !important;
+  }
+
+  /* Hover states for descriptions */
+  .ai-section:hover .ai-section__description,
+  [class*="-card"]:hover [class*="__description"],
+  [class*="-item"]:hover [class*="__description"] {
+    color: var(--card-text-secondary, #374151) !important;
+  }
+}
+

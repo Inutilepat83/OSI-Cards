@@ -31,4 +31,19 @@ export * from './flip-animation.util';
 export * from './streaming-layout.util';
 export * from './grid-accessibility.util';
 export * from './layout-debug.util';
-
+export * from './layout-optimizer.util';
+// Note: column-span-optimizer, local-swap-optimizer, gap-filler-optimizer 
+// have overlapping exports with layout-optimizer - import directly if needed
+// export * from './column-span-optimizer.util';
+// export * from './local-swap-optimizer.util';
+// export * from './gap-filler-optimizer.util';
+export * from './retry.util';
+export * from './performance.util';
+export * from './memory.util';
+export * from './accessibility.util';
+// Note: lru-cache has overlapping CacheStats with layout-cache - import directly if needed
+// export * from './lru-cache.util';
+// Note: grid-logger has overlapping exports with smart-grid-logger - import directly if needed
+// export * from './grid-logger.util';
+// Note: input-validation has overlapping exports with card-spawner - import directly if needed
+// export * from './input-validation.util';

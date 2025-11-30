@@ -1,0 +1,555 @@
+/**
+ * OSI Cards - Micro-Interactions
+ * 
+ * Delightful micro-animations and interactions for enhanced UX.
+ */
+
+// ============================================
+// Animation Variables
+// ============================================
+
+:root {
+  --osi-ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --osi-ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --osi-ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --osi-ease-in-out-circ: cubic-bezier(0.85, 0, 0.15, 1);
+  --osi-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  --osi-duration-instant: 50ms;
+  --osi-duration-fast: 150ms;
+  --osi-duration-normal: 250ms;
+  --osi-duration-slow: 400ms;
+  --osi-duration-slower: 600ms;
+}
+
+// Respect reduced motion preference
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --osi-duration-instant: 0ms;
+    --osi-duration-fast: 0ms;
+    --osi-duration-normal: 0ms;
+    --osi-duration-slow: 0ms;
+    --osi-duration-slower: 0ms;
+  }
+}
+
+// ============================================
+// Button Interactions
+// ============================================
+
+.osi-action-button {
+  position: relative;
+  overflow: hidden;
+  transition: 
+    transform var(--osi-duration-fast) var(--osi-ease-out-quart),
+    box-shadow var(--osi-duration-fast) var(--osi-ease-out-quart),
+    background-color var(--osi-duration-fast) var(--osi-ease-out-quart);
+  
+  // Ripple effect container
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), 
+      rgba(255, 255, 255, 0.3) 0%, 
+      transparent 70%);
+    opacity: 0;
+    transform: scale(0);
+    transition: 
+      opacity var(--osi-duration-normal) var(--osi-ease-out-quart),
+      transform var(--osi-duration-slow) var(--osi-ease-out-expo);
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  &:active {
+    transform: translateY(0) scale(0.98);
+    
+    &::before {
+      opacity: 1;
+      transform: scale(2);
+    }
+  }
+  
+  &:focus-visible {
+    outline: none;
+    box-shadow: 
+      0 0 0 2px var(--osi-card-background, #fff),
+      0 0 0 4px var(--osi-card-accent, #6366f1);
+  }
+}
+
+// ============================================
+// Card Hover Effects
+// ============================================
+
+.osi-card-container {
+  transition: 
+    transform var(--osi-duration-normal) var(--osi-ease-out-quart),
+    box-shadow var(--osi-duration-normal) var(--osi-ease-out-quart);
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.12),
+      0 4px 8px rgba(0, 0, 0, 0.08);
+  }
+  
+  // Subtle glow on hover
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, 
+      rgba(var(--osi-card-accent-rgb, 99, 102, 241), 0.1),
+      transparent 60%);
+    opacity: 0;
+    z-index: -1;
+    transition: opacity var(--osi-duration-normal) var(--osi-ease-out-quart);
+  }
+  
+  &:hover::after {
+    opacity: 1;
+  }
+}
+
+// ============================================
+// Section Entrance Animations
+// ============================================
+
+@keyframes section-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes section-enter-left {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes section-enter-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.ai-section {
+  animation: section-enter var(--osi-duration-slow) var(--osi-ease-out-expo) both;
+  
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 80}ms;
+    }
+  }
+}
+
+// ============================================
+// Field Value Reveal
+// ============================================
+
+@keyframes value-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.field-value {
+  animation: value-reveal var(--osi-duration-normal) var(--osi-ease-out-quart) both;
+}
+
+// ============================================
+// Metric Counter Animation
+// ============================================
+
+@keyframes metric-pop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.metric-value {
+  animation: metric-pop var(--osi-duration-slow) var(--osi-spring) both;
+}
+
+// ============================================
+// Trend Indicator Animation
+// ============================================
+
+@keyframes trend-up {
+  0% {
+    transform: translateY(4px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes trend-down {
+  0% {
+    transform: translateY(-4px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.trend-indicator {
+  &--up {
+    animation: trend-up var(--osi-duration-normal) var(--osi-ease-out-back) both;
+    color: var(--osi-card-success, #22c55e);
+  }
+  
+  &--down {
+    animation: trend-down var(--osi-duration-normal) var(--osi-ease-out-back) both;
+    color: var(--osi-card-destructive, #ef4444);
+  }
+}
+
+// ============================================
+// Progress Bar Animation
+// ============================================
+
+@keyframes progress-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(var(--progress, 0));
+  }
+}
+
+.progress-bar {
+  position: relative;
+  height: 8px;
+  background: var(--osi-card-border, #e5e7eb);
+  border-radius: 4px;
+  overflow: hidden;
+  
+  &__fill {
+    position: absolute;
+    inset: 0;
+    background: var(--osi-card-accent, #6366f1);
+    transform-origin: left;
+    animation: progress-fill var(--osi-duration-slower) var(--osi-ease-out-expo) both;
+    animation-delay: var(--osi-duration-fast);
+  }
+  
+  // Shimmer effect
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      transparent 100%
+    );
+    transform: translateX(-100%);
+    animation: shimmer 2s infinite;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+// ============================================
+// Skeleton Loading
+// ============================================
+
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes skeleton-wave {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--osi-card-border, #e5e7eb) 0%,
+    #f3f4f6 50%,
+    var(--osi-card-border, #e5e7eb) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-wave 1.5s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+// ============================================
+// Icon Interactions
+// ============================================
+
+.icon-interactive {
+  transition: 
+    transform var(--osi-duration-fast) var(--osi-ease-out-back),
+    color var(--osi-duration-fast) var(--osi-ease-out-quart);
+  
+  &:hover {
+    transform: scale(1.15);
+    color: var(--osi-card-accent, #6366f1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// Rotating refresh icon
+.icon-spin {
+  animation: icon-rotate 1s linear infinite;
+}
+
+@keyframes icon-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ============================================
+// Checkbox/Toggle Animations
+// ============================================
+
+@keyframes check-mark {
+  0% {
+    stroke-dashoffset: 24;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.checkbox-icon {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  
+  .checkbox:checked ~ & {
+    animation: check-mark var(--osi-duration-normal) var(--osi-ease-out-quart) forwards;
+  }
+}
+
+// ============================================
+// Tooltip Animation
+// ============================================
+
+@keyframes tooltip-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.tooltip {
+  animation: tooltip-enter var(--osi-duration-fast) var(--osi-ease-out-quart) both;
+}
+
+// ============================================
+// Card Actions Stagger
+// ============================================
+
+.osi-card-actions {
+  .osi-action-button {
+    @for $i from 1 through 5 {
+      &:nth-child(#{$i}) {
+        animation: section-enter var(--osi-duration-normal) var(--osi-ease-out-quart) both;
+        animation-delay: #{300 + ($i * 50)}ms;
+      }
+    }
+  }
+}
+
+// ============================================
+// Streaming Effect
+// ============================================
+
+@keyframes typing-cursor {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.streaming-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--osi-card-accent, #6366f1);
+  animation: typing-cursor 0.8s ease-in-out infinite;
+  vertical-align: text-bottom;
+  margin-left: 2px;
+}
+
+// ============================================
+// Focus Ring Animation
+// ============================================
+
+@keyframes focus-ring-pulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 0 2px var(--osi-card-background, #fff),
+      0 0 0 4px var(--osi-card-accent, #6366f1);
+  }
+  50% {
+    box-shadow: 
+      0 0 0 2px var(--osi-card-background, #fff),
+      0 0 0 6px rgba(var(--osi-card-accent-rgb, 99, 102, 241), 0.5);
+  }
+}
+
+.focus-animated:focus-visible {
+  outline: none;
+  animation: focus-ring-pulse 1.5s ease-in-out infinite;
+}
+
+// ============================================
+// Shake Animation (for errors)
+// ============================================
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+.shake {
+  animation: shake var(--osi-duration-slow) var(--osi-ease-out-quart);
+}
+
+// ============================================
+// Success Animation
+// ============================================
+
+@keyframes success-pop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.success-icon {
+  animation: success-pop var(--osi-duration-normal) var(--osi-spring) both;
+}
+
+// ============================================
+// Fade In/Out Utilities
+// ============================================
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.fade-in {
+  animation: fade-in var(--osi-duration-normal) var(--osi-ease-out-quart) both;
+}
+
+.fade-out {
+  animation: fade-out var(--osi-duration-normal) var(--osi-ease-out-quart) both;
+}
+
+// ============================================
+// Slide Utilities
+// ============================================
+
+@keyframes slide-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in-up {
+  animation: slide-in-up var(--osi-duration-normal) var(--osi-ease-out-quart) both;
+}
+
+.slide-in-down {
+  animation: slide-in-down var(--osi-duration-normal) var(--osi-ease-out-quart) both;
+}
+

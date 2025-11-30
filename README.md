@@ -2,11 +2,42 @@
 
 **OSI Cards - Versatile card generator for sales intelligence agents**
 
+[![npm version](https://badge.fury.io/js/osi-cards-lib.svg)](https://www.npmjs.com/package/osi-cards-lib)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Built as a modern, token-driven Angular dashboard framework (supports Angular 18 and 20), OSI Cards transforms any dataset into a visually rich stack of interactive cards rendered within a responsive masonry grid. Built for flexibility, accessibility, and performance, OSI Cards empowers developers to compose diverse data experiences with minimal friction.
 
 > **🤖 AI-Generated Cards:** All OSI Cards are **AI-generated** by Large Language Models (LLMs). Cards are never manually created - they are always produced by LLMs that understand the card structure, section types, and data schemas.
 
 Each card is composed of one or more **sections**—standalone, configurable components orchestrated by `AICardRendererComponent` ⟶ `SectionRendererComponent` ⟶ `MasonryGridComponent`. This architecture enables seamless combination of layouts, real-time streaming updates, and rich interactions.
+
+---
+
+## ✨ What's New in v1.3.0
+
+### Code Quality & Type Safety
+- **Branded Types**: Type-safe IDs (`CardId`, `SectionId`, `FieldId`) to prevent ID mixing bugs
+- **Utility Types**: `DeepPartial`, `DeepReadonly`, `RequiredFields`, `SectionOf` for better DX
+- **Factory Pattern**: `CardFactory`, `SectionFactory`, `FieldFactory` for fluent card creation
+- **Constants**: Centralized animation, layout, and streaming constants
+
+### Performance
+- **Performance Utilities**: `debounce`, `throttle`, `memoize`, `raf`, object pooling
+- **Memory Management**: `SubscriptionManager`, `CacheManager`, `CleanupRegistry`, `TimerManager`
+- **Virtual Scrolling**: Enhanced virtual scroll for large card lists
+
+### Testing
+- **Testing Utilities**: Mock Chart.js/Leaflet, test fixtures, helper functions
+- **95% Coverage Target**: Increased from 90% for stricter quality
+
+### UI/UX
+- **Design Tokens**: CSS custom properties for spacing, colors, typography, animations
+- **Directives**: `CopyToClipboardDirective`, `TooltipDirective`
+- **Accessibility**: Focus management, screen reader support, WCAG contrast checking
+
+### Architecture
+- **CardFacade Service**: Unified API for all card operations
+- **Injection Tokens**: Configurable streaming, animation, layout, theme, accessibility
 
 ---
 
@@ -17,8 +48,9 @@ Each card is composed of one or more **sections**—standalone, configurable com
 3. [Using OSI Cards in Your Project](#using-osi-cards-in-your-project)
 4. [LLM Integration](#llm-integration)
 5. [Section Types](#section-types)
-6. [Documentation](#documentation)
-7. [Development](#development)
+6. [Advanced Features](#advanced-features)
+7. [Documentation](#documentation)
+8. [Development](#development)
 
 ---
 
@@ -189,6 +221,105 @@ For complete section type documentation with examples and best practices, see [D
 
 ---
 
+## Advanced Features
+
+### Factory Pattern
+
+Create cards fluently with the factory pattern:
+
+```typescript
+import { CardFactory } from 'osi-cards-lib';
+
+const card = CardFactory.createCard('Company Overview', [
+  CardFactory.section('info', 'Company Details')
+    .addField('Industry', 'Technology')
+    .addField('Employees', '500+')
+    .build(),
+  CardFactory.section('analytics', 'Performance')
+    .addMetric('Growth', '85%', { percentage: 85, trend: 'up' })
+    .build()
+]);
+```
+
+### Branded Types for Type Safety
+
+```typescript
+import { CardId, SectionId, createCardId } from 'osi-cards-lib';
+
+// Type-safe ID handling prevents mixing different ID types
+const cardId: CardId = createCardId('my-card');
+const sectionId: SectionId = createSectionId('overview');
+
+// TypeScript error: Type 'CardId' is not assignable to type 'SectionId'
+// const wrong: SectionId = cardId;
+```
+
+### Configurable Services via Injection Tokens
+
+```typescript
+import { OSI_STREAMING_CONFIG, OSI_ANIMATION_CONFIG } from 'osi-cards-lib';
+
+@NgModule({
+  providers: [
+    {
+      provide: OSI_STREAMING_CONFIG,
+      useValue: {
+        chunkIntervalMs: 50,
+        throttleMs: 100,
+        timeoutMs: 60000
+      }
+    },
+    {
+      provide: OSI_ANIMATION_CONFIG,
+      useValue: {
+        durationMs: 300,
+        easing: 'ease-out',
+        staggerDelayMs: 40
+      }
+    }
+  ]
+})
+export class AppModule {}
+```
+
+### Accessibility Utilities
+
+```typescript
+import { AccessibilityUtil } from 'osi-cards-lib';
+
+// Announce to screen readers
+AccessibilityUtil.announceToScreenReader('Card loaded successfully');
+
+// Check for reduced motion preference
+if (AccessibilityUtil.prefersReducedMotion()) {
+  // Use simpler animations
+}
+
+// Trap focus in modal
+const releaseFocus = AccessibilityUtil.trapFocus(modalElement);
+// ... later
+releaseFocus();
+```
+
+### Performance Utilities
+
+```typescript
+import { PerformanceUtil } from 'osi-cards-lib';
+
+// Debounce expensive operations
+const debouncedSearch = PerformanceUtil.debounce(searchFn, 300);
+
+// Memoize computations
+const memoizedTransform = PerformanceUtil.memoize(transformData);
+
+// Batch DOM operations
+const batcher = PerformanceUtil.createFrameBatcher();
+batcher.schedule(() => updateDOM1());
+batcher.schedule(() => updateDOM2());
+```
+
+---
+
 ## Documentation
 
 📖 **Full Documentation:** [View Documentation](/docs)
@@ -245,7 +376,7 @@ MIT
 
 ## Version
 
-1.2.2
+1.3.0
 
 ---
 
