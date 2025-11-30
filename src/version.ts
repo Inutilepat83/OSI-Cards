@@ -4,7 +4,7 @@
  * Updated during build process
  */
 
-export const VERSION = '1.3.0';
+export const VERSION = '1.5.1';
 export const BUILD_DATE = '2025-11-30T22:00:00.000Z';
 export const BUILD_HASH = '4f3536f';
 export const BUILD_BRANCH = 'main';

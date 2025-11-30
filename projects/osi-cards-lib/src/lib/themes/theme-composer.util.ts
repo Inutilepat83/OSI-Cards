@@ -160,7 +160,7 @@ export function createThemeFromColors(
   } = palette;
 
   const accentForeground = getContrastColor(primary);
-  const primaryRgb = hexToRgb(primary);
+  const primaryRgb = hexToRgbString(primary);
 
   return {
     name,
@@ -195,13 +195,13 @@ export function createThemeFromColors(
       
       // Status colors
       '--osi-card-success': success,
-      '--osi-card-success-bg': `rgba(${hexToRgb(success)}, 0.1)`,
+      '--osi-card-success-bg': `rgba(${hexToRgbString(success)}, 0.1)`,
       '--osi-card-warning': warning,
-      '--osi-card-warning-bg': `rgba(${hexToRgb(warning)}, 0.1)`,
+      '--osi-card-warning-bg': `rgba(${hexToRgbString(warning)}, 0.1)`,
       '--osi-card-destructive': error,
-      '--osi-card-destructive-bg': `rgba(${hexToRgb(error)}, 0.1)`,
+      '--osi-card-destructive-bg': `rgba(${hexToRgbString(error)}, 0.1)`,
       '--osi-card-info': info,
-      '--osi-card-info-bg': `rgba(${hexToRgb(info)}, 0.1)`,
+      '--osi-card-info-bg': `rgba(${hexToRgbString(info)}, 0.1)`,
       
       // Shadows
       '--osi-card-shadow': isDark 
@@ -353,9 +353,9 @@ export function omitThemeVariables(
 // ============================================
 
 /**
- * Convert hex color to RGB string
+ * Convert hex color to RGB string (comma-separated)
  */
-export function hexToRgb(hex: string): string {
+export function hexToRgbString(hex: string): string {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   if (!result || !result[1] || !result[2] || !result[3]) {
     return '0, 0, 0';
@@ -423,7 +423,7 @@ export function mixColors(color1: string, color2: string, weight = 0.5): string 
  * Generate an alpha variant of a color
  */
 export function withAlpha(hex: string, alpha: number): string {
-  const rgb = hexToRgb(hex);
+  const rgb = hexToRgbString(hex);
   return `rgba(${rgb}, ${alpha})`;
 }
 

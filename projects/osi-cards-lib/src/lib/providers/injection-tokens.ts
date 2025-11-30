@@ -374,9 +374,9 @@ export const OSI_ERROR_CONFIG = new InjectionToken<OSIErrorConfig>(
 // ============================================================================
 
 /**
- * Complete OSI Cards configuration
+ * Complete OSI Cards configuration (extended)
  */
-export interface OSICardsConfig {
+export interface OSICardsFullConfig {
   streaming?: OSIStreamingConfig;
   animation?: OSIAnimationConfig;
   layout?: OSILayoutConfig;
@@ -389,7 +389,7 @@ export interface OSICardsConfig {
 /**
  * Default complete configuration
  */
-export const DEFAULT_OSI_CARDS_CONFIG: OSICardsConfig = {
+export const DEFAULT_OSI_CARDS_FULL_CONFIG: OSICardsFullConfig = {
   streaming: DEFAULT_STREAMING_CONFIG,
   animation: DEFAULT_ANIMATION_CONFIG,
   layout: DEFAULT_LAYOUT_CONFIG,
@@ -400,13 +400,13 @@ export const DEFAULT_OSI_CARDS_CONFIG: OSICardsConfig = {
 };
 
 /**
- * Injection token for complete OSI Cards configuration
+ * Injection token for complete OSI Cards configuration (extended)
  */
-export const OSI_CARDS_CONFIG = new InjectionToken<OSICardsConfig>(
-  'OSI_CARDS_CONFIG',
+export const OSI_FULL_CONFIG = new InjectionToken<OSICardsFullConfig>(
+  'OSI_FULL_CONFIG',
   {
     providedIn: 'root',
-    factory: () => DEFAULT_OSI_CARDS_CONFIG,
+    factory: () => DEFAULT_OSI_CARDS_FULL_CONFIG,
   }
 );
 

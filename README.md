@@ -13,7 +13,7 @@ Each card is composed of one or more **sections**—standalone, configurable com
 
 ---
 
-## ✨ What's New in v1.3.0
+## ✨ What's New in v1.5.1
 
 ### Code Quality & Type Safety
 - **Branded Types**: Type-safe IDs (`CardId`, `SectionId`, `FieldId`) to prevent ID mixing bugs
@@ -376,7 +376,7 @@ MIT
 
 ## Version
 
-1.3.0
+1.5.1
 
 ---
 
