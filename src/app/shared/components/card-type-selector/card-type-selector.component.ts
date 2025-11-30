@@ -11,9 +11,10 @@ import { CardType } from '../../../models';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="card-type-selector">
+    <div>
       <button
         *ngFor="let type of cardTypes"
+        class="card-type-btn"
         (click)="onTypeClick(type)"
         [class.active]="selectedType === type"
         [disabled]="disabled"
@@ -25,13 +26,7 @@ import { CardType } from '../../../models';
     </div>
   `,
   styles: [`
-    .card-type-selector {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .card-type-selector button {
+    .card-type-btn {
       padding: 0.5rem 1rem;
       background: var(--card-background);
       border: 2px solid color-mix(in srgb, var(--border) 60%, transparent);
@@ -43,23 +38,23 @@ import { CardType } from '../../../models';
       box-shadow: 0 2px 4px color-mix(in srgb, var(--foreground) 5%, transparent);
     }
 
-    .card-type-selector button:hover:not(:disabled) {
+    .card-type-btn:hover:not(:disabled) {
       background: rgba(255, 255, 255, 0.1);
       border-color: var(--color-brand, #FF7900);
     }
 
-    .card-type-selector button.active {
+    .card-type-btn.active {
       background: var(--color-brand, #FF7900);
       border-color: var(--color-brand, #FF7900);
       color: white;
     }
 
-    .card-type-selector button:disabled {
+    .card-type-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
 
-    .card-type-selector button:focus {
+    .card-type-btn:focus {
       outline: none;
       border-color: var(--color-brand, #FF7900);
     }

@@ -354,8 +354,8 @@ export class JsonProcessingService {
             // Try to fix common issues in incomplete sections
             try {
               let fixedSection = currentSection;
-              let openCount = (fixedSection.match(/{/g) || []).length;
-              let closeCount = (fixedSection.match(/}/g) || []).length;
+              const openCount = (fixedSection.match(/{/g) || []).length;
+              const closeCount = (fixedSection.match(/}/g) || []).length;
               for (let j = 0; j < openCount - closeCount; j++) {
                 fixedSection += '}';
               }

@@ -9,7 +9,19 @@ Displays metrics with visual indicators, trends, and percentages. Perfect for KP
 
 ## Overview
 
-The **Analytics Section** is used for displays metrics with visual indicators, trends, and percentages. perfect for kpis, performance metrics, and statistical data.
+The **Analytics Section** (\`type: "analytics"\`) is used for displays metrics with visual indicators, trends, and percentages. perfect for kpis, performance metrics, and statistical data.
+
+### Quick Facts
+
+| Property | Value |
+|----------|-------|
+| Type | \`analytics\` |
+| Uses Fields | Yes |
+| Uses Items | No |
+| Default Columns | 2 |
+| Supports Collapse | Yes |
+| Aliases | \`metrics\`, \`stats\` |
+
 
 ## Use Cases
 
@@ -20,25 +32,74 @@ The **Analytics Section** is used for displays metrics with visual indicators, t
 
 ## Data Schema
 
-\`\`\`typescript
-interface CardSection {
-  title: string;
-  type: 'analytics';
-  fields?: CardField[];
-  
-}
-\`\`\`
+### Fields Schema
 
-## Example
+| Property | Type | Description |
+|----------|------|-------------|
+| \`label\` | string | Metric label |
+| \`value\` | string,number | Metric value |
+| \`percentage\` | number | Percentage value for visualization |
+| \`performance\` | string | Performance rating |
+| \`trend\` | string | Trend indicator |
+| \`change\` | number | Numeric change value |
+| \`icon\` | string | Icon identifier |
+
+
+
+## Complete Example
 
 \`\`\`json
 {
-  "title": "Analytics Section Example",
+  "title": "Performance Analytics",
+  "type": "analytics",
+  "description": "Key performance indicators and metrics",
+  "fields": [
+    {
+      "label": "Performance Score",
+      "value": "95%",
+      "percentage": 95,
+      "performance": "excellent",
+      "trend": "up",
+      "change": 5.2
+    },
+    {
+      "label": "Growth Rate",
+      "value": "25% YoY",
+      "percentage": 25,
+      "performance": "good",
+      "trend": "up",
+      "change": 8.1
+    },
+    {
+      "label": "Market Share",
+      "value": "12%",
+      "percentage": 12,
+      "performance": "average",
+      "trend": "stable",
+      "change": 0.5
+    },
+    {
+      "label": "Customer Satisfaction",
+      "value": "4.8/5",
+      "percentage": 96,
+      "performance": "excellent",
+      "trend": "up"
+    }
+  ]
+}
+\`\`\`
+
+## Minimal Example
+
+\`\`\`json
+{
+  "title": "Analytics",
   "type": "analytics",
   "fields": [
     {
-      "label": "Example Label",
-      "value": "Example Value"
+      "label": "Score",
+      "value": "100%",
+      "percentage": 100
     }
   ]
 }
@@ -47,14 +108,15 @@ interface CardSection {
 ## Best Practices
 
 1. Include percentage values for better visualization
-1. Use trend indicators (up/down/stable)
-1. Show change values when available
-1. Group related metrics together
+2. Use trend indicators (up/down/stable)
+3. Show change values when available
+4. Group related metrics together
 
-## Component Properties
+## Component Information
 
-
-
+- **Selector:** \`app-analytics-section\`
+- **Component Path:** \`./lib/components/sections/analytics-section/analytics-section.component\`
+- **Style Path:** \`./lib/styles/components/sections/_analytics.scss\`
 
 ## Related Documentation
 

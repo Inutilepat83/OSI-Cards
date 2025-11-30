@@ -9,7 +9,19 @@ Displays financial data including revenue, expenses, P&L statements, and currenc
 
 ## Overview
 
-The **Financials Section** is used for displays financial data including revenue, expenses, p&l statements, and currency information.
+The **Financials Section** (\`type: "financials"\`) is used for displays financial data including revenue, expenses, p&l statements, and currency information.
+
+### Quick Facts
+
+| Property | Value |
+|----------|-------|
+| Type | \`financials\` |
+| Uses Fields | Yes |
+| Uses Items | No |
+| Default Columns | 2 |
+| Supports Collapse | Yes |
+| Aliases | None |
+
 
 ## Use Cases
 
@@ -20,25 +32,69 @@ The **Financials Section** is used for displays financial data including revenue
 
 ## Data Schema
 
-\`\`\`typescript
-interface CardSection {
-  title: string;
-  type: 'financials';
-  fields?: CardField[];
-  
-}
-\`\`\`
+### Fields Schema
 
-## Example
+| Property | Type | Description |
+|----------|------|-------------|
+| \`label\` | string | Financial metric name |
+| \`value\` | string,number | Metric value |
+| \`format\` | string | Value format |
+| \`change\` | number | Change percentage |
+| \`trend\` | string | Trend indicator |
+| \`period\` | string | Time period (Q1, YTD, etc.) |
+
+
+
+## Complete Example
 
 \`\`\`json
 {
-  "title": "Financials Section Example",
+  "title": "Financial Overview",
+  "type": "financials",
+  "description": "Key financial metrics and performance",
+  "fields": [
+    {
+      "label": "Annual Revenue",
+      "value": "$50M",
+      "format": "currency",
+      "change": 15,
+      "trend": "up"
+    },
+    {
+      "label": "Operating Margin",
+      "value": "18%",
+      "format": "percentage",
+      "change": 3.2,
+      "trend": "up"
+    },
+    {
+      "label": "EBITDA",
+      "value": "$12M",
+      "format": "currency",
+      "change": 8,
+      "trend": "up"
+    },
+    {
+      "label": "Net Income",
+      "value": "$8M",
+      "format": "currency",
+      "change": -2.5,
+      "trend": "down"
+    }
+  ]
+}
+\`\`\`
+
+## Minimal Example
+
+\`\`\`json
+{
+  "title": "Financials",
   "type": "financials",
   "fields": [
     {
-      "label": "Example Label",
-      "value": "Example Value"
+      "label": "Revenue",
+      "value": "$1M"
     }
   ]
 }
@@ -47,14 +103,15 @@ interface CardSection {
 ## Best Practices
 
 1. Use currency formatting
-1. Include time periods
-1. Show trends and changes
-1. Group by category
+2. Include time periods
+3. Show trends and changes
+4. Group by category
 
-## Component Properties
+## Component Information
 
-
-
+- **Selector:** \`app-financials-section\`
+- **Component Path:** \`./lib/components/sections/financials-section/financials-section.component\`
+- **Style Path:** \`./lib/styles/components/sections/_financials.scss\`
 
 ## Related Documentation
 

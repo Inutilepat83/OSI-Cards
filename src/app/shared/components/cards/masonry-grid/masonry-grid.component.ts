@@ -28,6 +28,8 @@ interface PositionedSection {
   left: string;
   top: number;
   width: string;
+  /** Whether this section is newly added and should animate */
+  isNew?: boolean;
 }
 
 /**
@@ -140,6 +142,23 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
    */
   @Input() virtualScrollBuffer = 500;
 
+  /**
+   * Flag indicating active streaming mode.
+   * When true, uses incremental layout updates to prevent blinking.
+   */
+  @Input() isStreaming = false;
+  
+  /**
+   * Point 9: External container width input - takes precedence over DOM measurement
+   * Allows parent to provide measured width for reliable multi-column layout
+   */
+  @Input() containerWidth?: number;
+
+  /**
+   * Type of card change for animation purposes.
+   */
+  @Input() changeType?: 'new' | 'update' | 'streaming';
+
   @Output() sectionEvent = new EventEmitter<SectionRenderEvent>();
   @Output() layoutChange = new EventEmitter<MasonryLayoutInfo>();
 
@@ -162,6 +181,40 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   visibleSections: PositionedSection[] = []; // Sections visible in viewport (for virtual scrolling)
   containerHeight = 0;
   isLayoutReady = false; // Prevent FOUC (Flash of Unstyled Content)
+
+  /**
+   * Track section keys that have already animated their entrance.
+   * Prevents re-animation when sections are re-rendered during streaming.
+   */
+  private animatedSectionKeys = new Set<string>();
+  
+  /**
+   * Track previous section keys to detect new sections
+   */
+  private previousSectionKeys = new Set<string>();
+  
+  /**
+   * Cache section positions during streaming to prevent layout jumps.
+   * Key: section key, Value: { left, top, width }
+   */
+  private positionCache = new Map<string, { left: string; top: number; width: string }>();
+  
+  /**
+   * Track the last container width to detect when we need to invalidate position cache
+   */
+  private lastContainerWidth = 0;
+  
+  /**
+   * Point 6: Guard flag to prevent reflow re-entry during active reflow
+   */
+  private isReflowing = false;
+  
+  /**
+   * Point 14: Section key stability map
+   * Maps section title/index to a stable key to ensure consistent identity during streaming
+   */
+  private stableKeyMap = new Map<string, string>();
+  private nextStableKeyIndex = 0;
 
   private resizeObserver?: ResizeObserver;
   private itemObserver?: ResizeObserver;
@@ -191,21 +244,28 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
         });
       }
       
-      // Check if structure changed (length change indicates structural change)
-      const previousLength = changes['sections'].previousValue?.length ?? 0;
-      const currentLength = this.sections.length;
-      const structureChanged = previousLength !== currentLength;
+      // Detect if this is a completely new card (not streaming update)
+      // If not streaming and sections drastically changed, reset stable keys
+      if (!this.isStreaming && changes['sections'].previousValue) {
+        const prevLength = changes['sections'].previousValue?.length || 0;
+        const currLength = this.sections.length;
+        // If section count dropped to 0 or changed dramatically, it's a new card
+        if (currLength === 0 || (prevLength > 0 && currLength > 0 && Math.abs(currLength - prevLength) > 3)) {
+          this.stableKeyMap.clear();
+          this.nextStableKeyIndex = 0;
+          this.positionCache.clear();
+          this.animatedSectionKeys.clear();
+          this.previousSectionKeys.clear();
+        }
+      }
       
       // Force recomputation of layout
       this.computeInitialLayout();
       // Schedule immediate layout update for section changes
       this.scheduleLayoutUpdate();
       
-      // Only force change detection for structural changes (sections added/removed)
-      // For content-only updates, use markForCheck to let Angular handle timing
-      if (structureChanged) {
-        this.cdr.detectChanges();
-      }
+      // Point 5: Use only markForCheck - let Angular batch updates naturally
+      // detectChanges() causes immediate re-render which leads to flickering
       this.cdr.markForCheck();
     }
   }
@@ -216,24 +276,15 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     this.observeItems();
     this.setupIntersectionObserver();
     
-    // Force change detection to ensure DOM elements are created
-    this.cdr.detectChanges();
+    // Point 4: Consolidated single deferred initialization
+    // Use single RAF with retry mechanism instead of nested detectChanges calls
+    this.cdr.markForCheck();
     
-    // Wait for DOM to be fully ready before first reflow
     requestAnimationFrame(() => {
-      // First frame: DOM should be created
-      this.cdr.detectChanges();
-      requestAnimationFrame(() => {
-        // Second frame: DOM should be fully rendered
-        this.reflowWithActualHeights();
-        requestAnimationFrame(() => {
-          // Third frame: Final reflow with actual heights
-          this.reflowWithActualHeights();
-          this.isLayoutReady = true;
-          this.cdr.detectChanges();
-          this.cdr.markForCheck();
-        });
-      });
+      // Single deferred reflow - retry mechanism handles DOM readiness
+      this.reflowWithActualHeights();
+      this.isLayoutReady = true;
+      this.cdr.markForCheck();
     });
   }
 
@@ -252,6 +303,11 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     }
     // Clear memoization cache
     this.colSpanCache.clear();
+    // Clear animation tracking
+    this.animatedSectionKeys.clear();
+    this.previousSectionKeys.clear();
+    // Clear position cache
+    this.positionCache.clear();
     if (this.rafId) {
       cancelAnimationFrame(this.rafId);
     }
@@ -260,12 +316,64 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     }
   }
 
+  /**
+   * Check if a section should animate its entrance.
+   * Returns true only for sections that haven't animated yet.
+   */
+  shouldAnimate(key: string): boolean {
+    return this.isStreaming && !this.animatedSectionKeys.has(key);
+  }
+
+  /**
+   * Mark a section as having completed its animation.
+   * Called from template on animationend event.
+   */
+  onSectionAnimationEnd(key: string): void {
+    this.animatedSectionKeys.add(key);
+  }
+
+  /**
+   * Reset animation tracking when streaming ends.
+   * Called externally or when isStreaming changes from true to false.
+   */
+  resetAnimationTracking(): void {
+    // Don't clear immediately - let completed animations stay marked
+    // This prevents re-animation if streaming restarts
+  }
+
+  /**
+   * Point 16: trackBy with stable keys - ensures Angular doesn't recreate DOM elements
+   */
   trackItem = (_: number, item: PositionedSection | null | undefined): string => {
     if (!item) {
       return `null-item-${_}`; // Unique identifier for null items
     }
     return item.key ?? `item-${_}`; // Fallback to index if key is missing
   };
+  
+  /**
+   * Point 14: Get stable key for a section
+   * Ensures the same section always gets the same key during streaming
+   */
+  private getStableKey(section: CardSection, index: number): string {
+    // If section has a stable ID, use it
+    if (section.id) {
+      return section.id;
+    }
+    
+    // Create a signature based on section properties
+    const signature = `${section.title || ''}_${section.type || ''}_${index}`;
+    
+    // Check if we already have a stable key for this signature
+    if (this.stableKeyMap.has(signature)) {
+      return this.stableKeyMap.get(signature)!;
+    }
+    
+    // Generate a new stable key
+    const stableKey = `stable_section_${this.nextStableKeyIndex++}`;
+    this.stableKeyMap.set(signature, stableKey);
+    return stableKey;
+  }
 
   onSectionEvent(event: SectionRenderEvent): void {
     this.sectionEvent.emit(event);
@@ -575,25 +683,142 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     
     this.reflowCount = 0;
     this.containerHeight = 0;
-    this.isLayoutReady = false; // Reset layout ready state
     
-    // Stack sections vertically initially to prevent overlap
-    let cumulativeTop = 0;
+    // During streaming, keep layout ready to prevent opacity flicker
+    // Only reset if not streaming or if this is the first render
+    if (!this.isStreaming) {
+      this.isLayoutReady = false;
+    }
+    
+    // Point 9 & 11: Calculate container width with fallback chain for IMMEDIATE multi-column layout
+    const containerElement = this.containerRef?.nativeElement;
+    let containerWidthResolved = 0;
+    
+    // 1. Use input containerWidth if provided (most reliable - from parent ResizeObserver)
+    if (this.containerWidth && this.containerWidth >= this.minColumnWidth) {
+      containerWidthResolved = this.containerWidth;
+    }
+    // 2. Use cached width (from previous successful measurement)
+    else if (this.lastContainerWidth >= this.minColumnWidth) {
+      containerWidthResolved = this.lastContainerWidth;
+    }
+    // 3. Try DOM measurement
+    else {
+      containerWidthResolved = containerElement?.clientWidth || 0;
+      if (containerWidthResolved < this.minColumnWidth) {
+        // Try getBoundingClientRect for more accurate measurement
+        const rect = containerElement?.getBoundingClientRect();
+        if (rect && rect.width >= this.minColumnWidth) {
+          containerWidthResolved = rect.width;
+        }
+      }
+    }
+    // 4. Window fallback - CRITICAL for streaming to ensure multi-column from start
+    // Use a reasonable minimum (600px) to ensure 2-column layout
+    if (containerWidthResolved < this.minColumnWidth && typeof window !== 'undefined') {
+      containerWidthResolved = Math.max(window.innerWidth - 80, 600);
+    }
+    
+    // Cache this width for future use
+    const columns = Math.min(this.maxColumns, Math.max(1, 
+      Math.floor((containerWidthResolved + this.gap) / (this.minColumnWidth + this.gap))
+    ));
+    
+    // CRITICAL: Invalidate position cache if column count changed
+    // This fixes the single-column bug during streaming
+    const lastColumns = this.lastContainerWidth > 0 
+      ? Math.min(this.maxColumns, Math.max(1, Math.floor((this.lastContainerWidth + this.gap) / (this.minColumnWidth + this.gap))))
+      : 0;
+    
+    if (columns !== lastColumns && lastColumns > 0) {
+      // Column count changed - clear position cache to force recalculation
+      this.positionCache.clear();
+    }
+    
+    // Cache the container width AFTER column comparison
+    if (containerWidthResolved >= this.minColumnWidth) {
+      this.lastContainerWidth = containerWidthResolved;
+    }
+    
+    // Calculate column width
+    const colWidth = columns > 1 
+      ? (containerWidthResolved - (this.gap * (columns - 1))) / columns
+      : containerWidthResolved;
+    
+    // Track column heights for multi-column placement
+    const colHeights = Array(columns).fill(0);
+    
+    // Build current section keys set
+    const currentSectionKeys = new Set<string>();
+    
+    // Only use position cache if we have multi-column layout
+    // This prevents caching single-column positions when container width is invalid
+    const shouldUseCache = this.isStreaming && columns > 1;
+    
+    // Place sections in multi-column layout from the start
     this.positionedSections = validSections.map((section, index) => {
+      // Point 14: Use stable key for consistent section identity
+      const key = this.getStableKey(section, index);
+      currentSectionKeys.add(key);
+      
+      // Check if this is a new section (not in previous keys)
+      const isNew = this.isStreaming && !this.previousSectionKeys.has(key) && !this.animatedSectionKeys.has(key);
+      
+      // Point 15: Try to use cached position during streaming for stability (only if multi-column)
+      const cachedPos = shouldUseCache ? this.positionCache.get(key) : undefined;
+      
+      let left: string;
+      let top: number;
+      let widthExpr: string;
+      
+      if (cachedPos && !isNew && columns > 1) {
+        // Use cached position for existing sections (position locking)
+        left = cachedPos.left;
+        top = cachedPos.top;
+        widthExpr = cachedPos.width;
+        // Update column height tracker based on cached position
+        const colIndex = Math.floor(parseInt(cachedPos.left) / (colWidth + this.gap)) || 0;
+        if (colIndex < columns) {
+          colHeights[colIndex] = Math.max(colHeights[colIndex], top + 300 + this.gap);
+        }
+      } else {
+        // Find shortest column for placement
+        const shortestCol = colHeights.indexOf(Math.min(...colHeights));
+        left = columns > 1 ? `${shortestCol * (colWidth + this.gap)}px` : '0px';
+        top = colHeights[shortestCol];
+        
+        // Calculate width expression
+        const totalGap = this.gap * (columns - 1);
+        widthExpr = columns > 1 
+          ? `calc((100% - ${totalGap}px) / ${columns})`
+          : '100%';
+        
+        // Estimate height and update column
+        colHeights[shortestCol] = top + 300 + this.gap;
+        
+        // Only cache if multi-column layout is active
+        if (columns > 1) {
+          this.positionCache.set(key, { left, top, width: widthExpr });
+        }
+      }
+      
       const item: PositionedSection = {
         section,
-        key: section.id ?? `${section.title ?? section.type ?? 'section'}-${index}`,
+        key,
         colSpan: this.getSectionColSpan(section),
-        left: '0px',
-        top: cumulativeTop,
-        width: '100%'
+        left,
+        top,
+        width: widthExpr,
+        isNew
       };
-      // Add estimated spacing (will be recalculated with actual heights)
-      cumulativeTop += 300 + this.gap;
+      
       return item;
     });
     
-    this.containerHeight = cumulativeTop;
+    // Update previous section keys for next comparison
+    this.previousSectionKeys = currentSectionKeys;
+    
+    this.containerHeight = Math.max(...colHeights, 0);
     
     // Diagnostic logging
     if (this.isDebugMode) {
@@ -669,34 +894,86 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
    * Space Complexity: O(n + c) for positioned sections and column heights
    */
   private reflowWithActualHeights(): void {
+    // Point 6: Guard against re-entry during active reflow
+    if (this.isReflowing) {
+      return;
+    }
+    
     if (!this.containerRef?.nativeElement || this.reflowCount >= this.MAX_REFLOWS) {
       return;
     }
 
+    this.isReflowing = true;
     this.reflowCount++;
 
     const containerElement = this.containerRef.nativeElement;
     if (!containerElement || typeof containerElement.clientWidth === 'undefined') {
+      this.isReflowing = false;
       return;
     }
 
-    const containerWidth = containerElement.clientWidth;
-    if (!containerWidth) {
+    // Point 9 & 11: Fallback chain for container width
+    // inputWidth -> cachedWidth -> DOMWidth -> parentWidth -> windowWidth - 80px
+    let resolvedWidth = 0;
+    
+    // 1. Use input containerWidth if provided (most reliable)
+    if (this.containerWidth && this.containerWidth >= this.minColumnWidth) {
+      resolvedWidth = this.containerWidth;
+    }
+    // 2. Use last valid cached width if available
+    else if (this.lastContainerWidth >= this.minColumnWidth) {
+      resolvedWidth = this.lastContainerWidth;
+    }
+    // 3. Try DOM measurement
+    else {
+      resolvedWidth = containerElement.clientWidth;
+      if (resolvedWidth < this.minColumnWidth) {
+        // Try getBoundingClientRect
+        const rect = containerElement.getBoundingClientRect();
+        if (rect.width >= this.minColumnWidth) {
+          resolvedWidth = rect.width;
+        }
+      }
+    }
+    // 4. Window fallback
+    if (resolvedWidth < this.minColumnWidth && typeof window !== 'undefined') {
+      resolvedWidth = Math.max(window.innerWidth - 80, this.minColumnWidth);
+    }
+    
+    if (resolvedWidth < this.minColumnWidth) {
+      this.isReflowing = false;
       return;
+    }
+    
+    const containerWidthFinal = resolvedWidth;
+
+    // Check if container width changed significantly (requires layout recalculation)
+    const widthChanged = Math.abs(containerWidthFinal - this.lastContainerWidth) > 4;
+    
+    // Point 8: Cache valid container width
+    // Invalidate position cache if width changed or not streaming
+    if (widthChanged || !this.isStreaming) {
+      this.positionCache.clear();
+      this.lastContainerWidth = containerWidthFinal;
     }
 
     // Smart responsive column calculation that adapts continuously
     const columns = Math.min(
       this.maxColumns,
-      Math.max(1, Math.floor((containerWidth + this.gap) / (this.minColumnWidth + this.gap)))
+      Math.max(1, Math.floor((containerWidthFinal + this.gap) / (this.minColumnWidth + this.gap)))
     );
     
-    // Expose column count as CSS custom property for section grids to consume
+    // Point 10: Expose column count and width as CSS custom properties
     if (containerElement.style && typeof containerElement.style.setProperty === 'function') {
       containerElement.style.setProperty('--masonry-columns', columns.toString());
+      containerElement.style.setProperty('--masonry-container-width', `${containerWidthFinal}px`);
+      const colWidth = columns > 1 
+        ? (containerWidthFinal - (this.gap * (columns - 1))) / columns
+        : containerWidthFinal;
+      containerElement.style.setProperty('--masonry-column-width', `${colWidth}px`);
     }
     
-    this.emitLayoutInfo(columns, containerWidth);
+    this.emitLayoutInfo(columns, containerWidthFinal);
 
     const colHeights = Array(columns).fill(0);
     let hasZeroHeights = false;
@@ -705,10 +982,9 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     // Guard: If positionedSections exist but DOM elements don't, wait for next frame
     if (this.positionedSections.length > 0 && itemRefArray.length === 0) {
       // DOM hasn't rendered yet, schedule retry
+      this.isReflowing = false;
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          this.reflowWithActualHeights();
-        });
+        this.reflowWithActualHeights();
       });
       return;
     }
@@ -716,6 +992,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     // Ensure itemRefArray length matches positionedSections length
     if (itemRefArray.length !== this.positionedSections.length) {
       // Mismatch - wait for DOM to catch up
+      this.isReflowing = false;
       requestAnimationFrame(() => {
         this.reflowWithActualHeights();
       });
@@ -730,46 +1007,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       .filter(item => item != null && item.section != null)
       .map((item, index) => {
       const colSpan = Math.min(item.colSpan, columns);
-      let bestColumn = 0;
-      let minHeight = Number.MAX_VALUE;
-
-      /**
-       * Shortest Column Algorithm:
-       * 
-       * For each possible starting column position (0 to columns - colSpan):
-       * 1. Calculate the maximum height across all columns the section would occupy
-       * 2. Choose the position with the minimum maximum height
-       * 
-       * This ensures sections are placed in the shortest available space,
-       * minimizing gaps and creating a balanced masonry layout.
-       * 
-       * Example: If colSpan=2 and columns=4, we check positions:
-       * - Position 0: columns [0,1] -> max height
-       * - Position 1: columns [1,2] -> max height
-       * - Position 2: columns [2,3] -> max height
-       * Choose position with minimum max height
-       */
-      for (let col = 0; col <= columns - colSpan; col += 1) {
-        let maxColHeight = 0;
-        // Find maximum height across all columns this section would occupy
-        for (let c = col; c < col + colSpan; c++) {
-          if (colHeights[c] > maxColHeight) {
-            maxColHeight = colHeights[c];
-          }
-        }
-        // Update best position if this is shorter
-        if (maxColHeight < minHeight) {
-          minHeight = maxColHeight;
-          bestColumn = col;
-        }
-      }
-
-      // Calculate width and left expressions
-      const widthExpr = colSpan === 1
-        ? columnWidthExpr
-        : `calc(${columnWidthExpr} * ${colSpan} + ${this.gap * (colSpan - 1)}px)`;
-      const leftExpr = `calc((${columnWidthExpr} + ${this.gap}px) * ${bestColumn})`;
-
+      
       // Safe access with null check
       const itemElement = itemRefArray[index]?.nativeElement;
       let height = 0;
@@ -793,17 +1031,83 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
         }
       }
 
-      // Update column heights
-      for (let col = bestColumn; col < bestColumn + colSpan; col += 1) {
-        colHeights[col] = minHeight + height + this.gap;
+      // During streaming, try to use cached position for existing (non-new) sections
+      // This prevents existing sections from jumping around when new sections are added
+      const cachedPosition = this.positionCache.get(item.key);
+      const shouldUseCachedPosition = this.isStreaming && 
+                                       cachedPosition && 
+                                       !item.isNew &&
+                                       this.animatedSectionKeys.has(item.key);
+      
+      let bestColumn = 0;
+      let minHeight = Number.MAX_VALUE;
+      let leftExpr: string;
+      let topValue: number;
+      let widthExpr: string;
+
+      if (shouldUseCachedPosition && cachedPosition) {
+        // Use cached position for stable layout
+        leftExpr = cachedPosition.left;
+        topValue = cachedPosition.top;
+        widthExpr = cachedPosition.width;
+        
+        // Still need to find which column this was in to update colHeights properly
+        // Parse the column from the cached left expression if possible
+        // For now, just update all column heights to max to ensure new sections go below
+        const maxHeight = Math.max(...colHeights, topValue + height + this.gap);
+        for (let c = 0; c < columns; c++) {
+          colHeights[c] = Math.max(colHeights[c], topValue + height + this.gap);
+        }
+      } else {
+        /**
+         * Shortest Column Algorithm:
+         * 
+         * For each possible starting column position (0 to columns - colSpan):
+         * 1. Calculate the maximum height across all columns the section would occupy
+         * 2. Choose the position with the minimum maximum height
+         * 
+         * This ensures sections are placed in the shortest available space,
+         * minimizing gaps and creating a balanced masonry layout.
+         */
+        for (let col = 0; col <= columns - colSpan; col += 1) {
+          let maxColHeight = 0;
+          // Find maximum height across all columns this section would occupy
+          for (let c = col; c < col + colSpan; c++) {
+            if (colHeights[c] > maxColHeight) {
+              maxColHeight = colHeights[c];
+            }
+          }
+          // Update best position if this is shorter
+          if (maxColHeight < minHeight) {
+            minHeight = maxColHeight;
+            bestColumn = col;
+          }
+        }
+
+        // Calculate width and left expressions
+        widthExpr = colSpan === 1
+          ? columnWidthExpr
+          : `calc(${columnWidthExpr} * ${colSpan} + ${this.gap * (colSpan - 1)}px)`;
+        leftExpr = `calc((${columnWidthExpr} + ${this.gap}px) * ${bestColumn})`;
+        topValue = minHeight;
+
+        // Update column heights
+        for (let col = bestColumn; col < bestColumn + colSpan; col += 1) {
+          colHeights[col] = minHeight + height + this.gap;
+        }
+        
+        // Cache the new position
+        this.positionCache.set(item.key, { left: leftExpr, top: topValue, width: widthExpr });
       }
 
       return {
         ...item,
         colSpan,
         left: leftExpr,
-        top: minHeight,
-        width: widthExpr
+        top: topValue,
+        width: widthExpr,
+        // Preserve isNew flag for animation
+        isNew: item.isNew
       };
     });
 
@@ -815,15 +1119,21 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       this.isLayoutReady = true;
     }
     
-    // Force change detection - transitions will be handled by CSS
+    // During streaming, ensure layout stays ready to prevent flicker
+    if (this.isStreaming && this.positionedSections.length > 0) {
+      this.isLayoutReady = true;
+    }
+    
+    // Point 6: Reset reflow guard
+    this.isReflowing = false;
+    
+    // Use markForCheck instead of detectChanges - let Angular batch updates
     this.cdr.markForCheck();
     
-    // If we detected zero heights and haven't hit max reflows, try again immediately
+    // If we detected zero heights and haven't hit max reflows, try again
     if (hasZeroHeights && this.reflowCount < this.MAX_REFLOWS) {
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          this.reflowWithActualHeights();
-        });
+        this.reflowWithActualHeights();
       });
     }
   }

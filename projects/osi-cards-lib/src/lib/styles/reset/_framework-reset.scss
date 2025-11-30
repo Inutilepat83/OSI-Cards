@@ -1,0 +1,452 @@
+// ============================================
+// COMPREHENSIVE FRAMEWORK RESET
+// ============================================
+//
+// Resets CSS variables and styles from popular CSS frameworks
+// to prevent them from affecting OSI Cards components.
+//
+// Supported frameworks:
+// - Bootstrap 4.x / 5.x
+// - Boosted (Orange Bootstrap)
+// - Tailwind CSS
+// - Foundation
+// - Bulma
+// - Materialize CSS
+// - DataTables
+//
+// Usage: Include in container scope
+//
+// ============================================
+
+/// Complete framework variable reset mixin
+/// Unsets all common CSS framework variables to prevent inheritance
+@mixin framework-variable-reset() {
+  // ========================================
+  // BOOTSTRAP 5.x VARIABLE RESET
+  // ========================================
+  
+  // Color palette
+  --bs-blue: unset;
+  --bs-indigo: unset;
+  --bs-purple: unset;
+  --bs-pink: unset;
+  --bs-red: unset;
+  --bs-orange: unset;
+  --bs-yellow: unset;
+  --bs-green: unset;
+  --bs-teal: unset;
+  --bs-cyan: unset;
+  --bs-black: unset;
+  --bs-white: unset;
+  --bs-gray: unset;
+  --bs-gray-dark: unset;
+  
+  // Gray scale
+  --bs-gray-100: unset;
+  --bs-gray-200: unset;
+  --bs-gray-300: unset;
+  --bs-gray-400: unset;
+  --bs-gray-500: unset;
+  --bs-gray-600: unset;
+  --bs-gray-700: unset;
+  --bs-gray-800: unset;
+  --bs-gray-900: unset;
+  --bs-gray-950: unset;
+  
+  // Semantic colors
+  --bs-primary: unset;
+  --bs-secondary: unset;
+  --bs-success: unset;
+  --bs-info: unset;
+  --bs-warning: unset;
+  --bs-danger: unset;
+  --bs-light: unset;
+  --bs-dark: unset;
+  
+  // RGB color variants
+  --bs-primary-rgb: unset;
+  --bs-secondary-rgb: unset;
+  --bs-success-rgb: unset;
+  --bs-info-rgb: unset;
+  --bs-warning-rgb: unset;
+  --bs-danger-rgb: unset;
+  --bs-light-rgb: unset;
+  --bs-dark-rgb: unset;
+  --bs-white-rgb: unset;
+  --bs-black-rgb: unset;
+  --bs-body-color-rgb: unset;
+  --bs-body-bg-rgb: unset;
+  
+  // Typography
+  --bs-font-sans-serif: unset;
+  --bs-font-monospace: unset;
+  --bs-body-font-family: unset;
+  --bs-body-font-size: unset;
+  --bs-body-font-weight: unset;
+  --bs-body-line-height: unset;
+  --bs-body-color: unset;
+  --bs-body-bg: unset;
+  --bs-emphasis-color: unset;
+  --bs-emphasis-color-rgb: unset;
+  --bs-secondary-color: unset;
+  --bs-secondary-color-rgb: unset;
+  --bs-secondary-bg: unset;
+  --bs-secondary-bg-rgb: unset;
+  --bs-tertiary-color: unset;
+  --bs-tertiary-color-rgb: unset;
+  --bs-tertiary-bg: unset;
+  --bs-tertiary-bg-rgb: unset;
+  --bs-heading-color: unset;
+  
+  // Links
+  --bs-link-color: unset;
+  --bs-link-color-rgb: unset;
+  --bs-link-decoration: unset;
+  --bs-link-hover-color: unset;
+  --bs-link-hover-color-rgb: unset;
+  --bs-link-hover-decoration: unset;
+  
+  // Code
+  --bs-code-color: unset;
+  --bs-highlight-bg: unset;
+  
+  // Borders
+  --bs-border-width: unset;
+  --bs-border-style: unset;
+  --bs-border-color: unset;
+  --bs-border-color-translucent: unset;
+  --bs-border-radius: unset;
+  --bs-border-radius-sm: unset;
+  --bs-border-radius-lg: unset;
+  --bs-border-radius-xl: unset;
+  --bs-border-radius-xxl: unset;
+  --bs-border-radius-2xl: unset;
+  --bs-border-radius-pill: unset;
+  
+  // Shadows
+  --bs-box-shadow: unset;
+  --bs-box-shadow-sm: unset;
+  --bs-box-shadow-lg: unset;
+  --bs-box-shadow-inset: unset;
+  
+  // Focus ring
+  --bs-focus-ring-width: unset;
+  --bs-focus-ring-opacity: unset;
+  --bs-focus-ring-color: unset;
+  
+  // Grid
+  --bs-gutter-x: unset;
+  --bs-gutter-y: unset;
+  --bs-breakpoint-xs: unset;
+  --bs-breakpoint-sm: unset;
+  --bs-breakpoint-md: unset;
+  --bs-breakpoint-lg: unset;
+  --bs-breakpoint-xl: unset;
+  --bs-breakpoint-xxl: unset;
+  
+  // Gradient
+  --bs-gradient: unset;
+  
+  // Component colors (Bootstrap 5.3+)
+  --bs-heading-color: unset;
+  --bs-nav-link-color: unset;
+  --bs-nav-link-hover-color: unset;
+  --bs-navbar-color: unset;
+  --bs-navbar-hover-color: unset;
+  --bs-navbar-disabled-color: unset;
+  --bs-navbar-active-color: unset;
+  --bs-navbar-brand-color: unset;
+  --bs-navbar-brand-hover-color: unset;
+  --bs-dropdown-color: unset;
+  --bs-dropdown-bg: unset;
+  --bs-dropdown-border-color: unset;
+  --bs-dropdown-link-color: unset;
+  --bs-dropdown-link-hover-color: unset;
+  --bs-dropdown-link-hover-bg: unset;
+  --bs-dropdown-link-active-color: unset;
+  --bs-dropdown-link-active-bg: unset;
+  --bs-dropdown-link-disabled-color: unset;
+  
+  // Form variables
+  --bs-form-valid-color: unset;
+  --bs-form-valid-border-color: unset;
+  --bs-form-invalid-color: unset;
+  --bs-form-invalid-border-color: unset;
+  
+  // Card variables
+  --bs-card-spacer-y: unset;
+  --bs-card-spacer-x: unset;
+  --bs-card-title-spacer-y: unset;
+  --bs-card-border-width: unset;
+  --bs-card-border-color: unset;
+  --bs-card-border-radius: unset;
+  --bs-card-box-shadow: unset;
+  --bs-card-inner-border-radius: unset;
+  --bs-card-cap-padding-y: unset;
+  --bs-card-cap-padding-x: unset;
+  --bs-card-cap-bg: unset;
+  --bs-card-cap-color: unset;
+  --bs-card-height: unset;
+  --bs-card-color: unset;
+  --bs-card-bg: unset;
+  --bs-card-img-overlay-padding: unset;
+  --bs-card-group-margin: unset;
+  
+  // Button variables
+  --bs-btn-padding-x: unset;
+  --bs-btn-padding-y: unset;
+  --bs-btn-font-family: unset;
+  --bs-btn-font-size: unset;
+  --bs-btn-line-height: unset;
+  --bs-btn-font-weight: unset;
+  --bs-btn-color: unset;
+  --bs-btn-bg: unset;
+  --bs-btn-border-width: unset;
+  --bs-btn-border-color: unset;
+  --bs-btn-border-radius: unset;
+  --bs-btn-hover-border-color: unset;
+  --bs-btn-box-shadow: unset;
+  --bs-btn-disabled-opacity: unset;
+  --bs-btn-focus-box-shadow: unset;
+  
+  // Table variables
+  --bs-table-color: unset;
+  --bs-table-bg: unset;
+  --bs-table-border-color: unset;
+  --bs-table-accent-bg: unset;
+  --bs-table-striped-color: unset;
+  --bs-table-striped-bg: unset;
+  --bs-table-active-color: unset;
+  --bs-table-active-bg: unset;
+  --bs-table-hover-color: unset;
+  --bs-table-hover-bg: unset;
+  
+  // ========================================
+  // BOOSTED (ORANGE BOOTSTRAP) RESET
+  // ========================================
+  
+  --boosted-orange: unset;
+  --boosted-white: unset;
+  --boosted-black: unset;
+  --boosted-font-family: unset;
+  --boosted-letter-spacing: unset;
+  
+  // ========================================
+  // TAILWIND CSS VARIABLE RESET
+  // ========================================
+  
+  --tw-ring-color: unset;
+  --tw-ring-offset-color: unset;
+  --tw-ring-offset-width: unset;
+  --tw-ring-offset-shadow: unset;
+  --tw-ring-shadow: unset;
+  --tw-shadow: unset;
+  --tw-shadow-colored: unset;
+  --tw-border-opacity: unset;
+  --tw-bg-opacity: unset;
+  --tw-text-opacity: unset;
+  --tw-divide-opacity: unset;
+  --tw-placeholder-opacity: unset;
+  --tw-backdrop-blur: unset;
+  --tw-backdrop-brightness: unset;
+  --tw-backdrop-contrast: unset;
+  --tw-backdrop-grayscale: unset;
+  --tw-backdrop-hue-rotate: unset;
+  --tw-backdrop-invert: unset;
+  --tw-backdrop-opacity: unset;
+  --tw-backdrop-saturate: unset;
+  --tw-backdrop-sepia: unset;
+  --tw-blur: unset;
+  --tw-brightness: unset;
+  --tw-contrast: unset;
+  --tw-grayscale: unset;
+  --tw-hue-rotate: unset;
+  --tw-invert: unset;
+  --tw-saturate: unset;
+  --tw-sepia: unset;
+  --tw-drop-shadow: unset;
+  --tw-gradient-from: unset;
+  --tw-gradient-to: unset;
+  --tw-gradient-stops: unset;
+  --tw-ordinal: unset;
+  --tw-slashed-zero: unset;
+  --tw-numeric-figure: unset;
+  --tw-numeric-spacing: unset;
+  --tw-numeric-fraction: unset;
+  --tw-pan-x: unset;
+  --tw-pan-y: unset;
+  --tw-pinch-zoom: unset;
+  --tw-scroll-snap-strictness: unset;
+  --tw-touch-action: unset;
+  --tw-translate-x: unset;
+  --tw-translate-y: unset;
+  --tw-rotate: unset;
+  --tw-skew-x: unset;
+  --tw-skew-y: unset;
+  --tw-scale-x: unset;
+  --tw-scale-y: unset;
+  --tw-transform: unset;
+  
+  // ========================================
+  // FOUNDATION FRAMEWORK RESET
+  // ========================================
+  
+  --foundation-palette-primary: unset;
+  --foundation-palette-secondary: unset;
+  --foundation-palette-success: unset;
+  --foundation-palette-warning: unset;
+  --foundation-palette-alert: unset;
+  --foundation-global-font-size: unset;
+  --foundation-global-lineheight: unset;
+  --foundation-global-margin: unset;
+  --foundation-global-padding: unset;
+  --foundation-global-radius: unset;
+  --foundation-global-weight-normal: unset;
+  --foundation-global-weight-bold: unset;
+  
+  // ========================================
+  // BULMA FRAMEWORK RESET
+  // ========================================
+  
+  --bulma-primary: unset;
+  --bulma-link: unset;
+  --bulma-info: unset;
+  --bulma-success: unset;
+  --bulma-warning: unset;
+  --bulma-danger: unset;
+  --bulma-light: unset;
+  --bulma-dark: unset;
+  --bulma-white: unset;
+  --bulma-black: unset;
+  --bulma-family-sans-serif: unset;
+  --bulma-family-monospace: unset;
+  --bulma-size-small: unset;
+  --bulma-size-normal: unset;
+  --bulma-size-medium: unset;
+  --bulma-size-large: unset;
+  --bulma-gap: unset;
+  --bulma-radius: unset;
+  --bulma-radius-small: unset;
+  --bulma-radius-large: unset;
+  --bulma-radius-rounded: unset;
+  
+  // ========================================
+  // MATERIALIZE CSS RESET
+  // ========================================
+  
+  --mdc-theme-primary: unset;
+  --mdc-theme-secondary: unset;
+  --mdc-theme-surface: unset;
+  --mdc-theme-background: unset;
+  --mdc-theme-error: unset;
+  --mdc-theme-on-primary: unset;
+  --mdc-theme-on-secondary: unset;
+  --mdc-theme-on-surface: unset;
+  --mdc-theme-on-error: unset;
+  --mdc-typography-font-family: unset;
+  --mdc-shape-small: unset;
+  --mdc-shape-medium: unset;
+  --mdc-shape-large: unset;
+  
+  // ========================================
+  // DATATABLES RESET
+  // ========================================
+  
+  --dt-row-selected: unset;
+  --dt-row-selected-text: unset;
+  --dt-row-selected-link: unset;
+  --dt-row-stripe: unset;
+  --dt-row-hover: unset;
+  --dt-column-ordering: unset;
+  --dt-html-background: unset;
+}
+
+/// Apply complete style override for framework isolation
+/// Use this mixin inside a container scope
+@mixin framework-style-override() {
+  // Reset all inherited properties
+  all: revert;
+  
+  // Re-establish box model
+  box-sizing: border-box;
+  
+  // Apply to all children
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box !important;
+  }
+  
+  // Reset heading styles that Bootstrap modifies
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    font-family: inherit !important;
+    line-height: 1.2 !important;
+  }
+  
+  // Reset button styles
+  button {
+    font-family: inherit !important;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    
+    &:focus-visible {
+      outline: 2px solid var(--color-brand, #FF7900) !important;
+      outline-offset: 2px !important;
+    }
+    
+    &:focus:not(:focus-visible) {
+      outline: none !important;
+    }
+  }
+  
+  // Reset link styles
+  a {
+    text-decoration: none !important;
+    color: inherit !important;
+    
+    &:hover,
+    &:focus {
+      text-decoration: none !important;
+    }
+  }
+  
+  // Reset list styles
+  ul, ol {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  // Reset table styles
+  table {
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+  }
+  
+  // Reset form element styles
+  input,
+  textarea,
+  select {
+    font-family: inherit !important;
+    font-size: inherit !important;
+    border: none;
+    background: transparent;
+    
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+// Export mixins for use in component styles
+@mixin apply-framework-reset() {
+  @include framework-variable-reset();
+  @include framework-style-override();
+}
+

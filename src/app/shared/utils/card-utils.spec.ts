@@ -109,14 +109,12 @@ describe('CardUtils', () => {
       const card = CardBuilder.create()
         .withId('card-id')
         .withTitle('Test Card')
-        .withSubtitle('Test Subtitle')
         .build();
       
       const result = removeAllIds(card);
       
       expect((result as any).id).toBeUndefined();
       expect((result as any).cardTitle).toBe('Test Card');
-      expect((result as any).cardSubtitle).toBe('Test Subtitle');
     });
 
     it('should handle arrays', () => {

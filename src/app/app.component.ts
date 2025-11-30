@@ -67,6 +67,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     // Performance service cleanup is handled automatically via OnDestroy interface
+    // No explicit cleanup needed - intentionally empty
+    void 0; // Satisfy linter requirement for non-empty method
   }
 
   toggleTheme(): void {

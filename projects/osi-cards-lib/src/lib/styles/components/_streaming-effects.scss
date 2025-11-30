@@ -1,0 +1,352 @@
+/* ===================================================================
+   STREAMING EFFECTS
+   Magical visual effects for LLM streaming card generation
+   
+   These styles create the "AI generating" experience with:
+   - Traveling spark around the card border
+   - Blur-to-sharp section reveals
+   - Shimmer sweeps across new content
+   - Typing cursor effect
+   - Pulsing glows on active sections
+   =================================================================== */
+
+/* ===================================================================
+   CARD SURFACE STREAMING STATE
+   Base container styles when streaming is active
+   =================================================================== */
+
+.ai-card-surface.streaming-active {
+  position: relative;
+  border: 1px solid rgba(255, 121, 0, 0.4);
+  box-shadow: 
+    0 0 10px rgba(255, 121, 0, 0.2),
+    0 0 20px rgba(255, 121, 0, 0.1);
+}
+
+/* Traveling spark - small glowing dot that travels around the border */
+.ai-card-surface.streaming-active::before {
+  content: '';
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #ff9500;
+  border-radius: 50%;
+  box-shadow: 0 0 6px 1px rgba(255, 149, 0, 0.8);
+  animation: sparkTravel 3s linear infinite;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ===================================================================
+   CONTENT STREAMING ANIMATIONS
+   Smooth transitions for text and values during streaming
+   =================================================================== */
+
+.ai-card-surface.streaming-active .field-value,
+.ai-card-surface.streaming-active .item-title,
+.ai-card-surface.streaming-active .item-description,
+.ai-card-surface.streaming-active .section-title,
+.ai-card-surface.streaming-active .section-description,
+.ai-card-surface.streaming-active [class*="value"],
+.ai-card-surface.streaming-active [class*="label"] {
+  transition: all 0.2s ease-out;
+}
+
+/* Typing cursor effect - blinking cursor at end of streaming text */
+.ai-card-surface.streaming-active [class*="value"]:last-child::after,
+.ai-card-surface.streaming-active .field-value:last-child::after {
+  content: '▋';
+  display: inline-block;
+  color: var(--color-brand, #ff7900);
+  animation: cursorBlink 0.8s step-end infinite;
+  margin-left: 2px;
+  font-weight: normal;
+}
+
+/* ===================================================================
+   SECTION CARD STREAMING EFFECTS
+   Glow and pulse effects on section cards
+   =================================================================== */
+
+.ai-card-surface.streaming-active .section-card,
+.ai-card-surface.streaming-active [class*="section-"] > div {
+  border-color: rgba(255, 121, 0, 0.3) !important;
+  box-shadow: 0 0 15px rgba(255, 121, 0, 0.25);
+  animation: sectionGlowPulse 1.5s ease-in-out infinite;
+}
+
+.ai-card-surface.streaming-active .section-card:hover {
+  border-color: rgba(255, 121, 0, 0.6) !important;
+  box-shadow: 0 0 25px rgba(255, 121, 0, 0.4);
+}
+
+/* Inner glow flash combined with pulse */
+.ai-card-surface.streaming-active .section-card {
+  animation: 
+    sectionGlowPulse 1.5s ease-in-out infinite,
+    innerFlash 0.6s ease-out forwards;
+}
+
+/* Subtle inner border glow on sections */
+.ai-card-surface.streaming-active .section-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 121, 0, 0.15);
+  pointer-events: none;
+  animation: innerBorderPulse 2s ease-in-out infinite;
+}
+
+/* ===================================================================
+   MASONRY ITEM STREAMING EFFECTS
+   Magical entrance animations for grid items
+   =================================================================== */
+
+/* Magical section entrance - blur-to-sharp reveal with scale bounce */
+.ai-card-surface.streaming-active .masonry-item {
+  animation: sectionMagicAppear 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Staggered entrance delays for cascade effect */
+.ai-card-surface.streaming-active .masonry-item:nth-child(1) { animation-delay: 0ms; }
+.ai-card-surface.streaming-active .masonry-item:nth-child(2) { animation-delay: 80ms; }
+.ai-card-surface.streaming-active .masonry-item:nth-child(3) { animation-delay: 160ms; }
+.ai-card-surface.streaming-active .masonry-item:nth-child(4) { animation-delay: 240ms; }
+.ai-card-surface.streaming-active .masonry-item:nth-child(5) { animation-delay: 320ms; }
+.ai-card-surface.streaming-active .masonry-item:nth-child(6) { animation-delay: 400ms; }
+.ai-card-surface.streaming-active .masonry-item:nth-child(7) { animation-delay: 480ms; }
+.ai-card-surface.streaming-active .masonry-item:nth-child(8) { animation-delay: 560ms; }
+
+/* Shimmer sweep effect on new sections */
+.ai-card-surface.streaming-active .masonry-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-card-surface.streaming-active .masonry-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(255, 149, 0, 0.15) 50%,
+    transparent 70%
+  );
+  animation: shimmerSweep 0.8s ease-out forwards;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ===================================================================
+   FIELD AND ITEM STREAMING ANIMATIONS
+   Staggered entrance for individual elements within sections
+   =================================================================== */
+
+.ai-card-surface.streaming-active :where(
+  .info-row,
+  .section-card,
+  .list-card,
+  .event-timeline__item,
+  .product-card,
+  .solutions-card,
+  .contact-card,
+  .network-card__item,
+  .map-point,
+  .text-reference-entry,
+  .quote-card,
+  .overview-card__item
+) {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fieldEnterBounce 0.45s ease forwards;
+  will-change: opacity, transform;
+}
+
+/* Staggered animation delays */
+.ai-card-surface.streaming-active :where(
+  .info-row, .section-card, .list-card, .event-timeline__item,
+  .product-card, .solutions-card, .contact-card, .network-card__item,
+  .map-point, .text-reference-entry, .quote-card, .overview-card__item
+):nth-child(1) { animation-delay: 0s; }
+
+.ai-card-surface.streaming-active :where(
+  .info-row, .section-card, .list-card, .event-timeline__item,
+  .product-card, .solutions-card, .contact-card, .network-card__item,
+  .map-point, .text-reference-entry, .quote-card, .overview-card__item
+):nth-child(2) { animation-delay: 0.05s; }
+
+.ai-card-surface.streaming-active :where(
+  .info-row, .section-card, .list-card, .event-timeline__item,
+  .product-card, .solutions-card, .contact-card, .network-card__item,
+  .map-point, .text-reference-entry, .quote-card, .overview-card__item
+):nth-child(3) { animation-delay: 0.1s; }
+
+.ai-card-surface.streaming-active :where(
+  .info-row, .section-card, .list-card, .event-timeline__item,
+  .product-card, .solutions-card, .contact-card, .network-card__item,
+  .map-point, .text-reference-entry, .quote-card, .overview-card__item
+):nth-child(4) { animation-delay: 0.15s; }
+
+.ai-card-surface.streaming-active :where(
+  .info-row, .section-card, .list-card, .event-timeline__item,
+  .product-card, .solutions-card, .contact-card, .network-card__item,
+  .map-point, .text-reference-entry, .quote-card, .overview-card__item
+):nth-child(5) { animation-delay: 0.2s; }
+
+.ai-card-surface.streaming-active :where(
+  .info-row, .section-card, .list-card, .event-timeline__item,
+  .product-card, .solutions-card, .contact-card, .network-card__item,
+  .map-point, .text-reference-entry, .quote-card, .overview-card__item
+):nth-child(n+6) { animation-delay: 0.24s; }
+
+/* ===================================================================
+   STREAMING CARD BORDER GLOW
+   Glowing border effect during streaming
+   =================================================================== */
+
+.streaming-border-glow {
+  position: relative;
+  border: 1px solid color-mix(in srgb, var(--color-brand, #FF7900) 40%, transparent);
+  box-shadow: 
+    0 0 10px color-mix(in srgb, var(--color-brand, #FF7900) 20%, transparent),
+    0 0 20px color-mix(in srgb, var(--color-brand, #FF7900) 10%, transparent);
+  
+  /* Traveling spark */
+  &::before {
+    content: '';
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: var(--color-brand, #FF7900);
+    border-radius: 50%;
+    box-shadow: 0 0 6px 1px color-mix(in srgb, var(--color-brand, #FF7900) 80%, transparent);
+    animation: sparkTravel 3s linear infinite;
+    pointer-events: none;
+    z-index: 10;
+  }
+}
+
+/* ===================================================================
+   TYPING CURSOR EFFECT
+   Blinking cursor for streaming text
+   =================================================================== */
+
+.typing-cursor::after {
+  content: '▋';
+  display: inline-block;
+  color: var(--color-brand, #FF7900);
+  animation: cursorBlink 0.8s step-end infinite;
+  margin-left: 2px;
+  font-weight: normal;
+}
+
+/* ===================================================================
+   SECTION HIGHLIGHT EFFECT
+   For URL fragment scrolling and attention
+   =================================================================== */
+
+.section-highlight {
+  animation: sectionPulse 2s ease-out;
+  position: relative;
+}
+
+.section-highlight::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 2px solid color-mix(in srgb, var(--color-brand, #FF7900) 60%, transparent);
+  border-radius: var(--card-border-radius, 14px);
+  pointer-events: none;
+  animation: sectionBorderFade 2s ease-out forwards;
+}
+
+/* ===================================================================
+   NEW SECTION GLOW EFFECT
+   For newly added streaming sections
+   =================================================================== */
+
+.new-section-glow {
+  border-color: color-mix(in srgb, var(--color-brand, #FF7900) 40%, transparent);
+  box-shadow: 0 0 15px color-mix(in srgb, var(--color-brand, #FF7900) 25%, transparent);
+  animation: newSectionGlow 0.6s ease-out forwards;
+}
+
+/* ===================================================================
+   SHIMMER TEXT EFFECT
+   Gradient shimmer on text during generation
+   =================================================================== */
+
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    var(--foreground, #ffffff) 0%,
+    var(--color-brand, #FF7900) 50%,
+    var(--foreground, #ffffff) 100%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textShimmer 2s ease-in-out infinite;
+}
+
+/* ===================================================================
+   WAVE PROGRESS INDICATOR
+   Sliding wave effect for progress indication
+   =================================================================== */
+
+.wave-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-brand, #FF7900) 25%,
+    var(--color-brand, #FF7900) 75%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: waveSlide 2s ease-in-out infinite;
+}
+
+/* ===================================================================
+   REDUCED MOTION SUPPORT
+   Respect user preferences for reduced motion
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-card-surface.streaming-active,
+  .ai-card-surface.streaming-active::before,
+  .ai-card-surface.streaming-active::after,
+  .ai-card-surface.streaming-active *,
+  .streaming-border-glow,
+  .streaming-border-glow::before,
+  .typing-cursor::after,
+  .section-highlight,
+  .section-highlight::after,
+  .new-section-glow,
+  .shimmer-text,
+  .wave-progress {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  /* Remove typing cursor */
+  .ai-card-surface.streaming-active [class*="value"]:last-child::after,
+  .ai-card-surface.streaming-active .field-value:last-child::after,
+  .typing-cursor::after {
+    content: none !important;
+  }
+  
+  /* Restore text fill */
+  .shimmer-text {
+    background: none !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+}
+

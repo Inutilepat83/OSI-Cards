@@ -1,0 +1,46 @@
+// ===================================================================
+// COLOR HELPERS - Re-exports from Master Tokens
+// ===================================================================
+//
+// This file re-exports color variables and functions from the master
+// tokens file for backward compatibility with @import.
+//
+// All color definitions are now in: ../tokens/_master.scss
+//
+// USAGE: Import this file in section SCSS files to access color helpers.
+// ===================================================================
+
+@forward '../tokens/master';
+@use '../tokens/master' as *;
+
+// All color variables, functions, and opacity variants are now
+// exported from the master tokens file:
+//
+// Brand colors:
+//   $brand-color, $brand-color-90...$brand-color-03
+//
+// Foreground colors:
+//   $foreground-color, $foreground-90...$foreground-03
+//
+// Secondary text:
+//   $text-secondary, $text-secondary-50...$text-secondary-05
+//
+// Muted foreground:
+//   $muted-foreground, $muted-foreground-50...$muted-foreground-10
+//
+// White variants:
+//   $white-90...$white-05
+//
+// Status colors:
+//   $success-color, $warning-color, $error-color, $info-color
+//
+// Border/shadow colors:
+//   $border-light, $border-medium, $border-dark
+//   $shadow-light, $shadow-medium, $shadow-dark
+//
+// Background colors:
+//   $card-bg, $section-bg, etc.
+//
+// Functions:
+//   brand-alpha($opacity), foreground-alpha($opacity),
+//   white-alpha($opacity), black-alpha($opacity)

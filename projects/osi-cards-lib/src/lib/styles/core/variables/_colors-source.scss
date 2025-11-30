@@ -1,0 +1,34 @@
+// ===================================================================
+// SHARED COLOR SOURCE - Re-exports from Master Tokens
+// ===================================================================
+//
+// This file re-exports theme color mixins from the master tokens file.
+// All color definitions have been consolidated into ../tokens/_master.scss
+//
+// ===================================================================
+
+@use '../../tokens/master' as *;
+
+// Theme color mixins are now defined in master tokens:
+//
+// Base theme:
+//   @include osi-theme-base($variant, $is-scoped);
+//
+// Dark theme:
+//   @include osi-theme-dark($variant, $is-scoped);
+//
+// Light theme:
+//   @include osi-theme-light($variant, $is-scoped);
+
+// Legacy mixin aliases for backward compatibility
+@mixin osi-colors($variant: 'demo', $is-scoped: false) {
+  @include osi-theme-base($variant, $is-scoped);
+}
+
+@mixin osi-colors-dark($variant: 'demo', $is-scoped: false) {
+  @include osi-theme-dark($variant, $is-scoped);
+}
+
+@mixin osi-colors-light($variant: 'demo', $is-scoped: false) {
+  @include osi-theme-light($variant, $is-scoped);
+}

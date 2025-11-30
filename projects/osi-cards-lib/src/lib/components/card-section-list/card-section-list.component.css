@@ -1,0 +1,13 @@
+.empty-sections-message {
+  padding: 2rem;
+  text-align: center;
+  color: var(--muted-foreground);
+}
+
+.w-full {
+  width: 100% !important;
+}
+
+
+
+

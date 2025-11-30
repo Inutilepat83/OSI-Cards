@@ -1,11 +1,4 @@
 <main class="min-h-screen bg-background" role="main" aria-labelledby="osi-hero-heading" id="main-content">
-  <!-- Skip Links for Keyboard Navigation -->
-  <div class="skip-links">
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-    <a href="#card-preview" class="skip-link">Skip to card preview</a>
-    <a href="#json-editor" class="skip-link">Skip to JSON editor</a>
-  </div>
-  
   <div class="sr-only" [attr.role]="liveStatusRole" [attr.aria-live]="liveStatusTone" aria-atomic="true">
     {{ statusMessage }}
   </div>
@@ -149,13 +142,22 @@
                 <lucide-icon name="sparkles" [size]="22" class="text-[#FF7900]" aria-hidden="true"></lucide-icon>
                 <span class="font-bold text-lg" style="letter-spacing: -0.01em;">Live Preview</span>
               </div>
-              <span *ngIf="jsonInput?.trim() !== ''" class="status-badge status-badge--live-edit">
+              <!-- Streaming Status Badges -->
+              <span *ngIf="streamingState?.stage === 'thinking'" class="status-badge status-badge--thinking">
+                <span class="status-badge-spinner"></span>
+                Thinking...
+              </span>
+              <span *ngIf="streamingState?.stage === 'streaming'" class="status-badge status-badge--streaming">
+                <span class="status-badge-spinner"></span>
+                Streaming {{ progressPercent }}%
+              </span>
+              <span *ngIf="streamingState?.stage === 'complete'" class="status-badge status-badge--complete">
+                <lucide-icon name="check-circle-2" [size]="12" aria-hidden="true"></lucide-icon>
+                Complete
+              </span>
+              <span *ngIf="!isStreamingActive && jsonInput?.trim() !== ''" class="status-badge status-badge--live-edit">
                 <span class="status-badge-dot"></span>
                 Live edit
-              </span>
-              <span *ngIf="isGenerating" class="status-badge status-badge--generating">
-                <span class="status-badge-spinner"></span>
-                Generating...
               </span>
             </div>
             <app-preview-controls
@@ -164,20 +166,33 @@
             </app-preview-controls>
           </div>
 
-          <div class="flex-1 min-h-0" style="display: flex; flex-direction: column; padding-top: 0; padding-bottom: 2rem; overflow: visible;">
+          <div class="flex-1 min-h-0" #previewRegion style="display: flex; flex-direction: column; padding-top: 0; padding-bottom: 2rem; overflow: visible;">
             <div [ngClass]="'w-full flex-1 min-h-0 ' + (isFullscreen ? 'max-w-none' : '')" style="display: flex; flex-direction: column; overflow: visible;">
-              <app-card-preview
-                [generatedCard]="generatedCard"
-                [isGenerating]="isGenerating"
-                [isInitialized]="isInitialized"
-                [isFullscreen]="isFullscreen"
-                (fieldInteraction)="onFieldInteraction($event)"
-                (cardInteraction)="onCardInteraction($event)"
-                (fullscreenToggle)="onFullscreenToggle($event)"
-                (export)="onExportCard()"
-                (agentAction)="onAgentAction($event)"
-                (questionAction)="onQuestionAction($event)">
-              </app-card-preview>
+              <!-- Card Renderer with Streaming Support -->
+              @if (showCardRenderer) {
+                <app-ai-card-renderer
+                  #cardRenderer
+                  [cardConfig]="cardConfigForRenderer"
+                  [streamingStage]="streamingState?.stage"
+                  [streamingProgress]="streamingState?.progress"
+                  [isStreaming]="streamingState?.stage === 'streaming'"
+                  [isFullscreen]="isFullscreen"
+                  [tiltEnabled]="true"
+                  [showLoadingByDefault]="true"
+                  (cardInteraction)="onCardInteraction($event)"
+                  (fieldInteraction)="onFieldInteraction($event)"
+                  (fullscreenToggle)="onFullscreenToggle($event)"
+                  (export)="onExportCard()"
+                  (agentAction)="onAgentAction($event)"
+                  (questionAction)="onQuestionAction($event)">
+                </app-ai-card-renderer>
+              } @else {
+                <!-- Empty state -->
+                <div class="empty-state">
+                  <lucide-icon name="layers" [size]="48" class="empty-icon"></lucide-icon>
+                  <p>Click "Generate Card" to start</p>
+                </div>
+              }
             </div>
           </div>
         </div>
@@ -209,17 +224,80 @@
                     Tip: Press <span class="kbd">⌘⏎</span> or <span class="kbd">Ctrl⏎</span> to format JSON.
                   </p>
                 </div>
-                <div class="editor-toolbar__buttons">
-                  <app-llm-simulation-controls
-                    [isSimulating]="isSimulatingLLM"
-                    [disabled]="isGenerating"
-                    (simulationToggle)="onSimulateLLMStart()">
-                  </app-llm-simulation-controls>
+              </div>
+
+              <!-- Streaming Controls Section -->
+              <div class="streaming-controls">
+                <div class="streaming-controls__row">
+                  <!-- Generation Mode Toggle -->
+                  <div class="streaming-control-group">
+                    <label class="streaming-control-label">
+                      <lucide-icon name="radio" [size]="14"></lucide-icon>
+                      Mode
+                    </label>
+                    <div class="radio-group">
+                      <label class="radio-option">
+                        <input type="radio" name="streaming" [value]="true" [(ngModel)]="useStreaming">
+                        <span class="radio-label">Streaming</span>
+                      </label>
+                      <label class="radio-option">
+                        <input type="radio" name="streaming" [value]="false" [(ngModel)]="useStreaming">
+                        <span class="radio-label">Instant</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Generate/Stop Button -->
+                  <div class="streaming-control-actions">
+                    @if (!isStreamingActive) {
+                      <button class="btn-generate" (click)="generateCard()" [disabled]="!jsonInput?.trim()">
+                        <lucide-icon name="play" [size]="16"></lucide-icon>
+                        Generate
+                      </button>
+                    } @else {
+                      <button class="btn-stop" (click)="stopGeneration()">
+                        <lucide-icon name="square" [size]="16"></lucide-icon>
+                        Stop
+                      </button>
+                    }
+                  </div>
                 </div>
+
+                <!-- Streaming Speed & Delay Controls (only when streaming mode) -->
+                @if (useStreaming) {
+                  <div class="streaming-controls__sliders">
+                    <div class="streaming-control-group">
+                      <label class="streaming-control-label">
+                        <lucide-icon name="gauge" [size]="14"></lucide-icon>
+                        Speed
+                        <span class="speed-value">{{ streamingSpeed }} tok/s</span>
+                      </label>
+                      <input type="range" class="control-range" min="20" max="200" step="10" [(ngModel)]="streamingSpeed">
+                    </div>
+                    <div class="streaming-control-group">
+                      <label class="streaming-control-label">
+                        <lucide-icon name="brain" [size]="14"></lucide-icon>
+                        Thinking Delay
+                        <span class="speed-value">{{ thinkingDelay / 1000 }}s</span>
+                      </label>
+                      <input type="range" class="control-range" min="0" max="8000" step="500" [(ngModel)]="thinkingDelay">
+                    </div>
+                  </div>
+                }
+
+                <!-- Progress Bar (during streaming) -->
+                @if (isStreamingActive && streamingState?.stage === 'streaming') {
+                  <div class="streaming-progress">
+                    <div class="progress-bar">
+                      <div class="progress-fill" [style.width.%]="progressPercent"></div>
+                    </div>
+                    <span class="progress-label">{{ progressPercent }}%</span>
+                  </div>
+                }
               </div>
 
               <!-- JSON Editor Component -->
-              <div class="json-editor-overlay" *ngIf="isGenerating" aria-hidden="true">
+              <div class="json-editor-overlay" *ngIf="isGenerating && !isStreamingActive" aria-hidden="true">
                 <div class="json-editor-overlay__inner">
                   <svg class="spinner" viewBox="0 0 50 50" fill="none" stroke="currentColor" width="24" height="24">
                     <circle cx="25" cy="25" r="20" stroke-width="5" stroke-opacity="0.25"></circle>

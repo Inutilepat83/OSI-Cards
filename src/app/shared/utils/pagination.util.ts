@@ -51,7 +51,7 @@ export class Paginator<T> {
   private currentPage = 1;
   private pageSize: number;
 
-  constructor(pageSize: number = 10) {
+  constructor(pageSize = 10) {
     this.pageSize = pageSize;
   }
 

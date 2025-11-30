@@ -29,7 +29,7 @@ export class LiveRegionDirective implements OnInit {
   /**
    * Whether to announce the entire region when content changes
    */
-  @Input() appLiveRegionAtomic: boolean = false;
+  @Input() appLiveRegionAtomic = false;
 
   /**
    * Whether to announce only relevant changes
@@ -52,5 +52,11 @@ export class LiveRegionDirective implements OnInit {
     this.renderer.addClass(element, 'sr-only');
   }
 }
+
+
+
+
+
+
 
 

@@ -4,7 +4,19 @@ Displays news articles, headlines, and press releases. Supports source attributi
 
 ## Overview
 
-The **News Section** is used for displays news articles, headlines, and press releases. supports source attribution and publication dates.
+The **News Section** (`type: "news"`) is used for displays news articles, headlines, and press releases. supports source attribution and publication dates.
+
+### Quick Facts
+
+| Property | Value |
+|----------|-------|
+| Type | `news` |
+| Uses Fields | No |
+| Uses Items | Yes |
+| Default Columns | 1 |
+| Supports Collapse | Yes |
+| Aliases | None |
+
 
 ## Use Cases
 
@@ -15,25 +27,56 @@ The **News Section** is used for displays news articles, headlines, and press re
 
 ## Data Schema
 
-```typescript
-interface CardSection {
-  title: string;
-  type: 'news';
-  fields?: CardField[];
-  items?: CardItem[];
-}
-```
 
-## Example
+
+### Items Schema
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `title` | string | News headline |
+| `description` | string | News summary |
+| `meta` | object | - |
+| `status` | string | Article status |
+
+## Complete Example
 
 ```json
 {
-  "title": "News Section Example",
+  "title": "Latest News",
+  "type": "news",
+  "description": "Recent company news and announcements",
+  "items": [
+    {
+      "title": "Q4 Earnings Beat Expectations",
+      "description": "Company reports 25% revenue growth in Q4 2024",
+      "meta": {
+        "source": "Bloomberg",
+        "date": "2025-01-15"
+      },
+      "status": "published"
+    },
+    {
+      "title": "New Product Launch Announced",
+      "description": "Enterprise Suite 4.0 coming Spring 2025",
+      "meta": {
+        "source": "Press Release",
+        "date": "2025-01-10"
+      },
+      "status": "published"
+    }
+  ]
+}
+```
+
+## Minimal Example
+
+```json
+{
+  "title": "News",
   "type": "news",
   "items": [
     {
-      "title": "Example Item",
-      "description": "Item description"
+      "title": "News Item"
     }
   ]
 }
@@ -42,14 +85,15 @@ interface CardSection {
 ## Best Practices
 
 1. Include source and publication date in meta
-1. Keep headlines concise
-1. Use descriptions for summaries
-1. Include status for article state
+2. Keep headlines concise
+3. Use descriptions for summaries
+4. Include status for article state
 
-## Component Properties
+## Component Information
 
-
-
+- **Selector:** `app-news-section`
+- **Component Path:** `./lib/components/sections/news-section/news-section.component`
+- **Style Path:** `./lib/styles/components/sections/_news.scss`
 
 ## Related Documentation
 

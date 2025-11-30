@@ -1,19 +1,27 @@
 /* ===================================================================
-   BOOTSTRAP STYLE ISOLATION - Reset Bootstrap Variables and Styles
+   BOOTSTRAP & BOOSTED STYLE ISOLATION
+   Reset Bootstrap/Boosted Variables and Styles for Complete Isolation
    =================================================================== */
 /* 
- * This file resets all Bootstrap CSS variables and common Bootstrap styles
+ * This file resets all Bootstrap/Boosted CSS variables and common styles
  * within OSI Cards containers to prevent style conflicts when cards are
- * imported into applications that use Bootstrap.
+ * imported into applications that use Bootstrap or Orange Boosted.
+ * 
+ * Supported Frameworks:
+ *   - Bootstrap 5.x
+ *   - Orange Boosted 5.x
+ *   - DataTables
  * 
  * Usage:
  *   This file is automatically imported in scoped stylesheets.
- *   All Bootstrap variables are reset to 'unset' within .osi-cards-container
+ *   All framework variables are reset to 'unset' within .osi-cards-container
  *   and .ai-card-surface to ensure complete isolation.
+ * 
+ * NOTE: This file is imported INSIDE .osi-cards-container { } in _styles-scoped.scss
  */
 
-/* Reset all Bootstrap CSS variables within card containers */
-.osi-cards-container,
+/* Reset all Bootstrap/Boosted CSS variables - applied to parent container via & */
+&,
 .ai-card-surface,
 article.ai-card-surface {
   /* Reset Bootstrap color variables */
@@ -219,48 +227,97 @@ article.ai-card-surface {
   /* Reset Bootstrap breadcrumb variables */
   --bs-breadcrumb-divider-filter: unset;
   
+  /* ===================================================================
+     ORANGE BOOSTED SPECIFIC RESETS
+     =================================================================== */
+  
+  /* Reset Boosted color variables */
+  --boosted-orange: unset;
+  --boosted-primary: unset;
+  --boosted-secondary: unset;
+  --boosted-black: unset;
+  --boosted-white: unset;
+  
+  /* Reset Boosted functional colors */
+  --o-accessible-orange: unset;
+  --o-accessible-yellow: unset;
+  --o-accessible-green: unset;
+  --o-accessible-blue: unset;
+  --o-accessible-purple: unset;
+  --o-accessible-pink: unset;
+  
+  /* Reset Boosted supporting colors */
+  --o-supporting-green: unset;
+  --o-supporting-blue: unset;
+  --o-supporting-purple: unset;
+  --o-supporting-pink: unset;
+  --o-supporting-yellow: unset;
+  
+  /* Reset Boosted typography variables */
+  --o-icon-font-family: unset;
+  --o-letter-icon-font-family: unset;
+  --o-stepped-component-size: unset;
+  
+  /* Reset Boosted component variables */
+  --o-navbar-item-min-height: unset;
+  --o-navbar-item-padding-y: unset;
+  --o-navbar-bg: unset;
+  --o-nav-link-color: unset;
+  --o-nav-link-hover-color: unset;
+  
+  /* Reset Boosted card variables */
+  --o-card-cap-bg: unset;
+  --o-card-cap-color: unset;
+  --o-card-img-overlay-padding: unset;
+  
+  /* Reset Boosted accordion variables */
+  --o-accordion-btn-focus-box-shadow: unset;
+  --o-accordion-color: unset;
+  --o-accordion-bg: unset;
+  
+  /* Reset Boosted alert variables */
+  --o-alert-bg: unset;
+  --o-alert-color: unset;
+  --o-alert-border-color: unset;
+  
+  /* Reset Boosted button variables */
+  --o-btn-social-network-icon-size: unset;
+  --o-btn-social-network-bg: unset;
+  
+  /* Reset Boosted badge variables */
+  --o-badge-font-size: unset;
+  --o-badge-font-weight: unset;
+  --o-badge-border-radius: unset;
+  
+  /* Reset Boosted footer variables */
+  --o-footer-bg: unset;
+  --o-footer-color: unset;
+  --o-footer-link-color: unset;
+  
+  /* Reset Boosted header variables */
+  --o-header-minimized-logo-height: unset;
+  --o-header-height: unset;
+  
+  /* ===================================================================
+     CSS ISOLATION
+     =================================================================== */
+  
   /* CSS Isolation - Create new stacking context */
   isolation: isolate;
   
-  /* Prevent inheritance of Bootstrap utility classes */
-  /* Reset common Bootstrap-affected properties */
-  font-family: inherit;
-  font-synthesis: none;
-  font-weight: inherit;
-  line-height: inherit;
-  letter-spacing: inherit;
-  -webkit-text-size-adjust: 100%;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-font-smoothing: inherit;
-  text-rendering: inherit;
-  color-scheme: inherit;
+  /* Ensure proper box-sizing for card layout */
   box-sizing: border-box;
   
-  /* Override Bootstrap's default text alignment if inherited */
-  text-align: inherit !important;
-  
-  /* Reset Bootstrap's default display and width constraints */
-  display: inherit;
-  width: inherit;
-  height: inherit;
-  
-  /* Ensure Bootstrap's global styles don't affect card content */
-  * {
-    /* Reset any Bootstrap-inherited font properties */
-    font-family: inherit;
-    font-weight: inherit;
-    line-height: inherit;
-    letter-spacing: inherit;
-    
-    /* Prevent Bootstrap utility class inheritance */
-    text-align: inherit;
-    color: inherit;
-  }
+  /* Reset inherited font from parent */
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
 }
 
-/* Additional isolation for nested elements */
-.osi-cards-container *,
+/* Additional isolation for nested elements - scoped to card surfaces only */
+.ai-card-surface,
 .ai-card-surface *,
+article.ai-card-surface,
 article.ai-card-surface * {
   /* Reset Bootstrap-specific properties that might leak through */
   --bs-body-font-family: unset;
@@ -272,15 +329,9 @@ article.ai-card-surface * {
 }
 
 /* Prevent Bootstrap utility classes from affecting card elements */
-.osi-cards-container,
+&,
 .ai-card-surface,
 article.ai-card-surface {
-  /* Override Bootstrap's default margin/padding resets */
-  & > * {
-    margin: revert;
-    padding: revert;
-  }
-  
   /* Ensure Bootstrap's container classes don't affect layout */
   &[class*="container"],
   &[class*="row"],
@@ -291,3 +342,91 @@ article.ai-card-surface {
   }
 }
 
+/* ===================================================================
+   ELEMENT-LEVEL BOOTSTRAP OVERRIDES
+   Reset all common HTML element styling from Bootstrap/Boosted
+   =================================================================== */
+
+/* Reset article elements */
+article {
+  text-align: left !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+  border: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Reset div elements */
+div {
+  box-sizing: border-box !important;
+  text-align: left !important;
+}
+
+/* Reset button elements within cards */
+button,
+[role="button"] {
+  font-family: inherit !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+  text-align: left !important;
+}
+
+/* Reset heading elements */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: inherit !important;
+  text-align: left !important;
+}
+
+/* Reset paragraph and span elements */
+p, span {
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+/* Reset list elements */
+ul, ol, li {
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+  text-align: left !important;
+}
+
+/* Reset anchor elements */
+a {
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+/* Reset image elements */
+img {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* Reset table elements */
+table, thead, tbody, tr, th, td {
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-align: left !important;
+  vertical-align: top !important;
+}
+
+/* Force all child elements to use border-box */
+*,
+*::before,
+*::after {
+  box-sizing: border-box !important;
+}
+
+/* Reset flex and grid containers */
+[class*="grid"],
+[class*="flex"],
+[class*="-grid"],
+[class*="-flex"] {
+  box-sizing: border-box !important;
+}

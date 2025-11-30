@@ -25,7 +25,7 @@ export class TruncatePipe implements PipeTransform {
    * @param trail - String to append when truncated (default: '...')
    * @returns Truncated text with trail, or original text if within limit
    */
-  transform(value: string | null | undefined, limit: number = 100, trail: string = '...'): string {
+  transform(value: string | null | undefined, limit = 100, trail = '...'): string {
     if (!value) {
       return '';
     }

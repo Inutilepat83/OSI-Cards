@@ -270,7 +270,7 @@ export class JsonFileStorageService {
   /**
    * Export multiple cards as ZIP (requires JSZip library)
    */
-  exportMultipleCards(cards: AICardConfig[], zipFileName: string = 'cards.zip'): void {
+  exportMultipleCards(cards: AICardConfig[], zipFileName = 'cards.zip'): void {
     try {
       // Note: This requires JSZip library - check if available
       const jsZip = (window as any).JSZip;

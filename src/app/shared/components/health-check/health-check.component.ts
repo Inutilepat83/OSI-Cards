@@ -131,7 +131,7 @@ export class HealthCheckComponent implements OnInit, OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
 
   healthStatus: HealthStatus | null = null;
-  serviceEntries: Array<{ key: string; value: HealthStatus['services'][string] }> = [];
+  serviceEntries: { key: string; value: HealthStatus['services'][string] }[] = [];
 
   ngOnInit(): void {
     // Initial health check

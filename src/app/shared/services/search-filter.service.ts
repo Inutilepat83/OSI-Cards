@@ -88,14 +88,6 @@ export class SearchFilterService {
       }
     }
 
-    // Search in subtitle
-    if (options.searchInDescription !== false && card.cardSubtitle) {
-      const subtitle = options.caseSensitive ? card.cardSubtitle : card.cardSubtitle.toLowerCase();
-      if (subtitle.includes(query)) {
-        return true;
-      }
-    }
-
     // Search in description
     if (options.searchInDescription !== false && card.description) {
       const description = options.caseSensitive ? card.description : card.description.toLowerCase();

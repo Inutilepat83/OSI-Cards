@@ -105,7 +105,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   private _changeType: CardChangeType = 'structural';
   
   // Empty state animations
-  particles: Array<{ transform: string; opacity: number }> = [];
+  particles: { transform: string; opacity: number }[] = [];
   gradientTransform = 'translate(-50%, -50%)';
   contentTransform = 'translate(0, 0)';
   currentMessageIndex = 0;
@@ -220,6 +220,12 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   @Input() streamingStage: StreamingStage = undefined;
   @Input() streamingProgress?: number; // Progress 0-1
   @Input() streamingProgressLabel?: string; // e.g., "STREAMING JSON (75%)"
+  
+  /**
+   * Flag indicating active streaming mode
+   * When true, disables CSS animations to prevent blinking during rapid updates
+   */
+  @Input() isStreaming = false;
 
   @Input()
   set changeType(value: CardChangeType) {
@@ -263,6 +269,11 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   private mouseMoveRafId: number | null = null;
   private pendingMouseMove: MouseEvent | null = null;
   
+  // Point 7-8: Container width measurement for reliable multi-column layout
+  measuredContainerWidth = 0;
+  private containerResizeObserver?: ResizeObserver;
+  private lastValidContainerWidth = 0;
+  
   private readonly destroyed$ = new Subject<void>();
   private readonly magneticTiltService = inject(MagneticTiltService);
   private readonly iconService = inject(IconService);
@@ -274,7 +285,6 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   private fallbackCard: AICardConfig = {
     id: 'fallback-test',
     cardTitle: 'Test Company',
-    cardSubtitle: 'Fallback Card for Testing',
     sections: [
       {
         id: 'test-info',
@@ -306,6 +316,13 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   };
 
   ngOnInit(): void {
+    // Immediately set a reasonable width fallback for streaming
+    // This ensures multi-column layout from the start
+    if (typeof window !== 'undefined' && this.measuredContainerWidth === 0) {
+      this.measuredContainerWidth = Math.max(window.innerWidth - 80, 500);
+      this.lastValidContainerWidth = this.measuredContainerWidth;
+    }
+    
     // Initialize particles
     this.initializeParticles();
     
@@ -365,6 +382,9 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
   
   ngAfterViewInit(): void {
+    // Point 7: Setup container width measurement with ResizeObserver
+    this.setupContainerWidthMeasurement();
+    
     // Handle URL fragment scrolling to sections
     this.route.fragment
       .pipe(
@@ -383,6 +403,89 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         this.scrollToSection(initialFragment);
       }, 300);
     }
+  }
+  
+  /**
+   * Point 7: Setup ResizeObserver to measure actual container width
+   * This ensures reliable multi-column layout even before first render
+   */
+  private setupContainerWidthMeasurement(): void {
+    if (typeof ResizeObserver === 'undefined') {
+      // Fallback for browsers without ResizeObserver
+      this.measureContainerWidth();
+      return;
+    }
+    
+    this.containerResizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const width = entry.contentRect.width;
+        if (width > 0) {
+          this.measuredContainerWidth = width;
+          this.lastValidContainerWidth = width;
+          this.cdr.markForCheck();
+        }
+      }
+    });
+    
+    // Observe the card container
+    if (this.cardContainer?.nativeElement) {
+      this.containerResizeObserver.observe(this.cardContainer.nativeElement);
+    }
+    
+    // Also do immediate measurement
+    this.measureContainerWidth();
+  }
+  
+  /**
+   * Point 8: Measure container width with fallback chain
+   * Point 11: Fallback: inputWidth -> cachedWidth -> DOMWidth -> parentWidth -> windowWidth - 80px
+   */
+  private measureContainerWidth(): void {
+    // Try card container first
+    const cardEl = this.cardContainer?.nativeElement;
+    if (cardEl) {
+      const width = cardEl.clientWidth || cardEl.getBoundingClientRect().width;
+      if (width > 0) {
+        this.measuredContainerWidth = width;
+        this.lastValidContainerWidth = width;
+        return;
+      }
+    }
+    
+    // Try parent element
+    const hostEl = this.el.nativeElement;
+    if (hostEl?.parentElement) {
+      const parentWidth = hostEl.parentElement.clientWidth;
+      if (parentWidth > 0) {
+        this.measuredContainerWidth = parentWidth;
+        this.lastValidContainerWidth = parentWidth;
+        return;
+      }
+    }
+    
+    // Fallback to window width - 80px for margins
+    if (typeof window !== 'undefined') {
+      this.measuredContainerWidth = Math.max(window.innerWidth - 80, 280);
+      this.lastValidContainerWidth = this.measuredContainerWidth;
+    }
+  }
+  
+  /**
+   * Point 8: Get effective container width with cache fallback
+   */
+  get effectiveContainerWidth(): number {
+    // Return measured width if valid, otherwise cached, otherwise fallback
+    if (this.measuredContainerWidth > 0) {
+      return this.measuredContainerWidth;
+    }
+    if (this.lastValidContainerWidth > 0) {
+      return this.lastValidContainerWidth;
+    }
+    // Window fallback
+    if (typeof window !== 'undefined') {
+      return Math.max(window.innerWidth - 80, 280);
+    }
+    return 600; // Reasonable default
   }
 
   /**
@@ -574,6 +677,9 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     if (this.mouseMoveRafId !== null) {
       cancelAnimationFrame(this.mouseMoveRafId);
     }
+    
+    // Disconnect container width observer
+    this.containerResizeObserver?.disconnect();
     
     // Clear tilt service cache for this element
     if (this.tiltContainerRef?.nativeElement) {

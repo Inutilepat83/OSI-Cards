@@ -17,7 +17,7 @@ export interface OSICardsThemeConfig {
 /**
  * Built-in theme presets
  */
-export type ThemePreset = 'light' | 'dark' | 'night' | 'day' | 'high-contrast' | 'custom';
+export type ThemePreset = 'light' | 'dark' | 'night' | 'day' | 'osi-day' | 'osi-night' | 'custom';
 
 /**
  * Theme Service
@@ -211,5 +211,11 @@ export class ThemeService {
     };
   }
 }
+
+
+
+
+
+
 
 

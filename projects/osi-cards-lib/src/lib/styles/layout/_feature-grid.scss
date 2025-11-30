@@ -1,0 +1,323 @@
+// ============================================
+// FEATURE GRID LAYOUT
+// ============================================
+//
+// Simple responsive grid layouts as an alternative to masonry.
+// Provides Tailwind-like responsive grid classes without
+// requiring Tailwind CSS.
+//
+// Usage:
+//   <div class="feature-grid feature-grid--3col">
+//     <div class="feature-grid__item">...</div>
+//   </div>
+//
+//   Or use mixins:
+//   @include feature-grid(3, 1.5rem);
+//
+// ============================================
+
+// ===================================================================
+// FEATURE GRID MIXINS
+// ===================================================================
+
+/// Create a responsive feature grid
+/// @param {Number} $columns - Maximum number of columns
+/// @param {Length} $gap - Gap between items (default: 1.5rem)
+/// @param {Length} $min-width - Minimum item width for auto-fit (default: 280px)
+@mixin feature-grid($columns: 3, $gap: 1.5rem, $min-width: 280px) {
+  display: grid;
+  gap: $gap;
+  width: 100%;
+  
+  @if $columns == 2 {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, $min-width), 1fr));
+    
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  } @else if $columns == 3 {
+    grid-template-columns: 1fr;
+    
+    @media (min-width: 640px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  } @else if $columns == 4 {
+    grid-template-columns: 1fr;
+    
+    @media (min-width: 640px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    @media (min-width: 1280px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  } @else {
+    // Default auto-fit behavior
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, $min-width), 1fr));
+  }
+}
+
+/// Auto-fit grid with minimum width constraint
+/// @param {Length} $min-width - Minimum column width
+/// @param {Length} $gap - Gap between items
+@mixin auto-fit-grid($min-width: 320px, $gap: 1.5rem) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, $min-width), 1fr));
+  gap: $gap;
+  width: 100%;
+}
+
+// ===================================================================
+// FEATURE GRID BASE CLASSES
+// ===================================================================
+
+.feature-grid {
+  display: grid;
+  gap: var(--feature-grid-gap, 1.5rem);
+  width: 100%;
+  
+  // Default: single column on mobile
+  grid-template-columns: 1fr;
+}
+
+// ===================================================================
+// COLUMN VARIANTS
+// ===================================================================
+
+// 2-column grid
+.feature-grid--2col {
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// 3-column grid (homepage features style)
+.feature-grid--3col {
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// 4-column grid
+.feature-grid--4col {
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  @media (min-width: 1280px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+// Auto-fit with minimum width
+.feature-grid--auto {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+}
+
+.feature-grid--auto-lg {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+}
+
+.feature-grid--auto-sm {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+}
+
+// ===================================================================
+// GAP VARIANTS
+// ===================================================================
+
+.feature-grid--gap-sm {
+  --feature-grid-gap: 0.75rem;
+  gap: var(--feature-grid-gap);
+}
+
+.feature-grid--gap-md {
+  --feature-grid-gap: 1rem;
+  gap: var(--feature-grid-gap);
+}
+
+.feature-grid--gap-lg {
+  --feature-grid-gap: 2rem;
+  gap: var(--feature-grid-gap);
+}
+
+.feature-grid--gap-xl {
+  --feature-grid-gap: 3rem;
+  gap: var(--feature-grid-gap);
+}
+
+// ===================================================================
+// GRID ITEMS
+// ===================================================================
+
+.feature-grid__item {
+  display: flex;
+  flex-direction: column;
+  min-width: 0; // Prevent overflow
+}
+
+// Span multiple columns
+.feature-grid__item--span-2 {
+  grid-column: span 2;
+  
+  @media (max-width: 639px) {
+    grid-column: span 1; // Reset on mobile
+  }
+}
+
+.feature-grid__item--span-full {
+  grid-column: 1 / -1;
+}
+
+// ===================================================================
+// HERO GRID LAYOUT
+// Specific layout matching homepage hero section
+// ===================================================================
+
+.hero-grid {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+  
+  // Mobile: single column
+  grid-template-columns: 1fr;
+  
+  // Tablet: 2 columns
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  
+  // Desktop: 3 columns
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// ===================================================================
+// CAPABILITIES GRID LAYOUT
+// Specific layout for capability cards section
+// ===================================================================
+
+.capabilities-grid {
+  display: grid;
+  gap: 1.5rem;
+  width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// ===================================================================
+// FEATURES SECTION GRID
+// Specific layout for features section
+// ===================================================================
+
+.features-grid {
+  display: grid;
+  gap: 1.5rem;
+  width: 100%;
+  
+  // Mobile: single column
+  grid-template-columns: 1fr;
+  
+  // Small screens: 2 columns
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+  
+  // Large screens: 3 columns
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// ===================================================================
+// DENSE PACKING
+// For grids that should fill gaps
+// ===================================================================
+
+.feature-grid--dense {
+  grid-auto-flow: dense;
+}
+
+// ===================================================================
+// ALIGNMENT UTILITIES
+// ===================================================================
+
+.feature-grid--center {
+  justify-items: center;
+}
+
+.feature-grid--stretch {
+  align-items: stretch;
+}
+
+.feature-grid--start {
+  align-items: start;
+}
+
+// ===================================================================
+// ANIMATION SUPPORT
+// Staggered entrance animations for grid items
+// ===================================================================
+
+.feature-grid--animated {
+  .feature-grid__item {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+  
+  // Staggered delays
+  @for $i from 1 through 12 {
+    .feature-grid__item:nth-child(#{$i}) {
+      animation-delay: #{($i - 1) * 0.08}s;
+    }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .feature-grid__item {
+      opacity: 1;
+      animation: none;
+    }
+  }
+}
+
+// ===================================================================
+// RESPONSIVE UTILITIES
+// Override columns at specific breakpoints
+// ===================================================================
+
+// Force single column on small screens
+@media (max-width: 639px) {
+  .feature-grid--mobile-1col {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+// Force 2 columns on tablets
+@media (min-width: 640px) and (max-width: 1023px) {
+  .feature-grid--tablet-2col {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+

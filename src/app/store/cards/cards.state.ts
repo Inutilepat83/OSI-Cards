@@ -227,7 +227,7 @@ function hashString(str: string): number {
  * Only uses key properties to avoid expensive serialization
  */
 function getCardHash(card: AICardConfig): string {
-  const key = `${card.id || ''}|${card.cardTitle || ''}|${card.cardSubtitle || ''}|${card.sections?.length || 0}`;
+  const key = `${card.id || ''}|${card.cardTitle || ''}|${card.sections?.length || 0}`;
   return String(hashString(key));
 }
 
@@ -363,7 +363,6 @@ export const reducer = createReducer(
     if (existingCard && existingCard.id === mergedCard.id) {
       // Compare key properties first (cheapest check)
       if (existingCard.cardTitle === mergedCard.cardTitle &&
-          existingCard.cardSubtitle === mergedCard.cardSubtitle &&
           existingCard.sections?.length === mergedCard.sections?.length) {
         // Use hash-based comparison instead of expensive JSON encoding
         const existingHash = getCardHash(existingCard);

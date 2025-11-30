@@ -84,7 +84,7 @@ export function createTestCards(count: number, baseOverrides: Partial<AICardConf
 /**
  * Create a card with multiple sections
  */
-export function createCardWithSections(sectionCount: number, fieldsPerSection: number = 3): AICardConfig {
+export function createCardWithSections(sectionCount: number, fieldsPerSection = 3): AICardConfig {
   const sections: CardSection[] = Array.from({ length: sectionCount }, (_, sectionIndex) => ({
     id: `section-${sectionIndex + 1}`,
     title: `Section ${sectionIndex + 1}`,

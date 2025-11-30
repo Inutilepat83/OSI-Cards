@@ -91,43 +91,68 @@ describe('SectionNormalizationService', () => {
     });
   });
 
-  describe('calculateColSpan', () => {
-    it('should return 1 for sections with low content density', () => {
-      const section = SectionBuilder.create()
-        .withType('info')
-        .withField(FieldBuilder.create().build())
-        .build();
-      
-      const colSpan = service.calculateColSpan(section, 4);
-      
-      expect(colSpan).toBe(1);
+  describe('getPreferredColumns', () => {
+    it('should return preferred columns for info type', () => {
+      const columns = service.getPreferredColumns('info');
+      expect(columns).toBeGreaterThanOrEqual(1);
     });
 
-    it('should return 2 for sections with high content density', () => {
-      const section = SectionBuilder.create()
-        .withType('info')
-        .withField(FieldBuilder.create().build())
-        .withField(FieldBuilder.create().build())
-        .withField(FieldBuilder.create().build())
-        .withField(FieldBuilder.create().build())
-        .withField(FieldBuilder.create().build())
-        .build();
-      
-      const colSpan = service.calculateColSpan(section, 4);
-      
-      expect(colSpan).toBeGreaterThanOrEqual(1);
-      expect(colSpan).toBeLessThanOrEqual(4);
+    it('should return preferred columns for chart type', () => {
+      const columns = service.getPreferredColumns('chart');
+      expect(columns).toBeGreaterThanOrEqual(1);
     });
 
-    it('should handle chart sections', () => {
+    it('should return preferred columns for overview type', () => {
+      const columns = service.getPreferredColumns('overview');
+      expect(columns).toBeGreaterThanOrEqual(1);
+    });
+
+    it('should handle unknown type', () => {
+      const columns = service.getPreferredColumns('unknown');
+      expect(columns).toBeGreaterThanOrEqual(1);
+    });
+  })
+
+  describe('calculatePreferredColumns', () => {
+    it('should calculate columns for contact-card based on field count', () => {
       const section = SectionBuilder.create()
-        .withType('chart')
+        .withType('contact-card')
+        .withField(FieldBuilder.create().build())
         .withField(FieldBuilder.create().build())
         .build();
-      
-      const colSpan = service.calculateColSpan(section, 4);
-      
-      expect(colSpan).toBeGreaterThanOrEqual(1);
+      const columns = service.calculatePreferredColumns(section);
+      expect(columns).toBeGreaterThanOrEqual(1);
+      expect(columns).toBeLessThanOrEqual(4);
+    });
+
+    it('should return 4 for overview sections', () => {
+      const section = SectionBuilder.create()
+        .withType('overview')
+        .build();
+      expect(service.calculatePreferredColumns(section)).toBe(4);
+    });
+
+    it('should return 1 for info sections', () => {
+      const section = SectionBuilder.create()
+        .withType('info')
+        .build();
+      expect(service.calculatePreferredColumns(section)).toBe(1);
+    });
+  })
+
+  describe('getSectionPriority', () => {
+    it('should return low priority for overview sections', () => {
+      const section = SectionBuilder.create()
+        .withType('overview')
+        .build();
+      expect(service.getSectionPriority(section)).toBeLessThan(3);
+    });
+
+    it('should return higher priority for event sections', () => {
+      const section = SectionBuilder.create()
+        .withType('event')
+        .build();
+      expect(service.getSectionPriority(section)).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -143,7 +168,7 @@ describe('SectionNormalizationService', () => {
       
       expect(sorted.length).toBe(3);
       // Overview should come first
-      expect(sorted[0].type).toBe('overview');
+      expect(sorted[0]?.type).toBe('overview');
     });
 
     it('should preserve order for sections with same priority', () => {
@@ -154,8 +179,8 @@ describe('SectionNormalizationService', () => {
       
       const sorted = service.sortSections(sections);
       
-      expect(sorted[0].title).toBe('Info 1');
-      expect(sorted[1].title).toBe('Info 2');
+      expect(sorted[0]?.title).toBe('Info 1');
+      expect(sorted[1]?.title).toBe('Info 2');
     });
   });
 });

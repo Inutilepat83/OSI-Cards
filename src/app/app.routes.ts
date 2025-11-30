@@ -68,6 +68,13 @@ export const routes: Routes = [
     data: { preload: false }
   },
   
+  // iLibrary Integration Simulator
+  {
+    path: 'ilibrary',
+    loadComponent: () => import('./features/ilibrary/ilibrary.component').then(m => m.IlibraryComponent),
+    data: { preload: false }
+  },
+  
   // Card detail route - uncomment when CardDetailComponent is created
   // {
   //   path: 'card/:id',

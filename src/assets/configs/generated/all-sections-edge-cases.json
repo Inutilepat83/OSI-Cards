@@ -1,0 +1,313 @@
+{
+  "cardTitle": "All Sections Demo - Edge Cases",
+  "sections": [
+    {
+      "title": "Info Section with Very Long Title That Should Be Truncated Properly",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Empty Value",
+          "value": ""
+        },
+        {
+          "label": "Null Value",
+          "value": null
+        },
+        {
+          "label": "Number",
+          "value": 12345.6789
+        },
+        {
+          "label": "Boolean",
+          "value": true
+        }
+      ]
+    },
+    {
+      "title": "Analytics Edge Cases",
+      "type": "analytics",
+      "fields": [
+        {
+          "label": "Zero",
+          "value": "0%",
+          "percentage": 0,
+          "trend": "down",
+          "change": -100
+        },
+        {
+          "label": "Negative",
+          "value": "-15%",
+          "percentage": -15,
+          "performance": "poor",
+          "trend": "down"
+        },
+        {
+          "label": "Max",
+          "value": "100%",
+          "percentage": 100,
+          "trend": "up",
+          "change": 999.99
+        }
+      ]
+    },
+    {
+      "title": "Contact Edge Cases",
+      "type": "contact-card",
+      "fields": [
+        {
+          "title": "No Email",
+          "value": "No contact info available"
+        },
+        {
+          "title": "Long Name That Exceeds Normal Display Width",
+          "email": "very.long.email@subdomain.domain.example.com"
+        }
+      ]
+    },
+    {
+      "title": "Network Edge Cases",
+      "type": "network-card",
+      "items": [
+        {
+          "title": "Zero Influence",
+          "meta": {
+            "influence": 0,
+            "connections": 0
+          }
+        },
+        {
+          "title": "Max Values",
+          "meta": {
+            "influence": 100,
+            "connections": 9999
+          }
+        }
+      ]
+    },
+    {
+      "title": "Map Edge Cases",
+      "type": "map",
+      "fields": [
+        {
+          "name": "North Pole",
+          "x": 90,
+          "y": 0
+        },
+        {
+          "name": "South Pole",
+          "x": -90,
+          "y": 0
+        },
+        {
+          "name": "Date Line",
+          "x": 0,
+          "y": 180
+        }
+      ]
+    },
+    {
+      "title": "Financial Edge Cases",
+      "type": "financials",
+      "fields": [
+        {
+          "label": "Zero Revenue",
+          "value": "$0",
+          "change": 0
+        },
+        {
+          "label": "Negative",
+          "value": "-$10M",
+          "change": -100,
+          "trend": "down"
+        },
+        {
+          "label": "Large Number",
+          "value": "$999,999,999,999",
+          "change": 9999.99
+        }
+      ]
+    },
+    {
+      "title": "Event Edge Cases",
+      "type": "event",
+      "fields": [
+        {
+          "label": "Past Event",
+          "date": "2020-01-01",
+          "status": "completed"
+        },
+        {
+          "label": "Far Future",
+          "date": "2099-12-31",
+          "status": "tentative"
+        },
+        {
+          "label": "Cancelled",
+          "date": "2025-01-01",
+          "status": "cancelled"
+        }
+      ]
+    },
+    {
+      "title": "List Edge Cases",
+      "type": "list",
+      "items": [
+        {
+          "title": "",
+          "description": "Empty title"
+        },
+        {
+          "title": "Unicode",
+          "description": "日本語 中文 العربية 한국어 🎉🚀💡"
+        }
+      ]
+    },
+    {
+      "title": "Chart Edge Cases",
+      "type": "chart",
+      "chartType": "line",
+      "chartData": {
+        "labels": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ],
+        "datasets": [
+          {
+            "label": "Negative",
+            "data": [
+              -50,
+              -25,
+              0,
+              25,
+              50
+            ]
+          },
+          {
+            "label": "Large",
+            "data": [
+              1000000,
+              2000000,
+              1500000,
+              2500000,
+              3000000
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Product Edge Cases",
+      "type": "product",
+      "fields": [
+        {
+          "label": "Version",
+          "value": "0.0.0-alpha.1"
+        },
+        {
+          "label": "SKU",
+          "value": "ABC-123-XYZ"
+        }
+      ]
+    },
+    {
+      "title": "Solutions Edge Cases",
+      "type": "solutions",
+      "fields": [
+        {
+          "title": "No Benefits",
+          "description": "Solution without benefits array"
+        },
+        {
+          "title": "Many Benefits",
+          "benefits": [
+            "Benefit 1",
+            "Benefit 2",
+            "Benefit 3",
+            "Benefit 4",
+            "Benefit 5"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Overview Edge Cases",
+      "type": "overview",
+      "fields": [
+        {
+          "label": "Long Text",
+          "value": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        }
+      ]
+    },
+    {
+      "title": "Quotation Edge Cases",
+      "type": "quotation",
+      "fields": [
+        {
+          "value": "'Single quotes' and \"double quotes\" mixed"
+        }
+      ]
+    },
+    {
+      "title": "Reference Edge Cases",
+      "type": "text-reference",
+      "fields": [
+        {
+          "label": "No URL",
+          "value": "Document without link"
+        }
+      ]
+    },
+    {
+      "title": "Color Edge Cases",
+      "type": "brand-colors",
+      "fields": [
+        {
+          "label": "RGB",
+          "value": "rgb(255, 121, 0)"
+        },
+        {
+          "label": "RGBA",
+          "value": "rgba(255, 121, 0, 0.5)"
+        },
+        {
+          "label": "Invalid",
+          "value": "not-a-color"
+        }
+      ]
+    },
+    {
+      "title": "News Edge Cases",
+      "type": "news",
+      "items": [
+        {
+          "title": "Old News",
+          "meta": {
+            "date": "2000-01-01"
+          }
+        },
+        {
+          "title": "No Source",
+          "meta": {}
+        }
+      ]
+    },
+    {
+      "title": "Social Edge Cases",
+      "type": "social-media",
+      "fields": [
+        {
+          "platform": "unknown",
+          "handle": ""
+        }
+      ]
+    },
+    {
+      "title": "Fallback Edge Cases",
+      "type": "completely-unknown"
+    }
+  ]
+}

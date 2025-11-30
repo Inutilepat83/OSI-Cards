@@ -1,32 +1,65 @@
-/* -------------------------------------------------------------------------- */
-/* AI Card Design System                                                      */
-/* -------------------------------------------------------------------------- */
+/* ===================================================================
+   AI Card Styles - Unified with Docs App
+   =================================================================== */
+
+/* Host element styles - transparent container with 8px padding */
+:host {
+  display: block;
+  padding: 8px;
+  background: transparent !important;
+  background-color: transparent !important;
+  
+  /* Responsive: reduce padding on mobile */
+  @media (max-width: 480px) {
+    padding: 4px;
+  }
+}
 
 .ai-card-surface {
   position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow: hidden;
+  /* Changed from hidden to visible to prevent shadow clipping */
+  overflow: visible;
   
   /* CSS Isolation - Prevent Bootstrap and external styles from affecting cards */
   isolation: isolate;
   
   /* Card has its own background distinct from sections */
   @include surface-ai-card-base;
-  /* Force border to be visible - override any resets */
-  border: 0.5px solid color-mix(in srgb, var(--color-brand) 49%, transparent) !important;
-  border-width: 0.5px !important;
+  
+  /* ========== DEMO-MATCHING STYLES ========== */
+  /* Force border to be visible - matches demo exactly */
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-width: 1px !important;
   border-style: solid !important;
-  border-color: color-mix(in srgb, var(--color-brand) 49%, transparent) !important;
-  padding: var(--card-main-padding, 16px) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  
+  /* Semi-transparent dark background - matches demo exactly */
+  background: rgba(20, 20, 20, 0.6) !important;
+  
+  /* Backdrop blur effect - matches demo exactly */
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  
+  /* Box shadow - matches demo exactly */
+  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2) !important;
+  /* ========== END DEMO-MATCHING STYLES ========== */
+  
+  padding: var(--card-main-padding) !important;
+  /* Ensure bottom padding is adequate */
+  padding-bottom: var(--card-main-padding) !important;
+  border-radius: var(--card-border-radius) !important;
   
   /* Gap between header and body - defined at card level */
   gap: var(--section-card-gap) !important;
   
   /* Smooth transitions for content updates */
-  transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  
+  /* Transform is handled by parent .tilt-container - don't override */
+  /* transform: none !important; - Removed to allow tilt transforms */
   
   /* Enhanced text sharpness */
   -webkit-font-smoothing: antialiased;
@@ -40,20 +73,28 @@
     text-rendering: optimizeLegibility;
   }
   
-  /* Smooth transitions for card title and subtitle updates */
-  h1, .ai-card-subtitle {
-    transition: opacity 0.2s ease, transform 0.2s ease;
+  /* Smooth transitions for card title updates - removed transform to prevent lift */
+  h1 {
+    transition: opacity 0.2s ease;
   }
 }
 
 .ai-card-surface:hover {
   @include surface-ai-card-hover;
-  /* Force hover border to be visible - override any resets */
-  border: 0.5px solid var(--color-brand) !important;
-  border-width: 0.5px !important;
-  border-style: solid !important;
-  border-color: var(--color-brand) !important;
-  transform: none !important;
+  
+  /* ========== DEMO-MATCHING HOVER STYLES ========== */
+  /* Hover border - matches demo exactly */
+  border-color: rgba(255, 121, 0, 0.5) !important;
+  
+  /* Hover background - slightly lighter - matches demo exactly */
+  background: rgba(30, 30, 30, 0.8) !important;
+  
+  /* Hover shadow - enhanced glow - matches demo exactly */
+  box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 121, 0, 0.2) !important;
+  /* ========== END DEMO-MATCHING HOVER STYLES ========== */
+  
+  /* Transform is handled by parent .tilt-container - don't override */
+  /* transform: none !important; - Removed to allow tilt transforms */
 }
 
 .ai-card-surface--fullscreen {
@@ -65,7 +106,7 @@
   max-width: none !important;
   width: 100% !important;
   overflow: visible !important;
-  padding: var(--card-main-padding, 16px) !important;
+  padding: var(--card-main-padding) !important;
   
   /* Disable all tilt effects */
   .tilt-container {
@@ -102,11 +143,7 @@
   }
   
   .ai-card-title {
-    font-size: 22px !important;
-  }
-  
-  .ai-card-subtitle {
-    font-size: 12px !important;
+    font-size: 14px !important;
   }
 }
 
@@ -165,7 +202,7 @@
   margin: 0 !important;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 4px;
   /* NO BORDER - completely invisible */
   border: none !important;
   border-top: none !important;
@@ -254,7 +291,7 @@
   font-size: var(--font-card-eyebrow);
   letter-spacing: 0.08em;
   text-transform: none;
-  color: color-mix(in srgb, var(--foreground) 85%, transparent);
+  color: rgba(28, 28, 31, 0.85);
   font-weight: 600;
   opacity: 0.9;
 }
@@ -262,7 +299,7 @@
 /* Removed .ai-card-title-group - content moved up one level */
 
 .ai-card-title {
-  font-size: 28px; /* Increased from default */
+  font-size: 18px;
   font-weight: 700;
   color: var(--foreground);
   letter-spacing: -0.01em;
@@ -359,21 +396,13 @@
   gap: 3px;
   padding: 2px 6px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
-  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  border: 1px solid rgba(255, 121, 0, 0.32);
+  background: rgba(255, 121, 0, 0.18);
   text-transform: none;
   letter-spacing: 0.05em;
   font-size: var(--font-card-meta);
   font-weight: 600;
-  color: color-mix(in srgb, var(--foreground) 85%, var(--accent) 15%);
-}
-
-.ai-card-subtitle {
-  font-size: var(--font-card-subtitle);
-  line-height: 1.4;
-  color: color-mix(in srgb, var(--foreground) 88%, transparent);
-  max-width: 42ch;
-  text-transform: none;
+  color: rgba(66, 61, 55, 0.85);
 }
 
 .ai-card-meta {
@@ -384,7 +413,7 @@
   text-transform: none;
   font-size: var(--font-card-meta);
   letter-spacing: 0.05em;
-  color: color-mix(in srgb, var(--foreground) 85%, transparent);
+  color: rgba(28, 28, 31, 0.85);
 }
 
 .ai-card-meta__chip {
@@ -393,8 +422,8 @@
   gap: 4px;
   padding: 2px 6px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--border) 65%, transparent);
-  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  border: 1px solid rgba(55, 55, 60, 0.65);
+  background: rgba(40, 40, 45, 0.80);
 }
 
 .ai-card-meta__chip-dot {
@@ -402,7 +431,7 @@
   height: 3px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent);
+  box-shadow: 0 0 0 1px rgba(255, 121, 0, 0.12);
 }
 
 .ai-card-meta__chip-dot--primary {
@@ -410,11 +439,11 @@
 }
 
 .ai-card-meta__chip-dot--secondary {
-  background: color-mix(in srgb, var(--accent) 65%, transparent);
+  background: rgba(255, 121, 0, 0.65);
 }
 
 .ai-card-meta__chip-dot--tertiary {
-  background: color-mix(in srgb, var(--accent) 35%, transparent);
+  background: rgba(255, 121, 0, 0.35);
 }
 
 .ai-card-meta__chip-content {
@@ -428,7 +457,7 @@
   font-size: 0.48rem;
   letter-spacing: 0.05em;
   text-transform: none;
-  color: color-mix(in srgb, var(--foreground) 85%, transparent);
+  color: rgba(28, 28, 31, 0.85);
   font-weight: 600;
 }
 
@@ -457,10 +486,13 @@
   padding-inline-start: 0 !important;
   padding-inline-end: 0 !important;
   margin: 0 !important;
+  margin-bottom: 0 !important;
   display: flex;
   flex-direction: column;
   gap: 12px; /* Constant gap between sections */
   min-height: 0;
+  /* Allow content to flow properly - no overflow clipping */
+  overflow: visible;
   /* NO BORDER - completely invisible */
   border: none !important;
   border-top: none !important;
@@ -561,27 +593,27 @@
 }
 
 .ai-card-action--primary {
-  background: var(--primary);
-  color: var(--primary-foreground);
-  border-color: color-mix(in srgb, var(--primary) 80%, transparent);
+  background: var(--primary, #FF7900);
+  color: var(--primary-foreground, #ffffff);
+  border-color: rgba(255, 121, 0, 0.80);
   box-shadow:
-    0 2px 8px color-mix(in srgb, var(--primary) 25%, transparent),
+    0 2px 8px rgba(255, 121, 0, 0.25),
     0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .ai-card-action--primary:hover {
   transform: translateY(-1px);
   box-shadow:
-    0 4px 16px color-mix(in srgb, var(--primary) 35%, transparent),
+    0 4px 16px rgba(255, 121, 0, 0.35),
     0 2px 4px rgba(0, 0, 0, 0.1);
-  background: color-mix(in srgb, var(--primary) 95%, white 5%);
-  border-color: var(--primary);
+  background: rgba(255, 121, 0, 0.95);
+  border-color: var(--primary, #FF7900);
 }
 
 .ai-card-action--secondary {
-  background: color-mix(in srgb, var(--card) 90%, transparent);
-  color: var(--foreground);
-  border-color: color-mix(in srgb, var(--border) 60%, transparent);
+  background: rgba(40, 40, 45, 0.90);
+  color: var(--foreground, #ffffff);
+  border-color: rgba(55, 55, 60, 0.60);
   box-shadow:
     0 1px 3px rgba(0, 0, 0, 0.1),
     0 1px 2px rgba(0, 0, 0, 0.06);
@@ -589,11 +621,11 @@
 
 .ai-card-action--secondary:hover {
   transform: translateY(-1px);
-  border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+  border-color: rgba(255, 121, 0, 0.40);
   box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.15),
     0 2px 4px rgba(0, 0, 0, 0.1);
-  background: color-mix(in srgb, var(--card) 95%, var(--primary) 5%);
+  background: rgba(50, 46, 42, 0.95);
 }
 
 .ai-card-action__shine {
@@ -664,8 +696,11 @@
 
 .ai-card-footnote {
   margin-top: auto;
+  /* Add bottom margin for proper spacing */
+  margin-bottom: 0 !important;
   /* NO PADDING - compact design */
   padding: 0 !important;
+  padding-bottom: 0 !important;
   /* NO BORDER - removed border */
   border: none !important;
   border-top: none !important;
@@ -674,7 +709,7 @@
   font-size: 0.65rem !important; /* Reduced from default */
   letter-spacing: 0.08em;
   text-transform: none;
-  color: color-mix(in srgb, var(--foreground) 70%, transparent);
+  color: rgba(28, 28, 31, 0.70);
   line-height: 1.2;
 }
 
@@ -696,19 +731,24 @@
   }
 }
 
-/* Light theme overrides */
-:root[data-theme='day'] {
+/* Light theme overrides - scoped for .osi-cards-container[data-theme='day'] */
+.osi-cards-container[data-theme='day'] {
   .ai-card-surface {
-    background: rgba(255, 255, 255, 0.9);
-    border: 0.5px solid rgba(255, 121, 0, 0.25); /* Brand border in light mode too */
-    box-shadow: 0 0 18px rgba(255, 121, 0, 0.3); /* Orange glow only, intensified by 50% */
+    /* Light theme - use white/light background with subtle blur */
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    /* Orange glow only - no dark shadows */
+    box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.1), 0 0 18px rgba(255, 121, 0, 0.15) !important;
   }
   
   .ai-card-surface:hover {
-    background: rgba(255, 255, 255, 1);
-    border-color: rgba(255, 121, 0, 0.4);
-    /* Orange glow only - no dark shadows, intensified by 50% */
-    box-shadow: 0 0 24px rgba(255, 121, 0, 0.45);
+    /* Hover - slightly more opaque */
+    background: rgba(255, 255, 255, 0.92) !important;
+    border-color: rgba(255, 121, 0, 0.4) !important;
+    /* Orange glow enhanced on hover */
+    box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.15), 0 0 24px rgba(255, 121, 0, 0.25), 0 0 0 1px rgba(255, 121, 0, 0.15) !important;
   }
   
   .ai-card-surface--fullscreen {
@@ -718,10 +758,6 @@
   
   .ai-card-title {
     color: #1a1a1a;
-  }
-  
-  .ai-card-subtitle {
-    color: #6b7280;
   }
   
   .ai-card-eyebrow {
@@ -743,5 +779,22 @@
       background: rgba(255, 121, 0, 0.12);
       border-color: rgba(255, 121, 0, 0.4);
     }
+  }
+}
+
+/* Also apply for :host-context with day theme attribute */
+:host-context([data-theme='day']) {
+  .ai-card-surface {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.1), 0 0 18px rgba(255, 121, 0, 0.15) !important;
+  }
+  
+  .ai-card-surface:hover {
+    background: rgba(255, 255, 255, 0.92) !important;
+    border-color: rgba(255, 121, 0, 0.4) !important;
+    box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.15), 0 0 24px rgba(255, 121, 0, 0.25), 0 0 0 1px rgba(255, 121, 0, 0.15) !important;
   }
 }

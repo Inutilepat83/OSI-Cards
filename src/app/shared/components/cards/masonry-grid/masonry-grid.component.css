@@ -3,40 +3,153 @@
   width: 100%;
 }
 
-/* Masonry container loading states */
+/* Masonry container base styles */
 .masonry-container {
-  transition: opacity 0.25s ease, height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   opacity: 1;
   min-height: 400px;
   /* Better containment for absolute positioned items */
   contain: layout style paint;
 }
 
-.masonry-container--loading {
-  opacity: 0.6;
+/* Loading state - keep full opacity to prevent blinking */
+.masonry-container--loading:not(.masonry-container--streaming) {
+  opacity: 1;
+  transition: height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* Masonry items with smooth positioning */
+/* ═══════════════════════════════════════════════════════════════════════════
+   STREAMING MODE - Visual Stability for Existing Sections
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.masonry-container--streaming {
+  /* Keep container fully visible during streaming */
+  opacity: 1 !important;
+  /* Smooth height transitions only during streaming */
+  transition: height 0.3s ease-out !important;
+}
+
+/* Base streaming mode - COMPLETE visual stability for existing sections */
+.masonry-container--streaming .masonry-item {
+  /* Force full opacity - NO flash */
+  opacity: 1 !important;
+  /* GPU acceleration */
+  will-change: auto;
+  transform: translateZ(0);
+}
+
+/* Existing sections (not new) must remain COMPLETELY stable */
+.masonry-container--streaming .masonry-item:not(.masonry-item--new) {
+  /* No animations whatsoever */
+  animation: none !important;
+  /* No visual effects */
+  filter: none !important;
+  /* Disable position transitions for stability */
+  transition: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   NEW SECTION ENTRANCE - Gentle Animation for New Sections Only
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Point 20: CSS-Only Entrance Animation for New Sections */
+/* Point 22: Staggered animations using CSS custom property --section-index */
+.masonry-container--streaming .masonry-item--new {
+  /* Simple fade-in with subtle slide - no blur, no bounce */
+  animation: masonry-gentle-enter 0.3s ease-out forwards;
+  /* Staggered delay based on section index for cascade effect */
+  animation-delay: calc(var(--section-index, 0) * 40ms);
+  /* Enable pseudo-element positioning */
+  position: relative;
+  overflow: hidden;
+  /* Subtle shadow - no harsh glow */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  /* Start invisible for animation */
+  opacity: 0;
+}
+
+/* Gentle fade-in with subtle slide */
+@keyframes masonry-gentle-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Shimmer sweep overlay - more subtle */
+.masonry-container--streaming .masonry-item--new::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 40%,
+    rgba(255, 149, 0, 0.08) 50%,
+    transparent 60%
+  );
+  animation: shimmer-sweep 0.5s ease-out forwards;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 10;
+}
+
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%); opacity: 0.8; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+/* Subtle inner highlight - reduced intensity */
+.masonry-container--streaming .masonry-item--new::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 15px rgba(255, 149, 0, 0.15);
+  animation: inner-flash 0.4s ease-out forwards;
+  pointer-events: none;
+  z-index: 5;
+}
+
+@keyframes inner-flash {
+  0% { opacity: 0.6; }
+  100% { opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   NON-STREAMING MODE - Normal Layout Behavior
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Masonry items base styles */
 .masonry-item {
-  will-change: top, left, width;
-  /* No transitions initially - will be enabled when ready */
-  transition: opacity 0.4s ease;
-  opacity: 0.3;
+  /* Start at full opacity - NO flash from 0.3 to 1 */
+  opacity: 1;
+  /* No opacity transition needed since we start at 1 */
+  transition: none;
   /* Better rendering performance */
   backface-visibility: hidden;
   transform: translateZ(0);
   /* Smooth repositioning */
   pointer-events: auto;
+  /* CSS containment for rendering isolation - prevents child changes from affecting siblings */
+  contain: layout style paint;
 }
 
+/* Ready state - enable smooth transitions */
 .masonry-item--ready {
   opacity: 1;
-  /* Enable smooth transitions for position changes once layout is ready */
-  transition: top 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-              left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              opacity 0.5s ease 0.1s,
-              transform 0.3s ease;
+  /* Enable smooth transitions for position changes once layout is ready - NO opacity transition */
+  transition: top 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+              left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* During streaming, ready items should still have no position transitions */
+.masonry-container--streaming .masonry-item--ready:not(.masonry-item--new) {
+  transition: none !important;
 }
 
 /* Ensure sections have proper containment */
@@ -46,7 +159,10 @@
   height: auto;
 }
 
-/* Responsive optimizations */
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE OPTIMIZATIONS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 @media (max-width: 768px) {
   .masonry-container {
     min-height: 300px;
@@ -54,14 +170,19 @@
   
   .masonry-item {
     /* Faster transitions on mobile for better responsiveness */
-    transition: opacity 0.3s ease;
+    transition: opacity 0.25s ease;
   }
   
   .masonry-item--ready {
-    transition: top 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-                left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                opacity 0.4s ease 0.05s;
+    transition: top 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity 0.25s ease;
+  }
+  
+  /* Faster entrance animation on mobile */
+  .masonry-container--streaming .masonry-item--new {
+    animation-duration: 0.4s;
   }
 }
 
@@ -70,5 +191,26 @@
   .masonry-container {
     /* Allow more space on wide screens */
     min-height: 500px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   REDUCED MOTION - Accessibility
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .masonry-container,
+  .masonry-container--streaming,
+  .masonry-item,
+  .masonry-item--ready,
+  .masonry-item--new {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .masonry-container--streaming .masonry-item--new::before,
+  .masonry-container--streaming .masonry-item--new::after {
+    animation: none !important;
+    display: none;
   }
 }

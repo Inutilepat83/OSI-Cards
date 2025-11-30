@@ -1,37 +1,74 @@
+/* =======================================================================
+   AI Card Renderer Component Styles
+   
+   STYLE ARCHITECTURE:
+   ===================
+   This library uses a dual-layer styling approach:
+   
+   1. GLOBAL SCSS (osi-cards-lib/styles/_styles-*.scss)
+      - Visual styling: colors, borders, shadows, typography
+      - Theming: light/dark mode, CSS variables
+      - Grid layouts: masonry, sections, cards
+      - Wrapped in CSS @layer for easy overrides
+   
+   2. COMPONENT CSS (this file)
+      - Component-specific behavior: animations, states
+      - Layout primitives: flex, grid for internal structure
+      - Uses CSS variables for consistent theming
+   
+   This separation ensures:
+   - Consumers can import styles via @import or angular.json
+   - Angular ViewEncapsulation works correctly
+   - No conflicting specificity issues
+   - Easy customization via CSS variables or overrides
+   ======================================================================= */
+
 :host {
   display: block;
   width: 100%;
   height: 100%;
+  
+  /* 
+   * IMPORTANT: Prevent CSS inheritance from host environments
+   * 
+   * Shadow DOM encapsulation isolates most styles, but INHERITED CSS properties
+   * (font-family, color, line-height, etc.) can still leak through from parent elements.
+   * 
+   * By explicitly setting these properties on :host, we ensure the card component
+   * looks consistent regardless of the host application's CSS environment.
+   * This is critical for integration into legacy systems with aggressive CSS resets.
+   */
+  font-family: Helvetica, "Helvetica Neue", -apple-system, "system-ui", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-color, #ffffff);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  /* Reset box-sizing for all descendants */
+  box-sizing: border-box;
+  
+  /* Ensure text rendering is optimized */
+  text-rendering: optimizeLegibility;
 }
 
-/* Force border to be visible on card surface - override any resets */
-:host ::ng-deep .ai-card-surface {
-  border: 0.5px solid color-mix(in srgb, var(--color-brand) 49%, transparent) !important;
-  border-width: 0.5px !important;
-  border-style: solid !important;
-  border-color: color-mix(in srgb, var(--color-brand) 49%, transparent) !important;
+/* Ensure all descendants inherit from :host, not from external styles */
+:host * {
+  font-family: inherit;
+  box-sizing: border-box;
 }
-
-:host ::ng-deep .ai-card-surface:hover {
-  border: 0.5px solid var(--color-brand) !important;
-  border-width: 0.5px !important;
-  border-style: solid !important;
-  border-color: var(--color-brand) !important;
-}
-
-/* Use Tailwind classes for styling - minimal custom CSS */
 
 /* Section highlight animation for URL fragment scrolling */
-:host ::ng-deep .section-highlight {
+.section-highlight {
   animation: section-pulse 2s ease-out;
   position: relative;
 }
 
-:host ::ng-deep .section-highlight::after {
+.section-highlight::after {
   content: '';
   position: absolute;
   inset: -4px;
-  border: 2px solid rgba(255, 121, 0, 0.6);
+  border: 2px solid color-mix(in srgb, var(--color-brand, #FF7900) 60%, transparent);
   border-radius: 14px;
   pointer-events: none;
   animation: section-border-fade 2s ease-out forwards;
@@ -49,11 +86,11 @@
 @keyframes section-border-fade {
   0% {
     opacity: 1;
-    box-shadow: 0 0 20px rgba(255, 121, 0, 0.4);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-brand, #FF7900) 40%, transparent);
   }
   100% {
     opacity: 0;
-    box-shadow: 0 0 0 rgba(255, 121, 0, 0);
+    box-shadow: 0 0 0 transparent;
   }
 }
 
@@ -63,17 +100,18 @@
   margin-top: 1rem;
   padding: 0.5rem 1.25rem;
   border-radius: 999px;
-  border: 2px solid rgba(255, 121, 0, 0.6);
-  background: rgba(255, 121, 0, 0.15);
-  color: #ff7900;
+  border: 2px solid color-mix(in srgb, var(--color-brand, #FF7900) 60%, transparent);
+  background: color-mix(in srgb, var(--color-brand, #FF7900) 15%, transparent);
+  color: var(--color-brand, #FF7900);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  box-shadow: 0 4px 20px rgba(255, 121, 0, 0.3);
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--color-brand, #FF7900) 30%, transparent);
   backdrop-filter: blur(8px);
 }
 
+/* Streaming animation for card items */
 .ai-card-surface.streaming-active :where(
   .info-row,
   .section-card,
@@ -199,8 +237,191 @@
   }
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   MAGICAL STREAMING EFFECTS - Border Spark Edition
+   ═══════════════════════════════════════════════════════════════════════════ */
 
+/* Card container during streaming - glowing border */
+.ai-card-surface.streaming-active {
+  position: relative;
+  border: 1px solid rgba(255, 121, 0, 0.4);
+  box-shadow: 
+    0 0 10px rgba(255, 121, 0, 0.2),
+    0 0 20px rgba(255, 121, 0, 0.1);
+}
 
+/* Traveling spark using pseudo-element - tiny, hugs the border */
+.ai-card-surface.streaming-active::before {
+  content: '';
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #ff9500;
+  border-radius: 50%;
+  box-shadow: 0 0 6px 1px rgba(255, 149, 0, 0.8);
+  animation: spark-travel 3s linear infinite;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes spark-travel {
+  0% { top: -1.5px; left: 0; }
+  25% { top: -1.5px; left: calc(100% - 1.5px); }
+  50% { top: calc(100% - 1.5px); left: calc(100% - 1.5px); }
+  75% { top: calc(100% - 1.5px); left: 0; }
+  100% { top: -1.5px; left: 0; }
+}
+
+/* Content text smooth transitions */
+.ai-card-surface.streaming-active .field-value,
+.ai-card-surface.streaming-active .item-title,
+.ai-card-surface.streaming-active .item-description,
+.ai-card-surface.streaming-active .section-title,
+.ai-card-surface.streaming-active .section-description,
+.ai-card-surface.streaming-active [class*="value"],
+.ai-card-surface.streaming-active [class*="label"] {
+  transition: all 0.2s ease-out;
+}
+
+/* Typing cursor effect for streaming text */
+.ai-card-surface.streaming-active [class*="value"]:last-child::after,
+.ai-card-surface.streaming-active .field-value:last-child::after {
+  content: '▋';
+  display: inline-block;
+  color: var(--color-brand, #ff7900);
+  animation: cursor-blink 0.8s step-end infinite;
+  margin-left: 2px;
+  font-weight: normal;
+}
+
+@keyframes cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Section cards get pulsing glow while generating */
+.ai-card-surface.streaming-active .section-card,
+.ai-card-surface.streaming-active [class*="section-"] > div {
+  border-color: rgba(255, 121, 0, 0.3) !important;
+  box-shadow: 0 0 15px rgba(255, 121, 0, 0.25);
+  animation: section-glow-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes section-glow-pulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(255, 121, 0, 0.15); }
+  50% { box-shadow: 0 0 20px rgba(255, 121, 0, 0.35); }
+}
+
+.ai-card-surface.streaming-active .section-card:hover {
+  border-color: rgba(255, 121, 0, 0.6) !important;
+  box-shadow: 0 0 25px rgba(255, 121, 0, 0.4);
+}
+
+/* Magical section entrance - blur-to-sharp reveal with scale bounce */
+.ai-card-surface.streaming-active .masonry-item {
+  animation: section-magic-appear 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes section-magic-appear {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    filter: blur(8px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.02);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Staggered entrance delays for cascade effect */
+.ai-card-surface.streaming-active .masonry-item:nth-child(1) { animation-delay: 0ms; }
+.ai-card-surface.streaming-active .masonry-item:nth-child(2) { animation-delay: 80ms; }
+.ai-card-surface.streaming-active .masonry-item:nth-child(3) { animation-delay: 160ms; }
+.ai-card-surface.streaming-active .masonry-item:nth-child(4) { animation-delay: 240ms; }
+.ai-card-surface.streaming-active .masonry-item:nth-child(5) { animation-delay: 320ms; }
+.ai-card-surface.streaming-active .masonry-item:nth-child(6) { animation-delay: 400ms; }
+.ai-card-surface.streaming-active .masonry-item:nth-child(7) { animation-delay: 480ms; }
+.ai-card-surface.streaming-active .masonry-item:nth-child(8) { animation-delay: 560ms; }
+
+/* Shimmer sweep effect on new sections */
+.ai-card-surface.streaming-active .masonry-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-card-surface.streaming-active .masonry-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(255, 149, 0, 0.15) 50%,
+    transparent 70%
+  );
+  animation: shimmer-sweep 0.8s ease-out forwards;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%); opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+/* Inner glow flash on section appearance */
+.ai-card-surface.streaming-active .section-card {
+  animation: 
+    section-glow-pulse 1.5s ease-in-out infinite,
+    inner-flash 0.6s ease-out forwards;
+}
+
+@keyframes inner-flash {
+  0% { box-shadow: inset 0 0 30px rgba(255, 149, 0, 0.4); }
+  100% { box-shadow: inset 0 0 0 rgba(255, 149, 0, 0); }
+}
+
+/* Subtle inner border glow on sections */
+.ai-card-surface.streaming-active .section-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 121, 0, 0.15);
+  pointer-events: none;
+  animation: inner-border-pulse 2s ease-in-out infinite;
+}
+
+@keyframes inner-border-pulse {
+  0%, 100% { box-shadow: inset 0 0 0 1px rgba(255, 121, 0, 0.1); }
+  50% { box-shadow: inset 0 0 0 1px rgba(255, 121, 0, 0.3); }
+}
+
+/* Disable all heavy animations on reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .ai-card-surface.streaming-active,
+  .ai-card-surface.streaming-active::before,
+  .ai-card-surface.streaming-active::after,
+  .ai-card-surface.streaming-active * {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  /* Remove typing cursor */
+  .ai-card-surface.streaming-active [class*="value"]:last-child::after,
+  .ai-card-surface.streaming-active .field-value:last-child::after {
+    content: none !important;
+  }
+}
+
+/* Loading state particles */
 .loading-particles {
   position: absolute;
   inset: 0;
@@ -211,11 +432,11 @@
   position: absolute;
   width: 8px;
   height: 8px;
-  background: var(--color-brand);
+  background: var(--color-brand, #FF7900);
   border-radius: 50%;
   opacity: 0.6;
   animation: particle-float 3s ease-in-out infinite;
-  box-shadow: 0 0 12px var(--color-brand);
+  box-shadow: 0 0 12px var(--color-brand, #FF7900);
 }
 
 .particle:nth-child(1) { top: 10%; left: 20%; }
@@ -271,7 +492,7 @@
 .spinner-circle {
   stroke-dasharray: 125.6;
   stroke-dashoffset: 31.4;
-  stroke: var(--color-brand);
+  stroke: var(--color-brand, #FF7900);
   animation: spinner-dash 1.5s ease-in-out infinite;
 }
 
@@ -306,12 +527,12 @@
 .loading-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--foreground);
+  color: var(--foreground, #1c1c1f);
   margin-bottom: 0.5rem;
   background: linear-gradient(90deg, 
-    var(--foreground) 0%,
-    var(--color-brand) 50%,
-    var(--foreground) 100%
+    var(--foreground, #1c1c1f) 0%,
+    var(--color-brand, #FF7900) 50%,
+    var(--foreground, #1c1c1f) 100%
   );
   background-size: 200% 100%;
   background-clip: text;
@@ -322,7 +543,7 @@
 
 .loading-subtitle {
   font-size: 0.875rem;
-  color: var(--muted-foreground);
+  color: var(--muted-foreground, #555861);
   margin: 0;
 }
 
@@ -343,8 +564,8 @@
   height: 4px;
   background: linear-gradient(90deg,
     transparent 0%,
-    var(--color-brand) 25%,
-    var(--color-brand) 75%,
+    var(--color-brand, #FF7900) 25%,
+    var(--color-brand, #FF7900) 75%,
     transparent 100%
   );
   background-size: 200% 100%;
@@ -370,7 +591,7 @@
   overflow: hidden;
   background: radial-gradient(
     circle at 50% 50%,
-    rgba(255, 121, 0, 0.05) 0%,
+    color-mix(in srgb, var(--color-brand, #FF7900) 5%, transparent) 0%,
     transparent 70%
   );
   animation: generating-bg-pulse 3s ease-in-out infinite, card-generating-pulse 2s ease-in-out infinite;
@@ -379,15 +600,15 @@
 @keyframes card-generating-pulse {
   0%, 100% {
     box-shadow: 
-      inset 0 1px 3px rgba(255, 121, 0, 0.08),
+      inset 0 1px 3px color-mix(in srgb, var(--color-brand, #FF7900) 8%, transparent),
       0 4px 20px rgba(0, 0, 0, 0.15),
-      0 0 0 rgba(255, 121, 0, 0);
+      0 0 0 transparent;
   }
   50% {
     box-shadow: 
-      inset 0 1px 3px rgba(255, 121, 0, 0.15),
+      inset 0 1px 3px color-mix(in srgb, var(--color-brand, #FF7900) 15%, transparent),
       0 4px 20px rgba(0, 0, 0, 0.15),
-      0 0 30px rgba(255, 121, 0, 0.2);
+      0 0 30px color-mix(in srgb, var(--color-brand, #FF7900) 20%, transparent);
   }
 }
 
@@ -395,14 +616,14 @@
   0%, 100% {
     background: radial-gradient(
       circle at 50% 50%,
-      rgba(255, 121, 0, 0.05) 0%,
+      color-mix(in srgb, var(--color-brand, #FF7900) 5%, transparent) 0%,
       transparent 70%
     );
   }
   50% {
     background: radial-gradient(
       circle at 50% 50%,
-      rgba(255, 121, 0, 0.12) 0%,
+      color-mix(in srgb, var(--color-brand, #FF7900) 12%, transparent) 0%,
       transparent 70%
     );
   }
@@ -423,7 +644,7 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 121, 0, 0.15) 50%,
+    color-mix(in srgb, var(--color-brand, #FF7900) 15%, transparent) 50%,
     transparent 100%
   );
   animation: shimmer-sweep 2.5s ease-in-out infinite;
@@ -443,13 +664,13 @@
 .generating-text {
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--foreground);
+  color: var(--foreground, #1c1c1f);
   margin: 0;
   background: linear-gradient(
     90deg,
-    var(--foreground) 0%,
-    var(--color-brand) 50%,
-    var(--foreground) 100%
+    var(--foreground, #1c1c1f) 0%,
+    var(--color-brand, #FF7900) 50%,
+    var(--foreground, #1c1c1f) 100%
   );
   background-size: 200% 100%;
   background-clip: text;
@@ -482,30 +703,30 @@
   padding: 4rem 2rem;
   border-radius: 1.5rem;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--color-brand) 20%, transparent);
-  background: color-mix(in srgb, var(--background) 98%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-brand, #FF7900) 20%, transparent);
+  background: color-mix(in srgb, var(--background, #ffffff) 98%, transparent);
   transition: all 0.3s ease;
   flex: 1;
 }
 
-/* Make card surface full height when showing empty state */
-:host ::ng-deep .ai-card-surface--empty-state {
-  display: flex !important;
-  flex-direction: column !important;
-  min-height: 100% !important;
-  height: 100% !important;
+/* Empty state layout for card surface */
+.ai-card-surface--empty-state {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  height: 100%;
 }
 
-:host ::ng-deep .ai-card-surface--empty-state .card-empty-state {
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
-  height: 100% !important;
-  display: flex !important;
+.ai-card-surface--empty-state .card-empty-state {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  display: flex;
 }
 
 .card-empty-state:hover {
-  border-color: color-mix(in srgb, var(--color-brand) 30%, transparent);
-  background: color-mix(in srgb, var(--background) 99%, transparent);
+  border-color: color-mix(in srgb, var(--color-brand, #FF7900) 30%, transparent);
+  background: color-mix(in srgb, var(--background, #ffffff) 99%, transparent);
 }
 
 .empty-state-background {
@@ -524,8 +745,8 @@
   height: 150%;
   background: radial-gradient(
     circle,
-    color-mix(in srgb, var(--color-brand) 6%, transparent) 0%,
-    color-mix(in srgb, var(--color-brand) 3%, transparent) 50%,
+    color-mix(in srgb, var(--color-brand, #FF7900) 6%, transparent) 0%,
+    color-mix(in srgb, var(--color-brand, #FF7900) 3%, transparent) 50%,
     transparent 80%
   );
   animation: gradient-pulse 5s ease-in-out infinite;
@@ -548,13 +769,14 @@
   inset: 0;
 }
 
-.particle {
+/* Empty state particles (different from loading particles) */
+.empty-state-particles .particle {
   position: absolute;
   width: 2.5px;
   height: 2.5px;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--color-brand) 55%, transparent);
-  box-shadow: 0 0 4px color-mix(in srgb, var(--color-brand) 45%, transparent);
+  background: color-mix(in srgb, var(--color-brand, #FF7900) 55%, transparent);
+  box-shadow: 0 0 4px color-mix(in srgb, var(--color-brand, #FF7900) 45%, transparent);
   transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s ease;
   will-change: transform, opacity;
   top: 50%;
@@ -565,14 +787,14 @@
   filter: blur(0.5px);
 }
 
-.particle:nth-child(odd) {
-  background: color-mix(in srgb, var(--color-brand) 65%, transparent);
-  box-shadow: 0 0 6px color-mix(in srgb, var(--color-brand) 55%, transparent);
+.empty-state-particles .particle:nth-child(odd) {
+  background: color-mix(in srgb, var(--color-brand, #FF7900) 65%, transparent);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--color-brand, #FF7900) 55%, transparent);
 }
 
-.particle:nth-child(even) {
-  background: color-mix(in srgb, var(--color-brand) 45%, transparent);
-  box-shadow: 0 0 3px color-mix(in srgb, var(--color-brand) 35%, transparent);
+.empty-state-particles .particle:nth-child(even) {
+  background: color-mix(in srgb, var(--color-brand, #FF7900) 45%, transparent);
+  box-shadow: 0 0 3px color-mix(in srgb, var(--color-brand, #FF7900) 35%, transparent);
 }
 
 .empty-state-content {
@@ -602,7 +824,7 @@
 .empty-state-icon-ring {
   position: absolute;
   inset: -8px;
-  border: 1.5px solid color-mix(in srgb, var(--color-brand) 25%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--color-brand, #FF7900) 25%, transparent);
   border-radius: 50%;
   animation: ring-pulse 3s ease-in-out infinite;
 }
@@ -610,7 +832,7 @@
 .empty-state-icon-pulse {
   position: absolute;
   inset: -16px;
-  border: 1px solid color-mix(in srgb, var(--color-brand) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-brand, #FF7900) 15%, transparent);
   border-radius: 50%;
   animation: ring-pulse 3s ease-in-out infinite 0.75s;
 }
@@ -629,9 +851,9 @@
 .empty-state-icon {
   position: relative;
   z-index: 1;
-  color: var(--color-brand);
+  color: var(--color-brand, #FF7900);
   animation: icon-float 4s ease-in-out infinite;
-  filter: drop-shadow(0 2px 8px color-mix(in srgb, var(--color-brand) 25%, transparent));
+  filter: drop-shadow(0 2px 8px color-mix(in srgb, var(--color-brand, #FF7900) 25%, transparent));
   opacity: 0.95;
 }
 
@@ -662,7 +884,7 @@
 .empty-state-title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--foreground);
+  color: var(--foreground, #1c1c1f);
   margin: 0;
   letter-spacing: -0.03em;
   line-height: 1.2;
@@ -680,7 +902,7 @@
 
 .empty-state-message {
   font-size: 1rem;
-  color: color-mix(in srgb, var(--color-brand) 75%, transparent);
+  color: color-mix(in srgb, var(--color-brand, #FF7900) 75%, transparent);
   margin: 0;
   line-height: 1.6;
   font-weight: 500;
@@ -701,8 +923,6 @@
   }
 }
 
-/* Hints removed per user request */
-
 /* Legacy empty state (kept for backward compatibility) */
 .card-empty-state-legacy {
   min-height: 200px;
@@ -712,10 +932,55 @@
   padding: 3rem;
 }
 
-.empty-state-icon {
-  position: relative;
-  width: 80px;
-  height: 80px;
+/* ============================================
+   Card Signature / Footer Styles - ENFORCED
+   ============================================ */
+.card-signature {
+  /* Layout - ENFORCED */
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  
+  /* Spacing - ENFORCED */
+  margin: 16px 0 0 0 !important;
+  padding: 12px 16px !important;
+  
+  /* Typography - ENFORCED: Small, centered text */
+  font-family: Helvetica, 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0.02em !important;
+  text-align: center !important;
+  
+  /* Color - Muted gray */
+  color: rgba(100, 100, 100, 0.7) !important;
+  
+  /* Visual reset */
+  background: transparent !important;
+  border: none !important;
+  text-decoration: none !important;
+}
+
+/* ============================================
+   Lucide Icon Fixes for Shadow DOM
+   ============================================ */
+lucide-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+}
+
+lucide-icon svg {
+  display: block !important;
+  width: inherit !important;
+  height: inherit !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 2 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
 }
 
 .empty-state-dot {
@@ -725,7 +990,7 @@
   transform: translate(-50%, -50%);
   width: 12px;
   height: 12px;
-  background: var(--color-brand);
+  background: var(--color-brand, #FF7900);
   border-radius: 50%;
   opacity: 0.6;
   animation: dot-pulse 2s ease-in-out infinite;
@@ -738,7 +1003,7 @@
   transform: translate(-50%, -50%);
   width: 80px;
   height: 80px;
-  border: 2px solid var(--color-brand);
+  border: 2px solid var(--color-brand, #FF7900);
   border-radius: 50%;
   opacity: 0.2;
   animation: ring-expand 2s ease-in-out infinite;
@@ -768,4 +1033,119 @@
     transform: translate(-50%, -50%) scale(1.2);
     opacity: 0;
   }
+}
+
+/* ============================================
+   ACTION BUTTONS - ENFORCED STYLES
+   (Included in Shadow DOM for proper styling)
+   ============================================ */
+
+.osi-card-actions {
+  margin-top: var(--section-card-gap, 12px) !important;
+  padding-bottom: 16px !important;
+  font-family: Helvetica, 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
+}
+
+.osi-card-actions__container {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  margin-left: 4px !important;
+  margin-right: 4px !important;
+}
+
+/* Base Action Button */
+.osi-action-button {
+  margin: 0 !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 0.625rem 1.25rem !important;
+  font-family: Helvetica, 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  line-height: 1.25rem !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  border-radius: 10px !important;
+  transition: all 200ms ease !important;
+  box-sizing: border-box !important;
+}
+
+/* PRIMARY Button - Orange Background */
+.osi-action-button--primary {
+  background-color: #FF7900 !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(255, 121, 0, 0.25) !important;
+}
+
+.osi-action-button--primary:hover {
+  background-color: #e66d00 !important;
+  box-shadow: 0 4px 16px rgba(255, 121, 0, 0.4) !important;
+  transform: translateY(-1px) !important;
+}
+
+.osi-action-button--primary:active {
+  background-color: #cc6000 !important;
+  transform: scale(0.98) translateY(0) !important;
+}
+
+/* SECONDARY Button - Orange Border */
+.osi-action-button--secondary {
+  background-color: transparent !important;
+  color: #FF7900 !important;
+  border: 2px solid #FF7900 !important;
+}
+
+.osi-action-button--secondary:hover {
+  background-color: rgba(255, 121, 0, 0.1) !important;
+}
+
+/* Button Content */
+.osi-action-button__label {
+  color: inherit !important;
+  font-family: inherit !important;
+}
+
+.osi-action-button__icon {
+  width: 18px !important;
+  height: 18px !important;
+  object-fit: contain !important;
+  flex-shrink: 0 !important;
+}
+
+.osi-action-button__emoji {
+  font-size: 16px !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+}
+
+.osi-action-button lucide-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  flex-shrink: 0 !important;
+}
+
+.osi-action-button lucide-icon svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border-width: 0 !important;
 }

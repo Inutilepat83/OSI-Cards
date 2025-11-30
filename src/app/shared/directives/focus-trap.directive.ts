@@ -31,7 +31,7 @@ export class FocusTrapDirective implements AfterViewInit, OnDestroy {
   private readonly focusTrapFactory = inject(FocusTrapFactory);
   private focusTrap?: FocusTrap;
 
-  @Input() appFocusTrap: boolean = true;
+  @Input() appFocusTrap = true;
 
   ngAfterViewInit(): void {
     if (this.appFocusTrap) {

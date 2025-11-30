@@ -1,6 +1,6 @@
 import { ApplicationConfig, isDevMode, inject, APP_INITIALIZER } from '@angular/core';
 import { provideRouter, PreloadAllModules, withPreloading } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
@@ -9,7 +9,13 @@ import { provideZoneChangeDetection } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideServiceWorker } from '@angular/service-worker';
 // NgDoc - provides ng-doc app functionality
-import { provideNgDocApp } from '@ng-doc/app';
+import { 
+  provideNgDocApp, 
+  provideSearchEngine, 
+  NgDocDefaultSearchEngine,
+  providePageSkeleton,
+  NG_DOC_DEFAULT_PAGE_SKELETON
+} from '@ng-doc/app';
 
 import { routes } from './app.routes';
 import { reducers } from './store/app.state';
@@ -25,14 +31,15 @@ import { WebVitalsService } from './core/services/web-vitals.service';
 export const config: ApplicationConfig = {
   providers: [
     provideAnimations(),
-    provideHttpClient(),
+    provideHttpClient(withInterceptorsFromDi()),
     provideRouter(
       routes,
       withPreloading(PreloadAllModules)
     ),
-    // NgDoc - provides ng-doc app functionality
-    // Note: Only provide when documentation routes are accessed
+    // NgDoc - temporarily disabled due to DI issue in Angular 20
     // provideNgDocApp(),
+    // provideSearchEngine(NgDocDefaultSearchEngine),
+    // providePageSkeleton(NG_DOC_DEFAULT_PAGE_SKELETON),
     // Optimize change detection with event coalescing and run coalescing
     provideZoneChangeDetection({
       eventCoalescing: true,

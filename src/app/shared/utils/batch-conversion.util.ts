@@ -16,11 +16,11 @@ export class BatchConversionUtil {
     validationService: CardValidationService
   ): {
     valid: AICardConfig[];
-    invalid: Array<{ index: number; error: string; content: string }>;
+    invalid: { index: number; error: string; content: string }[];
     successRate: number;
   } {
     const valid: AICardConfig[] = [];
-    const invalid: Array<{ index: number; error: string; content: string }> = [];
+    const invalid: { index: number; error: string; content: string }[] = [];
 
     jsonStrings.forEach((jsonString, index) => {
       try {
@@ -65,7 +65,7 @@ export class BatchConversionUtil {
   /**
    * Sanitize multiple cards (remove unsafe properties)
    */
-  static sanitizeMultipleCards(cards: Array<Partial<AICardConfig>>): AICardConfig[] {
+  static sanitizeMultipleCards(cards: Partial<AICardConfig>[]): AICardConfig[] {
     return cards
       .map(card => {
         try {
@@ -87,18 +87,18 @@ export class BatchConversionUtil {
     validationService: CardValidationService
   ): {
     converted: AICardConfig[];
-    results: Array<{
+    results: {
       success: boolean;
       cardId?: string;
       error?: string;
-    }>;
+    }[];
   } {
     const converted: AICardConfig[] = [];
-    const results: Array<{
+    const results: {
       success: boolean;
       cardId?: string;
       error?: string;
-    }> = [];
+    }[] = [];
 
     jsonStrings.forEach(jsonString => {
       try {
@@ -149,10 +149,10 @@ export class BatchConversionUtil {
   ): {
     merged: AICardConfig[];
     duplicateCount: number;
-    duplicates: Array<{ id: string; count: number }>;
+    duplicates: { id: string; count: number }[];
   } {
     const idMap = new Map<string, AICardConfig>();
-    const duplicates: Array<{ id: string; count: number }> = [];
+    const duplicates: { id: string; count: number }[] = [];
     let duplicateCount = 0;
 
     cardCollections.forEach(collection => {
@@ -224,9 +224,9 @@ export class BatchConversionUtil {
     validationService: CardValidationService
   ): {
     cards: AICardConfig[];
-    errors: Array<{ index: number; error: string }>;
+    errors: { index: number; error: string }[];
   } {
-    const errors: Array<{ index: number; error: string }> = [];
+    const errors: { index: number; error: string }[] = [];
     const cards: AICardConfig[] = [];
 
     try {
@@ -309,10 +309,10 @@ export class BatchConversionUtil {
    */
   static deduplicateByTitle(cards: AICardConfig[]): {
     unique: AICardConfig[];
-    duplicates: Array<{ title: string; count: number; cardIds: string[] }>;
+    duplicates: { title: string; count: number; cardIds: string[] }[];
   } {
     const titleMap = new Map<string, AICardConfig[]>();
-    const duplicates: Array<{ title: string; count: number; cardIds: string[] }> = [];
+    const duplicates: { title: string; count: number; cardIds: string[] }[] = [];
 
     cards.forEach(card => {
       const titleLower = card.cardTitle.toLowerCase();
@@ -358,7 +358,7 @@ export class BatchConversionUtil {
       avgSectionsPerCard: number;
       cardsWithActions: number;
     };
-    duplicates: Array<{ title: string; count: number; cardIds: string[] }>;
+    duplicates: { title: string; count: number; cardIds: string[] }[];
     issues: string[];
   } {
     const { valid, invalid } = this.validateMultipleCards(jsonStrings, validationService);

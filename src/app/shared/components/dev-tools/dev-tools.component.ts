@@ -519,18 +519,18 @@ export class DevToolsComponent implements OnInit, OnDestroy {
   
   logLevelFilter = '';
   filteredLogs: LogEntry[] = [];
-  performanceMetrics: Array<{ name: string; value: string }> = [];
+  performanceMetrics: { name: string; value: string }[] = [];
   cards$: Observable<any[]> = this.store.select(selectCards);
   statePreview = '';
   sessionId = '';
   
   // State inspector
-  stateTree: Array<{ key: string; type: string; value: string; expanded: boolean }> = [];
+  stateTree: { key: string; type: string; value: string; expanded: boolean }[] = [];
   
   // Profiler
   isProfiling = false;
-  profilerStats: Array<{ label: string; value: string }> = [];
-  profilerMetrics: Array<{ name: string; time: number; percentage: number }> = [];
+  profilerStats: { label: string; value: string }[] = [];
+  profilerMetrics: { name: string; time: number; percentage: number }[] = [];
   memoryInfo: { used: string; total: string; limit: string } | null = null;
   private profilerInterval?: ReturnType<typeof setInterval>;
 

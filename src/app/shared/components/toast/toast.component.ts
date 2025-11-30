@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Toast, ToastService, ToastType } from '../../services/toast.service';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -162,7 +162,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ToastComponent {
+export class ToastComponent implements OnInit {
   private readonly toastService = inject(ToastService);
 
   toasts: Toast[] = [];

@@ -202,7 +202,7 @@ export class PerformanceService implements OnDestroy {
   /**
    * Get recent metrics (last N metrics)
    */
-  getRecentMetrics(count: number = 10): PerformanceMetric[] {
+  getRecentMetrics(count = 10): PerformanceMetric[] {
     return [...this.metrics]
       .sort((a, b) => b.timestamp - a.timestamp)
       .slice(0, count);
@@ -442,7 +442,7 @@ export class PerformanceService implements OnDestroy {
   }
 
   private memoryCheckInterval?: number;
-  private memorySnapshots: Array<{ timestamp: number; usedMB: number; totalMB: number }> = [];
+  private memorySnapshots: { timestamp: number; usedMB: number; totalMB: number }[] = [];
   private readonly MAX_MEMORY_SNAPSHOTS = 50;
 
   /**
@@ -501,7 +501,7 @@ export class PerformanceService implements OnDestroy {
   /**
    * Get memory snapshots for analysis
    */
-  getMemorySnapshots(): Array<{ timestamp: number; usedMB: number; totalMB: number }> {
+  getMemorySnapshots(): { timestamp: number; usedMB: number; totalMB: number }[] {
     return [...this.memorySnapshots];
   }
 

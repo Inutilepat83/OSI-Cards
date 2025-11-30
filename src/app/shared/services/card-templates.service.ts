@@ -91,7 +91,7 @@ export class CardTemplatesService {
    * });
    * ```
    */
-  loadTemplate(cardType: CardType, variant: number = 1): Observable<AICardConfig | null> {
+  loadTemplate(cardType: CardType, variant = 1): Observable<AICardConfig | null> {
     const cacheKey = `${cardType}-${variant}`;
     
     // Check cache first
@@ -158,7 +158,7 @@ export class CardTemplatesService {
    * @param variant - The variant number (1-3)
    * @returns Cached template or null
    */
-  getCachedTemplate(cardType: CardType, variant: number = 1): AICardConfig | null {
+  getCachedTemplate(cardType: CardType, variant = 1): AICardConfig | null {
     const cacheKey = `${cardType}-${variant}`;
     return this.templateCache.get(cacheKey) || null;
   }
@@ -215,7 +215,7 @@ export class CardTemplatesService {
    * @param variant - The variant number
    * @returns Built-in template or null
    */
-  getTemplate(cardType: CardType, variant: number = 1): AICardConfig | null {
+  getTemplate(cardType: CardType, variant = 1): AICardConfig | null {
     return this.getBuiltInTemplate(cardType, variant);
   }
 
@@ -255,7 +255,6 @@ export class CardTemplatesService {
       {
         cardTitle: 'Company Name',
         cardType: 'company',
-        cardSubtitle: 'Company Tagline',
         sections: [
           {
             title: 'Company Overview',
@@ -598,12 +597,10 @@ export class CardTemplatesService {
     
     return userTemplates.filter(template => {
       const title = template.cardTitle?.toLowerCase() || '';
-      const subtitle = template.cardSubtitle?.toLowerCase() || '';
       const description = template.description?.toLowerCase() || '';
       const type = template.cardType?.toLowerCase() || '';
       
       return title.includes(lowerQuery) ||
-             subtitle.includes(lowerQuery) ||
              description.includes(lowerQuery) ||
              type.includes(lowerQuery);
     });

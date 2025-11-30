@@ -71,7 +71,6 @@ describe('CardDiffUtil', () => {
       
       const newCard = CardBuilder.create()
         .withTitle('New Title')
-        .withSubtitle('New Subtitle')
         .withSection(section)
         .build();
       
@@ -79,7 +78,6 @@ describe('CardDiffUtil', () => {
       
       expect(result.changeType).toBe('content');
       expect(result.card.cardTitle).toBe('New Title');
-      expect(result.card.cardSubtitle).toBe('New Subtitle');
       // Sections should be same reference
       expect(result.card.sections).toBe(oldCard.sections);
     });

@@ -82,10 +82,10 @@ export function generatePictureSources(
   webpUrl: string,
   sizes?: string
 ): {
-  sources: Array<{ srcset: string; type: string; sizes?: string }>;
+  sources: { srcset: string; type: string; sizes?: string }[];
   img: { src: string; alt?: string };
 } {
-  const sources: Array<{ srcset: string; type: string; sizes?: string }> = [
+  const sources: { srcset: string; type: string; sizes?: string }[] = [
     {
       srcset: webpUrl,
       type: 'image/webp'
@@ -207,7 +207,7 @@ export function getImageDimensions(url: string): Promise<{ width: number; height
  */
 export function convertToWebP(
   file: File,
-  quality: number = 0.8
+  quality = 0.8
 ): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

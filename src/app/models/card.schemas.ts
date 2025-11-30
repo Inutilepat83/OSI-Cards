@@ -175,7 +175,6 @@ export const cardSectionSchema = z.object({
 export const aiCardConfigSchema = z.object({
   id: z.string().optional(),
   cardTitle: z.string().min(1, 'Card title is required'),
-  cardSubtitle: z.string().optional(),
   cardType: z.string().optional(),
   description: z.string().optional(),
   columns: z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),

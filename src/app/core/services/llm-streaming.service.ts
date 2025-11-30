@@ -119,12 +119,28 @@ export class LLMStreamingService implements OnDestroy {
   private thinkingTimer: ReturnType<typeof setTimeout> | null = null;
   private chunkTimer: ReturnType<typeof setTimeout> | null = null;
   private completionBatchTimer: ReturnType<typeof setTimeout> | null = null;
+  private cardUpdateThrottleTimer: ReturnType<typeof setTimeout> | null = null;
   private pendingCompletedSectionIndices: number[] = [];
+  
+  // Throttled card update buffer - stores the latest update while throttling
+  private pendingCardUpdate: {
+    card: AICardConfig;
+    changeType: CardChangeType;
+    completedSections?: number[];
+  } | null = null;
+  private lastCardUpdateTime = 0;
+  
+  // Track detected section titles for structural change detection
+  // New title = new section = structural change (masonry recalculates)
+  private detectedSectionTitles = new Set<string>();
 
   /**
    * Start LLM simulation with target JSON
+   * @param targetJson The JSON string to stream
+   * @param options Optional settings for streaming behavior
+   * @param options.instant When true, processes all chunks immediately without delays (useful for initial page load)
    */
-  start(targetJson: string): void {
+  start(targetJson: string, options?: { instant?: boolean }): void {
     this.stop();
     this.targetJson = targetJson;
     this.buffer = '';
@@ -134,6 +150,14 @@ export class LLMStreamingService implements OnDestroy {
     this.sectionCompletionStates.clear();
     this.sectionCompletionPercentages.clear();
     this.pendingCompletedSectionIndices = [];
+    
+    // Reset partial section tracking for smart detection
+    this.partiallyCompletedSectionIndices.clear();
+    this.partialSections = [];
+    this.partialCardTitle = '';
+    
+    // Reset section title tracking for structural change detection
+    this.detectedSectionTitles.clear();
 
     if (!this.chunksQueue.length) {
       this.updateState({
@@ -155,17 +179,109 @@ export class LLMStreamingService implements OnDestroy {
 
     this.updateState({
       isActive: true,
-      stage: 'thinking',
+      stage: options?.instant ? 'streaming' : 'thinking',
       progress: 0,
       bufferLength: 0,
       targetLength: targetJson.length
     });
 
-    // Begin streaming after thinking delay
-    this.thinkingTimer = setTimeout(() => {
-      this.updateState({ stage: 'streaming' });
-      this.scheduleNextChunk();
-    }, this.config.LLM_SIMULATION.THINKING_DELAY_MS);
+    if (options?.instant) {
+      // Process all chunks immediately without delays (instant mode for page load)
+      this.processAllChunksInstantly();
+    } else {
+      // Begin streaming after thinking delay (normal simulation mode)
+      this.thinkingTimer = setTimeout(() => {
+        this.updateState({ stage: 'streaming' });
+        this.scheduleNextChunk();
+      }, this.config.LLM_SIMULATION.THINKING_DELAY_MS);
+    }
+  }
+
+  /**
+   * Process all chunks instantly without delays
+   * Used for initial page load to show cards immediately while still going through the streaming pipeline
+   */
+  private processAllChunksInstantly(): void {
+    // In instant mode, concatenate all chunks immediately to get complete JSON
+    while (this.chunksQueue.length > 0) {
+      const nextChunk = this.chunksQueue.shift() ?? '';
+      this.buffer += nextChunk;
+    }
+    
+    // Emit the complete buffer for JSON editor synchronization
+    this.bufferUpdateSubject.next(this.buffer);
+
+    // Now parse the complete JSON
+    const parsed = this.tryParseBuffer();
+    if (!parsed) {
+      // JSON parsing failed - finish with error state
+      this.updateState({
+        isActive: false,
+        stage: 'error',
+        progress: 0,
+        bufferLength: this.buffer.length,
+        targetLength: this.targetJson.length
+      });
+      return;
+    }
+
+    // Initialize placeholders with the complete parsed card
+    this.initializePlaceholdersIfNeeded(parsed);
+
+    // In instant mode, mark ALL sections as complete since we have the full JSON
+    if (this.placeholderCard) {
+      const allSectionIndices = (this.placeholderCard.sections || []).map((_, index) => index);
+      
+      // Mark all sections as complete in the completion states
+      allSectionIndices.forEach(index => {
+        const section = this.placeholderCard?.sections?.[index];
+        if (section) {
+          const sectionKey = section.id || `section-${index}`;
+          this.sectionCompletionStates.set(sectionKey, true);
+          this.sectionCompletionPercentages.set(sectionKey, 1.0);
+        }
+      });
+
+      // Apply all content from parsed JSON to placeholder card
+      this.updateCompletedSectionsOnly(parsed, allSectionIndices);
+
+      // Create the final card with all placeholders removed
+      const finalCard: AICardConfig = {
+        ...this.placeholderCard,
+        cardTitle: parsed.cardTitle || this.placeholderCard.cardTitle || '',
+        sections: (this.placeholderCard.sections || []).map((section, index) => ({
+          ...section,
+          fields: section.fields?.map(field => ({ 
+            ...field, 
+            meta: { ...(field.meta as Record<string, unknown> || {}), placeholder: false }
+          })),
+          items: section.items?.map(item => ({ 
+            ...item, 
+            meta: { ...(item.meta as Record<string, unknown> || {}), placeholder: false }
+          })),
+          meta: { ...(section.meta as Record<string, unknown> || {}), placeholder: false }
+        }))
+      };
+
+      this.placeholderCard = finalCard;
+      
+      // Update progress to 100%
+      this.updateState({
+        progress: 1,
+        bufferLength: this.buffer.length
+      });
+
+      // Emit the complete card with ALL sections marked as complete
+      this.emitCardUpdate(finalCard, 'structural', allSectionIndices);
+      this.pendingCompletedSectionIndices = [];
+    }
+
+    // Mark streaming as complete
+    this.updateState({
+      isActive: false,
+      stage: 'complete',
+      progress: 1
+    });
   }
 
   /**
@@ -189,6 +305,8 @@ export class LLMStreamingService implements OnDestroy {
     this.sectionCompletionStates.clear();
     this.sectionCompletionPercentages.clear();
     this.pendingCompletedSectionIndices = [];
+    this.pendingCardUpdate = null;
+    this.lastCardUpdateTime = 0;
   }
 
   /**
@@ -259,16 +377,15 @@ export class LLMStreamingService implements OnDestroy {
     // Emit buffer update for JSON editor synchronization
     this.bufferUpdateSubject.next(this.buffer);
 
-    // Parse and check for section completions
+    // Try to parse complete JSON first
     const parsed = this.tryParseBuffer();
     if (parsed) {
-      // Initialize placeholders if sections are declared for first time
+      // Full JSON is valid - use standard processing
       const placeholdersCreated = this.initializePlaceholdersIfNeeded(parsed);
       if (placeholdersCreated && this.placeholderCard) {
         this.emitCardUpdate(this.placeholderCard, 'structural');
       }
 
-      // Check if any sections completed
       if (this.placeholderCard) {
         const completedSections = this.checkSectionCompletions(parsed);
         const completedFields = this.checkFieldCompletions(parsed);
@@ -283,6 +400,20 @@ export class LLMStreamingService implements OnDestroy {
           this.pendingCompletedSectionIndices.push(...completedSections);
           this.batchSectionCompletions();
         }
+        
+        this.emitProgressiveUpdate(parsed);
+      }
+    } else {
+      // JSON is incomplete - use balanced-brace detection
+      // Only show sections when their JSON is complete (ensures fields/items are populated)
+      const { newlyCompleted, card } = this.detectCompletedSectionsFromBuffer();
+      
+      if (card) {
+        this.placeholderCard = card;
+        // New section completed = structural (masonry recalculates)
+        // Same sections = content (smooth update)
+        const changeType: CardChangeType = newlyCompleted.length > 0 ? 'structural' : 'content';
+        this.emitCardUpdate(card, changeType);
       }
     }
 
@@ -342,6 +473,494 @@ export class LLMStreamingService implements OnDestroy {
     return null;
   }
 
+  // Track which sections have been detected as complete from partial JSON
+  private partiallyCompletedSectionIndices = new Set<number>();
+  private partialSections: CardSection[] = [];
+  private partialCardTitle = '';
+
+  /**
+   * Detect completed sections from partial/incomplete JSON buffer.
+   * This allows progressive section reveal even when overall JSON is incomplete.
+   * A section is "complete" when its JSON object has balanced braces.
+   */
+  private detectCompletedSectionsFromBuffer(): { 
+    newlyCompleted: number[]; 
+    card: AICardConfig | null 
+  } {
+    const newlyCompleted: number[] = [];
+    
+    // Find sections array in buffer
+    const sectionsMatch = this.buffer.match(/"sections"\s*:\s*\[/);
+    if (!sectionsMatch || sectionsMatch.index === undefined) {
+      return { newlyCompleted, card: null };
+    }
+    
+    const sectionsStartIndex = sectionsMatch.index + sectionsMatch[0].length;
+    const sectionsContent = this.buffer.slice(sectionsStartIndex);
+    
+    // Extract card title if present
+    const titleMatch = this.buffer.match(/"cardTitle"\s*:\s*"([^"]*)"/);
+    if (titleMatch && titleMatch[1]) {
+      this.partialCardTitle = titleMatch[1];
+    }
+    
+    // Parse individual section objects by tracking brace balance
+    let sectionIndex = 0;
+    let i = 0;
+    
+    while (i < sectionsContent.length) {
+      // Skip whitespace and commas
+      let currentChar = sectionsContent[i];
+      while (i < sectionsContent.length && currentChar && /[\s,]/.test(currentChar)) {
+        i++;
+        currentChar = sectionsContent[i];
+      }
+      
+      if (i >= sectionsContent.length || currentChar === ']') {
+        break; // End of sections array
+      }
+      
+      if (currentChar === '{') {
+        // Found start of a section object
+        const sectionStart = i;
+        let braceDepth = 0;
+        let inString = false;
+        let escapeNext = false;
+        let sectionEnd = -1;
+        
+        // Find matching closing brace
+        for (let j = i; j < sectionsContent.length; j++) {
+          const char = sectionsContent[j];
+          
+          if (escapeNext) {
+            escapeNext = false;
+            continue;
+          }
+          
+          if (char === '\\' && inString) {
+            escapeNext = true;
+            continue;
+          }
+          
+          if (char === '"' && !escapeNext) {
+            inString = !inString;
+            continue;
+          }
+          
+          if (inString) continue;
+          
+          if (char === '{') {
+            braceDepth++;
+          } else if (char === '}') {
+            braceDepth--;
+            if (braceDepth === 0) {
+              sectionEnd = j;
+              break;
+            }
+          }
+        }
+        
+        if (sectionEnd !== -1) {
+          // Complete section found - try to parse it
+          const sectionJson = sectionsContent.slice(sectionStart, sectionEnd + 1);
+          
+          try {
+            const section = JSON.parse(sectionJson) as CardSection;
+            
+            // Create section with consistent ID
+            const sectionWithId = {
+              ...section,
+              id: section.id ?? `section_${sectionIndex}`
+            };
+            
+            // Check if this section is newly completed (for structural change detection)
+            const wasComplete = this.partiallyCompletedSectionIndices.has(sectionIndex);
+            if (!wasComplete) {
+              this.partiallyCompletedSectionIndices.add(sectionIndex);
+              newlyCompleted.push(sectionIndex);
+            }
+            
+            // ALWAYS update the stored section with latest data
+            // This ensures fields/items added after initial parse are preserved
+            const existingSection = this.partialSections[sectionIndex];
+            if (existingSection) {
+              // Merge: keep existing data, add new data
+              // Only overwrite if new data has MORE content
+              const existingContentCount = (existingSection.fields?.length ?? 0) + (existingSection.items?.length ?? 0);
+              const newContentCount = (sectionWithId.fields?.length ?? 0) + (sectionWithId.items?.length ?? 0);
+              
+              if (newContentCount >= existingContentCount) {
+                this.partialSections[sectionIndex] = sectionWithId;
+              }
+            } else {
+              // First time storing this section
+              this.partialSections[sectionIndex] = sectionWithId;
+            }
+            
+            i = sectionEnd + 1;
+            sectionIndex++;
+          } catch {
+            // Section JSON is malformed, skip it
+            i++;
+          }
+        } else {
+          // Section is incomplete (no closing brace yet)
+          break;
+        }
+      } else {
+        i++;
+      }
+    }
+    
+    // Build card from partial sections
+    if (this.partialSections.length > 0 || this.partialCardTitle) {
+      // IMPORTANT: Update lastKnownSectionCount to prevent initializePlaceholdersIfNeeded
+      // from creating duplicate sections when JSON becomes complete.
+      // This ensures consistent section_X IDs are used throughout streaming.
+      if (this.partialSections.length > this.lastKnownSectionCount) {
+        this.lastKnownSectionCount = this.partialSections.length;
+      }
+      
+      const partialCard: AICardConfig = {
+        cardTitle: this.partialCardTitle || 'Generating...',
+        sections: [...this.partialSections]
+      };
+      return { newlyCompleted, card: ensureCardIds(partialCard) };
+    }
+    
+    return { newlyCompleted, card: null };
+  }
+
+  /**
+   * Detect section titles in buffer and build partial card.
+   * Uses title detection to determine structural vs content changes:
+   * - New title detected = structural change (masonry recalculates)
+   * - Same titles, more content = content change (smooth update)
+   */
+  private detectSectionTitlesAndBuildCard(): { hasNewSection: boolean; partialCard: AICardConfig | null } {
+    // Find all section titles within the sections array
+    const sectionsMatch = this.buffer.match(/"sections"\s*:\s*\[/);
+    if (!sectionsMatch || sectionsMatch.index === undefined) {
+      // No sections array yet - just extract card title if available
+      const titleMatch = this.buffer.match(/"cardTitle"\s*:\s*"([^"]*)"/);
+      if (titleMatch && titleMatch[1]) {
+        return {
+          hasNewSection: false,
+          partialCard: ensureCardIds({
+            cardTitle: titleMatch[1],
+            sections: []
+          })
+        };
+      }
+      return { hasNewSection: false, partialCard: null };
+    }
+    
+    // Extract content after sections array starts
+    const sectionsStartIndex = sectionsMatch.index + sectionsMatch[0].length;
+    const sectionsContent = this.buffer.slice(sectionsStartIndex);
+    
+    // Find all section titles using regex
+    // Look for "title": "..." patterns within the sections content
+    const titleRegex = /"title"\s*:\s*"([^"]+)"/g;
+    const currentTitles: string[] = [];
+    let match;
+    while ((match = titleRegex.exec(sectionsContent)) !== null) {
+      if (match[1]) {
+        currentTitles.push(match[1]);
+      }
+    }
+    
+    // Check for new titles (structural change)
+    let hasNewSection = false;
+    for (const title of currentTitles) {
+      if (!this.detectedSectionTitles.has(title)) {
+        this.detectedSectionTitles.add(title);
+        hasNewSection = true;
+      }
+    }
+    
+    // Build partial card using existing extraction logic
+    const partialCard = this.extractPartialCardFromBuffer();
+    
+    return { hasNewSection, partialCard };
+  }
+
+  /**
+   * Extract partial card from buffer for LIVE streaming display.
+   * Shows content as it appears - doesn't wait for complete sections.
+   * Extracts whatever is available: partial titles, partial fields, etc.
+   */
+  extractPartialCardFromBuffer(): AICardConfig | null {
+    // Extract card title (even if incomplete)
+    let cardTitle = '';
+    const titleMatch = this.buffer.match(/"cardTitle"\s*:\s*"([^"]*)"?/);
+    if (titleMatch && titleMatch[1]) {
+      cardTitle = titleMatch[1];
+    }
+    
+    // Find sections array start
+    const sectionsMatch = this.buffer.match(/"sections"\s*:\s*\[/);
+    if (!sectionsMatch || sectionsMatch.index === undefined) {
+      // No sections yet - return card with just title if available
+      if (cardTitle) {
+        return ensureCardIds({
+          cardTitle,
+          sections: []
+        });
+      }
+      return null;
+    }
+    
+    const sectionsStartIndex = sectionsMatch.index + sectionsMatch[0].length;
+    const sectionsContent = this.buffer.slice(sectionsStartIndex);
+    
+    // Extract sections - including incomplete ones
+    const sections: CardSection[] = [];
+    let i = 0;
+    let sectionIndex = 0;
+    
+    while (i < sectionsContent.length) {
+      // Skip whitespace and commas
+      while (i < sectionsContent.length && /[\s,]/.test(sectionsContent[i] || '')) {
+        i++;
+      }
+      
+      if (i >= sectionsContent.length || sectionsContent[i] === ']') {
+        break;
+      }
+      
+      if (sectionsContent[i] === '{') {
+        // Found section start - extract whatever we can
+        const sectionStart = i;
+        const section = this.extractPartialSection(sectionsContent.slice(sectionStart), sectionIndex);
+        if (section) {
+          sections.push(section);
+        }
+        
+        // Find end of this section (balanced or not) to move to next
+        let braceDepth = 0;
+        let inString = false;
+        let escapeNext = false;
+        
+        for (let j = i; j < sectionsContent.length; j++) {
+          const char = sectionsContent[j];
+          if (escapeNext) { escapeNext = false; continue; }
+          if (char === '\\' && inString) { escapeNext = true; continue; }
+          if (char === '"' && !escapeNext) { inString = !inString; continue; }
+          if (inString) continue;
+          
+          if (char === '{') braceDepth++;
+          else if (char === '}') {
+            braceDepth--;
+            if (braceDepth === 0) {
+              i = j + 1;
+              break;
+            }
+          }
+        }
+        
+        // If we didn't find closing brace, we're at the last incomplete section
+        if (braceDepth > 0) {
+          break; // This section is still being written
+        }
+        
+        sectionIndex++;
+      } else {
+        i++;
+      }
+    }
+    
+    if (cardTitle || sections.length > 0) {
+      return ensureCardIds({
+        cardTitle: cardTitle || 'Generating...',
+        sections
+      });
+    }
+    
+    return null;
+  }
+  
+  /**
+   * Extract a partial section from JSON string.
+   * Uses regex to extract available properties even from incomplete JSON.
+   * 
+   * IMPORTANT: Prefers already-parsed complete sections to avoid data loss.
+   */
+  private extractPartialSection(sectionJson: string, index: number): CardSection | null {
+    // FIRST: Check if we already have a complete version of this section
+    // This prevents partial extraction from overwriting complete data
+    const existingComplete = this.partialSections[index];
+    if (existingComplete) {
+      // Return the complete section we already have
+      return existingComplete;
+    }
+    
+    // Try to parse as complete JSON first
+    try {
+      // Find the complete object if possible
+      let braceDepth = 0;
+      let inString = false;
+      let escapeNext = false;
+      let endIndex = -1;
+      
+      for (let i = 0; i < sectionJson.length; i++) {
+        const char = sectionJson[i];
+        if (escapeNext) { escapeNext = false; continue; }
+        if (char === '\\' && inString) { escapeNext = true; continue; }
+        if (char === '"') { inString = !inString; continue; }
+        if (inString) continue;
+        
+        if (char === '{') braceDepth++;
+        else if (char === '}') {
+          braceDepth--;
+          if (braceDepth === 0) {
+            endIndex = i;
+            break;
+          }
+        }
+      }
+      
+      if (endIndex !== -1) {
+        const completeJson = sectionJson.slice(0, endIndex + 1);
+        const parsed = JSON.parse(completeJson) as CardSection;
+        return {
+          ...parsed,
+          id: parsed.id ?? `section_${index}`
+        };
+      }
+    } catch {
+      // Fall through to partial extraction
+    }
+    
+    // Extract available properties via regex (for incomplete sections)
+    const section: CardSection = {
+      id: `section_${index}`,
+      title: '', // Will be populated if found
+      type: 'info',
+      fields: [],
+      items: []
+    };
+    
+    // Extract title
+    const titleMatch = sectionJson.match(/"title"\s*:\s*"([^"]*)"?/);
+    if (titleMatch && titleMatch[1]) {
+      section.title = titleMatch[1];
+    }
+    
+    // Extract type
+    const typeMatch = sectionJson.match(/"type"\s*:\s*"([^"]*)"?/);
+    if (typeMatch && typeMatch[1]) {
+      section.type = typeMatch[1] as CardSection['type'];
+    }
+    
+    // Extract description
+    const descMatch = sectionJson.match(/"description"\s*:\s*"([^"]*)"?/);
+    if (descMatch && descMatch[1]) {
+      section.description = descMatch[1];
+    }
+    
+    // Extract fields array
+    const fieldsMatch = sectionJson.match(/"fields"\s*:\s*\[/);
+    if (fieldsMatch && fieldsMatch.index !== undefined) {
+      const fieldsStart = fieldsMatch.index + fieldsMatch[0].length;
+      const fieldsContent = sectionJson.slice(fieldsStart);
+      section.fields = this.extractPartialFields(fieldsContent);
+    }
+    
+    // Extract items array
+    const itemsMatch = sectionJson.match(/"items"\s*:\s*\[/);
+    if (itemsMatch && itemsMatch.index !== undefined) {
+      const itemsStart = itemsMatch.index + itemsMatch[0].length;
+      const itemsContent = sectionJson.slice(itemsStart);
+      section.items = this.extractPartialItems(itemsContent);
+    }
+    
+    // Only return if we have at least a title or type
+    if (section.title || section.type !== 'info') {
+      return section;
+    }
+    
+    return null;
+  }
+  
+  /**
+   * Extract partial fields from incomplete JSON
+   */
+  private extractPartialFields(fieldsJson: string): CardField[] {
+    const fields: CardField[] = [];
+    let fieldIndex = 0;
+    
+    // Find field objects
+    const fieldRegex = /\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}?/g;
+    let match;
+    
+    while ((match = fieldRegex.exec(fieldsJson)) !== null) {
+      const fieldStr = match[0];
+      
+      // Extract field properties
+      const labelMatch = fieldStr.match(/"label"\s*:\s*"([^"]*)"?/);
+      const valueMatch = fieldStr.match(/"value"\s*:\s*"([^"]*)"?/);
+      const typeMatch = fieldStr.match(/"type"\s*:\s*"([^"]*)"?/);
+      
+      if (labelMatch || valueMatch) {
+        fields.push({
+          id: `field-${fieldIndex}`,
+          label: labelMatch?.[1] || '',
+          value: valueMatch?.[1] || '',
+          type: (typeMatch?.[1] as CardField['type']) || 'text'
+        });
+        fieldIndex++;
+      }
+      
+      // Stop at closing bracket
+      if (fieldsJson.indexOf(']', match.index) !== -1 && 
+          fieldsJson.indexOf(']', match.index) < (match.index + match[0].length + 10)) {
+        break;
+      }
+    }
+    
+    return fields;
+  }
+  
+  /**
+   * Extract partial items from incomplete JSON
+   */
+  private extractPartialItems(itemsJson: string): CardItem[] {
+    const items: CardItem[] = [];
+    let itemIndex = 0;
+    
+    // Find item objects
+    const itemRegex = /\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}?/g;
+    let match;
+    
+    while ((match = itemRegex.exec(itemsJson)) !== null) {
+      const itemStr = match[0];
+      
+      // Extract item properties
+      const titleMatch = itemStr.match(/"title"\s*:\s*"([^"]*)"?/);
+      const descMatch = itemStr.match(/"description"\s*:\s*"([^"]*)"?/);
+      const valueMatch = itemStr.match(/"value"\s*:\s*"([^"]*)"?/);
+      
+      if (titleMatch || descMatch) {
+        items.push({
+          id: `item-${itemIndex}`,
+          title: titleMatch?.[1] || '',
+          description: descMatch?.[1],
+          value: valueMatch?.[1]
+        });
+        itemIndex++;
+      }
+      
+      // Stop at closing bracket
+      if (itemsJson.indexOf(']', match.index) !== -1 && 
+          itemsJson.indexOf(']', match.index) < (match.index + match[0].length + 10)) {
+        break;
+      }
+    }
+    
+    return items;
+  }
+
   /**
    * Initialize placeholders when sections are first declared
    */
@@ -385,7 +1004,7 @@ export class LLMStreamingService implements OnDestroy {
   private createPlaceholderSection(section: CardSection, sectionIndex: number): CardSection {
     return {
       ...section,
-      id: section.id ?? `llm-section-${sectionIndex}`,
+      id: section.id ?? `section_${sectionIndex}`,
       title: section.title || `Section ${sectionIndex + 1}`,
       fields: (section.fields ?? []).map((field, fieldIndex) =>
         this.createPlaceholderField(field, sectionIndex, fieldIndex)
@@ -403,7 +1022,7 @@ export class LLMStreamingService implements OnDestroy {
   private createPlaceholderField(field: CardField, sectionIndex: number, fieldIndex: number): CardField {
     return {
       ...field,
-      id: field.id ?? `llm-field-${sectionIndex}-${fieldIndex}`,
+      id: field.id ?? `field_${sectionIndex}_${fieldIndex}`,
       label: field.label || field.title || `Field ${fieldIndex + 1}`,
       value: field.value ?? '',
       meta: { ...(field.meta ?? {}), placeholder: true }
@@ -416,7 +1035,7 @@ export class LLMStreamingService implements OnDestroy {
   private createPlaceholderItem(item: CardItem, sectionIndex: number, itemIndex: number): CardItem {
     return {
       ...item,
-      id: item.id ?? `llm-item-${sectionIndex}-${itemIndex}`,
+      id: item.id ?? `item_${sectionIndex}_${itemIndex}`,
       title: item.title || `Item ${itemIndex + 1}`,
       description: item.description ?? '',
       meta: { ...(item.meta ?? {}), placeholder: true }
@@ -461,9 +1080,9 @@ export class LLMStreamingService implements OnDestroy {
   /**
    * Check which fields have completed
    */
-  private checkFieldCompletions(parsed: AICardConfig): Array<{ sectionIndex: number; fieldIndex: number }> {
+  private checkFieldCompletions(parsed: AICardConfig): { sectionIndex: number; fieldIndex: number }[] {
     const sections = parsed.sections ?? [];
-    const completedFields: Array<{ sectionIndex: number; fieldIndex: number }> = [];
+    const completedFields: { sectionIndex: number; fieldIndex: number }[] = [];
 
     sections.forEach((section, sectionIndex) => {
       const fields = section.fields ?? [];
@@ -544,7 +1163,7 @@ export class LLMStreamingService implements OnDestroy {
       const fieldIndex = existing.length;
       const incomingField = incoming[fieldIndex];
       existing.push({
-        id: incomingField?.id ?? `llm-field-${sectionIndex}-${fieldIndex}`,
+        id: incomingField?.id ?? `field_${sectionIndex}_${fieldIndex}`,
         label: incomingField?.label ?? `Field ${fieldIndex + 1}`,
         value: incomingField?.value ?? '',
         meta: { placeholder: true, ...(incomingField?.meta ?? {}) }
@@ -586,7 +1205,7 @@ export class LLMStreamingService implements OnDestroy {
       const itemIndex = existing.length;
       const incomingItem = incoming[itemIndex];
       existing.push({
-        id: incomingItem?.id ?? `llm-item-${sectionIndex}-${itemIndex}`,
+        id: incomingItem?.id ?? `item_${sectionIndex}_${itemIndex}`,
         title: incomingItem?.title ?? `Item ${itemIndex + 1}`,
         description: incomingItem?.description ?? '',
         meta: { placeholder: true, ...(incomingItem?.meta ?? {}) }
@@ -617,7 +1236,7 @@ export class LLMStreamingService implements OnDestroy {
   /**
    * Update only completed fields in-place
    */
-  private updateCompletedFieldsOnly(incoming: AICardConfig, completedFields: Array<{ sectionIndex: number; fieldIndex: number }>): void {
+  private updateCompletedFieldsOnly(incoming: AICardConfig, completedFields: { sectionIndex: number; fieldIndex: number }[]): void {
     if (!this.placeholderCard) {
       return;
     }
@@ -769,14 +1388,143 @@ export class LLMStreamingService implements OnDestroy {
   }
 
   /**
-   * Emit card update
+   * Emit progressive content update during streaming
+   * Updates placeholder card with latest parsed content and emits throttled update
+   */
+  private emitProgressiveUpdate(parsed: AICardConfig): void {
+    if (!this.placeholderCard) {
+      return;
+    }
+
+    // Update card title progressively
+    if (parsed.cardTitle) {
+      this.placeholderCard.cardTitle = parsed.cardTitle;
+    }
+
+    // Update all sections with latest content from parsed JSON
+    const incomingSections = parsed.sections ?? [];
+    const placeholderSections = this.placeholderCard.sections ?? [];
+
+    incomingSections.forEach((incomingSection, index) => {
+      const placeholderSection = placeholderSections[index];
+      if (!placeholderSection) return;
+
+      // Update section content progressively
+      if (incomingSection.title) {
+        placeholderSection.title = incomingSection.title;
+      }
+      if (incomingSection.description) {
+        placeholderSection.description = incomingSection.description;
+      }
+
+      // Update fields progressively
+      const incomingFields = incomingSection.fields ?? [];
+      const placeholderFields = placeholderSection.fields ?? [];
+      incomingFields.forEach((incomingField, fieldIndex) => {
+        const placeholderField = placeholderFields[fieldIndex];
+        if (placeholderField && incomingField.value !== undefined) {
+          placeholderField.label = incomingField.label ?? placeholderField.label;
+          placeholderField.value = incomingField.value;
+        }
+      });
+
+      // Update items progressively
+      const incomingItems = incomingSection.items ?? [];
+      const placeholderItems = placeholderSection.items ?? [];
+      incomingItems.forEach((incomingItem, itemIndex) => {
+        const placeholderItem = placeholderItems[itemIndex];
+        if (placeholderItem) {
+          if (incomingItem.title) {
+            placeholderItem.title = incomingItem.title;
+          }
+          if (incomingItem.description) {
+            placeholderItem.description = incomingItem.description;
+          }
+        }
+      });
+    });
+
+    // Emit throttled content update - the throttle mechanism will limit frequency
+    this.emitCardUpdate(this.placeholderCard, 'content');
+  }
+
+  /**
+   * Emit card update with intelligent throttling for smooth streaming
+   * 
+   * Throttling strategy:
+   * - Structural changes (new sections): Emit immediately for responsive section appearance
+   * - Content-only changes: Throttle more aggressively to prevent rapid re-renders
+   * - Completion events: Emit immediately to show final state
+   * - Non-streaming contexts: Emit immediately (instant mode, completion)
    */
   private emitCardUpdate(card: AICardConfig, changeType: CardChangeType, completedSections?: number[]): void {
-    this.cardUpdateSubject.next({
-      card,
-      changeType,
-      completedSections
-    });
+    const now = Date.now();
+    const isStreaming = this.getState().isActive && this.getState().stage === 'streaming';
+    const isStructuralChange = changeType === 'structural';
+    const isCompletionEvent = completedSections && completedSections.length > 0;
+    
+    // Use different throttle times based on change type
+    // Structural changes use shorter throttle for responsive section appearance
+    // Content changes use longer throttle to reduce visual noise
+    const throttleMs = isStructuralChange 
+      ? this.config.LLM_SIMULATION.CARD_UPDATE_THROTTLE_MS
+      : (this.config.LLM_SIMULATION.CONTENT_UPDATE_THROTTLE_MS ?? this.config.LLM_SIMULATION.CARD_UPDATE_THROTTLE_MS);
+    
+    // Allow immediate update if:
+    // 1. Not actively streaming (instant mode, completion, etc.)
+    // 2. Structural change (new sections added) - always immediate for responsive feel
+    // 3. Section completion event - always immediate
+    // 4. Enough time has passed since last update
+    const shouldEmitImmediately = !isStreaming || 
+                                   isStructuralChange || 
+                                   isCompletionEvent ||
+                                   (now - this.lastCardUpdateTime >= throttleMs);
+    
+    if (shouldEmitImmediately) {
+      // Emit immediately
+      this.lastCardUpdateTime = now;
+      this.pendingCardUpdate = null;
+      
+      // Clear any pending throttled update
+      if (this.cardUpdateThrottleTimer) {
+        clearTimeout(this.cardUpdateThrottleTimer);
+        this.cardUpdateThrottleTimer = null;
+      }
+      
+      this.cardUpdateSubject.next({
+        card,
+        changeType,
+        completedSections
+      });
+    } else {
+      // Buffer the update for throttled emission
+      // If there's already a pending update, merge with it (keep latest card, preserve changeType)
+      if (this.pendingCardUpdate) {
+        // If pending is structural and new is content, keep structural
+        const mergedChangeType = this.pendingCardUpdate.changeType === 'structural' ? 'structural' : changeType;
+        this.pendingCardUpdate = { 
+          card, 
+          changeType: mergedChangeType, 
+          completedSections: completedSections ?? this.pendingCardUpdate.completedSections 
+        };
+      } else {
+        this.pendingCardUpdate = { card, changeType, completedSections };
+      }
+      
+      // Schedule throttled emission if not already scheduled
+      if (!this.cardUpdateThrottleTimer) {
+        const remainingTime = throttleMs - (now - this.lastCardUpdateTime);
+        this.cardUpdateThrottleTimer = setTimeout(() => {
+          this.cardUpdateThrottleTimer = null;
+          if (this.pendingCardUpdate) {
+            const update = this.pendingCardUpdate;
+            this.pendingCardUpdate = null;
+            this.lastCardUpdateTime = Date.now();
+            this.cardUpdateSubject.next(update);
+          }
+        }, Math.max(0, remainingTime));
+      }
+    }
   }
 
   /**
@@ -804,6 +1552,10 @@ export class LLMStreamingService implements OnDestroy {
     if (this.completionBatchTimer) {
       clearTimeout(this.completionBatchTimer);
       this.completionBatchTimer = null;
+    }
+    if (this.cardUpdateThrottleTimer) {
+      clearTimeout(this.cardUpdateThrottleTimer);
+      this.cardUpdateThrottleTimer = null;
     }
   }
 }

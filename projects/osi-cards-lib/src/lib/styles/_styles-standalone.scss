@@ -1,0 +1,1369 @@
+/* ===================================================================
+   STANDALONE OSI CARDS STYLES - Complete CSS Isolation
+   =================================================================== */
+/* 
+ * This stylesheet provides COMPLETE isolation from host application styles.
+ * All CSS variables are defined inline with explicit values.
+ * No external variable references - fully self-contained.
+ * 
+ * CSS Layer Strategy:
+ *   - All library styles are in the 'osi-cards' layer
+ *   - Consumer styles outside this layer have higher priority
+ *   - Easy to override: just write your CSS normally, no !important needed
+ * 
+ * Use this version when:
+ *   - Bootstrap/Boosted styles are conflicting
+ *   - You need pixel-perfect match with OSI Cards documentation
+ *   - You want zero CSS variable leakage
+ * 
+ * Usage:
+ *   1. Import this file in your styles or angular.json
+ *   2. Wrap your OSI Cards components in <div class="osi-cards-container">
+ * 
+ * Example:
+ *   <div class="osi-cards-container" data-theme="day">
+ *     <app-ai-card-renderer [cardConfig]="card"></app-ai-card-renderer>
+ *   </div>
+ *
+ * Overriding styles:
+ *   // Your styles (outside @layer) automatically override library styles
+ *   .osi-cards-container .ai-card-title {
+ *     font-size: 2rem; // This will override library default
+ *   }
+ */
+
+/* Declare the layer first for proper cascade ordering */
+@layer osi-cards;
+
+/* All library styles go in the osi-cards layer */
+@layer osi-cards {
+
+.osi-cards-container {
+  /* ===================================================================
+     COMPLETE STYLE RESET - Isolate from parent styles
+     =================================================================== */
+  all: revert;
+  box-sizing: border-box;
+  isolation: isolate;
+  
+  /* Container layout - transparent with 8px padding */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 8px;
+  
+  /* Fully transparent - allows host app background to show through */
+  background: transparent !important;
+  background-color: transparent !important;
+  
+  /* Preserve 3D transforms for tilt effects */
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  
+  /* Reset all inherited properties - FORCE OVERRIDE BOOSTED/BOOTSTRAP */
+  font-family: Helvetica, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  text-align: left;
+  color: #1c1c1f;
+  
+  /* Enhanced text rendering for sharpness */
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
+  font-feature-settings: 'kern' 1 !important;
+  
+  /* Force border-box on all children */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box !important;
+    /* Force font inheritance to override Boosted */
+    font-family: inherit !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+  }
+  
+  /* Reset all heading fonts to override Boosted */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: Helvetica, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
+    margin: 0 !important;
+    line-height: 1.2 !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+  
+  /* Reset button styles to override Boosted completely */
+  button {
+    font-family: inherit !important;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    
+    &:focus-visible {
+      outline: 2px solid var(--color-brand, #FF7900) !important;
+      outline-offset: 2px !important;
+      border-radius: 4px !important;
+    }
+    
+    &:focus:not(:focus-visible) {
+      outline: none !important;
+    }
+  }
+
+  /* ===================================================================
+     BOOTSTRAP VARIABLE RESET - Unset all Bootstrap/Boosted variables
+     =================================================================== */
+  
+  /* Reset Bootstrap color variables */
+  --bs-blue: unset;
+  --bs-indigo: unset;
+  --bs-purple: unset;
+  --bs-pink: unset;
+  --bs-red: unset;
+  --bs-orange: unset;
+  --bs-yellow: unset;
+  --bs-green: unset;
+  --bs-teal: unset;
+  --bs-cyan: unset;
+  --bs-black: unset;
+  --bs-white: unset;
+  --bs-gray: unset;
+  --bs-gray-dark: unset;
+  --bs-gray-100: unset;
+  --bs-gray-200: unset;
+  --bs-gray-300: unset;
+  --bs-gray-400: unset;
+  --bs-gray-500: unset;
+  --bs-gray-600: unset;
+  --bs-gray-700: unset;
+  --bs-gray-800: unset;
+  --bs-gray-900: unset;
+  --bs-gray-950: unset;
+  
+  /* Reset Bootstrap semantic colors */
+  --bs-primary: unset;
+  --bs-secondary: unset;
+  --bs-success: unset;
+  --bs-info: unset;
+  --bs-warning: unset;
+  --bs-danger: unset;
+  --bs-light: unset;
+  --bs-dark: unset;
+  
+  /* Reset Bootstrap RGB colors */
+  --bs-primary-rgb: unset;
+  --bs-secondary-rgb: unset;
+  --bs-success-rgb: unset;
+  --bs-info-rgb: unset;
+  --bs-warning-rgb: unset;
+  --bs-danger-rgb: unset;
+  --bs-light-rgb: unset;
+  --bs-dark-rgb: unset;
+  --bs-white-rgb: unset;
+  --bs-black-rgb: unset;
+  
+  /* Reset Bootstrap typography */
+  --bs-font-sans-serif: unset;
+  --bs-font-monospace: unset;
+  --bs-body-font-family: unset;
+  --bs-body-font-size: unset;
+  --bs-body-font-weight: unset;
+  --bs-body-line-height: unset;
+  --bs-body-color: unset;
+  --bs-body-color-rgb: unset;
+  --bs-body-bg: unset;
+  --bs-body-bg-rgb: unset;
+  --bs-emphasis-color: unset;
+  --bs-emphasis-color-rgb: unset;
+  --bs-secondary-color: unset;
+  --bs-secondary-color-rgb: unset;
+  --bs-secondary-bg: unset;
+  --bs-secondary-bg-rgb: unset;
+  --bs-tertiary-color: unset;
+  --bs-tertiary-color-rgb: unset;
+  --bs-tertiary-bg: unset;
+  --bs-tertiary-bg-rgb: unset;
+  --bs-heading-color: unset;
+  
+  /* Reset Bootstrap links */
+  --bs-link-color: unset;
+  --bs-link-color-rgb: unset;
+  --bs-link-decoration: unset;
+  --bs-link-hover-color: unset;
+  --bs-link-hover-color-rgb: unset;
+  
+  /* Reset Bootstrap borders */
+  --bs-border-width: unset;
+  --bs-border-style: unset;
+  --bs-border-color: unset;
+  --bs-border-color-subtle: unset;
+  --bs-border-color-translucent: unset;
+  --bs-border-radius: unset;
+  --bs-border-radius-sm: unset;
+  --bs-border-radius-lg: unset;
+  --bs-border-radius-xl: unset;
+  --bs-border-radius-xxl: unset;
+  --bs-border-radius-2xl: unset;
+  --bs-border-radius-pill: unset;
+  
+  /* Reset Bootstrap shadows */
+  --bs-box-shadow: unset;
+  --bs-box-shadow-sm: unset;
+  --bs-box-shadow-lg: unset;
+  --bs-box-shadow-inset: unset;
+  
+  /* Reset Bootstrap gutters */
+  --bs-gutter-x: unset;
+  --bs-gutter-y: unset;
+  
+  /* Reset Bootstrap gradient */
+  --bs-gradient: unset;
+
+  /* ===================================================================
+     OSI CARDS DESIGN TOKENS - All values defined inline
+     =================================================================== */
+  
+  /* === BRAND & CORE COLORS === */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-brand: #ff7900;
+  --color-brand-dark: #CC5F00;
+  --color-brand-light: #FF9933;
+
+  /* Grayscale ramp */
+  --color-gray-50: #ffffff;
+  --color-gray-100: #fcfcfc;
+  --color-gray-150: #f7f7f7;
+  --color-gray-200: #f0f0f1;
+  --color-gray-300: #e9e9e9;
+  --color-gray-400: #92999e;
+  --color-gray-500: #5a5f62;
+  --color-gray-600: #343541;
+  --color-gray-700: #2a2a2a;
+  --color-gray-800: #232323;
+  --color-gray-850: #171717;
+  --color-gray-900: #000000;
+
+  /* Theme colors - Light mode defaults */
+  --background: #ffffff;
+  --surface-contrast-color: #000000;
+  --foreground: #1c1c1f;
+  --muted: #f4f4f6;
+  --muted-foreground: #555861;
+  --card: #fefefe;
+  --card-foreground: #1c1c1f;
+  --card-surface: #fefefe;
+  --card-surface-hover: #fcfcfc;
+  --card-section-bg: #fafafa;
+  --card-section-card-bg: #f5f5f5;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
+  --primary: #FF7900;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #1a1a1a;
+  --accent: #FF7900;
+  --accent-foreground: #ffffff;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(200, 200, 200, 0.5);
+  --input: transparent;
+  --input-background: #f9f9f9;
+  --switch-background: #e5e5e5;
+  --ring: rgba(255, 121, 0, 0.4);
+  
+  /* Chart colors */
+  --chart-1: #FF7900;
+  --chart-2: #FF9933;
+  --chart-3: #CC5F00;
+  --chart-4: #FFE6CC;
+  --chart-5: #FF4500;
+
+  /* === AI CARD SURFACE TOKENS === */
+  --theme-ai-card-border: 0.5px solid rgba(255, 121, 0, 0.52);
+  --theme-ai-card-border-hover: 0.5px solid #ff7900;
+  --theme-ai-card-background: #fefefe;
+  --theme-ai-card-background-hover: #fcfcfc;
+  --theme-ai-card-box-shadow: 0 0 6px rgba(255, 121, 0, 0.15);
+  --theme-ai-card-box-shadow-hover: 0 0 8px rgba(255, 121, 0, 0.22);
+  --theme-ai-card-transition: border 0.38s cubic-bezier(0.4, 0, 0.2, 1), background 0.38s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* === CARD TOKENS === */
+  --theme-card-border: 1px solid rgba(0, 0, 0, 0.16);
+  --theme-card-border-hover: #ff7900;
+  --theme-card-hover-border: #ff7900;
+  --theme-card-background: #fefefe;
+  --theme-card-background-hover: #fcfcfc;
+  --theme-card-box-shadow: 0 1px 2px rgba(15, 15, 20, 0.04);
+  --theme-card-box-shadow-hover: 0 1px 3px rgba(10, 10, 16, 0.06);
+  --theme-card-box-shadow-hover-lift: 0 2px 4px rgba(6, 6, 10, 0.07);
+  --theme-card-hover-background: #fcfcfc;
+  --theme-card-hover-shadow: 0 2px 4px rgba(8, 8, 12, 0.07);
+
+  /* === SECTION TOKENS === */
+  --section-background: #fafafa;
+  --section-background-hover: #f7f7f7;
+  --section-surface: #fafafa;
+  --section-surface-hover: #f7f7f7;
+  --theme-section-border: 1px solid rgba(0, 0, 0, 0.08);
+  --theme-section-border-hover: 1px solid rgba(0, 0, 0, 0.1);
+  --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --theme-section-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.07);
+  --theme-section-transition: border-color 0.32s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* === SECTION ITEM TOKENS === */
+  --theme-section-item-border: 1px solid rgba(0, 0, 0, 0.14);
+  --theme-section-item-border-hover: 1px solid rgba(0, 0, 0, 0.22);
+  --theme-section-item-background: #fafafa;
+  --theme-section-item-background-hover: #f7f7f7;
+  --theme-section-item-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --theme-section-item-box-shadow-hover: 0 1px 3px rgba(0, 0, 0, 0.07);
+  --theme-section-item-hover-transform: none;
+  --theme-section-item-transition: border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), background 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* === DESIGN TOKENS === */
+  --font-size-base: 13px;
+  --radius-base: 0.625rem;
+  --spacing-base: 0.25rem;
+  
+  /* Text scale */
+  --text-xs: 0.625rem;
+  --text-sm: 0.75rem;
+  --text-base: 0.875rem;
+  --text-lg: 0.8125rem;
+  --text-xl: 1.125rem;
+  --text-2xl: 1.0625rem;
+  --text-3xl: 1.75rem;
+  --text-4xl: 2.125rem;
+  --text-5xl: 2.875rem;
+  --text-7xl: 4.375rem;
+  
+  /* Radius scale */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+  
+  /* === CARD SYSTEM TOKENS === */
+  --card-main-padding: 16px;
+  --card-padding-vertical: 12px;
+  --card-padding-horizontal: 16px;
+  --card-padding: 16px;
+  --card-padding-large: 20px;
+  --section-padding: 12px;
+  --card-min-height: auto;
+  --card-gap: clamp(6px, 0.6vw, 10px);
+  --card-gap-large: clamp(10px, 0.8vw, 14px);
+  --card-nested-gap: clamp(3px, 0.4vw, 6px);
+  --section-header-gap: clamp(3px, 0.4vw, 6px);
+  --section-header-padding-bottom: clamp(0px, 0.2vw, 2px);
+  --section-title-margin-bottom: 2px;
+  
+  --card-background: rgba(255, 121, 0, 0.025);
+  --card-background-hover: rgba(255, 121, 0, 0.055);
+  
+  /* Element type tokens */
+  --hero-card-border: 1px solid rgba(146, 153, 158, 0.4);
+  --hero-card-border-hover: rgba(146, 153, 158, 0.7);
+  --hero-card-background: #fefefe;
+  --hero-card-background-hover: #fefefe;
+  --hero-card-border-radius: 10px;
+  --hero-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --hero-card-box-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.12);
+  --hero-card-hover-transform: translateY(-2px);
+  
+  --button-border: 1px solid transparent;
+  --button-border-hover: 1px solid rgba(255, 121, 0, 0.4);
+  --button-background: #FF7900;
+  --button-background-hover: rgba(255, 121, 0, 0.85);
+  --button-border-radius: 8px;
+  --button-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  --button-box-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.12);
+  --button-hover-transform: translateY(-1px);
+  
+  --ai-card-border: 0.5px solid rgba(255, 121, 0, 0.52);
+  --ai-card-border-hover: 0.5px solid #ff7900;
+  --ai-card-background: #fefefe;
+  --ai-card-background-hover: #fcfcfc;
+  --ai-card-border-radius: 12px;
+  --ai-card-box-shadow: 0 0 18px rgba(255, 121, 0, 0.3);
+  --ai-card-box-shadow-hover: 0 0 24px rgba(255, 121, 0, 0.45);
+  --ai-card-hover-transform: none;
+  --ai-card-transition-default: border 0.32s cubic-bezier(0.4, 0, 0.2, 1), background 0.32s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  --ai-card-transition: border 0.32s cubic-bezier(0.4, 0, 0.2, 1), background 0.32s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  --section-border: 1px solid rgba(0, 0, 0, 0.08);
+  --section-border-hover: 1px solid rgba(0, 0, 0, 0.1);
+  --section-border-radius: 12px;
+  --section-box-shadow-default: 0 8px 22px rgba(0, 0, 0, 0.08);
+  --section-box-shadow-hover-default: 0 18px 40px rgba(0, 0, 0, 0.12);
+  --section-box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+  --section-box-shadow-hover: 0 18px 40px rgba(0, 0, 0, 0.12);
+  --section-hover-transform: none;
+  --section-transition: none;
+  
+  --section-item-border: 1px solid rgba(0, 0, 0, 0.14);
+  --section-item-border-hover: 1px solid rgba(0, 0, 0, 0.22);
+  --section-item-background: #fafafa;
+  --section-item-background-hover: #f7f7f7;
+  --section-item-border-radius: 10px;
+  --section-item-box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+  --section-item-box-shadow-hover-default: 0 8px 20px rgba(0, 0, 0, 0.12);
+  --section-item-box-shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.12);
+  --section-item-hover-transform: none;
+  --section-item-transition-default: background 300ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --section-item-transition: background 300ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Legacy card variables */
+  --card-border: 1px solid rgba(146, 153, 158, 0.15);
+  --card-border-hover: rgba(255, 121, 0, 0.4);
+  --card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --card-box-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --card-border-radius: 12px;
+  --card-border-radius-large: 16px;
+  --section-card-gap: 8px;
+  --section-card-border-radius: 10px;
+  --section-grid-min-width: 140px; /* RESPONSIVE: Smaller min-width for narrow containers */
+  
+  --card-hover-border: rgba(255, 121, 0, 0.4);
+  --card-hover-background: #fcfcfc;
+  --card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --card-hover-transform: none;
+  --card-hover-transform-scale: none;
+  --card-hover-transform-slide: none;
+  --card-box-shadow-hover-lift: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+  /* === TYPOGRAPHY SYSTEM === */
+  --section-title-font-size: clamp(0.92rem, 0.87rem + 0.2vw, 1.07rem);
+  --section-title-font-weight: 700;
+  --section-title-letter-spacing: -0.02em;
+  --section-title-line-height: 1.3;
+  --section-title-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --font-size-section-header: clamp(0.92rem, 0.87rem + 0.2vw, 1.07rem);
+  
+  --card-title-font-size: clamp(0.83rem, 0.78rem + 0.15vw, 0.93rem);
+  --card-title-font-weight: 700;
+  --card-title-letter-spacing: -0.01em;
+  --card-title-line-height: 1.4;
+  --card-title-text-shadow: 0 1px 1px rgba(0, 0, 0, 0.06);
+  
+  --card-subtitle-font-size: clamp(0.65rem, 0.625rem + 0.1vw, 0.7rem);
+  --card-subtitle-font-weight: 500;
+  --card-subtitle-letter-spacing: 0.015em;
+  --card-subtitle-line-height: 1.3;
+  
+  --card-label-font-size: clamp(0.5rem, 0.48rem + 0.05vw, 0.5rem);
+  --card-label-font-weight: 700;
+  --card-label-letter-spacing: 0.065em;
+  --card-label-line-height: 1.25;
+  --card-label-text-transform: uppercase;
+  --card-label-text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  
+  --card-value-font-size: clamp(1.0rem, 0.95rem + 0.2vw, 1.0rem);
+  --card-value-font-size-large: clamp(1.2rem, 1.15rem + 0.2vw, 1.25rem);
+  --card-value-font-size-xl: clamp(1.25rem, 1.2rem + 0.2vw, 1.25rem);
+  --card-value-font-weight: 600;
+  --card-value-letter-spacing: -0.015em;
+  --card-value-line-height: 1.35;
+  --card-value-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  --card-meta-font-size: clamp(0.55rem, 0.525rem + 0.1vw, 0.6rem);
+  --card-meta-font-weight: 500;
+  --card-meta-line-height: 1.3;
+  
+  --card-text-small-font-size: clamp(0.355rem, 0.295rem + 0.13vw, 0.455rem);
+  
+  --card-text-primary: #1c1c1f;
+  --card-text-secondary: #555861;
+  --card-text-muted: #555861;
+  --card-text-hover: #FF7900;
+  --card-text-label: #555861;
+  --card-meta-color: #555861;
+  
+  --card-transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  --card-transition-fast: all 0.22s ease;
+
+  /* Legacy font aliases */
+  --font-section-label: clamp(0.5rem, 0.48rem + 0.05vw, 0.5rem);
+  --font-section-value: clamp(1.0rem, 0.95rem + 0.2vw, 1.0rem);
+  --font-section-value-lg: clamp(0.95rem, 0.9rem + 0.15vw, 1.05rem);
+  --font-section-value-xl: clamp(1.2rem, 1.15rem + 0.2vw, 1.25rem);
+  --font-section-value-2xl: clamp(1.2rem, 1.15rem + 0.2vw, 1.25rem);
+  --font-section-description: clamp(0.65rem, 0.625rem + 0.1vw, 0.7rem);
+  --font-section-role: clamp(0.65rem, 0.625rem + 0.1vw, 0.7rem);
+  --font-section-tag: clamp(0.5rem, 0.48rem + 0.05vw, 0.5rem);
+  --font-section-tag-sm: clamp(0.5rem, 0.48rem + 0.05vw, 0.5rem);
+  --font-section-tag-lg: clamp(0.5rem, 0.48rem + 0.05vw, 0.5rem);
+  --font-section-meta: clamp(0.55rem, 0.525rem + 0.1vw, 0.6rem);
+  --font-section-name: clamp(0.95rem, 0.9rem + 0.15vw, 1.05rem);
+  --font-chart-label: clamp(0.5rem, 0.48rem + 0.05vw, 0.5rem);
+  --font-chart-value: clamp(1.0rem, 0.95rem + 0.2vw, 1.0rem);
+  --font-chart-meta: clamp(0.55rem, 0.525rem + 0.1vw, 0.6rem);
+  --font-chart-value-mobile: clamp(1.0rem, 0.95rem + 0.2vw, 1.0rem);
+  --font-contact-name: clamp(0.95rem, 0.9rem + 0.15vw, 1.05rem);
+  --font-contact-role: clamp(0.65rem, 0.625rem + 0.1vw, 0.7rem);
+  --font-contact-meta: clamp(0.55rem, 0.525rem + 0.1vw, 0.6rem);
+  --font-list-title: clamp(0.95rem, 0.9rem + 0.15vw, 1.05rem);
+  --font-list-subtitle: clamp(0.65rem, 0.625rem + 0.1vw, 0.7rem);
+  --font-list-meta: clamp(0.55rem, 0.525rem + 0.1vw, 0.6rem);
+  --font-overview-label: clamp(0.5rem, 0.48rem + 0.05vw, 0.5rem);
+  --font-overview-value: clamp(1.0rem, 0.95rem + 0.2vw, 1.0rem);
+  --font-section-label-mobile: clamp(0.5rem, 0.48rem + 0.05vw, 0.5rem);
+  --font-section-description-mobile: clamp(0.65rem, 0.625rem + 0.1vw, 0.7rem);
+
+  /* === SPACING SYSTEM === */
+  --spacing-xs: clamp(2px, 0.4vw, 6px);
+  --spacing-sm: clamp(4px, 0.6vw, 8px);
+  --spacing-md: clamp(6px, 0.8vw, 12px);
+  --spacing-lg: clamp(8px, 1vw, 14px);
+  --spacing-xl: clamp(10px, 1.2vw, 18px);
+  --spacing-2xl: clamp(12px, 1.4vw, 20px);
+  --spacing-3xl: clamp(14px, 1.6vw, 22px);
+  --spacing-4xl: clamp(16px, 1.8vw, 24px);
+  --spacing-5xl: clamp(18px, 2vw, 28px);
+  --spacing-6xl: clamp(20px, 2.2vw, 32px);
+  --spacing-7xl: clamp(22px, 2.4vw, 36px);
+  --spacing-8xl: clamp(24px, 2.6vw, 40px);
+  --spacing-9xl: clamp(26px, 2.8vw, 44px);
+  --spacing-10xl: clamp(28px, 3vw, 48px);
+  
+  --grid-gap-xs: 6px;
+  --grid-gap-sm: 8px;
+  --grid-gap-md: 12px;
+  --grid-gap-lg: 16px;
+  --grid-gap-xl: 20px;
+  --grid-gap-2xl: 24px;
+  --grid-gap-3xl: 32px;
+  
+  --section-grid-gap: 8px;
+  --section-grid-gap-mobile: 9px;
+  --section-stack-gap: 12px;
+  --section-stack-gap-mobile: 9px;
+  
+  --grid-gap-xs-mobile: 4px;
+  --grid-gap-sm-mobile: 4px;
+  --grid-gap-md-mobile: 4px;
+  
+  --section-item-padding: 8px;
+  --section-item-padding-mobile: 6px;
+  --section-item-gap: 6px;
+  --section-item-gap-mobile: 4px;
+  
+  --metric-item-padding: 10px 12px;
+  --metric-item-gap: 6px;
+  --metric-item-gap-mobile: 4px;
+  
+  --list-item-padding: 10px 12px;
+  --list-item-gap: 6px;
+  --list-item-gap-mobile: 4px;
+  
+  --card-element-gap-xs: 2px;
+  --card-element-gap-sm: 3px;
+  --card-element-gap-md: 4px;
+  --card-element-gap-lg: 6px;
+  --card-element-gap-xl: 8px;
+  --card-element-gap-2xl: 10px;
+  
+  --tag-padding-x: 6px;
+  --tag-padding-y: 3px;
+  --tag-padding-x-sm: 4px;
+  --tag-padding-y-sm: 2px;
+  --tag-padding-x-lg: 7px;
+  --tag-padding-y-lg: 3px;
+  
+  --accent-border-width: 3px;
+  --accent-border-width-sm: 2px;
+  
+  --icon-size-xs: 10px;
+  --icon-size-sm: 13px;
+  --icon-size-md: 16px;
+  --icon-size-lg: 22px;
+  --icon-size-xl: 36px;
+  --icon-size-section: 18px;
+  
+  --avatar-size-sm: 32px;
+  --avatar-size-md: 36px;
+  
+  --progress-height: 2px;
+  --progress-margin: 4px 0;
+
+  /* === ANIMATION SYSTEM === */
+  --duration-instant: 40ms;
+  --duration-fast: 80ms;
+  --duration-normal: 160ms;
+  --duration-moderate: 220ms;
+  --duration-slow: 300ms;
+  --duration-slower: 380ms;
+  --duration-slowest: 460ms;
+
+  --motion-distance-xl: 12px;
+  --motion-distance-lg: 10px;
+  --motion-distance-md: 6px;
+  --motion-distance-sm: 4px;
+  --motion-distance-xs: 2px;
+  --motion-scale-soft-start: 0.992;
+  --motion-scale-soft-end: 1;
+  --motion-scale-pop: 1.015;
+  --motion-scale-pulse-min: 0.985;
+  --motion-scale-pulse-max: 1.015;
+
+  --ease-out-smooth: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-in-out-quad: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+
+  --tilt-duration: 80ms;
+  --tilt-reset-duration: 300ms;
+  --shadow-duration: 100ms;
+  --glow-duration: 120ms;
+  --reflection-duration: 120ms;
+
+  --card-hover-duration: 200ms;
+  --card-hover-delay: 0ms;
+
+  --stagger-delay-base: 25ms;
+  --stagger-delay-fast: 15ms;
+  --stagger-delay-slow: 45ms;
+
+  --animation-fill-mode: both;
+  --animation-play-state: running;
+
+  /* Entrance animations */
+  --ai-card-entrance-animation: fadeInUpSoft var(--duration-moderate) var(--ease-out-smooth) 10ms 1 normal both;
+  --section-entrance-animation: fadeInSoft var(--duration-moderate) var(--ease-out-smooth) 20ms 1 normal both;
+  --section-item-entrance-animation: fadeInScaleSoft var(--duration-normal) var(--ease-out-smooth) 30ms 1 normal both;
+
+  /* Legacy variables */
+  --master-color: #ff7900;
+  --master-color-dark: #CC5F00;
+  --master-color-light: #FF9933;
+  --master-color-pale: #FFE6CC;
+  --bg-color: #ffffff;
+  --card-bg: #fefefe;
+  --section-bg: #f4f4f6;
+  --border-color: rgba(200, 200, 200, 0.5);
+  --text-color: #1c1c1f;
+  --text-muted: #555861;
+  --primary-color: #FF7900;
+  --primary-contrast: #ffffff;
+  --secondary-color: #f5f5f5;
+  --secondary-contrast: #1a1a1a;
+  --hover-bg: rgba(255, 121, 0, 0.1);
+  --placeholder-bg: rgba(255, 255, 255, 0.05);
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+
+  /* ===================================================================
+     IMPORT COMPONENT STYLES - Inside .osi-cards-container (theme-agnostic)
+     =================================================================== */
+
+  // Core styles
+  @import 'core/mixins';
+  @import 'core/surface-layers';
+  @import 'core/global-unified';
+  @import 'core/utilities';
+  @import 'core/animations';
+
+  // Layout styles
+  @import 'layout/tilt';
+  @import 'layout/masonry';
+  @import 'layout/feature-grid';
+
+  // Hero card and feature card styles
+  @import 'components/hero-card';
+  
+  // Streaming effects
+  @import 'components/streaming-effects';
+
+  // Component styles
+  @import 'components/cards/ai-card';
+  @import 'components/sections/design-system';
+  @import 'components/sections/sections-base';
+  @import 'components/sections/section-types';
+  @import 'components/sections/section-shell';
+  @import 'components/sections/overview';
+  @import 'components/sections/analytics';
+  @import 'components/sections/news';
+  @import 'components/sections/social-media';
+  @import 'components/sections/info';
+  @import 'components/sections/map';
+  @import 'components/sections/list';
+  @import 'components/sections/contact';
+  @import 'components/sections/network';
+  @import 'components/sections/product';
+  @import 'components/sections/chart';
+  @import 'components/sections/event';
+  @import 'components/sections/financials';
+  @import 'components/sections/solutions';
+  @import 'components/sections/quotation';
+  @import 'components/sections/text-reference';
+  @import 'components/sections/brand-colors';
+  @import 'components/sections/fallback';
+  @import 'components/sections/unified-cards';
+  @import 'components/sections/global-enforcement';
+  
+  // Additional component styles
+  @import 'components/badges';
+  @import 'components/ai-card-renderer';
+  @import 'components/image-fallback';
+
+  /* FINAL OVERRIDE - ABSOLUTELY NO BORDERS ON TITLE */
+  h1.ai-card-title,
+  .ai-card-title,
+  article.ai-card-surface h1,
+  .ai-card-surface > h1,
+  .ai-card-surface .ai-card-title {
+    border: 0 !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+    text-decoration: none !important;
+    background-image: none !important;
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    color: var(--foreground) !important;
+    letter-spacing: -0.01em !important;
+    line-height: 1.2 !important;
+    font-family: Helvetica, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
+    
+    &::before,
+    &::after {
+      display: none !important;
+      content: none !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      background: none !important;
+    }
+  }
+  
+  /* ===================================================================
+     ACTION BUTTON OVERRIDES - Override Boosted/Bootstrap button styles
+     =================================================================== */
+  .ai-card-action {
+    position: relative !important;
+    overflow: hidden !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 10px 20px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-size: 0.875rem !important;
+    letter-spacing: 0.01em !important;
+    text-transform: none !important;
+    cursor: pointer !important;
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+    font-family: inherit !important;
+    text-decoration: none !important;
+    
+    /* Reset Boosted button defaults */
+    --bs-btn-padding-x: unset !important;
+    --bs-btn-padding-y: unset !important;
+    --bs-btn-font-size: unset !important;
+    --bs-btn-font-weight: unset !important;
+    --bs-btn-line-height: unset !important;
+    --bs-btn-border-radius: unset !important;
+  }
+  
+  .ai-card-action--primary {
+    background: var(--primary, #FF7900) !important;
+    color: var(--primary-foreground, #ffffff) !important;
+    border: 1px solid color-mix(in srgb, var(--primary, #FF7900) 80%, transparent) !important;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--primary, #FF7900) 25%, transparent), 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  .ai-card-action--primary:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--primary, #FF7900) 35%, transparent), 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    background: color-mix(in srgb, var(--primary, #FF7900) 95%, white 5%) !important;
+    border-color: var(--primary, #FF7900) !important;
+  }
+  
+  .ai-card-action--secondary {
+    background: color-mix(in srgb, var(--card, #fefefe) 90%, transparent) !important;
+    color: var(--foreground, #1c1c1f) !important;
+    border: 1px solid color-mix(in srgb, var(--border, rgba(200,200,200,0.5)) 60%, transparent) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06) !important;
+  }
+  
+  .ai-card-action--secondary:hover {
+    transform: translateY(-1px) !important;
+    border-color: color-mix(in srgb, var(--primary, #FF7900) 40%, transparent) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    background: color-mix(in srgb, var(--card, #fefefe) 95%, var(--primary, #FF7900) 5%) !important;
+  }
+  
+  /* ===================================================================
+     CARD FOOTER/FOOTNOTE OVERRIDES
+     =================================================================== */
+  .ai-card-footnote {
+    margin-top: auto !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-top: none !important;
+    text-align: center !important;
+    font-size: 0.65rem !important;
+    letter-spacing: 0.08em !important;
+    text-transform: none !important;
+    color: color-mix(in srgb, var(--foreground, #1c1c1f) 70%, transparent) !important;
+    line-height: 1.2 !important;
+    font-family: inherit !important;
+    background: transparent !important;
+  }
+  
+  /* ===================================================================
+     CARD SURFACE ANIMATIONS
+     =================================================================== */
+  .ai-card-surface {
+    animation: var(--ai-card-entrance-animation) !important;
+  }
+  
+  .masonry-item {
+    animation: var(--section-entrance-animation) !important;
+  }
+  
+  .section-card,
+  .chart-card,
+  .metric-card,
+  .contact-card,
+  .list-card {
+    animation: var(--section-item-entrance-animation) !important;
+  }
+  
+  /* ===================================================================
+     TAILWIND UTILITY CLASSES - Required for component templates
+     These classes are used in component templates but need to be
+     included in standalone CSS for external app compatibility.
+     =================================================================== */
+  
+  /* Layout utilities */
+  .flex { display: flex !important; }
+  .inline-flex { display: inline-flex !important; }
+  .grid { display: grid !important; }
+  .block { display: block !important; }
+  .hidden { display: none !important; }
+  .flex-wrap { flex-wrap: wrap !important; }
+  .flex-col { flex-direction: column !important; }
+  .flex-row { flex-direction: row !important; }
+  .flex-1 { flex: 1 1 0% !important; }
+  .flex-shrink-0 { flex-shrink: 0 !important; }
+  .items-center { align-items: center !important; }
+  .items-start { align-items: flex-start !important; }
+  .items-end { align-items: flex-end !important; }
+  .justify-between { justify-content: space-between !important; }
+  .justify-center { justify-content: center !important; }
+  .justify-start { justify-content: flex-start !important; }
+  .justify-end { justify-content: flex-end !important; }
+  
+  /* Width utilities */
+  .w-full { width: 100% !important; }
+  .w-auto { width: auto !important; }
+  .h-full { height: 100% !important; }
+  .h-auto { height: auto !important; }
+  .min-h-0 { min-height: 0 !important; }
+  .max-w-none { max-width: none !important; }
+  
+  /* Spacing utilities - Margins */
+  .m-0 { margin: 0 !important; }
+  .m-1 { margin: 0.25rem !important; }
+  .m-2 { margin: 0.5rem !important; }
+  .m-3 { margin: 0.75rem !important; }
+  .m-4 { margin: 1rem !important; }
+  .mt-0 { margin-top: 0 !important; }
+  .mt-1 { margin-top: 0.25rem !important; }
+  .mt-2 { margin-top: 0.5rem !important; }
+  .mt-3 { margin-top: 0.75rem !important; }
+  .mt-4 { margin-top: 1rem !important; }
+  .mt-auto { margin-top: auto !important; }
+  .mb-0 { margin-bottom: 0 !important; }
+  .mb-1 { margin-bottom: 0.25rem !important; }
+  .mb-2 { margin-bottom: 0.5rem !important; }
+  .mb-3 { margin-bottom: 0.75rem !important; }
+  .mb-4 { margin-bottom: 1rem !important; }
+  .ml-0 { margin-left: 0 !important; }
+  .ml-1 { margin-left: 0.25rem !important; }
+  .ml-2 { margin-left: 0.5rem !important; }
+  .mr-0 { margin-right: 0 !important; }
+  .mr-1 { margin-right: 0.25rem !important; }
+  .mr-2 { margin-right: 0.5rem !important; }
+  
+  /* Spacing utilities - Padding */
+  .p-0 { padding: 0 !important; }
+  .p-1 { padding: 0.25rem !important; }
+  .p-2 { padding: 0.5rem !important; }
+  .p-3 { padding: 0.75rem !important; }
+  .p-4 { padding: 1rem !important; }
+  .p-5 { padding: 1.25rem !important; }
+  .p-6 { padding: 1.5rem !important; }
+  .px-2 { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+  .px-3 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+  .px-4 { padding-left: 1rem !important; padding-right: 1rem !important; }
+  .px-5 { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+  .py-2 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+  .py-3 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+  .py-4 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+  .py-2\.5 { padding-top: 0.625rem !important; padding-bottom: 0.625rem !important; }
+  
+  /* Gap utilities */
+  .gap-1 { gap: 0.25rem !important; }
+  .gap-2 { gap: 0.5rem !important; }
+  .gap-3 { gap: 0.75rem !important; }
+  .gap-4 { gap: 1rem !important; }
+  .gap-5 { gap: 1.25rem !important; }
+  .gap-6 { gap: 1.5rem !important; }
+  
+  /* Typography utilities */
+  .text-xs { font-size: 0.75rem !important; line-height: 1rem !important; }
+  .text-sm { font-size: 0.875rem !important; line-height: 1.25rem !important; }
+  .text-base { font-size: 1rem !important; line-height: 1.5rem !important; }
+  .text-lg { font-size: 1.125rem !important; line-height: 1.75rem !important; }
+  .text-xl { font-size: 1.125rem !important; line-height: 1.5rem !important; }
+  .text-2xl { font-size: var(--text-2xl, 1.0625rem) !important; line-height: 1.5rem !important; }
+  .text-3xl { font-size: 1.75rem !important; line-height: 2rem !important; }
+  .font-normal { font-weight: 400 !important; }
+  .font-medium { font-weight: 500 !important; }
+  .font-semibold { font-weight: 600 !important; }
+  .font-bold { font-weight: 700 !important; }
+  .text-left { text-align: left !important; }
+  .text-center { text-align: center !important; }
+  .text-right { text-align: right !important; }
+  .uppercase { text-transform: uppercase !important; }
+  .lowercase { text-transform: lowercase !important; }
+  .capitalize { text-transform: capitalize !important; }
+  .truncate { overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
+  .line-clamp-2 { display: -webkit-box !important; -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical !important; overflow: hidden !important; }
+  
+  /* Color utilities */
+  .text-foreground { color: var(--foreground) !important; }
+  .text-muted-foreground { color: var(--muted-foreground) !important; }
+  .text-white { color: #ffffff !important; }
+  .text-black { color: #000000 !important; }
+  .bg-transparent { background-color: transparent !important; }
+  .bg-card { background-color: var(--card) !important; }
+  .bg-muted { background-color: var(--muted) !important; }
+  
+  /* Brand color utilities (escaped for CSS) */
+  .bg-\[var\(--color-brand\)\] { background-color: var(--color-brand, #FF7900) !important; }
+  .text-\[var\(--color-brand\)\] { color: var(--color-brand, #FF7900) !important; }
+  .border-\[var\(--color-brand\)\] { border-color: var(--color-brand, #FF7900) !important; }
+  .hover\:bg-\[var\(--color-brand\)\]\/90:hover { background-color: rgba(255, 121, 0, 0.9) !important; }
+  .hover\:bg-\[var\(--color-brand\)\]\/10:hover { background-color: rgba(255, 121, 0, 0.1) !important; }
+  .hover\:shadow-lg:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important; }
+  .hover\:shadow-\[var\(--color-brand\)\]\/40:hover { box-shadow: 0 10px 15px -3px rgba(255, 121, 0, 0.4) !important; }
+  .active\:scale-95:active { transform: scale(0.95) !important; }
+  
+  /* Border utilities */
+  .border { border-width: 1px !important; border-style: solid !important; }
+  .border-0 { border-width: 0 !important; }
+  .border-2 { border-width: 2px !important; }
+  .border-t { border-top-width: 1px !important; }
+  .border-b { border-bottom-width: 1px !important; }
+  .border-l { border-left-width: 1px !important; }
+  .border-r { border-right-width: 1px !important; }
+  .rounded { border-radius: 0.25rem !important; }
+  .rounded-sm { border-radius: 0.125rem !important; }
+  .rounded-md { border-radius: 0.375rem !important; }
+  .rounded-lg { border-radius: 0.5rem !important; }
+  .rounded-xl { border-radius: 0.75rem !important; }
+  .rounded-2xl { border-radius: 1rem !important; }
+  .rounded-full { border-radius: 9999px !important; }
+  
+  /* Shadow utilities */
+  .shadow { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important; }
+  .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important; }
+  .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important; }
+  .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important; }
+  .shadow-none { box-shadow: none !important; }
+  
+  /* Transition utilities */
+  .transition { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter !important; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important; transition-duration: 150ms !important; }
+  .transition-all { transition-property: all !important; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important; transition-duration: 150ms !important; }
+  .transition-colors { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke !important; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important; transition-duration: 150ms !important; }
+  .duration-150 { transition-duration: 150ms !important; }
+  .duration-200 { transition-duration: 200ms !important; }
+  .duration-300 { transition-duration: 300ms !important; }
+  
+  /* Cursor utilities */
+  .cursor-pointer { cursor: pointer !important; }
+  .cursor-default { cursor: default !important; }
+  .cursor-not-allowed { cursor: not-allowed !important; }
+  
+  /* Overflow utilities */
+  .overflow-hidden { overflow: hidden !important; }
+  .overflow-auto { overflow: auto !important; }
+  .overflow-scroll { overflow: scroll !important; }
+  .overflow-visible { overflow: visible !important; }
+  
+  /* Position utilities */
+  .relative { position: relative !important; }
+  .absolute { position: absolute !important; }
+  .fixed { position: fixed !important; }
+  .sticky { position: sticky !important; }
+  .inset-0 { top: 0 !important; right: 0 !important; bottom: 0 !important; left: 0 !important; }
+  .top-0 { top: 0 !important; }
+  .right-0 { right: 0 !important; }
+  .bottom-0 { bottom: 0 !important; }
+  .left-0 { left: 0 !important; }
+  
+  /* Z-index utilities */
+  .z-10 { z-index: 10 !important; }
+  .z-20 { z-index: 20 !important; }
+  .z-30 { z-index: 30 !important; }
+  .z-50 { z-index: 50 !important; }
+  
+  /* Opacity utilities */
+  .opacity-0 { opacity: 0 !important; }
+  .opacity-50 { opacity: 0.5 !important; }
+  .opacity-75 { opacity: 0.75 !important; }
+  .opacity-100 { opacity: 1 !important; }
+  
+  /* Accessibility utilities */
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border-width: 0 !important;
+  }
+  
+  .not-sr-only {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    clip: auto !important;
+    white-space: normal !important;
+  }
+  
+} // End of .osi-cards-container
+
+/* === DARK THEME (Night Mode) - Variable overrides only === */
+.osi-cards-container[data-theme='night'] {
+  color-scheme: dark;
+  color: #ffffff;
+  --background: #030303;
+  --surface-contrast-color: #ffffff;
+  --foreground: #ffffff;
+  --muted: #242424;
+  --muted-foreground: #aaaaaa;
+  --card: rgba(20, 20, 20, 0.6);
+  --card-foreground: #ffffff;
+  --card-surface: rgba(20, 20, 20, 0.6);
+  --card-surface-hover: #080808;
+  --card-section-bg: #080808;
+  --card-section-card-bg: #141414;
+  --theme-ai-card-border: 0.5px solid rgba(255, 121, 0, 0.49);
+  --theme-ai-card-border-hover: 0.5px solid #ff7900;
+  --theme-ai-card-background: rgba(255, 255, 255, 0.03);
+  --theme-ai-card-background-hover: #080808;
+  --theme-ai-card-box-shadow: 0 0 18px rgba(255, 121, 0, 0.3);
+  --theme-ai-card-box-shadow-hover: 0 0 24px rgba(255, 121, 0, 0.45);
+
+  --theme-card-border: 1px solid rgba(0, 0, 0, 0.16);
+  --theme-card-border-hover: #ff7900;
+  --theme-card-hover-border: #ff7900;
+  --theme-card-background: #050505;
+  --theme-card-background-hover: #080808;
+  --theme-card-box-shadow: 0 6px 22px rgba(0, 0, 0, 0.58);
+  --theme-card-box-shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.68);
+  --theme-card-box-shadow-hover-lift: 0 18px 42px rgba(0, 0, 0, 0.72);
+  --theme-card-hover-background: #080808;
+  --theme-card-hover-shadow: 0 20px 44px rgba(0, 0, 0, 0.76);
+  
+  --section-background: #080808;
+  --section-background-hover: #0a0a0a;
+  --section-surface: #080808;
+  --section-surface-hover: #0a0a0a;
+  --popover: #111111;
+  --popover-foreground: #ffffff;
+  --primary: #FF7900;
+  --primary-foreground: #ffffff;
+  --secondary: #333333;
+  --secondary-foreground: #ffffff;
+  --accent: #FF7900;
+  --accent-foreground: #000000;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(200, 200, 200, 0.3);
+  --input: transparent;
+  --input-background: #222222;
+  --switch-background: #333333;
+  --ring: rgba(255, 121, 0, 0.6);
+  
+  --hero-card-border: 1px solid rgba(233, 233, 233, 0.3);
+  --hero-card-border-hover: rgba(233, 233, 233, 0.6);
+  --theme-section-border: 1px solid rgba(255, 255, 255, 0.08);
+  --theme-section-border-hover: 1px solid rgba(255, 255, 255, 0.08);
+  --theme-section-box-shadow: 0 12px 34px rgba(0, 0, 0, 0.6);
+  --theme-section-box-shadow-hover: 0 24px 48px rgba(0, 0, 0, 0.75);
+  --theme-section-item-border: 1px solid rgba(255, 255, 255, 0.16);
+  --theme-section-item-border-hover: 1px solid rgba(255, 255, 255, 0.28);
+  --theme-section-item-background: #080808;
+  --theme-section-item-background-hover: #0a0a0a;
+  --theme-section-item-box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
+  --theme-section-item-box-shadow-hover: 0 16px 34px rgba(0, 0, 0, 0.7);
+  --theme-section-item-hover-transform: none;
+  
+  --card-text-primary: #ffffff;
+  --card-text-secondary: #aaaaaa;
+  --card-text-muted: #aaaaaa;
+  --card-text-label: #aaaaaa;
+  --card-meta-color: #aaaaaa;
+  
+  --ai-card-border: 0.5px solid rgba(255, 121, 0, 0.49);
+  --ai-card-background: rgba(255, 255, 255, 0.03);
+  --ai-card-background-hover: #080808;
+  --ai-card-box-shadow: 0 0 18px rgba(255, 121, 0, 0.3);
+  --ai-card-box-shadow-hover: 0 0 24px rgba(255, 121, 0, 0.45);
+  
+  --section-border: 1px solid rgba(255, 255, 255, 0.08);
+  --section-border-hover: 1px solid rgba(255, 255, 255, 0.08);
+  --section-box-shadow: 0 12px 34px rgba(0, 0, 0, 0.6);
+  --section-box-shadow-hover: 0 24px 48px rgba(0, 0, 0, 0.75);
+  
+  --section-item-border: 1px solid rgba(255, 255, 255, 0.16);
+  --section-item-border-hover: 1px solid rgba(255, 255, 255, 0.28);
+  --section-item-background: #080808;
+  --section-item-background-hover: #0a0a0a;
+  --section-item-box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
+  --section-item-box-shadow-hover: 0 16px 34px rgba(0, 0, 0, 0.7);
+  
+  --bg-color: #030303;
+  --card-bg: rgba(20, 20, 20, 0.6);
+  --section-bg: #242424;
+  --border-color: rgba(200, 200, 200, 0.3);
+  --text-color: #ffffff;
+  --text-muted: #aaaaaa;
+}
+
+/* === LIGHT THEME (Day Mode) - Variable overrides only === */
+.osi-cards-container[data-theme='day'] {
+  color-scheme: light;
+  color: #1c1c1f;
+  --background: #ffffff;
+  --foreground: #1c1c1f;
+  --muted: #f4f4f6;
+  --muted-foreground: #555861;
+  --card: #fefefe;
+  --card-foreground: #1c1c1f;
+  --card-surface: #fefefe;
+  --card-surface-hover: #fcfcfc;
+  --card-section-bg: #fafafa;
+  --card-section-card-bg: #f0f0f0;
+  --theme-ai-card-border: 0.5px solid rgba(255, 121, 0, 0.52);
+  --theme-ai-card-border-hover: 0.5px solid #ff7900;
+  --theme-ai-card-background: #fefefe;
+  --theme-ai-card-background-hover: #fcfcfc;
+  --theme-ai-card-box-shadow: 0 0 18px rgba(255, 121, 0, 0.3);
+  --theme-ai-card-box-shadow-hover: 0 0 24px rgba(255, 121, 0, 0.45);
+
+  --theme-card-border: 1px solid rgba(255, 255, 255, 0.22);
+  --theme-card-border-hover: #ff7900;
+  --theme-card-hover-border: #ff7900;
+  --theme-card-background: #fefefe;
+  --theme-card-background-hover: #fcfcfc;
+  --theme-card-box-shadow: 0 4px 14px rgba(15, 15, 20, 0.06);
+  --theme-card-box-shadow-hover: 0 10px 24px rgba(10, 10, 16, 0.1);
+  --theme-card-box-shadow-hover-lift: 0 14px 32px rgba(6, 6, 10, 0.12);
+  --theme-card-hover-background: #fcfcfc;
+  --theme-card-hover-shadow: 0 14px 30px rgba(8, 8, 12, 0.12);
+  --section-background: #fafafa;
+  --section-background-hover: #f7f7f7;
+  --section-surface: #fafafa;
+  --section-surface-hover: #f7f7f7;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
+  --primary: #FF7900;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #1a1a1a;
+  --accent: #FF7900;
+  --accent-foreground: #ffffff;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(200, 200, 200, 0.5);
+  --input: transparent;
+  --input-background: #f9f9f9;
+  --switch-background: #e5e5e5;
+  --ring: rgba(255, 121, 0, 0.4);
+  
+  --color-gray-700: #e0e0e0;
+  --color-gray-600: #d0d0d0;
+  --card-section-card-bg: #eeeeee;
+  
+  --hero-card-border: 1px solid rgba(146, 153, 158, 0.4);
+  --hero-card-border-hover: rgba(146, 153, 158, 0.7);
+  --theme-section-border: 1px solid rgba(0, 0, 0, 0.08);
+  --theme-section-border-hover: 1px solid rgba(0, 0, 0, 0.1);
+  --theme-section-box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+  --theme-section-box-shadow-hover: 0 18px 40px rgba(0, 0, 0, 0.12);
+  --theme-section-item-border: 1px solid rgba(0, 0, 0, 0.14);
+  --theme-section-item-border-hover: 1px solid rgba(0, 0, 0, 0.22);
+  --theme-section-item-background: #fafafa;
+  --theme-section-item-background-hover: #f7f7f7;
+  --theme-section-item-box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+  --theme-section-item-box-shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.12);
+  --theme-section-item-hover-transform: none;
+}
+
+/* ===================================================================
+   ACCESSIBILITY SUPPORT (inside layer for proper cascade)
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .osi-cards-container {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 1ms !important;
+      scroll-behavior: auto !important;
+    }
+    
+    --ai-card-entrance-animation: none;
+    --section-entrance-animation: none;
+    --section-item-entrance-animation: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .osi-cards-container {
+    --foreground: #ffffff;
+    --background: #000000;
+    --muted-foreground: #ffffff;
+    --border: #ffffff;
+    --ai-card-border: 2px solid #ffffff;
+    --section-border: 2px solid #ffffff;
+  }
+}
+
+} /* End of @layer osi-cards */
+
+/* ===================================================================
+   KEYFRAME ANIMATIONS - Must be at root level, not nested in layers
+   =================================================================== */
+
+@keyframes fadeInUpSoft {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes fadeInSoft {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 4px, 0) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes fadeInScaleSoft {
+  from {
+    opacity: 0;
+    transform: scale(0.992) translate3d(0, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes sectionEnter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.992) translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   Export Button - Flat Icon Style
+   ========================================================================== */
+.ai-card-export-btn,
+button.ai-card-export-btn,
+.ai-card-export-btn[class],
+button.ai-card-export-btn[class] {
+  all: unset !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  color: var(--muted-foreground, #555861) !important;
+  cursor: pointer !important;
+  opacity: 0.5 !important;
+  transition: color 0.2s ease, opacity 0.2s ease !important;
+}
+
+.ai-card-export-btn:hover,
+button.ai-card-export-btn:hover {
+  color: var(--color-brand, #FF7900) !important;
+  opacity: 1 !important;
+}
+
+.ai-card-export-btn:active,
+button.ai-card-export-btn:active {
+  opacity: 0.7 !important;
+}

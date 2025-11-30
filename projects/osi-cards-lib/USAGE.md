@@ -55,19 +55,34 @@ Renders individual sections within a card.
 
 ### MasonryGridComponent
 
-Responsive masonry layout for sections.
+Responsive masonry layout for sections with intelligent column negotiation.
 
 **Selector:** `app-masonry-grid`
 
 **Inputs:**
 - `sections: CardSection[]` - Array of sections
-- `gap: number` - Gap between items (default: 12)
-- `minColumnWidth: number` - Minimum column width (default: 260)
-- `maxColumns: number` - Maximum columns (default: 4)
+- `gap: number` - Gap between items in pixels (default: 12)
+- `minColumnWidth: number` - Minimum column width in pixels (default: 260)
+- `maxColumns: number` - Maximum number of columns (default: 4)
+- `containerWidth?: number` - Optional explicit container width for reliable initial layout
 
 **Outputs:**
 - `sectionEvent: EventEmitter<SectionRenderEvent>`
 - `layoutChange: EventEmitter<MasonryLayoutInfo>`
+
+**Grid Configuration:**
+The grid uses standardized values that can be configured:
+- Minimum column width: 200px (ensures readable cards)
+- Maximum columns: 4 (adapts to container width)
+- Gap: 12px (consistent spacing between items)
+
+**Column Calculation:**
+The number of columns is calculated as: `floor((containerWidth + gap) / (minColumnWidth + gap))`
+
+Example column counts:
+- 424px container → 2 columns
+- 636px container → 3 columns  
+- 848px+ container → 4 columns
 
 ### CardSkeletonComponent
 
@@ -128,7 +143,20 @@ interface CardSection {
   description?: string;
   subtitle?: string;
   columns?: number;
+  
+  /**
+   * Explicit column span - how many columns this section should span.
+   * Takes precedence over preferredColumns.
+   */
   colSpan?: number;
+  
+  /**
+   * Preferred column count (1, 2, 3, or 4) - an adaptive hint.
+   * The section will use this width when available, but gracefully
+   * degrade to fewer columns when constrained.
+   */
+  preferredColumns?: 1 | 2 | 3 | 4;
+  
   fields?: CardField[];
   items?: CardItem[];
   chartType?: 'bar' | 'line' | 'pie' | 'doughnut';
@@ -136,6 +164,15 @@ interface CardSection {
   meta?: Record<string, unknown>;
 }
 ```
+
+**preferredColumns vs colSpan:**
+- `colSpan`: Hard override - section will always try to span this many columns
+- `preferredColumns`: Adaptive hint - section prefers this width but adapts to constraints
+
+Default preferred columns per section type:
+- `contact-card`, `network-card`, `project`: 1 column (compact)
+- `analytics`, `chart`, `map`, `financials`, `product`, `solutions`, `event`, `list`: 2 columns (medium)
+- `overview`, `info`: 2 columns (can expand based on content)
 
 ### CardField
 

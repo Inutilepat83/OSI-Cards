@@ -1,124 +1,115 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
+ * Comprehensive Visual Regression Testing Configuration
+ * 
+ * Features:
+ * - No video recording (faster execution)
+ * - List reporter for clear console output
+ * - HTML reporter with detailed visual diffs
+ * - Cross-browser testing (Chrome, Firefox, WebKit, Mobile)
+ * - Fast timeouts with clear failure messages
+ * 
  * @see https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
   testDir: './e2e',
+  
   /* Run tests in files in parallel */
   fullyParallel: true,
+  
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
+  
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
+  
+  /* Parallel workers */
   workers: process.env.CI ? 1 : undefined,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+  
+  /* Reporter configuration - clear output with detailed reports */
   reporter: [
-    ['html'],
+    // List reporter for clear console output with pass/fail status
+    ['list', { printSteps: true }],
+    // HTML reporter with visual diffs for screenshot comparisons
+    ['html', { 
+      open: 'never',
+      outputFolder: 'playwright-report'
+    }],
+    // JSON output for programmatic analysis
     ['json', { outputFile: 'e2e-results/results.json' }],
+    // JUnit for CI integration
     ['junit', { outputFile: 'e2e-results/results.xml' }],
-    ['github'],
-    ['dot']
+    // GitHub Actions annotations
+    ...(process.env.CI ? [['github' as const]] : [])
   ],
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  
+  /* Shared settings for all projects */
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
+    /* Base URL */
     baseURL: process.env.BASE_URL || 'http://localhost:4200',
 
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    /* Trace on first retry for debugging */
     trace: 'on-first-retry',
     
-    /* Screenshot settings */
+    /* Screenshot on failure for debugging */
     screenshot: 'only-on-failure',
     
-    /* Video settings */
-    video: 'retain-on-failure',
+    /* NO video recording - faster execution */
+    video: 'off',
     
-    /* Context options */
+    /* Default viewport */
     viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,
     
-    /* Global timeout for each action */
-    actionTimeout: 10000,
-    
-    /* Global timeout for navigation */
-    navigationTimeout: 30000,
+    /* Reduced timeouts for faster feedback */
+    actionTimeout: 5000,
+    navigationTimeout: 15000,
   },
 
-  /* Configure projects for major browsers */
+  /* Browser projects for cross-browser testing */
   projects: [
-    {
-      name: 'setup',
-      testMatch: /.*\.setup\.ts/,
-    },
-    
+    // Desktop browsers
     {
       name: 'chrome',
       use: { 
         ...devices['Desktop Chrome'],
-        // Use prepared auth state.
-        storageState: 'e2e/.auth/user.json',
       },
-      dependencies: ['setup'],
     },
-
     {
       name: 'firefox',
       use: { 
         ...devices['Desktop Firefox'],
-        storageState: 'e2e/.auth/user.json',
       },
-      dependencies: ['setup'],
     },
-
     {
       name: 'webkit',
       use: { 
         ...devices['Desktop Safari'],
-        storageState: 'e2e/.auth/user.json',
       },
-      dependencies: ['setup'],
     },
 
-    /* Test against mobile viewports. */
+    // Mobile viewports
     {
       name: 'mobile-chrome',
       use: { 
         ...devices['Pixel 5'],
-        storageState: 'e2e/.auth/user.json',
       },
-      dependencies: ['setup'],
     },
-    
     {
       name: 'mobile-safari',
       use: { 
         ...devices['iPhone 12'],
-        storageState: 'e2e/.auth/user.json',
       },
-      dependencies: ['setup'],
     },
 
-    /* Test against branded browsers. */
+    // Edge browser
     {
       name: 'edge',
       use: { 
         ...devices['Desktop Edge'], 
         channel: 'msedge',
-        storageState: 'e2e/.auth/user.json',
       },
-      dependencies: ['setup'],
-    },
-    
-    {
-      name: 'chrome-beta',
-      use: { 
-        ...devices['Desktop Chrome'], 
-        channel: 'chrome-beta',
-        storageState: 'e2e/.auth/user.json',
-      },
-      dependencies: ['setup'],
     },
   ],
 
@@ -126,7 +117,7 @@ export default defineConfig({
   globalSetup: require.resolve('./e2e/global-setup'),
   globalTeardown: require.resolve('./e2e/global-teardown'),
 
-  /* Run your local dev server before starting the tests */
+  /* Web server configuration */
   webServer: {
     command: 'npm run start',
     url: 'http://localhost:4200',
@@ -137,24 +128,29 @@ export default defineConfig({
     }
   },
 
-  /* Test timeout */
-  timeout: 30 * 1000,
+  /* Test timeout - fail fast */
+  timeout: 20 * 1000,
+  
+  /* Expect configuration */
   expect: {
-    /* Timeout for expect() assertions */
+    /* Assertion timeout */
     timeout: 5 * 1000,
-    /* Screenshot comparison threshold */
-    threshold: 0.2,
-    /* Pixel difference threshold */
+    
+    /* Screenshot comparison settings */
     toHaveScreenshot: {
       maxDiffPixels: 100,
+      threshold: 0.2,
+      animations: 'disabled'
+    },
+    toMatchSnapshot: {
       threshold: 0.2
     }
   },
 
-  /* Output directory */
+  /* Output directory for test artifacts */
   outputDir: 'e2e-results/',
   
-  /* Metadata */
+  /* Metadata for reports */
   metadata: {
     'test-environment': process.env.NODE_ENV || 'test',
     'app-version': process.env.npm_package_version || '1.0.0',

@@ -19,7 +19,7 @@
   border-style: solid !important;
   border-color: color-mix(in srgb, var(--color-brand) 49%, transparent) !important;
   border-radius: var(--ai-card-border-radius) !important;
-  background: var(--ai-card-background, var(--card-surface, var(--card))) !important;
+  background: var(--section-item-background) !important;
   box-shadow: var(--ai-card-box-shadow, none) !important;
   transition: var(--ai-card-transition, none) !important;
   animation: var(--ai-card-entrance-animation, none);
@@ -31,7 +31,7 @@
   border-width: 0.5px !important;
   border-style: solid !important;
   border-color: var(--color-brand) !important;
-  background: var(--ai-card-background-hover, var(--card-surface-hover, var(--card))) !important;
+  background: var(--section-item-background-hover, var(--section-item-background)) !important;
   box-shadow: var(--ai-card-box-shadow-hover, var(--ai-card-box-shadow, none)) !important;
 }
 
@@ -54,7 +54,7 @@
 
 /* Section items (cards rendered inside sections) --------------------------- */
 @mixin surface-section-item-base {
-  padding: var(--card-padding) !important;
+  padding: var(--section-item-padding) !important;
   border: var(--section-item-border) !important;
   border-width: 1px !important;
   border-style: solid !important;

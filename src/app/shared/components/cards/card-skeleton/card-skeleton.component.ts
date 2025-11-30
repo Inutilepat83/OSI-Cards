@@ -34,6 +34,7 @@ export class CardSkeletonComponent {
   @Input() cardTitle = '';
   @Input() sectionCount = 0;
   @Input() isFullscreen = false;
+  @Input() actionCount = 0;
 }
 
 

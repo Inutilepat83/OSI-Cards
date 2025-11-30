@@ -103,19 +103,7 @@ npm install git+https://github.com/Inutilepat83/OSI-Cards.git
 
 Or add to your \`package.json\`:
 
-\`\`\`json
-{
-  "dependencies": {
-    "osi-cards-lib": "git+https://github.com/Inutilepat83/OSI-Cards.git#main"
-  }
-}
-\`\`\`
-
-## Next Steps
-
-- [Installation Guide](/docs/installation)
-- [Library Usage Guide](/docs/library-usage)
-- [Section Types](/docs/section-types)`;
+`;
 
 @Component({
   selector: 'ng-doc-page-getting-started',

@@ -6,7 +6,7 @@
 /**
  * Create a label element for an input
  */
-export function createFormLabel(inputId: string, labelText: string, required: boolean = false): {
+export function createFormLabel(inputId: string, labelText: string, required = false): {
   id: string;
   htmlFor: string;
   text: string;

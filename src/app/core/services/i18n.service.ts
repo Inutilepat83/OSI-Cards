@@ -40,9 +40,7 @@ export interface TranslationDictionary {
   [key: string]: string | TranslationDictionary;
 }
 
-export interface TranslationParams {
-  [key: string]: string | number;
-}
+export type TranslationParams = Record<string, string | number>;
 
 @Injectable({
   providedIn: 'root'

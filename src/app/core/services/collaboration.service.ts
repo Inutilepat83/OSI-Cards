@@ -229,7 +229,7 @@ export class CollaborationService {
   /**
    * Get activity feed for a card
    */
-  getCardActivity(cardId: string, limit: number = 20): Observable<CollaborationActivity[]> {
+  getCardActivity(cardId: string, limit = 20): Observable<CollaborationActivity[]> {
     if (!this.activitySubjects.has(cardId)) {
       this.activitySubjects.set(cardId, new BehaviorSubject<CollaborationActivity[]>([]));
     }

@@ -1,158 +1,141 @@
 @import 'sections-base';
 @import 'unified-cards';
+@import '../../core/color-helpers';
 
 .section-block--reference {
-  --section-card-grid-min: 300px; /* Wider cards for text references */
+  --section-card-grid-min: 300px;
 }
 
 .section-card--reference {
   @include card;
-  display: flex;
-  flex-direction: column;
-  /* COMPACT: No minimum height */
-  min-height: auto;
-  gap: var(--card-gap);
-  border: 1px solid color-mix(in srgb, var(--color-brand) 20%, transparent);
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: auto !important;
+  gap: var(--card-gap) !important;
+  border: 1px solid $brand-color-20 !important;
 }
 
 .reference-card__content {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--card-gap) * 0.5);
-  /* COMPACT: Tighter content spacing */
+  display: flex !important;
+  flex-direction: column !important;
+  gap: calc(var(--card-gap) * 0.5) !important;
 }
 
 .reference-card__text {
   @include card-subtitle-text;
-  /* COMPACT: Tight line-height */
-  font-size: calc(var(--card-subtitle-font-size) * 1.1);
-  line-height: 1.4;
-  color: var(--card-text-primary);
-  margin: 0;
+  font-size: calc(var(--card-subtitle-font-size, 0.7rem) * 1.1) !important;
+  line-height: 1.4 !important;
+  color: var(--card-text-primary, $foreground-color) !important;
+  margin: 0 !important;
+  font-family: inherit !important;
+  border: none !important;
+  padding: 0 !important;
 }
 
 .reference-card__footer {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--card-gap) * 0.5);
-  /* COMPACT: Tighter footer spacing */
-  padding-top: calc(var(--card-padding) * 0.5);
-  /* COMPACT: Reduced padding */
+  display: flex !important;
+  flex-direction: column !important;
+  gap: calc(var(--card-gap) * 0.5) !important;
+  padding-top: calc(var(--card-padding) * 0.5) !important;
   border-top: none !important;
-  /* CLEAN: No borders on footers - only cards have borders */
-  margin-top: calc(var(--card-gap) * 0.125);
-  /* COMPACT: Reduced margin */
+  margin-top: calc(var(--card-gap) * 0.125) !important;
 }
 
 .reference-card__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: calc(var(--card-gap) * 0.75);
-  /* COMPACT: Tighter meta spacing */
-  align-items: center;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: calc(var(--card-gap) * 0.75) !important;
+  align-items: center !important;
 }
 
 .reference-card__category {
-  /* OPTIMIZED: Compact badge styling - NO BORDER (only cards have borders) */
-  display: inline-flex;
-  align-items: center;
-  padding: calc(var(--tag-padding-y-sm) * 1) calc(var(--tag-padding-x) * 1);
-  border-radius: var(--section-card-border-radius);
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: calc(var(--tag-padding-y-sm) * 1) calc(var(--tag-padding-x) * 1) !important;
+  border-radius: var(--section-card-border-radius) !important;
   border: none !important;
-  background: color-mix(in srgb, var(--color-brand) 12%, transparent);
+  background: $brand-color-12 !important;
   @include label-text;
-  font-size: calc(var(--card-meta-font-size) + 1px);
-  font-weight: 700;
-  color: var(--color-brand);
-  --accent: var(--color-brand);
-  line-height: 1.2;
-  flex-shrink: 0;
+  font-size: calc(var(--card-meta-font-size, 0.6rem) + 1px) !important;
+  font-weight: 700 !important;
+  color: var(--color-brand, $brand-color) !important;
+  --accent: var(--color-brand, #{$brand-color});
+  line-height: 1.2 !important;
+  flex-shrink: 0 !important;
+  font-family: inherit !important;
 }
 
 .reference-card__source,
 .reference-card__reference {
   @include card-meta-text;
-  /* COMPACT: Tight line-height */
-  margin: 0;
-  line-height: 1.2;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+  font-family: inherit !important;
 }
 
 .reference-card__date {
   @include card-meta-text;
-  /* COMPACT: Tight line-height */
-  margin-left: auto;
-  margin: 0;
-  line-height: 1.2;
+  margin-left: auto !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+  font-family: inherit !important;
 }
 
 .reference-card__link {
-  display: inline-flex;
-  align-items: center;
-  gap: calc(var(--card-gap) * 0.5);
-  /* COMPACT: Tighter link spacing */
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: calc(var(--card-gap) * 0.5) !important;
   @include card-meta-text;
-  color: var(--color-brand);
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.22s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s ease;
-  line-height: 1.2;
-  /* COMPACT: Tight line-height */
+  color: var(--color-brand, $brand-color) !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: color 0.22s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s ease !important;
+  line-height: 1.2 !important;
 
-  // Use color and opacity changes instead of transform
   &:hover {
-    color: var(--color-brand-dark, color-mix(in srgb, var(--color-brand) 80%, black));
-    opacity: 1;
-    transform: translateX(2px);
+    color: $brand-color-80 !important;
+    opacity: 1 !important;
+    transform: translateX(2px) !important;
     
     lucide-icon {
-      opacity: 1;
-      transform: translateX(2px);
+      opacity: 1 !important;
+      transform: translateX(2px) !important;
     }
   }
 
   lucide-icon {
-    width: 12px;
-    height: 12px;
-    /* OPTIMIZED: Smaller icon */
-    transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s ease;
-    flex-shrink: 0;
+    width: 12px !important;
+    height: 12px !important;
+    transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s ease !important;
+    flex-shrink: 0 !important;
   }
 }
 
-/* Removed redundant 768px media query - continuous responsive design via base system */
-
 /* Light theme overrides - text colors only */
-/* Background and border are handled by global enforcement */
 :root[data-theme='day'] {
   .reference-card {
     &__text {
-      color: #4b5563;
+      color: #4b5563 !important;
     }
     
     &__category {
-      /* Badge background/border handled by component styles - only text color here */
-      color: var(--primary) !important;
+      color: var(--primary, $brand-color) !important;
     }
     
     &__source {
-      color: #6b7280;
+      color: #6b7280 !important;
     }
     
     &__date {
-      color: #9ca3af;
+      color: #9ca3af !important;
     }
     
     &__link {
-      color: var(--primary);
+      color: var(--primary, $brand-color) !important;
       
       &:hover {
-        color: var(--primary);
+        color: var(--primary, $brand-color) !important;
       }
     }
   }
-  
-  .section-card--reference {
-    /* Background and border removed - handled by global enforcement */
-  }
 }
-

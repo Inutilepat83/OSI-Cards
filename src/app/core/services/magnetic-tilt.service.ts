@@ -53,17 +53,17 @@ export class MagneticTiltService implements OnDestroy {
   private pendingUpdate: { mousePosition: MousePosition; element: HTMLElement | null } | null = null;
   private lastCalculations: TiltCalculations | null = null;
   // Current smoothed values for interpolation
-  private currentRotateY: number = 0;
-  private currentRotateX: number = 0;
+  private currentRotateY = 0;
+  private currentRotateX = 0;
   private currentGlowBlur: number = BASE_GLOW_BLUR;
   private currentGlowOpacity: number = BASE_GLOW_OPACITY;
-  private currentReflectionOpacity: number = 0;
+  private currentReflectionOpacity = 0;
   // Latest target values for smoothing animation
-  private targetRotateY: number = 0;
-  private targetRotateX: number = 0;
+  private targetRotateY = 0;
+  private targetRotateX = 0;
   private targetGlowBlur: number = BASE_GLOW_BLUR;
   private targetGlowOpacity: number = BASE_GLOW_OPACITY;
-  private targetReflectionOpacity: number = 0;
+  private targetReflectionOpacity = 0;
   private readonly CACHE_DURATION = 200; // Recalculate rect every 200ms max (reduces lag from getBoundingClientRect)
   private readonly ngZone = inject(NgZone);
   private resetRafId: number | null = null;

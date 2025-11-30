@@ -8,18 +8,29 @@
       "sourceRoot": "src",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@ng-doc/builder:application",
           "options": {
             "outputPath": "dist/osi-cards",
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "browser": "src/main.ts",
+            "polyfills": ["zone.js", "src/polyfills.ts"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              {
+                "glob": "**/*",
+                "input": "node_modules/@ng-doc/app/assets",
+                "output": "assets/ng-doc/app"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@ng-doc/ui-kit/assets",
+                "output": "assets/ng-doc/ui-kit"
+              }
             ],
             "styles": [
+              "node_modules/@ng-doc/app/styles/global.css",
               "src/styles.scss",
               "src/styles.css"
             ],
@@ -32,8 +43,8 @@
               },
               {
                 "type": "anyComponentStyle",
-                "maximumWarning": "6kb",
-                "maximumError": "10kb"
+                "maximumWarning": "200kb",
+                "maximumError": "500kb"
               },
               {
                 "type": "bundle",
@@ -52,8 +63,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
+                  "maximumWarning": "200kb",
+                  "maximumError": "500kb"
                 },
                 {
                   "type": "bundle",
@@ -93,8 +104,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
+                  "maximumWarning": "200kb",
+                  "maximumError": "500kb"
                 },
                 {
                   "type": "bundle",
@@ -106,7 +117,7 @@
           }
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@ng-doc/builder:dev-server",
           "options": {
             "buildTarget": "osi-cards:build",
             "liveReload": true,
@@ -131,13 +142,73 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              {
+                "glob": "**/*",
+                "input": "node_modules/@ng-doc/app/assets",
+                "output": "assets/ng-doc/app"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@ng-doc/ui-kit/assets",
+                "output": "assets/ng-doc/ui-kit"
+              }
             ],
             "styles": [
+              "node_modules/@ng-doc/app/styles/global.css",
               "src/styles.scss",
               "src/styles.css"
             ],
             "scripts": []
+          }
+        }
+      }
+    },
+    "sales-assistance-demo": {
+      "projectType": "application",
+      "root": "sales_assistance_frontend-OSI-cards",
+      "sourceRoot": "sales_assistance_frontend-OSI-cards/src",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "outputPath": "dist/sales-assistance-demo",
+            "index": "sales_assistance_frontend-OSI-cards/src/index.html",
+            "browser": "sales_assistance_frontend-OSI-cards/src/main.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "sales_assistance_frontend-OSI-cards/tsconfig.app.json",
+            "styles": [
+              "sales_assistance_frontend-OSI-cards/src/styles.scss",
+              "dist/osi-cards-lib/styles/_styles-scoped.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false
+            },
+            "development": {
+              "optimization": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "sales-assistance-demo:build:production"
+            },
+            "development": {
+              "buildTarget": "sales-assistance-demo:build:development"
+            }
+          },
+          "defaultConfiguration": "development",
+          "options": {
+            "port": 4401
           }
         }
       }
@@ -176,6 +247,7 @@
   "cli": {
     "analytics": false,
     "schematicCollections": [
+      "@ng-doc/builder",
       "angular-eslint"
     ]
   }

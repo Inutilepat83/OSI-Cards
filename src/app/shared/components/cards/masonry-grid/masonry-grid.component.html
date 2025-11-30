@@ -1,26 +1,32 @@
 <div
   #container
   class="relative w-full masonry-container"
-  [class.masonry-container--loading]="!isLayoutReady"
+  [class.masonry-container--loading]="!isLayoutReady && !isStreaming"
+  [class.masonry-container--streaming]="isStreaming"
   [style.height.px]="containerHeight"
   [style.gap.px]="gap"
   role="region"
   [attr.aria-label]="'Card sections grid with ' + sections.length + ' section' + (sections.length !== 1 ? 's' : '')"
-  [attr.aria-busy]="!isLayoutReady"
+  [attr.aria-busy]="!isLayoutReady && !isStreaming"
 >
   <div
-    *ngFor="let item of (enableVirtualScrolling ? visibleSections : positionedSections); trackBy: trackItem; let idx = index"
+    *ngFor="let item of positionedSections; trackBy: trackItem; let idx = index"
     #itemRef
     class="absolute masonry-item"
-    [class.masonry-item--ready]="isLayoutReady"
+    [class.masonry-item--ready]="isLayoutReady || isStreaming"
+    [class.masonry-item--streaming]="isStreaming"
+    [class.masonry-item--new]="item?.isNew && shouldAnimate(item?.key || '')"
     [attr.id]="getSectionId(item?.section)"
+    [attr.data-section-key]="item?.key"
     [ngStyle]="{
       position: 'absolute',
       left: item?.left || '0px',
       top: (item?.top || 0) + 'px',
       width: item?.width || '100%',
-      zIndex: idx
+      zIndex: idx,
+      '--section-index': idx
     }"
+    (animationend)="onSectionAnimationEnd(item?.key || '')"
   >
     <app-error-boundary>
       <app-section-renderer

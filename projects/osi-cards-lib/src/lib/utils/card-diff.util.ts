@@ -59,7 +59,7 @@ export class CardDiffUtil {
       return { card: oldCard, changeType: 'content' };
     }
 
-    // Check if only top-level properties changed (title, subtitle, etc.)
+    // Check if only top-level properties changed (title, etc.)
     // Check if sections array changed
     const sectionsChanged = !this.areSectionsEqual(oldCard.sections, newCard.sections);
 
@@ -69,7 +69,6 @@ export class CardDiffUtil {
         card: {
           ...oldCard,
           cardTitle: newCard.cardTitle,
-          cardSubtitle: newCard.cardSubtitle,
           cardType: newCard.cardType,
           description: newCard.description,
           columns: newCard.columns,
@@ -92,7 +91,6 @@ export class CardDiffUtil {
       card: {
         ...oldCard,
         cardTitle: newCard.cardTitle,
-        cardSubtitle: newCard.cardSubtitle,
         cardType: newCard.cardType,
         description: newCard.description,
         columns: newCard.columns,
@@ -303,7 +301,6 @@ export class CardDiffUtil {
   private static areCardsEqual(card1: AICardConfig, card2: AICardConfig): boolean {
     return card1.id === card2.id &&
            card1.cardTitle === card2.cardTitle &&
-           card1.cardSubtitle === card2.cardSubtitle &&
            card1.cardType === card2.cardType &&
            this.areSectionsEqual(card1.sections, card2.sections);
   }
@@ -365,6 +362,12 @@ export class CardDiffUtil {
     });
   }
 }
+
+
+
+
+
+
 
 
 

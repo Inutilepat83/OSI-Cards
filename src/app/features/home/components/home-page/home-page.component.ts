@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, ElementRef, HostListener, OnInit, ViewChild, inject, NgZone, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, ElementRef, HostListener, OnInit, ViewChild, inject, NgZone, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -11,20 +11,22 @@ import { CardDiffUtil, CardChangeType } from '../../../../shared/utils/card-diff
 import { LoggingService } from '../../../../core/services/logging.service';
 import { ExportService } from '../../../../shared/services/export.service';
 import { CommandService } from '../../../../shared/services/command.service';
-import { LLMStreamingService } from '../../../../core/services/llm-streaming.service';
 import { CardDataService } from '../../../../core/services/card-data/card-data.service';
 import { AgentService } from '../../../../core/services/agent.service';
 import { ChatService } from '../../../../core/services/chat.service';
 
+// Import library streaming service and types
+import { OSICardsStreamingService, StreamingState, CardUpdate } from '../../../../../../projects/osi-cards-lib/src/lib/services/streaming.service';
+import { AICardRendererComponent } from '../../../../../../projects/osi-cards-lib/src/lib/components/ai-card-renderer/ai-card-renderer.component';
+import { AICardConfig as LibraryCardConfig } from '../../../../../../projects/osi-cards-lib/src/lib/models/card.model';
+
 // Import standalone components
-import { CardPreviewComponent } from '../../../../shared/components/cards';
 import { ensureCardIds, removeAllIds } from '../../../../shared';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { LucideIconsModule } from '../../../../shared/icons/lucide-icons.module';
 import { JsonEditorComponent } from '../../../../shared/components/json-editor/json-editor.component';
 import { CardTypeSelectorComponent } from '../../../../shared/components/card-type-selector/card-type-selector.component';
-import { LLMSimulationControlsComponent } from '../../../../shared/components/llm-simulation-controls/llm-simulation-controls.component';
 import { PreviewControlsComponent } from '../../../../shared/components/preview-controls/preview-controls.component';
 
 @Component({
@@ -34,18 +36,17 @@ import { PreviewControlsComponent } from '../../../../shared/components/preview-
     CommonModule,
     FormsModule,
     RouterModule,
-    CardPreviewComponent,
+    AICardRendererComponent,
     LucideIconsModule,
     JsonEditorComponent,
     CardTypeSelectorComponent,
-    LLMSimulationControlsComponent,
     PreviewControlsComponent
   ],
   templateUrl: './home-page.component.html',
   styleUrls: ['./home-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HomePageComponent implements OnInit {
+export class HomePageComponent implements OnInit, OnDestroy {
   private readonly store: Store<AppState> = inject(Store);
   private readonly cd = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
@@ -53,29 +54,16 @@ export class HomePageComponent implements OnInit {
   private readonly logger = inject(LoggingService);
   private readonly exportService = inject(ExportService);
   private readonly commandService = inject(CommandService);
-  private readonly llmStreamingService = inject(LLMStreamingService);
+  private readonly streamingService = inject(OSICardsStreamingService);
   private readonly cardDataService = inject(CardDataService);
   private readonly agentService = inject(AgentService);
   private readonly chatService = inject(ChatService);
   private readonly document = inject(DOCUMENT);
   
   theme: 'day' | 'night' = 'night';
-  
-  // Batch section completions to prevent excessive dispatches
-  private completionBatchTimer: ReturnType<typeof setTimeout> | null = null;
-  private readonly COMPLETION_BATCH_DELAY_MS = 70; // Batch completions every 70ms (30% faster) for more responsive updates
-  private pendingCompletedSectionIndices: number[] = []; // Track sections that completed in this batch
-  private pendingStructuralChanges = false; // Track if we have structural changes pending
-  
-  // Phase 1: Current streaming update for direct channel
-  currentStreamingUpdate: { card: AICardConfig; changeType: CardChangeType; completedSections?: number[] } | null = null;
-  
-  // Debug logging for section states
-  private sectionStateLogInterval: ReturnType<typeof setInterval> | null = null;
-  private readonly ENABLE_SECTION_STATE_LOGGING = true; // Set to false to disable
 
   @ViewChild('previewRegion') private previewRegion?: ElementRef<HTMLDivElement>;
-  @ViewChild(CardPreviewComponent) private cardPreviewComponent?: CardPreviewComponent;
+  @ViewChild('cardRenderer') private cardRenderer?: AICardRendererComponent;
   @ViewChild('jsonTextareaRef') private jsonTextareaRef?: ElementRef<HTMLTextAreaElement>;
   
   // Phase 1: Direct Update Channel - bypass store for streaming updates
@@ -102,41 +90,56 @@ export class HomePageComponent implements OnInit {
   systemStats = { totalFiles: 18 };
   livePreviewCard: AICardConfig | null = null;
   livePreviewChangeType: CardChangeType = 'structural';
-  // LLM simulation properties
-  isSimulatingLLM = false;
-  private readonly simulationFallbackCard: AICardConfig = {
-    cardTitle: 'Simulated Opportunity',
-    cardSubtitle: 'LLM Draft',
-    sections: [
-      {
-        id: 'sim-intro',
-        title: 'Priority Update',
-        type: 'info',
-        fields: [
-          { id: 'sim-status', label: 'Status', value: 'LLM thinking…', type: 'text' }
-        ]
-      },
-      {
-        id: 'sim-progress',
-        title: 'Milestones',
-        type: 'list',
-        items: [
-          { id: 'sim-item-1', title: 'Streaming layout' },
-          { id: 'sim-item-2', title: 'Updating KPI' }
-        ]
-      }
-    ]
-  };
+
+  // Library Streaming State (replaces old LLMStreamingService)
+  streamingState: StreamingState | null = null;
+  useStreaming = true;
+  streamingSpeed = 80; // tokens per second
+  thinkingDelay = 2000; // milliseconds to simulate LLM thinking
 
   cardTypes: CardType[] = []; // Dynamically loaded from examples
   
   // Track available variants for each card type
-  availableVariants: Map<CardType, number> = new Map();
+  availableVariants = new Map<CardType, number>();
   
   // Get available variants for current card type
   get variants(): number[] {
     const maxVariants = this.availableVariants.get(this.cardType) || 1;
     return Array.from({ length: maxVariants }, (_, i) => i + 1);
+  }
+
+  // Streaming computed properties (following iLibrary pattern)
+  get showCardRenderer(): boolean {
+    return this.isGenerating || this.hasCard;
+  }
+
+  get hasCard(): boolean {
+    return this.generatedCard !== null && 
+           this.generatedCard.sections !== undefined && 
+           this.generatedCard.sections.length > 0;
+  }
+
+  get cardConfigForRenderer(): LibraryCardConfig {
+    return (this.generatedCard ?? { cardTitle: 'Generating...', sections: [] }) as LibraryCardConfig;
+  }
+
+  get progressPercent(): number {
+    return Math.round((this.streamingState?.progress ?? 0) * 100);
+  }
+
+  get stageLabel(): string {
+    switch (this.streamingState?.stage) {
+      case 'thinking': return 'Thinking...';
+      case 'streaming': return 'Streaming';
+      case 'complete': return 'Complete';
+      case 'aborted': return 'Aborted';
+      case 'error': return 'Error';
+      default: return 'Idle';
+    }
+  }
+
+  get isStreamingActive(): boolean {
+    return this.streamingState?.isActive ?? false;
   }
 
   statusMessage = '';
@@ -145,21 +148,12 @@ export class HomePageComponent implements OnInit {
   private previousLoading = false;
   private previousError = '';
   
-  // Dual-stream JSON input processing:
-  // - Immediate stream: Live preview updates (50ms debounce for responsiveness)
-  // - Debounced stream: Final validation and merging (300ms debounce for performance)
+  // Debounced JSON input processing
   private jsonInputSubject = new Subject<string>();
-  private immediateJsonSubject = new Subject<string>();
   private lastProcessedJson = '';
-  private lastImmediateJson = '';
   private lastJsonHash = ''; // Track JSON hash to detect actual changes
   private previousJsonInput = ''; // For undo/redo tracking
   private jsonCommandSubject = new Subject<{ oldJson: string; newJson: string }>();
-  // LLM simulation state (now managed by LLMStreamingService)
-  private llmPlaceholderCard: AICardConfig | null = null;
-  private readonly sectionHashCache = new WeakMap<CardSection, string>();
-  private readonly fieldHashCache = new WeakMap<CardField, string>();
-  private readonly itemHashCache = new WeakMap<CardItem, string>();
   // Cache sanitized cards so repeated objects don't require re-sanitization
   private readonly sanitizedCardCache = new WeakMap<object, AICardConfig>();
   // Store-level guard to avoid duplicate final persists
@@ -176,13 +170,52 @@ export class HomePageComponent implements OnInit {
     }
     this.applyTheme();
     
+    // Subscribe to streaming service state (following iLibrary pattern)
+    this.streamingService.state$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(state => {
+        this.streamingState = state;
+        this.isGenerating = state.isActive;
+        this.cd.markForCheck();
+      });
+
+    // Subscribe to card updates from streaming service
+    this.streamingService.cardUpdates$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((update: CardUpdate) => {
+        this.generatedCard = update.card;
+        this.livePreviewCard = update.card;
+        this.livePreviewChangeType = update.changeType;
+        
+        // Emit for external listeners
+        this.streamingCardUpdate.emit({
+          card: update.card,
+          changeType: update.changeType,
+          completedSections: update.completedSections
+        });
+        
+        this.cd.markForCheck();
+      });
+
+    // Subscribe to buffer updates for JSON editor sync
+    this.streamingService.bufferUpdates$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(buffer => {
+        // Update JSON editor during streaming
+        if (this.isStreamingActive) {
+          this.jsonInput = buffer;
+          this.lastProcessedJson = buffer;
+          this.lastJsonHash = this.calculateJsonHash(buffer);
+        }
+        this.cd.markForCheck();
+      });
+    
     // Subscribe to store selectors
     this.store.select(CardSelectors.selectCurrentCard)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(card => {
-        // Only update from store if user is not actively editing (no live preview)
-        // This ensures live edits take precedence over store updates
-        if (!this.livePreviewCard && !this.jsonInput?.trim()) {
+        // Only update from store if not actively streaming
+        if (!this.isStreamingActive && !this.livePreviewCard) {
           const cardChanged = this.generatedCard !== card;
           this.generatedCard = card;
           if (cardChanged && card && !this.isGenerating && !this.jsonError) {
@@ -207,7 +240,7 @@ export class HomePageComponent implements OnInit {
     this.store.select(CardSelectors.selectCurrentCard)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(card => {
-        if (card) {
+        if (card && !this.isStreamingActive) {
           // Update JSON editor with the loaded card (remove IDs and cardType for clean JSON)
           const cardWithoutIds = removeAllIds(card);
           delete cardWithoutIds.cardType;
@@ -215,7 +248,8 @@ export class HomePageComponent implements OnInit {
           if (cardJson !== this.jsonInput) {
             this.jsonInput = cardJson;
             this.lastProcessedJson = cardJson;
-            this.lastImmediateJson = cardJson;
+            // Set hash so user edits trigger fresh processing
+            this.lastJsonHash = this.calculateJsonHash(cardJson);
             this.isJsonValid = true;
             this.jsonError = '';
           }
@@ -242,7 +276,10 @@ export class HomePageComponent implements OnInit {
     this.store.select(CardSelectors.selectIsBusy)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(loading => {
-        this.isGenerating = loading;
+        // Only use store busy state if not streaming
+        if (!this.isStreamingActive) {
+          this.isGenerating = loading;
+        }
         if (loading && !this.previousLoading) {
           this.announceStatus('Generating card preview. Please wait.');
         } else if (!loading && this.previousLoading && !this.jsonError) {
@@ -265,41 +302,25 @@ export class HomePageComponent implements OnInit {
     // Load available variants for each card type
     this.loadAvailableVariants();
     
-    // Setup immediate JSON processing for live preview updates
-    // Balanced debounce (75ms) for responsive updates without excessive re-renders
-    this.immediateJsonSubject.pipe(
-      debounceTime(75), // 75ms for responsive updates without blinking
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(jsonInput => {
-      // Always process to ensure live updates work
-      this.lastImmediateJson = jsonInput;
-      // Process directly - markForCheck handles change detection timing
-      this.processJsonInputImmediate(jsonInput);
-    });
-    
     // Setup debounced JSON processing for final validation and merging
-    // Longer debounce (300ms) for expensive operations like diffing
     this.jsonInputSubject.pipe(
-      debounceTime(300), // 300ms debounce for final processing
-      distinctUntilChanged(), // Only process if JSON actually changed
+      debounceTime(300),
+      distinctUntilChanged(),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(jsonInput => {
-      // Skip if this JSON was already processed (prevents loops)
       if (jsonInput === this.lastProcessedJson) {
         return;
       }
-      // Mark as processed and update card with full validation
       this.lastProcessedJson = jsonInput;
       this.processJsonInput(jsonInput);
     });
 
-    // Setup debounced command creation for undo/redo (only for significant changes)
+    // Setup debounced command creation for undo/redo
     this.jsonCommandSubject.pipe(
-      debounceTime(1000), // 1 second debounce - only create command after user stops typing
+      debounceTime(1000),
       distinctUntilChanged((prev, curr) => prev.newJson === curr.newJson),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(({ oldJson, newJson }) => {
-      // Only create command if change is significant (not just whitespace)
       if (oldJson.trim() !== newJson.trim()) {
         const command = this.commandService.createJsonChangeCommand(
           oldJson,
@@ -314,52 +335,42 @@ export class HomePageComponent implements OnInit {
         this.commandService.execute(command);
       }
     });
-
-    // Subscribe to LLM streaming service
-    this.llmStreamingService.state$.pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(state => {
-      this.isSimulatingLLM = state.isActive;
-      this.cd.markForCheck();
-    });
-
-    // Subscribe to LLM card updates
-    this.llmStreamingService.cardUpdates$.pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(update => {
-      this.currentStreamingUpdate = update;
-      this.llmPlaceholderCard = update.card;
-      this.streamingCardUpdate.emit(update);
-      
-      // Dispatch to store for state management
-      this.ngZone.run(() => {
-        this.store.dispatch(CardActions.generateCardSuccess({ 
-          card: update.card, 
-          changeType: update.changeType
-        }));
-        this.cd.markForCheck();
-      });
-    });
-
-    // Subscribe to LLM buffer updates (for JSON editor synchronization)
-    this.llmStreamingService.bufferUpdates$.pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(buffer => {
-      // Update JSON input during streaming
-      this.jsonInput = buffer;
-      // Trigger immediate processing for live preview updates (both title and sections)
-      // This ensures the card preview updates in real-time as streaming progresses
-      this.immediateJsonSubject.next(buffer);
-    });
-
-    // Cleanup on destroy
   }
 
   private initializeSystem(): void {
-    // Pre-load initial card immediately
+    // Pre-load initial card via streaming (instant mode for immediate display)
     this.isInitialized = true;
-    this.announceStatus('Loading the first JSON example.');
-    this.store.dispatch(CardActions.loadFirstCardExample());
+    this.announceStatus('Loading the All Sections example.');
+    
+    // Load the "all" type card by default (All Sections demo)
+    this.cardDataService.getCardsByType('all').pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(cards => {
+      const card = cards?.[0];
+      if (card) {
+        // Prepare card JSON for streaming (remove IDs for clean JSON)
+        const cardWithoutIds = removeAllIds(card);
+        delete cardWithoutIds.cardType;
+        const cardJson = JSON.stringify(cardWithoutIds, null, 2);
+        
+        // Start streaming with instant mode - processes all chunks immediately
+        this.streamingService.start(cardJson, { instant: true });
+      } else {
+        // Fallback: if no "all" card found, try first card
+        this.cardDataService.getFirstCard().pipe(
+          takeUntilDestroyed(this.destroyRef)
+        ).subscribe(fallbackCard => {
+          if (fallbackCard) {
+            const cardWithoutIds = removeAllIds(fallbackCard);
+            delete cardWithoutIds.cardType;
+            const cardJson = JSON.stringify(cardWithoutIds, null, 2);
+            this.streamingService.start(cardJson, { instant: true });
+          } else {
+            this.announceStatus('No cards available. Please check your configuration.', true);
+          }
+        });
+      }
+    });
   }
 
   private loadAvailableVariants(): void {
@@ -367,8 +378,20 @@ export class HomePageComponent implements OnInit {
     this.cardDataService.getAvailableCardTypes().pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(types => {
-      // Set card types dynamically from examples
-      this.cardTypes = types.length > 0 ? types : ['all']; // Fallback to all if none found
+      // Set card types dynamically from examples, ensuring 'all' is first
+      if (types.length > 0) {
+        // Move 'all' to the front if it exists, otherwise add it
+        const allIndex = types.indexOf('all');
+        if (allIndex > 0) {
+          types.splice(allIndex, 1);
+          types.unshift('all');
+        } else if (allIndex === -1) {
+          types.unshift('all');
+        }
+        this.cardTypes = types;
+      } else {
+        this.cardTypes = ['all'];
+      }
       
       // Then load variant counts for each card type
       this.cardTypes.forEach(cardType => {
@@ -412,13 +435,8 @@ export class HomePageComponent implements OnInit {
     this.previousJsonInput = jsonInput;
     this.jsonInput = jsonInput;
     
-    // Process through both streams:
-    // 1. Immediate stream for live preview (50ms debounce)
-    this.immediateJsonSubject.next(jsonInput);
-    // 2. Debounced stream for final validation (300ms debounce)
-    if (this.shouldTriggerDebouncedProcessing()) {
-      this.jsonInputSubject.next(jsonInput);
-    }
+    // Process through debounced stream for validation
+    this.jsonInputSubject.next(jsonInput);
   }
 
   onJsonValidChange(isValid: boolean): void {
@@ -449,9 +467,9 @@ export class HomePageComponent implements OnInit {
   private switchCardType(type: CardType): void {
     if (this.switchingType) return;
     
-    // Stop simulation if active when switching cards
-    if (this.isSimulatingLLM) {
-      this.stopSimulation();
+    // Stop streaming if active when switching cards
+    if (this.isStreamingActive) {
+      this.stopGeneration();
     }
     
     this.switchingType = true;
@@ -463,7 +481,9 @@ export class HomePageComponent implements OnInit {
     }
     // Reset processed JSON payloads before loading template to ensure updates
     this.lastProcessedJson = '';
-    this.lastImmediateJson = '';
+    // Clear live preview and streaming state to allow store updates to come through
+    this.livePreviewCard = null;
+    this.lastJsonHash = '';
     // Update state and load template
     this.store.dispatch(CardActions.setCardType({ cardType: type }));
     this.store.dispatch(CardActions.loadTemplate({ cardType: type, variant: this.cardVariant }));
@@ -476,7 +496,6 @@ export class HomePageComponent implements OnInit {
     this.cardVariant = variant;
     // Reset processed JSON payloads before switching to ensure updates
     this.lastProcessedJson = '';
-    this.lastImmediateJson = '';
     this.store.dispatch(CardActions.setCardVariant({ variant }));
     this.switchCardType(this.cardType);
   }
@@ -498,120 +517,133 @@ export class HomePageComponent implements OnInit {
     return String(hash);
   }
 
+
   /**
-   * Immediate JSON processing for live preview updates.
-   * Lightweight parsing with ALL JSON content displayed in real-time.
-   * Very permissive - accepts partial/incomplete JSON for instant visual feedback.
-   * Only updates when actual structural/content changes are detected (not whitespace).
+   * Check if we can do an in-place update (structure is unchanged)
+   * Returns true if sections have same count, types, and field/item counts
    */
-  private processJsonInputImmediate(jsonInput: string): void {
-    if (!this.isInitialized) return;
-
-    // Always process for live updates - don't skip based on hash
-    // This ensures every keystroke triggers an update
-    const currentHash = this.calculateJsonHash(jsonInput);
-    this.lastJsonHash = currentHash;
-
-    // Quick validation - check if empty
-    if (!jsonInput || jsonInput.trim() === '') {
-      // Clear live preview when JSON is empty so store updates can come through
-      this.livePreviewCard = null;
-      // Show empty card immediately for live feedback
-      const emptyCard: AICardConfig = {
-        cardTitle: '',
-        sections: []
-      };
-      // Only update if card actually changed
-      if (this.generatedCard?.cardTitle || this.generatedCard?.sections?.length) {
-        this.generatedCard = emptyCard;
-        this.cd.markForCheck();
-      }
-      return;
+  private canDoInPlaceUpdate(existingSections: CardSection[], incomingSections: Partial<CardSection>[]): boolean {
+    // Different section count = structural change
+    if (existingSections.length !== incomingSections.length) {
+      return false;
     }
-
-    // Try to parse JSON - if it fails, try to extract partial data
-    let data: unknown;
-    try {
-      data = JSON.parse(jsonInput);
-    } catch {
-      // JSON is incomplete - try to extract partial data
-      data = this.tryParsePartialJson(jsonInput);
-      if (!data) {
-        // If we can't parse at all, try to show what we can from the last valid card
-        // but merge in any visible changes from the current JSON string
-        if (this.generatedCard) {
-          // Try to extract cardTitle if visible in JSON
-          const titleMatch = jsonInput.match(/"cardTitle"\s*:\s*"([^"]*)"/);
-          // Try to extract sections even from incomplete JSON
-          const sectionsMatch = jsonInput.match(/"sections"\s*:\s*\[/);
-          if (titleMatch || sectionsMatch) {
-            const newCard: AICardConfig = {
-              ...this.generatedCard,
-              cardTitle: (titleMatch && titleMatch[1]) ? titleMatch[1]! : this.generatedCard.cardTitle
-            };
-            // If sections are being written, try to extract them
-            if (sectionsMatch) {
-              const partialData = this.tryParsePartialJson(jsonInput);
-              if (partialData && Array.isArray(partialData.sections)) {
-                newCard.sections = partialData.sections.map(s => this.ensureSectionStructure(s));
-              }
-            }
-            // Check if card actually changed before updating
-            const diffResult = CardDiffUtil.diffCards(this.generatedCard, newCard);
-            if (diffResult.hasChanges) {
-              this.updateLivePreviewCard(newCard, 'content');
-            }
+    
+    // Check each section for structural compatibility
+    for (let i = 0; i < existingSections.length; i++) {
+      const existing = existingSections[i];
+      const incoming = incomingSections[i];
+      
+      if (!existing || !incoming) return false;
+      
+      // Different type = structural change
+      if (incoming.type && existing.type !== incoming.type) {
+        return false;
+      }
+      
+      // Different field count = structural change
+      const existingFieldCount = existing.fields?.length ?? 0;
+      const incomingFieldCount = incoming.fields?.length ?? 0;
+      if (existingFieldCount !== incomingFieldCount) {
+        return false;
+      }
+      
+      // Different item count = structural change
+      const existingItemCount = existing.items?.length ?? 0;
+      const incomingItemCount = incoming.items?.length ?? 0;
+      if (existingItemCount !== incomingItemCount) {
+        return false;
+      }
+    }
+    
+    return true;
+  }
+  
+  /**
+   * Update a section's content in-place without creating new objects
+   * Returns true if any content changed
+   */
+  private updateSectionInPlace(existing: CardSection, incoming: Partial<CardSection>): boolean {
+    let changed = false;
+    
+    // Update section-level properties
+    if (incoming.title !== undefined && existing.title !== incoming.title) {
+      existing.title = incoming.title;
+      changed = true;
+    }
+    if (incoming.subtitle !== undefined && existing.subtitle !== incoming.subtitle) {
+      existing.subtitle = incoming.subtitle;
+      changed = true;
+    }
+    if (incoming.description !== undefined && existing.description !== incoming.description) {
+      existing.description = incoming.description;
+      changed = true;
+    }
+    if (incoming.emoji !== undefined && existing.emoji !== incoming.emoji) {
+      existing.emoji = incoming.emoji;
+      changed = true;
+    }
+    
+    // Update fields in-place
+    if (incoming.fields && existing.fields) {
+      for (let i = 0; i < existing.fields.length && i < incoming.fields.length; i++) {
+        const existingField = existing.fields[i];
+        const incomingField = incoming.fields[i];
+        if (existingField && incomingField) {
+          if (incomingField.label !== undefined && existingField.label !== incomingField.label) {
+            existingField.label = incomingField.label;
+            changed = true;
+          }
+          if (incomingField.value !== undefined && existingField.value !== incomingField.value) {
+            existingField.value = incomingField.value;
+            changed = true;
+          }
+          if (incomingField.type !== undefined && existingField.type !== incomingField.type) {
+            existingField.type = incomingField.type;
+            changed = true;
+          }
+          if (incomingField.percentage !== undefined && existingField.percentage !== incomingField.percentage) {
+            existingField.percentage = incomingField.percentage;
+            changed = true;
+          }
+          if (incomingField.trend !== undefined && existingField.trend !== incomingField.trend) {
+            existingField.trend = incomingField.trend;
+            changed = true;
+          }
+          if (incomingField.description !== undefined && existingField.description !== incomingField.description) {
+            existingField.description = incomingField.description;
+            changed = true;
           }
         }
-        return;
-      }
-    }
-
-    // Validate that data is an object
-    if (!data || typeof data !== 'object' || Array.isArray(data)) {
-      // Invalid structure - don't update preview
-      return;
-    }
-
-    const cardData = data as Partial<AICardConfig> & Record<string, unknown>;
-
-    // Create a complete card config with defaults for missing required fields
-    // Always create new object and array references to ensure change detection
-    const liveCard: AICardConfig = {
-      // Preserve all existing properties from JSON payload
-      ...cardData,
-      // Ensure required fields are always set (provide defaults if missing)
-      cardTitle: typeof cardData.cardTitle === 'string' ? cardData.cardTitle : (this.generatedCard?.cardTitle || ''),
-      // Always create new array reference to ensure change detection
-      // Deep clone sections and their nested structures (fields, items) for proper change detection
-      sections: Array.isArray(cardData.sections) 
-        ? cardData.sections.map(s => this.ensureSectionStructure(s))
-        : (this.generatedCard?.sections ? this.generatedCard.sections.map(s => this.ensureSectionStructure(s)) : [])
-    };
-
-    // Lightweight processing - ensure IDs exist for rendering
-    const sanitized = this.recheckCardStructure(liveCard) ?? liveCard;
-    
-    // Check if card actually changed before updating to prevent unnecessary re-renders
-    if (this.generatedCard) {
-      const diffResult = CardDiffUtil.diffCards(this.generatedCard, sanitized);
-      if (!diffResult.hasChanges) {
-        // No actual changes, skip update to prevent unnecessary re-renders
-        return;
       }
     }
     
-    // Detect if sections have changed compared to current preview
-    const sectionsChanged = this.detectSectionsChange(
-      this.generatedCard?.sections || [],
-      sanitized.sections
-    );
+    // Update items in-place
+    if (incoming.items && existing.items) {
+      for (let i = 0; i < existing.items.length && i < incoming.items.length; i++) {
+        const existingItem = existing.items[i];
+        const incomingItem = incoming.items[i];
+        if (existingItem && incomingItem) {
+          if (incomingItem.title !== undefined && existingItem.title !== incomingItem.title) {
+            existingItem.title = incomingItem.title;
+            changed = true;
+          }
+          if (incomingItem.description !== undefined && existingItem.description !== incomingItem.description) {
+            existingItem.description = incomingItem.description;
+            changed = true;
+          }
+          if (incomingItem.value !== undefined && existingItem.value !== incomingItem.value) {
+            existingItem.value = incomingItem.value;
+            changed = true;
+          }
+          if (incomingItem.status !== undefined && existingItem.status !== incomingItem.status) {
+            existingItem.status = incomingItem.status;
+            changed = true;
+          }
+        }
+      }
+    }
     
-    // Determine change type based on whether structure changed
-    const changeType: CardChangeType = sectionsChanged.structureChanged ? 'structural' : 'content';
-    
-    // Update only when there are actual changes
-    this.updateLivePreviewCard(sanitized, changeType);
+    return changed;
   }
 
   /**
@@ -853,8 +885,8 @@ export class HomePageComponent implements OnInit {
                   try {
                     // Add missing closing braces if needed
                     let fixedSection = currentSection;
-                    let openCount = (fixedSection.match(/{/g) || []).length;
-                    let closeCount = (fixedSection.match(/}/g) || []).length;
+                    const openCount = (fixedSection.match(/{/g) || []).length;
+                    const closeCount = (fixedSection.match(/}/g) || []).length;
                     for (let j = 0; j < openCount - closeCount; j++) {
                       fixedSection += '}';
                     }
@@ -1292,12 +1324,17 @@ export class HomePageComponent implements OnInit {
   private updateLivePreviewCard(nextCard: AICardConfig, changeTypeOverride?: CardChangeType): void {
     const currentCard = this.generatedCard;
     
+    // Helper to trigger change detection appropriately
+    const triggerChangeDetection = () => {
+      this.cd.markForCheck();
+    };
+    
     // If no existing card, create new one (structural change)
     if (!currentCard) {
       this.generatedCard = nextCard;
       this.livePreviewCard = nextCard;
       this.livePreviewChangeType = changeTypeOverride ?? 'structural';
-      this.cd.markForCheck();
+      triggerChangeDetection();
       return;
     }
     
@@ -1312,37 +1349,43 @@ export class HomePageComponent implements OnInit {
       this.generatedCard = mergeResult.card;
       this.livePreviewCard = mergeResult.card;
       this.livePreviewChangeType = changeType;
-      this.cd.markForCheck();
+      triggerChangeDetection();
       return;
     }
     
     // For content-only updates: mutate in-place to preserve all references
-    // Update top-level properties in-place
-    if (nextCard.cardTitle !== undefined) {
+    // Track if any actual changes were made
+    let hasChanges = false;
+    
+    // Update top-level properties in-place (only if changed)
+    if (nextCard.cardTitle !== undefined && currentCard.cardTitle !== nextCard.cardTitle) {
       currentCard.cardTitle = nextCard.cardTitle;
+      hasChanges = true;
     }
-    if (nextCard.cardSubtitle !== undefined) {
-      currentCard.cardSubtitle = nextCard.cardSubtitle;
-    }
-    if (nextCard.description !== undefined) {
+    if (nextCard.description !== undefined && currentCard.description !== nextCard.description) {
       currentCard.description = nextCard.description;
+      hasChanges = true;
     }
-    if (nextCard.columns !== undefined) {
+    if (nextCard.columns !== undefined && currentCard.columns !== nextCard.columns) {
       currentCard.columns = nextCard.columns;
+      hasChanges = true;
     }
-    if (nextCard.actions !== undefined) {
+    if (nextCard.actions !== undefined && currentCard.actions !== nextCard.actions) {
       currentCard.actions = nextCard.actions;
+      hasChanges = true;
     }
     
     // Update sections in-place (preserves sections array reference)
-    this.updateSectionsInPlace(currentCard.sections, nextCard.sections);
+    const sectionsChanged = this.updateSectionsInPlaceWithTracking(currentCard.sections, nextCard.sections);
+    if (sectionsChanged) hasChanges = true;
     
-    // Update live preview tracking
-    this.livePreviewCard = currentCard;
-    this.livePreviewChangeType = changeType;
-    
-    // Mark for check to trigger change detection (but references are stable)
-    this.cd.markForCheck();
+    // Only trigger change detection if something actually changed
+    if (hasChanges) {
+      // Update live preview tracking
+      this.livePreviewCard = currentCard;
+      this.livePreviewChangeType = changeType;
+      triggerChangeDetection();
+    }
   }
   
   /**
@@ -1374,6 +1417,71 @@ export class HomePageComponent implements OnInit {
     });
   }
   
+  /**
+   * Update sections array in-place and track if changes were made
+   * Returns true if any content changed
+   */
+  private updateSectionsInPlaceWithTracking(existingSections: CardSection[], incomingSections: CardSection[]): boolean {
+    let hasChanges = false;
+    
+    // Check if array lengths changed (structural, but we track it as a change)
+    if (existingSections.length !== incomingSections.length) {
+      hasChanges = true;
+    }
+    
+    const minLength = Math.min(existingSections.length, incomingSections.length);
+    
+    for (let i = 0; i < minLength; i++) {
+      const existingSection = existingSections[i];
+      const incomingSection = incomingSections[i];
+      
+      if (!existingSection || !incomingSection) continue;
+      
+      // Check and update each property, tracking changes
+      if (incomingSection.title !== undefined && existingSection.title !== incomingSection.title) {
+        existingSection.title = incomingSection.title;
+        hasChanges = true;
+      }
+      if (incomingSection.subtitle !== undefined && existingSection.subtitle !== incomingSection.subtitle) {
+        existingSection.subtitle = incomingSection.subtitle;
+        hasChanges = true;
+      }
+      if (incomingSection.description !== undefined && existingSection.description !== incomingSection.description) {
+        existingSection.description = incomingSection.description;
+        hasChanges = true;
+      }
+      
+      // Update fields with tracking
+      if (incomingSection.fields && existingSection.fields) {
+        for (let j = 0; j < Math.min(existingSection.fields.length, incomingSection.fields.length); j++) {
+          const ef = existingSection.fields[j];
+          const inf = incomingSection.fields[j];
+          if (ef && inf) {
+            if (inf.label !== undefined && ef.label !== inf.label) { ef.label = inf.label; hasChanges = true; }
+            if (inf.value !== undefined && ef.value !== inf.value) { ef.value = inf.value; hasChanges = true; }
+            if (inf.type !== undefined && ef.type !== inf.type) { ef.type = inf.type; hasChanges = true; }
+            if (inf.percentage !== undefined && ef.percentage !== inf.percentage) { ef.percentage = inf.percentage; hasChanges = true; }
+          }
+        }
+      }
+      
+      // Update items with tracking
+      if (incomingSection.items && existingSection.items) {
+        for (let j = 0; j < Math.min(existingSection.items.length, incomingSection.items.length); j++) {
+          const ei = existingSection.items[j];
+          const ini = incomingSection.items[j];
+          if (ei && ini) {
+            if (ini.title !== undefined && ei.title !== ini.title) { ei.title = ini.title; hasChanges = true; }
+            if (ini.description !== undefined && ei.description !== ini.description) { ei.description = ini.description; hasChanges = true; }
+            if (ini.value !== undefined && ei.value !== ini.value) { ei.value = ini.value; hasChanges = true; }
+          }
+        }
+      }
+    }
+    
+    return hasChanges;
+  }
+
   /**
    * Update sections array in-place to preserve object references
    * Only mutates existing sections, preserves all references for unchanged sections
@@ -1800,224 +1908,81 @@ export class HomePageComponent implements OnInit {
     }, 300);
   }
 
-  onSimulateLLMStart(): void {
-    // Toggle simulation: if already simulating, stop it
-    if (this.isSimulatingLLM) {
-      this.stopSimulation();
+  /**
+   * Generate card (start streaming or instant load)
+   * Following iLibrary pattern
+   */
+  generateCard(): void {
+    const payload = this.jsonInput?.trim();
+    if (!payload || payload === '{}') {
+      this.announceStatus('Provide JSON configuration before generating a card.', true);
       return;
     }
 
-    const payload = this.getSimulationPayload();
-    if (!payload) {
-      this.announceStatus('Provide JSON or select a card before starting the LLM simulation.', true);
-      return;
-    }
+    // Reset current card to show streaming state
+    this.generatedCard = null;
+    this.livePreviewCard = null;
     
-    // Start section state logging
-    if (this.ENABLE_SECTION_STATE_LOGGING) {
-      this.startSectionStateLogging();
-    }
+    // Configure streaming with user-controlled thinking delay
+    this.streamingService.configure({
+      tokensPerSecond: this.streamingSpeed,
+      thinkingDelayMs: this.useStreaming ? this.thinkingDelay : 0
+    });
+
+    // Start streaming
+    this.streamingService.start(payload, { 
+      instant: !this.useStreaming 
+    });
     
     this.store.dispatch(CardActions.clearError());
-    this.llmStreamingService.start(payload);
-    
-    // Get initial placeholder card
-    const placeholderCard = this.llmStreamingService.getPlaceholderCard();
-    if (placeholderCard) {
-      this.llmPlaceholderCard = placeholderCard;
-      this.ngZone.run(() => {
-        this.store.dispatch(CardActions.generateCardSuccess({ 
-          card: placeholderCard, 
-          changeType: 'structural'
-        }));
-        this.cd.markForCheck();
-      });
-    }
+    this.announceStatus(this.useStreaming ? 'Starting card generation...' : 'Generating card...');
   }
 
-  private stopSimulation(): void {
-    this.llmStreamingService.stop();
-    this.stopSectionStateLogging();
+  /**
+   * Stop current generation
+   */
+  stopGeneration(): void {
+    this.streamingService.stop();
     
     // Get the current card from streaming or other sources
-    const currentCard = this.llmPlaceholderCard || this.generatedCard || this.livePreviewCard;
+    const currentCard = this.generatedCard || this.livePreviewCard;
     
     // If we have a card, load the full JSON into the editor
     if (currentCard) {
       try {
-        // Format card for editor (remove IDs and cardType, just like when loading from store)
         const cardWithoutIds = removeAllIds(currentCard);
         delete cardWithoutIds.cardType;
         const cardJson = JSON.stringify(cardWithoutIds, null, 2);
         
-        // Update the editor with the full JSON
         this.jsonInput = cardJson;
         this.lastProcessedJson = cardJson;
-        this.lastImmediateJson = cardJson;
         this.isJsonValid = true;
         this.jsonError = '';
         
-        // Ensure card has IDs and dispatch to store
         const card = ensureCardIds(currentCard);
-        this.ngZone.run(() => {
-          this.store.dispatch(CardActions.generateCardSuccess({ 
-            card, 
-            changeType: 'structural'
-          }));
-          this.cd.markForCheck();
-        });
+        this.store.dispatch(CardActions.generateCardSuccess({ 
+          card, 
+          changeType: 'structural'
+        }));
         
-        this.announceStatus('Simulation stopped. Card loaded into editor.');
-        return;
+        this.announceStatus('Generation stopped. Card loaded into editor.');
       } catch (error) {
-        this.logger.error('Error loading card into editor after stopping simulation', 'HomePageComponent', error);
+        this.logger.error('Error loading card into editor after stopping generation', 'HomePageComponent', error);
       }
     }
     
-    // Fallback: If there's complete JSON in the input, try to load it
-    const trimmed = this.jsonInput?.trim();
-    if (trimmed) {
-      try {
-        const parsed = JSON.parse(trimmed);
-        if (CardTypeGuards.isAICardConfig(parsed)) {
-          const card = ensureCardIds(parsed);
-          this.ngZone.run(() => {
-            this.store.dispatch(CardActions.generateCardSuccess({ 
-              card, 
-              changeType: 'structural'
-            }));
-            this.cd.markForCheck();
-          });
-          this.announceStatus('Simulation stopped. Card loaded.');
-          return;
-        }
-      } catch {
-        // JSON is incomplete or invalid, just stop simulation
-      }
-    }
-    
-    this.announceStatus('Simulation stopped.');
+    this.cd.markForCheck();
   }
-
-  onSimulateLLMCancel(): void {
-    this.stopSimulation();
-  }
-
-  // LLM simulation logic moved to LLMStreamingService
 
   /**
-   * Get the simulation payload from user input.
-   * Works with complete or incomplete JSON - the simulation will handle parsing
-   * as the JSON becomes complete during streaming.
+   * Toggle streaming simulation (called from template)
    */
-  private getSimulationPayload(): string {
-    const trimmed = this.jsonInput?.trim();
-    // Return any input, even if incomplete JSON - simulation handles it gracefully
-    if (trimmed) {
-      return trimmed;
+  onSimulateLLMStart(): void {
+    if (this.isStreamingActive) {
+      this.stopGeneration();
+    } else {
+      this.generateCard();
     }
-    // Fallback to default card if no input
-    return JSON.stringify(this.simulationFallbackCard, null, 2);
-  }
-
-  // All LLM simulation methods removed - now handled by LLMStreamingService
-  // Removed: scheduleNextLlmChunk, finishLlmSimulation, cancelLlmSimulation, createLlmChunks,
-  // computeChunkDelay, batchSectionCompletions, clearLlmTimers, tryParseLlmBuffer,
-  // initializePlaceholdersIfNeeded, checkSectionCompletions, checkFieldCompletions,
-  // updateCompletedSectionsOnly, updateCompletedFieldsOnly, calculateSectionCompletionPercentage,
-  // isSectionComplete, initializeLlmPlaceholders, createPlaceholderSection, createPlaceholderField,
-  // createPlaceholderItem, syncPlaceholderSections, applySectionContentToPlaceholder,
-  // syncPlaceholderFields, syncPlaceholderItems, cloneSectionStructure, cloneStreamingPreview,
-  // getCardHash, estimateSectionsUnlocked, resolveLlmChangeType, updateSectionProgress
-
-  private isLlmStreamingActive(): boolean {
-    if (!this.isSimulatingLLM) {
-      return false;
-    }
-    const state = this.llmStreamingService.getState();
-    return state.stage !== 'complete' && state.stage !== 'aborted' && state.stage !== 'error';
-  }
-
-  private getSectionHash(section: CardSection): string {
-    const cached = this.sectionHashCache.get(section);
-    if (cached) {
-      return cached;
-    }
-    const fieldsHash = (section.fields ?? []).map((field) => this.getFieldHash(field)).join('|');
-    const itemsHash = (section.items ?? []).map((item) => this.getItemHash(item)).join('|');
-    const key = [
-      section.id ?? '',
-      section.title ?? '',
-      section.subtitle ?? '',
-      section.type ?? '',
-      section.description ?? '',
-      section.columns ?? '',
-      section.colSpan ?? '',
-      section.collapsed ?? '',
-      section.emoji ?? '',
-      section.chartType ?? '',
-      this.normalizeValue(section.chartData),
-      fieldsHash,
-      itemsHash
-    ].join('|');
-    const hash = this.fastHash(key);
-    this.sectionHashCache.set(section, hash);
-    return hash;
-  }
-
-  private getFieldHash(field: CardField): string {
-    const cached = this.fieldHashCache.get(field);
-    if (cached) {
-      return cached;
-    }
-    const key = [
-      field.id ?? '',
-      field.label ?? '',
-      field.title ?? '',
-      this.normalizeValue(field.value),
-      field.type ?? '',
-      field.status ?? '',
-      field.priority ?? '',
-      field.trend ?? '',
-      field.format ?? '',
-      field.description ?? '',
-      this.normalizeValue(field.meta)
-    ].join('|');
-    const hash = this.fastHash(key);
-    this.fieldHashCache.set(field, hash);
-    return hash;
-  }
-
-  private getItemHash(item: CardItem): string {
-    const cached = this.itemHashCache.get(item);
-    if (cached) {
-      return cached;
-    }
-    const key = [
-      item.id ?? '',
-      item.title ?? '',
-      item.description ?? '',
-      this.normalizeValue(item.value),
-      item.status ?? '',
-      this.normalizeValue(item.meta)
-    ].join('|');
-    const hash = this.fastHash(key);
-    this.itemHashCache.set(item, hash);
-    return hash;
-  }
-
-  private normalizeValue(value: unknown): string {
-    if (value === null || value === undefined) {
-      return '';
-    }
-    if (typeof value === 'object') {
-      try {
-        return JSON.stringify(value);
-      } catch {
-        return '';
-      }
-    }
-    return String(value);
   }
 
   private fastHash(value: string): string {
@@ -2084,12 +2049,12 @@ export class HomePageComponent implements OnInit {
    * This prevents full section re-renders and maintains stable DOM elements
    */
   private updateCompletedSectionsOnly(incoming: AICardConfig, completedIndices: number[]): void {
-    if (!this.llmPlaceholderCard) {
+    if (!this.generatedCard) {
       return;
     }
 
     const incomingSections = incoming.sections ?? [];
-    const placeholderSections = this.llmPlaceholderCard.sections ?? [];
+    const placeholderSections = this.generatedCard.sections ?? [];
 
     // Update only completed sections IN-PLACE (mutate existing objects)
     completedIndices.forEach(index => {
@@ -2280,17 +2245,9 @@ export class HomePageComponent implements OnInit {
   }
 
   private getCardFingerprint(card: AICardConfig): string {
-    const sectionHashes = (card.sections ?? []).map(s => this.getSectionHash(s)).join('|');
-    const key = `${card.id ?? ''}|${card.cardTitle ?? ''}|${sectionHashes}`;
+    const sectionIds = (card.sections ?? []).map(s => s.id ?? s.title ?? '').join('|');
+    const key = `${card.id ?? ''}|${card.cardTitle ?? ''}|${sectionIds}`;
     return this.fastHash(key);
-  }
-
-  private shouldTriggerDebouncedProcessing(): boolean {
-    if (!this.isSimulatingLLM) {
-      return true;
-    }
-    // LLM state check removed
-    return false;
   }
 
   get previewCard(): AICardConfig | null {
@@ -2310,16 +2267,16 @@ export class HomePageComponent implements OnInit {
         // Invalid JSON, return null
       }
     }
-    // During simulation, fall back to parsed LLM preview; otherwise use generated card
-    if (this.isLlmStreamingActive()) {
+    // During streaming, fall back to generated card
+    if (this.isStreamingActive) {
       return this.generatedCard;
     }
     return this.generatedCard ?? null;
   }
 
   get previewChangeType(): CardChangeType {
-    if (this.isLlmStreamingActive()) {
-      // During LLM streaming, use structural changes for layout recalculation
+    if (this.isStreamingActive) {
+      // During streaming, use structural changes for layout recalculation
       return 'structural';
     }
     if (this.livePreviewCard) {
@@ -2385,32 +2342,36 @@ export class HomePageComponent implements OnInit {
     // Wait a tick to ensure the view is updated
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    const containerElement = this.cardPreviewComponent?.getCardElement();
-    
-    if (!containerElement) {
+    // Find the card element from the preview region
+    const previewElement = this.previewRegion?.nativeElement;
+    if (!previewElement) {
       this.announceStatus('Card element not found', true);
-      this.logger.warn('Card container element not found', 'HomePageComponent');
+      this.logger.warn('Preview region not found', 'HomePageComponent');
       return;
     }
 
-    // Find the actual card article element inside the container
-    // Try multiple selectors to find the card element
-    let cardElement: HTMLElement | null = containerElement.querySelector('article.ai-card-surface');
+    // Find the actual card article element inside the preview
+    let cardElement: HTMLElement | null = previewElement.querySelector('article.ai-card-surface');
     
     if (!cardElement) {
       // Fallback 1: try tilt-container
-      cardElement = containerElement.querySelector('.tilt-container') as HTMLElement;
+      cardElement = previewElement.querySelector('.tilt-container') as HTMLElement;
     }
     
     if (!cardElement) {
       // Fallback 2: try any article element
-      cardElement = containerElement.querySelector('article') as HTMLElement;
+      cardElement = previewElement.querySelector('article') as HTMLElement;
     }
     
     if (!cardElement) {
-      // Fallback 3: use the container itself
-      cardElement = containerElement;
-      this.logger.warn('Using container element for export (card article not found)', 'HomePageComponent');
+      // Fallback 3: try app-ai-card-renderer
+      cardElement = previewElement.querySelector('app-ai-card-renderer') as HTMLElement;
+    }
+
+    if (!cardElement) {
+      this.announceStatus('Card element not found', true);
+      this.logger.warn('Card element not found in preview region', 'HomePageComponent');
+      return;
     }
 
     try {
@@ -2472,175 +2433,14 @@ export class HomePageComponent implements OnInit {
   }
   
   ngOnDestroy(): void {
-    // Stop section state logging
-    this.stopSectionStateLogging();
+    // Stop streaming if active
+    this.streamingService.stop();
     
-    // Stop LLM streaming if active
-    this.llmStreamingService.stop();
-    
+    // Complete subjects
     this.jsonInputSubject.complete();
-    this.immediateJsonSubject.complete();
     this.jsonCommandSubject.complete();
   }
   
-  /**
-   * Start logging section states every second for debugging
-   */
-  private startSectionStateLogging(): void {
-    // Clear any existing interval
-    if (this.sectionStateLogInterval) {
-      clearInterval(this.sectionStateLogInterval);
-    }
-    
-    // Log immediately
-    this.logSectionStates();
-    
-    // Then log every second
-    this.sectionStateLogInterval = setInterval(() => {
-      this.logSectionStates();
-    }, 1000);
-  }
-  
-  /**
-   * Stop section state logging
-   */
-  private stopSectionStateLogging(): void {
-    if (this.sectionStateLogInterval) {
-      clearInterval(this.sectionStateLogInterval);
-      this.sectionStateLogInterval = null;
-    }
-  }
-  
-  /**
-   * Log current section states and completion status
-   */
-  private logSectionStates(): void {
-    if (!this.ENABLE_SECTION_STATE_LOGGING || !this.isSimulatingLLM) {
-      return;
-    }
-    
-    const timestamp = new Date().toISOString();
-    const placeholderCard = this.llmPlaceholderCard;
-    const state = this.llmStreamingService.getState();
-    
-    if (!placeholderCard) {
-      this.logger.warn('⚠️ No placeholder card yet', 'HomePageComponent', { timestamp });
-      return;
-    }
-    
-    const sections = (placeholderCard.sections ?? []).map((section, index) => {
-      const sectionKey = section.id || `section-${index}`;
-      
-      // Check field completion
-      const fields = section.fields ?? [];
-      const fieldStates = fields.map((field, fieldIdx) => {
-        const meta = field.meta as Record<string, unknown> | undefined;
-        const isPlaceholder = field.value === 'Streaming…' || 
-                             field.value === undefined ||
-                             field.value === null ||
-                             (meta && meta['placeholder'] === true);
-        
-        return {
-          index: fieldIdx,
-          id: field.id || `field-${index}-${fieldIdx}`,
-          label: field.label || field.title || 'no-label',
-          value: field.value,
-          isPlaceholder
-        };
-      });
-      
-      // Check item completion
-      const items = section.items ?? [];
-      const itemStates = items.map((item, itemIdx) => {
-        const meta = item.meta as Record<string, unknown> | undefined;
-        const isPlaceholder = item.description === 'Streaming…' ||
-                             !item.title ||
-                             item.title.startsWith('Item ') ||
-                             (meta && meta['placeholder'] === true);
-        
-        return {
-          index: itemIdx,
-          id: item.id || `item-${index}-${itemIdx}`,
-          title: item.title,
-          description: item.description,
-          isPlaceholder
-        };
-      });
-      
-      const allFieldsComplete = fieldStates.length > 0 && fieldStates.every(f => !f.isPlaceholder);
-      const allItemsComplete = itemStates.length > 0 && itemStates.every(i => !i.isPlaceholder);
-      const sectionShouldBeComplete = (fieldStates.length === 0 || allFieldsComplete) && 
-                                      (itemStates.length === 0 || allItemsComplete);
-      const isComplete = sectionShouldBeComplete; // Simplified - completion is determined by current state
-      
-      return {
-        index,
-        key: sectionKey,
-        id: section.id || 'no-id',
-        title: section.title || 'no-title',
-        type: section.type || 'no-type',
-        isComplete,
-        shouldBeComplete: sectionShouldBeComplete,
-        completionMismatch: false, // No longer tracking mismatches since service handles it
-        fieldCount: fields.length,
-        itemCount: items.length,
-        fields: fieldStates,
-        items: itemStates
-      };
-    });
-    
-    const logData = {
-      timestamp,
-      isSimulating: this.isSimulatingLLM,
-      stage: state.stage,
-      bufferLength: state.bufferLength,
-      targetLength: state.targetLength,
-      progress: Math.floor(state.progress * 100) + '%',
-      placeholderCardId: placeholderCard.id,
-      placeholderSectionCount: placeholderCard.sections?.length ?? 0,
-      totalSections: sections.length,
-      completedSections: sections.filter(s => s.isComplete).length,
-      sections
-    };
-    
-    this.logger.debug(`📊 Section States - ${timestamp}`, 'HomePageComponent', {
-      streamingStatus: {
-        isSimulating: logData.isSimulating,
-        progress: logData.progress,
-        bufferLength: logData.bufferLength,
-        targetLength: logData.targetLength
-      },
-      cardState: {
-        placeholderCardId: logData.placeholderCardId,
-        placeholderSections: logData.placeholderSectionCount
-      },
-      completionSummary: {
-        total: logData.totalSections,
-        completed: logData.completedSections,
-        pending: logData.totalSections - logData.completedSections
-      },
-      sections: sections.map(s => ({
-        index: s.index,
-        id: s.id,
-        title: s.title,
-        type: s.type,
-        isComplete: s.isComplete,
-        shouldBeComplete: s.shouldBeComplete,
-        completionMismatch: s.completionMismatch,
-        fieldCount: s.fieldCount,
-        itemCount: s.itemCount,
-        fieldsComplete: s.fields.filter(f => !f.isPlaceholder).length + '/' + s.fieldCount,
-        itemsComplete: s.items.filter(i => !i.isPlaceholder).length + '/' + s.itemCount
-      }))
-    });
-    
-    // Log sections with mismatches
-    const mismatches = sections.filter(s => s.completionMismatch);
-    if (mismatches.length > 0) {
-      this.logger.warn('⚠️ Completion Mismatches', 'HomePageComponent', mismatches);
-    }
-  }
-
   toggleTheme(): void {
     this.theme = this.theme === 'night' ? 'day' : 'night';
     this.applyTheme();

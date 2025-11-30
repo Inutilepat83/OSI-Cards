@@ -5,7 +5,7 @@ import { LucideIconsModule } from '../../../icons/lucide-icons.module';
 /**
  * Card Header Component
  * 
- * Displays the card title, subtitle, and export button.
+ * Displays the card title and export button.
  * Extracted from AICardRendererComponent for better separation of concerns.
  */
 @Component({
@@ -18,7 +18,6 @@ import { LucideIconsModule } from '../../../icons/lucide-icons.module';
 })
 export class CardHeaderComponent {
   @Input() cardTitle?: string;
-  @Input() cardSubtitle?: string;
   @Input() showExport = false;
   @Output() export = new EventEmitter<void>();
 
@@ -26,4 +25,10 @@ export class CardHeaderComponent {
     this.export.emit();
   }
 }
+
+
+
+
+
+
 

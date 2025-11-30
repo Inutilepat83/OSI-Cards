@@ -53,7 +53,7 @@ export interface TocItem {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MarkdownRendererComponent implements OnInit, OnChanges, AfterViewInit {
-  @Input() markdown: string = '';
+  @Input() markdown = '';
   @Input() baseUrl?: string;
 
   @Output() tocChange = new EventEmitter<TocItem[]>();

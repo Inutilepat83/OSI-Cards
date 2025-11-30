@@ -17,7 +17,6 @@ export * from './app/shared/components/cards';
 export * from './app/shared/components/error-display/error-display.component';
 export * from './app/shared/components/json-editor/json-editor.component';
 export * from './app/shared/components/card-type-selector/card-type-selector.component';
-export * from './app/shared/components/llm-simulation-controls/llm-simulation-controls.component';
 export * from './app/shared/components/preview-controls/preview-controls.component';
 export * from './app/shared/components/system-stats/system-stats.component';
 export * from './app/shared/components/card-templates-gallery/card-templates-gallery.component';

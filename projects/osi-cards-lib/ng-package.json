@@ -3,7 +3,13 @@
   "dest": "../../dist/osi-cards-lib",
   "lib": {
     "entryFile": "src/public-api.ts",
-    "styleIncludePaths": ["src/lib/styles"]
+    "styleIncludePaths": [
+      "src/lib/styles",
+      "src/lib/styles/tokens",
+      "src/lib/styles/core",
+      "src/lib/styles/bundles",
+      "src/lib/styles/reset"
+    ]
   },
   "allowedNonPeerDependencies": [],
   "assets": [
@@ -11,7 +17,26 @@
       "input": "./src/lib/styles",
       "glob": "**/*.scss",
       "output": "/styles"
+    },
+    {
+      "input": "./src/lib/styles",
+      "glob": "**/*.css",
+      "output": "/styles"
+    },
+    {
+      "input": "./styles",
+      "glob": "**/*.css",
+      "output": "/styles"
+    },
+    {
+      "input": "./README.md",
+      "glob": "**/*",
+      "output": "/"
+    },
+    {
+      "input": "./USAGE.md",
+      "glob": "**/*",
+      "output": "/"
     }
   ]
 }
-

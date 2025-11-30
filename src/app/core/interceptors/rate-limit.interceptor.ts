@@ -14,7 +14,7 @@ class TokenBucket {
   constructor(
     private readonly capacity: number,
     private readonly refillRate: number, // tokens per second
-    private readonly refillInterval: number = 1000 // ms
+    private readonly refillInterval = 1000 // ms
   ) {
     this.tokens = capacity;
     this.lastRefill = Date.now();
@@ -170,7 +170,7 @@ export class RateLimitInterceptor implements HttpInterceptor {
   /**
    * Maximum allowed request body size (1MB)
    */
-  private readonly MAX_REQUEST_SIZE = 1024 * 1024; // 1MB
+  private readonly MAX_REQUEST_SIZE = 1024 * 1024; // 1MB - type inferred
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     if (!this.config.enabled) {

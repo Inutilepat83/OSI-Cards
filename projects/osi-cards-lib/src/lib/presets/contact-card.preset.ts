@@ -126,7 +126,6 @@ export function createContactCard(options: ContactCardOptions): AICardConfig {
   return {
     id: `contact-${name.toLowerCase().replace(/\s+/g, '-')}`,
     cardTitle: name,
-    cardSubtitle: jobTitle || company,
     cardType: 'contact',
     sections: sections.filter(s => s.fields && s.fields.length > 0),
     actions: actions.length > 0 ? actions : undefined

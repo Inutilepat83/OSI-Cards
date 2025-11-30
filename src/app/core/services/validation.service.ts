@@ -197,10 +197,10 @@ export class ValidationService {
    */
   validateCards(cards: unknown[]): {
     valid: AICardConfig[];
-    invalid: Array<{ index: number; errors: string[] }>;
+    invalid: { index: number; errors: string[] }[];
   } {
     const valid: AICardConfig[] = [];
-    const invalid: Array<{ index: number; errors: string[] }> = [];
+    const invalid: { index: number; errors: string[] }[] = [];
 
     cards.forEach((card, index) => {
       const result = this.validateCard(card);
@@ -246,4 +246,10 @@ export class ValidationService {
     return result.data;
   }
 }
+
+
+
+
+
+
 

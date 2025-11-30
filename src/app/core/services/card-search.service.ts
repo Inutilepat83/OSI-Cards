@@ -96,12 +96,6 @@ export class CardSearchService {
             score += 10;
           }
           
-          // Search in subtitle
-          if (card.cardSubtitle?.toLowerCase().includes(lowerQuery)) {
-            matches.push({ field: 'subtitle', value: card.cardSubtitle });
-            score += 5;
-          }
-          
           // Search in description
           if (card.description?.toLowerCase().includes(lowerQuery)) {
             matches.push({ field: 'description', value: card.description });
@@ -169,7 +163,7 @@ export class CardSearchService {
   /**
    * Search with debouncing (for real-time search)
    */
-  searchDebounced(query: string, options?: Partial<SearchOptions>, debounceMs: number = 300): Observable<SearchResult[]> {
+  searchDebounced(query: string, options?: Partial<SearchOptions>, debounceMs = 300): Observable<SearchResult[]> {
     return of(query).pipe(
       debounceTime(debounceMs),
       distinctUntilChanged(),
@@ -206,7 +200,7 @@ export class CardSearchService {
   /**
    * Get search suggestions based on query
    */
-  getSuggestions(query: string, limit: number = 5): Observable<string[]> {
+  getSuggestions(query: string, limit = 5): Observable<string[]> {
     return this.cardDataService.getAllCards().pipe(
       map(cards => {
         const lowerQuery = query.toLowerCase();
@@ -215,9 +209,6 @@ export class CardSearchService {
         cards.forEach(card => {
           if (card.cardTitle?.toLowerCase().startsWith(lowerQuery)) {
             suggestions.add(card.cardTitle);
-          }
-          if (card.cardSubtitle?.toLowerCase().startsWith(lowerQuery)) {
-            suggestions.add(card.cardSubtitle);
           }
           card.sections?.forEach(section => {
             if (section.title?.toLowerCase().startsWith(lowerQuery)) {

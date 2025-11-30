@@ -59,6 +59,41 @@ const SECTION_COL_SPAN_THRESHOLDS: Record<string, ColSpanThresholds> = {
 const DEFAULT_COL_SPAN_THRESHOLD: ColSpanThresholds = { two: 6 };
 
 /**
+ * Default column preferences for each section type
+ * Sections can prefer 1, 2, or 3 columns but will gracefully degrade if constrained
+ * 
+ * - 1 column: Narrow, compact sections (projects, simple info)
+ * - 2 columns: Medium-width sections that benefit from space (analytics, contact cards)
+ * - 3 columns: Wide sections that need horizontal space (charts, maps, overview)
+ */
+const DEFAULT_SECTION_COLUMN_PREFERENCES: Record<string, 1 | 2 | 3 | 4> = {
+  // Wide sections - prefer 3 columns
+  overview: 3,
+  chart: 3,
+  map: 3,
+  locations: 3,
+  
+  // Medium sections - prefer 2 columns
+  analytics: 2,
+  stats: 2,
+  'contact-card': 2,
+  'network-card': 2,
+  financials: 2,
+  info: 2,
+  solutions: 2,
+  product: 2,
+  list: 2,
+  event: 2,
+  quotation: 2,
+  'text-reference': 2,
+  
+  // Narrow sections - prefer 1 column
+  project: 1
+};
+
+const DEFAULT_PREFERRED_COLUMNS: 1 | 2 | 3 | 4 = 1;
+
+/**
  * Service for normalizing and resolving section types
  * 
  * Handles section type resolution, column span calculations, and section sorting.
@@ -130,9 +165,10 @@ export class SectionNormalizationService {
     const needsMetricsConversion = resolvedType === 'analytics' && (!section.fields || !section.fields.length) && (section as Record<string, unknown>)['metrics'];
     const needsDescriptionFromSubtitle = !section.description && section.subtitle;
     const needsMetaUpdate = !section.meta || !(section.meta as Record<string, unknown>)?.['colSpanThresholds'];
+    const needsPreferredColumns = section.preferredColumns === undefined;
 
     // If nothing needs to change, return original section to preserve reference
-    if (!needsTypeResolution && !needsMetricsConversion && !needsDescriptionFromSubtitle && !needsMetaUpdate) {
+    if (!needsTypeResolution && !needsMetricsConversion && !needsDescriptionFromSubtitle && !needsMetaUpdate && !needsPreferredColumns) {
       return section;
     }
 
@@ -167,7 +203,124 @@ export class SectionNormalizationService {
       };
     }
 
+    // Add preferred columns based on section type AND content if not already specified
+    if (needsPreferredColumns) {
+      normalized.preferredColumns = this.calculatePreferredColumns(normalized);
+    }
+
     return normalized;
+  }
+
+  /**
+   * Get the preferred number of columns for a section type (legacy method)
+   * @deprecated Use calculatePreferredColumns(section) for content-aware logic
+   */
+  getPreferredColumns(sectionType: string): 1 | 2 | 3 | 4 {
+    return DEFAULT_SECTION_COLUMN_PREFERENCES[sectionType] ?? DEFAULT_PREFERRED_COLUMNS;
+  }
+
+  /**
+   * Calculate the preferred number of columns based on section type AND content
+   * This provides smart, content-aware column sizing
+   * 
+   * @param section - The section to calculate preferred columns for
+   * @returns Preferred column count (1, 2, 3, or 4)
+   */
+  calculatePreferredColumns(section: CardSection): 1 | 2 | 3 | 4 {
+    const type = section.type?.toLowerCase() ?? '';
+    const fieldCount = section.fields?.length ?? 0;
+    
+    switch (type) {
+      case 'contact-card':
+        // 1 contact = 1 col, up to 4
+        return Math.min(Math.max(fieldCount, 1), 4) as 1 | 2 | 3 | 4;
+      
+      case 'info':
+      case 'analytics':
+      case 'stats':
+      case 'financials':
+      case 'list':
+      case 'event':
+        // Always compact - 1 column
+        return 1;
+      
+      case 'product':
+      case 'solutions':
+      case 'network-card':
+      case 'quotation':
+        // Medium width - 2 columns
+        return 2;
+      
+      case 'map':
+      case 'locations':
+        // Wide - 3 columns
+        return 3;
+      
+      case 'overview':
+        // Full width - 4 columns
+        return 4;
+      
+      case 'chart':
+        return this.calculateChartColumns(section);
+      
+      case 'text-reference':
+        return this.calculateTextRefColumns(section);
+      
+      default:
+        // Default to compact
+        return 1;
+    }
+  }
+
+  /**
+   * Calculate preferred columns for chart sections based on chart type and data complexity
+   * - Pie/donut charts are compact (2 columns)
+   * - Bar/line charts scale with dataset count
+   */
+  private calculateChartColumns(section: CardSection): 2 | 3 | 4 {
+    const chartType = (section.chartType ?? '').toLowerCase();
+    const datasets = section.chartData?.datasets?.length ?? 1;
+    
+    // Pie/donut charts are compact
+    if (chartType === 'pie' || chartType === 'donut' || chartType === 'doughnut') {
+      return 2;
+    }
+    
+    // Bar/line charts scale with data complexity
+    if (datasets <= 1) return 2;
+    if (datasets <= 2) return 3;
+    return 4;
+  }
+
+  /**
+   * Calculate preferred columns for text-reference sections based on content length
+   * - Short text (<100 chars): 1 column
+   * - Medium text (<300 chars): 2 columns
+   * - Long text: 3 columns
+   */
+  private calculateTextRefColumns(section: CardSection): 1 | 2 | 3 {
+    const textLength = this.getTextContentLength(section);
+    
+    if (textLength < 100) return 1;
+    if (textLength < 300) return 2;
+    return 3;
+  }
+
+  /**
+   * Get the total text content length of a section
+   * Combines field values, descriptions, and section description
+   */
+  private getTextContentLength(section: CardSection): number {
+    // Check fields for text content
+    const fieldText = section.fields?.map(f => 
+      String((f as Record<string, unknown>)['value'] ?? '') + 
+      String((f as Record<string, unknown>)['description'] ?? '')
+    ).join('') ?? '';
+    
+    // Check description
+    const desc = section.description ?? '';
+    
+    return fieldText.length + desc.length;
   }
 
   /**

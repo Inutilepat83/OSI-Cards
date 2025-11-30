@@ -134,6 +134,12 @@ import { AICardRendererComponent } from 'osi-cards-lib';
 - [Quick Start](/docs/getting-started)
 - [API Reference](/docs/api)
 
+
+
+
+
+
+
 `;
 
 @Component({

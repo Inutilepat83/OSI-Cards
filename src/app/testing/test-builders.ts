@@ -202,11 +202,6 @@ export class CardBuilder {
     return this;
   }
 
-  withSubtitle(subtitle: string): CardBuilder {
-    this.card.cardSubtitle = subtitle;
-    return this;
-  }
-
   withType(type: CardType): CardBuilder {
     this.card.cardType = type;
     return this;

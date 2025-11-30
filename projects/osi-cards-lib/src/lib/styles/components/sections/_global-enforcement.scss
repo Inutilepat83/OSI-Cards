@@ -45,6 +45,21 @@
  * This ensures 100% consistency across all card types.
  */
 
+/* ===== CRITICAL: FONT FAMILY ISOLATION ===== */
+/* 
+ * Prevents CSS inheritance from host environments (legacy systems, portals, etc.)
+ * Shadow DOM isolates most styles but INHERITED properties leak through.
+ * This explicit declaration ensures consistent typography across all integrations.
+ */
+.ai-section,
+.ai-section *,
+.masonry-item,
+.masonry-item *,
+.ai-card-surface,
+.ai-card-surface * {
+  font-family: Helvetica, "Helvetica Neue", -apple-system, "system-ui", system-ui, sans-serif !important;
+}
+
 /* ===== SECTION CONTAINER ENFORCEMENT ===== */
 /* All sections use these exact settings - NO EXCEPTIONS */
 
@@ -83,12 +98,14 @@
   margin: 0 !important;
   flex: 1 !important;
   /* Default: grid layout for card-based sections */
+  /* Standardized: 200px min column width (synchronized with grid-config.util.ts) */
   display: grid !important;
   grid-template-columns: repeat(auto-fit, minmax(var(--section-grid-min-width), 1fr)) !important;
   gap: var(--section-card-gap) !important;
   min-height: 0 !important;
   
-  @media (max-width: 520px) {
+  /* Only force single column on very small screens */
+  @media (max-width: 420px) {
     grid-template-columns: 1fr !important;
   }
 }
@@ -196,6 +213,10 @@
 
 .ai-section__title,
 .section-block__title {
+  /* CRITICAL: Explicit font-family prevents inheritance from host environments */
+  /* This is essential for CSS encapsulation when embedded in legacy systems */
+  font-family: Helvetica, "Helvetica Neue", -apple-system, "system-ui", system-ui, sans-serif !important;
+  
   /* Font - GLOBALLY ENFORCED */
   font-size: var(--section-title-font-size) !important;
   font-weight: var(--section-title-font-weight) !important;
@@ -205,13 +226,16 @@
   
   /* Remove any custom padding/margin */
   padding: 0 !important;
-  margin: 0 0 8px 0 !important;
+  margin: 0 0 var(--section-title-margin-bottom) 0 !important;
 }
 
 /* ===== SECTION HEADER ENFORCEMENT ===== */
 /* All section headers use these exact settings - NO EXCEPTIONS */
 
 .ai-section__header {
+  /* CRITICAL: Explicit font-family prevents inheritance from host environments */
+  font-family: Helvetica, "Helvetica Neue", -apple-system, "system-ui", system-ui, sans-serif !important;
+  
   /* UNIFIED: Use direct variables (no calc) */
   padding: 0 0 var(--section-header-padding-bottom) 0 !important;
   gap: var(--section-header-gap) !important;
@@ -372,7 +396,7 @@
 /* NOTE: .ai-card-surface is excluded so the hero card can keep its own palette */
 [class*="-card"]:not([class*="__"]):not(.ai-card-surface),
 [class*="-metric"]:not([class*="__"]),
-[class*="-item"]:not([class*="__"]):not(.product-entry__benefit):not(.product-entry__action),
+[class*="-item"]:not([class*="__"]):not(.product-entry__benefit):not(.product-entry__action):not(.masonry-item),
 [class*="-row"]:not([class*="__"]),
 .section-card,
 .section-card--quotation,

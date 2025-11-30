@@ -1,0 +1,407 @@
+// ============================================
+// HERO CARD ANIMATION SYSTEM
+// ============================================
+//
+// Provides hero-style card hover effects with:
+// - Vertical lift on hover
+// - Glow expansion with brand color
+// - Icon scale and rotation effects
+// - Left accent border glow
+// - Top glow line
+//
+// Usage:
+//   @use 'hero-card' as *;
+//   .my-card { @include hero-card-hover(); }
+//   .my-icon { @include icon-hover-effect(); }
+//
+// ============================================
+
+// ===================================================================
+// HERO CARD HOVER PATTERN
+// Vertical lift with glow expansion - matches homepage hero cards
+// ===================================================================
+
+/// Hero card hover effect with lift and glow
+/// @param {Length} $lift - Vertical lift distance on hover (default: 6px)
+/// @param {Boolean} $glow - Whether to show glow effect (default: true)
+/// @param {Boolean} $accent - Whether to show left accent border (default: false)
+@mixin hero-card-hover($lift: 6px, $glow: true, $accent: false) {
+  position: relative;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  @if $accent {
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--color-brand, #FF7900);
+      border-radius: 3px 0 0 3px;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+  }
+  
+  &:hover {
+    transform: translateY(-#{$lift});
+    
+    @if $glow {
+      box-shadow: 
+        0 20px 40px color-mix(in srgb, var(--foreground, #000) 15%, transparent),
+        0 0 0 1px color-mix(in srgb, var(--color-brand, #FF7900) 35%, transparent);
+    }
+    
+    @if $accent {
+      &::before {
+        opacity: 1;
+      }
+    }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+/// Hero card with top glow line effect
+/// @param {Length} $lift - Vertical lift distance on hover (default: 6px)
+@mixin hero-card-with-glow-line($lift: 6px) {
+  position: relative;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  
+  // Top glow line
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--color-brand, #FF7900) 60%, transparent) 50%,
+      transparent 100%
+    );
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  
+  // Left accent
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--color-brand, #FF7900);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  
+  &:hover {
+    transform: translateY(-#{$lift});
+    box-shadow: 
+      0 20px 40px color-mix(in srgb, var(--foreground, #000) 15%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--color-brand, #FF7900) 35%, transparent);
+    
+    &::before,
+    &::after {
+      opacity: 1;
+    }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+    
+    &::before,
+    &::after {
+      transition: none;
+    }
+  }
+}
+
+// ===================================================================
+// ICON HOVER EFFECTS
+// Scale and rotation effects for icons within cards
+// ===================================================================
+
+/// Icon hover effect with scale and rotation
+/// @param {Number} $scale - Scale factor on hover (default: 1.15)
+/// @param {Angle} $rotate - Rotation angle on hover (default: 5deg)
+/// @param {Boolean} $glow - Whether to add drop shadow glow (default: true)
+@mixin icon-hover-effect($scale: 1.15, $rotate: 5deg, $glow: true) {
+  transition: transform 0.35s ease, filter 0.35s ease;
+  
+  &:hover {
+    transform: scale($scale) rotateZ($rotate);
+    
+    @if $glow {
+      filter: drop-shadow(0 4px 12px color-mix(in srgb, var(--color-brand, #FF7900) 25%, transparent));
+    }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+      filter: none;
+    }
+  }
+}
+
+/// Icon hover effect triggered by parent card hover
+/// Apply to icon, effect triggers when parent .hero-card:hover
+/// @param {Number} $scale - Scale factor on hover (default: 1.15)
+/// @param {Angle} $rotate - Rotation angle on hover (default: 5deg)
+@mixin icon-hover-on-card($scale: 1.15, $rotate: 5deg) {
+  transition: transform 0.35s ease, filter 0.35s ease;
+  
+  .hero-card:hover &,
+  .hero-feature-card:hover &,
+  .feature-card:hover &,
+  [class*="card"]:hover & {
+    transform: scale($scale) rotateZ($rotate);
+    filter: drop-shadow(0 4px 12px color-mix(in srgb, var(--color-brand, #FF7900) 25%, transparent));
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    
+    .hero-card:hover &,
+    .hero-feature-card:hover &,
+    .feature-card:hover &,
+    [class*="card"]:hover & {
+      transform: none;
+      filter: none;
+    }
+  }
+}
+
+// ===================================================================
+// HERO CARD UTILITY CLASSES
+// Ready-to-use classes for hero card styling
+// ===================================================================
+
+// Hero card base class
+.hero-card {
+  @include hero-card-hover();
+}
+
+// Hero card with accent border
+.hero-card--accent {
+  @include hero-card-hover($accent: true);
+}
+
+// Hero card with top glow line
+.hero-card--glow-line {
+  @include hero-card-with-glow-line();
+}
+
+// Hero card icon that animates on card hover
+.hero-card-icon {
+  @include icon-hover-on-card();
+}
+
+// Standalone icon hover effect
+.icon-hover {
+  @include icon-hover-effect();
+}
+
+// Feature card style (homepage features section)
+.hero-feature-card {
+  position: relative;
+  border-radius: var(--card-border-radius, 1rem);
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  background: var(--card-background, rgba(20, 20, 20, 0.6));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 1.5rem;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    transform: translateY(-6px);
+    border-color: color-mix(in srgb, var(--color-brand, #FF7900) 50%, transparent);
+    box-shadow: 
+      0 20px 40px color-mix(in srgb, var(--foreground, #000) 15%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--color-brand, #FF7900) 35%, transparent);
+  }
+  
+  // Icon inside hero feature card
+  .hero-feature-card__icon {
+    transition: transform 0.35s ease, filter 0.35s ease;
+  }
+  
+  &:hover .hero-feature-card__icon {
+    transform: scale(1.15) rotateZ(5deg);
+    filter: drop-shadow(0 4px 12px color-mix(in srgb, var(--color-brand, #FF7900) 25%, transparent));
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+    
+    .hero-feature-card__icon {
+      transition: none;
+    }
+    
+    &:hover .hero-feature-card__icon {
+      transform: none;
+      filter: none;
+    }
+  }
+}
+
+// System capability card (homepage capabilities section)
+.system-capability-card {
+  position: relative;
+  border-radius: var(--card-border-radius, 1rem);
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  background: var(--card-background, rgba(20, 20, 20, 0.6));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 1.25rem;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeInUp 0.6s ease-out backwards;
+  
+  // Staggered animation delays
+  @for $i from 1 through 6 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.08}s;
+    }
+  }
+  
+  // Left accent (hidden by default)
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--color-brand, #FF7900);
+    border-radius: 3px 0 0 3px;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  
+  // Top glow line (hidden by default)
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--color-brand, #FF7900) 60%, transparent) 50%,
+      transparent 100%
+    );
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  
+  &:hover {
+    transform: translateY(-6px);
+    border-color: color-mix(in srgb, var(--color-brand, #FF7900) 50%, transparent);
+    box-shadow: 
+      0 20px 40px color-mix(in srgb, var(--foreground, #000) 15%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--color-brand, #FF7900) 35%, transparent);
+    
+    &::before,
+    &::after {
+      opacity: 1;
+    }
+  }
+  
+  // Icon inside capability card
+  .system-capability-card__icon {
+    transition: transform 0.35s ease, filter 0.35s ease;
+  }
+  
+  &:hover .system-capability-card__icon {
+    transform: scale(1.15) rotateZ(5deg);
+    filter: drop-shadow(0 4px 12px color-mix(in srgb, var(--color-brand, #FF7900) 25%, transparent));
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+    
+    &::before,
+    &::after {
+      transition: none;
+    }
+    
+    .system-capability-card__icon {
+      transition: none;
+    }
+    
+    &:hover .system-capability-card__icon {
+      transform: none;
+      filter: none;
+    }
+  }
+}
+
+// Feature card (simple version for features section)
+.feature-card {
+  position: relative;
+  border-radius: var(--card-border-radius, 1rem);
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  background: var(--card-background);
+  padding: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px -10px color-mix(in srgb, var(--color-brand, #FF7900) 15%, transparent);
+    
+    .feature-card__icon {
+      transform: scale(1.1);
+    }
+  }
+  
+  .feature-card__icon {
+    transition: transform 0.3s ease;
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+    
+    .feature-card__icon {
+      transition: none;
+    }
+    
+    &:hover .feature-card__icon {
+      transform: none;
+    }
+  }
+}
+

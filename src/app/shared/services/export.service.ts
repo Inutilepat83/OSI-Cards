@@ -85,11 +85,7 @@ export class ExportService {
    * Export card as text
    */
   exportAsText(card: AICardConfig, filename?: string): void {
-    let text = `Card: ${card.cardTitle}\n`;
-    if (card.cardSubtitle) {
-      text += `Subtitle: ${card.cardSubtitle}\n`;
-    }
-    text += '\n';
+    let text = `Card: ${card.cardTitle}\n\n`;
 
     card.sections?.forEach((section, index) => {
       text += `Section ${index + 1}: ${section.title}\n`;
@@ -185,7 +181,7 @@ export class ExportService {
       // Dynamic import of jsPDF (optional dependency)
       // Using type assertion to avoid TypeScript errors when package is not installed
       // Dynamic import for optional dependency
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       let jsPDF: typeof import('jspdf').jsPDF | null = null;
       try {
         const jsPDFModule = await import('jspdf' as any);
@@ -246,7 +242,7 @@ export class ExportService {
    * Export card as PNG using native browser APIs (SVG foreignObject + Canvas)
    * No external libraries required - uses only native browser APIs
    */
-  async exportAsPngNative(element: HTMLElement, filename?: string, scale: number = 2): Promise<void> {
+  async exportAsPngNative(element: HTMLElement, filename?: string, scale = 2): Promise<void> {
     try {
       if (!element) {
         throw new Error('Element is required for PNG export');
@@ -473,7 +469,7 @@ export class ExportService {
       // Dynamic import of jsPDF (optional dependency)
       // Using type assertion to avoid TypeScript errors when package is not installed
       // Dynamic import for optional dependency
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       let jsPDF: typeof import('jspdf').jsPDF | null = null;
       try {
         const jsPDFModule = await import('jspdf' as any);

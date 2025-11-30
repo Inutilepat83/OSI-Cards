@@ -108,7 +108,7 @@ export class LocaleFormattingService {
    */
   formatCurrency(
     value: number | string | null | undefined,
-    currency: string = 'USD',
+    currency = 'USD',
     options?: Omit<CurrencyFormatOptions, 'currency' | 'style'>
   ): string {
     if (value === null || value === undefined) {

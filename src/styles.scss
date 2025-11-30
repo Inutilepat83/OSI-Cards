@@ -1,50 +1,19 @@
-@use 'styles/core/variables' as *;
-@use 'styles/core/mixins' as *;
-@use 'styles/core/surface-layers' as *;
-@use 'styles/core/global' as *;
-@use 'styles/core/utilities' as *;
-@use 'styles/core/animations' as *;
+/* ===================================================================
+   OSI Cards Demo App Styles
+   =================================================================== */
 
-/* Layout styles */
-@use 'styles/layout/tilt' as *;
-@use 'styles/layout/masonry' as *;
+/* Demo-specific tokens - must come first */
+@use 'styles/core/demo-tokens' as *;
 
-/* Component styles */
-@use 'styles/components/cards/ai-card' as *;
-@use 'styles/components/sections/design-system' as *; /* Master design system - must import first */
-@use 'styles/components/sections/sections-base' as *;
-@use 'styles/components/sections/section-types' as *;
-@use 'styles/components/sections/section-shell' as *;
-@use 'styles/components/sections/overview' as *;
-@use 'styles/components/sections/analytics' as *;
-@use 'styles/components/sections/news' as *;
-@use 'styles/components/sections/social-media' as *;
-@use 'styles/components/sections/info' as *;
-@use 'styles/components/sections/map' as *;
-@use 'styles/components/sections/list' as *;
-@use 'styles/components/sections/contact' as *;
-@use 'styles/components/sections/network' as *;
-@use 'styles/components/sections/product' as *;
-@use 'styles/components/sections/chart' as *;
-@use 'styles/components/sections/event' as *;
-@use 'styles/components/sections/financials' as *;
-@use 'styles/components/sections/solutions' as *;
-@use 'styles/components/sections/quotation' as *;
-@use 'styles/components/sections/text-reference' as *;
-@use 'styles/components/sections/brand-colors' as *;
-@use 'styles/components/sections/fallback' as *;
-@use 'styles/components/sections/unified-cards' as *; /* Must be last to override all section-specific styles */
-@use 'styles/components/sections/global-enforcement' as *; /* GLOBAL ENFORCEMENT - MUST BE ABSOLUTELY LAST to enforce all settings */
-@use 'styles/components/badges' as *;
+/* App-specific styles - must use @use BEFORE any @import */
 @use 'styles/components/config-panel' as *;
-@use 'styles/components/ai-card-renderer' as *;
-@use 'styles/components/image-fallback' as *;
-
-/* Page styles */
 @use 'styles/pages/home' as *;
 @use 'styles/ng-doc-overrides' as *;
 
-/* Tailwind directives - must come after @use */
+/* Import all styles from the OSI Cards library */
+@import '../projects/osi-cards-lib/src/lib/styles/styles';
+
+/* Tailwind directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -88,51 +57,5 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* FINAL OVERRIDE - ABSOLUTELY NO BORDERS OR BORDER-LIKE EFFECTS */
-h1.ai-card-title,
-.ai-card-title,
-article.ai-card-surface h1,
-.ai-card-surface > h1,
-.ai-card-surface .ai-card-title {
-  border: 0 !important;
-  border-width: 0 !important;
-  border-style: none !important;
-  border-top-width: 0 !important;
-  border-right-width: 0 !important;
-  border-bottom-width: 0 !important;
-  border-left-width: 0 !important;
-  box-shadow: none !important;
-  outline: 0 !important;
-  outline-width: 0 !important;
-  text-decoration: none !important;
-  background-image: none !important;
-  
-  &::before,
-  &::after {
-    display: none !important;
-    content: none !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    background: none !important;
-  }
-}
-
-/* Remove all styling from parent container */
-.relative.h-full,
-div[class*="relative"][class*="h-full"] {
-  position: static !important;
-  height: auto !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border: 0 !important;
-  background: none !important;
-  box-shadow: none !important;
-}
-
-/* Also ensure article itself has no borders */
-article.ai-card-surface,
-.ai-card-surface {
-  border: 0 !important;
-  border-width: 0 !important;
-  outline: 0 !important;
-}
+/* Card styles are now handled by the library's scoped styles */
+/* No overrides needed - library uses --osi- prefixed self-contained variables */

@@ -66,52 +66,122 @@ import { IconService } from '../../services/icon.service';
     </div>
   `,
   styles: [`
+    /* Reset host styles */
+    :host {
+      display: block !important;
+      font-family: Helvetica, 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
+    }
+    
     .card-footer {
-      margin-top: auto;
-      padding-top: var(--section-card-gap, 12px);
-      padding-bottom: 16px;
+      margin-top: auto !important;
+      padding-top: var(--section-card-gap, 12px) !important;
+      padding-bottom: 16px !important;
+      font-family: inherit !important;
     }
     
     .card-actions {
-      margin-bottom: 8px;
+      margin-bottom: 12px !important;
     }
     
+    .flex {
+      display: flex !important;
+    }
+    
+    .flex-wrap {
+      flex-wrap: wrap !important;
+    }
+    
+    .items-center {
+      align-items: center !important;
+    }
+    
+    .gap-3 {
+      gap: 0.75rem !important;
+    }
+    
+    /* ENFORCED Action Button Styles */
     .action-button {
-      padding: 10px 20px;
-      font-size: 0.875rem;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      border: 1px solid transparent;
+      margin: 0 !important;
+      padding: 10px 20px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      font-size: 0.875rem !important;
+      font-weight: 600 !important;
+      font-family: Helvetica, 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
+      line-height: 1.25rem !important;
+      cursor: pointer !important;
+      border-radius: var(--section-card-border-radius, 10px) !important;
+      transition: all 0.2s ease !important;
+      box-sizing: border-box !important;
+      white-space: nowrap !important;
+      -webkit-appearance: none !important;
+      appearance: none !important;
+      text-decoration: none !important;
     }
     
     .action-button--primary {
-      background: var(--primary, #ff7900);
-      color: var(--primary-foreground, #ffffff);
+      background-color: var(--color-brand, #FF7900) !important;
+      color: #ffffff !important;
+      border: none !important;
+      box-shadow: 0 2px 4px rgba(255, 121, 0, 0.2) !important;
     }
     
     .action-button--primary:hover {
-      background: color-mix(in srgb, var(--primary) 85%, transparent);
-      border-color: var(--primary);
+      background-color: #e66d00 !important;
+      box-shadow: 0 4px 12px rgba(255, 121, 0, 0.35) !important;
+      transform: translateY(-1px) !important;
     }
     
     .action-button--secondary {
-      background: var(--secondary, #f5f5f5);
-      color: var(--secondary-foreground, #1a1a1a);
+      background-color: transparent !important;
+      color: var(--color-brand, #FF7900) !important;
+      border: 2px solid var(--color-brand, #FF7900) !important;
     }
     
     .action-button--secondary:hover {
-      background: color-mix(in srgb, var(--secondary) 90%, transparent);
-      border-color: var(--secondary);
+      background-color: rgba(255, 121, 0, 0.08) !important;
+      box-shadow: 0 2px 8px rgba(255, 121, 0, 0.15) !important;
     }
     
+    .action-button span {
+      color: inherit !important;
+      font-family: inherit !important;
+    }
+    
+    .action-button img {
+      width: 18px !important;
+      height: 18px !important;
+      object-fit: contain !important;
+    }
+    
+    /* ENFORCED Card Signature Styles */
     .card-signature {
-      font-size: 0.75rem;
-      color: var(--muted-foreground, rgba(128, 128, 128, 0.6));
-      text-align: center;
-      margin-top: 8px;
+      display: block !important;
+      margin: 12px 0 0 0 !important;
+      padding: 8px 0 !important;
+      font-size: 0.75rem !important;
+      font-weight: 500 !important;
+      color: var(--muted-foreground, rgba(85, 88, 97, 0.6)) !important;
+      text-align: center !important;
+      font-family: Helvetica, 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
+      line-height: 1.4 !important;
+      letter-spacing: 0.02em !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    
+    /* Lucide icon styling */
+    lucide-icon {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    
+    lucide-icon svg {
+      stroke: currentColor !important;
+      fill: none !important;
+      stroke-width: 2 !important;
     }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush

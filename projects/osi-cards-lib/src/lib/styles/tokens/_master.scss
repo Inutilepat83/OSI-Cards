@@ -1,0 +1,992 @@
+// ============================================
+// MASTER DESIGN TOKENS - Single Source of Truth
+// ============================================
+//
+// This file is the ONLY place where design tokens are defined.
+// All other files import from here.
+//
+// Organization:
+//   1. PRIMITIVE TOKENS - Raw color values, base numbers
+//   2. SEMANTIC TOKENS - Meaningful references to primitives
+//   3. COMPONENT TOKENS - UI element-specific values
+//   4. THEME VARIANTS - Light/dark mode overrides
+//
+// ============================================
+
+// ============================================
+// 1. PRIMITIVE TOKENS
+// ============================================
+
+// --- Brand Colors ---
+$osi-color-brand: #ff7900;
+$osi-color-brand-dark: #cc5f00;
+$osi-color-brand-light: #ff9933;
+$osi-color-brand-pale: #ffe6cc;
+
+// --- Neutral Colors ---
+$osi-color-white: #ffffff;
+$osi-color-black: #000000;
+
+// --- Grayscale Ramp ---
+$osi-gray-50: #ffffff;
+$osi-gray-100: #fcfcfc;
+$osi-gray-150: #f7f7f7;
+$osi-gray-200: #f0f0f1;
+$osi-gray-300: #e9e9e9;
+$osi-gray-400: #92999e;
+$osi-gray-500: #5a5f62;
+$osi-gray-600: #343541;
+$osi-gray-700: #2a2a2a;
+$osi-gray-800: #232323;
+$osi-gray-850: #171717;
+$osi-gray-900: #000000;
+
+// --- Status Colors ---
+$osi-color-success: #22c55e;
+$osi-color-warning: #f59e0b;
+$osi-color-error: #ef4444;
+$osi-color-info: #3b82f6;
+$osi-color-neutral: #6b7280;
+
+// --- Trend Colors ---
+$osi-color-trend-up: #4ade80;
+$osi-color-trend-down: #f87171;
+$osi-color-trend-stable: #facc15;
+$osi-color-trend-neutral: #94a3b8;
+
+// --- Text Colors (Light Theme) ---
+$osi-foreground-light: #1c1c1f;
+$osi-muted-foreground-light: #555861;
+
+// --- Text Colors (Dark Theme) ---
+$osi-foreground-dark: #ffffff;
+$osi-muted-foreground-dark: #aaaaaa;
+
+// --- Background Colors (Light Theme) ---
+$osi-background-light: #ffffff;
+$osi-card-bg-light: #fefefe;
+$osi-section-bg-light: #fafafa;
+
+// --- Background Colors (Dark Theme) ---
+$osi-background-dark: #0a0a0a;
+$osi-background-dark-scoped: #030303;
+$osi-card-bg-dark: rgba(20, 20, 20, 0.6);
+
+// ============================================
+// 2. COLOR HELPER FUNCTIONS & VARIABLES
+// ============================================
+
+/// Generate brand color with opacity
+/// @param {Number} $opacity - Opacity value (0-1)
+@function brand-alpha($opacity) {
+  @return rgba($osi-color-brand, $opacity);
+}
+
+/// Generate foreground color with opacity
+/// @param {Number} $opacity - Opacity value (0-1)
+@function foreground-alpha($opacity) {
+  @return rgba($osi-foreground-light, $opacity);
+}
+
+/// Generate white with opacity
+/// @param {Number} $opacity - Opacity value (0-1)
+@function white-alpha($opacity) {
+  @return rgba(255, 255, 255, $opacity);
+}
+
+/// Generate black with opacity
+/// @param {Number} $opacity - Opacity value (0-1)
+@function black-alpha($opacity) {
+  @return rgba(0, 0, 0, $opacity);
+}
+
+// --- Pre-computed Brand Opacity Variants ---
+$brand-color: $osi-color-brand;
+$brand-color-rgb: 255, 121, 0;
+$brand-color-90: rgba($osi-color-brand, 0.9);
+$brand-color-80: rgba($osi-color-brand, 0.8);
+$brand-color-70: rgba($osi-color-brand, 0.7);
+$brand-color-60: rgba($osi-color-brand, 0.6);
+$brand-color-50: rgba($osi-color-brand, 0.5);
+$brand-color-40: rgba($osi-color-brand, 0.4);
+$brand-color-35: rgba($osi-color-brand, 0.35);
+$brand-color-30: rgba($osi-color-brand, 0.3);
+$brand-color-25: rgba($osi-color-brand, 0.25);
+$brand-color-22: rgba($osi-color-brand, 0.22);
+$brand-color-20: rgba($osi-color-brand, 0.2);
+$brand-color-15: rgba($osi-color-brand, 0.15);
+$brand-color-12: rgba($osi-color-brand, 0.12);
+$brand-color-10: rgba($osi-color-brand, 0.1);
+$brand-color-08: rgba($osi-color-brand, 0.08);
+$brand-color-05: rgba($osi-color-brand, 0.05);
+$brand-color-03: rgba($osi-color-brand, 0.03);
+
+// --- Pre-computed Foreground Opacity Variants ---
+$foreground-color: $osi-foreground-light;
+$foreground-rgb: 28, 28, 31;
+$foreground-90: rgba($osi-foreground-light, 0.9);
+$foreground-80: rgba($osi-foreground-light, 0.8);
+$foreground-70: rgba($osi-foreground-light, 0.7);
+$foreground-60: rgba($osi-foreground-light, 0.6);
+$foreground-50: rgba($osi-foreground-light, 0.5);
+$foreground-40: rgba($osi-foreground-light, 0.4);
+$foreground-30: rgba($osi-foreground-light, 0.3);
+$foreground-20: rgba($osi-foreground-light, 0.2);
+$foreground-16: rgba($osi-foreground-light, 0.16);
+$foreground-14: rgba($osi-foreground-light, 0.14);
+$foreground-12: rgba($osi-foreground-light, 0.12);
+$foreground-10: rgba($osi-foreground-light, 0.1);
+$foreground-08: rgba($osi-foreground-light, 0.08);
+$foreground-06: rgba($osi-foreground-light, 0.06);
+$foreground-05: rgba($osi-foreground-light, 0.05);
+$foreground-04: rgba($osi-foreground-light, 0.04);
+$foreground-03: rgba($osi-foreground-light, 0.03);
+
+// --- Pre-computed Secondary Text Variants ---
+$text-secondary: $osi-muted-foreground-light;
+$text-secondary-rgb: 85, 88, 97;
+$text-secondary-50: rgba($osi-muted-foreground-light, 0.5);
+$text-secondary-30: rgba($osi-muted-foreground-light, 0.3);
+$text-secondary-20: rgba($osi-muted-foreground-light, 0.2);
+$text-secondary-15: rgba($osi-muted-foreground-light, 0.15);
+$text-secondary-10: rgba($osi-muted-foreground-light, 0.1);
+$text-secondary-05: rgba($osi-muted-foreground-light, 0.05);
+
+// --- Pre-computed Muted Foreground (Dark Theme) ---
+$muted-foreground: $osi-muted-foreground-dark;
+$muted-foreground-rgb: 170, 170, 170;
+$muted-foreground-50: rgba($osi-muted-foreground-dark, 0.5);
+$muted-foreground-30: rgba($osi-muted-foreground-dark, 0.3);
+$muted-foreground-20: rgba($osi-muted-foreground-dark, 0.2);
+$muted-foreground-10: rgba($osi-muted-foreground-dark, 0.1);
+
+// --- Pre-computed White Opacity Variants ---
+$white-90: rgba(255, 255, 255, 0.9);
+$white-80: rgba(255, 255, 255, 0.8);
+$white-70: rgba(255, 255, 255, 0.7);
+$white-60: rgba(255, 255, 255, 0.6);
+$white-50: rgba(255, 255, 255, 0.5);
+$white-40: rgba(255, 255, 255, 0.4);
+$white-30: rgba(255, 255, 255, 0.3);
+$white-20: rgba(255, 255, 255, 0.2);
+$white-15: rgba(255, 255, 255, 0.15);
+$white-10: rgba(255, 255, 255, 0.1);
+$white-05: rgba(255, 255, 255, 0.05);
+
+// --- Pre-computed Status Color Variants ---
+$success-color: $osi-color-success;
+$success-color-20: rgba($osi-color-success, 0.2);
+$success-color-15: rgba($osi-color-success, 0.15);
+$success-color-10: rgba($osi-color-success, 0.1);
+
+$warning-color: $osi-color-warning;
+$warning-color-20: rgba($osi-color-warning, 0.2);
+$warning-color-15: rgba($osi-color-warning, 0.15);
+$warning-color-10: rgba($osi-color-warning, 0.1);
+
+$error-color: $osi-color-error;
+$error-color-20: rgba($osi-color-error, 0.2);
+$error-color-15: rgba($osi-color-error, 0.15);
+$error-color-10: rgba($osi-color-error, 0.1);
+
+$info-color: $osi-color-info;
+$info-color-20: rgba($osi-color-info, 0.2);
+$info-color-15: rgba($osi-color-info, 0.15);
+$info-color-10: rgba($osi-color-info, 0.1);
+
+// --- Border Colors ---
+$border-light: rgba(0, 0, 0, 0.08);
+$border-medium: rgba(0, 0, 0, 0.14);
+$border-dark: rgba(0, 0, 0, 0.22);
+$border-light-dark: rgba(255, 255, 255, 0.08);
+$border-medium-dark: rgba(255, 255, 255, 0.16);
+$border-dark-dark: rgba(255, 255, 255, 0.28);
+
+// --- Shadow Colors ---
+$shadow-light: rgba(0, 0, 0, 0.07);
+$shadow-medium: rgba(0, 0, 0, 0.12);
+$shadow-dark: rgba(0, 0, 0, 0.18);
+$shadow-light-dark: rgba(0, 0, 0, 0.55);
+$shadow-medium-dark: rgba(0, 0, 0, 0.65);
+$shadow-dark-dark: rgba(0, 0, 0, 0.75);
+
+// --- Background Aliases ---
+$card-bg: $osi-card-bg-light;
+$card-bg-hover: #fcfcfc;
+$section-bg: $osi-section-bg-light;
+$section-bg-hover: #f7f7f7;
+
+// ============================================
+// 3. BREAKPOINTS
+// ============================================
+
+$breakpoints: (
+  'mobile': 520px,
+  'tablet': 640px,
+  'lg': 820px,
+  'desktop': 1024px,
+  'wide': 1280px
+);
+
+// ============================================
+// 4. CSS VARIABLE MIXINS
+// ============================================
+
+/// Generate base color tokens (shared between themes)
+@mixin osi-base-colors() {
+  --color-white: #{$osi-color-white};
+  --color-black: #{$osi-color-black};
+  --color-brand: #{$osi-color-brand};
+  --color-brand-dark: #{$osi-color-brand-dark};
+  --color-brand-light: #{$osi-color-brand-light};
+
+  // Grayscale
+  --color-gray-50: #{$osi-gray-50};
+  --color-gray-100: #{$osi-gray-100};
+  --color-gray-150: #{$osi-gray-150};
+  --color-gray-200: #{$osi-gray-200};
+  --color-gray-300: #{$osi-gray-300};
+  --color-gray-400: #{$osi-gray-400};
+  --color-gray-500: #{$osi-gray-500};
+  --color-gray-600: #{$osi-gray-600};
+  --color-gray-700: #{$osi-gray-700};
+  --color-gray-800: #{$osi-gray-800};
+  --color-gray-850: #{$osi-gray-850};
+  --color-gray-900: #{$osi-gray-900};
+}
+
+/// Generate status color tokens
+@mixin osi-status-colors() {
+  --status-success: #{$osi-color-success};
+  --status-success-bg: #{$success-color-15};
+  --status-success-border: rgba(74, 222, 128, 0.4);
+
+  --status-warning: #{$osi-color-warning};
+  --status-warning-bg: rgba(253, 186, 116, 0.15);
+  --status-warning-border: rgba(251, 191, 36, 0.4);
+
+  --status-error: #{$osi-color-error};
+  --status-error-bg: #{$error-color-15};
+  --status-error-border: rgba(248, 113, 113, 0.4);
+
+  --status-info: #{$osi-color-info};
+  --status-info-bg: #{$info-color-15};
+  --status-info-border: rgba(147, 197, 253, 0.4);
+
+  --status-neutral: #{$osi-color-neutral};
+  --status-neutral-bg: rgba(107, 114, 128, 0.15);
+  --status-neutral-border: rgba(156, 163, 175, 0.4);
+}
+
+/// Generate shadow tokens
+@mixin osi-shadows() {
+  // Elevation shadows - tight under the element
+  --shadow-sm: 0 1px 1px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 1px 3px rgba(0, 0, 0, 0.07);
+  --shadow-xl: 0 2px 4px rgba(0, 0, 0, 0.09);
+
+  // Glow shadows (brand-colored) - subtle
+  --shadow-glow-sm: 0 0 4px #{$brand-color-10};
+  --shadow-glow-md: 0 0 6px #{$brand-color-15};
+  --shadow-glow-lg: 0 0 10px #{$brand-color-20};
+
+  // Inset shadows
+  --shadow-inset-sm: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-inset-md: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+
+  // Combined hover shadow
+  --shadow-hover: var(--shadow-lg), var(--shadow-glow-sm);
+}
+
+/// Generate radius tokens
+@mixin osi-radius() {
+  --radius-base: 0.625rem;
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+}
+
+/// Generate spacing tokens
+@mixin osi-spacing() {
+  --spacing-base: 0.25rem;
+
+  // Primary spacing scale (fluid)
+  --space-1: clamp(2px, 0.4vw, 6px);
+  --space-2: clamp(4px, 0.6vw, 8px);
+  --space-3: clamp(6px, 0.8vw, 12px);
+  --space-4: clamp(8px, 1vw, 14px);
+  --space-5: clamp(10px, 1.2vw, 18px);
+  --space-6: clamp(12px, 1.4vw, 20px);
+  --space-7: clamp(14px, 1.6vw, 22px);
+  --space-8: clamp(16px, 1.8vw, 24px);
+  --space-9: clamp(18px, 2vw, 28px);
+  --space-10: clamp(20px, 2.2vw, 32px);
+  --space-11: clamp(22px, 2.4vw, 36px);
+  --space-12: clamp(24px, 2.6vw, 40px);
+
+  // Semantic spacing aliases
+  --spacing-xs: var(--space-1);
+  --spacing-sm: var(--space-2);
+  --spacing-md: var(--space-3);
+  --spacing-lg: var(--space-4);
+  --spacing-xl: var(--space-5);
+  --spacing-2xl: var(--space-6);
+  --spacing-3xl: var(--space-7);
+  --spacing-4xl: var(--space-8);
+
+  // Fixed grid gaps
+  --gap-xs: 4px;
+  --gap-sm: 6px;
+  --gap-md: 8px;
+  --gap-lg: 12px;
+  --gap-xl: 16px;
+  --gap-2xl: 20px;
+  --gap-3xl: 24px;
+  --gap-4xl: 32px;
+}
+
+/// Generate z-index scale tokens (isolated within container)
+/// All z-indices are relative to 0 to prevent host app collisions
+@mixin osi-z-index() {
+  // Base layer (content)
+  --z-base: 0;
+  --z-content: 1;
+  
+  // Elevated layers (cards, sections)
+  --z-elevated: 10;
+  --z-card: 10;
+  --z-section: 15;
+  
+  // Interactive layers (dropdowns, tooltips)
+  --z-dropdown: 100;
+  --z-tooltip: 200;
+  --z-popover: 300;
+  
+  // Overlay layers (modals, dialogs)
+  --z-overlay: 400;
+  --z-modal: 500;
+  --z-dialog: 600;
+  
+  // Top-most layers (notifications, alerts)
+  --z-notification: 700;
+  --z-toast: 800;
+  
+  // Maximum layer (for special cases)
+  --z-max: 999;
+}
+
+/// Generate animation tokens
+@mixin osi-animation() {
+  // Duration scale
+  --duration-instant: 40ms;
+  --duration-fast: 80ms;
+  --duration-normal: 160ms;
+  --duration-moderate: 220ms;
+  --duration-slow: 300ms;
+  --duration-slower: 380ms;
+  --duration-slowest: 460ms;
+
+  // Easing functions
+  --ease-out-smooth: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-in-out-quad: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+
+  // Motion distances
+  --motion-distance-xs: 2px;
+  --motion-distance-sm: 4px;
+  --motion-distance-md: 6px;
+  --motion-distance-lg: 10px;
+  --motion-distance-xl: 12px;
+
+  // Motion scales
+  --motion-scale-soft-start: 0.992;
+  --motion-scale-soft-end: 1;
+  --motion-scale-pop: 1.015;
+
+  // Stagger delays
+  --stagger-delay-fast: 15ms;
+  --stagger-delay-base: 25ms;
+  --stagger-delay-slow: 45ms;
+
+  // Animation playback
+  --animation-fill-mode: both;
+  --animation-play-state: running;
+}
+
+/// Generate opacity tokens
+@mixin osi-opacity() {
+  --opacity-subtle: 0.05;
+  --opacity-muted: 0.15;
+  --opacity-medium: 0.4;
+  --opacity-strong: 0.7;
+  --opacity-solid: 0.9;
+}
+
+/// Generate typography tokens
+/// @param {String} $variant - 'demo' or 'integration'
+@mixin osi-typography($variant: 'demo') {
+  // Both demo and integration now use the same compact values
+  --font-size-base: 13px;
+  --text-xs: 0.625rem;
+  --text-sm: 0.75rem;
+  --text-base: 0.875rem;
+  --text-lg: 0.8125rem;
+  --text-xl: 1.125rem;
+  --text-2xl: 1.0625rem;
+  --text-3xl: 1.75rem;
+  --text-4xl: 2.125rem;
+  --text-5xl: 2.875rem;
+  --text-7xl: 4.375rem;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+}
+
+/// Generate card typography tokens
+/// @param {String} $variant - 'demo' or 'integration'
+@mixin osi-card-typography($variant: 'demo') {
+  // Both demo and integration now use the same compact values
+  // Section Titles
+  --section-title-font-size: clamp(0.92rem, 0.87rem + 0.2vw, 1.07rem);
+  --section-title-font-weight: 700;
+  --section-title-letter-spacing: -0.02em;
+  --section-title-line-height: 1.3;
+  --section-title-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+
+  // Card Titles
+  --card-title-font-size: clamp(0.83rem, 0.78rem + 0.15vw, 0.93rem);
+  --card-title-font-weight: 700;
+  --card-title-letter-spacing: -0.01em;
+  --card-title-line-height: 1.4;
+  --card-title-text-shadow: 0 1px 1px rgba(0, 0, 0, 0.06);
+
+  // Card Subtitles
+  --card-subtitle-font-size: clamp(0.65rem, 0.625rem + 0.1vw, 0.7rem);
+  --card-subtitle-font-weight: 500;
+  --card-subtitle-letter-spacing: 0.015em;
+  --card-subtitle-line-height: 1.3;
+
+  // Card Labels
+  --card-label-font-size: clamp(0.5rem, 0.48rem + 0.05vw, 0.5rem);
+  --card-label-font-weight: 700;
+  --card-label-letter-spacing: 0.065em;
+  --card-label-line-height: 1.25;
+  --card-label-text-transform: uppercase;
+  --card-label-text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+
+  // Card Values
+  --card-value-font-size: clamp(1.0rem, 0.95rem + 0.2vw, 1.0rem);
+  --card-value-font-size-large: clamp(1.2rem, 1.15rem + 0.2vw, 1.25rem);
+  --card-value-font-size-xl: clamp(1.25rem, 1.2rem + 0.2vw, 1.25rem);
+  --card-value-font-weight: 600;
+  --card-value-letter-spacing: -0.015em;
+  --card-value-line-height: 1.35;
+  --card-value-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  // Card Meta
+  --card-meta-font-size: clamp(0.55rem, 0.525rem + 0.1vw, 0.6rem);
+  --card-meta-font-weight: 500;
+  --card-meta-line-height: 1.3;
+
+  // Smallest text
+  --card-text-small-font-size: clamp(0.355rem, 0.295rem + 0.13vw, 0.455rem);
+
+  // Grid min width
+  --section-grid-min-width: 200px;
+
+  // Shared aliases
+  --font-size-section-header: var(--section-title-font-size);
+}
+
+/// Generate card layout tokens
+@mixin osi-card-layout() {
+  --card-main-padding: 16px;
+  --card-padding-vertical: 12px;
+  --card-padding-horizontal: 16px;
+  --card-padding: 16px;
+  --card-padding-large: 20px;
+  --section-padding: 12px;
+  --section-container-padding: 12px;
+  --card-min-height: auto;
+  --card-gap: clamp(6px, 0.6vw, 10px);
+  --card-gap-large: clamp(10px, 0.8vw, 14px);
+  --card-nested-gap: clamp(3px, 0.4vw, 6px);
+  --section-header-gap: clamp(3px, 0.4vw, 6px);
+  --section-header-padding-bottom: clamp(0px, 0.2vw, 2px);
+  --section-title-margin-bottom: 2px;
+  --card-border-radius: 12px;
+  --card-border-radius-large: 16px;
+  --section-card-gap: 8px;
+  --section-card-border-radius: 10px;
+
+  // Element gaps within cards
+  --card-element-gap-xs: 2px;
+  --card-element-gap-sm: 3px;
+  --card-element-gap-md: 4px;
+  --card-element-gap-lg: 6px;
+  --card-element-gap-xl: 8px;
+
+  // Border widths
+  --border-width-default: 1px;
+  --border-width-accent: 3px;
+  --border-width-accent-sm: 2px;
+
+  // Icon sizes
+  --icon-xs: 10px;
+  --icon-sm: 13px;
+  --icon-md: 16px;
+  --icon-lg: 22px;
+  --icon-xl: 36px;
+
+  // Avatar sizes
+  --avatar-sm: 32px;
+  --avatar-md: 36px;
+
+  // Progress bar
+  --progress-height: 2px;
+  --progress-margin: 4px 0;
+
+  // Tag padding
+  --tag-padding: 3px 6px;
+  --tag-padding-sm: 2px 4px;
+  --tag-padding-lg: 3px 7px;
+
+  // Grid gaps (semantic)
+  --grid-gap-xs: var(--gap-sm);
+  --grid-gap-sm: var(--gap-md);
+  --grid-gap-md: var(--gap-lg);
+  --grid-gap-lg: var(--gap-xl);
+  --grid-gap-xl: var(--gap-2xl);
+
+  // Section-specific gaps
+  --section-grid-gap: var(--gap-md);
+  --section-stack-gap: var(--gap-lg);
+  --section-item-gap: var(--gap-sm);
+  --section-item-padding: var(--gap-lg);
+  --metric-item-padding: 10px 12px;
+  --list-item-padding: 10px 12px;
+}
+
+/// Generate card text color tokens
+@mixin osi-card-text-colors() {
+  --card-text-primary: var(--foreground);
+  --card-text-secondary: var(--muted-foreground);
+  --card-text-muted: var(--muted-foreground);
+  --card-text-hover: var(--primary);
+  --card-text-label: var(--muted-foreground);
+  --card-meta-color: var(--muted-foreground);
+}
+
+/// Generate card surface tokens
+@mixin osi-card-surfaces() {
+  --card-background: var(--ai-card-background, #{$brand-color-03});
+  --card-background-hover: var(--ai-card-background-hover, #{$brand-color-05});
+
+  // Card transitions
+  --card-transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  --card-transition-fast: all 0.22s ease;
+}
+
+/// Generate interactive state tokens
+@mixin osi-interactive() {
+  --interactive-hover-bg: #{$brand-color-08};
+  --interactive-active-bg: #{$brand-color-12};
+  --interactive-focus-ring: 0 0 0 2px #{$brand-color-40};
+  --interactive-glow: 0 0 12px #{$brand-color-30};
+}
+
+/// Generate element type system tokens (Hero, Buttons, Cards, Sections, Section Items)
+@mixin osi-element-system() {
+  // 1. HERO CARDS
+  --hero-card-border: 1px solid rgba(146, 153, 158, 0.15);
+  --hero-card-border-hover: #{$brand-color-40};
+  --hero-card-background: var(--card);
+  --hero-card-background-hover: var(--card);
+  --hero-card-border-radius: var(--radius-lg);
+  --hero-card-box-shadow: var(--shadow-md);
+  --hero-card-box-shadow-hover: var(--shadow-lg);
+  --hero-card-hover-transform: translateY(-2px);
+
+  // 2. BUTTONS
+  --button-border: 1px solid transparent;
+  --button-border-hover: 1px solid #{$brand-color-40};
+  --button-background: var(--primary);
+  --button-background-hover: color-mix(in srgb, var(--primary) 85%, transparent);
+  --button-border-radius: var(--radius-md);
+  --button-box-shadow: var(--shadow-sm);
+  --button-box-shadow-hover: var(--shadow-md);
+  --button-hover-transform: translateY(-1px);
+
+  // 3. AI CARDS
+  --ai-card-border: var(--theme-ai-card-border, none);
+  --ai-card-border-hover: var(--theme-ai-card-border-hover, var(--ai-card-border));
+  --ai-card-background: var(--theme-ai-card-background, var(--card-surface, var(--card-section-bg)));
+  --ai-card-background-hover: var(--theme-ai-card-background-hover, var(--card-surface-hover, var(--card-section-bg)));
+  --ai-card-border-radius: var(--radius-lg);
+  --ai-card-box-shadow: var(--theme-ai-card-box-shadow, var(--shadow-md));
+  --ai-card-box-shadow-hover: var(--theme-ai-card-box-shadow-hover, var(--shadow-lg));
+  --ai-card-hover-transform: none;
+  --ai-card-transition-default: border 0.32s cubic-bezier(0.4, 0, 0.2, 1), background 0.32s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  --ai-card-transition: var(--theme-ai-card-transition, var(--ai-card-transition-default));
+
+  // 4. SECTIONS
+  --section-border: var(--theme-section-border, 1px solid #{$white-05});
+  --section-border-hover: var(--theme-section-border-hover, 1px solid #{$brand-color-15});
+  --section-border-radius: var(--radius-lg);
+  --section-box-shadow-default: var(--shadow-md);
+  --section-box-shadow-hover-default: var(--shadow-lg), var(--shadow-glow-sm);
+  --section-box-shadow: var(--theme-section-box-shadow, var(--section-box-shadow-default));
+  --section-box-shadow-hover: var(--theme-section-box-shadow-hover, var(--section-box-shadow-hover-default));
+  --section-hover-transform: none;
+  --section-transition: var(--theme-section-transition, none);
+
+  // 5. SECTION ITEMS
+  --section-item-border: var(--theme-section-item-border, 1px solid #{$white-05});
+  --section-item-border-hover: var(--theme-section-item-border-hover, 1px solid #{$brand-color-12});
+  --section-item-background: var(--theme-section-item-background, var(--card-section-bg));
+  --section-item-background-hover: var(--theme-section-item-background-hover, color-mix(in srgb, var(--theme-section-item-background, var(--card-section-bg)) 97%, #{$brand-color-03}));
+  --section-item-border-radius: var(--radius-md);
+  --section-item-box-shadow: var(--theme-section-item-box-shadow, var(--shadow-sm));
+  --section-item-box-shadow-hover-default: var(--shadow-md), var(--shadow-glow-sm);
+  --section-item-box-shadow-hover: var(--theme-section-item-box-shadow-hover, var(--section-item-box-shadow-hover-default));
+  --section-item-hover-transform: var(--theme-section-item-hover-transform, none);
+  --section-item-transition-default: background 300ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --section-item-transition: var(--theme-section-item-transition, var(--section-item-transition-default));
+
+  // Legacy card variables (theme-aware)
+  --card-border: var(--theme-card-border, 1px solid rgba(146, 153, 158, 0.15));
+  --card-border-hover: var(--theme-card-border-hover, #{$brand-color-40});
+  --card-box-shadow: var(--theme-card-box-shadow, var(--shadow-md));
+  --card-box-shadow-hover: var(--theme-card-box-shadow-hover, var(--shadow-lg));
+  --card-hover-transform: none;
+
+  // Entrance animations
+  --ai-card-entrance-animation: fadeInUpSoft var(--duration-moderate) var(--ease-out-smooth) 10ms 1 normal both;
+  --section-entrance-animation: fadeInSoft var(--duration-moderate) var(--ease-out-smooth) 20ms 1 normal both;
+  --section-item-entrance-animation: fadeInScaleSoft var(--duration-normal) var(--ease-out-smooth) 30ms 1 normal both;
+}
+
+// ============================================
+// 5. THEME COLOR MIXINS
+// ============================================
+
+/// Generate base theme colors (default/dark)
+/// @param {String} $variant - 'demo' or 'integration' (deprecated - now always uses demo values)
+/// @param {Boolean} $is-scoped - If true, outputs for nested context
+@mixin osi-theme-base($variant: 'demo', $is-scoped: false) {
+  @if $is-scoped {
+    color-scheme: light dark;
+  }
+
+  @include osi-base-colors();
+
+  --background: #{$osi-color-white};
+  --surface-contrast-color: #{$osi-color-black};
+
+  // Surface tokens - always use demo values (variant param deprecated)
+  --theme-ai-card-border: 1px solid rgba(255, 255, 255, 0.08);
+  --theme-ai-card-border-hover: 1px solid rgba(255, 121, 0, 0.5);
+  --theme-ai-card-background: var(--background);
+  --theme-ai-card-background-hover: var(--background);
+  --theme-ai-card-box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
+  --theme-ai-card-box-shadow-hover: 0 20px 40px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 121, 0, 0.2);
+  --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  --theme-card-border: 1px solid rgba(0, 0, 0, 0.16);
+  --theme-card-border-hover: var(--color-brand);
+  --theme-card-background: color-mix(in srgb, var(--background) 99%, var(--surface-contrast-color) 1%);
+  --theme-card-background-hover: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --theme-card-box-shadow: 0 1px 2px rgba(15, 15, 20, 0.04);
+  --theme-card-box-shadow-hover: 0 1px 3px rgba(10, 10, 16, 0.06);
+
+  --theme-section-border: 1px solid rgba(0, 0, 0, 0.08);
+  --theme-section-border-hover: 1px solid rgba(0, 0, 0, 0.1);
+  --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --theme-section-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.07);
+  --theme-section-transition: border-color 0.32s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  --section-background: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --section-background-hover: color-mix(in srgb, var(--background) 97%, var(--surface-contrast-color) 3%);
+  --section-surface: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --section-surface-hover: color-mix(in srgb, var(--background) 97%, var(--surface-contrast-color) 3%);
+
+  --theme-section-item-border: 1px solid rgba(0, 0, 0, 0.14);
+  --theme-section-item-border-hover: 1px solid rgba(0, 0, 0, 0.22);
+  --theme-section-item-background: var(--section-surface);
+  --theme-section-item-background-hover: color-mix(in srgb, var(--background) 97%, var(--surface-contrast-color) 3%);
+  --theme-section-item-box-shadow: var(--shadow-md, 0 1px 2px rgba(0, 0, 0, 0.05));
+  --theme-section-item-box-shadow-hover: var(--shadow-lg, 0 1px 3px rgba(0, 0, 0, 0.07));
+  --theme-section-item-hover-transform: none;
+  --theme-section-item-transition: border-color var(--duration-moderate, 0.22s) var(--ease-in-out-smooth, cubic-bezier(0.4, 0, 0.2, 1)), background var(--duration-moderate, 0.22s) var(--ease-in-out-smooth, cubic-bezier(0.4, 0, 0.2, 1)), box-shadow var(--duration-moderate, 0.22s) var(--ease-in-out-smooth, cubic-bezier(0.4, 0, 0.2, 1));
+}
+
+/// Generate dark theme colors
+/// @param {String} $variant - 'demo' or 'integration' (deprecated - now always uses demo values)
+/// @param {Boolean} $is-scoped - If true, outputs for nested context
+@mixin osi-theme-dark($variant: 'demo', $is-scoped: false) {
+  @if $is-scoped {
+    color-scheme: dark;
+    --background: #{$osi-background-dark-scoped};
+  } @else {
+    --background: #{$osi-background-dark};
+  }
+  --surface-contrast-color: #{$osi-color-white};
+  --foreground: #{$osi-foreground-dark};
+  --muted: #242424;
+  --muted-foreground: #{$osi-muted-foreground-dark};
+  
+  // Always use demo values - transparent background for blur effect
+  --card: var(--background);
+  --card-surface: var(--background);
+  --card-foreground: #{$osi-foreground-dark};
+  --card-surface-hover: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --card-section-bg: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --card-section-card-bg: color-mix(in srgb, var(--card-section-bg) 90%, var(--surface-contrast-color) 10%);
+
+  // AI Card surface - matches demo exactly
+  --theme-ai-card-border: 1px solid rgba(255, 255, 255, 0.08);
+  --theme-ai-card-border-hover: 1px solid rgba(255, 121, 0, 0.5);
+  --theme-ai-card-background: rgba(20, 20, 20, 0.6);
+  --theme-ai-card-background-hover: rgba(30, 30, 30, 0.8);
+  --theme-ai-card-box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
+  --theme-ai-card-box-shadow-hover: 0 20px 40px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 121, 0, 0.2);
+
+  // Other card styles - always use demo values
+  --theme-card-border: 1px solid rgba(255, 255, 255, 0.08);
+  --theme-card-border-hover: var(--color-brand);
+  --theme-card-background: var(--background);
+  --theme-card-background-hover: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --theme-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --theme-card-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.45);
+
+  --section-background: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --section-background-hover: color-mix(in srgb, var(--background) 97%, var(--surface-contrast-color) 3%);
+  --section-surface: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --section-surface-hover: color-mix(in srgb, var(--background) 97%, var(--surface-contrast-color) 3%);
+  --popover: #111111;
+  --popover-foreground: #{$osi-foreground-dark};
+  --primary: #{$osi-color-brand};
+  --primary-foreground: #{$osi-foreground-dark};
+  --secondary: #333333;
+  --secondary-foreground: #{$osi-foreground-dark};
+  --accent: #{$osi-color-brand};
+  --accent-foreground: #{$osi-color-black};
+  --destructive: #d4183d;
+  --destructive-foreground: #{$osi-foreground-dark};
+  --border: rgba(200, 200, 200, 0.3);
+  --input: transparent;
+  --input-background: #222222;
+  --switch-background: #333333;
+  --ring: #{$brand-color-60};
+  --chart-1: #{$osi-color-brand};
+  --chart-2: #{$osi-color-brand-light};
+  --chart-3: #{$osi-color-brand-dark};
+  --chart-4: #{$osi-color-brand-pale};
+  --chart-5: #FF4500;
+
+  // Element type overrides
+  --hero-card-border: 1px solid rgba(233, 233, 233, 0.3);
+  --hero-card-border-hover: rgba(233, 233, 233, 0.6);
+  --theme-section-border: 1px solid #{$white-10};
+  --theme-section-border-hover: 1px solid #{$white-10};
+  --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --theme-section-box-shadow-hover: 0 2px 5px rgba(0, 0, 0, 0.5);
+  --theme-section-item-border: 1px solid #{$white-15};
+  --theme-section-item-border-hover: 1px solid rgba(255, 255, 255, 0.28);
+  --theme-section-item-background: var(--section-surface);
+  --theme-section-item-background-hover: color-mix(in srgb, var(--background) 97%, var(--surface-contrast-color) 3%);
+  --theme-section-item-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --theme-section-item-box-shadow-hover: 0 1px 4px rgba(0, 0, 0, 0.45);
+  --theme-section-item-hover-transform: none;
+}
+
+/// Generate light theme colors
+/// @param {String} $variant - 'demo' or 'integration' (deprecated - now always uses demo values)
+/// @param {Boolean} $is-scoped - If true, outputs for nested context
+@mixin osi-theme-light($variant: 'demo', $is-scoped: false) {
+  @if $is-scoped {
+    color-scheme: light;
+  }
+  --background: #{$osi-background-light};
+  --foreground: #{$osi-foreground-light};
+  --muted: #f4f4f6;
+  --muted-foreground: #{$osi-muted-foreground-light};
+  
+  // Always use demo values
+  --card: var(--background);
+  --card-surface: var(--background);
+  --card-foreground: #{$osi-foreground-light};
+  --card-surface-hover: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --card-section-bg: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --card-section-card-bg: color-mix(in srgb, var(--card-section-bg) 88%, #{$osi-color-white});
+
+  // AI Card surface - matches demo light theme with blur effect
+  --theme-ai-card-border: 1px solid rgba(0, 0, 0, 0.08);
+  --theme-ai-card-border-hover: 1px solid rgba(255, 121, 0, 0.4);
+  --theme-ai-card-background: rgba(255, 255, 255, 0.85);
+  --theme-ai-card-background-hover: rgba(255, 255, 255, 0.92);
+  --theme-ai-card-box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.1), 0 0 18px rgba(255, 121, 0, 0.15);
+  --theme-ai-card-box-shadow-hover: 0 20px 40px -5px rgba(0, 0, 0, 0.15), 0 0 24px rgba(255, 121, 0, 0.25), 0 0 0 1px rgba(255, 121, 0, 0.15);
+
+  // Other card styles - always use demo values
+  --theme-card-border: 1px solid rgba(0, 0, 0, 0.08);
+  --theme-card-border-hover: var(--color-brand);
+  --theme-card-background: var(--background);
+  --theme-card-background-hover: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --theme-card-box-shadow: 0 1px 2px rgba(15, 15, 20, 0.04);
+  --theme-card-box-shadow-hover: 0 1px 3px rgba(10, 10, 16, 0.06);
+
+  --section-background: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --section-background-hover: color-mix(in srgb, var(--background) 97%, var(--surface-contrast-color) 3%);
+  --section-surface: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%);
+  --section-surface-hover: color-mix(in srgb, var(--background) 97%, var(--surface-contrast-color) 3%);
+  --popover: #{$osi-color-white};
+  --popover-foreground: #1a1a1a;
+  --primary: #{$osi-color-brand};
+  --primary-foreground: #{$osi-color-white};
+  --secondary: #f5f5f5;
+  --secondary-foreground: #1a1a1a;
+  --accent: #{$osi-color-brand};
+  --accent-foreground: #{$osi-color-white};
+  --destructive: #d4183d;
+  --destructive-foreground: #{$osi-color-white};
+  --border: rgba(200, 200, 200, 0.5);
+  --input: transparent;
+  --input-background: #f9f9f9;
+  --switch-background: #e5e5e5;
+  --ring: #{$brand-color-40};
+  --chart-1: #{$osi-color-brand};
+  --chart-2: #{$osi-color-brand-light};
+  --chart-3: #{$osi-color-brand-dark};
+  --chart-4: #{$osi-color-brand-pale};
+  --chart-5: #FF4500;
+
+  // Light theme gray overrides
+  --color-gray-700: #e0e0e0;
+  --color-gray-600: #d0d0d0;
+  --card-section-card-bg: color-mix(in srgb, var(--card-section-bg) 85%, #{$osi-color-white});
+
+  // Element type overrides
+  --hero-card-border: 1px solid rgba(146, 153, 158, 0.4);
+  --hero-card-border-hover: rgba(146, 153, 158, 0.7);
+  --theme-section-border: 1px solid rgba(0, 0, 0, 0.08);
+  --theme-section-border-hover: 1px solid rgba(0, 0, 0, 0.1);
+  --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --theme-section-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.07);
+  --theme-section-item-border: 1px solid rgba(0, 0, 0, 0.14);
+  --theme-section-item-border-hover: 1px solid rgba(0, 0, 0, 0.22);
+  --theme-section-item-background: var(--section-surface);
+  --theme-section-item-background-hover: color-mix(in srgb, var(--background) 97%, var(--surface-contrast-color) 3%);
+  --theme-section-item-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --theme-section-item-box-shadow-hover: 0 1px 3px rgba(0, 0, 0, 0.07);
+  --theme-section-item-hover-transform: none;
+}
+
+// ============================================
+// 6. MAIN TOKEN GENERATION MIXIN
+// ============================================
+
+/// Generate all design tokens
+/// @param {String} $variant - 'demo' for larger demo app, 'integration' for compact OSA
+/// @param {Boolean} $is-scoped - If true, outputs for nested context
+@mixin osi-tokens($variant: 'demo', $is-scoped: false) {
+  @include osi-shadows();
+  @include osi-radius();
+  @include osi-spacing();
+  @include osi-z-index();
+  @include osi-animation();
+  @include osi-opacity();
+  @include osi-typography($variant);
+  @include osi-card-typography($variant);
+  @include osi-card-layout();
+  @include osi-card-text-colors();
+  @include osi-card-surfaces();
+  @include osi-status-colors();
+  @include osi-interactive();
+  @include osi-element-system();
+}
+
+/// Generate reduced motion overrides
+@mixin osi-tokens-reduced-motion() {
+  --duration-instant: 1ms;
+  --duration-fast: 1ms;
+  --duration-normal: 1ms;
+  --duration-moderate: 1ms;
+  --duration-slow: 1ms;
+  --duration-slower: 1ms;
+  --duration-slowest: 1ms;
+  --stagger-delay-base: 0ms;
+  --stagger-delay-fast: 0ms;
+  --stagger-delay-slow: 0ms;
+  --ai-card-entrance-animation: none;
+  --section-entrance-animation: none;
+  --section-item-entrance-animation: none;
+}
+
+/// Generate high contrast mode overrides
+@mixin osi-tokens-high-contrast() {
+  --foreground: #{$osi-color-white};
+  --background: #{$osi-color-black};
+  --muted-foreground: #{$osi-color-white};
+  --muted: #{$osi-color-black};
+  --border: #{$osi-color-white};
+  --card: #{$osi-color-black};
+  --card-foreground: #{$osi-color-white};
+  --ai-card-border: 2px solid #{$osi-color-white};
+  --section-border: 2px solid #{$osi-color-white};
+  --button-border: 2px solid #{$osi-color-white};
+  --card-background: #{$osi-color-black};
+  --card-background-hover: #1a1a1a;
+  --section-item-background: #{$osi-color-black};
+  --section-item-background-hover: #1a1a1a;
+}
+
+/// Generate forced colors mode overrides
+@mixin osi-tokens-forced-colors() {
+  --foreground: ButtonText;
+  --background: Canvas;
+  --border: ButtonBorder;
+  --card: Canvas;
+  --card-foreground: ButtonText;
+}
+
+// ============================================
+// 7. CSS PROPERTY HELPER MIXINS (for Bootstrap overrides)
+// ============================================
+
+// These mixins allow applying !important when needed
+@mixin display($value) {
+  display: $value !important;
+}
+
+@mixin flex-direction($value) {
+  flex-direction: $value !important;
+}
+
+@mixin gap($value) {
+  gap: $value !important;
+}
+
+@mixin width($value) {
+  width: $value !important;
+}
+
+@mixin min-height($value) {
+  min-height: $value !important;
+}
+
+@mixin box-sizing($value) {
+  box-sizing: $value !important;
+}
+
+@mixin grid-columns($value) {
+  grid-template-columns: $value !important;
+}
+

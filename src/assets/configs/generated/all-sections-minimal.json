@@ -1,0 +1,184 @@
+{
+  "cardTitle": "All Sections Demo - Minimal",
+  "sections": [
+    {
+      "title": "Info",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Key",
+          "value": "Value"
+        }
+      ]
+    },
+    {
+      "title": "Analytics",
+      "type": "analytics",
+      "fields": [
+        {
+          "label": "Score",
+          "value": "100%",
+          "percentage": 100
+        }
+      ]
+    },
+    {
+      "title": "Contact",
+      "type": "contact-card",
+      "fields": [
+        {
+          "title": "Contact Name",
+          "email": "contact@example.com"
+        }
+      ]
+    },
+    {
+      "title": "Network",
+      "type": "network-card",
+      "items": [
+        {
+          "title": "Partner"
+        }
+      ]
+    },
+    {
+      "title": "Location",
+      "type": "map",
+      "fields": [
+        {
+          "name": "Office",
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "title": "Financials",
+      "type": "financials",
+      "fields": [
+        {
+          "label": "Revenue",
+          "value": "$1M"
+        }
+      ]
+    },
+    {
+      "title": "Events",
+      "type": "event",
+      "fields": [
+        {
+          "label": "Event",
+          "value": "TBD"
+        }
+      ]
+    },
+    {
+      "title": "List",
+      "type": "list",
+      "items": [
+        {
+          "title": "Item 1"
+        }
+      ]
+    },
+    {
+      "title": "Chart",
+      "type": "chart",
+      "chartType": "bar",
+      "chartData": {
+        "labels": [
+          "A"
+        ],
+        "datasets": [
+          {
+            "data": [
+              1
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Product",
+      "type": "product",
+      "fields": [
+        {
+          "label": "Name",
+          "value": "Product"
+        }
+      ]
+    },
+    {
+      "title": "Solutions",
+      "type": "solutions",
+      "fields": [
+        {
+          "title": "Solution",
+          "description": "Description"
+        }
+      ]
+    },
+    {
+      "title": "Overview",
+      "type": "overview",
+      "fields": [
+        {
+          "label": "Summary",
+          "value": "Overview text"
+        }
+      ]
+    },
+    {
+      "title": "Quote",
+      "type": "quotation",
+      "fields": [
+        {
+          "value": "\"Quote text\""
+        }
+      ]
+    },
+    {
+      "title": "Reference",
+      "type": "text-reference",
+      "fields": [
+        {
+          "label": "Doc",
+          "value": "Document"
+        }
+      ]
+    },
+    {
+      "title": "Colors",
+      "type": "brand-colors",
+      "fields": [
+        {
+          "label": "Primary",
+          "value": "#000000"
+        }
+      ]
+    },
+    {
+      "title": "News",
+      "type": "news",
+      "items": [
+        {
+          "title": "News Item"
+        }
+      ]
+    },
+    {
+      "title": "Social",
+      "type": "social-media",
+      "fields": [
+        {
+          "platform": "linkedin",
+          "handle": "@company"
+        }
+      ]
+    },
+    {
+      "title": "Fallback",
+      "type": "fallback"
+    }
+  ]
+}

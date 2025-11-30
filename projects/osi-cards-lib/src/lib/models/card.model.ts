@@ -1,9 +1,21 @@
-export type CardType = 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'event' | 'project' | 'sko';
+import { SectionTypeInput, resolveSectionType, isValidSectionType } from './generated-section-types';
+
+export type CardType = 'all' | 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'event' | 'project' | 'sko';
+
+/**
+ * Numeric layout priority for space-filling algorithm
+ * 1 = Highest priority (placed first, resized last)
+ * 2 = Medium priority
+ * 3 = Lowest priority (placed last, resized first)
+ */
+export type LayoutPriority = 1 | 2 | 3;
+
+// Re-export for convenience
+export { SectionTypeInput, resolveSectionType, isValidSectionType };
 
 export interface AICardConfig {
   id?: string;
   cardTitle: string;
-  cardSubtitle?: string;
   cardType?: CardType; // Optional - only for demo examples
   description?: string;
   columns?: 1 | 2 | 3;
@@ -11,39 +23,95 @@ export interface AICardConfig {
   actions?: CardAction[];
   meta?: Record<string, unknown>;
   processedAt?: number;
+  /** Display order for drag-and-drop reordering (lower numbers appear first) */
+  displayOrder?: number;
 }
 
 export interface CardSection {
   id?: string;
   title: string;
-  type:
-    | 'info'
-    | 'timeline'
-    | 'analytics'
-    | 'metrics'
-    | 'contact-card'
-    | 'network-card'
-    | 'map'
-    | 'financials'
-    | 'locations'
-    | 'event'
-    | 'project'
-    | 'list'
-    | 'table'
-    | 'chart'
-    | 'product'
-    | 'solutions'
-    | 'overview'
-    | 'stats'
-    | 'quotation'
-    | 'reference'
-    | 'text-reference'
-    | 'text-ref'
-    | 'brand-colors';
+  /**
+   * Section type - uses generated types from section-registry.json
+   * Supports canonical types (e.g., 'analytics') and aliases (e.g., 'metrics')
+   */
+  type: SectionTypeInput;
   description?: string;
   subtitle?: string;
   columns?: number;
+  /**
+   * Explicit column span override - how many columns this section should span.
+   * Takes precedence over preferredColumns.
+   */
   colSpan?: number;
+  /**
+   * Preferred column count (1, 2, 3, or 4) - a hint for optimal display.
+   * The section will use this width when available, but gracefully
+   * degrade to fewer columns when constrained.
+   * Unlike colSpan, this is adaptive and respects container constraints.
+   */
+  preferredColumns?: 1 | 2 | 3 | 4;
+  /**
+   * Minimum columns this section should occupy
+   * Used for content-aware sizing - section won't shrink below this
+   */
+  minColumns?: 1 | 2 | 3 | 4;
+  /**
+   * Maximum columns this section can expand to
+   * Used for content-aware sizing - section won't grow beyond this
+   */
+  maxColumns?: 1 | 2 | 3 | 4;
+  /**
+   * Section content orientation
+   * - 'vertical': Stack items in a column (default for lists, overview)
+   * - 'horizontal': Arrange items in a row (good for contact cards, metrics)
+   * - 'auto': Let the system decide based on content shape and available space
+   */
+  orientation?: 'vertical' | 'horizontal' | 'auto';
+  /**
+   * Whether this section can grow to fill available row space
+   * When true, section may expand beyond preferredColumns to avoid gaps
+   */
+  flexGrow?: boolean;
+  /**
+   * Whether this section can shrink below its preferredColumns width
+   * to help fill rows completely. Default: true
+   * When false, section will never be smaller than preferredColumns
+   */
+  canShrink?: boolean;
+  /**
+   * Whether this section can grow beyond its preferredColumns width
+   * to fill gaps in rows. Default: true
+   * Supersedes flexGrow when using the row-first packing algorithm
+   */
+  canGrow?: boolean;
+  /**
+   * Numeric layout priority for the row-first space-filling algorithm
+   * - 1: Highest priority (placed first in rows, resized last)
+   * - 2: Medium priority
+   * - 3: Lowest priority (placed last, resized first to fill gaps)
+   * Maps from string priority: critical/important=1, standard=2, optional=3
+   */
+  layoutPriority?: LayoutPriority;
+  /**
+   * Priority band for layout ordering and condensation
+   * - 'critical': Always visible, never condensed (overview, key contacts)
+   * - 'important': Visible by default, condensed last (analytics, charts)
+   * - 'standard': Normal priority (info, lists)
+   * - 'optional': Can be collapsed first when space is limited
+   */
+  priority?: 'critical' | 'important' | 'standard' | 'optional';
+  /**
+   * Keep this section visible at the top during scroll
+   */
+  sticky?: boolean;
+  /**
+   * Group ID to keep related sections together in layout
+   */
+  groupId?: string;
+  /**
+   * Preferred column position (0-indexed) for column affinity
+   */
+  columnAffinity?: number;
   width?: number;
   collapsed?: boolean;
   emoji?: string;
@@ -129,6 +197,7 @@ export interface CardItem {
   icon?: string;
   value?: string | number;
   status?: string;
+  date?: string;
   meta?: Record<string, unknown>;
 }
 
@@ -417,12 +486,14 @@ export class CardUtils {
     return {
       ...config,
       cardTitle: this.safeString(config.cardTitle, 200),
-      cardSubtitle: config.cardSubtitle ? this.safeString(config.cardSubtitle, 500) : undefined,
       sections: this.ensureSectionIds(config.sections.filter(CardTypeGuards.isCardSection)),
       actions: config.actions?.map((action) => ({ ...action, id: action.id ?? this.generateId('action') }))
     };
   }
 }
+
+
+
 
 
 

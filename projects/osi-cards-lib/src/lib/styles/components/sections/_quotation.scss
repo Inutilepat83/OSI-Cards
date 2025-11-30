@@ -1,151 +1,137 @@
 @import 'sections-base';
 @import 'unified-cards';
+@import '../../core/color-helpers';
 
 .section-block--quotation {
-  --section-card-grid-min: 280px; /* Wider cards for quotations */
+  --section-card-grid-min: 280px;
 }
 
 .section-card--quotation {
   @include card;
-  display: flex;
-  flex-direction: column;
-  /* COMPACT: No minimum height */
-  min-height: auto;
-  gap: var(--card-gap);
-  background: color-mix(in srgb, var(--card-background) 98%, var(--color-brand) 1%);
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: auto !important;
+  gap: var(--card-gap) !important;
+  background: var(--card-background, #fafafa) !important;
 }
 
 .quotation-card__quote {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--card-gap) * 0.5);
-  /* COMPACT: Tighter quote spacing */
-  position: relative;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: calc(var(--card-gap) * 0.5) !important;
+  position: relative !important;
 }
 
 .quotation-card__icon {
-  color: var(--color-brand);
-  opacity: 0.7;
-  align-self: flex-start;
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  transition: opacity 0.22s ease, color 0.22s ease;
+  color: var(--color-brand, $brand-color) !important;
+  opacity: 0.7 !important;
+  align-self: flex-start !important;
+  flex-shrink: 0 !important;
+  width: 24px !important;
+  height: 24px !important;
+  transition: opacity 0.22s ease, color 0.22s ease !important;
   
-  // Use opacity and color changes instead of transform
   .section-card--quotation:hover & {
-    opacity: 0.9;
-    color: var(--color-brand);
+    opacity: 0.9 !important;
+    color: var(--color-brand, $brand-color) !important;
   }
 }
 
 .quotation-card__text {
   @include card-title-text;
-  /* COMPACT: Tight line-height */
-  font-style: italic;
-  font-size: calc(var(--card-title-font-size) * 1.15);
-  line-height: 1.4;
-  color: var(--card-text-primary);
-  margin: 0;
-  padding-left: calc(var(--card-padding) * 0.75);
-  /* COMPACT: Reduced padding */
-  position: relative;
-  transition: color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-  letter-spacing: 0.01em;
+  font-style: italic !important;
+  font-size: calc(var(--card-title-font-size, 0.95rem) * 1.15) !important;
+  line-height: 1.4 !important;
+  color: var(--card-text-primary, $foreground-color) !important;
+  margin: 0 !important;
+  padding-left: calc(var(--card-padding) * 0.75) !important;
+  position: relative !important;
+  transition: color 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  letter-spacing: 0.01em !important;
+  font-family: inherit !important;
+  border: none !important;
 
   &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    /* OPTIMIZED: Thicker accent bar */
-    background: var(--color-brand);
-    opacity: 1;
-    border-radius: var(--radius-xs);
-    transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    content: '' !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: 4px !important;
+    background: var(--color-brand, $brand-color) !important;
+    opacity: 1 !important;
+    border-radius: var(--radius-xs) !important;
+    transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
   
   .section-card--quotation:hover & {
-    color: color-mix(in srgb, var(--foreground) 95%, transparent);
+    color: $foreground-90 !important;
     
     &::before {
-      width: 4px;
-      opacity: 1;
+      width: 4px !important;
+      opacity: 1 !important;
     }
   }
 }
 
 .quotation-card__footer {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--card-gap) * 0.7);
-  /* COMPACT: Tighter footer spacing */
-  padding-top: calc(var(--card-padding) * 0.6);
-  /* COMPACT: Reduced padding */
+  display: flex !important;
+  flex-direction: column !important;
+  gap: calc(var(--card-gap) * 0.7) !important;
+  padding-top: calc(var(--card-padding) * 0.6) !important;
   border-top: none !important;
-  /* CLEAN: No borders on footers - only cards have borders */
-  margin-top: calc(var(--card-gap) * 0.25);
-  /* COMPACT: Reduced margin */
+  margin-top: calc(var(--card-gap) * 0.25) !important;
 }
 
 .quotation-card__author {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--card-gap) * 0.5);
-  /* OPTIMIZED: Tighter author spacing */
+  display: flex !important;
+  flex-direction: column !important;
+  gap: calc(var(--card-gap) * 0.5) !important;
 }
 
 .quotation-card__author-name {
   @include card-subtitle-text;
-  /* OPTIMIZED: Use typography mixin - names are secondary */
-  color: var(--color-brand);
-  margin: 0;
-  line-height: 1.2;
-  font-weight: 700;
-  font-size: calc(var(--card-subtitle-font-size) + 2px);
+  color: var(--color-brand, $brand-color) !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+  font-weight: 700 !important;
+  font-size: calc(var(--card-subtitle-font-size, 0.7rem) + 2px) !important;
+  font-family: inherit !important;
+  border: none !important;
+  padding: 0 !important;
 }
 
 .quotation-card__author-role {
   @include card-meta-text;
-  /* COMPACT: Tight line-height */
-  margin: 0;
-  line-height: 1.2;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+  font-family: inherit !important;
 }
 
 .quotation-card__date {
   @include card-meta-text;
-  /* COMPACT: Tight line-height */
-  margin: 0;
-  line-height: 1.2;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+  font-family: inherit !important;
 }
 
-/* Removed redundant 768px media query - continuous responsive design via base system */
-
 /* Light theme overrides - text colors only */
-/* Background and border are handled by global enforcement */
 :root[data-theme='day'] {
   .quotation-card {
     &__text {
-      color: #4b5563;
+      color: #4b5563 !important;
     }
     
     &__author-name {
-      color: #1a1a1a;
+      color: #1a1a1a !important;
     }
     
     &__author-role {
-      color: #6b7280;
+      color: #6b7280 !important;
     }
     
     &__date {
-      color: #9ca3af;
+      color: #9ca3af !important;
     }
   }
-  
-  .section-card--quotation {
-    /* Background and border removed - handled by global enforcement */
-  }
 }
-

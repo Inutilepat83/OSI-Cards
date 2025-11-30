@@ -6,6 +6,13 @@
 
 export * from './light-theme';
 export * from './dark-theme';
-export * from './high-contrast-theme';
+export * from './osi-day-theme';
+export * from './osi-night-theme';
+
+
+
+
+
+
 
 

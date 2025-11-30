@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-export interface FeatureFlags {
-  [key: string]: boolean;
-}
+export type FeatureFlags = Record<string, boolean>;
 
 /**
  * Feature Flag Service

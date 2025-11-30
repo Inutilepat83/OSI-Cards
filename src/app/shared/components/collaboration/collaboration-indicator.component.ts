@@ -153,3 +153,9 @@ export class CollaborationIndicatorComponent implements OnInit, OnDestroy {
   }
 }
 
+
+
+
+
+
+

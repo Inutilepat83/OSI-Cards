@@ -1,0 +1,140 @@
+// ============================================
+// TOKENS ONLY - CSS Custom Properties for Host Apps
+// ============================================
+//
+// This file provides ONLY the CSS custom properties (tokens) without
+// any component styles. Use this when you want the host app to define
+// the design tokens that OSI Cards components will consume.
+//
+// Include this in your host app's global styles to enable theming:
+//
+//   @import 'osi-cards-lib/styles/bundles/tokens-only';
+//
+// Or import the compiled CSS:
+//
+//   @import 'osi-cards-lib/styles/osi-cards-tokens.css';
+//
+// The components will read these CSS variables through Shadow DOM
+// (CSS custom properties pass through Shadow DOM boundaries).
+//
+// ============================================
+
+@use '../tokens/master' as *;
+
+// ============================================
+// ROOT-LEVEL TOKEN DEFINITIONS
+// ============================================
+
+// Apply to :root for global token availability
+:root {
+  // Base colors
+  @include osi-base-colors();
+
+  // Status colors
+  @include osi-status-colors();
+
+  // Shadows
+  @include osi-shadows();
+
+  // Radius
+  @include osi-radius();
+
+  // Spacing
+  @include osi-spacing();
+
+  // Animation
+  @include osi-animation();
+
+  // Opacity
+  @include osi-opacity();
+
+  // Typography (demo variant for standalone apps)
+  @include osi-typography('demo');
+
+  // Card typography
+  @include osi-card-typography('demo');
+
+  // Card layout
+  @include osi-card-layout();
+
+  // Interactive states
+  @include osi-interactive();
+
+  // Default theme (light)
+  @include osi-theme-base('demo', false);
+}
+
+// ============================================
+// THEME VARIANTS
+// ============================================
+
+// Dark theme
+:root[data-theme='night'],
+[data-theme='night'] {
+  @include osi-theme-dark('demo', false);
+}
+
+// Light theme
+:root[data-theme='day'],
+[data-theme='day'] {
+  @include osi-theme-light('demo', false);
+}
+
+// ============================================
+// ACCESSIBILITY OVERRIDES
+// ============================================
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    @include osi-tokens-reduced-motion();
+  }
+}
+
+// High contrast
+@media (prefers-contrast: high) {
+  :root {
+    @include osi-tokens-high-contrast();
+  }
+}
+
+// Forced colors (Windows High Contrast)
+@media (forced-colors: active) {
+  :root {
+    @include osi-tokens-forced-colors();
+  }
+}
+
+// ============================================
+// INTEGRATION VARIANT
+// ============================================
+
+// For embedding in external apps with scoped container
+.osi-cards-container {
+  // Scoped theme base
+  @include osi-theme-base('integration', true);
+  @include osi-tokens('integration', true);
+
+  // Scoped theme variants
+  &[data-theme='night'] {
+    @include osi-theme-dark('integration', true);
+  }
+
+  &[data-theme='day'] {
+    @include osi-theme-light('integration', true);
+  }
+
+  // Scoped accessibility overrides
+  @media (prefers-reduced-motion: reduce) {
+    @include osi-tokens-reduced-motion();
+  }
+
+  @media (prefers-contrast: high) {
+    @include osi-tokens-high-contrast();
+  }
+
+  @media (forced-colors: active) {
+    @include osi-tokens-forced-colors();
+  }
+}
+

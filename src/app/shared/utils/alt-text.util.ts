@@ -72,7 +72,7 @@ export function validateAltText(altText: string | null | undefined): boolean {
 /**
  * Get default alt text for missing alt attributes
  */
-export function getDefaultAltText(imageUrl: string, fallback: string = 'Image'): string {
+export function getDefaultAltText(imageUrl: string, fallback = 'Image'): string {
   const urlParts = imageUrl.split('/');
   const filename = urlParts[urlParts.length - 1];
   if (!filename) {

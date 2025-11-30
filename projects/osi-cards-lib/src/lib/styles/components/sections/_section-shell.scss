@@ -2,13 +2,13 @@
 /* =========================================================== */
 /* Consistent spacing across ALL sections - GLOBALLY ENFORCED */
 @import 'design-system';
+@import '../../core/color-helpers';
+
 .ai-section {
-  --section-accent: var(--accent);
-  /* GLOBALLY ENFORCED: Use main variables - NO CUSTOM OVERRIDES */
-  /* All padding, border, gap, radius come from main variables */
-  --section-border-hover: 1px solid var(--card-border-hover);
-  --section-background: var(--section-surface, var(--section-background, var(--card-section-bg)));
-  --section-background-hover: var(--section-surface-hover, var(--section-background-hover, var(--card-section-bg)));
+  --section-accent: var(--accent, #{$brand-color});
+  --section-border-hover: 1px solid var(--card-border-hover, #{$brand-color-20});
+  --section-background: var(--section-surface, var(--section-background, var(--card-section-bg, #fafafa)));
+  --section-background-hover: var(--section-surface-hover, var(--section-background-hover, var(--card-section-bg, #fafafa)));
   --section-backdrop-filter: blur(12px);
   --section-spacing-bottom: clamp(4px, 0.8vw, 12px);
   --section-glow-background: radial-gradient(circle at top right,
@@ -20,138 +20,126 @@
   --section-title-underline-height: 3px;
   --section-title-underline-offset: -10px;
   --section-title-hover-color: rgba(255, 180, 100, 1);
-  height: 100%;
-  margin-bottom: var(--section-spacing-bottom);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  height: 100% !important;
+  margin-bottom: var(--section-spacing-bottom) !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
   * {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
   }
   
-  /* IMPORTANT: Only apply section-wrapper styles if NOT inside masonry-item */
-  /* The masonry-item already has the border, padding, background, etc. */
   &:not(.masonry-item .ai-section) {
     @include section-wrapper;
   }
   
-  /* When inside masonry-item, just use flex layout without border/padding */
   .masonry-item & {
-    display: flex;
-    flex-direction: column;
-    gap: var(--section-card-gap);
-    /* Border, padding, background are handled by .masonry-item */
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--section-card-gap) !important;
   }
-  
-  /* GLOBALLY ENFORCED: section-wrapper mixin uses main variables */
-  /* Additional enforcement via global-enforcement.scss */
 }
 
-/* ✅ MAIN SECTION: Lighter background for most sections */
 .ai-section--main {
-  --section-background: var(--section-bg-main);
-  --section-background-hover: var(--section-bg-main);
+  --section-background: var(--section-bg-main, #fefefe);
+  --section-background-hover: var(--section-bg-main, #fefefe);
 }
 
-/* ✅ CONTRAST SECTION: Darker background for emphasis (1-2 max per card) */
 .ai-section--contrast {
-  --section-background: var(--section-bg-contrast);
-  --section-background-hover: var(--section-bg-contrast);
+  --section-background: var(--section-bg-contrast, #f5f5f5);
+  --section-background-hover: var(--section-bg-contrast, #f5f5f5);
 }
 
 .ai-section__header {
-  /* COMPACT: Reduced gap and padding */
   @include section-header(row, calc(var(--card-gap) * 0.75));
-  align-items: center;
-  /* COMPACT: Reduced padding */
+  align-items: center !important;
   padding: 0 0 calc(var(--card-gap) * 0.75) 0 !important;
   border-bottom: none !important;
-  /* CLEAN: No borders on headers */
-  background: transparent;
-  margin: 0;
-  flex-wrap: wrap;
+  background: transparent !important;
+  margin: 0 !important;
+  flex-wrap: wrap !important;
   gap: calc(var(--card-gap) * 0.75) !important;
 }
 
 .ai-section__title {
   @include section-heading-text;
-  /* GLOBALLY ENFORCED: Use main variables for typography */
-  font-size: var(--section-title-font-size) !important;
-  font-weight: var(--section-title-font-weight) !important;
-  letter-spacing: var(--section-title-letter-spacing) !important;
-  line-height: var(--section-title-line-height) !important;
-  color: var(--card-text-primary) !important;
-  opacity: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  position: relative;
-  /* GLOBALLY ENFORCED: Use standard transition */
-  transition: color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: var(--section-title-font-size, 1.1rem) !important;
+  font-weight: var(--section-title-font-weight, 700) !important;
+  letter-spacing: var(--section-title-letter-spacing, -0.02em) !important;
+  line-height: var(--section-title-line-height, 1.3) !important;
+  color: var(--card-text-primary, $foreground-color) !important;
+  opacity: 1 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  position: relative !important;
+  transition: color 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
   padding: 0 !important;
-  margin: 0 0 8px 0 !important;
+  margin: 0 0 var(--section-title-margin-bottom) 0 !important;
+  font-family: inherit !important;
+  border: none !important;
   
   &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: var(--section-title-underline-offset, -10px);
-    width: var(--section-title-underline-length, 42px);
-    height: var(--section-title-underline-height, 3px);
-    background: var(--section-accent, var(--accent));
-    border-radius: 2px;
-    transition: width 0.22s ease, opacity 0.22s ease;
-    transform-origin: left;
-    opacity: 0.6;
+    content: '' !important;
+    position: absolute !important;
+    left: 0 !important;
+    bottom: var(--section-title-underline-offset, -10px) !important;
+    width: var(--section-title-underline-length) !important;
+    height: var(--section-title-underline-height) !important;
+    background: var(--section-accent, var(--accent, $brand-color)) !important;
+    border-radius: 2px !important;
+    transition: width 0.22s ease, opacity 0.22s ease !important;
+    transform-origin: left !important;
+    opacity: 0.6 !important;
   }
   
-  // Minimalistic hover
   &:hover {
-    color: color-mix(in srgb, var(--card-text-primary) 90%, var(--section-accent, var(--accent)) 10%);
+    color: var(--card-text-primary, $foreground-color) !important;
     
     &::before {
-      width: var(--section-title-underline-hover-length, 60px);
-      opacity: 1;
+      width: var(--section-title-underline-hover-length) !important;
+      opacity: 1 !important;
     }
   }
 }
 
 .ai-section__icon {
-  display: none;
-  width: var(--icon-size-section); /* ✅ Standardized to 18px */
-  height: var(--icon-size-section);
+  display: none !important;
+  width: var(--icon-size-section) !important;
+  height: var(--icon-size-section) !important;
 }
 
 .ai-section__details {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--card-gap) * 0.75); /* COMPACT: Reduced from full gap */
+  display: flex !important;
+  flex-direction: column !important;
+  gap: calc(var(--card-gap) * 0.75) !important;
 }
 
 .ai-section__description {
   @include section-description-text;
-  color: color-mix(in srgb, var(--foreground) 75%, transparent); /* Slightly darker for better readability */
-  letter-spacing: 0.01em;
-  line-height: 1.2; /* COMPACT: Tight line-height */
-  font-weight: 400; /* Lighter weight for hierarchy */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  margin-top: calc(var(--card-gap) * 0.5); /* COMPACT: Reduced margin */
-  transition: color 0.2s ease;
+  color: $foreground-70 !important;
+  letter-spacing: 0.01em !important;
+  line-height: 1.2 !important;
+  font-weight: 400 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  margin-top: calc(var(--card-gap) * 0.5) !important;
+  transition: color 0.2s ease !important;
+  font-family: inherit !important;
 }
 
 .ai-section:hover .ai-section__description {
-  color: color-mix(in srgb, var(--foreground) 80%, transparent);
+  color: $foreground-80 !important;
 }
 
 .ai-section__badge {
   @include standard-badge;
   display: none !important;
-  padding: var(--tag-padding-y-sm) var(--tag-padding-x);
-  border-radius: var(--radius-sm);
+  padding: var(--tag-padding-y-sm) var(--tag-padding-x) !important;
+  border-radius: var(--radius-sm) !important;
 }
 
 /* Show badge for sections that need it */
@@ -161,142 +149,133 @@
 .ai-section--chart .ai-section__badge,
 .ai-section--financials .ai-section__badge {
   display: none !important;
-  align-items: center;
-  /* COMPACT: Reduced padding for badges */
-  padding: calc(var(--tag-padding-y-sm) * 0.75) calc(var(--tag-padding-x) * 0.875);
-  background: linear-gradient(135deg, 
-    color-mix(in srgb, var(--section-accent, var(--accent)) 16%, transparent),
-    color-mix(in srgb, var(--section-accent, var(--accent)) 12%, transparent));
-  color: color-mix(in srgb, var(--section-accent, var(--accent)) 95%, transparent);
+  align-items: center !important;
+  padding: calc(var(--tag-padding-y-sm) * 0.75) calc(var(--tag-padding-x) * 0.875) !important;
+  background: linear-gradient(135deg, $brand-color-15, $brand-color-12) !important;
+  color: $brand-color-90 !important;
   border: none !important;
-  /* CLEAN: No borders on badges - only sections and cards have borders */
-  box-shadow: none;
-  border-radius: var(--section-card-border-radius);
-  font-size: var(--card-meta-font-size);
-  font-weight: var(--card-meta-font-weight);
-  transition: opacity 0.2s ease, background 0.2s ease;
-  line-height: 1.2;
+  box-shadow: none !important;
+  border-radius: var(--section-card-border-radius) !important;
+  font-size: var(--card-meta-font-size, 0.6rem) !important;
+  font-weight: var(--card-meta-font-weight, 500) !important;
+  transition: opacity 0.2s ease, background 0.2s ease !important;
+  line-height: 1.2 !important;
 }
 
-// Minimalistic badge hover
 .ai-section:hover .ai-section__badge {
-  opacity: 1;
-  background: color-mix(in srgb, var(--section-accent, var(--accent)) 18%, transparent);
+  opacity: 1 !important;
+  background: $brand-color-20 !important;
 }
 
 .ai-section__body {
   @include section-body(var(--section-gap-internal));
-  padding: 0;
-  margin: 0;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 /* Consistent empty state styling for all sections */
 .ai-section .section-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  /* COMPACT: Reduced padding */
-  padding: calc(var(--card-padding) * 1.5);
-  text-align: center;
-  color: color-mix(in srgb, var(--foreground) 70%, transparent);
-  min-height: auto;
-  /* COMPACT: No minimum height */
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--foreground) 2%, transparent);
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: calc(var(--card-padding) * 1.5) !important;
+  text-align: center !important;
+  color: $foreground-70 !important;
+  min-height: auto !important;
+  border-radius: var(--radius-md) !important;
+  background: $foreground-03 !important;
   border: none !important;
-  /* CLEAN: No borders on empty states - only sections and cards have borders */
-  transition: opacity 0.2s ease, background 0.2s ease;
+  transition: opacity 0.2s ease, background 0.2s ease !important;
 
   lucide-icon {
-    margin-bottom: var(--card-gap);
-    opacity: 0.5;
-    color: color-mix(in srgb, var(--section-accent, var(--accent)) 60%, transparent);
-    transition: all 0.2s ease;
+    margin-bottom: var(--card-gap) !important;
+    opacity: 0.5 !important;
+    color: $brand-color-60 !important;
+    transition: all 0.2s ease !important;
   }
 
   p {
-    font-size: var(--font-section-description);
-    margin: 0;
-    font-weight: 500;
+    font-size: var(--font-section-description, 0.85rem) !important;
+    margin: 0 !important;
+    font-weight: 500 !important;
+    font-family: inherit !important;
   }
 
   &:hover {
-    background: color-mix(in srgb, var(--foreground) 3%, transparent);
-    border-color: color-mix(in srgb, var(--section-accent, var(--accent)) 25%, transparent);
+    background: $foreground-04 !important;
     
-    // Use opacity change instead of transform
     lucide-icon {
-      opacity: 0.7;
+      opacity: 0.7 !important;
     }
   }
 }
 
 /* Section type differentiation - subtle visual identities */
 .ai-section--info {
-  --section-accent: var(--section-accent-info);
+  --section-accent: var(--section-accent-info, #{$brand-color});
 }
 
 .ai-section--analytics {
-  --section-accent: var(--section-accent-analytics);
+  --section-accent: var(--section-accent-analytics, #{$brand-color});
 }
 
 .ai-section--financials {
-  --section-accent: var(--section-accent-financials);
+  --section-accent: var(--section-accent-financials, #{$brand-color});
 }
 
 .ai-section--map {
-  --section-accent: var(--section-accent-map);
+  --section-accent: var(--section-accent-map, #{$brand-color});
 }
 
 .ai-section--network-card {
-  --section-accent: var(--section-accent-network);
+  --section-accent: var(--section-accent-network, #{$brand-color});
 }
 
 .ai-section--contact-card {
-  --section-accent: var(--section-accent-contact);
+  --section-accent: var(--section-accent-contact, #{$brand-color});
 }
 
 .ai-section--product {
-  --section-accent: var(--section-accent-product);
+  --section-accent: var(--section-accent-product, #{$brand-color});
 }
 
 .ai-section--solutions {
-  --section-accent: var(--section-accent-solutions);
+  --section-accent: var(--section-accent-solutions, #{$brand-color});
 }
 
 .ai-section--overview {
-  --section-accent: var(--section-accent-overview);
+  --section-accent: var(--section-accent-overview, #{$brand-color});
 }
 
 .ai-section--list,
 .ai-section--info-list {
-  --section-accent: var(--section-accent-list);
+  --section-accent: var(--section-accent-list, #{$brand-color});
 }
 
 .ai-section--event {
-  --section-accent: var(--section-accent-event);
+  --section-accent: var(--section-accent-event, #{$brand-color});
 }
 
 .ai-section--chart {
-  --section-accent: var(--section-accent-chart, var(--accent));
+  --section-accent: var(--section-accent-chart, var(--accent, #{$brand-color}));
 }
 
 .ai-section--text-reference {
-  --section-accent: var(--section-accent-reference, var(--accent));
+  --section-accent: var(--section-accent-reference, var(--accent, #{$brand-color}));
 }
 
 .ai-section--quotation {
-  --section-accent: var(--section-accent-quotation, var(--accent));
+  --section-accent: var(--section-accent-quotation, var(--accent, #{$brand-color}));
 }
 
 /* Fullscreen mode - consistent padding using main variables */
 .ai-card-surface--fullscreen {
   .ai-section {
-    --section-padding: var(--card-padding); /* COMPACT: Use main variable */
+    --section-padding: var(--section-padding);
     --section-spacing-bottom: calc(var(--card-gap) * 1.25);
-    --section-gap: var(--section-card-gap); /* COMPACT: Use main variable */
-    --section-gap-internal: var(--card-gap); /* COMPACT: Use main variable */
+    --section-gap: var(--section-card-gap);
+    --section-gap-internal: var(--card-gap);
     --section-title-underline-length: 32px;
     --section-title-underline-hover-length: 40px;
     --section-title-underline-height: 2px;
@@ -305,7 +284,6 @@
     --section-box-shadow-hover: none !important;
   }
   
-  /* Remove box-shadow from masonry items (sections) in fullscreen */
   .masonry-item {
     box-shadow: none !important;
     
@@ -315,21 +293,21 @@
   }
   
   .ai-section__header {
-    padding: 0 0 calc(var(--card-gap) * 0.75) 0 !important; /* COMPACT: Use main variable */
-    gap: calc(var(--card-gap) * 0.75) !important; /* COMPACT: Use main variable */
+    padding: 0 0 calc(var(--card-gap) * 0.75) 0 !important;
+    gap: calc(var(--card-gap) * 0.75) !important;
   }
   
   .ai-section__title {
-    font-size: var(--card-title-font-size);
+    font-size: var(--card-title-font-size, 0.95rem) !important;
   }
   
   .ai-section__body {
-    gap: var(--card-gap);
+    gap: var(--card-gap) !important;
   }
   
   .ai-section__description {
-    font-size: var(--card-meta-font-size);
-    margin-top: 4px;
+    font-size: var(--card-meta-font-size, 0.6rem) !important;
+    margin-top: 4px !important;
   }
 }
 
@@ -352,34 +330,34 @@
   }
   
   .ai-section__title {
-    color: #1a1a1a;
-    text-shadow: none;
+    color: #1a1a1a !important;
+    text-shadow: none !important;
     
     &::before {
-      background: rgba(255, 121, 0, 0.8);
+      background: rgba(255, 121, 0, 0.8) !important;
     }
     
     &:hover {
-      color: var(--primary);
+      color: var(--primary, #{$brand-color}) !important;
     }
   }
   
   .ai-section__description {
-    color: #4b5563;
+    color: #4b5563 !important;
   }
   
   .ai-section:hover .ai-section__description {
-    color: #374151;
+    color: #374151 !important;
   }
   
   .section-empty {
-    background: rgba(250, 250, 250, 0.8);
-    border-color: rgba(200, 200, 200, 0.4);
-    color: #6b7280;
+    background: rgba(250, 250, 250, 0.8) !important;
+    border-color: rgba(200, 200, 200, 0.4) !important;
+    color: #6b7280 !important;
   }
   
   .section-empty:hover {
-    background: rgba(250, 250, 250, 1);
-    border-color: rgba(255, 121, 0, 0.3);
+    background: rgba(250, 250, 250, 1) !important;
+    border-color: rgba(255, 121, 0, 0.3) !important;
   }
 }

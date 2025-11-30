@@ -350,7 +350,7 @@ export function sanitizeCardConfig(config: Partial<AICardConfig>): Partial<AICar
 
     // Remove any properties that shouldn't be in the card
     const allowedRootKeys = [
-      'id', 'cardTitle', 'cardSubtitle', 'cardType', 'sections', 'actions', 
+      'id', 'cardTitle', 'cardType', 'sections', 'actions', 
       'metadata', 'tags', 'priority', 'complexity', 'description', 'columns', 'processedAt'
     ];
 
@@ -360,13 +360,6 @@ export function sanitizeCardConfig(config: Partial<AICardConfig>): Partial<AICar
     if ('cardTitle' in sanitized && typeof sanitized.cardTitle === 'string') {
       cleanedRoot.cardTitle = SanitizationUtil.sanitizeCardTitle(
         sanitized.cardTitle.substring(0, SIZE_CONSTANTS.MAX_CARD_TITLE_LENGTH)
-      );
-    }
-    
-    // Sanitize card subtitle
-    if ('cardSubtitle' in sanitized && typeof sanitized.cardSubtitle === 'string') {
-      cleanedRoot.cardSubtitle = SanitizationUtil.sanitizeCardTitle(
-        sanitized.cardSubtitle.substring(0, SIZE_CONSTANTS.MAX_CARD_SUBTITLE_LENGTH)
       );
     }
     

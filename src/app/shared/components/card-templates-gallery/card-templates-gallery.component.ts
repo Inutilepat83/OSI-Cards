@@ -5,7 +5,8 @@ import { AICardConfig, CardType } from '../../../models';
 import { CardTemplatesService } from '../../services/card-templates.service';
 import { SearchFilterService } from '../../services/search-filter.service';
 import { LucideIconsModule } from '../../icons/lucide-icons.module';
-import { CardPreviewComponent } from '../cards/card-preview/card-preview.component';
+import { AICardRendererComponent } from '../../../../../projects/osi-cards-lib/src/lib/components/ai-card-renderer/ai-card-renderer.component';
+import { AICardConfig as LibraryCardConfig } from '../../../../../projects/osi-cards-lib/src/lib/models/card.model';
 
 /**
  * Card Templates Gallery Component
@@ -14,7 +15,7 @@ import { CardPreviewComponent } from '../cards/card-preview/card-preview.compone
 @Component({
   selector: 'app-card-templates-gallery',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideIconsModule, CardPreviewComponent],
+  imports: [CommonModule, FormsModule, LucideIconsModule, AICardRendererComponent],
   template: `
     <div class="templates-gallery">
       <!-- Header -->
@@ -64,11 +65,12 @@ import { CardPreviewComponent } from '../cards/card-preview/card-preview.compone
           class="template-card"
           (click)="onTemplateSelect(template)">
           <div class="template-preview">
-            <app-card-preview
-              [generatedCard]="template"
-              [isGenerating]="false"
-              [isInitialized]="true">
-            </app-card-preview>
+            <app-ai-card-renderer
+              [cardConfig]="asLibraryConfig(template)"
+              [streamingStage]="'complete'"
+              [showLoadingByDefault]="false"
+              [tiltEnabled]="false">
+            </app-ai-card-renderer>
           </div>
           <div class="template-info">
             <h3 class="template-title">{{ template.cardTitle }}</h3>
@@ -347,6 +349,10 @@ export class CardTemplatesGalleryComponent implements OnInit {
 
   trackByTemplateId(index: number, template: AICardConfig): string {
     return template.id || index.toString();
+  }
+
+  asLibraryConfig(template: AICardConfig): LibraryCardConfig {
+    return template as unknown as LibraryCardConfig;
   }
 }
 

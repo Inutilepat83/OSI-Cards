@@ -39,7 +39,7 @@ export function createChunkedArray<T>(items: T[], chunkSize: number): T[][] {
 export async function processInChunks<T, R>(
   items: T[],
   processor: (chunk: T[]) => Promise<R[]>,
-  chunkSize: number = 100
+  chunkSize = 100
 ): Promise<R[]> {
   const chunks = createChunkedArray(items, chunkSize);
   const results: R[] = [];
@@ -77,7 +77,7 @@ export function getMemoryUsage(): {
 /**
  * Check if memory usage is high
  */
-export function isMemoryUsageHigh(threshold: number = 80): boolean {
+export function isMemoryUsageHigh(threshold = 80): boolean {
   const usage = getMemoryUsage();
   if (!usage) {
     return false;

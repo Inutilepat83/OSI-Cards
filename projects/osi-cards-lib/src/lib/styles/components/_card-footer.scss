@@ -1,0 +1,40 @@
+// ============================================
+// CARD FOOTER - Enforced Signature Styles
+// ============================================
+// These styles are included in the Shadow DOM bundle
+// to ensure proper footer styling regardless of host app CSS.
+
+// Card Signature / "Powered by" Footer
+.card-signature {
+  // Layout
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  
+  // Spacing
+  margin: 16px 0 0 0 !important;
+  padding: 12px 16px !important;
+  
+  // Typography - Small, centered, muted
+  font-family: Helvetica, 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0.02em !important;
+  text-align: center !important;
+  
+  // Color - Muted gray
+  color: rgba(100, 100, 100, 0.7) !important;
+  
+  // Visual reset
+  background: transparent !important;
+  border: none !important;
+  text-decoration: none !important;
+}
+
+// Dark theme variant
+:host([data-theme='night']) .card-signature,
+:host-context([data-theme='night']) .card-signature {
+  color: rgba(200, 200, 200, 0.6) !important;
+}
+

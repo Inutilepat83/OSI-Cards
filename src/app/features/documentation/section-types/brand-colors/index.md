@@ -4,7 +4,19 @@ Displays color swatches, brand palettes, and design system colors.
 
 ## Overview
 
-The **Brand Colors Section** is used for displays color swatches, brand palettes, and design system colors.
+The **Brand Colors Section** (`type: "brand-colors"`) is used for displays color swatches, brand palettes, and design system colors.
+
+### Quick Facts
+
+| Property | Value |
+|----------|-------|
+| Type | `brand-colors` |
+| Uses Fields | Yes |
+| Uses Items | No |
+| Default Columns | 2 |
+| Supports Collapse | Yes |
+| Aliases | `brands`, `colors` |
+
 
 ## Use Cases
 
@@ -15,25 +27,59 @@ The **Brand Colors Section** is used for displays color swatches, brand palettes
 
 ## Data Schema
 
-```typescript
-interface CardSection {
-  title: string;
-  type: 'brand-colors';
-  fields?: CardField[];
-  
-}
-```
+### Fields Schema
 
-## Example
+| Property | Type | Description |
+|----------|------|-------------|
+| `label` | string | Color name/label |
+| `value` | string | Color value (hex, rgb, etc.) |
+| `description` | string | Color description/usage |
+| `category` | string | Color category (primary, secondary, etc.) |
+
+
+
+## Complete Example
 
 ```json
 {
-  "title": "Brand Colors Section Example",
+  "title": "Brand Colors",
+  "type": "brand-colors",
+  "description": "Official brand color palette",
+  "fields": [
+    {
+      "label": "Primary",
+      "value": "#FF7900",
+      "description": "Orange Brand Color"
+    },
+    {
+      "label": "Secondary",
+      "value": "#000000",
+      "description": "Black"
+    },
+    {
+      "label": "Accent",
+      "value": "#4CAF50",
+      "description": "Green Accent"
+    },
+    {
+      "label": "Background",
+      "value": "#FFFFFF",
+      "description": "White Background"
+    }
+  ]
+}
+```
+
+## Minimal Example
+
+```json
+{
+  "title": "Colors",
   "type": "brand-colors",
   "fields": [
     {
-      "label": "Example Label",
-      "value": "Example Value"
+      "label": "Primary",
+      "value": "#000000"
     }
   ]
 }
@@ -42,14 +88,15 @@ interface CardSection {
 ## Best Practices
 
 1. Include hex/RGB values
-1. Show color names
-1. Group by category
-1. Enable copy-to-clipboard
+2. Show color names
+3. Group by category
+4. Enable copy-to-clipboard
 
-## Component Properties
+## Component Information
 
-
-
+- **Selector:** `app-brand-colors-section`
+- **Component Path:** `./lib/components/sections/brand-colors-section/brand-colors-section.component`
+- **Style Path:** `./lib/styles/components/sections/_brand-colors.scss`
 
 ## Related Documentation
 

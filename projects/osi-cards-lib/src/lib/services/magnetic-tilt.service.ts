@@ -76,9 +76,9 @@ export class MagneticTiltService implements OnDestroy {
     }
 
     // Cancel any ongoing reset animation when mouse re-enters
-    if (this.resetTimeoutId !== null) {
-      clearTimeout(this.resetTimeoutId);
-      this.resetTimeoutId = null;
+    if (this.resetRafId !== null) {
+      cancelAnimationFrame(this.resetRafId);
+      this.resetRafId = null;
     }
 
     // Don't cancel smoothing animation - let it continue for smooth updates
@@ -290,18 +290,26 @@ export class MagneticTiltService implements OnDestroy {
   }
 
   private hasCalculationsChanged(old: TiltCalculations, newCalc: TiltCalculations): boolean {
-    // Reduced threshold for smoother glow transitions - allow more frequent updates
-    const threshold = 0.005; // Reduced from 0.01 for smoother glow
+    // Optimized change detection with fast absolute value checks
+    // Lower thresholds for smoother, more frequent updates
+    const rotateYDiff = newCalc.rotateY - old.rotateY;
+    const rotateXDiff = newCalc.rotateX - old.rotateX;
+    const glowBlurDiff = newCalc.glowBlur - old.glowBlur;
+    const glowOpacityDiff = newCalc.glowOpacity - old.glowOpacity;
+    const reflectionDiff = newCalc.reflectionOpacity - old.reflectionOpacity;
+    
+    // Fast absolute value check: (x < 0 ? -x : x) is faster than Math.abs() for known values
+    // Very low thresholds for ultra-smooth updates
     return (
-      Math.abs(old.rotateX - newCalc.rotateX) > threshold ||
-      Math.abs(old.rotateY - newCalc.rotateY) > threshold ||
-      Math.abs(old.glowBlur - newCalc.glowBlur) > threshold ||
-      Math.abs(old.glowOpacity - newCalc.glowOpacity) > threshold ||
-      Math.abs(old.reflectionOpacity - newCalc.reflectionOpacity) > threshold
+      (rotateYDiff < 0 ? -rotateYDiff : rotateYDiff) > 0.0001 ||
+      (rotateXDiff < 0 ? -rotateXDiff : rotateXDiff) > 0.0001 ||
+      (glowBlurDiff < 0 ? -glowBlurDiff : glowBlurDiff) > 0.001 ||
+      (glowOpacityDiff < 0 ? -glowOpacityDiff : glowOpacityDiff) > 0.0001 ||
+      (reflectionDiff < 0 ? -reflectionDiff : reflectionDiff) > 0.0001
     );
   }
 
-  private resetTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private resetRafId: number | null = null;
   private readonly RESET_TRANSITION_DURATION_MS = 800; // Even smoother exit transition
 
   resetTilt(smooth = true): void {
@@ -318,10 +326,10 @@ export class MagneticTiltService implements OnDestroy {
       this.smoothingRafId = null;
     }
     
-    // Clear any existing reset timeout
-    if (this.resetTimeoutId !== null) {
-      clearTimeout(this.resetTimeoutId);
-      this.resetTimeoutId = null;
+    // Cancel any existing reset animation
+    if (this.resetRafId !== null) {
+      cancelAnimationFrame(this.resetRafId);
+      this.resetRafId = null;
     }
     
     if (smooth) {
@@ -363,7 +371,7 @@ export class MagneticTiltService implements OnDestroy {
         
         if (progress < 1) {
           // Continue animation using RAF for smooth 60fps
-          this.resetTimeoutId = window.setTimeout(animateReset, 16);
+          this.resetRafId = requestAnimationFrame(animateReset);
         } else {
           // Animation complete - set final values
           this.currentRotateY = 0;
@@ -384,12 +392,12 @@ export class MagneticTiltService implements OnDestroy {
             glowOpacity: BASE_GLOW_OPACITY,
             reflectionOpacity: 0
           });
-          this.resetTimeoutId = null;
+          this.resetRafId = null;
         }
       };
       
       // Start smooth reset animation using RAF
-      animateReset();
+      this.resetRafId = requestAnimationFrame(animateReset);
     } else {
       // Immediate reset (for cleanup)
       this.currentRotateY = 0;
@@ -424,9 +432,9 @@ export class MagneticTiltService implements OnDestroy {
 
   // Cleanup method for service destruction
   ngOnDestroy(): void {
-    if (this.resetTimeoutId !== null) {
-      clearTimeout(this.resetTimeoutId);
-      this.resetTimeoutId = null;
+    if (this.resetRafId !== null) {
+      cancelAnimationFrame(this.resetRafId);
+      this.resetRafId = null;
     }
     if (this.rafId !== null) {
       cancelAnimationFrame(this.rafId);

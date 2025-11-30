@@ -1,26 +1,27 @@
 import { OSICardsThemeConfig } from '../theme.service';
+import { OSI_COLORS, OSI_THEME_COLORS, colorMix, cssVar } from '../tokens.constants';
 
 /**
  * Light theme preset configuration
  * Based on the day theme from the design system
+ *
+ * Uses shared token constants for consistency with SCSS tokens.
  */
 export const lightTheme: OSICardsThemeConfig = {
   name: 'day',
   preset: true,
   variables: {
-    '--background': '#ffffff',
-    '--foreground': '#1c1c1f',
-    '--muted': '#f4f4f6',
-    '--muted-foreground': '#555861',
-    '--card': 'color-mix(in srgb, var(--background) 99%, var(--surface-contrast-color) 1%)',
-    '--card-foreground': '#1c1c1f',
-    '--primary': '#FF7900',
-    '--primary-foreground': '#ffffff',
-    '--secondary': '#f5f5f5',
-    '--secondary-foreground': '#1a1a1a',
-    '--border': 'rgba(200, 200, 200, 0.5)',
-    '--ring': 'rgba(255, 121, 0, 0.4)'
-  }
+    '--background': OSI_THEME_COLORS.light.background,
+    '--foreground': OSI_THEME_COLORS.light.foreground,
+    '--muted': OSI_THEME_COLORS.light.muted,
+    '--muted-foreground': OSI_THEME_COLORS.light.mutedForeground,
+    '--card': colorMix(cssVar('--background'), 99, cssVar('--surface-contrast-color'), 1),
+    '--card-foreground': OSI_THEME_COLORS.light.cardForeground,
+    '--primary': OSI_COLORS.brand,
+    '--primary-foreground': OSI_COLORS.white,
+    '--secondary': OSI_THEME_COLORS.light.secondary,
+    '--secondary-foreground': OSI_THEME_COLORS.light.secondaryForeground,
+    '--border': OSI_THEME_COLORS.light.border,
+    '--ring': OSI_THEME_COLORS.light.ring,
+  },
 };
-
-

@@ -65,7 +65,6 @@ export const selectFilteredCards = (searchTerm: string) => createSelector(
     const term = searchTerm.toLowerCase();
     return cards.filter(card => 
       card.cardTitle?.toLowerCase().includes(term) ||
-      card.cardSubtitle?.toLowerCase().includes(term) ||
       card.sections?.some(section => 
         section.title?.toLowerCase().includes(term) ||
         section.description?.toLowerCase().includes(term)

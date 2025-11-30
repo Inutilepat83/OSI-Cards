@@ -1,0 +1,1037 @@
+/**
+ * iLibrary Integration Simulator Styles
+ * 
+ * This stylesheet demonstrates CSS encapsulation by creating
+ * hostile/conflicting CSS environments that the OSI Card
+ * must survive unscathed.
+ */
+
+// ============================================
+// Variables & Tokens
+// ============================================
+$header-height: 80px;
+$panel-gap: 24px;
+$border-radius: 12px;
+$transition-fast: 150ms ease;
+$transition-normal: 250ms ease;
+
+// ============================================
+// Base Page Layout
+// ============================================
+.ilibrary-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a0c 0%, #1a1a22 50%, #0d0d10 100%);
+  color: #e4e4e7;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+// ============================================
+// Header
+// ============================================
+.ilibrary-header {
+  padding: 32px 48px;
+  background: linear-gradient(180deg, rgba(255, 121, 0, 0.08) 0%, transparent 100%);
+  border-bottom: 1px solid rgba(255, 121, 0, 0.15);
+}
+
+.header-content {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    margin: 0;
+  }
+}
+
+.header-icon {
+  color: #ff7900;
+}
+
+.header-subtitle {
+  font-size: 0.875rem;
+  color: #a1a1aa;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+.header-description {
+  font-size: 1rem;
+  color: #a1a1aa;
+  max-width: 600px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+// ============================================
+// Main Content Layout
+// ============================================
+.ilibrary-content {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: $panel-gap;
+  padding: 32px 48px;
+  max-width: 1600px;
+  margin: 0 auto;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ============================================
+// Panel Styles
+// ============================================
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: $border-radius $border-radius 0 0;
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #e4e4e7;
+
+  lucide-icon {
+    color: #ff7900;
+  }
+}
+
+.env-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(255, 121, 0, 0.15);
+  color: #ff7900;
+  border: 1px solid rgba(255, 121, 0, 0.3);
+}
+
+// ============================================
+// Simulation Panel
+// ============================================
+.simulation-panel {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: $border-radius;
+  overflow: hidden;
+}
+
+// ============================================
+// SIMULATED CLIENT ENVIRONMENTS
+// These represent different host applications
+// with their own aggressive CSS
+// ============================================
+
+.simulated-app {
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  transition: all $transition-normal;
+}
+
+// --- Environment 0: OSI (Orange Sales Assistance) ---
+// Replicates the Orange Sales Assistance app environment with Boosted styling
+.env-osi {
+  background: var(--bkg-color, #F7F7F7) !important;
+  font-family: 'Helvetica Neue', Arial, sans-serif !important;
+  color: var(--text-color, black) !important;
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+
+  // OSI-specific CSS variables (light mode defaults)
+  --text-color: black;
+  --bkg-color: #F7F7F7;
+  --btn-txt-color: black;
+  --btn-bg-color: #FFFFFF;
+  --chat-border-color: #ECECEC;
+  --chat-content-bg-color: #FFFFFF;
+  --chat-content-sources-bg-color: #F7F7F7;
+  --history-border-color: #ECECEC;
+  --history-tab-active-bg-color: #ffffff;
+  --history-tab-active-color: #000000;
+  --star-bg-color: #E9E9E9;
+
+  * {
+    box-sizing: border-box !important;
+  }
+
+  .sim-app-header {
+    background: linear-gradient(180deg, #000000 0%, #1a1a1a 100%) !important;
+    padding: 8px 16px !important;
+    border-bottom: 3px solid #ff7900 !important;
+  }
+
+  .sim-logo-icon {
+    width: 28px !important;
+    height: 28px !important;
+    background: #ff7900 !important;
+    border-radius: 4px !important;
+  }
+
+  .sim-app-name {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  .sim-nav-item {
+    color: rgba(255, 255, 255, 0.7) !important;
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+    
+    &.active {
+      color: #ff7900 !important;
+      border-bottom: 2px solid #ff7900 !important;
+    }
+  }
+
+  .sim-app-content {
+    background: var(--chat-content-bg-color, #ffffff) !important;
+    padding: 16px !important;
+    flex: 1 !important;
+    border: 1px solid var(--chat-border-color, #ECECEC) !important;
+  }
+
+  .sim-section-title {
+    color: var(--text-color, #000000) !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    margin: 0 0 6px 0 !important;
+    border-bottom: 2px solid #ff7900 !important;
+    padding-bottom: 8px !important;
+  }
+
+  .sim-section-desc {
+    color: #666666 !important;
+    font-size: 12px !important;
+    margin: 0 0 16px 0 !important;
+  }
+
+  .sim-app-footer {
+    background: #1B1B1D !important;
+    color: #999999 !important;
+    padding: 8px 16px !important;
+    font-size: 10px !important;
+    text-align: center !important;
+  }
+
+  .sim-footer-divider {
+    margin: 0 8px !important;
+    color: #555555 !important;
+  }
+
+  // Custom scrollbar styling matching OSI app
+  ::-webkit-scrollbar {
+    height: 6px !important;
+    width: 6px !important;
+    background: #C0C0C0 !important;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #797979 !important;
+  }
+}
+
+// --- Environment 1: Corporate Portal ---
+// Bootstrap/Boosted-like styling with aggressive resets
+.env-corporate {
+  background: #f7f7f7 !important;
+  font-family: 'Helvetica Neue', Arial, sans-serif !important;
+  color: #333333 !important;
+  font-size: 14px !important;
+  line-height: 1.428571429 !important;
+
+  * {
+    box-sizing: border-box !important;
+  }
+
+  .sim-app-header {
+    background: linear-gradient(180deg, #000000 0%, #1a1a1a 100%) !important;
+    padding: 12px 24px !important;
+    border-bottom: 3px solid #ff7900 !important;
+  }
+
+  .sim-logo-icon {
+    width: 32px !important;
+    height: 32px !important;
+    background: #ff7900 !important;
+    border-radius: 4px !important;
+  }
+
+  .sim-app-name {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 16px !important;
+  }
+
+  .sim-nav-item {
+    color: rgba(255, 255, 255, 0.7) !important;
+    padding: 8px 16px !important;
+    font-size: 13px !important;
+    
+    &.active {
+      color: #ff7900 !important;
+      border-bottom: 2px solid #ff7900 !important;
+    }
+  }
+
+  .sim-app-content {
+    background: #ffffff !important;
+    padding: 24px !important;
+    flex: 1 !important;
+  }
+
+  .sim-section-title {
+    color: #000000 !important;
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    margin: 0 0 8px 0 !important;
+    border-bottom: 2px solid #eeeeee !important;
+    padding-bottom: 12px !important;
+  }
+
+  .sim-section-desc {
+    color: #666666 !important;
+    font-size: 13px !important;
+    margin: 0 0 20px 0 !important;
+  }
+
+  .sim-app-footer {
+    background: #333333 !important;
+    color: #999999 !important;
+    padding: 12px 24px !important;
+    font-size: 11px !important;
+    text-align: center !important;
+  }
+
+  .sim-footer-divider {
+    margin: 0 8px !important;
+    color: #555555 !important;
+  }
+}
+
+// --- Environment 2: Developer Console ---
+// Dark terminal aesthetic with monospace fonts
+.env-developer {
+  background: #0d1117 !important;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
+  color: #c9d1d9 !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+
+  .sim-app-header {
+    background: #161b22 !important;
+    padding: 8px 16px !important;
+    border-bottom: 1px solid #30363d !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .sim-logo-icon {
+    width: 20px !important;
+    height: 20px !important;
+    background: #238636 !important;
+    border-radius: 50% !important;
+    margin-right: 8px !important;
+  }
+
+  .sim-app-name {
+    color: #58a6ff !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+
+    &::before {
+      content: '~/';
+      color: #8b949e;
+    }
+  }
+
+  .sim-nav-item {
+    color: #8b949e !important;
+    padding: 4px 12px !important;
+    font-size: 12px !important;
+    border-radius: 6px !important;
+    
+    &.active {
+      color: #f0f6fc !important;
+      background: #21262d !important;
+    }
+
+    &:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.05) !important;
+    }
+  }
+
+  .sim-app-content {
+    background: #0d1117 !important;
+    padding: 20px !important;
+    flex: 1 !important;
+    border-left: 3px solid #238636 !important;
+  }
+
+  .sim-section-title {
+    color: #58a6ff !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    margin: 0 0 4px 0 !important;
+
+    &::before {
+      content: '$ ';
+      color: #238636;
+    }
+  }
+
+  .sim-section-desc {
+    color: #8b949e !important;
+    font-size: 12px !important;
+    margin: 0 0 16px 0 !important;
+
+    &::before {
+      content: '# ';
+      color: #484f58;
+    }
+  }
+
+  .sim-app-footer {
+    background: #161b22 !important;
+    color: #484f58 !important;
+    padding: 8px 16px !important;
+    font-size: 11px !important;
+    border-top: 1px solid #30363d !important;
+  }
+
+  .sim-footer-divider {
+    margin: 0 8px !important;
+    color: #30363d !important;
+  }
+}
+
+// --- Environment 3: Marketing Site ---
+// Light, modern with conflicting styles and aggressive typography
+.env-marketing {
+  background: linear-gradient(180deg, #fafafa 0%, #f0f0f0 100%) !important;
+  font-family: 'Poppins', 'Segoe UI', sans-serif !important;
+  color: #2d3748 !important;
+  font-size: 16px !important;
+  line-height: 1.75 !important;
+
+  // Aggressive global resets that could break components
+  * {
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .sim-app-header {
+    background: #ffffff !important;
+    padding: 20px 32px !important;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .sim-logo-icon {
+    width: 40px !important;
+    height: 40px !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border-radius: 10px !important;
+  }
+
+  .sim-app-name {
+    color: #1a202c !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  .sim-nav-item {
+    color: #718096 !important;
+    padding: 8px 20px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    border-radius: 999px !important;
+    transition: all 0.2s !important;
+    
+    &.active {
+      color: #ffffff !important;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    }
+  }
+
+  .sim-app-content {
+    background: transparent !important;
+    padding: 40px 32px !important;
+    flex: 1 !important;
+  }
+
+  .sim-section-title {
+    color: #1a202c !important;
+    font-size: 32px !important;
+    font-weight: 800 !important;
+    margin-bottom: 8px !important;
+    letter-spacing: -0.03em !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+  }
+
+  .sim-section-desc {
+    color: #718096 !important;
+    font-size: 16px !important;
+    margin-bottom: 32px !important;
+  }
+
+  .sim-app-footer {
+    background: #1a202c !important;
+    color: #a0aec0 !important;
+    padding: 20px 32px !important;
+    font-size: 13px !important;
+    text-align: center !important;
+  }
+
+  .sim-footer-divider {
+    margin: 0 12px !important;
+    color: #4a5568 !important;
+  }
+}
+
+// --- Environment 4: Legacy System ---
+// Aggressive CSS resets and conflicting styles
+.env-legacy {
+  background: #e8e8e8 !important;
+  font-family: 'Times New Roman', Times, serif !important;
+  color: #000000 !important;
+  font-size: 12px !important;
+  line-height: 1.2 !important;
+
+  // VERY aggressive resets
+  * {
+    all: revert !important;
+    box-sizing: content-box !important;
+  }
+
+  // Then re-apply flex for layout
+  .simulated-app, .sim-app-content {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .sim-app-header {
+    background: #003366 !important;
+    padding: 8px 16px !important;
+    border: 2px outset #6699cc !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .sim-logo-icon {
+    width: 24px !important;
+    height: 24px !important;
+    background: #cc0000 !important;
+    border: 2px outset #ff6666 !important;
+  }
+
+  .sim-app-name {
+    color: #ffff00 !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    text-shadow: 1px 1px #000000 !important;
+    font-family: 'Arial Black', sans-serif !important;
+  }
+
+  .sim-nav-item {
+    color: #ffffff !important;
+    padding: 4px 8px !important;
+    font-size: 11px !important;
+    text-decoration: underline !important;
+    
+    &.active {
+      color: #ffff00 !important;
+      background: #660000 !important;
+      text-decoration: none !important;
+    }
+  }
+
+  .sim-app-content {
+    background: #ffffff !important;
+    padding: 16px !important;
+    flex: 1 !important;
+    border: 2px inset #999999 !important;
+    margin: 8px !important;
+  }
+
+  .sim-section-title {
+    color: #003366 !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+    margin-bottom: 8px !important;
+    text-decoration: underline !important;
+    font-family: 'Arial', sans-serif !important;
+  }
+
+  .sim-section-desc {
+    color: #666666 !important;
+    font-size: 11px !important;
+    margin-bottom: 12px !important;
+    font-style: italic !important;
+  }
+
+  .sim-app-footer {
+    background: #003366 !important;
+    color: #99ccff !important;
+    padding: 6px 16px !important;
+    font-size: 10px !important;
+    text-align: center !important;
+    border: 2px outset #6699cc !important;
+  }
+
+  .sim-footer-divider {
+    margin: 0 6px !important;
+    color: #6699cc !important;
+  }
+
+  // Card wrapper needs special treatment
+  .card-wrapper {
+    all: initial !important;
+    display: block !important;
+    margin: 16px 0 !important;
+  }
+}
+
+// ============================================
+// Card Wrapper - Common styles
+// ============================================
+.card-wrapper {
+  margin-top: 16px;
+  min-height: 500px;
+  // Remove fixed height - let card grow to fit content
+  position: relative;
+  display: block;
+  // No padding, no background - fully transparent container
+  padding: 0 !important;
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+
+  // Ensure AI card renderer displays properly - match home demo page
+  app-ai-card-renderer {
+    display: block !important;
+    width: 100% !important;
+    min-height: 500px !important;
+    padding: 8px !important; // Match home demo padding for glow effect
+    
+    // Enhanced glow effect - more visible like home demo
+    .ai-card-surface {
+      box-shadow: 
+        0 0 20px rgba(255, 121, 0, 0.35),
+        0 0 40px rgba(255, 121, 0, 0.15),
+        0 4px 20px rgba(0, 0, 0, 0.2) !important;
+      
+      &:hover {
+        box-shadow: 
+          0 0 28px rgba(255, 121, 0, 0.45),
+          0 0 50px rgba(255, 121, 0, 0.2),
+          0 8px 30px rgba(0, 0, 0, 0.25) !important;
+      }
+    }
+  }
+}
+
+// ============================================
+// Generating State
+// ============================================
+.generating-placeholder,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  border: 2px dashed rgba(0, 0, 0, 0.15);
+}
+
+.generating-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(255, 121, 0, 0.2);
+  border-top-color: #ff7900;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.generating-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ff7900;
+}
+
+.progress-bar-container {
+  width: 200px;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #ff7900, #ff9933);
+  border-radius: 3px;
+  transition: width 150ms ease;
+}
+
+.progress-text {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.empty-state {
+  color: rgba(0, 0, 0, 0.4);
+
+  .empty-icon {
+    opacity: 0.3;
+  }
+
+  p {
+    font-size: 14px;
+    margin: 0;
+  }
+}
+
+// ============================================
+// Controls Panel
+// ============================================
+.controls-panel {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: $border-radius;
+  height: fit-content;
+  position: sticky;
+  top: 24px;
+}
+
+.controls-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.control-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #a1a1aa;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  lucide-icon {
+    color: #ff7900;
+  }
+}
+
+.speed-value {
+  margin-left: auto;
+  color: #ff7900;
+  font-weight: 700;
+}
+
+.control-select {
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #e4e4e7;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: rgba(255, 121, 0, 0.3);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #ff7900;
+    box-shadow: 0 0 0 3px rgba(255, 121, 0, 0.15);
+  }
+
+  option {
+    background: #1a1a22;
+    color: #e4e4e7;
+  }
+}
+
+.control-hint {
+  font-size: 0.75rem;
+  color: #71717a;
+  margin: 0;
+}
+
+.control-range {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  appearance: none;
+  cursor: pointer;
+
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #ff7900;
+    border-radius: 50%;
+    cursor: grab;
+    box-shadow: 0 2px 8px rgba(255, 121, 0, 0.4);
+    transition: transform $transition-fast;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+}
+
+.range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: #71717a;
+}
+
+.radio-group {
+  display: flex;
+  gap: 16px;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+
+  input[type="radio"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    &:checked {
+      border-color: #ff7900;
+      background: radial-gradient(circle, #ff7900 40%, transparent 40%);
+    }
+  }
+
+  .radio-label {
+    font-size: 0.9rem;
+    color: #e4e4e7;
+  }
+}
+
+.control-actions {
+  padding-top: 8px;
+}
+
+.btn-primary,
+.btn-danger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #ff7900 0%, #ff9933 100%);
+  color: #ffffff;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(255, 121, 0, 0.4);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  color: #ffffff;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4);
+  }
+}
+
+// ============================================
+// Status Panel
+// ============================================
+.status-panel {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.status-label {
+  font-size: 0.75rem;
+  color: #71717a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #e4e4e7;
+
+  &.status-idle { color: #71717a; }
+  &.status-thinking { color: #fbbf24; }
+  &.status-streaming { color: #ff7900; }
+  &.status-complete { color: #22c55e; }
+  &.status-aborted { color: #ef4444; }
+  &.status-error { color: #ef4444; }
+}
+
+.status-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mini-progress-bar {
+  width: 80px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.mini-progress-fill {
+  height: 100%;
+  background: #ff7900;
+  border-radius: 2px;
+  transition: width 150ms ease;
+}
+
+// ============================================
+// Info Box
+// ============================================
+.info-box {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 121, 0, 0.08);
+  border: 1px solid rgba(255, 121, 0, 0.2);
+  border-radius: 8px;
+}
+
+.info-icon {
+  color: #ff7900;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.info-content {
+  strong {
+    display: block;
+    font-size: 0.85rem;
+    color: #ff7900;
+    margin-bottom: 4px;
+  }
+
+  p {
+    font-size: 0.8rem;
+    color: #a1a1aa;
+    line-height: 1.5;
+    margin: 0;
+  }
+}
+
+// ============================================
+// Simulated App Common Styles
+// ============================================
+.sim-app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sim-app-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sim-app-nav {
+  display: flex;
+  gap: 4px;
+}
+
+.sim-nav-item {
+  cursor: pointer;
+  transition: all $transition-fast;
+}
+

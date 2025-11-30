@@ -78,7 +78,7 @@ export function getContrastRatio(color1: string, color2: string): number {
  * @param isLargeText - Whether text is large (18pt+ or 14pt+ bold)
  * @returns True if contrast meets WCAG AA standard
  */
-export function meetsWCAGAA(color1: string, color2: string, isLargeText: boolean = false): boolean {
+export function meetsWCAGAA(color1: string, color2: string, isLargeText = false): boolean {
   const ratio = getContrastRatio(color1, color2);
   return isLargeText ? ratio >= 3 : ratio >= 4.5;
 }
@@ -91,7 +91,7 @@ export function meetsWCAGAA(color1: string, color2: string, isLargeText: boolean
  * @param isLargeText - Whether text is large (18pt+ or 14pt+ bold)
  * @returns True if contrast meets WCAG AAA standard
  */
-export function meetsWCAGAAA(color1: string, color2: string, isLargeText: boolean = false): boolean {
+export function meetsWCAGAAA(color1: string, color2: string, isLargeText = false): boolean {
   const ratio = getContrastRatio(color1, color2);
   return isLargeText ? ratio >= 4.5 : ratio >= 7;
 }
@@ -109,7 +109,7 @@ export function adjustColorForContrast(
   color: string,
   targetRatio: number,
   background: string,
-  isDarken: boolean = true
+  isDarken = true
 ): string {
   const rgb = hexToRgb(color);
   const bgRgb = hexToRgb(background);

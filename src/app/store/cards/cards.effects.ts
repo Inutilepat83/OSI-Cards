@@ -96,7 +96,6 @@ export class CardsEffects {
               const templateStartTime = performance.now();
               const scrubbed = removeAllIds(template);
               const hydrated = ensureCardIds({ ...scrubbed });
-              delete hydrated.cardSubtitle;
               delete hydrated.cardType;
               
               const duration = performance.now() - startTime;
@@ -190,7 +189,6 @@ export class CardsEffects {
                   map((manifestEntries: any[]): Action[] => {
                     const scrubbed = removeAllIds(firstCard);
                     const hydrated = ensureCardIds({ ...scrubbed });
-                    delete hydrated.cardSubtitle;
 
                     const duration = performance.now() - startTime;
                     this.performanceService.recordMetric('loadFirstExample', duration, {
@@ -223,7 +221,6 @@ export class CardsEffects {
                 map((cardsByType: AICardConfig[]): Action[] => {
                   const scrubbed = removeAllIds(firstCard);
                   const hydrated = ensureCardIds({ ...scrubbed });
-                  delete hydrated.cardSubtitle;
 
                   const duration = performance.now() - startTime;
                   this.performanceService.recordMetric('loadFirstExample', duration, {

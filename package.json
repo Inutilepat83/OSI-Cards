@@ -2,6 +2,9 @@
   "name": "osi-cards",
   "version": "1.2.2",
   "private": true,
+  "bin": {
+    "osi-cards": "./tools/cli/osi-cards-cli.js"
+  },
   "scripts": {
     "ng": "ng",
     "start": "npx ng serve",
@@ -10,7 +13,8 @@
     "start:timeout:long": "./scripts/start-with-timeout.sh 60",
     "start:safe": "npm run lint:fix && npm run start:timeout",
     "build": "npx ng build",
-    "build:lib": "ng build osi-cards-lib && node scripts/generate-library-package-json.js && node scripts/copy-library-files.js",
+    "build:lib": "ng build osi-cards-lib && node scripts/generate-library-package-json.js && node scripts/copy-library-files.js && node scripts/compile-styles.js",
+    "compile:styles": "node scripts/compile-styles.js",
     "prepublishOnly": "npm run build:lib",
     "publish:lib": "cd dist/osi-cards-lib && npm publish",
     "publish:lib:dry-run": "cd dist/osi-cards-lib && npm pack",
@@ -29,6 +33,23 @@
     "test:e2e:debug": "playwright test --debug",
     "test:visual": "playwright test e2e/visual-regression.spec.ts",
     "test:visual:update": "playwright test e2e/visual-regression.spec.ts --update-snapshots",
+    "test:multi-env": "playwright test e2e/integration/multi-environment.spec.ts",
+    "test:multi-env:ui": "playwright test e2e/integration/multi-environment.spec.ts --ui",
+    "test:multi-env:update": "playwright test e2e/integration/multi-environment.spec.ts --update-snapshots",
+    "test:visual-consistency": "playwright test e2e/integration/visual-consistency.spec.ts",
+    "test:visual-consistency:ui": "playwright test e2e/integration/visual-consistency.spec.ts --ui",
+    "test:visual-consistency:update": "playwright test e2e/integration/visual-consistency.spec.ts --update-snapshots",
+    "test:visual-consistency:report": "playwright test e2e/integration/visual-consistency.spec.ts --reporter=html",
+    "test:ilibrary": "playwright test e2e/integration/ilibrary-integration.spec.ts e2e/integration/multi-environment.spec.ts e2e/integration/visual-consistency.spec.ts",
+    "generate:test-configs": "node scripts/generate-test-configs.js",
+    "generate:from-registry": "node scripts/generate-from-registry.js",
+    "generate:registry-types": "node scripts/generate-from-registry.js --types",
+    "generate:registry-all": "node scripts/generate-from-registry.js --all",
+    "generate:styles": "node scripts/generate-style-bundle.js",
+    "generate:manifest": "node scripts/generate-section-manifest.js",
+    "generate:all": "npm run generate:from-registry && npm run generate:styles && npm run generate:manifest && npm run generate:tests && npm run generate:public-api && npm run docs:from-registry",
+    "generate:public-api": "node scripts/generate-public-api.js",
+    "generate:tests": "node scripts/generate-test-suite.js",
     "test:smoke": "echo 'Smoke tests placeholder'",
     "test:health": "echo 'Health checks placeholder'",
     "lint": "npx ng lint",
@@ -42,7 +63,7 @@
     "bundle:report": "npm run build:prod && node scripts/bundle-analyzer.js",
     "audit:tree-shaking": "node scripts/tree-shaking-audit.js",
     "audit:onpush": "node scripts/audit-onpush.js",
-    "generate:manifest": "node scripts/generate-manifest.js",
+    "generate:card-manifest": "node scripts/generate-manifest.js",
     "prebuild": "npm run generate:manifest && npm run version:generate && npm run docs:generate",
     "version:patch": "node scripts/version-manager.js patch",
     "version:minor": "node scripts/version-manager.js minor",
@@ -56,7 +77,8 @@
     "performance:report": "echo 'Performance report placeholder'",
     "serve:prod": "npx ng serve --configuration production",
     "clean": "rm -rf dist/ node_modules/.cache/ .angular/",
-    "docs:generate": "node scripts/generate-section-docs.js && node scripts/generate-llm-docs.js && node scripts/generate-readme-from-ngdoc.js && node scripts/generate-ngdoc-pages.js && node scripts/generate-ngdoc-routes.js",
+    "docs:generate": "node scripts/generate-docs-from-registry.js && node scripts/generate-readme-from-ngdoc.js && node scripts/generate-ngdoc-pages.js && node scripts/generate-ngdoc-routes.js",
+    "docs:from-registry": "node scripts/generate-docs-from-registry.js",
     "docs:api": "typedoc",
     "docs:sections": "node scripts/generate-section-docs.js",
     "docs:readme": "node scripts/generate-readme-from-ngdoc.js",
@@ -170,6 +192,9 @@
     ],
     "*.ts": [
       "bash -c 'npx tsc --noEmit --project tsconfig.json || true'"
+    ],
+    "projects/osi-cards-lib/section-registry.json": [
+      "node scripts/generate-from-registry.js"
     ]
   },
   "husky": {

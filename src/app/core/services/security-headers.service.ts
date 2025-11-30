@@ -35,7 +35,7 @@ import { environment } from '@environments/environment';
 export class SecurityHeadersService {
   private readonly logger = inject(LoggingService);
   private readonly cspNonceService = inject(CSPNonceService);
-  private securityHeaders: Map<string, string> = new Map();
+  private securityHeaders = new Map<string, string>();
 
   constructor() {
     // Initialize default headers in constructor to ensure they're set immediately
@@ -177,7 +177,7 @@ export class SecurityHeadersService {
    * @param includeSubDomains - Include subdomains (default: true)
    * @param preload - Enable HSTS preload (default: false)
    */
-  setHSTSHeader(maxAge: number = 31536000, includeSubDomains: boolean = true, preload: boolean = false): void {
+  setHSTSHeader(maxAge = 31536000, includeSubDomains = true, preload = false): void {
     let value = `max-age=${maxAge}`;
     if (includeSubDomains) {
       value += '; includeSubDomains';

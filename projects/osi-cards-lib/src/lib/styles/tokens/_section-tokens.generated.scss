@@ -1,0 +1,141 @@
+// AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
+// Generated from section-registry.json
+// Section-specific CSS custom properties
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SECTION TOKENS
+// Default values for section-specific styling
+// ═══════════════════════════════════════════════════════════════════════════
+
+:root {
+
+  // Info Section
+  --osi-section-info-columns: 1;
+  --osi-section-info-collapse: 1;
+
+  // Analytics Section
+  --osi-section-analytics-columns: 2;
+  --osi-section-analytics-collapse: 1;
+
+  // Contact Card Section
+  --osi-section-contact-card-columns: 2;
+  --osi-section-contact-card-collapse: 1;
+
+  // Network Card Section
+  --osi-section-network-card-columns: 1;
+  --osi-section-network-card-collapse: 1;
+
+  // Map Section
+  --osi-section-map-columns: 1;
+  --osi-section-map-collapse: 0;
+
+  // Financials Section
+  --osi-section-financials-columns: 2;
+  --osi-section-financials-collapse: 1;
+
+  // Event Section
+  --osi-section-event-columns: 1;
+  --osi-section-event-collapse: 1;
+
+  // List Section
+  --osi-section-list-columns: 1;
+  --osi-section-list-collapse: 1;
+
+  // Chart Section
+  --osi-section-chart-columns: 2;
+  --osi-section-chart-collapse: 0;
+
+  // Product Section
+  --osi-section-product-columns: 1;
+  --osi-section-product-collapse: 1;
+
+  // Solutions Section
+  --osi-section-solutions-columns: 1;
+  --osi-section-solutions-collapse: 1;
+
+  // Overview Section
+  --osi-section-overview-columns: 1;
+  --osi-section-overview-collapse: 0;
+
+  // Quotation Section
+  --osi-section-quotation-columns: 1;
+  --osi-section-quotation-collapse: 1;
+
+  // Text Reference Section
+  --osi-section-text-reference-columns: 1;
+  --osi-section-text-reference-collapse: 1;
+
+  // Brand Colors Section
+  --osi-section-brand-colors-columns: 2;
+  --osi-section-brand-colors-collapse: 1;
+
+  // News Section
+  --osi-section-news-columns: 1;
+  --osi-section-news-collapse: 1;
+
+  // Social Media Section
+  --osi-section-social-media-columns: 1;
+  --osi-section-social-media-collapse: 1;
+
+  // Fallback Section
+  --osi-section-fallback-columns: 1;
+  --osi-section-fallback-collapse: 1;
+}
+
+// Section type display properties
+@mixin section-type-vars($type) {
+  @if $type == 'info' {
+    --section-columns: var(--osi-section-info-columns, 1);
+  }
+  @if $type == 'analytics' {
+    --section-columns: var(--osi-section-analytics-columns, 2);
+  }
+  @if $type == 'contact-card' {
+    --section-columns: var(--osi-section-contact-card-columns, 2);
+  }
+  @if $type == 'network-card' {
+    --section-columns: var(--osi-section-network-card-columns, 1);
+  }
+  @if $type == 'map' {
+    --section-columns: var(--osi-section-map-columns, 1);
+  }
+  @if $type == 'financials' {
+    --section-columns: var(--osi-section-financials-columns, 2);
+  }
+  @if $type == 'event' {
+    --section-columns: var(--osi-section-event-columns, 1);
+  }
+  @if $type == 'list' {
+    --section-columns: var(--osi-section-list-columns, 1);
+  }
+  @if $type == 'chart' {
+    --section-columns: var(--osi-section-chart-columns, 2);
+  }
+  @if $type == 'product' {
+    --section-columns: var(--osi-section-product-columns, 1);
+  }
+  @if $type == 'solutions' {
+    --section-columns: var(--osi-section-solutions-columns, 1);
+  }
+  @if $type == 'overview' {
+    --section-columns: var(--osi-section-overview-columns, 1);
+  }
+  @if $type == 'quotation' {
+    --section-columns: var(--osi-section-quotation-columns, 1);
+  }
+  @if $type == 'text-reference' {
+    --section-columns: var(--osi-section-text-reference-columns, 1);
+  }
+  @if $type == 'brand-colors' {
+    --section-columns: var(--osi-section-brand-colors-columns, 2);
+  }
+  @if $type == 'news' {
+    --section-columns: var(--osi-section-news-columns, 1);
+  }
+  @if $type == 'social-media' {
+    --section-columns: var(--osi-section-social-media-columns, 1);
+  }
+  @if $type == 'fallback' {
+    --section-columns: var(--osi-section-fallback-columns, 1);
+  }
+}

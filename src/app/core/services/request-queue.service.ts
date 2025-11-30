@@ -53,7 +53,7 @@ export class RequestQueueService {
    * @param priority - Request priority (higher = more important, default: 0)
    * @returns Observable that emits when the request completes
    */
-  enqueue<T>(request: () => Observable<T>, priority: number = 0): Observable<T> {
+  enqueue<T>(request: () => Observable<T>, priority = 0): Observable<T> {
     const id = `req_${++this.requestIdCounter}`;
     const subject = new Subject<T>();
 

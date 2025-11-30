@@ -50,6 +50,8 @@ export class BrandColorsSectionComponent extends BaseSectionComponent<CardField>
     });
 
     this.brandColors = colors;
+    // Trigger change detection for OnPush strategy
+    this.cdr.markForCheck();
   }
 
   private isHexColor(value: string): boolean {

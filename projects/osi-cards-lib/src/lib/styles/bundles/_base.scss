@@ -1,0 +1,65 @@
+// ============================================
+// BASE BUNDLE
+// ============================================
+//
+// Shared foundation for all component bundles.
+// Contains tokens, reset, and core styles without section-specific code.
+//
+// Usage: Import in individual section bundles
+//   @use 'base';
+//
+// ============================================
+
+// 1. Master tokens
+@use '../tokens/master' as *;
+
+// 2. Shadow DOM reset
+@use '../reset/shadow-reset';
+
+// 3. Generate CSS custom properties
+:host {
+  @include osi-theme-base('integration', true);
+  @include osi-tokens('integration', true);
+}
+
+:host([data-theme='night']),
+:host-context([data-theme='night']) {
+  @include osi-theme-dark('integration', true);
+}
+
+:host([data-theme='day']),
+:host-context([data-theme='day']) {
+  @include osi-theme-light('integration', true);
+}
+
+// 4. Core styles
+@import '../core/mixins';
+@import '../core/utilities';
+@import '../core/animations';
+
+// 5. Section foundation (required for all sections)
+@import '../components/sections/design-system';
+@import '../components/sections/sections-base';
+@import '../components/sections/section-types';
+@import '../components/sections/section-shell';
+@import '../components/sections/unified-cards';
+
+// 6. Accessibility
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    @include osi-tokens-reduced-motion();
+  }
+}
+
+@media (prefers-contrast: high) {
+  :host {
+    @include osi-tokens-high-contrast();
+  }
+}
+
+@media (forced-colors: active) {
+  :host {
+    @include osi-tokens-forced-colors();
+  }
+}
+

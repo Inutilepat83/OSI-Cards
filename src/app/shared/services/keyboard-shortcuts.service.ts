@@ -1,4 +1,4 @@
-import { Injectable, inject, DestroyRef } from '@angular/core';
+import { Injectable, inject, DestroyRef, OnDestroy } from '@angular/core';
 import { Subject, Observable, fromEvent } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -20,7 +20,7 @@ export interface KeyboardShortcut {
 @Injectable({
   providedIn: 'root'
 })
-export class KeyboardShortcutsService {
+export class KeyboardShortcutsService implements OnDestroy {
   private readonly shortcuts = new Map<string, KeyboardShortcut>();
   private readonly shortcutTriggered$ = new Subject<KeyboardShortcut>();
   private readonly destroyRef = inject(DestroyRef);

@@ -33,7 +33,7 @@ export class DevToolsService {
   private readonly appConfig = inject(AppConfigService);
   private readonly logger = inject(LoggingService);
   
-  private performanceMetrics: Map<string, number> = new Map();
+  private performanceMetrics = new Map<string, number>();
   private isPerformanceMonitoringEnabled = false;
   private memoryUsageInterval?: ReturnType<typeof setInterval>;
 
@@ -216,6 +216,12 @@ export class DevToolsService {
     };
   }
 }
+
+
+
+
+
+
 
 
 

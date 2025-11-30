@@ -1,5 +1,4 @@
-@use '../../../../styles/core/variables' as *;
-@use '../../../../styles/core/mixins' as *;
+/* CSS variables are inherited from global styles */
 
 .performance-dashboard {
   padding: var(--card-padding, 1.25rem);

@@ -44,7 +44,7 @@
   will-change: transform;
   /* Orange glow only - no dark shadows, intensified by 50% */
   box-shadow: 
-    0 0 var(--glow-blur, 18px) var(--glow-color, rgba(255, 121, 0, 0.375));
+    0 0 var(--glow-blur) var(--glow-color, rgba(255, 121, 0, 0.375));
   /* Smooth transition for glow only - transform handled by JavaScript */
   transition: box-shadow 200ms cubic-bezier(0.2, 0, 0.2, 1);
 }
@@ -53,7 +53,7 @@
 .glow-container {
   position: relative;
   /* Always show base glow - smooth transitions, intensified by 50% */
-  filter: drop-shadow(0 0 var(--glow-blur, 12px) var(--glow-color, rgba(255, 121, 0, 0.225)));
+  filter: drop-shadow(0 0 var(--glow-blur) var(--glow-color, rgba(255, 121, 0, 0.225)));
   transition: filter 200ms cubic-bezier(0.4, 0, 0.2, 1);
   will-change: filter;
   
@@ -146,7 +146,7 @@
   .tilt-container:hover {
     /* Orange glow only - no dark shadows, intensified by 50% */
     box-shadow: 
-      0 0 var(--glow-blur, 18px) var(--glow-color, rgba(255, 121, 0, 0.375));
+      0 0 var(--glow-blur) var(--glow-color, rgba(255, 121, 0, 0.375));
   }
 }
 

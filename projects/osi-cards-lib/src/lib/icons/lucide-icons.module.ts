@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Provider } from '@angular/core';
 import {
   LucideAngularModule,
   Activity,
@@ -72,7 +72,10 @@ import {
   Type,
   Wrench,
   XCircle,
-  Zap
+  Zap,
+  // Provider token and class
+  LUCIDE_ICONS,
+  LucideIconProvider
 } from 'lucide-angular';
 
 const ICONS = {
@@ -155,6 +158,27 @@ const ICONS = {
   exports: [LucideAngularModule]
 })
 export class LucideIconsModule {}
+
+/**
+ * Provide Lucide icons for OSI Cards library
+ * This is used by provideOSICards() to register icons at the application level
+ */
+export function provideLucideIcons(): Provider[] {
+  return [
+    { provide: LUCIDE_ICONS, useFactory: () => new LucideIconProvider(ICONS) }
+  ];
+}
+
+/**
+ * Export the ICONS object for direct use
+ */
+export { ICONS as OSI_CARDS_ICONS };
+
+
+
+
+
+
 
 
 

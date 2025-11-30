@@ -39,8 +39,6 @@ export const SIZE_CONSTANTS = {
   DEFAULT_MAX_STRING_LENGTH: 1000,
   /** Maximum card title length */
   MAX_CARD_TITLE_LENGTH: 200,
-  /** Maximum card subtitle length */
-  MAX_CARD_SUBTITLE_LENGTH: 500,
 } as const;
 
 /**

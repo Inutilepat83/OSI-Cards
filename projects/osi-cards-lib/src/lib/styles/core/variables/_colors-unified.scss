@@ -1,0 +1,26 @@
+// ===================================================================
+// COLOR VARIABLES - Scoped for .osi-cards-container Integration
+// Generated from master tokens
+//
+// Used when integrating into external apps (like Orange Sales Assistance)
+// to prevent CSS variable conflicts with the host application.
+//
+// This file is designed to be imported INSIDE .osi-cards-container { }
+// ===================================================================
+
+@use '../../tokens/master' as *;
+
+// Base colors for scoped container (& refers to .osi-cards-container)
+& {
+  @include osi-theme-base('integration', true);
+}
+
+// Dark theme (Night Mode) - scoped
+&[data-theme='night'] {
+  @include osi-theme-dark('integration', true);
+}
+
+// Light theme (Day Mode) - scoped
+&[data-theme='day'] {
+  @include osi-theme-light('integration', true);
+}

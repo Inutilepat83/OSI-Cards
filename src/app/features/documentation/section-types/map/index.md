@@ -4,7 +4,19 @@ Displays geographic data with embedded maps, pins, and location information.
 
 ## Overview
 
-The **Map Section** is used for displays geographic data with embedded maps, pins, and location information.
+The **Map Section** (`type: "map"`) is used for displays geographic data with embedded maps, pins, and location information.
+
+### Quick Facts
+
+| Property | Value |
+|----------|-------|
+| Type | `map` |
+| Uses Fields | Yes |
+| Uses Items | No |
+| Default Columns | 1 |
+| Supports Collapse | No |
+| Aliases | `locations` |
+| External Library | `leaflet` |
 
 ## Use Cases
 
@@ -15,25 +27,63 @@ The **Map Section** is used for displays geographic data with embedded maps, pin
 
 ## Data Schema
 
-```typescript
-interface CardSection {
-  title: string;
-  type: 'map';
-  fields?: CardField[];
-  
-}
-```
+### Fields Schema
 
-## Example
+| Property | Type | Description |
+|----------|------|-------------|
+| `name` | string | Location name |
+| `address` | string | Physical address |
+| `x` | number | Latitude coordinate |
+| `y` | number | Longitude coordinate |
+| `type` | string | Location type (office, branch, etc.) |
+| `coordinates` | object | - |
+
+
+
+## Complete Example
 
 ```json
 {
-  "title": "Map Section Example",
+  "title": "Global Presence",
+  "type": "map",
+  "description": "Office locations worldwide",
+  "fields": [
+    {
+      "name": "Headquarters",
+      "x": 37.7749,
+      "y": -122.4194,
+      "type": "office",
+      "address": "San Francisco, CA, USA"
+    },
+    {
+      "name": "European HQ",
+      "x": 51.5074,
+      "y": -0.1278,
+      "type": "office",
+      "address": "London, UK"
+    },
+    {
+      "name": "APAC Office",
+      "x": 35.6762,
+      "y": 139.6503,
+      "type": "branch",
+      "address": "Tokyo, Japan"
+    }
+  ]
+}
+```
+
+## Minimal Example
+
+```json
+{
+  "title": "Location",
   "type": "map",
   "fields": [
     {
-      "label": "Example Label",
-      "value": "Example Value"
+      "name": "Office",
+      "x": 0,
+      "y": 0
     }
   ]
 }
@@ -42,14 +92,15 @@ interface CardSection {
 ## Best Practices
 
 1. Include coordinates or addresses
-1. Use proper location formats
-1. Add location metadata
-1. Ensure map accessibility
+2. Use proper location formats
+3. Add location metadata
+4. Ensure map accessibility
 
-## Component Properties
+## Component Information
 
-
-
+- **Selector:** `app-map-section`
+- **Component Path:** `./lib/components/sections/map-section/map-section.component`
+- **Style Path:** `./lib/styles/components/sections/_map.scss`
 
 ## Related Documentation
 

@@ -2,6 +2,7 @@
   #container
   class="relative w-full masonry-container"
   [class.masonry-container--loading]="!isLayoutReady"
+  [class.masonry-container--streaming]="isStreaming"
   [style.height.px]="containerHeight"
   [style.gap.px]="gap"
 >
@@ -10,7 +11,18 @@
     #itemRef
     class="absolute masonry-item"
     [class.masonry-item--ready]="isLayoutReady"
+    [class.masonry-item--animating]="item.isNew"
+    [class.masonry-item--vertical]="getOrientation(item.section) === 'vertical'"
+    [class.masonry-item--horizontal]="getOrientation(item.section) === 'horizontal'"
+    [class.masonry-item--auto]="getOrientation(item.section) === 'auto'"
+    [class.masonry-item--priority-critical]="item.section?.priority === 'critical'"
+    [class.masonry-item--priority-important]="item.section?.priority === 'important'"
+    [class.masonry-item--sticky]="item.section?.sticky"
+    [class.masonry-item--flex-grow]="item.section?.flexGrow"
     [attr.id]="getSectionId(item.section)"
+    [attr.data-orientation]="getOrientation(item.section)"
+    [attr.data-priority]="item.section?.priority || 'standard'"
+    [attr.data-col-span]="item.colSpan"
     [ngStyle]="{
       position: 'absolute',
       left: item.left,

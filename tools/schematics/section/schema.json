@@ -2,11 +2,12 @@
   "$schema": "http://json-schema.org/schema",
   "id": "OSICardsSectionSchematic",
   "title": "OSI Cards Section Component Schematic",
+  "description": "Creates a new section component and registers it in section-registry.json",
   "type": "object",
   "properties": {
     "name": {
       "type": "string",
-      "description": "The name of the section component",
+      "description": "The name of the section component (will be dasherized)",
       "$default": {
         "$source": "argv",
         "index": 0
@@ -18,12 +19,11 @@
       "format": "path",
       "description": "The path to create the section component",
       "visible": false,
-      "default": "src/app/shared/components/cards/sections"
+      "default": "projects/osi-cards-lib/src/lib/components/sections"
     },
     "type": {
       "type": "string",
-      "description": "The section type identifier (e.g., 'info', 'list', 'chart')",
-      "x-prompt": "What is the section type identifier?"
+      "description": "The section type identifier (defaults to name if not provided)"
     },
     "usesFields": {
       "type": "boolean",
@@ -37,12 +37,32 @@
       "default": false,
       "x-prompt": "Does this section use items (CardItem)?"
     },
+    "defaultColumns": {
+      "type": "integer",
+      "description": "Default column span (1-4)",
+      "default": 1,
+      "minimum": 1,
+      "maximum": 4
+    },
+    "description": {
+      "type": "string",
+      "description": "Description for documentation"
+    },
     "project": {
       "type": "string",
       "description": "The name of the project",
-      "default": "osi-cards"
+      "default": "osi-cards-lib"
+    },
+    "skipRegistry": {
+      "type": "boolean",
+      "description": "Skip adding to section-registry.json",
+      "default": false
+    },
+    "skipStyles": {
+      "type": "boolean",
+      "description": "Skip creating style file",
+      "default": false
     }
   },
-  "required": ["name", "type"]
+  "required": ["name"]
 }
-

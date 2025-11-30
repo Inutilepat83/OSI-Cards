@@ -1,0 +1,30 @@
+{
+  "generatedAt": "2025-11-30T14:06:20.770Z",
+  "generatedFrom": "section-registry.json",
+  "registryVersion": "1.0.0",
+  "sectionTypes": [
+    "info",
+    "analytics",
+    "contact-card",
+    "network-card",
+    "map",
+    "financials",
+    "event",
+    "list",
+    "chart",
+    "product",
+    "solutions",
+    "overview",
+    "quotation",
+    "text-reference",
+    "brand-colors",
+    "news",
+    "social-media",
+    "fallback"
+  ],
+  "files": [
+    "all-sections-complete.json",
+    "all-sections-minimal.json",
+    "all-sections-edge-cases.json"
+  ]
+}

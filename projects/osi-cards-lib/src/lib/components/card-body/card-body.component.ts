@@ -48,7 +48,7 @@ export class CardBodyComponent {
   @Input() gap = 12;
   
   /** Minimum column width in pixels */
-  @Input() minColumnWidth = 280;
+  @Input() minColumnWidth = 260;
   
   /** Emitted when a section event occurs */
   @Output() sectionEvent = new EventEmitter<SectionRenderEvent>();
@@ -64,5 +64,8 @@ export class CardBodyComponent {
     this.layoutChange.emit(info);
   }
 }
+
+
+
 
 

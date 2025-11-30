@@ -1,0 +1,58 @@
+/* ===================================================================
+   SHARED COMPONENT STYLES BUNDLE
+   
+   This file contains all component imports shared across all entry points:
+   - _styles.scss (demo app, :root scope)
+   - _styles-scoped.scss (integration, .osi-cards-container scope)
+   - _styles-standalone.scss (full isolation with Bootstrap reset)
+   
+   Each entry point imports this bundle after setting up its scope and variables.
+   =================================================================== */
+
+// Core styles (must come first, after variables)
+@import 'core/mixins';
+@import 'core/surface-layers';
+@import 'core/global';
+@import 'core/utilities';
+@import 'core/animations';
+
+// Streaming effects (must come after animations)
+@import 'components/streaming-effects';
+
+// Layout styles
+@import 'layout/tilt';
+@import 'layout/masonry';
+@import 'layout/feature-grid';
+
+// Hero card and feature card styles
+@import 'components/hero-card';
+
+// Component styles
+@import 'components/cards/ai-card';
+@import 'components/sections/design-system'; /* Master design system - must import first */
+@import 'components/sections/sections-base';
+@import 'components/sections/section-types';
+@import 'components/sections/section-shell';
+@import 'components/sections/overview';
+@import 'components/sections/analytics';
+@import 'components/sections/news';
+@import 'components/sections/social-media';
+@import 'components/sections/info';
+@import 'components/sections/map';
+@import 'components/sections/list';
+@import 'components/sections/contact';
+@import 'components/sections/network';
+@import 'components/sections/product';
+@import 'components/sections/chart';
+@import 'components/sections/event';
+@import 'components/sections/financials';
+@import 'components/sections/solutions';
+@import 'components/sections/quotation';
+@import 'components/sections/text-reference';
+@import 'components/sections/brand-colors';
+@import 'components/sections/fallback';
+@import 'components/sections/unified-cards'; /* Must be last to override all section-specific styles */
+@import 'components/sections/global-enforcement'; /* GLOBAL ENFORCEMENT - MUST BE ABSOLUTELY LAST to enforce all settings */
+
+
+

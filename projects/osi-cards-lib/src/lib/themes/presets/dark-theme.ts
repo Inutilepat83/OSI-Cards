@@ -1,26 +1,27 @@
 import { OSICardsThemeConfig } from '../theme.service';
+import { OSI_COLORS, OSI_THEME_COLORS, colorMix, cssVar } from '../tokens.constants';
 
 /**
  * Dark theme preset configuration
  * Based on the night theme from the design system
+ *
+ * Uses shared token constants for consistency with SCSS tokens.
  */
 export const darkTheme: OSICardsThemeConfig = {
   name: 'night',
   preset: true,
   variables: {
-    '--background': '#0a0a0a',
-    '--foreground': '#ffffff',
-    '--muted': '#242424',
-    '--muted-foreground': '#aaaaaa',
-    '--card': 'color-mix(in srgb, var(--background) 99%, var(--surface-contrast-color) 1%)',
-    '--card-foreground': '#ffffff',
-    '--primary': '#FF7900',
-    '--primary-foreground': '#ffffff',
-    '--secondary': '#333333',
-    '--secondary-foreground': '#ffffff',
-    '--border': 'rgba(200, 200, 200, 0.3)',
-    '--ring': 'rgba(255, 121, 0, 0.6)'
-  }
+    '--background': OSI_THEME_COLORS.dark.background,
+    '--foreground': OSI_THEME_COLORS.dark.foreground,
+    '--muted': OSI_THEME_COLORS.dark.muted,
+    '--muted-foreground': OSI_THEME_COLORS.dark.mutedForeground,
+    '--card': colorMix(cssVar('--background'), 99, cssVar('--surface-contrast-color'), 1),
+    '--card-foreground': OSI_THEME_COLORS.dark.cardForeground,
+    '--primary': OSI_COLORS.brand,
+    '--primary-foreground': OSI_THEME_COLORS.dark.foreground,
+    '--secondary': OSI_THEME_COLORS.dark.secondary,
+    '--secondary-foreground': OSI_THEME_COLORS.dark.secondaryForeground,
+    '--border': OSI_THEME_COLORS.dark.border,
+    '--ring': OSI_THEME_COLORS.dark.ring,
+  },
 };
-
-

@@ -29,7 +29,7 @@ export class FormatNumberPipe implements PipeTransform {
   transform(
     value: number | null | undefined,
     format: 'number' | 'currency' | 'percent' = 'number',
-    locale: string = 'en-US'
+    locale = 'en-US'
   ): string {
     if (value === null || value === undefined || isNaN(value)) {
       return '';

@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, OnDestroy } from '@angular/core';
 import { LoggingService } from './logging.service';
 
 /**
@@ -40,7 +40,7 @@ export interface WebVitalsMetrics {
 @Injectable({
   providedIn: 'root'
 })
-export class WebVitalsService {
+export class WebVitalsService implements OnDestroy {
   private readonly logger = inject(LoggingService);
   private metrics: WebVitalsMetrics = {};
   private observers: PerformanceObserver[] = [];
@@ -106,7 +106,7 @@ export class WebVitalsService {
   private observeLayoutShift(): void {
     try {
       let clsValue = 0;
-      let clsEntries: PerformanceEntry[] = [];
+      const clsEntries: PerformanceEntry[] = [];
 
       const observer = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {

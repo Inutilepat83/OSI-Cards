@@ -3,31 +3,34 @@
 @import 'sections-base';
 @import 'unified-cards';
 
-/* Contact Grid Layout */
+/* Contact Grid Layout - All properties use !important to override Bootstrap */
 .contact-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
   gap: var(--section-card-gap) !important;
-  width: 100%;
+  width: 100% !important;
+  box-sizing: border-box !important;
   
   @media (max-width: 820px) {
     grid-template-columns: 1fr !important;
   }
 }
 
-/* Contact Card */
+/* Contact Card - All properties use !important to override Bootstrap */
 .contact-card {
   @include card;
-  display: flex;
-  flex-direction: column;
+  display: flex !important;
+  flex-direction: column !important;
   gap: var(--card-gap) !important;
-  min-height: auto;
-  cursor: pointer;
+  min-height: auto !important;
+  cursor: pointer !important;
   padding: var(--card-padding) !important;
-  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-  background: var(--card-background);
-  position: relative;
-  overflow: hidden;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  background: var(--card-background) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  text-align: left !important;
 
   /* Subtle top accent border for executives */
   &::before {
@@ -44,64 +47,61 @@
 
   /* Minimalistic hover effect */
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px color-mix(in srgb, var(--foreground) 12%, transparent),
-                0 0 0 1px color-mix(in srgb, var(--color-brand) 15%, transparent);
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 16px rgba(28, 28, 31, 0.12), 0 0 0 1px rgba(255, 121, 0, 0.15) !important;
 
     .contact-card__name {
-      color: var(--color-brand);
+      color: var(--color-brand, #FF7900) !important;
     }
 
     .contact-card__avatar {
-      transform: scale(1.05);
+      transform: scale(1.05) !important;
     }
     
     .contact-card__header {
-      border-bottom-color: color-mix(in srgb, var(--color-brand) 20%, transparent);
+      border-bottom-color: rgba(255, 121, 0, 0.2) !important;
     }
   }
 
   &:focus-visible {
-    outline: 2px solid var(--color-brand);
-    outline-offset: 2px;
+    outline: 2px solid var(--color-brand, #FF7900) !important;
+    outline-offset: 2px !important;
   }
 }
 
-/* Card Header */
+/* Card Header - All properties use !important to override Bootstrap */
 .contact-card__header {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin: 0;
-  padding-bottom: var(--card-gap);
-  border-bottom: 1px solid color-mix(in srgb, var(--card-text-secondary) 10%, transparent);
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  margin: 0 !important;
+  padding-bottom: var(--card-gap) !important;
+  border-bottom: 1px solid rgba(85, 88, 97, 0.1) !important;
+  box-sizing: border-box !important;
 }
 
 .contact-card__avatar {
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  min-height: 48px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, 
-    color-mix(in srgb, var(--color-brand) 22%, transparent), 
-    color-mix(in srgb, var(--color-brand) 12%, transparent));
-  overflow: hidden;
-  border: 3px solid color-mix(in srgb, var(--color-brand) 60%, transparent);
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--color-brand) 15%, transparent),
-              inset 0 1px 2px rgba(255, 255, 255, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  align-self: flex-start;
+  flex-shrink: 0 !important;
+  width: 48px !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  aspect-ratio: 1 !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  /* Use rgba fallbacks for maximum compatibility */
+  background: linear-gradient(135deg, rgba(255, 121, 0, 0.22), rgba(255, 121, 0, 0.12)) !important;
+  overflow: hidden !important;
+  border: 3px solid rgba(255, 121, 0, 0.6) !important;
+  box-shadow: 0 2px 8px rgba(255, 121, 0, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  align-self: flex-start !important;
+  box-sizing: border-box !important;
   
   .contact-card:hover & {
-    border-color: var(--color-brand);
-    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-brand) 15%, transparent),
-                0 0 0 2px color-mix(in srgb, var(--color-brand) 15%, transparent),
-                inset 0 1px 2px rgba(255, 255, 255, 0.1);
+    border-color: var(--color-brand, #FF7900) !important;
+    box-shadow: 0 2px 8px rgba(255, 121, 0, 0.15), 0 0 0 2px rgba(255, 121, 0, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.1) !important;
   }
 }
 
@@ -114,12 +114,12 @@
 
 .contact-card__initials {
   @include card-title-text;
-  font-size: calc(var(--card-title-font-size) * 0.85);
-  font-weight: 600;
-  color: var(--color-brand);
-  line-height: 1;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+  font-size: calc(var(--card-title-font-size, 0.95rem) * 0.85) !important;
+  font-weight: 600 !important;
+  color: var(--color-brand, #FF7900) !important;
+  line-height: 1 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.03em !important;
 }
 
 .contact-card__header-content {
@@ -181,14 +181,14 @@
   border-radius: 4px;
 
   &:hover {
-    color: var(--card-text-hover) !important;
-    transform: translateX(2px);
-    background: color-mix(in srgb, var(--color-brand) 8%, transparent);
+    color: var(--card-text-hover, #FF7900) !important;
+    transform: translateX(2px) !important;
+    background: rgba(255, 121, 0, 0.08) !important;
 
     .contact-card__meta-icon {
-      opacity: 1;
-      color: var(--color-brand);
-      transform: scale(1.1) translateX(1px);
+      opacity: 1 !important;
+      color: var(--color-brand, #FF7900) !important;
+      transform: scale(1.1) translateX(1px) !important;
     }
   }
 
@@ -203,12 +203,27 @@
 }
 
 .contact-card__meta-icon {
-  flex-shrink: 0;
-  width: 15px;
-  height: 15px;
-  opacity: 0.65;
-  color: var(--color-brand);
-  transition: opacity 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  flex-shrink: 0 !important;
+  width: 15px !important;
+  height: 15px !important;
+  opacity: 0.65 !important;
+  color: var(--color-brand, #FF7900) !important;
+  transition: opacity 0.2s ease, color 0.2s ease, transform 0.2s ease !important;
+  
+  // Ensure lucide icons render properly
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  
+  svg {
+    width: 100% !important;
+    height: 100% !important;
+    stroke: currentColor !important;
+    fill: none !important;
+    stroke-width: 2 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+  }
 }
 
 .contact-card__meta-text {

@@ -177,3 +177,9 @@ To add new schematics:
 3. Create template files in `files/` directory
 4. Update `collection.json` to register the new schematic
 
+
+
+
+
+
+

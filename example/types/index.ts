@@ -176,7 +176,6 @@ export type CardType = 'Company' | 'Contact' | 'Opportunity' | 'Product' | 'Anal
 export interface AICardConfig {
   id: string;
   cardTitle: string;
-  cardSubtitle?: string;
   cardType: CardType;
   sections: AISectionConfig[];
   actions?: CardAction[];

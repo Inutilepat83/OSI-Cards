@@ -85,6 +85,8 @@ export abstract class BaseService implements IBaseService, IErrorHandlingService
    */
   ngOnDestroy(): void {
     // Default: no cleanup needed
+    // This is intentionally empty - subclasses should override if cleanup is required
+    void 0; // Satisfy linter requirement for non-empty method
   }
 
   /**

@@ -231,3 +231,68 @@
   }
 }
 
+/* Action buttons skeleton */
+.card-skeleton-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: 0.75rem;
+}
+
+.skeleton-action-button {
+  height: 2.5rem;
+  width: 120px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--muted, rgba(255, 255, 255, 0.1)) 100%, transparent) 0%,
+    color-mix(in srgb, var(--muted-foreground, rgba(255, 255, 255, 0.2)) 100%, transparent) 20%,
+    color-mix(in srgb, #FF7900 15%, transparent) 50%,
+    color-mix(in srgb, var(--muted, rgba(255, 255, 255, 0.1)) 100%, transparent) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: 0.625rem;
+  animation: shimmerWave 1.5s ease-in-out infinite, skeleton-fade-in 0.4s ease-out forwards;
+  opacity: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-action-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, #FF7900 20%, transparent) 50%,
+    transparent 100%
+  );
+  animation: shimmerWave 1.5s ease-in-out infinite;
+}
+
+/* Signature skeleton */
+.card-skeleton-signature {
+  display: flex;
+  justify-content: center;
+  padding-top: 0.5rem;
+}
+
+.skeleton-signature-line {
+  width: 180px;
+  height: 0.875rem;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--muted, rgba(255, 255, 255, 0.05)) 100%, transparent) 0%,
+    color-mix(in srgb, var(--muted-foreground, rgba(255, 255, 255, 0.1)) 100%, transparent) 50%,
+    color-mix(in srgb, var(--muted, rgba(255, 255, 255, 0.05)) 100%, transparent) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: 0.25rem;
+  animation: shimmerWave 1.5s ease-in-out infinite;
+  opacity: 0.6;
+}
+

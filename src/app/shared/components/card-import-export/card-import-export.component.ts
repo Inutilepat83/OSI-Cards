@@ -487,14 +487,14 @@ export class CardImportExportComponent implements OnInit, OnDestroy {
 
   // Export state
   exportMode: 'all' | 'single' | 'filtered' = 'all';
-  selectedCardId: string = '';
-  selectedType: string = '';
+  selectedCardId = '';
+  selectedType = '';
   exportFormat: 'json' | 'individual' = 'json';
   exportResult: { success: boolean; message: string } | null = null;
 
   // Analysis state
   analysisResult: any = null;
-  typeEntries: Array<{ key: string; value: number }> = [];
+  typeEntries: { key: string; value: number }[] = [];
 
   globalError: string | null = null;
   private destroy$ = new Subject<void>();

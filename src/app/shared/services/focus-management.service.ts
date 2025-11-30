@@ -24,7 +24,7 @@ import { LoggingService } from '../../core/services/logging.service';
 export class FocusManagementService {
   private readonly logger = inject(LoggingService);
   private readonly ngZone = inject(NgZone);
-  private focusTraps: Map<HTMLElement, () => void> = new Map();
+  private focusTraps = new Map<HTMLElement, () => void>();
 
   /**
    * Focus an element by selector or element reference

@@ -1,0 +1,38 @@
+/**
+ * OSI Cards Standalone CSS
+ * 
+ * This file provides minimal CSS variables for host applications.
+ * The library uses Shadow DOM encapsulation, so component styles
+ * are self-contained and don't require external stylesheets.
+ * 
+ * Host applications can override these variables to customize the theme.
+ */
+
+:root {
+  /* Brand Colors */
+  --color-brand: #FF7900;
+  --color-brand-hover: #e66d00;
+  --color-brand-active: #cc6000;
+  
+  /* Background Colors */
+  --background: #ffffff;
+  --foreground: #1c1c1f;
+  --muted-foreground: rgba(85, 88, 97, 0.6);
+  
+  /* Typography */
+  --font-family-base: Helvetica, 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  
+  /* Component Tokens */
+  --section-card-border-radius: 10px;
+  --button-border-radius: 10px;
+}
+
+/* Dark theme overrides */
+[data-theme='night'],
+.dark-theme,
+.dark {
+  --background: #1a1a1a;
+  --foreground: #ffffff;
+  --muted-foreground: rgba(200, 200, 200, 0.6);
+}
+

@@ -3,7 +3,6 @@ export * from './components/cards';
 export * from './components/error-display/error-display.component';
 export * from './components/json-editor/json-editor.component';
 export * from './components/card-type-selector/card-type-selector.component';
-export * from './components/llm-simulation-controls/llm-simulation-controls.component';
 export * from './components/preview-controls/preview-controls.component';
 export * from './components/system-stats/system-stats.component';
 export * from './components/card-templates-gallery/card-templates-gallery.component';

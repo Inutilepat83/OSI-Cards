@@ -4,7 +4,19 @@ Displays solution offerings, use cases, features, and benefits.
 
 ## Overview
 
-The **Solutions Section** is used for displays solution offerings, use cases, features, and benefits.
+The **Solutions Section** (`type: "solutions"`) is used for displays solution offerings, use cases, features, and benefits.
+
+### Quick Facts
+
+| Property | Value |
+|----------|-------|
+| Type | `solutions` |
+| Uses Fields | Yes |
+| Uses Items | Yes |
+| Default Columns | 1 |
+| Supports Collapse | Yes |
+| Aliases | None |
+
 
 ## Use Cases
 
@@ -15,25 +27,74 @@ The **Solutions Section** is used for displays solution offerings, use cases, fe
 
 ## Data Schema
 
-```typescript
-interface CardSection {
-  title: string;
-  type: 'solutions';
-  fields?: CardField[];
-  
-}
-```
+### Fields Schema
 
-## Example
+| Property | Type | Description |
+|----------|------|-------------|
+| `title` | string | Solution title |
+| `description` | string | Solution description |
+| `category` | string | Solution category |
+| `benefits` | array | List of benefits |
+| `deliveryTime` | string | Delivery timeframe |
+| `complexity` | string | Implementation complexity |
+| `outcomes` | array | Expected outcomes |
+
+### Items Schema
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `title` | string | Solution title |
+| `description` | string | Solution description |
+| `category` | string | Solution category |
+| `benefits` | array | List of benefits |
+| `deliveryTime` | string | Delivery timeframe |
+| `complexity` | string | Implementation complexity |
+| `outcomes` | array | Expected outcomes |
+
+## Complete Example
 
 ```json
 {
-  "title": "Solutions Section Example",
+  "title": "Solutions Portfolio",
+  "type": "solutions",
+  "description": "Available solutions and services",
+  "fields": [
+    {
+      "title": "Cloud Migration",
+      "description": "Complete cloud infrastructure migration service",
+      "category": "Infrastructure",
+      "benefits": [
+        "Scalability",
+        "Cost reduction",
+        "Security"
+      ],
+      "deliveryTime": "8-10 weeks"
+    },
+    {
+      "title": "Data Analytics Platform",
+      "description": "Real-time analytics and reporting solution",
+      "category": "Analytics",
+      "benefits": [
+        "Real-time insights",
+        "Custom dashboards",
+        "API access"
+      ],
+      "deliveryTime": "4-6 weeks"
+    }
+  ]
+}
+```
+
+## Minimal Example
+
+```json
+{
+  "title": "Solutions",
   "type": "solutions",
   "fields": [
     {
-      "label": "Example Label",
-      "value": "Example Value"
+      "title": "Solution",
+      "description": "Description"
     }
   ]
 }
@@ -42,14 +103,15 @@ interface CardSection {
 ## Best Practices
 
 1. Highlight key benefits
-1. Include use cases
-1. Add feature lists
-1. Show outcomes when available
+2. Include use cases
+3. Add feature lists
+4. Show outcomes when available
 
-## Component Properties
+## Component Information
 
-
-
+- **Selector:** `app-solutions-section`
+- **Component Path:** `./lib/components/sections/solutions-section/solutions-section.component`
+- **Style Path:** `./lib/styles/components/sections/_solutions.scss`
 
 ## Related Documentation
 

@@ -122,7 +122,6 @@ export function createCompanyCard(options: CompanyCardOptions): AICardConfig {
   return {
     id: `company-${name.toLowerCase().replace(/\s+/g, '-')}`,
     cardTitle: name,
-    cardSubtitle: subtitle,
     cardType: 'company',
     sections: sections.filter(s => s.fields && s.fields.length > 0),
     actions: actions.length > 0 ? actions : undefined

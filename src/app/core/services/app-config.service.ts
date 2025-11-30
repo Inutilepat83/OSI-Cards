@@ -24,20 +24,22 @@ export class AppConfigService {
     IMMEDIATE_DEBOUNCE_MS: 10,
     DEBOUNCED_DEBOUNCE_MS: 300,
     MAX_JSON_LENGTH: 1000000,
-    MAX_CARD_TITLE_LENGTH: 200,
-    MAX_CARD_SUBTITLE_LENGTH: 500
+    MAX_CARD_TITLE_LENGTH: 200
   };
 
   // LLM Simulation Configuration
+  // Phase 5: Optimized throttling for smooth streaming
   readonly LLM_SIMULATION = {
-    THINKING_DELAY_MS: 3500, // Reduced by 30% (from 5000ms) for faster generation
-    CHUNK_DELAY_BASE_MS: 10,
-    MIN_CHUNK_SIZE: 18,
-    MAX_CHUNK_SIZE: 64,
-    TOKENS_PER_SECOND: 130, // Increased by 30% (from 100) for faster generation
+    THINKING_DELAY_MS: 1500, // Quick thinking delay for responsive start
+    CHUNK_DELAY_BASE_MS: 12,
+    MIN_CHUNK_SIZE: 20, // Balanced chunks
+    MAX_CHUNK_SIZE: 60,
+    TOKENS_PER_SECOND: 80, // Slower token rate for observable streaming
     CHARS_PER_TOKEN: 4,
     STREAM_TIMEOUT_MS: 30000,
-    COMPLETION_BATCH_DELAY_MS: 70 // Reduced by 30% (from 100ms) for faster generation
+    COMPLETION_BATCH_DELAY_MS: 100, // Point 24: Batch section completions
+    CARD_UPDATE_THROTTLE_MS: 200, // Point 23: Structural changes throttle
+    CONTENT_UPDATE_THROTTLE_MS: 350 // Point 25: Content-only changes throttle (more aggressive)
   };
 
   // Section Completion Configuration

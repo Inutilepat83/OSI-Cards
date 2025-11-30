@@ -47,7 +47,9 @@ describe('RateLimitInterceptor', () => {
       // Make many rapid requests
       for (let i = 0; i < 100; i++) {
         interceptor.intercept(request, nextHandler).subscribe({
-          error: () => {} // Ignore errors
+          error: () => {
+            // Intentionally empty - ignore errors in test
+          }
         });
       }
       tick(10);
@@ -63,7 +65,9 @@ describe('RateLimitInterceptor', () => {
       // Exhaust tokens
       for (let i = 0; i < 20; i++) {
         interceptor.intercept(request, nextHandler).subscribe({
-          error: () => {}
+          error: () => {
+            // Intentionally empty - ignore errors in test
+          }
         });
       }
       tick(10);
@@ -108,7 +112,9 @@ describe('RateLimitInterceptor', () => {
       nextHandler.handle.and.returnValue(throwError(() => errorResponse));
 
       interceptor.intercept(request, nextHandler).subscribe({
-        error: () => {}
+        error: () => {
+          // Intentionally empty - ignore errors in test
+        }
       });
       tick(10);
 

@@ -1,0 +1,88 @@
+/* ===================================================================
+   DEMO WEBSITE TOKENS - Page-level design tokens
+   
+   These tokens are specific to the demo/documentation website and should
+   NOT be used by the library or integration targets like Orange Sales Assistance.
+   
+   Naming convention: All demo tokens use --demo-* prefix to avoid
+   confusion with library tokens (which have no prefix or use --osi-*).
+   =================================================================== */
+
+:root {
+  /* ===== PAGE LAYOUT ===== */
+  --demo-page-max-width: 1400px;
+  --demo-page-padding: 1.5rem;
+  --demo-page-padding-mobile: 1rem;
+  
+  /* ===== HERO SECTION ===== */
+  --demo-hero-padding: 5rem 1.5rem;
+  --demo-hero-padding-mobile: 3rem 1rem;
+  --demo-hero-title-size: 2.5rem;
+  --demo-hero-title-size-mobile: 1.75rem;
+  --demo-hero-subtitle-size: 1.125rem;
+  --demo-hero-subtitle-size-mobile: 1rem;
+  
+  /* ===== CAPABILITIES SECTION ===== */
+  --demo-capabilities-card-padding: 2rem;
+  --demo-capabilities-card-padding-mobile: 1.5rem;
+  --demo-capabilities-icon-size: 64px;
+  --demo-capabilities-icon-size-desktop: 72px;
+  --demo-capabilities-title-size: 1.375rem;
+  --demo-capabilities-title-size-desktop: 1.5rem;
+  --demo-capabilities-description-size: 1rem;
+  --demo-capabilities-description-size-desktop: 1.0625rem;
+  
+  /* ===== GRID LAYOUTS ===== */
+  --demo-grid-gap: 2rem;
+  --demo-grid-gap-mobile: 1.5rem;
+  --demo-grid-min-width: 320px;
+  
+  /* ===== BADGE STYLES ===== */
+  --demo-badge-padding: 0.5rem 1.25rem;
+  --demo-badge-radius: 100px;
+  --demo-badge-font-size: 0.6875rem;
+  --demo-badge-letter-spacing: 0.12em;
+  
+  /* ===== MARKETING EFFECTS ===== */
+  --demo-gradient-primary: linear-gradient(
+    135deg,
+    hsl(var(--muted) / 0.3) 0%,
+    hsl(var(--background)) 50%,
+    hsl(var(--muted) / 0.2) 100%
+  );
+  --demo-glow-primary: radial-gradient(
+    circle,
+    color-mix(in srgb, #FF7900 20%, transparent) 0%,
+    transparent 70%
+  );
+  
+  /* ===== ANIMATION TIMINGS ===== */
+  --demo-animation-duration: 0.6s;
+  --demo-animation-stagger: 0.08s;
+  --demo-hover-lift: -6px;
+  --demo-hover-scale: 1.15;
+}
+
+/* Mobile overrides */
+@media (max-width: 640px) {
+  :root {
+    --demo-hero-padding: var(--demo-hero-padding-mobile);
+    --demo-hero-title-size: var(--demo-hero-title-size-mobile);
+    --demo-hero-subtitle-size: var(--demo-hero-subtitle-size-mobile);
+    --demo-capabilities-card-padding: var(--demo-capabilities-card-padding-mobile);
+    --demo-grid-gap: var(--demo-grid-gap-mobile);
+    --demo-page-padding: var(--demo-page-padding-mobile);
+  }
+}
+
+/* Desktop enhancements */
+@media (min-width: 640px) {
+  :root {
+    --demo-capabilities-icon-size: var(--demo-capabilities-icon-size-desktop);
+    --demo-capabilities-title-size: var(--demo-capabilities-title-size-desktop);
+    --demo-capabilities-description-size: var(--demo-capabilities-description-size-desktop);
+  }
+}
+
+
+

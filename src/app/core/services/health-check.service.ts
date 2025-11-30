@@ -8,13 +8,11 @@ import { AppConfigService } from './app-config.service';
 export interface HealthStatus {
   status: 'healthy' | 'degraded' | 'unhealthy';
   timestamp: Date;
-  services: {
-    [key: string]: {
+  services: Record<string, {
       status: 'up' | 'down' | 'degraded';
       responseTime?: number;
       error?: string;
-    };
-  };
+    }>;
   metrics: {
     uptime: number;
     memoryUsage?: number;

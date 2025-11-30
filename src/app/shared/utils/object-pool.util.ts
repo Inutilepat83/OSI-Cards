@@ -19,7 +19,7 @@ export class ObjectPool<T> {
   constructor(
     createFn: () => T,
     resetFn?: (obj: T) => void,
-    maxSize: number = 50
+    maxSize = 50
   ) {
     this.createFn = createFn;
     this.resetFn = resetFn;
@@ -108,6 +108,12 @@ export function createCardFieldPool() {
     200
   );
 }
+
+
+
+
+
+
 
 
 

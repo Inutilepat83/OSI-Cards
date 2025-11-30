@@ -1,0 +1,14 @@
+// ============================================
+// RESET STYLES INDEX
+// ============================================
+//
+// This file consolidates all reset styles for the OSI Cards library.
+//
+// Available resets:
+// - shadow-reset: For Shadow DOM encapsulated components
+// - framework-reset: For resetting CSS framework variables
+//
+// ============================================
+
+@forward 'shadow-reset';
+@forward 'framework-reset';

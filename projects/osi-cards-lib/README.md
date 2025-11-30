@@ -1,6 +1,6 @@
 # osi-cards-lib
 
-Standalone OSI Cards library for Angular applications
+Standalone OSI Cards library for Angular applications with CSS Layer support for easy style overrides
 
 ## Installation
 
@@ -19,7 +19,7 @@ import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
   imports: [AICardRendererComponent],
   template: `
     <app-ai-card-renderer [cardConfig]="card"></app-ai-card-renderer>
-  `,
+  `
 })
 export class ExampleComponent {
   card: AICardConfig = {
@@ -28,9 +28,11 @@ export class ExampleComponent {
       {
         title: 'Info',
         type: 'info',
-        fields: [{ label: 'Name', value: 'Example' }],
-      },
-    ],
+        fields: [
+          { label: 'Name', value: 'Example' }
+        ]
+      }
+    ]
   };
 }
 ```

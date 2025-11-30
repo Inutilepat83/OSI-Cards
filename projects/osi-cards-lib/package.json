@@ -1,13 +1,8 @@
 {
   "name": "osi-cards-lib",
-  "version": "1.4.1",
-  "description": "Standalone OSI Cards library for Angular applications",
-  "keywords": [
-    "angular",
-    "cards",
-    "ui",
-    "components"
-  ],
+  "version": "1.4.0",
+  "description": "Standalone OSI Cards library for Angular applications with CSS Layer support for easy style overrides",
+  "keywords": ["angular", "cards", "ui", "components", "css-layers", "theming"],
   "author": "",
   "license": "MIT",
   "peerDependencies": {
@@ -41,17 +36,44 @@
       "default": "./fesm2022/osi-cards-lib.mjs"
     },
     "./styles/_styles": {
+      "sass": "./styles/_styles.scss",
       "default": "./styles/_styles.scss"
     },
     "./styles/_styles.scss": {
+      "sass": "./styles/_styles.scss",
       "default": "./styles/_styles.scss"
     },
     "./styles/_styles-scoped": {
+      "sass": "./styles/_styles-scoped.scss",
       "default": "./styles/_styles-scoped.scss"
     },
     "./styles/_styles-scoped.scss": {
+      "sass": "./styles/_styles-scoped.scss",
       "default": "./styles/_styles-scoped.scss"
+    },
+    "./styles/_styles-standalone": {
+      "sass": "./styles/_styles-standalone.scss",
+      "default": "./styles/_styles-standalone.scss"
+    },
+    "./styles/_styles-standalone.scss": {
+      "sass": "./styles/_styles-standalone.scss",
+      "default": "./styles/_styles-standalone.scss"
+    },
+    "./styles/osi-cards.css": {
+      "style": "./styles/osi-cards.css",
+      "default": "./styles/osi-cards.css"
+    },
+    "./styles/osi-cards-scoped.css": {
+      "style": "./styles/osi-cards-scoped.css",
+      "default": "./styles/osi-cards-scoped.css"
+    },
+    "./styles/osi-cards-standalone.css": {
+      "style": "./styles/osi-cards-standalone.css",
+      "default": "./styles/osi-cards-standalone.css"
     }
   },
-  "sideEffects": false
+  "sideEffects": [
+    "*.css",
+    "*.scss"
+  ]
 }

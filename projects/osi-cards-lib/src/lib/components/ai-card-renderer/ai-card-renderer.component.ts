@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, inject, Injector, isDevMode, PLATFORM_ID } from '@angular/core';
+import { Component, ElementRef, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, inject, Injector, isDevMode, PLATFORM_ID, ViewEncapsulation } from '@angular/core';
 import { CommonModule, ViewportScroller } from '@angular/common';
 import { AICardConfig, CardSection, CardField, CardItem, CardAction, MailCardAction } from '../../models';
 import { Subject, takeUntil, fromEvent, filter, delay, interval } from 'rxjs';
@@ -7,6 +7,9 @@ import { IconService, SectionNormalizationService } from '../../services';
 import { LucideIconsModule } from '../../icons';
 import { MasonryGridComponent, MasonryLayoutInfo } from '../masonry-grid/masonry-grid.component';
 import { SectionRenderEvent } from '../section-renderer/section-renderer.component';
+import { CardHeaderComponent } from '../card-header/card-header.component';
+import { CardSectionListComponent } from '../card-section-list/card-section-list.component';
+import { CardActionsComponent } from '../card-actions/card-actions.component';
 import { CardChangeType } from '../../utils';
 import { trigger, transition, style, animate, AnimationBuilder } from '@angular/animations';
 import { isPlatformBrowser } from '@angular/common';
@@ -24,10 +27,11 @@ export type StreamingStage = 'idle' | 'thinking' | 'streaming' | 'complete' | 'a
 @Component({
   selector: 'app-ai-card-renderer',
   standalone: true,
-  imports: [CommonModule, LucideIconsModule, MasonryGridComponent],
+  imports: [CommonModule, LucideIconsModule, MasonryGridComponent, CardHeaderComponent, CardSectionListComponent, CardActionsComponent],
   templateUrl: './ai-card-renderer.component.html',
-  styleUrls: ['./ai-card-renderer.component.css'],
+  styleUrls: ['../../styles/bundles/_ai-card.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.ShadowDom,
   animations: [
     trigger('messageAnimation', [
       transition('* => *', [
@@ -64,7 +68,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   private isMouseOverEmptyState = false;
   private scrollY = 0;
   
-  private readonly funnyMessages = [
+  private readonly defaultLoadingMessages = [
     'Deepening into archives...',
     'Asking all 40,000 employees...',
     'Re-reading manifesto...',
@@ -86,6 +90,26 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     'Channeling inner wisdom...',
     'Waiting for the right moment...'
   ];
+
+  /**
+   * Custom loading messages to display in the empty state.
+   * When not provided, uses default funny messages.
+   * Messages rotate every 2.5 seconds.
+   */
+  @Input() loadingMessages?: string[];
+
+  /**
+   * Custom title for the empty/loading state.
+   * @default 'Creating OSI Card'
+   */
+  @Input() loadingTitle = 'Creating OSI Card';
+
+  /**
+   * Get active loading messages (custom or default)
+   */
+  private get activeLoadingMessages(): string[] {
+    return this.loadingMessages?.length ? this.loadingMessages : this.defaultLoadingMessages;
+  }
   
   @Input()
   set cardConfig(value: AICardConfig | undefined) {
@@ -164,6 +188,42 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   @Input() streamingStage: StreamingStage = undefined;
   @Input() streamingProgress?: number; // Progress 0-1
   @Input() streamingProgressLabel?: string; // e.g., "STREAMING JSON (75%)"
+  
+  /**
+   * Boolean flag to directly control streaming animation state.
+   * When true, applies 'streaming-active' class to card surface for animations.
+   * Alternative to using streamingStage for simpler use cases.
+   */
+  @Input() isStreaming = false;
+  
+  /**
+   * When true, shows a loading/generating state by default when no card data is available.
+   * Set to false if you want to handle loading states externally.
+   * @default true
+   */
+  @Input() showLoadingByDefault = true;
+  
+  /** 
+   * Optional explicit container width from parent for reliable masonry layout.
+   * When provided, this is passed to the masonry grid to avoid DOM measurement issues.
+   */
+  @Input() containerWidth?: number;
+  
+  /**
+   * Computed effective streaming stage.
+   * Returns 'thinking' when showLoadingByDefault is true and no sections are available.
+   */
+  get effectiveStreamingStage(): StreamingStage {
+    // If an explicit stage is provided, use it
+    if (this.streamingStage) {
+      return this.streamingStage;
+    }
+    // Show loading state by default when no data is available
+    if (this.showLoadingByDefault && (!this.processedSections || this.processedSections.length === 0)) {
+      return 'thinking';
+    }
+    return undefined;
+  }
 
   @Input()
   set changeType(value: CardChangeType) {
@@ -183,6 +243,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   @Output() fullscreenToggle = new EventEmitter<boolean>();
   @Output() agentAction = new EventEmitter<{ action: CardAction; card: AICardConfig; agentId?: string; context?: Record<string, unknown> }>();
   @Output() questionAction = new EventEmitter<{ action: CardAction; card: AICardConfig; question?: string }>();
+  @Output() export = new EventEmitter<void>();
   
   @ViewChild('cardContainer') cardContainer!: ElementRef<HTMLElement>;
   @ViewChild('tiltContainer') tiltContainerRef!: ElementRef<HTMLDivElement>;
@@ -190,6 +251,35 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   @ViewChild('emptyStateContainer') emptyStateContainer!: ElementRef<HTMLDivElement>;
   
   processedSections: CardSection[] = [];
+  
+  /**
+   * Measured container width for reliable masonry layout in Shadow DOM.
+   * When containerWidth input is not provided, this is auto-measured.
+   */
+  private measuredContainerWidth = 0;
+  private containerResizeObserver?: ResizeObserver;
+  
+  /**
+   * Effective container width to pass to masonry grid.
+   * Uses explicit input if provided, otherwise uses measured width.
+   * Falls back to window-based estimation to ensure multi-column layout works.
+   */
+  get effectiveContainerWidth(): number | undefined {
+    // Explicit input takes priority
+    if (this.containerWidth && this.containerWidth > 0) {
+      return this.containerWidth;
+    }
+    // Use measured width if available
+    if (this.measuredContainerWidth > 0) {
+      return this.measuredContainerWidth;
+    }
+    // Window fallback - ensures multi-column layout even if measurement fails
+    if (isPlatformBrowser(this.platformId) && typeof window !== 'undefined') {
+      // Assume standard card width (window minus typical margins)
+      return Math.max(window.innerWidth - 80, 260);
+    }
+    return undefined;
+  }
   isHovered = false;
   mousePosition: MousePosition = { x: 0, y: 0 };
   
@@ -210,7 +300,6 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   private fallbackCard: AICardConfig = {
     id: 'fallback-test',
     cardTitle: 'Test Company',
-    cardSubtitle: 'Fallback Card for Testing',
     sections: [
       {
         id: 'test-info',
@@ -307,6 +396,83 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   ngAfterViewInit(): void {
     // Fragment handling removed for standalone library
     // Consumers can implement their own fragment handling if needed
+    
+    // Set up container width measurement for Shadow DOM compatibility
+    this.setupContainerWidthMeasurement();
+  }
+  
+  /**
+   * Sets up width measurement for the card container.
+   * This ensures reliable masonry layout in Shadow DOM environments.
+   */
+  private setupContainerWidthMeasurement(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    
+    // Initial measurement
+    this.measureContainerWidth();
+    
+    // Set up ResizeObserver for dynamic width changes
+    if (typeof ResizeObserver !== 'undefined' && this.cardContainer?.nativeElement) {
+      this.containerResizeObserver = new ResizeObserver((entries) => {
+        const entry = entries[0];
+        if (entry) {
+          const newWidth = entry.contentRect.width;
+          if (newWidth > 0 && Math.abs(newWidth - this.measuredContainerWidth) > 4) {
+            this.measuredContainerWidth = newWidth;
+            this.cdr.markForCheck();
+          }
+        }
+      });
+      this.containerResizeObserver.observe(this.cardContainer.nativeElement);
+    }
+  }
+  
+  /**
+   * Measures the container width using multiple fallback methods.
+   * Works reliably in both regular DOM and Shadow DOM contexts.
+   */
+  private measureContainerWidth(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    
+    // Try cardContainer first
+    if (this.cardContainer?.nativeElement) {
+      const rect = this.cardContainer.nativeElement.getBoundingClientRect();
+      if (rect.width > 0) {
+        this.measuredContainerWidth = rect.width;
+        return;
+      }
+    }
+    
+    // Try host element
+    const hostEl = this.el.nativeElement;
+    if (hostEl) {
+      const hostRect = hostEl.getBoundingClientRect();
+      if (hostRect.width > 0) {
+        this.measuredContainerWidth = hostRect.width;
+        return;
+      }
+      
+      // Try parent element
+      const parent = hostEl.parentElement;
+      if (parent) {
+        const parentRect = parent.getBoundingClientRect();
+        if (parentRect.width > 0) {
+          this.measuredContainerWidth = parentRect.width;
+          return;
+        }
+      }
+    }
+    
+    // Schedule retry if no width found
+    if (this.measuredContainerWidth === 0) {
+      requestAnimationFrame(() => {
+        this.measureContainerWidth();
+      });
+    }
   }
 
   /**
@@ -369,18 +535,20 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   private startMessageRotation(): void {
-    if (this.funnyMessages.length === 0) {
+    const messages = this.activeLoadingMessages;
+    if (messages.length === 0) {
       this.currentMessage = 'Loading...';
       return;
     }
-    this.currentMessage = this.funnyMessages[0] || 'Loading...';
+    this.currentMessage = messages[0] || 'Loading...';
     this.currentMessageIndex = 0;
     
     interval(2500) // Change message every 2.5 seconds
       .pipe(takeUntil(this.destroyed$))
       .subscribe(() => {
-        this.currentMessageIndex = (this.currentMessageIndex + 1) % this.funnyMessages.length;
-        this.currentMessage = this.funnyMessages[this.currentMessageIndex] || 'Loading...';
+        const activeMessages = this.activeLoadingMessages;
+        this.currentMessageIndex = (this.currentMessageIndex + 1) % activeMessages.length;
+        this.currentMessage = activeMessages[this.currentMessageIndex] || 'Loading...';
         this.cdr.markForCheck();
       });
   }
@@ -504,6 +672,12 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     // Clear tilt service cache for this element
     if (this.tiltContainerRef?.nativeElement) {
       this.magneticTiltService.clearCache(this.tiltContainerRef.nativeElement);
+    }
+    
+    // Clean up ResizeObserver
+    if (this.containerResizeObserver) {
+      this.containerResizeObserver.disconnect();
+      this.containerResizeObserver = undefined;
     }
     
     this.destroyed$.next();
@@ -764,8 +938,15 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     this.magneticTiltService.resetTilt(false);
   }
 
+  /**
+   * Emit export event for parent components to handle card export/download
+   */
+  onExport(): void {
+    this.export.emit();
+  }
+
   get isStreamingActive(): boolean {
-    return this.streamingStage === 'streaming';
+    return this.isStreaming || this.streamingStage === 'streaming';
   }
 
   get hasLoadingOverlay(): boolean {

@@ -4,7 +4,19 @@ Displays data visualizations including bar charts, line charts, pie charts, and 
 
 ## Overview
 
-The **Chart Section** is used for displays data visualizations including bar charts, line charts, pie charts, and more.
+The **Chart Section** (`type: "chart"`) is used for displays data visualizations including bar charts, line charts, pie charts, and more.
+
+### Quick Facts
+
+| Property | Value |
+|----------|-------|
+| Type | `chart` |
+| Uses Fields | No |
+| Uses Items | No |
+| Default Columns | 2 |
+| Supports Collapse | No |
+| Aliases | None |
+| External Library | `chart.js` |
 
 ## Use Cases
 
@@ -15,41 +27,84 @@ The **Chart Section** is used for displays data visualizations including bar cha
 
 ## Data Schema
 
-```typescript
-interface CardSection {
-  title: string;
-  type: 'chart';
-  fields?: CardField[];
-  
-}
-```
 
-## Example
+
+
+
+## Complete Example
 
 ```json
 {
-  "title": "Chart Section Example",
+  "title": "Revenue Trends",
   "type": "chart",
-  "fields": [
-    {
-      "label": "Example Label",
-      "value": "Example Value"
-    }
-  ]
+  "chartType": "bar",
+  "chartData": {
+    "labels": [
+      "Q1",
+      "Q2",
+      "Q3",
+      "Q4"
+    ],
+    "datasets": [
+      {
+        "label": "Revenue",
+        "data": [
+          100,
+          150,
+          200,
+          250
+        ],
+        "backgroundColor": "#FF7900"
+      },
+      {
+        "label": "Expenses",
+        "data": [
+          80,
+          90,
+          100,
+          110
+        ],
+        "backgroundColor": "#4CAF50"
+      }
+    ]
+  }
+}
+```
+
+## Minimal Example
+
+```json
+{
+  "title": "Chart",
+  "type": "chart",
+  "chartType": "bar",
+  "chartData": {
+    "labels": [
+      "A"
+    ],
+    "datasets": [
+      {
+        "data": [
+          1
+        ]
+      }
+    ]
+  }
 }
 ```
 
 ## Best Practices
 
 1. Provide proper chart configuration
-1. Include chart type specification
-1. Use appropriate data formats
-1. Ensure accessibility with labels
+2. Include chart type specification
+3. Use appropriate data formats
+4. Ensure accessibility with labels
 
-## Component Properties
+## Component Information
 
-
-
+- **Selector:** `app-chart-section`
+- **Component Path:** `./lib/components/sections/chart-section/chart-section.component`
+- **Style Path:** `./lib/styles/components/sections/_chart.scss`
 
 ## Related Documentation
 

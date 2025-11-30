@@ -1,0 +1,127 @@
+{
+  "generatedAt": "2025-11-30T13:56:56.471Z",
+  "registryVersion": "1.0.0",
+  "sections": [
+    {
+      "type": "info",
+      "stylePath": "./lib/styles/components/sections/_info.scss",
+      "hasStyle": true
+    },
+    {
+      "type": "analytics",
+      "stylePath": "./lib/styles/components/sections/_analytics.scss",
+      "hasStyle": true
+    },
+    {
+      "type": "contact-card",
+      "stylePath": "./lib/styles/components/sections/_contact.scss",
+      "hasStyle": true
+    },
+    {
+      "type": "network-card",
+      "stylePath": "./lib/styles/components/sections/_network.scss",
+      "hasStyle": true
+    },
+    {
+      "type": "map",
+      "stylePath": "./lib/styles/components/sections/_map.scss",
+      "hasStyle": true
+    },
+    {
+      "type": "financials",
+      "stylePath": "./lib/styles/components/sections/_financials.scss",
+      "hasStyle": true
+    },
+    {
+      "type": "event",
+      "stylePath": "./lib/styles/components/sections/_event.scss",
+      "hasStyle": true
+    },
+    {
+      "type": "list",
+      "stylePath": "./lib/styles/components/sections/_list.scss",
+      "hasStyle": true
+    },
+    {
+      "type": "chart",
+      "stylePath": "./lib/styles/components/sections/_chart.scss",
+      "hasStyle": true
+    },
+    {
+      "type": "product",
+      "stylePath": "./lib/styles/components/sections/_product.scss",
+      "hasStyle": true
+    },
+    {
+      "type": "solutions",
+      "stylePath": "./lib/styles/components/sections/_solutions.scss",
+      "hasStyle": true
+    },
+    {
+      "type": "overview",
+      "stylePath": "./lib/styles/components/sections/_overview.scss",
+      "hasStyle": true
+    },
+    {
+      "type": "quotation",
+      "stylePath": "./lib/styles/components/sections/_quotation.scss",
+      "hasStyle": true
+    },
+    {
+      "type": "text-reference",
+      "stylePath": "./lib/styles/components/sections/_text-reference.scss",
+      "hasStyle": true
+    },
+    {
+      "type": "brand-colors",
+      "stylePath": "./lib/styles/components/sections/_brand-colors.scss",
+      "hasStyle": true
+    },
+    {
+      "type": "news",
+      "stylePath": "./lib/styles/components/sections/_news.scss",
+      "hasStyle": true
+    },
+    {
+      "type": "social-media",
+      "stylePath": "./lib/styles/components/sections/_social-media.scss",
+      "hasStyle": true
+    },
+    {
+      "type": "fallback",
+      "stylePath": "./lib/styles/components/sections/_fallback.scss",
+      "hasStyle": true
+    }
+  ],
+  "discoveredFiles": [
+    "_analytics.scss",
+    "_brand-colors.scss",
+    "_chart.scss",
+    "_contact.scss",
+    "_design-system.scss",
+    "_event.scss",
+    "_fallback.scss",
+    "_financials.scss",
+    "_global-enforcement.scss",
+    "_info.scss",
+    "_list.scss",
+    "_map.scss",
+    "_network.scss",
+    "_news.scss",
+    "_overview.scss",
+    "_product.scss",
+    "_quotation.scss",
+    "_section-shell.scss",
+    "_section-types.generated.scss",
+    "_section-types.scss",
+    "_sections-base.scss",
+    "_social-media.scss",
+    "_solutions.scss",
+    "_text-reference.scss",
+    "_unified-cards.scss"
+  ],
+  "bundles": {
+    "complete": "_section-types.generated.scss",
+    "tokens": "tokens/_section-tokens.generated.scss"
+  }
+}

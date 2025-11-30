@@ -21,6 +21,10 @@ import { ErrorBoundaryComponent } from '../../../../core/error-boundary/error-bo
 })
 export class CardSectionListComponent {
   @Input() sections: CardSection[] = [];
+  @Input() isStreaming = false;
+  @Input() changeType: 'structural' | 'content' = 'structural';
+  /** Container width passed from parent for reliable multi-column layout */
+  @Input() containerWidth?: number;
   @Output() sectionEvent = new EventEmitter<SectionRenderEvent>();
   @Output() layoutChange = new EventEmitter<MasonryLayoutInfo>();
 
@@ -35,4 +39,10 @@ export class CardSectionListComponent {
   trackSection = (_index: number, section: CardSection): string =>
     section.id ?? `${section.title}-${_index}`;
 }
+
+
+
+
+
+
 

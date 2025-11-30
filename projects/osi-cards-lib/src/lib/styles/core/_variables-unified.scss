@@ -1,0 +1,57 @@
+// ===================================================================
+// DESIGN TOKENS - Scoped for .osi-cards-container Integration
+// Generated from master tokens
+//
+// Used when integrating into external apps (like Orange Sales Assistance)
+// to prevent CSS variable conflicts with the host application.
+//
+// This file is designed to be imported INSIDE .osi-cards-container { }
+// ===================================================================
+
+@use '../tokens/master' as *;
+
+@import 'variables/colors-unified';
+
+// Additional design tokens that extend the theme system
+&,
+&[data-theme='night'],
+&[data-theme='day'] {
+  @include osi-tokens('integration', true);
+}
+
+// ===== HIGH CONTRAST MODE SUPPORT =====
+@media (prefers-contrast: high) {
+  &,
+  &[data-theme='night'],
+  &[data-theme='day'] {
+    @include osi-tokens-high-contrast();
+  }
+}
+
+// Windows High Contrast Mode detection
+@media (forced-colors: active) {
+  &,
+  &[data-theme='night'],
+  &[data-theme='day'] {
+    @include osi-tokens-forced-colors();
+  }
+}
+
+// ===== RESPONSIVE ANIMATION PREFERENCES =====
+// Reduced motion support for accessibility
+@media (prefers-reduced-motion: reduce) {
+  &,
+  &[data-theme='night'],
+  &[data-theme='day'] {
+    @include osi-tokens-reduced-motion();
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

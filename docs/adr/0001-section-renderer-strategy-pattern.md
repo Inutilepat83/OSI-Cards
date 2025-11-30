@@ -40,3 +40,9 @@ We implemented a registry-based strategy pattern for section component loading:
 - Strategy Pattern: https://refactoring.guru/design-patterns/strategy
 - ADR Format: https://adr.github.io/
 
+
+
+
+
+
+

@@ -1,0 +1,164 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OSI Cards Section Registry",
+  "description": "Schema for the section registry - single source of truth for all section types",
+  "type": "object",
+  "required": ["version", "sections"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Registry schema version (semver)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Registry description"
+    },
+    "sections": {
+      "type": "object",
+      "description": "Map of section type ID to section definition",
+      "additionalProperties": {
+        "$ref": "#/definitions/SectionDefinition"
+      }
+    },
+    "typeAliases": {
+      "type": "object",
+      "description": "Map of type aliases to canonical type names",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "defaultSection": {
+      "type": "string",
+      "description": "Default section type for unknown types"
+    }
+  },
+  "definitions": {
+    "SectionDefinition": {
+      "type": "object",
+      "required": ["name", "description", "componentPath", "selector", "rendering"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Human-readable section name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the section"
+        },
+        "componentPath": {
+          "type": "string",
+          "description": "Path to the component file (relative to src/)"
+        },
+        "stylePath": {
+          "type": "string",
+          "description": "Path to the SCSS file (relative to src/)"
+        },
+        "selector": {
+          "type": "string",
+          "pattern": "^app-[a-z-]+$",
+          "description": "Angular component selector"
+        },
+        "useCases": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of use cases for this section"
+        },
+        "bestPractices": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Best practices for using this section"
+        },
+        "rendering": {
+          "$ref": "#/definitions/RenderingConfig"
+        },
+        "fieldSchema": {
+          "$ref": "#/definitions/JSONSchema",
+          "description": "JSON Schema for field objects"
+        },
+        "itemSchema": {
+          "$ref": "#/definitions/JSONSchema",
+          "description": "JSON Schema for item objects"
+        },
+        "chartSchema": {
+          "$ref": "#/definitions/JSONSchema",
+          "description": "JSON Schema for chart configuration"
+        },
+        "aliases": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Alternative type names that resolve to this section"
+        },
+        "isInternal": {
+          "type": "boolean",
+          "description": "Whether this is an internal section (not for external use)"
+        },
+        "testFixtures": {
+          "$ref": "#/definitions/TestFixtures"
+        }
+      }
+    },
+    "RenderingConfig": {
+      "type": "object",
+      "required": ["usesFields", "usesItems", "defaultColumns"],
+      "properties": {
+        "usesFields": {
+          "type": "boolean",
+          "description": "Whether section uses fields array"
+        },
+        "usesItems": {
+          "type": "boolean",
+          "description": "Whether section uses items array"
+        },
+        "usesChartData": {
+          "type": "boolean",
+          "description": "Whether section uses chartData"
+        },
+        "defaultColumns": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4,
+          "description": "Default column span"
+        },
+        "supportsCollapse": {
+          "type": "boolean",
+          "description": "Whether section supports collapse/expand"
+        },
+        "supportsEmoji": {
+          "type": "boolean",
+          "description": "Whether section supports emoji icons"
+        },
+        "requiresExternalLib": {
+          "type": "string",
+          "description": "External library requirement (e.g., 'leaflet', 'chart.js')"
+        }
+      }
+    },
+    "TestFixtures": {
+      "type": "object",
+      "properties": {
+        "complete": {
+          "type": "object",
+          "description": "Complete example with all fields populated"
+        },
+        "minimal": {
+          "type": "object",
+          "description": "Minimal example with required fields only"
+        },
+        "edgeCases": {
+          "type": "object",
+          "description": "Edge case example for testing boundaries"
+        }
+      }
+    },
+    "JSONSchema": {
+      "type": "object",
+      "description": "JSON Schema definition for data validation"
+    }
+  }
+}
+

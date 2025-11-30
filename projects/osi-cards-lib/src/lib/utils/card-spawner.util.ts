@@ -13,7 +13,6 @@ import { AICardConfig, CardSection } from '../models';
 export function createEmptyCard(title: string = 'Loading...'): AICardConfig {
   return {
     cardTitle: title,
-    cardSubtitle: undefined,
     sections: [],
     actions: []
   };
@@ -25,7 +24,6 @@ export function createEmptyCard(title: string = 'Loading...'): AICardConfig {
 export function createSkeletonCard(): AICardConfig {
   return {
     cardTitle: 'Loading...',
-    cardSubtitle: 'Please wait while we fetch your data',
     sections: [
       {
         id: 'skeleton-section',
@@ -230,7 +228,6 @@ export function createCardFromPartial(
 ): AICardConfig {
   return {
     cardTitle: partial.cardTitle || defaults.cardTitle || 'Card',
-    cardSubtitle: partial.cardSubtitle || defaults.cardSubtitle,
     sections: partial.sections || defaults.sections || [],
     actions: partial.actions || defaults.actions || []
   };
@@ -263,7 +260,6 @@ export function createErrorCard(
 
   return {
     cardTitle: title,
-    cardSubtitle: 'An error occurred',
     sections: [
       {
         id: 'error-section',
@@ -291,7 +287,6 @@ export function prepareCardForStreaming(
 ): AICardConfig {
   return {
     cardTitle: card.cardTitle || 'Loading...',
-    cardSubtitle: card.cardSubtitle,
     sections: card.sections || [],
     actions: card.actions || [],
     // Ensure sections have IDs for tracking during updates
@@ -313,9 +308,6 @@ export function updateCardIncremental(
   // Update top-level fields if provided
   if (update.cardTitle !== undefined) {
     updated.cardTitle = update.cardTitle;
-  }
-  if (update.cardSubtitle !== undefined) {
-    updated.cardSubtitle = update.cardSubtitle;
   }
 
   // Merge sections incrementally

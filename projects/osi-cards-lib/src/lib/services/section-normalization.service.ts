@@ -1,10 +1,65 @@
 import { Injectable } from '@angular/core';
-import { CardSection } from '../models/card.model';
+import { CardSection, LayoutPriority } from '../models/card.model';
+import { 
+  SectionType,
+  SectionTypeInput,
+  resolveSectionType as resolveType,
+  isValidSectionType
+} from '../models/generated-section-types';
+import { 
+  getPreferredColumns, 
+  DEFAULT_SECTION_COLUMN_PREFERENCES,
+  PreferredColumns 
+} from '../utils/grid-config.util';
 
 interface ColSpanThresholds {
   two: number;
   three?: number;
 }
+
+/**
+ * Priority band types for section ordering and condensation
+ */
+export type PriorityBand = 'critical' | 'important' | 'standard' | 'optional';
+
+/**
+ * Priority band configuration
+ */
+export interface PriorityBandConfig {
+  types: string[];
+  condensePriority: 'never' | 'last' | 'always' | 'first';
+  order: number;
+}
+
+/**
+ * Priority bands with condensation rules
+ * - critical: Never condensed, always visible (overview, contact-card)
+ * - important: Condensed last (analytics, chart, stats, financials)
+ * - standard: Normal condensation (info, list, product, solutions, map)
+ * - optional: Condensed first (news, event, timeline, quotation)
+ */
+export const PRIORITY_BANDS: Record<PriorityBand, PriorityBandConfig> = {
+  critical: { 
+    types: ['overview', 'contact-card'], 
+    condensePriority: 'never',
+    order: 1
+  },
+  important: { 
+    types: ['analytics', 'chart', 'stats', 'financials'], 
+    condensePriority: 'last',
+    order: 2
+  },
+  standard: { 
+    types: ['info', 'list', 'product', 'solutions', 'map'], 
+    condensePriority: 'always',
+    order: 3
+  },
+  optional: { 
+    types: ['news', 'event', 'timeline', 'quotation', 'text-reference', 'network-card'], 
+    condensePriority: 'first',
+    order: 4
+  },
+};
 
 /**
  * Column span thresholds for each section type
@@ -62,28 +117,6 @@ const DEFAULT_COL_SPAN_THRESHOLD: ColSpanThresholds = { two: 6 };
   providedIn: 'root'
 })
 export class SectionNormalizationService {
-  /**
-   * Supported section types
-   */
-  private readonly supportedTypes: CardSection['type'][] = [
-    'info',
-    'analytics',
-    'contact-card',
-    'network-card',
-    'map',
-    'financials',
-    'locations',
-    'event',
-    'project',
-    'list',
-    'chart',
-    'product',
-    'solutions',
-    'overview',
-    'stats',
-    'quotation',
-    'text-reference'
-  ];
 
   /**
    * Normalize a section by resolving its type and ensuring required properties
@@ -112,18 +145,155 @@ export class SectionNormalizationService {
       normalized.description = section.subtitle;
     }
 
-    // Add column span thresholds to section meta if not already present
+    // Add column span thresholds and preferred columns to section meta
     // This allows each section to have its own column logic
     const existingMeta = normalized.meta as Record<string, unknown> | undefined;
     const colSpanThresholds = this.getColSpanThresholdsForType(resolvedType);
+    const preferredColumns = this.getPreferredColumnsForType(resolvedType);
+    const priorityBand = this.getPriorityBandForType(resolvedType);
     
     normalized.meta = {
       ...existingMeta,
       // Only add if not already defined (allows sections to override)
-      colSpanThresholds: existingMeta?.['colSpanThresholds'] ?? colSpanThresholds
+      colSpanThresholds: existingMeta?.['colSpanThresholds'] ?? colSpanThresholds,
+      preferredColumns: existingMeta?.['preferredColumns'] ?? preferredColumns,
+      priorityBand: existingMeta?.['priorityBand'] ?? priorityBand
     };
+    
+    // Also set preferredColumns on the section itself if not already defined
+    if (!normalized.preferredColumns) {
+      normalized.preferredColumns = preferredColumns;
+    }
+
+    // Set priority band on section if not already defined
+    if (!normalized.priority) {
+      normalized.priority = priorityBand;
+    }
+
+    // Set numeric layout priority for row-first packing algorithm
+    if (normalized.layoutPriority === undefined) {
+      normalized.layoutPriority = this.mapPriorityBandToLayoutPriority(priorityBand);
+    }
 
     return normalized;
+  }
+
+  /**
+   * Get the priority band for a section type
+   */
+  getPriorityBandForType(type: string): PriorityBand {
+    const lowerType = type.toLowerCase();
+    
+    for (const [band, config] of Object.entries(PRIORITY_BANDS)) {
+      if (config.types.includes(lowerType)) {
+        return band as PriorityBand;
+      }
+    }
+    
+    return 'standard';
+  }
+
+  /**
+   * Maps a priority band string to a numeric layout priority (1-3).
+   * Used by the row-first packing algorithm for efficient sorting.
+   * 
+   * Mapping:
+   * - 'critical' → 1 (highest priority, placed first)
+   * - 'important' → 1 (high priority)
+   * - 'standard' → 2 (normal priority)
+   * - 'optional' → 3 (lowest priority, placed last)
+   * 
+   * @param priority - The priority band string
+   * @returns Numeric layout priority (1, 2, or 3)
+   */
+  mapPriorityBandToLayoutPriority(priority?: PriorityBand): LayoutPriority {
+    switch (priority) {
+      case 'critical':
+      case 'important':
+        return 1;
+      case 'standard':
+        return 2;
+      case 'optional':
+        return 3;
+      default:
+        return 2; // Default to standard priority
+    }
+  }
+
+  /**
+   * Gets the layout priority for a section.
+   * First checks for explicit layoutPriority, then maps from priority band.
+   * 
+   * @param section - The section to get priority for
+   * @returns Numeric layout priority (1, 2, or 3)
+   */
+  getLayoutPriorityForSection(section: CardSection): LayoutPriority {
+    // Explicit layoutPriority takes precedence
+    if (section.layoutPriority !== undefined) {
+      return section.layoutPriority;
+    }
+
+    // Map from priority band
+    const priorityBand = section.priority ?? this.getPriorityBandForType(section.type ?? 'info');
+    return this.mapPriorityBandToLayoutPriority(priorityBand);
+  }
+
+  /**
+   * Get condensation priority for a section
+   * Returns the order in which sections should be condensed (lower = condense first)
+   */
+  getCondensationOrder(section: CardSection): number {
+    const band = section.priority ?? this.getPriorityBandForType(section.type ?? 'info');
+    const config = PRIORITY_BANDS[band as PriorityBand];
+    
+    switch (config?.condensePriority) {
+      case 'first': return 1;   // Condense first
+      case 'always': return 2;  // Normal condensation
+      case 'last': return 3;    // Condense last
+      case 'never': return 999; // Never condense
+      default: return 2;
+    }
+  }
+
+  /**
+   * Apply condensation to sections based on available space
+   * Returns sections with collapsed flags set appropriately
+   * 
+   * @param sections - Sections to potentially condense
+   * @param maxVisibleSections - Maximum number of sections to show uncollapsed
+   * @returns Sections with collapsed flags updated
+   */
+  applyCondensation(sections: CardSection[], maxVisibleSections: number): CardSection[] {
+    if (sections.length <= maxVisibleSections) {
+      return sections;
+    }
+
+    // Sort by condensation order (what to condense first)
+    const sortedByCondensation = [...sections].sort((a, b) => {
+      return this.getCondensationOrder(a) - this.getCondensationOrder(b);
+    });
+
+    // Determine which sections to collapse
+    const toCollapse = sortedByCondensation.slice(maxVisibleSections);
+    const collapseIds = new Set(toCollapse.map(s => s.id ?? s.title));
+
+    // Apply collapsed flag while preserving original order
+    return sections.map(section => {
+      const shouldCollapse = collapseIds.has(section.id ?? section.title);
+      const band = section.priority ?? this.getPriorityBandForType(section.type ?? 'info');
+      const config = PRIORITY_BANDS[band as PriorityBand];
+      
+      // Never collapse critical sections
+      if (config?.condensePriority === 'never') {
+        return section;
+      }
+      
+      if (shouldCollapse) {
+        return { ...section, collapsed: true };
+      }
+      
+      return section;
+    });
   }
 
   /**
@@ -135,68 +305,89 @@ export class SectionNormalizationService {
   }
 
   /**
-   * Resolve section type from raw type and title
+   * Get preferred columns for a section type
+   * Uses the centralized preferences from grid-config.util.ts
+   * 
+   * @param type - The section type
+   * @returns Preferred column count (1, 2, or 3)
    */
-  private resolveSectionType(rawType: string, title: string): CardSection['type'] {
+  getPreferredColumnsForType(type: string): PreferredColumns {
+    return getPreferredColumns(type, DEFAULT_SECTION_COLUMN_PREFERENCES);
+  }
+
+  /**
+   * Resolve section type from raw type and title
+   * Uses the generated type resolution from section-registry.json
+   */
+  private resolveSectionType(rawType: string, title: string): SectionType {
     // Title-based overrides take precedence
     if (!rawType && title.includes('overview')) {
       return 'overview';
     }
 
-    // Type-based resolution
-    switch (rawType) {
-      case 'timeline':
-        return 'event';
-      case 'metrics':
-      case 'stats':
-        return 'analytics';
-      case 'table':
-        return 'list';
-      case 'locations':
-        return 'map';
-      case 'project':
-        return 'info';
-      case 'contact':
-        return 'contact-card';
-      case 'network':
-        return 'network-card';
-      case 'quotation':
-      case 'quote':
-        return 'quotation';
-      case 'text-reference':
-      case 'reference':
-      case 'text-ref':
-        return 'text-reference';
-      case '':
-        return title.includes('overview') ? 'overview' : 'info';
-      default:
-        return this.supportedTypes.includes(rawType as CardSection['type'])
-          ? (rawType as CardSection['type'])
-          : 'info';
+    // Handle empty type
+    if (!rawType) {
+      return title.includes('overview') ? 'overview' : 'info';
     }
+
+    // Handle legacy aliases not in registry
+    if (rawType === 'contact') {
+      return 'contact-card';
+    }
+    if (rawType === 'network') {
+      return 'network-card';
+    }
+
+    // Use the generated resolver which handles all registry aliases
+    const resolved = resolveType(rawType as SectionTypeInput);
+    
+    // If the resolved type is valid, use it; otherwise default to info
+    return isValidSectionType(resolved) ? resolved : 'info';
   }
 
   /**
    * Get section priority for sorting
+   * Uses priority bands for consistent ordering
    * Lower numbers appear first
    */
   getSectionPriority(section: CardSection): number {
+    // First check explicit priority on section
+    if (section.priority) {
+      return PRIORITY_BANDS[section.priority]?.order ?? 3;
+    }
+
     const type = section.type?.toLowerCase() ?? '';
     const title = section.title?.toLowerCase() ?? '';
 
-    // Priority order
-    if (type === 'contact-card' || type === 'contact') return 1;
-    if (type === 'overview' || title.includes('overview')) return 2;
-    if (type === 'analytics') return 3;
-    if (type === 'product') return 4;
-    if (type === 'solutions') return 5;
-    if (type === 'map') return 6;
-    if (type === 'financials') return 7;
-    if (type === 'chart') return 8;
-    if (type === 'list') return 9;
-    if (type === 'event') return 10;
-    if (type === 'info') return 11;
-    return 12;
+    // Title-based overrides
+    if (title.includes('overview')) return 1;
+
+    // Use priority bands
+    const band = this.getPriorityBandForType(type);
+    const baseOrder = PRIORITY_BANDS[band]?.order ?? 3;
+
+    // Fine-grained ordering within bands
+    const typeOrder: Record<string, number> = {
+      'overview': 0,
+      'contact-card': 1,
+      'analytics': 0,
+      'chart': 1,
+      'stats': 2,
+      'financials': 3,
+      'info': 0,
+      'product': 1,
+      'solutions': 2,
+      'list': 3,
+      'map': 4,
+      'event': 0,
+      'timeline': 1,
+      'quotation': 2,
+      'text-reference': 3,
+      'network-card': 4,
+    };
+
+    const subOrder = (typeOrder[type] ?? 5) / 10;
+    return baseOrder + subOrder;
   }
 
   /**
@@ -257,6 +448,9 @@ export class SectionNormalizationService {
     return this.sortSections(normalized);
   }
 }
+
+
+
 
 
 

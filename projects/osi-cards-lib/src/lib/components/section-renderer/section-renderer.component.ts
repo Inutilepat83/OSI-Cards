@@ -1,25 +1,26 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject, Type } from '@angular/core';
+import { 
+  ChangeDetectionStrategy, 
+  Component, 
+  EventEmitter, 
+  Input, 
+  Output, 
+  inject, 
+  ViewEncapsulation,
+  ViewChild,
+  ViewContainerRef,
+  OnChanges,
+  SimpleChanges,
+  ComponentRef,
+  DestroyRef,
+  Type
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardAction, CardField, CardItem, CardSection } from '../../models';
 import { SectionPluginRegistry } from '../../services/section-plugin-registry.service';
-import { BaseSectionComponent } from '../sections/base-section.component';
-import { PluginSectionWrapperComponent } from './plugin-section-wrapper.component';
-import { InfoSectionComponent, InfoSectionFieldInteraction } from '../sections/info-section.component';
-import { AnalyticsSectionComponent } from '../sections/analytics-section/analytics-section.component';
-import { FinancialsSectionComponent } from '../sections/financials-section/financials-section.component';
-import { ListSectionComponent } from '../sections/list-section/list-section.component';
-import { EventSectionComponent } from '../sections/event-section/event-section.component';
-import { ProductSectionComponent } from '../sections/product-section/product-section.component';
-import { SolutionsSectionComponent } from '../sections/solutions-section/solutions-section.component';
-import { ContactCardSectionComponent } from '../sections/contact-card-section/contact-card-section.component';
-import { NetworkCardSectionComponent } from '../sections/network-card-section/network-card-section.component';
-import { MapSectionComponent } from '../sections/map-section/map-section.component';
-import { ChartSectionComponent } from '../sections/chart-section/chart-section.component';
-import { OverviewSectionComponent } from '../sections/overview-section/overview-section.component';
-import { FallbackSectionComponent } from '../sections/fallback-section/fallback-section.component';
-import { QuotationSectionComponent } from '../sections/quotation-section/quotation-section.component';
-import { TextReferenceSectionComponent } from '../sections/text-reference-section/text-reference-section.component';
-import { BrandColorsSectionComponent } from '../sections/brand-colors-section/brand-colors-section.component';
+import { BaseSectionComponent, SectionInteraction } from '../sections/base-section.component';
+import { DynamicSectionLoaderService } from './dynamic-section-loader.service';
+import { resolveSectionType, isValidSectionType, SectionTypeInput } from '../../models/generated-section-types';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export interface SectionRenderEvent {
   type: 'field' | 'item' | 'action';
@@ -30,174 +31,217 @@ export interface SectionRenderEvent {
   metadata?: Record<string, unknown>;
 }
 
+/**
+ * Dynamic Section Renderer Component
+ * 
+ * This component dynamically loads and renders section components based on
+ * the section type. It replaces the previous switch-statement approach with
+ * a registry-based dynamic component resolution system.
+ * 
+ * Features:
+ * - Dynamic component loading via ViewContainerRef
+ * - Type alias resolution (e.g., 'metrics' -> 'analytics')
+ * - Plugin component support
+ * - Automatic fallback for unknown types
+ * - Component caching for performance
+ */
 @Component({
   selector: 'app-section-renderer',
   standalone: true,
-  imports: [
-    CommonModule,
-    PluginSectionWrapperComponent,
-    InfoSectionComponent,
-    AnalyticsSectionComponent,
-    FinancialsSectionComponent,
-    ListSectionComponent,
-    EventSectionComponent,
-    ProductSectionComponent,
-    SolutionsSectionComponent,
-    ContactCardSectionComponent,
-    NetworkCardSectionComponent,
-    MapSectionComponent,
-    ChartSectionComponent,
-    OverviewSectionComponent,
-    FallbackSectionComponent,
-    QuotationSectionComponent,
-    TextReferenceSectionComponent,
-    BrandColorsSectionComponent
-  ],
-  templateUrl: './section-renderer.component.html',
-  styleUrls: ['./section-renderer.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  imports: [CommonModule],
+  template: `
+    <ng-container #container></ng-container>
+  `,
+  styles: [`
+    :host {
+      display: block;
+    }
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None
 })
-export class SectionRendererComponent {
+export class SectionRendererComponent implements OnChanges {
   @Input({ required: true }) section!: CardSection;
   @Output() sectionEvent = new EventEmitter<SectionRenderEvent>();
 
+  @ViewChild('container', { read: ViewContainerRef, static: true }) 
+  private container!: ViewContainerRef;
+
+  private readonly loader = inject(DynamicSectionLoaderService);
   private readonly pluginRegistry = inject(SectionPluginRegistry);
+  private readonly destroyRef = inject(DestroyRef);
 
-  // Removed @HostBinding - will be set in template instead to avoid setAttribute errors
-  get sectionTypeAttribute(): string {
-    if (!this.section) {
-      return 'unknown';
-    }
-    try {
-      const typeLabel = (this.section.type ?? '').trim();
-      const resolved = this.resolvedType;
-      return (typeLabel || resolved || 'unknown').toLowerCase();
-    } catch {
-      return 'unknown';
-    }
-  }
+  private currentComponentRef: ComponentRef<BaseSectionComponent> | null = null;
+  private currentType: string | null = null;
 
-  get sectionIdAttribute(): string | null {
-    if (!this.section?.id) {
-      return null;
-    }
-    try {
-      return String(this.section.id);
-    } catch {
-      return null;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['section']) {
+      this.loadComponent();
     }
   }
 
   /**
-   * Get the component type for the current section, checking plugins first
+   * Load the appropriate component for the current section
    */
-  get sectionComponent(): Type<BaseSectionComponent> | null {
+  private loadComponent(): void {
     if (!this.section) {
-      return null;
+      this.clearComponent();
+      return;
     }
 
-    // Check if a plugin is registered for this section type
-    const pluginComponent = this.pluginRegistry.getComponentForSection(this.section);
-    if (pluginComponent) {
-      return pluginComponent;
+    const sectionType = this.section.type?.toLowerCase() || 'fallback';
+    const resolvedType = this.loader.resolveType(sectionType);
+
+    // Only recreate component if type changed
+    if (this.currentType !== resolvedType) {
+      this.clearComponent();
+      this.createComponent(resolvedType);
+      this.currentType = resolvedType;
+    } else if (this.currentComponentRef) {
+      // Just update the section input
+      this.updateComponentInput();
+    }
+  }
+
+  /**
+   * Create the dynamic component
+   */
+  private createComponent(resolvedType: string): void {
+    const componentClass = this.loader.getComponentForSection(this.section);
+    
+    if (!componentClass) {
+      console.warn(`No component found for section type: ${resolvedType}`);
+      return;
     }
 
-    // Fall back to built-in sections (handled by resolvedType in template)
-    return null;
+    this.currentComponentRef = this.container.createComponent(componentClass);
+    this.updateComponentInput();
+    this.subscribeToComponentEvents();
+  }
+
+  /**
+   * Update the section input on the component
+   */
+  private updateComponentInput(): void {
+    if (this.currentComponentRef) {
+      this.currentComponentRef.setInput('section', this.section);
+    }
+  }
+
+  /**
+   * Subscribe to component output events
+   */
+  private subscribeToComponentEvents(): void {
+    if (!this.currentComponentRef) return;
+
+    const instance = this.currentComponentRef.instance;
+
+    // Subscribe to fieldInteraction
+    if (instance.fieldInteraction) {
+      instance.fieldInteraction
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((event: SectionInteraction) => {
+          this.emitFieldInteraction(event.field as CardField, event.metadata);
+        });
+    }
+
+    // Subscribe to itemInteraction
+    if (instance.itemInteraction) {
+      instance.itemInteraction
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((event: SectionInteraction) => {
+          this.emitItemInteraction(event.item as CardItem, event.metadata);
+        });
+    }
+
+    // Handle InfoSectionComponent's custom output
+    const anyInstance = instance as any;
+    if (anyInstance.infoFieldInteraction) {
+      anyInstance.infoFieldInteraction
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((event: any) => {
+          this.emitFieldInteraction(event.field, { sectionTitle: event.sectionTitle });
+        });
+    }
+  }
+
+  /**
+   * Clear the current component
+   */
+  private clearComponent(): void {
+    if (this.currentComponentRef) {
+      this.currentComponentRef.destroy();
+      this.currentComponentRef = null;
+    }
+    this.container?.clear();
+    this.currentType = null;
+  }
+
+  /**
+   * Get the section type attribute for debugging/styling
+   */
+  get sectionTypeAttribute(): string {
+    if (!this.section) return 'unknown';
+    
+    try {
+      const typeLabel = (this.section.type ?? '').trim().toLowerCase();
+      if (isValidSectionType(typeLabel as SectionTypeInput)) {
+        return resolveSectionType(typeLabel as SectionTypeInput);
+      }
+      return typeLabel || 'unknown';
+    } catch {
+      return 'unknown';
+    }
+  }
+
+  /**
+   * Get the section ID attribute
+   */
+  get sectionIdAttribute(): string | null {
+    return this.section?.id ? String(this.section.id) : null;
   }
 
   /**
    * Check if current section uses a plugin
    */
   get usesPlugin(): boolean {
-    if (!this.section?.type) {
-      return false;
-    }
+    if (!this.section?.type) return false;
     return this.pluginRegistry.hasPlugin(this.section.type.toLowerCase());
   }
 
+  /**
+   * Get the resolved canonical type
+   */
   get resolvedType(): string {
-    // If a plugin is registered, don't resolve type (plugin handles it)
-    if (this.usesPlugin) {
-      return this.section.type?.toLowerCase() || 'unknown';
-    }
-
-    if (!this.section) {
-      return 'unknown';
-    }
-    try {
-      const type = (this.section.type ?? '').toLowerCase();
-      const title = (this.section.title ?? '').toLowerCase();
-
-    if (type === 'info' && title.includes('overview')) {
-      return 'overview';
-    }
-    if (type === 'timeline') {
-      return 'event';
-    }
-    if (type === 'metrics' || type === 'stats') {
-      return 'analytics';
-    }
-    if (type === 'table') {
-      return 'list';
-    }
-    if (type === 'project') {
-      return 'info';
-    }
-    if (type === 'locations') {
-      return 'map';
-    }
-    if (type === 'quotation' || type === 'quote') {
-      return 'quotation';
-    }
-    if (type === 'text-reference' || type === 'reference' || type === 'text-ref') {
-      return 'text-reference';
-    }
-    if (type === 'brand-colors' || type === 'brands' || type === 'colors') {
-      return 'brand-colors';
-    }
-    if (!type) {
-      if (title.includes('overview')) {
-        return 'overview';
-      }
-      return 'fallback';
-    }
-    return type;
-    } catch {
-      return 'unknown';
-    }
+    if (!this.section?.type) return 'fallback';
+    return this.loader.resolveType(this.section.type);
   }
 
-  onInfoFieldInteraction(event: InfoSectionFieldInteraction): void {
-    this.sectionEvent.emit({
-      type: 'field',
-      section: this.section,
-      field: event.field,
-      metadata: { sectionTitle: event.sectionTitle }
-    });
-  }
+  // Event emission methods
 
-  emitFieldInteraction(field: CardField, metadata?: Record<string, unknown>): void {
+  emitFieldInteraction(field: CardField | undefined, metadata?: Record<string, unknown>): void {
+    if (!field) return;
     this.sectionEvent.emit({
       type: 'field',
       section: this.section,
       field,
       metadata: {
-        sectionId: this.section.id,
-        sectionTitle: this.section.title,
+        sectionId: this.section?.id,
+        sectionTitle: this.section?.title,
         ...metadata
       }
     });
   }
 
-  emitItemInteraction(item: CardItem | CardField, metadata?: Record<string, unknown>): void {
+  emitItemInteraction(item: CardItem | CardField | undefined, metadata?: Record<string, unknown>): void {
+    if (!item) return;
     this.sectionEvent.emit({
       type: 'item',
       section: this.section,
       item,
       metadata: {
-        sectionId: this.section.id,
-        sectionTitle: this.section.title,
+        sectionId: this.section?.id,
+        sectionTitle: this.section?.title,
         ...metadata
       }
     });
@@ -218,5 +262,4 @@ export class SectionRendererComponent {
   onPluginSectionEvent(event: SectionRenderEvent): void {
     this.sectionEvent.emit(event);
   }
-
 }

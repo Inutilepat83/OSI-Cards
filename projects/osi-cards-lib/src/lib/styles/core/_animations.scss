@@ -303,6 +303,85 @@
 }
 
 /* ===================================================================
+   MAGICAL STREAMING EFFECTS
+   Enhanced visual effects for LLM streaming experience
+   =================================================================== */
+
+/* Traveling spark around card border - follows the perimeter */
+@keyframes sparkTravel {
+  0% { top: -1.5px; left: 0; }
+  25% { top: -1.5px; left: calc(100% - 1.5px); }
+  50% { top: calc(100% - 1.5px); left: calc(100% - 1.5px); }
+  75% { top: calc(100% - 1.5px); left: 0; }
+  100% { top: -1.5px; left: 0; }
+}
+
+/* Magical section entrance - blur-to-sharp reveal with scale bounce */
+@keyframes sectionMagicAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    filter: blur(8px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.02);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Shimmer sweep effect - diagonal light sweep across sections */
+@keyframes shimmerSweep {
+  0% { transform: translateX(-100%); opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+/* Inner glow flash on section appearance */
+@keyframes innerFlash {
+  0% { box-shadow: inset 0 0 30px rgba(255, 149, 0, 0.4); }
+  100% { box-shadow: inset 0 0 0 rgba(255, 149, 0, 0); }
+}
+
+/* Subtle inner border glow pulse */
+@keyframes innerBorderPulse {
+  0%, 100% { box-shadow: inset 0 0 0 1px rgba(255, 121, 0, 0.1); }
+  50% { box-shadow: inset 0 0 0 1px rgba(255, 121, 0, 0.3); }
+}
+
+/* Typing cursor blink effect */
+@keyframes cursorBlink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Section glow pulse during streaming */
+@keyframes sectionGlowPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(255, 121, 0, 0.15); }
+  50% { box-shadow: 0 0 20px rgba(255, 121, 0, 0.35); }
+}
+
+/* Field enter with bounce - more dynamic than simple fade */
+@keyframes fieldEnterBounce {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===================================================================
    STATE TRANSITION ANIMATIONS
    Smooth transitions between LLM simulation states
    =================================================================== */
@@ -384,6 +463,280 @@
   }
   50% {
     opacity: 1;
+  }
+}
+
+/* ===================================================================
+   ADDITIONAL ANIMATIONS - Homepage Feature Parity
+   =================================================================== */
+
+/* Fade in with scale - entrance with scale bounce */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.98) translate3d(0, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+}
+
+/* Background pulse glow - radial gradient pulsing effect */
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+/* Float animation - vertical floating motion */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translateY(-10px) translate3d(0, 0, 0);
+  }
+}
+
+/* Pulse ring - expanding ring animation */
+@keyframes pulseRing {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+}
+
+/* Text shimmer - gradient text shimmer effect */
+@keyframes textShimmer {
+  0%, 100% {
+    background-position: -200% 0;
+  }
+  50% {
+    background-position: 200% 0;
+  }
+}
+
+/* Wave slide - wave progress indicator */
+@keyframes waveSlide {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Section pulse - subtle scale pulse for highlighted sections */
+@keyframes sectionPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.01);
+  }
+}
+
+/* Section border fade - fading border highlight */
+@keyframes sectionBorderFade {
+  0% {
+    opacity: 1;
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-brand, #FF7900) 40%, transparent);
+  }
+  100% {
+    opacity: 0;
+    box-shadow: 0 0 0 transparent;
+  }
+}
+
+/* New section glow - glow effect for newly added sections */
+@keyframes newSectionGlow {
+  0% {
+    border-color: color-mix(in srgb, var(--color-brand, #FF7900) 60%, transparent);
+    box-shadow: 0 0 25px color-mix(in srgb, var(--color-brand, #FF7900) 40%, transparent);
+  }
+  100% {
+    border-color: color-mix(in srgb, var(--color-brand, #FF7900) 20%, transparent);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--color-brand, #FF7900) 15%, transparent);
+  }
+}
+
+/* Dot pulse - pulsing dot animation */
+@keyframes dotPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0.3;
+  }
+}
+
+/* Ring expand - expanding ring that fades */
+@keyframes ringExpand {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0;
+  }
+}
+
+/* Generating background pulse - for loading states */
+@keyframes generatingBgPulse {
+  0%, 100% {
+    background: radial-gradient(
+      circle at 50% 50%,
+      color-mix(in srgb, var(--color-brand, #FF7900) 5%, transparent) 0%,
+      transparent 70%
+    );
+  }
+  50% {
+    background: radial-gradient(
+      circle at 50% 50%,
+      color-mix(in srgb, var(--color-brand, #FF7900) 12%, transparent) 0%,
+      transparent 70%
+    );
+  }
+}
+
+/* Card generating pulse - glow pulse for cards during generation */
+@keyframes cardGeneratingPulse {
+  0%, 100% {
+    box-shadow: 
+      inset 0 1px 3px color-mix(in srgb, var(--color-brand, #FF7900) 8%, transparent),
+      0 4px 20px rgba(0, 0, 0, 0.15),
+      0 0 0 transparent;
+  }
+  50% {
+    box-shadow: 
+      inset 0 1px 3px color-mix(in srgb, var(--color-brand, #FF7900) 15%, transparent),
+      0 4px 20px rgba(0, 0, 0, 0.15),
+      0 0 30px color-mix(in srgb, var(--color-brand, #FF7900) 20%, transparent);
+  }
+}
+
+/* Gradient pulse - for empty state backgrounds */
+@keyframes gradientPulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+/* Ring pulse - for icon wrappers */
+@keyframes ringPulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.08);
+  }
+}
+
+/* Icon float - floating icon animation */
+@keyframes iconFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-6px) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-6px) rotate(3deg);
+  }
+}
+
+/* Particle float - for floating particle effects */
+@keyframes particleFloat {
+  0%, 100% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0.3;
+  }
+  25% {
+    transform: translateY(-30px) translateX(20px) scale(1.2);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(-60px) translateX(-10px) scale(0.8);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(-30px) translateX(15px) scale(1.1);
+    opacity: 0.6;
+  }
+}
+
+/* Spinner rotate - for loading spinners */
+@keyframes spinnerRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Spinner dash - SVG spinner stroke animation */
+@keyframes spinnerDash {
+  0% {
+    stroke-dasharray: 1, 125.6;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 94.2, 125.6;
+    stroke-dashoffset: -31.4;
+  }
+  100% {
+    stroke-dasharray: 94.2, 125.6;
+    stroke-dashoffset: -125.6;
+  }
+}
+
+/* Text shimmer flow - gradient text shimmer (alternative) */
+@keyframes textShimmerFlow {
+  0%, 100% {
+    background-position: -200% 0;
+  }
+  50% {
+    background-position: 200% 0;
+  }
+}
+
+/* Button ripple effect */
+@keyframes rippleEffect {
+  0% {
+    transform: scale(0);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
   }
 }
 
@@ -572,22 +925,23 @@
 }
 
 /* Stagger delay utilities for field animations (30ms increments) */
+// Field stagger delays - 40ms increment for smooth sequential animation
 .field-stagger-0 { animation-delay: 0ms; }
-.field-stagger-1 { animation-delay: 30ms; }
-.field-stagger-2 { animation-delay: 60ms; }
-.field-stagger-3 { animation-delay: 90ms; }
-.field-stagger-4 { animation-delay: 120ms; }
-.field-stagger-5 { animation-delay: 150ms; }
-.field-stagger-6 { animation-delay: 180ms; }
-.field-stagger-7 { animation-delay: 210ms; }
-.field-stagger-8 { animation-delay: 240ms; }
-.field-stagger-9 { animation-delay: 270ms; }
-.field-stagger-10 { animation-delay: 300ms; }
-.field-stagger-11 { animation-delay: 330ms; }
-.field-stagger-12 { animation-delay: 360ms; }
-.field-stagger-13 { animation-delay: 390ms; }
-.field-stagger-14 { animation-delay: 420ms; }
-.field-stagger-15 { animation-delay: 450ms; }
+.field-stagger-1 { animation-delay: 40ms; }
+.field-stagger-2 { animation-delay: 80ms; }
+.field-stagger-3 { animation-delay: 120ms; }
+.field-stagger-4 { animation-delay: 160ms; }
+.field-stagger-5 { animation-delay: 200ms; }
+.field-stagger-6 { animation-delay: 240ms; }
+.field-stagger-7 { animation-delay: 280ms; }
+.field-stagger-8 { animation-delay: 320ms; }
+.field-stagger-9 { animation-delay: 360ms; }
+.field-stagger-10 { animation-delay: 400ms; }
+.field-stagger-11 { animation-delay: 440ms; }
+.field-stagger-12 { animation-delay: 480ms; }
+.field-stagger-13 { animation-delay: 520ms; }
+.field-stagger-14 { animation-delay: 560ms; }
+.field-stagger-15 { animation-delay: 600ms; }
 
 /* Stagger delay utilities for item animations (40ms increments) */
 .item-stagger-0 { animation-delay: 0ms; }
@@ -691,6 +1045,182 @@
 }
 
 /* ===================================================================
+   ADDITIONAL ANIMATION UTILITY CLASSES
+   Homepage feature parity animations
+   =================================================================== */
+
+/* Fade in with scale */
+.animate-fade-in-scale {
+  animation: fadeInScale 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: var(--animation-fill-mode);
+}
+
+/* Pulse glow - background glow effect */
+.animate-pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* Float animation */
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Pulse ring - expanding ring */
+.animate-pulse-ring {
+  animation: pulseRing 2s ease-in-out infinite;
+}
+
+/* Text shimmer - gradient text effect */
+.animate-text-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--foreground, #ffffff) 0%,
+    var(--color-brand, #FF7900) 50%,
+    var(--foreground, #ffffff) 100%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textShimmer 2s ease-in-out infinite;
+}
+
+/* Wave slide - progress indicator */
+.animate-wave-slide {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-brand, #FF7900) 25%,
+    var(--color-brand, #FF7900) 75%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: waveSlide 2s ease-in-out infinite;
+}
+
+/* Section pulse - highlighted section */
+.animate-section-pulse {
+  animation: sectionPulse 2s ease-out;
+}
+
+/* Section border fade - fading highlight */
+.animate-section-border-fade {
+  animation: sectionBorderFade 2s ease-out forwards;
+}
+
+/* New section glow - streaming new sections */
+.animate-new-section-glow {
+  animation: newSectionGlow 0.6s ease-out forwards;
+}
+
+/* Dot pulse - status indicator */
+.animate-dot-pulse {
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+/* Ring expand - expandings rings */
+.animate-ring-expand {
+  animation: ringExpand 2s ease-in-out infinite;
+}
+
+/* Generating pulse - loading states */
+.animate-generating-pulse {
+  animation: generatingBgPulse 3s ease-in-out infinite, cardGeneratingPulse 2s ease-in-out infinite;
+}
+
+/* Gradient pulse - background gradient */
+.animate-gradient-pulse {
+  animation: gradientPulse 5s ease-in-out infinite;
+}
+
+/* Ring pulse - icon rings */
+.animate-ring-pulse {
+  animation: ringPulse 3s ease-in-out infinite;
+}
+
+/* Icon float - floating icons */
+.animate-icon-float {
+  animation: iconFloat 4s ease-in-out infinite;
+}
+
+/* Particle float - floating particles */
+.animate-particle-float {
+  animation: particleFloat 4s ease-in-out infinite;
+}
+
+/* Spinner - loading spinner */
+.animate-spinner {
+  animation: spinnerRotate 1.5s linear infinite;
+}
+
+/* Button ripple effect */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--color-brand, #FF7900) 30%, transparent) 0%,
+      transparent 70%
+    );
+    pointer-events: none;
+    border-radius: inherit;
+    opacity: 0;
+  }
+  
+  &:active::after {
+    animation: rippleEffect 0.6s ease-out;
+  }
+}
+
+/* Cursor blink - typing indicator */
+.animate-cursor-blink {
+  animation: cursorBlink 0.8s step-end infinite;
+}
+
+/* Spark travel - border traveling spark */
+.animate-spark-travel {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: var(--color-brand, #FF7900);
+    border-radius: 50%;
+    box-shadow: 0 0 6px 1px color-mix(in srgb, var(--color-brand, #FF7900) 80%, transparent);
+    animation: sparkTravel 3s linear infinite;
+    pointer-events: none;
+    z-index: 10;
+  }
+}
+
+/* Section highlight - URL fragment scroll highlight */
+.section-highlight {
+  animation: sectionPulse 2s ease-out;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border: 2px solid color-mix(in srgb, var(--color-brand, #FF7900) 60%, transparent);
+    border-radius: 14px;
+    pointer-events: none;
+    animation: sectionBorderFade 2s ease-out forwards;
+  }
+}
+
+/* ===================================================================
    PERFORMANCE OPTIMIZATION
    Hardware acceleration hints for smooth animations
    =================================================================== */
@@ -729,6 +1259,7 @@
   /* Disable all custom animations */
   .animate-fade-in,
   .animate-fade-in-up,
+  .animate-fade-in-scale,
   .animate-slide-up,
   .animate-slide-down,
   .animate-slide-in-left,
@@ -736,12 +1267,31 @@
   .animate-scale,
   .animate-scale-in,
   .animate-pulse,
+  .animate-pulse-glow,
+  .animate-float,
+  .animate-pulse-ring,
+  .animate-text-shimmer,
+  .animate-wave-slide,
+  .animate-section-pulse,
+  .animate-section-border-fade,
+  .animate-new-section-glow,
+  .animate-dot-pulse,
+  .animate-ring-expand,
+  .animate-generating-pulse,
+  .animate-gradient-pulse,
+  .animate-ring-pulse,
+  .animate-icon-float,
+  .animate-particle-float,
+  .animate-spinner,
+  .animate-cursor-blink,
+  .animate-spark-travel,
   .animate-spin,
   .animate-spin-slow,
   .animate-shake,
   .animate-bounce,
   .section-streaming,
   .section-streaming-glow,
+  .section-highlight,
   .field-streaming,
   .item-streaming,
   .state-transition-enter,
@@ -749,11 +1299,26 @@
   .error-shake,
   .error-pulse,
   .skeleton-shimmer,
-  .skeleton-pulse {
+  .skeleton-pulse,
+  .btn-ripple {
     animation: none !important;
     transition: none !important;
     opacity: 1 !important;
     transform: none !important;
+  }
+  
+  /* Disable pseudo-element animations */
+  .animate-spark-travel::before,
+  .section-highlight::after,
+  .btn-ripple::after {
+    animation: none !important;
+    display: none;
+  }
+  
+  /* Disable text shimmer gradient */
+  .animate-text-shimmer {
+    background: none !important;
+    -webkit-text-fill-color: var(--foreground, currentColor) !important;
   }
   
   /* Remove will-change hints */

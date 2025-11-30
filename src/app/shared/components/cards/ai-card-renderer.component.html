@@ -24,9 +24,8 @@
         class="ai-card-surface flex-1 min-h-0"
         [style.display]="'flex'"
         [style.flex-direction]="'column'"
-        [ngClass]="{ 'ai-card-surface--fullscreen': isFullscreen, 'ai-card-surface--empty-state': !processedSections.length }"
+        [ngClass]="{ 'ai-card-surface--fullscreen': isFullscreen, 'ai-card-surface--empty-state': !processedSections.length, 'streaming-active': isStreaming }"
         [attr.aria-label]="(cardConfig && cardConfig.cardTitle) || 'Card'"
-        [attr.aria-describedby]="(cardConfig && cardConfig.cardSubtitle) ? 'card-subtitle' : null"
         [attr.aria-live]="streamingStage === 'streaming' ? 'polite' : 'off'"
         [attr.aria-busy]="streamingStage === 'streaming' || streamingStage === 'thinking'"
         role="article"
@@ -35,7 +34,6 @@
           <app-card-header
             *ngIf="processedSections.length"
             [cardTitle]="cardConfig.cardTitle"
-            [cardSubtitle]="cardConfig.cardSubtitle"
             [showExport]="true"
             (export)="onExport()">
           </app-card-header>
@@ -51,6 +49,9 @@
           <app-card-section-list
             *ngIf="processedSections.length; else emptyState"
             [sections]="processedSections"
+            [isStreaming]="isStreaming"
+            [changeType]="changeType"
+            [containerWidth]="effectiveContainerWidth"
             (sectionEvent)="onSectionEvent($event)"
             (layoutChange)="onLayoutChange($event)">
           </app-card-section-list>

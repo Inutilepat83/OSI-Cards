@@ -41,31 +41,6 @@ export function cardTitleValidator(): ValidatorFn {
 }
 
 /**
- * Validator for card subtitle input
- * Ensures subtitle is within length limits (optional field)
- */
-export function cardSubtitleValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value;
-    
-    if (!value || typeof value !== 'string') {
-      return null; // Subtitle is optional
-    }
-    
-    if (value.length > CARD_LIMITS.MAX_SUBTITLE_LENGTH) {
-      return { 
-        cardSubtitleMaxLength: { 
-          maxLength: CARD_LIMITS.MAX_SUBTITLE_LENGTH,
-          actualLength: value.length 
-        } 
-      };
-    }
-    
-    return null;
-  };
-}
-
-/**
  * Validator for card description input
  * Ensures description is within length limits (optional field)
  */
@@ -311,6 +286,12 @@ export function arrayLengthValidator(maxLength: number, fieldName: string): Vali
     return null;
   };
 }
+
+
+
+
+
+
 
 
 

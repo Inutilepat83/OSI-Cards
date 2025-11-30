@@ -137,11 +137,16 @@ export function createAnalyticsDashboard(options: AnalyticsDashboardOptions): AI
   return {
     id: `analytics-${title.toLowerCase().replace(/\s+/g, '-')}`,
     cardTitle: title,
-    cardSubtitle: subtitle,
     cardType: 'analytics',
     sections: sections.filter(s => (s.fields && s.fields.length > 0) || s.chartData),
     actions: actions.length > 0 ? actions : undefined
   };
 }
+
+
+
+
+
+
 
 

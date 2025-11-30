@@ -1,0 +1,123 @@
+/* =================================================================
+   Card Streaming Indicator Component
+   Visual feedback during LLM streaming card generation
+   ================================================================= */
+
+.streaming-indicator {
+  position: relative;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 121, 0, 0.05);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* Progress Bar Container */
+.streaming-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 121, 0, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Progress Fill - Animated gradient */
+.streaming-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-brand, #ff7900), rgba(255, 121, 0, 0.8));
+  transition: width 0.3s ease;
+  border-radius: 2px;
+  position: relative;
+}
+
+/* Shimmer effect on progress fill */
+.streaming-progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  animation: progressShimmer 1.5s ease-in-out infinite;
+}
+
+/* Thinking state - indeterminate animation */
+.streaming-progress-thinking {
+  height: 100%;
+  width: 30%;
+  background: linear-gradient(90deg, var(--color-brand, #ff7900), rgba(255, 121, 0, 0.8));
+  border-radius: 2px;
+  animation: thinkingPulse 1.5s ease-in-out infinite;
+}
+
+/* Progress Label */
+.streaming-label {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-brand, #ff7900);
+  font-weight: 500;
+  text-align: center;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Screen reader only class */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* =================================================================
+   Animations
+   ================================================================= */
+
+@keyframes progressShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+@keyframes thinkingPulse {
+  0%, 100% {
+    transform: translateX(0);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateX(230%);
+    opacity: 1;
+  }
+}
+
+/* =================================================================
+   Reduced Motion Support
+   ================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .streaming-progress-fill::after {
+    animation: none;
+  }
+  
+  .streaming-progress-thinking {
+    animation: none;
+    width: 100%;
+    opacity: 0.5;
+  }
+}
+

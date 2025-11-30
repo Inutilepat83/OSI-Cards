@@ -1,0 +1,36 @@
+// ============================================
+// BUNDLES INDEX
+// ============================================
+//
+// Available bundles for Shadow DOM components:
+//
+// FULL BUNDLES:
+//   @use 'bundles/all'           - Everything included
+//   @use 'bundles/ai-card'       - AI Card with all sections
+//   @use 'bundles/sections'      - All sections without card chrome
+//
+// BASE BUNDLE:
+//   @use 'bundles/base'          - Foundation only (tokens, reset, core)
+//
+// INDIVIDUAL SECTION BUNDLES (for tree-shaking):
+//   @use 'bundles/section-analytics'
+//   @use 'bundles/section-contact'
+//   @use 'bundles/section-chart'
+//   @use 'bundles/section-list'
+//   @use 'bundles/section-news'
+//   @use 'bundles/section-overview'
+//
+// ============================================
+
+// Re-export all bundles
+@forward 'all';
+@forward 'ai-card';
+@forward 'sections';
+@forward 'base';
+@forward 'section-analytics';
+@forward 'section-contact';
+@forward 'section-chart';
+@forward 'section-list';
+@forward 'section-news';
+@forward 'section-overview';
+

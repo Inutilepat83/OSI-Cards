@@ -6,7 +6,7 @@ This guide explains how to customize and theme the OSI Cards library to match yo
 
 The OSI Cards library uses CSS custom properties (CSS variables) for theming, allowing for runtime theme switching and easy customization. The theme system supports:
 
-- Built-in presets (light, dark, high-contrast)
+- Built-in presets (day, night, osi-day, osi-night)
 - Custom themes via CSS variables
 - Runtime theme switching
 - Theme validation and builder utilities
@@ -41,7 +41,8 @@ export class MyComponent {
 
 - `'day'` - Light theme (default)
 - `'night'` - Dark theme
-- `'high-contrast'` - High contrast theme for accessibility
+- `'osi-day'` - OSI Deployment light theme (Orange Sales Assistance styling)
+- `'osi-night'` - OSI Deployment dark theme (Orange Sales Assistance styling)
 
 ## Built-in Theme Presets
 
@@ -63,14 +64,29 @@ const themeService = inject(ThemeService);
 themeService.setTheme('night');
 ```
 
-### High Contrast Theme
+### OSI Deployment Theme (Light)
 
 ```typescript
 import { ThemeService } from 'osi-cards-lib';
 
 const themeService = inject(ThemeService);
-themeService.setTheme('high-contrast');
+themeService.setTheme('osi-day');
 ```
+
+### OSI Deployment Theme (Dark)
+
+```typescript
+import { ThemeService } from 'osi-cards-lib';
+
+const themeService = inject(ThemeService);
+themeService.setTheme('osi-night');
+```
+
+The OSI deployment themes include styling from the Orange Sales Assistance application, providing seamless integration with that environment. These themes include:
+- Core OSI Cards variables (background, foreground, colors)
+- Chat interface variables (--chat-border-color, --chat-content-bg-color, etc.)
+- History panel variables (--history-border-color, --history-tab-active-*, etc.)
+- UI element variables (--btn-*, --star-*, --bkg-color, etc.)
 
 ## Custom Themes
 
@@ -276,17 +292,12 @@ You can also override themes using CSS in your application:
 
 ## Accessibility
 
-The library includes a high-contrast theme for better accessibility:
+The library respects the system's accessibility preferences through CSS media queries:
 
-```typescript
-themeService.setTheme('high-contrast');
-```
+- `@media (prefers-contrast: high)` - Automatically applies high contrast styles
+- `@media (forced-colors: active)` - Supports Windows High Contrast Mode
 
-This theme provides:
-- Maximum contrast ratios
-- Clearer borders
-- Enhanced visibility
-- WCAG AA compliance
+These accessibility features work automatically based on user system preferences and don't require programmatic theme switching.
 
 ## Best Practices
 

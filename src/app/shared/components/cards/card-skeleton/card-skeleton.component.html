@@ -26,4 +26,18 @@
   <div class="card-skeleton-empty" *ngIf="sectionCount === 0">
     <div class="skeleton-line skeleton-line--empty"></div>
   </div>
+
+  <!-- Action buttons placeholder -->
+  <div class="card-skeleton-actions" *ngIf="actionCount > 0">
+    <div 
+      *ngFor="let action of [].constructor(actionCount); let i = index"
+      class="skeleton-action-button"
+      [style.animation-delay.ms]="(sectionCount * 100) + (i * 50)">
+    </div>
+  </div>
+
+  <!-- Signature placeholder -->
+  <div class="card-skeleton-signature">
+    <div class="skeleton-signature-line"></div>
+  </div>
 </div>

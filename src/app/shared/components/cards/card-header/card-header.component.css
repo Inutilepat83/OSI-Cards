@@ -1,27 +1,30 @@
-/* Export button on card - matches fullscreen button style */
+/* Export button on card - flat icon only */
 .ai-card-export-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: rgba(255, 121, 0, 0.08);
-  border: 1px solid rgba(255, 121, 0, 0.2);
-  color: var(--foreground);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
+  all: unset !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  color: var(--muted-foreground, #555861) !important;
+  cursor: pointer !important;
+  opacity: 0.5 !important;
+  transition: color 0.2s ease, opacity 0.2s ease !important;
 }
 
 .ai-card-export-btn:hover {
-  transform: translateY(-2px);
-  background: rgba(255, 121, 0, 0.15);
-  border-color: rgba(255, 121, 0, 0.4);
-  box-shadow: 0 4px 12px rgba(255, 121, 0, 0.2);
+  color: var(--color-brand, #FF7900) !important;
+  opacity: 1 !important;
 }
 
 .ai-card-export-btn:active {
-  transform: translateY(0);
+  opacity: 0.7 !important;
 }
+
+
+
+
+
+
 

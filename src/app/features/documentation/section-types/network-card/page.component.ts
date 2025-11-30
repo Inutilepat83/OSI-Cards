@@ -9,7 +9,19 @@ Displays relationship graphs, network connections, and influence metrics.
 
 ## Overview
 
-The **Network Card Section** is used for displays relationship graphs, network connections, and influence metrics.
+The **Network Card Section** (\`type: "network-card"\`) is used for displays relationship graphs, network connections, and influence metrics.
+
+### Quick Facts
+
+| Property | Value |
+|----------|-------|
+| Type | \`network-card\` |
+| Uses Fields | No |
+| Uses Items | Yes |
+| Default Columns | 1 |
+| Supports Collapse | Yes |
+| Aliases | None |
+
 
 ## Use Cases
 
@@ -20,25 +32,64 @@ The **Network Card Section** is used for displays relationship graphs, network c
 
 ## Data Schema
 
-\`\`\`typescript
-interface CardSection {
-  title: string;
-  type: 'network-card';
-  fields?: CardField[];
-  
-}
-\`\`\`
 
-## Example
+
+### Items Schema
+
+| Property | Type | Description |
+|----------|------|-------------|
+| \`title\` | string | Network node name |
+| \`description\` | string | Node description |
+| \`meta\` | object | - |
+
+## Complete Example
 
 \`\`\`json
 {
-  "title": "Network Card Section Example",
+  "title": "Business Network",
   "type": "network-card",
-  "fields": [
+  "description": "Key business relationships and partnerships",
+  "items": [
     {
-      "label": "Example Label",
-      "value": "Example Value"
+      "title": "Strategic Partner A",
+      "description": "Technology partnership",
+      "meta": {
+        "influence": 85,
+        "connections": 12,
+        "status": "active"
+      }
+    },
+    {
+      "title": "Investor Group",
+      "description": "Series B lead investor",
+      "meta": {
+        "influence": 92,
+        "connections": 8,
+        "status": "active"
+      }
+    },
+    {
+      "title": "Distribution Partner",
+      "description": "EMEA distribution",
+      "meta": {
+        "influence": 67,
+        "connections": 25,
+        "status": "active"
+      }
+    }
+  ]
+}
+\`\`\`
+
+## Minimal Example
+
+\`\`\`json
+{
+  "title": "Network",
+  "type": "network-card",
+  "items": [
+    {
+      "title": "Partner"
     }
   ]
 }
@@ -47,14 +98,15 @@ interface CardSection {
 ## Best Practices
 
 1. Show relationships clearly
-1. Include connection types
-1. Add influence metrics
-1. Use visual hierarchy
+2. Include connection types
+3. Add influence metrics
+4. Use visual hierarchy
 
-## Component Properties
+## Component Information
 
-
-
+- **Selector:** \`app-network-card-section\`
+- **Component Path:** \`./lib/components/sections/network-card-section/network-card-section.component\`
+- **Style Path:** \`./lib/styles/components/sections/_network.scss\`
 
 ## Related Documentation
 

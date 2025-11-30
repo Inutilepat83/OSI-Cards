@@ -4,7 +4,19 @@ Displays product information, features, benefits, and pricing.
 
 ## Overview
 
-The **Product Section** is used for displays product information, features, benefits, and pricing.
+The **Product Section** (`type: "product"`) is used for displays product information, features, benefits, and pricing.
+
+### Quick Facts
+
+| Property | Value |
+|----------|-------|
+| Type | `product` |
+| Uses Fields | Yes |
+| Uses Items | No |
+| Default Columns | 1 |
+| Supports Collapse | Yes |
+| Aliases | None |
+
 
 ## Use Cases
 
@@ -15,25 +27,60 @@ The **Product Section** is used for displays product information, features, bene
 
 ## Data Schema
 
-```typescript
-interface CardSection {
-  title: string;
-  type: 'product';
-  fields?: CardField[];
-  
-}
-```
+### Fields Schema
 
-## Example
+| Property | Type | Description |
+|----------|------|-------------|
+| `label` | string | Product attribute label |
+| `value` | string | Attribute value |
+| `icon` | string | Icon identifier |
+| `price` | string | Product price |
+| `status` | string | Product availability |
+
+
+
+## Complete Example
 
 ```json
 {
-  "title": "Product Section Example",
+  "title": "Product Information",
+  "type": "product",
+  "description": "Product details and specifications",
+  "fields": [
+    {
+      "label": "Product Name",
+      "value": "Enterprise Suite Pro"
+    },
+    {
+      "label": "Version",
+      "value": "3.5.2"
+    },
+    {
+      "label": "Category",
+      "value": "Enterprise Software"
+    },
+    {
+      "label": "License",
+      "value": "Annual Subscription"
+    },
+    {
+      "label": "Support Level",
+      "value": "Premium 24/7"
+    }
+  ]
+}
+```
+
+## Minimal Example
+
+```json
+{
+  "title": "Product",
   "type": "product",
   "fields": [
     {
-      "label": "Example Label",
-      "value": "Example Value"
+      "label": "Name",
+      "value": "Product"
     }
   ]
 }
@@ -42,14 +89,15 @@ interface CardSection {
 ## Best Practices
 
 1. Highlight key features
-1. Include pricing when relevant
-1. Use descriptions for details
-1. Add status for availability
+2. Include pricing when relevant
+3. Use descriptions for details
+4. Add status for availability
 
-## Component Properties
+## Component Information
 
-
-
+- **Selector:** `app-product-section`
+- **Component Path:** `./lib/components/sections/product-section/product-section.component`
+- **Style Path:** `./lib/styles/components/sections/_product.scss`
 
 ## Related Documentation
 

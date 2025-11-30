@@ -1,0 +1,272 @@
+<div class="ilibrary-page">
+  <!-- Header -->
+  <header class="ilibrary-header">
+    <div class="header-content">
+      <div class="header-title">
+        <lucide-icon name="library" [size]="28" class="header-icon"></lucide-icon>
+        <div>
+          <h1>iLibrary</h1>
+          <p class="header-subtitle">Integration Simulator</p>
+        </div>
+      </div>
+      <p class="header-description">
+        Demonstrate OSI Cards integration across different client applications.
+        Test streaming, theming, and CSS encapsulation in various environments.
+      </p>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="ilibrary-content">
+    <!-- Left Panel: Simulated Client Environment -->
+    <div class="simulation-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <lucide-icon name="monitor" [size]="18"></lucide-icon>
+          <span>Client Application Preview</span>
+        </div>
+        <div class="env-badge" [ngClass]="selectedEnvironment.cssClass">
+          {{ selectedEnvironment.name }}
+        </div>
+      </div>
+
+      <!-- Simulated App Container -->
+      <div class="simulated-app" [ngClass]="selectedEnvironment.cssClass">
+        <!-- Simulated App Header -->
+        <div class="sim-app-header">
+          <div class="sim-app-logo">
+            <div class="sim-logo-icon"></div>
+            <span class="sim-app-name">{{ selectedEnvironment.name }}</span>
+          </div>
+          <div class="sim-app-nav">
+            <span class="sim-nav-item">Dashboard</span>
+            <span class="sim-nav-item active">Cards</span>
+            <span class="sim-nav-item">Settings</span>
+          </div>
+        </div>
+
+        <!-- Card Container -->
+        <div class="sim-app-content">
+          <div class="sim-content-header">
+            <h2 class="sim-section-title">Entity Card</h2>
+            <p class="sim-section-desc">OSI Cards component embedded in {{ selectedEnvironment.description }}</p>
+          </div>
+
+          <!-- The OSI Card wrapper -->
+          <div class="card-wrapper">
+            @if (showCardRenderer) {
+              <!-- Card renderer shows the particle animation during thinking phase, 
+                   then transitions to streaming content -->
+              <app-ai-card-renderer
+                [cardConfig]="cardConfigForRenderer"
+                [streamingStage]="streamingState?.stage"
+                [streamingProgress]="streamingState?.progress"
+                [isStreaming]="streamingState?.stage === 'streaming'"
+                [showLoadingByDefault]="true"
+                [tiltEnabled]="true">
+              </app-ai-card-renderer>
+            } @else {
+              <!-- Empty state - only shown when idle and no card -->
+              <div class="empty-state">
+                <lucide-icon name="layers" [size]="48" class="empty-icon"></lucide-icon>
+                <p>Click "Generate Card" to start</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Simulated App Footer -->
+        <div class="sim-app-footer">
+          <span>© 2024 {{ selectedEnvironment.name }}</span>
+          <span class="sim-footer-divider">|</span>
+          <span>Powered by OSI Cards</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel: Controls -->
+    <div class="controls-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <lucide-icon name="settings-2" [size]="18"></lucide-icon>
+          <span>Configuration</span>
+        </div>
+      </div>
+
+      <div class="controls-content">
+        <!-- Environment Selection -->
+        <div class="control-group">
+          <label class="control-label">
+            <lucide-icon name="layout" [size]="14"></lucide-icon>
+            Environment
+          </label>
+          <select 
+            class="control-select"
+            [(ngModel)]="selectedEnvironment"
+            (ngModelChange)="onEnvironmentChange()">
+            @for (env of environments; track env.id) {
+              <option [ngValue]="env">{{ env.name }}</option>
+            }
+          </select>
+          <p class="control-hint">{{ selectedEnvironment.description }}</p>
+        </div>
+
+        <!-- Card Theme -->
+        <div class="control-group">
+          <label class="control-label">
+            <lucide-icon name="palette" [size]="14"></lucide-icon>
+            Card Theme
+          </label>
+          <select 
+            class="control-select"
+            [(ngModel)]="selectedTheme"
+            (ngModelChange)="onThemeChange()">
+            @for (theme of themeOptions; track theme.id) {
+              <option [value]="theme.id">{{ theme.name }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Card Type -->
+        <div class="control-group">
+          <label class="control-label">
+            <lucide-icon name="file-json" [size]="14"></lucide-icon>
+            Card Type
+          </label>
+          <select 
+            class="control-select"
+            [(ngModel)]="selectedTemplate"
+            (ngModelChange)="onTemplateChange()">
+            @for (template of cardTemplates; track template.id) {
+              <option [ngValue]="template">{{ template.name }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Streaming Options -->
+        <div class="control-group">
+          <label class="control-label">
+            <lucide-icon name="radio" [size]="14"></lucide-icon>
+            Generation Mode
+          </label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input 
+                type="radio" 
+                name="streaming" 
+                [value]="true" 
+                [(ngModel)]="useStreaming">
+              <span class="radio-label">Streaming</span>
+            </label>
+            <label class="radio-option">
+              <input 
+                type="radio" 
+                name="streaming" 
+                [value]="false" 
+                [(ngModel)]="useStreaming">
+              <span class="radio-label">Instant</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Streaming Speed -->
+        @if (useStreaming) {
+          <div class="control-group">
+            <label class="control-label">
+              <lucide-icon name="gauge" [size]="14"></lucide-icon>
+              Streaming Speed
+              <span class="speed-value">{{ streamingSpeed }} tok/s</span>
+            </label>
+            <input 
+              type="range" 
+              class="control-range"
+              min="20" 
+              max="200" 
+              step="10"
+              [(ngModel)]="streamingSpeed">
+            <div class="range-labels">
+              <span>Slow</span>
+              <span>Fast</span>
+            </div>
+          </div>
+
+          <!-- LLM Thinking Delay -->
+          <div class="control-group">
+            <label class="control-label">
+              <lucide-icon name="brain" [size]="14"></lucide-icon>
+              LLM Thinking Delay
+              <span class="speed-value">{{ thinkingDelay / 1000 }}s</span>
+            </label>
+            <input 
+              type="range" 
+              class="control-range"
+              min="0" 
+              max="8000" 
+              step="500"
+              [(ngModel)]="thinkingDelay">
+            <div class="range-labels">
+              <span>Instant</span>
+              <span>8 sec</span>
+            </div>
+            <p class="control-hint">Simulates time waiting for LLM to start returning JSON</p>
+          </div>
+        }
+
+        <!-- Action Buttons -->
+        <div class="control-actions">
+          @if (!isGenerating) {
+            <button 
+              class="btn-primary"
+              (click)="generateCard()"
+              [disabled]="!cardJson">
+              <lucide-icon name="play" [size]="16"></lucide-icon>
+              Generate Card
+            </button>
+          } @else {
+            <button 
+              class="btn-danger"
+              (click)="stopGeneration()">
+              <lucide-icon name="square" [size]="16"></lucide-icon>
+              Stop
+            </button>
+          }
+        </div>
+
+        <!-- Status Display -->
+        <div class="status-panel">
+          <div class="status-row">
+            <span class="status-label">Status</span>
+            <span class="status-value" [ngClass]="'status-' + (streamingState?.stage ?? 'idle')">
+              {{ stageLabel }}
+            </span>
+          </div>
+          @if (streamingState?.isActive) {
+            <div class="status-row">
+              <span class="status-label">Progress</span>
+              <div class="status-progress">
+                <div class="mini-progress-bar">
+                  <div class="mini-progress-fill" [style.width.%]="progressPercent"></div>
+                </div>
+                <span class="status-value">{{ progressPercent }}%</span>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box">
+          <lucide-icon name="info" [size]="16" class="info-icon"></lucide-icon>
+          <div class="info-content">
+            <strong>CSS Encapsulation Demo</strong>
+            <p>
+              The card uses Shadow DOM encapsulation to isolate its styles 
+              from the host application. Notice how the card remains consistent 
+              regardless of the external environment's aggressive styling.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

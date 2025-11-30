@@ -357,3 +357,9 @@ if (require.main === module) {
 
 module.exports = { runWCAGAudit, WCAG_CRITERIA };
 
+
+
+
+
+
+

@@ -1,0 +1,117 @@
+{
+  "generatedAt": "2025-11-30T14:01:13.169Z",
+  "registryVersion": "1.0.0",
+  "entryPoints": {
+    "main": "public-api.ts",
+    "sections": "sections/index.ts",
+    "models": "models/index.ts"
+  },
+  "exports": {
+    "models": [
+      "AICardConfig",
+      "CardSection",
+      "CardField",
+      "CardItem",
+      "CardAction",
+      "SectionType",
+      "SectionTypeInput"
+    ],
+    "services": [
+      "OSICardsStreamingService",
+      "DynamicSectionLoaderService",
+      "SectionPluginRegistry"
+    ],
+    "components": [
+      "AICardRendererComponent",
+      "SectionRendererComponent",
+      "MasonryGridComponent"
+    ],
+    "sectionComponents": [
+      {
+        "type": "info",
+        "name": "Info Section",
+        "selector": "app-info-section"
+      },
+      {
+        "type": "analytics",
+        "name": "Analytics Section",
+        "selector": "app-analytics-section"
+      },
+      {
+        "type": "contact-card",
+        "name": "Contact Card Section",
+        "selector": "app-contact-card-section"
+      },
+      {
+        "type": "network-card",
+        "name": "Network Card Section",
+        "selector": "app-network-card-section"
+      },
+      {
+        "type": "map",
+        "name": "Map Section",
+        "selector": "app-map-section"
+      },
+      {
+        "type": "financials",
+        "name": "Financials Section",
+        "selector": "app-financials-section"
+      },
+      {
+        "type": "event",
+        "name": "Event Section",
+        "selector": "app-event-section"
+      },
+      {
+        "type": "list",
+        "name": "List Section",
+        "selector": "app-list-section"
+      },
+      {
+        "type": "chart",
+        "name": "Chart Section",
+        "selector": "app-chart-section"
+      },
+      {
+        "type": "product",
+        "name": "Product Section",
+        "selector": "app-product-section"
+      },
+      {
+        "type": "solutions",
+        "name": "Solutions Section",
+        "selector": "app-solutions-section"
+      },
+      {
+        "type": "overview",
+        "name": "Overview Section",
+        "selector": "app-overview-section"
+      },
+      {
+        "type": "quotation",
+        "name": "Quotation Section",
+        "selector": "app-quotation-section"
+      },
+      {
+        "type": "text-reference",
+        "name": "Text Reference Section",
+        "selector": "app-text-reference-section"
+      },
+      {
+        "type": "brand-colors",
+        "name": "Brand Colors Section",
+        "selector": "app-brand-colors-section"
+      },
+      {
+        "type": "news",
+        "name": "News Section",
+        "selector": "app-news-section"
+      },
+      {
+        "type": "social-media",
+        "name": "Social Media Section",
+        "selector": "app-social-media-section"
+      }
+    ]
+  }
+}

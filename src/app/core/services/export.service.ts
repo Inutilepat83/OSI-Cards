@@ -135,13 +135,7 @@ export class ExportService {
       doc.setFontSize(18);
       doc.text(card.cardTitle, 10, 20);
       
-      // Add card subtitle if present
-      if (card.cardSubtitle) {
-        doc.setFontSize(12);
-        doc.text(card.cardSubtitle, 10, 30);
-      }
-      
-      let yPosition = 40;
+      let yPosition = 35;
       
       // Add sections
       card.sections.forEach((section, index) => {
@@ -329,4 +323,10 @@ export class ExportService {
     return this.getSupportedFormats().includes(format as ExportFormat);
   }
 }
+
+
+
+
+
+
 
