@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AICardConfig } from '../../models';
-import { CardChangeType } from '../utils/card-diff.util';
+import { CardChangeType } from '@osi-cards/utils';
 
 export interface CardPreviewState {
   card: AICardConfig | null;

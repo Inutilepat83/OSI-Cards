@@ -60,7 +60,6 @@
           *ngIf="processedSections.length; else emptyState"
           [sections]="processedSections"
           [isStreaming]="isStreaming"
-          [changeType]="changeType"
           [containerWidth]="effectiveContainerWidth"
           (sectionEvent)="onSectionEvent($event)"
           (layoutChange)="onLayoutChange($event)"

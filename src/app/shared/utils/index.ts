@@ -5,25 +5,18 @@
 
 // ===== Card Utilities =====
 export * from './card-utils';
-export * from './card-diff.util';
 export * from './batch-conversion.util';
 
 // ===== Validation & Input =====
 export * from '../decorators/validation.decorator';
 export * from './validation.util';
-export * from './input-validation.util';
 export * from './form-labels.util';
-// Note: input-validation-decorators.util exports are intentionally excluded to avoid conflicts with validation.decorator
 
 // ===== Performance & Optimization =====
 export * from './memoization.util';
-// Note: memoization-enhanced.util.ts is deprecated - use memoization.util.ts instead
-export * from './performance.util';
-export * from './performance-budgets.util';
 export * from './cache.util';
 export * from './bundle-optimization.util';
 export * from './code-splitting.util';
-export * from './animation-optimization.util';
 export * from './css-optimization.util';
 export * from './progressive-loading.util';
 export * from './change-detection-optimization.util';
@@ -39,7 +32,6 @@ export * from './object-pool.util';
 
 // ===== Network & HTTP =====
 export * from './request-cancellation.util';
-export * from './retry.util';
 export * from './rate-limiting.util';
 export * from './url.util';
 
@@ -48,11 +40,9 @@ export * from './error-recovery.util';
 export * from './improved-error-messages.util';
 
 // ===== Security =====
-export * from './sanitization.util';
 export * from './security-headers.util';
 
 // ===== UI & Accessibility =====
-export * from './responsive.util';
 export * from './color-contrast.util';
 export * from './alt-text.util';
 export * from './pagination.util';

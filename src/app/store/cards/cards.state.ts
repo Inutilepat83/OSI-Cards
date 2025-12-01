@@ -3,7 +3,10 @@ import { createReducer, on } from '@ngrx/store';
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { AICardConfig, CardType } from '../../models/card.model';
 import { ensureCardIds, removeAllIds } from '../../shared/utils/card-utils';
-import { CardChangeType } from '../../shared/utils/card-diff.util';
+import { CardChangeType } from '@osi-cards/utils';
+
+// Re-export CardChangeType from library for consistency
+export type { CardChangeType } from '@osi-cards/utils';
 
 // ===== ENTITY ADAPTER =====
 

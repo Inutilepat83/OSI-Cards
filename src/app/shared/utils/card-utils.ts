@@ -1,9 +1,50 @@
 import { AICardConfig, CardAction, CardField, CardItem, CardSection } from '../../models';
 import { CARD_LIMITS, ID_CONSTANTS, SIZE_CONSTANTS } from './constants';
-import { SanitizationUtil } from './sanitization.util';
 import { ValidationUtil } from './validation.util';
 import { inject } from '@angular/core';
 import { CardValidationService } from '../services/card-validation.service';
+
+/**
+ * Inline sanitization utilities to avoid external dependency issues
+ */
+const SanitizationUtil = {
+  sanitizeCardTitle(title: string): string {
+    return title?.replace(/<[^>]*>/g, '').trim() || '';
+  },
+  sanitizeSectionTitle(title: string): string {
+    return title?.replace(/<[^>]*>/g, '').trim() || '';
+  },
+  sanitizeFieldValue(value: unknown): string | number | boolean | null {
+    if (value === null || value === undefined) return null;
+    if (typeof value === 'number' || typeof value === 'boolean') return value;
+    return String(value).replace(/<[^>]*>/g, '');
+  },
+  sanitizeUrl(url: string): string | null {
+    if (!url) return null;
+    const trimmed = url.trim().toLowerCase();
+    const dangerous = ['javascript:', 'data:', 'vbscript:'];
+    if (dangerous.some(p => trimmed.startsWith(p))) return null;
+    return url.trim();
+  },
+  sanitizeEmail(email: string): string | null {
+    if (!email) return null;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email) ? email.trim() : null;
+  },
+  sanitizeObject<T extends Record<string, unknown>>(obj: T): T {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj)) {
+      if (typeof value === 'string') {
+        result[key] = value.replace(/<[^>]*>/g, '');
+      } else if (value && typeof value === 'object' && !Array.isArray(value)) {
+        result[key] = SanitizationUtil.sanitizeObject(value as Record<string, unknown>);
+      } else {
+        result[key] = value;
+      }
+    }
+    return result as T;
+  }
+};
 
 /**
  * Recursively remove `id` properties from complex card payloads while preserving shape.

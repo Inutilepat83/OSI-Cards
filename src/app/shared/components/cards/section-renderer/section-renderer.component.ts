@@ -17,11 +17,16 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardAction, CardField, CardItem, CardSection } from '../../../../models';
-import { InfoSectionFieldInteraction } from '../sections/info-section.component';
 import { SectionLoaderService } from './section-loader.service';
 import { SectionTypeResolverService } from './section-type-resolver.service';
 import { AppConfigService } from '../../../../core/services/app-config.service';
-import { SectionInteraction } from '../sections/base-section.component';
+import {
+  SectionInteraction,
+  InfoSectionComponent
+} from '@osi-cards/sections';
+
+/** Type alias for InfoSection field interaction */
+type InfoSectionFieldInteraction = Parameters<InfoSectionComponent['fieldInteraction']['emit']>[0];
 import { ErrorBoundaryComponent } from '../../../../core/error-boundary/error-boundary.component';
 import { LoggingService } from '../../../../core/services/logging.service';
 
@@ -182,14 +187,14 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   onInfoFieldInteraction(event: InfoSectionFieldInteraction): void {
-    if (!this.section) {
+    if (!this.section || !event?.field) {
       return;
     }
     this.sectionEvent.emit({
       type: 'field',
       section: this.section,
       field: event.field,
-      metadata: { sectionTitle: event.sectionTitle },
+      metadata: { sectionTitle: this.section.title },
     });
   }
 

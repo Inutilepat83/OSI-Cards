@@ -1,9 +1,7 @@
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { LoggingService } from './logging.service';
-import { AppConfigService } from './app-config.service';
-import { WebVitalsService } from './web-vitals.service';
 
 export interface RUMEvent {
   type: 'pageview' | 'interaction' | 'error' | 'performance' | 'custom';
@@ -44,8 +42,6 @@ export interface RUMPerformanceMetric {
 })
 export class RUMService {
   private readonly logger = inject(LoggingService);
-  private readonly config = inject(AppConfigService);
-  private readonly webVitals = inject(WebVitalsService);
   private readonly platformId = inject(PLATFORM_ID);
 
   private readonly eventsSubject = new BehaviorSubject<RUMEvent[]>([]);

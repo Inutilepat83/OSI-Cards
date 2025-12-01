@@ -8,8 +8,7 @@
  */
 
 import { inject, Injectable, NgZone } from '@angular/core';
-import { BehaviorSubject, from, Observable, Subject, throwError } from 'rxjs';
-import { finalize, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, throwError } from 'rxjs';
 import {
   StreamingChunk,
   StreamingConnectionState,
@@ -200,7 +199,7 @@ export class FetchStreamingTransport extends StreamingTransport {
   /**
    * Disconnect and abort the stream
    */
-  disconnect(reason?: string): void {
+  disconnect(_reason?: string): void {
     this.clearTimers();
 
     if (this.abortController) {

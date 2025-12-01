@@ -30,7 +30,7 @@
  * ```
  */
 
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
 import { I18nService, SupportedLocale } from './i18n.service';
 
 export type DateFormatStyle = 'short' | 'medium' | 'long' | 'full' | 'custom';
@@ -231,7 +231,7 @@ export class LocaleFormattingService {
    */
   formatRelativeTime(
     date: Date | string | number | null | undefined,
-    unit?: Intl.RelativeTimeFormatUnit
+    _unit?: Intl.RelativeTimeFormatUnit
   ): string {
     if (!date) {
       return '';

@@ -1,8 +1,7 @@
 import { DestroyRef, inject, Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, fromEvent, merge, Observable, Subject, timer } from 'rxjs';
-import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, fromEvent, merge, Observable, timer } from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs/operators';
 import { LoggingService } from './logging.service';
-import { AppConfigService } from './app-config.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 /**
@@ -53,7 +52,6 @@ export interface QueuedOperation<T = unknown> {
 })
 export class RetryQueueService implements OnDestroy {
   private readonly logger = inject(LoggingService);
-  private readonly config = inject(AppConfigService);
   private readonly destroyRef = inject(DestroyRef);
 
   private operationQueue: QueuedOperation[] = [];
@@ -94,9 +92,8 @@ export class RetryQueueService implements OnDestroy {
    * Setup connection monitoring
    */
   private setupConnectionMonitoring(): void {
-    // Monitor online/offline events
+    // Monitor online events
     const online$ = fromEvent(window, 'online');
-    const offline$ = fromEvent(window, 'offline');
 
     merge(online$, timer(0, 5000)) // Also check every 5 seconds
       .pipe(
@@ -215,7 +212,7 @@ export class RetryQueueService implements OnDestroy {
             'RetryQueueService'
           );
 
-          const result = await operation.operation().toPromise();
+          await operation.operation().toPromise();
 
           // Success - remove from queue
           this.remove(operation.id);

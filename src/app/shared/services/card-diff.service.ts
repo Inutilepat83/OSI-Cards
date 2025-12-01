@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AICardConfig } from '../../models';
-import { CardChangeType, CardDiffResult, CardDiffUtil } from '../utils/card-diff.util';
+import { CardChangeType, CardDiffResult, CardDiffUtil } from '@osi-cards/utils';
 
 /**
  * Injectable service for card diffing and merging

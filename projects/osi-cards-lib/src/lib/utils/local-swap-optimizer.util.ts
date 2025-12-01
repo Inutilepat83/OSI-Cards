@@ -1,4 +1,10 @@
 /**
+ * @deprecated Use unified-layout-optimizer.util.ts instead.
+ * This file will be removed in a future version.
+ * Import from @osi-cards/core for new implementations.
+ */
+
+/**
  * Local Swap Optimizer Utility
  * 
  * Provides algorithms for optimizing layouts by swapping section positions.

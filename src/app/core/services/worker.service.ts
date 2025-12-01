@@ -39,7 +39,11 @@ export class WorkerService implements OnDestroy {
   ): Promise<{ changeType: CardChangeType; hasChanges: boolean }> {
     if (!this.workerSupported || !this.cardProcessingWorker) {
       // Fallback to main thread
-      return CardDiffUtil.diffCards(oldCard, newCard);
+      if (!oldCard) {
+        return { changeType: 'content', hasChanges: true };
+      }
+      const result = CardDiffUtil.mergeCardUpdates(oldCard, newCard);
+      return { changeType: result.changeType, hasChanges: result.card !== oldCard };
     }
 
     try {
@@ -51,7 +55,11 @@ export class WorkerService implements OnDestroy {
       return response.payload as { changeType: CardChangeType; hasChanges: boolean };
     } catch (error) {
       console.warn('Worker processing failed, using main thread', error);
-      return CardDiffUtil.diffCards(oldCard, newCard);
+      if (!oldCard) {
+        return { changeType: 'content', hasChanges: true };
+      }
+      const result = CardDiffUtil.mergeCardUpdates(oldCard, newCard);
+      return { changeType: result.changeType, hasChanges: result.card !== oldCard };
     }
   }
 

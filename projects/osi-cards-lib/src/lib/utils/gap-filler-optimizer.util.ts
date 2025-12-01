@@ -1,4 +1,10 @@
 /**
+ * @deprecated Use unified-layout-optimizer.util.ts instead.
+ * This file will be removed in a future version.
+ * Import from @osi-cards/core for new implementations.
+ */
+
+/**
  * Gap Filler Optimizer Utility
  * 
  * Provides comprehensive algorithms for detecting and filling gaps in masonry grid layouts:

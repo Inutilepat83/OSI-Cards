@@ -32,3 +32,13 @@ export {
 
 // Note: sse-streaming.service and offline-storage.service are available as separate imports if needed
 
+// Re-export theme service from themes folder
+export { ThemeService } from '../themes/theme.service';
+
+// Layout optimization service
+export {
+  LayoutOptimizationService,
+  PositionedSection,
+  OptimizablePositionedSection,
+  LayoutOptimizationConfig,
+} from './layout-optimization.service';

@@ -1,5 +1,5 @@
 # Deploy OSI Cards Documentation to GitHub Pages
-# 
+#
 # NOTE: Primary deployment is Firebase (deploy.yml).
 # This workflow deploys to GitHub Pages as a secondary/backup.
 # Only runs on workflow_dispatch to avoid duplicate builds.

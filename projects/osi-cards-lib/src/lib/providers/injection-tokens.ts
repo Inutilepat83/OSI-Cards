@@ -1,16 +1,16 @@
 /**
  * OSI Cards Injection Tokens
- * 
+ *
  * Provides DI tokens for configuring library services.
  * Use these tokens to customize library behavior at the application level.
- * 
+ *
  * @example
  * ```typescript
- * import { 
- *   OSI_STREAMING_CONFIG, 
- *   OSI_ANIMATION_CONFIG 
+ * import {
+ *   OSI_STREAMING_CONFIG,
+ *   OSI_ANIMATION_CONFIG
  * } from 'osi-cards-lib';
- * 
+ *
  * export const appConfig: ApplicationConfig = {
  *   providers: [
  *     {

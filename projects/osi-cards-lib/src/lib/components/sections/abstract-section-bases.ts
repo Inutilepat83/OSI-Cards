@@ -546,7 +546,8 @@ export abstract class MixedContentSectionComponent extends BaseSectionComponent 
    * Handle item interaction
    */
   onItemClick(item: CardItem, index: number): void {
-    this.emitItemInteraction(item, {
+    // Type assertion needed since MixedContent handles both CardField and CardItem
+    this.emitItemInteraction(item as unknown as CardField, {
       action: 'click',
       index,
       contentType: 'item'

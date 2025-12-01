@@ -1,6 +1,6 @@
 import { AICardConfig, CardSection, CardField, CardItem } from '../models';
 
-export type CardChangeType = 'content' | 'structural';
+export type CardChangeType = 'content' | 'structural' | 'style' | 'none';
 
 export interface CardDiffResult {
   card: AICardConfig;
@@ -237,7 +237,7 @@ export class CardDiffUtil {
         // Use content hashing instead of JSON.stringify
         const oldHash = fieldHashCache.get(oldField) || hashField(oldField);
         const newHash = hashField(newField);
-        
+
         // Cache hashes for future comparisons
         if (!fieldHashCache.has(oldField)) {
           fieldHashCache.set(oldField, oldHash);
@@ -245,7 +245,7 @@ export class CardDiffUtil {
         if (!fieldHashCache.has(newField)) {
           fieldHashCache.set(newField, newHash);
         }
-        
+
         if (oldHash === newHash) {
           return oldField; // Preserve reference
         }
@@ -277,7 +277,7 @@ export class CardDiffUtil {
         // Use content hashing instead of JSON.stringify
         const oldHash = itemHashCache.get(oldItem) || hashItem(oldItem);
         const newHash = hashItem(newItem);
-        
+
         // Cache hashes for future comparisons
         if (!itemHashCache.has(oldItem)) {
           itemHashCache.set(oldItem, oldHash);
@@ -285,7 +285,7 @@ export class CardDiffUtil {
         if (!itemHashCache.has(newItem)) {
           itemHashCache.set(newItem, newHash);
         }
-        
+
         if (oldHash === newHash) {
           return oldItem; // Preserve reference
         }

@@ -25,7 +25,21 @@ export * from './flip-animation.util';
 export * from './frame-budget.util';
 export * from './grid-accessibility.util';
 export * from './incremental-layout.util';
-export * from './layout-cache.util';
+// Export layout-cache with renamed CacheStats to avoid conflict with memo.util
+export {
+  LayoutCache,
+  CachedSectionLayout,
+  CachedCardLayout,
+  CacheStats as LayoutCacheStats,
+  DirtyCheckResult,
+  computeSectionHash,
+  computeCardHash,
+  computeStructureHash,
+  getLayoutCache,
+  clearLayoutCache,
+  memoizeLayoutComputation,
+  createDebouncedLayoutUpdate,
+} from './layout-cache.util';
 export * from './layout-debug.util';
 export * from './layout-optimizer.util';
 export * from './row-packer.util';
@@ -86,8 +100,57 @@ export {
   useVirtualScroll,
 } from './virtual-scroll-enhanced.util';
 
-// Performance monitoring
-export * from './performance-monitor.util';
+// Layout Memoization utilities
+export {
+  MemoizedFunction,
+  MemoStats,
+  MemoOptions,
+  DebouncedLayoutUpdate,
+  BatchedUpdates,
+  memoize,
+  layoutKeyGenerator,
+  heightKeyGenerator,
+  createDebouncedLayout,
+  createRAFScheduler,
+  createBatchProcessor,
+} from './layout-memoization.util';
+
+// Unified Layout Optimizer - consolidated layout optimization module
+export {
+  OptimizableLayoutSection,
+  PreferredColumns,
+  FullyOptimizableSection,
+  OptimizationStrategy,
+  OptimizationResult,
+  OptimizationMetrics,
+  UnifiedLayoutOptimizerConfig,
+  DEFAULT_OPTIMIZER_CONFIG as DEFAULT_UNIFIED_OPTIMIZER_CONFIG,
+  LayoutGap,
+  findLayoutGaps,
+  fillLayoutGaps,
+  optimizeColumnSpans,
+  localSwapOptimization,
+  optimizeLayout,
+  quickOptimize,
+  optimizeGapsOnly,
+  analyzeLayout,
+} from './unified-layout-optimizer.util';
+
+// Performance monitoring - rename getMemoryUsage to avoid conflict with memory.util
+export {
+  PerformanceMonitor,
+  PerformanceMark,
+  PerformanceReport,
+  performanceMonitor,
+  Measure,
+  MeasureAsync,
+  ComponentRenderTracker,
+  renderTracker,
+  FPSMonitor,
+  fpsMonitor,
+  getMemoryUsage as getPerformanceMemoryUsage,
+  observeLongTasks,
+} from './performance-monitor.util';
 
 // Note: Additional utility files are available as separate imports if needed:
 // - lru-cache.util.ts

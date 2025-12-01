@@ -1,23 +1,23 @@
 /**
  * Feature Flags Service
- * 
+ *
  * Provides a runtime feature flag system for enabling/disabling
  * experimental features and controlling library behavior.
- * 
+ *
  * @example
  * ```typescript
  * import { FeatureFlagsService, OSI_FEATURE_FLAGS } from 'osi-cards-lib';
- * 
+ *
  * const featureFlags = inject(FeatureFlagsService);
- * 
+ *
  * // Check if a feature is enabled
  * if (featureFlags.isEnabled(OSI_FEATURE_FLAGS.VIRTUAL_SCROLL)) {
  *   // Use virtual scrolling
  * }
- * 
+ *
  * // Enable a feature
  * featureFlags.enable(OSI_FEATURE_FLAGS.SKYLINE_PACKING);
- * 
+ *
  * // Configure multiple flags at once
  * featureFlags.configure({
  *   virtualScroll: true,
@@ -64,6 +64,8 @@ export const OSI_FEATURE_FLAGS = {
   PLUGINS: 'plugins',
   /** Use Shadow DOM for style isolation */
   SHADOW_DOM: 'shadowDom',
+  /** Enable unified layout optimization */
+  LAYOUT_OPTIMIZATION: 'layoutOptimization',
 } as const;
 
 /**
@@ -172,6 +174,12 @@ export const FEATURE_FLAG_META: Record<FeatureFlagKey, FeatureFlagMeta> = {
     experimental: false,
     defaultValue: false,
     mutable: false,
+  },
+  [OSI_FEATURE_FLAGS.LAYOUT_OPTIMIZATION]: {
+    description: 'Enable unified layout optimization for gap filling and span optimization',
+    experimental: false,
+    defaultValue: true,
+    mutable: true,
   },
 };
 
@@ -287,7 +295,7 @@ export class FeatureFlagsService {
    */
   setFlag(flag: FeatureFlagKey, value: boolean): boolean {
     const meta = FEATURE_FLAG_META[flag];
-    
+
     if (!meta) {
       console.warn(`Unknown feature flag: ${flag}`);
       return false;
@@ -354,7 +362,7 @@ export class FeatureFlagsService {
    */
   reset(): void {
     const newFlags = new Map<FeatureFlagKey, boolean>();
-    
+
     for (const [key, meta] of Object.entries(FEATURE_FLAG_META)) {
       newFlags.set(key as FeatureFlagKey, meta.defaultValue);
     }
@@ -369,7 +377,7 @@ export class FeatureFlagsService {
   enableExperimental(): void {
     const experimental = this.getExperimentalFlags();
     const config: FeatureFlagsConfig = {};
-    
+
     for (const flag of experimental) {
       const meta = FEATURE_FLAG_META[flag];
       if (meta?.mutable) {
@@ -450,12 +458,12 @@ export class FeatureFlagsService {
   private applyUrlOverrides(flags: Map<FeatureFlagKey, boolean>): void {
     try {
       const params = new URLSearchParams(window.location.search);
-      
+
       // Check for flag overrides: ?osi_flag_virtualScroll=true
       for (const [key] of Object.entries(FEATURE_FLAG_META)) {
         const paramName = `osi_flag_${key}`;
         const value = params.get(paramName);
-        
+
         if (value !== null) {
           flags.set(key as FeatureFlagKey, value === 'true' || value === '1');
         }

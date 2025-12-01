@@ -3,23 +3,23 @@ import { CSS_ISOLATION_MODE, DEFAULT_THEME, CSSIsolationMode } from '../../provi
 
 /**
  * OsiCardsContainerComponent
- * 
+ *
  * A wrapper component that automatically applies the `.osi-cards-container` class
  * to encapsulate OSI Cards styles and prevent CSS leakage into the host application.
- * 
+ *
  * Features:
  * - CSS Layer support for easy style overrides
  * - Optional strict CSS isolation with containment
  * - Theme support (day/night modes)
  * - Responsive padding adjustments
- * 
+ *
  * @example
  * ```html
  * <osi-cards-container>
  *   <app-ai-card-renderer [cardConfig]="card"></app-ai-card-renderer>
  * </osi-cards-container>
  * ```
- * 
+ *
  * @example
  * With theme support:
  * ```html
@@ -27,7 +27,7 @@ import { CSS_ISOLATION_MODE, DEFAULT_THEME, CSSIsolationMode } from '../../provi
  *   <app-ai-card-renderer [cardConfig]="card"></app-ai-card-renderer>
  * </osi-cards-container>
  * ```
- * 
+ *
  * @example
  * With strict isolation:
  * ```html
@@ -40,7 +40,7 @@ import { CSS_ISOLATION_MODE, DEFAULT_THEME, CSSIsolationMode } from '../../provi
   selector: 'osi-cards-container',
   standalone: true,
   template: `
-    <div [class]="containerClass" 
+    <div [class]="containerClass"
          [attr.data-theme]="effectiveTheme"
          [style.contain]="strictIsolation ? 'content' : null"
          [style.isolation]="strictIsolation ? 'isolate' : null">
@@ -53,26 +53,26 @@ import { CSS_ISOLATION_MODE, DEFAULT_THEME, CSSIsolationMode } from '../../provi
       background: transparent !important;
       background-color: transparent !important;
     }
-    
+
     .osi-cards-container {
-      /* 
+      /*
        * Fully transparent container - allows host app background to show through.
        * 8px padding for subtle shadow/glow effects around the card.
        */
       padding: 8px;
       background: transparent !important;
       background-color: transparent !important;
-      
+
       /* Preserve 3D transforms for child elements */
       perspective: 1200px;
       transform-style: preserve-3d;
-      
+
       /* Ensure card is centered */
       display: flex;
       justify-content: center;
       align-items: flex-start;
     }
-    
+
     /* Strict isolation mode - additional containment */
     .osi-cards-container--strict {
       /* CSS Containment for performance and isolation */
@@ -82,7 +82,7 @@ import { CSS_ISOLATION_MODE, DEFAULT_THEME, CSSIsolationMode } from '../../provi
       /* Ensure content doesn't overflow */
       overflow: hidden;
     }
-    
+
     /* Responsive adjustments */
     @media (max-width: 480px) {
       .osi-cards-container {
@@ -107,7 +107,7 @@ export class OsiCardsContainerComponent {
    * Whether to use strict CSS isolation.
    * When true, applies CSS containment (contain: content) and isolation: isolate.
    * This creates stronger style boundaries but may affect some visual effects.
-   * 
+   *
    * Defaults to the value from provideOSICards({ cssIsolation: 'strict' }) if set,
    * otherwise false.
    */
@@ -120,11 +120,11 @@ export class OsiCardsContainerComponent {
    */
   get containerClass(): string {
     const classes = ['osi-cards-container'];
-    
+
     if (this.strictIsolation ?? (this.cssIsolationMode === 'strict')) {
       classes.push('osi-cards-container--strict');
     }
-    
+
     return classes.join(' ');
   }
 

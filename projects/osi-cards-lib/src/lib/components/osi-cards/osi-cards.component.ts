@@ -1,8 +1,8 @@
-import { 
-  Component, 
-  Input, 
-  Output, 
-  EventEmitter, 
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
   ChangeDetectionStrategy,
   ViewEncapsulation,
   inject,
@@ -11,7 +11,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { AICardConfig, CardAction, CardField, CardItem } from '../../models';
 import { AICardRendererComponent, CardFieldInteractionEvent, StreamingStage } from '../ai-card-renderer/ai-card-renderer.component';
-import { 
+import {
   OSI_THEME_CONFIG_TOKEN,
   OSI_ANIMATION_CONFIG,
   OSIAnimationConfig,
@@ -20,32 +20,32 @@ import {
 
 /**
  * OSI Cards Component
- * 
+ *
  * Single entry point component for the OSI Cards library.
  * This component provides a simplified API for rendering AI cards with
  * full encapsulation and automatic style isolation.
- * 
+ *
  * Features:
  * - Automatic Shadow DOM encapsulation
  * - Theme support (day/night)
  * - Streaming animation support
  * - Full event system
  * - Container width management
- * 
+ *
  * @example
  * ```html
- * <osi-cards 
+ * <osi-cards
  *   [card]="cardConfig"
  *   [theme]="'day'"
  *   (fieldClick)="onFieldClick($event)"
  *   (actionClick)="onActionClick($event)">
  * </osi-cards>
  * ```
- * 
+ *
  * @example
  * With streaming:
  * ```html
- * <osi-cards 
+ * <osi-cards
  *   [card]="streamingCard"
  *   [isStreaming]="true"
  *   [streamingStage]="'streaming'">
@@ -57,7 +57,7 @@ import {
   standalone: true,
   imports: [CommonModule, AICardRendererComponent],
   template: `
-    <div 
+    <div
       class="osi-cards-root"
       [attr.data-theme]="effectiveTheme"
       [class.osi-cards-fullscreen]="fullscreen">
@@ -86,12 +86,12 @@ import {
       display: block;
       width: 100%;
     }
-    
+
     .osi-cards-root {
       width: 100%;
       min-height: 200px;
     }
-    
+
     .osi-cards-fullscreen {
       position: fixed;
       top: 0;
@@ -169,18 +169,18 @@ export class OsiCardsComponent {
   @Output() fullscreenChange = new EventEmitter<boolean>();
 
   /** Emitted for agent-type actions */
-  @Output() agentAction = new EventEmitter<{ 
-    action: CardAction; 
-    card: AICardConfig; 
-    agentId?: string; 
-    context?: Record<string, unknown> 
+  @Output() agentAction = new EventEmitter<{
+    action: CardAction;
+    card: AICardConfig;
+    agentId?: string;
+    context?: Record<string, unknown>
   }>();
 
   /** Emitted for question-type actions */
-  @Output() questionAction = new EventEmitter<{ 
-    action: CardAction; 
-    card: AICardConfig; 
-    question?: string 
+  @Output() questionAction = new EventEmitter<{
+    action: CardAction;
+    card: AICardConfig;
+    question?: string
   }>();
 
   /** Emitted when export is requested */
@@ -224,19 +224,19 @@ export class OsiCardsComponent {
     this.fullscreenChange.emit(isFullscreen);
   }
 
-  onAgentAction(event: { 
-    action: CardAction; 
-    card: AICardConfig; 
-    agentId?: string; 
-    context?: Record<string, unknown> 
+  onAgentAction(event: {
+    action: CardAction;
+    card: AICardConfig;
+    agentId?: string;
+    context?: Record<string, unknown>
   }): void {
     this.agentAction.emit(event);
   }
 
-  onQuestionAction(event: { 
-    action: CardAction; 
-    card: AICardConfig; 
-    question?: string 
+  onQuestionAction(event: {
+    action: CardAction;
+    card: AICardConfig;
+    question?: string
   }): void {
     this.questionAction.emit(event);
   }

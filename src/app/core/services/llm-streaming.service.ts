@@ -1,6 +1,5 @@
-import { DestroyRef, inject, Injectable, OnDestroy } from '@angular/core';
+import { inject, Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AICardConfig, CardField, CardItem, CardSection } from '../../models';
 import { CardChangeType } from 'projects/osi-cards-lib/src/lib/utils/card-diff.util';
 import { AppConfigService } from './app-config.service';
@@ -85,7 +84,6 @@ export interface SectionCompletionInfo {
 })
 export class LLMStreamingService implements OnDestroy {
   private readonly config = inject(AppConfigService);
-  private readonly destroyRef = inject(DestroyRef);
   private requestCanceller = new RequestCanceller();
 
   private readonly stateSubject = new BehaviorSubject<LLMStreamingState>({
