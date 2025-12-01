@@ -23,7 +23,4 @@ export * from './pipes';
 export * from './utils';
 
 // Re-export from library for backwards compatibility
-export {
-  ThemeService,
-  SectionNormalizationService
-} from '@osi-cards/services';
+export { ThemeService, SectionNormalizationService } from '@osi-cards/services';

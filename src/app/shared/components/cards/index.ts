@@ -11,5 +11,5 @@ export {
   CardSectionListComponent,
   CardSkeletonComponent,
   StreamingStage,
-  SkeletonSectionType
+  SkeletonSectionType,
 } from '@osi-cards/components';

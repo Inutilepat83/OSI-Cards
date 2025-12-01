@@ -35,10 +35,10 @@ import { LoggingService } from '../../../core/services/logging.service';
 import { DevelopmentWarningsService } from '../../../core/services/development-warnings.service';
 // Import from library (consolidated)
 import {
-  CardHeaderComponent,
   CardActionsComponent,
-  CardStreamingIndicatorComponent,
+  CardHeaderComponent,
   CardSectionListComponent,
+  CardStreamingIndicatorComponent,
 } from 'projects/osi-cards-lib/src/lib/components';
 import { StreamingStage } from 'projects/osi-cards-lib/src/lib/types';
 

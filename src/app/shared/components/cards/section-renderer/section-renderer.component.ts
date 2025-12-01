@@ -20,10 +20,7 @@ import { CardAction, CardField, CardItem, CardSection } from '../../../../models
 import { SectionLoaderService } from './section-loader.service';
 import { SectionTypeResolverService } from './section-type-resolver.service';
 import { AppConfigService } from '../../../../core/services/app-config.service';
-import {
-  SectionInteraction,
-  InfoSectionComponent
-} from '@osi-cards/sections';
+import { InfoSectionComponent, SectionInteraction } from '@osi-cards/sections';
 
 /** Type alias for InfoSection field interaction */
 type InfoSectionFieldInteraction = Parameters<InfoSectionComponent['fieldInteraction']['emit']>[0];

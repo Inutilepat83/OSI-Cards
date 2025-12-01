@@ -8,7 +8,7 @@
   padding: 8px;
   background: transparent !important;
   background-color: transparent !important;
-  
+
   /* Responsive: reduce padding on mobile */
   @media (max-width: 480px) {
     padding: 4px;
@@ -22,57 +22,57 @@
   height: 100%;
   /* Changed from hidden to visible to prevent shadow clipping */
   overflow: visible;
-  
+
   /* CSS Isolation - Prevent Bootstrap and external styles from affecting cards */
   isolation: isolate;
-  
+
   /* Card has its own background distinct from sections */
   @include surface-ai-card-base;
-  
+
   /* ========== CARD SURFACE STYLES ========== */
-  /* Force border to be visible */
-  border: 1px solid rgba(255, 121, 0, 0.15) !important;
-  border-width: 1px !important;
-  border-style: solid !important;
-  border-color: rgba(255, 121, 0, 0.15) !important;
-  
+  /* NO BORDERS - clean minimal design */
+  border: none !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+
   /* Semi-transparent dark background */
   background: rgba(20, 20, 20, 0.6) !important;
-  
+
   /* Backdrop blur effect */
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
-  
+
   /* Light, tight brand color glow instead of dark shadow */
   box-shadow: 0 0 8px rgba(255, 121, 0, 0.12), 0 0 2px rgba(255, 121, 0, 0.08) !important;
   /* ========== END CARD SURFACE STYLES ========== */
-  
+
   padding: var(--card-main-padding) !important;
   /* Ensure bottom padding is adequate */
   padding-bottom: var(--card-main-padding) !important;
   border-radius: var(--card-border-radius) !important;
-  
+
   /* Gap between header and body - defined at card level */
   gap: var(--section-card-gap) !important;
-  
+
   /* Smooth transitions for content updates */
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  
+
   /* Transform is handled by parent .tilt-container - don't override */
   /* transform: none !important; - Removed to allow tilt transforms */
-  
+
   /* Enhanced text sharpness */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  
+
   /* Force sharp text rendering on all child elements */
   * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
-  
+
   /* Smooth transitions for card title updates - removed transform to prevent lift */
   h1 {
     transition: opacity 0.2s ease;
@@ -81,18 +81,19 @@
 
 .ai-card-surface:hover {
   @include surface-ai-card-hover;
-  
+
   /* ========== HOVER STYLES ========== */
-  /* Hover border - enhanced brand color */
-  border-color: rgba(255, 121, 0, 0.4) !important;
-  
+  /* NO BORDERS on hover - clean minimal design */
+  border: none !important;
+  border-color: transparent !important;
+
   /* Hover background - slightly lighter */
   background: rgba(30, 30, 30, 0.8) !important;
-  
+
   /* Hover glow - enhanced brand color glow */
   box-shadow: 0 0 12px rgba(255, 121, 0, 0.2), 0 0 4px rgba(255, 121, 0, 0.15) !important;
   /* ========== END HOVER STYLES ========== */
-  
+
   /* Transform is handled by parent .tilt-container - don't override */
   /* transform: none !important; - Removed to allow tilt transforms */
 }
@@ -107,7 +108,7 @@
   width: 100% !important;
   overflow: visible !important;
   padding: var(--card-main-padding) !important;
-  
+
   /* Disable all tilt effects */
   .tilt-container {
     transform: none !important;
@@ -115,24 +116,24 @@
     width: 100% !important;
     max-width: none !important;
   }
-  
+
   .glow-container {
     filter: none !important;
   }
-  
+
   .card-reflection {
     display: none !important;
   }
-  
+
   /* Remove box-shadow glow from masonry items (sections) in fullscreen */
   .masonry-item {
     box-shadow: none !important;
-    
+
     &:hover {
       box-shadow: none !important;
     }
   }
-  
+
   /* Compact header - invisible container */
   .ai-card-header {
     padding: 0 !important;
@@ -141,7 +142,7 @@
     background: transparent !important;
     box-shadow: none !important;
   }
-  
+
   .ai-card-title {
     font-size: 14px !important;
   }
@@ -160,7 +161,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
-  
+
   /* Position absolutely in top-right corner */
   position: absolute;
   top: var(--card-main-padding);
@@ -305,7 +306,7 @@
   letter-spacing: -0.01em;
   line-height: 1.2;
   text-transform: none;
-  
+
   /* ABSOLUTE NO BORDERS - MAXIMUM SPECIFICITY */
   border: 0 !important;
   border-width: 0 !important;
@@ -323,14 +324,14 @@
   border-inline: none !important;
   border-image: none !important;
   border-radius: 0 !important;
-  
+
   /* NO OUTLINES */
   outline: none !important;
   outline-width: 0 !important;
   outline-style: none !important;
   outline-color: transparent !important;
   outline-offset: 0 !important;
-  
+
   /* NO PADDING */
   padding: 0 !important;
   padding-top: 0 !important;
@@ -339,7 +340,7 @@
   padding-left: 0 !important;
   padding-block: 0 !important;
   padding-inline: 0 !important;
-  
+
   /* NO MARGIN */
   margin: 0 !important;
   margin-top: 0 !important;
@@ -348,7 +349,7 @@
   margin-left: 0 !important;
   margin-block: 0 !important;
   margin-inline: 0 !important;
-  
+
   /* NO SHADOWS OR DECORATIONS */
   box-shadow: none !important;
   text-decoration: none !important;
@@ -357,7 +358,7 @@
   text-decoration-color: transparent !important;
   text-underline-offset: 0 !important;
   text-decoration-thickness: 0 !important;
-  
+
   /* NO PSEUDO-ELEMENT BORDERS */
   &::before,
   &::after {
@@ -742,7 +743,7 @@
     /* Light, tight brand color glow */
     box-shadow: 0 0 8px rgba(255, 121, 0, 0.1), 0 0 2px rgba(255, 121, 0, 0.06) !important;
   }
-  
+
   .ai-card-surface:hover {
     /* Hover - slightly more opaque */
     background: rgba(255, 255, 255, 0.92) !important;
@@ -750,31 +751,31 @@
     /* Enhanced brand color glow on hover */
     box-shadow: 0 0 12px rgba(255, 121, 0, 0.18), 0 0 4px rgba(255, 121, 0, 0.12) !important;
   }
-  
+
   .ai-card-surface--fullscreen {
     background: #ffffff;
     border-color: rgba(200, 200, 200, 0.4);
   }
-  
+
   .ai-card-title {
     color: #1a1a1a;
   }
-  
+
   .ai-card-eyebrow {
     color: #9ca3af;
   }
-  
+
   .ai-card-type-pill {
     background: rgba(255, 121, 0, 0.08);
     color: var(--primary);
     border-color: rgba(255, 121, 0, 0.2);
   }
-  
+
   .ai-card-fullscreen-btn {
     background: rgba(255, 121, 0, 0.06);
     border-color: rgba(255, 121, 0, 0.25);
     color: #1a1a1a;
-    
+
     &:hover {
       background: rgba(255, 121, 0, 0.12);
       border-color: rgba(255, 121, 0, 0.4);
@@ -792,7 +793,7 @@
     /* Light, tight brand color glow */
     box-shadow: 0 0 8px rgba(255, 121, 0, 0.1), 0 0 2px rgba(255, 121, 0, 0.06) !important;
   }
-  
+
   .ai-card-surface:hover {
     background: rgba(255, 255, 255, 0.92) !important;
     border-color: rgba(255, 121, 0, 0.3) !important;

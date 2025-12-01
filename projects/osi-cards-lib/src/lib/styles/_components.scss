@@ -1,13 +1,13 @@
 /* ===================================================================
    SHARED COMPONENT STYLES BUNDLE
-   
+
    This file contains all component imports shared across all entry points:
    - _styles.scss (demo app, :root scope)
    - _styles-scoped.scss (integration, .osi-cards-container scope)
    - _styles-standalone.scss (full isolation with Bootstrap reset)
-   
+
    Each entry point imports this bundle after setting up its scope and variables.
-   
+
    Note: Using @import here as Sass @use/@forward requires restructuring
    the entire SCSS architecture. These warnings can be safely ignored
    until Dart Sass 3.0.0 when migration will be required.
@@ -56,4 +56,5 @@
 @import "components/sections/brand-colors";
 @import "components/sections/fallback";
 @import "components/sections/unified-cards"; /* Must be last to override all section-specific styles */
-@import "components/sections/global-enforcement"; /* GLOBAL ENFORCEMENT - MUST BE ABSOLUTELY LAST to enforce all settings */
+@import "components/sections/global-enforcement"; /* GLOBAL ENFORCEMENT - enforces all settings */
+@import "components/sections/unified-design"; /* UNIFIED DESIGN - MUST BE ABSOLUTELY LAST for consistent backgrounds/animations */

@@ -20,7 +20,7 @@
 :host {
   @include osi-theme-base('integration', true);
   @include osi-tokens('integration', true);
-  
+
   // Block display - let content determine height
   display: block;
   width: 100%;
@@ -88,6 +88,7 @@
 // 9. Unified styles (must be last)
 @import '../components/sections/unified-cards';
 @import '../components/sections/global-enforcement';
+@import '../components/sections/unified-design';
 
 // 10. Action buttons and footer (enforced styles for Shadow DOM)
 @import '../components/card-actions';

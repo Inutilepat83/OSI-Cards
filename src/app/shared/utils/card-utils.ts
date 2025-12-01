@@ -15,19 +15,29 @@ const SanitizationUtil = {
     return title?.replace(/<[^>]*>/g, '').trim() || '';
   },
   sanitizeFieldValue(value: unknown): string | number | boolean | null {
-    if (value === null || value === undefined) return null;
-    if (typeof value === 'number' || typeof value === 'boolean') return value;
+    if (value === null || value === undefined) {
+      return null;
+    }
+    if (typeof value === 'number' || typeof value === 'boolean') {
+      return value;
+    }
     return String(value).replace(/<[^>]*>/g, '');
   },
   sanitizeUrl(url: string): string | null {
-    if (!url) return null;
+    if (!url) {
+      return null;
+    }
     const trimmed = url.trim().toLowerCase();
     const dangerous = ['javascript:', 'data:', 'vbscript:'];
-    if (dangerous.some(p => trimmed.startsWith(p))) return null;
+    if (dangerous.some((p) => trimmed.startsWith(p))) {
+      return null;
+    }
     return url.trim();
   },
   sanitizeEmail(email: string): string | null {
-    if (!email) return null;
+    if (!email) {
+      return null;
+    }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email) ? email.trim() : null;
   },
@@ -43,7 +53,7 @@ const SanitizationUtil = {
       }
     }
     return result as T;
-  }
+  },
 };
 
 /**

@@ -1,3 +1,5 @@
+import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -15,15 +17,13 @@ import {
   SimpleChanges,
   ViewEncapsulation,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
 // Import optimized card renderer from app (not library - uses optimized MagneticTiltService)
+import { of } from 'rxjs';
+import { catchError, take } from 'rxjs/operators';
 import { AICardRendererComponent } from '../../shared/components/cards/ai-card-renderer.component';
 import { DocCacheService } from './services/doc-cache.service';
-import { catchError, take } from 'rxjs/operators';
-import { of } from 'rxjs';
 
 // Content cache for faster re-renders (production only)
 // Version bumped when rendering logic changes to invalidate stale cache
@@ -968,6 +968,25 @@ interface PrerenderedPage {
           padding: 0.75rem 1rem;
           overflow-x: auto;
 
+          /* Discrete scrollbar */
+          &::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+          }
+
+          &::-webkit-scrollbar-track {
+            background: transparent;
+          }
+
+          &::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+
+            &:hover {
+              background: rgba(255, 255, 255, 0.3);
+            }
+          }
+
           code {
             display: block;
             padding: 0;
@@ -1385,22 +1404,21 @@ interface PrerenderedPage {
           overflow-x: hidden !important;
           margin: 0 !important;
 
-          /* Custom scrollbar */
+          /* Discrete scrollbar - thin and subtle */
           &::-webkit-scrollbar {
-            width: 8px;
+            width: 4px;
           }
 
           &::-webkit-scrollbar-track {
-            background: rgba(255, 121, 0, 0.1);
-            border-radius: 4px;
+            background: transparent;
           }
 
           &::-webkit-scrollbar-thumb {
-            background: rgba(255, 121, 0, 0.5);
-            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
 
             &:hover {
-              background: rgba(255, 121, 0, 0.8);
+              background: rgba(255, 255, 255, 0.3);
             }
           }
 

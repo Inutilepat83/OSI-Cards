@@ -1,23 +1,23 @@
 /* ===================================================================
    OSI CARDS STYLES - Scoped Integration Entry Point
-   
+
    Wraps all styles in .osi-cards-container to prevent CSS leakage.
    Uses same CSS variables as demo app, just scoped to container.
-   
+
    CSS Layer Strategy:
      - All library styles are in the 'osi-cards' layer
      - Consumer styles outside this layer have higher priority
      - Easy to override: just write your CSS normally, no !important needed
-   
+
    Usage:
      1. Import this file in your styles or angular.json
      2. Wrap your OSI Cards components in <div class="osi-cards-container">
-   
+
    Example:
      <div class="osi-cards-container" data-theme="day">
        <app-ai-card-renderer [cardConfig]="card"></app-ai-card-renderer>
      </div>
-   
+
    Overriding styles:
      // Your styles (outside @layer) automatically override library styles
      .osi-cards-container .ai-card-title {
@@ -38,22 +38,22 @@
     padding: 8px;
     background: transparent !important;
     background-color: transparent !important;
-    
+
     // Preserve 3D transforms for tilt effects
     perspective: 1200px;
     transform-style: preserve-3d;
-    
+
     // Responsive: reduce padding on mobile
     @media (max-width: 480px) {
       padding: 4px;
     }
-    
+
     // Bootstrap isolation - must come first to reset external Bootstrap variables
     @import 'core/bootstrap-reset';
-    
+
     // Scoped variables (applies tokens to & selector)
     @import 'core/variables-unified';
-    
+
     // Core styles (scoped versions where needed)
     @import 'core/mixins';
     @import 'core/surface-layers';
@@ -91,5 +91,6 @@
     @import 'components/sections/fallback';
     @import 'components/sections/unified-cards';
     @import 'components/sections/global-enforcement';
+    @import 'components/sections/unified-design';
   }
 }
