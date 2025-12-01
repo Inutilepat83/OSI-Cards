@@ -276,7 +276,7 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
 
   ngOnChanges(changes: SimpleChanges): void {
     // Handle section changes both before and after view initialization
-    if (changes['section']) {
+    if (changes.section) {
       if (!this.section) {
         // Clear component if section is null
         if (this.loadedComponent) {

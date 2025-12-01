@@ -18,17 +18,17 @@ export class SocialMediaSectionComponent extends BaseSectionComponent<CardItem> 
 
   formatPlatform(item: CardItem): string {
     const meta = (item.meta ?? {}) as Record<string, unknown>;
-    return typeof meta['platform'] === 'string'
-      ? meta['platform']
-      : typeof meta['network'] === 'string'
-        ? meta['network']
+    return typeof meta.platform === 'string'
+      ? meta.platform
+      : typeof meta.network === 'string'
+        ? meta.network
         : 'Social';
   }
 
   formatMetric(item: CardItem): string {
     const meta = (item.meta ?? {}) as Record<string, unknown>;
-    const likes = meta['likes'];
-    const comments = meta['comments'];
+    const likes = meta.likes;
+    const comments = meta.comments;
     if (typeof likes === 'number' && typeof comments === 'number') {
       return `${likes} likes · ${comments} comments`;
     }

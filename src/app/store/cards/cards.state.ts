@@ -272,7 +272,7 @@ function mergeCardPreservingValues(
       // If existing field has a real value (not placeholder), preserve it
       const meta = existingField.meta as Record<string, unknown> | undefined;
       const isPlaceholder =
-        existingField.value === 'Streaming…' || (meta && meta['placeholder'] === true);
+        existingField.value === 'Streaming…' || (meta && meta.placeholder === true);
 
       if (!isPlaceholder && existingField.value !== undefined && existingField.value !== null) {
         // Preserve existing value and other properties
@@ -308,7 +308,7 @@ function mergeCardPreservingValues(
       // If existing item has a real value (not placeholder), preserve it
       const meta = existingItem.meta as Record<string, unknown> | undefined;
       const isPlaceholder =
-        existingItem.description === 'Streaming…' || (meta && meta['placeholder'] === true);
+        existingItem.description === 'Streaming…' || (meta && meta.placeholder === true);
 
       if (
         !isPlaceholder &&

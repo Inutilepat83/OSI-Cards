@@ -52,11 +52,11 @@ export class CardValidationService {
 
     // Check required fields for a card
     // Be lenient: accept either cardTitle or title, and ensure sections is an array (even if empty)
-    const hasTitle = typeof config['cardTitle'] === 'string' || typeof config['title'] === 'string';
-    const hasSections = Array.isArray(config['sections']);
+    const hasTitle = typeof config.cardTitle === 'string' || typeof config.title === 'string';
+    const hasSections = Array.isArray(config.sections);
 
     // If sections is missing or not an array, try to create an empty array
-    if (!hasSections && config['sections'] === undefined) {
+    if (!hasSections && config.sections === undefined) {
       // This is acceptable - we can add sections later
       return hasTitle;
     }
@@ -78,8 +78,8 @@ export class CardValidationService {
 
     // Check required section properties
     return (
-      typeof section['type'] === 'string' &&
-      ['info', 'timeline', 'table', 'list', 'analytics', 'custom'].includes(section['type'] as string)
+      typeof section.type === 'string' &&
+      ['info', 'timeline', 'table', 'list', 'analytics', 'custom'].includes(section.type as string)
     );
   }
 
@@ -97,11 +97,11 @@ export class CardValidationService {
 
     // Fields need at least a label or name
     return (
-      (typeof field['label'] === 'string' || typeof field['name'] === 'string') &&
-      (typeof field['value'] === 'string' ||
-        typeof field['value'] === 'number' ||
-        typeof field['value'] === 'boolean' ||
-        typeof field['value'] === 'object')
+      (typeof field.label === 'string' || typeof field.name === 'string') &&
+      (typeof field.value === 'string' ||
+        typeof field.value === 'number' ||
+        typeof field.value === 'boolean' ||
+        typeof field.value === 'object')
     );
   }
 
@@ -151,9 +151,9 @@ export class CardValidationService {
       // Validate structure
       if (!this.isValidCardConfig(parsed)) {
         const config = parsed as Record<string, unknown>;
-        const hasTitle = typeof config['cardTitle'] === 'string' || typeof config['title'] === 'string';
-        const hasSections = Array.isArray(config['sections']);
-        const sectionsType = config['sections'] !== undefined ? typeof config['sections'] : 'undefined';
+        const hasTitle = typeof config.cardTitle === 'string' || typeof config.title === 'string';
+        const hasSections = Array.isArray(config.sections);
+        const sectionsType = config.sections !== undefined ? typeof config.sections : 'undefined';
 
         console.error('CardValidationService: Parsed JSON does not match AICardConfig structure', {
           hasTitle,
@@ -164,14 +164,14 @@ export class CardValidationService {
         });
 
         // Try to fix common issues: normalize title field
-        if (!hasTitle && typeof config['title'] === 'string') {
-          config['cardTitle'] = config['title'];
-          delete config['title'];
+        if (!hasTitle && typeof config.title === 'string') {
+          config.cardTitle = config.title;
+          delete config.title;
         }
 
         // Try to fix missing sections
-        if (!hasSections && config['sections'] === undefined) {
-          config['sections'] = [];
+        if (!hasSections && config.sections === undefined) {
+          config.sections = [];
         }
 
         // Re-validate after fixes

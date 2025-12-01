@@ -217,8 +217,8 @@ export class IlibraryComponent implements OnInit, OnDestroy {
     let shouldAutoGenerate = false;
 
     // Handle environment param
-    if (params['env']) {
-      const envId = params['env'];
+    if (params.env) {
+      const envId = params.env;
       const env = this.environments.find((e) => e.id === envId);
       if (env) {
         this.selectedEnvironment = env;
@@ -226,8 +226,8 @@ export class IlibraryComponent implements OnInit, OnDestroy {
     }
 
     // Handle theme param
-    if (params['theme']) {
-      const theme = params['theme'] as ThemePreset;
+    if (params.theme) {
+      const theme = params.theme as ThemePreset;
       if (['night', 'day', 'high-contrast', 'osi-day', 'osi-night'].includes(theme)) {
         this.selectedTheme = theme;
         this.themeService.setTheme(theme);
@@ -235,8 +235,8 @@ export class IlibraryComponent implements OnInit, OnDestroy {
     }
 
     // Handle config param
-    if (params['config']) {
-      const configId = params['config'];
+    if (params.config) {
+      const configId = params.config;
       const template = this.cardTemplates.find((t) => t.id === configId);
       if (template) {
         this.selectedTemplate = template;
@@ -245,8 +245,8 @@ export class IlibraryComponent implements OnInit, OnDestroy {
     }
 
     // Handle state param
-    if (params['state']) {
-      const state = params['state'];
+    if (params.state) {
+      const state = params.state;
 
       switch (state) {
         case 'empty':

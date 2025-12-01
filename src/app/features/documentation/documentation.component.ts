@@ -57,14 +57,14 @@ export class DocumentationPageComponent implements OnInit {
 
   ngOnInit(): void {
     // Get document ID from route, default to 'readme' if no ID
-    const docId = this.route.snapshot.params['id'] || 'readme';
+    const docId = this.route.snapshot.params.id || 'readme';
     this.loadDocument(docId);
 
     // Also subscribe to route changes
     this.route.params
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params: Record<string, string>) => {
-        const newDocId = params['id'] || 'readme';
+        const newDocId = params.id || 'readme';
         if (newDocId !== this.activeDocId()) {
           this.loadDocument(newDocId);
         }

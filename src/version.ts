@@ -20,7 +20,7 @@ export const VERSION_INFO: VersionInfo = {
   version: VERSION,
   buildDate: BUILD_DATE,
   buildHash: BUILD_HASH,
-  buildBranch: BUILD_BRANCH
+  buildBranch: BUILD_BRANCH,
 };
 
 /**

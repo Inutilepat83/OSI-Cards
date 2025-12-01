@@ -780,7 +780,7 @@ export class ExportService {
     // Using type assertion to avoid TypeScript errors when package is not installed
     try {
       // Dynamic import for optional dependency
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       let html2canvas:
         | ((element: HTMLElement, options?: any) => Promise<HTMLCanvasElement>)
         | null = null;

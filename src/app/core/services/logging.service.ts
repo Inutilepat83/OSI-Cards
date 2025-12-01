@@ -131,15 +131,15 @@ export class LoggingService {
     };
 
     if (context) {
-      structuredLog['context'] = context;
+      structuredLog.context = context;
     }
 
     if (this.correlationId) {
-      structuredLog['correlationId'] = this.correlationId;
+      structuredLog.correlationId = this.correlationId;
     }
 
     if (data) {
-      structuredLog['data'] = data;
+      structuredLog.data = data;
     }
 
     // Output to console based on level with structured format

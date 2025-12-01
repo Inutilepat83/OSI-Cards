@@ -94,7 +94,7 @@ export class ProductSectionComponent extends BaseSectionComponent<ProductField> 
     });
 
     return orderedKeys.map((key) => {
-      const config = this.categoryConfig[key] ?? this.categoryConfig['default'];
+      const config = this.categoryConfig[key] ?? this.categoryConfig.default;
       if (!config) {
         return {
           key,

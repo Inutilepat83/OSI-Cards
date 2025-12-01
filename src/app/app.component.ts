@@ -90,7 +90,7 @@ export class AppComponent implements OnInit, OnDestroy {
     // Batch DOM updates with requestAnimationFrame for smooth theme switching
     requestAnimationFrame(() => {
       const root = this.document.documentElement;
-      root.dataset['theme'] = this.theme;
+      root.dataset.theme = this.theme;
       localStorage.setItem('osi-theme', this.theme);
       // CSS variables and transitions handle styling automatically
       // No need for getComputedStyle() or manual body styling

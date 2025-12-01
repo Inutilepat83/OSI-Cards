@@ -18,16 +18,16 @@ export class NewsSectionComponent extends BaseSectionComponent<CardItem> {
 
   formatSource(item: CardItem): string {
     const meta = (item.meta ?? {}) as Record<string, unknown>;
-    return typeof meta['source'] === 'string' && meta['source']
-      ? meta['source']
-      : typeof meta['publisher'] === 'string'
-        ? meta['publisher']
+    return typeof meta.source === 'string' && meta.source
+      ? meta.source
+      : typeof meta.publisher === 'string'
+        ? meta.publisher
         : 'News';
   }
 
   formatTimestamp(item: CardItem): string {
     const meta = (item.meta ?? {}) as Record<string, unknown>;
-    const timestamp = meta['publishedAt'] ?? meta['time'] ?? meta['date'];
+    const timestamp = meta.publishedAt ?? meta.time ?? meta.date;
     return typeof timestamp === 'string' ? timestamp : '';
   }
 

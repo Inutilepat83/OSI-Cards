@@ -13,7 +13,7 @@ export const cardExistsGuard: CanActivateFn = (
 ): Observable<boolean> => {
   const cardDataService = inject(CardDataService);
   const router = inject(Router);
-  const cardId = route.params['id'];
+  const cardId = route.params.id;
 
   if (!cardId) {
     router.navigate(['/']);

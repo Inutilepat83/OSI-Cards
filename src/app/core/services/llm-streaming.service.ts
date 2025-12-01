@@ -1133,21 +1133,21 @@ export class LLMStreamingService implements OnDestroy {
     sections.forEach((section, sectionIndex) => {
       const fields = section.fields ?? [];
       fields.forEach((field, fieldIndex) => {
-      const meta = field.meta as Record<string, unknown> | undefined;
-      const isPlaceholder =
-        field.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
-        field.value === undefined ||
-        field.value === null ||
-        (meta && meta['placeholder'] === true);
+        const meta = field.meta as Record<string, unknown> | undefined;
+        const isPlaceholder =
+          field.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
+          field.value === undefined ||
+          field.value === null ||
+          (meta && meta.placeholder === true);
 
-      if (!isPlaceholder && field.value !== '') {
-        const placeholderSection = this.placeholderCard?.sections?.[sectionIndex];
-        const placeholderField = placeholderSection?.fields?.[fieldIndex];
-        if (placeholderField) {
-          const placeholderMeta = placeholderField.meta as Record<string, unknown> | undefined;
-          const wasPlaceholder =
-            placeholderField.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
-            placeholderMeta?.['placeholder'] === true;
+        if (!isPlaceholder && field.value !== '') {
+          const placeholderSection = this.placeholderCard?.sections?.[sectionIndex];
+          const placeholderField = placeholderSection?.fields?.[fieldIndex];
+          if (placeholderField) {
+            const placeholderMeta = placeholderField.meta as Record<string, unknown> | undefined;
+            const wasPlaceholder =
+              placeholderField.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
+              placeholderMeta?.placeholder === true;
             if (wasPlaceholder) {
               completedFields.push({ sectionIndex, fieldIndex });
             }
@@ -1201,7 +1201,7 @@ export class LLMStreamingService implements OnDestroy {
       // Remove placeholder flag
       const meta = placeholderSection.meta as Record<string, unknown> | undefined;
       if (meta) {
-        meta['placeholder'] = false;
+        meta.placeholder = false;
       }
     });
   }
@@ -1247,7 +1247,7 @@ export class LLMStreamingService implements OnDestroy {
 
       const meta = existingField.meta as Record<string, unknown> | undefined;
       if (meta) {
-        meta['placeholder'] = false;
+        meta.placeholder = false;
       }
     }
   }
@@ -1289,7 +1289,7 @@ export class LLMStreamingService implements OnDestroy {
 
       const meta = existingItem.meta as Record<string, unknown> | undefined;
       if (meta) {
-        meta['placeholder'] = false;
+        meta.placeholder = false;
       }
     }
   }
@@ -1332,7 +1332,7 @@ export class LLMStreamingService implements OnDestroy {
 
       const meta = placeholderField.meta as Record<string, unknown> | undefined;
       if (meta) {
-        meta['placeholder'] = false;
+        meta.placeholder = false;
       }
     });
   }
@@ -1357,7 +1357,7 @@ export class LLMStreamingService implements OnDestroy {
         field.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
         field.value === undefined ||
         field.value === null ||
-        (meta && meta['placeholder'] === true);
+        (meta && meta.placeholder === true);
       if (!isPlaceholder && field.value !== '') {
         completedCount++;
       }
@@ -1366,7 +1366,7 @@ export class LLMStreamingService implements OnDestroy {
     items.forEach((item) => {
       const meta = item.meta as Record<string, unknown> | undefined;
       const isPlaceholder =
-        (meta && meta['placeholder'] === true) || (item.title === 'Item' && !item.description);
+        (meta && meta.placeholder === true) || (item.title === 'Item' && !item.description);
       if (!isPlaceholder && item.title) {
         completedCount++;
       }
@@ -1386,7 +1386,7 @@ export class LLMStreamingService implements OnDestroy {
         field.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
         field.value === undefined ||
         field.value === null ||
-        (meta && meta['placeholder'] === true);
+        (meta && meta.placeholder === true);
       if (isPlaceholder) {
         return false;
       }
@@ -1399,7 +1399,7 @@ export class LLMStreamingService implements OnDestroy {
         item.description === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
         !item.title ||
         item.title.startsWith('Item ') ||
-        (meta && meta['placeholder'] === true);
+        (meta && meta.placeholder === true);
       if (isPlaceholder) {
         return false;
       }

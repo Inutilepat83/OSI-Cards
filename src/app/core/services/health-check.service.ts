@@ -57,25 +57,25 @@ export class HealthCheckService {
     // Check API health
     const apiHealth$ = this.checkApiHealth().pipe(
       map((result) => {
-        services['api'] = result;
+        services.api = result;
         return result;
       }),
       catchError((error) => {
-        services['api'] = {
+        services.api = {
           status: 'down',
           error: error instanceof Error ? error.message : 'Unknown error',
         };
-        return of(services['api']);
+        return of(services.api);
       })
     );
 
     // Check local storage
     const storageHealth = this.checkStorageHealth();
-    services['storage'] = storageHealth;
+    services.storage = storageHealth;
 
     // Check service worker
     const swHealth = this.checkServiceWorkerHealth();
-    services['serviceWorker'] = swHealth;
+    services.serviceWorker = swHealth;
 
     return apiHealth$.pipe(
       map(() => {

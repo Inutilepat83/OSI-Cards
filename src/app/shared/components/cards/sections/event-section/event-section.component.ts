@@ -19,7 +19,7 @@ interface TimelineEvent extends CardItem {
 })
 export class EventSectionComponent extends BaseSectionComponent<TimelineEvent> {
   get events(): TimelineEvent[] {
-    const timeline = (this.section as Record<string, unknown>)['timelineEvents'];
+    const timeline = (this.section as Record<string, unknown>).timelineEvents;
     if (Array.isArray(timeline)) {
       return timeline as TimelineEvent[];
     }

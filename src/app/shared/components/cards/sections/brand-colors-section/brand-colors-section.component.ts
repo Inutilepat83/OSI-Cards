@@ -27,7 +27,7 @@ export class BrandColorsSectionComponent extends BaseSectionComponent<CardField>
 
   override ngOnChanges(changes: SimpleChanges): void {
     super.ngOnChanges(changes);
-    if (changes['section']) {
+    if (changes.section) {
       this.extractBrandColors();
     }
   }

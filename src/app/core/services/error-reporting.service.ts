@@ -87,8 +87,8 @@ export class ErrorReportingService {
     }
   ): void {
     const errorContext = this.buildErrorContext(error, {
-      component: extra?.tags?.['component'] as string | undefined,
-      action: extra?.tags?.['action'] as string | undefined,
+      component: extra?.tags?.component as string | undefined,
+      action: extra?.tags?.action as string | undefined,
     });
 
     // Add extra context
@@ -97,8 +97,8 @@ export class ErrorReportingService {
     }
 
     this.captureError(error, {
-      component: extra?.tags?.['component'] as string | undefined,
-      action: extra?.tags?.['action'] as string | undefined,
+      component: extra?.tags?.component as string | undefined,
+      action: extra?.tags?.action as string | undefined,
     });
   }
 

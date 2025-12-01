@@ -126,13 +126,13 @@ export class ErrorBoundaryUtil {
     };
 
     if (error instanceof Error) {
-      errorContext['errorName'] = error.name;
-      errorContext['errorMessage'] = error.message;
+      errorContext.errorName = error.name;
+      errorContext.errorMessage = error.message;
       if (error.stack) {
-        errorContext['errorStack'] = error.stack;
+        errorContext.errorStack = error.stack;
       }
     } else {
-      errorContext['errorValue'] = String(error);
+      errorContext.errorValue = String(error);
     }
 
     return errorContext;

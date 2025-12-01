@@ -70,7 +70,7 @@ export class MarkdownRendererComponent implements OnInit, OnChanges, AfterViewIn
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['markdown'] && this.markdown) {
+    if (changes.markdown && this.markdown) {
       this.renderMarkdown();
     }
   }

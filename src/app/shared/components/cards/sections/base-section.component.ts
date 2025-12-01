@@ -127,8 +127,8 @@ export abstract class BaseSectionComponent<
           title: cardField.title ?? cardField.label ?? cardField.id,
           description:
             cardField.description ??
-            (typeof cardField.meta?.['description'] === 'string'
-              ? (cardField.meta['description'] as string)
+            (typeof cardField.meta?.description === 'string'
+              ? (cardField.meta.description as string)
               : undefined),
         } as CardItem;
       });
@@ -138,7 +138,7 @@ export abstract class BaseSectionComponent<
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['section']) {
+    if (changes.section) {
       // Cancel pending RAFs
       if (this.fieldAnimationUpdateRafId !== null) {
         cancelAnimationFrame(this.fieldAnimationUpdateRafId);

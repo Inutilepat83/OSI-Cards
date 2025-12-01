@@ -165,10 +165,10 @@ export class SectionNormalizationService {
     const needsMetricsConversion =
       resolvedType === 'analytics' &&
       (!section.fields || !section.fields.length) &&
-      (section as Record<string, unknown>)['metrics'];
+      (section as Record<string, unknown>).metrics;
     const needsDescriptionFromSubtitle = !section.description && section.subtitle;
     const needsMetaUpdate =
-      !section.meta || !(section.meta as Record<string, unknown>)?.['colSpanThresholds'];
+      !section.meta || !(section.meta as Record<string, unknown>)?.colSpanThresholds;
     const needsPreferredColumns = section.preferredColumns === undefined;
 
     // If nothing needs to change, return original section to preserve reference
@@ -190,7 +190,7 @@ export class SectionNormalizationService {
 
     // Handle analytics sections with metrics array
     if (needsMetricsConversion) {
-      const metrics = (section as Record<string, unknown>)['metrics'];
+      const metrics = (section as Record<string, unknown>).metrics;
       if (Array.isArray(metrics) && metrics.length > 0) {
         (normalized as { fields: typeof metrics }).fields = metrics;
       }
@@ -209,7 +209,7 @@ export class SectionNormalizationService {
       normalized.meta = {
         ...existingMeta,
         // Only add if not already defined (allows sections to override)
-        colSpanThresholds: existingMeta?.['colSpanThresholds'] ?? colSpanThresholds,
+        colSpanThresholds: existingMeta?.colSpanThresholds ?? colSpanThresholds,
       };
     }
 
@@ -334,8 +334,8 @@ export class SectionNormalizationService {
       section.fields
         ?.map(
           (f) =>
-            String((f as Record<string, unknown>)['value'] ?? '') +
-            String((f as Record<string, unknown>)['description'] ?? '')
+            String((f as Record<string, unknown>).value ?? '') +
+            String((f as Record<string, unknown>).description ?? '')
         )
         .join('') ?? '';
 
@@ -521,7 +521,7 @@ export class SectionNormalizationService {
     if (!metadata) {
       return null;
     }
-    const rawOrder = metadata['streamingOrder'];
+    const rawOrder = metadata.streamingOrder;
     if (typeof rawOrder === 'number' && Number.isFinite(rawOrder)) {
       return rawOrder;
     }

@@ -1655,7 +1655,7 @@ export class DocPageComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['content'] && !changes['content'].firstChange) {
+    if (changes.content && !changes.content.firstChange) {
       this.renderMarkdown();
     }
   }
@@ -1803,7 +1803,7 @@ export class DocPageComponent implements OnInit, OnChanges, AfterViewInit {
     const liveDemoButtons = this.el.nativeElement.querySelectorAll('.live-demo-btn');
     liveDemoButtons.forEach((btn: HTMLButtonElement) => {
       btn.addEventListener('click', () => {
-        const demoId = btn.dataset['demoId'];
+        const demoId = btn.dataset.demoId;
         if (demoId) {
           this.toggleDemo(demoId, btn);
         }
@@ -1851,9 +1851,9 @@ export class DocPageComponent implements OnInit, OnChanges, AfterViewInit {
       try {
         // Wrap section config in a card config if needed
         let cardConfig = config as Record<string, unknown>;
-        if (cardConfig['type'] && !cardConfig['sections']) {
+        if (cardConfig.type && !cardConfig.sections) {
           cardConfig = {
-            cardTitle: cardConfig['title'] || 'Live Demo',
+            cardTitle: cardConfig.title || 'Live Demo',
             sections: [cardConfig],
           };
         }
@@ -2155,7 +2155,7 @@ export class DocPageComponent implements OnInit, OnChanges, AfterViewInit {
     };
 
     return content.replace(calloutRegex, (_, type, title, body) => {
-      const icon = icons[type as keyof typeof icons] || icons['info'];
+      const icon = icons[type as keyof typeof icons] || icons.info;
       const titleHtml = title ? `<span class="callout-title">${title}</span>` : '';
       return `<div class="callout ${type}">${icon}<div class="callout-content">${titleHtml}<p>${body.trim()}</p></div></div>`;
     });

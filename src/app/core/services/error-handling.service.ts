@@ -86,7 +86,7 @@ export class ErrorHandlingService {
         recoveryStrategy: enhancedError.recoveryStrategy,
         userAction: enhancedError.userAction,
         details: enhancedError.details,
-        documentationUrl: enhancedError.details?.['documentationUrl'] as string | undefined,
+        documentationUrl: enhancedError.details?.documentationUrl as string | undefined,
       }
     );
     this.applicationErrorSubject.next(enhancedError);

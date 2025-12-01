@@ -200,7 +200,7 @@ export class CardSearchService {
    */
   filterByTags(cards: AICardConfig[], tags: string[]): AICardConfig[] {
     return cards.filter((card) => {
-      const cardTags = (card.meta?.['tags'] as string[]) || [];
+      const cardTags = (card.meta?.tags as string[]) || [];
       return tags.some((tag) => cardTags.includes(tag));
     });
   }

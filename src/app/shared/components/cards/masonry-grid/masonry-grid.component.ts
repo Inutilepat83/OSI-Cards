@@ -264,7 +264,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
   ngOnChanges(changes: SimpleChanges): void {
     // Track streaming state changes
-    if (changes['isStreaming']) {
+    if (changes.isStreaming) {
       const wasStreaming = this.previousStreamingState;
       const nowStreaming = this.isStreaming;
 
@@ -276,7 +276,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       this.previousStreamingState = nowStreaming;
     }
 
-    if (changes['sections']) {
+    if (changes.sections) {
       // Ensure sections is always an array and filter out null/undefined
       if (!Array.isArray(this.sections)) {
         this.sections = [];
@@ -292,8 +292,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
       // Detect if this is a completely new card (not streaming update)
       // If not streaming and sections drastically changed, reset stable keys
-      if (!this.isStreaming && changes['sections'].previousValue) {
-        const prevLength = changes['sections'].previousValue?.length || 0;
+      if (!this.isStreaming && changes.sections.previousValue) {
+        const prevLength = changes.sections.previousValue?.length || 0;
         const currLength = this.sections.length;
         // If section count dropped to 0 or changed dramatically, it's a new card
         if (
@@ -1357,7 +1357,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
    */
   private getColSpanThresholds(section: CardSection): ColSpanThresholds {
     const meta = section.meta as Record<string, unknown> | undefined;
-    const thresholds = meta?.['colSpanThresholds'] as ColSpanThresholds | undefined;
+    const thresholds = meta?.colSpanThresholds as ColSpanThresholds | undefined;
 
     if (thresholds && typeof thresholds === 'object' && 'two' in thresholds) {
       return thresholds;

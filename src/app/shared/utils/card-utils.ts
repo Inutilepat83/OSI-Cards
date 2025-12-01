@@ -577,48 +577,48 @@ function sanitizeAction(action: CardAction): CardAction {
     const sanitizedEmail: Record<string, unknown> = {};
 
     // Sanitize 'to' field (legacy structure)
-    if (typeof emailConfig['to'] === 'string') {
-      sanitizedEmail['to'] = SanitizationUtil.sanitizeEmail(emailConfig['to']) || undefined;
+    if (typeof emailConfig.to === 'string') {
+      sanitizedEmail.to = SanitizationUtil.sanitizeEmail(emailConfig.to) || undefined;
     }
 
     // Sanitize contact
-    if (emailConfig['contact'] && typeof emailConfig['contact'] === 'object') {
-      const contact = emailConfig['contact'] as Record<string, unknown>;
-      sanitizedEmail['contact'] = {
-        name: typeof contact['name'] === 'string' ? ValidationUtil.sanitizeString(contact['name']) : '',
+    if (emailConfig.contact && typeof emailConfig.contact === 'object') {
+      const contact = emailConfig.contact as Record<string, unknown>;
+      sanitizedEmail.contact = {
+        name: typeof contact.name === 'string' ? ValidationUtil.sanitizeString(contact.name) : '',
         email:
-          typeof contact['email'] === 'string'
-            ? SanitizationUtil.sanitizeEmail(contact['email']) || ''
+          typeof contact.email === 'string'
+            ? SanitizationUtil.sanitizeEmail(contact.email) || ''
             : '',
-        role: typeof contact['role'] === 'string' ? ValidationUtil.sanitizeString(contact['role']) : '',
+        role: typeof contact.role === 'string' ? ValidationUtil.sanitizeString(contact.role) : '',
       };
     }
 
     // Sanitize subject and body
-    if (typeof emailConfig['subject'] === 'string') {
-      sanitizedEmail['subject'] = ValidationUtil.sanitizeString(
-        emailConfig['subject'].substring(0, CARD_LIMITS.MAX_FIELD_LABEL_LENGTH)
+    if (typeof emailConfig.subject === 'string') {
+      sanitizedEmail.subject = ValidationUtil.sanitizeString(
+        emailConfig.subject.substring(0, CARD_LIMITS.MAX_FIELD_LABEL_LENGTH)
       );
     }
-    if (typeof emailConfig['body'] === 'string') {
-      sanitizedEmail['body'] = ValidationUtil.sanitizeString(
-        emailConfig['body'].substring(0, CARD_LIMITS.MAX_EMAIL_BODY_LENGTH)
+    if (typeof emailConfig.body === 'string') {
+      sanitizedEmail.body = ValidationUtil.sanitizeString(
+        emailConfig.body.substring(0, CARD_LIMITS.MAX_EMAIL_BODY_LENGTH)
       );
     }
 
     // Sanitize cc and bcc (optional fields)
-    if (typeof emailConfig['cc'] === 'string') {
-      sanitizedEmail['cc'] = SanitizationUtil.sanitizeEmail(emailConfig['cc']) || undefined;
-    } else if (Array.isArray(emailConfig['cc'])) {
-      sanitizedEmail['cc'] = (emailConfig['cc'] as string[])
+    if (typeof emailConfig.cc === 'string') {
+      sanitizedEmail.cc = SanitizationUtil.sanitizeEmail(emailConfig.cc) || undefined;
+    } else if (Array.isArray(emailConfig.cc)) {
+      sanitizedEmail.cc = (emailConfig.cc as string[])
         .map((email) => SanitizationUtil.sanitizeEmail(email))
         .filter((email): email is string => email !== null && email !== undefined);
     }
 
-    if (typeof emailConfig['bcc'] === 'string') {
-      sanitizedEmail['bcc'] = SanitizationUtil.sanitizeEmail(emailConfig['bcc']) || undefined;
-    } else if (Array.isArray(emailConfig['bcc'])) {
-      sanitizedEmail['bcc'] = (emailConfig['bcc'] as string[])
+    if (typeof emailConfig.bcc === 'string') {
+      sanitizedEmail.bcc = SanitizationUtil.sanitizeEmail(emailConfig.bcc) || undefined;
+    } else if (Array.isArray(emailConfig.bcc)) {
+      sanitizedEmail.bcc = (emailConfig.bcc as string[])
         .map((email) => SanitizationUtil.sanitizeEmail(email))
         .filter((email): email is string => email !== null && email !== undefined);
     }

@@ -299,15 +299,15 @@ function validateCard(payload: ValidateCardPayload): ValidateCardResult {
   const cardObj = card as Record<string, unknown>;
 
   // Check required fields
-  if (typeof cardObj['cardTitle'] !== 'string') {
+  if (typeof cardObj.cardTitle !== 'string') {
     errors.push('cardTitle must be a string');
   }
 
-  if (!Array.isArray(cardObj['sections'])) {
+  if (!Array.isArray(cardObj.sections)) {
     errors.push('sections must be an array');
   } else {
     // Validate each section
-    (cardObj['sections'] as unknown[]).forEach((section, i) => {
+    (cardObj.sections as unknown[]).forEach((section, i) => {
       if (!section || typeof section !== 'object') {
         errors.push(`Section ${i} must be an object`);
         return;
@@ -315,15 +315,15 @@ function validateCard(payload: ValidateCardPayload): ValidateCardResult {
 
       const sectionObj = section as Record<string, unknown>;
 
-      if (typeof sectionObj['title'] !== 'string' && typeof sectionObj['title'] !== 'undefined') {
+      if (typeof sectionObj.title !== 'string' && typeof sectionObj.title !== 'undefined') {
         errors.push(`Section ${i} title must be a string`);
       }
 
-      if (sectionObj['fields'] && !Array.isArray(sectionObj['fields'])) {
+      if (sectionObj.fields && !Array.isArray(sectionObj.fields)) {
         errors.push(`Section ${i} fields must be an array`);
       }
 
-      if (sectionObj['items'] && !Array.isArray(sectionObj['items'])) {
+      if (sectionObj.items && !Array.isArray(sectionObj.items)) {
         errors.push(`Section ${i} items must be an array`);
       }
     });
@@ -449,14 +449,14 @@ function isValidCard(card: unknown): boolean {
     return false;
   }
   const obj = card as Record<string, unknown>;
-  return typeof obj['cardTitle'] === 'string' && Array.isArray(obj['sections']);
+  return typeof obj.cardTitle === 'string' && Array.isArray(obj.sections);
 }
 
 function getCardSections(card: unknown): unknown[] {
   if (!card || typeof card !== 'object') {
     return [];
   }
-  const sections = (card as Record<string, unknown>)['sections'];
+  const sections = (card as Record<string, unknown>).sections;
   return Array.isArray(sections) ? sections : [];
 }
 
@@ -464,21 +464,21 @@ function getSectionTitle(section: unknown): string {
   if (!section || typeof section !== 'object') {
     return '';
   }
-  return String((section as Record<string, unknown>)['title'] || '');
+  return String((section as Record<string, unknown>).title || '');
 }
 
 function getSectionType(section: unknown): string {
   if (!section || typeof section !== 'object') {
     return 'info';
   }
-  return String((section as Record<string, unknown>)['type'] || 'info');
+  return String((section as Record<string, unknown>).type || 'info');
 }
 
 function getSectionFields(section: unknown): unknown[] {
   if (!section || typeof section !== 'object') {
     return [];
   }
-  const fields = (section as Record<string, unknown>)['fields'];
+  const fields = (section as Record<string, unknown>).fields;
   return Array.isArray(fields) ? fields : [];
 }
 
@@ -486,7 +486,7 @@ function getSectionItems(section: unknown): unknown[] {
   if (!section || typeof section !== 'object') {
     return [];
   }
-  const items = (section as Record<string, unknown>)['items'];
+  const items = (section as Record<string, unknown>).items;
   return Array.isArray(items) ? items : [];
 }
 
@@ -504,7 +504,7 @@ function fieldEquals(a: unknown, b: unknown): boolean {
   const aObj = a as Record<string, unknown>;
   const bObj = b as Record<string, unknown>;
 
-  return aObj['label'] === bObj['label'] && aObj['value'] === bObj['value'] && aObj['type'] === bObj['type'];
+  return aObj.label === bObj.label && aObj.value === bObj.value && aObj.type === bObj.type;
 }
 
 // ============================================

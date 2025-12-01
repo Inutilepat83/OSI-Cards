@@ -125,7 +125,6 @@ export interface DemoConfig {
           </div>
         }
       </div>
-
     </div>
   `,
   styles: [
@@ -437,7 +436,7 @@ export class DocsDemoComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['config']) {
+    if (changes.config) {
       this.updateCardConfig();
     }
   }
@@ -447,9 +446,9 @@ export class DocsDemoComponent implements OnInit, OnChanges {
     const config = this.config;
     if (config && typeof config === 'object') {
       // If config is a section config (has 'type' but no 'sections'), wrap it
-      if (config['type'] && !config['sections']) {
+      if (config.type && !config.sections) {
         this.cardConfig.set({
-          title: config['title'] || 'Demo Card',
+          title: config.title || 'Demo Card',
           sections: [config],
         });
       } else {

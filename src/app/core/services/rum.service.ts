@@ -220,8 +220,8 @@ export class RUMService {
       // Google Analytics integration
       (window as any).gtag('event', event.name, {
         event_category: event.type,
-        event_label: event.properties?.['path'] || '',
-        value: event.properties?.['value'],
+        event_label: event.properties?.path || '',
+        value: event.properties?.value,
         ...event.properties,
       });
     }

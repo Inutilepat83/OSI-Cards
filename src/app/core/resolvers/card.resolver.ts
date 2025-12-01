@@ -12,7 +12,7 @@ export const cardResolver: ResolveFn<AICardConfig | null> = (
   route
 ): Observable<AICardConfig | null> => {
   const cardDataService = inject(CardDataService);
-  const cardId = route.params['id'];
+  const cardId = route.params.id;
 
   if (!cardId) {
     return new Observable((observer) => {

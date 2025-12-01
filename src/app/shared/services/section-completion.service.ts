@@ -35,7 +35,7 @@ export class SectionCompletionService {
         field.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
         field.value === undefined ||
         field.value === null ||
-        (meta && meta['placeholder'] === true);
+        (meta && meta.placeholder === true);
       if (isPlaceholder) {
         return false;
       }
@@ -48,7 +48,7 @@ export class SectionCompletionService {
         item.description === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
         !item.title ||
         item.title.startsWith('Item ') ||
-        (meta && meta['placeholder'] === true);
+        (meta && meta.placeholder === true);
       if (isPlaceholder) {
         return false;
       }
@@ -78,7 +78,7 @@ export class SectionCompletionService {
         field.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
         field.value === undefined ||
         field.value === null ||
-        (meta && meta['placeholder'] === true);
+        (meta && meta.placeholder === true);
       if (!isPlaceholder && field.value !== '') {
         completedCount++;
       }
@@ -88,7 +88,7 @@ export class SectionCompletionService {
     items.forEach((item) => {
       const meta = item.meta as Record<string, unknown> | undefined;
       const isPlaceholder =
-        (meta && meta['placeholder'] === true) || (item.title === 'Item' && !item.description);
+        (meta && meta.placeholder === true) || (item.title === 'Item' && !item.description);
       if (!isPlaceholder && item.title) {
         completedCount++;
       }
@@ -114,7 +114,7 @@ export class SectionCompletionService {
         field.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
         field.value === undefined ||
         field.value === null ||
-        (meta && meta['placeholder'] === true);
+        (meta && meta.placeholder === true);
       if (!isPlaceholder && field.value !== '') {
         completedFieldCount++;
       }
@@ -124,7 +124,7 @@ export class SectionCompletionService {
     items.forEach((item) => {
       const meta = item.meta as Record<string, unknown> | undefined;
       const isPlaceholder =
-        (meta && meta['placeholder'] === true) || (item.title === 'Item' && !item.description);
+        (meta && meta.placeholder === true) || (item.title === 'Item' && !item.description);
       if (!isPlaceholder && item.title) {
         completedItemCount++;
       }
@@ -150,7 +150,7 @@ export class SectionCompletionService {
       field.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
       field.value === undefined ||
       field.value === null ||
-      (!!meta && meta['placeholder'] === true)
+      (!!meta && meta.placeholder === true)
     );
   }
 
@@ -163,7 +163,7 @@ export class SectionCompletionService {
       item.description === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
       !item.title ||
       item.title.startsWith('Item ') ||
-      (!!meta && meta['placeholder'] === true)
+      (!!meta && meta.placeholder === true)
     );
   }
 
