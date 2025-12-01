@@ -103,21 +103,21 @@ START_TIME=$(date +%s)
 
 while true; do
     ELAPSED=$(($(date +%s) - START_TIME))
-    
+
     if [ $ELAPSED -gt $MAX_WAIT ]; then
         echo "⏰ Timeout after ${MAX_WAIT}s. Check manually:"
         echo "   https://github.com/$REPO/actions"
         exit 1
     fi
-    
+
     # Get latest run info
     RUN_INFO=$(get_latest_run)
     STATUS=$(echo "$RUN_INFO" | jq -r '.status')
     CONCLUSION=$(echo "$RUN_INFO" | jq -r '.conclusion')
     RUN_ID=$(echo "$RUN_INFO" | jq -r '.databaseId')
-    
+
     echo -ne "\r⏳ [$ELAPSED s] Status: $STATUS | Conclusion: $CONCLUSION     "
-    
+
     if [ "$STATUS" == "completed" ]; then
         echo ""
         if [ "$CONCLUSION" == "success" ]; then
@@ -138,7 +138,7 @@ while true; do
             exit 1
         fi
     fi
-    
+
     sleep $POLL_INTERVAL
 done
 ```
@@ -189,17 +189,17 @@ npm run build
 
 if [ $? -eq 0 ]; then
     echo "✅ Build successful!"
-    
+
     # Check for changes
     if [ -n "$(git status --porcelain)" ]; then
         echo "→ Committing fixes..."
         git add .
         git commit --no-verify -m "fix: auto-fix lint and format issues"
         git push origin main
-        
+
         echo "🚀 Pushed fixes! Monitoring new pipeline..."
         sleep 5
-        
+
         # Monitor new deployment
         watch -n 10 'gh run list --repo Inutilepat83/OSI-Cards --workflow deploy.yml --limit 3'
     else
@@ -338,3 +338,4 @@ brew install jq
 npm install -g firebase-tools
 firebase login
 ```
+

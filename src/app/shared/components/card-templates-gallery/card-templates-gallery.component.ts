@@ -13,7 +13,8 @@ import { AICardConfig, CardType } from '../../../models';
 import { CardTemplatesService } from '../../services/card-templates.service';
 import { SearchFilterService } from '../../services/search-filter.service';
 import { LucideIconsModule } from '../../icons/lucide-icons.module';
-import { AICardRendererComponent } from '../../../../../projects/osi-cards-lib/src/lib/components/ai-card-renderer/ai-card-renderer.component';
+// Import optimized card renderer from app (not library - uses optimized MagneticTiltService)
+import { AICardRendererComponent } from '../cards/ai-card-renderer.component';
 import { AICardConfig as LibraryCardConfig } from '../../../../../projects/osi-cards-lib/src/lib/models/card.model';
 
 /**

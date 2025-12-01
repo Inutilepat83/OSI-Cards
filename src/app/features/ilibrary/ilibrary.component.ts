@@ -12,7 +12,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AICardRendererComponent } from '../../../../projects/osi-cards-lib/src/lib/components/ai-card-renderer/ai-card-renderer.component';
+// Import optimized card renderer from app (not library - uses optimized MagneticTiltService)
+import { AICardRendererComponent } from '../../shared/components/cards/ai-card-renderer.component';
 import { AICardConfig } from '../../../../projects/osi-cards-lib/src/lib/models';
 import {
   CardUpdate,

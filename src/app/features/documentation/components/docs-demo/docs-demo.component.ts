@@ -13,8 +13,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { LucideIconsModule } from '../../../../shared/icons/lucide-icons.module';
 
-// Import the card renderer from the library
-import { AICardRendererComponent } from '../../../../../../projects/osi-cards-lib/src/lib/components/ai-card-renderer/ai-card-renderer.component';
+// Import optimized card renderer from app (not library - uses optimized MagneticTiltService)
+import { AICardRendererComponent } from '../../../../shared/components/cards/ai-card-renderer.component';
 
 /**
  * Demo configuration for the DocsDemoComponent

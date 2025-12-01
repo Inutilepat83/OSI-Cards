@@ -19,7 +19,8 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
-import { AICardRendererComponent } from '../../../../projects/osi-cards-lib/src/lib/components/ai-card-renderer/ai-card-renderer.component';
+// Import optimized card renderer from app (not library - uses optimized MagneticTiltService)
+import { AICardRendererComponent } from '../../shared/components/cards/ai-card-renderer.component';
 import { DocCacheService } from './services/doc-cache.service';
 import { catchError, take } from 'rxjs/operators';
 import { of } from 'rxjs';

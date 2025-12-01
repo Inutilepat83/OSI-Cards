@@ -22,7 +22,7 @@ import {
   CardSection,
   MailCardAction,
 } from '../../../models';
-import { delay, filter, fromEvent, interval, Subject, takeUntil } from 'rxjs';
+import { delay, distinctUntilChanged, filter, fromEvent, interval, Subject, takeUntil } from 'rxjs';
 import { MagneticTiltService, MousePosition, TiltCalculations } from '../../../core';
 import { SectionNormalizationService } from '../../services/section-normalization.service';
 import { LucideIconsModule } from '../../icons/lucide-icons.module';
@@ -250,6 +250,13 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   @Input() streamingProgressLabel?: string; // e.g., "STREAMING JSON (75%)"
 
   /**
+   * Whether to show loading state by default when no sections are available.
+   * Set to false if you want to handle loading states externally.
+   * @default true
+   */
+  @Input() showLoadingByDefault = true;
+
+  /**
    * Flag indicating active streaming mode
    * When true, disables CSS animations to prevent blinking during rapid updates
    */
@@ -284,6 +291,33 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     question?: string;
   }>();
 
+  /**
+   * Computed effective streaming stage.
+   * Returns 'thinking' when showLoadingByDefault is true and no sections are available.
+   */
+  get effectiveStreamingStage(): StreamingStage {
+    // If an explicit stage is provided, use it
+    if (this.streamingStage) {
+      return this.streamingStage;
+    }
+    // Show loading state by default when no data is available
+    if (
+      this.showLoadingByDefault &&
+      (!this.processedSections || this.processedSections.length === 0)
+    ) {
+      return 'thinking';
+    }
+    return undefined;
+  }
+
+  /**
+   * Returns the host element (the component itself) for PNG/image export.
+   * This captures the entire Shadow DOM rendered content.
+   */
+  getExportElement(): HTMLElement | null {
+    return this.el.nativeElement || null;
+  }
+
   @ViewChild('cardContainer') cardContainer!: ElementRef<HTMLElement>;
   @ViewChild('tiltContainer') tiltContainerRef!: ElementRef<HTMLDivElement>;
   @ViewChild(MasonryGridComponent) masonryGrid!: MasonryGridComponent;
@@ -305,6 +339,25 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   // Performance: RAF batching for mouse moves
   private mouseMoveRafId: number | null = null;
   private pendingMouseMove: MouseEvent | null = null;
+
+  // Point 16: Make tiltRafId a class property for proper cleanup
+  private tiltRafId: number | null = null;
+
+  // Point 17: isDestroyed flag to prevent post-destroy callbacks
+  private isDestroyed = false;
+
+  // Point 14: Visibility tracking
+  private isVisible = true;
+  private visibilityObserver?: IntersectionObserver;
+
+  // Point 18: Last tilt values for threshold-based change detection
+  private lastTiltValues = {
+    rotateX: 0,
+    rotateY: 0,
+    glowBlur: 0,
+    glowOpacity: 0,
+    reflectionOpacity: 0,
+  };
 
   // Point 7-8: Container width measurement for reliable multi-column layout
   measuredContainerWidth = 0;
@@ -384,41 +437,72 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         }
       });
 
-    // Subscribe to tilt calculations with RAF batching for performance
-    let tiltRafId: number | null = null;
-    let pendingCalculations: TiltCalculations | null = null;
-
+    // Point 11 & 12: Subscribe to tilt calculations
+    // Service already handles RAF batching and change detection, so no double-RAF needed
     this.magneticTiltService.tiltCalculations$
-      .pipe(takeUntil(this.destroyed$))
+      .pipe(
+        takeUntil(this.destroyed$),
+        // Point 12: distinctUntilChanged with custom comparator
+        distinctUntilChanged(
+          (prev, curr) =>
+            Math.abs(prev.rotateX - curr.rotateX) < 0.001 &&
+            Math.abs(prev.rotateY - curr.rotateY) < 0.001 &&
+            Math.abs(prev.glowBlur - curr.glowBlur) < 0.001 &&
+            Math.abs(prev.glowOpacity - curr.glowOpacity) < 0.001 &&
+            Math.abs(prev.reflectionOpacity - curr.reflectionOpacity) < 0.001
+        )
+      )
       .subscribe((calculations: TiltCalculations) => {
-        pendingCalculations = calculations;
-
-        // Batch updates via RAF to avoid excessive change detection
-        // Always update to ensure smooth transitions
-        if (tiltRafId === null) {
-          tiltRafId = requestAnimationFrame(() => {
-            if (pendingCalculations) {
-              // Update CSS variables for smooth CSS transitions - transform handled by CSS
-              // Both horizontal (rotateY) and vertical (rotateX) rotation for 3D effect
-              this.tiltStyle = {
-                '--tilt-x': `${pendingCalculations.rotateX}deg`,
-                '--tilt-y': `${pendingCalculations.rotateY}deg`,
-                '--glow-blur': `${pendingCalculations.glowBlur}px`,
-                '--glow-color': `rgba(255,121,0,${pendingCalculations.glowOpacity})`,
-                '--reflection-opacity': pendingCalculations.reflectionOpacity,
-              };
-              this.cdr.markForCheck();
-            }
-            pendingCalculations = null;
-            tiltRafId = null;
-          });
+        // Point 17: Check if destroyed before processing
+        if (this.isDestroyed) {
+          return;
         }
+
+        // Point 14: Skip if not visible
+        if (!this.isVisible) {
+          return;
+        }
+
+        // Point 13 & 18: Batch CSS updates with threshold check
+        const threshold = 0.01;
+        const hasChanged =
+          Math.abs(calculations.rotateX - this.lastTiltValues.rotateX) > threshold ||
+          Math.abs(calculations.rotateY - this.lastTiltValues.rotateY) > threshold ||
+          Math.abs(calculations.glowBlur - this.lastTiltValues.glowBlur) > threshold ||
+          Math.abs(calculations.glowOpacity - this.lastTiltValues.glowOpacity) > threshold ||
+          Math.abs(calculations.reflectionOpacity - this.lastTiltValues.reflectionOpacity) >
+            threshold;
+
+        if (!hasChanged) {
+          return;
+        }
+
+        // Update last values
+        this.lastTiltValues = {
+          rotateX: calculations.rotateX,
+          rotateY: calculations.rotateY,
+          glowBlur: calculations.glowBlur,
+          glowOpacity: calculations.glowOpacity,
+          reflectionOpacity: calculations.reflectionOpacity,
+        };
+
+        // Point 13: Mutate existing object instead of creating new one each frame
+        this.tiltStyle['--tilt-x'] = `${calculations.rotateX}deg`;
+        this.tiltStyle['--tilt-y'] = `${calculations.rotateY}deg`;
+        this.tiltStyle['--glow-blur'] = `${calculations.glowBlur}px`;
+        this.tiltStyle['--glow-color'] = `rgba(255,121,0,${calculations.glowOpacity})`;
+        this.tiltStyle['--reflection-opacity'] = calculations.reflectionOpacity;
+
+        this.cdr.markForCheck();
       });
   }
 
   ngAfterViewInit(): void {
     // Point 7: Setup container width measurement with ResizeObserver
     this.setupContainerWidthMeasurement();
+
+    // Point 14: Setup visibility observer to skip tilt calculations when not visible
+    this.setupVisibilityObserver();
 
     // Handle URL fragment scrolling to sections
     this.route.fragment
@@ -437,6 +521,29 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       setTimeout(() => {
         this.scrollToSection(initialFragment);
       }, 300);
+    }
+  }
+
+  /**
+   * Point 14: Setup IntersectionObserver to track component visibility
+   * Skip tilt calculations when component is not visible
+   */
+  private setupVisibilityObserver(): void {
+    if (typeof IntersectionObserver === 'undefined') {
+      return;
+    }
+
+    this.visibilityObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          this.isVisible = entry.isIntersecting;
+        }
+      },
+      { threshold: 0 }
+    );
+
+    if (this.cardContainer?.nativeElement) {
+      this.visibilityObserver.observe(this.cardContainer.nativeElement);
     }
   }
 
@@ -722,13 +829,24 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngOnDestroy(): void {
-    // Cancel any pending RAFs
+    // Point 17: Set destroyed flag first
+    this.isDestroyed = true;
+
+    // Point 15 & 16: Cancel any pending RAFs
     if (this.mouseMoveRafId !== null) {
       cancelAnimationFrame(this.mouseMoveRafId);
+      this.mouseMoveRafId = null;
+    }
+    if (this.tiltRafId !== null) {
+      cancelAnimationFrame(this.tiltRafId);
+      this.tiltRafId = null;
     }
 
     // Disconnect container width observer
     this.containerResizeObserver?.disconnect();
+
+    // Point 14: Disconnect visibility observer
+    this.visibilityObserver?.disconnect();
 
     // Clear tilt service cache for this element
     if (this.tiltContainerRef?.nativeElement) {

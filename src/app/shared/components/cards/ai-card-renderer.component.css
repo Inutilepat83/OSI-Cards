@@ -4,6 +4,72 @@
   height: 100%;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   TILT ANIMATION OPTIMIZATIONS - Points 19-25
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Point 25: Register CSS custom properties for browser-native interpolation */
+/* Note: @property has limited browser support, these act as fallbacks */
+@supports (background: paint(id)) {
+  @property --tilt-x {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+  @property --tilt-y {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+  @property --glow-blur {
+    syntax: '<length>';
+    initial-value: 8px;
+    inherits: false;
+  }
+  @property --glow-color {
+    syntax: '<color>';
+    initial-value: rgba(255, 121, 0, 0.225);
+    inherits: false;
+  }
+  @property --reflection-opacity {
+    syntax: '<number>';
+    initial-value: 0;
+    inherits: false;
+  }
+}
+
+/* Point 23: CSS containment to prevent layout thrashing */
+.card-container-wrapper {
+  contain: layout style;
+}
+
+/* Point 20 & 21: GPU acceleration for tilt container */
+.tilt-container {
+  /* Point 20: Hint to browser about upcoming transform changes */
+  will-change: transform;
+  /* Point 21: Force GPU compositing layer */
+  transform: translate3d(0, 0, 0) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transform-style: preserve-3d;
+  /* Point 19: CSS transitions for smooth glow (faster than JS per-frame updates) */
+  transition: transform 0.1s ease-out;
+}
+
+/* Point 23: Containment for glow container */
+.glow-container {
+  contain: layout style;
+  /* Point 22: Simplified box-shadow during idle - JS will add glow dynamically */
+  box-shadow: 0 0 var(--glow-blur, 8px) var(--glow-color, rgba(255, 121, 0, 0.225));
+  transition: box-shadow 0.15s ease-out;
+}
+
+/* Point 22: Simplify box-shadows during active tilt animation */
+.card-container-wrapper:hover .glow-container {
+  /* Enhanced glow on hover - CSS handles transition */
+  box-shadow:
+    0 0 var(--glow-blur, 8px) var(--glow-color, rgba(255, 121, 0, 0.225)),
+    0 0 calc(var(--glow-blur, 8px) * 2) rgba(255, 121, 0, calc(var(--reflection-opacity, 0) * 0.5));
+}
+
 /* Force border to be visible on card surface - override any resets */
 :host ::ng-deep .ai-card-surface {
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -733,9 +799,12 @@
   }
 }
 
+/* Point 24: Optimized particle animations - reduced complexity */
 .empty-state-particles {
   position: absolute;
   inset: 0;
+  /* Point 23: Containment for particle container */
+  contain: strict;
 }
 
 .particle {
@@ -744,27 +813,29 @@
   height: 2.5px;
   border-radius: 50%;
   background: color-mix(in srgb, var(--color-brand) 55%, transparent);
-  box-shadow: 0 0 4px color-mix(in srgb, var(--color-brand) 45%, transparent);
-  transition:
-    transform 0.8s cubic-bezier(0.23, 1, 0.32, 1),
-    opacity 0.5s ease;
-  will-change: transform, opacity;
+  /* Point 24: Simplified box-shadow - single layer instead of multiple */
+  box-shadow: 0 0 4px currentColor;
+  /* Point 24: Use CSS transition instead of JS-driven per-frame updates */
+  transition: transform 0.6s ease-out, opacity 0.4s ease;
+  /* Point 20: will-change only when needed, not permanent */
   top: 50%;
   left: 50%;
   margin-left: -1.25px;
   margin-top: -1.25px;
   pointer-events: none;
-  filter: blur(0.5px);
+  /* Point 24: Remove blur filter for better performance */
+  color: color-mix(in srgb, var(--color-brand) 45%, transparent);
 }
 
+/* Point 24: Simplified particle variants - just two styles instead of many */
 .particle:nth-child(odd) {
   background: color-mix(in srgb, var(--color-brand) 65%, transparent);
-  box-shadow: 0 0 6px color-mix(in srgb, var(--color-brand) 55%, transparent);
+  color: color-mix(in srgb, var(--color-brand) 55%, transparent);
 }
 
 .particle:nth-child(even) {
   background: color-mix(in srgb, var(--color-brand) 45%, transparent);
-  box-shadow: 0 0 3px color-mix(in srgb, var(--color-brand) 35%, transparent);
+  color: color-mix(in srgb, var(--color-brand) 35%, transparent);
 }
 
 .empty-state-content {

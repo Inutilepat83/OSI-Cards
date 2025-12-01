@@ -17,7 +17,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, Subject, takeUntil } from 'rxjs';
 import { LucideIconsModule } from '../../../../shared/icons/lucide-icons.module';
-import { AICardRendererComponent } from '../../../../../../projects/osi-cards-lib/src/lib/components/ai-card-renderer/ai-card-renderer.component';
+// Import optimized card renderer from app (not library - uses optimized MagneticTiltService)
+import { AICardRendererComponent } from '../../../../shared/components/cards/ai-card-renderer.component';
 
 /**
  * Template for the playground

@@ -1,4 +1,4 @@
-import { inject, Injectable, NgZone, OnDestroy } from '@angular/core';
+import { inject, Injectable, isDevMode, NgZone, OnDestroy } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 export interface MousePosition {
@@ -14,22 +14,30 @@ export interface TiltCalculations {
   reflectionOpacity: number;
 }
 
-const MAX_LIFT_PX = 2.1; // Increased for more visible effect
-const BASE_GLOW_BLUR = 10; // Increased for more visible glow
-const MAX_GLOW_BLUR_OFFSET = 5; // Increased for more spread
-const BASE_GLOW_OPACITY = 0.25; // Increased for more visible effect
-const MAX_GLOW_OPACITY_OFFSET = 0.2; // Increased for more visible changes
-const MAX_REFLECTION_OPACITY = 0.25; // Increased for more visible reflection
-const SMOOTHING_FACTOR = 0.08; // Smooth interpolation that follows mouse cursor (lower = softer, less reactive)
-const MAX_TILT_ANGLE = 15; // Maximum tilt angle in degrees
+// Constants
+const BASE_GLOW_BLUR = 10;
+const MAX_GLOW_BLUR_OFFSET = 5;
+const BASE_GLOW_OPACITY = 0.25;
+const MAX_GLOW_OPACITY_OFFSET = 0.2;
+const MAX_REFLECTION_OPACITY = 0.25;
+const MAX_TILT_DEGREES = 0.5;
+const SQRT_2 = Math.sqrt(2); // Pre-calculated constant
 
-// Performance optimization: cache element dimensions
+// Performance tuning - Point 8: Increased from 0.08 to 0.18 for faster response
+const SMOOTHING_SPEED = 12; // Used with exponential smoothing (higher = faster)
+const RESET_DURATION_MS = 300; // Point 4: Reduced from 800ms to 300ms
+const MAX_ANIMATION_DURATION_MS = 2000; // Point 27: Safety timeout
+const FRAME_BUDGET_MS = 8; // Point 30: Skip frames if calculation takes too long
+const DEBOUNCE_MS = 16; // Point 3: One frame debounce for state transitions
+
+// Point 1: Animation State Machine
+type AnimationState = 'idle' | 'tilting' | 'resetting';
+
+// Point 26: Use WeakMap for element cache
 interface ElementCache {
-  element: HTMLElement;
   rect: DOMRect;
-  halfW: number;
-  halfH: number;
-  maxAngleY: number;
+  invWidth: number; // Point 9: Pre-cached inverse dimensions
+  invHeight: number;
   lastUpdate: number;
 }
 
@@ -37,6 +45,9 @@ interface ElementCache {
   providedIn: 'root',
 })
 export class MagneticTiltService implements OnDestroy {
+  private readonly ngZone = inject(NgZone);
+
+  // Observable for tilt calculations
   private tiltCalculationsSubject = new BehaviorSubject<TiltCalculations>({
     rotateY: 0,
     rotateX: 0,
@@ -44,155 +55,347 @@ export class MagneticTiltService implements OnDestroy {
     glowOpacity: BASE_GLOW_OPACITY,
     reflectionOpacity: 0,
   });
-
   tiltCalculations$ = this.tiltCalculationsSubject.asObservable();
 
-  // Performance: cache element dimensions to avoid repeated getBoundingClientRect calls
-  private elementCache: Map<HTMLElement, ElementCache> = new Map<HTMLElement, ElementCache>();
-  private rafId: number | null = null;
-  private pendingUpdate: { mousePosition: MousePosition; element: HTMLElement | null } | null =
-    null;
-  private lastCalculations: TiltCalculations | null = null;
-  // Current smoothed values for interpolation
+  // Point 1: Animation state machine
+  private animationState: AnimationState = 'idle';
+
+  // Point 2: Single unified RAF loop
+  private animationFrameId: number | null = null;
+  private animationStartTime = 0;
+
+  // Current and target values for smooth interpolation
   private currentRotateY = 0;
   private currentRotateX = 0;
-  private currentGlowBlur: number = BASE_GLOW_BLUR;
-  private currentGlowOpacity: number = BASE_GLOW_OPACITY;
+  private currentGlowBlur = BASE_GLOW_BLUR;
+  private currentGlowOpacity = BASE_GLOW_OPACITY;
   private currentReflectionOpacity = 0;
-  // Latest target values for smoothing animation
+
   private targetRotateY = 0;
   private targetRotateX = 0;
-  private targetGlowBlur: number = BASE_GLOW_BLUR;
-  private targetGlowOpacity: number = BASE_GLOW_OPACITY;
+  private targetGlowBlur = BASE_GLOW_BLUR;
+  private targetGlowOpacity = BASE_GLOW_OPACITY;
   private targetReflectionOpacity = 0;
-  private readonly CACHE_DURATION = 200; // Recalculate rect every 200ms max (reduces lag from getBoundingClientRect)
-  private readonly ngZone = inject(NgZone);
-  private resetRafId: number | null = null;
-  private smoothingRafId: number | null = null;
 
+  // Reset animation start values (for smooth reset interpolation)
+  private resetStartRotateY = 0;
+  private resetStartRotateX = 0;
+  private resetStartGlowBlur = BASE_GLOW_BLUR;
+  private resetStartGlowOpacity = BASE_GLOW_OPACITY;
+  private resetStartReflectionOpacity = 0;
+
+  // Point 26: WeakMap for element cache (allows garbage collection)
+  private elementCache = new WeakMap<HTMLElement, ElementCache>();
+  private readonly CACHE_DURATION = 100; // Reduced from 200ms for faster refresh
+
+  // Point 3: Debounce tracking
+  private lastStateChangeTime = 0;
+
+  // Pending mouse update
+  private pendingMousePosition: MousePosition | null = null;
+  private pendingElement: HTMLElement | null = null;
+
+  // Last frame timestamp for delta time calculation
+  private lastFrameTime = 0;
+
+  // Track last emitted values for change detection (Point 10)
+  private lastEmittedCalculations: TiltCalculations | null = null;
+
+  /**
+   * Calculate tilt based on mouse position
+   * Point 7: Implements interrupt-and-continue pattern
+   */
   calculateTilt(mousePosition: MousePosition, element: HTMLElement | null): void {
     if (!element) {
       this.resetTilt();
       return;
     }
 
-    // Cancel any ongoing reset animation when mouse re-enters
-    if (this.resetRafId !== null) {
-      cancelAnimationFrame(this.resetRafId);
-      this.resetRafId = null;
+    const now = performance.now();
+
+    // Point 3: Debounce rapid state transitions
+    if (this.animationState === 'resetting' && now - this.lastStateChangeTime < DEBOUNCE_MS) {
+      // Queue the update but don't interrupt reset yet
+      this.pendingMousePosition = mousePosition;
+      this.pendingElement = element;
+      return;
     }
 
-    // Don't cancel smoothing animation - let it continue for ultra-smooth updates
-    // This prevents lag when passing over interactive elements
+    // Point 7: If we're resetting, seamlessly interrupt and continue from current position
+    if (this.animationState === 'resetting') {
+      // Don't reset current values - just change state and continue from where we are
+      this.lastStateChangeTime = now;
+    }
 
-    // Store pending update for RAF batching (always use latest position)
-    this.pendingUpdate = { mousePosition, element };
+    // Store pending update
+    this.pendingMousePosition = mousePosition;
+    this.pendingElement = element;
 
-    // Schedule update via RAF for smooth 60fps (always process latest)
-    if (this.rafId === null) {
-      this.rafId = requestAnimationFrame(() => {
-        this.processTiltUpdate();
-        this.rafId = null;
-      });
+    // Transition to tilting state
+    this.animationState = 'tilting';
+
+    // Start unified animation loop if not already running
+    this.startAnimationLoop();
+  }
+
+  /**
+   * Reset tilt to neutral position
+   */
+  resetTilt(smooth = true): void {
+    const now = performance.now();
+
+    // Point 3: Debounce rapid state transitions
+    if (this.animationState === 'tilting' && now - this.lastStateChangeTime < DEBOUNCE_MS) {
+      return;
+    }
+
+    this.lastStateChangeTime = now;
+    this.pendingMousePosition = null;
+    this.pendingElement = null;
+
+    if (smooth && this.animationState !== 'idle') {
+      // Point 7: Store current position as reset start point for smooth transition
+      this.resetStartRotateY = this.currentRotateY;
+      this.resetStartRotateX = this.currentRotateX;
+      this.resetStartGlowBlur = this.currentGlowBlur;
+      this.resetStartGlowOpacity = this.currentGlowOpacity;
+      this.resetStartReflectionOpacity = this.currentReflectionOpacity;
+
+      // Set targets to zero
+      this.targetRotateY = 0;
+      this.targetRotateX = 0;
+      this.targetGlowBlur = BASE_GLOW_BLUR;
+      this.targetGlowOpacity = BASE_GLOW_OPACITY;
+      this.targetReflectionOpacity = 0;
+
+      this.animationState = 'resetting';
+      this.animationStartTime = now;
+      this.startAnimationLoop();
+    } else {
+      // Immediate reset
+      this.stopAnimationLoop();
+      this.setToNeutral();
+      this.emitCalculations();
     }
   }
 
-  private processTiltUpdate(): void {
-    if (!this.pendingUpdate) {
-      return;
+  /**
+   * Point 2: Single unified animation loop
+   */
+  private startAnimationLoop(): void {
+    if (this.animationFrameId !== null) {
+      return; // Already running
     }
 
-    const { mousePosition, element } = this.pendingUpdate;
-    this.pendingUpdate = null;
+    this.lastFrameTime = performance.now();
+    this.animationStartTime = this.lastFrameTime;
 
-    if (!element) {
-      this.resetTilt();
-      return;
-    }
+    const animate = () => {
+      const frameStart = performance.now();
 
-    // Get or update cached element dimensions
-    const cache = this.getElementCache(element);
+      // Point 27: Safety timeout to prevent runaway animations
+      if (frameStart - this.animationStartTime > MAX_ANIMATION_DURATION_MS) {
+        this.stopAnimationLoop();
+        this.setToNeutral();
+        this.emitCalculations();
+        return;
+      }
 
-    // Calculate normalized position (0-1) - optimized with cached inverse width/height
-    // Use actual card dimensions, not screen dimensions, to handle tall cards
-    const invWidth = 1.0 / cache.rect.width;
-    const invHeight = 1.0 / cache.rect.height;
-    const fx = (mousePosition.x - cache.rect.left) * invWidth;
-    const fy = (mousePosition.y - cache.rect.top) * invHeight;
-    // Fast clamp: use ternary for better branch prediction
-    const clampedFx = fx < 0 ? 0 : fx > 1 ? 1 : fx;
-    const clampedFy = fy < 0 ? 0 : fy > 1 ? 1 : fy;
+      // Calculate delta time for frame-rate independent animation
+      const deltaTime = Math.min((frameStart - this.lastFrameTime) / 1000, 0.1); // Cap at 100ms
+      this.lastFrameTime = frameStart;
 
-    // Normalize to -1 to 1 range (center is 0) - used for glow effects
-    const normalizedX = (clampedFx - 0.5) * 2;
-    const normalizedY = (clampedFy - 0.5) * 2;
+      let shouldContinue = false;
 
-    // Calculate tilt multiplier based on position within card (0-1 range)
-    // Use clamped position directly for more reliable calculation
-    const cardPosX = clampedFx; // 0 = left edge, 1 = right edge
-    const cardPosY = clampedFy; // 0 = top edge, 1 = bottom edge
+      if (this.animationState === 'tilting') {
+        shouldContinue = this.processTiltFrame(deltaTime);
+      } else if (this.animationState === 'resetting') {
+        shouldContinue = this.processResetFrame(frameStart);
+      }
 
-    // Wave function: 0 at 0%, max at 25%, 0 at 50%, -max at 75%, 0 at 100%
-    // Pattern: 0, 100, 0, 100, 0
-    const getTiltMultiplier = (pos: number): number => {
-      if (pos <= 0.25) {
-        // 0% to 25%: increase from 0 to 1
-        return pos * 4; // 0 -> 1
-      } else if (pos <= 0.5) {
-        // 25% to 50%: decrease from 1 to 0
-        return 1 - (pos - 0.25) * 4; // 1 -> 0
-      } else if (pos <= 0.75) {
-        // 50% to 75%: decrease from 0 to -1
-        return -(pos - 0.5) * 4; // 0 -> -1
+      // Point 30: Frame budget check
+      const frameTime = performance.now() - frameStart;
+      if (isDevMode() && frameTime > FRAME_BUDGET_MS) {
+        console.warn(`[MagneticTilt] Frame took ${frameTime.toFixed(2)}ms (budget: ${FRAME_BUDGET_MS}ms)`);
+      }
+
+      if (shouldContinue) {
+        this.animationFrameId = requestAnimationFrame(animate);
       } else {
-        // 75% to 100%: increase from -1 to 0
-        return -1 + (pos - 0.75) * 4; // -1 -> 0
+        this.animationFrameId = null;
+        if (this.animationState === 'resetting') {
+          this.animationState = 'idle';
+        }
       }
     };
 
-    const tiltMultiplierX = getTiltMultiplier(cardPosX);
-    const tiltMultiplierY = getTiltMultiplier(cardPosY);
+    this.ngZone.runOutsideAngular(() => {
+      this.animationFrameId = requestAnimationFrame(animate);
+    });
+  }
 
-    // Tilt based on card position: entry: 0°, 25%: 0.5°, 50%: 0°, 75%: -0.5°, exit: 0°
-    // Pattern: 0, 0.5, 0, -0.5, 0 degrees (softer, more subtle effect)
-    // Only horizontal tilt (left to right), vertical tilt disabled
-    const MAX_TILT_DEGREES = 0.5;
-    const targetRotateY = tiltMultiplierX * MAX_TILT_DEGREES; // Horizontal tilt (left to right)
-    const targetRotateX = 0; // Vertical tilt disabled
+  private stopAnimationLoop(): void {
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+    this.animationState = 'idle';
+  }
 
-    // Calculate intensity based on distance from center for glow effects
+  /**
+   * Process a single frame of tilt animation
+   * Point 5: Uses exponential smoothing instead of linear lerp
+   */
+  private processTiltFrame(deltaTime: number): boolean {
+    // Process pending mouse position
+    if (this.pendingMousePosition && this.pendingElement) {
+      this.calculateTargetValues(this.pendingMousePosition, this.pendingElement);
+    }
+
+    // Point 5: Exponential smoothing - naturally handles interruptions
+    const smoothFactor = 1 - Math.exp(-deltaTime * SMOOTHING_SPEED);
+
+    this.currentRotateY = this.exponentialSmooth(this.currentRotateY, this.targetRotateY, smoothFactor);
+    this.currentRotateX = this.exponentialSmooth(this.currentRotateX, this.targetRotateX, smoothFactor);
+    this.currentGlowBlur = this.exponentialSmooth(this.currentGlowBlur, this.targetGlowBlur, smoothFactor);
+    this.currentGlowOpacity = this.exponentialSmooth(this.currentGlowOpacity, this.targetGlowOpacity, smoothFactor);
+    this.currentReflectionOpacity = this.exponentialSmooth(this.currentReflectionOpacity, this.targetReflectionOpacity, smoothFactor);
+
+    this.emitCalculations();
+
+    // Point 6: Early bailout - check if close enough to target
+    return !this.isCloseToTarget(0.001);
+  }
+
+  /**
+   * Process a single frame of reset animation
+   */
+  private processResetFrame(now: number): boolean {
+    // Check for pending tilt request (Point 7: interrupt pattern)
+    if (this.pendingMousePosition && this.pendingElement) {
+      // Seamlessly transition to tilting from current position
+      this.animationState = 'tilting';
+      this.animationStartTime = now;
+      return true;
+    }
+
+    const elapsed = now - this.animationStartTime;
+    const progress = Math.min(elapsed / RESET_DURATION_MS, 1);
+
+    // Cubic ease-out for smooth deceleration
+    const t = 1 - progress;
+    const easeOut = 1 - t * t * t;
+
+    // Interpolate from reset start to neutral
+    this.currentRotateY = this.resetStartRotateY * (1 - easeOut);
+    this.currentRotateX = this.resetStartRotateX * (1 - easeOut);
+    this.currentGlowBlur = BASE_GLOW_BLUR + (this.resetStartGlowBlur - BASE_GLOW_BLUR) * (1 - easeOut);
+    this.currentGlowOpacity = BASE_GLOW_OPACITY + (this.resetStartGlowOpacity - BASE_GLOW_OPACITY) * (1 - easeOut);
+    this.currentReflectionOpacity = this.resetStartReflectionOpacity * (1 - easeOut);
+
+    this.emitCalculations();
+
+    if (progress >= 1) {
+      this.setToNeutral();
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Calculate target tilt values based on mouse position
+   */
+  private calculateTargetValues(mousePosition: MousePosition, element: HTMLElement): void {
+    const cache = this.getElementCache(element);
+    if (!cache) return;
+
+    // Use pre-cached inverse dimensions (Point 9)
+    const fx = (mousePosition.x - cache.rect.left) * cache.invWidth;
+    const fy = (mousePosition.y - cache.rect.top) * cache.invHeight;
+
+    // Fast clamp
+    const clampedFx = fx < 0 ? 0 : fx > 1 ? 1 : fx;
+    const clampedFy = fy < 0 ? 0 : fy > 1 ? 1 : fy;
+
+    // Normalize to -1 to 1 range
+    const normalizedX = (clampedFx - 0.5) * 2;
+    const normalizedY = (clampedFy - 0.5) * 2;
+
+    // Wave function for tilt
+    const tiltMultiplierX = this.getTiltMultiplier(clampedFx);
+
+    // Set target rotation
+    this.targetRotateY = tiltMultiplierX * MAX_TILT_DEGREES;
+    this.targetRotateX = 0; // Vertical tilt disabled
+
+    // Calculate intensity for glow effects
     const distance = Math.sqrt(normalizedX * normalizedX + normalizedY * normalizedY);
-    const maxDistance = Math.sqrt(2); // Maximum distance from center (corner)
-    const normalizedDistance = Math.min(distance / maxDistance, 1.0);
-    const intensity = normalizedDistance;
+    const intensity = Math.min(distance / SQRT_2, 1.0);
 
-    // Calculate target glow and reflection values
-    const targetGlowBlur = BASE_GLOW_BLUR + intensity * MAX_GLOW_BLUR_OFFSET;
-    const targetGlowOpacity = BASE_GLOW_OPACITY + intensity * MAX_GLOW_OPACITY_OFFSET;
-    const targetReflectionOpacity = intensity * MAX_REFLECTION_OPACITY;
+    // Set target glow values
+    this.targetGlowBlur = BASE_GLOW_BLUR + intensity * MAX_GLOW_BLUR_OFFSET;
+    this.targetGlowOpacity = BASE_GLOW_OPACITY + intensity * MAX_GLOW_OPACITY_OFFSET;
+    this.targetReflectionOpacity = intensity * MAX_REFLECTION_OPACITY;
+  }
 
-    // Update target values (these will be used by smoothing animation)
-    this.targetRotateY = targetRotateY;
-    this.targetRotateX = targetRotateX;
-    this.targetGlowBlur = targetGlowBlur;
-    this.targetGlowOpacity = targetGlowOpacity;
-    this.targetReflectionOpacity = targetReflectionOpacity;
+  /**
+   * Wave function: creates smooth tilt effect across card
+   */
+  private getTiltMultiplier(pos: number): number {
+    if (pos <= 0.25) {
+      return pos * 4;
+    } else if (pos <= 0.5) {
+      return 1 - (pos - 0.25) * 4;
+    } else if (pos <= 0.75) {
+      return -(pos - 0.5) * 4;
+    } else {
+      return -1 + (pos - 0.75) * 4;
+    }
+  }
 
-    // Apply smoothing interpolation (lerp) for smooth following
-    this.currentRotateY = this.lerp(this.currentRotateY, targetRotateY, SMOOTHING_FACTOR);
-    this.currentRotateX = this.lerp(this.currentRotateX, targetRotateX, SMOOTHING_FACTOR);
-    this.currentGlowBlur = this.lerp(this.currentGlowBlur, targetGlowBlur, SMOOTHING_FACTOR);
-    this.currentGlowOpacity = this.lerp(
-      this.currentGlowOpacity,
-      targetGlowOpacity,
-      SMOOTHING_FACTOR
+  /**
+   * Point 5: Exponential smoothing for natural transitions
+   */
+  private exponentialSmooth(current: number, target: number, factor: number): number {
+    return current + (target - current) * factor;
+  }
+
+  /**
+   * Point 6: Check if current values are close to target
+   */
+  private isCloseToTarget(threshold: number): boolean {
+    return (
+      Math.abs(this.currentRotateY - this.targetRotateY) < threshold &&
+      Math.abs(this.currentRotateX - this.targetRotateX) < threshold &&
+      Math.abs(this.currentGlowBlur - this.targetGlowBlur) < threshold &&
+      Math.abs(this.currentGlowOpacity - this.targetGlowOpacity) < threshold &&
+      Math.abs(this.currentReflectionOpacity - this.targetReflectionOpacity) < threshold
     );
-    this.currentReflectionOpacity = this.lerp(
-      this.currentReflectionOpacity,
-      targetReflectionOpacity,
-      SMOOTHING_FACTOR
-    );
+  }
 
+  /**
+   * Set all values to neutral position
+   */
+  private setToNeutral(): void {
+    this.currentRotateY = 0;
+    this.currentRotateX = 0;
+    this.currentGlowBlur = BASE_GLOW_BLUR;
+    this.currentGlowOpacity = BASE_GLOW_OPACITY;
+    this.currentReflectionOpacity = 0;
+
+    this.targetRotateY = 0;
+    this.targetRotateX = 0;
+    this.targetGlowBlur = BASE_GLOW_BLUR;
+    this.targetGlowOpacity = BASE_GLOW_OPACITY;
+    this.targetReflectionOpacity = 0;
+  }
+
+  /**
+   * Emit current calculations
+   * Point 10: Only emit if values have actually changed
+   */
+  private emitCalculations(): void {
     const newCalculations: TiltCalculations = {
       rotateY: this.currentRotateY,
       rotateX: this.currentRotateX,
@@ -201,111 +404,50 @@ export class MagneticTiltService implements OnDestroy {
       reflectionOpacity: this.currentReflectionOpacity,
     };
 
-    // Always emit for smooth continuous updates
-    this.lastCalculations = newCalculations;
-    // Run outside Angular zone for better performance
-    this.ngZone.runOutsideAngular(() => {
-      this.tiltCalculationsSubject.next(newCalculations);
-    });
-
-    // Always continue smoothing animation for ultra-smooth updates (prevents lag)
-    // This ensures smooth transitions even when mouse moves quickly over buttons/sections
-    if (this.smoothingRafId === null) {
-      this.smoothingRafId = requestAnimationFrame(() => {
-        this.continueSmoothing();
-      });
+    // Point 10: Check if calculations have changed meaningfully
+    if (this.lastEmittedCalculations && !this.hasCalculationsChanged(this.lastEmittedCalculations, newCalculations)) {
+      return;
     }
+
+    this.lastEmittedCalculations = newCalculations;
+    this.tiltCalculationsSubject.next(newCalculations);
   }
 
   /**
-   * Linear interpolation (lerp) for smooth value transitions
-   * @param start Current value
-   * @param end Target value
-   * @param factor Interpolation factor (0-1)
+   * Point 10: Check if calculations have changed by meaningful amount
    */
-  private lerp(start: number, end: number, factor: number): number {
-    return start + (end - start) * factor;
+  private hasCalculationsChanged(old: TiltCalculations, next: TiltCalculations): boolean {
+    const threshold = 0.001;
+    return (
+      Math.abs(next.rotateY - old.rotateY) > threshold ||
+      Math.abs(next.rotateX - old.rotateX) > threshold ||
+      Math.abs(next.glowBlur - old.glowBlur) > threshold ||
+      Math.abs(next.glowOpacity - old.glowOpacity) > threshold ||
+      Math.abs(next.reflectionOpacity - old.reflectionOpacity) > threshold
+    );
   }
 
   /**
-   * Continue smoothing animation until values are close to target
-   * Uses the latest target values stored in the service
-   * Optimized for smooth cursor following
+   * Get cached element dimensions with pre-calculated inverse values
+   * Point 9 & Point 28: Cache with inverse dimensions, invalidate on reset
    */
-  private continueSmoothing(): void {
-    const threshold = 0.01; // Threshold for smooth updates
-
-    // Check if we need to continue smoothing using latest target values
-    const rotateYDiff = Math.abs(this.currentRotateY - this.targetRotateY);
-    const rotateXDiff = Math.abs(this.currentRotateX - this.targetRotateX);
-    const glowBlurDiff = Math.abs(this.currentGlowBlur - this.targetGlowBlur);
-    const glowOpacityDiff = Math.abs(this.currentGlowOpacity - this.targetGlowOpacity);
-    const reflectionDiff = Math.abs(this.currentReflectionOpacity - this.targetReflectionOpacity);
-
-    // Continue smoothing if there's any significant difference
-    if (
-      rotateYDiff > threshold ||
-      rotateXDiff > threshold ||
-      glowBlurDiff > threshold ||
-      glowOpacityDiff > threshold ||
-      reflectionDiff > threshold
-    ) {
-      // Continue smoothing towards latest targets
-      this.currentRotateY = this.lerp(this.currentRotateY, this.targetRotateY, SMOOTHING_FACTOR);
-      this.currentRotateX = this.lerp(this.currentRotateX, this.targetRotateX, SMOOTHING_FACTOR);
-      this.currentGlowBlur = this.lerp(this.currentGlowBlur, this.targetGlowBlur, SMOOTHING_FACTOR);
-      this.currentGlowOpacity = this.lerp(
-        this.currentGlowOpacity,
-        this.targetGlowOpacity,
-        SMOOTHING_FACTOR
-      );
-      this.currentReflectionOpacity = this.lerp(
-        this.currentReflectionOpacity,
-        this.targetReflectionOpacity,
-        SMOOTHING_FACTOR
-      );
-
-      const newCalculations: TiltCalculations = {
-        rotateY: this.currentRotateY,
-        rotateX: this.currentRotateX,
-        glowBlur: this.currentGlowBlur,
-        glowOpacity: this.currentGlowOpacity,
-        reflectionOpacity: this.currentReflectionOpacity,
-      };
-
-      this.lastCalculations = newCalculations;
-      this.ngZone.runOutsideAngular(() => {
-        this.tiltCalculationsSubject.next(newCalculations);
-      });
-
-      // Continue animation for smooth updates
-      this.smoothingRafId = requestAnimationFrame(() => {
-        this.continueSmoothing();
-      });
-    } else {
-      // Very close to target, stop animation
-      this.smoothingRafId = null;
-    }
-  }
-
-  private getElementCache(element: HTMLElement): ElementCache {
+  private getElementCache(element: HTMLElement): ElementCache | null {
     const now = performance.now();
     const cached = this.elementCache.get(element);
 
-    // Use cache if recent (within CACHE_DURATION ms)
     if (cached && now - cached.lastUpdate < this.CACHE_DURATION) {
       return cached;
     }
 
-    // Recalculate and cache
     const rect = element.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+      return null;
+    }
 
     const cache: ElementCache = {
-      element,
       rect,
-      halfW: rect.width / 2,
-      halfH: rect.height / 2,
-      maxAngleY: MAX_TILT_ANGLE, // Use constant max angle for consistent behavior
+      invWidth: 1 / rect.width, // Point 9: Pre-calculated
+      invHeight: 1 / rect.height,
       lastUpdate: now,
     };
 
@@ -313,160 +455,21 @@ export class MagneticTiltService implements OnDestroy {
     return cache;
   }
 
-  private hasCalculationsChanged(old: TiltCalculations, newCalc: TiltCalculations): boolean {
-    // Optimized change detection with fast absolute value checks
-    // Lower thresholds for smoother, more frequent updates
-    const rotateYDiff = newCalc.rotateY - old.rotateY;
-    const rotateXDiff = newCalc.rotateX - old.rotateX;
-    const glowBlurDiff = newCalc.glowBlur - old.glowBlur;
-    const glowOpacityDiff = newCalc.glowOpacity - old.glowOpacity;
-    const reflectionDiff = newCalc.reflectionOpacity - old.reflectionOpacity;
-
-    // Fast absolute value check: (x < 0 ? -x : x) is faster than Math.abs() for known values
-    // Very low thresholds for ultra-smooth updates
-    return (
-      (rotateYDiff < 0 ? -rotateYDiff : rotateYDiff) > 0.0001 ||
-      (rotateXDiff < 0 ? -rotateXDiff : rotateXDiff) > 0.0001 ||
-      (glowBlurDiff < 0 ? -glowBlurDiff : glowBlurDiff) > 0.001 ||
-      (glowOpacityDiff < 0 ? -glowOpacityDiff : glowOpacityDiff) > 0.0001 ||
-      (reflectionDiff < 0 ? -reflectionDiff : reflectionDiff) > 0.0001
-    );
-  }
-
-  private readonly RESET_TRANSITION_DURATION_MS = 800; // Even smoother exit transition
-
-  resetTilt(smooth = true): void {
-    // Cancel any pending tilt calculations
-    if (this.rafId !== null) {
-      cancelAnimationFrame(this.rafId);
-      this.rafId = null;
-    }
-    this.pendingUpdate = null;
-
-    // Cancel smoothing animation
-    if (this.smoothingRafId !== null) {
-      cancelAnimationFrame(this.smoothingRafId);
-      this.smoothingRafId = null;
-    }
-
-    // Cancel any existing reset animation
-    if (this.resetRafId !== null) {
-      cancelAnimationFrame(this.resetRafId);
-      this.resetRafId = null;
-    }
-
-    if (smooth) {
-      // Smooth reset: gradually transition to zero over the transition duration
-      // Use RAF for smooth 60fps animation
-      const startTime = performance.now();
-      const startRotateY = this.currentRotateY;
-      const startRotateX = this.currentRotateX;
-      const startGlowBlur = this.currentGlowBlur;
-      const startGlowOpacity = this.currentGlowOpacity;
-      const startReflectionOpacity = this.currentReflectionOpacity;
-
-      const animateReset = () => {
-        const elapsed = performance.now() - startTime;
-        const progress = Math.min(elapsed / this.RESET_TRANSITION_DURATION_MS, 1);
-
-        // Optimized cubic ease-out - avoid Math.pow() for better performance
-        const t = 1 - progress;
-        const easeOut = 1 - t * t * t; // t³ instead of Math.pow(t, 3)
-
-        this.currentRotateY = startRotateY * (1 - easeOut);
-        this.currentRotateX = startRotateX * (1 - easeOut);
-        this.currentGlowBlur = BASE_GLOW_BLUR + (startGlowBlur - BASE_GLOW_BLUR) * (1 - easeOut);
-        this.currentGlowOpacity =
-          BASE_GLOW_OPACITY + (startGlowOpacity - BASE_GLOW_OPACITY) * (1 - easeOut);
-        this.currentReflectionOpacity = startReflectionOpacity * (1 - easeOut);
-
-        const currentCalculations: TiltCalculations = {
-          rotateY: this.currentRotateY,
-          rotateX: this.currentRotateX,
-          glowBlur: this.currentGlowBlur,
-          glowOpacity: this.currentGlowOpacity,
-          reflectionOpacity: this.currentReflectionOpacity,
-        };
-
-        this.lastCalculations = currentCalculations;
-        this.ngZone.runOutsideAngular(() => {
-          this.tiltCalculationsSubject.next(currentCalculations);
-        });
-
-        if (progress < 1) {
-          // Continue animation using RAF for smooth 60fps
-          this.resetRafId = requestAnimationFrame(animateReset);
-        } else {
-          // Animation complete - set final values
-          this.currentRotateY = 0;
-          this.currentRotateX = 0;
-          this.currentGlowBlur = BASE_GLOW_BLUR;
-          this.currentGlowOpacity = BASE_GLOW_OPACITY;
-          this.currentReflectionOpacity = 0;
-          this.targetRotateY = 0;
-          this.targetRotateX = 0;
-          this.targetGlowBlur = BASE_GLOW_BLUR;
-          this.targetGlowOpacity = BASE_GLOW_OPACITY;
-          this.targetReflectionOpacity = 0;
-          this.lastCalculations = null;
-          this.tiltCalculationsSubject.next({
-            rotateY: 0,
-            rotateX: 0,
-            glowBlur: BASE_GLOW_BLUR,
-            glowOpacity: BASE_GLOW_OPACITY,
-            reflectionOpacity: 0,
-          });
-          this.resetRafId = null;
-        }
-      };
-
-      // Start smooth reset animation using RAF
-      this.resetRafId = requestAnimationFrame(animateReset);
-    } else {
-      // Immediate reset (for cleanup)
-      this.currentRotateY = 0;
-      this.currentRotateX = 0;
-      this.currentGlowBlur = BASE_GLOW_BLUR;
-      this.currentGlowOpacity = BASE_GLOW_OPACITY;
-      this.currentReflectionOpacity = 0;
-      this.targetRotateY = 0;
-      this.targetRotateX = 0;
-      this.targetGlowBlur = BASE_GLOW_BLUR;
-      this.targetGlowOpacity = BASE_GLOW_OPACITY;
-      this.targetReflectionOpacity = 0;
-      this.lastCalculations = null;
-      this.tiltCalculationsSubject.next({
-        rotateY: 0,
-        rotateX: 0,
-        glowBlur: BASE_GLOW_BLUR,
-        glowOpacity: BASE_GLOW_OPACITY,
-        reflectionOpacity: 0,
-      });
-    }
-  }
-
-  // Cleanup cached elements when component is destroyed
+  /**
+   * Clear cache for element
+   * Point 28: Invalidate cache on reset or cleanup
+   */
   clearCache(element?: HTMLElement): void {
     if (element) {
       this.elementCache.delete(element);
-    } else {
-      this.elementCache.clear();
     }
+    // Note: WeakMap doesn't have clear(), but entries will be GC'd when elements are removed
   }
 
-  // Cleanup method for service destruction
+  /**
+   * Cleanup on service destruction
+   */
   ngOnDestroy(): void {
-    if (this.resetRafId !== null) {
-      cancelAnimationFrame(this.resetRafId);
-      this.resetRafId = null;
-    }
-    if (this.rafId !== null) {
-      cancelAnimationFrame(this.rafId);
-      this.rafId = null;
-    }
-    if (this.smoothingRafId !== null) {
-      cancelAnimationFrame(this.smoothingRafId);
-      this.smoothingRafId = null;
-    }
+    this.stopAnimationLoop();
   }
 }

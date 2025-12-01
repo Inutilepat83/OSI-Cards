@@ -35,8 +35,9 @@ import { AppState } from '../../../../store/app.state';
 import * as CardSelectors from '../../../../store/cards/cards.selectors';
 import * as CardActions from '../../../../store/cards/cards.state';
 
+// Import optimized card renderer from app (not library - uses optimized MagneticTiltService)
+import { AICardRendererComponent } from '../../../../shared/components/cards/ai-card-renderer.component';
 // Import library streaming service and types
-import { AICardRendererComponent } from '../../../../../../projects/osi-cards-lib/src/lib/components/ai-card-renderer/ai-card-renderer.component';
 import { AICardConfig as LibraryCardConfig } from '../../../../../../projects/osi-cards-lib/src/lib/models/card.model';
 import {
   CardUpdate,
