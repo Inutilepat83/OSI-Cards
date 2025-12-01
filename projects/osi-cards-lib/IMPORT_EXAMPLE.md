@@ -1,265 +1,70 @@
-# OSI Cards Library - Import Examples
+# OSI Cards Library - Integration Guide
 
-This document provides comprehensive examples for importing and using the OSI Cards library in your Angular project.
+Step-by-step guide for integrating OSI Cards into your Angular project.
 
 ## Table of Contents
 
 1. [Installation](#installation)
-2. [Basic Import](#basic-import)
-3. [Standalone Component Usage](#standalone-component-usage)
-4. [Style Import](#style-import)
-5. [With Optional Dependencies](#with-optional-dependencies)
-6. [Type Imports](#type-imports)
-7. [Service Usage](#service-usage)
-8. [Troubleshooting](#troubleshooting)
+2. [Setup](#setup)
+3. [Basic Usage (Static Card)](#basic-usage-static-card)
+4. [Usage with Events](#usage-with-events)
+5. [Streaming Usage](#streaming-usage)
+6. [Theme Configuration](#theme-configuration)
+7. [Style Customization](#style-customization)
+8. [Multiple Cards](#multiple-cards)
+9. [Troubleshooting](#troubleshooting)
+
+---
 
 ## Installation
 
-### Via npm (when published)
+### 1. Install the Package
 
 ```bash
 npm install osi-cards-lib
 ```
 
-### Via Local Path (Development)
-
-```bash
-npm install /path/to/OSI-Cards-1/dist/osi-cards-lib
-```
-
-Or in `package.json`:
-
-```json
-{
-  "dependencies": {
-    "osi-cards-lib": "file:../OSI-Cards-1/dist/osi-cards-lib"
-  }
-}
-```
-
-### Install Peer Dependencies
+### 2. Install Peer Dependencies
 
 ```bash
 npm install @angular/common@^20.0.0 @angular/core@^20.0.0 @angular/animations@^20.0.0 @angular/platform-browser@^20.0.0 lucide-angular@^0.548.0 rxjs@~7.8.0
 ```
 
-### Optional Dependencies (for charts and maps)
+### 3. Optional: Charts and Maps
 
 ```bash
 npm install chart.js leaflet
 ```
 
-## Basic Import
+---
 
-### Import Provider Function (REQUIRED)
+## Setup
 
-**⚠️ IMPORTANT**: Before using components, you must configure providers in your `app.config.ts`:
+### Step 1: Configure `app.config.ts`
 
 ```typescript
+// src/app/app.config.ts
 import { ApplicationConfig } from '@angular/core';
+import { provideRouter } from '@angular/router';
 import { provideOSICards } from 'osi-cards-lib';
+import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideOSICards(), // Required for animations and library functionality
-    // ... your other providers
+    provideOSICards(),  // ✅ Required - enables animations and library services
+    provideRouter(routes)
   ]
 };
 ```
 
-See [Provider Configuration](#provider-configuration) section for detailed options.
-
-### Import Component
-
-```typescript
-import { AICardRendererComponent } from 'osi-cards-lib';
-```
-
-### Import Types
-
-```typescript
-import { AICardConfig, CardSection, CardField } from 'osi-cards-lib';
-```
-
-### Import Services
-
-```typescript
-import { IconService, SectionNormalizationService, MagneticTiltService } from 'osi-cards-lib';
-```
-
-## Provider Configuration
-
-### Using Library Provider Function (Recommended)
-
-The simplest way to configure the library is to use the provided function:
-
-```typescript
-import { ApplicationConfig } from '@angular/core';
-import { provideOSICards } from 'osi-cards-lib';
-
-export const appConfig: ApplicationConfig = {
-  providers: [
-    provideOSICards(), // Provides required animations and configuration
-    // ... your other providers
-  ]
-};
-```
-
-### Disable Animations
-
-For testing or when animations are not desired:
-
-```typescript
-import { ApplicationConfig } from '@angular/core';
-import { provideOSICards } from 'osi-cards-lib';
-
-export const appConfig: ApplicationConfig = {
-  providers: [
-    provideOSICards({ enableAnimations: false }), // Uses noop animations
-    // ... your other providers
-  ]
-};
-```
-
-### Manual Provider Configuration
-
-If you prefer manual configuration:
-
-```typescript
-import { ApplicationConfig } from '@angular/core';
-import { provideAnimations } from '@angular/platform-browser/animations';
-
-export const appConfig: ApplicationConfig = {
-  providers: [
-    provideAnimations(), // Required for component animations
-    // ... your other providers
-  ]
-};
-```
-
-**Note**: Services (MagneticTiltService, IconService, etc.) use `providedIn: 'root'` and are automatically available without explicit providers.
-
-## Standalone Component Usage
-
-### Minimal Example
-
-```typescript
-import { Component } from '@angular/core';
-import { AICardRendererComponent } from 'osi-cards-lib';
-import { AICardConfig } from 'osi-cards-lib';
-
-@Component({
-  selector: 'app-example',
-  standalone: true,
-  imports: [AICardRendererComponent],
-  template: `
-    <app-ai-card-renderer [cardConfig]="cardConfig"></app-ai-card-renderer>
-  `
-})
-export class ExampleComponent {
-  cardConfig: AICardConfig = {
-    cardTitle: 'My Card',
-    sections: [
-      {
-        title: 'Overview',
-        type: 'overview',
-        fields: [
-          { label: 'Name', value: 'Example' },
-          { label: 'Status', value: 'Active' }
-        ]
-      }
-    ]
-  };
-}
-```
-
-### With Event Handlers
-
-```typescript
-import { Component } from '@angular/core';
-import { AICardRendererComponent, AICardConfig, CardFieldInteractionEvent } from 'osi-cards-lib';
-
-@Component({
-  selector: 'app-card-example',
-  standalone: true,
-  imports: [AICardRendererComponent],
-  template: `
-    <app-ai-card-renderer
-      [cardConfig]="card"
-      (fieldInteraction)="onFieldClick($event)"
-      (agentAction)="onAgentAction($event)">
-    </app-ai-card-renderer>
-  `
-})
-export class CardExampleComponent {
-  card: AICardConfig = {
-    cardTitle: 'Company Profile',
-    sections: [
-      {
-        title: 'Company Info',
-        type: 'info',
-        fields: [
-          { label: 'Industry', value: 'Technology' },
-          { label: 'Employees', value: '250' }
-        ]
-      }
-    ]
-  };
-
-  onFieldClick(event: CardFieldInteractionEvent): void {
-    console.log('Field clicked:', event);
-  }
-
-  onAgentAction(event: any): void {
-    console.log('Agent action:', event);
-  }
-}
-```
-
-### Multiple Cards
-
-```typescript
-import { Component } from '@angular/core';
-import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
-import { CommonModule } from '@angular/common';
-
-@Component({
-  selector: 'app-multiple-cards',
-  standalone: true,
-  imports: [AICardRendererComponent, CommonModule],
-  template: `
-    <div class="cards-grid">
-      <app-ai-card-renderer
-        *ngFor="let card of cards"
-        [cardConfig]="card">
-      </app-ai-card-renderer>
-    </div>
-  `
-})
-export class MultipleCardsComponent {
-  cards: AICardConfig[] = [
-    {
-      cardTitle: 'Card 1',
-      sections: [{ title: 'Section 1', type: 'info', fields: [] }]
-    },
-    {
-      cardTitle: 'Card 2',
-      sections: [{ title: 'Section 2', type: 'overview', fields: [] }]
-    }
-  ];
-}
-```
-
-## Style Import
-
-### Option 1: Import in styles.scss
+### Step 2: Import Styles in `styles.scss`
 
 ```scss
-// In your src/styles.scss
+// src/styles.scss
 @import 'osi-cards-lib/styles/_styles';
 ```
 
-### Option 2: Import in angular.json
+Alternatively, add to `angular.json`:
 
 ```json
 {
@@ -280,366 +85,573 @@ export class MultipleCardsComponent {
 }
 ```
 
-### Option 3: Import with Tailwind (if using Tailwind CSS)
+---
+
+## Basic Usage (Static Card)
+
+The simplest integration - display a card without streaming or events.
+
+### `my-card.component.ts`
+
+```typescript
+import { Component } from '@angular/core';
+import { OsiCardsComponent, AICardConfig } from 'osi-cards-lib';
+
+@Component({
+  selector: 'app-my-card',
+  standalone: true,
+  imports: [OsiCardsComponent],
+  templateUrl: './my-card.component.html',
+  styleUrls: ['./my-card.component.scss']
+})
+export class MyCardComponent {
+  // Define your card configuration
+  card: AICardConfig = {
+    cardTitle: 'Product Overview',
+    cardSubtitle: 'Premium Solution',
+    sections: [
+      {
+        title: 'Details',
+        type: 'info',
+        fields: [
+          { label: 'Category', value: 'Software' },
+          { label: 'Version', value: '2.0' },
+          { label: 'Status', value: 'Active' }
+        ]
+      },
+      {
+        title: 'Pricing',
+        type: 'analytics',
+        fields: [
+          { label: 'Monthly', value: '$99', trend: 'stable' },
+          { label: 'Annual', value: '$999', change: -15, trend: 'down' }
+        ]
+      }
+    ]
+  };
+}
+```
+
+### `my-card.component.html`
+
+```html
+<!-- Minimal usage - theme defaults to 'day' (light) -->
+<osi-cards [card]="card"></osi-cards>
+```
+
+**That's it!** Theme is optional and defaults to `'day'` (light theme).
+
+### With Optional Theme
+
+```html
+<!-- Dark theme -->
+<osi-cards [card]="card" [theme]="'night'"></osi-cards>
+
+<!-- Or bind to a variable -->
+<osi-cards [card]="card" [theme]="currentTheme"></osi-cards>
+```
+
+---
+
+## Usage with Events
+
+Handle user interactions with the card.
+
+### `interactive-card.component.ts`
+
+```typescript
+import { Component } from '@angular/core';
+import {
+  OsiCardsComponent,
+  AICardConfig,
+  CardFieldInteractionEvent
+} from 'osi-cards-lib';
+
+@Component({
+  selector: 'app-interactive-card',
+  standalone: true,
+  imports: [OsiCardsComponent],
+  templateUrl: './interactive-card.component.html'
+})
+export class InteractiveCardComponent {
+  card: AICardConfig = {
+    cardTitle: 'Company Profile',
+    sections: [
+      {
+        title: 'Team',
+        type: 'contact-card',
+        fields: [
+          { name: 'Alice Johnson', role: 'CEO', email: 'alice@company.com' },
+          { name: 'Bob Smith', role: 'CTO', email: 'bob@company.com' }
+        ]
+      }
+    ],
+    actions: [
+      { type: 'website', label: 'Website', variant: 'primary', url: 'https://example.com' },
+      { type: 'mail', label: 'Email', variant: 'outline', email: { contact: { email: 'info@company.com' } } },
+      { type: 'agent', label: 'Chat with AI', variant: 'ghost', agentId: 'support-bot' }
+    ]
+  };
+
+  // Handle field clicks
+  onFieldClick(event: CardFieldInteractionEvent): void {
+    console.log('Field clicked:', event.field);
+    console.log('Section:', event.sectionTitle);
+    // Navigate, open modal, etc.
+  }
+
+  // Handle action button clicks
+  onActionClick(event: { action: string; card: AICardConfig }): void {
+    console.log('Action:', event.action);
+    // Process the action
+  }
+
+  // Handle agent-type actions
+  onAgentAction(event: { action: any; card: AICardConfig; agentId?: string }): void {
+    console.log('Agent action:', event.agentId);
+    // Open chat, call API, etc.
+  }
+
+  // Handle fullscreen toggle
+  onFullscreenChange(isFullscreen: boolean): void {
+    console.log('Fullscreen:', isFullscreen);
+  }
+}
+```
+
+### `interactive-card.component.html`
+
+```html
+<osi-cards
+  [card]="card"
+  [tiltEnabled]="true"
+  (fieldClick)="onFieldClick($event)"
+  (actionClick)="onActionClick($event)"
+  (agentAction)="onAgentAction($event)"
+  (fullscreenChange)="onFullscreenChange($event)">
+</osi-cards>
+```
+
+---
+
+## Streaming Usage
+
+Display cards with AI streaming animations.
+
+### `streaming-card.component.ts`
+
+```typescript
+import { Component } from '@angular/core';
+import { OsiCardsComponent, AICardConfig, StreamingStage } from 'osi-cards-lib';
+
+@Component({
+  selector: 'app-streaming-card',
+  standalone: true,
+  imports: [OsiCardsComponent],
+  templateUrl: './streaming-card.component.html'
+})
+export class StreamingCardComponent {
+  card: AICardConfig | undefined;
+  isStreaming = false;
+  streamingStage: StreamingStage = 'idle';
+  streamingProgress = 0;
+
+  // Custom messages shown during loading
+  loadingMessages = [
+    'Analyzing request...',
+    'Gathering data...',
+    'Processing results...'
+  ];
+
+  async generateCard(): Promise<void> {
+    // Reset state
+    this.card = undefined;
+    this.isStreaming = true;
+    this.streamingStage = 'thinking';
+    this.streamingProgress = 0;
+
+    // Simulate AI thinking
+    await this.delay(1500);
+    this.streamingStage = 'streaming';
+
+    // Simulate progressive card generation
+    this.streamingProgress = 0.3;
+    this.card = {
+      cardTitle: 'Generating...',
+      sections: []
+    };
+
+    await this.delay(1000);
+    this.streamingProgress = 0.6;
+    this.card.sections.push({
+      title: 'Summary',
+      type: 'info',
+      fields: [{ label: 'Status', value: 'Processing' }]
+    });
+
+    await this.delay(1000);
+    this.streamingProgress = 1;
+    this.streamingStage = 'complete';
+    this.isStreaming = false;
+
+    // Final complete card
+    this.card = {
+      cardTitle: 'Analysis Complete',
+      sections: [
+        {
+          title: 'Results',
+          type: 'analytics',
+          fields: [
+            { label: 'Accuracy', value: '98.5%', trend: 'up' },
+            { label: 'Confidence', value: 'High', trend: 'stable' }
+          ]
+        }
+      ]
+    };
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+}
+```
+
+### `streaming-card.component.html`
+
+```html
+<div class="controls">
+  <button (click)="generateCard()" [disabled]="isStreaming">
+    {{ isStreaming ? 'Generating...' : 'Generate Card' }}
+  </button>
+</div>
+
+<osi-cards
+  [card]="card"
+  [isStreaming]="isStreaming"
+  [streamingStage]="streamingStage"
+  [streamingProgress]="streamingProgress"
+  [loadingMessages]="loadingMessages"
+  [loadingTitle]="'AI Analysis'"
+  [showLoadingByDefault]="true">
+</osi-cards>
+```
+
+### Disable Loading State (No Streaming)
+
+If you don't want streaming animations or loading states:
+
+```html
+<osi-cards
+  [card]="card"
+  [isStreaming]="false"
+  [showLoadingByDefault]="false">
+</osi-cards>
+```
+
+---
+
+## Theme Configuration
+
+### Option 1: Per-Component (Inline)
+
+```html
+<!-- Light theme (default - no need to specify) -->
+<osi-cards [card]="card"></osi-cards>
+
+<!-- Dark theme -->
+<osi-cards [card]="card" [theme]="'night'"></osi-cards>
+```
+
+### Option 2: Dynamic Theme
+
+```typescript
+// component.ts
+currentTheme: 'day' | 'night' = 'day';
+
+toggleTheme(): void {
+  this.currentTheme = this.currentTheme === 'day' ? 'night' : 'day';
+}
+```
+
+```html
+<!-- template -->
+<button (click)="toggleTheme()">Toggle Theme</button>
+<osi-cards [card]="card" [theme]="currentTheme"></osi-cards>
+```
+
+### Option 3: Global Default via Provider
+
+```typescript
+// app.config.ts
+import { provideOSICards } from 'osi-cards-lib';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideOSICards({
+      defaultTheme: 'night'  // All cards use dark theme by default
+    })
+  ]
+};
+```
+
+### Option 4: Using ThemeService
+
+```typescript
+import { Component, inject } from '@angular/core';
+import { ThemeService } from 'osi-cards-lib';
+
+@Component({...})
+export class AppComponent {
+  private themeService = inject(ThemeService);
+
+  setDark(): void {
+    this.themeService.setTheme('dark');
+  }
+
+  setLight(): void {
+    this.themeService.setTheme('light');
+  }
+
+  followSystem(): void {
+    this.themeService.setTheme('system');
+  }
+
+  toggle(): void {
+    this.themeService.toggleTheme();
+  }
+}
+```
+
+---
+
+## Style Customization
+
+### Override CSS Variables
 
 ```scss
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+// styles.scss
+@import 'osi-cards-lib/styles/_styles';
 
+:root {
+  // Accent color
+  --osi-card-accent: #6366f1;
+  --osi-card-accent-hover: #4f46e5;
+
+  // Background
+  --osi-card-background: #ffffff;
+  --osi-card-surface: #f8fafc;
+
+  // Text
+  --osi-card-foreground: #1a1a2e;
+  --osi-card-muted: #64748b;
+
+  // Border
+  --osi-card-border: #e2e8f0;
+  --osi-card-border-radius: 12px;
+
+  // Shadow
+  --osi-card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+```
+
+### Component-Level Styles
+
+```scss
+// my-card.component.scss
+:host {
+  display: block;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+osi-cards {
+  --osi-card-accent: #ff6b6b;  // Custom accent for this component
+}
+```
+
+---
+
+## Multiple Cards
+
+### Display Multiple Cards in a Grid
+
+```typescript
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { OsiCardsComponent, AICardConfig } from 'osi-cards-lib';
+
+@Component({
+  selector: 'app-card-grid',
+  standalone: true,
+  imports: [CommonModule, OsiCardsComponent],
+  template: `
+    <div class="card-grid">
+      @for (card of cards; track card.id) {
+        <osi-cards
+          [card]="card"
+          (fieldClick)="onFieldClick($event, card)">
+        </osi-cards>
+      }
+    </div>
+  `,
+  styles: [`
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+      gap: 24px;
+      padding: 24px;
+    }
+  `]
+})
+export class CardGridComponent {
+  cards: AICardConfig[] = [
+    {
+      id: '1',
+      cardTitle: 'Product A',
+      sections: [{ title: 'Info', type: 'info', fields: [{ label: 'Price', value: '$99' }] }]
+    },
+    {
+      id: '2',
+      cardTitle: 'Product B',
+      sections: [{ title: 'Info', type: 'info', fields: [{ label: 'Price', value: '$149' }] }]
+    },
+    {
+      id: '3',
+      cardTitle: 'Product C',
+      sections: [{ title: 'Info', type: 'info', fields: [{ label: 'Price', value: '$199' }] }]
+    }
+  ];
+
+  onFieldClick(event: any, card: AICardConfig): void {
+    console.log('Clicked field in card:', card.cardTitle);
+  }
+}
+```
+
+---
+
+## Troubleshooting
+
+### ❌ Error: Animations not working
+
+**Symptom:** Card renders but animations don't play.
+
+**Solution:** Add `provideOSICards()` to `app.config.ts`:
+
+```typescript
+providers: [
+  provideOSICards()  // Required!
+]
+```
+
+### ❌ Error: Module not found 'osi-cards-lib'
+
+**Solution:**
+
+1. Verify installation: `npm install osi-cards-lib`
+2. Restart dev server: `ng serve`
+3. Clear cache: `rm -rf node_modules/.cache && npm install`
+
+### ❌ Error: Styles not applied
+
+**Solution:** Import styles in `styles.scss`:
+
+```scss
 @import 'osi-cards-lib/styles/_styles';
 ```
 
-## With Optional Dependencies
+### ❌ Error: Icons not showing
 
-### Using Chart Sections
+**Solution:** Install lucide-angular:
 
-If you have `chart.js` installed:
-
-```typescript
-import { AICardConfig } from 'osi-cards-lib';
-
-const cardWithChart: AICardConfig = {
-  cardTitle: 'Analytics Dashboard',
-  sections: [
-    {
-      title: 'Sales Chart',
-      type: 'chart',
-      chartType: 'bar',
-      fields: [
-        { label: 'Q1', value: 100 },
-        { label: 'Q2', value: 150 },
-        { label: 'Q3', value: 120 }
-      ]
-    }
-  ]
-};
+```bash
+npm install lucide-angular@^0.548.0
 ```
 
-### Using Map Sections
+### ❌ Card shows loading forever
 
-If you have `leaflet` installed:
+**Symptom:** Card stuck in loading state with no content.
 
-```typescript
-import { AICardConfig } from 'osi-cards-lib';
+**Solution:** Either provide a `card` configuration OR disable loading:
 
-const cardWithMap: AICardConfig = {
-  cardTitle: 'Locations',
-  sections: [
-    {
-      title: 'Headquarters',
-      type: 'map',
-      fields: [
-        {
-          name: 'Headquarters',
-          coordinates: { lat: 40.7128, lng: -74.0060 },
-          address: '123 Main St, New York, NY'
-        }
-      ]
-    }
-  ]
-};
+```html
+<!-- Option 1: Provide card data -->
+<osi-cards [card]="myCard"></osi-cards>
+
+<!-- Option 2: Disable loading state -->
+<osi-cards [card]="undefined" [showLoadingByDefault]="false"></osi-cards>
 ```
 
-**Note**: Chart and map sections will still render without these dependencies, but with limited functionality.
+### ❌ Type errors in TypeScript
 
-## Type Imports
-
-### Import All Types
+**Solution:** Ensure you're importing types correctly:
 
 ```typescript
 import {
   AICardConfig,
   CardSection,
   CardField,
-  CardItem,
-  CardAction,
-  CardType,
-  SectionType
-} from 'osi-cards-lib';
-```
-
-### Import Component Types
-
-```typescript
-import {
-  AICardRendererComponent,
   CardFieldInteractionEvent,
   StreamingStage
 } from 'osi-cards-lib';
 ```
 
-### Import Service Types
+---
+
+## Quick Reference
+
+### Minimal Implementation
 
 ```typescript
-import {
-  IconService,
-  SectionNormalizationService,
-  MagneticTiltService,
-  SectionUtilsService
-} from 'osi-cards-lib';
-```
+// app.config.ts
+import { provideOSICards } from 'osi-cards-lib';
+export const appConfig = { providers: [provideOSICards()] };
 
-## Service Usage
+// styles.scss
+@import 'osi-cards-lib/styles/_styles';
 
-### Using IconService
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { IconService } from 'osi-cards-lib';
+// component.ts
+import { OsiCardsComponent, AICardConfig } from 'osi-cards-lib';
 
 @Component({
-  selector: 'app-icon-example',
-  standalone: true,
-  template: '<p>Icon: {{ iconName }}</p>'
+  imports: [OsiCardsComponent],
+  template: `<osi-cards [card]="card"></osi-cards>`
 })
-export class IconExampleComponent {
-  private iconService = inject(IconService);
-  iconName = this.iconService.getFieldIcon('email');
-}
-```
-
-### Using SectionNormalizationService
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { SectionNormalizationService, CardSection } from 'osi-cards-lib';
-
-@Component({
-  selector: 'app-normalize-example',
-  standalone: true,
-  template: '...'
-})
-export class NormalizeExampleComponent {
-  private normalizationService = inject(SectionNormalizationService);
-  
-  normalizeSections(sections: CardSection[]): CardSection[] {
-    return this.normalizationService.normalizeAndSortSections(sections);
-  }
-}
-```
-
-### Using SectionUtilsService
-
-```typescript
-import { Component, inject } from '@angular/core';
-import { SectionUtilsService } from 'osi-cards-lib';
-
-@Component({
-  selector: 'app-utils-example',
-  standalone: true,
-  template: '...'
-})
-export class UtilsExampleComponent {
-  private utils = inject(SectionUtilsService);
-  
-  getTrendIcon(trend: string): string {
-    return this.utils.getTrendIcon(trend);
-  }
-  
-  formatChange(change: number): string {
-    return this.utils.formatChange(change);
-  }
-}
-```
-
-## Complete Example
-
-```typescript
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { 
-  AICardRendererComponent,
-  AICardConfig,
-  CardFieldInteractionEvent
-} from 'osi-cards-lib';
-
-@Component({
-  selector: 'app-complete-example',
-  standalone: true,
-  imports: [AICardRendererComponent, CommonModule],
-  template: `
-    <div class="container">
-      <h1>My Application</h1>
-      <app-ai-card-renderer
-        [cardConfig]="cardConfig"
-        [tiltEnabled]="true"
-        (fieldInteraction)="handleFieldClick($event)"
-        (cardInteraction)="handleCardInteraction($event)">
-      </app-ai-card-renderer>
-    </div>
-  `,
-  styles: [`
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-  `]
-})
-export class CompleteExampleComponent {
-  cardConfig: AICardConfig = {
-    cardTitle: 'Acme Corporation',
-    cardSubtitle: 'Technology Solutions Provider',
-    sections: [
-      {
-        title: 'Company Overview',
-        type: 'overview',
-        fields: [
-          { label: 'Industry', value: 'Technology' },
-          { label: 'Employees', value: '250' },
-          { label: 'Founded', value: '2010' }
-        ]
-      },
-      {
-        title: 'Key Metrics',
-        type: 'analytics',
-        fields: [
-          { 
-            label: 'Revenue', 
-            value: 5000000,
-            change: 15,
-            trend: 'up'
-          }
-        ]
-      }
-    ],
-    actions: [
-      {
-        type: 'website',
-        label: 'Visit Website',
-        variant: 'primary',
-        url: 'https://acme.com'
-      }
-    ]
+export class MyComponent {
+  card: AICardConfig = {
+    cardTitle: 'My Card',
+    sections: [{ title: 'Info', type: 'info', fields: [{ label: 'Key', value: 'Value' }] }]
   };
-
-  handleFieldClick(event: CardFieldInteractionEvent): void {
-    console.log('Field interaction:', event);
-    // Handle field click logic
-  }
-
-  handleCardInteraction(event: any): void {
-    console.log('Card interaction:', event);
-    // Handle card interaction logic
-  }
 }
 ```
 
-## Troubleshooting
+### All Available Inputs
 
-### Issue: Animations not working
+```html
+<osi-cards
+  [card]="card"
+  [theme]="'day'"
+  [fullscreen]="false"
+  [tiltEnabled]="true"
+  [containerWidth]="800"
+  [isStreaming]="false"
+  [streamingStage]="'idle'"
+  [streamingProgress]="0"
+  [showLoadingByDefault]="true"
+  [loadingMessages]="['Loading...']"
+  [loadingTitle]="'Please wait'"
+  (fieldClick)="onFieldClick($event)"
+  (actionClick)="onActionClick($event)"
+  (fullscreenChange)="onFullscreen($event)"
+  (agentAction)="onAgent($event)"
+  (questionAction)="onQuestion($event)"
+  (export)="onExport()">
+</osi-cards>
+```
 
-**Error**: Components render but animations don't play, or you see errors about missing animation providers
+---
 
-**Symptoms**:
-- Card entrance animations don't work
-- Transitions between states are instant
-- Console errors about `BrowserAnimationsModule` or animation providers
+## See Also
 
-**Solution**:
-1. **Verify provider is configured**: Ensure you've added `provideOSICards()` to your `app.config.ts`:
-   ```typescript
-   import { ApplicationConfig } from '@angular/core';
-   import { provideOSICards } from 'osi-cards-lib';
-   
-   export const appConfig: ApplicationConfig = {
-     providers: [
-       provideOSICards(), // Must be included!
-     ]
-   };
-   ```
-
-2. **Restart dev server**: After adding providers, restart your development server
-
-3. **Check provider order**: Make sure `provideOSICards()` is included before components are used
-
-4. **Testing setup**: In tests, use `provideNoopAnimations()`:
-   ```typescript
-   import { provideNoopAnimations } from '@angular/platform-browser/animations';
-   
-   TestBed.configureTestingModule({
-     providers: [provideNoopAnimations()]
-   });
-   ```
-
-**Why this happens**: Angular's animation system requires providers to be configured at the application level. The library components declare animations but cannot work without the animation providers being available.
-
-### Issue: Module not found
-
-**Error**: `Cannot find module 'osi-cards-lib'`
-
-**Solution**:
-1. Ensure the library is installed: `npm install osi-cards-lib`
-2. If using local path, verify the path is correct
-3. Restart your development server
-
-### Issue: Styles not loading
-
-**Error**: Styles not applied to components
-
-**Solution**:
-1. Verify styles are imported in `styles.scss` or `angular.json`
-2. Check the import path: `@import 'osi-cards-lib/styles/_styles';`
-3. Ensure SCSS is configured in your Angular project
-
-### Issue: Icons not showing
-
-**Error**: Icons are missing
-
-**Solution**:
-1. Ensure `lucide-angular` is installed: `npm install lucide-angular@^0.548.0`
-2. Verify `LucideIconsModule` is imported (it's included in the library)
-
-### Issue: Type errors
-
-**Error**: TypeScript cannot find types
-
-**Solution**:
-1. Ensure `osi-cards-lib` is in your `tsconfig.json` paths (if using local path)
-2. Restart TypeScript server in your IDE
-3. Verify the library was built correctly
-
-### Issue: Optional dependencies not working
-
-**Error**: Charts or maps not rendering
-
-**Solution**:
-1. Install optional dependencies: `npm install chart.js leaflet`
-2. Verify they're in your `package.json`
-3. Check browser console for specific errors
-
-### Issue: Build errors
-
-**Error**: Angular build fails
-
-**Solution**:
-1. Verify all peer dependencies are installed
-2. Check Angular version compatibility (requires Angular 20+)
-3. Ensure all imports use the correct paths
-4. Clear `node_modules` and reinstall: `rm -rf node_modules && npm install`
-
-## Verification Checklist
-
-After importing the library, verify:
-
-- [ ] Library is installed in `node_modules/osi-cards-lib`
-- [ ] Components can be imported without errors
-- [ ] Styles are imported and applied
-- [ ] Icons are displaying correctly
-- [ ] TypeScript types are available
-- [ ] No console errors in browser
-- [ ] Components render correctly
-
-## Next Steps
-
-- See [README.md](./README.md) for more information
-- See [USAGE.md](./USAGE.md) for detailed API documentation
-- Check the main project repository for examples
-
-
-
-
-
-
-
+- [README.md](./README.md) - Overview and quick start
+- [USAGE.md](./USAGE.md) - Detailed API documentation

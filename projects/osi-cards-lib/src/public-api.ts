@@ -97,7 +97,7 @@ export {
   FieldFactory,
   ItemFactory,
   ActionFactory,
-  
+
   // Section factory
   SectionFactory,
 } from './lib/factories';

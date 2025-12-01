@@ -712,7 +712,9 @@ article[class*="card"] {
 /* Social media section overrides */
 .social-card,
 .social-item,
-.social-link {
+.social-link,
+.social-post,
+.social-feed {
   background: var(--section-item-background) !important;
   &:hover { background: var(--section-item-background-hover) !important; }
 }

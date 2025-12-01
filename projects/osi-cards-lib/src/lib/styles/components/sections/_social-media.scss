@@ -16,8 +16,8 @@
 }
 
 .social-post {
-  border: 1px solid $brand-color-60 !important;
-  background: var(--card-background, #fafafa) !important;
+  border: none !important;
+  background: var(--section-item-background, #1e1e1e) !important;
   padding: var(--card-padding) !important;
   display: grid !important;
   grid-template-columns: auto 1fr !important;
@@ -25,19 +25,22 @@
   align-items: center !important;
   min-height: 140px !important;
   box-sizing: border-box !important;
-  @include card;
+  border-radius: var(--card-border-radius) !important;
+  cursor: pointer !important;
+  position: relative !important;
+  overflow: hidden !important;
 }
 
 .social-post__avatar {
   width: 48px !important;
   height: 48px !important;
   border-radius: 50% !important;
-  background: $brand-color-20 !important;
+  background: var(--color-brand, $brand-color) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   font-size: var(--font-section-meta, 0.7rem) !important;
-  color: var(--card-background, #fafafa) !important;
+  color: white !important;
 }
 
 .social-post__body {

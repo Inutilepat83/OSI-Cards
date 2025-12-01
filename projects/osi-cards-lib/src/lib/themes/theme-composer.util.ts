@@ -53,12 +53,12 @@ export interface ColorScale {
 
 /**
  * Extend a base theme with overrides
- * 
+ *
  * @param base Base theme configuration
  * @param overrides CSS variable overrides
  * @param name Optional new theme name (defaults to base-extended)
  * @returns New theme configuration with overrides applied
- * 
+ *
  * @example
  * ```typescript
  * const customDark = extendTheme(darkTheme, {
@@ -87,11 +87,11 @@ export function extendTheme(
 /**
  * Merge multiple theme configurations
  * Later themes override earlier ones
- * 
+ *
  * @param themes Array of theme configurations to merge
  * @param name Name for the merged theme
  * @returns Merged theme configuration
- * 
+ *
  * @example
  * ```typescript
  * const merged = mergeThemes(
@@ -126,12 +126,12 @@ export function mergeThemes(
 
 /**
  * Create a complete theme from a color palette
- * 
+ *
  * @param palette Color palette to use
  * @param name Theme name
  * @param isDark Whether this is a dark theme
  * @returns Complete theme configuration
- * 
+ *
  * @example
  * ```typescript
  * const brandTheme = createThemeFromColors({
@@ -172,27 +172,27 @@ export function createThemeFromColors(
       '--osi-card-foreground': foreground,
       '--osi-card-muted': muted,
       '--osi-card-muted-foreground': adjustLightness(muted, isDark ? 30 : -30),
-      
+
       // Accent
       '--osi-card-accent': primary,
       '--osi-card-accent-rgb': primaryRgb,
       '--osi-card-accent-foreground': accentForeground,
       '--osi-card-accent-hover': adjustLightness(primary, isDark ? 10 : -10),
-      
+
       // Secondary
       '--osi-card-secondary': secondary,
       '--osi-card-secondary-foreground': getContrastColor(secondary),
-      
+
       // Borders
       '--osi-card-border': border,
       '--osi-card-border-hover': adjustLightness(border, isDark ? 10 : -10),
       '--osi-card-ring': `rgba(${primaryRgb}, 0.3)`,
-      
+
       // Surfaces
       '--osi-card-surface': adjustLightness(background, isDark ? 5 : -3),
       '--osi-card-surface-hover': adjustLightness(background, isDark ? 10 : -5),
       '--osi-card-surface-active': adjustLightness(background, isDark ? 15 : -8),
-      
+
       // Status colors
       '--osi-card-success': success,
       '--osi-card-success-bg': `rgba(${hexToRgbString(success)}, 0.1)`,
@@ -202,9 +202,9 @@ export function createThemeFromColors(
       '--osi-card-destructive-bg': `rgba(${hexToRgbString(error)}, 0.1)`,
       '--osi-card-info': info,
       '--osi-card-info-bg': `rgba(${hexToRgbString(info)}, 0.1)`,
-      
+
       // Shadows
-      '--osi-card-shadow': isDark 
+      '--osi-card-shadow': isDark
         ? '0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2)'
         : '0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04)',
       '--osi-card-shadow-md': isDark
@@ -220,10 +220,10 @@ export function createThemeFromColors(
 
 /**
  * Generate a color scale from a base color
- * 
+ *
  * @param baseColor Base color in hex format
  * @returns Color scale object with 50-950 variants
- * 
+ *
  * @example
  * ```typescript
  * const blueScale = deriveColorScale('#3b82f6');
@@ -250,7 +250,7 @@ export function deriveColorScale(baseColor: string): ColorScale {
 
 /**
  * Create a theme using a color scale
- * 
+ *
  * @param scale Color scale to use as primary
  * @param name Theme name
  * @param isDark Whether this is a dark theme
@@ -277,7 +277,7 @@ export function createThemeFromScale(
 
 /**
  * Create light and dark variants of a theme from a palette
- * 
+ *
  * @param palette Color palette
  * @param baseName Base name for the themes
  * @returns Object with light and dark theme configs
@@ -294,7 +294,7 @@ export function createThemePair(
 
 /**
  * Pick specific variables from a theme
- * 
+ *
  * @param theme Theme configuration
  * @param keys Variable names to pick
  * @returns New theme with only specified variables
@@ -304,7 +304,7 @@ export function pickThemeVariables(
   keys: string[]
 ): OSICardsThemeConfig {
   const picked: Record<string, string> = {};
-  
+
   keys.forEach(key => {
     const varKey = key.startsWith('--') ? key : `--${key}`;
     if (theme.variables[varKey]) {
@@ -323,7 +323,7 @@ export function pickThemeVariables(
 
 /**
  * Omit specific variables from a theme
- * 
+ *
  * @param theme Theme configuration
  * @param keys Variable names to omit
  * @returns New theme without specified variables
@@ -375,7 +375,7 @@ export function rgbToHex(r: number, g: number, b: number): string {
 
 /**
  * Adjust the lightness of a color
- * 
+ *
  * @param hex Hex color
  * @param amount Amount to adjust (-100 to 100)
  * @returns Adjusted hex color
@@ -386,7 +386,7 @@ export function adjustLightness(hex: string, amount: number): string {
 
   const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
   hsl.l = Math.max(0, Math.min(100, hsl.l + amount));
-  
+
   const newRgb = hslToRgb(hsl.h, hsl.s, hsl.l);
   return rgbToHex(newRgb.r, newRgb.g, newRgb.b);
 }
@@ -409,7 +409,7 @@ export function getContrastColor(hex: string): string {
 export function mixColors(color1: string, color2: string, weight = 0.5): string {
   const rgb1 = hexToRgbValues(color1);
   const rgb2 = hexToRgbValues(color2);
-  
+
   if (!rgb1 || !rgb2) return color1;
 
   const r = Math.round(rgb1.r * weight + rgb2.r * (1 - weight));
@@ -434,7 +434,7 @@ export function withAlpha(hex: string, alpha: number): string {
 function hexToRgbValues(hex: string): { r: number; g: number; b: number } | null {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   if (!result || !result[1] || !result[2] || !result[3]) return null;
-  
+
   return {
     r: parseInt(result[1], 16),
     g: parseInt(result[2], 16),

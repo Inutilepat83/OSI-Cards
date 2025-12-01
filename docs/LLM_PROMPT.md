@@ -1,7 +1,7 @@
 # OSI Cards - LLM Card Generation Guide
 
 > AUTO-GENERATED FROM section-registry.json
-> Generated: 2025-12-01T16:52:12.274Z
+> Generated: 2025-12-01T17:09:47.416Z
 
 ## Overview
 
