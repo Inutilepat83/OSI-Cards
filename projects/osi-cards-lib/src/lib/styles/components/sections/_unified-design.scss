@@ -771,3 +771,63 @@ article[class*="card"] {
   }
 }
 
+/* ============================================================================
+   8. DEMO PAGE UI - Remove borders from selector buttons
+   ============================================================================ */
+
+/* Card type selector and variant selector - remove all borders */
+.card-type-btn,
+.card-type-wrapper,
+.variant-selector,
+.variant-selector button,
+.card-type-selector,
+.card-type-selector button,
+app-card-type-selector,
+app-card-type-selector > div,
+.editor-toolbar__button {
+  border: none !important;
+}
+
+/* Feature cards on home page */
+.hero-feature-card,
+.feature-card {
+  border: none !important;
+}
+
+/* ============================================================================
+   9. SECTION ITEM BORDER REMOVAL - All cards inside sections
+   ============================================================================ */
+
+/* Remove borders from all section items/cards */
+.section-card,
+.section-card--quotation,
+.section-card--reference,
+.section-card--metric,
+.section-card--list,
+.info-row,
+.overview-card,
+.analytics-metric,
+.contact-card,
+.event-card,
+.event-item,
+.financial-card,
+.financial-metric,
+.solution-card,
+.solution-item,
+.map-card,
+.network-card,
+.product-card,
+.product-card--references,
+.product-entry,
+.product-reference,
+.chart-card,
+.chart-card--pie,
+.chart-card--legend,
+.fallback-card,
+.fallback-field,
+.location-card,
+.office-card {
+  border: none !important;
+  outline: none !important;
+}
+

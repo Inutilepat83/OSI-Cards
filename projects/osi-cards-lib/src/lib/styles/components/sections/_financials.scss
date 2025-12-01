@@ -34,7 +34,7 @@
   position: relative !important;
   overflow: hidden !important;
   transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  border: 1px solid $brand-color-20 !important;
+  border: none !important;
   box-sizing: border-box !important;
   
   .financial-card__content {
@@ -57,8 +57,7 @@
 
   &:hover {
     transform: translateY(-2px) !important;
-    box-shadow: 0 8px 16px $foreground-12, 0 0 0 1px $brand-color-15 !important;
-    border-color: $brand-color-30 !important;
+    box-shadow: 0 8px 16px $foreground-12 !important;
 
     &::before {
       opacity: 1 !important;

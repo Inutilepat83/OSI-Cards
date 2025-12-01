@@ -205,11 +205,9 @@ export function* createStreamingChunks(
  */
 export class MockStreamingService {
   private chunks: string[] = [];
-  private currentIndex = 0;
 
   setData(json: string, chunkSize = 50): void {
     this.chunks = Array.from(createStreamingChunks(json, chunkSize));
-    this.currentIndex = 0;
   }
 
   async *stream(): AsyncGenerator<string, void, unknown> {
@@ -220,7 +218,7 @@ export class MockStreamingService {
   }
 
   reset(): void {
-    this.currentIndex = 0;
+    this.chunks = [];
   }
 }
 
@@ -365,7 +363,7 @@ export function accessibilityAudit(element: HTMLElement): A11yAuditResult {
 
   // Check for ARIA roles
   const ariaRoles = element.querySelectorAll('[role]');
-  ariaRoles.forEach(el => {
+  ariaRoles.forEach(() => {
     // Just count as a pass - proper role validation is complex
     passes++;
   });
@@ -471,7 +469,7 @@ export interface PerformanceTestResult {
   avgDuration: number;
   minDuration: number;
   maxDuration: number;
-  memoryUsed?: number;
+  memoryUsed: number | undefined;
 }
 
 /**

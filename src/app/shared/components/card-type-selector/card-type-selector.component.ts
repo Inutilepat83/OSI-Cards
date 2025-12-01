@@ -11,7 +11,7 @@ import { CardType } from '../../../models';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div>
+    <div class="card-type-wrapper">
       <button
         *ngFor="let type of cardTypes"
         class="card-type-btn"
@@ -37,7 +37,7 @@ import { CardType } from '../../../models';
       .card-type-btn {
         padding: 0.5rem 1rem;
         background: var(--card-background);
-        border: 2px solid color-mix(in srgb, var(--border) 60%, transparent);
+        border: none;
         border-radius: 0.375rem;
         color: var(--foreground);
         font-size: 0.875rem;
@@ -48,12 +48,10 @@ import { CardType } from '../../../models';
 
       .card-type-btn:hover:not(:disabled) {
         background: rgba(255, 255, 255, 0.1);
-        border-color: var(--color-brand, #ff7900);
       }
 
       .card-type-btn.active {
         background: var(--color-brand, #ff7900);
-        border-color: var(--color-brand, #ff7900);
         color: white;
       }
 
@@ -64,7 +62,6 @@ import { CardType } from '../../../models';
 
       .card-type-btn:focus {
         outline: none;
-        border-color: var(--color-brand, #ff7900);
       }
     `,
   ],

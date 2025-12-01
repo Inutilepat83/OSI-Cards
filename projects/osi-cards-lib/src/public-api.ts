@@ -8,29 +8,122 @@
  */
 
 // ═══════════════════════════════════════════════════════════════════════════
-// TYPES (Branded types, utility types, and string literals)
+// CORE TYPES (Primary source for all type literals)
 // ═══════════════════════════════════════════════════════════════════════════
 export * from './lib/types';
 
 // ═══════════════════════════════════════════════════════════════════════════
-// MODELS (Card configuration types)
+// MODELS (Card configuration types - excluding duplicate type literals)
 // ═══════════════════════════════════════════════════════════════════════════
-export * from './lib/models';
+export {
+  // Card interfaces
+  AICardConfig,
+  CardSection,
+  CardField,
+  CardItem,
+  CardAction,
+  MailCardAction,
+  EmailConfig,
+  EmailContact,
+  
+  // Type guards
+  CardTypeGuards,
+} from './lib/models/card.model';
+
+// Re-export section types from factories (single source of truth)
+export { SectionMetadata, SectionType } from './lib/factories';
+
+// Generated section types
+export * from './lib/models/generated-section-types';
+export * from './lib/models/discriminated-sections';
 
 // ═══════════════════════════════════════════════════════════════════════════
-// CONSTANTS (Animation, layout, streaming configuration)
+// CONSTANTS (Animation, layout, streaming configuration - excluding duplicate types)
 // ═══════════════════════════════════════════════════════════════════════════
-export * from './lib/constants';
+export {
+  // Animation constants
+  ANIMATION_TIMING,
+  STAGGER_DELAYS,
+  EASING,
+  ANIMATION_PRESETS,
+  TILT_CONFIG,
+  prefersReducedMotion,
+  getAnimationTiming,
+  getEasing,
+  
+  // Layout constants
+  GRID_CONFIG,
+  MASONRY_CONFIG,
+  SPACING,
+  CARD_SPACING,
+  BREAKPOINTS,
+  COLUMNS_BY_BREAKPOINT,
+  BORDER_RADIUS,
+  SHADOWS,
+  Z_INDEX,
+  CARD_SIZES,
+  getCurrentBreakpoint,
+  getColumnsForBreakpoint,
+  isMobileViewport,
+  isTabletViewport,
+  isDesktopViewport,
+  
+  // Streaming constants
+  STREAMING_CONFIG,
+  STREAMING_STAGES,
+  STREAMING_PROGRESS,
+  PLACEHOLDER_TEXT,
+  DEFAULT_LOADING_MESSAGES,
+  calculateChunkDelay,
+  generateStreamingId,
+  isStreamingPlaceholder,
+  getRandomLoadingMessage,
+  
+  // UI constants
+  PARTICLE_CONFIG,
+  EMPTY_STATE_CONFIG,
+  CONTAINER_CONFIG,
+  ICON_SIZE,
+  SKELETON_CONFIG,
+} from './lib/constants';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // FACTORIES (Card and section builders)
 // ═══════════════════════════════════════════════════════════════════════════
-export * from './lib/factories';
+export {
+  // Card factory
+  CardFactory,
+  SectionConfigFactory,
+  FieldFactory,
+  ItemFactory,
+  ActionFactory,
+  
+  // Section factory
+  SectionFactory,
+  
+  // Card builder
+  CardBuilder,
+  SectionBuilder,
+  InfoSectionBuilder,
+  AnalyticsSectionBuilder,
+  ListSectionBuilder,
+  EventSectionBuilder,
+  ContactSectionBuilder,
+  ChartSectionBuilder,
+  buildCard,
+  createInfoCard,
+  createAnalyticsCard,
+} from './lib/factories';
 
 // ═══════════════════════════════════════════════════════════════════════════
-// DECORATORS
+// DECORATORS (Validation and section component decorators)
 // ═══════════════════════════════════════════════════════════════════════════
-export * from './lib/decorators';
+export * from './lib/decorators/section-component.decorator';
+export {
+  validateSection,
+  validateField,
+  LogValidationErrors,
+} from './lib/decorators/validation.decorator';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // SECTION MANIFEST (Generated)
@@ -150,8 +243,72 @@ export * from './lib/interfaces';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // UTILITIES (Layout, animation, performance, accessibility)
+// Note: Utilities are available via direct import: import { ... } from 'osi-cards-lib/lib/utils'
+// Core utilities exported here to avoid duplicate type conflicts
 // ═══════════════════════════════════════════════════════════════════════════
-export * from './lib/utils';
+export {
+  // Layout utilities
+  SkylinePacker,
+  StreamingLayoutManager,
+  
+  // Animation utilities  
+  FlipAnimator,
+  
+  // Accessibility
+  GridAccessibilityManager,
+  
+  // Component composition hooks
+  useToggleState,
+  useHoverState,
+  useFocusState,
+  useLoadingState,
+  useAsyncState,
+  usePagination,
+  useSelectionState,
+  useKeyboardNavigation,
+  useVisibility,
+  useExpandableState,
+  useDebouncedValue,
+  useCounter,
+  
+  // Error boundary
+  useErrorBoundary,
+  
+  // Input coercion
+  coerceBoolean,
+  coerceNumber,
+  
+  // Memoization
+  memoize,
+  layoutKeyGenerator,
+  createDebouncedLayout,
+  createRAFScheduler,
+  createBatchProcessor,
+  
+  // Sanitization
+  sanitizeHtml,
+  sanitizeUrl,
+  
+  // Virtual scroll
+  useVirtualScroll,
+  useIntersectionObserver,
+  createInfiniteScrollTrigger,
+  createLazyLoadTrigger,
+  
+  // Layout optimization
+  optimizeLayout,
+  quickOptimize,
+  analyzeLayout,
+  findLayoutGaps,
+  fillLayoutGaps,
+  optimizeColumnSpans,
+  
+  // Performance monitoring
+  PerformanceMonitor,
+  performanceMonitor,
+  renderTracker,
+  fpsMonitor,
+} from './lib/utils';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // ERRORS
@@ -160,8 +317,11 @@ export * from './lib/errors';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // TESTING UTILITIES
+// Note: Testing utilities available via direct import from the testing module
+// import { ... } from 'osi-cards-lib/lib/testing' for mock factories and fixtures
 // ═══════════════════════════════════════════════════════════════════════════
-export * from './lib/testing';
+// Testing exports temporarily disabled to resolve build issues
+// Re-enable after fixing testing module TypeScript errors
 
 /**
  * Note: For full functionality including:

@@ -5,17 +5,15 @@ import {
   EventEmitter,
   ChangeDetectionStrategy,
   ViewEncapsulation,
-  inject,
-  Optional
+  inject
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AICardConfig, CardAction, CardField, CardItem } from '../../models';
+import { AICardConfig, CardAction } from '../../models';
 import { AICardRendererComponent, CardFieldInteractionEvent, StreamingStage } from '../ai-card-renderer/ai-card-renderer.component';
 import {
   OSI_THEME_CONFIG_TOKEN,
   OSI_ANIMATION_CONFIG,
-  OSIAnimationConfig,
-  DEFAULT_OSI_THEME_CONFIG
+  OSIAnimationConfig
 } from '../../providers/injection-tokens';
 
 /**
@@ -66,11 +64,11 @@ import {
         [isFullscreen]="fullscreen"
         [tiltEnabled]="tiltEnabled"
         [streamingStage]="streamingStage"
-        [streamingProgress]="streamingProgress"
+        [streamingProgress]="streamingProgress ?? 0"
         [isStreaming]="isStreaming"
         [showLoadingByDefault]="showLoadingByDefault"
-        [containerWidth]="containerWidth"
-        [loadingMessages]="loadingMessages"
+        [containerWidth]="containerWidth ?? 0"
+        [loadingMessages]="loadingMessages ?? []"
         [loadingTitle]="loadingTitle"
         (fieldInteraction)="onFieldInteraction($event)"
         (cardInteraction)="onCardInteraction($event)"

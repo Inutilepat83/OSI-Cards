@@ -256,14 +256,14 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
    * When containerWidth input is not provided, this is auto-measured.
    */
   private measuredContainerWidth = 0;
-  private containerResizeObserver?: ResizeObserver;
+  private containerResizeObserver: ResizeObserver | undefined;
   
   /**
    * Effective container width to pass to masonry grid.
    * Uses explicit input if provided, otherwise uses measured width.
    * Falls back to window-based estimation to ensure multi-column layout works.
    */
-  get effectiveContainerWidth(): number | undefined {
+  get effectiveContainerWidth(): number {
     // Explicit input takes priority
     if (this.containerWidth && this.containerWidth > 0) {
       return this.containerWidth;
@@ -277,7 +277,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       // Assume standard card width (window minus typical margins)
       return Math.max(window.innerWidth - 80, 260);
     }
-    return undefined;
+    // SSR fallback
+    return 600;
   }
   isHovered = false;
   mousePosition: MousePosition = { x: 0, y: 0 };
@@ -593,7 +594,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     const maxDistance = Math.sqrt(rect.width * rect.width + rect.height * rect.height) / 2;
     const normalizedDistance = Math.min(distance / maxDistance, 1);
     
-    this.particles = this.particles.map((particle, index) => {
+    this.particles = this.particles.map((_particle, index) => {
       // Create a trailing effect with exponential easing
       const delay = index * 0.08;
       const followStrength = 0.4 - (delay * 0.3); // Particles further back follow less
@@ -625,7 +626,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   private resetParticles(): void {
-    this.particles = this.particles.map(particle => ({
+    this.particles = this.particles.map(() => ({
       transform: 'translate(0, 0) scale(1)',
       opacity: 0.5
     }));
@@ -736,11 +737,14 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   onFieldClick(field: CardField, section?: CardSection): void {
-    this.fieldInteraction.emit({
+    const event: CardFieldInteractionEvent = {
       field,
       action: 'click',
-      sectionTitle: section?.title
-    });
+    };
+    if (section?.title) {
+      event.sectionTitle = section.title;
+    }
+    this.fieldInteraction.emit(event);
   }
 
   /**
@@ -778,12 +782,18 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
           return;
 
         case 'agent':
-          this.agentAction.emit({
+          const agentEvent: { action: CardAction; card: AICardConfig; agentId?: string; context?: Record<string, unknown> } = {
             action: actionObj,
             card: this.cardConfig,
-            agentId: actionObj.agentId,
-            context: actionObj.agentContext || actionObj.meta
-          });
+          };
+          if (actionObj.agentId) {
+            agentEvent.agentId = actionObj.agentId;
+          }
+          const agentContext = actionObj.agentContext || actionObj.meta;
+          if (agentContext) {
+            agentEvent.context = agentContext as Record<string, unknown>;
+          }
+          this.agentAction.emit(agentEvent);
           return;
 
         case 'question':
@@ -980,22 +990,28 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     switch (event.type) {
       case 'field':
         if (event.field) {
-          this.fieldInteraction.emit({
+          const fieldEvent: CardFieldInteractionEvent = {
             field: event.field,
             action: 'click',
             sectionTitle: (event.metadata?.['sectionTitle'] as string | undefined) ?? event.section.title,
-            metadata: event.metadata
-          });
+          };
+          if (event.metadata) {
+            fieldEvent.metadata = event.metadata;
+          }
+          this.fieldInteraction.emit(fieldEvent);
         }
         break;
       case 'item':
         if (event.item) {
-          this.fieldInteraction.emit({
+          const itemEvent: CardFieldInteractionEvent = {
             item: event.item,
             action: 'click',
             sectionTitle: (event.metadata?.['sectionTitle'] as string | undefined) ?? event.section.title,
-            metadata: event.metadata
-          });
+          };
+          if (event.metadata) {
+            itemEvent.metadata = event.metadata;
+          }
+          this.fieldInteraction.emit(itemEvent);
         }
         break;
       case 'action':
@@ -1012,7 +1028,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     }
   }
 
-  onLayoutChange(layout: MasonryLayoutInfo): void {
+  onLayoutChange(_layout: MasonryLayoutInfo): void {
     // Layout change handler - kept for potential future use
   }
 

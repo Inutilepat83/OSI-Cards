@@ -14,6 +14,9 @@
  * ```
  */
 
+// Declare global for Node.js environment
+declare const global: typeof globalThis | undefined;
+
 // ============================================================================
 // CHART.JS MOCK
 // ============================================================================
@@ -51,7 +54,7 @@ export class MockChart {
     MockChart.instances.push(this);
   }
 
-  public update(mode?: string): void {
+  public update(_mode?: string): void {
     // Mock update
   }
 
@@ -98,11 +101,11 @@ export class MockChart {
     return MockChart.instances.find(c => c.canvas === key);
   }
 
-  public static register(...items: unknown[]): void {
+  public static register(..._items: unknown[]): void {
     // Mock register
   }
 
-  public static unregister(...items: unknown[]): void {
+  public static unregister(..._items: unknown[]): void {
     // Mock unregister
   }
 
@@ -242,7 +245,7 @@ export class MockLeafletMap {
     return this;
   }
 
-  public fitBounds(bounds: [[number, number], [number, number]]): this {
+  public fitBounds(_bounds: [[number, number], [number, number]]): this {
     return this;
   }
 
@@ -338,13 +341,11 @@ export class MockLeafletLayer {
  */
 export class MockLeafletMarker extends MockLeafletLayer {
   private _latlng: [number, number];
-  private _options: MockMarkerOptions;
   private _popup: MockLeafletPopup | null = null;
 
-  constructor(latlng: [number, number], options?: MockMarkerOptions) {
+  constructor(latlng: [number, number], _options?: MockMarkerOptions) {
     super();
     this._latlng = latlng;
-    this._options = options ?? {};
   }
 
   public getLatLng(): { lat: number; lng: number } {
@@ -416,17 +417,11 @@ export class MockLeafletPopup extends MockLeafletLayer {
  * Mock Leaflet TileLayer class
  */
 export class MockLeafletTileLayer extends MockLeafletLayer {
-  private _url: string;
-  private _options: MockTileLayerOptions;
-
-  constructor(url: string, options?: MockTileLayerOptions) {
+  constructor(_url: string, _options?: MockTileLayerOptions) {
     super();
-    this._url = url;
-    this._options = options ?? {};
   }
 
-  public setUrl(url: string): this {
-    this._url = url;
+  public setUrl(_url: string): this {
     return this;
   }
 }

@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Type, Component } from '@angular/core';
+import { Type } from '@angular/core';
 import { provideOsiCardsTesting } from '../providers/osi-cards.providers';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const expect: any;
 
 /**
  * Test utilities for section components
@@ -65,22 +68,32 @@ export async function renderSection<T>(
 
 /**
  * Creates a test host component for testing sections
+ * Note: This is a runtime utility. For AOT-compatible tests, create components directly in test files.
+ * 
+ * @example
+ * ```typescript
+ * // In your test file:
+ * \@Component({
+ *   selector: 'test-host',
+ *   template: '<my-section [section]="section"></my-section>',
+ *   standalone: true,
+ *   imports: [MySectionComponent]
+ * })
+ * class TestHostComponent {
+ *   section = { ... };
+ * }
+ * ```
  */
 export function createTestHost<T>(
-  component: Type<T>,
-  template: string
+  _component: Type<T>,
+  _template: string
 ): Type<{ hostComponent: T }> {
-  @Component({
-    selector: 'test-host',
-    template,
-    standalone: true,
-    imports: [component],
-  })
-  class TestHostComponent {
+  // Note: Dynamic component creation with variable imports/templates is not AOT-compatible.
+  // This function returns a placeholder. Create test hosts manually in test files.
+  class PlaceholderTestHost {
     hostComponent!: T;
   }
-
-  return TestHostComponent;
+  return PlaceholderTestHost as Type<{ hostComponent: T }>;
 }
 
 /**

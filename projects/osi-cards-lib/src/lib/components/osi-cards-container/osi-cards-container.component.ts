@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy, Input, inject, Optional } from '@angular/core';
-import { CSS_ISOLATION_MODE, DEFAULT_THEME, CSSIsolationMode } from '../../providers/injection-tokens';
+import { Component, ChangeDetectionStrategy, Input, inject } from '@angular/core';
+import { CSS_ISOLATION_MODE, DEFAULT_THEME } from '../../providers/injection-tokens';
 
 /**
  * OsiCardsContainerComponent
@@ -121,7 +121,8 @@ export class OsiCardsContainerComponent {
   get containerClass(): string {
     const classes = ['osi-cards-container'];
 
-    if (this.strictIsolation ?? (this.cssIsolationMode === 'strict')) {
+    const isStrictMode = this.strictIsolation ?? (this.cssIsolationMode === 'strict' as string);
+    if (isStrictMode) {
       classes.push('osi-cards-container--strict');
     }
 
@@ -133,6 +134,9 @@ export class OsiCardsContainerComponent {
    * Uses component input if provided, otherwise falls back to config default.
    */
   get effectiveTheme(): 'day' | 'night' {
-    return this.theme ?? this.defaultThemeConfig ?? 'day';
+    // Get theme from input, config default, or 'day'
+    const configTheme = this.defaultThemeConfig;
+    const resolvedTheme = this.theme ?? (typeof configTheme === 'string' ? configTheme : null) ?? 'day';
+    return resolvedTheme as 'day' | 'night';
   }
 }

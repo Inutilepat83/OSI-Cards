@@ -34,7 +34,6 @@ import {
   OnDestroy,
   inject,
   PLATFORM_ID,
-  ElementRef,
   NgZone,
   EmbeddedViewRef,
   ChangeDetectorRef
@@ -159,7 +158,14 @@ export class LazyRenderDirective implements OnInit, OnDestroy {
   /**
    * Get merged options from all input sources
    */
-  private getMergedOptions(): Required<Omit<LazyRenderOptions, 'placeholder' | 'onVisibilityChange'>> & Pick<LazyRenderOptions, 'placeholder' | 'onVisibilityChange'> {
+  private getMergedOptions(): {
+    rootMargin: string;
+    threshold: number | number[];
+    persistent: boolean;
+    disabled: boolean;
+    placeholder: TemplateRef<unknown> | undefined;
+    onVisibilityChange: ((isVisible: boolean) => void) | undefined;
+  } {
     return {
       rootMargin: this.lazyRootMargin ?? this.options.rootMargin ?? DEFAULT_OPTIONS.rootMargin,
       threshold: this.lazyThreshold ?? this.options.threshold ?? DEFAULT_OPTIONS.threshold,
@@ -173,7 +179,14 @@ export class LazyRenderDirective implements OnInit, OnDestroy {
   /**
    * Set up the IntersectionObserver
    */
-  private setupIntersectionObserver(options: LazyRenderOptions): void {
+  private setupIntersectionObserver(options: {
+    rootMargin?: string;
+    threshold?: number | number[];
+    persistent?: boolean;
+    disabled?: boolean;
+    placeholder?: TemplateRef<unknown> | undefined;
+    onVisibilityChange?: ((isVisible: boolean) => void) | undefined;
+  }): void {
     this.ngZone.runOutsideAngular(() => {
       // Create a sentinel element to observe
       this.sentinelElement = document.createElement('div');
@@ -186,12 +199,16 @@ export class LazyRenderDirective implements OnInit, OnDestroy {
       hostElement.parentNode?.insertBefore(this.sentinelElement, hostElement);
 
       // Create observer
+      const observerOptions: IntersectionObserverInit = {};
+      if (options.rootMargin) {
+        observerOptions.rootMargin = options.rootMargin;
+      }
+      if (options.threshold !== undefined) {
+        observerOptions.threshold = options.threshold;
+      }
       this.observer = new IntersectionObserver(
         (entries) => this.handleIntersection(entries, options),
-        {
-          rootMargin: options.rootMargin,
-          threshold: options.threshold
-        }
+        observerOptions
       );
 
       this.observer.observe(this.sentinelElement);
@@ -201,7 +218,14 @@ export class LazyRenderDirective implements OnInit, OnDestroy {
   /**
    * Handle intersection changes
    */
-  private handleIntersection(entries: IntersectionObserverEntry[], options: LazyRenderOptions): void {
+  private handleIntersection(entries: IntersectionObserverEntry[], options: {
+    rootMargin?: string;
+    threshold?: number | number[];
+    persistent?: boolean;
+    disabled?: boolean;
+    placeholder?: TemplateRef<unknown> | undefined;
+    onVisibilityChange?: ((isVisible: boolean) => void) | undefined;
+  }): void {
     const entry = entries[0];
     if (!entry) return;
 

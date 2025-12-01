@@ -1,8 +1,7 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardAction } from '../../models';
 import { LucideIconsModule } from '../../icons';
-import { IconService } from '../../services/icon.service';
 
 /**
  * Card Footer Component
@@ -199,7 +198,8 @@ export class CardFooterComponent {
   /** Emitted when an action is clicked */
   @Output() actionClick = new EventEmitter<CardAction>();
 
-  private readonly iconService = inject(IconService);
+  // IconService available for future use
+  // private readonly iconService = inject(IconService);
 
   get hasActions(): boolean {
     return this.actions && this.actions.length > 0;
