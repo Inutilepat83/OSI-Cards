@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
+import { DocsDemoComponent } from '../../components';
 
 const pageContent = `# Info Section
 
@@ -117,15 +118,71 @@ The **Info Section** (\`type: "info"\`) is used for displays key-value pairs in 
 - [Best Practices](/docs/best-practices)
 `;
 
+const demoConfig = {
+  "title": "Company Information",
+  "type": "info",
+  "description": "Detailed company information and metadata",
+  "fields": [
+    {
+      "label": "Industry",
+      "value": "Technology",
+      "icon": "🏢"
+    },
+    {
+      "label": "Founded",
+      "value": "2010",
+      "icon": "📅"
+    },
+    {
+      "label": "Headquarters",
+      "value": "San Francisco, CA",
+      "icon": "📍"
+    },
+    {
+      "label": "Employees",
+      "value": "5,000+",
+      "icon": "👥",
+      "trend": "up"
+    },
+    {
+      "label": "Website",
+      "value": "www.example.com",
+      "icon": "🌐"
+    }
+  ]
+};
+
+/**
+ * Info Section documentation page with live demo
+ * Auto-generated - modifications may be overwritten
+ */
 @Component({
   selector: 'app-info-page',
   standalone: true,
-  imports: [DocPageComponent],
-  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  imports: [DocPageComponent, DocsDemoComponent],
+  template: `
+    <div class="section-docs">
+      <app-docs-demo 
+        [config]="demo" 
+        [type]="'info'"
+        demoTitle="Live Preview"
+        height="350px"
+      ></app-docs-demo>
+      <app-doc-page [content]="content"></app-doc-page>
+    </div>
+  `,
+  styles: [`
+    .section-docs {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InfoPageComponent {
   content = pageContent;
+  demo = demoConfig;
 }
 
 export default InfoPageComponent;

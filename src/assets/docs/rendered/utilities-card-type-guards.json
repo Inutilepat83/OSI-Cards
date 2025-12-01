@@ -1,0 +1,50 @@
+{
+  "pageId": "utilities/card-type-guards",
+  "title": "CardTypeGuards",
+  "html": "<h1 id=\"cardtypeguards\"><a href=\"#cardtypeguards\" class=\"anchor-link\" aria-hidden=\"true\">#</a>CardTypeGuards</h1></p><p>Type guard functions for card validation.</p><p><h2 id=\"import\"><a href=\"#import\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Import</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">import { CardTypeGuards } from 'osi-cards-lib';</code></pre></div></p><p><h2 id=\"methods\"><a href=\"#methods\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Methods</h2></p><p><h3 id=\"isaicardconfig-obj\"><a href=\"#isaicardconfig-obj\" class=\"anchor-link\" aria-hidden=\"true\">#</a>isAICardConfig(obj)</h3></p><p>Check if object is valid AICardConfig.</p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">if (CardTypeGuards.isAICardConfig(data)) {<br>  // data is AICardConfig<br>}</code></pre></div></p><p><h3 id=\"iscardsection-obj\"><a href=\"#iscardsection-obj\" class=\"anchor-link\" aria-hidden=\"true\">#</a>isCardSection(obj)</h3></p><p>Check if object is valid CardSection.</p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">if (CardTypeGuards.isCardSection(section)) {<br>  // section is CardSection<br>}</code></pre></div></p><p><h3 id=\"iscardfield-obj\"><a href=\"#iscardfield-obj\" class=\"anchor-link\" aria-hidden=\"true\">#</a>isCardField(obj)</h3></p><p>Check if object is valid CardField.</p><p><h3 id=\"ismailaction-obj\"><a href=\"#ismailaction-obj\" class=\"anchor-link\" aria-hidden=\"true\">#</a>isMailAction(obj)</h3></p><p>Check if object is valid MailCardAction.</p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">if (CardTypeGuards.isMailAction(action)) {<br>  // action has valid email config<br>  console.log(action.email.contact.name);<br>}</code></pre></div></p><p><h2 id=\"usage-in-templates\"><a href=\"#usage-in-templates\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Usage in Templates</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">processData(data: unknown) {<br>  if (!CardTypeGuards.isAICardConfig(data)) {<br>    throw new Error('Invalid card configuration');<br>  }<br>  this.card = data;<br>}</code></pre></div>\n",
+  "toc": [
+    {
+      "id": "cardtypeguards",
+      "text": "CardTypeGuards",
+      "level": 1
+    },
+    {
+      "id": "import",
+      "text": "Import",
+      "level": 2
+    },
+    {
+      "id": "methods",
+      "text": "Methods",
+      "level": 2
+    },
+    {
+      "id": "isaicardconfig-obj",
+      "text": "isAICardConfig(obj)",
+      "level": 3
+    },
+    {
+      "id": "iscardsection-obj",
+      "text": "isCardSection(obj)",
+      "level": 3
+    },
+    {
+      "id": "iscardfield-obj",
+      "text": "isCardField(obj)",
+      "level": 3
+    },
+    {
+      "id": "ismailaction-obj",
+      "text": "isMailAction(obj)",
+      "level": 3
+    },
+    {
+      "id": "usage-in-templates",
+      "text": "Usage in Templates",
+      "level": 2
+    }
+  ],
+  "contentHash": "e0d4e7174e776a3a",
+  "generatedAt": "2025-12-01T09:15:43.794Z",
+  "demoConfigs": {}
+}

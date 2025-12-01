@@ -1,0 +1,55 @@
+{
+  "pageId": "schemas/type-aliases",
+  "title": "Type Aliases & Enums",
+  "html": "<h1 id=\"type-aliases-amp-enums\"><a href=\"#type-aliases-amp-enums\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Type Aliases &amp; Enums</h1></p><p>Reference for all type aliases and enums in OSI Cards.</p><p><h2 id=\"card-types\"><a href=\"#card-types\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Card Types</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">type CardType = 'all' | 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'event' | 'project' | 'sko';</code></pre></div></p><p><h2 id=\"section-types\"><a href=\"#section-types\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Section Types</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">type SectionType = <br>  | 'info' | 'analytics' | 'contact-card' | 'network-card' <br>  | 'map' | 'financials' | 'event' | 'list' | 'chart' <br>  | 'product' | 'solutions' | 'overview' | 'quotation' <br>  | 'text-reference' | 'brand-colors' | 'news' | 'social-media' <br>  | 'fallback';</code></pre></div></p><p><h2 id=\"type-aliases-backwards-compatibility\"><a href=\"#type-aliases-backwards-compatibility\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Type Aliases (Backwards Compatibility)</h2></p><p><div class=\"table-wrapper\"><table><thead><tr><th>Alias</th><th>Resolves To</th></tr></thead><tbody><tr><td><code>metrics</code></td><td>analytics</td></tr><tr><td><code>stats</code></td><td>analytics</td></tr><tr><td><code>timeline</code></td><td>event</td></tr><tr><td><code>table</code></td><td>list</td></tr><tr><td><code>locations</code></td><td>map</td></tr><tr><td><code>quote</code></td><td>quotation</td></tr><tr><td><code>reference</code></td><td>text-reference</td></tr><tr><td><code>text-ref</code></td><td>text-reference</td></tr><tr><td><code>brands</code></td><td>brand-colors</td></tr><tr><td><code>colors</code></td><td>brand-colors</td></tr><tr><td><code>project</code></td><td>info</td></tr></tbody></table></div>\n<h2 id=\"layout-priority\"><a href=\"#layout-priority\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Layout Priority</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">type LayoutPriority = 1 | 2 | 3;<br>// 1 = Highest (placed first)<br>// 2 = Medium<br>// 3 = Lowest (placed last)</code></pre></div></p><p><h2 id=\"trend-indicators\"><a href=\"#trend-indicators\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Trend Indicators</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">type Trend = 'up' | 'down' | 'stable' | 'neutral';</code></pre></div></p><p><h2 id=\"status-values\"><a href=\"#status-values\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Status Values</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">type FieldStatus = 'completed' | 'in-progress' | 'pending' | 'cancelled' | 'active' | 'inactive' | 'warning';<br>type Priority = 'high' | 'medium' | 'low';<br>type Performance = 'excellent' | 'good' | 'average' | 'poor';</code></pre></div></p><p><h2 id=\"button-variants\"><a href=\"#button-variants\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Button Variants</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost';</code></pre></div></p><p><h2 id=\"chart-types\"><a href=\"#chart-types\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Chart Types</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">type ChartType = 'bar' | 'line' | 'pie' | 'doughnut';</code></pre></div>\n",
+  "toc": [
+    {
+      "id": "type-aliases-amp-enums",
+      "text": "Type Aliases &amp; Enums",
+      "level": 1
+    },
+    {
+      "id": "card-types",
+      "text": "Card Types",
+      "level": 2
+    },
+    {
+      "id": "section-types",
+      "text": "Section Types",
+      "level": 2
+    },
+    {
+      "id": "type-aliases-backwards-compatibility",
+      "text": "Type Aliases (Backwards Compatibility)",
+      "level": 2
+    },
+    {
+      "id": "layout-priority",
+      "text": "Layout Priority",
+      "level": 2
+    },
+    {
+      "id": "trend-indicators",
+      "text": "Trend Indicators",
+      "level": 2
+    },
+    {
+      "id": "status-values",
+      "text": "Status Values",
+      "level": 2
+    },
+    {
+      "id": "button-variants",
+      "text": "Button Variants",
+      "level": 2
+    },
+    {
+      "id": "chart-types",
+      "text": "Chart Types",
+      "level": 2
+    }
+  ],
+  "contentHash": "e1f2682e6180b1cf",
+  "generatedAt": "2025-12-01T09:15:43.762Z",
+  "demoConfigs": {}
+}

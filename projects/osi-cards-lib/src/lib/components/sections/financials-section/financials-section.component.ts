@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardField } from '../../../models';
 import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent } from '../base-section.component';
+import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
 import { SectionUtilsService } from '../../../services';
 
 type FinancialField = CardField & {
@@ -19,6 +19,13 @@ type FinancialField = CardField & {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FinancialsSectionComponent extends BaseSectionComponent<FinancialField> {
+  /** Tables need width for data display */
+  static readonly layoutConfig: SectionLayoutConfig = {
+    preferredColumns: 2,
+    minColumns: 1,
+    maxColumns: 3,
+    expandOnFieldCount: 8,
+  };
   protected readonly utils = inject(SectionUtilsService);
 
   get fields(): FinancialField[] {

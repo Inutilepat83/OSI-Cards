@@ -7,6 +7,10 @@
    CSS Layer Strategy:
      - All library styles are in the 'osi-cards' layer
      - Consumer styles outside this layer have higher priority
+     
+   Note: Using @import inside @layer as @use cannot be used in @layer blocks.
+   The Sass @import deprecation warnings can be safely ignored until
+   Dart Sass 3.0.0 when migration will be required.
    =================================================================== */
 
 /* Declare the layer first for proper cascade ordering */

@@ -235,7 +235,7 @@ function getCardHash(card: AICardConfig): string {
  * Check if JSON input should be updated
  * Only update when structure changes or JSON editor is active
  */
-function shouldUpdateJsonInput(state: CardsState, newCard: AICardConfig): boolean {
+function shouldUpdateJsonInput(state: CardsState, _newCard: AICardConfig): boolean {
   // Only update if structure changed or JSON input is empty
   return state.lastChangeType === 'structural' || !state.jsonInput;
 }
@@ -404,11 +404,11 @@ export const reducer = createReducer(
     // Optimistic update - apply changes immediately
     return cardsAdapter.updateOne({ id, changes }, state);
   }),
-  on(updateCardSuccess, (state, { id, card }) => {
+  on(updateCardSuccess, (state, { card }) => {
     // Confirm optimistic update
     return cardsAdapter.upsertOne(card, state);
   }),
-  on(updateCardFailure, (state, { id }) => {
+  on(updateCardFailure, (state) => {
     // Revert optimistic update - restore original value
     // Note: Original value should be restored by OptimisticUpdatesService
     // This action is mainly for logging/error handling

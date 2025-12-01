@@ -1,0 +1,30 @@
+{
+  "pageId": "integration/card-generation-prompt",
+  "title": "Card Generation Prompt",
+  "html": "<h1 id=\"card-generation-prompt\"><a href=\"#card-generation-prompt\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Card Generation Prompt</h1></p><p>Documentation for Card Generation Prompt.</p><p><h2 id=\"overview\"><a href=\"#overview\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Overview</h2></p><p>This section covers card generation prompt.</p><p><h2 id=\"details\"><a href=\"#details\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Details</h2></p><p>Content coming soon.</p><p><h2 id=\"related\"><a href=\"#related\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Related</h2></p><p><ul><li><a href=\"/docs/getting-started\">Getting Started</a></li><li><a href=\"/docs/api-reference\">API Reference</a></li></ul>",
+  "toc": [
+    {
+      "id": "card-generation-prompt",
+      "text": "Card Generation Prompt",
+      "level": 1
+    },
+    {
+      "id": "overview",
+      "text": "Overview",
+      "level": 2
+    },
+    {
+      "id": "details",
+      "text": "Details",
+      "level": 2
+    },
+    {
+      "id": "related",
+      "text": "Related",
+      "level": 2
+    }
+  ],
+  "contentHash": "c5e3291c93032eac",
+  "generatedAt": "2025-12-01T09:15:43.726Z",
+  "demoConfigs": {}
+}

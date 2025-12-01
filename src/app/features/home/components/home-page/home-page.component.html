@@ -250,7 +250,7 @@
                   <!-- Generate/Stop Button -->
                   <div class="streaming-control-actions">
                     @if (!isStreamingActive) {
-                      <button class="btn-generate" (click)="generateCard()" [disabled]="!jsonInput?.trim()">
+                      <button class="btn-generate" (click)="generateCard()" [disabled]="!jsonInput.trim()">
                         <lucide-icon name="play" [size]="16"></lucide-icon>
                         Generate
                       </button>

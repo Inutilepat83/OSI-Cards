@@ -16,7 +16,6 @@
 }
 
 .social-post {
-  @include card;
   border: 1px solid $brand-color-60 !important;
   background: var(--card-background, #fafafa) !important;
   padding: var(--card-padding) !important;
@@ -26,6 +25,7 @@
   align-items: center !important;
   min-height: 140px !important;
   box-sizing: border-box !important;
+  @include card;
 }
 
 .social-post__avatar {

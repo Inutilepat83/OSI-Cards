@@ -7,6 +7,10 @@
    - _styles-standalone.scss (full isolation with Bootstrap reset)
    
    Each entry point imports this bundle after setting up its scope and variables.
+   
+   Note: Using @import here as Sass @use/@forward requires restructuring
+   the entire SCSS architecture. These warnings can be safely ignored
+   until Dart Sass 3.0.0 when migration will be required.
    =================================================================== */
 
 // Core styles (must come first, after variables)
@@ -53,6 +57,3 @@
 @import 'components/sections/fallback';
 @import 'components/sections/unified-cards'; /* Must be last to override all section-specific styles */
 @import 'components/sections/global-enforcement'; /* GLOBAL ENFORCEMENT - MUST BE ABSOLUTELY LAST to enforce all settings */
-
-
-

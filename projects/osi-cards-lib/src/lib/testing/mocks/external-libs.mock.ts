@@ -530,3 +530,6 @@ export function isLeafletAvailable(): boolean {
          typeof (global as unknown as { L?: unknown }).L !== 'undefined';
 }
 
+
+
+

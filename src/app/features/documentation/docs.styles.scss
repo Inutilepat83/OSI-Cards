@@ -9,7 +9,7 @@
  */
 
 // Import animations
-@import './docs.animations';
+@use './docs.animations' as *;
 
 // =============================================================================
 // CATEGORY A: VISUAL POLISH
@@ -141,8 +141,9 @@
   --docs-space-24: 6rem;
   
   // A19: Content Width
-  --docs-content-width: 72ch;
-  --docs-content-max: 900px;
+  --docs-content-width: 100%;
+  --docs-content-max: 100%;
+  --docs-content-prose: 72ch;
   --docs-sidebar-width: 280px;
   
   // Border Radius
@@ -534,6 +535,112 @@
     border-radius: var(--docs-radius-sm);
     pointer-events: none;
   }
+  
+  // Search Results Dropdown
+  .search-results {
+    position: absolute;
+    top: 100%;
+    left: var(--docs-space-4);
+    right: var(--docs-space-4);
+    margin-top: var(--docs-space-1);
+    max-height: 400px;
+    overflow-y: auto;
+    background: var(--docs-surface);
+    border: 1px solid var(--docs-border);
+    border-radius: var(--docs-radius-lg);
+    box-shadow: var(--docs-shadow-xl);
+    z-index: 100;
+    animation: fadeIn 0.15s ease;
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+  
+  .search-result-item {
+    display: block;
+    padding: var(--docs-space-3) var(--docs-space-4);
+    text-decoration: none;
+    border-bottom: 1px solid var(--docs-border-light);
+    transition: background var(--docs-transition);
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    &:hover,
+    &.highlighted {
+      background: var(--docs-hover-bg);
+    }
+    
+    &.highlighted {
+      background: var(--docs-primary-bg);
+    }
+  }
+  
+  .result-header {
+    display: flex;
+    align-items: center;
+    gap: var(--docs-space-2);
+    margin-bottom: var(--docs-space-1);
+    
+    lucide-icon {
+      color: var(--docs-text-muted);
+    }
+  }
+  
+  .result-title {
+    font-size: var(--docs-text-sm);
+    font-weight: 600;
+    color: var(--docs-text);
+  }
+  
+  .result-category {
+    display: inline-block;
+    font-size: var(--docs-text-xs);
+    color: var(--docs-text-muted);
+    background: var(--docs-bg-secondary);
+    padding: var(--docs-space-0\.5) var(--docs-space-2);
+    border-radius: var(--docs-radius-full);
+    margin-bottom: var(--docs-space-1);
+  }
+  
+  .result-snippet {
+    margin: 0;
+    font-size: var(--docs-text-xs);
+    color: var(--docs-text-secondary);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .search-no-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--docs-space-2);
+    padding: var(--docs-space-6);
+    text-align: center;
+    color: var(--docs-text-muted);
+    
+    span {
+      font-size: var(--docs-text-sm);
+    }
+  }
+  
+  &.has-results .search-input {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
 }
 
 // =============================================================================
@@ -684,13 +791,70 @@
   }
 }
 
+// Return to OSI Cards button in header
+.return-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--docs-space-2);
+  color: var(--docs-text-secondary);
+  border-radius: var(--docs-radius-md);
+  transition: all var(--docs-transition);
+  text-decoration: none;
+  
+  &:hover {
+    background: var(--docs-primary-bg);
+    color: var(--docs-primary);
+  }
+}
+
+// Sidebar footer with return button
+.sidebar-footer {
+  .return-home {
+    width: 100%;
+    padding: var(--docs-space-3) var(--docs-space-4);
+    background: var(--docs-primary-bg);
+    color: var(--docs-primary);
+    border-radius: var(--docs-radius-md);
+    font-weight: 500;
+    justify-content: center;
+    
+    &:hover {
+      background: var(--docs-primary);
+      color: white;
+    }
+  }
+}
+
+.sidebar-footer-links {
+  display: flex;
+  gap: var(--docs-space-4);
+  padding: var(--docs-space-3) var(--docs-space-4);
+  border-top: 1px solid var(--docs-border);
+  flex-shrink: 0;
+  
+  .footer-link {
+    display: flex;
+    align-items: center;
+    gap: var(--docs-space-1\.5);
+    font-size: var(--docs-text-xs);
+    color: var(--docs-text-muted);
+    text-decoration: none;
+    transition: color var(--docs-transition);
+    
+    &:hover {
+      color: var(--docs-primary);
+    }
+  }
+}
+
 // =============================================================================
 // MAIN CONTENT AREA
 // =============================================================================
 
 .docs-content {
   padding: var(--docs-space-8) var(--docs-space-12);
-  max-width: var(--docs-content-max);
+  width: 100%;
   min-height: 100vh;
   
   &::before {
@@ -922,10 +1086,22 @@
 
 .doc-page {
   display: grid;
-  grid-template-columns: 1fr 220px;
+  grid-template-columns: 1fr minmax(240px, 320px);
   gap: var(--docs-space-10);
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  
+  // Content should be in column 1, TOC in column 2
+  .doc-breadcrumbs,
+  .doc-content,
+  .doc-edit-github,
+  .doc-page-nav {
+    grid-column: 1;
+  }
+  
+  .doc-toc {
+    grid-column: 2;
+    grid-row: 1 / -1;
+  }
   
   // A25: Page Load Fade-in
   animation: fadeInUp var(--docs-transition-slow) ease;
@@ -952,7 +1128,19 @@
 
 .doc-content {
   min-width: 0;
-  max-width: var(--docs-content-width);
+  width: 100%;
+  
+  // Prose content should be readable width
+  > p, > ul, > ol, > blockquote {
+    max-width: var(--docs-content-prose);
+  }
+  
+  // Tables and code blocks can use full width
+  > .table-wrapper,
+  > .code-block-wrapper,
+  > pre {
+    max-width: 100%;
+  }
   
   // A1-A6: Headings with Fluid Typography
   h1 {
@@ -1589,6 +1777,7 @@
   overflow-y: auto;
   padding-left: var(--docs-space-4);
   border-left: 1px solid var(--docs-border);
+  min-width: 200px;
   
   @media (max-width: 1200px) {
     display: none;
@@ -1616,6 +1805,10 @@
     text-decoration: none;
     padding: var(--docs-space-1) 0;
     transition: all var(--docs-transition);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    line-height: 1.4;
     
     &:hover {
       color: var(--docs-primary);

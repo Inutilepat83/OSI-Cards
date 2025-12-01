@@ -1,0 +1,35 @@
+{
+  "pageId": "utilities/ensure-card-ids",
+  "title": "ensureCardIds",
+  "html": "<h1 id=\"ensurecardids\"><a href=\"#ensurecardids\" class=\"anchor-link\" aria-hidden=\"true\">#</a>ensureCardIds</h1></p><p>Ensure all card elements have unique IDs.</p><p><h2 id=\"purpose\"><a href=\"#purpose\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Purpose</h2></p><p>IDs are required for:\n<ul><li>Tracking updates during streaming</li><li>Animation coordination</li><li>Event handling</li><li>DOM reconciliation</li></ul>\n<h2 id=\"usage\"><a href=\"#usage\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Usage</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">import { CardUtils } from 'osi-cards-lib';</p><p>const cardWithIds = CardUtils.ensureSectionIds(card.sections);<br>// All sections, fields, items now have IDs</code></pre></div></p><p><h2 id=\"generated-id-format\"><a href=\"#generated-id-format\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Generated ID Format</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">text</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-text\">section_0_abc123def<br>field_0_1_abc123def<br>item_0_2_abc123def</code></pre></div></p><p><h2 id=\"when-to-use\"><a href=\"#when-to-use\" class=\"anchor-link\" aria-hidden=\"true\">#</a>When to Use</h2></p><p><ul><li>Before storing cards</li><li>Before streaming</li><li>Before animations</li><li>When IDs are missing</li></ul>",
+  "toc": [
+    {
+      "id": "ensurecardids",
+      "text": "ensureCardIds",
+      "level": 1
+    },
+    {
+      "id": "purpose",
+      "text": "Purpose",
+      "level": 2
+    },
+    {
+      "id": "usage",
+      "text": "Usage",
+      "level": 2
+    },
+    {
+      "id": "generated-id-format",
+      "text": "Generated ID Format",
+      "level": 2
+    },
+    {
+      "id": "when-to-use",
+      "text": "When to Use",
+      "level": 2
+    }
+  ],
+  "contentHash": "60be036ac5648fb8",
+  "generatedAt": "2025-12-01T09:15:43.798Z",
+  "demoConfigs": {}
+}

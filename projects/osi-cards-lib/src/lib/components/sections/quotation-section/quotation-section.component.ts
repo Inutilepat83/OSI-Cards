@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent } from '../base-section.component';
+import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
 import { CardField } from '../../../models';
 
 type QuotationField = CardField & {
@@ -19,6 +19,13 @@ type QuotationField = CardField & {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class QuotationSectionComponent extends BaseSectionComponent<QuotationField> {
+  /** Narrow text works best in single column */
+  static readonly layoutConfig: SectionLayoutConfig = {
+    preferredColumns: 1,
+    minColumns: 1,
+    maxColumns: 2,
+    expandOnDescriptionLength: 200,
+  };
   get fields(): QuotationField[] {
     return super.getFields() as QuotationField[];
   }

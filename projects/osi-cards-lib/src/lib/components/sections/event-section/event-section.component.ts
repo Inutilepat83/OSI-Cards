@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardItem } from '../../../models';
 import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent } from '../base-section.component';
+import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
 
 interface TimelineEvent extends CardItem {
   date?: string;
@@ -18,6 +18,12 @@ interface TimelineEvent extends CardItem {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EventSectionComponent extends BaseSectionComponent<TimelineEvent> {
+  /** Compact card style */
+  static readonly layoutConfig: SectionLayoutConfig = {
+    preferredColumns: 1,
+    minColumns: 1,
+    maxColumns: 2,
+  };
   get events(): TimelineEvent[] {
     const timeline = (this.section as Record<string, unknown>)['timelineEvents'];
     if (Array.isArray(timeline)) {

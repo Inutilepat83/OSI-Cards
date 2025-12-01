@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
+import { DocsDemoComponent } from '../../components';
 
 const pageContent = `# Event Section
 
@@ -125,15 +126,69 @@ The **Event Section** (\`type: "event"\`) is used for displays chronological eve
 - [Best Practices](/docs/best-practices)
 `;
 
+const demoConfig = {
+  "title": "Upcoming Events",
+  "type": "event",
+  "description": "Scheduled events and milestones",
+  "fields": [
+    {
+      "label": "Product Launch",
+      "value": "Q1 Launch Event",
+      "date": "2025-03-15",
+      "time": "10:00",
+      "category": "Launch",
+      "status": "confirmed"
+    },
+    {
+      "label": "Annual Conference",
+      "value": "User Summit 2025",
+      "date": "2025-06-20",
+      "time": "09:00",
+      "category": "Conference",
+      "status": "planned"
+    },
+    {
+      "label": "Board Meeting",
+      "value": "Q2 Review",
+      "date": "2025-04-10",
+      "time": "14:00",
+      "category": "Internal",
+      "status": "confirmed"
+    }
+  ]
+};
+
+/**
+ * Event Section documentation page with live demo
+ * Auto-generated - modifications may be overwritten
+ */
 @Component({
   selector: 'app-event-page',
   standalone: true,
-  imports: [DocPageComponent],
-  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  imports: [DocPageComponent, DocsDemoComponent],
+  template: `
+    <div class="section-docs">
+      <app-docs-demo 
+        [config]="demo" 
+        [type]="'event'"
+        demoTitle="Live Preview"
+        height="350px"
+      ></app-docs-demo>
+      <app-doc-page [content]="content"></app-doc-page>
+    </div>
+  `,
+  styles: [`
+    .section-docs {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EventPageComponent {
   content = pageContent;
+  demo = demoConfig;
 }
 
 export default EventPageComponent;

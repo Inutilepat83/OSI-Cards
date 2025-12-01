@@ -1,0 +1,50 @@
+{
+  "pageId": "schemas/card-action",
+  "title": "CardAction",
+  "html": "<h1 id=\"cardaction\"><a href=\"#cardaction\" class=\"anchor-link\" aria-hidden=\"true\">#</a>CardAction</h1></p><p>Defines action buttons for cards.</p><p><h2 id=\"overview\"><a href=\"#overview\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Overview</h2></p><p><code>CardAction</code> defines interactive buttons displayed at the bottom of cards. Four action types are supported.</p><p><h2 id=\"action-types\"><a href=\"#action-types\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Action Types</h2></p><p><h3 id=\"mail-action\"><a href=\"#mail-action\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Mail Action</h3>\nOpens email client with pre-filled content.</p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">interface MailCardAction {<br>  type: 'mail';<br>  label: string;<br>  icon?: string;<br>  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';<br>  email: {<br>    contact: { name: string; email: string; role: string };<br>    subject: string;<br>    body: string;<br>    to?: string | string[];<br>    cc?: string | string[];<br>    bcc?: string | string[];<br>  };<br>}</code></pre></div></p><p><h3 id=\"website-action\"><a href=\"#website-action\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Website Action</h3>\nOpens URL in new tab.</p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">interface WebsiteCardAction {<br>  type: 'website';<br>  label: string;<br>  url: string;<br>  icon?: string;<br>  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';<br>}</code></pre></div></p><p><h3 id=\"agent-action\"><a href=\"#agent-action\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Agent Action</h3>\nTriggers agent interaction.</p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">interface AgentCardAction {<br>  type: 'agent';<br>  label: string;<br>  agentId?: string;<br>  agentContext?: Record&amp;lt;string, unknown&amp;gt;;<br>  icon?: string;<br>  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';<br>}</code></pre></div></p><p><h3 id=\"question-action\"><a href=\"#question-action\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Question Action</h3>\nSends question to chat.</p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">interface QuestionCardAction {<br>  type: 'question';<br>  label: string;<br>  question?: string;<br>  icon?: string;<br>  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';<br>}</code></pre></div></p><p><h2 id=\"examples\"><a href=\"#examples\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Examples</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">json</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-json\">[<br>  {<br>    \"label\": \"Contact\",<br>    \"type\": \"mail\",<br>    \"variant\": \"primary\",<br>    \"icon\": \"📧\",<br>    \"email\": {<br>      \"contact\": { \"name\": \"John\", \"email\": \"john@example.com\", \"role\": \"Sales\" },<br>      \"subject\": \"Inquiry\",<br>      \"body\": \"Hello...\"<br>    }<br>  },<br>  {<br>    \"label\": \"Website\",<br>    \"type\": \"website\",<br>    \"variant\": \"secondary\",<br>    \"url\": \"https://example.com\"<br>  }<br>]</code></pre></div>\n",
+  "toc": [
+    {
+      "id": "cardaction",
+      "text": "CardAction",
+      "level": 1
+    },
+    {
+      "id": "overview",
+      "text": "Overview",
+      "level": 2
+    },
+    {
+      "id": "action-types",
+      "text": "Action Types",
+      "level": 2
+    },
+    {
+      "id": "mail-action",
+      "text": "Mail Action",
+      "level": 3
+    },
+    {
+      "id": "website-action",
+      "text": "Website Action",
+      "level": 3
+    },
+    {
+      "id": "agent-action",
+      "text": "Agent Action",
+      "level": 3
+    },
+    {
+      "id": "question-action",
+      "text": "Question Action",
+      "level": 3
+    },
+    {
+      "id": "examples",
+      "text": "Examples",
+      "level": 2
+    }
+  ],
+  "contentHash": "148188b053379137",
+  "generatedAt": "2025-12-01T09:15:43.753Z",
+  "demoConfigs": {}
+}

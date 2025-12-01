@@ -1,0 +1,30 @@
+{
+  "pageId": "utilities/resolve-section-type",
+  "title": "resolveSectionType",
+  "html": "<h1 id=\"resolvesectiontype\"><a href=\"#resolvesectiontype\" class=\"anchor-link\" aria-hidden=\"true\">#</a>resolveSectionType</h1></p><p>Resolve section type aliases.</p><p><h2 id=\"import\"><a href=\"#import\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Import</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">import { resolveSectionType } from 'osi-cards-lib';</code></pre></div></p><p><h2 id=\"usage\"><a href=\"#usage\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Usage</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">resolveSectionType('metrics');   // 'analytics'<br>resolveSectionType('stats');     // 'analytics'<br>resolveSectionType('timeline');  // 'event'<br>resolveSectionType('table');     // 'list'<br>resolveSectionType('locations'); // 'map'<br>resolveSectionType('info');      // 'info' (canonical)</code></pre></div></p><p><h2 id=\"alias-map\"><a href=\"#alias-map\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Alias Map</h2></p><p><div class=\"table-wrapper\"><table><thead><tr><th>Alias</th><th>Resolves To</th></tr></thead><tbody><tr><td>metrics</td><td>analytics</td></tr><tr><td>stats</td><td>analytics</td></tr><tr><td>timeline</td><td>event</td></tr><tr><td>table</td><td>list</td></tr><tr><td>locations</td><td>map</td></tr><tr><td>quote</td><td>quotation</td></tr><tr><td>reference</td><td>text-reference</td></tr><tr><td>text-ref</td><td>text-reference</td></tr><tr><td>brands</td><td>brand-colors</td></tr><tr><td>colors</td><td>brand-colors</td></tr><tr><td>project</td><td>info</td></tr></tbody></table></div>",
+  "toc": [
+    {
+      "id": "resolvesectiontype",
+      "text": "resolveSectionType",
+      "level": 1
+    },
+    {
+      "id": "import",
+      "text": "Import",
+      "level": 2
+    },
+    {
+      "id": "usage",
+      "text": "Usage",
+      "level": 2
+    },
+    {
+      "id": "alias-map",
+      "text": "Alias Map",
+      "level": 2
+    }
+  ],
+  "contentHash": "393422b1600fd66f",
+  "generatedAt": "2025-12-01T09:15:43.800Z",
+  "demoConfigs": {}
+}

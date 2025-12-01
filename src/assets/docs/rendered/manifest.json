@@ -1,0 +1,385 @@
+{
+  "generatedAt": "2025-12-01T09:15:43.801Z",
+  "pages": {
+    "advanced/accessibility": {
+      "hash": "bb86dfc74b5d05ef",
+      "title": "Accessibility (WCAG)",
+      "generatedAt": "2025-12-01T09:15:43.671Z"
+    },
+    "advanced/css-properties": {
+      "hash": "446413425c8e3057",
+      "title": "CSS Custom Properties",
+      "generatedAt": "2025-12-01T09:15:43.674Z"
+    },
+    "advanced/custom-sections": {
+      "hash": "6f23ea2e2f839989",
+      "title": "Custom Section Plugins",
+      "generatedAt": "2025-12-01T09:15:43.675Z"
+    },
+    "advanced/error-patterns": {
+      "hash": "1e66af090d65c30a",
+      "title": "Error Handling Patterns",
+      "generatedAt": "2025-12-01T09:15:43.676Z"
+    },
+    "advanced/event-middleware": {
+      "hash": "b73992d56993e96d",
+      "title": "Event Middleware",
+      "generatedAt": "2025-12-01T09:15:43.677Z"
+    },
+    "advanced/i18n": {
+      "hash": "b8aa844b75453dff",
+      "title": "Internationalization",
+      "generatedAt": "2025-12-01T09:15:43.693Z"
+    },
+    "advanced/performance": {
+      "hash": "5762988cae57d967",
+      "title": "Performance Optimization",
+      "generatedAt": "2025-12-01T09:15:43.697Z"
+    },
+    "advanced/security": {
+      "hash": "7c835312b9ee56d1",
+      "title": "Security Best Practices",
+      "generatedAt": "2025-12-01T09:15:43.698Z"
+    },
+    "advanced/theme-presets": {
+      "hash": "ec291950a1f4a522",
+      "title": "Theme Presets",
+      "generatedAt": "2025-12-01T09:15:43.699Z"
+    },
+    "advanced/theming-overview": {
+      "hash": "b3f91f66f025f09e",
+      "title": "Theming Overview",
+      "generatedAt": "2025-12-01T09:15:43.700Z"
+    },
+    "best-practices": {
+      "hash": "121b00e24099390c",
+      "title": "Best Practices",
+      "generatedAt": "2025-12-01T09:15:43.701Z"
+    },
+    "getting-started": {
+      "hash": "be16720061218f58",
+      "title": "OrangeSales Intelligence OSI Cards",
+      "generatedAt": "2025-12-01T09:15:43.702Z"
+    },
+    "installation": {
+      "hash": "e45f4b3576fa0f7f",
+      "title": "Installation Guide",
+      "generatedAt": "2025-12-01T09:15:43.704Z"
+    },
+    "integration/agent-systems": {
+      "hash": "a5f575196212faa0",
+      "title": "Agent System Integration",
+      "generatedAt": "2025-12-01T09:15:43.705Z"
+    },
+    "integration/angular-18": {
+      "hash": "e93b6a207ec19566",
+      "title": "Angular 18 Integration",
+      "generatedAt": "2025-12-01T09:15:43.717Z"
+    },
+    "integration/angular-20": {
+      "hash": "1a9f283861e73932",
+      "title": "Angular 20 Integration",
+      "generatedAt": "2025-12-01T09:15:43.725Z"
+    },
+    "integration/card-generation-prompt": {
+      "hash": "c5e3291c93032eac",
+      "title": "Card Generation Prompt",
+      "generatedAt": "2025-12-01T09:15:43.726Z"
+    },
+    "integration/card-validation": {
+      "hash": "c9c33dd6b795c27a",
+      "title": "Card Validation",
+      "generatedAt": "2025-12-01T09:15:43.727Z"
+    },
+    "integration/dependencies": {
+      "hash": "18cad1f408a89b28",
+      "title": "Dependency Management",
+      "generatedAt": "2025-12-01T09:15:43.728Z"
+    },
+    "integration/error-recovery": {
+      "hash": "d4f0fb6cadc57772",
+      "title": "Error Recovery Patterns",
+      "generatedAt": "2025-12-01T09:15:43.729Z"
+    },
+    "integration/json-schema-llm": {
+      "hash": "d7df0cf6b140069f",
+      "title": "JSON Schema for LLMs",
+      "generatedAt": "2025-12-01T09:15:43.730Z"
+    },
+    "integration/lazy-loading": {
+      "hash": "6e4734258edaa31c",
+      "title": "Lazy Loading Setup",
+      "generatedAt": "2025-12-01T09:15:43.731Z"
+    },
+    "integration/llm-overview": {
+      "hash": "e975aecd63a59b66",
+      "title": "LLM Overview",
+      "generatedAt": "2025-12-01T09:15:43.732Z"
+    },
+    "integration/module-based": {
+      "hash": "745bb9062acf0e55",
+      "title": "Module-based Integration",
+      "generatedAt": "2025-12-01T09:15:43.733Z"
+    },
+    "integration/npm-installation": {
+      "hash": "5cf3119d4374f4b9",
+      "title": "NPM Installation",
+      "generatedAt": "2025-12-01T09:15:43.734Z"
+    },
+    "integration/prompt-engineering": {
+      "hash": "e990d9cdfab05471",
+      "title": "Prompt Engineering",
+      "generatedAt": "2025-12-01T09:15:43.734Z"
+    },
+    "integration/pwa": {
+      "hash": "88218b5856e0163f",
+      "title": "PWA Integration",
+      "generatedAt": "2025-12-01T09:15:43.735Z"
+    },
+    "integration/quick-start": {
+      "hash": "61c6ae97baec930a",
+      "title": "Quick Start Guide",
+      "generatedAt": "2025-12-01T09:15:43.738Z"
+    },
+    "integration/rate-limiting": {
+      "hash": "e9068180adb1492c",
+      "title": "Rate Limiting",
+      "generatedAt": "2025-12-01T09:15:43.739Z"
+    },
+    "integration/ssr": {
+      "hash": "e677798af2b69876",
+      "title": "SSR Considerations",
+      "generatedAt": "2025-12-01T09:15:43.740Z"
+    },
+    "integration/standalone-components": {
+      "hash": "aca163027a742438",
+      "title": "Standalone Components",
+      "generatedAt": "2025-12-01T09:15:43.741Z"
+    },
+    "integration/streaming-responses": {
+      "hash": "a444176217776dc9",
+      "title": "Streaming Responses",
+      "generatedAt": "2025-12-01T09:15:43.741Z"
+    },
+    "integration/websocket-integration": {
+      "hash": "72459a9134d1f414",
+      "title": "WebSocket Integration",
+      "generatedAt": "2025-12-01T09:15:43.742Z"
+    },
+    "library-docs/agentic-flow": {
+      "hash": "22828b12ac36c576",
+      "title": "OSI Cards Library - Agentic Flow Integration Guide",
+      "generatedAt": "2025-12-01T09:15:43.743Z"
+    },
+    "library-docs/events": {
+      "hash": "6b77c7e62c00baf2",
+      "title": "OSI Cards Library - Event System Guide",
+      "generatedAt": "2025-12-01T09:15:43.747Z"
+    },
+    "library-docs/theming": {
+      "hash": "a8ed92ed6b11f255",
+      "title": "OSI Cards Library - Theming Guide",
+      "generatedAt": "2025-12-01T09:15:43.749Z"
+    },
+    "library-usage": {
+      "hash": "baf8d8f66ffdc67c",
+      "title": "Library Usage Guide",
+      "generatedAt": "2025-12-01T09:15:43.750Z"
+    },
+    "llm-integration": {
+      "hash": "59cbffe7e2311e6f",
+      "title": "LLM Integration",
+      "generatedAt": "2025-12-01T09:15:43.751Z"
+    },
+    "schemas/ai-card-config": {
+      "hash": "05249789a1814c3f",
+      "title": "AICardConfig",
+      "generatedAt": "2025-12-01T09:15:43.752Z"
+    },
+    "schemas/card-action": {
+      "hash": "148188b053379137",
+      "title": "CardAction",
+      "generatedAt": "2025-12-01T09:15:43.753Z"
+    },
+    "schemas/card-field": {
+      "hash": "2313b0187e727861",
+      "title": "CardField",
+      "generatedAt": "2025-12-01T09:15:43.754Z"
+    },
+    "schemas/card-item": {
+      "hash": "834c61be0864b63e",
+      "title": "CardItem",
+      "generatedAt": "2025-12-01T09:15:43.757Z"
+    },
+    "schemas/card-section": {
+      "hash": "6309aa76b6510373",
+      "title": "CardSection",
+      "generatedAt": "2025-12-01T09:15:43.758Z"
+    },
+    "schemas/email-config": {
+      "hash": "872b022d160b4059",
+      "title": "EmailConfig",
+      "generatedAt": "2025-12-01T09:15:43.760Z"
+    },
+    "schemas/type-aliases": {
+      "hash": "e1f2682e6180b1cf",
+      "title": "Type Aliases & Enums",
+      "generatedAt": "2025-12-01T09:15:43.762Z"
+    },
+    "section-types/analytics": {
+      "hash": "b07c1995580971f5",
+      "title": "Analytics Section",
+      "generatedAt": "2025-12-01T09:15:43.763Z"
+    },
+    "section-types/base": {
+      "hash": "bdb395f33cdb0f36",
+      "title": "base Section",
+      "generatedAt": "2025-12-01T09:15:43.764Z"
+    },
+    "section-types/brand-colors": {
+      "hash": "032ac1ed16d8aefb",
+      "title": "Brand Colors Section",
+      "generatedAt": "2025-12-01T09:15:43.764Z"
+    },
+    "section-types/chart": {
+      "hash": "a9a30340146b331c",
+      "title": "Chart Section",
+      "generatedAt": "2025-12-01T09:15:43.765Z"
+    },
+    "section-types/contact-card": {
+      "hash": "ff83bd0db163e1ee",
+      "title": "Contact Card Section",
+      "generatedAt": "2025-12-01T09:15:43.766Z"
+    },
+    "section-types/event": {
+      "hash": "cb8a24b08ffd2db7",
+      "title": "Event Section",
+      "generatedAt": "2025-12-01T09:15:43.767Z"
+    },
+    "section-types/financials": {
+      "hash": "127a4d300ac158f7",
+      "title": "Financials Section",
+      "generatedAt": "2025-12-01T09:15:43.770Z"
+    },
+    "section-types/info": {
+      "hash": "bf437a9a52315aec",
+      "title": "Info Section",
+      "generatedAt": "2025-12-01T09:15:43.772Z"
+    },
+    "section-types/list": {
+      "hash": "5436236ca85c725a",
+      "title": "List Section",
+      "generatedAt": "2025-12-01T09:15:43.773Z"
+    },
+    "section-types/map": {
+      "hash": "43a66897d665f39c",
+      "title": "Map Section",
+      "generatedAt": "2025-12-01T09:15:43.775Z"
+    },
+    "section-types/network-card": {
+      "hash": "2c840eabafc76fa7",
+      "title": "Network Card Section",
+      "generatedAt": "2025-12-01T09:15:43.776Z"
+    },
+    "section-types/news": {
+      "hash": "26d87c073abb6a92",
+      "title": "News Section",
+      "generatedAt": "2025-12-01T09:15:43.776Z"
+    },
+    "section-types/overview": {
+      "hash": "f52acedd0ec7f4fc",
+      "title": "Overview Section",
+      "generatedAt": "2025-12-01T09:15:43.778Z"
+    },
+    "section-types/product": {
+      "hash": "194b79e96a42ffb9",
+      "title": "Product Section",
+      "generatedAt": "2025-12-01T09:15:43.779Z"
+    },
+    "section-types/quotation": {
+      "hash": "f7eac63276c15b4c",
+      "title": "Quotation Section",
+      "generatedAt": "2025-12-01T09:15:43.780Z"
+    },
+    "section-types/social-media": {
+      "hash": "b59bd849c66e15d9",
+      "title": "Social Media Section",
+      "generatedAt": "2025-12-01T09:15:43.780Z"
+    },
+    "section-types/solutions": {
+      "hash": "d53071c14c5ba01d",
+      "title": "Solutions Section",
+      "generatedAt": "2025-12-01T09:15:43.784Z"
+    },
+    "section-types/text-reference": {
+      "hash": "93abe261d5ea9efa",
+      "title": "Text Reference Section",
+      "generatedAt": "2025-12-01T09:15:43.787Z"
+    },
+    "streaming/card-updates": {
+      "hash": "e2c3341148dc203a",
+      "title": "Card Updates",
+      "generatedAt": "2025-12-01T09:15:43.789Z"
+    },
+    "streaming/config": {
+      "hash": "05dc586748a1e4d8",
+      "title": "StreamingConfig",
+      "generatedAt": "2025-12-01T09:15:43.790Z"
+    },
+    "streaming/error-handling": {
+      "hash": "d29891babba11b41",
+      "title": "Streaming Error Handling",
+      "generatedAt": "2025-12-01T09:15:43.791Z"
+    },
+    "streaming/lifecycle": {
+      "hash": "3fbbb866bc94b612",
+      "title": "Streaming Lifecycle",
+      "generatedAt": "2025-12-01T09:15:43.792Z"
+    },
+    "streaming/overview": {
+      "hash": "2e2fd3a4d4855af5",
+      "title": "Streaming Overview",
+      "generatedAt": "2025-12-01T09:15:43.792Z"
+    },
+    "streaming/progressive-rendering": {
+      "hash": "debe07c8c1736838",
+      "title": "Progressive Rendering",
+      "generatedAt": "2025-12-01T09:15:43.793Z"
+    },
+    "streaming/state": {
+      "hash": "46678c5c820d95e2",
+      "title": "StreamingState",
+      "generatedAt": "2025-12-01T09:15:43.793Z"
+    },
+    "utilities/card-type-guards": {
+      "hash": "e0d4e7174e776a3a",
+      "title": "CardTypeGuards",
+      "generatedAt": "2025-12-01T09:15:43.794Z"
+    },
+    "utilities/card-utils": {
+      "hash": "c9a4f988fa03460f",
+      "title": "CardUtils",
+      "generatedAt": "2025-12-01T09:15:43.796Z"
+    },
+    "utilities/ensure-card-ids": {
+      "hash": "60be036ac5648fb8",
+      "title": "ensureCardIds",
+      "generatedAt": "2025-12-01T09:15:43.798Z"
+    },
+    "utilities/is-valid-section-type": {
+      "hash": "8050589ee5163a3c",
+      "title": "isValidSectionType",
+      "generatedAt": "2025-12-01T09:15:43.799Z"
+    },
+    "utilities/resolve-section-type": {
+      "hash": "393422b1600fd66f",
+      "title": "resolveSectionType",
+      "generatedAt": "2025-12-01T09:15:43.800Z"
+    },
+    "utilities/sanitize-card-config": {
+      "hash": "e2afc8393dd74214",
+      "title": "sanitizeCardConfig",
+      "generatedAt": "2025-12-01T09:15:43.801Z"
+    }
+  }
+}

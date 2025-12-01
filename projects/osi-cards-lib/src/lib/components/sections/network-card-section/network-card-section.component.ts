@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardField } from '../../../models';
 import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent } from '../base-section.component';
+import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
 
 type NetworkField = CardField;
 
@@ -14,6 +14,12 @@ type NetworkField = CardField;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NetworkCardSectionComponent extends BaseSectionComponent<NetworkField> {
+  /** Compact network card */
+  static readonly layoutConfig: SectionLayoutConfig = {
+    preferredColumns: 1,
+    minColumns: 1,
+    maxColumns: 2,
+  };
   get fields(): NetworkField[] {
     return super.getFields();
   }

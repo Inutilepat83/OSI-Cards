@@ -18,7 +18,7 @@
 }
 
 .analytics-metric {
-  @include card;
+  // All declarations must come BEFORE @include card (which contains nested rules)
   min-height: auto !important;
   justify-content: space-between !important;
   display: flex !important;
@@ -31,6 +31,9 @@
   box-sizing: border-box !important;
   text-align: left !important;
   background: var(--card-background, #fafafa) !important;
+
+  // Include mixin after all declarations
+  @include card;
 
   &::before {
     content: '' !important;
@@ -91,7 +94,6 @@
   }
 
   &__label {
-    @include label-text;
     display: flex !important;
     align-items: center !important;
     gap: calc(var(--card-gap) * 0.5) !important;
@@ -105,15 +107,16 @@
     transition: color 0.22s ease !important;
     font-family: inherit !important;
 
+    @include label-text;
+
     lucide-icon {
-      @include icon-base(14px);
       flex-shrink: 0 !important;
       transition: color 0.22s ease !important;
+      @include icon-base(14px);
     }
   }
 
   &__value {
-    @include value-text-lg;
     margin: 0 !important;
     color: var(--color-brand, $brand-color) !important;
     font-weight: 700 !important;
@@ -126,6 +129,8 @@
     font-family: inherit !important;
     border: none !important;
     padding: 0 !important;
+
+    @include value-text-lg;
   }
 
   &:hover .analytics-metric__label lucide-icon {
@@ -133,13 +138,14 @@
   }
 
   &__progress {
-    @include progress-bar;
     margin: calc(var(--card-gap) * 0.75) 0 calc(var(--card-gap) * 0.5) 0 !important;
     height: 6px !important;
     border-radius: 2px !important;
     background: linear-gradient(90deg, transparent, $brand-color-10, transparent) !important;
     box-shadow: 0 0 8px $brand-color-20 !important;
     overflow: hidden !important;
+
+    @include progress-bar;
 
     .section-card__progress-bar {
       height: 100% !important;
@@ -165,12 +171,12 @@
     font-family: inherit !important;
 
     lucide-icon {
-      @include icon-base(16px);
-      @include trend-colors;
       flex-shrink: 0 !important;
       opacity: 0.8 !important;
       color: var(--color-brand, $brand-color) !important;
       transition: opacity 0.25s ease, color 0.25s ease !important;
+      @include icon-base(16px);
+      @include trend-colors;
     }
   }
   
@@ -183,10 +189,10 @@
   }
 
   &__meta-change {
-    @include trend-colors;
     font-weight: 600 !important;
     font-size: var(--card-meta-font-size, 0.6rem) !important;
     font-family: inherit !important;
+    @include trend-colors;
   }
 }
 

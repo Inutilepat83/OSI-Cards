@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, inject, Output } from
 import { CommonModule } from '@angular/common';
 import { CardField } from '../../models';
 import { LucideIconsModule } from '../../icons';
-import { BaseSectionComponent } from './base-section.component';
+import { BaseSectionComponent, SectionLayoutConfig } from './base-section.component';
 import { SectionUtilsService } from '../../services';
 
 type InfoField = CardField & {
@@ -24,6 +24,14 @@ export interface InfoSectionFieldInteraction {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InfoSectionComponent extends BaseSectionComponent<InfoField> {
+  /** Simple content, compact by default */
+  static readonly layoutConfig: SectionLayoutConfig = {
+    preferredColumns: 1,
+    minColumns: 1,
+    maxColumns: 2,
+    expandOnFieldCount: 6,
+    expandOnDescriptionLength: 300,
+  };
   private readonly utils = inject(SectionUtilsService);
   
   // Custom output for backward compatibility with InfoSectionFieldInteraction format

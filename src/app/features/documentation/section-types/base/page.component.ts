@@ -1,64 +1,107 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
+import { DocsDemoComponent } from '../../components';
 
-const pageContent = `# Base (Fallback) Section
+const pageContent = `# base Section
 
-The fallback section for unknown or custom section types.
+Documentation for base section type.
+
+## Overview
+
+The **base Section** is used for documentation for base section type.
 
 ## Use Cases
 
-- Unknown section types
-- Custom sections
-- Raw data display
-- Debugging
 
-## Schema
+
+## Data Schema
 
 \`\`\`typescript
-interface BaseSection {
-  type: string;  // Any type not matching known types
+interface CardSection {
   title: string;
-  [key: string]: any;  // Arbitrary additional properties
+  type: 'base';
+  fields?: CardField[];
+  
 }
 \`\`\`
 
 ## Example
 
-\`\`\`typescript
-const customSection = {
-  title: 'Custom Data',
-  type: 'custom-widget',  // Unknown type → renders as base
-  data: { /* arbitrary data */ }
-};
+\`\`\`json
+{
+  "title": "base Section Example",
+  "type": "base",
+  "fields": [
+    {
+      "label": "Example Label",
+      "value": "Example Value"
+    }
+  ]
+}
 \`\`\`
 
-## Behavior
+## Best Practices
 
-When a section type is not recognized:
-1. The section is rendered using the base template
-2. A warning is logged (dev mode)
-3. Available data is displayed in a simple format
 
-## Custom Section Plugins
 
-To handle custom types, register a plugin:
+## Component Properties
 
-\`\`\`typescript
-sectionPluginRegistry.register('custom-widget', CustomWidgetComponent);
-\`\`\`
 
-See [Custom Sections](/docs/advanced/custom-sections) for details.
+### Outputs
+
+- **fieldInteraction**: Output event
+- **itemInteraction**: Output event
+
+
+## Related Documentation
+
+- [All Section Types](/docs/section-types)
+- [Card Configuration](/docs/api/models/aicardconfig)
+- [Best Practices](/docs/best-practices)
 `;
 
+const demoConfig = {
+  "title": "base Section Example",
+  "type": "base",
+  "fields": [
+    {
+      "label": "Example Label",
+      "value": "Example Value"
+    }
+  ]
+};
+
+/**
+ * Base Section documentation page with live demo
+ * Auto-generated - modifications may be overwritten
+ */
 @Component({
-  selector: 'app-section-types-base-page',
+  selector: 'app-base-page',
   standalone: true,
-  imports: [DocPageComponent],
-  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  imports: [DocPageComponent, DocsDemoComponent],
+  template: `
+    <div class="section-docs">
+      <app-docs-demo 
+        [config]="demo" 
+        [type]="'base'"
+        demoTitle="Live Preview"
+        height="350px"
+      ></app-docs-demo>
+      <app-doc-page [content]="content"></app-doc-page>
+    </div>
+  `,
+  styles: [`
+    .section-docs {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SectionTypesBasePageComponent {
+export class BasePageComponent {
   content = pageContent;
+  demo = demoConfig;
 }
 
-export default SectionTypesBasePageComponent;
+export default BasePageComponent;

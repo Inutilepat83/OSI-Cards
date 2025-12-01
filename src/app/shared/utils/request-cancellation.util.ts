@@ -113,7 +113,7 @@ export class RequestManager {
 /**
  * Add AbortSignal to HTTP request
  */
-export function addAbortSignal<T>(request: HttpRequest<T>, signal: AbortSignal): HttpRequest<T> {
+export function addAbortSignal<T>(request: HttpRequest<T>, _signal: AbortSignal): HttpRequest<T> {
   return request.clone({
     setHeaders: {
       // AbortSignal is handled via request options, not headers

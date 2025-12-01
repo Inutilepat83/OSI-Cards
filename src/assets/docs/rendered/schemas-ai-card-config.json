@@ -1,0 +1,70 @@
+{
+  "pageId": "schemas/ai-card-config",
+  "title": "AICardConfig",
+  "html": "<h1 id=\"aicardconfig\"><a href=\"#aicardconfig\" class=\"anchor-link\" aria-hidden=\"true\">#</a>AICardConfig</h1></p><p>The main configuration interface for OSI Cards.</p><p><h2 id=\"overview\"><a href=\"#overview\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Overview</h2></p><p><code>AICardConfig</code> is the primary interface that defines the structure of a card. Every card in OSI Cards must conform to this interface.</p><p><h2 id=\"interface-definition\"><a href=\"#interface-definition\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Interface Definition</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">interface AICardConfig {<br>  id?: string;<br>  cardTitle: string;<br>  cardType?: CardType;<br>  description?: string;<br>  columns?: 1 | 2 | 3;<br>  sections: CardSection[];<br>  actions?: CardAction[];<br>  meta?: Record&amp;lt;string, unknown&amp;gt;;<br>  processedAt?: number;<br>  displayOrder?: number;<br>}</code></pre></div></p><p><h2 id=\"properties\"><a href=\"#properties\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Properties</h2></p><p><div class=\"table-wrapper\"><table><thead><tr><th>Property</th><th>Type</th><th>Required</th><th>Description</th></tr></thead><tbody><tr><td><code>id</code></td><td>string</td><td>No</td><td>Unique identifier for the card</td></tr><tr><td><code>cardTitle</code></td><td>string</td><td><strong>Yes</strong></td><td>Main title displayed on the card</td></tr><tr><td><code>cardType</code></td><td>CardType</td><td>No</td><td>Card category (company, contact, etc.)</td></tr><tr><td><code>description</code></td><td>string</td><td>No</td><td>Card description/subtitle</td></tr><tr><td><code>columns</code></td><td>1 \\</td><td>2 \\</td><td>3</td><td>No</td><td>Number of columns for section layout</td></tr><tr><td><code>sections</code></td><td>CardSection[]</td><td><strong>Yes</strong></td><td>Array of sections composing the card</td></tr><tr><td><code>actions</code></td><td>CardAction[]</td><td>No</td><td>Action buttons at card bottom</td></tr><tr><td><code>meta</code></td><td>Record&lt;string, unknown&gt;</td><td>No</td><td>Additional metadata</td></tr><tr><td><code>processedAt</code></td><td>number</td><td>No</td><td>Processing timestamp</td></tr><tr><td><code>displayOrder</code></td><td>number</td><td>No</td><td>Order for drag-and-drop</td></tr></tbody></table></div>\n<h2 id=\"example\"><a href=\"#example\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Example</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">json</span><div class=\"code-actions\"><button class=\"live-demo-btn\" type=\"button\" data-demo-id=\"demo-0\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"5 3 19 12 5 21 5 3\"></polygon></svg>Live Demo</button><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-json\">{<br>  \"cardTitle\": \"Acme Corporation\",<br>  \"cardType\": \"company\",<br>  \"description\": \"Technology Solutions Provider\",<br>  \"columns\": 2,<br>  \"sections\": [<br>    {<br>      \"title\": \"Company Info\",<br>      \"type\": \"info\",<br>      \"fields\": [<br>        { \"label\": \"Industry\", \"value\": \"Technology\" },<br>        { \"label\": \"Founded\", \"value\": \"2010\" }<br>      ]<br>    }<br>  ],<br>  \"actions\": [<br>    { \"label\": \"Visit Website\", \"type\": \"website\", \"url\": \"https://acme.com\" }<br>  ]<br>}</code></pre></div><div id=\"demo-container-demo-0\" class=\"live-demo-container\"></div></p><p><h2 id=\"related\"><a href=\"#related\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Related</h2></p><p><ul><li><a href=\"#cardsection\">CardSection</a></li><li><a href=\"#cardaction\">CardAction</a></li><li><a href=\"/docs/section-types\">Section Types</a></li></ul>",
+  "toc": [
+    {
+      "id": "aicardconfig",
+      "text": "AICardConfig",
+      "level": 1
+    },
+    {
+      "id": "overview",
+      "text": "Overview",
+      "level": 2
+    },
+    {
+      "id": "interface-definition",
+      "text": "Interface Definition",
+      "level": 2
+    },
+    {
+      "id": "properties",
+      "text": "Properties",
+      "level": 2
+    },
+    {
+      "id": "example",
+      "text": "Example",
+      "level": 2
+    },
+    {
+      "id": "related",
+      "text": "Related",
+      "level": 2
+    }
+  ],
+  "contentHash": "05249789a1814c3f",
+  "generatedAt": "2025-12-01T09:15:43.752Z",
+  "demoConfigs": {
+    "demo-0": {
+      "cardTitle": "Acme Corporation",
+      "cardType": "company",
+      "description": "Technology Solutions Provider",
+      "columns": 2,
+      "sections": [
+        {
+          "title": "Company Info",
+          "type": "info",
+          "fields": [
+            {
+              "label": "Industry",
+              "value": "Technology"
+            },
+            {
+              "label": "Founded",
+              "value": "2010"
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "label": "Visit Website",
+          "type": "website",
+          "url": "https://acme.com"
+        }
+      ]
+    }
+  }
+}

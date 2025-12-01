@@ -239,8 +239,8 @@ export class ExportService {
   }
 
   /**
-   * Export card as PNG using native browser APIs (SVG foreignObject + Canvas)
-   * No external libraries required - uses only native browser APIs
+   * Export card as PNG using dom-to-image-more library
+   * This library has better support for modern CSS including color-mix() and oklab()
    */
   async exportAsPngNative(element: HTMLElement, filename?: string, scale = 2): Promise<void> {
     try {
@@ -248,12 +248,12 @@ export class ExportService {
         throw new Error('Element is required for PNG export');
       }
 
-      this.logger.info('Starting PNG export', 'ExportService', { 
+      this.logger.info('Starting PNG export with dom-to-image-more', 'ExportService', { 
         elementTag: element.tagName,
         elementClass: element.className 
       });
 
-      // Get dimensions - use getBoundingClientRect for more accurate measurements
+      // Get dimensions for logging
       const rect = element.getBoundingClientRect();
       const width = Math.max(rect.width, element.offsetWidth || element.clientWidth || 0);
       const height = Math.max(rect.height, element.offsetHeight || element.clientHeight || 0);
@@ -264,141 +264,299 @@ export class ExportService {
 
       this.logger.info('Element dimensions', 'ExportService', { width, height, scale });
 
-      const scaledWidth = Math.floor(width * scale);
-      const scaledHeight = Math.floor(height * scale);
+      // Dynamic import of dom-to-image-more
+      const domToImage = await import('dom-to-image-more');
 
-      // Clone the element deeply to preserve all styles
-      const clonedElement = element.cloneNode(true) as HTMLElement;
+      // Use dom-to-image-more to capture the element as PNG
+      const dataUrl = await domToImage.toPng(element, {
+        quality: 1,
+        bgcolor: '#ffffff',
+        width: width * scale,
+        height: height * scale,
+        style: {
+          transform: `scale(${scale})`,
+          transformOrigin: 'top left',
+        }
+      });
+
+      // Download the PNG
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = filename || 'card.png';
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
       
-      // Create an off-screen container to render the cloned element
-      const offscreenContainer = document.createElement('div');
-      offscreenContainer.style.position = 'absolute';
-      offscreenContainer.style.left = '-9999px';
-      offscreenContainer.style.top = '0';
-      offscreenContainer.style.width = `${scaledWidth}px`;
-      offscreenContainer.style.height = `${scaledHeight}px`;
-      offscreenContainer.style.overflow = 'hidden';
-      offscreenContainer.style.backgroundColor = '#ffffff';
-      
-      // Style the cloned element
-      clonedElement.style.width = `${width}px`;
-      clonedElement.style.height = `${height}px`;
-      clonedElement.style.transform = `scale(${scale})`;
-      clonedElement.style.transformOrigin = 'top left';
-      clonedElement.style.position = 'relative';
-      
-      // Append to offscreen container and document
-      offscreenContainer.appendChild(clonedElement);
-      document.body.appendChild(offscreenContainer);
+      // Cleanup
+      setTimeout(() => {
+        document.body.removeChild(link);
+      }, 100);
 
-      // Wait for rendering
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      try {
-        // Create SVG with foreignObject
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('width', String(scaledWidth));
-        svg.setAttribute('height', String(scaledHeight));
-        svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-
-        const foreignObject = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
-        foreignObject.setAttribute('width', String(scaledWidth));
-        foreignObject.setAttribute('height', String(scaledHeight));
-        foreignObject.setAttribute('x', '0');
-        foreignObject.setAttribute('y', '0');
-
-        // Clone again for SVG (need fresh clone)
-        const svgClone = offscreenContainer.cloneNode(true) as HTMLElement;
-        svgClone.style.position = 'static';
-        svgClone.style.left = 'auto';
-        svgClone.style.top = 'auto';
-        foreignObject.appendChild(svgClone);
-        svg.appendChild(foreignObject);
-
-        // Serialize SVG
-        const serializer = new XMLSerializer();
-        const svgString = serializer.serializeToString(svg);
-        
-        // Create SVG data URL
-        const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-        const svgDataUrl = URL.createObjectURL(svgBlob);
-
-        // Convert SVG to PNG via canvas
-        return new Promise<void>((resolve, reject) => {
-          const img = new Image();
-          
-          img.onload = () => {
-            try {
-              const canvas = document.createElement('canvas');
-              canvas.width = scaledWidth;
-              canvas.height = scaledHeight;
-              const ctx = canvas.getContext('2d', { willReadFrequently: false });
-              
-              if (!ctx) {
-                throw new Error('Failed to get canvas context');
-              }
-
-              // Fill white background
-              ctx.fillStyle = '#ffffff';
-              ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-              // Draw the image
-              ctx.drawImage(img, 0, 0, scaledWidth, scaledHeight);
-
-              // Convert to PNG
-              canvas.toBlob((blob) => {
-                // Cleanup
-                document.body.removeChild(offscreenContainer);
-                URL.revokeObjectURL(svgDataUrl);
-
-                if (!blob) {
-                  reject(new Error('Failed to create PNG blob'));
-                  return;
-                }
-
-                // Download
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = filename || 'card.png';
-                link.style.display = 'none';
-                document.body.appendChild(link);
-                link.click();
-                
-                // Cleanup after a delay to ensure download starts
-                setTimeout(() => {
-                  document.body.removeChild(link);
-                  URL.revokeObjectURL(url);
-                }, 100);
-
-                this.logger.info('Card exported as PNG successfully', 'ExportService', { filename });
-                resolve();
-              }, 'image/png');
-            } catch (error) {
-              document.body.removeChild(offscreenContainer);
-              URL.revokeObjectURL(svgDataUrl);
-              this.logger.error('Failed to create PNG from canvas', 'ExportService', error);
-              reject(error);
-            }
-          };
-
-          img.onerror = (error) => {
-            document.body.removeChild(offscreenContainer);
-            URL.revokeObjectURL(svgDataUrl);
-            this.logger.error('Failed to load SVG image', 'ExportService', error);
-            reject(new Error('Failed to load SVG image for conversion'));
-          };
-
-          img.src = svgDataUrl;
-        });
-      } catch (error) {
-        document.body.removeChild(offscreenContainer);
-        throw error;
-      }
+      this.logger.info('Card exported as PNG successfully', 'ExportService', { filename });
     } catch (error) {
       this.logger.error('Failed to export as PNG', 'ExportService', error);
       throw error;
     }
+  }
+
+  /**
+   * Create an exportable clone of the element with all styles inlined
+   * This avoids html2canvas parsing issues with modern CSS functions like color-mix()
+   */
+  private async createExportableClone(element: HTMLElement, scale: number): Promise<{ container: HTMLElement; cleanup: () => void }> {
+    const rect = element.getBoundingClientRect();
+    const width = rect.width * scale;
+    const height = rect.height * scale;
+
+    // Create an off-screen container
+    const container = document.createElement('div');
+    container.style.position = 'fixed';
+    container.style.left = '-9999px';
+    container.style.top = '0';
+    container.style.width = `${width}px`;
+    container.style.height = `${height}px`;
+    container.style.overflow = 'visible';
+    container.style.backgroundColor = '#ffffff';
+    container.style.zIndex = '-9999';
+
+    // Deep clone the element
+    const clone = element.cloneNode(true) as HTMLElement;
+    clone.style.transform = `scale(${scale})`;
+    clone.style.transformOrigin = 'top left';
+    clone.style.width = `${rect.width}px`;
+    clone.style.height = `${rect.height}px`;
+    clone.style.position = 'absolute';
+    clone.style.top = '0';
+    clone.style.left = '0';
+
+    // Inline all computed styles to avoid CSS parsing
+    this.deepInlineStyles(element, clone);
+
+    container.appendChild(clone);
+    document.body.appendChild(container);
+
+    // Wait for rendering
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+    return {
+      container,
+      cleanup: () => {
+        if (container.parentNode) {
+          container.parentNode.removeChild(container);
+        }
+      }
+    };
+  }
+
+  /**
+   * Recursively inline computed styles from source to clone
+   */
+  private deepInlineStyles(source: Element, clone: Element): void {
+    if (!(source instanceof HTMLElement) || !(clone instanceof HTMLElement)) {
+      return;
+    }
+
+    // Get computed styles from the original element
+    const computedStyle = window.getComputedStyle(source);
+    
+    // List of important visual properties to inline
+    const propertiesToInline = [
+      'color', 'background-color', 'background-image', 'background',
+      'border', 'border-color', 'border-width', 'border-style', 'border-radius',
+      'box-shadow', 'text-shadow', 'outline', 'outline-color',
+      'font-family', 'font-size', 'font-weight', 'font-style',
+      'line-height', 'letter-spacing', 'text-align', 'text-decoration',
+      'padding', 'margin', 'width', 'height', 'min-width', 'min-height',
+      'max-width', 'max-height', 'display', 'flex-direction', 'justify-content',
+      'align-items', 'gap', 'grid-template-columns', 'grid-template-rows',
+      'opacity', 'visibility', 'overflow', 'position',
+      'fill', 'stroke', 'stroke-width'
+    ];
+
+    for (const prop of propertiesToInline) {
+      const value = computedStyle.getPropertyValue(prop);
+      if (value && value !== 'none' && value !== 'normal' && value !== 'auto') {
+        // Sanitize value - replace any color-mix or unsupported functions
+        const sanitizedValue = this.sanitizeStyleValue(value);
+        try {
+          clone.style.setProperty(prop, sanitizedValue);
+        } catch {
+          // Ignore if setting fails
+        }
+      }
+    }
+
+    // Process children recursively
+    const sourceChildren = source.children;
+    const cloneChildren = clone.children;
+    for (let i = 0; i < sourceChildren.length && i < cloneChildren.length; i++) {
+      const sourceChild = sourceChildren[i];
+      const cloneChild = cloneChildren[i];
+      if (sourceChild && cloneChild) {
+        this.deepInlineStyles(sourceChild, cloneChild);
+      }
+    }
+  }
+
+  /**
+   * Sanitize a CSS style value, replacing unsupported functions
+   */
+  private sanitizeStyleValue(value: string): string {
+    if (!value) return value;
+    
+    // Replace color-mix() with fallback
+    let sanitized = this.replaceColorMix(value);
+    
+    // Replace oklab() with rgb fallback (convert to a neutral color)
+    sanitized = sanitized.replace(/oklab\([^)]+\)/gi, 'rgb(128, 128, 128)');
+    
+    return sanitized;
+  }
+
+  /**
+   * Download canvas as PNG
+   */
+  private downloadCanvas(canvas: HTMLCanvasElement, filename?: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          reject(new Error('Failed to create PNG blob'));
+          return;
+        }
+
+        // Download using data URL to avoid CSP issues
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const dataUrl = reader.result as string;
+          const link = document.createElement('a');
+          link.href = dataUrl;
+          link.download = filename || 'card.png';
+          link.style.display = 'none';
+          document.body.appendChild(link);
+          link.click();
+          
+          // Cleanup after a delay to ensure download starts
+          setTimeout(() => {
+            document.body.removeChild(link);
+          }, 100);
+
+          this.logger.info('Card exported as PNG successfully', 'ExportService', { filename });
+          resolve();
+        };
+        reader.onerror = () => {
+          reject(new Error('Failed to read PNG blob'));
+        };
+        reader.readAsDataURL(blob);
+      }, 'image/png');
+    });
+  }
+
+  /**
+   * Sanitize unsupported CSS properties in cloned document for html2canvas
+   * Replaces color-mix() and other modern CSS functions with fallback values
+   */
+  private sanitizeUnsupportedCSS(doc: Document): void {
+    // Process all style elements
+    const styleElements = doc.querySelectorAll('style');
+    styleElements.forEach(style => {
+      if (style.textContent) {
+        style.textContent = this.replaceColorMix(style.textContent);
+      }
+    });
+
+    // Process inline styles on all elements
+    const allElements = doc.querySelectorAll('*');
+    allElements.forEach(el => {
+      const htmlEl = el as HTMLElement;
+      if (htmlEl.style && htmlEl.style.cssText) {
+        htmlEl.style.cssText = this.replaceColorMix(htmlEl.style.cssText);
+      }
+      
+      // Also check the style attribute directly
+      const styleAttr = htmlEl.getAttribute('style');
+      if (styleAttr && styleAttr.includes('color-mix')) {
+        htmlEl.setAttribute('style', this.replaceColorMix(styleAttr));
+      }
+    });
+  }
+
+  /**
+   * Replace color-mix() CSS function with a fallback color
+   * color-mix(in srgb, color1 percentage, color2) -> extracts color1 as fallback
+   */
+  private replaceColorMix(css: string): string {
+    // Match color-mix(in srgb, color percentage, transparent/color)
+    // Replace with the first color as a reasonable fallback
+    return css.replace(
+      /color-mix\s*\(\s*in\s+\w+\s*,\s*([^,]+?)\s+\d+%?\s*,\s*[^)]+\)/gi,
+      (match, color) => {
+        // Extract the color value, removing any percentage
+        const cleanColor = color.trim().replace(/\s+\d+%$/, '');
+        
+        // If it's a CSS variable, try to provide a reasonable fallback
+        if (cleanColor.startsWith('var(')) {
+          // Extract fallback from var() if present, or use a default
+          const varMatch = cleanColor.match(/var\([^,]+,\s*([^)]+)\)/);
+          if (varMatch) {
+            return varMatch[1].trim();
+          }
+          // Common fallbacks for known variables
+          if (cleanColor.includes('--color-brand')) return '#FF7900';
+          if (cleanColor.includes('--primary')) return '#FF7900';
+          if (cleanColor.includes('--foreground')) return '#1c1c1f';
+          if (cleanColor.includes('--background')) return '#ffffff';
+          if (cleanColor.includes('--muted')) return '#f4f4f6';
+          if (cleanColor.includes('--border')) return 'rgba(200,200,200,0.5)';
+          if (cleanColor.includes('--card')) return '#fefefe';
+          return 'inherit';
+        }
+        
+        return cleanColor;
+      }
+    );
+  }
+
+  /**
+   * Inline computed styles on elements to avoid CSS parsing issues with modern functions
+   * This ensures html2canvas can properly render elements without parsing color-mix() etc.
+   */
+  private inlineComputedStyles(element: HTMLElement, doc: Document): void {
+    const walker = doc.createTreeWalker(element, NodeFilter.SHOW_ELEMENT);
+    let node: Node | null = walker.currentNode;
+    
+    // Properties that commonly use color-mix and need special handling
+    const colorProperties = [
+      'color', 'backgroundColor', 'borderColor', 'borderTopColor', 
+      'borderRightColor', 'borderBottomColor', 'borderLeftColor',
+      'outlineColor', 'boxShadow', 'textShadow', 'fill', 'stroke'
+    ];
+    
+    while (node) {
+      if (node instanceof HTMLElement) {
+        const computedStyle = window.getComputedStyle(node);
+        
+        // Only inline specific color properties to avoid breaking layout
+        for (const prop of colorProperties) {
+          const value = computedStyle.getPropertyValue(this.camelToKebab(prop));
+          if (value && !value.includes('color-mix') && !value.includes('oklab')) {
+            // Only set if the value is a valid color (not complex functions)
+            try {
+              node.style.setProperty(this.camelToKebab(prop), value);
+            } catch {
+              // Ignore invalid values
+            }
+          }
+        }
+      }
+      node = walker.nextNode();
+    }
+  }
+
+  /**
+   * Convert camelCase to kebab-case for CSS properties
+   */
+  private camelToKebab(str: string): string {
+    return str.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
   }
 
   /**

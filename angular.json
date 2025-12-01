@@ -34,7 +34,36 @@
               "src/styles.scss",
               "src/styles.css"
             ],
+            "stylePreprocessorOptions": {
+              "sass": {
+                "silenceDeprecations": ["import", "mixed-decls"]
+              }
+            },
             "scripts": [],
+            "allowedCommonJsDependencies": [
+              "html2canvas",
+              "dompurify",
+              "dom-to-image-more",
+              "raf",
+              "rgbcolor",
+              "canvg",
+              "core-js",
+              "core-js/modules/es.promise.js",
+              "core-js/modules/es.string.match.js",
+              "core-js/modules/es.string.replace.js",
+              "core-js/modules/es.string.starts-with.js",
+              "core-js/modules/es.array.iterator.js",
+              "core-js/modules/web.dom-collections.iterator.js",
+              "core-js/modules/es.array.reduce.js",
+              "core-js/modules/es.string.ends-with.js",
+              "core-js/modules/es.string.split.js",
+              "core-js/modules/es.string.trim.js",
+              "core-js/modules/es.array.index-of.js",
+              "core-js/modules/es.string.includes.js",
+              "core-js/modules/es.array.reverse.js",
+              "core-js/modules/es.regexp.to-string.js",
+              "jspdf"
+            ],
             "budgets": [
               {
                 "type": "initial",
@@ -43,18 +72,29 @@
               },
               {
                 "type": "anyComponentStyle",
-                "maximumWarning": "200kb",
-                "maximumError": "500kb"
+                "maximumWarning": "400kb",
+                "maximumError": "600kb"
               },
               {
                 "type": "bundle",
                 "maximumWarning": "500kb",
                 "maximumError": "1mb"
+              },
+              {
+                "type": "bundle",
+                "name": "*ai-card*",
+                "maximumWarning": "350kb",
+                "maximumError": "500kb"
               }
             ]
           },
           "configurations": {
             "production": {
+              "stylePreprocessorOptions": {
+                "sass": {
+                  "silenceDeprecations": ["import", "mixed-decls"]
+                }
+              },
               "budgets": [
                 {
                   "type": "initial",
@@ -63,13 +103,19 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "200kb",
-                  "maximumError": "500kb"
+                  "maximumWarning": "400kb",
+                  "maximumError": "600kb"
                 },
                 {
                   "type": "bundle",
                   "maximumWarning": "500kb",
                   "maximumError": "1mb"
+                },
+                {
+                  "type": "bundle",
+                  "name": "*ai-card*",
+                  "maximumWarning": "350kb",
+                  "maximumError": "500kb"
                 }
               ],
               "optimization": {
@@ -87,36 +133,11 @@
               "extractLicenses": true,
               "vendorChunk": true,
               "buildOptimizer": true,
-              "commonChunk": true,
-              "optimization": {
-                "scripts": true,
-                "styles": {
-                  "minify": true,
-                  "inlineCritical": false
-                },
-                "fonts": true
-              },
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "200kb",
-                  "maximumError": "500kb"
-                },
-                {
-                  "type": "bundle",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
-                }
-              ]
-            }
+              "commonChunk": true
           }
-        },
-        "serve": {
+        }
+      },
+      "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "buildTarget": "osi-cards:build",
@@ -181,7 +202,43 @@
               "sales_assistance_frontend-OSI-cards/src/styles.scss",
               "dist/osi-cards-lib/styles/_styles-scoped.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "stylePreprocessorOptions": {
+              "sass": {
+                "silenceDeprecations": ["import", "mixed-decls"]
+              }
+            },
+            "allowedCommonJsDependencies": [
+              "html2canvas",
+              "dompurify",
+              "dom-to-image-more",
+              "raf",
+              "rgbcolor",
+              "canvg",
+              "core-js",
+              "core-js/modules/es.promise.js",
+              "core-js/modules/es.string.match.js",
+              "core-js/modules/es.string.replace.js",
+              "core-js/modules/es.string.starts-with.js",
+              "core-js/modules/es.array.iterator.js",
+              "core-js/modules/web.dom-collections.iterator.js",
+              "core-js/modules/es.array.reduce.js",
+              "core-js/modules/es.string.ends-with.js",
+              "core-js/modules/es.string.split.js",
+              "core-js/modules/es.string.trim.js",
+              "core-js/modules/es.array.index-of.js",
+              "core-js/modules/es.string.includes.js",
+              "core-js/modules/es.array.reverse.js",
+              "core-js/modules/es.regexp.to-string.js",
+              "jspdf"
+            ],
+            "budgets": [
+              {
+                "type": "anyComponentStyle",
+                "maximumWarning": "400kb",
+                "maximumError": "600kb"
+              }
+            ]
           },
           "configurations": {
             "production": {

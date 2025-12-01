@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardField } from '../../../models';
 import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent } from '../base-section.component';
+import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
 
 interface SolutionField extends CardField {
   category?: 'consulting' | 'technology' | 'managed' | 'training' | 'support' | string;
@@ -20,6 +20,13 @@ interface SolutionField extends CardField {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SolutionsSectionComponent extends BaseSectionComponent<SolutionField> {
+  /** Multi-item showcase needs width */
+  static readonly layoutConfig: SectionLayoutConfig = {
+    preferredColumns: 3,
+    minColumns: 2,
+    maxColumns: 4,
+    expandOnItemCount: 4,
+  };
   get fields(): SolutionField[] {
     return super.getFields() as SolutionField[];
   }

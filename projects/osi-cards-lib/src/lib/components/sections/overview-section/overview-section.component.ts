@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardField } from '../../../models';
 import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent } from '../base-section.component';
+import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
 import { SectionUtilsService } from '../../../services';
 
 @Component({
@@ -13,6 +13,12 @@ import { SectionUtilsService } from '../../../services';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OverviewSectionComponent extends BaseSectionComponent<CardField> {
+  /** Full-width hero section */
+  static readonly layoutConfig: SectionLayoutConfig = {
+    preferredColumns: 4,
+    minColumns: 2,
+    maxColumns: 4,
+  };
   protected readonly utils = inject(SectionUtilsService);
 
   get fields(): CardField[] {

@@ -1,0 +1,596 @@
+/**
+ * CSS Layers Organization (Improvement #58)
+ * 
+ * Organizes OSI Cards CSS using CSS Cascade Layers
+ * for predictable specificity and easy theme overriding.
+ * 
+ * Layer order (lowest to highest priority):
+ * 1. reset - CSS reset/normalize
+ * 2. base - Base element styles
+ * 3. tokens - Design tokens/CSS variables
+ * 4. components - Component styles
+ * 5. utilities - Utility classes
+ * 6. themes - Theme-specific overrides
+ * 7. overrides - User overrides
+ */
+
+// ============================================================================
+// LAYER DEFINITIONS
+// ============================================================================
+
+@layer reset, base, tokens, components, utilities, themes, overrides;
+
+// ============================================================================
+// RESET LAYER
+// ============================================================================
+
+@layer reset {
+  // Minimal reset for card elements
+  .osi-card,
+  .osi-card * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .osi-card {
+    font-family: inherit;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .osi-card button {
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .osi-card img,
+  .osi-card picture,
+  .osi-card video,
+  .osi-card canvas,
+  .osi-card svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  .osi-card input,
+  .osi-card button,
+  .osi-card textarea,
+  .osi-card select {
+    font: inherit;
+  }
+}
+
+// ============================================================================
+// BASE LAYER
+// ============================================================================
+
+@layer base {
+  .osi-card {
+    display: block;
+    position: relative;
+  }
+
+  // Typography base
+  .osi-card h1,
+  .osi-card h2,
+  .osi-card h3,
+  .osi-card h4,
+  .osi-card h5,
+  .osi-card h6 {
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .osi-card p {
+    line-height: 1.6;
+  }
+
+  .osi-card a {
+    color: var(--osi-link-color, currentColor);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .osi-card a:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  // Focus styles
+  .osi-card :focus-visible {
+    outline: 2px solid var(--osi-focus-ring-color, #3b82f6);
+    outline-offset: 2px;
+  }
+
+  // Reduced motion
+  @media (prefers-reduced-motion: reduce) {
+    .osi-card,
+    .osi-card * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+// ============================================================================
+// TOKENS LAYER
+// ============================================================================
+
+@layer tokens {
+  :root,
+  :host {
+    // Colors - Neutral
+    --osi-color-gray-50: #f9fafb;
+    --osi-color-gray-100: #f3f4f6;
+    --osi-color-gray-200: #e5e7eb;
+    --osi-color-gray-300: #d1d5db;
+    --osi-color-gray-400: #9ca3af;
+    --osi-color-gray-500: #6b7280;
+    --osi-color-gray-600: #4b5563;
+    --osi-color-gray-700: #374151;
+    --osi-color-gray-800: #1f2937;
+    --osi-color-gray-900: #111827;
+    --osi-color-gray-950: #030712;
+
+    // Colors - Primary
+    --osi-color-primary-50: #eff6ff;
+    --osi-color-primary-100: #dbeafe;
+    --osi-color-primary-200: #bfdbfe;
+    --osi-color-primary-300: #93c5fd;
+    --osi-color-primary-400: #60a5fa;
+    --osi-color-primary-500: #3b82f6;
+    --osi-color-primary-600: #2563eb;
+    --osi-color-primary-700: #1d4ed8;
+    --osi-color-primary-800: #1e40af;
+    --osi-color-primary-900: #1e3a8a;
+
+    // Semantic Colors
+    --osi-color-success: #10b981;
+    --osi-color-warning: #f59e0b;
+    --osi-color-error: #ef4444;
+    --osi-color-info: #3b82f6;
+
+    // Typography Scale
+    --osi-font-size-xs: 0.75rem;
+    --osi-font-size-sm: 0.875rem;
+    --osi-font-size-base: 1rem;
+    --osi-font-size-lg: 1.125rem;
+    --osi-font-size-xl: 1.25rem;
+    --osi-font-size-2xl: 1.5rem;
+    --osi-font-size-3xl: 1.875rem;
+
+    // Font Weights
+    --osi-font-weight-normal: 400;
+    --osi-font-weight-medium: 500;
+    --osi-font-weight-semibold: 600;
+    --osi-font-weight-bold: 700;
+
+    // Line Heights
+    --osi-line-height-tight: 1.25;
+    --osi-line-height-normal: 1.5;
+    --osi-line-height-relaxed: 1.625;
+
+    // Spacing Scale
+    --osi-space-1: 0.25rem;
+    --osi-space-2: 0.5rem;
+    --osi-space-3: 0.75rem;
+    --osi-space-4: 1rem;
+    --osi-space-5: 1.25rem;
+    --osi-space-6: 1.5rem;
+    --osi-space-8: 2rem;
+    --osi-space-10: 2.5rem;
+    --osi-space-12: 3rem;
+    --osi-space-16: 4rem;
+
+    // Border Radius
+    --osi-radius-sm: 0.25rem;
+    --osi-radius-md: 0.375rem;
+    --osi-radius-lg: 0.5rem;
+    --osi-radius-xl: 0.75rem;
+    --osi-radius-2xl: 1rem;
+    --osi-radius-full: 9999px;
+
+    // Shadows
+    --osi-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --osi-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --osi-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --osi-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+    // Transitions
+    --osi-transition-fast: 150ms ease;
+    --osi-transition-normal: 200ms ease;
+    --osi-transition-slow: 300ms ease;
+
+    // Z-Index Scale
+    --osi-z-dropdown: 1000;
+    --osi-z-sticky: 1020;
+    --osi-z-fixed: 1030;
+    --osi-z-modal-backdrop: 1040;
+    --osi-z-modal: 1050;
+    --osi-z-popover: 1060;
+    --osi-z-tooltip: 1070;
+
+    // Card-Specific Tokens
+    --osi-card-background: #ffffff;
+    --osi-card-foreground: var(--osi-color-gray-900);
+    --osi-card-border: var(--osi-color-gray-200);
+    --osi-card-border-radius: var(--osi-radius-xl);
+    --osi-card-shadow: var(--osi-shadow-md);
+    --osi-card-padding: var(--osi-space-6);
+
+    // Section Tokens
+    --osi-section-background: var(--osi-color-gray-50);
+    --osi-section-foreground: var(--osi-color-gray-800);
+    --osi-section-border-radius: var(--osi-radius-lg);
+    --osi-section-padding: var(--osi-space-4);
+
+    // Field Tokens
+    --osi-field-label-color: var(--osi-color-gray-500);
+    --osi-field-value-color: var(--osi-color-gray-900);
+
+    // Button Tokens
+    --osi-button-padding-x: var(--osi-space-4);
+    --osi-button-padding-y: var(--osi-space-2);
+    --osi-button-border-radius: var(--osi-radius-md);
+  }
+}
+
+// ============================================================================
+// COMPONENTS LAYER
+// ============================================================================
+
+@layer components {
+  // Card Container
+  .osi-card-container {
+    background: var(--osi-card-background);
+    color: var(--osi-card-foreground);
+    border: 1px solid var(--osi-card-border);
+    border-radius: var(--osi-card-border-radius);
+    box-shadow: var(--osi-card-shadow);
+    overflow: hidden;
+  }
+
+  // Card Header
+  .osi-card-header {
+    padding: var(--osi-card-padding);
+    border-bottom: 1px solid var(--osi-card-border);
+  }
+
+  .osi-card-title {
+    font-size: var(--osi-font-size-xl);
+    font-weight: var(--osi-font-weight-semibold);
+    color: var(--osi-card-foreground);
+  }
+
+  .osi-card-description {
+    margin-top: var(--osi-space-2);
+    font-size: var(--osi-font-size-sm);
+    color: var(--osi-field-label-color);
+  }
+
+  // Card Body
+  .osi-card-body {
+    padding: var(--osi-card-padding);
+  }
+
+  // Card Footer
+  .osi-card-footer {
+    padding: var(--osi-card-padding);
+    border-top: 1px solid var(--osi-card-border);
+    background: var(--osi-section-background);
+  }
+
+  // Section
+  .osi-section {
+    background: var(--osi-section-background);
+    border-radius: var(--osi-section-border-radius);
+    padding: var(--osi-section-padding);
+  }
+
+  .osi-section-header {
+    display: flex;
+    align-items: center;
+    gap: var(--osi-space-2);
+    margin-bottom: var(--osi-space-3);
+  }
+
+  .osi-section-title {
+    font-size: var(--osi-font-size-base);
+    font-weight: var(--osi-font-weight-semibold);
+    color: var(--osi-section-foreground);
+  }
+
+  .osi-section-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--osi-color-primary-500);
+  }
+
+  // Field
+  .osi-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--osi-space-1);
+  }
+
+  .osi-field-label {
+    font-size: var(--osi-font-size-sm);
+    color: var(--osi-field-label-color);
+  }
+
+  .osi-field-value {
+    font-size: var(--osi-font-size-base);
+    color: var(--osi-field-value-color);
+  }
+
+  // Button
+  .osi-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--osi-space-2);
+    padding: var(--osi-button-padding-y) var(--osi-button-padding-x);
+    border-radius: var(--osi-button-border-radius);
+    font-size: var(--osi-font-size-sm);
+    font-weight: var(--osi-font-weight-medium);
+    transition: all var(--osi-transition-fast);
+  }
+
+  .osi-button--primary {
+    background: var(--osi-color-primary-600);
+    color: white;
+    border: none;
+  }
+
+  .osi-button--primary:hover {
+    background: var(--osi-color-primary-700);
+  }
+
+  .osi-button--secondary {
+    background: transparent;
+    color: var(--osi-card-foreground);
+    border: 1px solid var(--osi-card-border);
+  }
+
+  .osi-button--secondary:hover {
+    background: var(--osi-section-background);
+  }
+
+  // Grid
+  .osi-grid {
+    display: grid;
+    gap: var(--osi-space-4);
+  }
+
+  .osi-grid--2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .osi-grid--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .osi-grid--4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  // Masonry
+  .osi-masonry {
+    display: flex;
+    flex-wrap: wrap;
+    margin: calc(var(--osi-space-4) * -0.5);
+  }
+
+  .osi-masonry > * {
+    padding: calc(var(--osi-space-4) * 0.5);
+  }
+}
+
+// ============================================================================
+// UTILITIES LAYER
+// ============================================================================
+
+@layer utilities {
+  // Visually Hidden (Screen Reader Only)
+  .osi-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  // Flex utilities
+  .osi-flex {
+    display: flex;
+  }
+
+  .osi-flex-col {
+    flex-direction: column;
+  }
+
+  .osi-items-center {
+    align-items: center;
+  }
+
+  .osi-justify-between {
+    justify-content: space-between;
+  }
+
+  .osi-gap-2 {
+    gap: var(--osi-space-2);
+  }
+
+  .osi-gap-4 {
+    gap: var(--osi-space-4);
+  }
+
+  // Text utilities
+  .osi-text-sm {
+    font-size: var(--osi-font-size-sm);
+  }
+
+  .osi-text-lg {
+    font-size: var(--osi-font-size-lg);
+  }
+
+  .osi-font-medium {
+    font-weight: var(--osi-font-weight-medium);
+  }
+
+  .osi-font-semibold {
+    font-weight: var(--osi-font-weight-semibold);
+  }
+
+  .osi-text-muted {
+    color: var(--osi-field-label-color);
+  }
+
+  // Spacing utilities
+  .osi-mt-2 {
+    margin-top: var(--osi-space-2);
+  }
+
+  .osi-mt-4 {
+    margin-top: var(--osi-space-4);
+  }
+
+  .osi-mb-2 {
+    margin-bottom: var(--osi-space-2);
+  }
+
+  .osi-mb-4 {
+    margin-bottom: var(--osi-space-4);
+  }
+
+  .osi-p-4 {
+    padding: var(--osi-space-4);
+  }
+
+  // Animation utilities
+  .osi-animate-fade-in {
+    animation: osi-fade-in var(--osi-transition-normal);
+  }
+
+  .osi-animate-slide-up {
+    animation: osi-slide-up var(--osi-transition-normal);
+  }
+
+  @keyframes osi-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes osi-slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  // Truncation
+  .osi-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .osi-line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .osi-line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+// ============================================================================
+// THEMES LAYER
+// ============================================================================
+
+@layer themes {
+  // Dark Theme
+  [data-theme="dark"],
+  :host-context([data-theme="dark"]) {
+    --osi-card-background: var(--osi-color-gray-900);
+    --osi-card-foreground: var(--osi-color-gray-100);
+    --osi-card-border: var(--osi-color-gray-700);
+    --osi-section-background: var(--osi-color-gray-800);
+    --osi-section-foreground: var(--osi-color-gray-200);
+    --osi-field-label-color: var(--osi-color-gray-400);
+    --osi-field-value-color: var(--osi-color-gray-100);
+  }
+
+  // High Contrast Theme
+  [data-theme="high-contrast"],
+  :host-context([data-theme="high-contrast"]) {
+    --osi-card-background: #ffffff;
+    --osi-card-foreground: #000000;
+    --osi-card-border: #000000;
+    --osi-section-background: #ffffff;
+    --osi-section-foreground: #000000;
+    --osi-field-label-color: #000000;
+    --osi-field-value-color: #000000;
+  }
+
+  // Midnight Theme
+  [data-theme="midnight"],
+  :host-context([data-theme="midnight"]) {
+    --osi-card-background: #0f172a;
+    --osi-card-foreground: #e2e8f0;
+    --osi-card-border: #1e293b;
+    --osi-section-background: #1e293b;
+    --osi-section-foreground: #cbd5e1;
+    --osi-field-label-color: #94a3b8;
+    --osi-field-value-color: #f1f5f9;
+    --osi-color-primary-500: #38bdf8;
+    --osi-color-primary-600: #0ea5e9;
+  }
+
+  // Ocean Theme
+  [data-theme="ocean"],
+  :host-context([data-theme="ocean"]) {
+    --osi-card-background: #0c4a6e;
+    --osi-card-foreground: #e0f2fe;
+    --osi-card-border: #0369a1;
+    --osi-section-background: #075985;
+    --osi-section-foreground: #bae6fd;
+    --osi-field-label-color: #7dd3fc;
+    --osi-field-value-color: #f0f9ff;
+    --osi-color-primary-500: #22d3ee;
+    --osi-color-primary-600: #06b6d4;
+  }
+}
+
+// ============================================================================
+// OVERRIDES LAYER (Empty - for consumer customization)
+// ============================================================================
+
+@layer overrides {
+  // Consumer can add their own overrides here
+  // Example:
+  // .my-app .osi-card {
+  //   --osi-card-border-radius: 0;
+  // }
+}
+

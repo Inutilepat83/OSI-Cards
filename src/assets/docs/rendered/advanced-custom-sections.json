@@ -1,0 +1,30 @@
+{
+  "pageId": "advanced/custom-sections",
+  "title": "Custom Section Plugins",
+  "html": "<h1 id=\"custom-section-plugins\"><a href=\"#custom-section-plugins\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Custom Section Plugins</h1></p><p>Advanced topic: Custom Section Plugins</p><p><h2 id=\"overview\"><a href=\"#overview\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Overview</h2></p><p>This section covers custom section plugins.</p><p><h2 id=\"details\"><a href=\"#details\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Details</h2></p><p>Detailed documentation coming soon.</p><p><h2 id=\"related\"><a href=\"#related\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Related</h2></p><p><ul><li><a href=\"/docs/getting-started\">Getting Started</a></li><li><a href=\"/docs/api-reference\">API Reference</a></li></ul>",
+  "toc": [
+    {
+      "id": "custom-section-plugins",
+      "text": "Custom Section Plugins",
+      "level": 1
+    },
+    {
+      "id": "overview",
+      "text": "Overview",
+      "level": 2
+    },
+    {
+      "id": "details",
+      "text": "Details",
+      "level": 2
+    },
+    {
+      "id": "related",
+      "text": "Related",
+      "level": 2
+    }
+  ],
+  "contentHash": "6f23ea2e2f839989",
+  "generatedAt": "2025-12-01T09:15:43.675Z",
+  "demoConfigs": {}
+}

@@ -1,20 +1,39 @@
 /**
  * Card Test Fixtures
  * 
- * Provides factory functions for creating test card configurations.
+ * Factory functions for creating test card configurations.
+ * 
+ * IMPORTANT: Sample cards are now sourced from the Section Registry.
+ * Use SAMPLE_CARDS or create cards with registry fixtures for consistency.
  * 
  * @example
  * ```typescript
- * import { createMockCard, SAMPLE_CARDS } from 'osi-cards-lib/testing';
+ * import { 
+ *   createMockCard, 
+ *   SAMPLE_CARDS,
+ *   getFixture 
+ * } from 'osi-cards-lib/testing';
  * 
- * const card = createMockCard({
- *   cardTitle: 'Test Card',
- *   sections: [createMockSection({ type: 'info' })]
+ * // Use pre-built sample cards (recommended)
+ * const companyCard = SAMPLE_CARDS.company;
+ * 
+ * // Or create custom card with registry fixtures
+ * const customCard = createMockCard({
+ *   cardTitle: 'Custom Card',
+ *   sections: [
+ *     getFixture('info', 'complete'),
+ *     getFixture('analytics', 'complete')
+ *   ]
  * });
  * ```
  */
 
 import type { AICardConfig, CardSection, CardAction } from '../../models/card.model';
+import { 
+  SAMPLE_CARDS as REGISTRY_SAMPLE_CARDS,
+  COMPLETE_FIXTURES,
+  getAllFixtures
+} from '../../registry/fixtures.generated';
 
 // ============================================================================
 // FACTORY FUNCTIONS
@@ -115,74 +134,46 @@ export function createStreamingCard(): AICardConfig {
   };
 }
 
-// ============================================================================
-// SAMPLE CARDS
-// ============================================================================
-
 /**
- * Sample company card
+ * Creates a card using registry fixtures for specific section types
  */
-export const SAMPLE_COMPANY_CARD: AICardConfig = {
-  id: 'sample-company',
-  cardTitle: 'Acme Corporation',
-  cardType: 'company',
-  description: 'A sample company card for testing',
-  sections: [
-    {
-      id: 'company-info',
-      title: 'Company Information',
-      type: 'info',
-      fields: [
-        { id: 'industry', label: 'Industry', value: 'Technology', icon: '🏢' },
-        { id: 'founded', label: 'Founded', value: '2010', icon: '📅' },
-        { id: 'employees', label: 'Employees', value: '5,000+', icon: '👥', trend: 'up' },
-        { id: 'headquarters', label: 'Headquarters', value: 'San Francisco, CA', icon: '📍' },
-        { id: 'website', label: 'Website', value: 'www.acme.com', icon: '🌐' },
-      ],
-    },
-    {
-      id: 'company-analytics',
-      title: 'Performance Metrics',
-      type: 'analytics',
-      fields: [
-        { id: 'revenue', label: 'Annual Revenue', value: '$50M', percentage: 85, trend: 'up', change: 15 },
-        { id: 'growth', label: 'Growth Rate', value: '25%', percentage: 25, trend: 'up', change: 5 },
-        { id: 'satisfaction', label: 'Customer Satisfaction', value: '4.8/5', percentage: 96, trend: 'stable' },
-      ],
-    },
-  ],
-  actions: [
-    { id: 'view-profile', label: 'View Profile', variant: 'primary' } as CardAction,
-    { id: 'contact', label: 'Contact', variant: 'secondary' } as CardAction,
-  ],
-};
+export function createCardFromRegistry(
+  title: string,
+  sectionTypes: string[],
+  options: Partial<AICardConfig> = {}
+): AICardConfig {
+  const sections = sectionTypes
+    .map(type => COMPLETE_FIXTURES[type as keyof typeof COMPLETE_FIXTURES])
+    .filter((s): s is CardSection => s !== undefined);
+
+  return {
+    id: `registry-card-${Date.now()}`,
+    cardTitle: title,
+    sections,
+    ...options,
+  };
+}
+
+// ============================================================================
+// SAMPLE CARDS (FROM REGISTRY - SINGLE SOURCE OF TRUTH)
+// ============================================================================
 
 /**
- * Sample contact card
+ * Sample company card (from registry)
+ * @deprecated Use SAMPLE_CARDS.company instead
+ */
+export const SAMPLE_COMPANY_CARD: AICardConfig = REGISTRY_SAMPLE_CARDS.company;
+
+/**
+ * Sample contact card (from registry)
  */
 export const SAMPLE_CONTACT_CARD: AICardConfig = {
   id: 'sample-contact',
   cardTitle: 'John Smith',
   cardType: 'contact',
   sections: [
-    {
-      id: 'contact-info',
-      title: 'Contact Information',
-      type: 'contact-card',
-      fields: [
-        {
-          id: 'contact-1',
-          title: 'John Smith',
-          label: 'Primary Contact',
-          value: 'Chief Technology Officer',
-          role: 'CTO',
-          email: 'john.smith@acme.com',
-          phone: '+1 (555) 123-4567',
-          department: 'Technology',
-        },
-      ],
-    },
-  ],
+    COMPLETE_FIXTURES['contact-card']!,
+  ].filter(Boolean),
   actions: [
     { id: 'email', label: 'Send Email', type: 'mail', variant: 'primary' } as CardAction,
     { id: 'call', label: 'Call', variant: 'secondary' } as CardAction,
@@ -190,80 +181,26 @@ export const SAMPLE_CONTACT_CARD: AICardConfig = {
 };
 
 /**
- * Sample analytics dashboard card
+ * Sample analytics dashboard card (from registry)
+ * @deprecated Use SAMPLE_CARDS.analytics instead
  */
-export const SAMPLE_ANALYTICS_CARD: AICardConfig = {
-  id: 'sample-analytics',
-  cardTitle: 'Q4 2024 Performance',
-  cardType: 'analytics',
-  sections: [
-    {
-      id: 'kpis',
-      title: 'Key Performance Indicators',
-      type: 'analytics',
-      fields: [
-        { id: 'revenue', label: 'Revenue', value: '$12.5M', percentage: 92, performance: 'excellent', trend: 'up', change: 18.5 },
-        { id: 'profit', label: 'Profit Margin', value: '23%', percentage: 23, performance: 'good', trend: 'up', change: 3.2 },
-        { id: 'customers', label: 'New Customers', value: '1,234', percentage: 78, performance: 'good', trend: 'up', change: 12 },
-        { id: 'churn', label: 'Churn Rate', value: '2.1%', percentage: 2.1, performance: 'excellent', trend: 'down', change: -0.5 },
-      ],
-    },
-    {
-      id: 'chart',
-      title: 'Revenue Trends',
-      type: 'chart',
-      chartType: 'line',
-      chartData: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [
-          {
-            label: 'Revenue',
-            data: [10, 11, 12, 11.5, 12.2, 12.5],
-            borderColor: '#FF7900',
-          },
-        ],
-      },
-    },
-  ],
-};
+export const SAMPLE_ANALYTICS_CARD: AICardConfig = REGISTRY_SAMPLE_CARDS.analytics;
 
 /**
- * Sample news card
+ * Sample news card (from registry)
+ * @deprecated Use SAMPLE_CARDS.news instead
  */
-export const SAMPLE_NEWS_CARD: AICardConfig = {
-  id: 'sample-news',
-  cardTitle: 'Latest News',
-  sections: [
-    {
-      id: 'news',
-      title: 'Recent Headlines',
-      type: 'news',
-      items: [
-        {
-          id: 'news-1',
-          title: 'Company Announces Record Q4 Earnings',
-          description: 'Revenue exceeds expectations with 25% YoY growth',
-          meta: { source: 'Bloomberg', date: '2024-01-15' },
-        },
-        {
-          id: 'news-2',
-          title: 'New Product Launch Scheduled for Q2',
-          description: 'Enterprise Suite 5.0 to include AI features',
-          meta: { source: 'Press Release', date: '2024-01-10' },
-        },
-      ],
-    },
-  ],
-};
+export const SAMPLE_NEWS_CARD: AICardConfig = REGISTRY_SAMPLE_CARDS.news;
 
 /**
- * Collection of all sample cards for testing
+ * Collection of all sample cards (from registry)
+ * @deprecated Use SAMPLE_CARDS from registry instead
  */
 export const SAMPLE_CARDS: Record<string, AICardConfig> = {
-  company: SAMPLE_COMPANY_CARD,
+  company: REGISTRY_SAMPLE_CARDS.company,
   contact: SAMPLE_CONTACT_CARD,
-  analytics: SAMPLE_ANALYTICS_CARD,
-  news: SAMPLE_NEWS_CARD,
+  analytics: REGISTRY_SAMPLE_CARDS.analytics,
+  news: REGISTRY_SAMPLE_CARDS.news,
 };
 
 // ============================================================================
@@ -342,18 +279,7 @@ export const SPECIAL_CHARS_CARD: AICardConfig = {
 };
 
 /**
- * Card with all section types
+ * Card with all section types (from registry)
+ * @deprecated Use SAMPLE_CARDS.allSections instead
  */
-export const ALL_SECTIONS_CARD: AICardConfig = {
-  id: 'all-sections',
-  cardTitle: 'Card with All Section Types',
-  sections: [
-    { id: 'info', title: 'Info', type: 'info', fields: [{ label: 'Key', value: 'Value' }] },
-    { id: 'analytics', title: 'Analytics', type: 'analytics', fields: [{ label: 'Metric', value: '100%', percentage: 100 }] },
-    { id: 'list', title: 'List', type: 'list', items: [{ title: 'Item 1' }, { title: 'Item 2' }] },
-    { id: 'news', title: 'News', type: 'news', items: [{ title: 'Headline', description: 'Summary' }] },
-    { id: 'event', title: 'Events', type: 'event', fields: [{ label: 'Event', value: 'Conference', date: '2024-01-15' }] },
-    { id: 'contact', title: 'Contact', type: 'contact-card', fields: [{ title: 'Name', email: 'test@example.com' }] },
-  ],
-};
-
+export const ALL_SECTIONS_CARD: AICardConfig = REGISTRY_SAMPLE_CARDS.allSections;

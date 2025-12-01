@@ -10,6 +10,7 @@
 
 import { CardSection, CardField } from '../models/card.model';
 import { gridLogger, GapAnalysis, ColumnAnalysis, PlacementDecision } from './smart-grid-logger.util';
+import { calculateSmartColumns } from './section-layout-registry.util';
 
 // ============================================================================
 // TYPES AND INTERFACES
@@ -139,6 +140,7 @@ export function measureContentDensity(section: CardSection): number {
 
 /**
  * Calculates optimal column span based on content density and type
+ * Uses the section layout registry for type-based defaults.
  * 
  * @param section - The section to calculate for
  * @param maxColumns - Maximum available columns
@@ -148,47 +150,9 @@ export function calculateOptimalColumns(
   section: CardSection, 
   maxColumns: number = 4
 ): number {
-  const type = section.type?.toLowerCase() ?? 'info';
-  const density = measureContentDensity(section);
-  
-  // Type-based defaults (more aggressive single-column preference)
-  const typeDefaults: Record<string, number> = {
-    'overview': 4,       // Full width for overview
-    'chart': 2,          // Charts need width
-    'map': 2,            // Maps need width
-    'analytics': 1,      // Compact by default
-    'contact-card': 1,   // Compact cards
-    'info': 1,           // Default to single column
-    'list': 1,           // Lists are vertical
-    'event': 1,          // Events stack vertically
-    'product': 1,        // Products are compact
-    'quotation': 1,      // Quotes are narrow
-    'stats': 1,          // Stats are compact
-    'financials': 1,     // Financials are narrow
-  };
-  
-  // Get base from type or preferredColumns
-  let base: number = section.preferredColumns ?? typeDefaults[type] ?? 1;
-  
-  // Content-based adjustments - only expand if really dense
-  if (density > 40) {
-    base = Math.min(base + 1, 2);
-  }
-  
-  // Special cases for item/field counts
-  const itemCount = section.items?.length ?? 0;
-  const fieldCount = section.fields?.length ?? 0;
-  
-  // Contact cards with multiple contacts should expand
-  if (type === 'contact-card' && itemCount > 2) {
-    base = Math.min(itemCount, 4);
-  }
-  
-  // Respect min/max constraints
-  const min: number = section.minColumns ?? 1;
-  const max: number = section.maxColumns ?? maxColumns;
-  
-  return Math.min(max, Math.max(min, base), maxColumns);
+  // Use the smart column calculation from the registry
+  // This uses layoutConfig defined in each section component
+  return calculateSmartColumns(section, maxColumns);
 }
 
 // ============================================================================

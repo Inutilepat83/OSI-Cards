@@ -1,21 +1,37 @@
 /**
  * Section Test Fixtures
  * 
- * Provides factory functions for creating test section configurations.
+ * Factory functions for creating test section configurations.
+ * 
+ * IMPORTANT: Sample sections are now sourced from the Section Registry.
+ * Use getFixture() or SECTION_FIXTURES for pre-built examples.
  * 
  * @example
  * ```typescript
- * import { createMockSection, SAMPLE_SECTIONS } from 'osi-cards-lib/testing';
+ * import { 
+ *   createMockSection, 
+ *   getFixture,
+ *   COMPLETE_FIXTURES 
+ * } from 'osi-cards-lib/testing';
  * 
- * const section = createMockSection({
+ * // Use registry fixture (recommended)
+ * const infoSection = getFixture('info', 'complete');
+ * 
+ * // Or create custom section with factory
+ * const customSection = createMockSection({
  *   type: 'analytics',
- *   title: 'Performance',
+ *   title: 'Custom Analytics',
  *   fields: [...]
  * });
  * ```
  */
 
 import type { CardSection, CardField, CardItem } from '../../models/card.model';
+import { 
+  COMPLETE_FIXTURES, 
+  MINIMAL_FIXTURES, 
+  EDGE_CASE_FIXTURES 
+} from '../../registry/fixtures.generated';
 
 // ============================================================================
 // FACTORY FUNCTIONS
@@ -187,193 +203,67 @@ export function createEventSection(
 }
 
 // ============================================================================
-// SAMPLE SECTIONS
+// SAMPLE SECTIONS (FROM REGISTRY - SINGLE SOURCE OF TRUTH)
 // ============================================================================
 
 /**
- * Sample info section
+ * Sample info section (from registry)
+ * @deprecated Use getFixture('info', 'complete') instead
  */
-export const SAMPLE_INFO_SECTION: CardSection = {
-  id: 'sample-info',
-  title: 'Company Information',
-  type: 'info',
-  emoji: '🏢',
-  fields: [
-    { id: 'industry', label: 'Industry', value: 'Technology', icon: '💻' },
-    { id: 'founded', label: 'Founded', value: '2010' },
-    { id: 'size', label: 'Company Size', value: '1,000-5,000 employees' },
-    { id: 'location', label: 'Headquarters', value: 'San Francisco, CA' },
-    { id: 'revenue', label: 'Annual Revenue', value: '$50-100M', trend: 'up' },
-  ],
-};
+export const SAMPLE_INFO_SECTION: CardSection = COMPLETE_FIXTURES['info']!;
 
 /**
- * Sample analytics section
+ * Sample analytics section (from registry)
+ * @deprecated Use getFixture('analytics', 'complete') instead
  */
-export const SAMPLE_ANALYTICS_SECTION: CardSection = {
-  id: 'sample-analytics',
-  title: 'Performance Metrics',
-  type: 'analytics',
-  emoji: '📊',
-  fields: [
-    { id: 'score', label: 'Performance Score', value: '95/100', percentage: 95, trend: 'up', change: 5 },
-    { id: 'growth', label: 'Revenue Growth', value: '25%', percentage: 25, trend: 'up', change: 8 },
-    { id: 'satisfaction', label: 'Customer Satisfaction', value: '4.8/5', percentage: 96, trend: 'stable' },
-    { id: 'retention', label: 'Retention Rate', value: '92%', percentage: 92, trend: 'up', change: 3 },
-  ],
-};
+export const SAMPLE_ANALYTICS_SECTION: CardSection = COMPLETE_FIXTURES['analytics']!;
 
 /**
- * Sample contact section
+ * Sample contact section (from registry)
+ * @deprecated Use getFixture('contact-card', 'complete') instead
  */
-export const SAMPLE_CONTACT_SECTION: CardSection = {
-  id: 'sample-contact',
-  title: 'Key Contacts',
-  type: 'contact-card',
-  emoji: '👤',
-  fields: [
-    {
-      id: 'contact-1',
-      title: 'John Smith',
-      label: 'John Smith',
-      value: 'Chief Executive Officer',
-      role: 'CEO',
-      email: 'john.smith@company.com',
-      phone: '+1 (555) 123-4567',
-      department: 'Executive',
-    },
-    {
-      id: 'contact-2',
-      title: 'Jane Doe',
-      label: 'Jane Doe',
-      value: 'Chief Technology Officer',
-      role: 'CTO',
-      email: 'jane.doe@company.com',
-      phone: '+1 (555) 987-6543',
-      department: 'Technology',
-    },
-  ],
-};
+export const SAMPLE_CONTACT_SECTION: CardSection = COMPLETE_FIXTURES['contact-card']!;
 
 /**
- * Sample news section
+ * Sample news section (from registry)
+ * @deprecated Use getFixture('news', 'complete') instead
  */
-export const SAMPLE_NEWS_SECTION: CardSection = {
-  id: 'sample-news',
-  title: 'Recent News',
-  type: 'news',
-  emoji: '📰',
-  items: [
-    {
-      id: 'news-1',
-      title: 'Company Announces Strategic Partnership',
-      description: 'New partnership expected to drive growth in emerging markets',
-      meta: { source: 'Business Wire', date: '2024-01-15' },
-    },
-    {
-      id: 'news-2',
-      title: 'Q4 Earnings Exceed Expectations',
-      description: 'Record revenue growth of 30% year-over-year',
-      meta: { source: 'Financial Times', date: '2024-01-10' },
-    },
-    {
-      id: 'news-3',
-      title: 'New Product Launch Announcement',
-      description: 'Enterprise Suite 5.0 introduces AI-powered features',
-      meta: { source: 'TechCrunch', date: '2024-01-05' },
-    },
-  ],
-};
+export const SAMPLE_NEWS_SECTION: CardSection = COMPLETE_FIXTURES['news']!;
 
 /**
- * Sample list section
+ * Sample list section (from registry)
+ * @deprecated Use getFixture('list', 'complete') instead
  */
-export const SAMPLE_LIST_SECTION: CardSection = {
-  id: 'sample-list',
-  title: 'Key Products',
-  type: 'list',
-  emoji: '📦',
-  items: [
-    { id: 'product-1', title: 'Enterprise Suite', description: 'Complete business management solution', icon: '🏢' },
-    { id: 'product-2', title: 'Cloud Platform', description: 'Scalable cloud infrastructure', icon: '☁️' },
-    { id: 'product-3', title: 'Analytics Pro', description: 'Advanced analytics and reporting', icon: '📊' },
-    { id: 'product-4', title: 'Security Shield', description: 'Enterprise-grade security', icon: '🔒' },
-  ],
-};
+export const SAMPLE_LIST_SECTION: CardSection = COMPLETE_FIXTURES['list']!;
 
 /**
- * Sample chart section
+ * Sample chart section (from registry)
+ * @deprecated Use getFixture('chart', 'complete') instead
  */
-export const SAMPLE_CHART_SECTION: CardSection = {
-  id: 'sample-chart',
-  title: 'Revenue Trend',
-  type: 'chart',
-  emoji: '📈',
-  chartType: 'line',
-  chartData: {
-    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
-    datasets: [
-      {
-        label: 'Revenue (M$)',
-        data: [10, 12, 14, 18],
-        borderColor: '#FF7900',
-        backgroundColor: 'rgba(255, 121, 0, 0.1)',
-      },
-    ],
-  },
-};
+export const SAMPLE_CHART_SECTION: CardSection = COMPLETE_FIXTURES['chart']!;
 
 /**
- * Sample event section
+ * Sample event section (from registry)
+ * @deprecated Use getFixture('event', 'complete') instead
  */
-export const SAMPLE_EVENT_SECTION: CardSection = {
-  id: 'sample-event',
-  title: 'Upcoming Events',
-  type: 'event',
-  emoji: '📅',
-  fields: [
-    {
-      id: 'event-1',
-      label: 'Annual Conference',
-      title: 'Annual Conference',
-      value: 'Tech Summit 2024',
-      date: '2024-03-15',
-      status: 'pending' as CardField['status'],
-    },
-    {
-      id: 'event-2',
-      label: 'Product Launch',
-      title: 'Product Launch',
-      value: 'Enterprise Suite 5.0 Launch',
-      date: '2024-02-28',
-      status: 'in-progress' as CardField['status'],
-    },
-    {
-      id: 'event-3',
-      label: 'Earnings Call',
-      title: 'Earnings Call',
-      value: 'Q4 2024 Earnings',
-      date: '2024-01-25',
-      status: 'completed' as CardField['status'],
-    },
-  ],
-};
+export const SAMPLE_EVENT_SECTION: CardSection = COMPLETE_FIXTURES['event']!;
 
 /**
- * Collection of all sample sections
+ * Collection of all sample sections (from registry)
+ * @deprecated Use SECTION_FIXTURES.complete instead
  */
 export const SAMPLE_SECTIONS: Record<string, CardSection> = {
-  info: SAMPLE_INFO_SECTION,
-  analytics: SAMPLE_ANALYTICS_SECTION,
-  contact: SAMPLE_CONTACT_SECTION,
-  news: SAMPLE_NEWS_SECTION,
-  list: SAMPLE_LIST_SECTION,
-  chart: SAMPLE_CHART_SECTION,
-  event: SAMPLE_EVENT_SECTION,
+  info: COMPLETE_FIXTURES['info']!,
+  analytics: COMPLETE_FIXTURES['analytics']!,
+  contact: COMPLETE_FIXTURES['contact-card']!,
+  news: COMPLETE_FIXTURES['news']!,
+  list: COMPLETE_FIXTURES['list']!,
+  chart: COMPLETE_FIXTURES['chart']!,
+  event: COMPLETE_FIXTURES['event']!,
 };
 
 // ============================================================================
-// EDGE CASE SECTIONS
+// EDGE CASE SECTIONS (FROM REGISTRY)
 // ============================================================================
 
 /**
@@ -387,9 +277,9 @@ export const EMPTY_FIELDS_SECTION: CardSection = {
 };
 
 /**
- * Section with null values
+ * Section with null values (from registry edge cases)
  */
-export const NULL_VALUES_SECTION: CardSection = {
+export const NULL_VALUES_SECTION: CardSection = EDGE_CASE_FIXTURES['info'] ?? {
   id: 'null-values',
   title: 'Null Values Section',
   type: 'info',
@@ -452,4 +342,3 @@ export const COMPLETE_FIELD_SECTION: CardSection = {
     },
   ],
 };
-

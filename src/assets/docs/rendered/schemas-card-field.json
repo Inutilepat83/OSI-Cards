@@ -1,0 +1,50 @@
+{
+  "pageId": "schemas/card-field",
+  "title": "CardField",
+  "html": "<h1 id=\"cardfield\"><a href=\"#cardfield\" class=\"anchor-link\" aria-hidden=\"true\">#</a>CardField</h1></p><p>Defines a field within a section.</p><p><h2 id=\"overview\"><a href=\"#overview\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Overview</h2></p><p><code>CardField</code> represents a single data point within a section. Fields typically display key-value pairs with optional metadata.</p><p><h2 id=\"interface-definition\"><a href=\"#interface-definition\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Interface Definition</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">interface CardField {<br>  id?: string;<br>  label?: string;<br>  title?: string;<br>  value?: string | number | boolean | null;<br>  icon?: string;<br>  format?: 'currency' | 'percentage' | 'number' | 'text';<br>  percentage?: number;<br>  change?: number;<br>  trend?: 'up' | 'down' | 'stable' | 'neutral';<br>  performance?: string;<br>  description?: string;<br>  status?: 'completed' | 'in-progress' | 'pending' | 'cancelled' | 'active' | 'inactive' | 'warning';<br>  priority?: 'high' | 'medium' | 'low';<br>  email?: string;<br>  phone?: string;<br>  address?: string;<br>  coordinates?: { lat: number; lng: number };<br>  meta?: Record&amp;lt;string, unknown&amp;gt;;<br>}</code></pre></div></p><p><h2 id=\"common-properties\"><a href=\"#common-properties\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Common Properties</h2></p><p><div class=\"table-wrapper\"><table><thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td><code>label</code></td><td>string</td><td>Field label/key</td></tr><tr><td><code>value</code></td><td>mixed</td><td>Field value</td></tr><tr><td><code>icon</code></td><td>string</td><td>Icon (emoji or icon name)</td></tr><tr><td><code>trend</code></td><td>string</td><td>Trend indicator</td></tr><tr><td><code>percentage</code></td><td>number</td><td>Value for progress bars</td></tr><tr><td><code>format</code></td><td>string</td><td>Value formatting hint</td></tr></tbody></table></div>\n<h2 id=\"examples-by-section-type\"><a href=\"#examples-by-section-type\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Examples by Section Type</h2></p><p><h3 id=\"info-section\"><a href=\"#info-section\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Info Section</h3>\n<div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">json</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-json\">{ \"label\": \"Industry\", \"value\": \"Technology\", \"icon\": \"🏢\" }</code></pre></div></p><p><h3 id=\"analytics-section\"><a href=\"#analytics-section\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Analytics Section</h3>\n<div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">json</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-json\">{ \"label\": \"Growth\", \"value\": \"25%\", \"percentage\": 25, \"trend\": \"up\", \"change\": 5.2 }</code></pre></div></p><p><h3 id=\"contact-section\"><a href=\"#contact-section\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Contact Section</h3>\n<div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">json</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-json\">{ \"title\": \"John Doe\", \"role\": \"CEO\", \"email\": \"john@example.com\", \"phone\": \"+1-555-0100\" }</code></pre></div>\n",
+  "toc": [
+    {
+      "id": "cardfield",
+      "text": "CardField",
+      "level": 1
+    },
+    {
+      "id": "overview",
+      "text": "Overview",
+      "level": 2
+    },
+    {
+      "id": "interface-definition",
+      "text": "Interface Definition",
+      "level": 2
+    },
+    {
+      "id": "common-properties",
+      "text": "Common Properties",
+      "level": 2
+    },
+    {
+      "id": "examples-by-section-type",
+      "text": "Examples by Section Type",
+      "level": 2
+    },
+    {
+      "id": "info-section",
+      "text": "Info Section",
+      "level": 3
+    },
+    {
+      "id": "analytics-section",
+      "text": "Analytics Section",
+      "level": 3
+    },
+    {
+      "id": "contact-section",
+      "text": "Contact Section",
+      "level": 3
+    }
+  ],
+  "contentHash": "2313b0187e727861",
+  "generatedAt": "2025-12-01T09:15:43.754Z",
+  "demoConfigs": {}
+}

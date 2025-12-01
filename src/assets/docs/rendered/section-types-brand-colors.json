@@ -1,0 +1,103 @@
+{
+  "pageId": "section-types/brand-colors",
+  "title": "Brand Colors Section",
+  "html": "<h1 id=\"brand-colors-section\"><a href=\"#brand-colors-section\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Brand Colors Section</h1></p><p>Displays color swatches, brand palettes, and design system colors.</p><p><h2 id=\"overview\"><a href=\"#overview\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Overview</h2></p><p>The <strong>Brand Colors Section</strong> (<code>type: \"brand-colors\"</code>) is used for displays color swatches, brand palettes, and design system colors.</p><p><h3 id=\"quick-facts\"><a href=\"#quick-facts\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Quick Facts</h3></p><p><div class=\"table-wrapper\"><table><thead><tr><th>Property</th><th>Value</th></tr></thead><tbody><tr><td>Type</td><td><code>brand-colors</code></td></tr><tr><td>Uses Fields</td><td>Yes</td></tr><tr><td>Uses Items</td><td>No</td></tr><tr><td>Default Columns</td><td>2</td></tr><tr><td>Supports Collapse</td><td>Yes</td></tr><tr><td>Aliases</td><td><code>brands</code>, <code>colors</code></td></tr></tbody></table></div></p><p><h2 id=\"use-cases\"><a href=\"#use-cases\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Use Cases</h2></p><p><ul><li>Brand assets</li><li>Design systems</li><li>Color palettes</li><li>Style guides</li></ul>\n<h2 id=\"data-schema\"><a href=\"#data-schema\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Data Schema</h2></p><p><h3 id=\"fields-schema\"><a href=\"#fields-schema\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Fields Schema</h3></p><p><div class=\"table-wrapper\"><table><thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td><code>label</code></td><td>string</td><td>Color name/label</td></tr><tr><td><code>value</code></td><td>string</td><td>Color value (hex, rgb, etc.)</td></tr><tr><td><code>description</code></td><td>string</td><td>Color description/usage</td></tr><tr><td><code>category</code></td><td>string</td><td>Color category (primary, secondary, etc.)</td></tr></tbody></table></div></p><p><h2 id=\"complete-example\"><a href=\"#complete-example\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Complete Example</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">json</span><div class=\"code-actions\"><button class=\"live-demo-btn\" type=\"button\" data-demo-id=\"demo-0\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"5 3 19 12 5 21 5 3\"></polygon></svg>Live Demo</button><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-json\">{<br>  \"title\": \"Brand Colors\",<br>  \"type\": \"brand-colors\",<br>  \"description\": \"Official brand color palette\",<br>  \"fields\": [<br>    {<br>      \"label\": \"Primary\",<br>      \"value\": \"#FF7900\",<br>      \"description\": \"Orange Brand Color\"<br>    },<br>    {<br>      \"label\": \"Secondary\",<br>      \"value\": \"#000000\",<br>      \"description\": \"Black\"<br>    },<br>    {<br>      \"label\": \"Accent\",<br>      \"value\": \"#4CAF50\",<br>      \"description\": \"Green Accent\"<br>    },<br>    {<br>      \"label\": \"Background\",<br>      \"value\": \"#FFFFFF\",<br>      \"description\": \"White Background\"<br>    }<br>  ]<br>}</code></pre></div><div id=\"demo-container-demo-0\" class=\"live-demo-container\"></div></p><p><h2 id=\"minimal-example\"><a href=\"#minimal-example\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Minimal Example</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">json</span><div class=\"code-actions\"><button class=\"live-demo-btn\" type=\"button\" data-demo-id=\"demo-1\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"5 3 19 12 5 21 5 3\"></polygon></svg>Live Demo</button><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-json\">{<br>  \"title\": \"Colors\",<br>  \"type\": \"brand-colors\",<br>  \"fields\": [<br>    {<br>      \"label\": \"Primary\",<br>      \"value\": \"#000000\"<br>    }<br>  ]<br>}</code></pre></div><div id=\"demo-container-demo-1\" class=\"live-demo-container\"></div></p><p><h2 id=\"best-practices\"><a href=\"#best-practices\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Best Practices</h2></p><p><ol><li>Include hex/RGB values</li><li>Show color names</li><li>Group by category</li><li>Enable copy-to-clipboard</li></ol>\n<h2 id=\"component-information\"><a href=\"#component-information\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Component Information</h2></p><p><ul><li><strong>Selector:</strong> <code>app-brand-colors-section</code></li><li><strong>Component Path:</strong> <code>./lib/components/sections/brand-colors-section/brand-colors-section.component</code></li><li><strong>Style Path:</strong> <code>./lib/styles/components/sections/_brand-colors.scss</code></li></ul>\n<h2 id=\"related-documentation\"><a href=\"#related-documentation\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Related Documentation</h2></p><p><ul><li><a href=\"/docs/section-types\">All Section Types</a></li><li><a href=\"/docs/api/models/aicardconfig\">Card Configuration</a></li><li><a href=\"/docs/best-practices\">Best Practices</a></li></ul>",
+  "toc": [
+    {
+      "id": "brand-colors-section",
+      "text": "Brand Colors Section",
+      "level": 1
+    },
+    {
+      "id": "overview",
+      "text": "Overview",
+      "level": 2
+    },
+    {
+      "id": "quick-facts",
+      "text": "Quick Facts",
+      "level": 3
+    },
+    {
+      "id": "use-cases",
+      "text": "Use Cases",
+      "level": 2
+    },
+    {
+      "id": "data-schema",
+      "text": "Data Schema",
+      "level": 2
+    },
+    {
+      "id": "fields-schema",
+      "text": "Fields Schema",
+      "level": 3
+    },
+    {
+      "id": "complete-example",
+      "text": "Complete Example",
+      "level": 2
+    },
+    {
+      "id": "minimal-example",
+      "text": "Minimal Example",
+      "level": 2
+    },
+    {
+      "id": "best-practices",
+      "text": "Best Practices",
+      "level": 2
+    },
+    {
+      "id": "component-information",
+      "text": "Component Information",
+      "level": 2
+    },
+    {
+      "id": "related-documentation",
+      "text": "Related Documentation",
+      "level": 2
+    }
+  ],
+  "contentHash": "032ac1ed16d8aefb",
+  "generatedAt": "2025-12-01T09:15:43.764Z",
+  "demoConfigs": {
+    "demo-0": {
+      "title": "Brand Colors",
+      "type": "brand-colors",
+      "description": "Official brand color palette",
+      "fields": [
+        {
+          "label": "Primary",
+          "value": "#FF7900",
+          "description": "Orange Brand Color"
+        },
+        {
+          "label": "Secondary",
+          "value": "#000000",
+          "description": "Black"
+        },
+        {
+          "label": "Accent",
+          "value": "#4CAF50",
+          "description": "Green Accent"
+        },
+        {
+          "label": "Background",
+          "value": "#FFFFFF",
+          "description": "White Background"
+        }
+      ]
+    },
+    "demo-1": {
+      "title": "Colors",
+      "type": "brand-colors",
+      "fields": [
+        {
+          "label": "Primary",
+          "value": "#000000"
+        }
+      ]
+    }
+  }
+}

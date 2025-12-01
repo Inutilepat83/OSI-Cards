@@ -2,6 +2,36 @@ import { ChangeDetectionStrategy, Component, Input, EventEmitter, Output, Change
 import { CardField, CardItem, CardSection } from '../../models';
 
 /**
+ * Layout configuration for a section type.
+ * Each section component defines its own static layoutConfig.
+ */
+export interface SectionLayoutConfig {
+  /** Preferred column span (1-4) */
+  preferredColumns: number;
+  /** Minimum columns the section should span */
+  minColumns: number;
+  /** Maximum columns the section can span */
+  maxColumns: number;
+  /** Expand by 1 column when field count exceeds this threshold */
+  expandOnFieldCount?: number;
+  /** Expand by 1 column when item count exceeds this threshold */
+  expandOnItemCount?: number;
+  /** Expand by 1 column when description exceeds this character count */
+  expandOnDescriptionLength?: number;
+  /** For horizontal layouts: set columns to match item count (up to maxColumns) */
+  matchItemCount?: boolean;
+}
+
+/**
+ * Default layout configuration for sections without explicit config
+ */
+export const DEFAULT_LAYOUT_CONFIG: SectionLayoutConfig = {
+  preferredColumns: 1,
+  minColumns: 1,
+  maxColumns: 4,
+};
+
+/**
  * Base interface for section field/item interactions
  */
 export interface SectionInteraction<T = CardField | CardItem> {

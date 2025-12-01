@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
+import { DocsDemoComponent } from '../../components';
 
 const pageContent = `# Brand Colors Section
 
@@ -108,15 +109,65 @@ The **Brand Colors Section** (\`type: "brand-colors"\`) is used for displays col
 - [Best Practices](/docs/best-practices)
 `;
 
+const demoConfig = {
+  "title": "Brand Colors",
+  "type": "brand-colors",
+  "description": "Official brand color palette",
+  "fields": [
+    {
+      "label": "Primary",
+      "value": "#FF7900",
+      "description": "Orange Brand Color"
+    },
+    {
+      "label": "Secondary",
+      "value": "#000000",
+      "description": "Black"
+    },
+    {
+      "label": "Accent",
+      "value": "#4CAF50",
+      "description": "Green Accent"
+    },
+    {
+      "label": "Background",
+      "value": "#FFFFFF",
+      "description": "White Background"
+    }
+  ]
+};
+
+/**
+ * Brand Colors Section documentation page with live demo
+ * Auto-generated - modifications may be overwritten
+ */
 @Component({
   selector: 'app-brand-colors-page',
   standalone: true,
-  imports: [DocPageComponent],
-  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  imports: [DocPageComponent, DocsDemoComponent],
+  template: `
+    <div class="section-docs">
+      <app-docs-demo 
+        [config]="demo" 
+        [type]="'brand-colors'"
+        demoTitle="Live Preview"
+        height="350px"
+      ></app-docs-demo>
+      <app-doc-page [content]="content"></app-doc-page>
+    </div>
+  `,
+  styles: [`
+    .section-docs {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BrandColorsPageComponent {
   content = pageContent;
+  demo = demoConfig;
 }
 
 export default BrandColorsPageComponent;

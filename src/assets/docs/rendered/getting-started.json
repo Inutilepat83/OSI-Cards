@@ -1,0 +1,100 @@
+{
+  "pageId": "getting-started",
+  "title": "OrangeSales Intelligence OSI Cards",
+  "html": "<h1 id=\"orangesales-intelligence-osi-cards\"><a href=\"#orangesales-intelligence-osi-cards\" class=\"anchor-link\" aria-hidden=\"true\">#</a>OrangeSales Intelligence OSI Cards</h1></p><p><strong>OrangeSales Intelligence OSI Cards</strong> is a versatile card generator used by sales intelligence agents. It features structured formatting that can design cards for any form of business intelligence data. Built as a modern, token-driven Angular dashboard framework (supports Angular 18 and 20), OSI Cards transforms any dataset into a visually rich stack of interactive cards rendered within a responsive masonry grid. Built for flexibility, accessibility, and performance, OSI Cards empowers developers to compose diverse data experiences with minimal friction.</p><p>Each card is composed of one or more <strong>sections</strong>—standalone, configurable components orchestrated by <code>AICardRendererComponent</code> ⟶ <code>SectionRendererComponent</code> ⟶ <code>MasonryGridComponent</code>. This architecture enables seamless combination of layouts, real-time streaming updates, and rich interactions.</p><p><hr></p><p><h2 id=\"table-of-contents\"><a href=\"#table-of-contents\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Table of Contents</h2></p><p><ol><li><a href=\"#quick-start\">Quick Start</a></li><li><a href=\"#using-osi-cards-in-your-project\">Using OSI Cards in Your Project</a></li><li><a href=\"#core-architecture\">Core Architecture</a></li><li><a href=\"#section-types-catalog---all-20-components\">Section Types Catalog</a></li><li><a href=\"#creating-cards-complete-guide\">Creating Cards: Complete Guide</a></li><li><a href=\"#design-system--tokens\">Design System &amp; Tokens</a></li><li><a href=\"#advanced-features\">Advanced Features</a></li><li><a href=\"#development\">Development</a></li><li><a href=\"#appendix\">Appendix</a></li></ol>\n<hr></p><p><h2 id=\"quick-start\"><a href=\"#quick-start\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Quick Start</h2></p><p><h3 id=\"run-the-development-server\"><a href=\"#run-the-development-server\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Run the Development Server</h3></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">bash</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-bash\">npm start\n<h1 id=\"navigate-to-http-localhost-4200\"><a href=\"#navigate-to-http-localhost-4200\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Navigate to http://localhost:4200</code></pre></div></h1></p><p><h3 id=\"create-your-first-card\"><a href=\"#create-your-first-card\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Create Your First Card</h3></p><p>Add a JSON card configuration to <code>src/assets/configs/companies/</code> or <code>src/assets/configs/contacts/</code>:</p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">json</span><div class=\"code-actions\"><button class=\"live-demo-btn\" type=\"button\" data-demo-id=\"demo-0\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"5 3 19 12 5 21 5 3\"></polygon></svg>Live Demo</button><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-json\">{<br>  \"cardTitle\": \"Your Company\",<br>  \"sections\": [<br>    {<br>      \"title\": \"Company Info\",<br>      \"type\": \"info\",<br>      \"fields\": [<br>        { \"label\": \"Industry\", \"value\": \"Technology\" },<br>        { \"label\": \"Employees\", \"value\": \"1000+\" },<br>        { \"label\": \"Founded\", \"value\": \"2020\" }<br>      ]<br>    },<br>    {<br>      \"title\": \"Key Metrics\",<br>      \"type\": \"analytics\",<br>      \"fields\": [<br>        { \"label\": \"Growth\", \"value\": \"85%\", \"percentage\": 85 },<br>        { \"label\": \"ROI\", \"value\": \"120%\", \"percentage\": 120 }<br>      ]<br>    }<br>  ]<br>}</code></pre></div><div id=\"demo-container-demo-0\" class=\"live-demo-container\"></div></p><p>The card will automatically appear in the masonry grid on page load.</p><p><hr></p><p><h2 id=\"using-osi-cards-in-your-project\"><a href=\"#using-osi-cards-in-your-project\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Using OSI Cards in Your Project</h2></p><p>OSI Cards can be imported and used as a library in other Angular projects.</p><p>&gt; 📖 <strong>For detailed integration instructions, see <a href=\"./README_INTEGRATION.md\">README_INTEGRATION.md</a></strong></p><p><h3 id=\"installation-options\"><a href=\"#installation-options\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Installation Options</h3></p><p><h4 id=\"option-1-install-from-npm-recommended\"><a href=\"#option-1-install-from-npm-recommended\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Option 1: Install from npm (Recommended)</h4></p><p>Install the library directly from npm:</p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">bash</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-bash\">npm install osi-cards-lib</code></pre></div></p><p>The library supports both Angular 18 and Angular 20, which should resolve most peer dependency conflicts. If you still encounter issues, use:</p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">bash</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-bash\">npm install osi-cards-lib --legacy-peer-deps</code></pre></div></p><p><strong>Package URL:</strong> https://www.npmjs.com/package/osi-cards-lib</p><p>📖 <strong>See <a href=\"./docs/PEER_DEPENDENCY_CONFLICTS.md\">docs/PEER_DEPENDENCY_CONFLICTS.md</a> for detailed conflict resolution guide.</strong></p><p><h4 id=\"option-2-install-from-github\"><a href=\"#option-2-install-from-github\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Option 2: Install from GitHub</h4></p><p>Install the library directly from the GitHub repository:</p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">bash</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-bash\">npm install git+https://github.com/Inutilepat83/OSI-Cards.git</code></pre></div></p><p>Or add to your <code>package.json</code>:</p><p>",
+  "toc": [
+    {
+      "id": "orangesales-intelligence-osi-cards",
+      "text": "OrangeSales Intelligence OSI Cards",
+      "level": 1
+    },
+    {
+      "id": "table-of-contents",
+      "text": "Table of Contents",
+      "level": 2
+    },
+    {
+      "id": "quick-start",
+      "text": "Quick Start",
+      "level": 2
+    },
+    {
+      "id": "run-the-development-server",
+      "text": "Run the Development Server",
+      "level": 3
+    },
+    {
+      "id": "navigate-to-http-localhost-4200",
+      "text": "Navigate to http://localhost:4200",
+      "level": 1
+    },
+    {
+      "id": "create-your-first-card",
+      "text": "Create Your First Card",
+      "level": 3
+    },
+    {
+      "id": "using-osi-cards-in-your-project",
+      "text": "Using OSI Cards in Your Project",
+      "level": 2
+    },
+    {
+      "id": "installation-options",
+      "text": "Installation Options",
+      "level": 3
+    },
+    {
+      "id": "option-1-install-from-npm-recommended",
+      "text": "Option 1: Install from npm (Recommended)",
+      "level": 4
+    },
+    {
+      "id": "option-2-install-from-github",
+      "text": "Option 2: Install from GitHub",
+      "level": 4
+    }
+  ],
+  "contentHash": "be16720061218f58",
+  "generatedAt": "2025-12-01T09:15:43.702Z",
+  "demoConfigs": {
+    "demo-0": {
+      "cardTitle": "Your Company",
+      "sections": [
+        {
+          "title": "Company Info",
+          "type": "info",
+          "fields": [
+            {
+              "label": "Industry",
+              "value": "Technology"
+            },
+            {
+              "label": "Employees",
+              "value": "1000+"
+            },
+            {
+              "label": "Founded",
+              "value": "2020"
+            }
+          ]
+        },
+        {
+          "title": "Key Metrics",
+          "type": "analytics",
+          "fields": [
+            {
+              "label": "Growth",
+              "value": "85%",
+              "percentage": 85
+            },
+            {
+              "label": "ROI",
+              "value": "120%",
+              "percentage": 120
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

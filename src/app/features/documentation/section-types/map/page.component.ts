@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
+import { DocsDemoComponent } from '../../components';
 
 const pageContent = `# Map Section
 
@@ -112,15 +113,66 @@ The **Map Section** (\`type: "map"\`) is used for displays geographic data with 
 - [Best Practices](/docs/best-practices)
 `;
 
+const demoConfig = {
+  "title": "Global Presence",
+  "type": "map",
+  "description": "Office locations worldwide",
+  "fields": [
+    {
+      "name": "Headquarters",
+      "x": 37.7749,
+      "y": -122.4194,
+      "type": "office",
+      "address": "San Francisco, CA, USA"
+    },
+    {
+      "name": "European HQ",
+      "x": 51.5074,
+      "y": -0.1278,
+      "type": "office",
+      "address": "London, UK"
+    },
+    {
+      "name": "APAC Office",
+      "x": 35.6762,
+      "y": 139.6503,
+      "type": "branch",
+      "address": "Tokyo, Japan"
+    }
+  ]
+};
+
+/**
+ * Map Section documentation page with live demo
+ * Auto-generated - modifications may be overwritten
+ */
 @Component({
   selector: 'app-map-page',
   standalone: true,
-  imports: [DocPageComponent],
-  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  imports: [DocPageComponent, DocsDemoComponent],
+  template: `
+    <div class="section-docs">
+      <app-docs-demo 
+        [config]="demo" 
+        [type]="'map'"
+        demoTitle="Live Preview"
+        height="350px"
+      ></app-docs-demo>
+      <app-doc-page [content]="content"></app-doc-page>
+    </div>
+  `,
+  styles: [`
+    .section-docs {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapPageComponent {
   content = pageContent;
+  demo = demoConfig;
 }
 
 export default MapPageComponent;

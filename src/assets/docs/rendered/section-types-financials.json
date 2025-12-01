@@ -1,0 +1,111 @@
+{
+  "pageId": "section-types/financials",
+  "title": "Financials Section",
+  "html": "<h1 id=\"financials-section\"><a href=\"#financials-section\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Financials Section</h1></p><p>Displays financial data including revenue, expenses, P&amp;L statements, and currency information.</p><p><h2 id=\"overview\"><a href=\"#overview\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Overview</h2></p><p>The <strong>Financials Section</strong> (<code>type: \"financials\"</code>) is used for displays financial data including revenue, expenses, p&amp;l statements, and currency information.</p><p><h3 id=\"quick-facts\"><a href=\"#quick-facts\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Quick Facts</h3></p><p><div class=\"table-wrapper\"><table><thead><tr><th>Property</th><th>Value</th></tr></thead><tbody><tr><td>Type</td><td><code>financials</code></td></tr><tr><td>Uses Fields</td><td>Yes</td></tr><tr><td>Uses Items</td><td>No</td></tr><tr><td>Default Columns</td><td>2</td></tr><tr><td>Supports Collapse</td><td>Yes</td></tr><tr><td>Aliases</td><td>None</td></tr></tbody></table></div></p><p><h2 id=\"use-cases\"><a href=\"#use-cases\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Use Cases</h2></p><p><ul><li>Financial reports</li><li>Quarterly earnings</li><li>Budget information</li><li>Revenue tracking</li></ul>\n<h2 id=\"data-schema\"><a href=\"#data-schema\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Data Schema</h2></p><p><h3 id=\"fields-schema\"><a href=\"#fields-schema\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Fields Schema</h3></p><p><div class=\"table-wrapper\"><table><thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td><code>label</code></td><td>string</td><td>Financial metric name</td></tr><tr><td><code>value</code></td><td>string,number</td><td>Metric value</td></tr><tr><td><code>format</code></td><td>string</td><td>Value format</td></tr><tr><td><code>change</code></td><td>number</td><td>Change percentage</td></tr><tr><td><code>trend</code></td><td>string</td><td>Trend indicator</td></tr><tr><td><code>period</code></td><td>string</td><td>Time period (Q1, YTD, etc.)</td></tr></tbody></table></div></p><p><h2 id=\"complete-example\"><a href=\"#complete-example\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Complete Example</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">json</span><div class=\"code-actions\"><button class=\"live-demo-btn\" type=\"button\" data-demo-id=\"demo-0\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"5 3 19 12 5 21 5 3\"></polygon></svg>Live Demo</button><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-json\">{<br>  \"title\": \"Financial Overview\",<br>  \"type\": \"financials\",<br>  \"description\": \"Key financial metrics and performance\",<br>  \"fields\": [<br>    {<br>      \"label\": \"Annual Revenue\",<br>      \"value\": \"$50M\",<br>      \"format\": \"currency\",<br>      \"change\": 15,<br>      \"trend\": \"up\"<br>    },<br>    {<br>      \"label\": \"Operating Margin\",<br>      \"value\": \"18%\",<br>      \"format\": \"percentage\",<br>      \"change\": 3.2,<br>      \"trend\": \"up\"<br>    },<br>    {<br>      \"label\": \"EBITDA\",<br>      \"value\": \"$12M\",<br>      \"format\": \"currency\",<br>      \"change\": 8,<br>      \"trend\": \"up\"<br>    },<br>    {<br>      \"label\": \"Net Income\",<br>      \"value\": \"$8M\",<br>      \"format\": \"currency\",<br>      \"change\": -2.5,<br>      \"trend\": \"down\"<br>    }<br>  ]<br>}</code></pre></div><div id=\"demo-container-demo-0\" class=\"live-demo-container\"></div></p><p><h2 id=\"minimal-example\"><a href=\"#minimal-example\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Minimal Example</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">json</span><div class=\"code-actions\"><button class=\"live-demo-btn\" type=\"button\" data-demo-id=\"demo-1\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"5 3 19 12 5 21 5 3\"></polygon></svg>Live Demo</button><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-json\">{<br>  \"title\": \"Financials\",<br>  \"type\": \"financials\",<br>  \"fields\": [<br>    {<br>      \"label\": \"Revenue\",<br>      \"value\": \"$1M\"<br>    }<br>  ]<br>}</code></pre></div><div id=\"demo-container-demo-1\" class=\"live-demo-container\"></div></p><p><h2 id=\"best-practices\"><a href=\"#best-practices\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Best Practices</h2></p><p><ol><li>Use currency formatting</li><li>Include time periods</li><li>Show trends and changes</li><li>Group by category</li></ol>\n<h2 id=\"component-information\"><a href=\"#component-information\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Component Information</h2></p><p><ul><li><strong>Selector:</strong> <code>app-financials-section</code></li><li><strong>Component Path:</strong> <code>./lib/components/sections/financials-section/financials-section.component</code></li><li><strong>Style Path:</strong> <code>./lib/styles/components/sections/_financials.scss</code></li></ul>\n<h2 id=\"related-documentation\"><a href=\"#related-documentation\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Related Documentation</h2></p><p><ul><li><a href=\"/docs/section-types\">All Section Types</a></li><li><a href=\"/docs/api/models/aicardconfig\">Card Configuration</a></li><li><a href=\"/docs/best-practices\">Best Practices</a></li></ul>",
+  "toc": [
+    {
+      "id": "financials-section",
+      "text": "Financials Section",
+      "level": 1
+    },
+    {
+      "id": "overview",
+      "text": "Overview",
+      "level": 2
+    },
+    {
+      "id": "quick-facts",
+      "text": "Quick Facts",
+      "level": 3
+    },
+    {
+      "id": "use-cases",
+      "text": "Use Cases",
+      "level": 2
+    },
+    {
+      "id": "data-schema",
+      "text": "Data Schema",
+      "level": 2
+    },
+    {
+      "id": "fields-schema",
+      "text": "Fields Schema",
+      "level": 3
+    },
+    {
+      "id": "complete-example",
+      "text": "Complete Example",
+      "level": 2
+    },
+    {
+      "id": "minimal-example",
+      "text": "Minimal Example",
+      "level": 2
+    },
+    {
+      "id": "best-practices",
+      "text": "Best Practices",
+      "level": 2
+    },
+    {
+      "id": "component-information",
+      "text": "Component Information",
+      "level": 2
+    },
+    {
+      "id": "related-documentation",
+      "text": "Related Documentation",
+      "level": 2
+    }
+  ],
+  "contentHash": "127a4d300ac158f7",
+  "generatedAt": "2025-12-01T09:15:43.770Z",
+  "demoConfigs": {
+    "demo-0": {
+      "title": "Financial Overview",
+      "type": "financials",
+      "description": "Key financial metrics and performance",
+      "fields": [
+        {
+          "label": "Annual Revenue",
+          "value": "$50M",
+          "format": "currency",
+          "change": 15,
+          "trend": "up"
+        },
+        {
+          "label": "Operating Margin",
+          "value": "18%",
+          "format": "percentage",
+          "change": 3.2,
+          "trend": "up"
+        },
+        {
+          "label": "EBITDA",
+          "value": "$12M",
+          "format": "currency",
+          "change": 8,
+          "trend": "up"
+        },
+        {
+          "label": "Net Income",
+          "value": "$8M",
+          "format": "currency",
+          "change": -2.5,
+          "trend": "down"
+        }
+      ]
+    },
+    "demo-1": {
+      "title": "Financials",
+      "type": "financials",
+      "fields": [
+        {
+          "label": "Revenue",
+          "value": "$1M"
+        }
+      ]
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BaseSectionComponent } from '../base-section.component';
+import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
 import { CardItem } from '../../../models';
 import { LucideIconsModule } from '../../../icons';
 
@@ -12,6 +12,12 @@ import { LucideIconsModule } from '../../../icons';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NewsSectionComponent extends BaseSectionComponent<CardItem> {
+  /** Image + text layout needs width */
+  static readonly layoutConfig: SectionLayoutConfig = {
+    preferredColumns: 2,
+    minColumns: 1,
+    maxColumns: 3,
+  };
   get newsItems(): CardItem[] {
     return this.getItems();
   }

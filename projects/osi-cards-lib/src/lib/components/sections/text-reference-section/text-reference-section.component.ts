@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent } from '../base-section.component';
+import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
 import { CardField } from '../../../models';
 
 type TextReferenceField = CardField & {
@@ -21,6 +21,12 @@ type TextReferenceField = CardField & {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TextReferenceSectionComponent extends BaseSectionComponent<TextReferenceField> {
+  /** Citation style, compact */
+  static readonly layoutConfig: SectionLayoutConfig = {
+    preferredColumns: 1,
+    minColumns: 1,
+    maxColumns: 2,
+  };
   get fields(): TextReferenceField[] {
     return super.getFields() as TextReferenceField[];
   }

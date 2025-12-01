@@ -110,7 +110,7 @@ export class ErrorHandlingService {
 
     switch (category) {
       case ErrorCategory.NETWORK:
-        documentationUrl = 'https://github.com/Inutulepat83/OSI-Cards/blob/main/docs/TROUBLESHOOTING.md#network-errors';
+        documentationUrl = 'https://github.com/Inutilepat83/OSI-Cards/blob/main/docs/TROUBLESHOOTING.md#network-errors';
         suggestions = [
           'Check your internet connection',
           'Verify the API endpoint is accessible',
@@ -120,7 +120,7 @@ export class ErrorHandlingService {
         break;
 
       case ErrorCategory.VALIDATION:
-        documentationUrl = 'https://github.com/Inutulepat83/OSI-Cards/blob/main/README.md#creating-cards-complete-guide';
+        documentationUrl = 'https://github.com/Inutilepat83/OSI-Cards/blob/main/README.md#creating-cards-complete-guide';
         suggestions = [
           'Verify all required fields are provided',
           'Check JSON syntax is valid',
@@ -130,7 +130,7 @@ export class ErrorHandlingService {
         break;
 
       case ErrorCategory.BUSINESS_LOGIC:
-        documentationUrl = 'https://github.com/Inutulepat83/OSI-Cards/blob/main/docs/API_REFERENCE.md';
+        documentationUrl = 'https://github.com/Inutilepat83/OSI-Cards/blob/main/docs/API_REFERENCE.md';
         suggestions = [
           'Check the error code for specific guidance',
           'Verify your card configuration matches expected format',
@@ -140,7 +140,7 @@ export class ErrorHandlingService {
         break;
 
       default:
-        documentationUrl = 'https://github.com/Inutulepat83/OSI-Cards/blob/main/docs/TROUBLESHOOTING.md';
+        documentationUrl = 'https://github.com/Inutilepat83/OSI-Cards/blob/main/docs/TROUBLESHOOTING.md';
         suggestions = [
           'Try refreshing the page',
           'Check browser console for more details',

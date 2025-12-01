@@ -119,7 +119,7 @@ export class DevelopmentWarningsService {
       issues.push(
         `${sectionKey}: Invalid section type '${section.type}'. ` +
         `Valid types: ${validTypes.join(', ')}. ` +
-        `See: https://github.com/Inutulepat83/OSI-Cards/blob/main/README.md#section-types-catalog`
+        `See: https://github.com/Inutilepat83/OSI-Cards/blob/main/README.md#section-types-catalog`
       );
     }
 
@@ -159,7 +159,7 @@ export class DevelopmentWarningsService {
       if (!action.email) {
         issues.push(
           `${actionKey}: Mail action requires 'email' configuration. ` +
-          `See: https://github.com/Inutulepat83/OSI-Cards/blob/main/README.md#card-actions`
+          `See: https://github.com/Inutilepat83/OSI-Cards/blob/main/README.md#card-actions`
         );
       } else {
         if (!action.email.subject) {
@@ -230,7 +230,7 @@ export class DevelopmentWarningsService {
         'DevelopmentWarningsService',
         {
           replacement,
-          migrationGuide: `https://github.com/Inutulepat83/OSI-Cards/blob/main/docs/MIGRATION_V${version}.md`,
+          migrationGuide: `https://github.com/Inutilepat83/OSI-Cards/blob/main/docs/MIGRATION_V${version}.md`,
           context
         }
       );

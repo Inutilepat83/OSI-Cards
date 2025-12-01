@@ -1,0 +1,66 @@
+{
+  "pageId": "section-types/base",
+  "title": "base Section",
+  "html": "<h1 id=\"base-section\"><a href=\"#base-section\" class=\"anchor-link\" aria-hidden=\"true\">#</a>base Section</h1></p><p>Documentation for base section type.</p><p><h2 id=\"overview\"><a href=\"#overview\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Overview</h2></p><p>The <strong>base Section</strong> is used for documentation for base section type.</p><p><h2 id=\"use-cases\"><a href=\"#use-cases\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Use Cases</h2></p><p><h2 id=\"data-schema\"><a href=\"#data-schema\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Data Schema</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">interface CardSection {<br>  title: string;<br>  type: 'base';<br>  fields?: CardField[];<br>  <br>}</code></pre></div></p><p><h2 id=\"example\"><a href=\"#example\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Example</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">json</span><div class=\"code-actions\"><button class=\"live-demo-btn\" type=\"button\" data-demo-id=\"demo-0\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"5 3 19 12 5 21 5 3\"></polygon></svg>Live Demo</button><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-json\">{<br>  \"title\": \"base Section Example\",<br>  \"type\": \"base\",<br>  \"fields\": [<br>    {<br>      \"label\": \"Example Label\",<br>      \"value\": \"Example Value\"<br>    }<br>  ]<br>}</code></pre></div><div id=\"demo-container-demo-0\" class=\"live-demo-container\"></div></p><p><h2 id=\"best-practices\"><a href=\"#best-practices\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Best Practices</h2></p><p><h2 id=\"component-properties\"><a href=\"#component-properties\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Component Properties</h2></p><p><h3 id=\"outputs\"><a href=\"#outputs\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Outputs</h3></p><p><ul><li><strong>fieldInteraction</strong>: Output event</li><li><strong>itemInteraction</strong>: Output event</li></ul></p><p><h2 id=\"related-documentation\"><a href=\"#related-documentation\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Related Documentation</h2></p><p><ul><li><a href=\"/docs/section-types\">All Section Types</a></li><li><a href=\"/docs/api/models/aicardconfig\">Card Configuration</a></li><li><a href=\"/docs/best-practices\">Best Practices</a></li></ul>",
+  "toc": [
+    {
+      "id": "base-section",
+      "text": "base Section",
+      "level": 1
+    },
+    {
+      "id": "overview",
+      "text": "Overview",
+      "level": 2
+    },
+    {
+      "id": "use-cases",
+      "text": "Use Cases",
+      "level": 2
+    },
+    {
+      "id": "data-schema",
+      "text": "Data Schema",
+      "level": 2
+    },
+    {
+      "id": "example",
+      "text": "Example",
+      "level": 2
+    },
+    {
+      "id": "best-practices",
+      "text": "Best Practices",
+      "level": 2
+    },
+    {
+      "id": "component-properties",
+      "text": "Component Properties",
+      "level": 2
+    },
+    {
+      "id": "outputs",
+      "text": "Outputs",
+      "level": 3
+    },
+    {
+      "id": "related-documentation",
+      "text": "Related Documentation",
+      "level": 2
+    }
+  ],
+  "contentHash": "bdb395f33cdb0f36",
+  "generatedAt": "2025-12-01T09:15:43.764Z",
+  "demoConfigs": {
+    "demo-0": {
+      "title": "base Section Example",
+      "type": "base",
+      "fields": [
+        {
+          "label": "Example Label",
+          "value": "Example Value"
+        }
+      ]
+    }
+  }
+}

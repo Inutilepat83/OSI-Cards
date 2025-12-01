@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
+import { DocsDemoComponent } from '../../components';
 
 const pageContent = `# Text Reference Section
 
@@ -108,15 +109,63 @@ The **Text Reference Section** (\`type: "text-reference"\`) is used for displays
 - [Best Practices](/docs/best-practices)
 `;
 
+const demoConfig = {
+  "title": "Documentation References",
+  "type": "text-reference",
+  "description": "Related documents and resources",
+  "fields": [
+    {
+      "label": "Technical Spec",
+      "value": "Technical Specification v2.1",
+      "description": "Latest technical documentation",
+      "url": "https://docs.example.com/spec"
+    },
+    {
+      "label": "User Guide",
+      "value": "User Guide 2024 Edition",
+      "description": "Complete user manual",
+      "url": "https://docs.example.com/guide"
+    },
+    {
+      "label": "API Reference",
+      "value": "REST API Documentation",
+      "description": "API endpoints and schemas",
+      "url": "https://api.example.com/docs"
+    }
+  ]
+};
+
+/**
+ * Text Reference Section documentation page with live demo
+ * Auto-generated - modifications may be overwritten
+ */
 @Component({
   selector: 'app-text-reference-page',
   standalone: true,
-  imports: [DocPageComponent],
-  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  imports: [DocPageComponent, DocsDemoComponent],
+  template: `
+    <div class="section-docs">
+      <app-docs-demo 
+        [config]="demo" 
+        [type]="'text-reference'"
+        demoTitle="Live Preview"
+        height="350px"
+      ></app-docs-demo>
+      <app-doc-page [content]="content"></app-doc-page>
+    </div>
+  `,
+  styles: [`
+    .section-docs {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TextReferencePageComponent {
   content = pageContent;
+  demo = demoConfig;
 }
 
 export default TextReferencePageComponent;

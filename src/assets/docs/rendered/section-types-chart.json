@@ -1,0 +1,113 @@
+{
+  "pageId": "section-types/chart",
+  "title": "Chart Section",
+  "html": "<h1 id=\"chart-section\"><a href=\"#chart-section\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Chart Section</h1></p><p>Displays data visualizations including bar charts, line charts, pie charts, and more.</p><p><h2 id=\"overview\"><a href=\"#overview\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Overview</h2></p><p>The <strong>Chart Section</strong> (<code>type: \"chart\"</code>) is used for displays data visualizations including bar charts, line charts, pie charts, and more.</p><p><h3 id=\"quick-facts\"><a href=\"#quick-facts\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Quick Facts</h3></p><p><div class=\"table-wrapper\"><table><thead><tr><th>Property</th><th>Value</th></tr></thead><tbody><tr><td>Type</td><td><code>chart</code></td></tr><tr><td>Uses Fields</td><td>No</td></tr><tr><td>Uses Items</td><td>No</td></tr><tr><td>Default Columns</td><td>2</td></tr><tr><td>Supports Collapse</td><td>No</td></tr><tr><td>Aliases</td><td>None</td></tr><tr><td>External Library</td><td><code>chart.js</code></td></tr></tbody></table></div>\n<h2 id=\"use-cases\"><a href=\"#use-cases\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Use Cases</h2></p><p><ul><li>Data visualization</li><li>Analytics dashboards</li><li>Statistical reports</li><li>Trend analysis</li></ul>\n<h2 id=\"data-schema\"><a href=\"#data-schema\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Data Schema</h2></p><p><h2 id=\"complete-example\"><a href=\"#complete-example\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Complete Example</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">json</span><div class=\"code-actions\"><button class=\"live-demo-btn\" type=\"button\" data-demo-id=\"demo-0\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"5 3 19 12 5 21 5 3\"></polygon></svg>Live Demo</button><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-json\">{<br>  \"title\": \"Revenue Trends\",<br>  \"type\": \"chart\",<br>  \"chartType\": \"bar\",<br>  \"chartData\": {<br>    \"labels\": [<br>      \"Q1\",<br>      \"Q2\",<br>      \"Q3\",<br>      \"Q4\"<br>    ],<br>    \"datasets\": [<br>      {<br>        \"label\": \"Revenue\",<br>        \"data\": [<br>          100,<br>          150,<br>          200,<br>          250<br>        ],<br>        \"backgroundColor\": \"#FF7900\"<br>      },<br>      {<br>        \"label\": \"Expenses\",<br>        \"data\": [<br>          80,<br>          90,<br>          100,<br>          110<br>        ],<br>        \"backgroundColor\": \"#4CAF50\"<br>      }<br>    ]<br>  }<br>}</code></pre></div><div id=\"demo-container-demo-0\" class=\"live-demo-container\"></div></p><p><h2 id=\"minimal-example\"><a href=\"#minimal-example\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Minimal Example</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">json</span><div class=\"code-actions\"><button class=\"live-demo-btn\" type=\"button\" data-demo-id=\"demo-1\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"5 3 19 12 5 21 5 3\"></polygon></svg>Live Demo</button><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-json\">{<br>  \"title\": \"Chart\",<br>  \"type\": \"chart\",<br>  \"chartType\": \"bar\",<br>  \"chartData\": {<br>    \"labels\": [<br>      \"A\"<br>    ],<br>    \"datasets\": [<br>      {<br>        \"data\": [<br>          1<br>        ]<br>      }<br>    ]<br>  }<br>}</code></pre></div><div id=\"demo-container-demo-1\" class=\"live-demo-container\"></div></p><p><h2 id=\"best-practices\"><a href=\"#best-practices\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Best Practices</h2></p><p><ol><li>Provide proper chart configuration</li><li>Include chart type specification</li><li>Use appropriate data formats</li><li>Ensure accessibility with labels</li></ol>\n<h2 id=\"component-information\"><a href=\"#component-information\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Component Information</h2></p><p><ul><li><strong>Selector:</strong> <code>app-chart-section</code></li><li><strong>Component Path:</strong> <code>./lib/components/sections/chart-section/chart-section.component</code></li><li><strong>Style Path:</strong> <code>./lib/styles/components/sections/_chart.scss</code></li></ul>\n<h2 id=\"related-documentation\"><a href=\"#related-documentation\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Related Documentation</h2></p><p><ul><li><a href=\"/docs/section-types\">All Section Types</a></li><li><a href=\"/docs/api/models/aicardconfig\">Card Configuration</a></li><li><a href=\"/docs/best-practices\">Best Practices</a></li></ul>",
+  "toc": [
+    {
+      "id": "chart-section",
+      "text": "Chart Section",
+      "level": 1
+    },
+    {
+      "id": "overview",
+      "text": "Overview",
+      "level": 2
+    },
+    {
+      "id": "quick-facts",
+      "text": "Quick Facts",
+      "level": 3
+    },
+    {
+      "id": "use-cases",
+      "text": "Use Cases",
+      "level": 2
+    },
+    {
+      "id": "data-schema",
+      "text": "Data Schema",
+      "level": 2
+    },
+    {
+      "id": "complete-example",
+      "text": "Complete Example",
+      "level": 2
+    },
+    {
+      "id": "minimal-example",
+      "text": "Minimal Example",
+      "level": 2
+    },
+    {
+      "id": "best-practices",
+      "text": "Best Practices",
+      "level": 2
+    },
+    {
+      "id": "component-information",
+      "text": "Component Information",
+      "level": 2
+    },
+    {
+      "id": "related-documentation",
+      "text": "Related Documentation",
+      "level": 2
+    }
+  ],
+  "contentHash": "a9a30340146b331c",
+  "generatedAt": "2025-12-01T09:15:43.765Z",
+  "demoConfigs": {
+    "demo-0": {
+      "title": "Revenue Trends",
+      "type": "chart",
+      "chartType": "bar",
+      "chartData": {
+        "labels": [
+          "Q1",
+          "Q2",
+          "Q3",
+          "Q4"
+        ],
+        "datasets": [
+          {
+            "label": "Revenue",
+            "data": [
+              100,
+              150,
+              200,
+              250
+            ],
+            "backgroundColor": "#FF7900"
+          },
+          {
+            "label": "Expenses",
+            "data": [
+              80,
+              90,
+              100,
+              110
+            ],
+            "backgroundColor": "#4CAF50"
+          }
+        ]
+      }
+    },
+    "demo-1": {
+      "title": "Chart",
+      "type": "chart",
+      "chartType": "bar",
+      "chartData": {
+        "labels": [
+          "A"
+        ],
+        "datasets": [
+          {
+            "data": [
+              1
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

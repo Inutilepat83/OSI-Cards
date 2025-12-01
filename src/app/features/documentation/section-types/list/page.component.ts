@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
+import { DocsDemoComponent } from '../../components';
 
 const pageContent = `# List Section
 
@@ -113,15 +114,69 @@ The **List Section** (\`type: "list"\`) is used for displays structured lists an
 - [Best Practices](/docs/best-practices)
 `;
 
+const demoConfig = {
+  "title": "Product Features",
+  "type": "list",
+  "description": "Key features and capabilities",
+  "items": [
+    {
+      "title": "Real-time Analytics",
+      "description": "Live data processing and visualization",
+      "icon": "📊",
+      "status": "completed"
+    },
+    {
+      "title": "AI Integration",
+      "description": "Machine learning powered insights",
+      "icon": "🤖",
+      "status": "in-progress"
+    },
+    {
+      "title": "API Access",
+      "description": "RESTful API for integrations",
+      "icon": "🔗",
+      "status": "completed"
+    },
+    {
+      "title": "Multi-language",
+      "description": "Support for 20+ languages",
+      "icon": "🌍",
+      "status": "pending"
+    }
+  ]
+};
+
+/**
+ * List Section documentation page with live demo
+ * Auto-generated - modifications may be overwritten
+ */
 @Component({
   selector: 'app-list-page',
   standalone: true,
-  imports: [DocPageComponent],
-  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  imports: [DocPageComponent, DocsDemoComponent],
+  template: `
+    <div class="section-docs">
+      <app-docs-demo 
+        [config]="demo" 
+        [type]="'list'"
+        demoTitle="Live Preview"
+        height="350px"
+      ></app-docs-demo>
+      <app-doc-page [content]="content"></app-doc-page>
+    </div>
+  `,
+  styles: [`
+    .section-docs {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListPageComponent {
   content = pageContent;
+  demo = demoConfig;
 }
 
 export default ListPageComponent;

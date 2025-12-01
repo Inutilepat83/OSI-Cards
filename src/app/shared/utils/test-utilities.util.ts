@@ -3,7 +3,7 @@
  * Build reusable test utilities and factories for card data
  */
 
-import { AICardConfig, CardSection, CardField, CardItem, CardType } from '../../models';
+import { AICardConfig, CardSection, CardField, CardItem} from '../../models';
 
 /**
  * Create a test card

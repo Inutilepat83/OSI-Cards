@@ -1,4 +1,5 @@
-import { SanitizationUtil } from './sanitization.util';
+// Note: SanitizationUtil import removed - using built-in methods
+// import { SanitizationUtil } from './sanitization.util';
 
 /**
  * URL validation and sanitization utilities

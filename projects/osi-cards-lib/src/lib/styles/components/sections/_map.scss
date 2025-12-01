@@ -19,7 +19,7 @@
 
 /* Map Card */
 .map-card {
-  @include card;
+  // Declarations must come before @include to avoid mixed-decls deprecation warning
   display: flex !important;
   flex-direction: column !important;
   gap: var(--card-gap) !important;
@@ -29,6 +29,8 @@
   border: 1px solid $brand-color-20 !important;
   align-items: flex-start !important;
   box-sizing: border-box !important;
+  
+  @include card;
 
   &:hover {
     transform: translateY(-2px) !important;

@@ -14,7 +14,7 @@ export const VALID_SECTION_TYPES = ["info","analytics","contact-card","network-c
 /**
  * Type aliases map
  */
-export const TYPE_ALIASES: Record<string, string> = {"metrics":"analytics","stats":"analytics","timeline":"event","table":"list","locations":"map","quote":"quotation","reference":"text-reference","text-ref":"text-reference","brands":"brand-colors","colors":"brand-colors"};
+export const TYPE_ALIASES: Record<string, string> = {"metrics":"analytics","stats":"analytics","timeline":"event","table":"list","locations":"map","quote":"quotation","reference":"text-reference","text-ref":"text-reference","brands":"brand-colors","colors":"brand-colors","project":"info"};
 
 /**
  * Section metadata for validation

@@ -17,7 +17,6 @@
 }
 
 .info-row {
-  @include card;
   appearance: none !important;
   font: inherit !important;
   line-height: 1.4 !important;
@@ -30,6 +29,7 @@
   text-align: left !important;
   width: 100% !important;
   box-sizing: border-box !important;
+  @include card;
 
   &:hover {
     transform: translateY(-2px) !important;

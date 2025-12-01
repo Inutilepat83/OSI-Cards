@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
+import { DocsDemoComponent } from '../../components';
 
 const pageContent = `# Social Media Section
 
@@ -107,15 +108,57 @@ The **Social Media Section** (\`type: "social-media"\`) is used for displays soc
 - [Best Practices](/docs/best-practices)
 `;
 
+const demoConfig = {
+  "title": "Social Media Presence",
+  "type": "social-media",
+  "description": "Company social media profiles",
+  "fields": [
+    {
+      "platform": "linkedin",
+      "handle": "@company",
+      "url": "https://linkedin.com/company/example",
+      "followers": 50000
+    },
+    {
+      "platform": "twitter",
+      "handle": "@company",
+      "url": "https://twitter.com/company",
+      "followers": 25000
+    }
+  ]
+};
+
+/**
+ * Social Media Section documentation page with live demo
+ * Auto-generated - modifications may be overwritten
+ */
 @Component({
   selector: 'app-social-media-page',
   standalone: true,
-  imports: [DocPageComponent],
-  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  imports: [DocPageComponent, DocsDemoComponent],
+  template: `
+    <div class="section-docs">
+      <app-docs-demo 
+        [config]="demo" 
+        [type]="'social-media'"
+        demoTitle="Live Preview"
+        height="350px"
+      ></app-docs-demo>
+      <app-doc-page [content]="content"></app-doc-page>
+    </div>
+  `,
+  styles: [`
+    .section-docs {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SocialMediaPageComponent {
   content = pageContent;
+  demo = demoConfig;
 }
 
 export default SocialMediaPageComponent;

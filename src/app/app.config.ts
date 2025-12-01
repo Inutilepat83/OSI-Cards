@@ -1,5 +1,6 @@
 import { ApplicationConfig, isDevMode, inject, APP_INITIALIZER } from '@angular/core';
-import { provideRouter, PreloadAllModules, withPreloading } from '@angular/router';
+import { provideRouter, withPreloading } from '@angular/router';
+import { DocsPreloadingStrategy } from './core/strategies/docs-preloading.strategy';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
@@ -27,7 +28,7 @@ export const config: ApplicationConfig = {
     provideHttpClient(withInterceptorsFromDi()),
     provideRouter(
       routes,
-      withPreloading(PreloadAllModules)
+      withPreloading(DocsPreloadingStrategy)
     ),
     // Documentation uses custom components (no NgDoc for Angular 20 compatibility)
     // Optimize change detection with event coalescing and run coalescing

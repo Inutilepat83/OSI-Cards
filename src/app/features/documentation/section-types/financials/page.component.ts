@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
+import { DocsDemoComponent } from '../../components';
 
 const pageContent = `# Financials Section
 
@@ -118,15 +119,73 @@ The **Financials Section** (\`type: "financials"\`) is used for displays financi
 - [Best Practices](/docs/best-practices)
 `;
 
+const demoConfig = {
+  "title": "Financial Overview",
+  "type": "financials",
+  "description": "Key financial metrics and performance",
+  "fields": [
+    {
+      "label": "Annual Revenue",
+      "value": "$50M",
+      "format": "currency",
+      "change": 15,
+      "trend": "up"
+    },
+    {
+      "label": "Operating Margin",
+      "value": "18%",
+      "format": "percentage",
+      "change": 3.2,
+      "trend": "up"
+    },
+    {
+      "label": "EBITDA",
+      "value": "$12M",
+      "format": "currency",
+      "change": 8,
+      "trend": "up"
+    },
+    {
+      "label": "Net Income",
+      "value": "$8M",
+      "format": "currency",
+      "change": -2.5,
+      "trend": "down"
+    }
+  ]
+};
+
+/**
+ * Financials Section documentation page with live demo
+ * Auto-generated - modifications may be overwritten
+ */
 @Component({
   selector: 'app-financials-page',
   standalone: true,
-  imports: [DocPageComponent],
-  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  imports: [DocPageComponent, DocsDemoComponent],
+  template: `
+    <div class="section-docs">
+      <app-docs-demo 
+        [config]="demo" 
+        [type]="'financials'"
+        demoTitle="Live Preview"
+        height="350px"
+      ></app-docs-demo>
+      <app-doc-page [content]="content"></app-doc-page>
+    </div>
+  `,
+  styles: [`
+    .section-docs {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FinancialsPageComponent {
   content = pageContent;
+  demo = demoConfig;
 }
 
 export default FinancialsPageComponent;

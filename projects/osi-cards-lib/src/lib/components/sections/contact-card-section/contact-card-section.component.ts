@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardField } from '../../../models';
 import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent } from '../base-section.component';
+import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
 
 interface ContactField extends CardField {
   name?: string;
@@ -29,6 +29,13 @@ interface ContactField extends CardField {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContactCardSectionComponent extends BaseSectionComponent<ContactField> {
+  /** Compact cards, expand to match contact count */
+  static readonly layoutConfig: SectionLayoutConfig = {
+    preferredColumns: 1,
+    minColumns: 1,
+    maxColumns: 4,
+    matchItemCount: true,
+  };
   get contacts(): ContactField[] {
     return super.getFields() as ContactField[];
   }

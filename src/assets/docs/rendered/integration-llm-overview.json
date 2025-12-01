@@ -1,0 +1,40 @@
+{
+  "pageId": "integration/llm-overview",
+  "title": "LLM Overview",
+  "html": "<h1 id=\"llm-overview\"><a href=\"#llm-overview\" class=\"anchor-link\" aria-hidden=\"true\">#</a>LLM Overview</h1></p><p>Integrating OSI Cards with Large Language Models.</p><p><h2 id=\"concept\"><a href=\"#concept\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Concept</h2></p><p>OSI Cards is designed for AI-generated content. Cards are produced by LLMs that understand the card structure.</p><p><h2 id=\"flow\"><a href=\"#flow\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Flow</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">text</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-text\">User Query → LLM → JSON Card → OSI Cards → UI</code></pre></div></p><p><h2 id=\"supported-llms\"><a href=\"#supported-llms\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Supported LLMs</h2></p><p><ul><li>OpenAI GPT-4</li><li>Anthropic Claude</li><li>Google Gemini</li><li>Local models (Ollama, etc.)</li></ul>\n<h2 id=\"key-features\"><a href=\"#key-features\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Key Features</h2></p><p><ol><li><strong>Streaming</strong>: Progressive card rendering</li><li><strong>Validation</strong>: Schema validation</li><li><strong>Recovery</strong>: Error handling</li><li><strong>Prompts</strong>: Structured prompts</li></ol>\n<h2 id=\"quick-example\"><a href=\"#quick-example\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Quick Example</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">// LLM returns JSON<br>const llmResponse = await llm.generate(prompt);</p><p>// Stream to cards<br>streamingService.start(llmResponse);</code></pre></div>\n",
+  "toc": [
+    {
+      "id": "llm-overview",
+      "text": "LLM Overview",
+      "level": 1
+    },
+    {
+      "id": "concept",
+      "text": "Concept",
+      "level": 2
+    },
+    {
+      "id": "flow",
+      "text": "Flow",
+      "level": 2
+    },
+    {
+      "id": "supported-llms",
+      "text": "Supported LLMs",
+      "level": 2
+    },
+    {
+      "id": "key-features",
+      "text": "Key Features",
+      "level": 2
+    },
+    {
+      "id": "quick-example",
+      "text": "Quick Example",
+      "level": 2
+    }
+  ],
+  "contentHash": "e975aecd63a59b66",
+  "generatedAt": "2025-12-01T09:15:43.732Z",
+  "demoConfigs": {}
+}

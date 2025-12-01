@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BaseSectionComponent } from '../base-section.component';
+import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
 import { CardItem } from '../../../models';
 import { LucideIconsModule } from '../../../icons';
 
@@ -12,6 +12,13 @@ import { LucideIconsModule } from '../../../icons';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SocialMediaSectionComponent extends BaseSectionComponent<CardItem> {
+  /** Icons + stats need some width */
+  static readonly layoutConfig: SectionLayoutConfig = {
+    preferredColumns: 2,
+    minColumns: 1,
+    maxColumns: 3,
+    expandOnItemCount: 4,
+  };
   get posts(): CardItem[] {
     return this.getItems();
   }

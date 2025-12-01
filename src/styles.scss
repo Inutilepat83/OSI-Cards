@@ -1,5 +1,9 @@
 /* ===================================================================
    OSI Cards Demo App Styles
+   
+   Note: Sass @import deprecation warnings can be safely ignored until
+   Dart Sass 3.0.0. Migration to @use/@forward requires significant
+   restructuring of the SCSS architecture.
    =================================================================== */
 
 /* Demo-specific tokens - must come first */

@@ -1,0 +1,50 @@
+{
+  "pageId": "advanced/performance",
+  "title": "Performance Optimization",
+  "html": "<h1 id=\"performance-optimization\"><a href=\"#performance-optimization\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Performance Optimization</h1></p><p>Optimize OSI Cards for best performance.</p><p><h2 id=\"strategies\"><a href=\"#strategies\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Strategies</h2></p><p><h3 id=\"1-virtual-scrolling\"><a href=\"#1-virtual-scrolling\" class=\"anchor-link\" aria-hidden=\"true\">#</a>1. Virtual Scrolling</h3></p><p>For many cards, use virtual scrolling:</p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">html</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-html\">&amp;lt;cdk-virtual-scroll-viewport itemSize=\"400\"&amp;gt;<br>  &amp;lt;app-ai-card-renderer<br>    *cdkVirtualFor=\"let card of cards\"<br>    [cardConfig]=\"card\"&amp;gt;<br>  &amp;lt;/app-ai-card-renderer&amp;gt;<br>&amp;lt;/cdk-virtual-scroll-viewport&amp;gt;</code></pre></div></p><p><h3 id=\"2-onpush-change-detection\"><a href=\"#2-onpush-change-detection\" class=\"anchor-link\" aria-hidden=\"true\">#</a>2. OnPush Change Detection</h3></p><p>All library components use OnPush.</p><p><h3 id=\"3-web-workers\"><a href=\"#3-web-workers\" class=\"anchor-link\" aria-hidden=\"true\">#</a>3. Web Workers</h3></p><p>Layout calculations use Web Workers:</p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">layoutWorker.calculateLayout(cards, width);</code></pre></div></p><p><h3 id=\"4-lazy-loading\"><a href=\"#4-lazy-loading\" class=\"anchor-link\" aria-hidden=\"true\">#</a>4. Lazy Loading</h3></p><p>Lazy load card routes:</p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">{<br>  path: 'cards',<br>  loadComponent: () =&amp;gt; import('./cards.component')<br>}</code></pre></div></p><p><h3 id=\"5-image-optimization\"><a href=\"#5-image-optimization\" class=\"anchor-link\" aria-hidden=\"true\">#</a>5. Image Optimization</h3></p><p><ul><li>Use lazy loading for images</li><li>Provide appropriate sizes</li><li>Use modern formats (WebP)</li></ul>\n<h2 id=\"metrics-to-monitor\"><a href=\"#metrics-to-monitor\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Metrics to Monitor</h2></p><p><ul><li>First Contentful Paint</li><li>Largest Contentful Paint</li><li>Time to Interactive</li><li>Bundle size</li></ul>",
+  "toc": [
+    {
+      "id": "performance-optimization",
+      "text": "Performance Optimization",
+      "level": 1
+    },
+    {
+      "id": "strategies",
+      "text": "Strategies",
+      "level": 2
+    },
+    {
+      "id": "1-virtual-scrolling",
+      "text": "1. Virtual Scrolling",
+      "level": 3
+    },
+    {
+      "id": "2-onpush-change-detection",
+      "text": "2. OnPush Change Detection",
+      "level": 3
+    },
+    {
+      "id": "3-web-workers",
+      "text": "3. Web Workers",
+      "level": 3
+    },
+    {
+      "id": "4-lazy-loading",
+      "text": "4. Lazy Loading",
+      "level": 3
+    },
+    {
+      "id": "5-image-optimization",
+      "text": "5. Image Optimization",
+      "level": 3
+    },
+    {
+      "id": "metrics-to-monitor",
+      "text": "Metrics to Monitor",
+      "level": 2
+    }
+  ],
+  "contentHash": "5762988cae57d967",
+  "generatedAt": "2025-12-01T09:15:43.697Z",
+  "demoConfigs": {}
+}

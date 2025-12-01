@@ -1,0 +1,35 @@
+{
+  "pageId": "integration/quick-start",
+  "title": "Quick Start Guide",
+  "html": "<h1 id=\"quick-start-guide\"><a href=\"#quick-start-guide\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Quick Start Guide</h1></p><p>Get started with OSI Cards in minutes.</p><p><h2 id=\"prerequisites\"><a href=\"#prerequisites\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Prerequisites</h2></p><p><ul><li>Node.js 18+</li><li>Angular 18 or 20</li><li>npm or yarn</li></ul>\n<h2 id=\"installation\"><a href=\"#installation\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Installation</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">bash</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-bash\">npm install osi-cards-lib</code></pre></div></p><p><h2 id=\"basic-setup\"><a href=\"#basic-setup\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Basic Setup</h2></p><p><ol><li>Import styles in <code>styles.scss</code>:</li></ol><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">scss</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-scss\">@import 'osi-cards-lib/styles/_styles';</code></pre></div></p><p><ol><li>Use in component:</li></ol><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';</p><p>@Component({<br>  imports: [AICardRendererComponent],<br>  template: <code>&amp;lt;app-ai-card-renderer [cardConfig]=\"card\"&amp;gt;&amp;lt;/app-ai-card-renderer&amp;gt;</code>\n})<br>export class MyComponent {<br>  card: AICardConfig = {<br>    cardTitle: 'My Card',<br>    sections: [{ title: 'Info', type: 'info', fields: [] }]<br>  };<br>}</code></pre></div></p><p><h2 id=\"next-steps\"><a href=\"#next-steps\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Next Steps</h2></p><p><ul><li><a href=\"/docs/section-types\">Section Types</a></li><li><a href=\"/docs/streaming\">Streaming</a></li><li><a href=\"/docs/advanced/theming\">Theming</a></li></ul>",
+  "toc": [
+    {
+      "id": "quick-start-guide",
+      "text": "Quick Start Guide",
+      "level": 1
+    },
+    {
+      "id": "prerequisites",
+      "text": "Prerequisites",
+      "level": 2
+    },
+    {
+      "id": "installation",
+      "text": "Installation",
+      "level": 2
+    },
+    {
+      "id": "basic-setup",
+      "text": "Basic Setup",
+      "level": 2
+    },
+    {
+      "id": "next-steps",
+      "text": "Next Steps",
+      "level": 2
+    }
+  ],
+  "contentHash": "61c6ae97baec930a",
+  "generatedAt": "2025-12-01T09:15:43.738Z",
+  "demoConfigs": {}
+}

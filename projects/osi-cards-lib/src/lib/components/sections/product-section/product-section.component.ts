@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardField } from '../../../models';
 import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent } from '../base-section.component';
+import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
 
 interface ProductField extends CardField {
   category?: 'pricing' | 'features' | 'process' | 'references' | 'contacts' | 'advantages' | string;
@@ -39,6 +39,12 @@ interface ProductCategoryGroup {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductSectionComponent extends BaseSectionComponent<ProductField> {
+  /** Image + details layout needs width */
+  static readonly layoutConfig: SectionLayoutConfig = {
+    preferredColumns: 2,
+    minColumns: 1,
+    maxColumns: 3,
+  };
 
   private readonly categoryOrder: string[] = ['references', 'pricing', 'features', 'advantages', 'process', 'contacts'];
 

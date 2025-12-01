@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
+import { DocsDemoComponent } from '../../components';
 
 const pageContent = `# Solutions Section
 
@@ -123,15 +124,67 @@ The **Solutions Section** (\`type: "solutions"\`) is used for displays solution 
 - [Best Practices](/docs/best-practices)
 `;
 
+const demoConfig = {
+  "title": "Solutions Portfolio",
+  "type": "solutions",
+  "description": "Available solutions and services",
+  "fields": [
+    {
+      "title": "Cloud Migration",
+      "description": "Complete cloud infrastructure migration service",
+      "category": "Infrastructure",
+      "benefits": [
+        "Scalability",
+        "Cost reduction",
+        "Security"
+      ],
+      "deliveryTime": "8-10 weeks"
+    },
+    {
+      "title": "Data Analytics Platform",
+      "description": "Real-time analytics and reporting solution",
+      "category": "Analytics",
+      "benefits": [
+        "Real-time insights",
+        "Custom dashboards",
+        "API access"
+      ],
+      "deliveryTime": "4-6 weeks"
+    }
+  ]
+};
+
+/**
+ * Solutions Section documentation page with live demo
+ * Auto-generated - modifications may be overwritten
+ */
 @Component({
   selector: 'app-solutions-page',
   standalone: true,
-  imports: [DocPageComponent],
-  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  imports: [DocPageComponent, DocsDemoComponent],
+  template: `
+    <div class="section-docs">
+      <app-docs-demo 
+        [config]="demo" 
+        [type]="'solutions'"
+        demoTitle="Live Preview"
+        height="350px"
+      ></app-docs-demo>
+      <app-doc-page [content]="content"></app-doc-page>
+    </div>
+  `,
+  styles: [`
+    .section-docs {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SolutionsPageComponent {
   content = pageContent;
+  demo = demoConfig;
 }
 
 export default SolutionsPageComponent;

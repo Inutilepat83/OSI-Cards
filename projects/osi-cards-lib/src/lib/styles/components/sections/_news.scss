@@ -17,7 +17,7 @@
 }
 
 .news-item {
-  @include card;
+  // All declarations must come BEFORE @include card (which contains nested rules)
   border: 1px solid $brand-color-25 !important;
   min-height: 180px !important;
   display: flex !important;
@@ -28,6 +28,9 @@
   text-align: left !important;
   background: var(--section-item-background, #fafafa) !important;
   box-sizing: border-box !important;
+
+  // Include mixin after all declarations
+  @include card;
 }
 
 .news-item__header {

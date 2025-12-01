@@ -118,7 +118,7 @@ export function adjustColorForContrast(
     return color;
   }
 
-  const bgLum = getLuminance(bgRgb[0], bgRgb[1], bgRgb[2]);
+  const _bgLum = getLuminance(bgRgb[0], bgRgb[1], bgRgb[2]);
   let [r, g, b] = rgb;
   let currentRatio = getContrastRatio(color, background);
 

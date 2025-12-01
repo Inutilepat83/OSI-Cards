@@ -14,7 +14,7 @@ export interface ErrorMessage {
 /**
  * Generate user-friendly error message
  */
-export function generateUserFriendlyError(error: Error | string, context?: string): ErrorMessage {
+export function generateUserFriendlyError(error: Error | string, context?: string | undefined): ErrorMessage {
   const errorMessage = typeof error === 'string' ? error : error.message;
   const lowerError = errorMessage.toLowerCase();
 

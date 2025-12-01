@@ -1,0 +1,30 @@
+{
+  "pageId": "streaming/state",
+  "title": "StreamingState",
+  "html": "<h1 id=\"streamingstate\"><a href=\"#streamingstate\" class=\"anchor-link\" aria-hidden=\"true\">#</a>StreamingState</h1></p><p>Real-time streaming state information.</p><p><h2 id=\"interface\"><a href=\"#interface\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Interface</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">interface StreamingState {<br>  isActive: boolean;       // Streaming in progress<br>  stage: StreamingStage;   // Current stage<br>  progress: number;        // 0-1 progress<br>  bufferLength: number;    // Current buffer size<br>  targetLength: number;    // Total expected length<br>}</p><p>type StreamingStage = 'idle' | 'thinking' | 'streaming' | 'complete' | 'aborted' | 'error';</code></pre></div></p><p><h2 id=\"subscribing-to-state\"><a href=\"#subscribing-to-state\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Subscribing to State</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">const streamingService = inject(OSICardsStreamingService);</p><p>streamingService.state$.subscribe(state =&amp;gt; {<br>  // Update progress bar<br>  this.progress = state.progress <em> 100;<br>  <br>  // Show/hide loading indicator<br>  this.isLoading = state.isActive;<br>  <br>  // Handle completion<br>  if (state.stage === 'complete') {<br>    this.onStreamComplete();<br>  }<br>  <br>  // Handle errors<br>  if (state.stage === 'error') {<br>    this.onStreamError();<br>  }<br>});</code></pre></div></p><p><h2 id=\"getting-current-state\"><a href=\"#getting-current-state\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Getting Current State</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">// Get snapshot of current state<br>const currentState = streamingService.getState();</p><p>if (currentState.isActive) {<br>  console.log(<code>Progress: ${currentState.progress </em> 100}%</code>);<br>}</code></pre></div>\n",
+  "toc": [
+    {
+      "id": "streamingstate",
+      "text": "StreamingState",
+      "level": 1
+    },
+    {
+      "id": "interface",
+      "text": "Interface",
+      "level": 2
+    },
+    {
+      "id": "subscribing-to-state",
+      "text": "Subscribing to State",
+      "level": 2
+    },
+    {
+      "id": "getting-current-state",
+      "text": "Getting Current State",
+      "level": 2
+    }
+  ],
+  "contentHash": "46678c5c820d95e2",
+  "generatedAt": "2025-12-01T09:15:43.793Z",
+  "demoConfigs": {}
+}

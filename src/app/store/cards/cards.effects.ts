@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { of, Observable } from 'rxjs';
-import { map, mergeMap, catchError, tap, take, finalize, withLatestFrom } from 'rxjs/operators';
+import { map, mergeMap, catchError, take, withLatestFrom } from 'rxjs/operators';
 import { Action } from '@ngrx/store';
 import * as CardsActions from './cards.state';
 import { CardDataService, PerformanceService } from '../../core';
@@ -345,7 +345,7 @@ export class CardsEffects {
         this.optimisticUpdates.applyUpdate(id, optimisticCard, originalCard, {
           maxRetries: 3,
           conflictResolver: {
-            resolve: (serverValue, optimisticValue) => {
+            resolve: (serverValue, _optimisticValue) => {
               // Merge strategy: prefer optimistic changes for user experience
               return { ...serverValue, ...changes };
             },

@@ -99,6 +99,12 @@
         },
         "testFixtures": {
           "$ref": "#/definitions/TestFixtures"
+        },
+        "documentation": {
+          "$ref": "#/definitions/Documentation"
+        },
+        "demo": {
+          "$ref": "#/definitions/DemoConfig"
         }
       }
     },
@@ -140,6 +146,7 @@
     },
     "TestFixtures": {
       "type": "object",
+      "description": "Test fixtures for unit, integration, and E2E tests",
       "properties": {
         "complete": {
           "type": "object",
@@ -152,6 +159,73 @@
         "edgeCases": {
           "type": "object",
           "description": "Edge case example for testing boundaries"
+        },
+        "streaming": {
+          "type": "object",
+          "description": "Example for streaming simulation tests"
+        },
+        "accessibility": {
+          "type": "object",
+          "description": "Example optimized for accessibility testing"
+        }
+      }
+    },
+    "Documentation": {
+      "type": "object",
+      "description": "Documentation examples and code snippets",
+      "properties": {
+        "examples": {
+          "type": "array",
+          "description": "Array of documentation examples",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string", "description": "Example name" },
+              "description": { "type": "string", "description": "Example description" },
+              "section": { "type": "object", "description": "Section configuration" }
+            },
+            "required": ["name", "section"]
+          }
+        },
+        "codeSnippets": {
+          "type": "object",
+          "description": "Code snippets for documentation",
+          "properties": {
+            "typescript": { "type": "string", "description": "TypeScript usage example" },
+            "html": { "type": "string", "description": "HTML template example" },
+            "json": { "type": "string", "description": "JSON configuration example" }
+          }
+        },
+        "apiNotes": {
+          "type": "string",
+          "description": "Additional API documentation notes"
+        }
+      }
+    },
+    "DemoConfig": {
+      "type": "object",
+      "description": "Configuration for demo application",
+      "properties": {
+        "sampleCards": {
+          "type": "array",
+          "description": "Sample cards featuring this section type",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string", "description": "Sample card name" },
+              "description": { "type": "string", "description": "Card description" },
+              "card": { "type": "object", "description": "Full card configuration" }
+            },
+            "required": ["name", "card"]
+          }
+        },
+        "featured": {
+          "type": "boolean",
+          "description": "Whether to feature this section in demo homepage"
+        },
+        "order": {
+          "type": "integer",
+          "description": "Display order in demo app"
         }
       }
     },
@@ -161,4 +235,7 @@
     }
   }
 }
+
+
+
 

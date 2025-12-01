@@ -448,3 +448,6 @@ export type SuffixKeys<T, S extends string> = {
   [K in keyof T as K extends string ? `${K}${S}` : K]: T[K];
 };
 
+
+
+

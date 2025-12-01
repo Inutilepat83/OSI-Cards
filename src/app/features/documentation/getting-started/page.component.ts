@@ -115,7 +115,7 @@ const cardConfig: AICardConfig = {
 ## Support
 
 - **Documentation**: You're looking at it!
-- **GitHub**: [github.com/anthropic/osi-cards](https://github.com/anthropic/osi-cards)
+- **GitHub**: [github.com/Inutilepat83/OSI-Cards](https://github.com/Inutilepat83/OSI-Cards)
 - **Issues**: Report bugs or request features on GitHub
 
 Happy coding! 🎉

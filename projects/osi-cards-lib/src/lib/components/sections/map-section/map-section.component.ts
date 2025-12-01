@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardField, CardItem } from '../../../models';
 import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent } from '../base-section.component';
+import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
 
 type MapLocation = (CardField & CardItem) & {
   coordinates?: {
@@ -22,6 +22,12 @@ type MapLocation = (CardField & CardItem) & {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapSectionComponent extends BaseSectionComponent<MapLocation> {
+  /** Maps need width for visualization */
+  static readonly layoutConfig: SectionLayoutConfig = {
+    preferredColumns: 2,
+    minColumns: 2,
+    maxColumns: 4,
+  };
   get locations(): MapLocation[] {
     const fromFields = super.getFields() as MapLocation[];
     const mappedFields = fromFields

@@ -1,0 +1,101 @@
+{
+  "pageId": "section-types/text-reference",
+  "title": "Text Reference Section",
+  "html": "<h1 id=\"text-reference-section\"><a href=\"#text-reference-section\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Text Reference Section</h1></p><p>Displays long-form text, paragraphs, articles, and reference content.</p><p><h2 id=\"overview\"><a href=\"#overview\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Overview</h2></p><p>The <strong>Text Reference Section</strong> (<code>type: \"text-reference\"</code>) is used for displays long-form text, paragraphs, articles, and reference content.</p><p><h3 id=\"quick-facts\"><a href=\"#quick-facts\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Quick Facts</h3></p><p><div class=\"table-wrapper\"><table><thead><tr><th>Property</th><th>Value</th></tr></thead><tbody><tr><td>Type</td><td><code>text-reference</code></td></tr><tr><td>Uses Fields</td><td>Yes</td></tr><tr><td>Uses Items</td><td>No</td></tr><tr><td>Default Columns</td><td>1</td></tr><tr><td>Supports Collapse</td><td>Yes</td></tr><tr><td>Aliases</td><td><code>reference</code>, <code>text-ref</code></td></tr></tbody></table></div></p><p><h2 id=\"use-cases\"><a href=\"#use-cases\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Use Cases</h2></p><p><ul><li>Articles</li><li>Blog posts</li><li>Research summaries</li><li>Long-form content</li></ul>\n<h2 id=\"data-schema\"><a href=\"#data-schema\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Data Schema</h2></p><p><h3 id=\"fields-schema\"><a href=\"#fields-schema\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Fields Schema</h3></p><p><div class=\"table-wrapper\"><table><thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td><code>label</code></td><td>string</td><td>Reference label</td></tr><tr><td><code>value</code></td><td>string</td><td>Reference title/name</td></tr><tr><td><code>text</code></td><td>string</td><td>Reference text content</td></tr><tr><td><code>description</code></td><td>string</td><td>Reference description</td></tr><tr><td><code>url</code></td><td>string</td><td>Reference URL</td></tr><tr><td><code>source</code></td><td>string</td><td>Source attribution</td></tr></tbody></table></div></p><p><h2 id=\"complete-example\"><a href=\"#complete-example\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Complete Example</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">json</span><div class=\"code-actions\"><button class=\"live-demo-btn\" type=\"button\" data-demo-id=\"demo-0\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"5 3 19 12 5 21 5 3\"></polygon></svg>Live Demo</button><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-json\">{<br>  \"title\": \"Documentation References\",<br>  \"type\": \"text-reference\",<br>  \"description\": \"Related documents and resources\",<br>  \"fields\": [<br>    {<br>      \"label\": \"Technical Spec\",<br>      \"value\": \"Technical Specification v2.1\",<br>      \"description\": \"Latest technical documentation\",<br>      \"url\": \"https://docs.example.com/spec\"<br>    },<br>    {<br>      \"label\": \"User Guide\",<br>      \"value\": \"User Guide 2024 Edition\",<br>      \"description\": \"Complete user manual\",<br>      \"url\": \"https://docs.example.com/guide\"<br>    },<br>    {<br>      \"label\": \"API Reference\",<br>      \"value\": \"REST API Documentation\",<br>      \"description\": \"API endpoints and schemas\",<br>      \"url\": \"https://api.example.com/docs\"<br>    }<br>  ]<br>}</code></pre></div><div id=\"demo-container-demo-0\" class=\"live-demo-container\"></div></p><p><h2 id=\"minimal-example\"><a href=\"#minimal-example\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Minimal Example</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">json</span><div class=\"code-actions\"><button class=\"live-demo-btn\" type=\"button\" data-demo-id=\"demo-1\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polygon points=\"5 3 19 12 5 21 5 3\"></polygon></svg>Live Demo</button><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-json\">{<br>  \"title\": \"Reference\",<br>  \"type\": \"text-reference\",<br>  \"fields\": [<br>    {<br>      \"label\": \"Doc\",<br>      \"value\": \"Document\"<br>    }<br>  ]<br>}</code></pre></div><div id=\"demo-container-demo-1\" class=\"live-demo-container\"></div></p><p><h2 id=\"best-practices\"><a href=\"#best-practices\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Best Practices</h2></p><p><ol><li>Break into readable chunks</li><li>Use proper formatting</li><li>Include citations</li><li>Add metadata for context</li></ol>\n<h2 id=\"component-information\"><a href=\"#component-information\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Component Information</h2></p><p><ul><li><strong>Selector:</strong> <code>app-text-reference-section</code></li><li><strong>Component Path:</strong> <code>./lib/components/sections/text-reference-section/text-reference-section.component</code></li><li><strong>Style Path:</strong> <code>./lib/styles/components/sections/_text-reference.scss</code></li></ul>\n<h2 id=\"related-documentation\"><a href=\"#related-documentation\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Related Documentation</h2></p><p><ul><li><a href=\"/docs/section-types\">All Section Types</a></li><li><a href=\"/docs/api/models/aicardconfig\">Card Configuration</a></li><li><a href=\"/docs/best-practices\">Best Practices</a></li></ul>",
+  "toc": [
+    {
+      "id": "text-reference-section",
+      "text": "Text Reference Section",
+      "level": 1
+    },
+    {
+      "id": "overview",
+      "text": "Overview",
+      "level": 2
+    },
+    {
+      "id": "quick-facts",
+      "text": "Quick Facts",
+      "level": 3
+    },
+    {
+      "id": "use-cases",
+      "text": "Use Cases",
+      "level": 2
+    },
+    {
+      "id": "data-schema",
+      "text": "Data Schema",
+      "level": 2
+    },
+    {
+      "id": "fields-schema",
+      "text": "Fields Schema",
+      "level": 3
+    },
+    {
+      "id": "complete-example",
+      "text": "Complete Example",
+      "level": 2
+    },
+    {
+      "id": "minimal-example",
+      "text": "Minimal Example",
+      "level": 2
+    },
+    {
+      "id": "best-practices",
+      "text": "Best Practices",
+      "level": 2
+    },
+    {
+      "id": "component-information",
+      "text": "Component Information",
+      "level": 2
+    },
+    {
+      "id": "related-documentation",
+      "text": "Related Documentation",
+      "level": 2
+    }
+  ],
+  "contentHash": "93abe261d5ea9efa",
+  "generatedAt": "2025-12-01T09:15:43.787Z",
+  "demoConfigs": {
+    "demo-0": {
+      "title": "Documentation References",
+      "type": "text-reference",
+      "description": "Related documents and resources",
+      "fields": [
+        {
+          "label": "Technical Spec",
+          "value": "Technical Specification v2.1",
+          "description": "Latest technical documentation",
+          "url": "https://docs.example.com/spec"
+        },
+        {
+          "label": "User Guide",
+          "value": "User Guide 2024 Edition",
+          "description": "Complete user manual",
+          "url": "https://docs.example.com/guide"
+        },
+        {
+          "label": "API Reference",
+          "value": "REST API Documentation",
+          "description": "API endpoints and schemas",
+          "url": "https://api.example.com/docs"
+        }
+      ]
+    },
+    "demo-1": {
+      "title": "Reference",
+      "type": "text-reference",
+      "fields": [
+        {
+          "label": "Doc",
+          "value": "Document"
+        }
+      ]
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
+import { DocsDemoComponent } from '../../components';
 
 const pageContent = `# Product Section
 
@@ -109,15 +110,65 @@ The **Product Section** (\`type: "product"\`) is used for displays product infor
 - [Best Practices](/docs/best-practices)
 `;
 
+const demoConfig = {
+  "title": "Product Information",
+  "type": "product",
+  "description": "Product details and specifications",
+  "fields": [
+    {
+      "label": "Product Name",
+      "value": "Enterprise Suite Pro"
+    },
+    {
+      "label": "Version",
+      "value": "3.5.2"
+    },
+    {
+      "label": "Category",
+      "value": "Enterprise Software"
+    },
+    {
+      "label": "License",
+      "value": "Annual Subscription"
+    },
+    {
+      "label": "Support Level",
+      "value": "Premium 24/7"
+    }
+  ]
+};
+
+/**
+ * Product Section documentation page with live demo
+ * Auto-generated - modifications may be overwritten
+ */
 @Component({
   selector: 'app-product-page',
   standalone: true,
-  imports: [DocPageComponent],
-  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  imports: [DocPageComponent, DocsDemoComponent],
+  template: `
+    <div class="section-docs">
+      <app-docs-demo 
+        [config]="demo" 
+        [type]="'product'"
+        demoTitle="Live Preview"
+        height="350px"
+      ></app-docs-demo>
+      <app-doc-page [content]="content"></app-doc-page>
+    </div>
+  `,
+  styles: [`
+    .section-docs {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductPageComponent {
   content = pageContent;
+  demo = demoConfig;
 }
 
 export default ProductPageComponent;

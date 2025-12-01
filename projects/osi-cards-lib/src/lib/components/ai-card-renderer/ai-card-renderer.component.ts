@@ -5,7 +5,7 @@ import { Subject, takeUntil, fromEvent, interval } from 'rxjs';
 import { MagneticTiltService, MousePosition, TiltCalculations } from '../../services';
 import { IconService, SectionNormalizationService } from '../../services';
 import { LucideIconsModule } from '../../icons';
-import { MasonryGridComponent, MasonryLayoutInfo } from '../masonry-grid/masonry-grid.component';
+import { MasonryLayoutInfo } from '../masonry-grid/masonry-grid.component';
 import { SectionRenderEvent } from '../section-renderer/section-renderer.component';
 import { CardHeaderComponent } from '../card-header/card-header.component';
 import { CardSectionListComponent } from '../card-section-list/card-section-list.component';
@@ -27,7 +27,7 @@ export type StreamingStage = 'idle' | 'thinking' | 'streaming' | 'complete' | 'a
 @Component({
   selector: 'app-ai-card-renderer',
   standalone: true,
-  imports: [CommonModule, LucideIconsModule, MasonryGridComponent, CardHeaderComponent, CardSectionListComponent, CardActionsComponent],
+  imports: [CommonModule, LucideIconsModule, CardHeaderComponent, CardSectionListComponent, CardActionsComponent],
   templateUrl: './ai-card-renderer.component.html',
   styleUrls: ['../../styles/bundles/_ai-card.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -247,7 +247,6 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   
   @ViewChild('cardContainer') cardContainer!: ElementRef<HTMLElement>;
   @ViewChild('tiltContainer') tiltContainerRef!: ElementRef<HTMLDivElement>;
-  @ViewChild(MasonryGridComponent) masonryGrid!: MasonryGridComponent;
   @ViewChild('emptyStateContainer') emptyStateContainer!: ElementRef<HTMLDivElement>;
   
   processedSections: CardSection[] = [];
@@ -943,6 +942,15 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
    */
   onExport(): void {
     this.export.emit();
+  }
+
+  /**
+   * Get the card element for export purposes.
+   * Returns the host element (the component itself) for PNG/image export.
+   * This captures the entire Shadow DOM rendered content.
+   */
+  getExportElement(): HTMLElement | null {
+    return this.el.nativeElement || null;
   }
 
   get isStreamingActive(): boolean {

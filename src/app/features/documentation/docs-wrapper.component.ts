@@ -24,6 +24,14 @@ interface DocRoute {
   children?: DocRoute[];
 }
 
+interface SearchResult {
+  title: string;
+  path: string;
+  category?: string;
+  snippet?: string;
+  icon?: string;
+}
+
 /**
  * Enhanced Documentation wrapper component
  * Implements 100-point improvement plan features:
@@ -77,6 +85,14 @@ interface DocRoute {
           <span class="logo-badge">Docs</span>
         </a>
         <div class="header-actions">
+          <a 
+            routerLink="/" 
+            class="return-btn"
+            aria-label="Return to OSI Cards"
+            title="Return to OSI Cards"
+          >
+            <lucide-icon name="home" [size]="20"></lucide-icon>
+          </a>
           <button 
             class="menu-btn" 
             (click)="openCommandPalette()" 
@@ -86,7 +102,7 @@ interface DocRoute {
             <lucide-icon name="search" [size]="20"></lucide-icon>
           </button>
           <a 
-            href="https://github.com/ArtMGreen/osi-cards" 
+            href="https://github.com/Inutilepat83/OSI-Cards" 
             target="_blank" 
             rel="noopener noreferrer"
             class="github-link" 
@@ -126,8 +142,8 @@ interface DocRoute {
           </button>
         </div>
         
-        <!-- B34: Command Palette Search Trigger -->
-        <div class="sidebar-search">
+        <!-- B34: Command Palette Search with Live Results -->
+        <div class="sidebar-search" [class.has-results]="searchResults().length > 0 && searchQuery().length > 0">
           <lucide-icon name="search" [size]="16" class="search-icon"></lucide-icon>
           <input 
             type="text" 
@@ -136,13 +152,47 @@ interface DocRoute {
             [value]="searchQuery()"
             (input)="onSearchInput($event)"
             (keydown)="onSearchKeydown($event)"
-            (focus)="openCommandPalette()"
+            (blur)="onSearchBlur($event)"
             aria-label="Search documentation"
+            autocomplete="off"
           />
           <kbd class="search-kbd">⌘K</kbd>
+          
+          <!-- Search Results Dropdown -->
+          @if (searchQuery().length > 0 && showSearchResults()) {
+            <div class="search-results">
+              @if (searchResults().length > 0) {
+                @for (result of searchResults(); track result.path; let i = $index) {
+                  <a 
+                    [routerLink]="result.path"
+                    class="search-result-item"
+                    [class.highlighted]="highlightedIndex() === i"
+                    (click)="selectSearchResult(result)"
+                    (mouseenter)="highlightedIndex.set(i)"
+                  >
+                    <div class="result-header">
+                      <lucide-icon [name]="result.icon || 'file-text'" [size]="14"></lucide-icon>
+                      <span class="result-title">{{ result.title }}</span>
+                    </div>
+                    @if (result.category) {
+                      <span class="result-category">{{ result.category }}</span>
+                    }
+                    @if (result.snippet) {
+                      <p class="result-snippet">{{ result.snippet }}</p>
+                    }
+                  </a>
+                }
+              } @else if (searchQuery().length > 1) {
+                <div class="search-no-results">
+                  <lucide-icon name="search-x" [size]="24"></lucide-icon>
+                  <span>No results found for "{{ searchQuery() }}"</span>
+                </div>
+              }
+            </div>
+          }
         </div>
         
-        <nav class="sidebar-nav" #sidebarNav>
+        <nav class="sidebar-nav" #sidebarNav appPrefetchContainer>
           @for (section of filteredDocSections(); track section.path) {
             <div class="nav-section">
               @if (section.children && section.children.length > 0) {
@@ -205,7 +255,16 @@ interface DocRoute {
         <!-- Sidebar footer -->
         <div class="sidebar-footer">
           <a 
-            href="https://github.com/ArtMGreen/osi-cards" 
+            routerLink="/"
+            class="footer-link return-home"
+          >
+            <lucide-icon name="arrow-left" [size]="16"></lucide-icon>
+            <span>Return to OSI Cards</span>
+          </a>
+        </div>
+        <div class="sidebar-footer-links">
+          <a 
+            href="https://github.com/Inutilepat83/OSI-Cards" 
             target="_blank" 
             rel="noopener noreferrer"
             class="footer-link"
@@ -265,6 +324,9 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
   readingProgress = signal(0);
   announcement = signal('');
   expandedSections = signal<Set<string>>(new Set(['getting-started', 'section-types', 'schemas']));
+  searchResults = signal<SearchResult[]>([]);
+  showSearchResults = signal(false);
+  highlightedIndex = signal(0);
 
   // B29: Sidebar scroll position memory
   private sidebarScrollPositions = new Map<string, number>();
@@ -542,14 +604,123 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
     const value = (event.target as HTMLInputElement).value;
     this.searchQuery.set(value);
     this.filterDocSections(value);
+    this.generateSearchResults(value);
+    this.showSearchResults.set(true);
+    this.highlightedIndex.set(0);
   }
 
   onSearchKeydown(event: KeyboardEvent) {
+    const results = this.searchResults();
+    
     if (event.key === 'Escape') {
       this.searchQuery.set('');
       this.filterDocSections('');
+      this.searchResults.set([]);
+      this.showSearchResults.set(false);
       (event.target as HTMLInputElement).blur();
+    } else if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      if (this.highlightedIndex() < results.length - 1) {
+        this.highlightedIndex.update(i => i + 1);
+      }
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      if (this.highlightedIndex() > 0) {
+        this.highlightedIndex.update(i => i - 1);
+      }
+    } else if (event.key === 'Enter' && results.length > 0) {
+      event.preventDefault();
+      const result = results[this.highlightedIndex()];
+      if (result) {
+        this.selectSearchResult(result);
+      }
     }
+  }
+
+  onSearchBlur(event: FocusEvent) {
+    // Delay hiding to allow click on results
+    setTimeout(() => {
+      this.showSearchResults.set(false);
+    }, 200);
+  }
+
+  selectSearchResult(result: SearchResult) {
+    this.router.navigate([result.path]);
+    this.searchQuery.set('');
+    this.searchResults.set([]);
+    this.showSearchResults.set(false);
+    this.closeSidebar();
+    this.announce(`Navigating to ${result.title}`);
+  }
+
+  private generateSearchResults(query: string) {
+    const normalizedQuery = query.toLowerCase().trim();
+    
+    if (normalizedQuery.length < 2) {
+      this.searchResults.set([]);
+      return;
+    }
+
+    const results: SearchResult[] = [];
+    
+    // Search through all doc sections
+    for (const section of this.allDocSections) {
+      // Check parent section
+      if (section.title.toLowerCase().includes(normalizedQuery)) {
+        const childPath = section.children?.length ? `/${section.children[0]?.path || ''}` : '';
+        results.push({
+          title: section.title,
+          path: `/docs/${section.path}${childPath}`,
+          category: 'Documentation',
+          icon: section.icon
+        });
+      }
+      
+      // Check children
+      if (section.children) {
+        for (const child of section.children) {
+          if (child.title.toLowerCase().includes(normalizedQuery)) {
+            results.push({
+              title: child.title,
+              path: `/docs/${section.path}/${child.path}`,
+              category: section.title,
+              snippet: this.getSnippetForResult(child.title, normalizedQuery),
+              icon: section.icon
+            });
+          }
+        }
+      }
+    }
+    
+    // Limit results
+    this.searchResults.set(results.slice(0, 10));
+  }
+
+  private getSnippetForResult(title: string, query: string): string {
+    // Generate contextual snippets based on section type
+    const snippets: Record<string, string> = {
+      'info': 'Display key-value pairs in a clean format...',
+      'analytics': 'Display metrics with visual indicators and trends...',
+      'contact-card': 'Show contact information with photos and actions...',
+      'chart': 'Visualize data with various chart types...',
+      'list': 'Display items in organized list format...',
+      'product': 'Showcase products with images and details...',
+      'event': 'Display event information with dates and locations...',
+      'map': 'Show location data with interactive maps...',
+      'financials': 'Display financial data and metrics...',
+      'news': 'Show news articles and updates...',
+      'social-media': 'Display social media profiles and feeds...',
+      'quotation': 'Show quotes with attribution...',
+      'overview': 'Provide section summaries and highlights...',
+      'solutions': 'Present solutions and features...',
+      'network-card': 'Display network connections and relationships...',
+      'brand-colors': 'Show brand color palettes...',
+      'text-reference': 'Display referenced text content...',
+      'base': 'Fallback section type for unknown types...',
+    };
+    
+    const key = title.toLowerCase().replace(/ /g, '-');
+    return snippets[key] || '';
   }
 
   private filterDocSections(query: string) {

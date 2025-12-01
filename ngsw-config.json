@@ -15,8 +15,33 @@
           "/favicon.ico",
           "/index.html",
           "/manifest.webmanifest",
-          "/**/*.css",
-          "/**/*.js"
+          "/main*.js",
+          "/polyfills*.js",
+          "/runtime*.js",
+          "/styles*.css"
+        ]
+      }
+    },
+    {
+      "name": "docs-core",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/chunk-docs-wrapper*.js",
+          "/chunk-getting-started*.js",
+          "/chunk-installation*.js",
+          "/chunk-library-usage*.js"
+        ]
+      }
+    },
+    {
+      "name": "docs-pages",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/chunk-*.js"
         ]
       }
     },
@@ -44,6 +69,18 @@
     }
   ],
   "dataGroups": [
+    {
+      "name": "docs-content",
+      "urls": [
+        "/docs/**"
+      ],
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 100,
+        "maxAge": "7d",
+        "timeout": "3s"
+      }
+    },
     {
       "name": "api",
       "urls": [

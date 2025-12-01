@@ -6,6 +6,7 @@
 @use '../tokens/master' as *;
 
 // Import theme colors (applies to :root with theme variants)
+// Note: Using @import as colors file exports CSS rules directly
 @import 'variables/colors';
 
 // Additional design tokens that extend the theme system

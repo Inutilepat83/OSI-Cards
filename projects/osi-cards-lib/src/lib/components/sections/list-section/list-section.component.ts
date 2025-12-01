@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardField, CardItem } from '../../../models';
 import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent } from '../base-section.component';
+import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
 
 type ListEntry = (CardItem & CardField) & {
   priority?: string;
@@ -18,6 +18,13 @@ type ListEntry = (CardItem & CardField) & {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListSectionComponent extends BaseSectionComponent<ListEntry> {
+  /** Vertical list, compact by default */
+  static readonly layoutConfig: SectionLayoutConfig = {
+    preferredColumns: 1,
+    minColumns: 1,
+    maxColumns: 2,
+    expandOnItemCount: 8,
+  };
 
   get items(): ListEntry[] {
     return super.getItems() as ListEntry[];

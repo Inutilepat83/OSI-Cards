@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EmailConfig - OSI Cards Documentation</title>
+  <meta name="description" content="OSI Cards documentation: EmailConfig">
+  <meta property="og:title" content="EmailConfig - OSI Cards">
+  <meta property="og:description" content="OSI Cards documentation: EmailConfig">
+  <meta property="og:type" content="article">
+  <meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://osi-cards.dev/docs/schemas/email-config">
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 2rem; }
+    pre { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 8px; overflow-x: auto; }
+    code { background: #f3f4f6; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.9em; }
+    pre code { background: none; padding: 0; }
+    h1, h2, h3, h4 { margin-top: 2rem; }
+    .anchor-link { opacity: 0; margin-left: 0.5rem; text-decoration: none; }
+    h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link { opacity: 0.5; }
+    a { color: #e07b39; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #e5e7eb; padding: 0.5rem; text-align: left; }
+    th { background: #f9fafb; }
+    .callout { padding: 1rem; border-radius: 8px; margin: 1rem 0; display: flex; gap: 0.75rem; }
+    .callout.tip { background: #ecfdf5; border-left: 4px solid #10b981; }
+    .callout.warning { background: #fffbeb; border-left: 4px solid #f59e0b; }
+    .callout.info { background: #eff6ff; border-left: 4px solid #3b82f6; }
+    .callout.danger { background: #fef2f2; border-left: 4px solid #ef4444; }
+    .callout-icon { width: 20px; height: 20px; flex-shrink: 0; }
+    .code-header { display: flex; justify-content: space-between; background: #2d2d2d; padding: 0.5rem 1rem; border-radius: 8px 8px 0 0; }
+    .code-lang { color: #9ca3af; font-size: 0.75rem; text-transform: uppercase; }
+    .code-block-wrapper pre { margin-top: 0; border-radius: 0 0 8px 8px; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/">← Back to OSI Cards</a> |
+    <a href="/docs">Documentation</a>
+  </nav>
+  <main>
+    <h1 id="emailconfig"><a href="#emailconfig" class="anchor-link" aria-hidden="true">#</a>EmailConfig</h1></p><p>Configuration for mail action buttons.</p><p><h2 id="overview"><a href="#overview" class="anchor-link" aria-hidden="true">#</a>Overview</h2></p><p><code>EmailConfig</code> defines the email content for mail-type card actions.</p><p><h2 id="interface-definition"><a href="#interface-definition" class="anchor-link" aria-hidden="true">#</a>Interface Definition</h2></p><p><div class="code-block-wrapper"><div class="code-header"><span class="code-lang">typescript</span><div class="code-actions"><button class="copy-btn" type="button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy</button></div></div><pre><code class="language-typescript">interface EmailConfig {<br>  contact: EmailContact;<br>  subject: string;<br>  body: string;<br>  to?: string | string[];<br>  cc?: string | string[];<br>  bcc?: string | string[];<br>}</p><p>interface EmailContact {<br>  name: string;<br>  email: string;<br>  role: string;<br>}</code></pre></div></p><p><h2 id="properties"><a href="#properties" class="anchor-link" aria-hidden="true">#</a>Properties</h2></p><p><div class="table-wrapper"><table><thead><tr><th>Property</th><th>Type</th><th>Required</th><th>Description</th></tr></thead><tbody><tr><td><code>contact</code></td><td>EmailContact</td><td><strong>Yes</strong></td><td>Contact information</td></tr><tr><td><code>subject</code></td><td>string</td><td><strong>Yes</strong></td><td>Email subject line</td></tr><tr><td><code>body</code></td><td>string</td><td><strong>Yes</strong></td><td>Email body content</td></tr><tr><td><code>to</code></td><td>string \</td><td>string[]</td><td>No</td><td>Override recipient(s)</td></tr><tr><td><code>cc</code></td><td>string \</td><td>string[]</td><td>No</td><td>CC recipient(s)</td></tr><tr><td><code>bcc</code></td><td>string \</td><td>string[]</td><td>No</td><td>BCC recipient(s)</td></tr></tbody></table></div>
+<h2 id="example"><a href="#example" class="anchor-link" aria-hidden="true">#</a>Example</h2></p><p><div class="code-block-wrapper"><div class="code-header"><span class="code-lang">json</span><div class="code-actions"><button class="copy-btn" type="button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy</button></div></div><pre><code class="language-json">{<br>  "contact": {<br>    "name": "Jane Smith",<br>    "email": "jane.smith@company.com",<br>    "role": "Account Manager"<br>  },<br>  "subject": "Follow-up: Product Demo",<br>  "body": "Dear Jane,\n\nThank you for the demo yesterday...\n\nBest regards"<br>}</code></pre></div>
+
+  </main>
+  <footer>
+    <p>Generated: 2025-12-01T09:15:43.760Z</p>
+    <p><a href="https://github.com/Inutilepat83/OSI-Cards">View on GitHub</a></p>
+  </footer>
+</body>
+</html>

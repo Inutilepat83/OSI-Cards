@@ -17,6 +17,20 @@ if command -v node >/dev/null 2>&1; then
   fi
 fi
 
+# Pre-render documentation if doc files changed
+doc_files_changed=$(git diff --cached --name-only | grep -E "src/app/features/documentation/.*page\.component\.ts$" || true)
+if [ -n "$doc_files_changed" ]; then
+  echo "📚 Documentation files changed, pre-rendering..."
+  npx ts-node scripts/prerender-docs.ts
+  
+  # Stage the generated files
+  git add src/assets/docs/rendered/ docs-static/ 2>/dev/null || true
+  echo "✅ Documentation pre-rendered and staged"
+fi
+
+
+
+
 
 
 

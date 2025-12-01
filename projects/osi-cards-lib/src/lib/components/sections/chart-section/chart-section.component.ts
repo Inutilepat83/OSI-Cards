@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardField } from '../../../models';
 import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent } from '../base-section.component';
+import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
 
 type ChartField = CardField & {
   value: number;
@@ -17,6 +17,12 @@ type ChartField = CardField & {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChartSectionComponent extends BaseSectionComponent<ChartField> {
+  /** Charts need width for visualization */
+  static readonly layoutConfig: SectionLayoutConfig = {
+    preferredColumns: 2,
+    minColumns: 2,
+    maxColumns: 4,
+  };
 
   private readonly palette: string[] = ['#FF7900', '#FF9A3C', '#CC5F00', '#FFB873', '#FFD8B0'];
 

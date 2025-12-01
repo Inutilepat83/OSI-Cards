@@ -1,0 +1,30 @@
+{
+  "pageId": "streaming/lifecycle",
+  "title": "Streaming Lifecycle",
+  "html": "<h1 id=\"streaming-lifecycle\"><a href=\"#streaming-lifecycle\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Streaming Lifecycle</h1></p><p>Complete streaming lifecycle and control methods.</p><p><h2 id=\"starting-a-stream\"><a href=\"#starting-a-stream\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Starting a Stream</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">// Normal start with thinking delay<br>streamingService.start(jsonString);</p><p>// Instant mode (no thinking delay)<br>streamingService.start(jsonString, { instant: true });</code></pre></div></p><p><h2 id=\"stopping-a-stream\"><a href=\"#stopping-a-stream\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Stopping a Stream</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">// Stop and reset<br>streamingService.stop();<br>// State becomes 'aborted'</code></pre></div></p><p><h2 id=\"complete-lifecycle\"><a href=\"#complete-lifecycle\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Complete Lifecycle</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">@Component({...})<br>export class CardComponent implements OnInit, OnDestroy {<br>  private destroy$ = new Subject&amp;lt;void&amp;gt;();<br>  <br>  ngOnInit() {<br>    // Subscribe to state changes<br>    this.streamingService.state$<br>      .pipe(takeUntil(this.destroy$))<br>      .subscribe(state =&amp;gt; {<br>        switch (state.stage) {<br>          case 'thinking':<br>            this.showThinkingIndicator();<br>            break;<br>          case 'streaming':<br>            this.showProgressBar();<br>            break;<br>          case 'complete':<br>            this.onComplete();<br>            break;<br>          case 'error':<br>            this.onError();<br>            break;<br>        }<br>      });<br>    <br>    // Subscribe to card updates<br>    this.streamingService.cardUpdates$<br>      .pipe(takeUntil(this.destroy$))<br>      .subscribe(update =&amp;gt; {<br>        this.card = update.card;<br>      });<br>  }<br>  <br>  startStreaming(json: string) {<br>    this.streamingService.start(json);<br>  }<br>  <br>  cancelStreaming() {<br>    this.streamingService.stop();<br>  }<br>  <br>  ngOnDestroy() {<br>    this.destroy$.next();<br>    this.destroy$.complete();<br>    this.streamingService.stop();<br>  }<br>}</code></pre></div>\n",
+  "toc": [
+    {
+      "id": "streaming-lifecycle",
+      "text": "Streaming Lifecycle",
+      "level": 1
+    },
+    {
+      "id": "starting-a-stream",
+      "text": "Starting a Stream",
+      "level": 2
+    },
+    {
+      "id": "stopping-a-stream",
+      "text": "Stopping a Stream",
+      "level": 2
+    },
+    {
+      "id": "complete-lifecycle",
+      "text": "Complete Lifecycle",
+      "level": 2
+    }
+  ],
+  "contentHash": "3fbbb866bc94b612",
+  "generatedAt": "2025-12-01T09:15:43.792Z",
+  "demoConfigs": {}
+}

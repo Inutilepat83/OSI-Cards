@@ -19,7 +19,7 @@
 
 /* List Card */
 .list-card {
-  @include card;
+  // Declarations must come before @include to avoid mixed-decls deprecation warning
   display: flex !important;
   flex-direction: column !important;
   gap: var(--card-gap) !important;
@@ -31,6 +31,8 @@
   position: relative !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
+  
+  @include card;
 
   // Animation states for item streaming
   &.item-streaming {

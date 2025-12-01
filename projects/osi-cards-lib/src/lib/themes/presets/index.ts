@@ -1,18 +1,7 @@
 /**
- * Theme Presets
+ * Theme Presets Index
  * 
- * Exports all built-in theme presets for easy importing
+ * Exports all theme presets for OSI Cards library.
  */
 
-export * from './light-theme';
-export * from './dark-theme';
-export * from './osi-day-theme';
-export * from './osi-night-theme';
-
-
-
-
-
-
-
-
+export * from './additional-themes';

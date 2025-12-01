@@ -1,0 +1,40 @@
+{
+  "pageId": "schemas/card-item",
+  "title": "CardItem",
+  "html": "<h1 id=\"carditem\"><a href=\"#carditem\" class=\"anchor-link\" aria-hidden=\"true\">#</a>CardItem</h1></p><p>Defines an item in list-based sections.</p><p><h2 id=\"overview\"><a href=\"#overview\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Overview</h2></p><p><code>CardItem</code> is used for sections that display lists of items, such as news, events, or product lists.</p><p><h2 id=\"interface-definition\"><a href=\"#interface-definition\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Interface Definition</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">interface CardItem {<br>  id?: string;<br>  title: string;<br>  description?: string;<br>  icon?: string;<br>  value?: string | number;<br>  status?: string;<br>  date?: string;<br>  meta?: Record&amp;lt;string, unknown&amp;gt;;<br>}</code></pre></div></p><p><h2 id=\"properties\"><a href=\"#properties\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Properties</h2></p><p><div class=\"table-wrapper\"><table><thead><tr><th>Property</th><th>Type</th><th>Required</th><th>Description</th></tr></thead><tbody><tr><td><code>id</code></td><td>string</td><td>No</td><td>Unique identifier</td></tr><tr><td><code>title</code></td><td>string</td><td><strong>Yes</strong></td><td>Item title</td></tr><tr><td><code>description</code></td><td>string</td><td>No</td><td>Item description</td></tr><tr><td><code>icon</code></td><td>string</td><td>No</td><td>Icon identifier</td></tr><tr><td><code>value</code></td><td>string \\</td><td>number</td><td>No</td><td>Associated value</td></tr><tr><td><code>status</code></td><td>string</td><td>No</td><td>Status indicator</td></tr><tr><td><code>date</code></td><td>string</td><td>No</td><td>Date string</td></tr><tr><td><code>meta</code></td><td>object</td><td>No</td><td>Additional metadata</td></tr></tbody></table></div>\n<h2 id=\"example-news-section\"><a href=\"#example-news-section\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Example (News Section)</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">json</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-json\">{<br>  \"title\": \"Q4 Earnings Released\",<br>  \"description\": \"Company reports 25% revenue growth\",<br>  \"meta\": {<br>    \"source\": \"Bloomberg\",<br>    \"date\": \"2025-01-15\"<br>  },<br>  \"status\": \"published\"<br>}</code></pre></div></p><p><h2 id=\"example-list-section\"><a href=\"#example-list-section\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Example (List Section)</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">json</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-json\">{<br>  \"title\": \"Real-time Analytics\",<br>  \"description\": \"Live data processing\",<br>  \"icon\": \"📊\",<br>  \"status\": \"completed\"<br>}</code></pre></div>\n",
+  "toc": [
+    {
+      "id": "carditem",
+      "text": "CardItem",
+      "level": 1
+    },
+    {
+      "id": "overview",
+      "text": "Overview",
+      "level": 2
+    },
+    {
+      "id": "interface-definition",
+      "text": "Interface Definition",
+      "level": 2
+    },
+    {
+      "id": "properties",
+      "text": "Properties",
+      "level": 2
+    },
+    {
+      "id": "example-news-section",
+      "text": "Example (News Section)",
+      "level": 2
+    },
+    {
+      "id": "example-list-section",
+      "text": "Example (List Section)",
+      "level": 2
+    }
+  ],
+  "contentHash": "834c61be0864b63e",
+  "generatedAt": "2025-12-01T09:15:43.757Z",
+  "demoConfigs": {}
+}

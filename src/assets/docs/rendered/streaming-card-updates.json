@@ -1,0 +1,35 @@
+{
+  "pageId": "streaming/card-updates",
+  "title": "Card Updates",
+  "html": "<h1 id=\"card-updates\"><a href=\"#card-updates\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Card Updates</h1></p><p>Receiving card updates during streaming.</p><p><h2 id=\"cardupdate-interface\"><a href=\"#cardupdate-interface\" class=\"anchor-link\" aria-hidden=\"true\">#</a>CardUpdate Interface</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">interface CardUpdate {<br>  card: AICardConfig;           // Updated card<br>  changeType: CardChangeType;   // Type of change<br>  completedSections?: number[]; // Newly completed sections<br>}</p><p>type CardChangeType = 'structural' | 'content';</code></pre></div></p><p><h2 id=\"change-types\"><a href=\"#change-types\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Change Types</h2></p><p><div class=\"table-wrapper\"><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td><code>structural</code></td><td>New sections added or removed</td></tr><tr><td><code>content</code></td><td>Existing section content updated</td></tr></tbody></table></div>\n<h2 id=\"subscribing-to-updates\"><a href=\"#subscribing-to-updates\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Subscribing to Updates</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">streamingService.cardUpdates$.subscribe(update =&amp;gt; {<br>  // Update card<br>  this.card = update.card;<br>  <br>  // Handle structural changes (new sections)<br>  if (update.changeType === 'structural') {<br>    this.onNewSections();<br>  }<br>  <br>  // Animate completed sections<br>  if (update.completedSections?.length) {<br>    for (const index of update.completedSections) {<br>      this.animateSectionComplete(index);<br>    }<br>  }<br>});</code></pre></div></p><p><h2 id=\"buffer-updates\"><a href=\"#buffer-updates\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Buffer Updates</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">// Raw buffer updates (for JSON editor sync)<br>streamingService.bufferUpdates$.subscribe(buffer =&amp;gt; {<br>  this.jsonEditorContent = buffer;<br>});</code></pre></div>\n",
+  "toc": [
+    {
+      "id": "card-updates",
+      "text": "Card Updates",
+      "level": 1
+    },
+    {
+      "id": "cardupdate-interface",
+      "text": "CardUpdate Interface",
+      "level": 2
+    },
+    {
+      "id": "change-types",
+      "text": "Change Types",
+      "level": 2
+    },
+    {
+      "id": "subscribing-to-updates",
+      "text": "Subscribing to Updates",
+      "level": 2
+    },
+    {
+      "id": "buffer-updates",
+      "text": "Buffer Updates",
+      "level": 2
+    }
+  ],
+  "contentHash": "e2c3341148dc203a",
+  "generatedAt": "2025-12-01T09:15:43.789Z",
+  "demoConfigs": {}
+}

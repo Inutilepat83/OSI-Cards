@@ -1,0 +1,40 @@
+{
+  "pageId": "utilities/sanitize-card-config",
+  "title": "sanitizeCardConfig",
+  "html": "<h1 id=\"sanitizecardconfig\"><a href=\"#sanitizecardconfig\" class=\"anchor-link\" aria-hidden=\"true\">#</a>sanitizeCardConfig</h1></p><p>Sanitize and validate card configurations.</p><p><h2 id=\"import\"><a href=\"#import\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Import</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">import { CardUtils } from 'osi-cards-lib';</code></pre></div></p><p><h2 id=\"usage\"><a href=\"#usage\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Usage</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">const rawConfig = JSON.parse(llmResponse);<br>const cleanConfig = CardUtils.sanitizeCardConfig(rawConfig);</p><p>if (cleanConfig) {<br>  // Safe to use<br>  this.card = cleanConfig;<br>} else {<br>  // Invalid configuration<br>  this.showError('Invalid card');<br>}</code></pre></div></p><p><h2 id=\"what-it-does\"><a href=\"#what-it-does\" class=\"anchor-link\" aria-hidden=\"true\">#</a>What It Does</h2></p><p><ol><li>Validates required fields (cardTitle, sections)</li><li>Truncates long strings</li><li>Filters invalid sections</li><li>Ensures IDs exist</li><li>Sanitizes actions</li></ol>\n<h2 id=\"configuration\"><a href=\"#configuration\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Configuration</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">// Title max length: 200 characters<br>// Sections filtered through isCardSection<br>// Actions get auto-generated IDs</code></pre></div></p><p><h2 id=\"return-value\"><a href=\"#return-value\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Return Value</h2></p><p><ul><li>Returns sanitized <code>AICardConfig</code> if valid</li><li>Returns <code>null</code> if invalid</li></ul>",
+  "toc": [
+    {
+      "id": "sanitizecardconfig",
+      "text": "sanitizeCardConfig",
+      "level": 1
+    },
+    {
+      "id": "import",
+      "text": "Import",
+      "level": 2
+    },
+    {
+      "id": "usage",
+      "text": "Usage",
+      "level": 2
+    },
+    {
+      "id": "what-it-does",
+      "text": "What It Does",
+      "level": 2
+    },
+    {
+      "id": "configuration",
+      "text": "Configuration",
+      "level": 2
+    },
+    {
+      "id": "return-value",
+      "text": "Return Value",
+      "level": 2
+    }
+  ],
+  "contentHash": "e2afc8393dd74214",
+  "generatedAt": "2025-12-01T09:15:43.801Z",
+  "demoConfigs": {}
+}

@@ -6,7 +6,7 @@
 /**
  * Track by index
  */
-export function trackByIndex<T>(index: number): number {
+export function trackByIndex(index: number): number {
   return index;
 }
 

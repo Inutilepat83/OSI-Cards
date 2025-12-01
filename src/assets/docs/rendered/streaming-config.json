@@ -1,0 +1,30 @@
+{
+  "pageId": "streaming/config",
+  "title": "StreamingConfig",
+  "html": "<h1 id=\"streamingconfig\"><a href=\"#streamingconfig\" class=\"anchor-link\" aria-hidden=\"true\">#</a>StreamingConfig</h1></p><p>Configuration options for streaming behavior.</p><p><h2 id=\"interface\"><a href=\"#interface\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Interface</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">interface StreamingConfig {<br>  minChunkSize: number;      // Minimum chunk size (chars)<br>  maxChunkSize: number;      // Maximum chunk size (chars)<br>  thinkingDelayMs: number;   // Initial thinking delay<br>  charsPerToken: number;     // Characters per token<br>  tokensPerSecond: number;   // Target streaming speed<br>  cardUpdateThrottleMs: number;    // Update throttle<br>  completionBatchDelayMs: number;  // Batch completion delay<br>}</code></pre></div></p><p><h2 id=\"default-values\"><a href=\"#default-values\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Default Values</h2></p><p><div class=\"table-wrapper\"><table><thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>minChunkSize</code></td><td>10</td><td>Minimum characters per chunk</td></tr><tr><td><code>maxChunkSize</code></td><td>50</td><td>Maximum characters per chunk</td></tr><tr><td><code>thinkingDelayMs</code></td><td>100</td><td>Delay before streaming starts</td></tr><tr><td><code>charsPerToken</code></td><td>4</td><td>Characters per LLM token</td></tr><tr><td><code>tokensPerSecond</code></td><td>80</td><td>Target streaming speed</td></tr><tr><td><code>cardUpdateThrottleMs</code></td><td>50</td><td>UI update throttle</td></tr><tr><td><code>completionBatchDelayMs</code></td><td>100</td><td>Section completion batching</td></tr></tbody></table></div>\n<h2 id=\"custom-configuration\"><a href=\"#custom-configuration\" class=\"anchor-link\" aria-hidden=\"true\">#</a>Custom Configuration</h2></p><p><div class=\"code-block-wrapper\"><div class=\"code-header\"><span class=\"code-lang\">typescript</span><div class=\"code-actions\"><button class=\"copy-btn\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"9\" y=\"9\" width=\"13\" height=\"13\" rx=\"2\" ry=\"2\"></rect><path d=\"M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1\"></path></svg>Copy</button></div></div><pre><code class=\"language-typescript\">const streamingService = inject(OSICardsStreamingService);</p><p>// Configure for faster streaming<br>streamingService.configure({<br>  tokensPerSecond: 120,<br>  thinkingDelayMs: 50<br>});</p><p>// Configure for slower, more readable streaming<br>streamingService.configure({<br>  tokensPerSecond: 40,<br>  cardUpdateThrottleMs: 100<br>});</code></pre></div>\n",
+  "toc": [
+    {
+      "id": "streamingconfig",
+      "text": "StreamingConfig",
+      "level": 1
+    },
+    {
+      "id": "interface",
+      "text": "Interface",
+      "level": 2
+    },
+    {
+      "id": "default-values",
+      "text": "Default Values",
+      "level": 2
+    },
+    {
+      "id": "custom-configuration",
+      "text": "Custom Configuration",
+      "level": 2
+    }
+  ],
+  "contentHash": "05dc586748a1e4d8",
+  "generatedAt": "2025-12-01T09:15:43.790Z",
+  "demoConfigs": {}
+}

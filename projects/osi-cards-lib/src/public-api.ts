@@ -12,7 +12,7 @@
  */
 
 // ═══════════════════════════════════════════════════════════════════════════
-// MODELS (Primary source for types)
+// MODELS
 // ═══════════════════════════════════════════════════════════════════════════
 export * from './lib/models';
 
@@ -29,7 +29,6 @@ export * from './lib/section-manifest.generated';
 // ═══════════════════════════════════════════════════════════════════════════
 // SERVICES
 // ═══════════════════════════════════════════════════════════════════════════
-// @ts-ignore - Intentional re-exports, duplicates resolved at runtime
 export * from './lib/services';
 export * from './lib/services/section-utils.service';
 
@@ -45,19 +44,12 @@ export {
 // ═══════════════════════════════════════════════════════════════════════════
 // INTERFACES
 // ═══════════════════════════════════════════════════════════════════════════
-// @ts-ignore - Intentional re-exports, duplicates resolved at runtime
 export * from './lib/interfaces';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // UTILS
 // ═══════════════════════════════════════════════════════════════════════════
-// @ts-ignore - Intentional re-exports, duplicates resolved at runtime
 export * from './lib/utils';
-
-// ═══════════════════════════════════════════════════════════════════════════
-// CONSTANTS (Exported via utils to avoid duplicates)
-// ═══════════════════════════════════════════════════════════════════════════
-// export * from './lib/constants';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // EVENTS (Shadow DOM compatible event system)
@@ -72,7 +64,6 @@ export * from './lib/icons';
 // ═══════════════════════════════════════════════════════════════════════════
 // PROVIDERS
 // ═══════════════════════════════════════════════════════════════════════════
-// @ts-ignore - Intentional re-exports, duplicates resolved at runtime
 export * from './lib/providers';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -80,54 +71,10 @@ export * from './lib/providers';
 // ═══════════════════════════════════════════════════════════════════════════
 export * from './lib/themes';
 
-// Explicitly export key theme utilities for convenience
-export {
-  ThemeService,
-  OSICardsThemeConfig,
-  ThemePreset,
-  ThemeServiceConfig,
-  OSI_THEME_CONFIG,
-  DEFAULT_THEME_CONFIG,
-  ColorSchemePreference
-} from './lib/themes/theme.service';
-
-export {
-  provideOSICardsTheme,
-  provideOSICardsThemeFull,
-  OSICardsThemeOptions,
-  ThemePresets,
-  createSimpleTheme
-} from './lib/themes/theme-config.provider';
-
-export {
-  extendTheme,
-  mergeThemes,
-  createThemeFromColors,
-  deriveColorScale,
-  createThemePair,
-  ColorPalette,
-  ColorScale
-} from './lib/themes/theme-composer.util';
-
-// ═══════════════════════════════════════════════════════════════════════════
-// DIRECTIVES
-// ═══════════════════════════════════════════════════════════════════════════
-export * from './lib/directives';
-
 // ═══════════════════════════════════════════════════════════════════════════
 // PRESETS
 // ═══════════════════════════════════════════════════════════════════════════
 export * from './lib/presets';
-
-// ═══════════════════════════════════════════════════════════════════════════
-// ERRORS
-// ═══════════════════════════════════════════════════════════════════════════
-export * from './lib/errors';
-
-// ═══════════════════════════════════════════════════════════════════════════
-// FACTORIES
-// ═══════════════════════════════════════════════════════════════════════════
-export * from './lib/factories';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // MAIN COMPONENTS
@@ -150,7 +97,6 @@ export * from './lib/components/card-footer/card-footer.component';
 export * from './lib/components/card-actions/card-actions.component';
 export * from './lib/components/card-section-list/card-section-list.component';
 export * from './lib/components/card-streaming-indicator/card-streaming-indicator.component';
-export * from './lib/components/section-error-boundary/section-error-boundary.component';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // SECTION COMPONENTS (Generated from section-registry.json)

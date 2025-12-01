@@ -383,3 +383,6 @@ export function getTotalPropertyChecks(): number {
   return ELEMENTS_TO_CHECK.reduce((sum, el) => sum + el.properties.length, 0);
 }
 
+
+
+

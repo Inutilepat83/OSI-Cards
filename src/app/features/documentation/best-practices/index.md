@@ -6,27 +6,27 @@ Comprehensive best practices guide for using OSI Cards effectively.
 
 ### 1. Use OnPush Change Detection
 
-\`\`\`typescript
+```typescript
 @Component({
   selector: 'app-card-viewer',
   changeDetection: ChangeDetectionStrategy.OnPush,
   // ...
 })
-\`\`\`
+```
 
 ### 2. Lazy Load Cards
 
-\`\`\`typescript
+```typescript
 // Load cards on demand
 cardData.getCardsByType('company').pipe(
   take(10), // Limit initial load
   shareReplay(1) // Cache results
 ).subscribe();
-\`\`\`
+```
 
 ### 3. Virtual Scrolling for Large Lists
 
-\`\`\`typescript
+```typescript
 // Use Angular CDK virtual scrolling for many cards
 <cdk-virtual-scroll-viewport itemSize="400">
   <app-ai-card-renderer
@@ -34,37 +34,37 @@ cardData.getCardsByType('company').pipe(
     [cardConfig]="card">
   </app-ai-card-renderer>
 </cdk-virtual-scroll-viewport>
-\`\`\`
+```
 
 ## Data Management
 
 ### 1. Cache Card Data
 
-\`\`\`typescript
+```typescript
 private cards$ = this.cardData.getAllCards().pipe(
   shareReplay(1)
 );
-\`\`\`
+```
 
 ### 2. Handle Loading States
 
-\`\`\`typescript
+```typescript
 cards$ = this.cardData.getAllCards().pipe(
   startWith(null),
   map(cards => ({ cards, loading: cards === null }))
 );
-\`\`\`
+```
 
 ### 3. Error Handling
 
-\`\`\`typescript
+```typescript
 cards$ = this.cardData.getAllCards().pipe(
   catchError(error => {
     console.error('Error loading cards:', error);
     return of([]);
   })
 );
-\`\`\`
+```
 
 ## Section Types
 
@@ -78,7 +78,7 @@ cards$ = this.cardData.getAllCards().pipe(
 
 ### 2. Optimize Section Data
 
-\`\`\`typescript
+```typescript
 // Good: Structured data
 {
   title: 'Metrics',
@@ -96,24 +96,24 @@ cards$ = this.cardData.getAllCards().pipe(
     // Too many fields without grouping
   ]
 }
-\`\`\`
+```
 
 ## LLM Integration
 
 ### 1. Structured Prompts
 
-\`\`\`
+```
 Generate a card for [entity] with:
 - Title: [title]
 - Sections: [section types]
 - Actions: [actions]
 
 Return valid JSON following AICardConfig schema.
-\`\`\`
+```
 
 ### 2. Validate LLM Responses
 
-\`\`\`typescript
+```typescript
 try {
   const card = JSON.parse(llmResponse);
   if (isValidCardConfig(card)) {
@@ -122,17 +122,17 @@ try {
 } catch (error) {
   console.error('Invalid card JSON:', error);
 }
-\`\`\`
+```
 
 ### 3. Progressive Updates
 
-\`\`\`typescript
+```typescript
 streamingService.cardUpdates$.subscribe(update => {
   // Show partial card during streaming
   this.cardConfig = update.card;
   this.isStreaming = update.isComplete === false;
 });
-\`\`\`
+```
 
 ## Accessibility
 
@@ -142,12 +142,12 @@ Cards use semantic HTML by default. Ensure proper heading hierarchy.
 
 ### 2. ARIA Labels
 
-\`\`\`typescript
+```typescript
 <app-ai-card-renderer
   [cardConfig]="card"
   [attr.aria-label]="card.cardTitle">
 </app-ai-card-renderer>
-\`\`\`
+```
 
 ### 3. Keyboard Navigation
 
@@ -157,39 +157,39 @@ All interactive elements support keyboard navigation out of the box.
 
 ### 1. Use CSS Variables
 
-\`\`\`scss
+```scss
 :root {
   --color-brand: #ff7900;
   --card-padding: 1.25rem;
   --card-border-radius: 12px;
 }
-\`\`\`
+```
 
 ### 2. Consistent Spacing
 
-\`\`\`scss
+```scss
 .card {
   padding: var(--card-padding);
   margin-bottom: var(--spacing-md);
 }
-\`\`\`
+```
 
 ## Security
 
 ### 1. Sanitize User Input
 
-\`\`\`typescript
+```typescript
 import { DomSanitizer } from '@angular/platform-browser';
 
 const sanitized = this.sanitizer.sanitize(
   SecurityContext.HTML,
   userInput
 );
-\`\`\`
+```
 
 ### 2. Validate Card Data
 
-\`\`\`typescript
+```typescript
 function isValidCardConfig(card: any): card is AICardConfig {
   return (
     card &&
@@ -198,13 +198,13 @@ function isValidCardConfig(card: any): card is AICardConfig {
     card.sections.length > 0
   );
 }
-\`\`\`
+```
 
 ## Testing
 
 ### 1. Unit Tests
 
-\`\`\`typescript
+```typescript
 it('should render card', () => {
   const card: AICardConfig = {
     cardTitle: 'Test Card',
@@ -216,7 +216,7 @@ it('should render card', () => {
   
   expect(component).toBeTruthy();
 });
-\`\`\`
+```
 
 ### 2. Integration Tests
 
@@ -245,6 +245,9 @@ Cache card data to avoid unnecessary API calls.
 - [Section Types](/docs/section-types)
 - [LLM Integration](/docs/llm-integration)
 - [API Reference](/docs/api)
+
+
+
 
 
 

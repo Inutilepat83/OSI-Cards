@@ -2342,35 +2342,13 @@ export class HomePageComponent implements OnInit, OnDestroy {
     // Wait a tick to ensure the view is updated
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    // Find the card element from the preview region
-    const previewElement = this.previewRegion?.nativeElement;
-    if (!previewElement) {
-      this.announceStatus('Card element not found', true);
-      this.logger.warn('Preview region not found', 'HomePageComponent');
-      return;
-    }
-
-    // Find the actual card article element inside the preview
-    let cardElement: HTMLElement | null = previewElement.querySelector('article.ai-card-surface');
-    
-    if (!cardElement) {
-      // Fallback 1: try tilt-container
-      cardElement = previewElement.querySelector('.tilt-container') as HTMLElement;
-    }
-    
-    if (!cardElement) {
-      // Fallback 2: try any article element
-      cardElement = previewElement.querySelector('article') as HTMLElement;
-    }
-    
-    if (!cardElement) {
-      // Fallback 3: try app-ai-card-renderer
-      cardElement = previewElement.querySelector('app-ai-card-renderer') as HTMLElement;
-    }
+    // Get the card element directly from the renderer component
+    // This works around Shadow DOM encapsulation by using the component's public method
+    const cardElement = this.cardRenderer?.getExportElement();
 
     if (!cardElement) {
       this.announceStatus('Card element not found', true);
-      this.logger.warn('Card element not found in preview region', 'HomePageComponent');
+      this.logger.warn('Card element not found - cardRenderer may not be initialized', 'HomePageComponent');
       return;
     }
 

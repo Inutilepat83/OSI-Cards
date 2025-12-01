@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Type Aliases & Enums - OSI Cards Documentation</title>
+  <meta name="description" content="OSI Cards documentation: Type Aliases & Enums">
+  <meta property="og:title" content="Type Aliases & Enums - OSI Cards">
+  <meta property="og:description" content="OSI Cards documentation: Type Aliases & Enums">
+  <meta property="og:type" content="article">
+  <meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://osi-cards.dev/docs/schemas/type-aliases">
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 2rem; }
+    pre { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 8px; overflow-x: auto; }
+    code { background: #f3f4f6; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.9em; }
+    pre code { background: none; padding: 0; }
+    h1, h2, h3, h4 { margin-top: 2rem; }
+    .anchor-link { opacity: 0; margin-left: 0.5rem; text-decoration: none; }
+    h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link { opacity: 0.5; }
+    a { color: #e07b39; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #e5e7eb; padding: 0.5rem; text-align: left; }
+    th { background: #f9fafb; }
+    .callout { padding: 1rem; border-radius: 8px; margin: 1rem 0; display: flex; gap: 0.75rem; }
+    .callout.tip { background: #ecfdf5; border-left: 4px solid #10b981; }
+    .callout.warning { background: #fffbeb; border-left: 4px solid #f59e0b; }
+    .callout.info { background: #eff6ff; border-left: 4px solid #3b82f6; }
+    .callout.danger { background: #fef2f2; border-left: 4px solid #ef4444; }
+    .callout-icon { width: 20px; height: 20px; flex-shrink: 0; }
+    .code-header { display: flex; justify-content: space-between; background: #2d2d2d; padding: 0.5rem 1rem; border-radius: 8px 8px 0 0; }
+    .code-lang { color: #9ca3af; font-size: 0.75rem; text-transform: uppercase; }
+    .code-block-wrapper pre { margin-top: 0; border-radius: 0 0 8px 8px; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/">← Back to OSI Cards</a> |
+    <a href="/docs">Documentation</a>
+  </nav>
+  <main>
+    <h1 id="type-aliases-amp-enums"><a href="#type-aliases-amp-enums" class="anchor-link" aria-hidden="true">#</a>Type Aliases &amp; Enums</h1></p><p>Reference for all type aliases and enums in OSI Cards.</p><p><h2 id="card-types"><a href="#card-types" class="anchor-link" aria-hidden="true">#</a>Card Types</h2></p><p><div class="code-block-wrapper"><div class="code-header"><span class="code-lang">typescript</span><div class="code-actions"><button class="copy-btn" type="button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy</button></div></div><pre><code class="language-typescript">type CardType = 'all' | 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'event' | 'project' | 'sko';</code></pre></div></p><p><h2 id="section-types"><a href="#section-types" class="anchor-link" aria-hidden="true">#</a>Section Types</h2></p><p><div class="code-block-wrapper"><div class="code-header"><span class="code-lang">typescript</span><div class="code-actions"><button class="copy-btn" type="button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy</button></div></div><pre><code class="language-typescript">type SectionType = <br>  | 'info' | 'analytics' | 'contact-card' | 'network-card' <br>  | 'map' | 'financials' | 'event' | 'list' | 'chart' <br>  | 'product' | 'solutions' | 'overview' | 'quotation' <br>  | 'text-reference' | 'brand-colors' | 'news' | 'social-media' <br>  | 'fallback';</code></pre></div></p><p><h2 id="type-aliases-backwards-compatibility"><a href="#type-aliases-backwards-compatibility" class="anchor-link" aria-hidden="true">#</a>Type Aliases (Backwards Compatibility)</h2></p><p><div class="table-wrapper"><table><thead><tr><th>Alias</th><th>Resolves To</th></tr></thead><tbody><tr><td><code>metrics</code></td><td>analytics</td></tr><tr><td><code>stats</code></td><td>analytics</td></tr><tr><td><code>timeline</code></td><td>event</td></tr><tr><td><code>table</code></td><td>list</td></tr><tr><td><code>locations</code></td><td>map</td></tr><tr><td><code>quote</code></td><td>quotation</td></tr><tr><td><code>reference</code></td><td>text-reference</td></tr><tr><td><code>text-ref</code></td><td>text-reference</td></tr><tr><td><code>brands</code></td><td>brand-colors</td></tr><tr><td><code>colors</code></td><td>brand-colors</td></tr><tr><td><code>project</code></td><td>info</td></tr></tbody></table></div>
+<h2 id="layout-priority"><a href="#layout-priority" class="anchor-link" aria-hidden="true">#</a>Layout Priority</h2></p><p><div class="code-block-wrapper"><div class="code-header"><span class="code-lang">typescript</span><div class="code-actions"><button class="copy-btn" type="button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy</button></div></div><pre><code class="language-typescript">type LayoutPriority = 1 | 2 | 3;<br>// 1 = Highest (placed first)<br>// 2 = Medium<br>// 3 = Lowest (placed last)</code></pre></div></p><p><h2 id="trend-indicators"><a href="#trend-indicators" class="anchor-link" aria-hidden="true">#</a>Trend Indicators</h2></p><p><div class="code-block-wrapper"><div class="code-header"><span class="code-lang">typescript</span><div class="code-actions"><button class="copy-btn" type="button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy</button></div></div><pre><code class="language-typescript">type Trend = 'up' | 'down' | 'stable' | 'neutral';</code></pre></div></p><p><h2 id="status-values"><a href="#status-values" class="anchor-link" aria-hidden="true">#</a>Status Values</h2></p><p><div class="code-block-wrapper"><div class="code-header"><span class="code-lang">typescript</span><div class="code-actions"><button class="copy-btn" type="button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy</button></div></div><pre><code class="language-typescript">type FieldStatus = 'completed' | 'in-progress' | 'pending' | 'cancelled' | 'active' | 'inactive' | 'warning';<br>type Priority = 'high' | 'medium' | 'low';<br>type Performance = 'excellent' | 'good' | 'average' | 'poor';</code></pre></div></p><p><h2 id="button-variants"><a href="#button-variants" class="anchor-link" aria-hidden="true">#</a>Button Variants</h2></p><p><div class="code-block-wrapper"><div class="code-header"><span class="code-lang">typescript</span><div class="code-actions"><button class="copy-btn" type="button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy</button></div></div><pre><code class="language-typescript">type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost';</code></pre></div></p><p><h2 id="chart-types"><a href="#chart-types" class="anchor-link" aria-hidden="true">#</a>Chart Types</h2></p><p><div class="code-block-wrapper"><div class="code-header"><span class="code-lang">typescript</span><div class="code-actions"><button class="copy-btn" type="button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>Copy</button></div></div><pre><code class="language-typescript">type ChartType = 'bar' | 'line' | 'pie' | 'doughnut';</code></pre></div>
+
+  </main>
+  <footer>
+    <p>Generated: 2025-12-01T09:15:43.762Z</p>
+    <p><a href="https://github.com/Inutilepat83/OSI-Cards">View on GitHub</a></p>
+  </footer>
+</body>
+</html>

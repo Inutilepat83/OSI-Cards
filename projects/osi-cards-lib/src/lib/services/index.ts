@@ -20,3 +20,7 @@ export * from './cached-section-normalization.service';
 // Re-export dynamic loader from section-renderer
 export { DynamicSectionLoaderService } from '../components/section-renderer/dynamic-section-loader.service';
 
+// 50-Point Improvement Plan Services
+export * from './sse-streaming.service';
+export * from './offline-storage.service';
+

@@ -12,12 +12,18 @@
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="X-XSS-Protection" content="1; mode=block">
   
-  <!-- Resource Hints for Performance -->
-  <!-- Google Fonts removed - using system fonts (Helvetica) instead -->
+  <!-- ==========================================================================
+       Resource Hints for Performance
+       ========================================================================== -->
   
-  <!-- DNS Prefetch for external resources -->
+  <!-- DNS Prefetch - Resolve DNS early for external domains -->
   <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-  <!-- Note: API preconnect removed - add your actual API domain when deployed -->
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  <link rel="dns-prefetch" href="https://github.com">
+  <link rel="dns-prefetch" href="https://www.npmjs.com">
+  
+  <!-- Preconnect - Establish early connections to critical origins -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
   <!-- Preload critical assets -->
   <link rel="preload" href="/assets/configs/manifest.json" as="fetch" crossorigin>
@@ -25,10 +31,19 @@
   <!-- Prefetch for likely next resources -->
   <link rel="prefetch" href="/assets/configs/companies/" as="document">
   <link rel="prefetch" href="/assets/configs/contacts/" as="document">
-    <!-- Removed remote Material Icons link to avoid build-time inlining network fetch errors.
-      If you need local material icons, add the font files under `src/assets/fonts` and reference
-      them in your stylesheets using @font-face instead. Lucide icons are used across the UI.
-    -->
+  
+  <!-- Module preload for documentation (loaded during idle time) -->
+  <link rel="modulepreload" href="/main.js">
+  
+  <!-- 
+    Documentation Performance Optimizations:
+    - Core doc pages are preloaded via DocsPreloadingStrategy
+    - Navigation links use hover-based prefetching via PrefetchLinkDirective
+    - Rendered markdown is cached in IndexedDB via DocCacheService
+    - Service Worker caches doc chunks for offline access
+  -->
+  
+  <!-- Note: Material Icons removed - using Lucide icons instead -->
 </head>
 <body>
   <app-root></app-root>

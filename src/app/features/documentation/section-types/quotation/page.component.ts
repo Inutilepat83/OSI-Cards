@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
+import { DocsDemoComponent } from '../../components';
 
 const pageContent = `# Quotation Section
 
@@ -99,15 +100,55 @@ The **Quotation Section** (\`type: "quotation"\`) is used for displays quotes, t
 - [Best Practices](/docs/best-practices)
 `;
 
+const demoConfig = {
+  "title": "Customer Testimonials",
+  "type": "quotation",
+  "description": "What our customers say",
+  "fields": [
+    {
+      "label": "CEO Testimonial",
+      "value": '"This solution transformed our business operations and increased productivity by 40%."',
+      "description": "John Smith, CEO at TechCorp Inc."
+    },
+    {
+      "label": "CTO Review",
+      "value": '"The technical implementation was seamless and the support team was exceptional."',
+      "description": "Sarah Johnson, CTO at DataFlow Systems"
+    }
+  ]
+};
+
+/**
+ * Quotation Section documentation page with live demo
+ * Auto-generated - modifications may be overwritten
+ */
 @Component({
   selector: 'app-quotation-page',
   standalone: true,
-  imports: [DocPageComponent],
-  template: `<app-doc-page [content]="content"></app-doc-page>`,
+  imports: [DocPageComponent, DocsDemoComponent],
+  template: `
+    <div class="section-docs">
+      <app-docs-demo 
+        [config]="demo" 
+        [type]="'quotation'"
+        demoTitle="Live Preview"
+        height="350px"
+      ></app-docs-demo>
+      <app-doc-page [content]="content"></app-doc-page>
+    </div>
+  `,
+  styles: [`
+    .section-docs {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class QuotationPageComponent {
   content = pageContent;
+  demo = demoConfig;
 }
 
 export default QuotationPageComponent;
