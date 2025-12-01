@@ -5,7 +5,7 @@ const EventsPage: NgDocPage = {
   title: 'Event System',
   mdFile: './index.md',
   order: 1,
-  category: LibraryDocsCategory
+  category: LibraryDocsCategory,
 };
 
 export default EventsPage;

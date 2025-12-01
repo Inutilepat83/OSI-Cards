@@ -16,13 +16,37 @@
       "title": "Key Performance Indicators",
       "type": "analytics",
       "fields": [
-        { "label": "Revenue Target", "value": "105% Achieved", "percentage": 105, "performance": "excellent", "trend": "up" },
-        { "label": "Conversion Rate", "value": "32%", "percentage": 32, "performance": "good", "trend": "up" },
-        { "label": "Deals Closed", "value": "45 deals", "percentage": 112, "performance": "excellent", "trend": "up" }
+        {
+          "label": "Revenue Target",
+          "value": "105% Achieved",
+          "percentage": 105,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Conversion Rate",
+          "value": "32%",
+          "percentage": 32,
+          "performance": "good",
+          "trend": "up"
+        },
+        {
+          "label": "Deals Closed",
+          "value": "45 deals",
+          "percentage": 112,
+          "performance": "excellent",
+          "trend": "up"
+        }
       ]
     }
   ],
   "actions": [
-    { "label": "View Full Dashboard", "type": "website", "variant": "primary", "icon": "📊", "url": "https://dashboard.example.com" }
+    {
+      "label": "View Full Dashboard",
+      "type": "website",
+      "variant": "primary",
+      "icon": "📊",
+      "url": "https://dashboard.example.com"
+    }
   ]
 }

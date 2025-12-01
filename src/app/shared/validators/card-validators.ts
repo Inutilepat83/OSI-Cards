@@ -3,7 +3,7 @@ import { CARD_LIMITS } from '../utils/constants';
 
 /**
  * Validation decorators and validators for card-related inputs
- * 
+ *
  * Provides reusable validators for form controls that handle card data,
  * ensuring data integrity and preventing invalid configurations.
  */
@@ -15,26 +15,26 @@ import { CARD_LIMITS } from '../utils/constants';
 export function cardTitleValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
-    
+
     if (!value || typeof value !== 'string') {
       return { cardTitleRequired: true };
     }
-    
+
     const trimmed = value.trim();
-    
+
     if (trimmed.length === 0) {
       return { cardTitleRequired: true };
     }
-    
+
     if (trimmed.length > CARD_LIMITS.MAX_TITLE_LENGTH) {
-      return { 
-        cardTitleMaxLength: { 
+      return {
+        cardTitleMaxLength: {
           maxLength: CARD_LIMITS.MAX_TITLE_LENGTH,
-          actualLength: trimmed.length 
-        } 
+          actualLength: trimmed.length,
+        },
       };
     }
-    
+
     return null;
   };
 }
@@ -46,20 +46,20 @@ export function cardTitleValidator(): ValidatorFn {
 export function cardDescriptionValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
-    
+
     if (!value || typeof value !== 'string') {
       return null; // Description is optional
     }
-    
+
     if (value.length > CARD_LIMITS.MAX_DESCRIPTION_LENGTH) {
-      return { 
-        cardDescriptionMaxLength: { 
+      return {
+        cardDescriptionMaxLength: {
           maxLength: CARD_LIMITS.MAX_DESCRIPTION_LENGTH,
-          actualLength: value.length 
-        } 
+          actualLength: value.length,
+        },
       };
     }
-    
+
     return null;
   };
 }
@@ -71,26 +71,26 @@ export function cardDescriptionValidator(): ValidatorFn {
 export function sectionTitleValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
-    
+
     if (!value || typeof value !== 'string') {
       return { sectionTitleRequired: true };
     }
-    
+
     const trimmed = value.trim();
-    
+
     if (trimmed.length === 0) {
       return { sectionTitleRequired: true };
     }
-    
+
     if (trimmed.length > 200) {
-      return { 
-        sectionTitleMaxLength: { 
+      return {
+        sectionTitleMaxLength: {
           maxLength: 200,
-          actualLength: trimmed.length 
-        } 
+          actualLength: trimmed.length,
+        },
       };
     }
-    
+
     return null;
   };
 }
@@ -102,20 +102,20 @@ export function sectionTitleValidator(): ValidatorFn {
 export function fieldLabelValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
-    
+
     if (!value || typeof value !== 'string') {
       return null; // Label is optional for some field types
     }
-    
+
     if (value.length > CARD_LIMITS.MAX_FIELD_LABEL_LENGTH) {
-      return { 
-        fieldLabelMaxLength: { 
+      return {
+        fieldLabelMaxLength: {
           maxLength: CARD_LIMITS.MAX_FIELD_LABEL_LENGTH,
-          actualLength: value.length 
-        } 
+          actualLength: value.length,
+        },
       };
     }
-    
+
     return null;
   };
 }
@@ -127,20 +127,20 @@ export function fieldLabelValidator(): ValidatorFn {
 export function fieldValueValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
-    
+
     if (value === null || value === undefined) {
       return null; // Value can be null/undefined
     }
-    
+
     if (typeof value === 'string' && value.length > CARD_LIMITS.MAX_FIELD_VALUE_LENGTH) {
-      return { 
-        fieldValueMaxLength: { 
+      return {
+        fieldValueMaxLength: {
           maxLength: CARD_LIMITS.MAX_FIELD_VALUE_LENGTH,
-          actualLength: value.length 
-        } 
+          actualLength: value.length,
+        },
       };
     }
-    
+
     return null;
   };
 }
@@ -152,23 +152,23 @@ export function fieldValueValidator(): ValidatorFn {
 export function jsonValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
-    
+
     if (!value || typeof value !== 'string') {
       return { jsonRequired: true };
     }
-    
+
     if (value.trim().length === 0) {
       return { jsonRequired: true };
     }
-    
+
     try {
       JSON.parse(value);
       return null;
     } catch (error) {
-      return { 
-        jsonInvalid: { 
-          message: error instanceof Error ? error.message : 'Invalid JSON' 
-        } 
+      return {
+        jsonInvalid: {
+          message: error instanceof Error ? error.message : 'Invalid JSON',
+        },
       };
     }
   };
@@ -181,28 +181,28 @@ export function jsonValidator(): ValidatorFn {
 export function urlValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
-    
+
     if (!value || typeof value !== 'string') {
       return null; // URL is optional
     }
-    
+
     if (value.trim().length === 0) {
       return null; // Empty string is allowed
     }
-    
+
     try {
       const url = new URL(value);
       const allowedProtocols = ['http:', 'https:', 'mailto:'];
-      
+
       if (!allowedProtocols.includes(url.protocol)) {
-        return { 
-          urlInvalidProtocol: { 
+        return {
+          urlInvalidProtocol: {
             protocol: url.protocol,
-            allowedProtocols 
-          } 
+            allowedProtocols,
+          },
         };
       }
-      
+
       return null;
     } catch {
       return { urlInvalid: true };
@@ -217,21 +217,21 @@ export function urlValidator(): ValidatorFn {
 export function emailValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
-    
+
     if (!value || typeof value !== 'string') {
       return null; // Email is optional
     }
-    
+
     if (value.trim().length === 0) {
       return null; // Empty string is allowed
     }
-    
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
+
     if (!emailRegex.test(value)) {
       return { emailInvalid: true };
     }
-    
+
     return null;
   };
 }
@@ -243,20 +243,20 @@ export function emailValidator(): ValidatorFn {
 export function tagValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
-    
+
     if (!value || typeof value !== 'string') {
       return null; // Tag is optional
     }
-    
+
     if (value.length > CARD_LIMITS.MAX_TAG_LENGTH) {
-      return { 
-        tagMaxLength: { 
+      return {
+        tagMaxLength: {
           maxLength: CARD_LIMITS.MAX_TAG_LENGTH,
-          actualLength: value.length 
-        } 
+          actualLength: value.length,
+        },
       };
     }
-    
+
     return null;
   };
 }
@@ -267,30 +267,21 @@ export function tagValidator(): ValidatorFn {
 export function arrayLengthValidator(maxLength: number, fieldName: string): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
-    
+
     if (!Array.isArray(value)) {
       return null; // Not an array, let other validators handle it
     }
-    
+
     if (value.length > maxLength) {
-      return { 
-        arrayMaxLength: { 
+      return {
+        arrayMaxLength: {
           fieldName,
           maxLength,
-          actualLength: value.length 
-        } 
+          actualLength: value.length,
+        },
       };
     }
-    
+
     return null;
   };
 }
-
-
-
-
-
-
-
-
-

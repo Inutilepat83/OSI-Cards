@@ -1,0 +1,129 @@
+import { Injectable } from '@angular/core';
+import { from, Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
+export interface CachedDocContent {
+  html: string;
+  toc: { id: string; text: string; level: number }[];
+  contentHash: string;
+  timestamp: number;
+  demoConfigs?: Record<string, unknown>;
+}
+
+const DB_NAME = 'osi-docs-cache';
+const STORE_NAME = 'rendered-docs';
+const DB_VERSION = 1;
+const CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+@Injectable({
+  providedIn: 'root',
+})
+export class DocCacheService {
+  private dbPromise: Promise<IDBDatabase> | null = null;
+
+  constructor() {
+    if (typeof indexedDB !== 'undefined') {
+      this.dbPromise = this.openDatabase();
+    }
+  }
+
+  private openDatabase(): Promise<IDBDatabase> {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
+
+      request.onupgradeneeded = (event) => {
+        const db = (event.target as IDBOpenDBRequest).result;
+        if (!db.objectStoreNames.contains(STORE_NAME)) {
+          db.createObjectStore(STORE_NAME, { keyPath: 'pageId' });
+        }
+      };
+    });
+  }
+
+  hashContent(content: string): string {
+    let hash = 0;
+    for (let i = 0; i < content.length; i++) {
+      const char = content.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash;
+    }
+    return hash.toString(36);
+  }
+
+  get(pageId: string, contentHash: string): Observable<CachedDocContent | null> {
+    if (!this.dbPromise) {
+      return of(null);
+    }
+
+    return from(
+      this.dbPromise.then((db) => {
+        return new Promise<CachedDocContent | null>((resolve, reject) => {
+          const transaction = db.transaction(STORE_NAME, 'readonly');
+          const store = transaction.objectStore(STORE_NAME);
+          const request = store.get(pageId);
+
+          request.onerror = () => reject(request.error);
+          request.onsuccess = () => {
+            const result = request.result as (CachedDocContent & { pageId: string }) | undefined;
+
+            if (!result) {
+              resolve(null);
+              return;
+            }
+
+            // Check if content hash matches and cache is not expired
+            const isValid =
+              result.contentHash === contentHash && Date.now() - result.timestamp < CACHE_TTL;
+
+            resolve(isValid ? result : null);
+          };
+        });
+      })
+    ).pipe(catchError(() => of(null)));
+  }
+
+  set(
+    pageId: string,
+    content: Omit<CachedDocContent, 'contentHash' | 'timestamp'>,
+    contentHash: string
+  ): Observable<void> {
+    if (!this.dbPromise) {
+      return of(undefined);
+    }
+
+    return from(
+      this.dbPromise.then((db) => {
+        return new Promise<void>((resolve, reject) => {
+          const transaction = db.transaction(STORE_NAME, 'readwrite');
+          const store = transaction.objectStore(STORE_NAME);
+          const request = store.put({ ...content, pageId, contentHash, timestamp: Date.now() });
+
+          request.onerror = () => reject(request.error);
+          request.onsuccess = () => resolve();
+        });
+      })
+    ).pipe(catchError(() => of(undefined)));
+  }
+
+  clear(): Observable<void> {
+    if (!this.dbPromise) {
+      return of(undefined);
+    }
+
+    return from(
+      this.dbPromise.then((db) => {
+        return new Promise<void>((resolve, reject) => {
+          const transaction = db.transaction(STORE_NAME, 'readwrite');
+          const store = transaction.objectStore(STORE_NAME);
+          const request = store.clear();
+
+          request.onerror = () => reject(request.error);
+          request.onsuccess = () => resolve();
+        });
+      })
+    ).pipe(catchError(() => of(undefined)));
+  }
+}

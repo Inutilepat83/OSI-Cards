@@ -14,7 +14,10 @@ export interface ErrorMessage {
 /**
  * Generate user-friendly error message
  */
-export function generateUserFriendlyError(error: Error | string, context?: string | undefined): ErrorMessage {
+export function generateUserFriendlyError(
+  error: Error | string,
+  _context?: string | undefined
+): ErrorMessage {
   const errorMessage = typeof error === 'string' ? error : error.message;
   const lowerError = errorMessage.toLowerCase();
 
@@ -27,14 +30,18 @@ export function generateUserFriendlyError(error: Error | string, context?: strin
         'Check for missing commas between properties',
         'Ensure all strings are properly quoted',
         'Verify all brackets and braces are closed',
-        'Use the Format button to auto-format your JSON'
+        'Use the Format button to auto-format your JSON',
       ],
-      actionLabel: 'Format JSON'
+      actionLabel: 'Format JSON',
     };
   }
 
   // Network errors
-  if (lowerError.includes('network') || lowerError.includes('fetch') || lowerError.includes('connection')) {
+  if (
+    lowerError.includes('network') ||
+    lowerError.includes('fetch') ||
+    lowerError.includes('connection')
+  ) {
     return {
       title: 'Connection Problem',
       message: 'Unable to connect to the server. Please check your internet connection.',
@@ -42,9 +49,9 @@ export function generateUserFriendlyError(error: Error | string, context?: strin
         'Check your internet connection',
         'Try refreshing the page',
         'Check if the server is running',
-        'Wait a moment and try again'
+        'Wait a moment and try again',
       ],
-      actionLabel: 'Retry'
+      actionLabel: 'Retry',
     };
   }
 
@@ -56,21 +63,25 @@ export function generateUserFriendlyError(error: Error | string, context?: strin
       suggestions: [
         'Check that all required fields are filled',
         'Verify card title is provided',
-        'Ensure at least one section is included'
-      ]
+        'Ensure at least one section is included',
+      ],
     };
   }
 
   // Permission errors
-  if (lowerError.includes('permission') || lowerError.includes('unauthorized') || lowerError.includes('forbidden')) {
+  if (
+    lowerError.includes('permission') ||
+    lowerError.includes('unauthorized') ||
+    lowerError.includes('forbidden')
+  ) {
     return {
       title: 'Access Denied',
-      message: 'You don\'t have permission to perform this action.',
+      message: "You don't have permission to perform this action.",
       suggestions: [
         'Check your user permissions',
         'Contact your administrator',
-        'Try logging in again'
-      ]
+        'Try logging in again',
+      ],
     };
   }
 
@@ -81,9 +92,9 @@ export function generateUserFriendlyError(error: Error | string, context?: strin
     suggestions: [
       'Try refreshing the page',
       'Check your input and try again',
-      'If the problem persists, contact support'
+      'If the problem persists, contact support',
     ],
-    actionLabel: 'Retry'
+    actionLabel: 'Retry',
   };
 }
 
@@ -92,7 +103,7 @@ export function generateUserFriendlyError(error: Error | string, context?: strin
  */
 export function formatErrorMessage(error: Error | string): string {
   const errorMessage = typeof error === 'string' ? error : error.message;
-  
+
   // Remove technical details for user-facing messages
   let formatted = errorMessage
     .replace(/Error: /g, '')
@@ -106,5 +117,3 @@ export function formatErrorMessage(error: Error | string): string {
 
   return formatted;
 }
-
-

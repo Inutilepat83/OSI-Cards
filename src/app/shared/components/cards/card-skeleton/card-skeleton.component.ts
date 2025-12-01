@@ -1,18 +1,18 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /**
  * Card Skeleton Component
- * 
+ *
  * Loading skeleton component that displays animated placeholders while card data
  * is being loaded. Provides visual feedback and prevents layout shift during loading.
- * 
+ *
  * Features:
  * - Animated skeleton placeholders for card title and sections
  * - Staggered animations for multiple sections
  * - Fullscreen mode support
  * - Empty state handling
- * 
+ *
  * @example
  * ```html
  * <app-card-skeleton
@@ -28,7 +28,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   templateUrl: './card-skeleton.component.html',
   styleUrls: ['./card-skeleton.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardSkeletonComponent {
   @Input() cardTitle = '';
@@ -36,9 +36,3 @@ export class CardSkeletonComponent {
   @Input() isFullscreen = false;
   @Input() actionCount = 0;
 }
-
-
-
-
-
-

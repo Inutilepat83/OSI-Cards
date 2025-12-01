@@ -1,17 +1,23 @@
-import { Injectable, inject, DestroyRef } from '@angular/core';
+import { DestroyRef, inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { fromEvent } from 'rxjs';
-import { Command, CommandMetadata, CommandType, GenericCommand, CardEditCommand, JsonChangeCommand } from '../models/command.model';
+import {
+  CardEditCommand,
+  Command,
+  CommandMetadata,
+  CommandType,
+  GenericCommand,
+  JsonChangeCommand,
+} from '../models/command.model';
 import { LoggingService } from '../../core/services/logging.service';
-import { KeyboardShortcutsService } from './keyboard-shortcuts.service';
 
 export interface CommandHistoryState {
   canUndo: boolean;
   canRedo: boolean;
   historySize: number;
   currentIndex: number;
-  lastCommand?: CommandMetadata;
+  lastCommand: CommandMetadata | undefined;
 }
 
 /**
@@ -19,21 +25,21 @@ export interface CommandHistoryState {
  * Implements command pattern for managing command history
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CommandService {
   private readonly logger = inject(LoggingService);
-  private readonly keyboardShortcuts = inject(KeyboardShortcutsService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly MAX_HISTORY_SIZE = 50;
-  
+
   private history: Command[] = [];
   private currentIndex = -1;
   private readonly stateSubject = new BehaviorSubject<CommandHistoryState>({
     canUndo: false,
     canRedo: false,
     historySize: 0,
-    currentIndex: -1
+    currentIndex: -1,
+    lastCommand: undefined,
   });
 
   readonly state$: Observable<CommandHistoryState> = this.stateSubject.asObservable();
@@ -58,8 +64,8 @@ export class CommandService {
         }
         // Check for Ctrl+Y or Cmd+Shift+Z (redo)
         else if (
-          ((event.ctrlKey && event.key === 'y') || 
-           (event.metaKey && event.shiftKey && event.key === 'z'))
+          (event.ctrlKey && event.key === 'y') ||
+          (event.metaKey && event.shiftKey && event.key === 'z')
         ) {
           event.preventDefault();
           this.redo();
@@ -176,7 +182,7 @@ export class CommandService {
       type,
       timestamp: Date.now(),
       description,
-      ...metadata
+      ...metadata,
     };
 
     return new GenericCommand(executeFn, undoFn, description, commandMetadata);
@@ -196,7 +202,7 @@ export class CommandService {
       type: 'card-edit',
       timestamp: Date.now(),
       description: description || `Edit card: ${cardId}`,
-      cardId
+      cardId,
     };
 
     return new CardEditCommand(cardId, oldCard, newCard, updateFn, commandMetadata);
@@ -234,10 +240,9 @@ export class CommandService {
           return this.history[this.currentIndex]?.metadata;
         }
         return undefined;
-      })()
+      })(),
     };
 
     this.stateSubject.next(state);
   }
 }
-

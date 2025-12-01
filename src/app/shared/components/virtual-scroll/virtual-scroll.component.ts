@@ -1,7 +1,16 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ViewChild, ElementRef, AfterViewInit, OnDestroy, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { fromEvent, Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { VirtualScrollManager, VirtualScrollResult } from '../../utils/virtual-scrolling.util';
 
 /**
@@ -22,31 +31,35 @@ import { VirtualScrollManager, VirtualScrollResult } from '../../utils/virtual-s
       <div [style.height.px]="totalHeight" class="virtual-scroll-spacer"></div>
       <div [style.transform]="'translateY(' + offsetY + 'px)'" class="virtual-scroll-content">
         <ng-container *ngFor="let index of visibleIndices; trackBy: trackByIndex">
-          <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: items[index], index: index }"></ng-container>
+          <ng-container
+            *ngTemplateOutlet="itemTemplate; context: { $implicit: items[index], index: index }"
+          ></ng-container>
         </ng-container>
       </div>
     </div>
   `,
-  styles: [`
-    .virtual-scroll-container {
-      overflow-y: auto;
-      overflow-x: hidden;
-      position: relative;
-    }
+  styles: [
+    `
+      .virtual-scroll-container {
+        overflow-y: auto;
+        overflow-x: hidden;
+        position: relative;
+      }
 
-    .virtual-scroll-spacer {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      pointer-events: none;
-    }
+      .virtual-scroll-spacer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        pointer-events: none;
+      }
 
-    .virtual-scroll-content {
-      position: relative;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+      .virtual-scroll-content {
+        position: relative;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VirtualScrollComponent<T> implements AfterViewInit, OnDestroy {
   @ViewChild('scrollContainer') scrollContainer?: ElementRef<HTMLElement>;
@@ -69,7 +82,7 @@ export class VirtualScrollComponent<T> implements AfterViewInit, OnDestroy {
     this.scrollManager = new VirtualScrollManager({
       itemHeight: this.itemHeight,
       containerHeight: this.containerHeight,
-      overscan: this.overscan
+      overscan: this.overscan,
     });
 
     this.updateVirtualScroll();
@@ -107,5 +120,3 @@ export class VirtualScrollComponent<T> implements AfterViewInit, OnDestroy {
     return index;
   }
 }
-
-

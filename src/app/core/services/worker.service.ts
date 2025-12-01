@@ -1,13 +1,13 @@
-import { Injectable, OnDestroy, inject, DestroyRef } from '@angular/core';
+import { DestroyRef, inject, Injectable, OnDestroy } from '@angular/core';
 import { AICardConfig } from '../../models';
-import { CardDiffUtil, CardChangeType } from '../../shared/utils/card-diff.util';
+import { CardChangeType, CardDiffUtil } from '../../shared/utils/card-diff.util';
 
 /**
  * Web Worker Service
  * Manages Web Workers for heavy computations
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WorkerService implements OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
@@ -46,7 +46,7 @@ export class WorkerService implements OnDestroy {
     try {
       const response = await this.sendWorkerMessage({
         type: 'PROCESS_CARD_DIFF',
-        payload: { oldCard, newCard }
+        payload: { oldCard, newCard },
       });
 
       return response.payload as { changeType: CardChangeType; hasChanges: boolean };
@@ -67,7 +67,7 @@ export class WorkerService implements OnDestroy {
     try {
       const response = await this.sendWorkerMessage({
         type: 'NORMALIZE_CARD',
-        payload: { card }
+        payload: { card },
       });
 
       return response.payload as AICardConfig;
@@ -99,7 +99,7 @@ export class WorkerService implements OnDestroy {
         if (event.data.requestId === requestId) {
           clearTimeout(timeout);
           this.cardProcessingWorker?.removeEventListener('message', handler);
-          
+
           if (event.data.type === 'ERROR') {
             reject(new Error(event.data.error || 'Worker error'));
           } else {
@@ -188,4 +188,3 @@ export class WorkerService implements OnDestroy {
     }
   }
 }
-

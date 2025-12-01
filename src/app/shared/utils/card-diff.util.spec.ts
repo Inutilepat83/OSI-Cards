@@ -1,5 +1,5 @@
-import { CardDiffUtil, CardChangeType } from './card-diff.util';
-import { CardBuilder, SectionBuilder, FieldBuilder } from '../../testing/test-builders';
+import { CardChangeType, CardDiffUtil } from './card-diff.util';
+import { CardBuilder, FieldBuilder, SectionBuilder } from '../../testing/test-builders';
 import { AICardConfig } from '../../models';
 
 describe('CardDiffUtil', () => {
@@ -9,9 +9,9 @@ describe('CardDiffUtil', () => {
         .withTitle('Test Card')
         .withSection(SectionBuilder.create().withTitle('Section 1').build())
         .build();
-      
+
       const result = CardDiffUtil.mergeCardUpdates(card, { ...card });
-      
+
       expect(result.card).toBe(card); // Same reference
       expect(result.changeType).toBe('content');
     });
@@ -21,15 +21,15 @@ describe('CardDiffUtil', () => {
         .withTitle('Test Card')
         .withSection(SectionBuilder.create().withTitle('Section 1').build())
         .build();
-      
+
       const newCard = CardBuilder.create()
         .withTitle('Test Card')
         .withSection(SectionBuilder.create().withTitle('Section 1').build())
         .withSection(SectionBuilder.create().withTitle('Section 2').build())
         .build();
-      
+
       const result = CardDiffUtil.mergeCardUpdates(oldCard, newCard);
-      
+
       expect(result.changeType).toBe('structural');
       expect(result.card.sections.length).toBe(2);
     });
@@ -44,7 +44,7 @@ describe('CardDiffUtil', () => {
             .build()
         )
         .build();
-      
+
       const newCard = CardBuilder.create()
         .withTitle('Test Card')
         .withSection(
@@ -54,9 +54,9 @@ describe('CardDiffUtil', () => {
             .build()
         )
         .build();
-      
+
       const result = CardDiffUtil.mergeCardUpdates(oldCard, newCard);
-      
+
       expect(result.changeType).toBe('content');
       expect(result.card.sections[0].fields?.[0].value).toBe('New Value');
     });
@@ -68,14 +68,11 @@ describe('CardDiffUtil', () => {
         .withSubtitle('Old Subtitle')
         .withSection(section)
         .build();
-      
-      const newCard = CardBuilder.create()
-        .withTitle('New Title')
-        .withSection(section)
-        .build();
-      
+
+      const newCard = CardBuilder.create().withTitle('New Title').withSection(section).build();
+
       const result = CardDiffUtil.mergeCardUpdates(oldCard, newCard);
-      
+
       expect(result.changeType).toBe('content');
       expect(result.card.cardTitle).toBe('New Title');
       // Sections should be same reference
@@ -89,24 +86,36 @@ describe('CardDiffUtil', () => {
           SectionBuilder.create()
             .withId('section-1')
             .withTitle('Section 1')
-            .withField(FieldBuilder.create().withId('field-1').withLabel('Field 1').withValue('Value 1').build())
+            .withField(
+              FieldBuilder.create()
+                .withId('field-1')
+                .withLabel('Field 1')
+                .withValue('Value 1')
+                .build()
+            )
             .build()
         )
         .build();
-      
+
       const newCard = CardBuilder.create()
         .withTitle('Test Card')
         .withSection(
           SectionBuilder.create()
             .withId('section-1')
             .withTitle('Section 1')
-            .withField(FieldBuilder.create().withId('field-1').withLabel('Field 1').withValue('Updated Value').build())
+            .withField(
+              FieldBuilder.create()
+                .withId('field-1')
+                .withLabel('Field 1')
+                .withValue('Updated Value')
+                .build()
+            )
             .build()
         )
         .build();
-      
+
       const result = CardDiffUtil.mergeCardUpdates(oldCard, newCard);
-      
+
       expect(result.card.sections[0].fields?.[0].value).toBe('Updated Value');
     });
   });
@@ -117,7 +126,7 @@ describe('CardDiffUtil', () => {
         .withTitle('Test Card')
         .withSection(SectionBuilder.create().withTitle('Section 1').build())
         .build();
-      
+
       const result = (CardDiffUtil as any).areCardsEqual(card, { ...card });
       expect(result).toBe(true);
     });
@@ -125,7 +134,7 @@ describe('CardDiffUtil', () => {
     it('should return false for different cards', () => {
       const card1 = CardBuilder.create().withTitle('Card 1').build();
       const card2 = CardBuilder.create().withTitle('Card 2').build();
-      
+
       const result = (CardDiffUtil as any).areCardsEqual(card1, card2);
       expect(result).toBe(false);
     });

@@ -1,19 +1,19 @@
 /**
  * Branded Types for IDs
- * 
+ *
  * Prevents mixing different types of IDs (card IDs, section IDs, field IDs, etc.)
  * at compile time. This improves type safety and prevents bugs from passing
  * the wrong type of ID to functions.
- * 
+ *
  * @example
  * ```typescript
  * function getCardById(id: CardId): AICardConfig | null {
  *   // Only accepts CardId, not SectionId or FieldId
  * }
- * 
+ *
  * const cardId: CardId = 'card-123' as CardId;
  * const sectionId: SectionId = 'section-456' as SectionId;
- * 
+ *
  * getCardById(cardId); // ✅ OK
  * getCardById(sectionId); // ❌ Type error
  * ```
@@ -82,7 +82,9 @@ export const BrandedIds = {
    * Safely convert a string to CardId (validates format)
    */
   toCardId: (id: string | undefined | null): CardId | undefined => {
-    if (!id) return undefined;
+    if (!id) {
+      return undefined;
+    }
     // Add validation if needed
     return id as CardId;
   },
@@ -91,7 +93,9 @@ export const BrandedIds = {
    * Safely convert a string to SectionId (validates format)
    */
   toSectionId: (id: string | undefined | null): SectionId | undefined => {
-    if (!id) return undefined;
+    if (!id) {
+      return undefined;
+    }
     return id as SectionId;
   },
 
@@ -99,7 +103,9 @@ export const BrandedIds = {
    * Safely convert a string to FieldId (validates format)
    */
   toFieldId: (id: string | undefined | null): FieldId | undefined => {
-    if (!id) return undefined;
+    if (!id) {
+      return undefined;
+    }
     return id as FieldId;
   },
 
@@ -107,7 +113,9 @@ export const BrandedIds = {
    * Safely convert a string to ItemId (validates format)
    */
   toItemId: (id: string | undefined | null): ItemId | undefined => {
-    if (!id) return undefined;
+    if (!id) {
+      return undefined;
+    }
     return id as ItemId;
   },
 
@@ -115,9 +123,11 @@ export const BrandedIds = {
    * Safely convert a string to ActionId (validates format)
    */
   toActionId: (id: string | undefined | null): ActionId | undefined => {
-    if (!id) return undefined;
+    if (!id) {
+      return undefined;
+    }
     return id as ActionId;
-  }
+  },
 };
 
 /**
@@ -154,13 +164,3 @@ export function isItemId(id: string): id is ItemId {
 export function isActionId(id: string): id is ActionId {
   return typeof id === 'string' && id.length > 0;
 }
-
-
-
-
-
-
-
-
-
-

@@ -1,9 +1,9 @@
 /**
  * Streaming Transport Interfaces
- * 
+ *
  * Unified interface for streaming data from various transport protocols.
  * Supports SSE, WebSocket, Fetch streaming, and custom transports.
- * 
+ *
  * @since 2.0.0
  */
 
@@ -12,7 +12,7 @@ import { Observable, Subject } from 'rxjs';
 /**
  * Connection state for streaming transports
  */
-export type StreamingConnectionState = 
+export type StreamingConnectionState =
   | 'disconnected'
   | 'connecting'
   | 'connected'
@@ -131,70 +131,70 @@ export interface StreamingTransportError {
 
 /**
  * Abstract streaming transport interface
- * 
+ *
  * Implementations: SseStreamingTransport, WebSocketStreamingTransport, FetchStreamingTransport
  */
 export abstract class StreamingTransport {
   /** Transport protocol type */
   abstract readonly protocol: StreamingProtocol;
-  
+
   /** Observable of streaming chunks */
   abstract readonly chunks$: Observable<StreamingChunk>;
-  
+
   /** Observable of connection state changes */
   abstract readonly state$: Observable<StreamingConnectionState>;
-  
+
   /** Observable of connection status */
   abstract readonly status$: Observable<StreamingConnectionStatus>;
-  
+
   /** Observable of errors */
   abstract readonly errors$: Observable<StreamingTransportError>;
-  
+
   /**
    * Connect to the streaming endpoint
    * @param config Transport configuration
    * @returns Observable that completes when connected, errors on failure
    */
   abstract connect(config: StreamingTransportConfig): Observable<void>;
-  
+
   /**
    * Disconnect from the streaming endpoint
    * @param reason Optional reason for disconnection
    */
   abstract disconnect(reason?: string): void;
-  
+
   /**
    * Send data to the server (for bidirectional transports)
    * @param data Data to send
    * @returns Observable that completes when sent
    */
   abstract send?(data: string | ArrayBuffer): Observable<void>;
-  
+
   /**
    * Get current connection status
    */
   abstract getStatus(): StreamingConnectionStatus;
-  
+
   /**
    * Check if transport is currently connected
    */
   abstract isConnected(): boolean;
-  
+
   /**
    * Force reconnection
    */
   abstract reconnect(): Observable<void>;
-  
+
   /**
    * Pause streaming (buffer incoming data)
    */
   abstract pause?(): void;
-  
+
   /**
    * Resume streaming
    */
   abstract resume?(): void;
-  
+
   /**
    * Clean up resources
    */
@@ -211,13 +211,13 @@ export interface StreamingTransportFactory {
    * @returns StreamingTransport instance
    */
   create(protocol: StreamingProtocol): StreamingTransport;
-  
+
   /**
    * Get the best available protocol for the current environment
    * @returns Recommended protocol
    */
   detectBestProtocol(): StreamingProtocol;
-  
+
   /**
    * Check if a protocol is supported
    * @param protocol Protocol to check
@@ -257,7 +257,3 @@ export interface StreamingCheckpoint {
   /** Card state at checkpoint */
   cardState?: unknown;
 }
-
-
-
-

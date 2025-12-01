@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { CardSection, LayoutPriority } from '../models/card.model';
-import { 
+import {
   SectionType,
   SectionTypeInput,
   resolveSectionType as resolveType,
   isValidSectionType
 } from '../models/generated-section-types';
-import { 
-  getPreferredColumns, 
+import {
+  getPreferredColumns,
   DEFAULT_SECTION_COLUMN_PREFERENCES,
-  PreferredColumns 
+  PreferredColumns
 } from '../utils/grid-config.util';
 
 interface ColSpanThresholds {
@@ -39,23 +39,23 @@ export interface PriorityBandConfig {
  * - optional: Condensed first (news, event, timeline, quotation)
  */
 export const PRIORITY_BANDS: Record<PriorityBand, PriorityBandConfig> = {
-  critical: { 
-    types: ['overview', 'contact-card'], 
+  critical: {
+    types: ['overview', 'contact-card'],
     condensePriority: 'never',
     order: 1
   },
-  important: { 
-    types: ['analytics', 'chart', 'stats', 'financials'], 
+  important: {
+    types: ['analytics', 'chart', 'stats', 'financials'],
     condensePriority: 'last',
     order: 2
   },
-  standard: { 
-    types: ['info', 'list', 'product', 'solutions', 'map'], 
+  standard: {
+    types: ['info', 'list', 'product', 'solutions', 'map'],
     condensePriority: 'always',
     order: 3
   },
-  optional: { 
-    types: ['news', 'event', 'timeline', 'quotation', 'text-reference', 'network-card'], 
+  optional: {
+    types: ['news', 'event', 'timeline', 'quotation', 'text-reference', 'network-card'],
     condensePriority: 'first',
     order: 4
   },
@@ -65,53 +65,56 @@ export const PRIORITY_BANDS: Record<PriorityBand, PriorityBandConfig> = {
  * Column span thresholds for each section type
  * These define when a section should span 2 or 3 columns based on content density
  * Lower thresholds = sections span 2 columns more easily (with less content)
- * 
+ *
  * Threshold calculation: fieldCount + itemCount + descriptionDensity >= threshold
  * - two: minimum score to span 2 columns
  * - three: minimum score to span 3 columns (optional)
+ *
+ * UPDATED: Lowered thresholds to allow easier multi-column expansion and reduce gaps
  */
 const SECTION_COL_SPAN_THRESHOLDS: Record<string, ColSpanThresholds> = {
-  // Overview sections typically have 6-10 key-value pairs, should span 2 columns easily
-  overview: { two: 5, three: 10 },
-  
+  // Overview sections typically have 6-10 key-value pairs, should span 2-3 columns easily
+  overview: { two: 2, three: 6 },  // Lowered from { two: 5, three: 10 }
+
   // Charts and maps need space, should span 2 columns with minimal content
-  chart: { two: 2 },
-  map: { two: 2 },
-  locations: { two: 2 },
-  
-  // Contact cards typically have 3-4 contacts, should span 2 columns easily
-  'contact-card': { two: 3 },
-  'network-card': { two: 3 },
-  
-  // Analytics/Stats typically have 3-4 metrics, should span 2 columns
-  analytics: { two: 3 },
-  stats: { two: 3 },
-  
-  // Financials typically have 3-5 fields, should span 2 columns
-  financials: { two: 3 },
-  
-  // Info sections with key-value pairs, should span 2 columns with 4+ fields
-  info: { two: 4, three: 8 },
-  
-  // Solutions typically have 3-4 items, should span 2 columns
-  solutions: { two: 3 },
-  product: { two: 3 },
-  
-  // Lists typically have 4-6 items, should span 2 columns
-  list: { two: 4 },
-  
-  // Events/Timelines typically have 3-5 phases, should span 2 columns
-  event: { two: 3 },
-  
-  // Text-heavy sections should span 2 columns for readability
-  quotation: { two: 3 },
-  'text-reference': { two: 3 },
-  
-  // Projects always span 1 column (special case handled in masonry grid)
-  project: { two: 999 } // Effectively always 1 column
+  chart: { two: 1, three: 4 },     // Lowered and added three
+  map: { two: 1, three: 4 },       // Lowered and added three
+  locations: { two: 1, three: 4 }, // Lowered and added three
+
+  // Contact cards - span 2 with just 2 contacts
+  'contact-card': { two: 2, three: 4 }, // Lowered from { two: 3 }
+  'network-card': { two: 2, three: 4 }, // Lowered from { two: 3 }
+
+  // Analytics/Stats - span 2 with just 2 metrics
+  analytics: { two: 2, three: 5 }, // Lowered from { two: 3 }
+  stats: { two: 2, three: 5 },     // Lowered from { two: 3 }
+
+  // Financials - span 2 with just 2 fields
+  financials: { two: 2, three: 5 }, // Lowered from { two: 3 }
+
+  // Info sections with key-value pairs - easier to span 2
+  info: { two: 2, three: 6 },       // Lowered from { two: 4, three: 8 }
+
+  // Solutions/products - easier to span 2
+  solutions: { two: 2, three: 5 }, // Lowered from { two: 3 }
+  product: { two: 2, three: 5 },   // Lowered from { two: 3 }
+
+  // Lists - span 2 with just 3 items
+  list: { two: 3, three: 6 },      // Lowered from { two: 4 }
+
+  // Events/Timelines - span 2 with 2 events
+  event: { two: 2, three: 5 },     // Lowered from { two: 3 }
+  timeline: { two: 2, three: 5 },  // Added
+
+  // Text-heavy sections - easier to span 2
+  quotation: { two: 2, three: 4 },      // Lowered from { two: 3 }
+  'text-reference': { two: 2, three: 4 }, // Lowered from { two: 3 }
+
+  // Projects - can now span 2 if they have content
+  project: { two: 4, three: 8 }    // Changed from { two: 999 }
 };
 
-const DEFAULT_COL_SPAN_THRESHOLD: ColSpanThresholds = { two: 6 };
+const DEFAULT_COL_SPAN_THRESHOLD: ColSpanThresholds = { two: 3, three: 6 }; // Lowered from { two: 6 }
 
 @Injectable({
   providedIn: 'root'
@@ -151,7 +154,7 @@ export class SectionNormalizationService {
     const colSpanThresholds = this.getColSpanThresholdsForType(resolvedType);
     const preferredColumns = this.getPreferredColumnsForType(resolvedType);
     const priorityBand = this.getPriorityBandForType(resolvedType);
-    
+
     normalized.meta = {
       ...existingMeta,
       // Only add if not already defined (allows sections to override)
@@ -159,7 +162,7 @@ export class SectionNormalizationService {
       preferredColumns: existingMeta?.['preferredColumns'] ?? preferredColumns,
       priorityBand: existingMeta?.['priorityBand'] ?? priorityBand
     };
-    
+
     // Also set preferredColumns on the section itself if not already defined
     if (!normalized.preferredColumns) {
       normalized.preferredColumns = preferredColumns;
@@ -183,26 +186,26 @@ export class SectionNormalizationService {
    */
   getPriorityBandForType(type: string): PriorityBand {
     const lowerType = type.toLowerCase();
-    
+
     for (const [band, config] of Object.entries(PRIORITY_BANDS)) {
       if (config.types.includes(lowerType)) {
         return band as PriorityBand;
       }
     }
-    
+
     return 'standard';
   }
 
   /**
    * Maps a priority band string to a numeric layout priority (1-3).
    * Used by the row-first packing algorithm for efficient sorting.
-   * 
+   *
    * Mapping:
    * - 'critical' → 1 (highest priority, placed first)
    * - 'important' → 1 (high priority)
    * - 'standard' → 2 (normal priority)
    * - 'optional' → 3 (lowest priority, placed last)
-   * 
+   *
    * @param priority - The priority band string
    * @returns Numeric layout priority (1, 2, or 3)
    */
@@ -223,7 +226,7 @@ export class SectionNormalizationService {
   /**
    * Gets the layout priority for a section.
    * First checks for explicit layoutPriority, then maps from priority band.
-   * 
+   *
    * @param section - The section to get priority for
    * @returns Numeric layout priority (1, 2, or 3)
    */
@@ -245,7 +248,7 @@ export class SectionNormalizationService {
   getCondensationOrder(section: CardSection): number {
     const band = section.priority ?? this.getPriorityBandForType(section.type ?? 'info');
     const config = PRIORITY_BANDS[band as PriorityBand];
-    
+
     switch (config?.condensePriority) {
       case 'first': return 1;   // Condense first
       case 'always': return 2;  // Normal condensation
@@ -258,7 +261,7 @@ export class SectionNormalizationService {
   /**
    * Apply condensation to sections based on available space
    * Returns sections with collapsed flags set appropriately
-   * 
+   *
    * @param sections - Sections to potentially condense
    * @param maxVisibleSections - Maximum number of sections to show uncollapsed
    * @returns Sections with collapsed flags updated
@@ -282,16 +285,16 @@ export class SectionNormalizationService {
       const shouldCollapse = collapseIds.has(section.id ?? section.title);
       const band = section.priority ?? this.getPriorityBandForType(section.type ?? 'info');
       const config = PRIORITY_BANDS[band as PriorityBand];
-      
+
       // Never collapse critical sections
       if (config?.condensePriority === 'never') {
         return section;
       }
-      
+
       if (shouldCollapse) {
         return { ...section, collapsed: true };
       }
-      
+
       return section;
     });
   }
@@ -307,7 +310,7 @@ export class SectionNormalizationService {
   /**
    * Get preferred columns for a section type
    * Uses the centralized preferences from grid-config.util.ts
-   * 
+   *
    * @param type - The section type
    * @returns Preferred column count (1, 2, or 3)
    */
@@ -340,7 +343,7 @@ export class SectionNormalizationService {
 
     // Use the generated resolver which handles all registry aliases
     const resolved = resolveType(rawType as SectionTypeInput);
-    
+
     // If the resolved type is valid, use it; otherwise default to info
     return isValidSectionType(resolved) ? resolved : 'info';
   }

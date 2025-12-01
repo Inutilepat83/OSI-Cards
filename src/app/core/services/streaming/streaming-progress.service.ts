@@ -1,9 +1,9 @@
 /**
  * Streaming Progress Service
- * 
+ *
  * Provides detailed progress tracking for streaming operations.
  * Calculates ETA, rates, and section-level progress.
- * 
+ *
  * @since 2.0.0
  */
 
@@ -60,7 +60,7 @@ export interface SectionProgress {
 /**
  * Progress stages
  */
-export type StreamingProgressStage = 
+export type StreamingProgressStage =
   | 'idle'
   | 'connecting'
   | 'thinking'
@@ -84,59 +84,61 @@ export interface ProgressUpdate {
 
 /**
  * Streaming Progress Service
- * 
+ *
  * Tracks and calculates detailed progress metrics for streaming operations.
- * 
+ *
  * @example
  * ```typescript
  * const progress = inject(StreamingProgressService);
- * 
+ *
  * progress.start();
- * 
+ *
  * progress.progress$.subscribe(p => {
  *   console.log(`${p.progress * 100}% complete`);
  *   console.log(`ETA: ${p.estimatedTimeRemainingMs}ms`);
  * });
- * 
+ *
  * // Update as chunks arrive
  * progress.update({ bytesReceived: 1024, chunksReceived: 10 });
- * 
+ *
  * progress.complete();
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class StreamingProgressService implements OnDestroy {
   private startTime: number | null = null;
   private firstChunkTime: number | null = null;
   private bytesHistory: { timestamp: number; bytes: number }[] = [];
   private readonly HISTORY_WINDOW_MS = 5000; // 5 seconds for rate calculation
-  
-  private readonly progressSubject = new BehaviorSubject<StreamingProgress>(this.createInitialProgress());
+
+  private readonly progressSubject = new BehaviorSubject<StreamingProgress>(
+    this.createInitialProgress()
+  );
   private readonly destroy$ = new Subject<void>();
-  
+
   /** Observable of progress updates */
   readonly progress$ = this.progressSubject.asObservable();
-  
+
   /** Observable of overall progress (0-1) */
   readonly progressValue$ = this.progress$.pipe(
-    map(p => p.progress),
+    map((p) => p.progress),
     distinctUntilChanged()
   );
-  
+
   /** Observable of stage changes */
   readonly stage$ = this.progress$.pipe(
-    map(p => p.stage),
+    map((p) => p.stage),
     distinctUntilChanged()
   );
-  
+
   /** Observable of ETA */
   readonly eta$ = this.progress$.pipe(
-    map(p => p.estimatedTimeRemainingMs),
+    map((p) => p.estimatedTimeRemainingMs),
     distinctUntilChanged()
   );
-  
+
   /**
    * Start tracking progress
    */
@@ -144,47 +146,47 @@ export class StreamingProgressService implements OnDestroy {
     this.startTime = Date.now();
     this.firstChunkTime = null;
     this.bytesHistory = [];
-    
+
     const progress = this.createInitialProgress();
     progress.isActive = true;
     progress.stage = 'connecting';
-    
+
     if (initialEstimates?.bytesTotal) {
       progress.bytesTotal = initialEstimates.bytesTotal;
     }
     if (initialEstimates?.sectionsTotal) {
       progress.sectionsTotal = initialEstimates.sectionsTotal;
     }
-    
+
     this.progressSubject.next(progress);
   }
-  
+
   /**
    * Update progress with new data
    */
   update(update: ProgressUpdate): void {
     const current = this.progressSubject.value;
     const now = Date.now();
-    
+
     // Track first chunk
     if (!this.firstChunkTime && (update.bytesReceived || update.chunksReceived)) {
       this.firstChunkTime = now;
     }
-    
+
     // Update bytes history for rate calculation
     if (update.bytesReceived !== undefined) {
       this.bytesHistory.push({ timestamp: now, bytes: update.bytesReceived });
       // Prune old entries
       const cutoff = now - this.HISTORY_WINDOW_MS;
-      this.bytesHistory = this.bytesHistory.filter(h => h.timestamp > cutoff);
+      this.bytesHistory = this.bytesHistory.filter((h) => h.timestamp > cutoff);
     }
-    
+
     // Calculate new progress
     const bytesReceived = update.bytesReceived ?? current.bytesReceived;
     const bytesTotal = update.bytesTotal ?? current.bytesTotal;
     const sectionsComplete = update.sectionsComplete ?? current.sectionsComplete;
     const sectionsTotal = update.sectionsTotal ?? current.sectionsTotal;
-    
+
     // Calculate overall progress
     let progress = 0;
     if (bytesTotal && bytesTotal > 0) {
@@ -195,17 +197,17 @@ export class StreamingProgressService implements OnDestroy {
       // Estimate based on typical card size
       progress = Math.min(0.95, bytesReceived / 10000);
     }
-    
+
     // Calculate rate
     const bytesPerSecond = this.calculateRate();
-    
+
     // Calculate ETA
     let estimatedTimeRemainingMs: number | null = null;
     if (bytesTotal && bytesPerSecond > 0) {
       const remainingBytes = bytesTotal - bytesReceived;
-      estimatedTimeRemainingMs = Math.round(remainingBytes / bytesPerSecond * 1000);
+      estimatedTimeRemainingMs = Math.round((remainingBytes / bytesPerSecond) * 1000);
     }
-    
+
     // Determine stage
     let stage = update.stage ?? current.stage;
     if (progress > 0 && stage === 'connecting') {
@@ -217,7 +219,7 @@ export class StreamingProgressService implements OnDestroy {
     if (progress > 0.95 && stage === 'streaming') {
       stage = 'finalizing';
     }
-    
+
     const newProgress: StreamingProgress = {
       progress,
       bytesReceived,
@@ -228,25 +230,24 @@ export class StreamingProgressService implements OnDestroy {
       bytesPerSecond,
       estimatedTimeRemainingMs,
       elapsedMs: this.startTime ? now - this.startTime : 0,
-      timeToFirstChunkMs: this.firstChunkTime && this.startTime 
-        ? this.firstChunkTime - this.startTime 
-        : null,
+      timeToFirstChunkMs:
+        this.firstChunkTime && this.startTime ? this.firstChunkTime - this.startTime : null,
       isActive: true,
       stage,
-      sectionProgress: update.sectionProgress ?? current.sectionProgress
+      sectionProgress: update.sectionProgress ?? current.sectionProgress,
     };
-    
+
     this.progressSubject.next(newProgress);
   }
-  
+
   /**
    * Update section progress
    */
   updateSection(index: number, sectionUpdate: Partial<SectionProgress>): void {
     const current = this.progressSubject.value;
     const sections = [...current.sectionProgress];
-    
-    const existing = sections.find(s => s.index === index);
+
+    const existing = sections.find((s) => s.index === index);
     if (existing) {
       Object.assign(existing, sectionUpdate);
     } else {
@@ -258,47 +259,47 @@ export class StreamingProgressService implements OnDestroy {
         fieldsComplete: sectionUpdate.fieldsComplete ?? 0,
         fieldsTotal: sectionUpdate.fieldsTotal ?? 0,
         itemsComplete: sectionUpdate.itemsComplete ?? 0,
-        itemsTotal: sectionUpdate.itemsTotal ?? 0
+        itemsTotal: sectionUpdate.itemsTotal ?? 0,
       });
     }
-    
+
     // Sort by index
     sections.sort((a, b) => a.index - b.index);
-    
-    this.update({ 
+
+    this.update({
       sectionProgress: sections,
-      sectionsComplete: sections.filter(s => s.isComplete).length
+      sectionsComplete: sections.filter((s) => s.isComplete).length,
     });
   }
-  
+
   /**
    * Mark streaming as complete
    */
   complete(): void {
     const current = this.progressSubject.value;
-    
+
     this.progressSubject.next({
       ...current,
       progress: 1,
       isActive: false,
       stage: 'complete',
-      estimatedTimeRemainingMs: 0
+      estimatedTimeRemainingMs: 0,
     });
   }
-  
+
   /**
    * Mark streaming as errored
    */
   error(): void {
     const current = this.progressSubject.value;
-    
+
     this.progressSubject.next({
       ...current,
       isActive: false,
-      stage: 'error'
+      stage: 'error',
     });
   }
-  
+
   /**
    * Reset progress
    */
@@ -308,41 +309,45 @@ export class StreamingProgressService implements OnDestroy {
     this.bytesHistory = [];
     this.progressSubject.next(this.createInitialProgress());
   }
-  
+
   /**
    * Get current progress
    */
   getProgress(): StreamingProgress {
     return this.progressSubject.value;
   }
-  
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
     this.progressSubject.complete();
   }
-  
+
   // ============================================
   // Private Methods
   // ============================================
-  
+
   private calculateRate(): number {
     if (this.bytesHistory.length < 2) {
       return 0;
     }
-    
+
     const oldest = this.bytesHistory[0];
     const newest = this.bytesHistory[this.bytesHistory.length - 1];
-    
-    if (!oldest || !newest) return 0;
-    
+
+    if (!oldest || !newest) {
+      return 0;
+    }
+
     const timeDiff = (newest.timestamp - oldest.timestamp) / 1000;
-    if (timeDiff <= 0) return 0;
-    
+    if (timeDiff <= 0) {
+      return 0;
+    }
+
     const bytesDiff = newest.bytes - oldest.bytes;
     return Math.round(bytesDiff / timeDiff);
   }
-  
+
   private createInitialProgress(): StreamingProgress {
     return {
       progress: 0,
@@ -357,7 +362,7 @@ export class StreamingProgressService implements OnDestroy {
       timeToFirstChunkMs: null,
       isActive: false,
       stage: 'idle',
-      sectionProgress: []
+      sectionProgress: [],
     };
   }
 }
@@ -372,7 +377,7 @@ export function formatProgress(progress: StreamingProgress): {
   status: string;
 } {
   const percentage = `${Math.round(progress.progress * 100)}%`;
-  
+
   let eta = '--';
   if (progress.estimatedTimeRemainingMs !== null) {
     const seconds = Math.round(progress.estimatedTimeRemainingMs / 1000);
@@ -382,7 +387,7 @@ export function formatProgress(progress: StreamingProgress): {
       eta = `${Math.round(seconds / 60)}m`;
     }
   }
-  
+
   let rate = '--';
   if (progress.bytesPerSecond > 0) {
     if (progress.bytesPerSecond < 1024) {
@@ -393,7 +398,7 @@ export function formatProgress(progress: StreamingProgress): {
       rate = `${(progress.bytesPerSecond / (1024 * 1024)).toFixed(1)} MB/s`;
     }
   }
-  
+
   const statusMap: Record<StreamingProgressStage, string> = {
     idle: 'Ready',
     connecting: 'Connecting...',
@@ -401,17 +406,13 @@ export function formatProgress(progress: StreamingProgress): {
     streaming: 'Generating...',
     finalizing: 'Finalizing...',
     complete: 'Complete',
-    error: 'Error'
+    error: 'Error',
   };
-  
+
   return {
     percentage,
     eta,
     rate,
-    status: statusMap[progress.stage]
+    status: statusMap[progress.stage],
   };
 }
-
-
-
-

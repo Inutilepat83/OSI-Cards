@@ -1,6 +1,6 @@
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { HttpRequest, HttpHeaders } from '@angular/common/http';
+import { HttpHeaders, HttpRequest } from '@angular/common/http';
 
 /**
  * Request cancellation utilities
@@ -98,7 +98,7 @@ export class RequestManager {
    * Cancel all requests
    */
   cancelAll(): void {
-    this.cancellers.forEach(canceller => canceller.cancel());
+    this.cancellers.forEach((canceller) => canceller.cancel());
     this.cancellers.clear();
   }
 
@@ -117,7 +117,7 @@ export function addAbortSignal<T>(request: HttpRequest<T>, _signal: AbortSignal)
   return request.clone({
     setHeaders: {
       // AbortSignal is handled via request options, not headers
-    }
+    },
   });
 }
 
@@ -134,25 +134,19 @@ export function createCancellableRequest<T>(
   }
 ): { request: HttpRequest<T>; signal: AbortSignal } {
   const signal = canceller.signal;
-  
+
   // Create HttpHeaders from record if provided
   let httpHeaders: HttpHeaders | undefined;
   if (options?.headers) {
     httpHeaders = new HttpHeaders(options.headers);
   }
-  
+
   const request = new HttpRequest<T>(
     (options?.method || 'GET') as 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
     url,
     options?.body,
-    {
-      headers: httpHeaders,
-      // Note: Angular HttpClient doesn't directly support AbortSignal in HttpRequest
-      // We'll handle it via interceptor or by using the signal in the observable chain
-    }
+    httpHeaders ? { headers: httpHeaders } : undefined
   );
 
   return { request, signal };
 }
-
-

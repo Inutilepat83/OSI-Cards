@@ -22,7 +22,9 @@ export function estimateGzippedSize(originalSize: number): number {
  * Format file size
  */
 export function formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) {
+    return '0 Bytes';
+  }
 
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -48,5 +50,3 @@ export function getSizeWarning(size: number, threshold: number): string | null {
   }
   return null;
 }
-
-

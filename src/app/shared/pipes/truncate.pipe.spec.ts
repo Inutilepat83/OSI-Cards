@@ -76,15 +76,3 @@ describe('TruncatePipe', () => {
     expect(result.length).toBe(103); // 100 + '...'
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-

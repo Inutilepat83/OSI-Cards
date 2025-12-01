@@ -7,7 +7,7 @@ describe('CardSkeletonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CardSkeletonComponent]
+      imports: [CardSkeletonComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CardSkeletonComponent);
@@ -134,15 +134,3 @@ describe('CardSkeletonComponent', () => {
     expect(lines.length).toBeGreaterThan(0);
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-

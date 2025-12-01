@@ -44,24 +44,6 @@
               "html2canvas",
               "dompurify",
               "dom-to-image-more",
-              "raf",
-              "rgbcolor",
-              "canvg",
-              "core-js",
-              "core-js/modules/es.promise.js",
-              "core-js/modules/es.string.match.js",
-              "core-js/modules/es.string.replace.js",
-              "core-js/modules/es.string.starts-with.js",
-              "core-js/modules/es.array.iterator.js",
-              "core-js/modules/web.dom-collections.iterator.js",
-              "core-js/modules/es.array.reduce.js",
-              "core-js/modules/es.string.ends-with.js",
-              "core-js/modules/es.string.split.js",
-              "core-js/modules/es.string.trim.js",
-              "core-js/modules/es.array.index-of.js",
-              "core-js/modules/es.string.includes.js",
-              "core-js/modules/es.array.reverse.js",
-              "core-js/modules/es.regexp.to-string.js",
               "jspdf"
             ],
             "budgets": [
@@ -122,18 +104,18 @@
                 "scripts": true,
                 "styles": {
                   "minify": true,
-                  "inlineCritical": false
+                  "inlineCritical": true
                 },
-                "fonts": true
+                "fonts": {
+                  "inline": true
+                }
               },
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
-              "commonChunk": true
+              "crossOrigin": "anonymous",
+              "subresourceIntegrity": true
             }
           }
         },
@@ -209,24 +191,6 @@
               "html2canvas",
               "dompurify",
               "dom-to-image-more",
-              "raf",
-              "rgbcolor",
-              "canvg",
-              "core-js",
-              "core-js/modules/es.promise.js",
-              "core-js/modules/es.string.match.js",
-              "core-js/modules/es.string.replace.js",
-              "core-js/modules/es.string.starts-with.js",
-              "core-js/modules/es.array.iterator.js",
-              "core-js/modules/web.dom-collections.iterator.js",
-              "core-js/modules/es.array.reduce.js",
-              "core-js/modules/es.string.ends-with.js",
-              "core-js/modules/es.string.split.js",
-              "core-js/modules/es.string.trim.js",
-              "core-js/modules/es.array.index-of.js",
-              "core-js/modules/es.string.includes.js",
-              "core-js/modules/es.array.reverse.js",
-              "core-js/modules/es.regexp.to-string.js",
               "jspdf"
             ],
             "budgets": [

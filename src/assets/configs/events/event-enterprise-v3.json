@@ -14,18 +14,51 @@
         { "label": "Expected Attendance", "value": "3,000+ Executives" },
         { "label": "Duration", "value": "4 Days" },
         { "label": "Format", "value": "In-Person + Virtual + Hybrid" },
-        { "label": "Target Audience", "value": "C-Suite Executives, Investors, Policy Makers" }
+        {
+          "label": "Target Audience",
+          "value": "C-Suite Executives, Investors, Policy Makers"
+        }
       ]
     },
     {
       "title": "Registration & Engagement",
       "type": "analytics",
       "fields": [
-        { "label": "VIP Registration", "value": "98% Complete", "percentage": 98, "performance": "excellent", "trend": "stable" },
-        { "label": "Virtual Participation", "value": "40% of Attendees", "percentage": 40, "performance": "excellent", "trend": "up" },
-        { "label": "Speaker Confirmations", "value": "100% Confirmed", "percentage": 100, "performance": "excellent", "trend": "stable" },
-        { "label": "Sponsor Commitments", "value": "95% Secured", "percentage": 95, "performance": "excellent", "trend": "up" },
-        { "label": "Media Coverage", "value": "500+ Journalists", "percentage": 95, "performance": "excellent", "trend": "up" }
+        {
+          "label": "VIP Registration",
+          "value": "98% Complete",
+          "percentage": 98,
+          "performance": "excellent",
+          "trend": "stable"
+        },
+        {
+          "label": "Virtual Participation",
+          "value": "40% of Attendees",
+          "percentage": 40,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Speaker Confirmations",
+          "value": "100% Confirmed",
+          "percentage": 100,
+          "performance": "excellent",
+          "trend": "stable"
+        },
+        {
+          "label": "Sponsor Commitments",
+          "value": "95% Secured",
+          "percentage": 95,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Media Coverage",
+          "value": "500+ Journalists",
+          "percentage": 95,
+          "performance": "excellent",
+          "trend": "up"
+        }
       ]
     },
     {
@@ -130,25 +163,85 @@
       "title": "Key Topics",
       "type": "list",
       "items": [
-        { "title": "Digital Transformation", "description": "AI, Cloud, IoT Strategies for Enterprise", "icon": "🤖", "status": "active" },
-        { "title": "Sustainability", "description": "ESG, Net-Zero, Circular Economy Initiatives", "icon": "🌱", "status": "active" },
-        { "title": "Global Economy", "description": "Trade, Investment, Geopolitical Analysis", "icon": "🌍", "status": "active" }
+        {
+          "title": "Digital Transformation",
+          "description": "AI, Cloud, IoT Strategies for Enterprise",
+          "icon": "🤖",
+          "status": "active"
+        },
+        {
+          "title": "Sustainability",
+          "description": "ESG, Net-Zero, Circular Economy Initiatives",
+          "icon": "🌱",
+          "status": "active"
+        },
+        {
+          "title": "Global Economy",
+          "description": "Trade, Investment, Geopolitical Analysis",
+          "icon": "🌍",
+          "status": "active"
+        }
       ]
     },
     {
       "title": "Event Locations",
       "type": "map",
       "fields": [
-        { "name": "Congress Centre", "x": 52, "y": 28, "type": "venue", "address": "Davos, Switzerland" },
-        { "name": "Exhibition Hall", "x": 52, "y": 29, "type": "exhibition", "address": "Davos, Switzerland" },
-        { "name": "Networking Pavilion", "x": 52, "y": 27, "type": "networking", "address": "Davos, Switzerland" },
-        { "name": "VIP Lounge", "x": 52, "y": 28.5, "type": "venue", "address": "Davos, Switzerland" }
+        {
+          "name": "Congress Centre",
+          "x": 52,
+          "y": 28,
+          "type": "venue",
+          "address": "Davos, Switzerland"
+        },
+        {
+          "name": "Exhibition Hall",
+          "x": 52,
+          "y": 29,
+          "type": "exhibition",
+          "address": "Davos, Switzerland"
+        },
+        {
+          "name": "Networking Pavilion",
+          "x": 52,
+          "y": 27,
+          "type": "networking",
+          "address": "Davos, Switzerland"
+        },
+        {
+          "name": "VIP Lounge",
+          "x": 52,
+          "y": 28.5,
+          "type": "venue",
+          "address": "Davos, Switzerland"
+        }
       ]
     }
   ],
   "actions": [
-    { "label": "Register Now", "type": "website", "variant": "primary", "icon": "🎫", "url": "https://techsummit.com/register" },
-    { "label": "View Full Agenda", "type": "website", "variant": "primary", "icon": "📅", "url": "https://techsummit.com/agenda" },
-    { "label": "Become a Sponsor", "type": "mail", "variant": "secondary", "icon": "🤝", "email": { "to": "sponsors@techsummit.com", "subject": "Sponsorship Inquiry" } }
+    {
+      "label": "Register Now",
+      "type": "website",
+      "variant": "primary",
+      "icon": "🎫",
+      "url": "https://techsummit.com/register"
+    },
+    {
+      "label": "View Full Agenda",
+      "type": "website",
+      "variant": "primary",
+      "icon": "📅",
+      "url": "https://techsummit.com/agenda"
+    },
+    {
+      "label": "Become a Sponsor",
+      "type": "mail",
+      "variant": "secondary",
+      "icon": "🤝",
+      "email": {
+        "to": "sponsors@techsummit.com",
+        "subject": "Sponsorship Inquiry"
+      }
+    }
   ]
 }

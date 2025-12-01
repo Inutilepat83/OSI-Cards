@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, SimpleChanges, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardField } from '../../../../../models';
 import { LucideIconsModule } from '../../../../icons/lucide-icons.module';
@@ -18,7 +18,7 @@ interface BrandColor {
   standalone: true,
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './brand-colors-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BrandColorsSectionComponent extends BaseSectionComponent<CardField> {
   private readonly logger = inject(LoggingService);
@@ -45,7 +45,7 @@ export class BrandColorsSectionComponent extends BaseSectionComponent<CardField>
             label: field.label || field.title || `Color ${index + 1}`,
             hex: field.value.toUpperCase(),
             rgb: this.hexToRgb(field.value),
-            copied: false
+            copied: false,
           });
         }
       }
@@ -78,13 +78,13 @@ export class BrandColorsSectionComponent extends BaseSectionComponent<CardField>
     try {
       await navigator.clipboard.writeText(color.hex);
       this.copiedColorId = color.id;
-      
+
       // Reset after 2 seconds
       setTimeout(() => {
         this.copiedColorId = null;
         this.cdr.markForCheck();
       }, 2000);
-      
+
       this.cdr.markForCheck();
     } catch (err) {
       this.logger.error('Failed to copy to clipboard', 'BrandColorsSectionComponent', err);
@@ -107,7 +107,7 @@ export class BrandColorsSectionComponent extends BaseSectionComponent<CardField>
     this.copyToClipboard(color);
   }
 
-  trackColor(index: number, color: BrandColor): string {
+  trackColor(_index: number, color: BrandColor): string {
     return color.id;
   }
 }

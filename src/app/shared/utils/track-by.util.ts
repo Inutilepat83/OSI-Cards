@@ -62,5 +62,3 @@ export function trackByFieldId(index: number, field: { id?: string; label?: stri
 export function trackByItemId(index: number, item: { id?: string; title?: string }): string {
   return item.id || item.title || `item-${index}`;
 }
-
-

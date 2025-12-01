@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { AICardConfig } from '../../models';
-import { CardDiffUtil, CardChangeType, CardDiffResult } from '../utils/card-diff.util';
+import { CardChangeType, CardDiffResult, CardDiffUtil } from '../utils/card-diff.util';
 
 /**
  * Injectable service for card diffing and merging
  * Wraps CardDiffUtil for better dependency injection and testability
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CardDiffService {
   /**
@@ -25,5 +25,3 @@ export class CardDiffService {
     return result.changeType;
   }
 }
-
-

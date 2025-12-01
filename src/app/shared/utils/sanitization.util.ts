@@ -2,17 +2,17 @@ import { ValidationUtil } from './validation.util';
 
 /**
  * Sanitization utilities for preventing XSS attacks
- * 
+ *
  * Provides comprehensive sanitization functions for:
  * - HTML content
  * - Card titles and section titles
  * - Field values
  * - URLs and email addresses
  * - JSON inputs
- * 
+ *
  * All functions are static and can be used throughout the application
  * to ensure user-provided content is safe to render.
- * 
+ *
  * @example
  * ```typescript
  * const safeTitle = SanitizationUtil.sanitizeCardTitle(userInput);
@@ -50,7 +50,9 @@ export class SanitizationUtil {
   /**
    * Sanitize field value
    */
-  static sanitizeFieldValue(value: string | number | boolean | null | undefined): string | number | boolean | null {
+  static sanitizeFieldValue(
+    value: string | number | boolean | null | undefined
+  ): string | number | boolean | null {
     if (value === null || value === undefined) {
       return null;
     }
@@ -144,7 +146,7 @@ export class SanitizationUtil {
     }
 
     if (Array.isArray(obj)) {
-      return obj.map(item => this.sanitizeObject(item)) as T;
+      return obj.map((item) => this.sanitizeObject(item)) as T;
     }
 
     if (typeof obj === 'object') {
@@ -161,5 +163,3 @@ export class SanitizationUtil {
     return obj;
   }
 }
-
-

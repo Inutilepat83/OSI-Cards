@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { AICardConfig } from '../../models';
 import { removeAllIds } from '../utils/card-utils';
 import { LoggingService } from '../../core/services/logging.service';
@@ -26,11 +26,11 @@ export interface ImageExportOptions {
 
 /**
  * Export service for exporting cards in various formats
- * 
+ *
  * Provides comprehensive export functionality for OSI Cards, supporting multiple
  * formats including JSON, PDF, PNG, SVG, JPEG, CSV, and text. Handles both single
  * card and batch exports with configurable options.
- * 
+ *
  * Features:
  * - Multiple export formats (JSON, PDF, PNG, SVG, JPEG, CSV, text)
  * - Batch export support for multiple cards
@@ -38,29 +38,29 @@ export interface ImageExportOptions {
  * - Optional dependency support (jsPDF, html2canvas)
  * - High-resolution exports with configurable scaling
  * - Native browser API support (no dependencies for PNG export)
- * 
+ *
  * @example
  * ```typescript
  * const exportService = inject(ExportService);
- * 
+ *
  * // Export as JSON
  * exportService.exportAsJson(card, 'my-card.json');
- * 
+ *
  * // Export as PNG (native, no dependencies)
  * await exportService.exportAsPngNative(element, 'card.png', 2);
- * 
+ *
  * // Export as PDF (requires jsPDF)
  * await exportService.exportAsPdf(card, element, {
  *   format: 'a4',
  *   orientation: 'portrait'
  * }, 'card.pdf');
- * 
+ *
  * // Copy to clipboard
  * await exportService.copyToClipboard(card);
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ExportService {
   private readonly logger = inject(LoggingService);
@@ -93,11 +93,11 @@ export class ExportService {
         text += `  ${section.description}\n`;
       }
 
-      section.fields?.forEach(field => {
+      section.fields?.forEach((field) => {
         text += `  - ${field.label || field.title || 'Field'}: ${field.value || ''}\n`;
       });
 
-      section.items?.forEach(item => {
+      section.items?.forEach((item) => {
         text += `  - ${item.title}\n`;
         if (item.description) {
           text += `    ${item.description}\n`;
@@ -129,7 +129,7 @@ export class ExportService {
    * Export multiple cards as JSON array
    */
   exportMultipleAsJson(cards: AICardConfig[], filename?: string): void {
-    const cardsWithoutIds = cards.map(card => removeAllIds(card));
+    const cardsWithoutIds = cards.map((card) => removeAllIds(card));
     const json = JSON.stringify(cardsWithoutIds, null, 2);
     this.downloadFile(json, filename || 'cards.json', 'application/json');
   }
@@ -155,8 +155,8 @@ export class ExportService {
   exportAsCsv(card: AICardConfig, filename?: string): void {
     let csv = 'Section,Field,Value\n';
 
-    card.sections?.forEach(section => {
-      section.fields?.forEach(field => {
+    card.sections?.forEach((section) => {
+      section.fields?.forEach((field) => {
         const sectionTitle = (section.title || '').replace(/"/g, '""');
         const fieldLabel = (field.label || field.title || '').replace(/"/g, '""');
         const fieldValue = String(field.value || '').replace(/"/g, '""');
@@ -181,7 +181,7 @@ export class ExportService {
       // Dynamic import of jsPDF (optional dependency)
       // Using type assertion to avoid TypeScript errors when package is not installed
       // Dynamic import for optional dependency
-       
+
       let jsPDF: typeof import('jspdf').jsPDF | null = null;
       try {
         const jsPDFModule = await import('jspdf' as any);
@@ -189,13 +189,13 @@ export class ExportService {
       } catch (importError) {
         throw new Error('jsPDF is not installed. Install with: npm install jspdf');
       }
-      
+
       const {
         format = 'a4',
         orientation = 'portrait',
         margin = 20,
         title = card.cardTitle || 'Card',
-        includeMetadata = true
+        includeMetadata = true,
       } = options;
 
       if (!jsPDF) {
@@ -205,7 +205,7 @@ export class ExportService {
       const pdf = new jsPDF({
         orientation,
         unit: 'mm',
-        format
+        format,
       });
 
       // Add metadata
@@ -214,7 +214,7 @@ export class ExportService {
           title,
           subject: 'OSI Card Export',
           author: 'OSI Cards',
-          creator: 'OSI Cards Application'
+          creator: 'OSI Cards Application',
         });
       }
 
@@ -224,16 +224,20 @@ export class ExportService {
 
       // Convert element to image and add to PDF
       const imageData = await this.elementToImage(element, { format: 'png', scale: 2 });
-      const imgWidth = pdf.internal.pageSize.getWidth() - (margin * 2);
+      const imgWidth = pdf.internal.pageSize.getWidth() - margin * 2;
       const imgHeight = (element.offsetHeight * imgWidth) / element.offsetWidth;
-      
+
       pdf.addImage(imageData, 'PNG', margin, margin + 20, imgWidth, imgHeight);
 
       // Save PDF
       pdf.save(filename || `${title}.pdf`);
       this.logger.info('Card exported as PDF', 'ExportService');
     } catch (error) {
-      this.logger.error('Failed to export as PDF. jsPDF may not be installed.', 'ExportService', error);
+      this.logger.error(
+        'Failed to export as PDF. jsPDF may not be installed.',
+        'ExportService',
+        error
+      );
       throw new Error('PDF export requires jsPDF library. Install with: npm install jspdf');
     }
   }
@@ -248,9 +252,9 @@ export class ExportService {
         throw new Error('Element is required for PNG export');
       }
 
-      this.logger.info('Starting PNG export with dom-to-image-more', 'ExportService', { 
+      this.logger.info('Starting PNG export with dom-to-image-more', 'ExportService', {
         elementTag: element.tagName,
-        elementClass: element.className 
+        elementClass: element.className,
       });
 
       // Get dimensions for logging
@@ -276,7 +280,7 @@ export class ExportService {
         style: {
           transform: `scale(${scale})`,
           transformOrigin: 'top left',
-        }
+        },
       });
 
       // Download the PNG
@@ -286,7 +290,7 @@ export class ExportService {
       link.style.display = 'none';
       document.body.appendChild(link);
       link.click();
-      
+
       // Cleanup
       setTimeout(() => {
         document.body.removeChild(link);
@@ -302,8 +306,12 @@ export class ExportService {
   /**
    * Create an exportable clone of the element with all styles inlined
    * This avoids html2canvas parsing issues with modern CSS functions like color-mix()
+   * @internal Reserved for future use
    */
-  private async createExportableClone(element: HTMLElement, scale: number): Promise<{ container: HTMLElement; cleanup: () => void }> {
+  protected async createExportableClone(
+    element: HTMLElement,
+    scale: number
+  ): Promise<{ container: HTMLElement; cleanup: () => void }> {
     const rect = element.getBoundingClientRect();
     const width = rect.width * scale;
     const height = rect.height * scale;
@@ -336,7 +344,7 @@ export class ExportService {
     document.body.appendChild(container);
 
     // Wait for rendering
-    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
     return {
       container,
@@ -344,7 +352,7 @@ export class ExportService {
         if (container.parentNode) {
           container.parentNode.removeChild(container);
         }
-      }
+      },
     };
   }
 
@@ -358,19 +366,52 @@ export class ExportService {
 
     // Get computed styles from the original element
     const computedStyle = window.getComputedStyle(source);
-    
+
     // List of important visual properties to inline
     const propertiesToInline = [
-      'color', 'background-color', 'background-image', 'background',
-      'border', 'border-color', 'border-width', 'border-style', 'border-radius',
-      'box-shadow', 'text-shadow', 'outline', 'outline-color',
-      'font-family', 'font-size', 'font-weight', 'font-style',
-      'line-height', 'letter-spacing', 'text-align', 'text-decoration',
-      'padding', 'margin', 'width', 'height', 'min-width', 'min-height',
-      'max-width', 'max-height', 'display', 'flex-direction', 'justify-content',
-      'align-items', 'gap', 'grid-template-columns', 'grid-template-rows',
-      'opacity', 'visibility', 'overflow', 'position',
-      'fill', 'stroke', 'stroke-width'
+      'color',
+      'background-color',
+      'background-image',
+      'background',
+      'border',
+      'border-color',
+      'border-width',
+      'border-style',
+      'border-radius',
+      'box-shadow',
+      'text-shadow',
+      'outline',
+      'outline-color',
+      'font-family',
+      'font-size',
+      'font-weight',
+      'font-style',
+      'line-height',
+      'letter-spacing',
+      'text-align',
+      'text-decoration',
+      'padding',
+      'margin',
+      'width',
+      'height',
+      'min-width',
+      'min-height',
+      'max-width',
+      'max-height',
+      'display',
+      'flex-direction',
+      'justify-content',
+      'align-items',
+      'gap',
+      'grid-template-columns',
+      'grid-template-rows',
+      'opacity',
+      'visibility',
+      'overflow',
+      'position',
+      'fill',
+      'stroke',
+      'stroke-width',
     ];
 
     for (const prop of propertiesToInline) {
@@ -402,21 +443,24 @@ export class ExportService {
    * Sanitize a CSS style value, replacing unsupported functions
    */
   private sanitizeStyleValue(value: string): string {
-    if (!value) return value;
-    
+    if (!value) {
+      return value;
+    }
+
     // Replace color-mix() with fallback
     let sanitized = this.replaceColorMix(value);
-    
+
     // Replace oklab() with rgb fallback (convert to a neutral color)
     sanitized = sanitized.replace(/oklab\([^)]+\)/gi, 'rgb(128, 128, 128)');
-    
+
     return sanitized;
   }
 
   /**
    * Download canvas as PNG
+   * @internal Reserved for future use
    */
-  private downloadCanvas(canvas: HTMLCanvasElement, filename?: string): Promise<void> {
+  protected downloadCanvasToPng(canvas: HTMLCanvasElement, filename?: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       canvas.toBlob((blob) => {
         if (!blob) {
@@ -434,7 +478,7 @@ export class ExportService {
           link.style.display = 'none';
           document.body.appendChild(link);
           link.click();
-          
+
           // Cleanup after a delay to ensure download starts
           setTimeout(() => {
             document.body.removeChild(link);
@@ -454,11 +498,12 @@ export class ExportService {
   /**
    * Sanitize unsupported CSS properties in cloned document for html2canvas
    * Replaces color-mix() and other modern CSS functions with fallback values
+   * @internal Reserved for future use
    */
-  private sanitizeUnsupportedCSS(doc: Document): void {
+  protected sanitizeUnsupportedCSS(doc: Document): void {
     // Process all style elements
     const styleElements = doc.querySelectorAll('style');
-    styleElements.forEach(style => {
+    styleElements.forEach((style) => {
       if (style.textContent) {
         style.textContent = this.replaceColorMix(style.textContent);
       }
@@ -466,12 +511,12 @@ export class ExportService {
 
     // Process inline styles on all elements
     const allElements = doc.querySelectorAll('*');
-    allElements.forEach(el => {
+    allElements.forEach((el) => {
       const htmlEl = el as HTMLElement;
       if (htmlEl.style && htmlEl.style.cssText) {
         htmlEl.style.cssText = this.replaceColorMix(htmlEl.style.cssText);
       }
-      
+
       // Also check the style attribute directly
       const styleAttr = htmlEl.getAttribute('style');
       if (styleAttr && styleAttr.includes('color-mix')) {
@@ -489,10 +534,10 @@ export class ExportService {
     // Replace with the first color as a reasonable fallback
     return css.replace(
       /color-mix\s*\(\s*in\s+\w+\s*,\s*([^,]+?)\s+\d+%?\s*,\s*[^)]+\)/gi,
-      (match, color) => {
+      (_match, color) => {
         // Extract the color value, removing any percentage
         const cleanColor = color.trim().replace(/\s+\d+%$/, '');
-        
+
         // If it's a CSS variable, try to provide a reasonable fallback
         if (cleanColor.startsWith('var(')) {
           // Extract fallback from var() if present, or use a default
@@ -501,16 +546,30 @@ export class ExportService {
             return varMatch[1].trim();
           }
           // Common fallbacks for known variables
-          if (cleanColor.includes('--color-brand')) return '#FF7900';
-          if (cleanColor.includes('--primary')) return '#FF7900';
-          if (cleanColor.includes('--foreground')) return '#1c1c1f';
-          if (cleanColor.includes('--background')) return '#ffffff';
-          if (cleanColor.includes('--muted')) return '#f4f4f6';
-          if (cleanColor.includes('--border')) return 'rgba(200,200,200,0.5)';
-          if (cleanColor.includes('--card')) return '#fefefe';
+          if (cleanColor.includes('--color-brand')) {
+            return '#FF7900';
+          }
+          if (cleanColor.includes('--primary')) {
+            return '#FF7900';
+          }
+          if (cleanColor.includes('--foreground')) {
+            return '#1c1c1f';
+          }
+          if (cleanColor.includes('--background')) {
+            return '#ffffff';
+          }
+          if (cleanColor.includes('--muted')) {
+            return '#f4f4f6';
+          }
+          if (cleanColor.includes('--border')) {
+            return 'rgba(200,200,200,0.5)';
+          }
+          if (cleanColor.includes('--card')) {
+            return '#fefefe';
+          }
           return 'inherit';
         }
-        
+
         return cleanColor;
       }
     );
@@ -519,22 +578,32 @@ export class ExportService {
   /**
    * Inline computed styles on elements to avoid CSS parsing issues with modern functions
    * This ensures html2canvas can properly render elements without parsing color-mix() etc.
+   * @internal Reserved for future use
    */
-  private inlineComputedStyles(element: HTMLElement, doc: Document): void {
+  protected inlineComputedStyles(element: HTMLElement, doc: Document): void {
     const walker = doc.createTreeWalker(element, NodeFilter.SHOW_ELEMENT);
     let node: Node | null = walker.currentNode;
-    
+
     // Properties that commonly use color-mix and need special handling
     const colorProperties = [
-      'color', 'backgroundColor', 'borderColor', 'borderTopColor', 
-      'borderRightColor', 'borderBottomColor', 'borderLeftColor',
-      'outlineColor', 'boxShadow', 'textShadow', 'fill', 'stroke'
+      'color',
+      'backgroundColor',
+      'borderColor',
+      'borderTopColor',
+      'borderRightColor',
+      'borderBottomColor',
+      'borderLeftColor',
+      'outlineColor',
+      'boxShadow',
+      'textShadow',
+      'fill',
+      'stroke',
     ];
-    
+
     while (node) {
       if (node instanceof HTMLElement) {
         const computedStyle = window.getComputedStyle(node);
-        
+
         // Only inline specific color properties to avoid breaking layout
         for (const prop of colorProperties) {
           const value = computedStyle.getPropertyValue(this.camelToKebab(prop));
@@ -561,8 +630,9 @@ export class ExportService {
 
   /**
    * Convert data URL to Blob
+   * @internal Reserved for future use
    */
-  private dataUrlToBlob(dataUrl: string, callback: (blob: Blob) => void): void {
+  protected dataUrlToBlob(dataUrl: string, callback: (blob: Blob) => void): void {
     const arr = dataUrl.split(',');
     const firstPart = arr[0];
     const secondPart = arr[1];
@@ -591,26 +661,31 @@ export class ExportService {
     filename?: string
   ): Promise<void> {
     try {
-      const {
-        format = 'png',
-        quality = 0.92,
-        scale = 2,
-        backgroundColor = '#ffffff'
-      } = options;
+      const { format = 'png', quality = 0.92, scale = 2, backgroundColor = '#ffffff' } = options;
 
-      const imageData = await this.elementToImage(element, { format, quality, scale, backgroundColor });
-      
+      const imageData = await this.elementToImage(element, {
+        format,
+        quality,
+        scale,
+        backgroundColor,
+      });
+
       // Determine MIME type
-      const mimeType = format === 'png' ? 'image/png' : 
-                      format === 'jpeg' ? 'image/jpeg' : 
-                      'image/svg+xml';
+      const mimeType =
+        format === 'png' ? 'image/png' : format === 'jpeg' ? 'image/jpeg' : 'image/svg+xml';
 
       // Download image
       this.downloadFile(imageData, filename || `card.${format}`, mimeType);
       this.logger.info(`Card exported as ${format.toUpperCase()}`, 'ExportService');
     } catch (error) {
-      this.logger.error('Failed to export as image. html2canvas may not be installed.', 'ExportService', error);
-      throw new Error('Image export requires html2canvas library. Install with: npm install html2canvas');
+      this.logger.error(
+        'Failed to export as image. html2canvas may not be installed.',
+        'ExportService',
+        error
+      );
+      throw new Error(
+        'Image export requires html2canvas library. Install with: npm install html2canvas'
+      );
     }
   }
 
@@ -627,7 +702,7 @@ export class ExportService {
       // Dynamic import of jsPDF (optional dependency)
       // Using type assertion to avoid TypeScript errors when package is not installed
       // Dynamic import for optional dependency
-       
+
       let jsPDF: typeof import('jspdf').jsPDF | null = null;
       try {
         const jsPDFModule = await import('jspdf' as any);
@@ -635,12 +710,8 @@ export class ExportService {
       } catch (importError) {
         throw new Error('jsPDF is not installed. Install with: npm install jspdf');
       }
-      
-      const {
-        format = 'a4',
-        orientation = 'portrait',
-        margin = 20
-      } = options;
+
+      const { format = 'a4', orientation = 'portrait', margin = 20 } = options;
 
       if (!jsPDF) {
         throw new Error('jsPDF is not available');
@@ -649,7 +720,7 @@ export class ExportService {
       const pdf = new jsPDF({
         orientation,
         unit: 'mm',
-        format
+        format,
       });
 
       for (let i = 0; i < elements.length; i++) {
@@ -669,9 +740,9 @@ export class ExportService {
 
         // Convert element to image
         const imageData = await this.elementToImage(element, { format: 'png', scale: 2 });
-        const imgWidth = pdf.internal.pageSize.getWidth() - (margin * 2);
+        const imgWidth = pdf.internal.pageSize.getWidth() - margin * 2;
         const imgHeight = (element.offsetHeight * imgWidth) / element.offsetWidth;
-        
+
         pdf.addImage(imageData, 'PNG', margin, margin + 20, imgWidth, imgHeight);
       }
 
@@ -710,23 +781,25 @@ export class ExportService {
     try {
       // Dynamic import for optional dependency
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let html2canvas: ((element: HTMLElement, options?: any) => Promise<HTMLCanvasElement>) | null = null;
+      let html2canvas:
+        | ((element: HTMLElement, options?: any) => Promise<HTMLCanvasElement>)
+        | null = null;
       try {
         const html2canvasModule = await import('html2canvas' as any);
         html2canvas = html2canvasModule.default || html2canvasModule;
       } catch (importError) {
         throw new Error('html2canvas is not installed. Install with: npm install html2canvas');
       }
-      
+
       if (!html2canvas || typeof html2canvas !== 'function') {
         throw new Error('html2canvas is not available or is not a function');
       }
-      
+
       const canvas = await html2canvas(element, {
         scale,
         backgroundColor,
         useCORS: true,
-        logging: false
+        logging: false,
       });
 
       return canvas.toDataURL(`image/${format}`, quality);
@@ -736,5 +809,3 @@ export class ExportService {
     }
   }
 }
-
-

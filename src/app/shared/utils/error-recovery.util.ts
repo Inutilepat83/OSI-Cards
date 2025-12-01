@@ -25,7 +25,7 @@ export async function recoverFromError<T>(
     backoffMultiplier = 2,
     shouldRetry = () => true,
     onRetry,
-    fallback
+    fallback,
   } = options;
 
   let lastError: Error | null = null;
@@ -69,7 +69,7 @@ export async function recoverFromError<T>(
  * Sleep utility
  */
 function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -82,7 +82,11 @@ export function isRetryableError(error: Error): boolean {
   }
 
   // 5xx errors are retryable
-  if (error.message.includes('500') || error.message.includes('502') || error.message.includes('503')) {
+  if (
+    error.message.includes('500') ||
+    error.message.includes('502') ||
+    error.message.includes('503')
+  ) {
     return true;
   }
 
@@ -105,5 +109,3 @@ export function createErrorRecoveryWrapper<T extends (...args: any[]) => Promise
     return recoverFromError(() => fn(...args), options);
   }) as T;
 }
-
-

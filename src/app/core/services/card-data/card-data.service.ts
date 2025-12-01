@@ -1,6 +1,15 @@
-import { Injectable, inject, InjectionToken, OnDestroy, DestroyRef } from '@angular/core';
-import { Observable, BehaviorSubject, combineLatest, EMPTY, Subject } from 'rxjs';
-import { map, switchMap, shareReplay, startWith, filter, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { DestroyRef, inject, Injectable, InjectionToken, OnDestroy } from '@angular/core';
+import { BehaviorSubject, combineLatest, EMPTY, Observable, Subject } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  shareReplay,
+  startWith,
+  switchMap,
+  takeUntil,
+} from 'rxjs/operators';
 import { AICardConfig, CardType } from '../../../models';
 import { CardDataProvider } from './card-data-provider.interface';
 import { JsonFileCardProvider } from './json-file-card-provider.service';
@@ -24,47 +33,47 @@ interface CardUpdate {
  * @name CardDataService
  * @description
  * Main card data service that orchestrates different data providers.
- * 
+ *
  * Provides a unified interface for card data operations, allowing seamless switching
  * between different data sources (JSON files, WebSocket, API, etc.). Uses the provider
  * pattern to abstract data access and enable pluggable data sources.
- * 
+ *
  * ## Features
  * - Provider-based architecture for flexible data sources
  * - Cached observables with shareReplay for performance
  * - Real-time updates support (when provider supports it)
  * - Automatic provider initialization
  * - Repository pattern for data access
- * 
+ *
  * @example
  * ```typescript
  * import { inject } from '@angular/core';
  * import { CardDataService } from './core/services/card-data/card-data.service';
- * 
+ *
  * const cardData = inject(CardDataService);
- * 
+ *
  * // Get all cards
  * cardData.getAllCards().subscribe(cards => {
  *   console.log('Cards:', cards);
  * });
- * 
+ *
  * // Get cards by type
  * cardData.getCardsByType('company').subscribe(cards => {
  *   console.log('Company cards:', cards);
  * });
- * 
+ *
  * // Switch to a different provider (e.g., WebSocket for real-time updates)
  * const wsProvider = inject(WebSocketCardProvider);
  * cardData.switchProvider(wsProvider);
  * ```
- * 
+ *
  * @see {@link CardDataProvider} for provider interface
  * @see {@link JsonFileCardProvider} for JSON file provider
  * @see {@link WebSocketCardProvider} for WebSocket provider
  * @since 1.0.0
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CardDataService implements OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
@@ -75,17 +84,15 @@ export class CardDataService implements OnDestroy {
 
   // Cached observables for performance
   private allCards$ = this.activeProviderSubject.pipe(
-    switchMap(provider => provider.getAllCards().pipe(
-      takeUntil(this.requestCanceller.cancel$)
-    )),
+    switchMap((provider) => provider.getAllCards().pipe(takeUntil(this.requestCanceller.cancel$))),
     shareReplay(1)
   );
 
   private cardUpdates$ = this.activeProviderSubject.pipe(
-    switchMap(provider =>
+    switchMap((provider) =>
       provider.supportsRealtime && provider.subscribeToUpdates
         ? provider.subscribeToUpdates()
-        : EMPTY as Observable<CardUpdate>
+        : (EMPTY as Observable<CardUpdate>)
     ),
     startWith(null as CardUpdate | null)
   );
@@ -142,12 +149,14 @@ export class CardDataService implements OnDestroy {
     }
     // Fallback to getAllCards if method not available
     return this.getAllCards().pipe(
-      map(cards => {
-        if (!cards || cards.length === 0) return null;
+      map((cards) => {
+        if (!cards || cards.length === 0) {
+          return null;
+        }
         const firstCard = cards[0];
         return firstCard ?? null;
       }),
-      map(card => card ?? null) // Ensure we return null, not undefined
+      map((card) => card ?? null) // Ensure we return null, not undefined
     );
   }
 
@@ -163,7 +172,7 @@ export class CardDataService implements OnDestroy {
   private searchResults$ = this.searchSubject.pipe(
     debounceTime(300),
     distinctUntilChanged(),
-    switchMap(query => {
+    switchMap((query) => {
       if (!query.trim()) {
         return this.repository.findAll();
       }
@@ -174,17 +183,17 @@ export class CardDataService implements OnDestroy {
 
   /**
    * Search cards by title or content
-   * 
+   *
    * Performs a case-insensitive search across:
    * - Card titles
    * - Section titles
    * - Field labels and values
-   * 
+   *
    * Uses repository pattern for data access with debouncing
-   * 
+   *
    * @param query - Search query string (case-insensitive)
    * @returns Observable of matching cards
-   * 
+   *
    * @example
    * ```typescript
    * cardData.searchCards('company').subscribe(cards => {
@@ -204,27 +213,24 @@ export class CardDataService implements OnDestroy {
     cards: AICardConfig[];
     lastUpdate: CardUpdate | null;
   }> {
-    return combineLatest([
-      this.allCards$,
-      this.cardUpdates$
-    ]).pipe(
+    return combineLatest([this.allCards$, this.cardUpdates$]).pipe(
       map(([cards, lastUpdate]) => ({
         cards,
-        lastUpdate
+        lastUpdate,
       }))
     );
   }
 
   /**
    * Switch to a different data provider
-   * 
+   *
    * Automatically:
    * - Cleans up the current provider (calls destroy if available)
    * - Initializes the new provider (calls initialize if available)
    * - Cancels all in-flight requests from the previous provider
-   * 
+   *
    * @param newProvider - The new card data provider to use
-   * 
+   *
    * @example
    * ```typescript
    * const apiProvider = inject(ApiCardProvider);
@@ -264,9 +270,7 @@ export class CardDataService implements OnDestroy {
    * Subscribe to real-time card updates (if supported)
    */
   subscribeToUpdates(): Observable<CardUpdate> {
-    return this.cardUpdates$.pipe(
-      filter((update): update is CardUpdate => update !== null)
-    );
+    return this.cardUpdates$.pipe(filter((update): update is CardUpdate => update !== null));
   }
 
   /**
@@ -278,25 +282,22 @@ export class CardDataService implements OnDestroy {
     totalCards: number;
     cardTypes: string[];
   }> {
-    return combineLatest([
-      this.allCards$,
-      this.getAvailableCardTypes()
-    ]).pipe(
+    return combineLatest([this.allCards$, this.getAvailableCardTypes()]).pipe(
       map(([cards, types]) => ({
         type: this.getCurrentProvider().constructor.name,
         supportsRealtime: this.supportsRealtime(),
         totalCards: cards.length,
-        cardTypes: types
+        cardTypes: types,
       }))
     );
   }
 
   /**
    * Cancel all in-flight requests
-   * 
+   *
    * Useful for cleanup or when switching contexts.
    * Automatically called on service destruction.
-   * 
+   *
    * @example
    * ```typescript
    * // Cancel all requests before switching providers

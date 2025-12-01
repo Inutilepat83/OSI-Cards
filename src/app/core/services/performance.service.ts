@@ -1,4 +1,4 @@
-import { Injectable, isDevMode, OnDestroy, inject } from '@angular/core';
+import { inject, Injectable, isDevMode, OnDestroy } from '@angular/core';
 import { LoggingService } from './logging.service';
 
 export interface PerformanceMetric {
@@ -21,7 +21,7 @@ export interface PerformanceBudget {
 
 /**
  * Consolidated Performance Service
- * 
+ *
  * Merges functionality from PerformanceService, PerformanceMonitorService, and PerformanceBudgetService.
  * Provides comprehensive performance monitoring including:
  * - Custom metric tracking
@@ -29,25 +29,25 @@ export interface PerformanceBudget {
  * - Memory usage monitoring
  * - Performance budget enforcement
  * - Slow operation detection
- * 
+ *
  * @example
  * ```typescript
  * // Measure a function execution
  * const result = performanceService.measure('loadCards', () => {
  *   return this.loadCards();
  * });
- * 
+ *
  * // Measure async operation
  * const data = await performanceService.measureAsync('fetchData', async () => {
  *   return await this.http.get('/api/data').toPromise();
  * });
- * 
+ *
  * // Initialize Web Vitals tracking
  * performanceService.initialize();
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PerformanceService implements OnDestroy {
   private readonly logger = inject(LoggingService);
@@ -62,19 +62,19 @@ export class PerformanceService implements OnDestroy {
     { name: 'loadCards', type: 'duration', threshold: 500, warning: 1000, error: 2000 },
     { name: 'loadTemplate', type: 'duration', threshold: 300, warning: 600, error: 1200 },
     { name: 'searchCards', type: 'duration', threshold: 100, warning: 300, error: 500 },
-    
+
     // Rendering performance budgets
     { name: 'cardRender', type: 'duration', threshold: 50, warning: 100, error: 200 },
     { name: 'sectionRender', type: 'duration', threshold: 20, warning: 50, error: 100 },
     { name: 'layoutCalculation', type: 'duration', threshold: 100, warning: 200, error: 400 },
-    
+
     // Size budgets
     { name: 'cardSize', type: 'size', threshold: 5000, warning: 10000, error: 20000 },
     { name: 'totalCardSize', type: 'size', threshold: 50000, warning: 100000, error: 200000 },
-    
+
     // Count budgets
     { name: 'cardCount', type: 'count', threshold: 20, warning: 50, error: 100 },
-    { name: 'sectionCount', type: 'count', threshold: 10, warning: 20, error: 50 }
+    { name: 'sectionCount', type: 'count', threshold: 10, warning: 20, error: 50 },
   ];
 
   private violations: {
@@ -157,7 +157,7 @@ export class PerformanceService implements OnDestroy {
       name,
       duration,
       timestamp: Date.now(),
-      metadata
+      metadata,
     };
 
     this.metrics.push(metric);
@@ -169,7 +169,11 @@ export class PerformanceService implements OnDestroy {
 
     // Log slow operations in development
     if (duration > 100 && isDevMode()) {
-      this.logger.warn(`Slow operation detected: ${name} took ${duration.toFixed(2)}ms`, 'PerformanceService', metadata);
+      this.logger.warn(
+        `Slow operation detected: ${name} took ${duration.toFixed(2)}ms`,
+        'PerformanceService',
+        metadata
+      );
     }
   }
 
@@ -203,9 +207,7 @@ export class PerformanceService implements OnDestroy {
    * Get recent metrics (last N metrics)
    */
   getRecentMetrics(count = 10): PerformanceMetric[] {
-    return [...this.metrics]
-      .sort((a, b) => b.timestamp - a.timestamp)
-      .slice(0, count);
+    return [...this.metrics].sort((a, b) => b.timestamp - a.timestamp).slice(0, count);
   }
 
   /**
@@ -236,10 +238,10 @@ export class PerformanceService implements OnDestroy {
         slowestOperations: [],
         violations: {
           total: this.violations.length,
-          warnings: this.violations.filter(v => v.severity === 'warning').length,
-          errors: this.violations.filter(v => v.severity === 'error').length,
-          recent: this.getRecentViolations(5).length
-        }
+          warnings: this.violations.filter((v) => v.severity === 'warning').length,
+          errors: this.violations.filter((v) => v.severity === 'error').length,
+          recent: this.getRecentViolations(5).length,
+        },
       };
     }
 
@@ -256,10 +258,10 @@ export class PerformanceService implements OnDestroy {
       slowestOperations,
       violations: {
         total: this.violations.length,
-        warnings: this.violations.filter(v => v.severity === 'warning').length,
-        errors: this.violations.filter(v => v.severity === 'error').length,
-        recent: this.getRecentViolations(5).length
-      }
+        warnings: this.violations.filter((v) => v.severity === 'warning').length,
+        errors: this.violations.filter((v) => v.severity === 'error').length,
+        recent: this.getRecentViolations(5).length,
+      },
     };
   }
 
@@ -298,10 +300,10 @@ export class PerformanceService implements OnDestroy {
         const entries = list.getEntries();
         const lastEntry = entries[entries.length - 1] as any;
         const lcp = lastEntry.renderTime || lastEntry.loadTime;
-        
+
         this.recordMetric('LCP', lcp, {
           element: lastEntry.element?.tagName || 'unknown',
-          url: lastEntry.url || 'unknown'
+          url: lastEntry.url || 'unknown',
         });
 
         if (isDevMode()) {
@@ -327,10 +329,10 @@ export class PerformanceService implements OnDestroy {
         const entries = list.getEntries();
         entries.forEach((entry: any) => {
           const fid = entry.processingStart - entry.startTime;
-          
+
           this.recordMetric('FID', fid, {
             eventType: entry.name,
-            target: entry.target?.tagName || 'unknown'
+            target: entry.target?.tagName || 'unknown',
           });
 
           if (isDevMode()) {
@@ -367,7 +369,7 @@ export class PerformanceService implements OnDestroy {
 
         if (clsEntries.length > 0) {
           this.recordMetric('CLS', clsValue, {
-            entryCount: clsEntries.length
+            entryCount: clsEntries.length,
           });
 
           if (isDevMode()) {
@@ -394,9 +396,9 @@ export class PerformanceService implements OnDestroy {
         const entries = list.getEntries();
         entries.forEach((entry: any) => {
           const fcp = entry.renderTime || entry.loadTime;
-          
+
           this.recordMetric('FCP', fcp, {
-            name: entry.name
+            name: entry.name,
           });
 
           if (isDevMode()) {
@@ -424,13 +426,15 @@ export class PerformanceService implements OnDestroy {
 
     window.addEventListener('load', () => {
       setTimeout(() => {
-        const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+        const perfData = performance.getEntriesByType(
+          'navigation'
+        )[0] as PerformanceNavigationTiming;
         if (perfData) {
           const tti = perfData.domInteractive - perfData.fetchStart;
-          
+
           this.recordMetric('TTI', tti, {
             domContentLoaded: perfData.domContentLoadedEventEnd - perfData.fetchStart,
-            loadComplete: perfData.loadEventEnd - perfData.fetchStart
+            loadComplete: perfData.loadEventEnd - perfData.fetchStart,
           });
 
           if (isDevMode()) {
@@ -464,7 +468,7 @@ export class PerformanceService implements OnDestroy {
       this.memorySnapshots.push({
         timestamp: Date.now(),
         usedMB,
-        totalMB
+        totalMB,
       });
       if (this.memorySnapshots.length > this.MAX_MEMORY_SNAPSHOTS) {
         this.memorySnapshots.shift();
@@ -477,8 +481,12 @@ export class PerformanceService implements OnDestroy {
         const first = recent[0];
         if (last !== undefined && first !== undefined) {
           const trend = last.usedMB - first.usedMB;
-          if (trend > 10) { // 10MB growth in recent period
-            this.logger.warn(`Potential memory leak detected: ${trend.toFixed(2)}MB growth`, 'PerformanceService');
+          if (trend > 10) {
+            // 10MB growth in recent period
+            this.logger.warn(
+              `Potential memory leak detected: ${trend.toFixed(2)}MB growth`,
+              'PerformanceService'
+            );
           }
         }
       }
@@ -486,11 +494,14 @@ export class PerformanceService implements OnDestroy {
       this.recordMetric('memory', usedMB, {
         total: totalMB,
         limit: limitMB,
-        percentage: (usedMB / limitMB) * 100
+        percentage: (usedMB / limitMB) * 100,
       });
 
       if (usedMB > limitMB * 0.9) {
-        this.logger.warn(`High memory usage: ${usedMB.toFixed(2)}MB / ${limitMB.toFixed(2)}MB`, 'PerformanceService');
+        this.logger.warn(
+          `High memory usage: ${usedMB.toFixed(2)}MB / ${limitMB.toFixed(2)}MB`,
+          'PerformanceService'
+        );
       }
     };
 
@@ -513,7 +524,7 @@ export class PerformanceService implements OnDestroy {
   checkBudgets(): void {
     // Group metrics by name
     const metricsByName = new Map<string, number[]>();
-    this.metrics.forEach(metric => {
+    this.metrics.forEach((metric) => {
       if (!metricsByName.has(metric.name)) {
         metricsByName.set(metric.name, []);
       }
@@ -523,13 +534,13 @@ export class PerformanceService implements OnDestroy {
     // Check each budget
     for (const budget of this.budgets) {
       const metricValues = metricsByName.get(budget.name) || [];
-      
+
       if (metricValues.length === 0) {
         continue;
       }
 
       let value: number | undefined;
-      
+
       if (budget.type === 'duration') {
         value = metricValues.reduce((sum, v) => sum + v, 0) / metricValues.length;
       } else {
@@ -540,7 +551,7 @@ export class PerformanceService implements OnDestroy {
         }
         value = lastValue;
       }
-      
+
       if (value === undefined) {
         continue;
       }
@@ -556,10 +567,14 @@ export class PerformanceService implements OnDestroy {
   /**
    * Record a budget violation
    */
-  private recordViolation(budgetName: string, actual: number, threshold: number, severity: 'warning' | 'error'): void {
+  private recordViolation(
+    budgetName: string,
+    actual: number,
+    threshold: number,
+    severity: 'warning' | 'error'
+  ): void {
     const recentViolation = this.violations.find(
-      v => v.budget === budgetName && 
-           Date.now() - v.timestamp < 60000
+      (v) => v.budget === budgetName && Date.now() - v.timestamp < 60000
     );
 
     if (recentViolation) {
@@ -571,14 +586,15 @@ export class PerformanceService implements OnDestroy {
       actual,
       threshold,
       severity,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     this.violations.push(violation);
 
-    const message = `Performance budget violation: ${budgetName} ${severity.toUpperCase()}. ` +
-                   `Actual: ${actual.toFixed(2)}ms, Threshold: ${threshold}ms`;
-    
+    const message =
+      `Performance budget violation: ${budgetName} ${severity.toUpperCase()}. ` +
+      `Actual: ${actual.toFixed(2)}ms, Threshold: ${threshold}ms`;
+
     if (severity === 'error') {
       this.logger.error(message, 'PerformanceService');
     } else {
@@ -601,8 +617,8 @@ export class PerformanceService implements OnDestroy {
    * Get recent violations (last N minutes)
    */
   getRecentViolations(minutes = 5): typeof this.violations {
-    const cutoff = Date.now() - (minutes * 60 * 1000);
-    return this.violations.filter(v => v.timestamp > cutoff);
+    const cutoff = Date.now() - minutes * 60 * 1000;
+    return this.violations.filter((v) => v.timestamp > cutoff);
   }
 
   /**
@@ -629,8 +645,12 @@ export class PerformanceService implements OnDestroy {
   /**
    * Check a specific metric against its budget
    */
-  checkMetric(name: string, value: number, metadata?: Record<string, unknown>): 'ok' | 'warning' | 'error' {
-    const budget = this.budgets.find(b => b.name === name);
+  checkMetric(
+    name: string,
+    value: number,
+    metadata?: Record<string, unknown>
+  ): 'ok' | 'warning' | 'error' {
+    const budget = this.budgets.find((b) => b.name === name);
     if (!budget) {
       return 'ok';
     }
@@ -654,16 +674,15 @@ export class PerformanceService implements OnDestroy {
    * Clean up observers and intervals
    */
   ngOnDestroy(): void {
-    this.observers.forEach(observer => observer.disconnect());
+    this.observers.forEach((observer) => observer.disconnect());
     this.observers = [];
-    
+
     if (this.budgetCheckInterval) {
       clearInterval(this.budgetCheckInterval);
     }
-    
+
     if (this.memoryCheckInterval) {
       clearInterval(this.memoryCheckInterval);
     }
   }
 }
-

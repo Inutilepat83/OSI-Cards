@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { AICardConfig } from '../../models';
 import { LoggingService } from './logging.service';
 
@@ -13,9 +13,9 @@ export interface ExportOptions {
 
 /**
  * Export Service
- * 
+ *
  * Provides functionality to export cards in various formats (JSON, PDF, PNG, SVG).
- * 
+ *
  * @example
  * ```typescript
  * const exportService = inject(ExportService);
@@ -24,7 +24,7 @@ export interface ExportOptions {
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ExportService {
   private readonly logger = inject(LoggingService);
@@ -35,7 +35,7 @@ export class ExportService {
   async exportCard(card: AICardConfig, options: ExportOptions): Promise<void> {
     this.logger.info('Exporting card', 'ExportService', {
       format: options.format,
-      cardTitle: card.cardTitle
+      cardTitle: card.cardTitle,
     });
 
     switch (options.format) {
@@ -57,7 +57,7 @@ export class ExportService {
   async exportCards(cards: AICardConfig[], options: ExportOptions): Promise<void> {
     this.logger.info('Exporting multiple cards', 'ExportService', {
       format: options.format,
-      count: cards.length
+      count: cards.length,
     });
 
     switch (options.format) {
@@ -75,9 +75,7 @@ export class ExportService {
    */
   private async exportAsJson(card: AICardConfig, options: ExportOptions): Promise<void> {
     const data = options.includeMetadata ? card : this.removeMetadata(card);
-    const jsonString = options.prettyPrint
-      ? JSON.stringify(data, null, 2)
-      : JSON.stringify(data);
+    const jsonString = options.prettyPrint ? JSON.stringify(data, null, 2) : JSON.stringify(data);
 
     const blob = new Blob([jsonString], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -90,7 +88,7 @@ export class ExportService {
     URL.revokeObjectURL(url);
 
     this.logger.debug('Card exported as JSON', 'ExportService', {
-      filename: link.download
+      filename: link.download,
     });
   }
 
@@ -98,12 +96,8 @@ export class ExportService {
    * Export multiple cards as JSON array
    */
   private async exportMultipleAsJson(cards: AICardConfig[], options: ExportOptions): Promise<void> {
-    const data = cards.map(card => 
-      options.includeMetadata ? card : this.removeMetadata(card)
-    );
-    const jsonString = options.prettyPrint
-      ? JSON.stringify(data, null, 2)
-      : JSON.stringify(data);
+    const data = cards.map((card) => (options.includeMetadata ? card : this.removeMetadata(card)));
+    const jsonString = options.prettyPrint ? JSON.stringify(data, null, 2) : JSON.stringify(data);
 
     const blob = new Blob([jsonString], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -117,7 +111,7 @@ export class ExportService {
 
     this.logger.debug('Multiple cards exported as JSON', 'ExportService', {
       filename: link.download,
-      count: cards.length
+      count: cards.length,
     });
   }
 
@@ -130,27 +124,27 @@ export class ExportService {
     try {
       const { jsPDF } = await import('jspdf');
       const doc = new jsPDF();
-      
+
       // Add card title
       doc.setFontSize(18);
       doc.text(card.cardTitle, 10, 20);
-      
+
       let yPosition = 35;
-      
+
       // Add sections
       card.sections.forEach((section, index) => {
         if (yPosition > 250) {
           doc.addPage();
           yPosition = 20;
         }
-        
+
         doc.setFontSize(14);
         doc.text(section.title, 10, yPosition);
         yPosition += 10;
-        
+
         // Add fields
         if (section.fields) {
-          section.fields.forEach(field => {
+          section.fields.forEach((field) => {
             if (yPosition > 250) {
               doc.addPage();
               yPosition = 20;
@@ -161,16 +155,20 @@ export class ExportService {
             yPosition += 7;
           });
         }
-        
+
         yPosition += 5;
       });
-      
+
       const filename = options.filename || `${this.sanitizeFilename(card.cardTitle)}.pdf`;
       doc.save(filename);
-      
+
       this.logger.debug('Card exported as PDF', 'ExportService', { filename });
     } catch (error) {
-      this.logger.error('Failed to export as PDF. Install jsPDF: npm install jspdf', 'ExportService', { error });
+      this.logger.error(
+        'Failed to export as PDF. Install jsPDF: npm install jspdf',
+        'ExportService',
+        { error }
+      );
       throw new Error('PDF export requires jsPDF library. Install with: npm install jspdf');
     }
   }
@@ -182,32 +180,32 @@ export class ExportService {
     try {
       const { jsPDF } = await import('jspdf');
       const doc = new jsPDF();
-      
+
       cards.forEach((card, cardIndex) => {
         if (cardIndex > 0) {
           doc.addPage();
         }
-        
+
         let yPosition = 20;
-        
+
         // Add card title
         doc.setFontSize(18);
         doc.text(card.cardTitle, 10, yPosition);
         yPosition += 10;
-        
+
         // Add sections
-        card.sections.forEach(section => {
+        card.sections.forEach((section) => {
           if (yPosition > 250) {
             doc.addPage();
             yPosition = 20;
           }
-          
+
           doc.setFontSize(14);
           doc.text(section.title, 10, yPosition);
           yPosition += 10;
-          
+
           if (section.fields) {
-            section.fields.forEach(field => {
+            section.fields.forEach((field) => {
               if (yPosition > 250) {
                 doc.addPage();
                 yPosition = 20;
@@ -217,17 +215,17 @@ export class ExportService {
               yPosition += 7;
             });
           }
-          
+
           yPosition += 5;
         });
       });
-      
+
       const filename = options.filename || `cards-export-${Date.now()}.pdf`;
       doc.save(filename);
-      
+
       this.logger.debug('Multiple cards exported as PDF', 'ExportService', {
         filename,
-        count: cards.length
+        count: cards.length,
       });
     } catch (error) {
       this.logger.error('Failed to export as PDF', 'ExportService', { error });
@@ -249,12 +247,13 @@ export class ExportService {
     // PNG export using html2canvas
     try {
       const html2canvas = (await import('html2canvas')).default;
-      
+
       // Find the card element in the DOM
-      const cardElement = document.querySelector(`[data-card-id="${card.id}"]`) ||
-                         document.querySelector('app-ai-card-renderer') ||
-                         document.querySelector('app-card-preview');
-      
+      const cardElement =
+        document.querySelector(`[data-card-id="${card.id}"]`) ||
+        document.querySelector('app-ai-card-renderer') ||
+        document.querySelector('app-card-preview');
+
       if (!cardElement) {
         throw new Error('Card element not found in DOM');
       }
@@ -262,7 +261,7 @@ export class ExportService {
       const canvas = await html2canvas(cardElement as HTMLElement, {
         backgroundColor: null,
         scale: 2, // Higher quality
-        logging: false
+        logging: false,
       });
 
       canvas.toBlob((blob) => {
@@ -280,12 +279,18 @@ export class ExportService {
         URL.revokeObjectURL(url);
 
         this.logger.debug('Card exported as PNG', 'ExportService', {
-          filename: link.download
+          filename: link.download,
         });
       }, 'image/png');
     } catch (error) {
-      this.logger.error('Failed to export as image. Install html2canvas: npm install html2canvas', 'ExportService', { error });
-      throw new Error('Image export requires html2canvas library. Install with: npm install html2canvas');
+      this.logger.error(
+        'Failed to export as image. Install html2canvas: npm install html2canvas',
+        'ExportService',
+        { error }
+      );
+      throw new Error(
+        'Image export requires html2canvas library. Install with: npm install html2canvas'
+      );
     }
   }
 
@@ -323,10 +328,3 @@ export class ExportService {
     return this.getSupportedFormats().includes(format as ExportFormat);
   }
 }
-
-
-
-
-
-
-

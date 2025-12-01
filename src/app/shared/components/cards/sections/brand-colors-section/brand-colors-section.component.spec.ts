@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BrandColorsSectionComponent } from './brand-colors-section.component';
-import { SectionBuilder, FieldBuilder } from '../../../../testing/test-builders';
+import { FieldBuilder, SectionBuilder } from '../../../../testing/test-builders';
 
 describe('BrandColorsSectionComponent', () => {
   let component: BrandColorsSectionComponent;
@@ -8,29 +8,19 @@ describe('BrandColorsSectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BrandColorsSectionComponent]
+      imports: [BrandColorsSectionComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BrandColorsSectionComponent);
     component = fixture.componentInstance;
-    
+
     component.section = SectionBuilder.create()
       .withTitle('Brand Colors')
       .withType('brand-colors')
-      .withField(
-        FieldBuilder.create()
-          .withLabel('Primary')
-          .withValue('#FF7900')
-          .build()
-      )
-      .withField(
-        FieldBuilder.create()
-          .withLabel('Secondary')
-          .withValue('#FF9A3C')
-          .build()
-      )
+      .withField(FieldBuilder.create().withLabel('Primary').withValue('#FF7900').build())
+      .withField(FieldBuilder.create().withLabel('Secondary').withValue('#FF9A3C').build())
       .build();
-    
+
     fixture.detectChanges();
   });
 
@@ -64,12 +54,11 @@ describe('BrandColorsSectionComponent', () => {
     if (navigator.clipboard) {
       spyOn(navigator.clipboard, 'writeText').and.returnValue(Promise.resolve());
       const color = component.brandColors[0];
-      
+
       await component.onColorClick(color);
-      
+
       expect(navigator.clipboard.writeText).toHaveBeenCalledWith(color.hex);
       expect(component.copiedColorId).toBe(color.id);
     }
   });
 });
-

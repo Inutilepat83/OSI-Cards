@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
@@ -12,17 +12,6 @@ import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
   imports: [CommonModule, RouterModule, LucideIconsModule],
   templateUrl: './pricing.component.html',
   styleUrls: ['./pricing.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PricingComponent {}
-
-
-
-
-
-
-
-
-
-
-

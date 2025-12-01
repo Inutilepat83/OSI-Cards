@@ -76,36 +76,36 @@ export class TitleBasedSectionTypeResolver implements ISectionTypeResolver {
 
     // Title keywords mapping
     const titleMappings: Record<string, string> = {
-      'overview': 'overview',
-      'summary': 'overview',
-      'analytics': 'analytics',
-      'metrics': 'analytics',
-      'statistics': 'analytics',
-      'financial': 'financials',
-      'revenue': 'financials',
-      'pricing': 'financials',
-      'products': 'product',
-      'features': 'product',
-      'solutions': 'solutions',
-      'services': 'solutions',
-      'contacts': 'contact-card',
-      'team': 'contact-card',
-      'people': 'contact-card',
-      'network': 'network-card',
-      'connections': 'network-card',
-      'map': 'map',
-      'location': 'map',
-      'locations': 'map',
-      'chart': 'chart',
-      'graph': 'chart',
-      'quote': 'quotation',
-      'testimonial': 'quotation',
-      'news': 'news',
-      'announcement': 'news',
-      'social': 'social-media',
-      'timeline': 'event',
-      'events': 'event',
-      'schedule': 'event'
+      overview: 'overview',
+      summary: 'overview',
+      analytics: 'analytics',
+      metrics: 'analytics',
+      statistics: 'analytics',
+      financial: 'financials',
+      revenue: 'financials',
+      pricing: 'financials',
+      products: 'product',
+      features: 'product',
+      solutions: 'solutions',
+      services: 'solutions',
+      contacts: 'contact-card',
+      team: 'contact-card',
+      people: 'contact-card',
+      network: 'network-card',
+      connections: 'network-card',
+      map: 'map',
+      location: 'map',
+      locations: 'map',
+      chart: 'chart',
+      graph: 'chart',
+      quote: 'quotation',
+      testimonial: 'quotation',
+      news: 'news',
+      announcement: 'news',
+      social: 'social-media',
+      timeline: 'event',
+      events: 'event',
+      schedule: 'event',
     };
 
     for (const [keyword, resolvedType] of Object.entries(titleMappings)) {
@@ -130,7 +130,7 @@ export class TypeFirstSectionTypeResolver implements ISectionTypeResolver {
     }
 
     const type = (section.type ?? '').toLowerCase().trim();
-    
+
     if (type) {
       return type;
     }
@@ -140,5 +140,3 @@ export class TypeFirstSectionTypeResolver implements ISectionTypeResolver {
     return titleResolver.resolve(section);
   }
 }
-
-

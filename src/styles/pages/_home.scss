@@ -19,7 +19,7 @@
   animation: fadeInUp 0.8s ease-out 0.4s both;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 50%;
@@ -27,7 +27,7 @@
     width: 100%;
     max-width: 1400px;
     height: 100%;
-    background: 
+    background:
       radial-gradient(circle at 20% 30%, hsl(var(--primary) / 0.05) 0%, transparent 50%),
       radial-gradient(circle at 80% 70%, hsl(var(--primary) / 0.03) 0%, transparent 50%);
     pointer-events: none;
@@ -90,11 +90,7 @@
   color: hsl(var(--foreground));
   margin-bottom: 1rem;
   letter-spacing: -0.02em;
-  background: linear-gradient(
-    135deg,
-    hsl(var(--foreground)) 0%,
-    hsl(var(--foreground) / 0.7) 100%
-  );
+  background: linear-gradient(135deg, hsl(var(--foreground)) 0%, hsl(var(--foreground) / 0.7) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -125,7 +121,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 2rem;
-  
+
   @media (max-width: 640px) {
     grid-template-columns: 1fr;
     gap: 1.5rem;
@@ -142,11 +138,14 @@
   height: 250px;
   background: radial-gradient(
     circle,
-    color-mix(in srgb, #FF7900 20%, transparent) 0%,
+    color-mix(in srgb, #ff7900 20%, transparent) 0%,
     transparent 70%
   );
   opacity: 0;
-  transition: opacity 0.4s ease, width 0.4s ease, height 0.4s ease;
+  transition:
+    opacity 0.4s ease,
+    width 0.4s ease,
+    height 0.4s ease;
   pointer-events: none;
   z-index: 0;
 }
@@ -167,36 +166,36 @@
   animation: fadeInUp 0.6s ease-out backwards;
   overflow: hidden;
   text-align: center;
-  
+
   /* Stagger animation */
   @for $i from 1 through 6 {
     &:nth-child(#{$i}) {
       animation-delay: #{$i * 0.08}s;
     }
   }
-  
+
   /* Left accent border */
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     top: 0;
     bottom: 0;
     width: 3px;
-    background: linear-gradient(180deg, #FF7900, color-mix(in srgb, #FF7900 50%, transparent));
+    background: linear-gradient(180deg, #ff7900, color-mix(in srgb, #ff7900 50%, transparent));
     opacity: 0;
     transition: opacity 0.35s ease;
   }
-  
+
   /* Top glow effect */
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, transparent, #FF7900, transparent);
+    background: linear-gradient(90deg, transparent, #ff7900, transparent);
     opacity: 0;
     transition: opacity 0.35s ease;
   }
@@ -207,22 +206,25 @@
 
   &:hover {
     transform: translateY(-6px) !important;
-    box-shadow: 0 20px 40px color-mix(in srgb, var(--foreground) 15%, transparent),
-                0 8px 16px color-mix(in srgb, #FF7900 12%, transparent),
-                0 0 0 1px color-mix(in srgb, #FF7900 20%, transparent) !important;
-    border-color: color-mix(in srgb, #FF7900 30%, transparent) !important;
-    background: linear-gradient(135deg, 
+    box-shadow:
+      0 20px 40px color-mix(in srgb, var(--foreground) 15%, transparent),
+      0 8px 16px color-mix(in srgb, #ff7900 12%, transparent),
+      0 0 0 1px color-mix(in srgb, #ff7900 20%, transparent) !important;
+    border-color: color-mix(in srgb, #ff7900 30%, transparent) !important;
+    background: linear-gradient(
+      135deg,
       var(--hero-card-background) 0%,
-      color-mix(in srgb, var(--hero-card-background) 97%, #FF7900 3%) 100%) !important;
+      color-mix(in srgb, var(--hero-card-background) 97%, #ff7900 3%) 100%
+    ) !important;
 
     &::before {
       opacity: 1;
     }
-    
+
     &::after {
       opacity: 1;
     }
-    
+
     .capability-card-glow {
       opacity: 1;
       width: 300px;
@@ -231,13 +233,13 @@
 
     .capability-icon {
       transform: scale(1.15) rotateZ(5deg);
-      background: color-mix(in srgb, #FF7900 18%, transparent);
-      border-color: color-mix(in srgb, #FF7900 45%, transparent);
-      box-shadow: 0 4px 12px color-mix(in srgb, #FF7900 25%, transparent);
+      background: color-mix(in srgb, #ff7900 18%, transparent);
+      border-color: color-mix(in srgb, #ff7900 45%, transparent);
+      box-shadow: 0 4px 12px color-mix(in srgb, #ff7900 25%, transparent);
     }
-    
+
     h4 {
-      color: #FF7900;
+      color: #ff7900;
     }
   }
 }
@@ -254,13 +256,14 @@
   gap: 0.875rem;
   z-index: 1;
   box-shadow: var(--hero-card-box-shadow) !important;
-  transition: border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important,
-              background 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important,
-              box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important,
-              transform 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition:
+    border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important,
+    background 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important,
+    box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important,
+    transform 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
   animation: fadeInUp 0.6s ease-out backwards;
   overflow: hidden;
-  
+
   /* Stagger animation */
   @for $i from 1 through 6 {
     &:nth-child(#{$i}) {
@@ -312,20 +315,20 @@
   justify-content: center;
   width: 64px;
   height: 64px;
-  background: color-mix(in srgb, #FF7900 10%, transparent);
-  border: 2px solid color-mix(in srgb, #FF7900 30%, transparent);
+  background: color-mix(in srgb, #ff7900 10%, transparent);
+  border: 2px solid color-mix(in srgb, #ff7900 30%, transparent);
   border-radius: 1.25rem;
-  color: #FF7900;
+  color: #ff7900;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
   margin: 0 auto 1.5rem;
   position: relative;
   z-index: 1;
-  
+
   lucide-icon {
-    filter: drop-shadow(0 2px 4px color-mix(in srgb, #FF7900 20%, transparent));
+    filter: drop-shadow(0 2px 4px color-mix(in srgb, #ff7900 20%, transparent));
   }
-  
+
   @media (min-width: 640px) {
     width: 72px;
     height: 72px;
@@ -342,7 +345,7 @@
   margin: 0 0 1rem 0;
   letter-spacing: -0.02em;
   transition: color 0.35s ease;
-  
+
   @media (min-width: 640px) {
     font-size: 1.5rem;
   }
@@ -355,7 +358,7 @@
   margin: 0;
   font-weight: 400;
   transition: color 0.35s ease;
-  
+
   @media (min-width: 640px) {
     font-size: 1.0625rem;
   }
@@ -374,7 +377,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {

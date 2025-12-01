@@ -72,7 +72,7 @@ export abstract class CacheableService<T> extends BaseService implements ICachea
   protected setCached(key: string, data: T): void {
     this.cache.set(key, {
       data,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -111,4 +111,3 @@ export abstract class CacheableService<T> extends BaseService implements ICachea
     super.ngOnDestroy();
   }
 }
-

@@ -17,7 +17,7 @@ interface SolutionField extends CardField {
   standalone: true,
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './solutions-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SolutionsSectionComponent extends BaseSectionComponent<SolutionField> {
   get fields(): SolutionField[] {

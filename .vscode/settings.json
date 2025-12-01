@@ -1,66 +1,110 @@
 {
-  "css.validate": false,
-  "less.validate": false,
-  "scss.validate": false,
-  "files.associations": {
-    "*.css": "postcss"
-  },
-  "emmet.includeLanguages": {
-    "postcss": "html"
-  },
-  "yaml.schemas": {
-    "https://json.schemastore.org/github-workflow.json": [
-      ".github/workflows/*.yml",
-      ".github/workflows/*.yaml"
-    ]
-  },
-  "yaml.validate": true,
-  "yaml.format.enable": true,
-  "yaml.format.singleQuote": false,
-  "yaml.format.bracketSpacing": true,
-  // Removed CloudFormation intrinsic function tags – not needed for GitHub Actions and can trigger false positives
-  // If you later add AWS SAM/CloudFormation templates, reintroduce the needed intrinsic tags here.
-  "yaml.customTags": [],
-  // Enhanced YAML language server features
-  "yaml.schemaStore.enable": true,
-  "yaml.hover": true,
-  "yaml.completion": true,
-  "yaml.format.printWidth": 120,
-  // General editor / lint improvements
+  // ============================================================================
+  // EDITOR SETTINGS
+  // ============================================================================
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit",
     "source.fixAll.eslint": "explicit"
   },
+  "editor.rulers": [100, 120],
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+
+  // ============================================================================
+  // FILE SETTINGS
+  // ============================================================================
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.angular": true
+  },
+  "files.associations": {
+    "*.component.html": "html",
+    "*.scss": "scss"
+  },
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  // ============================================================================
+  // TYPESCRIPT SETTINGS
+  // ============================================================================
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.suggest.completeFunctionCalls": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+
+  // ============================================================================
+  // ANGULAR SETTINGS
+  // ============================================================================
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // ============================================================================
+  // SEARCH SETTINGS
+  // ============================================================================
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.angular": true,
+    "**/coverage": true,
+    "**/playwright-report": true,
+    "**/e2e-results": true
+  },
+
+  // ============================================================================
+  // ESLINT SETTINGS
+  // ============================================================================
   "eslint.validate": [
     "javascript",
     "javascriptreact",
     "typescript",
-    "typescriptreact",
-    "json",
-    "yaml"
+    "typescriptreact"
   ],
-  // Prefer Prettier where available; fallback is YAML formatter
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  // Suppress overly verbose YAML server trace output
-  "yaml.trace.server": "off",
-  "editor.quickSuggestions": {
-    "strings": true
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+
+  // ============================================================================
+  // PRETTIER SETTINGS
+  // ============================================================================
+  "prettier.singleQuote": true,
+  "prettier.trailingComma": "none",
+  "prettier.printWidth": 100,
+
+  // ============================================================================
+  // TESTING SETTINGS
+  // ============================================================================
+  "testing.automaticallyOpenPeekView": "failureVisible",
+
+  // ============================================================================
+  // OSI CARDS SPECIFIC
+  // ============================================================================
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/.angular/**": true
   },
-  "editor.suggestOnTriggerCharacters": true
-  ,
-  // Suppress noisy false-positive diagnostics from YAML / GitHub Actions validators for this large workflow
-  // Remove this block if you need to investigate real syntax issues in the workflow file.
-  "problems.exclude": {
-    "**/.github/workflows/ci-cd.yml": true
-  },
-  "chat.mcp.serverSampling": {
-    "OSI-Cards/.vscode/mcp.json: mcpServers": {
-      "allowedModels": [
-        "copilot/gpt-5.1-codex-mini"
-      ]
-    }
-  },
-  "[toon]": {
-    "editor.defaultFormatter": "oaslananka.vscode-toon-tools"
-  }
+
+  // Recommended extensions for this project
+  "recommendations": [
+    "angular.ng-template",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    "ms-playwright.playwright",
+    "nrwl.angular-console"
+  ]
 }

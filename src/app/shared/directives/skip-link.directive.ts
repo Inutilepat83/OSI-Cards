@@ -2,10 +2,10 @@ import { Directive, ElementRef, HostListener, inject, OnInit, Renderer2 } from '
 
 /**
  * Skip Link Directive
- * 
+ *
  * Provides skip navigation links for keyboard users to jump to main content areas.
  * Improves accessibility by allowing users to bypass repetitive navigation.
- * 
+ *
  * @example
  * ```html
  * <a appSkipLink="#main-content">Skip to main content</a>
@@ -13,7 +13,7 @@ import { Directive, ElementRef, HostListener, inject, OnInit, Renderer2 } from '
  */
 @Directive({
   selector: '[appSkipLink]',
-  standalone: true
+  standalone: true,
 })
 export class SkipLinkDirective implements OnInit {
   @HostListener('click', ['$event'])
@@ -46,7 +46,7 @@ export class SkipLinkDirective implements OnInit {
       this.renderer.setAttribute(element, 'role', 'link');
       this.renderer.setAttribute(element, 'tabindex', '0');
     }
-    
+
     // Add skip link styling
     this.renderer.addClass(element, 'skip-link');
   }
@@ -54,23 +54,23 @@ export class SkipLinkDirective implements OnInit {
   private getTargetId(): string | null {
     const element = this.el.nativeElement;
     const href = element.getAttribute('href') || element.getAttribute('appSkipLink');
-    
+
     if (href) {
       // Remove # if present
       return href.startsWith('#') ? href.substring(1) : href;
     }
-    
+
     return null;
   }
 
   private navigateToTarget(targetId: string): void {
     const target = document.getElementById(targetId);
-    
+
     if (target) {
       // Focus the target element
       target.focus();
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      
+
       // Add temporary focus indicator
       target.classList.add('skip-link-target');
       setTimeout(() => {

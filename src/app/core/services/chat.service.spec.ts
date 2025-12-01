@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { ChatService, ChatMessage } from './chat.service';
+import { ChatMessage, ChatService } from './chat.service';
 import { LoggingService } from './logging.service';
 
 describe('ChatService', () => {
@@ -10,10 +10,7 @@ describe('ChatService', () => {
     const loggingSpy = jasmine.createSpyObj('LoggingService', ['info']);
 
     TestBed.configureTestingModule({
-      providers: [
-        ChatService,
-        { provide: LoggingService, useValue: loggingSpy }
-      ]
+      providers: [ChatService, { provide: LoggingService, useValue: loggingSpy }],
     });
     service = TestBed.inject(ChatService);
     loggingService = TestBed.inject(LoggingService) as jasmine.SpyObj<LoggingService>;
@@ -26,8 +23,8 @@ describe('ChatService', () => {
   describe('sendMessage', () => {
     it('should add message to history', (done) => {
       service.sendMessage('Hello, agent!');
-      
-      service.messages$.subscribe(messages => {
+
+      service.messages$.subscribe((messages) => {
         expect(messages.length).toBe(1);
         expect(messages[0].text).toBe('Hello, agent!');
         expect(messages[0].sender).toBe('user');
@@ -39,7 +36,7 @@ describe('ChatService', () => {
 
     it('should log message sent', () => {
       service.sendMessage('Test message');
-      
+
       expect(loggingService.info).toHaveBeenCalledWith(
         'User message sent',
         'ChatService',
@@ -50,8 +47,8 @@ describe('ChatService', () => {
     it('should include metadata when provided', (done) => {
       const metadata = { source: 'test', priority: 'high' };
       service.sendMessage('Test', metadata);
-      
-      service.messages$.subscribe(messages => {
+
+      service.messages$.subscribe((messages) => {
         expect(messages[0].metadata).toEqual(metadata);
         done();
       });
@@ -64,12 +61,12 @@ describe('ChatService', () => {
         id: 'msg-1',
         sender: 'agent',
         text: 'Response message',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
-      
+
       service.addMessage(message);
-      
-      service.messages$.subscribe(messages => {
+
+      service.messages$.subscribe((messages) => {
         expect(messages.length).toBe(1);
         expect(messages[0]).toEqual(message);
         done();
@@ -79,8 +76,8 @@ describe('ChatService', () => {
     it('should append to existing messages', (done) => {
       service.sendMessage('First message');
       service.sendMessage('Second message');
-      
-      service.messages$.subscribe(messages => {
+
+      service.messages$.subscribe((messages) => {
         expect(messages.length).toBe(2);
         expect(messages[0].text).toBe('First message');
         expect(messages[1].text).toBe('Second message');
@@ -94,8 +91,8 @@ describe('ChatService', () => {
       service.sendMessage('Message 1');
       service.sendMessage('Message 2');
       service.clearHistory();
-      
-      service.messages$.subscribe(messages => {
+
+      service.messages$.subscribe((messages) => {
         expect(messages.length).toBe(0);
         done();
       });
@@ -103,22 +100,8 @@ describe('ChatService', () => {
 
     it('should log history cleared', () => {
       service.clearHistory();
-      
-      expect(loggingService.info).toHaveBeenCalledWith(
-        'Chat history cleared',
-        'ChatService'
-      );
+
+      expect(loggingService.info).toHaveBeenCalledWith('Chat history cleared', 'ChatService');
     });
   });
 });
-
-
-
-
-
-
-
-
-
-
-

@@ -33,7 +33,11 @@
               <h3 class="event-card__title">
                 {{ event.title }}
               </h3>
-              <span *ngIf="event.status" class="event-card__badge" [attr.data-status]="event.status ? (event.status + '') : null">
+              <span
+                *ngIf="event.status"
+                class="event-card__badge"
+                [attr.data-status]="event.status ? event.status + '' : null"
+              >
                 {{ event.status | uppercase }}
               </span>
             </header>

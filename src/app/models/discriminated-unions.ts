@@ -1,10 +1,10 @@
 /**
  * Discriminated Unions for Section Types
- * 
+ *
  * Provides type-safe discriminated unions for different section types.
  * This ensures type safety when working with different section types
  * and their specific properties.
- * 
+ *
  * @example
  * ```typescript
  * function processSection(section: DiscriminatedSection): void {
@@ -22,7 +22,7 @@
  * ```
  */
 
-import { CardSection, CardField, CardItem } from './card.model';
+import { CardField, CardItem, CardSection } from './card.model';
 
 /**
  * Base section properties shared by all section types
@@ -249,7 +249,7 @@ export interface FallbackSection extends BaseSection {
 
 /**
  * Discriminated union of all section types
- * 
+ *
  * This union type ensures type safety when working with sections.
  * TypeScript will narrow the type based on the 'type' property.
  */
@@ -285,7 +285,9 @@ export function isInfoSection(section: CardSection): section is CardSection & { 
  * Type guard to check if a section is an AnalyticsSection
  * Note: Returns CardSection with narrowed type for practical use
  */
-export function isAnalyticsSection(section: CardSection): section is CardSection & { type: 'analytics' | 'metrics' | 'stats' } {
+export function isAnalyticsSection(
+  section: CardSection
+): section is CardSection & { type: 'analytics' | 'metrics' | 'stats' } {
   return section.type === 'analytics' || section.type === 'metrics' || section.type === 'stats';
 }
 
@@ -293,7 +295,9 @@ export function isAnalyticsSection(section: CardSection): section is CardSection
  * Type guard to check if a section is a ListSection
  * Note: Returns CardSection with narrowed type for practical use
  */
-export function isListSection(section: CardSection): section is CardSection & { type: 'list' | 'table' } {
+export function isListSection(
+  section: CardSection
+): section is CardSection & { type: 'list' | 'table' } {
   return section.type === 'list' || section.type === 'table';
 }
 
@@ -329,4 +333,3 @@ export function narrowSectionType<T extends DiscriminatedSection['type']>(
 ): section is CardSection & { type: T } {
   return section.type === type;
 }
-

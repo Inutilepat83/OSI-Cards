@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 
 export interface ConfirmationDialogOptions {
   title: string;
@@ -18,7 +18,7 @@ export interface ConfirmationDialogResult {
  * Manages confirmation dialogs for destructive actions
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ConfirmationDialogService {
   private readonly dialogSubject = new Subject<{
@@ -37,7 +37,7 @@ export class ConfirmationDialogService {
   confirm(options: ConfirmationDialogOptions): Promise<boolean> {
     return new Promise((resolve) => {
       const result = new Subject<ConfirmationDialogResult>();
-      
+
       result.subscribe((dialogResult) => {
         resolve(dialogResult.confirmed);
       });
@@ -47,12 +47,10 @@ export class ConfirmationDialogService {
           confirmText: options.confirmText || 'Confirm',
           cancelText: options.cancelText || 'Cancel',
           confirmButtonClass: options.confirmButtonClass || 'primary',
-          ...options
+          ...options,
         },
-        result
+        result,
       });
     });
   }
 }
-
-

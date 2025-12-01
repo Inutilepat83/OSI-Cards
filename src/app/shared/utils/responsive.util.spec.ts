@@ -1,4 +1,11 @@
-import { getBreakpointFromWidth, Breakpoint, getOptimalColumns, isMobile, isTablet, isDesktop } from './responsive.util';
+import {
+  Breakpoint,
+  getBreakpointFromWidth,
+  getOptimalColumns,
+  isDesktop,
+  isMobile,
+  isTablet,
+} from './responsive.util';
 
 describe('ResponsiveUtil', () => {
   describe('getBreakpointFromWidth', () => {
@@ -50,4 +57,3 @@ describe('ResponsiveUtil', () => {
     });
   });
 });
-

@@ -8,18 +8,18 @@ describe('TextReferenceSectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TextReferenceSectionComponent]
+      imports: [TextReferenceSectionComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TextReferenceSectionComponent);
     component = fixture.componentInstance;
-    
+
     component.section = SectionBuilder.create()
       .withTitle('Reference')
       .withType('text-reference')
       .withDescription('This is a reference text')
       .build();
-    
+
     fixture.detectChanges();
   });
 
@@ -31,21 +31,3 @@ describe('TextReferenceSectionComponent', () => {
     expect(component.section.description).toBe('This is a reference text');
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

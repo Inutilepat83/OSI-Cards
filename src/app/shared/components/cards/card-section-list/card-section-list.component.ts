@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardSection } from '../../../../models';
 import { MasonryGridComponent, MasonryLayoutInfo } from '../masonry-grid/masonry-grid.component';
@@ -7,7 +7,7 @@ import { ErrorBoundaryComponent } from '../../../../core/error-boundary/error-bo
 
 /**
  * Card Section List Component
- * 
+ *
  * Manages the rendering of card sections through the masonry grid.
  * Extracted from AICardRendererComponent for better separation of concerns.
  */
@@ -17,7 +17,7 @@ import { ErrorBoundaryComponent } from '../../../../core/error-boundary/error-bo
   imports: [CommonModule, MasonryGridComponent, ErrorBoundaryComponent],
   templateUrl: './card-section-list.component.html',
   styleUrls: ['./card-section-list.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardSectionListComponent {
   @Input() sections: CardSection[] = [];
@@ -39,10 +39,3 @@ export class CardSectionListComponent {
   trackSection = (_index: number, section: CardSection): string =>
     section.id ?? `${section.title}-${_index}`;
 }
-
-
-
-
-
-
-

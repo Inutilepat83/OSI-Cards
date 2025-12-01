@@ -1,8 +1,8 @@
 /**
  * Streaming Services Module
- * 
+ *
  * Exports all streaming-related services, interfaces, and utilities.
- * 
+ *
  * @since 2.0.0
  */
 
@@ -16,29 +16,25 @@ export * from './streaming-errors';
 export * from './streaming-state-machine';
 
 // JSON parser
-export { 
+export {
   StreamingJsonParser,
   ParsedResult,
   ParserState,
   parseStreamingChunks,
-  parseStreamingJson
+  parseStreamingJson,
 } from './streaming-json-parser.service';
 
 // Transport implementations
 export { SseStreamingTransport } from './sse-streaming-transport.service';
 export { FetchStreamingTransport } from './fetch-streaming-transport.service';
-export { 
+export {
   WebSocketStreamingTransport,
   WebSocketMessage,
-  WebSocketMessageType
+  WebSocketMessageType,
 } from './websocket-streaming-transport.service';
 
 // Worker service
-export { 
-  StreamingWorkerService,
-  WorkerStatus,
-  WorkerConfig
-} from './streaming-worker.service';
+export { StreamingWorkerService, WorkerStatus, WorkerConfig } from './streaming-worker.service';
 
 // Worker types (for advanced usage)
 export type {
@@ -54,14 +50,14 @@ export type {
   ValidateCardPayload,
   ValidateCardResult,
   ExtractSectionsPayload,
-  ExtractSectionsResult
+  ExtractSectionsResult,
 } from './streaming-worker';
 
 // Factory
-export { 
+export {
   StreamingTransportFactoryService,
   ProtocolCapabilities,
-  provideStreamingTransport
+  provideStreamingTransport,
 } from './streaming-transport-factory.service';
 
 // Progress tracking
@@ -71,7 +67,7 @@ export {
   SectionProgress,
   StreamingProgressStage,
   ProgressUpdate,
-  formatProgress
+  formatProgress,
 } from './streaming-progress.service';
 
 // Mock/Test utilities
@@ -83,7 +79,7 @@ export {
   generateMockChunks,
   assertStateTransitions,
   waitForStreamingComplete,
-  collectChunks
+  collectChunks,
 } from './mock-streaming.service';
 
 // Orchestrator (high-level API)
@@ -91,6 +87,5 @@ export {
   StreamingOrchestratorService,
   StreamingOrchestratorConfig,
   CardStreamUpdate,
-  StreamingSession
+  StreamingSession,
 } from './streaming-orchestrator.service';
-

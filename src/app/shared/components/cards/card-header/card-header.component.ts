@@ -1,10 +1,10 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideIconsModule } from '../../../icons/lucide-icons.module';
 
 /**
  * Card Header Component
- * 
+ *
  * Displays the card title and export button.
  * Extracted from AICardRendererComponent for better separation of concerns.
  */
@@ -14,7 +14,7 @@ import { LucideIconsModule } from '../../../icons/lucide-icons.module';
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './card-header.component.html',
   styleUrls: ['./card-header.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardHeaderComponent {
   @Input() cardTitle?: string;
@@ -25,10 +25,3 @@ export class CardHeaderComponent {
     this.export.emit();
   }
 }
-
-
-
-
-
-
-

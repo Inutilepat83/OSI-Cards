@@ -47,9 +47,9 @@ export async function processInChunks<T, R>(
   for (const chunk of chunks) {
     const chunkResults = await processor(chunk);
     results.push(...chunkResults);
-    
+
     // Allow garbage collection between chunks
-    await new Promise(resolve => setTimeout(resolve, 0));
+    await new Promise((resolve) => setTimeout(resolve, 0));
   }
 
   return results;
@@ -68,7 +68,7 @@ export function getMemoryUsage(): {
     return {
       used: memory.usedJSHeapSize,
       total: memory.totalJSHeapSize,
-      percentage: (memory.usedJSHeapSize / memory.totalJSHeapSize) * 100
+      percentage: (memory.usedJSHeapSize / memory.totalJSHeapSize) * 100,
     };
   }
   return null;
@@ -93,5 +93,3 @@ export function forceGarbageCollection(): void {
     (window as any).gc();
   }
 }
-
-

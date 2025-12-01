@@ -23,7 +23,7 @@ describe('MemoizationUtil', () => {
 
     it('should handle multiple arguments', () => {
       const fn = memoize((a: number, b: number) => a + b);
-      
+
       expect(fn(1, 2)).toBe(3);
       expect(fn(1, 2)).toBe(3); // Cached
       expect(fn(2, 3)).toBe(5); // New call
@@ -31,7 +31,7 @@ describe('MemoizationUtil', () => {
 
     it('should handle different argument types', () => {
       const fn = memoize((str: string, num: number) => `${str}-${num}`);
-      
+
       expect(fn('test', 1)).toBe('test-1');
       expect(fn('test', 1)).toBe('test-1'); // Cached
     });
@@ -90,4 +90,3 @@ describe('MemoizationUtil', () => {
     });
   });
 });
-

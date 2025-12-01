@@ -15,7 +15,7 @@ interface TimelineEvent extends CardItem {
   standalone: true,
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './event-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventSectionComponent extends BaseSectionComponent<TimelineEvent> {
   get events(): TimelineEvent[] {

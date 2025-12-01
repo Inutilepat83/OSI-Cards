@@ -15,17 +15,17 @@ type ListEntry = (CardItem & CardField) & {
 
 /**
  * List Section Component
- * 
+ *
  * Displays items in a list format with titles, descriptions, and optional metadata.
  * Ideal for task lists, product catalogs, and any collection of items.
- * 
+ *
  * Features:
  * - Item list display with titles and descriptions
  * - Priority and assignee support
  * - Date display
  * - Item interaction events
  * - Streaming placeholder handling
- * 
+ *
  * @example
  * ```html
  * <app-list-section
@@ -39,14 +39,12 @@ type ListEntry = (CardItem & CardField) & {
   standalone: true,
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './list-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ListSectionComponent extends BaseSectionComponent<ListEntry> {
-
   get items(): ListEntry[] {
     return super.getItems() as ListEntry[];
   }
-
 
   onItemClick(item: ListEntry): void {
     this.emitItemInteraction(item);

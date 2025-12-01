@@ -15,15 +15,12 @@ describe('LoggingService', () => {
       LOGGING: {
         LOG_LEVEL: 'debug' as LogLevel,
         ENABLE_DEBUG: true,
-        ENABLE_SECTION_STATE_LOGGING: true
-      }
+        ENABLE_SECTION_STATE_LOGGING: true,
+      },
     });
 
     TestBed.configureTestingModule({
-      providers: [
-        LoggingService,
-        { provide: AppConfigService, useValue: appConfigSpy }
-      ]
+      providers: [LoggingService, { provide: AppConfigService, useValue: appConfigSpy }],
     });
 
     service = TestBed.inject(LoggingService);
@@ -66,9 +63,9 @@ describe('LoggingService', () => {
         value: {
           LOG_LEVEL: 'info' as LogLevel,
           ENABLE_DEBUG: false,
-          ENABLE_SECTION_STATE_LOGGING: false
+          ENABLE_SECTION_STATE_LOGGING: false,
         },
-        configurable: true
+        configurable: true,
       });
 
       service.debug('Debug message');
@@ -77,7 +74,10 @@ describe('LoggingService', () => {
 
     it('should log with context', () => {
       service.info('Message', 'MyContext');
-      expect(consoleInfoSpy).toHaveBeenCalledWith(jasmine.stringContaining('[MyContext]'), jasmine.any(Object));
+      expect(consoleInfoSpy).toHaveBeenCalledWith(
+        jasmine.stringContaining('[MyContext]'),
+        jasmine.any(Object)
+      );
     });
 
     it('should log with data', () => {
@@ -170,9 +170,9 @@ describe('LoggingService', () => {
         value: {
           LOG_LEVEL: 'warn' as LogLevel,
           ENABLE_DEBUG: false,
-          ENABLE_SECTION_STATE_LOGGING: false
+          ENABLE_SECTION_STATE_LOGGING: false,
         },
-        configurable: true
+        configurable: true,
       });
 
       service.debug('Debug message');
@@ -207,14 +207,3 @@ describe('LoggingService', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-
-
-

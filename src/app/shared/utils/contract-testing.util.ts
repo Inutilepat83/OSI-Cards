@@ -14,7 +14,10 @@ export interface ApiContract {
 /**
  * Validate request against contract
  */
-export function validateRequestContract(request: any, contract: ApiContract): {
+export function validateRequestContract(
+  request: any,
+  contract: ApiContract
+): {
   isValid: boolean;
   errors: string[];
 } {
@@ -34,14 +37,17 @@ export function validateRequestContract(request: any, contract: ApiContract): {
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
 /**
  * Validate response against contract
  */
-export function validateResponseContract(response: any, contract: ApiContract): {
+export function validateResponseContract(
+  response: any,
+  contract: ApiContract
+): {
   isValid: boolean;
   errors: string[];
 } {
@@ -61,8 +67,6 @@ export function validateResponseContract(response: any, contract: ApiContract): 
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 }
-
-

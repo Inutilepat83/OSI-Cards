@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy, inject, DestroyRef } from '@angular/core';
+import { DestroyRef, inject, Injectable, OnDestroy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LoggingService } from '../logging.service';
 import { IBaseService, IErrorHandlingService, ILoggingService } from './base-service.interface';
@@ -12,10 +12,12 @@ import { IBaseService, IErrorHandlingService, ILoggingService } from './base-ser
  * - Resource cleanup
  */
 @Injectable()
-export abstract class BaseService implements IBaseService, IErrorHandlingService, ILoggingService, OnDestroy {
+export abstract class BaseService
+  implements IBaseService, IErrorHandlingService, ILoggingService, OnDestroy
+{
   protected readonly logger = inject(LoggingService);
   protected readonly destroyRef = inject(DestroyRef);
-  
+
   protected readonly errorHistory: Error[] = [];
   protected readonly maxErrorHistory = 100;
 
@@ -31,9 +33,7 @@ export abstract class BaseService implements IBaseService, IErrorHandlingService
    * Handle an error
    */
   handleError(error: Error, context?: string): void {
-    const errorWithContext = new Error(
-      context ? `[${context}] ${error.message}` : error.message
-    );
+    const errorWithContext = new Error(context ? `[${context}] ${error.message}` : error.message);
     errorWithContext.stack = error.stack;
 
     this.errorHistory.push(errorWithContext);
@@ -96,7 +96,3 @@ export abstract class BaseService implements IBaseService, IErrorHandlingService
     return takeUntilDestroyed(this.destroyRef);
   }
 }
-
-
-
-

@@ -12,9 +12,9 @@ This prompt is dynamically generated from `section-registry.json` - the single s
 | ---------------- | ------------------------ |
 | Section Types    | 17                       |
 | Type Aliases     | 11                       |
-| Characters       | 28,201                   |
-| Estimated Tokens | ~7,051                   |
-| Generated        | 2025-12-01T09:10:02.055Z |
+| Characters       | 28,992                   |
+| Estimated Tokens | ~7,248                   |
+| Generated        | 2025-12-01T11:11:28.192Z |
 
 ## How to Use
 
@@ -59,23 +59,23 @@ info, analytics, contact-card, network-card, map, financials, event, list, chart
 
 QUICK REFERENCE:
 Type | Data | Aliases | Use Case
-info | fields | - | Company information
+info | fields | project | Company information
 analytics | fields | metrics/stats | Performance metrics
 contact-card | fields | - | Team members
 network-card | items | - | Org charts
 map | fields | locations | Office locations
 financials | fields | - | Financial reports
-event | items | timeline | Event calendars
+event | fields | timeline | Event calendars
 list | items | table | Product lists
 chart | chartData | - | Data visualization
 product | fields | - | Product catalogs
-solutions | items | - | Service offerings
+solutions | fields | - | Service offerings
 overview | fields | - | Executive summaries
 quotation | fields | quote | Testimonials
 text-reference | fields | reference/text-ref | Articles
 brand-colors | fields | brands/colors | Brand assets
 news | items | - | News feeds
-social-media | items | - | Social feeds
+social-media | fields | - | Social feeds
 
 TYPE ALIASES:
 metrics -> analytics
@@ -92,7 +92,7 @@ project -> info
 
 SECTION DETAILS:
 
-### info
+### info (aliases: project)
 
 Displays key-value pairs in a clean, scannable format. Ideal for metadata, contact information, and general data display.
 
@@ -273,11 +273,17 @@ Displays financial data including revenue, expenses, P&L statements, and currenc
 
 Displays chronological events, timelines, schedules, and calendar information.
 
-**Data Structure:** items
+**Data Structure:** fields
 **Use Cases:** Event calendars, Project timelines, Schedules, Milestones
 
 **Schema:**
-  No specific schema
+  - label: string - Event label
+  - value: string - Event name/description
+  - date: string - Event date
+  - time: string - Event time
+  - category: string - Event category
+  - status: string - Event status [confirmed, planned, tentative, cancelled, completed]
+  - location: string - Event location
 
 **Example:**
 {
@@ -385,11 +391,17 @@ Displays product information, features, benefits, and pricing.
 
 Displays solution offerings, use cases, features, and benefits.
 
-**Data Structure:** items
+**Data Structure:** fields
 **Use Cases:** Service offerings, Solution portfolios, Use cases, Case studies
 
 **Schema:**
-  No specific schema
+  - title: string (required) - Solution title
+  - description: string - Solution description
+  - category: string - Solution category
+  - benefits: array - List of benefits
+  - deliveryTime: string - Delivery timeframe
+  - complexity: string - Implementation complexity [low, medium, high]
+  - outcomes: array - Expected outcomes
 
 **Example:**
 {
@@ -546,11 +558,14 @@ Displays news articles, headlines, and press releases. Supports source attributi
 
 Displays social media posts, engagement metrics, and social feed content.
 
-**Data Structure:** items
+**Data Structure:** fields
 **Use Cases:** Social feeds, Engagement tracking, Social monitoring, Content aggregation
 
 **Schema:**
-  No specific schema
+  - platform: string - Social platform [twitter, linkedin, facebook, instagram]
+  - handle: string - Social media handle
+  - url: string - Profile URL
+  - followers: number - Follower count
 
 **Example:**
 {
@@ -564,6 +579,7 @@ Displays social media posts, engagement metrics, and social feed content.
   ]
 }
 
+---
 
 ACTION BUTTONS:
 

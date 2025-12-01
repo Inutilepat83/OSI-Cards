@@ -8,17 +8,17 @@ describe('FallbackSectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FallbackSectionComponent]
+      imports: [FallbackSectionComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(FallbackSectionComponent);
     component = fixture.componentInstance;
-    
+
     component.section = SectionBuilder.create()
       .withTitle('Unknown Section')
       .withType('unknown' as any)
       .build();
-    
+
     fixture.detectChanges();
   });
 
@@ -30,21 +30,3 @@ describe('FallbackSectionComponent', () => {
     expect(component.section.title).toBe('Unknown Section');
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

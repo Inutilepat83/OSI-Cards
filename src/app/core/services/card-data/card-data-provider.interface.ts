@@ -32,21 +32,21 @@ export interface ProviderStatus {
 /**
  * Abstract interface for card data providers
  * Allows pluggable data sources (JSON, WebSocket, API, etc.)
- * 
+ *
  * All card data providers must implement this interface to ensure
  * consistent behavior across different data sources.
- * 
+ *
  * @example
  * ```typescript
  * export class MyCustomProvider extends CardDataProvider {
  *   getAllCards(): Observable<AICardConfig[]> {
  *     // Implementation
  *   }
- *   
+ *
  *   getCardsByType(cardType: CardType): Observable<AICardConfig[]> {
  *     // Implementation
  *   }
- *   
+ *
  *   getCardById(id: string): Observable<AICardConfig | null> {
  *     // Implementation
  *   }

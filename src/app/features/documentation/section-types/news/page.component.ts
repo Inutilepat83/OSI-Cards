@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
 import { DocsDemoComponent } from '../../components';
 
@@ -107,29 +107,29 @@ The **News Section** (\`type: "news"\`) is used for displays news articles, head
 `;
 
 const demoConfig = {
-  "title": "Latest News",
-  "type": "news",
-  "description": "Recent company news and announcements",
-  "items": [
+  title: 'Latest News',
+  type: 'news',
+  description: 'Recent company news and announcements',
+  items: [
     {
-      "title": "Q4 Earnings Beat Expectations",
-      "description": "Company reports 25% revenue growth in Q4 2024",
-      "meta": {
-        "source": "Bloomberg",
-        "date": "2025-01-15"
+      title: 'Q4 Earnings Beat Expectations',
+      description: 'Company reports 25% revenue growth in Q4 2024',
+      meta: {
+        source: 'Bloomberg',
+        date: '2025-01-15',
       },
-      "status": "published"
+      status: 'published',
     },
     {
-      "title": "New Product Launch Announced",
-      "description": "Enterprise Suite 4.0 coming Spring 2025",
-      "meta": {
-        "source": "Press Release",
-        "date": "2025-01-10"
+      title: 'New Product Launch Announced',
+      description: 'Enterprise Suite 4.0 coming Spring 2025',
+      meta: {
+        source: 'Press Release',
+        date: '2025-01-10',
       },
-      "status": "published"
-    }
-  ]
+      status: 'published',
+    },
+  ],
 };
 
 /**
@@ -142,8 +142,8 @@ const demoConfig = {
   imports: [DocPageComponent, DocsDemoComponent],
   template: `
     <div class="section-docs">
-      <app-docs-demo 
-        [config]="demo" 
+      <app-docs-demo
+        [config]="demo"
         [type]="'news'"
         demoTitle="Live Preview"
         height="350px"
@@ -151,14 +151,16 @@ const demoConfig = {
       <app-doc-page [content]="content"></app-doc-page>
     </div>
   `,
-  styles: [`
-    .section-docs {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styles: [
+    `
+      .section-docs {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewsPageComponent {
   content = pageContent;

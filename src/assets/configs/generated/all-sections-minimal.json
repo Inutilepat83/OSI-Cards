@@ -86,14 +86,10 @@
       "type": "chart",
       "chartType": "bar",
       "chartData": {
-        "labels": [
-          "A"
-        ],
+        "labels": ["A"],
         "datasets": [
           {
-            "data": [
-              1
-            ]
+            "data": [1]
           }
         ]
       }

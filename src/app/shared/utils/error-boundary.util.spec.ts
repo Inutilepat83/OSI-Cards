@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ErrorBoundaryUtil } from './error-boundary.util';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
 import { LoggingService } from '../../core/services/logging.service';
-import { throwError, of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 describe('ErrorBoundaryUtil', () => {
   let util: ErrorBoundaryUtil;
@@ -17,11 +17,13 @@ describe('ErrorBoundaryUtil', () => {
       providers: [
         ErrorBoundaryUtil,
         { provide: ErrorHandlingService, useValue: errorHandlingSpy },
-        { provide: LoggingService, useValue: loggingSpy }
-      ]
+        { provide: LoggingService, useValue: loggingSpy },
+      ],
     });
     util = TestBed.inject(ErrorBoundaryUtil);
-    errorHandlingService = TestBed.inject(ErrorHandlingService) as jasmine.SpyObj<ErrorHandlingService>;
+    errorHandlingService = TestBed.inject(
+      ErrorHandlingService
+    ) as jasmine.SpyObj<ErrorHandlingService>;
     loggingService = TestBed.inject(LoggingService) as jasmine.SpyObj<LoggingService>;
   });
 
@@ -32,7 +34,7 @@ describe('ErrorBoundaryUtil', () => {
   describe('wrap', () => {
     it('should return result if function succeeds', () => {
       const result = util.wrap(() => 'success', 'test');
-      
+
       expect(result).toBe('success');
     });
 
@@ -41,13 +43,13 @@ describe('ErrorBoundaryUtil', () => {
         message: 'Test error',
         code: 'TEST-001',
         category: 'runtime',
-        severity: 'error'
+        severity: 'error',
       } as any);
-      
+
       const result = util.wrap(() => {
         throw new Error('Test error');
       }, 'test');
-      
+
       expect(result).toBeNull();
       expect(errorHandlingService.handleError).toHaveBeenCalled();
     });
@@ -58,13 +60,13 @@ describe('ErrorBoundaryUtil', () => {
         message: 'Test error',
         code: 'TEST-001',
         category: 'runtime',
-        severity: 'error'
+        severity: 'error',
       } as any);
-      
+
       util.wrap(() => {
         throw error;
       }, 'test');
-      
+
       expect(loggingService.error).toHaveBeenCalled();
     });
   });
@@ -76,42 +78,31 @@ describe('ErrorBoundaryUtil', () => {
         message: 'Test error',
         code: 'TEST-001',
         category: 'runtime',
-        severity: 'error'
+        severity: 'error',
       } as any);
-      
+
       const operator = util.catchErrorOperator('test');
       const source = throwError(() => error);
-      
+
       source.pipe(operator).subscribe({
         error: (err) => {
           expect(err).toBeTruthy();
           expect(errorHandlingService.handleError).toHaveBeenCalled();
           done();
-        }
+        },
       });
     });
 
     it('should pass through successful values', (done) => {
       const operator = util.catchErrorOperator('test');
       const source = of('success');
-      
+
       source.pipe(operator).subscribe({
         next: (value) => {
           expect(value).toBe('success');
           done();
-        }
+        },
       });
     });
   });
 });
-
-
-
-
-
-
-
-
-
-
-

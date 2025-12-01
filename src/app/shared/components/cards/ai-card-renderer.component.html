@@ -10,88 +10,101 @@
   (mouseleave)="onMouseLeave()"
   (mousemove)="onMouseMove($event)"
 >
-  <div class="glow-container w-full flex-1 min-h-0" 
-       [ngClass]="{ 'max-w-none': isFullscreen }"
-       [style.display]="'flex'"
-       [style.flex-direction]="'column'">
-    <div class="tilt-container w-full flex-1 min-h-0" 
-         [ngClass]="{ 'max-w-none': isFullscreen }"
-         [style.display]="'flex'"
-         [style.flex-direction]="'column'"
-         #tiltContainer
-         [ngStyle]="tiltStyle">
+  <div
+    class="glow-container w-full flex-1 min-h-0"
+    [ngClass]="{ 'max-w-none': isFullscreen }"
+    [style.display]="'flex'"
+    [style.flex-direction]="'column'"
+  >
+    <div
+      class="tilt-container w-full flex-1 min-h-0"
+      [ngClass]="{ 'max-w-none': isFullscreen }"
+      [style.display]="'flex'"
+      [style.flex-direction]="'column'"
+      #tiltContainer
+      [ngStyle]="tiltStyle"
+    >
       <article
         class="ai-card-surface flex-1 min-h-0"
         [style.display]="'flex'"
         [style.flex-direction]="'column'"
-        [ngClass]="{ 'ai-card-surface--fullscreen': isFullscreen, 'ai-card-surface--empty-state': !processedSections.length, 'streaming-active': isStreaming }"
+        [ngClass]="{
+          'ai-card-surface--fullscreen': isFullscreen,
+          'ai-card-surface--empty-state': !processedSections.length,
+          'streaming-active': isStreaming,
+        }"
         [attr.aria-label]="(cardConfig && cardConfig.cardTitle) || 'Card'"
         [attr.aria-live]="streamingStage === 'streaming' ? 'polite' : 'off'"
         [attr.aria-busy]="streamingStage === 'streaming' || streamingStage === 'thinking'"
         role="article"
       >
-          <!-- Card Header -->
-          <app-card-header
-            *ngIf="processedSections.length"
-            [cardTitle]="cardConfig.cardTitle"
-            [showExport]="true"
-            (export)="onExport()">
-          </app-card-header>
+        <!-- Card Header -->
+        <app-card-header
+          *ngIf="processedSections.length"
+          [cardTitle]="cardConfig.cardTitle"
+          [showExport]="true"
+          (export)="onExport()"
+        >
+        </app-card-header>
 
-          <!-- Streaming Indicator -->
-          <app-card-streaming-indicator
-            [streamingStage]="streamingStage"
-            [streamingProgress]="streamingProgress"
-            [streamingProgressLabel]="streamingProgressLabel">
-          </app-card-streaming-indicator>
+        <!-- Streaming Indicator -->
+        <app-card-streaming-indicator
+          [streamingStage]="streamingStage"
+          [streamingProgress]="streamingProgress ?? 0"
+          [streamingProgressLabel]="streamingProgressLabel ?? ''"
+        >
+        </app-card-streaming-indicator>
 
-          <!-- Card Section List -->
-          <app-card-section-list
-            *ngIf="processedSections.length; else emptyState"
-            [sections]="processedSections"
-            [isStreaming]="isStreaming"
-            [changeType]="changeType"
-            [containerWidth]="effectiveContainerWidth"
-            (sectionEvent)="onSectionEvent($event)"
-            (layoutChange)="onLayoutChange($event)">
-          </app-card-section-list>
+        <!-- Card Section List -->
+        <app-card-section-list
+          *ngIf="processedSections.length; else emptyState"
+          [sections]="processedSections"
+          [isStreaming]="isStreaming"
+          [changeType]="changeType"
+          [containerWidth]="effectiveContainerWidth"
+          (sectionEvent)="onSectionEvent($event)"
+          (layoutChange)="onLayoutChange($event)"
+        >
+        </app-card-section-list>
 
-          <ng-template #emptyState>
-            <div 
-              class="card-empty-state"
-              #emptyStateContainer
-              (mousemove)="onEmptyStateMouseMove($event)"
-              (mouseleave)="onEmptyStateMouseLeave()">
-              <div class="empty-state-background">
-                <div class="empty-state-gradient" [style.transform]="gradientTransform"></div>
-                <div class="empty-state-particles">
-                  <div 
-                    *ngFor="let particle of particles; let i = index"
-                    class="particle"
-                    [class]="'particle-' + (i + 1)"
-                    [style.transform]="particle.transform"
-                    [style.opacity]="particle.opacity">
-                  </div>
-                </div>
+        <ng-template #emptyState>
+          <div
+            class="card-empty-state"
+            #emptyStateContainer
+            (mousemove)="onEmptyStateMouseMove($event)"
+            (mouseleave)="onEmptyStateMouseLeave()"
+          >
+            <div class="empty-state-background">
+              <div class="empty-state-gradient" [style.transform]="gradientTransform"></div>
+              <div class="empty-state-particles">
+                <div
+                  *ngFor="let particle of particles; let i = index"
+                  class="particle"
+                  [class]="'particle-' + (i + 1)"
+                  [style.transform]="particle.transform"
+                  [style.opacity]="particle.opacity"
+                ></div>
               </div>
-              <div class="empty-state-content" [style.transform]="contentTransform">
-                <div class="empty-state-text">
-                  <h3 class="empty-state-title">Creating OSI Card</h3>
-                  <div class="empty-state-message-container">
-                    <p class="empty-state-message" [@messageAnimation]="currentMessageIndex">
-                      {{ currentMessage }}
-                    </p>
-                  </div>
+            </div>
+            <div class="empty-state-content" [style.transform]="contentTransform">
+              <div class="empty-state-text">
+                <h3 class="empty-state-title">Creating OSI Card</h3>
+                <div class="empty-state-message-container">
+                  <p class="empty-state-message" [@messageAnimation]="currentMessageIndex">
+                    {{ currentMessage }}
+                  </p>
                 </div>
               </div>
             </div>
-          </ng-template>
+          </div>
+        </ng-template>
 
         <!-- Card Actions -->
         <app-card-actions
           *ngIf="processedSections.length && cardConfig.actions?.length"
           [actions]="cardConfig.actions || []"
-          (actionClick)="onActionClick($event)">
+          (actionClick)="onActionClick($event)"
+        >
         </app-card-actions>
 
         <!-- Signature at bottom of card -->

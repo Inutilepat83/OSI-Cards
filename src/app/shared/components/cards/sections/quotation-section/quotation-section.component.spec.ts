@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { QuotationSectionComponent } from './quotation-section.component';
-import { SectionBuilder, FieldBuilder } from '../../../../testing/test-builders';
+import { FieldBuilder, SectionBuilder } from '../../../../testing/test-builders';
 
 describe('QuotationSectionComponent', () => {
   let component: QuotationSectionComponent;
@@ -8,18 +8,18 @@ describe('QuotationSectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [QuotationSectionComponent]
+      imports: [QuotationSectionComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(QuotationSectionComponent);
     component = fixture.componentInstance;
-    
+
     component.section = SectionBuilder.create()
       .withTitle('Quote')
       .withType('quotation')
       .withDescription('This is a test quotation')
       .build();
-    
+
     fixture.detectChanges();
   });
 
@@ -31,4 +31,3 @@ describe('QuotationSectionComponent', () => {
     expect(component.section.description).toBe('This is a test quotation');
   });
 });
-

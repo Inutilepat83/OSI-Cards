@@ -1,4 +1,4 @@
-import { AICardConfig, CardSection, CardField, CardItem } from '../../models';
+import { AICardConfig, CardField, CardItem, CardSection } from '../../models';
 
 /**
  * Validation utilities for card configurations
@@ -37,7 +37,7 @@ export class ValidationUtil {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -90,7 +90,11 @@ export class ValidationUtil {
   /**
    * Validate field
    */
-  static validateField(field: Partial<CardField>, sectionIndex: number, fieldIndex: number): string[] {
+  static validateField(
+    field: Partial<CardField>,
+    sectionIndex: number,
+    fieldIndex: number
+  ): string[] {
     const errors: string[] = [];
     const prefix = `Section ${sectionIndex + 1}, Field ${fieldIndex + 1}`;
 
@@ -164,5 +168,3 @@ export class ValidationUtil {
     return emailRegex.test(email);
   }
 }
-
-

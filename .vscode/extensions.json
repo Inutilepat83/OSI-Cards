@@ -1,0 +1,40 @@
+{
+  "recommendations": [
+    // Angular Development
+    "angular.ng-template",
+    "nrwl.angular-console",
+
+    // Code Quality
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+
+    // CSS/Styling
+    "bradlc.vscode-tailwindcss",
+    "stylelint.vscode-stylelint",
+
+    // Testing
+    "ms-playwright.playwright",
+    "hbenl.vscode-test-explorer",
+
+    // Git
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+
+    // Productivity
+    "christian-kohler.path-intellisense",
+    "steoates.autoimport",
+    "streetsidesoftware.code-spell-checker",
+
+    // Debugging
+    "msjsdiag.debugger-for-chrome",
+
+    // Documentation
+    "bierner.markdown-preview-github-styles",
+
+    // Icons
+    "lucide-icons.lucide-icons"
+  ],
+  "unwantedRecommendations": []
+}
+
+

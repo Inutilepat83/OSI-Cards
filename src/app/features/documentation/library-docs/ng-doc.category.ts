@@ -10,11 +10,7 @@ const LibraryDocsCategory: NgDocCategory = {
   expandable: true,
   expanded: false,
   order: 2,
-  category: DocsCategory
+  category: DocsCategory,
 };
 
 export default LibraryDocsCategory;
-
-
-
-

@@ -9,7 +9,7 @@ import { LucideIconsModule } from '../../../../icons/lucide-icons.module';
   standalone: true,
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './social-media-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SocialMediaSectionComponent extends BaseSectionComponent<CardItem> {
   get posts(): CardItem[] {
@@ -17,7 +17,7 @@ export class SocialMediaSectionComponent extends BaseSectionComponent<CardItem> 
   }
 
   formatPlatform(item: CardItem): string {
-    const meta = item.meta ?? {};
+    const meta = (item.meta ?? {}) as Record<string, unknown>;
     return typeof meta['platform'] === 'string'
       ? meta['platform']
       : typeof meta['network'] === 'string'
@@ -26,7 +26,7 @@ export class SocialMediaSectionComponent extends BaseSectionComponent<CardItem> 
   }
 
   formatMetric(item: CardItem): string {
-    const meta = item.meta ?? {};
+    const meta = (item.meta ?? {}) as Record<string, unknown>;
     const likes = meta['likes'];
     const comments = meta['comments'];
     if (typeof likes === 'number' && typeof comments === 'number') {

@@ -68,15 +68,3 @@ describe('FormatNumberPipe', () => {
     expect(typeof result).toBe('string');
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
 import { DocsDemoComponent } from '../../components';
 
@@ -125,33 +125,25 @@ The **Solutions Section** (\`type: "solutions"\`) is used for displays solution 
 `;
 
 const demoConfig = {
-  "title": "Solutions Portfolio",
-  "type": "solutions",
-  "description": "Available solutions and services",
-  "fields": [
+  title: 'Solutions Portfolio',
+  type: 'solutions',
+  description: 'Available solutions and services',
+  fields: [
     {
-      "title": "Cloud Migration",
-      "description": "Complete cloud infrastructure migration service",
-      "category": "Infrastructure",
-      "benefits": [
-        "Scalability",
-        "Cost reduction",
-        "Security"
-      ],
-      "deliveryTime": "8-10 weeks"
+      title: 'Cloud Migration',
+      description: 'Complete cloud infrastructure migration service',
+      category: 'Infrastructure',
+      benefits: ['Scalability', 'Cost reduction', 'Security'],
+      deliveryTime: '8-10 weeks',
     },
     {
-      "title": "Data Analytics Platform",
-      "description": "Real-time analytics and reporting solution",
-      "category": "Analytics",
-      "benefits": [
-        "Real-time insights",
-        "Custom dashboards",
-        "API access"
-      ],
-      "deliveryTime": "4-6 weeks"
-    }
-  ]
+      title: 'Data Analytics Platform',
+      description: 'Real-time analytics and reporting solution',
+      category: 'Analytics',
+      benefits: ['Real-time insights', 'Custom dashboards', 'API access'],
+      deliveryTime: '4-6 weeks',
+    },
+  ],
 };
 
 /**
@@ -164,8 +156,8 @@ const demoConfig = {
   imports: [DocPageComponent, DocsDemoComponent],
   template: `
     <div class="section-docs">
-      <app-docs-demo 
-        [config]="demo" 
+      <app-docs-demo
+        [config]="demo"
         [type]="'solutions'"
         demoTitle="Live Preview"
         height="350px"
@@ -173,14 +165,16 @@ const demoConfig = {
       <app-doc-page [content]="content"></app-doc-page>
     </div>
   `,
-  styles: [`
-    .section-docs {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styles: [
+    `
+      .section-docs {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SolutionsPageComponent {
   content = pageContent;

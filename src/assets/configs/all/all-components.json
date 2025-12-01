@@ -5,25 +5,80 @@
   "description": "This card demonstrates all available section types in the OSI Cards library",
   "sections": [
     {
-      "title": "Info Section",
+      "title": "Company Information",
       "type": "info",
+      "description": "Detailed company information and metadata",
       "fields": [
-        { "label": "Component Type", "value": "Info Section" },
-        { "label": "Purpose", "value": "Display key-value pairs" },
-        { "label": "Use Case", "value": "General information display" }
+        {
+          "label": "Industry",
+          "value": "Technology",
+          "icon": "🏢"
+        },
+        {
+          "label": "Founded",
+          "value": "2010",
+          "icon": "📅"
+        },
+        {
+          "label": "Headquarters",
+          "value": "San Francisco, CA",
+          "icon": "📍"
+        },
+        {
+          "label": "Employees",
+          "value": "5,000+",
+          "icon": "👥",
+          "trend": "up"
+        },
+        {
+          "label": "Website",
+          "value": "www.example.com",
+          "icon": "🌐"
+        }
       ]
     },
     {
-      "title": "Analytics Section",
+      "title": "Performance Analytics",
       "type": "analytics",
+      "description": "Key performance indicators and metrics",
       "fields": [
-        { "label": "Performance Score", "value": "95%", "percentage": 95, "performance": "excellent", "trend": "up" },
-        { "label": "Growth Rate", "value": "25% YoY", "percentage": 25, "performance": "good", "trend": "up" }
+        {
+          "label": "Performance Score",
+          "value": "95%",
+          "percentage": 95,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 5.2
+        },
+        {
+          "label": "Growth Rate",
+          "value": "25% YoY",
+          "percentage": 25,
+          "performance": "good",
+          "trend": "up",
+          "change": 8.1
+        },
+        {
+          "label": "Market Share",
+          "value": "12%",
+          "percentage": 12,
+          "performance": "average",
+          "trend": "stable",
+          "change": 0.5
+        },
+        {
+          "label": "Customer Satisfaction",
+          "value": "4.8/5",
+          "percentage": 96,
+          "performance": "excellent",
+          "trend": "up"
+        }
       ]
     },
     {
-      "title": "Contact Card Section",
+      "title": "Key Contacts",
       "type": "contact-card",
+      "description": "Primary contacts and stakeholders",
       "fields": [
         {
           "label": "Primary Contact",
@@ -32,95 +87,181 @@
           "email": "jane.doe@example.com",
           "phone": "+1 555 0100",
           "role": "Product Manager",
-          "department": "Product"
+          "department": "Product",
+          "linkedIn": "https://linkedin.com/in/janedoe"
+        },
+        {
+          "label": "Technical Lead",
+          "title": "John Smith",
+          "value": "Engineering Director",
+          "email": "john.smith@example.com",
+          "phone": "+1 555 0101",
+          "role": "Engineering Director",
+          "department": "Engineering"
         }
       ]
     },
     {
-      "title": "Network Card Section",
+      "title": "Business Network",
       "type": "network-card",
+      "description": "Key business relationships and partnerships",
       "items": [
         {
-          "title": "Partner Company",
-          "description": "Strategic Partner",
+          "title": "Strategic Partner A",
+          "description": "Technology partnership",
           "meta": {
             "influence": 85,
-            "connections": 12
+            "connections": 12,
+            "status": "active"
+          }
+        },
+        {
+          "title": "Investor Group",
+          "description": "Series B lead investor",
+          "meta": {
+            "influence": 92,
+            "connections": 8,
+            "status": "active"
+          }
+        },
+        {
+          "title": "Distribution Partner",
+          "description": "EMEA distribution",
+          "meta": {
+            "influence": 67,
+            "connections": 25,
+            "status": "active"
           }
         }
       ]
     },
     {
-      "title": "Map Section",
+      "title": "Global Presence",
       "type": "map",
+      "description": "Office locations worldwide",
       "fields": [
         {
           "name": "Headquarters",
-          "x": 25,
-          "y": 36,
+          "x": 37.7749,
+          "y": -122.4194,
           "type": "office",
           "address": "San Francisco, CA, USA"
+        },
+        {
+          "name": "European HQ",
+          "x": 51.5074,
+          "y": -0.1278,
+          "type": "office",
+          "address": "London, UK"
+        },
+        {
+          "name": "APAC Office",
+          "x": 35.6762,
+          "y": 139.6503,
+          "type": "branch",
+          "address": "Tokyo, Japan"
         }
       ]
     },
     {
-      "title": "Financials Section",
+      "title": "Financial Overview",
       "type": "financials",
-      "fields": [
-        { "label": "Annual Revenue", "value": "$50M", "format": "currency", "change": 15, "trend": "up" },
-        { "label": "Operating Margin", "value": "18%", "format": "percentage", "change": 3.2, "trend": "up" }
-      ]
-    },
-    {
-      "title": "Locations Section",
-      "type": "locations",
+      "description": "Key financial metrics and performance",
       "fields": [
         {
-          "name": "Office Location",
-          "address": "New York, NY",
-          "coordinates": {
-            "lat": 40.7128,
-            "lng": -74.0060
-          }
+          "label": "Annual Revenue",
+          "value": "$50M",
+          "format": "currency",
+          "change": 15,
+          "trend": "up"
+        },
+        {
+          "label": "Operating Margin",
+          "value": "18%",
+          "format": "percentage",
+          "change": 3.2,
+          "trend": "up"
+        },
+        {
+          "label": "EBITDA",
+          "value": "$12M",
+          "format": "currency",
+          "change": 8,
+          "trend": "up"
+        },
+        {
+          "label": "Net Income",
+          "value": "$8M",
+          "format": "currency",
+          "change": -2.5,
+          "trend": "down"
         }
       ]
     },
     {
-      "title": "Event Section",
+      "title": "Upcoming Events",
       "type": "event",
+      "description": "Scheduled events and milestones",
       "fields": [
         {
-          "label": "Upcoming Event",
-          "value": "Product Launch - March 15, 2025",
+          "label": "Product Launch",
+          "value": "Q1 Launch Event",
           "date": "2025-03-15",
           "time": "10:00",
           "category": "Launch",
+          "status": "confirmed"
+        },
+        {
+          "label": "Annual Conference",
+          "value": "User Summit 2025",
+          "date": "2025-06-20",
+          "time": "09:00",
+          "category": "Conference",
+          "status": "planned"
+        },
+        {
+          "label": "Board Meeting",
+          "value": "Q2 Review",
+          "date": "2025-04-10",
+          "time": "14:00",
+          "category": "Internal",
           "status": "confirmed"
         }
       ]
     },
     {
-      "title": "Project Section",
-      "type": "project",
+      "title": "Product Features",
+      "type": "list",
+      "description": "Key features and capabilities",
       "items": [
         {
-          "title": "Q1 Initiative",
-          "description": "Product development project",
-          "status": "in-progress",
-          "icon": "🚀"
+          "title": "Real-time Analytics",
+          "description": "Live data processing and visualization",
+          "icon": "📊",
+          "status": "completed"
+        },
+        {
+          "title": "AI Integration",
+          "description": "Machine learning powered insights",
+          "icon": "🤖",
+          "status": "in-progress"
+        },
+        {
+          "title": "API Access",
+          "description": "RESTful API for integrations",
+          "icon": "🔗",
+          "status": "completed"
+        },
+        {
+          "title": "Multi-language",
+          "description": "Support for 20+ languages",
+          "icon": "🌍",
+          "status": "pending"
         }
       ]
     },
     {
-      "title": "List Section",
-      "type": "list",
-      "items": [
-        { "title": "Feature 1", "description": "Core functionality", "icon": "✓", "status": "completed" },
-        { "title": "Feature 2", "description": "Advanced features", "icon": "⚡", "status": "in-progress" }
-      ]
-    },
-    {
-      "title": "Chart Section",
+      "title": "Revenue Trends",
       "type": "chart",
       "chartType": "bar",
       "chartData": {
@@ -130,74 +271,211 @@
             "label": "Revenue",
             "data": [100, 150, 200, 250],
             "backgroundColor": "#FF7900"
+          },
+          {
+            "label": "Expenses",
+            "data": [80, 90, 100, 110],
+            "backgroundColor": "#4CAF50"
           }
         ]
       }
     },
     {
-      "title": "Product Section",
+      "title": "Product Information",
       "type": "product",
+      "description": "Product details and specifications",
       "fields": [
-        { "label": "Product Name", "value": "Enterprise Solution" },
-        { "label": "Version", "value": "2.0" },
-        { "label": "Category", "value": "Software" }
+        {
+          "label": "Product Name",
+          "value": "Enterprise Suite Pro"
+        },
+        {
+          "label": "Version",
+          "value": "3.5.2"
+        },
+        {
+          "label": "Category",
+          "value": "Enterprise Software"
+        },
+        {
+          "label": "License",
+          "value": "Annual Subscription"
+        },
+        {
+          "label": "Support Level",
+          "value": "Premium 24/7"
+        }
       ]
     },
     {
-      "title": "Solutions Section",
+      "title": "Solutions Portfolio",
       "type": "solutions",
+      "description": "Available solutions and services",
       "fields": [
         {
-          "title": "Cloud Migration Service",
-          "description": "Complete cloud infrastructure migration",
+          "title": "Cloud Migration",
+          "description": "Complete cloud infrastructure migration service",
           "category": "Infrastructure",
           "benefits": ["Scalability", "Cost reduction", "Security"],
           "deliveryTime": "8-10 weeks"
+        },
+        {
+          "title": "Data Analytics Platform",
+          "description": "Real-time analytics and reporting solution",
+          "category": "Analytics",
+          "benefits": ["Real-time insights", "Custom dashboards", "API access"],
+          "deliveryTime": "4-6 weeks"
         }
       ]
     },
     {
-      "title": "Overview Section",
+      "title": "Company Overview",
       "type": "overview",
-      "fields": [
-        { "label": "Company Overview", "value": "Technology leader" },
-        { "label": "Industry", "value": "Enterprise Software" },
-        { "label": "Founded", "value": "2010" }
-      ]
-    },
-    {
-      "title": "Stats Section",
-      "type": "stats",
-      "fields": [
-        { "label": "Total Users", "value": "1M+", "trend": "up" },
-        { "label": "Active Sessions", "value": "50K", "trend": "stable" }
-      ]
-    },
-    {
-      "title": "Quotation Section",
-      "type": "quotation",
+      "description": "High-level company information",
       "fields": [
         {
-          "label": "Customer Testimonial",
-          "value": "\"This solution transformed our business operations.\"",
-          "description": "CEO, TechCorp Inc."
+          "label": "About",
+          "value": "Leading technology company specializing in enterprise solutions"
+        },
+        {
+          "label": "Mission",
+          "value": "Empowering businesses through innovative technology"
+        },
+        {
+          "label": "Industry",
+          "value": "Enterprise Software"
+        },
+        {
+          "label": "Founded",
+          "value": "2010"
+        },
+        {
+          "label": "Size",
+          "value": "1000-5000 employees"
         }
       ]
     },
     {
-      "title": "Text Reference Section",
-      "type": "text-reference",
+      "title": "Customer Testimonials",
+      "type": "quotation",
+      "description": "What our customers say",
       "fields": [
         {
-          "label": "Reference Document",
+          "label": "CEO Testimonial",
+          "value": "\"This solution transformed our business operations and increased productivity by 40%.\"",
+          "description": "John Smith, CEO at TechCorp Inc."
+        },
+        {
+          "label": "CTO Review",
+          "value": "\"The technical implementation was seamless and the support team was exceptional.\"",
+          "description": "Sarah Johnson, CTO at DataFlow Systems"
+        }
+      ]
+    },
+    {
+      "title": "Documentation References",
+      "type": "text-reference",
+      "description": "Related documents and resources",
+      "fields": [
+        {
+          "label": "Technical Spec",
           "value": "Technical Specification v2.1",
-          "description": "Latest documentation"
+          "description": "Latest technical documentation",
+          "url": "https://docs.example.com/spec"
+        },
+        {
+          "label": "User Guide",
+          "value": "User Guide 2024 Edition",
+          "description": "Complete user manual",
+          "url": "https://docs.example.com/guide"
+        },
+        {
+          "label": "API Reference",
+          "value": "REST API Documentation",
+          "description": "API endpoints and schemas",
+          "url": "https://api.example.com/docs"
+        }
+      ]
+    },
+    {
+      "title": "Brand Colors",
+      "type": "brand-colors",
+      "description": "Official brand color palette",
+      "fields": [
+        {
+          "label": "Primary",
+          "value": "#FF7900",
+          "description": "Orange Brand Color"
+        },
+        {
+          "label": "Secondary",
+          "value": "#000000",
+          "description": "Black"
+        },
+        {
+          "label": "Accent",
+          "value": "#4CAF50",
+          "description": "Green Accent"
+        },
+        {
+          "label": "Background",
+          "value": "#FFFFFF",
+          "description": "White Background"
+        }
+      ]
+    },
+    {
+      "title": "Latest News",
+      "type": "news",
+      "description": "Recent company news and announcements",
+      "items": [
+        {
+          "title": "Q4 Earnings Beat Expectations",
+          "description": "Company reports 25% revenue growth in Q4 2024",
+          "meta": {
+            "source": "Bloomberg",
+            "date": "2025-01-15"
+          },
+          "status": "published"
+        },
+        {
+          "title": "New Product Launch Announced",
+          "description": "Enterprise Suite 4.0 coming Spring 2025",
+          "meta": {
+            "source": "Press Release",
+            "date": "2025-01-10"
+          },
+          "status": "published"
+        }
+      ]
+    },
+    {
+      "title": "Social Media Presence",
+      "type": "social-media",
+      "description": "Company social media profiles",
+      "fields": [
+        {
+          "platform": "linkedin",
+          "handle": "@company",
+          "url": "https://linkedin.com/company/example",
+          "followers": 50000
+        },
+        {
+          "platform": "twitter",
+          "handle": "@company",
+          "url": "https://twitter.com/company",
+          "followers": 25000
         }
       ]
     }
   ],
   "actions": [
-    { "label": "Learn More", "type": "website", "variant": "primary", "icon": "🌐", "url": "https://example.com" }
+    {
+      "label": "Learn More",
+      "type": "website",
+      "variant": "primary",
+      "icon": "🌐",
+      "url": "https://example.com"
+    }
   ]
 }
-

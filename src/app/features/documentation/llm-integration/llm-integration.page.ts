@@ -5,7 +5,7 @@ const LLMIntegrationPage: NgDocPage = {
   title: 'LLM Integration',
   mdFile: './index.md',
   order: 4,
-  category: DocsCategory
+  category: DocsCategory,
 };
 
 export default LLMIntegrationPage;

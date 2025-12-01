@@ -8,7 +8,7 @@ describe('SafeHtmlPipe', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [DomSanitizer]
+      providers: [DomSanitizer],
     });
     sanitizer = TestBed.inject(DomSanitizer);
     pipe = new SafeHtmlPipe(sanitizer);
@@ -46,21 +46,3 @@ describe('SafeHtmlPipe', () => {
     expect(result).toBeDefined();
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

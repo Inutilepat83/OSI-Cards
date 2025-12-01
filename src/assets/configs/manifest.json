@@ -1,20 +1,20 @@
 {
-  "version": "1.2.2",
-  "generatedAt": "2025-11-29T18:29:01.687Z",
+  "version": "1.5.2",
+  "generatedAt": "2025-12-01T10:05:13.198Z",
   "cards": [
     {
       "id": "all-components",
       "type": "all",
       "path": "all/all-components.json",
       "format": "json",
-      "size": 5523,
+      "size": 12908,
       "priority": "high",
       "sectionCount": 17,
       "title": "All Sections Demo",
       "metadata": {
         "subtitle": "Complete Component Showcase",
         "description": "This card demonstrates all available section types in the OSI Cards library",
-        "lastUpdated": "2025-11-29T15:58:15.129Z",
+        "lastUpdated": "2025-12-01T10:04:58.396Z",
         "hasActions": true
       }
     },
@@ -376,24 +376,14 @@
       "opportunity-enhanced-v2",
       "opportunity-enterprise-v3"
     ],
-    "event": [
-      "event-basic-v1",
-      "event-enhanced-v2",
-      "event-enterprise-v3"
-    ],
+    "event": ["event-basic-v1", "event-enhanced-v2", "event-enterprise-v3"],
     "analytics": [
       "analytics-basic-v1",
       "analytics-enhanced-v2",
       "analytics-enterprise-v3"
     ],
     "financials": [],
-    "sko": [
-      "sko-basic-v1",
-      "sko-enhanced-v2",
-      "sko-enterprise-v3"
-    ],
-    "all": [
-      "all-components"
-    ]
+    "sko": ["sko-basic-v1", "sko-enhanced-v2", "sko-enterprise-v3"],
+    "all": ["all-components"]
   }
 }

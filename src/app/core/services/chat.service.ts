@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
@@ -18,11 +18,11 @@ export interface ChatMessage {
 
 /**
  * Chat Service
- * 
+ *
  * Manages chat messages and interactions within the application.
  * This service can be extended to integrate with external chat systems,
  * messaging APIs, or real-time communication services.
- * 
+ *
  * @example
  * ```typescript
  * const chatService = inject(ChatService);
@@ -33,7 +33,7 @@ export interface ChatMessage {
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ChatService {
   private readonly logger = inject(LoggingService);
@@ -41,14 +41,16 @@ export class ChatService {
   private readonly config = inject(AppConfigService);
   private readonly messagesSubject = new BehaviorSubject<ChatMessage[]>([]);
   public readonly messages$: Observable<ChatMessage[]> = this.messagesSubject.asObservable();
-  
+
   // Configuration for chat API integration
-  private readonly chatApiUrl = this.config.ENV.API_URL ? `${this.config.ENV.API_URL}/chat` : '/api/chat';
+  private readonly chatApiUrl = this.config.ENV.API_URL
+    ? `${this.config.ENV.API_URL}/chat`
+    : '/api/chat';
   private readonly enableApiIntegration = this.config.FEATURES.EXPERIMENTAL || false;
 
   /**
    * Send a message to the chat
-   * 
+   *
    * @param content - Message content to send
    * @param metadata - Optional metadata to attach to the message
    * @returns The created chat message
@@ -59,13 +61,13 @@ export class ChatService {
       content,
       timestamp: new Date(),
       sender: 'user',
-      metadata
+      metadata,
     };
 
     this.logger.info('Chat message sent', 'ChatService', {
       messageId: message.id,
       contentLength: content.length,
-      hasMetadata: !!metadata
+      hasMetadata: !!metadata,
     });
 
     const currentMessages = this.messagesSubject.value;
@@ -78,7 +80,7 @@ export class ChatService {
           this.logger.debug('Chat message sent to API', 'ChatService', { response });
           // Optionally update message with server response
           if (response && response.id) {
-            const updatedMessages = this.messagesSubject.value.map(msg =>
+            const updatedMessages = this.messagesSubject.value.map((msg) =>
               msg.id === message.id ? { ...response, id: response.id } : msg
             );
             this.messagesSubject.next(updatedMessages);
@@ -87,7 +89,7 @@ export class ChatService {
         error: (error) => {
           this.logger.error('Failed to send chat message to API', 'ChatService', { error });
           // Message is still stored locally even if API call fails
-        }
+        },
       });
     }
 
@@ -96,7 +98,7 @@ export class ChatService {
 
   /**
    * Get all chat messages
-   * 
+   *
    * @returns Observable of chat messages
    */
   getMessages(): Observable<ChatMessage[]> {
@@ -113,7 +115,7 @@ export class ChatService {
 
   /**
    * Add a system message
-   * 
+   *
    * @param content - System message content
    * @param metadata - Optional metadata
    */
@@ -123,7 +125,7 @@ export class ChatService {
       content,
       timestamp: new Date(),
       sender: 'system',
-      metadata
+      metadata,
     };
 
     const currentMessages = this.messagesSubject.value;
@@ -132,7 +134,7 @@ export class ChatService {
 
   /**
    * Send message to chat API
-   * 
+   *
    * @private
    */
   private sendMessageToApi(message: ChatMessage): Observable<ChatMessage> {
@@ -173,18 +175,19 @@ export class ChatService {
    */
   deleteMessage(messageId: string): void {
     const currentMessages = this.messagesSubject.value;
-    const filtered = currentMessages.filter(msg => msg.id !== messageId);
+    const filtered = currentMessages.filter((msg) => msg.id !== messageId);
     this.messagesSubject.next(filtered);
 
     if (this.enableApiIntegration) {
-      this.http.delete(`${this.chatApiUrl}/messages/${messageId}`).pipe(
-        catchError((error) => {
-          this.logger.error('Failed to delete message from API', 'ChatService', { error });
-          return of(null);
-        })
-      ).subscribe();
+      this.http
+        .delete(`${this.chatApiUrl}/messages/${messageId}`)
+        .pipe(
+          catchError((error) => {
+            this.logger.error('Failed to delete message from API', 'ChatService', { error });
+            return of(null);
+          })
+        )
+        .subscribe();
     }
   }
 }
-
-

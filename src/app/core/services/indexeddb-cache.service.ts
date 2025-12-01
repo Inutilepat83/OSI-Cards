@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, from, of } from 'rxjs';
-import { map, catchError, switchMap } from 'rxjs/operators';
+import { from, Observable, of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 interface CacheEntry {
   data: any;
@@ -13,7 +13,7 @@ interface CacheEntry {
  * Provides long-term storage for HTTP responses across browser sessions
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class IndexedDBCacheService {
   private readonly DB_NAME = 'osi-cards-cache';
@@ -56,7 +56,7 @@ export class IndexedDBCacheService {
    */
   get(url: string): Observable<CacheEntry | null> {
     return from(this.initDB()).pipe(
-      map(db => {
+      map((db) => {
         return new Promise<CacheEntry | null>((resolve, reject) => {
           const transaction = db.transaction([this.STORE_NAME], 'readonly');
           const store = transaction.objectStore(this.STORE_NAME);
@@ -71,7 +71,7 @@ export class IndexedDBCacheService {
           };
         });
       }),
-      switchMap(promise => from(promise)),
+      switchMap((promise) => from(promise)),
       catchError(() => of(null))
     );
   }
@@ -81,7 +81,7 @@ export class IndexedDBCacheService {
    */
   set(url: string, data: any, timestamp: number): Observable<boolean> {
     return from(this.initDB()).pipe(
-      map(db => {
+      map((db) => {
         return new Promise<boolean>((resolve, reject) => {
           const transaction = db.transaction([this.STORE_NAME], 'readwrite');
           const store = transaction.objectStore(this.STORE_NAME);
@@ -97,7 +97,7 @@ export class IndexedDBCacheService {
           };
         });
       }),
-      switchMap(promise => from(promise)),
+      switchMap((promise) => from(promise)),
       catchError(() => of(false))
     );
   }
@@ -107,7 +107,7 @@ export class IndexedDBCacheService {
    */
   delete(url: string): Observable<boolean> {
     return from(this.initDB()).pipe(
-      map(db => {
+      map((db) => {
         return new Promise<boolean>((resolve, reject) => {
           const transaction = db.transaction([this.STORE_NAME], 'readwrite');
           const store = transaction.objectStore(this.STORE_NAME);
@@ -122,7 +122,7 @@ export class IndexedDBCacheService {
           };
         });
       }),
-      switchMap(promise => from(promise)),
+      switchMap((promise) => from(promise)),
       catchError(() => of(false))
     );
   }
@@ -132,7 +132,7 @@ export class IndexedDBCacheService {
    */
   clearOlderThan(timestamp: number): Observable<number> {
     return from(this.initDB()).pipe(
-      map(db => {
+      map((db) => {
         return new Promise<number>((resolve, reject) => {
           const transaction = db.transaction([this.STORE_NAME], 'readwrite');
           const store = transaction.objectStore(this.STORE_NAME);
@@ -156,7 +156,7 @@ export class IndexedDBCacheService {
           };
         });
       }),
-      switchMap(promise => from(promise)),
+      switchMap((promise) => from(promise)),
       catchError(() => of(0))
     );
   }
@@ -166,7 +166,7 @@ export class IndexedDBCacheService {
    */
   clearAll(): Observable<boolean> {
     return from(this.initDB()).pipe(
-      map(db => {
+      map((db) => {
         return new Promise<boolean>((resolve, reject) => {
           const transaction = db.transaction([this.STORE_NAME], 'readwrite');
           const store = transaction.objectStore(this.STORE_NAME);
@@ -181,9 +181,8 @@ export class IndexedDBCacheService {
           };
         });
       }),
-      switchMap(promise => from(promise)),
+      switchMap((promise) => from(promise)),
       catchError(() => of(false))
     );
   }
 }
-

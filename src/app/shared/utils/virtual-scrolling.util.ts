@@ -47,7 +47,7 @@ export function calculateVirtualScroll(
     endIndex,
     visibleItems,
     totalHeight,
-    offsetY
+    offsetY,
   };
 }
 
@@ -83,5 +83,3 @@ export class VirtualScrollManager {
     return calculateVirtualScroll(this.scrollTop, this.totalItems, this.options);
   }
 }
-
-

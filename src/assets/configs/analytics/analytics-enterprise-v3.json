@@ -21,11 +21,41 @@
       "title": "Health Indicators",
       "type": "analytics",
       "fields": [
-        { "label": "Satisfaction Score", "value": "8.7/10", "percentage": 87, "performance": "excellent", "trend": "up" },
-        { "label": "Product Usage", "value": "94% Features", "percentage": 94, "performance": "excellent", "trend": "stable" },
-        { "label": "Support Tickets", "value": "3 Open", "percentage": 15, "performance": "good", "trend": "down" },
-        { "label": "Expansion Opportunity", "value": "€350K Potential", "percentage": 70, "performance": "good", "trend": "up" },
-        { "label": "Renewal Probability", "value": "95%", "percentage": 95, "performance": "excellent", "trend": "stable" }
+        {
+          "label": "Satisfaction Score",
+          "value": "8.7/10",
+          "percentage": 87,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Product Usage",
+          "value": "94% Features",
+          "percentage": 94,
+          "performance": "excellent",
+          "trend": "stable"
+        },
+        {
+          "label": "Support Tickets",
+          "value": "3 Open",
+          "percentage": 15,
+          "performance": "good",
+          "trend": "down"
+        },
+        {
+          "label": "Expansion Opportunity",
+          "value": "€350K Potential",
+          "percentage": 70,
+          "performance": "good",
+          "trend": "up"
+        },
+        {
+          "label": "Renewal Probability",
+          "value": "95%",
+          "percentage": 95,
+          "performance": "excellent",
+          "trend": "stable"
+        }
       ]
     },
     {
@@ -69,18 +99,45 @@
       "title": "Key Insights",
       "type": "list",
       "items": [
-        { "title": "High Engagement", "description": "Customer shows strong product adoption and active usage", "icon": "✅", "status": "completed" },
-        { "title": "Expansion Ready", "description": "High likelihood of upsell to premium features package", "icon": "💰", "status": "pending" },
-        { "title": "Renewal Safe", "description": "Low risk of churn, strong relationship indicators", "icon": "🔒", "status": "completed" }
+        {
+          "title": "High Engagement",
+          "description": "Customer shows strong product adoption and active usage",
+          "icon": "✅",
+          "status": "completed"
+        },
+        {
+          "title": "Expansion Ready",
+          "description": "High likelihood of upsell to premium features package",
+          "icon": "💰",
+          "status": "pending"
+        },
+        {
+          "title": "Renewal Safe",
+          "description": "Low risk of churn, strong relationship indicators",
+          "icon": "🔒",
+          "status": "completed"
+        }
       ]
     },
     {
       "title": "Statistics Summary",
       "type": "stats",
       "fields": [
-        { "label": "Total Active Users", "value": "1,250", "performance": "excellent" },
-        { "label": "Monthly API Calls", "value": "2.5M", "performance": "excellent" },
-        { "label": "Feature Adoption Rate", "value": "94%", "performance": "excellent" },
+        {
+          "label": "Total Active Users",
+          "value": "1,250",
+          "performance": "excellent"
+        },
+        {
+          "label": "Monthly API Calls",
+          "value": "2.5M",
+          "performance": "excellent"
+        },
+        {
+          "label": "Feature Adoption Rate",
+          "value": "94%",
+          "performance": "excellent"
+        },
         { "label": "NPS Score", "value": "72", "performance": "excellent" }
       ]
     },
@@ -108,8 +165,28 @@
     }
   ],
   "actions": [
-    { "label": "Update Account Status", "type": "agent", "variant": "primary", "icon": "💾", "agentId": "account-agent", "agentContext": { "action": "update_account_status" } },
-    { "label": "Plan Renewal", "type": "agent", "variant": "primary", "icon": "📅", "agentId": "billing-agent", "agentContext": { "action": "plan_renewal" } },
-    { "label": "Export Report", "type": "question", "variant": "secondary", "icon": "📥", "question": "How can I export this report?" }
+    {
+      "label": "Update Account Status",
+      "type": "agent",
+      "variant": "primary",
+      "icon": "💾",
+      "agentId": "account-agent",
+      "agentContext": { "action": "update_account_status" }
+    },
+    {
+      "label": "Plan Renewal",
+      "type": "agent",
+      "variant": "primary",
+      "icon": "📅",
+      "agentId": "billing-agent",
+      "agentContext": { "action": "plan_renewal" }
+    },
+    {
+      "label": "Export Report",
+      "type": "question",
+      "variant": "secondary",
+      "icon": "📥",
+      "question": "How can I export this report?"
+    }
   ]
 }

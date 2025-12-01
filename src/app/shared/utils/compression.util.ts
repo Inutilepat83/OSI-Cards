@@ -94,5 +94,3 @@ export async function compressData(data: string): Promise<Blob> {
   const compressedStream = blob.stream().pipeThrough(stream);
   return new Response(compressedStream).blob();
 }
-
-

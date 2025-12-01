@@ -7,7 +7,7 @@ export interface AppState {
 }
 
 export const reducers: ActionReducerMap<AppState> = {
-  cards: fromCards.reducer
+  cards: fromCards.reducer,
 };
 
 // Meta reducers for cross-cutting concerns
@@ -18,5 +18,5 @@ export const metaReducers: MetaReducer<AppState>[] = [
 
 // State persistence keys
 export const STORAGE_KEYS = {
-  CARDS: 'osi-cards-state'
+  CARDS: 'osi-cards-state',
 } as const;

@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { AppConfigService } from '../../core/services/app-config.service';
 import { LoggingService } from '../../core/services/logging.service';
@@ -15,7 +15,7 @@ export interface AutoSaveState {
  * Automatically saves card edits periodically to prevent data loss
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AutoSaveService {
   private readonly config = inject(AppConfigService);
@@ -26,19 +26,15 @@ export class AutoSaveService {
   private currentState: AutoSaveState = {
     isSaving: false,
     lastSaved: null,
-    hasUnsavedChanges: false
+    hasUnsavedChanges: false,
   };
 
   readonly save$: Observable<any> = this.saveSubject.asObservable();
   readonly state$: Observable<AutoSaveState> = this.stateSubject.asObservable();
 
-  private saveSubscription: any;
-
   constructor() {
     // Setup debounced save subscription in constructor to ensure it's active immediately
-    this.saveSubject.pipe(
-      debounceTime(this.config.UI.DEBOUNCE_SEARCH_MS)
-    ).subscribe((data) => {
+    this.saveSubject.pipe(debounceTime(this.config.UI.DEBOUNCE_SEARCH_MS)).subscribe((data) => {
       this.performSave(data);
     });
   }
@@ -62,10 +58,13 @@ export class AutoSaveService {
     try {
       // Save to localStorage
       const key = 'auto-save-card';
-      localStorage.setItem(key, JSON.stringify({
-        data,
-        timestamp: Date.now()
-      }));
+      localStorage.setItem(
+        key,
+        JSON.stringify({
+          data,
+          timestamp: Date.now(),
+        })
+      );
 
       this.currentState.isSaving = false;
       this.currentState.lastSaved = new Date();
@@ -124,4 +123,3 @@ export class AutoSaveService {
     this.stateSubject.next({ ...this.currentState });
   }
 }
-

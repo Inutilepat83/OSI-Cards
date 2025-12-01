@@ -1,10 +1,9 @@
-import { Provider, EnvironmentProviders } from '@angular/core';
-import { provideHttpClient } from '@angular/common/http';
+import { EnvironmentProviders, Provider } from '@angular/core';
+import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { reducers } from '../../store/app.state';
 import { CardsEffects } from '../../store/cards/cards.effects';
@@ -28,7 +27,7 @@ export interface OSICardsConfig {
 
 /**
  * Provide OSI Cards with configuration
- * 
+ *
  * @example
  * ```typescript
  * export const appConfig: ApplicationConfig = {
@@ -46,7 +45,7 @@ export function provideOSICards(config: OSICardsConfig = {}): (Provider | Enviro
     enableLogging = true,
     logLevel = 'info',
     enableDevTools = false,
-    cardDataProvider
+    cardDataProvider,
   } = config;
 
   const providers: (Provider | EnvironmentProviders)[] = [
@@ -56,23 +55,23 @@ export function provideOSICards(config: OSICardsConfig = {}): (Provider | Enviro
     provideEffects([CardsEffects]),
     {
       provide: CARD_DATA_PROVIDER,
-      useClass: cardDataProvider || JsonFileCardProvider
+      useClass: cardDataProvider || JsonFileCardProvider,
     },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorInterceptor,
-      multi: true
+      multi: true,
     },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpCacheInterceptor,
-      multi: true
+      multi: true,
     },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: RateLimitInterceptor,
-      multi: true
-    }
+      multi: true,
+    },
   ];
 
   // Configure AppConfigService if needed
@@ -85,7 +84,7 @@ export function provideOSICards(config: OSICardsConfig = {}): (Provider | Enviro
           // Update config if needed
         }
         return service;
-      }
+      },
     });
   }
 
@@ -94,11 +93,10 @@ export function provideOSICards(config: OSICardsConfig = {}): (Provider | Enviro
     providers.push(
       provideStoreDevtools({
         maxAge: 25,
-        logOnly: false
+        logOnly: false,
       })
     );
   }
 
   return providers;
 }
-

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AnalyticsSectionComponent } from './analytics-section.component';
-import { SectionBuilder, FieldBuilder } from '../../../../../testing/test-builders';
+import { FieldBuilder, SectionBuilder } from '../../../../../testing/test-builders';
 
 describe('AnalyticsSectionComponent', () => {
   let component: AnalyticsSectionComponent;
@@ -8,12 +8,12 @@ describe('AnalyticsSectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AnalyticsSectionComponent]
+      imports: [AnalyticsSectionComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AnalyticsSectionComponent);
     component = fixture.componentInstance;
-    
+
     component.section = SectionBuilder.create()
       .withTitle('Key Metrics')
       .withType('analytics')
@@ -34,7 +34,7 @@ describe('AnalyticsSectionComponent', () => {
           .build()
       )
       .build();
-    
+
     fixture.detectChanges();
   });
 
@@ -56,10 +56,9 @@ describe('AnalyticsSectionComponent', () => {
   it('should emit field interaction', () => {
     spyOn(component.fieldInteraction, 'emit');
     const field = component.getFields()[0];
-    
+
     component.onFieldClick(field);
-    
+
     expect(component.fieldInteraction.emit).toHaveBeenCalled();
   });
 });
-

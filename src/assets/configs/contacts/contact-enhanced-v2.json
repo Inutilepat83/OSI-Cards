@@ -21,9 +21,27 @@
       "title": "Marketing Performance",
       "type": "analytics",
       "fields": [
-        { "label": "Brand Awareness Growth", "value": "+185% YoY", "percentage": 185, "performance": "excellent", "trend": "up" },
-        { "label": "Campaign ROI", "value": "420% Average", "percentage": 105, "performance": "excellent", "trend": "up" },
-        { "label": "Lead Generation Growth", "value": "+520%", "percentage": 130, "performance": "excellent", "trend": "up" }
+        {
+          "label": "Brand Awareness Growth",
+          "value": "+185% YoY",
+          "percentage": 185,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Campaign ROI",
+          "value": "420% Average",
+          "percentage": 105,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Lead Generation Growth",
+          "value": "+520%",
+          "percentage": 130,
+          "performance": "excellent",
+          "trend": "up"
+        }
       ]
     },
     {
@@ -61,13 +79,27 @@
       "title": "Professional Network",
       "type": "network-card",
       "fields": [
-        { "label": "LinkedIn Connections", "value": "Marketing Leaders Network", "connections": 250 },
-        { "label": "Industry Associations", "value": "CMO Council, Marketing Institute", "connections": 45 }
+        {
+          "label": "LinkedIn Connections",
+          "value": "Marketing Leaders Network",
+          "connections": 250
+        },
+        {
+          "label": "Industry Associations",
+          "value": "CMO Council, Marketing Institute",
+          "connections": 45
+        }
       ]
     }
   ],
   "actions": [
-    { "label": "Connect on LinkedIn", "type": "website", "variant": "primary", "icon": "💼", "url": "https://www.linkedin.com/in/sarah-chen-cmo" },
+    {
+      "label": "Connect on LinkedIn",
+      "type": "website",
+      "variant": "primary",
+      "icon": "💼",
+      "url": "https://www.linkedin.com/in/sarah-chen-cmo"
+    },
     {
       "label": "Send Email",
       "type": "mail",

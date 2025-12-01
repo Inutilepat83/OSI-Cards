@@ -1,8 +1,15 @@
-<div class="ai-section ai-section--overview" role="region" [attr.aria-labelledby]="'overview-section-title-' + section.id" [attr.aria-describedby]="section.description ? 'overview-section-desc-' + section.id : null">
+<div
+  class="ai-section ai-section--overview"
+  role="region"
+  [attr.aria-labelledby]="'overview-section-title-' + section.id"
+  [attr.aria-describedby]="section.description ? 'overview-section-desc-' + section.id : null"
+>
   <div class="ai-section__header">
     <div class="ai-section__details">
       <h3 class="ai-section__title" [id]="'overview-section-title-' + section.id">{{ section.title }}</h3>
-      <p *ngIf="section.description" class="ai-section__description" [id]="'overview-section-desc-' + section.id">{{ section.description }}</p>
+      <p *ngIf="section.description" class="ai-section__description" [id]="'overview-section-desc-' + section.id">
+        {{ section.description }}
+      </p>
     </div>
   </div>
 

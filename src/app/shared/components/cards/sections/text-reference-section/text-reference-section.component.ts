@@ -18,7 +18,7 @@ type TextReferenceField = CardField & {
   standalone: true,
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './text-reference-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TextReferenceSectionComponent extends BaseSectionComponent<TextReferenceField> {
   get fields(): TextReferenceField[] {
@@ -52,4 +52,3 @@ export class TextReferenceSectionComponent extends BaseSectionComponent<TextRefe
     return text != null ? String(text) : '';
   }
 }
-

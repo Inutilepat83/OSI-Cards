@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ListSectionComponent } from './list-section.component';
-import { SectionBuilder, ItemBuilder } from '../../../../../../testing/test-builders';
+import { ItemBuilder, SectionBuilder } from '../../../../../../testing/test-builders';
 import { CardSection } from '../../../../../../models';
 
 describe('ListSectionComponent', () => {
@@ -9,12 +9,12 @@ describe('ListSectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ListSectionComponent]
+      imports: [ListSectionComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ListSectionComponent);
     component = fixture.componentInstance;
-    
+
     // Set up test section
     component.section = SectionBuilder.create()
       .withTitle('Task List')
@@ -22,7 +22,7 @@ describe('ListSectionComponent', () => {
       .withItem(ItemBuilder.create().withTitle('Task 1').withDescription('Description 1').build())
       .withItem(ItemBuilder.create().withTitle('Task 2').withDescription('Description 2').build())
       .build();
-    
+
     fixture.detectChanges();
   });
 
@@ -49,44 +49,38 @@ describe('ListSectionComponent', () => {
   it('should emit item interaction on click', () => {
     spyOn(component.itemInteraction, 'emit');
     const item = component.items[0];
-    
+
     component.onItemClick(item);
-    
+
     expect(component.itemInteraction.emit).toHaveBeenCalledWith(
       jasmine.objectContaining({
         item: item,
         metadata: jasmine.objectContaining({
           sectionId: component.section.id,
-          sectionTitle: component.section.title
-        })
+          sectionTitle: component.section.title,
+        }),
       })
     );
   });
 
   it('should handle empty section', () => {
-    component.section = SectionBuilder.create()
-      .withTitle('Empty List')
-      .withType('list')
-      .build();
-    
+    component.section = SectionBuilder.create().withTitle('Empty List').withType('list').build();
+
     fixture.detectChanges();
-    
+
     expect(component.items.length).toBe(0);
   });
 
   it('should hide streaming placeholder in description', () => {
-    const item = ItemBuilder.create()
-      .withTitle('Task')
-      .withDescription('Streaming…')
-      .build();
+    const item = ItemBuilder.create().withTitle('Task').withDescription('Streaming…').build();
     component.section = SectionBuilder.create()
       .withTitle('List')
       .withType('list')
       .withItem(item)
       .build();
-    
+
     fixture.detectChanges();
-    
+
     expect(component.getDisplayDescription(item)).toBe('');
   });
 
@@ -100,20 +94,9 @@ describe('ListSectionComponent', () => {
       .withType('list')
       .withItem(item)
       .build();
-    
+
     fixture.detectChanges();
-    
+
     expect(component.getDisplayDescription(item)).toBe('Normal description');
   });
 });
-
-
-
-
-
-
-
-
-
-
-

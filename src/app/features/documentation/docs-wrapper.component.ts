@@ -1,20 +1,19 @@
-import { 
-  Component, 
-  ChangeDetectionStrategy, 
-  ViewEncapsulation,
-  signal, 
-  computed,
-  inject, 
-  OnInit,
-  OnDestroy,
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
   HostListener,
-  ElementRef
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewEncapsulation,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule, Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { filter, map, takeUntil } from 'rxjs/operators';
-import { Subject, fromEvent } from 'rxjs';
+import { fromEvent, Subject } from 'rxjs';
 import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
 
 interface DocRoute {
@@ -29,7 +28,7 @@ interface SearchResult {
   path: string;
   category?: string;
   snippet?: string;
-  icon?: string;
+  icon?: string | undefined;
 }
 
 /**
@@ -46,34 +45,29 @@ interface SearchResult {
 @Component({
   selector: 'app-docs-wrapper',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    LucideIconsModule
-  ],
+  imports: [CommonModule, FormsModule, RouterModule, LucideIconsModule],
   encapsulation: ViewEncapsulation.ShadowDom,
   styleUrls: ['./docs.styles.scss'],
   template: `
     <!-- B46: Skip Navigation Link -->
     <a href="#main-content" class="skip-link">Skip to content</a>
-    
+
     <!-- B40: Reading Progress Bar -->
     <div class="reading-progress" [attr.aria-hidden]="true">
       <div class="reading-progress-bar" [style.width.%]="readingProgress()"></div>
     </div>
-    
+
     <!-- B50: Screen Reader Announcements -->
     <div class="sr-announcements" role="status" aria-live="polite" aria-atomic="true">
       {{ announcement() }}
     </div>
-    
+
     <div class="docs-layout" [class.sidebar-open]="sidebarOpen()">
       <!-- Mobile header -->
       <header class="docs-header" role="banner">
-        <button 
-          class="menu-btn" 
-          (click)="toggleSidebar()" 
+        <button
+          class="menu-btn"
+          (click)="toggleSidebar()"
           [attr.aria-expanded]="sidebarOpen()"
           aria-controls="docs-sidebar"
           aria-label="Toggle navigation menu"
@@ -85,34 +79,34 @@ interface SearchResult {
           <span class="logo-badge">Docs</span>
         </a>
         <div class="header-actions">
-          <a 
-            routerLink="/" 
+          <a
+            routerLink="/"
             class="return-btn"
             aria-label="Return to OSI Cards"
             title="Return to OSI Cards"
           >
             <lucide-icon name="home" [size]="20"></lucide-icon>
           </a>
-          <button 
-            class="menu-btn" 
-            (click)="openCommandPalette()" 
+          <button
+            class="menu-btn"
+            (click)="openCommandPalette()"
             aria-label="Search documentation (⌘K)"
             title="Search (⌘K)"
           >
             <lucide-icon name="search" [size]="20"></lucide-icon>
           </button>
-          <a 
-            href="https://github.com/Inutilepat83/OSI-Cards" 
-            target="_blank" 
+          <a
+            href="https://github.com/Inutilepat83/OSI-Cards"
+            target="_blank"
             rel="noopener noreferrer"
-            class="github-link" 
+            class="github-link"
             aria-label="View on GitHub"
           >
             <lucide-icon name="github" [size]="20"></lucide-icon>
           </a>
-          <button 
-            class="theme-btn" 
-            (click)="toggleTheme()" 
+          <button
+            class="theme-btn"
+            (click)="toggleTheme()"
             [attr.aria-label]="'Switch to ' + (isDark() ? 'light' : 'dark') + ' mode'"
             [attr.aria-pressed]="isDark()"
           >
@@ -122,10 +116,10 @@ interface SearchResult {
       </header>
 
       <!-- Sidebar -->
-      <aside 
+      <aside
         id="docs-sidebar"
-        class="docs-sidebar" 
-        role="navigation" 
+        class="docs-sidebar"
+        role="navigation"
         aria-label="Documentation navigation"
       >
         <div class="sidebar-header">
@@ -133,21 +127,20 @@ interface SearchResult {
             <span>OSI Cards</span>
             <span class="version">v2.0</span>
           </a>
-          <button 
-            class="close-btn" 
-            (click)="closeSidebar()" 
-            aria-label="Close navigation"
-          >
+          <button class="close-btn" (click)="closeSidebar()" aria-label="Close navigation">
             <lucide-icon name="x" [size]="20"></lucide-icon>
           </button>
         </div>
-        
+
         <!-- B34: Command Palette Search with Live Results -->
-        <div class="sidebar-search" [class.has-results]="searchResults().length > 0 && searchQuery().length > 0">
+        <div
+          class="sidebar-search"
+          [class.has-results]="searchResults().length > 0 && searchQuery().length > 0"
+        >
           <lucide-icon name="search" [size]="16" class="search-icon"></lucide-icon>
-          <input 
-            type="text" 
-            placeholder="Search docs..." 
+          <input
+            type="text"
+            placeholder="Search docs..."
             class="search-input"
             [value]="searchQuery()"
             (input)="onSearchInput($event)"
@@ -157,13 +150,13 @@ interface SearchResult {
             autocomplete="off"
           />
           <kbd class="search-kbd">⌘K</kbd>
-          
+
           <!-- Search Results Dropdown -->
           @if (searchQuery().length > 0 && showSearchResults()) {
             <div class="search-results">
               @if (searchResults().length > 0) {
                 @for (result of searchResults(); track result.path; let i = $index) {
-                  <a 
+                  <a
                     [routerLink]="result.path"
                     class="search-result-item"
                     [class.highlighted]="highlightedIndex() === i"
@@ -191,14 +184,14 @@ interface SearchResult {
             </div>
           }
         </div>
-        
+
         <nav class="sidebar-nav" #sidebarNav appPrefetchContainer>
           @for (section of filteredDocSections(); track section.path) {
             <div class="nav-section">
               @if (section.children && section.children.length > 0) {
                 <!-- B31: Collapsible Sidebar Groups -->
-                <button 
-                  class="nav-section-header" 
+                <button
+                  class="nav-section-header"
                   (click)="toggleSection(section.path)"
                   [class.expanded]="expandedSections().has(section.path)"
                   [attr.aria-expanded]="expandedSections().has(section.path)"
@@ -208,22 +201,18 @@ interface SearchResult {
                     <lucide-icon [name]="section.icon" [size]="14"></lucide-icon>
                   }
                   <span>{{ section.title }}</span>
-                  <lucide-icon 
-                    name="chevron-right" 
-                    [size]="14"
-                    class="chevron">
-                  </lucide-icon>
+                  <lucide-icon name="chevron-right" [size]="14" class="chevron"> </lucide-icon>
                 </button>
                 @if (expandedSections().has(section.path)) {
-                  <div 
+                  <div
                     [id]="'section-' + section.path"
                     class="nav-section-items"
                     role="group"
                     [attr.aria-label]="section.title + ' pages'"
                   >
                     @for (child of section.children; track child.path; let i = $index) {
-                      <a 
-                        [routerLink]="['/docs', section.path, child.path]" 
+                      <a
+                        [routerLink]="['/docs', section.path, child.path]"
                         routerLinkActive="active"
                         class="nav-item"
                         (click)="onNavItemClick(section.path, child.path)"
@@ -235,8 +224,8 @@ interface SearchResult {
                   </div>
                 }
               } @else {
-                <a 
-                  [routerLink]="['/docs', section.path]" 
+                <a
+                  [routerLink]="['/docs', section.path]"
                   routerLinkActive="active"
                   [routerLinkActiveOptions]="{ exact: true }"
                   class="nav-item top-level"
@@ -251,30 +240,27 @@ interface SearchResult {
             </div>
           }
         </nav>
-        
+
         <!-- Sidebar footer -->
         <div class="sidebar-footer">
-          <a 
-            routerLink="/"
-            class="footer-link return-home"
-          >
+          <a routerLink="/" class="footer-link return-home">
             <lucide-icon name="arrow-left" [size]="16"></lucide-icon>
             <span>Return to OSI Cards</span>
           </a>
         </div>
         <div class="sidebar-footer-links">
-          <a 
-            href="https://github.com/Inutilepat83/OSI-Cards" 
-            target="_blank" 
+          <a
+            href="https://github.com/Inutilepat83/OSI-Cards"
+            target="_blank"
             rel="noopener noreferrer"
             class="footer-link"
           >
             <lucide-icon name="github" [size]="16"></lucide-icon>
             <span>GitHub</span>
           </a>
-          <a 
-            href="https://www.npmjs.com/package/osi-cards-lib" 
-            target="_blank" 
+          <a
+            href="https://www.npmjs.com/package/osi-cards-lib"
+            target="_blank"
             rel="noopener noreferrer"
             class="footer-link"
           >
@@ -285,19 +271,15 @@ interface SearchResult {
       </aside>
 
       <!-- Backdrop for mobile -->
-      <div 
-        class="sidebar-backdrop" 
-        (click)="closeSidebar()"
-        [attr.aria-hidden]="true"
-      ></div>
+      <div class="sidebar-backdrop" (click)="closeSidebar()" [attr.aria-hidden]="true"></div>
 
       <!-- Main content -->
       <main id="main-content" class="docs-content" role="main">
         <router-outlet></router-outlet>
       </main>
-      
+
       <!-- B28: Back to Top Button -->
-      <button 
+      <button
         class="back-to-top"
         [class.visible]="showBackToTop()"
         (click)="scrollToTop()"
@@ -308,11 +290,10 @@ interface SearchResult {
       </button>
     </div>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DocsWrapperComponent implements OnInit, OnDestroy {
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
   private el = inject(ElementRef);
   private destroy$ = new Subject<void>();
 
@@ -327,9 +308,6 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
   searchResults = signal<SearchResult[]>([]);
   showSearchResults = signal(false);
   highlightedIndex = signal(0);
-
-  // B29: Sidebar scroll position memory
-  private sidebarScrollPositions = new Map<string, number>();
 
   private allDocSections: DocRoute[] = [
     { path: 'getting-started', title: 'Getting Started', icon: 'rocket' },
@@ -360,7 +338,7 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
         { path: 'news', title: 'News' },
         { path: 'social-media', title: 'Social Media' },
         { path: 'base', title: 'Base (Fallback)' },
-      ]
+      ],
     },
     {
       path: 'schemas',
@@ -374,7 +352,7 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
         { path: 'card-action', title: 'CardAction' },
         { path: 'email-config', title: 'EmailConfig' },
         { path: 'type-aliases', title: 'Type Aliases' },
-      ]
+      ],
     },
     {
       path: 'streaming',
@@ -388,7 +366,7 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
         { path: 'progressive-rendering', title: 'Progressive Rendering' },
         { path: 'lifecycle', title: 'Lifecycle Hooks' },
         { path: 'error-handling', title: 'Error Handling' },
-      ]
+      ],
     },
     {
       path: 'services',
@@ -405,7 +383,7 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
         { path: 'section-normalization', title: 'Section Normalization' },
         { path: 'layout-worker-service', title: 'Layout Worker' },
         { path: 'section-utils-service', title: 'Section Utils' },
-      ]
+      ],
     },
     {
       path: 'components',
@@ -422,7 +400,7 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
         { path: 'card-preview', title: 'CardPreview' },
         { path: 'osi-cards', title: 'OSICards' },
         { path: 'osi-cards-container', title: 'OSICardsContainer' },
-      ]
+      ],
     },
     {
       path: 'integration',
@@ -449,7 +427,7 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
         { path: 'rate-limiting', title: 'Rate Limiting' },
         { path: 'card-validation', title: 'Card Validation' },
         { path: 'json-schema-llm', title: 'JSON Schema for LLMs' },
-      ]
+      ],
     },
     {
       path: 'advanced',
@@ -466,7 +444,7 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
         { path: 'i18n', title: 'Internationalization' },
         { path: 'security', title: 'Security' },
         { path: 'error-patterns', title: 'Error Patterns' },
-      ]
+      ],
     },
     {
       path: 'utilities',
@@ -479,7 +457,7 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
         { path: 'is-valid-section-type', title: 'isValidSectionType' },
         { path: 'ensure-card-ids', title: 'ensureCardIds' },
         { path: 'sanitize-card-config', title: 'sanitizeCardConfig' },
-      ]
+      ],
     },
     {
       path: 'library-docs',
@@ -490,7 +468,7 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
         { path: 'services', title: 'Services API' },
         { path: 'events', title: 'Events API' },
         { path: 'theming', title: 'Theming API' },
-      ]
+      ],
     },
   ];
 
@@ -505,14 +483,14 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
       this.openCommandPalette();
       return;
     }
-    
+
     // / : Focus search (when not in input)
     if (event.key === '/' && !this.isInputFocused()) {
       event.preventDefault();
       this.focusSearch();
       return;
     }
-    
+
     // Escape: Close sidebar or search
     if (event.key === 'Escape') {
       if (this.sidebarOpen()) {
@@ -525,11 +503,12 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // Check initial theme
     this.isDark.set(
-      document.documentElement.classList.contains('dark') || 
-      document.documentElement.getAttribute('data-theme') === 'dark' ||
-      (typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches)
+      document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark' ||
+        (typeof window !== 'undefined' &&
+          window.matchMedia?.('(prefers-color-scheme: dark)').matches)
     );
-    
+
     // B40: Setup reading progress tracking
     if (typeof window !== 'undefined') {
       fromEvent(window, 'scroll')
@@ -539,27 +518,29 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
           this.updateBackToTopVisibility();
         });
     }
-    
+
     // Auto-expand section based on current route
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-      map((event: NavigationEnd) => event.urlAfterRedirects),
-      takeUntil(this.destroy$)
-    ).subscribe(url => {
-      const parts = url.split('/').filter(p => p && p !== 'docs');
-      const firstPart = parts[0];
-      if (parts.length > 0 && firstPart) {
-        this.expandedSections.update(set => {
-          const newSet = new Set(set);
-          newSet.add(firstPart);
-          return newSet;
-        });
-      }
-      
-      // Scroll to top on navigation
-      window.scrollTo({ top: 0 });
-      this.readingProgress.set(0);
-    });
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        map((event: NavigationEnd) => event.urlAfterRedirects),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((url) => {
+        const parts = url.split('/').filter((p) => p && p !== 'docs');
+        const firstPart = parts[0];
+        if (parts.length > 0 && firstPart) {
+          this.expandedSections.update((set) => {
+            const newSet = new Set(set);
+            newSet.add(firstPart);
+            return newSet;
+          });
+        }
+
+        // Scroll to top on navigation
+        window.scrollTo({ top: 0 });
+        this.readingProgress.set(0);
+      });
   }
 
   ngOnDestroy() {
@@ -593,7 +574,9 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
   }
 
   focusSearch() {
-    const searchInput = this.el.nativeElement.shadowRoot?.querySelector('.search-input') as HTMLInputElement;
+    const searchInput = this.el.nativeElement.shadowRoot?.querySelector(
+      '.search-input'
+    ) as HTMLInputElement;
     if (searchInput) {
       searchInput.focus();
       searchInput.select();
@@ -611,7 +594,7 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
 
   onSearchKeydown(event: KeyboardEvent) {
     const results = this.searchResults();
-    
+
     if (event.key === 'Escape') {
       this.searchQuery.set('');
       this.filterDocSections('');
@@ -621,12 +604,12 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
     } else if (event.key === 'ArrowDown') {
       event.preventDefault();
       if (this.highlightedIndex() < results.length - 1) {
-        this.highlightedIndex.update(i => i + 1);
+        this.highlightedIndex.update((i) => i + 1);
       }
     } else if (event.key === 'ArrowUp') {
       event.preventDefault();
       if (this.highlightedIndex() > 0) {
-        this.highlightedIndex.update(i => i - 1);
+        this.highlightedIndex.update((i) => i - 1);
       }
     } else if (event.key === 'Enter' && results.length > 0) {
       event.preventDefault();
@@ -637,7 +620,7 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSearchBlur(event: FocusEvent) {
+  onSearchBlur(_event: FocusEvent) {
     // Delay hiding to allow click on results
     setTimeout(() => {
       this.showSearchResults.set(false);
@@ -655,14 +638,14 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
 
   private generateSearchResults(query: string) {
     const normalizedQuery = query.toLowerCase().trim();
-    
+
     if (normalizedQuery.length < 2) {
       this.searchResults.set([]);
       return;
     }
 
     const results: SearchResult[] = [];
-    
+
     // Search through all doc sections
     for (const section of this.allDocSections) {
       // Check parent section
@@ -672,10 +655,10 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
           title: section.title,
           path: `/docs/${section.path}${childPath}`,
           category: 'Documentation',
-          icon: section.icon
+          icon: section.icon,
         });
       }
-      
+
       // Check children
       if (section.children) {
         for (const child of section.children) {
@@ -685,63 +668,63 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
               path: `/docs/${section.path}/${child.path}`,
               category: section.title,
               snippet: this.getSnippetForResult(child.title, normalizedQuery),
-              icon: section.icon
+              icon: section.icon,
             });
           }
         }
       }
     }
-    
+
     // Limit results
     this.searchResults.set(results.slice(0, 10));
   }
 
-  private getSnippetForResult(title: string, query: string): string {
+  private getSnippetForResult(title: string, _query: string): string {
     // Generate contextual snippets based on section type
     const snippets: Record<string, string> = {
-      'info': 'Display key-value pairs in a clean format...',
-      'analytics': 'Display metrics with visual indicators and trends...',
+      info: 'Display key-value pairs in a clean format...',
+      analytics: 'Display metrics with visual indicators and trends...',
       'contact-card': 'Show contact information with photos and actions...',
-      'chart': 'Visualize data with various chart types...',
-      'list': 'Display items in organized list format...',
-      'product': 'Showcase products with images and details...',
-      'event': 'Display event information with dates and locations...',
-      'map': 'Show location data with interactive maps...',
-      'financials': 'Display financial data and metrics...',
-      'news': 'Show news articles and updates...',
+      chart: 'Visualize data with various chart types...',
+      list: 'Display items in organized list format...',
+      product: 'Showcase products with images and details...',
+      event: 'Display event information with dates and locations...',
+      map: 'Show location data with interactive maps...',
+      financials: 'Display financial data and metrics...',
+      news: 'Show news articles and updates...',
       'social-media': 'Display social media profiles and feeds...',
-      'quotation': 'Show quotes with attribution...',
-      'overview': 'Provide section summaries and highlights...',
-      'solutions': 'Present solutions and features...',
+      quotation: 'Show quotes with attribution...',
+      overview: 'Provide section summaries and highlights...',
+      solutions: 'Present solutions and features...',
       'network-card': 'Display network connections and relationships...',
       'brand-colors': 'Show brand color palettes...',
       'text-reference': 'Display referenced text content...',
-      'base': 'Fallback section type for unknown types...',
+      base: 'Fallback section type for unknown types...',
     };
-    
+
     const key = title.toLowerCase().replace(/ /g, '-');
     return snippets[key] || '';
   }
 
   private filterDocSections(query: string) {
     const normalizedQuery = query.toLowerCase().trim();
-    
+
     if (!normalizedQuery) {
       this.filteredDocSections.set(this.allDocSections);
       return;
     }
 
     const filtered = this.allDocSections
-      .map(section => {
+      .map((section) => {
         const sectionMatches = section.title.toLowerCase().includes(normalizedQuery);
-        const matchingChildren = section.children?.filter(child => 
+        const matchingChildren = section.children?.filter((child) =>
           child.title.toLowerCase().includes(normalizedQuery)
         );
 
         if (sectionMatches || (matchingChildren && matchingChildren.length > 0)) {
           return {
             ...section,
-            children: matchingChildren || section.children
+            children: matchingChildren || section.children,
           } as DocRoute;
         }
         return null;
@@ -749,18 +732,20 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
       .filter((section): section is DocRoute => section !== null);
 
     this.filteredDocSections.set(filtered);
-    
+
     // Expand all matching sections
     if (normalizedQuery) {
-      this.expandedSections.set(new Set(filtered.map(s => s.path)));
+      this.expandedSections.set(new Set(filtered.map((s) => s.path)));
     }
   }
 
   private isInputFocused(): boolean {
     const activeElement = document.activeElement;
-    return activeElement?.tagName === 'INPUT' || 
-           activeElement?.tagName === 'TEXTAREA' ||
-           (activeElement as HTMLElement)?.isContentEditable;
+    return (
+      activeElement?.tagName === 'INPUT' ||
+      activeElement?.tagName === 'TEXTAREA' ||
+      (activeElement as HTMLElement)?.isContentEditable
+    );
   }
 
   // Navigation handlers
@@ -770,7 +755,7 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
   }
 
   toggleSidebar() {
-    this.sidebarOpen.update(v => !v);
+    this.sidebarOpen.update((v) => !v);
     this.announce(this.sidebarOpen() ? 'Navigation opened' : 'Navigation closed');
   }
 
@@ -779,8 +764,8 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
   }
 
   toggleTheme() {
-    this.isDark.update(v => !v);
-    
+    this.isDark.update((v) => !v);
+
     if (this.isDark()) {
       document.documentElement.classList.add('dark');
       document.documentElement.setAttribute('data-theme', 'dark');
@@ -788,12 +773,12 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
       document.documentElement.classList.remove('dark');
       document.documentElement.setAttribute('data-theme', 'light');
     }
-    
+
     this.announce(this.isDark() ? 'Dark mode enabled' : 'Light mode enabled');
   }
 
   toggleSection(path: string) {
-    this.expandedSections.update(set => {
+    this.expandedSections.update((set) => {
       const newSet = new Set(set);
       if (newSet.has(path)) {
         newSet.delete(path);

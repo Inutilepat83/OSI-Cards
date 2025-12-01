@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
 import { DocsDemoComponent } from '../../components';
 
@@ -114,32 +114,32 @@ The **Map Section** (\`type: "map"\`) is used for displays geographic data with 
 `;
 
 const demoConfig = {
-  "title": "Global Presence",
-  "type": "map",
-  "description": "Office locations worldwide",
-  "fields": [
+  title: 'Global Presence',
+  type: 'map',
+  description: 'Office locations worldwide',
+  fields: [
     {
-      "name": "Headquarters",
-      "x": 37.7749,
-      "y": -122.4194,
-      "type": "office",
-      "address": "San Francisco, CA, USA"
+      name: 'Headquarters',
+      x: 37.7749,
+      y: -122.4194,
+      type: 'office',
+      address: 'San Francisco, CA, USA',
     },
     {
-      "name": "European HQ",
-      "x": 51.5074,
-      "y": -0.1278,
-      "type": "office",
-      "address": "London, UK"
+      name: 'European HQ',
+      x: 51.5074,
+      y: -0.1278,
+      type: 'office',
+      address: 'London, UK',
     },
     {
-      "name": "APAC Office",
-      "x": 35.6762,
-      "y": 139.6503,
-      "type": "branch",
-      "address": "Tokyo, Japan"
-    }
-  ]
+      name: 'APAC Office',
+      x: 35.6762,
+      y: 139.6503,
+      type: 'branch',
+      address: 'Tokyo, Japan',
+    },
+  ],
 };
 
 /**
@@ -152,8 +152,8 @@ const demoConfig = {
   imports: [DocPageComponent, DocsDemoComponent],
   template: `
     <div class="section-docs">
-      <app-docs-demo 
-        [config]="demo" 
+      <app-docs-demo
+        [config]="demo"
         [type]="'map'"
         demoTitle="Live Preview"
         height="350px"
@@ -161,14 +161,16 @@ const demoConfig = {
       <app-doc-page [content]="content"></app-doc-page>
     </div>
   `,
-  styles: [`
-    .section-docs {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styles: [
+    `
+      .section-docs {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapPageComponent {
   content = pageContent;

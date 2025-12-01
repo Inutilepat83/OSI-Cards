@@ -1,7 +1,13 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpResponse } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import {
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest,
+  HttpResponse,
+} from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { tap, switchMap, catchError } from 'rxjs/operators';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { AppConfigService } from '../services/app-config.service';
 import { IndexedDBCacheService } from '../services/indexeddb-cache.service';
 
@@ -12,28 +18,28 @@ interface CacheEntry {
 
 /**
  * HTTP Cache Interceptor
- * 
+ *
  * HTTP interceptor that caches GET requests to improve performance and reduce
  * network traffic. Uses a two-tier caching strategy: in-memory cache for fast
  * access and IndexedDB for persistent caching across page reloads.
- * 
+ *
  * Features:
  * - Two-tier caching (in-memory + IndexedDB)
  * - Configurable TTL (Time To Live) for cache entries
  * - Automatic cache invalidation
  * - Selective caching (only /assets/configs/ endpoints)
  * - Cache management utilities
- * 
+ *
  * @example
  * ```typescript
  * const interceptor = inject(HttpCacheInterceptor);
- * 
+ *
  * // Clear cache for specific URL
  * interceptor.clearCache('/assets/configs/cards.json');
- * 
+ *
  * // Clear all cache
  * interceptor.clearAllCache();
- * 
+ *
  * // Get cache size
  * const size = interceptor.getCacheSize();
  * ```
@@ -58,12 +64,14 @@ export class HttpCacheInterceptor implements HttpInterceptor {
     const cached = this.cache.get(req.url);
     if (cached && now - cached.timestamp < this.TTL) {
       // Return cached response
-      return of(new HttpResponse({ 
-        body: cached.data,
-        status: 200,
-        statusText: 'OK',
-        url: req.url
-      }));
+      return of(
+        new HttpResponse({
+          body: cached.data,
+          status: 200,
+          statusText: 'OK',
+          url: req.url,
+        })
+      );
     }
 
     // Check IndexedDB cache
@@ -72,32 +80,34 @@ export class HttpCacheInterceptor implements HttpInterceptor {
         if (indexedEntry && now - indexedEntry.timestamp < this.TTL) {
           // Update in-memory cache and return cached response
           this.cache.set(req.url, indexedEntry);
-          return of(new HttpResponse({ 
-            body: indexedEntry.data,
-            status: 200,
-            statusText: 'OK',
-            url: req.url
-          }));
+          return of(
+            new HttpResponse({
+              body: indexedEntry.data,
+              status: 200,
+              statusText: 'OK',
+              url: req.url,
+            })
+          );
         }
 
         // No valid cache, make request and cache response
         return next.handle(req).pipe(
-          tap(event => {
+          tap((event) => {
             if (event instanceof HttpResponse) {
-              const cacheEntry: CacheEntry = { 
-                data: event.body, 
-                timestamp: now 
+              const cacheEntry: CacheEntry = {
+                data: event.body,
+                timestamp: now,
               };
-              
+
               // Cache in memory
               this.cache.set(req.url, cacheEntry);
-              
+
               // Cache in IndexedDB (async, don't wait)
               this.indexedDBCache.set(req.url, event.body, now).subscribe({
                 error: (err) => {
                   // Silently fail IndexedDB caching - in-memory cache is sufficient
                   console.debug('Failed to cache in IndexedDB:', err);
-                }
+                },
               });
             }
           })
@@ -106,11 +116,11 @@ export class HttpCacheInterceptor implements HttpInterceptor {
       catchError(() => {
         // If IndexedDB fails, fall back to regular request
         return next.handle(req).pipe(
-          tap(event => {
+          tap((event) => {
             if (event instanceof HttpResponse) {
-              const cacheEntry: CacheEntry = { 
-                data: event.body, 
-                timestamp: now 
+              const cacheEntry: CacheEntry = {
+                data: event.body,
+                timestamp: now,
               };
               this.cache.set(req.url, cacheEntry);
             }
@@ -141,4 +151,3 @@ export class HttpCacheInterceptor implements HttpInterceptor {
     return this.cache.size;
   }
 }
-

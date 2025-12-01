@@ -30,7 +30,7 @@ export class BatchConversionUtil {
           invalid.push({
             index,
             error: 'JSON structure validation failed',
-            content: jsonString.substring(0, 100)
+            content: jsonString.substring(0, 100),
           });
           return;
         }
@@ -39,7 +39,7 @@ export class BatchConversionUtil {
           invalid.push({
             index,
             error: 'Card structure validation failed',
-            content: jsonString.substring(0, 100)
+            content: jsonString.substring(0, 100),
           });
           return;
         }
@@ -50,7 +50,7 @@ export class BatchConversionUtil {
         invalid.push({
           index,
           error: msg,
-          content: jsonString.substring(0, 100)
+          content: jsonString.substring(0, 100),
         });
       }
     });
@@ -58,7 +58,7 @@ export class BatchConversionUtil {
     return {
       valid,
       invalid,
-      successRate: jsonStrings.length > 0 ? (valid.length / jsonStrings.length) * 100 : 0
+      successRate: jsonStrings.length > 0 ? (valid.length / jsonStrings.length) * 100 : 0,
     };
   }
 
@@ -67,7 +67,7 @@ export class BatchConversionUtil {
    */
   static sanitizeMultipleCards(cards: Partial<AICardConfig>[]): AICardConfig[] {
     return cards
-      .map(card => {
+      .map((card) => {
         try {
           return sanitizeCardConfig(card) as AICardConfig;
         } catch (error: unknown) {
@@ -100,14 +100,14 @@ export class BatchConversionUtil {
       error?: string;
     }[] = [];
 
-    jsonStrings.forEach(jsonString => {
+    jsonStrings.forEach((jsonString) => {
       try {
         const card = validationService.validateCardJson(jsonString);
 
         if (!card) {
           results.push({
             success: false,
-            error: 'JSON validation failed'
+            error: 'JSON validation failed',
           });
           return;
         }
@@ -116,7 +116,7 @@ export class BatchConversionUtil {
           results.push({
             success: false,
             cardId: (card as any).id || 'unknown',
-            error: 'Structure validation failed'
+            error: 'Structure validation failed',
           });
           return;
         }
@@ -126,13 +126,13 @@ export class BatchConversionUtil {
 
         results.push({
           success: true,
-          cardId: sanitized.id
+          ...(sanitized.id !== undefined && { cardId: sanitized.id }),
         });
       } catch (error: unknown) {
         const msg = error instanceof Error ? error.message : 'Unknown error';
         results.push({
           success: false,
-          error: msg
+          error: msg,
         });
       }
     });
@@ -144,9 +144,7 @@ export class BatchConversionUtil {
    * Merge multiple cards into a single collection
    * Removes duplicates based on card ID
    */
-  static mergeCards(
-    ...cardCollections: AICardConfig[][]
-  ): {
+  static mergeCards(...cardCollections: AICardConfig[][]): {
     merged: AICardConfig[];
     duplicateCount: number;
     duplicates: { id: string; count: number }[];
@@ -155,13 +153,13 @@ export class BatchConversionUtil {
     const duplicates: { id: string; count: number }[] = [];
     let duplicateCount = 0;
 
-    cardCollections.forEach(collection => {
-      collection.forEach(card => {
+    cardCollections.forEach((collection) => {
+      collection.forEach((card) => {
         const cardId = card.id || 'unknown';
 
         if (idMap.has(cardId)) {
           // Track duplicates
-          const existing = duplicates.find(d => d.id === cardId);
+          const existing = duplicates.find((d) => d.id === cardId);
           if (existing) {
             existing.count++;
           } else {
@@ -177,7 +175,7 @@ export class BatchConversionUtil {
     return {
       merged: Array.from(idMap.values()),
       duplicateCount,
-      duplicates
+      duplicates,
     };
   }
 
@@ -185,16 +183,15 @@ export class BatchConversionUtil {
    * Filter cards by type
    */
   static filterCardsByType(cards: AICardConfig[], cardType: string): AICardConfig[] {
-    return cards.filter(card => card.cardType === cardType);
+    return cards.filter((card) => card.cardType === cardType);
   }
-
 
   /**
    * Sort cards by priority
    */
   static sortCardsByPriority(cards: AICardConfig[]): AICardConfig[] {
     const priorityOrder = { high: 3, medium: 2, low: 1 };
-    
+
     return [...cards].sort((a, b) => {
       const priorityA = priorityOrder[(a as any).priority as keyof typeof priorityOrder] || 0;
       const priorityB = priorityOrder[(b as any).priority as keyof typeof priorityOrder] || 0;
@@ -207,7 +204,7 @@ export class BatchConversionUtil {
    */
   static exportAsJsonArray(cards: AICardConfig[]): string {
     try {
-      const sanitized = cards.map(card => sanitizeCardConfig(card as any) as AICardConfig);
+      const sanitized = cards.map((card) => sanitizeCardConfig(card as any) as AICardConfig);
       return JSON.stringify(sanitized, null, 2);
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : 'Unknown error';
@@ -281,7 +278,7 @@ export class BatchConversionUtil {
     let totalSections = 0;
     let cardsWithActions = 0;
 
-    cards.forEach(card => {
+    cards.forEach((card) => {
       // Count by type
       const type = card.cardType || 'unknown';
       byType[type] = (byType[type] || 0) + 1;
@@ -300,7 +297,7 @@ export class BatchConversionUtil {
       byType,
       totalSections,
       avgSectionsPerCard: cards.length > 0 ? totalSections / cards.length : 0,
-      cardsWithActions
+      cardsWithActions,
     };
   }
 
@@ -314,7 +311,7 @@ export class BatchConversionUtil {
     const titleMap = new Map<string, AICardConfig[]>();
     const duplicates: { title: string; count: number; cardIds: string[] }[] = [];
 
-    cards.forEach(card => {
+    cards.forEach((card) => {
       const titleLower = card.cardTitle.toLowerCase();
       if (!titleMap.has(titleLower)) {
         titleMap.set(titleLower, []);
@@ -329,7 +326,7 @@ export class BatchConversionUtil {
         duplicates.push({
           title,
           count: cardsWithTitle.length,
-          cardIds: cardsWithTitle.map(c => c.id || 'unknown')
+          cardIds: cardsWithTitle.map((c) => c.id || 'unknown'),
         });
       }
       // Keep first occurrence
@@ -385,7 +382,7 @@ export class BatchConversionUtil {
       invalidCards: invalid.length,
       stats,
       duplicates,
-      issues
+      issues,
     };
   }
 }

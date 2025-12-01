@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DocPageComponent } from './doc-page.component';
 
@@ -10,7 +10,7 @@ import { DocPageComponent } from './doc-page.component';
   standalone: true,
   imports: [CommonModule, DocPageComponent],
   template: `<app-doc-page [content]="content"></app-doc-page>`,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NgDocPageComponent {
   content = `# Documentation

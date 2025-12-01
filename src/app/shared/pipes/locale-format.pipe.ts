@@ -1,43 +1,50 @@
 /**
  * Locale Format Pipe
- * 
+ *
  * Pipe for formatting values according to the current locale in templates.
  * Supports numbers, currency, percentages, dates, and relative time.
- * 
+ *
  * @example
  * ```html
  * <!-- Format currency -->
  * <span>{{ 1234.56 | localeFormat: 'currency': 'USD' }}</span>
- * 
+ *
  * <!-- Format number -->
  * <span>{{ 1234.56 | localeFormat: 'number' }}</span>
- * 
+ *
  * <!-- Format percentage -->
  * <span>{{ 0.1234 | localeFormat: 'percent' }}</span>
- * 
+ *
  * <!-- Format date -->
  * <span>{{ date | localeFormat: 'date': 'medium' }}</span>
- * 
+ *
  * <!-- Format relative time -->
  * <span>{{ date | localeFormat: 'relative' }}</span>
  * ```
  */
 
-import { Pipe, PipeTransform, inject } from '@angular/core';
+import { inject, Pipe, PipeTransform } from '@angular/core';
 import {
-  LocaleFormattingService,
-  DateFormatStyle,
+  CurrencyFormatOptions,
   DateFormatOptions,
+  DateFormatStyle,
+  LocaleFormattingService,
   NumberFormatOptions,
-  CurrencyFormatOptions
 } from '../../core/services/locale-formatting.service';
 
-export type FormatType = 'number' | 'currency' | 'percent' | 'date' | 'dateTime' | 'relative' | 'compact';
+export type FormatType =
+  | 'number'
+  | 'currency'
+  | 'percent'
+  | 'date'
+  | 'dateTime'
+  | 'relative'
+  | 'compact';
 
 @Pipe({
   name: 'localeFormat',
   standalone: true,
-  pure: false // Not pure to react to locale changes
+  pure: false, // Not pure to react to locale changes
 })
 export class LocaleFormatPipe implements PipeTransform {
   private readonly formatter = inject(LocaleFormattingService);
@@ -61,7 +68,9 @@ export class LocaleFormatPipe implements PipeTransform {
       }
 
       case 'percent': {
-        const options = args[0] as { minimumFractionDigits?: number; maximumFractionDigits?: number } | undefined;
+        const options = args[0] as
+          | { minimumFractionDigits?: number; maximumFractionDigits?: number }
+          | undefined;
         // Convert Date to number for percentage formatting
         const numValue = value instanceof Date ? value.getTime() : value;
         return this.formatter.formatPercent(numValue, options);
@@ -100,4 +109,3 @@ export class LocaleFormatPipe implements PipeTransform {
     }
   }
 }
-

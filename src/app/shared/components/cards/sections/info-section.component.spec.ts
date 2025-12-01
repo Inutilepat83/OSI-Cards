@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { InfoSectionComponent } from './info-section.component';
-import { SectionBuilder, FieldBuilder } from '../../../../testing/test-builders';
+import { FieldBuilder, SectionBuilder } from '../../../../testing/test-builders';
 import { CardSection } from '../../../../models';
 
 describe('InfoSectionComponent', () => {
@@ -9,12 +9,12 @@ describe('InfoSectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [InfoSectionComponent]
+      imports: [InfoSectionComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(InfoSectionComponent);
     component = fixture.componentInstance;
-    
+
     // Set up test section
     component.section = SectionBuilder.create()
       .withTitle('Company Info')
@@ -22,7 +22,7 @@ describe('InfoSectionComponent', () => {
       .withField(FieldBuilder.create().withLabel('Industry').withValue('Technology').build())
       .withField(FieldBuilder.create().withLabel('Employees').withValue('1000+').build())
       .build();
-    
+
     fixture.detectChanges();
   });
 
@@ -44,47 +44,26 @@ describe('InfoSectionComponent', () => {
   it('should emit field interaction on click', () => {
     spyOn(component.fieldInteraction, 'emit');
     const field = component.getFields()[0];
-    
+
     component.onFieldClick(field);
-    
+
     expect(component.fieldInteraction.emit).toHaveBeenCalledWith(
       jasmine.objectContaining({
         field: field,
         metadata: jasmine.objectContaining({
           sectionId: component.section.id,
-          sectionTitle: component.section.title
-        })
+          sectionTitle: component.section.title,
+        }),
       })
     );
   });
 
   it('should handle empty section', () => {
-    component.section = SectionBuilder.create()
-      .withTitle('Empty')
-      .withType('info')
-      .build();
-    
+    component.section = SectionBuilder.create().withTitle('Empty').withType('info').build();
+
     fixture.detectChanges();
-    
+
     expect(component.hasFields).toBe(false);
     expect(component.getFields().length).toBe(0);
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

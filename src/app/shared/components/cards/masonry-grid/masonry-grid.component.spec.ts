@@ -15,12 +15,12 @@ describe('MasonryGridComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [MasonryGridComponent, SectionRendererComponent],
-      providers: [
-        { provide: SectionTypeResolverService, useValue: typeResolverSpy }
-      ]
+      providers: [{ provide: SectionTypeResolverService, useValue: typeResolverSpy }],
     }).compileComponents();
 
-    typeResolver = TestBed.inject(SectionTypeResolverService) as jasmine.SpyObj<SectionTypeResolverService>;
+    typeResolver = TestBed.inject(
+      SectionTypeResolverService
+    ) as jasmine.SpyObj<SectionTypeResolverService>;
     typeResolver.resolve.and.returnValue('info');
 
     fixture = TestBed.createComponent(MasonryGridComponent);
@@ -46,7 +46,7 @@ describe('MasonryGridComponent', () => {
   it('should handle sections input', () => {
     const sections = [
       SectionBuilder.create().withTitle('Section 1').withType('info').build(),
-      SectionBuilder.create().withTitle('Section 2').withType('analytics').build()
+      SectionBuilder.create().withTitle('Section 2').withType('analytics').build(),
     ];
 
     component.sections = sections;
@@ -59,7 +59,7 @@ describe('MasonryGridComponent', () => {
     const sections = [
       SectionBuilder.create().withTitle('Valid Section').withType('info').build(),
       null as any,
-      undefined as any
+      undefined as any,
     ];
 
     component.sections = sections;
@@ -75,7 +75,7 @@ describe('MasonryGridComponent', () => {
       .withType('info')
       .withFields([
         { label: 'Field 1', value: 'Value 1' },
-        { label: 'Field 2', value: 'Value 2' }
+        { label: 'Field 2', value: 'Value 2' },
       ])
       .build();
 
@@ -87,10 +87,7 @@ describe('MasonryGridComponent', () => {
   });
 
   it('should respect explicit colSpan from section', () => {
-    const section = SectionBuilder.create()
-      .withTitle('Test Section')
-      .withType('info')
-      .build();
+    const section = SectionBuilder.create().withTitle('Test Section').withType('info').build();
     section.colSpan = 2;
 
     component.sections = [section];
@@ -114,9 +111,7 @@ describe('MasonryGridComponent', () => {
   it('should emit layoutChange when layout changes', () => {
     spyOn(component.layoutChange, 'emit');
 
-    const sections = [
-      SectionBuilder.create().withTitle('Section 1').withType('info').build()
-    ];
+    const sections = [SectionBuilder.create().withTitle('Section 1').withType('info').build()];
 
     component.sections = sections;
     fixture.detectChanges();
@@ -127,7 +122,7 @@ describe('MasonryGridComponent', () => {
       Object.defineProperty(containerElement, 'clientWidth', {
         writable: true,
         configurable: true,
-        value: 1200
+        value: 1200,
       });
     }
 
@@ -141,9 +136,7 @@ describe('MasonryGridComponent', () => {
   it('should emit sectionEvent when section emits event', () => {
     spyOn(component.sectionEvent, 'emit');
 
-    const sections = [
-      SectionBuilder.create().withTitle('Section 1').withType('info').build()
-    ];
+    const sections = [SectionBuilder.create().withTitle('Section 1').withType('info').build()];
 
     component.sections = sections;
     fixture.detectChanges();
@@ -151,7 +144,7 @@ describe('MasonryGridComponent', () => {
     const event = {
       type: 'fieldInteraction' as const,
       field: { label: 'Test', value: 'Value' },
-      metadata: {}
+      metadata: {},
     };
 
     component.onSectionEvent(event);
@@ -178,9 +171,7 @@ describe('MasonryGridComponent', () => {
   });
 
   it('should track items correctly', () => {
-    const sections = [
-      SectionBuilder.create().withTitle('Section 1').withType('info').build()
-    ];
+    const sections = [SectionBuilder.create().withTitle('Section 1').withType('info').build()];
 
     component.sections = sections;
     fixture.detectChanges();
@@ -205,9 +196,7 @@ describe('MasonryGridComponent', () => {
   it('should handle sections without type by resolving', () => {
     typeResolver.resolve.and.returnValue('info');
 
-    const section = SectionBuilder.create()
-      .withTitle('Section Without Type')
-      .build();
+    const section = SectionBuilder.create().withTitle('Section Without Type').build();
     delete (section as any).type;
 
     component.sections = [section];
@@ -219,7 +208,7 @@ describe('MasonryGridComponent', () => {
 
   it('should update layout on sections change', () => {
     const initialSections = [
-      SectionBuilder.create().withTitle('Section 1').withType('info').build()
+      SectionBuilder.create().withTitle('Section 1').withType('info').build(),
     ];
 
     component.sections = initialSections;
@@ -229,7 +218,7 @@ describe('MasonryGridComponent', () => {
 
     const newSections = [
       ...initialSections,
-      SectionBuilder.create().withTitle('Section 2').withType('analytics').build()
+      SectionBuilder.create().withTitle('Section 2').withType('analytics').build(),
     ];
 
     component.sections = newSections;
@@ -239,9 +228,7 @@ describe('MasonryGridComponent', () => {
   });
 
   it('should clean up observers on destroy', () => {
-    const sections = [
-      SectionBuilder.create().withTitle('Section 1').withType('info').build()
-    ];
+    const sections = [SectionBuilder.create().withTitle('Section 1').withType('info').build()];
 
     component.sections = sections;
     fixture.detectChanges();
@@ -251,9 +238,7 @@ describe('MasonryGridComponent', () => {
   });
 
   it('should handle resize observer setup', () => {
-    const sections = [
-      SectionBuilder.create().withTitle('Section 1').withType('info').build()
-    ];
+    const sections = [SectionBuilder.create().withTitle('Section 1').withType('info').build()];
 
     component.sections = sections;
     fixture.detectChanges();
@@ -265,7 +250,7 @@ describe('MasonryGridComponent', () => {
   it('should calculate container height based on sections', () => {
     const sections = [
       SectionBuilder.create().withTitle('Section 1').withType('info').build(),
-      SectionBuilder.create().withTitle('Section 2').withType('info').build()
+      SectionBuilder.create().withTitle('Section 2').withType('info').build(),
     ];
 
     component.sections = sections;
@@ -277,9 +262,7 @@ describe('MasonryGridComponent', () => {
 
   it('should respect maxColumns limit', () => {
     component.maxColumns = 2;
-    const sections = [
-      SectionBuilder.create().withTitle('Section 1').withType('info').build()
-    ];
+    const sections = [SectionBuilder.create().withTitle('Section 1').withType('info').build()];
 
     component.sections = sections;
     fixture.detectChanges();
@@ -300,7 +283,7 @@ describe('MasonryGridComponent', () => {
     it('should update visible sections when virtual scrolling is enabled', () => {
       const sections = [
         SectionBuilder.create().withTitle('Section 1').withType('info').withId('section-1').build(),
-        SectionBuilder.create().withTitle('Section 2').withType('info').withId('section-2').build()
+        SectionBuilder.create().withTitle('Section 2').withType('info').withId('section-2').build(),
       ];
 
       component.sections = sections;
@@ -319,7 +302,7 @@ describe('MasonryGridComponent', () => {
       const sections = [
         SectionBuilder.create().withTitle('Section 1').withType('info').withId('section-1').build(),
         SectionBuilder.create().withTitle('Section 2').withType('info').withId('section-2').build(),
-        SectionBuilder.create().withTitle('Section 3').withType('info').withId('section-3').build()
+        SectionBuilder.create().withTitle('Section 3').withType('info').withId('section-3').build(),
       ];
 
       component.sections = sections;
@@ -333,13 +316,16 @@ describe('MasonryGridComponent', () => {
       (component as any).updateVisibleSections();
 
       expect(component.visibleSections.length).toBe(2);
-      expect(component.visibleSections.map(s => s.section.id)).toEqual(['section-1', 'section-3']);
+      expect(component.visibleSections.map((s) => s.section.id)).toEqual([
+        'section-1',
+        'section-3',
+      ]);
     });
 
     it('should not update visible sections when virtual scrolling is disabled', () => {
       component.enableVirtualScrolling = false;
       const sections = [
-        SectionBuilder.create().withTitle('Section 1').withType('info').withId('section-1').build()
+        SectionBuilder.create().withTitle('Section 1').withType('info').withId('section-1').build(),
       ];
 
       component.sections = sections;
@@ -377,7 +363,7 @@ describe('MasonryGridComponent', () => {
       const sections = [
         SectionBuilder.create().withTitle('Section 1').withType('info').withId('section-1').build(),
         SectionBuilder.create().withTitle('Section 2').withType('info').withId('section-2').build(),
-        SectionBuilder.create().withTitle('Section 3').withType('info').withId('section-3').build()
+        SectionBuilder.create().withTitle('Section 3').withType('info').withId('section-3').build(),
       ];
 
       component.sections = sections;
@@ -507,9 +493,7 @@ describe('MasonryGridComponent', () => {
     });
 
     it('should handle sections with only ID', () => {
-      const section = SectionBuilder.create()
-        .withId('custom-id')
-        .build();
+      const section = SectionBuilder.create().withId('custom-id').build();
       delete (section as any).title;
 
       const id = component.getSectionId(section);
@@ -517,9 +501,7 @@ describe('MasonryGridComponent', () => {
     });
 
     it('should handle sections with only type', () => {
-      const section = SectionBuilder.create()
-        .withType('info')
-        .build();
+      const section = SectionBuilder.create().withType('info').build();
       delete (section as any).title;
       delete (section as any).id;
 
@@ -535,9 +517,7 @@ describe('MasonryGridComponent', () => {
 
   describe('Layout Calculations', () => {
     it('should calculate correct column count for different container widths', () => {
-      const sections = [
-        SectionBuilder.create().withTitle('Section 1').withType('info').build()
-      ];
+      const sections = [SectionBuilder.create().withTitle('Section 1').withType('info').build()];
 
       component.sections = sections;
       fixture.detectChanges();
@@ -548,7 +528,7 @@ describe('MasonryGridComponent', () => {
         Object.defineProperty(containerElement, 'clientWidth', {
           writable: true,
           configurable: true,
-          value: 600
+          value: 600,
         });
       }
 
@@ -557,9 +537,7 @@ describe('MasonryGridComponent', () => {
     });
 
     it('should handle very small container width', () => {
-      const sections = [
-        SectionBuilder.create().withTitle('Section 1').withType('info').build()
-      ];
+      const sections = [SectionBuilder.create().withTitle('Section 1').withType('info').build()];
 
       component.sections = sections;
       fixture.detectChanges();
@@ -569,7 +547,7 @@ describe('MasonryGridComponent', () => {
         Object.defineProperty(containerElement, 'clientWidth', {
           writable: true,
           configurable: true,
-          value: 100
+          value: 100,
         });
       }
 
@@ -579,9 +557,7 @@ describe('MasonryGridComponent', () => {
 
     it('should handle very large container width', () => {
       component.maxColumns = 4;
-      const sections = [
-        SectionBuilder.create().withTitle('Section 1').withType('info').build()
-      ];
+      const sections = [SectionBuilder.create().withTitle('Section 1').withType('info').build()];
 
       component.sections = sections;
       fixture.detectChanges();
@@ -591,7 +567,7 @@ describe('MasonryGridComponent', () => {
         Object.defineProperty(containerElement, 'clientWidth', {
           writable: true,
           configurable: true,
-          value: 5000
+          value: 5000,
         });
       }
 
@@ -604,10 +580,7 @@ describe('MasonryGridComponent', () => {
   describe('Edge Cases', () => {
     it('should handle sections with very long titles', () => {
       const longTitle = 'A'.repeat(1000);
-      const section = SectionBuilder.create()
-        .withTitle(longTitle)
-        .withType('info')
-        .build();
+      const section = SectionBuilder.create().withTitle(longTitle).withType('info').build();
 
       component.sections = [section];
       fixture.detectChanges();
@@ -632,12 +605,10 @@ describe('MasonryGridComponent', () => {
     });
 
     it('should handle rapid section changes', () => {
-      const sections1 = [
-        SectionBuilder.create().withTitle('Section 1').withType('info').build()
-      ];
+      const sections1 = [SectionBuilder.create().withTitle('Section 1').withType('info').build()];
       const sections2 = [
         SectionBuilder.create().withTitle('Section 2').withType('info').build(),
-        SectionBuilder.create().withTitle('Section 3').withType('info').build()
+        SectionBuilder.create().withTitle('Section 3').withType('info').build(),
       ];
 
       component.sections = sections1;
@@ -650,5 +621,3 @@ describe('MasonryGridComponent', () => {
     });
   });
 });
-
-

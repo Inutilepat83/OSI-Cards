@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
 import { DocsDemoComponent } from '../../components';
 
@@ -110,29 +110,29 @@ The **Text Reference Section** (\`type: "text-reference"\`) is used for displays
 `;
 
 const demoConfig = {
-  "title": "Documentation References",
-  "type": "text-reference",
-  "description": "Related documents and resources",
-  "fields": [
+  title: 'Documentation References',
+  type: 'text-reference',
+  description: 'Related documents and resources',
+  fields: [
     {
-      "label": "Technical Spec",
-      "value": "Technical Specification v2.1",
-      "description": "Latest technical documentation",
-      "url": "https://docs.example.com/spec"
+      label: 'Technical Spec',
+      value: 'Technical Specification v2.1',
+      description: 'Latest technical documentation',
+      url: 'https://docs.example.com/spec',
     },
     {
-      "label": "User Guide",
-      "value": "User Guide 2024 Edition",
-      "description": "Complete user manual",
-      "url": "https://docs.example.com/guide"
+      label: 'User Guide',
+      value: 'User Guide 2024 Edition',
+      description: 'Complete user manual',
+      url: 'https://docs.example.com/guide',
     },
     {
-      "label": "API Reference",
-      "value": "REST API Documentation",
-      "description": "API endpoints and schemas",
-      "url": "https://api.example.com/docs"
-    }
-  ]
+      label: 'API Reference',
+      value: 'REST API Documentation',
+      description: 'API endpoints and schemas',
+      url: 'https://api.example.com/docs',
+    },
+  ],
 };
 
 /**
@@ -145,8 +145,8 @@ const demoConfig = {
   imports: [DocPageComponent, DocsDemoComponent],
   template: `
     <div class="section-docs">
-      <app-docs-demo 
-        [config]="demo" 
+      <app-docs-demo
+        [config]="demo"
         [type]="'text-reference'"
         demoTitle="Live Preview"
         height="350px"
@@ -154,14 +154,16 @@ const demoConfig = {
       <app-doc-page [content]="content"></app-doc-page>
     </div>
   `,
-  styles: [`
-    .section-docs {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styles: [
+    `
+      .section-docs {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TextReferencePageComponent {
   content = pageContent;

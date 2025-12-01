@@ -1,4 +1,4 @@
-import { Directive, Input, OnInit, OnDestroy, ElementRef, inject } from '@angular/core';
+import { Directive, ElementRef, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 /**
@@ -7,7 +7,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
  */
 @Directive({
   selector: '[appAriaLive]',
-  standalone: true
+  standalone: true,
 })
 export class AriaLiveDirective implements OnInit, OnDestroy {
   private readonly elementRef = inject(ElementRef);
@@ -37,5 +37,3 @@ export class AriaLiveDirective implements OnInit, OnDestroy {
     this.liveAnnouncer.announce(message, this.appAriaLive);
   }
 }
-
-

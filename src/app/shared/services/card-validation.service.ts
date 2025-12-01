@@ -1,13 +1,13 @@
-import { Injectable, inject } from '@angular/core';
-import { AICardConfig, CardSection, CardField, CardItem, CardTypeGuards } from '../../models';
+import { inject, Injectable } from '@angular/core';
+import { AICardConfig, CardField, CardSection } from '../../models';
 import { AppConfigService } from '../../core/services/app-config.service';
 
 /**
  * Card Validation Service
- * 
+ *
  * Centralized service for validating card configurations, sections, fields, and items.
  * Extracted from card-utils.ts to improve testability and maintainability.
- * 
+ *
  * Features:
  * - Card configuration validation
  * - Section validation
@@ -15,16 +15,16 @@ import { AppConfigService } from '../../core/services/app-config.service';
  * - Item validation
  * - JSON structure validation
  * - Recursive structure validation
- * 
+ *
  * @example
  * ```typescript
  * const validationService = inject(CardValidationService);
- * 
+ *
  * // Validate card config
  * if (validationService.isValidCardConfig(cardData)) {
  *   // Process card
  * }
- * 
+ *
  * // Validate JSON string
  * const parsed = validationService.validateCardJson(jsonString);
  * if (parsed) {
@@ -33,7 +33,7 @@ import { AppConfigService } from '../../core/services/app-config.service';
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CardValidationService {
   private readonly appConfig = inject(AppConfigService);
@@ -54,13 +54,13 @@ export class CardValidationService {
     // Be lenient: accept either cardTitle or title, and ensure sections is an array (even if empty)
     const hasTitle = typeof config['cardTitle'] === 'string' || typeof config['title'] === 'string';
     const hasSections = Array.isArray(config['sections']);
-    
+
     // If sections is missing or not an array, try to create an empty array
     if (!hasSections && config['sections'] === undefined) {
       // This is acceptable - we can add sections later
       return hasTitle;
     }
-    
+
     return hasTitle && hasSections;
   }
 
@@ -79,9 +79,7 @@ export class CardValidationService {
     // Check required section properties
     return (
       typeof section['type'] === 'string' &&
-      ['info', 'timeline', 'table', 'list', 'analytics', 'custom'].includes(
-        section['type'] as string
-      )
+      ['info', 'timeline', 'table', 'list', 'analytics', 'custom'].includes(section['type'] as string)
     );
   }
 
@@ -100,8 +98,10 @@ export class CardValidationService {
     // Fields need at least a label or name
     return (
       (typeof field['label'] === 'string' || typeof field['name'] === 'string') &&
-      (typeof field['value'] === 'string' || typeof field['value'] === 'number' || 
-       typeof field['value'] === 'boolean' || typeof field['value'] === 'object')
+      (typeof field['value'] === 'string' ||
+        typeof field['value'] === 'number' ||
+        typeof field['value'] === 'boolean' ||
+        typeof field['value'] === 'object')
     );
   }
 
@@ -126,7 +126,9 @@ export class CardValidationService {
       // Check size limit to prevent DoS attacks
       const sizeInBytes = new Blob([jsonString]).size;
       if (sizeInBytes > this.MAX_JSON_SIZE) {
-        console.error(`CardValidationService: JSON input size (${sizeInBytes} bytes) exceeds maximum allowed size (${this.MAX_JSON_SIZE} bytes)`);
+        console.error(
+          `CardValidationService: JSON input size (${sizeInBytes} bytes) exceeds maximum allowed size (${this.MAX_JSON_SIZE} bytes)`
+        );
         return null;
       }
 
@@ -136,10 +138,13 @@ export class CardValidationService {
         parsed = JSON.parse(jsonString);
       } catch (parseError: unknown) {
         const msg = parseError instanceof Error ? parseError.message : 'Unknown error';
-        const position = parseError instanceof SyntaxError && 'position' in parseError 
-          ? (parseError as { position?: number }).position 
-          : null;
-        console.error(`CardValidationService: JSON parse failed: ${msg}${position ? ` at position ${position}` : ''}`);
+        const position =
+          parseError instanceof SyntaxError && 'position' in parseError
+            ? (parseError as { position?: number }).position
+            : null;
+        console.error(
+          `CardValidationService: JSON parse failed: ${msg}${position ? ` at position ${position}` : ''}`
+        );
         return null;
       }
 
@@ -149,32 +154,32 @@ export class CardValidationService {
         const hasTitle = typeof config['cardTitle'] === 'string' || typeof config['title'] === 'string';
         const hasSections = Array.isArray(config['sections']);
         const sectionsType = config['sections'] !== undefined ? typeof config['sections'] : 'undefined';
-        
+
         console.error('CardValidationService: Parsed JSON does not match AICardConfig structure', {
           hasTitle,
           hasSections,
           sectionsType,
           keys: Object.keys(config),
-          preview: JSON.stringify(parsed).substring(0, 200)
+          preview: JSON.stringify(parsed).substring(0, 200),
         });
-        
+
         // Try to fix common issues: normalize title field
         if (!hasTitle && typeof config['title'] === 'string') {
           config['cardTitle'] = config['title'];
           delete config['title'];
         }
-        
+
         // Try to fix missing sections
         if (!hasSections && config['sections'] === undefined) {
           config['sections'] = [];
         }
-        
+
         // Re-validate after fixes
         if (this.isValidCardConfig(config)) {
           console.warn('CardValidationService: Fixed common issues in JSON structure');
           return config as Partial<AICardConfig>;
         }
-        
+
         return null;
       }
 
@@ -206,7 +211,9 @@ export class CardValidationService {
       // Validate section count
       const maxSections = this.appConfig.CARD_LIMITS.MAX_SECTIONS;
       if (config.sections.length > maxSections) {
-        console.warn(`CardValidationService: Card has ${config.sections.length} sections, exceeding limit of ${maxSections}`);
+        console.warn(
+          `CardValidationService: Card has ${config.sections.length} sections, exceeding limit of ${maxSections}`
+        );
         return false;
       }
 
@@ -219,7 +226,9 @@ export class CardValidationService {
         if (Array.isArray(section.fields)) {
           const maxFields = this.appConfig.CARD_LIMITS.MAX_FIELDS_PER_SECTION;
           if (section.fields.length > maxFields) {
-            console.warn(`CardValidationService: Section has ${section.fields.length} fields, exceeding limit of ${maxFields}`);
+            console.warn(
+              `CardValidationService: Section has ${section.fields.length} fields, exceeding limit of ${maxFields}`
+            );
             return false;
           }
 
@@ -270,5 +279,3 @@ export class CardValidationService {
     return title.length >= minLength && title.length <= maxLength;
   }
 }
-
-

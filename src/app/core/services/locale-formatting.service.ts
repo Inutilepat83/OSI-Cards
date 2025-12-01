@@ -1,9 +1,9 @@
 /**
  * Locale-Aware Formatting Service
- * 
+ *
  * Provides locale-aware formatting for dates, numbers, currencies, and percentages.
  * Integrates with I18nService to automatically use the current locale for formatting.
- * 
+ *
  * Features:
  * - Date/time formatting (short, medium, long, full)
  * - Number formatting with locale-specific separators
@@ -11,26 +11,26 @@
  * - Percentage formatting
  * - Relative time formatting (e.g., "2 hours ago")
  * - Compact number formatting (e.g., "1.2K", "3.5M")
- * 
+ *
  * @example
  * ```typescript
  * const formatter = inject(LocaleFormattingService);
- * 
+ *
  * // Format currency
  * const price = formatter.formatCurrency(1234.56, 'USD'); // "$1,234.56" (en) or "1 234,56 €" (fr)
- * 
+ *
  * // Format date
  * const date = formatter.formatDate(new Date(), 'medium'); // "Dec 15, 2024" (en) or "15 déc. 2024" (fr)
- * 
+ *
  * // Format number
  * const number = formatter.formatNumber(1234.56); // "1,234.56" (en) or "1 234,56" (fr)
- * 
+ *
  * // Format percentage
  * const percent = formatter.formatPercent(0.1234); // "12.34%" (en) or "12,34 %" (fr)
  * ```
  */
 
-import { Injectable, inject, computed, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { I18nService, SupportedLocale } from './i18n.service';
 
 export type DateFormatStyle = 'short' | 'medium' | 'long' | 'full' | 'custom';
@@ -60,7 +60,7 @@ export interface NumberFormatOptions {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LocaleFormattingService {
   private readonly i18n = inject(I18nService);
@@ -74,10 +74,7 @@ export class LocaleFormattingService {
   /**
    * Format a number according to the current locale
    */
-  formatNumber(
-    value: number | string | null | undefined,
-    options?: NumberFormatOptions
-  ): string {
+  formatNumber(value: number | string | null | undefined, options?: NumberFormatOptions): string {
     if (value === null || value === undefined) {
       return '';
     }
@@ -92,7 +89,7 @@ export class LocaleFormattingService {
       minimumFractionDigits: options?.minimumFractionDigits ?? 0,
       maximumFractionDigits: options?.maximumFractionDigits ?? 3,
       useGrouping: options?.useGrouping ?? true,
-      ...(options?.notation && { notation: options.notation })
+      ...(options?.notation && { notation: options.notation }),
     };
 
     try {
@@ -125,7 +122,7 @@ export class LocaleFormattingService {
       currency: currency,
       minimumFractionDigits: options?.minimumFractionDigits ?? 2,
       maximumFractionDigits: options?.maximumFractionDigits ?? 2,
-      useGrouping: true
+      useGrouping: true,
     };
 
     try {
@@ -159,7 +156,7 @@ export class LocaleFormattingService {
     const formatOptions: Intl.NumberFormatOptions = {
       style: 'percent',
       minimumFractionDigits: options?.minimumFractionDigits ?? 0,
-      maximumFractionDigits: options?.maximumFractionDigits ?? 2
+      maximumFractionDigits: options?.maximumFractionDigits ?? 2,
     };
 
     try {
@@ -188,7 +185,7 @@ export class LocaleFormattingService {
     }
 
     const formatOptions: Intl.DateTimeFormatOptions = {
-      ...this.getDateFormatOptions(style, options)
+      ...this.getDateFormatOptions(style, options),
     };
 
     try {
@@ -218,7 +215,7 @@ export class LocaleFormattingService {
 
     const formatOptions: Intl.DateTimeFormatOptions = {
       ...this.getDateFormatOptions(dateStyle),
-      ...this.getTimeFormatOptions(timeStyle)
+      ...this.getTimeFormatOptions(timeStyle),
     };
 
     try {
@@ -283,7 +280,7 @@ export class LocaleFormattingService {
   formatCompactNumber(value: number | string | null | undefined): string {
     return this.formatNumber(value, {
       notation: 'compact',
-      maximumFractionDigits: 1
+      maximumFractionDigits: 1,
     });
   }
 
@@ -296,11 +293,11 @@ export class LocaleFormattingService {
         style: 'currency',
         currency: currency,
         minimumFractionDigits: 0,
-        maximumFractionDigits: 0
+        maximumFractionDigits: 0,
       });
       // Extract currency symbol from formatted number
       const parts = formatter.formatToParts(0);
-      const currencyPart = parts.find(part => part.type === 'currency');
+      const currencyPart = parts.find((part) => part.type === 'currency');
       return currencyPart?.value || currency;
     } catch (error) {
       // Fallback currency symbols
@@ -323,7 +320,7 @@ export class LocaleFormattingService {
         NOK: 'kr',
         DKK: 'kr',
         PLN: 'zł',
-        TRY: '₺'
+        TRY: '₺',
       };
       return symbols[currency] || currency;
     }
@@ -391,7 +388,7 @@ export class LocaleFormattingService {
   private formatRelativeTimeUnit(value: number, unit: Intl.RelativeTimeFormatUnit): string {
     try {
       const formatter = new Intl.RelativeTimeFormat(this.localeString(), {
-        numeric: 'auto'
+        numeric: 'auto',
       });
       return formatter.format(value, unit);
     } catch (error) {
@@ -417,9 +414,8 @@ export class LocaleFormattingService {
       it: 'it-IT',
       ja: 'ja-JP',
       zh: 'zh-CN',
-      ko: 'ko-KR'
+      ko: 'ko-KR',
     };
     return localeMap[locale] || 'en-US';
   }
 }
-

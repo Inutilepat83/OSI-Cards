@@ -1,4 +1,4 @@
-import { Directive, Input, ElementRef, OnInit, Renderer2, inject } from '@angular/core';
+import { Directive, ElementRef, inject, Input, OnInit, Renderer2 } from '@angular/core';
 
 /**
  * Directive for improving ARIA labels
@@ -6,7 +6,7 @@ import { Directive, Input, ElementRef, OnInit, Renderer2, inject } from '@angula
  */
 @Directive({
   selector: '[appImprovedAriaLabel]',
-  standalone: true
+  standalone: true,
 })
 export class ImprovedAriaLabelDirective implements OnInit {
   private readonly elementRef = inject(ElementRef);
@@ -52,10 +52,12 @@ export class ImprovedAriaLabelDirective implements OnInit {
     // Ensure role is set for interactive elements
     if (element.tagName === 'BUTTON' || element.tagName === 'A') {
       if (!element.getAttribute('role')) {
-        this.renderer.setAttribute(element, 'role', element.tagName === 'BUTTON' ? 'button' : 'link');
+        this.renderer.setAttribute(
+          element,
+          'role',
+          element.tagName === 'BUTTON' ? 'button' : 'link'
+        );
       }
     }
   }
 }
-
-

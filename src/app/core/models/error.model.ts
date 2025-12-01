@@ -1,6 +1,6 @@
 /**
  * Comprehensive error type hierarchy for the application
- * 
+ *
  * Provides structured error types with proper categorization,
  * context, and recovery information.
  */
@@ -15,7 +15,7 @@ export enum ErrorCategory {
   SECURITY = 'SECURITY',
   SYSTEM = 'SYSTEM',
   USER_INPUT = 'USER_INPUT',
-  UNKNOWN = 'UNKNOWN'
+  UNKNOWN = 'UNKNOWN',
 }
 
 /**
@@ -25,7 +25,7 @@ export enum ErrorSeverity {
   LOW = 'LOW',
   MEDIUM = 'MEDIUM',
   HIGH = 'HIGH',
-  CRITICAL = 'CRITICAL'
+  CRITICAL = 'CRITICAL',
 }
 
 /**
@@ -36,7 +36,7 @@ export enum RecoveryStrategy {
   RETRY = 'RETRY',
   FALLBACK = 'FALLBACK',
   USER_ACTION = 'USER_ACTION',
-  AUTOMATIC = 'AUTOMATIC'
+  AUTOMATIC = 'AUTOMATIC',
 }
 
 /**
@@ -144,13 +144,13 @@ export interface UserInputError extends AppError {
 /**
  * Union type of all error types
  */
-export type ApplicationError = 
-  | NetworkError 
-  | ValidationError 
-  | SecurityError 
-  | BusinessLogicError 
-  | SystemError 
-  | UserInputError 
+export type ApplicationError =
+  | NetworkError
+  | ValidationError
+  | SecurityError
+  | BusinessLogicError
+  | SystemError
+  | UserInputError
   | AppError;
 
 /**
@@ -173,9 +173,10 @@ export class ErrorFactory {
   ): NetworkError {
     return {
       category: ErrorCategory.NETWORK,
-      severity: options?.statusCode && options.statusCode >= 500 
-        ? ErrorSeverity.HIGH 
-        : ErrorSeverity.MEDIUM,
+      severity:
+        options?.statusCode && options.statusCode >= 500
+          ? ErrorSeverity.HIGH
+          : ErrorSeverity.MEDIUM,
       message,
       code: options?.statusCode ? `HTTP_${options.statusCode}` : 'NETWORK_ERROR',
       originalError: options?.originalError,
@@ -184,18 +185,20 @@ export class ErrorFactory {
       method: options?.method,
       retryable: options?.retryable ?? (options?.statusCode ? options.statusCode >= 500 : true),
       timestamp: Date.now(),
-      recoveryStrategy: options?.retryable !== false ? RecoveryStrategy.RETRY : RecoveryStrategy.USER_ACTION,
-      userAction: options?.statusCode === 401 
-        ? 'Please log in again'
-        : options?.statusCode === 403
-        ? 'You do not have permission to perform this action'
-        : options?.statusCode === 404
-        ? 'The requested resource was not found'
-        : options?.statusCode && options.statusCode >= 500
-        ? 'Server error. Please try again later.'
-        : 'Please check your internet connection and try again',
+      recoveryStrategy:
+        options?.retryable !== false ? RecoveryStrategy.RETRY : RecoveryStrategy.USER_ACTION,
+      userAction:
+        options?.statusCode === 401
+          ? 'Please log in again'
+          : options?.statusCode === 403
+            ? 'You do not have permission to perform this action'
+            : options?.statusCode === 404
+              ? 'The requested resource was not found'
+              : options?.statusCode && options.statusCode >= 500
+                ? 'Server error. Please try again later.'
+                : 'Please check your internet connection and try again',
       context: options?.context,
-      stack: options?.originalError instanceof Error ? options.originalError.stack : undefined
+      stack: options?.originalError instanceof Error ? options.originalError.stack : undefined,
     };
   }
 
@@ -224,11 +227,12 @@ export class ErrorFactory {
       retryable: false,
       timestamp: Date.now(),
       recoveryStrategy: RecoveryStrategy.USER_ACTION,
-      userAction: options?.suggestions && options.suggestions.length > 0
-        ? options.suggestions[0]
-        : 'Please check your input and try again',
+      userAction:
+        options?.suggestions && options.suggestions.length > 0
+          ? options.suggestions[0]
+          : 'Please check your input and try again',
       context: options?.context,
-      stack: options?.originalError instanceof Error ? options.originalError.stack : undefined
+      stack: options?.originalError instanceof Error ? options.originalError.stack : undefined,
     };
   }
 
@@ -255,11 +259,11 @@ export class ErrorFactory {
       retryable: false,
       timestamp: Date.now(),
       recoveryStrategy: RecoveryStrategy.USER_ACTION,
-      userAction: options?.shouldLogout 
+      userAction: options?.shouldLogout
         ? 'Security violation detected. Please log in again.'
         : 'This action is not allowed for security reasons.',
       context: options?.context,
-      stack: options?.originalError instanceof Error ? options.originalError.stack : undefined
+      stack: options?.originalError instanceof Error ? options.originalError.stack : undefined,
     };
   }
 
@@ -288,7 +292,7 @@ export class ErrorFactory {
       recoveryStrategy: RecoveryStrategy.USER_ACTION,
       userAction: options?.alternative || 'Please review your action and try again',
       context: options?.context,
-      stack: options?.originalError instanceof Error ? options.originalError.stack : undefined
+      stack: options?.originalError instanceof Error ? options.originalError.stack : undefined,
     };
   }
 
@@ -317,7 +321,7 @@ export class ErrorFactory {
       recoveryStrategy: RecoveryStrategy.AUTOMATIC,
       userAction: 'System error detected. The application will attempt to recover automatically.',
       context: options?.context,
-      stack: options?.originalError instanceof Error ? options.originalError.stack : undefined
+      stack: options?.originalError instanceof Error ? options.originalError.stack : undefined,
     };
   }
 
@@ -346,13 +350,13 @@ export class ErrorFactory {
       retryable: false,
       timestamp: Date.now(),
       recoveryStrategy: RecoveryStrategy.USER_ACTION,
-      userAction: options?.example 
+      userAction: options?.example
         ? `Please use the correct format. Example: ${options.example}`
         : options?.expectedFormat
-        ? `Expected format: ${options.expectedFormat}`
-        : 'Please check your input and try again',
+          ? `Expected format: ${options.expectedFormat}`
+          : 'Please check your input and try again',
       context: options?.context,
-      stack: options?.originalError instanceof Error ? options.originalError.stack : undefined
+      stack: options?.originalError instanceof Error ? options.originalError.stack : undefined,
     };
   }
 
@@ -377,19 +381,7 @@ export class ErrorFactory {
       recoveryStrategy: RecoveryStrategy.USER_ACTION,
       userAction: 'An unexpected error occurred. Please try again or contact support.',
       context: options?.context,
-      stack: options?.originalError instanceof Error ? options.originalError.stack : undefined
+      stack: options?.originalError instanceof Error ? options.originalError.stack : undefined,
     };
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-

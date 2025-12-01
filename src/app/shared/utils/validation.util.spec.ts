@@ -87,11 +87,11 @@ describe('ValidationUtil', () => {
           {
             title: 'Section 1',
             type: 'info',
-            fields: [{ label: 'Field 1', value: 'Value 1' }]
-          }
-        ]
+            fields: [{ label: 'Field 1', value: 'Value 1' }],
+          },
+        ],
       };
-      
+
       const result = ValidationUtil.validateCard(card);
       expect(result.isValid).toBe(true);
       expect(result.errors.length).toBe(0);
@@ -99,9 +99,9 @@ describe('ValidationUtil', () => {
 
     it('should reject card without title', () => {
       const card = {
-        sections: [{ title: 'Section 1', type: 'info' }]
+        sections: [{ title: 'Section 1', type: 'info' }],
       };
-      
+
       const result = ValidationUtil.validateCard(card);
       expect(result.isValid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
@@ -110,9 +110,9 @@ describe('ValidationUtil', () => {
     it('should reject card with empty title', () => {
       const card = {
         cardTitle: '',
-        sections: [{ title: 'Section 1', type: 'info' }]
+        sections: [{ title: 'Section 1', type: 'info' }],
       };
-      
+
       const result = ValidationUtil.validateCard(card);
       expect(result.isValid).toBe(false);
     });
@@ -120,9 +120,9 @@ describe('ValidationUtil', () => {
     it('should reject card with title too long', () => {
       const card = {
         cardTitle: 'A'.repeat(201),
-        sections: [{ title: 'Section 1', type: 'info' }]
+        sections: [{ title: 'Section 1', type: 'info' }],
       };
-      
+
       const result = ValidationUtil.validateCard(card);
       expect(result.isValid).toBe(false);
     });
@@ -130,9 +130,9 @@ describe('ValidationUtil', () => {
     it('should reject card without sections', () => {
       const card = {
         cardTitle: 'Test Card',
-        sections: []
+        sections: [],
       };
-      
+
       const result = ValidationUtil.validateCard(card);
       expect(result.isValid).toBe(false);
     });
@@ -140,9 +140,9 @@ describe('ValidationUtil', () => {
     it('should reject card with null sections', () => {
       const card = {
         cardTitle: 'Test Card',
-        sections: null as any
+        sections: null as any,
       };
-      
+
       const result = ValidationUtil.validateCard(card);
       expect(result.isValid).toBe(false);
     });
@@ -153,18 +153,18 @@ describe('ValidationUtil', () => {
       const section = {
         title: 'Section 1',
         type: 'info',
-        fields: [{ label: 'Field 1', value: 'Value 1' }]
+        fields: [{ label: 'Field 1', value: 'Value 1' }],
       };
-      
+
       const errors = ValidationUtil.validateSection(section, 0);
       expect(errors.length).toBe(0);
     });
 
     it('should reject section without title', () => {
       const section = {
-        type: 'info'
+        type: 'info',
       };
-      
+
       const errors = ValidationUtil.validateSection(section, 0);
       expect(errors.length).toBeGreaterThan(0);
     });
@@ -172,9 +172,9 @@ describe('ValidationUtil', () => {
     it('should reject section with empty title', () => {
       const section = {
         title: '',
-        type: 'info'
+        type: 'info',
       };
-      
+
       const errors = ValidationUtil.validateSection(section, 0);
       expect(errors.length).toBeGreaterThan(0);
     });
@@ -182,18 +182,18 @@ describe('ValidationUtil', () => {
     it('should reject section with title too long', () => {
       const section = {
         title: 'A'.repeat(101),
-        type: 'info'
+        type: 'info',
       };
-      
+
       const errors = ValidationUtil.validateSection(section, 0);
       expect(errors.length).toBeGreaterThan(0);
     });
 
     it('should reject section without type', () => {
       const section = {
-        title: 'Section 1'
+        title: 'Section 1',
       };
-      
+
       const errors = ValidationUtil.validateSection(section, 0);
       expect(errors.length).toBeGreaterThan(0);
     });
@@ -201,30 +201,30 @@ describe('ValidationUtil', () => {
     it('should reject section with too many fields', () => {
       const fields = Array.from({ length: 1001 }, (_, i) => ({
         label: `Field ${i}`,
-        value: `Value ${i}`
+        value: `Value ${i}`,
       }));
-      
+
       const section = {
         title: 'Section 1',
         type: 'info',
-        fields
+        fields,
       };
-      
+
       const errors = ValidationUtil.validateSection(section, 0);
       expect(errors.length).toBeGreaterThan(0);
     });
 
     it('should reject section with too many items', () => {
       const items = Array.from({ length: 1001 }, (_, i) => ({
-        title: `Item ${i}`
+        title: `Item ${i}`,
       }));
-      
+
       const section = {
         title: 'Section 1',
         type: 'info',
-        items
+        items,
       };
-      
+
       const errors = ValidationUtil.validateSection(section, 0);
       expect(errors.length).toBeGreaterThan(0);
     });
@@ -234,9 +234,9 @@ describe('ValidationUtil', () => {
     it('should validate valid field with label', () => {
       const field = {
         label: 'Field 1',
-        value: 'Value 1'
+        value: 'Value 1',
       };
-      
+
       const errors = ValidationUtil.validateField(field, 0, 0);
       expect(errors.length).toBe(0);
     });
@@ -244,18 +244,18 @@ describe('ValidationUtil', () => {
     it('should validate valid field with title', () => {
       const field = {
         title: 'Field 1',
-        value: 'Value 1'
+        value: 'Value 1',
       };
-      
+
       const errors = ValidationUtil.validateField(field, 0, 0);
       expect(errors.length).toBe(0);
     });
 
     it('should reject field without label or title', () => {
       const field = {
-        value: 'Value 1'
+        value: 'Value 1',
       };
-      
+
       const errors = ValidationUtil.validateField(field, 0, 0);
       expect(errors.length).toBeGreaterThan(0);
     });
@@ -263,9 +263,9 @@ describe('ValidationUtil', () => {
     it('should validate field with number value', () => {
       const field = {
         label: 'Field 1',
-        value: 123
+        value: 123,
       };
-      
+
       const errors = ValidationUtil.validateField(field, 0, 0);
       expect(errors.length).toBe(0);
     });
@@ -273,9 +273,9 @@ describe('ValidationUtil', () => {
     it('should validate field with boolean value', () => {
       const field = {
         label: 'Field 1',
-        value: true
+        value: true,
       };
-      
+
       const errors = ValidationUtil.validateField(field, 0, 0);
       expect(errors.length).toBe(0);
     });
@@ -283,9 +283,9 @@ describe('ValidationUtil', () => {
     it('should reject field with invalid value type', () => {
       const field = {
         label: 'Field 1',
-        value: {} as any
+        value: {} as any,
       };
-      
+
       const errors = ValidationUtil.validateField(field, 0, 0);
       expect(errors.length).toBeGreaterThan(0);
     });
@@ -295,27 +295,27 @@ describe('ValidationUtil', () => {
     it('should validate valid item', () => {
       const item = {
         title: 'Item 1',
-        description: 'Description'
+        description: 'Description',
       };
-      
+
       const errors = ValidationUtil.validateItem(item, 0, 0);
       expect(errors.length).toBe(0);
     });
 
     it('should reject item without title', () => {
       const item = {
-        description: 'Description'
+        description: 'Description',
       };
-      
+
       const errors = ValidationUtil.validateItem(item, 0, 0);
       expect(errors.length).toBeGreaterThan(0);
     });
 
     it('should reject item with non-string title', () => {
       const item = {
-        title: 123 as any
+        title: 123 as any,
       };
-      
+
       const errors = ValidationUtil.validateItem(item, 0, 0);
       expect(errors.length).toBeGreaterThan(0);
     });
@@ -323,7 +323,9 @@ describe('ValidationUtil', () => {
 
   describe('Edge cases', () => {
     it('should handle URLs with special characters', () => {
-      expect(ValidationUtil.isValidUrl('https://example.com/path?query=value&other=test')).toBe(true);
+      expect(ValidationUtil.isValidUrl('https://example.com/path?query=value&other=test')).toBe(
+        true
+      );
       expect(ValidationUtil.isValidUrl('https://example.com/path#fragment')).toBe(true);
     });
 
@@ -346,10 +348,10 @@ describe('ValidationUtil', () => {
         '<img src=x onerror=alert("xss")>',
         'javascript:alert("xss")',
         '<svg onload=alert("xss")>',
-        '<iframe src="javascript:alert(\'xss\')"></iframe>'
+        '<iframe src="javascript:alert(\'xss\')"></iframe>',
       ];
 
-      xssAttempts.forEach(attempt => {
+      xssAttempts.forEach((attempt) => {
         const result = ValidationUtil.sanitizeString(attempt);
         expect(result).not.toContain('<script');
         expect(result).not.toContain('onerror');
@@ -364,11 +366,3 @@ describe('ValidationUtil', () => {
     });
   });
 });
-
-
-
-
-
-
-
-

@@ -1,6 +1,6 @@
 /**
  * Smart Grid Utilities
- * 
+ *
  * Advanced layout algorithms for the masonry grid system including:
  * - 2D bin-packing for optimal section placement
  * - Gap-filling tetris-like algorithm
@@ -12,39 +12,41 @@ import { CardSection, CardField } from '../models/card.model';
 import { gridLogger, GapAnalysis, ColumnAnalysis, PlacementDecision } from './smart-grid-logger.util';
 
 // Local implementation of calculateSmartColumns (previously from section-layout-registry)
+// UPDATED: Increased default spans for better gap filling
 function calculateSmartColumnsLocal(section: CardSection, maxColumns: number): number {
   const type = section.type || 'info';
   const width = section.width as number | undefined;
-  
+
   // If width is explicitly set, use it
   if (typeof width === 'number' && width >= 1 && width <= maxColumns) {
     return Math.min(width, maxColumns);
   }
-  
+
   // Default column spans based on section type
+  // UPDATED: Increased spans to reduce gaps
   const defaultSpans: Record<string, number> = {
-    'overview': 2,
+    'overview': 3,      // Increased from 2
     'contact-card': 1,
-    'network-card': 1,
+    'network-card': 2,  // Increased from 1
     'analytics': 2,
-    'stats': 1,
+    'stats': 2,         // Increased from 1
     'chart': 2,
     'map': 2,
     'financials': 2,
-    'info': 1,
+    'info': 2,          // Increased from 1
     'list': 1,
-    'event': 1,
+    'event': 2,         // Increased from 1
     'timeline': 2,
     'news': 1,
-    'product': 1,
-    'quotation': 1,
+    'product': 2,       // Increased from 1
+    'quotation': 2,     // Increased from 1
     'solutions': 2,
     'social-media': 1,
-    'text-reference': 1,
+    'text-reference': 2, // Increased from 1
     'brand-colors': 1
   };
-  
-  return Math.min(defaultSpans[type] || 1, maxColumns);
+
+  return Math.min(defaultSpans[type] || 2, maxColumns); // Default increased from 1 to 2
 }
 
 // ============================================================================
@@ -155,34 +157,34 @@ export const SECTION_PADDING = 20;
 /**
  * Measures the content density of a section
  * Higher density indicates more content that may need more space
- * 
+ *
  * @param section - The section to measure
  * @returns Density score (0-100+)
  */
 export function measureContentDensity(section: CardSection): number {
-  const textLength = (section.description?.length ?? 0) + 
+  const textLength = (section.description?.length ?? 0) +
     (section.fields?.reduce((acc: number, f: CardField) => acc + String(f.value ?? '').length + (f.label?.length ?? 0), 0) ?? 0);
   const itemCount = section.items?.length ?? 0;
   const fieldCount = section.fields?.length ?? 0;
-  
+
   // Calculate density score
   const textScore = textLength / 50;  // 1 point per 50 chars
   const itemScore = itemCount * 3;     // 3 points per item
   const fieldScore = fieldCount * 2;   // 2 points per field
-  
+
   return Math.round(textScore + itemScore + fieldScore);
 }
 
 /**
  * Calculates optimal column span based on content density and type
  * Uses the section layout registry for type-based defaults.
- * 
+ *
  * @param section - The section to calculate for
  * @param maxColumns - Maximum available columns
  * @returns Recommended column span (1-4)
  */
 export function calculateOptimalColumns(
-  section: CardSection, 
+  section: CardSection,
   maxColumns: number = 4
 ): number {
   // Use the smart column calculation
@@ -195,28 +197,28 @@ export function calculateOptimalColumns(
 
 /**
  * Estimates the height of a section based on its content
- * 
+ *
  * @param section - The section to estimate
  * @returns Estimated height in pixels
  */
 export function estimateSectionHeight(section: CardSection): number {
   const type = section.type?.toLowerCase() ?? 'default';
   const baseHeight = SECTION_HEIGHT_ESTIMATES[type] ?? SECTION_HEIGHT_ESTIMATES['default'] ?? 120;
-  
+
   const itemCount = section.items?.length ?? 0;
   const fieldCount = section.fields?.length ?? 0;
-  
+
   // Calculate content-based height
   const itemsHeight = itemCount * HEIGHT_PER_ITEM;
   const fieldsHeight = fieldCount * HEIGHT_PER_FIELD;
   const contentHeight = Math.max(itemsHeight, fieldsHeight);
-  
+
   // Use the larger of base height or content-based height
   const estimatedHeight = Math.max(
     baseHeight as number,
     SECTION_HEADER_HEIGHT + contentHeight + SECTION_PADDING
   );
-  
+
   // Cap at reasonable maximum
   return Math.min(estimatedHeight, 500);
 }
@@ -227,7 +229,7 @@ export function estimateSectionHeight(section: CardSection): number {
 
 /**
  * Gets the priority band for a section
- * 
+ *
  * @param section - The section to evaluate
  * @returns The priority band
  */
@@ -236,22 +238,22 @@ export function getSectionPriorityBand(section: CardSection): PriorityBand {
   if (section.priority) {
     return section.priority;
   }
-  
+
   // Then check type-based defaults
   const type = section.type?.toLowerCase() ?? '';
-  
+
   for (const [band, config] of Object.entries(PRIORITY_BANDS)) {
     if (config.types.includes(type)) {
       return band as PriorityBand;
     }
   }
-  
+
   return 'standard';
 }
 
 /**
  * Calculates numeric priority score for sorting (lower = higher priority)
- * 
+ *
  * @param section - The section to evaluate
  * @returns Numeric priority (1-4)
  */
@@ -267,7 +269,7 @@ export function calculatePriorityScore(section: CardSection): number {
 /**
  * Improved 2D bin-packing algorithm using First Fit Decreasing Height (FFDH)
  * Places sections optimally to minimize gaps and maximize space utilization
- * 
+ *
  * @param sections - Sections to pack
  * @param columns - Number of available columns
  * @param options - Packing options
@@ -282,8 +284,8 @@ export function binPack2D(
     balanceColumns?: boolean;
   } = {}
 ): SectionWithMetrics[] {
-  const { 
-    respectPriority = true, 
+  const {
+    respectPriority = true,
     fillGaps = true,
     balanceColumns = true
   } = options;
@@ -310,7 +312,7 @@ export function binPack2D(
   }));
   gridLogger.endPhase('measure', `${sectionsWithMetrics.length} sections measured`);
 
-  // Step 2: Sort by priority, then by height (FFDH - taller items first)
+  // Step 2: Sort by priority, then by width (wider first for better row filling), then by height
   gridLogger.startPhase('sort');
   if (respectPriority) {
     sectionsWithMetrics.sort((a, b) => {
@@ -318,14 +320,23 @@ export function binPack2D(
       if (a.priority !== b.priority) {
         return a.priority - b.priority;
       }
-      // Secondary: height descending (taller first for better packing)
+      // Secondary: width descending (wider sections first for better row filling)
+      if (a.colSpan !== b.colSpan) {
+        return b.colSpan - a.colSpan;
+      }
+      // Tertiary: height descending (taller first for better packing)
       return b.estimatedHeight - a.estimatedHeight;
     });
   } else {
-    // Sort by height descending for optimal packing
-    sectionsWithMetrics.sort((a, b) => b.estimatedHeight - a.estimatedHeight);
+    // Sort by width then height descending for optimal packing
+    sectionsWithMetrics.sort((a, b) => {
+      if (a.colSpan !== b.colSpan) {
+        return b.colSpan - a.colSpan;
+      }
+      return b.estimatedHeight - a.estimatedHeight;
+    });
   }
-  
+
   gridLogger.logSortOrder(sectionsWithMetrics.map(s => ({
     title: s.section.title ?? 'Untitled',
     type: s.section.type ?? 'unknown',
@@ -399,23 +410,23 @@ function packIntoRows(
         i++;
         continue;
       }
-      
+
       // Clamp colSpan to available capacity
       const effectiveColSpan = Math.min(section.colSpan, row.remainingCapacity);
-      
+
       if (effectiveColSpan > 0) {
         // Place section
         section.colSpan = effectiveColSpan;
         section.column = columns - row.remainingCapacity;
         section.row = rowIndex;
         section.top = currentTop;
-        
+
         row.sections.push(section);
         row.remainingCapacity -= effectiveColSpan;
         row.height = Math.max(row.height, section.estimatedHeight);
-        
+
         unplaced.splice(i, 1);
-        
+
         gridLogger.logPlacement({
           sectionId: section.section.id ?? section.section.title ?? '',
           sectionType: section.section.type ?? 'unknown',
@@ -437,19 +448,19 @@ function packIntoRows(
       for (let j = 0; j < unplaced.length && row.remainingCapacity > 0; j++) {
         const section = unplaced[j];
         if (!section) continue;
-        
+
         if (section.colSpan <= row.remainingCapacity) {
           section.column = columns - row.remainingCapacity;
           section.row = rowIndex;
           section.top = currentTop;
-          
+
           row.sections.push(section);
           row.remainingCapacity -= section.colSpan;
           row.height = Math.max(row.height, section.estimatedHeight);
-          
+
           unplaced.splice(j, 1);
           j--;
-          
+
           gridLogger.logPlacement({
             sectionId: section.section.id ?? section.section.title ?? '',
             sectionType: section.section.type ?? 'unknown',
@@ -497,14 +508,14 @@ function packIntoRows(
  */
 function calculatePositions(rows: VirtualRow[], columns: number): SectionWithMetrics[] {
   const result: SectionWithMetrics[] = [];
-  
+
   for (const row of rows) {
     for (const section of row.sections) {
       section.top = row.topOffset;
       result.push(section);
     }
   }
-  
+
   return result;
 }
 
@@ -514,30 +525,30 @@ function calculatePositions(rows: VirtualRow[], columns: number): SectionWithMet
 function balanceColumnLoads(sections: SectionWithMetrics[], columns: number): void {
   // Calculate current column heights
   const columnHeights = calculateColumnHeights(sections, columns);
-  
+
   // Find imbalanced columns
   const avgHeight = columnHeights.reduce((a, b) => a + b, 0) / columns;
   const threshold = avgHeight * 0.2; // 20% tolerance
-  
+
   // Try to move sections from tall columns to short columns
   for (let iter = 0; iter < 3; iter++) {
     const tallestCol = columnHeights.indexOf(Math.max(...columnHeights));
     const shortestCol = columnHeights.indexOf(Math.min(...columnHeights));
-    
+
     const tallestHeight = columnHeights[tallestCol] ?? 0;
     const shortestHeight = columnHeights[shortestCol] ?? 0;
-    
+
     if (tallestHeight - shortestHeight < threshold) {
       break; // Already balanced enough
     }
-    
+
     // Find a section in the tallest column that could fit in the shortest
-    const movableSection = sections.find(s => 
-      s.column === tallestCol && 
+    const movableSection = sections.find(s =>
+      s.column === tallestCol &&
       s.colSpan === 1 &&
       s.priority >= 3 // Only move low priority sections
     );
-    
+
     if (movableSection && columnHeights[tallestCol] !== undefined && columnHeights[shortestCol] !== undefined) {
       movableSection.column = shortestCol;
       columnHeights[tallestCol] = columnHeights[tallestCol]! - movableSection.estimatedHeight;
@@ -551,17 +562,17 @@ function balanceColumnLoads(sections: SectionWithMetrics[], columns: number): vo
  */
 function calculateColumnHeights(sections: SectionWithMetrics[], columns: number): number[] {
   const heights = new Array(columns).fill(0);
-  
+
   for (const section of sections) {
     const col = section.column ?? 0;
     const span = section.colSpan;
     const height = section.estimatedHeight;
-    
+
     for (let c = col; c < Math.min(col + span, columns); c++) {
       heights[c] += height / span; // Distribute height across spanned columns
     }
   }
-  
+
   return heights;
 }
 
@@ -592,16 +603,16 @@ function analyzeGaps(sections: SectionWithMetrics[], columns: number): GapAnalys
   // Calculate total used area
   let usedArea = 0;
   let maxHeight = 0;
-  
+
   for (const section of sections) {
     usedArea += section.colSpan * section.estimatedHeight;
     const sectionBottom = (section.top ?? 0) + section.estimatedHeight;
     maxHeight = Math.max(maxHeight, sectionBottom);
   }
-  
+
   const totalArea = columns * maxHeight;
   const gapArea = totalArea - usedArea;
-  
+
   return {
     totalGaps: gapArea > 0 ? Math.ceil(gapArea / (260 * 100)) : 0,
     gapArea: Math.max(0, gapArea),
@@ -616,7 +627,7 @@ function analyzeGaps(sections: SectionWithMetrics[], columns: number): GapAnalys
 
 /**
  * Identifies gaps in the current layout
- * 
+ *
  * @param positionedSections - Currently positioned sections
  * @param columns - Number of columns
  * @param containerHeight - Current container height
@@ -628,7 +639,7 @@ export function findGaps(
   containerHeight: number
 ): Array<{ column: number; top: number; height: number; width: number }> {
   const gaps: Array<{ column: number; top: number; height: number; width: number }> = [];
-  
+
   if (positionedSections.length === 0 || containerHeight === 0) {
     return gaps;
   }
@@ -636,17 +647,17 @@ export function findGaps(
   // Build occupancy grid
   const gridResolution = 10; // pixels
   const rows = Math.ceil(containerHeight / gridResolution);
-  const grid: boolean[][] = Array.from({ length: rows }, () => 
+  const grid: boolean[][] = Array.from({ length: rows }, () =>
     new Array(columns).fill(false)
   );
-  
+
   // Mark occupied cells
   for (const section of positionedSections) {
     const startRow = Math.floor(section.top / gridResolution);
     const endRow = Math.ceil((section.top + section.height) / gridResolution);
     const startCol = parseColumnFromLeft(section.left, columns);
     const endCol = startCol + section.colSpan;
-    
+
     for (let r = startRow; r < Math.min(endRow, rows); r++) {
       for (let c = startCol; c < Math.min(endCol, columns); c++) {
         const row = grid[r];
@@ -656,14 +667,14 @@ export function findGaps(
       }
     }
   }
-  
+
   // Find contiguous unoccupied regions
   for (let c = 0; c < columns; c++) {
     let gapStart: number | null = null;
-    
+
     for (let r = 0; r < rows; r++) {
       const isOccupied = grid[r]?.[c] ?? false;
-      
+
       if (!isOccupied && gapStart === null) {
         gapStart = r;
       } else if (isOccupied && gapStart !== null) {
@@ -681,7 +692,7 @@ export function findGaps(
       }
     }
   }
-  
+
   return gaps;
 }
 
@@ -709,14 +720,14 @@ export function fillGapsWithSections(
 ): SectionWithMetrics[] {
   const result: SectionWithMetrics[] = [];
   const pending: SectionWithMetrics[] = [...orderedSections];
-  
+
   // Separate by flexibility
   const rigid = pending.filter(s => s.priority <= 2); // Critical/Important don't move
   const flexible = pending.filter(s => s.priority > 2);
-  
+
   // Place rigid sections first
   result.push(...rigid);
-  
+
   // Use first-fit decreasing for flexible sections
   const sortedFlexible = [...flexible].sort((a, b) => {
     // Prefer sections that can fill remaining row space
@@ -725,12 +736,12 @@ export function fillGapsWithSections(
     if (aFills !== bFills) return aFills ? -1 : 1;
     return b.colSpan - a.colSpan;
   });
-  
+
   // Build rows, preferring complete fills
   const rows: SectionWithMetrics[][] = [];
   let currentRow: SectionWithMetrics[] = [];
   let currentRowWidth = 0;
-  
+
   for (const section of sortedFlexible) {
     if (currentRowWidth + section.colSpan <= columns) {
       currentRow.push(section);
@@ -744,16 +755,16 @@ export function fillGapsWithSections(
       currentRowWidth = section.colSpan;
     }
   }
-  
+
   if (currentRow.length > 0) {
     rows.push(currentRow);
   }
-  
+
   // Flatten rows back to array
   for (const row of rows) {
     result.push(...row);
   }
-  
+
   return result;
 }
 
@@ -763,7 +774,7 @@ export function fillGapsWithSections(
 
 /**
  * Calculates layout quality metrics
- * 
+ *
  * @param sections - Positioned sections
  * @param columns - Number of columns
  * @param containerHeight - Container height
@@ -775,25 +786,25 @@ export function calculateLayoutAnalytics(
   containerHeight: number
 ): { gapCount: number; utilizationPercent: number; balanceScore: number } {
   // Calculate total section area
-  const totalArea = sections.reduce((acc, s) => 
+  const totalArea = sections.reduce((acc, s) =>
     acc + (s.colSpan * s.estimatedHeight), 0
   );
-  
+
   // Calculate container area
   const containerArea = columns * containerHeight;
-  
+
   // Utilization percentage
-  const utilizationPercent = containerArea > 0 
-    ? Math.round((totalArea / containerArea) * 100) 
+  const utilizationPercent = containerArea > 0
+    ? Math.round((totalArea / containerArea) * 100)
     : 0;
-  
+
   // Column balance (standard deviation of heights)
   const columnHeights = calculateColumnHeights(sections, columns);
   const balanceScore = calculateBalanceScore(columnHeights);
-  
+
   // Gap count (simplified - based on utilization)
   const gapCount = Math.round((100 - utilizationPercent) / 10);
-  
+
   return { gapCount, utilizationPercent, balanceScore };
 }
 
@@ -808,14 +819,14 @@ export function groupRelatedSections(
   sections: SectionWithMetrics[]
 ): Map<string | undefined, SectionWithMetrics[]> {
   const groups = new Map<string | undefined, SectionWithMetrics[]>();
-  
+
   for (const section of sections) {
     const groupId = section.groupId;
     const group = groups.get(groupId) ?? [];
     group.push(section);
     groups.set(groupId, group);
   }
-  
+
   return groups;
 }
 
@@ -826,10 +837,10 @@ export function flattenGroups(
   groups: Map<string | undefined, SectionWithMetrics[]>
 ): SectionWithMetrics[] {
   const result: SectionWithMetrics[] = [];
-  
+
   // Process ungrouped first
   const ungrouped = groups.get(undefined) ?? [];
-  
+
   // Interleave ungrouped with grouped sections based on priority
   const groupedEntries = Array.from(groups.entries())
     .filter(([key]) => key !== undefined)
@@ -838,30 +849,30 @@ export function flattenGroups(
       const bPriority = Math.min(...b[1].map(s => s.priority));
       return aPriority - bPriority;
     });
-  
+
   // Merge based on priority
   let ungroupedIdx = 0;
   let groupedIdx = 0;
-  
+
   while (ungroupedIdx < ungrouped.length || groupedIdx < groupedEntries.length) {
     const nextUngrouped = ungrouped[ungroupedIdx];
     const nextGroup = groupedEntries[groupedIdx];
-    
+
     if (!nextGroup) {
       result.push(...ungrouped.slice(ungroupedIdx));
       break;
     }
-    
+
     if (!nextUngrouped) {
       for (const [, group] of groupedEntries.slice(groupedIdx)) {
         result.push(...group);
       }
       break;
     }
-    
+
     const ungroupedPriority = nextUngrouped.priority;
     const groupPriority = Math.min(...nextGroup[1].map(s => s.priority));
-    
+
     if (ungroupedPriority <= groupPriority) {
       result.push(nextUngrouped);
       ungroupedIdx++;
@@ -870,7 +881,7 @@ export function flattenGroups(
       groupedIdx++;
     }
   }
-  
+
   return result;
 }
 

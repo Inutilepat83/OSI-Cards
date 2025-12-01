@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { AICardConfig, CardSection, CardField, CardItem, CardType } from '../../models';
+import { AICardConfig, CardField, CardItem, CardSection, CardType } from '../../models';
 import { LoggingService } from '../../core/services/logging.service';
 
 export interface SearchFilterOptions {
@@ -52,7 +52,7 @@ export interface SearchResult {
  * Supports multi-criteria filtering, saved presets, and search highlighting
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SearchFilterService {
   private readonly logger = inject(LoggingService);
@@ -73,7 +73,7 @@ export class SearchFilterService {
 
     const query = options.caseSensitive ? options.query : options.query.toLowerCase();
 
-    return cards.filter(card => this.matchesCard(card, query, options));
+    return cards.filter((card) => this.matchesCard(card, query, options));
   }
 
   /**
@@ -111,7 +111,11 @@ export class SearchFilterService {
   /**
    * Check if section matches search query
    */
-  private matchesSection(section: CardSection, query: string, options: SearchFilterOptions): boolean {
+  private matchesSection(
+    section: CardSection,
+    query: string,
+    options: SearchFilterOptions
+  ): boolean {
     // Search in section title
     const title = options.caseSensitive ? section.title : section.title.toLowerCase();
     if (title.includes(query)) {
@@ -120,7 +124,9 @@ export class SearchFilterService {
 
     // Search in section description
     if (options.searchInDescription !== false && section.description) {
-      const description = options.caseSensitive ? section.description : section.description.toLowerCase();
+      const description = options.caseSensitive
+        ? section.description
+        : section.description.toLowerCase();
       if (description.includes(query)) {
         return true;
       }
@@ -177,7 +183,9 @@ export class SearchFilterService {
 
     // Search in description
     if (options.searchInDescription !== false && field.description) {
-      const description = options.caseSensitive ? field.description : field.description.toLowerCase();
+      const description = options.caseSensitive
+        ? field.description
+        : field.description.toLowerCase();
       if (description.includes(query)) {
         return true;
       }
@@ -224,7 +232,7 @@ export class SearchFilterService {
     if (!cardType) {
       return cards;
     }
-    return cards.filter(card => card.cardType === cardType);
+    return cards.filter((card) => card.cardType === cardType);
   }
 
   /**
@@ -234,9 +242,7 @@ export class SearchFilterService {
     if (!sectionType) {
       return cards;
     }
-    return cards.filter(card =>
-      card.sections?.some(section => section.type === sectionType)
-    );
+    return cards.filter((card) => card.sections?.some((section) => section.type === sectionType));
   }
 
   /**
@@ -269,7 +275,7 @@ export class SearchFilterService {
     cards: AICardConfig[],
     criteria: AdvancedFilterCriteria
   ): AICardConfig[] {
-    return cards.filter(card => {
+    return cards.filter((card) => {
       // Filter by card types
       if (criteria.cardTypes && criteria.cardTypes.length > 0) {
         if (!card.cardType || !criteria.cardTypes.includes(card.cardType)) {
@@ -279,7 +285,7 @@ export class SearchFilterService {
 
       // Filter by section types
       if (criteria.sectionTypes && criteria.sectionTypes.length > 0) {
-        const hasMatchingSection = card.sections?.some(section =>
+        const hasMatchingSection = card.sections?.some((section) =>
           criteria.sectionTypes!.includes(section.type)
         );
         if (!hasMatchingSection) {
@@ -304,9 +310,7 @@ export class SearchFilterService {
       // Filter by tags
       if (criteria.tags && criteria.tags.length > 0) {
         const cardTags = (card as any).tags || [];
-        const hasMatchingTag = criteria.tags.some(tag =>
-          cardTags.includes(tag)
-        );
+        const hasMatchingTag = criteria.tags.some((tag) => cardTags.includes(tag));
         if (!hasMatchingTag) {
           return false;
         }
@@ -314,9 +318,8 @@ export class SearchFilterService {
 
       // Filter by has fields
       if (criteria.hasFields !== undefined) {
-        const hasFields = card.sections?.some(section =>
-          section.fields && section.fields.length > 0
-        ) ?? false;
+        const hasFields =
+          card.sections?.some((section) => section.fields && section.fields.length > 0) ?? false;
         if (hasFields !== criteria.hasFields) {
           return false;
         }
@@ -324,9 +327,8 @@ export class SearchFilterService {
 
       // Filter by has items
       if (criteria.hasItems !== undefined) {
-        const hasItems = card.sections?.some(section =>
-          section.items && section.items.length > 0
-        ) ?? false;
+        const hasItems =
+          card.sections?.some((section) => section.items && section.items.length > 0) ?? false;
         if (hasItems !== criteria.hasItems) {
           return false;
         }
@@ -378,15 +380,12 @@ export class SearchFilterService {
   /**
    * Search with highlighting
    */
-  searchWithHighlighting(
-    cards: AICardConfig[],
-    options: SearchFilterOptions
-  ): SearchResult[] {
+  searchWithHighlighting(cards: AICardConfig[], options: SearchFilterOptions): SearchResult[] {
     if (!options.query || options.query.trim() === '') {
-      return cards.map(card => ({
+      return cards.map((card) => ({
         card,
         score: 1,
-        matches: []
+        matches: [],
       }));
     }
 
@@ -405,7 +404,7 @@ export class SearchFilterService {
           matches.push({
             field: 'title',
             value: card.cardTitle,
-            highlighted: this.highlightText(card.cardTitle, options.query, options.caseSensitive)
+            highlighted: this.highlightText(card.cardTitle, options.query, options.caseSensitive),
           });
         }
       }
@@ -421,7 +420,11 @@ export class SearchFilterService {
               matches.push({
                 field: `section.${section.id}.title`,
                 value: section.title,
-                highlighted: this.highlightText(section.title, options.query, options.caseSensitive)
+                highlighted: this.highlightText(
+                  section.title,
+                  options.query,
+                  options.caseSensitive
+                ),
               });
             }
           }
@@ -435,7 +438,7 @@ export class SearchFilterService {
                 matches.push({
                   field: `section.${section.id}.field.${field.id}`,
                   value: `${field.label || ''}: ${value}`,
-                  highlighted: this.highlightText(value, options.query, options.caseSensitive)
+                  highlighted: this.highlightText(value, options.query, options.caseSensitive),
                 });
               }
             }
@@ -449,7 +452,11 @@ export class SearchFilterService {
                 matches.push({
                   field: `section.${section.id}.item.${item.id}`,
                   value: item.title || '',
-                  highlighted: this.highlightText(item.title || '', options.query, options.caseSensitive)
+                  highlighted: this.highlightText(
+                    item.title || '',
+                    options.query,
+                    options.caseSensitive
+                  ),
                 });
               }
             }
@@ -461,7 +468,7 @@ export class SearchFilterService {
         results.push({
           card,
           score,
-          matches
+          matches,
         });
       }
     }
@@ -474,10 +481,7 @@ export class SearchFilterService {
    * Highlight search terms in text
    */
   highlightText(text: string, query: string, caseSensitive = false): string {
-    const regex = new RegExp(
-      `(${this.escapeRegex(query)})`,
-      caseSensitive ? 'g' : 'gi'
-    );
+    const regex = new RegExp(`(${this.escapeRegex(query)})`, caseSensitive ? 'g' : 'gi');
     return text.replace(regex, '<mark>$1</mark>');
   }
 
@@ -495,7 +499,7 @@ export class SearchFilterService {
     const newPreset: FilterPreset = {
       ...preset,
       id: `preset-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
 
     const presets = [...this.presetsSubject.value, newPreset];
@@ -509,7 +513,7 @@ export class SearchFilterService {
    * Delete filter preset
    */
   deletePreset(id: string): void {
-    const presets = this.presetsSubject.value.filter(p => p.id !== id);
+    const presets = this.presetsSubject.value.filter((p) => p.id !== id);
     this.presetsSubject.next(presets);
     this.savePresetsToStorage(presets);
     this.logger.info(`Filter preset deleted: ${id}`, 'SearchFilterService');
@@ -519,7 +523,7 @@ export class SearchFilterService {
    * Get preset by ID
    */
   getPreset(id: string): FilterPreset | undefined {
-    return this.presetsSubject.value.find(p => p.id === id);
+    return this.presetsSubject.value.find((p) => p.id === id);
   }
 
   /**
@@ -531,7 +535,7 @@ export class SearchFilterService {
       if (stored) {
         const presets = JSON.parse(stored) as FilterPreset[];
         // Convert date strings back to Date objects
-        presets.forEach(preset => {
+        presets.forEach((preset) => {
           preset.createdAt = new Date(preset.createdAt);
         });
         this.presetsSubject.next(presets);
@@ -552,5 +556,3 @@ export class SearchFilterService {
     }
   }
 }
-
-

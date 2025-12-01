@@ -16,7 +16,7 @@ type FinancialField = CardField & {
   standalone: true,
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './financials-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FinancialsSectionComponent extends BaseSectionComponent<FinancialField> {
   protected readonly utils = inject(SectionUtilsService);

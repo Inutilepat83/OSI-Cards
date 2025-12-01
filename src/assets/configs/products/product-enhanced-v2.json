@@ -21,10 +21,34 @@
       "title": "Security Metrics",
       "type": "analytics",
       "fields": [
-        { "label": "Threat Detection Rate", "value": "99.7%", "percentage": 99.7, "performance": "excellent", "trend": "up" },
-        { "label": "False Positive Rate", "value": "0.03%", "percentage": 0.03, "performance": "excellent", "trend": "down" },
-        { "label": "Response Time", "value": "< 5 seconds", "percentage": 95, "performance": "excellent", "trend": "down" },
-        { "label": "Customer Retention", "value": "96%", "percentage": 96, "performance": "excellent", "trend": "up" }
+        {
+          "label": "Threat Detection Rate",
+          "value": "99.7%",
+          "percentage": 99.7,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "False Positive Rate",
+          "value": "0.03%",
+          "percentage": 0.03,
+          "performance": "excellent",
+          "trend": "down"
+        },
+        {
+          "label": "Response Time",
+          "value": "< 5 seconds",
+          "percentage": 95,
+          "performance": "excellent",
+          "trend": "down"
+        },
+        {
+          "label": "Customer Retention",
+          "value": "96%",
+          "percentage": 96,
+          "performance": "excellent",
+          "trend": "up"
+        }
       ]
     },
     {
@@ -46,10 +70,26 @@
       "title": "Core Features",
       "type": "product",
       "fields": [
-        { "label": "Endpoint Protection", "value": "Next-Gen Antivirus with AI", "icon": "🛡️" },
-        { "label": "EDR/XDR", "value": "Advanced Threat Hunting & Response", "icon": "🔍" },
-        { "label": "Zero Trust Network", "value": "Identity-Based Access Control", "icon": "🔐" },
-        { "label": "AI-Powered Detection", "value": "Machine Learning Threat Analysis", "icon": "🤖" }
+        {
+          "label": "Endpoint Protection",
+          "value": "Next-Gen Antivirus with AI",
+          "icon": "🛡️"
+        },
+        {
+          "label": "EDR/XDR",
+          "value": "Advanced Threat Hunting & Response",
+          "icon": "🔍"
+        },
+        {
+          "label": "Zero Trust Network",
+          "value": "Identity-Based Access Control",
+          "icon": "🔐"
+        },
+        {
+          "label": "AI-Powered Detection",
+          "value": "Machine Learning Threat Analysis",
+          "icon": "🤖"
+        }
       ]
     },
     {
@@ -59,12 +99,20 @@
         {
           "label": "Endpoint Security",
           "value": "Comprehensive endpoint protection",
-          "benefits": ["Real-time threat detection", "Automated response", "Behavioral analysis"]
+          "benefits": [
+            "Real-time threat detection",
+            "Automated response",
+            "Behavioral analysis"
+          ]
         },
         {
           "label": "Network Security",
           "value": "Zero Trust architecture",
-          "benefits": ["Micro-segmentation", "Identity verification", "Continuous monitoring"]
+          "benefits": [
+            "Micro-segmentation",
+            "Identity verification",
+            "Continuous monitoring"
+          ]
         }
       ]
     },
@@ -94,7 +142,20 @@
     }
   ],
   "actions": [
-    { "label": "Start Free Trial", "type": "question", "variant": "primary", "icon": "🛡️", "question": "How do I start a free trial?" },
-    { "label": "Security Assessment", "type": "agent", "variant": "secondary", "icon": "🔍", "agentId": "security-agent", "agentContext": { "action": "security_assessment" } }
+    {
+      "label": "Start Free Trial",
+      "type": "question",
+      "variant": "primary",
+      "icon": "🛡️",
+      "question": "How do I start a free trial?"
+    },
+    {
+      "label": "Security Assessment",
+      "type": "agent",
+      "variant": "secondary",
+      "icon": "🔍",
+      "agentId": "security-agent",
+      "agentContext": { "action": "security_assessment" }
+    }
   ]
 }

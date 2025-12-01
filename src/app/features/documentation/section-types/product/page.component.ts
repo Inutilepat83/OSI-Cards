@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
 import { DocsDemoComponent } from '../../components';
 
@@ -111,31 +111,31 @@ The **Product Section** (\`type: "product"\`) is used for displays product infor
 `;
 
 const demoConfig = {
-  "title": "Product Information",
-  "type": "product",
-  "description": "Product details and specifications",
-  "fields": [
+  title: 'Product Information',
+  type: 'product',
+  description: 'Product details and specifications',
+  fields: [
     {
-      "label": "Product Name",
-      "value": "Enterprise Suite Pro"
+      label: 'Product Name',
+      value: 'Enterprise Suite Pro',
     },
     {
-      "label": "Version",
-      "value": "3.5.2"
+      label: 'Version',
+      value: '3.5.2',
     },
     {
-      "label": "Category",
-      "value": "Enterprise Software"
+      label: 'Category',
+      value: 'Enterprise Software',
     },
     {
-      "label": "License",
-      "value": "Annual Subscription"
+      label: 'License',
+      value: 'Annual Subscription',
     },
     {
-      "label": "Support Level",
-      "value": "Premium 24/7"
-    }
-  ]
+      label: 'Support Level',
+      value: 'Premium 24/7',
+    },
+  ],
 };
 
 /**
@@ -148,8 +148,8 @@ const demoConfig = {
   imports: [DocPageComponent, DocsDemoComponent],
   template: `
     <div class="section-docs">
-      <app-docs-demo 
-        [config]="demo" 
+      <app-docs-demo
+        [config]="demo"
         [type]="'product'"
         demoTitle="Live Preview"
         height="350px"
@@ -157,14 +157,16 @@ const demoConfig = {
       <app-doc-page [content]="content"></app-doc-page>
     </div>
   `,
-  styles: [`
-    .section-docs {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styles: [
+    `
+      .section-docs {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductPageComponent {
   content = pageContent;

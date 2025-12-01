@@ -16,7 +16,7 @@ type QuotationField = CardField & {
   standalone: true,
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './quotation-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuotationSectionComponent extends BaseSectionComponent<QuotationField> {
   get fields(): QuotationField[] {
@@ -47,4 +47,3 @@ export class QuotationSectionComponent extends BaseSectionComponent<QuotationFie
     return quote != null ? String(quote) : '';
   }
 }
-

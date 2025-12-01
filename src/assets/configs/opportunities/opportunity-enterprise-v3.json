@@ -21,11 +21,41 @@
       "title": "Project Progress",
       "type": "analytics",
       "fields": [
-        { "label": "Discovery Phase", "value": "100% Complete", "percentage": 100, "performance": "excellent", "trend": "stable" },
-        { "label": "Strategy Development", "value": "95% Complete", "percentage": 95, "performance": "excellent", "trend": "up" },
-        { "label": "Contract Negotiation", "value": "80% Complete", "percentage": 80, "performance": "excellent", "trend": "up" },
-        { "label": "Resource Planning", "value": "75% Complete", "percentage": 75, "performance": "good", "trend": "up" },
-        { "label": "Stakeholder Alignment", "value": "90% Complete", "percentage": 90, "performance": "excellent", "trend": "up" }
+        {
+          "label": "Discovery Phase",
+          "value": "100% Complete",
+          "percentage": 100,
+          "performance": "excellent",
+          "trend": "stable"
+        },
+        {
+          "label": "Strategy Development",
+          "value": "95% Complete",
+          "percentage": 95,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Contract Negotiation",
+          "value": "80% Complete",
+          "percentage": 80,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Resource Planning",
+          "value": "75% Complete",
+          "percentage": 75,
+          "performance": "good",
+          "trend": "up"
+        },
+        {
+          "label": "Stakeholder Alignment",
+          "value": "90% Complete",
+          "percentage": 90,
+          "performance": "excellent",
+          "trend": "up"
+        }
       ]
     },
     {
@@ -48,11 +78,40 @@
       "title": "Financial Analysis",
       "type": "financials",
       "fields": [
-        { "label": "Total Opportunity Value", "value": "$30M", "format": "currency", "change": 0, "trend": "stable" },
-        { "label": "Expected Cost Savings", "value": "$10.5M annually", "format": "currency", "change": 35, "trend": "up" },
-        { "label": "Revenue Growth Potential", "value": "$7.5M annually", "format": "currency", "change": 25, "trend": "up" },
-        { "label": "ROI Projection", "value": "320%", "format": "percentage", "change": 32, "trend": "up" },
-        { "label": "Payback Period", "value": "18 months", "format": "text", "trend": "stable" }
+        {
+          "label": "Total Opportunity Value",
+          "value": "$30M",
+          "format": "currency",
+          "change": 0,
+          "trend": "stable"
+        },
+        {
+          "label": "Expected Cost Savings",
+          "value": "$10.5M annually",
+          "format": "currency",
+          "change": 35,
+          "trend": "up"
+        },
+        {
+          "label": "Revenue Growth Potential",
+          "value": "$7.5M annually",
+          "format": "currency",
+          "change": 25,
+          "trend": "up"
+        },
+        {
+          "label": "ROI Projection",
+          "value": "320%",
+          "format": "percentage",
+          "change": 32,
+          "trend": "up"
+        },
+        {
+          "label": "Payback Period",
+          "value": "18 months",
+          "format": "text",
+          "trend": "stable"
+        }
       ]
     },
     {
@@ -92,10 +151,30 @@
       "title": "Project Activities",
       "type": "list",
       "items": [
-        { "title": "Infrastructure Modernization", "description": "Cloud migration and modernization of core systems", "icon": "☁️", "status": "pending" },
-        { "title": "AI & Analytics Integration", "description": "Implement AI-powered analytics and automation", "icon": "🤖", "status": "pending" },
-        { "title": "Security Enhancement", "description": "Zero Trust security architecture implementation", "icon": "🔐", "status": "pending" },
-        { "title": "Process Automation", "description": "Automate 80% of manual processes", "icon": "⚙️", "status": "pending" }
+        {
+          "title": "Infrastructure Modernization",
+          "description": "Cloud migration and modernization of core systems",
+          "icon": "☁️",
+          "status": "pending"
+        },
+        {
+          "title": "AI & Analytics Integration",
+          "description": "Implement AI-powered analytics and automation",
+          "icon": "🤖",
+          "status": "pending"
+        },
+        {
+          "title": "Security Enhancement",
+          "description": "Zero Trust security architecture implementation",
+          "icon": "🔐",
+          "status": "pending"
+        },
+        {
+          "title": "Process Automation",
+          "description": "Automate 80% of manual processes",
+          "icon": "⚙️",
+          "status": "pending"
+        }
       ]
     },
     {
@@ -132,16 +211,53 @@
       "title": "Project Locations",
       "type": "map",
       "fields": [
-        { "name": "Client HQ", "x": 25, "y": 35, "type": "client", "address": "Detroit, MI, USA" },
-        { "name": "Manufacturing Plant 1", "x": 28, "y": 32, "type": "facility", "address": "Chicago, IL, USA" },
-        { "name": "Manufacturing Plant 2", "x": 18, "y": 38, "type": "facility", "address": "Cleveland, OH, USA" },
-        { "name": "Data Center", "x": 22, "y": 36, "type": "datacenter", "address": "Columbus, OH, USA" }
+        {
+          "name": "Client HQ",
+          "x": 25,
+          "y": 35,
+          "type": "client",
+          "address": "Detroit, MI, USA"
+        },
+        {
+          "name": "Manufacturing Plant 1",
+          "x": 28,
+          "y": 32,
+          "type": "facility",
+          "address": "Chicago, IL, USA"
+        },
+        {
+          "name": "Manufacturing Plant 2",
+          "x": 18,
+          "y": 38,
+          "type": "facility",
+          "address": "Cleveland, OH, USA"
+        },
+        {
+          "name": "Data Center",
+          "x": 22,
+          "y": 36,
+          "type": "datacenter",
+          "address": "Columbus, OH, USA"
+        }
       ]
     }
   ],
   "actions": [
-    { "label": "View Full Proposal", "type": "question", "variant": "primary", "icon": "📋", "question": "Can you show me the full proposal details?" },
-    { "label": "Schedule Executive Review", "type": "agent", "variant": "primary", "icon": "📅", "agentId": "calendar-agent", "agentContext": { "action": "schedule_executive_review" } },
+    {
+      "label": "View Full Proposal",
+      "type": "question",
+      "variant": "primary",
+      "icon": "📋",
+      "question": "Can you show me the full proposal details?"
+    },
+    {
+      "label": "Schedule Executive Review",
+      "type": "agent",
+      "variant": "primary",
+      "icon": "📅",
+      "agentId": "calendar-agent",
+      "agentContext": { "action": "schedule_executive_review" }
+    },
     {
       "label": "Contact Decision Maker",
       "type": "mail",

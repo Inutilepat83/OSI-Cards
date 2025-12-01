@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
 import { DocsDemoComponent } from '../../components';
 
@@ -115,35 +115,35 @@ The **List Section** (\`type: "list"\`) is used for displays structured lists an
 `;
 
 const demoConfig = {
-  "title": "Product Features",
-  "type": "list",
-  "description": "Key features and capabilities",
-  "items": [
+  title: 'Product Features',
+  type: 'list',
+  description: 'Key features and capabilities',
+  items: [
     {
-      "title": "Real-time Analytics",
-      "description": "Live data processing and visualization",
-      "icon": "📊",
-      "status": "completed"
+      title: 'Real-time Analytics',
+      description: 'Live data processing and visualization',
+      icon: '📊',
+      status: 'completed',
     },
     {
-      "title": "AI Integration",
-      "description": "Machine learning powered insights",
-      "icon": "🤖",
-      "status": "in-progress"
+      title: 'AI Integration',
+      description: 'Machine learning powered insights',
+      icon: '🤖',
+      status: 'in-progress',
     },
     {
-      "title": "API Access",
-      "description": "RESTful API for integrations",
-      "icon": "🔗",
-      "status": "completed"
+      title: 'API Access',
+      description: 'RESTful API for integrations',
+      icon: '🔗',
+      status: 'completed',
     },
     {
-      "title": "Multi-language",
-      "description": "Support for 20+ languages",
-      "icon": "🌍",
-      "status": "pending"
-    }
-  ]
+      title: 'Multi-language',
+      description: 'Support for 20+ languages',
+      icon: '🌍',
+      status: 'pending',
+    },
+  ],
 };
 
 /**
@@ -156,8 +156,8 @@ const demoConfig = {
   imports: [DocPageComponent, DocsDemoComponent],
   template: `
     <div class="section-docs">
-      <app-docs-demo 
-        [config]="demo" 
+      <app-docs-demo
+        [config]="demo"
         [type]="'list'"
         demoTitle="Live Preview"
         height="350px"
@@ -165,14 +165,16 @@ const demoConfig = {
       <app-doc-page [content]="content"></app-doc-page>
     </div>
   `,
-  styles: [`
-    .section-docs {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styles: [
+    `
+      .section-docs {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ListPageComponent {
   content = pageContent;

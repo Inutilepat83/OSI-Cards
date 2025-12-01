@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NewsSectionComponent } from './news-section.component';
-import { SectionBuilder, ItemBuilder } from '../../../../../../testing/test-builders';
+import { ItemBuilder, SectionBuilder } from '../../../../../../testing/test-builders';
 import { CardSection } from '../../../../../../models';
 
 describe('NewsSectionComponent', () => {
@@ -9,12 +9,12 @@ describe('NewsSectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NewsSectionComponent]
+      imports: [NewsSectionComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(NewsSectionComponent);
     component = fixture.componentInstance;
-    
+
     // Set up test section
     component.section = SectionBuilder.create()
       .withTitle('Latest News')
@@ -34,7 +34,7 @@ describe('NewsSectionComponent', () => {
           .build()
       )
       .build();
-    
+
     fixture.detectChanges();
   });
 
@@ -57,10 +57,7 @@ describe('NewsSectionComponent', () => {
   });
 
   it('should fallback to "News" when neither source nor publisher exists', () => {
-    const item = ItemBuilder.create()
-      .withTitle('Article')
-      .withMeta({})
-      .build();
+    const item = ItemBuilder.create().withTitle('Article').withMeta({}).build();
     expect(component.formatSource(item)).toBe('News');
   });
 
@@ -75,18 +72,12 @@ describe('NewsSectionComponent', () => {
   });
 
   it('should format timestamp from date field', () => {
-    const item = ItemBuilder.create()
-      .withTitle('Article')
-      .withMeta({ date: '2024-01-13' })
-      .build();
+    const item = ItemBuilder.create().withTitle('Article').withMeta({ date: '2024-01-13' }).build();
     expect(component.formatTimestamp(item)).toBe('2024-01-13');
   });
 
   it('should return empty string when no timestamp available', () => {
-    const item = ItemBuilder.create()
-      .withTitle('Article')
-      .withMeta({})
-      .build();
+    const item = ItemBuilder.create().withTitle('Article').withMeta({}).build();
     expect(component.formatTimestamp(item)).toBe('');
   });
 
@@ -97,20 +88,14 @@ describe('NewsSectionComponent', () => {
   });
 
   it('should track items with source when ID is missing', () => {
-    const item = ItemBuilder.create()
-      .withTitle('News')
-      .withMeta({ source: 'Tech News' })
-      .build();
+    const item = ItemBuilder.create().withTitle('News').withMeta({ source: 'Tech News' }).build();
     const trackBy = component.trackItem(0, item);
     expect(trackBy).toContain('news-item');
     expect(trackBy).toContain('Tech News');
   });
 
   it('should hide streaming placeholder in description', () => {
-    const item = ItemBuilder.create()
-      .withTitle('News')
-      .withDescription('Streaming…')
-      .build();
+    const item = ItemBuilder.create().withTitle('News').withDescription('Streaming…').build();
     expect(component.getDisplayDescription(item)).toBe('');
   });
 
@@ -122,14 +107,3 @@ describe('NewsSectionComponent', () => {
     expect(component.getDisplayDescription(item)).toBe('Normal description');
   });
 });
-
-
-
-
-
-
-
-
-
-
-

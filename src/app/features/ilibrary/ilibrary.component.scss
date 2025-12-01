@@ -22,7 +22,11 @@ $transition-normal: 250ms ease;
   min-height: 100vh;
   background: linear-gradient(135deg, #0a0a0c 0%, #1a1a22 50%, #0d0d10 100%);
   color: #e4e4e7;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
 }
 
 // ============================================
@@ -154,24 +158,24 @@ $transition-normal: 250ms ease;
 // --- Environment 0: OSI (Orange Sales Assistance) ---
 // Replicates the Orange Sales Assistance app environment with Boosted styling
 .env-osi {
-  background: var(--bkg-color, #F7F7F7) !important;
-  font-family: 'Helvetica Neue', Arial, sans-serif !important;
+  background: var(--bkg-color, #f7f7f7) !important;
+  font-family: "Helvetica Neue", Arial, sans-serif !important;
   color: var(--text-color, black) !important;
   font-size: 12px !important;
   line-height: 1.4 !important;
 
   // OSI-specific CSS variables (light mode defaults)
   --text-color: black;
-  --bkg-color: #F7F7F7;
+  --bkg-color: #f7f7f7;
   --btn-txt-color: black;
-  --btn-bg-color: #FFFFFF;
-  --chat-border-color: #ECECEC;
-  --chat-content-bg-color: #FFFFFF;
-  --chat-content-sources-bg-color: #F7F7F7;
-  --history-border-color: #ECECEC;
+  --btn-bg-color: #ffffff;
+  --chat-border-color: #ececec;
+  --chat-content-bg-color: #ffffff;
+  --chat-content-sources-bg-color: #f7f7f7;
+  --history-border-color: #ececec;
   --history-tab-active-bg-color: #ffffff;
   --history-tab-active-color: #000000;
-  --star-bg-color: #E9E9E9;
+  --star-bg-color: #e9e9e9;
 
   * {
     box-sizing: border-box !important;
@@ -201,7 +205,7 @@ $transition-normal: 250ms ease;
     color: rgba(255, 255, 255, 0.7) !important;
     padding: 6px 12px !important;
     font-size: 12px !important;
-    
+
     &.active {
       color: #ff7900 !important;
       border-bottom: 2px solid #ff7900 !important;
@@ -212,7 +216,7 @@ $transition-normal: 250ms ease;
     background: var(--chat-content-bg-color, #ffffff) !important;
     padding: 16px !important;
     flex: 1 !important;
-    border: 1px solid var(--chat-border-color, #ECECEC) !important;
+    border: 1px solid var(--chat-border-color, #ececec) !important;
   }
 
   .sim-section-title {
@@ -231,7 +235,7 @@ $transition-normal: 250ms ease;
   }
 
   .sim-app-footer {
-    background: #1B1B1D !important;
+    background: #1b1b1d !important;
     color: #999999 !important;
     padding: 8px 16px !important;
     font-size: 10px !important;
@@ -247,9 +251,9 @@ $transition-normal: 250ms ease;
   ::-webkit-scrollbar {
     height: 6px !important;
     width: 6px !important;
-    background: #C0C0C0 !important;
+    background: #c0c0c0 !important;
   }
-  
+
   ::-webkit-scrollbar-thumb {
     background: #797979 !important;
   }
@@ -259,7 +263,7 @@ $transition-normal: 250ms ease;
 // Bootstrap/Boosted-like styling with aggressive resets
 .env-corporate {
   background: #f7f7f7 !important;
-  font-family: 'Helvetica Neue', Arial, sans-serif !important;
+  font-family: "Helvetica Neue", Arial, sans-serif !important;
   color: #333333 !important;
   font-size: 14px !important;
   line-height: 1.428571429 !important;
@@ -291,7 +295,7 @@ $transition-normal: 250ms ease;
     color: rgba(255, 255, 255, 0.7) !important;
     padding: 8px 16px !important;
     font-size: 13px !important;
-    
+
     &.active {
       color: #ff7900 !important;
       border-bottom: 2px solid #ff7900 !important;
@@ -337,7 +341,7 @@ $transition-normal: 250ms ease;
 // Dark terminal aesthetic with monospace fonts
 .env-developer {
   background: #0d1117 !important;
-  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
+  font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace !important;
   color: #c9d1d9 !important;
   font-size: 13px !important;
   line-height: 1.6 !important;
@@ -364,7 +368,7 @@ $transition-normal: 250ms ease;
     font-weight: 400 !important;
 
     &::before {
-      content: '~/';
+      content: "~/";
       color: #8b949e;
     }
   }
@@ -374,7 +378,7 @@ $transition-normal: 250ms ease;
     padding: 4px 12px !important;
     font-size: 12px !important;
     border-radius: 6px !important;
-    
+
     &.active {
       color: #f0f6fc !important;
       background: #21262d !important;
@@ -399,7 +403,7 @@ $transition-normal: 250ms ease;
     margin: 0 0 4px 0 !important;
 
     &::before {
-      content: '$ ';
+      content: "$ ";
       color: #238636;
     }
   }
@@ -410,7 +414,7 @@ $transition-normal: 250ms ease;
     margin: 0 0 16px 0 !important;
 
     &::before {
-      content: '# ';
+      content: "# ";
       color: #484f58;
     }
   }
@@ -433,7 +437,7 @@ $transition-normal: 250ms ease;
 // Light, modern with conflicting styles and aggressive typography
 .env-marketing {
   background: linear-gradient(180deg, #fafafa 0%, #f0f0f0 100%) !important;
-  font-family: 'Poppins', 'Segoe UI', sans-serif !important;
+  font-family: "Poppins", "Segoe UI", sans-serif !important;
   color: #2d3748 !important;
   font-size: 16px !important;
   line-height: 1.75 !important;
@@ -472,7 +476,7 @@ $transition-normal: 250ms ease;
     font-weight: 500 !important;
     border-radius: 999px !important;
     transition: all 0.2s !important;
-    
+
     &.active {
       color: #ffffff !important;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
@@ -521,7 +525,7 @@ $transition-normal: 250ms ease;
 // Aggressive CSS resets and conflicting styles
 .env-legacy {
   background: #e8e8e8 !important;
-  font-family: 'Times New Roman', Times, serif !important;
+  font-family: "Times New Roman", Times, serif !important;
   color: #000000 !important;
   font-size: 12px !important;
   line-height: 1.2 !important;
@@ -533,7 +537,8 @@ $transition-normal: 250ms ease;
   }
 
   // Then re-apply flex for layout
-  .simulated-app, .sim-app-content {
+  .simulated-app,
+  .sim-app-content {
     display: flex !important;
     flex-direction: column !important;
   }
@@ -558,7 +563,7 @@ $transition-normal: 250ms ease;
     font-size: 14px !important;
     font-weight: bold !important;
     text-shadow: 1px 1px #000000 !important;
-    font-family: 'Arial Black', sans-serif !important;
+    font-family: "Arial Black", sans-serif !important;
   }
 
   .sim-nav-item {
@@ -566,7 +571,7 @@ $transition-normal: 250ms ease;
     padding: 4px 8px !important;
     font-size: 11px !important;
     text-decoration: underline !important;
-    
+
     &.active {
       color: #ffff00 !important;
       background: #660000 !important;
@@ -588,7 +593,7 @@ $transition-normal: 250ms ease;
     font-weight: bold !important;
     margin-bottom: 8px !important;
     text-decoration: underline !important;
-    font-family: 'Arial', sans-serif !important;
+    font-family: "Arial", sans-serif !important;
   }
 
   .sim-section-desc {
@@ -641,16 +646,16 @@ $transition-normal: 250ms ease;
     width: 100% !important;
     min-height: 500px !important;
     padding: 8px !important; // Match home demo padding for glow effect
-    
+
     // Enhanced glow effect - more visible like home demo
     .ai-card-surface {
-      box-shadow: 
+      box-shadow:
         0 0 20px rgba(255, 121, 0, 0.35),
         0 0 40px rgba(255, 121, 0, 0.15),
         0 4px 20px rgba(0, 0, 0, 0.2) !important;
-      
+
       &:hover {
-        box-shadow: 
+        box-shadow:
           0 0 28px rgba(255, 121, 0, 0.45),
           0 0 50px rgba(255, 121, 0, 0.2),
           0 8px 30px rgba(0, 0, 0, 0.25) !important;
@@ -685,7 +690,9 @@ $transition-normal: 250ms ease;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .generating-text {
@@ -947,12 +954,24 @@ $transition-normal: 250ms ease;
   font-weight: 600;
   color: #e4e4e7;
 
-  &.status-idle { color: #71717a; }
-  &.status-thinking { color: #fbbf24; }
-  &.status-streaming { color: #ff7900; }
-  &.status-complete { color: #22c55e; }
-  &.status-aborted { color: #ef4444; }
-  &.status-error { color: #ef4444; }
+  &.status-idle {
+    color: #71717a;
+  }
+  &.status-thinking {
+    color: #fbbf24;
+  }
+  &.status-streaming {
+    color: #ff7900;
+  }
+  &.status-complete {
+    color: #22c55e;
+  }
+  &.status-aborted {
+    color: #ef4444;
+  }
+  &.status-error {
+    color: #ef4444;
+  }
 }
 
 .status-progress {
@@ -1034,4 +1053,3 @@ $transition-normal: 250ms ease;
   cursor: pointer;
   transition: all $transition-fast;
 }
-

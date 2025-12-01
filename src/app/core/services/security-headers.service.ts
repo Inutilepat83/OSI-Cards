@@ -6,31 +6,31 @@ import { environment } from '@environments/environment';
 
 /**
  * Security Headers Service
- * 
+ *
  * Manages HTTP security headers for the application. Provides utilities for
  * setting and managing Content Security Policy (CSP), XSS protection, and
  * other security-related headers.
- * 
+ *
  * Features:
  * - Content Security Policy (CSP) management
  * - XSS protection headers
  * - Frame options configuration
  * - Referrer policy management
  * - Security header validation
- * 
+ *
  * @example
  * ```typescript
  * const securityService = inject(SecurityHeadersService);
- * 
+ *
  * // Set CSP header
  * securityService.setCSPHeader('default-src \'self\'');
- * 
+ *
  * // Get current security headers
  * const headers = securityService.getSecurityHeaders();
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SecurityHeadersService {
   private readonly logger = inject(LoggingService);
@@ -62,7 +62,11 @@ export class SecurityHeadersService {
     this.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
 
     // Strict-Transport-Security: Force HTTPS (if served over HTTPS)
-    if (environment.production && typeof window !== 'undefined' && window.location.protocol === 'https:') {
+    if (
+      environment.production &&
+      typeof window !== 'undefined' &&
+      window.location.protocol === 'https:'
+    ) {
       this.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
     }
 
@@ -81,7 +85,7 @@ export class SecurityHeadersService {
 
   /**
    * Set comprehensive Content Security Policy
-   * 
+   *
    * Implements a strict CSP that:
    * - Prevents XSS attacks
    * - Restricts resource loading
@@ -107,7 +111,7 @@ export class SecurityHeadersService {
         "base-uri 'self'",
         "form-action 'self'",
         "object-src 'none'",
-        "upgrade-insecure-requests"
+        'upgrade-insecure-requests',
       ].join('; ');
     }
 
@@ -116,7 +120,7 @@ export class SecurityHeadersService {
 
   /**
    * Set a security header
-   * 
+   *
    * @param name - Header name
    * @param value - Header value
    */
@@ -127,7 +131,7 @@ export class SecurityHeadersService {
 
   /**
    * Get a security header value
-   * 
+   *
    * @param name - Header name
    * @returns Header value or undefined if not set
    */
@@ -137,7 +141,7 @@ export class SecurityHeadersService {
 
   /**
    * Get all security headers as an object
-   * 
+   *
    * @returns Object with all security headers
    */
   getSecurityHeaders(): Record<string, string> {
@@ -150,7 +154,7 @@ export class SecurityHeadersService {
 
   /**
    * Set Content Security Policy header
-   * 
+   *
    * @param policy - CSP policy string
    * @example
    * ```typescript
@@ -163,7 +167,7 @@ export class SecurityHeadersService {
 
   /**
    * Get Content Security Policy header
-   * 
+   *
    * @returns CSP policy string or undefined
    */
   getCSPHeader(): string | undefined {
@@ -172,7 +176,7 @@ export class SecurityHeadersService {
 
   /**
    * Set Strict-Transport-Security (HSTS) header
-   * 
+   *
    * @param maxAge - Maximum age in seconds (default: 31536000 = 1 year)
    * @param includeSubDomains - Include subdomains (default: true)
    * @param preload - Enable HSTS preload (default: false)
@@ -190,7 +194,7 @@ export class SecurityHeadersService {
 
   /**
    * Remove a security header
-   * 
+   *
    * @param name - Header name to remove
    */
   removeHeader(name: string): void {
@@ -208,7 +212,7 @@ export class SecurityHeadersService {
 
   /**
    * Validate security headers configuration
-   * 
+   *
    * @returns Object with validation results
    */
   validateHeaders(): {
@@ -241,8 +245,7 @@ export class SecurityHeadersService {
     return {
       isValid: errors.length === 0,
       warnings,
-      errors
+      errors,
     };
   }
 }
-

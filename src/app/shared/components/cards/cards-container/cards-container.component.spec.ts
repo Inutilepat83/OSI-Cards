@@ -20,8 +20,8 @@ describe('CardsContainerComponent', () => {
       imports: [CardsContainerComponent, AICardRendererComponent],
       providers: [
         { provide: CardDataService, useValue: cardDataSpy },
-        { provide: ErrorHandlingService, useValue: errorHandlerSpy }
-      ]
+        { provide: ErrorHandlingService, useValue: errorHandlerSpy },
+      ],
     }).compileComponents();
 
     cardDataService = TestBed.inject(CardDataService) as jasmine.SpyObj<CardDataService>;
@@ -45,7 +45,7 @@ describe('CardsContainerComponent', () => {
   it('should load cards on init', () => {
     const mockCards = [
       CardBuilder.create().withTitle('Card 1').build(),
-      CardBuilder.create().withTitle('Card 2').build()
+      CardBuilder.create().withTitle('Card 2').build(),
     ];
 
     cardDataService.getAllCards.and.returnValue(of(mockCards));
@@ -102,7 +102,7 @@ describe('CardsContainerComponent', () => {
   it('should load example cards when loadExampleCards is called', () => {
     const mockCards = [
       CardBuilder.create().withTitle('Example Card 1').build(),
-      CardBuilder.create().withTitle('Example Card 2').build()
+      CardBuilder.create().withTitle('Example Card 2').build(),
     ];
 
     cardDataService.getAllCards.and.returnValue(of(mockCards));
@@ -115,9 +115,7 @@ describe('CardsContainerComponent', () => {
   });
 
   it('should update cards array when new cards are loaded', () => {
-    const initialCards = [
-      CardBuilder.create().withTitle('Card 1').build()
-    ];
+    const initialCards = [CardBuilder.create().withTitle('Card 1').build()];
 
     cardDataService.getAllCards.and.returnValue(of(initialCards));
 
@@ -129,7 +127,7 @@ describe('CardsContainerComponent', () => {
     const newCards = [
       CardBuilder.create().withTitle('Card 1').build(),
       CardBuilder.create().withTitle('Card 2').build(),
-      CardBuilder.create().withTitle('Card 3').build()
+      CardBuilder.create().withTitle('Card 3').build(),
     ];
 
     cardDataService.getAllCards.and.returnValue(of(newCards));
@@ -140,15 +138,3 @@ describe('CardsContainerComponent', () => {
     expect(component.cards.length).toBe(3);
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-

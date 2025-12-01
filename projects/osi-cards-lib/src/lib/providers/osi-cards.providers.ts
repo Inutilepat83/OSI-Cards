@@ -1,7 +1,10 @@
-import { Provider, EnvironmentProviders, InjectionToken } from '@angular/core';
+import { Provider, EnvironmentProviders, InjectionToken, APP_INITIALIZER, inject } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideLucideIcons } from '../icons/lucide-icons.module';
+import { IconService } from '../services/icon.service';
+import { FeatureFlagsService } from '../services/feature-flags.service';
+import { AccessibilityService } from '../services/accessibility.service';
 
 /**
  * CSS isolation mode for the library
@@ -88,7 +91,7 @@ export interface OSICardsLibConfig {
    *   Styles are wrapped in @layer osi-cards, making them easy to override
    * - 'strict': Adds CSS containment properties for maximum isolation
    *   Uses contain: content and isolation: isolate for stronger CSS boundaries
-   * 
+   *
    * @default 'standard'
    */
   cssIsolation?: CSSIsolationMode;
@@ -96,7 +99,7 @@ export interface OSICardsLibConfig {
   /**
    * Default theme for the library.
    * Can be 'day' (light) or 'night' (dark).
-   * 
+   *
    * @default 'day'
    */
   defaultTheme?: 'day' | 'night';
@@ -166,7 +169,7 @@ const ANIMATION_PRESETS: Record<AnimationPreset, AnimationFeatures> = {
 function resolveAnimationConfig(config?: AnimationConfig): AnimationConfig {
   const preset = config?.preset ?? 'full';
   const presetFeatures = ANIMATION_PRESETS[preset];
-  
+
   return {
     preset,
     features: {
@@ -186,23 +189,23 @@ function resolveAnimationConfig(config?: AnimationConfig): AnimationConfig {
 
 /**
  * Provide OSI Cards Library with required providers
- * 
+ *
  * This function provides all necessary providers for the OSI Cards library to function
  * correctly in an Angular application. It includes:
  * - Animation providers (required for component animations)
  * - Lucide icons (required for icons in Shadow DOM components)
  * - Configuration injection tokens
  * - Service providers (services use providedIn: 'root' so they're automatically available)
- * 
+ *
  * @param config - Optional configuration object
  * @returns Array of providers to be added to your ApplicationConfig
- * 
+ *
  * @example
  * ```typescript
  * // In your app.config.ts
  * import { ApplicationConfig } from '@angular/core';
  * import { provideOSICards } from 'osi-cards-lib';
- * 
+ *
  * export const appConfig: ApplicationConfig = {
  *   providers: [
  *     provideOSICards(), // Enable animations (default)
@@ -210,7 +213,7 @@ function resolveAnimationConfig(config?: AnimationConfig): AnimationConfig {
  *   ]
  * };
  * ```
- * 
+ *
  * @example
  * ```typescript
  * // Full configuration
@@ -225,7 +228,7 @@ function resolveAnimationConfig(config?: AnimationConfig): AnimationConfig {
  *   ]
  * };
  * ```
- * 
+ *
  * @example
  * ```typescript
  * // Disable animations (for testing or performance)
@@ -236,20 +239,20 @@ function resolveAnimationConfig(config?: AnimationConfig): AnimationConfig {
  *   ]
  * };
  * ```
- * 
+ *
  * @remarks
  * - **REQUIRED**: You must call this function in your app.config.ts providers array
  * - Animations are required for proper component behavior (entrance animations, transitions)
  * - Services (MagneticTiltService, IconService, etc.) are automatically provided via providedIn: 'root'
  * - Styles must be imported separately: @import 'osi-cards-lib/styles/_styles-scoped';
- * 
+ *
  * ## CSS Isolation Modes
- * 
+ *
  * The library uses CSS Layers (@layer) for style encapsulation:
  * - Library styles are in the 'osi-cards' layer
  * - Your styles (outside any layer) automatically have higher priority
  * - No need for !important to override library styles
- * 
+ *
  * For strict isolation:
  * - Use cssIsolation: 'strict' to enable CSS containment
  * - The container will use contain: content and isolation: isolate
@@ -265,20 +268,20 @@ export function provideOSICards(config: OSICardsLibConfig = {}): (Provider | Env
 
   // Resolve animation configuration
   const resolvedAnimationConfig = resolveAnimationConfig(animationConfig);
-  
+
   // Determine if Angular animations should be enabled
   // Disable if explicitly set to false OR if animation preset is 'none'
-  const shouldEnableAngularAnimations = enableAnimations && 
+  const shouldEnableAngularAnimations = enableAnimations &&
     resolvedAnimationConfig.preset !== 'none';
 
   const providers: (Provider | EnvironmentProviders)[] = [
     // Animation provider is REQUIRED for component animations
     shouldEnableAngularAnimations ? provideAnimations() : provideNoopAnimations(),
-    
+
     // Lucide icons provider - REQUIRED for icons in Shadow DOM components
     // This ensures icons are registered at the application root injector level
     ...provideLucideIcons(),
-    
+
     // Provide configuration through injection tokens
     { provide: OSI_CARDS_CONFIG, useValue: config },
     { provide: CSS_ISOLATION_MODE, useValue: cssIsolation },
@@ -293,7 +296,45 @@ export function provideOSICards(config: OSICardsLibConfig = {}): (Provider | Env
   // - SectionNormalizationService
   // - SectionUtilsService
 
+  // Add APP_INITIALIZER for service initialization
+  providers.push({
+    provide: APP_INITIALIZER,
+    useFactory: osiCardsInitializerFactory,
+    multi: true
+  });
+
   return providers;
+}
+
+/**
+ * Factory function for APP_INITIALIZER
+ * Initializes critical services on application startup
+ */
+function osiCardsInitializerFactory(): () => Promise<void> {
+  // Use inject() to get services - this works in injection context
+  return async () => {
+    try {
+      // Services are lazy loaded via inject() when needed
+      // This initializer ensures they're ready on app startup
+
+      // IconService - preloads common icons
+      const iconService = inject(IconService);
+
+      // FeatureFlagsService - loads feature flags from storage/API
+      const featureFlags = inject(FeatureFlagsService);
+
+      // AccessibilityService - detects user preferences
+      const a11y = inject(AccessibilityService);
+
+      // Log initialization (in development only)
+      if (typeof ngDevMode !== 'undefined' && ngDevMode) {
+        console.log('[OSI Cards] Services initialized');
+      }
+    } catch (error) {
+      // Don't fail app startup on service initialization errors
+      console.warn('[OSI Cards] Service initialization warning:', error);
+    }
+  };
 }
 
 /**
@@ -319,7 +360,7 @@ export function isAnimationFeatureEnabled(
 export function getAnimationTimingCSSVars(config: AnimationConfig | null | undefined): Record<string, string> {
   const timing = config?.timing ?? {};
   const multiplier = timing.durationMultiplier ?? 1;
-  
+
   return {
     '--osi-anim-entrance-duration': `${(timing.entranceDuration ?? 220) * multiplier}ms`,
     '--osi-anim-hover-duration': `${(timing.hoverDuration ?? 200) * multiplier}ms`,

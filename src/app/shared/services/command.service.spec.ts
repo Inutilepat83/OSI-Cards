@@ -17,13 +17,15 @@ describe('CommandService', () => {
       providers: [
         CommandService,
         { provide: LoggingService, useValue: loggingSpy },
-        { provide: KeyboardShortcutsService, useValue: keyboardSpy }
-      ]
+        { provide: KeyboardShortcutsService, useValue: keyboardSpy },
+      ],
     });
 
     service = TestBed.inject(CommandService);
     loggingService = TestBed.inject(LoggingService) as jasmine.SpyObj<LoggingService>;
-    keyboardShortcutsService = TestBed.inject(KeyboardShortcutsService) as jasmine.SpyObj<KeyboardShortcutsService>;
+    keyboardShortcutsService = TestBed.inject(
+      KeyboardShortcutsService
+    ) as jasmine.SpyObj<KeyboardShortcutsService>;
   });
 
   it('should be created', () => {
@@ -32,7 +34,7 @@ describe('CommandService', () => {
 
   describe('initial state', () => {
     it('should have empty history initially', (done) => {
-      service.state$.subscribe(state => {
+      service.state$.subscribe((state) => {
         expect(state.canUndo).toBe(false);
         expect(state.canRedo).toBe(false);
         expect(state.historySize).toBe(0);
@@ -54,7 +56,9 @@ describe('CommandService', () => {
     it('should execute a command and add to history', () => {
       let executed = false;
       const command = new GenericCommand(
-        () => { executed = true; },
+        () => {
+          executed = true;
+        },
         () => {},
         'Test command'
       );
@@ -73,7 +77,7 @@ describe('CommandService', () => {
         'Test command'
       );
 
-      service.state$.subscribe(state => {
+      service.state$.subscribe((state) => {
         if (state.historySize > 0) {
           expect(state.canUndo).toBe(true);
           expect(state.historySize).toBe(1);
@@ -100,9 +104,21 @@ describe('CommandService', () => {
     });
 
     it('should remove future commands when executing after undo', () => {
-      const command1 = new GenericCommand(() => {}, () => {}, 'Command 1');
-      const command2 = new GenericCommand(() => {}, () => {}, 'Command 2');
-      const command3 = new GenericCommand(() => {}, () => {}, 'Command 3');
+      const command1 = new GenericCommand(
+        () => {},
+        () => {},
+        'Command 1'
+      );
+      const command2 = new GenericCommand(
+        () => {},
+        () => {},
+        'Command 2'
+      );
+      const command3 = new GenericCommand(
+        () => {},
+        () => {},
+        'Command 3'
+      );
 
       service.execute(command1);
       service.execute(command2);
@@ -113,9 +129,13 @@ describe('CommandService', () => {
       expect(service.getState().historySize).toBe(3);
       expect(service.canRedo()).toBe(true);
 
-      const newCommand = new GenericCommand(() => {}, () => {}, 'New Command');
+      const newCommand = new GenericCommand(
+        () => {},
+        () => {},
+        'New Command'
+      );
       service.execute(newCommand);
-      
+
       const state = service.getState();
       expect(state.historySize).toBe(3); // Should have removed command3
       expect(state.canRedo()).toBe(false);
@@ -127,7 +147,9 @@ describe('CommandService', () => {
       let undone = false;
       const command = new GenericCommand(
         () => {},
-        () => { undone = true; },
+        () => {
+          undone = true;
+        },
         'Test command'
       );
 
@@ -146,10 +168,14 @@ describe('CommandService', () => {
     });
 
     it('should update state after undo', (done) => {
-      const command = new GenericCommand(() => {}, () => {}, 'Test');
+      const command = new GenericCommand(
+        () => {},
+        () => {},
+        'Test'
+      );
       service.execute(command);
 
-      service.state$.subscribe(state => {
+      service.state$.subscribe((state) => {
         if (state.currentIndex === -1 && state.canRedo) {
           expect(state.canUndo).toBe(false);
           expect(state.canRedo).toBe(true);
@@ -162,8 +188,20 @@ describe('CommandService', () => {
 
     it('should undo multiple commands in order', () => {
       const undoOrder: number[] = [];
-      const command1 = new GenericCommand(() => {}, () => { undoOrder.push(1); }, 'Command 1');
-      const command2 = new GenericCommand(() => {}, () => { undoOrder.push(2); }, 'Command 2');
+      const command1 = new GenericCommand(
+        () => {},
+        () => {
+          undoOrder.push(1);
+        },
+        'Command 1'
+      );
+      const command2 = new GenericCommand(
+        () => {},
+        () => {
+          undoOrder.push(2);
+        },
+        'Command 2'
+      );
 
       service.execute(command1);
       service.execute(command2);
@@ -180,7 +218,9 @@ describe('CommandService', () => {
     it('should redo last undone command', () => {
       let redone = false;
       const command = new GenericCommand(
-        () => { redone = true; },
+        () => {
+          redone = true;
+        },
         () => {},
         'Test command'
       );
@@ -201,11 +241,15 @@ describe('CommandService', () => {
     });
 
     it('should update state after redo', (done) => {
-      const command = new GenericCommand(() => {}, () => {}, 'Test');
+      const command = new GenericCommand(
+        () => {},
+        () => {},
+        'Test'
+      );
       service.execute(command);
       service.undo();
 
-      service.state$.subscribe(state => {
+      service.state$.subscribe((state) => {
         if (state.currentIndex === 0 && !state.canRedo) {
           expect(state.canUndo).toBe(true);
           expect(state.canRedo).toBe(false);
@@ -219,8 +263,16 @@ describe('CommandService', () => {
 
   describe('clearHistory', () => {
     it('should clear all history', () => {
-      const command1 = new GenericCommand(() => {}, () => {}, 'Command 1');
-      const command2 = new GenericCommand(() => {}, () => {}, 'Command 2');
+      const command1 = new GenericCommand(
+        () => {},
+        () => {},
+        'Command 1'
+      );
+      const command2 = new GenericCommand(
+        () => {},
+        () => {},
+        'Command 2'
+      );
 
       service.execute(command1);
       service.execute(command2);
@@ -240,7 +292,9 @@ describe('CommandService', () => {
     it('should create generic command', () => {
       let executed = false;
       const command = service.createGenericCommand(
-        () => { executed = true; },
+        () => {
+          executed = true;
+        },
         () => {},
         'Test',
         'field-change'
@@ -253,13 +307,8 @@ describe('CommandService', () => {
     it('should create card edit command', () => {
       const oldCard = { cardTitle: 'Old', sections: [] };
       const newCard = { cardTitle: 'New', sections: [] };
-      
-      const command = service.createCardEditCommand(
-        'card-1',
-        oldCard,
-        newCard,
-        () => {}
-      );
+
+      const command = service.createCardEditCommand('card-1', oldCard, newCard, () => {});
 
       expect(command.getDescription()).toContain('Edit card');
       service.execute(command);
@@ -267,11 +316,7 @@ describe('CommandService', () => {
     });
 
     it('should create JSON change command', () => {
-      const command = service.createJsonChangeCommand(
-        'old json',
-        'new json',
-        () => {}
-      );
+      const command = service.createJsonChangeCommand('old json', 'new json', () => {});
 
       expect(command.getDescription()).toContain('JSON change');
       service.execute(command);
@@ -289,7 +334,11 @@ describe('CommandService', () => {
     });
 
     it('should return updated state after command', () => {
-      const command = new GenericCommand(() => {}, () => {}, 'Test');
+      const command = new GenericCommand(
+        () => {},
+        () => {},
+        'Test'
+      );
       service.execute(command);
 
       const state = service.getState();
@@ -298,4 +347,3 @@ describe('CommandService', () => {
     });
   });
 });
-

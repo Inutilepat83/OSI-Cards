@@ -1,33 +1,57 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, ElementRef, HostListener, OnInit, ViewChild, inject, NgZone, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { Store } from '@ngrx/store';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  inject,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import { AICardConfig, CardType, CardTypeGuards, CardSection, CardField, CardItem } from '../../../../models';
-import * as CardActions from '../../../../store/cards/cards.state';
-import * as CardSelectors from '../../../../store/cards/cards.selectors';
-import { AppState } from '../../../../store/app.state';
-import { CardDiffUtil, CardChangeType } from '../../../../shared/utils/card-diff.util';
-import { LoggingService } from '../../../../core/services/logging.service';
-import { ExportService } from '../../../../shared/services/export.service';
-import { CommandService } from '../../../../shared/services/command.service';
-import { CardDataService } from '../../../../core/services/card-data/card-data.service';
+import { Store } from '@ngrx/store';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { AgentService } from '../../../../core/services/agent.service';
+import { CardDataService } from '../../../../core/services/card-data/card-data.service';
 import { ChatService } from '../../../../core/services/chat.service';
+import { LoggingService } from '../../../../core/services/logging.service';
+import {
+  AICardConfig,
+  CardField,
+  CardItem,
+  CardSection,
+  CardType,
+  CardTypeGuards,
+} from '../../../../models';
+import { CommandService } from '../../../../shared/services/command.service';
+import { ExportService } from '../../../../shared/services/export.service';
+import { CardChangeType, CardDiffUtil } from '../../../../shared/utils/card-diff.util';
+import { AppState } from '../../../../store/app.state';
+import * as CardSelectors from '../../../../store/cards/cards.selectors';
+import * as CardActions from '../../../../store/cards/cards.state';
 
 // Import library streaming service and types
-import { OSICardsStreamingService, StreamingState, CardUpdate } from '../../../../../../projects/osi-cards-lib/src/lib/services/streaming.service';
 import { AICardRendererComponent } from '../../../../../../projects/osi-cards-lib/src/lib/components/ai-card-renderer/ai-card-renderer.component';
 import { AICardConfig as LibraryCardConfig } from '../../../../../../projects/osi-cards-lib/src/lib/models/card.model';
+import {
+  CardUpdate,
+  OSICardsStreamingService,
+  StreamingState,
+} from '../../../../../../projects/osi-cards-lib/src/lib/services/streaming.service';
 
 // Import standalone components
-import { ensureCardIds, removeAllIds } from '../../../../shared';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { LucideIconsModule } from '../../../../shared/icons/lucide-icons.module';
-import { JsonEditorComponent } from '../../../../shared/components/json-editor/json-editor.component';
+import { ensureCardIds, removeAllIds } from '../../../../shared';
 import { CardTypeSelectorComponent } from '../../../../shared/components/card-type-selector/card-type-selector.component';
+import { JsonEditorComponent } from '../../../../shared/components/json-editor/json-editor.component';
 import { PreviewControlsComponent } from '../../../../shared/components/preview-controls/preview-controls.component';
+import { LucideIconsModule } from '../../../../shared/icons/lucide-icons.module';
 
 @Component({
   selector: 'app-home-page',
@@ -40,17 +64,16 @@ import { PreviewControlsComponent } from '../../../../shared/components/preview-
     LucideIconsModule,
     JsonEditorComponent,
     CardTypeSelectorComponent,
-    PreviewControlsComponent
+    PreviewControlsComponent,
   ],
   templateUrl: './home-page.component.html',
   styleUrls: ['./home-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePageComponent implements OnInit, OnDestroy {
   private readonly store: Store<AppState> = inject(Store);
   private readonly cd = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly ngZone = inject(NgZone);
   private readonly logger = inject(LoggingService);
   private readonly exportService = inject(ExportService);
   private readonly commandService = inject(CommandService);
@@ -59,13 +82,12 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private readonly agentService = inject(AgentService);
   private readonly chatService = inject(ChatService);
   private readonly document = inject(DOCUMENT);
-  
+
   theme: 'day' | 'night' = 'night';
 
   @ViewChild('previewRegion') private previewRegion?: ElementRef<HTMLDivElement>;
   @ViewChild('cardRenderer') private cardRenderer?: AICardRendererComponent;
-  @ViewChild('jsonTextareaRef') private jsonTextareaRef?: ElementRef<HTMLTextAreaElement>;
-  
+
   // Phase 1: Direct Update Channel - bypass store for streaming updates
   @Output() streamingCardUpdate = new EventEmitter<{
     card: AICardConfig;
@@ -98,10 +120,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
   thinkingDelay = 2000; // milliseconds to simulate LLM thinking
 
   cardTypes: CardType[] = []; // Dynamically loaded from examples
-  
+
   // Track available variants for each card type
   availableVariants = new Map<CardType, number>();
-  
+
   // Get available variants for current card type
   get variants(): number[] {
     const maxVariants = this.availableVariants.get(this.cardType) || 1;
@@ -114,13 +136,18 @@ export class HomePageComponent implements OnInit, OnDestroy {
   }
 
   get hasCard(): boolean {
-    return this.generatedCard !== null && 
-           this.generatedCard.sections !== undefined && 
-           this.generatedCard.sections.length > 0;
+    return (
+      this.generatedCard !== null &&
+      this.generatedCard.sections !== undefined &&
+      this.generatedCard.sections.length > 0
+    );
   }
 
   get cardConfigForRenderer(): LibraryCardConfig {
-    return (this.generatedCard ?? { cardTitle: 'Generating...', sections: [] }) as LibraryCardConfig;
+    return (this.generatedCard ?? {
+      cardTitle: 'Generating...',
+      sections: [],
+    }) as LibraryCardConfig;
   }
 
   get progressPercent(): number {
@@ -129,12 +156,18 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   get stageLabel(): string {
     switch (this.streamingState?.stage) {
-      case 'thinking': return 'Thinking...';
-      case 'streaming': return 'Streaming';
-      case 'complete': return 'Complete';
-      case 'aborted': return 'Aborted';
-      case 'error': return 'Error';
-      default: return 'Idle';
+      case 'thinking':
+        return 'Thinking...';
+      case 'streaming':
+        return 'Streaming';
+      case 'complete':
+        return 'Complete';
+      case 'aborted':
+        return 'Aborted';
+      case 'error':
+        return 'Error';
+      default:
+        return 'Idle';
     }
   }
 
@@ -147,11 +180,11 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private statusRole: 'status' | 'alert' = 'status';
   private previousLoading = false;
   private previousError = '';
-  
+
   // Debounced JSON input processing
   private jsonInputSubject = new Subject<string>();
   private lastProcessedJson = '';
-  private lastJsonHash = ''; // Track JSON hash to detect actual changes
+  private lastJsonHash = '';
   private previousJsonInput = ''; // For undo/redo tracking
   private jsonCommandSubject = new Subject<{ oldJson: string; newJson: string }>();
   // Cache sanitized cards so repeated objects don't require re-sanitization
@@ -169,15 +202,13 @@ export class HomePageComponent implements OnInit, OnDestroy {
       }
     }
     this.applyTheme();
-    
+
     // Subscribe to streaming service state (following iLibrary pattern)
-    this.streamingService.state$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(state => {
-        this.streamingState = state;
-        this.isGenerating = state.isActive;
-        this.cd.markForCheck();
-      });
+    this.streamingService.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
+      this.streamingState = state;
+      this.isGenerating = state.isActive;
+      this.cd.markForCheck();
+    });
 
     // Subscribe to card updates from streaming service
     this.streamingService.cardUpdates$
@@ -186,21 +217,28 @@ export class HomePageComponent implements OnInit, OnDestroy {
         this.generatedCard = update.card;
         this.livePreviewCard = update.card;
         this.livePreviewChangeType = update.changeType;
-        
+
         // Emit for external listeners
-        this.streamingCardUpdate.emit({
+        const eventPayload: {
+          card: AICardConfig;
+          changeType: CardChangeType;
+          completedSections?: number[];
+        } = {
           card: update.card,
           changeType: update.changeType,
-          completedSections: update.completedSections
-        });
-        
+        };
+        if (update.completedSections !== undefined) {
+          eventPayload.completedSections = update.completedSections;
+        }
+        this.streamingCardUpdate.emit(eventPayload);
+
         this.cd.markForCheck();
       });
 
     // Subscribe to buffer updates for JSON editor sync
     this.streamingService.bufferUpdates$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(buffer => {
+      .subscribe((buffer) => {
         // Update JSON editor during streaming
         if (this.isStreamingActive) {
           this.jsonInput = buffer;
@@ -209,11 +247,12 @@ export class HomePageComponent implements OnInit, OnDestroy {
         }
         this.cd.markForCheck();
       });
-    
+
     // Subscribe to store selectors
-    this.store.select(CardSelectors.selectCurrentCard)
+    this.store
+      .select(CardSelectors.selectCurrentCard)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(card => {
+      .subscribe((card) => {
         // Only update from store if not actively streaming
         if (!this.isStreamingActive && !this.livePreviewCard) {
           const cardChanged = this.generatedCard !== card;
@@ -229,17 +268,19 @@ export class HomePageComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.store.select(CardSelectors.selectIsFullscreen)
+    this.store
+      .select(CardSelectors.selectIsFullscreen)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(isFullscreen => {
+      .subscribe((isFullscreen) => {
         this.isFullscreen = isFullscreen;
         this.cd.markForCheck();
       });
 
     // Subscribe to current card to populate JSON editor
-    this.store.select(CardSelectors.selectCurrentCard)
+    this.store
+      .select(CardSelectors.selectCurrentCard)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(card => {
+      .subscribe((card) => {
         if (card && !this.isStreamingActive) {
           // Update JSON editor with the loaded card (remove IDs and cardType for clean JSON)
           const cardWithoutIds = removeAllIds(card);
@@ -257,9 +298,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
         this.cd.markForCheck();
       });
 
-    this.store.select(CardSelectors.selectError)
+    this.store
+      .select(CardSelectors.selectError)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(error => {
+      .subscribe((error) => {
         this.jsonError = error || '';
         this.isJsonValid = !error;
         if (error && error !== this.previousError) {
@@ -273,9 +315,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
       });
 
     // Subscribe to template loading to control spinner
-    this.store.select(CardSelectors.selectIsBusy)
+    this.store
+      .select(CardSelectors.selectIsBusy)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(loading => {
+      .subscribe((loading) => {
         // Only use store busy state if not streaming
         if (!this.isStreamingActive) {
           this.isGenerating = loading;
@@ -289,129 +332,134 @@ export class HomePageComponent implements OnInit, OnDestroy {
         this.cd.markForCheck();
       });
 
-    this.store.select(CardSelectors.selectLastChangeType)
+    this.store
+      .select(CardSelectors.selectLastChangeType)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(changeType => {
+      .subscribe((changeType) => {
         this.lastChangeType = changeType;
         this.cd.markForCheck();
       });
 
     // Initialize system and load initial company card
     this.initializeSystem();
-    
+
     // Load available variants for each card type
     this.loadAvailableVariants();
-    
+
     // Setup debounced JSON processing for final validation and merging
-    this.jsonInputSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(jsonInput => {
-      if (jsonInput === this.lastProcessedJson) {
-        return;
-      }
-      this.lastProcessedJson = jsonInput;
-      this.processJsonInput(jsonInput);
-    });
+    this.jsonInputSubject
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe((jsonInput) => {
+        if (jsonInput === this.lastProcessedJson) {
+          return;
+        }
+        this.lastProcessedJson = jsonInput;
+        this.processJsonInput(jsonInput);
+      });
 
     // Setup debounced command creation for undo/redo
-    this.jsonCommandSubject.pipe(
-      debounceTime(1000),
-      distinctUntilChanged((prev, curr) => prev.newJson === curr.newJson),
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(({ oldJson, newJson }) => {
-      if (oldJson.trim() !== newJson.trim()) {
-        const command = this.commandService.createJsonChangeCommand(
-          oldJson,
-          newJson,
-          (json: string) => {
-            this.jsonInput = json;
-            this.previousJsonInput = json;
-            this.onJsonInputChange(json);
-          },
-          'JSON edit'
-        );
-        this.commandService.execute(command);
-      }
-    });
+    this.jsonCommandSubject
+      .pipe(
+        debounceTime(1000),
+        distinctUntilChanged((prev, curr) => prev.newJson === curr.newJson),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(({ oldJson, newJson }) => {
+        if (oldJson.trim() !== newJson.trim()) {
+          const command = this.commandService.createJsonChangeCommand(
+            oldJson,
+            newJson,
+            (json: string) => {
+              this.jsonInput = json;
+              this.previousJsonInput = json;
+              this.onJsonInputChange(json);
+            },
+            'JSON edit'
+          );
+          this.commandService.execute(command);
+        }
+      });
   }
 
   private initializeSystem(): void {
     // Pre-load initial card via streaming (instant mode for immediate display)
     this.isInitialized = true;
     this.announceStatus('Loading the All Sections example.');
-    
+
     // Load the "all" type card by default (All Sections demo)
-    this.cardDataService.getCardsByType('all').pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(cards => {
-      const card = cards?.[0];
-      if (card) {
-        // Prepare card JSON for streaming (remove IDs for clean JSON)
-        const cardWithoutIds = removeAllIds(card);
-        delete cardWithoutIds.cardType;
-        const cardJson = JSON.stringify(cardWithoutIds, null, 2);
-        
-        // Start streaming with instant mode - processes all chunks immediately
-        this.streamingService.start(cardJson, { instant: true });
-      } else {
-        // Fallback: if no "all" card found, try first card
-        this.cardDataService.getFirstCard().pipe(
-          takeUntilDestroyed(this.destroyRef)
-        ).subscribe(fallbackCard => {
-          if (fallbackCard) {
-            const cardWithoutIds = removeAllIds(fallbackCard);
-            delete cardWithoutIds.cardType;
-            const cardJson = JSON.stringify(cardWithoutIds, null, 2);
-            this.streamingService.start(cardJson, { instant: true });
-          } else {
-            this.announceStatus('No cards available. Please check your configuration.', true);
-          }
-        });
-      }
-    });
+    this.cardDataService
+      .getCardsByType('all')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((cards) => {
+        const card = cards?.[0];
+        if (card) {
+          // Prepare card JSON for streaming (remove IDs for clean JSON)
+          const cardWithoutIds = removeAllIds(card);
+          delete cardWithoutIds.cardType;
+          const cardJson = JSON.stringify(cardWithoutIds, null, 2);
+
+          // Start streaming with instant mode - processes all chunks immediately
+          this.streamingService.start(cardJson, { instant: true });
+        } else {
+          // Fallback: if no "all" card found, try first card
+          this.cardDataService
+            .getFirstCard()
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((fallbackCard) => {
+              if (fallbackCard) {
+                const cardWithoutIds = removeAllIds(fallbackCard);
+                delete cardWithoutIds.cardType;
+                const cardJson = JSON.stringify(cardWithoutIds, null, 2);
+                this.streamingService.start(cardJson, { instant: true });
+              } else {
+                this.announceStatus('No cards available. Please check your configuration.', true);
+              }
+            });
+        }
+      });
   }
 
   private loadAvailableVariants(): void {
     // First, load available card types from the manifest/examples
-    this.cardDataService.getAvailableCardTypes().pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(types => {
-      // Set card types dynamically from examples, ensuring 'all' is first
-      if (types.length > 0) {
-        // Move 'all' to the front if it exists, otherwise add it
-        const allIndex = types.indexOf('all');
-        if (allIndex > 0) {
-          types.splice(allIndex, 1);
-          types.unshift('all');
-        } else if (allIndex === -1) {
-          types.unshift('all');
-        }
-        this.cardTypes = types;
-      } else {
-        this.cardTypes = ['all'];
-      }
-      
-      // Then load variant counts for each card type
-      this.cardTypes.forEach(cardType => {
-        if (cardType === 'all') {
-          // 'all' type always has exactly 1 variant
-          this.availableVariants.set('all', 1);
+    this.cardDataService
+      .getAvailableCardTypes()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((types) => {
+        // Set card types dynamically from examples, ensuring 'all' is first
+        if (types.length > 0) {
+          // Move 'all' to the front if it exists, otherwise add it
+          const allIndex = types.indexOf('all');
+          if (allIndex > 0) {
+            types.splice(allIndex, 1);
+            types.unshift('all');
+          } else if (allIndex === -1) {
+            types.unshift('all');
+          }
+          this.cardTypes = types;
         } else {
-          // For other types, count available cards
-          this.cardDataService.getCardsByType(cardType).pipe(
-            takeUntilDestroyed(this.destroyRef)
-          ).subscribe(cards => {
-            const count = Math.max(cards.length, 1); // At least 1 variant
-            this.availableVariants.set(cardType, count);
-            this.cd.markForCheck();
-          });
+          this.cardTypes = ['all'];
         }
+
+        // Then load variant counts for each card type
+        this.cardTypes.forEach((cardType) => {
+          if (cardType === 'all') {
+            // 'all' type always has exactly 1 variant
+            this.availableVariants.set('all', 1);
+          } else {
+            // For other types, count available cards
+            this.cardDataService
+              .getCardsByType(cardType)
+              .pipe(takeUntilDestroyed(this.destroyRef))
+              .subscribe((cards) => {
+                const count = Math.max(cards.length, 1); // At least 1 variant
+                this.availableVariants.set(cardType, count);
+                this.cd.markForCheck();
+              });
+          }
+        });
+
+        this.cd.markForCheck();
       });
-      
-      this.cd.markForCheck();
-    });
   }
 
   onCardTypeChange(type: CardType): void {
@@ -428,13 +476,13 @@ export class HomePageComponent implements OnInit, OnDestroy {
       // Emit to command subject (will be debounced)
       this.jsonCommandSubject.next({
         oldJson: this.previousJsonInput,
-        newJson: jsonInput
+        newJson: jsonInput,
       });
     }
-    
+
     this.previousJsonInput = jsonInput;
     this.jsonInput = jsonInput;
-    
+
     // Process through debounced stream for validation
     this.jsonInputSubject.next(jsonInput);
   }
@@ -456,22 +504,27 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.cd.markForCheck();
   }
 
-  onJsonErrorDetailsChange(details: { error: string | null; position: number | null; suggestion: string }): void {
+  onJsonErrorDetailsChange(details: {
+    error: string | null;
+    position: number | null;
+    suggestion: string;
+  }): void {
     this.jsonError = details.error || '';
     this.jsonErrorPosition = details.position;
     this.jsonErrorSuggestion = details.suggestion;
     this.cd.markForCheck();
   }
-  
 
   private switchCardType(type: CardType): void {
-    if (this.switchingType) return;
-    
+    if (this.switchingType) {
+      return;
+    }
+
     // Stop streaming if active when switching cards
     if (this.isStreamingActive) {
       this.stopGeneration();
     }
-    
+
     this.switchingType = true;
     this.cardType = type;
     // Reset variant to 1 if current variant exceeds available variants for new type
@@ -492,7 +545,9 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   private switchCardVariant(variant: number): void {
     const maxVariants = this.availableVariants.get(this.cardType) || 1;
-    if (variant < 1 || variant > maxVariants) return; // Ensure variant is within valid range
+    if (variant < 1 || variant > maxVariants) {
+      return;
+    } // Ensure variant is within valid range
     this.cardVariant = variant;
     // Reset processed JSON payloads before switching to ensure updates
     this.lastProcessedJson = '';
@@ -511,42 +566,47 @@ export class HomePageComponent implements OnInit, OnDestroy {
     let hash = 0;
     for (let i = 0; i < normalized.length; i++) {
       const char = normalized.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return String(hash);
   }
 
-
   /**
    * Check if we can do an in-place update (structure is unchanged)
    * Returns true if sections have same count, types, and field/item counts
+   * @internal Reserved for potential streaming optimization
    */
-  private canDoInPlaceUpdate(existingSections: CardSection[], incomingSections: Partial<CardSection>[]): boolean {
+  protected canDoInPlaceUpdate(
+    existingSections: CardSection[],
+    incomingSections: Partial<CardSection>[]
+  ): boolean {
     // Different section count = structural change
     if (existingSections.length !== incomingSections.length) {
       return false;
     }
-    
+
     // Check each section for structural compatibility
     for (let i = 0; i < existingSections.length; i++) {
       const existing = existingSections[i];
       const incoming = incomingSections[i];
-      
-      if (!existing || !incoming) return false;
-      
+
+      if (!existing || !incoming) {
+        return false;
+      }
+
       // Different type = structural change
       if (incoming.type && existing.type !== incoming.type) {
         return false;
       }
-      
+
       // Different field count = structural change
       const existingFieldCount = existing.fields?.length ?? 0;
       const incomingFieldCount = incoming.fields?.length ?? 0;
       if (existingFieldCount !== incomingFieldCount) {
         return false;
       }
-      
+
       // Different item count = structural change
       const existingItemCount = existing.items?.length ?? 0;
       const incomingItemCount = incoming.items?.length ?? 0;
@@ -554,17 +614,18 @@ export class HomePageComponent implements OnInit, OnDestroy {
         return false;
       }
     }
-    
+
     return true;
   }
-  
+
   /**
    * Update a section's content in-place without creating new objects
    * Returns true if any content changed
+   * @internal Reserved for potential streaming optimization
    */
-  private updateSectionInPlace(existing: CardSection, incoming: Partial<CardSection>): boolean {
+  protected updateSectionInPlace(existing: CardSection, incoming: Partial<CardSection>): boolean {
     let changed = false;
-    
+
     // Update section-level properties
     if (incoming.title !== undefined && existing.title !== incoming.title) {
       existing.title = incoming.title;
@@ -582,7 +643,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       existing.emoji = incoming.emoji;
       changed = true;
     }
-    
+
     // Update fields in-place
     if (incoming.fields && existing.fields) {
       for (let i = 0; i < existing.fields.length && i < incoming.fields.length; i++) {
@@ -601,7 +662,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
             existingField.type = incomingField.type;
             changed = true;
           }
-          if (incomingField.percentage !== undefined && existingField.percentage !== incomingField.percentage) {
+          if (
+            incomingField.percentage !== undefined &&
+            existingField.percentage !== incomingField.percentage
+          ) {
             existingField.percentage = incomingField.percentage;
             changed = true;
           }
@@ -609,14 +673,17 @@ export class HomePageComponent implements OnInit, OnDestroy {
             existingField.trend = incomingField.trend;
             changed = true;
           }
-          if (incomingField.description !== undefined && existingField.description !== incomingField.description) {
+          if (
+            incomingField.description !== undefined &&
+            existingField.description !== incomingField.description
+          ) {
             existingField.description = incomingField.description;
             changed = true;
           }
         }
       }
     }
-    
+
     // Update items in-place
     if (incoming.items && existing.items) {
       for (let i = 0; i < existing.items.length && i < incoming.items.length; i++) {
@@ -627,7 +694,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
             existingItem.title = incomingItem.title;
             changed = true;
           }
-          if (incomingItem.description !== undefined && existingItem.description !== incomingItem.description) {
+          if (
+            incomingItem.description !== undefined &&
+            existingItem.description !== incomingItem.description
+          ) {
             existingItem.description = incomingItem.description;
             changed = true;
           }
@@ -642,15 +712,16 @@ export class HomePageComponent implements OnInit, OnDestroy {
         }
       }
     }
-    
+
     return changed;
   }
 
   /**
    * Detect if sections have changed between old and new sections arrays
    * Returns information about whether sections changed and if structure changed
+   * @internal Reserved for potential streaming optimization
    */
-  private detectSectionsChange(
+  protected detectSectionsChange(
     oldSections: CardSection[],
     newSections: CardSection[]
   ): { hasChanges: boolean; structureChanged: boolean } {
@@ -748,24 +819,25 @@ export class HomePageComponent implements OnInit, OnDestroy {
    * Try to extract partial data from incomplete JSON.
    * This allows showing partial results even when JSON is not fully complete.
    * Enhanced to handle more edge cases: trailing commas, incomplete strings, nested structures.
+   * @internal Reserved for potential streaming optimization
    */
-  private tryParsePartialJson(jsonInput: string): Partial<AICardConfig> | null {
+  protected tryParsePartialJson(jsonInput: string): Partial<AICardConfig> | null {
     try {
       // Try to close incomplete JSON by adding missing closing braces/brackets
       let sanitized = jsonInput.trim();
-      
+
       // Remove trailing commas before closing braces/brackets (common in incomplete JSON)
       sanitized = sanitized.replace(/,(\s*[}\]])/g, '$1');
-      
+
       // Count open/close braces and brackets
       const openBraces = (sanitized.match(/{/g) || []).length;
       const closeBraces = (sanitized.match(/}/g) || []).length;
       const openBrackets = (sanitized.match(/\[/g) || []).length;
       const closeBrackets = (sanitized.match(/\]/g) || []).length;
-      
+
       // Add missing closing brackets first (for arrays), then braces (for objects)
       let tempJson = sanitized;
-      
+
       // Handle incomplete strings - close any unclosed strings
       let inString = false;
       let escapeNext = false;
@@ -786,7 +858,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       if (inString) {
         tempJson += '"';
       }
-      
+
       // If the string doesn't end with a comma, add one before closing (if needed)
       const lastChar = tempJson.trim().slice(-1);
       if (lastChar && !/[}\],]/.test(lastChar)) {
@@ -798,7 +870,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
           // But let's be conservative and just add closing brackets/braces
         }
       }
-      
+
       // Add missing closing brackets/braces in reverse order (inner to outer)
       for (let i = 0; i < openBrackets - closeBrackets; i++) {
         tempJson += ']';
@@ -806,7 +878,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       for (let i = 0; i < openBraces - closeBraces; i++) {
         tempJson += '}';
       }
-      
+
       // Try to parse the sanitized JSON
       const parsed = JSON.parse(tempJson);
       if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
@@ -816,53 +888,55 @@ export class HomePageComponent implements OnInit, OnDestroy {
       // If that fails, try to extract key-value pairs using regex
       try {
         const cardData: Partial<AICardConfig> = {};
-        
+
         // Extract cardTitle (handle both string and unquoted values)
-        const titleMatch = jsonInput.match(/"cardTitle"\s*:\s*"([^"]*)"/) || 
-                          jsonInput.match(/'cardTitle'\s*:\s*'([^']*)'/);
-        if (titleMatch) {
-          cardData.cardTitle = titleMatch[1];
+        const titleMatch =
+          jsonInput.match(/"cardTitle"\s*:\s*"([^"]*)"/) ||
+          jsonInput.match(/'cardTitle'\s*:\s*'([^']*)'/);
+        const extractedTitle = titleMatch?.[1];
+        if (extractedTitle) {
+          cardData.cardTitle = extractedTitle;
         }
-        
+
         // Try to extract sections array (even if incomplete)
         // Look for "sections": [ and try to extract complete section objects
         const sectionsMatch = jsonInput.match(/"sections"\s*:\s*\[([\s\S]*)/);
         if (sectionsMatch && sectionsMatch[1]) {
           const sectionsContent = sectionsMatch[1];
           const sections: CardSection[] = [];
-          
+
           // Try to find complete section objects by matching braces
           let depth = 0;
           let currentSection = '';
           let inString = false;
           let escapeNext = false;
-          
+
           for (let i = 0; i < sectionsContent.length; i++) {
             const char = sectionsContent[i];
-            
+
             if (escapeNext) {
               currentSection += char;
               escapeNext = false;
               continue;
             }
-            
+
             if (char === '\\') {
               escapeNext = true;
               currentSection += char;
               continue;
             }
-            
+
             if (char === '"') {
               inString = !inString;
               currentSection += char;
               continue;
             }
-            
+
             if (inString) {
               currentSection += char;
               continue;
             }
-            
+
             if (char === '{') {
               if (depth === 0) {
                 currentSection = '{';
@@ -904,7 +978,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
               currentSection += char;
             }
           }
-          
+
           // Try to parse the last incomplete section if we have one
           if (currentSection.trim() && depth > 0) {
             try {
@@ -925,23 +999,23 @@ export class HomePageComponent implements OnInit, OnDestroy {
               }
             }
           }
-          
+
           // Also try to extract sections that might be partially written
           // This handles cases where sections array is incomplete
           if (sections.length === 0) {
             const partialSections = this.extractPartialSectionsFromJson(jsonInput);
             // Filter to only include sections with required properties
-            const validSections = partialSections.filter(s => s.title && s.type) as CardSection[];
+            const validSections = partialSections.filter((s) => s.title && s.type) as CardSection[];
             if (validSections.length > 0) {
               sections.push(...validSections);
             }
           }
-          
+
           if (sections.length > 0) {
             cardData.sections = sections;
           }
         }
-        
+
         // Only return if we extracted at least some data
         if (cardData.cardTitle || (cardData.sections && cardData.sections.length > 0)) {
           return cardData;
@@ -950,7 +1024,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
         // Couldn't extract partial data
       }
     }
-    
+
     return null;
   }
 
@@ -961,31 +1035,35 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private extractPartialSection(sectionStr: string): Partial<CardSection> | null {
     try {
       const section: Partial<CardSection> = {};
-      
+
       // Extract title
       const titleMatch = sectionStr.match(/"title"\s*:\s*"([^"]*)"/);
-      if (titleMatch) {
-        section.title = titleMatch[1];
+      const sectionTitle = titleMatch?.[1];
+      if (sectionTitle) {
+        section.title = sectionTitle;
       }
-      
+
       // Extract type
       const typeMatch = sectionStr.match(/"type"\s*:\s*"([^"]*)"/);
-      if (typeMatch) {
-        section.type = typeMatch[1] as any;
+      const sectionType = typeMatch?.[1];
+      if (sectionType) {
+        section.type = sectionType as any;
       }
-      
+
       // Extract subtitle
       const subtitleMatch = sectionStr.match(/"subtitle"\s*:\s*"([^"]*)"/);
-      if (subtitleMatch) {
-        section.subtitle = subtitleMatch[1];
+      const sectionSubtitle = subtitleMatch?.[1];
+      if (sectionSubtitle) {
+        section.subtitle = sectionSubtitle;
       }
-      
+
       // Extract description
       const descMatch = sectionStr.match(/"description"\s*:\s*"([^"]*)"/);
-      if (descMatch) {
-        section.description = descMatch[1];
+      const sectionDesc = descMatch?.[1];
+      if (sectionDesc) {
+        section.description = sectionDesc;
       }
-      
+
       // Try to extract fields array (even if incomplete)
       const fieldsMatch = sectionStr.match(/"fields"\s*:\s*\[([\s\S]*?)(?:\]|$)/);
       if (fieldsMatch && fieldsMatch[1]) {
@@ -997,7 +1075,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
           }
         }
       }
-      
+
       // Try to extract items array (even if incomplete)
       const itemsMatch = sectionStr.match(/"items"\s*:\s*\[([\s\S]*?)(?:\]|$)/);
       if (itemsMatch && itemsMatch[1]) {
@@ -1006,17 +1084,19 @@ export class HomePageComponent implements OnInit, OnDestroy {
           const partialItems = this.extractPartialItems(itemsContent);
           // Filter out items without required 'title' property and ensure they match CardItem type
           const items: CardItem[] = partialItems
-          .filter((item): item is CardItem => typeof item.title === 'string' && item.title.length > 0)
-          .map(item => ({
-            ...item,
-            title: item.title! // We know title exists due to filter
-          }));
+            .filter(
+              (item): item is CardItem => typeof item.title === 'string' && item.title.length > 0
+            )
+            .map((item) => ({
+              ...item,
+              title: item.title!, // We know title exists due to filter
+            }));
           if (items.length > 0) {
             section.items = items;
           }
         }
       }
-      
+
       // Only return if we extracted at least title or type
       if (section.title || section.type) {
         return section;
@@ -1024,7 +1104,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     } catch {
       // Failed to extract partial section
     }
-    
+
     return null;
   }
 
@@ -1033,39 +1113,39 @@ export class HomePageComponent implements OnInit, OnDestroy {
    */
   private extractPartialFields(fieldsContent: string): Partial<CardField>[] {
     const fields: Partial<CardField>[] = [];
-    
+
     // Try to find field objects by matching braces
     let depth = 0;
     let currentField = '';
     let inString = false;
     let escapeNext = false;
-    
+
     for (let i = 0; i < fieldsContent.length; i++) {
       const char = fieldsContent[i];
-      
+
       if (escapeNext) {
         currentField += char;
         escapeNext = false;
         continue;
       }
-      
+
       if (char === '\\') {
         escapeNext = true;
         currentField += char;
         continue;
       }
-      
+
       if (char === '"') {
         inString = !inString;
         currentField += char;
         continue;
       }
-      
+
       if (inString) {
         currentField += char;
         continue;
       }
-      
+
       if (char === '{') {
         if (depth === 0) {
           currentField = '{';
@@ -1096,7 +1176,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
         currentField += char;
       }
     }
-    
+
     // Handle last incomplete field
     if (currentField.trim() && depth > 0) {
       try {
@@ -1115,7 +1195,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
         }
       }
     }
-    
+
     return fields;
   }
 
@@ -1125,25 +1205,27 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private extractPartialField(fieldStr: string): Partial<CardField> | null {
     try {
       const field: Partial<CardField> = {};
-      
+
       // Extract label
       const labelMatch = fieldStr.match(/"label"\s*:\s*"([^"]*)"/);
-      if (labelMatch) {
-        field.label = labelMatch[1];
+      const fieldLabel = labelMatch?.[1];
+      if (fieldLabel) {
+        field.label = fieldLabel;
       }
-      
+
       // Extract value
       const valueMatch = fieldStr.match(/"value"\s*:\s*"([^"]*)"/);
-      if (valueMatch) {
-        field.value = valueMatch[1];
+      const fieldValue = valueMatch?.[1];
+      if (fieldValue) {
+        field.value = fieldValue;
       }
-      
+
       // Extract type
       const typeMatch = fieldStr.match(/"type"\s*:\s*"([^"]*)"/);
       if (typeMatch) {
         field.type = typeMatch[1] as any;
       }
-      
+
       // Only return if we extracted at least label or value
       if (field.label || field.value !== undefined) {
         return field;
@@ -1151,7 +1233,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     } catch {
       // Failed to extract partial field
     }
-    
+
     return null;
   }
 
@@ -1160,39 +1242,39 @@ export class HomePageComponent implements OnInit, OnDestroy {
    */
   private extractPartialItems(itemsContent: string): Partial<CardItem>[] {
     const items: Partial<CardItem>[] = [];
-    
+
     // Try to find item objects by matching braces
     let depth = 0;
     let currentItem = '';
     let inString = false;
     let escapeNext = false;
-    
+
     for (let i = 0; i < itemsContent.length; i++) {
       const char = itemsContent[i];
-      
+
       if (escapeNext) {
         currentItem += char;
         escapeNext = false;
         continue;
       }
-      
+
       if (char === '\\') {
         escapeNext = true;
         currentItem += char;
         continue;
       }
-      
+
       if (char === '"') {
         inString = !inString;
         currentItem += char;
         continue;
       }
-      
+
       if (inString) {
         currentItem += char;
         continue;
       }
-      
+
       if (char === '{') {
         if (depth === 0) {
           currentItem = '{';
@@ -1223,7 +1305,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
         currentItem += char;
       }
     }
-    
+
     // Handle last incomplete item
     if (currentItem.trim() && depth > 0) {
       try {
@@ -1242,7 +1324,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
         }
       }
     }
-    
+
     return items;
   }
 
@@ -1252,25 +1334,28 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private extractPartialItem(itemStr: string): Partial<CardItem> | null {
     try {
       const item: Partial<CardItem> = {};
-      
+
       // Extract title
       const titleMatch = itemStr.match(/"title"\s*:\s*"([^"]*)"/);
-      if (titleMatch) {
-        item.title = titleMatch[1];
+      const itemTitle = titleMatch?.[1];
+      if (itemTitle) {
+        item.title = itemTitle;
       }
-      
+
       // Extract description
       const descMatch = itemStr.match(/"description"\s*:\s*"([^"]*)"/);
-      if (descMatch) {
-        item.description = descMatch[1];
+      const itemDesc = descMatch?.[1];
+      if (itemDesc) {
+        item.description = itemDesc;
       }
-      
+
       // Extract value
       const valueMatch = itemStr.match(/"value"\s*:\s*"([^"]*)"/);
-      if (valueMatch) {
-        item.value = valueMatch[1];
+      const itemValue = valueMatch?.[1];
+      if (itemValue) {
+        item.value = itemValue;
       }
-      
+
       // Only return if we extracted at least title
       if (item.title) {
         return item;
@@ -1278,7 +1363,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     } catch {
       // Failed to extract partial item
     }
-    
+
     return null;
   }
 
@@ -1288,29 +1373,36 @@ export class HomePageComponent implements OnInit, OnDestroy {
    */
   private extractPartialSectionsFromJson(jsonInput: string): Partial<CardSection>[] {
     const sections: Partial<CardSection>[] = [];
-    
+
     // Look for section-like patterns in the JSON
     // Match patterns like: "title": "Section Name" followed by other properties
     const sectionPattern = /"title"\s*:\s*"([^"]*)"[^}]*"type"\s*:\s*"([^"]*)"/g;
     let match;
-    
+
     while ((match = sectionPattern.exec(jsonInput)) !== null) {
-      const section: Partial<CardSection> = {
-        title: match[1],
-        type: match[2] as any
-      };
-      sections.push(section);
+      const matchTitle = match[1];
+      const matchType = match[2];
+      if (matchTitle && matchType) {
+        const section: Partial<CardSection> = {
+          title: matchTitle,
+          type: matchType as any,
+        };
+        sections.push(section);
+      }
     }
-    
+
     return sections;
   }
 
   /**
    * Fast fallback processing used for per-token updates when streaming.
    * Avoids the cost of full decode and uses the fallback parser for instant updates.
+   * @internal Reserved for potential streaming optimization
    */
-  private processJsonInputFast(jsonInput: string): void {
-    if (!this.isInitialized) return;
+  protected processJsonInputFast(jsonInput: string): void {
+    if (!this.isInitialized) {
+      return;
+    }
     if (!jsonInput || jsonInput.trim() === '') {
       const emptyCard: AICardConfig = { cardTitle: '', sections: [] };
       this.updateLivePreviewCard(this.recheckCardStructure(emptyCard) ?? emptyCard, 'structural');
@@ -1323,12 +1415,12 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   private updateLivePreviewCard(nextCard: AICardConfig, changeTypeOverride?: CardChangeType): void {
     const currentCard = this.generatedCard;
-    
+
     // Helper to trigger change detection appropriately
     const triggerChangeDetection = () => {
       this.cd.markForCheck();
     };
-    
+
     // If no existing card, create new one (structural change)
     if (!currentCard) {
       this.generatedCard = nextCard;
@@ -1337,11 +1429,12 @@ export class HomePageComponent implements OnInit, OnDestroy {
       triggerChangeDetection();
       return;
     }
-    
+
     // Check if structure changed (sections added/removed/reordered)
     const structureChanged = this.didStructureChange(currentCard.sections, nextCard.sections);
-    const changeType: CardChangeType = changeTypeOverride ?? (structureChanged ? 'structural' : 'content');
-    
+    const changeType: CardChangeType =
+      changeTypeOverride ?? (structureChanged ? 'structural' : 'content');
+
     // For structural changes, we need new references
     if (structureChanged) {
       // Use merge for structural changes to preserve what we can
@@ -1352,11 +1445,11 @@ export class HomePageComponent implements OnInit, OnDestroy {
       triggerChangeDetection();
       return;
     }
-    
+
     // For content-only updates: mutate in-place to preserve all references
     // Track if any actual changes were made
     let hasChanges = false;
-    
+
     // Update top-level properties in-place (only if changed)
     if (nextCard.cardTitle !== undefined && currentCard.cardTitle !== nextCard.cardTitle) {
       currentCard.cardTitle = nextCard.cardTitle;
@@ -1374,11 +1467,16 @@ export class HomePageComponent implements OnInit, OnDestroy {
       currentCard.actions = nextCard.actions;
       hasChanges = true;
     }
-    
+
     // Update sections in-place (preserves sections array reference)
-    const sectionsChanged = this.updateSectionsInPlaceWithTracking(currentCard.sections, nextCard.sections);
-    if (sectionsChanged) hasChanges = true;
-    
+    const sectionsChanged = this.updateSectionsInPlaceWithTracking(
+      currentCard.sections,
+      nextCard.sections
+    );
+    if (sectionsChanged) {
+      hasChanges = true;
+    }
+
     // Only trigger change detection if something actually changed
     if (hasChanges) {
       // Update live preview tracking
@@ -1387,7 +1485,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       triggerChangeDetection();
     }
   }
-  
+
   /**
    * Check if structure changed (sections added/removed/reordered)
    */
@@ -1416,79 +1514,123 @@ export class HomePageComponent implements OnInit, OnDestroy {
       return oldFieldsLength !== newFieldsLength || newItemsLength !== oldItemsLength;
     });
   }
-  
+
   /**
    * Update sections array in-place and track if changes were made
    * Returns true if any content changed
    */
-  private updateSectionsInPlaceWithTracking(existingSections: CardSection[], incomingSections: CardSection[]): boolean {
+  private updateSectionsInPlaceWithTracking(
+    existingSections: CardSection[],
+    incomingSections: CardSection[]
+  ): boolean {
     let hasChanges = false;
-    
+
     // Check if array lengths changed (structural, but we track it as a change)
     if (existingSections.length !== incomingSections.length) {
       hasChanges = true;
     }
-    
+
     const minLength = Math.min(existingSections.length, incomingSections.length);
-    
+
     for (let i = 0; i < minLength; i++) {
       const existingSection = existingSections[i];
       const incomingSection = incomingSections[i];
-      
-      if (!existingSection || !incomingSection) continue;
-      
+
+      if (!existingSection || !incomingSection) {
+        continue;
+      }
+
       // Check and update each property, tracking changes
       if (incomingSection.title !== undefined && existingSection.title !== incomingSection.title) {
         existingSection.title = incomingSection.title;
         hasChanges = true;
       }
-      if (incomingSection.subtitle !== undefined && existingSection.subtitle !== incomingSection.subtitle) {
+      if (
+        incomingSection.subtitle !== undefined &&
+        existingSection.subtitle !== incomingSection.subtitle
+      ) {
         existingSection.subtitle = incomingSection.subtitle;
         hasChanges = true;
       }
-      if (incomingSection.description !== undefined && existingSection.description !== incomingSection.description) {
+      if (
+        incomingSection.description !== undefined &&
+        existingSection.description !== incomingSection.description
+      ) {
         existingSection.description = incomingSection.description;
         hasChanges = true;
       }
-      
+
       // Update fields with tracking
       if (incomingSection.fields && existingSection.fields) {
-        for (let j = 0; j < Math.min(existingSection.fields.length, incomingSection.fields.length); j++) {
+        for (
+          let j = 0;
+          j < Math.min(existingSection.fields.length, incomingSection.fields.length);
+          j++
+        ) {
           const ef = existingSection.fields[j];
           const inf = incomingSection.fields[j];
           if (ef && inf) {
-            if (inf.label !== undefined && ef.label !== inf.label) { ef.label = inf.label; hasChanges = true; }
-            if (inf.value !== undefined && ef.value !== inf.value) { ef.value = inf.value; hasChanges = true; }
-            if (inf.type !== undefined && ef.type !== inf.type) { ef.type = inf.type; hasChanges = true; }
-            if (inf.percentage !== undefined && ef.percentage !== inf.percentage) { ef.percentage = inf.percentage; hasChanges = true; }
+            if (inf.label !== undefined && ef.label !== inf.label) {
+              ef.label = inf.label;
+              hasChanges = true;
+            }
+            if (inf.value !== undefined && ef.value !== inf.value) {
+              ef.value = inf.value;
+              hasChanges = true;
+            }
+            if (inf.type !== undefined && ef.type !== inf.type) {
+              ef.type = inf.type;
+              hasChanges = true;
+            }
+            if (inf.percentage !== undefined && ef.percentage !== inf.percentage) {
+              ef.percentage = inf.percentage;
+              hasChanges = true;
+            }
           }
         }
       }
-      
+
       // Update items with tracking
       if (incomingSection.items && existingSection.items) {
-        for (let j = 0; j < Math.min(existingSection.items.length, incomingSection.items.length); j++) {
+        for (
+          let j = 0;
+          j < Math.min(existingSection.items.length, incomingSection.items.length);
+          j++
+        ) {
           const ei = existingSection.items[j];
           const ini = incomingSection.items[j];
           if (ei && ini) {
-            if (ini.title !== undefined && ei.title !== ini.title) { ei.title = ini.title; hasChanges = true; }
-            if (ini.description !== undefined && ei.description !== ini.description) { ei.description = ini.description; hasChanges = true; }
-            if (ini.value !== undefined && ei.value !== ini.value) { ei.value = ini.value; hasChanges = true; }
+            if (ini.title !== undefined && ei.title !== ini.title) {
+              ei.title = ini.title;
+              hasChanges = true;
+            }
+            if (ini.description !== undefined && ei.description !== ini.description) {
+              ei.description = ini.description;
+              hasChanges = true;
+            }
+            if (ini.value !== undefined && ei.value !== ini.value) {
+              ei.value = ini.value;
+              hasChanges = true;
+            }
           }
         }
       }
     }
-    
+
     return hasChanges;
   }
 
   /**
    * Update sections array in-place to preserve object references
    * Only mutates existing sections, preserves all references for unchanged sections
+   * @internal Reserved for potential streaming optimization
    */
-  private updateSectionsInPlace(existingSections: CardSection[], incomingSections: CardSection[]): void {
+  protected updateSectionsInPlace(
+    existingSections: CardSection[],
+    incomingSections: CardSection[]
+  ): void {
     const maxLength = Math.max(existingSections.length, incomingSections.length);
-    
+
     // Extend array if needed (only for new sections)
     while (existingSections.length < maxLength) {
       const sectionIndex = existingSections.length;
@@ -1497,16 +1639,16 @@ export class HomePageComponent implements OnInit, OnDestroy {
         existingSections.push(incomingSection);
       }
     }
-    
+
     // Update existing sections in-place
     for (let i = 0; i < Math.min(existingSections.length, incomingSections.length); i++) {
       const existingSection = existingSections[i];
       const incomingSection = incomingSections[i];
-      
+
       if (!existingSection || !incomingSection) {
         continue;
       }
-      
+
       // Update section properties in-place (preserve object reference)
       if (incomingSection.title !== undefined) {
         existingSection.title = incomingSection.title;
@@ -1541,7 +1683,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       if (incomingSection.meta !== undefined) {
         existingSection.meta = incomingSection.meta;
       }
-      
+
       // Update fields in-place (preserves fields array reference)
       if (incomingSection.fields !== undefined) {
         if (!existingSection.fields) {
@@ -1549,7 +1691,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
         }
         this.updateFieldsInPlace(existingSection.fields, incomingSection.fields, i);
       }
-      
+
       // Update items in-place (preserves items array reference)
       if (incomingSection.items !== undefined) {
         if (!existingSection.items) {
@@ -1561,10 +1703,13 @@ export class HomePageComponent implements OnInit, OnDestroy {
   }
 
   private createFallbackPreviewCard(jsonInput: string): AICardConfig {
-    const lines = jsonInput.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    const lines = jsonInput
+      .split(/\r?\n/)
+      .map((l) => l.trim())
+      .filter(Boolean);
 
     // Card title
-    const titleMatch = lines.find(l => /^cardTitle\s*:\s*/i.test(l));
+    const titleMatch = lines.find((l) => /^cardTitle\s*:\s*/i.test(l));
     const cardTitle = titleMatch ? titleMatch.replace(/^cardTitle\s*:\s*/i, '').trim() : 'Preview';
 
     const sections: CardSection[] = [];
@@ -1584,7 +1729,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
           currentSection = {
             title: titleMatch.trim(),
             type: 'info',
-            fields: []
+            fields: [],
           } as CardSection;
           sections.push(currentSection);
           inFieldsBlock = false;
@@ -1622,7 +1767,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
               currentSection = {
                 title: maybeTitle.trim(),
                 type: 'info',
-                fields: []
+                fields: [],
               } as CardSection;
               sections.push(currentSection);
             }
@@ -1673,7 +1818,13 @@ export class HomePageComponent implements OnInit, OnDestroy {
         }
         // item with details (e.g. '- John Doe | CTO | cto@example.com') -> CardItem
         const itemDetailMatch = line.match(/^[-*]\s*(.+?)\s*\|\s*(.+?)\s*\|\s*(.+)$/);
-        if (itemDetailMatch && itemDetailMatch[1] && itemDetailMatch[2] && itemDetailMatch[3] && currentSection) {
+        if (
+          itemDetailMatch &&
+          itemDetailMatch[1] &&
+          itemDetailMatch[2] &&
+          itemDetailMatch[3] &&
+          currentSection
+        ) {
           const titleStr = itemDetailMatch[1];
           const subtitleStr = itemDetailMatch[2];
           const metaValStr = itemDetailMatch[3];
@@ -1693,7 +1844,12 @@ export class HomePageComponent implements OnInit, OnDestroy {
             const subtitle = subtitleStr.trim();
             const metaVal = metaValStr.trim();
             currentSection.items = currentSection.items || [];
-            currentSection.items.push({ title, description: subtitle, meta: { contact: metaVal }, icon } as CardItem);
+            currentSection.items.push({
+              title,
+              description: subtitle,
+              meta: { contact: metaVal },
+              icon,
+            } as CardItem);
             continue;
           }
         }
@@ -1712,7 +1868,12 @@ export class HomePageComponent implements OnInit, OnDestroy {
         }
         // List item in a list section: '- John Doe' -> CardItem
         const listItemMatch = line.match(/^[-*]\s+([^:]+)$/);
-        if (listItemMatch && listItemMatch[1] && currentSection && /list|timeline|event/i.test(String(currentSection.type))) {
+        if (
+          listItemMatch &&
+          listItemMatch[1] &&
+          currentSection &&
+          /list|timeline|event/i.test(String(currentSection.type))
+        ) {
           const titleStr = listItemMatch[1];
           if (titleStr) {
             const title = titleStr.trim();
@@ -1724,7 +1885,12 @@ export class HomePageComponent implements OnInit, OnDestroy {
       }
 
       // Dash item outside of fields block (for list-type sections)
-      if (!inFieldsBlock && currentSection && /^[-*]\s+([^:]+)$/.test(line) && /list|timeline|event/i.test(String(currentSection.type))) {
+      if (
+        !inFieldsBlock &&
+        currentSection &&
+        /^[-*]\s+([^:]+)$/.test(line) &&
+        /list|timeline|event/i.test(String(currentSection.type))
+      ) {
         const m = line.match(/^[-*]\s+([^:]+)$/);
         if (m && m[1]) {
           const titleStr = m[1];
@@ -1774,56 +1940,79 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
     const previewCard: AICardConfig = {
       cardTitle: cardTitle || 'Preview',
-      sections: sections.length ? sections : []
+      sections: sections.length ? sections : [],
     };
 
     // Parse tables (|' separated rows) into chartData if present
     // Heuristic: if lines contain '|' and the line above or below indicates 'table' or 'chart', parse simple table
     // Also detect 'chartData' block: 'labels: [a,b,c]' and 'datasets:' lines
     const tableRegex = /\|/;
-    const hasTableLines = lines.some(l => tableRegex.test(l));
+    const hasTableLines = lines.some((l) => tableRegex.test(l));
     if (hasTableLines) {
       // Build simple table as chartData: first row as labels, rest as rows
-      const tableRows = lines.filter(l => tableRegex.test(l)).map(r => r.split('|').map(c => c.trim()));
+      const tableRows = lines
+        .filter((l) => tableRegex.test(l))
+        .map((r) => r.split('|').map((c) => c.trim()));
       if (tableRows.length > 0) {
         const firstRow = tableRows[0];
         if (firstRow && firstRow.length > 0) {
-          const headers = firstRow.filter((h): h is string => h !== undefined).map(h => h.trim());
-          const datasets = tableRows.slice(1).map(row => ({ label: row[0], data: row.slice(1).map(v => ({ value: v })) }));
+          const headers = firstRow.filter((h): h is string => h !== undefined).map((h) => h.trim());
+          const datasets = tableRows
+            .slice(1)
+            .map((row) => ({ label: row[0], data: row.slice(1).map((v) => ({ value: v })) }));
           previewCard.sections = previewCard.sections || [];
-          previewCard.sections.push({ title: 'Table', type: 'table', chartData: { labels: headers.slice(1), datasets: datasets.map(d => ({ label: d.label, data: d.data.map(x => Number(x.value) || 0) })) } as any } as any);
+          previewCard.sections.push({
+            title: 'Table',
+            type: 'table',
+            chartData: {
+              labels: headers.slice(1),
+              datasets: datasets.map((d) => ({
+                label: d.label,
+                data: d.data.map((x) => Number(x.value) || 0),
+              })),
+            } as any,
+          } as any);
         }
       }
     }
 
     // Chart detection: look for 'chartType:' and 'labels:' lines
-    const chartTypeLine = lines.find(l => /^chartType\s*:\s*\w+/i.test(l));
-    const chartLabelsLine = lines.find(l => /^labels\s*:\s*\[.*\]/i.test(l));
+    const chartTypeLine = lines.find((l) => /^chartType\s*:\s*\w+/i.test(l));
+    const chartLabelsLine = lines.find((l) => /^labels\s*:\s*\[.*\]/i.test(l));
     if (chartTypeLine && chartLabelsLine) {
       const chartTypePart = chartTypeLine.split(':')[1];
       const chartType = (chartTypePart || 'bar').trim();
       const labelsPart = chartLabelsLine.replace(/labels\s*:\s*\[(.*)\]/i, '$1');
-      const labels = labelsPart.split(',').map(s => s.trim().replace(/^"|"$/g, ''));
+      const labels = labelsPart.split(',').map((s) => s.trim().replace(/^"|"$/g, ''));
       // Try to parse datasets lines after the labelsLine in the input
       const datasets: any[] = [];
       const labelIndex = lines.indexOf(chartLabelsLine);
       for (let idx = labelIndex + 1; idx < Math.min(labelIndex + 10, lines.length); idx++) {
         const line = lines[idx];
-        if (!line) continue;
+        if (!line) {
+          continue;
+        }
         const dsMatch = line.match(/^([^:]+):\s*\[(.*)\]$/);
         if (dsMatch && dsMatch[1] && dsMatch[2]) {
           const dsLabelStr = dsMatch[1];
           const dsValuesStr = dsMatch[2];
           if (dsLabelStr && dsValuesStr) {
             const dsLabel = dsLabelStr.trim();
-            const values = dsValuesStr.split(',').map(v => Number(v.trim().replace(/[^0-9.-]+/g, '')) || 0);
+            const values = dsValuesStr
+              .split(',')
+              .map((v) => Number(v.trim().replace(/[^0-9.-]+/g, '')) || 0);
             datasets.push({ label: dsLabel, data: values });
           }
         }
       }
       if (datasets.length) {
         previewCard.sections = previewCard.sections || [];
-        previewCard.sections.push({ title: 'Chart', type: 'chart', chartType: chartType as any, chartData: { labels, datasets } as any } as any);
+        previewCard.sections.push({
+          title: 'Chart',
+          type: 'chart',
+          chartType: chartType as any,
+          chartData: { labels, datasets } as any,
+        } as any);
       }
     }
 
@@ -1837,15 +2026,22 @@ export class HomePageComponent implements OnInit, OnDestroy {
   }
 
   private processJsonInput(jsonInput: string): void {
-    if (!this.isInitialized) return;
+    if (!this.isInitialized) {
+      return;
+    }
 
     // Quick validation - check if empty
     if (!jsonInput || jsonInput.trim() === '') {
       const defaultCard: AICardConfig = {
         cardTitle: 'Empty Card',
-        sections: []
+        sections: [],
       };
-      this.store.dispatch(CardActions.generateCardSuccess({ card: this.recheckCardStructure(defaultCard) ?? defaultCard, changeType: 'structural' }));
+      this.store.dispatch(
+        CardActions.generateCardSuccess({
+          card: this.recheckCardStructure(defaultCard) ?? defaultCard,
+          changeType: 'structural',
+        })
+      );
       return;
     }
 
@@ -1861,7 +2057,11 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
     // Validate that data is an object
     if (!data || typeof data !== 'object' || Array.isArray(data)) {
-      this.store.dispatch(CardActions.generateCardFailure({ error: 'Card configuration must be a valid JSON object.' }));
+      this.store.dispatch(
+        CardActions.generateCardFailure({
+          error: 'Card configuration must be a valid JSON object.',
+        })
+      );
       return;
     }
 
@@ -1872,11 +2072,14 @@ export class HomePageComponent implements OnInit, OnDestroy {
       const sanitized = this.needsSanitization(cardData) ? ensureCardIds(cardData) : cardData;
       // Re-check final card structure before merging/persisting
       const rechecked = this.recheckCardStructure(sanitized) ?? sanitized;
-      
+
       // Smart merging with existing card for optimal updates
       // The card preview component will handle streaming sections
       if (this.generatedCard) {
-        const { card: mergedCard, changeType } = CardDiffUtil.mergeCardUpdates(this.generatedCard, rechecked);
+        const { card: mergedCard, changeType } = CardDiffUtil.mergeCardUpdates(
+          this.generatedCard,
+          rechecked
+        );
         this.maybePersistCard(mergedCard, changeType);
       } else {
         // First load - dispatch immediately to show skeleton frame
@@ -1884,7 +2087,12 @@ export class HomePageComponent implements OnInit, OnDestroy {
       }
       this.updateLivePreviewCard(rechecked);
     } else {
-      this.store.dispatch(CardActions.generateCardFailure({ error: 'Invalid card configuration format - missing required fields (cardTitle, sections)' }));
+      this.store.dispatch(
+        CardActions.generateCardFailure({
+          error:
+            'Invalid card configuration format - missing required fields (cardTitle, sections)',
+        })
+      );
     }
   }
 
@@ -1922,18 +2130,18 @@ export class HomePageComponent implements OnInit, OnDestroy {
     // Reset current card to show streaming state
     this.generatedCard = null;
     this.livePreviewCard = null;
-    
+
     // Configure streaming with user-controlled thinking delay
     this.streamingService.configure({
       tokensPerSecond: this.streamingSpeed,
-      thinkingDelayMs: this.useStreaming ? this.thinkingDelay : 0
+      thinkingDelayMs: this.useStreaming ? this.thinkingDelay : 0,
     });
 
     // Start streaming
-    this.streamingService.start(payload, { 
-      instant: !this.useStreaming 
+    this.streamingService.start(payload, {
+      instant: !this.useStreaming,
     });
-    
+
     this.store.dispatch(CardActions.clearError());
     this.announceStatus(this.useStreaming ? 'Starting card generation...' : 'Generating card...');
   }
@@ -1943,34 +2151,40 @@ export class HomePageComponent implements OnInit, OnDestroy {
    */
   stopGeneration(): void {
     this.streamingService.stop();
-    
+
     // Get the current card from streaming or other sources
     const currentCard = this.generatedCard || this.livePreviewCard;
-    
+
     // If we have a card, load the full JSON into the editor
     if (currentCard) {
       try {
         const cardWithoutIds = removeAllIds(currentCard);
         delete cardWithoutIds.cardType;
         const cardJson = JSON.stringify(cardWithoutIds, null, 2);
-        
+
         this.jsonInput = cardJson;
         this.lastProcessedJson = cardJson;
         this.isJsonValid = true;
         this.jsonError = '';
-        
+
         const card = ensureCardIds(currentCard);
-        this.store.dispatch(CardActions.generateCardSuccess({ 
-          card, 
-          changeType: 'structural'
-        }));
-        
+        this.store.dispatch(
+          CardActions.generateCardSuccess({
+            card,
+            changeType: 'structural',
+          })
+        );
+
         this.announceStatus('Generation stopped. Card loaded into editor.');
       } catch (error) {
-        this.logger.error('Error loading card into editor after stopping generation', 'HomePageComponent', error);
+        this.logger.error(
+          'Error loading card into editor after stopping generation',
+          'HomePageComponent',
+          error
+        );
       }
     }
-    
+
     this.cd.markForCheck();
   }
 
@@ -1989,7 +2203,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     let hash = 0;
     for (let i = 0; i < value.length; i++) {
       const char = value.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash |= 0;
     }
     return String(hash);
@@ -2002,8 +2216,9 @@ export class HomePageComponent implements OnInit, OnDestroy {
   /**
    * Ensure section structure is properly cloned with all nested arrays (fields, items)
    * This is critical for Angular change detection to detect section updates
+   * @internal Reserved for potential streaming optimization
    */
-  private ensureSectionStructure(section: Partial<CardSection> | CardSection): CardSection {
+  protected ensureSectionStructure(section: Partial<CardSection> | CardSection): CardSection {
     // Create a new section object to ensure reference change
     const newSection: CardSection = {
       ...section,
@@ -2012,21 +2227,25 @@ export class HomePageComponent implements OnInit, OnDestroy {
       title: section.title || '',
       // Deep clone fields array to ensure change detection
       fields: Array.isArray(section.fields)
-        ? section.fields.map(f => ({ ...f, id: f.id || `field-${Date.now()}-${Math.random()}` }))
+        ? section.fields.map((f) => ({ ...f, id: f.id || `field-${Date.now()}-${Math.random()}` }))
         : [],
       // Deep clone items array to ensure change detection
       items: Array.isArray(section.items)
-        ? section.items.map(i => ({ ...i, id: i.id || `item-${Date.now()}-${Math.random()}` }))
-        : []
+        ? section.items.map((i) => ({ ...i, id: i.id || `item-${Date.now()}-${Math.random()}` }))
+        : [],
     };
     return newSection;
   }
 
   private recheckCardStructure(card: AICardConfig | null): AICardConfig | null {
-    if (!card) return null;
+    if (!card) {
+      return null;
+    }
     // Return cached sanitized card if we've already sanitized this exact object
     const cached = this.sanitizedCardCache.get(card);
-    if (cached) return cached;
+    if (cached) {
+      return cached;
+    }
 
     // Ensure IDs and basic invariants via helper only if necessary
     const sanitized = this.needsSanitization(card) ? ensureCardIds({ ...card }) : { ...card };
@@ -2047,8 +2266,9 @@ export class HomePageComponent implements OnInit, OnDestroy {
   /**
    * Update only completed sections IN-PLACE to preserve object references
    * This prevents full section re-renders and maintains stable DOM elements
+   * @internal Reserved for potential streaming optimization
    */
-  private updateCompletedSectionsOnly(incoming: AICardConfig, completedIndices: number[]): void {
+  protected updateCompletedSectionsOnly(incoming: AICardConfig, completedIndices: number[]): void {
     if (!this.generatedCard) {
       return;
     }
@@ -2057,31 +2277,53 @@ export class HomePageComponent implements OnInit, OnDestroy {
     const placeholderSections = this.generatedCard.sections ?? [];
 
     // Update only completed sections IN-PLACE (mutate existing objects)
-    completedIndices.forEach(index => {
+    completedIndices.forEach((index) => {
       const placeholderSection = placeholderSections[index];
       const incomingSection = incomingSections[index];
-      
+
       if (!placeholderSection || !incomingSection) {
         return;
       }
 
       // Update section properties in-place (preserve object reference)
-      placeholderSection.title = incomingSection.title ?? placeholderSection.title;
-      placeholderSection.subtitle = incomingSection.subtitle ?? placeholderSection.subtitle;
-      placeholderSection.type = incomingSection.type ?? placeholderSection.type;
-      placeholderSection.description = incomingSection.description ?? placeholderSection.description;
-      placeholderSection.emoji = incomingSection.emoji ?? placeholderSection.emoji;
-      placeholderSection.columns = incomingSection.columns ?? placeholderSection.columns;
-      placeholderSection.colSpan = incomingSection.colSpan ?? placeholderSection.colSpan;
-      placeholderSection.chartType = incomingSection.chartType ?? placeholderSection.chartType;
-      placeholderSection.chartData = incomingSection.chartData ?? placeholderSection.chartData;
-      
+      if (incomingSection.title !== undefined) {
+        placeholderSection.title = incomingSection.title;
+      }
+      if (incomingSection.subtitle !== undefined) {
+        placeholderSection.subtitle = incomingSection.subtitle;
+      }
+      if (incomingSection.type !== undefined) {
+        placeholderSection.type = incomingSection.type;
+      }
+      if (incomingSection.description !== undefined) {
+        placeholderSection.description = incomingSection.description;
+      }
+      if (incomingSection.emoji !== undefined) {
+        placeholderSection.emoji = incomingSection.emoji;
+      }
+      if (incomingSection.columns !== undefined) {
+        placeholderSection.columns = incomingSection.columns;
+      }
+      if (incomingSection.colSpan !== undefined) {
+        placeholderSection.colSpan = incomingSection.colSpan;
+      }
+      if (incomingSection.chartType !== undefined) {
+        placeholderSection.chartType = incomingSection.chartType;
+      }
+      if (incomingSection.chartData !== undefined) {
+        placeholderSection.chartData = incomingSection.chartData;
+      }
+
       // Update fields in-place
-      this.updateFieldsInPlace(placeholderSection.fields ?? [], incomingSection.fields ?? [], index);
-      
+      this.updateFieldsInPlace(
+        placeholderSection.fields ?? [],
+        incomingSection.fields ?? [],
+        index
+      );
+
       // Update items in-place
       this.updateItemsInPlace(placeholderSection.items ?? [], incomingSection.items ?? [], index);
-      
+
       // Remove placeholder flag
       const meta = placeholderSection.meta as Record<string, unknown> | undefined;
       if (meta) {
@@ -2093,9 +2335,13 @@ export class HomePageComponent implements OnInit, OnDestroy {
   /**
    * Update fields array in-place to preserve object references
    */
-  private updateFieldsInPlace(existing: CardField[], incoming: CardField[], sectionIndex: number): void {
+  private updateFieldsInPlace(
+    existing: CardField[],
+    incoming: CardField[],
+    sectionIndex: number
+  ): void {
     const maxLength = Math.max(existing.length, incoming.length);
-    
+
     // Extend array if needed
     while (existing.length < maxLength) {
       const fieldIndex = existing.length;
@@ -2104,7 +2350,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
         id: incomingField?.id ?? `llm-field-${sectionIndex}-${fieldIndex}`,
         label: incomingField?.label ?? `Field ${fieldIndex + 1}`,
         value: incomingField?.value ?? '', // Use actual value from JSON if available
-        meta: { placeholder: true, ...(incomingField?.meta ?? {}) }
+        meta: { placeholder: true, ...(incomingField?.meta ?? {}) },
       } as CardField);
     }
 
@@ -2123,16 +2369,34 @@ export class HomePageComponent implements OnInit, OnDestroy {
       }
 
       // Update field properties in-place (preserve object reference)
-      existingField.label = incomingField.label ?? existingField.label;
-      existingField.value = incomingField.value ?? existingField.value;
-      existingField.percentage = incomingField.percentage ?? existingField.percentage;
-      existingField.trend = incomingField.trend ?? existingField.trend;
-      existingField.type = incomingField.type ?? existingField.type;
-      existingField.status = incomingField.status ?? existingField.status;
-      existingField.priority = incomingField.priority ?? existingField.priority;
-      existingField.format = incomingField.format ?? existingField.format;
-      existingField.description = incomingField.description ?? existingField.description;
-      
+      if (incomingField.label !== undefined) {
+        existingField.label = incomingField.label;
+      }
+      if (incomingField.value !== undefined) {
+        existingField.value = incomingField.value;
+      }
+      if (incomingField.percentage !== undefined) {
+        existingField.percentage = incomingField.percentage;
+      }
+      if (incomingField.trend !== undefined) {
+        existingField.trend = incomingField.trend;
+      }
+      if (incomingField.type !== undefined) {
+        existingField.type = incomingField.type;
+      }
+      if (incomingField.status !== undefined) {
+        existingField.status = incomingField.status;
+      }
+      if (incomingField.priority !== undefined) {
+        existingField.priority = incomingField.priority;
+      }
+      if (incomingField.format !== undefined) {
+        existingField.format = incomingField.format;
+      }
+      if (incomingField.description !== undefined) {
+        existingField.description = incomingField.description;
+      }
+
       // Remove placeholder flag
       const meta = existingField.meta as Record<string, unknown> | undefined;
       if (meta) {
@@ -2144,9 +2408,13 @@ export class HomePageComponent implements OnInit, OnDestroy {
   /**
    * Update items array in-place to preserve object references
    */
-  private updateItemsInPlace(existing: CardItem[], incoming: CardItem[], sectionIndex: number): void {
+  private updateItemsInPlace(
+    existing: CardItem[],
+    incoming: CardItem[],
+    sectionIndex: number
+  ): void {
     const maxLength = Math.max(existing.length, incoming.length);
-    
+
     // Extend array if needed
     while (existing.length < maxLength) {
       const itemIndex = existing.length;
@@ -2155,7 +2423,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
         id: incomingItem?.id ?? `llm-item-${sectionIndex}-${itemIndex}`,
         title: incomingItem?.title ?? `Item ${itemIndex + 1}`,
         description: incomingItem?.description ?? '', // Use actual description from JSON if available
-        meta: { placeholder: true, ...(incomingItem?.meta ?? {}) }
+        meta: { placeholder: true, ...(incomingItem?.meta ?? {}) },
       } as CardItem);
     }
 
@@ -2174,12 +2442,22 @@ export class HomePageComponent implements OnInit, OnDestroy {
       }
 
       // Update item properties in-place (preserve object reference)
-      existingItem.title = incomingItem.title ?? existingItem.title;
-      existingItem.description = incomingItem.description ?? existingItem.description;
-      existingItem.value = incomingItem.value ?? existingItem.value;
-      existingItem.status = incomingItem.status ?? existingItem.status;
-      existingItem.icon = incomingItem.icon ?? existingItem.icon;
-      
+      if (incomingItem.title !== undefined) {
+        existingItem.title = incomingItem.title;
+      }
+      if (incomingItem.description !== undefined) {
+        existingItem.description = incomingItem.description;
+      }
+      if (incomingItem.value !== undefined) {
+        existingItem.value = incomingItem.value;
+      }
+      if (incomingItem.status !== undefined) {
+        existingItem.status = incomingItem.status;
+      }
+      if (incomingItem.icon !== undefined) {
+        existingItem.icon = incomingItem.icon;
+      }
+
       // Remove placeholder flag
       const meta = existingItem.meta as Record<string, unknown> | undefined;
       if (meta) {
@@ -2188,22 +2466,20 @@ export class HomePageComponent implements OnInit, OnDestroy {
     }
   }
 
-
-
-
-
   /**
    * Check if a section is complete (all fields/items have real values, not placeholders)
+   * @internal Reserved for potential streaming optimization
    */
-  private isSectionComplete(section: CardSection): boolean {
+  protected isSectionComplete(section: CardSection): boolean {
     // Check fields
     const fields = section.fields ?? [];
     for (const field of fields) {
       const meta = field.meta as Record<string, unknown> | undefined;
-      const isPlaceholder = field.value === 'Streaming…' || 
-                           field.value === undefined ||
-                           field.value === null ||
-                           (meta && meta['placeholder'] === true);
+      const isPlaceholder =
+        field.value === 'Streaming…' ||
+        field.value === undefined ||
+        field.value === null ||
+        (meta && meta['placeholder'] === true);
       if (isPlaceholder) {
         return false;
       }
@@ -2213,10 +2489,11 @@ export class HomePageComponent implements OnInit, OnDestroy {
     const items = section.items ?? [];
     for (const item of items) {
       const meta = item.meta as Record<string, unknown> | undefined;
-      const isPlaceholder = item.description === 'Streaming…' ||
-                           !item.title ||
-                           item.title.startsWith('Item ') ||
-                           (meta && meta['placeholder'] === true);
+      const isPlaceholder =
+        item.description === 'Streaming…' ||
+        !item.title ||
+        item.title.startsWith('Item ') ||
+        (meta && meta['placeholder'] === true);
       if (isPlaceholder) {
         return false;
       }
@@ -2225,27 +2502,39 @@ export class HomePageComponent implements OnInit, OnDestroy {
     return true;
   }
 
-
-
   /**
    * Re-check and sanitize the card structure by ensuring IDs and required defaults.
    * This function should be called whenever a section is generated and again at the end of the card generation.
    */
   private needsSanitization(card: AICardConfig | null): boolean {
-    if (!card) return true;
-    if (!card.id) return true;
-    if (!card.sections) return false;
+    if (!card) {
+      return true;
+    }
+    if (!card.id) {
+      return true;
+    }
+    if (!card.sections) {
+      return false;
+    }
     for (const s of card.sections) {
-      if (!s) return true;
-      if (!s.id) return true;
-      if (s.fields && s.fields.some(f => !f || !f.id)) return true;
-      if (s.items && s.items.some(i => !i || !i.id)) return true;
+      if (!s) {
+        return true;
+      }
+      if (!s.id) {
+        return true;
+      }
+      if (s.fields && s.fields.some((f) => !f || !f.id)) {
+        return true;
+      }
+      if (s.items && s.items.some((i) => !i || !i.id)) {
+        return true;
+      }
     }
     return false;
   }
 
   private getCardFingerprint(card: AICardConfig): string {
-    const sectionIds = (card.sections ?? []).map(s => s.id ?? s.title ?? '').join('|');
+    const sectionIds = (card.sections ?? []).map((s) => s.id ?? s.title ?? '').join('|');
     const key = `${card.id ?? ''}|${card.cardTitle ?? ''}|${sectionIds}`;
     return this.fastHash(key);
   }
@@ -2303,10 +2592,15 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.isFullscreen = isFullscreen;
   }
 
-  onAgentAction(event: { action: any; card: AICardConfig; agentId?: string; context?: Record<string, unknown> }): void {
+  onAgentAction(event: {
+    action: any;
+    card: AICardConfig;
+    agentId?: string;
+    context?: Record<string, unknown>;
+  }): void {
     // Handle agent action - trigger agent with the provided context
     this.logger.info('Agent action triggered', 'HomePageComponent', event);
-    this.agentService.triggerAgent(event.agentId, event.context).catch(error => {
+    this.agentService.triggerAgent(event.agentId, event.context).catch((error) => {
       this.logger.error('Failed to trigger agent', 'HomePageComponent', error);
     });
   }
@@ -2319,7 +2613,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       this.chatService.sendMessage(message, {
         cardId: event.card.id,
         cardTitle: event.card.cardTitle,
-        actionType: event.action?.type
+        actionType: event.action?.type,
       });
     }
   }
@@ -2332,7 +2626,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   async onExportCard(): Promise<void> {
     this.logger.info('Export button clicked', 'HomePageComponent');
-    
+
     if (!this.generatedCard) {
       this.announceStatus('No card to export', true);
       this.logger.warn('No card to export', 'HomePageComponent');
@@ -2340,7 +2634,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     }
 
     // Wait a tick to ensure the view is updated
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     // Get the card element directly from the renderer component
     // This works around Shadow DOM encapsulation by using the component's public method
@@ -2348,33 +2642,42 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
     if (!cardElement) {
       this.announceStatus('Card element not found', true);
-      this.logger.warn('Card element not found - cardRenderer may not be initialized', 'HomePageComponent');
+      this.logger.warn(
+        'Card element not found - cardRenderer may not be initialized',
+        'HomePageComponent'
+      );
       return;
     }
 
     try {
-      const filename = `${this.generatedCard.cardTitle || 'card'}.png`.replace(/[^a-z0-9.-]/gi, '_');
-      this.logger.info('Exporting card as PNG', 'HomePageComponent', { 
-        element: cardElement.tagName, 
+      const filename = `${this.generatedCard.cardTitle || 'card'}.png`.replace(
+        /[^a-z0-9.-]/gi,
+        '_'
+      );
+      this.logger.info('Exporting card as PNG', 'HomePageComponent', {
+        element: cardElement.tagName,
         className: cardElement.className,
         filename,
-        dimensions: { width: cardElement.offsetWidth, height: cardElement.offsetHeight }
+        dimensions: { width: cardElement.offsetWidth, height: cardElement.offsetHeight },
       });
       await this.exportService.exportAsPngNative(cardElement, filename, 2);
       this.logger.info('PNG export completed successfully', 'HomePageComponent');
       this.announceStatus('Card exported as PNG');
     } catch (error) {
       this.logger.error('Failed to export card as PNG', 'HomePageComponent', error);
-      this.announceStatus('Failed to export PNG: ' + (error instanceof Error ? error.message : 'Unknown error'), true);
+      this.announceStatus(
+        'Failed to export PNG: ' + (error instanceof Error ? error.message : 'Unknown error'),
+        true
+      );
     }
   }
 
   // TrackBy functions for performance optimization
-  trackByCardType(index: number, type: string): string {
+  trackByCardType(_index: number, type: string): string {
     return type;
   }
 
-  trackByVariant(index: number, variant: number): number {
+  trackByVariant(_index: number, variant: number): number {
     return variant;
   }
 
@@ -2386,9 +2689,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
     }
   }
 
-
   private focusPreviewRegion(): void {
-    if (!this.previewRegion) return;
+    if (!this.previewRegion) {
+      return;
+    }
     queueMicrotask(() => {
       this.previewRegion?.nativeElement.focus({ preventScroll: true });
     });
@@ -2401,7 +2705,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.cd.markForCheck();
   }
 
-
   get liveStatusTone(): 'polite' | 'assertive' {
     return this.statusTone;
   }
@@ -2409,16 +2712,16 @@ export class HomePageComponent implements OnInit, OnDestroy {
   get liveStatusRole(): 'status' | 'alert' {
     return this.statusRole;
   }
-  
+
   ngOnDestroy(): void {
     // Stop streaming if active
     this.streamingService.stop();
-    
+
     // Complete subjects
     this.jsonInputSubject.complete();
     this.jsonCommandSubject.complete();
   }
-  
+
   toggleTheme(): void {
     this.theme = this.theme === 'night' ? 'day' : 'night';
     this.applyTheme();

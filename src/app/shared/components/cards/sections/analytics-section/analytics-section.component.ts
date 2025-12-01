@@ -16,17 +16,17 @@ type AnalyticsField = CardField & {
 
 /**
  * Analytics Section Component
- * 
+ *
  * Displays analytics metrics with trend indicators, spark lines, and percentage
  * values. Optimized for performance metrics, growth rates, and statistical data.
- * 
+ *
  * Features:
  * - Trend indicators with icons (up, down, stable)
  * - Percentage display with formatting
  * - Change value display with +/- indicators
  * - Spark line visualization support
  * - Field interaction events
- * 
+ *
  * @example
  * ```html
  * <app-analytics-section
@@ -40,7 +40,7 @@ type AnalyticsField = CardField & {
   standalone: true,
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './analytics-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnalyticsSectionComponent extends BaseSectionComponent<AnalyticsField> {
   readonly Math = Math;
@@ -86,17 +86,17 @@ export class AnalyticsSectionComponent extends BaseSectionComponent<AnalyticsFie
     if (field.percentage === undefined) {
       return false;
     }
-    
+
     const value = this.getDisplayValue(field);
     if (!value) {
       return false;
     }
-    
+
     // Check if the value already contains the percentage
     // Remove % signs and compare numbers
     const valueWithoutPercent = value.replace(/%/g, '').trim();
     const percentageStr = String(field.percentage);
-    
+
     // If value already contains the percentage number, don't show it again
     return !valueWithoutPercent.includes(percentageStr);
   }

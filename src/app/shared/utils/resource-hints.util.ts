@@ -80,7 +80,5 @@ export function dnsPrefetchOrigin(href: string): void {
  */
 export function removeResourceHint(href: string, type: string): void {
   const links = document.head.querySelectorAll(`link[rel="${type}"][href="${href}"]`);
-  links.forEach(link => link.remove());
+  links.forEach((link) => link.remove());
 }
-
-

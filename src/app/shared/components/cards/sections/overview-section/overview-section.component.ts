@@ -7,16 +7,16 @@ import { SectionUtilsService } from '../../../../services/section-utils.service'
 
 /**
  * Overview Section Component
- * 
+ *
  * Displays high-level overview information with key metrics and status indicators.
  * Optimized for executive summaries and dashboard-style data presentation.
- * 
+ *
  * Features:
  * - Key metrics display
  * - Status badge support
  * - Field interaction events
  * - Streaming placeholder handling
- * 
+ *
  * @example
  * ```html
  * <app-overview-section
@@ -30,7 +30,7 @@ import { SectionUtilsService } from '../../../../services/section-utils.service'
   standalone: true,
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './overview-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OverviewSectionComponent extends BaseSectionComponent<CardField> {
   protected readonly utils = inject(SectionUtilsService);

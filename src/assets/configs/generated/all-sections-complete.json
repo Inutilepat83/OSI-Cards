@@ -264,31 +264,16 @@
       "type": "chart",
       "chartType": "bar",
       "chartData": {
-        "labels": [
-          "Q1",
-          "Q2",
-          "Q3",
-          "Q4"
-        ],
+        "labels": ["Q1", "Q2", "Q3", "Q4"],
         "datasets": [
           {
             "label": "Revenue",
-            "data": [
-              100,
-              150,
-              200,
-              250
-            ],
+            "data": [100, 150, 200, 250],
             "backgroundColor": "#FF7900"
           },
           {
             "label": "Expenses",
-            "data": [
-              80,
-              90,
-              100,
-              110
-            ],
+            "data": [80, 90, 100, 110],
             "backgroundColor": "#4CAF50"
           }
         ]
@@ -330,22 +315,14 @@
           "title": "Cloud Migration",
           "description": "Complete cloud infrastructure migration service",
           "category": "Infrastructure",
-          "benefits": [
-            "Scalability",
-            "Cost reduction",
-            "Security"
-          ],
+          "benefits": ["Scalability", "Cost reduction", "Security"],
           "deliveryTime": "8-10 weeks"
         },
         {
           "title": "Data Analytics Platform",
           "description": "Real-time analytics and reporting solution",
           "category": "Analytics",
-          "benefits": [
-            "Real-time insights",
-            "Custom dashboards",
-            "API access"
-          ],
+          "benefits": ["Real-time insights", "Custom dashboards", "API access"],
           "deliveryTime": "4-6 weeks"
         }
       ]

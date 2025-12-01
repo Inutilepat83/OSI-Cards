@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NetworkCardSectionComponent } from './network-card-section.component';
-import { SectionBuilder, FieldBuilder } from '../../../../testing/test-builders';
+import { FieldBuilder, SectionBuilder } from '../../../../testing/test-builders';
 
 describe('NetworkCardSectionComponent', () => {
   let component: NetworkCardSectionComponent;
@@ -8,23 +8,18 @@ describe('NetworkCardSectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NetworkCardSectionComponent]
+      imports: [NetworkCardSectionComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(NetworkCardSectionComponent);
     component = fixture.componentInstance;
-    
+
     component.section = SectionBuilder.create()
       .withTitle('Network')
       .withType('network-card')
-      .withField(
-        FieldBuilder.create()
-          .withLabel('Contact 1')
-          .withValue('John Doe')
-          .build()
-      )
+      .withField(FieldBuilder.create().withLabel('Contact 1').withValue('John Doe').build())
       .build();
-    
+
     fixture.detectChanges();
   });
 
@@ -46,27 +41,9 @@ describe('NetworkCardSectionComponent', () => {
   it('should emit field interaction on click', () => {
     spyOn(component.fieldInteraction, 'emit');
     const field = component.getFields()[0];
-    
+
     component.onFieldClick(field);
-    
+
     expect(component.fieldInteraction.emit).toHaveBeenCalled();
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MapSectionComponent } from './map-section.component';
-import { SectionBuilder, FieldBuilder } from '../../../../testing/test-builders';
+import { FieldBuilder, SectionBuilder } from '../../../../testing/test-builders';
 
 describe('MapSectionComponent', () => {
   let component: MapSectionComponent;
@@ -8,12 +8,12 @@ describe('MapSectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MapSectionComponent]
+      imports: [MapSectionComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MapSectionComponent);
     component = fixture.componentInstance;
-    
+
     component.section = SectionBuilder.create()
       .withTitle('Locations')
       .withType('map')
@@ -21,11 +21,11 @@ describe('MapSectionComponent', () => {
         FieldBuilder.create()
           .withLabel('Location 1')
           .withValue('Address 1')
-          .withMeta({ coordinates: { lat: 40.7128, lng: -74.0060 } })
+          .withMeta({ coordinates: { lat: 40.7128, lng: -74.006 } })
           .build()
       )
       .build();
-    
+
     fixture.detectChanges();
   });
 
@@ -47,27 +47,9 @@ describe('MapSectionComponent', () => {
   it('should emit field interaction on click', () => {
     spyOn(component.fieldInteraction, 'emit');
     const field = component.getFields()[0];
-    
+
     component.onFieldClick(field);
-    
+
     expect(component.fieldInteraction.emit).toHaveBeenCalled();
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

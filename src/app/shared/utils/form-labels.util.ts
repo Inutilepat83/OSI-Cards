@@ -6,7 +6,11 @@
 /**
  * Create a label element for an input
  */
-export function createFormLabel(inputId: string, labelText: string, required = false): {
+export function createFormLabel(
+  inputId: string,
+  labelText: string,
+  required = false
+): {
   id: string;
   htmlFor: string;
   text: string;
@@ -16,14 +20,17 @@ export function createFormLabel(inputId: string, labelText: string, required = f
     id: `label-${inputId}`,
     htmlFor: inputId,
     text: labelText + (required ? ' *' : ''),
-    required
+    required,
   };
 }
 
 /**
  * Create an error message element for an input
  */
-export function createFormError(inputId: string, errorMessage: string): {
+export function createFormError(
+  inputId: string,
+  errorMessage: string
+): {
   id: string;
   ariaLive: 'polite' | 'assertive';
   role: 'alert';
@@ -33,27 +40,32 @@ export function createFormError(inputId: string, errorMessage: string): {
     id: `error-${inputId}`,
     ariaLive: 'assertive',
     role: 'alert',
-    text: errorMessage
+    text: errorMessage,
   };
 }
 
 /**
  * Create a helper text element for an input
  */
-export function createFormHelper(inputId: string, helperText: string): {
+export function createFormHelper(
+  inputId: string,
+  helperText: string
+): {
   id: string;
   text: string;
 } {
   return {
     id: `helper-${inputId}`,
-    text: helperText
+    text: helperText,
   };
 }
 
 /**
  * Validate form field has associated label
  */
-export function hasAssociatedLabel(input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement): boolean {
+export function hasAssociatedLabel(
+  input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+): boolean {
   const id = input.id;
   if (!id) {
     return false;
@@ -111,5 +123,3 @@ export function ensureFormFieldAccessibility(
     input.removeAttribute('aria-invalid');
   }
 }
-
-

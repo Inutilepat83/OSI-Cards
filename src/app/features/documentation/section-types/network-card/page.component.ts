@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
 import { DocsDemoComponent } from '../../components';
 
@@ -115,38 +115,38 @@ The **Network Card Section** (\`type: "network-card"\`) is used for displays rel
 `;
 
 const demoConfig = {
-  "title": "Business Network",
-  "type": "network-card",
-  "description": "Key business relationships and partnerships",
-  "items": [
+  title: 'Business Network',
+  type: 'network-card',
+  description: 'Key business relationships and partnerships',
+  items: [
     {
-      "title": "Strategic Partner A",
-      "description": "Technology partnership",
-      "meta": {
-        "influence": 85,
-        "connections": 12,
-        "status": "active"
-      }
+      title: 'Strategic Partner A',
+      description: 'Technology partnership',
+      meta: {
+        influence: 85,
+        connections: 12,
+        status: 'active',
+      },
     },
     {
-      "title": "Investor Group",
-      "description": "Series B lead investor",
-      "meta": {
-        "influence": 92,
-        "connections": 8,
-        "status": "active"
-      }
+      title: 'Investor Group',
+      description: 'Series B lead investor',
+      meta: {
+        influence: 92,
+        connections: 8,
+        status: 'active',
+      },
     },
     {
-      "title": "Distribution Partner",
-      "description": "EMEA distribution",
-      "meta": {
-        "influence": 67,
-        "connections": 25,
-        "status": "active"
-      }
-    }
-  ]
+      title: 'Distribution Partner',
+      description: 'EMEA distribution',
+      meta: {
+        influence: 67,
+        connections: 25,
+        status: 'active',
+      },
+    },
+  ],
 };
 
 /**
@@ -159,8 +159,8 @@ const demoConfig = {
   imports: [DocPageComponent, DocsDemoComponent],
   template: `
     <div class="section-docs">
-      <app-docs-demo 
-        [config]="demo" 
+      <app-docs-demo
+        [config]="demo"
         [type]="'network-card'"
         demoTitle="Live Preview"
         height="350px"
@@ -168,14 +168,16 @@ const demoConfig = {
       <app-doc-page [content]="content"></app-doc-page>
     </div>
   `,
-  styles: [`
-    .section-docs {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styles: [
+    `
+      .section-docs {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NetworkCardPageComponent {
   content = pageContent;

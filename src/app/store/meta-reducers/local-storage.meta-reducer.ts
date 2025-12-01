@@ -25,19 +25,19 @@ export function localStorageSyncReducer(reducer: ActionReducer<AppState>): Actio
             isFullscreen: false,
             error: null,
             loading: false,
-          }
+          },
         };
-        
+
         const stateString = JSON.stringify(stateToStore);
         const stateSize = new Blob([stateString]).size;
         const MAX_STATE_SIZE = 10 * 1024 * 1024; // 10MB max state size
-        
+
         // Prevent storing excessively large state (DoS protection)
         if (stateSize > MAX_STATE_SIZE) {
           console.warn('State size exceeds maximum, skipping localStorage sync');
           return nextState;
         }
-        
+
         localStorage.setItem('osi-cards-state', stateString);
       } catch (error) {
         // Handle quota exceeded and other storage errors gracefully
@@ -52,7 +52,7 @@ export function localStorageSyncReducer(reducer: ActionReducer<AppState>): Actio
                 currentCardId: nextState.cards.currentCardId,
                 cardType: nextState.cards.cardType,
                 cardVariant: nextState.cards.cardVariant,
-              }
+              },
             });
             localStorage.setItem('osi-cards-state', stateString);
           } catch (retryError) {
@@ -89,4 +89,3 @@ export function rehydrateState(): Partial<AppState> | undefined {
     return undefined;
   }
 }
-

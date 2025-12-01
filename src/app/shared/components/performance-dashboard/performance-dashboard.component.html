@@ -2,15 +2,9 @@
   <div class="dashboard-header">
     <h2 class="dashboard-title">Performance Monitoring</h2>
     <div class="dashboard-actions">
-      <button class="btn btn-secondary" (click)="loadMetrics()" title="Refresh metrics">
-        🔄 Refresh
-      </button>
-      <button class="btn btn-secondary" (click)="clearMetrics()" title="Clear all metrics">
-        🗑️ Clear
-      </button>
-      <button class="btn btn-secondary" (click)="exportMetrics()" title="Export metrics">
-        📥 Export
-      </button>
+      <button class="btn btn-secondary" (click)="loadMetrics()" title="Refresh metrics">🔄 Refresh</button>
+      <button class="btn btn-secondary" (click)="clearMetrics()" title="Clear all metrics">🗑️ Clear</button>
+      <button class="btn btn-secondary" (click)="exportMetrics()" title="Export metrics">📥 Export</button>
     </div>
   </div>
 
@@ -97,7 +91,8 @@
       <div class="summary-item" *ngIf="summary.violations">
         <span class="summary-label">Budget Violations:</span>
         <span class="summary-value" [class.has-violations]="summary.violations.total > 0">
-          {{ summary.violations.total }} ({{ summary.violations.errors }} errors, {{ summary.violations.warnings }} warnings)
+          {{ summary.violations.total }} ({{ summary.violations.errors }} errors,
+          {{ summary.violations.warnings }} warnings)
         </span>
       </div>
     </div>
@@ -124,17 +119,18 @@
   <section class="dashboard-section" *ngIf="budgetViolations.length > 0">
     <h3 class="section-title">Budget Violations</h3>
     <div class="violations-list">
-      <div class="violation-item" *ngFor="let violation of budgetViolations" [class]="'violation-' + violation.severity">
+      <div
+        class="violation-item"
+        *ngFor="let violation of budgetViolations"
+        [class]="'violation-' + violation.severity"
+      >
         <div class="violation-header">
           <span class="violation-budget">{{ violation.budget }}</span>
           <span class="violation-severity">{{ violation.severity }}</span>
         </div>
-        <div class="violation-details">
-          Actual: {{ violation.actual }} | Threshold: {{ violation.threshold }}
-        </div>
+        <div class="violation-details">Actual: {{ violation.actual }} | Threshold: {{ violation.threshold }}</div>
         <div class="violation-time">{{ formatTimestampWithDate(violation.timestamp) }}</div>
       </div>
     </div>
   </section>
 </div>
-

@@ -8,12 +8,14 @@ import { CardDataService } from '../services/card-data/card-data.service';
  * Resolver to preload card data before route activation
  * Ensures card is available in component
  */
-export const cardResolver: ResolveFn<AICardConfig | null> = (route): Observable<AICardConfig | null> => {
+export const cardResolver: ResolveFn<AICardConfig | null> = (
+  route
+): Observable<AICardConfig | null> => {
   const cardDataService = inject(CardDataService);
   const cardId = route.params['id'];
 
   if (!cardId) {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       observer.next(null);
       observer.complete();
     });
@@ -21,4 +23,3 @@ export const cardResolver: ResolveFn<AICardConfig | null> = (route): Observable<
 
   return cardDataService.getCardById(cardId);
 };
-

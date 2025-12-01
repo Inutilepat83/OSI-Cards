@@ -5,7 +5,7 @@ const LibraryUsagePage: NgDocPage = {
   title: 'Library Usage',
   mdFile: './index.md',
   order: 3,
-  category: DocsCategory
+  category: DocsCategory,
 };
 
 export default LibraryUsagePage;

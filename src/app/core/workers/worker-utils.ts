@@ -51,7 +51,7 @@ export function sendWorkerMessage<TRequest, TResponse>(
       if (event.data.requestId === requestId) {
         clearTimeout(timeout);
         worker.removeEventListener('message', handler);
-        
+
         if (event.data.type === 'ERROR') {
           reject(new Error(event.data.error || 'Worker error'));
         } else {
@@ -64,16 +64,3 @@ export function sendWorkerMessage<TRequest, TResponse>(
     worker.postMessage(message);
   });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

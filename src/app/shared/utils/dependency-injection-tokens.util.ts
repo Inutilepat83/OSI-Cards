@@ -39,5 +39,3 @@ export const EXPORT_SERVICE_TOKEN = new InjectionToken<any>('EXPORT_SERVICE');
  * Theme service token
  */
 export const THEME_SERVICE_TOKEN = new InjectionToken<any>('THEME_SERVICE');
-
-

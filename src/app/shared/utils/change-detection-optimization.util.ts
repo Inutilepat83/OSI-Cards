@@ -13,7 +13,10 @@ export function hasReferenceChanged<T>(oldValue: T, newValue: T): boolean {
 /**
  * Check if object content changed (shallow comparison)
  */
-export function hasContentChanged<T extends Record<string, any>>(oldValue: T, newValue: T): boolean {
+export function hasContentChanged<T extends Record<string, any>>(
+  oldValue: T,
+  newValue: T
+): boolean {
   if (oldValue === newValue) {
     return false;
   }
@@ -84,5 +87,3 @@ export function createImmutableArrayAdd<T>(array: T[], item: T): T[] {
 export function createImmutableArrayRemove<T>(array: T[], index: number): T[] {
   return array.filter((_, i) => i !== index);
 }
-
-

@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
-import { Router, ActivatedRouteSnapshot, CanActivateFn } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { CardDataService } from '../services/card-data/card-data.service';
 
 /**
@@ -21,7 +21,7 @@ export const cardExistsGuard: CanActivateFn = (
   }
 
   return cardDataService.getCardById(cardId).pipe(
-    map(card => {
+    map((card) => {
       if (!card) {
         router.navigate(['/']);
         return false;
@@ -34,4 +34,3 @@ export const cardExistsGuard: CanActivateFn = (
     })
   );
 };
-

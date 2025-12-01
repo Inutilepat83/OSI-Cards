@@ -1,5 +1,5 @@
-/* Legacy stylesheet placeholder. New global styles live in src/styles.scss. */.mb-1 {
-
+/* Legacy stylesheet placeholder. New global styles live in src/styles.scss. */
+.mb-1 {
   margin-bottom: calc(var(--spacing) * 1);
 }
 
@@ -134,7 +134,9 @@
 
 /* Box shadow */
 .shadow-lg {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .shadow-2xl {
@@ -251,7 +253,9 @@
 
 /* Font styles */
 .font-mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
 }
 
 .leading-relaxed {
@@ -266,7 +270,6 @@
 /* Note: .tilt-container and .glow-container styles are defined in src/styles/layout/_tilt.scss */
 /* Removed conflicting CSS rules here to prevent transform transition conflicts */
 /* Transform transitions are handled via JavaScript for precise control */
-
 
 /* Remove .card-reflection - it was causing the drop-shadow to follow a rectangular shape */
 /* The reflection effect is now handled directly by the dynamic glow colors */
@@ -284,7 +287,8 @@
 }
 
 @keyframes glowPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.6;
     filter: blur(25px);
   }
@@ -295,7 +299,8 @@
 }
 
 @keyframes glowDrift {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.7;
     transform: translate(0, 0);
   }
@@ -314,7 +319,8 @@
 }
 
 @keyframes shimmer {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.5;
   }
   50% {
@@ -345,14 +351,14 @@
 
 /* TOON Editor specific styles */
 .toon-editor {
-  font-family: var(--font-mono, 'SFMono-Regular', ui-monospace, monospace);
+  font-family: var(--font-mono, "SFMono-Regular", ui-monospace, monospace);
   background: var(--input-background);
   border-radius: var(--radius);
   color: var(--foreground);
 }
 
 .toon-editor-textarea {
-  font-family: var(--font-mono, 'SFMono-Regular', ui-monospace, monospace);
+  font-family: var(--font-mono, "SFMono-Regular", ui-monospace, monospace);
   background: var(--card-background);
   border: none;
   border-radius: var(--card-border-radius);
@@ -361,7 +367,9 @@
   max-height: 600px;
   overflow-y: auto;
   resize: none;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
 .toon-editor-textarea:focus {
@@ -481,66 +489,66 @@
     padding-left: 1rem;
     padding-right: 1rem;
   }
-  
+
   .sm\:px-6 {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
   }
-  
+
   .sm\:py-6 {
     padding-top: 1.5rem;
     padding-bottom: 1.5rem;
   }
-  
+
   .sm\:py-10 {
     padding-top: 2.5rem;
     padding-bottom: 2.5rem;
   }
-  
+
   .sm\:text-lg {
     font-size: var(--text-lg);
   }
-  
+
   .sm\:text-xl {
     font-size: var(--text-xl);
   }
-  
+
   .sm\:text-4xl {
     font-size: var(--text-4xl);
   }
-  
+
   .sm\:text-5xl {
     font-size: var(--text-5xl);
   }
-  
+
   .sm\:gap-3 {
     gap: 0.75rem;
   }
-  
+
   .sm\:gap-4 {
     gap: 1rem;
   }
-  
+
   .sm\:mb-4 {
     margin-bottom: 1rem;
   }
-  
+
   .sm\:mb-6 {
     margin-bottom: 1.5rem;
   }
-  
+
   .sm\:mb-8 {
     margin-bottom: 2rem;
   }
-  
+
   .sm\:w-16 {
     width: 4rem;
   }
-  
+
   .sm\:h-16 {
     height: 4rem;
   }
-  
+
   .sm\:flex-row {
     flex-direction: row;
   }
@@ -550,7 +558,7 @@
   .md\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  
+
   .md\:col-span-2 {
     grid-column: span 2 / span 2;
   }
@@ -560,52 +568,51 @@
   .lg\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  
+
   .lg\:grid-cols-5 {
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
-  
+
   .lg\:col-span-1 {
     grid-column: span 1 / span 1;
   }
-  
+
   .lg\:col-span-2 {
     grid-column: span 2 / span 2;
   }
-  
+
   .lg\:col-span-3 {
     grid-column: span 3 / span 3;
   }
-  
+
   .lg\:text-7xl {
     font-size: var(--text-7xl);
   }
-  
+
   .lg\:order-1 {
     order: 1;
   }
-  
+
   .lg\:order-2 {
     order: 2;
   }
-  
+
   .lg\:gap-8 {
     gap: 2rem;
   }
-  
+
   .lg\:mb-16 {
     margin-bottom: 4rem;
   }
-  
+
   .lg\:mb-20 {
     margin-bottom: 5rem;
   }
-  
+
   .lg\:max-h-\[600px\] {
     max-height: 600px;
   }
 }
-
 
 /* OSI Cards specific component styles */
 .card-container {
@@ -620,14 +627,15 @@
 .card-main {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, 
+  background: linear-gradient(
+    135deg,
     rgba(255, 121, 0, 0.05) 0%,
     rgba(0, 0, 0, 0.95) 50%,
     rgba(255, 121, 0, 0.03) 100%
   );
   border: 2px solid rgba(255, 121, 0, 0.2);
   border-radius: 16px;
-  box-shadow: 
+  box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.5),
     0 0 20px rgba(255, 121, 0, 0.1);
   height: 100%;
@@ -638,14 +646,14 @@
 
 .card-main:hover {
   border-color: rgba(255, 121, 0, 0.4);
-  box-shadow: 
+  box-shadow:
     0 25px 70px rgba(0, 0, 0, 0.6),
     0 0 40px rgba(255, 121, 0, 0.15);
 }
 
 .card-main.fullscreen {
   border-color: rgba(255, 121, 0, 0.5);
-  box-shadow: 
+  box-shadow:
     0 30px 80px rgba(0, 0, 0, 0.7),
     0 0 60px rgba(255, 121, 0, 0.2);
 }
@@ -904,7 +912,9 @@
 .progress-bar {
   height: 100%;
   border-radius: 9999px;
-  transition: width 0.3s ease, background-color 0.2s ease;
+  transition:
+    width 0.3s ease,
+    background-color 0.2s ease;
 }
 
 .progress-bar.excellent {
@@ -1194,8 +1204,8 @@
   pointer-events: none;
   border-radius: inherit;
   background: radial-gradient(
-    circle at var(--glare-x, 50%) var(--glare-y, 50%), 
-    rgba(255, 255, 255, 0.4) 0%, 
+    circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 255, 255, 0.4) 0%,
     rgba(255, 255, 255, 0) 60%
   );
   opacity: var(--glare-opacity, 0);
@@ -1257,19 +1267,35 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes scale {
-  0% { transform: scale(0.95); }
-  70% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(0.95);
+  }
+  70% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* Section styles */
@@ -1373,7 +1399,10 @@
   padding: 20px 22px;
   background: linear-gradient(182deg, rgba(28, 28, 28, 0.94) 0%, rgba(12, 12, 12, 0.9) 100%);
   cursor: pointer;
-  transition: border-color 0.24s ease, box-shadow 0.24s ease, transform 0.24s ease;
+  transition:
+    border-color 0.24s ease,
+    box-shadow 0.24s ease,
+    transform 0.24s ease;
 }
 
 .analytics-metric:hover {
@@ -1469,7 +1498,10 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  transition: border-color 0.24s ease, box-shadow 0.24s ease, transform 0.24s ease;
+  transition:
+    border-color 0.24s ease,
+    box-shadow 0.24s ease,
+    transform 0.24s ease;
 }
 
 .map-card:hover {
@@ -1541,19 +1573,25 @@
   padding: 24px 26px;
   border: 1px solid rgba(255, 121, 0, 0.26);
   background: linear-gradient(184deg, rgba(24, 24, 24, 0.96) 0%, rgba(14, 14, 14, 0.94) 100%);
-  box-shadow: 0 26px 48px rgba(0, 0, 0, 0.42), inset 0 0 0 1px rgba(255, 121, 0, 0.08);
+  box-shadow:
+    0 26px 48px rgba(0, 0, 0, 0.42),
+    inset 0 0 0 1px rgba(255, 121, 0, 0.08);
   overflow: hidden;
 }
 
 .product-card:hover {
   border-color: rgba(255, 153, 51, 0.46);
-  box-shadow: 0 32px 62px rgba(0, 0, 0, 0.52), inset 0 0 0 1px rgba(255, 153, 51, 0.12);
+  box-shadow:
+    0 32px 62px rgba(0, 0, 0, 0.52),
+    inset 0 0 0 1px rgba(255, 153, 51, 0.12);
 }
 
 .product-card--references {
   background: linear-gradient(176deg, rgba(32, 32, 32, 0.96) 0%, rgba(40, 18, 0, 0.82) 100%);
   border-color: rgba(255, 153, 51, 0.44);
-  box-shadow: 0 32px 66px rgba(255, 121, 0, 0.22), inset 0 0 0 1px rgba(255, 200, 120, 0.26);
+  box-shadow:
+    0 32px 66px rgba(255, 121, 0, 0.22),
+    inset 0 0 0 1px rgba(255, 200, 120, 0.26);
 }
 
 .product-card__header {
@@ -1682,7 +1720,10 @@
   border: 1px solid rgba(255, 200, 120, 0.24);
   color: var(--foreground);
   cursor: pointer;
-  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+  transition:
+    transform 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
 }
 
 .product-reference:hover {
@@ -1698,7 +1739,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at 40% 30%, rgba(255, 200, 120, 0.25), rgba(255, 121, 0, 0.12));
+  background: radial-gradient(
+    circle at 40% 30%,
+    rgba(255, 200, 120, 0.25),
+    rgba(255, 121, 0, 0.12)
+  );
   color: rgba(255, 203, 135, 0.95);
   border: 1px solid rgba(255, 177, 68, 0.4);
 }
@@ -1762,7 +1807,10 @@
   background: rgba(0, 0, 0, 0.18);
   text-align: left;
   cursor: pointer;
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .product-entry:hover {
@@ -1847,7 +1895,9 @@
 
 .product-entry__chevron {
   color: rgba(255, 255, 255, 0.55);
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
 }
 
 .product-entry:hover .product-entry__chevron {

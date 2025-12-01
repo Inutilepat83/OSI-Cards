@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideIconsModule } from '../../icons/lucide-icons.module';
 
@@ -37,53 +37,37 @@ export interface SystemStats {
       </div>
     </div>
   `,
-  styles: [`
-    .system-stats {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      padding: 0.5rem;
-      background: rgba(20, 30, 50, 0.4);
-      border-radius: 0.375rem;
-    }
+  styles: [
+    `
+      .system-stats {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        padding: 0.5rem;
+        background: rgba(20, 30, 50, 0.4);
+        border-radius: 0.375rem;
+      }
 
-    .stats-item {
-      display: flex;
-      align-items: center;
-      gap: 0.375rem;
-      font-size: 0.875rem;
-      color: var(--card-text-secondary, #B8C5D6);
-    }
+      .stats-item {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        font-size: 0.875rem;
+        color: var(--card-text-secondary, #b8c5d6);
+      }
 
-    .stats-label {
-      font-weight: 500;
-    }
+      .stats-label {
+        font-weight: 500;
+      }
 
-    .stats-value {
-      font-weight: 600;
-      color: var(--card-text-primary, #FFFFFF);
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+      .stats-value {
+        font-weight: 600;
+        color: var(--card-text-primary, #ffffff);
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SystemStatsComponent {
   @Input() stats: SystemStats | null = null;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

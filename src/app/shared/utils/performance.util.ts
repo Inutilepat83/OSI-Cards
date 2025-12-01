@@ -62,7 +62,7 @@ export class PerformanceUtil {
       name,
       duration,
       timestamp: Date.now(),
-      metadata
+      ...(metadata !== undefined && { metadata }),
     };
 
     this.metrics.push(metric);
@@ -74,7 +74,10 @@ export class PerformanceUtil {
 
     // Log slow operations
     if (duration > 100) {
-      console.warn(`[Performance] Slow operation detected: ${name} took ${duration.toFixed(2)}ms`, metadata);
+      console.warn(
+        `[Performance] Slow operation detected: ${name} took ${duration.toFixed(2)}ms`,
+        metadata
+      );
     }
   }
 
@@ -89,7 +92,7 @@ export class PerformanceUtil {
    * Get metrics by name
    */
   static getMetricsByName(name: string): PerformanceMetric[] {
-    return this.metrics.filter(m => m.name === name);
+    return this.metrics.filter((m) => m.name === name);
   }
 
   /**
@@ -175,5 +178,3 @@ export class PerformanceUtil {
     cancelAnimationFrame(id);
   }
 }
-
-

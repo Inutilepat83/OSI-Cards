@@ -21,11 +21,41 @@
       "title": "Performance Metrics",
       "type": "analytics",
       "fields": [
-        { "label": "Accuracy Rate", "value": "98.5%", "percentage": 98.5, "performance": "excellent", "trend": "up" },
-        { "label": "Processing Speed", "value": "10M records/min", "percentage": 95, "performance": "excellent", "trend": "up" },
-        { "label": "Customer Satisfaction", "value": "4.8/5", "percentage": 96, "performance": "excellent", "trend": "stable" },
-        { "label": "Uptime SLA", "value": "99.99%", "percentage": 99.99, "performance": "excellent", "trend": "stable" },
-        { "label": "Model Performance", "value": "Top 1%", "percentage": 99, "performance": "excellent", "trend": "up" }
+        {
+          "label": "Accuracy Rate",
+          "value": "98.5%",
+          "percentage": 98.5,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Processing Speed",
+          "value": "10M records/min",
+          "percentage": 95,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Customer Satisfaction",
+          "value": "4.8/5",
+          "percentage": 96,
+          "performance": "excellent",
+          "trend": "stable"
+        },
+        {
+          "label": "Uptime SLA",
+          "value": "99.99%",
+          "percentage": 99.99,
+          "performance": "excellent",
+          "trend": "stable"
+        },
+        {
+          "label": "Model Performance",
+          "value": "Top 1%",
+          "percentage": 99,
+          "performance": "excellent",
+          "trend": "up"
+        }
       ]
     },
     {
@@ -54,11 +84,31 @@
       "title": "AI Capabilities",
       "type": "product",
       "fields": [
-        { "label": "Machine Learning", "value": "Advanced ML models for prediction", "icon": "🧠" },
-        { "label": "Deep Learning", "value": "Neural networks for complex patterns", "icon": "🔬" },
-        { "label": "Natural Language Processing", "value": "Text analysis and understanding", "icon": "💬" },
-        { "label": "Computer Vision", "value": "Image and video recognition", "icon": "👁️" },
-        { "label": "Predictive Analytics", "value": "Forecasting and trend analysis", "icon": "📈" }
+        {
+          "label": "Machine Learning",
+          "value": "Advanced ML models for prediction",
+          "icon": "🧠"
+        },
+        {
+          "label": "Deep Learning",
+          "value": "Neural networks for complex patterns",
+          "icon": "🔬"
+        },
+        {
+          "label": "Natural Language Processing",
+          "value": "Text analysis and understanding",
+          "icon": "💬"
+        },
+        {
+          "label": "Computer Vision",
+          "value": "Image and video recognition",
+          "icon": "👁️"
+        },
+        {
+          "label": "Predictive Analytics",
+          "value": "Forecasting and trend analysis",
+          "icon": "📈"
+        }
       ]
     },
     {
@@ -68,13 +118,25 @@
         {
           "label": "Business Intelligence",
           "value": "Transform data into actionable insights",
-          "benefits": ["Real-time dashboards", "Custom reports", "Data visualization"],
-          "outcomes": ["20% faster decision-making", "30% cost reduction", "Improved ROI"]
+          "benefits": [
+            "Real-time dashboards",
+            "Custom reports",
+            "Data visualization"
+          ],
+          "outcomes": [
+            "20% faster decision-making",
+            "30% cost reduction",
+            "Improved ROI"
+          ]
         },
         {
           "label": "Predictive Maintenance",
           "value": "Reduce downtime with AI predictions",
-          "benefits": ["Anomaly detection", "Failure prediction", "Optimized schedules"],
+          "benefits": [
+            "Anomaly detection",
+            "Failure prediction",
+            "Optimized schedules"
+          ],
           "outcomes": ["40% less downtime", "25% maintenance cost savings"]
         },
         {
@@ -89,9 +151,24 @@
       "title": "Product Roadmap",
       "type": "list",
       "items": [
-        { "title": "Q2 2024: Advanced NLP", "description": "Enhanced natural language understanding with GPT integration", "icon": "💬", "status": "pending" },
-        { "title": "Q3 2024: Real-time Streaming", "description": "Live data processing and analytics capabilities", "icon": "⚡", "status": "pending" },
-        { "title": "Q4 2024: AutoML Features", "description": "Automated model selection and optimization", "icon": "🤖", "status": "pending" }
+        {
+          "title": "Q2 2024: Advanced NLP",
+          "description": "Enhanced natural language understanding with GPT integration",
+          "icon": "💬",
+          "status": "pending"
+        },
+        {
+          "title": "Q3 2024: Real-time Streaming",
+          "description": "Live data processing and analytics capabilities",
+          "icon": "⚡",
+          "status": "pending"
+        },
+        {
+          "title": "Q4 2024: AutoML Features",
+          "description": "Automated model selection and optimization",
+          "icon": "🤖",
+          "status": "pending"
+        }
       ]
     },
     {
@@ -129,8 +206,20 @@
     }
   ],
   "actions": [
-    { "label": "Start Free Trial", "type": "question", "variant": "primary", "icon": "🚀", "question": "How can I start a free trial?" },
-    { "label": "View Documentation", "type": "website", "variant": "primary", "icon": "📚", "url": "https://docs.ai-insights.com" },
+    {
+      "label": "Start Free Trial",
+      "type": "question",
+      "variant": "primary",
+      "icon": "🚀",
+      "question": "How can I start a free trial?"
+    },
+    {
+      "label": "View Documentation",
+      "type": "website",
+      "variant": "primary",
+      "icon": "📚",
+      "url": "https://docs.ai-insights.com"
+    },
     {
       "label": "Contact Sales Team",
       "type": "mail",

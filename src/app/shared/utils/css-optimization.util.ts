@@ -41,7 +41,10 @@ export function getUnusedCSSRules(styleSheet: CSSStyleSheet): string[] {
 /**
  * Apply CSS containment to element
  */
-export function applyCSSContainment(element: HTMLElement, containment: 'none' | 'strict' | 'content' | 'size' | 'layout' | 'style' | 'paint'): void {
+export function applyCSSContainment(
+  element: HTMLElement,
+  containment: 'none' | 'strict' | 'content' | 'size' | 'layout' | 'style' | 'paint'
+): void {
   element.style.contain = containment;
 }
 
@@ -58,4 +61,3 @@ export function removeCSSContainment(element: HTMLElement): void {
 export function supportsCSSContainment(): boolean {
   return CSS.supports('contain', 'strict');
 }
-

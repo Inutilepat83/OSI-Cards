@@ -437,3 +437,35 @@ The library exposes CSS custom properties for theming.
 - Ensure proper encapsulation settings
 
 For more help, see the [GitHub repository](https://github.com/Inutilepat83/OSI-Cards).
+
+---
+
+## Extended Documentation
+
+For detailed documentation on specific topics, see these specialized guides:
+
+### Architecture & Extensibility
+- **[PLUGIN_SYSTEM.md](./PLUGIN_SYSTEM.md)** - Custom section plugins, SectionPluginRegistry, and the @SectionComponent decorator
+- **[EVENT_SYSTEM.md](./EVENT_SYSTEM.md)** - EventBusService, EventMiddlewareService, and Shadow DOM events
+- **[SECTION_REGISTRY.md](./SECTION_REGISTRY.md)** - Section type definitions, aliases, and the registry schema
+
+### Services & Components
+- **[SERVICES.md](./SERVICES.md)** - Detailed service documentation (AnimationOrchestrator, MagneticTilt, FeatureFlags, etc.)
+- **[COMPONENTS.md](./COMPONENTS.md)** - Component API reference (OsiCards, MasonryGrid, SectionRenderer, etc.)
+
+### Theming & Styling
+- **[PRESETS.md](./PRESETS.md)** - Card presets (Company, Analytics, Contact) and theme composition utilities
+- **[THEMING_GUIDE.md](./THEMING_GUIDE.md)** - Theme customization, CSS custom properties, and theme presets
+- **[CSS_ENCAPSULATION.md](./CSS_ENCAPSULATION.md)** - Shadow DOM, CSS Layers, and style isolation
+
+### Utilities & Best Practices
+- **[DIRECTIVES_UTILITIES.md](./DIRECTIVES_UTILITIES.md)** - Directives (CopyToClipboard, Tooltip, Theme) and utility functions
+- **[BEST_PRACTICES.md](./BEST_PRACTICES.md)** - Performance, accessibility, security, and testing best practices
+- **[INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md)** - Framework integration (SSR, NgRx, Micro-frontends)
+
+### Reference
+- **[SECTION_TYPES.md](./SECTION_TYPES.md)** - Comprehensive section type reference with examples
+- **[MIGRATION_GUIDE.md](./MIGRATION_GUIDE.md)** - Migration to version 2.0 with Shadow DOM
+- **[OPENAPI.md](./OPENAPI.md)** - OpenAPI specification for card configuration schemas
+- **[LLM_PROMPT.md](./LLM_PROMPT.md)** - System prompt for LLM-based card generation
+

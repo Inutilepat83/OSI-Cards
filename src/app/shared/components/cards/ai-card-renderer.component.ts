@@ -1,22 +1,43 @@
-import { Component, ElementRef, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, inject } from '@angular/core';
-import { CommonModule, ViewportScroller } from '@angular/common';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { AICardConfig, CardSection, CardField, CardItem, CardAction, MailCardAction } from '../../../models';
-import { Subject, takeUntil, fromEvent, filter, delay, interval } from 'rxjs';
+import {
+  AICardConfig,
+  CardAction,
+  CardField,
+  CardItem,
+  CardSection,
+  MailCardAction,
+} from '../../../models';
+import { delay, filter, fromEvent, interval, Subject, takeUntil } from 'rxjs';
 import { MagneticTiltService, MousePosition, TiltCalculations } from '../../../core';
-import { IconService } from '../../services/icon.service';
 import { SectionNormalizationService } from '../../services/section-normalization.service';
 import { LucideIconsModule } from '../../icons/lucide-icons.module';
 import { MasonryGridComponent, MasonryLayoutInfo } from './masonry-grid/masonry-grid.component';
 import { SectionRenderEvent } from './section-renderer/section-renderer.component';
 import { CardChangeType } from '../../utils/card-diff.util';
-import { trigger, transition, style, animate } from '@angular/animations';
+import { animate, style, transition, trigger } from '@angular/animations';
 import { LoggingService } from '../../../core/services/logging.service';
 import { DevelopmentWarningsService } from '../../../core/services/development-warnings.service';
-import { ErrorBoundaryComponent } from '../../../core/error-boundary/error-boundary.component';
 import { CardHeaderComponent } from './card-header/card-header.component';
 import { CardActionsComponent } from './card-actions/card-actions.component';
-import { CardStreamingIndicatorComponent, StreamingStage } from './card-streaming-indicator/card-streaming-indicator.component';
+import {
+  CardStreamingIndicatorComponent,
+  StreamingStage,
+} from './card-streaming-indicator/card-streaming-indicator.component';
 import { CardSectionListComponent } from './card-section-list/card-section-list.component';
 
 export interface CardFieldInteractionEvent {
@@ -29,10 +50,10 @@ export interface CardFieldInteractionEvent {
 
 /**
  * AI Card Renderer Component
- * 
+ *
  * Main component for rendering OSI Cards with interactive features and animations.
  * Orchestrates the rendering of card sections through the masonry grid layout engine.
- * 
+ *
  * Features:
  * - Card configuration rendering with section normalization
  * - Magnetic tilt effect for interactive cards
@@ -41,10 +62,10 @@ export interface CardFieldInteractionEvent {
  * - Layout change detection and optimization
  * - Export functionality integration
  * - Fullscreen mode support
- * 
+ *
  * The component processes card configurations, normalizes sections, and delegates
  * rendering to the MasonryGridComponent which handles responsive layout.
- * 
+ *
  * @example
  * ```html
  * <app-ai-card-renderer
@@ -66,7 +87,7 @@ export interface CardFieldInteractionEvent {
     CardHeaderComponent,
     CardActionsComponent,
     CardStreamingIndicatorComponent,
-    CardSectionListComponent
+    CardSectionListComponent,
   ],
   templateUrl: './ai-card-renderer.component.html',
   styleUrls: ['./ai-card-renderer.component.css'],
@@ -74,19 +95,22 @@ export interface CardFieldInteractionEvent {
   animations: [
     trigger('messageAnimation', [
       transition('* => *', [
-        style({ 
-          opacity: 0, 
+        style({
+          opacity: 0,
           transform: 'translateY(10px)',
-          willChange: 'opacity, transform' // Optimize for GPU acceleration
+          willChange: 'opacity, transform', // Optimize for GPU acceleration
         }),
-        animate('0.4s ease-out', style({ 
-          opacity: 1, 
-          transform: 'translateY(0)',
-          willChange: 'auto' // Remove will-change after animation
-        }))
-      ])
-    ])
-  ]
+        animate(
+          '0.4s ease-out',
+          style({
+            opacity: 1,
+            transform: 'translateY(0)',
+            willChange: 'auto', // Remove will-change after animation
+          })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy {
   private _cardConfig?: AICardConfig;
@@ -94,16 +118,16 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly logger = inject(LoggingService);
   private readonly devWarnings = inject(DevelopmentWarningsService);
-  
+
   // Expose Math for template
   Math = Math;
-  
+
   private previousSectionsHash = '';
   private normalizedSectionCache = new WeakMap<CardSection, CardSection>();
   private sectionHashCache = new WeakMap<CardSection[], string>();
   private sectionOrderKeys: string[] = [];
   private _changeType: CardChangeType = 'structural';
-  
+
   // Empty state animations
   particles: { transform: string; opacity: number }[] = [];
   gradientTransform = 'translate(-50%, -50%)';
@@ -114,7 +138,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   private mouseY = 0;
   private isMouseOverEmptyState = false;
   private scrollY = 0;
-  
+
   private readonly funnyMessages = [
     'Deepening into archives...',
     'Asking all 40,000 employees...',
@@ -135,16 +159,20 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     'Asking Siri nicely...',
     'Reading tea leaves...',
     'Channeling inner wisdom...',
-    'Waiting for the right moment...'
+    'Waiting for the right moment...',
   ];
-  
+
   @Input()
   set cardConfig(value: AICardConfig | undefined) {
-    this._cardConfig = value ?? undefined;
-    
+    if (value === undefined) {
+      this._cardConfig = undefined as unknown as AICardConfig;
+    } else {
+      this._cardConfig = value;
+    }
+
     // Validate card configuration in development mode
     this.devWarnings.validateCardConfig(this._cardConfig, 'AICardRendererComponent');
-    
+
     if (!this._cardConfig?.sections?.length) {
       this.resetProcessedSections();
       this.cdr.markForCheck();
@@ -192,24 +220,24 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     if (this.sectionHashCache.has(sections)) {
       return this.sectionHashCache.get(sections)!;
     }
-    
+
     // Create a lightweight hash based on section metadata
     const hash = sections
-      .map(section => {
+      .map((section) => {
         const fieldCount = section.fields?.length ?? 0;
         const itemCount = section.items?.length ?? 0;
         return `${section.id || ''}|${section.title || ''}|${section.type || ''}|f${fieldCount}|i${itemCount}`;
       })
       .join('||');
-    
+
     // Simple hash of the string
     let result = 0;
     for (let i = 0; i < hash.length; i++) {
       const char = hash.charCodeAt(i);
-      result = ((result << 5) - result) + char;
+      result = (result << 5) - result + char;
       result = result & result; // Convert to 32-bit integer
     }
-    
+
     const hashString = String(result);
     // Cache the result
     this.sectionHashCache.set(sections, hashString);
@@ -220,7 +248,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   @Input() streamingStage: StreamingStage = undefined;
   @Input() streamingProgress?: number; // Progress 0-1
   @Input() streamingProgressLabel?: string; // e.g., "STREAMING JSON (75%)"
-  
+
   /**
    * Flag indicating active streaming mode
    * When true, disables CSS animations to prevent blinking during rapid updates
@@ -241,44 +269,51 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     return this._changeType;
   }
   @Output() fieldInteraction = new EventEmitter<CardFieldInteractionEvent>();
-  @Output() cardInteraction = new EventEmitter<{ action: string, card: AICardConfig }>();
+  @Output() cardInteraction = new EventEmitter<{ action: string; card: AICardConfig }>();
   @Output() fullscreenToggle = new EventEmitter<boolean>();
   @Output() export = new EventEmitter<void>();
-  @Output() agentAction = new EventEmitter<{ action: CardAction; card: AICardConfig; agentId?: string; context?: Record<string, unknown> }>();
-  @Output() questionAction = new EventEmitter<{ action: CardAction; card: AICardConfig; question?: string }>();
-  
+  @Output() agentAction = new EventEmitter<{
+    action: CardAction;
+    card: AICardConfig;
+    agentId?: string;
+    context?: Record<string, unknown>;
+  }>();
+  @Output() questionAction = new EventEmitter<{
+    action: CardAction;
+    card: AICardConfig;
+    question?: string;
+  }>();
+
   @ViewChild('cardContainer') cardContainer!: ElementRef<HTMLElement>;
   @ViewChild('tiltContainer') tiltContainerRef!: ElementRef<HTMLDivElement>;
   @ViewChild(MasonryGridComponent) masonryGrid!: MasonryGridComponent;
   @ViewChild('emptyStateContainer') emptyStateContainer!: ElementRef<HTMLDivElement>;
-  
+
   processedSections: CardSection[] = [];
   isHovered = false;
   mousePosition: MousePosition = { x: 0, y: 0 };
-  
+
   // CSS variables for the tilt effect - initialize with no transform to prevent lift
   tiltStyle: Record<string, string | number> = {
     '--tilt-x': '0deg',
     '--tilt-y': '0deg',
     '--glow-blur': '8px',
     '--glow-color': 'rgba(255,121,0,0.225)',
-    '--reflection-opacity': 0
+    '--reflection-opacity': 0,
   };
-  
+
   // Performance: RAF batching for mouse moves
   private mouseMoveRafId: number | null = null;
   private pendingMouseMove: MouseEvent | null = null;
-  
+
   // Point 7-8: Container width measurement for reliable multi-column layout
   measuredContainerWidth = 0;
   private containerResizeObserver?: ResizeObserver;
   private lastValidContainerWidth = 0;
-  
+
   private readonly destroyed$ = new Subject<void>();
   private readonly magneticTiltService = inject(MagneticTiltService);
-  private readonly iconService = inject(IconService);
   private readonly sectionNormalizationService = inject(SectionNormalizationService);
-  private readonly viewportScroller = inject(ViewportScroller);
   private readonly route = inject(ActivatedRoute);
 
   // Fallback card configuration for testing
@@ -295,24 +330,24 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
             id: 'industry',
             label: 'Industry',
             value: 'Technology',
-            type: 'text'
+            type: 'text',
           },
           {
             id: 'employees',
             label: 'Employees',
             value: '250',
-            type: 'text'
-          }
-        ]
-      }
+            type: 'text',
+          },
+        ],
+      },
     ],
     actions: [
       {
         id: 'view-details',
         label: 'View Details',
-        variant: 'primary'
-      }
-    ]
+        variant: 'primary',
+      },
+    ],
   };
 
   ngOnInit(): void {
@@ -322,13 +357,13 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       this.measuredContainerWidth = Math.max(window.innerWidth - 80, 500);
       this.lastValidContainerWidth = this.measuredContainerWidth;
     }
-    
+
     // Initialize particles
     this.initializeParticles();
-    
+
     // Start message rotation
     this.startMessageRotation();
-    
+
     // Track scroll for parallax effect
     this.setupScrollTracking();
     // Use fallback if no card config provided
@@ -352,12 +387,12 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     // Subscribe to tilt calculations with RAF batching for performance
     let tiltRafId: number | null = null;
     let pendingCalculations: TiltCalculations | null = null;
-    
+
     this.magneticTiltService.tiltCalculations$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((calculations: TiltCalculations) => {
         pendingCalculations = calculations;
-        
+
         // Batch updates via RAF to avoid excessive change detection
         // Always update to ensure smooth transitions
         if (tiltRafId === null) {
@@ -370,7 +405,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
                 '--tilt-y': `${pendingCalculations.rotateY}deg`,
                 '--glow-blur': `${pendingCalculations.glowBlur}px`,
                 '--glow-color': `rgba(255,121,0,${pendingCalculations.glowOpacity})`,
-                '--reflection-opacity': pendingCalculations.reflectionOpacity
+                '--reflection-opacity': pendingCalculations.reflectionOpacity,
               };
               this.cdr.markForCheck();
             }
@@ -380,19 +415,19 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         }
       });
   }
-  
+
   ngAfterViewInit(): void {
     // Point 7: Setup container width measurement with ResizeObserver
     this.setupContainerWidthMeasurement();
-    
+
     // Handle URL fragment scrolling to sections
     this.route.fragment
       .pipe(
-        filter(fragment => !!fragment),
+        filter((fragment) => !!fragment),
         delay(100),
         takeUntil(this.destroyed$)
       )
-      .subscribe(fragment => {
+      .subscribe((fragment) => {
         this.scrollToSection(fragment as string);
       });
 
@@ -404,7 +439,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       }, 300);
     }
   }
-  
+
   /**
    * Point 7: Setup ResizeObserver to measure actual container width
    * This ensures reliable multi-column layout even before first render
@@ -415,7 +450,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       this.measureContainerWidth();
       return;
     }
-    
+
     this.containerResizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const width = entry.contentRect.width;
@@ -426,16 +461,16 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         }
       }
     });
-    
+
     // Observe the card container
     if (this.cardContainer?.nativeElement) {
       this.containerResizeObserver.observe(this.cardContainer.nativeElement);
     }
-    
+
     // Also do immediate measurement
     this.measureContainerWidth();
   }
-  
+
   /**
    * Point 8: Measure container width with fallback chain
    * Point 11: Fallback: inputWidth -> cachedWidth -> DOMWidth -> parentWidth -> windowWidth - 80px
@@ -451,7 +486,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         return;
       }
     }
-    
+
     // Try parent element
     const hostEl = this.el.nativeElement;
     if (hostEl?.parentElement) {
@@ -462,14 +497,14 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         return;
       }
     }
-    
+
     // Fallback to window width - 80px for margins
     if (typeof window !== 'undefined') {
       this.measuredContainerWidth = Math.max(window.innerWidth - 80, 280);
       this.lastValidContainerWidth = this.measuredContainerWidth;
     }
   }
-  
+
   /**
    * Point 8: Get effective container width with cache fallback
    */
@@ -492,14 +527,18 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
    * Scrolls to a section by ID or sanitized title
    */
   private scrollToSection(sectionId: string): void {
-    if (typeof document === 'undefined') return;
+    if (typeof document === 'undefined') {
+      return;
+    }
 
     // Try direct ID match first
     let targetElement = document.getElementById(sectionId);
 
     // If not found, try to find by sanitized section title
     if (!targetElement) {
-      const section = this.processedSections.find(s => this.sanitizeSectionId(s.title) === sectionId);
+      const section = this.processedSections.find(
+        (s) => this.sanitizeSectionId(s.title) === sectionId
+      );
       if (section) {
         targetElement = document.getElementById(this.getSectionId(section));
       }
@@ -509,10 +548,10 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       // Scroll with smooth behavior and offset for header
       const yOffset = -20; // Offset from top
       const y = targetElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      
+
       window.scrollTo({
         top: y,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
 
       // Add visual highlight effect
@@ -534,7 +573,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
    * Sanitizes section title for use as HTML ID
    */
   private sanitizeSectionId(title: string): string {
-    return title.toLowerCase()
+    return title
+      .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '');
   }
@@ -543,7 +583,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     // Create 20 smaller particles for smoother mouse following trail
     this.particles = Array.from({ length: 20 }, () => ({
       transform: 'translate(0, 0) scale(1)',
-      opacity: 0.5
+      opacity: 0.5,
     }));
   }
 
@@ -551,7 +591,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     const firstMessage = this.funnyMessages[0];
     this.currentMessage = firstMessage ?? 'Loading...';
     this.currentMessageIndex = 0;
-    
+
     interval(2500) // Change message every 2.5 seconds
       .pipe(takeUntil(this.destroyed$))
       .subscribe(() => {
@@ -572,13 +612,15 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   onEmptyStateMouseMove(event: MouseEvent): void {
-    if (!this.emptyStateContainer) return;
-    
+    if (!this.emptyStateContainer) {
+      return;
+    }
+
     const rect = this.emptyStateContainer.nativeElement.getBoundingClientRect();
     this.mouseX = event.clientX - rect.left;
     this.mouseY = event.clientY - rect.top;
     this.isMouseOverEmptyState = true;
-    
+
     this.updateParticlePositions();
     this.updateGradientTransform();
     this.updateContentTransform();
@@ -591,83 +633,90 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   private updateParticlePositions(): void {
-    if (!this.emptyStateContainer) return;
-    
+    if (!this.emptyStateContainer) {
+      return;
+    }
+
     const rect = this.emptyStateContainer.nativeElement.getBoundingClientRect();
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    
+
     const deltaX = this.mouseX - centerX;
     const deltaY = this.mouseY - centerY;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     const maxDistance = Math.sqrt(rect.width * rect.width + rect.height * rect.height) / 2;
     const normalizedDistance = Math.min(distance / maxDistance, 1);
-    
-    this.particles = this.particles.map((particle, index) => {
+
+    this.particles = this.particles.map((_particle, index) => {
       // Create a trailing effect with exponential easing
-      const delay = index * 0.08;
-      const followStrength = 0.4 - (delay * 0.3); // Particles further back follow less
+      const delayFactor = typeof delay === 'number' ? delay : 0;
+      const followStrength = 0.4 - delayFactor * 0.3; // Particles further back follow less
       const spiralRadius = 15 + (index % 4) * 8;
       const angle = (index * 137.5) % 360; // Golden angle for spiral distribution
-      const angleRad = angle * Math.PI / 180;
-      
+      const angleRad = (angle * Math.PI) / 180;
+
       // Calculate spiral offset
       const spiralX = Math.cos(angleRad) * spiralRadius;
       const spiralY = Math.sin(angleRad) * spiralRadius;
-      
+
       // Smooth following with easing
       const targetX = deltaX * followStrength + spiralX;
       const targetY = deltaY * followStrength + spiralY;
-      
+
       // Opacity based on distance and position
       const baseOpacity = 0.5;
       const distanceOpacity = normalizedDistance * 0.3;
-      const positionOpacity = (1 - Math.abs(index - this.particles.length / 2) / this.particles.length) * 0.2;
+      const positionOpacity =
+        (1 - Math.abs(index - this.particles.length / 2) / this.particles.length) * 0.2;
       const finalOpacity = Math.min(1, baseOpacity + distanceOpacity + positionOpacity);
-      
+
       return {
         transform: `translate(${targetX}px, ${targetY}px) scale(${0.8 + normalizedDistance * 0.4})`,
-        opacity: finalOpacity
+        opacity: finalOpacity,
       };
     });
-    
+
     this.cdr.markForCheck();
   }
 
   private resetParticles(): void {
-    this.particles = this.particles.map(particle => ({
+    this.particles = this.particles.map((_particle) => ({
       transform: 'translate(0, 0) scale(1)',
-      opacity: 0.5
+      opacity: 0.5,
     }));
     this.cdr.markForCheck();
   }
 
   private updateGradientTransform(): void {
-    if (!this.emptyStateContainer) return;
-    
+    if (!this.emptyStateContainer) {
+      return;
+    }
+
     const rect = this.emptyStateContainer.nativeElement.getBoundingClientRect();
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    
+
     const deltaX = (this.mouseX - centerX) * 0.1;
     const deltaY = (this.mouseY - centerY) * 0.1;
-    
+
     this.gradientTransform = `translate(calc(-50% + ${deltaX}px), calc(-50% + ${deltaY}px))`;
     this.cdr.markForCheck();
   }
 
   private updateContentTransform(): void {
-    if (!this.emptyStateContainer) return;
-    
+    if (!this.emptyStateContainer) {
+      return;
+    }
+
     const rect = this.emptyStateContainer.nativeElement.getBoundingClientRect();
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    
+
     // Parallax effect based on mouse position and scroll
     const mouseParallaxX = this.isMouseOverEmptyState ? (this.mouseX - centerX) * 0.02 : 0;
     const mouseParallaxY = this.isMouseOverEmptyState ? (this.mouseY - centerY) * 0.02 : 0;
     const scrollParallaxY = this.scrollY * 0.05;
-    
+
     this.contentTransform = `translate(${mouseParallaxX}px, calc(${mouseParallaxY}px + ${scrollParallaxY}px))`;
     this.cdr.markForCheck();
   }
@@ -677,15 +726,15 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     if (this.mouseMoveRafId !== null) {
       cancelAnimationFrame(this.mouseMoveRafId);
     }
-    
+
     // Disconnect container width observer
     this.containerResizeObserver?.disconnect();
-    
+
     // Clear tilt service cache for this element
     if (this.tiltContainerRef?.nativeElement) {
       this.magneticTiltService.clearCache(this.tiltContainerRef.nativeElement);
     }
-    
+
     this.destroyed$.next();
     this.destroyed$.complete();
   }
@@ -695,21 +744,24 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     this.mousePosition = { x: event.clientX, y: event.clientY };
     if (this.tiltContainerRef?.nativeElement) {
       // Smooth enter: calculate tilt immediately for responsive feel
-      this.magneticTiltService.calculateTilt(this.mousePosition, this.tiltContainerRef.nativeElement);
+      this.magneticTiltService.calculateTilt(
+        this.mousePosition,
+        this.tiltContainerRef.nativeElement
+      );
     }
     // No need for markForCheck - tilt updates are handled via RAF in subscription
   }
 
   onMouseLeave(): void {
     this.isHovered = false;
-    
+
     // Cancel pending RAF for mouse moves
     if (this.mouseMoveRafId !== null) {
       cancelAnimationFrame(this.mouseMoveRafId);
       this.mouseMoveRafId = null;
     }
     this.pendingMouseMove = null;
-    
+
     // Smooth exit: reset with smooth transition that completes even if cursor leaves quickly
     this.magneticTiltService.resetTilt(true);
     // No need for markForCheck - tilt reset is handled via smooth animation
@@ -719,27 +771,27 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     if (!this.isHovered || !this.tiltContainerRef?.nativeElement) {
       return;
     }
-    
+
     // Always update mouse position immediately for responsive feel
-    this.mousePosition = { 
-      x: event.clientX, 
-      y: event.clientY 
+    this.mousePosition = {
+      x: event.clientX,
+      y: event.clientY,
     };
-    
+
     // Store latest mouse position for RAF batching
     this.pendingMouseMove = event;
-    
+
     // Throttle with RAF for 60fps smooth updates (prevents lag over interactive elements)
     if (this.mouseMoveRafId === null) {
       this.mouseMoveRafId = requestAnimationFrame(() => {
         if (this.pendingMouseMove && this.tiltContainerRef?.nativeElement) {
           // Use latest position for ultra-smooth updates
-          this.mousePosition = { 
-            x: this.pendingMouseMove.clientX, 
-            y: this.pendingMouseMove.clientY 
+          this.mousePosition = {
+            x: this.pendingMouseMove.clientX,
+            y: this.pendingMouseMove.clientY,
           };
           this.magneticTiltService.calculateTilt(
-            this.mousePosition, 
+            this.mousePosition,
             this.tiltContainerRef.nativeElement
           );
         }
@@ -750,11 +802,14 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   onFieldClick(field: CardField, section?: CardSection): void {
-    this.fieldInteraction.emit({
+    const event: CardFieldInteractionEvent = {
       field,
       action: 'click',
-      sectionTitle: section?.title
-    });
+    };
+    if (section?.title !== undefined) {
+      event.sectionTitle = section.title;
+    }
+    this.fieldInteraction.emit(event);
   }
 
   /**
@@ -780,7 +835,10 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
           if (this.hasEmailProperty(actionObj)) {
             this.handleEmailAction(actionObj);
           } else {
-            this.logger.error('Mail action requires email configuration', 'AICardRendererComponent');
+            this.logger.error(
+              'Mail action requires email configuration',
+              'AICardRendererComponent'
+            );
           }
           return;
 
@@ -790,24 +848,40 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
           if (url && url !== '#' && (url.startsWith('http://') || url.startsWith('https://'))) {
             window.open(url, '_blank', 'noopener,noreferrer');
           } else {
-            this.logger.warn('No valid URL provided for website button type', 'AICardRendererComponent');
+            this.logger.warn(
+              'No valid URL provided for website button type',
+              'AICardRendererComponent'
+            );
           }
           return;
 
         case 'agent':
-          this.agentAction.emit({
+          const agentEvent: {
+            action: CardAction;
+            card: AICardConfig;
+            agentId?: string;
+            context?: Record<string, unknown>;
+          } = {
             action: actionObj,
             card: this.cardConfig,
-            agentId: actionObj.agentId,
-            context: actionObj.agentContext || actionObj.meta
-          });
+          };
+          if (actionObj.agentId !== undefined) {
+            agentEvent.agentId = actionObj.agentId;
+          }
+          if (actionObj.agentContext || actionObj.meta) {
+            agentEvent.context = (actionObj.agentContext || actionObj.meta) as Record<
+              string,
+              unknown
+            >;
+          }
+          this.agentAction.emit(agentEvent);
           return;
 
         case 'question':
           this.questionAction.emit({
             action: actionObj,
             card: this.cardConfig,
-            question: actionObj.question || actionObj.label
+            question: actionObj.question || actionObj.label,
           });
           return;
 
@@ -835,7 +909,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     const action = actionObj.action || actionObj.label;
     this.cardInteraction.emit({
       action: action,
-      card: this.cardConfig
+      card: this.cardConfig,
     });
   }
 
@@ -850,15 +924,21 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     const email = action.email;
-    
+
     // Validate required fields for mail type
     if (action.type === 'mail') {
       if (!email.contact) {
-        this.logger.error('Mail action requires email.contact with name, email, and role', 'AICardRendererComponent');
+        this.logger.error(
+          'Mail action requires email.contact with name, email, and role',
+          'AICardRendererComponent'
+        );
         return;
       }
       if (!email.contact.name || !email.contact.email || !email.contact.role) {
-        this.logger.error('Mail action requires email.contact.name, email.contact.email, and email.contact.role', 'AICardRendererComponent');
+        this.logger.error(
+          'Mail action requires email.contact.name, email.contact.email, and email.contact.role',
+          'AICardRendererComponent'
+        );
         return;
       }
       if (!email.subject) {
@@ -870,7 +950,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         return;
       }
     }
-    
+
     // Determine recipient email address - prioritize to, then contact.email
     let recipientEmail = '';
     if (email.to) {
@@ -878,7 +958,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     } else if (email.contact?.email) {
       recipientEmail = email.contact.email;
     }
-    
+
     if (!recipientEmail) {
       this.logger.warn('No email address provided for email action', 'AICardRendererComponent');
       return;
@@ -886,7 +966,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
 
     // Build mailto URL parameters manually for better control over encoding
     const params: string[] = [];
-    
+
     // Add CC if provided
     if (email.cc) {
       const cc = Array.isArray(email.cc) ? email.cc.join(',') : email.cc;
@@ -940,7 +1020,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     // Construct mailto link
     const queryString = params.length > 0 ? '?' + params.join('&') : '';
     const mailtoLink = `mailto:${recipientEmail}${queryString}`;
-    
+
     // Open email client using a temporary anchor element (most reliable method)
     // This ensures the email client opens without navigating away from the page
     const anchor = document.createElement('a');
@@ -966,7 +1046,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   get hasLoadingOverlay(): boolean {
-    const isStreamingOrThinking = this.streamingStage === 'streaming' || this.streamingStage === 'thinking';
+    const isStreamingOrThinking =
+      this.streamingStage === 'streaming' || this.streamingStage === 'thinking';
     const hasNoProcessedSections = !this.processedSections || this.processedSections.length === 0;
     const hasNoConfigSections = !this.cardConfig?.sections || this.cardConfig.sections.length === 0;
     return isStreamingOrThinking && hasNoProcessedSections && hasNoConfigSections;
@@ -975,40 +1056,53 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   trackSection = (_index: number, section: CardSection): string =>
     section.id ?? `${section.title}-${_index}`;
 
-  trackField = (_index: number, field: CardField): string =>
-    field.id ?? `${field.label}-${_index}`;
+  trackField = (_index: number, field: CardField): string => field.id ?? `${field.label}-${_index}`;
 
-  trackItem = (_index: number, item: CardItem): string =>
-    item.id ?? `${item.title}-${_index}`;
+  trackItem = (_index: number, item: CardItem): string => item.id ?? `${item.title}-${_index}`;
 
   onSectionEvent(event: SectionRenderEvent): void {
     switch (event.type) {
       case 'field':
         if (event.field) {
-          this.fieldInteraction.emit({
+          const fieldEvent: CardFieldInteractionEvent = {
             field: event.field,
             action: 'click',
-            sectionTitle: (event.metadata?.['sectionTitle'] as string | undefined) ?? event.section.title,
-            metadata: event.metadata
-          });
+          };
+          const fieldSectionTitle =
+            (event.metadata?.['sectionTitle'] as string | undefined) ?? event.section.title;
+          if (fieldSectionTitle !== undefined) {
+            fieldEvent.sectionTitle = fieldSectionTitle;
+          }
+          if (event.metadata !== undefined) {
+            fieldEvent.metadata = event.metadata;
+          }
+          this.fieldInteraction.emit(fieldEvent);
         }
         break;
       case 'item':
         if (event.item) {
-          this.fieldInteraction.emit({
+          const itemEvent: CardFieldInteractionEvent = {
             item: event.item,
             action: 'click',
-            sectionTitle: (event.metadata?.['sectionTitle'] as string | undefined) ?? event.section.title,
-            metadata: event.metadata
-          });
+          };
+          const itemSectionTitle =
+            (event.metadata?.['sectionTitle'] as string | undefined) ?? event.section.title;
+          if (itemSectionTitle !== undefined) {
+            itemEvent.sectionTitle = itemSectionTitle;
+          }
+          if (event.metadata !== undefined) {
+            itemEvent.metadata = event.metadata;
+          }
+          this.fieldInteraction.emit(itemEvent);
         }
         break;
       case 'action':
         if (event.action && this.cardConfig) {
-          const identifier = event.action.action ?? event.action.id ?? event.action.label ?? 'section-action';
+          const identifier =
+            event.action.action ?? event.action.id ?? event.action.label ?? 'section-action';
           this.cardInteraction.emit({
             action: identifier,
-            card: this.cardConfig
+            card: this.cardConfig,
           });
         }
         break;
@@ -1017,7 +1111,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     }
   }
 
-  onLayoutChange(layout: MasonryLayoutInfo): void {
+  onLayoutChange(_layout: MasonryLayoutInfo): void {
     // Layout change handler - kept for potential future use
   }
 
@@ -1044,40 +1138,44 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       this.normalizedSectionCache = new WeakMap<CardSection, CardSection>();
     }
 
-    const normalizedSections = sections.map(section => this.getNormalizedSection(section, requiresStructuralRebuild));
+    const normalizedSections = sections.map((section) =>
+      this.getNormalizedSection(section, requiresStructuralRebuild)
+    );
     const orderedSections = requiresStructuralRebuild
       ? this.sectionNormalizationService.sortSections(normalizedSections)
       : this.mergeWithPreviousOrderPreservingReferences(normalizedSections);
 
     this.processedSections = orderedSections;
-    this.sectionOrderKeys = orderedSections.map(section => this.getSectionKey(section));
+    this.sectionOrderKeys = orderedSections.map((section) => this.getSectionKey(section));
     this.previousSectionsHash = nextHash;
-    
+
     this.cdr.markForCheck();
   }
-  
+
   /**
    * Merge with previous order while preserving section references when possible
    */
-  private mergeWithPreviousOrderPreservingReferences(normalizedSections: CardSection[]): CardSection[] {
+  private mergeWithPreviousOrderPreservingReferences(
+    normalizedSections: CardSection[]
+  ): CardSection[] {
     if (!this.sectionOrderKeys.length) {
       return normalizedSections;
     }
 
     const nextByKey = new Map<string, CardSection>();
-    normalizedSections.forEach(section => {
+    normalizedSections.forEach((section) => {
       nextByKey.set(this.getSectionKey(section), section);
     });
 
     // Try to preserve processedSections array reference and section references
     const ordered: CardSection[] = [];
     let allReferencesPreserved = true;
-    
-    this.sectionOrderKeys.forEach(key => {
+
+    this.sectionOrderKeys.forEach((key) => {
       const match = nextByKey.get(key);
       if (match) {
         // Try to find the same section in processedSections by reference
-        const existingSection = this.processedSections.find(s => this.getSectionKey(s) === key);
+        const existingSection = this.processedSections.find((s) => this.getSectionKey(s) === key);
         if (existingSection && existingSection === match) {
           // Same reference, preserve it
           ordered.push(existingSection);
@@ -1091,12 +1189,14 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     });
 
     // Add any new sections
-    nextByKey.forEach(section => ordered.push(section));
+    nextByKey.forEach((section) => ordered.push(section));
 
     // If all references are preserved and order is the same, return existing array
-    if (allReferencesPreserved && 
-        ordered.length === this.processedSections.length &&
-        ordered.every((section, index) => section === this.processedSections[index])) {
+    if (
+      allReferencesPreserved &&
+      ordered.length === this.processedSections.length &&
+      ordered.every((section, index) => section === this.processedSections[index])
+    ) {
       return this.processedSections;
     }
 
@@ -1116,7 +1216,10 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     return normalized;
   }
 
-  private mergeWithPreviousOrder(normalizedSections: CardSection[]): CardSection[] {
+  /**
+   * @internal Reserved for potential streaming optimization
+   */
+  protected mergeWithPreviousOrder(normalizedSections: CardSection[]): CardSection[] {
     // Use the new method that preserves references
     return this.mergeWithPreviousOrderPreservingReferences(normalizedSections);
   }

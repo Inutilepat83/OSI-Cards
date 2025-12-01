@@ -20,18 +20,54 @@
       "title": "Performance Metrics",
       "type": "analytics",
       "fields": [
-        { "label": "Revenue Growth", "value": "35% YoY", "percentage": 35, "performance": "excellent", "trend": "up" },
-        { "label": "Customer Retention", "value": "94%", "percentage": 94, "performance": "excellent", "trend": "stable" },
-        { "label": "Market Share", "value": "18%", "percentage": 18, "performance": "good", "trend": "up" }
+        {
+          "label": "Revenue Growth",
+          "value": "35% YoY",
+          "percentage": 35,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Customer Retention",
+          "value": "94%",
+          "percentage": 94,
+          "performance": "excellent",
+          "trend": "stable"
+        },
+        {
+          "label": "Market Share",
+          "value": "18%",
+          "percentage": 18,
+          "performance": "good",
+          "trend": "up"
+        }
       ]
     },
     {
       "title": "Financial Performance",
       "type": "financials",
       "fields": [
-        { "label": "Annual Revenue", "value": "$250M", "format": "currency", "change": 35, "trend": "up" },
-        { "label": "EBITDA", "value": "$45M", "format": "currency", "change": 28, "trend": "up" },
-        { "label": "Operating Margin", "value": "18%", "format": "percentage", "change": 3.2, "trend": "up" }
+        {
+          "label": "Annual Revenue",
+          "value": "$250M",
+          "format": "currency",
+          "change": 35,
+          "trend": "up"
+        },
+        {
+          "label": "EBITDA",
+          "value": "$45M",
+          "format": "currency",
+          "change": 28,
+          "trend": "up"
+        },
+        {
+          "label": "Operating Margin",
+          "value": "18%",
+          "format": "percentage",
+          "change": 3.2,
+          "trend": "up"
+        }
       ]
     },
     {
@@ -51,10 +87,19 @@
     }
   ],
   "actions": [
-    { "label": "Visit Website", "type": "website", "variant": "primary", "icon": "🌐", "url": "https://www.techventure.com" },
-    { "label": "Contact Sales", "type": "mail", "variant": "secondary", "icon": "📧", "email": { "to": "sales@techventure.com", "subject": "Sales Inquiry" } }
+    {
+      "label": "Visit Website",
+      "type": "website",
+      "variant": "primary",
+      "icon": "🌐",
+      "url": "https://www.techventure.com"
+    },
+    {
+      "label": "Contact Sales",
+      "type": "mail",
+      "variant": "secondary",
+      "icon": "📧",
+      "email": { "to": "sales@techventure.com", "subject": "Sales Inquiry" }
+    }
   ]
 }
-
-
-

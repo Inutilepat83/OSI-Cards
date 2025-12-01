@@ -1,5 +1,5 @@
 # OSI Cards Library - CI/CD Pipeline
-# 
+#
 # This workflow runs on pull requests and pushes to main/develop branches.
 # It performs linting, testing, building, and quality gate checks.
 
@@ -19,6 +19,7 @@ concurrency:
 env:
   NODE_VERSION: '20'
   CACHE_KEY: node-modules-${{ hashFiles('**/package-lock.json') }}
+  ANGULAR_CACHE_KEY: angular-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('src/**/*.ts', 'projects/**/*.ts') }}
 
 jobs:
   # ============================================================================
@@ -249,6 +250,7 @@ jobs:
           npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
 
 
 

@@ -1,4 +1,4 @@
-import { CardTypeGuards, CardUtils, AICardConfig, CardSection, CardField } from './card.model';
+import { AICardConfig, CardField, CardSection, CardTypeGuards, CardUtils } from './card.model';
 
 describe('CardTypeGuards', () => {
   describe('isAICardConfig', () => {
@@ -6,9 +6,9 @@ describe('CardTypeGuards', () => {
       const validConfig: AICardConfig = {
         cardTitle: 'Test Card',
         cardType: 'company',
-        sections: []
+        sections: [],
       };
-      
+
       expect(CardTypeGuards.isAICardConfig(validConfig)).toBe(true);
     });
 
@@ -24,9 +24,9 @@ describe('CardTypeGuards', () => {
       const invalidConfig = {
         cardTitle: 'Test Card',
         cardType: 'invalid',
-        sections: []
+        sections: [],
       };
-      
+
       expect(CardTypeGuards.isAICardConfig(invalidConfig)).toBe(false);
     });
 
@@ -34,9 +34,9 @@ describe('CardTypeGuards', () => {
       const invalidConfig = {
         cardTitle: 'x'.repeat(201),
         cardType: 'company',
-        sections: []
+        sections: [],
       };
-      
+
       expect(CardTypeGuards.isAICardConfig(invalidConfig)).toBe(false);
     });
   });
@@ -45,9 +45,9 @@ describe('CardTypeGuards', () => {
     it('should return true for valid CardSection', () => {
       const validSection: CardSection = {
         title: 'Test Section',
-        type: 'info'
+        type: 'info',
       };
-      
+
       expect(CardTypeGuards.isCardSection(validSection)).toBe(true);
     });
 
@@ -62,9 +62,9 @@ describe('CardTypeGuards', () => {
     it('should return true for valid CardField', () => {
       const validField: CardField = {
         label: 'Test Field',
-        value: 'Test Value'
+        value: 'Test Value',
       };
-      
+
       expect(CardTypeGuards.isCardField(validField)).toBe(true);
     });
 
@@ -119,12 +119,14 @@ describe('CardUtils', () => {
       const config: AICardConfig = {
         cardTitle: 'Test Card',
         cardType: 'company',
-        sections: [{
-          title: 'Test Section',
-          type: 'info'
-        }]
+        sections: [
+          {
+            title: 'Test Section',
+            type: 'info',
+          },
+        ],
       };
-      
+
       const sanitized = CardUtils.sanitizeCardConfig(config);
       expect(sanitized).toBeTruthy();
       expect(sanitized?.cardTitle).toBe('Test Card');
@@ -140,9 +142,9 @@ describe('CardUtils', () => {
         cardTitle: 'Test Card',
         cardType: 'company',
         sections: Array(25).fill({ title: 'Section', type: 'info' }),
-        actions: Array(15).fill({ label: 'Action' })
+        actions: Array(15).fill({ label: 'Action' }),
       };
-      
+
       const sanitized = CardUtils.sanitizeCardConfig(config);
       expect(sanitized?.sections.length).toBe(20);
       expect(sanitized?.actions?.length).toBe(10);

@@ -6,21 +6,17 @@
 export class ObjectPool<T> {
   private pool: T[] = [];
   private createFn: () => T;
-  private resetFn?: (obj: T) => void;
+  private resetFn: ((obj: T) => void) | undefined;
   private maxSize: number;
 
   /**
    * Create an object pool
-   * 
+   *
    * @param createFn - Function to create new objects
    * @param resetFn - Optional function to reset objects before reuse
    * @param maxSize - Maximum pool size (default: 50)
    */
-  constructor(
-    createFn: () => T,
-    resetFn?: (obj: T) => void,
-    maxSize = 50
-  ) {
+  constructor(createFn: () => T, resetFn?: (obj: T) => void, maxSize = 50) {
     this.createFn = createFn;
     this.resetFn = resetFn;
     this.maxSize = maxSize;
@@ -77,7 +73,7 @@ export function createCardSectionPool() {
       title: '',
       type: '',
       fields: [],
-      items: []
+      items: [],
     }),
     (section) => {
       section.id = '';
@@ -98,7 +94,7 @@ export function createCardFieldPool() {
     () => ({
       label: '',
       value: '',
-      id: ''
+      id: '',
     }),
     (field) => {
       field.label = '';
@@ -108,16 +104,3 @@ export function createCardFieldPool() {
     200
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

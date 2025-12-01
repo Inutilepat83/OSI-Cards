@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { LLMStreamingService, LLMStreamingState } from './llm-streaming.service';
 import { AppConfigService } from './app-config.service';
-import { CardBuilder, SectionBuilder, FieldBuilder } from '../../testing/test-builders';
+import { CardBuilder, FieldBuilder, SectionBuilder } from '../../testing/test-builders';
 import { AICardConfig } from '../../models';
 import { fakeAsync, tick } from '@angular/core/testing';
 
@@ -22,11 +22,11 @@ describe('LLMStreamingService', () => {
               MAX_CHUNK_SIZE: 50,
               MIN_CHUNK_DELAY_MS: 20,
               MAX_CHUNK_DELAY_MS: 100,
-              FAST_TOKEN_RATE: 0.1
-            }
-          }
-        }
-      ]
+              FAST_TOKEN_RATE: 0.1,
+            },
+          },
+        },
+      ],
     });
     service = TestBed.inject(LLMStreamingService);
     appConfigService = TestBed.inject(AppConfigService);
@@ -49,7 +49,7 @@ describe('LLMStreamingService', () => {
     });
 
     it('should emit initial state', (done) => {
-      service.state$.subscribe(state => {
+      service.state$.subscribe((state) => {
         expect(state.isActive).toBe(false);
         expect(state.stage).toBe('idle');
         done();
@@ -61,12 +61,7 @@ describe('LLMStreamingService', () => {
     it('should start streaming with valid JSON', fakeAsync(() => {
       const card = CardBuilder.create()
         .withTitle('Test Card')
-        .withSection(
-          SectionBuilder.create()
-            .withTitle('Section 1')
-            .withType('info')
-            .build()
-        )
+        .withSection(SectionBuilder.create().withTitle('Section 1').withType('info').build())
         .build();
 
       const json = JSON.stringify(card);
@@ -177,14 +172,14 @@ describe('LLMStreamingService', () => {
       const json = JSON.stringify(card);
       let bufferReceived = false;
 
-      service.bufferUpdates$.subscribe(buffer => {
+      service.bufferUpdates$.subscribe((buffer) => {
         expect(buffer).toBeTruthy();
         bufferReceived = true;
       });
 
       service.start(json);
       tick(150);
-      
+
       expect(bufferReceived).toBe(true);
     }));
   });
@@ -202,7 +197,7 @@ describe('LLMStreamingService', () => {
         .build();
 
       let updateCount = 0;
-      service.cardUpdates$.subscribe(update => {
+      service.cardUpdates$.subscribe((update) => {
         updateCount++;
         expect(update.card).toBeTruthy();
         expect(update.changeType).toBeDefined();
@@ -210,24 +205,20 @@ describe('LLMStreamingService', () => {
 
       service.start(JSON.stringify(card));
       tick(200);
-      
+
       expect(updateCount).toBeGreaterThan(0);
     }));
 
     it('should complete streaming and emit final card', fakeAsync(() => {
       const card = CardBuilder.create()
         .withTitle('Test Card')
-        .withSection(
-          SectionBuilder.create()
-            .withTitle('Section')
-            .build()
-        )
+        .withSection(SectionBuilder.create().withTitle('Section').build())
         .build();
 
       const json = JSON.stringify(card);
       let finalState: LLMStreamingState | null = null;
 
-      service.state$.subscribe(state => {
+      service.state$.subscribe((state) => {
         if (state.stage === 'complete') {
           finalState = state;
         }
@@ -236,7 +227,7 @@ describe('LLMStreamingService', () => {
       service.start(json);
       // Wait for all chunks to process
       tick(1000);
-      
+
       expect(finalState).toBeTruthy();
       if (finalState) {
         expect(finalState.progress).toBe(1);
@@ -249,16 +240,12 @@ describe('LLMStreamingService', () => {
     it('should update progress during streaming', fakeAsync(() => {
       const card = CardBuilder.create()
         .withTitle('Test Card')
-        .withSection(
-          SectionBuilder.create()
-            .withTitle('Section')
-            .build()
-        )
+        .withSection(SectionBuilder.create().withTitle('Section').build())
         .build();
 
       const json = JSON.stringify(card);
       service.start(json);
-      
+
       tick(100);
       const state1 = service.getState();
       expect(state1.progress).toBeGreaterThanOrEqual(0);
@@ -273,7 +260,7 @@ describe('LLMStreamingService', () => {
       const json = JSON.stringify(card);
       let completed = false;
 
-      service.state$.subscribe(state => {
+      service.state$.subscribe((state) => {
         if (state.stage === 'complete') {
           expect(state.progress).toBe(1);
           completed = true;
@@ -282,7 +269,7 @@ describe('LLMStreamingService', () => {
 
       service.start(json);
       tick(1000);
-      
+
       expect(completed).toBe(true);
     }));
   });
@@ -300,4 +287,3 @@ describe('LLMStreamingService', () => {
     }));
   });
 });
-

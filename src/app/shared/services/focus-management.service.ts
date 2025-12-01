@@ -1,25 +1,25 @@
-import { Injectable, inject, NgZone } from '@angular/core';
+import { inject, Injectable, NgZone } from '@angular/core';
 import { LoggingService } from '../../core/services/logging.service';
 
 /**
  * Focus Management Service
- * 
+ *
  * Provides utilities for managing focus and keyboard navigation throughout the application.
  * Helps improve accessibility by ensuring proper focus management in dynamic content.
- * 
+ *
  * @example
  * ```typescript
  * const focusService = inject(FocusManagementService);
- * 
+ *
  * // Focus an element
  * focusService.focusElement('#my-element');
- * 
+ *
  * // Trap focus within a container
  * focusService.trapFocus(containerElement);
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FocusManagementService {
   private readonly logger = inject(LoggingService);
@@ -28,7 +28,7 @@ export class FocusManagementService {
 
   /**
    * Focus an element by selector or element reference
-   * 
+   *
    * @param target - CSS selector, element ID, or HTMLElement
    * @param options - Focus options
    */
@@ -54,7 +54,10 @@ export class FocusManagementService {
         }
 
         element.focus(options);
-        this.logger.debug(`Focused element: ${typeof target === 'string' ? target : target.tagName}`, 'FocusManagementService');
+        this.logger.debug(
+          `Focused element: ${typeof target === 'string' ? target : target.tagName}`,
+          'FocusManagementService'
+        );
       } else {
         this.logger.warn(`Element not found: ${target}`, 'FocusManagementService');
       }
@@ -89,13 +92,13 @@ export class FocusManagementService {
   /**
    * Trap focus within a container element
    * Useful for modals, dialogs, and dropdowns
-   * 
+   *
    * @param container - Container element to trap focus within
    * @returns Function to release the focus trap
    */
   trapFocus(container: HTMLElement): () => void {
     const focusableElements = this.getFocusableElements(container);
-    
+
     if (focusableElements.length === 0) {
       this.logger.warn('No focusable elements found in container', 'FocusManagementService');
       return () => {};
@@ -112,7 +115,7 @@ export class FocusManagementService {
       if (!firstElement || !lastElement) {
         return;
       }
-      
+
       if (event.shiftKey) {
         // Shift + Tab: move backwards
         if (document.activeElement === firstElement) {
@@ -129,7 +132,7 @@ export class FocusManagementService {
     };
 
     container.addEventListener('keydown', handleKeyDown);
-    
+
     // Focus first element
     if (firstElement) {
       firstElement.focus();
@@ -142,14 +145,16 @@ export class FocusManagementService {
     };
 
     this.focusTraps.set(container, release);
-    this.logger.debug('Focus trap activated', 'FocusManagementService', { container: container.tagName });
+    this.logger.debug('Focus trap activated', 'FocusManagementService', {
+      container: container.tagName,
+    });
 
     return release;
   }
 
   /**
    * Release focus trap for a container
-   * 
+   *
    * @param container - Container element
    */
   releaseFocusTrap(container: HTMLElement): void {
@@ -161,7 +166,7 @@ export class FocusManagementService {
 
   /**
    * Get all focusable elements within a container
-   * 
+   *
    * @param container - Container element
    * @returns Array of focusable elements
    */
@@ -173,20 +178,19 @@ export class FocusManagementService {
       'input:not([disabled])',
       'select:not([disabled])',
       '[tabindex]:not([tabindex="-1"])',
-      '[contenteditable="true"]'
+      '[contenteditable="true"]',
     ].join(', ');
 
-    return Array.from(container.querySelectorAll<HTMLElement>(selector))
-      .filter(el => {
-        // Check if element is visible
-        const style = window.getComputedStyle(el);
-        return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
-      });
+    return Array.from(container.querySelectorAll<HTMLElement>(selector)).filter((el) => {
+      // Check if element is visible
+      const style = window.getComputedStyle(el);
+      return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+    });
   }
 
   /**
    * Move focus to next focusable element
-   * 
+   *
    * @param currentElement - Current focused element
    * @param direction - 'next' or 'previous'
    */
@@ -198,21 +202,24 @@ export class FocusManagementService {
       return;
     }
 
-    const nextIndex = direction === 'next'
-      ? (currentIndex + 1) % allFocusable.length
-      : currentIndex === 0 ? allFocusable.length - 1 : currentIndex - 1;
+    const nextIndex =
+      direction === 'next'
+        ? (currentIndex + 1) % allFocusable.length
+        : currentIndex === 0
+          ? allFocusable.length - 1
+          : currentIndex - 1;
 
     allFocusable[nextIndex]?.focus();
   }
 
   /**
    * Save current focus for later restoration
-   * 
+   *
    * @returns Function to restore focus
    */
   saveFocus(): () => void {
     const activeElement = document.activeElement as HTMLElement;
-    
+
     return () => {
       if (activeElement && document.body.contains(activeElement)) {
         this.focusElement(activeElement);
@@ -220,4 +227,3 @@ export class FocusManagementService {
     };
   }
 }
-

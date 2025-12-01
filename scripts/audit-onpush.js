@@ -2,7 +2,7 @@
 
 /**
  * OnPush Change Detection Audit Script
- * 
+ *
  * Scans all Angular components to identify those missing OnPush change detection strategy.
  * This helps ensure optimal performance by using OnPush everywhere possible.
  */
@@ -14,7 +14,8 @@ const { execSync } = require('child_process');
 const COMPONENT_DIRS = [
   'src/app/shared/components',
   'src/app/features',
-  'src/app/core'
+  'src/app/core',
+  'projects/osi-cards-lib/src/lib/components'
 ];
 
 const EXCLUDE_PATTERNS = [
@@ -35,7 +36,7 @@ const results = {
  * Check if a file is a component file
  */
 function isComponentFile(filePath) {
-  return filePath.endsWith('.component.ts') && 
+  return filePath.endsWith('.component.ts') &&
          !filePath.includes('.spec.') &&
          !filePath.includes('.stories.');
 }
@@ -55,11 +56,11 @@ function hasOnPush(content) {
   // Pattern 1: changeDetection: ChangeDetectionStrategy.OnPush
   // Pattern 2: changeDetection: ChangeDetectionStrategy.OnPush, (with comma)
   const hasOnPushStrategy = /changeDetection\s*:\s*ChangeDetectionStrategy\.OnPush/.test(content);
-  
+
   // Also check if ChangeDetectionStrategy is imported (can be on multiple lines)
   const hasOnPushImport = /import.*ChangeDetectionStrategy.*from.*['"]@angular\/core['"]/.test(content) ||
                          /import\s*\{[^}]*ChangeDetectionStrategy[^}]*\}\s*from\s*['"]@angular\/core['"]/.test(content);
-  
+
   // If we see the strategy in decorator, it's using OnPush (import might be elsewhere or combined)
   // But we should warn if import is missing
   return hasOnPushStrategy;
@@ -95,7 +96,7 @@ function scanDirectory(dir, baseDir = '') {
     } else if (entry.isFile() && isComponentFile(relativePath)) {
       try {
         const content = fs.readFileSync(fullPath, 'utf-8');
-        
+
         if (!isComponent(content)) {
           results.noComponent.push(relativePath);
           continue;
@@ -120,7 +121,7 @@ function main() {
   console.log('🔍 Starting OnPush Change Detection Audit...\n');
 
   const baseDir = process.cwd();
-  
+
   for (const dir of COMPONENT_DIRS) {
     const fullPath = path.join(baseDir, dir);
     if (fs.existsSync(fullPath)) {

@@ -18,7 +18,7 @@ export const cardsAdapter = createEntityAdapter<AICardConfig>({
     }
     // Fallback to title sorting if displayOrder is not set
     return a.cardTitle.localeCompare(b.cardTitle);
-  }
+  },
 });
 
 // ===== ACTIONS =====
@@ -40,10 +40,7 @@ export const loadCardsFailure = createAction(
 );
 
 // Card Type and Variant Actions
-export const setCardType = createAction(
-  '[Cards] Set Card Type',
-  props<{ cardType: CardType }>()
-);
+export const setCardType = createAction('[Cards] Set Card Type', props<{ cardType: CardType }>());
 export const setCardVariant = createAction(
   '[Cards] Set Card Variant',
   props<{ variant: number }>()
@@ -68,10 +65,7 @@ export const generateCardFailure = createAction(
 );
 
 // Card CRUD Actions
-export const addCard = createAction(
-  '[Cards] Add Card',
-  props<{ card: AICardConfig }>()
-);
+export const addCard = createAction('[Cards] Add Card', props<{ card: AICardConfig }>());
 export const updateCard = createAction(
   '[Cards] Update Card',
   props<{ id: string; changes: Partial<AICardConfig> }>()
@@ -88,13 +82,16 @@ export const updateCardFailure = createAction(
   '[Cards] Update Card Failure',
   props<{ id: string; error: string }>()
 );
-export const upsertCard = createAction(
-  '[Cards] Upsert Card',
-  props<{ card: AICardConfig }>()
-);
+export const upsertCard = createAction('[Cards] Upsert Card', props<{ card: AICardConfig }>());
 export const deleteCard = createAction('[Cards] Delete Card', props<{ id: string }>());
-export const deleteCardSuccess = createAction('[Cards] Delete Card Success', props<{ id: string }>());
-export const deleteCardFailure = createAction('[Cards] Delete Card Failure', props<{ error: string }>());
+export const deleteCardSuccess = createAction(
+  '[Cards] Delete Card Success',
+  props<{ id: string }>()
+);
+export const deleteCardFailure = createAction(
+  '[Cards] Delete Card Failure',
+  props<{ error: string }>()
+);
 
 // UI State Actions
 export const toggleFullscreen = createAction('[Cards] Toggle Fullscreen');
@@ -131,8 +128,14 @@ export const trackPerformance = createAction(
 
 // Search Actions
 export const searchCards = createAction('[Cards] Search Cards', props<{ query: string }>());
-export const searchCardsSuccess = createAction('[Cards] Search Cards Success', props<{ query: string; results: AICardConfig[] }>());
-export const searchCardsFailure = createAction('[Cards] Search Cards Failure', props<{ query: string; error: string }>());
+export const searchCardsSuccess = createAction(
+  '[Cards] Search Cards Success',
+  props<{ query: string; results: AICardConfig[] }>()
+);
+export const searchCardsFailure = createAction(
+  '[Cards] Search Cards Failure',
+  props<{ query: string; error: string }>()
+);
 
 // Card Reordering Actions
 export const reorderCards = createAction(
@@ -169,14 +172,12 @@ export const initialState: CardsState = cardsAdapter.getInitialState({
   isFullscreen: false,
   error: null,
   loading: false,
-  lastChangeType: 'structural'
+  lastChangeType: 'structural',
 });
 
 const removeNullValues = (value: unknown): unknown => {
   if (Array.isArray(value)) {
-    return value
-      .map(removeNullValues)
-      .filter((item) => item !== undefined);
+    return value.map(removeNullValues).filter((item) => item !== undefined);
   }
 
   if (value && typeof value === 'object') {
@@ -213,10 +214,12 @@ const formatJsonPayload = (value: unknown): string => {
  */
 function hashString(str: string): number {
   let hash = 0;
-  if (str.length === 0) return hash;
+  if (str.length === 0) {
+    return hash;
+  }
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32-bit integer
   }
   return hash;
@@ -244,7 +247,10 @@ function shouldUpdateJsonInput(state: CardsState, _newCard: AICardConfig): boole
  * Merge new card with existing card, preserving displayed values
  * Once a field/item has a real value (not placeholder), it won't be overwritten
  */
-function mergeCardPreservingValues(existing: AICardConfig | null, incoming: AICardConfig): AICardConfig {
+function mergeCardPreservingValues(
+  existing: AICardConfig | null,
+  incoming: AICardConfig
+): AICardConfig {
   if (!existing || existing.id !== incoming.id) {
     return incoming;
   }
@@ -262,22 +268,33 @@ function mergeCardPreservingValues(existing: AICardConfig | null, incoming: AICa
       if (!existingField || existingField.id !== incomingField.id) {
         return incomingField;
       }
-      
+
       // If existing field has a real value (not placeholder), preserve it
       const meta = existingField.meta as Record<string, unknown> | undefined;
-      const isPlaceholder = existingField.value === 'Streaming…' || 
-                           (meta && meta['placeholder'] === true);
-      
+      const isPlaceholder =
+        existingField.value === 'Streaming…' || (meta && meta['placeholder'] === true);
+
       if (!isPlaceholder && existingField.value !== undefined && existingField.value !== null) {
         // Preserve existing value and other properties
-        return {
+        const merged = {
           ...incomingField,
           value: existingField.value,
-          percentage: existingField.percentage ?? incomingField.percentage,
-          trend: existingField.trend ?? incomingField.trend
         };
+        // Only include percentage if defined
+        if (existingField.percentage !== undefined) {
+          merged.percentage = existingField.percentage;
+        } else if (incomingField.percentage !== undefined) {
+          merged.percentage = incomingField.percentage;
+        }
+        // Only include trend if defined
+        if (existingField.trend !== undefined) {
+          merged.trend = existingField.trend;
+        } else if (incomingField.trend !== undefined) {
+          merged.trend = incomingField.trend;
+        }
+        return merged;
       }
-      
+
       return incomingField;
     });
 
@@ -287,35 +304,50 @@ function mergeCardPreservingValues(existing: AICardConfig | null, incoming: AICa
       if (!existingItem || existingItem.id !== incomingItem.id) {
         return incomingItem;
       }
-      
+
       // If existing item has a real value (not placeholder), preserve it
       const meta = existingItem.meta as Record<string, unknown> | undefined;
-      const isPlaceholder = existingItem.description === 'Streaming…' ||
-                           (meta && meta['placeholder'] === true);
-      
-      if (!isPlaceholder && existingItem.title && existingItem.title !== 'Item ' + (itemIndex + 1)) {
+      const isPlaceholder =
+        existingItem.description === 'Streaming…' || (meta && meta['placeholder'] === true);
+
+      if (
+        !isPlaceholder &&
+        existingItem.title &&
+        existingItem.title !== 'Item ' + (itemIndex + 1)
+      ) {
         // Preserve existing item
-        return {
+        const merged = {
           ...incomingItem,
           title: existingItem.title,
-          description: existingItem.description ?? incomingItem.description,
-          value: existingItem.value ?? incomingItem.value
         };
+        // Only include description if defined
+        if (existingItem.description !== undefined) {
+          merged.description = existingItem.description;
+        } else if (incomingItem.description !== undefined) {
+          merged.description = incomingItem.description;
+        }
+        // Only include value if defined
+        if (existingItem.value !== undefined) {
+          merged.value = existingItem.value;
+        } else if (incomingItem.value !== undefined) {
+          merged.value = incomingItem.value;
+        }
+        return merged;
       }
-      
+
       return incomingItem;
     });
 
     return {
       ...incomingSection,
       fields: mergedFields,
-      items: mergedItems
+      items: mergedItems,
     };
   });
 
   return {
     ...incoming,
-    sections: mergedSections
+    sections: mergedSections,
   };
 }
 
@@ -340,7 +372,11 @@ export const reducer = createReducer(
     return cardsAdapter.upsertOne(cardWithId, { ...state, loading: true });
   }),
   on(loadCardsComplete, (state) => ({ ...state, loading: false })),
-  on(loadCardsFailure, (state, { error }) => ({ ...state, error: error as string, loading: false })),
+  on(loadCardsFailure, (state, { error }) => ({
+    ...state,
+    error: error as string,
+    loading: false,
+  })),
 
   on(setCardType, (state, { cardType }) => ({ ...state, cardType })),
   on(setCardVariant, (state, { variant }) => ({ ...state, cardVariant: variant })),
@@ -349,21 +385,23 @@ export const reducer = createReducer(
   on(generateCard, (state) => ({ ...state, isGenerating: true, error: null })),
   on(generateCardSuccess, (state, { card, changeType = 'structural' }) => {
     const cardWithId = ensureCardIds(card);
-    const existingCard = state.currentCardId ? state.entities[state.currentCardId] ?? null : null;
-    
+    const existingCard = state.currentCardId ? (state.entities[state.currentCardId] ?? null) : null;
+
     // Fast path: reference equality check
     if (existingCard === cardWithId) {
       return { ...state, lastChangeType: changeType, isGenerating: false };
     }
-    
+
     // Merge card preserving existing displayed values
     const mergedCard = mergeCardPreservingValues(existingCard, cardWithId);
-    
+
     // Fast path: hash-based comparison (replaces expensive JSON encoding)
     if (existingCard && existingCard.id === mergedCard.id) {
       // Compare key properties first (cheapest check)
-      if (existingCard.cardTitle === mergedCard.cardTitle &&
-          existingCard.sections?.length === mergedCard.sections?.length) {
+      if (
+        existingCard.cardTitle === mergedCard.cardTitle &&
+        existingCard.sections?.length === mergedCard.sections?.length
+      ) {
         // Use hash-based comparison instead of expensive JSON encoding
         const existingHash = getCardHash(existingCard);
         const newHash = getCardHash(mergedCard);
@@ -372,19 +410,19 @@ export const reducer = createReducer(
         }
       }
     }
-    
+
     // Only encode JSON when actually needed (lazy evaluation)
     const cardWithoutIds = removeAllIds(mergedCard);
-    const jsonInput = shouldUpdateJsonInput(state, mergedCard) 
+    const jsonInput = shouldUpdateJsonInput(state, mergedCard)
       ? formatJsonPayload(cardWithoutIds)
       : state.jsonInput;
-    
+
     return {
       ...cardsAdapter.upsertOne(mergedCard, state),
       currentCardId: mergedCard.id ?? null,
       jsonInput,
       isGenerating: false,
-      lastChangeType: changeType
+      lastChangeType: changeType,
     };
   }),
   on(generateCardFailure, (state, { error }) => ({
@@ -425,7 +463,7 @@ export const reducer = createReducer(
     const newState = cardsAdapter.removeOne(id, state);
     return {
       ...newState,
-      currentCardId: state.currentCardId === id ? null : state.currentCardId
+      currentCardId: state.currentCardId === id ? null : state.currentCardId,
     };
   }),
   on(deleteCardFailure, (state, { error }) => ({
@@ -447,7 +485,7 @@ export const reducer = createReducer(
       currentCardId: templateWithId.id ?? null,
       jsonInput: formatJsonPayload(templateWithoutIds),
       loading: false,
-      lastChangeType: 'structural' as CardChangeType
+      lastChangeType: 'structural' as CardChangeType,
     };
   }),
   on(loadTemplateFailure, (state, { error }) => ({
@@ -460,7 +498,7 @@ export const reducer = createReducer(
   on(resetCardState, () => initialState),
 
   on(searchCardsSuccess, (state, { results }) => {
-    const resultsWithIds = results.map(card => ensureCardIds(card));
+    const resultsWithIds = results.map((card) => ensureCardIds(card));
     return cardsAdapter.setAll(resultsWithIds, state);
   }),
   on(searchCardsFailure, (state, { error }) => ({
@@ -471,7 +509,7 @@ export const reducer = createReducer(
   on(reorderCards, (state, { previousIndex, currentIndex }) => {
     // Get all cards sorted by displayOrder (or by title as fallback)
     const allCards = state.ids
-      .map(id => state.entities[id])
+      .map((id) => state.entities[id])
       .filter((card): card is AICardConfig => card !== undefined)
       .sort((a, b) => {
         const orderA = a.displayOrder ?? Number.MAX_SAFE_INTEGER;
@@ -484,8 +522,12 @@ export const reducer = createReducer(
       });
 
     // Perform array reordering
-    if (previousIndex < 0 || previousIndex >= allCards.length || 
-        currentIndex < 0 || currentIndex >= allCards.length) {
+    if (
+      previousIndex < 0 ||
+      previousIndex >= allCards.length ||
+      currentIndex < 0 ||
+      currentIndex >= allCards.length
+    ) {
       return state; // Invalid indices, return unchanged state
     }
 
@@ -501,15 +543,15 @@ export const reducer = createReducer(
     // Update displayOrder for all cards based on new positions
     const updatedCards = newCards.map((card, index) => ({
       ...card,
-      displayOrder: index
+      displayOrder: index,
     }));
 
     // Upsert all cards with new displayOrder
-    const cardsWithIds = updatedCards.map(card => ensureCardIds(card));
+    const cardsWithIds = updatedCards.map((card) => ensureCardIds(card));
     return cardsAdapter.setAll(cardsWithIds, state);
   }),
   on(reorderCardsSuccess, (state, { cards }) => {
-    const cardsWithIds = cards.map(card => ensureCardIds(card));
+    const cardsWithIds = cards.map((card) => ensureCardIds(card));
     return cardsAdapter.setAll(cardsWithIds, state);
   })
 );

@@ -17,12 +17,30 @@
       "title": "Progress Metrics",
       "type": "analytics",
       "fields": [
-        { "label": "Assessment Phase", "value": "100% Complete", "percentage": 100, "performance": "excellent", "trend": "stable" },
-        { "label": "Planning Phase", "value": "60% Complete", "percentage": 60, "performance": "good", "trend": "up" }
+        {
+          "label": "Assessment Phase",
+          "value": "100% Complete",
+          "percentage": 100,
+          "performance": "excellent",
+          "trend": "stable"
+        },
+        {
+          "label": "Planning Phase",
+          "value": "60% Complete",
+          "percentage": 60,
+          "performance": "good",
+          "trend": "up"
+        }
       ]
     }
   ],
   "actions": [
-    { "label": "View Details", "type": "question", "variant": "primary", "icon": "📋", "question": "What are the details of this opportunity?" }
+    {
+      "label": "View Details",
+      "type": "question",
+      "variant": "primary",
+      "icon": "📋",
+      "question": "What are the details of this opportunity?"
+    }
   ]
 }

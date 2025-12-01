@@ -23,7 +23,9 @@
 
 .card-drag-item {
   cursor: move;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .card-drag-item.cdk-drag-animating {

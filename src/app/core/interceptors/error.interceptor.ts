@@ -1,23 +1,29 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import {
+  HttpErrorResponse,
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest,
+} from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ErrorHandlingService } from '../services/error-handling.service';
 
 /**
  * Error Interceptor
- * 
+ *
  * HTTP interceptor that catches and handles HTTP errors globally. Transforms HTTP
  * error responses into user-friendly error messages and integrates with the
  * ErrorHandlingService for centralized error management.
- * 
+ *
  * Features:
  * - Automatic error categorization by HTTP status code
  * - User-friendly error messages
  * - Network error detection
  * - Integration with ErrorHandlingService
  * - Client-side and server-side error handling
- * 
+ *
  * @example
  * ```typescript
  * // Automatically intercepts all HTTP errors
@@ -55,7 +61,7 @@ export class ErrorInterceptor implements HttpInterceptor {
               errorMessage = 'Unauthorized. Please log in.';
               break;
             case 403:
-              errorMessage = 'Access forbidden. You don\'t have permission.';
+              errorMessage = "Access forbidden. You don't have permission.";
               break;
             case 404:
               errorMessage = error.error?.message || 'Resource not found.';
@@ -78,4 +84,3 @@ export class ErrorInterceptor implements HttpInterceptor {
     );
   }
 }
-

@@ -11,12 +11,12 @@ export interface ISectionComponentLoader {
 
 /**
  * Section Component Registry Service
- * 
+ *
  * Uses a registry-based strategy pattern to load section components.
  * This replaces the switch statement approach for better extensibility.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SectionComponentRegistryService {
   private loaders = new Map<string, ISectionComponentLoader>();
@@ -27,9 +27,9 @@ export class SectionComponentRegistryService {
    */
   register(type: string, loader: ISectionComponentLoader, aliases: string[] = []): void {
     this.loaders.set(type, loader);
-    
+
     // Register aliases
-    aliases.forEach(alias => {
+    aliases.forEach((alias) => {
       this.typeMappings.set(alias, type);
     });
   }
@@ -40,10 +40,10 @@ export class SectionComponentRegistryService {
   async getComponentType(sectionType: string): Promise<Type<SectionComponentInstance>> {
     // Resolve alias to primary type
     const primaryType = this.typeMappings.get(sectionType) || sectionType;
-    
+
     // Find loader that can handle this type
     const loader = this.loaders.get(primaryType);
-    
+
     if (loader && loader.canHandle(primaryType)) {
       try {
         return await loader.loadComponent();
@@ -52,7 +52,7 @@ export class SectionComponentRegistryService {
         return this.getFallbackComponent();
       }
     }
-    
+
     // Fallback if no loader found
     return this.getFallbackComponent();
   }
@@ -65,7 +65,7 @@ export class SectionComponentRegistryService {
     if (fallbackLoader) {
       return fallbackLoader.loadComponent();
     }
-    
+
     // Default fallback
     const module = await import('../sections/fallback-section/fallback-section.component');
     return module.FallbackSectionComponent;
@@ -87,4 +87,3 @@ export class SectionComponentRegistryService {
     this.typeMappings.clear();
   }
 }
-

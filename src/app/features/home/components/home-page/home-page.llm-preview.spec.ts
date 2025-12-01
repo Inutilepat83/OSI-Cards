@@ -11,7 +11,7 @@ describe('HomePageComponent LLM preview & fallback', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HomePageComponent],
-      providers: [provideStore({ cards: cardsReducer })]
+      providers: [provideStore({ cards: cardsReducer })],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HomePageComponent);
@@ -55,8 +55,8 @@ describe('HomePageComponent LLM preview & fallback', () => {
     const fallback = (component as any).createFallbackPreviewCard(input) as AICardConfig;
     const section = fallback.sections[0];
     expect(section.fields?.length).toBe(2);
-    const growth = section.fields?.find(f => f.label === 'Growth');
-    const arr = section.fields?.find(f => f.label === 'ARR');
+    const growth = section.fields?.find((f) => f.label === 'Growth');
+    const arr = section.fields?.find((f) => f.label === 'ARR');
     expect(growth?.percentage).toBeCloseTo(23);
     expect(arr?.format).toBe('number');
     expect(arr?.value).toBeCloseTo(12.5);
@@ -69,15 +69,15 @@ describe('HomePageComponent LLM preview & fallback', () => {
       sections: [
         { id: 's1', title: 'S1', type: 'info', fields: [{ id: 'f1', label: 'A', value: '1' }] },
         { id: 's2', title: 'S2', type: 'info', fields: [{ id: 'f2', label: 'B', value: '2' }] },
-        { id: 's3', title: 'S3', type: 'info', fields: [{ id: 'f3', label: 'C', value: '3' }] }
-      ]
+        { id: 's3', title: 'S3', type: 'info', fields: [{ id: 'f3', label: 'C', value: '3' }] },
+      ],
     };
     (component as any).llmParsedCard = parsed;
     (component as any).llmPreviewCard = null;
     (component as any).llmPreviewSectionCount = 0;
 
     // low progress -> 1 section
-    (component as any).updateLlmPreviewCard(0.10);
+    (component as any).updateLlmPreviewCard(0.1);
     expect((component as any).llmPreviewSectionCount).toBeGreaterThanOrEqual(1);
     expect((component as any).llmPreviewCard?.sections.length).toBeGreaterThanOrEqual(1);
 
@@ -95,8 +95,8 @@ describe('HomePageComponent LLM preview & fallback', () => {
       cardTitle: 'S',
       sections: [
         { id: 's1', title: 'S1', type: 'info', fields: [{ id: 'f1', label: 'A', value: '1' }] },
-        { id: 's2', title: 'S2', type: 'info', fields: [{ id: 'f2', label: 'B', value: '2' }] }
-      ]
+        { id: 's2', title: 'S2', type: 'info', fields: [{ id: 'f2', label: 'B', value: '2' }] },
+      ],
     };
     // Start with only first section shown
     (component as any).llmParsedCard = parsed;
@@ -104,7 +104,10 @@ describe('HomePageComponent LLM preview & fallback', () => {
     (component as any).llmPreviewSectionCount = 1;
 
     // Update parsed with a changed second section
-    const changedParsed = { ...parsed, sections: [parsed.sections[0], { ...parsed.sections[1], title: 'S2 changed' }] };
+    const changedParsed = {
+      ...parsed,
+      sections: [parsed.sections[0], { ...parsed.sections[1], title: 'S2 changed' }],
+    };
     (component as any).llmParsedCard = changedParsed;
     (component as any).updateLlmPreviewCard(0.6);
     // first section reference should be preserved (identity)
@@ -115,7 +118,12 @@ describe('HomePageComponent LLM preview & fallback', () => {
 
   it('handles large number of sections without excessive errors', () => {
     const count = 400;
-    const sections = Array.from({ length: count }, (_, i) => ({ id: `s${i}`, title: `Sec ${i}`, type: 'info', fields: [{ id: `f${i}`, label: `L${i}`, value: `${i}` }] }));
+    const sections = Array.from({ length: count }, (_, i) => ({
+      id: `s${i}`,
+      title: `Sec ${i}`,
+      type: 'info',
+      fields: [{ id: `f${i}`, label: `L${i}`, value: `${i}` }],
+    }));
     (component as any).llmParsedCard = { cardTitle: 'Large', sections } as any;
     (component as any).llmPreviewCard = null;
     (component as any).llmPreviewSectionCount = 0;
@@ -126,14 +134,18 @@ describe('HomePageComponent LLM preview & fallback', () => {
 
   it('shows Live edit badge when jsonInput is populated and not simulating', () => {
     component.jsonInput = '{"cardTitle": "Hello"}';
-    (component as any).llmStreamState = { ...((component as any).llmStreamState), isSimulating: false } as any;
+    (component as any).llmStreamState = {
+      ...(component as any).llmStreamState,
+      isSimulating: false,
+    } as any;
     fixture.detectChanges();
     const el = fixture.nativeElement.querySelector('.ml-2');
     expect(el?.textContent).toContain('Live edit');
   });
 
   it('editor-driven fallback shows parsed title in preview', () => {
-    component.jsonInput = '{"cardTitle": "FallbackTest", "sections": [{"title": "Overview", "type": "info", "fields": [{"label": "Industry", "value": "Tech"}]}]}';
+    component.jsonInput =
+      '{"cardTitle": "FallbackTest", "sections": [{"title": "Overview", "type": "info", "fields": [{"label": "Industry", "value": "Tech"}]}]}';
     // ensure live preview was updated
     (component as any).processJsonInputImmediate(component.jsonInput);
     fixture.detectChanges();
@@ -144,7 +156,9 @@ describe('HomePageComponent LLM preview & fallback', () => {
 
   it('LLM simulation updates card via editor tokens', () => {
     spyOn(component, 'onJsonInputChange').and.callThrough();
-    (component as any).startLlmSimulation('{"cardTitle": "Test", "sections": [{"title": "SimSection", "type": "info", "fields": [{"label": "Industry", "value": "Tech"}]}]}');
+    (component as any).startLlmSimulation(
+      '{"cardTitle": "Test", "sections": [{"title": "SimSection", "type": "info", "fields": [{"label": "Industry", "value": "Tech"}]}]}'
+    );
     // Directly schedule a chunk to simulate tokens arriving
     (component as any).llmBuffer = '{"cardTitle": "Streamed Test"}';
     (component as any).processJsonInputImmediate((component as any).llmBuffer);
@@ -156,7 +170,10 @@ describe('HomePageComponent LLM preview & fallback', () => {
   });
 
   it('re-checks and sanitizes live preview on structural changes', () => {
-    const unsanitized: AICardConfig = { cardTitle: 'LP', sections: [{ title: 'Overview', fields: [{ label: 'Industry', value: 'Tech' }] }] } as any;
+    const unsanitized: AICardConfig = {
+      cardTitle: 'LP',
+      sections: [{ title: 'Overview', fields: [{ label: 'Industry', value: 'Tech' }] }],
+    } as any;
     // Trigger structural set
     (component as any).updateLivePreviewCard(unsanitized, 'structural');
     const live = (component as any).livePreviewCard as AICardConfig;
@@ -169,8 +186,8 @@ describe('HomePageComponent LLM preview & fallback', () => {
       cardTitle: 'Unsanitized',
       sections: [
         { title: 'S1', type: 'info', fields: [{ label: 'A', value: '1' } as any] } as any,
-        { title: 'S2', type: 'info', fields: [{ label: 'B', value: '2' } as any] } as any
-      ]
+        { title: 'S2', type: 'info', fields: [{ label: 'B', value: '2' } as any] } as any,
+      ],
     } as any;
     (component as any).llmParsedCard = parsed;
     (component as any).llmPreviewCard = null;

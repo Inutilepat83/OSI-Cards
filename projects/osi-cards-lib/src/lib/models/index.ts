@@ -3,6 +3,9 @@ export * from './card.model';
 // Auto-generated section types
 export * from './generated-section-types';
 
+// Discriminated union types for exhaustive type checking
+export * from './discriminated-sections';
+
 // Type definitions (excluding duplicates already exported from card.model)
 export {
   TrendDirection,

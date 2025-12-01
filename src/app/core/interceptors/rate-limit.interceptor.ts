@@ -1,5 +1,11 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import {
+  HttpErrorResponse,
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest,
+} from '@angular/common/http';
 import { Observable, throwError, timer } from 'rxjs';
 import { catchError, mergeMap } from 'rxjs/operators';
 import { LoggingService } from '../services/logging.service';
@@ -26,12 +32,12 @@ class TokenBucket {
    */
   tryConsume(): boolean {
     this.refill();
-    
+
     if (this.tokens >= 1) {
       this.tokens--;
       return true;
     }
-    
+
     return false;
   }
 
@@ -40,11 +46,11 @@ class TokenBucket {
    */
   getTimeUntilNextToken(): number {
     this.refill();
-    
+
     if (this.tokens >= 1) {
       return 0;
     }
-    
+
     const tokensNeeded = 1 - this.tokens;
     return Math.ceil((tokensNeeded / this.refillRate) * this.refillInterval);
   }
@@ -55,7 +61,7 @@ class TokenBucket {
   private refill(): void {
     const now = Date.now();
     const elapsed = now - this.lastRefill;
-    
+
     if (elapsed >= this.refillInterval) {
       const tokensToAdd = Math.floor((elapsed / this.refillInterval) * this.refillRate);
       this.tokens = Math.min(this.capacity, this.tokens + tokensToAdd);
@@ -91,7 +97,7 @@ export interface RateLimitConfig {
 
 /**
  * Default rate limit configuration
- * 
+ *
  * Uses conservative defaults to prevent API overload:
  * - 10 requests capacity with 2 requests/second refill rate
  * - Exponential backoff for retries (more aggressive than linear)
@@ -106,7 +112,7 @@ const DEFAULT_CONFIG: RateLimitConfig = {
   retryAfterHeader: 'Retry-After',
   endpoints: [],
   maxRetries: 3,
-  retryBackoff: 'exponential'
+  retryBackoff: 'exponential',
 };
 
 /**
@@ -118,17 +124,17 @@ export enum RateLimitStrategy {
   /** Sliding window algorithm */
   SLIDING_WINDOW = 'sliding-window',
   /** Fixed window algorithm */
-  FIXED_WINDOW = 'fixed-window'
+  FIXED_WINDOW = 'fixed-window',
 }
 
 /**
  * Rate Limit Interceptor
- * 
+ *
  * HTTP interceptor that implements rate limiting using the token bucket algorithm.
  * Prevents API overload by limiting the number of requests per time period. Supports
  * per-endpoint configuration, automatic retries with backoff, and server-side rate
  * limit handling.
- * 
+ *
  * Features:
  * - Token bucket algorithm for rate limiting
  * - Per-endpoint rate limit configuration
@@ -136,11 +142,11 @@ export enum RateLimitStrategy {
  * - Server-side rate limit detection (429 responses)
  * - Configurable capacity and refill rates
  * - Request queuing and throttling
- * 
+ *
  * @example
  * ```typescript
  * const interceptor = inject(RateLimitInterceptor);
- * 
+ *
  * // Configure rate limiting
  * interceptor.configure({
  *   capacity: 10,
@@ -185,7 +191,7 @@ export class RateLimitInterceptor implements HttpInterceptor {
           error: `Request body size (${(bodySize / 1024).toFixed(2)} KB) exceeds maximum allowed size (${(this.MAX_REQUEST_SIZE / 1024).toFixed(2)} KB)`,
           status: 413,
           statusText: 'Payload Too Large',
-          url: request.url
+          url: request.url,
         });
 
         this.logger.error(
@@ -201,17 +207,17 @@ export class RateLimitInterceptor implements HttpInterceptor {
     const endpointConfig = this.getEndpointConfig(request.url);
     const bucket = this.getBucket(request.url, endpointConfig);
     const retryCount = this.getRetryCount(request);
-    
+
     if (!bucket.tryConsume()) {
       const waitTime = bucket.getTimeUntilNextToken();
-      
+
       // Check if we've exceeded max retries
       if (retryCount >= (this.config.maxRetries || 3)) {
         const error = new HttpErrorResponse({
           error: 'Rate limit exceeded. Maximum retries reached.',
           status: 429,
           statusText: 'Too Many Requests',
-          url: request.url
+          url: request.url,
         });
 
         this.logger.error(
@@ -226,7 +232,10 @@ export class RateLimitInterceptor implements HttpInterceptor {
         error: 'Rate limit exceeded',
         status: 429,
         statusText: 'Too Many Requests',
-        headers: request.headers.set(this.config.retryAfterHeader || 'Retry-After', String(Math.ceil(waitTime / 1000)))
+        headers: request.headers.set(
+          this.config.retryAfterHeader || 'Retry-After',
+          String(Math.ceil(waitTime / 1000))
+        ),
       });
 
       this.logger.warn(
@@ -244,8 +253,8 @@ export class RateLimitInterceptor implements HttpInterceptor {
             // Add retry header to track retries
             const retryRequest = request.clone({
               setHeaders: {
-                'X-RateLimit-Retry': String(retryCount + 1)
-              }
+                'X-RateLimit-Retry': String(retryCount + 1),
+              },
             });
             return next.handle(retryRequest);
           }
@@ -261,7 +270,7 @@ export class RateLimitInterceptor implements HttpInterceptor {
           const retryAfter = error.headers.get(this.config.retryAfterHeader || 'Retry-After');
           const waitTime = retryAfter ? parseInt(retryAfter, 10) * 1000 : 1000;
           const retryCount = this.getRetryCount(request);
-          
+
           if (retryCount >= (this.config.maxRetries || 3)) {
             this.logger.error(
               `Server rate limit exceeded. Maximum retries reached for ${request.url}`,
@@ -269,7 +278,7 @@ export class RateLimitInterceptor implements HttpInterceptor {
             );
             return throwError(() => error);
           }
-          
+
           this.logger.warn(
             `Server rate limit exceeded. Retry ${retryCount + 1}/${this.config.maxRetries || 3} after ${waitTime}ms`,
             'RateLimitInterceptor'
@@ -280,8 +289,8 @@ export class RateLimitInterceptor implements HttpInterceptor {
             mergeMap(() => {
               const retryRequest = request.clone({
                 setHeaders: {
-                  'X-RateLimit-Retry': String(retryCount + 1)
-                }
+                  'X-RateLimit-Retry': String(retryCount + 1),
+                },
               });
               return next.handle(retryRequest);
             })
@@ -329,7 +338,7 @@ export class RateLimitInterceptor implements HttpInterceptor {
    */
   private calculateBackoffDelay(baseDelay: number, retryCount: number): number {
     const strategy = this.config.retryBackoff || 'exponential';
-    
+
     if (strategy === 'exponential') {
       // Exponential backoff: baseDelay * 2^retryCount
       return baseDelay * Math.pow(2, retryCount);
@@ -346,16 +355,14 @@ export class RateLimitInterceptor implements HttpInterceptor {
   private getBucket(url: string, endpointConfig?: EndpointRateLimit | null): TokenBucket {
     // Use endpoint-specific configuration if available
     if (endpointConfig) {
-      const pattern = typeof endpointConfig.pattern === 'string' 
-        ? endpointConfig.pattern 
-        : endpointConfig.pattern.toString();
+      const pattern =
+        typeof endpointConfig.pattern === 'string'
+          ? endpointConfig.pattern
+          : endpointConfig.pattern.toString();
       const key = `endpoint:${pattern}`;
-      
+
       if (!this.buckets.has(key)) {
-        this.buckets.set(
-          key, 
-          new TokenBucket(endpointConfig.capacity, endpointConfig.refillRate)
-        );
+        this.buckets.set(key, new TokenBucket(endpointConfig.capacity, endpointConfig.refillRate));
       }
       return this.buckets.get(key)!;
     }
@@ -377,9 +384,3 @@ export class RateLimitInterceptor implements HttpInterceptor {
     return this.buckets.get(key)!;
   }
 }
-
-
-
-
-
-

@@ -18,12 +18,34 @@
       "title": "Performance Metrics",
       "type": "analytics",
       "fields": [
-        { "label": "Sales Target Achievement", "value": "120%", "percentage": 120, "performance": "excellent", "trend": "up" },
-        { "label": "Deals Closed", "value": "45 deals", "percentage": 112, "performance": "excellent", "trend": "up" }
+        {
+          "label": "Sales Target Achievement",
+          "value": "120%",
+          "percentage": 120,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Deals Closed",
+          "value": "45 deals",
+          "percentage": 112,
+          "performance": "excellent",
+          "trend": "up"
+        }
       ]
     }
   ],
   "actions": [
-    { "label": "Send Email", "type": "mail", "variant": "primary", "icon": "📧", "email": { "to": "john.smith@techcorp.com", "subject": "Hello", "body": "Dear John Smith,\n\n" } }
+    {
+      "label": "Send Email",
+      "type": "mail",
+      "variant": "primary",
+      "icon": "📧",
+      "email": {
+        "to": "john.smith@techcorp.com",
+        "subject": "Hello",
+        "body": "Dear John Smith,\n\n"
+      }
+    }
   ]
 }

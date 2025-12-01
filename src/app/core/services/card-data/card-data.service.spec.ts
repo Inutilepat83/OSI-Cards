@@ -9,11 +9,7 @@ describe('CardDataService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        CardDataService,
-        JsonFileCardProvider,
-        provideStore({ cards: cardsReducer })
-      ]
+      providers: [CardDataService, JsonFileCardProvider, provideStore({ cards: cardsReducer })],
     });
     service = TestBed.inject(CardDataService);
     provider = TestBed.inject(JsonFileCardProvider);
@@ -25,7 +21,7 @@ describe('CardDataService', () => {
 
   describe('getAllCards', () => {
     it('should return observable of cards', (done) => {
-      service.getAllCards().subscribe(cards => {
+      service.getAllCards().subscribe((cards) => {
         expect(Array.isArray(cards)).toBe(true);
         done();
       });
@@ -34,10 +30,10 @@ describe('CardDataService', () => {
 
   describe('getCardsByType', () => {
     it('should return cards filtered by type', (done) => {
-      service.getCardsByType('company').subscribe(cards => {
+      service.getCardsByType('company').subscribe((cards) => {
         expect(Array.isArray(cards)).toBe(true);
         // All returned cards should be of the specified type
-        cards.forEach(card => {
+        cards.forEach((card) => {
           expect(card.cardType).toBe('company');
         });
         done();
@@ -49,10 +45,9 @@ describe('CardDataService', () => {
     it('should switch to new provider', () => {
       const newProvider = TestBed.inject(JsonFileCardProvider);
       service.switchProvider(newProvider);
-      
+
       // Provider should be switched
       expect(service).toBeTruthy();
     });
   });
 });
-

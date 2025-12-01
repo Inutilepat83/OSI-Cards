@@ -20,7 +20,12 @@ export function removeWillChange(element: HTMLElement): void {
 /**
  * Create optimized transform string
  */
-export function createTransform(translateX?: number, translateY?: number, scale?: number, rotate?: number): string {
+export function createTransform(
+  translateX?: number,
+  translateY?: number,
+  scale?: number,
+  rotate?: number
+): string {
   const transforms: string[] = [];
 
   if (translateX !== undefined || translateY !== undefined) {
@@ -65,5 +70,3 @@ export function isAnimating(element: HTMLElement): boolean {
   const animation = computedStyle.animation;
   return transition !== 'all 0s ease 0s' || animation !== 'none 0s ease 0s';
 }
-
-

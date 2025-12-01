@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { AppConfigService } from './app-config.service';
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
@@ -19,7 +19,7 @@ export interface LogEntry {
  * Replaces console.log statements throughout the application
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LoggingService {
   private readonly config = inject(AppConfigService);
@@ -93,7 +93,7 @@ export class LoggingService {
       debug: 0,
       info: 1,
       warn: 2,
-      error: 3
+      error: 3,
     };
 
     // Only log if level is at or above configured level
@@ -113,7 +113,7 @@ export class LoggingService {
       data,
       timestamp: new Date(),
       correlationId: this.correlationId || undefined,
-      sessionId: this.sessionId
+      sessionId: this.sessionId,
     };
 
     // Add to history
@@ -127,17 +127,17 @@ export class LoggingService {
       level,
       message,
       timestamp: entry.timestamp.toISOString(),
-      sessionId: this.sessionId
+      sessionId: this.sessionId,
     };
-    
+
     if (context) {
       structuredLog['context'] = context;
     }
-    
+
     if (this.correlationId) {
       structuredLog['correlationId'] = this.correlationId;
     }
-    
+
     if (data) {
       structuredLog['data'] = data;
     }
@@ -145,7 +145,7 @@ export class LoggingService {
     // Output to console based on level with structured format
     const logMessage = context ? `[${context}] ${message}` : message;
     const logData = data ? [logMessage, data] : [logMessage];
-    
+
     // Also log structured format for better debugging
     const structuredMessage = `[${level.toUpperCase()}] ${JSON.stringify(structuredLog, null, 2)}`;
 
@@ -181,7 +181,7 @@ export class LoggingService {
   getHistory(level?: LogLevel, limit?: number): LogEntry[] {
     let entries = this.logHistory;
     if (level) {
-      entries = entries.filter(entry => entry.level === level);
+      entries = entries.filter((entry) => entry.level === level);
     }
     if (limit) {
       entries = entries.slice(-limit);
@@ -196,5 +196,3 @@ export class LoggingService {
     this.logHistory.length = 0;
   }
 }
-
-

@@ -46,11 +46,7 @@
                   </p>
                   <div class="product-reference__meta">
                     <div class="product-reference__stars">
-                      <lucide-icon
-                        *ngFor="let star of referenceStars"
-                        name="star"
-                        size="14"
-                      ></lucide-icon>
+                      <lucide-icon *ngFor="let star of referenceStars" name="star" size="14"></lucide-icon>
                     </div>
                     <span class="product-reference__badge">Success Story</span>
                   </div>
@@ -64,10 +60,7 @@
         </ng-container>
 
         <div class="product-grid" [ngClass]="{ 'product-grid--single': gridGroups.length <= 1 }">
-          <section
-            *ngFor="let group of gridGroups; trackBy: trackGroup"
-            class="product-card"
-          >
+          <section *ngFor="let group of gridGroups; trackBy: trackGroup" class="product-card">
             <div class="product-card__header">
               <div class="product-card__icon" [ngClass]="getCategoryIconTone(group)">
                 <lucide-icon [name]="group.icon" size="18"></lucide-icon>
@@ -156,10 +149,7 @@
                     </p>
 
                     <div *ngIf="field.benefits?.length" class="product-entry__benefits">
-                      <div
-                        *ngFor="let benefit of (field.benefits || []) | slice:0:3"
-                        class="product-entry__benefit"
-                      >
+                      <div *ngFor="let benefit of field.benefits || [] | slice: 0 : 3" class="product-entry__benefit">
                         <lucide-icon name="check-circle-2" size="14"></lucide-icon>
                         <span>{{ benefit }}</span>
                       </div>

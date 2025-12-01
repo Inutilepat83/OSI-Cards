@@ -1,4 +1,4 @@
-import { isValidUrl, isAllowedProtocol, sanitizeUrl, getDomain, isExternalUrl } from './url.util';
+import { getDomain, isAllowedProtocol, isExternalUrl, isValidUrl, sanitizeUrl } from './url.util';
 
 describe('URL Utilities', () => {
   describe('isValidUrl', () => {
@@ -129,15 +129,3 @@ describe('URL Utilities', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-

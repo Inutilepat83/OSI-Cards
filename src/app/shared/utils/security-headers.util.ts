@@ -20,28 +20,31 @@ export interface SecurityHeaders {
  * Default security headers
  */
 export const DEFAULT_SECURITY_HEADERS: SecurityHeaders = {
-  'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;",
+  'Content-Security-Policy':
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:;",
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
   'X-Frame-Options': 'DENY',
   'X-Content-Type-Options': 'nosniff',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
-  'Permissions-Policy': 'geolocation=(), microphone=(), camera=()'
+  'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
 };
 
 /**
  * Generate CSP header
  */
-export function generateCSPHeader(options: {
-  allowInlineScripts?: boolean;
-  allowInlineStyles?: boolean;
-  allowEval?: boolean;
-  allowedDomains?: string[];
-} = {}): string {
+export function generateCSPHeader(
+  options: {
+    allowInlineScripts?: boolean;
+    allowInlineStyles?: boolean;
+    allowEval?: boolean;
+    allowedDomains?: string[];
+  } = {}
+): string {
   const {
     allowInlineScripts = false,
     allowInlineStyles = false,
     allowEval = false,
-    allowedDomains = []
+    allowedDomains = [],
   } = options;
 
   const directives: string[] = [];
@@ -51,15 +54,21 @@ export function generateCSPHeader(options: {
 
   // Script source
   const scriptSrc = ['self'];
-  if (allowInlineScripts) scriptSrc.push("'unsafe-inline'");
-  if (allowEval) scriptSrc.push("'unsafe-eval'");
-  allowedDomains.forEach(domain => scriptSrc.push(domain));
+  if (allowInlineScripts) {
+    scriptSrc.push("'unsafe-inline'");
+  }
+  if (allowEval) {
+    scriptSrc.push("'unsafe-eval'");
+  }
+  allowedDomains.forEach((domain) => scriptSrc.push(domain));
   directives.push(`script-src ${scriptSrc.join(' ')}`);
 
   // Style source
   const styleSrc = ['self'];
-  if (allowInlineStyles) styleSrc.push("'unsafe-inline'");
-  allowedDomains.forEach(domain => styleSrc.push(domain));
+  if (allowInlineStyles) {
+    styleSrc.push("'unsafe-inline'");
+  }
+  allowedDomains.forEach((domain) => styleSrc.push(domain));
   directives.push(`style-src ${styleSrc.join(' ')}`);
 
   // Image source
@@ -95,8 +104,6 @@ export function validateSecurityHeaders(headers: SecurityHeaders): {
 
   return {
     isValid: warnings.length === 0,
-    warnings
+    warnings,
   };
 }
-
-

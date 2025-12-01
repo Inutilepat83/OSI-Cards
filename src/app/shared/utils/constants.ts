@@ -1,6 +1,6 @@
 /**
  * Application-wide constants
- * 
+ *
  * Centralized location for magic numbers and configuration values
  * used throughout the application to improve maintainability.
  */
@@ -133,4 +133,3 @@ export const RETRY_CONSTANTS = {
   /** Exponential backoff base multiplier */
   EXPONENTIAL_BACKOFF_BASE: 2,
 } as const;
-

@@ -1,4 +1,12 @@
-import { Component, inject, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -6,8 +14,15 @@ import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AICardRendererComponent } from '../../../../projects/osi-cards-lib/src/lib/components/ai-card-renderer/ai-card-renderer.component';
 import { AICardConfig } from '../../../../projects/osi-cards-lib/src/lib/models';
-import { OSICardsStreamingService, StreamingState, CardUpdate } from '../../../../projects/osi-cards-lib/src/lib/services/streaming.service';
-import { ThemeService, ThemePreset } from '../../../../projects/osi-cards-lib/src/lib/themes/theme.service';
+import {
+  CardUpdate,
+  OSICardsStreamingService,
+  StreamingState,
+} from '../../../../projects/osi-cards-lib/src/lib/services/streaming.service';
+import {
+  ThemePreset,
+  ThemeService,
+} from '../../../../projects/osi-cards-lib/src/lib/themes/theme.service';
 import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
 
 /**
@@ -31,7 +46,7 @@ interface CardTemplate {
 
 /**
  * iLibrary Integration Simulator Component
- * 
+ *
  * Demonstrates OSI Cards integration into various client applications,
  * showcasing streaming logic, theme switching, and CSS encapsulation
  * across different stylesheet environments.
@@ -39,15 +54,10 @@ interface CardTemplate {
 @Component({
   selector: 'app-ilibrary',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    AICardRendererComponent,
-    LucideIconsModule
-  ],
+  imports: [CommonModule, FormsModule, AICardRendererComponent, LucideIconsModule],
   templateUrl: './ilibrary.component.html',
   styleUrls: ['./ilibrary.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IlibraryComponent implements OnInit, OnDestroy {
   private readonly http = inject(HttpClient);
@@ -63,83 +73,117 @@ export class IlibraryComponent implements OnInit, OnDestroy {
       id: 'osi',
       name: 'OSI (Orange Sales Assistance)',
       description: 'Orange Sales Assistance environment with Boosted styling',
-      cssClass: 'env-osi'
+      cssClass: 'env-osi',
     },
     {
       id: 'corporate',
       name: 'Corporate Portal',
       description: 'Bootstrap/Boosted-like enterprise environment',
-      cssClass: 'env-corporate'
+      cssClass: 'env-corporate',
     },
     {
       id: 'developer',
       name: 'Developer Console',
       description: 'Dark terminal aesthetic with monospace fonts',
-      cssClass: 'env-developer'
+      cssClass: 'env-developer',
     },
     {
       id: 'marketing',
       name: 'Marketing Site',
       description: 'Light, modern with conflicting styles',
-      cssClass: 'env-marketing'
+      cssClass: 'env-marketing',
     },
     {
       id: 'legacy',
       name: 'Legacy System',
       description: 'Aggressive CSS resets and overrides',
-      cssClass: 'env-legacy'
-    }
+      cssClass: 'env-legacy',
+    },
   ];
 
   // Card templates - All Sections Complete is default for comprehensive testing
   readonly cardTemplates: CardTemplate[] = [
     // Generated test configs (most useful for testing - placed first)
-    { id: 'complete', name: 'All Sections (Complete)', path: 'assets/configs/generated/all-sections-complete.json' },
-    { id: 'all-components', name: 'All Components', path: 'assets/configs/all/all-components.json' },
-    { id: 'minimal', name: 'All Sections (Minimal)', path: 'assets/configs/generated/all-sections-minimal.json' },
-    { id: 'edge-cases', name: 'All Sections (Edge Cases)', path: 'assets/configs/generated/all-sections-edge-cases.json' },
+    {
+      id: 'complete',
+      name: 'All Sections (Complete)',
+      path: 'assets/configs/generated/all-sections-complete.json',
+    },
+    {
+      id: 'all-components',
+      name: 'All Components',
+      path: 'assets/configs/all/all-components.json',
+    },
+    {
+      id: 'minimal',
+      name: 'All Sections (Minimal)',
+      path: 'assets/configs/generated/all-sections-minimal.json',
+    },
+    {
+      id: 'edge-cases',
+      name: 'All Sections (Edge Cases)',
+      path: 'assets/configs/generated/all-sections-edge-cases.json',
+    },
     // Standard configs
-    { id: 'company-basic', name: 'Company (Basic)', path: 'assets/configs/companies/company-basic-v1.json' },
-    { id: 'company-enhanced', name: 'Company (Enhanced)', path: 'assets/configs/companies/company-enhanced-v2.json' },
-    { id: 'contact-basic', name: 'Contact (Basic)', path: 'assets/configs/contacts/contact-basic-v1.json' },
-    { id: 'opportunity-basic', name: 'Opportunity (Basic)', path: 'assets/configs/opportunities/opportunity-basic-v1.json' },
-    { id: 'analytics-basic', name: 'Analytics (Basic)', path: 'assets/configs/analytics/analytics-basic-v1.json' }
+    {
+      id: 'company-basic',
+      name: 'Company (Basic)',
+      path: 'assets/configs/companies/company-basic-v1.json',
+    },
+    {
+      id: 'company-enhanced',
+      name: 'Company (Enhanced)',
+      path: 'assets/configs/companies/company-enhanced-v2.json',
+    },
+    {
+      id: 'contact-basic',
+      name: 'Contact (Basic)',
+      path: 'assets/configs/contacts/contact-basic-v1.json',
+    },
+    {
+      id: 'opportunity-basic',
+      name: 'Opportunity (Basic)',
+      path: 'assets/configs/opportunities/opportunity-basic-v1.json',
+    },
+    {
+      id: 'analytics-basic',
+      name: 'Analytics (Basic)',
+      path: 'assets/configs/analytics/analytics-basic-v1.json',
+    },
   ];
 
   // Theme options
   readonly themeOptions: { id: ThemePreset; name: string }[] = [
     { id: 'light', name: 'Light' },
     { id: 'dark', name: 'Dark' },
-    { id: 'system', name: 'System' }
+    { id: 'system', name: 'System' },
   ];
 
   // State
   selectedEnvironment: ClientEnvironment = this.environments[0]!;
   selectedTemplate: CardTemplate = this.cardTemplates[0]!;
   selectedTheme: ThemePreset = 'dark';
-  
+
   // Streaming configuration
   useStreaming = true;
   streamingSpeed = 80; // tokens per second
   thinkingDelay = 2000; // milliseconds to simulate LLM thinking (waiting for JSON)
-  
+
   // Card state
   currentCard: AICardConfig | null = null;
   streamingState: StreamingState | null = null;
-  
+
   // UI state
   isGenerating = false;
   cardJson = '';
 
   ngOnInit(): void {
     // Subscribe to streaming service state
-    this.streamingService.state$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(state => {
-        this.streamingState = state;
-        this.isGenerating = state.isActive;
-        this.cdr.markForCheck();
-      });
+    this.streamingService.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
+      this.streamingState = state;
+      this.isGenerating = state.isActive;
+      this.cdr.markForCheck();
+    });
 
     // Subscribe to card updates
     this.streamingService.cardUpdates$
@@ -150,15 +194,13 @@ export class IlibraryComponent implements OnInit, OnDestroy {
       });
 
     // Handle query params for automated testing
-    this.route.queryParams
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(params => {
-        this.handleQueryParams(params);
-      });
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      this.handleQueryParams(params);
+    });
 
     // Set initial theme
     this.onThemeChange();
-    
+
     // Load initial card
     this.loadCardTemplate();
   }
@@ -171,18 +213,18 @@ export class IlibraryComponent implements OnInit, OnDestroy {
    *   - config: 'complete' | 'minimal' | 'edge-cases' | template id
    *   - env: 'osi' | 'corporate' | 'developer' | 'marketing' | 'legacy'
    */
-  private handleQueryParams(params: { [key: string]: string }): void {
+  private handleQueryParams(params: Record<string, string>): void {
     let shouldAutoGenerate = false;
-    
+
     // Handle environment param
     if (params['env']) {
       const envId = params['env'];
-      const env = this.environments.find(e => e.id === envId);
+      const env = this.environments.find((e) => e.id === envId);
       if (env) {
         this.selectedEnvironment = env;
       }
     }
-    
+
     // Handle theme param
     if (params['theme']) {
       const theme = params['theme'] as ThemePreset;
@@ -195,7 +237,7 @@ export class IlibraryComponent implements OnInit, OnDestroy {
     // Handle config param
     if (params['config']) {
       const configId = params['config'];
-      const template = this.cardTemplates.find(t => t.id === configId);
+      const template = this.cardTemplates.find((t) => t.id === configId);
       if (template) {
         this.selectedTemplate = template;
         shouldAutoGenerate = true;
@@ -205,7 +247,7 @@ export class IlibraryComponent implements OnInit, OnDestroy {
     // Handle state param
     if (params['state']) {
       const state = params['state'];
-      
+
       switch (state) {
         case 'empty':
           // Set empty card (no sections)
@@ -213,13 +255,13 @@ export class IlibraryComponent implements OnInit, OnDestroy {
           this.cardJson = JSON.stringify(this.currentCard, null, 2);
           this.cdr.markForCheck();
           return; // Don't auto-generate for empty state
-          
+
         case 'streaming':
           // Enable streaming mode
           this.useStreaming = true;
           shouldAutoGenerate = true;
           break;
-          
+
         case 'normal':
         default:
           // Normal mode - instant load
@@ -233,7 +275,7 @@ export class IlibraryComponent implements OnInit, OnDestroy {
     if (shouldAutoGenerate) {
       this.loadCardTemplateAndGenerate();
     }
-    
+
     this.cdr.markForCheck();
   }
 
@@ -241,7 +283,8 @@ export class IlibraryComponent implements OnInit, OnDestroy {
    * Load template and auto-generate (for query param automation)
    */
   private loadCardTemplateAndGenerate(): void {
-    this.http.get<AICardConfig>(this.selectedTemplate.path)
+    this.http
+      .get<AICardConfig>(this.selectedTemplate.path)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (cardConfig) => {
@@ -254,7 +297,7 @@ export class IlibraryComponent implements OnInit, OnDestroy {
           console.error('Failed to load card template:', err);
           this.cardJson = '{}';
           this.cdr.markForCheck();
-        }
+        },
       });
   }
 
@@ -288,7 +331,8 @@ export class IlibraryComponent implements OnInit, OnDestroy {
    * Load the selected card template from assets
    */
   loadCardTemplate(): void {
-    this.http.get<AICardConfig>(this.selectedTemplate.path)
+    this.http
+      .get<AICardConfig>(this.selectedTemplate.path)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (cardConfig) => {
@@ -300,7 +344,7 @@ export class IlibraryComponent implements OnInit, OnDestroy {
           console.error('Failed to load card template:', err);
           this.cardJson = '{}';
           this.cdr.markForCheck();
-        }
+        },
       });
   }
 
@@ -314,17 +358,17 @@ export class IlibraryComponent implements OnInit, OnDestroy {
 
     // Reset current card
     this.currentCard = null;
-    
+
     // Configure streaming with user-controlled thinking delay
     // The thinking delay simulates waiting for LLM to start returning JSON
     this.streamingService.configure({
       tokensPerSecond: this.streamingSpeed,
-      thinkingDelayMs: this.useStreaming ? this.thinkingDelay : 0
+      thinkingDelayMs: this.useStreaming ? this.thinkingDelay : 0,
     });
 
     // Start streaming
-    this.streamingService.start(this.cardJson, { 
-      instant: !this.useStreaming 
+    this.streamingService.start(this.cardJson, {
+      instant: !this.useStreaming,
     });
   }
 
@@ -347,12 +391,18 @@ export class IlibraryComponent implements OnInit, OnDestroy {
    */
   get stageLabel(): string {
     switch (this.streamingState?.stage) {
-      case 'thinking': return 'Thinking...';
-      case 'streaming': return 'Streaming';
-      case 'complete': return 'Complete';
-      case 'aborted': return 'Aborted';
-      case 'error': return 'Error';
-      default: return 'Idle';
+      case 'thinking':
+        return 'Thinking...';
+      case 'streaming':
+        return 'Streaming';
+      case 'complete':
+        return 'Complete';
+      case 'aborted':
+        return 'Aborted';
+      case 'error':
+        return 'Error';
+      default:
+        return 'Idle';
     }
   }
 
@@ -368,12 +418,13 @@ export class IlibraryComponent implements OnInit, OnDestroy {
    * Check if card has content (sections).
    */
   get hasCard(): boolean {
-    const hasSections = this.currentCard !== null && 
-           this.currentCard.sections !== undefined && 
-           this.currentCard.sections.length > 0;
+    const hasSections =
+      this.currentCard !== null &&
+      this.currentCard.sections !== undefined &&
+      this.currentCard.sections.length > 0;
     return hasSections;
   }
-  
+
   /**
    * Get the card config to pass to renderer.
    * Returns current card or a placeholder during generation.
@@ -386,14 +437,13 @@ export class IlibraryComponent implements OnInit, OnDestroy {
    * Get environment by ID
    */
   getEnvironmentById(id: string): ClientEnvironment | undefined {
-    return this.environments.find(env => env.id === id);
+    return this.environments.find((env) => env.id === id);
   }
 
   /**
    * Get template by ID
    */
   getTemplateById(id: string): CardTemplate | undefined {
-    return this.cardTemplates.find(t => t.id === id);
+    return this.cardTemplates.find((t) => t.id === id);
   }
 }
-

@@ -36,11 +36,17 @@ interface ProductCategoryGroup {
   standalone: true,
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './product-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductSectionComponent extends BaseSectionComponent<ProductField> {
-
-  private readonly categoryOrder: string[] = ['references', 'pricing', 'features', 'advantages', 'process', 'contacts'];
+  private readonly categoryOrder: string[] = [
+    'references',
+    'pricing',
+    'features',
+    'advantages',
+    'process',
+    'contacts',
+  ];
 
   private readonly categoryConfig: Record<string, { title: string; icon: string }> = {
     references: { title: 'Client References', icon: 'award' },
@@ -49,7 +55,7 @@ export class ProductSectionComponent extends BaseSectionComponent<ProductField> 
     advantages: { title: 'Competitive Advantages', icon: 'trending-up' },
     process: { title: 'Sales Process', icon: 'target' },
     contacts: { title: 'Internal Contacts', icon: 'users' },
-    default: { title: 'Product Information', icon: 'box' }
+    default: { title: 'Product Information', icon: 'box' },
   };
 
   readonly referenceStars = [1, 2, 3, 4, 5];
@@ -94,7 +100,7 @@ export class ProductSectionComponent extends BaseSectionComponent<ProductField> 
           key,
           title: 'Unknown',
           icon: 'box',
-          fields: groups.get(key) ?? []
+          fields: groups.get(key) ?? [],
         };
       }
       const configTitle = config.title;
@@ -103,7 +109,7 @@ export class ProductSectionComponent extends BaseSectionComponent<ProductField> 
         key,
         title: configTitle ?? 'Unknown',
         icon: configIcon ?? 'box',
-        fields: groups.get(key) ?? []
+        fields: groups.get(key) ?? [],
       };
     });
   }
@@ -126,7 +132,7 @@ export class ProductSectionComponent extends BaseSectionComponent<ProductField> 
       { label: 'Features', value: totalFeatures },
       { label: 'References', value: totalReferences },
       { label: 'Contacts', value: totalContacts },
-      { label: 'Advantages', value: totalAdvantages }
+      { label: 'Advantages', value: totalAdvantages },
     ];
   }
 
@@ -144,7 +150,8 @@ export class ProductSectionComponent extends BaseSectionComponent<ProductField> 
 
   trackGroup = (_index: number, group: ProductCategoryGroup): string => group.key;
 
-  override trackField = (_index: number, field: ProductField): string => field.id ?? field.label ?? `product-field-${_index}`;
+  override trackField = (_index: number, field: ProductField): string =>
+    field.id ?? field.label ?? `product-field-${_index}`;
 
   getGroupBadgeLabel(group: ProductCategoryGroup): string {
     return `${group.fields.length} ${group.fields.length === 1 ? 'item' : 'items'}`;

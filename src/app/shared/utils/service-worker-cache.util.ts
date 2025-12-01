@@ -7,7 +7,12 @@ export interface CacheStrategy {
   name: string;
   maxAge: number; // in milliseconds
   maxEntries?: number;
-  strategy: 'cache-first' | 'network-first' | 'stale-while-revalidate' | 'network-only' | 'cache-only';
+  strategy:
+    | 'cache-first'
+    | 'network-first'
+    | 'stale-while-revalidate'
+    | 'network-only'
+    | 'cache-only';
 }
 
 /**
@@ -18,45 +23,53 @@ export const CACHE_STRATEGIES: Record<string, CacheStrategy> = {
     name: 'card-configs',
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     maxEntries: 100,
-    strategy: 'stale-while-revalidate'
+    strategy: 'stale-while-revalidate',
   },
-  'assets': {
+  assets: {
     name: 'assets',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     maxEntries: 500,
-    strategy: 'cache-first'
+    strategy: 'cache-first',
   },
-  'api': {
+  api: {
     name: 'api',
     maxAge: 5 * 60 * 1000, // 5 minutes
     maxEntries: 50,
-    strategy: 'network-first'
-  }
+    strategy: 'network-first',
+  },
 };
 
 /**
  * Get cache strategy for a URL
  */
 export function getCacheStrategy(url: string): CacheStrategy {
-  const defaultStrategy: CacheStrategy = { strategy: 'network-first', maxAge: 3600000, name: 'default' };
-  
+  const defaultStrategy: CacheStrategy = {
+    strategy: 'network-first',
+    maxAge: 3600000,
+    name: 'default',
+  };
+
   if (url.includes('/assets/configs/')) {
     const cardConfigs = CACHE_STRATEGIES['card-configs'];
-    if (cardConfigs) return cardConfigs;
-    const api = CACHE_STRATEGIES['api'];
+    if (cardConfigs) {
+      return cardConfigs;
+    }
+    const api = CACHE_STRATEGIES.api;
     return api ?? defaultStrategy;
   }
   if (url.includes('/assets/')) {
-    const assets = CACHE_STRATEGIES['assets'];
-    if (assets) return assets;
-    const api = CACHE_STRATEGIES['api'];
+    const assets = CACHE_STRATEGIES.assets;
+    if (assets) {
+      return assets;
+    }
+    const api = CACHE_STRATEGIES.api;
     return api ?? { strategy: 'cache-first', maxAge: 86400000, name: 'assets-fallback' };
   }
   if (url.includes('/api/')) {
-    const api = CACHE_STRATEGIES['api'];
+    const api = CACHE_STRATEGIES.api;
     return api ?? defaultStrategy;
   }
-  const api = CACHE_STRATEGIES['api'];
+  const api = CACHE_STRATEGIES.api;
   return api ?? defaultStrategy; // Default
 }
 
@@ -100,5 +113,3 @@ export async function cleanExpiredCacheEntries(cacheName: string, maxAge: number
     return 0;
   }
 }
-
-

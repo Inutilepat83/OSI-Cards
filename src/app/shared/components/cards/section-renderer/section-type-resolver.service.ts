@@ -9,7 +9,7 @@ import { DefaultSectionTypeResolver } from './section-type-resolver.strategies';
  * Allows different resolution strategies to be used
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SectionTypeResolverService {
   private resolver: ISectionTypeResolver = new DefaultSectionTypeResolver();
@@ -35,5 +35,3 @@ export class SectionTypeResolverService {
     return this.resolver;
   }
 }
-
-

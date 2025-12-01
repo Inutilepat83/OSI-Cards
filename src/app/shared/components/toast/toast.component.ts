@@ -1,7 +1,7 @@
-import { Component, Input, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Toast, ToastService, ToastType } from '../../services/toast.service';
-import { trigger, transition, style, animate } from '@angular/animations';
+import { Toast, ToastService } from '../../services/toast.service';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 /**
  * Toast notification component
@@ -40,127 +40,131 @@ import { trigger, transition, style, animate } from '@angular/animations';
       </div>
     </div>
   `,
-  styles: [`
-    .toast-container {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 10000;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      max-width: 400px;
-    }
-
-    .toast {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem 1rem;
-      background: rgba(20, 30, 50, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-      cursor: pointer;
-      transition: transform 0.2s, opacity 0.2s;
-    }
-
-    .toast:hover {
-      transform: translateX(-4px);
-    }
-
-    .toast--success {
-      border-left: 4px solid #10b981;
-    }
-
-    .toast--error {
-      border-left: 4px solid #ef4444;
-    }
-
-    .toast--warning {
-      border-left: 4px solid #f59e0b;
-    }
-
-    .toast--info {
-      border-left: 4px solid #3b82f6;
-    }
-
-    .toast-icon {
-      flex-shrink: 0;
-      width: 1.5rem;
-      height: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 1rem;
-    }
-
-    .toast--success .toast-icon {
-      color: #10b981;
-    }
-
-    .toast--error .toast-icon {
-      color: #ef4444;
-    }
-
-    .toast--warning .toast-icon {
-      color: #f59e0b;
-    }
-
-    .toast--info .toast-icon {
-      color: #3b82f6;
-    }
-
-    .toast-message {
-      flex: 1;
-      color: var(--card-text-primary, #FFFFFF);
-      font-size: 0.875rem;
-      line-height: 1.5;
-    }
-
-    .toast-close {
-      flex-shrink: 0;
-      background: transparent;
-      border: none;
-      color: var(--card-text-secondary, #B8C5D6);
-      font-size: 1.5rem;
-      line-height: 1;
-      cursor: pointer;
-      padding: 0;
-      width: 1.5rem;
-      height: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: color 0.2s;
-    }
-
-    .toast-close:hover {
-      color: var(--card-text-primary, #FFFFFF);
-    }
-
-    @media (max-width: 768px) {
+  styles: [
+    `
       .toast-container {
-        top: 0.5rem;
-        right: 0.5rem;
-        left: 0.5rem;
-        max-width: none;
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        max-width: 400px;
       }
-    }
-  `],
+
+      .toast {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        background: rgba(20, 30, 50, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          opacity 0.2s;
+      }
+
+      .toast:hover {
+        transform: translateX(-4px);
+      }
+
+      .toast--success {
+        border-left: 4px solid #10b981;
+      }
+
+      .toast--error {
+        border-left: 4px solid #ef4444;
+      }
+
+      .toast--warning {
+        border-left: 4px solid #f59e0b;
+      }
+
+      .toast--info {
+        border-left: 4px solid #3b82f6;
+      }
+
+      .toast-icon {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1rem;
+      }
+
+      .toast--success .toast-icon {
+        color: #10b981;
+      }
+
+      .toast--error .toast-icon {
+        color: #ef4444;
+      }
+
+      .toast--warning .toast-icon {
+        color: #f59e0b;
+      }
+
+      .toast--info .toast-icon {
+        color: #3b82f6;
+      }
+
+      .toast-message {
+        flex: 1;
+        color: var(--card-text-primary, #ffffff);
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+
+      .toast-close {
+        flex-shrink: 0;
+        background: transparent;
+        border: none;
+        color: var(--card-text-secondary, #b8c5d6);
+        font-size: 1.5rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0;
+        width: 1.5rem;
+        height: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.2s;
+      }
+
+      .toast-close:hover {
+        color: var(--card-text-primary, #ffffff);
+      }
+
+      @media (max-width: 768px) {
+        .toast-container {
+          top: 0.5rem;
+          right: 0.5rem;
+          left: 0.5rem;
+          max-width: none;
+        }
+      }
+    `,
+  ],
   animations: [
     trigger('slideInOut', [
       transition(':enter', [
         style({ transform: 'translateX(100%)', opacity: 0 }),
-        animate('0.3s ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
+        animate('0.3s ease-out', style({ transform: 'translateX(0)', opacity: 1 })),
       ]),
       transition(':leave', [
-        animate('0.3s ease-out', style({ transform: 'translateX(100%)', opacity: 0 }))
-      ])
-    ])
+        animate('0.3s ease-out', style({ transform: 'translateX(100%)', opacity: 0 })),
+      ]),
+    ]),
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToastComponent implements OnInit {
   private readonly toastService = inject(ToastService);
@@ -168,7 +172,7 @@ export class ToastComponent implements OnInit {
   toasts: Toast[] = [];
 
   ngOnInit(): void {
-    this.toastService.toasts$.subscribe(toasts => {
+    this.toastService.toasts$.subscribe((toasts) => {
       this.toasts = toasts;
     });
   }
@@ -177,5 +181,3 @@ export class ToastComponent implements OnInit {
     this.toastService.remove(id);
   }
 }
-
-

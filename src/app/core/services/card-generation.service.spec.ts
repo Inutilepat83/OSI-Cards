@@ -2,17 +2,14 @@ import { TestBed } from '@angular/core/testing';
 import { provideStore } from '@ngrx/store';
 import { CardGenerationService } from './card-generation.service';
 import { reducer as cardsReducer } from '../../store/cards/cards.state';
-import { CardBuilder, SectionBuilder, FieldBuilder } from '../../testing/test-builders';
+import { CardBuilder, FieldBuilder, SectionBuilder } from '../../testing/test-builders';
 
 describe('CardGenerationService', () => {
   let service: CardGenerationService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        CardGenerationService,
-        provideStore({ cards: cardsReducer })
-      ]
+      providers: [CardGenerationService, provideStore({ cards: cardsReducer })],
     });
     service = TestBed.inject(CardGenerationService);
   });
@@ -25,11 +22,11 @@ describe('CardGenerationService', () => {
     it('should generate card from valid JSON', () => {
       const json = JSON.stringify({
         cardTitle: 'Test Card',
-        sections: []
+        sections: [],
       });
-      
+
       const result = service.generateCardFromJson(json);
-      
+
       expect(result).toBeTruthy();
       expect(result?.cardTitle).toBe('Test Card');
       expect(result?.sections).toEqual([]);
@@ -62,10 +59,10 @@ describe('CardGenerationService', () => {
             .build()
         )
         .build();
-      
+
       const json = JSON.stringify(card);
       const result = service.generateCardFromJson(json);
-      
+
       expect(result).toBeTruthy();
       expect(result?.sections.length).toBe(1);
     });
@@ -75,7 +72,7 @@ describe('CardGenerationService', () => {
     it('should return new card if no existing card', () => {
       const newCard = CardBuilder.create().withTitle('New').build();
       const result = service.mergeCard(newCard, null);
-      
+
       expect(result.card).toBe(newCard);
       expect(result.changeType).toBe('structural');
     });
@@ -83,9 +80,9 @@ describe('CardGenerationService', () => {
     it('should merge cards when existing card provided', () => {
       const existing = CardBuilder.create().withTitle('Existing').build();
       const newCard = CardBuilder.create().withTitle('New').build();
-      
+
       const result = service.mergeCard(newCard, existing);
-      
+
       expect(result.card).toBeTruthy();
       expect(result.changeType).toBeDefined();
     });
@@ -93,32 +90,31 @@ describe('CardGenerationService', () => {
 
   describe('loadTemplate', () => {
     it('should dispatch load template action', () => {
-      const dispatchSpy = spyOn(service['store'], 'dispatch');
-      
+      const dispatchSpy = spyOn(service.store, 'dispatch');
+
       service.loadTemplate('company', 1);
-      
+
       expect(dispatchSpy).toHaveBeenCalled();
     });
   });
 
   describe('loadFirstCardExample', () => {
     it('should dispatch load first card action', () => {
-      const dispatchSpy = spyOn(service['store'], 'dispatch');
-      
+      const dispatchSpy = spyOn(service.store, 'dispatch');
+
       service.loadFirstCardExample();
-      
+
       expect(dispatchSpy).toHaveBeenCalled();
     });
   });
 
   describe('clearError', () => {
     it('should dispatch clear error action', () => {
-      const dispatchSpy = spyOn(service['store'], 'dispatch');
-      
+      const dispatchSpy = spyOn(service.store, 'dispatch');
+
       service.clearError();
-      
+
       expect(dispatchSpy).toHaveBeenCalled();
     });
   });
 });
-

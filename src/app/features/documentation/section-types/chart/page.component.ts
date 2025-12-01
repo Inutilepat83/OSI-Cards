@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
 import { DocsDemoComponent } from '../../components';
 
@@ -118,39 +118,24 @@ The **Chart Section** (\`type: "chart"\`) is used for displays data visualizatio
 `;
 
 const demoConfig = {
-  "title": "Revenue Trends",
-  "type": "chart",
-  "chartType": "bar",
-  "chartData": {
-    "labels": [
-      "Q1",
-      "Q2",
-      "Q3",
-      "Q4"
-    ],
-    "datasets": [
+  title: 'Revenue Trends',
+  type: 'chart',
+  chartType: 'bar',
+  chartData: {
+    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+    datasets: [
       {
-        "label": "Revenue",
-        "data": [
-          100,
-          150,
-          200,
-          250
-        ],
-        "backgroundColor": "#FF7900"
+        label: 'Revenue',
+        data: [100, 150, 200, 250],
+        backgroundColor: '#FF7900',
       },
       {
-        "label": "Expenses",
-        "data": [
-          80,
-          90,
-          100,
-          110
-        ],
-        "backgroundColor": "#4CAF50"
-      }
-    ]
-  }
+        label: 'Expenses',
+        data: [80, 90, 100, 110],
+        backgroundColor: '#4CAF50',
+      },
+    ],
+  },
 };
 
 /**
@@ -163,8 +148,8 @@ const demoConfig = {
   imports: [DocPageComponent, DocsDemoComponent],
   template: `
     <div class="section-docs">
-      <app-docs-demo 
-        [config]="demo" 
+      <app-docs-demo
+        [config]="demo"
         [type]="'chart'"
         demoTitle="Live Preview"
         height="350px"
@@ -172,14 +157,16 @@ const demoConfig = {
       <app-doc-page [content]="content"></app-doc-page>
     </div>
   `,
-  styles: [`
-    .section-docs {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styles: [
+    `
+      .section-docs {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChartPageComponent {
   content = pageContent;

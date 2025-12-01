@@ -1,24 +1,27 @@
 import {
-  Component,
-  OnInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  Component,
+  DestroyRef,
   inject,
+  OnInit,
   signal,
-  DestroyRef
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { RouterModule, ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { catchError, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
-import { MarkdownRendererComponent, TocItem } from '../../shared/components/markdown-renderer/markdown-renderer.component';
 import {
+  MarkdownRendererComponent,
+  TocItem,
+} from '../../shared/components/markdown-renderer/markdown-renderer.component';
+import {
+  DocCategory,
+  DocItem,
   getDocumentationByCategory,
   getDocumentationById,
-  DocItem,
-  DocCategory
 } from './documentation.config';
 
 /**
@@ -28,15 +31,10 @@ import {
 @Component({
   selector: 'app-documentation',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    LucideIconsModule,
-    MarkdownRendererComponent
-  ],
+  imports: [CommonModule, RouterModule, LucideIconsModule, MarkdownRendererComponent],
   templateUrl: './documentation.component.html',
   styleUrls: ['./documentation.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DocumentationPageComponent implements OnInit {
   private readonly http = inject(HttpClient);
@@ -61,7 +59,7 @@ export class DocumentationPageComponent implements OnInit {
     // Get document ID from route, default to 'readme' if no ID
     const docId = this.route.snapshot.params['id'] || 'readme';
     this.loadDocument(docId);
-    
+
     // Also subscribe to route changes
     this.route.params
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -78,7 +76,7 @@ export class DocumentationPageComponent implements OnInit {
    */
   loadDocument(docId: string): void {
     const doc = getDocumentationById(docId);
-    
+
     if (!doc) {
       this.error.set(`Document "${docId}" not found`);
       this.cdr.markForCheck();
@@ -98,7 +96,7 @@ export class DocumentationPageComponent implements OnInit {
     this.http
       .get(doc.path, { responseType: 'text' })
       .pipe(
-        catchError(err => {
+        catchError((err) => {
           console.error('Error loading documentation:', err);
           this.error.set(`Failed to load "${doc.title}". File may not exist at ${doc.path}`);
           this.isLoading.set(false);
@@ -106,7 +104,7 @@ export class DocumentationPageComponent implements OnInit {
           return of('');
         })
       )
-      .subscribe(content => {
+      .subscribe((content) => {
         this.markdownContent.set(content);
         this.isLoading.set(false);
         this.cdr.markForCheck();
@@ -117,7 +115,7 @@ export class DocumentationPageComponent implements OnInit {
    * Toggle sidebar (mobile)
    */
   toggleSidebar(): void {
-    this.sidebarOpen.update(open => !open);
+    this.sidebarOpen.update((open) => !open);
   }
 
   /**
@@ -163,10 +161,9 @@ export class DocumentationPageComponent implements OnInit {
 
       window.scrollTo({
         top: offsetPosition,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     }
     this.closeSidebar();
   }
 }
-

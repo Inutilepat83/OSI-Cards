@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
 import { DocsDemoComponent } from '../../components';
 
@@ -109,23 +109,23 @@ The **Social Media Section** (\`type: "social-media"\`) is used for displays soc
 `;
 
 const demoConfig = {
-  "title": "Social Media Presence",
-  "type": "social-media",
-  "description": "Company social media profiles",
-  "fields": [
+  title: 'Social Media Presence',
+  type: 'social-media',
+  description: 'Company social media profiles',
+  fields: [
     {
-      "platform": "linkedin",
-      "handle": "@company",
-      "url": "https://linkedin.com/company/example",
-      "followers": 50000
+      platform: 'linkedin',
+      handle: '@company',
+      url: 'https://linkedin.com/company/example',
+      followers: 50000,
     },
     {
-      "platform": "twitter",
-      "handle": "@company",
-      "url": "https://twitter.com/company",
-      "followers": 25000
-    }
-  ]
+      platform: 'twitter',
+      handle: '@company',
+      url: 'https://twitter.com/company',
+      followers: 25000,
+    },
+  ],
 };
 
 /**
@@ -138,8 +138,8 @@ const demoConfig = {
   imports: [DocPageComponent, DocsDemoComponent],
   template: `
     <div class="section-docs">
-      <app-docs-demo 
-        [config]="demo" 
+      <app-docs-demo
+        [config]="demo"
         [type]="'social-media'"
         demoTitle="Live Preview"
         height="350px"
@@ -147,14 +147,16 @@ const demoConfig = {
       <app-doc-page [content]="content"></app-doc-page>
     </div>
   `,
-  styles: [`
-    .section-docs {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styles: [
+    `
+      .section-docs {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SocialMediaPageComponent {
   content = pageContent;

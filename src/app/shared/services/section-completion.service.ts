@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { CardSection, CardField, CardItem } from '../../models';
+import { inject, Injectable } from '@angular/core';
+import { CardField, CardItem, CardSection } from '../../models';
 import { AppConfigService } from '../../core/services/app-config.service';
 
 export interface SectionCompletionState {
@@ -17,7 +17,7 @@ export interface SectionCompletionState {
  * Extracted from HomePageComponent for better testability and reusability
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SectionCompletionService {
   private readonly config = inject(AppConfigService);
@@ -31,10 +31,11 @@ export class SectionCompletionService {
     const fields = section.fields ?? [];
     for (const field of fields) {
       const meta = field.meta as Record<string, unknown> | undefined;
-      const isPlaceholder = field.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
-                           field.value === undefined ||
-                           field.value === null ||
-                           (meta && meta['placeholder'] === true);
+      const isPlaceholder =
+        field.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
+        field.value === undefined ||
+        field.value === null ||
+        (meta && meta['placeholder'] === true);
       if (isPlaceholder) {
         return false;
       }
@@ -43,10 +44,11 @@ export class SectionCompletionService {
     const items = section.items ?? [];
     for (const item of items) {
       const meta = item.meta as Record<string, unknown> | undefined;
-      const isPlaceholder = item.description === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
-                           !item.title ||
-                           item.title.startsWith('Item ') ||
-                           (meta && meta['placeholder'] === true);
+      const isPlaceholder =
+        item.description === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
+        !item.title ||
+        item.title.startsWith('Item ') ||
+        (meta && meta['placeholder'] === true);
       if (isPlaceholder) {
         return false;
       }
@@ -70,22 +72,23 @@ export class SectionCompletionService {
     let completedCount = 0;
 
     // Check fields
-    fields.forEach(field => {
+    fields.forEach((field) => {
       const meta = field.meta as Record<string, unknown> | undefined;
-      const isPlaceholder = field.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
-                           field.value === undefined ||
-                           field.value === null ||
-                           (meta && meta['placeholder'] === true);
+      const isPlaceholder =
+        field.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
+        field.value === undefined ||
+        field.value === null ||
+        (meta && meta['placeholder'] === true);
       if (!isPlaceholder && field.value !== '') {
         completedCount++;
       }
     });
 
     // Check items
-    items.forEach(item => {
+    items.forEach((item) => {
       const meta = item.meta as Record<string, unknown> | undefined;
-      const isPlaceholder = (meta && meta['placeholder'] === true) ||
-                           (item.title === 'Item' && !item.description);
+      const isPlaceholder =
+        (meta && meta['placeholder'] === true) || (item.title === 'Item' && !item.description);
       if (!isPlaceholder && item.title) {
         completedCount++;
       }
@@ -105,22 +108,23 @@ export class SectionCompletionService {
     const completionPercentage = this.calculateCompletionPercentage(section);
 
     let completedFieldCount = 0;
-    fields.forEach(field => {
+    fields.forEach((field) => {
       const meta = field.meta as Record<string, unknown> | undefined;
-      const isPlaceholder = field.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
-                           field.value === undefined ||
-                           field.value === null ||
-                           (meta && meta['placeholder'] === true);
+      const isPlaceholder =
+        field.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
+        field.value === undefined ||
+        field.value === null ||
+        (meta && meta['placeholder'] === true);
       if (!isPlaceholder && field.value !== '') {
         completedFieldCount++;
       }
     });
 
     let completedItemCount = 0;
-    items.forEach(item => {
+    items.forEach((item) => {
       const meta = item.meta as Record<string, unknown> | undefined;
-      const isPlaceholder = (meta && meta['placeholder'] === true) ||
-                           (item.title === 'Item' && !item.description);
+      const isPlaceholder =
+        (meta && meta['placeholder'] === true) || (item.title === 'Item' && !item.description);
       if (!isPlaceholder && item.title) {
         completedItemCount++;
       }
@@ -133,7 +137,7 @@ export class SectionCompletionService {
       fieldCount: fields.length,
       itemCount: items.length,
       completedFieldCount,
-      completedItemCount
+      completedItemCount,
     };
   }
 
@@ -142,10 +146,12 @@ export class SectionCompletionService {
    */
   isFieldPlaceholder(field: CardField): boolean {
     const meta = field.meta as Record<string, unknown> | undefined;
-    return (field.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE) ||
-           (field.value === undefined) ||
-           (field.value === null) ||
-           (!!meta && meta['placeholder'] === true);
+    return (
+      field.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
+      field.value === undefined ||
+      field.value === null ||
+      (!!meta && meta['placeholder'] === true)
+    );
   }
 
   /**
@@ -153,10 +159,12 @@ export class SectionCompletionService {
    */
   isItemPlaceholder(item: CardItem): boolean {
     const meta = item.meta as Record<string, unknown> | undefined;
-    return (item.description === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE) ||
-           (!item.title) ||
-           (item.title.startsWith('Item ')) ||
-           (!!meta && meta['placeholder'] === true);
+    return (
+      item.description === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
+      !item.title ||
+      item.title.startsWith('Item ') ||
+      (!!meta && meta['placeholder'] === true)
+    );
   }
 
   /**
@@ -170,7 +178,9 @@ export class SectionCompletionService {
   /**
    * Get stored completion state
    */
-  getStoredCompletionState(sectionId: string): { isComplete: boolean; completionPercentage: number } | null {
+  getStoredCompletionState(
+    sectionId: string
+  ): { isComplete: boolean; completionPercentage: number } | null {
     const isComplete = this.completionStates.get(sectionId) || false;
     const completionPercentage = this.completionPercentages.get(sectionId) || 0;
     return { isComplete, completionPercentage };
@@ -192,4 +202,3 @@ export class SectionCompletionService {
     this.completionPercentages.delete(sectionId);
   }
 }
-

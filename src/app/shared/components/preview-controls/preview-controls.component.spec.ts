@@ -8,7 +8,7 @@ describe('PreviewControlsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PreviewControlsComponent]
+      imports: [PreviewControlsComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PreviewControlsComponent);
@@ -81,16 +81,3 @@ describe('PreviewControlsComponent', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-

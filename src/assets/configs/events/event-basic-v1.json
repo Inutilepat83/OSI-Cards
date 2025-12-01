@@ -18,12 +18,30 @@
       "title": "Registration Status",
       "type": "analytics",
       "fields": [
-        { "label": "Early Bird Registration", "value": "92% Complete", "percentage": 92, "performance": "excellent", "trend": "up" },
-        { "label": "Speaker Confirmations", "value": "98% Confirmed", "percentage": 98, "performance": "excellent", "trend": "stable" }
+        {
+          "label": "Early Bird Registration",
+          "value": "92% Complete",
+          "percentage": 92,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Speaker Confirmations",
+          "value": "98% Confirmed",
+          "percentage": 98,
+          "performance": "excellent",
+          "trend": "stable"
+        }
       ]
     }
   ],
   "actions": [
-    { "label": "Register Now", "type": "website", "variant": "primary", "icon": "🎫", "url": "https://techsummit.com/register" }
+    {
+      "label": "Register Now",
+      "type": "website",
+      "variant": "primary",
+      "icon": "🎫",
+      "url": "https://techsummit.com/register"
+    }
   ]
 }

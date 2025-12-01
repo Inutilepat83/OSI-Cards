@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AICardConfig } from '../../models';
 import { sanitizeCardConfig } from '../../shared/utils';
@@ -10,7 +10,7 @@ import { LoggingService } from './logging.service';
  * Handles saving, loading, and managing JSON card files in localStorage and IndexedDB
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class JsonFileStorageService {
   private readonly logger = inject(LoggingService);
@@ -45,14 +45,14 @@ export class JsonFileStorageService {
   /**
    * Save a single card to localStorage
    * Falls back to IndexedDB for larger files
-   * 
+   *
    * Security measures:
    * - Validates and sanitizes card data before storage
    * - Checks storage quota before attempting save
    * - Handles storage errors gracefully
    */
   saveCard(card: AICardConfig): Observable<{ success: boolean; error?: string }> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       try {
         // Validate and sanitize
         if (!card.id || !card.cardTitle) {
@@ -62,17 +62,17 @@ export class JsonFileStorageService {
         }
 
         const sanitized = sanitizeCardConfig(card as any) as AICardConfig;
-        
+
         // Additional security: Validate card structure before storage
         if (!this.validationService.validateCardStructure(sanitized)) {
           observer.next({ success: false, error: 'Card validation failed - invalid structure' });
           observer.complete();
           return;
         }
-        
+
         const cardString = JSON.stringify(sanitized);
         const cardId = sanitized.id || 'unknown';
-        
+
         // Check estimated size before storage (prevent DoS)
         const estimatedSize = new Blob([cardString]).size;
         const MAX_CARD_SIZE = 5 * 1024 * 1024; // 5MB per card
@@ -86,10 +86,10 @@ export class JsonFileStorageService {
         try {
           const key = `${this.STORAGE_PREFIX}${cardId}`;
           localStorage.setItem(key, cardString);
-          
+
           // Update index
           this.updateCardIndex(cardId, 'add');
-          
+
           // Update in-memory cache
           const cache = this.storedCards$.value;
           cache.set(cardId, sanitized);
@@ -100,8 +100,8 @@ export class JsonFileStorageService {
           // localStorage might be full, try IndexedDB
           if ((storageError as any)?.name === 'QuotaExceededError') {
             this.saveToIndexedDB(sanitized).subscribe(
-              result => observer.next(result),
-              error => observer.error(error)
+              (result) => observer.next(result),
+              (error) => observer.error(error)
             );
           } else {
             throw storageError;
@@ -121,7 +121,7 @@ export class JsonFileStorageService {
    * Load a single card from storage by ID
    */
   loadCard(cardId: string): Observable<AICardConfig | null> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       try {
         // Check in-memory cache first
         const cached = this.storedCards$.value.get(cardId);
@@ -151,11 +151,11 @@ export class JsonFileStorageService {
 
         // Try IndexedDB
         this.loadFromIndexedDB(cardId).subscribe(
-          card => {
+          (card) => {
             observer.next(card);
             observer.complete();
           },
-          error => {
+          (error) => {
             observer.error(error);
           }
         );
@@ -172,7 +172,7 @@ export class JsonFileStorageService {
    * Load all cards from storage
    */
   loadAllCards(): Observable<AICardConfig[]> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       try {
         const cards: AICardConfig[] = [];
         const cardIds = this.getCardIndex();
@@ -180,7 +180,7 @@ export class JsonFileStorageService {
         for (const cardId of cardIds) {
           const key = `${this.STORAGE_PREFIX}${cardId}`;
           const cardString = localStorage.getItem(key);
-          
+
           if (cardString) {
             const card = this.validationService.validateCardJson(cardString);
             if (card) {
@@ -191,7 +191,7 @@ export class JsonFileStorageService {
 
         // Update cache
         const cache = new Map<string, AICardConfig>();
-        cards.forEach(card => cache.set(card.id!, card));
+        cards.forEach((card) => cache.set(card.id!, card));
         this.storedCards$.next(cache);
 
         observer.next(cards);
@@ -209,7 +209,7 @@ export class JsonFileStorageService {
    * Delete a card from storage
    */
   deleteCard(cardId: string): Observable<{ success: boolean; error?: string }> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       try {
         // Delete from localStorage
         const key = `${this.STORAGE_PREFIX}${cardId}`;
@@ -233,7 +233,7 @@ export class JsonFileStorageService {
             // Even if IndexedDB fails, localStorage deletion succeeded
             observer.next({ success: true });
             observer.complete();
-          }
+          },
         });
       } catch (error: unknown) {
         const msg = error instanceof Error ? error.message : 'Unknown error';
@@ -253,7 +253,7 @@ export class JsonFileStorageService {
       const blob = new Blob([jsonString], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      
+
       link.href = url;
       link.download = filename || `${sanitized.id || 'card'}.json`;
       document.body.appendChild(link);
@@ -275,13 +275,16 @@ export class JsonFileStorageService {
       // Note: This requires JSZip library - check if available
       const jsZip = (window as any).JSZip;
       if (!jsZip) {
-        this.logger.warn('JSZip not available. Export as individual files or add JSZip library.', 'JsonFileStorageService');
+        this.logger.warn(
+          'JSZip not available. Export as individual files or add JSZip library.',
+          'JsonFileStorageService'
+        );
         return;
       }
 
       const zip = new jsZip();
-      
-      cards.forEach(card => {
+
+      cards.forEach((card) => {
         const sanitized = sanitizeCardConfig(card as any) as AICardConfig;
         const jsonString = JSON.stringify(sanitized, null, 2);
         zip.file(`${sanitized.id || 'card'}.json`, jsonString);
@@ -308,7 +311,7 @@ export class JsonFileStorageService {
    * Get stored cards observable
    */
   getStoredCards(): Observable<AICardConfig[]> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       const cache = this.storedCards$.value;
       observer.next(Array.from(cache.values()));
       observer.complete();
@@ -326,10 +329,10 @@ export class JsonFileStorageService {
    * Clear all stored cards
    */
   clearAllCards(): Observable<{ success: boolean; error?: string }> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       try {
         const cardIds = this.getCardIndex();
-        
+
         for (const cardId of cardIds) {
           const key = `${this.STORAGE_PREFIX}${cardId}`;
           localStorage.removeItem(key);
@@ -350,7 +353,7 @@ export class JsonFileStorageService {
             this.storedCards$.next(new Map());
             observer.next({ success: true });
             observer.complete();
-          }
+          },
         });
       } catch (error: unknown) {
         const msg = error instanceof Error ? error.message : 'Unknown error';
@@ -368,29 +371,32 @@ export class JsonFileStorageService {
     estimatedQuota: number;
     percentageUsed: number;
   }> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       if (navigator.storage?.estimate) {
-        navigator.storage.estimate().then(estimate => {
-          observer.next({
-            estimatedUsage: estimate.usage || 0,
-            estimatedQuota: estimate.quota || 0,
-            percentageUsed: estimate.quota ? (estimate.usage || 0) / estimate.quota * 100 : 0
+        navigator.storage
+          .estimate()
+          .then((estimate) => {
+            observer.next({
+              estimatedUsage: estimate.usage || 0,
+              estimatedQuota: estimate.quota || 0,
+              percentageUsed: estimate.quota ? ((estimate.usage || 0) / estimate.quota) * 100 : 0,
+            });
+            observer.complete();
+          })
+          .catch((error) => {
+            this.logger.warn('Storage estimate not available', 'JsonFileStorageService', error);
+            observer.next({
+              estimatedUsage: 0,
+              estimatedQuota: 0,
+              percentageUsed: 0,
+            });
+            observer.complete();
           });
-          observer.complete();
-        }).catch(error => {
-          this.logger.warn('Storage estimate not available', 'JsonFileStorageService', error);
-          observer.next({
-            estimatedUsage: 0,
-            estimatedQuota: 0,
-            percentageUsed: 0
-          });
-          observer.complete();
-        });
       } else {
         observer.next({
           estimatedUsage: 0,
           estimatedQuota: 0,
-          percentageUsed: 0
+          percentageUsed: 0,
         });
         observer.complete();
       }
@@ -403,7 +409,7 @@ export class JsonFileStorageService {
    * Save to IndexedDB (for larger files)
    */
   private saveToIndexedDB(card: AICardConfig): Observable<{ success: boolean; error?: string }> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       try {
         const request = indexedDB.open(this.DB_NAME, this.DB_VERSION);
 
@@ -447,7 +453,7 @@ export class JsonFileStorageService {
    * Load from IndexedDB
    */
   private loadFromIndexedDB(cardId: string): Observable<AICardConfig | null> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       try {
         const request = indexedDB.open(this.DB_NAME, this.DB_VERSION);
 
@@ -488,7 +494,7 @@ export class JsonFileStorageService {
    * Delete from IndexedDB
    */
   private deleteFromIndexedDB(cardId: string): Observable<void> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       try {
         const request = indexedDB.open(this.DB_NAME, this.DB_VERSION);
 
@@ -521,7 +527,7 @@ export class JsonFileStorageService {
    * Clear IndexedDB
    */
   private clearIndexedDB(): Observable<void> {
-    return new Observable(observer => {
+    return new Observable((observer) => {
       try {
         const request = indexedDB.open(this.DB_NAME, this.DB_VERSION);
 

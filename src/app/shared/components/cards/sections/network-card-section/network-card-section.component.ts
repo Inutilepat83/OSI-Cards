@@ -11,7 +11,7 @@ type NetworkField = CardField;
   standalone: true,
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './network-card-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NetworkCardSectionComponent extends BaseSectionComponent<NetworkField> {
   get fields(): NetworkField[] {
@@ -22,7 +22,8 @@ export class NetworkCardSectionComponent extends BaseSectionComponent<NetworkFie
     return super.hasFields;
   }
 
-  override trackField = (_index: number, field: NetworkField): string => field.id ?? field.label ?? `network-${_index}`;
+  override trackField = (_index: number, field: NetworkField): string =>
+    field.id ?? field.label ?? `network-${_index}`;
 
   onItemClick(field: NetworkField): void {
     // Emit as field interaction (network fields are treated as fields)

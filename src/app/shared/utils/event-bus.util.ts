@@ -1,4 +1,4 @@
-import { Subject, Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 /**
  * Event bus for centralized cross-component communication
@@ -27,7 +27,7 @@ export class EventBus {
     this.eventSubject.next({
       type,
       data,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
@@ -38,8 +38,8 @@ export class EventBus {
     return this.eventSubject.asObservable().pipe(
       // Filter by event type
       (source: Observable<AppEvent>) => {
-        return new Observable(observer => {
-          const subscription = source.subscribe(event => {
+        return new Observable((observer) => {
+          const subscription = source.subscribe((event) => {
             if (event.type === type) {
               observer.next(event);
             }
@@ -61,18 +61,16 @@ export class EventBus {
    * Subscribe to multiple event types
    */
   onMultiple(types: EventType[]): Observable<AppEvent> {
-    return this.eventSubject.asObservable().pipe(
-      (source: Observable<AppEvent>) => {
-        return new Observable(observer => {
-          const subscription = source.subscribe(event => {
-            if (types.includes(event.type)) {
-              observer.next(event);
-            }
-          });
-          return () => subscription.unsubscribe();
+    return this.eventSubject.asObservable().pipe((source: Observable<AppEvent>) => {
+      return new Observable((observer) => {
+        const subscription = source.subscribe((event) => {
+          if (types.includes(event.type)) {
+            observer.next(event);
+          }
         });
-      }
-    );
+        return () => subscription.unsubscribe();
+      });
+    });
   }
 }
 
@@ -80,5 +78,3 @@ export class EventBus {
  * Global event bus instance
  */
 export const eventBus = new EventBus();
-
-

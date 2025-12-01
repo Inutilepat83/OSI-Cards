@@ -1,9 +1,9 @@
 /**
  * Translation Pipe
- * 
+ *
  * Pipe for translating text in templates using the I18nService.
  * Automatically updates when locale changes.
- * 
+ *
  * @example
  * ```html
  * <button>{{ 'common.save' | translate }}</button>
@@ -11,21 +11,21 @@
  * ```
  */
 
-import { Pipe, PipeTransform, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, inject, OnDestroy, Pipe, PipeTransform } from '@angular/core';
 import { I18nService, TranslationParams } from '../../core/services/i18n.service';
 import { Subscription } from 'rxjs';
 
 @Pipe({
   name: 'translate',
   standalone: true,
-  pure: false // Not pure to react to locale changes
+  pure: false, // Not pure to react to locale changes
 })
 export class TranslatePipe implements PipeTransform, OnDestroy {
   private readonly i18n = inject(I18nService);
   private readonly cdr = inject(ChangeDetectorRef);
   private subscription?: Subscription;
   private lastKey = '';
-  private lastParams?: TranslationParams;
+  private lastParams: TranslationParams | undefined;
   private lastValue = '';
 
   transform(key: string, params?: TranslationParams): string {
@@ -33,7 +33,7 @@ export class TranslatePipe implements PipeTransform, OnDestroy {
     if (key !== this.lastKey || params !== this.lastParams) {
       this.lastKey = key;
       this.lastParams = params;
-      
+
       // Unsubscribe from previous subscription
       if (this.subscription) {
         this.subscription.unsubscribe();
@@ -44,7 +44,7 @@ export class TranslatePipe implements PipeTransform, OnDestroy {
         this.lastValue = this.i18n.translate(key, params);
         this.cdr.markForCheck();
       });
-      
+
       // Get initial value
       this.lastValue = this.i18n.translate(key, params);
     }
@@ -58,13 +58,3 @@ export class TranslatePipe implements PipeTransform, OnDestroy {
     }
   }
 }
-
-
-
-
-
-
-
-
-
-

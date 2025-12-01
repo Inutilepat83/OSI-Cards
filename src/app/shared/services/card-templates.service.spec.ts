@@ -19,8 +19,8 @@ describe('CardTemplatesService', () => {
       providers: [
         CardTemplatesService,
         { provide: CardDataService, useValue: cardDataSpy },
-        { provide: LoggingService, useValue: loggingSpy }
-      ]
+        { provide: LoggingService, useValue: loggingSpy },
+      ],
     });
 
     service = TestBed.inject(CardTemplatesService);
@@ -42,7 +42,7 @@ describe('CardTemplatesService', () => {
 
       cardDataService.getCardsByType.and.returnValue(of([template]));
 
-      service.loadTemplate('company', 1).subscribe(result => {
+      service.loadTemplate('company', 1).subscribe((result) => {
         expect(result).toBeTruthy();
         expect(result?.cardTitle).toBe('Company Template');
         expect(cardDataService.getCardsByType).toHaveBeenCalledWith('company');
@@ -60,7 +60,7 @@ describe('CardTemplatesService', () => {
 
       service.loadTemplate('company', 1).subscribe(() => {
         // Load again - should use cache
-        service.loadTemplate('company', 1).subscribe(cached => {
+        service.loadTemplate('company', 1).subscribe((cached) => {
           expect(cached).toBeTruthy();
           expect(cached?.cardTitle).toBe('Cached Template');
           // Should only call CardDataService once
@@ -77,7 +77,7 @@ describe('CardTemplatesService', () => {
 
       cardDataService.getCardsByType.and.returnValue(of([template1, template2, template3]));
 
-      service.loadTemplate('company', 2).subscribe(result => {
+      service.loadTemplate('company', 2).subscribe((result) => {
         expect(result?.cardTitle).toBe('Variant 2');
         done();
       });
@@ -86,7 +86,7 @@ describe('CardTemplatesService', () => {
     it('should fallback to built-in template when no file templates', (done) => {
       cardDataService.getCardsByType.and.returnValue(of([]));
 
-      service.loadTemplate('company', 1).subscribe(result => {
+      service.loadTemplate('company', 1).subscribe((result) => {
         expect(result).toBeTruthy();
         expect(result?.cardTitle).toBeDefined();
         done();
@@ -96,7 +96,7 @@ describe('CardTemplatesService', () => {
     it('should handle errors gracefully', (done) => {
       cardDataService.getCardsByType.and.returnValue(throwError(() => new Error('Network error')));
 
-      service.loadTemplate('company', 1).subscribe(result => {
+      service.loadTemplate('company', 1).subscribe((result) => {
         // Should fallback to built-in template
         expect(result).toBeTruthy();
         expect(loggingService.error).toHaveBeenCalled();
@@ -119,7 +119,7 @@ describe('CardTemplatesService', () => {
 
       cardDataService.getCardsByType.and.returnValue(of([template]));
 
-      service.loadTemplate('company', 1).subscribe(result => {
+      service.loadTemplate('company', 1).subscribe((result) => {
         expect(result?.id).toBeDefined();
         expect(result?.sections?.[0]?.id).toBeDefined();
         done();
@@ -129,10 +129,7 @@ describe('CardTemplatesService', () => {
 
   describe('getCachedTemplate', () => {
     it('should return cached template', (done) => {
-      const template = CardBuilder.create()
-        .withTitle('Cached')
-        .withType('company')
-        .build();
+      const template = CardBuilder.create().withTitle('Cached').withType('company').build();
 
       cardDataService.getCardsByType.and.returnValue(of([template]));
 
@@ -157,7 +154,7 @@ describe('CardTemplatesService', () => {
 
       cardDataService.getCardsByType.and.returnValue(of([template1, template2]));
 
-      service.getAvailableVariants('company').subscribe(count => {
+      service.getAvailableVariants('company').subscribe((count) => {
         expect(count).toBe(2);
         done();
       });
@@ -166,7 +163,7 @@ describe('CardTemplatesService', () => {
     it('should return 3 for built-in templates when no file templates', (done) => {
       cardDataService.getCardsByType.and.returnValue(of([]));
 
-      service.getAvailableVariants('company').subscribe(count => {
+      service.getAvailableVariants('company').subscribe((count) => {
         expect(count).toBe(3); // Built-in templates have 3 variants
         done();
       });
@@ -175,18 +172,15 @@ describe('CardTemplatesService', () => {
 
   describe('clearCache', () => {
     it('should clear all cached templates', (done) => {
-      const template = CardBuilder.create()
-        .withTitle('To Clear')
-        .withType('company')
-        .build();
+      const template = CardBuilder.create().withTitle('To Clear').withType('company').build();
 
       cardDataService.getCardsByType.and.returnValue(of([template]));
 
       service.loadTemplate('company', 1).subscribe(() => {
         expect(service.getCachedTemplate('company', 1)).toBeTruthy();
-        
+
         service.clearCache();
-        
+
         expect(service.getCachedTemplate('company', 1)).toBeNull();
         done();
       });
@@ -195,26 +189,20 @@ describe('CardTemplatesService', () => {
 
   describe('clearCacheByType', () => {
     it('should clear cache for specific type only', (done) => {
-      const companyTemplate = CardBuilder.create()
-        .withTitle('Company')
-        .withType('company')
-        .build();
-      const productTemplate = CardBuilder.create()
-        .withTitle('Product')
-        .withType('product')
-        .build();
+      const companyTemplate = CardBuilder.create().withTitle('Company').withType('company').build();
+      const productTemplate = CardBuilder.create().withTitle('Product').withType('product').build();
 
       cardDataService.getCardsByType.and.returnValue(of([companyTemplate]));
 
       service.loadTemplate('company', 1).subscribe(() => {
         cardDataService.getCardsByType.and.returnValue(of([productTemplate]));
-        
+
         service.loadTemplate('product', 1).subscribe(() => {
           expect(service.getCachedTemplate('company', 1)).toBeTruthy();
           expect(service.getCachedTemplate('product', 1)).toBeTruthy();
-          
+
           service.clearCacheByType('company');
-          
+
           expect(service.getCachedTemplate('company', 1)).toBeNull();
           expect(service.getCachedTemplate('product', 1)).toBeTruthy();
           done();
@@ -223,16 +211,3 @@ describe('CardTemplatesService', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-

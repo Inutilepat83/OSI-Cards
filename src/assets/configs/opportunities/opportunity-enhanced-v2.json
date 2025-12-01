@@ -21,10 +21,34 @@
       "title": "Project Progress",
       "type": "analytics",
       "fields": [
-        { "label": "Assessment Phase", "value": "100% Complete", "percentage": 100, "performance": "excellent", "trend": "stable" },
-        { "label": "Migration Planning", "value": "90% Complete", "percentage": 90, "performance": "excellent", "trend": "up" },
-        { "label": "Resource Allocation", "value": "70% Complete", "percentage": 70, "performance": "good", "trend": "up" },
-        { "label": "Risk Assessment", "value": "85% Complete", "percentage": 85, "performance": "good", "trend": "up" }
+        {
+          "label": "Assessment Phase",
+          "value": "100% Complete",
+          "percentage": 100,
+          "performance": "excellent",
+          "trend": "stable"
+        },
+        {
+          "label": "Migration Planning",
+          "value": "90% Complete",
+          "percentage": 90,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Resource Allocation",
+          "value": "70% Complete",
+          "percentage": 70,
+          "performance": "good",
+          "trend": "up"
+        },
+        {
+          "label": "Risk Assessment",
+          "value": "85% Complete",
+          "percentage": 85,
+          "performance": "good",
+          "trend": "up"
+        }
       ]
     },
     {
@@ -46,9 +70,27 @@
       "title": "Financial Impact",
       "type": "financials",
       "fields": [
-        { "label": "Estimated Value", "value": "$10M", "format": "currency", "change": 0, "trend": "stable" },
-        { "label": "Expected Cost Savings", "value": "$4M annually", "format": "currency", "change": 40, "trend": "up" },
-        { "label": "ROI Projection", "value": "250%", "format": "percentage", "change": 25, "trend": "up" }
+        {
+          "label": "Estimated Value",
+          "value": "$10M",
+          "format": "currency",
+          "change": 0,
+          "trend": "stable"
+        },
+        {
+          "label": "Expected Cost Savings",
+          "value": "$4M annually",
+          "format": "currency",
+          "change": 40,
+          "trend": "up"
+        },
+        {
+          "label": "ROI Projection",
+          "value": "250%",
+          "format": "percentage",
+          "change": 25,
+          "trend": "up"
+        }
       ]
     },
     {
@@ -104,7 +146,20 @@
     }
   ],
   "actions": [
-    { "label": "Review Migration Plan", "type": "question", "variant": "primary", "icon": "📋", "question": "Can you show me the migration plan details?" },
-    { "label": "Schedule Review", "type": "agent", "variant": "secondary", "icon": "🏗️", "agentId": "calendar-agent", "agentContext": { "action": "schedule_review" } }
+    {
+      "label": "Review Migration Plan",
+      "type": "question",
+      "variant": "primary",
+      "icon": "📋",
+      "question": "Can you show me the migration plan details?"
+    },
+    {
+      "label": "Schedule Review",
+      "type": "agent",
+      "variant": "secondary",
+      "icon": "🏗️",
+      "agentId": "calendar-agent",
+      "agentContext": { "action": "schedule_review" }
+    }
   ]
 }

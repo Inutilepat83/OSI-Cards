@@ -85,8 +85,8 @@ describe('FeatureFlagService', () => {
       service.enable('flag1', false);
       service.disable('flag2', false);
       const flags = service.getAllFlags();
-      expect(flags['flag1']).toBe(true);
-      expect(flags['flag2']).toBe(false);
+      expect(flags.flag1).toBe(true);
+      expect(flags.flag2).toBe(false);
     });
   });
 
@@ -96,8 +96,7 @@ describe('FeatureFlagService', () => {
       service.reset(false);
       // Custom flag should be gone, defaults should remain
       const flags = service.getAllFlags();
-      expect(flags['customFlag']).toBeUndefined();
+      expect(flags.customFlag).toBeUndefined();
     });
   });
 });
-

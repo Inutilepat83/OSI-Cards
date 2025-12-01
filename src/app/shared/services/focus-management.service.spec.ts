@@ -16,13 +16,13 @@ describe('FocusManagementService', () => {
       providers: [
         FocusManagementService,
         { provide: LoggingService, useValue: loggingSpy },
-        { provide: NgZone, useValue: ngZoneSpy }
-      ]
+        { provide: NgZone, useValue: ngZoneSpy },
+      ],
     });
     service = TestBed.inject(FocusManagementService);
     loggingService = TestBed.inject(LoggingService) as jasmine.SpyObj<LoggingService>;
     ngZone = TestBed.inject(NgZone) as jasmine.SpyObj<NgZone>;
-    
+
     ngZone.runOutsideAngular.and.callFake((fn: () => void) => fn());
   });
 
@@ -42,33 +42,33 @@ describe('FocusManagementService', () => {
     it('should focus element by ID', () => {
       const element = document.getElementById('test-element') as HTMLElement;
       spyOn(element, 'focus');
-      
+
       service.focusElement('test-element');
-      
+
       expect(element.focus).toHaveBeenCalled();
     });
 
     it('should focus element by selector', () => {
       const element = document.getElementById('test-element') as HTMLElement;
       spyOn(element, 'focus');
-      
+
       service.focusElement('#test-element');
-      
+
       expect(element.focus).toHaveBeenCalled();
     });
 
     it('should focus element directly', () => {
       const element = document.getElementById('test-element') as HTMLElement;
       spyOn(element, 'focus');
-      
+
       service.focusElement(element);
-      
+
       expect(element.focus).toHaveBeenCalled();
     });
 
     it('should warn if element not found', () => {
       service.focusElement('non-existent');
-      
+
       expect(loggingService.warn).toHaveBeenCalledWith(
         'Element not found: non-existent',
         'FocusManagementService'
@@ -96,15 +96,15 @@ describe('FocusManagementService', () => {
     it('should return all focusable elements', () => {
       const container = document.getElementById('container') as HTMLElement;
       const focusable = service.getFocusableElements(container);
-      
+
       expect(focusable.length).toBe(4); // button, link, input, div with tabindex
     });
 
     it('should exclude hidden elements', () => {
       const container = document.getElementById('container') as HTMLElement;
       const focusable = service.getFocusableElements(container);
-      
-      const hasHidden = focusable.some(el => el.style.display === 'none');
+
+      const hasHidden = focusable.some((el) => el.style.display === 'none');
       expect(hasHidden).toBe(false);
     });
   });
@@ -128,28 +128,28 @@ describe('FocusManagementService', () => {
       const container = document.getElementById('container') as HTMLElement;
       const firstButton = document.getElementById('first') as HTMLElement;
       const thirdButton = document.getElementById('third') as HTMLElement;
-      
+
       spyOn(firstButton, 'focus');
       spyOn(thirdButton, 'focus');
-      
+
       const release = service.trapFocus(container);
-      
+
       expect(firstButton.focus).toHaveBeenCalled();
-      
+
       // Simulate Tab on last element
       const event = new KeyboardEvent('keydown', { key: 'Tab' });
       thirdButton.dispatchEvent(event);
-      
+
       // Should wrap to first
       expect(firstButton.focus).toHaveBeenCalledTimes(2);
-      
+
       release();
     });
 
     it('should return release function', () => {
       const container = document.getElementById('container') as HTMLElement;
       const release = service.trapFocus(container);
-      
+
       expect(typeof release).toBe('function');
       expect(() => release()).not.toThrow();
     });
@@ -158,19 +158,8 @@ describe('FocusManagementService', () => {
   describe('saveFocus', () => {
     it('should return restore function', () => {
       const restore = service.saveFocus();
-      
+
       expect(typeof restore).toBe('function');
     });
   });
 });
-
-
-
-
-
-
-
-
-
-
-

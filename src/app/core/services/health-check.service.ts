@@ -1,18 +1,21 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, timer } from 'rxjs';
-import { map, catchError, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { LoggingService } from './logging.service';
 import { AppConfigService } from './app-config.service';
 
 export interface HealthStatus {
   status: 'healthy' | 'degraded' | 'unhealthy';
   timestamp: Date;
-  services: Record<string, {
+  services: Record<
+    string,
+    {
       status: 'up' | 'down' | 'degraded';
       responseTime?: number;
       error?: string;
-    }>;
+    }
+  >;
   metrics: {
     uptime: number;
     memoryUsage?: number;
@@ -22,10 +25,10 @@ export interface HealthStatus {
 
 /**
  * Health Check Service
- * 
+ *
  * Provides health check endpoints and monitoring for the application.
  * Can be used to monitor service availability and performance.
- * 
+ *
  * @example
  * ```typescript
  * const healthCheck = inject(HealthCheckService);
@@ -35,13 +38,13 @@ export interface HealthStatus {
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class HealthCheckService {
   private readonly http = inject(HttpClient);
   private readonly logger = inject(LoggingService);
   private readonly config = inject(AppConfigService);
-  
+
   private readonly startTime = Date.now();
   private readonly healthCheckInterval = 30000; // 30 seconds
 
@@ -50,17 +53,17 @@ export class HealthCheckService {
    */
   checkHealth(): Observable<HealthStatus> {
     const services: HealthStatus['services'] = {};
-    
+
     // Check API health
     const apiHealth$ = this.checkApiHealth().pipe(
-      map(result => {
+      map((result) => {
         services['api'] = result;
         return result;
       }),
-      catchError(error => {
+      catchError((error) => {
         services['api'] = {
           status: 'down',
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         };
         return of(services['api']);
       })
@@ -77,7 +80,7 @@ export class HealthCheckService {
     return apiHealth$.pipe(
       map(() => {
         const overallStatus = this.determineOverallStatus(services);
-        
+
         return {
           status: overallStatus,
           timestamp: new Date(),
@@ -85,8 +88,8 @@ export class HealthCheckService {
           metrics: {
             uptime: Date.now() - this.startTime,
             memoryUsage: this.getMemoryUsage(),
-            cpuUsage: this.getCpuUsage()
-          }
+            cpuUsage: this.getCpuUsage(),
+          },
         };
       })
     );
@@ -95,9 +98,13 @@ export class HealthCheckService {
   /**
    * Check API health
    */
-  private checkApiHealth(): Observable<{ status: 'up' | 'down' | 'degraded'; responseTime?: number; error?: string }> {
+  private checkApiHealth(): Observable<{
+    status: 'up' | 'down' | 'degraded';
+    responseTime?: number;
+    error?: string;
+  }> {
     const apiUrl = this.config.ENV.API_URL;
-    
+
     if (!apiUrl || apiUrl === '/api') {
       // No external API configured
       return of({ status: 'up' });
@@ -105,17 +112,17 @@ export class HealthCheckService {
 
     const startTime = performance.now();
     return this.http.get(`${apiUrl}/health`, { observe: 'response' }).pipe(
-      map(response => {
+      map((response) => {
         const responseTime = performance.now() - startTime;
         const status: 'up' | 'down' | 'degraded' = response.status === 200 ? 'up' : 'degraded';
         return { status, responseTime };
       }),
-      catchError(error => {
+      catchError((error) => {
         const responseTime = performance.now() - startTime;
         return of({
           status: 'down' as const,
           responseTime,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
       })
     );
@@ -133,7 +140,7 @@ export class HealthCheckService {
     } catch (error) {
       return {
         status: 'down',
-        error: error instanceof Error ? error.message : 'Storage unavailable'
+        error: error instanceof Error ? error.message : 'Storage unavailable',
       };
     }
   }
@@ -147,17 +154,19 @@ export class HealthCheckService {
     }
     return {
       status: 'degraded',
-      error: 'Service Worker not supported'
+      error: 'Service Worker not supported',
     };
   }
 
   /**
    * Determine overall health status
    */
-  private determineOverallStatus(services: HealthStatus['services']): 'healthy' | 'degraded' | 'unhealthy' {
+  private determineOverallStatus(
+    services: HealthStatus['services']
+  ): 'healthy' | 'degraded' | 'unhealthy' {
     const serviceStatuses = Object.values(services);
-    const downCount = serviceStatuses.filter(s => s.status === 'down').length;
-    const degradedCount = serviceStatuses.filter(s => s.status === 'degraded').length;
+    const downCount = serviceStatuses.filter((s) => s.status === 'down').length;
+    const degradedCount = serviceStatuses.filter((s) => s.status === 'degraded').length;
 
     if (downCount > 0) {
       return 'unhealthy';
@@ -192,9 +201,7 @@ export class HealthCheckService {
    * Start periodic health checks
    */
   startPeriodicHealthChecks(): Observable<HealthStatus> {
-    return timer(0, this.healthCheckInterval).pipe(
-      switchMap(() => this.checkHealth())
-    );
+    return timer(0, this.healthCheckInterval).pipe(switchMap(() => this.checkHealth()));
   }
 
   /**
@@ -204,4 +211,3 @@ export class HealthCheckService {
     return '/api/health';
   }
 }
-

@@ -5,10 +5,16 @@ import { By } from '@angular/platform-browser';
 
 @Component({
   template: `
-    <button appImprovedAriaLabel="Test Label" [appAriaDescription]="description" [appAriaLive]="live">Click me</button>
+    <button
+      appImprovedAriaLabel="Test Label"
+      [appAriaDescription]="description"
+      [appAriaLive]="live"
+    >
+      Click me
+    </button>
     <a appImprovedAriaLabel="Link Label">Link</a>
     <div appImprovedAriaLabel="Div Label" [appAriaDescription]="null">Content</div>
-  `
+  `,
 })
 class TestComponent {
   description = 'Test description';
@@ -25,7 +31,7 @@ describe('ImprovedAriaLabelDirective', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [TestComponent],
-      imports: [ImprovedAriaLabelDirective]
+      imports: [ImprovedAriaLabelDirective],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TestComponent);
@@ -40,7 +46,7 @@ describe('ImprovedAriaLabelDirective', () => {
   it('should create an instance', () => {
     const directive = new ImprovedAriaLabelDirective(
       {} as any, // Renderer2
-      {} as any  // ElementRef
+      {} as any // ElementRef
     );
     expect(directive).toBeTruthy();
   });
@@ -64,7 +70,7 @@ describe('ImprovedAriaLabelDirective', () => {
     it('should create and link aria-describedby element', () => {
       const describedBy = buttonElement.nativeElement.getAttribute('aria-describedby');
       expect(describedBy).toBeTruthy();
-      
+
       const descriptionElement = fixture.nativeElement.querySelector(`#${describedBy}`);
       expect(descriptionElement).toBeTruthy();
       expect(descriptionElement.textContent).toContain('Test description');
@@ -124,7 +130,7 @@ describe('ImprovedAriaLabelDirective', () => {
     it('should create visually hidden description element', () => {
       const describedBy = buttonElement.nativeElement.getAttribute('aria-describedby');
       const descriptionElement = fixture.nativeElement.querySelector(`#${describedBy}`);
-      
+
       expect(descriptionElement).toBeTruthy();
       // Should be visually hidden
       const styles = window.getComputedStyle(descriptionElement);
@@ -134,16 +140,3 @@ describe('ImprovedAriaLabelDirective', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-

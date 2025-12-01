@@ -6,7 +6,7 @@ import { AICardConfig } from '../../models';
  * Extracted from HomePageComponent for better separation of concerns
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class JsonValidationService {
   /**
@@ -30,7 +30,7 @@ export class JsonValidationService {
         isValid: true,
         error: '',
         position: null,
-        suggestion: ''
+        suggestion: '',
       };
     }
 
@@ -41,7 +41,8 @@ export class JsonValidationService {
         isValid: false,
         error: `JSON input size (${(sizeInBytes / 1024).toFixed(2)} KB) exceeds maximum allowed size (${(this.MAX_JSON_SIZE / 1024).toFixed(2)} KB)`,
         position: null,
-        suggestion: 'Please reduce the size of your JSON input. Consider splitting large cards into multiple smaller cards.'
+        suggestion:
+          'Please reduce the size of your JSON input. Consider splitting large cards into multiple smaller cards.',
       };
     }
 
@@ -51,7 +52,7 @@ export class JsonValidationService {
         isValid: true,
         error: '',
         position: null,
-        suggestion: ''
+        suggestion: '',
       };
     } catch (e) {
       const errorMessage = e instanceof Error ? e.message : 'Invalid JSON syntax';
@@ -77,7 +78,7 @@ export class JsonValidationService {
         isValid: false,
         error: errorMessage,
         position,
-        suggestion
+        suggestion,
       };
     }
   }
@@ -190,7 +191,8 @@ export class JsonValidationService {
         const cardData: Partial<AICardConfig> = {};
 
         // Extract cardTitle (handle both string and unquoted values)
-        const titleMatch = jsonInput.match(/"cardTitle"\s*:\s*"([^"]*)"/) ||
+        const titleMatch =
+          jsonInput.match(/"cardTitle"\s*:\s*"([^"]*)"/) ||
           jsonInput.match(/'cardTitle'\s*:\s*'([^']*)'/);
         if (titleMatch && titleMatch[1]) {
           cardData.cardTitle = titleMatch[1];
@@ -212,71 +214,73 @@ export class JsonValidationService {
           if (sectionsContent) {
             for (let i = 0; i < sectionsContent.length; i++) {
               const char = sectionsContent[i];
-              if (char === undefined) continue;
+              if (char === undefined) {
+                continue;
+              }
 
               if (escapeNext) {
-              currentSection += char;
-              escapeNext = false;
-              continue;
-            }
-
-            if (char === '\\') {
-              escapeNext = true;
-              currentSection += char;
-              continue;
-            }
-
-            if (char === '"') {
-              inString = !inString;
-              currentSection += char;
-              continue;
-            }
-
-            if (inString) {
-              currentSection += char;
-              continue;
-            }
-
-            if (char === '{') {
-              if (depth === 0) {
-                currentSection = '{';
-              } else {
                 currentSection += char;
+                escapeNext = false;
+                continue;
               }
-              depth++;
-            } else if (char === '}') {
-              currentSection += char;
-              depth--;
-              if (depth === 0) {
-                // Complete section object found
-                try {
-                  const section = JSON.parse(currentSection);
-                  if (section && typeof section === 'object') {
-                    sections.push(section);
-                  }
-                } catch {
-                  // Try to fix common issues in incomplete sections
+
+              if (char === '\\') {
+                escapeNext = true;
+                currentSection += char;
+                continue;
+              }
+
+              if (char === '"') {
+                inString = !inString;
+                currentSection += char;
+                continue;
+              }
+
+              if (inString) {
+                currentSection += char;
+                continue;
+              }
+
+              if (char === '{') {
+                if (depth === 0) {
+                  currentSection = '{';
+                } else {
+                  currentSection += char;
+                }
+                depth++;
+              } else if (char === '}') {
+                currentSection += char;
+                depth--;
+                if (depth === 0) {
+                  // Complete section object found
                   try {
-                    // Add missing closing braces if needed
-                    let fixedSection = currentSection;
-                    const openCount = (fixedSection.match(/{/g) || []).length;
-                    const closeCount = (fixedSection.match(/}/g) || []).length;
-                    for (let j = 0; j < openCount - closeCount; j++) {
-                      fixedSection += '}';
-                    }
-                    const section = JSON.parse(fixedSection);
+                    const section = JSON.parse(currentSection);
                     if (section && typeof section === 'object') {
                       sections.push(section);
                     }
                   } catch {
-                    // Skip this section
+                    // Try to fix common issues in incomplete sections
+                    try {
+                      // Add missing closing braces if needed
+                      let fixedSection = currentSection;
+                      const openCount = (fixedSection.match(/{/g) || []).length;
+                      const closeCount = (fixedSection.match(/}/g) || []).length;
+                      for (let j = 0; j < openCount - closeCount; j++) {
+                        fixedSection += '}';
+                      }
+                      const section = JSON.parse(fixedSection);
+                      if (section && typeof section === 'object') {
+                        sections.push(section);
+                      }
+                    } catch {
+                      // Skip this section
+                    }
                   }
+                  currentSection = '';
                 }
-                currentSection = '';
+              } else if (depth > 0) {
+                currentSection += char;
               }
-            } else if (depth > 0) {
-              currentSection += char;
-            }
             }
           }
 
@@ -327,17 +331,9 @@ export class JsonValidationService {
     let hash = 0;
     for (let i = 0; i < normalized.length; i++) {
       const char = normalized.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return String(hash);
   }
 }
-
-
-
-
-
-
-
-

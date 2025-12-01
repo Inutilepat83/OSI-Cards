@@ -1,10 +1,21 @@
-<div class="ai-section ai-section--list" role="region" [attr.aria-labelledby]="'list-section-title-' + section.id" [attr.aria-describedby]="section.description ? 'list-section-desc-' + section.id : null">
+<div
+  class="ai-section ai-section--list"
+  role="region"
+  [attr.aria-labelledby]="'list-section-title-' + section.id"
+  [attr.aria-describedby]="section.description ? 'list-section-desc-' + section.id : null"
+>
   <div class="ai-section__header">
     <div class="ai-section__details">
       <h3 class="ai-section__title" [id]="'list-section-title-' + section.id">{{ section.title }}</h3>
-      <p *ngIf="section.description" class="ai-section__description" [id]="'list-section-desc-' + section.id">{{ section.description }}</p>
+      <p *ngIf="section.description" class="ai-section__description" [id]="'list-section-desc-' + section.id">
+        {{ section.description }}
+      </p>
     </div>
-    <span *ngIf="items.length" class="ai-section__badge" aria-label="{{ items.length }} {{ items.length === 1 ? 'item' : 'items' }}">
+    <span
+      *ngIf="items.length"
+      class="ai-section__badge"
+      aria-label="{{ items.length }} {{ items.length === 1 ? 'item' : 'items' }}"
+    >
       {{ items.length }} {{ items.length === 1 ? 'item' : 'items' }}
     </span>
   </div>
@@ -17,7 +28,11 @@
           class="list-card"
           role="button"
           tabindex="0"
-          [attr.aria-label]="(item.title || item.label || 'Item') + (item.description ? ': ' + item.description : '') + (item.value ? '. Value: ' + item.value : '')"
+          [attr.aria-label]="
+            (item.title || item.label || 'Item') +
+            (item.description ? ': ' + item.description : '') +
+            (item.value ? '. Value: ' + item.value : '')
+          "
           [attr.aria-describedby]="item.description ? 'item-desc-' + trackItem(idx, item) : null"
           [attr.aria-posinset]="idx + 1"
           [attr.aria-setsize]="items.length"
@@ -50,10 +65,18 @@
                 {{ item.title || item.label }}
               </h3>
               <div class="list-card__badges" *ngIf="item.priority || item.status">
-                <span *ngIf="item.priority" class="list-card__badge list-card__badge--priority" [attr.data-priority]="item.priority ? (item.priority + '') : null">
+                <span
+                  *ngIf="item.priority"
+                  class="list-card__badge list-card__badge--priority"
+                  [attr.data-priority]="item.priority ? item.priority + '' : null"
+                >
                   {{ item.priority }}
                 </span>
-                <span *ngIf="item.status" class="list-card__badge list-card__badge--status" [attr.data-status]="item.status ? (item.status + '') : null">
+                <span
+                  *ngIf="item.status"
+                  class="list-card__badge list-card__badge--status"
+                  [attr.data-status]="item.status ? item.status + '' : null"
+                >
                   {{ item.status }}
                 </span>
               </div>
@@ -72,7 +95,9 @@
           <footer *ngIf="item.assignee || item.date" class="list-card__footer">
             <div *ngIf="item.assignee" class="list-card__meta">
               <lucide-icon name="user" size="14" class="list-card__meta-icon"></lucide-icon>
-              <span class="list-card__meta-text">Assigned to <strong>{{ item.assignee }}</strong></span>
+              <span class="list-card__meta-text"
+                >Assigned to <strong>{{ item.assignee }}</strong></span
+              >
             </div>
             <div *ngIf="item.date" class="list-card__meta">
               <lucide-icon name="calendar" size="14" class="list-card__meta-icon"></lucide-icon>

@@ -6,30 +6,30 @@ export type FeatureFlags = Record<string, boolean>;
 
 /**
  * Feature Flag Service
- * 
+ *
  * Manages feature flags for enabling/disabling features at runtime. Supports
  * environment-based configuration, localStorage persistence, and reactive updates.
  * Essential for A/B testing, gradual rollouts, and feature toggling.
- * 
+ *
  * Features:
  * - Runtime feature toggling
  * - Environment-based defaults
  * - localStorage persistence
  * - Reactive flag updates via observables
  * - Multiple flag sources (defaults, environment, localStorage)
- * 
+ *
  * @example
  * ```typescript
  * const flags = inject(FeatureFlagService);
- * 
+ *
  * // Check if feature is enabled
  * if (flags.isEnabled('exportToPdf')) {
  *   this.exportToPdf();
  * }
- * 
+ *
  * // Toggle a feature
  * flags.toggle('darkMode');
- * 
+ *
  * // Subscribe to flag changes
  * flags.flags$.subscribe(flags => {
  *   console.log('Feature flags updated:', flags);
@@ -37,7 +37,7 @@ export type FeatureFlags = Record<string, boolean>;
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FeatureFlagService {
   private readonly flagsSubject = new BehaviorSubject<FeatureFlags>(this.getInitialFlags());
@@ -57,7 +57,7 @@ export class FeatureFlagService {
       cardTemplates: true,
       undoRedo: false,
       performanceMonitoring: true,
-      accessibilityAudit: false
+      accessibilityAudit: false,
     };
 
     // Override with environment flags if available
@@ -185,4 +185,3 @@ export class FeatureFlagService {
     }
   }
 }
-

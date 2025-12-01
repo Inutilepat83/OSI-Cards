@@ -3,21 +3,21 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 /**
  * Safe HTML pipe for sanitizing HTML content
- * 
+ *
  * Prevents XSS attacks by sanitizing HTML before rendering using Angular's DomSanitizer.
  * This pipe should be used whenever rendering user-provided HTML content.
- * 
+ *
  * @example
  * ```html
  * <div [innerHTML]="userContent | safeHtml"></div>
  * ```
- * 
+ *
  * @note The pipe uses SecurityContext.HTML (value 1) which allows HTML but sanitizes
  * dangerous elements and attributes like script tags, event handlers, etc.
  */
 @Pipe({
   name: 'safeHtml',
-  standalone: true
+  standalone: true,
 })
 export class SafeHtmlPipe implements PipeTransform {
   constructor(private readonly sanitizer: DomSanitizer) {}
@@ -35,5 +35,3 @@ export class SafeHtmlPipe implements PipeTransform {
     return this.sanitizer.sanitize(1, value) || '';
   }
 }
-
-

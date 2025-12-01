@@ -16,6 +16,7 @@ export * from './email-handler.service';
 // Avoid duplicate CardEventType export - export selectively from event-bus
 export { EventBusService, CardBusEvent, EventHandler } from './event-bus.service';
 export * from './cached-section-normalization.service';
+export * from './retry-policy.service';
 
 // Re-export dynamic loader from section-renderer
 export { DynamicSectionLoaderService } from '../components/section-renderer/dynamic-section-loader.service';

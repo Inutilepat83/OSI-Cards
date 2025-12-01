@@ -17,15 +17,30 @@
       "title": "Key Metrics",
       "type": "analytics",
       "fields": [
-        { "label": "Growth Rate", "value": "25% YoY", "percentage": 25, "performance": "excellent", "trend": "up" },
-        { "label": "Market Share", "value": "12%", "percentage": 12, "performance": "good", "trend": "up" }
+        {
+          "label": "Growth Rate",
+          "value": "25% YoY",
+          "percentage": 25,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Market Share",
+          "value": "12%",
+          "percentage": 12,
+          "performance": "good",
+          "trend": "up"
+        }
       ]
     }
   ],
   "actions": [
-    { "label": "View Website", "type": "website", "variant": "primary", "icon": "🌐", "url": "https://www.acmecorp.com" }
+    {
+      "label": "View Website",
+      "type": "website",
+      "variant": "primary",
+      "icon": "🌐",
+      "url": "https://www.acmecorp.com"
+    }
   ]
 }
-
-
-

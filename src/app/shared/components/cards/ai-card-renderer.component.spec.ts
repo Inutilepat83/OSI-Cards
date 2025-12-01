@@ -31,13 +31,15 @@ describe('AICardRendererComponent', () => {
         { provide: LoggingService, useValue: loggingSpy },
         { provide: IconService, useValue: iconSpy },
         { provide: SectionNormalizationService, useValue: normalizationSpy },
-        { provide: MagneticTiltService, useValue: tiltSpy }
-      ]
+        { provide: MagneticTiltService, useValue: tiltSpy },
+      ],
     }).compileComponents();
 
     loggingService = TestBed.inject(LoggingService) as jasmine.SpyObj<LoggingService>;
     iconService = TestBed.inject(IconService) as jasmine.SpyObj<IconService>;
-    normalizationService = TestBed.inject(SectionNormalizationService) as jasmine.SpyObj<SectionNormalizationService>;
+    normalizationService = TestBed.inject(
+      SectionNormalizationService
+    ) as jasmine.SpyObj<SectionNormalizationService>;
     tiltService = TestBed.inject(MagneticTiltService) as jasmine.SpyObj<MagneticTiltService>;
 
     fixture = TestBed.createComponent(AICardRendererComponent);
@@ -57,16 +59,11 @@ describe('AICardRendererComponent', () => {
   it('should process card config and normalize sections', () => {
     const card = CardBuilder.create()
       .withTitle('Test Card')
-      .withSection(
-        SectionBuilder.create()
-          .withTitle('Test Section')
-          .withType('info')
-          .build()
-      )
+      .withSection(SectionBuilder.create().withTitle('Test Section').withType('info').build())
       .build();
 
     normalizationService.normalize.and.returnValue([
-      SectionBuilder.create().withTitle('Test Section').withType('info').build()
+      SectionBuilder.create().withTitle('Test Section').withType('info').build(),
     ]);
 
     component.cardConfig = card;
@@ -84,9 +81,7 @@ describe('AICardRendererComponent', () => {
   });
 
   it('should handle card config without sections', () => {
-    const card = CardBuilder.create()
-      .withTitle('Card Without Sections')
-      .build();
+    const card = CardBuilder.create().withTitle('Card Without Sections').build();
 
     normalizationService.normalize.and.returnValue([]);
 
@@ -102,7 +97,7 @@ describe('AICardRendererComponent', () => {
     const event = {
       type: 'fieldInteraction' as const,
       field: { label: 'Test', value: 'Value' },
-      metadata: {}
+      metadata: {},
     };
 
     component.onSectionEvent(event);
@@ -116,7 +111,7 @@ describe('AICardRendererComponent', () => {
     const layoutInfo = {
       breakpoint: 'desktop' as const,
       columns: 3,
-      containerWidth: 1200
+      containerWidth: 1200,
     };
 
     component.onLayoutChange(layoutInfo);
@@ -128,14 +123,14 @@ describe('AICardRendererComponent', () => {
     const mockEvent = {
       clientX: 100,
       clientY: 200,
-      preventDefault: jasmine.createSpy('preventDefault')
+      preventDefault: jasmine.createSpy('preventDefault'),
     } as any;
 
     tiltService.calculateTilt.and.returnValue({
       rotateY: 10,
       glowBlur: 8,
       glowOpacity: 0.225,
-      reflectionOpacity: 0
+      reflectionOpacity: 0,
     });
 
     component.onMouseEnter(mockEvent);
@@ -153,14 +148,14 @@ describe('AICardRendererComponent', () => {
     const mockEvent = {
       clientX: 150,
       clientY: 250,
-      preventDefault: jasmine.createSpy('preventDefault')
+      preventDefault: jasmine.createSpy('preventDefault'),
     } as any;
 
     tiltService.calculateTilt.and.returnValue({
       rotateY: 7,
       glowBlur: 8,
       glowOpacity: 0.225,
-      reflectionOpacity: 0
+      reflectionOpacity: 0,
     });
 
     component.onMouseMove(mockEvent);
@@ -172,7 +167,7 @@ describe('AICardRendererComponent', () => {
     component.tiltEnabled = false;
     const mockEvent = {
       clientX: 100,
-      clientY: 200
+      clientY: 200,
     } as any;
 
     component.onMouseEnter(mockEvent);
@@ -209,7 +204,7 @@ describe('AICardRendererComponent', () => {
       .build();
 
     normalizationService.normalize.and.returnValue([
-      SectionBuilder.create().withTitle('Section 1').withType('info').build()
+      SectionBuilder.create().withTitle('Section 1').withType('info').build(),
     ]);
 
     component.cardConfig = card1;
@@ -218,7 +213,7 @@ describe('AICardRendererComponent', () => {
     const initialSections = component.processedSections.length;
 
     normalizationService.normalize.and.returnValue([
-      SectionBuilder.create().withTitle('Section 2').withType('analytics').build()
+      SectionBuilder.create().withTitle('Section 2').withType('analytics').build(),
     ]);
 
     component.cardConfig = card2;
@@ -236,7 +231,7 @@ describe('AICardRendererComponent', () => {
 
     normalizationService.normalize.and.returnValue([
       SectionBuilder.create().withTitle('Section 1').withType('info').build(),
-      SectionBuilder.create().withTitle('Section 2').withType('analytics').build()
+      SectionBuilder.create().withTitle('Section 2').withType('analytics').build(),
     ]);
 
     component.cardConfig = card;
@@ -249,5 +244,3 @@ describe('AICardRendererComponent', () => {
     expect(() => component.ngOnDestroy()).not.toThrow();
   });
 });
-
-

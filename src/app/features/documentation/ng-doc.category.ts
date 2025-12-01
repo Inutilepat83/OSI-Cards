@@ -8,11 +8,7 @@ const DocsCategory: NgDocCategory = {
   title: 'OSI Cards Documentation',
   expandable: true,
   expanded: true,
-  order: 1
+  order: 1,
 };
 
 export default DocsCategory;
-
-
-
-

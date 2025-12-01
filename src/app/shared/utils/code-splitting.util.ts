@@ -20,7 +20,7 @@ export async function lazyLoadModule<T>(moduleLoader: () => Promise<T>): Promise
  */
 export function preloadModule<T>(moduleLoader: () => Promise<T>): Promise<T> {
   // Load module in background
-  return moduleLoader().catch(error => {
+  return moduleLoader().catch((error) => {
     console.warn('Module preload failed:', error);
     throw error;
   });
@@ -60,5 +60,3 @@ export function loadModuleWithCache<T>(
 
   return loadPromise;
 }
-
-

@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { LoggingService } from '../../core/services/logging.service';
 
@@ -6,34 +6,34 @@ export type Theme = 'light' | 'dark' | 'auto';
 
 /**
  * Theme service for managing dark mode and theme switching
- * 
+ *
  * Provides comprehensive theme management with support for light, dark, and
  * automatic theme modes. Automatically syncs with system preferences and
  * persists user selections in localStorage.
- * 
+ *
  * Features:
  * - Three theme modes: light, dark, auto (system preference)
  * - Automatic system theme detection and syncing
  * - Persistent theme storage in localStorage
  * - Reactive theme stream for UI updates
  * - CSS class and data attribute management
- * 
+ *
  * @example
  * ```typescript
  * const themeService = inject(ThemeService);
- * 
+ *
  * // Get current theme
  * const currentTheme = themeService.getTheme();
- * 
+ *
  * // Set theme
  * themeService.setTheme('dark');
- * 
+ *
  * // Toggle between light and dark
  * themeService.toggleTheme();
- * 
+ *
  * // Check if dark mode is active
  * const isDark = themeService.isDarkMode();
- * 
+ *
  * // Subscribe to theme changes
  * themeService.theme$.subscribe(theme => {
  *   console.log('Theme changed to:', theme);
@@ -41,7 +41,7 @@ export type Theme = 'light' | 'dark' | 'auto';
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ThemeService {
   private readonly logger = inject(LoggingService);
@@ -99,7 +99,7 @@ export class ThemeService {
   private applyTheme(theme: Theme): void {
     const isDark = theme === 'auto' ? this.getSystemTheme() === 'dark' : theme === 'dark';
     const html = document.documentElement;
-    
+
     if (isDark) {
       html.classList.add('dark');
       html.setAttribute('data-theme', 'dark');
@@ -159,5 +159,3 @@ export class ThemeService {
     return null;
   }
 }
-
-

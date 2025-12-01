@@ -82,7 +82,7 @@
 
 /* Shimmer sweep overlay - more subtle - ONE-SHOT only */
 .masonry-container--streaming .masonry-item--animating::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(
@@ -99,13 +99,19 @@
 }
 
 @keyframes shimmer-sweep {
-  0% { transform: translateX(-100%); opacity: 0.8; }
-  100% { transform: translateX(100%); opacity: 0; }
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }
 
 /* Subtle inner highlight - reduced intensity - ONE-SHOT only */
 .masonry-container--streaming .masonry-item--animating::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -117,8 +123,12 @@
 }
 
 @keyframes inner-flash {
-  0% { opacity: 0.6; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -202,9 +212,10 @@
 .masonry-item--ready {
   opacity: 1;
   /* Enable smooth transitions for position changes once layout is ready - NO opacity transition */
-  transition: top 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-              left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition:
+    top 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* During streaming, ready items should still have no position transitions */
@@ -227,19 +238,20 @@
   .masonry-container {
     min-height: 300px;
   }
-  
+
   .masonry-item {
     /* Faster transitions on mobile for better responsiveness */
     transition: opacity 0.25s ease;
   }
-  
+
   .masonry-item--ready {
-    transition: top 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-                left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                opacity 0.25s ease;
+    transition:
+      top 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      opacity 0.25s ease;
   }
-  
+
   /* Faster entrance animation on mobile */
   .masonry-container--streaming .masonry-item--animating {
     animation-duration: 0.4s;
@@ -267,7 +279,7 @@
     animation: none !important;
     transition: none !important;
   }
-  
+
   .masonry-container--streaming .masonry-item--animating::before,
   .masonry-container--streaming .masonry-item--animating::after {
     animation: none !important;

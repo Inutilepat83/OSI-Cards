@@ -22,10 +22,34 @@
       "title": "Professional Achievements",
       "type": "analytics",
       "fields": [
-        { "label": "Cost Reduction", "value": "€245M Achieved", "percentage": 78, "performance": "excellent", "trend": "down" },
-        { "label": "Revenue Growth", "value": "€1.2B YoY", "percentage": 105, "performance": "excellent", "trend": "up" },
-        { "label": "Team Leadership", "value": "120 professionals", "percentage": 80, "performance": "excellent", "trend": "stable" },
-        { "label": "M&A Deals", "value": "8 successful deals", "percentage": 95, "performance": "excellent", "trend": "up" }
+        {
+          "label": "Cost Reduction",
+          "value": "€245M Achieved",
+          "percentage": 78,
+          "performance": "excellent",
+          "trend": "down"
+        },
+        {
+          "label": "Revenue Growth",
+          "value": "€1.2B YoY",
+          "percentage": 105,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Team Leadership",
+          "value": "120 professionals",
+          "percentage": 80,
+          "performance": "excellent",
+          "trend": "stable"
+        },
+        {
+          "label": "M&A Deals",
+          "value": "8 successful deals",
+          "percentage": 95,
+          "performance": "excellent",
+          "trend": "up"
+        }
       ]
     },
     {
@@ -80,9 +104,24 @@
       "title": "Professional Network",
       "type": "network-card",
       "fields": [
-        { "label": "CFO Network Europe", "value": "Industry Leadership Group", "connections": 45, "strength": 95 },
-        { "label": "Board Positions", "value": "3 Advisory Boards", "connections": 12, "strength": 90 },
-        { "label": "Industry Forums", "value": "Financial Services Council", "connections": 80, "strength": 85 }
+        {
+          "label": "CFO Network Europe",
+          "value": "Industry Leadership Group",
+          "connections": 45,
+          "strength": 95
+        },
+        {
+          "label": "Board Positions",
+          "value": "3 Advisory Boards",
+          "connections": 12,
+          "strength": 90
+        },
+        {
+          "label": "Industry Forums",
+          "value": "Financial Services Council",
+          "connections": 80,
+          "strength": 85
+        }
       ]
     },
     {
@@ -113,24 +152,79 @@
       "title": "Recent Activities",
       "type": "list",
       "items": [
-        { "title": "M&A Deal Completion", "description": "Successfully closed €500M acquisition deal", "icon": "✅", "status": "completed" },
-        { "title": "Cost Optimization Initiative", "description": "Led €45M annual cost reduction program", "icon": "💰", "status": "completed" },
-        { "title": "Financial Strategy Planning", "description": "Developed 3-year financial roadmap", "icon": "📊", "status": "in-progress" }
+        {
+          "title": "M&A Deal Completion",
+          "description": "Successfully closed €500M acquisition deal",
+          "icon": "✅",
+          "status": "completed"
+        },
+        {
+          "title": "Cost Optimization Initiative",
+          "description": "Led €45M annual cost reduction program",
+          "icon": "💰",
+          "status": "completed"
+        },
+        {
+          "title": "Financial Strategy Planning",
+          "description": "Developed 3-year financial roadmap",
+          "icon": "📊",
+          "status": "in-progress"
+        }
       ]
     },
     {
       "title": "Work Locations",
       "type": "map",
       "fields": [
-        { "name": "Frankfurt Office", "x": 52, "y": 28, "type": "work", "address": "Frankfurt, Germany" },
-        { "name": "London Office", "x": 48, "y": 28, "type": "work", "address": "London, UK" },
-        { "name": "Zurich Office", "x": 50, "y": 26, "type": "work", "address": "Zurich, Switzerland" }
+        {
+          "name": "Frankfurt Office",
+          "x": 52,
+          "y": 28,
+          "type": "work",
+          "address": "Frankfurt, Germany"
+        },
+        {
+          "name": "London Office",
+          "x": 48,
+          "y": 28,
+          "type": "work",
+          "address": "London, UK"
+        },
+        {
+          "name": "Zurich Office",
+          "x": 50,
+          "y": 26,
+          "type": "work",
+          "address": "Zurich, Switzerland"
+        }
       ]
     }
   ],
   "actions": [
-    { "label": "Schedule Call", "type": "agent", "variant": "primary", "icon": "☎️", "agentId": "calendar-agent", "agentContext": { "action": "schedule_call" } },
-    { "label": "Send Proposal", "type": "mail", "variant": "primary", "icon": "📧", "email": { "to": "alex.patel@eurobank.com", "subject": "Business Proposal" } },
-    { "label": "View LinkedIn", "type": "website", "variant": "secondary", "icon": "💼", "url": "https://www.linkedin.com" }
+    {
+      "label": "Schedule Call",
+      "type": "agent",
+      "variant": "primary",
+      "icon": "☎️",
+      "agentId": "calendar-agent",
+      "agentContext": { "action": "schedule_call" }
+    },
+    {
+      "label": "Send Proposal",
+      "type": "mail",
+      "variant": "primary",
+      "icon": "📧",
+      "email": {
+        "to": "alex.patel@eurobank.com",
+        "subject": "Business Proposal"
+      }
+    },
+    {
+      "label": "View LinkedIn",
+      "type": "website",
+      "variant": "secondary",
+      "icon": "💼",
+      "url": "https://www.linkedin.com"
+    }
   ]
 }

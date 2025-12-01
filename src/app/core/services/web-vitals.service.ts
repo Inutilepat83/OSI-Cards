@@ -1,4 +1,4 @@
-import { Injectable, inject, OnDestroy } from '@angular/core';
+import { inject, Injectable, OnDestroy } from '@angular/core';
 import { LoggingService } from './logging.service';
 
 /**
@@ -23,14 +23,14 @@ export interface WebVitalsMetrics {
 
 /**
  * Web Vitals Service
- * 
+ *
  * Monitors and reports Core Web Vitals and other performance metrics.
  * Integrates with Google Analytics or other analytics services.
- * 
+ *
  * @example
  * ```typescript
  * const webVitals = inject(WebVitalsService);
- * 
+ *
  * // Metrics are automatically collected
  * webVitals.getMetrics().subscribe(metrics => {
  *   console.log('Web Vitals:', metrics);
@@ -38,7 +38,7 @@ export interface WebVitalsMetrics {
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WebVitalsService implements OnDestroy {
   private readonly logger = inject(LoggingService);
@@ -50,14 +50,17 @@ export class WebVitalsService implements OnDestroy {
    */
   initialize(): void {
     if (typeof window === 'undefined' || typeof PerformanceObserver === 'undefined') {
-      this.logger.warn('Web Vitals monitoring not supported in this environment', 'WebVitalsService');
+      this.logger.warn(
+        'Web Vitals monitoring not supported in this environment',
+        'WebVitalsService'
+      );
       return;
     }
 
     this.observePaintMetrics();
     this.observeLayoutShift();
     this.observeNavigationTiming();
-    
+
     this.logger.info('Web Vitals monitoring initialized', 'WebVitalsService');
   }
 
@@ -77,7 +80,7 @@ export class WebVitalsService implements OnDestroy {
         for (const entry of list.getEntries()) {
           if (entry.entryType === 'paint') {
             const paintEntry = entry as PerformancePaintTiming;
-            
+
             if (paintEntry.name === 'first-contentful-paint') {
               this.metrics.fcp = Math.round(paintEntry.startTime);
               this.logMetric('FCP', this.metrics.fcp);
@@ -134,12 +137,16 @@ export class WebVitalsService implements OnDestroy {
   private observeNavigationTiming(): void {
     try {
       if (typeof performance.getEntriesByType === 'function') {
-        const navigationEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
-        
+        const navigationEntries = performance.getEntriesByType(
+          'navigation'
+        ) as PerformanceNavigationTiming[];
+
         if (navigationEntries.length > 0) {
           const nav = navigationEntries[0];
-          if (!nav) return;
-          
+          if (!nav) {
+            return;
+          }
+
           // Time to First Byte
           if (nav.responseStart !== undefined && nav.requestStart !== undefined) {
             this.metrics.ttfb = Math.round(nav.responseStart - nav.requestStart);
@@ -167,7 +174,7 @@ export class WebVitalsService implements OnDestroy {
    */
   private logMetric(name: string, value: number): void {
     this.logger.debug(`Web Vital ${name}: ${value}`, 'WebVitalsService', { metric: name, value });
-    
+
     // Send to analytics if configured
     this.sendToAnalytics(name, value);
   }
@@ -181,7 +188,7 @@ export class WebVitalsService implements OnDestroy {
       (window as any).gtag('event', name, {
         event_category: 'Web Vitals',
         value: Math.round(value),
-        non_interaction: true
+        non_interaction: true,
       });
     }
   }
@@ -190,8 +197,7 @@ export class WebVitalsService implements OnDestroy {
    * Cleanup observers
    */
   ngOnDestroy(): void {
-    this.observers.forEach(observer => observer.disconnect());
+    this.observers.forEach((observer) => observer.disconnect());
     this.observers = [];
   }
 }
-

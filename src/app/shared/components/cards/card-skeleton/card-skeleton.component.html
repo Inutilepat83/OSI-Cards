@@ -7,12 +7,13 @@
       <div class="skeleton-title-placeholder"></div>
     </ng-template>
   </div>
-  
+
   <div class="card-skeleton-sections" *ngIf="sectionCount > 0">
-    <div 
+    <div
       *ngFor="let section of [].constructor(sectionCount); let i = index"
       class="skeleton-section"
-      [style.animation-delay.ms]="i * 100">
+      [style.animation-delay.ms]="i * 100"
+    >
       <div class="skeleton-section-header">
         <div class="skeleton-line skeleton-line--title"></div>
       </div>
@@ -21,7 +22,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Show placeholder when no sections yet -->
   <div class="card-skeleton-empty" *ngIf="sectionCount === 0">
     <div class="skeleton-line skeleton-line--empty"></div>
@@ -29,11 +30,11 @@
 
   <!-- Action buttons placeholder -->
   <div class="card-skeleton-actions" *ngIf="actionCount > 0">
-    <div 
+    <div
       *ngFor="let action of [].constructor(actionCount); let i = index"
       class="skeleton-action-button"
-      [style.animation-delay.ms]="(sectionCount * 100) + (i * 50)">
-    </div>
+      [style.animation-delay.ms]="sectionCount * 100 + i * 50"
+    ></div>
   </div>
 
   <!-- Signature placeholder -->

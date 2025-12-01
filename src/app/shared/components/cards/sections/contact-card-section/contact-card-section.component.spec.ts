@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ContactCardSectionComponent } from './contact-card-section.component';
-import { SectionBuilder, FieldBuilder } from '../../../../../testing/test-builders';
+import { FieldBuilder, SectionBuilder } from '../../../../../testing/test-builders';
 
 describe('ContactCardSectionComponent', () => {
   let component: ContactCardSectionComponent;
@@ -8,29 +8,19 @@ describe('ContactCardSectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ContactCardSectionComponent]
+      imports: [ContactCardSectionComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ContactCardSectionComponent);
     component = fixture.componentInstance;
-    
+
     component.section = SectionBuilder.create()
       .withTitle('Contact Information')
       .withType('contact-card')
-      .withField(
-        FieldBuilder.create()
-          .withLabel('Name')
-          .withValue('John Doe')
-          .build()
-      )
-      .withField(
-        FieldBuilder.create()
-          .withLabel('Email')
-          .withValue('john@example.com')
-          .build()
-      )
+      .withField(FieldBuilder.create().withLabel('Name').withValue('John Doe').build())
+      .withField(FieldBuilder.create().withLabel('Email').withValue('john@example.com').build())
       .build();
-    
+
     fixture.detectChanges();
   });
 
@@ -52,10 +42,9 @@ describe('ContactCardSectionComponent', () => {
   it('should emit field interaction on click', () => {
     spyOn(component.fieldInteraction, 'emit');
     const field = component.getFields()[0];
-    
+
     component.onFieldClick(field);
-    
+
     expect(component.fieldInteraction.emit).toHaveBeenCalled();
   });
 });
-

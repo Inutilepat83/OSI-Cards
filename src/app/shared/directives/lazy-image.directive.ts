@@ -1,15 +1,15 @@
-import { Directive, ElementRef, Input, OnInit, OnDestroy, inject, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, inject, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { LoggingService } from '../../core/services/logging.service';
 
 /**
  * Lazy loading directive for images
- * 
+ *
  * Uses Intersection Observer API for efficient image loading with:
  * - Progressive loading support
  * - Enhanced error handling with retry logic
  * - Loading state management
  * - Fallback image support
- * 
+ *
  * @example
  * ```html
  * <img appLazyImage="image.jpg" fallback="placeholder.jpg" [threshold]="0.2" />
@@ -17,7 +17,7 @@ import { LoggingService } from '../../core/services/logging.service';
  */
 @Directive({
   selector: 'img[appLazyImage]',
-  standalone: true
+  standalone: true,
 })
 export class LazyImageDirective implements OnInit, OnDestroy {
   @Input() appLazyImage?: string;
@@ -61,7 +61,7 @@ export class LazyImageDirective implements OnInit, OnDestroy {
       },
       {
         threshold: this.threshold,
-        rootMargin: '50px' // Start loading 50px before entering viewport
+        rootMargin: '50px', // Start loading 50px before entering viewport
       }
     );
 
@@ -119,7 +119,7 @@ export class LazyImageDirective implements OnInit, OnDestroy {
 
     // Create new image to preload
     const imageLoader = new Image();
-    
+
     imageLoader.onload = () => {
       this.renderer.setAttribute(img, 'src', src);
       this.renderer.removeClass(img, 'lazy-loading');
@@ -127,17 +127,23 @@ export class LazyImageDirective implements OnInit, OnDestroy {
       this.loaded = true;
       this.loading = false;
       this.retryCount = 0;
-      this.logger.debug(`LazyImageDirective: Image loaded successfully: ${src}`, 'LazyImageDirective');
+      this.logger.debug(
+        `LazyImageDirective: Image loaded successfully: ${src}`,
+        'LazyImageDirective'
+      );
     };
 
     imageLoader.onerror = () => {
       this.loading = false;
       this.logger.warn(`LazyImageDirective: Failed to load image: ${src}`, 'LazyImageDirective');
-      
+
       // Retry logic
       if (this.retryCount < this.retryAttempts) {
         this.retryCount++;
-        this.logger.debug(`LazyImageDirective: Retrying image load (attempt ${this.retryCount}/${this.retryAttempts})`, 'LazyImageDirective');
+        this.logger.debug(
+          `LazyImageDirective: Retrying image load (attempt ${this.retryCount}/${this.retryAttempts})`,
+          'LazyImageDirective'
+        );
         setTimeout(() => {
           this.loadImage();
         }, this.retryDelay);
@@ -146,7 +152,10 @@ export class LazyImageDirective implements OnInit, OnDestroy {
 
       // Use fallback if available
       if (this.fallback) {
-        this.logger.debug(`LazyImageDirective: Using fallback image: ${this.fallback}`, 'LazyImageDirective');
+        this.logger.debug(
+          `LazyImageDirective: Using fallback image: ${this.fallback}`,
+          'LazyImageDirective'
+        );
         this.renderer.setAttribute(img, 'src', this.fallback);
         this.renderer.removeClass(img, 'lazy-loading');
         this.renderer.addClass(img, 'lazy-loaded');
@@ -206,4 +215,3 @@ export class LazyImageDirective implements OnInit, OnDestroy {
     return null;
   }
 }
-

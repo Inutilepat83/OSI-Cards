@@ -9,7 +9,7 @@ import { LucideIconsModule } from '../../../../icons/lucide-icons.module';
   standalone: true,
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './news-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewsSectionComponent extends BaseSectionComponent<CardItem> {
   get newsItems(): CardItem[] {
@@ -17,14 +17,16 @@ export class NewsSectionComponent extends BaseSectionComponent<CardItem> {
   }
 
   formatSource(item: CardItem): string {
-    const meta = item.meta ?? {};
-    return (typeof meta['source'] === 'string' && meta['source'])
+    const meta = (item.meta ?? {}) as Record<string, unknown>;
+    return typeof meta['source'] === 'string' && meta['source']
       ? meta['source']
-      : (typeof meta['publisher'] === 'string' ? meta['publisher'] : 'News');
+      : typeof meta['publisher'] === 'string'
+        ? meta['publisher']
+        : 'News';
   }
 
   formatTimestamp(item: CardItem): string {
-    const meta = item.meta ?? {};
+    const meta = (item.meta ?? {}) as Record<string, unknown>;
     const timestamp = meta['publishedAt'] ?? meta['time'] ?? meta['date'];
     return typeof timestamp === 'string' ? timestamp : '';
   }

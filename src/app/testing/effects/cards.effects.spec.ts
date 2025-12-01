@@ -5,13 +5,13 @@ describe('Card model utilities', () => {
     const validConfig = {
       cardTitle: 'Sample',
       cardType: 'company',
-      sections: []
+      sections: [],
     };
 
     const invalidConfig = {
       cardTitle: '',
       cardType: 'unknown',
-      sections: []
+      sections: [],
     };
 
     expect(CardTypeGuards.isAICardConfig(validConfig)).toBeTrue();
@@ -23,7 +23,10 @@ describe('Card model utilities', () => {
       cardTitle: 'Valid Card',
       cardType: 'company',
       sections: [{ title: 'Info', type: 'info' }],
-      actions: Array.from({ length: 20 }, (_, index) => ({ id: `action-${index}`, label: `Action ${index}` }))
+      actions: Array.from({ length: 20 }, (_, index) => ({
+        id: `action-${index}`,
+        label: `Action ${index}`,
+      })),
     });
 
     expect(sanitized).not.toBeNull();

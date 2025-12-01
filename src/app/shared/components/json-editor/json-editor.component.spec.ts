@@ -12,24 +12,29 @@ describe('JsonEditorComponent', () => {
   let appConfigService: jasmine.SpyObj<AppConfigService>;
 
   beforeEach(async () => {
-    const jsonProcessingSpy = jasmine.createSpyObj('JsonProcessingService', ['validateJson', 'formatJson']);
+    const jsonProcessingSpy = jasmine.createSpyObj('JsonProcessingService', [
+      'validateJson',
+      'formatJson',
+    ]);
     const appConfigSpy = jasmine.createSpyObj('AppConfigService', [], {
       JSON_EDITOR: {
-        DEBOUNCE_MS: 300
-      }
+        DEBOUNCE_MS: 300,
+      },
     });
 
     await TestBed.configureTestingModule({
       imports: [JsonEditorComponent, FormsModule],
       providers: [
         { provide: JsonProcessingService, useValue: jsonProcessingSpy },
-        { provide: AppConfigService, useValue: appConfigSpy }
-      ]
+        { provide: AppConfigService, useValue: appConfigSpy },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(JsonEditorComponent);
     component = fixture.componentInstance;
-    jsonProcessingService = TestBed.inject(JsonProcessingService) as jasmine.SpyObj<JsonProcessingService>;
+    jsonProcessingService = TestBed.inject(
+      JsonProcessingService
+    ) as jasmine.SpyObj<JsonProcessingService>;
     appConfigService = TestBed.inject(AppConfigService) as jasmine.SpyObj<AppConfigService>;
   });
 
@@ -40,9 +45,9 @@ describe('JsonEditorComponent', () => {
   describe('JSON input', () => {
     it('should emit jsonInputChange when input changes', () => {
       spyOn(component.jsonInputChange, 'emit');
-      
+
       component.onJsonInputChange('{"test": "value"}');
-      
+
       expect(component.jsonInputChange.emit).toHaveBeenCalledWith('{"test": "value"}');
     });
 
@@ -51,11 +56,11 @@ describe('JsonEditorComponent', () => {
         isValid: true,
         error: null,
         errorPosition: null,
-        suggestion: null
+        suggestion: null,
       });
 
       component.onJsonInputChange('{"valid": "json"}');
-      
+
       expect(jsonProcessingService.validateJson).toHaveBeenCalled();
     });
 
@@ -64,11 +69,11 @@ describe('JsonEditorComponent', () => {
         isValid: false,
         error: 'Invalid JSON',
         errorPosition: 5,
-        suggestion: 'Check syntax'
+        suggestion: 'Check syntax',
       });
 
       component.onJsonInputChange('{"invalid": json}');
-      
+
       expect(component.isJsonValid).toBe(false);
       expect(component.jsonError).toBe('Invalid JSON');
       expect(component.jsonErrorPosition).toBe(5);
@@ -82,11 +87,11 @@ describe('JsonEditorComponent', () => {
         isValid: true,
         error: null,
         errorPosition: null,
-        suggestion: null
+        suggestion: null,
       });
 
       component.onJsonInputChange('{"valid": "json"}');
-      
+
       expect(component.isJsonValid).toBe(true);
       expect(component.jsonError).toBeNull();
     });
@@ -98,16 +103,16 @@ describe('JsonEditorComponent', () => {
       jsonProcessingService.formatJson.and.returnValue('{\n  "test": "value"\n}');
 
       component.formatJson();
-      
+
       expect(jsonProcessingService.formatJson).toHaveBeenCalledWith('{"test":"value"}');
       expect(component.jsonInput).toBe('{\n  "test": "value"\n}');
     });
 
     it('should not format when input is empty', () => {
       component.jsonInput = '';
-      
+
       component.formatJson();
-      
+
       expect(jsonProcessingService.formatJson).not.toHaveBeenCalled();
     });
 
@@ -127,11 +132,11 @@ describe('JsonEditorComponent', () => {
 
       const event = new KeyboardEvent('keydown', {
         key: 'Enter',
-        ctrlKey: true
+        ctrlKey: true,
       });
 
       component.onKeydown(event);
-      
+
       expect(jsonProcessingService.formatJson).toHaveBeenCalled();
     });
 
@@ -141,11 +146,11 @@ describe('JsonEditorComponent', () => {
 
       const event = new KeyboardEvent('keydown', {
         key: 'Enter',
-        metaKey: true
+        metaKey: true,
       });
 
       component.onKeydown(event);
-      
+
       expect(jsonProcessingService.formatJson).toHaveBeenCalled();
     });
 
@@ -153,11 +158,11 @@ describe('JsonEditorComponent', () => {
       component.jsonInput = '{"test":"value"}';
 
       const event = new KeyboardEvent('keydown', {
-        key: 'Enter'
+        key: 'Enter',
       });
 
       component.onKeydown(event);
-      
+
       expect(jsonProcessingService.formatJson).not.toHaveBeenCalled();
     });
   });
@@ -226,62 +231,49 @@ describe('JsonEditorComponent', () => {
   describe('output events', () => {
     it('should emit jsonValid when validation changes', () => {
       spyOn(component.jsonValid, 'emit');
-      
+
       jsonProcessingService.validateJson.and.returnValue({
         isValid: true,
         error: null,
         errorPosition: null,
-        suggestion: null
+        suggestion: null,
       });
 
       component.onJsonInputChange('{"valid": "json"}');
-      
+
       expect(component.jsonValid.emit).toHaveBeenCalledWith(true);
     });
 
     it('should emit jsonErrorChange when error changes', () => {
       spyOn(component.jsonErrorChange, 'emit');
-      
+
       jsonProcessingService.validateJson.and.returnValue({
         isValid: false,
         error: 'New error',
         errorPosition: null,
-        suggestion: null
+        suggestion: null,
       });
 
       component.onJsonInputChange('invalid');
-      
+
       expect(component.jsonErrorChange.emit).toHaveBeenCalledWith('New error');
     });
 
     it('should emit jsonErrorDetailsChange with error details', () => {
       spyOn(component.jsonErrorDetailsChange, 'emit');
-      
+
       const errorDetails = {
         isValid: false,
         error: 'Error',
         errorPosition: 5,
-        suggestion: 'Fix it'
+        suggestion: 'Fix it',
       };
-      
+
       jsonProcessingService.validateJson.and.returnValue(errorDetails);
 
       component.onJsonInputChange('invalid');
-      
+
       expect(component.jsonErrorDetailsChange.emit).toHaveBeenCalledWith(errorDetails);
     });
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-

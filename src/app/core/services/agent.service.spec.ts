@@ -10,10 +10,7 @@ describe('AgentService', () => {
     const loggingSpy = jasmine.createSpyObj('LoggingService', ['info', 'error']);
 
     TestBed.configureTestingModule({
-      providers: [
-        AgentService,
-        { provide: LoggingService, useValue: loggingSpy }
-      ]
+      providers: [AgentService, { provide: LoggingService, useValue: loggingSpy }],
     });
     service = TestBed.inject(AgentService);
     loggingService = TestBed.inject(LoggingService) as jasmine.SpyObj<LoggingService>;
@@ -26,7 +23,7 @@ describe('AgentService', () => {
   describe('triggerAgent', () => {
     it('should log agent trigger with ID', () => {
       service.triggerAgent('agent-123');
-      
+
       expect(loggingService.info).toHaveBeenCalledWith(
         'Agent triggered: agent-123',
         'AgentService',
@@ -37,7 +34,7 @@ describe('AgentService', () => {
     it('should log agent trigger with context', () => {
       const context = { query: 'show sales data', userId: 'user-1' };
       service.triggerAgent('agent-123', context);
-      
+
       expect(loggingService.info).toHaveBeenCalledWith(
         'Agent triggered: agent-123',
         'AgentService',
@@ -50,7 +47,7 @@ describe('AgentService', () => {
     it('should log agent response', () => {
       const response = { data: 'test response' };
       service.processAgentResponse('agent-123', response);
-      
+
       expect(loggingService.info).toHaveBeenCalledWith(
         'Agent response received from agent-123',
         'AgentService',
@@ -63,7 +60,7 @@ describe('AgentService', () => {
     it('should log agent error', () => {
       const error = new Error('Agent failed');
       service.handleAgentError('agent-123', error);
-      
+
       expect(loggingService.error).toHaveBeenCalledWith(
         'Error interacting with agent agent-123',
         'AgentService',
@@ -72,14 +69,3 @@ describe('AgentService', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-
-
-

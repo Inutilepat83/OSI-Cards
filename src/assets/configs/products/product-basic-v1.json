@@ -18,13 +18,37 @@
       "title": "Performance Metrics",
       "type": "analytics",
       "fields": [
-        { "label": "Restore Success Rate", "value": "99.98%", "percentage": 99.98, "performance": "excellent", "trend": "stable" },
-        { "label": "Backup Speed", "value": "500 GB/hour", "percentage": 95, "performance": "excellent", "trend": "up" },
-        { "label": "Uptime", "value": "99.99%", "percentage": 99.99, "performance": "excellent", "trend": "stable" }
+        {
+          "label": "Restore Success Rate",
+          "value": "99.98%",
+          "percentage": 99.98,
+          "performance": "excellent",
+          "trend": "stable"
+        },
+        {
+          "label": "Backup Speed",
+          "value": "500 GB/hour",
+          "percentage": 95,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Uptime",
+          "value": "99.99%",
+          "percentage": 99.99,
+          "performance": "excellent",
+          "trend": "stable"
+        }
       ]
     }
   ],
   "actions": [
-    { "label": "Try Free Trial", "type": "question", "variant": "primary", "icon": "🚀", "question": "How can I start a free trial?" }
+    {
+      "label": "Try Free Trial",
+      "type": "question",
+      "variant": "primary",
+      "icon": "🚀",
+      "question": "How can I start a free trial?"
+    }
   ]
 }

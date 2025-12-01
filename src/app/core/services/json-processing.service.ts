@@ -1,14 +1,14 @@
-import { Injectable, inject } from '@angular/core';
-import { AICardConfig, CardTypeGuards, CardSection } from '../../models';
+import { inject, Injectable } from '@angular/core';
+import { AICardConfig, CardSection, CardTypeGuards } from '../../models';
 import { AppConfigService } from './app-config.service';
 import { ensureCardIds } from '../../shared/utils/card-utils';
 
 /**
  * Service for processing JSON input, including parsing, validation, and partial parsing.
- * 
+ *
  * Extracted from HomePageComponent for better testability and reusability.
  * Handles JSON validation, error reporting, and partial parsing for live preview updates.
- * 
+ *
  * @example
  * ```typescript
  * const jsonService = inject(JsonProcessingService);
@@ -17,24 +17,24 @@ import { ensureCardIds } from '../../shared/utils/card-utils';
  *   // Use result.card
  * }
  * ```
- * 
+ *
  * @since 1.0.0
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class JsonProcessingService {
   private readonly config = inject(AppConfigService);
 
   /**
    * Validate JSON syntax and return error information
-   * 
+   *
    * Validates JSON syntax without parsing the full structure.
    * Provides detailed error information including position and suggestions.
-   * 
+   *
    * @param jsonInput - The JSON string to validate
    * @returns Validation result with error details if invalid
-   * 
+   *
    * @example
    * ```typescript
    * const validation = jsonProcessing.validateJsonSyntax(jsonString);
@@ -66,7 +66,7 @@ export class JsonProcessingService {
         isValid: false,
         error: errorMessage,
         position,
-        suggestion
+        suggestion,
       };
     }
   }
@@ -86,14 +86,14 @@ export class JsonProcessingService {
       /eval\s*\(/i,
       /expression\s*\(/i,
       /vbscript:/i,
-      /data:text\/html/i
+      /data:text\/html/i,
     ];
 
     for (const pattern of scriptPatterns) {
       if (pattern.test(jsonInput)) {
         return {
           isSafe: false,
-          threat: 'Potential script injection detected'
+          threat: 'Potential script injection detected',
         };
       }
     }
@@ -103,7 +103,9 @@ export class JsonProcessingService {
     try {
       const parsed = JSON.parse(jsonInput);
       const checkObject = (obj: any, depth = 0): boolean => {
-        if (depth > 50) return false; // Prevent deep nesting DoS
+        if (depth > 50) {
+          return false;
+        } // Prevent deep nesting DoS
         if (typeof obj === 'string' && obj.length > maxStringLength) {
           return false;
         }
@@ -119,7 +121,7 @@ export class JsonProcessingService {
       if (!checkObject(parsed)) {
         return {
           isSafe: false,
-          threat: 'Potential DoS attack detected (excessive string length or nesting)'
+          threat: 'Potential DoS attack detected (excessive string length or nesting)',
         };
       }
     } catch {
@@ -140,7 +142,7 @@ export class JsonProcessingService {
     if (!jsonInput || jsonInput.trim() === '') {
       return {
         success: false,
-        error: 'JSON input is empty'
+        error: 'JSON input is empty',
       };
     }
 
@@ -149,7 +151,7 @@ export class JsonProcessingService {
     if (!injectionCheck.isSafe) {
       return {
         success: false,
-        error: `Security validation failed: ${injectionCheck.threat}`
+        error: `Security validation failed: ${injectionCheck.threat}`,
       };
     }
 
@@ -159,7 +161,7 @@ export class JsonProcessingService {
       if (!data || typeof data !== 'object' || Array.isArray(data)) {
         return {
           success: false,
-          error: 'Card configuration must be a valid JSON object.'
+          error: 'Card configuration must be a valid JSON object.',
         };
       }
 
@@ -167,38 +169,38 @@ export class JsonProcessingService {
         const sanitized = ensureCardIds(data);
         return {
           success: true,
-          card: sanitized
+          card: sanitized,
         };
       }
 
       return {
         success: false,
-        error: 'Invalid card configuration format - missing required fields (cardTitle, sections)'
+        error: 'Invalid card configuration format - missing required fields (cardTitle, sections)',
       };
     } catch (e) {
       const error = e instanceof Error ? e.message : 'Invalid JSON format';
       return {
         success: false,
-        error: `Invalid JSON: ${error}`
+        error: `Invalid JSON: ${error}`,
       };
     }
   }
 
   /**
    * Try to parse partial/incomplete JSON for live preview
-   * 
+   *
    * Attempts to parse incomplete JSON input for real-time preview updates.
    * Handles common issues like:
    * - Trailing commas
    * - Missing closing braces/brackets
    * - Incomplete strings
    * - Partial section arrays
-   * 
+   *
    * Falls back to regex-based extraction if full parsing fails.
-   * 
+   *
    * @param jsonInput - The potentially incomplete JSON string
    * @returns Partial card configuration if parsing succeeds, null otherwise
-   * 
+   *
    * @example
    * ```typescript
    * const partial = jsonProcessing.tryParsePartialJson('{"cardTitle": "Test"');
@@ -268,8 +270,9 @@ export class JsonProcessingService {
       const cardData: Partial<AICardConfig> = {};
 
       // Extract cardTitle
-      const titleMatch = jsonInput.match(/"cardTitle"\s*:\s*"([^"]*)"/) ||
-                        jsonInput.match(/'cardTitle'\s*:\s*'([^']*)'/);
+      const titleMatch =
+        jsonInput.match(/"cardTitle"\s*:\s*"([^"]*)"/) ||
+        jsonInput.match(/'cardTitle'\s*:\s*'([^']*)'/);
       if (titleMatch) {
         cardData.cardTitle = titleMatch[1];
       }
@@ -395,10 +398,10 @@ export class JsonProcessingService {
 
   /**
    * Extract error position from error message
-   * 
+   *
    * Attempts to extract the character position where a JSON parsing error occurred.
    * This helps provide better error feedback to users.
-   * 
+   *
    * @param errorMessage - The error message from JSON.parse
    * @param jsonInput - The JSON input string
    * @returns Character position of the error, or undefined if not found
@@ -463,13 +466,13 @@ export class JsonProcessingService {
 
   /**
    * Format JSON with proper indentation
-   * 
+   *
    * Formats a JSON string with 2-space indentation for readability.
    * Returns the original string if parsing fails.
-   * 
+   *
    * @param jsonInput - The JSON string to format
    * @returns Formatted JSON string with indentation, or original string if invalid
-   * 
+   *
    * @example
    * ```typescript
    * const formatted = jsonProcessing.formatJson('{"a":1,"b":2}');
@@ -487,13 +490,13 @@ export class JsonProcessingService {
 
   /**
    * Calculate a simple hash of JSON content (ignoring whitespace differences)
-   * 
+   *
    * Creates a hash value for JSON content that ignores whitespace differences.
    * Useful for detecting content changes without formatting differences.
-   * 
+   *
    * @param jsonInput - The JSON string to hash
    * @returns Hash string representing the JSON content
-   * 
+   *
    * @example
    * ```typescript
    * const hash1 = jsonProcessing.calculateJsonHash('{"a":1}');
@@ -506,10 +509,9 @@ export class JsonProcessingService {
     let hash = 0;
     for (let i = 0; i < normalized.length; i++) {
       const char = normalized.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return String(hash);
   }
 }
-

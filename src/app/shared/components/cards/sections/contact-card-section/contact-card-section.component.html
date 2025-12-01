@@ -1,10 +1,21 @@
-<div class="ai-section ai-section--contact" role="region" [attr.aria-labelledby]="'contact-section-title-' + section.id" [attr.aria-describedby]="section.description ? 'contact-section-desc-' + section.id : null">
+<div
+  class="ai-section ai-section--contact"
+  role="region"
+  [attr.aria-labelledby]="'contact-section-title-' + section.id"
+  [attr.aria-describedby]="section.description ? 'contact-section-desc-' + section.id : null"
+>
   <div class="ai-section__header">
     <div class="ai-section__details">
       <h3 class="ai-section__title" [id]="'contact-section-title-' + section.id">{{ section.title }}</h3>
-      <p *ngIf="section.description" class="ai-section__description" [id]="'contact-section-desc-' + section.id">{{ section.description }}</p>
+      <p *ngIf="section.description" class="ai-section__description" [id]="'contact-section-desc-' + section.id">
+        {{ section.description }}
+      </p>
     </div>
-    <span *ngIf="hasContacts" class="ai-section__badge" aria-label="{{ contacts.length }} {{ contacts.length === 1 ? 'contact' : 'contacts' }}">
+    <span
+      *ngIf="hasContacts"
+      class="ai-section__badge"
+      aria-label="{{ contacts.length }} {{ contacts.length === 1 ? 'contact' : 'contacts' }}"
+    >
       {{ contacts.length }} {{ contacts.length === 1 ? 'contact' : 'contacts' }}
     </span>
   </div>
@@ -17,7 +28,12 @@
           class="contact-card"
           role="button"
           tabindex="0"
-          [attr.aria-label]="getContactName(contact) + (getContactRole(contact) ? ', ' + getContactRole(contact) : '') + (getContactEmail(contact) ? '. Email: ' + getContactEmail(contact) : '') + (getContactPhone(contact) ? '. Phone: ' + getContactPhone(contact) : '')"
+          [attr.aria-label]="
+            getContactName(contact) +
+            (getContactRole(contact) ? ', ' + getContactRole(contact) : '') +
+            (getContactEmail(contact) ? '. Email: ' + getContactEmail(contact) : '') +
+            (getContactPhone(contact) ? '. Phone: ' + getContactPhone(contact) : '')
+          "
           [attr.aria-posinset]="idx + 1"
           [attr.aria-setsize]="contacts.length"
           (click)="onContactClick(contact)"
@@ -28,12 +44,13 @@
           <header class="contact-card__header">
             <div class="contact-card__avatar">
               <ng-container *ngIf="getContactAvatar(contact) as avatar; else contactInitials">
-                <img 
-                  [src]="avatar" 
-                  [alt]="getContactName(contact)" 
+                <img
+                  [src]="avatar"
+                  [alt]="getContactName(contact)"
                   class="contact-card__avatar-img"
                   loading="lazy"
-                  decoding="async" />
+                  decoding="async"
+                />
               </ng-container>
               <ng-template #contactInitials>
                 <span class="contact-card__initials">

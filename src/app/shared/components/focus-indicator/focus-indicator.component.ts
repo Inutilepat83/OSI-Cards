@@ -1,4 +1,11 @@
-import { Component, ChangeDetectionStrategy, HostListener, ElementRef, Renderer2, OnInit, OnDestroy, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  Renderer2,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -11,15 +18,16 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: '',
-  styles: [`
-    :host {
-      display: contents;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styles: [
+    `
+      :host {
+        display: contents;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FocusIndicatorComponent implements OnInit, OnDestroy {
-  private readonly elementRef = inject(ElementRef);
   private readonly renderer = inject(Renderer2);
   private styleElement?: HTMLStyleElement;
 
@@ -63,4 +71,3 @@ export class FocusIndicatorComponent implements OnInit, OnDestroy {
     document.head.appendChild(styleElement);
   }
 }
-

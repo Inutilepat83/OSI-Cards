@@ -26,8 +26,16 @@
               {{ field.label }}
             </span>
             <div class="financial-card__value-wrapper">
-              <span class="financial-card__value" [ngClass]="{'financial-card__value--currency': field.format === 'currency'}">
-                <lucide-icon *ngIf="field.format === 'currency'" name="dollar-sign" size="16" class="financial-card__currency-icon"></lucide-icon>
+              <span
+                class="financial-card__value"
+                [ngClass]="{ 'financial-card__value--currency': field.format === 'currency' }"
+              >
+                <lucide-icon
+                  *ngIf="field.format === 'currency'"
+                  name="dollar-sign"
+                  size="16"
+                  class="financial-card__currency-icon"
+                ></lucide-icon>
                 {{ getDisplayValue(field) }}
               </span>
               <lucide-icon
@@ -39,7 +47,11 @@
               ></lucide-icon>
             </div>
           </div>
-          <div *ngIf="field.change !== undefined && field.change !== null" class="financial-card__change" [ngClass]="getChangeClass(field)">
+          <div
+            *ngIf="field.change !== undefined && field.change !== null"
+            class="financial-card__change"
+            [ngClass]="getChangeClass(field)"
+          >
             {{ field.change > 0 ? '+' : '' }}{{ field.change }}%
           </div>
         </article>

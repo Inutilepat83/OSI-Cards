@@ -11,22 +11,19 @@ describe('ToastService', () => {
   beforeEach(() => {
     const appConfigSpy = jasmine.createSpyObj('AppConfigService', [], {
       UI: {
-        TOAST_DURATION_MS: 3000
-      }
+        TOAST_DURATION_MS: 3000,
+      },
     });
 
     TestBed.configureTestingModule({
-      providers: [
-        ToastService,
-        { provide: AppConfigService, useValue: appConfigSpy }
-      ]
+      providers: [ToastService, { provide: AppConfigService, useValue: appConfigSpy }],
     });
 
     service = TestBed.inject(ToastService);
     appConfig = TestBed.inject(AppConfigService) as jasmine.SpyObj<AppConfigService>;
 
     // Subscribe to toasts to track changes
-    service.toasts$.subscribe(t => {
+    service.toasts$.subscribe((t) => {
       toasts = t;
     });
   });
@@ -74,7 +71,7 @@ describe('ToastService', () => {
     it('should generate unique IDs for toasts', () => {
       service.success('Message 1');
       service.success('Message 2');
-      
+
       expect(toasts.length).toBe(2);
       expect(toasts[0].id).not.toBe(toasts[1].id);
     });
@@ -93,10 +90,10 @@ describe('ToastService', () => {
     it('should remove toast by ID', () => {
       service.success('Message 1');
       service.success('Message 2');
-      
+
       const toastId = toasts[0].id;
       service.remove(toastId);
-      
+
       expect(toasts.length).toBe(1);
       expect(toasts[0].id).not.toBe(toastId);
     });
@@ -105,9 +102,9 @@ describe('ToastService', () => {
       service.success('Message 1');
       service.error('Message 2');
       service.warning('Message 3');
-      
+
       expect(toasts.length).toBe(3);
-      
+
       service.clear();
       expect(toasts.length).toBe(0);
     });
@@ -115,7 +112,7 @@ describe('ToastService', () => {
     it('should auto-remove toast after duration', fakeAsync(() => {
       service.success('Message', 1000);
       expect(toasts.length).toBe(1);
-      
+
       tick(1000);
       expect(toasts.length).toBe(0);
     }));
@@ -123,10 +120,10 @@ describe('ToastService', () => {
     it('should not remove toast before duration expires', fakeAsync(() => {
       service.success('Message', 2000);
       expect(toasts.length).toBe(1);
-      
+
       tick(1000);
       expect(toasts.length).toBe(1);
-      
+
       tick(1000);
       expect(toasts.length).toBe(0);
     }));
@@ -135,7 +132,7 @@ describe('ToastService', () => {
   describe('Observable stream', () => {
     it('should emit toasts array on changes', (done) => {
       let emissionCount = 0;
-      service.toasts$.subscribe(toastArray => {
+      service.toasts$.subscribe((toastArray) => {
         emissionCount++;
         if (emissionCount === 1) {
           expect(toastArray.length).toBe(0);
@@ -150,9 +147,9 @@ describe('ToastService', () => {
 
     it('should emit updated array when toast is removed', (done) => {
       service.success('Message');
-      
+
       let emissionCount = 0;
-      service.toasts$.subscribe(toastArray => {
+      service.toasts$.subscribe((toastArray) => {
         emissionCount++;
         if (emissionCount === 2) {
           expect(toastArray.length).toBe(1);
@@ -170,7 +167,7 @@ describe('ToastService', () => {
     it('should return current toasts array', () => {
       service.success('Message 1');
       service.error('Message 2');
-      
+
       const currentToasts = service.getToasts();
       expect(currentToasts.length).toBe(2);
       expect(currentToasts).toEqual(toasts);
@@ -180,7 +177,7 @@ describe('ToastService', () => {
       service.success('Message');
       const toasts1 = service.getToasts();
       const toasts2 = service.getToasts();
-      
+
       expect(toasts1).not.toBe(toasts2); // Different array references
       expect(toasts1).toEqual(toasts2); // Same content
     });
@@ -192,21 +189,21 @@ describe('ToastService', () => {
       service.error('Error');
       service.warning('Warning');
       service.info('Info');
-      
+
       expect(toasts.length).toBe(4);
-      expect(toasts.map(t => t.type)).toEqual(['success', 'error', 'warning', 'info']);
+      expect(toasts.map((t) => t.type)).toEqual(['success', 'error', 'warning', 'info']);
     });
 
     it('should remove toasts independently', fakeAsync(() => {
       service.success('Message 1', 1000);
       service.error('Message 2', 2000);
-      
+
       expect(toasts.length).toBe(2);
-      
+
       tick(1000);
       expect(toasts.length).toBe(1);
       expect(toasts[0].type).toBe('error');
-      
+
       tick(1000);
       expect(toasts.length).toBe(0);
     }));
@@ -228,7 +225,7 @@ describe('ToastService', () => {
     it('should handle zero duration', fakeAsync(() => {
       service.success('Message', 0);
       expect(toasts.length).toBe(1);
-      
+
       tick(0);
       expect(toasts.length).toBe(0);
     }));
@@ -236,20 +233,9 @@ describe('ToastService', () => {
     it('should handle removing non-existent toast ID', () => {
       service.success('Message');
       const initialLength = toasts.length;
-      
+
       service.remove('non-existent-id');
       expect(toasts.length).toBe(initialLength);
     });
   });
 });
-
-
-
-
-
-
-
-
-
-
-

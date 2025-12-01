@@ -1,4 +1,4 @@
-import { AICardConfig, CardSection, CardField, CardItem, CardAction, CardType } from '../models';
+import { AICardConfig, CardAction, CardField, CardItem, CardSection, CardType } from '../models';
 
 /**
  * Test data builders for creating test card configurations
@@ -55,7 +55,7 @@ export class FieldBuilder {
       id: this.field.id || `field-${Date.now()}`,
       label: this.field.label || 'Test Field',
       value: this.field.value ?? 'Test Value',
-      ...this.field
+      ...this.field,
     } as CardField;
   }
 }
@@ -109,7 +109,7 @@ export class ItemBuilder {
     return {
       id: this.item.id || `item-${Date.now()}`,
       title: this.item.title || 'Test Item',
-      ...this.item
+      ...this.item,
     } as CardItem;
   }
 }
@@ -177,7 +177,7 @@ export class SectionBuilder {
       type: this.section.type || 'info',
       fields: this.section.fields || [],
       items: this.section.items || [],
-      ...this.section
+      ...this.section,
     } as CardSection;
   }
 }
@@ -242,7 +242,7 @@ export class CardBuilder {
     return {
       cardTitle: this.card.cardTitle || 'Test Card',
       sections: this.card.sections || [],
-      ...this.card
+      ...this.card,
     } as AICardConfig;
   }
 }
@@ -330,6 +330,5 @@ export const TestCardFactory = {
           .build()
       )
       .build();
-  }
+  },
 };
-

@@ -1,9 +1,8 @@
-import { TestBed } from '@angular/core/testing';
-import { HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
 import { RateLimitInterceptor } from './rate-limit.interceptor';
 import { LoggingService } from '../services/logging.service';
 import { of, throwError } from 'rxjs';
-import { fakeAsync, tick } from '@angular/core/testing';
 
 describe('RateLimitInterceptor', () => {
   let interceptor: RateLimitInterceptor;
@@ -14,10 +13,7 @@ describe('RateLimitInterceptor', () => {
     const loggingSpy = jasmine.createSpyObj('LoggingService', ['warn', 'error', 'debug']);
 
     TestBed.configureTestingModule({
-      providers: [
-        RateLimitInterceptor,
-        { provide: LoggingService, useValue: loggingSpy }
-      ]
+      providers: [RateLimitInterceptor, { provide: LoggingService, useValue: loggingSpy }],
     });
 
     interceptor = TestBed.inject(RateLimitInterceptor);
@@ -49,7 +45,7 @@ describe('RateLimitInterceptor', () => {
         interceptor.intercept(request, nextHandler).subscribe({
           error: () => {
             // Intentionally empty - ignore errors in test
-          }
+          },
         });
       }
       tick(10);
@@ -67,7 +63,7 @@ describe('RateLimitInterceptor', () => {
         interceptor.intercept(request, nextHandler).subscribe({
           error: () => {
             // Intentionally empty - ignore errors in test
-          }
+          },
         });
       }
       tick(10);
@@ -105,8 +101,8 @@ describe('RateLimitInterceptor', () => {
         status: 429,
         statusText: 'Too Many Requests',
         headers: {
-          'Retry-After': '2'
-        }
+          'Retry-After': '2',
+        },
       });
 
       nextHandler.handle.and.returnValue(throwError(() => errorResponse));
@@ -114,7 +110,7 @@ describe('RateLimitInterceptor', () => {
       interceptor.intercept(request, nextHandler).subscribe({
         error: () => {
           // Intentionally empty - ignore errors in test
-        }
+        },
       });
       tick(10);
 
@@ -127,15 +123,13 @@ describe('RateLimitInterceptor', () => {
         status: 429,
         statusText: 'Too Many Requests',
         headers: {
-          'Retry-After': '1'
-        }
+          'Retry-After': '1',
+        },
       });
 
       let callCount = 0;
       nextHandler.handle.and.returnValue(
-        callCount++ === 0 
-          ? throwError(() => errorResponse)
-          : of({} as HttpEvent<any>)
+        callCount++ === 0 ? throwError(() => errorResponse) : of({} as HttpEvent<any>)
       );
 
       interceptor.intercept(request, nextHandler).subscribe();
@@ -150,7 +144,7 @@ describe('RateLimitInterceptor', () => {
       const request = new HttpRequest('GET', '/api/test');
       const errorResponse = new HttpErrorResponse({
         status: 500,
-        statusText: 'Internal Server Error'
+        statusText: 'Internal Server Error',
       });
 
       nextHandler.handle.and.returnValue(throwError(() => errorResponse));
@@ -158,13 +152,9 @@ describe('RateLimitInterceptor', () => {
       interceptor.intercept(request, nextHandler).subscribe({
         error: (error) => {
           expect(error.status).toBe(500);
-        }
+        },
       });
       tick(10);
     }));
   });
 });
-
-
-
-

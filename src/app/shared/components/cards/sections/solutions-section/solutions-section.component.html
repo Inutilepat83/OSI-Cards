@@ -40,7 +40,7 @@
 
           <!-- Benefits/Features -->
           <ul *ngIf="field.benefits?.length" class="solution-card__benefits">
-            <li *ngFor="let benefit of field.benefits | slice:0:4" class="solution-card__benefit">
+            <li *ngFor="let benefit of field.benefits | slice: 0 : 4" class="solution-card__benefit">
               <lucide-icon name="check" size="14" class="solution-card__benefit-icon"></lucide-icon>
               <span class="solution-card__benefit-text">{{ benefit }}</span>
             </li>

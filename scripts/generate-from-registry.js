@@ -2,7 +2,7 @@
 
 /**
  * Master Registry Generation Script
- * 
+ *
  * This script is the single entry point for generating all derived artifacts
  * from the section-registry.json. It ensures consistency across:
  * - TypeScript types (CardSection.type union)
@@ -10,9 +10,10 @@
  * - Style imports bundle
  * - Documentation
  * - Test fixtures
+ * - Demo card (all-components.json)
  * - OpenAPI schema
- * 
- * Usage: node scripts/generate-from-registry.js [--types] [--docs] [--tests] [--styles] [--all]
+ *
+ * Usage: node scripts/generate-from-registry.js [--types] [--docs] [--tests] [--styles] [--demo] [--all]
  */
 
 const fs = require('fs');
@@ -51,14 +52,14 @@ function loadRegistry() {
   if (!fs.existsSync(REGISTRY_PATH)) {
     throw new Error(`Registry not found at: ${REGISTRY_PATH}`);
   }
-  
+
   const content = fs.readFileSync(REGISTRY_PATH, 'utf8');
   const registry = JSON.parse(content);
-  
+
   if (!registry.version || !registry.sections) {
     throw new Error('Invalid registry format: missing version or sections');
   }
-  
+
   return registry;
 }
 
@@ -83,17 +84,17 @@ function getAllSectionTypes(registry) {
  */
 function generateTypes(registry) {
   logSection('Generating TypeScript Types');
-  
+
   const outputPath = path.join(LIB_SRC, 'lib', 'models', 'generated-section-types.ts');
-  
+
   const publicTypes = getPublicSectionTypes(registry);
   const allTypes = getAllSectionTypes(registry);
   const aliases = registry.typeAliases || {};
-  
+
   // Build type union
   const typeUnion = allTypes.map(t => `'${t}'`).join('\n  | ');
   const aliasUnion = Object.keys(aliases).map(t => `'${t}'`).join('\n  | ');
-  
+
   // Build section metadata map
   const metadataEntries = Object.entries(registry.sections).map(([type, def]) => {
     return `  '${type}': {
@@ -210,7 +211,7 @@ export const ALL_SECTION_TYPES: SectionType[] = [
   log(`  ✓ Generated ${outputPath}`, colors.green);
   log(`    - ${allTypes.length} section types`, colors.blue);
   log(`    - ${Object.keys(aliases).length} type aliases`, colors.blue);
-  
+
   return { outputPath, typesCount: allTypes.length };
 }
 
@@ -219,24 +220,24 @@ export const ALL_SECTION_TYPES: SectionType[] = [
  */
 function generateComponentMap(registry) {
   logSection('Generating Component Map');
-  
+
   const outputPath = path.join(LIB_SRC, 'lib', 'components', 'section-renderer', 'section-component-map.generated.ts');
-  
+
   const imports = [];
   const mapEntries = [];
-  
+
   Object.entries(registry.sections).forEach(([type, def]) => {
     const componentName = def.selector
       .replace('app-', '')
       .split('-')
       .map(part => part.charAt(0).toUpperCase() + part.slice(1))
       .join('') + 'Component';
-    
+
     // Extract just the component file name from the path
     const componentPath = def.componentPath;
     const componentFile = path.basename(componentPath);
     const componentDir = path.basename(path.dirname(componentPath));
-    
+
     // Build proper relative import path
     let importPath;
     if (componentDir === 'sections') {
@@ -246,7 +247,7 @@ function generateComponentMap(registry) {
       // Component is in a subfolder (e.g., analytics-section/analytics-section.component.ts)
       importPath = `../sections/${componentDir}/${componentFile}`;
     }
-    
+
     imports.push(`import { ${componentName} } from '${importPath}';`);
     mapEntries.push(`  '${type}': ${componentName}`);
   });
@@ -285,7 +286,7 @@ export function getSectionComponent(type: SectionType): Type<BaseSectionComponen
   fs.writeFileSync(outputPath, content, 'utf8');
   log(`  ✓ Generated ${outputPath}`, colors.green);
   log(`    - ${Object.keys(registry.sections).length} component mappings`, colors.blue);
-  
+
   return { outputPath };
 }
 
@@ -294,9 +295,9 @@ export function getSectionComponent(type: SectionType): Type<BaseSectionComponen
  */
 function generateStyleBundle(registry) {
   logSection('Generating Style Bundle');
-  
+
   const outputPath = path.join(LIB_SRC, 'lib', 'styles', 'components', 'sections', '_section-types.generated.scss');
-  
+
   const imports = Object.entries(registry.sections)
     .filter(([_, def]) => def.stylePath)
     .map(([type, def]) => {
@@ -315,7 +316,7 @@ ${imports.join('\n')}
   fs.writeFileSync(outputPath, content, 'utf8');
   log(`  ✓ Generated ${outputPath}`, colors.green);
   log(`    - ${imports.length} style imports`, colors.blue);
-  
+
   return { outputPath };
 }
 
@@ -324,18 +325,18 @@ ${imports.join('\n')}
  */
 function generateTestFixtures(registry) {
   logSection('Generating Test Fixtures');
-  
+
   const outputDir = path.join(ROOT_DIR, 'src', 'assets', 'configs', 'generated');
-  
+
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
-  
+
   // Generate complete fixtures
   const completeSections = Object.entries(registry.sections)
     .filter(([_, def]) => def.testFixtures?.complete)
     .map(([_, def]) => def.testFixtures.complete);
-  
+
   const completeCard = {
     cardTitle: 'All Sections Demo - Complete',
     cardSubtitle: 'Generated from section-registry.json',
@@ -346,34 +347,34 @@ function generateTestFixtures(registry) {
       { label: 'Contact', type: 'mail', variant: 'secondary', icon: '📧', email: { contact: { name: 'Support', email: 'support@example.com', role: 'Support' }, subject: 'Inquiry', body: 'Hello' } }
     ]
   };
-  
+
   // Generate minimal fixtures
   const minimalSections = Object.entries(registry.sections)
     .filter(([_, def]) => def.testFixtures?.minimal)
     .map(([_, def]) => def.testFixtures.minimal);
-  
+
   const minimalCard = {
     cardTitle: 'All Sections Demo - Minimal',
     sections: minimalSections
   };
-  
+
   // Generate edge case fixtures
   const edgeCaseSections = Object.entries(registry.sections)
     .filter(([_, def]) => def.testFixtures?.edgeCases)
     .map(([_, def]) => def.testFixtures.edgeCases);
-  
+
   const edgeCaseCard = {
     cardTitle: 'All Sections Demo - Edge Cases',
     sections: edgeCaseSections
   };
-  
+
   // Write files
   const files = [
     { name: 'all-sections-complete.json', data: completeCard },
     { name: 'all-sections-minimal.json', data: minimalCard },
     { name: 'all-sections-edge-cases.json', data: edgeCaseCard },
   ];
-  
+
   files.forEach(({ name, data }) => {
     fs.writeFileSync(
       path.join(outputDir, name),
@@ -382,7 +383,7 @@ function generateTestFixtures(registry) {
     );
     log(`  ✓ Generated ${name}`, colors.green);
   });
-  
+
   // Generate manifest
   const manifest = {
     generatedAt: new Date().toISOString(),
@@ -391,15 +392,60 @@ function generateTestFixtures(registry) {
     sectionTypes: Object.keys(registry.sections),
     files: files.map(f => f.name)
   };
-  
+
   fs.writeFileSync(
     path.join(outputDir, 'manifest.json'),
     JSON.stringify(manifest, null, 2),
     'utf8'
   );
   log(`  ✓ Generated manifest.json`, colors.green);
-  
+
   return { outputDir, filesCount: files.length };
+}
+
+/**
+ * Generate the all-components.json demo card used by the home page
+ * This ensures the "All Sections Demo" always includes every section type
+ */
+function generateAllComponentsCard(registry) {
+  logSection('Generating All Components Demo Card');
+
+  const outputDir = path.join(ROOT_DIR, 'src', 'assets', 'configs', 'all');
+  const outputPath = path.join(outputDir, 'all-components.json');
+
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+
+  // Get all public section types (exclude internal like 'fallback')
+  const publicSections = Object.entries(registry.sections)
+    .filter(([_, def]) => !def.isInternal && def.testFixtures?.complete)
+    .map(([_, def]) => def.testFixtures.complete);
+
+  const sectionCount = publicSections.length;
+
+  const allComponentsCard = {
+    cardTitle: 'All Sections Demo',
+    cardSubtitle: 'Complete Component Showcase',
+    cardType: 'company',
+    description: 'This card demonstrates all available section types in the OSI Cards library',
+    sections: publicSections,
+    actions: [
+      { label: 'Learn More', type: 'website', variant: 'primary', icon: '🌐', url: 'https://example.com' }
+    ]
+  };
+
+  fs.writeFileSync(
+    outputPath,
+    JSON.stringify(allComponentsCard, null, 2) + '\n',
+    'utf8'
+  );
+
+  log(`  ✓ Generated all-components.json`, colors.green);
+  log(`    - ${sectionCount} section types included`, colors.blue);
+  log(`    - Excludes internal sections (fallback)`, colors.blue);
+
+  return { outputPath, sectionCount };
 }
 
 /**
@@ -407,18 +453,18 @@ function generateTestFixtures(registry) {
  */
 function generatePublicApi(registry) {
   logSection('Generating Public API Exports');
-  
+
   const outputPath = path.join(LIB_SRC, 'lib', 'models', 'index.ts');
-  
+
   // Read existing file to preserve manual exports
   let existingContent = '';
   if (fs.existsSync(outputPath)) {
     existingContent = fs.readFileSync(outputPath, 'utf8');
   }
-  
+
   // Check if we need to add the generated types export
   const exportLine = "export * from './generated-section-types';";
-  
+
   if (!existingContent.includes(exportLine)) {
     const newContent = existingContent.trim() + '\n\n// Auto-generated section types\n' + exportLine + '\n';
     fs.writeFileSync(outputPath, newContent, 'utf8');
@@ -426,7 +472,7 @@ function generatePublicApi(registry) {
   } else {
     log(`  ✓ ${outputPath} already includes generated types`, colors.blue);
   }
-  
+
   return { outputPath };
 }
 
@@ -435,10 +481,10 @@ function generatePublicApi(registry) {
  */
 function validateRegistry(registry) {
   logSection('Validating Registry');
-  
+
   let errors = [];
   let warnings = [];
-  
+
   // Check required fields for each section
   Object.entries(registry.sections).forEach(([type, def]) => {
     if (!def.name) errors.push(`Section '${type}' missing 'name'`);
@@ -446,13 +492,13 @@ function validateRegistry(registry) {
     if (!def.componentPath) errors.push(`Section '${type}' missing 'componentPath'`);
     if (!def.selector) errors.push(`Section '${type}' missing 'selector'`);
     if (!def.rendering) errors.push(`Section '${type}' missing 'rendering'`);
-    
+
     // Check component file exists
     const componentFile = path.join(LIB_SRC, def.componentPath + '.ts');
     if (!fs.existsSync(componentFile)) {
       warnings.push(`Component file not found for '${type}': ${componentFile}`);
     }
-    
+
     // Check style file exists
     if (def.stylePath) {
       const styleFile = path.join(LIB_SRC, def.stylePath);
@@ -460,13 +506,13 @@ function validateRegistry(registry) {
         warnings.push(`Style file not found for '${type}': ${styleFile}`);
       }
     }
-    
+
     // Check test fixtures
     if (!def.testFixtures) {
       warnings.push(`Section '${type}' missing 'testFixtures'`);
     }
   });
-  
+
   // Check aliases point to valid types
   if (registry.typeAliases) {
     Object.entries(registry.typeAliases).forEach(([alias, target]) => {
@@ -475,22 +521,22 @@ function validateRegistry(registry) {
       }
     });
   }
-  
+
   // Report results
   if (errors.length > 0) {
     log(`\n  ❌ Validation errors:`, colors.red);
     errors.forEach(e => log(`     - ${e}`, colors.red));
   }
-  
+
   if (warnings.length > 0) {
     log(`\n  ⚠️  Validation warnings:`, colors.yellow);
     warnings.forEach(w => log(`     - ${w}`, colors.yellow));
   }
-  
+
   if (errors.length === 0) {
     log(`  ✓ Registry is valid`, colors.green);
   }
-  
+
   return { errors, warnings, isValid: errors.length === 0 };
 }
 
@@ -500,49 +546,55 @@ function validateRegistry(registry) {
 function main() {
   const args = process.argv.slice(2);
   const runAll = args.includes('--all') || args.length === 0;
-  
+
   log('\n🔧 OSI Cards Registry Generation', colors.bright + colors.cyan);
   log('═'.repeat(60), colors.cyan);
-  
+
   try {
     // Load registry
     const registry = loadRegistry();
     log(`\n📄 Loaded registry v${registry.version}`, colors.green);
     log(`   ${Object.keys(registry.sections).length} sections defined`, colors.blue);
-    
+
     // Validate
     const validation = validateRegistry(registry);
     if (!validation.isValid) {
       log('\n❌ Registry validation failed. Fix errors before generating.', colors.red);
       process.exit(1);
     }
-    
+
     // Generate artifacts
     if (runAll || args.includes('--types')) {
       generateTypes(registry);
     }
-    
+
     if (runAll || args.includes('--components')) {
       generateComponentMap(registry);
     }
-    
+
     if (runAll || args.includes('--styles')) {
       generateStyleBundle(registry);
     }
-    
+
     if (runAll || args.includes('--tests')) {
       generateTestFixtures(registry);
     }
-    
+
     if (runAll || args.includes('--api')) {
       generatePublicApi(registry);
     }
-    
+
+    // Always generate the all-components.json demo card
+    // This ensures the home page demo stays in sync with the registry
+    if (runAll || args.includes('--demo')) {
+      generateAllComponentsCard(registry);
+    }
+
     // Summary
     log('\n' + '═'.repeat(60), colors.cyan);
     log('✅ Generation complete!', colors.bright + colors.green);
     log('═'.repeat(60) + '\n', colors.cyan);
-    
+
   } catch (error) {
     log(`\n❌ Error: ${error.message}`, colors.red);
     process.exit(1);

@@ -1,17 +1,17 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { supportsWebP, getOptimizedImageUrl } from '../utils/image-optimization.util';
-import { Observable, of, from } from 'rxjs';
+import { getOptimizedImageUrl, supportsWebP } from '../utils/image-optimization.util';
+import { from, Observable, of } from 'rxjs';
 
 /**
  * WebP Image Pipe
- * 
+ *
  * Automatically serves WebP images when supported, with fallback to original format.
- * 
+ *
  * @example
  * ```html
  * <img [src]="imageUrl | webpImage" alt="Image">
  * ```
- * 
+ *
  * @example
  * ```html
  * <img [src]="imageUrl | webpImage:webpUrl" alt="Image">
@@ -19,7 +19,7 @@ import { Observable, of, from } from 'rxjs';
  */
 @Pipe({
   name: 'webpImage',
-  standalone: true
+  standalone: true,
 })
 export class WebPImagePipe implements PipeTransform {
   private webpSupported: boolean | null = null;
@@ -40,13 +40,13 @@ export class WebPImagePipe implements PipeTransform {
       if (!this.webpCheckPromise) {
         this.webpCheckPromise = supportsWebP();
       }
-      
+
       // For synchronous pipe, we'll use a simple check
       // In a real implementation, you might want to use async pipe
-      this.webpCheckPromise.then(supported => {
+      this.webpCheckPromise.then((supported) => {
         this.webpSupported = supported;
       });
-      
+
       // Default to original until we know WebP is supported
       return originalUrl;
     }
@@ -57,9 +57,9 @@ export class WebPImagePipe implements PipeTransform {
 
 /**
  * Async WebP Image Pipe
- * 
+ *
  * Asynchronous version that properly waits for WebP support detection.
- * 
+ *
  * @example
  * ```html
  * <img [src]="(imageUrl | webpImageAsync:webpUrl | async)" alt="Image">
@@ -67,7 +67,7 @@ export class WebPImagePipe implements PipeTransform {
  */
 @Pipe({
   name: 'webpImageAsync',
-  standalone: true
+  standalone: true,
 })
 export class WebPImageAsyncPipe implements PipeTransform {
   transform(originalUrl: string | null | undefined, webpUrl?: string): Observable<string> {
@@ -79,7 +79,10 @@ export class WebPImageAsyncPipe implements PipeTransform {
       return of(originalUrl);
     }
 
-    return from(getOptimizedImageUrl(originalUrl, webpUrl).then(result => result.src).catch(() => originalUrl));
+    return from(
+      getOptimizedImageUrl(originalUrl, webpUrl)
+        .then((result) => result.src)
+        .catch(() => originalUrl)
+    );
   }
 }
-

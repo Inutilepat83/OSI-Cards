@@ -1,6 +1,6 @@
-import { Injectable, inject, OnDestroy, DestroyRef } from '@angular/core';
-import { Observable, Subject, BehaviorSubject, fromEvent, merge, timer } from 'rxjs';
-import { takeUntil, filter, switchMap, tap } from 'rxjs/operators';
+import { DestroyRef, inject, Injectable, OnDestroy } from '@angular/core';
+import { BehaviorSubject, fromEvent, merge, Observable, Subject, timer } from 'rxjs';
+import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { LoggingService } from './logging.service';
 import { AppConfigService } from './app-config.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -21,22 +21,22 @@ export interface QueuedOperation<T = unknown> {
 
 /**
  * Retry Queue Service
- * 
+ *
  * Queues failed operations for retry when connection is restored.
  * Provides persistent queue using IndexedDB and automatic retry on
  * network restoration.
- * 
+ *
  * Features:
  * - Persistent queue (IndexedDB)
  * - Automatic retry on connection restore
  * - Priority-based retry order
  * - Configurable retry limits
  * - User notification of queued operations
- * 
+ *
  * @example
  * ```typescript
  * const retryQueue = inject(RetryQueueService);
- * 
+ *
  * // Queue a failed operation
  * retryQueue.queue({
  *   id: 'save-card-123',
@@ -44,18 +44,18 @@ export interface QueuedOperation<T = unknown> {
  *   maxRetries: 3,
  *   priority: 'high'
  * });
- * 
+ *
  * // Operations automatically retry when connection is restored
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RetryQueueService implements OnDestroy {
   private readonly logger = inject(LoggingService);
   private readonly config = inject(AppConfigService);
   private readonly destroyRef = inject(DestroyRef);
-  
+
   private operationQueue: QueuedOperation[] = [];
   private processing = false;
   private readonly queueSubject = new BehaviorSubject<QueuedOperation[]>([]);
@@ -63,9 +63,7 @@ export class RetryQueueService implements OnDestroy {
 
   readonly queue$ = this.queueSubject.asObservable();
   readonly processing$ = this.processingSubject.asObservable();
-  readonly queueSize$ = this.queue$.pipe(
-    switchMap(queue => new BehaviorSubject(queue.length))
-  );
+  readonly queueSize$ = this.queue$.pipe(switchMap((queue) => new BehaviorSubject(queue.length)));
 
   constructor() {
     this.initializeQueue();
@@ -88,11 +86,7 @@ export class RetryQueueService implements OnDestroy {
         );
       }
     } catch (error) {
-      this.logger.warn(
-        'Failed to load queue from storage',
-        'RetryQueueService',
-        error
-      );
+      this.logger.warn('Failed to load queue from storage', 'RetryQueueService', error);
     }
   }
 
@@ -109,7 +103,10 @@ export class RetryQueueService implements OnDestroy {
         filter(() => navigator.onLine && this.operationQueue.length > 0 && !this.processing),
         takeUntilDestroyed(this.destroyRef),
         tap(() => {
-          this.logger.info('Connection restored, processing queued operations', 'RetryQueueService');
+          this.logger.info(
+            'Connection restored, processing queued operations',
+            'RetryQueueService'
+          );
         }),
         switchMap(() => this.processQueue())
       )
@@ -123,11 +120,11 @@ export class RetryQueueService implements OnDestroy {
     const queuedOp: QueuedOperation<T> = {
       ...operation,
       retryCount: 0,
-      createdAt: Date.now()
+      createdAt: Date.now(),
     };
 
     // Check if operation already exists
-    const existingIndex = this.operationQueue.findIndex(op => op.id === queuedOp.id);
+    const existingIndex = this.operationQueue.findIndex((op) => op.id === queuedOp.id);
     if (existingIndex >= 0) {
       // Update existing operation
       this.operationQueue[existingIndex] = queuedOp;
@@ -145,11 +142,10 @@ export class RetryQueueService implements OnDestroy {
     this.queueSubject.next([...this.operationQueue]);
     this.saveToStorage();
 
-    this.logger.info(
-      `Queued operation: ${queuedOp.id}`,
-      'RetryQueueService',
-      { queueSize: this.operationQueue.length, priority: queuedOp.priority }
-    );
+    this.logger.info(`Queued operation: ${queuedOp.id}`, 'RetryQueueService', {
+      queueSize: this.operationQueue.length,
+      priority: queuedOp.priority,
+    });
 
     // Try to process immediately if online
     if (navigator.onLine && !this.processing) {
@@ -163,7 +159,7 @@ export class RetryQueueService implements OnDestroy {
    * Remove operation from queue
    */
   remove(operationId: string): void {
-    const index = this.operationQueue.findIndex(op => op.id === operationId);
+    const index = this.operationQueue.findIndex((op) => op.id === operationId);
     if (index >= 0) {
       this.operationQueue.splice(index, 1);
       this.queueSubject.next([...this.operationQueue]);
@@ -186,7 +182,7 @@ export class RetryQueueService implements OnDestroy {
    */
   private processQueue(): Observable<void> {
     if (this.processing || this.operationQueue.length === 0 || !navigator.onLine) {
-      return new Observable(observer => {
+      return new Observable((observer) => {
         observer.complete();
       });
     }
@@ -194,7 +190,7 @@ export class RetryQueueService implements OnDestroy {
     this.processing = true;
     this.processingSubject.next(true);
 
-    return new Observable(observer => {
+    return new Observable((observer) => {
       const processNext = async () => {
         if (this.operationQueue.length === 0) {
           this.processing = false;
@@ -220,13 +216,10 @@ export class RetryQueueService implements OnDestroy {
           );
 
           const result = await operation.operation().toPromise();
-          
+
           // Success - remove from queue
           this.remove(operation.id);
-          this.logger.info(
-            `Successfully retried operation: ${operation.id}`,
-            'RetryQueueService'
-          );
+          this.logger.info(`Successfully retried operation: ${operation.id}`, 'RetryQueueService');
 
           // Process next
           processNext();
@@ -267,10 +260,12 @@ export class RetryQueueService implements OnDestroy {
       if (typeof indexedDB !== 'undefined') {
         // Simplified storage - in production, use proper IndexedDB service
         const key = 'osi-cards-retry-queue';
-        const data = JSON.stringify(this.operationQueue.map(op => ({
-          ...op,
-          operation: undefined // Don't store function
-        })));
+        const data = JSON.stringify(
+          this.operationQueue.map((op) => ({
+            ...op,
+            operation: undefined, // Don't store function
+          }))
+        );
         localStorage.setItem(key, data);
       }
     } catch (error) {
@@ -318,19 +313,23 @@ export class RetryQueueService implements OnDestroy {
     byPriority: Record<string, number>;
     oldestOperation?: number;
   } {
-    const byPriority = this.operationQueue.reduce((acc, op) => {
-      acc[op.priority] = (acc[op.priority] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const byPriority = this.operationQueue.reduce(
+      (acc, op) => {
+        acc[op.priority] = (acc[op.priority] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
-    const oldestOperation = this.operationQueue.length > 0
-      ? Math.min(...this.operationQueue.map(op => op.createdAt))
-      : undefined;
+    const oldestOperation =
+      this.operationQueue.length > 0
+        ? Math.min(...this.operationQueue.map((op) => op.createdAt))
+        : undefined;
 
     return {
       total: this.operationQueue.length,
       byPriority,
-      oldestOperation
+      oldestOperation,
     };
   }
 
@@ -338,4 +337,3 @@ export class RetryQueueService implements OnDestroy {
     this.clear();
   }
 }
-

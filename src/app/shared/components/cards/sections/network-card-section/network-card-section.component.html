@@ -1,10 +1,21 @@
-<div class="ai-section ai-section--network-card" role="region" [attr.aria-labelledby]="'network-section-title-' + section.id" [attr.aria-describedby]="section.description ? 'network-section-desc-' + section.id : null">
+<div
+  class="ai-section ai-section--network-card"
+  role="region"
+  [attr.aria-labelledby]="'network-section-title-' + section.id"
+  [attr.aria-describedby]="section.description ? 'network-section-desc-' + section.id : null"
+>
   <div class="ai-section__header">
     <div class="ai-section__details">
       <h3 class="ai-section__title" [id]="'network-section-title-' + section.id">{{ section.title }}</h3>
-      <p *ngIf="section.description" class="ai-section__description" [id]="'network-section-desc-' + section.id">{{ section.description }}</p>
+      <p *ngIf="section.description" class="ai-section__description" [id]="'network-section-desc-' + section.id">
+        {{ section.description }}
+      </p>
     </div>
-    <span *ngIf="fields.length" class="ai-section__badge" aria-label="{{ fields.length }} {{ fields.length === 1 ? 'metric' : 'metrics' }}">
+    <span
+      *ngIf="fields.length"
+      class="ai-section__badge"
+      aria-label="{{ fields.length }} {{ fields.length === 1 ? 'metric' : 'metrics' }}"
+    >
       {{ fields.length }} {{ fields.length === 1 ? 'metric' : 'metrics' }}
     </span>
   </div>
@@ -17,7 +28,9 @@
           class="network-card"
           role="button"
           tabindex="0"
-          [attr.aria-label]="(field.label || field.title || 'Network metric') + ': ' + (getDisplayValue(field) || 'No value')"
+          [attr.aria-label]="
+            (field.label || field.title || 'Network metric') + ': ' + (getDisplayValue(field) || 'No value')
+          "
           [attr.aria-describedby]="field.description ? 'network-field-desc-' + trackField(idx, field) : null"
           [attr.aria-posinset]="idx + 1"
           [attr.aria-setsize]="fields.length"
@@ -32,7 +45,9 @@
             <span *ngIf="getDisplayValue(field)" class="network-card__value">
               {{ getDisplayValue(field) }}
             </span>
-            <p *ngIf="field.description" class="sr-only" [id]="'network-field-desc-' + trackField(idx, field)">{{ field.description }}</p>
+            <p *ngIf="field.description" class="sr-only" [id]="'network-field-desc-' + trackField(idx, field)">
+              {{ field.description }}
+            </p>
           </div>
         </article>
       </div>

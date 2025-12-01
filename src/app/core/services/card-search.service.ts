@@ -1,7 +1,7 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable, of, BehaviorSubject } from 'rxjs';
-import { map, debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { AICardConfig, CardType, CardSection } from '../../models';
+import { inject, Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { AICardConfig, CardSection, CardType } from '../../models';
 import { CardDataService } from './card-data/card-data.service';
 import { LoggingService } from './logging.service';
 
@@ -25,14 +25,14 @@ export interface SearchResult {
 
 /**
  * Card Search Service
- * 
+ *
  * Provides advanced search and filtering capabilities for cards.
  * Supports full-text search, type filtering, and tag-based filtering.
- * 
+ *
  * @example
  * ```typescript
  * const searchService = inject(CardSearchService);
- * 
+ *
  * // Search cards
  * searchService.search('company', {
  *   cardTypes: ['company'],
@@ -43,12 +43,12 @@ export interface SearchResult {
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CardSearchService {
   private readonly cardDataService = inject(CardDataService);
   private readonly logger = inject(LoggingService);
-  
+
   private readonly searchSubject = new BehaviorSubject<string>('');
   public readonly searchQuery$ = this.searchSubject.asObservable();
 
@@ -57,79 +57,83 @@ export class CardSearchService {
    */
   search(query: string, options?: Partial<SearchOptions>): Observable<SearchResult[]> {
     this.searchSubject.next(query);
-    
+
     return this.cardDataService.getAllCards().pipe(
-      map(cards => {
+      map((cards) => {
         const results: SearchResult[] = [];
         const lowerQuery = query.toLowerCase().trim();
-        
+
         for (const card of cards) {
           // Apply filters
           if (options?.cardTypes && !options.cardTypes.includes(card.cardType as CardType)) {
             continue;
           }
-          
+
           if (options?.minSections && (card.sections?.length || 0) < options.minSections) {
             continue;
           }
-          
+
           if (options?.maxSections && (card.sections?.length || 0) > options.maxSections) {
             continue;
           }
-          
+
           if (options?.sectionTypes) {
-            const hasMatchingSection = card.sections?.some(s => 
+            const hasMatchingSection = card.sections?.some((s) =>
               options.sectionTypes!.includes(s.type)
             );
             if (!hasMatchingSection) {
               continue;
             }
           }
-          
+
           // Search in card
           const matches: { field: string; value: string }[] = [];
           let score = 0;
-          
+
           // Search in title (highest weight)
           if (card.cardTitle?.toLowerCase().includes(lowerQuery)) {
             matches.push({ field: 'title', value: card.cardTitle });
             score += 10;
           }
-          
+
           // Search in description
           if (card.description?.toLowerCase().includes(lowerQuery)) {
             matches.push({ field: 'description', value: card.description });
             score += 3;
           }
-          
+
           // Search in sections
-          card.sections?.forEach(section => {
+          card.sections?.forEach((section) => {
             // Section title
             if (section.title?.toLowerCase().includes(lowerQuery)) {
               matches.push({ field: 'section.title', value: section.title });
               score += 4;
             }
-            
+
             // Section description
             if (section.description?.toLowerCase().includes(lowerQuery)) {
               matches.push({ field: 'section.description', value: section.description });
               score += 2;
             }
-            
+
             // Fields
-            section.fields?.forEach(field => {
+            section.fields?.forEach((field) => {
               if (field.label?.toLowerCase().includes(lowerQuery)) {
                 matches.push({ field: 'field.label', value: field.label });
                 score += 2;
               }
-              if (String(field.value || '').toLowerCase().includes(lowerQuery)) {
+              if (
+                String(field.value || '')
+                  .toLowerCase()
+                  .includes(lowerQuery)
+              ) {
                 matches.push({ field: 'field.value', value: String(field.value) });
                 score += 1;
               }
             });
-            
+
             // Items
-            section.items?.forEach(item => {
+            section.items?.forEach((item) => {
               if (item.title?.toLowerCase().includes(lowerQuery)) {
                 matches.push({ field: 'item.title', value: item.title });
                 score += 2;
@@ -140,21 +144,21 @@ export class CardSearchService {
               }
             });
           });
-          
+
           // Only include cards with matches
           if (matches.length > 0) {
             results.push({ card, score, matches });
           }
         }
-        
+
         // Sort by score (highest first)
         results.sort((a, b) => b.score - a.score);
-        
+
         this.logger.debug('Search completed', 'CardSearchService', {
           query,
-          resultsCount: results.length
+          resultsCount: results.length,
         });
-        
+
         return results;
       })
     );
@@ -163,11 +167,15 @@ export class CardSearchService {
   /**
    * Search with debouncing (for real-time search)
    */
-  searchDebounced(query: string, options?: Partial<SearchOptions>, debounceMs = 300): Observable<SearchResult[]> {
+  searchDebounced(
+    query: string,
+    options?: Partial<SearchOptions>,
+    debounceMs = 300
+  ): Observable<SearchResult[]> {
     return of(query).pipe(
       debounceTime(debounceMs),
       distinctUntilChanged(),
-      switchMap(q => this.search(q, options))
+      switchMap((q) => this.search(q, options))
     );
   }
 
@@ -175,15 +183,15 @@ export class CardSearchService {
    * Filter cards by type
    */
   filterByType(cards: AICardConfig[], cardTypes: CardType[]): AICardConfig[] {
-    return cards.filter(card => cardTypes.includes(card.cardType as CardType));
+    return cards.filter((card) => cardTypes.includes(card.cardType as CardType));
   }
 
   /**
    * Filter cards by section type
    */
   filterBySectionType(cards: AICardConfig[], sectionTypes: string[]): AICardConfig[] {
-    return cards.filter(card =>
-      card.sections?.some(section => sectionTypes.includes(section.type))
+    return cards.filter((card) =>
+      card.sections?.some((section) => sectionTypes.includes(section.type))
     );
   }
 
@@ -191,9 +199,9 @@ export class CardSearchService {
    * Filter cards by tags (if tags are implemented in metadata)
    */
   filterByTags(cards: AICardConfig[], tags: string[]): AICardConfig[] {
-    return cards.filter(card => {
+    return cards.filter((card) => {
       const cardTags = (card.meta?.['tags'] as string[]) || [];
-      return tags.some(tag => cardTags.includes(tag));
+      return tags.some((tag) => cardTags.includes(tag));
     });
   }
 
@@ -202,24 +210,23 @@ export class CardSearchService {
    */
   getSuggestions(query: string, limit = 5): Observable<string[]> {
     return this.cardDataService.getAllCards().pipe(
-      map(cards => {
+      map((cards) => {
         const lowerQuery = query.toLowerCase();
         const suggestions = new Set<string>();
-        
-        cards.forEach(card => {
+
+        cards.forEach((card) => {
           if (card.cardTitle?.toLowerCase().startsWith(lowerQuery)) {
             suggestions.add(card.cardTitle);
           }
-          card.sections?.forEach(section => {
+          card.sections?.forEach((section) => {
             if (section.title?.toLowerCase().startsWith(lowerQuery)) {
               suggestions.add(section.title);
             }
           });
         });
-        
+
         return Array.from(suggestions).slice(0, limit);
       })
     );
   }
 }
-

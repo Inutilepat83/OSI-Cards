@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 interface QueuedRequest<T> {
@@ -11,27 +11,27 @@ interface QueuedRequest<T> {
 
 /**
  * Request Queue Service
- * 
+ *
  * Manages concurrent HTTP requests with priority-based queuing to prevent network
  * overload and ensure optimal request ordering. Limits concurrent requests to a
  * configurable maximum and processes them in priority order.
- * 
+ *
  * Features:
  * - Priority-based request queuing
  * - Configurable concurrency limits
  * - Automatic queue processing
  * - Request lifecycle management
  * - Performance tracking
- * 
+ *
  * @example
  * ```typescript
  * const queue = inject(RequestQueueService);
- * 
+ *
  * // Enqueue a high-priority request
  * queue.enqueue(() => this.http.get('/api/data'), 10).subscribe(data => {
  *   console.log('Data received:', data);
  * });
- * 
+ *
  * // Enqueue a low-priority request
  * queue.enqueue(() => this.http.get('/api/stats'), 0).subscribe(stats => {
  *   console.log('Stats received:', stats);
@@ -39,7 +39,7 @@ interface QueuedRequest<T> {
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RequestQueueService {
   private queue: QueuedRequest<any>[] = [];
@@ -61,11 +61,11 @@ export class RequestQueueService {
       id,
       priority,
       request,
-      subject
+      subject,
     };
 
     // Insert into queue sorted by priority (higher priority first)
-    const insertIndex = this.queue.findIndex(q => q.priority < priority);
+    const insertIndex = this.queue.findIndex((q) => q.priority < priority);
     if (insertIndex === -1) {
       this.queue.push(queuedRequest);
     } else {
@@ -91,22 +91,25 @@ export class RequestQueueService {
       this.activeRequests++;
       const startTime = performance.now();
 
-      queuedRequest.request().pipe(
-        finalize(() => {
-          this.activeRequests--;
-          const duration = performance.now() - startTime;
-          // Process next item in queue
-          setTimeout(() => this.processQueue(), 0);
-        })
-      ).subscribe({
-        next: (value) => {
-          queuedRequest.subject.next(value);
-          queuedRequest.subject.complete();
-        },
-        error: (error) => {
-          queuedRequest.subject.error(error);
-        }
-      });
+      queuedRequest
+        .request()
+        .pipe(
+          finalize(() => {
+            this.activeRequests--;
+            const duration = performance.now() - startTime;
+            // Process next item in queue
+            setTimeout(() => this.processQueue(), 0);
+          })
+        )
+        .subscribe({
+          next: (value) => {
+            queuedRequest.subject.next(value);
+            queuedRequest.subject.complete();
+          },
+          error: (error) => {
+            queuedRequest.subject.error(error);
+          },
+        });
     }
   }
 
@@ -128,11 +131,9 @@ export class RequestQueueService {
    * Clear all pending requests
    */
   clearQueue(): void {
-    this.queue.forEach(req => {
+    this.queue.forEach((req) => {
       req.subject.error(new Error('Request queue cleared'));
     });
     this.queue = [];
   }
 }
-
-

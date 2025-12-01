@@ -1,5 +1,5 @@
-import { Directive, Input, ElementRef, OnInit, Renderer2, inject } from '@angular/core';
-import { generateAltText, validateAltText, getDefaultAltText } from '../utils/alt-text.util';
+import { Directive, ElementRef, inject, Input, OnInit, Renderer2 } from '@angular/core';
+import { generateAltText, validateAltText } from '../utils/alt-text.util';
 
 /**
  * Directive for ensuring images have descriptive alt text
@@ -7,7 +7,7 @@ import { generateAltText, validateAltText, getDefaultAltText } from '../utils/al
  */
 @Directive({
   selector: 'img[appAltText]',
-  standalone: true
+  standalone: true,
 })
 export class AltTextDirective implements OnInit {
   private readonly elementRef = inject(ElementRef<HTMLImageElement>);
@@ -43,5 +43,3 @@ export class AltTextDirective implements OnInit {
     }
   }
 }
-
-

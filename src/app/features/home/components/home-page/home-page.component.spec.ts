@@ -9,9 +9,7 @@ describe('HomePageComponent (a11y smoke)', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HomePageComponent],
-      providers: [
-        provideStore({ cards: cardsReducer })
-      ]
+      providers: [provideStore({ cards: cardsReducer })],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HomePageComponent);
@@ -25,5 +23,3 @@ describe('HomePageComponent (a11y smoke)', () => {
     expect(status).toBeTruthy();
   });
 });
-
-

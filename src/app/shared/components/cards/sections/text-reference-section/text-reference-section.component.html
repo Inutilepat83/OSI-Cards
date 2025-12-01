@@ -10,41 +10,44 @@
     <ng-container *ngIf="hasFields; else referenceEmpty">
       <div class="section-grid section-grid--reference">
         <article
-        *ngFor="let field of fields"
-        class="section-card section-card--reference"
-        role="button"
-        tabindex="0"
-        [attr.aria-label]="'Open reference ' + (field.title || field.category || 'details')"
-        (click)="onReferenceClick(field)"
-        (keydown.enter)="onReferenceClick(field)"
-        (keydown.space)="$event.preventDefault(); onReferenceClick(field)"
-      >
-        <div class="reference-card__content">
-          <p class="reference-card__text">
-            {{ getDisplayText(field) }}
-          </p>
-        </div>
-
-        <footer class="reference-card__footer" *ngIf="field.referenceText || field.source || field.date || field.category">
-          <div class="reference-card__meta">
-            <span class="reference-card__category" *ngIf="field.category">{{ field.category }}</span>
-            <span class="reference-card__source" *ngIf="field.source">{{ field.source }}</span>
-            <span class="reference-card__reference" *ngIf="field.referenceText">{{ field.referenceText }}</span>
-            <time class="reference-card__date" *ngIf="field.date">{{ field.date }}</time>
+          *ngFor="let field of fields"
+          class="section-card section-card--reference"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="'Open reference ' + (field.title || field.category || 'details')"
+          (click)="onReferenceClick(field)"
+          (keydown.enter)="onReferenceClick(field)"
+          (keydown.space)="$event.preventDefault(); onReferenceClick(field)"
+        >
+          <div class="reference-card__content">
+            <p class="reference-card__text">
+              {{ getDisplayText(field) }}
+            </p>
           </div>
-          <a
-            *ngIf="field.url"
-            href="{{ field.url }}"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="reference-card__link"
-            (click)="openReference(field, $event)"
+
+          <footer
+            class="reference-card__footer"
+            *ngIf="field.referenceText || field.source || field.date || field.category"
           >
-            <lucide-icon name="external-link" [size]="14" aria-hidden="true"></lucide-icon>
-            <span>View source</span>
-          </a>
-        </footer>
-      </article>
+            <div class="reference-card__meta">
+              <span class="reference-card__category" *ngIf="field.category">{{ field.category }}</span>
+              <span class="reference-card__source" *ngIf="field.source">{{ field.source }}</span>
+              <span class="reference-card__reference" *ngIf="field.referenceText">{{ field.referenceText }}</span>
+              <time class="reference-card__date" *ngIf="field.date">{{ field.date }}</time>
+            </div>
+            <a
+              *ngIf="field.url"
+              href="{{ field.url }}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="reference-card__link"
+              (click)="openReference(field, $event)"
+            >
+              <lucide-icon name="external-link" [size]="14" aria-hidden="true"></lucide-icon>
+              <span>View source</span>
+            </a>
+          </footer>
+        </article>
       </div>
     </ng-container>
 
@@ -56,4 +59,3 @@
     </ng-template>
   </div>
 </div>
-

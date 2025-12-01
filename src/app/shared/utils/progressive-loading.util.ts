@@ -50,7 +50,7 @@ export class ProgressiveLoader<T> {
     this.isLoading = true;
 
     if (this.options.loadDelay) {
-      await new Promise(resolve => setTimeout(resolve, this.options.loadDelay));
+      await new Promise((resolve) => setTimeout(resolve, this.options.loadDelay));
     }
 
     const nextBatch = this.allItems.slice(
@@ -98,5 +98,3 @@ export class ProgressiveLoader<T> {
     return distanceFromBottom < threshold && !this.isComplete() && !this.isLoading;
   }
 }
-
-

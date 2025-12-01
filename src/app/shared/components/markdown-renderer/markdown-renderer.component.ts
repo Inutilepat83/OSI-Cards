@@ -1,18 +1,18 @@
 import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  OnInit,
-  OnChanges,
-  SimpleChanges,
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  Component,
   ElementRef,
-  ViewChild,
-  AfterViewInit,
+  EventEmitter,
   inject,
-  SecurityContext
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SecurityContext,
+  SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -50,7 +50,7 @@ export interface TocItem {
   imports: [CommonModule],
   templateUrl: './markdown-renderer.component.html',
   styleUrls: ['./markdown-renderer.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MarkdownRendererComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() markdown = '';
@@ -88,7 +88,7 @@ export class MarkdownRendererComponent implements OnInit, OnChanges, AfterViewIn
     // Configure marked with options for v17 API
     marked.use({
       breaks: true,
-      gfm: true
+      gfm: true,
     });
   }
 
@@ -106,17 +106,17 @@ export class MarkdownRendererComponent implements OnInit, OnChanges, AfterViewIn
     try {
       this.tableOfContents = [];
       let html = marked.parse(this.markdown) as string;
-      
+
       // Post-process HTML to add IDs to headings and extract TOC
       html = this.postProcessHtml(html);
-      
+
       // Sanitize HTML for security and convert to SafeHtml
       const sanitized = this.sanitizer.sanitize(SecurityContext.HTML, html);
       this.renderedHtml = sanitized ? this.sanitizer.bypassSecurityTrustHtml(sanitized) : '';
-      
+
       // Emit TOC after rendering
       this.tocChange.emit([...this.tableOfContents]);
-      
+
       this.cdr.markForCheck();
 
       // Highlight code and setup anchor links after view update
@@ -147,12 +147,12 @@ export class MarkdownRendererComponent implements OnInit, OnChanges, AfterViewIn
       const text = heading.textContent || '';
       const id = this.slugify(text);
       const level = parseInt(heading.tagName.substring(1));
-      
+
       heading.id = id;
       heading.className = `markdown-heading markdown-heading-${level}`;
-      
+
       // Add to TOC if not already present
-      if (!this.tableOfContents.find(item => item.id === id)) {
+      if (!this.tableOfContents.find((item) => item.id === id)) {
         this.tableOfContents.push({ id, text: text.trim(), level });
       }
     });
@@ -163,17 +163,17 @@ export class MarkdownRendererComponent implements OnInit, OnChanges, AfterViewIn
       const href = link.getAttribute('href') || '';
       const isExternal = href.startsWith('http') || href.startsWith('//');
       const isAnchor = href.startsWith('#');
-      
+
       if (isExternal) {
         link.setAttribute('target', '_blank');
         link.setAttribute('rel', 'noopener noreferrer');
       }
-      
+
       if (isAnchor) {
         link.classList.add('markdown-anchor-link');
         link.setAttribute('data-anchor', href.substring(1));
       }
-      
+
       link.classList.add('markdown-link');
     });
 
@@ -184,7 +184,7 @@ export class MarkdownRendererComponent implements OnInit, OnChanges, AfterViewIn
       if (table.parentElement?.classList.contains('markdown-table-wrapper')) {
         return;
       }
-      
+
       const wrapper = document.createElement('div');
       wrapper.className = 'markdown-table-wrapper';
       const parent = table.parentNode;
@@ -202,7 +202,7 @@ export class MarkdownRendererComponent implements OnInit, OnChanges, AfterViewIn
       if (pre && pre.tagName === 'PRE') {
         // Extract language from class if present
         const classes = Array.from(code.classList);
-        const langClass = classes.find(c => c.startsWith('language-'));
+        const langClass = classes.find((c) => c.startsWith('language-'));
         if (langClass) {
           pre.className = langClass;
         } else {
@@ -250,29 +250,6 @@ export class MarkdownRendererComponent implements OnInit, OnChanges, AfterViewIn
   }
 
   /**
-   * Strip markdown syntax from text
-   */
-  private stripMarkdown(text: string): string {
-    // Remove markdown links but keep text
-    text = text.replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1');
-    // Remove markdown code
-    text = text.replace(/`([^`]+)`/g, '$1');
-    // Remove markdown bold/italic
-    text = text.replace(/\*\*([^\*]+)\*\*/g, '$1');
-    text = text.replace(/\*([^\*]+)\*/g, '$1');
-    return text.trim();
-  }
-
-  /**
-   * Escape HTML to prevent XSS
-   */
-  private escapeHtml(text: string): string {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  /**
    * Setup anchor link click handlers
    */
   private setupAnchorLinks(): void {
@@ -280,8 +257,9 @@ export class MarkdownRendererComponent implements OnInit, OnChanges, AfterViewIn
       return;
     }
 
-    const anchorLinks = this.contentContainer.nativeElement.querySelectorAll('a.markdown-anchor-link');
-    anchorLinks.forEach(link => {
+    const anchorLinks =
+      this.contentContainer.nativeElement.querySelectorAll('a.markdown-anchor-link');
+    anchorLinks.forEach((link) => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
         const anchorId = link.getAttribute('data-anchor');
@@ -311,9 +289,8 @@ export class MarkdownRendererComponent implements OnInit, OnChanges, AfterViewIn
 
       window.scrollTo({
         top: offsetPosition,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     }
   }
 }
-

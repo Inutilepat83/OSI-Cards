@@ -25,4 +25,3 @@ export interface CardManifest {
   cards: CardManifestEntry[];
   types: Record<string, string[]>;
 }
-

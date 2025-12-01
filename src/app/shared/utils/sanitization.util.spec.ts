@@ -204,12 +204,11 @@ describe('SanitizationUtil', () => {
       const obj = {
         name: '  test  ',
         nested: {
-          value: '  nested  '
-        }
+          value: '  nested  ',
+        },
       };
       SanitizationUtil.sanitizeObject(obj);
       expect(ValidationUtil.sanitizeString).toHaveBeenCalled();
     });
   });
 });
-

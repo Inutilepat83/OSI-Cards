@@ -1,4 +1,20 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewContainerRef, ViewChild, OnInit, OnDestroy, OnChanges, SimpleChanges, inject, AfterViewInit, ChangeDetectorRef, Injector, ComponentRef, Type } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ComponentRef,
+  EventEmitter,
+  inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardAction, CardField, CardItem, CardSection } from '../../../../models';
 import { InfoSectionFieldInteraction } from '../sections/info-section.component';
@@ -12,7 +28,7 @@ import { LoggingService } from '../../../../core/services/logging.service';
 /**
  * Interface for dynamically loaded section component instances
  * All section components extend BaseSectionComponent and have these properties
- * 
+ *
  * @deprecated Use SectionComponentInstance from './section-component.interface' instead
  * This local interface is kept for backward compatibility but will be removed
  */
@@ -37,21 +53,21 @@ export interface SectionRenderEvent {
 
 /**
  * Section Renderer Component
- * 
+ *
  * Smart router component that dynamically loads and renders the appropriate section
  * component based on section type. Uses lazy loading for optimal bundle size and
  * provides a unified interface for section interactions.
- * 
+ *
  * Features:
  * - Dynamic component loading based on section type
  * - Type resolution with fallback handling
  * - Event aggregation and propagation
  * - Lazy loading for section components
  * - Change detection optimization
- * 
+ *
  * The component resolves section types using SectionTypeResolverService and loads
  * the appropriate section component dynamically using SectionLoaderService.
- * 
+ *
  * @example
  * ```html
  * <app-section-renderer
@@ -59,7 +75,7 @@ export interface SectionRenderEvent {
  *   (sectionEvent)="handleSectionEvent($event)">
  * </app-section-renderer>
  * ```
- * 
+ *
  * @example
  * ```typescript
  * handleSectionEvent(event: SectionRenderEvent): void {
@@ -79,19 +95,27 @@ export interface SectionRenderEvent {
   imports: [CommonModule, ErrorBoundaryComponent],
   templateUrl: './section-renderer.component.html',
   styleUrls: ['./section-renderer.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
-  @Input() 
+  @Input()
   set section(value: CardSection | null) {
     // Validate section input
     if (value !== null && (!value || typeof value !== 'object')) {
-      this.logger.warn('Invalid section input: expected CardSection object or null', 'SectionRendererComponent', { value });
+      this.logger.warn(
+        'Invalid section input: expected CardSection object or null',
+        'SectionRendererComponent',
+        { value }
+      );
       this._section = null;
       return;
     }
     if (value && (!value.title || typeof value.title !== 'string')) {
-      this.logger.warn('Invalid section input: section must have a title', 'SectionRendererComponent', { value });
+      this.logger.warn(
+        'Invalid section input: section must have a title',
+        'SectionRendererComponent',
+        { value }
+      );
       this._section = null;
       return;
     }
@@ -102,13 +126,12 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
   }
   private _section: CardSection | null = null;
   @Output() sectionEvent = new EventEmitter<SectionRenderEvent>();
-  
+
   @ViewChild('dynamicComponent', { read: ViewContainerRef }) dynamicComponent!: ViewContainerRef;
-  
+
   private readonly sectionLoader = inject(SectionLoaderService);
   private readonly typeResolver = inject(SectionTypeResolverService);
   private readonly cdr = inject(ChangeDetectorRef);
-  private readonly injector = inject(Injector);
   private readonly appConfig = inject(AppConfigService);
   private readonly logger = inject(LoggingService);
   /**
@@ -118,7 +141,7 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
   private loadedComponent: ComponentRef<SectionComponentInstance> | null = null;
   private viewInitialized = false;
   private lastSectionType: string | null = null;
-  
+
   /**
    * Check if debug mode is enabled via environment configuration
    */
@@ -159,17 +182,21 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   onInfoFieldInteraction(event: InfoSectionFieldInteraction): void {
-    if (!this.section) return;
+    if (!this.section) {
+      return;
+    }
     this.sectionEvent.emit({
       type: 'field',
       section: this.section,
       field: event.field,
-      metadata: { sectionTitle: event.sectionTitle }
+      metadata: { sectionTitle: event.sectionTitle },
     });
   }
 
   emitFieldInteraction(field: CardField, metadata?: Record<string, unknown>): void {
-    if (!this.section) return;
+    if (!this.section) {
+      return;
+    }
     this.sectionEvent.emit({
       type: 'field',
       section: this.section,
@@ -177,13 +204,15 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
       metadata: {
         sectionId: this.section.id,
         sectionTitle: this.section.title,
-        ...metadata
-      }
+        ...metadata,
+      },
     });
   }
 
   emitItemInteraction(item: CardItem | CardField, metadata?: Record<string, unknown>): void {
-    if (!this.section) return;
+    if (!this.section) {
+      return;
+    }
     this.sectionEvent.emit({
       type: 'item',
       section: this.section,
@@ -191,19 +220,24 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
       metadata: {
         sectionId: this.section.id,
         sectionTitle: this.section.title,
-        ...metadata
-      }
+        ...metadata,
+      },
     });
   }
 
   emitActionInteraction(action: CardAction, metadata?: Record<string, unknown>): void {
-    if (!this.section) return;
-    this.sectionEvent.emit({
+    if (!this.section) {
+      return;
+    }
+    const event: SectionRenderEvent = {
       type: 'action',
       section: this.section,
       action,
-      metadata
-    });
+    };
+    if (metadata !== undefined) {
+      event.metadata = metadata;
+    }
+    this.sectionEvent.emit(event);
   }
 
   ngOnInit(): void {
@@ -211,14 +245,14 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
     // If section is already set before view init, we'll load it in ngAfterViewInit
     if (this.section && this.isDebugMode) {
       this.logger.debug('ngOnInit - section already set', 'SectionRendererComponent', {
-        sectionTitle: this.section.title
+        sectionTitle: this.section.title,
       });
     }
   }
 
   ngAfterViewInit(): void {
     this.viewInitialized = true;
-    
+
     // Use setTimeout to ensure ViewContainerRef is fully initialized
     // This helps avoid timing issues with dynamic component loading
     setTimeout(() => {
@@ -253,17 +287,20 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
         this.cdr.markForCheck();
         return;
       }
-      
+
       // If view is not initialized yet, wait for ngAfterViewInit
       if (!this.viewInitialized) {
         if (this.isDebugMode) {
-          this.logger.debug('Section set before view init, will load in ngAfterViewInit', 'SectionRendererComponent');
+          this.logger.debug(
+            'Section set before view init, will load in ngAfterViewInit',
+            'SectionRendererComponent'
+          );
         }
         return;
       }
-      
+
       const newType = this.resolvedType;
-      
+
       // Diagnostic logging
       if (this.isDebugMode) {
         this.logger.debug('Section changed', 'SectionRendererComponent', {
@@ -271,10 +308,10 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
           sectionType: this.section.type,
           resolvedType: newType,
           previousType: this.lastSectionType,
-          hasLoadedComponent: !!this.loadedComponent
+          hasLoadedComponent: !!this.loadedComponent,
         });
       }
-      
+
       // Reload component if section type changed or if component not loaded yet
       if (newType !== this.lastSectionType || !this.loadedComponent) {
         this.lastSectionType = newType;
@@ -287,7 +324,10 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
         } else {
           // Component instance is null, reload component
           if (this.isDebugMode) {
-            this.logger.warn('Component instance is null, reloading component', 'SectionRendererComponent');
+            this.logger.warn(
+              'Component instance is null, reloading component',
+              'SectionRendererComponent'
+            );
           }
           this.loadComponent();
         }
@@ -304,13 +344,13 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
 
   /**
    * Load component dynamically based on section type
-   * 
+   *
    * This method handles the complete lifecycle of dynamic component loading:
    * 1. Validates prerequisites (view initialized, ViewContainerRef available, section exists)
    * 2. Resolves section type and loads appropriate component
    * 3. Sets up event subscriptions for component interactions
    * 4. Handles errors with fallback component loading
-   * 
+   *
    * @throws Will log errors but not throw exceptions to prevent component crashes
    * @private
    */
@@ -322,7 +362,7 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
 
     const sectionType = this.resolvedType;
     this.logComponentLoading(sectionType);
-    
+
     try {
       const componentRef = await this.createAndSetupComponent(sectionType);
       if (componentRef) {
@@ -344,18 +384,24 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
   private validateLoadPrerequisites(): boolean {
     if (!this.viewInitialized) {
       if (this.isDebugMode) {
-        this.logger.warn('Cannot load component - view not initialized', 'SectionRendererComponent');
+        this.logger.warn(
+          'Cannot load component - view not initialized',
+          'SectionRendererComponent'
+        );
       }
       return false;
     }
-    
+
     if (!this.dynamicComponent) {
       if (this.isDebugMode) {
-        this.logger.warn('Cannot load component - ViewContainerRef not available', 'SectionRendererComponent');
+        this.logger.warn(
+          'Cannot load component - ViewContainerRef not available',
+          'SectionRendererComponent'
+        );
       }
       return false;
     }
-    
+
     if (!this.section) {
       if (this.isDebugMode) {
         this.logger.warn('Cannot load component - section is null', 'SectionRendererComponent');
@@ -377,7 +423,7 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
         sectionType,
         sectionTitle: this.section.title,
         sectionId: this.section.id,
-        originalType: this.section.type
+        originalType: this.section.type,
       });
     }
   }
@@ -389,7 +435,9 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
    */
   private logComponentLoaded(sectionType: string): void {
     if (this.isDebugMode) {
-      this.logger.debug('Successfully loaded component', 'SectionRendererComponent', { sectionType });
+      this.logger.debug('Successfully loaded component', 'SectionRendererComponent', {
+        sectionType,
+      });
     }
   }
 
@@ -399,37 +447,41 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
    * @returns ComponentRef if successful, null otherwise
    * @private
    */
-  private async createAndSetupComponent(sectionType: string): Promise<ComponentRef<SectionComponentInstance> | null> {
+  private async createAndSetupComponent(
+    sectionType: string
+  ): Promise<ComponentRef<SectionComponentInstance> | null> {
     if (!this.dynamicComponent || !this.section) {
       return null;
     }
 
     const ComponentType = await this.sectionLoader.getComponentType(sectionType);
-    
+
     if (!ComponentType) {
       throw new Error(`Component type is null for section type: ${sectionType}`);
     }
-    
+
     // Clear previous component
     this.dynamicComponent.clear();
-    
+
     // Ensure change detection has run before creating component
     this.cdr.detectChanges();
-    
+
     // Create new component - ViewContainerRef's injector will be used automatically
     // This ensures the component has access to all providers in the component tree
-    const componentRef = this.dynamicComponent.createComponent(ComponentType) as ComponentRef<SectionComponentInstance>;
-    
+    const componentRef = this.dynamicComponent.createComponent(
+      ComponentType
+    ) as ComponentRef<SectionComponentInstance>;
+
     if (!componentRef?.instance) {
       throw new Error(`Failed to create component instance for type: ${sectionType}`);
     }
-    
+
     // Set section input after component is created
     componentRef.instance.section = this.section;
-    
+
     // Subscribe to component events
     this.subscribeToComponentEvents(componentRef.instance);
-    
+
     return componentRef;
   }
 
@@ -447,7 +499,7 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
         }
       });
     }
-    
+
     // Subscribe to item interaction events
     if (instance.itemInteraction) {
       instance.itemInteraction.subscribe((event: SectionInteraction<CardItem>) => {
@@ -456,7 +508,7 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
         }
       });
     }
-    
+
     // Special handling for InfoSectionComponent
     if (instance.infoFieldInteraction) {
       instance.infoFieldInteraction.subscribe((event: InfoSectionFieldInteraction) => {
@@ -477,32 +529,32 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
       sectionTitle: this.section?.title,
       sectionId: this.section?.id,
       error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined
+      stack: error instanceof Error ? error.stack : undefined,
     });
-    
+
     // Attempt to load fallback component
     try {
       if (this.isDebugMode) {
         this.logger.debug('Attempting to load fallback component', 'SectionRendererComponent');
       }
-      
+
       const fallbackRef = await this.loadFallbackComponent();
       if (fallbackRef) {
         this.loadedComponent = fallbackRef;
         this.lastSectionType = 'fallback';
-        
+
         if (this.isDebugMode) {
           this.logger.debug('Successfully loaded fallback component', 'SectionRendererComponent');
         }
-        
+
         this.cdr.markForCheck();
       }
     } catch (fallbackError) {
       this.logger.error('Failed to load fallback component', 'SectionRendererComponent', {
         error: fallbackError instanceof Error ? fallbackError.message : String(fallbackError),
-        stack: fallbackError instanceof Error ? fallbackError.stack : undefined
+        stack: fallbackError instanceof Error ? fallbackError.stack : undefined,
       });
-      
+
       // Last resort: clear component and mark for check
       this.clearComponent();
     }
@@ -519,21 +571,23 @@ export class SectionRendererComponent implements OnInit, AfterViewInit, OnDestro
     }
 
     const FallbackComponent = await this.sectionLoader.getComponentType('fallback');
-    
+
     if (!FallbackComponent) {
       throw new Error('Fallback component type is null');
     }
-    
+
     // Clear any partial component
     this.dynamicComponent.clear();
     this.cdr.detectChanges();
-    
-    const componentRef = this.dynamicComponent.createComponent(FallbackComponent) as ComponentRef<SectionComponentInstance>;
-    
+
+    const componentRef = this.dynamicComponent.createComponent(
+      FallbackComponent
+    ) as ComponentRef<SectionComponentInstance>;
+
     if (!componentRef?.instance) {
       throw new Error('Failed to create fallback component instance');
     }
-    
+
     componentRef.instance.section = this.section;
     return componentRef;
   }

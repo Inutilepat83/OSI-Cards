@@ -1,10 +1,4 @@
-import {
-  Component,
-  Input,
-  ChangeDetectionStrategy,
-  signal,
-  computed
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Input, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideIconsModule } from '../../../../shared/icons/lucide-icons.module';
@@ -102,91 +96,93 @@ export interface RelatedLink {
       </div>
     </div>
   `,
-  styles: [`
-    .api-card {
-      margin: 1.5rem 0;
-      border: 1px solid var(--docs-border, #e2e8f0);
-      border-radius: var(--docs-radius-lg, 12px);
-      overflow: hidden;
-      background: var(--docs-surface, #fff);
-      
-      &.deprecated {
-        border-color: var(--docs-warning-border, #f59e0b);
-        background: var(--docs-warning-bg, rgba(245,158,11,0.08));
+  styles: [
+    `
+      .api-card {
+        margin: 1.5rem 0;
+        border: 1px solid var(--docs-border, #e2e8f0);
+        border-radius: var(--docs-radius-lg, 12px);
+        overflow: hidden;
+        background: var(--docs-surface, #fff);
+
+        &.deprecated {
+          border-color: var(--docs-warning-border, #f59e0b);
+          background: var(--docs-warning-bg, rgba(245, 158, 11, 0.08));
+        }
       }
-    }
-    
-    .api-card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.875rem 1rem;
-      background: var(--docs-bg-secondary, #f4f6f9);
-      border-bottom: 1px solid var(--docs-border, #e2e8f0);
-    }
-    
-    .api-card-title {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .api-name {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--docs-text, #1a1d23);
-      background: transparent;
-      padding: 0;
-    }
-    
-    .api-badge {
-      padding: 0.125rem 0.5rem;
-      font-size: 0.625rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      border-radius: var(--docs-radius-full, 9999px);
-      
-      &.new {
-        background: var(--docs-tip-bg, rgba(16,185,129,0.08));
-        color: var(--docs-tip-text, #047857);
+
+      .api-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.875rem 1rem;
+        background: var(--docs-bg-secondary, #f4f6f9);
+        border-bottom: 1px solid var(--docs-border, #e2e8f0);
       }
-      
-      &.beta {
-        background: var(--docs-info-bg, rgba(59,130,246,0.08));
-        color: var(--docs-info-text, #1d4ed8);
+
+      .api-card-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
       }
-      
-      &.deprecated {
-        background: var(--docs-warning-bg, rgba(245,158,11,0.08));
-        color: var(--docs-warning-text, #b45309);
+
+      .api-name {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--docs-text, #1a1d23);
+        background: transparent;
+        padding: 0;
       }
-      
-      &.required {
-        background: var(--docs-danger-bg, rgba(239,68,68,0.08));
-        color: var(--docs-danger-text, #dc2626);
+
+      .api-badge {
+        padding: 0.125rem 0.5rem;
+        font-size: 0.625rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-radius: var(--docs-radius-full, 9999px);
+
+        &.new {
+          background: var(--docs-tip-bg, rgba(16, 185, 129, 0.08));
+          color: var(--docs-tip-text, #047857);
+        }
+
+        &.beta {
+          background: var(--docs-info-bg, rgba(59, 130, 246, 0.08));
+          color: var(--docs-info-text, #1d4ed8);
+        }
+
+        &.deprecated {
+          background: var(--docs-warning-bg, rgba(245, 158, 11, 0.08));
+          color: var(--docs-warning-text, #b45309);
+        }
+
+        &.required {
+          background: var(--docs-danger-bg, rgba(239, 68, 68, 0.08));
+          color: var(--docs-danger-text, #dc2626);
+        }
       }
-    }
-    
-    .api-since {
-      font-size: 0.75rem;
-      color: var(--docs-text-muted, #8891a4);
-    }
-    
-    .api-description {
-      margin: 0;
-      padding: 1rem;
-      font-size: 0.875rem;
-      color: var(--docs-text-secondary, #4a5568);
-      line-height: 1.6;
-      border-bottom: 1px solid var(--docs-border-light, #f1f5f9);
-    }
-    
-    .api-card-content {
-      padding: 1rem;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+
+      .api-since {
+        font-size: 0.75rem;
+        color: var(--docs-text-muted, #8891a4);
+      }
+
+      .api-description {
+        margin: 0;
+        padding: 1rem;
+        font-size: 0.875rem;
+        color: var(--docs-text-secondary, #4a5568);
+        line-height: 1.6;
+        border-bottom: 1px solid var(--docs-border-light, #f1f5f9);
+      }
+
+      .api-card-content {
+        padding: 1rem;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DocsAPICardComponent {
   @Input() name!: string;
@@ -218,8 +214,8 @@ export class DocsAPICardComponent {
           <!-- Filter -->
           <div class="props-filter">
             <lucide-icon name="search" [size]="14"></lucide-icon>
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Filter props..."
               [value]="filter()"
               (input)="onFilterChange($event)"
@@ -227,29 +223,23 @@ export class DocsAPICardComponent {
           </div>
           <!-- Show Required Only -->
           <label class="props-checkbox">
-            <input 
-              type="checkbox"
-              [checked]="showRequiredOnly()"
-              (change)="toggleRequiredOnly()"
-            />
+            <input type="checkbox" [checked]="showRequiredOnly()" (change)="toggleRequiredOnly()" />
             <span>Required only</span>
           </label>
         </div>
       </div>
-      
+
       <!-- Table -->
       <div class="props-table-wrapper">
         <table class="props-table">
           <thead>
             <tr>
-              <th 
-                class="sortable"
-                (click)="sort('name')"
-                [class.sorted]="sortBy() === 'name'"
-              >
+              <th class="sortable" (click)="sort('name')" [class.sorted]="sortBy() === 'name'">
                 Name
-                <lucide-icon 
-                  [name]="sortBy() === 'name' && sortDir() === 'desc' ? 'chevron-down' : 'chevron-up'" 
+                <lucide-icon
+                  [name]="
+                    sortBy() === 'name' && sortDir() === 'desc' ? 'chevron-down' : 'chevron-up'
+                  "
                   [size]="12"
                 ></lucide-icon>
               </th>
@@ -290,7 +280,7 @@ export class DocsAPICardComponent {
             }
           </tbody>
         </table>
-        
+
         @if (filteredProps().length === 0) {
           <div class="no-results">
             <lucide-icon name="search-x" [size]="24"></lucide-icon>
@@ -300,232 +290,236 @@ export class DocsAPICardComponent {
       </div>
     </div>
   `,
-  styles: [`
-    .props-table-container {
-      margin: 1.5rem 0;
-      border: 1px solid var(--docs-border, #e2e8f0);
-      border-radius: var(--docs-radius-lg, 12px);
-      overflow: hidden;
-      background: var(--docs-surface, #fff);
-    }
-    
-    .props-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.75rem 1rem;
-      background: var(--docs-bg-secondary, #f4f6f9);
-      border-bottom: 1px solid var(--docs-border, #e2e8f0);
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-    
-    .props-title {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin: 0;
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--docs-text, #1a1d23);
-    }
-    
-    .props-controls {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-    
-    .props-filter {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.375rem 0.75rem;
-      background: var(--docs-surface, #fff);
-      border: 1px solid var(--docs-border, #e2e8f0);
-      border-radius: var(--docs-radius, 6px);
-      
-      input {
-        border: none;
-        background: transparent;
-        font-size: 0.8125rem;
+  styles: [
+    `
+      .props-table-container {
+        margin: 1.5rem 0;
+        border: 1px solid var(--docs-border, #e2e8f0);
+        border-radius: var(--docs-radius-lg, 12px);
+        overflow: hidden;
+        background: var(--docs-surface, #fff);
+      }
+
+      .props-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1rem;
+        background: var(--docs-bg-secondary, #f4f6f9);
+        border-bottom: 1px solid var(--docs-border, #e2e8f0);
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .props-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+        font-size: 0.875rem;
+        font-weight: 600;
         color: var(--docs-text, #1a1d23);
-        outline: none;
-        width: 120px;
-        
-        &::placeholder {
-          color: var(--docs-text-muted, #8891a4);
+      }
+
+      .props-controls {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .props-filter {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.375rem 0.75rem;
+        background: var(--docs-surface, #fff);
+        border: 1px solid var(--docs-border, #e2e8f0);
+        border-radius: var(--docs-radius, 6px);
+
+        input {
+          border: none;
+          background: transparent;
+          font-size: 0.8125rem;
+          color: var(--docs-text, #1a1d23);
+          outline: none;
+          width: 120px;
+
+          &::placeholder {
+            color: var(--docs-text-muted, #8891a4);
+          }
         }
       }
-    }
-    
-    .props-checkbox {
-      display: flex;
-      align-items: center;
-      gap: 0.375rem;
-      font-size: 0.75rem;
-      color: var(--docs-text-secondary, #4a5568);
-      cursor: pointer;
-      
-      input {
-        accent-color: var(--docs-primary, #ff7900);
-      }
-    }
-    
-    .props-table-wrapper {
-      overflow-x: auto;
-    }
-    
-    .props-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8125rem;
-    }
-    
-    th, td {
-      padding: 0.75rem 1rem;
-      text-align: left;
-      border-bottom: 1px solid var(--docs-border-light, #f1f5f9);
-    }
-    
-    th {
-      font-weight: 600;
-      color: var(--docs-text-secondary, #4a5568);
-      background: var(--docs-bg-tertiary, #eef1f5);
-      white-space: nowrap;
-      
-      &.sortable {
+
+      .props-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        font-size: 0.75rem;
+        color: var(--docs-text-secondary, #4a5568);
         cursor: pointer;
-        user-select: none;
-        
-        &:hover {
-          color: var(--docs-primary, #ff7900);
-        }
-        
-        &.sorted {
-          color: var(--docs-primary, #ff7900);
+
+        input {
+          accent-color: var(--docs-primary, #ff7900);
         }
       }
-    }
-    
-    tr:last-child td {
-      border-bottom: none;
-    }
-    
-    tr:hover td {
-      background: var(--docs-hover-bg, rgba(255,121,0,0.04));
-    }
-    
-    tr.deprecated td {
-      opacity: 0.6;
-    }
-    
-    tr.required .prop-name code {
-      color: var(--docs-primary, #ff7900);
-    }
-    
-    .prop-name {
-      font-weight: 500;
-      
-      code {
-        font-family: var(--docs-font-mono, monospace);
-        color: var(--docs-text, #1a1d23);
-        background: transparent;
-        padding: 0;
+
+      .props-table-wrapper {
+        overflow-x: auto;
       }
-    }
-    
-    .required-badge {
-      color: var(--docs-danger-text, #dc2626);
-      font-weight: 700;
-    }
-    
-    .deprecated-badge {
-      margin-left: 0.5rem;
-      padding: 0.125rem 0.375rem;
-      font-size: 0.625rem;
-      font-weight: 600;
-      color: var(--docs-warning-text, #b45309);
-      background: var(--docs-warning-bg, rgba(245,158,11,0.08));
-      border-radius: var(--docs-radius-sm, 4px);
-    }
-    
-    .since-badge {
-      margin-left: 0.5rem;
-      padding: 0.125rem 0.375rem;
-      font-size: 0.625rem;
-      color: var(--docs-text-muted, #8891a4);
-      background: var(--docs-bg-secondary, #f4f6f9);
-      border-radius: var(--docs-radius-sm, 4px);
-    }
-    
-    .prop-type code {
-      font-family: var(--docs-font-mono, monospace);
-      font-size: 0.75rem;
-      color: var(--docs-code-keyword, #be185d);
-      background: var(--docs-code-bg, #f8fafc);
-      padding: 0.125rem 0.375rem;
-      border-radius: var(--docs-radius-sm, 4px);
-    }
-    
-    .prop-default {
-      code {
+
+      .props-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8125rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--docs-border-light, #f1f5f9);
+      }
+
+      th {
+        font-weight: 600;
+        color: var(--docs-text-secondary, #4a5568);
+        background: var(--docs-bg-tertiary, #eef1f5);
+        white-space: nowrap;
+
+        &.sortable {
+          cursor: pointer;
+          user-select: none;
+
+          &:hover {
+            color: var(--docs-primary, #ff7900);
+          }
+
+          &.sorted {
+            color: var(--docs-primary, #ff7900);
+          }
+        }
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      tr:hover td {
+        background: var(--docs-hover-bg, rgba(255, 121, 0, 0.04));
+      }
+
+      tr.deprecated td {
+        opacity: 0.6;
+      }
+
+      tr.required .prop-name code {
+        color: var(--docs-primary, #ff7900);
+      }
+
+      .prop-name {
+        font-weight: 500;
+
+        code {
+          font-family: var(--docs-font-mono, monospace);
+          color: var(--docs-text, #1a1d23);
+          background: transparent;
+          padding: 0;
+        }
+      }
+
+      .required-badge {
+        color: var(--docs-danger-text, #dc2626);
+        font-weight: 700;
+      }
+
+      .deprecated-badge {
+        margin-left: 0.5rem;
+        padding: 0.125rem 0.375rem;
+        font-size: 0.625rem;
+        font-weight: 600;
+        color: var(--docs-warning-text, #b45309);
+        background: var(--docs-warning-bg, rgba(245, 158, 11, 0.08));
+        border-radius: var(--docs-radius-sm, 4px);
+      }
+
+      .since-badge {
+        margin-left: 0.5rem;
+        padding: 0.125rem 0.375rem;
+        font-size: 0.625rem;
+        color: var(--docs-text-muted, #8891a4);
+        background: var(--docs-bg-secondary, #f4f6f9);
+        border-radius: var(--docs-radius-sm, 4px);
+      }
+
+      .prop-type code {
         font-family: var(--docs-font-mono, monospace);
         font-size: 0.75rem;
-        color: var(--docs-code-string, #059669);
+        color: var(--docs-code-keyword, #be185d);
         background: var(--docs-code-bg, #f8fafc);
         padding: 0.125rem 0.375rem;
         border-radius: var(--docs-radius-sm, 4px);
       }
-      
-      .no-default {
+
+      .prop-default {
+        code {
+          font-family: var(--docs-font-mono, monospace);
+          font-size: 0.75rem;
+          color: var(--docs-code-string, #059669);
+          background: var(--docs-code-bg, #f8fafc);
+          padding: 0.125rem 0.375rem;
+          border-radius: var(--docs-radius-sm, 4px);
+        }
+
+        .no-default {
+          color: var(--docs-text-muted, #8891a4);
+        }
+      }
+
+      .prop-description {
+        color: var(--docs-text-secondary, #4a5568);
+        line-height: 1.5;
+      }
+
+      .no-results {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 2rem;
         color: var(--docs-text-muted, #8891a4);
       }
-    }
-    
-    .prop-description {
-      color: var(--docs-text-secondary, #4a5568);
-      line-height: 1.5;
-    }
-    
-    .no-results {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 2rem;
-      color: var(--docs-text-muted, #8891a4);
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DocsPropsTableComponent {
   @Input() props: APIProp[] = [];
   @Input() title?: string;
-  
+
   filter = signal('');
   showRequiredOnly = signal(false);
   sortBy = signal<'name' | 'type'>('name');
   sortDir = signal<'asc' | 'desc'>('asc');
-  
+
   filteredProps = computed(() => {
     let result = [...this.props];
-    
+
     // Filter by search
     const filterText = this.filter().toLowerCase();
     if (filterText) {
-      result = result.filter(p => 
-        p.name.toLowerCase().includes(filterText) ||
-        p.type.toLowerCase().includes(filterText) ||
-        p.description.toLowerCase().includes(filterText)
+      result = result.filter(
+        (p) =>
+          p.name.toLowerCase().includes(filterText) ||
+          p.type.toLowerCase().includes(filterText) ||
+          p.description.toLowerCase().includes(filterText)
       );
     }
-    
+
     // Filter required only
     if (this.showRequiredOnly()) {
-      result = result.filter(p => p.required);
+      result = result.filter((p) => p.required);
     }
-    
+
     // Sort
     result.sort((a, b) => {
       const aVal = a[this.sortBy()] || '';
@@ -533,21 +527,21 @@ export class DocsPropsTableComponent {
       const cmp = aVal.toString().localeCompare(bVal.toString());
       return this.sortDir() === 'asc' ? cmp : -cmp;
     });
-    
+
     return result;
   });
-  
+
   onFilterChange(event: Event) {
     this.filter.set((event.target as HTMLInputElement).value);
   }
-  
+
   toggleRequiredOnly() {
-    this.showRequiredOnly.update(v => !v);
+    this.showRequiredOnly.update((v) => !v);
   }
-  
+
   sort(by: 'name' | 'type') {
     if (this.sortBy() === by) {
-      this.sortDir.update(d => d === 'asc' ? 'desc' : 'asc');
+      this.sortDir.update((d) => (d === 'asc' ? 'desc' : 'asc'));
     } else {
       this.sortBy.set(by);
       this.sortDir.set('asc');
@@ -573,18 +567,18 @@ export class DocsPropsTableComponent {
         @if (definition.description) {
           <span class="type-desc">{{ definition.description }}</span>
         }
-        <lucide-icon 
-          [name]="isExpanded() ? 'chevron-up' : 'chevron-down'" 
+        <lucide-icon
+          [name]="isExpanded() ? 'chevron-up' : 'chevron-down'"
           [size]="16"
           class="type-chevron"
         ></lucide-icon>
       </button>
-      
+
       @if (isExpanded()) {
         <div class="type-content">
           <pre class="type-code"><code>{{ definition.definition }}</code></pre>
           @if (definition.properties && definition.properties.length > 0) {
-            <app-docs-props-table 
+            <app-docs-props-table
               [props]="definition.properties"
               title="Properties"
             ></app-docs-props-table>
@@ -593,114 +587,116 @@ export class DocsPropsTableComponent {
       }
     </div>
   `,
-  styles: [`
-    .type-definition {
-      margin: 1rem 0;
-      border: 1px solid var(--docs-border, #e2e8f0);
-      border-radius: var(--docs-radius-md, 8px);
-      overflow: hidden;
-      background: var(--docs-surface, #fff);
-    }
-    
-    .type-header {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      width: 100%;
-      padding: 0.75rem 1rem;
-      background: transparent;
-      border: none;
-      text-align: left;
-      cursor: pointer;
-      transition: background 0.15s ease;
-      
-      &:hover {
-        background: var(--docs-hover-bg, rgba(255,121,0,0.04));
+  styles: [
+    `
+      .type-definition {
+        margin: 1rem 0;
+        border: 1px solid var(--docs-border, #e2e8f0);
+        border-radius: var(--docs-radius-md, 8px);
+        overflow: hidden;
+        background: var(--docs-surface, #fff);
       }
-    }
-    
-    .type-info {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .type-kind {
-      padding: 0.125rem 0.5rem;
-      font-size: 0.625rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: var(--docs-primary, #ff7900);
-      background: var(--docs-primary-bg, rgba(255,121,0,0.06));
-      border-radius: var(--docs-radius-sm, 4px);
-    }
-    
-    .type-name {
-      font-family: var(--docs-font-mono, monospace);
-      font-size: 0.9375rem;
-      font-weight: 600;
-      color: var(--docs-text, #1a1d23);
-      background: transparent;
-      padding: 0;
-    }
-    
-    .type-desc {
-      flex: 1;
-      font-size: 0.8125rem;
-      color: var(--docs-text-muted, #8891a4);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    
-    .type-chevron {
-      flex-shrink: 0;
-      color: var(--docs-text-muted, #8891a4);
-    }
-    
-    .type-content {
-      border-top: 1px solid var(--docs-border, #e2e8f0);
-      animation: slideDown 0.2s ease;
-    }
-    
-    .type-code {
-      margin: 0;
-      padding: 1rem;
-      font-size: 0.8125rem;
-      background: var(--docs-pre-bg, #0f172a);
-      color: var(--docs-pre-text, #e2e8f0);
-      overflow-x: auto;
-      
-      code {
+
+      .type-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: transparent;
+        border: none;
+        text-align: left;
+        cursor: pointer;
+        transition: background 0.15s ease;
+
+        &:hover {
+          background: var(--docs-hover-bg, rgba(255, 121, 0, 0.04));
+        }
+      }
+
+      .type-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .type-kind {
+        padding: 0.125rem 0.5rem;
+        font-size: 0.625rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: var(--docs-primary, #ff7900);
+        background: var(--docs-primary-bg, rgba(255, 121, 0, 0.06));
+        border-radius: var(--docs-radius-sm, 4px);
+      }
+
+      .type-name {
         font-family: var(--docs-font-mono, monospace);
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: var(--docs-text, #1a1d23);
+        background: transparent;
+        padding: 0;
       }
-    }
-    
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
+
+      .type-desc {
+        flex: 1;
+        font-size: 0.8125rem;
+        color: var(--docs-text-muted, #8891a4);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
-      to {
-        opacity: 1;
-        transform: translateY(0);
+
+      .type-chevron {
+        flex-shrink: 0;
+        color: var(--docs-text-muted, #8891a4);
       }
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+
+      .type-content {
+        border-top: 1px solid var(--docs-border, #e2e8f0);
+        animation: slideDown 0.2s ease;
+      }
+
+      .type-code {
+        margin: 0;
+        padding: 1rem;
+        font-size: 0.8125rem;
+        background: var(--docs-pre-bg, #0f172a);
+        color: var(--docs-pre-text, #e2e8f0);
+        overflow-x: auto;
+
+        code {
+          font-family: var(--docs-font-mono, monospace);
+        }
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DocsTypeDefinitionComponent {
+export class DocsTypeDefinitionComponent implements OnInit {
   @Input() definition!: TypeDefinition;
   @Input() expanded = false;
-  
+
   isExpanded = signal(false);
-  
+
   ngOnInit() {
     this.isExpanded.set(this.expanded);
   }
-  
+
   toggle() {
-    this.isExpanded.update(v => !v);
+    this.isExpanded.update((v) => !v);
   }
 }
 
@@ -720,48 +716,50 @@ export class DocsTypeDefinitionComponent {
       </button>
     </div>
   `,
-  styles: [`
-    .import-statement {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin: 1rem 0;
-      padding: 0.75rem 1rem;
-      background: var(--docs-pre-bg, #0f172a);
-      border-radius: var(--docs-radius-md, 8px);
-    }
-    
-    .import-code {
-      font-family: var(--docs-font-mono, monospace);
-      font-size: 0.875rem;
-      color: var(--docs-pre-text, #e2e8f0);
-      background: transparent;
-      padding: 0;
-    }
-    
-    .copy-btn {
-      display: flex;
-      padding: 0.375rem;
-      color: var(--docs-text-muted, #8891a4);
-      background: transparent;
-      border: none;
-      border-radius: var(--docs-radius-sm, 4px);
-      cursor: pointer;
-      transition: all 0.15s ease;
-      
-      &:hover {
-        color: white;
-        background: rgba(255,255,255,0.1);
+  styles: [
+    `
+      .import-statement {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 1rem 0;
+        padding: 0.75rem 1rem;
+        background: var(--docs-pre-bg, #0f172a);
+        border-radius: var(--docs-radius-md, 8px);
       }
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+
+      .import-code {
+        font-family: var(--docs-font-mono, monospace);
+        font-size: 0.875rem;
+        color: var(--docs-pre-text, #e2e8f0);
+        background: transparent;
+        padding: 0;
+      }
+
+      .copy-btn {
+        display: flex;
+        padding: 0.375rem;
+        color: var(--docs-text-muted, #8891a4);
+        background: transparent;
+        border: none;
+        border-radius: var(--docs-radius-sm, 4px);
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        &:hover {
+          color: white;
+          background: rgba(255, 255, 255, 0.1);
+        }
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DocsImportComponent {
   @Input() importStatement!: string;
-  
+
   copied = signal(false);
-  
+
   async copy() {
     try {
       await navigator.clipboard.writeText(this.importStatement);
@@ -803,78 +801,80 @@ export class DocsImportComponent {
       </div>
     </div>
   `,
-  styles: [`
-    .related-links {
-      margin: 1.5rem 0;
-      padding: 1rem;
-      background: var(--docs-bg-secondary, #f4f6f9);
-      border-radius: var(--docs-radius-lg, 12px);
-    }
-    
-    .related-title {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin: 0 0 0.75rem;
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: var(--docs-text-secondary, #4a5568);
-    }
-    
-    .related-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    
-    .related-link {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem;
-      background: var(--docs-surface, #fff);
-      border: 1px solid var(--docs-border, #e2e8f0);
-      border-radius: var(--docs-radius-md, 8px);
-      text-decoration: none;
-      transition: all 0.15s ease;
-      
-      &:hover {
-        border-color: var(--docs-primary, #ff7900);
-        transform: translateX(4px);
-        
-        .link-arrow {
-          opacity: 1;
-          transform: translateX(0);
+  styles: [
+    `
+      .related-links {
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background: var(--docs-bg-secondary, #f4f6f9);
+        border-radius: var(--docs-radius-lg, 12px);
+      }
+
+      .related-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0 0 0.75rem;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--docs-text-secondary, #4a5568);
+      }
+
+      .related-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .related-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: var(--docs-surface, #fff);
+        border: 1px solid var(--docs-border, #e2e8f0);
+        border-radius: var(--docs-radius-md, 8px);
+        text-decoration: none;
+        transition: all 0.15s ease;
+
+        &:hover {
+          border-color: var(--docs-primary, #ff7900);
+          transform: translateX(4px);
+
+          .link-arrow {
+            opacity: 1;
+            transform: translateX(0);
+          }
         }
       }
-    }
-    
-    .link-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 0.125rem;
-    }
-    
-    .link-title {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: var(--docs-text, #1a1d23);
-    }
-    
-    .link-desc {
-      font-size: 0.75rem;
-      color: var(--docs-text-muted, #8891a4);
-    }
-    
-    .link-arrow {
-      opacity: 0;
-      transform: translateX(-4px);
-      color: var(--docs-primary, #ff7900);
-      transition: all 0.15s ease;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+
+      .link-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.125rem;
+      }
+
+      .link-title {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--docs-text, #1a1d23);
+      }
+
+      .link-desc {
+        font-size: 0.75rem;
+        color: var(--docs-text-muted, #8891a4);
+      }
+
+      .link-arrow {
+        opacity: 0;
+        transform: translateX(-4px);
+        color: var(--docs-primary, #ff7900);
+        transition: all 0.15s ease;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DocsRelatedLinksComponent {
   @Input() links: RelatedLink[] = [];
@@ -901,7 +901,9 @@ export class DocsRelatedLinksComponent {
       <div class="deprecation-content">
         <ng-content></ng-content>
         @if (replacement) {
-          <p class="replacement">Use <code>{{ replacement }}</code> instead.</p>
+          <p class="replacement">
+            Use <code>{{ replacement }}</code> instead.
+          </p>
         }
         @if (removeIn) {
           <p class="removal">Will be removed in v{{ removeIn }}</p>
@@ -909,67 +911,68 @@ export class DocsRelatedLinksComponent {
       </div>
     </div>
   `,
-  styles: [`
-    .deprecation-notice {
-      margin: 1rem 0;
-      border: 1px solid var(--docs-warning-border, #f59e0b);
-      border-radius: var(--docs-radius-md, 8px);
-      overflow: hidden;
-      background: var(--docs-warning-bg, rgba(245,158,11,0.08));
-    }
-    
-    .deprecation-header {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1rem;
-      font-weight: 600;
-      color: var(--docs-warning-text, #b45309);
-      background: rgba(245,158,11,0.1);
-    }
-    
-    .since {
-      margin-left: auto;
-      font-size: 0.75rem;
-      font-weight: 400;
-      opacity: 0.8;
-    }
-    
-    .deprecation-content {
-      padding: 1rem;
-      font-size: 0.875rem;
-      color: var(--docs-warning-text, #b45309);
-      line-height: 1.6;
-      
-      p {
-        margin: 0;
-        
-        & + p {
-          margin-top: 0.5rem;
+  styles: [
+    `
+      .deprecation-notice {
+        margin: 1rem 0;
+        border: 1px solid var(--docs-warning-border, #f59e0b);
+        border-radius: var(--docs-radius-md, 8px);
+        overflow: hidden;
+        background: var(--docs-warning-bg, rgba(245, 158, 11, 0.08));
+      }
+
+      .deprecation-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        font-weight: 600;
+        color: var(--docs-warning-text, #b45309);
+        background: rgba(245, 158, 11, 0.1);
+      }
+
+      .since {
+        margin-left: auto;
+        font-size: 0.75rem;
+        font-weight: 400;
+        opacity: 0.8;
+      }
+
+      .deprecation-content {
+        padding: 1rem;
+        font-size: 0.875rem;
+        color: var(--docs-warning-text, #b45309);
+        line-height: 1.6;
+
+        p {
+          margin: 0;
+
+          & + p {
+            margin-top: 0.5rem;
+          }
+        }
+
+        code {
+          padding: 0.125rem 0.375rem;
+          background: rgba(255, 255, 255, 0.5);
+          border-radius: var(--docs-radius-sm, 4px);
         }
       }
-      
-      code {
-        padding: 0.125rem 0.375rem;
-        background: rgba(255,255,255,0.5);
-        border-radius: var(--docs-radius-sm, 4px);
+
+      .replacement code {
+        font-weight: 600;
       }
-    }
-    
-    .replacement code {
-      font-weight: 600;
-    }
-    
-    .removal {
-      font-style: italic;
-      opacity: 0.8;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+
+      .removal {
+        font-style: italic;
+        opacity: 0.8;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DocsDeprecationComponent {
   @Input() since?: string;
   @Input() replacement?: string;
   @Input() removeIn?: string;
 }
-

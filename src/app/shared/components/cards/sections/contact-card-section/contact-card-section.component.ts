@@ -26,7 +26,7 @@ interface ContactField extends CardField {
   standalone: true,
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './contact-card-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContactCardSectionComponent extends BaseSectionComponent<ContactField> {
   get contacts(): ContactField[] {
@@ -38,7 +38,10 @@ export class ContactCardSectionComponent extends BaseSectionComponent<ContactFie
   }
 
   trackContact = (_index: number, contact: ContactField): string =>
-    contact.id ?? this.getContactEmail(contact) ?? this.getContactName(contact) ?? `contact-${_index}`;
+    contact.id ??
+    this.getContactEmail(contact) ??
+    this.getContactName(contact) ??
+    `contact-${_index}`;
 
   onContactClick(field: ContactField): void {
     this.emitFieldInteraction(field);

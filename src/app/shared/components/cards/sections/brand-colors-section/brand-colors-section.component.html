@@ -19,7 +19,7 @@
           (keydown.space)="$event.preventDefault(); onColorClick(color)"
           [attr.aria-label]="'Copy ' + color.label + ' color code ' + color.hex"
         >
-          <div 
+          <div
             class="brand-color-tile__swatch"
             [style.background-color]="color.hex"
             [class.brand-color-tile__swatch--copied]="copiedColorId === color.id"
@@ -28,7 +28,7 @@
               <lucide-icon name="check" [size]="24" class="check-icon"></lucide-icon>
             </div>
           </div>
-          
+
           <div class="brand-color-tile__info">
             <span class="brand-color-tile__label">{{ color.label }}</span>
             <div class="brand-color-tile__codes">

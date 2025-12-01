@@ -30,7 +30,7 @@ export class RateLimiter {
     const windowStart = now - this.options.windowMs;
 
     // Remove old requests outside the window
-    this.requests = this.requests.filter(timestamp => timestamp > windowStart);
+    this.requests = this.requests.filter((timestamp) => timestamp > windowStart);
 
     // Check if we're at the limit
     if (this.requests.length >= this.options.maxRequests) {
@@ -39,7 +39,7 @@ export class RateLimiter {
       return {
         allowed: false,
         remaining: 0,
-        resetAt
+        resetAt,
       };
     }
 
@@ -49,7 +49,7 @@ export class RateLimiter {
     return {
       allowed: true,
       remaining: this.options.maxRequests - this.requests.length,
-      resetAt: now + this.options.windowMs
+      resetAt: now + this.options.windowMs,
     };
   }
 
@@ -66,7 +66,7 @@ export class RateLimiter {
   getCurrentCount(): number {
     const now = Date.now();
     const windowStart = now - this.options.windowMs;
-    this.requests = this.requests.filter(timestamp => timestamp > windowStart);
+    this.requests = this.requests.filter((timestamp) => timestamp > windowStart);
     return this.requests.length;
   }
 }
@@ -83,7 +83,9 @@ export function createRateLimitedFunction<T extends (...args: any[]) => any>(
   const limited = ((...args: Parameters<T>): ReturnType<T> | null => {
     const result = rateLimiter.check();
     if (!result.allowed) {
-      throw new Error(`Rate limit exceeded. Try again after ${new Date(result.resetAt).toISOString()}`);
+      throw new Error(
+        `Rate limit exceeded. Try again after ${new Date(result.resetAt).toISOString()}`
+      );
     }
     return fn(...args);
   }) as T & { rateLimiter: RateLimiter };
@@ -92,5 +94,3 @@ export function createRateLimitedFunction<T extends (...args: any[]) => any>(
 
   return limited;
 }
-
-

@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -34,123 +34,124 @@ import { CommonModule } from '@angular/common';
       <div *ngIf="type === 'rectangle'" class="skeleton-rectangle"></div>
     </div>
   `,
-  styles: [`
-    .skeleton-container {
-      animation: skeleton-loading 1.5s ease-in-out infinite;
-    }
-
-    @keyframes skeleton-loading {
-      0%, 100% {
-        opacity: 1;
+  styles: [
+    `
+      .skeleton-container {
+        animation: skeleton-loading 1.5s ease-in-out infinite;
       }
-      50% {
-        opacity: 0.5;
+
+      @keyframes skeleton-loading {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
       }
-    }
 
-    .skeleton-card {
-      padding: 1rem;
-      background: rgba(20, 30, 50, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 0.5rem;
-    }
-
-    .skeleton-header {
-      margin-bottom: 1rem;
-    }
-
-    .skeleton-title {
-      height: 1.5rem;
-      width: 60%;
-      margin-bottom: 0.5rem;
-    }
-
-    .skeleton-subtitle {
-      height: 1rem;
-      width: 40%;
-    }
-
-    .skeleton-content {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .skeleton-line {
-      height: 1rem;
-      background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(255, 255, 255, 0.2) 50%,
-        rgba(255, 255, 255, 0.1) 100%
-      );
-      background-size: 200% 100%;
-      border-radius: 0.25rem;
-      animation: skeleton-shimmer 1.5s ease-in-out infinite;
-    }
-
-    .skeleton-line.skeleton-short {
-      width: 60%;
-    }
-
-    .skeleton-circle {
-      width: 3rem;
-      height: 3rem;
-      border-radius: 50%;
-      background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(255, 255, 255, 0.2) 50%,
-        rgba(255, 255, 255, 0.1) 100%
-      );
-      background-size: 200% 100%;
-      animation: skeleton-shimmer 1.5s ease-in-out infinite;
-    }
-
-    .skeleton-rectangle {
-      width: 100%;
-      height: 200px;
-      background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(255, 255, 255, 0.2) 50%,
-        rgba(255, 255, 255, 0.1) 100%
-      );
-      background-size: 200% 100%;
-      border-radius: 0.5rem;
-      animation: skeleton-shimmer 1.5s ease-in-out infinite;
-    }
-
-    .skeleton-section {
-      padding: 1rem;
-    }
-
-    .skeleton-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .skeleton-item {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    @keyframes skeleton-shimmer {
-      0% {
-        background-position: -200% 0;
+      .skeleton-card {
+        padding: 1rem;
+        background: rgba(20, 30, 50, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0.5rem;
       }
-      100% {
-        background-position: 200% 0;
+
+      .skeleton-header {
+        margin-bottom: 1rem;
       }
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+
+      .skeleton-title {
+        height: 1.5rem;
+        width: 60%;
+        margin-bottom: 0.5rem;
+      }
+
+      .skeleton-subtitle {
+        height: 1rem;
+        width: 40%;
+      }
+
+      .skeleton-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .skeleton-line {
+        height: 1rem;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.1) 0%,
+          rgba(255, 255, 255, 0.2) 50%,
+          rgba(255, 255, 255, 0.1) 100%
+        );
+        background-size: 200% 100%;
+        border-radius: 0.25rem;
+        animation: skeleton-shimmer 1.5s ease-in-out infinite;
+      }
+
+      .skeleton-line.skeleton-short {
+        width: 60%;
+      }
+
+      .skeleton-circle {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.1) 0%,
+          rgba(255, 255, 255, 0.2) 50%,
+          rgba(255, 255, 255, 0.1) 100%
+        );
+        background-size: 200% 100%;
+        animation: skeleton-shimmer 1.5s ease-in-out infinite;
+      }
+
+      .skeleton-rectangle {
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.1) 0%,
+          rgba(255, 255, 255, 0.2) 50%,
+          rgba(255, 255, 255, 0.1) 100%
+        );
+        background-size: 200% 100%;
+        border-radius: 0.5rem;
+        animation: skeleton-shimmer 1.5s ease-in-out infinite;
+      }
+
+      .skeleton-section {
+        padding: 1rem;
+      }
+
+      .skeleton-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .skeleton-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      @keyframes skeleton-shimmer {
+        0% {
+          background-position: -200% 0;
+        }
+        100% {
+          background-position: 200% 0;
+        }
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoadingSkeletonComponent {
   @Input() type: 'card' | 'section' | 'line' | 'circle' | 'rectangle' = 'card';
 }
-
-

@@ -5,7 +5,7 @@ const BaseSectionPage: NgDocPage = {
   title: 'Base Section',
   mdFile: './index.md',
   order: 0,
-  category: SectionTypesCategory
+  category: SectionTypesCategory,
 };
 
 export default BaseSectionPage;

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { EventSectionComponent } from './event-section.component';
-import { SectionBuilder, ItemBuilder } from '../../../../testing/test-builders';
+import { ItemBuilder, SectionBuilder } from '../../../../testing/test-builders';
 
 describe('EventSectionComponent', () => {
   let component: EventSectionComponent;
@@ -8,12 +8,12 @@ describe('EventSectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EventSectionComponent]
+      imports: [EventSectionComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EventSectionComponent);
     component = fixture.componentInstance;
-    
+
     component.section = SectionBuilder.create()
       .withTitle('Timeline')
       .withType('event')
@@ -32,7 +32,7 @@ describe('EventSectionComponent', () => {
           .build()
       )
       .build();
-    
+
     fixture.detectChanges();
   });
 
@@ -54,27 +54,9 @@ describe('EventSectionComponent', () => {
   it('should emit item interaction on click', () => {
     spyOn(component.itemInteraction, 'emit');
     const item = component.getItems()[0];
-    
+
     component.onItemClick(item);
-    
+
     expect(component.itemInteraction.emit).toHaveBeenCalled();
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -24,7 +24,10 @@ const validationMetadata = new WeakMap<any, Map<string, ValidationMetadata>>();
 /**
  * Get validation metadata for a property
  */
-export function getValidationMetadata(target: any, propertyKey: string): ValidationMetadata | undefined {
+export function getValidationMetadata(
+  target: any,
+  propertyKey: string
+): ValidationMetadata | undefined {
   const metadata = validationMetadata.get(target);
   return metadata?.get(propertyKey);
 }
@@ -32,7 +35,11 @@ export function getValidationMetadata(target: any, propertyKey: string): Validat
 /**
  * Set validation metadata for a property
  */
-export function setValidationMetadata(target: any, propertyKey: string, metadata: ValidationMetadata): void {
+export function setValidationMetadata(
+  target: any,
+  propertyKey: string,
+  metadata: ValidationMetadata
+): void {
   let targetMetadata = validationMetadata.get(target);
   if (!targetMetadata) {
     targetMetadata = new Map();
@@ -85,8 +92,6 @@ export function validateObject(obj: any): { isValid: boolean; errors: Record<str
 
   return {
     isValid: Object.keys(errors).length === 0,
-    errors
+    errors,
   };
 }
-
-

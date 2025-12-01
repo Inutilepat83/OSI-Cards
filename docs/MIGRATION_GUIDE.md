@@ -511,3 +511,5 @@ const element = page.locator('app-ai-card-renderer >>> .section');
 - Check the [CSS Encapsulation Guide](./CSS_ENCAPSULATION.md)
 - Review the [API Documentation](./API.md)
 - Open an issue on GitHub
+
+

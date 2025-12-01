@@ -210,7 +210,7 @@
                   #cardRenderer
                   [cardConfig]="cardConfigForRenderer"
                   [streamingStage]="streamingState?.stage"
-                  [streamingProgress]="streamingState?.progress"
+                  [streamingProgress]="streamingState?.progress ?? 0"
                   [isStreaming]="streamingState?.stage === 'streaming'"
                   [isFullscreen]="isFullscreen"
                   [tiltEnabled]="true"

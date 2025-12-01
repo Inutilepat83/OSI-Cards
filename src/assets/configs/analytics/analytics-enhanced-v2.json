@@ -18,10 +18,34 @@
       "title": "Performance Metrics",
       "type": "analytics",
       "fields": [
-        { "label": "Campaign ROI", "value": "320% Return", "percentage": 320, "performance": "excellent", "trend": "up" },
-        { "label": "Click-Through Rate", "value": "5.2%", "percentage": 52, "performance": "excellent", "trend": "up" },
-        { "label": "Conversion Rate", "value": "8.9%", "percentage": 89, "performance": "excellent", "trend": "up" },
-        { "label": "Cost Per Acquisition", "value": "€28", "percentage": 92, "performance": "excellent", "trend": "down" }
+        {
+          "label": "Campaign ROI",
+          "value": "320% Return",
+          "percentage": 320,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Click-Through Rate",
+          "value": "5.2%",
+          "percentage": 52,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Conversion Rate",
+          "value": "8.9%",
+          "percentage": 89,
+          "performance": "excellent",
+          "trend": "up"
+        },
+        {
+          "label": "Cost Per Acquisition",
+          "value": "€28",
+          "percentage": 92,
+          "performance": "excellent",
+          "trend": "down"
+        }
       ]
     },
     {
@@ -43,23 +67,63 @@
       "title": "Key Insights",
       "type": "list",
       "items": [
-        { "title": "Top Performer", "description": "Email campaigns generated highest ROI at 420%", "icon": "📧", "status": "completed" },
-        { "title": "Growth Opportunity", "description": "Social media shows strong engagement with 85% growth", "icon": "📱", "status": "active" },
-        { "title": "Optimization", "description": "Paid search requires budget reallocation for better results", "icon": "🔍", "status": "pending" }
+        {
+          "title": "Top Performer",
+          "description": "Email campaigns generated highest ROI at 420%",
+          "icon": "📧",
+          "status": "completed"
+        },
+        {
+          "title": "Growth Opportunity",
+          "description": "Social media shows strong engagement with 85% growth",
+          "icon": "📱",
+          "status": "active"
+        },
+        {
+          "title": "Optimization",
+          "description": "Paid search requires budget reallocation for better results",
+          "icon": "🔍",
+          "status": "pending"
+        }
       ]
     },
     {
       "title": "Statistics Summary",
       "type": "stats",
       "fields": [
-        { "label": "Total Impressions", "value": "15.2M", "performance": "excellent" },
-        { "label": "Total Clicks", "value": "790K", "performance": "excellent" },
-        { "label": "Total Conversions", "value": "70.3K", "performance": "excellent" }
+        {
+          "label": "Total Impressions",
+          "value": "15.2M",
+          "performance": "excellent"
+        },
+        {
+          "label": "Total Clicks",
+          "value": "790K",
+          "performance": "excellent"
+        },
+        {
+          "label": "Total Conversions",
+          "value": "70.3K",
+          "performance": "excellent"
+        }
       ]
     }
   ],
   "actions": [
-    { "label": "Export Full Report", "type": "question", "variant": "primary", "icon": "📥", "question": "How can I export the full report?" },
-    { "label": "Schedule Review", "type": "agent", "variant": "secondary", "icon": "📞", "agentId": "calendar-agent", "agentContext": { "action": "schedule_review" } }
+    {
+      "label": "Export Full Report",
+      "type": "question",
+      "variant": "primary",
+      "icon": "📥",
+      "question": "How can I export the full report?"
+    },
+    {
+      "label": "Schedule Review",
+      "type": "agent",
+      "variant": "secondary",
+      "icon": "📞",
+      "agentId": "calendar-agent",
+      "agentContext": { "action": "schedule_review" }
+    }
   ]
 }

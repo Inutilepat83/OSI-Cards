@@ -1,12 +1,16 @@
-import { ApplicationConfig, isDevMode, inject, APP_INITIALIZER } from '@angular/core';
+import {
+  APP_INITIALIZER,
+  ApplicationConfig,
+  inject,
+  isDevMode,
+  provideZoneChangeDetection,
+} from '@angular/core';
 import { provideRouter, withPreloading } from '@angular/router';
 import { DocsPreloadingStrategy } from './core/strategies/docs-preloading.strategy';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { provideZoneChangeDetection } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideServiceWorker } from '@angular/service-worker';
 // NgDoc imports removed - using custom documentation system for Angular 20 compatibility
@@ -26,25 +30,22 @@ export const config: ApplicationConfig = {
   providers: [
     provideAnimations(),
     provideHttpClient(withInterceptorsFromDi()),
-    provideRouter(
-      routes,
-      withPreloading(DocsPreloadingStrategy)
-    ),
+    provideRouter(routes, withPreloading(DocsPreloadingStrategy)),
     // Documentation uses custom components (no NgDoc for Angular 20 compatibility)
     // Optimize change detection with event coalescing and run coalescing
     provideZoneChangeDetection({
       eventCoalescing: true,
-      runCoalescing: true
+      runCoalescing: true,
     }),
     provideStore(reducers),
     provideEffects([CardsEffects]),
     provideStoreDevtools({
       maxAge: 25,
-      logOnly: false
+      logOnly: false,
     }),
     {
       provide: CARD_DATA_PROVIDER,
-      useClass: JsonFileCardProvider
+      useClass: JsonFileCardProvider,
     },
     // Initialize Web Vitals monitoring
     {
@@ -53,32 +54,32 @@ export const config: ApplicationConfig = {
         const webVitals = inject(WebVitalsService);
         return () => webVitals.initialize();
       },
-      multi: true
+      multi: true,
     },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorInterceptor,
-      multi: true
+      multi: true,
     },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpCacheInterceptor,
-      multi: true
+      multi: true,
     },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: RateLimitInterceptor,
-      multi: true
+      multi: true,
     },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: SecurityHeadersInterceptor,
-      multi: true
+      multi: true,
     },
     // Service Worker for offline support and PWA features
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
-      registrationStrategy: 'registerWhenStable:30000'
-    })
-  ]
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
+  ],
 };

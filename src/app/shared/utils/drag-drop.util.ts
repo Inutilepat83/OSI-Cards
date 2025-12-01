@@ -77,5 +77,3 @@ export class DragDropManager {
     this.draggedIndex = null;
   }
 }
-
-

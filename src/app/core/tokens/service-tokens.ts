@@ -16,16 +16,3 @@ export const PERFORMANCE_SERVICE = new InjectionToken<PerformanceService>('Perfo
 export const APP_CONFIG_SERVICE = new InjectionToken<AppConfigService>('AppConfigService');
 export const CARD_DATA_SERVICE = new InjectionToken<CardDataService>('CardDataService');
 export const CARD_REPOSITORY = new InjectionToken<ICardRepository>('CardRepository');
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -19,7 +19,9 @@
   border-color: rgba(255, 121, 0, 0.5) !important;
   background: rgba(30, 30, 30, 0.8) !important;
   /* Transform is handled by parent .tilt-container - don't override */
-  box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 121, 0, 0.2) !important;
+  box-shadow:
+    0 20px 40px -5px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 121, 0, 0.2) !important;
 }
 
 /* Use Tailwind classes for styling - minimal custom CSS */
@@ -31,7 +33,7 @@
 }
 
 :host ::ng-deep .section-highlight::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: -4px;
   border: 2px solid rgba(255, 121, 0, 0.6);
@@ -41,7 +43,8 @@
 }
 
 @keyframes section-pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -82,20 +85,21 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* During streaming, keep all existing content fully visible and stable */
-.ai-card-surface.streaming-active :where(
-  .info-row,
-  .section-card,
-  .list-card,
-  .event-timeline__item,
-  .product-card,
-  .solutions-card,
-  .contact-card,
-  .network-card__item,
-  .map-point,
-  .text-reference-entry,
-  .quote-card,
-  .overview-card__item
-) {
+.ai-card-surface.streaming-active
+  :where(
+    .info-row,
+    .section-card,
+    .list-card,
+    .event-timeline__item,
+    .product-card,
+    .solutions-card,
+    .contact-card,
+    .network-card__item,
+    .map-point,
+    .text-reference-entry,
+    .quote-card,
+    .overview-card__item
+  ) {
   /* Full opacity - no flickering */
   opacity: 1;
   /* No transform resets */
@@ -105,48 +109,102 @@
 }
 
 /* Content inside NEW sections can have subtle entrance animation */
-.ai-card-surface.streaming-active .masonry-item--new :where(
-  .info-row,
-  .section-card,
-  .list-card,
-  .event-timeline__item,
-  .product-card,
-  .solutions-card,
-  .contact-card,
-  .network-card__item,
-  .map-point,
-  .text-reference-entry,
-  .quote-card,
-  .overview-card__item
-) {
+.ai-card-surface.streaming-active
+  .masonry-item--new
+  :where(
+    .info-row,
+    .section-card,
+    .list-card,
+    .event-timeline__item,
+    .product-card,
+    .solutions-card,
+    .contact-card,
+    .network-card__item,
+    .map-point,
+    .text-reference-entry,
+    .quote-card,
+    .overview-card__item
+  ) {
   animation: field-enter 0.35s ease forwards;
   will-change: opacity, transform;
 }
 
 /* Staggered delays for content within new sections */
-.ai-card-surface.streaming-active .masonry-item--new :where(
-  .info-row, .section-card, .list-card, .event-timeline__item,
-  .product-card, .solutions-card, .contact-card, .network-card__item,
-  .map-point, .text-reference-entry, .quote-card, .overview-card__item
-):nth-child(1) { animation-delay: 0.05s; }
+.ai-card-surface.streaming-active
+  .masonry-item--new
+  :where(
+    .info-row,
+    .section-card,
+    .list-card,
+    .event-timeline__item,
+    .product-card,
+    .solutions-card,
+    .contact-card,
+    .network-card__item,
+    .map-point,
+    .text-reference-entry,
+    .quote-card,
+    .overview-card__item
+  ):nth-child(1) {
+  animation-delay: 0.05s;
+}
 
-.ai-card-surface.streaming-active .masonry-item--new :where(
-  .info-row, .section-card, .list-card, .event-timeline__item,
-  .product-card, .solutions-card, .contact-card, .network-card__item,
-  .map-point, .text-reference-entry, .quote-card, .overview-card__item
-):nth-child(2) { animation-delay: 0.1s; }
+.ai-card-surface.streaming-active
+  .masonry-item--new
+  :where(
+    .info-row,
+    .section-card,
+    .list-card,
+    .event-timeline__item,
+    .product-card,
+    .solutions-card,
+    .contact-card,
+    .network-card__item,
+    .map-point,
+    .text-reference-entry,
+    .quote-card,
+    .overview-card__item
+  ):nth-child(2) {
+  animation-delay: 0.1s;
+}
 
-.ai-card-surface.streaming-active .masonry-item--new :where(
-  .info-row, .section-card, .list-card, .event-timeline__item,
-  .product-card, .solutions-card, .contact-card, .network-card__item,
-  .map-point, .text-reference-entry, .quote-card, .overview-card__item
-):nth-child(3) { animation-delay: 0.15s; }
+.ai-card-surface.streaming-active
+  .masonry-item--new
+  :where(
+    .info-row,
+    .section-card,
+    .list-card,
+    .event-timeline__item,
+    .product-card,
+    .solutions-card,
+    .contact-card,
+    .network-card__item,
+    .map-point,
+    .text-reference-entry,
+    .quote-card,
+    .overview-card__item
+  ):nth-child(3) {
+  animation-delay: 0.15s;
+}
 
-.ai-card-surface.streaming-active .masonry-item--new :where(
-  .info-row, .section-card, .list-card, .event-timeline__item,
-  .product-card, .solutions-card, .contact-card, .network-card__item,
-  .map-point, .text-reference-entry, .quote-card, .overview-card__item
-):nth-child(n+4) { animation-delay: 0.2s; }
+.ai-card-surface.streaming-active
+  .masonry-item--new
+  :where(
+    .info-row,
+    .section-card,
+    .list-card,
+    .event-timeline__item,
+    .product-card,
+    .solutions-card,
+    .contact-card,
+    .network-card__item,
+    .map-point,
+    .text-reference-entry,
+    .quote-card,
+    .overview-card__item
+  ):nth-child(n + 4) {
+  animation-delay: 0.2s;
+}
 
 @keyframes field-enter {
   0% {
@@ -167,14 +225,14 @@
 .ai-card-surface.streaming-active {
   position: relative;
   border: 1px solid rgba(255, 121, 0, 0.4);
-  box-shadow: 
+  box-shadow:
     0 0 10px rgba(255, 121, 0, 0.2),
     0 0 20px rgba(255, 121, 0, 0.1);
 }
 
 /* Traveling spark using pseudo-element - tiny, hugs the border */
 .ai-card-surface.streaming-active::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 3px;
   height: 3px;
@@ -187,11 +245,26 @@
 }
 
 @keyframes spark-travel {
-  0% { top: -1.5px; left: 0; }
-  25% { top: -1.5px; left: calc(100% - 1.5px); }
-  50% { top: calc(100% - 1.5px); left: calc(100% - 1.5px); }
-  75% { top: calc(100% - 1.5px); left: 0; }
-  100% { top: -1.5px; left: 0; }
+  0% {
+    top: -1.5px;
+    left: 0;
+  }
+  25% {
+    top: -1.5px;
+    left: calc(100% - 1.5px);
+  }
+  50% {
+    top: calc(100% - 1.5px);
+    left: calc(100% - 1.5px);
+  }
+  75% {
+    top: calc(100% - 1.5px);
+    left: 0;
+  }
+  100% {
+    top: -1.5px;
+    left: 0;
+  }
 }
 
 /* Content text smooth transitions */
@@ -208,7 +281,7 @@
 /* Typing cursor effect for streaming text */
 .ai-card-surface.streaming-active [class*="value"]:last-child::after,
 .ai-card-surface.streaming-active .field-value:last-child::after {
-  content: '▋';
+  content: "▋";
   display: inline-block;
   color: var(--color-brand, #ff7900);
   animation: cursor-blink 0.8s step-end infinite;
@@ -217,8 +290,14 @@
 }
 
 @keyframes cursor-blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -244,7 +323,9 @@
 /* Subtle glow for section cards during streaming (all sections) */
 .ai-card-surface.streaming-active .section-card {
   border-color: rgba(255, 121, 0, 0.2);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .ai-card-surface.streaming-active .section-card:hover {
@@ -286,8 +367,6 @@
   }
 }
 
-
-
 .loading-particles {
   position: absolute;
   inset: 0;
@@ -305,17 +384,49 @@
   box-shadow: 0 0 12px var(--color-brand);
 }
 
-.particle:nth-child(1) { top: 10%; left: 20%; }
-.particle:nth-child(2) { top: 20%; left: 80%; animation-delay: 0.3s; }
-.particle:nth-child(3) { top: 60%; left: 15%; animation-delay: 0.6s; }
-.particle:nth-child(4) { top: 80%; left: 70%; animation-delay: 0.9s; }
-.particle:nth-child(5) { top: 30%; left: 50%; animation-delay: 1.2s; }
-.particle:nth-child(6) { top: 70%; left: 40%; animation-delay: 1.5s; }
-.particle:nth-child(7) { top: 50%; left: 90%; animation-delay: 1.8s; }
-.particle:nth-child(8) { top: 15%; left: 60%; animation-delay: 2.1s; }
+.particle:nth-child(1) {
+  top: 10%;
+  left: 20%;
+}
+.particle:nth-child(2) {
+  top: 20%;
+  left: 80%;
+  animation-delay: 0.3s;
+}
+.particle:nth-child(3) {
+  top: 60%;
+  left: 15%;
+  animation-delay: 0.6s;
+}
+.particle:nth-child(4) {
+  top: 80%;
+  left: 70%;
+  animation-delay: 0.9s;
+}
+.particle:nth-child(5) {
+  top: 30%;
+  left: 50%;
+  animation-delay: 1.2s;
+}
+.particle:nth-child(6) {
+  top: 70%;
+  left: 40%;
+  animation-delay: 1.5s;
+}
+.particle:nth-child(7) {
+  top: 50%;
+  left: 90%;
+  animation-delay: 1.8s;
+}
+.particle:nth-child(8) {
+  top: 15%;
+  left: 60%;
+  animation-delay: 2.1s;
+}
 
 @keyframes particle-float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0) translateX(0) scale(1);
     opacity: 0.3;
   }
@@ -395,7 +506,8 @@
   font-weight: 600;
   color: var(--foreground);
   margin-bottom: 0.5rem;
-  background: linear-gradient(90deg, 
+  background: linear-gradient(
+    90deg,
     var(--foreground) 0%,
     var(--color-brand) 50%,
     var(--foreground) 100%
@@ -414,7 +526,8 @@
 }
 
 @keyframes text-shimmer {
-  0%, 100% {
+  0%,
+  100% {
     background-position: -200% 0;
   }
   50% {
@@ -428,7 +541,8 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg,
+  background: linear-gradient(
+    90deg,
     transparent 0%,
     var(--color-brand) 25%,
     var(--color-brand) 75%,
@@ -455,23 +569,22 @@
   min-height: 500px;
   position: relative;
   overflow: hidden;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(255, 121, 0, 0.05) 0%,
-    transparent 70%
-  );
-  animation: generating-bg-pulse 3s ease-in-out infinite, card-generating-pulse 2s ease-in-out infinite;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 121, 0, 0.05) 0%, transparent 70%);
+  animation:
+    generating-bg-pulse 3s ease-in-out infinite,
+    card-generating-pulse 2s ease-in-out infinite;
 }
 
 @keyframes card-generating-pulse {
-  0%, 100% {
-    box-shadow: 
+  0%,
+  100% {
+    box-shadow:
       inset 0 1px 3px rgba(255, 121, 0, 0.08),
       0 4px 20px rgba(0, 0, 0, 0.15),
       0 0 0 rgba(255, 121, 0, 0);
   }
   50% {
-    box-shadow: 
+    box-shadow:
       inset 0 1px 3px rgba(255, 121, 0, 0.15),
       0 4px 20px rgba(0, 0, 0, 0.15),
       0 0 30px rgba(255, 121, 0, 0.2);
@@ -479,19 +592,12 @@
 }
 
 @keyframes generating-bg-pulse {
-  0%, 100% {
-    background: radial-gradient(
-      circle at 50% 50%,
-      rgba(255, 121, 0, 0.05) 0%,
-      transparent 70%
-    );
+  0%,
+  100% {
+    background: radial-gradient(circle at 50% 50%, rgba(255, 121, 0, 0.05) 0%, transparent 70%);
   }
   50% {
-    background: radial-gradient(
-      circle at 50% 50%,
-      rgba(255, 121, 0, 0.12) 0%,
-      transparent 70%
-    );
+    background: radial-gradient(circle at 50% 50%, rgba(255, 121, 0, 0.12) 0%, transparent 70%);
   }
 }
 
@@ -507,12 +613,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 121, 0, 0.15) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 121, 0, 0.15) 50%, transparent 100%);
   animation: shimmer-sweep 2.5s ease-in-out infinite;
   pointer-events: none;
   z-index: 1;
@@ -549,7 +650,8 @@
 }
 
 @keyframes text-shimmer-flow {
-  0%, 100% {
+  0%,
+  100% {
     background-position: -200% 0;
   }
   50% {
@@ -620,7 +722,8 @@
 }
 
 @keyframes gradient-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.6;
     transform: translate(-50%, -50%) scale(1);
   }
@@ -642,7 +745,9 @@
   border-radius: 50%;
   background: color-mix(in srgb, var(--color-brand) 55%, transparent);
   box-shadow: 0 0 4px color-mix(in srgb, var(--color-brand) 45%, transparent);
-  transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s ease;
+  transition:
+    transform 0.8s cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 0.5s ease;
   will-change: transform, opacity;
   top: 50%;
   left: 50%;
@@ -703,7 +808,8 @@
 }
 
 @keyframes ring-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.4;
     transform: scale(1);
   }
@@ -723,7 +829,8 @@
 }
 
 @keyframes icon-float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0) rotate(0deg);
   }
   25% {
@@ -832,7 +939,8 @@
 }
 
 @keyframes dot-pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(-50%, -50%) scale(1);
     opacity: 0.6;
   }
@@ -869,11 +977,13 @@
   color: var(--muted-foreground, #555861) !important;
   cursor: pointer !important;
   opacity: 0.5 !important;
-  transition: color 0.2s ease, opacity 0.2s ease !important;
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease !important;
 }
 
 .ai-card-export-btn:hover {
-  color: var(--color-brand, #FF7900) !important;
+  color: var(--color-brand, #ff7900) !important;
   opacity: 1 !important;
 }
 

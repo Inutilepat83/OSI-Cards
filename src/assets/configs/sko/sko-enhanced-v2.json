@@ -11,21 +11,36 @@
           "title": "Secure Data Exchange Platform",
           "description": "HIPAA-compliant messaging and file sharing with end-to-end encryption",
           "category": "Security & Compliance",
-          "benefits": ["HIPAA compliant", "Audit trails", "Role-based access", "End-to-end encryption"],
+          "benefits": [
+            "HIPAA compliant",
+            "Audit trails",
+            "Role-based access",
+            "End-to-end encryption"
+          ],
           "deliveryTime": "6-8 weeks"
         },
         {
           "title": "Patient Portal & Telemedicine",
           "description": "HIPAA-compliant patient portal with video conferencing",
           "category": "Patient Experience",
-          "benefits": ["24/7 access", "Video consults", "Mobile app", "Secure messaging"],
+          "benefits": [
+            "24/7 access",
+            "Video consults",
+            "Mobile app",
+            "Secure messaging"
+          ],
           "deliveryTime": "5-7 weeks"
         },
         {
           "title": "Backup & Disaster Recovery",
           "description": "Specialized DR for healthcare with rapid recovery",
           "category": "Infrastructure",
-          "benefits": ["4-hour RTO", "Geo-redundant", "Compliance reports", "Automated backups"],
+          "benefits": [
+            "4-hour RTO",
+            "Geo-redundant",
+            "Compliance reports",
+            "Automated backups"
+          ],
           "deliveryTime": "4-6 weeks"
         }
       ]
@@ -34,9 +49,27 @@
       "title": "Solution Benefits",
       "type": "analytics",
       "fields": [
-        { "label": "Compliance Rate", "value": "100% HIPAA", "percentage": 100, "performance": "excellent", "trend": "stable" },
-        { "label": "Uptime Guarantee", "value": "99.9%", "percentage": 99.9, "performance": "excellent", "trend": "stable" },
-        { "label": "Client Satisfaction", "value": "4.8/5", "percentage": 96, "performance": "excellent", "trend": "up" }
+        {
+          "label": "Compliance Rate",
+          "value": "100% HIPAA",
+          "percentage": 100,
+          "performance": "excellent",
+          "trend": "stable"
+        },
+        {
+          "label": "Uptime Guarantee",
+          "value": "99.9%",
+          "percentage": 99.9,
+          "performance": "excellent",
+          "trend": "stable"
+        },
+        {
+          "label": "Client Satisfaction",
+          "value": "4.8/5",
+          "percentage": 96,
+          "performance": "excellent",
+          "trend": "up"
+        }
       ]
     },
     {
@@ -77,7 +110,13 @@
     }
   ],
   "actions": [
-    { "label": "Download Compliance Brief", "type": "website", "variant": "primary", "icon": "📄", "url": "https://example.com/compliance-brief.pdf" },
+    {
+      "label": "Download Compliance Brief",
+      "type": "website",
+      "variant": "primary",
+      "icon": "📄",
+      "url": "https://example.com/compliance-brief.pdf"
+    },
     {
       "label": "Send Email to Client",
       "type": "mail",
@@ -93,6 +132,13 @@
         "body": "Dear Dr. James Wilson,\n\nI am pleased to present the top Orange Business Solutions tailored for MedicalCare Networks:\n\n1. Secure Data Exchange Platform\n   HIPAA-compliant messaging and file sharing with end-to-end encryption\n   - HIPAA compliant\n   - Audit trails\n   - Role-based access\n   - End-to-end encryption\n   Delivery Time: 6-8 weeks\n\n2. Patient Portal & Telemedicine\n   HIPAA-compliant patient portal with video conferencing\n   - 24/7 patient access\n   - Video consultations\n   - Mobile app\n   - Secure messaging\n   Delivery Time: 5-7 weeks\n\n3. Backup & Disaster Recovery\n   Specialized DR for healthcare with rapid recovery\n   - 4-hour RTO (Recovery Time Objective)\n   - Geo-redundant storage\n   - Compliance reports\n   - Automated backups\n   Delivery Time: 4-6 weeks\n\n**Solution Benefits:**\n• 100% HIPAA Compliance\n• 99.9% Uptime Guarantee\n• 4.8/5 Client Satisfaction Rating\n\nI would be happy to schedule a consultation to discuss these solutions in detail and address any specific requirements for MedicalCare Networks.\n\nBest regards,\nOrange Business Sales Team"
       }
     },
-    { "label": "Schedule Consultation", "type": "agent", "variant": "secondary", "icon": "📅", "agentId": "calendar-agent", "agentContext": { "action": "schedule_consultation" } }
+    {
+      "label": "Schedule Consultation",
+      "type": "agent",
+      "variant": "secondary",
+      "icon": "📅",
+      "agentId": "calendar-agent",
+      "agentContext": { "action": "schedule_consultation" }
+    }
   ]
 }

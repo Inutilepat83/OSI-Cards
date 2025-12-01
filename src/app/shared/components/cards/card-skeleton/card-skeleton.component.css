@@ -38,7 +38,7 @@
     90deg,
     color-mix(in srgb, var(--muted, rgba(255, 255, 255, 0.1)) 100%, transparent) 0%,
     color-mix(in srgb, var(--muted-foreground, rgba(255, 255, 255, 0.2)) 100%, transparent) 20%,
-    color-mix(in srgb, #FF7900 15%, transparent) 50%,
+    color-mix(in srgb, #ff7900 15%, transparent) 50%,
     color-mix(in srgb, var(--muted, rgba(255, 255, 255, 0.1)) 100%, transparent) 100%
   );
   background-size: 200% 100%;
@@ -50,7 +50,7 @@
 }
 
 .skeleton-title-placeholder::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
@@ -59,7 +59,7 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    color-mix(in srgb, #FF7900 20%, transparent) 50%,
+    color-mix(in srgb, #ff7900 20%, transparent) 50%,
     transparent 100%
   );
   animation: shimmerWave 1.5s ease-in-out infinite;
@@ -81,23 +81,23 @@
   background: linear-gradient(
     135deg,
     var(--card-background, var(--background)) 0%,
-    color-mix(in srgb, var(--card-background, var(--background)) 98%, #FF7900 2%) 100%
+    color-mix(in srgb, var(--card-background, var(--background)) 98%, #ff7900 2%) 100%
   );
   box-shadow: 0 2px 4px color-mix(in srgb, var(--foreground) 5%, transparent);
   position: relative;
   overflow: hidden;
-  
+
   /* Subtle left accent */
 }
 
 .skeleton-section::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
   width: 2px;
-  background: linear-gradient(180deg, #FF7900, color-mix(in srgb, #FF7900 50%, transparent));
+  background: linear-gradient(180deg, #ff7900, color-mix(in srgb, #ff7900 50%, transparent));
   opacity: 0.3;
 }
 
@@ -158,7 +158,7 @@
     90deg,
     color-mix(in srgb, var(--muted, rgba(255, 255, 255, 0.1)) 100%, transparent) 0%,
     color-mix(in srgb, var(--muted-foreground, rgba(255, 255, 255, 0.2)) 100%, transparent) 20%,
-    color-mix(in srgb, #FF7900 10%, transparent) 50%,
+    color-mix(in srgb, #ff7900 10%, transparent) 50%,
     color-mix(in srgb, var(--muted, rgba(255, 255, 255, 0.1)) 100%, transparent) 100%
   );
   background-size: 200% 100%;
@@ -169,7 +169,7 @@
 }
 
 .skeleton-line::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
@@ -178,7 +178,7 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    color-mix(in srgb, #FF7900 15%, transparent) 50%,
+    color-mix(in srgb, #ff7900 15%, transparent) 50%,
     transparent 100%
   );
   animation: shimmerWave 1.5s ease-in-out infinite;
@@ -247,19 +247,21 @@
     90deg,
     color-mix(in srgb, var(--muted, rgba(255, 255, 255, 0.1)) 100%, transparent) 0%,
     color-mix(in srgb, var(--muted-foreground, rgba(255, 255, 255, 0.2)) 100%, transparent) 20%,
-    color-mix(in srgb, #FF7900 15%, transparent) 50%,
+    color-mix(in srgb, #ff7900 15%, transparent) 50%,
     color-mix(in srgb, var(--muted, rgba(255, 255, 255, 0.1)) 100%, transparent) 100%
   );
   background-size: 200% 100%;
   border-radius: 0.625rem;
-  animation: shimmerWave 1.5s ease-in-out infinite, skeleton-fade-in 0.4s ease-out forwards;
+  animation:
+    shimmerWave 1.5s ease-in-out infinite,
+    skeleton-fade-in 0.4s ease-out forwards;
   opacity: 0;
   position: relative;
   overflow: hidden;
 }
 
 .skeleton-action-button::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
@@ -268,7 +270,7 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    color-mix(in srgb, #FF7900 20%, transparent) 50%,
+    color-mix(in srgb, #ff7900 20%, transparent) 50%,
     transparent 100%
   );
   animation: shimmerWave 1.5s ease-in-out infinite;
@@ -295,4 +297,3 @@
   animation: shimmerWave 1.5s ease-in-out infinite;
   opacity: 0.6;
 }
-

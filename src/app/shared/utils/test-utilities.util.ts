@@ -3,7 +3,7 @@
  * Build reusable test utilities and factories for card data
  */
 
-import { AICardConfig, CardSection, CardField, CardItem} from '../../models';
+import { AICardConfig, CardField, CardItem, CardSection } from '../../models';
 
 /**
  * Create a test card
@@ -22,12 +22,12 @@ export function createTestCard(overrides: Partial<AICardConfig> = {}): AICardCon
           {
             id: 'test-field-1',
             label: 'Test Field',
-            value: 'Test Value'
-          }
-        ]
-      }
+            value: 'Test Value',
+          },
+        ],
+      },
     ],
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -40,7 +40,7 @@ export function createTestSection(overrides: Partial<CardSection> = {}): CardSec
     title: 'Test Section',
     type: 'info',
     fields: [],
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -52,7 +52,7 @@ export function createTestField(overrides: Partial<CardField> = {}): CardField {
     id: 'test-field',
     label: 'Test Field',
     value: 'Test Value',
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -64,19 +64,22 @@ export function createTestItem(overrides: Partial<CardItem> = {}): CardItem {
     id: 'test-item',
     title: 'Test Item',
     description: 'Test Description',
-    ...overrides
+    ...overrides,
   };
 }
 
 /**
  * Create multiple test cards
  */
-export function createTestCards(count: number, baseOverrides: Partial<AICardConfig> = {}): AICardConfig[] {
+export function createTestCards(
+  count: number,
+  baseOverrides: Partial<AICardConfig> = {}
+): AICardConfig[] {
   return Array.from({ length: count }, (_, index) =>
     createTestCard({
       id: `test-card-${index + 1}`,
       cardTitle: `Test Card ${index + 1}`,
-      ...baseOverrides
+      ...baseOverrides,
     })
   );
 }
@@ -92,14 +95,12 @@ export function createCardWithSections(sectionCount: number, fieldsPerSection = 
     fields: Array.from({ length: fieldsPerSection }, (_, fieldIndex) => ({
       id: `field-${sectionIndex + 1}-${fieldIndex + 1}`,
       label: `Field ${fieldIndex + 1}`,
-      value: `Value ${fieldIndex + 1}`
-    }))
+      value: `Value ${fieldIndex + 1}`,
+    })),
   }));
 
   return createTestCard({
     sections,
-    cardTitle: `Card with ${sectionCount} Sections`
+    cardTitle: `Card with ${sectionCount} Sections`,
   });
 }
-
-

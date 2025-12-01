@@ -1,38 +1,38 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { AppConfigService } from './app-config.service';
 import { LoggingService } from './logging.service';
 
 /**
  * Development Tools Service
- * 
+ *
  * Provides enhanced debugging capabilities for development mode.
  * Includes performance monitoring, state inspection, and debugging utilities.
- * 
+ *
  * Features:
  * - Performance metrics tracking
  * - Component tree inspection
  * - State debugging
  * - Network request monitoring
  * - Memory usage tracking
- * 
+ *
  * @example
  * ```typescript
  * const devTools = inject(DevToolsService);
- * 
+ *
  * // Enable performance monitoring
  * devTools.enablePerformanceMonitoring();
- * 
+ *
  * // Get performance metrics
  * const metrics = devTools.getPerformanceMetrics();
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DevToolsService {
   private readonly appConfig = inject(AppConfigService);
   private readonly logger = inject(LoggingService);
-  
+
   private performanceMetrics = new Map<string, number>();
   private isPerformanceMonitoringEnabled = false;
   private memoryUsageInterval?: ReturnType<typeof setInterval>;
@@ -49,7 +49,10 @@ export class DevToolsService {
    */
   enablePerformanceMonitoring(): void {
     if (!this.isDevelopmentMode) {
-      this.logger.warn('Performance monitoring only available in development mode', 'DevToolsService');
+      this.logger.warn(
+        'Performance monitoring only available in development mode',
+        'DevToolsService'
+      );
       return;
     }
 
@@ -132,16 +135,20 @@ export class DevToolsService {
       return {};
     }
 
-    const memory = (performance as { memory?: {
-      usedJSHeapSize?: number;
-      totalJSHeapSize?: number;
-      jsHeapSizeLimit?: number;
-    } }).memory;
+    const memory = (
+      performance as {
+        memory?: {
+          usedJSHeapSize?: number;
+          totalJSHeapSize?: number;
+          jsHeapSizeLimit?: number;
+        };
+      }
+    ).memory;
 
     return {
       usedJSHeapSize: memory?.usedJSHeapSize,
       totalJSHeapSize: memory?.totalJSHeapSize,
-      jsHeapSizeLimit: memory?.jsHeapSizeLimit
+      jsHeapSizeLimit: memory?.jsHeapSizeLimit,
     };
   }
 
@@ -183,16 +190,20 @@ export class DevToolsService {
     }
 
     const indent = '  '.repeat(depth);
-    this.logger.debug(`${indent}Component: ${component?.constructor?.name || 'Unknown'}`, 'DevToolsService');
-    
+    this.logger.debug(
+      `${indent}Component: ${component?.constructor?.name || 'Unknown'}`,
+      'DevToolsService'
+    );
+
     // Log component properties (be careful not to log sensitive data)
     if (component && typeof component === 'object') {
-      const keys = Object.keys(component).filter(key => 
-        !key.startsWith('_') && 
-        !key.startsWith('ng') &&
-        typeof (component as Record<string, unknown>)[key] !== 'function'
+      const keys = Object.keys(component).filter(
+        (key) =>
+          !key.startsWith('_') &&
+          !key.startsWith('ng') &&
+          typeof (component as Record<string, unknown>)[key] !== 'function'
       );
-      
+
       if (keys.length > 0) {
         this.logger.debug(`${indent}  Properties: ${keys.join(', ')}`, 'DevToolsService');
       }
@@ -212,19 +223,7 @@ export class DevToolsService {
     return {
       totalRequests: 0,
       failedRequests: 0,
-      averageResponseTime: 0
+      averageResponseTime: 0,
     };
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,8 +1,8 @@
 /**
  * Public API for OSI Cards Library
- * 
+ *
  * This file exports all public APIs that can be imported by other Angular projects.
- * 
+ *
  * @example
  * ```typescript
  * import { AICardRendererComponent, CardDataService } from 'osi-cards';
@@ -104,4 +104,3 @@ export * from './app/store';
 
 // Features
 export * from './app/features';
-

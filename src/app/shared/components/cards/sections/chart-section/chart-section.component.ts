@@ -14,10 +14,9 @@ type ChartField = CardField & {
   standalone: true,
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './chart-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChartSectionComponent extends BaseSectionComponent<ChartField> {
-
   private readonly palette: string[] = ['#FF7900', '#FF9A3C', '#CC5F00', '#FFB873', '#FFD8B0'];
 
   get chartType(): string {

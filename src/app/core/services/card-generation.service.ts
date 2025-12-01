@@ -1,43 +1,43 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AICardConfig, CardType } from '../../models';
 import { AppState } from '../../store/app.state';
 import * as CardActions from '../../store/cards/cards.state';
 import { ensureCardIds } from '../../shared/utils/card-utils';
-import { CardDiffUtil, CardChangeType } from '../../shared/utils/card-diff.util';
+import { CardChangeType, CardDiffUtil } from '../../shared/utils/card-diff.util';
 import { JsonProcessingService } from './json-processing.service';
 import { ValidateCardType, validateObject } from '../../shared/decorators/validation.decorator';
 
 /**
  * Card Generation Service
- * 
+ *
  * Handles card generation from JSON input, validation, and merging with existing cards.
  * Provides a clean separation of concerns for card generation logic, making it easier
  * to test and maintain.
- * 
+ *
  * Features:
  * - JSON parsing and validation
  * - Card ID generation
  * - Card merging with change detection
  * - NgRx store integration
  * - Template loading support
- * 
+ *
  * @example
  * ```typescript
  * const cardGen = inject(CardGenerationService);
- * 
+ *
  * // Generate card from JSON
  * const card = cardGen.generateCardFromJson(jsonString);
  * if (card) {
  *   cardGen.dispatchCard(card, 'content');
  * }
- * 
+ *
  * // Merge with existing card
  * const merged = cardGen.mergeCard(newCard, existingCard);
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CardGenerationService {
   private readonly store = inject(Store<AppState>);
@@ -74,7 +74,7 @@ export class CardGenerationService {
       const card: AICardConfig = {
         ...cardData,
         cardTitle: typeof cardData.cardTitle === 'string' ? cardData.cardTitle : '',
-        sections: Array.isArray(cardData.sections) ? cardData.sections : []
+        sections: Array.isArray(cardData.sections) ? cardData.sections : [],
       };
 
       // Ensure IDs exist
@@ -130,16 +130,24 @@ export class CardGenerationService {
       const validationResult = ValidateCardType();
       const validator = (validationResult as any).prototype?.constructor || validationResult;
       // Runtime validation
-      const validTypes: CardType[] = ['company', 'contact', 'opportunity', 'product', 'analytics', 'event', 'sko'];
+      const validTypes: CardType[] = [
+        'company',
+        'contact',
+        'opportunity',
+        'product',
+        'analytics',
+        'event',
+        'sko',
+      ];
       if (!validTypes.includes(cardType)) {
         throw new Error(`Invalid card type: ${cardType}`);
       }
-      
+
       // Validate variant
       if (variant < 1 || variant > 3) {
         throw new Error(`Invalid variant: ${variant}. Must be between 1 and 3`);
       }
-      
+
       this.store.dispatch(CardActions.setCardType({ cardType }));
       this.store.dispatch(CardActions.loadTemplate({ cardType, variant }));
     } catch (error) {
@@ -164,4 +172,3 @@ export class CardGenerationService {
     this.store.dispatch(CardActions.clearError());
   }
 }
-

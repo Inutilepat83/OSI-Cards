@@ -21,10 +21,7 @@ export interface PaginationResult<T> {
 /**
  * Paginate an array
  */
-export function paginate<T>(
-  items: T[],
-  options: PaginationOptions
-): PaginationResult<T> {
+export function paginate<T>(items: T[], options: PaginationOptions): PaginationResult<T> {
   const { pageSize, currentPage = 1 } = options;
   const totalItems = items.length;
   const totalPages = Math.ceil(totalItems / pageSize);
@@ -39,7 +36,7 @@ export function paginate<T>(
     currentPage,
     pageSize,
     hasNextPage: currentPage < totalPages,
-    hasPreviousPage: currentPage > 1
+    hasPreviousPage: currentPage > 1,
   };
 }
 
@@ -69,7 +66,7 @@ export class Paginator<T> {
   getCurrentPage(): PaginationResult<T> {
     return paginate(this.items, {
       pageSize: this.pageSize,
-      currentPage: this.currentPage
+      currentPage: this.currentPage,
     });
   }
 
@@ -117,5 +114,3 @@ export class Paginator<T> {
     this.currentPage = 1;
   }
 }
-
-

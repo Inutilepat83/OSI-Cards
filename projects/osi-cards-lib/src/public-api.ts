@@ -1,6 +1,6 @@
 /**
  * Public API Surface of OSI Cards Library
- * 
+ *
  * @example
  * ```typescript
  * import { AICardRendererComponent, provideOSICards } from 'osi-cards-lib';
@@ -8,9 +8,24 @@
  */
 
 // ═══════════════════════════════════════════════════════════════════════════
-// MODELS (primary source for types)
+// TYPES (Branded types, utility types, and string literals)
+// ═══════════════════════════════════════════════════════════════════════════
+export * from './lib/types';
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MODELS (Card configuration types)
 // ═══════════════════════════════════════════════════════════════════════════
 export * from './lib/models';
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CONSTANTS (Animation, layout, streaming configuration)
+// ═══════════════════════════════════════════════════════════════════════════
+export * from './lib/constants';
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FACTORIES (Card and section builders)
+// ═══════════════════════════════════════════════════════════════════════════
+export * from './lib/factories';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // DECORATORS
@@ -69,8 +84,8 @@ export * from './lib/providers';
 // ═══════════════════════════════════════════════════════════════════════════
 // THEMES (ThemePreset is re-exported from models)
 // ═══════════════════════════════════════════════════════════════════════════
-export { 
-  provideOSICardsTheme, 
+export {
+  provideOSICardsTheme,
   OSI_THEME_CONFIG,
   DEFAULT_THEME_CONFIG
 } from './lib/themes';
@@ -128,15 +143,35 @@ export { SocialMediaSectionComponent } from './lib/components/sections/social-me
 // ═══════════════════════════════════════════════════════════════════════════
 export * from './lib/directives';
 
+// ═══════════════════════════════════════════════════════════════════════════
+// INTERFACES (Plugin architecture, event middleware)
+// ═══════════════════════════════════════════════════════════════════════════
+export * from './lib/interfaces';
+
+// ═══════════════════════════════════════════════════════════════════════════
+// UTILITIES (Layout, animation, performance, accessibility)
+// ═══════════════════════════════════════════════════════════════════════════
+export * from './lib/utils';
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ERRORS
+// ═══════════════════════════════════════════════════════════════════════════
+export * from './lib/errors';
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TESTING UTILITIES
+// ═══════════════════════════════════════════════════════════════════════════
+export * from './lib/testing';
+
 /**
  * Note: For full functionality including:
  * - CardDataService and other core services
  * - NgRx store (actions, selectors, reducers, effects)
  * - Additional utilities and providers
- * 
+ *
  * Styles entry points:
  * - 'osi-cards-lib/styles/_styles.scss' (global styles - may affect host app)
  * - 'osi-cards-lib/styles/_styles-scoped.scss' (scoped styles - recommended for integration)
- * 
+ *
  * For scoped styles, wrap components in <osi-cards-container> or use class="osi-cards-container"
  */

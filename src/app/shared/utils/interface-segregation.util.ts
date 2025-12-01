@@ -33,7 +33,14 @@ export interface TrendField extends BaseField {
  * Field with status
  */
 export interface StatusField extends BaseField {
-  status?: 'completed' | 'in-progress' | 'pending' | 'cancelled' | 'active' | 'inactive' | 'warning';
+  status?:
+    | 'completed'
+    | 'in-progress'
+    | 'pending'
+    | 'cancelled'
+    | 'active'
+    | 'inactive'
+    | 'warning';
   priority?: 'high' | 'medium' | 'low';
 }
 
@@ -67,5 +74,3 @@ export interface ReferenceField extends BaseField {
     logo?: string;
   };
 }
-
-

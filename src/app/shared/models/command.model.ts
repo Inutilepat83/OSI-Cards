@@ -29,13 +29,13 @@ export interface Command {
   /**
    * Optional metadata for the command
    */
-  metadata?: CommandMetadata;
+  readonly metadata?: CommandMetadata | undefined;
 }
 
 /**
  * Command types
  */
-export type CommandType = 
+export type CommandType =
   | 'card-edit'
   | 'json-change'
   | 'section-add'
@@ -63,12 +63,16 @@ export interface CommandMetadata {
  * Generic command implementation
  */
 export class GenericCommand implements Command {
+  public readonly metadata: CommandMetadata | undefined;
+
   constructor(
     private executeFn: () => void,
     private undoFn: () => void,
     private description: string,
-    public readonly metadata?: CommandMetadata
-  ) {}
+    metadata?: CommandMetadata
+  ) {
+    this.metadata = metadata;
+  }
 
   execute(): void {
     this.executeFn();
@@ -91,13 +95,17 @@ export class GenericCommand implements Command {
  * Card edit command
  */
 export class CardEditCommand implements Command {
+  public readonly metadata: CommandMetadata | undefined;
+
   constructor(
     private cardId: string,
     private oldCard: unknown,
     private newCard: unknown,
     private updateFn: (card: unknown) => void,
-    public readonly metadata?: CommandMetadata
-  ) {}
+    metadata?: CommandMetadata
+  ) {
+    this.metadata = metadata;
+  }
 
   execute(): void {
     this.updateFn(this.newCard);
@@ -120,12 +128,16 @@ export class CardEditCommand implements Command {
  * JSON change command
  */
 export class JsonChangeCommand implements Command {
+  public readonly metadata: CommandMetadata | undefined;
+
   constructor(
     private oldJson: string,
     private newJson: string,
     private updateFn: (json: string) => void,
-    public readonly metadata?: CommandMetadata
-  ) {}
+    metadata?: CommandMetadata
+  ) {
+    this.metadata = metadata;
+  }
 
   execute(): void {
     this.updateFn(this.newJson);
@@ -143,4 +155,3 @@ export class JsonChangeCommand implements Command {
     return this.metadata?.description || 'JSON change';
   }
 }
-

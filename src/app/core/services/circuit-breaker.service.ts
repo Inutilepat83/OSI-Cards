@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable, throwError, timer, of } from 'rxjs';
-import { catchError, switchMap, retry } from 'rxjs/operators';
+import { inject, Injectable } from '@angular/core';
+import { Observable, of, throwError, timer } from 'rxjs';
+import { catchError, retry, switchMap } from 'rxjs/operators';
 import { LoggingService } from './logging.service';
 import { AppConfigService } from './app-config.service';
 
@@ -8,9 +8,9 @@ import { AppConfigService } from './app-config.service';
  * Circuit breaker states
  */
 export enum CircuitState {
-  CLOSED = 'CLOSED',      // Normal operation
-  OPEN = 'OPEN',          // Failing, reject requests
-  HALF_OPEN = 'HALF_OPEN' // Testing if service recovered
+  CLOSED = 'CLOSED', // Normal operation
+  OPEN = 'OPEN', // Failing, reject requests
+  HALF_OPEN = 'HALF_OPEN', // Testing if service recovered
 }
 
 /**
@@ -42,22 +42,22 @@ export interface CircuitBreakerStats {
 
 /**
  * Circuit Breaker Service
- * 
+ *
  * Implements circuit breaker pattern to prevent cascading failures.
  * Protects against repeated failures by temporarily stopping requests
  * to failing services and allowing them to recover.
- * 
+ *
  * Features:
  * - Automatic failure detection
  * - Configurable thresholds
  * - Automatic recovery attempts
  * - Statistics tracking
  * - Fallback responses
- * 
+ *
  * @example
  * ```typescript
  * const circuitBreaker = inject(CircuitBreakerService);
- * 
+ *
  * circuitBreaker.execute('api-service', () => {
  *   return this.http.get('/api/data');
  * }).subscribe({
@@ -67,7 +67,7 @@ export interface CircuitBreakerStats {
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CircuitBreakerService {
   private readonly logger = inject(LoggingService);
@@ -88,38 +88,40 @@ export class CircuitBreakerService {
     if (circuit.state === CircuitState.OPEN) {
       if (circuit.shouldAttemptReset()) {
         circuit.state = CircuitState.HALF_OPEN;
-        this.logger.info(`Circuit ${circuitName} entering HALF_OPEN state`, 'CircuitBreakerService');
+        this.logger.info(
+          `Circuit ${circuitName} entering HALF_OPEN state`,
+          'CircuitBreakerService'
+        );
       } else {
         const error = new Error(`Circuit breaker ${circuitName} is OPEN`);
-        this.logger.warn(`Circuit ${circuitName} is OPEN, rejecting request`, 'CircuitBreakerService');
-        
+        this.logger.warn(
+          `Circuit ${circuitName} is OPEN, rejecting request`,
+          'CircuitBreakerService'
+        );
+
         if (fallback) {
           const fallbackResult = fallback();
           return fallbackResult instanceof Observable ? fallbackResult : of(fallbackResult);
         }
-        
+
         return throwError(() => error);
       }
     }
 
     // Execute operation
     return operation().pipe(
-      switchMap(result => {
+      switchMap((result) => {
         circuit.recordSuccess();
         return of(result);
       }),
-      catchError(error => {
+      catchError((error) => {
         circuit.recordFailure();
-        
-        this.logger.error(
-          `Circuit ${circuitName} recorded failure`,
-          'CircuitBreakerService',
-          {
-            state: circuit.state,
-            failures: circuit.failures,
-            threshold: circuit.config.failureThreshold || 5
-          }
-        );
+
+        this.logger.error(`Circuit ${circuitName} recorded failure`, 'CircuitBreakerService', {
+          state: circuit.state,
+          failures: circuit.failures,
+          threshold: circuit.config.failureThreshold || 5,
+        });
 
         // If circuit opened, use fallback
         if (circuit.state === CircuitState.OPEN && fallback) {
@@ -143,7 +145,7 @@ export class CircuitBreakerService {
         failureThreshold: 5,
         timeout: 60000, // 1 minute
         successThreshold: 2,
-        monitoringWindow: 60000 // 1 minute
+        monitoringWindow: 60000, // 1 minute
       };
       this.circuits.set(name, new CircuitBreaker(defaultConfig, this.logger));
     }
@@ -164,7 +166,7 @@ export class CircuitBreakerService {
       failures: circuit.failures,
       successes: circuit.successes,
       lastFailureTime: circuit.lastFailureTime,
-      lastSuccessTime: circuit.lastSuccessTime
+      lastSuccessTime: circuit.lastSuccessTime,
     };
   }
 
@@ -208,7 +210,7 @@ class CircuitBreaker {
 
   recordSuccess(): void {
     this.lastSuccessTime = Date.now();
-    
+
     if (this.state === CircuitState.HALF_OPEN) {
       this.successes++;
       if (this.successes >= (this.config.successThreshold || 2)) {
@@ -232,12 +234,12 @@ class CircuitBreaker {
   recordFailure(): void {
     this.lastFailureTime = Date.now();
     const now = Date.now();
-    
+
     // Clean old failures from window
     this.failureWindow = this.failureWindow.filter(
-      time => now - time < (this.config.monitoringWindow || 60000)
+      (time) => now - time < (this.config.monitoringWindow || 60000)
     );
-    
+
     // Add current failure
     this.failureWindow.push(now);
     this.failures = this.failureWindow.length;
@@ -251,7 +253,7 @@ class CircuitBreaker {
           'CircuitBreaker',
           {
             threshold: this.config.failureThreshold,
-            failures: this.failures
+            failures: this.failures,
           }
         );
       }
@@ -280,4 +282,3 @@ class CircuitBreaker {
     this.lastSuccessTime = undefined;
   }
 }
-

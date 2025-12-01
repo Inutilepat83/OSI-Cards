@@ -3,10 +3,10 @@
 
 /**
  * URL validation and sanitization utilities
- * 
+ *
  * Provides comprehensive URL validation and sanitization for external links,
  * ensuring security and preventing malicious URL attacks.
- * 
+ *
  * @example
  * ```typescript
  * const safeUrl = UrlUtil.validateAndSanitizeUrl(userInput);
@@ -28,13 +28,13 @@ export class UrlUtil {
 
   /**
    * Validate and sanitize a URL for external use
-   * 
+   *
    * Performs comprehensive validation:
    * - Checks protocol is allowed (http, https, mailto)
    * - Validates URL format
    * - Prevents javascript: and data: protocols
    * - Sanitizes query parameters
-   * 
+   *
    * @param url - URL to validate and sanitize
    * @param allowedProtocols - Optional custom allowed protocols (defaults to ALLOWED_PROTOCOLS)
    * @returns Sanitized URL if valid, null otherwise
@@ -54,13 +54,7 @@ export class UrlUtil {
     }
 
     // Check for dangerous patterns
-    const dangerousPatterns = [
-      /javascript:/i,
-      /data:/i,
-      /vbscript:/i,
-      /file:/i,
-      /about:/i
-    ];
+    const dangerousPatterns = [/javascript:/i, /data:/i, /vbscript:/i, /file:/i, /about:/i];
 
     for (const pattern of dangerousPatterns) {
       if (pattern.test(trimmedUrl)) {
@@ -90,11 +84,11 @@ export class UrlUtil {
           /^127\./,
           /^192\.168\./,
           /^10\./,
-          /^172\.(1[6-9]|2[0-9]|3[01])\./
+          /^172\.(1[6-9]|2[0-9]|3[01])\./,
         ];
 
         // Allow localhost in development, but log it
-        if (localhostPatterns.some(pattern => pattern.test(hostname))) {
+        if (localhostPatterns.some((pattern) => pattern.test(hostname))) {
           // Note: Cannot use LoggingService here as this is a static utility class without DI context
           // In production, you might want to reject these
           // return null;
@@ -120,7 +114,7 @@ export class UrlUtil {
 
   /**
    * Validate and sanitize URL for website actions (http/https only)
-   * 
+   *
    * @param url - URL to validate
    * @returns Sanitized URL if valid, null otherwise
    */
@@ -130,7 +124,7 @@ export class UrlUtil {
 
   /**
    * Validate hostname format
-   * 
+   *
    * @param hostname - Hostname to validate
    * @returns true if hostname is valid
    */
@@ -147,13 +141,14 @@ export class UrlUtil {
     }
 
     // Must contain only valid characters (letters, numbers, dots, hyphens)
-    const hostnamePattern = /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/i;
+    const hostnamePattern =
+      /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/i;
     return hostnamePattern.test(hostname);
   }
 
   /**
    * Check if URL is external (not same origin)
-   * 
+   *
    * @param url - URL to check
    * @returns true if URL is external
    */
@@ -168,10 +163,10 @@ export class UrlUtil {
 
   /**
    * Get safe URL for use in href attributes
-   * 
+   *
    * Returns null for external URLs that should use rel="noopener noreferrer"
    * or for invalid URLs
-   * 
+   *
    * @param url - URL to process
    * @returns Safe URL string or null
    */

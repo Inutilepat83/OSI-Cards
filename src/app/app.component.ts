@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { DOCUMENT, CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { ErrorDisplayComponent } from './shared/components/error-display/error-display.component';
 import { PerformanceService } from './core';
-import { VERSION_INFO, getVersionString } from '../version';
+import { getVersionString, VERSION_INFO } from '../version';
 
 @Component({
   selector: 'app-root',
@@ -14,32 +14,33 @@ import { VERSION_INFO, getVersionString } from '../version';
       <div class="app-container">
         <router-outlet></router-outlet>
       </div>
-      
+
       <app-error-display></app-error-display>
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
+  styles: [
+    `
+      :host {
+        display: block;
+      }
 
-    .app-root {
-      min-height: 100vh;
-      width: 100%;
-      background: var(--background);
-      color: var(--foreground);
-      display: flex;
-      flex-direction: column;
-      /* No transition for instant theme switching */
-    }
+      .app-root {
+        min-height: 100vh;
+        width: 100%;
+        background: var(--background);
+        color: var(--foreground);
+        display: flex;
+        flex-direction: column;
+        /* No transition for instant theme switching */
+      }
 
-
-    .app-container {
-      flex: 1;
-      background: var(--background);
-      color: var(--foreground);
-    }
-  `]
+      .app-container {
+        flex: 1;
+        background: var(--background);
+        color: var(--foreground);
+      }
+    `,
+  ],
 })
 export class AppComponent implements OnInit, OnDestroy {
   theme: 'day' | 'night' = 'night';
@@ -54,14 +55,19 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     }
     this.applyTheme();
-    
+
     // Initialize performance monitoring
     this.performanceService.initialize();
-    
+
     // Log version info in development
     if (typeof console !== 'undefined') {
-      console.log(`%cOSI Cards ${getVersionString()}`, 'color: #1976d2; font-weight: bold; font-size: 14px;');
-      console.log(`Build: ${VERSION_INFO.buildHash} | Branch: ${VERSION_INFO.buildBranch} | Date: ${new Date(VERSION_INFO.buildDate).toLocaleString()}`);
+      console.log(
+        `%cOSI Cards ${getVersionString()}`,
+        'color: #1976d2; font-weight: bold; font-size: 14px;'
+      );
+      console.log(
+        `Build: ${VERSION_INFO.buildHash} | Branch: ${VERSION_INFO.buildBranch} | Date: ${new Date(VERSION_INFO.buildDate).toLocaleString()}`
+      );
     }
   }
 

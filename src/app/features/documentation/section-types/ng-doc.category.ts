@@ -10,11 +10,7 @@ const SectionTypesCategory: NgDocCategory = {
   expandable: true,
   expanded: false,
   order: 3,
-  category: DocsCategory
+  category: DocsCategory,
 };
 
 export default SectionTypesCategory;
-
-
-
-

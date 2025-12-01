@@ -9,7 +9,7 @@ describe('CardTypeSelectorComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CardTypeSelectorComponent]
+      imports: [CardTypeSelectorComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CardTypeSelectorComponent);
@@ -108,7 +108,7 @@ describe('CardTypeSelectorComponent', () => {
       fixture.detectChanges();
 
       const buttons = fixture.debugElement.queryAll(By.css('button'));
-      buttons.forEach(button => {
+      buttons.forEach((button) => {
         expect(button.nativeElement.disabled).toBe(true);
       });
     });
@@ -119,7 +119,7 @@ describe('CardTypeSelectorComponent', () => {
       fixture.detectChanges();
 
       const buttons = fixture.debugElement.queryAll(By.css('button'));
-      buttons.forEach(button => {
+      buttons.forEach((button) => {
         expect(button.nativeElement.disabled).toBe(false);
       });
     });
@@ -140,16 +140,3 @@ describe('CardTypeSelectorComponent', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -3,7 +3,7 @@
  * Provides property decorators for validating card inputs, section types, and field values
  */
 
-import { CardType, CardSection, CardField, CardItem } from '../../models';
+import { CardField, CardItem, CardSection, CardType } from '../../models';
 
 /**
  * Validation error
@@ -48,7 +48,7 @@ const validationMetadata = new WeakMap<object, Map<string, ValidationMetadata>>(
 
 /**
  * Validate decorator - adds runtime validation to a property
- * 
+ *
  * @example
  * ```typescript
  * class MyComponent {
@@ -72,7 +72,7 @@ export function Validate<T = unknown>(validator: ValidatorFn<T>) {
 
     metadataMap.set(propertyKey, {
       validator: validator as ValidatorFn,
-      propertyKey
+      propertyKey,
     });
 
     // Create getter/setter with validation
@@ -98,7 +98,7 @@ export function Validate<T = unknown>(validator: ValidatorFn<T>) {
         (this as any)[privateKey] = value;
       },
       enumerable: true,
-      configurable: true
+      configurable: true,
     });
   };
 }
@@ -108,12 +108,20 @@ export function Validate<T = unknown>(validator: ValidatorFn<T>) {
  */
 export function ValidateCardType() {
   return Validate<CardType>((value) => {
-    const validTypes: CardType[] = ['company', 'contact', 'opportunity', 'product', 'analytics', 'event', 'sko'];
+    const validTypes: CardType[] = [
+      'company',
+      'contact',
+      'opportunity',
+      'product',
+      'analytics',
+      'event',
+      'sko',
+    ];
     if (!validTypes.includes(value)) {
       return {
         isValid: false,
         error: `Invalid card type: ${value}. Must be one of: ${validTypes.join(', ')}`,
-        suggestions: validTypes.filter(t => t.startsWith(String(value).charAt(0)))
+        suggestions: validTypes.filter((t) => t.startsWith(String(value).charAt(0))),
       };
     }
     return { isValid: true };
@@ -126,17 +134,37 @@ export function ValidateCardType() {
 export function ValidateSectionType() {
   return Validate<string>((value) => {
     const validTypes = [
-      'info', 'overview', 'analytics', 'news', 'social-media', 'financials',
-      'list', 'table', 'event', 'timeline', 'product', 'solutions',
-      'contact-card', 'network-card', 'map', 'locations', 'chart',
-      'quotation', 'quote', 'text-reference', 'reference', 'text-ref',
-      'brand-colors', 'brands', 'colors'
+      'info',
+      'overview',
+      'analytics',
+      'news',
+      'social-media',
+      'financials',
+      'list',
+      'table',
+      'event',
+      'timeline',
+      'product',
+      'solutions',
+      'contact-card',
+      'network-card',
+      'map',
+      'locations',
+      'chart',
+      'quotation',
+      'quote',
+      'text-reference',
+      'reference',
+      'text-ref',
+      'brand-colors',
+      'brands',
+      'colors',
     ];
     if (!validTypes.includes(value)) {
       return {
         isValid: false,
         error: `Invalid section type: ${value}`,
-        suggestions: validTypes.filter(t => t.includes(value) || value.includes(t))
+        suggestions: validTypes.filter((t) => t.includes(value) || value.includes(t)),
       };
     }
     return { isValid: true };
@@ -274,29 +302,13 @@ export function validateObject(target: object): ValidationResult[] {
   for (const [propertyKey, metadata] of metadataMap.entries()) {
     const value = (target as any)[propertyKey];
     const result = metadata.validator(value);
+    const errorMsg = result.error ? `${propertyKey}: ${result.error}` : undefined;
     results.push({
-      ...result,
-      error: result.error ? `${propertyKey}: ${result.error}` : undefined
+      isValid: result.isValid,
+      ...(errorMsg !== undefined && { error: errorMsg }),
+      ...(result.suggestions && { suggestions: result.suggestions }),
     });
   }
 
   return results;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

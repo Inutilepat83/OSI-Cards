@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
@@ -20,22 +20,25 @@ import { CardValidationService } from '../../services/card-validation.service';
   template: `
     <div class="import-export-container">
       <div class="tabs">
-        <button 
+        <button
           class="tab-button"
           [class.active]="activeTab === 'import'"
-          (click)="activeTab = 'import'">
+          (click)="activeTab = 'import'"
+        >
           Import Cards
         </button>
-        <button 
+        <button
           class="tab-button"
           [class.active]="activeTab === 'export'"
-          (click)="activeTab = 'export'">
+          (click)="activeTab = 'export'"
+        >
           Export Cards
         </button>
-        <button 
+        <button
           class="tab-button"
           [class.active]="activeTab === 'analyze'"
-          (click)="activeTab = 'analyze'">
+          (click)="activeTab = 'analyze'"
+        >
           Analyze
         </button>
       </div>
@@ -43,20 +46,19 @@ import { CardValidationService } from '../../services/card-validation.service';
       <!-- Import Tab -->
       <div *ngIf="activeTab === 'import'" class="tab-content">
         <h3>Import JSON Cards</h3>
-        
+
         <div class="import-section">
           <div class="file-input-wrapper">
             <label>Select JSON File(s)</label>
-            <input 
-              type="file" 
+            <input
+              type="file"
               #fileInput
               (change)="onFileSelected($event)"
               accept=".json"
               multiple
-              class="file-input">
-            <button (click)="fileInput.click()" class="btn btn-primary">
-              Choose Files
-            </button>
+              class="file-input"
+            />
+            <button (click)="fileInput.click()" class="btn btn-primary">Choose Files</button>
           </div>
 
           <div *ngIf="selectedFiles.length > 0" class="selected-files">
@@ -69,15 +71,14 @@ import { CardValidationService } from '../../services/card-validation.service';
           </div>
 
           <div class="import-actions">
-            <button 
-              (click)="importFiles()" 
+            <button
+              (click)="importFiles()"
               [disabled]="selectedFiles.length === 0"
-              class="btn btn-success">
+              class="btn btn-success"
+            >
               Import Cards
             </button>
-            <button 
-              (click)="clearSelectedFiles()"
-              class="btn btn-secondary">
+            <button (click)="clearSelectedFiles()" class="btn btn-secondary">
               Clear Selection
             </button>
           </div>
@@ -107,19 +108,19 @@ import { CardValidationService } from '../../services/card-validation.service';
       <!-- Export Tab -->
       <div *ngIf="activeTab === 'export'" class="tab-content">
         <h3>Export JSON Cards</h3>
-        
+
         <div class="export-section">
           <div class="export-options">
             <label>
-              <input type="radio" name="exportMode" value="all" [(ngModel)]="exportMode">
+              <input type="radio" name="exportMode" value="all" [(ngModel)]="exportMode" />
               Export All Stored Cards
             </label>
             <label>
-              <input type="radio" name="exportMode" value="single" [(ngModel)]="exportMode">
+              <input type="radio" name="exportMode" value="single" [(ngModel)]="exportMode" />
               Export Single Card
             </label>
             <label>
-              <input type="radio" name="exportMode" value="filtered" [(ngModel)]="exportMode">
+              <input type="radio" name="exportMode" value="filtered" [(ngModel)]="exportMode" />
               Export by Type
             </label>
           </div>
@@ -147,20 +148,17 @@ import { CardValidationService } from '../../services/card-validation.service';
           <div class="export-format-options">
             <label>Export Format:</label>
             <label>
-              <input type="radio" name="format" value="json" [(ngModel)]="exportFormat">
+              <input type="radio" name="format" value="json" [(ngModel)]="exportFormat" />
               JSON (single file)
             </label>
             <label>
-              <input type="radio" name="format" value="individual" [(ngModel)]="exportFormat">
+              <input type="radio" name="format" value="individual" [(ngModel)]="exportFormat" />
               Individual JSON Files
             </label>
           </div>
 
           <div class="export-actions">
-            <button 
-              (click)="exportCards()" 
-              [disabled]="!canExport()"
-              class="btn btn-success">
+            <button (click)="exportCards()" [disabled]="!canExport()" class="btn btn-success">
               Export Cards
             </button>
           </div>
@@ -175,11 +173,9 @@ import { CardValidationService } from '../../services/card-validation.service';
       <!-- Analyze Tab -->
       <div *ngIf="activeTab === 'analyze'" class="tab-content">
         <h3>Analyze Stored Cards</h3>
-        
+
         <div class="analyze-section">
-          <button (click)="analyzeCards()" class="btn btn-primary">
-            Analyze Collection
-          </button>
+          <button (click)="analyzeCards()" class="btn btn-primary">Analyze Collection</button>
 
           <div *ngIf="analysisResult" class="analysis-results">
             <h4>Collection Statistics</h4>
@@ -228,252 +224,258 @@ import { CardValidationService } from '../../services/card-validation.service';
       </div>
     </div>
   `,
-  styles: [`
-    .import-export-container {
-      padding: 20px;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      border-bottom: 2px solid #e0e0e0;
-    }
-
-    .tab-button {
-      padding: 10px 20px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      color: #666;
-      border-bottom: 3px solid transparent;
-      transition: all 0.3s;
-
-      &.active {
-        color: #1976d2;
-        border-bottom-color: #1976d2;
+  styles: [
+    `
+      .import-export-container {
+        padding: 20px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        max-width: 1000px;
+        margin: 0 auto;
       }
 
-      &:hover:not(.active) {
+      .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #e0e0e0;
+      }
+
+      .tab-button {
+        padding: 10px 20px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        color: #666;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s;
+
+        &.active {
+          color: #1976d2;
+          border-bottom-color: #1976d2;
+        }
+
+        &:hover:not(.active) {
+          color: #333;
+        }
+      }
+
+      .tab-content {
+        padding: 20px;
+        background: #f9f9f9;
+        border-radius: 4px;
+      }
+
+      .file-input-wrapper {
+        margin-bottom: 20px;
+      }
+
+      .file-input {
+        display: none;
+      }
+
+      .selected-files {
+        margin: 15px 0;
+        padding: 10px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+
+      .selected-files ul {
+        margin: 10px 0;
+        padding-left: 20px;
+      }
+
+      .import-actions,
+      .export-actions {
+        display: flex;
+        gap: 10px;
+        margin: 15px 0;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s;
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+
+      .btn-primary {
+        background: #1976d2;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background: #1565c0;
+        }
+      }
+
+      .btn-success {
+        background: #388e3c;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background: #2e7d32;
+        }
+      }
+
+      .btn-secondary {
+        background: #757575;
+        color: white;
+
+        &:hover {
+          background: #616161;
+        }
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      .export-options {
+        margin-bottom: 15px;
+      }
+
+      .export-options label {
+        display: block;
+        margin: 8px 0;
+        cursor: pointer;
+      }
+
+      .export-options-detail {
+        margin: 15px 0;
+        padding: 10px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+
+      .export-format-options {
+        margin: 15px 0;
+        padding: 10px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+
+      .export-format-options label {
+        display: inline-block;
+        margin-right: 20px;
+        cursor: pointer;
+      }
+
+      .result-message {
+        margin: 15px 0;
+        padding: 12px;
+        border-radius: 4px;
+        background: #c8e6c9;
+        border: 1px solid #4caf50;
+        color: #2e7d32;
+
+        &.error {
+          background: #ffcdd2;
+          border-color: #f44336;
+          color: #c62828;
+        }
+      }
+
+      .stats-section {
+        margin-top: 20px;
+        padding: 15px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+
+      .analysis-results {
+        margin-top: 20px;
+        padding: 15px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+
+      .analysis-results dl {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
+      .analysis-results dt {
+        font-weight: 600;
         color: #333;
       }
-    }
 
-    .tab-content {
-      padding: 20px;
-      background: #f9f9f9;
-      border-radius: 4px;
-    }
-
-    .file-input-wrapper {
-      margin-bottom: 20px;
-    }
-
-    .file-input {
-      display: none;
-    }
-
-    .selected-files {
-      margin: 15px 0;
-      padding: 10px;
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-
-    .selected-files ul {
-      margin: 10px 0;
-      padding-left: 20px;
-    }
-
-    .import-actions, .export-actions {
-      display: flex;
-      gap: 10px;
-      margin: 15px 0;
-    }
-
-    .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: all 0.3s;
-
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
+      .analysis-results dd {
+        color: #666;
+        margin: 0;
       }
-    }
 
-    .btn-primary {
-      background: #1976d2;
-      color: white;
-
-      &:hover:not(:disabled) {
-        background: #1565c0;
+      .warnings,
+      .issues {
+        margin-top: 15px;
+        padding: 12px;
+        border-radius: 4px;
+        background: #fff3cd;
+        border: 1px solid #ffc107;
       }
-    }
 
-    .btn-success {
-      background: #388e3c;
-      color: white;
-
-      &:hover:not(:disabled) {
-        background: #2e7d32;
+      .warnings h4,
+      .issues h4 {
+        margin-top: 0;
+        color: #856404;
       }
-    }
 
-    .btn-secondary {
-      background: #757575;
-      color: white;
-
-      &:hover {
-        background: #616161;
+      .warnings ul,
+      .issues ul {
+        margin: 10px 0;
+        padding-left: 20px;
       }
-    }
 
-    .form-control {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-
-    .export-options {
-      margin-bottom: 15px;
-    }
-
-    .export-options label {
-      display: block;
-      margin: 8px 0;
-      cursor: pointer;
-    }
-
-    .export-options-detail {
-      margin: 15px 0;
-      padding: 10px;
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-
-    .export-format-options {
-      margin: 15px 0;
-      padding: 10px;
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-
-    .export-format-options label {
-      display: inline-block;
-      margin-right: 20px;
-      cursor: pointer;
-    }
-
-    .result-message {
-      margin: 15px 0;
-      padding: 12px;
-      border-radius: 4px;
-      background: #c8e6c9;
-      border: 1px solid #4caf50;
-      color: #2e7d32;
-
-      &.error {
+      .error-banner {
+        margin-top: 20px;
+        padding: 12px;
         background: #ffcdd2;
-        border-color: #f44336;
+        border: 1px solid #f44336;
+        border-radius: 4px;
         color: #c62828;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
-    }
 
-    .stats-section {
-      margin-top: 20px;
-      padding: 15px;
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
+      .close-btn {
+        background: none;
+        border: none;
+        color: #c62828;
+        cursor: pointer;
+        font-size: 20px;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+      }
 
-    .analysis-results {
-      margin-top: 20px;
-      padding: 15px;
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-
-    .analysis-results dl {
-      display: grid;
-      grid-template-columns: 200px 1fr;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-
-    .analysis-results dt {
-      font-weight: 600;
-      color: #333;
-    }
-
-    .analysis-results dd {
-      color: #666;
-      margin: 0;
-    }
-
-    .warnings, .issues {
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 4px;
-      background: #fff3cd;
-      border: 1px solid #ffc107;
-    }
-
-    .warnings h4, .issues h4 {
-      margin-top: 0;
-      color: #856404;
-    }
-
-    .warnings ul, .issues ul {
-      margin: 10px 0;
-      padding-left: 20px;
-    }
-
-    .error-banner {
-      margin-top: 20px;
-      padding: 12px;
-      background: #ffcdd2;
-      border: 1px solid #f44336;
-      border-radius: 4px;
-      color: #c62828;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .close-btn {
-      background: none;
-      border: none;
-      color: #c62828;
-      cursor: pointer;
-      font-size: 20px;
-      padding: 0;
-      width: 24px;
-      height: 24px;
-    }
-
-    .details {
-      margin-top: 8px;
-      font-size: 12px;
-      opacity: 0.9;
-    }
-  `]
+      .details {
+        margin-top: 8px;
+        font-size: 12px;
+        opacity: 0.9;
+      }
+    `,
+  ],
 })
 export class CardImportExportComponent implements OnInit, OnDestroy {
   activeTab: 'import' | 'export' | 'analyze' = 'import';
@@ -524,7 +526,7 @@ export class CardImportExportComponent implements OnInit, OnDestroy {
         },
         error: (error: any) => {
           this.globalError = `Failed to load stored cards: ${error}`;
-        }
+        },
       });
   }
 
@@ -540,15 +542,18 @@ export class CardImportExportComponent implements OnInit, OnDestroy {
   }
 
   importFiles(): void {
-    if (this.selectedFiles.length === 0) return;
+    if (this.selectedFiles.length === 0) {
+      return;
+    }
 
-    const readers: Promise<string>[] = this.selectedFiles.map(file =>
-      new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = () => reject(reader.error);
-        reader.readAsText(file);
-      })
+    const readers: Promise<string>[] = this.selectedFiles.map(
+      (file) =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = () => reject(reader.error);
+          reader.readAsText(file);
+        })
     );
 
     Promise.all(readers)
@@ -563,24 +568,27 @@ export class CardImportExportComponent implements OnInit, OnDestroy {
             .subscribe({
               error: (error: any) => {
                 this.globalError = `Failed to save card: ${error}`;
-              }
+              },
             });
         });
 
         this.importStats = {
           valid: result.valid.length,
           invalid: result.invalid.length,
-          successRate: result.successRate
+          successRate: result.successRate,
         };
 
-        this.importResult = {
+        const importResultBase = {
           success: result.invalid.length === 0,
           message: `Imported ${result.valid.length} cards${result.invalid.length > 0 ? ` (${result.invalid.length} failed)` : ''}`,
-          details:
-            result.invalid.length > 0
-              ? `Failed cards: ${result.invalid.map((i: any) => `#${i.index + 1}`).join(', ')}`
-              : undefined
         };
+        this.importResult =
+          result.invalid.length > 0
+            ? {
+                ...importResultBase,
+                details: `Failed cards: ${result.invalid.map((i: any) => `#${i.index + 1}`).join(', ')}`,
+              }
+            : importResultBase;
 
         this.loadStoredCards();
         this.clearSelectedFiles();
@@ -591,8 +599,12 @@ export class CardImportExportComponent implements OnInit, OnDestroy {
   }
 
   canExport(): boolean {
-    if (this.storedCards.length === 0) return false;
-    if (this.exportMode === 'single' && !this.selectedCardId) return false;
+    if (this.storedCards.length === 0) {
+      return false;
+    }
+    if (this.exportMode === 'single' && !this.selectedCardId) {
+      return false;
+    }
     return true;
   }
 
@@ -603,7 +615,9 @@ export class CardImportExportComponent implements OnInit, OnDestroy {
       cardsToExport = this.storedCards;
     } else if (this.exportMode === 'single') {
       const card = this.storedCards.find((c) => c.id === this.selectedCardId);
-      if (card) cardsToExport = [card];
+      if (card) {
+        cardsToExport = [card];
+      }
     } else if (this.exportMode === 'filtered') {
       cardsToExport = this.selectedType
         ? this.storedCards.filter((c) => c.cardType === this.selectedType)
@@ -635,7 +649,7 @@ export class CardImportExportComponent implements OnInit, OnDestroy {
 
       this.exportResult = {
         success: true,
-        message: `Exported ${cardsToExport.length} card(s) successfully`
+        message: `Exported ${cardsToExport.length} card(s) successfully`,
       };
     } catch (error) {
       this.exportResult = { success: false, message: `Export failed: ${error}` };
@@ -644,13 +658,15 @@ export class CardImportExportComponent implements OnInit, OnDestroy {
 
   analyzeCards(): void {
     const jsonStrings = this.storedCards.map((card) => JSON.stringify(card));
-    this.analysisResult = BatchConversionUtil.analyzeCollection(jsonStrings, this.validationService);
+    this.analysisResult = BatchConversionUtil.analyzeCollection(
+      jsonStrings,
+      this.validationService
+    );
 
     this.typeEntries = Object.entries(this.analysisResult.stats.byType).map(([key, value]) => ({
       key,
-      value: value as number
+      value: value as number,
     }));
-
   }
 
   clearError(): void {

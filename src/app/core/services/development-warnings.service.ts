@@ -1,21 +1,21 @@
-import { Injectable, inject, isDevMode } from '@angular/core';
+import { inject, Injectable, isDevMode } from '@angular/core';
 import { LoggingService } from './logging.service';
 import { AppConfigService } from './app-config.service';
-import { AICardConfig, CardSection, CardAction } from '../../models';
+import { AICardConfig, CardAction, CardSection } from '../../models';
 
 /**
  * Development Warnings Service
- * 
+ *
  * Provides helpful warnings in development mode for common mistakes and anti-patterns.
  * These warnings help developers catch issues early without breaking production builds.
- * 
+ *
  * Features:
  * - Missing required fields validation
  * - Invalid section types detection
  * - Performance anti-pattern warnings
  * - Deprecated API usage warnings
  * - Configuration validation
- * 
+ *
  * @example
  * ```typescript
  * const warnings = inject(DevelopmentWarningsService);
@@ -23,7 +23,7 @@ import { AICardConfig, CardSection, CardAction } from '../../models';
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DevelopmentWarningsService {
   private readonly logger = inject(LoggingService);
@@ -110,16 +110,31 @@ export class DevelopmentWarningsService {
 
     // Check invalid section types
     const validTypes = [
-      'info', 'analytics', 'overview', 'list', 'event', 'product', 'solutions',
-      'contact-card', 'network-card', 'map', 'chart', 'financials', 'news',
-      'social-media', 'quotation', 'text-reference', 'brand-colors', 'fallback'
+      'info',
+      'analytics',
+      'overview',
+      'list',
+      'event',
+      'product',
+      'solutions',
+      'contact-card',
+      'network-card',
+      'map',
+      'chart',
+      'financials',
+      'news',
+      'social-media',
+      'quotation',
+      'text-reference',
+      'brand-colors',
+      'fallback',
     ];
 
     if (section.type && !validTypes.includes(section.type)) {
       issues.push(
         `${sectionKey}: Invalid section type '${section.type}'. ` +
-        `Valid types: ${validTypes.join(', ')}. ` +
-        `See: https://github.com/Inutilepat83/OSI-Cards/blob/main/README.md#section-types-catalog`
+          `Valid types: ${validTypes.join(', ')}. ` +
+          `See: https://github.com/Inutilepat83/OSI-Cards/blob/main/README.md#section-types-catalog`
       );
     }
 
@@ -127,7 +142,7 @@ export class DevelopmentWarningsService {
     if (section.fields && section.items) {
       issues.push(
         `${sectionKey}: Section has both 'fields' and 'items'. ` +
-        `Use 'fields' for key-value pairs or 'items' for lists, not both.`
+          `Use 'fields' for key-value pairs or 'items' for lists, not both.`
       );
     }
 
@@ -135,7 +150,7 @@ export class DevelopmentWarningsService {
     if (section.fields && section.fields.length > this.config.CARD_LIMITS.MAX_FIELDS_PER_SECTION) {
       issues.push(
         `${sectionKey}: Section has ${section.fields.length} fields, ` +
-        `exceeding limit of ${this.config.CARD_LIMITS.MAX_FIELDS_PER_SECTION}`
+          `exceeding limit of ${this.config.CARD_LIMITS.MAX_FIELDS_PER_SECTION}`
       );
     }
 
@@ -159,7 +174,7 @@ export class DevelopmentWarningsService {
       if (!action.email) {
         issues.push(
           `${actionKey}: Mail action requires 'email' configuration. ` +
-          `See: https://github.com/Inutilepat83/OSI-Cards/blob/main/README.md#card-actions`
+            `See: https://github.com/Inutilepat83/OSI-Cards/blob/main/README.md#card-actions`
         );
       } else {
         if (!action.email.subject) {
@@ -178,13 +193,9 @@ export class DevelopmentWarningsService {
     if (action.type === 'website') {
       const url = action.url || action.action;
       if (!url || url === '#') {
-        issues.push(
-          `${actionKey}: Website action requires valid 'url' or 'action' property`
-        );
+        issues.push(`${actionKey}: Website action requires valid 'url' or 'action' property`);
       } else if (!url.startsWith('http://') && !url.startsWith('https://')) {
-        issues.push(
-          `${actionKey}: Website URL should start with 'http://' or 'https://'`
-        );
+        issues.push(`${actionKey}: Website URL should start with 'http://' or 'https://'`);
       }
     }
 
@@ -231,7 +242,7 @@ export class DevelopmentWarningsService {
         {
           replacement,
           migrationGuide: `https://github.com/Inutilepat83/OSI-Cards/blob/main/docs/MIGRATION_V${version}.md`,
-          context
+          context,
         }
       );
       this.warnedIssues.add(warningKey);
@@ -253,7 +264,7 @@ export class DevelopmentWarningsService {
         'DevelopmentWarningsService',
         {
           suggestion: 'Add changeDetection: ChangeDetectionStrategy.OnPush to improve performance',
-          component: componentName
+          component: componentName,
         }
       );
       this.warnedIssues.add(warningKey);
@@ -267,4 +278,3 @@ export class DevelopmentWarningsService {
     this.warnedIssues.clear();
   }
 }
-

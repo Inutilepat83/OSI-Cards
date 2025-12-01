@@ -1,19 +1,19 @@
 /**
  * Streaming State Machine
- * 
+ *
  * Formal state machine implementation for streaming sessions.
  * Manages state transitions, guards, and actions.
- * 
+ *
  * @since 2.0.0
  */
 
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, map, distinctUntilChanged } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 
 /**
  * All possible streaming states
  */
-export type StreamingState = 
+export type StreamingState =
   | 'idle'
   | 'connecting'
   | 'thinking'
@@ -28,7 +28,7 @@ export type StreamingState =
 /**
  * All possible streaming events
  */
-export type StreamingEvent = 
+export type StreamingEvent =
   | 'CONNECT'
   | 'CONNECTED'
   | 'CONNECTION_FAILED'
@@ -126,19 +126,19 @@ export interface StateChange {
 const DEFAULT_TRANSITIONS: StateTransition[] = [
   // From idle
   { from: 'idle', to: 'connecting', event: 'CONNECT' },
-  
+
   // From connecting
   { from: 'connecting', to: 'thinking', event: 'CONNECTED' },
   { from: 'connecting', to: 'error', event: 'CONNECTION_FAILED' },
   { from: 'connecting', to: 'idle', event: 'ABORT' },
   { from: 'connecting', to: 'reconnecting', event: 'RECONNECT' },
-  
+
   // From thinking
   { from: 'thinking', to: 'streaming', event: 'START_STREAMING' },
   { from: 'thinking', to: 'streaming', event: 'CHUNK_RECEIVED' },
   { from: 'thinking', to: 'error', event: 'ERROR' },
   { from: 'thinking', to: 'aborted', event: 'ABORT' },
-  
+
   // From streaming
   { from: 'streaming', to: 'streaming', event: 'CHUNK_RECEIVED' },
   { from: 'streaming', to: 'paused', event: 'PAUSE' },
@@ -147,43 +147,53 @@ const DEFAULT_TRANSITIONS: StateTransition[] = [
   { from: 'streaming', to: 'error', event: 'ERROR' },
   { from: 'streaming', to: 'aborted', event: 'ABORT' },
   { from: 'streaming', to: 'reconnecting', event: 'RECONNECT' },
-  
+
   // From paused
   { from: 'paused', to: 'streaming', event: 'RESUME' },
   { from: 'paused', to: 'complete', event: 'COMPLETE' },
   { from: 'paused', to: 'aborted', event: 'ABORT' },
-  
+
   // From buffering
   { from: 'buffering', to: 'streaming', event: 'BUFFER_CLEARED' },
   { from: 'buffering', to: 'error', event: 'ERROR' },
   { from: 'buffering', to: 'aborted', event: 'ABORT' },
-  
+
   // From error
-  { 
-    from: 'error', 
-    to: 'reconnecting', 
+  {
+    from: 'error',
+    to: 'reconnecting',
     event: 'RECONNECT',
-    guard: (ctx) => ctx.reconnectAttempts < ctx.maxReconnectAttempts
+    guard: (ctx) => ctx.reconnectAttempts < ctx.maxReconnectAttempts,
   },
   { from: 'error', to: 'idle', event: 'RESET' },
-  
+
   // From aborted
   { from: 'aborted', to: 'idle', event: 'RESET' },
-  
+
   // From reconnecting
   { from: 'reconnecting', to: 'thinking', event: 'RECONNECT_SUCCESS' },
   { from: 'reconnecting', to: 'error', event: 'RECONNECT_FAILED' },
   { from: 'reconnecting', to: 'aborted', event: 'ABORT' },
-  
+
   // From complete
   { from: 'complete', to: 'idle', event: 'RESET' },
-  
+
   // Universal reset (from any state except idle)
-  { 
-    from: ['connecting', 'thinking', 'streaming', 'paused', 'buffering', 'complete', 'error', 'aborted', 'reconnecting'],
+  {
+    from: [
+      'connecting',
+      'thinking',
+      'streaming',
+      'paused',
+      'buffering',
+      'complete',
+      'error',
+      'aborted',
+      'reconnecting',
+    ],
     to: 'idle',
-    event: 'RESET'
-  }
+    event: 'RESET',
+  },
 ];
 
 /**
@@ -208,24 +218,24 @@ function createInitialContext(): StreamingContext {
     bufferState: 'empty',
     partialData: null,
     lastError: null,
-    metadata: {}
+    metadata: {},
   };
 }
 
 /**
  * Streaming State Machine
- * 
+ *
  * Manages streaming state transitions with guards and actions.
  * Provides observables for state changes and progress tracking.
- * 
+ *
  * @example
  * ```typescript
  * const stateMachine = new StreamingStateMachine();
- * 
+ *
  * stateMachine.stateChanges$.subscribe(change => {
  *   console.log(`${change.previousState} -> ${change.currentState}`);
  * });
- * 
+ *
  * stateMachine.send('CONNECT');
  * stateMachine.send('CONNECTED');
  * stateMachine.send('START_STREAMING');
@@ -235,60 +245,57 @@ export class StreamingStateMachine {
   private readonly contextSubject: BehaviorSubject<StreamingContext>;
   private readonly stateChangeSubject = new Subject<StateChange>();
   private readonly transitions: StateTransition[];
-  
+
   /** Observable of full context */
   readonly context$: Observable<StreamingContext>;
-  
+
   /** Observable of current state only */
   readonly state$: Observable<StreamingState>;
-  
+
   /** Observable of state changes */
   readonly stateChanges$: Observable<StateChange>;
-  
+
   /** Observable of progress (0-1) */
   readonly progress$: Observable<number>;
-  
-  constructor(
-    customTransitions?: StateTransition[],
-    initialContext?: Partial<StreamingContext>
-  ) {
+
+  constructor(customTransitions?: StateTransition[], initialContext?: Partial<StreamingContext>) {
     this.transitions = customTransitions || DEFAULT_TRANSITIONS;
-    
+
     const context = {
       ...createInitialContext(),
-      ...initialContext
+      ...initialContext,
     };
-    
+
     this.contextSubject = new BehaviorSubject<StreamingContext>(context);
     this.context$ = this.contextSubject.asObservable();
-    
+
     this.state$ = this.context$.pipe(
-      map(ctx => ctx.state),
+      map((ctx) => ctx.state),
       distinctUntilChanged()
     );
-    
+
     this.stateChanges$ = this.stateChangeSubject.asObservable();
-    
+
     this.progress$ = this.context$.pipe(
-      map(ctx => this.calculateProgress(ctx)),
+      map((ctx) => this.calculateProgress(ctx)),
       distinctUntilChanged()
     );
   }
-  
+
   /**
    * Get current context
    */
   getContext(): StreamingContext {
     return this.contextSubject.value;
   }
-  
+
   /**
    * Get current state
    */
   getState(): StreamingState {
     return this.contextSubject.value.state;
   }
-  
+
   /**
    * Send an event to the state machine
    * @returns true if transition occurred, false otherwise
@@ -298,54 +305,56 @@ export class StreamingStateMachine {
     const eventData: StreamingEventData = {
       event,
       payload,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
-    
+
     // Find matching transition
     const transition = this.findTransition(currentContext.state, event, currentContext);
-    
+
     if (!transition) {
       // No valid transition - log in dev mode
       if (typeof ngDevMode !== 'undefined' && ngDevMode) {
-        console.warn(`[StreamingStateMachine] No transition for event '${event}' in state '${currentContext.state}'`);
+        console.warn(
+          `[StreamingStateMachine] No transition for event '${event}' in state '${currentContext.state}'`
+        );
       }
       return false;
     }
-    
+
     // Execute transition
     const previousState = currentContext.state;
-    
+
     // Update context
     const newContext: StreamingContext = {
       ...currentContext,
       state: transition.to,
       previousState,
-      lastUpdateTime: Date.now()
+      lastUpdateTime: Date.now(),
     };
-    
+
     // Apply event-specific context updates
     this.applyEventUpdates(newContext, eventData);
-    
+
     // Execute action if defined
     if (transition.action) {
       transition.action(newContext, eventData);
     }
-    
+
     // Emit new context
     this.contextSubject.next(newContext);
-    
+
     // Emit state change
     this.stateChangeSubject.next({
       previousState,
       currentState: transition.to,
       event,
       context: newContext,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
-    
+
     return true;
   }
-  
+
   /**
    * Update context without changing state
    */
@@ -354,10 +363,10 @@ export class StreamingStateMachine {
     this.contextSubject.next({
       ...currentContext,
       ...updates,
-      lastUpdateTime: Date.now()
+      lastUpdateTime: Date.now(),
     });
   }
-  
+
   /**
    * Check if an event can be sent in current state
    */
@@ -365,18 +374,18 @@ export class StreamingStateMachine {
     const context = this.contextSubject.value;
     return this.findTransition(context.state, event, context) !== null;
   }
-  
+
   /**
    * Get available events for current state
    */
   getAvailableEvents(): StreamingEvent[] {
     const context = this.contextSubject.value;
     return this.transitions
-      .filter(t => this.matchesFrom(t.from, context.state))
-      .filter(t => !t.guard || t.guard(context))
-      .map(t => t.event);
+      .filter((t) => this.matchesFrom(t.from, context.state))
+      .filter((t) => !t.guard || t.guard(context))
+      .map((t) => t.event);
   }
-  
+
   /**
    * Reset state machine to initial state
    */
@@ -387,7 +396,7 @@ export class StreamingStateMachine {
       this.contextSubject.next(createInitialContext());
     }
   }
-  
+
   /**
    * Check if currently in a terminal state
    */
@@ -395,72 +404,74 @@ export class StreamingStateMachine {
     const state = this.getState();
     return state === 'complete' || state === 'error' || state === 'aborted';
   }
-  
+
   /**
    * Check if currently in an active streaming state
    */
   isActive(): boolean {
     const state = this.getState();
-    return state === 'connecting' || state === 'thinking' || 
-           state === 'streaming' || state === 'buffering' || 
-           state === 'reconnecting';
+    return (
+      state === 'connecting' ||
+      state === 'thinking' ||
+      state === 'streaming' ||
+      state === 'buffering' ||
+      state === 'reconnecting'
+    );
   }
-  
+
   /**
    * Subscribe to specific state
    */
   onState(targetState: StreamingState): Observable<StreamingContext> {
-    return this.context$.pipe(
-      filter(ctx => ctx.state === targetState)
-    );
+    return this.context$.pipe(filter((ctx) => ctx.state === targetState));
   }
-  
+
   /**
    * Subscribe to multiple states
    */
   onStates(...states: StreamingState[]): Observable<StreamingContext> {
     const stateSet = new Set(states);
-    return this.context$.pipe(
-      filter(ctx => stateSet.has(ctx.state))
-    );
+    return this.context$.pipe(filter((ctx) => stateSet.has(ctx.state)));
   }
-  
+
   // ============================================
   // Private Methods
   // ============================================
-  
+
   private findTransition(
     currentState: StreamingState,
     event: StreamingEvent,
     context: StreamingContext
   ): StateTransition | null {
-    return this.transitions.find(t => {
-      // Check if from state matches
-      if (!this.matchesFrom(t.from, currentState)) {
-        return false;
-      }
-      
-      // Check if event matches
-      if (t.event !== event) {
-        return false;
-      }
-      
-      // Check guard if present
-      if (t.guard && !t.guard(context)) {
-        return false;
-      }
-      
-      return true;
-    }) || null;
+    return (
+      this.transitions.find((t) => {
+        // Check if from state matches
+        if (!this.matchesFrom(t.from, currentState)) {
+          return false;
+        }
+
+        // Check if event matches
+        if (t.event !== event) {
+          return false;
+        }
+
+        // Check guard if present
+        if (t.guard && !t.guard(context)) {
+          return false;
+        }
+
+        return true;
+      }) || null
+    );
   }
-  
+
   private matchesFrom(from: StreamingState | StreamingState[], current: StreamingState): boolean {
     if (Array.isArray(from)) {
       return from.includes(current);
     }
     return from === current;
   }
-  
+
   private applyEventUpdates(context: StreamingContext, eventData: StreamingEventData): void {
     switch (eventData.event) {
       case 'CONNECT':
@@ -468,7 +479,7 @@ export class StreamingStateMachine {
         context.reconnectAttempts = 0;
         context.errorCount = 0;
         break;
-        
+
       case 'CHUNK_RECEIVED':
         context.chunksReceived++;
         if (!context.firstChunkTime) {
@@ -484,59 +495,65 @@ export class StreamingStateMachine {
           }
         }
         break;
-        
+
       case 'PAUSE':
         context.isPausedByUser = true;
         break;
-        
+
       case 'RESUME':
         context.isPausedByUser = false;
         break;
-        
+
       case 'BUFFER_OVERFLOW':
         context.bufferState = 'overflow';
         break;
-        
+
       case 'BUFFER_CLEARED':
         context.bufferState = 'empty';
         break;
-        
+
       case 'ERROR':
         context.errorCount++;
         if (eventData.payload instanceof Error) {
           context.lastError = eventData.payload;
         }
         break;
-        
+
       case 'RECONNECT':
         context.reconnectAttempts++;
         break;
-        
+
       case 'RECONNECT_SUCCESS':
         // Keep reconnect attempts for tracking
         break;
-        
+
       case 'RESET':
         Object.assign(context, createInitialContext());
         break;
     }
   }
-  
+
   private calculateProgress(context: StreamingContext): number {
-    if (context.state === 'idle') return 0;
-    if (context.state === 'complete') return 1;
-    if (context.state === 'error' || context.state === 'aborted') return 0;
-    
+    if (context.state === 'idle') {
+      return 0;
+    }
+    if (context.state === 'complete') {
+      return 1;
+    }
+    if (context.state === 'error' || context.state === 'aborted') {
+      return 0;
+    }
+
     // If we know total bytes, use byte-based progress
     if (context.totalBytes && context.totalBytes > 0) {
       return Math.min(1, context.bytesReceived / context.totalBytes);
     }
-    
+
     // If we know total sections, use section-based progress
     if (context.totalSections && context.totalSections > 0) {
       return Math.min(1, context.sectionsCompleted / context.totalSections);
     }
-    
+
     // Fallback: estimate based on state
     switch (context.state) {
       case 'connecting':
@@ -560,18 +577,11 @@ declare const ngDevMode: boolean | undefined;
 /**
  * Create a streaming state machine with default configuration
  */
-export function createStreamingStateMachine(
-  options?: {
-    maxReconnectAttempts?: number;
-    customTransitions?: StateTransition[];
-  }
-): StreamingStateMachine {
-  return new StreamingStateMachine(
-    options?.customTransitions,
-    { maxReconnectAttempts: options?.maxReconnectAttempts ?? 5 }
-  );
+export function createStreamingStateMachine(options?: {
+  maxReconnectAttempts?: number;
+  customTransitions?: StateTransition[];
+}): StreamingStateMachine {
+  return new StreamingStateMachine(options?.customTransitions, {
+    maxReconnectAttempts: options?.maxReconnectAttempts ?? 5,
+  });
 }
-
-
-
-

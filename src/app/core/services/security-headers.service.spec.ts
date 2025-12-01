@@ -10,10 +10,7 @@ describe('SecurityHeadersService', () => {
     const loggingSpy = jasmine.createSpyObj('LoggingService', ['debug', 'info', 'warn', 'error']);
 
     TestBed.configureTestingModule({
-      providers: [
-        SecurityHeadersService,
-        { provide: LoggingService, useValue: loggingSpy }
-      ]
+      providers: [SecurityHeadersService, { provide: LoggingService, useValue: loggingSpy }],
     });
 
     service = TestBed.inject(SecurityHeadersService);
@@ -26,7 +23,7 @@ describe('SecurityHeadersService', () => {
 
   it('should initialize with default headers', () => {
     const headers = service.getSecurityHeaders();
-    
+
     expect(headers['X-Content-Type-Options']).toBe('nosniff');
     expect(headers['X-Frame-Options']).toBe('DENY');
     expect(headers['X-XSS-Protection']).toBe('1; mode=block');
@@ -35,7 +32,7 @@ describe('SecurityHeadersService', () => {
 
   it('should set and get headers', () => {
     service.setHeader('Test-Header', 'test-value');
-    
+
     expect(service.getHeader('Test-Header')).toBe('test-value');
   });
 
@@ -46,13 +43,13 @@ describe('SecurityHeadersService', () => {
   it('should set CSP header', () => {
     const policy = "default-src 'self'";
     service.setCSPHeader(policy);
-    
+
     expect(service.getCSPHeader()).toBe(policy);
   });
 
   it('should set HSTS header with default values', () => {
     service.setHSTSHeader();
-    
+
     const hsts = service.getHeader('Strict-Transport-Security');
     expect(hsts).toContain('max-age=31536000');
     expect(hsts).toContain('includeSubDomains');
@@ -60,7 +57,7 @@ describe('SecurityHeadersService', () => {
 
   it('should set HSTS header with custom values', () => {
     service.setHSTSHeader(86400, false, true);
-    
+
     const hsts = service.getHeader('Strict-Transport-Security');
     expect(hsts).toContain('max-age=86400');
     expect(hsts).not.toContain('includeSubDomains');
@@ -70,7 +67,7 @@ describe('SecurityHeadersService', () => {
   it('should remove header', () => {
     service.setHeader('Test-Header', 'test-value');
     expect(service.getHeader('Test-Header')).toBe('test-value');
-    
+
     service.removeHeader('Test-Header');
     expect(service.getHeader('Test-Header')).toBeUndefined();
   });
@@ -78,7 +75,7 @@ describe('SecurityHeadersService', () => {
   it('should clear all headers and reinitialize defaults', () => {
     service.setHeader('Custom-Header', 'custom-value');
     service.clearHeaders();
-    
+
     const headers = service.getSecurityHeaders();
     expect(headers['Custom-Header']).toBeUndefined();
     expect(headers['X-Content-Type-Options']).toBe('nosniff');
@@ -86,7 +83,7 @@ describe('SecurityHeadersService', () => {
 
   it('should validate headers and return warnings', () => {
     const validation = service.validateHeaders();
-    
+
     expect(validation.isValid).toBe(true);
     expect(Array.isArray(validation.warnings)).toBe(true);
     expect(Array.isArray(validation.errors)).toBe(true);
@@ -94,28 +91,16 @@ describe('SecurityHeadersService', () => {
 
   it('should warn when CSP contains unsafe directives', () => {
     service.setCSPHeader("default-src 'self' 'unsafe-inline' 'unsafe-eval'");
-    
+
     const validation = service.validateHeaders();
     expect(validation.warnings.length).toBeGreaterThan(0);
-    expect(validation.warnings.some(w => w.includes('unsafe'))).toBe(true);
+    expect(validation.warnings.some((w) => w.includes('unsafe'))).toBe(true);
   });
 
   it('should get all security headers as object', () => {
     const headers = service.getSecurityHeaders();
-    
+
     expect(typeof headers).toBe('object');
     expect(headers['X-Content-Type-Options']).toBeDefined();
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-

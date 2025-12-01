@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
 import { DocsDemoComponent } from '../../components';
 
@@ -119,37 +119,37 @@ The **Info Section** (\`type: "info"\`) is used for displays key-value pairs in 
 `;
 
 const demoConfig = {
-  "title": "Company Information",
-  "type": "info",
-  "description": "Detailed company information and metadata",
-  "fields": [
+  title: 'Company Information',
+  type: 'info',
+  description: 'Detailed company information and metadata',
+  fields: [
     {
-      "label": "Industry",
-      "value": "Technology",
-      "icon": "🏢"
+      label: 'Industry',
+      value: 'Technology',
+      icon: '🏢',
     },
     {
-      "label": "Founded",
-      "value": "2010",
-      "icon": "📅"
+      label: 'Founded',
+      value: '2010',
+      icon: '📅',
     },
     {
-      "label": "Headquarters",
-      "value": "San Francisco, CA",
-      "icon": "📍"
+      label: 'Headquarters',
+      value: 'San Francisco, CA',
+      icon: '📍',
     },
     {
-      "label": "Employees",
-      "value": "5,000+",
-      "icon": "👥",
-      "trend": "up"
+      label: 'Employees',
+      value: '5,000+',
+      icon: '👥',
+      trend: 'up',
     },
     {
-      "label": "Website",
-      "value": "www.example.com",
-      "icon": "🌐"
-    }
-  ]
+      label: 'Website',
+      value: 'www.example.com',
+      icon: '🌐',
+    },
+  ],
 };
 
 /**
@@ -162,8 +162,8 @@ const demoConfig = {
   imports: [DocPageComponent, DocsDemoComponent],
   template: `
     <div class="section-docs">
-      <app-docs-demo 
-        [config]="demo" 
+      <app-docs-demo
+        [config]="demo"
         [type]="'info'"
         demoTitle="Live Preview"
         height="350px"
@@ -171,14 +171,16 @@ const demoConfig = {
       <app-doc-page [content]="content"></app-doc-page>
     </div>
   `,
-  styles: [`
-    .section-docs {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styles: [
+    `
+      .section-docs {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InfoPageComponent {
   content = pageContent;

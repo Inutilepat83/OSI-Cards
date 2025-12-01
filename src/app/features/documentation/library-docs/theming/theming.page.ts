@@ -5,7 +5,7 @@ const ThemingPage: NgDocPage = {
   title: 'Theming Guide',
   mdFile: './index.md',
   order: 2,
-  category: LibraryDocsCategory
+  category: LibraryDocsCategory,
 };
 
 export default ThemingPage;

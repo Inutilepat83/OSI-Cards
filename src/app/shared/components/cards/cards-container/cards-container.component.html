@@ -6,26 +6,11 @@
   <h1>OSI Cards Examples</h1>
 
   <!-- Drag-and-drop mode -->
-  <div
-    *ngIf="enableDragDrop"
-    cdkDropList
-    class="cards-drag-list"
-    (cdkDropListDropped)="onCardDrop($event)">
-    <div
-      *ngFor="let card of cards; trackBy: trackByCardId"
-      cdkDrag
-      class="card-drag-item">
-      <app-ai-card-renderer
-        [cardConfig]="card"
-        [tiltEnabled]="true"
-        class="card-item">
-      </app-ai-card-renderer>
+  <div *ngIf="enableDragDrop" cdkDropList class="cards-drag-list" (cdkDropListDropped)="onCardDrop($event)">
+    <div *ngFor="let card of cards; trackBy: trackByCardId" cdkDrag class="card-drag-item">
+      <app-ai-card-renderer [cardConfig]="card" [tiltEnabled]="true" class="card-item"> </app-ai-card-renderer>
       <div *cdkDragPreview class="card-preview">
-        <app-ai-card-renderer
-          [cardConfig]="card"
-          [tiltEnabled]="false"
-          class="card-item">
-        </app-ai-card-renderer>
+        <app-ai-card-renderer [cardConfig]="card" [tiltEnabled]="false" class="card-item"> </app-ai-card-renderer>
       </div>
       <div *cdkDragPlaceholder class="card-placeholder"></div>
     </div>
@@ -37,12 +22,14 @@
     [itemSize]="itemHeight"
     [minBufferPx]="minBufferPx"
     [maxBufferPx]="maxBufferPx"
-    class="cards-viewport">
+    class="cards-viewport"
+  >
     <app-ai-card-renderer
       *cdkVirtualFor="let card of cards; trackBy: trackByCardId"
       [cardConfig]="card"
       [tiltEnabled]="true"
-      class="card-item">
+      class="card-item"
+    >
     </app-ai-card-renderer>
   </cdk-virtual-scroll-viewport>
 </div>

@@ -1,6 +1,6 @@
 /**
  * Grid Configuration Utilities
- * 
+ *
  * Centralized grid constants and calculation helpers for the masonry layout system.
  * This is the single source of truth for all grid-related values.
  */
@@ -66,26 +66,26 @@ export type PackingAlgorithm = 'legacy' | 'row-first' | 'skyline';
  */
 export interface RowPackingOptions {
   /**
-   * When true, filling rows completely takes precedence over 
+   * When true, filling rows completely takes precedence over
    * respecting section preferred widths
    * @default true
    */
   prioritizeSpaceFilling: boolean;
-  
+
   /**
    * Whether sections can be shrunk below their preferred width
    * to help fill rows completely
    * @default true
    */
   allowShrinking: boolean;
-  
+
   /**
    * Whether sections can be grown beyond their preferred width
    * to fill gaps in rows
    * @default true
    */
   allowGrowing: boolean;
-  
+
   /**
    * Maximum optimization passes to run after initial packing
    * @default 3
@@ -100,7 +100,7 @@ export const DEFAULT_ROW_PACKING_OPTIONS: RowPackingOptions = {
   prioritizeSpaceFilling: true,
   allowShrinking: true,
   allowGrowing: true,
-  maxOptimizationPasses: 3,
+  maxOptimizationPasses: 5,
 };
 
 /**
@@ -112,13 +112,13 @@ export interface MasonryPackingConfig extends GridConfig {
    * @default 'row-first'
    */
   packingAlgorithm: PackingAlgorithm;
-  
+
   /**
    * Options for the row-first packing algorithm
    * Only used when packingAlgorithm is 'row-first'
    */
   rowPackingOptions: RowPackingOptions;
-  
+
   /**
    * Whether to use the legacy algorithm as a fallback
    * when the selected algorithm fails
@@ -129,12 +129,12 @@ export interface MasonryPackingConfig extends GridConfig {
 
 /**
  * Default masonry packing configuration
- * Uses the legacy algorithm by default for backward compatibility
- * Set packingAlgorithm to 'row-first' to enable zero white space packing
+ * Uses row-first algorithm by default for zero white space packing
+ * Set packingAlgorithm to 'legacy' for backward compatibility
  */
 export const DEFAULT_MASONRY_PACKING_CONFIG: MasonryPackingConfig = {
   ...DEFAULT_GRID_CONFIG,
-  packingAlgorithm: 'legacy',
+  packingAlgorithm: 'row-first',
   rowPackingOptions: DEFAULT_ROW_PACKING_OPTIONS,
   useLegacyFallback: true,
 };
@@ -199,17 +199,19 @@ export interface SectionColumnPreferences {
 
 /**
  * Default preferred columns per section type
- * - 1 column: compact sections (contact cards, simple info)
- * - 2 columns: medium sections (analytics, charts, maps)
- * - 3 columns: wide sections (overview with many fields)
+ * - 1 column: truly compact sections (project, simple info)
+ * - 2 columns: medium sections (most section types)
+ * - 3+ columns: wide sections (overview, charts)
+ *
+ * UPDATED: Increased preferred columns to reduce gaps
  */
 export const DEFAULT_SECTION_COLUMN_PREFERENCES: SectionColumnPreferences = {
-  // Single column sections - compact
+  // Single column sections - truly compact only
   'contact-card': 1,
-  'network-card': 1,
   'project': 1,
-  
-  // Two column sections - medium
+
+  // Two column sections - most section types
+  'network-card': 2,  // Increased - networks benefit from more space
   'analytics': 2,
   'stats': 2,
   'chart': 2,
@@ -222,13 +224,14 @@ export const DEFAULT_SECTION_COLUMN_PREFERENCES: SectionColumnPreferences = {
   'list': 2,
   'quotation': 2,
   'text-reference': 2,
-  
-  // Can expand to 3 columns with enough content
-  'overview': 2,
+  'timeline': 2,
   'info': 2,
-  
-  // Default for unknown types
-  'default': 1,
+
+  // Wide sections
+  'overview': 3,  // Increased - overview benefits from more space
+
+  // Default for unknown types - 2 columns to reduce gaps
+  'default': 2,
 };
 
 // ============================================================================
@@ -239,7 +242,7 @@ export const DEFAULT_SECTION_COLUMN_PREFERENCES: SectionColumnPreferences = {
  * Maximum column expansion allowed per section type.
  * This limits how wide a section can grow when filling remaining row space.
  * Prevents inappropriate expansion (e.g., contact cards becoming 4 columns wide).
- * 
+ *
  * Unlike preferredColumns (which is a starting point), these are hard limits
  * that the expansion logic will not exceed.
  */
@@ -251,48 +254,52 @@ export interface SectionExpansionLimits {
  * Default maximum expansion limits per section type.
  * These values represent the maximum sensible width for each section type,
  * regardless of available space.
+ *
+ * UPDATED: Increased limits to allow better gap filling while maintaining
+ * reasonable content density.
  */
 export const SECTION_MAX_EXPANSION: SectionExpansionLimits = {
-  // Compact sections - should never expand much
-  'contact-card': 2,    // Contact cards look bad when too wide
-  'network-card': 2,    // Similar to contact cards
-  'project': 1,         // Projects should stay single column
-  'quotation': 2,       // Quotes are narrow content
-  
-  // Medium sections - can expand moderately
-  'info': 2,            // Info sections work at 1-2 columns
-  'list': 2,            // Lists are vertical, don't need width
-  'event': 2,           // Events are timeline-oriented
-  'timeline': 2,        // Timelines are vertical
-  'financials': 2,      // Financial data is typically narrow
-  'stats': 2,           // Stats are compact metrics
-  'product': 2,         // Products don't need full width
-  'solutions': 2,       // Solutions work at medium width
-  'text-reference': 2,  // Text references are narrow
-  
-  // Wide sections - can expand more
-  'analytics': 3,       // Analytics with multiple metrics can expand
-  'locations': 3,       // Location maps can be wider
-  
+  // Compact sections - can expand to fill gaps
+  'contact-card': 3,    // Contact cards can expand for multiple contacts
+  'network-card': 3,    // Network cards can show more connections
+  'project': 2,         // Projects can expand slightly
+  'quotation': 3,       // Quotes can expand for readability
+
+  // Medium sections - can expand more freely
+  'info': 3,            // Info sections work at 1-3 columns
+  'list': 3,            // Lists can expand for better readability
+  'event': 3,           // Events can expand
+  'timeline': 3,        // Timelines can expand
+  'financials': 3,      // Financial data can expand for more metrics
+  'stats': 3,           // Stats can expand for more metrics
+  'product': 3,         // Products can expand
+  'solutions': 3,       // Solutions work at medium width
+  'text-reference': 3,  // Text references can expand
+
+  // Wide sections - can expand fully
+  'analytics': 4,       // Analytics with multiple metrics can expand fully
+  'locations': 4,       // Location maps can be wider
+
   // Full-width capable sections
   'chart': 4,           // Charts benefit from full width
   'map': 4,             // Maps benefit from full width
   'overview': 4,        // Overview sections can span full width
-  
-  // Conservative default for unknown types
-  'default': 2,
+
+  // More permissive default for unknown types
+  'default': 3,
 };
 
 /**
  * Content density threshold for expansion.
  * Sections with density below this value will not be expanded,
  * as sparse content looks bad when stretched across multiple columns.
+ * Lowered from 15 to 8 to allow more aggressive gap filling.
  */
-export const EXPANSION_DENSITY_THRESHOLD = 15;
+export const EXPANSION_DENSITY_THRESHOLD = 8;
 
 /**
  * Gets the maximum expansion limit for a section type.
- * 
+ *
  * @param sectionType - The section type
  * @param limits - Optional custom limits map
  * @returns Maximum column span allowed for this section type
@@ -354,14 +361,14 @@ export interface ExpansionResult {
 /**
  * Determines whether a section should expand to fill remaining row space.
  * Uses type-aware limits and content density checks to make intelligent decisions.
- * 
+ *
  * The function considers:
  * 1. Whether the section allows growth (canGrow)
  * 2. Type-based expansion limits
  * 3. Explicit maxColumns constraint from section config
  * 4. Content density (sparse content shouldn't expand)
  * 5. Whether remaining space can fit another section
- * 
+ *
  * @param section - Section information
  * @param context - Expansion context
  * @returns Expansion decision with reasoning
@@ -401,7 +408,7 @@ export function shouldExpandSection(
   // Calculate type-aware max expansion limit
   const sectionType = section.type?.toLowerCase() || 'default';
   const typeMaxExpansion = getMaxExpansion(sectionType);
-  
+
   // Effective max is minimum of: type limit, explicit maxColumns, total columns
   const effectiveMaxSpan = Math.min(
     typeMaxExpansion,
@@ -416,7 +423,7 @@ export function shouldExpandSection(
   if (potentialSpan > effectiveMaxSpan) {
     // Calculate how much we CAN expand
     const allowedExpansion = effectiveMaxSpan - currentSpan;
-    
+
     if (allowedExpansion <= 0) {
       return {
         shouldExpand: false,
@@ -424,7 +431,7 @@ export function shouldExpandSection(
         reason: `Type '${sectionType}' at max expansion limit (${effectiveMaxSpan})`,
       };
     }
-    
+
     // Partial expansion up to the limit
     return {
       shouldExpand: true,
@@ -439,9 +446,9 @@ export function shouldExpandSection(
     // Allow expansion only if remaining space is truly unusable
     const gapTotal = gap * (totalColumns - 1);
     const columnWidthPx = (containerWidth - gapTotal) / totalColumns;
-    const remainingWidthPx = remainingColumns * columnWidthPx + 
+    const remainingWidthPx = remainingColumns * columnWidthPx +
       (remainingColumns > 0 ? (remainingColumns - 1) * gap : 0);
-    
+
     // If another section COULD fit, don't expand sparse content
     if (remainingWidthPx >= minColumnWidth || canPendingFit) {
       return {
@@ -455,7 +462,7 @@ export function shouldExpandSection(
   // Check if remaining space can fit another section
   const gapTotal = gap * (totalColumns - 1);
   const columnWidthPx = (containerWidth - gapTotal) / totalColumns;
-  const remainingWidthPx = remainingColumns * columnWidthPx + 
+  const remainingWidthPx = remainingColumns * columnWidthPx +
     (remainingColumns > 0 ? (remainingColumns - 1) * gap : 0);
 
   // Expand only if:
@@ -468,7 +475,7 @@ export function shouldExpandSection(
     return {
       shouldExpand: true,
       finalSpan: potentialSpan,
-      reason: spaceIsUnusable 
+      reason: spaceIsUnusable
         ? 'Remaining space too small for any section'
         : 'No pending section can fit in remaining space',
     };
@@ -486,7 +493,7 @@ export function shouldExpandSection(
  * Simple content density calculation for expansion decisions.
  * This is a lightweight version that can be used standalone.
  * For full density calculation, use measureContentDensity from smart-grid.util.
- * 
+ *
  * @param fields - Array of fields in the section
  * @param items - Array of items in the section
  * @param description - Section description text
@@ -497,15 +504,15 @@ export function calculateBasicDensity(
   items?: unknown[],
   description?: string
 ): number {
-  const textLength = (description?.length ?? 0) + 
+  const textLength = (description?.length ?? 0) +
     (fields?.reduce((acc, f) => acc + String(f.value ?? '').length + (f.label?.length ?? 0), 0) ?? 0);
   const itemCount = items?.length ?? 0;
   const fieldCount = fields?.length ?? 0;
-  
+
   const textScore = textLength / 50;  // 1 point per 50 chars
   const itemScore = itemCount * 3;     // 3 points per item
   const fieldScore = fieldCount * 2;   // 2 points per field
-  
+
   return Math.round(textScore + itemScore + fieldScore);
 }
 
@@ -516,9 +523,9 @@ export function calculateBasicDensity(
 /**
  * Calculates the number of columns that fit within a container width
  * while ensuring each column is at least minColumnWidth pixels wide.
- * 
+ *
  * Formula: columns = floor((containerWidth + gap) / (minColumnWidth + gap))
- * 
+ *
  * @param containerWidth - Available container width in pixels
  * @param config - Grid configuration (optional, uses defaults)
  * @returns Number of columns (1 to maxColumns)
@@ -527,10 +534,10 @@ export function calculateColumns(
   containerWidth: number,
   config: Partial<GridConfig> = {}
 ): number {
-  const { 
-    minColumnWidth = MIN_COLUMN_WIDTH, 
-    maxColumns = MAX_COLUMNS, 
-    gap = GRID_GAP 
+  const {
+    minColumnWidth = MIN_COLUMN_WIDTH,
+    maxColumns = MAX_COLUMNS,
+    gap = GRID_GAP
   } = config;
 
   if (containerWidth <= 0) {
@@ -540,14 +547,14 @@ export function calculateColumns(
   // Calculate how many columns fit
   // We add gap to containerWidth because the formula accounts for n-1 gaps
   const columns = Math.floor((containerWidth + gap) / (minColumnWidth + gap));
-  
+
   // Clamp between 1 and maxColumns
   return Math.min(maxColumns, Math.max(1, columns));
 }
 
 /**
  * Calculates the actual column width based on container width and column count
- * 
+ *
  * @param containerWidth - Available container width in pixels
  * @param columns - Number of columns
  * @param gap - Gap between columns in pixels
@@ -564,17 +571,17 @@ export function calculateColumnWidth(
 
   // Total gap space = (columns - 1) * gap
   const totalGapWidth = (columns - 1) * gap;
-  
+
   // Available width for columns
   const availableWidth = containerWidth - totalGapWidth;
-  
+
   // Width per column
   return availableWidth / columns;
 }
 
 /**
  * Calculates the minimum container width required for a given number of columns
- * 
+ *
  * @param columns - Desired number of columns
  * @param config - Grid configuration (optional, uses defaults)
  * @returns Minimum container width in pixels
@@ -584,7 +591,7 @@ export function calculateMinContainerWidth(
   config: Partial<GridConfig> = {}
 ): number {
   const { minColumnWidth = MIN_COLUMN_WIDTH, gap = GRID_GAP } = config;
-  
+
   if (columns <= 0) {
     return 0;
   }
@@ -595,7 +602,7 @@ export function calculateMinContainerWidth(
 
 /**
  * Gets the preferred column count for a section type
- * 
+ *
  * @param sectionType - The section type
  * @param preferences - Optional custom preferences map
  * @returns Preferred column count (1, 2, or 3)
@@ -610,7 +617,7 @@ export function getPreferredColumns(
 
 /**
  * Resolves the effective column span for a section based on preference and availability
- * 
+ *
  * @param preferredColumns - The section's preferred column count
  * @param availableColumns - The total columns available in the container
  * @param explicitColSpan - Optional explicit colSpan override from section config
@@ -632,7 +639,7 @@ export function resolveColumnSpan(
 
 /**
  * Generates a CSS calc() expression for column width
- * 
+ *
  * @param columns - Total number of columns in the grid
  * @param colSpan - Number of columns this item spans
  * @param gap - Gap between columns in pixels
@@ -661,7 +668,7 @@ export function generateWidthExpression(
 
 /**
  * Generates a CSS calc() expression for left position
- * 
+ *
  * @param columns - Total number of columns in the grid
  * @param columnIndex - The starting column index (0-based)
  * @param gap - Gap between columns in pixels
@@ -703,7 +710,7 @@ export type BreakpointKey = keyof typeof BREAKPOINTS;
 
 /**
  * Gets the breakpoint key for a given container width
- * 
+ *
  * @param width - Container width in pixels
  * @returns Breakpoint key
  */
@@ -718,7 +725,7 @@ export function getBreakpoint(width: number): BreakpointKey {
 
 /**
  * Maps breakpoint to typical column count
- * 
+ *
  * @param breakpoint - Breakpoint key
  * @returns Suggested column count for the breakpoint
  */

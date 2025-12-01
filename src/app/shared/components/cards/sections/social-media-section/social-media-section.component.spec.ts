@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SocialMediaSectionComponent } from './social-media-section.component';
-import { SectionBuilder, ItemBuilder } from '../../../../../../testing/test-builders';
+import { ItemBuilder, SectionBuilder } from '../../../../../../testing/test-builders';
 import { CardSection } from '../../../../../../models';
 
 describe('SocialMediaSectionComponent', () => {
@@ -9,12 +9,12 @@ describe('SocialMediaSectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SocialMediaSectionComponent]
+      imports: [SocialMediaSectionComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SocialMediaSectionComponent);
     component = fixture.componentInstance;
-    
+
     // Set up test section
     component.section = SectionBuilder.create()
       .withTitle('Social Media')
@@ -34,7 +34,7 @@ describe('SocialMediaSectionComponent', () => {
           .build()
       )
       .build();
-    
+
     fixture.detectChanges();
   });
 
@@ -57,10 +57,7 @@ describe('SocialMediaSectionComponent', () => {
   });
 
   it('should fallback to "Social" when neither platform nor network exists', () => {
-    const post = ItemBuilder.create()
-      .withTitle('Post')
-      .withMeta({})
-      .build();
+    const post = ItemBuilder.create().withTitle('Post').withMeta({}).build();
     expect(component.formatPlatform(post)).toBe('Social');
   });
 
@@ -78,19 +75,13 @@ describe('SocialMediaSectionComponent', () => {
   });
 
   it('should format metric with only comments', () => {
-    const post = ItemBuilder.create()
-      .withTitle('Post')
-      .withMeta({ comments: 15 })
-      .build();
+    const post = ItemBuilder.create().withTitle('Post').withMeta({ comments: 15 }).build();
     const metric = component.formatMetric(post);
     expect(metric).toBe('15 comments');
   });
 
   it('should return empty string when no metrics available', () => {
-    const post = ItemBuilder.create()
-      .withTitle('Post')
-      .withMeta({})
-      .build();
+    const post = ItemBuilder.create().withTitle('Post').withMeta({}).build();
     expect(component.formatMetric(post)).toBe('');
   });
 
@@ -111,20 +102,9 @@ describe('SocialMediaSectionComponent', () => {
       .withTitle('Empty Social')
       .withType('social-media')
       .build();
-    
+
     fixture.detectChanges();
-    
+
     expect(component.posts.length).toBe(0);
   });
 });
-
-
-
-
-
-
-
-
-
-
-

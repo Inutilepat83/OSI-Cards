@@ -1,13 +1,13 @@
 /**
  * Error Boundary Utilities
- * 
+ *
  * Provides utilities for consistent error handling and error boundary patterns
  * across the application.
- * 
+ *
  * @example
  * ```typescript
  * import { ErrorBoundaryUtil } from '@shared/utils/error-boundary.util';
- * 
+ *
  * try {
  *   // risky operation
  * } catch (error) {
@@ -18,7 +18,7 @@
 export class ErrorBoundaryUtil {
   /**
    * Check if an error is recoverable
-   * 
+   *
    * @param error - Error to check
    * @returns true if error is recoverable
    */
@@ -43,7 +43,7 @@ export class ErrorBoundaryUtil {
 
   /**
    * Extract user-friendly error message
-   * 
+   *
    * @param error - Error to extract message from
    * @returns User-friendly error message
    */
@@ -72,7 +72,7 @@ export class ErrorBoundaryUtil {
 
   /**
    * Get error recovery suggestion
-   * 
+   *
    * @param error - Error to get suggestion for
    * @returns Recovery suggestion or null
    */
@@ -93,7 +93,7 @@ export class ErrorBoundaryUtil {
 
   /**
    * Check if error should be logged
-   * 
+   *
    * @param error - Error to check
    * @returns true if error should be logged
    */
@@ -111,15 +111,18 @@ export class ErrorBoundaryUtil {
 
   /**
    * Create error context for logging
-   * 
+   *
    * @param error - Error to create context for
    * @param context - Additional context information
    * @returns Error context object
    */
-  static createErrorContext(error: unknown, context?: Record<string, unknown>): Record<string, unknown> {
+  static createErrorContext(
+    error: unknown,
+    context?: Record<string, unknown>
+  ): Record<string, unknown> {
     const errorContext: Record<string, unknown> = {
       timestamp: new Date().toISOString(),
-      ...context
+      ...context,
     };
 
     if (error instanceof Error) {
@@ -135,4 +138,3 @@ export class ErrorBoundaryUtil {
     return errorContext;
   }
 }
-

@@ -1,32 +1,32 @@
-import { Injectable, inject, ElementRef, QueryList } from '@angular/core';
-import { Subject, fromEvent, takeUntil } from 'rxjs';
+import { ElementRef, inject, Injectable, QueryList } from '@angular/core';
+import { fromEvent, Subject, takeUntil } from 'rxjs';
 
 /**
  * Focus Management Service
- * 
+ *
  * Centralized focus management for modals, drawers, and dynamic content.
  * Provides focus trapping, focus restoration, and focus indicators.
- * 
+ *
  * Features:
  * - Focus trap in modals and drawers
  * - Return focus after modal close
  * - Focus visible indicators
  * - Skip links
  * - Keyboard navigation helpers
- * 
+ *
  * @example
  * ```typescript
  * const focusService = inject(FocusManagementService);
- * 
+ *
  * // Trap focus in modal
  * const trapId = focusService.trapFocus(modalElement);
- * 
+ *
  * // Restore focus when closing
  * focusService.restoreFocus(trapId);
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FocusManagementService {
   private focusTraps = new Map<string, FocusTrap>();
@@ -47,7 +47,7 @@ export class FocusManagementService {
   trapFocus(element: HTMLElement | ElementRef<HTMLElement>, id?: string): string {
     const el = element instanceof ElementRef ? element.nativeElement : element;
     const trapId = id || `focus-trap-${Date.now()}`;
-    
+
     // Store previous focus
     const previousFocus = document.activeElement as HTMLElement;
     if (previousFocus) {
@@ -56,7 +56,7 @@ export class FocusManagementService {
 
     // Find all focusable elements
     const focusableElements = this.getFocusableElements(el);
-    
+
     if (focusableElements.length === 0) {
       console.warn('No focusable elements found in trap container');
       return trapId;
@@ -71,12 +71,12 @@ export class FocusManagementService {
       container: el,
       focusableElements,
       previousFocus,
-      handleKeyDown: this.createKeyDownHandler(focusableElements)
+      handleKeyDown: this.createKeyDownHandler(focusableElements),
     };
 
     // Add keyboard listener
     el.addEventListener('keydown', trap.handleKeyDown);
-    
+
     this.focusTraps.set(trapId, trap);
 
     return trapId;
@@ -95,7 +95,7 @@ export class FocusManagementService {
 
     // Remove keyboard listener
     trap.container.removeEventListener('keydown', trap.handleKeyDown);
-    
+
     // Restore focus
     if (restoreFocus && trap.previousFocus) {
       trap.previousFocus.focus();
@@ -134,15 +134,14 @@ export class FocusManagementService {
       'textarea:not([disabled])',
       'input:not([disabled])',
       'select:not([disabled])',
-      '[tabindex]:not([tabindex="-1"])'
+      '[tabindex]:not([tabindex="-1"])',
     ].join(', ');
 
-    return Array.from(container.querySelectorAll<HTMLElement>(selector))
-      .filter(el => {
-        // Filter out hidden elements
-        const style = window.getComputedStyle(el);
-        return style.display !== 'none' && style.visibility !== 'hidden';
-      });
+    return Array.from(container.querySelectorAll<HTMLElement>(selector)).filter((el) => {
+      // Filter out hidden elements
+      const style = window.getComputedStyle(el);
+      return style.display !== 'none' && style.visibility !== 'hidden';
+    });
   }
 
   /**
@@ -190,7 +189,7 @@ export class FocusManagementService {
     // Handle Escape key to close modals
     fromEvent<KeyboardEvent>(document, 'keydown')
       .pipe(takeUntil(this.destroy$))
-      .subscribe(event => {
+      .subscribe((event) => {
         if (event.key === 'Escape' && this.focusTraps.size > 0) {
           // Find the most recent trap and release it
           const traps = Array.from(this.focusTraps.values());
@@ -199,7 +198,7 @@ export class FocusManagementService {
             if (latestTrap) {
               // Emit event that can be handled by components
               const escapeEvent = new CustomEvent('focus-trap-escape', {
-                detail: { trapId: latestTrap.id }
+                detail: { trapId: latestTrap.id },
               });
               document.dispatchEvent(escapeEvent);
             }
@@ -232,4 +231,3 @@ interface FocusTrap {
   previousFocus: HTMLElement | null;
   handleKeyDown: (e: KeyboardEvent) => void;
 }
-

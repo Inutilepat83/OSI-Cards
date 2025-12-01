@@ -7,11 +7,14 @@
     "inlineSources": true,
     "types": ["reflect-metadata"],
     "skipLibCheck": true,
-    "strict": false,
-    "strictNullChecks": false,
-    "strictPropertyInitialization": false,
-    "noImplicitOverride": false,
-    "noImplicitAny": false
+    "strict": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "noImplicitOverride": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true
   },
   "include": [
     "src/**/*.ts"

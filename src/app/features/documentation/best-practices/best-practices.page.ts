@@ -5,7 +5,7 @@ const BestPracticesPage: NgDocPage = {
   title: 'Best Practices',
   mdFile: './index.md',
   order: 5,
-  category: DocsCategory
+  category: DocsCategory,
 };
 
 export default BestPracticesPage;

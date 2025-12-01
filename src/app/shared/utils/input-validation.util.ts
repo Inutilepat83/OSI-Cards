@@ -95,7 +95,7 @@ export function createValidator(rules: ValidationRule[]) {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   };
 }
@@ -107,12 +107,12 @@ export function validateCardTitle(title: string): InputValidationResult {
   const validator = createValidator([
     {
       validate: (v) => validateRequired(v),
-      message: 'Card title is required'
+      message: 'Card title is required',
     },
     {
       validate: (v) => validateLength(v, 1, 200),
-      message: 'Card title must be between 1 and 200 characters'
-    }
+      message: 'Card title must be between 1 and 200 characters',
+    },
   ]);
 
   return validator(title);
@@ -136,8 +136,6 @@ export function validateJsonString(json: string): InputValidationResult {
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 }
-
-

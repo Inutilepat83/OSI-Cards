@@ -14,36 +14,36 @@ export interface CardPreviewState {
 
 /**
  * Service for managing card preview state
- * 
+ *
  * Provides centralized state management for card preview functionality, including
  * live preview updates, fullscreen mode, and generation status. Extracted from
  * HomePageComponent for better separation of concerns and reusability.
- * 
+ *
  * Features:
  * - Reactive state management with BehaviorSubject
  * - Live preview support for real-time editing
  * - Fullscreen mode management
  * - Generation status tracking
  * - Change type tracking for optimized updates
- * 
+ *
  * @example
  * ```typescript
  * const previewService = inject(CardPreviewService);
- * 
+ *
  * // Subscribe to preview state changes
  * previewService.state$.subscribe(state => {
  *   console.log('Preview state:', state);
  * });
- * 
+ *
  * // Update preview card
  * previewService.updateCard(myCard, 'content');
- * 
+ *
  * // Toggle fullscreen
  * previewService.toggleFullscreen();
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CardPreviewService {
   private readonly stateSubject = new BehaviorSubject<CardPreviewState>({
@@ -52,7 +52,7 @@ export class CardPreviewService {
     isInitialized: false,
     isFullscreen: false,
     changeType: 'structural',
-    livePreviewCard: null
+    livePreviewCard: null,
   });
 
   readonly state$: Observable<CardPreviewState> = this.stateSubject.asObservable();
@@ -74,7 +74,7 @@ export class CardPreviewService {
     this.stateSubject.next({
       ...current,
       card,
-      changeType
+      changeType,
     });
   }
 
@@ -88,7 +88,7 @@ export class CardPreviewService {
     this.stateSubject.next({
       ...current,
       livePreviewCard: card,
-      changeType
+      changeType,
     });
   }
 
@@ -100,7 +100,7 @@ export class CardPreviewService {
     const current = this.stateSubject.value;
     this.stateSubject.next({
       ...current,
-      isGenerating
+      isGenerating,
     });
   }
 
@@ -112,7 +112,7 @@ export class CardPreviewService {
     const current = this.stateSubject.value;
     this.stateSubject.next({
       ...current,
-      isInitialized
+      isInitialized,
     });
   }
 
@@ -123,7 +123,7 @@ export class CardPreviewService {
     const current = this.stateSubject.value;
     this.stateSubject.next({
       ...current,
-      isFullscreen: !current.isFullscreen
+      isFullscreen: !current.isFullscreen,
     });
   }
 
@@ -135,7 +135,7 @@ export class CardPreviewService {
     const current = this.stateSubject.value;
     this.stateSubject.next({
       ...current,
-      isFullscreen
+      isFullscreen,
     });
   }
 
@@ -146,7 +146,7 @@ export class CardPreviewService {
     const current = this.stateSubject.value;
     this.stateSubject.next({
       ...current,
-      livePreviewCard: null
+      livePreviewCard: null,
     });
   }
 
@@ -160,14 +160,7 @@ export class CardPreviewService {
       isInitialized: false,
       isFullscreen: false,
       changeType: 'structural',
-      livePreviewCard: null
+      livePreviewCard: null,
     });
   }
 }
-
-
-
-
-
-
-

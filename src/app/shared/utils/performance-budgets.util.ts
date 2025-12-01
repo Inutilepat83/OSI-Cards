@@ -45,7 +45,8 @@ export class PerformanceBudgetManager {
         continue;
       }
 
-      const withinBudget = actual.size <= budget.maxSize &&
+      const withinBudget =
+        actual.size <= budget.maxSize &&
         (!budget.maxGzippedSize || !actual.gzipped || actual.gzipped <= budget.maxGzippedSize);
 
       let warning: string | undefined;
@@ -58,10 +59,10 @@ export class PerformanceBudgetManager {
         name: budget.name,
         actual: actual.size,
         budget: budget.maxSize,
-        gzipped: actual.gzipped,
-        gzippedBudget: budget.maxGzippedSize,
         withinBudget,
-        warning
+        ...(actual.gzipped !== undefined && { gzipped: actual.gzipped }),
+        ...(budget.maxGzippedSize !== undefined && { gzippedBudget: budget.maxGzippedSize }),
+        ...(warning !== undefined && { warning }),
       });
     }
 
@@ -77,20 +78,20 @@ export class PerformanceBudgetManager {
         name: 'main',
         maxSize: 500 * 1024, // 500KB
         maxGzippedSize: 150 * 1024, // 150KB gzipped
-        type: 'initial'
+        type: 'initial',
       },
       {
         name: 'vendor',
         maxSize: 1000 * 1024, // 1MB
         maxGzippedSize: 300 * 1024, // 300KB gzipped
-        type: 'chunk'
+        type: 'chunk',
       },
       {
         name: 'total',
         maxSize: 2000 * 1024, // 2MB
         maxGzippedSize: 600 * 1024, // 600KB gzipped
-        type: 'total'
-      }
+        type: 'total',
+      },
     ];
   }
 }
@@ -99,11 +100,11 @@ export class PerformanceBudgetManager {
  * Format bytes to human-readable string
  */
 function formatBytes(bytes: number): string {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) {
+    return '0 Bytes';
+  }
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
 }
-
-

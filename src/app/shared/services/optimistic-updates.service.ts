@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { LoggingService } from '../../core/services/logging.service';
 
@@ -23,13 +23,16 @@ export interface ConflictResolution<T> {
  * Shows UI changes immediately while background operations complete
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class OptimisticUpdatesService {
   private readonly logger = inject(LoggingService);
-  private readonly updatesSubject = new BehaviorSubject<Map<string, OptimisticUpdate<any>>>(new Map());
+  private readonly updatesSubject = new BehaviorSubject<Map<string, OptimisticUpdate<any>>>(
+    new Map()
+  );
   private readonly conflictResolvers = new Map<string, ConflictResolution<any>>();
-  readonly updates$: Observable<Map<string, OptimisticUpdate<any>>> = this.updatesSubject.asObservable();
+  readonly updates$: Observable<Map<string, OptimisticUpdate<any>>> =
+    this.updatesSubject.asObservable();
 
   /**
    * Apply optimistic update
@@ -45,7 +48,7 @@ export class OptimisticUpdatesService {
   ): void {
     const updates = new Map(this.updatesSubject.value);
     const existingUpdate = updates.get(id);
-    
+
     // If there's a conflict resolver, store it
     if (options?.conflictResolver) {
       this.conflictResolvers.set(id, options.conflictResolver);
@@ -58,9 +61,9 @@ export class OptimisticUpdatesService {
       timestamp: Date.now(),
       status: 'pending',
       maxRetries: options?.maxRetries ?? 3,
-      retryCount: 0
+      retryCount: 0,
     });
-    
+
     this.updatesSubject.next(updates);
     this.logger.debug(`Optimistic update applied: ${id}`, 'OptimisticUpdatesService');
   }
@@ -93,12 +96,12 @@ export class OptimisticUpdatesService {
       updates.set(id, {
         ...update,
         status: 'reverted',
-        error
+        error,
       });
       this.updatesSubject.next(updates);
-      
+
       this.logger.warn(`Optimistic update reverted: ${id}`, 'OptimisticUpdatesService', error);
-      
+
       // Remove after a delay
       setTimeout(() => {
         const currentUpdates = new Map(this.updatesSubject.value);
@@ -127,7 +130,7 @@ export class OptimisticUpdatesService {
       updates.set(id, {
         ...update,
         optimisticValue: resolvedValue,
-        status: 'pending' // Keep as pending, will be confirmed when server accepts
+        status: 'pending', // Keep as pending, will be confirmed when server accepts
       });
       this.updatesSubject.next(updates);
       this.logger.info(
@@ -139,16 +142,19 @@ export class OptimisticUpdatesService {
       // Default: mark as conflict and use server value
       updates.set(id, {
         ...update,
-        status: 'conflict'
+        status: 'conflict',
       });
       this.updatesSubject.next(updates);
-      this.logger.warn(`Conflict detected for ${id}, using server value`, 'OptimisticUpdatesService');
-      
+      this.logger.warn(
+        `Conflict detected for ${id}, using server value`,
+        'OptimisticUpdatesService'
+      );
+
       // Auto-revert after delay
       setTimeout(() => {
         this.revertUpdate(id, new Error('Conflict: server value differs from optimistic value'));
       }, 3000);
-      
+
       return serverValue;
     }
   }
@@ -159,7 +165,7 @@ export class OptimisticUpdatesService {
   retryUpdate<T>(id: string, newOptimisticValue: T): boolean {
     const updates = new Map(this.updatesSubject.value);
     const update = updates.get(id);
-    
+
     if (!update || update.status !== 'reverted') {
       return false;
     }
@@ -179,11 +185,14 @@ export class OptimisticUpdatesService {
       timestamp: Date.now(),
       status: 'pending',
       retryCount,
-      error: undefined
+      error: undefined,
     });
 
     this.updatesSubject.next(updates);
-    this.logger.info(`Retrying optimistic update: ${id} (attempt ${retryCount}/${maxRetries})`, 'OptimisticUpdatesService');
+    this.logger.info(
+      `Retrying optimistic update: ${id} (attempt ${retryCount}/${maxRetries})`,
+      'OptimisticUpdatesService'
+    );
     return true;
   }
 
@@ -234,5 +243,3 @@ export class OptimisticUpdatesService {
     this.updatesSubject.next(new Map());
   }
 }
-
-

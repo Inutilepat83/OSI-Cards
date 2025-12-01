@@ -5,7 +5,7 @@ const AgenticFlowPage: NgDocPage = {
   title: 'Agentic Flow Integration',
   mdFile: './index.md',
   order: 4,
-  category: LibraryDocsCategory
+  category: LibraryDocsCategory,
 };
 
 export default AgenticFlowPage;

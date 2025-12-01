@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
 import { DocsDemoComponent } from '../../components';
 
@@ -110,31 +110,31 @@ The **Brand Colors Section** (\`type: "brand-colors"\`) is used for displays col
 `;
 
 const demoConfig = {
-  "title": "Brand Colors",
-  "type": "brand-colors",
-  "description": "Official brand color palette",
-  "fields": [
+  title: 'Brand Colors',
+  type: 'brand-colors',
+  description: 'Official brand color palette',
+  fields: [
     {
-      "label": "Primary",
-      "value": "#FF7900",
-      "description": "Orange Brand Color"
+      label: 'Primary',
+      value: '#FF7900',
+      description: 'Orange Brand Color',
     },
     {
-      "label": "Secondary",
-      "value": "#000000",
-      "description": "Black"
+      label: 'Secondary',
+      value: '#000000',
+      description: 'Black',
     },
     {
-      "label": "Accent",
-      "value": "#4CAF50",
-      "description": "Green Accent"
+      label: 'Accent',
+      value: '#4CAF50',
+      description: 'Green Accent',
     },
     {
-      "label": "Background",
-      "value": "#FFFFFF",
-      "description": "White Background"
-    }
-  ]
+      label: 'Background',
+      value: '#FFFFFF',
+      description: 'White Background',
+    },
+  ],
 };
 
 /**
@@ -147,8 +147,8 @@ const demoConfig = {
   imports: [DocPageComponent, DocsDemoComponent],
   template: `
     <div class="section-docs">
-      <app-docs-demo 
-        [config]="demo" 
+      <app-docs-demo
+        [config]="demo"
         [type]="'brand-colors'"
         demoTitle="Live Preview"
         height="350px"
@@ -156,14 +156,16 @@ const demoConfig = {
       <app-doc-page [content]="content"></app-doc-page>
     </div>
   `,
-  styles: [`
-    .section-docs {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styles: [
+    `
+      .section-docs {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BrandColorsPageComponent {
   content = pageContent;

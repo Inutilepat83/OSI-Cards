@@ -2,10 +2,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 /**
  * Format number pipe for formatting numbers with locale support
- * 
+ *
  * Formats numbers using Intl.NumberFormat with support for currency, percentage,
  * and standard number formatting. Provides locale-aware number formatting.
- * 
+ *
  * @example
  * ```html
  * {{ 1234.56 | formatNumber }}
@@ -15,12 +15,12 @@ import { Pipe, PipeTransform } from '@angular/core';
  */
 @Pipe({
   name: 'formatNumber',
-  standalone: true
+  standalone: true,
 })
 export class FormatNumberPipe implements PipeTransform {
   /**
    * Transform number to formatted string
-   * 
+   *
    * @param value - The number to format (can be null or undefined)
    * @param format - Format type: 'number', 'currency', or 'percent' (default: 'number')
    * @param locale - Locale string for formatting (default: 'en-US')
@@ -55,5 +55,3 @@ export class FormatNumberPipe implements PipeTransform {
     return new Intl.NumberFormat(locale, options).format(value);
   }
 }
-
-

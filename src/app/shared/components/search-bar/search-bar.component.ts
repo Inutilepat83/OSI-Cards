@@ -1,7 +1,15 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AppConfigService } from '../../../core/services/app-config.service';
 
@@ -43,71 +51,73 @@ import { AppConfigService } from '../../../core/services/app-config.service';
       </div>
     </div>
   `,
-  styles: [`
-    .search-bar-container {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
+  styles: [
+    `
+      .search-bar-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
 
-    .search-input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
+      .search-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
 
-    .search-input {
-      width: 100%;
-      padding: 0.75rem 2.5rem 0.75rem 2.5rem;
-      background: rgba(20, 30, 50, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 0.5rem;
-      color: var(--card-text-primary, #FFFFFF);
-      font-size: 0.875rem;
-      transition: border-color 0.2s;
-    }
+      .search-input {
+        width: 100%;
+        padding: 0.75rem 2.5rem 0.75rem 2.5rem;
+        background: rgba(20, 30, 50, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0.5rem;
+        color: var(--card-text-primary, #ffffff);
+        font-size: 0.875rem;
+        transition: border-color 0.2s;
+      }
 
-    .search-input:focus {
-      outline: none;
-      border-color: var(--color-brand, #FF7900);
-    }
+      .search-input:focus {
+        outline: none;
+        border-color: var(--color-brand, #ff7900);
+      }
 
-    .search-icon {
-      position: absolute;
-      left: 0.75rem;
-      pointer-events: none;
-      color: var(--card-text-secondary, #B8C5D6);
-    }
+      .search-icon {
+        position: absolute;
+        left: 0.75rem;
+        pointer-events: none;
+        color: var(--card-text-secondary, #b8c5d6);
+      }
 
-    .search-clear {
-      position: absolute;
-      right: 0.75rem;
-      background: transparent;
-      border: none;
-      color: var(--card-text-secondary, #B8C5D6);
-      font-size: 1.5rem;
-      line-height: 1;
-      cursor: pointer;
-      padding: 0;
-      width: 1.5rem;
-      height: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: color 0.2s;
-    }
+      .search-clear {
+        position: absolute;
+        right: 0.75rem;
+        background: transparent;
+        border: none;
+        color: var(--card-text-secondary, #b8c5d6);
+        font-size: 1.5rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0;
+        width: 1.5rem;
+        height: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.2s;
+      }
 
-    .search-clear:hover {
-      color: var(--card-text-primary, #FFFFFF);
-    }
+      .search-clear:hover {
+        color: var(--card-text-primary, #ffffff);
+      }
 
-    .search-hint {
-      font-size: 0.75rem;
-      color: var(--card-text-secondary, #B8C5D6);
-      padding: 0 0.75rem;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+      .search-hint {
+        font-size: 0.75rem;
+        color: var(--card-text-secondary, #b8c5d6);
+        padding: 0 0.75rem;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchBarComponent {
   private readonly config = inject(AppConfigService);
@@ -128,13 +138,15 @@ export class SearchBarComponent {
 
   constructor() {
     const debounceTimeMs = this.debounceMs ?? this.config.UI.DEBOUNCE_SEARCH_MS;
-    this.searchSubject.pipe(
-      debounceTime(debounceTimeMs),
-      distinctUntilChanged(),
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(query => {
-      this.searchChange.emit(query);
-    });
+    this.searchSubject
+      .pipe(
+        debounceTime(debounceTimeMs),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((query) => {
+        this.searchChange.emit(query);
+      });
   }
 
   onSearchChange(query: string): void {
@@ -155,4 +167,3 @@ export class SearchBarComponent {
     this.searchBlur.emit();
   }
 }
-

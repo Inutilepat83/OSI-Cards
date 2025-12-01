@@ -1,4 +1,4 @@
-import { Injectable, inject, ErrorHandler } from '@angular/core';
+import { ErrorHandler, inject, Injectable } from '@angular/core';
 import { LoggingService } from './logging.service';
 import { AppConfigService } from './app-config.service';
 
@@ -19,10 +19,10 @@ export interface ErrorContext {
 
 /**
  * Error Reporting Service
- * 
+ *
  * Centralized error reporting with support for external services (Sentry, LogRocket, etc.)
  * Provides error aggregation, context capture, and reporting capabilities.
- * 
+ *
  * @example
  * ```typescript
  * const errorReporting = inject(ErrorReportingService);
@@ -30,13 +30,13 @@ export interface ErrorContext {
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ErrorReportingService {
   private readonly logger = inject(LoggingService);
   private readonly config = inject(AppConfigService);
   private readonly errorHandler = inject(ErrorHandler);
-  
+
   private errorQueue: ErrorContext[] = [];
   private readonly maxQueueSize = 100;
   private reportingEnabled = true;
@@ -54,7 +54,7 @@ export class ErrorReportingService {
     }
   ): void {
     const errorContext = this.buildErrorContext(error, context);
-    
+
     // Add to queue
     this.errorQueue.push(errorContext);
     if (this.errorQueue.length > this.maxQueueSize) {
@@ -65,7 +65,7 @@ export class ErrorReportingService {
     this.logger.error(errorContext.message, errorContext.component || 'ErrorReporting', {
       stack: errorContext.stack,
       url: errorContext.url,
-      context: context
+      context: context,
     });
 
     // Report to external service if enabled
@@ -87,8 +87,8 @@ export class ErrorReportingService {
     }
   ): void {
     const errorContext = this.buildErrorContext(error, {
-      component: extra?.tags?.['component'],
-      action: extra?.tags?.['action']
+      component: extra?.tags?.['component'] as string | undefined,
+      action: extra?.tags?.['action'] as string | undefined,
     });
 
     // Add extra context
@@ -97,8 +97,8 @@ export class ErrorReportingService {
     }
 
     this.captureError(error, {
-      component: extra?.tags?.['component'],
-      action: extra?.tags?.['action']
+      component: extra?.tags?.['component'] as string | undefined,
+      action: extra?.tags?.['action'] as string | undefined,
     });
   }
 
@@ -128,7 +128,7 @@ export class ErrorReportingService {
       component: context?.component,
       action: context?.action,
       state: context?.state,
-      userActions: context?.userActions
+      userActions: context?.userActions,
     };
   }
 
@@ -138,10 +138,10 @@ export class ErrorReportingService {
   private reportToExternalService(errorContext: ErrorContext): void {
     // Integration point for external error reporting services
     // Example: Sentry, LogRocket, Bugsnag, etc.
-    
+
     // Check if external service is configured
     // This would typically check for API keys or service configuration
-    
+
     // Example Sentry integration (commented out - requires @sentry/angular):
     /*
     if (typeof window !== 'undefined' && (window as any).Sentry) {
@@ -163,7 +163,7 @@ export class ErrorReportingService {
     // For now, just log that we would report
     this.logger.debug('Error would be reported to external service', 'ErrorReporting', {
       message: errorContext.message,
-      component: errorContext.component
+      component: errorContext.component,
     });
   }
 
@@ -197,8 +197,8 @@ export class ErrorReportingService {
     recent: ErrorContext[];
   } {
     const byComponent: Record<string, number> = {};
-    
-    this.errorQueue.forEach(error => {
+
+    this.errorQueue.forEach((error) => {
       const component = error.component || 'unknown';
       byComponent[component] = (byComponent[component] || 0) + 1;
     });
@@ -206,7 +206,7 @@ export class ErrorReportingService {
     return {
       total: this.errorQueue.length,
       byComponent,
-      recent: this.errorQueue.slice(-10) // Last 10 errors
+      recent: this.errorQueue.slice(-10), // Last 10 errors
     };
   }
 
@@ -217,7 +217,7 @@ export class ErrorReportingService {
     // This would typically set user context in external services
     this.logger.debug('User context set', 'ErrorReporting', {
       userId,
-      ...additionalData
+      ...additionalData,
     });
   }
 
@@ -234,8 +234,7 @@ export class ErrorReportingService {
     this.logger.debug(`Breadcrumb: ${message}`, 'ErrorReporting', {
       category,
       level,
-      ...data
+      ...data,
     });
   }
 }
-

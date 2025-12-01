@@ -27,5 +27,3 @@ export abstract class BaseFacade implements Facade {
     }
   }
 }
-
-

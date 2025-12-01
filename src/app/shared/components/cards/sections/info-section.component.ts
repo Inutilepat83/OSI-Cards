@@ -21,18 +21,18 @@ export interface InfoSectionFieldInteraction {
 
 /**
  * Info Section Component
- * 
+ *
  * Displays key-value pairs in a clean, scannable format. Ideal for metadata,
  * contact information, and general data display. Supports trend indicators
  * and change values for dynamic data visualization.
- * 
+ *
  * Features:
  * - Key-value pair display with labels and values
  * - Trend indicators (up, down, stable, neutral)
  * - Change percentage display
  * - Field interaction events
  * - Streaming placeholder handling
- * 
+ *
  * @example
  * ```html
  * <app-info-section
@@ -46,11 +46,11 @@ export interface InfoSectionFieldInteraction {
   standalone: true,
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './info-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InfoSectionComponent extends BaseSectionComponent<InfoField> {
   private readonly utils = inject(SectionUtilsService);
-  
+
   // Custom output for backward compatibility with InfoSectionFieldInteraction format
   @Output() infoFieldInteraction = new EventEmitter<InfoSectionFieldInteraction>();
 
@@ -65,11 +65,11 @@ export class InfoSectionComponent extends BaseSectionComponent<InfoField> {
   onFieldClick(field: InfoField): void {
     // Emit to base class for standard handling
     this.emitFieldInteraction(field, { sectionTitle: this.section.title });
-    
+
     // Also emit in InfoSectionFieldInteraction format for backward compatibility
     this.infoFieldInteraction.emit({
       field,
-      sectionTitle: this.section.title
+      sectionTitle: this.section.title,
     });
   }
 

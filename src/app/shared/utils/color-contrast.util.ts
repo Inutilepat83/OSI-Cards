@@ -5,14 +5,14 @@
 
 /**
  * Calculate relative luminance of a color
- * 
+ *
  * @param r - Red component (0-255)
  * @param g - Green component (0-255)
  * @param b - Blue component (0-255)
  * @returns Relative luminance (0-1)
  */
 export function getLuminance(r: number, g: number, b: number): number {
-  const [rs, gs, bs] = [r, g, b].map(val => {
+  const [rs, gs, bs] = [r, g, b].map((val) => {
     val = val / 255;
     return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
   });
@@ -24,7 +24,7 @@ export function getLuminance(r: number, g: number, b: number): number {
 
 /**
  * Parse hex color to RGB
- * 
+ *
  * @param hex - Hex color string (e.g., '#FF7900' or 'FF7900')
  * @returns RGB values [r, g, b] or null if invalid
  */
@@ -39,16 +39,12 @@ export function hexToRgb(hex: string): [number, number, number] | null {
   if (!rStr || !gStr || !bStr) {
     return null;
   }
-  return [
-    parseInt(rStr, 16),
-    parseInt(gStr, 16),
-    parseInt(bStr, 16)
-  ];
+  return [parseInt(rStr, 16), parseInt(gStr, 16), parseInt(bStr, 16)];
 }
 
 /**
  * Calculate contrast ratio between two colors
- * 
+ *
  * @param color1 - First color (hex string)
  * @param color2 - Second color (hex string)
  * @returns Contrast ratio (1-21)
@@ -72,7 +68,7 @@ export function getContrastRatio(color1: string, color2: string): number {
 
 /**
  * Check if contrast ratio meets WCAG AA standard
- * 
+ *
  * @param color1 - First color (hex string)
  * @param color2 - Second color (hex string)
  * @param isLargeText - Whether text is large (18pt+ or 14pt+ bold)
@@ -85,7 +81,7 @@ export function meetsWCAGAA(color1: string, color2: string, isLargeText = false)
 
 /**
  * Check if contrast ratio meets WCAG AAA standard
- * 
+ *
  * @param color1 - First color (hex string)
  * @param color2 - Second color (hex string)
  * @param isLargeText - Whether text is large (18pt+ or 14pt+ bold)
@@ -98,7 +94,7 @@ export function meetsWCAGAAA(color1: string, color2: string, isLargeText = false
 
 /**
  * Adjust color brightness to meet contrast requirements
- * 
+ *
  * @param color - Hex color string
  * @param targetRatio - Target contrast ratio
  * @param background - Background color (hex string)
@@ -118,7 +114,8 @@ export function adjustColorForContrast(
     return color;
   }
 
-  const _bgLum = getLuminance(bgRgb[0], bgRgb[1], bgRgb[2]);
+  // Background luminance calculated for reference but not currently used
+  // const bgLum = getLuminance(bgRgb[0], bgRgb[1], bgRgb[2]);
   let [r, g, b] = rgb;
   let currentRatio = getContrastRatio(color, background);
 
@@ -131,19 +128,21 @@ export function adjustColorForContrast(
     g = Math.max(0, Math.min(255, g + step));
     b = Math.max(0, Math.min(255, b + step));
 
-    const newColor = `#${[r, g, b].map(x => {
-      const hex = x.toString(16);
-      return hex.length === 1 ? '0' + hex : hex;
-    }).join('')}`;
+    const newColor = `#${[r, g, b]
+      .map((x) => {
+        const hex = x.toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+      })
+      .join('')}`;
 
     currentRatio = getContrastRatio(newColor, background);
     iterations++;
   }
 
-  return `#${[r, g, b].map(x => {
-    const hex = x.toString(16);
-    return hex.length === 1 ? '0' + hex : hex;
-  }).join('')}`;
+  return `#${[r, g, b]
+    .map((x) => {
+      const hex = x.toString(16);
+      return hex.length === 1 ? '0' + hex : hex;
+    })
+    .join('')}`;
 }
-
-

@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, Input, EventEmitter, Output, ChangeDetectorRef, OnChanges, SimpleChanges, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { CardField, CardItem, CardSection } from '../../../../models';
 
 /**
@@ -12,7 +22,7 @@ export interface SectionInteraction<T = CardField | CardItem> {
 
 /**
  * Base component class for all section components
- * 
+ *
  * Provides common functionality and ensures consistency across all section types.
  * All section components should extend this class to inherit:
  * - Animation state management (staggered field/item animations)
@@ -20,9 +30,9 @@ export interface SectionInteraction<T = CardField | CardItem> {
  * - TrackBy functions for optimal *ngFor performance
  * - Change detection optimization (OnPush strategy with batched updates)
  * - Standardized data access patterns (getFields, getItems)
- * 
+ *
  * @template T - The type of field/item this section handles (CardField or CardItem)
- * 
+ *
  * @example
  * ```typescript
  * @Component({
@@ -39,15 +49,17 @@ export interface SectionInteraction<T = CardField | CardItem> {
  */
 @Component({
   template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export abstract class BaseSectionComponent<T extends CardField | CardItem = CardField> implements OnChanges {
+export abstract class BaseSectionComponent<
+  T extends CardField | CardItem = CardField,
+> implements OnChanges {
   @Input({ required: true }) section!: CardSection;
   @Output() fieldInteraction = new EventEmitter<SectionInteraction<T>>();
   @Output() itemInteraction = new EventEmitter<SectionInteraction<T>>();
 
   protected readonly cdr = inject(ChangeDetectorRef);
-  
+
   // Animation state tracking
   private readonly fieldAnimationStates = new Map<string, 'entering' | 'entered' | 'none'>();
   private readonly itemAnimationStates = new Map<string, 'entering' | 'entered' | 'none'>();
@@ -57,9 +69,7 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
   private readonly ITEM_STAGGER_DELAY_MS = 40;
   private readonly FIELD_ANIMATION_DURATION_MS = 300;
   private readonly ITEM_ANIMATION_DURATION_MS = 350;
-  private fieldsAnimated = false;
-  private itemsAnimated = false;
-  
+
   // Performance: Batch change detection for animation state updates
   private pendingFieldAnimationUpdates = new Set<string>();
   private pendingItemAnimationUpdates = new Set<string>();
@@ -68,12 +78,12 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
 
   /**
    * Get fields from section (standardized access pattern)
-   * 
+   *
    * Returns the fields array from the section, or an empty array if not available.
    * This method provides a consistent way to access fields across all section components.
-   * 
+   *
    * @returns Array of CardField objects from the section
-   * 
+   *
    * @example
    * ```typescript
    * const fields = this.getFields();
@@ -88,13 +98,13 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
 
   /**
    * Get items from section (standardized access pattern)
-   * 
+   *
    * Returns the items array from the section, or falls back to fields if items are not available.
    * This method provides a consistent way to access items across all section components.
    * If items are not available, it converts fields to items by mapping field properties.
-   * 
+   *
    * @returns Array of CardItem objects from the section, or converted from fields
-   * 
+   *
    * @example
    * ```typescript
    * const items = this.getItems();
@@ -107,7 +117,7 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
     if (Array.isArray(this.section.items) && this.section.items.length > 0) {
       return this.section.items as CardItem[];
     }
-    
+
     // Fallback to fields if items are not available
     if (Array.isArray(this.section.fields) && this.section.fields.length > 0) {
       return (this.section.fields as CardField[]).map((field) => {
@@ -115,13 +125,15 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
         return {
           ...cardField,
           title: cardField.title ?? cardField.label ?? cardField.id,
-          description: cardField.description ?? (typeof cardField.meta?.['description'] === 'string' 
-            ? cardField.meta['description'] as string 
-            : undefined)
+          description:
+            cardField.description ??
+            (typeof cardField.meta?.['description'] === 'string'
+              ? (cardField.meta['description'] as string)
+              : undefined),
         } as CardItem;
       });
     }
-    
+
     return [];
   }
 
@@ -139,8 +151,6 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
       // Reset animation states when section changes
       this.resetFieldAnimations();
       this.resetItemAnimations();
-      this.fieldsAnimated = false;
-      this.itemsAnimated = false;
       // Clear pending updates
       this.pendingFieldAnimationUpdates.clear();
       this.pendingItemAnimationUpdates.clear();
@@ -149,15 +159,15 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
 
   /**
    * Get animation class for a field based on its appearance state
-   * 
+   *
    * Returns the appropriate CSS class for field animations based on the field's
    * current animation state (entering, entered, or none). Automatically marks new
    * fields as entering if they haven't been seen before.
-   * 
+   *
    * @param fieldId - Unique identifier for the field
    * @param index - Index of the field in the array (used for stagger delay)
    * @returns CSS class name for the animation state ('field-streaming', 'field-entered', or '')
-   * 
+   *
    * @example
    * ```html
    * <div [ngClass]="getFieldAnimationClass(getFieldId(field, i), i)">
@@ -167,21 +177,21 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
    */
   getFieldAnimationClass(fieldId: string, index: number): string {
     const state = this.fieldAnimationStates.get(fieldId);
-    
+
     if (state === 'entering') {
       return 'field-streaming';
     }
-    
+
     if (state === 'entered') {
       return 'field-entered';
     }
-    
+
     // New field - mark as entering
     if (state === undefined || state === 'none') {
       this.markFieldEntering(fieldId, index);
       return 'field-streaming';
     }
-    
+
     return '';
   }
 
@@ -190,21 +200,21 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
    */
   getItemAnimationClass(itemId: string, index: number): string {
     const state = this.itemAnimationStates.get(itemId);
-    
+
     if (state === 'entering') {
       return 'item-streaming';
     }
-    
+
     if (state === 'entered') {
       return 'item-entered';
     }
-    
+
     // New item - mark as entering
     if (state === undefined || state === 'none') {
       this.markItemEntering(itemId, index);
       return 'item-streaming';
     }
-    
+
     return '';
   }
 
@@ -230,11 +240,11 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
     this.fieldAnimationStates.set(fieldId, 'entering');
     const appearanceTime = Date.now();
     this.fieldAnimationTimes.set(fieldId, appearanceTime);
-    
+
     // Calculate total delay (stagger + animation duration)
     const staggerDelay = index * this.FIELD_STAGGER_DELAY_MS;
     const totalDelay = staggerDelay + this.FIELD_ANIMATION_DURATION_MS;
-    
+
     // Mark as entered after animation completes
     // Batch change detection for multiple fields
     setTimeout(() => {
@@ -255,7 +265,7 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
     if (this.fieldAnimationUpdateRafId !== null) {
       return; // Already scheduled
     }
-    
+
     this.fieldAnimationUpdateRafId = requestAnimationFrame(() => {
       if (this.pendingFieldAnimationUpdates.size > 0) {
         // Single change detection for all pending updates
@@ -274,11 +284,11 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
     this.itemAnimationStates.set(itemId, 'entering');
     const appearanceTime = Date.now();
     this.itemAnimationTimes.set(itemId, appearanceTime);
-    
+
     // Calculate total delay (stagger + animation duration)
     const staggerDelay = index * this.ITEM_STAGGER_DELAY_MS;
     const totalDelay = staggerDelay + this.ITEM_ANIMATION_DURATION_MS;
-    
+
     // Mark as entered after animation completes
     // Batch change detection for multiple items
     setTimeout(() => {
@@ -299,7 +309,7 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
     if (this.itemAnimationUpdateRafId !== null) {
       return; // Already scheduled
     }
-    
+
     this.itemAnimationUpdateRafId = requestAnimationFrame(() => {
       if (this.pendingItemAnimationUpdates.size > 0) {
         // Single change detection for all pending updates
@@ -358,13 +368,13 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
 
   /**
    * Emit field interaction event (standardized pattern)
-   * 
+   *
    * Emits a fieldInteraction event with the field data and metadata.
    * Automatically includes section ID and title in the metadata.
-   * 
+   *
    * @param field - The field that was interacted with
    * @param metadata - Optional additional metadata to include
-   * 
+   *
    * @example
    * ```typescript
    * onFieldClick(field: CardField): void {
@@ -378,8 +388,8 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
       metadata: {
         sectionId: this.section.id,
         sectionTitle: this.section.title,
-        ...metadata
-      }
+        ...metadata,
+      },
     });
   }
 
@@ -392,24 +402,24 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
       metadata: {
         sectionId: this.section.id,
         sectionTitle: this.section.title,
-        ...metadata
-      }
+        ...metadata,
+      },
     });
   }
 
   /**
    * TrackBy function for fields - uses stable field ID for optimal *ngFor performance
-   * 
+   *
    * This function should be used with *ngFor trackBy to prevent unnecessary
    * DOM re-renders when the fields array changes. Uses the field's ID if available,
    * otherwise generates a stable ID from the index and label.
-   * 
+   *
    * Can be overridden by child classes for custom tracking logic.
-   * 
+   *
    * @param index - Index of the field in the array
    * @param field - The field object
    * @returns A stable identifier for the field
-   * 
+   *
    * @example
    * ```html
    * <div *ngFor="let field of fields; trackBy: trackField">
@@ -465,6 +475,4 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
   protected isStreamingPlaceholder(value: unknown): boolean {
     return value === 'Streaming…' || value === 'Streaming...';
   }
-
 }
-

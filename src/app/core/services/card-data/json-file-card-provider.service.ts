@@ -1,7 +1,16 @@
-import { Injectable, inject, OnDestroy, DestroyRef } from '@angular/core';
+import { DestroyRef, inject, Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, forkJoin, throwError, timer } from 'rxjs';
-import { map, catchError, switchMap, shareReplay, takeUntil, filter, retryWhen, mergeMap } from 'rxjs/operators';
+import { forkJoin, Observable, of, throwError, timer } from 'rxjs';
+import {
+  catchError,
+  filter,
+  map,
+  mergeMap,
+  retryWhen,
+  shareReplay,
+  switchMap,
+  takeUntil,
+} from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AICardConfig } from '../../../models';
 import { CardDataProvider } from './card-data-provider.interface';
@@ -23,7 +32,7 @@ const PRIORITY_ORDER = { high: 3, medium: 2, low: 1 };
  * Uses manifest for discovery and streaming support
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class JsonFileCardProvider extends CardDataProvider implements OnDestroy {
   private http = inject(HttpClient);
@@ -37,7 +46,7 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
   private requestCanceller = new RequestCanceller();
   // In-memory cache for instant access (bypasses HTTP for cached items)
   private memoryCache = new Map<string, { data: AICardConfig | null; timestamp: number }>();
-  private readonly CACHE_TTL = (environment.performance?.cacheTimeout || 60 * 60 * 1000);
+  private readonly CACHE_TTL = environment.performance?.cacheTimeout || 60 * 60 * 1000;
 
   /**
    * Load manifest with caching
@@ -47,21 +56,30 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
       this.manifestCache$ = this.http.get<CardManifest>('/assets/configs/manifest.json').pipe(
         takeUntil(this.requestCanceller.cancel$),
         catchError((error: unknown): Observable<CardManifest> => {
-          if (error && typeof error === 'object' && 'name' in error && error.name === 'AbortError') {
+          if (
+            error &&
+            typeof error === 'object' &&
+            'name' in error &&
+            error.name === 'AbortError'
+          ) {
             this.logger.debug('Manifest request cancelled', 'JsonFileCardProvider');
             return of({
               version: '1.0.0',
               generatedAt: new Date().toISOString(),
               cards: [],
-              types: {}
+              types: {},
             } as CardManifest);
           }
-          this.logger.warn('Failed to load manifest, returning empty catalog', 'JsonFileCardProvider', error);
+          this.logger.warn(
+            'Failed to load manifest, returning empty catalog',
+            'JsonFileCardProvider',
+            error
+          );
           return of({
             version: '1.0.0',
             generatedAt: new Date().toISOString(),
             cards: [],
-            types: {}
+            types: {},
           } as CardManifest);
         }),
         shareReplay(1)
@@ -84,20 +102,20 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
   private loadJsonCard(card: CardManifestEntry): Observable<AICardConfig | null> {
     const jsonPath = card.path.endsWith('.json') ? card.path : `${card.path}.json`;
     const fullUrl = `/assets/configs/${jsonPath}`;
-    
+
     // Check in-memory cache first (instant, synchronous, no async overhead)
     const cached = this.memoryCache.get(fullUrl);
     const now = Date.now();
-    if (cached && (now - cached.timestamp) < this.CACHE_TTL) {
+    if (cached && now - cached.timestamp < this.CACHE_TTL) {
       // Return immediately - no async operations, no queue, no HTTP
       return of(cached.data);
     }
-    
+
     // Not in memory cache - check IndexedDB and load in background
     // But don't block - return cached if available, otherwise make request
     return this.indexedDBCache.get(fullUrl).pipe(
       switchMap((indexedEntry: any) => {
-        if (indexedEntry && (now - indexedEntry.timestamp) < this.CACHE_TTL) {
+        if (indexedEntry && now - indexedEntry.timestamp < this.CACHE_TTL) {
           try {
             // Ensure data is a string - handle both string and object cases
             let jsonText: string;
@@ -110,7 +128,7 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
               this.logger.warn(`Invalid cached data type for ${fullUrl}`, 'JsonFileCardProvider');
               throw new Error('Invalid cached data format');
             }
-            
+
             // Decode and cache in memory for instant access next time
             const cardData = this.decodeJsonToCard(jsonText);
             if (cardData) {
@@ -123,84 +141,100 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
             }
           } catch (error) {
             // Cached data is corrupted, clear it and fetch fresh
-            this.logger.warn(`Cached data invalid for ${fullUrl}, fetching fresh`, 'JsonFileCardProvider', error);
+            this.logger.warn(
+              `Cached data invalid for ${fullUrl}, fetching fresh`,
+              'JsonFileCardProvider',
+              error
+            );
             this.indexedDBCache.delete(fullUrl).subscribe();
             // Fall through to HTTP request
           }
         }
-        
+
         // Not in any cache - make HTTP request (bypass queue for templates to reduce latency)
         // Use HttpClient.get directly with responseType: 'text' for simpler handling
         const priority = PRIORITY_ORDER[card.priority] || 0;
         const isTemplate = card.priority === 'high'; // High priority cards are typically templates
-        
+
         const makeHttpRequest = () => {
           return this.http.get(fullUrl, { responseType: 'text' }).pipe(
             map((text: string) => {
               if (!text || typeof text !== 'string') {
                 throw new Error(`Invalid response type: expected string, got ${typeof text}`);
               }
-              
+
               const cardData = this.decodeJsonToCard(text);
-              
+
               if (!cardData) {
                 throw new Error('Failed to decode JSON card');
               }
-              
+
               // Cache immediately for next time
               this.memoryCache.set(fullUrl, { data: cardData, timestamp: now });
               this.indexedDBCache.set(fullUrl, text, now).subscribe({
                 error: (err) => {
-                  this.logger.debug('Failed to cache in IndexedDB (non-critical)', 'JsonFileCardProvider', err);
-                }
+                  this.logger.debug(
+                    'Failed to cache in IndexedDB (non-critical)',
+                    'JsonFileCardProvider',
+                    err
+                  );
+                },
               });
-              
+
               return cardData;
             }),
             takeUntil(this.requestCanceller.cancel$),
             catchError((error: unknown) => {
               const errorMessage = error instanceof Error ? error.message : String(error);
-              const errorName = error && typeof error === 'object' && 'name' in error ? error.name : '';
-              
+              const errorName =
+                error && typeof error === 'object' && 'name' in error ? error.name : '';
+
               if (errorName === 'AbortError') {
                 this.logger.debug(`Request cancelled for ${fullUrl}`, 'JsonFileCardProvider');
                 return of(null);
               }
-              
+
               // Log detailed error information
-              const statusCode = error && typeof error === 'object' && 'status' in error ? (error as any).status : 'unknown';
+              const statusCode =
+                error && typeof error === 'object' && 'status' in error
+                  ? (error as any).status
+                  : 'unknown';
               this.logger.error(
                 `Failed to load JSON card from ${fullUrl}: ${errorMessage} (status: ${statusCode})`,
                 'JsonFileCardProvider',
                 error
               );
-              
+
               return of(null);
             })
           );
         };
-        
+
         if (isTemplate) {
           // Direct HTTP request for templates (no queue delay)
           return makeHttpRequest();
         }
-        
+
         // For non-templates, use queue
         return this.requestQueue.enqueue(() => {
           return makeHttpRequest().pipe(
-            retryWhen(errors =>
+            retryWhen((errors) =>
               errors.pipe(
                 mergeMap((error, index) => {
                   const retryAttempt = index + 1;
                   const maxRetries = 3;
-                  
-                  const errorName = error && typeof error === 'object' && 'name' in error ? error.name : '';
-                  const statusCode = error && typeof error === 'object' && 'status' in error ? (error as any).status : null;
-                  
+
+                  const errorName =
+                    error && typeof error === 'object' && 'name' in error ? error.name : '';
+                  const statusCode =
+                    error && typeof error === 'object' && 'status' in error
+                      ? (error as any).status
+                      : null;
+
                   if (errorName === 'AbortError' || statusCode === 404) {
                     return throwError(() => error);
                   }
-                  
+
                   if (retryAttempt > maxRetries) {
                     this.logger.warn(
                       `Max retries reached for ${fullUrl} after ${retryAttempt} attempts`,
@@ -208,7 +242,7 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
                     );
                     return throwError(() => error);
                   }
-                  
+
                   const delay = Math.min(1000 * Math.pow(2, retryAttempt - 1), 4000);
                   this.logger.debug(
                     `Retrying ${fullUrl} (attempt ${retryAttempt}/${maxRetries}) after ${delay}ms`,
@@ -223,7 +257,11 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
       }),
       catchError((error: unknown) => {
         // Fallback: direct HTTP request if IndexedDB fails
-        this.logger.warn(`IndexedDB lookup failed for ${fullUrl}, using direct HTTP`, 'JsonFileCardProvider', error);
+        this.logger.warn(
+          `IndexedDB lookup failed for ${fullUrl}, using direct HTTP`,
+          'JsonFileCardProvider',
+          error
+        );
         return this.http.get(fullUrl, { responseType: 'text' }).pipe(
           map((text: string) => {
             if (!text || typeof text !== 'string') {
@@ -255,7 +293,9 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
    */
   private decodeJsonToCard(text: string): AICardConfig | null {
     if (!text || typeof text !== 'string') {
-      this.logger.error('Invalid input: expected string', 'JsonFileCardProvider', { type: typeof text });
+      this.logger.error('Invalid input: expected string', 'JsonFileCardProvider', {
+        type: typeof text,
+      });
       return null;
     }
 
@@ -274,7 +314,7 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
         const parseMsg = parseError instanceof Error ? parseError.message : 'Unknown parse error';
         this.logger.error(`JSON parse failed: ${parseMsg}`, 'JsonFileCardProvider', {
           error: parseError,
-          preview: trimmed.substring(0, 200)
+          preview: trimmed.substring(0, 200),
         });
         return null;
       }
@@ -283,24 +323,24 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
       if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
         this.logger.error('Parsed JSON is not an object', 'JsonFileCardProvider', {
           type: typeof parsed,
-          isArray: Array.isArray(parsed)
+          isArray: Array.isArray(parsed),
         });
         return null;
       }
 
       // Validate JSON structure using CardValidationService
       const cardConfig = this.validationService.validateCardJson(trimmed);
-      
+
       if (!cardConfig) {
         // Try to provide more helpful error message
         const hasTitle = 'cardTitle' in parsed || 'title' in parsed;
         const hasSections = 'sections' in parsed && Array.isArray((parsed as any).sections);
-        
+
         this.logger.error('JSON validation failed for card', 'JsonFileCardProvider', {
           hasTitle,
           hasSections,
           keys: Object.keys(parsed),
-          preview: JSON.stringify(parsed).substring(0, 500)
+          preview: JSON.stringify(parsed).substring(0, 500),
         });
         return null;
       }
@@ -310,7 +350,7 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
       if (!zodResult.success) {
         this.logger.warn('Zod validation failed for card', 'JsonFileCardProvider', {
           errors: zodResult.errorMessages,
-          cardTitle: cardConfig.cardTitle
+          cardTitle: cardConfig.cardTitle,
         });
         // Continue with cardConfig even if Zod validation fails (non-blocking)
         // This allows cards to work while we refine the schema
@@ -318,16 +358,16 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
 
       // Sanitize and ensure IDs
       const sanitized = sanitizeCardConfig(cardConfig);
-      
+
       // Ensure it has required fields after sanitization
       if (!sanitized.cardTitle || !Array.isArray(sanitized.sections)) {
         this.logger.error('Sanitized card missing required fields', 'JsonFileCardProvider', {
           hasTitle: !!sanitized.cardTitle,
-          hasSections: Array.isArray(sanitized.sections)
+          hasSections: Array.isArray(sanitized.sections),
         });
         return null;
       }
-      
+
       return sanitized as AICardConfig;
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : 'Unknown error';
@@ -335,19 +375,18 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
       this.logger.error(`Failed to decode JSON card: ${msg}`, 'JsonFileCardProvider', {
         error,
         stack,
-        preview: trimmed.substring(0, 200)
+        preview: trimmed.substring(0, 200),
       });
       return null;
     }
   }
-
 
   /**
    * Get all available cards
    */
   override getAllCards(): Observable<AICardConfig[]> {
     return this.getManifest().pipe(
-      switchMap(manifest => {
+      switchMap((manifest) => {
         if (!manifest.cards || manifest.cards.length === 0) {
           this.logger.warn('Manifest is empty, returning no cards', 'JsonFileCardProvider');
           return of([] as AICardConfig[]);
@@ -360,17 +399,17 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
 
         // Load cards with request queuing (max 4 concurrent)
         // forkJoin will wait for all requests, but queue limits concurrency
-        const requests = sortedCards.map(card => this.loadCardConfig(card));
+        const requests = sortedCards.map((card) => this.loadCardConfig(card));
 
         return forkJoin(requests).pipe(
-          map(cards => cards.filter((card): card is AICardConfig => card !== null)),
-          catchError(error => {
+          map((cards) => cards.filter((card): card is AICardConfig => card !== null)),
+          catchError((error) => {
             this.logger.error('Error loading cards', 'JsonFileCardProvider', error);
             return of([] as AICardConfig[]);
           })
         );
       }),
-      catchError(error => {
+      catchError((error) => {
         this.logger.error('Error in getAllCards', 'JsonFileCardProvider', error);
         return of([] as AICardConfig[]);
       })
@@ -382,13 +421,13 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
    */
   override getCardsByType(cardType: string): Observable<AICardConfig[]> {
     return this.getManifest().pipe(
-      switchMap(manifest => {
+      switchMap((manifest) => {
         if (!manifest.cards || manifest.cards.length === 0) {
           return of([] as AICardConfig[]);
         }
 
         // Filter by type
-        const typeCards = manifest.cards.filter(card => card.type === cardType);
+        const typeCards = manifest.cards.filter((card) => card.type === cardType);
 
         if (typeCards.length === 0) {
           this.logger.debug(`No cards found for type: ${cardType}`, 'JsonFileCardProvider');
@@ -402,12 +441,16 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
 
         // Load cards with request queuing (max 4 concurrent)
         // forkJoin will wait for all requests, but queue limits concurrency
-        const requests = sortedCards.map(card => this.loadCardConfig(card));
+        const requests = sortedCards.map((card) => this.loadCardConfig(card));
 
         return forkJoin(requests).pipe(
-          map(cards => cards.filter((card): card is AICardConfig => card !== null)),
-          catchError(error => {
-            this.logger.error(`Error loading cards for type ${cardType}`, 'JsonFileCardProvider', error);
+          map((cards) => cards.filter((card): card is AICardConfig => card !== null)),
+          catchError((error) => {
+            this.logger.error(
+              `Error loading cards for type ${cardType}`,
+              'JsonFileCardProvider',
+              error
+            );
             return of([] as AICardConfig[]);
           })
         );
@@ -420,9 +463,9 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
    */
   override getCardById(id: string): Observable<AICardConfig | null> {
     return this.getManifest().pipe(
-      switchMap(manifest => {
-        const cardEntry = manifest.cards?.find(c => c.id === id);
-        
+      switchMap((manifest) => {
+        const cardEntry = manifest.cards?.find((c) => c.id === id);
+
         if (!cardEntry) {
           this.logger.warn(`Card not found in manifest: ${id}`, 'JsonFileCardProvider');
           return of(null);
@@ -430,27 +473,25 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
 
         return this.loadCardConfig(cardEntry);
       }),
-      catchError(error => {
+      catchError((error) => {
         this.logger.error(`Error getting card ${id}`, 'JsonFileCardProvider', error);
         return of(null);
       })
     );
   }
 
-
-
   /**
    * Get available card types
    */
   getAvailableCardTypes(): Observable<string[]> {
     return this.getManifest().pipe(
-      map(manifest => {
+      map((manifest) => {
         if (!manifest.types) {
           return [];
         }
         return Object.keys(manifest.types);
       }),
-      catchError(error => {
+      catchError((error) => {
         this.logger.error('Error getting available card types', 'JsonFileCardProvider', error);
         return of([]);
       })
@@ -463,7 +504,7 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
    */
   getCardByTypeAndVariant(cardType: string, variant: number): Observable<AICardConfig | null> {
     return this.getManifest().pipe(
-      switchMap(manifest => {
+      switchMap((manifest) => {
         if (!manifest.cards || manifest.cards.length === 0) {
           this.logger.debug(`No cards found in manifest`, 'JsonFileCardProvider');
           return of(null);
@@ -471,9 +512,10 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
 
         // Filter by type and sort by priority
         // If cardType is 'all', return all cards; otherwise filter by type
-        const typeCards = (cardType === 'all' 
-          ? manifest.cards 
-          : manifest.cards.filter(card => card.type === cardType)
+        const typeCards = (
+          cardType === 'all'
+            ? manifest.cards
+            : manifest.cards.filter((card) => card.type === cardType)
         ).sort((a, b) => {
           return (PRIORITY_ORDER[b.priority] || 0) - (PRIORITY_ORDER[a.priority] || 0);
         });
@@ -488,14 +530,21 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
         const cardEntry = typeCards[cardIndex];
 
         if (!cardEntry) {
-          this.logger.warn(`Card not found for type ${cardType} variant ${variant}`, 'JsonFileCardProvider');
+          this.logger.warn(
+            `Card not found for type ${cardType} variant ${variant}`,
+            'JsonFileCardProvider'
+          );
           return of(null);
         }
 
         return this.loadCardConfig(cardEntry);
       }),
-      catchError(error => {
-        this.logger.error(`Error getting card by type ${cardType} variant ${variant}`, 'JsonFileCardProvider', error);
+      catchError((error) => {
+        this.logger.error(
+          `Error getting card by type ${cardType} variant ${variant}`,
+          'JsonFileCardProvider',
+          error
+        );
         return of(null);
       })
     );
@@ -507,7 +556,7 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
    */
   getFirstCard(): Observable<AICardConfig | null> {
     return this.getManifest().pipe(
-      switchMap(manifest => {
+      switchMap((manifest) => {
         if (!manifest.cards || manifest.cards.length === 0) {
           this.logger.warn('No cards found in manifest', 'JsonFileCardProvider');
           return of(null);
@@ -522,7 +571,7 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
 
         return this.loadCardConfig(firstCardEntry);
       }),
-      catchError(error => {
+      catchError((error) => {
         this.logger.error('Error getting first card', 'JsonFileCardProvider', error);
         return of(null);
       })
@@ -535,19 +584,23 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
    */
   getManifestEntriesByType(cardType: string): Observable<CardManifestEntry[]> {
     return this.getManifest().pipe(
-      map(manifest => {
+      map((manifest) => {
         if (!manifest.cards || manifest.cards.length === 0) {
           return [];
         }
 
         return manifest.cards
-          .filter(card => card.type === cardType)
+          .filter((card) => card.type === cardType)
           .sort((a, b) => {
             return (PRIORITY_ORDER[b.priority] || 0) - (PRIORITY_ORDER[a.priority] || 0);
           });
       }),
-      catchError(error => {
-        this.logger.error(`Error getting manifest entries for type ${cardType}`, 'JsonFileCardProvider', error);
+      catchError((error) => {
+        this.logger.error(
+          `Error getting manifest entries for type ${cardType}`,
+          'JsonFileCardProvider',
+          error
+        );
         return of([]);
       })
     );
@@ -559,27 +612,25 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
    */
   preloadTemplates(): Observable<void> {
     return this.getManifest().pipe(
-      switchMap(manifest => {
+      switchMap((manifest) => {
         if (!manifest.cards || manifest.cards.length === 0) {
           return of(undefined);
         }
-        
+
         // Pre-load high priority cards (templates) - these are the most commonly used
-        const templates = manifest.cards
-          .filter(card => card.priority === 'high')
-          .slice(0, 9); // Pre-load first 9 templates (3 types × 3 variants)
-        
+        const templates = manifest.cards.filter((card) => card.priority === 'high').slice(0, 9); // Pre-load first 9 templates (3 types × 3 variants)
+
         if (templates.length === 0) {
           return of(undefined);
         }
-        
+
         // Load templates in parallel - they'll be cached for instant access
-        const loadObservables = templates.map(card => 
+        const loadObservables = templates.map((card) =>
           this.loadJsonCard(card).pipe(
             catchError(() => of(null)) // Don't fail individual loads
           )
         );
-        
+
         return forkJoin(loadObservables).pipe(
           map(() => undefined),
           catchError(() => of(undefined)) // Don't fail if preload fails
@@ -600,7 +651,7 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
       },
       error: (err) => {
         this.logger.debug('Template preload failed (non-critical)', 'JsonFileCardProvider', err);
-      }
+      },
     });
   }
 

@@ -2,10 +2,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 /**
  * Truncate pipe for limiting text length
- * 
+ *
  * Truncates text to a specified length and appends a trail string. Useful for
  * displaying previews of long text content in cards and lists.
- * 
+ *
  * @example
  * ```html
  * {{ longText | truncate:50 }}
@@ -14,12 +14,12 @@ import { Pipe, PipeTransform } from '@angular/core';
  */
 @Pipe({
   name: 'truncate',
-  standalone: true
+  standalone: true,
 })
 export class TruncatePipe implements PipeTransform {
   /**
    * Transform text by truncating to specified length
-   * 
+   *
    * @param value - The text to truncate (can be null or undefined)
    * @param limit - Maximum length before truncation (default: 100)
    * @param trail - String to append when truncated (default: '...')
@@ -35,5 +35,3 @@ export class TruncatePipe implements PipeTransform {
     return value.substring(0, limit) + trail;
   }
 }
-
-

@@ -1,10 +1,10 @@
 /**
  * Internationalization (i18n) Service
- * 
+ *
  * Provides runtime translation functionality for all user-facing text.
  * Supports dynamic language switching, lazy loading of translation files,
  * and fallback to default language when translations are missing.
- * 
+ *
  * Features:
  * - Runtime language switching
  * - Lazy loading of translation files
@@ -12,26 +12,26 @@
  * - Pluralization support
  * - Parameter interpolation
  * - Type-safe translation keys
- * 
+ *
  * @example
  * ```typescript
  * const i18n = inject(I18nService);
- * 
+ *
  * // Simple translation
  * const text = i18n.translate('common.save');
- * 
+ *
  * // Translation with parameters
  * const greeting = i18n.translate('common.greeting', { name: 'John' });
- * 
+ *
  * // Pluralization
  * const items = i18n.translate('common.items', { count: 5 });
  * ```
  */
 
-import { Injectable, inject, signal, computed, effect } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { Observable, BehaviorSubject, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 
 export type SupportedLocale = 'en' | 'fr' | 'es' | 'de' | 'pt' | 'it' | 'ja' | 'zh' | 'ko';
@@ -43,7 +43,7 @@ export interface TranslationDictionary {
 export type TranslationParams = Record<string, string | number>;
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class I18nService {
   private readonly http = inject(HttpClient);
@@ -54,20 +54,20 @@ export class I18nService {
 
   // Current locale signal
   private readonly _currentLocale = signal<SupportedLocale>(this.detectLocale());
-  
+
   // Current translations dictionary
   private translations: TranslationDictionary = {};
-  
+
   // Cache for loaded translations
   private translationCache = new Map<SupportedLocale, TranslationDictionary>();
-  
+
   // Observable for locale changes
   private localeSubject = new BehaviorSubject<SupportedLocale>(this._currentLocale());
 
   constructor() {
     // Load default translations on initialization
     this.loadTranslations(this.defaultLocale).subscribe();
-    
+
     // Update document lang attribute when locale changes
     effect(() => {
       const locale = this._currentLocale();
@@ -93,14 +93,14 @@ export class I18nService {
 
   /**
    * Translate a key to the current locale
-   * 
+   *
    * @param key Translation key (dot notation supported, e.g., 'common.save')
    * @param params Optional parameters for interpolation
    * @returns Translated string
    */
   translate(key: string, params?: TranslationParams): string {
     const translation = this.getTranslation(key, this._currentLocale());
-    
+
     if (!translation) {
       console.warn(`Translation missing for key: ${key} (locale: ${this._currentLocale()})`);
       return key; // Return key as fallback
@@ -113,9 +113,7 @@ export class I18nService {
    * Get translation as observable
    */
   translate$(key: string, params?: TranslationParams): Observable<string> {
-    return this.locale$.pipe(
-      map(() => this.translate(key, params))
-    );
+    return this.locale$.pipe(map(() => this.translate(key, params)));
   }
 
   /**
@@ -207,7 +205,10 @@ export class I18nService {
   /**
    * Get nested value from object using key path
    */
-  private getNestedValue(obj: TranslationDictionary, keys: string[]): string | TranslationDictionary | null {
+  private getNestedValue(
+    obj: TranslationDictionary,
+    keys: string[]
+  ): string | TranslationDictionary | null {
     let value: TranslationDictionary | string | null = obj;
     for (const k of keys) {
       if (typeof value === 'object' && value !== null && k in value) {
@@ -284,4 +285,3 @@ export class I18nService {
     return Object.keys(this.translations).length > 0;
   }
 }
-

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { OverviewSectionComponent } from './overview-section.component';
-import { SectionBuilder, FieldBuilder } from '../../../../../../testing/test-builders';
+import { FieldBuilder, SectionBuilder } from '../../../../../../testing/test-builders';
 import { SectionUtilsService } from '../../../../../services/section-utils.service';
 
 describe('OverviewSectionComponent', () => {
@@ -10,12 +10,12 @@ describe('OverviewSectionComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [OverviewSectionComponent],
-      providers: [SectionUtilsService]
+      providers: [SectionUtilsService],
     }).compileComponents();
 
     fixture = TestBed.createComponent(OverviewSectionComponent);
     component = fixture.componentInstance;
-    
+
     // Set up test section
     component.section = SectionBuilder.create()
       .withTitle('Overview')
@@ -23,7 +23,7 @@ describe('OverviewSectionComponent', () => {
       .withField(FieldBuilder.create().withLabel('Status').withValue('Active').build())
       .withField(FieldBuilder.create().withLabel('Revenue').withValue('$1M').build())
       .build();
-    
+
     fixture.detectChanges();
   });
 
@@ -51,16 +51,16 @@ describe('OverviewSectionComponent', () => {
   it('should emit field interaction on click', () => {
     spyOn(component.fieldInteraction, 'emit');
     const field = component.fields[0];
-    
+
     component.onFieldClick(field);
-    
+
     expect(component.fieldInteraction.emit).toHaveBeenCalledWith(
       jasmine.objectContaining({
         field: field,
         metadata: jasmine.objectContaining({
           sectionId: component.section.id,
-          sectionTitle: component.section.title
-        })
+          sectionTitle: component.section.title,
+        }),
       })
     );
   });
@@ -72,18 +72,12 @@ describe('OverviewSectionComponent', () => {
   });
 
   it('should hide streaming placeholder in value', () => {
-    const field = FieldBuilder.create()
-      .withLabel('Value')
-      .withValue('Streaming…')
-      .build();
+    const field = FieldBuilder.create().withLabel('Value').withValue('Streaming…').build();
     expect(component.getDisplayValue(field)).toBe('');
   });
 
   it('should show normal value when not streaming', () => {
-    const field = FieldBuilder.create()
-      .withLabel('Value')
-      .withValue('Normal Value')
-      .build();
+    const field = FieldBuilder.create().withLabel('Value').withValue('Normal Value').build();
     expect(component.getDisplayValue(field)).toBe('Normal Value');
   });
 
@@ -96,10 +90,7 @@ describe('OverviewSectionComponent', () => {
   });
 
   it('should handle number value', () => {
-    const field = FieldBuilder.create()
-      .withLabel('Count')
-      .withValue(42)
-      .build();
+    const field = FieldBuilder.create().withLabel('Count').withValue(42).build();
     expect(component.getDisplayValue(field)).toBe('42');
   });
 
@@ -108,21 +99,10 @@ describe('OverviewSectionComponent', () => {
       .withTitle('Empty Overview')
       .withType('overview')
       .build();
-    
+
     fixture.detectChanges();
-    
+
     expect(component.hasFields).toBe(false);
     expect(component.fields.length).toBe(0);
   });
 });
-
-
-
-
-
-
-
-
-
-
-

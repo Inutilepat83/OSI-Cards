@@ -36,9 +36,7 @@ export function generateAltText(
   }
 
   // Clean up filename (remove dashes, underscores, etc.)
-  const cleanName = nameWithoutExt
-    .replace(/[-_]/g, ' ')
-    .replace(/\b\w/g, l => l.toUpperCase());
+  const cleanName = nameWithoutExt.replace(/[-_]/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 
   // If we have section context, include it
   if (context?.sectionTitle) {
@@ -84,10 +82,8 @@ export function getDefaultAltText(imageUrl: string, fallback = 'Image'): string 
   }
 
   if (nameWithoutExt && nameWithoutExt !== filename) {
-    return nameWithoutExt.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    return nameWithoutExt.replace(/[-_]/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
   }
 
   return fallback;
 }
-
-

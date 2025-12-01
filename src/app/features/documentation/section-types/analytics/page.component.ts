@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
 import { DocsDemoComponent } from '../../components';
 
@@ -125,42 +125,42 @@ The **Analytics Section** (\`type: "analytics"\`) is used for displays metrics w
 `;
 
 const demoConfig = {
-  "title": "Performance Analytics",
-  "type": "analytics",
-  "description": "Key performance indicators and metrics",
-  "fields": [
+  title: 'Performance Analytics',
+  type: 'analytics',
+  description: 'Key performance indicators and metrics',
+  fields: [
     {
-      "label": "Performance Score",
-      "value": "95%",
-      "percentage": 95,
-      "performance": "excellent",
-      "trend": "up",
-      "change": 5.2
+      label: 'Performance Score',
+      value: '95%',
+      percentage: 95,
+      performance: 'excellent',
+      trend: 'up',
+      change: 5.2,
     },
     {
-      "label": "Growth Rate",
-      "value": "25% YoY",
-      "percentage": 25,
-      "performance": "good",
-      "trend": "up",
-      "change": 8.1
+      label: 'Growth Rate',
+      value: '25% YoY',
+      percentage: 25,
+      performance: 'good',
+      trend: 'up',
+      change: 8.1,
     },
     {
-      "label": "Market Share",
-      "value": "12%",
-      "percentage": 12,
-      "performance": "average",
-      "trend": "stable",
-      "change": 0.5
+      label: 'Market Share',
+      value: '12%',
+      percentage: 12,
+      performance: 'average',
+      trend: 'stable',
+      change: 0.5,
     },
     {
-      "label": "Customer Satisfaction",
-      "value": "4.8/5",
-      "percentage": 96,
-      "performance": "excellent",
-      "trend": "up"
-    }
-  ]
+      label: 'Customer Satisfaction',
+      value: '4.8/5',
+      percentage: 96,
+      performance: 'excellent',
+      trend: 'up',
+    },
+  ],
 };
 
 /**
@@ -173,8 +173,8 @@ const demoConfig = {
   imports: [DocPageComponent, DocsDemoComponent],
   template: `
     <div class="section-docs">
-      <app-docs-demo 
-        [config]="demo" 
+      <app-docs-demo
+        [config]="demo"
         [type]="'analytics'"
         demoTitle="Live Preview"
         height="350px"
@@ -182,14 +182,16 @@ const demoConfig = {
       <app-doc-page [content]="content"></app-doc-page>
     </div>
   `,
-  styles: [`
-    .section-docs {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styles: [
+    `
+      .section-docs {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnalyticsPageComponent {
   content = pageContent;

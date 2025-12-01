@@ -63,7 +63,7 @@ export class Cache<T> {
     this.cache.set(key, {
       value,
       expires: now + ttl,
-      createdAt: now
+      createdAt: now,
     });
   }
 
@@ -148,5 +148,3 @@ export function createCachedFunction<T extends (...args: any[]) => any>(
 
   return cached;
 }
-
-

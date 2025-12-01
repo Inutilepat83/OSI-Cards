@@ -26,36 +26,36 @@ export const DOCUMENTATION_ITEMS: DocItem[] = [
     title: 'Getting Started',
     path: 'assets/docs/README.md',
     category: 'Getting Started',
-    description: 'Introduction and quick start guide'
+    description: 'Introduction and quick start guide',
   },
   {
     id: 'events',
     title: 'Event System',
     path: 'assets/docs/EVENTS.md',
     category: 'Library Documentation',
-    description: 'Event handling and middleware system'
+    description: 'Event handling and middleware system',
   },
   {
     id: 'theming',
     title: 'Theming Guide',
     path: 'assets/docs/THEMING.md',
     category: 'Library Documentation',
-    description: 'Customization and theming options'
+    description: 'Customization and theming options',
   },
   {
     id: 'services',
     title: 'Services',
     path: 'assets/docs/SERVICES.md',
     category: 'Library Documentation',
-    description: 'Available services and their usage'
+    description: 'Available services and their usage',
   },
   {
     id: 'agentic-flow',
     title: 'Agentic Flow Integration',
     path: 'assets/docs/AGENTIC_FLOW_INTEGRATION.md',
     category: 'Library Documentation',
-    description: 'Integration with agentic workflows'
-  }
+    description: 'Integration with agentic workflows',
+  },
 ];
 
 /**
@@ -64,7 +64,7 @@ export const DOCUMENTATION_ITEMS: DocItem[] = [
 export function getDocumentationByCategory(): DocCategory[] {
   const categories = new Map<string, DocItem[]>();
 
-  DOCUMENTATION_ITEMS.forEach(item => {
+  DOCUMENTATION_ITEMS.forEach((item) => {
     const category = item.category || 'Other';
     if (!categories.has(category)) {
       categories.set(category, []);
@@ -74,7 +74,7 @@ export function getDocumentationByCategory(): DocCategory[] {
 
   return Array.from(categories.entries()).map(([name, items]) => ({
     name,
-    items
+    items,
   }));
 }
 
@@ -82,15 +82,5 @@ export function getDocumentationByCategory(): DocCategory[] {
  * Get documentation item by ID
  */
 export function getDocumentationById(id: string): DocItem | undefined {
-  return DOCUMENTATION_ITEMS.find(item => item.id === id);
+  return DOCUMENTATION_ITEMS.find((item) => item.id === id);
 }
-
-
-
-
-
-
-
-
-
-

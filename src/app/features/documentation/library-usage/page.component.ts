@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocPageComponent } from '../doc-page.component';
 
 const pageContent = `# Library Usage Guide
@@ -117,7 +117,7 @@ See [Streaming Documentation](/docs/streaming/overview) for more details.
   standalone: true,
   imports: [DocPageComponent],
   template: `<app-doc-page [content]="content"></app-doc-page>`,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LibraryUsagePageComponent {
   content = pageContent;

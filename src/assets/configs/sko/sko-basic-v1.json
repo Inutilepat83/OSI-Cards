@@ -11,20 +11,35 @@
           "title": "Secure Cloud Banking Platform",
           "description": "Compliant cloud infrastructure for financial services",
           "category": "Infrastructure",
-          "benefits": ["Regulatory compliance", "Enhanced security", "Scalability"],
+          "benefits": [
+            "Regulatory compliance",
+            "Enhanced security",
+            "Scalability"
+          ],
           "deliveryTime": "10-12 weeks"
         },
         {
           "title": "Fraud Detection & Prevention",
           "description": "AI-powered fraud detection system",
           "category": "Security",
-          "benefits": ["Real-time detection", "AI-powered analysis", "Compliance ready"],
+          "benefits": [
+            "Real-time detection",
+            "AI-powered analysis",
+            "Compliance ready"
+          ],
           "deliveryTime": "8-10 weeks"
         }
       ]
     }
   ],
   "actions": [
-    { "label": "Create Presentation", "type": "agent", "variant": "primary", "icon": "📊", "agentId": "presentation-agent", "agentContext": { "action": "create_presentation" } }
+    {
+      "label": "Create Presentation",
+      "type": "agent",
+      "variant": "primary",
+      "icon": "📊",
+      "agentId": "presentation-agent",
+      "agentContext": { "action": "create_presentation" }
+    }
   ]
 }

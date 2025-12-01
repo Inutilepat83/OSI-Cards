@@ -1,19 +1,19 @@
-import { Injectable, inject, OnDestroy } from '@angular/core';
+import { inject, Injectable, OnDestroy } from '@angular/core';
 import { LoggingService } from './logging.service';
 import { AppConfigService } from './app-config.service';
 
 /**
  * Base service class for all application services
- * 
+ *
  * Provides common functionality and ensures consistency across all services:
  * - Logging integration
  * - Configuration access
  * - Lifecycle management
  * - Error handling patterns
- * 
+ *
  * All services should extend this class to inherit common patterns and ensure
  * consistent behavior across the application.
- * 
+ *
  * @example
  * ```typescript
  * @Injectable({
@@ -92,15 +92,3 @@ export abstract class BaseService implements OnDestroy {
     this.cleanup();
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-

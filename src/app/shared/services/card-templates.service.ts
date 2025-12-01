@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable, of, BehaviorSubject } from 'rxjs';
-import { map, shareReplay, catchError } from 'rxjs/operators';
+import { inject, Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, map, shareReplay } from 'rxjs/operators';
 import { AICardConfig, CardType } from '../../models';
 import { CardDataService } from '../../core/services/card-data/card-data.service';
 import { LoggingService } from '../../core/services/logging.service';
@@ -10,25 +10,25 @@ import { ensureCardIds, removeAllIds } from '../utils/card-utils';
 
 /**
  * Card templates service
- * 
+ *
  * Handles template loading, caching, and management for card templates.
  * Supports both file-based templates (from CardDataService) and built-in templates.
- * 
+ *
  * Features:
  * - Template caching for performance
  * - Variant selection (1-3)
  * - Template validation and sanitization
  * - Fallback to built-in templates
- * 
+ *
  * @example
  * ```typescript
  * const templateService = inject(CardTemplatesService);
- * 
+ *
  * // Load template from files
  * templateService.loadTemplate('company', 1).subscribe(template => {
  *   console.log('Template loaded:', template);
  * });
- * 
+ *
  * // Get cached template
  * const cached = templateService.getCachedTemplate('company', 1);
  * ```
@@ -47,41 +47,41 @@ export interface TemplateMetadata {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CardTemplatesService {
   private readonly cardDataService = inject(CardDataService);
   private readonly logger = inject(LoggingService);
   private readonly exportService = inject(ExportService);
   private readonly validationService = inject(ValidationService);
-  
+
   // Template cache: Map<`${cardType}-${variant}`, AICardConfig>
   private readonly templateCache = new Map<string, AICardConfig>();
-  
+
   // Template metadata cache
   private readonly templateMetadata = new Map<string, TemplateMetadata>();
-  
+
   // User-created templates (stored in localStorage)
   private readonly userTemplatesKey = 'osi-cards-user-templates';
   private readonly userTemplatesSubject = new BehaviorSubject<AICardConfig[]>([]);
   public readonly userTemplates$ = this.userTemplatesSubject.asObservable();
-  
+
   // Observable cache for async loading
   private readonly templateObservables = new Map<string, Observable<AICardConfig | null>>();
-  
+
   constructor() {
     this.loadUserTemplates();
   }
   /**
    * Load template by type and variant
-   * 
+   *
    * First tries to load from file-based templates (via CardDataService),
    * then falls back to built-in templates if no file templates are available.
-   * 
+   *
    * @param cardType - The card type to load
    * @param variant - The variant number (1-3)
    * @returns Observable of the template, or null if not found
-   * 
+   *
    * @example
    * ```typescript
    * templateService.loadTemplate('company', 1).subscribe(template => {
@@ -93,30 +93,30 @@ export class CardTemplatesService {
    */
   loadTemplate(cardType: CardType, variant = 1): Observable<AICardConfig | null> {
     const cacheKey = `${cardType}-${variant}`;
-    
+
     // Check cache first
     const cached = this.templateCache.get(cacheKey);
     if (cached) {
       return of(cached);
     }
-    
+
     // Check if we already have an observable for this template
     const existingObservable = this.templateObservables.get(cacheKey);
     if (existingObservable) {
       return existingObservable;
     }
-    
+
     // Load from file-based templates
     const template$ = this.cardDataService.getCardsByType(cardType).pipe(
-      map(cards => {
+      map((cards) => {
         if (!cards || cards.length === 0) {
           // Fallback to built-in templates
           return this.getBuiltInTemplate(cardType, variant);
         }
-        
+
         // Select variant (1-based index)
         const template = cards[Math.min(variant - 1, cards.length - 1)] ?? cards[0];
-        
+
         // Sanitize template (remove IDs, ensure structure)
         const scrubbed = removeAllIds(template);
         if (!scrubbed) {
@@ -129,31 +129,35 @@ export class CardTemplatesService {
         }
         const sanitized = ensureCardIds({
           ...scrubbed,
-          cardTitle: scrubbed.cardTitle
+          cardTitle: scrubbed.cardTitle,
         });
-        
+
         // Cache the template
         this.templateCache.set(cacheKey, sanitized);
-        
+
         return sanitized;
       }),
       catchError((error) => {
-        this.logger.warn(`Failed to load template ${cardType}-${variant}`, 'CardTemplatesService', error);
+        this.logger.warn(
+          `Failed to load template ${cardType}-${variant}`,
+          'CardTemplatesService',
+          error
+        );
         // Fallback to built-in template
         return of(this.getBuiltInTemplate(cardType, variant));
       }),
       shareReplay(1)
     );
-    
+
     // Cache the observable
     this.templateObservables.set(cacheKey, template$);
-    
+
     return template$;
   }
 
   /**
    * Get cached template (synchronous)
-   * 
+   *
    * @param cardType - The card type
    * @param variant - The variant number (1-3)
    * @returns Cached template or null
@@ -165,7 +169,7 @@ export class CardTemplatesService {
 
   /**
    * Clear template cache
-   * 
+   *
    * Useful when templates need to be reloaded (e.g., after file updates)
    */
   clearCache(): void {
@@ -176,7 +180,7 @@ export class CardTemplatesService {
 
   /**
    * Clear cache for specific card type
-   * 
+   *
    * @param cardType - The card type to clear from cache
    */
   clearCacheForType(cardType: CardType): void {
@@ -186,18 +190,18 @@ export class CardTemplatesService {
         keysToDelete.push(key);
       }
     });
-    
-    keysToDelete.forEach(key => {
+
+    keysToDelete.forEach((key) => {
       this.templateCache.delete(key);
       this.templateObservables.delete(key);
     });
-    
+
     this.logger.debug(`Cache cleared for type: ${cardType}`, 'CardTemplatesService');
   }
 
   /**
    * Get built-in template (fallback)
-   * 
+   *
    * @param cardType - The card type
    * @param variant - The variant number
    * @returns Built-in template or null
@@ -209,7 +213,7 @@ export class CardTemplatesService {
 
   /**
    * Get template by type and variant (synchronous, built-in only)
-   * 
+   *
    * @deprecated Use loadTemplate() for file-based templates
    * @param cardType - The card type
    * @param variant - The variant number
@@ -244,7 +248,7 @@ export class CardTemplatesService {
    */
   getAllTemplates(): AICardConfig[] {
     const types: CardType[] = ['company', 'contact', 'opportunity', 'product', 'event'];
-    return types.flatMap(type => this.getTemplatesByType(type));
+    return types.flatMap((type) => this.getTemplatesByType(type));
   }
 
   /**
@@ -263,19 +267,19 @@ export class CardTemplatesService {
               { label: 'Industry', value: 'Technology' },
               { label: 'Employees', value: '1000+' },
               { label: 'Founded', value: '2020' },
-              { label: 'Location', value: 'San Francisco, CA' }
-            ]
+              { label: 'Location', value: 'San Francisco, CA' },
+            ],
           },
           {
             title: 'Key Metrics',
             type: 'analytics',
             fields: [
               { label: 'Revenue', value: '$10M', percentage: 100, trend: 'up' },
-              { label: 'Growth', value: '25%', percentage: 25, trend: 'up' }
-            ]
-          }
-        ]
-      }
+              { label: 'Growth', value: '25%', percentage: 25, trend: 'up' },
+            ],
+          },
+        ],
+      },
     ];
   }
 
@@ -297,13 +301,13 @@ export class CardTemplatesService {
                 description: 'CEO',
                 meta: {
                   email: 'john@example.com',
-                  phone: '+1-555-0100'
-                }
-              }
-            ]
-          }
-        ]
-      }
+                  phone: '+1-555-0100',
+                },
+              },
+            ],
+          },
+        ],
+      },
     ];
   }
 
@@ -322,11 +326,11 @@ export class CardTemplatesService {
             fields: [
               { label: 'Stage', value: 'Qualification', status: 'in-progress' },
               { label: 'Value', value: '$50,000', format: 'currency' },
-              { label: 'Probability', value: '60%', percentage: 60 }
-            ]
-          }
-        ]
-      }
+              { label: 'Probability', value: '60%', percentage: 60 },
+            ],
+          },
+        ],
+      },
     ];
   }
 
@@ -344,11 +348,11 @@ export class CardTemplatesService {
             type: 'product',
             items: [
               { title: 'Feature 1', description: 'Description of feature 1' },
-              { title: 'Feature 2', description: 'Description of feature 2' }
-            ]
-          }
-        ]
-      }
+              { title: 'Feature 2', description: 'Description of feature 2' },
+            ],
+          },
+        ],
+      },
     ];
   }
 
@@ -368,45 +372,46 @@ export class CardTemplatesService {
               {
                 title: 'Opening Keynote',
                 description: '9:00 AM - Main Hall',
-                status: 'active'
-              }
-            ]
-          }
-        ]
-      }
+                status: 'active',
+              },
+            ],
+          },
+        ],
+      },
     ];
   }
 
   /**
    * Get available variants for a card type
-   * 
+   *
    * @param cardType - The card type
    * @returns Number of available variants
    */
   getAvailableVariants(cardType: CardType): Observable<number> {
     return this.cardDataService.getCardsByType(cardType).pipe(
-      map(cards => Math.max(cards.length, 3)), // At least 3 variants
+      map((cards) => Math.max(cards.length, 3)), // At least 3 variants
       catchError(() => of(this.getTemplatesByType(cardType).length || 1))
     );
   }
 
   /**
    * Check if template exists for type and variant
-   * 
+   *
    * @param cardType - The card type
    * @param variant - The variant number
    * @returns Observable of boolean indicating if template exists
    */
   templateExists(cardType: CardType, variant: number): Observable<boolean> {
-    return this.loadTemplate(cardType, variant).pipe(
-      map(template => template !== null)
-    );
+    return this.loadTemplate(cardType, variant).pipe(map((template) => template !== null));
   }
 
   /**
    * Create a new template from a card
    */
-  createTemplate(card: AICardConfig, metadata: Omit<TemplateMetadata, 'id' | 'createdAt' | 'updatedAt'>): string {
+  createTemplate(
+    card: AICardConfig,
+    metadata: Omit<TemplateMetadata, 'id' | 'createdAt' | 'updatedAt'>
+  ): string {
     // Validate card
     const validation = this.validationService.validateCard(card);
     if (!validation.success) {
@@ -415,13 +420,13 @@ export class CardTemplatesService {
 
     // Generate template ID
     const templateId = `template_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-    
+
     // Create template metadata
     const templateMeta: TemplateMetadata = {
       id: templateId,
       ...metadata,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     // Remove IDs and sanitize
@@ -429,29 +434,36 @@ export class CardTemplatesService {
     const template: AICardConfig = {
       ...scrubbed,
       cardType: metadata.cardType,
-      id: templateId
+      id: templateId,
     };
 
     // Store in user templates
     const userTemplates = this.getUserTemplates();
     userTemplates.push(template);
     this.saveUserTemplates(userTemplates);
-    
+
     // Store metadata
     this.templateMetadata.set(templateId, templateMeta);
     this.saveTemplateMetadata();
 
-    this.logger.info('Template created', 'CardTemplatesService', { templateId, name: metadata.name });
+    this.logger.info('Template created', 'CardTemplatesService', {
+      templateId,
+      name: metadata.name,
+    });
     return templateId;
   }
 
   /**
    * Update an existing template
    */
-  updateTemplate(templateId: string, card: AICardConfig, updates?: Partial<TemplateMetadata>): void {
+  updateTemplate(
+    templateId: string,
+    card: AICardConfig,
+    updates?: Partial<TemplateMetadata>
+  ): void {
     const userTemplates = this.getUserTemplates();
-    const index = userTemplates.findIndex(t => t.id === templateId);
-    
+    const index = userTemplates.findIndex((t) => t.id === templateId);
+
     if (index === -1) {
       throw new Error(`Template not found: ${templateId}`);
     }
@@ -466,7 +478,7 @@ export class CardTemplatesService {
     const scrubbed = removeAllIds(card);
     userTemplates[index] = {
       ...scrubbed,
-      id: templateId
+      id: templateId,
     };
     this.saveUserTemplates(userTemplates);
 
@@ -476,7 +488,7 @@ export class CardTemplatesService {
       this.templateMetadata.set(templateId, {
         ...meta,
         ...updates,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
       this.saveTemplateMetadata();
     }
@@ -489,9 +501,9 @@ export class CardTemplatesService {
    */
   deleteTemplate(templateId: string): void {
     const userTemplates = this.getUserTemplates();
-    const filtered = userTemplates.filter(t => t.id !== templateId);
+    const filtered = userTemplates.filter((t) => t.id !== templateId);
     this.saveUserTemplates(filtered);
-    
+
     this.templateMetadata.delete(templateId);
     this.saveTemplateMetadata();
 
@@ -503,8 +515,8 @@ export class CardTemplatesService {
    */
   async exportTemplate(templateId: string, format: 'json' | 'pdf' = 'json'): Promise<void> {
     const userTemplates = this.getUserTemplates();
-    const template = userTemplates.find(t => t.id === templateId);
-    
+    const template = userTemplates.find((t) => t.id === templateId);
+
     if (!template) {
       throw new Error(`Template not found: ${templateId}`);
     }
@@ -513,7 +525,7 @@ export class CardTemplatesService {
       format,
       filename: `${this.sanitizeFilename(template.cardTitle || 'template')}.${format}`,
       includeMetadata: true,
-      prettyPrint: true
+      prettyPrint: true,
     });
   }
 
@@ -524,30 +536,30 @@ export class CardTemplatesService {
     try {
       const parsed = JSON.parse(jsonString);
       const validation = this.validationService.validateCard(parsed);
-      
+
       if (!validation.success || !validation.data) {
         throw new Error(`Invalid template: ${validation.errorMessages?.join(', ')}`);
       }
 
       const card = validation.data;
       const templateId = `template_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-      
+
       const templateMeta: TemplateMetadata = {
         id: templateId,
         name: metadata?.name || card.cardTitle || 'Imported Template',
-        description: metadata?.description,
         cardType: metadata?.cardType || (card.cardType as CardType) || 'all',
         variant: metadata?.variant || 1,
-        tags: metadata?.tags,
         createdAt: new Date(),
         updatedAt: new Date(),
-        createdBy: metadata?.createdBy
+        ...(metadata?.description !== undefined && { description: metadata.description }),
+        ...(metadata?.tags !== undefined && { tags: metadata.tags }),
+        ...(metadata?.createdBy !== undefined && { createdBy: metadata.createdBy }),
       };
 
       const userTemplates = this.getUserTemplates();
       userTemplates.push({ ...card, id: templateId });
       this.saveUserTemplates(userTemplates);
-      
+
       this.templateMetadata.set(templateId, templateMeta);
       this.saveTemplateMetadata();
 
@@ -555,7 +567,9 @@ export class CardTemplatesService {
       return templateId;
     } catch (error) {
       this.logger.error('Failed to import template', 'CardTemplatesService', { error });
-      throw new Error(`Failed to import template: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to import template: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -594,15 +608,15 @@ export class CardTemplatesService {
   searchTemplates(query: string): AICardConfig[] {
     const userTemplates = this.getUserTemplates();
     const lowerQuery = query.toLowerCase();
-    
-    return userTemplates.filter(template => {
+
+    return userTemplates.filter((template) => {
       const title = template.cardTitle?.toLowerCase() || '';
       const description = template.description?.toLowerCase() || '';
       const type = template.cardType?.toLowerCase() || '';
-      
-      return title.includes(lowerQuery) ||
-             description.includes(lowerQuery) ||
-             type.includes(lowerQuery);
+
+      return (
+        title.includes(lowerQuery) || description.includes(lowerQuery) || type.includes(lowerQuery)
+      );
     });
   }
 
@@ -612,17 +626,17 @@ export class CardTemplatesService {
   private loadUserTemplates(): void {
     const templates = this.getUserTemplates();
     this.userTemplatesSubject.next(templates);
-    
+
     // Load metadata
     try {
       const stored = localStorage.getItem('osi-cards-template-metadata');
       if (stored) {
         const metadata = JSON.parse(stored) as TemplateMetadata[];
-        metadata.forEach(meta => {
+        metadata.forEach((meta) => {
           this.templateMetadata.set(meta.id, {
             ...meta,
             createdAt: new Date(meta.createdAt),
-            updatedAt: new Date(meta.updatedAt)
+            updatedAt: new Date(meta.updatedAt),
           });
         });
       }
@@ -667,5 +681,3 @@ export class CardTemplatesService {
       .substring(0, 50);
   }
 }
-
-

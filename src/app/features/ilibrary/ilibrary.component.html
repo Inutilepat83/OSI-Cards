@@ -10,8 +10,8 @@
         </div>
       </div>
       <p class="header-description">
-        Demonstrate OSI Cards integration across different client applications.
-        Test streaming, theming, and CSS encapsulation in various environments.
+        Demonstrate OSI Cards integration across different client applications. Test streaming, theming, and CSS
+        encapsulation in various environments.
       </p>
     </div>
   </header>
@@ -55,15 +55,16 @@
           <!-- The OSI Card wrapper -->
           <div class="card-wrapper">
             @if (showCardRenderer) {
-              <!-- Card renderer shows the particle animation during thinking phase, 
+              <!-- Card renderer shows the particle animation during thinking phase,
                    then transitions to streaming content -->
               <app-ai-card-renderer
                 [cardConfig]="cardConfigForRenderer"
                 [streamingStage]="streamingState?.stage"
-                [streamingProgress]="streamingState?.progress"
+                [streamingProgress]="streamingState?.progress ?? 0"
                 [isStreaming]="streamingState?.stage === 'streaming'"
                 [showLoadingByDefault]="true"
-                [tiltEnabled]="true">
+                [tiltEnabled]="true"
+              >
               </app-ai-card-renderer>
             } @else {
               <!-- Empty state - only shown when idle and no card -->
@@ -100,10 +101,7 @@
             <lucide-icon name="layout" [size]="14"></lucide-icon>
             Environment
           </label>
-          <select 
-            class="control-select"
-            [(ngModel)]="selectedEnvironment"
-            (ngModelChange)="onEnvironmentChange()">
+          <select class="control-select" [(ngModel)]="selectedEnvironment" (ngModelChange)="onEnvironmentChange()">
             @for (env of environments; track env.id) {
               <option [ngValue]="env">{{ env.name }}</option>
             }
@@ -117,10 +115,7 @@
             <lucide-icon name="palette" [size]="14"></lucide-icon>
             Card Theme
           </label>
-          <select 
-            class="control-select"
-            [(ngModel)]="selectedTheme"
-            (ngModelChange)="onThemeChange()">
+          <select class="control-select" [(ngModel)]="selectedTheme" (ngModelChange)="onThemeChange()">
             @for (theme of themeOptions; track theme.id) {
               <option [value]="theme.id">{{ theme.name }}</option>
             }
@@ -133,10 +128,7 @@
             <lucide-icon name="file-json" [size]="14"></lucide-icon>
             Card Type
           </label>
-          <select 
-            class="control-select"
-            [(ngModel)]="selectedTemplate"
-            (ngModelChange)="onTemplateChange()">
+          <select class="control-select" [(ngModel)]="selectedTemplate" (ngModelChange)="onTemplateChange()">
             @for (template of cardTemplates; track template.id) {
               <option [ngValue]="template">{{ template.name }}</option>
             }
@@ -151,19 +143,11 @@
           </label>
           <div class="radio-group">
             <label class="radio-option">
-              <input 
-                type="radio" 
-                name="streaming" 
-                [value]="true" 
-                [(ngModel)]="useStreaming">
+              <input type="radio" name="streaming" [value]="true" [(ngModel)]="useStreaming" />
               <span class="radio-label">Streaming</span>
             </label>
             <label class="radio-option">
-              <input 
-                type="radio" 
-                name="streaming" 
-                [value]="false" 
-                [(ngModel)]="useStreaming">
+              <input type="radio" name="streaming" [value]="false" [(ngModel)]="useStreaming" />
               <span class="radio-label">Instant</span>
             </label>
           </div>
@@ -177,13 +161,7 @@
               Streaming Speed
               <span class="speed-value">{{ streamingSpeed }} tok/s</span>
             </label>
-            <input 
-              type="range" 
-              class="control-range"
-              min="20" 
-              max="200" 
-              step="10"
-              [(ngModel)]="streamingSpeed">
+            <input type="range" class="control-range" min="20" max="200" step="10" [(ngModel)]="streamingSpeed" />
             <div class="range-labels">
               <span>Slow</span>
               <span>Fast</span>
@@ -197,13 +175,7 @@
               LLM Thinking Delay
               <span class="speed-value">{{ thinkingDelay / 1000 }}s</span>
             </label>
-            <input 
-              type="range" 
-              class="control-range"
-              min="0" 
-              max="8000" 
-              step="500"
-              [(ngModel)]="thinkingDelay">
+            <input type="range" class="control-range" min="0" max="8000" step="500" [(ngModel)]="thinkingDelay" />
             <div class="range-labels">
               <span>Instant</span>
               <span>8 sec</span>
@@ -215,17 +187,12 @@
         <!-- Action Buttons -->
         <div class="control-actions">
           @if (!isGenerating) {
-            <button 
-              class="btn-primary"
-              (click)="generateCard()"
-              [disabled]="!cardJson">
+            <button class="btn-primary" (click)="generateCard()" [disabled]="!cardJson">
               <lucide-icon name="play" [size]="16"></lucide-icon>
               Generate Card
             </button>
           } @else {
-            <button 
-              class="btn-danger"
-              (click)="stopGeneration()">
+            <button class="btn-danger" (click)="stopGeneration()">
               <lucide-icon name="square" [size]="16"></lucide-icon>
               Stop
             </button>
@@ -259,9 +226,8 @@
           <div class="info-content">
             <strong>CSS Encapsulation Demo</strong>
             <p>
-              The card uses Shadow DOM encapsulation to isolate its styles 
-              from the host application. Notice how the card remains consistent 
-              regardless of the external environment's aggressive styling.
+              The card uses Shadow DOM encapsulation to isolate its styles from the host application. Notice how the
+              card remains consistent regardless of the external environment's aggressive styling.
             </p>
           </div>
         </div>
@@ -269,4 +235,3 @@
     </div>
   </div>
 </div>
-

@@ -23,7 +23,7 @@ export class CommandManager {
   private history: CommandHistory = {
     commands: [],
     currentIndex: -1,
-    maxHistory: 50
+    maxHistory: 50,
   };
 
   /**
@@ -104,7 +104,7 @@ export class CommandManager {
     this.history = {
       commands: [],
       currentIndex: -1,
-      maxHistory: this.history.maxHistory
+      maxHistory: this.history.maxHistory,
     };
   }
 
@@ -139,8 +139,6 @@ export function createCommand(
     execute,
     undo,
     redo: execute,
-    description
+    ...(description !== undefined && { description }),
   };
 }
-
-

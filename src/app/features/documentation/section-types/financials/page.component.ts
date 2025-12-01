@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { DocPageComponent } from '../../doc-page.component';
 import { DocsDemoComponent } from '../../components';
 
@@ -120,39 +120,39 @@ The **Financials Section** (\`type: "financials"\`) is used for displays financi
 `;
 
 const demoConfig = {
-  "title": "Financial Overview",
-  "type": "financials",
-  "description": "Key financial metrics and performance",
-  "fields": [
+  title: 'Financial Overview',
+  type: 'financials',
+  description: 'Key financial metrics and performance',
+  fields: [
     {
-      "label": "Annual Revenue",
-      "value": "$50M",
-      "format": "currency",
-      "change": 15,
-      "trend": "up"
+      label: 'Annual Revenue',
+      value: '$50M',
+      format: 'currency',
+      change: 15,
+      trend: 'up',
     },
     {
-      "label": "Operating Margin",
-      "value": "18%",
-      "format": "percentage",
-      "change": 3.2,
-      "trend": "up"
+      label: 'Operating Margin',
+      value: '18%',
+      format: 'percentage',
+      change: 3.2,
+      trend: 'up',
     },
     {
-      "label": "EBITDA",
-      "value": "$12M",
-      "format": "currency",
-      "change": 8,
-      "trend": "up"
+      label: 'EBITDA',
+      value: '$12M',
+      format: 'currency',
+      change: 8,
+      trend: 'up',
     },
     {
-      "label": "Net Income",
-      "value": "$8M",
-      "format": "currency",
-      "change": -2.5,
-      "trend": "down"
-    }
-  ]
+      label: 'Net Income',
+      value: '$8M',
+      format: 'currency',
+      change: -2.5,
+      trend: 'down',
+    },
+  ],
 };
 
 /**
@@ -165,8 +165,8 @@ const demoConfig = {
   imports: [DocPageComponent, DocsDemoComponent],
   template: `
     <div class="section-docs">
-      <app-docs-demo 
-        [config]="demo" 
+      <app-docs-demo
+        [config]="demo"
         [type]="'financials'"
         demoTitle="Live Preview"
         height="350px"
@@ -174,14 +174,16 @@ const demoConfig = {
       <app-doc-page [content]="content"></app-doc-page>
     </div>
   `,
-  styles: [`
-    .section-docs {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styles: [
+    `
+      .section-docs {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FinancialsPageComponent {
   content = pageContent;

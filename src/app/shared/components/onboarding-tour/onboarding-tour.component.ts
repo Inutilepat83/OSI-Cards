@@ -1,7 +1,14 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnInit, OnDestroy, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 export interface TourStep {
   id: string;
@@ -29,12 +36,7 @@ export interface TourStep {
       >
         <div class="tour-header">
           <h3 class="tour-title">{{ currentStep.title }}</h3>
-          <button
-            type="button"
-            class="tour-close"
-            (click)="skipTour()"
-            aria-label="Skip tour"
-          >
+          <button type="button" class="tour-close" (click)="skipTour()" aria-label="Skip tour">
             ×
           </button>
         </div>
@@ -48,121 +50,117 @@ export interface TourStep {
           >
             Previous
           </button>
-          <div class="tour-progress">
-            Step {{ currentStepIndex + 1 }} of {{ steps.length }}
-          </div>
-          <button
-            type="button"
-            class="tour-button tour-button--primary"
-            (click)="nextStep()"
-          >
+          <div class="tour-progress">Step {{ currentStepIndex + 1 }} of {{ steps.length }}</div>
+          <button type="button" class="tour-button tour-button--primary" (click)="nextStep()">
             {{ currentStepIndex === steps.length - 1 ? 'Finish' : 'Next' }}
           </button>
         </div>
       </div>
     </div>
   `,
-  styles: [`
-    .tour-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      z-index: 10000;
-      pointer-events: all;
-    }
+  styles: [
+    `
+      .tour-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 10000;
+        pointer-events: all;
+      }
 
-    .tour-tooltip {
-      position: absolute;
-      background: rgba(20, 30, 50, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 0.5rem;
-      padding: 1.5rem;
-      max-width: 400px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-      pointer-events: all;
-    }
+      .tour-tooltip {
+        position: absolute;
+        background: rgba(20, 30, 50, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        max-width: 400px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        pointer-events: all;
+      }
 
-    .tour-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 1rem;
-    }
+      .tour-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+      }
 
-    .tour-title {
-      margin: 0;
-      font-size: 1.125rem;
-      font-weight: 600;
-      color: var(--card-text-primary, #FFFFFF);
-    }
+      .tour-title {
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--card-text-primary, #ffffff);
+      }
 
-    .tour-close {
-      background: transparent;
-      border: none;
-      color: var(--card-text-secondary, #B8C5D6);
-      font-size: 1.5rem;
-      line-height: 1;
-      cursor: pointer;
-      padding: 0;
-      width: 1.5rem;
-      height: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+      .tour-close {
+        background: transparent;
+        border: none;
+        color: var(--card-text-secondary, #b8c5d6);
+        font-size: 1.5rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0;
+        width: 1.5rem;
+        height: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-    .tour-close:hover {
-      color: var(--card-text-primary, #FFFFFF);
-    }
+      .tour-close:hover {
+        color: var(--card-text-primary, #ffffff);
+      }
 
-    .tour-description {
-      margin: 0 0 1.5rem 0;
-      color: var(--card-text-secondary, #B8C5D6);
-      font-size: 0.875rem;
-      line-height: 1.6;
-    }
+      .tour-description {
+        margin: 0 0 1.5rem 0;
+        color: var(--card-text-secondary, #b8c5d6);
+        font-size: 0.875rem;
+        line-height: 1.6;
+      }
 
-    .tour-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-    }
+      .tour-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+      }
 
-    .tour-button {
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 0.375rem;
-      font-size: 0.875rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
+      .tour-button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
 
-    .tour-button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+      .tour-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
 
-    .tour-button--primary {
-      background: var(--color-brand, #FF7900);
-      color: white;
-    }
+      .tour-button--primary {
+        background: var(--color-brand, #ff7900);
+        color: white;
+      }
 
-    .tour-button--secondary {
-      background: rgba(255, 255, 255, 0.1);
-      color: var(--card-text-primary, #FFFFFF);
-    }
+      .tour-button--secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--card-text-primary, #ffffff);
+      }
 
-    .tour-progress {
-      font-size: 0.75rem;
-      color: var(--card-text-secondary, #B8C5D6);
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+      .tour-progress {
+        font-size: 0.75rem;
+        color: var(--card-text-secondary, #b8c5d6);
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OnboardingTourComponent implements OnInit, OnDestroy {
   @Input() steps: TourStep[] = [];
@@ -263,5 +261,3 @@ export class OnboardingTourComponent implements OnInit, OnDestroy {
     // Don't close on overlay click - require explicit action
   }
 }
-
-

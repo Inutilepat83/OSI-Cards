@@ -10,10 +10,7 @@ describe('WebVitalsService', () => {
     const loggingSpy = jasmine.createSpyObj('LoggingService', ['debug', 'warn']);
 
     TestBed.configureTestingModule({
-      providers: [
-        WebVitalsService,
-        { provide: LoggingService, useValue: loggingSpy }
-      ]
+      providers: [WebVitalsService, { provide: LoggingService, useValue: loggingSpy }],
     });
     service = TestBed.inject(WebVitalsService);
     loggingService = TestBed.inject(LoggingService) as jasmine.SpyObj<LoggingService>;
@@ -31,14 +28,14 @@ describe('WebVitalsService', () => {
     it('should warn if PerformanceObserver not available', () => {
       const originalObserver = (window as any).PerformanceObserver;
       (window as any).PerformanceObserver = undefined;
-      
+
       service.initialize();
-      
+
       expect(loggingService.warn).toHaveBeenCalledWith(
         'Web Vitals monitoring not supported in this environment',
         'WebVitalsService'
       );
-      
+
       (window as any).PerformanceObserver = originalObserver;
     });
   });
@@ -46,14 +43,14 @@ describe('WebVitalsService', () => {
   describe('getMetrics', () => {
     it('should return empty metrics initially', () => {
       const metrics = service.getMetrics();
-      
+
       expect(metrics).toEqual({});
     });
 
     it('should return copy of metrics', () => {
       const metrics1 = service.getMetrics();
       const metrics2 = service.getMetrics();
-      
+
       expect(metrics1).not.toBe(metrics2);
     });
   });
@@ -65,14 +62,3 @@ describe('WebVitalsService', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-
-
-

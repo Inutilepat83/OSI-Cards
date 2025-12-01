@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { map, Observable } from 'rxjs';
 import { AICardConfig, CardType } from '../../../models';
 import { ICardRepository } from './card-repository.interface';
 import { CardDataProvider } from './card-data-provider.interface';
@@ -11,7 +11,7 @@ import { CARD_DATA_PROVIDER } from './card-data.service';
  * Separates data access concerns from business logic
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CardRepository implements ICardRepository {
   private readonly provider = inject<CardDataProvider>(CARD_DATA_PROVIDER);
@@ -33,15 +33,17 @@ export class CardRepository implements ICardRepository {
   }
 
   findByTypeAndVariant(type: CardType, variant: number): Observable<AICardConfig | null> {
-    if ('getCardByTypeAndVariant' in this.provider && 
-        typeof this.provider.getCardByTypeAndVariant === 'function') {
+    if (
+      'getCardByTypeAndVariant' in this.provider &&
+      typeof this.provider.getCardByTypeAndVariant === 'function'
+    ) {
       return (this.provider as any).getCardByTypeAndVariant(type, variant);
     }
     // Fallback implementation
     // If type is 'all', use findAll; otherwise use findByType
     const cards$ = type === 'all' ? this.findAll() : this.findByType(type);
     return cards$.pipe(
-      map(cards => {
+      map((cards) => {
         if (!cards || cards.length === 0) {
           return null;
         }
@@ -53,20 +55,23 @@ export class CardRepository implements ICardRepository {
 
   search(query: string): Observable<AICardConfig[]> {
     return this.findAll().pipe(
-      map(cards => {
+      map((cards) => {
         if (!query.trim()) {
           return cards;
         }
         const searchTerm = query.toLowerCase();
-        return cards.filter(card => 
-          card.cardTitle.toLowerCase().includes(searchTerm) ||
-          card.sections?.some(section => 
-            section.title?.toLowerCase().includes(searchTerm) ||
-            section.fields?.some(field => 
-              field.label?.toLowerCase().includes(searchTerm) ||
-              String(field.value).toLowerCase().includes(searchTerm)
+        return cards.filter(
+          (card) =>
+            card.cardTitle.toLowerCase().includes(searchTerm) ||
+            card.sections?.some(
+              (section) =>
+                section.title?.toLowerCase().includes(searchTerm) ||
+                section.fields?.some(
+                  (field) =>
+                    field.label?.toLowerCase().includes(searchTerm) ||
+                    String(field.value).toLowerCase().includes(searchTerm)
+                )
             )
-          )
         );
       })
     );
@@ -74,8 +79,8 @@ export class CardRepository implements ICardRepository {
 
   getAvailableTypes(): Observable<CardType[]> {
     return this.findAll().pipe(
-      map(cards => {
-        const types = new Set(cards.map(card => card.cardType));
+      map((cards) => {
+        const types = new Set(cards.map((card) => card.cardType));
         const sortedTypes = Array.from(types).sort() as CardType[];
         // Add 'all' at the beginning if it's not already there
         if (!sortedTypes.includes('all' as CardType)) {
@@ -98,7 +103,7 @@ export class CardRepository implements ICardRepository {
       return (this.provider as any).saveCard(card);
     }
     // For read-only providers, return the card as-is
-    return new Observable(observer => {
+    return new Observable((observer) => {
       observer.next(card);
       observer.complete();
     });
@@ -110,12 +115,9 @@ export class CardRepository implements ICardRepository {
       return (this.provider as any).deleteCard(id);
     }
     // For read-only providers, return false
-    return new Observable(observer => {
+    return new Observable((observer) => {
       observer.next(false);
       observer.complete();
     });
   }
 }
-
-
-

@@ -22,7 +22,7 @@ export class CleanupManager {
    * Execute all cleanup functions
    */
   cleanup(): void {
-    this.cleanupFunctions.forEach(cleanup => {
+    this.cleanupFunctions.forEach((cleanup) => {
       try {
         cleanup();
       } catch (error) {
@@ -43,14 +43,18 @@ export class CleanupManager {
 /**
  * Create a cleanup function for a subscription
  */
-export function createSubscriptionCleanup(subscription: { unsubscribe: () => void }): CleanupFunction {
+export function createSubscriptionCleanup(subscription: {
+  unsubscribe: () => void;
+}): CleanupFunction {
   return () => subscription.unsubscribe();
 }
 
 /**
  * Create a cleanup function for a timer
  */
-export function createTimerCleanup(timerId: ReturnType<typeof setTimeout> | ReturnType<typeof setInterval>): CleanupFunction {
+export function createTimerCleanup(
+  timerId: ReturnType<typeof setTimeout> | ReturnType<typeof setInterval>
+): CleanupFunction {
   return () => {
     if (typeof timerId === 'number') {
       clearTimeout(timerId);
@@ -76,5 +80,3 @@ export function createEventListenerCleanup(
 export function createAbortControllerCleanup(controller: AbortController): CleanupFunction {
   return () => controller.abort();
 }
-
-

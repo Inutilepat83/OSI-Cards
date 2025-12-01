@@ -19,7 +19,7 @@ type MapLocation = (CardField & CardItem) & {
   standalone: true,
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './map-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapSectionComponent extends BaseSectionComponent<MapLocation> {
   get locations(): MapLocation[] {
@@ -27,7 +27,7 @@ export class MapSectionComponent extends BaseSectionComponent<MapLocation> {
     const mappedFields = fromFields
       .map((field) => ({
         ...field,
-        name: field.name || field.title || field.label || field.id || 'Unknown Location'
+        name: field.name || field.title || field.label || field.id || 'Unknown Location',
       }))
       .filter((field): field is MapLocation => !!field.name && typeof field.name === 'string');
 
@@ -36,10 +36,10 @@ export class MapSectionComponent extends BaseSectionComponent<MapLocation> {
       const mappedItems = items
         .map((item) => ({
           ...item,
-          name: item.name || item.title || item.id || 'Unknown Location'
+          name: item.name || item.title || item.id || 'Unknown Location',
         }))
         .filter((item): item is MapLocation => !!item.name && typeof item.name === 'string');
-      
+
       return mappedFields.concat(mappedItems);
     }
 

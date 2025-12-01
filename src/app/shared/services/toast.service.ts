@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 import { AppConfigService } from '../../core/services/app-config.service';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
@@ -14,28 +14,28 @@ export interface Toast {
 
 /**
  * Toast notification service
- * 
+ *
  * Provides user-visible toast notifications for application feedback. Replaces
  * console logs with accessible, dismissible toast messages that inform users
  * of application state changes, errors, and success messages.
- * 
+ *
  * Features:
  * - Multiple toast types (success, error, warning, info)
  * - Auto-dismiss with configurable duration
  * - Observable stream for reactive UI updates
  * - Unique ID tracking for individual toast management
  * - Configurable duration from app config
- * 
+ *
  * @example
  * ```typescript
  * const toastService = inject(ToastService);
- * 
+ *
  * // Show success toast
  * toastService.success('Card saved successfully');
- * 
+ *
  * // Show error toast with custom duration
  * toastService.error('Failed to load card', 5000);
- * 
+ *
  * // Subscribe to toast stream
  * toastService.toasts$.subscribe(toasts => {
  *   console.log('Active toasts:', toasts);
@@ -43,7 +43,7 @@ export interface Toast {
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ToastService {
   private readonly config = inject(AppConfigService);
@@ -89,7 +89,7 @@ export class ToastService {
       message,
       type,
       duration: duration ?? this.config.UI.TOAST_DURATION_MS,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     this.toasts.push(toast);
@@ -105,7 +105,7 @@ export class ToastService {
    * Remove a toast
    */
   remove(id: string): void {
-    this.toasts = this.toasts.filter(t => t.id !== id);
+    this.toasts = this.toasts.filter((t) => t.id !== id);
     this.emit();
   }
 
@@ -138,5 +138,3 @@ export class ToastService {
     return `toast_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
   }
 }
-
-

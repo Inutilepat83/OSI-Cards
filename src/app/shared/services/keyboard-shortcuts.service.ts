@@ -1,5 +1,5 @@
-import { Injectable, inject, DestroyRef, OnDestroy } from '@angular/core';
-import { Subject, Observable, fromEvent } from 'rxjs';
+import { DestroyRef, inject, Injectable, OnDestroy } from '@angular/core';
+import { fromEvent, Observable, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 export interface KeyboardShortcut {
@@ -18,7 +18,7 @@ export interface KeyboardShortcut {
  * Manages keyboard shortcuts throughout the application
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class KeyboardShortcutsService implements OnDestroy {
   private readonly shortcuts = new Map<string, KeyboardShortcut>();
@@ -58,7 +58,13 @@ export class KeyboardShortcutsService implements OnDestroy {
   /**
    * Get shortcut by key combination
    */
-  getShortcut(key: string, ctrlKey = false, shiftKey = false, altKey = false, metaKey = false): KeyboardShortcut | undefined {
+  getShortcut(
+    key: string,
+    ctrlKey = false,
+    shiftKey = false,
+    altKey = false,
+    metaKey = false
+  ): KeyboardShortcut | undefined {
     const shortcutKey = this.buildShortcutKey(key, ctrlKey, shiftKey, altKey, metaKey);
     return this.shortcuts.get(shortcutKey);
   }
@@ -111,12 +117,26 @@ export class KeyboardShortcutsService implements OnDestroy {
   /**
    * Build shortcut key string
    */
-  private buildShortcutKey(key: string, ctrlKey: boolean, shiftKey: boolean, altKey: boolean, metaKey: boolean): string {
+  private buildShortcutKey(
+    key: string,
+    ctrlKey: boolean,
+    shiftKey: boolean,
+    altKey: boolean,
+    metaKey: boolean
+  ): string {
     const parts: string[] = [];
-    if (ctrlKey) parts.push('Ctrl');
-    if (metaKey) parts.push('Meta');
-    if (shiftKey) parts.push('Shift');
-    if (altKey) parts.push('Alt');
+    if (ctrlKey) {
+      parts.push('Ctrl');
+    }
+    if (metaKey) {
+      parts.push('Meta');
+    }
+    if (shiftKey) {
+      parts.push('Shift');
+    }
+    if (altKey) {
+      parts.push('Alt');
+    }
     parts.push(key);
     return parts.join('+');
   }
@@ -126,4 +146,3 @@ export class KeyboardShortcutsService implements OnDestroy {
     this.shortcutTriggered$.complete();
   }
 }
-

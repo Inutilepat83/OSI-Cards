@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HealthCheckService, HealthStatus } from '../../../core/services/health-check.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -6,7 +6,7 @@ import { DestroyRef } from '@angular/core';
 
 /**
  * Health Check Component
- * 
+ *
  * Displays application health status and service availability.
  */
 @Component({
@@ -16,20 +16,24 @@ import { DestroyRef } from '@angular/core';
   template: `
     <div class="health-check-container">
       <h1>Health Check</h1>
-      
+
       <div class="health-status" [class]="'status-' + (healthStatus?.status || 'unknown')">
         <h2>Overall Status: {{ healthStatus?.status || 'Checking...' }}</h2>
-        <p>Last checked: {{ healthStatus?.timestamp | date:'short' }}</p>
+        <p>Last checked: {{ healthStatus?.timestamp | date: 'short' }}</p>
       </div>
 
       <div class="services-section">
         <h3>Services</h3>
         <div class="service-list">
-          <div *ngFor="let service of serviceEntries" class="service-item" [class]="'status-' + service.value.status">
+          <div
+            *ngFor="let service of serviceEntries"
+            class="service-item"
+            [class]="'status-' + service.value.status"
+          >
             <div class="service-name">{{ service.key }}</div>
             <div class="service-status">{{ service.value.status }}</div>
             <div *ngIf="service.value.responseTime" class="service-metrics">
-              Response time: {{ service.value.responseTime | number:'1.0-2' }}ms
+              Response time: {{ service.value.responseTime | number: '1.0-2' }}ms
             </div>
             <div *ngIf="service.value.error" class="service-error">
               {{ service.value.error }}
@@ -45,86 +49,88 @@ import { DestroyRef } from '@angular/core';
           <dd>{{ formatUptime(healthStatus?.metrics?.uptime || 0) }}</dd>
           <dt *ngIf="healthStatus?.metrics?.memoryUsage">Memory Usage:</dt>
           <dd *ngIf="healthStatus?.metrics?.memoryUsage">
-            {{ ((healthStatus?.metrics?.memoryUsage || 0) * 100) | number:'1.0-2' }}%
+            {{ (healthStatus?.metrics?.memoryUsage || 0) * 100 | number: '1.0-2' }}%
           </dd>
         </dl>
       </div>
     </div>
   `,
-  styles: [`
-    .health-check-container {
-      padding: 20px;
-      max-width: 800px;
-      margin: 0 auto;
-    }
+  styles: [
+    `
+      .health-check-container {
+        padding: 20px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
 
-    .health-status {
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
+      .health-status {
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
 
-    .status-healthy {
-      background: #c8e6c9;
-      color: #2e7d32;
-    }
+      .status-healthy {
+        background: #c8e6c9;
+        color: #2e7d32;
+      }
 
-    .status-degraded {
-      background: #fff3cd;
-      color: #856404;
-    }
+      .status-degraded {
+        background: #fff3cd;
+        color: #856404;
+      }
 
-    .status-unhealthy {
-      background: #ffcdd2;
-      color: #c62828;
-    }
+      .status-unhealthy {
+        background: #ffcdd2;
+        color: #c62828;
+      }
 
-    .service-list {
-      display: grid;
-      gap: 10px;
-    }
+      .service-list {
+        display: grid;
+        gap: 10px;
+      }
 
-    .service-item {
-      padding: 15px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
+      .service-item {
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
 
-    .service-name {
-      font-weight: 600;
-    }
+      .service-name {
+        font-weight: 600;
+      }
 
-    .service-status {
-      margin-top: 5px;
-      text-transform: uppercase;
-      font-size: 0.9em;
-    }
+      .service-status {
+        margin-top: 5px;
+        text-transform: uppercase;
+        font-size: 0.9em;
+      }
 
-    .status-up {
-      color: #2e7d32;
-    }
+      .status-up {
+        color: #2e7d32;
+      }
 
-    .status-down {
-      color: #c62828;
-    }
+      .status-down {
+        color: #c62828;
+      }
 
-    .status-degraded {
-      color: #856404;
-    }
+      .status-degraded {
+        color: #856404;
+      }
 
-    .service-error {
-      margin-top: 5px;
-      color: #c62828;
-      font-size: 0.9em;
-    }
+      .service-error {
+        margin-top: 5px;
+        color: #c62828;
+        font-size: 0.9em;
+      }
 
-    .metrics-section dl {
-      display: grid;
-      grid-template-columns: 150px 1fr;
-      gap: 10px;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+      .metrics-section dl {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+        gap: 10px;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HealthCheckComponent implements OnInit, OnDestroy {
   private readonly healthCheckService = inject(HealthCheckService);
@@ -135,19 +141,27 @@ export class HealthCheckComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Initial health check
-    this.healthCheckService.checkHealth()
+    this.healthCheckService
+      .checkHealth()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(status => {
+      .subscribe((status) => {
         this.healthStatus = status;
-        this.serviceEntries = Object.entries(status.services).map(([key, value]) => ({ key, value }));
+        this.serviceEntries = Object.entries(status.services).map(([key, value]) => ({
+          key,
+          value,
+        }));
       });
 
     // Periodic health checks
-    this.healthCheckService.startPeriodicHealthChecks()
+    this.healthCheckService
+      .startPeriodicHealthChecks()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(status => {
+      .subscribe((status) => {
         this.healthStatus = status;
-        this.serviceEntries = Object.entries(status.services).map(([key, value]) => ({ key, value }));
+        this.serviceEntries = Object.entries(status.services).map(([key, value]) => ({
+          key,
+          value,
+        }));
       });
   }
 
@@ -173,4 +187,3 @@ export class HealthCheckComponent implements OnInit, OnDestroy {
     return `${seconds}s`;
   }
 }
-

@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AICardConfig, CardType } from '../../models';
@@ -7,25 +7,24 @@ import { CardValidationService } from './card-validation.service';
 import { CardTemplatesService } from './card-templates.service';
 import { SectionNormalizationService } from './section-normalization.service';
 import { ErrorHandlingService } from '../../core/services/error-handling.service';
-import { LoggingService } from '../../core/services/logging.service';
 
 /**
  * Card Facade Service
- * 
+ *
  * Provides a simplified interface for complex card operations by coordinating
  * multiple services. This facade hides the complexity of interacting with
  * CardDataService, CardValidationService, CardTemplatesService, and others.
- * 
+ *
  * Benefits:
  * - Simplifies component code by reducing service dependencies
  * - Centralizes complex operations
  * - Improves testability by providing a single point of interaction
  * - Makes it easier to change underlying implementations
- * 
+ *
  * @example
  * ```typescript
  * const facade = inject(CardFacadeService);
- * 
+ *
  * // Load and validate a card in one call
  * facade.loadAndValidateCard('card-id').subscribe({
  *   next: card => console.log('Valid card:', card),
@@ -34,7 +33,7 @@ import { LoggingService } from '../../core/services/logging.service';
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CardFacadeService {
   private readonly cardData = inject(CardDataService);
@@ -42,7 +41,6 @@ export class CardFacadeService {
   private readonly templates = inject(CardTemplatesService);
   private readonly normalization = inject(SectionNormalizationService);
   private readonly errorHandling = inject(ErrorHandlingService);
-  private readonly logger = inject(LoggingService);
 
   /**
    * Load a card by ID and validate it
@@ -51,7 +49,7 @@ export class CardFacadeService {
    */
   loadAndValidateCard(id: string): Observable<AICardConfig | null> {
     return this.cardData.getCardById(id).pipe(
-      map(card => {
+      map((card) => {
         if (!card) {
           return null;
         }
@@ -85,7 +83,7 @@ export class CardFacadeService {
    */
   createCardFromTemplate(type: CardType, variant: number): Observable<AICardConfig | null> {
     return this.loadTemplate(type, variant).pipe(
-      map(template => {
+      map((template) => {
         if (!template) {
           this.errorHandling.handleError(
             new Error(`Template not found: ${type} variant ${variant}`),
@@ -95,7 +93,7 @@ export class CardFacadeService {
         }
         // Normalize sections
         if (template.sections) {
-          template.sections = template.sections.map(section =>
+          template.sections = template.sections.map((section) =>
             this.normalization.normalizeSection(section)
           );
         }
@@ -117,9 +115,9 @@ export class CardFacadeService {
    * @returns Observable of validated cards array
    */
   getAllValidCards(): Observable<AICardConfig[]> {
-    return this.cardData.getAllCards().pipe(
-      map(cards => cards.filter(card => this.validation.validateCardStructure(card)))
-    );
+    return this.cardData
+      .getAllCards()
+      .pipe(map((cards) => cards.filter((card) => this.validation.validateCardStructure(card))));
   }
 
   /**
@@ -130,26 +128,29 @@ export class CardFacadeService {
   searchValidCards(query: string): Observable<AICardConfig[]> {
     // Use repository search if available, otherwise fallback to getAllCards
     return this.cardData.getAllCards().pipe(
-      map(cards => {
+      map((cards) => {
         if (!query.trim()) {
-          return cards.filter(card => this.validation.validateCardStructure(card));
+          return cards.filter((card) => this.validation.validateCardStructure(card));
         }
         const searchTerm = query.toLowerCase();
-        return cards.filter(card => {
+        return cards.filter((card) => {
           if (!this.validation.validateCardStructure(card)) {
             return false;
           }
-          return card.cardTitle.toLowerCase().includes(searchTerm) ||
-            card.sections?.some(section =>
-              section.title?.toLowerCase().includes(searchTerm) ||
-              section.fields?.some(field =>
-                field.label?.toLowerCase().includes(searchTerm) ||
-                String(field.value).toLowerCase().includes(searchTerm)
-              )
-            );
+          return (
+            card.cardTitle.toLowerCase().includes(searchTerm) ||
+            card.sections?.some(
+              (section) =>
+                section.title?.toLowerCase().includes(searchTerm) ||
+                section.fields?.some(
+                  (field) =>
+                    field.label?.toLowerCase().includes(searchTerm) ||
+                    String(field.value).toLowerCase().includes(searchTerm)
+                )
+            )
+          );
         });
       })
     );
   }
 }
-

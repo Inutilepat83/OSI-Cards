@@ -5,7 +5,7 @@ const GettingStartedPage: NgDocPage = {
   title: 'Getting Started',
   mdFile: './index.md',
   order: 1,
-  category: DocsCategory
+  category: DocsCategory,
 };
 
 export default GettingStartedPage;

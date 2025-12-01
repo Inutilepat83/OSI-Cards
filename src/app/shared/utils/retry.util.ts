@@ -12,16 +12,8 @@ export interface RetryOptions {
 /**
  * Retry a function with exponential backoff
  */
-export async function retry<T>(
-  fn: () => Promise<T>,
-  options: RetryOptions = {}
-): Promise<T> {
-  const {
-    maxAttempts = 3,
-    delayMs = 1000,
-    backoffMultiplier = 2,
-    onRetry
-  } = options;
+export async function retry<T>(fn: () => Promise<T>, options: RetryOptions = {}): Promise<T> {
+  const { maxAttempts = 3, delayMs = 1000, backoffMultiplier = 2, onRetry } = options;
 
   let lastError: Error | null = null;
 
@@ -77,7 +69,7 @@ export function retrySync<T>(
  * Sleep utility
  */
 function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -91,5 +83,3 @@ export function createRetryWrapper<T extends (...args: any[]) => Promise<any>>(
     return retry(() => fn(...args), options);
   }) as T;
 }
-
-
