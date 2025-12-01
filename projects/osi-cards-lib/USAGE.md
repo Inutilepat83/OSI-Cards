@@ -18,11 +18,21 @@ Main component for rendering cards.
 
 **Selector:** `app-ai-card-renderer`
 
-**Inputs:**
-- `cardConfig: AICardConfig` - The card configuration (required)
-- `updateSource: 'stream' | 'liveEdit'` - Update source type (default: 'stream')
-- `isFullscreen: boolean` - Fullscreen mode (default: false)
-- `tiltEnabled: boolean` - Enable magnetic tilt effect (default: true)
+**Inputs (all optional with defaults):**
+
+| Input | Type | Default | Description |
+|-------|------|---------|-------------|
+| `cardConfig` | `AICardConfig` | `undefined` | The card configuration |
+| `updateSource` | `'stream' \| 'liveEdit'` | `'stream'` | Update source type |
+| `isFullscreen` | `boolean` | `false` | Fullscreen mode |
+| `tiltEnabled` | `boolean` | `true` | Enable magnetic tilt effect |
+| `streamingStage` | `StreamingStage` | `undefined` | `'idle'` \| `'thinking'` \| `'streaming'` \| `'complete'` |
+| `streamingProgress` | `number` | `undefined` | Progress 0-1 |
+| `isStreaming` | `boolean` | `false` | Streaming animation state |
+| `showLoadingByDefault` | `boolean` | `true` | Show loading when no data |
+| `containerWidth` | `number` | auto | Explicit width for masonry |
+| `loadingMessages` | `string[]` | defaults | Custom loading messages |
+| `loadingTitle` | `string` | `'Creating OSI Card'` | Loading title |
 
 **Outputs:**
 - `cardInteraction: EventEmitter<{ action: string; card: AICardConfig }>`
@@ -31,7 +41,7 @@ Main component for rendering cards.
 - `agentAction: EventEmitter<{ action: any; card: AICardConfig; agentId?: string; context?: Record<string, unknown> }>`
 - `questionAction: EventEmitter<{ action: any; card: AICardConfig; question?: string }>`
 
-**Example:**
+**Example (with streaming/loading):**
 ```typescript
 <app-ai-card-renderer
   [cardConfig]="myCard"
@@ -39,6 +49,56 @@ Main component for rendering cards.
   (fieldInteraction)="handleFieldClick($event)"
   (agentAction)="handleAgentAction($event)">
 </app-ai-card-renderer>
+```
+
+**Example (static card, no loading):**
+```typescript
+<app-ai-card-renderer
+  [cardConfig]="myCard"
+  [streamingStage]="'complete'"
+  [showLoadingByDefault]="false"
+  (cardInteraction)="handleAction($event)">
+</app-ai-card-renderer>
+```
+
+### OsiCardsContainerComponent
+
+Container wrapper for theme and CSS isolation.
+
+**Selector:** `osi-cards-container`
+
+**Inputs (all optional):**
+
+| Input | Type | Default | Description |
+|-------|------|---------|-------------|
+| `theme` | `'day' \| 'night'` | `'day'` | Theme to apply |
+| `strictIsolation` | `boolean` | `false` | Enable strict CSS containment |
+
+**Example (Container + Renderer Pattern):**
+```html
+<osi-cards-container [theme]="'night'">
+  <app-ai-card-renderer
+    [cardConfig]="card"
+    [streamingStage]="'complete'"
+    [showLoadingByDefault]="false"
+    (cardInteraction)="onAction($event)">
+  </app-ai-card-renderer>
+</osi-cards-container>
+```
+
+**Example (Multiple Cards):**
+```html
+@for (item of items; track item.id) {
+  <osi-cards-container [theme]="cardTheme">
+    <app-ai-card-renderer
+      [cardConfig]="item.card"
+      [containerWidth]="cardContainerWidth"
+      [streamingStage]="'complete'"
+      [showLoadingByDefault]="false"
+      (cardInteraction)="onCardActionClick($event)">
+    </app-ai-card-renderer>
+  </osi-cards-container>
+}
 ```
 
 ### SectionRendererComponent
@@ -81,7 +141,7 @@ The number of columns is calculated as: `floor((containerWidth + gap) / (minColu
 
 Example column counts:
 - 424px container → 2 columns
-- 636px container → 3 columns  
+- 636px container → 3 columns
 - 848px+ container → 4 columns
 
 ### CardSkeletonComponent
@@ -143,20 +203,20 @@ interface CardSection {
   description?: string;
   subtitle?: string;
   columns?: number;
-  
+
   /**
    * Explicit column span - how many columns this section should span.
    * Takes precedence over preferredColumns.
    */
   colSpan?: number;
-  
+
   /**
    * Preferred column count (1, 2, 3, or 4) - an adaptive hint.
    * The section will use this width when available, but gracefully
    * degrade to fewer columns when constrained.
    */
   preferredColumns?: 1 | 2 | 3 | 4;
-  
+
   fields?: CardField[];
   items?: CardItem[];
   chartType?: 'bar' | 'line' | 'pie' | 'doughnut';
@@ -345,6 +405,127 @@ If you use Tailwind CSS, include it in your main styles:
 
 ## Examples
 
+### Static Card (No Streaming)
+
+For displaying cards with pre-loaded data (no AI streaming):
+
+```typescript
+import { Component } from '@angular/core';
+import { OsiCardsContainerComponent, AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
+
+@Component({
+  selector: 'app-static-card',
+  standalone: true,
+  imports: [OsiCardsContainerComponent, AICardRendererComponent],
+  template: `
+    <osi-cards-container [theme]="'day'">
+      <app-ai-card-renderer
+        [cardConfig]="card"
+        [streamingStage]="'complete'"
+        [showLoadingByDefault]="false"
+        (cardInteraction)="onAction($event)">
+      </app-ai-card-renderer>
+    </osi-cards-container>
+  `
+})
+export class StaticCardComponent {
+  card: AICardConfig = {
+    cardTitle: 'My Static Card',
+    sections: [
+      {
+        title: 'Information',
+        type: 'info',
+        fields: [
+          { label: 'Name', value: 'Example' },
+          { label: 'Status', value: 'Active' }
+        ]
+      }
+    ]
+  };
+
+  onAction(event: { action: string; card: AICardConfig }): void {
+    console.log('Action clicked:', event);
+  }
+}
+```
+
+**Key settings for static cards:**
+- `[streamingStage]="'complete'"` - Marks the card as fully loaded
+- `[showLoadingByDefault]="false"` - Prevents loading spinner from appearing
+
+### Streaming Card (AI Integration)
+
+For progressive card generation with loading animations:
+
+```typescript
+import { Component } from '@angular/core';
+import { OsiCardsContainerComponent, AICardRendererComponent, AICardConfig, StreamingStage } from 'osi-cards-lib';
+
+@Component({
+  selector: 'app-streaming-card',
+  standalone: true,
+  imports: [OsiCardsContainerComponent, AICardRendererComponent],
+  template: `
+    <button (click)="generate()" [disabled]="isStreaming">Generate</button>
+
+    <osi-cards-container [theme]="'day'">
+      <app-ai-card-renderer
+        [cardConfig]="card"
+        [isStreaming]="isStreaming"
+        [streamingStage]="streamingStage"
+        [streamingProgress]="progress"
+        [showLoadingByDefault]="true"
+        [loadingMessages]="messages"
+        (cardInteraction)="onAction($event)">
+      </app-ai-card-renderer>
+    </osi-cards-container>
+  `
+})
+export class StreamingCardComponent {
+  card: AICardConfig | undefined;
+  isStreaming = false;
+  streamingStage: StreamingStage = 'idle';
+  progress = 0;
+  messages = ['Processing...', 'Analyzing...'];
+
+  async generate(): Promise<void> {
+    this.card = undefined;
+    this.isStreaming = true;
+    this.streamingStage = 'thinking';
+
+    await new Promise(r => setTimeout(r, 2000));
+    this.streamingStage = 'streaming';
+    this.progress = 0.5;
+    this.card = { cardTitle: 'Result', sections: [] };
+
+    await new Promise(r => setTimeout(r, 1000));
+    this.progress = 1;
+    this.streamingStage = 'complete';
+    this.isStreaming = false;
+    this.card.sections = [{ title: 'Done', type: 'info', fields: [{ label: 'Status', value: 'Complete' }] }];
+  }
+
+  onAction(event: any): void {
+    console.log('Action:', event);
+  }
+}
+```
+
+**Key settings for streaming cards:**
+- `[isStreaming]="true"` - Enables streaming animations
+- `[streamingStage]` - Controls the current phase: `'thinking'` | `'streaming'` | `'complete'`
+- `[streamingProgress]` - Progress value from 0 to 1
+- `[showLoadingByDefault]="true"` - Shows loading UI when card is undefined
+- `[loadingMessages]` - Custom messages during loading
+
+### Quick Reference: Streaming vs Static
+
+| Scenario | streamingStage | showLoadingByDefault | isStreaming |
+|----------|----------------|---------------------|-------------|
+| Static card | `'complete'` | `false` | not needed |
+| AI generating | `'thinking'` / `'streaming'` | `true` | `true` |
+| AI complete | `'complete'` | `true` | `false` |
+
 ### Complete Card Example
 
 ```typescript
@@ -382,8 +563,8 @@ export class CardExampleComponent {
         title: 'Key Metrics',
         type: 'analytics',
         fields: [
-          { 
-            label: 'Revenue', 
+          {
+            label: 'Revenue',
             value: 5000000,
             change: 15,
             trend: 'up'

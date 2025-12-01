@@ -457,9 +457,24 @@ open https://osi-card.web.app/ https://github.com/Inutilepat83/OSI-Cards/actions
 
 ---
 
-# 📦 Version & Publish (Library releases only)
+# 📦 NPM Library Management
 
-## 22. Smart Publish Workflow
+## 22. Pre-Publish Checklist
+
+Before publishing a new version:
+
+- [ ] All changes are committed to git
+- [ ] Library builds successfully: `npm run build:lib`
+- [ ] Documentation is updated (README.md, USAGE.md, IMPORT_EXAMPLE.md)
+- [ ] Version bump is appropriate (patch/minor/major)
+- [ ] CHANGELOG.md is updated
+
+```bash
+# Quick pre-publish check
+npm run build:lib && npm run version:show
+```
+
+## 23. Smart Publish Workflow
 
 The smart publish script handles everything automatically:
 
@@ -484,7 +499,233 @@ npm run publish:smart:major     # major: 1.5.2 → 2.0.0
 7. ✅ Publishes to npm
 8. ✅ Pushes to git remote
 
-Verify: https://www.npmjs.com/package/osi-cards-lib
+## 24. Manual Publish (If Needed)
+
+```bash
+# Build library
+npm run build:lib
+
+# Navigate to dist folder
+cd dist/osi-cards-lib
+
+# Check package contents
+npm pack --dry-run
+
+# Publish
+npm publish --access public
+
+# Return to root
+cd ../..
+```
+
+## 25. NPM Package Monitoring
+
+### Check Package Status
+
+```bash
+# View package info
+npm view osi-cards-lib
+
+# Check latest version
+npm view osi-cards-lib version
+
+# View all published versions
+npm view osi-cards-lib versions --json
+
+# Check download stats (last week)
+npm view osi-cards-lib --json | jq '.dist-tags, .time'
+```
+
+### Monitor Downloads & Stats
+
+```bash
+# Weekly downloads
+curl -s "https://api.npmjs.org/downloads/point/last-week/osi-cards-lib" | jq
+
+# Monthly downloads
+curl -s "https://api.npmjs.org/downloads/point/last-month/osi-cards-lib" | jq
+
+# Download history (last 30 days)
+curl -s "https://api.npmjs.org/downloads/range/last-month/osi-cards-lib" | jq '.downloads[-7:]'
+```
+
+### Quick Status Dashboard
+
+```bash
+#!/bin/bash
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║              OSI-CARDS-LIB NPM STATUS                         ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+
+echo "📦 Package Info:"
+npm view osi-cards-lib version dist-tags.latest 2>/dev/null || echo "   (Package not found)"
+echo ""
+
+echo "📊 Download Stats (Last Week):"
+curl -s "https://api.npmjs.org/downloads/point/last-week/osi-cards-lib" 2>/dev/null | jq -r '"   Downloads: \(.downloads)"' || echo "   (API unavailable)"
+echo ""
+
+echo "📅 Recent Versions:"
+npm view osi-cards-lib time --json 2>/dev/null | jq -r 'to_entries | sort_by(.value) | reverse | .[0:5] | .[] | "   \(.key): \(.value)"' || echo "   (Unable to fetch)"
+echo ""
+
+echo "🔗 Links:"
+echo "   • NPM: https://www.npmjs.com/package/osi-cards-lib"
+echo "   • Bundlephobia: https://bundlephobia.com/package/osi-cards-lib"
+echo "   • NPM Charts: https://npmcharts.com/compare/osi-cards-lib"
+```
+
+## 26. Post-Publish Verification
+
+After publishing, verify the package works:
+
+```bash
+# 1. Check npm registry
+npm view osi-cards-lib version
+
+# 2. Test install in a temp project
+cd /tmp
+mkdir test-osi-cards && cd test-osi-cards
+npm init -y
+npm install osi-cards-lib@latest
+
+# 3. Verify package contents
+ls node_modules/osi-cards-lib/
+
+# 4. Check exports
+node -e "console.log(Object.keys(require('osi-cards-lib')))"
+
+# 5. Cleanup
+cd .. && rm -rf test-osi-cards
+```
+
+### Verify in Browser (Quick Test)
+
+```bash
+# Open npm page and bundlephobia
+open https://www.npmjs.com/package/osi-cards-lib
+open https://bundlephobia.com/package/osi-cards-lib
+```
+
+## 27. Version Strategy
+
+| Change Type     | Version Bump | Example            | When to Use                       |
+| --------------- | ------------ | ------------------ | --------------------------------- |
+| Bug fix         | `patch`      | 1.5.2 → 1.5.3      | Backwards-compatible fixes        |
+| New feature     | `minor`      | 1.5.2 → 1.6.0      | New features, no breaking changes |
+| Breaking change | `major`      | 1.5.2 → 2.0.0      | API changes, removed features     |
+| Pre-release     | `prerelease` | 1.5.2 → 1.5.3-rc.0 | Testing before stable release     |
+
+### Semantic Versioning Guidelines
+
+```
+MAJOR.MINOR.PATCH
+
+MAJOR: Breaking API changes
+  - Removed exports
+  - Changed component selectors
+  - Required input changes
+  - Angular version requirement changes
+
+MINOR: New features (backwards-compatible)
+  - New components
+  - New optional inputs
+  - New section types
+  - New services
+
+PATCH: Bug fixes (backwards-compatible)
+  - Bug fixes
+  - Performance improvements
+  - Documentation updates
+  - Style fixes
+```
+
+## 28. Deprecation & Breaking Changes
+
+When making breaking changes:
+
+```typescript
+// 1. Mark as deprecated first (in minor release)
+/**
+ * @deprecated Use `newMethod()` instead. Will be removed in v2.0.0
+ */
+oldMethod(): void {
+  console.warn('oldMethod is deprecated, use newMethod instead');
+  this.newMethod();
+}
+
+// 2. Document in CHANGELOG.md
+// ## Breaking Changes (v2.0.0)
+// - Removed `oldMethod()` - use `newMethod()` instead
+
+// 3. Update migration guide
+```
+
+## 29. NPM Token Management
+
+### Check Token Status
+
+```bash
+# View current npm user
+npm whoami
+
+# Check token permissions
+npm token list
+```
+
+### Refresh Token (If Needed)
+
+```bash
+# Login to npm
+npm login
+
+# Or set token directly (for CI)
+npm config set //registry.npmjs.org/:_authToken YOUR_TOKEN
+```
+
+## 30. Troubleshooting NPM Publish
+
+| Issue                | Solution                                                             |
+| -------------------- | -------------------------------------------------------------------- |
+| `403 Forbidden`      | Check npm login: `npm whoami`                                        |
+| `Version exists`     | Bump version: `npm run version:patch`                                |
+| `Package name taken` | Use scoped name: `@scope/package`                                    |
+| `Missing files`      | Check `files` in package.json                                        |
+| `Build failed`       | Run `npm run build:lib` first                                        |
+| `Git tag exists`     | Delete tag: `git tag -d vX.X.X && git push origin :refs/tags/vX.X.X` |
+
+### Reset and Republish
+
+```bash
+# If publish failed mid-way
+npm run build:lib
+cd dist/osi-cards-lib
+npm publish --access public
+cd ../..
+git tag -a "v$(npm view osi-cards-lib version)" -m "Release $(npm view osi-cards-lib version)"
+git push origin --tags
+```
+
+---
+
+# 📊 NPM Quick Reference
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                  NPM LIBRARY MANAGEMENT                      │
+├─────────────────────────────────────────────────────────────┤
+│ CHECK VERSION:    npm view osi-cards-lib version            │
+│ ALL VERSIONS:     npm view osi-cards-lib versions           │
+│ DOWNLOADS:        curl api.npmjs.org/downloads/...          │
+│ DRY RUN:          npm run publish:smart:dry                 │
+│ PUBLISH PATCH:    npm run publish:smart                     │
+│ PUBLISH MINOR:    npm run publish:smart:minor               │
+│ PUBLISH MAJOR:    npm run publish:smart:major               │
+│ NPM PAGE:         https://www.npmjs.com/package/osi-cards-lib│
+│ BUNDLE SIZE:      https://bundlephobia.com/package/osi-cards-lib│
+└─────────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -514,14 +755,17 @@ firebase hosting:rollback
 
 # 🔗 URLs Reference
 
-| Resource             | URL                                                  |
-| -------------------- | ---------------------------------------------------- |
-| **Live Site**        | https://osi-card.web.app/                            |
-| **GitHub Repo**      | https://github.com/Inutilepat83/OSI-Cards            |
-| **GitHub Actions**   | https://github.com/Inutilepat83/OSI-Cards/actions    |
-| **NPM Package**      | https://www.npmjs.com/package/osi-cards-lib          |
-| **Firebase Console** | https://console.firebase.google.com/project/osi-card |
-| **GitHub Token**     | https://github.com/settings/tokens                   |
+| Resource             | URL                                                           |
+| -------------------- | ------------------------------------------------------------- |
+| **Live Site**        | https://osi-card.web.app/                                     |
+| **GitHub Repo**      | https://github.com/Inutilepat83/OSI-Cards                     |
+| **GitHub Actions**   | https://github.com/Inutilepat83/OSI-Cards/actions             |
+| **NPM Package**      | https://www.npmjs.com/package/osi-cards-lib                   |
+| **NPM Downloads**    | https://npmcharts.com/compare/osi-cards-lib                   |
+| **Bundle Size**      | https://bundlephobia.com/package/osi-cards-lib                |
+| **NPM API Stats**    | https://api.npmjs.org/downloads/point/last-week/osi-cards-lib |
+| **Firebase Console** | https://console.firebase.google.com/project/osi-card          |
+| **GitHub Token**     | https://github.com/settings/tokens                            |
 
 ---
 
@@ -555,11 +799,23 @@ firebase login
 │ BUILD:    npm run lint:fix && npm run build                 │
 │ COMMIT:   git commit --no-verify -m "type: msg"             │
 │ PUSH:     git push origin main                              │
-│ PUBLISH:  npm run publish:smart                             │
 │ MONITOR:  gh run list --repo Inutilepat83/OSI-Cards         │
 │ SITE:     https://osi-card.web.app/                         │
 │ ACTIONS:  https://github.com/Inutilepat83/OSI-Cards/actions │
+├─────────────────────────────────────────────────────────────┤
+│                    NPM LIBRARY                               │
+├─────────────────────────────────────────────────────────────┤
+│ CHECK:    npm view osi-cards-lib version                    │
+│ DRY RUN:  npm run publish:smart:dry                         │
+│ PUBLISH:  npm run publish:smart                             │
+│ STATS:    curl api.npmjs.org/downloads/point/last-week/osi-cards-lib │
+│ NPM:      https://www.npmjs.com/package/osi-cards-lib       │
+│ SIZE:     https://bundlephobia.com/package/osi-cards-lib    │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Ask Cursor AI**: "Check my GitHub pipeline status" (with MCP configured)
+**Ask Cursor AI**:
+
+- "Check my GitHub pipeline status" (with MCP configured)
+- "Check npm package osi-cards-lib stats"
+- "What's the latest version of osi-cards-lib on npm?"

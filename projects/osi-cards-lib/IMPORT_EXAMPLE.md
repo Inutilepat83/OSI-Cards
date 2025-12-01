@@ -153,6 +153,81 @@ export class MyCardComponent {
 
 ---
 
+## Container + Renderer Pattern (For Lists & Full Control)
+
+When you need more control or are displaying multiple cards, use the container pattern:
+
+### `card-list.component.ts`
+
+```typescript
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  OsiCardsContainerComponent,
+  AICardRendererComponent,
+  AICardConfig
+} from 'osi-cards-lib';
+
+@Component({
+  selector: 'app-card-list',
+  standalone: true,
+  imports: [CommonModule, OsiCardsContainerComponent, AICardRendererComponent],
+  templateUrl: './card-list.component.html'
+})
+export class CardListComponent {
+  cardTheme: 'day' | 'night' = 'day';
+  cardContainerWidth = 600; // Optional
+
+  items: { id: string; card: AICardConfig }[] = [
+    {
+      id: '1',
+      card: {
+        cardTitle: 'Company A',
+        sections: [{ title: 'Info', type: 'info', fields: [{ label: 'Status', value: 'Active' }] }]
+      }
+    },
+    {
+      id: '2',
+      card: {
+        cardTitle: 'Company B',
+        sections: [{ title: 'Info', type: 'info', fields: [{ label: 'Status', value: 'Pending' }] }]
+      }
+    }
+  ];
+
+  onCardActionClick(event: { action: string; card: AICardConfig }): void {
+    console.log('Action:', event);
+  }
+}
+```
+
+### `card-list.component.html`
+
+```html
+@for (item of items; track item.id) {
+  <osi-cards-container [theme]="cardTheme">
+    <app-ai-card-renderer
+      [cardConfig]="item.card"
+      [containerWidth]="cardContainerWidth"
+      [streamingStage]="'complete'"
+      [showLoadingByDefault]="false"
+      (cardInteraction)="onCardActionClick($event)">
+    </app-ai-card-renderer>
+  </osi-cards-container>
+}
+```
+
+### Key Points:
+
+| Input | Value | Why |
+|-------|-------|-----|
+| `[streamingStage]="'complete'"` | `'complete'` | Card data is already loaded |
+| `[showLoadingByDefault]="false"` | `false` | Don't show loading spinner |
+| `[containerWidth]` | Optional | Explicit width for consistent layouts |
+| `[theme]` | On container | Theme applied to container, not renderer |
+
+---
+
 ## Usage with Events
 
 Handle user interactions with the card.
@@ -234,89 +309,169 @@ export class InteractiveCardComponent {
 
 ---
 
-## Streaming Usage
+## Complete Integration Examples
 
-Display cards with AI streaming animations.
+### Example 1: Static Card (No Streaming)
 
-### `streaming-card.component.ts`
+For displaying pre-loaded cards without any loading animations.
+
+**`static-card.component.ts`**
 
 ```typescript
 import { Component } from '@angular/core';
-import { OsiCardsComponent, AICardConfig, StreamingStage } from 'osi-cards-lib';
+import { OsiCardsContainerComponent, AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
+
+@Component({
+  selector: 'app-static-card',
+  standalone: true,
+  imports: [OsiCardsContainerComponent, AICardRendererComponent],
+  templateUrl: './static-card.component.html'
+})
+export class StaticCardComponent {
+  cardTheme: 'day' | 'night' = 'day';
+
+  card: AICardConfig = {
+    cardTitle: 'Company Profile',
+    cardSubtitle: 'Technology Solutions',
+    sections: [
+      {
+        title: 'Company Info',
+        type: 'info',
+        fields: [
+          { label: 'Industry', value: 'Software' },
+          { label: 'Founded', value: '2015' },
+          { label: 'Employees', value: '250+' }
+        ]
+      },
+      {
+        title: 'Performance',
+        type: 'analytics',
+        fields: [
+          { label: 'Revenue', value: '$5M', trend: 'up', change: 20 },
+          { label: 'Growth', value: '35%', trend: 'up' }
+        ]
+      }
+    ],
+    actions: [
+      { type: 'website', label: 'Website', variant: 'primary', url: 'https://example.com' }
+    ]
+  };
+
+  onCardAction(event: { action: string; card: AICardConfig }): void {
+    console.log('Action clicked:', event.action);
+  }
+}
+```
+
+**`static-card.component.html`**
+
+```html
+<osi-cards-container [theme]="cardTheme">
+  <app-ai-card-renderer
+    [cardConfig]="card"
+    [streamingStage]="'complete'"
+    [showLoadingByDefault]="false"
+    (cardInteraction)="onCardAction($event)">
+  </app-ai-card-renderer>
+</osi-cards-container>
+```
+
+---
+
+### Example 2: Streaming Card (AI/LLM Integration)
+
+For progressive card generation with loading animations.
+
+**`streaming-card.component.ts`**
+
+```typescript
+import { Component } from '@angular/core';
+import { OsiCardsContainerComponent, AICardRendererComponent, AICardConfig, StreamingStage } from 'osi-cards-lib';
 
 @Component({
   selector: 'app-streaming-card',
   standalone: true,
-  imports: [OsiCardsComponent],
+  imports: [OsiCardsContainerComponent, AICardRendererComponent],
   templateUrl: './streaming-card.component.html'
 })
 export class StreamingCardComponent {
+  cardTheme: 'day' | 'night' = 'day';
+
+  // Card data (starts undefined)
   card: AICardConfig | undefined;
+
+  // Streaming state
   isStreaming = false;
   streamingStage: StreamingStage = 'idle';
   streamingProgress = 0;
 
-  // Custom messages shown during loading
+  // Custom loading messages
   loadingMessages = [
     'Analyzing request...',
     'Gathering data...',
-    'Processing results...'
+    'Processing results...',
+    'Almost there...'
   ];
 
   async generateCard(): Promise<void> {
-    // Reset state
+    // Reset and start
     this.card = undefined;
     this.isStreaming = true;
     this.streamingStage = 'thinking';
     this.streamingProgress = 0;
 
-    // Simulate AI thinking
-    await this.delay(1500);
+    // Phase 1: Thinking (show loading animation)
+    await this.delay(2000);
+
+    // Phase 2: Start streaming content
     this.streamingStage = 'streaming';
+    this.streamingProgress = 0.2;
 
-    // Simulate progressive card generation
-    this.streamingProgress = 0.3;
-    this.card = {
-      cardTitle: 'Generating...',
-      sections: []
-    };
+    // Build card progressively
+    this.card = { cardTitle: 'Analysis Results', sections: [] };
 
-    await this.delay(1000);
-    this.streamingProgress = 0.6;
+    await this.delay(800);
+    this.streamingProgress = 0.4;
     this.card.sections.push({
       title: 'Summary',
       type: 'info',
-      fields: [{ label: 'Status', value: 'Processing' }]
+      fields: [{ label: 'Status', value: 'Analyzing...' }]
     });
 
-    await this.delay(1000);
+    await this.delay(800);
+    this.streamingProgress = 0.7;
+    this.card.sections.push({
+      title: 'Insights',
+      type: 'analytics',
+      fields: [
+        { label: 'Score', value: '92%', trend: 'up' },
+        { label: 'Confidence', value: 'High' }
+      ]
+    });
+
+    await this.delay(600);
     this.streamingProgress = 1;
+
+    // Phase 3: Complete
     this.streamingStage = 'complete';
     this.isStreaming = false;
 
-    // Final complete card
-    this.card = {
-      cardTitle: 'Analysis Complete',
-      sections: [
-        {
-          title: 'Results',
-          type: 'analytics',
-          fields: [
-            { label: 'Accuracy', value: '98.5%', trend: 'up' },
-            { label: 'Confidence', value: 'High', trend: 'stable' }
-          ]
-        }
-      ]
-    };
+    // Update final state
+    this.card.cardTitle = 'Analysis Complete';
+    this.card.sections[0].fields = [{ label: 'Status', value: 'Complete ✓' }];
   }
 
   private delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+  onCardAction(event: { action: string; card: AICardConfig }): void {
+    console.log('Action clicked:', event.action);
+  }
 }
 ```
 
-### `streaming-card.component.html`
+**`streaming-card.component.html`**
 
 ```html
 <div class="controls">
@@ -325,27 +480,43 @@ export class StreamingCardComponent {
   </button>
 </div>
 
-<osi-cards
-  [card]="card"
-  [isStreaming]="isStreaming"
-  [streamingStage]="streamingStage"
-  [streamingProgress]="streamingProgress"
-  [loadingMessages]="loadingMessages"
-  [loadingTitle]="'AI Analysis'"
-  [showLoadingByDefault]="true">
-</osi-cards>
+<osi-cards-container [theme]="cardTheme">
+  <app-ai-card-renderer
+    [cardConfig]="card"
+    [isStreaming]="isStreaming"
+    [streamingStage]="streamingStage"
+    [streamingProgress]="streamingProgress"
+    [showLoadingByDefault]="true"
+    [loadingMessages]="loadingMessages"
+    [loadingTitle]="'AI Analysis'"
+    (cardInteraction)="onCardAction($event)">
+  </app-ai-card-renderer>
+</osi-cards-container>
 ```
 
-### Disable Loading State (No Streaming)
+---
 
-If you don't want streaming animations or loading states:
+### Side-by-Side Comparison
 
-```html
-<osi-cards
-  [card]="card"
-  [isStreaming]="false"
-  [showLoadingByDefault]="false">
-</osi-cards>
+| Setting | Static Card | Streaming Card |
+|---------|-------------|----------------|
+| `[cardConfig]` | Always has data | Starts `undefined` |
+| `[streamingStage]` | `'complete'` | `'idle'` → `'thinking'` → `'streaming'` → `'complete'` |
+| `[showLoadingByDefault]` | `false` | `true` |
+| `[isStreaming]` | Not needed | Controls animation |
+| `[streamingProgress]` | Not needed | `0` to `1` |
+| `[loadingMessages]` | Not needed | Custom messages |
+| Loading UI | None | Animated spinner + messages |
+
+### Streaming Stages Explained
+
+```
+'idle'      → Initial state, no activity
+'thinking'  → AI is processing (shows loading animation)
+'streaming' → Content is being generated (progress bar active)
+'complete'  → Card is fully loaded (normal display)
+'error'     → Something went wrong
+'aborted'   → Generation was cancelled
 ```
 
 ---
@@ -624,6 +795,60 @@ export class MyComponent {
   };
 }
 ```
+
+### Common Use Cases
+
+#### Static Card (No Streaming, No Loading)
+
+```html
+<!-- Using OsiCardsComponent -->
+<osi-cards
+  [card]="card"
+  [showLoadingByDefault]="false">
+</osi-cards>
+
+<!-- Using Container + Renderer -->
+<osi-cards-container [theme]="'day'">
+  <app-ai-card-renderer
+    [cardConfig]="card"
+    [streamingStage]="'complete'"
+    [showLoadingByDefault]="false">
+  </app-ai-card-renderer>
+</osi-cards-container>
+```
+
+#### Card with Dark Theme
+
+```html
+<osi-cards [card]="card" [theme]="'night'"></osi-cards>
+```
+
+#### Card in a Loop
+
+```html
+@for (item of items; track item.id) {
+  <osi-cards-container>
+    <app-ai-card-renderer
+      [cardConfig]="item.card"
+      [streamingStage]="'complete'"
+      [showLoadingByDefault]="false"
+      (cardInteraction)="onAction($event)">
+    </app-ai-card-renderer>
+  </osi-cards-container>
+}
+```
+
+### What's Required vs Optional
+
+| Component | Required Inputs | Optional with Defaults |
+|-----------|-----------------|------------------------|
+| `<osi-cards>` | None (shows loading if no card) | All inputs have defaults |
+| `<osi-cards-container>` | None | `theme='day'`, `strictIsolation=false` |
+| `<app-ai-card-renderer>` | None (shows loading if no cardConfig) | All inputs have defaults |
+
+**To show a static card without loading:**
+- Set `[showLoadingByDefault]="false"` OR
+- Set `[streamingStage]="'complete'"` AND provide `[cardConfig]`
 
 ### All Available Inputs
 

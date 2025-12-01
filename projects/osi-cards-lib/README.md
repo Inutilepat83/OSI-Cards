@@ -62,79 +62,267 @@ In your `src/styles.scss`:
 
 ---
 
-## Basic Usage (Without Streaming)
+## Integration: Streaming vs Static
 
-The simplest way to display a card. **Theme is optional** - it defaults to `'day'` (light theme).
+### Option A: Static Card (No Streaming)
 
-### TypeScript (`example.component.ts`)
+Use this when you already have the card data and don't need loading animations.
+
+**TypeScript:**
 
 ```typescript
 import { Component } from '@angular/core';
-import { OsiCardsComponent, AICardConfig } from 'osi-cards-lib';
+import { OsiCardsContainerComponent, AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
 
 @Component({
-  selector: 'app-example',
+  selector: 'app-static-card',
   standalone: true,
-  imports: [OsiCardsComponent],
-  templateUrl: './example.component.html'
+  imports: [OsiCardsContainerComponent, AICardRendererComponent],
+  templateUrl: './static-card.component.html'
 })
-export class ExampleComponent {
+export class StaticCardComponent {
+  cardTheme: 'day' | 'night' = 'day';
+
   card: AICardConfig = {
-    cardTitle: 'Company Overview',
-    cardSubtitle: 'Technology Solutions Provider',
+    cardTitle: 'Company Profile',
     sections: [
       {
-        title: 'General Information',
+        title: 'Overview',
         type: 'info',
         fields: [
           { label: 'Industry', value: 'Technology' },
-          { label: 'Employees', value: '500+' },
-          { label: 'Founded', value: '2015' }
-        ]
-      },
-      {
-        title: 'Key Metrics',
-        type: 'analytics',
-        fields: [
-          { label: 'Revenue', value: '$12M', trend: 'up', change: 15 },
-          { label: 'Growth', value: '25%', trend: 'up', change: 5 }
+          { label: 'Employees', value: '500+' }
         ]
       }
-    ],
-    actions: [
-      { type: 'website', label: 'Visit Website', variant: 'primary', url: 'https://example.com' },
-      { type: 'mail', label: 'Contact Us', variant: 'outline', email: { contact: { email: 'hello@example.com' } } }
     ]
   };
+
+  onCardAction(event: { action: string; card: AICardConfig }): void {
+    console.log('Action:', event);
+  }
 }
 ```
 
-### HTML (`example.component.html`)
+**HTML:**
 
 ```html
-<!-- Minimal usage - no theme required! Defaults to 'day' (light) -->
-<osi-cards [card]="card"></osi-cards>
+<osi-cards-container [theme]="cardTheme">
+  <app-ai-card-renderer
+    [cardConfig]="card"
+    [streamingStage]="'complete'"
+    [showLoadingByDefault]="false"
+    (cardInteraction)="onCardAction($event)">
+  </app-ai-card-renderer>
+</osi-cards-container>
 ```
 
-Or with explicit options:
+**Key Settings:**
+- `[streamingStage]="'complete'"` → Card is fully loaded
+- `[showLoadingByDefault]="false"` → No loading spinner
+
+---
+
+### Option B: With Streaming (AI/LLM Integration)
+
+Use this when generating cards progressively from an AI service.
+
+**TypeScript:**
+
+```typescript
+import { Component } from '@angular/core';
+import { OsiCardsContainerComponent, AICardRendererComponent, AICardConfig, StreamingStage } from 'osi-cards-lib';
+
+@Component({
+  selector: 'app-streaming-card',
+  standalone: true,
+  imports: [OsiCardsContainerComponent, AICardRendererComponent],
+  templateUrl: './streaming-card.component.html'
+})
+export class StreamingCardComponent {
+  cardTheme: 'day' | 'night' = 'day';
+
+  // Streaming state
+  card: AICardConfig | undefined;
+  isStreaming = false;
+  streamingStage: StreamingStage = 'idle';
+  streamingProgress = 0;
+
+  // Custom loading messages (optional)
+  loadingMessages = [
+    'Analyzing data...',
+    'Processing request...',
+    'Generating insights...'
+  ];
+
+  async generateCard(): Promise<void> {
+    // Start streaming
+    this.card = undefined;
+    this.isStreaming = true;
+    this.streamingStage = 'thinking';
+    this.streamingProgress = 0;
+
+    // Simulate AI thinking phase
+    await this.delay(2000);
+
+    // Start streaming content
+    this.streamingStage = 'streaming';
+    this.streamingProgress = 0.2;
+
+    // Progressive card building (simulate chunks from AI)
+    this.card = { cardTitle: 'Analysis Results', sections: [] };
+
+    await this.delay(800);
+    this.streamingProgress = 0.5;
+    this.card.sections.push({
+      title: 'Summary',
+      type: 'info',
+      fields: [{ label: 'Status', value: 'Processing...' }]
+    });
+
+    await this.delay(800);
+    this.streamingProgress = 0.8;
+    this.card.sections.push({
+      title: 'Metrics',
+      type: 'analytics',
+      fields: [{ label: 'Score', value: '92%', trend: 'up' }]
+    });
+
+    await this.delay(500);
+
+    // Complete
+    this.streamingProgress = 1;
+    this.streamingStage = 'complete';
+    this.isStreaming = false;
+
+    // Final card state
+    this.card.sections[0].fields = [{ label: 'Status', value: 'Complete' }];
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  onCardAction(event: { action: string; card: AICardConfig }): void {
+    console.log('Action:', event);
+  }
+}
+```
+
+**HTML:**
 
 ```html
-<!-- With theme (optional) -->
-<osi-cards
-  [card]="card"
-  [theme]="'night'">
-</osi-cards>
+<button (click)="generateCard()" [disabled]="isStreaming">
+  {{ isStreaming ? 'Generating...' : 'Generate Card' }}
+</button>
 
-<!-- With all common options -->
-<osi-cards
-  [card]="card"
-  [theme]="'day'"
-  [tiltEnabled]="true"
-  [showLoadingByDefault]="false"
-  (fieldClick)="onFieldClick($event)"
-  (actionClick)="onActionClick($event)">
-</osi-cards>
+<osi-cards-container [theme]="cardTheme">
+  <app-ai-card-renderer
+    [cardConfig]="card"
+    [isStreaming]="isStreaming"
+    [streamingStage]="streamingStage"
+    [streamingProgress]="streamingProgress"
+    [showLoadingByDefault]="true"
+    [loadingMessages]="loadingMessages"
+    [loadingTitle]="'AI Analysis'"
+    (cardInteraction)="onCardAction($event)">
+  </app-ai-card-renderer>
+</osi-cards-container>
 ```
+
+**Key Settings:**
+- `[isStreaming]="isStreaming"` → Controls streaming animation
+- `[streamingStage]="streamingStage"` → `'idle'` | `'thinking'` | `'streaming'` | `'complete'`
+- `[streamingProgress]="streamingProgress"` → Progress bar (0-1)
+- `[showLoadingByDefault]="true"` → Shows loading when no card data
+- `[loadingMessages]` → Custom messages during loading
+
+---
+
+### Comparison Table
+
+| Feature | Static Card | Streaming Card |
+|---------|-------------|----------------|
+| `[cardConfig]` | Always provided | Starts `undefined`, built progressively |
+| `[streamingStage]` | `'complete'` | `'idle'` → `'thinking'` → `'streaming'` → `'complete'` |
+| `[showLoadingByDefault]` | `false` | `true` |
+| `[isStreaming]` | Not needed | `true` during generation |
+| `[streamingProgress]` | Not needed | `0` to `1` |
+| Loading animation | None | Shows animated loading state |
+| Use case | Pre-loaded data | AI/LLM generation |
+
+---
+
+## Using Container + Renderer Pattern (Recommended for Lists)
+
+When displaying cards in lists or needing more control, use `osi-cards-container` with `app-ai-card-renderer`:
+
+### TypeScript
+
+```typescript
+import { Component } from '@angular/core';
+import {
+  OsiCardsContainerComponent,
+  AICardRendererComponent,
+  AICardConfig
+} from 'osi-cards-lib';
+
+@Component({
+  selector: 'app-card-list',
+  standalone: true,
+  imports: [OsiCardsContainerComponent, AICardRendererComponent],
+  templateUrl: './card-list.component.html'
+})
+export class CardListComponent {
+  cardTheme: 'day' | 'night' = 'day';
+  cardContainerWidth = 600; // Optional: explicit width
+
+  cards: { id: string; card: AICardConfig }[] = [
+    {
+      id: '1',
+      card: {
+        cardTitle: 'Card 1',
+        sections: [{ title: 'Info', type: 'info', fields: [{ label: 'Status', value: 'Active' }] }]
+      }
+    },
+    {
+      id: '2',
+      card: {
+        cardTitle: 'Card 2',
+        sections: [{ title: 'Info', type: 'info', fields: [{ label: 'Status', value: 'Pending' }] }]
+      }
+    }
+  ];
+
+  onCardActionClick(event: { action: string; card: AICardConfig }): void {
+    console.log('Action clicked:', event);
+  }
+}
+```
+
+### HTML
+
+```html
+<!-- Loop through cards -->
+@for (item of cards; track item.id) {
+  <osi-cards-container [theme]="cardTheme">
+    <app-ai-card-renderer
+      [cardConfig]="item.card"
+      [containerWidth]="cardContainerWidth"
+      [streamingStage]="'complete'"
+      [showLoadingByDefault]="false"
+      (cardInteraction)="onCardActionClick($event)">
+    </app-ai-card-renderer>
+  </osi-cards-container>
+}
+```
+
+### Why Use This Pattern?
+
+- **Theme at container level** - Apply theme once for all nested cards
+- **CSS isolation** - Container provides style boundaries
+- **Explicit control** - Fine-grained control over each card's behavior
+- **No loading state** - `[showLoadingByDefault]="false"` for static data
+- **Complete stage** - `[streamingStage]="'complete'"` marks card as fully loaded
 
 ---
 
@@ -468,21 +656,23 @@ export class CardPageComponent {
 
 ### OsiCardsComponent (`<osi-cards>`)
 
+High-level wrapper component with simplified API.
+
 **Inputs:**
 
-| Input | Type | Default | Description |
-|-------|------|---------|-------------|
-| `card` | `AICardConfig` | - | The card configuration to render |
-| `theme` | `'day' \| 'night'` | `'day'` | Theme to apply (optional) |
-| `fullscreen` | `boolean` | `false` | Display in fullscreen mode |
-| `tiltEnabled` | `boolean` | `true` | Enable 3D tilt effect on hover |
-| `containerWidth` | `number` | - | Explicit container width for layout |
-| `isStreaming` | `boolean` | `false` | Whether streaming is active |
-| `streamingStage` | `StreamingStage` | - | Current streaming stage |
-| `streamingProgress` | `number` | - | Streaming progress (0-1) |
-| `showLoadingByDefault` | `boolean` | `true` | Show loading state when no card |
-| `loadingMessages` | `string[]` | - | Custom loading messages |
-| `loadingTitle` | `string` | `'Creating OSI Card'` | Loading state title |
+| Input | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `card` | `AICardConfig` | `undefined` | No | The card configuration to render |
+| `theme` | `'day' \| 'night'` | `'day'` | No | Theme to apply |
+| `fullscreen` | `boolean` | `false` | No | Display in fullscreen mode |
+| `tiltEnabled` | `boolean` | `true` | No | Enable 3D tilt effect on hover |
+| `containerWidth` | `number` | auto | No | Explicit container width for layout |
+| `isStreaming` | `boolean` | `false` | No | Whether streaming is active |
+| `streamingStage` | `StreamingStage` | `undefined` | No | Current streaming stage |
+| `streamingProgress` | `number` | `0` | No | Streaming progress (0-1) |
+| `showLoadingByDefault` | `boolean` | `true` | No | Show loading state when no card |
+| `loadingMessages` | `string[]` | defaults | No | Custom loading messages |
+| `loadingTitle` | `string` | `'Creating OSI Card'` | No | Loading state title |
 
 **Outputs:**
 
@@ -494,6 +684,70 @@ export class CardPageComponent {
 | `agentAction` | `{ action, card, agentId?, context? }` | Emitted for agent-type actions |
 | `questionAction` | `{ action, card, question? }` | Emitted for question-type actions |
 | `export` | `void` | Emitted when export is requested |
+
+---
+
+### OsiCardsContainerComponent (`<osi-cards-container>`)
+
+Container wrapper for theme and CSS isolation.
+
+**Inputs:**
+
+| Input | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `theme` | `'day' \| 'night'` | `'day'` | No | Theme to apply to container |
+| `strictIsolation` | `boolean` | `false` | No | Enable strict CSS containment |
+
+**Usage:**
+
+```html
+<osi-cards-container [theme]="'night'">
+  <app-ai-card-renderer [cardConfig]="card"></app-ai-card-renderer>
+</osi-cards-container>
+```
+
+---
+
+### AICardRendererComponent (`<app-ai-card-renderer>`)
+
+Core rendering component with full control.
+
+**Inputs:**
+
+| Input | Type | Default | Required | Description |
+|-------|------|---------|----------|-------------|
+| `cardConfig` | `AICardConfig` | `undefined` | No | The card configuration |
+| `isFullscreen` | `boolean` | `false` | No | Fullscreen mode |
+| `tiltEnabled` | `boolean` | `true` | No | Enable 3D tilt effect |
+| `streamingStage` | `StreamingStage` | `undefined` | No | `'idle'` \| `'thinking'` \| `'streaming'` \| `'complete'` |
+| `streamingProgress` | `number` | `undefined` | No | Progress 0-1 |
+| `isStreaming` | `boolean` | `false` | No | Streaming animation state |
+| `showLoadingByDefault` | `boolean` | `true` | No | Show loading when no data |
+| `containerWidth` | `number` | auto | No | Explicit width for masonry |
+| `loadingMessages` | `string[]` | defaults | No | Custom loading messages |
+| `loadingTitle` | `string` | `'Creating OSI Card'` | No | Loading title |
+| `updateSource` | `'stream' \| 'liveEdit'` | `'stream'` | No | Update source mode |
+
+**Outputs:**
+
+| Output | Type | Description |
+|--------|------|-------------|
+| `fieldInteraction` | `CardFieldInteractionEvent` | Field clicked |
+| `cardInteraction` | `{ action: string; card: AICardConfig }` | Action button clicked |
+| `fullscreenToggle` | `boolean` | Fullscreen toggled |
+| `agentAction` | `{ action, card, agentId?, context? }` | Agent action |
+| `questionAction` | `{ action, card, question? }` | Question action |
+| `export` | `void` | Export requested |
+
+**Minimal Usage (Static Card, No Loading):**
+
+```html
+<app-ai-card-renderer
+  [cardConfig]="card"
+  [streamingStage]="'complete'"
+  [showLoadingByDefault]="false">
+</app-ai-card-renderer>
+```
 
 ---
 
