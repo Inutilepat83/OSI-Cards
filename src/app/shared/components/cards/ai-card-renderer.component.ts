@@ -26,19 +26,21 @@ import { delay, distinctUntilChanged, filter, fromEvent, interval, Subject, take
 import { MagneticTiltService, MousePosition, TiltCalculations } from '../../../core';
 import { SectionNormalizationService } from '../../services/section-normalization.service';
 import { LucideIconsModule } from '../../icons/lucide-icons.module';
-import { MasonryGridComponent, MasonryLayoutInfo } from './masonry-grid/masonry-grid.component';
+import { MasonryGridComponent } from 'projects/osi-cards-lib/src/lib/components/masonry-grid/masonry-grid.component';
+import type { MasonryLayoutInfo } from 'projects/osi-cards-lib/src/lib/components/masonry-grid/masonry-grid.component';
 import { SectionRenderEvent } from './section-renderer/section-renderer.component';
 import { CardChangeType } from '../../utils/card-diff.util';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { LoggingService } from '../../../core/services/logging.service';
 import { DevelopmentWarningsService } from '../../../core/services/development-warnings.service';
-import { CardHeaderComponent } from './card-header/card-header.component';
-import { CardActionsComponent } from './card-actions/card-actions.component';
+// Import from library (consolidated)
 import {
+  CardHeaderComponent,
+  CardActionsComponent,
   CardStreamingIndicatorComponent,
-  StreamingStage,
-} from './card-streaming-indicator/card-streaming-indicator.component';
-import { CardSectionListComponent } from './card-section-list/card-section-list.component';
+  CardSectionListComponent,
+} from 'projects/osi-cards-lib/src/lib/components';
+import { StreamingStage } from 'projects/osi-cards-lib/src/lib/types';
 
 export interface CardFieldInteractionEvent {
   field?: CardField;
@@ -245,7 +247,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
   @Input() isFullscreen = false;
   @Input() tiltEnabled = true;
-  @Input() streamingStage: StreamingStage = undefined;
+  @Input() streamingStage: StreamingStage | undefined;
   @Input() streamingProgress?: number; // Progress 0-1
   @Input() streamingProgressLabel?: string; // e.g., "STREAMING JSON (75%)"
 
@@ -295,7 +297,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
    * Computed effective streaming stage.
    * Returns 'thinking' when showLoadingByDefault is true and no sections are available.
    */
-  get effectiveStreamingStage(): StreamingStage {
+  get effectiveStreamingStage(): StreamingStage | undefined {
     // If an explicit stage is provided, use it
     if (this.streamingStage) {
       return this.streamingStage;

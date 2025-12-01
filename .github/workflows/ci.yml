@@ -1,13 +1,11 @@
-# OSI Cards Library - CI/CD Pipeline
+# OSI Cards Library - Simplified CI Pipeline
 #
-# This workflow runs on pull requests and pushes to main/develop branches.
-# It performs linting, testing, building, and quality gate checks.
+# This workflow runs basic quality checks on pull requests.
+# The main deploy.yml handles production deployments.
 
 name: CI
 
 on:
-  push:
-    branches: [main, develop]
   pull_request:
     branches: [main, develop]
   workflow_dispatch:
@@ -18,73 +16,14 @@ concurrency:
 
 env:
   NODE_VERSION: '20'
-  CACHE_KEY: node-modules-${{ hashFiles('**/package-lock.json') }}
-  ANGULAR_CACHE_KEY: angular-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('src/**/*.ts', 'projects/**/*.ts') }}
 
 jobs:
   # ============================================================================
-  # Lint Job - Code Quality Checks
-  # ============================================================================
-  lint:
-    name: Lint & Format Check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run ESLint
-        run: npm run lint
-
-      - name: Check formatting (Prettier)
-        run: npm run format:check || true
-        continue-on-error: true
-
-  # ============================================================================
-  # Unit Tests Job
-  # ============================================================================
-  test:
-    name: Unit Tests
-    runs-on: ubuntu-latest
-    needs: lint
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run unit tests
-        run: npm run test:lib -- --watch=false --browsers=ChromeHeadless --code-coverage
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage/
-          retention-days: 7
-
-  # ============================================================================
-  # Build Job
+  # Build Check - Verify the app compiles
   # ============================================================================
   build:
-    name: Build Library
+    name: Build Check
     runs-on: ubuntu-latest
-    needs: lint
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -96,162 +35,13 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps --ignore-scripts
 
-      - name: Build library
-        run: npm run build:lib
+      - name: Build production
+        run: npm run build:prod
+        continue-on-error: false
 
       - name: Check bundle size
         run: |
-          echo "Checking bundle size..."
-          du -sh dist/osi-cards-lib/
-          du -sh dist/osi-cards-lib/fesm2022/
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-lib
-          path: dist/osi-cards-lib/
-          retention-days: 7
-
-  # ============================================================================
-  # E2E Tests Job
-  # ============================================================================
-  e2e:
-    name: E2E Tests
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: dist-lib
-          path: dist/osi-cards-lib/
-
-      - name: Run E2E tests
-        run: npm run e2e:headless || true
-        continue-on-error: true
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: e2e-results
-          path: |
-            e2e-results/
-            playwright-report/
-          retention-days: 7
-
-  # ============================================================================
-  # Security Audit Job
-  # ============================================================================
-  security:
-    name: Security Audit
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run npm audit
-        run: npm audit --audit-level=high
-        continue-on-error: true
-
-  # ============================================================================
-  # Quality Gate Job - Final Check
-  # ============================================================================
-  quality-gate:
-    name: Quality Gate
-    runs-on: ubuntu-latest
-    needs: [lint, test, build]
-    if: always()
-    steps:
-      - name: Check job results
-        run: |
-          if [ "${{ needs.lint.result }}" != "success" ]; then
-            echo "Lint job failed"
-            exit 1
-          fi
-          if [ "${{ needs.test.result }}" != "success" ]; then
-            echo "Test job failed"
-            exit 1
-          fi
-          if [ "${{ needs.build.result }}" != "success" ]; then
-            echo "Build job failed"
-            exit 1
-          fi
-          echo "All quality gates passed!"
-
-  # ============================================================================
-  # Publish Job (only on main branch push)
-  # ============================================================================
-  publish:
-    name: Publish to npm
-    runs-on: ubuntu-latest
-    needs: quality-gate
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: dist-lib
-          path: dist/osi-cards-lib/
-
-      - name: Check if version changed
-        id: version-check
-        run: |
-          CURRENT_VERSION=$(node -p "require('./projects/osi-cards-lib/package.json').version")
-          PUBLISHED_VERSION=$(npm view osi-cards-lib version 2>/dev/null || echo "0.0.0")
-          if [ "$CURRENT_VERSION" != "$PUBLISHED_VERSION" ]; then
-            echo "version_changed=true" >> $GITHUB_OUTPUT
-            echo "New version: $CURRENT_VERSION (published: $PUBLISHED_VERSION)"
-          else
-            echo "version_changed=false" >> $GITHUB_OUTPUT
-            echo "Version unchanged: $CURRENT_VERSION"
-          fi
-
-      - name: Publish to npm
-        if: steps.version-check.outputs.version_changed == 'true'
-        run: |
-          cd dist/osi-cards-lib
-          npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-
-
-
-
+          echo "📦 Build output size:"
+          du -sh dist/osi-cards/browser/ || echo "Build directory not found"

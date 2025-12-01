@@ -46,6 +46,7 @@
       "@osi-cards/events": ["projects/osi-cards-lib/src/lib/events/index.ts"],
       "@osi-cards/interfaces": ["projects/osi-cards-lib/src/lib/interfaces/index.ts"],
       "@osi-cards/providers": ["projects/osi-cards-lib/src/lib/providers/index.ts"],
+      "@osi-cards/components": ["projects/osi-cards-lib/src/lib/components/index.ts"],
       "@app/*": ["./src/app/*"],
       "@environments/*": ["./src/environments/*"],
       "@core/*": ["./src/app/core/*"],
