@@ -410,3 +410,33 @@ export const OSI_FULL_CONFIG = new InjectionToken<OSICardsFullConfig>(
   }
 );
 
+// ============================================================================
+// CSS ISOLATION CONFIG
+// ============================================================================
+
+/**
+ * CSS isolation mode type
+ */
+export type CSSIsolationMode = 'shadow-dom' | 'scoped' | 'none';
+
+/**
+ * Default CSS isolation mode
+ */
+export const DEFAULT_CSS_ISOLATION_MODE: CSSIsolationMode = 'shadow-dom';
+
+/**
+ * Injection token for CSS isolation mode
+ */
+export const CSS_ISOLATION_MODE = new InjectionToken<CSSIsolationMode>(
+  'CSS_ISOLATION_MODE',
+  {
+    providedIn: 'root',
+    factory: () => DEFAULT_CSS_ISOLATION_MODE,
+  }
+);
+
+/**
+ * Alias for theme config token (for backwards compatibility)
+ */
+export const DEFAULT_THEME = OSI_THEME_CONFIG_TOKEN;
+

@@ -12,11 +12,11 @@ import { CommonModule } from '@angular/common';
 import { AICardConfig, CardAction, CardField, CardItem } from '../../models';
 import { AICardRendererComponent, CardFieldInteractionEvent, StreamingStage } from '../ai-card-renderer/ai-card-renderer.component';
 import { 
-  DEFAULT_THEME, 
-  ANIMATION_CONFIG, 
-  AnimationConfig,
-  isAnimationFeatureEnabled 
-} from '../../providers/osi-cards.providers';
+  OSI_THEME_CONFIG_TOKEN,
+  OSI_ANIMATION_CONFIG,
+  OSIAnimationConfig,
+  DEFAULT_OSI_THEME_CONFIG
+} from '../../providers/injection-tokens';
 
 /**
  * OSI Cards Component
@@ -107,8 +107,8 @@ import {
 })
 export class OsiCardsComponent {
   // Inject configuration
-  private readonly defaultThemeConfig = inject(DEFAULT_THEME, { optional: true });
-  private readonly animationConfig = inject<AnimationConfig | null>(ANIMATION_CONFIG, { optional: true });
+  private readonly defaultThemeConfig = inject(OSI_THEME_CONFIG_TOKEN, { optional: true });
+  private readonly animationConfig = inject<OSIAnimationConfig | null>(OSI_ANIMATION_CONFIG, { optional: true });
 
   // ========================================
   // CARD DATA INPUTS
@@ -192,13 +192,19 @@ export class OsiCardsComponent {
 
   /** Effective theme (component input > provider config > default) */
   get effectiveTheme(): 'day' | 'night' {
-    return this.theme ?? this.defaultThemeConfig ?? 'day';
+    if (this.theme) return this.theme;
+    const configTheme = this.defaultThemeConfig?.defaultTheme;
+    if (configTheme === 'day' || configTheme === 'night') return configTheme;
+    if (configTheme === 'dark') return 'night';
+    return 'day';
   }
 
   /** Check if tilt should be enabled based on animation config */
   get shouldEnableTilt(): boolean {
     if (!this.tiltEnabled) return false;
-    return isAnimationFeatureEnabled(this.animationConfig, 'tilt');
+    // Check animation config for tilt feature
+    if (!this.animationConfig) return true;
+    return this.animationConfig.enabled !== false;
   }
 
   // ========================================

@@ -59,11 +59,11 @@ export class LazySectionLoaderService {
   private readonly lazyFactories: Record<LazySectionType, LazyComponentFactory> = {
     'chart': async () => {
       const module = await import('../sections/chart-section/chart-section.component');
-      return module.ChartSectionComponent;
+      return module.ChartSectionComponent as unknown as Type<BaseSectionComponent>;
     },
     'map': async () => {
       const module = await import('../sections/map-section/map-section.component');
-      return module.MapSectionComponent;
+      return module.MapSectionComponent as unknown as Type<BaseSectionComponent>;
     }
   };
 

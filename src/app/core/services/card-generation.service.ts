@@ -4,7 +4,7 @@ import { AICardConfig, CardType } from '../../models';
 import { AppState } from '../../store/app.state';
 import * as CardActions from '../../store/cards/cards.state';
 import { ensureCardIds } from '../../shared/utils/card-utils';
-import { CardChangeType, CardDiffUtil } from '../../shared/utils/card-diff.util';
+import { CardChangeType, CardDiffUtil } from '@osi-cards/utils';
 import { JsonProcessingService } from './json-processing.service';
 import { ValidateCardType, validateObject } from '../../shared/decorators/validation.decorator';
 

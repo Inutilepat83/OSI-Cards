@@ -201,12 +201,13 @@ export class SectionRendererComponent implements OnChanges {
   /**
    * Create a component from a component class
    */
-  private createComponentFromClass(componentClass: BaseSectionComponent['constructor']): void {
+  private createComponentFromClass(componentClass: unknown): void {
     if (!componentClass) {
       return;
     }
 
-    this.currentComponentRef = this.container.createComponent(componentClass);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.currentComponentRef = this.container.createComponent(componentClass as any);
     this.updateComponentInput();
     this.subscribeToComponentEvents();
   }

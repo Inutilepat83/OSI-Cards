@@ -8,6 +8,14 @@ on:
     branches:
       - main
 
+# Cancel previous runs when new commits are pushed
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,20 +26,36 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
+      # Cache Angular build artifacts
+      - name: Cache Angular build
+        uses: actions/cache@v4
+        with:
+          path: |
+            .angular/cache
+            node_modules/.cache
+          key: angular-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('src/**', 'projects/**') }}
+          restore-keys: |
+            angular-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-
+            angular-${{ runner.os }}-
+
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps --ignore-scripts
+        run: npm ci --legacy-peer-deps --ignore-scripts --prefer-offline
 
       - name: Build production
         run: npm run build:prod
+        env:
+          # Increase Node memory for large builds
+          NODE_OPTIONS: '--max-old-space-size=4096'
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist/osi-cards/browser
+          retention-days: 1
 
   deploy-preview:
     needs: build
@@ -79,5 +103,3 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
           projectId: osi-card
           channelId: live
-
-

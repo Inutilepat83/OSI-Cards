@@ -30,7 +30,7 @@ import {
 } from '../../../../models';
 import { CommandService } from '../../../../shared/services/command.service';
 import { ExportService } from '../../../../shared/services/export.service';
-import { CardChangeType, CardDiffUtil } from '../../../../shared/utils/card-diff.util';
+import { CardChangeType, CardDiffUtil } from '@osi-cards/utils';
 import { AppState } from '../../../../store/app.state';
 import * as CardSelectors from '../../../../store/cards/cards.selectors';
 import * as CardActions from '../../../../store/cards/cards.state';

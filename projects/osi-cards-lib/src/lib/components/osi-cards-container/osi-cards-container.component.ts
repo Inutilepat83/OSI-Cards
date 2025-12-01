@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, Input, inject, Optional } from '@angular/core';
-import { CSS_ISOLATION_MODE, DEFAULT_THEME, CSSIsolationMode } from '../../providers/osi-cards.providers';
+import { CSS_ISOLATION_MODE, DEFAULT_THEME, CSSIsolationMode } from '../../providers/injection-tokens';
 
 /**
  * OsiCardsContainerComponent

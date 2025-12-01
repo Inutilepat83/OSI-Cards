@@ -298,10 +298,11 @@ export abstract class ItemBasedSectionComponent extends BaseSectionComponent<Car
    * Handle item action (e.g., link click)
    */
   onItemAction(item: CardItem, action: string): void {
+    const meta = item.meta as Record<string, unknown> | undefined;
     this.emitItemInteraction(item, {
       action,
-      url: item.url,
-      linkText: item.linkText
+      url: meta?.['url'] as string | undefined,
+      linkText: meta?.['linkText'] as string | undefined
     });
   }
 }
@@ -534,7 +535,7 @@ export abstract class MixedContentSectionComponent extends BaseSectionComponent 
    * Handle field interaction
    */
   onFieldClick(field: CardField, index: number): void {
-    this.emitFieldInteraction(field as CardField | CardItem, {
+    this.emitFieldInteraction(field, {
       action: 'click',
       index,
       contentType: 'field'
@@ -545,7 +546,7 @@ export abstract class MixedContentSectionComponent extends BaseSectionComponent 
    * Handle item interaction
    */
   onItemClick(item: CardItem, index: number): void {
-    this.emitItemInteraction(item as CardField | CardItem, {
+    this.emitItemInteraction(item, {
       action: 'click',
       index,
       contentType: 'item'
@@ -683,17 +684,5 @@ export abstract class ContactSectionBaseComponent extends FieldBasedSectionCompo
   }
 }
 
-// ============================================================================
-// EXPORTS
-// ============================================================================
-
-export {
-  FieldBasedSectionComponent,
-  ItemBasedSectionComponent,
-  ChartSectionBaseComponent,
-  MixedContentSectionComponent,
-  ContactSectionBaseComponent
-};
-
-
+// Classes are exported inline with their declarations
 
