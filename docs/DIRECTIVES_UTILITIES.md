@@ -36,32 +36,28 @@ Enables one-click copy functionality for any element with feedback display.
 <span [appCopyToClipboard]>contact@example.com</span>
 
 <!-- Copy custom value -->
-<button [appCopyToClipboard]="customValue" (copySuccess)="onCopied()">
-  Copy Value
-</button>
+<button [appCopyToClipboard]="customValue" (copySuccess)="onCopied()">Copy Value</button>
 
 <!-- With feedback message -->
-<code appCopyToClipboard showFeedback="Copied!">
-  npm install osi-cards
-</code>
+<code appCopyToClipboard showFeedback="Copied!"> npm install osi-cards </code>
 ```
 
 #### Inputs
 
-| Input | Type | Default | Description |
-|-------|------|---------|-------------|
-| `appCopyToClipboard` | `string \| null` | `null` | Value to copy. If not provided, copies element's text content |
-| `showFeedback` | `string \| boolean` | `false` | Feedback message to show on copy success |
-| `feedbackDuration` | `number` | `2000` | Duration to show feedback in milliseconds |
-| `feedbackClass` | `string` | `'copy-success'` | CSS class to add during feedback |
+| Input                | Type                | Default          | Description                                                   |
+| -------------------- | ------------------- | ---------------- | ------------------------------------------------------------- |
+| `appCopyToClipboard` | `string \| null`    | `null`           | Value to copy. If not provided, copies element's text content |
+| `showFeedback`       | `string \| boolean` | `false`          | Feedback message to show on copy success                      |
+| `feedbackDuration`   | `number`            | `2000`           | Duration to show feedback in milliseconds                     |
+| `feedbackClass`      | `string`            | `'copy-success'` | CSS class to add during feedback                              |
 
 #### Outputs
 
-| Output | Type | Description |
-|--------|------|-------------|
-| `copySuccess` | `EventEmitter<string>` | Emitted when copy succeeds with copied text |
-| `copyError` | `EventEmitter<string>` | Emitted when copy fails with error message |
-| `copyResult` | `EventEmitter<CopyResult>` | Emitted on any copy attempt with full result |
+| Output        | Type                       | Description                                  |
+| ------------- | -------------------------- | -------------------------------------------- |
+| `copySuccess` | `EventEmitter<string>`     | Emitted when copy succeeds with copied text  |
+| `copyError`   | `EventEmitter<string>`     | Emitted when copy fails with error message   |
+| `copyResult`  | `EventEmitter<CopyResult>` | Emitted on any copy attempt with full result |
 
 #### CopyResult Interface
 
@@ -84,10 +80,11 @@ interface CopyResult {
       [feedbackDuration]="3000"
       feedbackClass="copied-success"
       (copySuccess)="onCopied($event)"
-      (copyError)="onError($event)">
+      (copyError)="onError($event)"
+    >
       {{ apiKey }}
     </div>
-  `
+  `,
 })
 export class ApiKeyComponent {
   apiKey = 'sk-1234567890abcdef';
@@ -119,28 +116,24 @@ Provides configurable tooltips for any element with multiple positions and anima
 <button appTooltip="Click to save">Save</button>
 
 <!-- Positioned tooltip -->
-<span [appTooltip]="helpText" tooltipPosition="bottom">
-  Help
-</span>
+<span [appTooltip]="helpText" tooltipPosition="bottom"> Help </span>
 
 <!-- Delayed tooltip -->
-<icon appTooltip="Settings" [tooltipDelay]="500" tooltipPosition="left">
-  ⚙️
-</icon>
+<icon appTooltip="Settings" [tooltipDelay]="500" tooltipPosition="left"> ⚙️ </icon>
 ```
 
 #### Inputs
 
-| Input | Type | Default | Description |
-|-------|------|---------|-------------|
-| `appTooltip` | `string` | `''` | Tooltip text content |
-| `tooltipPosition` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'top'` | Tooltip position |
-| `tooltipDelay` | `number` | `300` | Delay before showing (ms) |
-| `tooltipDuration` | `number` | `0` | Auto-hide duration (0 = indefinite) |
-| `tooltipClass` | `string` | `''` | Custom CSS class |
-| `tooltipDisabled` | `boolean` | `false` | Disable tooltip |
-| `tooltipShowArrow` | `boolean` | `true` | Show arrow pointer |
-| `tooltipMaxWidth` | `number` | `250` | Maximum width in pixels |
+| Input              | Type                                     | Default | Description                         |
+| ------------------ | ---------------------------------------- | ------- | ----------------------------------- |
+| `appTooltip`       | `string`                                 | `''`    | Tooltip text content                |
+| `tooltipPosition`  | `'top' \| 'bottom' \| 'left' \| 'right'` | `'top'` | Tooltip position                    |
+| `tooltipDelay`     | `number`                                 | `300`   | Delay before showing (ms)           |
+| `tooltipDuration`  | `number`                                 | `0`     | Auto-hide duration (0 = indefinite) |
+| `tooltipClass`     | `string`                                 | `''`    | Custom CSS class                    |
+| `tooltipDisabled`  | `boolean`                                | `false` | Disable tooltip                     |
+| `tooltipShowArrow` | `boolean`                                | `true`  | Show arrow pointer                  |
+| `tooltipMaxWidth`  | `number`                                 | `250`   | Maximum width in pixels             |
 
 #### Styling
 
@@ -160,7 +153,8 @@ Tooltips use CSS custom properties for theming:
   appTooltip="This action cannot be undone"
   tooltipPosition="bottom"
   [tooltipDelay]="200"
-  tooltipClass="warning-tooltip">
+  tooltipClass="warning-tooltip"
+>
   Delete
 </button>
 ```
@@ -196,12 +190,12 @@ Applies theme to a specific DOM subtree, allowing cards or sections to have inde
 
 #### Inputs
 
-| Input | Type | Default | Description |
-|-------|------|---------|-------------|
-| `osiTheme` | `ThemePreset \| string \| OSICardsThemeConfig \| 'inherit'` | `'inherit'` | Theme to apply |
-| `osiThemeIsolated` | `boolean` | `false` | Isolate from global theme changes |
-| `osiThemeTransitions` | `boolean` | `true` | Enable theme change transitions |
-| `osiThemeVariables` | `Record<string, string>` | `undefined` | Additional CSS variables |
+| Input                 | Type                                                        | Default     | Description                       |
+| --------------------- | ----------------------------------------------------------- | ----------- | --------------------------------- |
+| `osiTheme`            | `ThemePreset \| string \| OSICardsThemeConfig \| 'inherit'` | `'inherit'` | Theme to apply                    |
+| `osiThemeIsolated`    | `boolean`                                                   | `false`     | Isolate from global theme changes |
+| `osiThemeTransitions` | `boolean`                                                   | `true`      | Enable theme change transitions   |
+| `osiThemeVariables`   | `Record<string, string>`                                    | `undefined` | Additional CSS variables          |
 
 #### Public Methods
 
@@ -217,7 +211,7 @@ osiThemeDirective.refresh();
 
 // Set variables programmatically
 osiThemeDirective.setVariables({
-  '--custom-color': '#ff0000'
+  '--custom-color': '#ff0000',
 });
 
 // Clear all theme styling
@@ -232,7 +226,7 @@ osiThemeDirective.clearTheme();
     <div [osiTheme]="customTheme" [osiThemeVariables]="extraVars">
       <osi-cards [card]="card" />
     </div>
-  `
+  `,
 })
 export class ThemedCardComponent {
   customTheme: OSICardsThemeConfig = {
@@ -240,12 +234,12 @@ export class ThemedCardComponent {
     colorScheme: 'light',
     variables: {
       '--osi-card-accent': '#6366f1',
-      '--osi-card-background': '#fafafa'
-    }
+      '--osi-card-background': '#fafafa',
+    },
   };
 
   extraVars = {
-    '--card-border-radius': '16px'
+    '--card-border-radius': '16px',
   };
 }
 ```
@@ -269,6 +263,7 @@ Creates an isolated theme container with proper CSS containment for fully isolat
 ```
 
 This directive automatically applies:
+
 - `container-type: inline-size`
 - `contain: layout style`
 - The `osi-theme-container` CSS class
@@ -286,21 +281,16 @@ Comprehensive accessibility helpers for WCAG compliance, focus management, keybo
 #### Focus Management
 
 ```typescript
-import {
-  getFocusableElements,
-  trapFocus,
-  moveFocus,
-  createRovingTabindex
-} from 'osi-cards-lib';
+import { getFocusableElements, trapFocus, moveFocus, createRovingTabindex } from 'osi-cards-lib';
 
 // Get all focusable elements in a container
 const focusable = getFocusableElements(containerElement);
 
 // Trap focus within a modal
 const releaseFocus = trapFocus(modalElement, {
-  initialFocus: '#first-input',  // Selector or element
-  returnFocus: previousElement,  // Where to return on release
-  allowEscape: true              // Release on Escape key
+  initialFocus: '#first-input', // Selector or element
+  returnFocus: previousElement, // Where to return on release
+  allowEscape: true, // Release on Escape key
 });
 
 // Later: release the focus trap
@@ -309,7 +299,7 @@ releaseFocus();
 // Move focus to an element
 moveFocus(element, {
   preventScroll: true,
-  select: true  // For inputs
+  select: true, // For inputs
 });
 
 // Create roving tabindex for navigation
@@ -322,15 +312,12 @@ const roving = createRovingTabindex(container, '.menu-item');
 #### Screen Reader Support
 
 ```typescript
-import {
-  announceToScreenReader,
-  createLiveRegion
-} from 'osi-cards-lib';
+import { announceToScreenReader, createLiveRegion } from 'osi-cards-lib';
 
 // Announce a message
 announceToScreenReader('Card loaded successfully', {
-  priority: 'polite',  // or 'assertive'
-  clearAfter: 1000     // ms
+  priority: 'polite', // or 'assertive'
+  clearAfter: 1000, // ms
 });
 
 // Create a persistent live region
@@ -347,40 +334,36 @@ import {
   getContrastRatio,
   meetsContrastRequirement,
   getWCAGLevel,
-  WCAG_CONTRAST
+  WCAG_CONTRAST,
 } from 'osi-cards-lib';
 
 // Calculate contrast ratio (1-21)
 const ratio = getContrastRatio('#ffffff', '#000000'); // 21
 
 // Check WCAG compliance
-meetsContrastRequirement('#333', '#fff', 'AA_NORMAL');  // true
+meetsContrastRequirement('#333', '#fff', 'AA_NORMAL'); // true
 meetsContrastRequirement('#666', '#fff', 'AAA_NORMAL'); // false
 
 // Get WCAG level
 const level = getWCAGLevel('#333', '#fff'); // 'AA' | 'AAA' | 'Fail'
 
 // WCAG requirements
-WCAG_CONTRAST.AA_NORMAL;  // 4.5
-WCAG_CONTRAST.AA_LARGE;   // 3
+WCAG_CONTRAST.AA_NORMAL; // 4.5
+WCAG_CONTRAST.AA_LARGE; // 3
 WCAG_CONTRAST.AAA_NORMAL; // 7
-WCAG_CONTRAST.AAA_LARGE;  // 4.5
+WCAG_CONTRAST.AAA_LARGE; // 4.5
 ```
 
 #### ARIA Helpers
 
 ```typescript
-import {
-  setAriaAttributes,
-  generateAriaId,
-  linkAriaElements
-} from 'osi-cards-lib';
+import { setAriaAttributes, generateAriaId, linkAriaElements } from 'osi-cards-lib';
 
 // Set ARIA attributes
 setAriaAttributes(element, {
   label: 'Main navigation',
   expanded: false,
-  hidden: null  // Removes attribute
+  hidden: null, // Removes attribute
 });
 
 // Generate unique ID
@@ -396,14 +379,17 @@ linkAriaElements(trigger, panel, 'controls');
 ```typescript
 import { registerShortcuts } from 'osi-cards-lib';
 
-const unregister = registerShortcuts({
-  'Ctrl+S': (e) => save(),
-  'Ctrl+Shift+P': (e) => openCommandPalette(),
-  'Escape': (e) => close()
-}, {
-  scope: document,        // Or a specific element
-  preventDefault: true
-});
+const unregister = registerShortcuts(
+  {
+    'Ctrl+S': (e) => save(),
+    'Ctrl+Shift+P': (e) => openCommandPalette(),
+    Escape: (e) => close(),
+  },
+  {
+    scope: document, // Or a specific element
+    preventDefault: true,
+  }
+);
 
 // Later: unregister all shortcuts
 unregister();
@@ -412,10 +398,7 @@ unregister();
 #### Motion Preferences
 
 ```typescript
-import {
-  prefersReducedMotion,
-  watchReducedMotion
-} from 'osi-cards-lib';
+import { prefersReducedMotion, watchReducedMotion } from 'osi-cards-lib';
 
 // Check once
 if (prefersReducedMotion()) {
@@ -476,7 +459,7 @@ const result = validateUrl(url, {
   allowedProtocols: ['https:', 'mailto:'],
   allowRelative: true,
   allowDataUrls: false,
-  maxLength: 2048
+  maxLength: 2048,
 });
 ```
 
@@ -495,7 +478,7 @@ const result = validateEmailConfig({
   contact: { name: 'John', email: 'john@example.com' },
   cc: ['team@example.com'],
   subject: 'Hello',
-  body: 'Message content'
+  body: 'Message content',
 });
 ```
 
@@ -512,11 +495,11 @@ const safeHtml = sanitizeHtml('<script>alert("xss")</script><p>Hello</p>');
 const cleaned = sanitizeHtml(userContent, {
   allowedTags: ['p', 'br', 'b', 'i', 'a'],
   allowedAttributes: {
-    'a': ['href', 'title'],
-    '*': ['class']
+    a: ['href', 'title'],
+    '*': ['class'],
   },
   allowLinks: true,
-  stripHtml: false  // Set true to return plain text
+  stripHtml: false, // Set true to return plain text
 });
 
 // Escape HTML for display
@@ -553,10 +536,7 @@ if (result.valid) {
 #### CSP Compliance
 
 ```typescript
-import {
-  isCspCompliantElement,
-  applyCspCompliantStyles
-} from 'osi-cards-lib';
+import { isCspCompliantElement, applyCspCompliantStyles } from 'osi-cards-lib';
 
 // Check if element has no inline styles
 if (!isCspCompliantElement(element)) {
@@ -566,7 +546,7 @@ if (!isCspCompliantElement(element)) {
 // Apply styles via CSS custom properties (CSP-safe)
 applyCspCompliantStyles(element, {
   '--card-width': '300px',
-  '--card-color': '#333'
+  '--card-color': '#333',
 });
 ```
 
@@ -592,14 +572,14 @@ window.addEventListener('resize', handleResize);
 
 // With options
 const search = debounce(performSearch, 300, {
-  leading: false,   // Don't call on first invocation
-  trailing: true,   // Call on trailing edge
-  maxWait: 1000     // Max time to wait
+  leading: false, // Don't call on first invocation
+  trailing: true, // Call on trailing edge
+  maxWait: 1000, // Max time to wait
 });
 
 // Control methods
-search.cancel();  // Cancel pending execution
-search.flush();   // Execute immediately
+search.cancel(); // Cancel pending execution
+search.flush(); // Execute immediately
 search.pending(); // Check if pending
 ```
 
@@ -630,7 +610,7 @@ updateLayout(); // Safe to call multiple times
 updateLayout();
 updateLayout(); // Only one frame scheduled
 
-updateLayout.cancel();  // Cancel pending frame
+updateLayout.cancel(); // Cancel pending frame
 updateLayout.pending(); // Check if pending
 
 // Batch DOM reads/writes
@@ -662,15 +642,15 @@ expensiveCalc(2, 3); // => 6 (cached)
 
 // With options
 const cachedFetch = memoize(fetchUserData, {
-  maxSize: 100,      // Max cache entries
-  ttl: 60000,        // Cache TTL in ms
-  keyFn: (id) => `user-${id}` // Custom cache key
+  maxSize: 100, // Max cache entries
+  ttl: 60000, // Cache TTL in ms
+  keyFn: (id) => `user-${id}`, // Custom cache key
 });
 
 // Cache control
-cachedFetch.clear();          // Clear cache
-cachedFetch.size();           // Get cache size
-cachedFetch.has('user-123');  // Check if cached
+cachedFetch.clear(); // Clear cache
+cachedFetch.size(); // Get cache size
+cachedFetch.has('user-123'); // Check if cached
 ```
 
 #### Lazy Evaluation
@@ -701,9 +681,12 @@ expensiveValue.isComputed();
 import { whenIdle, createIdleQueue } from 'osi-cards-lib';
 
 // Schedule during idle time
-const cancel = whenIdle(() => {
-  prefetchData();
-}, { timeout: 1000 });
+const cancel = whenIdle(
+  () => {
+    prefetchData();
+  },
+  { timeout: 1000 }
+);
 
 cancel(); // Cancel if needed
 
@@ -715,9 +698,9 @@ queue.add(() => console.log('Task 2'));
 queue.add(() => console.log('Task 3'));
 
 queue.start((task) => task()); // Process during idle time
-queue.stop();  // Stop processing
+queue.stop(); // Stop processing
 queue.clear(); // Clear queue
-queue.size();  // Get queue size
+queue.size(); // Get queue size
 ```
 
 #### Performance Monitoring
@@ -750,8 +733,12 @@ import { createObjectPool } from 'osi-cards-lib';
 // Reduce GC pressure with object pooling
 const pool = createObjectPool({
   create: () => ({ x: 0, y: 0, z: 0 }),
-  reset: (obj) => { obj.x = 0; obj.y = 0; obj.z = 0; },
-  maxSize: 100
+  reset: (obj) => {
+    obj.x = 0;
+    obj.y = 0;
+    obj.z = 0;
+  },
+  maxSize: 100,
 });
 
 // Get object from pool (or create new)
@@ -762,7 +749,7 @@ obj.x = 10;
 pool.release(obj);
 
 pool.clear(); // Clear pool
-pool.size();  // Get pool size
+pool.size(); // Get pool size
 ```
 
 ---
@@ -784,7 +771,7 @@ const config: Partial<RetryConfig> = {
   maxDelayMs: 30000,
   backoffMultiplier: 2,
   useJitter: true,
-  isRetryable: (error) => isNetworkError(error)
+  isRetryable: (error) => isNetworkError(error),
 };
 
 try {
@@ -805,28 +792,34 @@ try {
 ```typescript
 import { retryWithBackoff$ } from 'osi-cards-lib';
 
-http.get('/api/data').pipe(
-  retryWithBackoff$({
-    maxRetries: 3,
-    initialDelayMs: 1000
-  }, (state) => {
-    console.log(`Retry ${state.attempt}:`, state.lastError);
-  })
-).subscribe({
-  next: (data) => console.log(data),
-  error: (err) => console.error('Failed after retries:', err)
-});
+http
+  .get('/api/data')
+  .pipe(
+    retryWithBackoff$(
+      {
+        maxRetries: 3,
+        initialDelayMs: 1000,
+      },
+      (state) => {
+        console.log(`Retry ${state.attempt}:`, state.lastError);
+      }
+    )
+  )
+  .subscribe({
+    next: (data) => console.log(data),
+    error: (err) => console.error('Failed after retries:', err),
+  });
 ```
 
 #### RetryConfig Interface
 
 ```typescript
 interface RetryConfig {
-  maxRetries: number;        // Max retry attempts
-  initialDelayMs: number;    // Initial delay before first retry
-  maxDelayMs: number;        // Maximum delay between retries
+  maxRetries: number; // Max retry attempts
+  initialDelayMs: number; // Initial delay before first retry
+  maxDelayMs: number; // Maximum delay between retries
   backoffMultiplier: number; // Exponential backoff multiplier
-  useJitter: boolean;        // Add random jitter to delay
+  useJitter: boolean; // Add random jitter to delay
   isRetryable?: (error: unknown) => boolean; // Custom retry predicate
 }
 ```
@@ -835,11 +828,11 @@ interface RetryConfig {
 
 ```typescript
 interface RetryState {
-  attempt: number;      // Current attempt (1-based)
-  elapsedMs: number;    // Total elapsed time
-  lastError?: Error;    // Last error encountered
-  nextDelayMs: number;  // Delay before next retry
-  exhausted: boolean;   // Whether max retries reached
+  attempt: number; // Current attempt (1-based)
+  elapsedMs: number; // Total elapsed time
+  lastError?: Error; // Last error encountered
+  nextDelayMs: number; // Delay before next retry
+  exhausted: boolean; // Whether max retries reached
 }
 ```
 
@@ -849,9 +842,9 @@ interface RetryState {
 import { CircuitBreaker, CircuitOpenError } from 'osi-cards-lib';
 
 const breaker = new CircuitBreaker({
-  failureThreshold: 5,    // Open after 5 failures
-  resetTimeoutMs: 30000,  // Try half-open after 30s
-  successThreshold: 2     // Close after 2 successes
+  failureThreshold: 5, // Open after 5 failures
+  resetTimeoutMs: 30000, // Try half-open after 30s
+  successThreshold: 2, // Close after 2 successes
 });
 
 try {
@@ -914,7 +907,7 @@ import {
 
   // Retry
   retryWithBackoff,
-  CircuitBreaker
+  CircuitBreaker,
 } from 'osi-cards-lib';
 ```
 
@@ -926,5 +919,3 @@ import {
 - [BEST_PRACTICES.md](./BEST_PRACTICES.md) - Best practices including performance and accessibility
 - [SERVICES.md](./SERVICES.md) - Service documentation
 - [PRESETS.md](./PRESETS.md) - Preset and theming documentation
-
-

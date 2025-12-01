@@ -5,8 +5,8 @@
  */
 
 export const VERSION = '1.5.2';
-export const BUILD_DATE = '2025-12-01T11:29:07.237Z';
-export const BUILD_HASH = '9fdf2fe';
+export const BUILD_DATE = '2025-12-01T11:32:33.808Z';
+export const BUILD_HASH = 'aaa6164';
 export const BUILD_BRANCH = 'main';
 
 export interface VersionInfo {

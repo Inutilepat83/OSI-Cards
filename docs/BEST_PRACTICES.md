@@ -490,5 +490,3 @@ For dashboards with many cards:
 ---
 
 For more details, see the [API Reference](./API.md), [Theming Guide](./THEMING_GUIDE.md), and [Integration Guide](./INTEGRATION_GUIDE.md).
-
-

@@ -35,13 +35,13 @@
 
 ## Cost Breakdown
 
-| Service | Free Tier | Expected Usage | Cost |
-|---------|-----------|----------------|------|
-| Firebase Hosting | 10 GB storage, 360 MB/day | ~50 MB/day | **€0** |
-| Cloud Storage | 5 GB | ~100 MB | **€0** |
-| Cloud Build | 120 min/day | ~5 min/deploy | **€0** |
-| Budget Alert Function | 2M invocations | ~30/month | **€0** |
-| **Total** | | | **€0** |
+| Service               | Free Tier                 | Expected Usage | Cost   |
+| --------------------- | ------------------------- | -------------- | ------ |
+| Firebase Hosting      | 10 GB storage, 360 MB/day | ~50 MB/day     | **€0** |
+| Cloud Storage         | 5 GB                      | ~100 MB        | **€0** |
+| Cloud Build           | 120 min/day               | ~5 min/deploy  | **€0** |
+| Budget Alert Function | 2M invocations            | ~30/month      | **€0** |
+| **Total**             |                           |                | **€0** |
 
 ---
 
@@ -62,6 +62,7 @@ firebase init hosting --project=osi-card
 ### Phase 2: Configure Firebase Hosting
 
 Create `firebase.json`:
+
 ```json
 {
   "hosting": {
@@ -109,6 +110,7 @@ Create `firebase.json`:
 ### Phase 3: Build & Deploy Script
 
 Add to `package.json`:
+
 ```json
 {
   "scripts": {
@@ -121,6 +123,7 @@ Add to `package.json`:
 ### Phase 4: CI/CD with Cloud Build
 
 Create `cloudbuild.yaml`:
+
 ```yaml
 steps:
   # Install dependencies
@@ -183,6 +186,7 @@ firebase deploy --only hosting
 ### Automated Deploy (GitHub Actions)
 
 Create `.github/workflows/deploy.yml`:
+
 ```yaml
 name: Deploy to Firebase
 
@@ -195,19 +199,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Build
         run: npm run build:prod
-      
+
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
@@ -225,7 +229,7 @@ jobs:
 ✅ Lazy loading routes  
 ✅ Pre-rendered documentation  
 ✅ Asset caching headers  
-✅ Gzip/Brotli compression (Firebase auto)  
+✅ Gzip/Brotli compression (Firebase auto)
 
 ---
 
@@ -267,12 +271,10 @@ gcloud run deploy osi-cards \
 
 ## Summary
 
-| Option | Cost | Complexity | Best For |
-|--------|------|------------|----------|
-| **Firebase Hosting** | €0 | Low | Static SPA ✅ |
-| Cloud Storage + LB | €5-10 | Medium | High customization |
-| Cloud Run | €0.50-5 | Medium | SSR/API needed |
+| Option               | Cost    | Complexity | Best For           |
+| -------------------- | ------- | ---------- | ------------------ |
+| **Firebase Hosting** | €0      | Low        | Static SPA ✅      |
+| Cloud Storage + LB   | €5-10   | Medium     | High customization |
+| Cloud Run            | €0.50-5 | Medium     | SSR/API needed     |
 
 **Recommendation**: Start with **Firebase Hosting** - it's free, fast, and perfect for your Angular SPA with low traffic.
-
-

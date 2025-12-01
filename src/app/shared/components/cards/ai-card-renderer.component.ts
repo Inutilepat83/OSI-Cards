@@ -1069,7 +1069,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
             action: 'click',
           };
           const fieldSectionTitle =
-            (event.metadata?.['sectionTitle'] as string | undefined) ?? event.section.title;
+            (event.metadata?.sectionTitle as string | undefined) ?? event.section.title;
           if (fieldSectionTitle !== undefined) {
             fieldEvent.sectionTitle = fieldSectionTitle;
           }
@@ -1086,7 +1086,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
             action: 'click',
           };
           const itemSectionTitle =
-            (event.metadata?.['sectionTitle'] as string | undefined) ?? event.section.title;
+            (event.metadata?.sectionTitle as string | undefined) ?? event.section.title;
           if (itemSectionTitle !== undefined) {
             itemEvent.sectionTitle = itemSectionTitle;
           }

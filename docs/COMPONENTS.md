@@ -39,7 +39,7 @@ The primary entry point for rendering OSI Cards. Provides a simplified API with 
 #### Selector
 
 ```html
-<osi-cards>
+<osi-cards></osi-cards>
 ```
 
 #### Usage
@@ -65,30 +65,30 @@ import { OsiCardsComponent } from 'osi-cards-lib';
 
 #### Inputs
 
-| Input | Type | Default | Description |
-|-------|------|---------|-------------|
-| `card` | `AICardConfig` | - | Card configuration to render |
-| `theme` | `'day' \| 'night'` | `'day'` | Theme to apply |
-| `fullscreen` | `boolean` | `false` | Display in fullscreen mode |
-| `tiltEnabled` | `boolean` | `true` | Enable 3D tilt effect |
-| `containerWidth` | `number` | - | Explicit container width |
-| `isStreaming` | `boolean` | `false` | Whether streaming is active |
-| `streamingStage` | `StreamingStage` | - | Current streaming stage |
-| `streamingProgress` | `number` | - | Streaming progress (0-1) |
-| `showLoadingByDefault` | `boolean` | `true` | Show loading when no card |
-| `loadingMessages` | `string[]` | - | Custom loading messages |
-| `loadingTitle` | `string` | `'Creating OSI Card'` | Loading title |
+| Input                  | Type               | Default               | Description                  |
+| ---------------------- | ------------------ | --------------------- | ---------------------------- |
+| `card`                 | `AICardConfig`     | -                     | Card configuration to render |
+| `theme`                | `'day' \| 'night'` | `'day'`               | Theme to apply               |
+| `fullscreen`           | `boolean`          | `false`               | Display in fullscreen mode   |
+| `tiltEnabled`          | `boolean`          | `true`                | Enable 3D tilt effect        |
+| `containerWidth`       | `number`           | -                     | Explicit container width     |
+| `isStreaming`          | `boolean`          | `false`               | Whether streaming is active  |
+| `streamingStage`       | `StreamingStage`   | -                     | Current streaming stage      |
+| `streamingProgress`    | `number`           | -                     | Streaming progress (0-1)     |
+| `showLoadingByDefault` | `boolean`          | `true`                | Show loading when no card    |
+| `loadingMessages`      | `string[]`         | -                     | Custom loading messages      |
+| `loadingTitle`         | `string`           | `'Creating OSI Card'` | Loading title                |
 
 #### Outputs
 
-| Output | Event Type | Description |
-|--------|------------|-------------|
-| `fieldClick` | `CardFieldInteractionEvent` | Field clicked |
-| `actionClick` | `{ action: string; card: AICardConfig }` | Action button clicked |
-| `fullscreenChange` | `boolean` | Fullscreen toggled |
-| `agentAction` | `AgentActionEvent` | Agent action triggered |
-| `questionAction` | `QuestionActionEvent` | Question action triggered |
-| `export` | `void` | Export requested |
+| Output             | Event Type                               | Description               |
+| ------------------ | ---------------------------------------- | ------------------------- |
+| `fieldClick`       | `CardFieldInteractionEvent`              | Field clicked             |
+| `actionClick`      | `{ action: string; card: AICardConfig }` | Action button clicked     |
+| `fullscreenChange` | `boolean`                                | Fullscreen toggled        |
+| `agentAction`      | `AgentActionEvent`                       | Agent action triggered    |
+| `questionAction`   | `QuestionActionEvent`                    | Question action triggered |
+| `export`           | `void`                                   | Export requested          |
 
 ---
 
@@ -99,7 +99,7 @@ A wrapper component that provides layout and theme context for multiple cards.
 #### Selector
 
 ```html
-<osi-cards-container>
+<osi-cards-container></osi-cards-container>
 ```
 
 #### Usage
@@ -120,11 +120,11 @@ import { OsiCardsContainerComponent } from 'osi-cards-lib';
 
 #### Inputs
 
-| Input | Type | Default | Description |
-|-------|------|---------|-------------|
-| `theme` | `'day' \| 'night'` | `'day'` | Theme for all cards |
-| `maxWidth` | `number` | - | Maximum container width |
-| `gap` | `number` | `16` | Gap between cards |
+| Input      | Type               | Default | Description             |
+| ---------- | ------------------ | ------- | ----------------------- |
+| `theme`    | `'day' \| 'night'` | `'day'` | Theme for all cards     |
+| `maxWidth` | `number`           | -       | Maximum container width |
+| `gap`      | `number`           | `16`    | Gap between cards       |
 
 ---
 
@@ -135,7 +135,7 @@ The core rendering component that handles all card visualization. Uses Shadow DO
 #### Selector
 
 ```html
-<app-ai-card-renderer>
+<app-ai-card-renderer></app-ai-card-renderer>
 ```
 
 #### Usage
@@ -172,7 +172,7 @@ Responsive masonry grid layout for sections with multiple packing algorithms.
 #### Selector
 
 ```html
-<app-masonry-grid>
+<app-masonry-grid></app-masonry-grid>
 ```
 
 #### Usage
@@ -200,30 +200,30 @@ import { MasonryGridComponent } from 'osi-cards-lib';
 
 #### Inputs
 
-| Input | Type | Default | Description |
-|-------|------|---------|-------------|
-| `sections` | `CardSection[]` | `[]` | Sections to render |
-| `gap` | `number` | `12` | Gap between sections |
-| `minColumnWidth` | `number` | `260` | Minimum column width |
-| `maxColumns` | `number` | `4` | Maximum columns |
-| `containerWidth` | `number` | - | Explicit container width |
-| `isStreaming` | `boolean` | `false` | Streaming mode |
-| `optimizeLayout` | `boolean` | `true` | Enable layout optimization |
-| `packingAlgorithm` | `PackingAlgorithm` | `'legacy'` | Packing algorithm |
-| `rowPackingOptions` | `RowPackingOptions` | - | Row packing config |
-| `useLegacyFallback` | `boolean` | `true` | Fallback to legacy |
-| `enableVirtualScroll` | `boolean` | `false` | Enable virtual scrolling |
-| `virtualThreshold` | `number` | `50` | Section count for virtual |
-| `virtualBuffer` | `number` | `5` | Buffer sections |
-| `debug` | `boolean` | `false` | Enable debug logging |
+| Input                 | Type                | Default    | Description                |
+| --------------------- | ------------------- | ---------- | -------------------------- |
+| `sections`            | `CardSection[]`     | `[]`       | Sections to render         |
+| `gap`                 | `number`            | `12`       | Gap between sections       |
+| `minColumnWidth`      | `number`            | `260`      | Minimum column width       |
+| `maxColumns`          | `number`            | `4`        | Maximum columns            |
+| `containerWidth`      | `number`            | -          | Explicit container width   |
+| `isStreaming`         | `boolean`           | `false`    | Streaming mode             |
+| `optimizeLayout`      | `boolean`           | `true`     | Enable layout optimization |
+| `packingAlgorithm`    | `PackingAlgorithm`  | `'legacy'` | Packing algorithm          |
+| `rowPackingOptions`   | `RowPackingOptions` | -          | Row packing config         |
+| `useLegacyFallback`   | `boolean`           | `true`     | Fallback to legacy         |
+| `enableVirtualScroll` | `boolean`           | `false`    | Enable virtual scrolling   |
+| `virtualThreshold`    | `number`            | `50`       | Section count for virtual  |
+| `virtualBuffer`       | `number`            | `5`        | Buffer sections            |
+| `debug`               | `boolean`           | `false`    | Enable debug logging       |
 
 #### Outputs
 
-| Output | Event Type | Description |
-|--------|------------|-------------|
+| Output         | Event Type           | Description         |
+| -------------- | -------------------- | ------------------- |
 | `sectionEvent` | `SectionRenderEvent` | Section interaction |
-| `layoutChange` | `MasonryLayoutInfo` | Layout changed |
-| `layoutLog` | `LayoutLogEntry` | Debug layout log |
+| `layoutChange` | `MasonryLayoutInfo`  | Layout changed      |
+| `layoutLog`    | `LayoutLogEntry`     | Debug layout log    |
 
 #### Packing Algorithms
 
@@ -257,7 +257,7 @@ Renders a list of sections with proper animations and event handling.
 #### Selector
 
 ```html
-<app-card-section-list>
+<app-card-section-list></app-card-section-list>
 ```
 
 #### Usage
@@ -285,7 +285,7 @@ Renders the card header with title, subtitle, and optional actions.
 #### Selector
 
 ```html
-<app-card-header>
+<app-card-header></app-card-header>
 ```
 
 #### Usage
@@ -313,7 +313,7 @@ Container for the main card content (sections).
 #### Selector
 
 ```html
-<app-card-body>
+<app-card-body></app-card-body>
 ```
 
 ---
@@ -325,7 +325,7 @@ Renders the card footer with metadata or actions.
 #### Selector
 
 ```html
-<app-card-footer>
+<app-card-footer></app-card-footer>
 ```
 
 ---
@@ -337,7 +337,7 @@ Renders action buttons for the card.
 #### Selector
 
 ```html
-<app-card-actions>
+<app-card-actions></app-card-actions>
 ```
 
 #### Usage
@@ -358,15 +358,15 @@ Renders action buttons for the card.
 
 ```typescript
 type CardActionType =
-  | 'link'      // Open URL
-  | 'mail'      // Email action
-  | 'phone'     // Phone call
-  | 'copy'      // Copy to clipboard
-  | 'share'     // Share content
-  | 'download'  // Download file
-  | 'agent'     // Trigger AI agent
-  | 'question'  // Ask follow-up question
-  | 'custom';   // Custom handler
+  | 'link' // Open URL
+  | 'mail' // Email action
+  | 'phone' // Phone call
+  | 'copy' // Copy to clipboard
+  | 'share' // Share content
+  | 'download' // Download file
+  | 'agent' // Trigger AI agent
+  | 'question' // Ask follow-up question
+  | 'custom'; // Custom handler
 ```
 
 ---
@@ -380,7 +380,7 @@ Dynamically loads and renders section components based on type.
 #### Selector
 
 ```html
-<app-section-renderer>
+<app-section-renderer></app-section-renderer>
 ```
 
 #### Usage
@@ -401,14 +401,14 @@ import { SectionRendererComponent } from 'osi-cards-lib';
 
 #### Inputs
 
-| Input | Type | Description |
-|-------|------|-------------|
+| Input     | Type          | Description           |
+| --------- | ------------- | --------------------- |
 | `section` | `CardSection` | Section configuration |
 
 #### Outputs
 
-| Output | Event Type | Description |
-|--------|------------|-------------|
+| Output         | Event Type           | Description         |
+| -------------- | -------------------- | ------------------- |
 | `sectionEvent` | `SectionRenderEvent` | Section interaction |
 
 ---
@@ -425,12 +425,9 @@ import { BaseSectionComponent, SectionPlugin } from 'osi-cards-lib';
 @Component({
   selector: 'app-custom-section',
   template: `...`,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CustomSectionComponent
-  extends BaseSectionComponent
-  implements SectionPlugin {
-
+export class CustomSectionComponent extends BaseSectionComponent implements SectionPlugin {
   getPluginType(): string {
     return 'custom';
   }
@@ -479,26 +476,26 @@ get hasItems(): boolean;
 
 ### Built-in Section Types
 
-| Type | Component | Description |
-|------|-----------|-------------|
-| `info` | `InfoSectionComponent` | Key-value pairs |
-| `analytics` | `AnalyticsSectionComponent` | Metrics with trends |
-| `overview` | `OverviewSectionComponent` | Summary overview |
-| `contact-card` | `ContactCardSectionComponent` | Contact information |
-| `network-card` | `NetworkCardSectionComponent` | Network/connections |
-| `map` | `MapSectionComponent` | Interactive map (Leaflet) |
-| `chart` | `ChartSectionComponent` | Charts (Chart.js) |
-| `list` | `ListSectionComponent` | Item list |
-| `event` | `EventSectionComponent` | Timeline/events |
-| `product` | `ProductSectionComponent` | Product details |
-| `solutions` | `SolutionsSectionComponent` | Solutions list |
-| `financials` | `FinancialsSectionComponent` | Financial data |
-| `quotation` | `QuotationSectionComponent` | Quotes |
-| `text-reference` | `TextReferenceSectionComponent` | Text with references |
-| `brand-colors` | `BrandColorsSectionComponent` | Color palette |
-| `news` | `NewsSectionComponent` | News items |
-| `social-media` | `SocialMediaSectionComponent` | Social links |
-| `fallback` | `FallbackSectionComponent` | Unknown types |
+| Type             | Component                       | Description               |
+| ---------------- | ------------------------------- | ------------------------- |
+| `info`           | `InfoSectionComponent`          | Key-value pairs           |
+| `analytics`      | `AnalyticsSectionComponent`     | Metrics with trends       |
+| `overview`       | `OverviewSectionComponent`      | Summary overview          |
+| `contact-card`   | `ContactCardSectionComponent`   | Contact information       |
+| `network-card`   | `NetworkCardSectionComponent`   | Network/connections       |
+| `map`            | `MapSectionComponent`           | Interactive map (Leaflet) |
+| `chart`          | `ChartSectionComponent`         | Charts (Chart.js)         |
+| `list`           | `ListSectionComponent`          | Item list                 |
+| `event`          | `EventSectionComponent`         | Timeline/events           |
+| `product`        | `ProductSectionComponent`       | Product details           |
+| `solutions`      | `SolutionsSectionComponent`     | Solutions list            |
+| `financials`     | `FinancialsSectionComponent`    | Financial data            |
+| `quotation`      | `QuotationSectionComponent`     | Quotes                    |
+| `text-reference` | `TextReferenceSectionComponent` | Text with references      |
+| `brand-colors`   | `BrandColorsSectionComponent`   | Color palette             |
+| `news`           | `NewsSectionComponent`          | News items                |
+| `social-media`   | `SocialMediaSectionComponent`   | Social links              |
+| `fallback`       | `FallbackSectionComponent`      | Unknown types             |
 
 See [Section Types Reference](./SECTION_TYPES.md) for detailed examples.
 
@@ -513,7 +510,7 @@ Displays a loading skeleton while card data is loading.
 #### Selector
 
 ```html
-<app-card-skeleton>
+<app-card-skeleton></app-card-skeleton>
 ```
 
 #### Usage
@@ -533,11 +530,11 @@ Displays a loading skeleton while card data is loading.
 
 #### Inputs
 
-| Input | Type | Default | Description |
-|-------|------|---------|-------------|
-| `sections` | `number` | `3` | Number of skeleton sections |
-| `showHeader` | `boolean` | `true` | Show header skeleton |
-| `showActions` | `boolean` | `true` | Show actions skeleton |
+| Input         | Type      | Default | Description                 |
+| ------------- | --------- | ------- | --------------------------- |
+| `sections`    | `number`  | `3`     | Number of skeleton sections |
+| `showHeader`  | `boolean` | `true`  | Show header skeleton        |
+| `showActions` | `boolean` | `true`  | Show actions skeleton       |
 
 ---
 
@@ -548,7 +545,7 @@ Displays a loading skeleton for a single section.
 #### Selector
 
 ```html
-<app-section-skeleton>
+<app-section-skeleton></app-section-skeleton>
 ```
 
 #### Usage
@@ -573,7 +570,7 @@ Wraps sections to catch and handle rendering errors gracefully.
 #### Selector
 
 ```html
-<app-section-error-boundary>
+<app-section-error-boundary></app-section-error-boundary>
 ```
 
 #### Usage
@@ -595,21 +592,21 @@ Wraps sections to catch and handle rendering errors gracefully.
 
 #### Inputs
 
-| Input | Type | Default | Description |
-|-------|------|---------|-------------|
-| `sectionId` | `string` | - | Section ID for reporting |
-| `sectionType` | `string` | - | Section type for reporting |
-| `config` | `ErrorBoundaryConfig` | Default config | Error handling config |
+| Input         | Type                  | Default        | Description                |
+| ------------- | --------------------- | -------------- | -------------------------- |
+| `sectionId`   | `string`              | -              | Section ID for reporting   |
+| `sectionType` | `string`              | -              | Section type for reporting |
+| `config`      | `ErrorBoundaryConfig` | Default config | Error handling config      |
 
 #### Configuration
 
 ```typescript
 interface ErrorBoundaryConfig {
-  showDetails: boolean;   // Show error details (dev mode)
-  allowRetry: boolean;    // Allow retry button
-  maxRetries: number;     // Maximum retry attempts
-  retryDelayMs: number;   // Delay between retries
-  autoRetry: boolean;     // Auto-retry on error
+  showDetails: boolean; // Show error details (dev mode)
+  allowRetry: boolean; // Allow retry button
+  maxRetries: number; // Maximum retry attempts
+  retryDelayMs: number; // Delay between retries
+  autoRetry: boolean; // Auto-retry on error
 }
 
 const DEFAULT_ERROR_BOUNDARY_CONFIG: ErrorBoundaryConfig = {
@@ -617,17 +614,17 @@ const DEFAULT_ERROR_BOUNDARY_CONFIG: ErrorBoundaryConfig = {
   allowRetry: true,
   maxRetries: 3,
   retryDelayMs: 1000,
-  autoRetry: false
+  autoRetry: false,
 };
 ```
 
 #### Outputs
 
-| Output | Event Type | Description |
-|--------|------------|-------------|
-| `errorCaught` | `SectionError` | Error was caught |
-| `retryRequested` | `number` | Retry requested (count) |
-| `errorCleared` | `void` | Error was cleared |
+| Output           | Event Type     | Description             |
+| ---------------- | -------------- | ----------------------- |
+| `errorCaught`    | `SectionError` | Error was caught        |
+| `retryRequested` | `number`       | Retry requested (count) |
+| `errorCleared`   | `void`         | Error was cleared       |
 
 #### SectionError Interface
 
@@ -651,7 +648,7 @@ Displays streaming progress and status.
 #### Selector
 
 ```html
-<app-card-streaming-indicator>
+<app-card-streaming-indicator></app-card-streaming-indicator>
 ```
 
 #### Usage
@@ -670,22 +667,16 @@ Displays streaming progress and status.
 
 #### Inputs
 
-| Input | Type | Description |
-|-------|------|-------------|
-| `stage` | `StreamingStage` | Current streaming stage |
-| `progress` | `number` | Progress value (0-1) |
-| `message` | `string` | Status message |
+| Input      | Type             | Description             |
+| ---------- | ---------------- | ----------------------- |
+| `stage`    | `StreamingStage` | Current streaming stage |
+| `progress` | `number`         | Progress value (0-1)    |
+| `message`  | `string`         | Status message          |
 
 #### StreamingStage
 
 ```typescript
-type StreamingStage =
-  | 'idle'
-  | 'thinking'
-  | 'streaming'
-  | 'complete'
-  | 'aborted'
-  | 'error';
+type StreamingStage = 'idle' | 'thinking' | 'streaming' | 'complete' | 'aborted' | 'error';
 ```
 
 ---
@@ -699,7 +690,7 @@ Renders a compact preview/thumbnail of a card.
 #### Selector
 
 ```html
-<app-card-preview>
+<app-card-preview></app-card-preview>
 ```
 
 #### Usage
@@ -719,12 +710,12 @@ Renders a compact preview/thumbnail of a card.
 
 #### Inputs
 
-| Input | Type | Default | Description |
-|-------|------|---------|-------------|
-| `card` | `AICardConfig` | - | Card to preview |
-| `maxSections` | `number` | `2` | Max sections to show |
-| `showActions` | `boolean` | `false` | Show action buttons |
-| `compact` | `boolean` | `true` | Use compact layout |
+| Input         | Type           | Default | Description          |
+| ------------- | -------------- | ------- | -------------------- |
+| `card`        | `AICardConfig` | -       | Card to preview      |
+| `maxSections` | `number`       | `2`     | Max sections to show |
+| `showActions` | `boolean`      | `false` | Show action buttons  |
+| `compact`     | `boolean`      | `true`  | Use compact layout   |
 
 ---
 
@@ -789,5 +780,3 @@ AICardConfig
 - [Plugin System](./PLUGIN_SYSTEM.md) - Custom section plugins
 - [CSS Encapsulation](./CSS_ENCAPSULATION.md) - Style isolation
 - [Best Practices](./BEST_PRACTICES.md) - Performance tips
-
-

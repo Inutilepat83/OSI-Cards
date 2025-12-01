@@ -2327,7 +2327,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       // Remove placeholder flag
       const meta = placeholderSection.meta as Record<string, unknown> | undefined;
       if (meta) {
-        meta['placeholder'] = false;
+        meta.placeholder = false;
       }
     });
   }
@@ -2400,7 +2400,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       // Remove placeholder flag
       const meta = existingField.meta as Record<string, unknown> | undefined;
       if (meta) {
-        meta['placeholder'] = false;
+        meta.placeholder = false;
       }
     }
   }
@@ -2461,7 +2461,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       // Remove placeholder flag
       const meta = existingItem.meta as Record<string, unknown> | undefined;
       if (meta) {
-        meta['placeholder'] = false;
+        meta.placeholder = false;
       }
     }
   }
@@ -2479,7 +2479,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
         field.value === 'Streaming…' ||
         field.value === undefined ||
         field.value === null ||
-        (meta && meta['placeholder'] === true);
+        (meta && meta.placeholder === true);
       if (isPlaceholder) {
         return false;
       }
@@ -2493,7 +2493,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
         item.description === 'Streaming…' ||
         !item.title ||
         item.title.startsWith('Item ') ||
-        (meta && meta['placeholder'] === true);
+        (meta && meta.placeholder === true);
       if (isPlaceholder) {
         return false;
       }
@@ -2730,7 +2730,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   private applyTheme(): void {
     const root = this.document.documentElement;
-    root.dataset['theme'] = this.theme;
+    root.dataset.theme = this.theme;
     localStorage.setItem('osi-theme', this.theme);
     if (typeof window !== 'undefined') {
       const styles = getComputedStyle(root);
