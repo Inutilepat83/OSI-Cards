@@ -131,11 +131,16 @@ export interface DemoConfig {
     `
       .demo-container {
         margin: 1.5rem 0;
-        border: 1px solid var(--docs-border, #e5e7eb);
+        border: 1px solid var(--docs-border, rgba(255, 255, 255, 0.1));
         border-radius: 12px;
         overflow: hidden;
-        background: var(--docs-bg, #fafbfc);
+        background: var(--docs-bg, #0a0a0a);
         width: 100%;
+      }
+      
+      :host-context([data-theme='day']) .demo-container {
+        border-color: #e5e7eb;
+        background: #fafbfc;
       }
 
       .demo-header {
@@ -143,8 +148,13 @@ export interface DemoConfig {
         align-items: center;
         justify-content: space-between;
         padding: 0.75rem 1rem;
-        background: var(--docs-bg-secondary, #f6f8fa);
-        border-bottom: 1px solid var(--docs-border, #e5e7eb);
+        background: var(--docs-bg-secondary, #111111);
+        border-bottom: 1px solid var(--docs-border, rgba(255, 255, 255, 0.1));
+      }
+      
+      :host-context([data-theme='day']) .demo-header {
+        background: #f6f8fa;
+        border-bottom-color: #e5e7eb;
       }
 
       .demo-info {
@@ -156,9 +166,13 @@ export interface DemoConfig {
       .demo-title {
         font-size: 0.75rem;
         font-weight: 600;
-        color: var(--docs-text-muted, #6b7280);
+        color: var(--docs-text-muted, rgba(255, 255, 255, 0.6));
         text-transform: uppercase;
         letter-spacing: 0.05em;
+      }
+      
+      :host-context([data-theme='day']) .demo-title {
+        color: #6b7280;
       }
 
       .demo-badge {
@@ -241,8 +255,28 @@ export interface DemoConfig {
         flex-direction: column;
         align-items: stretch;
         justify-content: flex-start;
-        background: var(--docs-bg, #fafbfc);
+        background: var(--background, #0a0a0a);
         width: 100%;
+        
+        /* Force dark theme context for card preview */
+        --section-surface: #161616;
+        --section-item-background: #1e1e1e;
+        --section-item-background-hover: #252525;
+        --ai-card-background: #111111;
+        --card-text-primary: rgba(255, 255, 255, 0.95);
+        --card-text-secondary: rgba(255, 255, 255, 0.7);
+        --card-text-muted: rgba(255, 255, 255, 0.5);
+      }
+      
+      :host-context([data-theme='day']) .demo-preview {
+        background: var(--background, #ffffff);
+        --section-surface: #f5f5f5;
+        --section-item-background: #ffffff;
+        --section-item-background-hover: #fafafa;
+        --ai-card-background: #ffffff;
+        --card-text-primary: #1a1a1a;
+        --card-text-secondary: #4b5563;
+        --card-text-muted: #9ca3af;
       }
 
       .demo-description {
