@@ -13,6 +13,7 @@ npm run generate:section <name> -- --type <section-type>
 ```
 
 **Options:**
+
 - `name` (required): The name of the section component
 - `--type` (required): The section type identifier (e.g., 'info', 'list', 'chart')
 - `--path` (optional): Custom path for the component (default: `src/app/shared/components/cards/sections`)
@@ -33,6 +34,7 @@ npm run generate:section complex-section -- --type complex --usesFields --usesIt
 ```
 
 **Generated Files:**
+
 - `<name>-section.component.ts` - Component class
 - `<name>-section.component.html` - Template
 - `<name>-section.component.scss` - Styles
@@ -47,6 +49,7 @@ npm run generate:template <name> -- --cardType <type>
 ```
 
 **Options:**
+
 - `name` (required): The name of the template
 - `--cardType` (required): The card type (e.g., 'company', 'product', 'contact')
 - `--path` (optional): Custom path for the template (default: `src/assets/configs`)
@@ -63,6 +66,7 @@ npm run generate:template product-detailed -- --cardType product --sectionCount 
 ```
 
 **Generated Files:**
+
 - `<name>.json` - Card template configuration
 
 ## Installation & Setup
@@ -148,6 +152,7 @@ The template generator creates:
 ## Customization
 
 You can customize the generated files by editing the templates in:
+
 - `tools/schematics/section/files/`
 - `tools/schematics/card-template/files/`
 
@@ -156,6 +161,7 @@ You can customize the generated files by editing the templates in:
 ### Schematic not found
 
 If you get "Schematic not found", ensure:
+
 1. The schematics are properly configured in `collection.json`
 2. Dependencies are installed
 3. You're using the correct command syntax
@@ -163,6 +169,7 @@ If you get "Schematic not found", ensure:
 ### Generated files have errors
 
 The generated files follow OSI Cards patterns, but you may need to:
+
 1. Add additional imports
 2. Implement custom logic
 3. Update type definitions
@@ -176,13 +183,3 @@ To add new schematics:
 2. Add `schema.json`, `schema.ts`, and `index.ts`
 3. Create template files in `files/` directory
 4. Update `collection.json` to register the new schematic
-
-
-
-
-
-
-
-
-
-

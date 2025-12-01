@@ -1,18 +1,18 @@
-@import '../../../../../../styles/components/sections/sections-base';
+@import "../../../../../../styles/components/sections/sections-base";
 
-.ai-section--<%= name %> {
+.ai-section--<%= name % > {
   @include card;
-  
-  .<%= name %>-grid,
-  .<%= name %>-list {
+
+  .<%= name % > -grid,
+  .<%= name % > -list {
     display: grid;
     gap: var(--section-card-gap);
     grid-template-columns: repeat(auto-fill, minmax(var(--section-card-grid-min), 1fr));
   }
 
-  .<%= name %>-item {
+  .<%= name % > -item {
     @include section-card;
-    
+
     &__label {
       @include label-text;
     }
@@ -36,13 +36,3 @@
     color: var(--color-gray-500);
   }
 }
-
-
-
-
-
-
-
-
-
-

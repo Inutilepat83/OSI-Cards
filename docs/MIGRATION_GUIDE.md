@@ -28,6 +28,7 @@ Version 2.0 introduces complete CSS encapsulation using Shadow DOM. This ensures
 ### 1. Component Encapsulation
 
 **Before:**
+
 ```typescript
 // Components used default emulated encapsulation
 @Component({
@@ -36,6 +37,7 @@ Version 2.0 introduces complete CSS encapsulation using Shadow DOM. This ensures
 ```
 
 **After:**
+
 ```typescript
 // Main components use Shadow DOM
 @Component({
@@ -51,12 +53,14 @@ Version 2.0 introduces complete CSS encapsulation using Shadow DOM. This ensures
 ### 2. Style Imports
 
 **Before:**
+
 ```scss
 // Global style import
 @import 'osi-cards-lib/styles/styles';
 ```
 
 **After:**
+
 ```scss
 // Scoped style import (recommended)
 @import 'osi-cards-lib/styles/styles-scoped';
@@ -68,34 +72,40 @@ Version 2.0 introduces complete CSS encapsulation using Shadow DOM. This ensures
 ### 3. Provider Configuration
 
 **Before:**
+
 ```typescript
 providers: [
   provideAnimations(),
   // Manual icon registration
-]
+];
 ```
 
 **After:**
+
 ```typescript
 providers: [
   provideOSICards({
     enableAnimations: true,
-    animationConfig: { /* new options */ },
+    animationConfig: {
+      /* new options */
+    },
     cssIsolation: 'standard',
-    defaultTheme: 'day'
-  })
-]
+    defaultTheme: 'day',
+  }),
+];
 ```
 
 ### 4. Container Requirement
 
 **Before:**
+
 ```html
 <!-- Components worked anywhere -->
 <app-ai-card-renderer [cardConfig]="config"></app-ai-card-renderer>
 ```
 
 **After:**
+
 ```html
 <!-- Recommended: Use single entry point -->
 <osi-cards [card]="config" [theme]="'day'"></osi-cards>
@@ -121,10 +131,10 @@ export const appConfig: ApplicationConfig = {
     provideOSICards({
       enableAnimations: true,
       cssIsolation: 'standard',
-      defaultTheme: 'day'
+      defaultTheme: 'day',
     }),
     // ... other providers
-  ]
+  ],
 };
 ```
 
@@ -147,18 +157,15 @@ Remove global style imports from `styles.scss`:
 
 ```html
 <!-- Before -->
-<app-ai-card-renderer 
+<app-ai-card-renderer
   [cardConfig]="config"
   [isFullscreen]="fullscreen"
-  (fieldInteraction)="onField($event)">
+  (fieldInteraction)="onField($event)"
+>
 </app-ai-card-renderer>
 
 <!-- After -->
-<osi-cards 
-  [card]="config"
-  [fullscreen]="fullscreen"
-  (fieldClick)="onField($event)">
-</osi-cards>
+<osi-cards [card]="config" [fullscreen]="fullscreen" (fieldClick)="onField($event)"> </osi-cards>
 ```
 
 **Option B: Use Container Wrapper**
@@ -223,30 +230,30 @@ provideOSICards({
   animationConfig: {
     // Preset: 'full' | 'minimal' | 'none'
     preset: 'full',
-    
+
     // Individual feature toggles
     features: {
-      entrance: true,    // Card entrance animations
-      streaming: true,   // Streaming generation animations
-      hover: true,       // Hover effects
-      skeleton: true,    // Skeleton shimmer
-      tilt: true,        // 3D tilt effects
-      particles: true,   // Empty state particles
-      stagger: true      // Stagger delays
+      entrance: true, // Card entrance animations
+      streaming: true, // Streaming generation animations
+      hover: true, // Hover effects
+      skeleton: true, // Skeleton shimmer
+      tilt: true, // 3D tilt effects
+      particles: true, // Empty state particles
+      stagger: true, // Stagger delays
     },
-    
+
     // Timing adjustments
     timing: {
-      durationMultiplier: 1,  // Scale all durations
+      durationMultiplier: 1, // Scale all durations
       entranceDuration: 220,
       hoverDuration: 200,
-      streamingDuration: 300
+      streamingDuration: 300,
     },
-    
+
     // Accessibility
-    respectReducedMotion: true
-  }
-})
+    respectReducedMotion: true,
+  },
+});
 ```
 
 ### CSS Isolation Mode
@@ -255,8 +262,8 @@ provideOSICards({
 provideOSICards({
   // 'standard': CSS Layers for encapsulation
   // 'strict': Additional containment properties
-  cssIsolation: 'standard'
-})
+  cssIsolation: 'standard',
+});
 ```
 
 ## Style Updates
@@ -264,6 +271,7 @@ provideOSICards({
 ### Custom Token Overrides
 
 **Before:**
+
 ```scss
 // Global variable override
 :root {
@@ -272,6 +280,7 @@ provideOSICards({
 ```
 
 **After:**
+
 ```scss
 // Scoped override using container
 .osi-cards-container {
@@ -290,6 +299,7 @@ provideOSICards({
 ### Custom Component Styles
 
 **Before:**
+
 ```scss
 // Direct styling
 app-ai-card-renderer .section {
@@ -298,6 +308,7 @@ app-ai-card-renderer .section {
 ```
 
 **After:**
+
 ```scss
 // Cannot style Shadow DOM directly from outside
 // Use CSS custom properties instead
@@ -312,6 +323,7 @@ app-ai-card-renderer .section {
 ### Keyframe Access
 
 **Before:**
+
 ```scss
 // Using library keyframes globally
 .my-element {
@@ -320,6 +332,7 @@ app-ai-card-renderer .section {
 ```
 
 **After:**
+
 ```scss
 // Keyframes are now scoped to Shadow DOM
 // Import them for use in your components
@@ -333,6 +346,7 @@ app-ai-card-renderer .section {
 ### Disabling Specific Animations
 
 **Before:**
+
 ```scss
 // Override with CSS
 .osi-cards-container .section {
@@ -341,16 +355,17 @@ app-ai-card-renderer .section {
 ```
 
 **After:**
+
 ```typescript
 // Configure via provider
 provideOSICards({
   animationConfig: {
     features: {
-      entrance: false,  // Disable entrance animations
-      streaming: true   // Keep streaming animations
-    }
-  }
-})
+      entrance: false, // Disable entrance animations
+      streaming: true, // Keep streaming animations
+    },
+  },
+});
 ```
 
 ## Event System Migration
@@ -360,11 +375,11 @@ provideOSICards({
 The library now exports typed events that work with Shadow DOM:
 
 ```typescript
-import { 
+import {
   OSI_EVENTS,
   createFieldClickEvent,
   isOSIFieldClickEvent,
-  OSIFieldClickEvent
+  OSIFieldClickEvent,
 } from 'osi-cards-lib';
 
 // Listen to events
@@ -380,12 +395,12 @@ element.dispatchEvent(event);
 
 ### Event Mapping
 
-| Old Event | New Event | Notes |
-|-----------|-----------|-------|
-| `(fieldInteraction)` | `(fieldClick)` + `osi-field-click` | Both work |
-| `(cardInteraction)` | `(actionClick)` + `osi-action-click` | Renamed |
-| `(agentAction)` | `(agentAction)` + `osi-action-click` | Type in detail |
-| `(questionAction)` | `(questionAction)` | Unchanged |
+| Old Event            | New Event                            | Notes          |
+| -------------------- | ------------------------------------ | -------------- |
+| `(fieldInteraction)` | `(fieldClick)` + `osi-field-click`   | Both work      |
+| `(cardInteraction)`  | `(actionClick)` + `osi-action-click` | Renamed        |
+| `(agentAction)`      | `(agentAction)` + `osi-action-click` | Type in detail |
+| `(questionAction)`   | `(questionAction)`                   | Unchanged      |
 
 ## Testing Updates
 
@@ -396,7 +411,7 @@ element.dispatchEvent(event);
 beforeEach(async () => {
   await TestBed.configureTestingModule({
     imports: [AICardRendererComponent],
-    providers: [provideAnimations()]
+    providers: [provideAnimations()],
   }).compileComponents();
 });
 
@@ -404,7 +419,7 @@ beforeEach(async () => {
 beforeEach(async () => {
   await TestBed.configureTestingModule({
     imports: [AICardRendererComponent],
-    providers: [provideOSICards()]
+    providers: [provideOSICards()],
   }).compileComponents();
 });
 ```
@@ -427,7 +442,7 @@ const innerElement = shadowRoot.querySelector('.section');
 const card = page.locator('app-ai-card-renderer');
 
 // Check Shadow DOM exists
-const hasShadow = await card.evaluate(el => el.shadowRoot !== null);
+const hasShadow = await card.evaluate((el) => el.shadowRoot !== null);
 expect(hasShadow).toBe(true);
 
 // Query Shadow DOM
@@ -496,7 +511,3 @@ const element = page.locator('app-ai-card-renderer >>> .section');
 - Check the [CSS Encapsulation Guide](./CSS_ENCAPSULATION.md)
 - Review the [API Documentation](./API.md)
 - Open an issue on GitHub
-
-
-
-

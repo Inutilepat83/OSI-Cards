@@ -110,17 +110,21 @@
 
 :root {
   // Font families
-  --osi-font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --osi-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --osi-font-sans:
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --osi-font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
 
   // Font sizes
-  --osi-text-xs: 0.75rem;    // 12px
-  --osi-text-sm: 0.875rem;   // 14px
-  --osi-text-base: 1rem;     // 16px
-  --osi-text-lg: 1.125rem;   // 18px
-  --osi-text-xl: 1.25rem;    // 20px
-  --osi-text-2xl: 1.5rem;    // 24px
-  --osi-text-3xl: 1.875rem;  // 30px
+  --osi-text-xs: 0.75rem; // 12px
+  --osi-text-sm: 0.875rem; // 14px
+  --osi-text-base: 1rem; // 16px
+  --osi-text-lg: 1.125rem; // 18px
+  --osi-text-xl: 1.25rem; // 20px
+  --osi-text-2xl: 1.5rem; // 24px
+  --osi-text-3xl: 1.875rem; // 30px
 
   // Font weights
   --osi-font-normal: 400;
@@ -200,9 +204,10 @@
   --osi-transition-base: all var(--osi-duration-normal) var(--osi-ease-default);
   --osi-transition-fast: all var(--osi-duration-fast) var(--osi-ease-default);
   --osi-transition-slow: all var(--osi-duration-slow) var(--osi-ease-default);
-  --osi-transition-colors: color var(--osi-duration-fast) var(--osi-ease-default),
-                           background-color var(--osi-duration-fast) var(--osi-ease-default),
-                           border-color var(--osi-duration-fast) var(--osi-ease-default);
+  --osi-transition-colors:
+    color var(--osi-duration-fast) var(--osi-ease-default),
+    background-color var(--osi-duration-fast) var(--osi-ease-default),
+    border-color var(--osi-duration-fast) var(--osi-ease-default);
   --osi-transition-transform: transform var(--osi-duration-normal) var(--osi-ease-out);
   --osi-transition-opacity: opacity var(--osi-duration-normal) var(--osi-ease-default);
 
@@ -243,8 +248,10 @@
 // Focus visible utility
 .osi-focus-visible:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 var(--osi-focus-ring-offset) var(--osi-color-background),
-              0 0 0 calc(var(--osi-focus-ring-offset) + var(--osi-focus-ring-width)) var(--osi-focus-ring-color);
+  box-shadow:
+    0 0 0 var(--osi-focus-ring-offset) var(--osi-color-background),
+    0 0 0 calc(var(--osi-focus-ring-offset) + var(--osi-focus-ring-width))
+      var(--osi-focus-ring-color);
 }
 
 // ============================================================================
@@ -285,27 +292,39 @@
 
 // Screen breakpoints
 @mixin screen-xs {
-  @media (max-width: 639px) { @content; }
+  @media (max-width: 639px) {
+    @content;
+  }
 }
 
 @mixin screen-sm {
-  @media (min-width: 640px) { @content; }
+  @media (min-width: 640px) {
+    @content;
+  }
 }
 
 @mixin screen-md {
-  @media (min-width: 768px) { @content; }
+  @media (min-width: 768px) {
+    @content;
+  }
 }
 
 @mixin screen-lg {
-  @media (min-width: 1024px) { @content; }
+  @media (min-width: 1024px) {
+    @content;
+  }
 }
 
 @mixin screen-xl {
-  @media (min-width: 1280px) { @content; }
+  @media (min-width: 1280px) {
+    @content;
+  }
 }
 
 @mixin screen-2xl {
-  @media (min-width: 1536px) { @content; }
+  @media (min-width: 1536px) {
+    @content;
+  }
 }
 
 // Focus ring mixin
@@ -320,11 +339,11 @@
 @mixin transition($properties...) {
   $transitions: ();
   @each $prop in $properties {
-    $transitions: append($transitions, $prop var(--osi-duration-normal) var(--osi-ease-default), comma);
+    $transitions: append(
+      $transitions,
+      $prop var(--osi-duration-normal) var(--osi-ease-default),
+      comma
+    );
   }
   transition: $transitions;
 }
-
-
-
-

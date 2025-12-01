@@ -18,10 +18,13 @@ Comprehensive best practices guide for using OSI Cards effectively.
 
 ```typescript
 // Load cards on demand
-cardData.getCardsByType('company').pipe(
-  take(10), // Limit initial load
-  shareReplay(1) // Cache results
-).subscribe();
+cardData
+  .getCardsByType('company')
+  .pipe(
+    take(10), // Limit initial load
+    shareReplay(1) // Cache results
+  )
+  .subscribe();
 ```
 
 ### 3. Virtual Scrolling for Large Lists
@@ -51,7 +54,7 @@ private cards$ = this.cardData.getAllCards().pipe(
 ```typescript
 cards$ = this.cardData.getAllCards().pipe(
   startWith(null),
-  map(cards => ({ cards, loading: cards === null }))
+  map((cards) => ({ cards, loading: cards === null }))
 );
 ```
 
@@ -59,7 +62,7 @@ cards$ = this.cardData.getAllCards().pipe(
 
 ```typescript
 cards$ = this.cardData.getAllCards().pipe(
-  catchError(error => {
+  catchError((error) => {
     console.error('Error loading cards:', error);
     return of([]);
   })
@@ -127,7 +130,7 @@ try {
 ### 3. Progressive Updates
 
 ```typescript
-streamingService.cardUpdates$.subscribe(update => {
+streamingService.cardUpdates$.subscribe((update) => {
   // Show partial card during streaming
   this.cardConfig = update.card;
   this.isStreaming = update.isComplete === false;
@@ -181,10 +184,7 @@ All interactive elements support keyboard navigation out of the box.
 ```typescript
 import { DomSanitizer } from '@angular/platform-browser';
 
-const sanitized = this.sanitizer.sanitize(
-  SecurityContext.HTML,
-  userInput
-);
+const sanitized = this.sanitizer.sanitize(SecurityContext.HTML, userInput);
 ```
 
 ### 2. Validate Card Data
@@ -208,12 +208,12 @@ function isValidCardConfig(card: any): card is AICardConfig {
 it('should render card', () => {
   const card: AICardConfig = {
     cardTitle: 'Test Card',
-    sections: [{ title: 'Test', type: 'info', fields: [] }]
+    sections: [{ title: 'Test', type: 'info', fields: [] }],
   };
-  
+
   component.cardConfig = card;
   fixture.detectChanges();
-  
+
   expect(component).toBeTruthy();
 });
 ```
@@ -245,13 +245,3 @@ Cache card data to avoid unnecessary API calls.
 - [Section Types](/docs/section-types)
 - [LLM Integration](/docs/llm-integration)
 - [API Reference](/docs/api)
-
-
-
-
-
-
-
-
-
-

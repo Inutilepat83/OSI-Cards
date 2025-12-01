@@ -5,6 +5,7 @@ This guide explains how to integrate OSI Cards library with LLM-powered agentic 
 ## Overview
 
 In an agentic flow integration:
+
 1. **LLM Response** triggers a router action
 2. **Router** calls an agentic flow service
 3. **Agent Flow** starts executing and instantiates a card
@@ -59,7 +60,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideOSICards(), // Required for animations
     // ... other providers
-  ]
+  ],
 };
 ```
 
@@ -74,50 +75,49 @@ import { AICardConfig } from 'osi-cards-lib';
 
 @Injectable({ providedIn: 'root' })
 export class AgentFlowService {
-  
   /**
    * Execute an agentic flow and emit card configuration progressively
    */
   executeAgentFlow(agentPrompt: string, context?: any): Observable<Partial<AICardConfig>> {
     const subject = new Subject<Partial<AICardConfig>>();
-    
+
     // Simulate agent flow execution
     // In real implementation, this would connect to your LLM/agent system
     this.executeFlow(agentPrompt, context, (partialCard) => {
       subject.next(partialCard);
-    }).then((completeCard) => {
-      subject.next(completeCard);
-      subject.complete();
-    }).catch((error) => {
-      subject.error(error);
-    });
-    
+    })
+      .then((completeCard) => {
+        subject.next(completeCard);
+        subject.complete();
+      })
+      .catch((error) => {
+        subject.error(error);
+      });
+
     return subject.asObservable();
   }
-  
+
   private async executeFlow(
-    prompt: string, 
+    prompt: string,
     context: any,
     onUpdate: (partial: Partial<AICardConfig>) => void
   ): Promise<AICardConfig> {
     // Your agent flow implementation
     // This is a placeholder - replace with your actual agent execution
-    
+
     // Example: Emit initial card structure
     onUpdate({
       cardTitle: 'Loading...',
-      sections: []
+      sections: [],
     });
-    
+
     // Simulate progressive updates
     await this.delay(500);
     onUpdate({
       cardTitle: 'Company Profile',
-      sections: [
-        { title: 'Overview', type: 'overview', fields: [] }
-      ]
+      sections: [{ title: 'Overview', type: 'overview', fields: [] }],
     });
-    
+
     await this.delay(500);
     onUpdate({
       cardTitle: 'Company Profile',
@@ -125,13 +125,11 @@ export class AgentFlowService {
         {
           title: 'Overview',
           type: 'overview',
-          fields: [
-            { label: 'Name', value: 'Acme Corp' }
-          ]
-        }
-      ]
+          fields: [{ label: 'Name', value: 'Acme Corp' }],
+        },
+      ],
     });
-    
+
     // Return complete card
     return {
       cardTitle: 'Company Profile',
@@ -141,15 +139,15 @@ export class AgentFlowService {
           type: 'overview',
           fields: [
             { label: 'Name', value: 'Acme Corp' },
-            { label: 'Industry', value: 'Technology' }
-          ]
-        }
-      ]
+            { label: 'Industry', value: 'Technology' },
+          ],
+        },
+      ],
     };
   }
-  
+
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 ```
@@ -174,41 +172,43 @@ import { merge, scan } from 'rxjs';
       <app-ai-card-renderer
         [cardConfig]="cardConfig"
         [streamingStage]="streamingStage"
-        (fieldInteraction)="onFieldInteraction($event)">
+        (fieldInteraction)="onFieldInteraction($event)"
+      >
       </app-ai-card-renderer>
     </div>
-  `
+  `,
 })
 export class AgentCardViewComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private agentFlowService = inject(AgentFlowService);
   private cdr = inject(ChangeDetectorRef);
-  
+
   cardConfig: AICardConfig | null = null;
   streamingStage: StreamingStage = 'idle';
-  
+
   ngOnInit(): void {
     // Get agent prompt from route params or query params
-    const agentPrompt = this.route.snapshot.queryParams['prompt'] || 
-                       this.route.snapshot.params['prompt'];
-    
+    const agentPrompt =
+      this.route.snapshot.queryParams['prompt'] || this.route.snapshot.params['prompt'];
+
     if (agentPrompt) {
       this.executeAgentFlow(agentPrompt);
     }
   }
-  
+
   private executeAgentFlow(prompt: string): void {
     this.streamingStage = 'thinking';
     this.cdr.markForCheck();
-    
+
     // Initialize with empty card
     this.cardConfig = {
       cardTitle: 'Loading...',
-      sections: []
+      sections: [],
     };
-    
+
     // Execute agent flow and accumulate updates
-    this.agentFlowService.executeAgentFlow(prompt)
+    this.agentFlowService
+      .executeAgentFlow(prompt)
       .pipe(
         scan((acc: AICardConfig, update: Partial<AICardConfig>) => {
           // Merge partial updates into accumulated card
@@ -229,21 +229,18 @@ export class AgentCardViewComponent implements OnInit {
           this.streamingStage = 'error';
           console.error('Agent flow error:', error);
           this.cdr.markForCheck();
-        }
+        },
       });
   }
-  
-  private mergeCardConfig(
-    existing: AICardConfig, 
-    update: Partial<AICardConfig>
-  ): AICardConfig {
+
+  private mergeCardConfig(existing: AICardConfig, update: Partial<AICardConfig>): AICardConfig {
     return {
       ...existing,
       ...update,
-      sections: update.sections || existing.sections
+      sections: update.sections || existing.sections,
     };
   }
-  
+
   onFieldInteraction(event: any): void {
     console.log('Field interaction:', event);
   }
@@ -261,13 +258,13 @@ import { AgentCardViewComponent } from './agent-card-view.component';
 export const routes: Routes = [
   {
     path: 'agent-card/:prompt',
-    component: AgentCardViewComponent
+    component: AgentCardViewComponent,
   },
   {
     path: 'agent-card',
     component: AgentCardViewComponent,
     // Can also use query params: /agent-card?prompt=...
-  }
+  },
 ];
 ```
 
@@ -279,24 +276,24 @@ For agents that build sections incrementally:
 
 ```typescript
 private mergeCardConfig(
-  existing: AICardConfig, 
+  existing: AICardConfig,
   update: Partial<AICardConfig>
 ): AICardConfig {
   const merged: AICardConfig = {
     ...existing,
     ...update
   };
-  
+
   // Merge sections progressively
   if (update.sections) {
     const sectionMap = new Map(
       existing.sections.map(s => [s.id || s.title, s])
     );
-    
+
     update.sections.forEach(updateSection => {
       const key = updateSection.id || updateSection.title;
       const existingSection = sectionMap.get(key);
-      
+
       if (existingSection) {
         // Merge fields into existing section
         sectionMap.set(key, {
@@ -312,10 +309,10 @@ private mergeCardConfig(
         sectionMap.set(key, updateSection);
       }
     });
-    
+
     merged.sections = Array.from(sectionMap.values());
   }
-  
+
   return merged;
 }
 ```
@@ -325,7 +322,7 @@ private mergeCardConfig(
 Track agent execution states:
 
 ```typescript
-type AgentFlowState = 
+type AgentFlowState =
   | { status: 'idle' }
   | { status: 'thinking' }
   | { status: 'streaming'; card: Partial<AICardConfig> }
@@ -335,22 +332,22 @@ type AgentFlowState =
 @Component({...})
 export class AgentCardViewComponent {
   flowState: AgentFlowState = { status: 'idle' };
-  
+
   executeAgentFlow(prompt: string): void {
     this.flowState = { status: 'thinking' };
-    
+
     this.agentFlowService.executeAgentFlow(prompt).subscribe({
       next: (update) => {
-        this.flowState = { 
-          status: 'streaming', 
-          card: update 
+        this.flowState = {
+          status: 'streaming',
+          card: update
         };
         this.updateCardConfig(update);
       },
       complete: () => {
-        this.flowState = { 
-          status: 'complete', 
-          card: this.cardConfig! 
+        this.flowState = {
+          status: 'complete',
+          card: this.cardConfig!
         };
       },
       error: (error) => {
@@ -402,9 +399,9 @@ private createErrorCard(error: Error): AICardConfig {
         title: 'Error',
         type: 'info',
         fields: [
-          { 
-            label: 'Message', 
-            value: error.message || 'An error occurred' 
+          {
+            label: 'Message',
+            value: error.message || 'An error occurred'
           }
         ]
       }
@@ -425,16 +422,16 @@ import { AgentFlowService } from './agent-flow.service';
 @Injectable({ providedIn: 'root' })
 export class AgentCardGuard implements CanActivate {
   private agentFlowService = inject(AgentFlowService);
-  
+
   canActivate(route: ActivatedRouteSnapshot): boolean {
     const prompt = route.params['prompt'] || route.queryParams['prompt'];
-    
+
     if (prompt) {
       // Pre-validate prompt before navigating
       // Could also pre-instantiate skeleton card here
       return true;
     }
-    
+
     return false;
   }
 }
@@ -454,15 +451,15 @@ import { AICardConfig } from 'osi-cards-lib';
 @Injectable({ providedIn: 'root' })
 export class AgentCardResolver implements Resolve<Observable<AICardConfig>> {
   private agentFlowService = inject(AgentFlowService);
-  
+
   resolve(route: ActivatedRouteSnapshot): Observable<AICardConfig> {
     const prompt = route.params['prompt'] || route.queryParams['prompt'];
-    
+
     if (prompt) {
       // Start agent flow immediately
       return this.agentFlowService.executeAgentFlow(prompt);
     }
-    
+
     return of({ cardTitle: '', sections: [] });
   }
 }
@@ -512,7 +509,7 @@ Always instantiate a card structure (even if empty) before agent starts:
 ```typescript
 this.cardConfig = {
   cardTitle: 'Loading...',
-  sections: []
+  sections: [],
 };
 this.streamingStage = 'thinking';
 ```
@@ -523,11 +520,11 @@ Use OnPush change detection and manually trigger updates:
 
 ```typescript
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AgentCardViewComponent {
   private cdr = inject(ChangeDetectorRef);
-  
+
   onUpdate(card: Partial<AICardConfig>): void {
     this.cardConfig = this.mergeCardConfig(this.cardConfig, card);
     this.cdr.markForCheck(); // Trigger change detection
@@ -545,7 +542,7 @@ private agentFlowSubscription?: Subscription;
 executeAgentFlow(prompt: string): void {
   // Cancel previous flow if active
   this.agentFlowSubscription?.unsubscribe();
-  
+
   this.agentFlowSubscription = this.agentFlowService
     .executeAgentFlow(prompt)
     .subscribe({...});
@@ -576,7 +573,7 @@ Show skeleton or loading state:
 
 ```typescript
 get showSkeleton(): boolean {
-  return this.streamingStage === 'thinking' || 
+  return this.streamingStage === 'thinking' ||
          (this.streamingStage === 'streaming' && !this.cardConfig?.sections?.length);
 }
 ```
@@ -598,6 +595,7 @@ See `examples/agentic-flow-integration.example.ts` for a complete working exampl
 **Issue**: Card doesn't update during streaming
 
 **Solution**:
+
 - Ensure `ChangeDetectorRef.markForCheck()` is called after updates
 - Verify `streamingStage` is being updated correctly
 - Check that card merging logic preserves all fields
@@ -607,6 +605,7 @@ See `examples/agentic-flow-integration.example.ts` for a complete working exampl
 **Issue**: Router doesn't trigger agent flow
 
 **Solution**:
+
 - Verify route parameters are being read correctly
 - Check router configuration
 - Ensure component is being created on route navigation
@@ -616,18 +615,8 @@ See `examples/agentic-flow-integration.example.ts` for a complete working exampl
 **Issue**: Too many updates causing performance problems
 
 **Solution**:
+
 - Batch updates (use `debounceTime` or `throttleTime`)
 - Use `OnPush` change detection
 - Optimize card merging logic
 - Limit update frequency from agent
-
-
-
-
-
-
-
-
-
-
-

@@ -23,7 +23,7 @@ All OSI Cards components use `ChangeDetectionStrategy.OnPush`. Ensure your paren
 
 ```typescript
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MyComponent {
   // Use immutable updates
@@ -38,9 +38,7 @@ export class MyComponent {
 When iterating over cards or sections, always use trackBy:
 
 ```html
-<app-ai-card-renderer
-  *ngFor="let card of cards; trackBy: trackCardById"
-  [cardConfig]="card">
+<app-ai-card-renderer *ngFor="let card of cards; trackBy: trackCardById" [cardConfig]="card">
 </app-ai-card-renderer>
 ```
 
@@ -56,8 +54,7 @@ Import optional features only when needed:
 
 ```typescript
 // Lazy load chart sections
-const ChartSection = await import('osi-cards-lib/optional')
-  .then(m => m.ChartSectionComponent);
+const ChartSection = await import('osi-cards-lib/optional').then((m) => m.ChartSectionComponent);
 ```
 
 ### 4. Virtual Scrolling for Large Lists
@@ -65,9 +62,7 @@ const ChartSection = await import('osi-cards-lib/optional')
 For many cards, enable virtual scrolling:
 
 ```html
-<app-masonry-grid
-  [sections]="sections"
-  [virtualScrollEnabled]="sections.length > 50">
+<app-masonry-grid [sections]="sections" [virtualScrollEnabled]="sections.length > 50">
 </app-masonry-grid>
 ```
 
@@ -101,9 +96,9 @@ const card: AICardConfig = {
     {
       title: 'Section Title', // Renders as <h2>
       type: 'info',
-      fields: []
-    }
-  ]
+      fields: [],
+    },
+  ],
 };
 ```
 
@@ -161,10 +156,7 @@ const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)
 Always provide fallback content:
 
 ```html
-<app-ai-card-renderer
-  [cardConfig]="card"
-  *ngIf="card; else loading">
-</app-ai-card-renderer>
+<app-ai-card-renderer [cardConfig]="card" *ngIf="card; else loading"> </app-ai-card-renderer>
 
 <ng-template #loading>
   <app-card-skeleton></app-card-skeleton>
@@ -176,12 +168,15 @@ Always provide fallback content:
 Handle streaming errors:
 
 ```typescript
-cardFacade.streamFromJson(json).pipe(
-  catchError(error => {
-    console.error('Streaming failed:', error);
-    return of(cardFacade.createErrorCard(error));
-  })
-).subscribe(card => this.card.set(card));
+cardFacade
+  .streamFromJson(json)
+  .pipe(
+    catchError((error) => {
+      console.error('Streaming failed:', error);
+      return of(cardFacade.createErrorCard(error));
+    })
+  )
+  .subscribe((card) => this.card.set(card));
 ```
 
 ### 3. Validation
@@ -207,7 +202,7 @@ apiCall$.pipe(
   retryWithBackoff({
     maxRetries: 3,
     initialDelay: 1000,
-    maxDelay: 10000
+    maxDelay: 10000,
   })
 );
 ```
@@ -237,8 +232,10 @@ const safeText = InputValidation.escapeHtml(userInput);
 Configure CSP headers:
 
 ```html
-<meta http-equiv="Content-Security-Policy" 
-  content="default-src 'self'; style-src 'self' 'unsafe-inline';">
+<meta
+  http-equiv="Content-Security-Policy"
+  content="default-src 'self'; style-src 'self' 'unsafe-inline';"
+/>
 ```
 
 ### 3. Sanitize HTML Content
@@ -248,10 +245,7 @@ When rendering HTML fields:
 ```typescript
 import { DomSanitizer } from '@angular/platform-browser';
 
-sanitizedContent = InputValidation.sanitizeHtml(
-  this.sanitizer,
-  untrustedHtml
-);
+sanitizedContent = InputValidation.sanitizeHtml(this.sanitizer, untrustedHtml);
 ```
 
 ### 4. Validate Email Actions
@@ -278,7 +272,7 @@ describe('CardDisplay', () => {
     const fixture = TestBed.createComponent(CardDisplay);
     fixture.componentInstance.card = mockCard;
     fixture.detectChanges();
-    
+
     expect(fixture.nativeElement.textContent).toContain(mockCard.cardTitle);
   });
 });
@@ -316,8 +310,7 @@ Use Playwright for visual testing:
 ```typescript
 test('card renders correctly', async ({ page }) => {
   await page.goto('/card');
-  await expect(page.locator('.osi-card-container'))
-    .toHaveScreenshot('card-default.png');
+  await expect(page.locator('.osi-card-container')).toHaveScreenshot('card-default.png');
 });
 ```
 
@@ -350,8 +343,8 @@ src/
 export const PRODUCT_CARD_TEMPLATE: Partial<AICardConfig> = {
   sections: [
     { type: 'info', title: 'Product Details' },
-    { type: 'analytics', title: 'Performance' }
-  ]
+    { type: 'analytics', title: 'Performance' },
+  ],
 };
 ```
 
@@ -364,7 +357,7 @@ export class CardConfigService {
     return {
       cardTitle: product.name,
       ...PRODUCT_CARD_TEMPLATE,
-      sections: this.mapProductToSections(product)
+      sections: this.mapProductToSections(product),
     };
   }
 }
@@ -379,9 +372,7 @@ export class CardConfigService {
 Provide visual feedback during streaming:
 
 ```html
-<app-card-streaming-indicator
-  [isStreaming]="isStreaming()"
-  [streamingStage]="streamingStage()">
+<app-card-streaming-indicator [isStreaming]="isStreaming()" [streamingStage]="streamingStage()">
 </app-card-streaming-indicator>
 ```
 
@@ -401,7 +392,7 @@ stopStreaming() {
 Gracefully handle incomplete cards:
 
 ```typescript
-streamingState$.subscribe(state => {
+streamingState$.subscribe((state) => {
   if (state.stage === 'error' && state.card) {
     // Show partial card with error indicator
     this.showPartialCard(state.card);
@@ -420,11 +411,11 @@ Use `takeUntilDestroyed`:
 ```typescript
 export class MyComponent {
   private destroyRef = inject(DestroyRef);
-  
+
   ngOnInit() {
-    this.cardService.cards$.pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(cards => this.cards = cards);
+    this.cardService.cards$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((cards) => (this.cards = cards));
   }
 }
 ```
@@ -468,6 +459,7 @@ For dashboards with many cards:
 ## Quick Reference Checklist
 
 ### Before Production
+
 - [ ] Enable production mode
 - [ ] Configure CSP headers
 - [ ] Test with screen reader
@@ -478,6 +470,7 @@ For dashboards with many cards:
 - [ ] Review security practices
 
 ### Performance Checklist
+
 - [ ] OnPush change detection
 - [ ] trackBy on ngFor
 - [ ] Lazy loaded features
@@ -486,6 +479,7 @@ For dashboards with many cards:
 - [ ] Optimized images
 
 ### Accessibility Checklist
+
 - [ ] Proper heading hierarchy
 - [ ] Keyboard navigable
 - [ ] Screen reader tested
@@ -496,7 +490,3 @@ For dashboards with many cards:
 ---
 
 For more details, see the [API Reference](./API.md), [Theming Guide](./THEMING_GUIDE.md), and [Integration Guide](./INTEGRATION_GUIDE.md).
-
-
-
-

@@ -8,31 +8,30 @@
 // All section-specific styles imported from registry
 // ═══════════════════════════════════════════════════════════════════════════
 
-
 // Core Sections
-@import '_info.scss'; // info
-@import '_list.scss'; // list
-@import '_overview.scss'; // overview
-@import '_fallback.scss'; // fallback
+@import "_info.scss"; // info
+@import "_list.scss"; // list
+@import "_overview.scss"; // overview
+@import "_fallback.scss"; // fallback
 
 // Data Visualization Sections
-@import '_analytics.scss'; // analytics
-@import '_financials.scss'; // financials
-@import '_chart.scss'; // chart
+@import "_analytics.scss"; // analytics
+@import "_financials.scss"; // financials
+@import "_chart.scss"; // chart
 
 // Entity Sections
-@import '_contact.scss'; // contact-card
-@import '_network.scss'; // network-card
-@import '_product.scss'; // product
-@import '_solutions.scss'; // solutions
+@import "_contact.scss"; // contact-card
+@import "_network.scss"; // network-card
+@import "_product.scss"; // product
+@import "_solutions.scss"; // solutions
 
 // Content Sections
-@import '_event.scss'; // event
-@import '_quotation.scss'; // quotation
-@import '_text-reference.scss'; // text-reference
-@import '_news.scss'; // news
-@import '_social-media.scss'; // social-media
+@import "_event.scss"; // event
+@import "_quotation.scss"; // quotation
+@import "_text-reference.scss"; // text-reference
+@import "_news.scss"; // news
+@import "_social-media.scss"; // social-media
 
 // Special Sections
-@import '_map.scss'; // map
-@import '_brand-colors.scss'; // brand-colors
+@import "_map.scss"; // map
+@import "_brand-colors.scss"; // brand-colors

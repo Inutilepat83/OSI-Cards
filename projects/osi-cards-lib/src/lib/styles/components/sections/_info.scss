@@ -1,8 +1,8 @@
 /* Detailed info cards shown in the company information section */
 /* OPTIMIZED: Compact design with proper typography hierarchy */
 
-@import 'design-system';
-@import '../../core/color-helpers';
+@import "design-system";
+@import "../../core/color-helpers";
 
 .info-matrix {
   display: grid !important;
@@ -10,7 +10,7 @@
   gap: var(--section-card-gap) !important;
   padding: 0 !important;
   box-sizing: border-box !important;
-  
+
   @media (max-width: 400px) {
     grid-template-columns: 1fr !important;
   }
@@ -33,13 +33,15 @@
 
   &:hover {
     transform: translateY(-2px) !important;
-    box-shadow: 0 8px 16px $foreground-12, 0 0 0 1px $brand-color-15 !important;
+    box-shadow:
+      0 8px 16px $foreground-12,
+      0 0 0 1px $brand-color-15 !important;
     background: var(--card-background, #fafafa) !important;
-    
+
     .info-row__value {
       color: var(--foreground, $foreground-color) !important;
     }
-    
+
     .info-row__label {
       color: var(--card-text-label, $text-secondary) !important;
     }
@@ -52,7 +54,9 @@
 
   &:active {
     transform: translateY(0) !important;
-    box-shadow: 0 4px 12px $foreground-10, 0 0 0 1px $brand-color-15 !important;
+    box-shadow:
+      0 4px 12px $foreground-10,
+      0 0 0 1px $brand-color-15 !important;
   }
 
   &:focus-visible {
@@ -62,7 +66,7 @@
   }
 
   &::before {
-    content: '' !important;
+    content: "" !important;
     position: absolute !important;
     left: 0 !important;
     top: 0 !important;
@@ -70,7 +74,9 @@
     width: 3px !important;
     background: var(--color-brand, $brand-color) !important;
     opacity: 0 !important;
-    transition: opacity 0.3s ease, width 0.3s ease !important;
+    transition:
+      opacity 0.3s ease,
+      width 0.3s ease !important;
     border-radius: 0 2px 2px 0 !important;
   }
 
@@ -112,7 +118,9 @@
     background: $brand-color-12 !important;
     border-radius: calc(var(--card-border-radius) * 0.4) !important;
     align-self: flex-start !important;
-    transition: background 0.22s ease, color 0.22s ease !important;
+    transition:
+      background 0.22s ease,
+      color 0.22s ease !important;
     font-family: inherit !important;
     border: none !important;
   }
@@ -175,7 +183,7 @@
 
     &.trend-up {
       color: var(--color-success, #10b981) !important;
-      
+
       lucide-icon {
         color: var(--color-brand, $brand-color) !important;
       }

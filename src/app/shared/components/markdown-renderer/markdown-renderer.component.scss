@@ -2,10 +2,15 @@
   @apply w-full;
 
   // Typography
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-bold mt-8 mb-4 text-white;
     scroll-margin-top: 2rem;
-    
+
     &:first-child {
       @apply mt-0;
     }
@@ -27,7 +32,8 @@
     @apply text-lg mt-4;
   }
 
-  h5, h6 {
+  h5,
+  h6 {
     @apply text-base mt-4;
   }
 
@@ -42,7 +48,8 @@
   }
 
   // Lists
-  ul, ol {
+  ul,
+  ol {
     @apply mb-4 ml-6 text-gray-300;
   }
 
@@ -56,7 +63,7 @@
 
   li {
     @apply mb-2;
-    
+
     p {
       @apply mb-2;
     }
@@ -66,17 +73,17 @@
   pre {
     @apply bg-gray-900 rounded-lg p-4 mb-4 overflow-x-auto;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    
+
     code {
       @apply text-sm text-gray-100;
-      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+      font-family: "Monaco", "Menlo", "Ubuntu Mono", "Consolas", monospace;
     }
   }
 
   // Inline code
   code:not(pre code) {
     @apply bg-gray-800 text-orange-400 px-1.5 py-0.5 rounded text-sm;
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+    font-family: "Monaco", "Menlo", "Ubuntu Mono", "Consolas", monospace;
   }
 
   // Blockquotes
@@ -96,7 +103,7 @@
 
   table.markdown-table {
     @apply w-full border-collapse mb-4;
-    
+
     thead {
       @apply bg-gray-800;
     }
@@ -133,13 +140,3 @@
     @apply text-red-400 bg-red-900/20 border border-red-500 rounded p-4;
   }
 }
-
-
-
-
-
-
-
-
-
-

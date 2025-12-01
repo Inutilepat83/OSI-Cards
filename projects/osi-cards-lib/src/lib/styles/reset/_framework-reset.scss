@@ -24,7 +24,7 @@
   // ========================================
   // BOOTSTRAP 5.x VARIABLE RESET
   // ========================================
-  
+
   // Color palette
   --bs-blue: unset;
   --bs-indigo: unset;
@@ -40,7 +40,7 @@
   --bs-white: unset;
   --bs-gray: unset;
   --bs-gray-dark: unset;
-  
+
   // Gray scale
   --bs-gray-100: unset;
   --bs-gray-200: unset;
@@ -52,7 +52,7 @@
   --bs-gray-800: unset;
   --bs-gray-900: unset;
   --bs-gray-950: unset;
-  
+
   // Semantic colors
   --bs-primary: unset;
   --bs-secondary: unset;
@@ -62,7 +62,7 @@
   --bs-danger: unset;
   --bs-light: unset;
   --bs-dark: unset;
-  
+
   // RGB color variants
   --bs-primary-rgb: unset;
   --bs-secondary-rgb: unset;
@@ -76,7 +76,7 @@
   --bs-black-rgb: unset;
   --bs-body-color-rgb: unset;
   --bs-body-bg-rgb: unset;
-  
+
   // Typography
   --bs-font-sans-serif: unset;
   --bs-font-monospace: unset;
@@ -97,7 +97,7 @@
   --bs-tertiary-bg: unset;
   --bs-tertiary-bg-rgb: unset;
   --bs-heading-color: unset;
-  
+
   // Links
   --bs-link-color: unset;
   --bs-link-color-rgb: unset;
@@ -105,11 +105,11 @@
   --bs-link-hover-color: unset;
   --bs-link-hover-color-rgb: unset;
   --bs-link-hover-decoration: unset;
-  
+
   // Code
   --bs-code-color: unset;
   --bs-highlight-bg: unset;
-  
+
   // Borders
   --bs-border-width: unset;
   --bs-border-style: unset;
@@ -122,18 +122,18 @@
   --bs-border-radius-xxl: unset;
   --bs-border-radius-2xl: unset;
   --bs-border-radius-pill: unset;
-  
+
   // Shadows
   --bs-box-shadow: unset;
   --bs-box-shadow-sm: unset;
   --bs-box-shadow-lg: unset;
   --bs-box-shadow-inset: unset;
-  
+
   // Focus ring
   --bs-focus-ring-width: unset;
   --bs-focus-ring-opacity: unset;
   --bs-focus-ring-color: unset;
-  
+
   // Grid
   --bs-gutter-x: unset;
   --bs-gutter-y: unset;
@@ -143,10 +143,10 @@
   --bs-breakpoint-lg: unset;
   --bs-breakpoint-xl: unset;
   --bs-breakpoint-xxl: unset;
-  
+
   // Gradient
   --bs-gradient: unset;
-  
+
   // Component colors (Bootstrap 5.3+)
   --bs-heading-color: unset;
   --bs-nav-link-color: unset;
@@ -166,13 +166,13 @@
   --bs-dropdown-link-active-color: unset;
   --bs-dropdown-link-active-bg: unset;
   --bs-dropdown-link-disabled-color: unset;
-  
+
   // Form variables
   --bs-form-valid-color: unset;
   --bs-form-valid-border-color: unset;
   --bs-form-invalid-color: unset;
   --bs-form-invalid-border-color: unset;
-  
+
   // Card variables
   --bs-card-spacer-y: unset;
   --bs-card-spacer-x: unset;
@@ -191,7 +191,7 @@
   --bs-card-bg: unset;
   --bs-card-img-overlay-padding: unset;
   --bs-card-group-margin: unset;
-  
+
   // Button variables
   --bs-btn-padding-x: unset;
   --bs-btn-padding-y: unset;
@@ -208,7 +208,7 @@
   --bs-btn-box-shadow: unset;
   --bs-btn-disabled-opacity: unset;
   --bs-btn-focus-box-shadow: unset;
-  
+
   // Table variables
   --bs-table-color: unset;
   --bs-table-bg: unset;
@@ -220,21 +220,21 @@
   --bs-table-active-bg: unset;
   --bs-table-hover-color: unset;
   --bs-table-hover-bg: unset;
-  
+
   // ========================================
   // BOOSTED (ORANGE BOOTSTRAP) RESET
   // ========================================
-  
+
   --boosted-orange: unset;
   --boosted-white: unset;
   --boosted-black: unset;
   --boosted-font-family: unset;
   --boosted-letter-spacing: unset;
-  
+
   // ========================================
   // TAILWIND CSS VARIABLE RESET
   // ========================================
-  
+
   --tw-ring-color: unset;
   --tw-ring-offset-color: unset;
   --tw-ring-offset-width: unset;
@@ -286,11 +286,11 @@
   --tw-scale-x: unset;
   --tw-scale-y: unset;
   --tw-transform: unset;
-  
+
   // ========================================
   // FOUNDATION FRAMEWORK RESET
   // ========================================
-  
+
   --foundation-palette-primary: unset;
   --foundation-palette-secondary: unset;
   --foundation-palette-success: unset;
@@ -303,11 +303,11 @@
   --foundation-global-radius: unset;
   --foundation-global-weight-normal: unset;
   --foundation-global-weight-bold: unset;
-  
+
   // ========================================
   // BULMA FRAMEWORK RESET
   // ========================================
-  
+
   --bulma-primary: unset;
   --bulma-link: unset;
   --bulma-info: unset;
@@ -329,11 +329,11 @@
   --bulma-radius-small: unset;
   --bulma-radius-large: unset;
   --bulma-radius-rounded: unset;
-  
+
   // ========================================
   // MATERIALIZE CSS RESET
   // ========================================
-  
+
   --mdc-theme-primary: unset;
   --mdc-theme-secondary: unset;
   --mdc-theme-surface: unset;
@@ -347,11 +347,11 @@
   --mdc-shape-small: unset;
   --mdc-shape-medium: unset;
   --mdc-shape-large: unset;
-  
+
   // ========================================
   // DATATABLES RESET
   // ========================================
-  
+
   --dt-row-selected: unset;
   --dt-row-selected-text: unset;
   --dt-row-selected-link: unset;
@@ -366,26 +366,31 @@
 @mixin framework-style-override() {
   // Reset all inherited properties
   all: revert;
-  
+
   // Re-establish box model
   box-sizing: border-box;
-  
+
   // Apply to all children
   *,
   *::before,
   *::after {
     box-sizing: border-box !important;
   }
-  
+
   // Reset heading styles that Bootstrap modifies
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     margin: 0 !important;
     padding: 0 !important;
     border: none !important;
     font-family: inherit !important;
     line-height: 1.2 !important;
   }
-  
+
   // Reset button styles
   button {
     font-family: inherit !important;
@@ -394,41 +399,42 @@
     background: transparent;
     padding: 0;
     margin: 0;
-    
+
     &:focus-visible {
-      outline: 2px solid var(--color-brand, #FF7900) !important;
+      outline: 2px solid var(--color-brand, #ff7900) !important;
       outline-offset: 2px !important;
     }
-    
+
     &:focus:not(:focus-visible) {
       outline: none !important;
     }
   }
-  
+
   // Reset link styles
   a {
     text-decoration: none !important;
     color: inherit !important;
-    
+
     &:hover,
     &:focus {
       text-decoration: none !important;
     }
   }
-  
+
   // Reset list styles
-  ul, ol {
+  ul,
+  ol {
     list-style: none !important;
     padding: 0 !important;
     margin: 0 !important;
   }
-  
+
   // Reset table styles
   table {
     border-collapse: collapse !important;
     border-spacing: 0 !important;
   }
-  
+
   // Reset form element styles
   input,
   textarea,
@@ -437,7 +443,7 @@
     font-size: inherit !important;
     border: none;
     background: transparent;
-    
+
     &:focus {
       outline: none;
     }
@@ -449,7 +455,3 @@
   @include framework-variable-reset();
   @include framework-style-override();
 }
-
-
-
-

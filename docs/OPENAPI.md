@@ -5,6 +5,7 @@ This document describes the OpenAPI/Swagger specification for the OSI Cards Libr
 ## Overview
 
 The OSI Cards Library uses OpenAPI 3.1.0 specification to document:
+
 - Card configuration schemas
 - Component APIs and interfaces
 - Service interfaces
@@ -13,6 +14,7 @@ The OSI Cards Library uses OpenAPI 3.1.0 specification to document:
 ## Specification Location
 
 The OpenAPI specification is located at:
+
 - **YAML Format**: `docs/openapi.yaml`
 - **JSON Format**: `docs/openapi.json` (generated)
 
@@ -20,7 +22,7 @@ The OpenAPI specification is located at:
 
 ### Online Viewers
 
-1. **Swagger Editor**: 
+1. **Swagger Editor**:
    - Open https://editor.swagger.io/
    - Import the `docs/openapi.yaml` file
 
@@ -52,6 +54,7 @@ npx swagger-ui-serve docs/openapi.yaml
 ### Card Configuration API
 
 The main API is the card configuration schema (`AICardConfig`), which defines:
+
 - Card metadata (title, subtitle, type)
 - Sections array (required)
 - Actions array (optional)
@@ -60,6 +63,7 @@ The main API is the card configuration schema (`AICardConfig`), which defines:
 ### Section Types
 
 All supported section types are documented:
+
 - `info` - Key-value pairs
 - `list` - Item lists
 - `chart` - Data visualization
@@ -73,6 +77,7 @@ All supported section types are documented:
 ### Service Interfaces
 
 Service interfaces are documented as TypeScript interfaces:
+
 - `CardDataProvider` - Abstract provider interface
 - `CardDataService` - Main data service
 - `ValidationService` - Card validation
@@ -81,12 +86,13 @@ Service interfaces are documented as TypeScript interfaces:
 ## Endpoints
 
 The OpenAPI spec documents conceptual endpoints for:
+
 - `/cards` - Get all cards, create card
 - `/cards/{id}` - Get card by ID
 - `/cards/validate` - Validate card configuration
 
-**Note**: These are conceptual endpoints representing the programmatic API. 
-In practice, OSI Cards is a frontend library that works with JSON configurations 
+**Note**: These are conceptual endpoints representing the programmatic API.
+In practice, OSI Cards is a frontend library that works with JSON configurations
 rather than REST endpoints.
 
 ## Schema Definitions
@@ -96,10 +102,12 @@ rather than REST endpoints.
 The root schema representing a complete card configuration.
 
 **Required Fields:**
+
 - `cardTitle` (string) - Main title
 - `sections` (array) - Array of CardSection objects
 
 **Optional Fields:**
+
 - `id` - Unique identifier
 - `cardSubtitle` - Subtitle
 - `cardType` - Type categorization
@@ -112,10 +120,12 @@ The root schema representing a complete card configuration.
 Represents a section within a card.
 
 **Required Fields:**
+
 - `title` (string) - Section title
 - `type` (string) - Section type identifier
 
 **Optional Fields:**
+
 - `fields` - Array of CardField objects
 - `items` - Array of CardItem objects
 - `description` - Section description
@@ -127,6 +137,7 @@ Represents a section within a card.
 Represents a field within a section.
 
 **Common Properties:**
+
 - `label` - Field label
 - `value` - Field value (string, number, boolean, or null)
 - `format` - Value format (currency, percentage, number, text)
@@ -138,6 +149,7 @@ Represents a field within a section.
 Represents an action button on a card.
 
 **Types:**
+
 - `mail` - Email action (requires EmailConfig)
 - `website` - URL navigation (requires url)
 - `agent` - Agent action (triggers agentAction event)
@@ -165,6 +177,7 @@ if (result.isValid) {
 ### Schema Validation
 
 The OpenAPI schema can be used with validation tools:
+
 - JSON Schema validators
 - Ajv (Another JSON Schema Validator)
 - Zod (TypeScript-first schema validation)
@@ -174,36 +187,36 @@ The OpenAPI schema can be used with validation tools:
 ### Example Card Configuration
 
 ```yaml
-cardTitle: "Company Overview"
-cardSubtitle: "Q4 2024"
-cardType: "company"
+cardTitle: 'Company Overview'
+cardSubtitle: 'Q4 2024'
+cardType: 'company'
 columns: 2
 sections:
-  - type: "info"
-    title: "Company Information"
+  - type: 'info'
+    title: 'Company Information'
     fields:
-      - label: "Industry"
-        value: "Technology"
-      - label: "Founded"
-        value: "2010"
-  - type: "analytics"
-    title: "Key Metrics"
+      - label: 'Industry'
+        value: 'Technology'
+      - label: 'Founded'
+        value: '2010'
+  - type: 'analytics'
+    title: 'Key Metrics'
     fields:
-      - label: "Revenue"
+      - label: 'Revenue'
         value: 1250000
-        format: "currency"
-        trend: "up"
+        format: 'currency'
+        trend: 'up'
         change: 15.5
 actions:
-  - label: "Contact"
-    type: "mail"
+  - label: 'Contact'
+    type: 'mail'
     email:
       contact:
-        name: "Support"
-        email: "support@example.com"
-        role: "Support Team"
-      subject: "Inquiry"
-      body: "Hello, I would like to inquire about..."
+        name: 'Support'
+        email: 'support@example.com'
+        role: 'Support Team'
+      subject: 'Inquiry'
+      body: 'Hello, I would like to inquire about...'
 ```
 
 ## Integration
@@ -211,6 +224,7 @@ actions:
 ### Using with Code Generators
 
 The OpenAPI specification can be used to generate:
+
 - TypeScript types
 - Client SDKs
 - API documentation
@@ -225,12 +239,14 @@ The OpenAPI specification can be used to generate:
 ## Versioning
 
 The OpenAPI specification version matches the library version:
+
 - Current version: 1.2.2
 - OpenAPI version: 3.1.0
 
 ## Contributing
 
 When adding new features:
+
 1. Update `docs/openapi.yaml` with new schemas
 2. Add examples for new section types
 3. Update this documentation
@@ -242,13 +258,3 @@ When adding new features:
 - [Swagger Editor](https://editor.swagger.io/)
 - [OpenAPI Generator](https://openapi-generator.tech/)
 - [JSON Schema](https://json-schema.org/)
-
-
-
-
-
-
-
-
-
-

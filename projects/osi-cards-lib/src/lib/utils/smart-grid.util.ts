@@ -10,7 +10,42 @@
 
 import { CardSection, CardField } from '../models/card.model';
 import { gridLogger, GapAnalysis, ColumnAnalysis, PlacementDecision } from './smart-grid-logger.util';
-import { calculateSmartColumns } from './section-layout-registry.util';
+
+// Local implementation of calculateSmartColumns (previously from section-layout-registry)
+function calculateSmartColumnsLocal(section: CardSection, maxColumns: number): number {
+  const type = section.type || 'info';
+  const width = section.width as number | undefined;
+  
+  // If width is explicitly set, use it
+  if (typeof width === 'number' && width >= 1 && width <= maxColumns) {
+    return Math.min(width, maxColumns);
+  }
+  
+  // Default column spans based on section type
+  const defaultSpans: Record<string, number> = {
+    'overview': 2,
+    'contact-card': 1,
+    'network-card': 1,
+    'analytics': 2,
+    'stats': 1,
+    'chart': 2,
+    'map': 2,
+    'financials': 2,
+    'info': 1,
+    'list': 1,
+    'event': 1,
+    'timeline': 2,
+    'news': 1,
+    'product': 1,
+    'quotation': 1,
+    'solutions': 2,
+    'social-media': 1,
+    'text-reference': 1,
+    'brand-colors': 1
+  };
+  
+  return Math.min(defaultSpans[type] || 1, maxColumns);
+}
 
 // ============================================================================
 // TYPES AND INTERFACES
@@ -150,9 +185,8 @@ export function calculateOptimalColumns(
   section: CardSection, 
   maxColumns: number = 4
 ): number {
-  // Use the smart column calculation from the registry
-  // This uses layoutConfig defined in each section component
-  return calculateSmartColumns(section, maxColumns);
+  // Use the smart column calculation
+  return calculateSmartColumnsLocal(section, maxColumns);
 }
 
 // ============================================================================

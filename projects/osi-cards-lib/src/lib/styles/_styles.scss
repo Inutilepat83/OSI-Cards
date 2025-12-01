@@ -19,8 +19,8 @@
 /* All library styles go in the osi-cards layer */
 @layer osi-cards {
   // Core variables (applies to :root)
-  @import 'core/variables';
+  @import "core/variables";
 
   // Shared component styles
-  @import 'components';
+  @import "components";
 }

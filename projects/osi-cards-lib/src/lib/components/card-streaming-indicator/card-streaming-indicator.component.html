@@ -7,19 +7,16 @@
   [attr.aria-label]="getAriaLabel()"
 >
   <div class="streaming-progress-bar">
-    <div 
+    <div
       *ngIf="streamingStage === 'streaming'"
-      class="streaming-progress-fill" 
+      class="streaming-progress-fill"
       [style.width.%]="progressPercentage"
       [attr.aria-valuenow]="progressPercentage"
       [attr.aria-valuemin]="0"
       [attr.aria-valuemax]="100"
       role="progressbar"
     ></div>
-    <div 
-      *ngIf="streamingStage === 'thinking'"
-      class="streaming-progress-thinking"
-    ></div>
+    <div *ngIf="streamingStage === 'thinking'" class="streaming-progress-thinking"></div>
   </div>
   <div *ngIf="streamingProgressLabel" class="streaming-label">
     {{ streamingProgressLabel }}
@@ -27,11 +24,5 @@
   <span *ngIf="!streamingProgressLabel && streamingStage === 'streaming'" class="sr-only">
     Streaming progress: {{ progressPercentage }}%
   </span>
-  <span *ngIf="streamingStage === 'thinking'" class="sr-only">
-    Thinking, please wait
-  </span>
+  <span *ngIf="streamingStage === 'thinking'" class="sr-only"> Thinking, please wait </span>
 </div>
-
-
-
-

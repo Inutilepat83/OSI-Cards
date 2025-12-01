@@ -40,9 +40,7 @@
       "installMode": "lazy",
       "updateMode": "prefetch",
       "resources": {
-        "files": [
-          "/chunk-*.js"
-        ]
+        "files": ["/chunk-*.js"]
       }
     },
     {
@@ -50,10 +48,7 @@
       "installMode": "lazy",
       "updateMode": "prefetch",
       "resources": {
-        "files": [
-          "/assets/**",
-          "/favicon.ico"
-        ]
+        "files": ["/assets/**", "/favicon.ico"]
       }
     },
     {
@@ -71,9 +66,7 @@
   "dataGroups": [
     {
       "name": "docs-content",
-      "urls": [
-        "/docs/**"
-      ],
+      "urls": ["/docs/**"],
       "cacheConfig": {
         "strategy": "performance",
         "maxSize": 100,
@@ -83,9 +76,7 @@
     },
     {
       "name": "api",
-      "urls": [
-        "/api/**"
-      ],
+      "urls": ["/api/**"],
       "cacheConfig": {
         "strategy": "freshness",
         "maxSize": 50,
@@ -95,9 +86,7 @@
     },
     {
       "name": "configs",
-      "urls": [
-        "/assets/configs/**"
-      ],
+      "urls": ["/assets/configs/**"],
       "cacheConfig": {
         "strategy": "performance",
         "maxSize": 200,
@@ -141,9 +130,7 @@
     },
     {
       "name": "offline-fallback",
-      "urls": [
-        "/**"
-      ],
+      "urls": ["/**"],
       "cacheConfig": {
         "strategy": "performance",
         "maxSize": 10,
@@ -153,9 +140,7 @@
     },
     {
       "name": "user-templates",
-      "urls": [
-        "/**"
-      ],
+      "urls": ["/**"],
       "cacheConfig": {
         "strategy": "freshness",
         "maxSize": 100,
@@ -164,12 +149,5 @@
       }
     }
   ],
-  "navigationUrls": [
-    "/**",
-    "!/**/*.*",
-    "!/**/*__*",
-    "!/**/*__*/**"
-  ]
+  "navigationUrls": ["/**", "!/**/*.*", "!/**/*__*", "!/**/*__*/**"]
 }
-
-

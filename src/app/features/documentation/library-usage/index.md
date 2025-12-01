@@ -11,27 +11,27 @@ import { Component } from '@angular/core';
 import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
 
 @Component({
-  selector: 'app-my-component',
-  standalone: true,
-  imports: [AICardRendererComponent],
-  template: \`
-    <app-ai-card-renderer [cardConfig]="cardConfig"></app-ai-card-renderer>
-  \`
+selector: 'app-my-component',
+standalone: true,
+imports: [AICardRendererComponent],
+template: \`
+<app-ai-card-renderer [cardConfig]="cardConfig"></app-ai-card-renderer>
+\`
 })
 export class MyComponent {
-  cardConfig: AICardConfig = {
-    cardTitle: 'My Card',
-    sections: [
-      {
-        title: 'Overview',
-        type: 'info',
-        fields: [
-          { label: 'Name', value: 'Example' },
-          { label: 'Status', value: 'Active' }
-        ]
-      }
-    ]
-  };
+cardConfig: AICardConfig = {
+cardTitle: 'My Card',
+sections: [
+{
+title: 'Overview',
+type: 'info',
+fields: [
+{ label: 'Name', value: 'Example' },
+{ label: 'Status', value: 'Active' }
+]
+}
+]
+};
 }
 \`\`\`
 
@@ -45,24 +45,24 @@ import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
 import { CardDataService } from 'osi-cards-lib';
 
 @Component({
-  selector: 'app-card-viewer',
-  standalone: true,
-  imports: [AICardRendererComponent],
-  template: \`
-    <app-ai-card-renderer
-      [cardConfig]="card$ | async"
-      (sectionEvent)="onSectionEvent($event)">
-    </app-ai-card-renderer>
-  \`
+selector: 'app-card-viewer',
+standalone: true,
+imports: [AICardRendererComponent],
+template: \`
+<app-ai-card-renderer
+[cardConfig]="card$ | async"
+(sectionEvent)="onSectionEvent($event)">
+</app-ai-card-renderer>
+\`
 })
 export class CardViewerComponent {
-  private cardData = inject(CardDataService);
-  
-  card$ = this.cardData.getAllCards();
-  
-  onSectionEvent(event: any) {
-    console.log('Section event:', event);
-  }
+private cardData = inject(CardDataService);
+
+card$ = this.cardData.getAllCards();
+
+onSectionEvent(event: any) {
+console.log('Section event:', event);
+}
 }
 \`\`\`
 
@@ -78,17 +78,17 @@ const cardData = inject(CardDataService);
 
 // Get all cards
 cardData.getAllCards().subscribe(cards => {
-  console.log('All cards:', cards);
+console.log('All cards:', cards);
 });
 
 // Get cards by type
 cardData.getCardsByType('company').subscribe(cards => {
-  console.log('Company cards:', cards);
+console.log('Company cards:', cards);
 });
 
 // Get specific card
 cardData.getCardById('card-123').subscribe(card => {
-  console.log('Card:', card);
+console.log('Card:', card);
 });
 \`\`\`
 
@@ -105,7 +105,7 @@ streamingService.start(llmJsonResponse);
 
 // Subscribe to updates
 streamingService.cardUpdates$.subscribe(update => {
-  console.log('Card updated:', update.card);
+console.log('Card updated:', update.card);
 });
 \`\`\`
 
@@ -115,25 +115,25 @@ streamingService.cardUpdates$.subscribe(update => {
 
 \`\`\`typescript
 const cardConfig: AICardConfig = {
-  cardTitle: 'Card Title',
-  cardSubtitle: 'Optional Subtitle',
-  cardType: 'company',
-  sections: [
-    {
-      title: 'Section Title',
-      type: 'info',
-      fields: [
-        { label: 'Label', value: 'Value' }
-      ]
-    }
-  ],
-  actions: [
-    {
-      label: 'Action',
-      type: 'primary',
-      action: 'https://example.com'
-    }
-  ]
+cardTitle: 'Card Title',
+cardSubtitle: 'Optional Subtitle',
+cardType: 'company',
+sections: [
+{
+title: 'Section Title',
+type: 'info',
+fields: [
+{ label: 'Label', value: 'Value' }
+]
+}
+],
+actions: [
+{
+label: 'Action',
+type: 'primary',
+action: 'https://example.com'
+}
+]
 };
 \`\`\`
 
@@ -143,15 +143,15 @@ const cardConfig: AICardConfig = {
 
 \`\`\`typescript
 onSectionEvent(event: SectionRenderEvent) {
-  const { type, section, field, item, action } = event;
-  
-  if (type === 'field') {
-    console.log('Field clicked:', field?.label);
-  } else if (type === 'item') {
-    console.log('Item selected:', item?.title);
-  } else if (type === 'action') {
-    console.log('Action triggered:', action?.label);
-  }
+const { type, section, field, item, action } = event;
+
+if (type === 'field') {
+console.log('Field clicked:', field?.label);
+} else if (type === 'item') {
+console.log('Item selected:', item?.title);
+} else if (type === 'action') {
+console.log('Action triggered:', action?.label);
+}
 }
 \`\`\`
 
@@ -161,9 +161,9 @@ onSectionEvent(event: SectionRenderEvent) {
 
 \`\`\`scss
 :root {
-  --color-brand: #ff7900;
-  --card-padding: 1.25rem;
-  --card-border-radius: 12px;
+--color-brand: #ff7900;
+--card-padding: 1.25rem;
+--card-border-radius: 12px;
 }
 \`\`\`
 
@@ -182,13 +182,3 @@ See the [Examples](/docs/examples) section for complete working examples.
 ## API Reference
 
 For complete API documentation, see [API Reference](/docs/api).
-
-
-
-
-
-
-
-
-
-

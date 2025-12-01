@@ -1,51 +1,54 @@
 <!doctype html>
 <html lang="en" data-theme="dark">
-<head>
-  <meta charset="utf-8">
-  <title>OSI Cards</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  
-  <!-- Security Headers -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' ws: wss:;">
-  <meta http-equiv="X-Content-Type-Options" content="nosniff">
-  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-  
-  <!-- ==========================================================================
+  <head>
+    <meta charset="utf-8" />
+    <title>OSI Cards</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <!-- Security Headers -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' ws: wss:;"
+    />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+
+    <!-- ==========================================================================
        Resource Hints for Performance
        ========================================================================== -->
-  
-  <!-- DNS Prefetch - Resolve DNS early for external domains -->
-  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-  <link rel="dns-prefetch" href="https://github.com">
-  <link rel="dns-prefetch" href="https://www.npmjs.com">
-  
-  <!-- Preconnect - Establish early connections to critical origins -->
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  
-  <!-- Preload critical assets -->
-  <link rel="preload" href="/assets/configs/manifest.json" as="fetch" crossorigin>
-  
-  <!-- Prefetch for likely next resources -->
-  <link rel="prefetch" href="/assets/configs/companies/" as="document">
-  <link rel="prefetch" href="/assets/configs/contacts/" as="document">
-  
-  <!-- Module preload for documentation (loaded during idle time) -->
-  <link rel="modulepreload" href="/main.js">
-  
-  <!-- 
+
+    <!-- DNS Prefetch - Resolve DNS early for external domains -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="https://github.com" />
+    <link rel="dns-prefetch" href="https://www.npmjs.com" />
+
+    <!-- Preconnect - Establish early connections to critical origins -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Preload critical assets -->
+    <link rel="preload" href="/assets/configs/manifest.json" as="fetch" crossorigin />
+
+    <!-- Prefetch for likely next resources -->
+    <link rel="prefetch" href="/assets/configs/companies/" as="document" />
+    <link rel="prefetch" href="/assets/configs/contacts/" as="document" />
+
+    <!-- Module preload for documentation (loaded during idle time) -->
+    <link rel="modulepreload" href="/main.js" />
+
+    <!-- 
     Documentation Performance Optimizations:
     - Core doc pages are preloaded via DocsPreloadingStrategy
     - Navigation links use hover-based prefetching via PrefetchLinkDirective
     - Rendered markdown is cached in IndexedDB via DocCacheService
     - Service Worker caches doc chunks for offline access
   -->
-  
-  <!-- Note: Material Icons removed - using Lucide icons instead -->
-</head>
-<body>
-  <app-root></app-root>
-</body>
+
+    <!-- Note: Material Icons removed - using Lucide icons instead -->
+  </head>
+  <body>
+    <app-root></app-root>
+  </body>
 </html>

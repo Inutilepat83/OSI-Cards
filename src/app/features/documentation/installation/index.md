@@ -32,9 +32,9 @@ Or add to your \`package.json\`:
 
 \`\`\`json
 {
-  "dependencies": {
-    "osi-cards-lib": "git+https://github.com/Inutilepat83/OSI-Cards.git#main"
-  }
+"dependencies": {
+"osi-cards-lib": "git+https://github.com/Inutilepat83/OSI-Cards.git#main"
+}
 }
 \`\`\`
 
@@ -80,7 +80,7 @@ npm install @angular-slider/ngx-slider@latest --legacy-peer-deps
 Add to your \`src/styles.scss\`:
 
 \`\`\`scss
-@import 'osi-cards-lib/styles/_styles';
+@import 'osi-cards-lib/styles/\_styles';
 \`\`\`
 
 ### 2. Configure Providers (Optional)
@@ -92,10 +92,10 @@ import { ApplicationConfig } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
-  providers: [
-    provideAnimations(),
-    // Other providers...
-  ]
+providers: [
+provideAnimations(),
+// Other providers...
+]
 };
 \`\`\`
 
@@ -128,13 +128,3 @@ import { AICardRendererComponent } from 'osi-cards-lib';
 - [Library Usage Guide](/docs/library-usage)
 - [Quick Start](/docs/getting-started)
 - [API Reference](/docs/api)
-
-
-
-
-
-
-
-
-
-

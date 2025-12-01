@@ -8,13 +8,13 @@ This prompt is dynamically generated from `section-registry.json` - the single s
 
 ## Prompt Statistics
 
-| Metric | Value |
-|--------|-------|
-| Section Types | 17 |
-| Type Aliases | 11 |
-| Characters | 28,201 |
-| Estimated Tokens | ~7,051 |
-| Generated | 2025-12-01T09:10:02.055Z |
+| Metric           | Value                    |
+| ---------------- | ------------------------ |
+| Section Types    | 17                       |
+| Type Aliases     | 11                       |
+| Characters       | 28,201                   |
+| Estimated Tokens | ~7,051                   |
+| Generated        | 2025-12-01T09:10:02.055Z |
 
 ## How to Use
 

@@ -11,61 +11,61 @@
 // ============================================
 
 // 1. Master tokens
-@use '../tokens/master' as *;
+@use "../tokens/master" as *;
 
 // 2. Shadow DOM reset
-@use '../reset/shadow-reset';
+@use "../reset/shadow-reset";
 
 // 3. Generate CSS custom properties
 :host {
-  @include osi-theme-base('integration', true);
-  @include osi-tokens('integration', true);
+  @include osi-theme-base("integration", true);
+  @include osi-tokens("integration", true);
 }
 
-:host([data-theme='night']),
-:host-context([data-theme='night']) {
-  @include osi-theme-dark('integration', true);
+:host([data-theme="night"]),
+:host-context([data-theme="night"]) {
+  @include osi-theme-dark("integration", true);
 }
 
-:host([data-theme='day']),
-:host-context([data-theme='day']) {
-  @include osi-theme-light('integration', true);
+:host([data-theme="day"]),
+:host-context([data-theme="day"]) {
+  @include osi-theme-light("integration", true);
 }
 
 // 4. Core styles
-@import '../core/mixins';
-@import '../core/utilities';
-@import '../core/animations';
+@import "../core/mixins";
+@import "../core/utilities";
+@import "../core/animations";
 
 // 5. Design system foundation
-@import '../components/sections/design-system';
-@import '../components/sections/sections-base';
-@import '../components/sections/section-types';
-@import '../components/sections/section-shell';
+@import "../components/sections/design-system";
+@import "../components/sections/sections-base";
+@import "../components/sections/section-types";
+@import "../components/sections/section-shell";
 
 // 6. All section types
-@import '../components/sections/overview';
-@import '../components/sections/analytics';
-@import '../components/sections/news';
-@import '../components/sections/social-media';
-@import '../components/sections/info';
-@import '../components/sections/map';
-@import '../components/sections/list';
-@import '../components/sections/contact';
-@import '../components/sections/network';
-@import '../components/sections/product';
-@import '../components/sections/chart';
-@import '../components/sections/event';
-@import '../components/sections/financials';
-@import '../components/sections/solutions';
-@import '../components/sections/quotation';
-@import '../components/sections/text-reference';
-@import '../components/sections/brand-colors';
-@import '../components/sections/fallback';
+@import "../components/sections/overview";
+@import "../components/sections/analytics";
+@import "../components/sections/news";
+@import "../components/sections/social-media";
+@import "../components/sections/info";
+@import "../components/sections/map";
+@import "../components/sections/list";
+@import "../components/sections/contact";
+@import "../components/sections/network";
+@import "../components/sections/product";
+@import "../components/sections/chart";
+@import "../components/sections/event";
+@import "../components/sections/financials";
+@import "../components/sections/solutions";
+@import "../components/sections/quotation";
+@import "../components/sections/text-reference";
+@import "../components/sections/brand-colors";
+@import "../components/sections/fallback";
 
 // 7. Unified styles (must be last)
-@import '../components/sections/unified-cards';
-@import '../components/sections/global-enforcement';
+@import "../components/sections/unified-cards";
+@import "../components/sections/global-enforcement";
 
 // 8. Accessibility
 @media (prefers-reduced-motion: reduce) {
@@ -73,7 +73,3 @@
     @include osi-tokens-reduced-motion();
   }
 }
-
-
-
-

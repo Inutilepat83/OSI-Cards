@@ -1,8 +1,8 @@
 /* List Section - Modern, Clean Design */
 
-@import 'sections-base';
-@import 'unified-cards';
-@import '../../core/color-helpers';
+@import "sections-base";
+@import "unified-cards";
+@import "../../core/color-helpers";
 
 /* List Grid Layout */
 .list-grid {
@@ -11,7 +11,7 @@
   gap: var(--section-card-gap) !important;
   width: 100% !important;
   box-sizing: border-box !important;
-  
+
   @media (max-width: 820px) {
     grid-template-columns: 1fr !important;
   }
@@ -31,7 +31,7 @@
   position: relative !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
-  
+
   @include card;
 
   // Animation states for item streaming
@@ -53,7 +53,9 @@
   /* Minimalistic hover effect */
   &:hover {
     transform: translateY(-2px) !important;
-    box-shadow: 0 8px 16px $foreground-12, 0 0 0 1px $brand-color-15 !important;
+    box-shadow:
+      0 8px 16px $foreground-12,
+      0 0 0 1px $brand-color-15 !important;
 
     .list-card__title {
       color: var(--color-brand, $brand-color) !important;
@@ -105,7 +107,7 @@
   font-family: inherit !important;
   border: none !important;
   padding: 0 !important;
-  
+
   .list-card:hover & {
     color: var(--color-brand, $brand-color) !important;
   }
@@ -227,7 +229,7 @@
 .list-card__meta-text {
   @include card-meta-text;
   font-family: inherit !important;
-  
+
   strong {
     font-weight: var(--card-meta-font-weight, 500) !important;
     color: var(--card-text-primary, $foreground-color) !important;

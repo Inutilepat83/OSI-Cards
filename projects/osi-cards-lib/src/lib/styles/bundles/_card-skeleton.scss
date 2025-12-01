@@ -11,28 +11,28 @@
 // ============================================
 
 // 1. Master tokens (single source of truth)
-@use '../tokens/master' as *;
+@use "../tokens/master" as *;
 
 // 2. Shadow DOM reset (full isolation)
-@use '../reset/shadow-reset';
+@use "../reset/shadow-reset";
 
 // 3. Generate CSS custom properties
 :host {
-  @include osi-theme-base('integration', true);
-  @include osi-tokens('integration', true);
-  
+  @include osi-theme-base("integration", true);
+  @include osi-tokens("integration", true);
+
   display: block;
   width: 100%;
 }
 
-:host([data-theme='night']),
-:host-context([data-theme='night']) {
-  @include osi-theme-dark('integration', true);
+:host([data-theme="night"]),
+:host-context([data-theme="night"]) {
+  @include osi-theme-dark("integration", true);
 }
 
-:host([data-theme='day']),
-:host-context([data-theme='day']) {
-  @include osi-theme-light('integration', true);
+:host([data-theme="day"]),
+:host-context([data-theme="day"]) {
+  @include osi-theme-light("integration", true);
 }
 
 // ============================================
@@ -60,7 +60,8 @@
 }
 
 @keyframes skeletonPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.6;
   }
   50% {
@@ -112,7 +113,7 @@
     90deg,
     color-mix(in srgb, var(--muted, #f4f4f6) 100%, transparent) 0%,
     color-mix(in srgb, var(--muted-foreground, #555861) 100%, transparent) 20%,
-    color-mix(in srgb, var(--color-brand, #FF7900) 15%, transparent) 50%,
+    color-mix(in srgb, var(--color-brand, #ff7900) 15%, transparent) 50%,
     color-mix(in srgb, var(--muted, #f4f4f6) 100%, transparent) 100%
   );
   background-size: 200% 100%;
@@ -124,7 +125,7 @@
 }
 
 .skeleton-title-placeholder::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
@@ -133,7 +134,7 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    color-mix(in srgb, var(--color-brand, #FF7900) 20%, transparent) 50%,
+    color-mix(in srgb, var(--color-brand, #ff7900) 20%, transparent) 50%,
     transparent 100%
   );
   animation: shimmerWave 1.5s ease-in-out infinite;
@@ -155,7 +156,12 @@
   background: linear-gradient(
     135deg,
     var(--card-background, var(--background, #ffffff)) 0%,
-    color-mix(in srgb, var(--card-background, var(--background, #ffffff)) 98%, var(--color-brand, #FF7900) 2%) 100%
+    color-mix(
+        in srgb,
+        var(--card-background, var(--background, #ffffff)) 98%,
+        var(--color-brand, #ff7900) 2%
+      )
+      100%
   );
   box-shadow: 0 2px 4px color-mix(in srgb, var(--foreground, #1c1c1f) 5%, transparent);
   position: relative;
@@ -163,13 +169,17 @@
 }
 
 .skeleton-section::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
   width: 2px;
-  background: linear-gradient(180deg, var(--color-brand, #FF7900), color-mix(in srgb, var(--color-brand, #FF7900) 50%, transparent));
+  background: linear-gradient(
+    180deg,
+    var(--color-brand, #ff7900),
+    color-mix(in srgb, var(--color-brand, #ff7900) 50%, transparent)
+  );
   opacity: 0.3;
 }
 
@@ -196,7 +206,7 @@
     90deg,
     color-mix(in srgb, var(--muted, #f4f4f6) 100%, transparent) 0%,
     color-mix(in srgb, var(--muted-foreground, #555861) 100%, transparent) 20%,
-    color-mix(in srgb, var(--color-brand, #FF7900) 10%, transparent) 50%,
+    color-mix(in srgb, var(--color-brand, #ff7900) 10%, transparent) 50%,
     color-mix(in srgb, var(--muted, #f4f4f6) 100%, transparent) 100%
   );
   background-size: 200% 100%;
@@ -207,7 +217,7 @@
 }
 
 .skeleton-line::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
@@ -216,7 +226,7 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    color-mix(in srgb, var(--color-brand, #FF7900) 15%, transparent) 50%,
+    color-mix(in srgb, var(--color-brand, #ff7900) 15%, transparent) 50%,
     transparent 100%
   );
   animation: shimmerWave 1.5s ease-in-out infinite;
@@ -256,7 +266,7 @@
   :host {
     @include osi-tokens-reduced-motion();
   }
-  
+
   .skeleton-title-placeholder,
   .skeleton-title-placeholder::after,
   .skeleton-line,
@@ -278,7 +288,3 @@
     @include osi-tokens-forced-colors();
   }
 }
-
-
-
-

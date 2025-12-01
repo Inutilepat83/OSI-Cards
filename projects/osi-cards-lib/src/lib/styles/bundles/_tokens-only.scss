@@ -19,7 +19,7 @@
 //
 // ============================================
 
-@use '../tokens/master' as *;
+@use "../tokens/master" as *;
 
 // ============================================
 // ROOT-LEVEL TOKEN DEFINITIONS
@@ -49,10 +49,10 @@
   @include osi-opacity();
 
   // Typography (demo variant for standalone apps)
-  @include osi-typography('demo');
+  @include osi-typography("demo");
 
   // Card typography
-  @include osi-card-typography('demo');
+  @include osi-card-typography("demo");
 
   // Card layout
   @include osi-card-layout();
@@ -61,7 +61,7 @@
   @include osi-interactive();
 
   // Default theme (light)
-  @include osi-theme-base('demo', false);
+  @include osi-theme-base("demo", false);
 }
 
 // ============================================
@@ -69,15 +69,15 @@
 // ============================================
 
 // Dark theme
-:root[data-theme='night'],
-[data-theme='night'] {
-  @include osi-theme-dark('demo', false);
+:root[data-theme="night"],
+[data-theme="night"] {
+  @include osi-theme-dark("demo", false);
 }
 
 // Light theme
-:root[data-theme='day'],
-[data-theme='day'] {
-  @include osi-theme-light('demo', false);
+:root[data-theme="day"],
+[data-theme="day"] {
+  @include osi-theme-light("demo", false);
 }
 
 // ============================================
@@ -112,16 +112,16 @@
 // For embedding in external apps with scoped container
 .osi-cards-container {
   // Scoped theme base
-  @include osi-theme-base('integration', true);
-  @include osi-tokens('integration', true);
+  @include osi-theme-base("integration", true);
+  @include osi-tokens("integration", true);
 
   // Scoped theme variants
-  &[data-theme='night'] {
-    @include osi-theme-dark('integration', true);
+  &[data-theme="night"] {
+    @include osi-theme-dark("integration", true);
   }
 
-  &[data-theme='day'] {
-    @include osi-theme-light('integration', true);
+  &[data-theme="day"] {
+    @include osi-theme-light("integration", true);
   }
 
   // Scoped accessibility overrides
@@ -137,7 +137,3 @@
     @include osi-tokens-forced-colors();
   }
 }
-
-
-
-

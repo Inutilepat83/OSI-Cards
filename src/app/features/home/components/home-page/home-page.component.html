@@ -20,9 +20,7 @@
             class="toggle-switch"
             role="switch"
             [attr.aria-checked]="theme === 'day'"
-            [attr.aria-label]="
-              theme === 'day' ? 'Switch to night theme' : 'Switch to day theme'
-            "
+            [attr.aria-label]="theme === 'day' ? 'Switch to night theme' : 'Switch to day theme'"
             (click)="toggleTheme()"
           >
             <span class="toggle-thumb"></span>
@@ -38,7 +36,7 @@
           </svg>
         </div>
       </header>
-      
+
       <!-- Hero Header -->
       <div class="hero-header">
         <h1 class="hero-title" id="osi-hero-heading">
@@ -46,7 +44,8 @@
           <span class="hero-title-accent"> Sales Intelligence</span>
         </h1>
         <p class="hero-description">
-          OrangeSales Intelligence OSI Cards is a versatile card generator used by sales intelligence agents. It features structured formatting that can design cards for any form of business intelligence data.
+          OrangeSales Intelligence OSI Cards is a versatile card generator used by sales intelligence agents. It
+          features structured formatting that can design cards for any form of business intelligence data.
         </p>
       </div>
 
@@ -56,7 +55,11 @@
         <div class="hero-feature-card">
           <div class="p-6 sm:p-8 text-center">
             <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-              <lucide-icon name="sparkles" [size]="32" class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"></lucide-icon>
+              <lucide-icon
+                name="sparkles"
+                [size]="32"
+                class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"
+              ></lucide-icon>
             </div>
             <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-foreground">AI-Powered Generation</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
@@ -69,7 +72,11 @@
         <div class="hero-feature-card">
           <div class="p-6 sm:p-8 text-center">
             <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-              <lucide-icon name="zap" [size]="32" class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"></lucide-icon>
+              <lucide-icon
+                name="zap"
+                [size]="32"
+                class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"
+              ></lucide-icon>
             </div>
             <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-foreground">Instant Generation</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
@@ -82,7 +89,11 @@
         <div class="hero-feature-card md:col-span-2 lg:col-span-1">
           <div class="p-6 sm:p-8 text-center">
             <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-              <lucide-icon name="code-2" [size]="32" class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"></lucide-icon>
+              <lucide-icon
+                name="code-2"
+                [size]="32"
+                class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"
+              ></lucide-icon>
             </div>
             <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-foreground">JSON Configuration</h3>
             <p class="text-muted-foreground text-sm leading-relaxed">
@@ -94,53 +105,73 @@
     </div>
   </section>
 
-      <!-- Interactive Demo Section -->
-      <div class="px-4 sm:px-6">
-        <div class="mx-auto max-w-7xl">
-          <div class="text-center mb-8 sm:mb-12">
-            <h3 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6" style="letter-spacing: -0.03em;">
-              <span class="text-foreground">Interactive </span>
-              <span class="text-[#FF7900]">Demo</span>
-            </h3>
-          </div>
-          
-          <!-- Card Type Selector with Label -->
-          <div class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
-            <span class="text-sm font-semibold text-muted-foreground">Card Examples:</span>
-            <app-card-type-selector
-              [selectedType]="cardType"
-              [cardTypes]="cardTypes"
-              [disabled]="switchingType"
-              (typeChange)="onCardTypeChange($event)">
-            </app-card-type-selector>
-          </div>
+  <!-- Interactive Demo Section -->
+  <div class="px-4 sm:px-6">
+    <div class="mx-auto max-w-7xl">
+      <div class="text-center mb-8 sm:mb-12">
+        <h3
+          class="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6"
+          style="letter-spacing: -0.03em"
+        >
+          <span class="text-foreground">Interactive </span>
+          <span class="text-[#FF7900]">Demo</span>
+        </h3>
+      </div>
 
-          <!-- Variant Selector -->
-          <div class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 mb-8 sm:mb-10" style="margin-bottom: 18px;">
-            <span class="text-sm font-semibold text-muted-foreground">Variants:</span>
-            <div class="variant-selector">
-              <button
-                *ngFor="let variant of variants"
-                (click)="onCardVariantChange(variant)"
-                [class.active]="cardVariant === variant"
-                [disabled]="switchingType"
-                [title]="'Load variant ' + variant + ' of ' + cardType + ' template'"
-                type="button">
-                {{ variant }}
-              </button>
-            </div>
-          </div>
+      <!-- Card Type Selector with Label -->
+      <div class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <span class="text-sm font-semibold text-muted-foreground">Card Examples:</span>
+        <app-card-type-selector
+          [selectedType]="cardType"
+          [cardTypes]="cardTypes"
+          [disabled]="switchingType"
+          (typeChange)="onCardTypeChange($event)"
+        >
+        </app-card-type-selector>
+      </div>
+
+      <!-- Variant Selector -->
+      <div
+        class="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 mb-8 sm:mb-10"
+        style="margin-bottom: 18px"
+      >
+        <span class="text-sm font-semibold text-muted-foreground">Variants:</span>
+        <div class="variant-selector">
+          <button
+            *ngFor="let variant of variants"
+            (click)="onCardVariantChange(variant)"
+            [class.active]="cardVariant === variant"
+            [disabled]="switchingType"
+            [title]="'Load variant ' + variant + ' of ' + cardType + ' template'"
+            type="button"
+          >
+            {{ variant }}
+          </button>
+        </div>
+      </div>
 
       <!-- Enhanced Responsive Layout with Fullscreen Support -->
-      <div [ngClass]="'transition-all duration-500 ease-in-out mb-16 min-h-[800px] ' + (isFullscreen ? 'flex flex-col gap-4' : 'grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-4 items-start')">
-        
+      <div
+        [ngClass]="
+          'transition-all duration-500 ease-in-out mb-16 min-h-[800px] ' +
+          (isFullscreen ? 'flex flex-col gap-4' : 'grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-4 items-start')
+        "
+      >
         <!-- Card Preview - Full width when fullscreen, otherwise responsive -->
-        <div [ngClass]="'flex flex-col ' + (isFullscreen ? 'order-1 w-full' : 'lg:col-span-3 order-2 lg:order-2')" id="card-preview" tabindex="-1" style="align-self: stretch; margin-top: 0; padding-top: 0; overflow: visible;">
-          <div class="preview-header-enhanced flex items-center justify-between gap-3 flex-shrink-0 min-h-[32px]" style="margin: 0; padding: 0; margin-bottom: 10px;">
+        <div
+          [ngClass]="'flex flex-col ' + (isFullscreen ? 'order-1 w-full' : 'lg:col-span-3 order-2 lg:order-2')"
+          id="card-preview"
+          tabindex="-1"
+          style="align-self: stretch; margin-top: 0; padding-top: 0; overflow: visible"
+        >
+          <div
+            class="preview-header-enhanced flex items-center justify-between gap-3 flex-shrink-0 min-h-[32px]"
+            style="margin: 0; padding: 0; margin-bottom: 10px"
+          >
             <div class="flex items-center gap-3">
               <div class="flex items-center gap-2">
                 <lucide-icon name="sparkles" [size]="22" class="text-[#FF7900]" aria-hidden="true"></lucide-icon>
-                <span class="font-bold text-lg" style="letter-spacing: -0.01em;">Live Preview</span>
+                <span class="font-bold text-lg" style="letter-spacing: -0.01em">Live Preview</span>
               </div>
               <!-- Streaming Status Badges -->
               <span *ngIf="streamingState?.stage === 'thinking'" class="status-badge status-badge--thinking">
@@ -160,14 +191,19 @@
                 Live edit
               </span>
             </div>
-            <app-preview-controls
-              [isFullscreen]="isFullscreen"
-              (toggleFullscreen)="toggleFullscreen()">
+            <app-preview-controls [isFullscreen]="isFullscreen" (toggleFullscreen)="toggleFullscreen()">
             </app-preview-controls>
           </div>
 
-          <div class="flex-1 min-h-0" #previewRegion style="display: flex; flex-direction: column; padding-top: 0; padding-bottom: 2rem; overflow: visible;">
-            <div [ngClass]="'w-full flex-1 min-h-0 ' + (isFullscreen ? 'max-w-none' : '')" style="display: flex; flex-direction: column; overflow: visible;">
+          <div
+            class="flex-1 min-h-0"
+            #previewRegion
+            style="display: flex; flex-direction: column; padding-top: 0; padding-bottom: 2rem; overflow: visible"
+          >
+            <div
+              [ngClass]="'w-full flex-1 min-h-0 ' + (isFullscreen ? 'max-w-none' : '')"
+              style="display: flex; flex-direction: column; overflow: visible"
+            >
               <!-- Card Renderer with Streaming Support -->
               @if (showCardRenderer) {
                 <app-ai-card-renderer
@@ -184,7 +220,8 @@
                   (fullscreenToggle)="onFullscreenToggle($event)"
                   (export)="onExportCard()"
                   (agentAction)="onAgentAction($event)"
-                  (questionAction)="onQuestionAction($event)">
+                  (questionAction)="onQuestionAction($event)"
+                >
                 </app-ai-card-renderer>
               } @else {
                 <!-- Empty state -->
@@ -198,11 +235,19 @@
         </div>
 
         <!-- JSON Configuration - Full width when fullscreen, otherwise responsive -->
-        <div [ngClass]="'flex flex-col ' + (isFullscreen ? 'order-2 w-full' : 'lg:col-span-2 order-1 lg:order-1')" id="json-editor" tabindex="-1" style="margin-top: 0; padding-top: 0;">
-          <div class="preview-header-enhanced flex items-center gap-3 flex-shrink-0 min-h-[32px]" style="margin: 0; padding: 0; margin-bottom: 17px;">
+        <div
+          [ngClass]="'flex flex-col ' + (isFullscreen ? 'order-2 w-full' : 'lg:col-span-2 order-1 lg:order-1')"
+          id="json-editor"
+          tabindex="-1"
+          style="margin-top: 0; padding-top: 0"
+        >
+          <div
+            class="preview-header-enhanced flex items-center gap-3 flex-shrink-0 min-h-[32px]"
+            style="margin: 0; padding: 0; margin-bottom: 17px"
+          >
             <div class="flex items-center gap-2">
               <lucide-icon name="code-2" [size]="22" class="text-[#FF7900]" aria-hidden="true"></lucide-icon>
-              <span class="font-bold text-lg" style="letter-spacing: -0.01em;">JSON Configuration</span>
+              <span class="font-bold text-lg" style="letter-spacing: -0.01em">JSON Configuration</span>
             </div>
             <span *ngIf="!isJsonValid" class="status-badge status-badge--error">
               <lucide-icon name="alert-circle" [size]="12" aria-hidden="true"></lucide-icon>
@@ -213,9 +258,12 @@
               Valid
             </span>
           </div>
-          
+
           <!-- JSON Editor Card -->
-          <div class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg p-4 flex flex-col flex-1 min-h-0" style="align-self: stretch; margin-top: 0;">
+          <div
+            class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg p-4 flex flex-col flex-1 min-h-0"
+            style="align-self: stretch; margin-top: 0"
+          >
             <div class="json-editor flex flex-col">
               <!-- JSON Configuration Header -->
               <div class="editor-toolbar__actions">
@@ -237,11 +285,11 @@
                     </label>
                     <div class="radio-group">
                       <label class="radio-option">
-                        <input type="radio" name="streaming" [value]="true" [(ngModel)]="useStreaming">
+                        <input type="radio" name="streaming" [value]="true" [(ngModel)]="useStreaming" />
                         <span class="radio-label">Streaming</span>
                       </label>
                       <label class="radio-option">
-                        <input type="radio" name="streaming" [value]="false" [(ngModel)]="useStreaming">
+                        <input type="radio" name="streaming" [value]="false" [(ngModel)]="useStreaming" />
                         <span class="radio-label">Instant</span>
                       </label>
                     </div>
@@ -272,7 +320,14 @@
                         Speed
                         <span class="speed-value">{{ streamingSpeed }} tok/s</span>
                       </label>
-                      <input type="range" class="control-range" min="20" max="200" step="10" [(ngModel)]="streamingSpeed">
+                      <input
+                        type="range"
+                        class="control-range"
+                        min="20"
+                        max="200"
+                        step="10"
+                        [(ngModel)]="streamingSpeed"
+                      />
                     </div>
                     <div class="streaming-control-group">
                       <label class="streaming-control-label">
@@ -280,7 +335,14 @@
                         Thinking Delay
                         <span class="speed-value">{{ thinkingDelay / 1000 }}s</span>
                       </label>
-                      <input type="range" class="control-range" min="0" max="8000" step="500" [(ngModel)]="thinkingDelay">
+                      <input
+                        type="range"
+                        class="control-range"
+                        min="0"
+                        max="8000"
+                        step="500"
+                        [(ngModel)]="thinkingDelay"
+                      />
                     </div>
                   </div>
                 }
@@ -311,7 +373,8 @@
                 (jsonInputChange)="onJsonInputChange($event)"
                 (jsonValid)="onJsonValidChange($event)"
                 (jsonErrorChange)="onJsonErrorChange($event)"
-                (jsonErrorDetailsChange)="onJsonErrorDetailsChange($event)">
+                (jsonErrorDetailsChange)="onJsonErrorDetailsChange($event)"
+              >
               </app-json-editor>
             </div>
           </div>
@@ -325,11 +388,14 @@
   <div class="features-section">
     <div class="mx-auto max-w-6xl">
       <div class="text-center mb-12 sm:mb-16">
-        <h3 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6" style="letter-spacing: -0.03em;">
+        <h3
+          class="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6"
+          style="letter-spacing: -0.03em"
+        >
           <span class="text-foreground">System </span>
           <span class="text-[#FF7900]">Capabilities</span>
         </h3>
-        <p class="text-muted-foreground max-w-2xl mx-auto text-lg sm:text-xl" style="line-height: 1.7;">
+        <p class="text-muted-foreground max-w-2xl mx-auto text-lg sm:text-xl" style="line-height: 1.7">
           Enterprise-grade features designed for modern sales intelligence workflows
         </p>
       </div>
@@ -339,7 +405,12 @@
           <div class="feature-card">
             <div class="p-6 sm:p-8 text-center">
               <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-                <lucide-icon name="zap" [size]="32" class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]" aria-hidden="true"></lucide-icon>
+                <lucide-icon
+                  name="zap"
+                  [size]="32"
+                  class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"
+                  aria-hidden="true"
+                ></lucide-icon>
               </div>
               <h4 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Real-time Generation</h4>
               <p class="text-muted-foreground text-sm leading-relaxed">
@@ -348,10 +419,17 @@
             </div>
           </div>
 
-          <div class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg">
+          <div
+            class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg"
+          >
             <div class="p-6 sm:p-8 text-center">
               <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-                <lucide-icon name="settings" [size]="32" class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]" aria-hidden="true"></lucide-icon>
+                <lucide-icon
+                  name="settings"
+                  [size]="32"
+                  class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"
+                  aria-hidden="true"
+                ></lucide-icon>
               </div>
               <h4 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Flexible Configuration</h4>
               <p class="text-muted-foreground text-sm leading-relaxed">
@@ -360,10 +438,17 @@
             </div>
           </div>
 
-          <div class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg">
+          <div
+            class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg"
+          >
             <div class="p-6 sm:p-8 text-center">
               <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-                <lucide-icon name="download" [size]="32" class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]" aria-hidden="true"></lucide-icon>
+                <lucide-icon
+                  name="download"
+                  [size]="32"
+                  class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"
+                  aria-hidden="true"
+                ></lucide-icon>
               </div>
               <h4 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">PNG Export</h4>
               <p class="text-muted-foreground text-sm leading-relaxed">
@@ -372,10 +457,17 @@
             </div>
           </div>
 
-          <div class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg">
+          <div
+            class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg"
+          >
             <div class="p-6 sm:p-8 text-center">
               <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-                <lucide-icon name="file-text" [size]="32" class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]" aria-hidden="true"></lucide-icon>
+                <lucide-icon
+                  name="file-text"
+                  [size]="32"
+                  class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"
+                  aria-hidden="true"
+                ></lucide-icon>
               </div>
               <h4 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">TypeScript Support</h4>
               <p class="text-muted-foreground text-sm leading-relaxed">
@@ -384,10 +476,17 @@
             </div>
           </div>
 
-          <div class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg">
+          <div
+            class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg"
+          >
             <div class="p-6 sm:p-8 text-center">
               <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-                <lucide-icon name="save" [size]="32" class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]" aria-hidden="true"></lucide-icon>
+                <lucide-icon
+                  name="save"
+                  [size]="32"
+                  class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"
+                  aria-hidden="true"
+                ></lucide-icon>
               </div>
               <h4 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Save &amp; Load</h4>
               <p class="text-muted-foreground text-sm leading-relaxed">
@@ -396,10 +495,17 @@
             </div>
           </div>
 
-          <div class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg">
+          <div
+            class="bg-card border border-border/50 text-foreground hover:border-primary/50 transition-colors rounded-lg"
+          >
             <div class="p-6 sm:p-8 text-center">
               <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 sm:mb-6 flex items-center justify-center">
-                <lucide-icon name="code-2" [size]="32" class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]" aria-hidden="true"></lucide-icon>
+                <lucide-icon
+                  name="code-2"
+                  [size]="32"
+                  class="w-8 h-8 sm:w-10 sm:h-10 text-[var(--color-brand)]"
+                  aria-hidden="true"
+                ></lucide-icon>
               </div>
               <h4 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Component Architecture</h4>
               <p class="text-muted-foreground text-sm leading-relaxed">
@@ -444,5 +550,4 @@
       <p>&copy; 2024 OSI Cards. All rights reserved.</p>
     </div>
   </footer>
-
 </main>

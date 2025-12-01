@@ -16,6 +16,7 @@ The following files are **internal development documentation** and should **NOT*
 - `TYPESCRIPT_STRICT_MIGRATION.md` - TypeScript strict mode migration guide
 
 These files are:
+
 - ✅ Excluded from TypeDoc generation (see `typedoc.json`)
 - ✅ Excluded from npm package (see `projects/osi-cards-lib/.npmignore`)
 - ❌ Should NOT be copied to website documentation
@@ -23,16 +24,6 @@ These files are:
 ## Library Documentation
 
 For library-specific documentation, see:
+
 - `projects/osi-cards-lib/README.md` - Main library README
 - `projects/osi-cards-lib/docs/` - Library documentation
-
-
-
-
-
-
-
-
-
-
-

@@ -31,12 +31,12 @@
   transition: var(--hover-transition);
   cursor: default;
   user-select: none;
-  
+
   /* Default variant (primary/orange) */
   background: var(--badge-bg-primary);
   border: 1px solid var(--color-orange-border);
   color: var(--color-orange-solid);
-  
+
   /* Icon inside badge */
   lucide-icon,
   svg {
@@ -53,7 +53,7 @@
   background: var(--badge-bg-success);
   border-color: var(--color-success-border);
   color: var(--color-success-solid);
-  
+
   lucide-icon,
   svg {
     color: var(--color-success-solid);
@@ -65,7 +65,7 @@
   background: var(--badge-bg-warning);
   border-color: var(--color-warning-border);
   color: var(--color-warning-solid);
-  
+
   lucide-icon,
   svg {
     color: var(--color-warning-solid);
@@ -77,7 +77,7 @@
   background: var(--badge-bg-error);
   border-color: var(--color-error-border);
   color: var(--color-error-solid);
-  
+
   lucide-icon,
   svg {
     color: var(--color-error-solid);
@@ -89,7 +89,7 @@
   background: var(--badge-bg-info);
   border-color: var(--color-info-border);
   color: var(--color-info-solid);
-  
+
   lucide-icon,
   svg {
     color: var(--color-info-solid);
@@ -101,7 +101,7 @@
   background: var(--badge-bg-primary);
   border-color: var(--color-orange-border);
   color: var(--color-orange-solid);
-  
+
   lucide-icon,
   svg {
     color: var(--color-orange-solid);
@@ -113,7 +113,7 @@
   background: var(--badge-bg-neutral);
   border-color: var(--color-neutral-border);
   color: var(--color-neutral-solid);
-  
+
   lucide-icon,
   svg {
     color: var(--color-neutral-solid);
@@ -126,7 +126,7 @@
 .badge--sm {
   padding: 2px 6px;
   font-size: 0.5625rem; /* 9px */
-  
+
   lucide-icon,
   svg {
     width: 10px;
@@ -138,7 +138,7 @@
 .badge--lg {
   padding: 6px 10px;
   font-size: 0.6875rem; /* 11px */
-  
+
   lucide-icon,
   svg {
     width: 14px;
@@ -152,32 +152,32 @@
 .badge--solid {
   border: none;
   font-weight: 700;
-  
+
   &.badge--success {
     background: var(--color-success-solid);
     color: var(--color-white);
   }
-  
+
   &.badge--warning {
     background: var(--color-warning-solid);
     color: var(--color-gray-900);
   }
-  
+
   &.badge--error {
     background: var(--color-error-solid);
     color: var(--color-white);
   }
-  
+
   &.badge--info {
     background: var(--color-info-solid);
     color: var(--color-white);
   }
-  
+
   &.badge--primary {
     background: var(--color-orange-solid);
     color: var(--color-white);
   }
-  
+
   &.badge--neutral {
     background: var(--color-neutral-solid);
     color: var(--color-white);
@@ -188,32 +188,32 @@
 .badge--outline {
   background: transparent;
   border-width: 1px;
-  
+
   &.badge--success {
     border-color: var(--color-success-border);
     color: var(--color-success-solid);
   }
-  
+
   &.badge--warning {
     border-color: var(--color-warning-border);
     color: var(--color-warning-solid);
   }
-  
+
   &.badge--error {
     border-color: var(--color-error-border);
     color: var(--color-error-solid);
   }
-  
+
   &.badge--info {
     border-color: var(--color-info-border);
     color: var(--color-info-solid);
   }
-  
+
   &.badge--primary {
     border-color: var(--color-orange-border);
     color: var(--color-orange-solid);
   }
-  
+
   &.badge--neutral {
     border-color: var(--color-neutral-border);
     color: var(--color-neutral-solid);
@@ -225,33 +225,33 @@
 /* Clickable/interactive badge */
 .badge--interactive {
   cursor: pointer;
-  
+
   &:hover {
     border-color: var(--hover-border-color);
     background: var(--hover-bg-color);
     transform: translateY(-1px);
   }
-  
+
   &:active {
     transform: translateY(0);
   }
-  
+
   /* Variant-specific hover states */
   &.badge--success:hover {
     border-color: var(--color-success-border);
     background: color-mix(in srgb, var(--color-success-light) 150%, transparent);
   }
-  
+
   &.badge--warning:hover {
     border-color: var(--color-warning-border);
     background: color-mix(in srgb, var(--color-warning-light) 150%, transparent);
   }
-  
+
   &.badge--error:hover {
     border-color: var(--color-error-border);
     background: color-mix(in srgb, var(--color-error-light) 150%, transparent);
   }
-  
+
   &.badge--info:hover {
     border-color: var(--color-info-border);
     background: color-mix(in srgb, var(--color-info-light) 150%, transparent);
@@ -262,7 +262,7 @@
 
 .badge--with-dot {
   &::before {
-    content: '';
+    content: "";
     width: 6px;
     height: 6px;
     border-radius: 50%;
@@ -277,19 +277,19 @@
   .badge {
     font-size: 0.5625rem; /* 9px on mobile */
     padding: 3px 6px;
-    
+
     lucide-icon,
     svg {
       width: 10px;
       height: 10px;
     }
   }
-  
+
   .badge--sm {
     padding: 2px 4px;
     font-size: 0.5rem; /* 8px */
   }
-  
+
   .badge--lg {
     padding: 4px 8px;
     font-size: 0.625rem; /* 10px */
@@ -315,10 +315,3 @@
 .badge-group--loose {
   gap: var(--spacing-lg);
 }
-
-
-
-
-
-
-

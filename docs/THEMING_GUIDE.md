@@ -35,56 +35,56 @@ The simplest way to customize OSI Cards is by overriding CSS custom properties:
 
 ### Color Properties
 
-| Property | Default | Description |
-|----------|---------|-------------|
-| `--osi-card-background` | `#ffffff` | Card background color |
-| `--osi-card-foreground` | `#1a1a1a` | Primary text color |
-| `--osi-card-muted` | `#6b7280` | Muted/secondary text |
-| `--osi-card-accent` | `#6366f1` | Accent/highlight color |
+| Property                       | Default   | Description               |
+| ------------------------------ | --------- | ------------------------- |
+| `--osi-card-background`        | `#ffffff` | Card background color     |
+| `--osi-card-foreground`        | `#1a1a1a` | Primary text color        |
+| `--osi-card-muted`             | `#6b7280` | Muted/secondary text      |
+| `--osi-card-accent`            | `#6366f1` | Accent/highlight color    |
 | `--osi-card-accent-foreground` | `#ffffff` | Text on accent background |
-| `--osi-card-border` | `#e5e7eb` | Border color |
-| `--osi-card-destructive` | `#ef4444` | Error/destructive actions |
-| `--osi-card-success` | `#22c55e` | Success indicators |
-| `--osi-card-warning` | `#f59e0b` | Warning indicators |
+| `--osi-card-border`            | `#e5e7eb` | Border color              |
+| `--osi-card-destructive`       | `#ef4444` | Error/destructive actions |
+| `--osi-card-success`           | `#22c55e` | Success indicators        |
+| `--osi-card-warning`           | `#f59e0b` | Warning indicators        |
 
 ### Spacing Properties
 
-| Property | Default | Description |
-|----------|---------|-------------|
-| `--osi-card-padding` | `1rem` | Internal padding |
-| `--osi-card-gap` | `0.75rem` | Gap between elements |
-| `--osi-card-section-gap` | `1rem` | Gap between sections |
-| `--osi-card-border-radius` | `0.5rem` | Border radius |
+| Property                   | Default   | Description          |
+| -------------------------- | --------- | -------------------- |
+| `--osi-card-padding`       | `1rem`    | Internal padding     |
+| `--osi-card-gap`           | `0.75rem` | Gap between elements |
+| `--osi-card-section-gap`   | `1rem`    | Gap between sections |
+| `--osi-card-border-radius` | `0.5rem`  | Border radius        |
 
 ### Typography Properties
 
-| Property | Default | Description |
-|----------|---------|-------------|
-| `--osi-card-font-family` | `system-ui, sans-serif` | Base font family |
-| `--osi-card-title-size` | `1.25rem` | Card title size |
-| `--osi-card-section-title-size` | `1rem` | Section title size |
-| `--osi-card-body-size` | `0.875rem` | Body text size |
-| `--osi-card-small-size` | `0.75rem` | Small text size |
-| `--osi-card-font-weight-normal` | `400` | Normal weight |
-| `--osi-card-font-weight-medium` | `500` | Medium weight |
-| `--osi-card-font-weight-bold` | `600` | Bold weight |
+| Property                        | Default                 | Description        |
+| ------------------------------- | ----------------------- | ------------------ |
+| `--osi-card-font-family`        | `system-ui, sans-serif` | Base font family   |
+| `--osi-card-title-size`         | `1.25rem`               | Card title size    |
+| `--osi-card-section-title-size` | `1rem`                  | Section title size |
+| `--osi-card-body-size`          | `0.875rem`              | Body text size     |
+| `--osi-card-small-size`         | `0.75rem`               | Small text size    |
+| `--osi-card-font-weight-normal` | `400`                   | Normal weight      |
+| `--osi-card-font-weight-medium` | `500`                   | Medium weight      |
+| `--osi-card-font-weight-bold`   | `600`                   | Bold weight        |
 
 ### Shadow Properties
 
-| Property | Default | Description |
-|----------|---------|-------------|
-| `--osi-card-shadow` | `0 1px 3px rgba(0,0,0,0.1)` | Default shadow |
-| `--osi-card-shadow-hover` | `0 4px 6px rgba(0,0,0,0.1)` | Hover shadow |
-| `--osi-card-shadow-focus` | `0 0 0 3px rgba(99,102,241,0.3)` | Focus ring |
+| Property                  | Default                          | Description    |
+| ------------------------- | -------------------------------- | -------------- |
+| `--osi-card-shadow`       | `0 1px 3px rgba(0,0,0,0.1)`      | Default shadow |
+| `--osi-card-shadow-hover` | `0 4px 6px rgba(0,0,0,0.1)`      | Hover shadow   |
+| `--osi-card-shadow-focus` | `0 0 0 3px rgba(99,102,241,0.3)` | Focus ring     |
 
 ### Animation Properties
 
-| Property | Default | Description |
-|----------|---------|-------------|
-| `--osi-card-transition-fast` | `150ms` | Fast transitions |
-| `--osi-card-transition-normal` | `200ms` | Normal transitions |
-| `--osi-card-transition-slow` | `300ms` | Slow transitions |
-| `--osi-card-easing` | `cubic-bezier(0.4, 0, 0.2, 1)` | Default easing |
+| Property                       | Default                        | Description        |
+| ------------------------------ | ------------------------------ | ------------------ |
+| `--osi-card-transition-fast`   | `150ms`                        | Fast transitions   |
+| `--osi-card-transition-normal` | `200ms`                        | Normal transitions |
+| `--osi-card-transition-slow`   | `300ms`                        | Slow transitions   |
+| `--osi-card-easing`            | `cubic-bezier(0.4, 0, 0.2, 1)` | Default easing     |
 
 ---
 
@@ -98,19 +98,20 @@ import { provideOSICards, OSI_THEMES } from 'osi-cards-lib';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideOSICards({
-      theme: OSI_THEMES.DARK // 'light' | 'dark' | 'corporate' | 'minimal'
-    })
-  ]
+      theme: OSI_THEMES.DARK, // 'light' | 'dark' | 'corporate' | 'minimal'
+    }),
+  ],
 };
 ```
 
 ### Available Themes
 
 #### Light Theme (Default)
+
 Clean, professional appearance with subtle shadows.
 
 ```css
-[data-theme="light"] {
+[data-theme='light'] {
   --osi-card-background: #ffffff;
   --osi-card-foreground: #1a1a1a;
   --osi-card-accent: #6366f1;
@@ -118,10 +119,11 @@ Clean, professional appearance with subtle shadows.
 ```
 
 #### Dark Theme
+
 Modern dark mode with reduced eye strain.
 
 ```css
-[data-theme="dark"] {
+[data-theme='dark'] {
   --osi-card-background: #1f2937;
   --osi-card-foreground: #f9fafb;
   --osi-card-accent: #818cf8;
@@ -130,10 +132,11 @@ Modern dark mode with reduced eye strain.
 ```
 
 #### Corporate Theme
+
 Professional blue tones for enterprise applications.
 
 ```css
-[data-theme="corporate"] {
+[data-theme='corporate'] {
   --osi-card-accent: #2563eb;
   --osi-card-background: #f8fafc;
   --osi-card-border-radius: 4px;
@@ -141,10 +144,11 @@ Professional blue tones for enterprise applications.
 ```
 
 #### Minimal Theme
+
 Ultra-clean with reduced visual noise.
 
 ```css
-[data-theme="minimal"] {
+[data-theme='minimal'] {
   --osi-card-shadow: none;
   --osi-card-border: transparent;
   --osi-card-border-radius: 0;
@@ -180,10 +184,7 @@ export class AppComponent {
 
   toggleDarkMode() {
     this.isDarkMode = !this.isDarkMode;
-    document.documentElement.setAttribute(
-      'data-theme', 
-      this.isDarkMode ? 'dark' : 'light'
-    );
+    document.documentElement.setAttribute('data-theme', this.isDarkMode ? 'dark' : 'light');
   }
 }
 ```
@@ -210,7 +211,7 @@ export class AppComponent {
 
 ```css
 /* my-theme.css */
-[data-theme="ocean"] {
+[data-theme='ocean'] {
   /* Colors */
   --osi-card-background: #0a192f;
   --osi-card-foreground: #ccd6f6;
@@ -218,12 +219,12 @@ export class AppComponent {
   --osi-card-accent-foreground: #0a192f;
   --osi-card-border: #233554;
   --osi-card-muted: #8892b0;
-  
+
   /* Status colors */
   --osi-card-success: #64ffda;
   --osi-card-warning: #ffd700;
   --osi-card-destructive: #ff6b6b;
-  
+
   /* Shadows */
   --osi-card-shadow: 0 10px 30px -10px rgba(2, 12, 27, 0.7);
 }
@@ -241,11 +242,11 @@ provideOSICards({
       properties: {
         '--osi-card-background': '#0a192f',
         '--osi-card-foreground': '#ccd6f6',
-        '--osi-card-accent': '#64ffda'
-      }
-    }
-  }
-})
+        '--osi-card-accent': '#64ffda',
+      },
+    },
+  },
+});
 ```
 
 ---
@@ -402,6 +403,7 @@ Always use custom properties instead of hard-coded values:
 ### 4. Test Across Themes
 
 Always test your customizations in:
+
 - Light mode
 - Dark mode
 - High contrast mode
@@ -430,27 +432,27 @@ If using SCSS, you can leverage the library's mixins:
 
 ```css
 /* Purple Dream Theme */
-[data-theme="purple-dream"] {
+[data-theme='purple-dream'] {
   /* Base colors */
   --osi-card-background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   --osi-card-foreground: #eaeaea;
   --osi-card-muted: #a0a0a0;
-  
+
   /* Accent */
   --osi-card-accent: #9d4edd;
   --osi-card-accent-foreground: #ffffff;
-  
+
   /* Borders */
   --osi-card-border: rgba(157, 78, 221, 0.3);
   --osi-card-border-radius: 16px;
-  
+
   /* Typography */
   --osi-card-font-family: 'Inter', system-ui, sans-serif;
-  
+
   /* Shadows */
   --osi-card-shadow: 0 8px 32px rgba(157, 78, 221, 0.15);
   --osi-card-shadow-hover: 0 12px 48px rgba(157, 78, 221, 0.25);
-  
+
   /* Status colors */
   --osi-card-success: #00d9ff;
   --osi-card-warning: #ffbe0b;
@@ -461,7 +463,3 @@ If using SCSS, you can leverage the library's mixins:
 ---
 
 For more examples and live demos, visit the [OSI Cards Storybook](https://osi-cards.dev/storybook).
-
-
-
-

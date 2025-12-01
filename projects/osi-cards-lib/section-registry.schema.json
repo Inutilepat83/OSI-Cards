@@ -40,7 +40,13 @@
   "definitions": {
     "SectionDefinition": {
       "type": "object",
-      "required": ["name", "description", "componentPath", "selector", "rendering"],
+      "required": [
+        "name",
+        "description",
+        "componentPath",
+        "selector",
+        "rendering"
+      ],
       "properties": {
         "name": {
           "type": "string",
@@ -181,8 +187,14 @@
             "type": "object",
             "properties": {
               "name": { "type": "string", "description": "Example name" },
-              "description": { "type": "string", "description": "Example description" },
-              "section": { "type": "object", "description": "Section configuration" }
+              "description": {
+                "type": "string",
+                "description": "Example description"
+              },
+              "section": {
+                "type": "object",
+                "description": "Section configuration"
+              }
             },
             "required": ["name", "section"]
           }
@@ -191,9 +203,18 @@
           "type": "object",
           "description": "Code snippets for documentation",
           "properties": {
-            "typescript": { "type": "string", "description": "TypeScript usage example" },
-            "html": { "type": "string", "description": "HTML template example" },
-            "json": { "type": "string", "description": "JSON configuration example" }
+            "typescript": {
+              "type": "string",
+              "description": "TypeScript usage example"
+            },
+            "html": {
+              "type": "string",
+              "description": "HTML template example"
+            },
+            "json": {
+              "type": "string",
+              "description": "JSON configuration example"
+            }
           }
         },
         "apiNotes": {
@@ -213,8 +234,14 @@
             "type": "object",
             "properties": {
               "name": { "type": "string", "description": "Sample card name" },
-              "description": { "type": "string", "description": "Card description" },
-              "card": { "type": "object", "description": "Full card configuration" }
+              "description": {
+                "type": "string",
+                "description": "Card description"
+              },
+              "card": {
+                "type": "object",
+                "description": "Full card configuration"
+              }
             },
             "required": ["name", "card"]
           }
@@ -235,7 +262,3 @@
     }
   }
 }
-
-
-
-

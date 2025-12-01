@@ -7,15 +7,15 @@
    =================================================================== */
 
 /* Demo-specific tokens - must come first */
-@use 'styles/core/demo-tokens' as *;
+@use "styles/core/demo-tokens" as *;
 
 /* App-specific styles - must use @use BEFORE any @import */
-@use 'styles/components/config-panel' as *;
-@use 'styles/pages/home' as *;
-@use 'styles/ng-doc-overrides' as *;
+@use "styles/components/config-panel" as *;
+@use "styles/pages/home" as *;
+@use "styles/ng-doc-overrides" as *;
 
 /* Import all styles from the OSI Cards library */
-@import '../projects/osi-cards-lib/src/lib/styles/styles';
+@import "../projects/osi-cards-lib/src/lib/styles/styles";
 
 /* Tailwind directives */
 @tailwind base;
@@ -24,29 +24,31 @@
 
 /* CSS files - Keep as @import (cannot use @use for CSS files) */
 /* Override deprecated color-adjust in prismjs (fixes PostCSS warning) - must be before prismjs imports */
-@import 'styles/prismjs-overrides.css';
+@import "styles/prismjs-overrides.css";
 /* Prism.js syntax highlighting */
-@import 'prismjs/themes/prism-tomorrow.css';
-@import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
-@import 'prismjs/plugins/line-highlight/prism-line-highlight.css';
+@import "prismjs/themes/prism-tomorrow.css";
+@import "prismjs/plugins/line-numbers/prism-line-numbers.css";
+@import "prismjs/plugins/line-highlight/prism-line-highlight.css";
 
 /* NgDoc styles */
-@import '@ng-doc/app/styles/main.css';
-@import '@ng-doc/app/styles/global.css';
-@import '@ng-doc/app/styles/themes/dark.css';
+@import "@ng-doc/app/styles/main.css";
+@import "@ng-doc/app/styles/global.css";
+@import "@ng-doc/app/styles/themes/dark.css";
 
 /* Optional local Material Icons: place fonts in src/assets/fonts/MaterialIcons-Regular.woff2 */
 @font-face {
-  font-family: 'Material Icons';
+  font-family: "Material Icons";
   font-style: normal;
   font-weight: 400;
-  src: local('Material Icons'), url('assets/fonts/MaterialIcons-Regular.woff2') format('woff2');
+  src:
+    local("Material Icons"),
+    url("assets/fonts/MaterialIcons-Regular.woff2") format("woff2");
   font-display: swap;
 }
 
 /* Material icons helper class (follows Google Material Icons apis) */
 .material-icons {
-  font-family: 'Material Icons';
+  font-family: "Material Icons";
   font-weight: normal;
   font-style: normal;
   font-size: 24px;
@@ -57,7 +59,7 @@
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
-  -webkit-font-feature-settings: 'liga';
+  -webkit-font-feature-settings: "liga";
   -webkit-font-smoothing: antialiased;
 }
 

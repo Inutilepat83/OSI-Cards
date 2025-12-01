@@ -186,10 +186,7 @@ For the Orange Sales Assistance frontend specifically:
 ```html
 <!-- Wrap the card renderer in the container class -->
 <div class="osi-cards-container">
-  <osi-ai-card-renderer 
-    [card]="generatedCard"
-    [config]="cardConfig">
-  </osi-ai-card-renderer>
+  <osi-ai-card-renderer [card]="generatedCard" [config]="cardConfig"> </osi-ai-card-renderer>
 </div>
 ```
 
@@ -231,10 +228,10 @@ If you need to customize:
   // Override typography scale
   --card-title-font-size: 1.2rem;
   --card-value-font-size: 1.1rem;
-  
+
   // Override colors
   --color-brand: #your-brand-color;
-  
+
   // Override spacing
   --card-padding: 20px;
 }
@@ -285,9 +282,3 @@ If you need to customize:
 ## Support
 
 For issues or questions, please file an issue in the repository or contact the OSI Cards team.
-
-
-
-
-
-

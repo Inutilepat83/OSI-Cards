@@ -20,17 +20,20 @@ All services in the OSI Cards library use Angular's `providedIn: 'root'` pattern
 **Provided In**: `root` (singleton)
 
 **Lifecycle**:
+
 - Initialized on first injection into any component
 - Maintains state across all card components
 - Automatically cleans up on application destroy
 
 **Key Features**:
+
 - Mouse position tracking for tilt calculations
 - RAF (RequestAnimationFrame) optimized updates
 - Element dimension caching for performance
 - Observable-based tilt calculations stream
 
 **Usage**:
+
 ```typescript
 import { Component, inject } from '@angular/core';
 import { MagneticTiltService } from 'osi-cards-lib';
@@ -40,13 +43,14 @@ import { MagneticTiltService } from 'osi-cards-lib';
 })
 export class MyComponent {
   private tiltService = inject(MagneticTiltService);
-  
+
   // Subscribe to tilt calculations
   // tiltService.tiltCalculations$.subscribe(calculations => { ... });
 }
 ```
 
-**Initialization Timing**: 
+**Initialization Timing**:
+
 - Created on first component injection
 - No explicit initialization required
 - Shared across all card instances
@@ -60,16 +64,19 @@ export class MyComponent {
 **Provided In**: `root` (singleton)
 
 **Lifecycle**:
+
 - Stateless service with icon mapping dictionary
 - No initialization required
 - Instant access to icon mappings
 
 **Key Features**:
+
 - Pre-defined icon mappings for common fields
 - Fallback icon support
 - Field name to icon name translation
 
 **Usage**:
+
 ```typescript
 import { Component, inject } from '@angular/core';
 import { IconService } from 'osi-cards-lib';
@@ -79,7 +86,7 @@ import { IconService } from 'osi-cards-lib';
 })
 export class MyComponent {
   private iconService = inject(IconService);
-  
+
   getIcon(fieldName: string): string {
     return this.iconService.getFieldIcon(fieldName);
   }
@@ -87,6 +94,7 @@ export class MyComponent {
 ```
 
 **Initialization Timing**:
+
 - Available immediately (no async initialization)
 - Icon map is static and in-memory
 - No dependencies
@@ -100,17 +108,20 @@ export class MyComponent {
 **Provided In**: `root` (singleton)
 
 **Lifecycle**:
+
 - Stateless normalization functions
 - No persistent state
 - Available immediately
 
 **Key Features**:
+
 - Section type validation
 - Field normalization
 - Section sorting and ordering
 - Default value injection
 
 **Usage**:
+
 ```typescript
 import { Component, inject } from '@angular/core';
 import { SectionNormalizationService, CardSection } from 'osi-cards-lib';
@@ -120,7 +131,7 @@ import { SectionNormalizationService, CardSection } from 'osi-cards-lib';
 })
 export class MyComponent {
   private normalizationService = inject(SectionNormalizationService);
-  
+
   normalizeSections(sections: CardSection[]): CardSection[] {
     return this.normalizationService.normalizeAndSortSections(sections);
   }
@@ -128,6 +139,7 @@ export class MyComponent {
 ```
 
 **Initialization Timing**:
+
 - Available immediately
 - Pure functions, no state
 - No async operations
@@ -141,17 +153,20 @@ export class MyComponent {
 **Provided In**: `root` (singleton)
 
 **Lifecycle**:
+
 - Utility functions only
 - No state management
 - Stateless helper methods
 
 **Key Features**:
+
 - Trend icon mapping
 - Change formatting
 - Value formatting utilities
 - Section-specific helpers
 
 **Usage**:
+
 ```typescript
 import { Component, inject } from '@angular/core';
 import { SectionUtilsService } from 'osi-cards-lib';
@@ -161,7 +176,7 @@ import { SectionUtilsService } from 'osi-cards-lib';
 })
 export class MyComponent {
   private utils = inject(SectionUtilsService);
-  
+
   formatChange(change: number): string {
     return this.utils.formatChange(change);
   }
@@ -169,6 +184,7 @@ export class MyComponent {
 ```
 
 **Initialization Timing**:
+
 - Available immediately
 - No initialization required
 - Pure utility functions
@@ -262,6 +278,7 @@ export class MyComponent {
 ### Stateful Services
 
 **MagneticTiltService**:
+
 - Maintains mouse position state
 - Tracks element cache
 - Manages animation frame requests
@@ -270,6 +287,7 @@ export class MyComponent {
 ### Stateless Services
 
 **IconService**, **SectionNormalizationService**, **SectionUtilsService**:
+
 - No persistent state
 - Pure functions only
 - No side effects
@@ -335,7 +353,7 @@ Since services are singletons, state is automatically shared:
 // Component A
 export class ComponentA {
   private tiltService = inject(MagneticTiltService);
-  
+
   updateTilt() {
     this.tiltService.calculateTilt({ x: 100, y: 200 }, element);
   }
@@ -344,10 +362,10 @@ export class ComponentA {
 // Component B (same instance)
 export class ComponentB {
   private tiltService = inject(MagneticTiltService);
-  
+
   subscribeToTilt() {
     // Receives updates from Component A
-    this.tiltService.tiltCalculations$.subscribe(calc => {
+    this.tiltService.tiltCalculations$.subscribe((calc) => {
       // ...
     });
   }
@@ -361,7 +379,7 @@ Services are available immediately after injection:
 ```typescript
 export class MyComponent {
   private iconService = inject(IconService);
-  
+
   ngOnInit() {
     // Service already initialized and ready
     const icon = this.iconService.getFieldIcon('email');
@@ -375,7 +393,8 @@ export class MyComponent {
 
 **Issue**: Cannot inject service
 
-**Solution**: 
+**Solution**:
+
 - Ensure service is imported from 'osi-cards-lib'
 - Verify service uses `providedIn: 'root'` (no explicit providers needed)
 - Check import path is correct
@@ -385,6 +404,7 @@ export class MyComponent {
 **Issue**: Multiple service instances
 
 **Solution**:
+
 - This shouldn't happen with `providedIn: 'root'`
 - Verify you're not providing the service elsewhere
 - Check for module-level providers that might override root
@@ -394,6 +414,7 @@ export class MyComponent {
 **Issue**: Services not cleaned up
 
 **Solution**:
+
 - Services with `providedIn: 'root'` are automatically cleaned up
 - Ensure components unsubscribe from service observables
 - Check for component references held in services
@@ -412,14 +433,3 @@ export class MyComponent {
 - [README.md](../README.md) - Library overview and setup
 - [IMPORT_EXAMPLE.md](../IMPORT_EXAMPLE.md) - Import and usage examples
 - [USAGE.md](../USAGE.md) - Detailed API documentation
-
-
-
-
-
-
-
-
-
-
-

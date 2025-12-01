@@ -37,7 +37,7 @@ const cardConfig: AICardConfig = {
   cardTitle: 'Example Card',
   sections: [
     // Add sections here
-  ]
+  ],
 };
 ```
 
@@ -65,17 +65,17 @@ const infoSection: CardSection = {
       label: 'Revenue',
       value: '$2.5B',
       change: 15.5,
-      description: 'YoY growth'
+      description: 'YoY growth',
     },
     {
       label: 'Market Cap',
       value: '$10B',
-      trend: 'up'
-    }
+      trend: 'up',
+    },
   ],
   // Optional layout hints
   preferredColumns: 1,
-  priority: 'standard'
+  priority: 'standard',
 };
 ```
 
@@ -92,8 +92,8 @@ const interactiveInfoSection: CardSection = {
       value: 'www.example.com',
       action: {
         type: 'link',
-        url: 'https://example.com'
-      }
+        url: 'https://example.com',
+      },
     },
     {
       id: 'contact',
@@ -101,10 +101,10 @@ const interactiveInfoSection: CardSection = {
       value: 'sales@example.com',
       action: {
         type: 'email',
-        email: 'sales@example.com'
-      }
-    }
-  ]
+        email: 'sales@example.com',
+      },
+    },
+  ],
 };
 ```
 
@@ -131,11 +131,11 @@ const overviewSection: CardSection = {
     { label: 'Headquarters', value: 'San Francisco, CA' },
     { label: 'CEO', value: 'Jane Smith' },
     { label: 'Fiscal Year End', value: 'December' },
-    { label: 'Website', value: 'https://acme.com' }
+    { label: 'Website', value: 'https://acme.com' },
   ],
   // Overview sections work well with 2-3 columns
   preferredColumns: 2,
-  priority: 'important'
+  priority: 'important',
 };
 ```
 
@@ -158,31 +158,31 @@ const analyticsSection: CardSection = {
       value: '1.2M',
       change: 23.5,
       trend: 'up',
-      percentage: 85
+      percentage: 85,
     },
     {
       label: 'Customer Satisfaction',
       value: '4.8/5',
       change: 0.2,
       trend: 'up',
-      percentage: 96
+      percentage: 96,
     },
     {
       label: 'Churn Rate',
       value: '2.1%',
       change: -0.5,
       trend: 'down', // down is good for churn
-      percentage: 21
+      percentage: 21,
     },
     {
       label: 'Net Promoter Score',
       value: '72',
       change: 5,
       trend: 'up',
-      percentage: 72
-    }
+      percentage: 72,
+    },
   ],
-  preferredColumns: 2
+  preferredColumns: 2,
 };
 ```
 
@@ -196,8 +196,8 @@ const progressAnalytics: CardSection = {
     { label: 'Revenue Target', value: '$10M', percentage: 78 },
     { label: 'New Customers', value: '500', percentage: 92 },
     { label: 'Team Growth', value: '25 hires', percentage: 60 },
-    { label: 'Product Launches', value: '3 products', percentage: 100 }
-  ]
+    { label: 'Product Launches', value: '3 products', percentage: 100 },
+  ],
 };
 ```
 
@@ -218,10 +218,10 @@ const barChartSection: CardSection = {
     { label: 'Q1 2024', value: 2500000 },
     { label: 'Q2 2024', value: 3100000 },
     { label: 'Q3 2024', value: 2800000 },
-    { label: 'Q4 2024', value: 3500000 }
+    { label: 'Q4 2024', value: 3500000 },
   ],
   // Charts typically span 2 columns
-  preferredColumns: 2
+  preferredColumns: 2,
 };
 ```
 
@@ -236,9 +236,9 @@ const pieChartSection: CardSection = {
     { label: 'North America', value: 45 },
     { label: 'Europe', value: 30 },
     { label: 'Asia Pacific', value: 18 },
-    { label: 'Rest of World', value: 7 }
+    { label: 'Rest of World', value: 7 },
   ],
-  preferredColumns: 2
+  preferredColumns: 2,
 };
 ```
 
@@ -255,8 +255,8 @@ const lineChartSection: CardSection = {
     { label: 'Mar', value: 128 },
     { label: 'Apr', value: 145 },
     { label: 'May', value: 152 },
-    { label: 'Jun', value: 148 }
-  ]
+    { label: 'Jun', value: 148 },
+  ],
 };
 ```
 
@@ -278,27 +278,27 @@ const listSection: CardSection = {
       title: 'Cloud Migration',
       value: 'In Progress',
       status: 'active',
-      description: 'Migrating to AWS infrastructure'
+      description: 'Migrating to AWS infrastructure',
     },
     {
       title: 'Mobile App v2.0',
       value: 'Planning',
       status: 'pending',
-      description: 'Next generation mobile experience'
+      description: 'Next generation mobile experience',
     },
     {
       title: 'Data Analytics Platform',
       value: 'Completed',
       status: 'complete',
-      description: 'Real-time analytics dashboard'
+      description: 'Real-time analytics dashboard',
     },
     {
       title: 'Security Audit',
       value: 'Scheduled',
       status: 'pending',
-      description: 'Annual security compliance review'
-    }
-  ]
+      description: 'Annual security compliance review',
+    },
+  ],
 };
 ```
 
@@ -312,19 +312,19 @@ const iconListSection: CardSection = {
     {
       title: 'Cloud Computing',
       value: 'Enterprise',
-      icon: 'cloud'
+      icon: 'cloud',
     },
     {
       title: 'Data Analytics',
       value: 'Professional',
-      icon: 'bar-chart'
+      icon: 'bar-chart',
     },
     {
       title: 'Cybersecurity',
       value: 'Advanced',
-      icon: 'shield'
-    }
-  ]
+      icon: 'shield',
+    },
+  ],
 };
 ```
 
@@ -346,25 +346,25 @@ const contactSection: CardSection = {
       role: 'CEO',
       email: 'jane.smith@example.com',
       phone: '+1 (555) 123-4567',
-      avatar: 'https://example.com/avatars/jane.jpg'
+      avatar: 'https://example.com/avatars/jane.jpg',
     },
     {
       name: 'John Doe',
       role: 'CFO',
       email: 'john.doe@example.com',
       phone: '+1 (555) 234-5678',
-      linkedin: 'https://linkedin.com/in/johndoe'
+      linkedin: 'https://linkedin.com/in/johndoe',
     },
     {
       name: 'Alice Johnson',
       role: 'CTO',
       email: 'alice.johnson@example.com',
-      twitter: '@alicejohnson'
-    }
+      twitter: '@alicejohnson',
+    },
   ],
   // Contact cards work well in single column
   preferredColumns: 1,
-  orientation: 'horizontal'
+  orientation: 'horizontal',
 };
 ```
 
@@ -383,25 +383,25 @@ const networkSection: CardSection = {
   primaryContact: {
     name: 'Acme Corporation',
     type: 'company',
-    avatar: 'https://example.com/logos/acme.png'
+    avatar: 'https://example.com/logos/acme.png',
   },
   connections: [
     {
       name: 'Global Partners Inc.',
       relationship: 'Strategic Partner',
-      strength: 'strong'
+      strength: 'strong',
     },
     {
       name: 'Tech Solutions Ltd.',
       relationship: 'Vendor',
-      strength: 'moderate'
+      strength: 'moderate',
     },
     {
       name: 'Innovation Labs',
       relationship: 'Investment',
-      strength: 'strong'
-    }
-  ]
+      strength: 'strong',
+    },
+  ],
 };
 ```
 
@@ -424,29 +424,29 @@ const mapSection: CardSection = {
       address: '123 Market St, San Francisco, CA',
       lat: 37.7749,
       lng: -122.4194,
-      type: 'headquarters'
+      type: 'headquarters',
     },
     {
       name: 'European Office',
       address: '10 Downing St, London, UK',
       lat: 51.5074,
       lng: -0.1278,
-      type: 'office'
+      type: 'office',
     },
     {
       name: 'Asia Pacific Hub',
       address: '1 Raffles Place, Singapore',
       lat: 1.3521,
       lng: 103.8198,
-      type: 'office'
-    }
+      type: 'office',
+    },
   ],
   // Maps benefit from wider display
   preferredColumns: 2,
   mapOptions: {
     zoom: 2,
-    center: { lat: 20, lng: 0 }
-  }
+    center: { lat: 20, lng: 0 },
+  },
 };
 ```
 
@@ -468,28 +468,28 @@ const eventSection: CardSection = {
       date: '2024-01-15',
       time: '4:00 PM EST',
       type: 'earnings',
-      description: 'Quarterly financial results presentation'
+      description: 'Quarterly financial results presentation',
     },
     {
       title: 'Annual Shareholder Meeting',
       date: '2024-02-20',
       type: 'meeting',
-      location: 'San Francisco, CA'
+      location: 'San Francisco, CA',
     },
     {
       title: 'Product Launch',
       date: '2024-03-01',
       type: 'launch',
-      description: 'New enterprise platform release'
+      description: 'New enterprise platform release',
     },
     {
       title: 'Industry Conference',
       date: '2024-03-15',
       type: 'conference',
       location: 'Las Vegas, NV',
-      description: 'Tech Summit 2024'
-    }
-  ]
+      description: 'Tech Summit 2024',
+    },
+  ],
 };
 ```
 
@@ -512,7 +512,7 @@ const productSection: CardSection = {
       category: 'Cloud',
       price: 'From $999/mo',
       features: ['Auto-scaling', 'Global CDN', '24/7 Support'],
-      icon: 'cloud'
+      icon: 'cloud',
     },
     {
       name: 'Data Analytics Pro',
@@ -520,7 +520,7 @@ const productSection: CardSection = {
       category: 'Analytics',
       price: 'From $499/mo',
       features: ['Real-time dashboards', 'ML insights', 'Custom reports'],
-      icon: 'trending-up'
+      icon: 'trending-up',
     },
     {
       name: 'SecureShield',
@@ -528,10 +528,10 @@ const productSection: CardSection = {
       category: 'Security',
       price: 'Custom pricing',
       features: ['Threat detection', 'Compliance', 'Incident response'],
-      icon: 'shield'
-    }
+      icon: 'shield',
+    },
   ],
-  preferredColumns: 2
+  preferredColumns: 2,
 };
 ```
 
@@ -552,21 +552,21 @@ const solutionsSection: CardSection = {
       title: 'Financial Services',
       description: 'Regulatory-compliant solutions for banks and fintech',
       benefits: ['SOC 2 certified', 'Real-time transactions', 'Fraud detection'],
-      icon: 'building-bank'
+      icon: 'building-bank',
     },
     {
       title: 'Healthcare',
       description: 'HIPAA-compliant healthcare technology',
       benefits: ['EHR integration', 'Telehealth', 'Patient analytics'],
-      icon: 'heart-pulse'
+      icon: 'heart-pulse',
     },
     {
       title: 'Retail & E-commerce',
       description: 'Omnichannel commerce solutions',
       benefits: ['Inventory sync', 'Personalization', 'Payment processing'],
-      icon: 'shopping-cart'
-    }
-  ]
+      icon: 'shopping-cart',
+    },
+  ],
 };
 ```
 
@@ -589,41 +589,41 @@ const financialsSection: CardSection = {
       value: '$2.5B',
       change: 18.5,
       trend: 'up',
-      period: 'YoY'
+      period: 'YoY',
     },
     {
       label: 'Gross Profit',
       value: '$1.2B',
       change: 22.3,
       trend: 'up',
-      percentage: 48 // Gross margin
+      percentage: 48, // Gross margin
     },
     {
       label: 'Operating Income',
       value: '$450M',
       change: 15.2,
-      trend: 'up'
+      trend: 'up',
     },
     {
       label: 'Net Income',
       value: '$320M',
       change: 12.8,
-      trend: 'up'
+      trend: 'up',
     },
     {
       label: 'EPS',
       value: '$3.25',
       change: 0.45,
-      trend: 'up'
+      trend: 'up',
     },
     {
       label: 'Free Cash Flow',
       value: '$280M',
       change: -5.2,
-      trend: 'down'
-    }
+      trend: 'down',
+    },
   ],
-  preferredColumns: 2
+  preferredColumns: 2,
 };
 ```
 
@@ -641,19 +641,19 @@ const quotationSection: CardSection = {
   title: 'Customer Testimonials',
   quotes: [
     {
-      text: 'Implementing Acme\'s solution reduced our operational costs by 40% in the first year.',
+      text: "Implementing Acme's solution reduced our operational costs by 40% in the first year.",
       author: 'Michael Chen',
       role: 'VP of Operations',
       company: 'Global Logistics Inc.',
-      avatar: 'https://example.com/avatars/michael.jpg'
+      avatar: 'https://example.com/avatars/michael.jpg',
     },
     {
       text: 'The support team is exceptional. They helped us solve complex integration challenges within days.',
       author: 'Sarah Williams',
       role: 'CTO',
-      company: 'TechStart Corp.'
-    }
-  ]
+      company: 'TechStart Corp.',
+    },
+  ],
 };
 ```
 
@@ -672,18 +672,20 @@ const textReferenceSection: CardSection = {
   references: [
     {
       title: 'Annual Report 2024',
-      excerpt: 'The company achieved record revenue growth of 18.5% year-over-year, driven by strong performance in cloud services...',
+      excerpt:
+        'The company achieved record revenue growth of 18.5% year-over-year, driven by strong performance in cloud services...',
       source: 'SEC Filing 10-K',
       date: '2024-01-15',
-      url: 'https://sec.gov/example'
+      url: 'https://sec.gov/example',
     },
     {
       title: 'Market Analysis',
-      excerpt: 'Industry analysts project the cloud services market to grow at 22% CAGR through 2028...',
+      excerpt:
+        'Industry analysts project the cloud services market to grow at 22% CAGR through 2028...',
       source: 'Gartner Research',
-      date: '2024-02-01'
-    }
-  ]
+      date: '2024-02-01',
+    },
+  ],
 };
 ```
 
@@ -706,23 +708,23 @@ const newsSection: CardSection = {
       date: '2024-01-20',
       source: 'PR Newswire',
       url: 'https://example.com/news/partnership',
-      image: 'https://example.com/images/partnership.jpg'
+      image: 'https://example.com/images/partnership.jpg',
     },
     {
       title: 'Q4 2024 Results Exceed Expectations',
       summary: 'Company reports 25% revenue growth and raises guidance',
       date: '2024-01-15',
       source: 'Business Wire',
-      category: 'earnings'
+      category: 'earnings',
     },
     {
       title: 'New AI-Powered Analytics Platform Launched',
       summary: 'Revolutionary ML capabilities for enterprise customers',
       date: '2024-01-10',
       source: 'TechCrunch',
-      category: 'product'
-    }
-  ]
+      category: 'product',
+    },
+  ],
 };
 ```
 
@@ -743,27 +745,27 @@ const brandColorsSection: CardSection = {
       name: 'Primary Blue',
       hex: '#0066CC',
       rgb: 'rgb(0, 102, 204)',
-      usage: 'Primary brand color, CTAs'
+      usage: 'Primary brand color, CTAs',
     },
     {
       name: 'Secondary Green',
       hex: '#00A86B',
       rgb: 'rgb(0, 168, 107)',
-      usage: 'Success states, accents'
+      usage: 'Success states, accents',
     },
     {
       name: 'Neutral Gray',
       hex: '#6B7280',
       rgb: 'rgb(107, 114, 128)',
-      usage: 'Text, borders'
+      usage: 'Text, borders',
     },
     {
       name: 'Alert Red',
       hex: '#DC2626',
       rgb: 'rgb(220, 38, 38)',
-      usage: 'Errors, warnings'
-    }
-  ]
+      usage: 'Errors, warnings',
+    },
+  ],
 };
 ```
 
@@ -787,8 +789,8 @@ const completeCard: AICardConfig = {
         { label: 'Name', value: 'Acme Corporation' },
         { label: 'Ticker', value: 'ACME' },
         { label: 'Sector', value: 'Technology' },
-        { label: 'Employees', value: '5,000+' }
-      ]
+        { label: 'Employees', value: '5,000+' },
+      ],
     },
     {
       type: 'analytics',
@@ -797,8 +799,8 @@ const completeCard: AICardConfig = {
       fields: [
         { label: 'Revenue', value: '$2.5B', change: 18.5, trend: 'up' },
         { label: 'Growth', value: '18.5%', percentage: 85 },
-        { label: 'NPS', value: '72', change: 5, trend: 'up' }
-      ]
+        { label: 'NPS', value: '72', change: 5, trend: 'up' },
+      ],
     },
     {
       type: 'chart',
@@ -808,8 +810,8 @@ const completeCard: AICardConfig = {
         { label: 'Q1', value: 550 },
         { label: 'Q2', value: 620 },
         { label: 'Q3', value: 580 },
-        { label: 'Q4', value: 750 }
-      ]
+        { label: 'Q4', value: 750 },
+      ],
     },
     {
       type: 'contact-card',
@@ -818,9 +820,9 @@ const completeCard: AICardConfig = {
         {
           name: 'Jane Smith',
           role: 'CEO',
-          email: 'jane@acme.com'
-        }
-      ]
+          email: 'jane@acme.com',
+        },
+      ],
     },
     {
       type: 'event',
@@ -829,11 +831,11 @@ const completeCard: AICardConfig = {
         {
           title: 'Earnings Call',
           date: '2024-01-15',
-          type: 'earnings'
-        }
-      ]
-    }
-  ]
+          type: 'earnings',
+        },
+      ],
+    },
+  ],
 };
 ```
 
@@ -847,25 +849,25 @@ All sections support these common layout options:
 interface SectionLayoutOptions {
   /** Preferred number of columns (1-4) */
   preferredColumns?: 1 | 2 | 3 | 4;
-  
+
   /** Minimum columns (won't shrink below this) */
   minColumns?: number;
-  
+
   /** Maximum columns (won't expand beyond this) */
   maxColumns?: number;
-  
+
   /** Section priority for layout ordering */
   priority?: 'critical' | 'important' | 'standard' | 'optional';
-  
+
   /** Orientation hint */
   orientation?: 'vertical' | 'horizontal' | 'auto';
-  
+
   /** Whether section should stick to top */
   sticky?: boolean;
-  
+
   /** Whether section can expand to fill space */
   flexGrow?: boolean;
-  
+
   /** Group ID for related sections */
   groupId?: string;
 }
@@ -886,12 +888,8 @@ import {
   CardEvent,
   CardProduct,
   CardLocation,
-  SectionRenderEvent
+  SectionRenderEvent,
 } from 'osi-cards-lib';
 ```
 
 For the complete type definitions, see the [API Documentation](./api/).
-
-
-
-

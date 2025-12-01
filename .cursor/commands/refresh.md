@@ -1,1 +1,0 @@
-Force refresh the app, also browswer storage to see new version 

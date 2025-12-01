@@ -33,7 +33,7 @@
 
 /* Shimmer effect on progress fill */
 .streaming-progress-fill::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -95,7 +95,8 @@
 }
 
 @keyframes thinkingPulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(0);
     opacity: 0.7;
   }
@@ -113,14 +114,10 @@
   .streaming-progress-fill::after {
     animation: none;
   }
-  
+
   .streaming-progress-thinking {
     animation: none;
     width: 100%;
     opacity: 0.5;
   }
 }
-
-
-
-

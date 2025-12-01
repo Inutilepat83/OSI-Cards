@@ -1,9 +1,8 @@
 /* Analytics metric cards with progress and trend indicators */
 /* OPTIMIZED: Compact design with clear visual hierarchy */
 
-@import 'design-system';
-@import '../../core/color-helpers';
-
+@import "design-system";
+@import "../../core/color-helpers";
 
 .analytics-metrics {
   display: grid !important;
@@ -11,7 +10,7 @@
   gap: var(--section-card-gap) !important;
   width: 100% !important;
   box-sizing: border-box !important;
-  
+
   @media (max-width: 820px) {
     grid-template-columns: 1fr !important;
   }
@@ -36,7 +35,7 @@
   @include card;
 
   &::before {
-    content: '' !important;
+    content: "" !important;
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
@@ -47,9 +46,9 @@
     transition: opacity 0.22s ease !important;
     pointer-events: none !important;
   }
-  
+
   &::after {
-    content: '' !important;
+    content: "" !important;
     position: absolute !important;
     inset: 0 !important;
     background: radial-gradient(circle at center, $brand-color-03, transparent) !important;
@@ -60,12 +59,14 @@
 
   &:hover {
     transform: translateY(-2px) !important;
-    box-shadow: 0 8px 16px $foreground-12, 0 0 0 1px $brand-color-15 !important;
+    box-shadow:
+      0 8px 16px $foreground-12,
+      0 0 0 1px $brand-color-15 !important;
 
     &::before {
       opacity: 1 !important;
     }
-    
+
     &::after {
       opacity: 1 !important;
     }
@@ -73,7 +74,7 @@
     .analytics-metric__value {
       color: var(--foreground, $foreground-color) !important;
     }
-    
+
     .analytics-metric__label {
       color: var(--card-text-secondary, $text-secondary) !important;
     }
@@ -149,7 +150,11 @@
 
     .section-card__progress-bar {
       height: 100% !important;
-      background: linear-gradient(90deg, var(--color-brand, $brand-color), $brand-color-60) !important;
+      background: linear-gradient(
+        90deg,
+        var(--color-brand, $brand-color),
+        $brand-color-60
+      ) !important;
       border-radius: inherit !important;
       transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
@@ -174,15 +179,17 @@
       flex-shrink: 0 !important;
       opacity: 0.8 !important;
       color: var(--color-brand, $brand-color) !important;
-      transition: opacity 0.25s ease, color 0.25s ease !important;
+      transition:
+        opacity 0.25s ease,
+        color 0.25s ease !important;
       @include icon-base(16px);
       @include trend-colors;
     }
   }
-  
+
   &:hover .analytics-metric__meta {
     color: var(--card-text-secondary, $text-secondary) !important;
-    
+
     lucide-icon {
       opacity: 1 !important;
     }
@@ -215,29 +222,29 @@
   .analytics-metrics {
     gap: var(--card-gap) !important;
   }
-  
+
   .analytics-metric {
     padding: var(--card-padding) !important;
-    
+
     &__label {
       gap: var(--card-gap) !important;
       margin-bottom: 4px !important;
-      
+
       lucide-icon {
         width: 12px !important;
         height: 12px !important;
       }
     }
-    
+
     &__progress {
       margin-top: 6px !important;
       height: 5px !important;
     }
-    
+
     &__meta {
       gap: var(--card-gap) !important;
       margin-top: 6px !important;
-      
+
       lucide-icon {
         width: 11px !important;
         height: 11px !important;
@@ -247,33 +254,33 @@
 }
 
 /* Light theme overrides */
-:root[data-theme='day'] {
+:root[data-theme="day"] {
   .analytics-metric {
     &__label {
       color: #6b7280 !important;
     }
-    
+
     &:hover &__label {
       color: #4b5563 !important;
     }
-    
+
     &__value {
       color: #1a1a1a !important;
     }
-    
+
     &:hover &__value {
       color: var(--primary, $brand-color) !important;
       text-shadow: none !important;
     }
-    
+
     &__meta {
       color: #6b7280 !important;
     }
   }
-  
+
   .analytics-progress {
     background: rgba(200, 200, 200, 0.2) !important;
-    
+
     &::after {
       background: linear-gradient(90deg, $brand-color-80, $brand-color) !important;
     }

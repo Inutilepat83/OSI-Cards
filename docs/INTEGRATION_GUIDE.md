@@ -33,9 +33,7 @@ import { ApplicationConfig } from '@angular/core';
 import { provideOSICards } from 'osi-cards-lib';
 
 export const appConfig: ApplicationConfig = {
-  providers: [
-    provideOSICards()
-  ]
+  providers: [provideOSICards()],
 };
 ```
 
@@ -68,11 +66,9 @@ import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
   standalone: true,
   imports: [AICardRendererComponent],
   template: `
-    <app-ai-card-renderer
-      [cardConfig]="card"
-      (cardEvent)="onInteraction($event)">
+    <app-ai-card-renderer [cardConfig]="card" (cardEvent)="onInteraction($event)">
     </app-ai-card-renderer>
-  `
+  `,
 })
 export class MyComponent {
   card: AICardConfig = {
@@ -83,10 +79,10 @@ export class MyComponent {
         type: 'info',
         fields: [
           { label: 'SKU', value: 'PRD-001' },
-          { label: 'Price', value: '$99.99', type: 'currency' }
-        ]
-      }
-    ]
+          { label: 'Price', value: '$99.99', type: 'currency' },
+        ],
+      },
+    ],
   };
 
   onInteraction(event: CardFieldInteractionEvent) {
@@ -99,11 +95,7 @@ export class MyComponent {
 
 ```typescript
 import { Component, inject } from '@angular/core';
-import { 
-  AICardRendererComponent, 
-  CardFacadeService,
-  StreamingStage 
-} from 'osi-cards-lib';
+import { AICardRendererComponent, CardFacadeService, StreamingStage } from 'osi-cards-lib';
 
 @Component({
   // ...
@@ -111,30 +103,33 @@ import {
     <app-ai-card-renderer
       [cardConfig]="currentCard()"
       [isStreaming]="isStreaming()"
-      [streamingStage]="streamingStage()">
+      [streamingStage]="streamingStage()"
+    >
     </app-ai-card-renderer>
-  `
+  `,
 })
 export class StreamingComponent {
   private cardFacade = inject(CardFacadeService);
-  
+
   currentCard = signal<AICardConfig | null>(null);
   isStreaming = signal(false);
   streamingStage = signal<StreamingStage>('idle');
 
   startStreaming(jsonData: string) {
     this.isStreaming.set(true);
-    
-    this.cardFacade.streamFromJson(jsonData, {
-      onStateChange: (state) => {
-        this.streamingStage.set(state.stage);
-        if (state.stage === 'complete') {
-          this.isStreaming.set(false);
-        }
-      }
-    }).subscribe(card => {
-      this.currentCard.set(card);
-    });
+
+    this.cardFacade
+      .streamFromJson(jsonData, {
+        onStateChange: (state) => {
+          this.streamingStage.set(state.stage);
+          if (state.stage === 'complete') {
+            this.isStreaming.set(false);
+          }
+        },
+      })
+      .subscribe((card) => {
+        this.currentCard.set(card);
+      });
   }
 }
 ```
@@ -149,24 +144,15 @@ export class StreamingComponent {
 // cards.module.ts
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { 
+import {
   AICardRendererComponent,
   CardSkeletonComponent,
-  MasonryGridComponent 
+  MasonryGridComponent,
 } from 'osi-cards-lib';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    AICardRendererComponent,
-    CardSkeletonComponent,
-    MasonryGridComponent
-  ],
-  exports: [
-    AICardRendererComponent,
-    CardSkeletonComponent,
-    MasonryGridComponent
-  ]
+  imports: [CommonModule, AICardRendererComponent, CardSkeletonComponent, MasonryGridComponent],
+  exports: [AICardRendererComponent, CardSkeletonComponent, MasonryGridComponent],
 })
 export class CardsModule {}
 ```
@@ -181,11 +167,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CardsModule } from './cards/cards.module';
 
 @NgModule({
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    CardsModule
-  ],
+  imports: [BrowserModule, BrowserAnimationsModule, CardsModule],
   // ...
 })
 export class AppModule {}
@@ -207,9 +189,9 @@ export const serverConfig: ApplicationConfig = {
   providers: [
     provideServerRendering(),
     provideOSICards({
-      ssr: true // Disables browser-only features
-    })
-  ]
+      ssr: true, // Disables browser-only features
+    }),
+  ],
 };
 ```
 
@@ -222,7 +204,7 @@ import { isPlatformBrowser } from '@angular/common';
 @Component({...})
 export class MyComponent {
   private platformId = inject(PLATFORM_ID);
-  
+
   get isBrowser(): boolean {
     return isPlatformBrowser(this.platformId);
   }
@@ -232,16 +214,14 @@ export class MyComponent {
 ### Conditional Rendering
 
 ```html
-<app-ai-card-renderer
-  *ngIf="isBrowser"
-  [cardConfig]="card">
-</app-ai-card-renderer>
+<app-ai-card-renderer *ngIf="isBrowser" [cardConfig]="card"> </app-ai-card-renderer>
 
 <!-- SSR fallback -->
 <app-card-skeleton
   *ngIf="!isBrowser"
   [cardTitle]="card.cardTitle"
-  [sectionCount]="card.sections.length">
+  [sectionCount]="card.sections.length"
+>
 </app-card-skeleton>
 ```
 
@@ -257,15 +237,15 @@ module.exports = {
   plugins: [
     new ModuleFederationPlugin({
       remotes: {
-        osiCards: 'osiCards@http://localhost:4201/remoteEntry.js'
+        osiCards: 'osiCards@http://localhost:4201/remoteEntry.js',
       },
       shared: {
         '@angular/core': { singleton: true },
         '@angular/common': { singleton: true },
-        'osi-cards-lib': { singleton: true }
-      }
-    })
-  ]
+        'osi-cards-lib': { singleton: true },
+      },
+    }),
+  ],
 };
 ```
 
@@ -274,9 +254,7 @@ module.exports = {
 ```typescript
 // Lazy load from remote
 @Component({
-  template: `
-    <ng-container *ngComponentOutlet="cardComponent"></ng-container>
-  `
+  template: ` <ng-container *ngComponentOutlet="cardComponent"></ng-container> `,
 })
 export class RemoteCardHost {
   cardComponent: Type<unknown> | null = null;
@@ -300,10 +278,7 @@ import { createAction, props } from '@ngrx/store';
 import { AICardConfig } from 'osi-cards-lib';
 
 export const loadCard = createAction('[Card] Load');
-export const loadCardSuccess = createAction(
-  '[Card] Load Success',
-  props<{ card: AICardConfig }>()
-);
+export const loadCardSuccess = createAction('[Card] Load Success', props<{ card: AICardConfig }>());
 export const updateCard = createAction(
   '[Card] Update',
   props<{ updates: Partial<AICardConfig> }>()
@@ -322,16 +297,16 @@ export interface CardsState {
 
 const initialState: CardsState = {
   currentCard: null,
-  loading: false
+  loading: false,
 };
 
 export const cardsReducer = createReducer(
   initialState,
-  on(loadCard, state => ({ ...state, loading: true })),
+  on(loadCard, (state) => ({ ...state, loading: true })),
   on(loadCardSuccess, (state, { card }) => ({
     ...state,
     currentCard: card,
-    loading: false
+    loading: false,
   }))
 );
 ```
@@ -363,14 +338,14 @@ export class CardStore {
   private _selectedId = signal<string | null>(null);
 
   cards = this._cards.asReadonly();
-  
+
   selectedCard = computed(() => {
     const id = this._selectedId();
-    return id ? this._cards().find(c => c.id === id) : null;
+    return id ? this._cards().find((c) => c.id === id) : null;
   });
 
   addCard(card: AICardConfig) {
-    this._cards.update(cards => [...cards, card]);
+    this._cards.update((cards) => [...cards, card]);
   }
 
   selectCard(id: string) {
@@ -395,25 +370,23 @@ import { AICardRendererComponent, AICardConfig } from 'osi-cards-lib';
   imports: [ReactiveFormsModule, AICardRendererComponent],
   template: `
     <form [formGroup]="cardForm">
-      <input formControlName="title" placeholder="Card Title">
-      
-      <app-ai-card-renderer
-        [cardConfig]="previewCard">
-      </app-ai-card-renderer>
+      <input formControlName="title" placeholder="Card Title" />
+
+      <app-ai-card-renderer [cardConfig]="previewCard"> </app-ai-card-renderer>
     </form>
-  `
+  `,
 })
 export class CardEditorComponent {
   cardForm = this.fb.group({
     title: [''],
-    description: ['']
+    description: [''],
   });
 
   get previewCard(): AICardConfig {
     return {
       cardTitle: this.cardForm.value.title || 'Untitled',
       description: this.cardForm.value.description,
-      sections: []
+      sections: [],
     };
   }
 
@@ -433,7 +406,7 @@ addSection(type: string) {
     title: [''],
     fields: this.fb.array([])
   });
-  
+
   this.sectionsArray.push(sectionGroup);
 }
 
@@ -461,7 +434,7 @@ describe('MyComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MyComponent, AICardRendererComponent],
-      providers: [provideOSICards()]
+      providers: [provideOSICards()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MyComponent);
@@ -487,7 +460,7 @@ describe('CardFacadeService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideOSICards()]
+      providers: [provideOSICards()],
     });
     service = TestBed.inject(CardFacadeService);
   });
@@ -495,9 +468,9 @@ describe('CardFacadeService', () => {
   it('should create card', () => {
     const card = service.createCard({
       title: 'Test',
-      sections: []
+      sections: [],
     });
-    
+
     expect(card.cardTitle).toBe('Test');
     expect(card.id).toBeDefined();
   });
@@ -511,10 +484,10 @@ import { test, expect } from '@playwright/test';
 
 test('card renders correctly', async ({ page }) => {
   await page.goto('/cards');
-  
+
   const card = page.locator('app-ai-card-renderer');
   await expect(card).toBeVisible();
-  
+
   // Check title
   const title = card.locator('.card-title');
   await expect(title).toContainText('Product Overview');
@@ -522,19 +495,23 @@ test('card renders correctly', async ({ page }) => {
 
 test('card interaction emits event', async ({ page }) => {
   await page.goto('/cards');
-  
+
   // Listen for custom event
   const eventPromise = page.evaluate(() => {
-    return new Promise(resolve => {
-      document.addEventListener('card-interaction', (e) => {
-        resolve((e as CustomEvent).detail);
-      }, { once: true });
+    return new Promise((resolve) => {
+      document.addEventListener(
+        'card-interaction',
+        (e) => {
+          resolve((e as CustomEvent).detail);
+        },
+        { once: true }
+      );
     });
   });
 
   // Click field
   await page.click('.card-field');
-  
+
   const event = await eventPromise;
   expect(event).toBeDefined();
 });
@@ -553,10 +530,7 @@ If animations aren't working:
 import { provideAnimations } from '@angular/platform-browser/animations';
 
 export const appConfig = {
-  providers: [
-    provideAnimations(),
-    provideOSICards()
-  ]
+  providers: [provideAnimations(), provideOSICards()],
 };
 ```
 
@@ -586,7 +560,3 @@ this.ngZone.runOutsideAngular(() => {
 ---
 
 For more help, see the [API Reference](./API.md) or [Theming Guide](./THEMING_GUIDE.md).
-
-
-
-

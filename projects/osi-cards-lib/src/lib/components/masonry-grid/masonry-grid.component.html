@@ -16,12 +16,7 @@
   [attr.data-rendered-sections]="isVirtualScrollActive ? renderedSections.length : positionedSections.length"
 >
   <!-- Screen reader live region for streaming updates -->
-  <div
-    class="sr-only"
-    role="status"
-    aria-live="polite"
-    aria-atomic="true"
-  >
+  <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
     <span *ngIf="isStreaming && positionedSections.length > 0">
       Loading section {{ positionedSections.length }} of card content
     </span>
@@ -46,7 +41,11 @@
 
   <!-- Render sections (all sections or visible subset when virtual scrolling) -->
   <div
-    *ngFor="let item of isVirtualScrollActive ? renderedSections : positionedSections; trackBy: trackItem; let idx = index"
+    *ngFor="
+      let item of isVirtualScrollActive ? renderedSections : positionedSections;
+      trackBy: trackItem;
+      let idx = index
+    "
     #itemRef
     class="absolute masonry-item"
     role="gridcell"
@@ -80,13 +79,10 @@
       top: item.top + 'px',
       width: item.width,
       zIndex: idx,
-      '--section-index': idx
+      '--section-index': idx,
     }"
     (animationend)="onSectionAnimationEnd(item.key)"
   >
-    <app-section-renderer
-      [section]="item.section"
-      (sectionEvent)="onSectionEvent($event)"
-    ></app-section-renderer>
+    <app-section-renderer [section]="item.section" (sectionEvent)="onSectionEvent($event)"></app-section-renderer>
   </div>
 </div>

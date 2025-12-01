@@ -23,8 +23,7 @@
 
 export * from './osi-cards.providers';
 export * from './injection-tokens';
-export * from './enhanced-providers';
-export * from './zoneless.providers';
+// Note: enhanced-providers and zoneless.providers are available as separate imports if needed
 
 
 

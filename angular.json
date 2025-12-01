@@ -134,10 +134,10 @@
               "vendorChunk": true,
               "buildOptimizer": true,
               "commonChunk": true
+            }
           }
-        }
-      },
-      "serve": {
+        },
+        "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "buildTarget": "osi-cards:build",
@@ -149,10 +149,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         },
         "test": {
@@ -303,9 +300,6 @@
   },
   "cli": {
     "analytics": false,
-    "schematicCollections": [
-      "@ng-doc/builder",
-      "angular-eslint"
-    ]
+    "schematicCollections": ["@ng-doc/builder", "angular-eslint"]
   }
 }
