@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -10,11 +11,10 @@ import {
   signal,
   SimpleChanges,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { LucideIconsModule } from '../../../../shared/icons/lucide-icons.module';
 
-// Import optimized card renderer from app (not library - uses optimized MagneticTiltService)
-import { AICardRendererComponent } from '../../../../shared/components/cards/ai-card-renderer.component';
+// Import card renderer from the OSI Cards library to ensure docs show actual library output
+import { AICardRendererComponent } from '@osi-cards/components';
 
 /**
  * Demo configuration for the DocsDemoComponent
@@ -137,7 +137,7 @@ export interface DemoConfig {
         background: var(--docs-bg, #0a0a0a);
         width: 100%;
       }
-      
+
       :host-context([data-theme='day']) .demo-container {
         border-color: #e5e7eb;
         background: #fafbfc;
@@ -151,7 +151,7 @@ export interface DemoConfig {
         background: var(--docs-bg-secondary, #111111);
         border-bottom: 1px solid var(--docs-border, rgba(255, 255, 255, 0.1));
       }
-      
+
       :host-context([data-theme='day']) .demo-header {
         background: #f6f8fa;
         border-bottom-color: #e5e7eb;
@@ -170,7 +170,7 @@ export interface DemoConfig {
         text-transform: uppercase;
         letter-spacing: 0.05em;
       }
-      
+
       :host-context([data-theme='day']) .demo-title {
         color: #6b7280;
       }
@@ -257,7 +257,7 @@ export interface DemoConfig {
         justify-content: flex-start;
         background: var(--background, #0a0a0a);
         width: 100%;
-        
+
         /* Force dark theme context for card preview */
         --section-surface: #161616;
         --section-item-background: #1e1e1e;
@@ -267,7 +267,7 @@ export interface DemoConfig {
         --card-text-secondary: rgba(255, 255, 255, 0.7);
         --card-text-muted: rgba(255, 255, 255, 0.5);
       }
-      
+
       :host-context([data-theme='day']) .demo-preview {
         background: var(--background, #ffffff);
         --section-surface: #f5f5f5;
@@ -290,11 +290,13 @@ export interface DemoConfig {
         width: 100%;
         display: flex;
         justify-content: stretch;
+        flex: 1;
       }
 
       .demo-card {
         width: 100%;
         max-width: none;
+        flex: 1;
       }
 
       .demo-placeholder {

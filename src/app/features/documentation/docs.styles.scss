@@ -1941,11 +1941,14 @@
     background: var(--docs-bg);
     min-height: 250px;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: stretch;
+    justify-content: stretch;
+    width: 100%;
 
     > * {
       max-width: 100%;
+      width: 100%;
+      flex: 1;
     }
   }
 

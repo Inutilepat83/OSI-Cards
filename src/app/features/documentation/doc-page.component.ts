@@ -19,10 +19,10 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
-// Import optimized card renderer from app (not library - uses optimized MagneticTiltService)
+// Import card renderer from the OSI Cards library to ensure docs show actual library output
+import { AICardRendererComponent } from '@osi-cards/components';
 import { of } from 'rxjs';
 import { catchError, take } from 'rxjs/operators';
-import { AICardRendererComponent } from '../../shared/components/cards/ai-card-renderer.component';
 import { DocCacheService } from './services/doc-cache.service';
 
 // Content cache for faster re-renders (production only)
@@ -943,12 +943,12 @@ interface PrerenderedPage {
             .demo-content {
               padding: 1.5rem;
               display: flex;
-              justify-content: center;
+              justify-content: stretch;
               background: linear-gradient(135deg, #f8f9fa 0%, #fff 50%, #f8f9fa 100%);
               min-height: 200px;
 
               app-ai-card-renderer {
-                max-width: 450px;
+                max-width: none;
                 width: 100%;
               }
             }
@@ -1827,6 +1827,23 @@ export class DocPageComponent implements OnInit, OnChanges, AfterViewInit {
           this.toggleDemo(demoId, btn);
         }
       });
+    });
+
+    // Auto-expand all live demos after setup
+    this.autoExpandDemos();
+  }
+
+  /**
+   * Auto-expand all live demos to show card previews immediately
+   */
+  private autoExpandDemos() {
+    const liveDemoButtons = this.el.nativeElement.querySelectorAll('.live-demo-btn');
+    liveDemoButtons.forEach((btn: HTMLButtonElement) => {
+      const demoId = btn.dataset.demoId;
+      if (demoId) {
+        // Simulate click to expand the demo
+        this.toggleDemo(demoId, btn);
+      }
     });
   }
 

@@ -27,3 +27,15 @@ export * from './social-media-section/social-media-section.component';
 export * from './solutions-section/solutions-section.component';
 export * from './text-reference-section/text-reference-section.component';
 
+// New section types (v1.6+)
+export * from './timeline-section/timeline-section.component';
+export * from './faq-section/faq-section.component';
+export * from './gallery-section/gallery-section.component';
+export * from './code-section/code-section.component';
+export * from './video-section/video-section.component';
+export * from './rating-section/rating-section.component';
+export * from './pricing-section/pricing-section.component';
+export * from './kanban-section/kanban-section.component';
+export * from './comparison-section/comparison-section.component';
+export * from './social-section/social-section.component';
+

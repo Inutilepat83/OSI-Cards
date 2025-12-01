@@ -512,5 +512,17 @@ const element = page.locator('app-ai-card-renderer >>> .section');
 - Review the [API Documentation](./API.md)
 - Open an issue on GitHub
 
+---
+
+## Related Documentation
+
+- **[Getting Started](./GETTING_STARTED.md)** - Fresh installation guide
+- **[CSS Encapsulation](./CSS_ENCAPSULATION.md)** - Shadow DOM and style isolation
+- **[API Reference](./API.md)** - Complete API documentation
+- **[Theming Guide](./THEMING_GUIDE.md)** - Theme customization
+- **[Event System](./EVENT_SYSTEM.md)** - Updated event handling
+- **[Components](./COMPONENTS.md)** - Component reference
+- **[Best Practices](./BEST_PRACTICES.md)** - Testing and performance tips
+
 
 

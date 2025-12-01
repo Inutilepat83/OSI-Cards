@@ -892,7 +892,19 @@ import {
 } from 'osi-cards-lib';
 ```
 
-For the complete type definitions, see the [API Documentation](./api/).
+For the complete type definitions, see the [API Reference](./API.md).
+
+---
+
+## Related Documentation
+
+- **[Getting Started](./GETTING_STARTED.md)** - Installation and initial setup
+- **[API Reference](./API.md)** - Complete API documentation
+- **[Components](./COMPONENTS.md)** - Section renderer components
+- **[Plugin System](./PLUGIN_SYSTEM.md)** - Create custom section types
+- **[Section Registry](./SECTION_REGISTRY.md)** - Section type definitions and aliases
+- **[Theming Guide](./THEMING_GUIDE.md)** - Customize section appearance
+- **[Best Practices](./BEST_PRACTICES.md)** - Performance and accessibility tips
 
 
 

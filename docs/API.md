@@ -436,7 +436,10 @@ The library exposes CSS custom properties for theming.
 - Import the styles: `@import 'osi-cards-lib/styles/styles.scss';`
 - Ensure proper encapsulation settings
 
-For more help, see the [GitHub repository](https://github.com/Inutilepat83/OSI-Cards).
+For more help, see:
+- **[Getting Started](./GETTING_STARTED.md)** - Step-by-step installation and setup
+- **[Best Practices](./BEST_PRACTICES.md)** - Performance and accessibility tips
+- **[GitHub repository](https://github.com/Inutilepat83/OSI-Cards)** - Source code and issues
 
 ---
 
@@ -472,4 +475,4 @@ For detailed documentation on specific topics, see these specialized guides:
 - **[SECTION_TYPES.md](./SECTION_TYPES.md)** - Comprehensive section type reference with examples
 - **[MIGRATION_GUIDE.md](./MIGRATION_GUIDE.md)** - Migration to version 2.0 with Shadow DOM
 - **[OPENAPI.md](./OPENAPI.md)** - OpenAPI specification for card configuration schemas
-- **[LLM_PROMPT.md](./LLM_PROMPT.md)** - System prompt for LLM-based card generation
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Library architecture and design decisions

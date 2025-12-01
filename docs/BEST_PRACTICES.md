@@ -489,5 +489,15 @@ For dashboards with many cards:
 
 ---
 
-For more details, see the [API Reference](./API.md), [Theming Guide](./THEMING_GUIDE.md), and [Integration Guide](./INTEGRATION_GUIDE.md).
+---
+
+## Related Documentation
+
+- **[Getting Started](./GETTING_STARTED.md)** - Installation and initial setup
+- **[API Reference](./API.md)** - Complete API documentation
+- **[Theming Guide](./THEMING_GUIDE.md)** - Customize appearance
+- **[Integration Guide](./INTEGRATION_GUIDE.md)** - Advanced integrations (SSR, NgRx, Micro-frontends)
+- **[Components](./COMPONENTS.md)** - Component reference
+- **[Services](./SERVICES.md)** - Service reference
+- **[Event System](./EVENT_SYSTEM.md)** - Event handling and middleware
 

@@ -289,5 +289,16 @@ When releasing:
 
 ---
 
+## Related Documentation
+
+- **[Getting Started](./GETTING_STARTED.md)** - Installation and initial setup
+- **[Components](./COMPONENTS.md)** - Component architecture details
+- **[Services](./SERVICES.md)** - Service documentation
+- **[Plugin System](./PLUGIN_SYSTEM.md)** - Extending with custom sections
+- **[Section Registry](./SECTION_REGISTRY.md)** - Section type definitions
+- **[CSS Encapsulation](./CSS_ENCAPSULATION.md)** - Style isolation strategies
+
+---
+
 *Last Updated: December 2025*
 

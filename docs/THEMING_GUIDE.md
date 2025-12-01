@@ -462,7 +462,15 @@ If using SCSS, you can leverage the library's mixins:
 
 ---
 
-For more examples and live demos, visit the [OSI Cards Storybook](https://osi-cards.dev/storybook).
+---
+
+## Related Documentation
+
+- **[Getting Started](./GETTING_STARTED.md)** - Initial setup and configuration
+- **[CSS Encapsulation](./CSS_ENCAPSULATION.md)** - Shadow DOM and style isolation
+- **[Presets](./PRESETS.md)** - Pre-built card and theme presets
+- **[Components](./COMPONENTS.md)** - Component-specific styling options
+- **[Best Practices](./BEST_PRACTICES.md)** - Accessibility and performance tips
 
 
 

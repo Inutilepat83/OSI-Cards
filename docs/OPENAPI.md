@@ -259,5 +259,14 @@ When adding new features:
 - [OpenAPI Generator](https://openapi-generator.tech/)
 - [JSON Schema](https://json-schema.org/)
 
+---
+
+## Related Documentation
+
+- **[API Reference](./API.md)** - Complete API documentation
+- **[Section Types](./SECTION_TYPES.md)** - All section types with examples
+- **[Section Registry](./SECTION_REGISTRY.md)** - Section type definitions and aliases
+- **[Getting Started](./GETTING_STARTED.md)** - Installation and initial setup
+
 
 

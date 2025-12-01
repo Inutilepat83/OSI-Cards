@@ -27,24 +27,37 @@ export * from './grid-accessibility.util';
 export * from './incremental-layout.util';
 // Export layout-cache with renamed CacheStats to avoid conflict with memo.util
 export {
-  LayoutCache,
-  CachedSectionLayout,
   CachedCardLayout,
-  CacheStats as LayoutCacheStats,
+  CachedSectionLayout,
   DirtyCheckResult,
-  computeSectionHash,
-  computeCardHash,
-  computeStructureHash,
-  getLayoutCache,
+  LayoutCache,
+  CacheStats as LayoutCacheStats,
   clearLayoutCache,
-  memoizeLayoutComputation,
+  computeCardHash,
+  computeSectionHash,
+  computeStructureHash,
   createDebouncedLayoutUpdate,
+  getLayoutCache,
+  memoizeLayoutComputation,
 } from './layout-cache.util';
 export * from './layout-debug.util';
 export * from './layout-optimizer.util';
 export * from './row-packer.util';
 export * from './streaming-layout.util';
 export * from './virtual-scroll.util';
+// Export virtual-scroll.utils with renamed types to avoid conflict with virtual-scroll.util
+export {
+  VirtualScrollConfig as SimpleVirtualScrollConfig,
+  VirtualScrollResult as SimpleVirtualScrollResult,
+  VariableHeightItem,
+  VariableVirtualScrollConfig,
+  VariableVirtualScrollResult,
+  calculateVirtualScroll as calculateSimpleVirtualScroll,
+  calculateVariableVirtualScroll,
+  createLazyLoadObserver,
+  createResizeObserver,
+  createScrollHandler,
+} from './virtual-scroll.utils';
 export * from './web-animations.util';
 // Note: column-span-optimizer, local-swap-optimizer, gap-filler-optimizer
 // have overlapping exports with layout-optimizer - import directly if needed
@@ -102,54 +115,54 @@ export {
 
 // Layout Memoization utilities
 export {
-  MemoizedFunction,
-  MemoStats,
-  MemoOptions,
-  DebouncedLayoutUpdate,
   BatchedUpdates,
-  memoize,
-  layoutKeyGenerator,
-  heightKeyGenerator,
+  DebouncedLayoutUpdate,
+  MemoOptions,
+  MemoStats,
+  MemoizedFunction,
+  createBatchProcessor,
   createDebouncedLayout,
   createRAFScheduler,
-  createBatchProcessor,
+  heightKeyGenerator,
+  layoutKeyGenerator,
+  memoize,
 } from './layout-memoization.util';
 
 // Unified Layout Optimizer - consolidated layout optimization module
 export {
-  OptimizableLayoutSection,
-  PreferredColumns,
-  FullyOptimizableSection,
-  OptimizationStrategy,
-  OptimizationResult,
-  OptimizationMetrics,
-  UnifiedLayoutOptimizerConfig,
   DEFAULT_OPTIMIZER_CONFIG as DEFAULT_UNIFIED_OPTIMIZER_CONFIG,
+  FullyOptimizableSection,
   LayoutGap,
-  findLayoutGaps,
+  OptimizableLayoutSection,
+  OptimizationMetrics,
+  OptimizationResult,
+  OptimizationStrategy,
+  PreferredColumns,
+  UnifiedLayoutOptimizerConfig,
+  analyzeLayout,
   fillLayoutGaps,
-  optimizeColumnSpans,
+  findLayoutGaps,
   localSwapOptimization,
+  optimizeColumnSpans,
+  optimizeGapsOnly,
   optimizeLayout,
   quickOptimize,
-  optimizeGapsOnly,
-  analyzeLayout,
 } from './unified-layout-optimizer.util';
 
 // Performance monitoring - rename getMemoryUsage to avoid conflict with memory.util
 export {
-  PerformanceMonitor,
-  PerformanceMark,
-  PerformanceReport,
-  performanceMonitor,
+  ComponentRenderTracker,
+  FPSMonitor,
   Measure,
   MeasureAsync,
-  ComponentRenderTracker,
-  renderTracker,
-  FPSMonitor,
+  PerformanceMark,
+  PerformanceMonitor,
+  PerformanceReport,
   fpsMonitor,
   getMemoryUsage as getPerformanceMemoryUsage,
   observeLongTasks,
+  performanceMonitor,
+  renderTracker,
 } from './performance-monitor.util';
 
 // Note: Additional utility files are available as separate imports if needed:

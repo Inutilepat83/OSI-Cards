@@ -229,7 +229,7 @@ Animations automatically respect `prefers-reduced-motion`:
 Use the single entry point component:
 
 ```html
-<osi-cards 
+<osi-cards
   [card]="cardConfig"
   [theme]="'day'"
   (fieldClick)="onFieldClick($event)">
@@ -242,7 +242,7 @@ For more control, use the container component:
 
 ```html
 <osi-cards-container [theme]="'night'" [strictIsolation]="true">
-  <app-ai-card-renderer 
+  <app-ai-card-renderer
     [cardConfig]="config">
   </app-ai-card-renderer>
 </osi-cards-container>
@@ -291,7 +291,7 @@ Located in `reset/_framework-reset.scss`:
   --bs-primary: unset;
   --bs-secondary: unset;
   // ... more resets
-  
+
   // Reset Tailwind variables
   --tw-ring-color: unset;
   // ... more resets
@@ -413,3 +413,14 @@ Located in `postcss.config.js`:
 - **v2.0.0**: Full Shadow DOM encapsulation
 - **v1.5.0**: CSS Layers support
 - **v1.0.0**: Initial release with scoped styles
+
+---
+
+## Related Documentation
+
+- **[Getting Started](./GETTING_STARTED.md)** - Initial setup and configuration
+- **[Theming Guide](./THEMING_GUIDE.md)** - Theme customization
+- **[Components](./COMPONENTS.md)** - Component encapsulation details
+- **[Migration Guide](./MIGRATION_GUIDE.md)** - Migrating to Shadow DOM
+- **[Event System](./EVENT_SYSTEM.md)** - Shadow DOM event handling
+- **[Best Practices](./BEST_PRACTICES.md)** - Styling best practices

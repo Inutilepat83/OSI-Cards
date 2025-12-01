@@ -559,7 +559,16 @@ this.ngZone.runOutsideAngular(() => {
 
 ---
 
-For more help, see the [API Reference](./API.md) or [Theming Guide](./THEMING_GUIDE.md).
+## Related Documentation
+
+- **[Getting Started](./GETTING_STARTED.md)** - Basic installation and setup
+- **[API Reference](./API.md)** - Complete API documentation
+- **[Theming Guide](./THEMING_GUIDE.md)** - Customize appearance
+- **[Components](./COMPONENTS.md)** - Component reference
+- **[Services](./SERVICES.md)** - Service reference
+- **[Event System](./EVENT_SYSTEM.md)** - Event handling
+- **[Best Practices](./BEST_PRACTICES.md)** - Performance and testing tips
+- **[CSS Encapsulation](./CSS_ENCAPSULATION.md)** - Style isolation strategies
 
 
 

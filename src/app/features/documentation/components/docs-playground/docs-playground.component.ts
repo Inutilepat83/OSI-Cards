@@ -615,20 +615,22 @@ interface PlaygroundTemplate {
       .preview-wrapper {
         flex: 1;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        align-items: stretch;
+        justify-content: stretch;
         padding: 2rem;
         background: var(--docs-bg, #fafbfd);
         overflow: auto;
       }
 
       .preview-content {
-        max-width: 500px;
+        max-width: none;
         width: 100%;
+        flex: 1;
       }
 
       .preview-card {
         width: 100%;
+        flex: 1;
       }
 
       .preview-error,

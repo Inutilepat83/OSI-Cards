@@ -403,8 +403,9 @@ export interface ISectionTypeDemo {
         background: var(--docs-bg, #fafbfd);
         min-height: 300px;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        align-items: stretch;
+        justify-content: stretch;
+        width: 100%;
 
         &.theme-dark {
           background: #0d1117;
@@ -414,6 +415,7 @@ export interface ISectionTypeDemo {
       .preview-frame {
         width: 100%;
         max-width: 100%;
+        flex: 1;
         transition: max-width 0.3s ease;
 
         &.no-animations * {
@@ -424,6 +426,7 @@ export interface ISectionTypeDemo {
 
       .demo-card {
         width: 100%;
+        flex: 1;
       }
 
       /* State Overlays */
