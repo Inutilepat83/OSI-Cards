@@ -119,7 +119,7 @@ export function mergeThemes(
   return {
     name,
     preset: false,
-    colorScheme: lastTheme.colorScheme,
+    colorScheme: lastTheme?.colorScheme ?? 'dark',
     variables: mergedVariables
   };
 }

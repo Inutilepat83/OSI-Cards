@@ -69,7 +69,7 @@ export async function renderSection<T>(
 /**
  * Creates a test host component for testing sections
  * Note: This is a runtime utility. For AOT-compatible tests, create components directly in test files.
- * 
+ *
  * @example
  * ```typescript
  * // In your test file:

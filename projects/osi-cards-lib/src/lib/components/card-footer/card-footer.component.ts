@@ -5,10 +5,10 @@ import { LucideIconsModule } from '../../icons';
 
 /**
  * Card Footer Component
- * 
+ *
  * Composable component for rendering card footer with actions and optional signature.
  * Can be used independently or as part of the full card renderer.
- * 
+ *
  * @example
  * ```html
  * <app-card-footer
@@ -37,14 +37,14 @@ import { LucideIconsModule } from '../../icons';
             (keydown.enter)="onActionClick(action)"
             (keydown.space)="$event.preventDefault(); onActionClick(action)">
             <!-- Lucide icon -->
-            <lucide-icon 
+            <lucide-icon
               *ngIf="getActionIconNameForDisplay(action) as iconName"
               [name]="iconName"
               [size]="16"
               aria-hidden="true">
             </lucide-icon>
             <!-- Image icon -->
-            <img 
+            <img
               *ngIf="hasImageIcon(action)"
               [src]="action.icon"
               [alt]="action.label + ' icon'"
@@ -70,34 +70,34 @@ import { LucideIconsModule } from '../../icons';
       display: block !important;
       font-family: Helvetica, 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
     }
-    
+
     .card-footer {
       margin-top: auto !important;
       padding-top: var(--section-card-gap, 12px) !important;
       padding-bottom: 16px !important;
       font-family: inherit !important;
     }
-    
+
     .card-actions {
       margin-bottom: 12px !important;
     }
-    
+
     .flex {
       display: flex !important;
     }
-    
+
     .flex-wrap {
       flex-wrap: wrap !important;
     }
-    
+
     .items-center {
       align-items: center !important;
     }
-    
+
     .gap-3 {
       gap: 0.75rem !important;
     }
-    
+
     /* ENFORCED Action Button Styles */
     .action-button {
       margin: 0 !important;
@@ -118,42 +118,42 @@ import { LucideIconsModule } from '../../icons';
       appearance: none !important;
       text-decoration: none !important;
     }
-    
+
     .action-button--primary {
       background-color: var(--color-brand, #FF7900) !important;
       color: #ffffff !important;
       border: none !important;
       box-shadow: 0 2px 4px rgba(255, 121, 0, 0.2) !important;
     }
-    
+
     .action-button--primary:hover {
       background-color: #e66d00 !important;
       box-shadow: 0 4px 12px rgba(255, 121, 0, 0.35) !important;
       transform: translateY(-1px) !important;
     }
-    
+
     .action-button--secondary {
       background-color: transparent !important;
       color: var(--color-brand, #FF7900) !important;
       border: 2px solid var(--color-brand, #FF7900) !important;
     }
-    
+
     .action-button--secondary:hover {
       background-color: rgba(255, 121, 0, 0.08) !important;
       box-shadow: 0 2px 8px rgba(255, 121, 0, 0.15) !important;
     }
-    
+
     .action-button span {
       color: inherit !important;
       font-family: inherit !important;
     }
-    
+
     .action-button img {
       width: 18px !important;
       height: 18px !important;
       object-fit: contain !important;
     }
-    
+
     /* ENFORCED Card Signature Styles */
     .card-signature {
       display: block !important;
@@ -169,14 +169,14 @@ import { LucideIconsModule } from '../../icons';
       width: 100% !important;
       box-sizing: border-box !important;
     }
-    
+
     /* Lucide icon styling */
     lucide-icon {
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
     }
-    
+
     lucide-icon svg {
       stroke: currentColor !important;
       fill: none !important;
@@ -188,13 +188,13 @@ import { LucideIconsModule } from '../../icons';
 export class CardFooterComponent {
   /** Actions to display */
   @Input() actions: CardAction[] = [];
-  
+
   /** Whether to show the signature */
   @Input() showSignature = true;
-  
+
   /** Signature text to display */
   @Input() signatureText = 'Powered by Orange Sales Intelligence';
-  
+
   /** Emitted when an action is clicked */
   @Output() actionClick = new EventEmitter<CardAction>();
 

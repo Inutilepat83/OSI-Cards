@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: OSI Cards Library API
-  version: 1.5.2
+  version: 1.5.3
   description: |
     OpenAPI documentation for OSI Cards Library - a versatile card generator for sales intelligence agents.
     

@@ -23,6 +23,7 @@
 import {
   Provider,
   InjectionToken,
+  Injectable,
   inject,
   signal,
   computed,
@@ -56,6 +57,7 @@ export interface AnimationItemState {
 /**
  * Component-scoped animation management service
  */
+@Injectable()
 export class ScopedAnimationService implements OnDestroy {
   private readonly _items = signal<Map<string, AnimationItemState>>(new Map());
   private readonly _isAnimating = signal(false);
@@ -251,6 +253,7 @@ export const SCOPED_SELECTION_SERVICE = new InjectionToken<ScopedSelectionServic
 /**
  * Component-scoped selection management service
  */
+@Injectable()
 export class ScopedSelectionService<T> implements OnDestroy {
   private readonly _selectedItems = signal<Set<T>>(new Set());
   private readonly _lastSelected = signal<T | null>(null);
@@ -393,13 +396,14 @@ export function provideScopedSelectionService<T>(): Provider {
 /**
  * Token for scoped state service
  */
-export const SCOPED_STATE_SERVICE = new InjectionToken<ScopedStateService<unknown>>(
+export const SCOPED_STATE_SERVICE = new InjectionToken<ScopedStateService<Record<string, unknown>>>(
   'SCOPED_STATE_SERVICE'
 );
 
 /**
  * Component-scoped state management service
  */
+@Injectable()
 export class ScopedStateService<T extends object> implements OnDestroy {
   private readonly _state = signal<T>({} as T);
   private readonly _history: T[] = [];
@@ -505,21 +509,7 @@ export function provideScopedStateService<T extends object>(): Provider {
   };
 }
 
-// ============================================================================
-// EXPORTS
-// ============================================================================
-
-export {
-  provideScopedAnimationService,
-  provideScopedSelectionService,
-  provideScopedStateService,
-  SCOPED_ANIMATION_SERVICE,
-  SCOPED_SELECTION_SERVICE,
-  SCOPED_STATE_SERVICE,
-  ScopedAnimationService,
-  ScopedSelectionService,
-  ScopedStateService
-};
+// All items are already exported at their definition
 
 
 

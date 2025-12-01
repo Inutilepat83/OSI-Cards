@@ -1,6 +1,6 @@
 /**
  * CDK Test Harnesses for OSI Cards
- * 
+ *
  * Provides Angular CDK ComponentHarness implementations for testing.
  */
 
@@ -11,7 +11,7 @@ import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
  */
 export class BaseHarness extends ComponentHarness {
   static hostSelector = '.osi-base';
-  
+
   async getHostElement(): Promise<Element> {
     return (await this.host()) as unknown as Element;
   }
@@ -22,7 +22,7 @@ export class BaseHarness extends ComponentHarness {
  */
 export class FieldHarness extends ComponentHarness {
   static hostSelector = '.osi-field';
-  
+
   static with(_options: { label?: string } = {}): HarnessPredicate<FieldHarness> {
     return new HarnessPredicate(FieldHarness, {});
   }

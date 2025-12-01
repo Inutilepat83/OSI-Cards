@@ -7,7 +7,7 @@ import { IconService } from '../services/icon.service';
 import { SectionNormalizationService } from '../services/section-normalization.service';
 import { SectionUtilsService } from '../services/section-utils.service';
 import { CardFacadeService } from '../services/card-facade.service';
-import { SectionPluginRegistryService } from '../services/section-plugin-registry.service';
+import { SectionPluginRegistry } from '../services/section-plugin-registry.service';
 import { FeatureFlagsService } from '../services/feature-flags.service';
 import { AccessibilityService } from '../services/accessibility.service';
 import { ReducedMotionService } from '../services/reduced-motion.service';
@@ -47,7 +47,7 @@ export function provideOsiCardsCore(): Provider[] {
     SectionNormalizationService,
     SectionUtilsService,
     CardFacadeService,
-    SectionPluginRegistryService,
+    SectionPluginRegistry,
     FeatureFlagsService,
     AccessibilityService,
     ReducedMotionService,

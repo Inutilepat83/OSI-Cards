@@ -1,6 +1,6 @@
 /**
  * Contract Testing Utilities
- * 
+ *
  * Placeholder for contract testing utilities.
  */
 

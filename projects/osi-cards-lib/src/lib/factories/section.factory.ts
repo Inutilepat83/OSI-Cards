@@ -1,5 +1,5 @@
 import { Injectable, Type, inject } from '@angular/core';
-import { SectionPluginRegistryService } from '../services/section-plugin-registry.service';
+import { SectionPluginRegistry } from '../services/section-plugin-registry.service';
 
 /**
  * Section types supported by the library
@@ -66,7 +66,7 @@ interface SectionRegistryEntry {
  */
 @Injectable({ providedIn: 'root' })
 export class SectionFactory {
-  private readonly pluginRegistry = inject(SectionPluginRegistryService);
+  private readonly pluginRegistry = inject(SectionPluginRegistry);
   private readonly registry = new Map<SectionType, SectionRegistryEntry>();
   private readonly cache = new Map<SectionType, Type<unknown>>();
 
@@ -333,9 +333,9 @@ export class SectionFactory {
     }
 
     // Check plugin registry for custom sections
-    const plugin = this.pluginRegistry.get(type);
-    if (plugin) {
-      return plugin.component;
+    const pluginComponent = this.pluginRegistry.getComponent(type);
+    if (pluginComponent) {
+      return pluginComponent;
     }
 
     // Check built-in registry
@@ -359,7 +359,7 @@ export class SectionFactory {
    * Check if a section type is registered.
    */
   hasSection(type: string): type is SectionType {
-    return this.registry.has(type as SectionType) || this.pluginRegistry.has(type);
+    return this.registry.has(type as SectionType) || this.pluginRegistry.hasPlugin(type);
   }
 
   /**

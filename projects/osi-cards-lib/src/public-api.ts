@@ -25,7 +25,7 @@ export {
   MailCardAction,
   EmailConfig,
   EmailContact,
-  
+
   // Type guards
   CardTypeGuards,
 } from './lib/models/card.model';
@@ -50,7 +50,7 @@ export {
   prefersReducedMotion,
   getAnimationTiming,
   getEasing,
-  
+
   // Layout constants
   GRID_CONFIG,
   MASONRY_CONFIG,
@@ -67,7 +67,7 @@ export {
   isMobileViewport,
   isTabletViewport,
   isDesktopViewport,
-  
+
   // Streaming constants
   STREAMING_CONFIG,
   STREAMING_STAGES,
@@ -78,7 +78,7 @@ export {
   generateStreamingId,
   isStreamingPlaceholder,
   getRandomLoadingMessage,
-  
+
   // UI constants
   PARTICLE_CONFIG,
   EMPTY_STATE_CONFIG,
@@ -100,19 +100,6 @@ export {
   
   // Section factory
   SectionFactory,
-  
-  // Card builder
-  CardBuilder,
-  SectionBuilder,
-  InfoSectionBuilder,
-  AnalyticsSectionBuilder,
-  ListSectionBuilder,
-  EventSectionBuilder,
-  ContactSectionBuilder,
-  ChartSectionBuilder,
-  buildCard,
-  createInfoCard,
-  createAnalyticsCard,
 } from './lib/factories';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -250,13 +237,13 @@ export {
   // Layout utilities
   SkylinePacker,
   StreamingLayoutManager,
-  
-  // Animation utilities  
+
+  // Animation utilities
   FlipAnimator,
-  
+
   // Accessibility
   GridAccessibilityManager,
-  
+
   // Component composition hooks
   useToggleState,
   useHoverState,
@@ -270,31 +257,31 @@ export {
   useExpandableState,
   useDebouncedValue,
   useCounter,
-  
+
   // Error boundary
   useErrorBoundary,
-  
+
   // Input coercion
   coerceBoolean,
   coerceNumber,
-  
+
   // Memoization
   memoize,
   layoutKeyGenerator,
   createDebouncedLayout,
   createRAFScheduler,
   createBatchProcessor,
-  
+
   // Sanitization
   sanitizeHtml,
   sanitizeUrl,
-  
+
   // Virtual scroll
   useVirtualScroll,
   useIntersectionObserver,
   createInfiniteScrollTrigger,
   createLazyLoadTrigger,
-  
+
   // Layout optimization
   optimizeLayout,
   quickOptimize,
@@ -302,7 +289,7 @@ export {
   findLayoutGaps,
   fillLayoutGaps,
   optimizeColumnSpans,
-  
+
   // Performance monitoring
   PerformanceMonitor,
   performanceMonitor,

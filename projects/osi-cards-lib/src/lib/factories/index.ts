@@ -36,24 +36,8 @@ export {
   type SectionMetadata,
 } from './section.factory';
 
-// Type-Safe Card Builder DSL (Improvement Plan Point #26)
-export {
-  CardBuilder,
-  SectionBuilder,
-  InfoSectionBuilder,
-  AnalyticsSectionBuilder,
-  ListSectionBuilder,
-  EventSectionBuilder,
-  ContactSectionBuilder,
-  ChartSectionBuilder,
-  buildCard,
-  createInfoCard,
-  createAnalyticsCard,
-  type FieldOptions,
-  type ItemOptions,
-  type ActionOptions,
-  type SectionOptions
-} from './card-builder';
+// Type-Safe Card Builder DSL is planned for future implementation
+// See: Improvement Plan Point #26
 
 
 

@@ -1,9 +1,9 @@
 /**
  * Generated Registry Fixtures
- * 
+ *
  * Auto-generated section fixtures from the section registry.
  * This file provides sample data for testing and documentation.
- * 
+ *
  * DO NOT EDIT MANUALLY - regenerate with `npm run generate:registry-fixtures`
  */
 
@@ -207,7 +207,7 @@ export const SAMPLE_CARDS = {
 export function getFixture(sectionType: string, category: FixtureCategory = 'complete'): CardSection | undefined {
   const fixtures = SECTION_FIXTURES[sectionType];
   if (!fixtures) return undefined;
-  
+
   switch (category) {
     case 'complete': return fixtures.complete;
     case 'minimal': return fixtures.minimal;
@@ -229,7 +229,7 @@ export function getAllFixtures(sectionType: string): SectionFixtures | undefined
 export function getFixtureWithUniqueId(sectionType: string, category: FixtureCategory = 'complete'): CardSection | undefined {
   const fixture = getFixture(sectionType, category);
   if (!fixture) return undefined;
-  
+
   return {
     ...fixture,
     id: `${fixture.id}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,

@@ -1,13 +1,13 @@
 /**
  * Mocks for External Library Dependencies
- * 
+ *
  * Provides mock implementations for optional external libraries
  * (Chart.js, Leaflet) to enable testing without requiring these dependencies.
- * 
+ *
  * @example
  * ```typescript
  * import { MockChartJS, MockLeaflet, setupMocks } from 'osi-cards-lib/testing';
- * 
+ *
  * beforeEach(() => {
  *   setupMocks();
  * });
@@ -40,13 +40,13 @@ export class MockChart {
     this.config = config;
     this.data = config.data ?? { labels: [], datasets: [] };
     this.options = config.options ?? {};
-    
+
     if (typeof context === 'string') {
       this.canvas = document.querySelector<HTMLCanvasElement>(context);
     } else if (context instanceof HTMLCanvasElement) {
       this.canvas = context;
     }
-    
+
     if (this.canvas) {
       this.ctx = this.canvas.getContext('2d');
     }
@@ -183,7 +183,7 @@ export class MockLeafletMap {
     } else {
       this._container = element;
     }
-    
+
     if (options?.center) {
       this._center = options.center;
     }
