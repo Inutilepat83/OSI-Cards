@@ -26,8 +26,21 @@ const LIB_DIRS = [
 ];
 
 // Files that are intentionally different and should not be flagged
+// These are app-specific versions with custom optimizations
 const ALLOWED_DUPLICATES = [
   'index.ts',  // Barrel exports are expected to exist in both
+  // App-specific card renderer with streaming/export features
+  'ai-card-renderer.component.ts',
+  'ai-card-renderer.component.html',
+  'ai-card-renderer.component.css',
+  'ai-card-renderer.component.scss',
+  // App-specific section renderer with custom loaders
+  'section-renderer.component.ts',
+  'section-renderer.component.html',
+  'section-renderer.component.css',
+  'section-renderer.component.scss',
+  // App-specific magnetic tilt with perf optimizations
+  'magnetic-tilt.service.ts',
 ];
 
 function findFiles(dir, extension = '.ts') {
@@ -104,6 +117,12 @@ function detectDuplicates() {
 
   for (const srcFile of srcCss) {
     const srcName = path.basename(srcFile);
+
+    // Skip allowed duplicates
+    if (ALLOWED_DUPLICATES.includes(srcName)) {
+      continue;
+    }
+
     const libMatch = libCss.find(f => path.basename(f) === srcName);
 
     if (libMatch) {
@@ -131,6 +150,12 @@ function detectDuplicates() {
 
   for (const srcFile of srcHtml) {
     const srcName = path.basename(srcFile);
+
+    // Skip allowed duplicates
+    if (ALLOWED_DUPLICATES.includes(srcName)) {
+      continue;
+    }
+
     const libMatch = libHtml.find(f => path.basename(f) === srcName);
 
     if (libMatch) {

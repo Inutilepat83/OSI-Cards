@@ -24,12 +24,12 @@ import {
 } from '../../../models';
 import { delay, distinctUntilChanged, filter, fromEvent, interval, Subject, takeUntil } from 'rxjs';
 import { MagneticTiltService, MousePosition, TiltCalculations } from '../../../core';
-import { SectionNormalizationService } from '../../services/section-normalization.service';
+import { SectionNormalizationService } from 'projects/osi-cards-lib/src/lib/services';
 import { LucideIconsModule } from '../../icons/lucide-icons.module';
 import { MasonryGridComponent } from 'projects/osi-cards-lib/src/lib/components/masonry-grid/masonry-grid.component';
 import type { MasonryLayoutInfo } from 'projects/osi-cards-lib/src/lib/components/masonry-grid/masonry-grid.component';
 import { SectionRenderEvent } from './section-renderer/section-renderer.component';
-import { CardChangeType } from '../../utils/card-diff.util';
+import { CardChangeType } from 'projects/osi-cards-lib/src/lib/utils/card-diff.util';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { LoggingService } from '../../../core/services/logging.service';
 import { DevelopmentWarningsService } from '../../../core/services/development-warnings.service';

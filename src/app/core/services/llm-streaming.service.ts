@@ -2,7 +2,7 @@ import { DestroyRef, inject, Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AICardConfig, CardField, CardItem, CardSection } from '../../models';
-import { CardChangeType } from '../../shared/utils/card-diff.util';
+import { CardChangeType } from 'projects/osi-cards-lib/src/lib/utils/card-diff.util';
 import { AppConfigService } from './app-config.service';
 import { ensureCardIds } from '../../shared/utils/card-utils';
 import { CardTypeGuards } from '../../models';

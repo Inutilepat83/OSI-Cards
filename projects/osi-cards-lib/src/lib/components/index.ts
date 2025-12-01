@@ -1,6 +1,6 @@
 /**
  * OSI Cards Components Barrel Export
- * 
+ *
  * @module @osi-cards/lib/components
  */
 

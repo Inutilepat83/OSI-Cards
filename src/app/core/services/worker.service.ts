@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { AICardConfig } from '../../models';
-import { CardChangeType, CardDiffUtil } from '../../shared/utils/card-diff.util';
+import { CardChangeType, CardDiffUtil } from 'projects/osi-cards-lib/src/lib/utils/card-diff.util';
 
 /**
  * Web Worker Service

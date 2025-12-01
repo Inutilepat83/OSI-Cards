@@ -1,5 +1,5 @@
 # OSI Cards CI/CD Pipeline
-# 
+#
 # NOTE: This workflow is disabled. Use deploy.yml for Firebase deployments.
 # Re-enable when full CI/CD pipeline is needed.
 
