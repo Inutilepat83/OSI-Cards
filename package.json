@@ -1,6 +1,6 @@
 {
   "name": "osi-cards",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "private": true,
   "bin": {
     "osi-cards": "./tools/cli/osi-cards-cli.js"
@@ -19,6 +19,10 @@
     "publish:lib": "cd dist/osi-cards-lib && npm publish",
     "publish:lib:dry-run": "cd dist/osi-cards-lib && npm pack",
     "publish:lib:test": "cd dist/osi-cards-lib && npm pack && echo 'Package created. Review the .tgz file to see what would be published.'",
+    "publish:smart": "node scripts/smart-publish.js",
+    "publish:smart:dry": "node scripts/smart-publish.js dry",
+    "publish:smart:minor": "node scripts/smart-publish.js minor",
+    "publish:smart:major": "node scripts/smart-publish.js major",
     "build:prod": "npx ng build --configuration production",
     "build:analyze": "npm run analyze",
     "build:prod:ci": "npx ng build --configuration production --output-hashing=all",
@@ -205,9 +209,16 @@
     "typescript-eslint": "8.40.0"
   },
   "lint-staged": {
-    "*.{ts,js}": ["eslint --fix", "prettier --write"],
-    "*.{html,css,scss,json,md}": ["prettier --write"],
-    "*.ts": ["bash -c 'npx tsc --noEmit --project tsconfig.json || true'"],
+    "*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{html,css,scss,json,md}": [
+      "prettier --write"
+    ],
+    "*.ts": [
+      "bash -c 'npx tsc --noEmit --project tsconfig.json || true'"
+    ],
     "projects/osi-cards-lib/section-registry.json": [
       "node scripts/generate-from-registry.js"
     ]
@@ -218,5 +229,10 @@
       "pre-push": "npm run lint && npm run test:unit && npm run check:security && npm run size:check"
     }
   },
-  "sideEffects": ["**/*.css", "**/*.scss", "src/polyfills.ts", "src/main.ts"]
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss",
+    "src/polyfills.ts",
+    "src/main.ts"
+  ]
 }
