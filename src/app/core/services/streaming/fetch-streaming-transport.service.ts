@@ -222,7 +222,7 @@ export class FetchStreamingTransport extends StreamingTransport {
   /**
    * Fetch streaming can send data via POST body, but not during stream
    */
-  send(data: string | ArrayBuffer): Observable<void> {
+  send(_data: string | ArrayBuffer): Observable<void> {
     return throwError(() => ({
       code: 'NOT_SUPPORTED',
       message:

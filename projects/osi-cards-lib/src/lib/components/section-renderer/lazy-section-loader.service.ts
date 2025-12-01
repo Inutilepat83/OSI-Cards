@@ -1,332 +1,229 @@
 /**
  * Lazy Section Loader Service
  *
- * Provides code splitting for section components by loading them on demand.
- * This reduces initial bundle size by deferring loading of heavy sections
- * (like chart and map sections) until they're actually needed.
+ * Provides dynamic imports for optional/heavy section components
+ * that require external libraries (Chart.js, Leaflet, etc.)
+ *
+ * This reduces initial bundle size by loading these components only when needed.
  *
  * @example
  * ```typescript
- * const loader = inject(LazySectionLoaderService);
- *
- * // Load a section component lazily
- * const component = await loader.loadSection('chart');
+ * const ChartSection = await lazySectionLoader.loadSection('chart');
  * ```
- *
- * @module components/section-renderer/lazy-section-loader
  */
 
-import { Injectable, Type, signal, computed, inject } from '@angular/core';
-import { CardSection } from '../../models';
+import { Injectable, Type, inject, NgZone } from '@angular/core';
 import { BaseSectionComponent } from '../sections/base-section.component';
-import { SectionType, isValidSectionType, resolveSectionType, SectionTypeInput } from '../../models/generated-section-types';
+import { SectionType } from '../../models/generated-section-types';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnySectionComponent = Type<BaseSectionComponent<any>>;
+/** Sections that should be lazy loaded due to external dependencies */
+export const LAZY_SECTION_TYPES = ['chart', 'map'] as const;
+export type LazySectionType = typeof LAZY_SECTION_TYPES[number];
 
-/**
- * Lazy load result
- */
-interface LazyLoadResult {
-  component: AnySectionComponent | null;
+/** Loading state for lazy sections */
+export interface LazySectionState {
+  loading: boolean;
+  loaded: boolean;
   error: Error | null;
-  loadTimeMs: number;
+  component: Type<BaseSectionComponent> | null;
 }
 
-/**
- * Section categories for lazy loading
- */
-type SectionCategory = 'core' | 'chart' | 'map' | 'complex' | 'simple';
+/** Factory function type for lazy loading */
+type LazyComponentFactory = () => Promise<Type<BaseSectionComponent>>;
 
 /**
- * Section category configuration
- */
-const SECTION_CATEGORIES: Record<SectionType, SectionCategory> = {
-  // Core sections - always loaded
-  'info': 'core',
-  'analytics': 'core',
-  'list': 'core',
-  'overview': 'core',
-  'fallback': 'core',
-
-  // Chart sections - requires chart.js
-  'chart': 'chart',
-
-  // Map sections - requires leaflet
-  'map': 'map',
-
-  // Complex sections - lazy loaded for performance
-  'financials': 'complex',
-  'contact-card': 'complex',
-  'network-card': 'complex',
-  'social-media': 'complex',
-
-  // Simple sections - loaded on demand
-  'event': 'simple',
-  'product': 'simple',
-  'solutions': 'simple',
-  'quotation': 'simple',
-  'text-reference': 'simple',
-  'brand-colors': 'simple',
-  'news': 'simple'
-};
-
-/**
- * Lazy section loader service for code splitting
+ * Service for lazy loading heavy section components
+ *
+ * Features:
+ * - Dynamic imports for chart and map sections
+ * - Caching of loaded components
+ * - Loading state tracking
+ * - Error handling with retry capability
  */
 @Injectable({
   providedIn: 'root'
 })
 export class LazySectionLoaderService {
-  // Cache for loaded components
-  private readonly componentCache = new Map<string, AnySectionComponent>();
+  private readonly ngZone = inject(NgZone);
 
-  // Loading promises to prevent duplicate loads
-  private readonly loadingPromises = new Map<string, Promise<AnySectionComponent>>();
+  /** Cache for loaded components */
+  private readonly componentCache = new Map<LazySectionType, Type<BaseSectionComponent>>();
 
-  // State signals
-  private readonly _loadedCategories = signal<Set<SectionCategory>>(new Set(['core']));
-  private readonly _loadingCategory = signal<SectionCategory | null>(null);
-  private readonly _loadStats = signal<Map<string, number>>(new Map());
+  /** Loading states for each lazy section type */
+  private readonly loadingStates = new Map<LazySectionType, LazySectionState>();
 
-  /**
-   * Categories that have been loaded
-   */
-  readonly loadedCategories = this._loadedCategories.asReadonly();
+  /** Pending load promises to prevent duplicate loads */
+  private readonly pendingLoads = new Map<LazySectionType, Promise<Type<BaseSectionComponent>>>();
 
-  /**
-   * Currently loading category (if any)
-   */
-  readonly loadingCategory = this._loadingCategory.asReadonly();
-
-  /**
-   * Whether chart sections are loaded
-   */
-  readonly isChartLoaded = computed(() => this._loadedCategories().has('chart'));
-
-  /**
-   * Whether map sections are loaded
-   */
-  readonly isMapLoaded = computed(() => this._loadedCategories().has('map'));
-
-  /**
-   * Load statistics
-   */
-  readonly loadStats = this._loadStats.asReadonly();
+  /** Lazy load factories for each section type */
+  private readonly lazyFactories: Record<LazySectionType, LazyComponentFactory> = {
+    'chart': async () => {
+      const module = await import('../sections/chart-section/chart-section.component');
+      return module.ChartSectionComponent;
+    },
+    'map': async () => {
+      const module = await import('../sections/map-section/map-section.component');
+      return module.MapSectionComponent;
+    }
+  };
 
   constructor() {
-    // Pre-load core sections synchronously
-    this.preloadCoreComponents();
-  }
-
-  /**
-   * Load a section component (lazy or from cache)
-   */
-  async loadSection(type: SectionType): Promise<AnySectionComponent> {
-    // Check cache first
-    if (this.componentCache.has(type)) {
-      return this.componentCache.get(type)!;
-    }
-
-    // Check if already loading
-    if (this.loadingPromises.has(type)) {
-      return this.loadingPromises.get(type)!;
-    }
-
-    // Start loading
-    const loadPromise = this.loadSectionInternal(type);
-    this.loadingPromises.set(type, loadPromise);
-
-    try {
-      const component = await loadPromise;
-      this.componentCache.set(type, component);
-      return component;
-    } finally {
-      this.loadingPromises.delete(type);
-    }
-  }
-
-  /**
-   * Load all components for a category
-   */
-  async loadCategory(category: SectionCategory): Promise<void> {
-    if (this._loadedCategories().has(category)) {
-      return;
-    }
-
-    this._loadingCategory.set(category);
-
-    try {
-      const types = Object.entries(SECTION_CATEGORIES)
-        .filter(([_, cat]) => cat === category)
-        .map(([type]) => type as SectionType);
-
-      await Promise.all(types.map(type => this.loadSection(type)));
-
-      this._loadedCategories.update(cats => {
-        const newCats = new Set(cats);
-        newCats.add(category);
-        return newCats;
+    // Initialize loading states
+    for (const type of LAZY_SECTION_TYPES) {
+      this.loadingStates.set(type, {
+        loading: false,
+        loaded: false,
+        error: null,
+        component: null
       });
-    } finally {
-      this._loadingCategory.set(null);
     }
   }
 
   /**
-   * Preload components for likely-needed sections
+   * Check if a section type should be lazy loaded
    */
-  async preloadSections(types: SectionType[]): Promise<void> {
-    await Promise.all(types.map(type => this.loadSection(type)));
+  isLazySection(type: string): type is LazySectionType {
+    return LAZY_SECTION_TYPES.includes(type as LazySectionType);
   }
 
   /**
-   * Check if a section type is loaded
+   * Get the loading state for a lazy section type
    */
-  isLoaded(type: SectionType): boolean {
+  getLoadingState(type: LazySectionType): LazySectionState {
+    return this.loadingStates.get(type) ?? {
+      loading: false,
+      loaded: false,
+      error: null,
+      component: null
+    };
+  }
+
+  /**
+   * Check if a lazy section is already loaded
+   */
+  isLoaded(type: LazySectionType): boolean {
     return this.componentCache.has(type);
   }
 
   /**
-   * Get category for a section type
+   * Get a cached component if available
    */
-  getCategory(type: SectionType): SectionCategory {
-    return SECTION_CATEGORIES[type] ?? 'simple';
-  }
-
-  /**
-   * Get component synchronously (returns null if not loaded)
-   */
-  getSync(type: SectionType): AnySectionComponent | null {
+  getCachedComponent(type: LazySectionType): Type<BaseSectionComponent> | null {
     return this.componentCache.get(type) ?? null;
   }
 
   /**
-   * Clear cache and reset state
+   * Load a lazy section component
+   *
+   * @param type - The section type to load
+   * @returns Promise resolving to the component class
    */
-  reset(): void {
-    this.componentCache.clear();
-    this.loadingPromises.clear();
-    this._loadedCategories.set(new Set(['core']));
-    this._loadStats.set(new Map());
-    this.preloadCoreComponents();
-  }
+  async loadSection(type: LazySectionType): Promise<Type<BaseSectionComponent>> {
+    // Return cached component if available
+    if (this.componentCache.has(type)) {
+      return this.componentCache.get(type)!;
+    }
 
-  /**
-   * Internal loading implementation with lazy imports
-   */
-  private async loadSectionInternal(type: SectionType): Promise<AnySectionComponent> {
-    const startTime = performance.now();
+    // Return pending promise if already loading
+    if (this.pendingLoads.has(type)) {
+      return this.pendingLoads.get(type)!;
+    }
+
+    // Start loading
+    const state = this.loadingStates.get(type)!;
+    state.loading = true;
+    state.error = null;
+
+    const loadPromise = this.executeLoad(type);
+    this.pendingLoads.set(type, loadPromise);
 
     try {
-      const component = await this.dynamicImport(type);
+      const component = await loadPromise;
 
-      // Track load time
-      const loadTime = performance.now() - startTime;
-      this._loadStats.update(stats => {
-        const newStats = new Map(stats);
-        newStats.set(type, loadTime);
-        return newStats;
-      });
+      // Update state
+      state.loading = false;
+      state.loaded = true;
+      state.component = component;
+
+      // Cache the component
+      this.componentCache.set(type, component);
 
       return component;
     } catch (error) {
-      console.warn(`[LazySectionLoader] Failed to load section: ${type}`, error);
-      // Return fallback on error
-      return this.getFallbackComponent();
+      state.loading = false;
+      state.error = error instanceof Error ? error : new Error(String(error));
+      throw error;
+    } finally {
+      this.pendingLoads.delete(type);
     }
   }
 
   /**
-   * Dynamic import for each section type
-   * Note: These imports enable tree-shaking and code splitting
+   * Execute the actual dynamic import
    */
-  private async dynamicImport(type: SectionType): Promise<AnySectionComponent> {
-    switch (type) {
-      // Core sections - synchronous import (already bundled)
-      case 'info':
-        return (await import('../sections/info-section.component')).InfoSectionComponent;
+  private async executeLoad(type: LazySectionType): Promise<Type<BaseSectionComponent>> {
+    const factory = this.lazyFactories[type];
 
-      case 'analytics':
-        return (await import('../sections/analytics-section/analytics-section.component')).AnalyticsSectionComponent;
-
-      case 'list':
-        return (await import('../sections/list-section/list-section.component')).ListSectionComponent;
-
-      case 'overview':
-        return (await import('../sections/overview-section/overview-section.component')).OverviewSectionComponent;
-
-      // Chart section - requires chart.js
-      case 'chart':
-        return (await import('../sections/chart-section/chart-section.component')).ChartSectionComponent;
-
-      // Map section - requires leaflet
-      case 'map':
-        return (await import('../sections/map-section/map-section.component')).MapSectionComponent;
-
-      // Complex sections
-      case 'financials':
-        return (await import('../sections/financials-section/financials-section.component')).FinancialsSectionComponent;
-
-      case 'contact-card':
-        return (await import('../sections/contact-card-section/contact-card-section.component')).ContactCardSectionComponent;
-
-      case 'network-card':
-        return (await import('../sections/network-card-section/network-card-section.component')).NetworkCardSectionComponent;
-
-      case 'social-media':
-        return (await import('../sections/social-media-section/social-media-section.component')).SocialMediaSectionComponent;
-
-      // Simple sections
-      case 'event':
-        return (await import('../sections/event-section/event-section.component')).EventSectionComponent;
-
-      case 'product':
-        return (await import('../sections/product-section/product-section.component')).ProductSectionComponent;
-
-      case 'solutions':
-        return (await import('../sections/solutions-section/solutions-section.component')).SolutionsSectionComponent;
-
-      case 'quotation':
-        return (await import('../sections/quotation-section/quotation-section.component')).QuotationSectionComponent;
-
-      case 'text-reference':
-        return (await import('../sections/text-reference-section/text-reference-section.component')).TextReferenceSectionComponent;
-
-      case 'brand-colors':
-        return (await import('../sections/brand-colors-section/brand-colors-section.component')).BrandColorsSectionComponent;
-
-      case 'news':
-        return (await import('../sections/news-section/news-section.component')).NewsSectionComponent;
-
-      case 'fallback':
-      default:
-        return this.getFallbackComponent();
+    if (!factory) {
+      throw new Error(`No lazy loader defined for section type: ${type}`);
     }
-  }
 
-  /**
-   * Pre-load core components
-   */
-  private preloadCoreComponents(): void {
-    // Core components are loaded synchronously on startup
-    // This ensures they're available immediately
-    const coreTypes: SectionType[] = ['info', 'analytics', 'list', 'overview', 'fallback'];
-
-    // Load them asynchronously but don't await
-    coreTypes.forEach(type => {
-      this.loadSection(type).catch(() => {
-        // Ignore errors during preload
-      });
+    // Run outside Angular zone for better performance
+    return this.ngZone.runOutsideAngular(async () => {
+      try {
+        return await factory();
+      } catch (error) {
+        console.error(`Failed to lazy load section "${type}":`, error);
+        throw error;
+      }
     });
   }
 
   /**
-   * Get fallback component
+   * Preload a lazy section (useful for anticipated navigation)
+   *
+   * @param type - The section type to preload
    */
-  private async getFallbackComponent(): Promise<AnySectionComponent> {
-    return (await import('../sections/fallback-section/fallback-section.component')).FallbackSectionComponent;
+  preload(type: LazySectionType): void {
+    if (!this.isLoaded(type) && !this.pendingLoads.has(type)) {
+      // Fire and forget - preload in background
+      this.loadSection(type).catch(() => {
+        // Silently ignore preload failures
+      });
+    }
+  }
+
+  /**
+   * Preload all lazy sections
+   * Useful for applications that know they'll need these sections
+   */
+  preloadAll(): void {
+    for (const type of LAZY_SECTION_TYPES) {
+      this.preload(type);
+    }
+  }
+
+  /**
+   * Clear the component cache (useful for testing or hot reload)
+   */
+  clearCache(): void {
+    this.componentCache.clear();
+    for (const [type, state] of this.loadingStates) {
+      state.loading = false;
+      state.loaded = false;
+      state.error = null;
+      state.component = null;
+    }
+  }
+
+  /**
+   * Retry loading a failed section
+   */
+  async retryLoad(type: LazySectionType): Promise<Type<BaseSectionComponent>> {
+    const state = this.loadingStates.get(type);
+    if (state) {
+      state.error = null;
+    }
+    return this.loadSection(type);
   }
 }
-
-

@@ -1,18 +1,18 @@
 /**
  * OSI Cards Constants
- * 
+ *
  * Centralized constants for animation, layout, streaming, and configuration.
  * Import from this barrel file to access all constants.
- * 
+ *
  * @example
  * ```typescript
- * import { 
- *   ANIMATION_TIMING, 
- *   SPACING, 
- *   STREAMING_CONFIG 
+ * import {
+ *   ANIMATION_TIMING,
+ *   SPACING,
+ *   STREAMING_CONFIG
  * } from 'osi-cards-lib';
  * ```
- * 
+ *
  * @module constants
  */
 
@@ -85,6 +85,25 @@ export {
   type StreamingStage,
   type StreamingIdPrefix,
 } from './streaming.constants';
+
+// ============================================================================
+// UI CONSTANTS
+// ============================================================================
+export {
+  PARTICLE_CONFIG,
+  EMPTY_STATE_CONFIG,
+  CONTAINER_CONFIG,
+  TILT_EFFECT_CONFIG,
+  INTERACTION_THRESHOLDS,
+  CARD_SIZE_CONFIG,
+  SKELETON_CONFIG,
+  ICON_SIZE,
+  TOAST_CONFIG,
+  VALIDATION_LIMITS,
+  type IconSizeKey,
+  type ParticleConfigKey,
+} from './ui.constants';
+
 
 
 

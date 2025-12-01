@@ -72,6 +72,8 @@ export {
 } from './component-composition.util';
 export * from './error-boundary.util';
 export * from './input-coercion.util';
+export * from './memo.util';
+export * from './sanitization.util';
 // Export virtual-scroll-enhanced with renamed VirtualScrollConfig to avoid conflict with virtual-scroll.util
 export {
   VirtualScrollConfig as EnhancedVirtualScrollConfig,
@@ -83,6 +85,9 @@ export {
   useIntersectionObserver,
   useVirtualScroll,
 } from './virtual-scroll-enhanced.util';
+
+// Performance monitoring
+export * from './performance-monitor.util';
 
 // Note: Additional utility files are available as separate imports if needed:
 // - lru-cache.util.ts

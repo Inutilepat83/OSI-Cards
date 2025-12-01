@@ -66,8 +66,9 @@ export class SectionComponentRegistryService {
       return fallbackLoader.loadComponent();
     }
 
-    // Default fallback
-    const module = await import('../sections/fallback-section/fallback-section.component');
+    // Default fallback - from library
+    const module =
+      await import('projects/osi-cards-lib/src/lib/components/sections/fallback-section/fallback-section.component');
     return module.FallbackSectionComponent;
   }
 

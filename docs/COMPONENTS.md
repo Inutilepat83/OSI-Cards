@@ -780,3 +780,4 @@ AICardConfig
 - [Plugin System](./PLUGIN_SYSTEM.md) - Custom section plugins
 - [CSS Encapsulation](./CSS_ENCAPSULATION.md) - Style isolation
 - [Best Practices](./BEST_PRACTICES.md) - Performance tips
+

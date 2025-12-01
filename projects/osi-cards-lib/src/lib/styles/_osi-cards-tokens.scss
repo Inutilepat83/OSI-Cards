@@ -1,0 +1,325 @@
+/**
+ * OSI Cards Design Tokens
+ * Single Source of Truth for all design tokens
+ *
+ * Usage:
+ * @use 'osi-cards-tokens' as tokens;
+ *
+ * .my-component {
+ *   color: var(--osi-text-primary);
+ *   padding: var(--osi-spacing-md);
+ * }
+ */
+
+// ============================================================================
+// COLOR PALETTE
+// ============================================================================
+
+:root {
+  // Primary Colors
+  --osi-primary-50: #fef4f2;
+  --osi-primary-100: #fee5e2;
+  --osi-primary-200: #fdd0c8;
+  --osi-primary-300: #fbb0a3;
+  --osi-primary-400: #f78370;
+  --osi-primary-500: #ec5a45;
+  --osi-primary-600: #d93e27;
+  --osi-primary-700: #b6311d;
+  --osi-primary-800: #972c1c;
+  --osi-primary-900: #7d2a1d;
+
+  // Neutral Colors
+  --osi-neutral-50: #f8fafc;
+  --osi-neutral-100: #f1f5f9;
+  --osi-neutral-200: #e2e8f0;
+  --osi-neutral-300: #cbd5e1;
+  --osi-neutral-400: #94a3b8;
+  --osi-neutral-500: #64748b;
+  --osi-neutral-600: #475569;
+  --osi-neutral-700: #334155;
+  --osi-neutral-800: #1e293b;
+  --osi-neutral-900: #0f172a;
+
+  // Semantic Colors
+  --osi-success-50: #f0fdf4;
+  --osi-success-500: #22c55e;
+  --osi-success-700: #15803d;
+
+  --osi-warning-50: #fffbeb;
+  --osi-warning-500: #f59e0b;
+  --osi-warning-700: #b45309;
+
+  --osi-error-50: #fef2f2;
+  --osi-error-500: #ef4444;
+  --osi-error-700: #b91c1c;
+
+  --osi-info-50: #eff6ff;
+  --osi-info-500: #3b82f6;
+  --osi-info-700: #1d4ed8;
+}
+
+// ============================================================================
+// TYPOGRAPHY
+// ============================================================================
+
+:root {
+  // Font Families
+  --osi-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --osi-font-mono: 'SF Mono', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+
+  // Font Sizes
+  --osi-text-xs: 0.75rem;     // 12px
+  --osi-text-sm: 0.875rem;    // 14px
+  --osi-text-base: 1rem;      // 16px
+  --osi-text-lg: 1.125rem;    // 18px
+  --osi-text-xl: 1.25rem;     // 20px
+  --osi-text-2xl: 1.5rem;     // 24px
+  --osi-text-3xl: 1.875rem;   // 30px
+  --osi-text-4xl: 2.25rem;    // 36px
+
+  // Line Heights
+  --osi-leading-tight: 1.25;
+  --osi-leading-snug: 1.375;
+  --osi-leading-normal: 1.5;
+  --osi-leading-relaxed: 1.625;
+
+  // Font Weights
+  --osi-font-normal: 400;
+  --osi-font-medium: 500;
+  --osi-font-semibold: 600;
+  --osi-font-bold: 700;
+}
+
+// ============================================================================
+// SPACING
+// ============================================================================
+
+:root {
+  --osi-spacing-0: 0;
+  --osi-spacing-px: 1px;
+  --osi-spacing-0_5: 0.125rem;  // 2px
+  --osi-spacing-1: 0.25rem;     // 4px
+  --osi-spacing-1_5: 0.375rem;  // 6px
+  --osi-spacing-2: 0.5rem;      // 8px
+  --osi-spacing-2_5: 0.625rem;  // 10px
+  --osi-spacing-3: 0.75rem;     // 12px
+  --osi-spacing-3_5: 0.875rem;  // 14px
+  --osi-spacing-4: 1rem;        // 16px
+  --osi-spacing-5: 1.25rem;     // 20px
+  --osi-spacing-6: 1.5rem;      // 24px
+  --osi-spacing-7: 1.75rem;     // 28px
+  --osi-spacing-8: 2rem;        // 32px
+  --osi-spacing-9: 2.25rem;     // 36px
+  --osi-spacing-10: 2.5rem;     // 40px
+  --osi-spacing-12: 3rem;       // 48px
+  --osi-spacing-14: 3.5rem;     // 56px
+  --osi-spacing-16: 4rem;       // 64px
+  --osi-spacing-20: 5rem;       // 80px
+  --osi-spacing-24: 6rem;       // 96px
+
+  // Semantic spacing aliases
+  --osi-spacing-xs: var(--osi-spacing-1);
+  --osi-spacing-sm: var(--osi-spacing-2);
+  --osi-spacing-md: var(--osi-spacing-4);
+  --osi-spacing-lg: var(--osi-spacing-6);
+  --osi-spacing-xl: var(--osi-spacing-8);
+  --osi-spacing-2xl: var(--osi-spacing-12);
+}
+
+// ============================================================================
+// BORDERS & RADIUS
+// ============================================================================
+
+:root {
+  // Border Radius
+  --osi-radius-none: 0;
+  --osi-radius-sm: 0.125rem;    // 2px
+  --osi-radius-default: 0.25rem; // 4px
+  --osi-radius-md: 0.375rem;    // 6px
+  --osi-radius-lg: 0.5rem;      // 8px
+  --osi-radius-xl: 0.75rem;     // 12px
+  --osi-radius-2xl: 1rem;       // 16px
+  --osi-radius-3xl: 1.5rem;     // 24px
+  --osi-radius-full: 9999px;
+
+  // Border Widths
+  --osi-border-0: 0;
+  --osi-border-1: 1px;
+  --osi-border-2: 2px;
+  --osi-border-4: 4px;
+  --osi-border-8: 8px;
+}
+
+// ============================================================================
+// SHADOWS
+// ============================================================================
+
+:root {
+  --osi-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --osi-shadow-default: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --osi-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --osi-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --osi-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --osi-shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --osi-shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+  --osi-shadow-none: 0 0 #0000;
+}
+
+// ============================================================================
+// ANIMATIONS
+// ============================================================================
+
+:root {
+  // Durations
+  --osi-duration-75: 75ms;
+  --osi-duration-100: 100ms;
+  --osi-duration-150: 150ms;
+  --osi-duration-200: 200ms;
+  --osi-duration-300: 300ms;
+  --osi-duration-500: 500ms;
+  --osi-duration-700: 700ms;
+  --osi-duration-1000: 1000ms;
+
+  // Timing Functions
+  --osi-ease-linear: linear;
+  --osi-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --osi-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --osi-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --osi-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+// ============================================================================
+// Z-INDEX
+// ============================================================================
+
+:root {
+  --osi-z-0: 0;
+  --osi-z-10: 10;
+  --osi-z-20: 20;
+  --osi-z-30: 30;
+  --osi-z-40: 40;
+  --osi-z-50: 50;
+  --osi-z-auto: auto;
+
+  // Semantic z-index
+  --osi-z-dropdown: 1000;
+  --osi-z-sticky: 1020;
+  --osi-z-fixed: 1030;
+  --osi-z-modal-backdrop: 1040;
+  --osi-z-modal: 1050;
+  --osi-z-popover: 1060;
+  --osi-z-tooltip: 1070;
+}
+
+// ============================================================================
+// COMPONENT TOKENS
+// ============================================================================
+
+:root {
+  // Card tokens
+  --osi-card-bg: white;
+  --osi-card-border: var(--osi-neutral-200);
+  --osi-card-radius: var(--osi-radius-xl);
+  --osi-card-shadow: var(--osi-shadow-md);
+  --osi-card-padding: var(--osi-spacing-4);
+
+  // Section tokens
+  --osi-section-gap: var(--osi-spacing-3);
+  --osi-section-header-color: var(--osi-neutral-800);
+  --osi-section-content-color: var(--osi-neutral-600);
+
+  // Field tokens
+  --osi-field-label-color: var(--osi-neutral-500);
+  --osi-field-value-color: var(--osi-neutral-900);
+  --osi-field-gap: var(--osi-spacing-1);
+
+  // Grid tokens
+  --osi-grid-columns: 12;
+  --osi-grid-gap: var(--osi-spacing-4);
+  --osi-grid-min-column: 200px;
+
+  // Button tokens
+  --osi-btn-padding-x: var(--osi-spacing-4);
+  --osi-btn-padding-y: var(--osi-spacing-2);
+  --osi-btn-radius: var(--osi-radius-md);
+  --osi-btn-font-size: var(--osi-text-sm);
+  --osi-btn-font-weight: var(--osi-font-medium);
+}
+
+// ============================================================================
+// THEME-SPECIFIC TOKENS (Light)
+// ============================================================================
+
+:root,
+[data-theme="light"] {
+  --osi-bg-primary: white;
+  --osi-bg-secondary: var(--osi-neutral-50);
+  --osi-bg-tertiary: var(--osi-neutral-100);
+
+  --osi-text-primary: var(--osi-neutral-900);
+  --osi-text-secondary: var(--osi-neutral-600);
+  --osi-text-tertiary: var(--osi-neutral-400);
+  --osi-text-inverse: white;
+
+  --osi-border-default: var(--osi-neutral-200);
+  --osi-border-strong: var(--osi-neutral-300);
+}
+
+// ============================================================================
+// THEME-SPECIFIC TOKENS (Dark)
+// ============================================================================
+
+[data-theme="dark"] {
+  --osi-bg-primary: var(--osi-neutral-900);
+  --osi-bg-secondary: var(--osi-neutral-800);
+  --osi-bg-tertiary: var(--osi-neutral-700);
+
+  --osi-text-primary: var(--osi-neutral-50);
+  --osi-text-secondary: var(--osi-neutral-300);
+  --osi-text-tertiary: var(--osi-neutral-500);
+  --osi-text-inverse: var(--osi-neutral-900);
+
+  --osi-border-default: var(--osi-neutral-700);
+  --osi-border-strong: var(--osi-neutral-600);
+
+  // Override card tokens for dark
+  --osi-card-bg: var(--osi-neutral-800);
+  --osi-card-border: var(--osi-neutral-700);
+
+  // Override section tokens
+  --osi-section-header-color: var(--osi-neutral-100);
+  --osi-section-content-color: var(--osi-neutral-300);
+
+  // Override field tokens
+  --osi-field-label-color: var(--osi-neutral-400);
+  --osi-field-value-color: var(--osi-neutral-100);
+}
+
+// ============================================================================
+// PRINT STYLES
+// ============================================================================
+
+@media print {
+  :root {
+    --osi-card-shadow: none;
+    --osi-card-border: var(--osi-neutral-300);
+  }
+}
+
+// ============================================================================
+// REDUCED MOTION
+// ============================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --osi-duration-75: 0ms;
+    --osi-duration-100: 0ms;
+    --osi-duration-150: 0ms;
+    --osi-duration-200: 0ms;
+    --osi-duration-300: 0ms;
+    --osi-duration-500: 0ms;
+    --osi-duration-700: 0ms;
+    --osi-duration-1000: 0ms;
+  }
+}
+

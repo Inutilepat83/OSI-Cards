@@ -8,8 +8,8 @@
  */
 
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, concat, delay, Observable, of, Subject, timer } from 'rxjs';
-import { concatMap, finalize, map, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, concat, Observable, of, Subject, timer } from 'rxjs';
+import { finalize, map, takeUntil } from 'rxjs/operators';
 import {
   StreamingChunk,
   StreamingConnectionState,
@@ -19,7 +19,6 @@ import {
   StreamingTransportConfig,
   StreamingTransportError,
 } from './streaming-transport.interface';
-import { StreamingEvent, StreamingState, StreamingStateMachine } from './streaming-state-machine';
 import { AICardConfig } from '../../../models';
 
 /**
@@ -101,7 +100,6 @@ export class MockStreamingService extends StreamingTransport {
   private bytesReceived = 0;
   private chunksReceived = 0;
   private _isConnected = false;
-  private isDestroyed = false;
 
   private readonly destroy$ = new Subject<void>();
   private readonly chunkSubject = new Subject<StreamingChunk>();
@@ -155,7 +153,7 @@ export class MockStreamingService extends StreamingTransport {
   /**
    * Connect (mock)
    */
-  connect(transportConfig: StreamingTransportConfig): Observable<void> {
+  connect(_transportConfig: StreamingTransportConfig): Observable<void> {
     return new Observable((observer) => {
       this.reset();
 
@@ -195,7 +193,7 @@ export class MockStreamingService extends StreamingTransport {
   /**
    * Disconnect (mock)
    */
-  disconnect(reason?: string): void {
+  disconnect(_reason?: string): void {
     this._isConnected = false;
     this.stateSubject.next('disconnected');
     this.updateStatus();
@@ -205,7 +203,7 @@ export class MockStreamingService extends StreamingTransport {
   /**
    * Send is not supported in mock
    */
-  send(data: string | ArrayBuffer): Observable<void> {
+  send(_data: string | ArrayBuffer): Observable<void> {
     return of(undefined);
   }
 
@@ -249,7 +247,7 @@ export class MockStreamingService extends StreamingTransport {
    * Destroy
    */
   destroy(): void {
-    this.isDestroyed = true;
+    // Cleanup complete
     this.disconnect('Destroyed');
     this.destroy$.complete();
     this.chunkSubject.complete();

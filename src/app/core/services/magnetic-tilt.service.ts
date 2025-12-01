@@ -216,7 +216,9 @@ export class MagneticTiltService implements OnDestroy {
       // Point 30: Frame budget check
       const frameTime = performance.now() - frameStart;
       if (isDevMode() && frameTime > FRAME_BUDGET_MS) {
-        console.warn(`[MagneticTilt] Frame took ${frameTime.toFixed(2)}ms (budget: ${FRAME_BUDGET_MS}ms)`);
+        console.warn(
+          `[MagneticTilt] Frame took ${frameTime.toFixed(2)}ms (budget: ${FRAME_BUDGET_MS}ms)`
+        );
       }
 
       if (shouldContinue) {
@@ -255,11 +257,31 @@ export class MagneticTiltService implements OnDestroy {
     // Point 5: Exponential smoothing - naturally handles interruptions
     const smoothFactor = 1 - Math.exp(-deltaTime * SMOOTHING_SPEED);
 
-    this.currentRotateY = this.exponentialSmooth(this.currentRotateY, this.targetRotateY, smoothFactor);
-    this.currentRotateX = this.exponentialSmooth(this.currentRotateX, this.targetRotateX, smoothFactor);
-    this.currentGlowBlur = this.exponentialSmooth(this.currentGlowBlur, this.targetGlowBlur, smoothFactor);
-    this.currentGlowOpacity = this.exponentialSmooth(this.currentGlowOpacity, this.targetGlowOpacity, smoothFactor);
-    this.currentReflectionOpacity = this.exponentialSmooth(this.currentReflectionOpacity, this.targetReflectionOpacity, smoothFactor);
+    this.currentRotateY = this.exponentialSmooth(
+      this.currentRotateY,
+      this.targetRotateY,
+      smoothFactor
+    );
+    this.currentRotateX = this.exponentialSmooth(
+      this.currentRotateX,
+      this.targetRotateX,
+      smoothFactor
+    );
+    this.currentGlowBlur = this.exponentialSmooth(
+      this.currentGlowBlur,
+      this.targetGlowBlur,
+      smoothFactor
+    );
+    this.currentGlowOpacity = this.exponentialSmooth(
+      this.currentGlowOpacity,
+      this.targetGlowOpacity,
+      smoothFactor
+    );
+    this.currentReflectionOpacity = this.exponentialSmooth(
+      this.currentReflectionOpacity,
+      this.targetReflectionOpacity,
+      smoothFactor
+    );
 
     this.emitCalculations();
 
@@ -289,8 +311,10 @@ export class MagneticTiltService implements OnDestroy {
     // Interpolate from reset start to neutral
     this.currentRotateY = this.resetStartRotateY * (1 - easeOut);
     this.currentRotateX = this.resetStartRotateX * (1 - easeOut);
-    this.currentGlowBlur = BASE_GLOW_BLUR + (this.resetStartGlowBlur - BASE_GLOW_BLUR) * (1 - easeOut);
-    this.currentGlowOpacity = BASE_GLOW_OPACITY + (this.resetStartGlowOpacity - BASE_GLOW_OPACITY) * (1 - easeOut);
+    this.currentGlowBlur =
+      BASE_GLOW_BLUR + (this.resetStartGlowBlur - BASE_GLOW_BLUR) * (1 - easeOut);
+    this.currentGlowOpacity =
+      BASE_GLOW_OPACITY + (this.resetStartGlowOpacity - BASE_GLOW_OPACITY) * (1 - easeOut);
     this.currentReflectionOpacity = this.resetStartReflectionOpacity * (1 - easeOut);
 
     this.emitCalculations();
@@ -308,7 +332,9 @@ export class MagneticTiltService implements OnDestroy {
    */
   private calculateTargetValues(mousePosition: MousePosition, element: HTMLElement): void {
     const cache = this.getElementCache(element);
-    if (!cache) return;
+    if (!cache) {
+      return;
+    }
 
     // Use pre-cached inverse dimensions (Point 9)
     const fx = (mousePosition.x - cache.rect.left) * cache.invWidth;
@@ -405,7 +431,10 @@ export class MagneticTiltService implements OnDestroy {
     };
 
     // Point 10: Check if calculations have changed meaningfully
-    if (this.lastEmittedCalculations && !this.hasCalculationsChanged(this.lastEmittedCalculations, newCalculations)) {
+    if (
+      this.lastEmittedCalculations &&
+      !this.hasCalculationsChanged(this.lastEmittedCalculations, newCalculations)
+    ) {
       return;
     }
 

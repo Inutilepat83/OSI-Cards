@@ -1,0 +1,26 @@
+/**
+ * OSI Cards Style System
+ * Single entry point for all styles
+ *
+ * Usage in applications:
+ * @use 'osi-cards-lib/styles' as osi;
+ *
+ * Or import individual parts:
+ * @use 'osi-cards-lib/styles/tokens' as tokens;
+ * @use 'osi-cards-lib/styles/mixins' as mixins;
+ */
+
+// Design tokens (CSS custom properties)
+@forward 'osi-cards-tokens';
+
+// SCSS mixins and utilities
+@forward 'osi-cards-mixins';
+
+// Component styles
+@forward 'components/card' as card-*;
+@forward 'components/section' as section-*;
+
+// Optional: Theme utilities
+@forward 'themes/light' as light-*;
+@forward 'themes/dark' as dark-*;
+

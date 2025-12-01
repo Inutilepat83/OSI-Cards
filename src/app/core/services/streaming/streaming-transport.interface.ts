@@ -7,7 +7,7 @@
  * @since 2.0.0
  */
 
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 
 /**
  * Connection state for streaming transports

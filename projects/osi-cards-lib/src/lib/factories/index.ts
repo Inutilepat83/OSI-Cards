@@ -1,12 +1,12 @@
 /**
  * OSI Cards Factories
- * 
+ *
  * Factory classes and builders for creating card configurations.
- * 
+ *
  * @example
  * ```typescript
  * import { CardFactory, SectionFactory, FieldFactory } from 'osi-cards-lib';
- * 
+ *
  * const card = CardFactory.create()
  *   .withTitle('My Card')
  *   .withSection(SectionFactory.info('Details', [
@@ -15,19 +15,26 @@
  *   ]))
  *   .build();
  * ```
- * 
+ *
  * @module factories
  */
 
 export {
   CardFactory,
-  SectionFactory,
+  SectionFactory as SectionConfigFactory,
   FieldFactory,
   ItemFactory,
   ActionFactory,
   type ICardBuilder,
   type ISectionBuilder,
 } from './card.factory';
+
+// Section Component Factory (for dynamic component loading)
+export {
+  SectionFactory,
+  type SectionType,
+  type SectionMetadata,
+} from './section.factory';
 
 // Type-Safe Card Builder DSL (Improvement Plan Point #26)
 export {

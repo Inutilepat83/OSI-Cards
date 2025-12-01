@@ -56,3 +56,4 @@ We refactored `AICardRendererComponent` by extracting focused sub-components:
 - Component Composition: https://angular.io/guide/component-overview
 
 
+

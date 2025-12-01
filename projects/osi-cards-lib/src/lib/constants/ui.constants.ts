@@ -1,0 +1,313 @@
+/**
+ * OSI Cards UI Constants
+ *
+ * Centralized constants for UI elements, particles, and interactions.
+ * Eliminates magic numbers from component code.
+ *
+ * @module constants/ui
+ */
+
+// ============================================================================
+// PARTICLE CONFIGURATION
+// ============================================================================
+
+/**
+ * Configuration for particle animations in empty state
+ */
+export const PARTICLE_CONFIG = {
+  /** Number of particles in the animation */
+  COUNT: 20,
+
+  /** Base scale for particles */
+  BASE_SCALE: 1,
+
+  /** Maximum scale multiplier on hover */
+  MAX_SCALE_MULTIPLIER: 0.4,
+
+  /** Base opacity for particles */
+  BASE_OPACITY: 0.5,
+
+  /** Maximum additional opacity on interaction */
+  MAX_OPACITY_ADDITION: 0.3,
+
+  /** Opacity factor based on position */
+  POSITION_OPACITY_FACTOR: 0.2,
+
+  /** Delay multiplier between particles */
+  DELAY_MULTIPLIER: 0.08,
+
+  /** Follow strength reduction per particle */
+  FOLLOW_STRENGTH_REDUCTION: 0.3,
+
+  /** Base follow strength */
+  BASE_FOLLOW_STRENGTH: 0.4,
+
+  /** Spiral radius base */
+  SPIRAL_RADIUS_BASE: 15,
+
+  /** Spiral radius increment */
+  SPIRAL_RADIUS_INCREMENT: 8,
+
+  /** Golden angle for spiral distribution */
+  GOLDEN_ANGLE: 137.5,
+} as const;
+
+// ============================================================================
+// EMPTY STATE CONFIGURATION
+// ============================================================================
+
+/**
+ * Configuration for the empty/loading state
+ */
+export const EMPTY_STATE_CONFIG = {
+  /** Message rotation interval in milliseconds */
+  MESSAGE_INTERVAL_MS: 2500,
+
+  /** Default loading title */
+  DEFAULT_TITLE: 'Creating OSI Card',
+
+  /** Gradient transform multiplier for mouse tracking */
+  GRADIENT_TRANSFORM_MULTIPLIER: 0.1,
+
+  /** Content parallax mouse multiplier */
+  CONTENT_PARALLAX_MOUSE: 0.02,
+
+  /** Content parallax scroll multiplier */
+  CONTENT_PARALLAX_SCROLL: 0.05,
+} as const;
+
+// ============================================================================
+// CONTAINER CONFIGURATION
+// ============================================================================
+
+/**
+ * Configuration for container measurements and fallbacks
+ */
+export const CONTAINER_CONFIG = {
+  /** Default margin for window-based width calculation */
+  WINDOW_MARGIN: 80,
+
+  /** Minimum container width */
+  MIN_WIDTH: 260,
+
+  /** Width change threshold for triggering updates (pixels) */
+  WIDTH_CHANGE_THRESHOLD: 4,
+
+  /** Section highlight duration in milliseconds */
+  SECTION_HIGHLIGHT_DURATION_MS: 2000,
+
+  /** Scroll offset from top for section navigation */
+  SCROLL_OFFSET: -20,
+} as const;
+
+// ============================================================================
+// TILT EFFECT CONFIGURATION
+// ============================================================================
+
+/**
+ * Extended tilt effect configuration
+ */
+export const TILT_EFFECT_CONFIG = {
+  /** Default maximum tilt angle in degrees */
+  MAX_ANGLE_DEG: 10,
+
+  /** Tilt sensitivity multiplier */
+  SENSITIVITY: 0.5,
+
+  /** Glow effect base intensity */
+  GLOW_INTENSITY: 0.4,
+
+  /** Maximum glow blur in pixels */
+  MAX_GLOW_BLUR_PX: 40,
+
+  /** Reflection opacity multiplier */
+  REFLECTION_OPACITY_MULTIPLIER: 0.3,
+
+  /** Distance threshold for activation in pixels */
+  ACTIVATION_DISTANCE_PX: 300,
+
+  /** Primary brand color for glow (RGB) */
+  GLOW_COLOR_RGB: '255, 121, 0',
+} as const;
+
+// ============================================================================
+// INTERACTION THRESHOLDS
+// ============================================================================
+
+/**
+ * Thresholds for various UI interactions
+ */
+export const INTERACTION_THRESHOLDS = {
+  /** Double-click detection time in milliseconds */
+  DOUBLE_CLICK_MS: 300,
+
+  /** Long press detection time in milliseconds */
+  LONG_PRESS_MS: 500,
+
+  /** Swipe minimum distance in pixels */
+  SWIPE_MIN_DISTANCE_PX: 50,
+
+  /** Swipe maximum vertical deviation ratio */
+  SWIPE_MAX_VERTICAL_RATIO: 0.3,
+
+  /** Debounce delay for resize events in milliseconds */
+  RESIZE_DEBOUNCE_MS: 150,
+
+  /** Debounce delay for scroll events in milliseconds */
+  SCROLL_DEBOUNCE_MS: 100,
+
+  /** Throttle delay for mouse move events in milliseconds */
+  MOUSEMOVE_THROTTLE_MS: 16, // ~60fps
+} as const;
+
+// ============================================================================
+// CARD SIZING
+// ============================================================================
+
+/**
+ * Card size constraints and defaults
+ */
+export const CARD_SIZE_CONFIG = {
+  /** Minimum card width in pixels */
+  MIN_WIDTH_PX: 280,
+
+  /** Maximum card width in pixels */
+  MAX_WIDTH_PX: 800,
+
+  /** Default card width in pixels */
+  DEFAULT_WIDTH_PX: 400,
+
+  /** Minimum card height in pixels */
+  MIN_HEIGHT_PX: 200,
+
+  /** Maximum recommended sections before scrolling */
+  MAX_SECTIONS_BEFORE_SCROLL: 10,
+
+  /** Default action button count limit */
+  MAX_VISIBLE_ACTIONS: 4,
+} as const;
+
+// ============================================================================
+// SKELETON LOADING
+// ============================================================================
+
+/**
+ * Configuration for skeleton loading states
+ */
+export const SKELETON_CONFIG = {
+  /** Shimmer animation duration in milliseconds */
+  SHIMMER_DURATION_MS: 1500,
+
+  /** Shimmer background size multiplier */
+  SHIMMER_BG_SIZE_MULTIPLIER: 2,
+
+  /** Header skeleton height in pixels */
+  HEADER_HEIGHT_PX: 24,
+
+  /** Line skeleton height in pixels */
+  LINE_HEIGHT_PX: 16,
+
+  /** Gap between skeleton lines in pixels */
+  LINE_GAP_PX: 8,
+
+  /** Short line width percentage */
+  SHORT_LINE_WIDTH_PERCENT: 70,
+
+  /** Number of lines in default skeleton */
+  DEFAULT_LINE_COUNT: 3,
+} as const;
+
+// ============================================================================
+// ICON SIZES
+// ============================================================================
+
+/**
+ * Standard icon sizes
+ */
+export const ICON_SIZE = {
+  /** Extra small icons (12px) */
+  XS: 12,
+
+  /** Small icons (16px) */
+  SM: 16,
+
+  /** Medium icons (20px - default) */
+  MD: 20,
+
+  /** Large icons (24px) */
+  LG: 24,
+
+  /** Extra large icons (32px) */
+  XL: 32,
+
+  /** Hero icons (48px) */
+  HERO: 48,
+} as const;
+
+// ============================================================================
+// TOAST/NOTIFICATION
+// ============================================================================
+
+/**
+ * Configuration for toast notifications
+ */
+export const TOAST_CONFIG = {
+  /** Default duration in milliseconds */
+  DEFAULT_DURATION_MS: 4000,
+
+  /** Minimum duration for auto-dismiss */
+  MIN_DURATION_MS: 2000,
+
+  /** Maximum simultaneous toasts */
+  MAX_VISIBLE: 5,
+
+  /** Animation duration for enter/exit */
+  ANIMATION_DURATION_MS: 300,
+
+  /** Gap between stacked toasts in pixels */
+  STACK_GAP_PX: 8,
+} as const;
+
+// ============================================================================
+// VALIDATION LIMITS
+// ============================================================================
+
+/**
+ * Input validation limits
+ */
+export const VALIDATION_LIMITS = {
+  /** Maximum card title length */
+  MAX_TITLE_LENGTH: 200,
+
+  /** Maximum section title length */
+  MAX_SECTION_TITLE_LENGTH: 150,
+
+  /** Maximum field label length */
+  MAX_FIELD_LABEL_LENGTH: 100,
+
+  /** Maximum field value length */
+  MAX_FIELD_VALUE_LENGTH: 1000,
+
+  /** Maximum description length */
+  MAX_DESCRIPTION_LENGTH: 2000,
+
+  /** Maximum number of sections per card */
+  MAX_SECTIONS_PER_CARD: 50,
+
+  /** Maximum number of fields per section */
+  MAX_FIELDS_PER_SECTION: 100,
+
+  /** Maximum number of items per section */
+  MAX_ITEMS_PER_SECTION: 100,
+
+  /** Maximum number of actions per card */
+  MAX_ACTIONS_PER_CARD: 10,
+} as const;
+
+// ============================================================================
+// TYPE EXPORTS
+// ============================================================================
+
+export type IconSizeKey = keyof typeof ICON_SIZE;
+export type ParticleConfigKey = keyof typeof PARTICLE_CONFIG;
+

@@ -16,8 +16,9 @@ import { AICardRendererComponent } from '../../../../shared/components/cards/ai-
 
 /**
  * Section type definition for gallery
+ * Used for component demo gallery display
  */
-interface SectionTypeDemo {
+export interface ISectionTypeDemo {
   type: string;
   name: string;
   description: string;

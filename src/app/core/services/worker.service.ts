@@ -1,4 +1,4 @@
-import { DestroyRef, inject, Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { AICardConfig } from '../../models';
 import { CardChangeType, CardDiffUtil } from '../../shared/utils/card-diff.util';
 
@@ -10,7 +10,6 @@ import { CardChangeType, CardDiffUtil } from '../../shared/utils/card-diff.util'
   providedIn: 'root',
 })
 export class WorkerService implements OnDestroy {
-  private readonly destroyRef = inject(DestroyRef);
   private cardProcessingWorker: Worker | null = null;
   private workerSupported = typeof Worker !== 'undefined';
 
@@ -132,7 +131,7 @@ export class WorkerService implements OnDestroy {
           changeType: changes.length > 0 ? 'content' : 'none'
         };
       }
-      
+
       function normalizeCardData(card) {
         return {
           ...card,
@@ -142,11 +141,11 @@ export class WorkerService implements OnDestroy {
           })) || []
         };
       }
-      
+
       self.addEventListener('message', (event) => {
         const { type, payload } = event.data;
         let result;
-        
+
         try {
           switch (type) {
             case 'PROCESS_CARD_DIFF':
@@ -161,7 +160,7 @@ export class WorkerService implements OnDestroy {
             default:
               throw new Error('Unknown worker task: ' + type);
           }
-          
+
           self.postMessage({
             type: type + '_RESULT',
             payload: result,

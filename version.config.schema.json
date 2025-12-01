@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OSI Cards Version Configuration",
+  "description": "Central version configuration file for OSI Cards project",
+  "type": "object",
+  "required": ["version", "name"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[\\w.]+)?(\\+[\\w.]+)?$",
+      "description": "Semantic version string (e.g., 1.5.2, 2.0.0-rc.1)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Package name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Project description"
+    },
+    "releaseDate": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Release date (set automatically during release)"
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    },
+    "author": {
+      "type": "string",
+      "description": "Author or team name"
+    },
+    "license": {
+      "type": "string",
+      "description": "License type"
+    },
+    "repository": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string" },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "apiVersion": {
+      "type": "string",
+      "description": "API version for OpenAPI spec"
+    },
+    "minAngularVersion": {
+      "type": "string",
+      "description": "Minimum supported Angular version"
+    },
+    "syncTargets": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Files to sync version to"
+    },
+    "releaseNotes": {
+      "type": "object",
+      "properties": {
+        "outputFile": { "type": "string" },
+        "changelogFile": { "type": "string" },
+        "includeCommitHash": { "type": "boolean" },
+        "includeAuthor": { "type": "boolean" },
+        "groupByType": { "type": "boolean" }
+      }
+    }
+  }
+}
+

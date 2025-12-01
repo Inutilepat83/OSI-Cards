@@ -3,7 +3,6 @@ import { LoggingService } from '../services/logging.service';
 import { PerformanceService } from '../services/performance.service';
 import { AppConfigService } from '../services/app-config.service';
 import { CardDataService } from '../services/card-data/card-data.service';
-import { CardRepository } from '../services/card-data/card-repository.service';
 import { ICardRepository } from '../services/card-data/card-repository.interface';
 
 /**

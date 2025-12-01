@@ -1,26 +1,26 @@
 /**
  * Testing Utilities (Improvements #26-40)
- * 
+ *
  * Comprehensive testing utilities for OSI Cards library.
  * Includes component harnesses, fixtures, mocks, and accessibility testing.
- * 
+ *
  * IMPORTANT: All section fixtures are sourced from the Section Registry.
  * Do NOT create hardcoded section examples - use the registry fixtures instead.
- * 
+ *
  * @example
  * ```typescript
- * import { 
- *   createMockCard, 
+ * import {
+ *   createMockCard,
  *   getFixture,
  *   SECTION_FIXTURES,
  *   SAMPLE_CARDS,
- *   accessibilityAudit 
+ *   accessibilityAudit
  * } from 'osi-cards-lib/testing';
- * 
+ *
  * // Use registry fixtures for consistent test data
  * const infoSection = getFixture('info', 'complete');
  * const analyticsSection = getFixture('analytics', 'minimal');
- * 
+ *
  * // Use sample cards built from registry
  * const companyCard = SAMPLE_CARDS.company;
  * ```
@@ -31,6 +31,7 @@ export * from './fixtures';
 export * from './mocks';
 export * from './utils';
 export * from './contract-testing';
+export * from './section-test.utils';
 
 // CDK Test Harnesses (Improvement Plan Point #13)
 export {
@@ -50,13 +51,13 @@ export {
   getAllFixtures,
   getFixtureWithUniqueId,
   getAvailableSectionTypes,
-  
+
   // Fixture collections
   SECTION_FIXTURES,
   COMPLETE_FIXTURES,
   MINIMAL_FIXTURES,
   EDGE_CASE_FIXTURES,
-  
+
   // Sample cards from registry
   SAMPLE_CARDS,
   SAMPLE_COMPANY_CARD,
@@ -65,7 +66,7 @@ export {
   ALL_SECTIONS_CARD,
   MINIMAL_ALL_SECTIONS_CARD,
   EDGE_CASE_ALL_SECTIONS_CARD,
-  
+
   // Types
   type FixtureCategory,
   type SectionFixtures
@@ -205,19 +206,19 @@ export function* createStreamingChunks(
 export class MockStreamingService {
   private chunks: string[] = [];
   private currentIndex = 0;
-  
+
   setData(json: string, chunkSize = 50): void {
     this.chunks = Array.from(createStreamingChunks(json, chunkSize));
     this.currentIndex = 0;
   }
-  
+
   async *stream(): AsyncGenerator<string, void, unknown> {
     for (const chunk of this.chunks) {
       await new Promise(resolve => setTimeout(resolve, 10));
       yield chunk;
     }
   }
-  
+
   reset(): void {
     this.currentIndex = 0;
   }
@@ -256,7 +257,7 @@ export function accessibilityAudit(element: HTMLElement): A11yAuditResult {
   const violations: A11yViolation[] = [];
   const warnings: A11yViolation[] = [];
   let passes = 0;
-  
+
   // Check for alt text on images
   const images = element.querySelectorAll('img');
   images.forEach((img, i) => {
@@ -272,14 +273,14 @@ export function accessibilityAudit(element: HTMLElement): A11yAuditResult {
       passes++;
     }
   });
-  
+
   // Check for button accessibility
   const buttons = element.querySelectorAll('button');
   buttons.forEach((btn, i) => {
     const hasText = btn.textContent?.trim();
     const hasAriaLabel = btn.hasAttribute('aria-label');
     const hasAriaLabelledBy = btn.hasAttribute('aria-labelledby');
-    
+
     if (!hasText && !hasAriaLabel && !hasAriaLabelledBy) {
       violations.push({
         id: 'button-name',
@@ -292,7 +293,7 @@ export function accessibilityAudit(element: HTMLElement): A11yAuditResult {
       passes++;
     }
   });
-  
+
   // Check for heading hierarchy
   const headings = element.querySelectorAll('h1, h2, h3, h4, h5, h6');
   let lastLevel = 0;
@@ -309,7 +310,7 @@ export function accessibilityAudit(element: HTMLElement): A11yAuditResult {
     }
     lastLevel = level;
   });
-  
+
   // Check for form labels
   const inputs = element.querySelectorAll('input, select, textarea');
   inputs.forEach((input, i) => {
@@ -317,7 +318,7 @@ export function accessibilityAudit(element: HTMLElement): A11yAuditResult {
     const hasLabel = id && element.querySelector(`label[for="${id}"]`);
     const hasAriaLabel = input.hasAttribute('aria-label');
     const hasAriaLabelledBy = input.hasAttribute('aria-labelledby');
-    
+
     if (!hasLabel && !hasAriaLabel && !hasAriaLabelledBy) {
       violations.push({
         id: 'label',
@@ -330,7 +331,7 @@ export function accessibilityAudit(element: HTMLElement): A11yAuditResult {
       passes++;
     }
   });
-  
+
   // Check color contrast (basic check for inline styles)
   const elementsWithColor = element.querySelectorAll('[style*="color"]');
   elementsWithColor.forEach((el, i) => {
@@ -346,7 +347,7 @@ export function accessibilityAudit(element: HTMLElement): A11yAuditResult {
       });
     }
   });
-  
+
   // Check for tabindex > 0 (anti-pattern)
   const highTabIndex = element.querySelectorAll('[tabindex]:not([tabindex="-1"]):not([tabindex="0"])');
   highTabIndex.forEach((el, i) => {
@@ -361,14 +362,14 @@ export function accessibilityAudit(element: HTMLElement): A11yAuditResult {
       });
     }
   });
-  
+
   // Check for ARIA roles
   const ariaRoles = element.querySelectorAll('[role]');
   ariaRoles.forEach(el => {
     // Just count as a pass - proper role validation is complex
     passes++;
   });
-  
+
   return {
     passed: violations.length === 0,
     violations,
@@ -390,13 +391,13 @@ export async function waitForElement(
   timeout = 5000
 ): Promise<HTMLElement | null> {
   const startTime = Date.now();
-  
+
   while (Date.now() - startTime < timeout) {
     const element = container.querySelector<HTMLElement>(selector);
     if (element) return element;
     await new Promise(resolve => setTimeout(resolve, 50));
   }
-  
+
   return null;
 }
 
@@ -409,12 +410,12 @@ export async function waitForText(
   timeout = 5000
 ): Promise<boolean> {
   const startTime = Date.now();
-  
+
   while (Date.now() - startTime < timeout) {
     if (container.textContent?.includes(text)) return true;
     await new Promise(resolve => setTimeout(resolve, 50));
   }
-  
+
   return false;
 }
 
@@ -483,22 +484,22 @@ export async function runPerformanceTest(
 ): Promise<PerformanceTestResult> {
   const durations: number[] = [];
   let memoryUsed: number | undefined;
-  
+
   // Warm up
   await fn();
-  
+
   // Run iterations
   for (let i = 0; i < iterations; i++) {
     const start = performance.now();
     await fn();
     durations.push(performance.now() - start);
   }
-  
+
   // Check memory if available
   if ('memory' in performance) {
     memoryUsed = (performance as any).memory.usedJSHeapSize;
   }
-  
+
   return {
     name,
     duration: durations.reduce((a, b) => a + b, 0),
@@ -537,13 +538,13 @@ export function compareSnapshots(
   const obj1 = JSON.parse(snapshot1);
   const obj2 = JSON.parse(snapshot2);
   const differences: string[] = [];
-  
+
   const compare = (a: any, b: any, path = ''): void => {
     if (typeof a !== typeof b) {
       differences.push(`${path}: type mismatch (${typeof a} vs ${typeof b})`);
       return;
     }
-    
+
     if (Array.isArray(a)) {
       if (a.length !== b.length) {
         differences.push(`${path}: array length mismatch (${a.length} vs ${b.length})`);
@@ -558,9 +559,9 @@ export function compareSnapshots(
       differences.push(`${path}: value mismatch ("${a}" vs "${b}")`);
     }
   };
-  
+
   compare(obj1, obj2);
-  
+
   return {
     equal: differences.length === 0,
     differences

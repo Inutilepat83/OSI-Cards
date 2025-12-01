@@ -185,7 +185,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
   // Debounced JSON input processing
   private jsonInputSubject = new Subject<string>();
   private lastProcessedJson = '';
-  private lastJsonHash = '';
   private previousJsonInput = ''; // For undo/redo tracking
   private jsonCommandSubject = new Subject<{ oldJson: string; newJson: string }>();
   // Cache sanitized cards so repeated objects don't require re-sanitization
@@ -244,7 +243,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
         if (this.isStreamingActive) {
           this.jsonInput = buffer;
           this.lastProcessedJson = buffer;
-          this.lastJsonHash = this.calculateJsonHash(buffer);
         }
         this.cd.markForCheck();
       });
@@ -290,8 +288,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
           if (cardJson !== this.jsonInput) {
             this.jsonInput = cardJson;
             this.lastProcessedJson = cardJson;
-            // Set hash so user edits trigger fresh processing
-            this.lastJsonHash = this.calculateJsonHash(cardJson);
             this.isJsonValid = true;
             this.jsonError = '';
           }
@@ -537,7 +533,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.lastProcessedJson = '';
     // Clear live preview and streaming state to allow store updates to come through
     this.livePreviewCard = null;
-    this.lastJsonHash = '';
     // Update state and load template
     this.store.dispatch(CardActions.setCardType({ cardType: type }));
     this.store.dispatch(CardActions.loadTemplate({ cardType: type, variant: this.cardVariant }));
@@ -554,23 +549,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.lastProcessedJson = '';
     this.store.dispatch(CardActions.setCardVariant({ variant }));
     this.switchCardType(this.cardType);
-  }
-
-  /**
-   * Calculate a simple hash of JSON content (ignoring whitespace differences)
-   * Used to detect actual structural/content changes vs just whitespace
-   */
-  private calculateJsonHash(jsonInput: string): string {
-    // Normalize whitespace for comparison
-    const normalized = jsonInput.replace(/\s+/g, ' ').trim();
-    // Simple hash function
-    let hash = 0;
-    for (let i = 0; i < normalized.length; i++) {
-      const char = normalized.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
-    }
-    return String(hash);
   }
 
   /**

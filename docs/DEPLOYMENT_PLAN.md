@@ -278,3 +278,4 @@ gcloud run deploy osi-cards \
 | Cloud Run            | €0.50-5 | Medium     | SSR/API needed     |
 
 **Recommendation**: Start with **Firebase Hosting** - it's free, fast, and perfect for your Angular SPA with low traffic.
+

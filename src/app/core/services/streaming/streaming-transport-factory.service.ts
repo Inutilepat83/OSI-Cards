@@ -8,7 +8,7 @@
  */
 
 import { inject, Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import {
   StreamingProtocol,
   StreamingTransport,
@@ -259,7 +259,7 @@ export class StreamingTransportFactoryService implements StreamingTransportFacto
 /**
  * Provider function for configuring streaming transport
  */
-export function provideStreamingTransport(config?: {
+export function provideStreamingTransport(_config?: {
   defaultProtocol?: StreamingProtocol;
   enableCompression?: boolean;
 }): {

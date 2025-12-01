@@ -1,13 +1,13 @@
 /**
  * OSI Cards Factory
- * 
+ *
  * Factory functions and builders for creating card configurations.
  * Provides a fluent API for constructing cards, sections, fields, and items.
- * 
+ *
  * @example
  * ```typescript
  * import { CardFactory, SectionFactory } from 'osi-cards-lib';
- * 
+ *
  * const card = CardFactory.create()
  *   .withTitle('Company Overview')
  *   .withSection(
@@ -19,17 +19,17 @@
  *   )
  *   .build();
  * ```
- * 
+ *
  * @module factories
  */
 
-import type { 
-  AICardConfig, 
-  CardSection, 
-  CardField, 
-  CardItem, 
+import type {
+  AICardConfig,
+  CardSection,
+  CardField,
+  CardItem,
   CardAction,
-  CardType 
+  CardType
 } from '../models/card.model';
 import type { SectionTypeInput } from '../models/generated-section-types';
 
@@ -417,14 +417,16 @@ class SectionBuilder implements ISectionBuilder {
 
 /**
  * Factory for creating card configurations
- * 
+ *
+ * Tree-shakable: All methods are annotated with #__PURE__ for dead code elimination.
+ *
  * @example
  * ```typescript
  * const card = CardFactory.create()
  *   .withTitle('My Card')
  *   .withSection(mySection)
  *   .build();
- * 
+ *
  * // Or create from existing config
  * const newCard = CardFactory.fromConfig(existingCard)
  *   .withTitle('Updated Title')
@@ -436,15 +438,15 @@ export class CardFactory {
    * Create a new card builder
    */
   static create(): ICardBuilder {
-    return new CardBuilder();
+    return /*#__PURE__*/ new CardBuilder();
   }
 
   /**
    * Create a card builder from existing config
    */
   static fromConfig(config: Partial<AICardConfig>): ICardBuilder {
-    const builder = new CardBuilder();
-    
+    const builder = /*#__PURE__*/ new CardBuilder();
+
     if (config.id) builder.withId(config.id);
     if (config.cardTitle) builder.withTitle(config.cardTitle);
     if (config.description) builder.withDescription(config.description);
@@ -453,13 +455,13 @@ export class CardFactory {
     if (config.sections) builder.withSections(config.sections);
     if (config.actions) builder.withActions(config.actions);
     if (config.displayOrder !== undefined) builder.withDisplayOrder(config.displayOrder);
-    
+
     if (config.meta) {
       Object.entries(config.meta).forEach(([key, value]) => {
         builder.withMeta(key, value);
       });
     }
-    
+
     return builder;
   }
 
@@ -467,7 +469,7 @@ export class CardFactory {
    * Create a minimal card with just title and one section
    */
   static minimal(title: string, section: CardSection): AICardConfig {
-    return CardFactory.create()
+    return /*#__PURE__*/ CardFactory.create()
       .withTitle(title)
       .withSection(section)
       .build();
@@ -475,15 +477,18 @@ export class CardFactory {
 
   /**
    * Clone a card configuration
+   * @pure
    */
   static clone(config: AICardConfig): AICardConfig {
-    return JSON.parse(JSON.stringify(config)) as AICardConfig;
+    return /*#__PURE__*/ JSON.parse(JSON.stringify(config)) as AICardConfig;
   }
 }
 
 /**
  * Factory for creating section configurations
- * 
+ *
+ * Tree-shakable: All methods are annotated with #__PURE__ for dead code elimination.
+ *
  * @example
  * ```typescript
  * const section = SectionFactory.create()
@@ -498,15 +503,15 @@ export class SectionFactory {
    * Create a new section builder
    */
   static create(): ISectionBuilder {
-    return new SectionBuilder();
+    return /*#__PURE__*/ new SectionBuilder();
   }
 
   /**
    * Create a section builder from existing config
    */
   static fromConfig(config: Partial<CardSection>): ISectionBuilder {
-    const builder = new SectionBuilder();
-    
+    const builder = /*#__PURE__*/ new SectionBuilder();
+
     if (config.id) builder.withId(config.id);
     if (config.title) builder.withTitle(config.title);
     if (config.type) builder.withType(config.type);
@@ -520,13 +525,13 @@ export class SectionFactory {
     if (config.items) builder.withItems(config.items);
     if (config.emoji) builder.withEmoji(config.emoji);
     if (config.collapsed !== undefined) builder.withCollapsed(config.collapsed);
-    
+
     if (config.meta) {
       Object.entries(config.meta).forEach(([key, value]) => {
         builder.withMeta(key, value);
       });
     }
-    
+
     return builder;
   }
 
@@ -534,7 +539,7 @@ export class SectionFactory {
    * Create a minimal section with just type and title
    */
   static minimal(type: SectionTypeInput, title: string): CardSection {
-    return SectionFactory.create()
+    return /*#__PURE__*/ SectionFactory.create()
       .withType(type)
       .withTitle(title)
       .build();
@@ -544,7 +549,7 @@ export class SectionFactory {
    * Create an info section
    */
   static info(title: string, fields: CardField[]): CardSection {
-    return SectionFactory.create()
+    return /*#__PURE__*/ SectionFactory.create()
       .withType('info')
       .withTitle(title)
       .withFields(fields)
@@ -555,7 +560,7 @@ export class SectionFactory {
    * Create an analytics section
    */
   static analytics(title: string, fields: CardField[]): CardSection {
-    return SectionFactory.create()
+    return /*#__PURE__*/ SectionFactory.create()
       .withType('analytics')
       .withTitle(title)
       .withFields(fields)
@@ -566,7 +571,7 @@ export class SectionFactory {
    * Create a list section
    */
   static list(title: string, items: CardItem[]): CardSection {
-    return SectionFactory.create()
+    return /*#__PURE__*/ SectionFactory.create()
       .withType('list')
       .withTitle(title)
       .withItems(items)
@@ -577,7 +582,7 @@ export class SectionFactory {
    * Create a news section
    */
   static news(title: string, items: CardItem[]): CardSection {
-    return SectionFactory.create()
+    return /*#__PURE__*/ SectionFactory.create()
       .withType('news')
       .withTitle(title)
       .withItems(items)
@@ -586,63 +591,72 @@ export class SectionFactory {
 
   /**
    * Clone a section configuration
+   * @pure
    */
   static clone(config: CardSection): CardSection {
-    return JSON.parse(JSON.stringify(config)) as CardSection;
+    return /*#__PURE__*/ JSON.parse(JSON.stringify(config)) as CardSection;
   }
 }
 
 /**
  * Factory for creating field configurations
+ *
+ * Tree-shakable: All methods return pure object literals.
  */
 export class FieldFactory {
   /**
    * Create a text field
+   * @pure
    */
   static text(label: string, value: string): CardField {
-    return { label, value, type: 'text' };
+    return /*#__PURE__*/ ({ label, value, type: 'text' });
   }
 
   /**
    * Create a number field
+   * @pure
    */
   static number(label: string, value: number): CardField {
-    return { label, value, type: 'number', format: 'number' };
+    return /*#__PURE__*/ ({ label, value, type: 'number', format: 'number' });
   }
 
   /**
    * Create a currency field
+   * @pure
    */
   static currency(label: string, value: string | number): CardField {
-    return { label, value, format: 'currency' };
+    return /*#__PURE__*/ ({ label, value, format: 'currency' });
   }
 
   /**
    * Create a percentage field
+   * @pure
    */
   static percentage(label: string, value: number, percentage?: number): CardField {
-    return { 
-      label, 
-      value: `${value}%`, 
+    return /*#__PURE__*/ ({
+      label,
+      value: `${value}%`,
       percentage: percentage ?? value,
-      format: 'percentage' 
-    };
+      format: 'percentage'
+    });
   }
 
   /**
    * Create a field with trend indicator
+   * @pure
    */
   static withTrend(
-    label: string, 
-    value: string | number, 
+    label: string,
+    value: string | number,
     trend: 'up' | 'down' | 'stable' | 'neutral',
     change?: number
   ): CardField {
-    return { label, value, trend, change };
+    return /*#__PURE__*/ ({ label, value, trend, change });
   }
 
   /**
    * Create a contact field
+   * @pure
    */
   static contact(
     name: string,
@@ -650,125 +664,140 @@ export class FieldFactory {
     email?: string,
     phone?: string
   ): CardField {
-    return { 
+    return /*#__PURE__*/ ({
       label: name,
       title: name,
       value: role,
       role,
       email,
       phone
-    };
+    });
   }
 
   /**
    * Create a link field
+   * @pure
    */
   static link(label: string, url: string, value?: string): CardField {
-    return { 
-      label, 
-      value: value ?? url, 
+    return /*#__PURE__*/ ({
+      label,
+      value: value ?? url,
       link: url,
-      clickable: true 
-    };
+      clickable: true
+    });
   }
 
   /**
    * Create a status field
+   * @pure
    */
   static status(
-    label: string, 
+    label: string,
     status: CardField['status'],
     value?: string
   ): CardField {
-    return { label, value: value ?? status, status };
+    return /*#__PURE__*/ ({ label, value: value ?? status, status });
   }
 }
 
 /**
  * Factory for creating item configurations
+ *
+ * Tree-shakable: All methods return pure object literals.
  */
 export class ItemFactory {
   /**
    * Create a basic item
+   * @pure
    */
   static basic(title: string, description?: string): CardItem {
-    return { title, description };
+    return /*#__PURE__*/ ({ title, description });
   }
 
   /**
    * Create an item with icon
+   * @pure
    */
   static withIcon(title: string, icon: string, description?: string): CardItem {
-    return { title, icon, description };
+    return /*#__PURE__*/ ({ title, icon, description });
   }
 
   /**
    * Create a news item
+   * @pure
    */
   static news(
-    title: string, 
-    description: string, 
-    source?: string, 
+    title: string,
+    description: string,
+    source?: string,
     date?: string
   ): CardItem {
-    return { 
-      title, 
+    return /*#__PURE__*/ ({
+      title,
       description,
       meta: { source, date }
-    };
+    });
   }
 
   /**
    * Create a list item with status
+   * @pure
    */
   static withStatus(
-    title: string, 
-    status: string, 
+    title: string,
+    status: string,
     description?: string
   ): CardItem {
-    return { title, status, description };
+    return /*#__PURE__*/ ({ title, status, description });
   }
 
   /**
    * Create an item with value
+   * @pure
    */
   static withValue(title: string, value: string | number, description?: string): CardItem {
-    return { title, value, description };
+    return /*#__PURE__*/ ({ title, value, description });
   }
 }
 
 /**
  * Factory for creating action configurations
+ *
+ * Tree-shakable: All methods return pure object literals.
  */
 export class ActionFactory {
   /**
    * Create a primary action button
+   * @pure
    */
   static primary(label: string, action?: string): CardAction {
-    return { label, action, variant: 'primary' } as CardAction;
+    return /*#__PURE__*/ ({ label, action, variant: 'primary' }) as CardAction;
   }
 
   /**
    * Create a secondary action button
+   * @pure
    */
   static secondary(label: string, action?: string): CardAction {
-    return { label, action, variant: 'secondary' } as CardAction;
+    return /*#__PURE__*/ ({ label, action, variant: 'secondary' }) as CardAction;
   }
 
   /**
    * Create a website link action
+   * @pure
    */
   static website(label: string, url: string): CardAction {
-    return { 
-      label, 
-      type: 'website', 
+    return /*#__PURE__*/ ({
+      label,
+      type: 'website',
       url,
       variant: 'primary'
-    } as CardAction;
+    }) as CardAction;
   }
 
   /**
    * Create an email action
+   * @pure
    */
   static email(
     label: string,
@@ -776,37 +805,39 @@ export class ActionFactory {
     subject: string,
     body: string
   ): CardAction {
-    return {
+    return /*#__PURE__*/ ({
       label,
       type: 'mail',
       variant: 'primary',
       email: { contact, subject, body }
-    } as CardAction;
+    }) as CardAction;
   }
 
   /**
    * Create an agent action
+   * @pure
    */
   static agent(label: string, agentId?: string, context?: Record<string, unknown>): CardAction {
-    return {
+    return /*#__PURE__*/ ({
       label,
       type: 'agent',
       variant: 'outline',
       agentId,
       agentContext: context
-    } as CardAction;
+    }) as CardAction;
   }
 
   /**
    * Create a question action
+   * @pure
    */
   static question(label: string, question?: string): CardAction {
-    return {
+    return /*#__PURE__*/ ({
       label,
       type: 'question',
       variant: 'ghost',
       question
-    } as CardAction;
+    }) as CardAction;
   }
 }
 

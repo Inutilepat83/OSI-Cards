@@ -8,7 +8,7 @@
  */
 
 import { inject, Injectable, NgZone, OnDestroy } from '@angular/core';
-import { BehaviorSubject, from, Observable, Subject, throwError } from 'rxjs';
+import { BehaviorSubject, from, Observable, Subject } from 'rxjs';
 import { filter, map, take, timeout } from 'rxjs/operators';
 import {
   DiffCardsPayload,
@@ -242,10 +242,10 @@ export class StreamingWorkerService implements OnDestroy {
       self.onmessage = async function(event) {
         const { id, type, payload } = event.data;
         const startTime = performance.now();
-        
+
         try {
           let result;
-          
+
           switch (type) {
             case 'PARSE_JSON':
               try {
@@ -255,11 +255,11 @@ export class StreamingWorkerService implements OnDestroy {
                 result = { card: null, isValid: false };
               }
               break;
-              
+
             default:
               throw new Error('Operation not supported in inline worker');
           }
-          
+
           self.postMessage({
             id,
             type,

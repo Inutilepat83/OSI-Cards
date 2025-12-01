@@ -2,10 +2,17 @@
 
 /**
  * Smart Publish Script
- * 
- * Automatically checks npm for the latest published version,
- * bumps the version if needed, builds, and publishes.
- * 
+ *
+ * Comprehensive publishing workflow that:
+ * - Checks npm for existing versions
+ * - Auto-bumps version if needed
+ * - Syncs all version files
+ * - Generates release notes
+ * - Builds the library
+ * - Publishes to npm
+ * - Creates git tag
+ * - Pushes to remote
+ *
  * Usage:
  *   npm run publish:smart         - Auto-increment patch and publish
  *   npm run publish:smart:minor   - Auto-increment minor and publish
@@ -17,441 +24,484 @@ const fs = require('fs');
 const path = require('path');
 const { execSync, spawnSync } = require('child_process');
 
-const PACKAGE_NAME = 'osi-cards-lib';
-const ROOT_PACKAGE_JSON = path.join(__dirname, '..', 'package.json');
-const LIB_PACKAGE_JSON = path.join(__dirname, '..', 'projects', 'osi-cards-lib', 'package.json');
-const DIST_PACKAGE_JSON = path.join(__dirname, '..', 'dist', 'osi-cards-lib', 'package.json');
-const VERSION_FILE = path.join(__dirname, '..', 'src', 'version.ts');
+// ═══════════════════════════════════════════════════════════════
+// Configuration
+// ═══════════════════════════════════════════════════════════════
 
-// Colors for console output
-const colors = {
+const ROOT_DIR = path.join(__dirname, '..');
+const PACKAGE_NAME = 'osi-cards-lib';
+const VERSION_CONFIG = path.join(ROOT_DIR, 'version.config.json');
+const ROOT_PACKAGE = path.join(ROOT_DIR, 'package.json');
+const LIB_PACKAGE = path.join(ROOT_DIR, 'projects', 'osi-cards-lib', 'package.json');
+const DIST_PACKAGE = path.join(ROOT_DIR, 'dist', 'osi-cards-lib', 'package.json');
+
+// Colors
+const c = {
   reset: '\x1b[0m',
   bright: '\x1b[1m',
+  dim: '\x1b[2m',
   red: '\x1b[31m',
   green: '\x1b[32m',
   yellow: '\x1b[33m',
   blue: '\x1b[34m',
+  magenta: '\x1b[35m',
   cyan: '\x1b[36m'
 };
 
-function log(message, color = 'reset') {
-  console.log(`${colors[color]}${message}${colors.reset}`);
+// ═══════════════════════════════════════════════════════════════
+// Utilities
+// ═══════════════════════════════════════════════════════════════
+
+function log(msg, color = 'reset') {
+  console.log(`${c[color]}${msg}${c.reset}`);
 }
 
-function logStep(step, message) {
-  console.log(`\n${colors.cyan}[${step}]${colors.reset} ${message}`);
+function logStep(step, msg) {
+  console.log(`\n${c.cyan}[${step}]${c.reset} ${msg}`);
 }
 
-function logSuccess(message) {
-  console.log(`${colors.green}✓${colors.reset} ${message}`);
+function logSuccess(msg) { log(`✓ ${msg}`, 'green'); }
+function logError(msg) { log(`✗ ${msg}`, 'red'); }
+function logWarning(msg) { log(`⚠ ${msg}`, 'yellow'); }
+function logInfo(msg) { log(`ℹ ${msg}`, 'cyan'); }
+
+function readJSON(filePath) {
+  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
 
-function logError(message) {
-  console.log(`${colors.red}✗${colors.reset} ${message}`);
+function writeJSON(filePath, data) {
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + '\n', 'utf8');
 }
 
-function logWarning(message) {
-  console.log(`${colors.yellow}⚠${colors.reset} ${message}`);
+function exec(cmd, options = {}) {
+  return execSync(cmd, { encoding: 'utf8', ...options }).trim();
 }
 
-/**
- * Parse semantic version string
- */
+function execSafe(cmd, fallback = null) {
+  try {
+    return exec(cmd);
+  } catch {
+    return fallback;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Version Management
+// ═══════════════════════════════════════════════════════════════
+
 function parseVersion(version) {
   const clean = version.replace(/^v/, '');
-  const match = clean.match(/^(\d+)\.(\d+)\.(\d+)(?:-([\w.]+))?(?:\+([\w.]+))?$/);
-  if (!match) {
-    throw new Error(`Invalid version format: ${version}`);
-  }
+  const match = clean.match(/^(\d+)\.(\d+)\.(\d+)(?:-([\w.]+))?/);
+  if (!match) throw new Error(`Invalid version: ${version}`);
   return {
     major: parseInt(match[1], 10),
     minor: parseInt(match[2], 10),
     patch: parseInt(match[3], 10),
     prerelease: match[4] || null,
-    build: match[5] || null,
     raw: clean
   };
 }
 
-/**
- * Format version components into string
- */
-function formatVersion(components) {
-  let version = `${components.major}.${components.minor}.${components.patch}`;
-  if (components.prerelease) {
-    version += `-${components.prerelease}`;
-  }
+function formatVersion(v) {
+  let version = `${v.major}.${v.minor}.${v.patch}`;
+  if (v.prerelease) version += `-${v.prerelease}`;
   return version;
 }
 
-/**
- * Compare two versions: returns -1 if a < b, 0 if equal, 1 if a > b
- */
-function compareVersions(a, b) {
-  const vA = parseVersion(a);
-  const vB = parseVersion(b);
-  
-  if (vA.major !== vB.major) return vA.major - vB.major;
-  if (vA.minor !== vB.minor) return vA.minor - vB.minor;
-  if (vA.patch !== vB.patch) return vA.patch - vB.patch;
-  return 0;
-}
-
-/**
- * Increment version
- */
-function incrementVersion(version, type = 'patch') {
+function bumpVersion(version, type = 'patch') {
   const v = parseVersion(version);
-  
   switch (type) {
-    case 'major':
-      v.major += 1;
-      v.minor = 0;
-      v.patch = 0;
-      break;
-    case 'minor':
-      v.minor += 1;
-      v.patch = 0;
-      break;
-    case 'patch':
-    default:
-      v.patch += 1;
-      break;
+    case 'major': v.major += 1; v.minor = 0; v.patch = 0; break;
+    case 'minor': v.minor += 1; v.patch = 0; break;
+    case 'patch': default: v.patch += 1; break;
   }
-  
   v.prerelease = null;
   return formatVersion(v);
 }
 
-/**
- * Get latest published version from npm
- */
-function getNpmVersion(packageName) {
-  try {
-    const result = execSync(`npm view ${packageName} version 2>/dev/null`, { 
-      encoding: 'utf8',
-      stdio: ['pipe', 'pipe', 'pipe']
-    });
-    return result.trim();
-  } catch (error) {
-    // Package might not exist yet
-    return null;
-  }
+function compareVersions(a, b) {
+  const vA = parseVersion(a);
+  const vB = parseVersion(b);
+  if (vA.major !== vB.major) return vA.major - vB.major;
+  if (vA.minor !== vB.minor) return vA.minor - vB.minor;
+  return vA.patch - vB.patch;
 }
 
-/**
- * Get all published versions from npm
- */
+// ═══════════════════════════════════════════════════════════════
+// NPM Operations
+// ═══════════════════════════════════════════════════════════════
+
+function getNpmVersion(packageName) {
+  return execSafe(`npm view ${packageName} version 2>/dev/null`);
+}
+
 function getNpmVersions(packageName) {
   try {
-    const result = execSync(`npm view ${packageName} versions --json 2>/dev/null`, { 
-      encoding: 'utf8',
-      stdio: ['pipe', 'pipe', 'pipe']
-    });
+    const result = exec(`npm view ${packageName} versions --json 2>/dev/null`);
     const versions = JSON.parse(result);
     return Array.isArray(versions) ? versions : [versions];
-  } catch (error) {
+  } catch {
     return [];
   }
 }
 
-/**
- * Read package.json
- */
-function readPackageJson(filePath) {
-  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-}
+// ═══════════════════════════════════════════════════════════════
+// Version Sync (delegating to version-sync.js)
+// ═══════════════════════════════════════════════════════════════
 
-/**
- * Write package.json
- */
-function writePackageJson(filePath, data) {
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + '\n', 'utf8');
-}
+function syncAllVersions(version) {
+  logInfo(`Syncing version ${version} across all files...`);
 
-/**
- * Update version in all package.json files
- */
-function updateAllVersions(newVersion) {
-  // Update root package.json
-  const rootPkg = readPackageJson(ROOT_PACKAGE_JSON);
-  rootPkg.version = newVersion;
-  writePackageJson(ROOT_PACKAGE_JSON, rootPkg);
-  logSuccess(`Updated root package.json to ${newVersion}`);
-  
-  // Update library package.json
-  const libPkg = readPackageJson(LIB_PACKAGE_JSON);
-  libPkg.version = newVersion;
-  writePackageJson(LIB_PACKAGE_JSON, libPkg);
-  logSuccess(`Updated library package.json to ${newVersion}`);
-}
+  // Update version.config.json
+  let config = {};
+  if (fs.existsSync(VERSION_CONFIG)) {
+    config = readJSON(VERSION_CONFIG);
+  }
+  config.version = version;
+  config.lastUpdated = new Date().toISOString();
+  config.releaseDate = new Date().toISOString();
+  writeJSON(VERSION_CONFIG, config);
+  logSuccess('Updated version.config.json');
 
-/**
- * Generate version.ts file
- */
-function generateVersionFile(version) {
-  const buildDate = new Date().toISOString();
-  let buildHash = 'unknown';
-  let buildBranch = 'unknown';
-  
+  // Run version-sync.js
   try {
-    buildHash = execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
-    buildBranch = execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf8' }).trim();
-  } catch {}
-  
-  const content = `/**
- * Auto-generated version file
- * Do not edit manually - this file is generated by smart-publish.js
- * Updated during build process
- */
-
-export const VERSION = '${version}';
-export const BUILD_DATE = '${buildDate}';
-export const BUILD_HASH = '${buildHash}';
-export const BUILD_BRANCH = '${buildBranch}';
-
-export interface VersionInfo {
-  version: string;
-  buildDate: string;
-  buildHash: string;
-  buildBranch: string;
-}
-
-export const VERSION_INFO: VersionInfo = {
-  version: VERSION,
-  buildDate: BUILD_DATE,
-  buildHash: BUILD_HASH,
-  buildBranch: BUILD_BRANCH
-};
-
-/**
- * Get formatted version string
- */
-export function getVersionString(): string {
-  return \`\${VERSION} (\${BUILD_BRANCH}@\${BUILD_HASH})\`;
-}
-
-/**
- * Check if current build is a production build
- */
-export function isProductionBuild(): boolean {
-  return BUILD_BRANCH === 'main' || BUILD_BRANCH === 'master';
-}
-`;
-  
-  fs.writeFileSync(VERSION_FILE, content, 'utf8');
-  logSuccess(`Generated version.ts`);
-}
-
-/**
- * Build the library
- */
-function buildLibrary() {
-  logStep('BUILD', 'Building library...');
-  
-  try {
-    execSync('npm run build:lib', { 
-      stdio: 'inherit',
-      cwd: path.join(__dirname, '..')
+    execSync('node scripts/version-sync.js', {
+      cwd: ROOT_DIR,
+      stdio: 'inherit'
     });
-    logSuccess('Library built successfully');
     return true;
   } catch (error) {
+    logError('Version sync failed');
+    return false;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Release Notes Generation
+// ═══════════════════════════════════════════════════════════════
+
+function generateReleaseNotes(version) {
+  logInfo('Generating release notes...');
+
+  try {
+    execSync(`node scripts/generate-release-notes.js --version ${version}`, {
+      cwd: ROOT_DIR,
+      stdio: 'inherit'
+    });
+    return true;
+  } catch {
+    logWarning('Release notes generation skipped');
+    return false;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Build & Publish
+// ═══════════════════════════════════════════════════════════════
+
+function buildLibrary() {
+  logInfo('Building library...');
+  try {
+    execSync('npm run build:lib', { cwd: ROOT_DIR, stdio: 'inherit' });
+    logSuccess('Library built successfully');
+    return true;
+  } catch {
     logError('Build failed');
     return false;
   }
 }
 
-/**
- * Publish to npm
- */
+function updateDistVersion(version) {
+  if (fs.existsSync(DIST_PACKAGE)) {
+    const pkg = readJSON(DIST_PACKAGE);
+    pkg.version = version;
+    writeJSON(DIST_PACKAGE, pkg);
+    logSuccess('Updated dist/osi-cards-lib/package.json');
+  }
+}
+
 function publishToNpm(dryRun = false) {
-  const distDir = path.join(__dirname, '..', 'dist', 'osi-cards-lib');
-  
-  logStep('PUBLISH', dryRun ? 'Running publish dry-run...' : 'Publishing to npm...');
-  
+  const distDir = path.join(ROOT_DIR, 'dist', 'osi-cards-lib');
+
   try {
     const cmd = dryRun ? 'npm pack' : 'npm publish --access public';
-    execSync(cmd, { 
-      stdio: 'inherit',
-      cwd: distDir
-    });
-    logSuccess(dryRun ? 'Dry run completed' : 'Published successfully');
+    execSync(cmd, { cwd: distDir, stdio: 'inherit' });
+    logSuccess(dryRun ? 'Dry run completed' : 'Published to npm');
     return true;
-  } catch (error) {
+  } catch {
     logError('Publish failed');
     return false;
   }
 }
 
-/**
- * Commit version bump
- */
-function commitVersionBump(version, skipCommit = false) {
+// ═══════════════════════════════════════════════════════════════
+// Git Operations
+// ═══════════════════════════════════════════════════════════════
+
+function getGitInfo() {
+  return {
+    hash: execSafe('git rev-parse --short HEAD', 'unknown'),
+    branch: execSafe('git rev-parse --abbrev-ref HEAD', 'unknown'),
+    isDirty: (execSafe('git status --porcelain', '') || '').length > 0
+  };
+}
+
+function commitChanges(version, skipCommit = false) {
   if (skipCommit) {
     logWarning('Skipping git commit');
-    return;
+    return true;
   }
-  
+
   try {
-    execSync('git add -A', { stdio: 'pipe' });
-    execSync(`git commit --no-verify -m "chore(release): bump version to ${version}"`, { stdio: 'pipe' });
-    logSuccess(`Committed version bump to ${version}`);
-  } catch (error) {
-    logWarning('Could not commit (maybe no changes or not a git repo)');
+    execSync('git add -A', { cwd: ROOT_DIR, stdio: 'pipe' });
+    execSync(`git commit --no-verify -m "chore(release): v${version}"`, {
+      cwd: ROOT_DIR,
+      stdio: 'pipe'
+    });
+    logSuccess(`Committed: chore(release): v${version}`);
+    return true;
+  } catch {
+    logWarning('No changes to commit or commit failed');
+    return false;
   }
 }
 
-/**
- * Push to remote
- */
+function createGitTag(version, skipTag = false) {
+  if (skipTag) {
+    logWarning('Skipping git tag');
+    return true;
+  }
+
+  const tagName = `v${version}`;
+  try {
+    // Check if tag exists
+    const existingTag = execSafe(`git tag -l "${tagName}"`);
+    if (existingTag) {
+      logWarning(`Tag ${tagName} already exists`);
+      return false;
+    }
+
+    execSync(`git tag -a ${tagName} -m "Release ${version}"`, {
+      cwd: ROOT_DIR,
+      stdio: 'pipe'
+    });
+    logSuccess(`Created tag: ${tagName}`);
+    return true;
+  } catch {
+    logWarning('Failed to create git tag');
+    return false;
+  }
+}
+
 function pushToRemote(skipPush = false) {
   if (skipPush) {
     logWarning('Skipping git push');
-    return;
+    return true;
   }
-  
+
   try {
-    execSync('git push origin main', { stdio: 'pipe' });
-    logSuccess('Pushed to remote');
-  } catch (error) {
-    logWarning('Could not push to remote');
+    execSync('git push origin main --follow-tags', { cwd: ROOT_DIR, stdio: 'pipe' });
+    logSuccess('Pushed to remote with tags');
+    return true;
+  } catch {
+    logWarning('Failed to push to remote');
+    return false;
   }
 }
 
-/**
- * Main smart publish function
- */
+// ═══════════════════════════════════════════════════════════════
+// Main Workflow
+// ═══════════════════════════════════════════════════════════════
+
 async function smartPublish(options = {}) {
   const {
     bumpType = 'patch',
     dryRun = false,
     skipCommit = false,
     skipPush = false,
+    skipTag = false,
     force = false
   } = options;
 
-  console.log('\n' + colors.bright + '═══════════════════════════════════════════════════════════════' + colors.reset);
-  console.log(colors.bright + '                    OSI Cards Smart Publish                     ' + colors.reset);
-  console.log(colors.bright + '═══════════════════════════════════════════════════════════════' + colors.reset);
+  const startTime = Date.now();
+  const git = getGitInfo();
 
-  // Step 1: Get current local version
-  logStep('1', 'Checking local version...');
-  const localPkg = readPackageJson(LIB_PACKAGE_JSON);
-  const localVersion = localPkg.version;
-  log(`   Local version: ${localVersion}`, 'cyan');
+  console.log('\n' + c.bright + '╔═══════════════════════════════════════════════════════════════╗' + c.reset);
+  console.log(c.bright + '║              OSI Cards Smart Publish v2.0                      ║' + c.reset);
+  console.log(c.bright + '╚═══════════════════════════════════════════════════════════════╝' + c.reset);
 
-  // Step 2: Get npm version
-  logStep('2', 'Checking npm registry...');
+  if (dryRun) {
+    console.log(c.yellow + '\n🔸 DRY RUN MODE - No changes will be published\n' + c.reset);
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // Step 1: Gather Version Info
+  // ═══════════════════════════════════════════════════════════════
+  logStep('1/8', 'Gathering version information...');
+
+  // Load local version
+  let localVersion = '0.0.0';
+  if (fs.existsSync(VERSION_CONFIG)) {
+    localVersion = readJSON(VERSION_CONFIG).version;
+  } else if (fs.existsSync(LIB_PACKAGE)) {
+    localVersion = readJSON(LIB_PACKAGE).version;
+  }
+  logInfo(`Local version: ${localVersion}`);
+
+  // Check npm
   const npmVersion = getNpmVersion(PACKAGE_NAME);
   const npmVersions = getNpmVersions(PACKAGE_NAME);
-  
   if (npmVersion) {
-    log(`   Latest npm version: ${npmVersion}`, 'cyan');
-    log(`   Total published versions: ${npmVersions.length}`, 'cyan');
+    logInfo(`npm latest: ${npmVersion}`);
+    logInfo(`npm versions: ${npmVersions.length} published`);
   } else {
-    log('   Package not yet published on npm', 'yellow');
+    logInfo('Package not yet published on npm');
   }
 
-  // Step 3: Determine new version
-  logStep('3', 'Calculating new version...');
-  
+  // ═══════════════════════════════════════════════════════════════
+  // Step 2: Calculate New Version
+  // ═══════════════════════════════════════════════════════════════
+  logStep('2/8', `Calculating new version (${bumpType})...`);
+
   let newVersion;
   const baseVersion = npmVersion || localVersion;
-  
-  // Check if local version already exists on npm
+
   if (npmVersions.includes(localVersion)) {
-    log(`   Version ${localVersion} already exists on npm`, 'yellow');
-    newVersion = incrementVersion(baseVersion, bumpType);
-    log(`   Auto-incrementing ${bumpType}: ${baseVersion} → ${newVersion}`, 'green');
+    logWarning(`Version ${localVersion} already on npm`);
+    newVersion = bumpVersion(baseVersion, bumpType);
+    logInfo(`Bumping ${bumpType}: ${baseVersion} → ${newVersion}`);
   } else if (npmVersion && compareVersions(localVersion, npmVersion) <= 0) {
-    log(`   Local version ${localVersion} is not higher than npm version ${npmVersion}`, 'yellow');
-    newVersion = incrementVersion(npmVersion, bumpType);
-    log(`   Auto-incrementing ${bumpType}: ${npmVersion} → ${newVersion}`, 'green');
+    logWarning(`Local ${localVersion} <= npm ${npmVersion}`);
+    newVersion = bumpVersion(npmVersion, bumpType);
+    logInfo(`Bumping ${bumpType}: ${npmVersion} → ${newVersion}`);
   } else {
-    newVersion = localVersion;
-    log(`   Using local version: ${newVersion}`, 'green');
+    newVersion = bumpVersion(localVersion, bumpType);
+    logInfo(`Bumping ${bumpType}: ${localVersion} → ${newVersion}`);
   }
 
-  // Ensure new version doesn't exist
+  // Ensure version is unique
   while (npmVersions.includes(newVersion)) {
-    log(`   Version ${newVersion} already exists, incrementing again...`, 'yellow');
-    newVersion = incrementVersion(newVersion, 'patch');
+    logWarning(`${newVersion} exists, incrementing...`);
+    newVersion = bumpVersion(newVersion, 'patch');
   }
 
-  log(`\n   ${colors.bright}Final version to publish: ${newVersion}${colors.reset}`, 'green');
+  console.log(`\n   ${c.bright}📦 New Version: ${c.green}${newVersion}${c.reset}\n`);
 
   if (dryRun) {
-    logWarning('\n   DRY RUN MODE - No changes will be made\n');
+    logWarning('DRY RUN - Would publish this version');
   }
 
-  // Step 4: Update version files
+  // ═══════════════════════════════════════════════════════════════
+  // Step 3: Sync All Versions
+  // ═══════════════════════════════════════════════════════════════
+  logStep('3/8', 'Synchronizing version files...');
+
   if (!dryRun) {
-    logStep('4', 'Updating version files...');
-    updateAllVersions(newVersion);
-    generateVersionFile(newVersion);
+    if (!syncAllVersions(newVersion)) {
+      logError('Version sync failed. Aborting.');
+      process.exit(1);
+    }
   } else {
-    logStep('4', 'Would update version files (dry run)');
+    logInfo('Would sync all version files');
   }
 
-  // Step 5: Build library
-  logStep('5', 'Building library...');
+  // ═══════════════════════════════════════════════════════════════
+  // Step 4: Generate Release Notes
+  // ═══════════════════════════════════════════════════════════════
+  logStep('4/8', 'Generating release notes...');
+
+  if (!dryRun) {
+    generateReleaseNotes(newVersion);
+  } else {
+    logInfo('Would generate release notes');
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // Step 5: Build Library
+  // ═══════════════════════════════════════════════════════════════
+  logStep('5/8', 'Building library...');
+
   if (!buildLibrary()) {
-    logError('\nBuild failed. Aborting publish.');
+    logError('Build failed. Aborting publish.');
     process.exit(1);
   }
 
-  // Update dist package.json with correct version
-  if (fs.existsSync(DIST_PACKAGE_JSON)) {
-    const distPkg = readPackageJson(DIST_PACKAGE_JSON);
-    distPkg.version = newVersion;
-    writePackageJson(DIST_PACKAGE_JSON, distPkg);
-    logSuccess(`Updated dist package.json to ${newVersion}`);
-  }
-
-  // Step 6: Commit changes
+  // Update dist package.json
   if (!dryRun) {
-    logStep('6', 'Committing changes...');
-    commitVersionBump(newVersion, skipCommit);
+    updateDistVersion(newVersion);
   }
 
-  // Step 7: Publish
-  logStep('7', dryRun ? 'Dry run publish...' : 'Publishing to npm...');
+  // ═══════════════════════════════════════════════════════════════
+  // Step 6: Commit Changes
+  // ═══════════════════════════════════════════════════════════════
+  logStep('6/8', 'Committing changes...');
+
+  if (!dryRun) {
+    commitChanges(newVersion, skipCommit);
+    createGitTag(newVersion, skipTag);
+  } else {
+    logInfo('Would commit and tag');
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // Step 7: Publish to npm
+  // ═══════════════════════════════════════════════════════════════
+  logStep('7/8', dryRun ? 'Testing publish (dry run)...' : 'Publishing to npm...');
+
   if (!publishToNpm(dryRun)) {
-    logError('\nPublish failed.');
+    logError('Publish failed.');
     process.exit(1);
   }
 
-  // Step 8: Push to git
+  // ═══════════════════════════════════════════════════════════════
+  // Step 8: Push to Remote
+  // ═══════════════════════════════════════════════════════════════
+  logStep('8/8', 'Pushing to git remote...');
+
   if (!dryRun && !skipPush) {
-    logStep('8', 'Pushing to git...');
     pushToRemote(skipPush);
+  } else {
+    logInfo(dryRun ? 'Would push to remote' : 'Skipped push');
   }
 
-  // Done!
-  console.log('\n' + colors.bright + '═══════════════════════════════════════════════════════════════' + colors.reset);
+  // ═══════════════════════════════════════════════════════════════
+  // Summary
+  // ═══════════════════════════════════════════════════════════════
+  const duration = ((Date.now() - startTime) / 1000).toFixed(1);
+
+  console.log('\n' + c.bright + '╔═══════════════════════════════════════════════════════════════╗' + c.reset);
+
   if (dryRun) {
-    log('   DRY RUN COMPLETE', 'yellow');
-    log(`   Would have published version: ${newVersion}`, 'cyan');
+    console.log(c.yellow + '║                     DRY RUN COMPLETE                          ║' + c.reset);
+    console.log(c.bright + '╠═══════════════════════════════════════════════════════════════╣' + c.reset);
+    console.log(`║  Would publish: ${c.cyan}${PACKAGE_NAME}@${newVersion}${c.reset}`.padEnd(76) + '║');
   } else {
-    log('   🎉 PUBLISH SUCCESSFUL!', 'green');
-    log(`   Published: ${PACKAGE_NAME}@${newVersion}`, 'cyan');
-    log(`   npm: https://www.npmjs.com/package/${PACKAGE_NAME}`, 'cyan');
+    console.log(c.green + '║                   🎉 PUBLISH SUCCESSFUL!                       ║' + c.reset);
+    console.log(c.bright + '╠═══════════════════════════════════════════════════════════════╣' + c.reset);
+    console.log(`║  Published: ${c.green}${PACKAGE_NAME}@${newVersion}${c.reset}`.padEnd(76) + '║');
+    console.log(`║  npm: ${c.cyan}https://www.npmjs.com/package/${PACKAGE_NAME}${c.reset}`.padEnd(76) + '║');
+    console.log(`║  Tag: ${c.cyan}v${newVersion}${c.reset}`.padEnd(76) + '║');
   }
-  console.log(colors.bright + '═══════════════════════════════════════════════════════════════' + colors.reset + '\n');
+
+  console.log(`║  Duration: ${duration}s`.padEnd(65) + '║');
+  console.log(`║  Date: ${new Date().toISOString()}`.padEnd(65) + '║');
+  console.log(c.bright + '╚═══════════════════════════════════════════════════════════════╝' + c.reset + '\n');
 }
 
-// CLI handling
+// ═══════════════════════════════════════════════════════════════
+// CLI
+// ═══════════════════════════════════════════════════════════════
+
 const args = process.argv.slice(2);
 const options = {
   bumpType: 'patch',
   dryRun: false,
   skipCommit: false,
   skipPush: false,
+  skipTag: false,
   force: false
 };
 
-// Parse arguments
 for (const arg of args) {
   switch (arg) {
     case 'minor':
@@ -477,6 +527,9 @@ for (const arg of args) {
     case '--skip-push':
       options.skipPush = true;
       break;
+    case '--skip-tag':
+      options.skipTag = true;
+      break;
     case '--force':
     case '-f':
       options.force = true;
@@ -484,37 +537,49 @@ for (const arg of args) {
     case '--help':
     case '-h':
       console.log(`
-Smart Publish Script
+${c.bright}OSI Cards Smart Publish${c.reset}
 
-Automatically checks npm for existing versions and bumps appropriately.
+Comprehensive publishing workflow with version sync and release notes.
 
-Usage:
+${c.cyan}Usage:${c.reset}
   node scripts/smart-publish.js [options]
+  npm run publish:smart [options]
 
-Options:
-  patch         Increment patch version (default)
-  minor         Increment minor version  
-  major         Increment major version
-  dry, --dry    Dry run (no actual publish)
+${c.cyan}Version Bump:${c.reset}
+  patch         Bump patch version (default): 1.0.0 → 1.0.1
+  minor         Bump minor version: 1.0.0 → 1.1.0
+  major         Bump major version: 1.0.0 → 2.0.0
+
+${c.cyan}Options:${c.reset}
+  dry, --dry    Dry run - preview without publishing
   --skip-commit Skip git commit
   --skip-push   Skip git push
+  --skip-tag    Skip git tag creation
   --force, -f   Force publish even if version exists
   --help, -h    Show this help
 
-Examples:
-  npm run publish:smart          # Auto-increment patch and publish
-  npm run publish:smart minor    # Auto-increment minor and publish
+${c.cyan}Examples:${c.reset}
+  npm run publish:smart          # Bump patch and publish
+  npm run publish:smart minor    # Bump minor and publish
   npm run publish:smart dry      # Dry run
+  npm run publish:smart:minor    # Bump minor and publish
+
+${c.cyan}Workflow:${c.reset}
+  1. Check local and npm versions
+  2. Calculate new version
+  3. Sync all version files (version.config.json → all targets)
+  4. Generate release notes from commits
+  5. Build library
+  6. Commit and tag
+  7. Publish to npm
+  8. Push to git remote
 `);
       process.exit(0);
   }
 }
 
-// Run
 smartPublish(options).catch(error => {
   logError(`Fatal error: ${error.message}`);
+  console.error(error.stack);
   process.exit(1);
 });
-
-
-

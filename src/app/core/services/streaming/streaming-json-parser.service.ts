@@ -9,8 +9,8 @@
 
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { AICardConfig, CardField, CardItem, CardSection } from '../../../models';
-import { StreamJsonError, StreamParseError } from './streaming-errors';
+import { AICardConfig, CardSection } from '../../../models';
+import { StreamParseError } from './streaming-errors';
 
 /**
  * Parser state

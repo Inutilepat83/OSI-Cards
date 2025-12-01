@@ -6,6 +6,8 @@ import { SectionComponentInstance } from './section-component.interface';
  * Section component loader service
  * Handles lazy loading of section components to reduce initial bundle size.
  * Now uses registry-based strategy pattern instead of switch statement.
+ *
+ * CONSOLIDATED: All sections now load from @osi-cards/lib (single source of truth)
  */
 @Injectable({
   providedIn: 'root',
@@ -20,172 +22,196 @@ export class SectionLoaderService {
 
   /**
    * Initialize the component registry with all section types
+   * All sections load from the library (projects/osi-cards-lib)
    */
   private initializeRegistry(): void {
-    // Info section
+    // Info section - from library
     this.registry.register('info', {
       canHandle: () => true,
       loadComponent: async () =>
-        (await import('../sections/info-section.component')).InfoSectionComponent,
+        (await import('projects/osi-cards-lib/src/lib/components/sections/info-section.component'))
+          .InfoSectionComponent,
     });
 
-    // Analytics section
+    // Analytics section - from library
     this.registry.register(
       'analytics',
       {
         canHandle: () => true,
         loadComponent: async () =>
-          (await import('../sections/analytics-section/analytics-section.component'))
-            .AnalyticsSectionComponent,
+          (
+            await import('projects/osi-cards-lib/src/lib/components/sections/analytics-section/analytics-section.component')
+          ).AnalyticsSectionComponent,
       },
       ['metrics', 'stats']
     );
 
-    // Financials section
+    // Financials section - from library
     this.registry.register('financials', {
       canHandle: () => true,
       loadComponent: async () =>
-        (await import('../sections/financials-section/financials-section.component'))
-          .FinancialsSectionComponent,
+        (
+          await import('projects/osi-cards-lib/src/lib/components/sections/financials-section/financials-section.component')
+        ).FinancialsSectionComponent,
     });
 
-    // List section
+    // List section - from library
     this.registry.register(
       'list',
       {
         canHandle: () => true,
         loadComponent: async () =>
-          (await import('../sections/list-section/list-section.component')).ListSectionComponent,
+          (
+            await import('projects/osi-cards-lib/src/lib/components/sections/list-section/list-section.component')
+          ).ListSectionComponent,
       },
       ['table']
     );
 
-    // Event section
+    // Event section - from library
     this.registry.register(
       'event',
       {
         canHandle: () => true,
         loadComponent: async () =>
-          (await import('../sections/event-section/event-section.component')).EventSectionComponent,
+          (
+            await import('projects/osi-cards-lib/src/lib/components/sections/event-section/event-section.component')
+          ).EventSectionComponent,
       },
       ['timeline']
     );
 
-    // Product section
+    // Product section - from library
     this.registry.register('product', {
       canHandle: () => true,
       loadComponent: async () =>
-        (await import('../sections/product-section/product-section.component'))
-          .ProductSectionComponent,
+        (
+          await import('projects/osi-cards-lib/src/lib/components/sections/product-section/product-section.component')
+        ).ProductSectionComponent,
     });
 
-    // Solutions section
+    // Solutions section - from library
     this.registry.register('solutions', {
       canHandle: () => true,
       loadComponent: async () =>
-        (await import('../sections/solutions-section/solutions-section.component'))
-          .SolutionsSectionComponent,
+        (
+          await import('projects/osi-cards-lib/src/lib/components/sections/solutions-section/solutions-section.component')
+        ).SolutionsSectionComponent,
     });
 
-    // Contact card section
+    // Contact card section - from library
     this.registry.register('contact-card', {
       canHandle: () => true,
       loadComponent: async () =>
-        (await import('../sections/contact-card-section/contact-card-section.component'))
-          .ContactCardSectionComponent,
+        (
+          await import('projects/osi-cards-lib/src/lib/components/sections/contact-card-section/contact-card-section.component')
+        ).ContactCardSectionComponent,
     });
 
-    // Network card section
+    // Network card section - from library
     this.registry.register('network-card', {
       canHandle: () => true,
       loadComponent: async () =>
-        (await import('../sections/network-card-section/network-card-section.component'))
-          .NetworkCardSectionComponent,
+        (
+          await import('projects/osi-cards-lib/src/lib/components/sections/network-card-section/network-card-section.component')
+        ).NetworkCardSectionComponent,
     });
 
-    // Map section
+    // Map section - from library
     this.registry.register(
       'map',
       {
         canHandle: () => true,
         loadComponent: async () =>
-          (await import('../sections/map-section/map-section.component')).MapSectionComponent,
+          (
+            await import('projects/osi-cards-lib/src/lib/components/sections/map-section/map-section.component')
+          ).MapSectionComponent,
       },
       ['locations']
     );
 
-    // Chart section
+    // Chart section - from library
     this.registry.register('chart', {
       canHandle: () => true,
       loadComponent: async () =>
-        (await import('../sections/chart-section/chart-section.component')).ChartSectionComponent,
+        (
+          await import('projects/osi-cards-lib/src/lib/components/sections/chart-section/chart-section.component')
+        ).ChartSectionComponent,
     });
 
-    // Overview section
+    // Overview section - from library
     this.registry.register('overview', {
       canHandle: () => true,
       loadComponent: async () =>
-        (await import('../sections/overview-section/overview-section.component'))
-          .OverviewSectionComponent,
+        (
+          await import('projects/osi-cards-lib/src/lib/components/sections/overview-section/overview-section.component')
+        ).OverviewSectionComponent,
     });
 
-    // Quotation section
+    // Quotation section - from library
     this.registry.register(
       'quotation',
       {
         canHandle: () => true,
         loadComponent: async () =>
-          (await import('../sections/quotation-section/quotation-section.component'))
-            .QuotationSectionComponent,
+          (
+            await import('projects/osi-cards-lib/src/lib/components/sections/quotation-section/quotation-section.component')
+          ).QuotationSectionComponent,
       },
       ['quote']
     );
 
-    // Text reference section
+    // Text reference section - from library
     this.registry.register(
       'text-reference',
       {
         canHandle: () => true,
         loadComponent: async () =>
-          (await import('../sections/text-reference-section/text-reference-section.component'))
-            .TextReferenceSectionComponent,
+          (
+            await import('projects/osi-cards-lib/src/lib/components/sections/text-reference-section/text-reference-section.component')
+          ).TextReferenceSectionComponent,
       },
       ['reference', 'text-ref']
     );
 
-    // Brand colors section
+    // Brand colors section - from library
     this.registry.register(
       'brand-colors',
       {
         canHandle: () => true,
         loadComponent: async () =>
-          (await import('../sections/brand-colors-section/brand-colors-section.component'))
-            .BrandColorsSectionComponent,
+          (
+            await import('projects/osi-cards-lib/src/lib/components/sections/brand-colors-section/brand-colors-section.component')
+          ).BrandColorsSectionComponent,
       },
       ['brands', 'colors']
     );
 
-    // News section
+    // News section - from library
     this.registry.register('news', {
       canHandle: () => true,
       loadComponent: async () =>
-        (await import('../sections/news-section/news-section.component')).NewsSectionComponent,
+        (
+          await import('projects/osi-cards-lib/src/lib/components/sections/news-section/news-section.component')
+        ).NewsSectionComponent,
     });
 
-    // Social media section
+    // Social media section - from library
     this.registry.register('social-media', {
       canHandle: () => true,
       loadComponent: async () =>
-        (await import('../sections/social-media-section/social-media-section.component'))
-          .SocialMediaSectionComponent,
+        (
+          await import('projects/osi-cards-lib/src/lib/components/sections/social-media-section/social-media-section.component')
+        ).SocialMediaSectionComponent,
     });
 
-    // Fallback section
+    // Fallback section - from library
     this.registry.register('fallback', {
       canHandle: () => true,
       loadComponent: async () =>
-        (await import('../sections/fallback-section/fallback-section.component'))
-          .FallbackSectionComponent,
+        (
+          await import('projects/osi-cards-lib/src/lib/components/sections/fallback-section/fallback-section.component')
+        ).FallbackSectionComponent,
     });
   }
 

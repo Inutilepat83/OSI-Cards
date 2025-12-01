@@ -12,27 +12,27 @@
 /* Note: @property has limited browser support, these act as fallbacks */
 @supports (background: paint(id)) {
   @property --tilt-x {
-    syntax: '<angle>';
+    syntax: "<angle>";
     initial-value: 0deg;
     inherits: false;
   }
   @property --tilt-y {
-    syntax: '<angle>';
+    syntax: "<angle>";
     initial-value: 0deg;
     inherits: false;
   }
   @property --glow-blur {
-    syntax: '<length>';
+    syntax: "<length>";
     initial-value: 8px;
     inherits: false;
   }
   @property --glow-color {
-    syntax: '<color>';
+    syntax: "<color>";
     initial-value: rgba(255, 121, 0, 0.225);
     inherits: false;
   }
   @property --reflection-opacity {
-    syntax: '<number>';
+    syntax: "<number>";
     initial-value: 0;
     inherits: false;
   }
@@ -816,7 +816,9 @@
   /* Point 24: Simplified box-shadow - single layer instead of multiple */
   box-shadow: 0 0 4px currentColor;
   /* Point 24: Use CSS transition instead of JS-driven per-frame updates */
-  transition: transform 0.6s ease-out, opacity 0.4s ease;
+  transition:
+    transform 0.6s ease-out,
+    opacity 0.4s ease;
   /* Point 20: will-change only when needed, not permanent */
   top: 50%;
   left: 50%;

@@ -8,8 +8,8 @@
  */
 
 import { inject, Injectable, NgZone } from '@angular/core';
-import { BehaviorSubject, EMPTY, Observable, of, Subject, throwError, timer } from 'rxjs';
-import { catchError, retry, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, throwError } from 'rxjs';
+import { take } from 'rxjs/operators';
 import {
   StreamingChunk,
   StreamingConnectionState,
@@ -183,7 +183,7 @@ export class SseStreamingTransport extends StreamingTransport {
   /**
    * Disconnect from SSE endpoint
    */
-  disconnect(reason?: string): void {
+  disconnect(_reason?: string): void {
     this.clearTimers();
 
     if (this.eventSource) {
@@ -198,7 +198,7 @@ export class SseStreamingTransport extends StreamingTransport {
   /**
    * SSE is unidirectional - send is not supported
    */
-  send(data: string | ArrayBuffer): Observable<void> {
+  send(_data: string | ArrayBuffer): Observable<void> {
     return throwError(() => ({
       code: 'NOT_SUPPORTED',
       message:
@@ -281,7 +281,7 @@ export class SseStreamingTransport extends StreamingTransport {
     this.chunkSubject.next(chunk);
   }
 
-  private handleError(event: Event, observer?: { error: (err: unknown) => void }): void {
+  private handleError(_event: Event, observer?: { error: (err: unknown) => void }): void {
     const isConnecting = this.stateSubject.value === 'connecting';
 
     const error: StreamingTransportError = {

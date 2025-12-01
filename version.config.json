@@ -1,0 +1,30 @@
+{
+  "$schema": "./version.config.schema.json",
+  "version": "1.5.2",
+  "name": "osi-cards",
+  "description": "OSI Cards Library - Versatile card generator for sales intelligence agents",
+  "releaseDate": null,
+  "lastUpdated": "2025-12-01T13:20:55.677Z",
+  "author": "OSI Cards Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Inutilepat83/OSI-Cards"
+  },
+  "apiVersion": "1.0",
+  "minAngularVersion": "18.0.0",
+  "syncTargets": [
+    "package.json",
+    "projects/osi-cards-lib/package.json",
+    "src/version.ts",
+    "docs/openapi.yaml",
+    "CHANGELOG.md"
+  ],
+  "releaseNotes": {
+    "outputFile": "RELEASE_NOTES.md",
+    "changelogFile": "CHANGELOG.md",
+    "includeCommitHash": true,
+    "includeAuthor": false,
+    "groupByType": true
+  }
+}

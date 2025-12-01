@@ -390,7 +390,7 @@ export class StreamingErrorFactory {
   /**
    * Create error from EventSource error
    */
-  static fromEventSourceError(event: Event): SseStreamError {
+  static fromEventSourceError(_event: Event): SseStreamError {
     return new SseStreamError('SSE connection error');
   }
 

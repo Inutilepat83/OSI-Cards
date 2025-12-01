@@ -1,10 +1,11 @@
-import { 
-  ChangeDetectionStrategy, 
-  Component, 
-  EventEmitter, 
-  Input, 
-  Output, 
-  inject, 
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  inject,
   ViewEncapsulation,
   ViewChild,
   ViewContainerRef,
@@ -19,6 +20,8 @@ import { CardAction, CardField, CardItem, CardSection } from '../../models';
 import { SectionPluginRegistry } from '../../services/section-plugin-registry.service';
 import { BaseSectionComponent, SectionInteraction } from '../sections/base-section.component';
 import { DynamicSectionLoaderService } from './dynamic-section-loader.service';
+import { LazySectionLoaderService, LazySectionType } from './lazy-section-loader.service';
+import { LazySectionPlaceholderComponent } from './lazy-section-placeholder.component';
 import { resolveSectionType, isValidSectionType, SectionTypeInput } from '../../models/generated-section-types';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -41,11 +44,11 @@ export interface SectionRenderEvent {
 
 /**
  * Dynamic Section Renderer Component
- * 
+ *
  * This component dynamically loads and renders section components based on
  * the section type. It replaces the previous switch-statement approach with
  * a registry-based dynamic component resolution system.
- * 
+ *
  * Features:
  * - Dynamic component loading via ViewContainerRef
  * - Type alias resolution (e.g., 'metrics' -> 'analytics')
@@ -56,8 +59,19 @@ export interface SectionRenderEvent {
 @Component({
   selector: 'app-section-renderer',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LazySectionPlaceholderComponent],
   template: `
+    <!-- Lazy loading placeholder -->
+    @if (isLazyLoading) {
+      <app-lazy-section-placeholder
+        [sectionType]="lazyType"
+        [isLoading]="true"
+        [error]="lazyLoadError"
+        (retry)="retryLazyLoad()">
+      </app-lazy-section-placeholder>
+    }
+
+    <!-- Dynamic component container -->
     <ng-container #container></ng-container>
   `,
   styles: [`
@@ -72,15 +86,22 @@ export class SectionRendererComponent implements OnChanges {
   @Input({ required: true }) section!: CardSection;
   @Output() sectionEvent = new EventEmitter<SectionRenderEvent>();
 
-  @ViewChild('container', { read: ViewContainerRef, static: true }) 
+  @ViewChild('container', { read: ViewContainerRef, static: true })
   private container!: ViewContainerRef;
 
   private readonly loader = inject(DynamicSectionLoaderService);
+  private readonly lazySectionLoader = inject(LazySectionLoaderService);
   private readonly pluginRegistry = inject(SectionPluginRegistry);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   private currentComponentRef: ComponentRef<BaseSectionComponent> | null = null;
   private currentType: string | null = null;
+
+  /** Lazy loading state */
+  protected isLazyLoading = false;
+  protected lazyLoadError: Error | null = null;
+  protected lazyType: LazySectionType = 'chart';
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['section']) {
@@ -90,6 +111,7 @@ export class SectionRendererComponent implements OnChanges {
 
   /**
    * Load the appropriate component for the current section
+   * Handles both sync and lazy-loaded components
    */
   private loadComponent(): void {
     if (!this.section) {
@@ -103,7 +125,18 @@ export class SectionRendererComponent implements OnChanges {
     // Only recreate component if type changed
     if (this.currentType !== resolvedType) {
       this.clearComponent();
-      this.createComponent(resolvedType);
+
+      // Check if this is a lazy-loaded section
+      const resolution = this.loader.resolveComponent(this.section);
+
+      if (resolution.isLazy && !resolution.component && resolution.loadPromise) {
+        // Start lazy loading
+        this.startLazyLoad(resolvedType as LazySectionType, resolution.loadPromise);
+      } else if (resolution.component) {
+        // Sync component available - create immediately
+        this.createComponentFromClass(resolution.component);
+      }
+
       this.currentType = resolvedType;
     } else if (this.currentComponentRef) {
       // Just update the section input
@@ -112,13 +145,64 @@ export class SectionRendererComponent implements OnChanges {
   }
 
   /**
+   * Start lazy loading a section component
+   */
+  private async startLazyLoad(
+    type: LazySectionType,
+    loadPromise: Promise<BaseSectionComponent['constructor']>
+  ): Promise<void> {
+    this.isLazyLoading = true;
+    this.lazyLoadError = null;
+    this.lazyType = type;
+    this.cdr.markForCheck();
+
+    try {
+      const componentClass = await loadPromise;
+
+      // Check if section type still matches (user might have changed it during load)
+      if (this.section?.type?.toLowerCase() === type ||
+          this.loader.resolveType(this.section?.type ?? '') === type) {
+        this.isLazyLoading = false;
+        this.createComponentFromClass(componentClass as BaseSectionComponent['constructor']);
+        this.cdr.markForCheck();
+      }
+    } catch (error) {
+      this.isLazyLoading = false;
+      this.lazyLoadError = error instanceof Error ? error : new Error(String(error));
+      this.cdr.markForCheck();
+    }
+  }
+
+  /**
+   * Retry loading a failed lazy section
+   */
+  protected retryLazyLoad(): void {
+    if (this.lazyType) {
+      this.lazyLoadError = null;
+      const loadPromise = this.lazySectionLoader.retryLoad(this.lazyType);
+      this.startLazyLoad(this.lazyType, loadPromise);
+    }
+  }
+
+  /**
    * Create the dynamic component
    */
   private createComponent(resolvedType: string): void {
     const componentClass = this.loader.getComponentForSection(this.section);
-    
+
     if (!componentClass) {
       console.warn(`No component found for section type: ${resolvedType}`);
+      return;
+    }
+
+    this.createComponentFromClass(componentClass);
+  }
+
+  /**
+   * Create a component from a component class
+   */
+  private createComponentFromClass(componentClass: BaseSectionComponent['constructor']): void {
+    if (!componentClass) {
       return;
     }
 
@@ -183,6 +267,8 @@ export class SectionRendererComponent implements OnChanges {
     }
     this.container?.clear();
     this.currentType = null;
+    this.isLazyLoading = false;
+    this.lazyLoadError = null;
   }
 
   /**
@@ -190,7 +276,7 @@ export class SectionRendererComponent implements OnChanges {
    */
   get sectionTypeAttribute(): string {
     if (!this.section) return 'unknown';
-    
+
     try {
       const typeLabel = (this.section.type ?? '').trim().toLowerCase();
       if (isValidSectionType(typeLabel as SectionTypeInput)) {

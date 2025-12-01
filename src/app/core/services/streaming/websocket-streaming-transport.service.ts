@@ -19,11 +19,7 @@ import {
   StreamingTransportConfig,
   StreamingTransportError,
 } from './streaming-transport.interface';
-import {
-  StreamMaxRetriesError,
-  StreamNetworkError,
-  WebSocketStreamError,
-} from './streaming-errors';
+import { StreamMaxRetriesError, StreamNetworkError } from './streaming-errors';
 
 /**
  * Default WebSocket configuration
@@ -192,7 +188,7 @@ export class WebSocketStreamingTransport extends StreamingTransport implements O
           };
 
           // Handle errors
-          this.socket.onerror = (event: Event) => {
+          this.socket.onerror = (_event: Event) => {
             this.ngZone.run(() => {
               const error: StreamingTransportError = {
                 code: 'WEBSOCKET_ERROR',

@@ -68,7 +68,12 @@
                 "maximumWarning": "350kb",
                 "maximumError": "500kb"
               }
-            ]
+            ],
+            "optimization": {
+              "fonts": {
+                "inline": false
+              }
+            }
           },
           "configurations": {
             "production": {

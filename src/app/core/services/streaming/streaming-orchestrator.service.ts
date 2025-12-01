@@ -12,18 +12,8 @@
  */
 
 import { inject, Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, EMPTY, merge, Observable, of, Subject, throwError } from 'rxjs';
-import {
-  catchError,
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  map,
-  switchMap,
-  takeUntil,
-  tap,
-  withLatestFrom,
-} from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, Observable, of, Subject, throwError } from 'rxjs';
+import { catchError, distinctUntilChanged, takeUntil, tap } from 'rxjs/operators';
 
 import { AICardConfig } from '../../../models';
 import {
@@ -36,25 +26,16 @@ import {
 import { StreamingTransportFactoryService } from './streaming-transport-factory.service';
 import {
   createStreamingStateMachine,
-  StateChange,
   StreamingContext,
   StreamingState,
   StreamingStateMachine,
 } from './streaming-state-machine';
 import { ParsedResult, StreamingJsonParser } from './streaming-json-parser.service';
-import {
-  SectionProgress,
-  StreamingProgress,
-  StreamingProgressService,
-} from './streaming-progress.service';
-import { StreamingWorkerService } from './streaming-worker.service';
+import { StreamingProgress, StreamingProgressService } from './streaming-progress.service';
 import {
   DefaultStreamingErrorHandler,
-  StreamAbortedError,
-  StreamConnectionError,
   StreamingError,
   StreamingErrorFactory,
-  StreamParseError,
 } from './streaming-errors';
 
 /**
@@ -156,7 +137,6 @@ export interface StreamingSession {
 export class StreamingOrchestratorService implements OnDestroy {
   private readonly transportFactory = inject(StreamingTransportFactoryService);
   private readonly progressService = inject(StreamingProgressService);
-  private readonly workerService = inject(StreamingWorkerService);
 
   private config: StreamingOrchestratorConfig = { ...DEFAULT_CONFIG };
   private transport: StreamingTransport | null = null;

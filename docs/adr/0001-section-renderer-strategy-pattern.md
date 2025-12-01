@@ -50,3 +50,4 @@ We implemented a registry-based strategy pattern for section component loading:
 - ADR Format: https://adr.github.io/
 
 
+

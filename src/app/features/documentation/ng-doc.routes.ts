@@ -4,7 +4,7 @@ import { Routes } from '@angular/router';
  * Documentation routes
  * Auto-generated from page files - do not edit manually
  * Uses DocPageComponent (no NgDoc dependency for Angular 20 compatibility)
- * Generated: 2025-12-01T11:32:35.508Z
+ * Generated: 2025-12-01T13:40:17.881Z
  */
 
 export const NG_DOC_ROUTING: Routes = [

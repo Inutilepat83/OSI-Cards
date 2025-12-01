@@ -16,8 +16,8 @@
     "noImplicitThis": true,
     "alwaysStrict": true,
     "noUncheckedIndexedAccess": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "exactOptionalPropertyTypes": false,
     "sourceMap": true,
     "declaration": false,
@@ -34,37 +34,28 @@
       "dom"
     ],
     "paths": {
+      "@osi-cards/lib": ["projects/osi-cards-lib/src/public-api.ts"],
+      "@osi-cards/lib/*": ["projects/osi-cards-lib/src/lib/*"],
+      "@osi-cards/sections": ["projects/osi-cards-lib/src/lib/components/sections/index.ts"],
+      "@osi-cards/services": ["projects/osi-cards-lib/src/lib/services/index.ts"],
+      "@osi-cards/utils": ["projects/osi-cards-lib/src/lib/utils/index.ts"],
+      "@osi-cards/models": ["projects/osi-cards-lib/src/lib/models/index.ts"],
+      "@osi-cards/themes": ["projects/osi-cards-lib/src/lib/themes/index.ts"],
+      "@osi-cards/constants": ["projects/osi-cards-lib/src/lib/constants/index.ts"],
+      "@osi-cards/testing": ["projects/osi-cards-lib/src/lib/testing/index.ts"],
+      "@osi-cards/events": ["projects/osi-cards-lib/src/lib/events/index.ts"],
+      "@osi-cards/interfaces": ["projects/osi-cards-lib/src/lib/interfaces/index.ts"],
+      "@osi-cards/providers": ["projects/osi-cards-lib/src/lib/providers/index.ts"],
       "@app/*": ["./src/app/*"],
-      "@environments/*": [
-        "./src/environments/*"
-      ],
-      "@core/*": [
-        "./src/app/core/*"
-      ],
-      "@core": [
-        "./src/app/core/index.ts"
-      ],
-      "@shared/*": [
-        "./src/app/shared/*"
-      ],
-      "@shared": [
-        "./src/app/shared/index.ts"
-      ],
-      "@models/*": [
-        "./src/app/models/*"
-      ],
-      "@models": [
-        "./src/app/models/index.ts"
-      ],
-      "@ui": [
-        "./ui/src/public-api"
-      ],
-      "@data-access/cards": [
-        "./cards-data-access/src/public-api"
-      ],
-      "@data-access/cards/*": [
-        "./cards-data-access/src/lib/cards/*"
-      ]
+      "@environments/*": ["./src/environments/*"],
+      "@core/*": ["./src/app/core/*"],
+      "@core": ["./src/app/core/index.ts"],
+      "@shared/*": ["./src/app/shared/*"],
+      "@shared": ["./src/app/shared/index.ts"],
+      "@models/*": ["./src/app/models/*"],
+      "@models": ["./src/app/models/index.ts"],
+      "@features/*": ["./src/app/features/*"],
+      "@env": ["./src/environments/environment.ts"]
     }
   },
   "angularCompilerOptions": {

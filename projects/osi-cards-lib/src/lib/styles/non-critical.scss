@@ -1,0 +1,639 @@
+/**
+ * OSI Cards - Non-Critical CSS
+ *
+ * This stylesheet contains styles that can be loaded asynchronously after
+ * the critical CSS. Includes animations, effects, and enhanced styling.
+ *
+ * Load this stylesheet with a lower priority:
+ *
+ * @example
+ * ```html
+ * <link rel="preload" href="non-critical.css" as="style" onload="this.rel='stylesheet'">
+ * <noscript><link rel="stylesheet" href="non-critical.css"></noscript>
+ * ```
+ */
+
+// =============================================================================
+// EXTENDED CSS CUSTOM PROPERTIES
+// =============================================================================
+
+:root {
+  // Extended spacing
+  --osi-spacing-xl: 32px;
+  --osi-spacing-2xl: 48px;
+  --osi-spacing-3xl: 64px;
+
+  // Extended shadows
+  --osi-shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+  --osi-shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.2);
+  --osi-shadow-glow: 0 0 40px rgba(var(--osi-color-brand-rgb), 0.3);
+
+  // Animation timing
+  --osi-transition-fast: 150ms ease;
+  --osi-transition-normal: 200ms ease;
+  --osi-transition-slow: 300ms ease;
+
+  // Extended colors
+  --osi-color-success: #28a745;
+  --osi-color-warning: #ffc107;
+  --osi-color-error: #dc3545;
+  --osi-color-info: #17a2b8;
+
+  // Trend colors
+  --osi-color-trend-up: #28a745;
+  --osi-color-trend-down: #dc3545;
+  --osi-color-trend-stable: #6c757d;
+}
+
+// =============================================================================
+// ANIMATION KEYFRAMES
+// =============================================================================
+
+@keyframes osi-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes osi-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes osi-fade-in-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes osi-skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes osi-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes osi-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes osi-bounce {
+  0%, 20%, 53%, 100% {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translateY(0);
+  }
+  40%, 43% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translateY(-15px);
+  }
+  70% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translateY(-7px);
+  }
+  90% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes osi-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+// =============================================================================
+// CARD ENHANCED STYLES
+// =============================================================================
+
+.osi-card {
+  // Add transitions for non-critical interactions
+  transition: box-shadow var(--osi-transition-normal),
+              transform var(--osi-transition-normal);
+
+  &:hover {
+    box-shadow: var(--osi-shadow-lg);
+  }
+
+  &--elevated {
+    box-shadow: var(--osi-shadow-lg);
+
+    &:hover {
+      box-shadow: var(--osi-shadow-xl);
+    }
+  }
+
+  &--with-glow {
+    &:hover {
+      box-shadow: var(--osi-shadow-glow);
+    }
+  }
+}
+
+.osi-card-surface {
+  transition: transform var(--osi-transition-normal);
+}
+
+// =============================================================================
+// CARD ANIMATIONS
+// =============================================================================
+
+.osi-card-enter {
+  animation: osi-fade-in-scale 0.3s ease-out forwards;
+}
+
+.osi-card-exit {
+  animation: osi-fade-in-scale 0.2s ease-in reverse forwards;
+}
+
+// Staggered entrance for multiple cards
+@for $i from 1 through 10 {
+  .osi-card:nth-child(#{$i}) {
+    animation-delay: #{($i - 1) * 0.05}s;
+  }
+}
+
+// =============================================================================
+// TILT EFFECT STYLES
+// =============================================================================
+
+.osi-card--tilt-enabled {
+  perspective: 1000px;
+
+  .osi-card-surface {
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-out;
+  }
+
+  &:hover .osi-card-surface {
+    // Tilt handled via JS, but add smooth transition
+  }
+}
+
+.osi-tilt-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--osi-transition-normal);
+  background: radial-gradient(
+    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(var(--osi-color-brand-rgb), 0.15) 0%,
+    transparent 60%
+  );
+}
+
+.osi-card--tilt-enabled:hover .osi-tilt-glow {
+  opacity: 1;
+}
+
+.osi-tilt-reflection {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 50%
+  );
+  opacity: 0;
+  transition: opacity var(--osi-transition-normal);
+}
+
+.osi-card--tilt-enabled:hover .osi-tilt-reflection {
+  opacity: 0.5;
+}
+
+// =============================================================================
+// SECTION ANIMATIONS
+// =============================================================================
+
+.osi-section {
+  opacity: 0;
+  animation: osi-fade-in-up 0.3s ease-out forwards;
+
+  @for $i from 1 through 15 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{($i - 1) * 0.08}s;
+    }
+  }
+}
+
+.osi-section--streaming {
+  .osi-section-title::after {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 1em;
+    background: var(--osi-color-brand);
+    margin-left: 4px;
+    animation: osi-pulse 0.8s infinite;
+  }
+}
+
+// =============================================================================
+// FIELD ANIMATIONS
+// =============================================================================
+
+.osi-field {
+  opacity: 0;
+  animation: osi-fade-in 0.2s ease-out forwards;
+
+  @for $i from 1 through 20 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{($i - 1) * 0.04}s;
+    }
+  }
+}
+
+.osi-field--streaming {
+  .osi-field-value {
+    background: linear-gradient(
+      90deg,
+      var(--osi-color-background-soft) 0%,
+      var(--osi-color-border) 50%,
+      var(--osi-color-background-soft) 100%
+    );
+    background-size: 200% 100%;
+    animation: osi-skeleton-shimmer 1.5s infinite;
+    border-radius: var(--osi-border-radius-sm);
+  }
+}
+
+// =============================================================================
+// ITEM ANIMATIONS
+// =============================================================================
+
+.osi-item {
+  opacity: 0;
+  animation: osi-fade-in-up 0.25s ease-out forwards;
+
+  @for $i from 1 through 20 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{($i - 1) * 0.04}s;
+    }
+  }
+
+  &:hover {
+    background: var(--osi-color-background-soft);
+    border-radius: var(--osi-border-radius-md);
+  }
+}
+
+.osi-item--clickable {
+  cursor: pointer;
+  transition: background var(--osi-transition-fast);
+
+  &:hover {
+    background: var(--osi-color-background-soft);
+  }
+}
+
+// =============================================================================
+// BUTTON ENHANCED STYLES
+// =============================================================================
+
+.osi-action-button {
+  transition: background var(--osi-transition-fast),
+              color var(--osi-transition-fast),
+              border-color var(--osi-transition-fast),
+              transform var(--osi-transition-fast),
+              box-shadow var(--osi-transition-fast);
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &--primary {
+    &:hover {
+      background: var(--osi-color-brand-dark);
+      box-shadow: 0 4px 12px rgba(var(--osi-color-brand-rgb), 0.3);
+    }
+  }
+
+  &--secondary {
+    &:hover {
+      background: var(--osi-color-border);
+    }
+  }
+
+  &--outline {
+    &:hover {
+      background: rgba(var(--osi-color-brand-rgb), 0.1);
+    }
+  }
+
+  &--ghost {
+    &:hover {
+      background: var(--osi-color-background-soft);
+      color: var(--osi-color-text);
+    }
+  }
+
+  // Loading state
+  &--loading {
+    position: relative;
+    color: transparent;
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: osi-spin 0.6s linear infinite;
+    }
+  }
+}
+
+// =============================================================================
+// SKELETON ANIMATIONS
+// =============================================================================
+
+.osi-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--osi-color-background-soft) 0%,
+    var(--osi-color-border) 50%,
+    var(--osi-color-background-soft) 100%
+  );
+  background-size: 200% 100%;
+  animation: osi-skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+// =============================================================================
+// EMPTY STATE STYLES
+// =============================================================================
+
+.osi-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--osi-spacing-2xl);
+  text-align: center;
+  min-height: 300px;
+}
+
+.osi-empty-state-title {
+  font-size: var(--osi-font-size-xl);
+  font-weight: 600;
+  margin-bottom: var(--osi-spacing-md);
+  animation: osi-fade-in 0.3s ease-out;
+}
+
+.osi-empty-state-message {
+  font-size: var(--osi-font-size-base);
+  color: var(--osi-color-text-secondary);
+  animation: osi-fade-in 0.3s ease-out 0.1s both;
+}
+
+// =============================================================================
+// PARTICLE ANIMATION STYLES
+// =============================================================================
+
+.osi-particles-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.osi-particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--osi-color-brand);
+  opacity: 0.3;
+  animation: osi-float 3s ease-in-out infinite;
+
+  @for $i from 1 through 20 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.15}s;
+      left: #{random(100)}%;
+      top: #{random(100)}%;
+    }
+  }
+}
+
+// =============================================================================
+// TREND INDICATORS
+// =============================================================================
+
+.osi-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--osi-spacing-xs);
+  font-size: var(--osi-font-size-sm);
+  font-weight: 500;
+
+  &--up {
+    color: var(--osi-color-trend-up);
+  }
+
+  &--down {
+    color: var(--osi-color-trend-down);
+  }
+
+  &--stable {
+    color: var(--osi-color-trend-stable);
+  }
+}
+
+.osi-trend-icon {
+  transition: transform var(--osi-transition-fast);
+}
+
+.osi-trend:hover .osi-trend-icon {
+  transform: scale(1.1);
+}
+
+// =============================================================================
+// PROGRESS BAR
+// =============================================================================
+
+.osi-progress {
+  height: 6px;
+  background: var(--osi-color-background-soft);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.osi-progress-bar {
+  height: 100%;
+  background: var(--osi-color-brand);
+  border-radius: inherit;
+  transition: width var(--osi-transition-slow);
+}
+
+// =============================================================================
+// TOOLTIP STYLES
+// =============================================================================
+
+.osi-tooltip {
+  position: absolute;
+  z-index: var(--osi-z-index-dropdown);
+  padding: var(--osi-spacing-sm) var(--osi-spacing-md);
+  background: var(--osi-color-text);
+  color: var(--osi-color-background);
+  font-size: var(--osi-font-size-sm);
+  border-radius: var(--osi-border-radius-sm);
+  box-shadow: var(--osi-shadow-md);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity var(--osi-transition-fast),
+              transform var(--osi-transition-fast);
+  pointer-events: none;
+
+  &--visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================================================
+// STATUS BADGES
+// =============================================================================
+
+.osi-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--osi-spacing-xs);
+  padding: 2px var(--osi-spacing-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  &--completed {
+    background: rgba(40, 167, 69, 0.1);
+    color: var(--osi-color-success);
+  }
+
+  &--in-progress {
+    background: rgba(255, 193, 7, 0.1);
+    color: var(--osi-color-warning);
+  }
+
+  &--pending {
+    background: var(--osi-color-background-soft);
+    color: var(--osi-color-text-secondary);
+  }
+
+  &--error {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--osi-color-error);
+  }
+}
+
+// =============================================================================
+// FULLSCREEN MODE
+// =============================================================================
+
+.osi-card--fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: var(--osi-z-index-modal);
+  border-radius: 0;
+  animation: osi-fade-in-scale 0.2s ease-out;
+
+  .osi-card-surface {
+    border-radius: 0;
+  }
+}
+
+.osi-fullscreen-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: calc(var(--osi-z-index-modal) - 1);
+  animation: osi-fade-in 0.2s ease-out;
+}
+
+// =============================================================================
+// PRINT STYLES
+// =============================================================================
+
+@media print {
+  .osi-card {
+    box-shadow: none;
+    border: 1px solid var(--osi-color-border);
+    break-inside: avoid;
+  }
+
+  .osi-card-actions,
+  .osi-tilt-glow,
+  .osi-tilt-reflection,
+  .osi-particles-container {
+    display: none !important;
+  }
+
+  .osi-section,
+  .osi-field,
+  .osi-item {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
+// =============================================================================
+// HIGH CONTRAST MODE
+// =============================================================================
+
+@media (forced-colors: active) {
+  .osi-card {
+    border: 2px solid CanvasText;
+  }
+
+  .osi-action-button {
+    border: 2px solid ButtonText;
+  }
+
+  .osi-skeleton {
+    background: Canvas;
+    border: 1px solid CanvasText;
+  }
+}
+
