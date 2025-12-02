@@ -1,0 +1,352 @@
+// =====================================================================
+// ULTRA-COMPACT DESIGN TOKENS - Master Design System
+// =====================================================================
+//
+// Unified token system for maximum compactness and consistency
+// 200px/400px column widths with optimized heights
+//
+// =====================================================================
+
+@use '../../tokens/master' as *;
+
+// =====================================================================
+// CORE SPACING - Ultra Compact Scale
+// =====================================================================
+
+:root {
+  // Ultra-compact spacing (primary scale)
+  --uc-space-1: 1px;
+  --uc-space-2: 2px;
+  --uc-space-3: 3px;
+  --uc-space-4: 4px;
+  --uc-space-5: 5px;
+  --uc-space-6: 6px;
+  --uc-space-8: 8px;
+  --uc-space-10: 10px;
+  --uc-space-12: 12px;
+
+  // Section spacing standards
+  --uc-section-gap: 8px;           // Between sections
+  --uc-card-padding: 8px;          // Card internal padding
+  --uc-card-padding-sm: 6px;       // Mobile card padding
+  --uc-item-padding: 6px 8px;      // List item padding
+  --uc-item-padding-sm: 5px 6px;   // Mobile item padding
+  --uc-internal-gap: 4px;          // Between elements
+  --uc-internal-gap-sm: 3px;       // Tight internal gap
+  --uc-grid-gap: 8px;              // Grid gap
+  --uc-grid-gap-sm: 6px;           // Mobile grid gap
+}
+
+// =====================================================================
+// TYPOGRAPHY - Ultra Compact Scale
+// =====================================================================
+
+:root {
+  // Font sizes (optimized for density)
+  --uc-text-xs: 0.55rem;    // 8.8px - Tiny labels
+  --uc-text-sm: 0.6rem;     // 9.6px - Small labels
+  --uc-text-base: 0.65rem;  // 10.4px - Labels, meta
+  --uc-text-md: 0.7rem;     // 11.2px - Body text
+  --uc-text-lg: 0.75rem;    // 12px - Titles
+  --uc-text-xl: 0.8rem;     // 12.8px - Values
+  --uc-text-2xl: 0.95rem;   // 15.2px - Large values
+  --uc-text-3xl: 1.1rem;    // 17.6px - Metric values
+  --uc-text-4xl: 1.2rem;    // 19.2px - Large metrics
+
+  // Line heights (tight)
+  --uc-leading-tightest: 1;
+  --uc-leading-tight: 1.1;
+  --uc-leading-snug: 1.2;
+  --uc-leading-normal: 1.3;
+  --uc-leading-relaxed: 1.4;
+
+  // Font weights
+  --uc-font-normal: 400;
+  --uc-font-medium: 500;
+  --uc-font-semibold: 600;
+  --uc-font-bold: 700;
+}
+
+// =====================================================================
+// COMPONENT HEIGHTS - Optimized for 200px/400px Columns
+// =====================================================================
+
+:root {
+  // 200px column cards
+  --uc-card-height-200px: 80px;      // Analytics, Financials
+  --uc-card-height-contact: 140px;   // Contact cards
+  --uc-card-height-gallery: 150px;   // Gallery items
+  --uc-card-height-social: 105px;    // Social media
+  --uc-card-height-network: 105px;   // Network cards
+  --uc-card-height-news: 210px;      // News cards
+  --uc-card-height-quote: 130px;     // Quotations
+  --uc-card-height-color: 110px;     // Brand colors
+
+  // 400px full-width items
+  --uc-item-height-info: 42px;       // Info items
+  --uc-item-height-list: 44px;       // List items
+  --uc-item-height-event: 52px;      // Event items
+  --uc-item-height-overview: 48px;   // Overview items
+  --uc-item-height-product: 54px;    // Product items
+  --uc-item-height-faq: 42px;        // FAQ items
+
+  // Component-specific
+  --uc-avatar-size: 42px;            // Compact avatars
+  --uc-icon-size: 1rem;              // Standard icons
+  --uc-icon-size-lg: 1.6rem;         // Large icons
+  --uc-button-height: 24px;          // Compact buttons
+  --uc-date-badge: 44px;             // Date badges
+}
+
+// =====================================================================
+// BORDERS & RADIUS - Consistent System
+// =====================================================================
+
+:root {
+  // Border widths
+  --uc-border-width: 1px;
+  --uc-border-width-thick: 2px;
+
+  // Border colors
+  --uc-border: rgba(255, 255, 255, 0.06);
+  --uc-border-hover: rgba(255, 255, 255, 0.12);
+  --uc-border-separator: rgba(255, 255, 255, 0.04);
+  --uc-border-accent: var(--accent, #ff7900);
+
+  // Border radius
+  --uc-radius-sm: 4px;
+  --uc-radius-md: 8px;
+  --uc-radius-lg: 12px;
+  --uc-radius-full: 9999px;
+}
+
+// =====================================================================
+// COLORS - Unified Palette
+// =====================================================================
+
+:root {
+  // Base colors
+  --uc-bg: var(--background, #0c0c0c);
+  --uc-card: var(--card, var(--background, #0c0c0c));
+  --uc-surface: var(--surface, rgba(255, 255, 255, 0.02));
+  --uc-surface-hover: rgba(255, 255, 255, 0.02);
+
+  // Text colors
+  --uc-text-primary: var(--foreground, #fff);
+  --uc-text-secondary: var(--muted-foreground, #999);
+  --uc-accent: var(--accent, #ff7900);
+  --uc-accent-bright: var(--accent-bright, #ffa347);
+
+  // Opacity levels
+  --uc-opacity-subtle: 0.5;
+  --uc-opacity-muted: 0.7;
+  --uc-opacity-medium: 0.8;
+  --uc-opacity-strong: 0.85;
+}
+
+// =====================================================================
+// TRANSITIONS - Fast & Smooth
+// =====================================================================
+
+:root {
+  --uc-transition-fast: 150ms ease-out;
+  --uc-transition-base: 200ms ease-out;
+  --uc-transition-all: all 200ms ease-out;
+  --uc-transition-color: color 150ms ease-out;
+  --uc-transition-bg: background 150ms ease-out;
+  --uc-transition-transform: transform 200ms ease-out;
+}
+
+// =====================================================================
+// SHADOWS - Subtle System
+// =====================================================================
+
+:root {
+  --uc-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --uc-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --uc-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+// =====================================================================
+// GRID SYSTEM - 200px/400px Standards
+// =====================================================================
+
+:root {
+  // Column widths
+  --uc-col-200px: 200px;  // Compact sections
+  --uc-col-400px: 400px;  // Full-width sections
+
+  // Breakpoints
+  --uc-bp-tiny: 420px;
+  --uc-bp-mobile: 480px;
+  --uc-bp-tablet: 640px;
+  --uc-bp-desktop: 768px;
+}
+
+// =====================================================================
+// REUSABLE MIXINS
+// =====================================================================
+
+// Card base (200px compatible)
+@mixin uc-card-200px {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: var(--uc-card-padding);
+  background: var(--uc-card);
+  border: var(--uc-border-width) solid var(--uc-border);
+  border-radius: var(--uc-radius-md);
+  transition: var(--uc-transition-all);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--uc-border-accent);
+    opacity: 0;
+    transition: var(--uc-transition-fast);
+  }
+
+  &:hover {
+    border-color: var(--uc-border-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--uc-shadow-hover);
+
+    &::before {
+      opacity: 0.6;
+    }
+  }
+}
+
+// List container (400px compatible)
+@mixin uc-list-400px {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: var(--uc-space-4);
+  background: var(--uc-card);
+  border: var(--uc-border-width) solid var(--uc-border);
+  border-radius: var(--uc-radius-md);
+}
+
+// List item
+@mixin uc-list-item {
+  padding: var(--uc-item-padding);
+  border-radius: var(--uc-radius-sm);
+  transition: var(--uc-transition-bg);
+
+  &:not(:last-child) {
+    border-bottom: var(--uc-border-width) solid var(--uc-border-separator);
+  }
+
+  &:hover {
+    background: var(--uc-surface-hover);
+  }
+}
+
+// Label text
+@mixin uc-label {
+  font-size: var(--uc-text-sm);
+  font-weight: var(--uc-font-semibold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--uc-text-secondary);
+  line-height: var(--uc-leading-tight);
+}
+
+// Value text
+@mixin uc-value {
+  font-size: var(--uc-text-xl);
+  font-weight: var(--uc-font-semibold);
+  color: var(--uc-text-primary);
+  line-height: var(--uc-leading-tight);
+  transition: var(--uc-transition-color);
+}
+
+// Title text
+@mixin uc-title {
+  font-size: var(--uc-text-lg);
+  font-weight: var(--uc-font-semibold);
+  color: var(--uc-text-primary);
+  line-height: var(--uc-leading-snug);
+  transition: var(--uc-transition-color);
+}
+
+// Body text
+@mixin uc-body {
+  font-size: var(--uc-text-md);
+  font-weight: var(--uc-font-normal);
+  color: var(--uc-text-secondary);
+  line-height: var(--uc-leading-normal);
+}
+
+// Grid 200px
+@mixin uc-grid-200px {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--uc-col-200px), 1fr));
+  gap: var(--uc-grid-gap);
+
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--uc-grid-gap-sm);
+  }
+
+  @media (max-width: 420px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Host min-width 400px
+@mixin uc-host-400px {
+  display: block;
+  width: 100%;
+  min-width: var(--uc-col-400px);
+
+  @media (max-width: 640px) {
+    min-width: 100%;
+  }
+}
+
+// Responsive mobile
+@mixin uc-mobile {
+  @media (max-width: 640px) {
+    @content;
+  }
+}
+
+// Reduced motion
+@mixin uc-reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+// =====================================================================
+// UTILITY CLASSES (Optional)
+// =====================================================================
+
+// Gap utilities
+.uc-gap-2 { gap: var(--uc-space-2); }
+.uc-gap-3 { gap: var(--uc-space-3); }
+.uc-gap-4 { gap: var(--uc-space-4); }
+.uc-gap-6 { gap: var(--uc-space-6); }
+.uc-gap-8 { gap: var(--uc-space-8); }
+
+// Padding utilities
+.uc-p-4 { padding: var(--uc-space-4); }
+.uc-p-6 { padding: var(--uc-space-6); }
+.uc-p-8 { padding: var(--uc-space-8); }
+
+// Flex utilities
+.uc-flex { display: flex; }
+.uc-flex-col { flex-direction: column; }
+.uc-items-center { align-items: center; }
+.uc-justify-between { justify-content: space-between; }
+

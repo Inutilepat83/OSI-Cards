@@ -1,153 +1,128 @@
 // =====================================================================
-// EMPTY STATE - Universal Shared Component
+// EMPTY STATE - Ultra Compact
 // =====================================================================
 
 @use '../../../styles/components/sections/design-system' as *;
 @use '../../../styles/components/sections/typography-system' as typo;
-@use '../../../styles/components/sections/component-mixins' as components;
 
 :host {
   display: block;
   width: 100%;
 }
 
-// =====================================================================
-// EMPTY STATE CONTAINER
-// =====================================================================
-
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-xl, 24px);
+  padding: 16px;
   text-align: center;
   background: var(--surface, transparent);
   border-radius: var(--radius-md, 8px);
-  gap: var(--spacing-md, 12px);
-  min-height: 200px;
+  gap: 8px;
+  min-height: 140px;
+  border: 1px dashed rgba(255, 255, 255, 0.08);
 
-  // Subtle border for visual separation
-  border: 1px dashed var(--border-muted, rgba(255, 255, 255, 0.1));
-
-  // Variants
   &.minimal {
     background: transparent;
     border: none;
-    min-height: 120px;
-    padding: var(--spacing-lg, 16px);
+    min-height: 100px;
+    padding: 12px;
   }
 
   &.centered {
-    min-height: 300px;
+    min-height: 200px;
   }
 
   &.compact {
-    min-height: 100px;
-    padding: var(--spacing-md, 12px);
-    gap: var(--spacing-sm, 8px);
+    min-height: 80px;
+    padding: 10px;
+    gap: 6px;
   }
 
-  // Size variants
   &.small {
-    padding: var(--spacing-md, 12px);
-    min-height: 120px;
-    gap: var(--spacing-sm, 8px);
+    padding: 10px;
+    min-height: 90px;
+    gap: 6px;
   }
 
   &.large {
-    padding: var(--spacing-2xl, 32px);
-    min-height: 320px;
-    gap: var(--spacing-lg, 16px);
+    padding: 24px;
+    min-height: 220px;
+    gap: 12px;
   }
 }
 
-// =====================================================================
-// ICON/EMOJI
-// =====================================================================
-
 .empty-icon {
-  font-size: var(--text-6xl, 3.75rem);
+  font-size: 2.5rem;
   line-height: 1;
-  opacity: 0.6;
+  opacity: 0.5;
   filter: grayscale(0.3);
 
   .compact & {
-    font-size: var(--text-4xl, 2.25rem);
+    font-size: 2rem;
   }
 
   .small & {
-    font-size: var(--text-4xl, 2.25rem);
+    font-size: 2rem;
   }
 
   .large & {
-    font-size: var(--text-8xl, 6rem);
+    font-size: 4rem;
   }
 }
-
-// =====================================================================
-// MESSAGE TEXT
-// =====================================================================
 
 .empty-text {
-  font-size: var(--text-base);
-  font-weight: var(--font-normal);
-  line-height: var(--leading-normal);
+  @include typo.body-base;
   margin: 0;
-  color: var(--muted-foreground, #999999);
-  max-width: 400px;
+  color: var(--muted-foreground, #999);
+  max-width: 340px;
+  font-size: 0.75rem;
+  line-height: 1.3;
 
   .compact & {
-    font-size: var(--text-sm, 0.875rem);
+    font-size: 0.7rem;
   }
 
   .small & {
-    font-size: var(--text-sm, 0.875rem);
-    max-width: 300px;
+    font-size: 0.7rem;
+    max-width: 280px;
   }
 
   .large & {
-    font-size: var(--text-lg, 1.125rem);
-    max-width: 500px;
+    font-size: 0.85rem;
+    max-width: 420px;
   }
 }
 
-// =====================================================================
-// ACTION BUTTON
-// =====================================================================
-
 .empty-action {
-  margin-top: var(--spacing-sm, 8px);
-  padding: var(--spacing-sm, 8px) var(--spacing-lg, 16px);
+  margin-top: 6px;
+  padding: 6px 12px;
   background: var(--accent, #ff7900);
-  color: var(--foreground, #ffffff);
+  color: #fff;
   border: none;
   border-radius: var(--radius-md, 8px);
-  font-size: var(--text-sm, 0.875rem);
-  font-weight: var(--font-semibold, 600);
+  font-size: 0.7rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 200ms var(--ease-out, cubic-bezier(0, 0, 0.2, 1));
+  transition: all 150ms ease-out;
 
-  // Hover state
   &:hover {
     background: var(--accent-bright, #ffa347);
     transform: translateY(-1px);
-    box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   }
 
-  // Active state
   &:active {
     transform: translateY(0);
     box-shadow: none;
   }
 
-  // Focus state (accessibility)
   &:focus-visible {
     outline: 2px solid var(--accent, #ff7900);
     outline-offset: 2px;
   }
 
-  // Disabled state
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -155,14 +130,10 @@
   }
 }
 
-// =====================================================================
-// ANIMATION
-// =====================================================================
-
 @keyframes emptyStateFadeIn {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -171,76 +142,62 @@
 }
 
 .empty-state {
-  animation: emptyStateFadeIn 400ms var(--ease-out, cubic-bezier(0, 0, 0.2, 1));
+  animation: emptyStateFadeIn 300ms ease-out;
 }
-
-// =====================================================================
-// RESPONSIVE
-// =====================================================================
 
 @media (max-width: 640px) {
   .empty-state {
-    padding: var(--spacing-lg, 16px);
-    min-height: 160px;
+    padding: 12px;
+    min-height: 120px;
 
     &.large {
-      padding: var(--spacing-xl, 24px);
-      min-height: 240px;
+      padding: 18px;
+      min-height: 180px;
     }
   }
 
   .empty-icon {
-    font-size: var(--text-5xl, 3rem);
+    font-size: 2.2rem;
 
     .large & {
-      font-size: var(--text-6xl, 3.75rem);
+      font-size: 3rem;
     }
   }
 
   .empty-text {
-    font-size: var(--text-sm, 0.875rem);
+    font-size: 0.7rem;
 
     .large & {
-      font-size: var(--text-base, 1rem);
+      font-size: 0.8rem;
     }
   }
 
   .empty-action {
-    padding: var(--spacing-xs, 4px) var(--spacing-md, 12px);
-    font-size: var(--text-xs, 0.75rem);
+    padding: 5px 10px;
+    font-size: 0.65rem;
   }
 }
-
-// =====================================================================
-// DARK MODE SUPPORT
-// =====================================================================
 
 @media (prefers-color-scheme: dark) {
   .empty-state {
-    border-color: var(--border-muted, rgba(255, 255, 255, 0.1));
+    border-color: rgba(255, 255, 255, 0.08);
   }
 
   .empty-icon {
-    opacity: 0.5;
+    opacity: 0.4;
   }
 }
 
-// =====================================================================
-// ACCESSIBILITY
-// =====================================================================
-
-// High contrast mode support
 @media (prefers-contrast: high) {
   .empty-state {
-    border: 2px solid var(--border, rgba(255, 255, 255, 0.2));
+    border: 2px solid rgba(255, 255, 255, 0.15);
   }
 
   .empty-action {
-    border: 2px solid var(--foreground, #ffffff);
+    border: 2px solid var(--foreground, #fff);
   }
 }
 
-// Reduced motion support
 @media (prefers-reduced-motion: reduce) {
   .empty-state {
     animation: none;
@@ -250,4 +207,3 @@
     transition: none;
   }
 }
-

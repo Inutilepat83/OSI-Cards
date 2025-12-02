@@ -1,38 +1,26 @@
-<div class="brand-colors-container">
-  <!-- Section Header -->
+<div class="colors">
   <lib-section-header
+    *ngIf="section.title"
     [title]="section.title"
     [description]="section.description">
   </lib-section-header>
 
-  <!-- Colors Grid -->
-  <div class="colors-grid" *ngIf="section.fields && section.fields.length > 0">
-    <div class="color-swatch"
-         *ngFor="let color of section.fields"
-         (click)="copyColor(color.value)"
-         [attr.title]="'Click to copy: ' + color.value">
-
-      <!-- Color Display -->
-      <div class="swatch-color"
-           [style.background]="isValidColor(color.value) ? color.value : '#cccccc'"
-           [class.invalid]="!isValidColor(color.value)">
-      </div>
-
-      <!-- Color Info -->
-      <div class="swatch-info">
-        <div class="color-name">{{ color.label }}</div>
-        <div class="color-value">{{ color.value }}</div>
-        <div class="color-category" *ngIf="color.category">{{ color.category }}</div>
-        <div class="color-description" *ngIf="color.description">{{ color.description }}</div>
+  <div class="grid" *ngIf="section.fields?.length">
+    <div class="color" *ngFor="let c of section.fields" (click)="copyColor(c.value)" [attr.title]="'Copy ' + c.value">
+      <div class="swatch" [style.background]="isValidColor(c.value) ? c.value : '#ccc'" [class.invalid]="!isValidColor(c.value)"></div>
+      <div class="info">
+        <div class="name">{{ c.label }}</div>
+        <div class="value">{{ c.value }}</div>
+        <div class="cat" *ngIf="c.category">{{ c.category }}</div>
+        <div class="desc" *ngIf="c.description">{{ c.description }}</div>
       </div>
     </div>
   </div>
 
-  <!-- Empty State -->
   <lib-empty-state
-    *ngIf="!section.fields && !section.items || (section.fields?.length === 0 && section.items?.length === 0)"
-    message="No colors defined"
+    *ngIf="!section.fields?.length"
+    message="No colors"
     icon="🎨"
-    variant="minimal">
+    variant="compact">
   </lib-empty-state>
 </div>

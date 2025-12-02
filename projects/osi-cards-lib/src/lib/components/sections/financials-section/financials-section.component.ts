@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseSectionComponent } from '../base-section.component';
-import { SectionHeaderComponent, EmptyStateComponent, TrendIndicatorComponent, type TrendDirection } from '../../shared';
+import { SectionHeaderComponent, EmptyStateComponent, TrendIndicatorComponent } from '../../shared';
+import { TrendDirection } from '../../../types';
 
 /**
  * Financials Section Component

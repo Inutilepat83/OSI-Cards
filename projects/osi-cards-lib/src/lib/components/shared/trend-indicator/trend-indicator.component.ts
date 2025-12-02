@@ -1,10 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-/**
- * Trend direction types
- */
-export type TrendDirection = 'up' | 'down' | 'stable' | 'neutral';
+import { TrendDirection } from '../../../types';
 
 /**
  * Shared Trend Indicator Component
@@ -117,6 +113,24 @@ export class TrendIndicatorComponent {
                       this.trend === 'stable' ? 'stable' : 'neutral';
 
     return `Trend ${trendText}${this.value !== undefined ? ` by ${this.formattedValue}` : ''}`;
+  }
+
+  /**
+   * Get computed classes for ngClass
+   */
+  get classes(): Record<string, boolean> {
+    const classes: Record<string, boolean> = {
+      'trend-indicator--animated': this.animated
+    };
+
+    classes[`trend-indicator--${this.trend}`] = true;
+    classes[`trend-indicator--${this.size}`] = true;
+
+    if (this.trendClass) {
+      classes[this.trendClass] = true;
+    }
+
+    return classes;
   }
 }
 

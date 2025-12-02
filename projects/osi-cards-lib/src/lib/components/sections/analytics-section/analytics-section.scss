@@ -1,115 +1,128 @@
 // =====================================================================
-// ANALYTICS SECTION - Compact, Responsive, Consistent
+// ANALYTICS SECTION - Clean & Modern
 // =====================================================================
 
-@use '../../../styles/design-system/tokens' as *;
-@use '../../../styles/design-system/unified-sections' as unified;
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
 
 :host {
   display: block;
   width: 100%;
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// CONTAINER
-// ═══════════════════════════════════════════════════════════════════
-
-.analytics-container {
+.analytics-section {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-section-header-gap);
+  gap: 12px;
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// METRICS GRID - Compact & Responsive
-// ═══════════════════════════════════════════════════════════════════
-
+// Grid
 .analytics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: var(--osi-spacing-sm);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
 
-  @include mobile {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: var(--osi-spacing-xs);
+  @media (max-width: 768px) {
+    gap: 10px;
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  @media (max-width: 420px) {
+    grid-template-columns: 1fr;
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// METRIC CARD - Compact
-// ═══════════════════════════════════════════════════════════════════
-
+// Metric Card
 .metric-card {
-  background: var(--osi-surface);
-  border: 1px solid var(--osi-border-muted);
-  border-radius: var(--osi-radius-sm);
-  padding: var(--osi-spacing-sm);
-  min-height: var(--osi-card-min-height);
+  @include card-elevated;
+  position: relative;
+  padding: 14px;
+  min-height: 130px;
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-xs);
-  transition: all var(--osi-duration-medium) var(--osi-ease-out);
+  gap: 10px;
+  transition: all 300ms var(--ease-out);
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 300ms var(--ease-out);
+  }
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--osi-shadow-md);
-    background: var(--osi-surface-raised);
-  }
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
 
-  &:focus-visible {
-    outline: 2px solid var(--osi-accent);
-    outline-offset: 2px;
-  }
+    &::after {
+      opacity: 0.8;
+    }
 
-  @include mobile {
-    padding: var(--osi-spacing-xs);
-    min-height: auto;
+    .metric-value {
+      color: var(--accent);
+    }
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// METRIC ELEMENTS - Unified Typography
-// ═══════════════════════════════════════════════════════════════════
-
+// Header
 .metric-header {
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
-  gap: var(--osi-spacing-xs);
+  align-items: center;
+  gap: 8px;
 }
 
 .metric-label {
-  @include unified.unified-item-label;  // Consistent label style
+  @include typo.label-uppercase;
   flex: 1;
 }
 
+// Value
 .metric-value {
-  @include unified.unified-number-display;  // Consistent number style
-  margin: var(--osi-spacing-xs) 0;
+  @include typo.number-display-medium;
+  font-size: 1.5rem;
+  margin: 4px 0;
+  transition: color 200ms var(--ease-out);
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// RESPONSIVE
-// ═══════════════════════════════════════════════════════════════════
+// Progress
+.metric-card > lib-progress-bar {
+  margin-top: auto;
+}
 
-@include mobile {
-  .analytics-grid {
-    grid-template-columns: repeat(2, 1fr);  // 2 columns on mobile
-  }
+// Badge
+.metric-card > lib-badge {
+  align-self: flex-start;
+}
 
+// Responsive
+@media (max-width: 640px) {
   .metric-card {
-    gap: 2px;
+    padding: 12px;
+    min-height: 120px;
+    gap: 8px;
   }
 
-  .metric-header {
-    flex-direction: column;
-    gap: 2px;
+  .metric-value {
+    font-size: 1.3rem;
   }
 }
 
-// Extra small devices
-@media (max-width: 400px) {
-  .analytics-grid {
-    grid-template-columns: 1fr;  // Single column on very small screens
+@media (prefers-reduced-motion: reduce) {
+  .metric-card {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
   }
 }

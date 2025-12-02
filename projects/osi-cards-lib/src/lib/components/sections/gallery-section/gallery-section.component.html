@@ -1,37 +1,25 @@
-<div class="gallery-container">
-  <!-- Section Header -->
+<div class="gallery">
   <lib-section-header
+    *ngIf="section.title"
     [title]="section.title"
     [description]="section.description">
   </lib-section-header>
 
-  <!-- Gallery Grid -->
-  <div class="gallery-grid" *ngIf="section.items && section.items.length > 0">
-    <div class="gallery-item"
-         *ngFor="let item of section.items; let i = index"
-         (click)="onImageClick(item, i)"
-         tabindex="0"
-         role="button"
-         [attr.aria-label]="'View image: ' + getCaption(item)">
-
-      <!-- Image -->
-      <img [src]="getImageUrl(item)"
-           [alt]="getAltText(item)"
-           class="gallery-image"
-           loading="lazy">
-
-      <!-- Caption Overlay -->
-      <div class="gallery-caption" *ngIf="getCaption(item)">
-        <span class="caption-text">{{ getCaption(item) }}</span>
+  <div class="grid" *ngIf="section.items?.length">
+    <div class="item" *ngFor="let i of section.items; let idx = index" (click)="onImageClick(i, idx)" tabindex="0" role="button">
+      <div class="img-container">
+        <img [src]="getImageUrl(i)" [alt]="getAltText(i)" class="img" loading="lazy">
+      </div>
+      <div class="caption" *ngIf="getCaption(i)">
+        <span class="text">{{ getCaption(i) }}</span>
       </div>
     </div>
   </div>
 
-  <!-- Empty State -->
   <lib-empty-state
-    *ngIf="!section.fields && !section.items || (section.fields?.length === 0 && section.items?.length === 0)"
-    message="No images in gallery"
+    *ngIf="!section.items?.length"
+    message="No images"
     icon="🖼️"
-    variant="minimal">
+    variant="compact">
   </lib-empty-state>
 </div>

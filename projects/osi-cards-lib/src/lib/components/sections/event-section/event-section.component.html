@@ -1,50 +1,40 @@
-<div class="events-container">
-  <!-- Section Header -->
+<div class="events">
   <lib-section-header
+    *ngIf="section.title"
     [title]="section.title"
     [description]="section.description">
   </lib-section-header>
 
-  <!-- Events List -->
-  <div class="events-list" *ngIf="section.fields && section.fields.length > 0">
-    <div class="event-card" *ngFor="let event of section.fields">
-
-      <!-- Event Date Badge -->
-      <div class="event-date" *ngIf="event.date">
-        <ng-container *ngIf="formatDate(event.date) as formattedDate">
-          <span class="date-day">{{ formattedDate.day }}</span>
-          <span class="date-month">{{ formattedDate.month }}</span>
+  <div class="list" *ngIf="section.fields?.length">
+    <div class="event" *ngFor="let e of section.fields">
+      <div class="date" *ngIf="e.date">
+        <ng-container *ngIf="formatDate(e.date) as d">
+          <span class="day">{{ d.day }}</span>
+          <span class="month">{{ d.month }}</span>
         </ng-container>
       </div>
-
-      <!-- Event Content -->
-      <div class="event-content">
-        <div class="event-header">
-          <h4 class="event-title">{{ event.label || event.value }}</h4>
-          <lib-badge
-            *ngIf="event.status"
-            [variant]="getStatusVariant(event.status)"
-            size="sm">
-            {{ event.status }}
-          </lib-badge>
+      <div class="content">
+        <h4 class="title">{{ e.label || e.value }}</h4>
+        <div class="details">
+          <span *ngIf="e.time">{{ e.time }}</span>
+          <span *ngIf="e.location">{{ e.location }}</span>
+          <span *ngIf="e.attendees">{{ e.attendees }} people</span>
         </div>
-
-        <div class="event-details">
-          <span class="event-time" *ngIf="event.time">{{ event.time }}</span>
-          <span class="event-location" *ngIf="event.location">{{ event.location }}</span>
-          <span class="event-attendees" *ngIf="event.attendees">{{ event.attendees }} attendees</span>
-        </div>
-
-        <span class="event-category" *ngIf="event.category">{{ event.category }}</span>
       </div>
+      <lib-badge
+        *ngIf="e.status"
+        class="status"
+        [variant]="getStatusVariant(e.status)"
+        size="sm">
+        {{ e.status }}
+      </lib-badge>
     </div>
   </div>
 
-  <!-- Empty State -->
   <lib-empty-state
-    *ngIf="!section.fields || section.fields.length === 0"
-    message="No events scheduled"
+    *ngIf="!section.fields?.length"
+    message="No events"
     icon="📅"
-    variant="minimal">
+    variant="compact">
   </lib-empty-state>
 </div>

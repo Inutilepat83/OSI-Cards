@@ -1,41 +1,27 @@
-<div class="faq-container">
-  <!-- Section Header -->
+<div class="faq">
   <lib-section-header
+    *ngIf="section.title"
     [title]="section.title"
     [description]="section.description">
   </lib-section-header>
 
-  <!-- FAQ List -->
-  <div class="faq-list" *ngIf="section.items && section.items.length > 0">
-    <div class="faq-item" *ngFor="let item of section.items; let i = index" [class.is-expanded]="isExpanded(i)">
-      <!-- Question (Clickable) -->
-      <button
-        class="faq-question"
-        (click)="toggle(i)"
-        [attr.aria-expanded]="isExpanded(i)"
-        [attr.aria-controls]="'faq-answer-' + i"
-      >
-        <span class="question-text">{{ getQuestion(item) }}</span>
-        <span class="question-icon" [class.rotated]="isExpanded(i)">
-          <span class="chevron">›</span>
-        </span>
+  <div class="list" *ngIf="section.items?.length">
+    <div class="item" *ngFor="let item of section.items; let i = index" [class.expanded]="isExpanded(i)">
+      <button class="question" (click)="toggle(i)" [attr.aria-expanded]="isExpanded(i)">
+        <span class="text">{{ getQuestion(item) }}</span>
+        <span class="icon" [class.rotated]="isExpanded(i)">›</span>
       </button>
-
-      <!-- Answer (Expandable) -->
-      <div class="faq-answer" [id]="'faq-answer-' + i" *ngIf="isExpanded(i)" [@fadeInOut]>
-        <p class="answer-text">{{ getAnswer(item) }}</p>
-        <span class="answer-category" *ngIf="item.meta?.category">
-          {{ item.meta?.category }}
-        </span>
+      <div class="answer" *ngIf="isExpanded(i)" [@fadeInOut]>
+        <p class="text">{{ getAnswer(item) }}</p>
+        <span class="cat" *ngIf="item.meta?.category">{{ item.meta?.category }}</span>
       </div>
     </div>
   </div>
 
-  <!-- Empty State -->
   <lib-empty-state
-    *ngIf="!section.fields && !section.items || (section.fields?.length === 0 && section.items?.length === 0)"
-    message="No FAQs available"
+    *ngIf="!section.items?.length"
+    message="No FAQs"
     icon="❓"
-    variant="minimal">
+    variant="compact">
   </lib-empty-state>
 </div>

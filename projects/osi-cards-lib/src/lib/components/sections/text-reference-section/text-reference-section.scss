@@ -1,9 +1,10 @@
 // =====================================================================
-// TEXT REFERENCE SECTION - Compact, Responsive, Consistent
+// TEXT REFERENCE SECTION - Clean List, Proper Spacing
 // =====================================================================
 
-@use '../../../styles/design-system/tokens' as *;
-@use '../../../styles/design-system/unified-sections' as unified;
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
+@use '../../../styles/components/sections/component-mixins' as components;
 
 :host {
   display: block;
@@ -13,88 +14,115 @@
 .text-reference-container {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-section-header-gap);
+  gap: var(--spacing-md);
 }
 
 .references-list {
-  background: var(--osi-surface);
-  border: 1px solid var(--osi-border-muted);
-  border-radius: var(--osi-radius-md);
-  padding: var(--osi-spacing-xs);
+  @include card;
+  padding: 8px 12px;
   display: flex;
   flex-direction: column;
   gap: 0;
+  background: var(--surface);
 }
 
+// REFERENCE ITEM - Proper spacing for all elements
 .reference-item {
+  padding: 14px 8px;  // Good vertical padding
+  border-radius: var(--radius-sm);
+  transition: all 200ms var(--ease-out);
   display: flex;
-  gap: var(--osi-spacing-sm);
-  padding: var(--osi-spacing-sm);
-  border-radius: var(--osi-radius-sm);
-  transition: all var(--osi-duration-normal) var(--osi-ease-out);
+  gap: 12px;  // Good gap between number and content
 
   &:not(:last-child) {
-    border-bottom: 1px solid var(--osi-border-muted);
+    border-bottom: 1px solid var(--border);
   }
 
   &:hover {
-    background: var(--osi-surface-raised);
-  }
+    background: var(--surface-raised);
+    padding-left: 12px;
 
-  @include mobile {
-    padding: var(--osi-spacing-xs);
-    gap: var(--osi-spacing-xs);
+    .reference-number {
+      color: var(--accent);
+      transform: scale(1.1);
+    }
+
+    .reference-title {
+      color: var(--accent);
+    }
   }
 }
 
 .reference-number {
-  @include unified.unified-item-label;
+  @include typo.label-base;
   flex-shrink: 0;
-  min-width: 1.5rem;
+  min-width: 24px;  // Enough space for 2-digit numbers
   text-align: center;
+  font-weight: var(--font-bold);
+  font-size: 0.7rem;
+  opacity: 0.5;
+  transition: all 200ms var(--ease-out);
+  line-height: 1.3;
 }
 
+// REFERENCE CONTENT - Proper vertical spacing
 .reference-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-xs);
+  gap: 8px;  // Space between title, text, meta, link
+  min-width: 0;
 }
 
 .reference-title {
-  @include unified.unified-item-title;
+  @include heading(6);
+  font-size: 0.8125rem;  // 13px
+  margin: 0;
+  line-height: 1.4;
+  transition: color 200ms var(--ease-out);
 }
 
 .reference-text {
-  @include unified.unified-item-description;
+  @include body-text('small');
+  color: var(--muted-foreground);
+  font-size: 0.75rem;  // 12px
+  line-height: 1.6;
   margin: 0;
+  opacity: 0.9;
 }
 
 .reference-meta {
   display: flex;
-  gap: var(--osi-spacing-sm);
-  flex-wrap: wrap;
+  gap: 10px;
   font-size: 0.7rem;
-  color: var(--osi-muted-foreground);
-
-  @include mobile {
-    gap: var(--osi-spacing-xs);
-  }
+  color: var(--muted-foreground);
+  opacity: 0.6;
+  line-height: 1.3;
 }
 
 .reference-link {
-  @include unified.unified-item-label;
-  text-transform: none;
-  color: var(--osi-accent);
+  font-size: 0.7rem;
+  color: var(--accent);
   text-decoration: none;
+  font-weight: var(--font-medium);
 
   &:hover {
     text-decoration: underline;
   }
 }
 
-@include mobile {
+// RESPONSIVE
+@media (max-width: 480px) {
   .references-list {
-    padding: 2px;
+    padding: 6px 10px;
+  }
+
+  .reference-item {
+    padding: 12px 6px;
+    gap: 10px;
+  }
+
+  .reference-number {
+    min-width: 20px;
   }
 }

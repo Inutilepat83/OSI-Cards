@@ -1,101 +1,100 @@
 // =====================================================================
-// QUOTATION SECTION - Compact, Responsive, Consistent
+// QUOTATION SECTION - Original Product Style
 // =====================================================================
 
-@use '../../../styles/design-system/tokens' as *;
-@use '../../../styles/design-system/unified-sections' as unified;
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
 
 :host {
   display: block;
   width: 100%;
 }
 
-.quotation-container {
+.quotes {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-section-header-gap);
+  gap: var(--spacing-md);
 }
 
-.quotes-grid {
+.grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--osi-spacing-sm);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-md);
 
-  @include mobile {
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+  }
+
+  @media (max-width: 480px) {
     grid-template-columns: 1fr;
-    gap: var(--osi-spacing-xs);
   }
 }
 
-.quote-card {
-  background: var(--osi-surface);
-  border: 1px solid var(--osi-border-muted);
-  border-left: 3px solid var(--osi-accent);
-  border-radius: var(--osi-radius-sm);
-  padding: var(--osi-spacing-sm);
+.quote {
+  @include card-elevated;
+  border-left: 3px solid var(--accent);
+  padding: var(--spacing-md);
+  min-height: 180px;
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-xs);
-  transition: all var(--osi-duration-medium) var(--osi-ease-out);
+  gap: var(--spacing-sm);
+  transition: all 300ms var(--ease-out);
+  margin: 0;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: var(--osi-shadow-md);
-    background: var(--osi-surface-raised);
-  }
+    box-shadow: var(--shadow-lg);
+    background: var(--surface-raised);
 
-  @include mobile {
-    padding: var(--osi-spacing-xs);
+    .icon {
+      opacity: 0.3;
+      transform: scale(1.05);
+    }
   }
 }
 
-.quote-icon {
-  font-size: var(--osi-text-2xl);
+.icon {
+  font-size: var(--text-3xl);
   line-height: 1;
-  color: var(--osi-accent);
-  opacity: 0.3;
+  color: var(--accent);
+  opacity: 0.15;
+  transition: all 200ms var(--ease-out);
 }
 
-.quote-text {
-  @include unified.unified-item-value;
+.text {
+  @include body-text('base');
   font-style: italic;
+  line-height: var(--leading-relaxed);
   margin: 0;
-  line-height: var(--osi-leading-relaxed);
+  color: var(--foreground);
+  flex: 1;
 }
 
-.quote-footer {
-  margin-top: var(--osi-spacing-xs);
-  padding-top: var(--osi-spacing-xs);
-  border-top: 1px solid var(--osi-border-muted);
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--osi-spacing-sm);
-
-  @include mobile {
-    flex-direction: column;
-    gap: var(--osi-spacing-xs);
-  }
-}
-
-.author-info {
+.footer {
+  margin-top: auto;
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--spacing-xs);
+
+  .name {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    font-style: normal;
+    color: var(--foreground);
+  }
+
+  .role {
+    @include typo.caption;
+    color: var(--muted-foreground);
+  }
 }
 
-.author-name {
-  @include unified.unified-item-title;
-  font-style: normal;
-}
-
-.author-role,
-.author-company {
-  @include unified.unified-item-description;
-  font-size: 0.7rem;
-}
-
-.quote-date {
-  @include unified.unified-item-label;
-  text-transform: none;
+@media (max-width: 480px) {
+  .quote {
+    padding: var(--spacing-sm);
+    min-height: 160px;
+  }
 }

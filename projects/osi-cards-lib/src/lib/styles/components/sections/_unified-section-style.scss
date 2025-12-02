@@ -1,0 +1,158 @@
+// =====================================================================
+// UNIFIED SECTION STYLE - Based on Original Product Section
+// =====================================================================
+//
+// This is the ORIGINAL style that worked well
+// Clean structure, good spacing, proper hierarchy
+//
+// =====================================================================
+
+@use '../../tokens/master' as *;
+
+// =====================================================================
+// STANDARD SPACING (Good balance)
+// =====================================================================
+
+:root {
+  --section-padding: var(--spacing-md);      // 12px
+  --section-gap: var(--spacing-md);          // 12px
+  --section-item-padding: var(--spacing-sm); // 8px
+  --section-item-gap: var(--spacing-sm);     // 8px
+}
+
+// =====================================================================
+// STANDARD CARD (For 200px grids)
+// =====================================================================
+
+@mixin section-card {
+  @include card;
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  transition: all 300ms var(--ease-out);
+
+  &:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+}
+
+// =====================================================================
+// STANDARD LIST (For 400px width sections)
+// =====================================================================
+
+@mixin section-list-container {
+  @include card;
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  transition: box-shadow 300ms var(--ease-out);
+
+  &:hover {
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+@mixin section-list-item {
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  transition: all 250ms var(--ease-out);
+
+  &:not(:last-child) {
+    margin-bottom: var(--spacing-xs);
+  }
+
+  &:hover {
+    background: var(--surface-hover);
+    transform: translateX(4px);
+  }
+}
+
+// =====================================================================
+// TYPOGRAPHY MIXINS (Original hierarchy)
+// =====================================================================
+
+@mixin section-field-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted-foreground);
+  font-weight: var(--font-semibold);
+  line-height: 1.3;
+}
+
+@mixin section-field-value {
+  color: var(--foreground);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+}
+
+@mixin section-metric-value {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--foreground);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+// =====================================================================
+// GRID SYSTEMS
+// =====================================================================
+
+@mixin section-grid-200px {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+
+  @media (max-width: 768px) {
+    gap: var(--spacing-sm);
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 420px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+@mixin section-grid-280px {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-md);
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// =====================================================================
+// UTILITIES
+// =====================================================================
+
+@mixin section-reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    animation: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+}
+

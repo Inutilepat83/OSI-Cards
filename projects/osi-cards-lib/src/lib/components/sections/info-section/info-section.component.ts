@@ -4,9 +4,9 @@ import { BaseSectionComponent } from '../base-section.component';
 import {
   SectionHeaderComponent,
   EmptyStateComponent,
-  TrendIndicatorComponent,
-  type TrendDirection
+  TrendIndicatorComponent
 } from '../../shared';
+import { TrendDirection } from '../../../types';
 
 /**
  * Info Section Component

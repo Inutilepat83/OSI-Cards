@@ -1,9 +1,10 @@
 // =====================================================================
-// CHART SECTION - Compact, Responsive, Consistent
+// CHART SECTION - Proper Canvas Sizing, No Overlaps
 // =====================================================================
 
-@use '../../../styles/design-system/tokens' as *;
-@use '../../../styles/design-system/unified-sections' as unified;
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
+@use '../../../styles/components/sections/component-mixins' as components;
 
 :host {
   display: block;
@@ -13,24 +14,129 @@
 .chart-container {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-section-header-gap);
+  gap: var(--spacing-md);
 }
 
+// CHART WRAPPER - Proper spacing and height
 .chart-wrapper {
-  background: var(--osi-surface);
-  border: 1px solid var(--osi-border-muted);
-  border-radius: var(--osi-radius-md);
-  padding: var(--osi-spacing-sm);
-  min-height: 200px;
+  @include card;
+  padding: 16px;  // Good padding around chart
+  background: var(--surface);
+  min-height: 320px;  // Ensure chart has good size
+  display: flex;
+  flex-direction: column;
+  gap: 12px;  // Space between title and canvas
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-bottom: 12px;  // Separation from chart
+  border-bottom: 1px solid var(--border);
+}
+
+.chart-title {
+  @include heading(5);
+  font-size: 0.9375rem;  // 15px
+  margin: 0;
+  line-height: 1.3;
+}
+
+.chart-legend {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  color: var(--muted-foreground);
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+// CHART CANVAS - Proper sizing
+.chart-canvas-wrapper {
+  flex: 1;
   position: relative;
+  min-height: 250px;  // Ensure good chart size
+  width: 100%;
 
   canvas {
     max-width: 100%;
-    height: auto !important;
+    max-height: 100%;
+  }
+}
+
+// CHART FOOTER - Optional stats below chart
+.chart-footer {
+  display: flex;
+  justify-content: space-around;
+  gap: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.chart-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.chart-stat-value {
+  @include typo.number-display-medium;
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+}
+
+.chart-stat-label {
+  @include typo.caption;
+  font-size: 0.7rem;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+// RESPONSIVE
+@media (max-width: 768px) {
+  .chart-wrapper {
+    padding: 14px;
+    min-height: 280px;
   }
 
-  @include mobile {
-    padding: var(--osi-spacing-xs);
-    min-height: 160px;
+  .chart-canvas-wrapper {
+    min-height: 220px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-wrapper {
+    padding: 12px;
+    min-height: 240px;
+  }
+
+  .chart-canvas-wrapper {
+    min-height: 180px;
+  }
+
+  .chart-header {
+    flex-direction: column;
+  }
+
+  .chart-footer {
+    flex-direction: column;
+    gap: 12px;
   }
 }

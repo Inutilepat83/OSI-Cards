@@ -1,0 +1,355 @@
+// =====================================================================
+// VISUAL EFFECTS LIBRARY - Reusable Card & Item Effects
+// =====================================================================
+// Beautiful, polished effects that sections can apply
+// Extracted from best-looking sections (like analytics)
+
+@use 'design-tokens' as *;
+
+// ═══════════════════════════════════════════════════════════════════
+// CARD HOVER EFFECTS - Analytics-Style Polish
+// ═══════════════════════════════════════════════════════════════════
+
+// The beautiful analytics card effect (lift + subtle scale + shadow)
+@mixin analytics-card-effect {
+  position: relative;
+  transition: all 300ms var(--ease-out);
+  cursor: default;
+
+  // Subtle gradient overlay for depth
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+      var(--accent) 0%,
+      transparent 100%
+    );
+    opacity: 0;
+    transition: opacity 300ms var(--ease-out);
+  }
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+// Scale + lift effect
+@mixin card-scale-lift {
+  transition: all 250ms var(--ease-out);
+
+  &:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+// Slide right effect (for list items)
+@mixin item-slide-right {
+  transition: all 200ms var(--ease-out);
+
+  &:hover {
+    transform: translateX(6px);
+    background: var(--surface-raised);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+// Glow effect on hover
+@mixin card-glow-hover {
+  transition: all 300ms var(--ease-out);
+
+  &:hover {
+    box-shadow:
+      var(--shadow-md),
+      0 0 20px rgba(var(--accent-rgb, 255, 121, 0), 0.2);
+    border-color: var(--accent);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// METRIC VALUE ANIMATIONS - Analytics-Style
+// ═══════════════════════════════════════════════════════════════════
+
+// The nice metric value scale effect
+@mixin metric-value-effect {
+  transition: all 300ms var(--ease-out);
+
+  .metric-card:hover &,
+  .analytics-card:hover & {
+    transform: scale(1.05);
+    color: var(--accent);
+  }
+}
+
+// Number pulse effect
+@mixin number-pulse-effect {
+  animation: numberPulse 2s ease-in-out infinite;
+
+  @keyframes numberPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PROGRESS BAR EFFECTS
+// ═══════════════════════════════════════════════════════════════════
+
+// Shimmer effect (from analytics)
+@mixin progress-shimmer {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      transparent 100%
+    );
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+}
+
+// Progress pulse on hover
+@mixin progress-pulse-hover {
+  .metric-card:hover &,
+  .card:hover & {
+    animation: progressPulse 1s ease-in-out;
+  }
+
+  @keyframes progressPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ACCENT LINE EFFECTS
+// ═══════════════════════════════════════════════════════════════════
+
+// Animated top accent line (analytics style)
+@mixin accent-line-top {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+      var(--accent) 0%,
+      transparent 100%
+    );
+    opacity: 0;
+    transition: opacity 300ms var(--ease-out);
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+// Left accent border (quotations, highlights)
+@mixin accent-line-left {
+  border-left: 3px solid var(--accent);
+  padding-left: calc(var(--osi-default-card-padding) - 3px);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TREND ANIMATIONS
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin trend-bounce-animation {
+  .trend-icon,
+  .trend-arrow {
+    display: inline-block;
+    animation: trendBounce 1.5s ease-in-out infinite;
+  }
+
+  @keyframes trendBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+  }
+
+  &:hover .trend-icon,
+  &:hover .trend-arrow {
+    animation-play-state: paused;
+    transform: scale(1.1);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ZEBRA STRIPING (for lists)
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin zebra-striping {
+  &:nth-child(even) {
+    background: var(--surface-subtle);
+  }
+
+  &:hover {
+    background: var(--surface-raised);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// GLASS MORPHISM EFFECT
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-md));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-sm);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(var(--blur-lg));
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ICON ANIMATIONS
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin icon-hover-scale {
+  .item-icon,
+  .card-icon {
+    transition: all 200ms var(--ease-out);
+  }
+
+  &:hover .item-icon,
+  &:hover .card-icon {
+    transform: scale(1.15);
+    color: var(--accent);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// GRADIENT BACKGROUNDS
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin gradient-background {
+  background: linear-gradient(135deg,
+    var(--surface) 0%,
+    var(--surface-raised) 100%
+  );
+}
+
+@mixin gradient-hover {
+  &:hover {
+    background: linear-gradient(135deg,
+      var(--surface-raised) 0%,
+      var(--surface-hover) 100%
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FOCUS RING (Accessibility)
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// LOADING STATE EFFECT
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin loading-shimmer {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--osi-overlay-medium) 50%,
+      transparent 100%
+    );
+    transform: translateX(-100%);
+    animation: loadingShimmer 1.5s infinite;
+  }
+
+  @keyframes loadingShimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// COMBINED EFFECTS - Pre-built Combinations
+// ═══════════════════════════════════════════════════════════════════
+
+// Premium card effect (analytics-style)
+@mixin premium-card {
+  @include analytics-card-effect;
+  @include focus-ring;
+
+  // Additional polish
+  background: var(--osi-card-background);
+  border: var(--osi-card-border-width) solid var(--osi-card-border-color);
+  border-radius: var(--osi-card-border-radius);
+  padding: var(--osi-default-card-padding);
+}
+
+// Interactive list item
+@mixin interactive-list-item {
+  @include item-slide-right;
+  @include zebra-striping;
+  @include focus-ring;
+
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  padding: var(--osi-default-card-padding);
+}
+
+// Feature card (gallery, products)
+@mixin feature-card {
+  @include card-scale-lift;
+  @include accent-line-top;
+  @include focus-ring;
+
+  background: var(--osi-card-background);
+  border: var(--osi-card-border-width) solid var(--osi-card-border-color);
+  border-radius: var(--osi-card-border-radius);
+  padding: var(--osi-default-card-padding);
+}
+

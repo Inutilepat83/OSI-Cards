@@ -1,0 +1,295 @@
+// =====================================================================
+// MASTER COMPACT SYSTEM - Intelligent Structure
+// =====================================================================
+//
+// This isn't just about reducing padding - it's about SMART LAYOUT
+// Horizontal when possible, vertical when needed, adaptive always
+//
+// =====================================================================
+
+// =====================================================================
+// CONSISTENT SPACING SYSTEM
+// =====================================================================
+
+:root {
+  // Base spacing scale (strictly enforced)
+  --compact-space-1: 2px;   // Micro
+  --compact-space-2: 4px;   // Tight
+  --compact-space-3: 6px;   // Compact
+  --compact-space-4: 8px;   // Standard
+  --compact-space-5: 10px;  // Comfortable
+  --compact-space-6: 12px;  // Spacious
+
+  // Component spacing (consistent application)
+  --compact-card-padding: 8px;
+  --compact-item-padding-y: 6px;
+  --compact-item-padding-x: 8px;
+  --compact-gap-tight: 4px;
+  --compact-gap-standard: 6px;
+  --compact-gap-comfortable: 8px;
+}
+
+// =====================================================================
+// INTELLIGENT LAYOUT MIXINS
+// =====================================================================
+
+// Smart card that uses horizontal space wisely
+@mixin smart-card-horizontal {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto auto;
+  gap: var(--compact-gap-tight);
+  align-items: center;
+  
+  // On narrow screens, switch to vertical
+  @media (max-width: 200px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+}
+
+// Metric card optimized for 200px width
+@mixin metric-card-200px {
+  padding: var(--compact-card-padding);
+  display: grid;
+  grid-template-areas:
+    "label trend"
+    "value value"
+    "extra extra";
+  grid-template-columns: 1fr auto;
+  gap: var(--compact-gap-tight);
+  align-items: start;
+  min-height: 75px;
+
+  .label { grid-area: label; }
+  .trend { grid-area: trend; }
+  .value { grid-area: value; }
+  .extra { grid-area: extra; }
+}
+
+// List item optimized for 400px width
+@mixin list-item-400px {
+  padding: var(--compact-item-padding-y) var(--compact-item-padding-x);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--compact-gap-standard);
+  align-items: center;
+  min-height: 40px;
+}
+
+// Contact card optimized for vertical space
+@mixin contact-card-compact {
+  padding: var(--compact-card-padding);
+  display: grid;
+  grid-template-areas:
+    "avatar"
+    "info"
+    "actions";
+  grid-template-rows: auto 1fr auto;
+  gap: var(--compact-gap-tight);
+  justify-items: center;
+  text-align: center;
+}
+
+// =====================================================================
+// RESPONSIVE GRID SYSTEM
+// =====================================================================
+
+@mixin responsive-grid-200px {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--compact-gap-comfortable);
+
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--compact-gap-standard);
+  }
+
+  @media (max-width: 420px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+@mixin responsive-list-400px {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 400px;
+
+  @media (max-width: 640px) {
+    min-width: 100%;
+  }
+}
+
+// =====================================================================
+// CONSISTENT CARD STRUCTURE
+// =====================================================================
+
+@mixin base-card {
+  position: relative;
+  background: var(--card, #0c0c0c);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  transition: all 200ms ease-out;
+  box-sizing: border-box;
+
+  // Accent line (consistent across all cards)
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--accent, #ff7900);
+    opacity: 0;
+    transition: opacity 200ms ease-out;
+  }
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+    &::before {
+      opacity: 0.6;
+    }
+  }
+}
+
+@mixin base-list {
+  padding: var(--compact-space-2);
+  background: var(--card, #0c0c0c);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+@mixin base-item {
+  padding: var(--compact-item-padding-y) var(--compact-item-padding-x);
+  border-radius: 4px;
+  transition: background 150ms ease-out;
+  box-sizing: border-box;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
+}
+
+// =====================================================================
+// TYPOGRAPHY - CONSISTENT SYSTEM
+// =====================================================================
+
+@mixin text-label-compact {
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted-foreground, #999);
+  line-height: 1.1;
+}
+
+@mixin text-value-compact {
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--foreground, #fff);
+  line-height: 1;
+}
+
+@mixin text-title-compact {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--foreground, #fff);
+  line-height: 1.2;
+}
+
+@mixin text-body-compact {
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--muted-foreground, #999);
+  line-height: 1.3;
+}
+
+// =====================================================================
+// REDUCED MOTION - CONSISTENT
+// =====================================================================
+
+@mixin reduced-motion-safe {
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    animation: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+// =====================================================================
+// VISUAL HIERARCHY - SMART SPACING
+// =====================================================================
+
+// Breathing room for visual appeal
+@mixin visual-spacing {
+  // Not everything needs to be cramped
+  // Strategic spacing for visual hierarchy
+  
+  > *:not(:first-child) {
+    margin-top: var(--compact-gap-tight);
+  }
+
+  .primary-content {
+    margin: var(--compact-gap-standard) 0;
+  }
+
+  .secondary-content {
+    margin-top: auto; // Push to bottom
+  }
+}
+
+// =====================================================================
+// SMART TRUNCATION
+// =====================================================================
+
+@mixin smart-truncate($lines: 1) {
+  @if $lines == 1 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// =====================================================================
+// INTERACTIVE STATES - CONSISTENT
+// =====================================================================
+
+@mixin interactive-card {
+  cursor: pointer;
+  
+  &:hover {
+    .accent-text {
+      color: var(--accent, #ff7900);
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent, #ff7900);
+    outline-offset: 2px;
+  }
+}
+

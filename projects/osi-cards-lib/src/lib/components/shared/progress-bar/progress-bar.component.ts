@@ -115,5 +115,29 @@ export class ProgressBarComponent {
   get ariaValueMax(): number {
     return this.max;
   }
+
+  /**
+   * Get container classes
+   */
+  get containerClasses(): Record<string, boolean> {
+    const classes: Record<string, boolean> = {};
+    classes[`progress-bar--${this.size}`] = true;
+    if (this.progressClass) {
+      classes[this.progressClass] = true;
+    }
+    return classes;
+  }
+
+  /**
+   * Get fill classes
+   */
+  get fillClasses(): Record<string, boolean> {
+    return {
+      [`progress-fill--${this.variant}`]: true,
+      'progress-fill--animated': this.animated,
+      'progress-fill--striped': this.striped,
+      'progress-fill--shimmer': this.shimmer
+    };
+  }
 }
 

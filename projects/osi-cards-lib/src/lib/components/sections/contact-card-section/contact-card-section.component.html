@@ -1,76 +1,31 @@
-<div class="contacts-container">
-  <!-- Section Header -->
+<div class="contacts">
   <lib-section-header
+    *ngIf="section.title"
     [title]="section.title"
     [description]="section.description">
   </lib-section-header>
 
-  <!-- Contacts Grid -->
-  <div class="contacts-grid" *ngIf="section.fields && section.fields.length > 0">
-    <div class="contact-card" *ngFor="let contact of section.fields">
-
-      <!-- Avatar -->
-      <div class="contact-avatar">
-        <img [src]="getAvatar(contact)"
-             [alt]="getContactName(contact)"
-             *ngIf="getAvatar(contact)"
-             loading="lazy">
-        <span class="avatar-initials" *ngIf="!getAvatar(contact)">
-          {{ getInitials(getContactName(contact)) }}
-        </span>
+  <div class="grid" *ngIf="section.fields?.length">
+    <div class="card" *ngFor="let c of section.fields">
+      <div class="avatar">
+        <img [src]="getAvatar(c)" [alt]="getContactName(c)" *ngIf="getAvatar(c)" loading="lazy">
+        <span class="initials" *ngIf="!getAvatar(c)">{{ getInitials(getContactName(c)) }}</span>
       </div>
-
-      <!-- Contact Info -->
-      <div class="contact-info">
-        <h4 class="contact-name">{{ getContactName(contact) }}</h4>
-        <p class="contact-role" *ngIf="getContactRole(contact)">{{ getContactRole(contact) }}</p>
-
-        <!-- Department Badge -->
-        <lib-badge
-          *ngIf="contact.department"
-          variant="primary"
-          size="sm"
-          [pill]="true">
-          {{ contact.department }}
-        </lib-badge>
-
-        <!-- Location -->
-        <div class="contact-location" *ngIf="contact.location">
-          <span>{{ contact.location }}</span>
-        </div>
-
-        <!-- Contact Methods -->
-        <div class="contact-methods">
-          <a [href]="'mailto:' + contact.email"
-             class="contact-link"
-             *ngIf="contact.email"
-             [attr.aria-label]="'Email ' + getContactName(contact)">
-            Email
-          </a>
-          <a [href]="'tel:' + contact.phone"
-             class="contact-link"
-             *ngIf="contact.phone"
-             [attr.aria-label]="'Call ' + getContactName(contact)">
-            Call
-          </a>
-          <a [href]="contact.linkedIn"
-             class="contact-link"
-             target="_blank"
-             rel="noopener"
-             *ngIf="contact.linkedIn"
-             [attr.aria-label]="getContactName(contact) + ' LinkedIn'">
-            LinkedIn
-          </a>
-        </div>
+      <h4 class="name">{{ getContactName(c) }}</h4>
+      <p class="role" *ngIf="getContactRole(c)">{{ getContactRole(c) }}</p>
+      <lib-badge *ngIf="c.department" class="dept" variant="primary" size="sm">{{ c.department }}</lib-badge>
+      <div class="actions">
+        <a [href]="'mailto:' + c.email" class="action" *ngIf="c.email" title="Email">📧</a>
+        <a [href]="'tel:' + c.phone" class="action" *ngIf="c.phone" title="Call">📞</a>
+        <a [href]="c.linkedIn" class="action" target="_blank" rel="noopener" *ngIf="c.linkedIn" title="LinkedIn">💼</a>
       </div>
     </div>
   </div>
 
-  <!-- Empty State -->
   <lib-empty-state
-    *ngIf="!section.fields || section.fields.length === 0"
-    message="No contacts available"
+    *ngIf="!section.fields?.length"
+    message="No contacts"
     icon="👤"
-    variant="minimal">
+    variant="compact">
   </lib-empty-state>
 </div>

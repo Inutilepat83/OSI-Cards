@@ -89,5 +89,26 @@ export class BadgeComponent {
    * ARIA label for accessibility
    */
   @Input() ariaLabel?: string;
+
+  /**
+   * Get computed classes for ngClass
+   */
+  get classes(): Record<string, boolean> {
+    const classes: Record<string, boolean> = {
+      'badge--outlined': this.outlined,
+      'badge--pill': this.pill,
+      'badge--dot': this.dot,
+      'badge--interactive': this.interactive,
+    };
+
+    classes[`badge--${this.variant}`] = true;
+    classes[`badge--${this.size}`] = true;
+
+    if (this.badgeClass) {
+      classes[this.badgeClass] = true;
+    }
+
+    return classes;
+  }
 }
 

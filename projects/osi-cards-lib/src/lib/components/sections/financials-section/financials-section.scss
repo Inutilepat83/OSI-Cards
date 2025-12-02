@@ -1,93 +1,129 @@
 // =====================================================================
-// FINANCIALS SECTION - Compact, Responsive, Consistent
+// FINANCIALS SECTION - Clean & Modern
 // =====================================================================
 
-@use '../../../styles/design-system/tokens' as *;
-@use '../../../styles/design-system/unified-sections' as unified;
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
 
 :host {
   display: block;
   width: 100%;
 }
 
-.financials-container {
+.financials-section {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-section-header-gap);
+  gap: 12px;
 }
 
+// Grid
 .financials-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: var(--osi-spacing-sm);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
 
-  @include mobile {
+  @media (max-width: 768px) {
+    gap: 10px;
+  }
+
+  @media (max-width: 640px) {
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--osi-spacing-xs);
+    gap: 8px;
+  }
+
+  @media (max-width: 420px) {
+    grid-template-columns: 1fr;
   }
 }
 
+// Financial Card
 .financial-card {
-  background: var(--osi-surface);
-  border: 1px solid var(--osi-border-muted);
-  border-radius: var(--osi-radius-sm);
-  padding: var(--osi-spacing-sm);
-  min-height: var(--osi-card-min-height);
+  @include card-elevated;
+  position: relative;
+  padding: 14px;
+  min-height: 120px;
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-xs);
-  transition: all var(--osi-duration-medium) var(--osi-ease-out);
+  gap: 10px;
+  transition: all 300ms var(--ease-out);
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 300ms var(--ease-out);
+  }
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--osi-shadow-md);
-    background: var(--osi-surface-raised);
-  }
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
 
-  @include mobile {
-    padding: var(--osi-spacing-xs);
-    min-height: auto;
+    &::after {
+      opacity: 0.8;
+    }
+
+    .financial-value {
+      color: var(--accent);
+    }
   }
 }
 
-.metric-header {
+// Header
+.financial-header {
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
-  gap: var(--osi-spacing-xs);
+  align-items: center;
+  gap: 8px;
 }
 
-.metric-label {
-  @include unified.unified-item-label;
+.financial-label {
+  @include typo.label-uppercase;
   flex: 1;
 }
 
-.metric-period {
-  @include unified.unified-item-label;
-  text-transform: none;
+.financial-period {
   font-size: 0.65rem;
-  opacity: 0.8;
+  color: var(--muted-foreground);
+  opacity: 0.7;
 }
 
-.metric-value {
-  @include unified.unified-number-display;
-  margin: var(--osi-spacing-xs) 0;
+// Value
+.financial-value {
+  @include typo.number-display-medium;
+  font-size: 1.5rem;
+  margin: 4px 0;
+  transition: color 200ms var(--ease-out);
 }
 
-.metric-footer {
+// Trend
+.financial-card > lib-trend-indicator {
   margin-top: auto;
-  padding-top: var(--osi-spacing-xs);
-  border-top: 1px solid var(--osi-border-muted);
 }
 
-@include mobile {
-  .financials-grid {
-    grid-template-columns: 1fr;
+// Responsive
+@media (max-width: 640px) {
+  .financial-card {
+    padding: 12px;
+    min-height: 110px;
+    gap: 8px;
+  }
+
+  .financial-value {
+    font-size: 1.3rem;
   }
 }
 
-@media (max-width: 400px) {
-  .financials-grid {
-    grid-template-columns: 1fr;
+@media (prefers-reduced-motion: reduce) {
+  .financial-card {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
   }
 }

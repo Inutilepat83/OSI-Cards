@@ -1,7 +1,6 @@
 <span
   class="trend-indicator"
-  [class.trend-indicator--animated]="animated"
-  [ngClass]="['trend-indicator--' + trend, 'trend-indicator--' + size, trendClass]"
+  [ngClass]="classes"
   role="status"
   [attr.aria-label]="computedAriaLabel">
 

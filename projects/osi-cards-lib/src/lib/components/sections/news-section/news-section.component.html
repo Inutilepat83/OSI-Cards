@@ -1,43 +1,33 @@
-<div class="news-container">
-  <!-- Section Header -->
-  <lib-section-header [title]="section.title" [description]="section.description"> </lib-section-header>
+<div class="news">
+  <lib-section-header
+    *ngIf="section.title"
+    [title]="section.title"
+    [description]="section.description">
+  </lib-section-header>
 
-  <!-- News Grid -->
-  <div class="news-grid" *ngIf="section.items && section.items.length > 0">
-    <article class="news-card" *ngFor="let article of section.items">
-      <!-- Featured Image -->
-      <img
-        [src]="getImageUrl(article)"
-        [alt]="article.title"
-        class="news-image"
-        *ngIf="getImageUrl(article)"
-        loading="lazy"
-      />
-
-      <!-- Article Content -->
-      <div class="news-content">
-        <div class="news-meta">
-          <span class="news-date" *ngIf="article.meta?.date">{{ article.meta?.date }}</span>
-          <span class="news-source" *ngIf="article.meta?.source">{{ article.meta?.source }}</span>
-          <span class="news-category" *ngIf="article.meta?.category">{{ article.meta?.category }}</span>
+  <div class="grid" *ngIf="section.items?.length">
+    <!-- SMART: Adaptive height based on content -->
+    <article class="card"
+             *ngFor="let a of section.items"
+             [class.has-image]="getImageUrl(a)"
+             [class.has-excerpt]="a.description">
+      <img [src]="getImageUrl(a)" [alt]="a.title" class="img" *ngIf="getImageUrl(a)" loading="lazy" />
+      <div class="content">
+        <div class="meta">
+          <span *ngIf="a.meta?.date">{{ a.meta?.date }}</span>
+          <span *ngIf="a.meta?.source">{{ a.meta?.source }}</span>
         </div>
-
-        <h4 class="news-title">{{ article.title }}</h4>
-        <p class="news-excerpt" *ngIf="article.description">{{ article.description }}</p>
-
-        <a [href]="article.meta?.url" class="news-link" *ngIf="article.meta?.url" target="_blank" rel="noopener">
-          Read more →
-        </a>
+        <h4 class="title">{{ a.title }}</h4>
+        <p class="excerpt" *ngIf="a.description">{{ a.description }}</p>
+        <a [href]="a.meta?.url" class="link" *ngIf="a.meta?.url" target="_blank" rel="noopener">Read →</a>
       </div>
     </article>
   </div>
 
-  <!-- Empty State -->
   <lib-empty-state
-    *ngIf="!section.items || section.items.length === 0"
-    message="No news articles available"
+    *ngIf="!section.items?.length"
+    message="No news"
     icon="📰"
-    variant="minimal"
-  >
+    variant="compact">
   </lib-empty-state>
 </div>

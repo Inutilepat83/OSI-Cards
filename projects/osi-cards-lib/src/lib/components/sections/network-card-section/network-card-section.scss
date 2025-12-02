@@ -1,63 +1,168 @@
 // =====================================================================
-// NETWORK CARD SECTION - Compact, Responsive, Consistent
+// NETWORK CARD SECTION - Clean & Modern
 // =====================================================================
 
-@use '../../../styles/design-system/tokens' as *;
-@use '../../../styles/design-system/unified-sections' as unified;
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
 
 :host {
   display: block;
   width: 100%;
 }
 
-.network-container {
+.network-section {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-section-header-gap);
+  gap: 12px;
 }
 
+// Grid
 .network-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: var(--osi-spacing-sm);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
 
-  @include mobile {
+  @media (max-width: 768px) {
+    gap: 10px;
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  @media (max-width: 420px) {
     grid-template-columns: 1fr;
-    gap: var(--osi-spacing-xs);
   }
 }
 
+// Network Card
 .network-card {
-  background: var(--osi-surface);
-  border: 1px solid var(--osi-border-muted);
-  border-radius: var(--osi-radius-sm);
-  padding: var(--osi-spacing-sm);
+  @include card-elevated;
+  position: relative;
+  padding: 14px;
+  min-height: 140px;
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-xs);
-  transition: all var(--osi-duration-medium) var(--osi-ease-out);
+  gap: 10px;
+  transition: all 300ms var(--ease-out);
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 300ms var(--ease-out);
+  }
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--osi-shadow-md);
-    background: var(--osi-surface-raised);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+
+    &::after {
+      opacity: 0.8;
+    }
+
+    .network-name {
+      color: var(--accent);
+    }
   }
-
-  @include mobile {
-    padding: var(--osi-spacing-xs);
-  }
 }
 
-.network-title {
-  @include unified.unified-item-title;
+// Header
+.network-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
 }
 
-.network-relationship {
-  @include unified.unified-item-label;
-  text-transform: none;
-}
-
-.network-description {
-  @include unified.unified-item-description;
+.network-name {
+  @include heading(5);
+  flex: 1;
   margin: 0;
+  transition: color 200ms var(--ease-out);
+}
+
+.network-status {
+  padding: 4px 8px;
+  font-size: 0.65rem;
+  font-weight: var(--font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 4px;
+
+  &.active {
+    background: rgba(34, 197, 94, 0.15);
+    color: var(--status-success);
+  }
+
+  &.inactive {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--status-error);
+  }
+
+  &.pending {
+    background: rgba(234, 179, 8, 0.15);
+    color: var(--status-warning);
+  }
+}
+
+// Description
+.network-description {
+  @include body-text('small');
+  color: var(--muted-foreground);
+  margin: 0;
+  line-height: 1.5;
+}
+
+// Metrics
+.network-metrics {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.metric-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metric-label {
+  @include typo.label-uppercase;
+  font-size: 0.65rem;
+}
+
+.metric-value {
+  font-size: var(--text-sm);
+  font-weight: var(--font-bold);
+  color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+// Responsive
+@media (max-width: 640px) {
+  .network-card {
+    padding: 12px;
+    min-height: 130px;
+    gap: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .network-card {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
 }

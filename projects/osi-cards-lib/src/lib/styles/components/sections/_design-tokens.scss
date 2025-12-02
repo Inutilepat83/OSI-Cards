@@ -10,6 +10,28 @@
 @use '../../tokens/master' as *;
 
 // =====================================================================
+// RESPONSIVE BREAKPOINTS
+// =====================================================================
+
+@mixin mobile {
+  @media (max-width: 480px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: 1024px) {
+    @content;
+  }
+}
+
+// =====================================================================
 // SPACING SCALE (8px base)
 // =====================================================================
 
@@ -29,30 +51,32 @@ $spacing-scale: (
   @return map-get($spacing-scale, $key);
 }
 
-// Export as CSS variables - COMPACT MODE with comfortable padding
+// Export as CSS variables - BALANCED: Compact but Comfortable
 :root {
   --spacing-none: 0;
-  --spacing-xs: 4px;        // Restored for comfortable padding
-  --spacing-sm: 8px;        // Restored
-  --spacing-md: 10px;       // Slightly compact (was 12px)
-  --spacing-base: 14px;     // Slightly compact (was 16px)
-  --spacing-lg: 18px;       // Slightly compact (was 24px)
-  --spacing-xl: 26px;       // Slightly compact (was 32px)
-  --spacing-2xl: 40px;      // Slightly compact (was 48px)
-  --spacing-3xl: 54px;      // Slightly compact (was 64px)
+  --spacing-xs: 4px;        // Tight spacing
+  --spacing-sm: 8px;        // Small spacing
+  --spacing-md: 12px;       // Medium spacing (comfortable)
+  --spacing-base: 16px;     // Base spacing
+  --spacing-lg: 20px;       // Large spacing (comfortable)
+  --spacing-xl: 28px;       // Extra large
+  --spacing-2xl: 40px;      // 2XL
+  --spacing-3xl: 56px;      // 3XL
 
-  // Compact mode variations (for denser layouts)
-  --spacing-compact-xs: 2px;
-  --spacing-compact-sm: 4px;
-  --spacing-compact-md: 7px;
-  --spacing-compact-base: 10px;
-  --spacing-compact-lg: 14px;
+  // Compact mode variations (for denser layouts when needed)
+  --spacing-compact-xs: 3px;
+  --spacing-compact-sm: 6px;
+  --spacing-compact-md: 9px;
+  --spacing-compact-base: 12px;
+  --spacing-compact-lg: 16px;
 
-  // Section-specific sizing - balanced compact with comfort
-  --section-card-min-height: 90px;     // Slightly compact (was 100px)
-  --section-card-compact-height: 72px; // Slightly compact (was 80px)
-  --section-header-gap: var(--spacing-md);   // 10px - comfortable
-  --section-content-gap: var(--spacing-sm);  // 8px - comfortable
+  // Section-specific sizing - BALANCED for good UX
+  --section-card-min-height: 110px;           // Comfortable (was 120px, not 90px)
+  --section-card-compact-height: 90px;        // Compact variant
+  --section-header-gap: var(--spacing-md);    // 12px - comfortable readability
+  --section-content-gap: var(--spacing-sm);   // 8px - good separation
+  --section-card-gap: var(--spacing-md);      // 12px - visual breathing room
+  --section-card-padding: var(--spacing-md);  // 12px - comfortable
 }
 
 // =====================================================================

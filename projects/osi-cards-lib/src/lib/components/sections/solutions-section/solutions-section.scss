@@ -1,9 +1,10 @@
 // =====================================================================
-// SOLUTIONS SECTION - Compact, Responsive, Consistent
+// SOLUTIONS SECTION - Feature Cards, Proper Spacing
 // =====================================================================
 
-@use '../../../styles/design-system/tokens' as *;
-@use '../../../styles/design-system/unified-sections' as unified;
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
+@use '../../../styles/components/sections/component-mixins' as components;
 
 :host {
   display: block;
@@ -13,98 +14,149 @@
 .solutions-container {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-section-header-gap);
+  gap: var(--spacing-md);
 }
 
+// SOLUTIONS GRID - 2 columns desktop, 1 mobile
 .solutions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--osi-spacing-sm);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
 
-  @include mobile {
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  @media (max-width: 480px) {
     grid-template-columns: 1fr;
-    gap: var(--osi-spacing-xs);
+    gap: 10px;
   }
 }
 
 .solution-card {
-  background: var(--osi-surface);
-  border: 1px solid var(--osi-border-muted);
-  border-radius: var(--osi-radius-sm);
-  padding: var(--osi-spacing-sm);
+  @include card-elevated;
+  padding: 16px 14px;  // Good padding for all content
+  min-height: 220px;  // Ensure space for title, description, benefits, meta
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-xs);
-  transition: all var(--osi-duration-medium) var(--osi-ease-out);
+  gap: 12px;  // Good separation
+  transition: all 300ms var(--ease-out);
+  position: relative;
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--osi-shadow-md);
-    background: var(--osi-surface-raised);
+  // Animated bottom accent line
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 300ms var(--ease-out);
   }
 
-  @include mobile {
-    padding: var(--osi-spacing-xs);
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+
+    &::after {
+      opacity: 0.8;
+    }
+
+    .solution-title {
+      color: var(--accent);
+    }
   }
 }
 
+// SOLUTION HEADER - Title + category layout
 .solution-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: var(--osi-spacing-sm);
-  margin-bottom: var(--osi-spacing-xs);
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .solution-title {
-  @include unified.unified-item-title;
+  @include heading(5);
+  font-size: 0.9375rem;  // 15px
   flex: 1;
+  margin: 0;
+  line-height: 1.4;
+  transition: color 200ms var(--ease-out);
 }
 
 .solution-category {
-  @include unified.unified-item-label;
-  text-transform: none;
+  @include typo.label-uppercase;
+  font-size: 0.65rem;  // 10px
+  opacity: 0.7;
 }
 
 .solution-description {
-  @include unified.unified-item-description;
+  @include body-text('small');
+  color: var(--muted-foreground);
+  font-size: 0.75rem;  // 12px
+  line-height: 1.6;
   margin: 0;
+  opacity: 0.9;
 }
 
+// BENEFITS LIST - Proper spacing
 .solution-benefits {
   list-style: none;
   padding: 0;
-  margin: var(--osi-spacing-xs) 0 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;  // Good separation
+  flex: 1;
 
   li {
-    @include unified.unified-item-description;
-    padding-left: var(--osi-spacing-sm);
+    font-size: 0.7rem;  // 11px
+    color: var(--muted-foreground);
+    padding-left: 18px;  // Room for checkmark
     position: relative;
+    line-height: 1.4;
 
     &::before {
       content: '✓';
       position: absolute;
       left: 0;
-      color: var(--osi-success);
+      color: var(--accent);
+      font-size: 0.7rem;
+      font-weight: var(--font-bold);
     }
   }
 }
 
+// SOLUTION META - Proper separation at bottom
 .solution-meta {
   display: flex;
   align-items: center;
-  gap: var(--osi-spacing-sm);
-  margin-top: var(--osi-spacing-xs);
-  padding-top: var(--osi-spacing-xs);
-  border-top: 1px solid var(--osi-border-muted);
-  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;  // Push to bottom
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
 }
 
 .delivery-time {
-  @include unified.unified-item-label;
-  text-transform: none;
   font-size: 0.7rem;
+  color: var(--muted-foreground);
+  opacity: 0.7;
+}
+
+// RESPONSIVE
+@media (max-width: 480px) {
+  .solution-card {
+    padding: 14px 12px;
+    min-height: 200px;
+  }
+
+  .solution-description {
+    font-size: 0.7rem;
+  }
 }

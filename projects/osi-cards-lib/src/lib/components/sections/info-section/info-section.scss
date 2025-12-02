@@ -1,124 +1,94 @@
 // =====================================================================
-// INFO SECTION - Compact, Responsive, Consistent
+// INFO SECTION - Original Product Style
 // =====================================================================
 
-@use '../../../styles/design-system/tokens' as *;
-@use '../../../styles/design-system/unified-sections' as unified;
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
 
 :host {
   display: block;
   width: 100%;
+  min-width: 400px;
+
+  @media (max-width: 640px) {
+    min-width: 100%;
+  }
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// CONTAINER
-// ═══════════════════════════════════════════════════════════════════
-
-.info-container {
+.info {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-section-header-gap);
+  gap: var(--spacing-md);
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// INFO LIST
-// ═══════════════════════════════════════════════════════════════════
-
-.info-list {
-  background: var(--osi-surface);
-  border: 1px solid var(--osi-border-muted);
-  border-radius: var(--osi-radius-md);
-  padding: var(--osi-spacing-sm);
+.list {
+  @include card;
+  padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: var(--spacing-md);
+  background: var(--surface);
+
+  &:hover {
+    box-shadow: var(--shadow-lg);
+  }
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// INFO ITEM - Compact & Responsive
-// ═══════════════════════════════════════════════════════════════════
-
-.info-item {
+.item {
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-xs);
-  padding: var(--osi-spacing-sm);
-  border-radius: var(--osi-radius-sm);
-  transition: all var(--osi-duration-normal) var(--osi-ease-out);
+  gap: var(--spacing-sm);
+  transition: all 250ms var(--ease-out);
 
   &:not(:last-child) {
-    border-bottom: 1px solid var(--osi-border-muted);
+    margin-bottom: var(--spacing-xs);
   }
 
   &:hover {
-    background: var(--osi-surface-raised);
-    transform: translateX(2px);
+    background: var(--surface-hover);
+    transform: translateX(4px);
+
+    .info-value {
+      color: var(--accent);
+    }
   }
-
-  &:focus-visible {
-    outline: 2px solid var(--osi-accent);
-    outline-offset: 2px;
-  }
-}
-
-// Label wrapper
-.info-label-wrapper {
-  display: flex;
-  align-items: center;
-  gap: var(--osi-spacing-xs);
-}
-
-.info-icon {
-  font-size: var(--osi-text-base);
-  flex-shrink: 0;
-  line-height: 1;
-  color: var(--osi-muted-foreground);
 }
 
 .info-label {
-  @include unified.unified-item-label;  // Consistent label style
+  @include typo.label-uppercase;
+  font-size: 0.7rem;
 }
 
-// Value wrapper
-.info-value-wrapper {
+.info-value-row {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: var(--osi-spacing-sm);
-  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
 }
 
-.info-value {
-  @include unified.unified-item-value;  // Consistent value style
+.value {
+  @include body-text('base');
+  color: var(--foreground);
+  font-weight: var(--font-semibold);
   flex: 1;
-  min-width: 0;
-  word-break: break-word;
+  transition: color 200ms var(--ease-out);
 }
 
-// Description
-.info-description {
-  @include unified.unified-item-description;  // Consistent description style
+.info-desc {
+  @include typo.caption;
   font-style: italic;
-  margin-top: var(--osi-spacing-xs);
+  color: var(--muted-foreground);
+  opacity: 0.85;
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// RESPONSIVE
-// ═══════════════════════════════════════════════════════════════════
-
-@include mobile {
-  .info-list {
-    padding: var(--osi-spacing-xs);
+@media (max-width: 480px) {
+  .list {
+    padding: var(--spacing-sm);
   }
 
-  .info-item {
-    padding: var(--osi-spacing-xs);
-    gap: 2px;
-  }
-
-  .info-value-wrapper {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--osi-spacing-xs);
+  .item {
+    padding: var(--spacing-xs);
   }
 }

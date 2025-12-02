@@ -2,8 +2,8 @@
 // MAP SECTION - Compact, Responsive, Consistent
 // =====================================================================
 
-@use '../../../styles/design-system/tokens' as *;
-@use '../../../styles/design-system/unified-sections' as unified;
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
 
 :host {
   display: block;
@@ -23,7 +23,7 @@
   overflow: hidden;
   height: 300px;
 
-  @include mobile {
+  @media (max-width: 480px) {
     height: 200px;
   }
 }
@@ -51,22 +51,22 @@
     background: var(--osi-surface-raised);
   }
 
-  @include mobile {
+  @media (max-width: 480px) {
     padding: var(--osi-spacing-xs);
   }
 }
 
 .location-name {
-  @include unified.unified-item-title;
+  @include heading(6);
 }
 
 .location-address {
-  @include unified.unified-item-description;
+  @include body-text('small');
   margin: var(--osi-spacing-xs) 0 0;
 }
 
 .location-type {
-  @include unified.unified-item-label;
+  @include typo.label-base;
   text-transform: none;
   display: inline-block;
   margin-top: var(--osi-spacing-xs);

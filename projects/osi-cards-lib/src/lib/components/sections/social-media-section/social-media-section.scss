@@ -1,120 +1,122 @@
 // =====================================================================
-// SOCIAL MEDIA SECTION - Compact, Responsive, Consistent
+// SOCIAL MEDIA SECTION - Original Product Style
 // =====================================================================
 
-@use '../../../styles/design-system/tokens' as *;
-@use '../../../styles/design-system/unified-sections' as unified;
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
 
 :host {
   display: block;
   width: 100%;
 }
 
-.social-media-container {
+.social {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-section-header-gap);
+  gap: var(--spacing-md);
 }
 
-.social-grid {
+.grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: var(--osi-spacing-sm);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-md);
 
-  @include mobile {
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-sm);
+  }
+
+  @media (max-width: 640px) {
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--osi-spacing-xs);
+  }
+
+  @media (max-width: 420px) {
+    grid-template-columns: 1fr;
   }
 }
 
-.social-card {
-  background: var(--osi-surface);
-  border: 1px solid var(--osi-border-muted);
-  border-radius: var(--osi-radius-sm);
-  padding: var(--osi-spacing-sm);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--osi-spacing-xs);
+.card {
+  @include card-elevated;
+  padding: var(--spacing-md);
   text-decoration: none;
   color: inherit;
-  transition: all var(--osi-duration-medium) var(--osi-ease-out);
+  text-align: center;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  transition: all 300ms var(--ease-out);
 
   &:hover {
+    border-color: var(--accent);
     transform: translateY(-2px);
-    box-shadow: var(--osi-shadow-md);
-    background: var(--osi-surface-raised);
-    border-color: var(--osi-accent);
-  }
+    box-shadow: var(--shadow-lg);
 
-  @include mobile {
-    padding: var(--osi-spacing-xs);
+    .icon {
+      transform: scale(1.12);
+      color: var(--accent);
+    }
+
+    .platform {
+      color: var(--accent);
+    }
   }
 }
 
-.social-icon {
-  font-size: var(--osi-text-2xl);
+.icon {
+  font-size: var(--text-3xl);
   line-height: 1;
+  transition: all 250ms var(--ease-out);
+  margin-bottom: var(--spacing-xs);
 }
 
-.social-info {
+.platform {
+  @include heading(6);
+  margin: 0;
+  transition: color 200ms var(--ease-out);
+}
+
+.handle {
+  @include typo.caption;
+  color: var(--muted-foreground);
+  opacity: 0.7;
+}
+
+.stats {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: auto;
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--border);
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--osi-spacing-xs);
-  text-align: center;
+  justify-content: center;
 }
 
-.social-header {
+.stat {
   display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
   align-items: center;
-  justify-content: center;
-  gap: var(--osi-spacing-xs);
 }
 
-.social-platform {
-  @include unified.unified-item-title;
+.val {
+  font-size: var(--text-sm);
+  font-weight: var(--font-bold);
+  font-variant-numeric: tabular-nums;
+  color: var(--foreground);
 }
 
-.social-handle {
-  @include unified.unified-item-label;
-  text-transform: none;
+.lbl {
+  font-size: 0.6rem;
+  font-weight: var(--font-semibold);
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  opacity: 0.7;
 }
 
-.social-stats {
-  display: flex;
-  justify-content: center;
-  gap: var(--osi-spacing-md);
-  margin-top: var(--osi-spacing-xs);
-
-  @include mobile {
-    gap: var(--osi-spacing-sm);
-  }
-}
-
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.stat-value {
-  @include unified.unified-item-value;
-  font-size: var(--osi-text-base);
-}
-
-.stat-label {
-  @include unified.unified-item-label;
-}
-
-@include mobile {
-  .social-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 400px) {
-  .social-grid {
-    grid-template-columns: 1fr;
+@media (max-width: 480px) {
+  .card {
+    padding: var(--spacing-sm);
   }
 }

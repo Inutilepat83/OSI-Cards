@@ -1,6 +1,6 @@
 <div
   class="progress-bar-container"
-  [ngClass]="['progress-bar--' + size, progressClass]">
+  [ngClass]="containerClasses">
 
   <!-- Progress Bar -->
   <div
@@ -14,10 +14,7 @@
     <!-- Progress Fill -->
     <div
       class="progress-fill"
-      [class.progress-fill--animated]="animated"
-      [class.progress-fill--striped]="striped"
-      [class.progress-fill--shimmer]="shimmer"
-      [ngClass]="'progress-fill--' + variant"
+      [ngClass]="fillClasses"
       [style.width.%]="percentage">
     </div>
   </div>

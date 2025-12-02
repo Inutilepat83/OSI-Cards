@@ -2,8 +2,8 @@
 // FALLBACK SECTION - Compact, Responsive, Consistent
 // =====================================================================
 
-@use '../../../styles/design-system/tokens' as *;
-@use '../../../styles/design-system/unified-sections' as unified;
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
 
 :host {
   display: block;
@@ -25,7 +25,7 @@
   flex-direction: column;
   gap: var(--osi-spacing-sm);
 
-  @include mobile {
+  @media (max-width: 480px) {
     padding: var(--osi-spacing-xs);
     gap: var(--osi-spacing-xs);
   }
@@ -36,23 +36,23 @@
   gap: var(--osi-spacing-sm);
   padding: var(--osi-spacing-xs);
 
-  @include mobile {
+  @media (max-width: 480px) {
     flex-direction: column;
     gap: 2px;
   }
 }
 
 .data-label {
-  @include unified.unified-item-label;
+  @include typo.label-base;
   min-width: 100px;
 
-  @include mobile {
+  @media (max-width: 480px) {
     min-width: auto;
   }
 }
 
 .data-value {
-  @include unified.unified-item-value;
+  @include body-text('base');
   flex: 1;
 }
 
@@ -63,6 +63,6 @@
 }
 
 .data-section-title {
-  @include unified.unified-item-title;
+  @include heading(6);
   margin-bottom: var(--osi-spacing-xs);
 }

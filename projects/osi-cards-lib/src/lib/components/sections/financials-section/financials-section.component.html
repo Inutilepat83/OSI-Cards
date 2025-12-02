@@ -1,39 +1,29 @@
-<div class="financials-container">
-  <!-- Section Header -->
+<div class="financials-section">
   <lib-section-header
+    *ngIf="section.title"
     [title]="section.title"
     [description]="section.description">
   </lib-section-header>
 
-  <!-- Financials Grid -->
-  <div class="financials-grid" *ngIf="section.fields && section.fields.length > 0">
+  <div class="financials-grid" *ngIf="section.fields?.length">
     <div class="financial-card" *ngFor="let metric of section.fields">
-
-      <!-- Metric Header -->
-      <div class="metric-header">
-        <span class="metric-label">{{ metric.label }}</span>
-        <span class="metric-period" *ngIf="metric.period">{{ metric.period }}</span>
+      <div class="financial-header">
+        <span class="financial-label">{{ metric.label }}</span>
+        <span class="financial-period" *ngIf="metric.period">{{ metric.period }}</span>
       </div>
-
-      <!-- Metric Value -->
-      <div class="metric-value">{{ metric.value }}</div>
-
-      <!-- Trend & Change -->
-      <div class="metric-footer" *ngIf="metric.trend || metric.change">
-        <lib-trend-indicator
-          *ngIf="metric.trend"
-          [trend]="getTrendDirection(metric.trend)"
-          [value]="metric.change"
-          size="small">
-        </lib-trend-indicator>
-      </div>
+      <div class="financial-value">{{ metric.value }}</div>
+      <lib-trend-indicator
+        *ngIf="metric.trend"
+        [trend]="getTrendDirection(metric.trend)"
+        [value]="metric.change"
+        size="small">
+      </lib-trend-indicator>
     </div>
   </div>
 
-  <!-- Empty State -->
   <lib-empty-state
-    *ngIf="!section.fields || section.fields.length === 0"
-    message="No financial data available"
+    *ngIf="!section.fields?.length"
+    message="No financial data"
     icon="💰"
     variant="minimal">
   </lib-empty-state>

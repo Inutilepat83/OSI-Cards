@@ -1,54 +1,33 @@
-<div class="social-media-container">
-  <!-- Section Header -->
+<div class="social">
   <lib-section-header
+    *ngIf="section.title"
     [title]="section.title"
     [description]="section.description">
   </lib-section-header>
 
-  <!-- Social Links -->
-  <div class="social-grid" *ngIf="section.fields && section.fields.length > 0">
-    <a [href]="social.url"
-       class="social-card"
-       *ngFor="let social of section.fields"
-       target="_blank"
-       rel="noopener"
-       [attr.aria-label]="social.platform + ' profile'">
-
-      <div class="social-icon">{{ getPlatformIcon(social.platform) }}</div>
-
-      <div class="social-info">
-        <div class="social-header">
-          <span class="social-platform">{{ social.platform }}</span>
-          <lib-badge
-            *ngIf="social.verified"
-            variant="primary"
-            size="sm"
-            icon="✓">
-            Verified
-          </lib-badge>
+  <div class="grid" *ngIf="section.fields?.length">
+    <a [href]="s.url" class="card" *ngFor="let s of section.fields" target="_blank" rel="noopener">
+      <div class="icon">{{ getPlatformIcon(s.platform) }}</div>
+      <span class="platform">{{ s.platform }}</span>
+      <lib-badge *ngIf="s.verified" class="verify" variant="primary" size="sm">✓</lib-badge>
+      <span class="handle" *ngIf="s.handle">{{ s.handle }}</span>
+      <div class="stats" *ngIf="s.followers || s.engagement">
+        <div class="stat" *ngIf="s.followers">
+          <span class="val">{{ formatFollowers(s.followers) }}</span>
+          <span class="lbl">followers</span>
         </div>
-
-        <span class="social-handle" *ngIf="social.handle">{{ social.handle }}</span>
-
-        <div class="social-stats" *ngIf="social.followers">
-          <span class="stat-item">
-            <span class="stat-value">{{ formatFollowers(social.followers) }}</span>
-            <span class="stat-label">followers</span>
-          </span>
-          <span class="stat-item" *ngIf="social.engagement">
-            <span class="stat-value">{{ social.engagement }}%</span>
-            <span class="stat-label">engagement</span>
-          </span>
+        <div class="stat" *ngIf="s.engagement">
+          <span class="val">{{ s.engagement }}%</span>
+          <span class="lbl">rate</span>
         </div>
       </div>
     </a>
   </div>
 
-  <!-- Empty State -->
   <lib-empty-state
-    *ngIf="!section.fields || section.fields.length === 0"
-    message="No social media links"
+    *ngIf="!section.fields?.length"
+    message="No social links"
     icon="📱"
-    variant="minimal">
+    variant="compact">
   </lib-empty-state>
 </div>

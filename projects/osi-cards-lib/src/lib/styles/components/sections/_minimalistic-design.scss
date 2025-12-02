@@ -1,0 +1,269 @@
+// =====================================================================
+// MINIMALISTIC DESIGN SYSTEM - Clean, Compact, Modern
+// =====================================================================
+// Philosophy: Less is more. Remove visual noise, maximize clarity.
+
+@use 'design-tokens' as *;
+
+// ═══════════════════════════════════════════════════════════════════
+// MINIMALISTIC SPACING - Tight but Breathable
+// ═══════════════════════════════════════════════════════════════════
+
+:root {
+  // Minimalistic spacing (tighter than comfortable, but not cramped)
+  --minimal-spacing-xs: 3px;
+  --minimal-spacing-sm: 6px;
+  --minimal-spacing-md: 9px;
+  --minimal-spacing-lg: 12px;
+  --minimal-spacing-xl: 18px;
+
+  // Card/Item spacing
+  --minimal-card-padding: 10px;           // Balanced compact
+  --minimal-card-gap: 10px;               // Visual separation
+  --minimal-item-gap: 6px;                // Between elements
+
+  // Heights
+  --minimal-card-height: 95px;            // Compact but not cramped
+  --minimal-card-height-mobile: auto;     // Flexible on mobile
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// MINIMALISTIC COLORS - Subtle, Clean
+// ═══════════════════════════════════════════════════════════════════
+
+:root {
+  // Subtle backgrounds (less contrast = cleaner)
+  --minimal-surface: var(--surface);
+  --minimal-surface-hover: rgba(var(--foreground-rgb), 0.03);  // Very subtle
+  --minimal-border: rgba(var(--foreground-rgb), 0.06);         // Subtle borders
+  --minimal-border-hover: rgba(var(--foreground-rgb), 0.1);
+
+  // Accent usage (minimal, strategic)
+  --minimal-accent-subtle: rgba(var(--accent-rgb), 0.1);
+  --minimal-accent-line: 2px;                                   // Thin accent
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// MINIMALISTIC CARD STYLES
+// ═══════════════════════════════════════════════════════════════════
+
+// Minimal card - clean, subtle
+@mixin minimal-card {
+  background: transparent;                           // No background
+  border: 1px solid var(--minimal-border);          // Subtle border
+  border-radius: var(--radius-sm);                  // Small radius
+  padding: var(--minimal-card-padding);             // 10px
+  transition: all 200ms var(--ease-out);
+
+  &:hover {
+    border-color: var(--minimal-border-hover);
+    background: var(--minimal-surface-hover);       // Very subtle
+    transform: translateY(-1px);                    // Subtle lift
+  }
+}
+
+// Minimal card elevated - with subtle shadow
+@mixin minimal-card-elevated {
+  @include minimal-card;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);       // Very subtle
+
+  &:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);     // Subtle elevation
+  }
+}
+
+// Minimal card accent - left border only
+@mixin minimal-card-accent {
+  background: transparent;
+  border: none;
+  border-left: var(--minimal-accent-line) solid var(--accent);
+  padding: var(--minimal-card-padding);
+  padding-left: calc(var(--minimal-card-padding) + 4px);
+  transition: all 200ms var(--ease-out);
+
+  &:hover {
+    background: var(--minimal-surface-hover);
+    padding-left: calc(var(--minimal-card-padding) + 6px);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// MINIMALISTIC GRID - Optimal Column Usage
+// ═══════════════════════════════════════════════════════════════════
+
+// Small metrics (3-4 columns desktop, 2 mobile)
+@mixin minimal-grid-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--minimal-card-gap);
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);  // 3 columns on tablet
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);  // 2 columns on mobile
+  }
+}
+
+// Medium cards (2-3 columns desktop, 1-2 mobile)
+@mixin minimal-grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--minimal-card-gap);
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);  // 2 columns on tablet
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;  // 1 column on mobile
+  }
+}
+
+// List layout - no grid, vertical stack
+@mixin minimal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;  // Seamless with borders
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// MINIMALISTIC TYPOGRAPHY - Clean Hierarchy
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin minimal-section-title {
+  font-size: var(--text-lg);              // 17px - not too large
+  font-weight: var(--font-semibold);      // 600 - not too bold
+  line-height: var(--leading-tight);
+  color: var(--foreground);
+  margin: 0;
+}
+
+@mixin minimal-item-title {
+  font-size: var(--text-base);            // 13px
+  font-weight: var(--font-medium);        // 500 - subtle
+  line-height: var(--leading-snug);
+  color: var(--foreground);
+  margin: 0;
+}
+
+@mixin minimal-label {
+  font-size: var(--text-xs);              // 11px
+  font-weight: var(--font-normal);        // 400 - light
+  line-height: var(--leading-tight);
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+@mixin minimal-value {
+  font-size: var(--text-md);              // 14px
+  font-weight: var(--font-medium);        // 500 - not too bold
+  line-height: var(--leading-normal);
+  color: var(--foreground);
+}
+
+@mixin minimal-number {
+  font-size: var(--text-2xl);             // 22px
+  font-weight: var(--font-semibold);      // 600 - not too bold
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--foreground);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// MINIMALISTIC ITEM - Clean List Item
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin minimal-item {
+  padding: var(--minimal-card-padding);
+  border: none;
+  border-bottom: 1px solid var(--minimal-border);
+  transition: all 150ms var(--ease-out);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: var(--minimal-surface-hover);
+    padding-left: calc(var(--minimal-card-padding) + 4px);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// MINIMALISTIC EFFECTS - Subtle Interactions
+// ═══════════════════════════════════════════════════════════════════
+
+// Subtle lift (minimalistic)
+@mixin minimal-lift {
+  transition: all 200ms var(--ease-out);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+}
+
+// Accent line reveal (minimalistic)
+@mixin minimal-accent-reveal {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 100%;
+    height: 1px;
+    background: var(--accent);
+    transition: right 300ms var(--ease-out);
+  }
+
+  &:hover::after {
+    right: 0;
+  }
+}
+
+// Fade background (minimalistic)
+@mixin minimal-fade-bg {
+  background: transparent;
+  transition: background 200ms var(--ease-out);
+
+  &:hover {
+    background: var(--minimal-surface-hover);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// MINIMALISTIC RESPONSIVE - Mobile-First
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin minimal-mobile {
+  @media (max-width: 480px) {
+    padding: var(--minimal-spacing-sm);  // 6px on mobile
+    gap: var(--minimal-spacing-xs);      // 3px between elements
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// COMPLETE MINIMALISTIC CARD - Ready to Use
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin minimalistic-card-complete {
+  @include minimal-card-elevated;
+  @include minimal-lift;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--minimal-item-gap);
+  min-height: var(--minimal-card-height);
+
+  @media (max-width: 480px) {
+    min-height: var(--minimal-card-height-mobile);
+    padding: var(--minimal-spacing-sm);
+  }
+}
+

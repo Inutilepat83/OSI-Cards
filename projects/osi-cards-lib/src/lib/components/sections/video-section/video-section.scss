@@ -2,8 +2,8 @@
 // VIDEO SECTION - Compact, Responsive, Consistent
 // =====================================================================
 
-@use '../../../styles/design-system/tokens' as *;
-@use '../../../styles/design-system/unified-sections' as unified;
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
 
 :host {
   display: block;
@@ -21,7 +21,7 @@
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--osi-spacing-sm);
 
-  @include mobile {
+  @media (max-width: 480px) {
     grid-template-columns: 1fr;
     gap: var(--osi-spacing-xs);
   }
@@ -66,7 +66,7 @@
     border-radius: var(--osi-radius-full);
   }
 
-  @include mobile {
+  @media (max-width: 480px) {
     height: 100px;
   }
 }
@@ -77,13 +77,13 @@
   flex-direction: column;
   gap: var(--osi-spacing-xs);
 
-  @include mobile {
+  @media (max-width: 480px) {
     padding: var(--osi-spacing-xs);
   }
 }
 
 .video-title {
-  @include unified.unified-item-title;
+  @include heading(6);
 }
 
 .video-meta {

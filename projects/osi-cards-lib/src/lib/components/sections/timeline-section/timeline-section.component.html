@@ -1,38 +1,36 @@
-<div class="timeline-container">
-  <!-- Section Header -->
+<div class="timeline-section">
   <lib-section-header
+    *ngIf="section.title"
     [title]="section.title"
     [description]="section.description">
   </lib-section-header>
 
-  <!-- Timeline -->
-  <div class="timeline" *ngIf="section.items && section.items.length > 0">
-    <div class="timeline-item" *ngFor="let event of section.items">
-
-      <!-- Timeline Marker -->
-      <div class="timeline-marker"></div>
-
-      <!-- Timeline Content -->
+  <div class="timeline-container" *ngIf="section.items?.length">
+    <div class="timeline-item" *ngFor="let event of section.items; let i = index; let last = last">
+      <div class="timeline-marker">
+        <div class="timeline-dot"></div>
+        <div class="timeline-line" *ngIf="!last"></div>
+      </div>
       <div class="timeline-content">
         <div class="timeline-header">
-          <span class="timeline-date">{{ getDateDisplay(event) }}</span>
-          <span class="timeline-category" *ngIf="event.meta?.category">{{ event.meta?.category }}</span>
-          <span class="timeline-status" [ngClass]="getStatusClass(event.meta?.status)" *ngIf="event.meta?.status">
-            {{ event.meta?.status }}
-          </span>
+          <h4 class="timeline-title">{{ event.title }}</h4>
+          <span class="timeline-date" *ngIf="event.meta?.date">{{ event.meta?.date }}</span>
         </div>
-
-        <h4 class="timeline-title">{{ event.title }}</h4>
         <p class="timeline-description" *ngIf="event.description">{{ event.description }}</p>
+        <lib-badge
+          *ngIf="event.meta?.type"
+          variant="primary"
+          size="sm">
+          {{ event.meta?.type }}
+        </lib-badge>
       </div>
     </div>
   </div>
 
-  <!-- Empty State -->
   <lib-empty-state
-    *ngIf="!section.fields && !section.items || (section.fields?.length === 0 && section.items?.length === 0)"
+    *ngIf="!section.items?.length"
     message="No timeline events"
-    icon="⏰"
+    icon="📅"
     variant="minimal">
   </lib-empty-state>
 </div>

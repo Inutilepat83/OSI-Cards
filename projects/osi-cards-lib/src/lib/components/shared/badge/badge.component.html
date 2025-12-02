@@ -1,10 +1,6 @@
 <span
   class="badge"
-  [class.badge--outlined]="outlined"
-  [class.badge--pill]="pill"
-  [class.badge--dot]="dot"
-  [class.badge--interactive]="interactive"
-  [ngClass]="['badge--' + variant, 'badge--' + size, badgeClass]"
+  [ngClass]="classes"
   [attr.role]="interactive ? 'button' : 'status'"
   [attr.tabindex]="interactive ? 0 : null"
   [attr.aria-label]="ariaLabel">

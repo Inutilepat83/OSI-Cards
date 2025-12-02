@@ -1,37 +1,25 @@
-<div class="quotation-container">
-  <!-- Section Header -->
+<div class="quotes">
   <lib-section-header
+    *ngIf="section.title"
     [title]="section.title"
     [description]="section.description">
   </lib-section-header>
 
-  <!-- Quotes Grid -->
-  <div class="quotes-grid" *ngIf="section.fields && section.fields.length > 0">
-    <blockquote class="quote-card" *ngFor="let quote of section.fields">
-
-      <!-- Quote Icon -->
-      <div class="quote-icon">"</div>
-
-      <!-- Quote Text -->
-      <p class="quote-text">{{ getQuoteText(quote) }}</p>
-
-      <!-- Attribution -->
-      <footer class="quote-footer">
-        <div class="author-info">
-          <cite class="author-name">{{ getAuthorName(quote) }}</cite>
-          <span class="author-role" *ngIf="quote.role">{{ quote.role }}</span>
-          <span class="author-company" *ngIf="quote.company">{{ quote.company }}</span>
-        </div>
-        <span class="quote-date" *ngIf="quote.date">{{ quote.date }}</span>
+  <div class="grid" *ngIf="section.fields?.length">
+    <blockquote class="quote" *ngFor="let q of section.fields">
+      <div class="icon">"</div>
+      <p class="text">{{ getQuoteText(q) }}</p>
+      <footer class="footer">
+        <cite class="name">{{ getAuthorName(q) }}</cite>
+        <span class="role" *ngIf="q.role">{{ q.role }}</span>
       </footer>
     </blockquote>
   </div>
 
-  <!-- Empty State -->
   <lib-empty-state
-    *ngIf="!section.fields || section.fields.length === 0"
-    message="No quotes available"
+    *ngIf="!section.fields?.length"
+    message="No quotes"
     icon="💬"
-    variant="minimal">
+    variant="compact">
   </lib-empty-state>
 </div>

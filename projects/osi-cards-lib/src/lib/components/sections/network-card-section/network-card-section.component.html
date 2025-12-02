@@ -1,41 +1,35 @@
-<div class="network-container">
-  <!-- Section Header -->
+<div class="network-section">
   <lib-section-header
+    *ngIf="section.title"
     [title]="section.title"
     [description]="section.description">
   </lib-section-header>
 
-  <!-- Network Grid -->
-  <div class="network-grid" *ngIf="section.items && section.items.length > 0">
+  <div class="network-grid" *ngIf="section.items?.length">
     <div class="network-card" *ngFor="let node of section.items">
-
       <div class="network-header">
         <h4 class="network-name">{{ node.title }}</h4>
         <span class="network-status" [ngClass]="getStatusClass(node.meta?.status)" *ngIf="node.meta?.status">
           {{ node.meta?.status }}
         </span>
       </div>
-
       <p class="network-description" *ngIf="node.description">{{ node.description }}</p>
-
-      <div class="network-metrics" *ngIf="node.meta">
-        <div class="metric" *ngIf="node.meta.influence">
+      <div class="network-metrics" *ngIf="node.meta?.influence || node.meta?.connections">
+        <div class="metric-item" *ngIf="node.meta?.influence">
           <span class="metric-label">Influence</span>
-          <span class="metric-value">{{ node.meta.influence }}</span>
+          <span class="metric-value">{{ node.meta?.influence }}</span>
         </div>
-        <div class="metric" *ngIf="node.meta.connections">
+        <div class="metric-item" *ngIf="node.meta?.connections">
           <span class="metric-label">Connections</span>
-          <span class="metric-value">{{ node.meta.connections }}</span>
+          <span class="metric-value">{{ node.meta?.connections }}</span>
         </div>
-        <span class="network-type" *ngIf="node.meta.type">{{ node.meta.type }}</span>
       </div>
     </div>
   </div>
 
-  <!-- Empty State -->
   <lib-empty-state
-    *ngIf="!section.fields && !section.items || (section.fields?.length === 0 && section.items?.length === 0)"
-    message="No network data available"
+    *ngIf="!section.items?.length"
+    message="No network data"
     icon="🔗"
     variant="minimal">
   </lib-empty-state>

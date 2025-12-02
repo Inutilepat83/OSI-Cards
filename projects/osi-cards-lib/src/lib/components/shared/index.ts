@@ -15,7 +15,8 @@ export { EmptyStateComponent } from './empty-state/empty-state.component';
 export { BadgeComponent, type BadgeVariant, type BadgeSize } from './badge/badge.component';
 
 // Trend Indicator Component
-export { TrendIndicatorComponent, type TrendDirection } from './trend-indicator/trend-indicator.component';
+export { TrendIndicatorComponent } from './trend-indicator/trend-indicator.component';
+// Note: TrendDirection is exported from lib/types
 
 // Progress Bar Component
 export { ProgressBarComponent, type ProgressBarVariant } from './progress-bar/progress-bar.component';

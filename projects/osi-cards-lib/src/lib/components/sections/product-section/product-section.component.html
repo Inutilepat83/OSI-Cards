@@ -1,36 +1,24 @@
-<div class="product-container">
-  <!-- Section Header -->
+<div class="product">
   <lib-section-header
+    *ngIf="section.title"
     [title]="section.title"
     [description]="section.description">
   </lib-section-header>
 
-  <!-- Product Info -->
-  <div class="product-info" *ngIf="section.fields && section.fields.length > 0">
-    <div class="product-field" *ngFor="let field of section.fields">
-
-      <div class="field-header">
-        <span class="field-icon" *ngIf="field.icon">{{ field.icon }}</span>
-        <span class="field-label">{{ field.label }}</span>
-        <lib-badge
-          *ngIf="field.status"
-          [variant]="getStatusVariant(field.status)"
-          size="sm">
-          {{ field.status }}
-        </lib-badge>
-      </div>
-
-      <div class="field-value">{{ field.value }}</div>
-
-      <div class="field-price" *ngIf="field.price">{{ field.price }}</div>
+  <div class="list" *ngIf="section.fields?.length">
+    <div class="item" *ngFor="let f of section.fields">
+      <span class="icon" *ngIf="f.icon">{{ f.icon }}</span>
+      <span class="label">{{ f.label }}</span>
+      <lib-badge *ngIf="f.status" class="status" [variant]="getStatusVariant(f.status)" size="sm">{{ f.status }}</lib-badge>
+      <div class="value">{{ f.value }}</div>
+      <div class="price" *ngIf="f.price">{{ f.price }}</div>
     </div>
   </div>
 
-  <!-- Empty State -->
   <lib-empty-state
-    *ngIf="!section.fields || section.fields.length === 0"
-    message="No product information available"
+    *ngIf="!section.fields?.length"
+    message="No products"
     icon="📦"
-    variant="minimal">
+    variant="compact">
   </lib-empty-state>
 </div>
