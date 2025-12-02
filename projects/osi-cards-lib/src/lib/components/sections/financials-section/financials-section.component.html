@@ -1,56 +1,35 @@
-<div class="ai-section ai-section--financials">
-  <div class="ai-section__header">
-    <div class="ai-section__details">
-      <h3 class="ai-section__title">{{ section.title }}</h3>
-      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
-    </div>
-    <span *ngIf="fields.length" class="ai-section__badge">
-      {{ fields.length }} {{ fields.length === 1 ? 'metric' : 'metrics' }}
-    </span>
+<div class="financials-container">
+  <!-- Section Header -->
+  <div class="section-header" *ngIf="section.title || section.description">
+    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
+    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
   </div>
 
-  <div class="ai-section__body">
-    <ng-container *ngIf="fields.length; else financialsEmpty">
-      <div class="financials-grid">
-        <article
-          *ngFor="let field of fields; trackBy: trackField"
-          class="financial-card"
-          role="button"
-          tabindex="0"
-          (click)="onFieldClick(field)"
-          (keydown.enter)="onFieldClick(field)"
-          (keydown.space)="$event.preventDefault(); onFieldClick(field)"
-        >
-          <div class="financial-card__content">
-            <span class="financial-card__label">
-              {{ field.label }}
-            </span>
-            <div class="financial-card__value-wrapper">
-              <span class="financial-card__value" [ngClass]="{'financial-card__value--currency': field.format === 'currency'}">
-                <lucide-icon *ngIf="field.format === 'currency'" name="dollar-sign" size="16" class="financial-card__currency-icon"></lucide-icon>
-                {{ getDisplayValue(field) }}
-              </span>
-              <lucide-icon
-                *ngIf="getTrendIcon(field) as trendIcon"
-                [name]="trendIcon"
-                size="16"
-                class="financial-card__trend-icon"
-                [ngClass]="getChangeClass(field)"
-              ></lucide-icon>
-            </div>
-          </div>
-          <div *ngIf="field.change !== undefined && field.change !== null" class="financial-card__change" [ngClass]="getChangeClass(field)">
-            {{ field.change > 0 ? '+' : '' }}{{ field.change }}%
-          </div>
-        </article>
-      </div>
-    </ng-container>
+  <!-- Financials Grid -->
+  <div class="financials-grid" *ngIf="section.fields && section.fields.length > 0">
+    <div class="financial-card" *ngFor="let metric of section.fields">
 
-    <ng-template #financialsEmpty>
-      <div class="section-empty">
-        <lucide-icon name="dollar-sign" size="32" class="section-empty__icon"></lucide-icon>
-        <p class="section-empty__text">No financial metrics available</p>
+      <!-- Metric Header -->
+      <div class="metric-header">
+        <span class="metric-label">{{ metric.label }}</span>
+        <span class="metric-period" *ngIf="metric.period">{{ metric.period }}</span>
       </div>
-    </ng-template>
+
+      <!-- Metric Value -->
+      <div class="metric-value">{{ metric.value }}</div>
+
+      <!-- Trend & Change -->
+      <div class="metric-footer" *ngIf="metric.trend || metric.change">
+        <span class="metric-trend" [ngClass]="getTrendClass(metric.trend)" *ngIf="metric.trend">
+          <span class="trend-arrow" [attr.data-trend]="metric.trend"></span>
+          <span class="trend-change" *ngIf="metric.change">{{ formatChange(metric.change) }}</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="financials-empty" *ngIf="!section.fields || section.fields.length === 0">
+    <p class="empty-text">No financial data available</p>
   </div>
 </div>

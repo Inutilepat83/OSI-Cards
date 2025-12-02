@@ -72,7 +72,7 @@ export class SectionCompletionService {
     let completedCount = 0;
 
     // Check fields
-    fields.forEach((field) => {
+    fields.forEach((field: CardField) => {
       const meta = field.meta as Record<string, unknown> | undefined;
       const isPlaceholder =
         field.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
@@ -85,7 +85,7 @@ export class SectionCompletionService {
     });
 
     // Check items
-    items.forEach((item) => {
+    items.forEach((item: CardItem) => {
       const meta = item.meta as Record<string, unknown> | undefined;
       const isPlaceholder =
         (meta && meta.placeholder === true) || (item.title === 'Item' && !item.description);
@@ -108,7 +108,7 @@ export class SectionCompletionService {
     const completionPercentage = this.calculateCompletionPercentage(section);
 
     let completedFieldCount = 0;
-    fields.forEach((field) => {
+    fields.forEach((field: CardField) => {
       const meta = field.meta as Record<string, unknown> | undefined;
       const isPlaceholder =
         field.value === this.config.SECTION_COMPLETION.PLACEHOLDER_VALUE ||
@@ -121,7 +121,7 @@ export class SectionCompletionService {
     });
 
     let completedItemCount = 0;
-    items.forEach((item) => {
+    items.forEach((item: CardItem) => {
       const meta = item.meta as Record<string, unknown> | undefined;
       const isPlaceholder =
         (meta && meta.placeholder === true) || (item.title === 'Item' && !item.description);

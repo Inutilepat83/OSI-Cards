@@ -8,35 +8,17 @@
       "fields": [
         { "label": "Category", "value": "Backup & Recovery" },
         { "label": "Version", "value": "3.5.0" },
-        { "label": "Release Date", "value": "March 2024" },
-        { "label": "Storage Options", "value": "AWS, Azure, Google Cloud" },
-        { "label": "Encryption", "value": "AES-256" },
-        { "label": "Pricing Model", "value": "Subscription-based" }
+        { "label": "Pricing", "value": "Subscription" }
       ]
     },
     {
-      "title": "Performance Metrics",
+      "title": "Performance",
       "type": "analytics",
       "fields": [
         {
-          "label": "Restore Success Rate",
+          "label": "Success Rate",
           "value": "99.98%",
           "percentage": 99.98,
-          "performance": "excellent",
-          "trend": "stable"
-        },
-        {
-          "label": "Backup Speed",
-          "value": "500 GB/hour",
-          "percentage": 95,
-          "performance": "excellent",
-          "trend": "up"
-        },
-        {
-          "label": "Uptime",
-          "value": "99.99%",
-          "percentage": 99.99,
-          "performance": "excellent",
           "trend": "stable"
         }
       ]
@@ -47,8 +29,7 @@
       "label": "Try Free Trial",
       "type": "question",
       "variant": "primary",
-      "icon": "🚀",
-      "question": "How can I start a free trial?"
+      "icon": "🚀"
     }
   ]
 }

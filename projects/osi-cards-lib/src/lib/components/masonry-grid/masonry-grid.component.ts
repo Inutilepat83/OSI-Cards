@@ -35,6 +35,11 @@ import {
   fillGapsWithSections
 } from '../../utils/smart-grid.util';
 import {
+  HeightEstimator,
+  recordHeightMeasurement,
+  HeightEstimationContext
+} from '../../utils/height-estimation.util';
+import {
   packSectionsIntoRows,
   packingResultToPositions,
   RowPackerConfig
@@ -2032,6 +2037,14 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     });
 
     // ========================================================================
+    // PHASE 1.5: ADAPTIVE HEIGHT LEARNING (Point 6 & Point 8)
+    // Record actual heights vs estimates for future predictions
+    // ========================================================================
+    if (!hasZeroHeights) {
+      this.recordHeightsForLearning(containerWidth, columns);
+    }
+
+    // ========================================================================
     // PHASE 2: COLUMN SPAN OPTIMIZATION
     // For tall multi-column sections, evaluate if narrower span would help
     // ========================================================================
@@ -2551,6 +2564,72 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       this.renderedSectionKeys.add(section.id);
     }
     this.renderedSectionKeys.add(generatedKey);
+  }
+
+  // ==========================================================================
+  // ADAPTIVE HEIGHT LEARNING (Points 6-10)
+  // ==========================================================================
+
+  /**
+   * Records measured heights to the HeightEstimator for adaptive learning.
+   * This creates a feedback loop where the estimator learns from actual
+   * measurements to improve future estimates.
+   *
+   * @param containerWidth - Current container width for context
+   * @param columns - Current column count
+   */
+  private recordHeightsForLearning(containerWidth: number, columns: number): void {
+    const itemRefArray = this.itemRefs?.toArray() ?? [];
+    if (itemRefArray.length === 0) {
+      return;
+    }
+
+    // Build estimation context for accurate learning
+    const context: HeightEstimationContext = {
+      containerWidth,
+      totalColumns: columns,
+    };
+
+    // Record each section's actual vs estimated height
+    for (let i = 0; i < this.positionedSections.length; i++) {
+      const item = this.positionedSections[i];
+      if (!item) continue;
+
+      const itemElement = itemRefArray[i]?.nativeElement;
+      let actualHeight = itemElement?.offsetHeight ?? 0;
+
+      // Skip if we couldn't measure
+      if (actualHeight <= 0) {
+        continue;
+      }
+
+      // Get first child height if element has wrapper
+      if (actualHeight === 0 && itemElement?.firstElementChild) {
+        actualHeight = (itemElement.firstElementChild as HTMLElement).offsetHeight ?? 0;
+      }
+
+      if (actualHeight <= 0) {
+        continue;
+      }
+
+      // Calculate what was estimated for this section
+      const sectionContext = {
+        ...context,
+        colSpan: item.colSpan,
+      };
+      const estimated = estimateSectionHeight(item.section, sectionContext);
+
+      // Generate content hash for deduplication
+      const contentHash = HeightEstimator.generateContentHash(item.section);
+
+      // Record the measurement for learning
+      recordHeightMeasurement(
+        item.section.type ?? 'default',
+        estimated,
+        actualHeight,
+        contentHash
+      );
+    }
   }
 
   /**

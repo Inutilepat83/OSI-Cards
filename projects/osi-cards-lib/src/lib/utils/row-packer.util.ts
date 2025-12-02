@@ -216,10 +216,12 @@ export interface PositionedSection {
   section: CardSection;
   key: string;
   colSpan: number;
+  column: number;
   preferredColumns: 1 | 2 | 3 | 4;
   left: string;
   top: number;
   width: string;
+  height: number;
   rowIndex: number;
   wasShrunk: boolean;
   wasGrown: boolean;
@@ -236,10 +238,100 @@ const DEFAULT_CONFIG: Required<RowPackerConfig> = {
   allowShrinking: true,
   allowGrowing: true,
   maxOptimizationPasses: 5,
-  lookAheadCount: 3,
+  lookAheadCount: 5, // UPDATED (Point 17): Increased from 3 to 5 for better combinations
   alignLeft: true,
   enableSwapping: true,
 };
+
+// ============================================================================
+// ADAPTIVE LOOK-AHEAD (Point 17)
+// ============================================================================
+
+/**
+ * Calculates adaptive look-ahead count based on layout complexity.
+ * Reduces look-ahead for complex layouts to avoid O(n!) explosion.
+ *
+ * @param totalSections - Total number of sections remaining
+ * @param totalColumns - Number of columns in the grid
+ * @param baseLookAhead - Base look-ahead count from config
+ * @returns Adaptive look-ahead count
+ */
+function calculateAdaptiveLookAhead(
+  totalSections: number,
+  totalColumns: number,
+  baseLookAhead: number
+): number {
+  // For few sections, use full look-ahead
+  if (totalSections <= 10) {
+    return baseLookAhead;
+  }
+
+  // Reduce look-ahead for many sections (complexity grows factorially)
+  if (totalSections <= 20) {
+    return Math.max(3, baseLookAhead - 1);
+  }
+
+  // For very large layouts, use minimal look-ahead
+  if (totalSections > 50) {
+    return 2;
+  }
+
+  return Math.max(2, baseLookAhead - 2);
+}
+
+// ============================================================================
+// WEIGHTED ORPHAN PENALTY (Point 18)
+// ============================================================================
+
+/**
+ * Calculates weighted orphan penalty for a placement decision.
+ * Considers remaining sections' minimum spans when calculating penalty.
+ *
+ * @param remainingGap - Gap left in the current row
+ * @param pendingSections - Sections yet to be placed
+ * @returns Weighted penalty score (lower is better)
+ */
+function calculateOrphanPenalty(
+  remainingGap: number,
+  pendingSections: PlannedSection[]
+): number {
+  if (remainingGap === 0) return 0;
+
+  let penalty = 0;
+
+  // Check how many sections can potentially fill the gap
+  let fillableSections = 0;
+  let totalMinWidth = 0;
+
+  for (const section of pendingSections) {
+    if (section.minWidth <= remainingGap) {
+      fillableSections++;
+    }
+    totalMinWidth += section.minWidth;
+  }
+
+  // No sections can fill the gap - high penalty
+  if (fillableSections === 0 && pendingSections.length > 0) {
+    penalty += remainingGap * 10;
+  }
+
+  // Few sections can fill - moderate penalty
+  if (fillableSections === 1) {
+    penalty += remainingGap * 3;
+  }
+
+  // Weight by how many sections we're orphaning
+  const orphanRatio = pendingSections.length / Math.max(1, fillableSections);
+  penalty *= (1 + orphanRatio * 0.5);
+
+  // Consider if remaining sections have wide minimum widths
+  const avgMinWidth = pendingSections.length > 0 ? totalMinWidth / pendingSections.length : 1;
+  if (avgMinWidth > remainingGap) {
+    penalty += remainingGap * 5; // Gap is smaller than average minimum - bad
+  }
+
+  return penalty;
+}
 
 // ============================================================================
 // PRIORITY MAPPING
@@ -419,46 +511,58 @@ export function prepareSections(
 // ============================================================================
 
 /**
- * Look-ahead mechanism to find the best combination of sections to fill a row
- * Returns the optimal set of section indices that together fill the row completely
+ * Look-ahead mechanism to find the best combination of sections to fill a row.
+ * UPDATED (Points 17, 18): Uses adaptive look-ahead and weighted orphan penalty.
+ * Returns the optimal set of section indices that together fill the row completely.
  */
 function findOptimalCombination(
   available: PlannedSection[],
   targetWidth: number,
   lookAheadCount: number
 ): number[] | null {
-  const candidates = available.slice(0, Math.min(lookAheadCount + 3, available.length));
+  // UPDATED (Point 17): Use adaptive look-ahead based on remaining sections
+  const adaptiveLookAhead = calculateAdaptiveLookAhead(available.length, targetWidth, lookAheadCount);
+  const candidates = available.slice(0, Math.min(adaptiveLookAhead + 3, available.length));
 
-  // Try to find exact fit combinations
-  // Start with single sections, then pairs, then triples
-  for (let combinationSize = 1; combinationSize <= Math.min(3, candidates.length); combinationSize++) {
+  // Track best combination with penalty scoring
+  let bestCombo: number[] | null = null;
+  let bestScore = -Infinity;
+
+  // Try to find combinations with penalty consideration
+  // Start with single sections, then pairs, then triples, then quads
+  const maxComboSize = Math.min(4, candidates.length); // Allow up to 4 sections for better filling
+
+  for (let combinationSize = 1; combinationSize <= maxComboSize; combinationSize++) {
     const combinations = getCombinations(candidates.length, combinationSize);
 
     for (const combo of combinations) {
       const totalWidth = combo.reduce((sum, idx) => sum + (candidates[idx]?.preferredWidth ?? 0), 0);
-      if (totalWidth === targetWidth) {
-        return combo;
+
+      // Skip if exceeds target
+      if (totalWidth > targetWidth) continue;
+
+      // Calculate remaining gap
+      const gap = targetWidth - totalWidth;
+
+      // UPDATED (Point 18): Calculate weighted orphan penalty
+      // Consider remaining sections after this combo
+      const remainingAfterCombo = available.filter((_, idx) => !combo.includes(idx));
+      const penalty = calculateOrphanPenalty(gap, remainingAfterCombo);
+
+      // Score: maximize fill, minimize penalty
+      // Exact fit (gap = 0) gets huge bonus
+      const fillScore = totalWidth * 10;
+      const exactFitBonus = gap === 0 ? 1000 : 0;
+      const score = fillScore + exactFitBonus - penalty;
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestCombo = combo;
       }
     }
   }
 
-  // No exact fit found, try to find best fit (closest to target without exceeding)
-  let bestFit: number[] | null = null;
-  let bestFitWidth = 0;
-
-  for (let combinationSize = 1; combinationSize <= Math.min(3, candidates.length); combinationSize++) {
-    const combinations = getCombinations(candidates.length, combinationSize);
-
-    for (const combo of combinations) {
-      const totalWidth = combo.reduce((sum, idx) => sum + (candidates[idx]?.preferredWidth ?? 0), 0);
-      if (totalWidth <= targetWidth && totalWidth > bestFitWidth) {
-        bestFit = combo;
-        bestFitWidth = totalWidth;
-      }
-    }
-  }
-
-  return bestFit;
+  return bestCombo;
 }
 
 /**
@@ -482,6 +586,169 @@ function getCombinations(n: number, k: number): number[][] {
 
   backtrack(0, []);
   return result;
+}
+
+// ============================================================================
+// LIMITED BACKTRACKING (Point 19)
+// ============================================================================
+
+/**
+ * Backtracking result containing improved row layout
+ */
+interface BacktrackResult {
+  improved: boolean;
+  newRowSections: RowPlacedSection[];
+  newRemaining: PlannedSection[];
+  newGap: number;
+}
+
+/**
+ * Tries limited backtracking by swapping last 2 placed sections with candidates.
+ * If row ends with gap > 0, tries to find a better combination by:
+ * 1. Removing the last placed section
+ * 2. Finding a better candidate from remaining that fills the gap
+ * 3. Or swapping positions of last 2 sections
+ *
+ * @param currentRow - Current row sections
+ * @param remaining - Remaining sections not yet placed
+ * @param totalColumns - Total columns in grid
+ * @param currentGap - Current gap in the row
+ * @param rowIndex - Current row index
+ * @param config - Row packer config
+ * @returns Backtrack result indicating if improvement was made
+ */
+function tryBacktrackSwap(
+  currentRow: RowPlacedSection[],
+  remaining: PlannedSection[],
+  totalColumns: number,
+  currentGap: number,
+  rowIndex: number,
+  config: Required<RowPackerConfig>
+): BacktrackResult {
+  const noImprovement: BacktrackResult = {
+    improved: false,
+    newRowSections: currentRow,
+    newRemaining: remaining,
+    newGap: currentGap,
+  };
+
+  // Need at least 2 sections to swap
+  if (currentRow.length < 2) {
+    return noImprovement;
+  }
+
+  // Try Strategy 1: Replace last section with a better fitting one
+  const lastSection = currentRow[currentRow.length - 1];
+  if (!lastSection) return noImprovement;
+
+  const lastSectionWidth = lastSection.finalWidth;
+  const targetWidth = lastSectionWidth + currentGap;
+
+  // Find a section from remaining that exactly fills the gap
+  const exactFitIdx = remaining.findIndex(
+    s => s.preferredWidth === targetWidth ||
+        (s.canShrink && s.minWidth <= targetWidth && s.preferredWidth >= targetWidth)
+  );
+
+  if (exactFitIdx >= 0) {
+    // Found an exact fit - swap it in
+    const newSections = [...currentRow];
+    const newRemaining = [...remaining];
+
+    // Remove the new section from remaining
+    const [newSection] = newRemaining.splice(exactFitIdx, 1);
+    if (!newSection) return noImprovement;
+
+    // Remove last section from row and put back to remaining
+    const removedFromRow = newSections.pop();
+    if (removedFromRow) {
+      // Convert back to PlannedSection
+      const plannedSection: PlannedSection = {
+        section: removedFromRow.section,
+        originalIndex: removedFromRow.originalIndex,
+        minWidth: removedFromRow.minWidth,
+        preferredWidth: removedFromRow.preferredWidth,
+        maxWidth: removedFromRow.maxWidth,
+        priority: removedFromRow.priority,
+        isFlexible: removedFromRow.isFlexible,
+        canShrink: removedFromRow.canShrink,
+        canGrow: removedFromRow.canGrow,
+        estimatedHeight: removedFromRow.estimatedHeight,
+        density: removedFromRow.density,
+      };
+      newRemaining.push(plannedSection);
+    }
+
+    // Calculate position for new section
+    let column = 0;
+    for (const s of newSections) {
+      column += s.finalWidth;
+    }
+
+    // Add new section
+    const newPlaced: RowPlacedSection = {
+      ...newSection,
+      finalWidth: Math.min(targetWidth, newSection.preferredWidth),
+      columnIndex: column,
+      rowIndex,
+      wasShrunk: targetWidth < newSection.preferredWidth,
+      wasGrown: targetWidth > newSection.preferredWidth,
+    };
+    newSections.push(newPlaced);
+
+    const newTotalWidth = newSections.reduce((sum, s) => sum + s.finalWidth, 0);
+    const newGap = totalColumns - newTotalWidth;
+
+    // Only accept if this improves the gap
+    if (newGap < currentGap) {
+      return {
+        improved: true,
+        newRowSections: newSections,
+        newRemaining: newRemaining,
+        newGap: newGap,
+      };
+    }
+  }
+
+  // Try Strategy 2: Swap last 2 sections' widths if they're different
+  if (currentRow.length >= 2) {
+    const secondLast = currentRow[currentRow.length - 2];
+    if (secondLast && lastSection.finalWidth !== secondLast.finalWidth) {
+      // Check if swapping widths would help
+      const lastCanShrink = lastSection.canShrink && lastSection.minWidth <= secondLast.finalWidth;
+      const secondCanGrow = secondLast.canGrow && secondLast.maxWidth >= lastSection.finalWidth;
+
+      if (lastCanShrink && secondCanGrow) {
+        // Try the swap - this rebalances widths
+        const newSections = [...currentRow];
+        const lastIdx = newSections.length - 1;
+        const secondIdx = newSections.length - 2;
+
+        // Swap widths
+        const tempWidth = newSections[lastIdx]!.finalWidth;
+        newSections[lastIdx]!.finalWidth = newSections[secondIdx]!.finalWidth;
+        newSections[secondIdx]!.finalWidth = tempWidth;
+
+        // Mark adjustments
+        newSections[lastIdx]!.wasShrunk = true;
+        newSections[secondIdx]!.wasGrown = true;
+
+        // Recalculate column indices
+        let col = 0;
+        for (const s of newSections) {
+          s.columnIndex = col;
+          col += s.finalWidth;
+        }
+
+        const newGap = totalColumns - col;
+
+        // This doesn't reduce gap but might help with section sizing
+        // Skip this strategy for now - it doesn't actually help fill gaps
+      }
+    }
+  }
+
+  return noImprovement;
 }
 
 /**
@@ -787,6 +1054,29 @@ function buildRow(
     currentColumn = totalColumns - gap;
   }
 
+  // Phase 5.5: LIMITED BACKTRACKING (Point 19)
+  // If row ends with gap > 0, try swapping last 2 placed sections to find better fit
+  if (gap > 0 && rowSections.length >= 2 && remaining.length > 0) {
+    const backtrackResult = tryBacktrackSwap(
+      rowSections,
+      remaining,
+      totalColumns,
+      gap,
+      rowIndex,
+      config
+    );
+
+    if (backtrackResult.improved) {
+      // Replace rowSections with the improved version
+      rowSections.length = 0;
+      rowSections.push(...backtrackResult.newRowSections);
+      remaining.length = 0;
+      remaining.push(...backtrackResult.newRemaining);
+      gap = backtrackResult.newGap;
+      currentColumn = totalColumns - gap;
+    }
+  }
+
   // Phase 6: Left alignment - ensure sections start from column 0
   if (config.alignLeft && rowSections.length > 0) {
     // Sort by column index and recalculate positions starting from 0
@@ -1057,10 +1347,12 @@ export function packingResultToPositions(
         section: placed.section,
         key: generateSectionKey(placed.section, placed.originalIndex),
         colSpan: placed.finalWidth,
+        column: placed.columnIndex,
         preferredColumns: Math.min(placed.preferredWidth, 4) as 1 | 2 | 3 | 4,
         left: leftExpr,
         top: row.topOffset,
         width: widthExpr,
+        height: estimateSectionHeight(placed.section),
         rowIndex: row.index,
         wasShrunk: placed.wasShrunk,
         wasGrown: placed.wasGrown,

@@ -1,46 +1,44 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardItem } from '../../../models';
-import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
+import { BaseSectionComponent } from '../base-section.component';
 
-interface TimelineEvent extends CardItem {
-  date?: string;
-  time?: string;
-  status?: string;
-}
-
+/**
+ * Event Section Component
+ *
+ * Displays chronological events, schedules, and calendar information.
+ * Features: dates, times, locations, status indicators.
+ */
 @Component({
-  selector: 'app-event-section',
+  selector: 'lib-event-section',
   standalone: true,
-  imports: [CommonModule, LucideIconsModule],
+  imports: [CommonModule],
   templateUrl: './event-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './event-section.scss'
 })
-export class EventSectionComponent extends BaseSectionComponent<TimelineEvent> {
-  /** Compact card style */
-  static readonly layoutConfig: SectionLayoutConfig = {
-    preferredColumns: 1,
-    minColumns: 1,
-    maxColumns: 2,
-  };
-  get events(): TimelineEvent[] {
-    const timeline = (this.section as Record<string, unknown>)['timelineEvents'];
-    if (Array.isArray(timeline)) {
-      return timeline as TimelineEvent[];
+export class EventSectionComponent extends BaseSectionComponent {
+
+  /**
+   * Format date for display
+   */
+  formatDate(dateStr: string): { day: string; month: string } | null {
+    if (!dateStr) return null;
+
+    try {
+      const date = new Date(dateStr);
+      return {
+        day: date.getDate().toString(),
+        month: date.toLocaleDateString('en-US', { month: 'short' })
+      };
+    } catch {
+      return null;
     }
-    return super.getItems() as TimelineEvent[];
   }
 
-  override get hasItems(): boolean {
-    return this.events.length > 0;
-  }
-
-  onEventClick(event: TimelineEvent): void {
-    this.emitItemInteraction(event);
-  }
-
-  override trackItem(index: number, event: TimelineEvent): string {
-    return event.id ?? `${event.title}-${index}`;
+  /**
+   * Get status class
+   */
+  getStatusClass(status?: string): string {
+    if (!status) return '';
+    return `event-status--${status}`;
   }
 }

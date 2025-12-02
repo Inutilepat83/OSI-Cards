@@ -198,6 +198,7 @@ export interface CardItem {
   value?: string | number;
   status?: string;
   date?: string;
+  priority?: string;
   meta?: Record<string, unknown>;
 }
 
@@ -207,7 +208,7 @@ export interface CardItem {
  * - 'website': Opens URL in a new browser tab/window
  * - 'agent': Triggers an agent action (emits agentAction event for parent handling)
  * - 'question': Writes a new message to the chat (emits questionAction event for parent handling)
- * 
+ *
  * Legacy values ('primary', 'secondary') are supported for backward compatibility but should use 'variant' for styling
  */
 export type CardActionButtonType = 'mail' | 'website' | 'agent' | 'question' | 'primary' | 'secondary';
@@ -322,7 +323,7 @@ export interface LegacyCardAction extends BaseCardAction {
  * Card action button configuration
  * The 'type' field from JSON determines button behavior (mail, website, agent, question)
  * The 'variant' field determines visual styling (primary, secondary, outline, ghost)
- * 
+ *
  * @example
  * // Mail button - REQUIRES email.contact, email.subject, and email.body
  * {
@@ -340,7 +341,7 @@ export interface LegacyCardAction extends BaseCardAction {
  *     "body": "Dear Robert Chen,\n\nI am pleased to present..."
  *   }
  * }
- * 
+ *
  * @example
  * // Website button
  * {
@@ -349,7 +350,7 @@ export interface LegacyCardAction extends BaseCardAction {
  *   "variant": "primary",
  *   "url": "https://example.com"
  * }
- * 
+ *
  * @example
  * // Agent button
  * {
@@ -359,7 +360,7 @@ export interface LegacyCardAction extends BaseCardAction {
  *   "agentId": "agent-123",
  *   "agentContext": { "context": "sales" }
  * }
- * 
+ *
  * @example
  * // Question button
  * {
@@ -401,30 +402,30 @@ export class CardTypeGuards {
   static isMailAction(obj: unknown): obj is MailCardAction {
     if (!obj || typeof obj !== 'object') return false;
     const action = obj as Record<string, unknown>;
-    
+
     // Must have type 'mail'
     if (action['type'] !== 'mail') return false;
-    
+
     // Must have email property
     if (!action['email'] || typeof action['email'] !== 'object') return false;
-    
+
     const email = action['email'] as Record<string, unknown>;
-    
+
     // Must have contact with name, email, and role
     if (!email['contact'] || typeof email['contact'] !== 'object') return false;
     const contact = email['contact'] as Record<string, unknown>;
-    if (typeof contact['name'] !== 'string' || 
-        typeof contact['email'] !== 'string' || 
+    if (typeof contact['name'] !== 'string' ||
+        typeof contact['email'] !== 'string' ||
         typeof contact['role'] !== 'string') {
       return false;
     }
-    
+
     // Must have subject
     if (typeof email['subject'] !== 'string') return false;
-    
+
     // Must have body
     if (typeof email['body'] !== 'string') return false;
-    
+
     return true;
   }
 }

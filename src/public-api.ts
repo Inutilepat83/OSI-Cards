@@ -25,7 +25,6 @@ export * from './app/shared/components/card-templates-gallery/card-templates-gal
 export * from './app/shared/services/section-completion.service';
 export * from './app/shared/services/card-diff.service';
 export * from './app/shared/services/toast.service';
-export * from './app/shared/services/keyboard-shortcuts.service';
 export * from './app/shared/services/command.service';
 export * from './app/shared/services/confirmation-dialog.service';
 export * from './app/shared/services/auto-save.service';

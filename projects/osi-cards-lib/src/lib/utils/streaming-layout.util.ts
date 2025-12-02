@@ -1,645 +1,874 @@
 /**
  * Streaming Layout Utilities
- * 
- * Integrates streaming data flow with grid layout calculations.
- * Manages skeleton placeholders, section morphing, and progressive reveal.
- * 
- * Layout States:
- * - measuring: Initial measurement of skeleton placeholders
- * - estimating: Predicting layout based on partial data
- * - placing: Positioning sections using bin-packing
- * - refining: Adjusting positions as heights become known
- * - stable: Layout is complete and stable
- * 
+ *
+ * Improvements for section placement during streaming scenarios:
+ * - Mini-batch streaming layout for better packing (Point 36)
+ * - Simplified animation state management (Point 37)
+ * - Progressive optimization during streaming (Point 38)
+ * - Smooth transition on streaming end (Point 39)
+ * - Explicit card identity detection (Point 40)
+ *
  * @example
  * ```typescript
- * import { StreamingLayoutManager } from 'osi-cards-lib';
- * 
- * const layout = new StreamingLayoutManager(container, { columns: 4 });
- * 
- * // As sections stream in
- * layout.addPlaceholder(sectionId, sectionType);
- * 
- * // When section data is ready
- * layout.morphToContent(sectionId, actualSection);
+ * import { StreamingLayoutManager } from './streaming-layout.util';
+ *
+ * const manager = new StreamingLayoutManager({ columns: 4 });
+ *
+ * // During streaming
+ * manager.addSection(section);
+ * const layout = manager.getLayout();
+ *
+ * // When streaming ends
+ * manager.finalizeLayout();
  * ```
  */
 
 import { CardSection } from '../models/card.model';
-import { IncrementalLayoutEngine, LayoutUpdate } from './incremental-layout.util';
-import { estimateSectionHeight } from './smart-grid.util';
-import { FlipAnimator } from './flip-animation.util';
+import {
+  generateWidthExpression,
+  generateLeftExpression,
+  GRID_GAP,
+  calculateColumns
+} from './grid-config.util';
+import { estimateSectionHeight } from './height-estimation.util';
 
 // ============================================================================
 // TYPES AND INTERFACES
 // ============================================================================
 
 /**
- * Streaming layout states
+ * Animation state for a section (Point 37)
  */
-export type StreamingLayoutState = 
-  | 'idle'
-  | 'measuring'
-  | 'estimating'
-  | 'placing'
-  | 'refining'
-  | 'stable';
+export type AnimationPhase =
+  | 'pending'      // Not yet visible
+  | 'entering'     // Playing entrance animation
+  | 'positioned'   // In final position, animation complete
+  | 'repositioning' // Moving to new position
+  | 'exiting';     // Leaving the layout
 
 /**
- * Section streaming state
+ * Comprehensive animation state for a section
  */
-export type SectionStreamState = 
-  | 'placeholder'
-  | 'partial'
-  | 'complete'
-  | 'measured';
-
-/**
- * Streamed section with state
- */
-export interface StreamedSection {
-  id: string;
-  section: CardSection | null;
-  state: SectionStreamState;
-  estimatedHeight: number;
-  measuredHeight?: number;
-  placeholder: HTMLElement | null;
-  contentElement: HTMLElement | null;
+export interface SectionAnimationState {
+  /** Unique section identifier */
+  key: string;
+  /** Current animation phase */
+  phase: AnimationPhase;
+  /** Timestamp when animation started */
+  startTime: number;
+  /** Duration of current animation (ms) */
+  duration: number;
+  /** Previous position (for repositioning) */
+  previousTop?: number;
+  previousLeft?: string;
+  /** Target position */
+  targetTop: number;
+  targetLeft: string;
+  /** Whether animation has completed */
+  completed: boolean;
 }
 
 /**
- * Skeleton configuration
+ * Positioned section in streaming layout
  */
-export interface SkeletonConfig {
-  /** Base height for skeleton placeholder */
-  baseHeight?: number;
-  /** Height per expected field */
-  fieldHeight?: number;
-  /** Height per expected item */
-  itemHeight?: number;
-  /** Animation duration for morphing */
-  morphDuration?: number;
+export interface StreamingPositionedSection {
+  section: CardSection;
+  key: string;
+  colSpan: number;
+  left: string;
+  top: number;
+  width: string;
+  height: number;
+  /** Animation state */
+  animationState: SectionAnimationState;
 }
 
 /**
- * Reveal zone configuration
+ * Card identity for tracking (Point 40)
  */
-export interface RevealZoneConfig {
-  /** Items to render immediately (in viewport) */
-  immediate: number;
-  /** Items to render eagerly (near viewport) */
-  eager: number;
-  /** Items to render lazily (far from viewport) */
-  lazy: number;
+export interface CardIdentity {
+  /** Explicit card ID from config */
+  cardId?: string;
+  /** Generated hash from content */
+  contentHash: string;
+  /** Timestamp when card was created */
+  createdAt: number;
+  /** Number of sections in the card */
+  sectionCount: number;
 }
 
 /**
- * Layout manager configuration
+ * Streaming layout configuration
  */
 export interface StreamingLayoutConfig {
+  /** Number of columns in grid */
   columns: number;
+  /** Gap between sections (px) */
+  gap: number;
+  /** Container width (px) */
   containerWidth: number;
-  gap?: number;
-  skeleton?: SkeletonConfig;
-  revealZones?: RevealZoneConfig;
-  enableMorphing?: boolean;
-  enableFlip?: boolean;
+  /** Mini-batch size for streaming (Point 36) */
+  batchSize: number;
+  /** Sections between progressive optimizations (Point 38) */
+  optimizationInterval: number;
+  /** Animation duration for entrance (ms) */
+  enterAnimationDuration: number;
+  /** Animation duration for repositioning (ms) */
+  repositionAnimationDuration: number;
+  /** Whether to animate streaming end transition (Point 39) */
+  animateStreamingEnd: boolean;
 }
 
 /**
- * Layout state change event
+ * Default streaming configuration
  */
-export interface LayoutStateChange {
-  previousState: StreamingLayoutState;
-  currentState: StreamingLayoutState;
-  sectionsAffected: string[];
+export const DEFAULT_STREAMING_CONFIG: StreamingLayoutConfig = {
+  columns: 4,
+  gap: GRID_GAP,
+  containerWidth: 1200,
+  batchSize: 4,  // Buffer 4 sections before placing (Point 36)
+  optimizationInterval: 5, // Optimize after every 5 sections (Point 38)
+  enterAnimationDuration: 300,
+  repositionAnimationDuration: 200,
+  animateStreamingEnd: true,
+};
+
+/**
+ * Layout metrics during streaming
+ */
+export interface StreamingLayoutMetrics {
+  /** Total sections placed */
+  totalSections: number;
+  /** Sections in current batch */
+  batchedSections: number;
+  /** Number of optimizations performed */
+  optimizationCount: number;
+  /** Current layout height */
+  totalHeight: number;
+  /** Estimated utilization */
+  utilizationPercent: number;
+  /** Whether streaming is active */
+  isStreaming: boolean;
 }
 
 // ============================================================================
-// DEFAULT CONFIGURATIONS
-// ============================================================================
-
-const DEFAULT_SKELETON_CONFIG: Required<SkeletonConfig> = {
-  baseHeight: 100,
-  fieldHeight: 36,
-  itemHeight: 60,
-  morphDuration: 250,
-};
-
-const DEFAULT_REVEAL_ZONES: Required<RevealZoneConfig> = {
-  immediate: 6,
-  eager: 12,
-  lazy: 20,
-};
-
-// ============================================================================
-// STREAMING LAYOUT MANAGER
+// STREAMING LAYOUT MANAGER CLASS
 // ============================================================================
 
 /**
- * Manages layout during streaming data flow
+ * Manages layout during streaming with mini-batching and progressive optimization.
  */
 export class StreamingLayoutManager {
-  private state: StreamingLayoutState = 'idle';
-  private sections = new Map<string, StreamedSection>();
+  private config: StreamingLayoutConfig;
+
+  // Section storage
+  private sections: Map<string, StreamingPositionedSection> = new Map();
   private sectionOrder: string[] = [];
-  private layoutEngine: IncrementalLayoutEngine;
-  private flipAnimator: FlipAnimator | null = null;
-  
-  private readonly config: Required<StreamingLayoutConfig>;
-  private readonly skeletonConfig: Required<SkeletonConfig>;
-  private readonly revealZones: Required<RevealZoneConfig>;
-  
-  private container: HTMLElement | null = null;
-  private stateListeners: Array<(change: LayoutStateChange) => void> = [];
-  private measureQueue: string[] = [];
-  private measureRAF: number | null = null;
 
-  constructor(config: StreamingLayoutConfig) {
-    this.config = {
-      columns: config.columns,
-      containerWidth: config.containerWidth,
-      gap: config.gap ?? 12,
-      skeleton: config.skeleton ?? DEFAULT_SKELETON_CONFIG,
-      revealZones: config.revealZones ?? DEFAULT_REVEAL_ZONES,
-      enableMorphing: config.enableMorphing ?? true,
-      enableFlip: config.enableFlip ?? true,
+  // Batching state (Point 36)
+  private pendingBatch: CardSection[] = [];
+  private batchTimer: ReturnType<typeof setTimeout> | null = null;
+
+  // Animation state (Point 37)
+  private animationStates: Map<string, SectionAnimationState> = new Map();
+
+  // Card identity (Point 40)
+  private currentCardIdentity: CardIdentity | null = null;
+
+  // Column heights for placement
+  private columnHeights: number[] = [];
+
+  // Metrics
+  private metrics: StreamingLayoutMetrics = {
+    totalSections: 0,
+    batchedSections: 0,
+    optimizationCount: 0,
+    totalHeight: 0,
+    utilizationPercent: 0,
+    isStreaming: false,
+  };
+
+  // Callbacks
+  private onLayoutChange?: (sections: StreamingPositionedSection[]) => void;
+  private onBatchPlaced?: (batch: StreamingPositionedSection[]) => void;
+  private onOptimization?: (metrics: StreamingLayoutMetrics) => void;
+
+  constructor(config: Partial<StreamingLayoutConfig> = {}) {
+    this.config = { ...DEFAULT_STREAMING_CONFIG, ...config };
+    this.reset();
+  }
+
+  /**
+   * Configure the manager
+   */
+  configure(config: Partial<StreamingLayoutConfig>): void {
+    this.config = { ...this.config, ...config };
+    this.columnHeights = new Array(this.config.columns).fill(0);
+  }
+
+  /**
+   * Set callbacks
+   */
+  setCallbacks(callbacks: {
+    onLayoutChange?: (sections: StreamingPositionedSection[]) => void;
+    onBatchPlaced?: (batch: StreamingPositionedSection[]) => void;
+    onOptimization?: (metrics: StreamingLayoutMetrics) => void;
+  }): void {
+    this.onLayoutChange = callbacks.onLayoutChange;
+    this.onBatchPlaced = callbacks.onBatchPlaced;
+    this.onOptimization = callbacks.onOptimization;
+  }
+
+  // ==========================================================================
+  // CARD IDENTITY (Point 40)
+  // ==========================================================================
+
+  /**
+   * Starts a new card with explicit identity
+   */
+  startNewCard(cardId?: string): void {
+    this.currentCardIdentity = {
+      cardId,
+      contentHash: this.generateCardHash(),
+      createdAt: Date.now(),
+      sectionCount: 0,
     };
 
-    this.skeletonConfig = { ...DEFAULT_SKELETON_CONFIG, ...config.skeleton };
-    this.revealZones = { ...DEFAULT_REVEAL_ZONES, ...config.revealZones };
-
-    this.layoutEngine = new IncrementalLayoutEngine({
-      columns: this.config.columns,
-      containerWidth: this.config.containerWidth,
-      gap: this.config.gap,
-    });
+    this.reset();
+    this.metrics.isStreaming = true;
   }
 
   /**
-   * Sets the container element for FLIP animations
+   * Checks if this is a new card based on identity
    */
-  setContainer(container: HTMLElement): void {
-    this.container = container;
-    if (this.config.enableFlip) {
-      this.flipAnimator = new FlipAnimator(container, {
-        duration: this.skeletonConfig.morphDuration,
-        animateSize: true,
-      });
+  isNewCard(cardId?: string, sections?: CardSection[]): boolean {
+    // Explicit cardId check (most reliable)
+    if (cardId && this.currentCardIdentity?.cardId) {
+      return cardId !== this.currentCardIdentity.cardId;
+    }
+
+    // Content hash check
+    if (sections && sections.length > 0) {
+      const newHash = this.generateContentHash(sections);
+      return newHash !== this.currentCardIdentity?.contentHash;
+    }
+
+    // Section count heuristic
+    if (this.currentCardIdentity) {
+      const currentCount = this.sections.size;
+      // If section count drops significantly, likely new card
+      return currentCount < this.currentCardIdentity.sectionCount * 0.5;
+    }
+
+    return true; // Assume new card if no identity
+  }
+
+  /**
+   * Generates a hash for the current card
+   */
+  private generateCardHash(): string {
+    return `card-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  /**
+   * Generates a content hash from sections
+   */
+  private generateContentHash(sections: CardSection[]): string {
+    const parts = sections.map(s => `${s.type}:${s.title}:${s.fields?.length ?? 0}`);
+    return parts.join('|');
+  }
+
+  // ==========================================================================
+  // MINI-BATCH STREAMING (Point 36)
+  // ==========================================================================
+
+  /**
+   * Adds a section to the streaming layout.
+   * Sections are batched for better placement decisions.
+   */
+  addSection(section: CardSection): void {
+    this.pendingBatch.push(section);
+    this.metrics.batchedSections = this.pendingBatch.length;
+
+    // Check if batch is full
+    if (this.pendingBatch.length >= this.config.batchSize) {
+      this.processBatch();
+    } else {
+      // Set a timer to flush partial batches
+      this.scheduleBatchFlush();
     }
   }
 
   /**
-   * Adds a placeholder section during streaming
+   * Adds multiple sections at once
    */
-  addPlaceholder(
-    id: string,
-    type: string,
-    expectedContent?: {
-      fieldCount?: number;
-      itemCount?: number;
-      title?: string;
+  addSections(sections: CardSection[]): void {
+    for (const section of sections) {
+      this.addSection(section);
     }
-  ): StreamedSection {
-    const estimatedHeight = this.estimatePlaceholderHeight(type, expectedContent);
+  }
 
-    const section: StreamedSection = {
-      id,
-      section: null,
-      state: 'placeholder',
-      estimatedHeight,
-      placeholder: null,
-      contentElement: null,
+  /**
+   * Schedules a batch flush after a short delay
+   */
+  private scheduleBatchFlush(): void {
+    if (this.batchTimer) {
+      clearTimeout(this.batchTimer);
+    }
+
+    // Flush after 100ms of no new sections
+    this.batchTimer = setTimeout(() => {
+      if (this.pendingBatch.length > 0) {
+        this.processBatch();
+      }
+    }, 100);
+  }
+
+  /**
+   * Processes the current batch of sections
+   */
+  private processBatch(): void {
+    if (this.pendingBatch.length === 0) return;
+
+    // Clear timer
+    if (this.batchTimer) {
+      clearTimeout(this.batchTimer);
+      this.batchTimer = null;
+    }
+
+    const batch = [...this.pendingBatch];
+    this.pendingBatch = [];
+    this.metrics.batchedSections = 0;
+
+    // Sort batch for better packing (optional)
+    // batch.sort((a, b) => estimateSectionHeight(b) - estimateSectionHeight(a));
+
+    // Place each section in the batch
+    const placedBatch: StreamingPositionedSection[] = [];
+
+    for (const section of batch) {
+      const positioned = this.placeSection(section);
+      placedBatch.push(positioned);
+    }
+
+    // Update card identity
+    if (this.currentCardIdentity) {
+      this.currentCardIdentity.sectionCount = this.sections.size;
+    }
+
+    // Notify
+    this.onBatchPlaced?.(placedBatch);
+    this.onLayoutChange?.(this.getLayout());
+
+    // Check if progressive optimization is needed (Point 38)
+    this.checkProgressiveOptimization();
+  }
+
+  /**
+   * Places a single section using greedy first-fit
+   */
+  private placeSection(section: CardSection): StreamingPositionedSection {
+    const key = this.generateSectionKey(section);
+    const height = estimateSectionHeight(section);
+    const colSpan = this.calculateColSpan(section);
+
+    // Find best position
+    const { column, top } = this.findBestPosition(colSpan, height);
+
+    // Generate CSS expressions
+    const left = generateLeftExpression(this.config.columns, column, this.config.gap);
+    const width = generateWidthExpression(this.config.columns, colSpan, this.config.gap);
+
+    // Create animation state (Point 37)
+    const animationState: SectionAnimationState = {
+      key,
+      phase: 'entering',
+      startTime: Date.now(),
+      duration: this.config.enterAnimationDuration,
+      targetTop: top,
+      targetLeft: left,
+      completed: false,
     };
 
-    this.sections.set(id, section);
-    this.sectionOrder.push(id);
-
-    // Create placeholder section for layout
-    const placeholderSection: CardSection = {
-      id,
-      type: type as CardSection['type'],
-      title: expectedContent?.title ?? `Loading ${type}...`,
-      fields: [],
-      items: [],
-      meta: { placeholder: true },
+    // Create positioned section
+    const positioned: StreamingPositionedSection = {
+      section,
+      key,
+      colSpan,
+      left,
+      top,
+      width,
+      height,
+      animationState,
     };
 
-    this.layoutEngine.addSection(placeholderSection);
-    this.transitionState('measuring');
+    // Store
+    this.sections.set(key, positioned);
+    this.sectionOrder.push(key);
+    this.animationStates.set(key, animationState);
 
-    return section;
+    // Update column heights
+    this.updateColumnHeights(column, colSpan, top + height);
+
+    // Update metrics
+    this.metrics.totalSections = this.sections.size;
+    this.metrics.totalHeight = Math.max(...this.columnHeights, 0);
+    this.updateUtilization();
+
+    return positioned;
   }
 
   /**
-   * Updates a section with partial data
+   * Finds the best position for a section
    */
-  updatePartial(id: string, partialSection: Partial<CardSection>): LayoutUpdate | null {
-    const section = this.sections.get(id);
-    if (!section) return null;
+  private findBestPosition(colSpan: number, height: number): { column: number; top: number } {
+    const columns = this.config.columns;
+    let bestColumn = 0;
+    let bestTop = Infinity;
 
-    // Create or update section data
-    const currentSection = section.section ?? {
-      id,
-      type: 'info',
-      title: '',
-      fields: [],
-      items: [],
-    };
+    // Find column with minimum height that can fit the span
+    for (let col = 0; col <= columns - colSpan; col++) {
+      let maxHeight = 0;
 
-    const updatedSection: CardSection = {
-      ...currentSection,
-      ...partialSection,
-      id,
-    };
+      for (let c = col; c < col + colSpan; c++) {
+        const colHeight = this.columnHeights[c] ?? 0;
+        if (colHeight > maxHeight) {
+          maxHeight = colHeight;
+        }
+      }
 
-    section.section = updatedSection;
-    section.state = 'partial';
-    section.estimatedHeight = estimateSectionHeight(updatedSection);
-
-    const update = this.layoutEngine.updateSection(updatedSection);
-    this.transitionState('refining');
-
-    return update;
-  }
-
-  /**
-   * Completes a section with full data and triggers morphing
-   */
-  async completeSection(id: string, fullSection: CardSection): Promise<void> {
-    const section = this.sections.get(id);
-    if (!section) return;
-
-    // Record first position for FLIP
-    if (this.flipAnimator && this.config.enableFlip) {
-      this.flipAnimator.first();
+      if (maxHeight < bestTop) {
+        bestTop = maxHeight;
+        bestColumn = col;
+      }
     }
-
-    section.section = fullSection;
-    section.state = 'complete';
-    section.estimatedHeight = estimateSectionHeight(fullSection);
-
-    this.layoutEngine.updateSection(fullSection);
-
-    // Trigger FLIP animation
-    if (this.flipAnimator && this.config.enableFlip) {
-      await this.flipAnimator.play();
-    }
-
-    // Queue measurement
-    this.queueMeasurement(id);
-  }
-
-  /**
-   * Morphs a skeleton placeholder to actual content
-   */
-  async morphToContent(
-    id: string,
-    contentElement: HTMLElement
-  ): Promise<void> {
-    const section = this.sections.get(id);
-    if (!section || !this.config.enableMorphing) return;
-
-    section.contentElement = contentElement;
-
-    if (section.placeholder) {
-      await this.animateMorph(section.placeholder, contentElement);
-    }
-
-    // Measure actual height
-    this.queueMeasurement(id);
-  }
-
-  /**
-   * Registers measured height for a section
-   */
-  setMeasuredHeight(id: string, height: number): void {
-    const section = this.sections.get(id);
-    if (!section) return;
-
-    section.measuredHeight = height;
-    section.state = 'measured';
-
-    this.layoutEngine.updateMeasuredHeight(id, height);
-    this.checkStableState();
-  }
-
-  /**
-   * Gets current layout positions
-   */
-  getPositions(): Map<string, { left: string; top: number; width: string }> {
-    const positions = new Map<string, { left: string; top: number; width: string }>();
-    const layoutPositions = this.layoutEngine.getPositions();
-
-    for (const [key, layout] of layoutPositions) {
-      positions.set(key, {
-        left: layout.left,
-        top: layout.top,
-        width: layout.width,
-      });
-    }
-
-    return positions;
-  }
-
-  /**
-   * Gets current layout state
-   */
-  getState(): StreamingLayoutState {
-    return this.state;
-  }
-
-  /**
-   * Gets sections in reveal zone order
-   */
-  getSectionsForReveal(): {
-    immediate: string[];
-    eager: string[];
-    lazy: string[];
-  } {
-    const { immediate, eager, lazy } = this.revealZones;
 
     return {
-      immediate: this.sectionOrder.slice(0, immediate),
-      eager: this.sectionOrder.slice(immediate, immediate + eager),
-      lazy: this.sectionOrder.slice(immediate + eager, immediate + eager + lazy),
+      column: bestColumn,
+      top: bestTop === Infinity ? 0 : bestTop
     };
   }
 
   /**
-   * Subscribes to state changes
+   * Updates column heights after placing a section
    */
-  onStateChange(callback: (change: LayoutStateChange) => void): () => void {
-    this.stateListeners.push(callback);
-    return () => {
-      this.stateListeners = this.stateListeners.filter(l => l !== callback);
-    };
+  private updateColumnHeights(startCol: number, colSpan: number, newHeight: number): void {
+    const endCol = Math.min(startCol + colSpan, this.config.columns);
+
+    for (let c = startCol; c < endCol; c++) {
+      this.columnHeights[c] = newHeight + this.config.gap;
+    }
   }
 
   /**
-   * Gets total container height
+   * Calculates column span for a section
    */
-  getContainerHeight(): number {
-    return this.layoutEngine.getContainerHeight();
+  private calculateColSpan(section: CardSection): number {
+    if (section.colSpan && section.colSpan > 0) {
+      return Math.min(section.colSpan, this.config.columns);
+    }
+
+    if (section.preferredColumns && section.preferredColumns > 0) {
+      return Math.min(section.preferredColumns, this.config.columns);
+    }
+
+    // Default to 1
+    return 1;
   }
 
   /**
-   * Resets the layout manager
+   * Generates a unique key for a section
+   */
+  private generateSectionKey(section: CardSection): string {
+    if (section.id) {
+      return section.id;
+    }
+
+    return `section-${section.type}-${section.title}-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+  }
+
+  // ==========================================================================
+  // PROGRESSIVE OPTIMIZATION (Point 38)
+  // ==========================================================================
+
+  /**
+   * Checks if progressive optimization should run
+   */
+  private checkProgressiveOptimization(): void {
+    const sectionCount = this.sections.size;
+    const interval = this.config.optimizationInterval;
+
+    // Run optimization at intervals
+    if (sectionCount > 0 && sectionCount % interval === 0) {
+      this.runProgressiveOptimization();
+    }
+  }
+
+  /**
+   * Runs lightweight gap-fill optimization during streaming
+   */
+  private runProgressiveOptimization(): void {
+    // Simple optimization: check for obvious gaps and try to fill them
+    const layout = this.getLayout();
+    let madeChanges = false;
+
+    // Find gaps in each column
+    for (let col = 0; col < this.config.columns; col++) {
+      const sectionsInCol = layout.filter(s => {
+        const colIndex = this.parseColumnIndex(s.left);
+        return colIndex <= col && colIndex + s.colSpan > col;
+      });
+
+      if (sectionsInCol.length < 2) continue;
+
+      // Sort by top position
+      sectionsInCol.sort((a, b) => a.top - b.top);
+
+      // Check for gaps
+      for (let i = 0; i < sectionsInCol.length - 1; i++) {
+        const current = sectionsInCol[i];
+        const next = sectionsInCol[i + 1];
+        if (!current || !next) continue;
+
+        const gapTop = current.top + current.height + this.config.gap;
+        const gapHeight = next.top - gapTop;
+
+        // If significant gap, try to fill it
+        if (gapHeight > 50) {
+          // Find a section that could fit
+          const filler = this.findFillerSection(col, gapHeight);
+          if (filler) {
+            // Move filler to gap
+            this.repositionSection(filler.key, col, gapTop);
+            madeChanges = true;
+          }
+        }
+      }
+    }
+
+    if (madeChanges) {
+      this.metrics.optimizationCount++;
+      this.onOptimization?.(this.metrics);
+      this.onLayoutChange?.(this.getLayout());
+    }
+  }
+
+  /**
+   * Finds a section that could fill a gap
+   */
+  private findFillerSection(targetCol: number, maxHeight: number): StreamingPositionedSection | null {
+    for (const section of this.sections.values()) {
+      // Single-column sections at the bottom are best candidates
+      if (section.colSpan === 1 && section.height <= maxHeight) {
+        const col = this.parseColumnIndex(section.left);
+        // Don't move sections that are already well-positioned
+        if (col !== targetCol && section.top > this.metrics.totalHeight * 0.7) {
+          return section;
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Repositions a section with animation
+   */
+  private repositionSection(key: string, newCol: number, newTop: number): void {
+    const section = this.sections.get(key);
+    if (!section) return;
+
+    const oldTop = section.top;
+    const oldLeft = section.left;
+
+    // Update position
+    section.top = newTop;
+    section.left = generateLeftExpression(this.config.columns, newCol, this.config.gap);
+
+    // Update animation state (Point 37)
+    const animState = this.animationStates.get(key);
+    if (animState) {
+      animState.phase = 'repositioning';
+      animState.previousTop = oldTop;
+      animState.previousLeft = oldLeft;
+      animState.targetTop = newTop;
+      animState.targetLeft = section.left;
+      animState.startTime = Date.now();
+      animState.duration = this.config.repositionAnimationDuration;
+      animState.completed = false;
+    }
+
+    section.animationState = animState ?? section.animationState;
+  }
+
+  /**
+   * Parses column index from CSS left expression
+   */
+  private parseColumnIndex(left: string): number {
+    if (left === '0px' || left === '0') return 0;
+
+    const match = left.match(/\*\s*(\d+)\s*\)/);
+    return match?.[1] ? parseInt(match[1], 10) : 0;
+  }
+
+  // ==========================================================================
+  // SMOOTH STREAMING END TRANSITION (Point 39)
+  // ==========================================================================
+
+  /**
+   * Finalizes the layout when streaming ends.
+   * Triggers a full optimization and smooth transition.
+   */
+  finalizeLayout(): StreamingPositionedSection[] {
+    // Flush any remaining batch
+    if (this.pendingBatch.length > 0) {
+      this.processBatch();
+    }
+
+    this.metrics.isStreaming = false;
+
+    if (!this.config.animateStreamingEnd) {
+      // Instant finalization
+      return this.getLayout();
+    }
+
+    // Run full optimization
+    this.runFinalOptimization();
+
+    // Mark all sections for smooth transition
+    for (const [key, section] of this.sections) {
+      const animState = this.animationStates.get(key);
+      if (animState && animState.phase !== 'positioned') {
+        animState.phase = 'repositioning';
+        animState.duration = this.config.repositionAnimationDuration;
+        animState.startTime = Date.now();
+      }
+    }
+
+    return this.getLayout();
+  }
+
+  /**
+   * Runs final optimization when streaming ends
+   */
+  private runFinalOptimization(): void {
+    // Recalculate all positions for optimal layout
+    const sections = Array.from(this.sections.values());
+
+    // Sort by height descending for FFDH
+    sections.sort((a, b) => b.height - a.height);
+
+    // Reset column heights
+    this.columnHeights = new Array(this.config.columns).fill(0);
+
+    // Reposition all sections
+    for (const section of sections) {
+      const { column, top } = this.findBestPosition(section.colSpan, section.height);
+
+      const oldTop = section.top;
+      const oldLeft = section.left;
+      const newLeft = generateLeftExpression(this.config.columns, column, this.config.gap);
+
+      // Only update if position changed
+      if (top !== oldTop || newLeft !== oldLeft) {
+        // Update animation state for smooth transition
+        const animState = this.animationStates.get(section.key);
+        if (animState) {
+          animState.phase = 'repositioning';
+          animState.previousTop = oldTop;
+          animState.previousLeft = oldLeft;
+          animState.targetTop = top;
+          animState.targetLeft = newLeft;
+          animState.startTime = Date.now();
+          animState.duration = this.config.repositionAnimationDuration;
+        }
+
+        section.top = top;
+        section.left = newLeft;
+      }
+
+      // Update column heights
+      this.updateColumnHeights(column, section.colSpan, top + section.height);
+    }
+
+    // Update metrics
+    this.metrics.totalHeight = Math.max(...this.columnHeights, 0);
+    this.updateUtilization();
+  }
+
+  // ==========================================================================
+  // ANIMATION STATE MANAGEMENT (Point 37)
+  // ==========================================================================
+
+  /**
+   * Gets the animation state for a section
+   */
+  getAnimationState(key: string): SectionAnimationState | undefined {
+    return this.animationStates.get(key);
+  }
+
+  /**
+   * Marks an animation as complete
+   */
+  completeAnimation(key: string): void {
+    const state = this.animationStates.get(key);
+    if (state) {
+      state.phase = 'positioned';
+      state.completed = true;
+    }
+
+    const section = this.sections.get(key);
+    if (section && state) {
+      section.animationState = state;
+    }
+  }
+
+  /**
+   * Gets all active animations
+   */
+  getActiveAnimations(): SectionAnimationState[] {
+    return Array.from(this.animationStates.values())
+      .filter(s => !s.completed && (s.phase === 'entering' || s.phase === 'repositioning'));
+  }
+
+  /**
+   * Updates all animation states (call from animation frame)
+   */
+  updateAnimations(): void {
+    const now = Date.now();
+
+    for (const [key, state] of this.animationStates) {
+      if (state.completed) continue;
+
+      const elapsed = now - state.startTime;
+
+      if (elapsed >= state.duration) {
+        // Animation complete
+        state.phase = 'positioned';
+        state.completed = true;
+
+        const section = this.sections.get(key);
+        if (section) {
+          section.animationState = state;
+        }
+      }
+    }
+  }
+
+  // ==========================================================================
+  // UTILITY METHODS
+  // ==========================================================================
+
+  /**
+   * Gets the current layout
+   */
+  getLayout(): StreamingPositionedSection[] {
+    return this.sectionOrder
+      .map(key => this.sections.get(key))
+      .filter((s): s is StreamingPositionedSection => s !== undefined);
+  }
+
+  /**
+   * Gets current metrics
+   */
+  getMetrics(): StreamingLayoutMetrics {
+    return { ...this.metrics };
+  }
+
+  /**
+   * Resets the manager
    */
   reset(): void {
     this.sections.clear();
     this.sectionOrder = [];
-    this.layoutEngine.reset();
-    this.transitionState('idle');
-    
-    if (this.measureRAF) {
-      cancelAnimationFrame(this.measureRAF);
-      this.measureRAF = null;
+    this.pendingBatch = [];
+    this.animationStates.clear();
+    this.columnHeights = new Array(this.config.columns).fill(0);
+
+    if (this.batchTimer) {
+      clearTimeout(this.batchTimer);
+      this.batchTimer = null;
     }
-    this.measureQueue = [];
+
+    this.metrics = {
+      totalSections: 0,
+      batchedSections: 0,
+      optimizationCount: 0,
+      totalHeight: 0,
+      utilizationPercent: 0,
+      isStreaming: false,
+    };
   }
 
   /**
-   * Cleans up resources
+   * Updates utilization metric
    */
-  destroy(): void {
-    this.reset();
-    this.stateListeners = [];
-    this.flipAnimator?.cancelAll();
-  }
-
-  // ============================================================================
-  // PRIVATE METHODS
-  // ============================================================================
-
-  private estimatePlaceholderHeight(
-    type: string,
-    content?: { fieldCount?: number; itemCount?: number }
-  ): number {
-    const { baseHeight, fieldHeight, itemHeight } = this.skeletonConfig;
-
-    // Type-based base heights
-    const typeHeights: Record<string, number> = {
-      'overview': 180,
-      'contact-card': 160,
-      'chart': 280,
-      'map': 250,
-      'analytics': 200,
-    };
-
-    const base = typeHeights[type.toLowerCase()] ?? baseHeight;
-    const fieldsHeight = (content?.fieldCount ?? 3) * fieldHeight;
-    const itemsHeight = (content?.itemCount ?? 0) * itemHeight;
-
-    return base + Math.max(fieldsHeight, itemsHeight);
-  }
-
-  private async animateMorph(
-    placeholder: HTMLElement,
-    content: HTMLElement
-  ): Promise<void> {
-    const duration = this.skeletonConfig.morphDuration;
-
-    // Fade out skeleton shimmer
-    const fadeOut = placeholder.animate(
-      [
-        { opacity: 1 },
-        { opacity: 0 },
-      ],
-      { duration: duration / 2, fill: 'forwards' }
-    );
-
-    await fadeOut.finished;
-
-    // Fade in actual content
-    const fadeIn = content.animate(
-      [
-        { opacity: 0, transform: 'scale(0.98)' },
-        { opacity: 1, transform: 'scale(1)' },
-      ],
-      { duration: duration / 2, fill: 'forwards' }
-    );
-
-    await fadeIn.finished;
-  }
-
-  private queueMeasurement(id: string): void {
-    if (!this.measureQueue.includes(id)) {
-      this.measureQueue.push(id);
+  private updateUtilization(): void {
+    const totalArea = this.config.columns * this.metrics.totalHeight;
+    if (totalArea === 0) {
+      this.metrics.utilizationPercent = 100;
+      return;
     }
 
-    if (!this.measureRAF) {
-      this.measureRAF = requestAnimationFrame(() => {
-        this.processMeasurements();
-        this.measureRAF = null;
-      });
+    let usedArea = 0;
+    for (const section of this.sections.values()) {
+      usedArea += section.colSpan * section.height;
     }
-  }
 
-  private processMeasurements(): void {
-    for (const id of this.measureQueue) {
-      const section = this.sections.get(id);
-      if (section?.contentElement) {
-        const height = section.contentElement.offsetHeight;
-        if (height > 0) {
-          this.setMeasuredHeight(id, height);
-        }
-      }
-    }
-    this.measureQueue = [];
-  }
-
-  private transitionState(newState: StreamingLayoutState): void {
-    if (this.state === newState) return;
-
-    const previousState = this.state;
-    this.state = newState;
-
-    const affectedSections = Array.from(this.sections.keys());
-    const change: LayoutStateChange = {
-      previousState,
-      currentState: newState,
-      sectionsAffected: affectedSections,
-    };
-
-    for (const listener of this.stateListeners) {
-      listener(change);
-    }
-  }
-
-  private checkStableState(): void {
-    // Check if all sections are measured
-    const allMeasured = Array.from(this.sections.values()).every(
-      s => s.state === 'measured' || s.state === 'complete'
-    );
-
-    if (allMeasured && this.sections.size > 0) {
-      this.transitionState('stable');
-    }
+    this.metrics.utilizationPercent = (usedArea / totalArea) * 100;
   }
 }
 
 // ============================================================================
-// SKELETON UTILITIES
+// CONVENIENCE FUNCTIONS
 // ============================================================================
 
+let _streamingManagerInstance: StreamingLayoutManager | null = null;
+
 /**
- * Creates skeleton placeholder HTML for a section type
+ * Gets the global streaming layout manager instance
  */
-export function createSkeletonHTML(
-  type: string,
-  expectedContent?: { fieldCount?: number; itemCount?: number; title?: string }
-): string {
-  const title = expectedContent?.title ?? `Loading ${type}...`;
-  const fieldCount = expectedContent?.fieldCount ?? 3;
-  const itemCount = expectedContent?.itemCount ?? 0;
-
-  let fieldsHTML = '';
-  for (let i = 0; i < fieldCount; i++) {
-    fieldsHTML += `
-      <div class="skeleton-field">
-        <div class="skeleton-label shimmer"></div>
-        <div class="skeleton-value shimmer"></div>
-      </div>
-    `;
+export function getStreamingLayoutManager(config?: Partial<StreamingLayoutConfig>): StreamingLayoutManager {
+  if (!_streamingManagerInstance) {
+    _streamingManagerInstance = new StreamingLayoutManager(config);
+  } else if (config) {
+    _streamingManagerInstance.configure(config);
   }
-
-  let itemsHTML = '';
-  for (let i = 0; i < itemCount; i++) {
-    itemsHTML += `
-      <div class="skeleton-item">
-        <div class="skeleton-item-title shimmer"></div>
-        <div class="skeleton-item-desc shimmer"></div>
-      </div>
-    `;
-  }
-
-  return `
-    <div class="skeleton-section" data-section-type="${type}">
-      <div class="skeleton-header">
-        <div class="skeleton-title shimmer">${title}</div>
-      </div>
-      <div class="skeleton-content">
-        ${fieldsHTML}
-        ${itemsHTML}
-      </div>
-    </div>
-  `;
+  return _streamingManagerInstance;
 }
 
 /**
- * Creates skeleton styles CSS
+ * Resets the global streaming layout manager
  */
-export function getSkeletonStyles(): string {
-  return `
-    .skeleton-section {
-      padding: 16px;
-      border-radius: 8px;
-      background: var(--skeleton-bg, #f0f0f0);
-    }
-    
-    .skeleton-field,
-    .skeleton-item {
-      margin-bottom: 12px;
-    }
-    
-    .skeleton-label,
-    .skeleton-title,
-    .skeleton-item-title {
-      height: 14px;
-      width: 40%;
-      margin-bottom: 8px;
-      border-radius: 4px;
-    }
-    
-    .skeleton-value,
-    .skeleton-item-desc {
-      height: 18px;
-      width: 70%;
-      border-radius: 4px;
-    }
-    
-    .shimmer {
-      background: linear-gradient(
-        90deg,
-        var(--skeleton-shimmer-start, #e0e0e0) 0%,
-        var(--skeleton-shimmer-mid, #f0f0f0) 50%,
-        var(--skeleton-shimmer-start, #e0e0e0) 100%
-      );
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite linear;
-    }
-    
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-    
-    @media (prefers-reduced-motion: reduce) {
-      .shimmer {
-        animation: none;
-        background: var(--skeleton-static, #e0e0e0);
-      }
-    }
-  `;
+export function resetStreamingLayoutManager(): void {
+  _streamingManagerInstance = null;
 }
-
-// ============================================================================
-// FACTORY FUNCTIONS
-// ============================================================================
 
 /**
- * Creates a streaming layout manager with default configuration
+ * Checks if given sections represent a new card compared to previous
  */
-export function createStreamingLayout(
-  columns: number,
-  containerWidth: number,
-  options?: Partial<StreamingLayoutConfig>
-): StreamingLayoutManager {
-  return new StreamingLayoutManager({
-    columns,
-    containerWidth,
-    ...options,
-  });
-}
+export function detectNewCard(
+  currentSections: CardSection[],
+  previousSections: CardSection[],
+  cardId?: string,
+  previousCardId?: string
+): boolean {
+  // Explicit ID check
+  if (cardId && previousCardId) {
+    return cardId !== previousCardId;
+  }
 
+  // Section count drop check
+  if (currentSections.length < previousSections.length * 0.5) {
+    return true;
+  }
+
+  // Type signature check
+  const currentTypes = currentSections.map(s => s.type).join(',');
+  const previousTypes = previousSections.slice(0, currentSections.length).map(s => s.type).join(',');
+
+  if (currentSections.length <= 3 && currentTypes !== previousTypes) {
+    return true;
+  }
+
+  return false;
+}

@@ -1,11 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ChangeDetectorRef, ElementRef } from '@angular/core';
-import { AICardRendererComponent } from './ai-card-renderer.component';
-import { CardBuilder, SectionBuilder } from '../../../../testing/test-builders';
+import { MagneticTiltService } from '@osi-cards/services';
 import { LoggingService } from '../../../../core/services/logging.service';
+import { CardBuilder, SectionBuilder } from '../../../../testing/test-builders';
 import { IconService } from '../../services/icon.service';
 import { SectionNormalizationService } from '../../services/section-normalization.service';
-import { MagneticTiltService } from '../../../../core/services/magnetic-tilt.service';
+import { AICardRendererComponent } from './ai-card-renderer.component';
 import { MasonryGridComponent } from './masonry-grid/masonry-grid.component';
 
 describe('AICardRendererComponent', () => {

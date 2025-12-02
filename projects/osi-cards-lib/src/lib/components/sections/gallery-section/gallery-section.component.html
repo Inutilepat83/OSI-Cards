@@ -1,109 +1,35 @@
-<div class="gallery-section">
-  @if (items.length > 0) {
-    <div class="gallery-grid" [class.gallery-grid--single]="items.length === 1">
-      @for (item of items; track trackItem($index, item); let i = $index) {
-        <div
-          class="gallery-item"
-          [style.--stagger-index]="getItemStaggerIndex(i)"
-          [ngClass]="getItemAnimationClass(getItemId(item, i), i)"
-          (click)="openLightbox(item, i)"
-          (keydown.enter)="openLightbox(item, i)"
-          tabindex="0"
-          role="button"
-          [attr.aria-label]="'View ' + getAltText(item)">
+<div class="gallery-container">
+  <!-- Section Header -->
+  <div class="section-header" *ngIf="section.title || section.description">
+    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
+    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
+  </div>
 
-          <div class="gallery-image-container" [style.aspect-ratio]="getAspectRatio(item)">
-            <img
-              [src]="getThumbnail(item)"
-              [alt]="getAltText(item)"
-              class="gallery-image"
-              loading="lazy">
+  <!-- Gallery Grid -->
+  <div class="gallery-grid" *ngIf="section.items && section.items.length > 0">
+    <div class="gallery-item"
+         *ngFor="let item of section.items; let i = index"
+         (click)="onImageClick(item, i)"
+         tabindex="0"
+         role="button"
+         [attr.aria-label]="'View image: ' + getCaption(item)">
 
-            <div class="gallery-overlay">
-              <lucide-icon name="maximize" [size]="24"></lucide-icon>
-            </div>
-          </div>
+      <!-- Image -->
+      <img [src]="getImageUrl(item)"
+           [alt]="getAltText(item)"
+           class="gallery-image"
+           loading="lazy">
 
-          @if (item.caption || item.title) {
-            <div class="gallery-caption">
-              {{ item.caption || item.title }}
-            </div>
-          }
-        </div>
-      }
-    </div>
-
-    <!-- Lightbox -->
-    @if (selectedImage()) {
-      <div
-        class="gallery-lightbox"
-        role="dialog"
-        aria-modal="true"
-        [attr.aria-label]="'Image viewer: ' + getAltText(selectedImage()!)"
-        (keydown)="handleLightboxKeydown($event)"
-        tabindex="0">
-
-        <!-- Backdrop -->
-        <div class="gallery-lightbox-backdrop" (click)="closeLightbox()"></div>
-
-        <!-- Content -->
-        <div class="gallery-lightbox-content">
-          <!-- Close button -->
-          <button
-            type="button"
-            class="gallery-lightbox-close"
-            (click)="closeLightbox()"
-            aria-label="Close lightbox">
-            <lucide-icon name="x" [size]="24"></lucide-icon>
-          </button>
-
-          <!-- Navigation - Previous -->
-          @if (hasPrevious) {
-            <button
-              type="button"
-              class="gallery-lightbox-nav gallery-lightbox-nav--prev"
-              (click)="previousImage()"
-              aria-label="Previous image">
-              <lucide-icon name="chevron-left" [size]="32"></lucide-icon>
-            </button>
-          }
-
-          <!-- Image -->
-          <img
-            [src]="getImageSrc(selectedImage()!)"
-            [alt]="getAltText(selectedImage()!)"
-            class="gallery-lightbox-image">
-
-          <!-- Navigation - Next -->
-          @if (hasNext) {
-            <button
-              type="button"
-              class="gallery-lightbox-nav gallery-lightbox-nav--next"
-              (click)="nextImage()"
-              aria-label="Next image">
-              <lucide-icon name="chevron-right" [size]="32"></lucide-icon>
-            </button>
-          }
-
-          <!-- Caption -->
-          @if (selectedImage()!.caption || selectedImage()!.title) {
-            <div class="gallery-lightbox-caption">
-              {{ selectedImage()!.caption || selectedImage()!.title }}
-            </div>
-          }
-
-          <!-- Counter -->
-          <div class="gallery-lightbox-counter">
-            {{ selectedIndex() + 1 }} / {{ items.length }}
-          </div>
-        </div>
+      <!-- Caption Overlay -->
+      <div class="gallery-caption" *ngIf="getCaption(item)">
+        <span class="caption-text">{{ getCaption(item) }}</span>
       </div>
-    }
-  } @else {
-    <div class="gallery-empty">
-      <lucide-icon name="image" [size]="24"></lucide-icon>
-      <span>No images available</span>
     </div>
-  }
-</div>
+  </div>
 
+  <!-- Empty State -->
+  <div class="gallery-empty" *ngIf="!section.items || section.items.length === 0">
+    <div class="empty-icon">🖼️</div>
+    <p class="empty-text">No images in gallery</p>
+  </div>
+</div>

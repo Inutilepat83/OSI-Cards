@@ -1,129 +1,36 @@
 {
   "cardTitle": "Marketing Campaign ROI",
-  "cardSubtitle": "Holiday Season 2024 Campaign Analysis",
+  "cardSubtitle": "Holiday Season 2024",
   "cardType": "analytics",
   "sections": [
     {
-      "title": "Campaign Overview",
-      "type": "overview",
+      "title": "Overview",
+      "type": "info",
       "fields": [
-        { "label": "Campaign", "value": "Holiday Season 2024 Multichannel" },
+        { "label": "Campaign", "value": "Holiday 2024" },
         { "label": "Budget", "value": "€450K" },
-        { "label": "Duration", "value": "8 Weeks" },
-        { "label": "Channels", "value": "Email, Digital, Paid Social" },
-        { "label": "Target Audience", "value": "High-value Customers 18-45" }
+        { "label": "Duration", "value": "8 Weeks" }
       ]
     },
     {
-      "title": "Performance Metrics",
+      "title": "Performance",
       "type": "analytics",
       "fields": [
         {
-          "label": "Campaign ROI",
-          "value": "320% Return",
+          "label": "ROI",
+          "value": "320%",
           "percentage": 320,
-          "performance": "excellent",
           "trend": "up"
-        },
-        {
-          "label": "Click-Through Rate",
-          "value": "5.2%",
-          "percentage": 52,
-          "performance": "excellent",
-          "trend": "up"
-        },
-        {
-          "label": "Conversion Rate",
-          "value": "8.9%",
-          "percentage": 89,
-          "performance": "excellent",
-          "trend": "up"
-        },
-        {
-          "label": "Cost Per Acquisition",
-          "value": "€28",
-          "percentage": 92,
-          "performance": "excellent",
-          "trend": "down"
-        }
-      ]
-    },
-    {
-      "title": "Channel Performance",
-      "type": "chart",
-      "chartType": "pie",
-      "chartData": {
-        "labels": ["Email", "Social Media", "Paid Search", "Influencer"],
-        "datasets": [
-          {
-            "label": "Revenue (K)",
-            "data": [185, 142, 98, 25],
-            "backgroundColor": ["#ff7900", "#ff9933", "#cc5f00", "#993300"]
-          }
-        ]
-      }
-    },
-    {
-      "title": "Key Insights",
-      "type": "list",
-      "items": [
-        {
-          "title": "Top Performer",
-          "description": "Email campaigns generated highest ROI at 420%",
-          "icon": "📧",
-          "status": "completed"
-        },
-        {
-          "title": "Growth Opportunity",
-          "description": "Social media shows strong engagement with 85% growth",
-          "icon": "📱",
-          "status": "active"
-        },
-        {
-          "title": "Optimization",
-          "description": "Paid search requires budget reallocation for better results",
-          "icon": "🔍",
-          "status": "pending"
-        }
-      ]
-    },
-    {
-      "title": "Statistics Summary",
-      "type": "stats",
-      "fields": [
-        {
-          "label": "Total Impressions",
-          "value": "15.2M",
-          "performance": "excellent"
-        },
-        {
-          "label": "Total Clicks",
-          "value": "790K",
-          "performance": "excellent"
-        },
-        {
-          "label": "Total Conversions",
-          "value": "70.3K",
-          "performance": "excellent"
         }
       ]
     }
   ],
   "actions": [
     {
-      "label": "Export Full Report",
+      "label": "Export Report",
       "type": "question",
       "variant": "primary",
-      "icon": "📥",
-      "question": "How can I export the full report?"
-    },
-    {
-      "label": "Schedule Review",
-      "type": "agent",
-      "variant": "secondary",
-      "icon": "📞",
-      "agentId": "calendar-agent",
-      "agentContext": { "action": "schedule_review" }
+      "icon": "📥"
     }
   ]
 }

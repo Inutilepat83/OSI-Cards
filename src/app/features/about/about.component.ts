@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
+import {
+  ComingSoonComponent,
+  ComingSoonConfig,
+} from '../../shared/components/coming-soon/coming-soon.component';
 
 /**
  * About page component
@@ -9,9 +10,16 @@ import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [CommonModule, RouterModule, LucideIconsModule],
-  templateUrl: './about.component.html',
-  styleUrls: ['./about.component.scss'],
+  imports: [ComingSoonComponent],
+  template: `<app-coming-soon [config]="config"></app-coming-soon>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AboutComponent {}
+export class AboutComponent {
+  readonly config: ComingSoonConfig = {
+    title: 'About',
+    subtitle: 'Learn more about OSI Cards',
+    icon: 'info',
+    description:
+      'This page is under development. Check back soon for information about our mission and team.',
+  };
+}

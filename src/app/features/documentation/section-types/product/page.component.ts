@@ -27,7 +27,8 @@ The **Product Section** (\`type: "product"\`) is used for displays product infor
 - Product catalogs
 - Feature lists
 - Product comparisons
-- Pricing tables
+- Specifications
+- Service offerings
 
 ## Data Schema
 
@@ -47,29 +48,71 @@ The **Product Section** (\`type: "product"\`) is used for displays product infor
 
 \`\`\`json
 {
-  "title": "Product Information",
+  "title": "Nexus Analytics Enterprise",
   "type": "product",
-  "description": "Product details and specifications",
+  "description": "AI-powered business intelligence platform for data-driven enterprises",
   "fields": [
     {
       "label": "Product Name",
-      "value": "Enterprise Suite Pro"
+      "value": "Nexus Analytics Enterprise Edition"
     },
     {
       "label": "Version",
-      "value": "3.5.2"
+      "value": "5.2.1 LTS (Long-term Support)"
     },
     {
-      "label": "Category",
-      "value": "Enterprise Software"
+      "label": "Release Date",
+      "value": "January 15, 2025"
     },
     {
-      "label": "License",
-      "value": "Annual Subscription"
+      "label": "License Type",
+      "value": "Annual Enterprise Subscription"
+    },
+    {
+      "label": "Starting Price",
+      "value": "$2,500/month (billed annually)",
+      "price": "$2,500/mo"
+    },
+    {
+      "label": "Included Users",
+      "value": "Unlimited users with role-based access"
+    },
+    {
+      "label": "Data Connectors",
+      "value": "200+ native connectors (Salesforce, SAP, Oracle, etc.)"
+    },
+    {
+      "label": "Storage Included",
+      "value": "5TB cloud storage with auto-scaling"
+    },
+    {
+      "label": "API Calls",
+      "value": "10M requests/month included"
     },
     {
       "label": "Support Level",
-      "value": "Premium 24/7"
+      "value": "24/7 Premium Support with dedicated CSM"
+    },
+    {
+      "label": "SLA Guarantee",
+      "value": "99.99% uptime with financial credits"
+    },
+    {
+      "label": "Certifications",
+      "value": "SOC 2 Type II, ISO 27001, GDPR, HIPAA"
+    },
+    {
+      "label": "Deployment Options",
+      "value": "Cloud, Hybrid, or On-premise"
+    },
+    {
+      "label": "Training",
+      "value": "Included: 40 hours onboarding + certification"
+    },
+    {
+      "label": "Status",
+      "value": "Generally Available",
+      "status": "available"
     }
   ]
 }
@@ -84,7 +127,7 @@ The **Product Section** (\`type: "product"\`) is used for displays product infor
   "fields": [
     {
       "label": "Name",
-      "value": "Product"
+      "value": "Basic Product"
     }
   ]
 }
@@ -96,12 +139,13 @@ The **Product Section** (\`type: "product"\`) is used for displays product infor
 2. Include pricing when relevant
 3. Use descriptions for details
 4. Add status for availability
+5. Show version information
 
 ## Component Information
 
-- **Selector:** \`app-product-section\`
+- **Selector:** \`lib-product-section\`
 - **Component Path:** \`./lib/components/sections/product-section/product-section.component\`
-- **Style Path:** \`./lib/styles/components/sections/_product.scss\`
+- **Style Path:** \`./lib/components/sections/product-section/product-section.scss\`
 
 ## Related Documentation
 
@@ -111,29 +155,71 @@ The **Product Section** (\`type: "product"\`) is used for displays product infor
 `;
 
 const demoConfig = {
-  title: 'Product Information',
+  title: 'Nexus Analytics Enterprise',
   type: 'product',
-  description: 'Product details and specifications',
+  description: 'AI-powered business intelligence platform for data-driven enterprises',
   fields: [
     {
       label: 'Product Name',
-      value: 'Enterprise Suite Pro',
+      value: 'Nexus Analytics Enterprise Edition',
     },
     {
       label: 'Version',
-      value: '3.5.2',
+      value: '5.2.1 LTS (Long-term Support)',
     },
     {
-      label: 'Category',
-      value: 'Enterprise Software',
+      label: 'Release Date',
+      value: 'January 15, 2025',
     },
     {
-      label: 'License',
-      value: 'Annual Subscription',
+      label: 'License Type',
+      value: 'Annual Enterprise Subscription',
+    },
+    {
+      label: 'Starting Price',
+      value: '$2,500/month (billed annually)',
+      price: '$2,500/mo',
+    },
+    {
+      label: 'Included Users',
+      value: 'Unlimited users with role-based access',
+    },
+    {
+      label: 'Data Connectors',
+      value: '200+ native connectors (Salesforce, SAP, Oracle, etc.)',
+    },
+    {
+      label: 'Storage Included',
+      value: '5TB cloud storage with auto-scaling',
+    },
+    {
+      label: 'API Calls',
+      value: '10M requests/month included',
     },
     {
       label: 'Support Level',
-      value: 'Premium 24/7',
+      value: '24/7 Premium Support with dedicated CSM',
+    },
+    {
+      label: 'SLA Guarantee',
+      value: '99.99% uptime with financial credits',
+    },
+    {
+      label: 'Certifications',
+      value: 'SOC 2 Type II, ISO 27001, GDPR, HIPAA',
+    },
+    {
+      label: 'Deployment Options',
+      value: 'Cloud, Hybrid, or On-premise',
+    },
+    {
+      label: 'Training',
+      value: 'Included: 40 hours onboarding + certification',
+    },
+    {
+      label: 'Status',
+      value: 'Generally Available',
+      status: 'available',
     },
   ],
 };

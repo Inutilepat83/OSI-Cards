@@ -37,12 +37,8 @@
 @import "../core/utilities";
 @import "../core/animations";
 
-// 5. Section foundation (required for all sections)
-@import "../components/sections/design-system";
-@import "../components/sections/sections-base";
-@import "../components/sections/section-types";
-@import "../components/sections/section-shell";
-@import "../components/sections/unified-cards";
+// 5. Section foundation (consolidated styles)
+@import "../components/sections/sections-all";
 
 // 6. Accessibility
 @media (prefers-reduced-motion: reduce) {

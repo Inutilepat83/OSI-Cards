@@ -1,6 +1,8 @@
-import { AICardConfig, CardSection, CardField, CardItem } from '../models';
+import { AICardConfig, CardField, CardItem, CardSection } from '../models';
+import type { CardChangeType } from '../types';
 
-export type CardChangeType = 'content' | 'structural' | 'style' | 'none';
+// Re-export for convenience
+export type { CardChangeType };
 
 export interface CardDiffResult {
   card: AICardConfig;
@@ -16,7 +18,7 @@ function hashString(str: string): number {
   if (str.length === 0) return hash;
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32-bit integer
   }
   return hash;
@@ -74,18 +76,19 @@ export class CardDiffUtil {
           columns: newCard.columns,
           actions: newCard.actions,
           // Keep same sections reference
-          sections: oldCard.sections
+          sections: oldCard.sections,
         },
-        changeType: 'content'
+        changeType: 'content',
       };
     }
 
     // Merge sections incrementally
     const mergedSections = this.mergeSections(oldCard.sections, newCard.sections);
 
-    const changeType: CardChangeType = sectionsChanged && !this.didStructureChange(oldCard.sections, newCard.sections)
-      ? 'content'
-      : 'structural';
+    const changeType: CardChangeType =
+      sectionsChanged && !this.didStructureChange(oldCard.sections, newCard.sections)
+        ? 'content'
+        : 'structural';
 
     return {
       card: {
@@ -95,13 +98,16 @@ export class CardDiffUtil {
         description: newCard.description,
         columns: newCard.columns,
         actions: newCard.actions,
-        sections: mergedSections
+        sections: mergedSections,
       },
-      changeType
+      changeType,
     };
   }
 
-  private static didStructureChange(oldSections: CardSection[], newSections: CardSection[]): boolean {
+  private static didStructureChange(
+    oldSections: CardSection[],
+    newSections: CardSection[]
+  ): boolean {
     if (oldSections.length !== newSections.length) {
       return true;
     }
@@ -127,7 +133,10 @@ export class CardDiffUtil {
   /**
    * Merges sections array, preserving references to unchanged sections
    */
-  private static mergeSections(oldSections: CardSection[], newSections: CardSection[]): CardSection[] {
+  private static mergeSections(
+    oldSections: CardSection[],
+    newSections: CardSection[]
+  ): CardSection[] {
     // If sections array length changed, we need to rebuild
     if (oldSections.length !== newSections.length) {
       return newSections.map((section, index) => {
@@ -182,19 +191,21 @@ export class CardDiffUtil {
         meta: newSection.meta,
         // Preserve fields/items references
         fields: oldSection.fields,
-        items: oldSection.items
+        items: oldSection.items,
       };
     }
 
     // Merge fields if they exist
-    const mergedFields = oldSection.fields && newSection.fields
-      ? this.mergeFields(oldSection.fields, newSection.fields)
-      : newSection.fields;
+    const mergedFields =
+      oldSection.fields && newSection.fields
+        ? this.mergeFields(oldSection.fields, newSection.fields)
+        : newSection.fields;
 
     // Merge items if they exist
-    const mergedItems = oldSection.items && newSection.items
-      ? this.mergeItems(oldSection.items, newSection.items)
-      : newSection.items;
+    const mergedItems =
+      oldSection.items && newSection.items
+        ? this.mergeItems(oldSection.items, newSection.items)
+        : newSection.items;
 
     return {
       ...oldSection,
@@ -210,7 +221,7 @@ export class CardDiffUtil {
       chartData: newSection.chartData,
       meta: newSection.meta,
       fields: mergedFields,
-      items: mergedItems
+      items: mergedItems,
     };
   }
 
@@ -230,10 +241,12 @@ export class CardDiffUtil {
       }
 
       // Fast comparison: check key properties first
-      if (oldField.id === newField.id &&
-          oldField.label === newField.label &&
-          oldField.value === newField.value &&
-          oldField.title === newField.title) {
+      if (
+        oldField.id === newField.id &&
+        oldField.label === newField.label &&
+        oldField.value === newField.value &&
+        oldField.title === newField.title
+      ) {
         // Use content hashing instead of JSON.stringify
         const oldHash = fieldHashCache.get(oldField) || hashField(oldField);
         const newHash = hashField(newField);
@@ -271,9 +284,11 @@ export class CardDiffUtil {
       }
 
       // Fast comparison
-      if (oldItem.id === newItem.id &&
-          oldItem.title === newItem.title &&
-          oldItem.value === newItem.value) {
+      if (
+        oldItem.id === newItem.id &&
+        oldItem.title === newItem.title &&
+        oldItem.value === newItem.value
+      ) {
         // Use content hashing instead of JSON.stringify
         const oldHash = itemHashCache.get(oldItem) || hashItem(oldItem);
         const newHash = hashItem(newItem);
@@ -299,10 +314,12 @@ export class CardDiffUtil {
    * Fast equality check for cards
    */
   private static areCardsEqual(card1: AICardConfig, card2: AICardConfig): boolean {
-    return card1.id === card2.id &&
-           card1.cardTitle === card2.cardTitle &&
-           card1.cardType === card2.cardType &&
-           this.areSectionsEqual(card1.sections, card2.sections);
+    return (
+      card1.id === card2.id &&
+      card1.cardTitle === card2.cardTitle &&
+      card1.cardType === card2.cardType &&
+      this.areSectionsEqual(card1.sections, card2.sections)
+    );
   }
 
   /**
@@ -317,11 +334,13 @@ export class CardDiffUtil {
       const section2 = sections2[index];
       if (!section2) return false;
 
-      return section1.id === section2.id &&
-             section1.title === section2.title &&
-             section1.type === section2.type &&
-             this.areFieldsEqual(section1.fields, section2.fields) &&
-             this.areItemsEqual(section1.items, section2.items);
+      return (
+        section1.id === section2.id &&
+        section1.title === section2.title &&
+        section1.type === section2.type &&
+        this.areFieldsEqual(section1.fields, section2.fields) &&
+        this.areItemsEqual(section1.items, section2.items)
+      );
     });
   }
 
@@ -337,10 +356,12 @@ export class CardDiffUtil {
       const field2 = fields2[index];
       if (!field2) return false;
 
-      return field1.id === field2.id &&
-             field1.label === field2.label &&
-             field1.value === field2.value &&
-             field1.title === field2.title;
+      return (
+        field1.id === field2.id &&
+        field1.label === field2.label &&
+        field1.value === field2.value &&
+        field1.title === field2.title
+      );
     });
   }
 
@@ -356,25 +377,7 @@ export class CardDiffUtil {
       const item2 = items2[index];
       if (!item2) return false;
 
-      return item1.id === item2.id &&
-             item1.title === item2.title &&
-             item1.value === item2.value;
+      return item1.id === item2.id && item1.title === item2.title && item1.value === item2.value;
     });
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

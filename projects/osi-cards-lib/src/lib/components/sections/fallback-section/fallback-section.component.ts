@@ -1,22 +1,26 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardField } from '../../../models';
-import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
+import { BaseSectionComponent } from '../base-section.component';
 
+/**
+ * Fallback Section Component
+ *
+ * Default renderer for unknown or unsupported section types.
+ * Displays available data in a readable format for debugging.
+ */
 @Component({
-  selector: 'app-fallback-section',
+  selector: 'lib-fallback-section',
   standalone: true,
-  imports: [CommonModule, LucideIconsModule],
+  imports: [CommonModule],
   templateUrl: './fallback-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './fallback-section.scss'
 })
-export class FallbackSectionComponent extends BaseSectionComponent<CardField> {
-  /** Fallback section - flexible sizing */
-  static readonly layoutConfig: SectionLayoutConfig = {
-    preferredColumns: 1,
-    minColumns: 1,
-    maxColumns: 4,
-  };
-  // Fallback section - minimal implementation, inherits all base functionality
+export class FallbackSectionComponent extends BaseSectionComponent {
+
+  /**
+   * Get section type display
+   */
+  getSectionType(): string {
+    return this.section?.type || 'unknown';
+  }
 }

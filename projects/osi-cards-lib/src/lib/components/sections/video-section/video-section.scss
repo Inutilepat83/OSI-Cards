@@ -1,0 +1,281 @@
+// =====================================================================
+// VIDEO SECTION - Enhanced Video Content Display
+// =====================================================================
+
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
+@use '../../../styles/components/sections/component-mixins' as components;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+// =====================================================================
+// CONTAINER
+// =====================================================================
+
+.video-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-header-gap);
+}
+
+// =====================================================================
+// SECTION HEADER
+// =====================================================================
+
+.section-header {
+  .section-title {
+    @include heading(3);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .section-description {
+    @include body-text('base');
+    color: var(--muted-foreground);
+    line-height: var(--leading-relaxed);
+  }
+}
+
+// =====================================================================
+// VIDEOS GRID - Enhanced Layout
+// =====================================================================
+
+.videos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: var(--spacing-lg);
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+}
+
+// =====================================================================
+// VIDEO CARD - Enhanced with Modern Effects
+// =====================================================================
+
+.video-card {
+  @include card-elevated;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  transition: all 300ms var(--ease-out);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+
+    .video-play-overlay {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    .video-thumbnail {
+      transform: scale(1.05);
+    }
+
+    .video-title {
+      color: var(--accent);
+    }
+  }
+}
+
+// =====================================================================
+// VIDEO WRAPPER - Enhanced with Play Button
+// =====================================================================
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; // 16:9 aspect ratio
+  background: var(--surface-subtle);
+  overflow: hidden;
+
+  iframe,
+  video,
+  .video-thumbnail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 400ms var(--ease-out);
+  }
+
+  // Custom play button overlay
+  .video-play-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px;
+    height: 64px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition: all 300ms var(--ease-out);
+    cursor: pointer;
+    border: 3px solid rgba(255, 255, 255, 0.9);
+
+    &::before {
+      content: '';
+      width: 0;
+      height: 0;
+      border-left: 16px solid white;
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent;
+      margin-left: 3px; // Optical alignment
+    }
+
+    &:hover {
+      background: var(--accent);
+      border-color: var(--accent-bright);
+      transform: translate(-50%, -50%) scale(1.15);
+    }
+  }
+}
+
+// =====================================================================
+// VIDEO INFO - Enhanced Spacing
+// =====================================================================
+
+.video-info {
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  background: var(--surface);
+}
+
+.video-title {
+  @include heading(5);
+  margin: 0;
+  line-height: var(--leading-tight);
+  transition: color 200ms var(--ease-out);
+
+  // Clamp to 2 lines
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.video-description {
+  @include body-text('small');
+  color: var(--muted-foreground);
+  line-height: var(--leading-relaxed);
+  margin: 0;
+
+  // Clamp to 2 lines
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// =====================================================================
+// VIDEO META - Enhanced Layout
+// =====================================================================
+
+.video-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--border-light);
+
+  > span {
+    @include typo.caption;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    color: var(--muted-foreground);
+    font-size: 0.7rem;
+  }
+
+  .video-category {
+    @include components.badge-modern('default');
+    font-size: 0.65rem;
+  }
+
+  // Removed emojis for minimalist design
+}
+
+// =====================================================================
+// EMPTY STATE
+// =====================================================================
+
+.video-empty {
+  @include components.empty-state-modern;
+  padding: var(--spacing-3xl);
+
+  .empty-icon {
+    font-size: 56px;
+    opacity: 0.25;
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+// =====================================================================
+// ANIMATIONS
+// =====================================================================
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+// =====================================================================
+// RESPONSIVE DESIGN
+// =====================================================================
+
+@media (max-width: 480px) {
+  .videos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .video-info {
+    padding: var(--spacing-sm);
+  }
+
+  .video-meta {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    align-items: flex-start;
+  }
+}
+
+// =====================================================================
+// REDUCED MOTION
+// =====================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .video-card:hover {
+    transform: none;
+  }
+
+  .video-play-overlay {
+    animation: none;
+
+    &:hover {
+      transform: translate(-50%, -50%);
+    }
+  }
+}
+

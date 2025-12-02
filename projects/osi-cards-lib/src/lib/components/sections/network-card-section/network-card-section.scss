@@ -1,0 +1,215 @@
+// =====================================================================
+// NETWORK CARD SECTION - Enhanced Relationship Display
+// =====================================================================
+
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
+@use '../../../styles/components/sections/modern-effects' as effects;
+@use '../../../styles/components/sections/component-mixins' as components;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+// =====================================================================
+// CONTAINER
+// =====================================================================
+
+.network-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-header-gap);
+}
+
+// =====================================================================
+// SECTION HEADER
+// =====================================================================
+
+.section-header {
+  .section-title {
+    @include heading(3);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .section-description {
+    @include body-text('base');
+    color: var(--muted-foreground);
+    line-height: var(--leading-relaxed);
+  }
+}
+
+// =====================================================================
+// NETWORK GRID - Enhanced Layout
+// =====================================================================
+
+.network-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: var(--spacing-md);
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// =====================================================================
+// NETWORK CARD - Enhanced with Modern Effects
+// =====================================================================
+
+.network-card {
+  @include card-elevated;
+  position: relative;
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  transition: all 300ms var(--ease-out);
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+
+    .network-name {
+      color: var(--accent);
+    }
+
+    .metric-value {
+      transform: scale(1.05);
+      color: var(--accent);
+    }
+  }
+
+  &:focus-within {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+// =====================================================================
+// NETWORK HEADER
+// =====================================================================
+
+.network-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xs);
+}
+
+.network-name {
+  @include heading(5);
+  flex: 1;
+  font-weight: var(--font-bold);
+  transition: color 200ms var(--ease-out);
+}
+
+.network-status {
+  @include components.badge-modern('default');
+  font-size: 0.65rem;
+  flex-shrink: 0;
+
+  &.network-status--active {
+    @include components.badge-modern('success');
+  }
+
+  &.network-status--inactive {
+    @include components.badge-modern('error');
+  }
+
+  &.network-status--pending {
+    @include components.badge-modern('warning');
+  }
+}
+
+// =====================================================================
+// NETWORK DESCRIPTION
+// =====================================================================
+
+.network-description {
+  @include body-text('small');
+  color: var(--muted-foreground);
+  line-height: var(--leading-relaxed);
+}
+
+// =====================================================================
+// NETWORK METRICS - Enhanced with Animation
+// =====================================================================
+
+.network-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--border-light);
+
+  .metric {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    &-label {
+      @include typo.label-uppercase;
+      font-size: 0.65rem;
+      color: var(--muted-foreground);
+    }
+
+    &-value {
+      @include typo.number-display-small;
+      font-size: var(--text-lg);
+      font-weight: var(--font-bold);
+      font-variant-numeric: tabular-nums;
+      transition: all 200ms var(--ease-out);
+    }
+  }
+
+  .network-type {
+    @include components.badge-modern('primary');
+    align-self: flex-start;
+    font-size: 0.65rem;
+  }
+}
+
+// =====================================================================
+// EMPTY STATE
+// =====================================================================
+
+.network-empty {
+  @include components.empty-state-modern;
+  padding: var(--spacing-xl);
+
+  .empty-text {
+    color: var(--muted-foreground);
+    font-size: var(--text-sm);
+  }
+}
+
+// =====================================================================
+// RESPONSIVE
+// =====================================================================
+
+@media (max-width: 640px) {
+  .network-grid {
+    gap: var(--spacing-sm);
+  }
+
+  .network-card {
+    padding: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .network-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .network-metrics {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+}
+

@@ -1,74 +1,82 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardField, CardItem } from '../../../models';
-import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
+import { BaseSectionComponent } from '../base-section.component';
 
-type MapLocation = (CardField & CardItem) & {
-  coordinates?: {
-    lat: number;
-    lng: number;
-  };
-  address?: string;
-  name: string;
-  type?: string;
-};
-
+/**
+ * Map Section Component
+ *
+ * Displays geographic data with embedded maps using Leaflet.
+ * Features: markers, location pins, interactive maps.
+ *
+ * Note: Requires Leaflet library to be installed.
+ */
 @Component({
-  selector: 'app-map-section',
+  selector: 'lib-map-section',
   standalone: true,
-  imports: [CommonModule, LucideIconsModule],
+  imports: [CommonModule],
   templateUrl: './map-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './map-section.scss'
 })
-export class MapSectionComponent extends BaseSectionComponent<MapLocation> {
-  /** Maps need width for visualization */
-  static readonly layoutConfig: SectionLayoutConfig = {
-    preferredColumns: 2,
-    minColumns: 2,
-    maxColumns: 4,
-  };
-  get locations(): MapLocation[] {
-    const fromFields = super.getFields() as MapLocation[];
-    const mappedFields = fromFields
-      .map((field) => ({
-        ...field,
-        name: field.name || field.title || field.label || field.id || 'Unknown Location'
-      }))
-      .filter((field): field is MapLocation => !!field.name && typeof field.name === 'string');
+export class MapSectionComponent extends BaseSectionComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('mapElement', { static: false }) mapElement?: ElementRef<HTMLDivElement>;
 
-    const items = super.getItems() as MapLocation[];
-    if (items.length) {
-      const mappedItems = items
-        .map((item) => ({
-          ...item,
-          name: item.name || item.title || item.id || 'Unknown Location'
-        }))
-        .filter((item): item is MapLocation => !!item.name && typeof item.name === 'string');
-      
-      return mappedFields.concat(mappedItems);
+  private mapInstance: any;
+
+  ngAfterViewInit(): void {
+    this.initializeMap();
+  }
+
+  ngOnDestroy(): void {
+    this.destroyMap();
+  }
+
+  /**
+   * Initialize Leaflet map
+   */
+  private async initializeMap(): Promise<void> {
+    const fields = this.section?.fields;
+    if (!this.mapElement || !fields || fields.length === 0) return;
+
+    try {
+      // Dynamic import of Leaflet
+      const L = await import('leaflet');
+
+      // Get first location coordinates
+      const firstLocation: any = fields[0];
+      const lat = firstLocation.x || firstLocation.coordinates?.lat || 0;
+      const lng = firstLocation.y || firstLocation.coordinates?.lng || 0;
+
+      // Create map
+      this.mapInstance = L.map(this.mapElement.nativeElement).setView([lat, lng], 13);
+
+      // Add tile layer
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(this.mapInstance);
+
+      // Add markers for all locations
+      fields.forEach((location: any) => {
+        const locLat = location.x || location.coordinates?.lat;
+        const locLng = location.y || location.coordinates?.lng;
+
+        if (locLat && locLng) {
+          L.marker([locLat, locLng])
+            .addTo(this.mapInstance)
+            .bindPopup(`<b>${location.name}</b><br>${location.address || ''}`);
+        }
+      });
+    } catch (error) {
+      console.warn('Leaflet not available', error);
     }
-
-    return mappedFields;
   }
 
-  override get hasItems(): boolean {
-    return this.locations.length > 0;
-  }
-
-  onLocationClick(location: MapLocation): void {
-    this.emitItemInteraction(location);
-  }
-
-  formatCoordinates(location: MapLocation): string | null {
-    if (!location.coordinates) {
-      return null;
+  /**
+   * Destroy map instance
+   */
+  private destroyMap(): void {
+    if (this.mapInstance) {
+      this.mapInstance.remove();
+      this.mapInstance = null;
     }
-    const { lat, lng } = location.coordinates;
-    return `${lat.toFixed(2)}, ${lng.toFixed(2)}`;
-  }
-
-  override trackItem(index: number, location: MapLocation): string {
-    return location.id ?? `${location.name}-${index}`;
   }
 }

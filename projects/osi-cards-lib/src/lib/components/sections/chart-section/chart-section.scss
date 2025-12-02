@@ -1,0 +1,240 @@
+// =====================================================================
+// CHART SECTION - Enhanced Data Visualization
+// =====================================================================
+
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
+@use '../../../styles/components/sections/component-mixins' as components;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+// =====================================================================
+// CHART CONTAINER - Enhanced with Better Spacing
+// =====================================================================
+
+.chart-container {
+  @include card-elevated;
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  transition: box-shadow 300ms var(--ease-out);
+
+  &:hover {
+    box-shadow: var(--shadow-xl);
+  }
+}
+
+// =====================================================================
+// CHART HEADER - Improved Typography
+// =====================================================================
+
+.chart-header {
+  .chart-title {
+    @include heading(4);
+    margin-bottom: var(--spacing-xs);
+    font-weight: var(--font-bold);
+  }
+
+  .chart-description {
+    @include body-text('small');
+    color: var(--muted-foreground);
+    line-height: var(--leading-relaxed);
+  }
+}
+
+// =====================================================================
+// CHART WRAPPER - Enhanced with Loading State
+// =====================================================================
+
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-md);
+
+  // Loading skeleton
+  &.is-loading {
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        90deg,
+        var(--surface-subtle) 0%,
+        var(--surface-hover) 50%,
+        var(--surface-subtle) 100%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+
+    &::after {
+      content: 'Loading chart...';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      @include typo.caption;
+      color: var(--muted-foreground);
+      z-index: 1;
+    }
+  }
+
+  canvas {
+    max-width: 100%;
+    height: auto !important;
+    position: relative;
+    z-index: 2;
+  }
+}
+
+// =====================================================================
+// CHART LEGEND - Enhanced Styling
+// =====================================================================
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--border-light);
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--text-sm);
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: var(--radius-sm);
+      flex-shrink: 0;
+    }
+
+    .legend-label {
+      color: var(--foreground);
+      font-weight: var(--font-medium);
+    }
+  }
+}
+
+// =====================================================================
+// EMPTY STATE
+// =====================================================================
+
+.chart-empty {
+  @include components.empty-state-modern;
+  min-height: 320px;
+
+  .empty-icon {
+    font-size: 56px;
+    opacity: 0.25;
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+// =====================================================================
+// ANIMATIONS
+// =====================================================================
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+// =====================================================================
+// RESPONSIVE
+// =====================================================================
+
+@media (max-width: 640px) {
+  .chart-container {
+    padding: var(--spacing-md);
+  }
+
+  .chart-wrapper {
+    min-height: 250px;
+    padding: var(--spacing-sm);
+  }
+
+  .chart-legend {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-wrapper {
+    min-height: 220px;
+  }
+}
+
+// =====================================================================
+// ACCESSIBILITY - High Contrast Mode
+// =====================================================================
+
+@media (prefers-contrast: high) {
+  .chart-wrapper {
+    border: 2px solid var(--foreground);
+  }
+
+  .legend-item {
+    .legend-color {
+      border: 1px solid var(--foreground);
+    }
+  }
+}
+
+// =====================================================================
+// EMPTY STATE
+// =====================================================================
+
+.chart-empty {
+  @include components.empty-state-modern;
+  padding: var(--spacing-xl);
+  min-height: 280px;
+
+  .empty-text {
+    color: var(--muted-foreground);
+    font-size: var(--text-sm);
+  }
+}
+
+// =====================================================================
+// REDUCED MOTION
+// =====================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .chart-wrapper.is-loading::before {
+    animation: none;
+  }
+}
+

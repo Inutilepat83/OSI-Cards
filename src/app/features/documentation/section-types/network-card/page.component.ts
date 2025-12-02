@@ -27,7 +27,8 @@ The **Network Card Section** (\`type: "network-card"\`) is used for displays rel
 - Org charts
 - Relationship maps
 - Network analysis
-- Connection graphs
+- Partnership visualization
+- Stakeholder mapping
 
 ## Data Schema
 
@@ -45,35 +46,88 @@ The **Network Card Section** (\`type: "network-card"\`) is used for displays rel
 
 \`\`\`json
 {
-  "title": "Business Network",
+  "title": "Strategic Partner Ecosystem",
   "type": "network-card",
-  "description": "Key business relationships and partnerships",
+  "description": "Key business relationships and strategic partnerships",
   "items": [
     {
-      "title": "Strategic Partner A",
-      "description": "Technology partnership",
+      "title": "Amazon Web Services",
+      "description": "Premier Consulting Partner - Cloud Infrastructure",
       "meta": {
-        "influence": 85,
-        "connections": 12,
-        "status": "active"
+        "influence": 95,
+        "connections": 47,
+        "status": "active",
+        "type": "Technology Partner"
       }
     },
     {
-      "title": "Investor Group",
-      "description": "Series B lead investor",
+      "title": "Sequoia Capital",
+      "description": "Series C Lead Investor - $50M",
       "meta": {
         "influence": 92,
-        "connections": 8,
-        "status": "active"
+        "connections": 12,
+        "status": "active",
+        "type": "Investor"
       }
     },
     {
-      "title": "Distribution Partner",
-      "description": "EMEA distribution",
+      "title": "Accenture",
+      "description": "Systems Integration Partner - Enterprise Deployments",
       "meta": {
-        "influence": 67,
-        "connections": 25,
-        "status": "active"
+        "influence": 88,
+        "connections": 34,
+        "status": "active",
+        "type": "Implementation Partner"
+      }
+    },
+    {
+      "title": "Snowflake",
+      "description": "Data Platform Partnership - Native Integration",
+      "meta": {
+        "influence": 85,
+        "connections": 28,
+        "status": "active",
+        "type": "Technology Partner"
+      }
+    },
+    {
+      "title": "Microsoft",
+      "description": "Azure Marketplace Partner - Co-sell Agreement",
+      "meta": {
+        "influence": 90,
+        "connections": 52,
+        "status": "active",
+        "type": "Technology Partner"
+      }
+    },
+    {
+      "title": "Deloitte",
+      "description": "Advisory Partner - Digital Transformation",
+      "meta": {
+        "influence": 82,
+        "connections": 19,
+        "status": "active",
+        "type": "Consulting Partner"
+      }
+    },
+    {
+      "title": "Goldman Sachs",
+      "description": "Strategic Banking Partner",
+      "meta": {
+        "influence": 78,
+        "connections": 8,
+        "status": "active",
+        "type": "Financial Partner"
+      }
+    },
+    {
+      "title": "TechStars",
+      "description": "Accelerator Alumni Network",
+      "meta": {
+        "influence": 65,
+        "connections": 156,
+        "status": "active",
+        "type": "Network"
       }
     }
   ]
@@ -84,11 +138,11 @@ The **Network Card Section** (\`type: "network-card"\`) is used for displays rel
 
 \`\`\`json
 {
-  "title": "Network",
+  "title": "Partners",
   "type": "network-card",
   "items": [
     {
-      "title": "Partner"
+      "title": "Partner Organization"
     }
   ]
 }
@@ -100,12 +154,13 @@ The **Network Card Section** (\`type: "network-card"\`) is used for displays rel
 2. Include connection types
 3. Add influence metrics
 4. Use visual hierarchy
+5. Show connection strength
 
 ## Component Information
 
-- **Selector:** \`app-network-card-section\`
+- **Selector:** \`lib-network-card-section\`
 - **Component Path:** \`./lib/components/sections/network-card-section/network-card-section.component\`
-- **Style Path:** \`./lib/styles/components/sections/_network.scss\`
+- **Style Path:** \`./lib/components/sections/network-card-section/network-card-section.scss\`
 
 ## Related Documentation
 
@@ -115,35 +170,88 @@ The **Network Card Section** (\`type: "network-card"\`) is used for displays rel
 `;
 
 const demoConfig = {
-  title: 'Business Network',
+  title: 'Strategic Partner Ecosystem',
   type: 'network-card',
-  description: 'Key business relationships and partnerships',
+  description: 'Key business relationships and strategic partnerships',
   items: [
     {
-      title: 'Strategic Partner A',
-      description: 'Technology partnership',
+      title: 'Amazon Web Services',
+      description: 'Premier Consulting Partner - Cloud Infrastructure',
       meta: {
-        influence: 85,
-        connections: 12,
+        influence: 95,
+        connections: 47,
         status: 'active',
+        type: 'Technology Partner',
       },
     },
     {
-      title: 'Investor Group',
-      description: 'Series B lead investor',
+      title: 'Sequoia Capital',
+      description: 'Series C Lead Investor - $50M',
       meta: {
         influence: 92,
-        connections: 8,
+        connections: 12,
         status: 'active',
+        type: 'Investor',
       },
     },
     {
-      title: 'Distribution Partner',
-      description: 'EMEA distribution',
+      title: 'Accenture',
+      description: 'Systems Integration Partner - Enterprise Deployments',
       meta: {
-        influence: 67,
-        connections: 25,
+        influence: 88,
+        connections: 34,
         status: 'active',
+        type: 'Implementation Partner',
+      },
+    },
+    {
+      title: 'Snowflake',
+      description: 'Data Platform Partnership - Native Integration',
+      meta: {
+        influence: 85,
+        connections: 28,
+        status: 'active',
+        type: 'Technology Partner',
+      },
+    },
+    {
+      title: 'Microsoft',
+      description: 'Azure Marketplace Partner - Co-sell Agreement',
+      meta: {
+        influence: 90,
+        connections: 52,
+        status: 'active',
+        type: 'Technology Partner',
+      },
+    },
+    {
+      title: 'Deloitte',
+      description: 'Advisory Partner - Digital Transformation',
+      meta: {
+        influence: 82,
+        connections: 19,
+        status: 'active',
+        type: 'Consulting Partner',
+      },
+    },
+    {
+      title: 'Goldman Sachs',
+      description: 'Strategic Banking Partner',
+      meta: {
+        influence: 78,
+        connections: 8,
+        status: 'active',
+        type: 'Financial Partner',
+      },
+    },
+    {
+      title: 'TechStars',
+      description: 'Accelerator Alumni Network',
+      meta: {
+        influence: 65,
+        connections: 156,
+        status: 'active',
+        type: 'Network',
       },
     },
   ],

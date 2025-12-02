@@ -29,8 +29,9 @@ export class SectionLoaderService {
     this.registry.register('info', {
       canHandle: () => true,
       loadComponent: async () =>
-        (await import('projects/osi-cards-lib/src/lib/components/sections/info-section.component'))
-          .InfoSectionComponent,
+        (
+          await import('projects/osi-cards-lib/src/lib/components/sections/info-section/info-section.component')
+        ).InfoSectionComponent,
     });
 
     // Analytics section - from library

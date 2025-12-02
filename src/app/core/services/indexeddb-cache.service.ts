@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import { from, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
@@ -11,6 +11,7 @@ interface CacheEntry {
 /**
  * IndexedDB-based persistent cache service
  * Provides long-term storage for HTTP responses across browser sessions
+ * Note: Cache is disabled in development mode for fresh data on every request
  */
 @Injectable({
   providedIn: 'root',
@@ -20,6 +21,7 @@ export class IndexedDBCacheService {
   private readonly STORE_NAME = 'http-cache';
   private readonly DB_VERSION = 1;
   private db: IDBDatabase | null = null;
+  private readonly cacheDisabled = isDevMode(); // Disable cache in dev mode
 
   /**
    * Initialize IndexedDB database
@@ -53,8 +55,13 @@ export class IndexedDBCacheService {
 
   /**
    * Get cached entry from IndexedDB
+   * Returns null immediately in dev mode (cache disabled)
    */
   get(url: string): Observable<CacheEntry | null> {
+    // Skip cache read in dev mode
+    if (this.cacheDisabled) {
+      return of(null);
+    }
     return from(this.initDB()).pipe(
       map((db) => {
         return new Promise<CacheEntry | null>((resolve, reject) => {
@@ -78,8 +85,13 @@ export class IndexedDBCacheService {
 
   /**
    * Set cached entry in IndexedDB
+   * No-op in dev mode (cache disabled)
    */
   set(url: string, data: any, timestamp: number): Observable<boolean> {
+    // Skip cache write in dev mode
+    if (this.cacheDisabled) {
+      return of(true);
+    }
     return from(this.initDB()).pipe(
       map((db) => {
         return new Promise<boolean>((resolve, reject) => {

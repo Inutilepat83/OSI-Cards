@@ -1,103 +1,58 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardField } from '../../../models';
-import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
+import { Component } from '@angular/core';
+import { BaseSectionComponent } from '../base-section.component';
 
-interface ContactField extends CardField {
-  name?: string;
-  role?: string;
-  avatar?: string;
-  department?: string;
-  location?: string;
-  email?: string;
-  phone?: string;
-  contact?: {
-    name: string;
-    role: string;
-    email?: string;
-    phone?: string;
-    avatar?: string;
-  };
-}
-
+/**
+ * Contact Card Section Component
+ *
+ * Displays contact information with avatars, roles, and contact details.
+ * Perfect for team members, leadership profiles, and stakeholder directories.
+ */
 @Component({
-  selector: 'app-contact-card-section',
+  selector: 'lib-contact-card-section',
   standalone: true,
-  imports: [CommonModule, LucideIconsModule],
+  imports: [CommonModule],
   templateUrl: './contact-card-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './contact-card-section.scss',
 })
-export class ContactCardSectionComponent extends BaseSectionComponent<ContactField> {
-  /** Compact cards, expand to match contact count */
-  static readonly layoutConfig: SectionLayoutConfig = {
-    preferredColumns: 1,
-    minColumns: 1,
-    maxColumns: 4,
-    matchItemCount: true,
-  };
-  get contacts(): ContactField[] {
-    return super.getFields() as ContactField[];
+export class ContactCardSectionComponent extends BaseSectionComponent {
+  /**
+   * Get contact name from field
+   */
+  getContactName(field: any): string {
+    return field.title || field.label || 'No Name';
   }
 
-  get hasContacts(): boolean {
-    return super.hasFields;
+  /**
+   * Get contact role from field
+   */
+  getContactRole(field: any): string {
+    return field.value || field.role || '';
   }
 
-  trackContact = (_index: number, contact: ContactField): string =>
-    contact.id ?? this.getContactEmail(contact) ?? this.getContactName(contact) ?? `contact-${_index}`;
-
-  onContactClick(field: ContactField): void {
-    this.emitFieldInteraction(field);
+  /**
+   * Get contact avatar with fallback
+   */
+  getAvatar(field: any): string | null {
+    return field.avatar || null;
   }
 
-  getContactName(contact: ContactField): string {
-    return (
-      contact.contact?.name ??
-      contact.name ??
-      contact.title ??
-      contact.label ??
-      contact.contact?.email ??
-      contact.email ??
-      'Unnamed contact'
-    );
-  }
-
-  getContactRole(contact: ContactField): string | undefined {
-    // Prioritize title field as it often contains the role description
-    if (contact.title) {
-      const role = contact.contact?.role ?? contact.role;
-      // Combine title and role if both exist
-      return role ? `${contact.title} ${role}` : contact.title;
-    }
-    return contact.contact?.role ?? contact.role ?? undefined;
-  }
-
-  getContactTitle(contact: ContactField): string | undefined {
-    return contact.title ?? contact.contact?.role ?? contact.role ?? undefined;
-  }
-
-  getContactEmail(contact: ContactField): string | undefined {
-    return contact.contact?.email ?? contact.email ?? undefined;
-  }
-
-  getContactPhone(contact: ContactField): string | undefined {
-    return contact.contact?.phone ?? contact.phone ?? undefined;
-  }
-
-  getContactAvatar(contact: ContactField): string | undefined {
-    return contact.contact?.avatar ?? contact.avatar ?? undefined;
-  }
-
-  getInitials(name?: string): string {
-    if (!name) {
-      return 'NA';
-    }
-    return name
+  /**
+   * Get initials from name for fallback avatar
+   */
+  getInitials(name: string): string {
+    if (!name) return '?';
+    const parts = name
+      .trim()
       .split(' ')
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((part) => part.charAt(0).toUpperCase())
-      .join('');
+      .filter((p) => p);
+    if (parts.length >= 2) {
+      const first = parts[0]?.[0] || '';
+      const last = parts[parts.length - 1]?.[0] || '';
+      if (first && last) {
+        return (first + last).toUpperCase();
+      }
+    }
+    return name[0]?.toUpperCase() || '?';
   }
 }

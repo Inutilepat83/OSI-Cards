@@ -1,29 +1,33 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ComponentRef,
+  DestroyRef,
   EventEmitter,
-  Input,
-  Output,
   inject,
-  ViewEncapsulation,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
   ViewChild,
   ViewContainerRef,
-  OnChanges,
-  SimpleChanges,
-  ComponentRef,
-  DestroyRef
+  ViewEncapsulation,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
 import { CardAction, CardField, CardItem, CardSection } from '../../models';
+import {
+  isValidSectionType,
+  resolveSectionType,
+  SectionTypeInput,
+} from '../../models/generated-section-types';
 import { SectionPluginRegistry } from '../../services/section-plugin-registry.service';
 import { BaseSectionComponent, SectionInteraction } from '../sections/base-section.component';
 import { DynamicSectionLoaderService } from './dynamic-section-loader.service';
 import { LazySectionLoaderService, LazySectionType } from './lazy-section-loader.service';
 import { LazySectionPlaceholderComponent } from './lazy-section-placeholder.component';
-import { resolveSectionType, isValidSectionType, SectionTypeInput } from '../../models/generated-section-types';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 /**
  * Interface for sections with custom field interaction output
@@ -67,20 +71,23 @@ export interface SectionRenderEvent {
         [sectionType]="lazyType"
         [isLoading]="true"
         [error]="lazyLoadError"
-        (retry)="retryLazyLoad()">
+        (retry)="retryLazyLoad()"
+      >
       </app-lazy-section-placeholder>
     }
 
     <!-- Dynamic component container -->
     <ng-container #container></ng-container>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
-  `],
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class SectionRendererComponent implements OnChanges {
   @Input({ required: true }) section!: CardSection;
@@ -160,8 +167,10 @@ export class SectionRendererComponent implements OnChanges {
       const componentClass = await loadPromise;
 
       // Check if section type still matches (user might have changed it during load)
-      if (this.section?.type?.toLowerCase() === type ||
-          this.loader.resolveType(this.section?.type ?? '') === type) {
+      if (
+        this.section?.type?.toLowerCase() === type ||
+        this.loader.resolveType(this.section?.type ?? '') === type
+      ) {
         this.isLazyLoading = false;
         this.createComponentFromClass(componentClass as BaseSectionComponent['constructor']);
         this.cdr.markForCheck();
@@ -323,12 +332,15 @@ export class SectionRendererComponent implements OnChanges {
       metadata: {
         sectionId: this.section?.id,
         sectionTitle: this.section?.title,
-        ...metadata
-      }
+        ...metadata,
+      },
     });
   }
 
-  emitItemInteraction(item: CardItem | CardField | undefined, metadata?: Record<string, unknown>): void {
+  emitItemInteraction(
+    item: CardItem | CardField | undefined,
+    metadata?: Record<string, unknown>
+  ): void {
     if (!item) return;
     this.sectionEvent.emit({
       type: 'item',
@@ -337,8 +349,8 @@ export class SectionRendererComponent implements OnChanges {
       metadata: {
         sectionId: this.section?.id,
         sectionTitle: this.section?.title,
-        ...metadata
-      }
+        ...metadata,
+      },
     });
   }
 
@@ -347,7 +359,7 @@ export class SectionRendererComponent implements OnChanges {
       type: 'action',
       section: this.section,
       action,
-      metadata: metadata ?? {}
+      metadata: metadata ?? {},
     });
   }
 

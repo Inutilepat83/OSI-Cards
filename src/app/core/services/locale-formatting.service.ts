@@ -31,7 +31,7 @@
  */
 
 import { computed, inject, Injectable } from '@angular/core';
-import { I18nService, SupportedLocale } from './i18n.service';
+import { I18nService, SupportedLocale } from '@osi-cards/services';
 
 export type DateFormatStyle = 'short' | 'medium' | 'long' | 'full' | 'custom';
 export type NumberFormatStyle = 'decimal' | 'currency' | 'percent' | 'unit' | 'compact';
@@ -67,7 +67,7 @@ export class LocaleFormattingService {
 
   // Computed locale string for Intl APIs (converts 'en' to 'en-US', 'fr' to 'fr-FR', etc.)
   private readonly localeString = computed(() => {
-    const locale = this.i18n.currentLocale();
+    const locale = this.i18n.locale();
     return this.convertToLocaleString(locale);
   });
 
@@ -415,6 +415,7 @@ export class LocaleFormattingService {
       ja: 'ja-JP',
       zh: 'zh-CN',
       ko: 'ko-KR',
+      ar: 'ar-SA',
     };
     return localeMap[locale] || 'en-US';
   }

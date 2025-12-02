@@ -19,7 +19,7 @@ The **Overview Section** (\`type: "overview"\`) is used for displays high-level 
 | Uses Items | No |
 | Default Columns | 1 |
 | Supports Collapse | No |
-| Aliases | None |
+| Aliases | \`summary\`, \`executive\` |
 
 
 ## Use Cases
@@ -28,6 +28,7 @@ The **Overview Section** (\`type: "overview"\`) is used for displays high-level 
 - Dashboard overviews
 - Key highlights
 - Quick insights
+- Company profiles
 
 ## Data Schema
 
@@ -46,29 +47,41 @@ The **Overview Section** (\`type: "overview"\`) is used for displays high-level 
 
 \`\`\`json
 {
-  "title": "Company Overview",
+  "title": "Executive Summary",
   "type": "overview",
-  "description": "High-level company information",
+  "description": "Strategic company overview and positioning",
   "fields": [
     {
       "label": "About",
-      "value": "Leading technology company specializing in enterprise solutions"
+      "value": "Nexus Technologies is a leading enterprise software company specializing in AI-powered analytics and business intelligence solutions. Founded in 2018, we serve over 450 enterprise customers globally, helping them transform raw data into actionable insights that drive business growth."
     },
     {
       "label": "Mission",
-      "value": "Empowering businesses through innovative technology"
+      "value": "To democratize data intelligence by making advanced analytics accessible to every business user, regardless of technical expertise, enabling organizations to make faster, smarter, data-driven decisions."
     },
     {
-      "label": "Industry",
-      "value": "Enterprise Software"
+      "label": "Vision",
+      "value": "A world where every business decision is informed by real-time, AI-powered insights, eliminating guesswork and enabling unprecedented operational efficiency."
     },
     {
-      "label": "Founded",
-      "value": "2010"
+      "label": "Core Values",
+      "value": "Innovation First • Customer Obsession • Radical Transparency • Continuous Learning • Inclusive Excellence"
     },
     {
-      "label": "Size",
-      "value": "1000-5000 employees"
+      "label": "Market Position",
+      "value": "Leader in Gartner Magic Quadrant for Analytics & BI Platforms 2024. Top-rated on G2 with 4.8/5 stars across 2,500+ reviews. Named to Forbes Cloud 100 for three consecutive years."
+    },
+    {
+      "label": "Industry Focus",
+      "value": "Enterprise Software • Financial Services • Healthcare & Life Sciences • Retail & E-commerce • Manufacturing • Technology"
+    },
+    {
+      "label": "Competitive Advantage",
+      "value": "Proprietary AI engine with patent-pending natural language processing, enabling 10x faster insights discovery compared to traditional BI tools."
+    },
+    {
+      "label": "Key Differentiators",
+      "value": "Real-time streaming analytics • No-code dashboard builder • Native AI/ML integration • Enterprise-grade security • Industry-specific solutions"
     }
   ]
 }
@@ -83,7 +96,7 @@ The **Overview Section** (\`type: "overview"\`) is used for displays high-level 
   "fields": [
     {
       "label": "Summary",
-      "value": "Overview text"
+      "value": "Brief overview of the topic"
     }
   ]
 }
@@ -95,12 +108,13 @@ The **Overview Section** (\`type: "overview"\`) is used for displays high-level 
 2. Focus on key metrics
 3. Use visual indicators
 4. Limit to essential information
+5. Use as entry point to details
 
 ## Component Information
 
-- **Selector:** \`app-overview-section\`
+- **Selector:** \`lib-overview-section\`
 - **Component Path:** \`./lib/components/sections/overview-section/overview-section.component\`
-- **Style Path:** \`./lib/styles/components/sections/_overview.scss\`
+- **Style Path:** \`./lib/components/sections/overview-section/overview-section.scss\`
 
 ## Related Documentation
 
@@ -110,29 +124,49 @@ The **Overview Section** (\`type: "overview"\`) is used for displays high-level 
 `;
 
 const demoConfig = {
-  title: 'Company Overview',
+  title: 'Executive Summary',
   type: 'overview',
-  description: 'High-level company information',
+  description: 'Strategic company overview and positioning',
   fields: [
     {
       label: 'About',
-      value: 'Leading technology company specializing in enterprise solutions',
+      value:
+        'Nexus Technologies is a leading enterprise software company specializing in AI-powered analytics and business intelligence solutions. Founded in 2018, we serve over 450 enterprise customers globally, helping them transform raw data into actionable insights that drive business growth.',
     },
     {
       label: 'Mission',
-      value: 'Empowering businesses through innovative technology',
+      value:
+        'To democratize data intelligence by making advanced analytics accessible to every business user, regardless of technical expertise, enabling organizations to make faster, smarter, data-driven decisions.',
     },
     {
-      label: 'Industry',
-      value: 'Enterprise Software',
+      label: 'Vision',
+      value:
+        'A world where every business decision is informed by real-time, AI-powered insights, eliminating guesswork and enabling unprecedented operational efficiency.',
     },
     {
-      label: 'Founded',
-      value: '2010',
+      label: 'Core Values',
+      value:
+        'Innovation First • Customer Obsession • Radical Transparency • Continuous Learning • Inclusive Excellence',
     },
     {
-      label: 'Size',
-      value: '1000-5000 employees',
+      label: 'Market Position',
+      value:
+        'Leader in Gartner Magic Quadrant for Analytics & BI Platforms 2024. Top-rated on G2 with 4.8/5 stars across 2,500+ reviews. Named to Forbes Cloud 100 for three consecutive years.',
+    },
+    {
+      label: 'Industry Focus',
+      value:
+        'Enterprise Software • Financial Services • Healthcare & Life Sciences • Retail & E-commerce • Manufacturing • Technology',
+    },
+    {
+      label: 'Competitive Advantage',
+      value:
+        'Proprietary AI engine with patent-pending natural language processing, enabling 10x faster insights discovery compared to traditional BI tools.',
+    },
+    {
+      label: 'Key Differentiators',
+      value:
+        'Real-time streaming analytics • No-code dashboard builder • Native AI/ML integration • Enterprise-grade security • Industry-specific solutions',
     },
   ],
 };

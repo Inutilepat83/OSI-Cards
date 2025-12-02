@@ -1,0 +1,137 @@
+{
+  "type": "contact-card",
+  "name": "Contact Card Section",
+  "description": "Displays person information with avatars, roles, contact details, and social links.",
+  "selector": "lib-contact-card-section",
+  "useCases": [
+    "Team members",
+    "Key contacts",
+    "Leadership profiles",
+    "Stakeholder directory",
+    "Sales contacts"
+  ],
+  "bestPractices": [
+    "Include name, role, and contact info",
+    "Add avatar images when available",
+    "Include social media links",
+    "Group by department or role",
+    "Show location for distributed teams"
+  ],
+  "rendering": {
+    "usesFields": true,
+    "usesItems": false,
+    "defaultColumns": 2,
+    "supportsCollapse": true,
+    "supportsEmoji": false
+  },
+  "fieldSchema": {
+    "type": "object",
+    "properties": {
+      "title": { "type": "string", "description": "Contact name" },
+      "label": { "type": "string", "description": "Contact label" },
+      "value": { "type": "string", "description": "Role or description" },
+      "role": { "type": "string", "description": "Job role/title" },
+      "email": { "type": "string", "format": "email", "description": "Email address" },
+      "phone": { "type": "string", "description": "Phone number" },
+      "avatar": { "type": "string", "description": "Avatar image URL" },
+      "department": { "type": "string", "description": "Department name" },
+      "location": { "type": "string", "description": "Office location" },
+      "linkedIn": { "type": "string", "format": "uri", "description": "LinkedIn profile URL" },
+      "twitter": { "type": "string", "description": "Twitter handle" }
+    },
+    "required": []
+  },
+  "testFixtures": {
+    "complete": {
+      "title": "Executive Leadership Team",
+      "type": "contact-card",
+      "description": "Key decision makers and stakeholders",
+      "fields": [
+        {
+          "label": "Chief Executive Officer",
+          "title": "Dr. Sarah Mitchell",
+          "value": "CEO & Co-Founder",
+          "email": "sarah.mitchell@nexustech.io",
+          "phone": "+1 (512) 555-0100",
+          "role": "Chief Executive Officer",
+          "department": "Executive",
+          "location": "Austin, TX",
+          "linkedIn": "https://linkedin.com/in/sarahmitchell",
+          "twitter": "@sarahmitchell"
+        },
+        {
+          "label": "Chief Technology Officer",
+          "title": "James Park",
+          "value": "CTO & Co-Founder",
+          "email": "james.park@nexustech.io",
+          "phone": "+1 (512) 555-0101",
+          "role": "Chief Technology Officer",
+          "department": "Engineering",
+          "location": "Austin, TX",
+          "linkedIn": "https://linkedin.com/in/jamespark"
+        },
+        {
+          "label": "Chief Revenue Officer",
+          "title": "Maria Santos",
+          "value": "CRO",
+          "email": "maria.santos@nexustech.io",
+          "phone": "+1 (512) 555-0102",
+          "role": "Chief Revenue Officer",
+          "department": "Sales",
+          "location": "New York, NY",
+          "linkedIn": "https://linkedin.com/in/mariasantos"
+        },
+        {
+          "label": "Chief Financial Officer",
+          "title": "David Thompson",
+          "value": "CFO",
+          "email": "david.thompson@nexustech.io",
+          "phone": "+44 20 7946 0958",
+          "role": "Chief Financial Officer",
+          "department": "Finance",
+          "location": "London, UK",
+          "linkedIn": "https://linkedin.com/in/davidthompson"
+        },
+        {
+          "label": "VP of Engineering",
+          "title": "Dr. Wei Chen",
+          "value": "VP Engineering - Platform",
+          "email": "wei.chen@nexustech.io",
+          "phone": "+65 6823 4567",
+          "role": "VP of Engineering",
+          "department": "Engineering",
+          "location": "Singapore"
+        },
+        {
+          "label": "VP of Customer Success",
+          "title": "Rachel Green",
+          "value": "VP Customer Success",
+          "email": "rachel.green@nexustech.io",
+          "phone": "+1 (512) 555-0105",
+          "role": "VP of Customer Success",
+          "department": "Customer Success",
+          "location": "Austin, TX"
+        }
+      ]
+    },
+    "minimal": {
+      "title": "Primary Contact",
+      "type": "contact-card",
+      "fields": [
+        { "title": "Support Team", "email": "support@company.com" }
+      ]
+    },
+    "edgeCases": {
+      "title": "Contact Edge Cases",
+      "type": "contact-card",
+      "fields": [
+        { "title": "No Contact Info", "value": "Contact details pending" },
+        { "title": "Dr. Alexandra Konstantinopoulou-Papadimitriou", "value": "Senior Director of International Business Development", "email": "alexandra.konstantinopoulou@subdomain.longcompanyname.example.com" },
+        { "title": "日本語の名前", "value": "Japanese Name Test", "department": "国際部門" }
+      ]
+    }
+  }
+}
+
+
+

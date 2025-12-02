@@ -18,3 +18,5 @@ export function validateCardContract(): ContractTestResult {
   return { passed: true, errors: [] };
 }
 
+
+

@@ -15,6 +15,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
+import { CardChangeType, CardDiffUtil } from '@osi-cards/utils';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { AgentService } from '../../../../core/services/agent.service';
 import { CardDataService } from '../../../../core/services/card-data/card-data.service';
@@ -30,7 +31,6 @@ import {
 } from '../../../../models';
 import { CommandService } from '../../../../shared/services/command.service';
 import { ExportService } from '../../../../shared/services/export.service';
-import { CardChangeType, CardDiffUtil } from '@osi-cards/utils';
 import { AppState } from '../../../../store/app.state';
 import * as CardSelectors from '../../../../store/cards/cards.selectors';
 import * as CardActions from '../../../../store/cards/cards.state';

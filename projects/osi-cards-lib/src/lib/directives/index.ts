@@ -1,22 +1,7 @@
 /**
- * Directives
+ * Public API - Directives
  *
- * Exports all public directives from the OSI Cards library
- *
- * @example
- * ```typescript
- * import {
- *   CopyToClipboardDirective,
- *   TooltipDirective,
- *   OsiRtlDirective,
- *   KeyboardShortcutsDirective
- * } from 'osi-cards-lib';
- * ```
+ * Exports all directive components
  */
 
-export * from './scoped-theme.directive';
-export * from './copy-to-clipboard.directive';
-export * from './tooltip.directive';
-export * from './lazy-render.directive';
-
-// Note: rtl.directive and keyboard-shortcuts.directive are available as separate imports if needed
+export * from './section-design.directive';

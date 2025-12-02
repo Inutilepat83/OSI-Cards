@@ -1,0 +1,129 @@
+{
+  "type": "text-reference",
+  "name": "Text Reference Section",
+  "description": "Displays long-form text, paragraphs, articles, and reference content.",
+  "selector": "lib-text-reference-section",
+  "useCases": [
+    "Articles",
+    "Documentation links",
+    "Research summaries",
+    "Reference materials",
+    "Resource libraries"
+  ],
+  "bestPractices": [
+    "Break into readable chunks",
+    "Use proper formatting",
+    "Include citations",
+    "Add metadata for context",
+    "Provide action links"
+  ],
+  "rendering": {
+    "usesFields": true,
+    "usesItems": false,
+    "defaultColumns": 1,
+    "supportsCollapse": true,
+    "supportsEmoji": false
+  },
+  "fieldSchema": {
+    "type": "object",
+    "properties": {
+      "label": { "type": "string", "description": "Reference label" },
+      "value": { "type": "string", "description": "Reference title/name" },
+      "text": { "type": "string", "description": "Reference text content" },
+      "description": { "type": "string", "description": "Reference description" },
+      "url": { "type": "string", "format": "uri", "description": "Reference URL" },
+      "source": { "type": "string", "description": "Source attribution" },
+      "type": { "type": "string", "description": "Document type (PDF, Video, etc.)" },
+      "date": { "type": "string", "format": "date", "description": "Publication date" }
+    },
+    "required": []
+  },
+  "aliases": ["reference", "text-ref", "documentation"],
+  "testFixtures": {
+    "complete": {
+      "title": "Resources & Documentation",
+      "type": "text-reference",
+      "description": "Essential guides, documentation, and reference materials",
+      "fields": [
+        {
+          "label": "Technical Documentation",
+          "value": "Nexus Analytics Platform - Complete Technical Reference",
+          "description": "Comprehensive documentation covering architecture, API reference, integration guides, and best practices for enterprise deployments",
+          "url": "https://docs.nexustech.io/platform",
+          "type": "Documentation",
+          "date": "2024-12-01"
+        },
+        {
+          "label": "API Reference",
+          "value": "REST API v3.0 Developer Guide",
+          "description": "Complete API documentation with authentication, endpoints, request/response schemas, rate limiting, and code examples in Python, JavaScript, and Java",
+          "url": "https://api.nexustech.io/docs/v3",
+          "type": "API Docs"
+        },
+        {
+          "label": "Security Whitepaper",
+          "value": "Enterprise Security & Compliance Framework",
+          "description": "Detailed overview of security architecture, encryption standards, access controls, audit logging, and compliance certifications (SOC 2, ISO 27001, GDPR, HIPAA)",
+          "url": "https://nexustech.io/security-whitepaper",
+          "type": "PDF",
+          "date": "2024-10-15"
+        },
+        {
+          "label": "Implementation Guide",
+          "value": "Enterprise Deployment Playbook",
+          "description": "Step-by-step guide for enterprise implementations including architecture patterns, migration strategies, performance tuning, and go-live checklists",
+          "url": "https://docs.nexustech.io/implementation",
+          "type": "Guide"
+        },
+        {
+          "label": "Video Training",
+          "value": "Nexus Academy - Complete Certification Course",
+          "description": "40-hour video training program covering platform fundamentals, advanced analytics, administration, and developer certification paths",
+          "url": "https://academy.nexustech.io",
+          "type": "Video Course"
+        },
+        {
+          "label": "Case Study",
+          "value": "How Fortune 500 Retailer Achieved 47% Faster Insights",
+          "description": "Detailed case study covering implementation journey, challenges overcome, technical architecture, and measurable business outcomes",
+          "url": "https://nexustech.io/case-studies/retail-transformation",
+          "type": "PDF",
+          "date": "2024-09-20"
+        },
+        {
+          "label": "Architecture Guide",
+          "value": "Multi-tenant Cloud Architecture Deep Dive",
+          "description": "Technical architecture documentation covering data isolation, scaling strategies, disaster recovery, and multi-region deployments",
+          "url": "https://docs.nexustech.io/architecture",
+          "type": "Technical Guide"
+        },
+        {
+          "label": "Release Notes",
+          "value": "Version 5.2 Release Notes & Migration Guide",
+          "description": "Complete changelog, new features, breaking changes, deprecations, and step-by-step migration instructions for version 5.2",
+          "url": "https://docs.nexustech.io/releases/5.2",
+          "type": "Release Notes",
+          "date": "2025-01-15"
+        }
+      ]
+    },
+    "minimal": {
+      "title": "References",
+      "type": "text-reference",
+      "fields": [
+        { "label": "Link", "value": "Reference Document" }
+      ]
+    },
+    "edgeCases": {
+      "title": "Reference Edge Cases",
+      "type": "text-reference",
+      "fields": [
+        { "label": "No URL", "value": "Document without web link", "description": "Internal document, contact support for access" },
+        { "label": "Long URL", "value": "External Resource", "url": "https://very-long-subdomain.example.com/path/to/deeply/nested/resource/document.pdf?param1=value1&param2=value2&token=abc123xyz" }
+      ]
+    }
+  }
+}
+
+
+

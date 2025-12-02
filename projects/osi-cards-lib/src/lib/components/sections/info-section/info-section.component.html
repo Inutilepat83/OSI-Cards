@@ -1,0 +1,31 @@
+<div class="info-container">
+  <!-- Section Header -->
+  <div class="section-header" *ngIf="section.title || section.description">
+    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
+    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
+  </div>
+
+  <!-- Info List -->
+  <div class="info-list" *ngIf="section.fields && section.fields.length > 0">
+    <div class="info-item" *ngFor="let field of section.fields">
+      <div class="info-label-wrapper">
+        <span class="info-label">{{ field.label }}</span>
+      </div>
+
+      <div class="info-value-wrapper">
+        <span class="info-value">{{ field.value }}</span>
+        <span class="info-trend" [ngClass]="getTrendClass(field.trend)" *ngIf="field.trend">
+          <span class="trend-arrow" [attr.data-trend]="field.trend"></span>
+          <span *ngIf="field.change">{{ formatChange(field.change) }}</span>
+        </span>
+      </div>
+
+      <p class="info-description" *ngIf="field.description">{{ field.description }}</p>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="info-empty" *ngIf="!section.fields || section.fields.length === 0">
+    <p class="empty-text">No information available</p>
+  </div>
+</div>

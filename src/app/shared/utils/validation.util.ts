@@ -29,7 +29,7 @@ export class ValidationUtil {
     } else if (card.sections.length === 0) {
       errors.push('Card must have at least one section');
     } else {
-      card.sections.forEach((section, index) => {
+      card.sections.forEach((section: CardSection, index: number) => {
         const sectionErrors = this.validateSection(section, index);
         errors.push(...sectionErrors);
       });
@@ -67,7 +67,7 @@ export class ValidationUtil {
       if (section.fields.length > 1000) {
         errors.push(`${prefix}: Cannot have more than 1000 fields`);
       }
-      section.fields.forEach((field, fieldIndex) => {
+      section.fields.forEach((field: CardField, fieldIndex: number) => {
         const fieldErrors = this.validateField(field, index, fieldIndex);
         errors.push(...fieldErrors);
       });
@@ -78,7 +78,7 @@ export class ValidationUtil {
       if (section.items.length > 1000) {
         errors.push(`${prefix}: Cannot have more than 1000 items`);
       }
-      section.items.forEach((item, itemIndex) => {
+      section.items.forEach((item: CardItem, itemIndex: number) => {
         const itemErrors = this.validateItem(item, index, itemIndex);
         errors.push(...itemErrors);
       });

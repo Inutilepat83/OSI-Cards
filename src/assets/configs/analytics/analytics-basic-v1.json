@@ -3,38 +3,21 @@
   "cardType": "analytics",
   "sections": [
     {
-      "title": "Analytics Overview",
+      "title": "Overview",
       "type": "info",
       "fields": [
-        { "label": "Dashboard Type", "value": "Sales Analytics" },
-        { "label": "Data Source", "value": "CRM Integration" },
-        { "label": "Update Frequency", "value": "Real-time" },
-        { "label": "Time Range", "value": "Q1 2025" }
+        { "label": "Type", "value": "Sales Analytics" },
+        { "label": "Period", "value": "Q1 2025" }
       ]
     },
     {
-      "title": "Key Performance Indicators",
+      "title": "Key Metrics",
       "type": "analytics",
       "fields": [
         {
           "label": "Revenue Target",
-          "value": "105% Achieved",
+          "value": "105%",
           "percentage": 105,
-          "performance": "excellent",
-          "trend": "up"
-        },
-        {
-          "label": "Conversion Rate",
-          "value": "32%",
-          "percentage": 32,
-          "performance": "good",
-          "trend": "up"
-        },
-        {
-          "label": "Deals Closed",
-          "value": "45 deals",
-          "percentage": 112,
-          "performance": "excellent",
           "trend": "up"
         }
       ]
@@ -42,11 +25,10 @@
   ],
   "actions": [
     {
-      "label": "View Full Dashboard",
+      "label": "View Dashboard",
       "type": "website",
       "variant": "primary",
-      "icon": "📊",
-      "url": "https://dashboard.example.com"
+      "icon": "📊"
     }
   ]
 }

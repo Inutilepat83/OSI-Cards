@@ -242,7 +242,9 @@ export class SearchFilterService {
     if (!sectionType) {
       return cards;
     }
-    return cards.filter((card) => card.sections?.some((section) => section.type === sectionType));
+    return cards.filter((card) =>
+      card.sections?.some((section: CardSection) => section.type === sectionType)
+    );
   }
 
   /**
@@ -285,7 +287,7 @@ export class SearchFilterService {
 
       // Filter by section types
       if (criteria.sectionTypes && criteria.sectionTypes.length > 0) {
-        const hasMatchingSection = card.sections?.some((section) =>
+        const hasMatchingSection = card.sections?.some((section: CardSection) =>
           criteria.sectionTypes!.includes(section.type)
         );
         if (!hasMatchingSection) {
@@ -319,7 +321,9 @@ export class SearchFilterService {
       // Filter by has fields
       if (criteria.hasFields !== undefined) {
         const hasFields =
-          card.sections?.some((section) => section.fields && section.fields.length > 0) ?? false;
+          card.sections?.some(
+            (section: CardSection) => section.fields && section.fields.length > 0
+          ) ?? false;
         if (hasFields !== criteria.hasFields) {
           return false;
         }
@@ -328,7 +332,9 @@ export class SearchFilterService {
       // Filter by has items
       if (criteria.hasItems !== undefined) {
         const hasItems =
-          card.sections?.some((section) => section.items && section.items.length > 0) ?? false;
+          card.sections?.some(
+            (section: CardSection) => section.items && section.items.length > 0
+          ) ?? false;
         if (hasItems !== criteria.hasItems) {
           return false;
         }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import { from, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -20,9 +20,11 @@ const CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days
 })
 export class DocCacheService {
   private dbPromise: Promise<IDBDatabase> | null = null;
+  private readonly cacheDisabled = isDevMode(); // Disable cache in dev mode for fresh content
 
   constructor() {
-    if (typeof indexedDB !== 'undefined') {
+    // Skip IndexedDB initialization in dev mode
+    if (typeof indexedDB !== 'undefined' && !this.cacheDisabled) {
       this.dbPromise = this.openDatabase();
     }
   }
@@ -54,7 +56,8 @@ export class DocCacheService {
   }
 
   get(pageId: string, contentHash: string): Observable<CachedDocContent | null> {
-    if (!this.dbPromise) {
+    // Skip cache read in dev mode
+    if (this.cacheDisabled || !this.dbPromise) {
       return of(null);
     }
 
@@ -90,7 +93,8 @@ export class DocCacheService {
     content: Omit<CachedDocContent, 'contentHash' | 'timestamp'>,
     contentHash: string
   ): Observable<void> {
-    if (!this.dbPromise) {
+    // Skip cache write in dev mode
+    if (this.cacheDisabled || !this.dbPromise) {
       return of(undefined);
     }
 

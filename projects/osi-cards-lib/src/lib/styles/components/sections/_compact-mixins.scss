@@ -1,0 +1,181 @@
+// =====================================================================
+// COMPACT LAYOUT MIXINS
+// =====================================================================
+//
+// Optimized mixins for denser, more compact section layouts.
+// Uses reduced spacing while maintaining readability.
+//
+// =====================================================================
+
+@use 'design-tokens' as *;
+@use 'sections-base' as base;
+@use 'component-mixins' as components;
+@use 'modern-effects' as effects;
+@use 'typography-system' as typo;
+
+// =====================================================================
+// COMPACT SECTION CONTAINER
+// =====================================================================
+
+@mixin section-container-compact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-header-gap);
+}
+
+@mixin section-header-compact {
+  margin-bottom: var(--spacing-compact-sm);
+
+  .section-title,
+  h3 {
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    line-height: var(--leading-tight);
+    color: var(--foreground);
+    margin: 0 0 var(--spacing-compact-xs);
+  }
+
+  .section-description,
+  p {
+    font-size: var(--text-sm);
+    color: var(--muted-foreground);
+    line-height: var(--leading-snug);
+    margin: 0;
+  }
+}
+
+// =====================================================================
+// COMPACT CARD VARIANTS
+// =====================================================================
+
+@mixin card-compact {
+  @include base.card;
+  padding: var(--spacing-compact-base) var(--spacing-compact-md);
+  gap: var(--spacing-compact-sm);
+  min-height: var(--section-card-compact-height);
+}
+
+@mixin card-compact-elevated {
+  @include card-compact;
+  @include effects.elevated-card;
+}
+
+@mixin card-compact-glass {
+  @include card-compact;
+  @include effects.glass-card;
+}
+
+// =====================================================================
+// COMPACT GRID LAYOUTS
+// =====================================================================
+
+@mixin grid-compact($min-width: 140px) {
+  @include section-grid($min-width, var(--spacing-compact-md));
+}
+
+@mixin list-compact {
+  @include list-stack(var(--spacing-compact-sm));
+}
+
+// =====================================================================
+// COMPACT TYPOGRAPHY
+// =====================================================================
+
+@mixin heading-compact($level: 5) {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-tight);
+  color: var(--foreground);
+  margin: 0;
+}
+
+@mixin body-compact {
+  font-size: var(--text-sm);
+  font-weight: var(--font-normal);
+  line-height: var(--leading-snug);
+  color: var(--foreground);
+  margin: 0;
+}
+
+@mixin caption-compact {
+  font-size: 0.6rem;
+  font-weight: var(--font-medium);
+  line-height: var(--leading-tight);
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+@mixin label-compact {
+  font-size: 0.6rem;
+  font-weight: var(--font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted-foreground);
+  line-height: 1.2;
+}
+
+// =====================================================================
+// COMPACT BADGES & INDICATORS
+// =====================================================================
+
+@mixin badge-compact($variant: 'default') {
+  @include components.badge-modern($variant);
+  font-size: 0.55rem;
+  padding: 1px 4px;
+  gap: 2px;
+}
+
+// =====================================================================
+// COMPACT EMPTY STATES
+// =====================================================================
+
+@mixin empty-state-compact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-compact-sm);
+  padding: var(--spacing-lg);
+  text-align: center;
+
+  .empty-icon {
+    font-size: 36px;
+    opacity: 0.25;
+  }
+
+  .empty-text {
+    font-size: var(--text-sm);
+    color: var(--muted-foreground);
+    margin: 0;
+  }
+}
+
+// =====================================================================
+// UTILITY: Apply Compact Mode to Section
+// =====================================================================
+
+@mixin apply-compact-mode {
+  // Reduce all spacing
+  gap: var(--spacing-compact-md);
+
+  // Reduce padding on cards
+  .card,
+  [class*="-card"],
+  [class$="-card"] {
+    padding: var(--spacing-compact-base) var(--spacing-compact-md);
+    gap: var(--spacing-compact-sm);
+  }
+
+  // Reduce grid gaps
+  [class*="-grid"],
+  [class$="-grid"] {
+    gap: var(--spacing-compact-md);
+  }
+
+  // Reduce list gaps
+  [class*="-list"],
+  [class$="-list"] {
+    gap: var(--spacing-compact-sm);
+  }
+}
+

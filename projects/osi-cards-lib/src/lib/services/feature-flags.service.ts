@@ -27,10 +27,11 @@
  * ```
  */
 
-import { Injectable, inject, InjectionToken, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { inject, Injectable, InjectionToken, PLATFORM_ID } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, distinctUntilChanged } from 'rxjs/operators';
+import { distinctUntilChanged, map } from 'rxjs/operators';
+import { MigrationFlags, DEFAULT_MIGRATION_FLAGS } from '../config/migration-flags.config';
 
 // ============================================================================
 // TYPES
@@ -71,7 +72,7 @@ export const OSI_FEATURE_FLAGS = {
 /**
  * Feature flag key type
  */
-export type FeatureFlagKey = typeof OSI_FEATURE_FLAGS[keyof typeof OSI_FEATURE_FLAGS];
+export type FeatureFlagKey = (typeof OSI_FEATURE_FLAGS)[keyof typeof OSI_FEATURE_FLAGS];
 
 /**
  * Feature flags configuration object
@@ -194,17 +195,27 @@ export const INITIAL_FEATURE_FLAGS = new InjectionToken<FeatureFlagsConfig>(
 // SERVICE
 // ============================================================================
 
+/**
+ * Injection token for migration flag overrides (merged from migration-flags.service.ts)
+ */
+export const MIGRATION_FLAGS_TOKEN = new InjectionToken<Partial<MigrationFlags>>('MIGRATION_FLAGS');
+
 @Injectable({
   providedIn: 'root',
 })
 export class FeatureFlagsService {
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly flags = new BehaviorSubject<Map<FeatureFlagKey, boolean>>(
-    new Map()
-  );
+  private readonly migrationFlagOverrides = inject(MIGRATION_FLAGS_TOKEN, { optional: true });
+  private readonly flags = new BehaviorSubject<Map<FeatureFlagKey, boolean>>(new Map());
 
   /** Observable of current flags state */
   readonly flags$ = this.flags.asObservable();
+
+  // ========== Migration Flags (merged from migration-flags.service.ts) ==========
+  private readonly migrationFlags: MigrationFlags = {
+    ...DEFAULT_MIGRATION_FLAGS,
+    ...this.migrationFlagOverrides,
+  };
 
   constructor() {
     this.initializeFlags();
@@ -231,7 +242,7 @@ export class FeatureFlagsService {
    */
   observe(flag: FeatureFlagKey): Observable<boolean> {
     return this.flags$.pipe(
-      map(flags => flags.get(flag) ?? FEATURE_FLAG_META[flag]?.defaultValue ?? false),
+      map((flags) => flags.get(flag) ?? FEATURE_FLAG_META[flag]?.defaultValue ?? false),
       distinctUntilChanged()
     );
   }
@@ -262,6 +273,51 @@ export class FeatureFlagsService {
     return Object.entries(FEATURE_FLAG_META)
       .filter(([_, meta]) => meta.experimental)
       .map(([key]) => key as FeatureFlagKey);
+  }
+
+  // ============================================================================
+  // MIGRATION FLAGS API (merged from migration-flags.service.ts)
+  // ============================================================================
+
+  /**
+   * Check if a migration flag is enabled
+   */
+  isMigrationEnabled(flag: keyof MigrationFlags): boolean {
+    return this.migrationFlags[flag];
+  }
+
+  /**
+   * Get all migration flags
+   */
+  getAllMigrationFlags(): MigrationFlags {
+    return { ...this.migrationFlags };
+  }
+
+  /**
+   * Get enabled migration flags
+   */
+  getEnabledMigrationFlags(): (keyof MigrationFlags)[] {
+    return (Object.keys(this.migrationFlags) as (keyof MigrationFlags)[])
+      .filter(key => this.migrationFlags[key]);
+  }
+
+  /**
+   * Get disabled migration flags
+   */
+  getDisabledMigrationFlags(): (keyof MigrationFlags)[] {
+    return (Object.keys(this.migrationFlags) as (keyof MigrationFlags)[])
+      .filter(key => !this.migrationFlags[key]);
+  }
+
+  /**
+   * Log migration flags status
+   */
+  logMigrationStatus(): void {
+    console.group('Migration Flags Status');
+    for (const [key, value] of Object.entries(this.migrationFlags)) {
+      console.log(`${key}: ${value ? '✅' : '❌'}`);
+    }
+    console.groupEnd();
   }
 
   // ============================================================================
@@ -310,9 +366,7 @@ export class FeatureFlagsService {
     if (value && meta.dependencies) {
       for (const dep of meta.dependencies) {
         if (!this.isEnabled(dep)) {
-          console.warn(
-            `Feature flag "${flag}" requires "${dep}" to be enabled first`
-          );
+          console.warn(`Feature flag "${flag}" requires "${dep}" to be enabled first`);
           return false;
         }
       }
@@ -421,7 +475,7 @@ export class FeatureFlagsService {
   private loadPersistedFlags(): FeatureFlagsConfig {
     try {
       const stored = localStorage.getItem('osi-cards-feature-flags');
-      return stored ? JSON.parse(stored) as FeatureFlagsConfig : {};
+      return stored ? (JSON.parse(stored) as FeatureFlagsConfig) : {};
     } catch {
       return {};
     }
@@ -493,10 +547,3 @@ export function provideFeatureFlags(config: FeatureFlagsConfig) {
     useValue: config,
   };
 }
-
-
-
-
-
-
-

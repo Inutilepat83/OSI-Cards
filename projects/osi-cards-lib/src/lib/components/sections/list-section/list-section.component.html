@@ -1,89 +1,38 @@
-<div class="ai-section ai-section--list">
-  <div class="ai-section__header">
-    <div class="ai-section__details">
-      <h3 class="ai-section__title">{{ section.title }}</h3>
-      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
-    </div>
-    <span *ngIf="items.length" class="ai-section__badge">
-      {{ items.length }} {{ items.length === 1 ? 'item' : 'items' }}
-    </span>
+<div class="list-container">
+  <!-- Section Header -->
+  <div class="section-header" *ngIf="section.title || section.description">
+    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
+    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
   </div>
 
-  <div class="ai-section__body">
-    <ng-container *ngIf="items.length; else listEmpty">
-      <div class="list-grid">
-        <article
-          *ngFor="let item of items; trackBy: trackItem; let idx = index"
-          class="list-card"
-          role="button"
-          tabindex="0"
-          [class.item-streaming]="getItemAnimationClass(getItemId(item, idx), idx) === 'item-streaming'"
-          [class.item-entered]="getItemAnimationClass(getItemId(item, idx), idx) === 'item-entered'"
-          [class.item-stagger-0]="getItemStaggerIndex(idx) === 0"
-          [class.item-stagger-1]="getItemStaggerIndex(idx) === 1"
-          [class.item-stagger-2]="getItemStaggerIndex(idx) === 2"
-          [class.item-stagger-3]="getItemStaggerIndex(idx) === 3"
-          [class.item-stagger-4]="getItemStaggerIndex(idx) === 4"
-          [class.item-stagger-5]="getItemStaggerIndex(idx) === 5"
-          [class.item-stagger-6]="getItemStaggerIndex(idx) === 6"
-          [class.item-stagger-7]="getItemStaggerIndex(idx) === 7"
-          [class.item-stagger-8]="getItemStaggerIndex(idx) === 8"
-          [class.item-stagger-9]="getItemStaggerIndex(idx) === 9"
-          [class.item-stagger-10]="getItemStaggerIndex(idx) === 10"
-          [class.item-stagger-11]="getItemStaggerIndex(idx) === 11"
-          [class.item-stagger-12]="getItemStaggerIndex(idx) === 12"
-          [class.item-stagger-13]="getItemStaggerIndex(idx) === 13"
-          [class.item-stagger-14]="getItemStaggerIndex(idx) === 14"
-          [class.item-stagger-15]="getItemStaggerIndex(idx) === 15"
-          (click)="onItemClick(item)"
-          (keydown.enter)="onItemClick(item)"
-          (keydown.space)="$event.preventDefault(); onItemClick(item)"
-        >
-          <!-- Header: Title -->
-          <header class="list-card__header">
-            <div class="list-card__header-content">
-              <h3 class="list-card__title">
-                {{ item.title || item.label }}
-              </h3>
-              <div class="list-card__badges" *ngIf="item.priority || item.status">
-                <span *ngIf="item.priority" class="list-card__badge list-card__badge--priority" [attr.data-priority]="item.priority ? (item.priority + '') : null">
-                  {{ item.priority }}
-                </span>
-                <span *ngIf="item.status" class="list-card__badge list-card__badge--status" [attr.data-status]="item.status ? (item.status + '') : null">
-                  {{ item.status }}
-                </span>
-              </div>
-            </div>
-            <div *ngIf="item.value" class="list-card__value">
-              {{ item.value }}
-            </div>
-          </header>
+  <!-- List Items -->
+  <div class="section-list" *ngIf="section.items && section.items.length > 0">
+    <div class="list-item" *ngFor="let item of section.items">
 
-          <!-- Description -->
-          <p *ngIf="getDisplayDescription(item)" class="list-card__description">
-            {{ getDisplayDescription(item) }}
-          </p>
+      <!-- Item Bullet -->
+      <span class="item-bullet">•</span>
 
-          <!-- Meta Information -->
-          <footer *ngIf="item.assignee || item.date" class="list-card__footer">
-            <div *ngIf="item.assignee" class="list-card__meta">
-              <lucide-icon name="user" size="14" class="list-card__meta-icon"></lucide-icon>
-              <span class="list-card__meta-text">Assigned to <strong>{{ item.assignee }}</strong></span>
-            </div>
-            <div *ngIf="item.date" class="list-card__meta">
-              <lucide-icon name="calendar" size="14" class="list-card__meta-icon"></lucide-icon>
-              <span class="list-card__meta-text">Due {{ item.date }}</span>
-            </div>
-          </footer>
-        </article>
+      <!-- Item Content -->
+      <div class="item-content">
+        <div class="item-header">
+          <h4 class="item-title">{{ item.title }}</h4>
+          <div class="item-badges">
+            <span class="item-status" [ngClass]="getStatusClass(item.status)" *ngIf="item.status">
+              {{ item.status }}
+            </span>
+            <span class="item-priority" [ngClass]="getPriorityClass(item.priority)" *ngIf="item.priority">
+              {{ item.priority }}
+            </span>
+          </div>
+        </div>
+
+        <p class="item-description" *ngIf="item.description">{{ item.description }}</p>
       </div>
-    </ng-container>
+    </div>
+  </div>
 
-    <ng-template #listEmpty>
-      <div class="section-empty">
-        <lucide-icon name="list" size="32" class="section-empty__icon"></lucide-icon>
-        <p class="section-empty__text">No items available</p>
-      </div>
-    </ng-template>
+  <!-- Empty State -->
+  <div class="list-empty" *ngIf="!section.items || section.items.length === 0">
+    <p class="empty-text">No items in list</p>
   </div>
 </div>

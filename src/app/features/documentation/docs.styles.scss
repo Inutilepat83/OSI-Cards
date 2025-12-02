@@ -1937,12 +1937,12 @@
   }
 
   .demo-preview {
-    padding: var(--docs-space-8);
+    padding: 0;
     background: var(--docs-bg);
     min-height: 250px;
     display: flex;
+    flex-direction: column;
     align-items: stretch;
-    justify-content: stretch;
     width: 100%;
 
     > * {

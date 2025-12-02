@@ -5,11 +5,11 @@ export * from './cards-container/cards-container.component';
 
 // Re-export from library for backwards compatibility
 export {
-  CardHeaderComponent,
   CardActionsComponent,
-  CardStreamingIndicatorComponent,
+  CardHeaderComponent,
   CardSectionListComponent,
   CardSkeletonComponent,
-  StreamingStage,
+  CardStreamingIndicatorComponent,
   SkeletonSectionType,
+  StreamingStage,
 } from '@osi-cards/components';

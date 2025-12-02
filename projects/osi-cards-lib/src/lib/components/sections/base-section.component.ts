@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, EventEmitter, Output, ChangeDetectorRef, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { CardField, CardItem, CardSection } from '../../models';
+import { SectionDesignParams, getSectionDesignParams } from '../../models/section-design-params.model';
 
 /**
  * Layout configuration for a section type.
@@ -54,7 +55,7 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
   @Output() itemInteraction = new EventEmitter<SectionInteraction<T>>();
 
   protected readonly cdr = inject(ChangeDetectorRef);
-  
+
   // Animation state tracking
   private readonly fieldAnimationStates = new Map<string, 'entering' | 'entered' | 'none'>();
   private readonly itemAnimationStates = new Map<string, 'entering' | 'entered' | 'none'>();
@@ -66,7 +67,7 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
   private readonly ITEM_ANIMATION_DURATION_MS = 350;
   private fieldsAnimated = false;
   private itemsAnimated = false;
-  
+
   // Performance: Batch change detection for animation state updates
   private pendingFieldAnimationUpdates = new Set<string>();
   private pendingItemAnimationUpdates = new Set<string>();
@@ -88,7 +89,7 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
     if (Array.isArray(this.section.items) && this.section.items.length > 0) {
       return this.section.items as CardItem[];
     }
-    
+
     // Fallback to fields if items are not available
     if (Array.isArray(this.section.fields) && this.section.fields.length > 0) {
       return (this.section.fields as CardField[]).map((field) => {
@@ -96,13 +97,13 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
         return {
           ...cardField,
           title: cardField.title ?? cardField.label ?? cardField.id,
-          description: cardField.description ?? (typeof cardField.meta?.['description'] === 'string' 
-            ? cardField.meta['description'] as string 
+          description: cardField.description ?? (typeof cardField.meta?.['description'] === 'string'
+            ? cardField.meta['description'] as string
             : undefined)
         } as CardItem;
       });
     }
-    
+
     return [];
   }
 
@@ -133,21 +134,21 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
    */
   getFieldAnimationClass(fieldId: string, index: number): string {
     const state = this.fieldAnimationStates.get(fieldId);
-    
+
     if (state === 'entering') {
       return 'field-streaming';
     }
-    
+
     if (state === 'entered') {
       return 'field-entered';
     }
-    
+
     // New field - mark as entering
     if (state === undefined || state === 'none') {
       this.markFieldEntering(fieldId, index);
       return 'field-streaming';
     }
-    
+
     return '';
   }
 
@@ -156,21 +157,21 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
    */
   getItemAnimationClass(itemId: string, index: number): string {
     const state = this.itemAnimationStates.get(itemId);
-    
+
     if (state === 'entering') {
       return 'item-streaming';
     }
-    
+
     if (state === 'entered') {
       return 'item-entered';
     }
-    
+
     // New item - mark as entering
     if (state === undefined || state === 'none') {
       this.markItemEntering(itemId, index);
       return 'item-streaming';
     }
-    
+
     return '';
   }
 
@@ -196,11 +197,11 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
     this.fieldAnimationStates.set(fieldId, 'entering');
     const appearanceTime = Date.now();
     this.fieldAnimationTimes.set(fieldId, appearanceTime);
-    
+
     // Calculate total delay (stagger + animation duration)
     const staggerDelay = index * this.FIELD_STAGGER_DELAY_MS;
     const totalDelay = staggerDelay + this.FIELD_ANIMATION_DURATION_MS;
-    
+
     // Mark as entered after animation completes
     // Batch change detection for multiple fields
     setTimeout(() => {
@@ -221,7 +222,7 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
     if (this.fieldAnimationUpdateRafId !== null) {
       return; // Already scheduled
     }
-    
+
     this.fieldAnimationUpdateRafId = requestAnimationFrame(() => {
       if (this.pendingFieldAnimationUpdates.size > 0) {
         // Single change detection for all pending updates
@@ -240,11 +241,11 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
     this.itemAnimationStates.set(itemId, 'entering');
     const appearanceTime = Date.now();
     this.itemAnimationTimes.set(itemId, appearanceTime);
-    
+
     // Calculate total delay (stagger + animation duration)
     const staggerDelay = index * this.ITEM_STAGGER_DELAY_MS;
     const totalDelay = staggerDelay + this.ITEM_ANIMATION_DURATION_MS;
-    
+
     // Mark as entered after animation completes
     // Batch change detection for multiple items
     setTimeout(() => {
@@ -265,7 +266,7 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
     if (this.itemAnimationUpdateRafId !== null) {
       return; // Already scheduled
     }
-    
+
     this.itemAnimationUpdateRafId = requestAnimationFrame(() => {
       if (this.pendingItemAnimationUpdates.size > 0) {
         // Single change detection for all pending updates
@@ -403,6 +404,21 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
    */
   protected isStreamingPlaceholder(value: unknown): boolean {
     return value === 'Streaming…' || value === 'Streaming...';
+  }
+
+  /**
+   * Get design parameters from section meta
+   * Provides easy access to design customization in templates
+   */
+  protected getDesignParams(): SectionDesignParams | undefined {
+    return getSectionDesignParams(this.section.meta);
+  }
+
+  /**
+   * Check if section has custom design parameters
+   */
+  protected get hasDesignParams(): boolean {
+    return !!this.getDesignParams();
   }
 
 }

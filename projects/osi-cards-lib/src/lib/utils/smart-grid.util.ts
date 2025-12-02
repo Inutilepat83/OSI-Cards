@@ -6,10 +6,21 @@
  * - Gap-filling tetris-like algorithm
  * - Content density measurement
  * - Priority-based condensation
+ *
+ * Height estimation is now delegated to height-estimation.util.ts for
+ * adaptive learning and text-aware calculations (Points 6-10).
  */
 
 import { CardSection, CardField } from '../models/card.model';
 import { gridLogger, GapAnalysis, ColumnAnalysis, PlacementDecision } from './smart-grid-logger.util';
+import {
+  HeightEstimator,
+  HeightEstimationContext,
+  estimateSectionHeight as estimateHeightNew,
+  measureContentDensity as measureDensityNew,
+  BASE_HEIGHT_ESTIMATES,
+  HEIGHT_MULTIPLIERS,
+} from './height-estimation.util';
 
 // Local implementation of calculateSmartColumns (previously from section-layout-registry)
 // UPDATED: Increased default spans for better gap filling
@@ -114,41 +125,25 @@ export interface LayoutResult {
 import { PriorityBand, PriorityBandConfig, PRIORITY_BANDS } from '../services/section-normalization.service';
 
 // ============================================================================
-// CONSTANTS
+// CONSTANTS - Re-exported from height-estimation.util.ts
 // ============================================================================
 
 // PRIORITY_BANDS is imported from section-normalization.service
 
 /**
  * Default height estimates per section type (in pixels)
+ * Re-exported from height-estimation.util.ts for backward compatibility
  */
-export const SECTION_HEIGHT_ESTIMATES: Record<string, number> = {
-  'overview': 180,
-  'contact-card': 160,
-  'network-card': 160,
-  'analytics': 200,
-  'stats': 180,
-  'chart': 280,
-  'map': 250,
-  'financials': 200,
-  'info': 180,
-  'list': 220,
-  'event': 240,
-  'timeline': 240,
-  'product': 260,
-  'solutions': 240,
-  'quotation': 160,
-  'text-reference': 180,
-  'default': 180,
-};
+export const SECTION_HEIGHT_ESTIMATES = BASE_HEIGHT_ESTIMATES;
 
 /**
  * Height per item/field (in pixels)
+ * Re-exported from height-estimation.util.ts for backward compatibility
  */
-export const HEIGHT_PER_ITEM = 50;
-export const HEIGHT_PER_FIELD = 32;
-export const SECTION_HEADER_HEIGHT = 48;
-export const SECTION_PADDING = 20;
+export const HEIGHT_PER_ITEM = HEIGHT_MULTIPLIERS.perItem;
+export const HEIGHT_PER_FIELD = HEIGHT_MULTIPLIERS.perField;
+export const SECTION_HEADER_HEIGHT = HEIGHT_MULTIPLIERS.headerHeight;
+export const SECTION_PADDING = HEIGHT_MULTIPLIERS.padding;
 
 // ============================================================================
 // CONTENT DENSITY MEASUREMENT
@@ -158,21 +153,13 @@ export const SECTION_PADDING = 20;
  * Measures the content density of a section
  * Higher density indicates more content that may need more space
  *
+ * Delegated to height-estimation.util.ts for consistency (Point 91).
+ *
  * @param section - The section to measure
  * @returns Density score (0-100+)
  */
 export function measureContentDensity(section: CardSection): number {
-  const textLength = (section.description?.length ?? 0) +
-    (section.fields?.reduce((acc: number, f: CardField) => acc + String(f.value ?? '').length + (f.label?.length ?? 0), 0) ?? 0);
-  const itemCount = section.items?.length ?? 0;
-  const fieldCount = section.fields?.length ?? 0;
-
-  // Calculate density score
-  const textScore = textLength / 50;  // 1 point per 50 chars
-  const itemScore = itemCount * 3;     // 3 points per item
-  const fieldScore = fieldCount * 2;   // 2 points per field
-
-  return Math.round(textScore + itemScore + fieldScore);
+  return measureDensityNew(section);
 }
 
 /**
@@ -198,29 +185,22 @@ export function calculateOptimalColumns(
 /**
  * Estimates the height of a section based on its content
  *
+ * Now uses adaptive learning and text-aware estimation via HeightEstimator (Points 6-10).
+ * The HeightEstimator uses a multi-stage approach:
+ * 1. Check for custom predictor (ML model support)
+ * 2. Use adaptive learned values if available
+ * 3. Calculate text-aware base estimate
+ * 4. Apply content-based adjustments
+ *
  * @param section - The section to estimate
+ * @param context - Optional context with container width for text-aware estimation
  * @returns Estimated height in pixels
  */
-export function estimateSectionHeight(section: CardSection): number {
-  const type = section.type?.toLowerCase() ?? 'default';
-  const baseHeight = SECTION_HEIGHT_ESTIMATES[type] ?? SECTION_HEIGHT_ESTIMATES['default'] ?? 120;
-
-  const itemCount = section.items?.length ?? 0;
-  const fieldCount = section.fields?.length ?? 0;
-
-  // Calculate content-based height
-  const itemsHeight = itemCount * HEIGHT_PER_ITEM;
-  const fieldsHeight = fieldCount * HEIGHT_PER_FIELD;
-  const contentHeight = Math.max(itemsHeight, fieldsHeight);
-
-  // Use the larger of base height or content-based height
-  const estimatedHeight = Math.max(
-    baseHeight as number,
-    SECTION_HEADER_HEIGHT + contentHeight + SECTION_PADDING
-  );
-
-  // Cap at reasonable maximum
-  return Math.min(estimatedHeight, 500);
+export function estimateSectionHeight(
+  section: CardSection,
+  context?: HeightEstimationContext
+): number {
+  return estimateHeightNew(section, context);
 }
 
 // ============================================================================

@@ -21,11 +21,11 @@ import { SectionLoaderService } from './section-loader.service';
 import { SectionTypeResolverService } from './section-type-resolver.service';
 import { AppConfigService } from '../../../../core/services/app-config.service';
 import { InfoSectionComponent, SectionInteraction } from '@osi-cards/sections';
+import { ErrorBoundaryComponent } from '@osi-cards/components';
+import { LoggingService } from '../../../../core/services/logging.service';
 
 /** Type alias for InfoSection field interaction */
 type InfoSectionFieldInteraction = Parameters<InfoSectionComponent['fieldInteraction']['emit']>[0];
-import { ErrorBoundaryComponent } from '../../../../core/error-boundary/error-boundary.component';
-import { LoggingService } from '../../../../core/services/logging.service';
 
 /**
  * Interface for dynamically loaded section component instances

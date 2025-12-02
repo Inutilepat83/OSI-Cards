@@ -1,43 +1,40 @@
-<div class="ai-section ai-section--network-card">
-  <div class="ai-section__header">
-    <div class="ai-section__details">
-      <h3 class="ai-section__title">{{ section.title }}</h3>
-      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
-    </div>
-    <span *ngIf="fields.length" class="ai-section__badge">
-      {{ fields.length }} {{ fields.length === 1 ? 'metric' : 'metrics' }}
-    </span>
+<div class="network-container">
+  <!-- Section Header -->
+  <div class="section-header" *ngIf="section.title || section.description">
+    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
+    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
   </div>
 
-  <div class="ai-section__body">
-    <ng-container *ngIf="fields.length; else networkEmpty">
-      <div class="network-grid">
-        <article
-          *ngFor="let field of fields; trackBy: trackField"
-          class="network-card"
-          role="button"
-          tabindex="0"
-          (click)="onItemClick(field)"
-          (keydown.enter)="onItemClick(field)"
-          (keydown.space)="$event.preventDefault(); onItemClick(field)"
-        >
-          <div class="network-card__content">
-            <span class="network-card__label">
-              {{ field.label || field.title }}
-            </span>
-            <span *ngIf="getDisplayValue(field)" class="network-card__value">
-              {{ getDisplayValue(field) }}
-            </span>
-          </div>
-        </article>
-      </div>
-    </ng-container>
+  <!-- Network Grid -->
+  <div class="network-grid" *ngIf="section.items && section.items.length > 0">
+    <div class="network-card" *ngFor="let node of section.items">
 
-    <ng-template #networkEmpty>
-      <div class="section-empty">
-        <lucide-icon name="share2" size="32" class="section-empty__icon"></lucide-icon>
-        <p class="section-empty__text">No network data available</p>
+      <div class="network-header">
+        <h4 class="network-name">{{ node.title }}</h4>
+        <span class="network-status" [ngClass]="getStatusClass(node.meta?.status)" *ngIf="node.meta?.status">
+          {{ node.meta?.status }}
+        </span>
       </div>
-    </ng-template>
+
+      <p class="network-description" *ngIf="node.description">{{ node.description }}</p>
+
+      <div class="network-metrics" *ngIf="node.meta">
+        <div class="metric" *ngIf="node.meta.influence">
+          <span class="metric-label">Influence</span>
+          <span class="metric-value">{{ node.meta.influence }}</span>
+        </div>
+        <div class="metric" *ngIf="node.meta.connections">
+          <span class="metric-label">Connections</span>
+          <span class="metric-value">{{ node.meta.connections }}</span>
+        </div>
+        <span class="network-type" *ngIf="node.meta.type">{{ node.meta.type }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="network-empty" *ngIf="!section.items || section.items.length === 0">
+    <div class="empty-icon">🔗</div>
+    <p class="empty-text">No network data available</p>
   </div>
 </div>

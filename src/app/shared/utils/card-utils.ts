@@ -162,11 +162,15 @@ export function ensureCardIds(config: AICardConfig): AICardConfig {
   }
 
   // Auto-generate section IDs
-  card.sections = card.sections?.map((section, index) => ensureSectionIds(section, index));
+  card.sections = card.sections?.map((section: CardSection, index: number) =>
+    ensureSectionIds(section, index)
+  );
 
   // Auto-generate action IDs
   if (card.actions) {
-    card.actions = card.actions.map((action, index) => ensureActionIds(action, index));
+    card.actions = card.actions.map((action: CardAction, index: number) =>
+      ensureActionIds(action, index)
+    );
   }
 
   return card;
@@ -427,12 +431,14 @@ export function sanitizeCardConfig(config: Partial<AICardConfig>): Partial<AICar
 
     // Sanitize sections recursively
     if (Array.isArray(sanitized.sections)) {
-      cleanedRoot.sections = sanitized.sections.map((section) => sanitizeSection(section));
+      cleanedRoot.sections = sanitized.sections.map((section: CardSection) =>
+        sanitizeSection(section)
+      );
     }
 
     // Sanitize actions
     if (Array.isArray(sanitized.actions)) {
-      cleanedRoot.actions = sanitized.actions.map((action) => sanitizeAction(action));
+      cleanedRoot.actions = sanitized.actions.map((action: CardAction) => sanitizeAction(action));
     }
 
     // Sanitize metadata if present
@@ -480,12 +486,12 @@ function sanitizeSection(section: CardSection): CardSection {
 
   // Sanitize fields
   if (Array.isArray(section.fields)) {
-    sanitized.fields = section.fields.map((field) => sanitizeField(field));
+    sanitized.fields = section.fields.map((field: CardField) => sanitizeField(field));
   }
 
   // Sanitize items
   if (Array.isArray(section.items)) {
-    sanitized.items = section.items.map((item) => sanitizeItem(item));
+    sanitized.items = section.items.map((item: CardItem) => sanitizeItem(item));
   }
 
   // Sanitize meta
@@ -695,14 +701,14 @@ function ensureSectionIds(section: CardSection, sectionIndex: number): CardSecti
 
   // Auto-generate field IDs
   if (nextSection.fields) {
-    nextSection.fields = nextSection.fields.map((field, fieldIndex) =>
+    nextSection.fields = nextSection.fields.map((field: CardField, fieldIndex: number) =>
       ensureFieldIds(field, sectionIndex, fieldIndex)
     );
   }
 
   // Auto-generate item IDs
   if (nextSection.items) {
-    nextSection.items = nextSection.items.map((item, itemIndex) =>
+    nextSection.items = nextSection.items.map((item: CardItem, itemIndex: number) =>
       ensureItemIds(item, sectionIndex, itemIndex)
     );
   }

@@ -2,144 +2,13 @@
   "cardTitle": "All Sections Demo - Minimal",
   "sections": [
     {
-      "title": "Info",
-      "type": "info",
-      "fields": [
-        {
-          "label": "Key",
-          "value": "Value"
-        }
-      ]
-    },
-    {
-      "title": "Analytics",
+      "title": "Key Metric",
       "type": "analytics",
       "fields": [
         {
           "label": "Score",
-          "value": "100%",
-          "percentage": 100
-        }
-      ]
-    },
-    {
-      "title": "Contact",
-      "type": "contact-card",
-      "fields": [
-        {
-          "title": "Contact Name",
-          "email": "contact@example.com"
-        }
-      ]
-    },
-    {
-      "title": "Network",
-      "type": "network-card",
-      "items": [
-        {
-          "title": "Partner"
-        }
-      ]
-    },
-    {
-      "title": "Location",
-      "type": "map",
-      "fields": [
-        {
-          "name": "Office",
-          "x": 0,
-          "y": 0
-        }
-      ]
-    },
-    {
-      "title": "Financials",
-      "type": "financials",
-      "fields": [
-        {
-          "label": "Revenue",
-          "value": "$1M"
-        }
-      ]
-    },
-    {
-      "title": "Events",
-      "type": "event",
-      "fields": [
-        {
-          "label": "Event",
-          "value": "TBD"
-        }
-      ]
-    },
-    {
-      "title": "List",
-      "type": "list",
-      "items": [
-        {
-          "title": "Item 1"
-        }
-      ]
-    },
-    {
-      "title": "Chart",
-      "type": "chart",
-      "chartType": "bar",
-      "chartData": {
-        "labels": ["A"],
-        "datasets": [
-          {
-            "data": [1]
-          }
-        ]
-      }
-    },
-    {
-      "title": "Product",
-      "type": "product",
-      "fields": [
-        {
-          "label": "Name",
-          "value": "Product"
-        }
-      ]
-    },
-    {
-      "title": "Solutions",
-      "type": "solutions",
-      "fields": [
-        {
-          "title": "Solution",
-          "description": "Description"
-        }
-      ]
-    },
-    {
-      "title": "Overview",
-      "type": "overview",
-      "fields": [
-        {
-          "label": "Summary",
-          "value": "Overview text"
-        }
-      ]
-    },
-    {
-      "title": "Quote",
-      "type": "quotation",
-      "fields": [
-        {
-          "value": "\"Quote text\""
-        }
-      ]
-    },
-    {
-      "title": "Reference",
-      "type": "text-reference",
-      "fields": [
-        {
-          "label": "Doc",
-          "value": "Document"
+          "value": "85%",
+          "percentage": 85
         }
       ]
     },
@@ -154,11 +23,146 @@
       ]
     },
     {
+      "title": "Basic Chart",
+      "type": "chart",
+      "chartType": "bar",
+      "chartData": {
+        "labels": ["A", "B", "C"],
+        "datasets": [
+          {
+            "data": [10, 20, 30]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Primary Contact",
+      "type": "contact-card",
+      "fields": [
+        {
+          "title": "Support Team",
+          "email": "support@company.com"
+        }
+      ]
+    },
+    {
+      "title": "Upcoming Event",
+      "type": "event",
+      "fields": [
+        {
+          "label": "Meeting",
+          "value": "Team Sync",
+          "date": "2025-01-15"
+        }
+      ]
+    },
+    {
+      "title": "Fallback",
+      "type": "fallback"
+    },
+    {
+      "title": "FAQ",
+      "type": "faq",
+      "items": [
+        {
+          "title": "Question?",
+          "description": "Answer here."
+        }
+      ]
+    },
+    {
+      "title": "Revenue",
+      "type": "financials",
+      "fields": [
+        {
+          "label": "Total Revenue",
+          "value": "$10M"
+        }
+      ]
+    },
+    {
+      "title": "Gallery",
+      "type": "gallery",
+      "items": [
+        {
+          "title": "Image 1"
+        }
+      ]
+    },
+    {
+      "title": "Quick Info",
+      "type": "info",
+      "fields": [
+        {
+          "label": "Status",
+          "value": "Active"
+        }
+      ]
+    },
+    {
+      "title": "Tasks",
+      "type": "list",
+      "items": [
+        {
+          "title": "Task 1"
+        }
+      ]
+    },
+    {
+      "title": "Location",
+      "type": "map",
+      "fields": [
+        {
+          "name": "Main Office",
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "title": "Partners",
+      "type": "network-card",
+      "items": [
+        {
+          "title": "Partner Organization"
+        }
+      ]
+    },
+    {
       "title": "News",
       "type": "news",
       "items": [
         {
-          "title": "News Item"
+          "title": "Company Update"
+        }
+      ]
+    },
+    {
+      "title": "Overview",
+      "type": "overview",
+      "fields": [
+        {
+          "label": "Summary",
+          "value": "Brief overview of the topic"
+        }
+      ]
+    },
+    {
+      "title": "Product",
+      "type": "product",
+      "fields": [
+        {
+          "label": "Name",
+          "value": "Basic Product"
+        }
+      ]
+    },
+    {
+      "title": "Testimonial",
+      "type": "quotation",
+      "fields": [
+        {
+          "value": "\"Great product!\""
         }
       ]
     },
@@ -173,8 +177,45 @@
       ]
     },
     {
-      "title": "Fallback",
-      "type": "fallback"
+      "title": "Solution",
+      "type": "solutions",
+      "fields": [
+        {
+          "title": "Consulting Service",
+          "description": "Professional consultation"
+        }
+      ]
+    },
+    {
+      "title": "References",
+      "type": "text-reference",
+      "fields": [
+        {
+          "label": "Link",
+          "value": "Reference Document"
+        }
+      ]
+    },
+    {
+      "title": "Timeline",
+      "type": "timeline",
+      "items": [
+        {
+          "title": "Event 1",
+          "meta": {
+            "year": "2024"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Videos",
+      "type": "video",
+      "items": [
+        {
+          "title": "Video Title"
+        }
+      ]
     }
   ]
 }

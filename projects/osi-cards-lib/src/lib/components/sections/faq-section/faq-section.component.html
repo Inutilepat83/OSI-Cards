@@ -1,88 +1,39 @@
-<div class="faq-section">
-  @if (items.length > 0) {
-    <!-- Optional expand/collapse all buttons -->
-    @if (items.length > 2) {
-      <div class="faq-controls">
-        <button
-          type="button"
-          class="faq-control-btn"
-          (click)="expandAll()"
-          aria-label="Expand all">
-          <lucide-icon name="chevrons-down" [size]="14"></lucide-icon>
-          Expand all
-        </button>
-        <button
-          type="button"
-          class="faq-control-btn"
-          (click)="collapseAll()"
-          aria-label="Collapse all">
-          <lucide-icon name="chevrons-up" [size]="14"></lucide-icon>
-          Collapse all
-        </button>
+<div class="faq-container">
+  <!-- Section Header -->
+  <div class="section-header" *ngIf="section.title || section.description">
+    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
+    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
+  </div>
+
+  <!-- FAQ List -->
+  <div class="faq-list" *ngIf="section.items && section.items.length > 0">
+    <div class="faq-item" *ngFor="let item of section.items; let i = index" [class.is-expanded]="isExpanded(i)">
+      <!-- Question (Clickable) -->
+      <button
+        class="faq-question"
+        (click)="toggle(i)"
+        [attr.aria-expanded]="isExpanded(i)"
+        [attr.aria-controls]="'faq-answer-' + i"
+      >
+        <span class="question-text">{{ getQuestion(item) }}</span>
+        <span class="question-icon" [class.rotated]="isExpanded(i)">
+          <span class="chevron">›</span>
+        </span>
+      </button>
+
+      <!-- Answer (Expandable) -->
+      <div class="faq-answer" [id]="'faq-answer-' + i" *ngIf="isExpanded(i)" [@fadeInOut]>
+        <p class="answer-text">{{ getAnswer(item) }}</p>
+        <span class="answer-category" *ngIf="item.meta?.category">
+          {{ item.meta?.category }}
+        </span>
       </div>
-    }
-
-    <div class="faq-list" role="list">
-      @for (item of items; track trackItem($index, item); let i = $index) {
-        <div
-          class="faq-item"
-          [class.faq-item--expanded]="isExpanded(item, i)"
-          [style.--stagger-index]="getItemStaggerIndex(i)"
-          [ngClass]="getItemAnimationClass(getItemId(item, i), i)"
-          role="listitem">
-
-          <!-- Question header (clickable) -->
-          <button
-            type="button"
-            class="faq-question"
-            [attr.aria-expanded]="isExpanded(item, i)"
-            [attr.aria-controls]="'faq-answer-' + i"
-            (click)="toggleItem(item, i)">
-
-            <span class="faq-question-text">
-              @if (item.icon) {
-                <lucide-icon [name]="item.icon" [size]="18" class="faq-icon"></lucide-icon>
-              }
-              {{ getQuestion(item) }}
-            </span>
-
-            <lucide-icon
-              [name]="isExpanded(item, i) ? 'chevron-up' : 'chevron-down'"
-              [size]="18"
-              class="faq-chevron">
-            </lucide-icon>
-          </button>
-
-          <!-- Answer panel (collapsible) -->
-          <div
-            [id]="'faq-answer-' + i"
-            class="faq-answer"
-            [class.faq-answer--visible]="isExpanded(item, i)"
-            role="region"
-            [attr.aria-hidden]="!isExpanded(item, i)">
-            <div class="faq-answer-content">
-              {{ getAnswer(item) }}
-
-              @if (item.url) {
-                <a
-                  [href]="item.url"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="faq-link">
-                  Learn more
-                  <lucide-icon name="external-link" [size]="12"></lucide-icon>
-                </a>
-              }
-            </div>
-          </div>
-        </div>
-      }
     </div>
-  } @else {
-    <div class="faq-empty">
-      <lucide-icon name="help-circle" [size]="24"></lucide-icon>
-      <span>No FAQs available</span>
-    </div>
-  }
+  </div>
+
+  <!-- Empty State -->
+  <div class="faq-empty" *ngIf="!section.items || section.items.length === 0">
+    <div class="empty-icon">❓</div>
+    <p class="empty-text">No FAQs available</p>
+  </div>
 </div>
-

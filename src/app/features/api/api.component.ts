@@ -1,17 +1,25 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
+import {
+  ComingSoonComponent,
+  ComingSoonConfig,
+} from '../../shared/components/coming-soon/coming-soon.component';
 
 /**
- * API documentation page component
+ * API page component
  */
 @Component({
   selector: 'app-api',
   standalone: true,
-  imports: [CommonModule, RouterModule, LucideIconsModule],
-  templateUrl: './api.component.html',
-  styleUrls: ['./api.component.scss'],
+  imports: [ComingSoonComponent],
+  template: `<app-coming-soon [config]="config"></app-coming-soon>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ApiComponent {}
+export class ApiComponent {
+  readonly config: ComingSoonConfig = {
+    title: 'API',
+    subtitle: 'API documentation and reference',
+    icon: 'code',
+    description:
+      'This page is under development. Check back soon for API documentation and integration guides.',
+  };
+}

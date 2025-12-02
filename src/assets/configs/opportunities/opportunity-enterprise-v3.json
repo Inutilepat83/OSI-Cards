@@ -4,274 +4,35 @@
   "cardType": "opportunity",
   "sections": [
     {
-      "title": "Opportunity Overview",
-      "type": "overview",
+      "title": "Overview",
+      "type": "info",
       "fields": [
-        { "label": "Opportunity Type", "value": "Digital Transformation" },
-        { "label": "Industry Focus", "value": "Manufacturing" },
-        { "label": "Estimated Value", "value": "$25M - $35M" },
+        { "label": "Type", "value": "Digital Transformation" },
+        { "label": "Industry", "value": "Manufacturing" },
+        { "label": "Value", "value": "$25M - $35M" },
         { "label": "Timeline", "value": "36 Months" },
-        { "label": "Lead Source", "value": "Strategic Partnership" },
-        { "label": "Decision Maker", "value": "C-Suite" },
-        { "label": "Competition Level", "value": "Medium" },
-        { "label": "Success Probability", "value": "85%" }
+        { "label": "Probability", "value": "85%" }
       ]
     },
     {
-      "title": "Project Progress",
+      "title": "Progress",
       "type": "analytics",
       "fields": [
         {
-          "label": "Discovery Phase",
-          "value": "100% Complete",
-          "percentage": 100,
-          "performance": "excellent",
-          "trend": "stable"
-        },
-        {
-          "label": "Strategy Development",
-          "value": "95% Complete",
+          "label": "Strategy",
+          "value": "95%",
           "percentage": 95,
-          "performance": "excellent",
           "trend": "up"
-        },
-        {
-          "label": "Contract Negotiation",
-          "value": "80% Complete",
-          "percentage": 80,
-          "performance": "excellent",
-          "trend": "up"
-        },
-        {
-          "label": "Resource Planning",
-          "value": "75% Complete",
-          "percentage": 75,
-          "performance": "good",
-          "trend": "up"
-        },
-        {
-          "label": "Stakeholder Alignment",
-          "value": "90% Complete",
-          "percentage": 90,
-          "performance": "excellent",
-          "trend": "up"
-        }
-      ]
-    },
-    {
-      "title": "Revenue Forecast",
-      "type": "chart",
-      "chartType": "line",
-      "chartData": {
-        "labels": ["Q1 2025", "Q2 2025", "Q3 2025", "Q4 2025", "Q1 2026"],
-        "datasets": [
-          {
-            "label": "Expected Revenue (M)",
-            "data": [5, 8, 12, 15, 20],
-            "borderColor": "#10b981",
-            "backgroundColor": "rgba(16, 185, 129, 0.1)"
-          }
-        ]
-      }
-    },
-    {
-      "title": "Financial Analysis",
-      "type": "financials",
-      "fields": [
-        {
-          "label": "Total Opportunity Value",
-          "value": "$30M",
-          "format": "currency",
-          "change": 0,
-          "trend": "stable"
-        },
-        {
-          "label": "Expected Cost Savings",
-          "value": "$10.5M annually",
-          "format": "currency",
-          "change": 35,
-          "trend": "up"
-        },
-        {
-          "label": "Revenue Growth Potential",
-          "value": "$7.5M annually",
-          "format": "currency",
-          "change": 25,
-          "trend": "up"
-        },
-        {
-          "label": "ROI Projection",
-          "value": "320%",
-          "format": "percentage",
-          "change": 32,
-          "trend": "up"
-        },
-        {
-          "label": "Payback Period",
-          "value": "18 months",
-          "format": "text",
-          "trend": "stable"
-        }
-      ]
-    },
-    {
-      "title": "Project Team",
-      "type": "contact-card",
-      "fields": [
-        {
-          "label": "Executive Sponsor",
-          "title": "Robert Anderson",
-          "value": "Chief Executive Officer",
-          "email": "robert.anderson@client.com",
-          "phone": "+1 555 9000",
-          "role": "Executive",
-          "department": "Executive"
-        },
-        {
-          "label": "Project Lead",
-          "title": "Jennifer Martinez",
-          "value": "Chief Technology Officer",
-          "email": "jennifer.martinez@client.com",
-          "phone": "+1 555 9001",
-          "role": "Executive",
-          "department": "Technology"
-        },
-        {
-          "label": "Finance Lead",
-          "title": "Michael Brown",
-          "value": "Chief Financial Officer",
-          "email": "michael.brown@client.com",
-          "phone": "+1 555 9002",
-          "role": "Executive",
-          "department": "Finance"
-        }
-      ]
-    },
-    {
-      "title": "Project Activities",
-      "type": "list",
-      "items": [
-        {
-          "title": "Infrastructure Modernization",
-          "description": "Cloud migration and modernization of core systems",
-          "icon": "☁️",
-          "status": "pending"
-        },
-        {
-          "title": "AI & Analytics Integration",
-          "description": "Implement AI-powered analytics and automation",
-          "icon": "🤖",
-          "status": "pending"
-        },
-        {
-          "title": "Security Enhancement",
-          "description": "Zero Trust security architecture implementation",
-          "icon": "🔐",
-          "status": "pending"
-        },
-        {
-          "title": "Process Automation",
-          "description": "Automate 80% of manual processes",
-          "icon": "⚙️",
-          "status": "pending"
-        }
-      ]
-    },
-    {
-      "title": "Project Timeline",
-      "type": "event",
-      "fields": [
-        {
-          "label": "Phase 1: Foundation",
-          "value": "Q1-Q2 2025 - Infrastructure & Security",
-          "date": "2025-06-30",
-          "category": "Phase",
-          "status": "pending",
-          "attendees": 50
-        },
-        {
-          "label": "Phase 2: Migration",
-          "value": "Q3-Q4 2025 - Application & Data Migration",
-          "date": "2025-12-31",
-          "category": "Phase",
-          "status": "pending",
-          "attendees": 75
-        },
-        {
-          "label": "Phase 3: Optimization",
-          "value": "Q1-Q2 2026 - AI & Analytics Integration",
-          "date": "2026-06-30",
-          "category": "Phase",
-          "status": "pending",
-          "attendees": 100
-        }
-      ]
-    },
-    {
-      "title": "Project Locations",
-      "type": "map",
-      "fields": [
-        {
-          "name": "Client HQ",
-          "x": 25,
-          "y": 35,
-          "type": "client",
-          "address": "Detroit, MI, USA"
-        },
-        {
-          "name": "Manufacturing Plant 1",
-          "x": 28,
-          "y": 32,
-          "type": "facility",
-          "address": "Chicago, IL, USA"
-        },
-        {
-          "name": "Manufacturing Plant 2",
-          "x": 18,
-          "y": 38,
-          "type": "facility",
-          "address": "Cleveland, OH, USA"
-        },
-        {
-          "name": "Data Center",
-          "x": 22,
-          "y": 36,
-          "type": "datacenter",
-          "address": "Columbus, OH, USA"
         }
       ]
     }
   ],
   "actions": [
     {
-      "label": "View Full Proposal",
+      "label": "View Details",
       "type": "question",
       "variant": "primary",
-      "icon": "📋",
-      "question": "Can you show me the full proposal details?"
-    },
-    {
-      "label": "Schedule Executive Review",
-      "type": "agent",
-      "variant": "primary",
-      "icon": "📅",
-      "agentId": "calendar-agent",
-      "agentContext": { "action": "schedule_executive_review" }
-    },
-    {
-      "label": "Contact Decision Maker",
-      "type": "mail",
-      "variant": "secondary",
-      "icon": "📧",
-      "email": {
-        "contact": {
-          "name": "Robert Anderson",
-          "email": "robert.anderson@client.com",
-          "role": "Chief Executive Officer"
-        },
-        "subject": "Digital Transformation Partnership - Executive Proposal",
-        "body": "Dear Robert Anderson,\n\nI hope this email finds you well. I wanted to follow up on our recent discussions regarding the Digital Transformation Partnership opportunity for your organization.\n\nAs discussed, we are proposing a comprehensive 36-month digital transformation initiative that will:\n\n• Modernize infrastructure across 5 major divisions\n• Migrate 120+ enterprise applications to a multi-cloud strategy\n• Process 500TB+ of data migration\n• Implement AI-powered analytics and automation\n• Enhance security with zero trust architecture\n• Automate 80% of manual processes\n\n**Expected Business Impact:**\n• 35% operational cost reduction\n• 50% efficiency improvement\n• 25% revenue growth potential\n• 80% faster innovation enablement\n\n**Financial Summary:**\n• Total Opportunity Value: $30M\n• Expected Annual Cost Savings: $10.5M\n• Expected Revenue Growth: $7.5M annually\n• Projected ROI: 320%\n• Payback Period: 18 months\n\nI would welcome the opportunity to schedule an executive review meeting to present the full proposal and discuss how this transformation aligns with your strategic objectives.\n\nPlease let me know your availability, and I'll coordinate with my team to schedule a convenient time.\n\nBest regards,\nOrange Business Sales Team"
-      }
+      "icon": "📋"
     }
   ]
 }

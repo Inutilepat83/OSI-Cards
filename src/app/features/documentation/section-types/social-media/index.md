@@ -20,6 +20,7 @@ The **Social Media Section** (`type: "social-media"`) is used for displays socia
 
 ## Use Cases
 
+- Social profiles
 - Social feeds
 - Engagement tracking
 - Social monitoring
@@ -35,6 +36,8 @@ The **Social Media Section** (`type: "social-media"`) is used for displays socia
 | `handle` | string | Social media handle |
 | `url` | string | Profile URL |
 | `followers` | number | Follower count |
+| `engagement` | number | Engagement rate |
+| `verified` | boolean | Verified account |
 
 ### Items Schema
 
@@ -44,6 +47,8 @@ The **Social Media Section** (`type: "social-media"`) is used for displays socia
 | `handle` | string | Social media handle |
 | `url` | string | Profile URL |
 | `followers` | number | Follower count |
+| `engagement` | number | Engagement rate |
+| `verified` | boolean | Verified account |
 
 ## Complete Example
 
@@ -51,19 +56,54 @@ The **Social Media Section** (`type: "social-media"`) is used for displays socia
 {
   "title": "Social Media Presence",
   "type": "social-media",
-  "description": "Company social media profiles",
+  "description": "Official company social profiles and engagement",
   "fields": [
     {
       "platform": "linkedin",
-      "handle": "@company",
-      "url": "https://linkedin.com/company/example",
-      "followers": 50000
+      "handle": "Nexus Technologies",
+      "url": "https://linkedin.com/company/nexus-tech",
+      "followers": 125000,
+      "engagement": 4.8,
+      "verified": true
     },
     {
       "platform": "twitter",
-      "handle": "@company",
-      "url": "https://twitter.com/company",
-      "followers": 25000
+      "handle": "@NexusTech",
+      "url": "https://twitter.com/NexusTech",
+      "followers": 87500,
+      "engagement": 3.2,
+      "verified": true
+    },
+    {
+      "platform": "youtube",
+      "handle": "Nexus Technologies",
+      "url": "https://youtube.com/@nexustech",
+      "followers": 45000,
+      "engagement": 6.1,
+      "verified": true
+    },
+    {
+      "platform": "github",
+      "handle": "nexus-tech",
+      "url": "https://github.com/nexus-tech",
+      "followers": 12500,
+      "verified": false
+    },
+    {
+      "platform": "instagram",
+      "handle": "@nexustech.official",
+      "url": "https://instagram.com/nexustech.official",
+      "followers": 32000,
+      "engagement": 5.4,
+      "verified": true
+    },
+    {
+      "platform": "facebook",
+      "handle": "NexusTechnologies",
+      "url": "https://facebook.com/NexusTechnologies",
+      "followers": 28000,
+      "engagement": 2.1,
+      "verified": true
     }
   ]
 }
@@ -89,13 +129,14 @@ The **Social Media Section** (`type: "social-media"`) is used for displays socia
 1. Include platform information
 2. Show engagement metrics
 3. Add timestamps
-4. Include author information
+4. Include profile links
+5. Show follower counts
 
 ## Component Information
 
-- **Selector:** `app-social-media-section`
+- **Selector:** `lib-social-media-section`
 - **Component Path:** `./lib/components/sections/social-media-section/social-media-section.component`
-- **Style Path:** `./lib/styles/components/sections/_social-media.scss`
+
 
 ## Related Documentation
 

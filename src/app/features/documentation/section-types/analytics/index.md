@@ -15,15 +15,16 @@ The **Analytics Section** (`type: "analytics"`) is used for displays metrics wit
 | Uses Items | No |
 | Default Columns | 2 |
 | Supports Collapse | Yes |
-| Aliases | `metrics`, `stats` |
+| Aliases | None |
 
 
 ## Use Cases
 
 - Performance metrics
-- KPIs
+- KPIs and dashboards
 - Growth statistics
-- Analytics dashboards
+- Sales analytics
+- Customer health scores
 
 ## Data Schema
 
@@ -45,40 +46,103 @@ The **Analytics Section** (`type: "analytics"`) is used for displays metrics wit
 
 ```json
 {
-  "title": "Performance Analytics",
+  "title": "Q4 2024 Performance Dashboard",
   "type": "analytics",
-  "description": "Key performance indicators and metrics",
+  "description": "Comprehensive business metrics and KPIs",
   "fields": [
     {
-      "label": "Performance Score",
-      "value": "95%",
-      "percentage": 95,
+      "label": "Revenue Growth",
+      "value": "47.3% YoY",
+      "percentage": 47,
       "performance": "excellent",
       "trend": "up",
-      "change": 5.2
+      "change": 12.8
     },
     {
-      "label": "Growth Rate",
-      "value": "25% YoY",
-      "percentage": 25,
+      "label": "Customer Acquisition Cost",
+      "value": "$124",
+      "percentage": 78,
+      "performance": "good",
+      "trend": "down",
+      "change": -8.5
+    },
+    {
+      "label": "Monthly Active Users",
+      "value": "2.4M",
+      "percentage": 89,
+      "performance": "excellent",
+      "trend": "up",
+      "change": 31.2
+    },
+    {
+      "label": "Net Promoter Score",
+      "value": "72",
+      "percentage": 72,
+      "performance": "excellent",
+      "trend": "up",
+      "change": 5
+    },
+    {
+      "label": "Customer Lifetime Value",
+      "value": "$8,450",
+      "percentage": 84,
+      "performance": "excellent",
+      "trend": "up",
+      "change": 18.3
+    },
+    {
+      "label": "Churn Rate",
+      "value": "2.1%",
+      "percentage": 21,
+      "performance": "excellent",
+      "trend": "down",
+      "change": -0.8
+    },
+    {
+      "label": "Average Deal Size",
+      "value": "$45K",
+      "percentage": 65,
       "performance": "good",
       "trend": "up",
-      "change": 8.1
+      "change": 7.2
     },
     {
-      "label": "Market Share",
-      "value": "12%",
-      "percentage": 12,
+      "label": "Sales Cycle Length",
+      "value": "34 days",
+      "percentage": 55,
       "performance": "average",
       "trend": "stable",
+      "change": -2
+    },
+    {
+      "label": "Pipeline Coverage",
+      "value": "4.2x",
+      "percentage": 84,
+      "performance": "excellent",
+      "trend": "up",
       "change": 0.5
     },
     {
-      "label": "Customer Satisfaction",
-      "value": "4.8/5",
-      "percentage": 96,
+      "label": "Win Rate",
+      "value": "38%",
+      "percentage": 38,
+      "performance": "average",
+      "trend": "up",
+      "change": 3.1
+    },
+    {
+      "label": "Employee Satisfaction",
+      "value": "4.6/5",
+      "percentage": 92,
       "performance": "excellent",
-      "trend": "up"
+      "trend": "stable"
+    },
+    {
+      "label": "Product Uptime",
+      "value": "99.97%",
+      "percentage": 99,
+      "performance": "excellent",
+      "trend": "stable"
     }
   ]
 }
@@ -88,13 +152,13 @@ The **Analytics Section** (`type: "analytics"`) is used for displays metrics wit
 
 ```json
 {
-  "title": "Analytics",
+  "title": "Key Metric",
   "type": "analytics",
   "fields": [
     {
       "label": "Score",
-      "value": "100%",
-      "percentage": 100
+      "value": "85%",
+      "percentage": 85
     }
   ]
 }
@@ -106,12 +170,13 @@ The **Analytics Section** (`type: "analytics"`) is used for displays metrics wit
 2. Use trend indicators (up/down/stable)
 3. Show change values when available
 4. Group related metrics together
+5. Use performance ratings for quick assessment
 
 ## Component Information
 
-- **Selector:** `app-analytics-section`
+- **Selector:** `lib-analytics-section`
 - **Component Path:** `./lib/components/sections/analytics-section/analytics-section.component`
-- **Style Path:** `./lib/styles/components/sections/_analytics.scss`
+
 
 ## Related Documentation
 

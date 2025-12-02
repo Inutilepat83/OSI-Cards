@@ -38,7 +38,7 @@ export const environment = {
   performance: {
     enableChangeDetectionProfiling: true,
     enableBundleAnalysis: false,
-    cacheTimeout: 3600000, // 1 hour (60 * 60 * 1000 ms)
+    cacheTimeout: 0, // Cache disabled in dev for fresh data on every request
     debounceTime: 300, // milliseconds
   },
 

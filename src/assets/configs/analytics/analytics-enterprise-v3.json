@@ -1,192 +1,36 @@
 {
-  "cardTitle": "Customer Health Scorecard",
-  "cardSubtitle": "Account Management Insights & Analytics",
+  "cardTitle": "Global Sales Performance",
+  "cardSubtitle": "Multi-Region FY2024 Analysis",
   "cardType": "analytics",
   "sections": [
     {
-      "title": "Account Overview",
-      "type": "overview",
+      "title": "Overview",
+      "type": "info",
       "fields": [
-        { "label": "Customer Name", "value": "TechVenture GmbH" },
-        { "label": "Industry", "value": "Software Development" },
-        { "label": "Contract Value", "value": "€1.2M Annual" },
-        { "label": "Renewal Date", "value": "Q2 2025" },
-        { "label": "Account Manager", "value": "Sarah Chen" },
-        { "label": "Risk Level", "value": "Low" },
-        { "label": "Customer Since", "value": "2019" },
-        { "label": "Products in Use", "value": "5 Enterprise Products" }
+        { "label": "Dashboard", "value": "Global Sales" },
+        { "label": "Period", "value": "FY2024" },
+        { "label": "Regions", "value": "EMEA, APAC, Americas" }
       ]
     },
     {
-      "title": "Health Indicators",
+      "title": "Performance",
       "type": "analytics",
       "fields": [
         {
-          "label": "Satisfaction Score",
-          "value": "8.7/10",
-          "percentage": 87,
-          "performance": "excellent",
+          "label": "Revenue",
+          "value": "$850M",
+          "percentage": 118,
           "trend": "up"
-        },
-        {
-          "label": "Product Usage",
-          "value": "94% Features",
-          "percentage": 94,
-          "performance": "excellent",
-          "trend": "stable"
-        },
-        {
-          "label": "Support Tickets",
-          "value": "3 Open",
-          "percentage": 15,
-          "performance": "good",
-          "trend": "down"
-        },
-        {
-          "label": "Expansion Opportunity",
-          "value": "€350K Potential",
-          "percentage": 70,
-          "performance": "good",
-          "trend": "up"
-        },
-        {
-          "label": "Renewal Probability",
-          "value": "95%",
-          "percentage": 95,
-          "performance": "excellent",
-          "trend": "stable"
-        }
-      ]
-    },
-    {
-      "title": "Usage Trend Analysis",
-      "type": "chart",
-      "chartType": "line",
-      "chartData": {
-        "labels": ["Q1 2024", "Q2 2024", "Q3 2024", "Q4 2024", "Q1 2025"],
-        "datasets": [
-          {
-            "label": "Active Users",
-            "data": [1100, 1150, 1200, 1220, 1250],
-            "borderColor": "#10b981",
-            "backgroundColor": "rgba(16, 185, 129, 0.1)"
-          },
-          {
-            "label": "Monthly Logins (K)",
-            "data": [38, 40, 42, 43, 45],
-            "borderColor": "#3b82f6",
-            "backgroundColor": "rgba(59, 130, 246, 0.1)"
-          }
-        ]
-      }
-    },
-    {
-      "title": "Feature Adoption Distribution",
-      "type": "chart",
-      "chartType": "doughnut",
-      "chartData": {
-        "labels": ["Core Features", "Advanced Features", "Enterprise Features"],
-        "datasets": [
-          {
-            "label": "Adoption %",
-            "data": [98, 85, 75],
-            "backgroundColor": ["#10b981", "#3b82f6", "#8b5cf6"]
-          }
-        ]
-      }
-    },
-    {
-      "title": "Key Insights",
-      "type": "list",
-      "items": [
-        {
-          "title": "High Engagement",
-          "description": "Customer shows strong product adoption and active usage",
-          "icon": "✅",
-          "status": "completed"
-        },
-        {
-          "title": "Expansion Ready",
-          "description": "High likelihood of upsell to premium features package",
-          "icon": "💰",
-          "status": "pending"
-        },
-        {
-          "title": "Renewal Safe",
-          "description": "Low risk of churn, strong relationship indicators",
-          "icon": "🔒",
-          "status": "completed"
-        }
-      ]
-    },
-    {
-      "title": "Statistics Summary",
-      "type": "stats",
-      "fields": [
-        {
-          "label": "Total Active Users",
-          "value": "1,250",
-          "performance": "excellent"
-        },
-        {
-          "label": "Monthly API Calls",
-          "value": "2.5M",
-          "performance": "excellent"
-        },
-        {
-          "label": "Feature Adoption Rate",
-          "value": "94%",
-          "performance": "excellent"
-        },
-        { "label": "NPS Score", "value": "72", "performance": "excellent" }
-      ]
-    },
-    {
-      "title": "Account Recommendations",
-      "type": "text-reference",
-      "fields": [
-        {
-          "label": "Upsell Opportunity",
-          "value": "Premium features package - €350K potential revenue",
-          "reference": {
-            "company": "TechVenture GmbH",
-            "testimonial": "Customer is actively exploring advanced features and has budget approved"
-          }
-        },
-        {
-          "label": "Renewal Strategy",
-          "value": "Early renewal discount - 15% for 3-year commitment",
-          "reference": {
-            "company": "TechVenture GmbH",
-            "testimonial": "Strong relationship with CTO and executive sponsor"
-          }
         }
       ]
     }
   ],
   "actions": [
     {
-      "label": "Update Account Status",
-      "type": "agent",
-      "variant": "primary",
-      "icon": "💾",
-      "agentId": "account-agent",
-      "agentContext": { "action": "update_account_status" }
-    },
-    {
-      "label": "Plan Renewal",
-      "type": "agent",
-      "variant": "primary",
-      "icon": "📅",
-      "agentId": "billing-agent",
-      "agentContext": { "action": "plan_renewal" }
-    },
-    {
       "label": "Export Report",
       "type": "question",
-      "variant": "secondary",
-      "icon": "📥",
-      "question": "How can I export this report?"
+      "variant": "primary",
+      "icon": "📥"
     }
   ]
 }

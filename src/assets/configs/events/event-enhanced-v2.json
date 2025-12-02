@@ -5,115 +5,23 @@
   "sections": [
     {
       "title": "Event Overview",
-      "type": "overview",
+      "type": "info",
       "fields": [
-        { "label": "Event Type", "value": "Technology Conference" },
         { "label": "Date", "value": "March 15-17, 2025" },
-        { "label": "Location", "value": "Las Vegas, NV, USA" },
-        { "label": "Venue", "value": "CES Convention Center" },
-        { "label": "Expected Attendance", "value": "150,000+" },
-        { "label": "Duration", "value": "3 Days" },
-        { "label": "Format", "value": "In-Person + Virtual" },
-        { "label": "Target Audience", "value": "Tech Professionals" }
+        { "label": "Location", "value": "Las Vegas, NV" },
+        { "label": "Attendance", "value": "150,000+" },
+        { "label": "Format", "value": "In-Person + Virtual" }
       ]
     },
     {
-      "title": "Registration & Engagement",
+      "title": "Status",
       "type": "analytics",
       "fields": [
         {
-          "label": "Early Bird Registration",
-          "value": "92% Complete",
+          "label": "Registration",
+          "value": "92%",
           "percentage": 92,
-          "performance": "excellent",
           "trend": "up"
-        },
-        {
-          "label": "Virtual Participation",
-          "value": "55% of Attendees",
-          "percentage": 55,
-          "performance": "excellent",
-          "trend": "up"
-        },
-        {
-          "label": "Speaker Confirmations",
-          "value": "98% Confirmed",
-          "percentage": 98,
-          "performance": "excellent",
-          "trend": "stable"
-        },
-        {
-          "label": "Sponsor Commitments",
-          "value": "85% Secured",
-          "percentage": 85,
-          "performance": "excellent",
-          "trend": "up"
-        }
-      ]
-    },
-    {
-      "title": "Event Statistics",
-      "type": "chart",
-      "chartType": "bar",
-      "chartData": {
-        "labels": ["Sessions", "Exhibitors", "Square Footage (M)"],
-        "datasets": [
-          {
-            "label": "Event Scale",
-            "data": [350, 1200, 2.5],
-            "backgroundColor": ["#ff7900", "#ff9933", "#cc5f00"]
-          }
-        ]
-      }
-    },
-    {
-      "title": "Event Details",
-      "type": "event",
-      "fields": [
-        {
-          "label": "Opening Keynote",
-          "value": "March 15, 2025 - 9:00 AM",
-          "date": "2025-03-15",
-          "time": "09:00",
-          "category": "Keynote",
-          "status": "confirmed",
-          "attendees": 50000
-        },
-        {
-          "label": "Technical Workshops",
-          "value": "March 15-17, 2025 - Various Times",
-          "date": "2025-03-15",
-          "category": "Workshop",
-          "status": "confirmed",
-          "attendees": 35000
-        }
-      ]
-    },
-    {
-      "title": "Event Organizers",
-      "type": "contact-card",
-      "fields": [
-        {
-          "label": "Event Director",
-          "title": "Jennifer Martinez",
-          "value": "Conference Director",
-          "email": "jennifer@techsummit.com",
-          "phone": "+1 555 SUMMIT",
-          "role": "Event Management",
-          "department": "Operations"
-        }
-      ]
-    },
-    {
-      "title": "Event Location",
-      "type": "map",
-      "fields": [
-        {
-          "name": "CES Convention Center",
-          "x": 25,
-          "y": 36,
-          "type": "venue",
-          "address": "Las Vegas, NV, USA"
         }
       ]
     }
@@ -123,30 +31,7 @@
       "label": "Register Now",
       "type": "website",
       "variant": "primary",
-      "icon": "🎫",
-      "url": "https://techsummit.com/register"
-    },
-    {
-      "label": "Contact Organizers",
-      "type": "mail",
-      "variant": "secondary",
-      "icon": "📧",
-      "email": {
-        "contact": {
-          "name": "Jennifer Martinez",
-          "email": "jennifer@techsummit.com",
-          "role": "Conference Director"
-        },
-        "subject": "Tech Summit 2025 - Inquiry",
-        "body": "Dear Jennifer Martinez,\n\nI am interested in attending Tech Summit 2025 and would like to learn more about:\n\n• Event registration options\n• Available sponsorship opportunities\n• Speaker submission process\n• Networking event details\n\n**Event Details:**\n• Date: March 15-17, 2025\n• Location: CES Convention Center, Las Vegas, NV\n• Expected Attendance: 150,000+\n• Format: In-Person + Virtual\n\nI look forward to hearing from you.\n\nBest regards"
-      }
-    },
-    {
-      "label": "View Agenda",
-      "type": "website",
-      "variant": "secondary",
-      "icon": "📅",
-      "url": "https://techsummit.com/agenda"
+      "icon": "🎫"
     }
   ]
 }

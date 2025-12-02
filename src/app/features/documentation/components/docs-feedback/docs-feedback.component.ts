@@ -262,11 +262,16 @@ export class DocsPageRatingComponent {
   }
 
   private submitRating(feedback?: string) {
-    this.ratingSubmitted.emit({
+    const payload: { rating: string; feedback?: string; path?: string } = {
       rating: this.rating()!,
-      feedback,
-      path: this.pagePath,
-    });
+    };
+    if (feedback) {
+      payload.feedback = feedback;
+    }
+    if (this.pagePath) {
+      payload.path = this.pagePath;
+    }
+    this.ratingSubmitted.emit(payload);
     this.submitted.set(true);
   }
 }

@@ -1,239 +1,38 @@
 {
-  "cardTitle": "AI Insights Platform",
-  "cardSubtitle": "Enterprise AI Analytics & Intelligence",
+  "cardTitle": "EnterpriseSync Suite",
+  "cardSubtitle": "Complete Enterprise Integration Platform",
   "cardType": "product",
   "sections": [
     {
       "title": "Product Overview",
-      "type": "overview",
+      "type": "info",
       "fields": [
-        { "label": "Category", "value": "AI & Analytics" },
-        { "label": "Launch Date", "value": "2021" },
-        { "label": "Version", "value": "4.1.0" },
-        { "label": "Target Market", "value": "Enterprise" },
-        { "label": "Pricing Model", "value": "Subscription + Usage" },
-        { "label": "Support Level", "value": "24/7 Premium" },
-        { "label": "Deployment", "value": "Multi-Cloud" },
-        { "label": "Compliance", "value": "SOC 2, ISO 27001, GDPR" }
+        { "label": "Category", "value": "Enterprise Integration" },
+        { "label": "Version", "value": "5.0" },
+        { "label": "Deployment", "value": "Cloud & On-Premise" },
+        { "label": "Target", "value": "Large Enterprise" },
+        { "label": "Pricing", "value": "Enterprise License" }
       ]
     },
     {
-      "title": "Performance Metrics",
+      "title": "Performance",
       "type": "analytics",
       "fields": [
         {
-          "label": "Accuracy Rate",
-          "value": "98.5%",
-          "percentage": 98.5,
-          "performance": "excellent",
-          "trend": "up"
-        },
-        {
-          "label": "Processing Speed",
-          "value": "10M records/min",
-          "percentage": 95,
-          "performance": "excellent",
-          "trend": "up"
-        },
-        {
-          "label": "Customer Satisfaction",
-          "value": "4.8/5",
-          "percentage": 96,
-          "performance": "excellent",
-          "trend": "stable"
-        },
-        {
-          "label": "Uptime SLA",
+          "label": "Uptime",
           "value": "99.99%",
           "percentage": 99.99,
-          "performance": "excellent",
           "trend": "stable"
-        },
-        {
-          "label": "Model Performance",
-          "value": "Top 1%",
-          "percentage": 99,
-          "performance": "excellent",
-          "trend": "up"
-        }
-      ]
-    },
-    {
-      "title": "Usage Growth Trends",
-      "type": "chart",
-      "chartType": "line",
-      "chartData": {
-        "labels": ["Q1 2023", "Q2 2023", "Q3 2023", "Q4 2023", "Q1 2024"],
-        "datasets": [
-          {
-            "label": "Active Users (K)",
-            "data": [15, 18, 20, 23, 25],
-            "borderColor": "#3b82f6",
-            "backgroundColor": "rgba(59, 130, 246, 0.1)"
-          },
-          {
-            "label": "Data Processed (TB)",
-            "data": [200, 280, 350, 420, 500],
-            "borderColor": "#10b981",
-            "backgroundColor": "rgba(16, 185, 129, 0.1)"
-          }
-        ]
-      }
-    },
-    {
-      "title": "AI Capabilities",
-      "type": "product",
-      "fields": [
-        {
-          "label": "Machine Learning",
-          "value": "Advanced ML models for prediction",
-          "icon": "🧠"
-        },
-        {
-          "label": "Deep Learning",
-          "value": "Neural networks for complex patterns",
-          "icon": "🔬"
-        },
-        {
-          "label": "Natural Language Processing",
-          "value": "Text analysis and understanding",
-          "icon": "💬"
-        },
-        {
-          "label": "Computer Vision",
-          "value": "Image and video recognition",
-          "icon": "👁️"
-        },
-        {
-          "label": "Predictive Analytics",
-          "value": "Forecasting and trend analysis",
-          "icon": "📈"
-        }
-      ]
-    },
-    {
-      "title": "Enterprise Solutions",
-      "type": "solutions",
-      "fields": [
-        {
-          "label": "Business Intelligence",
-          "value": "Transform data into actionable insights",
-          "benefits": [
-            "Real-time dashboards",
-            "Custom reports",
-            "Data visualization"
-          ],
-          "outcomes": [
-            "20% faster decision-making",
-            "30% cost reduction",
-            "Improved ROI"
-          ]
-        },
-        {
-          "label": "Predictive Maintenance",
-          "value": "Reduce downtime with AI predictions",
-          "benefits": [
-            "Anomaly detection",
-            "Failure prediction",
-            "Optimized schedules"
-          ],
-          "outcomes": ["40% less downtime", "25% maintenance cost savings"]
-        },
-        {
-          "label": "Customer Analytics",
-          "value": "Understand customer behavior patterns",
-          "benefits": ["Segmentation", "Churn prediction", "Personalization"],
-          "outcomes": ["15% increase in retention", "35% better conversion"]
-        }
-      ]
-    },
-    {
-      "title": "Product Roadmap",
-      "type": "list",
-      "items": [
-        {
-          "title": "Q2 2024: Advanced NLP",
-          "description": "Enhanced natural language understanding with GPT integration",
-          "icon": "💬",
-          "status": "pending"
-        },
-        {
-          "title": "Q3 2024: Real-time Streaming",
-          "description": "Live data processing and analytics capabilities",
-          "icon": "⚡",
-          "status": "pending"
-        },
-        {
-          "title": "Q4 2024: AutoML Features",
-          "description": "Automated model selection and optimization",
-          "icon": "🤖",
-          "status": "pending"
-        }
-      ]
-    },
-    {
-      "title": "Enterprise Support",
-      "type": "contact-card",
-      "fields": [
-        {
-          "label": "Technical Support",
-          "title": "AI Platform Support",
-          "value": "24/7 Technical Assistance",
-          "email": "support@ai-insights.com",
-          "phone": "+1 555 AI-HELP",
-          "role": "Support",
-          "department": "Technical"
-        },
-        {
-          "label": "Enterprise Sales",
-          "title": "Enterprise Solutions",
-          "value": "Custom AI Solutions",
-          "email": "enterprise@ai-insights.com",
-          "phone": "+1 555 ENTERPRISE",
-          "role": "Sales",
-          "department": "Enterprise"
-        },
-        {
-          "label": "AI Consultants",
-          "title": "Professional Services",
-          "value": "Implementation & Strategy",
-          "email": "consulting@ai-insights.com",
-          "phone": "+1 555 CONSULT",
-          "role": "Consulting",
-          "department": "Professional Services"
         }
       ]
     }
   ],
   "actions": [
     {
-      "label": "Start Free Trial",
+      "label": "Request Demo",
       "type": "question",
       "variant": "primary",
-      "icon": "🚀",
-      "question": "How can I start a free trial?"
-    },
-    {
-      "label": "View Documentation",
-      "type": "website",
-      "variant": "primary",
-      "icon": "📚",
-      "url": "https://docs.ai-insights.com"
-    },
-    {
-      "label": "Contact Sales Team",
-      "type": "mail",
-      "variant": "secondary",
-      "icon": "📧",
-      "email": {
-        "contact": {
-          "name": "Enterprise Sales Team",
-          "email": "enterprise@ai-insights.com",
-          "role": "Sales"
-        },
-        "subject": "AI Insights Platform - Enterprise Inquiry",
-        "body": "Hello,\n\nI am interested in learning more about the AI Insights Platform for our organization.\n\n**Key Areas of Interest:**\n• Machine Learning capabilities\n• Real-time data processing (10M records/min)\n• Custom AI model training\n• 100+ data source integrations\n• 98.5% accuracy rate\n• 99.99% uptime SLA\n\n**Organization Details:**\n• Industry: [Your Industry]\n• Size: [Your Organization Size]\n• Use Case: [Your Use Case]\n\nI would appreciate the opportunity to:\n1. Schedule a personalized demo\n2. Discuss enterprise pricing and licensing options\n3. Learn more about implementation and support services\n\nPlease let me know your availability for a call or meeting.\n\nThank you for your time and consideration.\n\nBest regards"
-      }
+      "icon": "🚀"
     }
   ]
 }

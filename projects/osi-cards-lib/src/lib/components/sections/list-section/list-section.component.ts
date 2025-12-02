@@ -1,53 +1,35 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardField, CardItem } from '../../../models';
-import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
+import { BaseSectionComponent } from '../base-section.component';
 
-type ListEntry = (CardItem & CardField) & {
-  priority?: string;
-  assignee?: string;
-  date?: string;
-};
-
+/**
+ * List Section Component
+ *
+ * Displays structured lists with icons, status indicators, and priority badges.
+ * Perfect for task lists, features, requirements, and inventory.
+ */
 @Component({
-  selector: 'app-list-section',
+  selector: 'lib-list-section',
   standalone: true,
-  imports: [CommonModule, LucideIconsModule],
+  imports: [CommonModule],
   templateUrl: './list-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './list-section.scss'
 })
-export class ListSectionComponent extends BaseSectionComponent<ListEntry> {
-  /** Vertical list, compact by default */
-  static readonly layoutConfig: SectionLayoutConfig = {
-    preferredColumns: 1,
-    minColumns: 1,
-    maxColumns: 2,
-    expandOnItemCount: 8,
-  };
+export class ListSectionComponent extends BaseSectionComponent {
 
-  get items(): ListEntry[] {
-    return super.getItems() as ListEntry[];
-  }
-
-
-  onItemClick(item: ListEntry): void {
-    this.emitItemInteraction(item);
+  /**
+   * Get status class
+   */
+  getStatusClass(status?: string): string {
+    if (!status) return '';
+    return `item-status--${status}`;
   }
 
   /**
-   * Get display description, hiding "Streaming…" placeholder text
-   * Inline implementation to avoid TypeScript override conflicts
+   * Get priority class
    */
-  getDisplayDescription(item: ListEntry): string {
-    const description = item.description;
-    if (description === 'Streaming…' || description === 'Streaming...') {
-      return '';
-    }
-    return description ?? '';
-  }
-
-  override trackItem(index: number, item: ListEntry): string {
-    return item.id ?? `${item.title ?? item.label}-${index}`;
+  getPriorityClass(priority?: string): string {
+    if (!priority) return '';
+    return `item-priority--${priority}`;
   }
 }

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CommandService } from './command.service';
 import { LoggingService } from '../../core/services/logging.service';
-import { KeyboardShortcutsService } from './keyboard-shortcuts.service';
+import { KeyboardShortcutsService } from '@osi-cards/services';
 import { Command, GenericCommand } from '../models/command.model';
 
 describe('CommandService', () => {

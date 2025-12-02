@@ -1,0 +1,145 @@
+{
+  "type": "list",
+  "name": "List Section",
+  "description": "Displays structured lists and tables. Supports sorting, filtering, and item interactions.",
+  "selector": "lib-list-section",
+  "useCases": [
+    "Product lists",
+    "Feature lists",
+    "Task lists",
+    "Inventory",
+    "Requirements"
+  ],
+  "bestPractices": [
+    "Use items array for list data",
+    "Include titles and descriptions",
+    "Add status badges when relevant",
+    "Keep list items scannable",
+    "Use icons for visual hierarchy"
+  ],
+  "rendering": {
+    "usesFields": false,
+    "usesItems": true,
+    "defaultColumns": 1,
+    "supportsCollapse": true,
+    "supportsEmoji": true
+  },
+  "itemSchema": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "Item title"
+      },
+      "description": {
+        "type": "string",
+        "description": "Item description"
+      },
+      "icon": {
+        "type": "string",
+        "description": "Icon identifier"
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "completed",
+          "in-progress",
+          "pending",
+          "cancelled",
+          "blocked"
+        ],
+        "description": "Item status"
+      },
+      "value": {
+        "type": [
+          "string",
+          "number"
+        ],
+        "description": "Item value"
+      },
+      "date": {
+        "type": "string",
+        "format": "date",
+        "description": "Item date"
+      },
+      "priority": {
+        "type": "string",
+        "enum": [
+          "critical",
+          "high",
+          "medium",
+          "low"
+        ],
+        "description": "Priority level"
+      }
+    },
+    "required": [
+      "title"
+    ]
+  },
+  "aliases": [
+    "table",
+    "checklist"
+  ],
+  "testFixtures": {
+    "complete": {
+      "title": "Product Roadmap Q1-Q2 2025",
+      "type": "list",
+      "description": "Strategic initiatives and feature development",
+      "items": [
+        {
+          "title": "AI-Powered Forecasting Engine",
+          "description": "Machine learning model for predictive analytics with 95% accuracy target",
+          "icon": "🤖",
+          "status": "in-progress",
+          "priority": "critical"
+        },
+        {
+          "title": "Real-time Collaboration Suite",
+          "description": "Multi-user editing with presence indicators and conflict resolution",
+          "icon": "👥",
+          "status": "in-progress",
+          "priority": "high"
+        },
+        {
+          "title": "Enterprise SSO Integration",
+          "description": "SAML 2.0 and OIDC support for Okta, Azure AD, and custom IdPs",
+          "icon": "🔐",
+          "status": "completed",
+          "priority": "high"
+        }
+      ]
+    },
+    "minimal": {
+      "title": "Tasks",
+      "type": "list",
+      "items": [
+        {
+          "title": "Task 1"
+        }
+      ]
+    },
+    "edgeCases": {
+      "title": "List Edge Cases",
+      "type": "list",
+      "items": [
+        {
+          "title": "",
+          "description": "Empty title item"
+        },
+        {
+          "title": "Unicode Support",
+          "description": "日本語 中文 العربية 한국어 🎉🚀💡"
+        },
+        {
+          "title": "Very Long Title That Should Wrap Properly Across Multiple Lines Without Breaking Layout",
+          "description": "Short description"
+        },
+        {
+          "title": "Short",
+          "description": "This is an extremely long description that contains a lot of information and should properly wrap across multiple lines while maintaining readability and not breaking the overall layout of the card section component"
+        }
+      ]
+    }
+  }
+}

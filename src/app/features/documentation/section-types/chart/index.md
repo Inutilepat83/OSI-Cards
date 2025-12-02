@@ -24,6 +24,7 @@ The **Chart Section** (`type: "chart"`) is used for displays data visualizations
 - Analytics dashboards
 - Statistical reports
 - Trend analysis
+- Performance tracking
 
 ## Data Schema
 
@@ -35,36 +36,56 @@ The **Chart Section** (`type: "chart"`) is used for displays data visualizations
 
 ```json
 {
-  "title": "Revenue Trends",
+  "title": "Revenue & Growth Analysis",
   "type": "chart",
   "chartType": "bar",
   "chartData": {
     "labels": [
-      "Q1",
-      "Q2",
-      "Q3",
-      "Q4"
+      "Q1 2024",
+      "Q2 2024",
+      "Q3 2024",
+      "Q4 2024",
+      "Q1 2025 (Proj)"
     ],
     "datasets": [
       {
-        "label": "Revenue",
+        "label": "Revenue ($M)",
         "data": [
-          100,
-          150,
-          200,
-          250
+          28.5,
+          32.1,
+          35.8,
+          42.4,
+          48.2
         ],
-        "backgroundColor": "#FF7900"
+        "backgroundColor": "#FF7900",
+        "borderColor": "#FF7900",
+        "borderWidth": 1
       },
       {
-        "label": "Expenses",
+        "label": "Operating Costs ($M)",
         "data": [
-          80,
-          90,
-          100,
-          110
+          22.1,
+          24.3,
+          26.8,
+          31.2,
+          34.5
         ],
-        "backgroundColor": "#4CAF50"
+        "backgroundColor": "#4CAF50",
+        "borderColor": "#4CAF50",
+        "borderWidth": 1
+      },
+      {
+        "label": "Net Profit ($M)",
+        "data": [
+          6.4,
+          7.8,
+          9,
+          11.2,
+          13.7
+        ],
+        "backgroundColor": "#2196F3",
+        "borderColor": "#2196F3",
+        "borderWidth": 1
       }
     ]
   }
@@ -75,17 +96,21 @@ The **Chart Section** (`type: "chart"`) is used for displays data visualizations
 
 ```json
 {
-  "title": "Chart",
+  "title": "Basic Chart",
   "type": "chart",
   "chartType": "bar",
   "chartData": {
     "labels": [
-      "A"
+      "A",
+      "B",
+      "C"
     ],
     "datasets": [
       {
         "data": [
-          1
+          10,
+          20,
+          30
         ]
       }
     ]
@@ -99,12 +124,13 @@ The **Chart Section** (`type: "chart"`) is used for displays data visualizations
 2. Include chart type specification
 3. Use appropriate data formats
 4. Ensure accessibility with labels
+5. Choose chart type based on data
 
 ## Component Information
 
-- **Selector:** `app-chart-section`
+- **Selector:** `lib-chart-section`
 - **Component Path:** `./lib/components/sections/chart-section/chart-section.component`
-- **Style Path:** `./lib/styles/components/sections/_chart.scss`
+
 
 ## Related Documentation
 

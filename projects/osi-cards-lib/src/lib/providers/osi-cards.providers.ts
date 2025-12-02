@@ -1,5 +1,5 @@
 import { Provider, EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
-import { MigrationFlagsService, MIGRATION_FLAGS } from '../services/migration-flags.service';
+import { MIGRATION_FLAGS_TOKEN } from '../services/feature-flags.service';
 import { MigrationFlags } from '../config/migration-flags.config';
 import { SectionFactory } from '../factories/section.factory';
 import { EventBusService } from '../services/event-bus.service';
@@ -10,7 +10,8 @@ import { CardFacadeService } from '../services/card-facade.service';
 import { SectionPluginRegistry } from '../services/section-plugin-registry.service';
 import { FeatureFlagsService } from '../services/feature-flags.service';
 import { AccessibilityService } from '../services/accessibility.service';
-import { ReducedMotionService } from '../services/reduced-motion.service';
+import { AnimationService } from '../services/animation.service';
+// import { LayoutOptimizerService } from '../services/layout-optimizer.service';  // Service disabled due to type errors
 
 /**
  * Configuration options for OSI Cards library
@@ -37,10 +38,11 @@ export interface OsiCardsConfig {
 
 /**
  * Core providers required for OSI Cards functionality
+ * Updated with consolidated services (Phase 3)
  */
 export function provideOsiCardsCore(): Provider[] {
   return [
-    MigrationFlagsService,
+    // Core services
     SectionFactory,
     EventBusService,
     IconService,
@@ -48,9 +50,12 @@ export function provideOsiCardsCore(): Provider[] {
     SectionUtilsService,
     CardFacadeService,
     SectionPluginRegistry,
-    FeatureFlagsService,
-    AccessibilityService,
-    ReducedMotionService,
+
+    // Consolidated services (Phase 3)
+    FeatureFlagsService,        // Now includes migration flags
+    AccessibilityService,        // Now includes focus-trap, live-announcer, reduced-motion
+    AnimationService,            // Now includes orchestrator + section animation
+    // LayoutOptimizerService,      // Disabled: service has type errors
   ];
 }
 
@@ -81,7 +86,7 @@ export function provideOsiCards(config?: OsiCardsConfig): EnvironmentProviders {
   // Add migration flags if provided
   if (config?.migrationFlags) {
     providers.push({
-      provide: MIGRATION_FLAGS,
+      provide: MIGRATION_FLAGS_TOKEN,
       useValue: config.migrationFlags,
     });
   }
@@ -119,7 +124,7 @@ export function provideOsiCardsTesting(): EnvironmentProviders {
     ...provideOsiCardsCore(),
     // Override with test-friendly versions if needed
     {
-      provide: MIGRATION_FLAGS,
+      provide: MIGRATION_FLAGS_TOKEN,
       useValue: {
         USE_LIB_SECTIONS: true,
         USE_SECTION_REGISTRY: true,

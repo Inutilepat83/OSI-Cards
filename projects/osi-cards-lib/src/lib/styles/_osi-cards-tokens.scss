@@ -67,15 +67,15 @@
   --osi-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --osi-font-mono: 'SF Mono', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 
-  // Font Sizes
-  --osi-text-xs: 0.75rem;     // 12px
-  --osi-text-sm: 0.875rem;    // 14px
-  --osi-text-base: 1rem;      // 16px
-  --osi-text-lg: 1.125rem;    // 18px
-  --osi-text-xl: 1.25rem;     // 20px
-  --osi-text-2xl: 1.5rem;     // 24px
-  --osi-text-3xl: 1.875rem;   // 30px
-  --osi-text-4xl: 2.25rem;    // 36px
+  // Font Sizes - COMPACT MODE (reduced by ~10-15%)
+  --osi-text-xs: 0.625rem;    // 10px (was 12px)
+  --osi-text-sm: 0.8125rem;   // 13px (was 14px)
+  --osi-text-base: 0.9375rem; // 15px (was 16px)
+  --osi-text-lg: 1.0625rem;   // 17px (was 18px)
+  --osi-text-xl: 1.1875rem;   // 19px (was 20px)
+  --osi-text-2xl: 1.375rem;   // 22px (was 24px)
+  --osi-text-3xl: 1.75rem;    // 28px (was 30px)
+  --osi-text-4xl: 2.125rem;   // 34px (was 36px)
 
   // Line Heights
   --osi-leading-tight: 1.25;
@@ -322,4 +322,6 @@
     --osi-duration-1000: 0ms;
   }
 }
+
+
 

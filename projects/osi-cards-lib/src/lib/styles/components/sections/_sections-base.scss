@@ -1,110 +1,85 @@
 // =====================================================================
-// SECTIONS BASE - Consolidated base styles for all card sections
+// SECTIONS BASE - Clean, Consistent Card Styles
 // =====================================================================
 //
-// Imports from master tokens for consistency.
+// Uses CSS variables from master tokens. No hardcoded shadows or effects.
 //
 // =====================================================================
 
-@use '../../tokens/master' as *;
+@use "../../tokens/master" as *;
 
 // =====================================================================
 // GRID MIXINS
 // =====================================================================
 
 @mixin section-grid($min-width: var(--section-grid-min-width), $gap: var(--section-card-gap)) {
-  display: grid !important;
-  gap: $gap !important;
-  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr)) !important;
-  min-height: 0 !important;
-  box-sizing: border-box !important;
+  display: grid;
+  gap: $gap;
+  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
+  min-height: 0;
+  box-sizing: border-box;
 
   @media (max-width: 420px) {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: 1fr;
   }
 }
 
-@mixin section-grid-responsive($min-width: var(--section-grid-min-width), $gap: var(--section-card-gap), $tablet-breakpoint: 820px) {
-  display: grid !important;
-  gap: $gap !important;
-  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr)) !important;
-  min-height: 0 !important;
-  box-sizing: border-box !important;
+@mixin section-grid-responsive(
+  $min-width: var(--section-grid-min-width),
+  $gap: var(--section-card-gap),
+  $tablet-breakpoint: 820px
+) {
+  display: grid;
+  gap: $gap;
+  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
+  min-height: 0;
+  box-sizing: border-box;
 
   @media (max-width: $tablet-breakpoint) {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: 1fr;
   }
 }
 
 // =====================================================================
-// UNIVERSAL CARD MIXIN
+// UNIVERSAL CARD MIXIN - Uses CSS Variables Only
 // =====================================================================
 
 @mixin card {
-  // Use section-item variables for consistency
-  border: none !important;
-  border-radius: var(--section-item-border-radius) !important;
-  padding: var(--card-padding) !important;
-  background: var(--section-item-background) !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: var(--card-gap) !important;
-  min-height: var(--card-min-height, auto) !important;
-  cursor: pointer !important;
-  position: relative !important;
-  overflow: hidden !important;
-  box-shadow: var(--section-item-box-shadow, 0 1px 2px rgba(0, 0, 0, 0.05)) !important;
-  box-sizing: border-box !important;
-  text-align: left !important;
+  background: var(--section-item-background);
+  border: var(--section-item-border);
+  border-radius: var(--section-item-border-radius);
+  box-shadow: var(--section-item-box-shadow);
+  padding: var(--card-padding);
 
-  transition: background 0.22s ease,
-    box-shadow 0.22s ease,
-    border-color 0.22s ease,
-    transform 0.22s ease !important;
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+  min-height: var(--card-min-height, auto);
 
-  // Minimalistic accent line on left
-  &::before {
-    content: '' !important;
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    width: 3px !important;
-    background: #{$brand-color-60} !important;
-    opacity: 0 !important;
-    transition: opacity 0.22s ease !important;
-    border-radius: 0 2px 2px 0 !important;
-  }
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  text-align: left;
+
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 
   &:hover {
-    box-shadow: var(--section-item-box-shadow-hover, 0 1px 3px rgba(0, 0, 0, 0.08)),
-      0 0 0 1px #{$brand-color-15} !important;
-    transform: translateY(-2px) var(--section-item-hover-transform, scale(1)) !important;
-    border-color: #{$brand-color-20} !important;
-
-    &::before {
-      opacity: 0.6 !important;
-    }
+    background: var(--section-item-background-hover);
+    border-color: var(--section-item-border-hover);
+    box-shadow: var(--section-item-box-shadow-hover);
   }
 
   &:focus-visible {
-    outline: 2px solid #{$brand-color-60} !important;
-    outline-offset: 2px !important;
-    border-color: #{$brand-color-50} !important;
-  }
-
-  &:not(:hover) {
-    will-change: auto !important;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    transition: none !important;
-    will-change: auto !important;
-    transform: none !important;
-
-    &::before {
-      display: none;
-    }
+    transition: none;
   }
 }
 
@@ -121,50 +96,34 @@
 }
 
 // =====================================================================
-// METRIC TYPOGRAPHY MIXINS
+// TYPOGRAPHY MIXINS - Use CSS Variables
 // =====================================================================
 
 @mixin metric-label {
-  font-size: var(--card-label-font-size, 0.5rem) !important;
-  letter-spacing: 0.04em !important;
-  text-transform: none !important;
-  color: var(--card-text-label, #{$text-secondary}) !important;
-  line-height: 1.3 !important;
-  font-weight: 600 !important;
-  text-align: left !important;
-  transition: color 0.22s ease !important;
-  font-family: inherit !important;
-
-  .section-card:hover &,
-  .unified-card:hover & {
-    color: var(--card-text-label, #{$text-secondary}) !important;
-  }
+  font-size: var(--card-label-font-size);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  line-height: 1.3;
+  font-family: inherit;
 }
 
 @mixin metric-value {
-  font-size: var(--card-value-font-size, 1rem) !important;
-  font-weight: 700 !important;
-  color: var(--foreground, #{$foreground-color}) !important;
-  letter-spacing: -0.01em !important;
-  line-height: 1.2 !important;
-  text-align: left !important;
-  transition: color 0.22s ease !important;
-  font-family: inherit !important;
-
-  .section-card:hover &,
-  .unified-card:hover & {
-    color: var(--foreground, #{$foreground-color}) !important;
-  }
+  font-size: var(--card-value-font-size);
+  font-weight: 600;
+  color: var(--foreground);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  font-family: inherit;
 }
 
 @mixin section-description {
-  font-size: var(--font-section-description, 0.85rem) !important;
-  color: #{$foreground-70} !important;
-  letter-spacing: 0.01em !important;
-  line-height: 1.4 !important;
-  font-weight: 400 !important;
-  text-align: left !important;
-  font-family: inherit !important;
+  font-size: var(--card-subtitle-font-size);
+  color: var(--muted-foreground);
+  line-height: 1.5;
+  font-weight: 400;
+  font-family: inherit;
 }
 
 // Legacy aliases
@@ -177,23 +136,22 @@
 }
 
 // =====================================================================
-// COMMON COMPONENTS
+// EMPTY STATE
 // =====================================================================
 
-@mixin section-empty-state($accent: var(--section-accent, var(--accent, #{$brand-color}))) {
-  padding: calc(var(--card-padding) * 1.5) !important;
-  text-align: center !important;
-  color: #{$foreground-50} !important;
-  border: none !important;
-  border-radius: var(--section-card-border-radius) !important;
-  background: #{$brand-color-10} !important;
-  min-height: auto !important;
+@mixin section-empty-state {
+  padding: calc(var(--card-padding) * 1.5);
+  text-align: center;
+  color: var(--muted-foreground);
+  border: 1px dashed var(--border);
+  border-radius: var(--section-item-border-radius);
+  background: var(--section-item-background);
+  min-height: auto;
 }
 
 @mixin section-empty-icon {
-  margin: 0 auto var(--card-gap) !important;
-  opacity: 0.65 !important;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.22)) !important;
+  margin: 0 auto var(--card-gap);
+  opacity: 0.5;
 }
 
 // =====================================================================
@@ -202,45 +160,42 @@
 
 @mixin trend-colors {
   &.trend--up {
-    color: #{$osi-color-trend-up} !important;
+    color: #{$osi-color-trend-up};
   }
 
   &.trend--down {
-    color: #{$osi-color-trend-down} !important;
+    color: #{$osi-color-trend-down};
   }
 
   &.trend--stable {
-    color: #{$osi-color-trend-stable} !important;
+    color: #{$osi-color-trend-stable};
   }
 
   &.trend--neutral {
-    color: #{$osi-color-trend-neutral} !important;
+    color: #{$osi-color-trend-neutral};
   }
 }
 
 // =====================================================================
-// STANDARDIZED STATUS CLASSES
+// STATUS CLASSES
 // =====================================================================
 
 .status--completed,
 .status--success {
-  border-color: rgba(74, 222, 128, 0.4) !important;
-  color: rgba(134, 239, 172, 1) !important;
-  background: #{$success-color-15} !important;
+  color: #{$success-color};
+  background: #{$success-color-10};
 }
 
 .status--active,
 .status--in-progress {
-  border-color: #{$brand-color-40} !important;
-  color: #{$brand-color-70} !important;
-  background: #{$brand-color-15} !important;
+  color: var(--accent);
+  background: #{$brand-color-10};
 }
 
 .status--pending,
 .status--warning {
-  border-color: rgba(251, 191, 36, 0.4) !important;
-  color: rgba(253, 224, 71, 1) !important;
-  background: #{$warning-color-15} !important;
+  color: #{$warning-color};
+  background: #{$warning-color-10};
 }
 
 .status--blocked,
@@ -248,116 +203,114 @@
 .status--delayed,
 .status--inactive,
 .status--error {
-  border-color: rgba(248, 113, 113, 0.4) !important;
-  color: rgba(252, 165, 165, 1) !important;
-  background: #{$error-color-15} !important;
+  color: #{$error-color};
+  background: #{$error-color-10};
 }
 
 .status--default {
-  border-color: rgba(120, 120, 120, 0.4) !important;
-  color: rgba(200, 200, 200, 0.85) !important;
-  background: rgba(40, 40, 40, 0.2) !important;
+  color: var(--muted-foreground);
+  background: var(--muted);
 }
 
 // =====================================================================
-// STANDARDIZED PRIORITY CLASSES
+// PRIORITY CLASSES
 // =====================================================================
 
 .priority--high {
-  border-color: rgba(248, 113, 113, 0.4) !important;
-  color: rgba(252, 165, 165, 1) !important;
-  background: #{$error-color-15} !important;
+  color: #{$error-color};
+  background: #{$error-color-10};
 }
 
 .priority--medium {
-  border-color: rgba(251, 191, 36, 0.4) !important;
-  color: rgba(253, 224, 71, 1) !important;
-  background: #{$warning-color-15} !important;
+  color: #{$warning-color};
+  background: #{$warning-color-10};
 }
 
 .priority--low {
-  border-color: rgba(74, 222, 128, 0.4) !important;
-  color: rgba(134, 239, 172, 1) !important;
-  background: #{$success-color-15} !important;
+  color: #{$success-color};
+  background: #{$success-color-10};
 }
 
 .priority--default {
-  border-color: rgba(120, 120, 120, 0.4) !important;
-  color: rgba(200, 200, 200, 0.85) !important;
-  background: rgba(40, 40, 40, 0.2) !important;
+  color: var(--muted-foreground);
+  background: var(--muted);
 }
 
 // =====================================================================
-// REDUCED MOTION SUPPORT
+// REDUCED MOTION
 // =====================================================================
 
 @media (prefers-reduced-motion: reduce) {
   .unified-card,
   .section-card,
-  [class*='__card'],
-  [class*='-card'],
-  [class*='__item'],
-  [class*='-item'] {
-    transition: none !important;
-    animation: none !important;
-  }
-
-  .trend--up,
-  .trend--down,
-  .trend--stable,
-  .trend--neutral {
-    text-shadow: none !important;
-    filter: none !important;
-  }
-
-  .status--completed,
-  .status--success,
-  .status--active,
-  .status--in-progress,
-  .status--pending,
-  .status--warning,
-  .status--blocked,
-  .status--cancelled,
-  .status--delayed,
-  .status--inactive,
-  .status--error,
-  .status--default,
-  .priority--high,
-  .priority--medium,
-  .priority--low,
-  .priority--default {
-    filter: none !important;
+  [class*="__card"],
+  [class*="-card"],
+  [class*="__item"],
+  [class*="-item"] {
+    transition: none;
+    animation: none;
   }
 }
 
 // =====================================================================
-// THEME OVERRIDES
+// ANIMATION SYSTEM
 // =====================================================================
 
-// Dark theme (Night Mode)
-:root[data-theme='night'],
-:host-context([data-theme='night']) {
-  .unified-card,
-  .section-card {
-    --section-item-background: rgba(40, 40, 48, 0.9);
-    --section-item-border: 1px solid rgba(100, 100, 120, 0.4);
-    --section-item-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    --section-item-box-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.3);
-    background: linear-gradient(135deg, rgba(40, 40, 48, 0.9) 0%, rgba(35, 35, 42, 0.95) 100%) !important;
-    border-color: rgba(100, 100, 120, 0.4) !important;
+@keyframes section-item-stream {
+  0% {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-// Light theme (Day Mode)
-:root[data-theme='day'],
-:host-context([data-theme='day']) {
-  .unified-card,
-  .section-card {
-    --section-item-background: rgba(250, 250, 250, 0.95);
-    --section-item-border: 1px solid rgba(200, 200, 200, 0.5);
-    --section-item-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    --section-item-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.08);
-    background: linear-gradient(135deg, rgba(250, 250, 250, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%) !important;
-    border-color: rgba(200, 200, 200, 0.5) !important;
+@mixin section-item-animation {
+  &.section-item-streaming {
+    animation: section-item-stream 0.25s ease-out forwards;
+  }
+
+  &.section-item-entered {
+    animation: none;
+  }
+
+  @for $i from 0 through 15 {
+    &.section-item-stagger-#{$i} {
+      animation-delay: calc(#{$i} * 30ms);
+    }
+  }
+}
+
+@mixin legacy-item-animation {
+  &.item-streaming {
+    animation: section-item-stream 0.25s ease-out forwards;
+  }
+
+  &.item-entered {
+    animation: none;
+  }
+
+  @for $i from 0 through 15 {
+    &.item-stagger-#{$i} {
+      animation-delay: calc(#{$i} * 30ms);
+    }
+  }
+}
+
+@mixin legacy-field-animation {
+  &.field-streaming {
+    animation: section-item-stream 0.25s ease-out forwards;
+  }
+
+  &.field-entered {
+    animation: none;
+  }
+
+  @for $i from 0 through 15 {
+    &.field-stagger-#{$i} {
+      animation-delay: calc(#{$i} * 30ms);
+    }
   }
 }

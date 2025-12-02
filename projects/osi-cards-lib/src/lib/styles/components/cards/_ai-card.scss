@@ -20,60 +20,54 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  /* Changed from hidden to visible to prevent shadow clipping */
   overflow: visible;
 
-  /* CSS Isolation - Prevent Bootstrap and external styles from affecting cards */
+  /* CSS Isolation */
   isolation: isolate;
 
-  /* Card has its own background distinct from sections */
+  /* Card base */
   @include surface-ai-card-base;
 
-  /* ========== CARD SURFACE STYLES ========== */
-  /* NO BORDERS - clean minimal design */
-  border: none !important;
-  border-width: 0 !important;
-  border-style: none !important;
-  border-color: transparent !important;
+  /* ========== MAIN CARD SPECIFIC STYLING (Theme-aware) ========== */
+  /* These are specific to the main card container, not sections */
 
-  /* Semi-transparent dark background */
-  background: rgba(20, 20, 20, 0.6) !important;
+  /* Background - follows theme but has card-specific styling */
+  background: var(--ai-card-background) !important;
 
-  /* Backdrop blur effect */
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
+  /* Border - card-specific (stronger than section borders) */
+  border: var(--theme-ai-card-border) !important;
 
-  /* Light, tight brand color glow instead of dark shadow */
-  box-shadow: 0 0 8px rgba(255, 121, 0, 0.12), 0 0 2px rgba(255, 121, 0, 0.08) !important;
-  /* ========== END CARD SURFACE STYLES ========== */
+  /* Box shadow - card-specific elevation */
+  box-shadow: var(--theme-ai-card-box-shadow) !important;
 
+  /* Padding - card-specific spacing */
   padding: var(--card-main-padding) !important;
-  /* Ensure bottom padding is adequate */
   padding-bottom: var(--card-main-padding) !important;
+
+  /* Border radius - card-specific (larger than sections) */
   border-radius: var(--card-border-radius) !important;
 
-  /* Gap between header and body - defined at card level */
+  /* Gap - specific space between header and sections */
   gap: var(--section-card-gap) !important;
+  /* ========== END CARD SPECIFIC STYLES ========== */
 
-  /* Smooth transitions for content updates */
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  /* Smooth transitions */
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease !important;
 
-  /* Transform is handled by parent .tilt-container - don't override */
-  /* transform: none !important; - Removed to allow tilt transforms */
-
-  /* Enhanced text sharpness */
+  /* Text rendering optimization */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 
-  /* Force sharp text rendering on all child elements */
   * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
 
-  /* Smooth transitions for card title updates - removed transform to prevent lift */
   h1 {
     transition: opacity 0.2s ease;
   }
@@ -82,32 +76,35 @@
 .ai-card-surface:hover {
   @include surface-ai-card-hover;
 
-  /* ========== HOVER STYLES ========== */
-  /* NO BORDERS on hover - clean minimal design */
-  border: none !important;
-  border-color: transparent !important;
+  /* ========== CARD HOVER - Theme-aware with card-specific effects ========== */
+  /* Background hover - card-specific (different from sections) */
+  background: var(--ai-card-background-hover) !important;
 
-  /* Hover background - slightly lighter */
-  background: rgba(30, 30, 30, 0.8) !important;
+  /* Border hover - card-specific accent */
+  border: var(--theme-ai-card-border-hover) !important;
 
-  /* Hover glow - enhanced brand color glow */
-  box-shadow: 0 0 12px rgba(255, 121, 0, 0.2), 0 0 4px rgba(255, 121, 0, 0.15) !important;
-  /* ========== END HOVER STYLES ========== */
-
-  /* Transform is handled by parent .tilt-container - don't override */
-  /* transform: none !important; - Removed to allow tilt transforms */
+  /* Box shadow hover - card-specific elevation */
+  box-shadow: var(--theme-ai-card-box-shadow-hover) !important;
+  /* ========== END CARD HOVER ========== */
 }
 
 .ai-card-surface--fullscreen {
-  /* Fullscreen styling - clean and focused */
+  /* Fullscreen styling - use SAME background as normal card */
   border: none !important;
   box-shadow: none !important;
-  background: transparent !important;
+  background: var(--ai-card-background) !important; /* Same as normal mode */
   max-height: none !important;
   max-width: none !important;
   width: 100% !important;
   overflow: visible !important;
   padding: var(--card-main-padding) !important;
+
+  /* Disable hover background change in fullscreen */
+  &:hover {
+    background: var(--ai-card-background) !important; /* Keep same background on hover */
+    border: none !important;
+    box-shadow: none !important;
+  }
 
   /* Disable all tilt effects */
   .tilt-container {
@@ -424,7 +421,7 @@
   padding: 2px 6px;
   border-radius: 999px;
   border: 1px solid rgba(55, 55, 60, 0.65);
-  background: rgba(40, 40, 45, 0.80);
+  background: rgba(40, 40, 45, 0.8);
 }
 
 .ai-card-meta__chip-dot {
@@ -594,9 +591,9 @@
 }
 
 .ai-card-action--primary {
-  background: var(--primary, #FF7900);
+  background: var(--primary, #ff7900);
   color: var(--primary-foreground, #ffffff);
-  border-color: rgba(255, 121, 0, 0.80);
+  border-color: rgba(255, 121, 0, 0.8);
   box-shadow:
     0 2px 8px rgba(255, 121, 0, 0.25),
     0 1px 2px rgba(0, 0, 0, 0.1);
@@ -608,13 +605,13 @@
     0 4px 16px rgba(255, 121, 0, 0.35),
     0 2px 4px rgba(0, 0, 0, 0.1);
   background: rgba(255, 121, 0, 0.95);
-  border-color: var(--primary, #FF7900);
+  border-color: var(--primary, #ff7900);
 }
 
 .ai-card-action--secondary {
-  background: rgba(40, 40, 45, 0.90);
+  background: rgba(40, 40, 45, 0.9);
   color: var(--foreground, #ffffff);
-  border-color: rgba(55, 55, 60, 0.60);
+  border-color: rgba(55, 55, 60, 0.6);
   box-shadow:
     0 1px 3px rgba(0, 0, 0, 0.1),
     0 1px 2px rgba(0, 0, 0, 0.06);
@@ -622,7 +619,7 @@
 
 .ai-card-action--secondary:hover {
   transform: translateY(-1px);
-  border-color: rgba(255, 121, 0, 0.40);
+  border-color: rgba(255, 121, 0, 0.4);
   box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.15),
     0 2px 4px rgba(0, 0, 0, 0.1);
@@ -677,7 +674,9 @@
 .ai-card-action__icon {
   color: currentColor;
   opacity: 0.9;
-  transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .ai-card-action__label {
@@ -710,7 +709,7 @@
   font-size: 0.65rem !important; /* Reduced from default */
   letter-spacing: 0.08em;
   text-transform: none;
-  color: rgba(28, 28, 31, 0.70);
+  color: rgba(28, 28, 31, 0.7);
   line-height: 1.2;
 }
 
@@ -732,72 +731,15 @@
   }
 }
 
-/* Light theme overrides - scoped for .osi-cards-container[data-theme='day'] */
-.osi-cards-container[data-theme='day'] {
-  .ai-card-surface {
-    /* Light theme - use white/light background with subtle blur */
-    background: rgba(255, 255, 255, 0.85) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(255, 121, 0, 0.12) !important;
-    /* Light, tight brand color glow */
-    box-shadow: 0 0 8px rgba(255, 121, 0, 0.1), 0 0 2px rgba(255, 121, 0, 0.06) !important;
-  }
-
-  .ai-card-surface:hover {
-    /* Hover - slightly more opaque */
-    background: rgba(255, 255, 255, 0.92) !important;
-    border-color: rgba(255, 121, 0, 0.3) !important;
-    /* Enhanced brand color glow on hover */
-    box-shadow: 0 0 12px rgba(255, 121, 0, 0.18), 0 0 4px rgba(255, 121, 0, 0.12) !important;
-  }
-
-  .ai-card-surface--fullscreen {
-    background: #ffffff;
-    border-color: rgba(200, 200, 200, 0.4);
-  }
-
-  .ai-card-title {
-    color: #1a1a1a;
-  }
-
-  .ai-card-eyebrow {
-    color: #9ca3af;
-  }
-
-  .ai-card-type-pill {
-    background: rgba(255, 121, 0, 0.08);
-    color: var(--primary);
-    border-color: rgba(255, 121, 0, 0.2);
-  }
-
-  .ai-card-fullscreen-btn {
-    background: rgba(255, 121, 0, 0.06);
-    border-color: rgba(255, 121, 0, 0.25);
-    color: #1a1a1a;
-
-    &:hover {
-      background: rgba(255, 121, 0, 0.12);
-      border-color: rgba(255, 121, 0, 0.4);
-    }
-  }
-}
-
-/* Also apply for :host-context with day theme attribute */
-:host-context([data-theme='day']) {
-  .ai-card-surface {
-    background: rgba(255, 255, 255, 0.85) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(255, 121, 0, 0.12) !important;
-    /* Light, tight brand color glow */
-    box-shadow: 0 0 8px rgba(255, 121, 0, 0.1), 0 0 2px rgba(255, 121, 0, 0.06) !important;
-  }
-
-  .ai-card-surface:hover {
-    background: rgba(255, 255, 255, 0.92) !important;
-    border-color: rgba(255, 121, 0, 0.3) !important;
-    /* Enhanced brand color glow on hover */
-    box-shadow: 0 0 12px rgba(255, 121, 0, 0.18), 0 0 4px rgba(255, 121, 0, 0.12) !important;
-  }
-}
+/* Light theme - handled automatically by theme system */
+/* No overrides needed - theme variables handle light/dark/day/night */
+/* Variables used:
+ * - var(--ai-card-background) adapts to theme
+ * - var(--theme-ai-card-border) adapts to theme
+ * - var(--theme-ai-card-box-shadow) adapts to theme
+ *
+ * Theme definitions in tokens/_master.scss:
+ * - Light theme: --theme-ai-card-background: #ffffff
+ * - Dark theme: --theme-ai-card-background: #141414
+ * - Base theme: --theme-ai-card-background: var(--background)
+ */

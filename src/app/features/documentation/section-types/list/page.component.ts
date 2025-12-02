@@ -19,15 +19,16 @@ The **List Section** (\`type: "list"\`) is used for displays structured lists an
 | Uses Items | Yes |
 | Default Columns | 1 |
 | Supports Collapse | Yes |
-| Aliases | \`table\` |
+| Aliases | \`table\`, \`checklist\` |
 
 
 ## Use Cases
 
 - Product lists
-- Employee rosters
-- Inventory
+- Feature lists
 - Task lists
+- Inventory
+- Requirements
 
 ## Data Schema
 
@@ -43,38 +44,36 @@ The **List Section** (\`type: "list"\`) is used for displays structured lists an
 | \`status\` | string | Item status |
 | \`value\` | string,number | Item value |
 | \`date\` | string | Item date |
+| \`priority\` | string | Priority level |
 
 ## Complete Example
 
 \`\`\`json
 {
-  "title": "Product Features",
+  "title": "Product Roadmap Q1-Q2 2025",
   "type": "list",
-  "description": "Key features and capabilities",
+  "description": "Strategic initiatives and feature development",
   "items": [
     {
-      "title": "Real-time Analytics",
-      "description": "Live data processing and visualization",
-      "icon": "📊",
-      "status": "completed"
-    },
-    {
-      "title": "AI Integration",
-      "description": "Machine learning powered insights",
+      "title": "AI-Powered Forecasting Engine",
+      "description": "Machine learning model for predictive analytics with 95% accuracy target",
       "icon": "🤖",
-      "status": "in-progress"
+      "status": "in-progress",
+      "priority": "critical"
     },
     {
-      "title": "API Access",
-      "description": "RESTful API for integrations",
-      "icon": "🔗",
-      "status": "completed"
+      "title": "Real-time Collaboration Suite",
+      "description": "Multi-user editing with presence indicators and conflict resolution",
+      "icon": "👥",
+      "status": "in-progress",
+      "priority": "high"
     },
     {
-      "title": "Multi-language",
-      "description": "Support for 20+ languages",
-      "icon": "🌍",
-      "status": "pending"
+      "title": "Enterprise SSO Integration",
+      "description": "SAML 2.0 and OIDC support for Okta, Azure AD, and custom IdPs",
+      "icon": "🔐",
+      "status": "completed",
+      "priority": "high"
     }
   ]
 }
@@ -84,11 +83,11 @@ The **List Section** (\`type: "list"\`) is used for displays structured lists an
 
 \`\`\`json
 {
-  "title": "List",
+  "title": "Tasks",
   "type": "list",
   "items": [
     {
-      "title": "Item 1"
+      "title": "Task 1"
     }
   ]
 }
@@ -100,12 +99,13 @@ The **List Section** (\`type: "list"\`) is used for displays structured lists an
 2. Include titles and descriptions
 3. Add status badges when relevant
 4. Keep list items scannable
+5. Use icons for visual hierarchy
 
 ## Component Information
 
-- **Selector:** \`app-list-section\`
+- **Selector:** \`lib-list-section\`
 - **Component Path:** \`./lib/components/sections/list-section/list-section.component\`
-- **Style Path:** \`./lib/styles/components/sections/_list.scss\`
+- **Style Path:** \`./lib/components/sections/list-section/list-section.scss\`
 
 ## Related Documentation
 
@@ -115,33 +115,30 @@ The **List Section** (\`type: "list"\`) is used for displays structured lists an
 `;
 
 const demoConfig = {
-  title: 'Product Features',
+  title: 'Product Roadmap Q1-Q2 2025',
   type: 'list',
-  description: 'Key features and capabilities',
+  description: 'Strategic initiatives and feature development',
   items: [
     {
-      title: 'Real-time Analytics',
-      description: 'Live data processing and visualization',
-      icon: '📊',
-      status: 'completed',
-    },
-    {
-      title: 'AI Integration',
-      description: 'Machine learning powered insights',
+      title: 'AI-Powered Forecasting Engine',
+      description: 'Machine learning model for predictive analytics with 95% accuracy target',
       icon: '🤖',
       status: 'in-progress',
+      priority: 'critical',
     },
     {
-      title: 'API Access',
-      description: 'RESTful API for integrations',
-      icon: '🔗',
+      title: 'Real-time Collaboration Suite',
+      description: 'Multi-user editing with presence indicators and conflict resolution',
+      icon: '👥',
+      status: 'in-progress',
+      priority: 'high',
+    },
+    {
+      title: 'Enterprise SSO Integration',
+      description: 'SAML 2.0 and OIDC support for Okta, Azure AD, and custom IdPs',
+      icon: '🔐',
       status: 'completed',
-    },
-    {
-      title: 'Multi-language',
-      description: 'Support for 20+ languages',
-      icon: '🌍',
-      status: 'pending',
+      priority: 'high',
     },
   ],
 };

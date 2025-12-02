@@ -23,7 +23,8 @@ The **News Section** (`type: "news"`) is used for displays news articles, headli
 - News feeds
 - Press releases
 - Announcements
-- Blog posts
+- Industry updates
+- Company news
 
 ## Data Schema
 
@@ -42,25 +43,39 @@ The **News Section** (`type: "news"`) is used for displays news articles, headli
 
 ```json
 {
-  "title": "Latest News",
+  "title": "Latest News & Press Coverage",
   "type": "news",
-  "description": "Recent company news and announcements",
+  "description": "Recent company news, press releases, and industry recognition",
   "items": [
     {
-      "title": "Q4 Earnings Beat Expectations",
-      "description": "Company reports 25% revenue growth in Q4 2024",
+      "title": "Nexus Technologies Closes $85M Series C to Accelerate AI Innovation",
+      "description": "Funding led by Sequoia Capital will fuel expansion of AI capabilities, global go-to-market, and strategic acquisitions. Company valuation reaches $1.2B.",
       "meta": {
-        "source": "Bloomberg",
-        "date": "2025-01-15"
+        "source": "TechCrunch",
+        "date": "2025-01-20",
+        "url": "https://techcrunch.com/nexus-series-c",
+        "category": "Funding"
       },
       "status": "published"
     },
     {
-      "title": "New Product Launch Announced",
-      "description": "Enterprise Suite 4.0 coming Spring 2025",
+      "title": "Nexus Named Leader in Gartner Magic Quadrant for Analytics & BI Platforms",
+      "description": "Recognition highlights company's vision completeness and ability to execute, with highest scores for AI/ML capabilities and customer experience.",
       "meta": {
-        "source": "Press Release",
-        "date": "2025-01-10"
+        "source": "Gartner",
+        "date": "2024-12-15",
+        "url": "https://gartner.com/magic-quadrant/analytics",
+        "category": "Recognition"
+      },
+      "status": "published"
+    },
+    {
+      "title": "Q4 2024 Revenue Exceeds $42M, Up 47% Year-Over-Year",
+      "description": "Strong enterprise demand drives record quarterly results. Full-year ARR surpasses $127M with path to profitability in 2025.",
+      "meta": {
+        "source": "Company Press Release",
+        "date": "2025-01-15",
+        "category": "Earnings"
       },
       "status": "published"
     }
@@ -76,7 +91,7 @@ The **News Section** (`type: "news"`) is used for displays news articles, headli
   "type": "news",
   "items": [
     {
-      "title": "News Item"
+      "title": "Company Update"
     }
   ]
 }
@@ -88,12 +103,13 @@ The **News Section** (`type: "news"`) is used for displays news articles, headli
 2. Keep headlines concise
 3. Use descriptions for summaries
 4. Include status for article state
+5. Order chronologically
 
 ## Component Information
 
-- **Selector:** `app-news-section`
+- **Selector:** `lib-news-section`
 - **Component Path:** `./lib/components/sections/news-section/news-section.component`
-- **Style Path:** `./lib/styles/components/sections/_news.scss`
+
 
 ## Related Documentation
 

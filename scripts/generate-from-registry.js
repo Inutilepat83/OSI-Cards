@@ -227,7 +227,9 @@ function generateComponentMap(registry) {
   const mapEntries = [];
 
   Object.entries(registry.sections).forEach(([type, def]) => {
+    // Remove both 'lib-' and 'app-' prefixes from selector to get component name
     const componentName = def.selector
+      .replace('lib-', '')
       .replace('app-', '')
       .split('-')
       .map(part => part.charAt(0).toUpperCase() + part.slice(1))
@@ -301,15 +303,22 @@ function generateStyleBundle(registry) {
   const imports = Object.entries(registry.sections)
     .filter(([_, def]) => def.stylePath)
     .map(([type, def]) => {
+      // Import from section folder using relative path
+      // From: lib/styles/components/sections/
+      // To:   lib/components/sections/[section-name]/[section-name].scss
       const fileName = path.basename(def.stylePath);
-      return `@import '${fileName}'; // ${type}`;
+      const relativePath = `../../../components/sections/${type}-section/${fileName}`;
+      return `@import '${relativePath}'; // ${type}`;
     });
 
   const content = `// AUTO-GENERATED FILE - DO NOT EDIT DIRECTLY
 // Generated from section-registry.json
 // Run: npm run generate:from-registry
+//
+// Imports section SCSS files from their section folders.
+// Each section can inherit from design-system and add custom styles.
 
-// Section type styles - import all registered sections
+// Section type styles - imported from section folders
 ${imports.join('\n')}
 `;
 
@@ -401,6 +410,230 @@ function generateTestFixtures(registry) {
   log(`  ✓ Generated manifest.json`, colors.green);
 
   return { outputDir, filesCount: files.length };
+}
+
+/**
+ * Generate TypeScript fixtures from registry (fixtures.generated.ts)
+ * This replaces manual fixture definitions with registry-sourced data
+ */
+function generateTsFixtures(registry) {
+  logSection('Generating TypeScript Fixtures');
+
+  const outputPath = path.join(LIB_SRC, 'lib', 'registry', 'fixtures.generated.ts');
+
+  // Build complete fixtures object
+  const completeSections = [];
+  const minimalSections = [];
+  const edgeCaseSections = [];
+  const sectionTypes = [];
+
+  Object.entries(registry.sections).forEach(([type, def]) => {
+    if (def.isInternal) return; // Skip internal sections like fallback
+
+    sectionTypes.push(type);
+
+    if (def.testFixtures?.complete) {
+      completeSections.push({ type, fixture: { id: type + '-complete', ...def.testFixtures.complete } });
+    }
+    if (def.testFixtures?.minimal) {
+      minimalSections.push({ type, fixture: { id: type + '-minimal', ...def.testFixtures.minimal } });
+    }
+    if (def.testFixtures?.edgeCases) {
+      edgeCaseSections.push({ type, fixture: { id: type + '-edge', ...def.testFixtures.edgeCases } });
+    }
+  });
+
+  // Build fixtures JSON
+  const completeFixturesObj = Object.fromEntries(
+    completeSections.map(({ type, fixture }) => [type, fixture])
+  );
+  const minimalFixturesObj = Object.fromEntries(
+    minimalSections.map(({ type, fixture }) => [type, fixture])
+  );
+  const edgeCaseFixturesObj = Object.fromEntries(
+    edgeCaseSections.map(({ type, fixture }) => [type, fixture])
+  );
+
+  // Build SECTION_FIXTURES entries
+  const sectionFixturesEntries = sectionTypes.map(type => {
+    return "  '" + type + "': {\n" +
+           "    complete: COMPLETE_FIXTURES['" + type + "']!,\n" +
+           "    minimal: MINIMAL_FIXTURES['" + type + "']!,\n" +
+           "    edgeCase: EDGE_CASE_FIXTURES['" + type + "'] || MINIMAL_FIXTURES['" + type + "']!\n" +
+           "  }";
+  }).join(',\n');
+
+  const generatedAt = new Date().toISOString();
+
+  const content = `/**
+ * Generated Registry Fixtures
+ *
+ * Auto-generated section fixtures from the section registry.
+ * This file provides sample data for testing and documentation.
+ *
+ * DO NOT EDIT MANUALLY - regenerate with \`npm run generate:from-registry\`
+ *
+ * Source: Individual *.definition.json files in section folders
+ * Generated: ${generatedAt}
+ */
+
+import type { AICardConfig, CardSection } from '../models/card.model';
+
+// ============================================================================
+// TYPES
+// ============================================================================
+
+export type FixtureCategory = 'complete' | 'minimal' | 'edge-case';
+
+export interface SectionFixtures {
+  complete: CardSection;
+  minimal: CardSection;
+  edgeCase: CardSection;
+}
+
+// ============================================================================
+// COMPLETE FIXTURES (Rich examples from definition files)
+// ============================================================================
+
+export const COMPLETE_FIXTURES: Record<string, CardSection> = ${JSON.stringify(completeFixturesObj, null, 2)};
+
+// ============================================================================
+// MINIMAL FIXTURES (Basic examples)
+// ============================================================================
+
+export const MINIMAL_FIXTURES: Record<string, CardSection> = ${JSON.stringify(minimalFixturesObj, null, 2)};
+
+// ============================================================================
+// EDGE CASE FIXTURES (Testing edge cases)
+// ============================================================================
+
+export const EDGE_CASE_FIXTURES: Record<string, CardSection> = ${JSON.stringify(edgeCaseFixturesObj, null, 2)};
+
+// ============================================================================
+// SECTION FIXTURES COMBINED
+// ============================================================================
+
+export const SECTION_FIXTURES: Record<string, SectionFixtures> = {
+${sectionFixturesEntries}
+};
+
+// ============================================================================
+// SAMPLE CARDS (Built from fixtures)
+// ============================================================================
+
+export const SAMPLE_COMPANY_CARD: AICardConfig = {
+  id: 'sample-company',
+  cardTitle: 'Nexus Technologies Inc.',
+  cardType: 'company',
+  sections: [
+    COMPLETE_FIXTURES['info']!,
+    COMPLETE_FIXTURES['analytics']!,
+    COMPLETE_FIXTURES['chart']!,
+    COMPLETE_FIXTURES['financials']!,
+  ].filter(Boolean),
+  actions: [
+    { id: 'view', label: 'View Details', variant: 'primary' },
+    { id: 'contact', label: 'Contact', variant: 'secondary' },
+  ],
+};
+
+export const SAMPLE_ANALYTICS_CARD: AICardConfig = {
+  id: 'sample-analytics',
+  cardTitle: 'Performance Dashboard',
+  cardType: 'analytics',
+  sections: [
+    COMPLETE_FIXTURES['analytics']!,
+    COMPLETE_FIXTURES['chart']!,
+  ].filter(Boolean),
+};
+
+export const SAMPLE_NEWS_CARD: AICardConfig = {
+  id: 'sample-news',
+  cardTitle: 'Latest Updates',
+  cardType: 'news',
+  sections: [COMPLETE_FIXTURES['news']!].filter(Boolean),
+};
+
+export const ALL_SECTIONS_CARD: AICardConfig = {
+  id: 'all-sections',
+  cardTitle: 'Complete Card Example',
+  sections: Object.values(COMPLETE_FIXTURES),
+};
+
+export const MINIMAL_ALL_SECTIONS_CARD: AICardConfig = {
+  id: 'minimal-all-sections',
+  cardTitle: 'Minimal Card',
+  sections: Object.values(MINIMAL_FIXTURES),
+};
+
+export const EDGE_CASE_ALL_SECTIONS_CARD: AICardConfig = {
+  id: 'edge-case-all-sections',
+  cardTitle: 'Edge Case Card',
+  sections: Object.values(EDGE_CASE_FIXTURES),
+};
+
+export const SAMPLE_CARDS = {
+  company: SAMPLE_COMPANY_CARD,
+  analytics: SAMPLE_ANALYTICS_CARD,
+  news: SAMPLE_NEWS_CARD,
+  allSections: ALL_SECTIONS_CARD,
+};
+
+// ============================================================================
+// FIXTURE ACCESS FUNCTIONS
+// ============================================================================
+
+/**
+ * Get a fixture for a specific section type and category
+ */
+export function getFixture(sectionType: string, category: FixtureCategory = 'complete'): CardSection | undefined {
+  const fixtures = SECTION_FIXTURES[sectionType];
+  if (!fixtures) return undefined;
+
+  switch (category) {
+    case 'complete': return fixtures.complete;
+    case 'minimal': return fixtures.minimal;
+    case 'edge-case': return fixtures.edgeCase;
+    default: return fixtures.complete;
+  }
+}
+
+/**
+ * Get all fixtures for a section type
+ */
+export function getAllFixtures(sectionType: string): SectionFixtures | undefined {
+  return SECTION_FIXTURES[sectionType];
+}
+
+/**
+ * Get a fixture with a unique ID generated
+ */
+export function getFixtureWithUniqueId(sectionType: string, category: FixtureCategory = 'complete'): CardSection | undefined {
+  const fixture = getFixture(sectionType, category);
+  if (!fixture) return undefined;
+
+  return {
+    ...fixture,
+    id: \`\${fixture.id}-\${Date.now()}-\${Math.random().toString(36).slice(2, 9)}\`,
+  };
+}
+
+/**
+ * Get list of available section types
+ */
+export function getAvailableSectionTypes(): string[] {
+  return Object.keys(SECTION_FIXTURES);
+}
+`;
+
+  fs.writeFileSync(outputPath, content, 'utf8');
+  log(`  ✓ Generated ${outputPath}`, colors.green);
+  log(`    - ${sectionTypes.length} section types`, colors.blue);
+  log(`    - ${completeSections.length} complete fixtures`, colors.blue);
+  log(`    - ${minimalSections.length} minimal fixtures`, colors.blue);
+  log(`    - ${edgeCaseSections.length} edge case fixtures`, colors.blue);
+
+  return { outputPath, sectionCount: sectionTypes.length };
 }
 
 /**
@@ -499,13 +732,8 @@ function validateRegistry(registry) {
       warnings.push(`Component file not found for '${type}': ${componentFile}`);
     }
 
-    // Check style file exists
-    if (def.stylePath) {
-      const styleFile = path.join(LIB_SRC, def.stylePath);
-      if (!fs.existsSync(styleFile)) {
-        warnings.push(`Style file not found for '${type}': ${styleFile}`);
-      }
-    }
+    // Note: Styles are in unified bundles, not per-section files
+    // The _sections-base.scss and _unified-sections-final.scss contain all styles
 
     // Check test fixtures
     if (!def.testFixtures) {
@@ -578,6 +806,10 @@ function main() {
 
     if (runAll || args.includes('--tests')) {
       generateTestFixtures(registry);
+    }
+
+    if (runAll || args.includes('--fixtures')) {
+      generateTsFixtures(registry);
     }
 
     if (runAll || args.includes('--api')) {

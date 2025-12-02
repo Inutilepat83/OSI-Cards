@@ -1,211 +1,27 @@
 {
   "cardTitle": "Top Orange Business Solutions",
-  "cardSubtitle": "Recommended Solutions for Enterprise Manufacturing Client",
+  "cardSubtitle": "Enterprise Telecommunications",
   "cardType": "sko",
   "sections": [
     {
-      "title": "Manufacturing Solutions Overview",
-      "type": "overview",
-      "fields": [
-        { "label": "Client Industry", "value": "Manufacturing" },
-        { "label": "Client Size", "value": "Enterprise - 15,000+ employees" },
-        { "label": "Geographic Presence", "value": "Global - 25+ facilities" },
-        {
-          "label": "Primary Objectives",
-          "value": "Digital Transformation, IoT Integration, Supply Chain Optimization"
-        },
-        { "label": "Estimated Budget", "value": "$5M - $8M" },
-        { "label": "Timeline", "value": "12-18 Months" }
-      ]
-    },
-    {
-      "title": "Manufacturing Solutions",
+      "title": "Solutions",
       "type": "solutions",
       "fields": [
         {
-          "title": "IoT Manufacturing Platform",
-          "description": "Connected devices and sensors for smart manufacturing and predictive maintenance",
-          "category": "IoT & Automation",
-          "benefits": [
-            "Real-time monitoring",
-            "Predictive maintenance",
-            "Energy optimization",
-            "Quality control"
-          ],
-          "outcomes": [
-            "30% reduction in downtime",
-            "25% energy savings",
-            "40% quality improvement"
-          ],
-          "deliveryTime": "8-10 weeks"
-        },
-        {
-          "title": "Industrial Cloud Infrastructure",
-          "description": "Secure, scalable cloud platform for manufacturing operations and data analytics",
-          "category": "Infrastructure",
-          "benefits": [
-            "99.9% uptime",
-            "Global edge network",
-            "Auto-scaling",
-            "Disaster recovery"
-          ],
-          "outcomes": [
-            "50% faster processing",
-            "99.9% availability",
-            "60% cost reduction"
-          ],
-          "deliveryTime": "10-12 weeks"
-        },
-        {
-          "title": "Supply Chain Analytics",
-          "description": "AI-powered analytics for supply chain optimization and demand forecasting",
-          "category": "Analytics",
-          "benefits": [
-            "Demand forecasting",
-            "Inventory optimization",
-            "Real-time insights",
-            "Cost reduction"
-          ],
-          "outcomes": [
-            "35% inventory reduction",
-            "20% cost savings",
-            "90% forecast accuracy"
-          ],
-          "deliveryTime": "6-8 weeks"
-        },
-        {
-          "title": "Secure Network Connectivity",
-          "description": "Dedicated secure network for manufacturing facilities and remote monitoring",
-          "category": "Networking",
-          "benefits": [
-            "Secure connectivity",
-            "Low latency",
-            "High availability",
-            "Global reach"
-          ],
-          "outcomes": [
-            "100% secure connections",
-            "< 10ms latency",
-            "99.99% availability"
-          ],
-          "deliveryTime": "4-6 weeks"
-        }
-      ]
-    },
-    {
-      "title": "Client Contacts",
-      "type": "contact-card",
-      "fields": [
-        {
-          "label": "CIO",
-          "title": "Robert Chen",
-          "value": "Chief Information Officer",
-          "email": "robert.chen@manufacturing.com",
-          "phone": "+1 555 0400",
-          "role": "Executive",
-          "department": "Technology",
-          "location": "Detroit, MI"
-        },
-        {
-          "label": "Operations Director",
-          "title": "Lisa Anderson",
-          "value": "Director of Operations",
-          "email": "lisa.anderson@manufacturing.com",
-          "phone": "+1 555 0401",
-          "role": "Senior Manager",
-          "department": "Operations",
-          "location": "Chicago, IL"
-        },
-        {
-          "label": "Finance Lead",
-          "title": "Michael Brown",
-          "value": "VP of Finance",
-          "email": "michael.brown@manufacturing.com",
-          "phone": "+1 555 0402",
-          "role": "Executive",
-          "department": "Finance",
-          "location": "Detroit, MI"
-        }
-      ]
-    },
-    {
-      "title": "Expected Outcomes",
-      "type": "list",
-      "items": [
-        {
-          "title": "Operational Efficiency",
-          "description": "30% improvement in production efficiency through automation",
-          "icon": "⚙️",
-          "status": "pending"
-        },
-        {
-          "title": "Cost Reduction",
-          "description": "25% reduction in operational costs through optimization",
-          "icon": "💰",
-          "status": "pending"
-        },
-        {
-          "title": "Quality Improvement",
-          "description": "40% reduction in defects through real-time monitoring",
-          "icon": "✅",
-          "status": "pending"
-        },
-        {
-          "title": "Energy Savings",
-          "description": "25% reduction in energy consumption through smart systems",
-          "icon": "⚡",
-          "status": "pending"
-        }
-      ]
-    },
-    {
-      "title": "Implementation Timeline",
-      "type": "event",
-      "items": [
-        {
-          "title": "Phase 1: Planning",
-          "description": "Assessment & Strategy - Initial planning, requirements gathering, and strategic alignment",
-          "date": "Q1 2025",
-          "status": "pending"
-        },
-        {
-          "title": "Phase 2: Core Implementation",
-          "description": "Infrastructure & IoT deployment - Core systems implementation and IoT device integration",
-          "date": "Q2-Q3 2025",
-          "status": "pending"
-        },
-        {
-          "title": "Phase 3: Optimization",
-          "description": "Analytics & Fine-tuning - Performance optimization, analytics deployment, and system refinement",
-          "date": "Q4 2025",
-          "status": "pending"
+          "title": "Global MPLS Network",
+          "description": "Private enterprise network",
+          "category": "Connectivity",
+          "benefits": ["Global coverage", "SLA-backed"]
         }
       ]
     }
   ],
   "actions": [
     {
-      "label": "Create Presentation",
-      "type": "agent",
+      "label": "Download Proposal",
+      "type": "website",
       "variant": "primary",
-      "icon": "📊",
-      "agentId": "presentation-agent",
-      "agentContext": { "action": "create_presentation" }
-    },
-    {
-      "label": "Send Email to Client",
-      "type": "mail",
-      "variant": "primary",
-      "icon": "📧",
-      "email": {
-        "contact": {
-          "name": "Robert Chen",
-          "email": "robert.chen@manufacturing.com",
-          "role": "Chief Information Officer"
-        },
-        "subject": "Orange Business Solutions - Recommended Solutions for Manufacturing Corp",
-        "body": "Dear Robert Chen,\n\nI am pleased to present the top Orange Business Solutions tailored for Manufacturing Corp:\n\n1. IoT Manufacturing Platform\n   Connected devices and sensors for smart manufacturing and predictive maintenance\n   - Real-time monitoring\n   - Predictive maintenance\n   - Energy optimization\n   - Quality control\n   Expected outcomes: 30% reduction in downtime, 25% energy savings, 40% quality improvement\n\n2. Industrial Cloud Infrastructure\n   Secure, scalable cloud platform for manufacturing operations and data analytics\n   - 99.9% uptime SLA\n   - Global edge network\n   - Auto-scaling capabilities\n   - Disaster recovery\n   Expected outcomes: 50% faster processing, 99.9% availability, 60% cost reduction\n\n3. Supply Chain Analytics\n   AI-powered analytics for supply chain optimization and demand forecasting\n   - Demand forecasting\n   - Inventory optimization\n   - Real-time insights\n   - Cost reduction\n   Expected outcomes: 35% inventory reduction, 20% cost savings, 90% forecast accuracy\n\n4. Secure Network Connectivity\n   Dedicated secure network for manufacturing facilities and remote monitoring\n   - Secure connectivity\n   - Low latency\n   - High availability\n   - Global reach\n   Expected outcomes: 100% secure connections, < 10ms latency, 99.99% availability\n\nExpected ROI: 280%\nTotal Investment: $6.5M\nExpected Annual Savings: $4.5M\nPayback Period: 18 months\n\nI would be happy to schedule a call to discuss these solutions in detail and answer any questions you may have.\n\nBest regards,\nOrange Business Sales Team"
-      }
+      "icon": "📄"
     }
   ]
 }

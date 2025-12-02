@@ -11,6 +11,7 @@ import {
   DEFAULT_SECTION_COLUMN_PREFERENCES,
   PreferredColumns
 } from '../utils/grid-config.util';
+import { LRUCache } from '../utils/lru-cache.util';
 
 interface ColSpanThresholds {
   two: number;
@@ -120,11 +121,36 @@ const DEFAULT_COL_SPAN_THRESHOLD: ColSpanThresholds = { two: 3, three: 6 }; // L
   providedIn: 'root'
 })
 export class SectionNormalizationService {
+  // ========== Caching (merged from cached-section-normalization.service.ts) ==========
+  private readonly normalizedSectionsCache = new LRUCache<string, CardSection>({ maxSize: 200 });
+  private readonly sortedSectionsCache = new LRUCache<string, CardSection[]>({ maxSize: 50 });
+  private readonly columnSpanCache = new LRUCache<string, number>({ maxSize: 500 });
+  private cacheHits = 0;
+  private cacheMisses = 0;
 
   /**
    * Normalize a section by resolving its type and ensuring required properties
+   * Now includes caching to avoid redundant computations
    */
   normalizeSection(section: CardSection): CardSection {
+    // Check cache first
+    const key = this.generateSectionKey(section);
+    const cached = this.normalizedSectionsCache.get(key);
+    if (cached) {
+      this.cacheHits++;
+      return cached;
+    }
+
+    this.cacheMisses++;
+    const normalized = this.performNormalization(section);
+    this.normalizedSectionsCache.set(key, normalized);
+    return normalized;
+  }
+
+  /**
+   * Actual normalization logic (extracted for caching)
+   */
+  private performNormalization(section: CardSection): CardSection {
     const rawType = (section.type ?? '').toLowerCase();
     const title = (section.title ?? '').toLowerCase();
 
@@ -394,10 +420,20 @@ export class SectionNormalizationService {
   }
 
   /**
-   * Sort sections by priority
+   * Sort sections by priority (with caching)
    */
   sortSections(sections: CardSection[]): CardSection[] {
-    return [...sections].sort((a, b) => {
+    // Check cache first
+    const key = this.generateSectionsArrayKey(sections);
+    const cached = this.sortedSectionsCache.get(key);
+    if (cached) {
+      this.cacheHits++;
+      return cached;
+    }
+
+    // Cache miss - perform sort
+    this.cacheMisses++;
+    const sorted = [...sections].sort((a, b) => {
       const streamingOrderComparison = this.compareStreamingOrder(a, b);
       if (streamingOrderComparison !== 0) {
         return streamingOrderComparison;
@@ -406,6 +442,9 @@ export class SectionNormalizationService {
       const priorityB = this.getSectionPriority(b);
       return priorityA - priorityB;
     });
+
+    this.sortedSectionsCache.set(key, sorted);
+    return sorted;
   }
 
   private compareStreamingOrder(a: CardSection, b: CardSection): number {
@@ -449,6 +488,71 @@ export class SectionNormalizationService {
   normalizeAndSortSections(sections: CardSection[]): CardSection[] {
     const normalized = sections.map(section => this.normalizeSection(section));
     return this.sortSections(normalized);
+  }
+
+  // ============================================================================
+  // CACHING METHODS (merged from cached-section-normalization.service.ts)
+  // ============================================================================
+
+  /**
+   * Clear all caches
+   */
+  clearCache(): void {
+    this.normalizedSectionsCache.clear();
+    this.sortedSectionsCache.clear();
+    this.columnSpanCache.clear();
+    this.cacheHits = 0;
+    this.cacheMisses = 0;
+  }
+
+  /**
+   * Get cache statistics
+   */
+  getCacheStats(): {
+    hits: number;
+    misses: number;
+    hitRate: number;
+    normalizedCacheSize: number;
+    sortedCacheSize: number;
+    columnSpanCacheSize: number;
+  } {
+    const total = this.cacheHits + this.cacheMisses;
+    return {
+      hits: this.cacheHits,
+      misses: this.cacheMisses,
+      hitRate: total > 0 ? this.cacheHits / total : 0,
+      normalizedCacheSize: this.normalizedSectionsCache.size,
+      sortedCacheSize: this.sortedSectionsCache.size,
+      columnSpanCacheSize: this.columnSpanCache.size
+    };
+  }
+
+  /**
+   * Pre-warm cache with common section types
+   */
+  warmCache(sectionTypes: string[]): void {
+    // Pre-compute column spans for common types
+    sectionTypes.forEach(type => {
+      const preferredCols = this.getPreferredColumnsForType(type);
+      this.columnSpanCache.set(type, preferredCols);
+    });
+  }
+
+  /**
+   * Generate cache key for a section
+   */
+  private generateSectionKey(section: CardSection): string {
+    const fieldCount = section.fields?.length ?? 0;
+    const itemCount = section.items?.length ?? 0;
+    const meta = JSON.stringify(section.meta || {});
+    return `${section.type}:${section.title || ''}:${fieldCount}:${itemCount}:${meta}`;
+  }
+
+  /**
+   * Generate cache key for sections array
+   */
+  private generateSectionsArrayKey(sections: CardSection[]): string {
+    return sections.map(s => this.generateSectionKey(s)).join('|');
   }
 }
 

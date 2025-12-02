@@ -2,37 +2,12 @@
   display: block;
 }
 
-// Hero Section Styles using Theme Variables - Enhanced Design
+// Hero Section - Minimalist Design Using Design System
 .hero-section {
   position: relative;
   overflow: hidden;
   background: var(--background);
-  animation: fadeIn 0.8s ease-out;
-
-  /* Subtle background gradient - Brand gradient overlay */
-  &::before {
-    content: "";
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle at 50% 50%, rgba(255, 121, 0, 0.15) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 30%;
-    background: linear-gradient(180deg, transparent 0%, var(--background) 100%);
-    pointer-events: none;
-    z-index: 0;
-  }
+  animation: fadeIn 0.6s ease-out;
 }
 
 @keyframes fadeIn {
@@ -47,16 +22,16 @@
 .hero-container {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 3rem 1rem;
+  padding: var(--spacing-3xl) var(--spacing-base);
   position: relative;
   z-index: 1;
 
   @media (min-width: 640px) {
-    padding: 5rem 1.5rem;
+    padding: var(--spacing-3xl) var(--spacing-lg);
   }
 
   @media (min-width: 1024px) {
-    padding: 6rem 1.5rem;
+    padding: calc(var(--spacing-3xl) * 1.5) var(--spacing-lg);
   }
 }
 
@@ -166,7 +141,7 @@
 .hero-header {
   text-align: center;
   margin-bottom: 4rem;
-  animation: fadeInUp 0.8s ease-out;
+  animation: fadeInUp 0.5s ease-out;
 
   @media (min-width: 640px) {
     margin-bottom: 5rem;
@@ -194,22 +169,13 @@
 .hero-title-primary {
   color: var(--foreground);
   display: inline-block;
-  text-shadow: 0 2px 8px color-mix(in srgb, var(--foreground) 10%, transparent);
-  margin-right: 0.5rem;
+  margin-right: var(--spacing-sm);
 }
 
 .hero-title-accent {
-  color: #ff7900;
+  color: var(--accent);
   display: inline-block;
-  background: linear-gradient(
-    135deg,
-    #ff7900 0%,
-    color-mix(in srgb, #ff7900 80%, var(--foreground) 20%) 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: 0 2px 12px color-mix(in srgb, #ff7900 30%, transparent);
+  text-shadow: 0 1px 8px color-mix(in srgb, var(--accent) 15%, transparent);
   position: relative;
   margin-left: 0.5rem;
 
@@ -219,97 +185,78 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, #ff7900, transparent);
-    opacity: 0.3;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.2;
     border-radius: 2px;
   }
 }
 
 .hero-description {
-  font-size: 1rem;
+  font-size: var(--text-md);
   color: var(--muted-foreground);
   max-width: 52rem;
   margin: 0 auto;
-  line-height: 1.7;
-  padding: 0 1rem;
-  font-weight: 400;
-  animation: fadeInUp 0.8s ease-out 0.2s both;
+  line-height: var(--leading-relaxed);
+  padding: 0 var(--spacing-base);
+  font-weight: var(--font-normal);
+  animation: fadeInUp 0.5s ease-out 0.1s both;
 
   @media (min-width: 640px) {
-    font-size: 1.125rem;
-    line-height: 1.75;
+    font-size: var(--text-lg);
+    line-height: var(--leading-relaxed);
   }
 }
 
 .hero-features {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.5rem;
+  gap: var(--spacing-lg);
   max-width: 72rem;
   margin: 0 auto;
 
   @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
+    gap: var(--spacing-xl);
   }
 
   @media (min-width: 1024px) {
     grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
+    gap: var(--spacing-xl);
   }
 }
 
 .hero-feature-card {
-  /* GLOBALLY DEFINED: Use global variables for hero cards */
-  background: rgba(255, 255, 255, 0.03) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: none !important;
-  border-radius: var(--hero-card-border-radius) !important;
-  padding: 2rem;
+  /* Minimalist Design Using Design System */
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
   text-align: center;
-  box-shadow: var(--hero-card-box-shadow) !important;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s var(--ease-out);
   position: relative;
   overflow: hidden;
-  animation: fadeInUp 0.6s ease-out backwards;
+  animation: fadeInUp 0.5s ease-out backwards;
 
   /* Stagger animation for cards */
   &:nth-child(1) {
-    animation-delay: 0.1s;
+    animation-delay: 0.08s;
   }
   &:nth-child(2) {
-    animation-delay: 0.2s;
+    animation-delay: 0.14s;
   }
   &:nth-child(3) {
-    animation-delay: 0.3s;
+    animation-delay: 0.2s;
   }
 
-  /* Left accent border */
-  &::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: linear-gradient(180deg, #ff7900, color-mix(in srgb, #ff7900 50%, transparent));
+  /* Minimalist hover - no decorative borders */
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
     opacity: 0;
-    transition: opacity 0.35s ease;
-  }
-
-  /* Top glow effect */
-  &::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #ff7900, transparent);
-    opacity: 0;
-    transition: opacity 0.35s ease;
+    transition: opacity 0.25s ease;
   }
 
   @media (min-width: 640px) {
@@ -317,30 +264,23 @@
   }
 
   &:hover {
-    transform: translateY(-6px) !important;
+    transform: translateY(-2px) !important;
+    border: var(--hero-card-border-hover) !important;
     box-shadow:
-      0 20px 40px color-mix(in srgb, var(--foreground) 15%, transparent),
-      0 8px 16px color-mix(in srgb, #ff7900 12%, transparent),
-      0 0 0 1px color-mix(in srgb, #ff7900 20%, transparent) !important;
-    border-color: color-mix(in srgb, #ff7900 30%, transparent) !important;
-    background: linear-gradient(
-      135deg,
-      var(--hero-card-background) 0%,
-      color-mix(in srgb, var(--hero-card-background) 97%, #ff7900 3%) 100%
-    ) !important;
+      0 8px 20px color-mix(in srgb, var(--foreground) 8%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--accent) 10%, transparent) !important;
 
     &::before {
-      opacity: 1;
+      opacity: 0.6;
     }
 
     &::after {
-      opacity: 1;
+      opacity: 0.4;
     }
 
     .hero-feature-icon {
-      transform: scale(1.15) rotate(5deg);
-      background: color-mix(in srgb, #ff7900 15%, transparent);
-      border-color: color-mix(in srgb, #ff7900 40%, transparent);
+      transform: scale(1.05);
+      background: color-mix(in srgb, var(--accent) 10%, transparent);
     }
   }
 
@@ -358,11 +298,11 @@
   width: 4rem;
   height: 4rem;
   margin: 0 auto 1.5rem;
-  color: #ff7900;
-  background: color-mix(in srgb, #ff7900 8%, transparent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
   border: none !important;
   border-radius: 1rem;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   z-index: 1;
 
@@ -373,8 +313,8 @@
   }
 
   lucide-icon {
-    color: #ff7900;
-    filter: drop-shadow(0 2px 4px color-mix(in srgb, #ff7900 20%, transparent));
+    color: var(--accent);
+    filter: drop-shadow(0 1px 2px color-mix(in srgb, var(--accent) 12%, transparent));
   }
 }
 
@@ -385,7 +325,7 @@
   margin-bottom: 1rem;
   letter-spacing: -0.02em;
   line-height: 1.3;
-  transition: color 0.35s ease;
+  transition: color 0.2s ease;
 
   @media (min-width: 640px) {
     font-size: 1.375rem;
@@ -393,7 +333,7 @@
   }
 
   .hero-feature-card:hover & {
-    color: #ff7900;
+    color: var(--accent);
   }
 }
 
@@ -402,21 +342,21 @@
   color: var(--muted-foreground);
   line-height: 1.65;
   font-weight: 400;
-  transition: color 0.35s ease;
+  transition: color 0.2s ease;
 
   @media (min-width: 640px) {
     font-size: 0.9375rem;
   }
 
   .hero-feature-card:hover & {
-    color: color-mix(in srgb, var(--muted-foreground) 90%, var(--foreground) 10%);
+    color: var(--muted-foreground);
   }
 }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -440,7 +380,7 @@
   }
 }
 
-// Enhanced Card Type Selector
+// Enhanced Card Type Selector - Subtle hover
 .card-type-selector {
   display: flex;
   flex-wrap: wrap;
@@ -454,11 +394,11 @@
     border-radius: 0.75rem;
     font-weight: 600;
     font-size: 0.625rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 2px solid transparent;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid var(--border);
     background: var(--card-background);
     color: var(--foreground);
-    box-shadow: 0 2px 4px color-mix(in srgb, var(--foreground) 5%, transparent);
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--foreground) 3%, transparent);
     overflow: hidden;
 
     /* Ripple effect */
@@ -470,26 +410,25 @@
       width: 0;
       height: 0;
       border-radius: 50%;
-      background: color-mix(in srgb, var(--foreground) 15%, transparent);
+      background: color-mix(in srgb, var(--foreground) 8%, transparent);
       transform: translate(-50%, -50%);
       transition:
-        width 0.6s,
-        height 0.6s;
+        width 0.4s,
+        height 0.4s;
       pointer-events: none;
     }
 
     &:not(:disabled):hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px color-mix(in srgb, var(--foreground) 10%, transparent);
-      border-color: color-mix(in srgb, #ff7900 30%, transparent);
+      border-color: color-mix(in srgb, var(--accent) 25%, transparent);
+      box-shadow: 0 2px 6px color-mix(in srgb, var(--foreground) 5%, transparent);
     }
 
     &:not(:disabled):active {
-      transform: translateY(0) scale(0.98);
+      transform: scale(0.98);
 
       &::after {
-        width: 300px;
-        height: 300px;
+        width: 200px;
+        height: 200px;
         transition:
           width 0s,
           height 0s;
@@ -502,41 +441,19 @@
     }
 
     &.active {
-      background: linear-gradient(
-        135deg,
-        #ff7900,
-        color-mix(in srgb, #ff7900 90%, var(--foreground) 10%)
-      );
+      background: var(--accent);
       color: white;
-      border-color: #ff7900;
-      box-shadow:
-        0 4px 16px color-mix(in srgb, #ff7900 35%, transparent),
-        0 0 0 1px color-mix(in srgb, #ff7900 20%, transparent);
-      transform: scale(1.05);
-
-      &::before {
-        content: "";
-        position: absolute;
-        inset: -2px;
-        border-radius: 0.75rem;
-        padding: 2px;
-        background: linear-gradient(135deg, #ff7900, color-mix(in srgb, #ff7900 70%, transparent));
-        -webkit-mask:
-          linear-gradient(#fff 0 0) content-box,
-          linear-gradient(#fff 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-        opacity: 0.5;
-      }
+      border-color: var(--accent);
+      box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 20%, transparent);
 
       &::after {
-        background: color-mix(in srgb, rgba(255, 255, 255) 20%, transparent);
+        background: color-mix(in srgb, rgba(255, 255, 255) 15%, transparent);
       }
     }
   }
 }
 
-// Variant Selector
+// Variant Selector - Subtle hover
 .variant-selector {
   display: flex;
   flex-wrap: wrap;
@@ -550,12 +467,12 @@
     border-radius: 0.75rem;
     font-weight: 600;
     font-size: 0.625rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: none !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid var(--border);
     background: var(--card-background);
     color: var(--foreground);
     min-width: 3rem;
-    box-shadow: 0 2px 4px color-mix(in srgb, var(--foreground) 5%, transparent);
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--foreground) 3%, transparent);
     overflow: hidden;
 
     /* Ripple effect */
@@ -567,25 +484,25 @@
       width: 0;
       height: 0;
       border-radius: 50%;
-      background: color-mix(in srgb, var(--foreground) 15%, transparent);
+      background: color-mix(in srgb, var(--foreground) 8%, transparent);
       transform: translate(-50%, -50%);
       transition:
-        width 0.6s,
-        height 0.6s;
+        width 0.4s,
+        height 0.4s;
       pointer-events: none;
     }
 
     &:not(:disabled):hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px color-mix(in srgb, var(--foreground) 10%, transparent);
+      border-color: color-mix(in srgb, var(--accent) 25%, transparent);
+      box-shadow: 0 2px 6px color-mix(in srgb, var(--foreground) 5%, transparent);
     }
 
     &:not(:disabled):active {
-      transform: translateY(0) scale(0.98);
+      transform: scale(0.98);
 
       &::after {
-        width: 300px;
-        height: 300px;
+        width: 200px;
+        height: 200px;
         transition:
           width 0s,
           height 0s;
@@ -598,17 +515,13 @@
     }
 
     &.active {
-      background: linear-gradient(
-        135deg,
-        #ff7900,
-        color-mix(in srgb, #ff7900 90%, var(--foreground) 10%)
-      );
+      background: var(--accent);
       color: white;
-      box-shadow: 0 4px 16px color-mix(in srgb, #ff7900 35%, transparent);
-      transform: scale(1.05);
+      border-color: var(--accent);
+      box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 20%, transparent);
 
       &::after {
-        background: color-mix(in srgb, rgba(255, 255, 255) 20%, transparent);
+        background: color-mix(in srgb, rgba(255, 255, 255) 15%, transparent);
       }
     }
   }
@@ -1045,12 +958,12 @@
   font-size: 0.6875rem;
   font-weight: 600;
   border-radius: 0.625rem;
-  border: none !important;
+  border: 1px solid var(--border);
   background: var(--card-background);
   color: var(--foreground);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
-  box-shadow: 0 2px 4px color-mix(in srgb, var(--foreground) 5%, transparent);
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--foreground) 3%, transparent);
   position: relative;
   overflow: hidden;
 
@@ -1063,11 +976,11 @@
     width: 0;
     height: 0;
     border-radius: 50%;
-    background: color-mix(in srgb, var(--foreground) 10%, transparent);
+    background: color-mix(in srgb, var(--foreground) 6%, transparent);
     transform: translate(-50%, -50%);
     transition:
-      width 0.6s,
-      height 0.6s;
+      width 0.4s,
+      height 0.4s;
     pointer-events: none;
   }
 
@@ -1075,8 +988,8 @@
     transform: scale(0.98);
 
     &::before {
-      width: 300px;
-      height: 300px;
+      width: 200px;
+      height: 200px;
       transition:
         width 0s,
         height 0s;
@@ -1085,34 +998,28 @@
 }
 
 .editor-toolbar__button--brand {
-  color: #ff7900;
-  background: color-mix(in srgb, #ff7900 8%, transparent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 15%, transparent);
 
   &::before {
-    background: color-mix(in srgb, #ff7900 20%, transparent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
   }
 }
 
 .editor-toolbar__button--brand:hover,
 .editor-toolbar__button--brand:focus-visible {
-  background: linear-gradient(
-    135deg,
-    #ff7900,
-    color-mix(in srgb, #ff7900 90%, var(--foreground) 10%)
-  );
+  background: var(--accent);
   color: white;
-  box-shadow:
-    0 4px 16px color-mix(in srgb, #ff7900 35%, transparent),
-    0 0 0 1px color-mix(in srgb, #ff7900 20%, transparent);
-  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
 .editor-toolbar__button:hover,
 .editor-toolbar__button:focus-visible {
-  color: #ff7900;
-  background: color-mix(in srgb, #ff7900 10%, transparent);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--foreground) 10%, transparent);
-  transform: translateY(-2px);
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 25%, transparent);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--foreground) 5%, transparent);
   outline: none;
 }
 
@@ -1246,27 +1153,27 @@
 }
 
 .feature-card {
-  background: rgba(255, 255, 255, 0.02);
-  border: none !important;
-  border-radius: 1rem;
-  padding: 2rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  transition: all 0.3s var(--ease-out);
   position: relative;
   overflow: hidden;
 
   &:hover {
-    transform: translateY(-4px);
-    background: rgba(255, 255, 255, 0.04);
-    box-shadow: 0 10px 30px -10px rgba(255, 121, 0, 0.15);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--foreground) 5%, transparent);
 
     lucide-icon {
-      color: #ff7900;
-      transform: scale(1.1);
+      color: var(--accent);
+      transform: scale(1.03);
     }
   }
 
   lucide-icon {
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
   }
 }
 

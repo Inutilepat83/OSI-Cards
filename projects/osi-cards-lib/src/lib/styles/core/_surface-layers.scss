@@ -14,10 +14,9 @@
 
 /* AI card (hero shell) ----------------------------------------------------- */
 @mixin surface-ai-card-base {
-  border: var(--ai-card-border, 0.5px solid color-mix(in srgb, var(--color-brand) 49%, transparent)) !important;
-  border-width: 0.5px !important;
+  border: var(--ai-card-border, 1px solid rgba(255, 121, 0, 0.12)) !important;
+  border-width: 1px !important;
   border-style: solid !important;
-  border-color: color-mix(in srgb, var(--color-brand) 49%, transparent) !important;
   border-radius: var(--ai-card-border-radius) !important;
   background: var(--section-item-background) !important;
   box-shadow: var(--ai-card-box-shadow, none) !important;
@@ -27,10 +26,7 @@
 }
 
 @mixin surface-ai-card-hover {
-  border: var(--ai-card-border-hover, 0.5px solid var(--color-brand)) !important;
-  border-width: 0.5px !important;
-  border-style: solid !important;
-  border-color: var(--color-brand) !important;
+  border-color: var(--ai-card-border-hover, rgba(255, 121, 0, 0.2)) !important;
   background: var(--section-item-background-hover, var(--section-item-background)) !important;
   box-shadow: var(--ai-card-box-shadow-hover, var(--ai-card-box-shadow, none)) !important;
 }
@@ -47,8 +43,9 @@
 }
 
 @mixin surface-section-hover {
-  /* Only darken background by 1%, no border changes */
-  background: color-mix(in srgb, var(--section-surface, var(--section-background, var(--card-section-bg))) 99%, black) !important;
+  /* Use hover background variable - flat color with theme border */
+  background: var(--section-surface-hover, var(--section-background-hover, var(--section-surface))) !important;
+  border-color: var(--section-border-hover, var(--section-border)) !important;
   box-shadow: var(--section-box-shadow-hover, var(--section-box-shadow)) !important;
 }
 
@@ -69,8 +66,8 @@
 }
 
 @mixin surface-section-item-hover {
-  /* Only darken background by 1%, no border changes */
-  background: color-mix(in srgb, var(--section-item-background) 99%, black) !important;
+  /* Use hover background variable - flat color with theme border */
+  background: var(--section-item-background-hover, var(--section-item-background)) !important;
+  border-color: var(--section-item-border-hover, var(--section-item-border)) !important;
   box-shadow: var(--section-item-box-shadow-hover) !important;
-  transform: var(--section-item-hover-transform) !important;
 }

@@ -6,29 +6,19 @@
       "title": "Opportunity Overview",
       "type": "info",
       "fields": [
-        { "label": "Opportunity Type", "value": "Cloud Migration" },
-        { "label": "Estimated Value", "value": "$5M - $8M" },
-        { "label": "Timeline", "value": "12 Months" },
-        { "label": "Success Probability", "value": "70%" },
+        { "label": "Type", "value": "Cloud Migration" },
+        { "label": "Value", "value": "$5M - $8M" },
         { "label": "Stage", "value": "Assessment Phase" }
       ]
     },
     {
-      "title": "Progress Metrics",
+      "title": "Progress",
       "type": "analytics",
       "fields": [
         {
-          "label": "Assessment Phase",
-          "value": "100% Complete",
-          "percentage": 100,
-          "performance": "excellent",
-          "trend": "stable"
-        },
-        {
-          "label": "Planning Phase",
-          "value": "60% Complete",
+          "label": "Completion",
+          "value": "60%",
           "percentage": 60,
-          "performance": "good",
           "trend": "up"
         }
       ]
@@ -39,8 +29,7 @@
       "label": "View Details",
       "type": "question",
       "variant": "primary",
-      "icon": "📋",
-      "question": "What are the details of this opportunity?"
+      "icon": "📋"
     }
   ]
 }

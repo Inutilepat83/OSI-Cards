@@ -1,0 +1,246 @@
+// =====================================================================
+// SOLUTIONS SECTION - Enhanced Service Offerings Display
+// =====================================================================
+
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
+@use '../../../styles/components/sections/modern-effects' as effects;
+@use '../../../styles/components/sections/component-mixins' as components;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+// =====================================================================
+// CONTAINER
+// =====================================================================
+
+.solutions-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-header-gap);
+}
+
+// =====================================================================
+// SECTION HEADER
+// =====================================================================
+
+.section-header {
+  .section-title {
+    @include heading(3);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .section-description {
+    @include body-text('base');
+    color: var(--muted-foreground);
+    line-height: var(--leading-relaxed);
+  }
+}
+
+// =====================================================================
+// SOLUTIONS GRID - Enhanced Layout
+// =====================================================================
+
+.solutions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: var(--spacing-lg);
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+}
+
+// =====================================================================
+// SOLUTION CARD - Enhanced with Modern Effects
+// =====================================================================
+
+.solution-card {
+  @include card-elevated;
+  position: relative;
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  transition: all 300ms var(--ease-out);
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+
+    .solution-title {
+      color: var(--accent);
+    }
+
+    .solution-category {
+      transform: scale(1.05);
+    }
+  }
+
+  &:focus-within {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+// =====================================================================
+// SOLUTION HEADER
+// =====================================================================
+
+.solution-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+
+  .solution-title {
+    @include heading(5);
+    font-weight: var(--font-bold);
+    transition: color 200ms var(--ease-out);
+  }
+
+  .solution-category {
+    @include components.badge-modern('primary');
+    align-self: flex-start;
+    font-size: 0.65rem;
+    transition: transform 200ms var(--ease-out);
+  }
+}
+
+// =====================================================================
+// SOLUTION DESCRIPTION
+// =====================================================================
+
+.solution-description {
+  @include body-text('base');
+  color: var(--muted-foreground);
+  line-height: var(--leading-relaxed);
+  margin: 0;
+}
+
+// =====================================================================
+// SOLUTION BENEFITS - Enhanced List
+// =====================================================================
+
+.solution-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin: 0;
+  padding-left: var(--spacing-lg);
+  list-style: none;
+
+  li {
+    @include body-text('small');
+    line-height: var(--leading-relaxed);
+    position: relative;
+    padding-left: var(--spacing-sm);
+
+    &::before {
+      content: '✓';
+      position: absolute;
+      left: calc(var(--spacing-lg) * -1);
+      color: var(--status-success);
+      font-weight: var(--font-bold);
+    }
+  }
+}
+
+// =====================================================================
+// SOLUTION META - Enhanced with Icons
+// =====================================================================
+
+.solution-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin-top: auto;
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-light);
+
+  .delivery-time {
+    @include typo.caption-bold;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+  }
+
+  .complexity-badge {
+    @include components.badge-modern('default');
+    font-size: 0.65rem;
+
+    &.complexity--low {
+      @include components.badge-modern('success');
+    }
+
+    &.complexity--medium {
+      @include components.badge-modern('warning');
+    }
+
+    &.complexity--high {
+      @include components.badge-modern('error');
+    }
+  }
+}
+
+// =====================================================================
+// EMPTY STATE
+// =====================================================================
+
+.solutions-empty {
+  @include components.empty-state-modern;
+  padding: var(--spacing-3xl);
+
+  .empty-icon {
+    font-size: 56px;
+    opacity: 0.25;
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+// =====================================================================
+// ANIMATIONS
+// =====================================================================
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(-2deg);
+  }
+}
+
+// =====================================================================
+// RESPONSIVE
+// =====================================================================
+
+@media (max-width: 640px) {
+  .solutions-grid {
+    gap: var(--spacing-md);
+  }
+
+  .solution-card {
+    padding: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .solutions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .overview-container {
+    padding: var(--spacing-md);
+    gap: var(--spacing-md);
+  }
+
+  .solution-benefits {
+    padding-left: var(--spacing-md);
+  }
+}
+

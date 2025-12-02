@@ -31,6 +31,9 @@ export type { MasonryLayoutInfo } from './masonry-grid/masonry-grid.component';
 export { OsiCardsComponent } from './osi-cards/osi-cards.component';
 // Note: osi-cards-container has import issues, export separately if needed
 
+// Error Boundary
+export { ErrorBoundaryComponent, ErrorBoundaryEvent } from './error-boundary/error-boundary.component';
+
 // Utility Components
 export { SkipLinkComponent } from './skip-link/skip-link.component';
 

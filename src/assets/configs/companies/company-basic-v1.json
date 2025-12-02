@@ -7,10 +7,8 @@
       "type": "info",
       "fields": [
         { "label": "Industry", "value": "Technology Services" },
-        { "label": "Founded", "value": "2010" },
         { "label": "Employees", "value": "500+" },
-        { "label": "Headquarters", "value": "San Francisco, CA" },
-        { "label": "Annual Revenue", "value": "$50M" }
+        { "label": "Revenue", "value": "$50M" }
       ]
     },
     {
@@ -21,14 +19,6 @@
           "label": "Growth Rate",
           "value": "25% YoY",
           "percentage": 25,
-          "performance": "excellent",
-          "trend": "up"
-        },
-        {
-          "label": "Market Share",
-          "value": "12%",
-          "percentage": 12,
-          "performance": "good",
           "trend": "up"
         }
       ]
@@ -39,8 +29,7 @@
       "label": "View Website",
       "type": "website",
       "variant": "primary",
-      "icon": "🌐",
-      "url": "https://www.acmecorp.com"
+      "icon": "🌐"
     }
   ]
 }

@@ -9,85 +9,19 @@
       "fields": [
         { "label": "Job Title", "value": "Chief Marketing Officer" },
         { "label": "Company", "value": "BrandForward Agency" },
-        { "label": "Industry", "value": "Digital Marketing" },
         { "label": "Location", "value": "London, UK" },
-        { "label": "Experience", "value": "15+ Years" },
-        { "label": "Education", "value": "MBA Marketing" },
-        { "label": "LinkedIn", "value": "sarah-chen-cmo" },
         { "label": "Email", "value": "sarah.chen@brandforward.com" }
       ]
     },
     {
-      "title": "Marketing Performance",
+      "title": "Performance",
       "type": "analytics",
       "fields": [
         {
-          "label": "Brand Awareness Growth",
+          "label": "Brand Growth",
           "value": "+185% YoY",
           "percentage": 185,
-          "performance": "excellent",
           "trend": "up"
-        },
-        {
-          "label": "Campaign ROI",
-          "value": "420% Average",
-          "percentage": 105,
-          "performance": "excellent",
-          "trend": "up"
-        },
-        {
-          "label": "Lead Generation Growth",
-          "value": "+520%",
-          "percentage": 130,
-          "performance": "excellent",
-          "trend": "up"
-        }
-      ]
-    },
-    {
-      "title": "Marketing Reach",
-      "type": "chart",
-      "chartType": "bar",
-      "chartData": {
-        "labels": ["Social Followers", "Monthly Traffic", "Email Subscribers"],
-        "datasets": [
-          {
-            "label": "Reach (K)",
-            "data": [920, 1500, 180],
-            "backgroundColor": ["#7c3aed", "#8b5cf6", "#a78bfa"]
-          }
-        ]
-      }
-    },
-    {
-      "title": "Contact Information",
-      "type": "contact-card",
-      "fields": [
-        {
-          "label": "CMO",
-          "title": "Sarah Chen",
-          "value": "Chief Marketing Officer",
-          "email": "sarah.chen@brandforward.com",
-          "phone": "+44 20 7123 4567",
-          "role": "Executive",
-          "department": "Marketing",
-          "location": "London, UK"
-        }
-      ]
-    },
-    {
-      "title": "Professional Network",
-      "type": "network-card",
-      "fields": [
-        {
-          "label": "LinkedIn Connections",
-          "value": "Marketing Leaders Network",
-          "connections": 250
-        },
-        {
-          "label": "Industry Associations",
-          "value": "CMO Council, Marketing Institute",
-          "connections": 45
         }
       ]
     }
@@ -97,23 +31,7 @@
       "label": "Connect on LinkedIn",
       "type": "website",
       "variant": "primary",
-      "icon": "💼",
-      "url": "https://www.linkedin.com/in/sarah-chen-cmo"
-    },
-    {
-      "label": "Send Email",
-      "type": "mail",
-      "variant": "secondary",
-      "icon": "📧",
-      "email": {
-        "contact": {
-          "name": "Sarah Chen",
-          "email": "sarah.chen@brandforward.com",
-          "role": "Chief Marketing Officer"
-        },
-        "subject": "Marketing Collaboration Opportunity",
-        "body": "Dear Sarah Chen,\n\nI hope this email finds you well. I wanted to reach out regarding a potential marketing collaboration opportunity.\n\nBased on your impressive track record:\n• +185% Brand Awareness Growth YoY\n• 420% Average Campaign ROI\n• +520% Lead Generation Growth\n• 920K Social Followers\n• 1.5M Monthly Traffic\n• 180K Email Subscribers\n\nI believe there could be significant synergies between our organizations. I would welcome the opportunity to discuss potential collaboration initiatives that could benefit both parties.\n\nWould you be available for a brief call next week to explore this further?\n\nBest regards"
-      }
+      "icon": "💼"
     }
   ]
 }

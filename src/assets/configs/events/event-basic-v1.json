@@ -6,31 +6,20 @@
       "title": "Event Overview",
       "type": "info",
       "fields": [
-        { "label": "Event Type", "value": "Technology Conference" },
         { "label": "Date", "value": "March 15-17, 2025" },
         { "label": "Location", "value": "Las Vegas, NV" },
-        { "label": "Expected Attendance", "value": "150,000+" },
-        { "label": "Duration", "value": "3 Days" },
-        { "label": "Format", "value": "In-Person" }
+        { "label": "Attendance", "value": "150,000+" }
       ]
     },
     {
-      "title": "Registration Status",
+      "title": "Status",
       "type": "analytics",
       "fields": [
         {
-          "label": "Early Bird Registration",
-          "value": "92% Complete",
+          "label": "Registration",
+          "value": "92%",
           "percentage": 92,
-          "performance": "excellent",
           "trend": "up"
-        },
-        {
-          "label": "Speaker Confirmations",
-          "value": "98% Confirmed",
-          "percentage": 98,
-          "performance": "excellent",
-          "trend": "stable"
         }
       ]
     }
@@ -40,8 +29,7 @@
       "label": "Register Now",
       "type": "website",
       "variant": "primary",
-      "icon": "🎫",
-      "url": "https://techsummit.com/register"
+      "icon": "🎫"
     }
   ]
 }

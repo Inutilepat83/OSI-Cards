@@ -12,13 +12,12 @@
  * ```
  */
 
-import { Injectable, Type, inject, NgZone } from '@angular/core';
+import { inject, Injectable, NgZone, Type } from '@angular/core';
 import { BaseSectionComponent } from '../sections/base-section.component';
-import { SectionType } from '../../models/generated-section-types';
 
 /** Sections that should be lazy loaded due to external dependencies */
 export const LAZY_SECTION_TYPES = ['chart', 'map'] as const;
-export type LazySectionType = typeof LAZY_SECTION_TYPES[number];
+export type LazySectionType = (typeof LAZY_SECTION_TYPES)[number];
 
 /** Loading state for lazy sections */
 export interface LazySectionState {
@@ -41,7 +40,7 @@ type LazyComponentFactory = () => Promise<Type<BaseSectionComponent>>;
  * - Error handling with retry capability
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LazySectionLoaderService {
   private readonly ngZone = inject(NgZone);
@@ -57,14 +56,14 @@ export class LazySectionLoaderService {
 
   /** Lazy load factories for each section type */
   private readonly lazyFactories: Record<LazySectionType, LazyComponentFactory> = {
-    'chart': async () => {
+    chart: async () => {
       const module = await import('../sections/chart-section/chart-section.component');
       return module.ChartSectionComponent as unknown as Type<BaseSectionComponent>;
     },
-    'map': async () => {
+    map: async () => {
       const module = await import('../sections/map-section/map-section.component');
       return module.MapSectionComponent as unknown as Type<BaseSectionComponent>;
-    }
+    },
   };
 
   constructor() {
@@ -74,7 +73,7 @@ export class LazySectionLoaderService {
         loading: false,
         loaded: false,
         error: null,
-        component: null
+        component: null,
       });
     }
   }
@@ -90,12 +89,14 @@ export class LazySectionLoaderService {
    * Get the loading state for a lazy section type
    */
   getLoadingState(type: LazySectionType): LazySectionState {
-    return this.loadingStates.get(type) ?? {
-      loading: false,
-      loaded: false,
-      error: null,
-      component: null
-    };
+    return (
+      this.loadingStates.get(type) ?? {
+        loading: false,
+        loaded: false,
+        error: null,
+        component: null,
+      }
+    );
   }
 
   /**

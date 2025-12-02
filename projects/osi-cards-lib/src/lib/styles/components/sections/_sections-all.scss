@@ -1,0 +1,25 @@
+/**
+ * Consolidated Section Styles
+ *
+ * This file imports all section styles.
+ *
+ * @import "osi-cards-lib/styles/components/sections/sections-all";
+ *
+ * Structure:
+ * 1. Design System - Core mixins and tokens
+ * 2. Sections Base - Card mixin and grid layouts
+ * 3. Section Shell - Section container styles
+ * 4. All Sections - Unified styles for all section types
+ */
+
+// ============================================================================
+// CORE FILES
+// ============================================================================
+@import "design-system";
+@import "sections-base";
+@import "section-shell";
+
+// ============================================================================
+// ALL SECTION STYLES (Unified)
+// ============================================================================
+@import "all-sections";

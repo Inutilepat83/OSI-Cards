@@ -1,0 +1,336 @@
+// =====================================================================
+// UNIFIED SECTIONS - Master Token Based Design System
+// =====================================================================
+//
+// Uses all tokens from master.scss for consistent, minimalistic design.
+// No hardcoded values - everything references CSS variables.
+//
+// =====================================================================
+
+@use "../../tokens/master" as *;
+
+// =====================================================================
+// UNIFIED CARD - Single Source
+// =====================================================================
+
+@mixin unified-card {
+  // Background & Border - from CSS vars
+  background: var(--section-item-background);
+  border: var(--section-item-border);
+  border-radius: var(--section-item-border-radius, var(--radius-md));
+
+  // Layout
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-element-gap-md);
+  padding: var(--space-3) var(--space-4);
+
+  // Interaction
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  // Smooth transitions - subtle
+  transition:
+    background var(--duration-normal) var(--ease-out-smooth),
+    border-color var(--duration-normal) var(--ease-out-smooth),
+    box-shadow var(--duration-normal) var(--ease-out-smooth);
+
+  &:hover {
+    background: var(--section-item-background-hover);
+    border-color: var(--section-item-border-hover);
+    box-shadow: var(--section-item-box-shadow-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// =====================================================================
+// TYPOGRAPHY - Consistent Hierarchy
+// =====================================================================
+
+@mixin type-label {
+  font-size: var(--card-label-font-size);
+  font-weight: var(--card-label-font-weight);
+  letter-spacing: var(--card-label-letter-spacing);
+  text-transform: var(--card-label-text-transform);
+  color: var(--muted-foreground);
+  line-height: var(--card-label-line-height);
+}
+
+@mixin type-value {
+  font-size: var(--card-value-font-size);
+  font-weight: var(--card-value-font-weight);
+  letter-spacing: var(--card-value-letter-spacing);
+  color: var(--foreground);
+  line-height: var(--card-value-line-height);
+}
+
+@mixin type-value-large {
+  font-size: var(--card-value-font-size-large);
+  font-weight: var(--card-value-font-weight);
+  letter-spacing: var(--card-value-letter-spacing);
+  color: var(--foreground);
+  line-height: var(--card-value-line-height);
+}
+
+@mixin type-title {
+  font-size: var(--card-title-font-size);
+  font-weight: var(--card-title-font-weight);
+  letter-spacing: var(--card-title-letter-spacing);
+  color: var(--foreground);
+  line-height: var(--card-title-line-height);
+  margin: 0;
+}
+
+@mixin type-subtitle {
+  font-size: var(--card-subtitle-font-size);
+  font-weight: var(--card-subtitle-font-weight);
+  letter-spacing: var(--card-subtitle-letter-spacing);
+  color: var(--muted-foreground);
+  line-height: var(--card-subtitle-line-height);
+}
+
+@mixin type-meta {
+  font-size: var(--card-meta-font-size);
+  font-weight: var(--card-meta-font-weight);
+  color: var(--muted-foreground);
+  line-height: var(--card-meta-line-height);
+}
+
+// =====================================================================
+// BADGES - Consistent styling
+// =====================================================================
+
+@mixin badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--card-text-small-font-size);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: #{$brand-color-10};
+  border-radius: var(--radius-xs);
+  white-space: nowrap;
+}
+
+@mixin badge-status {
+  &.status--completed, &.status--success {
+    color: var(--status-success);
+    background: var(--status-success-bg);
+  }
+  &.status--active, &.status--in-progress {
+    color: var(--accent);
+    background: #{$brand-color-10};
+  }
+  &.status--pending, &.status--warning {
+    color: var(--status-warning);
+    background: var(--status-warning-bg);
+  }
+  &.status--blocked, &.status--cancelled, &.status--error {
+    color: var(--status-error);
+    background: var(--status-error-bg);
+  }
+}
+
+// =====================================================================
+// TREND INDICATORS
+// =====================================================================
+
+@mixin trend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--card-meta-font-size);
+  font-weight: 600;
+
+  lucide-icon, svg {
+    width: var(--icon-xs);
+    height: var(--icon-xs);
+  }
+
+  &.trend--up { color: #{$osi-color-trend-up}; }
+  &.trend--down { color: #{$osi-color-trend-down}; }
+  &.trend--stable { color: #{$osi-color-trend-stable}; }
+}
+
+// =====================================================================
+// PROGRESS BAR
+// =====================================================================
+
+@mixin progress-track {
+  width: 100%;
+  height: 3px;
+  background: var(--muted);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: var(--space-2);
+}
+
+@mixin progress-bar {
+  height: 100%;
+  background: var(--accent);
+  border-radius: inherit;
+  transition: width var(--duration-slow) var(--ease-out-smooth);
+}
+
+// =====================================================================
+// ICON CONTAINERS
+// =====================================================================
+
+@mixin icon-container($size: var(--icon-lg)) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $size;
+  height: $size;
+  color: var(--accent);
+  flex-shrink: 0;
+
+  lucide-icon, svg {
+    width: calc($size * 0.6);
+    height: calc($size * 0.6);
+  }
+}
+
+@mixin icon-bg($size: var(--icon-lg)) {
+  @include icon-container($size);
+  background: #{$brand-color-10};
+  border-radius: var(--radius-sm);
+}
+
+// =====================================================================
+// AVATARS
+// =====================================================================
+
+@mixin avatar($size: 32px) {
+  width: $size;
+  height: $size;
+  border-radius: var(--radius-full);
+  background: #{$brand-color-15};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__initials {
+    font-size: calc($size * 0.35);
+    font-weight: 600;
+    color: var(--accent);
+  }
+}
+
+// =====================================================================
+// EMPTY STATES
+// =====================================================================
+
+@mixin empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+  color: var(--muted-foreground);
+  background: var(--section-item-background);
+  border-radius: var(--section-item-border-radius);
+  border: 1px dashed var(--border);
+
+  lucide-icon, svg {
+    opacity: 0.4;
+    width: var(--icon-lg);
+    height: var(--icon-lg);
+  }
+
+  p {
+    margin: 0;
+    @include type-subtitle;
+  }
+}
+
+// =====================================================================
+// GRID LAYOUTS
+// =====================================================================
+
+@mixin grid($min-width: 180px, $gap: var(--section-card-gap)) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
+  gap: $gap;
+  width: 100%;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: var(--gap-sm);
+  }
+}
+
+@mixin stack($gap: var(--gap-sm)) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+  width: 100%;
+}
+
+@mixin row($gap: var(--gap-md)) {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $gap;
+  width: 100%;
+}
+
+// =====================================================================
+// STREAMING ANIMATIONS
+// =====================================================================
+
+@keyframes unified-stream-in {
+  0% {
+    opacity: 0;
+    transform: translateY(var(--motion-distance-sm));
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@mixin stream-animation {
+  &.section-item-streaming,
+  &.item-streaming,
+  &.field-streaming {
+    animation: unified-stream-in var(--duration-moderate) var(--ease-out-smooth) var(--animation-fill-mode);
+  }
+
+  &.section-item-entered,
+  &.item-entered,
+  &.field-entered {
+    animation: none;
+  }
+
+  @for $i from 0 through 15 {
+    &.section-item-stagger-#{$i},
+    &.item-stagger-#{$i},
+    &.field-stagger-#{$i} {
+      animation-delay: calc(#{$i} * var(--stagger-delay-base));
+    }
+  }
+}

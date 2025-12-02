@@ -2,12 +2,17 @@
   "$schema": "https://angular.io/schemas/service-worker-config/1.0/schema.json",
   "index": "/index.html",
   "appData": {
-    "version": "1.2.0",
-    "buildDate": "2025-01-01T00:00:00.000Z"
+    "version": "1.5.3",
+    "buildDate": "2025-12-01T00:00:00.000Z",
+    "features": {
+      "offlineSupport": true,
+      "backgroundSync": true,
+      "pushNotifications": false
+    }
   },
   "assetGroups": [
     {
-      "name": "app",
+      "name": "app-shell",
       "installMode": "prefetch",
       "updateMode": "prefetch",
       "resources": {
@@ -23,15 +28,32 @@
       }
     },
     {
-      "name": "docs-core",
+      "name": "critical-chunks",
       "installMode": "prefetch",
       "updateMode": "prefetch",
       "resources": {
         "files": [
+          "/chunk-home*.js",
           "/chunk-docs-wrapper*.js",
           "/chunk-getting-started*.js",
           "/chunk-installation*.js",
-          "/chunk-library-usage*.js"
+          "/chunk-library-usage*.js",
+          "/chunk-best-practices*.js"
+        ]
+      }
+    },
+    {
+      "name": "feature-chunks",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/chunk-features*.js",
+          "/chunk-templates*.js",
+          "/chunk-pricing*.js",
+          "/chunk-about*.js",
+          "/chunk-contact*.js",
+          "/chunk-support*.js"
         ]
       }
     },
@@ -44,7 +66,18 @@
       }
     },
     {
-      "name": "assets",
+      "name": "assets-critical",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/assets/configs/manifest.json",
+          "/assets/i18n/en.json"
+        ]
+      }
+    },
+    {
+      "name": "assets-lazy",
       "installMode": "lazy",
       "updateMode": "prefetch",
       "resources": {

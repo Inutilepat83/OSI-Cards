@@ -1,0 +1,221 @@
+// =====================================================================
+// QUOTATION SECTION - Enhanced Testimonials & Quotes Display
+// =====================================================================
+
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
+@use '../../../styles/components/sections/modern-effects' as effects;
+@use '../../../styles/components/sections/component-mixins' as components;
+
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.quotation-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-header-gap);
+}
+
+.section-header {
+  .section-title {
+    @include heading(3);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .section-description {
+    @include body-text('base');
+    color: var(--muted-foreground);
+  }
+}
+
+// =====================================================================
+// QUOTES GRID - Enhanced Layout
+// =====================================================================
+
+.quotes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: var(--spacing-lg);
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+}
+
+// =====================================================================
+// QUOTE CARD - Enhanced with Modern Effects
+// =====================================================================
+
+.quote-card {
+  @include card-elevated;
+  position: relative;
+  margin: 0;
+  padding: var(--spacing-md);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  transition: all 300ms var(--ease-out);
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+
+    .quote-icon {
+      opacity: 0.15;
+      transform: scale(1.05) rotate(-5deg);
+    }
+
+    .author-name {
+      color: var(--accent);
+    }
+  }
+}
+
+// =====================================================================
+// QUOTE ICON - Enhanced
+// =====================================================================
+
+.quote-icon {
+  position: absolute;
+  top: var(--spacing-sm);
+  left: var(--spacing-sm);
+  font-size: 64px;
+  line-height: 1;
+  color: var(--accent);
+  opacity: 0.08;
+  font-family: Georgia, serif;
+  transition: all 300ms var(--ease-out);
+
+  &::before {
+    content: '"';
+  }
+}
+
+// =====================================================================
+// QUOTE TEXT - Enhanced Typography
+// =====================================================================
+
+.quote-text {
+  @include body-text('large');
+  font-style: italic;
+  line-height: var(--leading-relaxed);
+  color: var(--foreground);
+  margin: 0 0 var(--spacing-md);
+  position: relative;
+  z-index: 1;
+  font-weight: var(--font-medium);
+  padding-left: var(--spacing-md);
+}
+
+// =====================================================================
+// QUOTE FOOTER - Enhanced Layout
+// =====================================================================
+
+.quote-footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  border-top: 1px solid var(--border-light);
+  padding-top: var(--spacing-sm);
+  position: relative;
+  z-index: 1;
+}
+
+// =====================================================================
+// AUTHOR INFO - Enhanced
+// =====================================================================
+
+.author-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .author-name {
+    @include heading(6);
+    font-style: normal;
+    color: var(--foreground);
+    font-weight: var(--font-semibold);
+    transition: color 200ms var(--ease-out);
+  }
+
+  .author-role {
+    @include typo.caption;
+    color: var(--muted-foreground);
+    font-size: 0.7rem;
+  }
+
+  .author-company {
+    @include typo.caption-bold;
+    color: var(--accent);
+    font-size: 0.75rem;
+    margin-top: var(--spacing-xs);
+  }
+}
+
+.quote-date {
+  @include typo.caption;
+  opacity: 0.6;
+  font-size: 0.65rem;
+  margin-top: var(--spacing-xs);
+}
+
+// =====================================================================
+// EMPTY STATE
+// =====================================================================
+
+.quotation-empty {
+  @include components.empty-state-modern;
+  padding: var(--spacing-3xl);
+
+  .empty-icon {
+    font-size: 56px;
+    opacity: 0.25;
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+// =====================================================================
+// ANIMATIONS
+// =====================================================================
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+}
+
+// =====================================================================
+// RESPONSIVE
+// =====================================================================
+
+@media (max-width: 640px) {
+  .quotes-grid {
+    gap: var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .quotes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quote-card {
+    padding: var(--spacing-sm);
+  }
+
+  .quote-icon {
+    font-size: 48px;
+  }
+
+  .quote-text {
+    padding-left: var(--spacing-sm);
+  }
+}
+

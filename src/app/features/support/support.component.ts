@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
+import {
+  ComingSoonComponent,
+  ComingSoonConfig,
+} from '../../shared/components/coming-soon/coming-soon.component';
 
 /**
  * Support page component
@@ -9,9 +10,15 @@ import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
 @Component({
   selector: 'app-support',
   standalone: true,
-  imports: [CommonModule, RouterModule, LucideIconsModule],
-  templateUrl: './support.component.html',
-  styleUrls: ['./support.component.scss'],
+  imports: [ComingSoonComponent],
+  template: `<app-coming-soon [config]="config"></app-coming-soon>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SupportComponent {}
+export class SupportComponent {
+  readonly config: ComingSoonConfig = {
+    title: 'Support',
+    subtitle: 'Help and documentation',
+    icon: 'life-buoy',
+    description: 'This page is under development. Check back soon for support resources and FAQs.',
+  };
+}

@@ -124,6 +124,8 @@ export {
   IconService,
   SectionNormalizationService,
   MagneticTiltService,
+  MousePosition,
+  TiltCalculations,
   SectionUtilsService,
   SectionPluginRegistry,
   EventMiddlewareService,
@@ -132,10 +134,14 @@ export {
   CardUpdate,
   StreamingConfig,
   LayoutWorkerService,
-  AnimationOrchestratorService,
-  SectionAnimationService,
+  // AnimationOrchestratorService,  // Not exported from services
+  // SectionAnimationService,  // Not exported from services
   CardFacadeService,
   FeatureFlagsService,
+  OSI_FEATURE_FLAGS,
+  FeatureFlagKey,
+  FeatureFlagsConfig,
+  FEATURE_FLAG_META,
   AccessibilityService,
   EmptyStateService,
   EmailHandlerService,
@@ -143,7 +149,12 @@ export {
   CardBusEvent,
   EventHandler,
   DynamicSectionLoaderService,
-  CachedSectionNormalizationService
+  CachedSectionNormalizationService,
+  I18nService,
+  SupportedLocale,
+  TranslationDictionary,
+  KeyboardShortcutsService,
+  KeyboardShortcut,
 } from './lib/services';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -197,10 +208,15 @@ export * from './lib/components/card-section-list/card-section-list.component';
 export { CardStreamingIndicatorComponent } from './lib/components/card-streaming-indicator/card-streaming-indicator.component';
 
 // ═══════════════════════════════════════════════════════════════════════════
+// ERROR BOUNDARY
+// ═══════════════════════════════════════════════════════════════════════════
+export { ErrorBoundaryComponent, ErrorBoundaryEvent } from './lib/components/error-boundary/error-boundary.component';
+
+// ═══════════════════════════════════════════════════════════════════════════
 // SECTION COMPONENTS (Generated from section-registry.json)
 // ═══════════════════════════════════════════════════════════════════════════
 export { BaseSectionComponent } from './lib/components/sections/base-section.component';
-export * from './lib/components/sections/info-section.component';
+export * from './lib/components/sections/info-section/info-section.component';
 export { AnalyticsSectionComponent } from './lib/components/sections/analytics-section/analytics-section.component';
 export { ContactCardSectionComponent } from './lib/components/sections/contact-card-section/contact-card-section.component';
 export { NetworkCardSectionComponent } from './lib/components/sections/network-card-section/network-card-section.component';
@@ -230,72 +246,13 @@ export * from './lib/interfaces';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // UTILITIES (Layout, animation, performance, accessibility)
-// Note: Utilities are available via direct import: import { ... } from 'osi-cards-lib/lib/utils'
-// Core utilities exported here to avoid duplicate type conflicts
+// Note: Most utilities are available via direct import from specific util files
+// Only section-design utilities are exported from lib/utils/index.ts
+// Other utilities need to be imported directly from their files
+// Disabled due to duplicate exports with types (PackingAlgorithm, PreferredColumns, etc.)
+// Import directly from: 'osi-cards-lib/lib/utils/grid-config.util' etc.
 // ═══════════════════════════════════════════════════════════════════════════
-export {
-  // Layout utilities
-  SkylinePacker,
-  StreamingLayoutManager,
-
-  // Animation utilities
-  FlipAnimator,
-
-  // Accessibility
-  GridAccessibilityManager,
-
-  // Component composition hooks
-  useToggleState,
-  useHoverState,
-  useFocusState,
-  useLoadingState,
-  useAsyncState,
-  usePagination,
-  useSelectionState,
-  useKeyboardNavigation,
-  useVisibility,
-  useExpandableState,
-  useDebouncedValue,
-  useCounter,
-
-  // Error boundary
-  useErrorBoundary,
-
-  // Input coercion
-  coerceBoolean,
-  coerceNumber,
-
-  // Memoization
-  memoize,
-  layoutKeyGenerator,
-  createDebouncedLayout,
-  createRAFScheduler,
-  createBatchProcessor,
-
-  // Sanitization
-  sanitizeHtml,
-  sanitizeUrl,
-
-  // Virtual scroll
-  useVirtualScroll,
-  useIntersectionObserver,
-  createInfiniteScrollTrigger,
-  createLazyLoadTrigger,
-
-  // Layout optimization
-  optimizeLayout,
-  quickOptimize,
-  analyzeLayout,
-  findLayoutGaps,
-  fillLayoutGaps,
-  optimizeColumnSpans,
-
-  // Performance monitoring
-  PerformanceMonitor,
-  performanceMonitor,
-  renderTracker,
-  fpsMonitor,
-} from './lib/utils';
+// export * from './lib/utils';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // ERRORS

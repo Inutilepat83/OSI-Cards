@@ -172,7 +172,7 @@ export class SectionFactory {
       },
       {
         type: 'info',
-        loader: () => import('../components/sections/info-section.component')
+        loader: () => import('../components/sections/info-section/info-section.component')
           .then(m => m.InfoSectionComponent),
         metadata: {
           type: 'info',

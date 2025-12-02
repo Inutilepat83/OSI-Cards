@@ -26,8 +26,9 @@ The **Contact Card Section** (\`type: "contact-card"\`) is used for displays per
 
 - Team members
 - Key contacts
-- Leadership
-- Stakeholders
+- Leadership profiles
+- Stakeholder directory
+- Sales contacts
 
 ## Data Schema
 
@@ -43,7 +44,9 @@ The **Contact Card Section** (\`type: "contact-card"\`) is used for displays per
 | \`phone\` | string | Phone number |
 | \`avatar\` | string | Avatar image URL |
 | \`department\` | string | Department name |
+| \`location\` | string | Office location |
 | \`linkedIn\` | string | LinkedIn profile URL |
+| \`twitter\` | string | Twitter handle |
 
 
 
@@ -51,28 +54,74 @@ The **Contact Card Section** (\`type: "contact-card"\`) is used for displays per
 
 \`\`\`json
 {
-  "title": "Key Contacts",
+  "title": "Executive Leadership Team",
   "type": "contact-card",
-  "description": "Primary contacts and stakeholders",
+  "description": "Key decision makers and stakeholders",
   "fields": [
     {
-      "label": "Primary Contact",
-      "title": "Jane Doe",
-      "value": "Product Manager",
-      "email": "jane.doe@example.com",
-      "phone": "+1 555 0100",
-      "role": "Product Manager",
-      "department": "Product",
-      "linkedIn": "https://linkedin.com/in/janedoe"
+      "label": "Chief Executive Officer",
+      "title": "Dr. Sarah Mitchell",
+      "value": "CEO & Co-Founder",
+      "email": "sarah.mitchell@nexustech.io",
+      "phone": "+1 (512) 555-0100",
+      "role": "Chief Executive Officer",
+      "department": "Executive",
+      "location": "Austin, TX",
+      "linkedIn": "https://linkedin.com/in/sarahmitchell",
+      "twitter": "@sarahmitchell"
     },
     {
-      "label": "Technical Lead",
-      "title": "John Smith",
-      "value": "Engineering Director",
-      "email": "john.smith@example.com",
-      "phone": "+1 555 0101",
-      "role": "Engineering Director",
-      "department": "Engineering"
+      "label": "Chief Technology Officer",
+      "title": "James Park",
+      "value": "CTO & Co-Founder",
+      "email": "james.park@nexustech.io",
+      "phone": "+1 (512) 555-0101",
+      "role": "Chief Technology Officer",
+      "department": "Engineering",
+      "location": "Austin, TX",
+      "linkedIn": "https://linkedin.com/in/jamespark"
+    },
+    {
+      "label": "Chief Revenue Officer",
+      "title": "Maria Santos",
+      "value": "CRO",
+      "email": "maria.santos@nexustech.io",
+      "phone": "+1 (512) 555-0102",
+      "role": "Chief Revenue Officer",
+      "department": "Sales",
+      "location": "New York, NY",
+      "linkedIn": "https://linkedin.com/in/mariasantos"
+    },
+    {
+      "label": "Chief Financial Officer",
+      "title": "David Thompson",
+      "value": "CFO",
+      "email": "david.thompson@nexustech.io",
+      "phone": "+44 20 7946 0958",
+      "role": "Chief Financial Officer",
+      "department": "Finance",
+      "location": "London, UK",
+      "linkedIn": "https://linkedin.com/in/davidthompson"
+    },
+    {
+      "label": "VP of Engineering",
+      "title": "Dr. Wei Chen",
+      "value": "VP Engineering - Platform",
+      "email": "wei.chen@nexustech.io",
+      "phone": "+65 6823 4567",
+      "role": "VP of Engineering",
+      "department": "Engineering",
+      "location": "Singapore"
+    },
+    {
+      "label": "VP of Customer Success",
+      "title": "Rachel Green",
+      "value": "VP Customer Success",
+      "email": "rachel.green@nexustech.io",
+      "phone": "+1 (512) 555-0105",
+      "role": "VP of Customer Success",
+      "department": "Customer Success",
+      "location": "Austin, TX"
     }
   ]
 }
@@ -82,12 +131,12 @@ The **Contact Card Section** (\`type: "contact-card"\`) is used for displays per
 
 \`\`\`json
 {
-  "title": "Contact",
+  "title": "Primary Contact",
   "type": "contact-card",
   "fields": [
     {
-      "title": "Contact Name",
-      "email": "contact@example.com"
+      "title": "Support Team",
+      "email": "support@company.com"
     }
   ]
 }
@@ -99,12 +148,13 @@ The **Contact Card Section** (\`type: "contact-card"\`) is used for displays per
 2. Add avatar images when available
 3. Include social media links
 4. Group by department or role
+5. Show location for distributed teams
 
 ## Component Information
 
-- **Selector:** \`app-contact-card-section\`
+- **Selector:** \`lib-contact-card-section\`
 - **Component Path:** \`./lib/components/sections/contact-card-section/contact-card-section.component\`
-- **Style Path:** \`./lib/styles/components/sections/_contact.scss\`
+- **Style Path:** \`./lib/components/sections/contact-card-section/contact-card-section.scss\`
 
 ## Related Documentation
 
@@ -114,28 +164,74 @@ The **Contact Card Section** (\`type: "contact-card"\`) is used for displays per
 `;
 
 const demoConfig = {
-  title: 'Key Contacts',
+  title: 'Executive Leadership Team',
   type: 'contact-card',
-  description: 'Primary contacts and stakeholders',
+  description: 'Key decision makers and stakeholders',
   fields: [
     {
-      label: 'Primary Contact',
-      title: 'Jane Doe',
-      value: 'Product Manager',
-      email: 'jane.doe@example.com',
-      phone: '+1 555 0100',
-      role: 'Product Manager',
-      department: 'Product',
-      linkedIn: 'https://linkedin.com/in/janedoe',
+      label: 'Chief Executive Officer',
+      title: 'Dr. Sarah Mitchell',
+      value: 'CEO & Co-Founder',
+      email: 'sarah.mitchell@nexustech.io',
+      phone: '+1 (512) 555-0100',
+      role: 'Chief Executive Officer',
+      department: 'Executive',
+      location: 'Austin, TX',
+      linkedIn: 'https://linkedin.com/in/sarahmitchell',
+      twitter: '@sarahmitchell',
     },
     {
-      label: 'Technical Lead',
-      title: 'John Smith',
-      value: 'Engineering Director',
-      email: 'john.smith@example.com',
-      phone: '+1 555 0101',
-      role: 'Engineering Director',
+      label: 'Chief Technology Officer',
+      title: 'James Park',
+      value: 'CTO & Co-Founder',
+      email: 'james.park@nexustech.io',
+      phone: '+1 (512) 555-0101',
+      role: 'Chief Technology Officer',
       department: 'Engineering',
+      location: 'Austin, TX',
+      linkedIn: 'https://linkedin.com/in/jamespark',
+    },
+    {
+      label: 'Chief Revenue Officer',
+      title: 'Maria Santos',
+      value: 'CRO',
+      email: 'maria.santos@nexustech.io',
+      phone: '+1 (512) 555-0102',
+      role: 'Chief Revenue Officer',
+      department: 'Sales',
+      location: 'New York, NY',
+      linkedIn: 'https://linkedin.com/in/mariasantos',
+    },
+    {
+      label: 'Chief Financial Officer',
+      title: 'David Thompson',
+      value: 'CFO',
+      email: 'david.thompson@nexustech.io',
+      phone: '+44 20 7946 0958',
+      role: 'Chief Financial Officer',
+      department: 'Finance',
+      location: 'London, UK',
+      linkedIn: 'https://linkedin.com/in/davidthompson',
+    },
+    {
+      label: 'VP of Engineering',
+      title: 'Dr. Wei Chen',
+      value: 'VP Engineering - Platform',
+      email: 'wei.chen@nexustech.io',
+      phone: '+65 6823 4567',
+      role: 'VP of Engineering',
+      department: 'Engineering',
+      location: 'Singapore',
+    },
+    {
+      label: 'VP of Customer Success',
+      title: 'Rachel Green',
+      value: 'VP Customer Success',
+      email: 'rachel.green@nexustech.io',
+      phone: '+1 (512) 555-0105',
+      role: 'VP of Customer Success',
+      department: 'Customer Success',
+      location: 'Austin, TX',
     },
   ],
 };

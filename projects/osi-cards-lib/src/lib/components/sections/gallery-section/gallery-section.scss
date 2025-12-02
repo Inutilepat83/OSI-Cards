@@ -1,0 +1,279 @@
+// =====================================================================
+// GALLERY SECTION - Enhanced Image Grid Display
+// =====================================================================
+
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/modern-effects' as effects;
+@use '../../../styles/components/sections/component-mixins' as components;
+@use '../../../styles/components/sections/typography-system' as typo;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+// =====================================================================
+// CONTAINER
+// =====================================================================
+
+.gallery-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-header-gap);
+}
+
+// =====================================================================
+// SECTION HEADER
+// =====================================================================
+
+.section-header {
+  .section-title {
+    @include heading(3);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .section-description {
+    @include body-text('base');
+    color: var(--muted-foreground);
+    line-height: var(--leading-relaxed);
+  }
+}
+
+// =====================================================================
+// GALLERY GRID - Enhanced with Better Spacing
+// =====================================================================
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: var(--spacing-md);
+
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 180px), 1fr));
+    gap: var(--spacing-sm);
+  }
+}
+
+// =====================================================================
+// GALLERY ITEM - Enhanced with Modern Effects
+// =====================================================================
+
+.gallery-item {
+  @include card;
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 1 / 1; // Square for better grid layout
+  border-radius: var(--radius-md);
+  transition: all 300ms var(--ease-out);
+  background: var(--surface-subtle);
+
+  // Hover effect with elevation
+  &:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--shadow-xl);
+    z-index: 2;
+
+    .gallery-image {
+      transform: scale(1.1);
+      filter: brightness(0.9);
+    }
+
+    .gallery-caption {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .gallery-overlay {
+      opacity: 1;
+    }
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  // Active state
+  &:active {
+    transform: translateY(-2px) scale(1.01);
+  }
+}
+
+// =====================================================================
+// GALLERY IMAGE - Enhanced with Loading State
+// =====================================================================
+
+.gallery-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 400ms var(--ease-out);
+  display: block;
+
+  // Loading placeholder
+  &[src=""], &:not([src]) {
+    background: linear-gradient(
+      135deg,
+      var(--surface-subtle) 0%,
+      var(--surface-hover) 50%,
+      var(--surface-subtle) 100%
+    );
+    background-size: 200% 200%;
+    animation: shimmerDiagonal 2s infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    animation: none;
+
+    .gallery-item:hover & {
+      transform: none;
+    }
+  }
+}
+
+// =====================================================================
+// GALLERY OVERLAY - Zoom Icon Indicator
+// =====================================================================
+
+.gallery-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 300ms var(--ease-out);
+  pointer-events: none;
+
+  &::before {
+    content: '+';
+    font-size: 32px;
+    font-weight: var(--font-light);
+  }
+}
+
+// =====================================================================
+// GALLERY CAPTION - Enhanced with Better Readability
+// =====================================================================
+
+.gallery-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--spacing-md);
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0.6) 60%,
+    transparent 100%
+  );
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 300ms var(--ease-out);
+
+  .gallery-item:hover & {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .caption-text {
+    @include body-text('small');
+    color: white;
+    display: block;
+    font-weight: var(--font-medium);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    line-height: var(--leading-snug);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transform: none;
+  }
+}
+
+// =====================================================================
+// EMPTY STATE
+// =====================================================================
+
+.gallery-empty {
+  @include components.empty-state-modern;
+  padding: var(--spacing-3xl);
+
+  .empty-icon {
+    font-size: 56px;
+    opacity: 0.25;
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+// =====================================================================
+// ANIMATIONS
+// =====================================================================
+
+@keyframes shimmerDiagonal {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 200% 200%;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+// =====================================================================
+// RESPONSIVE DESIGN
+// =====================================================================
+
+@media (max-width: 768px) {
+  .gallery-grid {
+    gap: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery-item {
+    aspect-ratio: 16 / 9; // Wider on mobile
+  }
+
+  .gallery-caption {
+    padding: var(--spacing-sm);
+  }
+}
+
+// =====================================================================
+// ACCESSIBILITY - High Contrast
+// =====================================================================
+
+@media (prefers-contrast: high) {
+  .gallery-item {
+    border: 2px solid var(--foreground);
+  }
+
+  .gallery-overlay {
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid white;
+  }
+}
+

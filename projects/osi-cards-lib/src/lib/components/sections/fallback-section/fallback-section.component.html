@@ -1,15 +1,35 @@
-<div class="ai-section">
-  <div class="ai-section__header">
-    <div class="ai-section__details">
-      <h3 class="ai-section__title">{{ section.title || 'Unsupported Section' }}</h3>
-      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
-    </div>
+<div class="fallback-container">
+  <div class="fallback-warning">
+    <div class="warning-icon">⚠️</div>
+    <h3 class="warning-title">Unknown Section Type</h3>
+    <p class="warning-message">Section type "{{ getSectionType() }}" is not recognized</p>
   </div>
 
-  <div class="ai-section__body">
-    <div class="section-empty">
-      <lucide-icon name="alert-circle" size="32" class="mb-3 opacity-60"></lucide-icon>
-      <p class="text-sm">This section type is not yet customized. Add data or configure a renderer to display it.</p>
+  <div class="fallback-data" *ngIf="section.title || section.description || section.fields || section.items">
+    <div *ngIf="section.title" class="data-item">
+      <span class="data-label">Title:</span>
+      <span class="data-value">{{ section.title }}</span>
+    </div>
+
+    <div *ngIf="section.description" class="data-item">
+      <span class="data-label">Description:</span>
+      <span class="data-value">{{ section.description }}</span>
+    </div>
+
+    <div *ngIf="section.fields && section.fields.length > 0" class="data-section">
+      <h4 class="data-section-title">Fields ({{ section.fields.length }})</h4>
+      <div class="data-item" *ngFor="let field of section.fields">
+        <span class="data-label">{{ field.label }}:</span>
+        <span class="data-value">{{ field.value }}</span>
+      </div>
+    </div>
+
+    <div *ngIf="section.items && section.items.length > 0" class="data-section">
+      <h4 class="data-section-title">Items ({{ section.items.length }})</h4>
+      <div class="data-item" *ngFor="let item of section.items">
+        <span class="data-label">{{ item.title || 'Item' }}:</span>
+        <span class="data-value">{{ item.description || item.value }}</span>
+      </div>
     </div>
   </div>
 </div>

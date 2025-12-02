@@ -28,6 +28,7 @@ The **Financials Section** (\`type: "financials"\`) is used for displays financi
 - Quarterly earnings
 - Budget information
 - Revenue tracking
+- Investment summaries
 
 ## Data Schema
 
@@ -41,6 +42,7 @@ The **Financials Section** (\`type: "financials"\`) is used for displays financi
 | \`change\` | number | Change percentage |
 | \`trend\` | string | Trend indicator |
 | \`period\` | string | Time period (Q1, YTD, etc.) |
+| \`currency\` | string | Currency code (USD, EUR, etc.) |
 
 
 
@@ -48,37 +50,118 @@ The **Financials Section** (\`type: "financials"\`) is used for displays financi
 
 \`\`\`json
 {
-  "title": "Financial Overview",
+  "title": "FY2024 Financial Summary",
   "type": "financials",
-  "description": "Key financial metrics and performance",
+  "description": "Annual financial performance and key metrics",
   "fields": [
     {
-      "label": "Annual Revenue",
-      "value": "$50M",
+      "label": "Annual Recurring Revenue",
+      "value": "$127.4M",
       "format": "currency",
-      "change": 15,
+      "change": 45.2,
+      "trend": "up",
+      "period": "FY2024"
+    },
+    {
+      "label": "Total Revenue",
+      "value": "$142.8M",
+      "format": "currency",
+      "change": 38.7,
+      "trend": "up",
+      "period": "FY2024"
+    },
+    {
+      "label": "Gross Profit",
+      "value": "$112.3M",
+      "format": "currency",
+      "change": 41.2,
+      "trend": "up",
+      "period": "FY2024"
+    },
+    {
+      "label": "Gross Margin",
+      "value": "78.6%",
+      "format": "percentage",
+      "change": 2.3,
       "trend": "up"
     },
     {
-      "label": "Operating Margin",
-      "value": "18%",
-      "format": "percentage",
-      "change": 3.2,
+      "label": "Operating Expenses",
+      "value": "$98.5M",
+      "format": "currency",
+      "change": 22.1,
       "trend": "up"
     },
     {
       "label": "EBITDA",
-      "value": "$12M",
+      "value": "$24.8M",
       "format": "currency",
-      "change": 8,
+      "change": 156.3,
       "trend": "up"
     },
     {
       "label": "Net Income",
-      "value": "$8M",
+      "value": "$18.2M",
       "format": "currency",
-      "change": -2.5,
+      "change": 245.8,
+      "trend": "up"
+    },
+    {
+      "label": "Operating Margin",
+      "value": "17.4%",
+      "format": "percentage",
+      "change": 8.2,
+      "trend": "up"
+    },
+    {
+      "label": "Cash & Equivalents",
+      "value": "$89.3M",
+      "format": "currency",
+      "change": 12.4,
+      "trend": "up"
+    },
+    {
+      "label": "Total Assets",
+      "value": "$234.7M",
+      "format": "currency",
+      "change": 28.9,
+      "trend": "up"
+    },
+    {
+      "label": "Debt-to-Equity Ratio",
+      "value": "0.34",
+      "format": "ratio",
+      "change": -8.1,
       "trend": "down"
+    },
+    {
+      "label": "Free Cash Flow",
+      "value": "$31.2M",
+      "format": "currency",
+      "change": 67.4,
+      "trend": "up"
+    },
+    {
+      "label": "R&D Investment",
+      "value": "$28.4M",
+      "format": "currency",
+      "change": 35.2,
+      "trend": "up",
+      "period": "FY2024"
+    },
+    {
+      "label": "Customer Acquisition Cost",
+      "value": "$12,450",
+      "format": "currency",
+      "change": -12.3,
+      "trend": "down"
+    },
+    {
+      "label": "LTV/CAC Ratio",
+      "value": "6.8x",
+      "format": "ratio",
+      "change": 23.5,
+      "trend": "up"
     }
   ]
 }
@@ -88,12 +171,12 @@ The **Financials Section** (\`type: "financials"\`) is used for displays financi
 
 \`\`\`json
 {
-  "title": "Financials",
+  "title": "Revenue",
   "type": "financials",
   "fields": [
     {
-      "label": "Revenue",
-      "value": "$1M"
+      "label": "Total Revenue",
+      "value": "$10M"
     }
   ]
 }
@@ -105,12 +188,13 @@ The **Financials Section** (\`type: "financials"\`) is used for displays financi
 2. Include time periods
 3. Show trends and changes
 4. Group by category
+5. Highlight key metrics
 
 ## Component Information
 
-- **Selector:** \`app-financials-section\`
+- **Selector:** \`lib-financials-section\`
 - **Component Path:** \`./lib/components/sections/financials-section/financials-section.component\`
-- **Style Path:** \`./lib/styles/components/sections/_financials.scss\`
+- **Style Path:** \`./lib/components/sections/financials-section/financials-section.scss\`
 
 ## Related Documentation
 
@@ -120,37 +204,118 @@ The **Financials Section** (\`type: "financials"\`) is used for displays financi
 `;
 
 const demoConfig = {
-  title: 'Financial Overview',
+  title: 'FY2024 Financial Summary',
   type: 'financials',
-  description: 'Key financial metrics and performance',
+  description: 'Annual financial performance and key metrics',
   fields: [
     {
-      label: 'Annual Revenue',
-      value: '$50M',
+      label: 'Annual Recurring Revenue',
+      value: '$127.4M',
       format: 'currency',
-      change: 15,
+      change: 45.2,
+      trend: 'up',
+      period: 'FY2024',
+    },
+    {
+      label: 'Total Revenue',
+      value: '$142.8M',
+      format: 'currency',
+      change: 38.7,
+      trend: 'up',
+      period: 'FY2024',
+    },
+    {
+      label: 'Gross Profit',
+      value: '$112.3M',
+      format: 'currency',
+      change: 41.2,
+      trend: 'up',
+      period: 'FY2024',
+    },
+    {
+      label: 'Gross Margin',
+      value: '78.6%',
+      format: 'percentage',
+      change: 2.3,
       trend: 'up',
     },
     {
-      label: 'Operating Margin',
-      value: '18%',
-      format: 'percentage',
-      change: 3.2,
+      label: 'Operating Expenses',
+      value: '$98.5M',
+      format: 'currency',
+      change: 22.1,
       trend: 'up',
     },
     {
       label: 'EBITDA',
-      value: '$12M',
+      value: '$24.8M',
       format: 'currency',
-      change: 8,
+      change: 156.3,
       trend: 'up',
     },
     {
       label: 'Net Income',
-      value: '$8M',
+      value: '$18.2M',
       format: 'currency',
-      change: -2.5,
+      change: 245.8,
+      trend: 'up',
+    },
+    {
+      label: 'Operating Margin',
+      value: '17.4%',
+      format: 'percentage',
+      change: 8.2,
+      trend: 'up',
+    },
+    {
+      label: 'Cash & Equivalents',
+      value: '$89.3M',
+      format: 'currency',
+      change: 12.4,
+      trend: 'up',
+    },
+    {
+      label: 'Total Assets',
+      value: '$234.7M',
+      format: 'currency',
+      change: 28.9,
+      trend: 'up',
+    },
+    {
+      label: 'Debt-to-Equity Ratio',
+      value: '0.34',
+      format: 'ratio',
+      change: -8.1,
       trend: 'down',
+    },
+    {
+      label: 'Free Cash Flow',
+      value: '$31.2M',
+      format: 'currency',
+      change: 67.4,
+      trend: 'up',
+    },
+    {
+      label: 'R&D Investment',
+      value: '$28.4M',
+      format: 'currency',
+      change: 35.2,
+      trend: 'up',
+      period: 'FY2024',
+    },
+    {
+      label: 'Customer Acquisition Cost',
+      value: '$12,450',
+      format: 'currency',
+      change: -12.3,
+      trend: 'down',
+    },
+    {
+      label: 'LTV/CAC Ratio',
+      value: '6.8x',
+      format: 'ratio',
+      change: 23.5,
+      trend: 'up',
     },
   ],
 };

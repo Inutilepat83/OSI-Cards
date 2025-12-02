@@ -1,53 +1,42 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
-import { CardItem } from '../../../models';
-import { LucideIconsModule } from '../../../icons';
+import { BaseSectionComponent } from '../base-section.component';
 
+/**
+ * News Section Component
+ *
+ * Displays news articles, headlines, and press releases.
+ * Features: publication dates, sources, categories, featured images.
+ */
 @Component({
-  selector: 'app-news-section',
+  selector: 'lib-news-section',
   standalone: true,
-  imports: [CommonModule, LucideIconsModule],
+  imports: [CommonModule],
   templateUrl: './news-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './news-section.scss'
 })
-export class NewsSectionComponent extends BaseSectionComponent<CardItem> {
-  /** Image + text layout needs width */
-  static readonly layoutConfig: SectionLayoutConfig = {
-    preferredColumns: 2,
-    minColumns: 1,
-    maxColumns: 3,
-  };
-  get newsItems(): CardItem[] {
-    return this.getItems();
-  }
+export class NewsSectionComponent extends BaseSectionComponent {
 
-  formatSource(item: CardItem): string {
-    const meta = item.meta ?? {};
-    return (typeof meta['source'] === 'string' && meta['source'])
-      ? meta['source']
-      : (typeof meta['publisher'] === 'string' ? meta['publisher'] : 'News');
-  }
-
-  formatTimestamp(item: CardItem): string {
-    const meta = item.meta ?? {};
-    const timestamp = meta['publishedAt'] ?? meta['time'] ?? meta['date'];
-    return typeof timestamp === 'string' ? timestamp : '';
+  /**
+   * Get article image URL
+   */
+  getImageUrl(item: any): string | null {
+    return item.meta?.image || null;
   }
 
   /**
-   * Get display description, hiding "Streaming…" placeholder text
-   * Inline implementation to avoid TypeScript override conflicts
+   * Format date for display
    */
-  getDisplayDescription(item: CardItem): string {
-    const description = item.description;
-    if (description === 'Streaming…' || description === 'Streaming...') {
-      return '';
+  formatDate(dateStr: any): string {
+    if (!dateStr || typeof dateStr !== 'string') return '';
+    try {
+      return new Date(dateStr).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch {
+      return String(dateStr);
     }
-    return description ?? '';
-  }
-
-  override trackItem(index: number, item: CardItem): string {
-    return item.id ?? `news-item-${index}-${this.formatSource(item)}`;
   }
 }

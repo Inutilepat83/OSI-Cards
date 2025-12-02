@@ -1,0 +1,154 @@
+{
+  "type": "event",
+  "name": "Event Section",
+  "description": "Displays chronological events, timelines, schedules, and calendar information.",
+  "selector": "lib-event-section",
+  "useCases": [
+    "Event calendars",
+    "Project timelines",
+    "Schedules",
+    "Milestones",
+    "Upcoming activities"
+  ],
+  "bestPractices": [
+    "Include dates and times",
+    "Add location information",
+    "Use status for event state",
+    "Chronological ordering",
+    "Group by category or date"
+  ],
+  "rendering": {
+    "usesFields": true,
+    "usesItems": true,
+    "defaultColumns": 1,
+    "supportsCollapse": true,
+    "supportsEmoji": true
+  },
+  "fieldSchema": {
+    "type": "object",
+    "properties": {
+      "label": { "type": "string", "description": "Event label" },
+      "value": { "type": "string", "description": "Event name/description" },
+      "date": { "type": "string", "format": "date", "description": "Event date" },
+      "time": { "type": "string", "description": "Event time" },
+      "endDate": { "type": "string", "format": "date", "description": "Event end date" },
+      "category": { "type": "string", "description": "Event category" },
+      "status": { "type": "string", "enum": ["confirmed", "planned", "tentative", "cancelled", "completed"], "description": "Event status" },
+      "location": { "type": "string", "description": "Event location" },
+      "attendees": { "type": "number", "description": "Number of attendees" }
+    },
+    "required": []
+  },
+  "aliases": ["calendar", "schedule"],
+  "testFixtures": {
+    "complete": {
+      "title": "Q1 2025 Key Events",
+      "type": "event",
+      "description": "Major company events and milestones",
+      "fields": [
+        {
+          "label": "Annual Sales Kickoff",
+          "value": "SKO 2025 - Revenue Excellence",
+          "date": "2025-01-15",
+          "endDate": "2025-01-17",
+          "time": "09:00",
+          "category": "Sales",
+          "status": "confirmed",
+          "location": "Austin Convention Center, TX",
+          "attendees": 450
+        },
+        {
+          "label": "Board Meeting",
+          "value": "Q4 2024 Results Review",
+          "date": "2025-01-28",
+          "time": "14:00",
+          "category": "Corporate",
+          "status": "confirmed",
+          "location": "Virtual",
+          "attendees": 12
+        },
+        {
+          "label": "Product Launch",
+          "value": "Nexus Analytics 5.0 Release",
+          "date": "2025-02-10",
+          "time": "10:00",
+          "category": "Product",
+          "status": "confirmed",
+          "location": "Global Webcast"
+        },
+        {
+          "label": "Customer Summit",
+          "value": "NexusCon 2025 - AI Future",
+          "date": "2025-03-18",
+          "endDate": "2025-03-20",
+          "time": "08:00",
+          "category": "Conference",
+          "status": "planned",
+          "location": "Moscone Center, San Francisco",
+          "attendees": 3500
+        },
+        {
+          "label": "Investor Day",
+          "value": "Annual Investor Relations Event",
+          "date": "2025-03-25",
+          "time": "09:30",
+          "category": "Finance",
+          "status": "planned",
+          "location": "New York Stock Exchange",
+          "attendees": 200
+        },
+        {
+          "label": "Partner Summit",
+          "value": "Global Partner Ecosystem Meeting",
+          "date": "2025-04-08",
+          "endDate": "2025-04-09",
+          "time": "09:00",
+          "category": "Partnership",
+          "status": "tentative",
+          "location": "London, UK",
+          "attendees": 180
+        },
+        {
+          "label": "Engineering All-Hands",
+          "value": "Technical Roadmap Review",
+          "date": "2025-02-28",
+          "time": "16:00",
+          "category": "Internal",
+          "status": "confirmed",
+          "location": "Virtual",
+          "attendees": 850
+        },
+        {
+          "label": "AWS re:Invent Presence",
+          "value": "Booth #1234 + Speaking Sessions",
+          "date": "2025-12-01",
+          "endDate": "2025-12-05",
+          "time": "08:00",
+          "category": "Conference",
+          "status": "planned",
+          "location": "Las Vegas, NV"
+        }
+      ]
+    },
+    "minimal": {
+      "title": "Upcoming Event",
+      "type": "event",
+      "fields": [
+        { "label": "Meeting", "value": "Team Sync", "date": "2025-01-15" }
+      ]
+    },
+    "edgeCases": {
+      "title": "Event Edge Cases",
+      "type": "event",
+      "fields": [
+        { "label": "Past Event", "value": "Historical Milestone", "date": "2020-01-01", "status": "completed" },
+        { "label": "Far Future", "value": "Long-term Planning", "date": "2030-12-31", "status": "tentative" },
+        { "label": "Cancelled Event", "value": "Postponed Conference", "date": "2025-06-01", "status": "cancelled" },
+        { "label": "All Day Event", "value": "Company Holiday", "date": "2025-12-25", "time": "", "status": "confirmed" }
+      ]
+    }
+  }
+}
+
+
+

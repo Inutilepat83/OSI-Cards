@@ -8,10 +8,7 @@
       "fields": [
         { "label": "Job Title", "value": "Sales Director" },
         { "label": "Company", "value": "TechCorp Inc" },
-        { "label": "Location", "value": "Chicago, IL" },
-        { "label": "Experience", "value": "10+ Years" },
-        { "label": "Email", "value": "john.smith@techcorp.com" },
-        { "label": "Phone", "value": "+1 555 1234" }
+        { "label": "Email", "value": "john.smith@techcorp.com" }
       ]
     },
     {
@@ -19,17 +16,9 @@
       "type": "analytics",
       "fields": [
         {
-          "label": "Sales Target Achievement",
+          "label": "Sales Achievement",
           "value": "120%",
           "percentage": 120,
-          "performance": "excellent",
-          "trend": "up"
-        },
-        {
-          "label": "Deals Closed",
-          "value": "45 deals",
-          "percentage": 112,
-          "performance": "excellent",
           "trend": "up"
         }
       ]
@@ -40,12 +29,7 @@
       "label": "Send Email",
       "type": "mail",
       "variant": "primary",
-      "icon": "📧",
-      "email": {
-        "to": "john.smith@techcorp.com",
-        "subject": "Hello",
-        "body": "Dear John Smith,\n\n"
-      }
+      "icon": "📧"
     }
   ]
 }

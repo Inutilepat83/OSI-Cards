@@ -7,16 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
 
-    <!-- Security Headers -->
+    <!-- Security Headers (Point 43, 52) -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' ws: wss:;"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' ws: wss:; frame-ancestors 'none'; form-action 'self';"
     />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()" />
 
     <!-- ==========================================================================
-       Resource Hints for Performance
+       Resource Hints for Performance (Point 8)
        ========================================================================== -->
 
     <!-- DNS Prefetch - Resolve DNS early for external domains -->
@@ -24,31 +26,50 @@
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link rel="dns-prefetch" href="https://github.com" />
     <link rel="dns-prefetch" href="https://www.npmjs.com" />
+    <link rel="dns-prefetch" href="https://api.github.com" />
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
 
     <!-- Preconnect - Establish early connections to critical origins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 
-    <!-- Preload critical assets -->
+    <!-- Preload critical assets (Point 7) -->
     <link rel="preload" href="/assets/configs/manifest.json" as="fetch" crossorigin />
 
     <!-- Prefetch for likely next resources -->
     <link rel="prefetch" href="/assets/configs/companies/" as="document" />
     <link rel="prefetch" href="/assets/configs/contacts/" as="document" />
 
-    <!-- Module preload for documentation (loaded during idle time) -->
+    <!-- Module preload for critical JavaScript -->
     <link rel="modulepreload" href="/main.js" />
 
-    <!-- 
-    Documentation Performance Optimizations:
-    - Core doc pages are preloaded via DocsPreloadingStrategy
+    <!--
+    Performance Optimizations Applied (100-Point Plan):
+    ═══════════════════════════════════════════════════
+    Point 2:  DocsPreloadingStrategy with predictive preloading
+    Point 6:  Service Worker precaching (ngsw-config.json)
+    Point 7:  Critical CSS extraction (critical.scss)
+    Point 8:  Resource hints (preconnect, prefetch, dns-prefetch)
+    Point 43: Content Security Policy headers
+    Point 52: Subresource Integrity enabled in angular.json
+
+    Additional Features:
     - Navigation links use hover-based prefetching via PrefetchLinkDirective
     - Rendered markdown is cached in IndexedDB via DocCacheService
     - Service Worker caches doc chunks for offline access
+    - Network-aware loading respects Save-Data header
   -->
 
     <!-- Note: Material Icons removed - using Lucide icons instead -->
   </head>
   <body>
     <app-root></app-root>
+    <noscript>
+      <div style="padding: 2rem; text-align: center; font-family: system-ui, sans-serif">
+        <h1>JavaScript Required</h1>
+        <p>OSI Cards requires JavaScript to function. Please enable JavaScript in your browser settings.</p>
+      </div>
+    </noscript>
   </body>
 </html>

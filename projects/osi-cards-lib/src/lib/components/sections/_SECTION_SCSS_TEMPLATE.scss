@@ -1,0 +1,45 @@
+// =====================================================================
+// SECTION NAME - Section Styles
+// =====================================================================
+//
+// This file provides section-specific styling while inheriting from
+// the master design system.
+//
+// Structure:
+// 1. Import master design system (provides mixins, tokens, base styles)
+// 2. Host styles (component container)
+// 3. Section-specific custom styles
+//
+// The master design system provides:
+// - @mixin card - Base card styling
+// - @mixin section-grid - Responsive grid layouts
+// - @mixin list-stack - Vertical stacking
+// - CSS variables for colors, spacing, typography
+// - Standard transitions and hover states
+//
+// =====================================================================
+
+// Import master design system
+@use "../../../styles/components/sections/design-system" as *;
+@use "../../../styles/components/sections/sections-base" as *;
+
+// =====================================================================
+// HOST STYLES - Component Container
+// =====================================================================
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+// =====================================================================
+// SECTION-SPECIFIC CUSTOM STYLES
+// =====================================================================
+// Add your custom section styles below this line
+// These styles extend the base design system for this specific section
+
+// Example custom styles:
+// .custom-element {
+//   @include card; // Use base card styling
+//   // Add custom properties here
+// }

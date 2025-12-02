@@ -10,24 +10,14 @@
  * @module components/sections/abstract-section-bases
  */
 
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  ChangeDetectionStrategy,
-  inject,
-  DestroyRef,
-  signal,
-  computed,
-  OnInit,
-  OnDestroy
-} from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Subject } from 'rxjs';
+import { ChangeDetectionStrategy, Component, computed, Input, signal } from '@angular/core';
 
-import { BaseSectionComponent, SectionLayoutConfig, DEFAULT_LAYOUT_CONFIG } from './base-section.component';
-import { CardField, CardItem, CardSection } from '../../models';
+import { CardField, CardItem } from '../../models';
+import {
+  BaseSectionComponent,
+  DEFAULT_LAYOUT_CONFIG,
+  SectionLayoutConfig,
+} from './base-section.component';
 
 // ============================================================================
 // FIELD-BASED SECTION
@@ -57,7 +47,7 @@ import { CardField, CardItem, CardSection } from '../../models';
  */
 @Component({
   template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export abstract class FieldBasedSectionComponent extends BaseSectionComponent<CardField> {
   /**
@@ -65,7 +55,7 @@ export abstract class FieldBasedSectionComponent extends BaseSectionComponent<Ca
    */
   static readonly layoutConfig: SectionLayoutConfig = {
     ...DEFAULT_LAYOUT_CONFIG,
-    expandOnFieldCount: 5
+    expandOnFieldCount: 5,
   };
 
   /**
@@ -87,7 +77,7 @@ export abstract class FieldBasedSectionComponent extends BaseSectionComponent<Ca
    * Get fields filtered for display (removes streaming placeholders)
    */
   protected getDisplayFields(): CardField[] {
-    return this.getFields().filter(field => {
+    return this.getFields().filter((field) => {
       const value = this.getFieldValue(field);
       return value !== undefined && value !== null && !this.isStreamingPlaceholder(value);
     });
@@ -123,7 +113,7 @@ export abstract class FieldBasedSectionComponent extends BaseSectionComponent<Ca
     if (typeof value === 'number') {
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'USD'
+        currency: 'USD',
       }).format(value);
     }
     return String(value);
@@ -155,7 +145,7 @@ export abstract class FieldBasedSectionComponent extends BaseSectionComponent<Ca
   onFieldClick(field: CardField, index: number): void {
     this.emitFieldInteraction(field, {
       action: 'click',
-      index
+      index,
     });
   }
 }
@@ -187,7 +177,7 @@ export abstract class FieldBasedSectionComponent extends BaseSectionComponent<Ca
  */
 @Component({
   template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export abstract class ItemBasedSectionComponent extends BaseSectionComponent<CardItem> {
   /**
@@ -195,7 +185,7 @@ export abstract class ItemBasedSectionComponent extends BaseSectionComponent<Car
    */
   static readonly layoutConfig: SectionLayoutConfig = {
     ...DEFAULT_LAYOUT_CONFIG,
-    expandOnItemCount: 4
+    expandOnItemCount: 4,
   };
 
   /**
@@ -237,9 +227,7 @@ export abstract class ItemBasedSectionComponent extends BaseSectionComponent<Car
   /**
    * Whether there are more items to show
    */
-  readonly hasMoreItems = computed(() =>
-    this.displayItems().length > this.maxVisibleItems
-  );
+  readonly hasMoreItems = computed(() => this.displayItems().length > this.maxVisibleItems);
 
   /**
    * Number of hidden items
@@ -257,7 +245,7 @@ export abstract class ItemBasedSectionComponent extends BaseSectionComponent<Car
    * Get items filtered for display
    */
   protected getDisplayItems(): CardItem[] {
-    return this.getItems().filter(item => {
+    return this.getItems().filter((item) => {
       const title = item.title;
       return title !== undefined && title !== null && !this.isStreamingPlaceholder(title);
     });
@@ -267,7 +255,7 @@ export abstract class ItemBasedSectionComponent extends BaseSectionComponent<Car
    * Toggle expanded state
    */
   toggleExpanded(): void {
-    this.isExpanded.update(v => !v);
+    this.isExpanded.update((v) => !v);
   }
 
   /**
@@ -290,7 +278,7 @@ export abstract class ItemBasedSectionComponent extends BaseSectionComponent<Car
   onItemClick(item: CardItem, index: number): void {
     this.emitItemInteraction(item, {
       action: 'click',
-      index
+      index,
     });
   }
 
@@ -302,7 +290,7 @@ export abstract class ItemBasedSectionComponent extends BaseSectionComponent<Car
     this.emitItemInteraction(item, {
       action,
       url: meta?.['url'] as string | undefined,
-      linkText: meta?.['linkText'] as string | undefined
+      linkText: meta?.['linkText'] as string | undefined,
     });
   }
 }
@@ -352,7 +340,7 @@ export interface ChartConfig {
  */
 @Component({
   template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export abstract class ChartSectionBaseComponent extends BaseSectionComponent {
   /**
@@ -360,7 +348,7 @@ export abstract class ChartSectionBaseComponent extends BaseSectionComponent {
    */
   static readonly layoutConfig: SectionLayoutConfig = {
     ...DEFAULT_LAYOUT_CONFIG,
-    preferredColumns: 2
+    preferredColumns: 2,
   };
 
   /**
@@ -376,9 +364,7 @@ export abstract class ChartSectionBaseComponent extends BaseSectionComponent {
   /**
    * Chart type (bar, line, pie, doughnut)
    */
-  readonly chartType = computed(() =>
-    this.section.chartType ?? 'bar'
-  );
+  readonly chartType = computed(() => this.section.chartType ?? 'bar');
 
   /**
    * Processed chart configuration
@@ -390,13 +376,13 @@ export abstract class ChartSectionBaseComponent extends BaseSectionComponent {
     return {
       type: this.chartType(),
       labels: chartData.labels ?? [],
-      datasets: (chartData.datasets ?? []).map(ds => ({
+      datasets: (chartData.datasets ?? []).map((ds) => ({
         label: ds.label,
         data: ds.data,
         backgroundColor: ds.backgroundColor,
         borderColor: ds.borderColor,
-        borderWidth: ds.borderWidth ?? 1
-      }))
+        borderWidth: ds.borderWidth ?? 1,
+      })),
     };
   });
 
@@ -405,9 +391,11 @@ export abstract class ChartSectionBaseComponent extends BaseSectionComponent {
    */
   readonly hasValidData = computed(() => {
     const config = this.chartConfig();
-    return config !== null &&
-           config.datasets.length > 0 &&
-           config.datasets.some(ds => ds.data.length > 0);
+    return (
+      config !== null &&
+      config.datasets.length > 0 &&
+      config.datasets.some((ds) => ds.data.length > 0)
+    );
   });
 
   /**
@@ -417,9 +405,7 @@ export abstract class ChartSectionBaseComponent extends BaseSectionComponent {
     const config = this.chartConfig();
     if (!config) return 0;
 
-    return config.datasets.reduce((sum, ds) =>
-      sum + ds.data.reduce((a, b) => a + b, 0), 0
-    );
+    return config.datasets.reduce((sum, ds) => sum + ds.data.reduce((a, b) => a + b, 0), 0);
   });
 
   /**
@@ -469,7 +455,7 @@ export abstract class ChartSectionBaseComponent extends BaseSectionComponent {
  */
 @Component({
   template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export abstract class MixedContentSectionComponent extends BaseSectionComponent {
   /**
@@ -500,22 +486,18 @@ export abstract class MixedContentSectionComponent extends BaseSectionComponent 
   /**
    * Whether section has any displayable content
    */
-  readonly hasContent = computed(() =>
-    this.fieldCount() > 0 || this.itemCount() > 0
-  );
+  readonly hasContent = computed(() => this.fieldCount() > 0 || this.itemCount() > 0);
 
   /**
    * Whether section has both fields and items
    */
-  readonly hasMixedContent = computed(() =>
-    this.fieldCount() > 0 && this.itemCount() > 0
-  );
+  readonly hasMixedContent = computed(() => this.fieldCount() > 0 && this.itemCount() > 0);
 
   /**
    * Get filtered fields for display
    */
   protected getFilteredFields(): CardField[] {
-    return this.getFields().filter(field => {
+    return this.getFields().filter((field) => {
       const value = this.getFieldValue(field);
       return value !== undefined && value !== null && !this.isStreamingPlaceholder(value);
     });
@@ -525,7 +507,7 @@ export abstract class MixedContentSectionComponent extends BaseSectionComponent 
    * Get filtered items for display
    */
   protected getFilteredItems(): CardItem[] {
-    return this.getItems().filter(item => {
+    return this.getItems().filter((item) => {
       const title = item.title;
       return title !== undefined && title !== null && !this.isStreamingPlaceholder(title);
     });
@@ -538,7 +520,7 @@ export abstract class MixedContentSectionComponent extends BaseSectionComponent 
     this.emitFieldInteraction(field, {
       action: 'click',
       index,
-      contentType: 'field'
+      contentType: 'field',
     });
   }
 
@@ -550,7 +532,7 @@ export abstract class MixedContentSectionComponent extends BaseSectionComponent 
     this.emitItemInteraction(item as unknown as CardField, {
       action: 'click',
       index,
-      contentType: 'item'
+      contentType: 'item',
     });
   }
 }
@@ -595,7 +577,7 @@ export interface ContactInfo {
  */
 @Component({
   template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export abstract class ContactSectionBaseComponent extends FieldBasedSectionComponent {
   /**
@@ -604,7 +586,7 @@ export abstract class ContactSectionBaseComponent extends FieldBasedSectionCompo
   static override readonly layoutConfig: SectionLayoutConfig = {
     ...DEFAULT_LAYOUT_CONFIG,
     preferredColumns: 2,
-    matchItemCount: true
+    matchItemCount: true,
   };
 
   /**
@@ -647,7 +629,7 @@ export abstract class ContactSectionBaseComponent extends FieldBasedSectionCompo
 
     return name
       .split(' ')
-      .map(part => part[0])
+      .map((part) => part[0])
       .filter(Boolean)
       .slice(0, 2)
       .join('')
@@ -686,4 +668,3 @@ export abstract class ContactSectionBaseComponent extends FieldBasedSectionCompo
 }
 
 // Classes are exported inline with their declarations
-

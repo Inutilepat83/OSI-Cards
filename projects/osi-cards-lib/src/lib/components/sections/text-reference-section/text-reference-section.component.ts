@@ -1,68 +1,33 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
-import { CardField } from '../../../models';
+import { BaseSectionComponent } from '../base-section.component';
 
-type TextReferenceField = CardField & {
-  text: string;
-  referenceText?: string; // Use referenceText instead of reference to avoid conflict with CardField.reference
-  source?: string;
-  url?: string;
-  date?: string;
-  category?: string;
-};
-
+/**
+ * Text Reference Section Component
+ *
+ * Displays reference materials, citations, and documentation links.
+ * Perfect for articles, research summaries, and resource libraries.
+ */
 @Component({
-  selector: 'app-text-reference-section',
+  selector: 'lib-text-reference-section',
   standalone: true,
-  imports: [CommonModule, LucideIconsModule],
+  imports: [CommonModule],
   templateUrl: './text-reference-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './text-reference-section.scss'
 })
-export class TextReferenceSectionComponent extends BaseSectionComponent<TextReferenceField> {
-  /** Citation style, compact */
-  static readonly layoutConfig: SectionLayoutConfig = {
-    preferredColumns: 1,
-    minColumns: 1,
-    maxColumns: 2,
-  };
-  get fields(): TextReferenceField[] {
-    return super.getFields() as TextReferenceField[];
-  }
+export class TextReferenceSectionComponent extends BaseSectionComponent {
 
-  override get hasFields(): boolean {
-    return super.hasFields;
-  }
-
-  onReferenceClick(field: TextReferenceField): void {
-    this.emitFieldInteraction(field, { sectionTitle: this.section.title });
-  }
-
-  openReference(field: TextReferenceField, event: Event): void {
-    if (field.url) {
-      event.stopPropagation();
-      window.open(field.url, '_blank', 'noopener,noreferrer');
-    }
+  /**
+   * Get reference title
+   */
+  getReferenceTitle(field: any): string {
+    return field.value || field.title || field.label || 'Reference';
   }
 
   /**
-   * Get display text, hiding "Streaming…" placeholder text
-   * Inline implementation to avoid TypeScript override conflicts
+   * Get reference content
    */
-  getDisplayText(field: TextReferenceField): string {
-    const text = field.text || field.value;
-    if (text === 'Streaming…' || text === 'Streaming...') {
-      return '';
-    }
-    return text != null ? String(text) : '';
-  }
-
-  /**
-   * TrackBy function for fields
-   */
-  trackByField(index: number, field: TextReferenceField): string {
-    return field.id ?? `field-${index}`;
+  getReferenceContent(field: any): string {
+    return field.text || field.description || '';
   }
 }
-

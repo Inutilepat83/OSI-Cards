@@ -1,85 +1,69 @@
-<div class="ai-section ai-section--contact">
-  <div class="ai-section__header">
-    <div class="ai-section__details">
-      <h3 class="ai-section__title">{{ section.title }}</h3>
-      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
-    </div>
-    <span *ngIf="hasContacts" class="ai-section__badge">
-      {{ contacts.length }} {{ contacts.length === 1 ? 'contact' : 'contacts' }}
-    </span>
+<div class="contacts-container">
+  <!-- Section Header -->
+  <div class="section-header" *ngIf="section.title || section.description">
+    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
+    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
   </div>
 
-  <div class="ai-section__body">
-    <ng-container *ngIf="hasContacts; else contactEmpty">
-      <div class="contact-grid">
-        <article
-          *ngFor="let contact of contacts; trackBy: trackContact"
-          class="contact-card"
-          role="button"
-          tabindex="0"
-          (click)="onContactClick(contact)"
-          (keydown.enter)="onContactClick(contact)"
-          (keydown.space)="$event.preventDefault(); onContactClick(contact)"
-        >
-          <!-- Header: Avatar and Name/Role -->
-          <header class="contact-card__header">
-            <div class="contact-card__avatar">
-              <ng-container *ngIf="getContactAvatar(contact) as avatar; else contactInitials">
-                <img [src]="avatar" [alt]="getContactName(contact)" class="contact-card__avatar-img" />
-              </ng-container>
-              <ng-template #contactInitials>
-                <span class="contact-card__initials">
-                  {{ getInitials(getContactName(contact)) }}
-                </span>
-              </ng-template>
-            </div>
-            <div class="contact-card__header-content">
-              <h3 class="contact-card__name">{{ getContactName(contact) }}</h3>
-              <p *ngIf="getContactRole(contact) as role" class="contact-card__role">{{ role }}</p>
-            </div>
-          </header>
+  <!-- Contacts Grid -->
+  <div class="contacts-grid" *ngIf="section.fields && section.fields.length > 0">
+    <div class="contact-card" *ngFor="let contact of section.fields">
 
-          <!-- Contact Information -->
-          <div class="contact-card__meta">
-            <a
-              *ngIf="getContactEmail(contact) as email"
-              class="contact-card__meta-item contact-card__meta-item--link"
-              href="mailto:{{ email }}"
-              (click)="$event.stopPropagation()"
-            >
-              <lucide-icon name="mail" size="14" class="contact-card__meta-icon"></lucide-icon>
-              <span class="contact-card__meta-text">{{ email }}</span>
-            </a>
-
-            <a
-              *ngIf="getContactPhone(contact) as phone"
-              class="contact-card__meta-item contact-card__meta-item--link"
-              href="tel:{{ phone }}"
-              (click)="$event.stopPropagation()"
-            >
-              <lucide-icon name="phone" size="14" class="contact-card__meta-icon"></lucide-icon>
-              <span class="contact-card__meta-text">{{ phone }}</span>
-            </a>
-
-            <div *ngIf="contact.department" class="contact-card__meta-item">
-              <lucide-icon name="building" size="14" class="contact-card__meta-icon"></lucide-icon>
-              <span class="contact-card__meta-text">{{ contact.department }}</span>
-            </div>
-
-            <div *ngIf="contact.location" class="contact-card__meta-item">
-              <lucide-icon name="map-pin" size="14" class="contact-card__meta-icon"></lucide-icon>
-              <span class="contact-card__meta-text">{{ contact.location }}</span>
-            </div>
-          </div>
-        </article>
+      <!-- Avatar -->
+      <div class="contact-avatar">
+        <img [src]="getAvatar(contact)"
+             [alt]="getContactName(contact)"
+             *ngIf="getAvatar(contact)"
+             loading="lazy">
+        <span class="avatar-initials" *ngIf="!getAvatar(contact)">
+          {{ getInitials(getContactName(contact)) }}
+        </span>
       </div>
-    </ng-container>
 
-    <ng-template #contactEmpty>
-      <div class="section-empty">
-        <lucide-icon name="user" size="32" class="section-empty__icon"></lucide-icon>
-        <p class="section-empty__text">No contacts available</p>
+      <!-- Contact Info -->
+      <div class="contact-info">
+        <h4 class="contact-name">{{ getContactName(contact) }}</h4>
+        <p class="contact-role" *ngIf="getContactRole(contact)">{{ getContactRole(contact) }}</p>
+
+        <!-- Department Badge -->
+        <span class="contact-department" *ngIf="contact.department">
+          {{ contact.department }}
+        </span>
+
+        <!-- Location -->
+        <div class="contact-location" *ngIf="contact.location">
+          <span>{{ contact.location }}</span>
+        </div>
+
+        <!-- Contact Methods -->
+        <div class="contact-methods">
+          <a [href]="'mailto:' + contact.email"
+             class="contact-link"
+             *ngIf="contact.email"
+             [attr.aria-label]="'Email ' + getContactName(contact)">
+            Email
+          </a>
+          <a [href]="'tel:' + contact.phone"
+             class="contact-link"
+             *ngIf="contact.phone"
+             [attr.aria-label]="'Call ' + getContactName(contact)">
+            Call
+          </a>
+          <a [href]="contact.linkedIn"
+             class="contact-link"
+             target="_blank"
+             rel="noopener"
+             *ngIf="contact.linkedIn"
+             [attr.aria-label]="getContactName(contact) + ' LinkedIn'">
+            LinkedIn
+          </a>
+        </div>
       </div>
-    </ng-template>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="contacts-empty" *ngIf="!section.fields || section.fields.length === 0">
+    <p class="empty-text">No contacts available</p>
   </div>
 </div>

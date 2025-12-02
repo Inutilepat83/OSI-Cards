@@ -8,80 +8,20 @@
       "type": "info",
       "fields": [
         { "label": "Industry", "value": "Enterprise Software" },
-        { "label": "Founded", "value": "2005" },
         { "label": "Employees", "value": "2,500+" },
-        { "label": "Headquarters", "value": "New York, NY" },
-        { "label": "Annual Revenue", "value": "$250M" },
-        { "label": "Global Presence", "value": "25+ Countries" },
-        { "label": "CEO", "value": "Sarah Johnson" }
+        { "label": "Revenue", "value": "$250M" },
+        { "label": "Headquarters", "value": "New York, NY" }
       ]
     },
     {
-      "title": "Performance Metrics",
+      "title": "Performance",
       "type": "analytics",
       "fields": [
         {
           "label": "Revenue Growth",
           "value": "35% YoY",
           "percentage": 35,
-          "performance": "excellent",
           "trend": "up"
-        },
-        {
-          "label": "Customer Retention",
-          "value": "94%",
-          "percentage": 94,
-          "performance": "excellent",
-          "trend": "stable"
-        },
-        {
-          "label": "Market Share",
-          "value": "18%",
-          "percentage": 18,
-          "performance": "good",
-          "trend": "up"
-        }
-      ]
-    },
-    {
-      "title": "Financial Performance",
-      "type": "financials",
-      "fields": [
-        {
-          "label": "Annual Revenue",
-          "value": "$250M",
-          "format": "currency",
-          "change": 35,
-          "trend": "up"
-        },
-        {
-          "label": "EBITDA",
-          "value": "$45M",
-          "format": "currency",
-          "change": 28,
-          "trend": "up"
-        },
-        {
-          "label": "Operating Margin",
-          "value": "18%",
-          "format": "percentage",
-          "change": 3.2,
-          "trend": "up"
-        }
-      ]
-    },
-    {
-      "title": "Key Contacts",
-      "type": "contact-card",
-      "fields": [
-        {
-          "label": "CEO",
-          "title": "TechVenture Solutions",
-          "value": "Chief Executive Officer",
-          "email": "sarah.johnson@techventure.com",
-          "phone": "+1 555 0100",
-          "role": "Executive",
-          "department": "Executive"
         }
       ]
     }
@@ -91,15 +31,7 @@
       "label": "Visit Website",
       "type": "website",
       "variant": "primary",
-      "icon": "🌐",
-      "url": "https://www.techventure.com"
-    },
-    {
-      "label": "Contact Sales",
-      "type": "mail",
-      "variant": "secondary",
-      "icon": "📧",
-      "email": { "to": "sales@techventure.com", "subject": "Sales Inquiry" }
+      "icon": "🌐"
     }
   ]
 }

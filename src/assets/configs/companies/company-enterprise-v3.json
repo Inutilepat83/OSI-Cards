@@ -1,224 +1,28 @@
 {
   "cardTitle": "GlobalTech Industries",
-  "cardSubtitle": "Leading Enterprise Technology Solutions Provider",
+  "cardSubtitle": "Enterprise Technology Solutions Provider",
   "cardType": "company",
   "sections": [
     {
       "title": "Company Overview",
-      "type": "overview",
+      "type": "info",
       "fields": [
         { "label": "Industry", "value": "Enterprise Technology" },
-        { "label": "Founded", "value": "1998" },
         { "label": "Employees", "value": "15,000+" },
+        { "label": "Revenue", "value": "$2.5B" },
         { "label": "Headquarters", "value": "London, UK" },
-        { "label": "Annual Revenue", "value": "$2.5B" },
-        { "label": "Global Presence", "value": "60+ Countries" },
-        { "label": "CEO", "value": "Michael Chen" },
-        { "label": "Stock Exchange", "value": "NYSE: GTECH" }
+        { "label": "CEO", "value": "Michael Chen" }
       ]
     },
     {
-      "title": "Performance Metrics",
+      "title": "Performance",
       "type": "analytics",
       "fields": [
         {
           "label": "Revenue Growth",
           "value": "42% YoY",
           "percentage": 42,
-          "performance": "excellent",
           "trend": "up"
-        },
-        {
-          "label": "Customer Retention",
-          "value": "97%",
-          "percentage": 97,
-          "performance": "excellent",
-          "trend": "up"
-        },
-        {
-          "label": "Market Share",
-          "value": "28%",
-          "percentage": 28,
-          "performance": "excellent",
-          "trend": "up"
-        },
-        {
-          "label": "Digital Transformation",
-          "value": "85% Complete",
-          "percentage": 85,
-          "performance": "excellent",
-          "trend": "up"
-        },
-        {
-          "label": "Employee Satisfaction",
-          "value": "4.6/5",
-          "percentage": 92,
-          "performance": "excellent",
-          "trend": "stable"
-        }
-      ]
-    },
-    {
-      "title": "Revenue Growth Trend",
-      "type": "chart",
-      "chartType": "line",
-      "chartData": {
-        "labels": ["2020", "2021", "2022", "2023", "2024"],
-        "datasets": [
-          {
-            "label": "Revenue (Billions)",
-            "data": [1.2, 1.5, 1.8, 2.1, 2.5],
-            "borderColor": "#3b82f6",
-            "backgroundColor": "rgba(59, 130, 246, 0.1)"
-          }
-        ]
-      }
-    },
-    {
-      "title": "Financial Performance",
-      "type": "financials",
-      "fields": [
-        {
-          "label": "Annual Revenue",
-          "value": "$2.5B",
-          "format": "currency",
-          "change": 42,
-          "trend": "up"
-        },
-        {
-          "label": "EBITDA",
-          "value": "$550M",
-          "format": "currency",
-          "change": 38,
-          "trend": "up"
-        },
-        {
-          "label": "Net Income",
-          "value": "$320M",
-          "format": "currency",
-          "change": 35,
-          "trend": "up"
-        },
-        {
-          "label": "Operating Margin",
-          "value": "22%",
-          "format": "percentage",
-          "change": 4.5,
-          "trend": "up"
-        },
-        {
-          "label": "ROE",
-          "value": "18.5%",
-          "format": "percentage",
-          "change": 2.3,
-          "trend": "up"
-        }
-      ]
-    },
-    {
-      "title": "Key Initiatives",
-      "type": "list",
-      "items": [
-        {
-          "title": "Cloud Migration",
-          "description": "Migrating 80% of infrastructure to cloud by Q2 2025",
-          "icon": "☁️",
-          "status": "in-progress"
-        },
-        {
-          "title": "AI Integration",
-          "description": "Deploying AI across all business units for process automation",
-          "icon": "🤖",
-          "status": "in-progress"
-        },
-        {
-          "title": "Sustainability",
-          "description": "Net-zero emissions target by 2030 with renewable energy transition",
-          "icon": "🌱",
-          "status": "active"
-        },
-        {
-          "title": "Global Expansion",
-          "description": "Opening offices in 5 new markets across APAC region",
-          "icon": "🌍",
-          "status": "pending"
-        }
-      ]
-    },
-    {
-      "title": "Executive Team",
-      "type": "contact-card",
-      "fields": [
-        {
-          "label": "CEO",
-          "title": "Michael Chen",
-          "value": "Chief Executive Officer",
-          "email": "michael.chen@globaltech.com",
-          "phone": "+44 20 7123 4567",
-          "role": "Executive",
-          "department": "Executive",
-          "location": "London, UK"
-        },
-        {
-          "label": "CTO",
-          "title": "Dr. Emma Rodriguez",
-          "value": "Chief Technology Officer",
-          "email": "emma.rodriguez@globaltech.com",
-          "phone": "+44 20 7123 4568",
-          "role": "Executive",
-          "department": "Technology",
-          "location": "London, UK"
-        },
-        {
-          "label": "CFO",
-          "title": "James Wilson",
-          "value": "Chief Financial Officer",
-          "email": "james.wilson@globaltech.com",
-          "phone": "+44 20 7123 4569",
-          "role": "Executive",
-          "department": "Finance",
-          "location": "London, UK"
-        }
-      ]
-    },
-    {
-      "title": "Global Operations",
-      "type": "map",
-      "fields": [
-        {
-          "name": "London HQ",
-          "x": 48,
-          "y": 28,
-          "type": "headquarters",
-          "address": "London, UK"
-        },
-        {
-          "name": "New York Office",
-          "x": 25,
-          "y": 35,
-          "type": "regional-office",
-          "address": "New York, NY, USA"
-        },
-        {
-          "name": "Singapore Office",
-          "x": 80,
-          "y": 60,
-          "type": "regional-office",
-          "address": "Singapore"
-        },
-        {
-          "name": "Tokyo Office",
-          "x": 85,
-          "y": 35,
-          "type": "regional-office",
-          "address": "Tokyo, Japan"
-        },
-        {
-          "name": "Sydney Office",
-          "x": 85,
-          "y": 72,
-          "type": "regional-office",
-          "address": "Sydney, Australia"
         }
       ]
     }
@@ -228,22 +32,7 @@
       "label": "Visit Website",
       "type": "website",
       "variant": "primary",
-      "icon": "🌐",
-      "url": "https://www.techcorp.com"
-    },
-    {
-      "label": "Contact Sales",
-      "type": "mail",
-      "variant": "primary",
-      "icon": "📧",
-      "email": { "to": "sales@techcorp.com", "subject": "Sales Inquiry" }
-    },
-    {
-      "label": "View Annual Report",
-      "type": "website",
-      "variant": "secondary",
-      "icon": "📄",
-      "url": "https://www.techcorp.com/annual-report"
+      "icon": "🌐"
     }
   ]
 }

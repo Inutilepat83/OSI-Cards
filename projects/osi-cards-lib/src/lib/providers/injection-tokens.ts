@@ -65,13 +65,10 @@ export const DEFAULT_STREAMING_CONFIG: OSIStreamingConfig = {
 /**
  * Injection token for streaming configuration
  */
-export const OSI_STREAMING_CONFIG = new InjectionToken<OSIStreamingConfig>(
-  'OSI_STREAMING_CONFIG',
-  {
-    providedIn: 'root',
-    factory: () => DEFAULT_STREAMING_CONFIG,
-  }
-);
+export const OSI_STREAMING_CONFIG = new InjectionToken<OSIStreamingConfig>('OSI_STREAMING_CONFIG', {
+  providedIn: 'root',
+  factory: () => DEFAULT_STREAMING_CONFIG,
+});
 
 // ============================================================================
 // ANIMATION CONFIGURATION
@@ -116,13 +113,10 @@ export const DEFAULT_ANIMATION_CONFIG: OSIAnimationConfig = {
 /**
  * Injection token for animation configuration
  */
-export const OSI_ANIMATION_CONFIG = new InjectionToken<OSIAnimationConfig>(
-  'OSI_ANIMATION_CONFIG',
-  {
-    providedIn: 'root',
-    factory: () => DEFAULT_ANIMATION_CONFIG,
-  }
-);
+export const OSI_ANIMATION_CONFIG = new InjectionToken<OSIAnimationConfig>('OSI_ANIMATION_CONFIG', {
+  providedIn: 'root',
+  factory: () => DEFAULT_ANIMATION_CONFIG,
+});
 
 // ============================================================================
 // LAYOUT CONFIGURATION
@@ -167,13 +161,10 @@ export const DEFAULT_LAYOUT_CONFIG: OSILayoutConfig = {
 /**
  * Injection token for layout configuration
  */
-export const OSI_LAYOUT_CONFIG = new InjectionToken<OSILayoutConfig>(
-  'OSI_LAYOUT_CONFIG',
-  {
-    providedIn: 'root',
-    factory: () => DEFAULT_LAYOUT_CONFIG,
-  }
-);
+export const OSI_LAYOUT_CONFIG = new InjectionToken<OSILayoutConfig>('OSI_LAYOUT_CONFIG', {
+  providedIn: 'root',
+  factory: () => DEFAULT_LAYOUT_CONFIG,
+});
 
 // ============================================================================
 // LOGGING CONFIGURATION
@@ -209,13 +200,10 @@ export const DEFAULT_LOGGING_CONFIG: OSILoggingConfig = {
 /**
  * Injection token for logging configuration
  */
-export const OSI_LOGGING_CONFIG = new InjectionToken<OSILoggingConfig>(
-  'OSI_LOGGING_CONFIG',
-  {
-    providedIn: 'root',
-    factory: () => DEFAULT_LOGGING_CONFIG,
-  }
-);
+export const OSI_LOGGING_CONFIG = new InjectionToken<OSILoggingConfig>('OSI_LOGGING_CONFIG', {
+  providedIn: 'root',
+  factory: () => DEFAULT_LOGGING_CONFIG,
+});
 
 // ============================================================================
 // THEMING CONFIGURATION
@@ -251,13 +239,10 @@ export const DEFAULT_OSI_THEME_CONFIG: OSIThemeConfig = {
 /**
  * Injection token for theme configuration
  */
-export const OSI_THEME_CONFIG_TOKEN = new InjectionToken<OSIThemeConfig>(
-  'OSI_THEME_CONFIG_TOKEN',
-  {
-    providedIn: 'root',
-    factory: () => DEFAULT_OSI_THEME_CONFIG,
-  }
-);
+export const OSI_THEME_CONFIG_TOKEN = new InjectionToken<OSIThemeConfig>('OSI_THEME_CONFIG_TOKEN', {
+  providedIn: 'root',
+  factory: () => DEFAULT_OSI_THEME_CONFIG,
+});
 
 // ============================================================================
 // ACCESSIBILITY CONFIGURATION
@@ -361,13 +346,10 @@ export const DEFAULT_ERROR_CONFIG: OSIErrorConfig = {
 /**
  * Injection token for error handling configuration
  */
-export const OSI_ERROR_CONFIG = new InjectionToken<OSIErrorConfig>(
-  'OSI_ERROR_CONFIG',
-  {
-    providedIn: 'root',
-    factory: () => DEFAULT_ERROR_CONFIG,
-  }
-);
+export const OSI_ERROR_CONFIG = new InjectionToken<OSIErrorConfig>('OSI_ERROR_CONFIG', {
+  providedIn: 'root',
+  factory: () => DEFAULT_ERROR_CONFIG,
+});
 
 // ============================================================================
 // COMBINED CONFIGURATION
@@ -402,13 +384,10 @@ export const DEFAULT_OSI_CARDS_FULL_CONFIG: OSICardsFullConfig = {
 /**
  * Injection token for complete OSI Cards configuration (extended)
  */
-export const OSI_FULL_CONFIG = new InjectionToken<OSICardsFullConfig>(
-  'OSI_FULL_CONFIG',
-  {
-    providedIn: 'root',
-    factory: () => DEFAULT_OSI_CARDS_FULL_CONFIG,
-  }
-);
+export const OSI_FULL_CONFIG = new InjectionToken<OSICardsFullConfig>('OSI_FULL_CONFIG', {
+  providedIn: 'root',
+  factory: () => DEFAULT_OSI_CARDS_FULL_CONFIG,
+});
 
 // ============================================================================
 // CSS ISOLATION CONFIG
@@ -427,16 +406,12 @@ export const DEFAULT_CSS_ISOLATION_MODE: CSSIsolationMode = 'shadow-dom';
 /**
  * Injection token for CSS isolation mode
  */
-export const CSS_ISOLATION_MODE = new InjectionToken<CSSIsolationMode>(
-  'CSS_ISOLATION_MODE',
-  {
-    providedIn: 'root',
-    factory: () => DEFAULT_CSS_ISOLATION_MODE,
-  }
-);
+export const CSS_ISOLATION_MODE = new InjectionToken<CSSIsolationMode>('CSS_ISOLATION_MODE', {
+  providedIn: 'root',
+  factory: () => DEFAULT_CSS_ISOLATION_MODE,
+});
 
 /**
  * Alias for theme config token (for backwards compatibility)
  */
 export const DEFAULT_THEME = OSI_THEME_CONFIG_TOKEN;
-

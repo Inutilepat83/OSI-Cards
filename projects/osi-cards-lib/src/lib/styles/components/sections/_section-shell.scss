@@ -28,11 +28,11 @@
     -webkit-font-smoothing: antialiased !important;
     -moz-osx-font-smoothing: grayscale !important;
   }
-  
+
   &:not(.masonry-item .ai-section) {
     @include section-wrapper;
   }
-  
+
   .masonry-item & {
     display: flex !important;
     flex-direction: column !important;
@@ -41,13 +41,13 @@
 }
 
 .ai-section--main {
-  --section-background: var(--section-bg-main, #fefefe);
-  --section-background-hover: var(--section-bg-main, #fefefe);
+  --section-background: var(--section-bg-main, var(--section-surface, var(--background)));
+  --section-background-hover: var(--section-bg-main-hover, var(--section-surface-hover, var(--background)));
 }
 
 .ai-section--contrast {
-  --section-background: var(--section-bg-contrast, #f5f5f5);
-  --section-background-hover: var(--section-bg-contrast, #f5f5f5);
+  --section-background: var(--section-bg-contrast, var(--card-section-bg));
+  --section-background-hover: var(--section-bg-contrast-hover, var(--card-section-card-bg));
 }
 
 .ai-section__header {
@@ -78,7 +78,7 @@
   margin: 0 0 var(--section-title-margin-bottom) 0 !important;
   font-family: inherit !important;
   border: none !important;
-  
+
   &::before {
     content: '' !important;
     position: absolute !important;
@@ -92,10 +92,10 @@
     transform-origin: left !important;
     opacity: 0.6 !important;
   }
-  
+
   &:hover {
     color: var(--card-text-primary, $foreground-color) !important;
-    
+
     &::before {
       width: var(--section-title-underline-hover-length) !important;
       opacity: 1 !important;
@@ -181,17 +181,17 @@
   justify-content: center !important;
   padding: calc(var(--card-padding) * 1.5) !important;
   text-align: center !important;
-  color: $foreground-70 !important;
+  color: var(--muted-foreground) !important;
   min-height: auto !important;
   border-radius: var(--radius-md) !important;
-  background: $foreground-03 !important;
-  border: none !important;
+  background: var(--section-item-background, var(--card-section-bg)) !important;
+  border: 1px dashed var(--border) !important;
   transition: opacity 0.2s ease, background 0.2s ease !important;
 
   lucide-icon {
     margin-bottom: var(--card-gap) !important;
     opacity: 0.5 !important;
-    color: $brand-color-60 !important;
+    color: var(--accent) !important;
     transition: all 0.2s ease !important;
   }
 
@@ -203,8 +203,9 @@
   }
 
   &:hover {
-    background: $foreground-04 !important;
-    
+    background: var(--section-item-background-hover, var(--card-section-card-bg)) !important;
+    border-color: var(--accent) !important;
+
     lucide-icon {
       opacity: 0.7 !important;
     }
@@ -283,134 +284,37 @@
     --section-box-shadow: none !important;
     --section-box-shadow-hover: none !important;
   }
-  
+
   .masonry-item {
     box-shadow: none !important;
-    
+
     &:hover {
       box-shadow: none !important;
     }
   }
-  
+
   .ai-section__header {
     padding: 0 0 calc(var(--card-gap) * 0.75) 0 !important;
     gap: calc(var(--card-gap) * 0.75) !important;
   }
-  
+
   .ai-section__title {
     font-size: var(--card-title-font-size, 0.95rem) !important;
   }
-  
+
   .ai-section__body {
     gap: var(--card-gap) !important;
   }
-  
+
   .ai-section__description {
     font-size: var(--card-meta-font-size, 0.6rem) !important;
     margin-top: 4px !important;
   }
 }
 
-/* Dark theme (Night Mode) overrides */
-:root[data-theme='night'],
-:host-context([data-theme='night']) {
-  .ai-section {
-    --section-background: rgba(30, 30, 35, 0.8);
-    --section-background-hover: rgba(35, 35, 42, 0.95);
-    --section-border: 1px solid rgba(80, 80, 90, 0.4);
-    --section-border-hover: 1px solid rgba(255, 121, 0, 0.4);
-    --section-box-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.2),
-      0 1px 2px rgba(0, 0, 0, 0.15),
-      inset 0 1px 0 rgba(255, 255, 255, 0.03);
-    --section-box-shadow-hover:
-      0 4px 12px rgba(0, 0, 0, 0.3),
-      0 2px 4px rgba(255, 121, 0, 0.12),
-      0 0 0 1px rgba(255, 121, 0, 0.25),
-      inset 0 1px 0 rgba(255, 121, 0, 0.08);
-  }
-  
-  .ai-section__title {
-    color: rgba(255, 255, 255, 0.95) !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
-    
-    &::before {
-      background: rgba(255, 121, 0, 0.9) !important;
-    }
-    
-    &:hover {
-      color: var(--primary, #{$brand-color}) !important;
-    }
-  }
-  
-  .ai-section__description {
-    color: rgba(255, 255, 255, 0.7) !important;
-  }
-  
-  .ai-section:hover .ai-section__description {
-    color: rgba(255, 255, 255, 0.85) !important;
-  }
-  
-  .section-empty {
-    background: rgba(30, 30, 35, 0.8) !important;
-    border-color: rgba(80, 80, 90, 0.4) !important;
-    color: rgba(255, 255, 255, 0.6) !important;
-  }
-  
-  .section-empty:hover {
-    background: rgba(35, 35, 42, 0.95) !important;
-    border-color: rgba(255, 121, 0, 0.3) !important;
-  }
-}
+/* Theme overrides are handled automatically by theme system */
+/* No hardcoded colors needed - all sections use theme variables */
+/* Variables adapt based on theme selection (night/day/auto) */
 
-/* Light theme overrides for better visibility */
-:root[data-theme='day'],
-:host-context([data-theme='day']) {
-  .ai-section {
-    --section-background: rgba(255, 255, 255, 0.8);
-    --section-background-hover: rgba(255, 255, 255, 0.95);
-    --section-border: 1px solid rgba(200, 200, 200, 0.4);
-    --section-border-hover: 1px solid rgba(255, 121, 0, 0.3);
-    --section-box-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.06),
-      0 1px 2px rgba(0, 0, 0, 0.04),
-      inset 0 1px 0 rgba(255, 121, 0, 0.04);
-    --section-box-shadow-hover:
-      0 4px 12px rgba(0, 0, 0, 0.08),
-      0 2px 4px rgba(255, 121, 0, 0.08),
-      0 0 0 1px rgba(255, 121, 0, 0.2),
-      inset 0 1px 0 rgba(255, 121, 0, 0.08);
-  }
-  
-  .ai-section__title {
-    color: #1a1a1a !important;
-    text-shadow: none !important;
-    
-    &::before {
-      background: rgba(255, 121, 0, 0.8) !important;
-    }
-    
-    &:hover {
-      color: var(--primary, #{$brand-color}) !important;
-    }
-  }
-  
-  .ai-section__description {
-    color: #4b5563 !important;
-  }
-  
-  .ai-section:hover .ai-section__description {
-    color: #374151 !important;
-  }
-  
-  .section-empty {
-    background: rgba(250, 250, 250, 0.8) !important;
-    border-color: rgba(200, 200, 200, 0.4) !important;
-    color: #6b7280 !important;
-  }
-  
-  .section-empty:hover {
-    background: rgba(250, 250, 250, 1) !important;
-    border-color: rgba(255, 121, 0, 0.3) !important;
-  }
-}
+/* Theme system handles all light/dark variations automatically */
+/* All colors adapt through CSS variables defined in tokens/_master.scss */

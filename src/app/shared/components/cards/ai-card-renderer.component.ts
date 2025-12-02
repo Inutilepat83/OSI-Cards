@@ -1,3 +1,5 @@
+import { animate, style, transition, trigger } from '@angular/animations';
+import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -12,8 +14,26 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import {
+  CardActionsComponent,
+  CardHeaderComponent,
+  CardSectionListComponent,
+  CardStreamingIndicatorComponent,
+  MasonryGridComponent,
+  type MasonryLayoutInfo,
+  StreamingStage,
+} from '@osi-cards/components';
+import {
+  MagneticTiltService,
+  MousePosition,
+  SectionNormalizationService,
+  TiltCalculations,
+} from '@osi-cards/services';
+import { CardChangeType } from '@osi-cards/utils';
+import { delay, distinctUntilChanged, filter, fromEvent, interval, Subject, takeUntil } from 'rxjs';
+import { DevelopmentWarningsService } from '../../../core/services/development-warnings.service';
+import { LoggingService } from '../../../core/services/logging.service';
 import {
   AICardConfig,
   CardAction,
@@ -22,25 +42,8 @@ import {
   CardSection,
   MailCardAction,
 } from '../../../models';
-import { delay, distinctUntilChanged, filter, fromEvent, interval, Subject, takeUntil } from 'rxjs';
-import { MagneticTiltService, MousePosition, TiltCalculations } from '../../../core';
-import { SectionNormalizationService } from 'projects/osi-cards-lib/src/lib/services';
 import { LucideIconsModule } from '../../icons/lucide-icons.module';
-import { MasonryGridComponent } from 'projects/osi-cards-lib/src/lib/components/masonry-grid/masonry-grid.component';
-import type { MasonryLayoutInfo } from 'projects/osi-cards-lib/src/lib/components/masonry-grid/masonry-grid.component';
 import { SectionRenderEvent } from './section-renderer/section-renderer.component';
-import { CardChangeType } from 'projects/osi-cards-lib/src/lib/utils/card-diff.util';
-import { animate, style, transition, trigger } from '@angular/animations';
-import { LoggingService } from '../../../core/services/logging.service';
-import { DevelopmentWarningsService } from '../../../core/services/development-warnings.service';
-// Import from library (consolidated)
-import {
-  CardActionsComponent,
-  CardHeaderComponent,
-  CardSectionListComponent,
-  CardStreamingIndicatorComponent,
-} from 'projects/osi-cards-lib/src/lib/components';
-import { StreamingStage } from 'projects/osi-cards-lib/src/lib/types';
 
 export interface CardFieldInteractionEvent {
   field?: CardField;
@@ -1258,7 +1261,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       this.normalizedSectionCache = new WeakMap<CardSection, CardSection>();
     }
 
-    const normalizedSections = sections.map((section) =>
+    const normalizedSections = sections.map((section: CardSection) =>
       this.getNormalizedSection(section, requiresStructuralRebuild)
     );
     const orderedSections = requiresStructuralRebuild

@@ -1,33 +1,17 @@
 {
   "cardTitle": "Top Orange Business Solutions",
-  "cardSubtitle": "Recommended Solutions for Financial Services",
+  "cardSubtitle": "Recommended Solutions",
   "cardType": "sko",
   "sections": [
     {
-      "title": "Recommended Solutions",
+      "title": "Solutions",
       "type": "solutions",
       "fields": [
         {
-          "title": "Secure Cloud Banking Platform",
-          "description": "Compliant cloud infrastructure for financial services",
+          "title": "Secure Cloud Banking",
+          "description": "Compliant cloud infrastructure",
           "category": "Infrastructure",
-          "benefits": [
-            "Regulatory compliance",
-            "Enhanced security",
-            "Scalability"
-          ],
-          "deliveryTime": "10-12 weeks"
-        },
-        {
-          "title": "Fraud Detection & Prevention",
-          "description": "AI-powered fraud detection system",
-          "category": "Security",
-          "benefits": [
-            "Real-time detection",
-            "AI-powered analysis",
-            "Compliance ready"
-          ],
-          "deliveryTime": "8-10 weeks"
+          "benefits": ["Compliance", "Security"]
         }
       ]
     }
@@ -37,9 +21,7 @@
       "label": "Create Presentation",
       "type": "agent",
       "variant": "primary",
-      "icon": "📊",
-      "agentId": "presentation-agent",
-      "agentContext": { "action": "create_presentation" }
+      "icon": "📊"
     }
   ]
 }

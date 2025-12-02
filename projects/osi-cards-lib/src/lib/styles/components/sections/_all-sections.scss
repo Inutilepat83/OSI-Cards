@@ -1,0 +1,1079 @@
+// =====================================================================
+// ALL SECTIONS - Unified Styling Using Master Tokens
+// =====================================================================
+//
+// All sections use unified mixins from modern-sections.scss.
+// Consistent, minimalistic design across all section types.
+//
+// =====================================================================
+
+@use "../../tokens/master" as *;
+@import "sections-base";
+@import "design-system";
+@import "modern-sections";
+
+// =====================================================================
+// BASE CLASSES
+// =====================================================================
+
+.section-card,
+.unified-card {
+  @include unified-card;
+  @include stream-animation;
+}
+
+// =====================================================================
+// ANALYTICS SECTION
+// =====================================================================
+
+.analytics-metrics {
+  @include grid(160px);
+}
+
+.analytics-metric {
+  @include unified-card;
+  @include stream-animation;
+}
+
+.analytics-metric__label {
+  @include type-label;
+}
+
+.analytics-metric__value {
+  @include type-value;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.analytics-metric__change {
+  @include trend;
+}
+
+.analytics-metric__progress {
+  @include progress-track;
+}
+
+.analytics-metric__progress-bar {
+  @include progress-bar;
+}
+
+.analytics-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// FINANCIALS SECTION
+// =====================================================================
+
+.financials-grid {
+  @include grid(160px);
+}
+
+.financial-card {
+  @include unified-card;
+  @include stream-animation;
+}
+
+.financial-card__label {
+  @include type-label;
+}
+
+.financial-card__value {
+  @include type-value-large;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.financial-card__change {
+  @include trend;
+}
+
+.financial-card__icon {
+  @include icon-container(var(--icon-md));
+}
+
+.financials-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// OVERVIEW SECTION
+// =====================================================================
+
+.overview-grid {
+  @include stack(var(--gap-xs));
+}
+
+.overview-card {
+  @include unified-card;
+  @include stream-animation;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+}
+
+.overview-card__label {
+  @include type-label;
+  margin-bottom: 0;
+}
+
+.overview-card__value {
+  @include type-title;
+  text-align: right;
+}
+
+.overview-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// INFO SECTION
+// =====================================================================
+
+.info-matrix {
+  @include stack(var(--gap-xs));
+}
+
+.info-row {
+  @include unified-card;
+  @include stream-animation;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  gap: var(--space-4);
+}
+
+.info-row__label {
+  @include type-label;
+  margin-bottom: 0;
+  min-width: 80px;
+}
+
+.info-row__value {
+  @include type-subtitle;
+  text-align: right;
+  flex: 1;
+  color: var(--foreground);
+}
+
+.info-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// NEWS SECTION
+// =====================================================================
+
+.news-feed {
+  @include stack(var(--gap-sm));
+}
+
+.news-item {
+  @include unified-card;
+  @include stream-animation;
+}
+
+.news-item__header {
+  @include row(var(--space-2));
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.news-item__tag {
+  @include badge;
+}
+
+.news-item__date {
+  @include type-meta;
+}
+
+.news-item__title {
+  @include type-title;
+  margin: 0 0 var(--space-1) 0;
+}
+
+.news-item__summary {
+  @include type-subtitle;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+}
+
+.news-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// CONTACT SECTION
+// =====================================================================
+
+.contact-grid {
+  @include grid(200px);
+}
+
+.contact-card {
+  @include unified-card;
+  @include stream-animation;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.contact-card__avatar {
+  @include avatar(36px);
+}
+
+.contact-card__initials {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.contact-card__info {
+  @include stack(var(--space-1));
+  flex: 1;
+  min-width: 0;
+}
+
+.contact-card__name {
+  @include type-title;
+}
+
+.contact-card__role {
+  @include type-subtitle;
+}
+
+.contact-card__email,
+.contact-card__phone {
+  @include type-meta;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  text-decoration: none;
+
+  lucide-icon, svg {
+    width: var(--icon-xs);
+    height: var(--icon-xs);
+    opacity: 0.6;
+  }
+
+  &:hover {
+    color: var(--accent);
+  }
+}
+
+.contact-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// EVENT SECTION
+// =====================================================================
+
+.event-grid {
+  @include stack(var(--gap-sm));
+}
+
+.event-card {
+  @include unified-card;
+  @include stream-animation;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.event-card__icon {
+  @include icon-bg(var(--icon-xl));
+}
+
+.event-card__content {
+  @include stack(var(--space-1));
+  flex: 1;
+  min-width: 0;
+}
+
+.event-card__title {
+  @include type-title;
+}
+
+.event-card__datetime {
+  @include type-meta;
+  @include row(var(--space-3));
+  flex-wrap: wrap;
+
+  lucide-icon, svg {
+    width: var(--icon-xs);
+    height: var(--icon-xs);
+    opacity: 0.5;
+  }
+}
+
+.event-card__date,
+.event-card__time,
+.event-card__location {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.event-card__status {
+  @include badge;
+  @include badge-status;
+}
+
+.event-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// QUOTATION SECTION
+// =====================================================================
+
+.quotation-grid {
+  @include grid(240px);
+}
+
+.quotation-card {
+  @include unified-card;
+  @include stream-animation;
+}
+
+.quotation-card__icon {
+  display: none;
+}
+
+.quotation-card__text {
+  @include type-subtitle;
+  font-style: italic;
+  line-height: 1.6;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--accent);
+  color: var(--foreground);
+}
+
+.quotation-card__author {
+  @include stack(var(--space-0));
+  margin-top: var(--space-3);
+}
+
+.quotation-card__author-name {
+  @include type-title;
+  color: var(--accent);
+}
+
+.quotation-card__author-role {
+  @include type-meta;
+}
+
+.quotation-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// TEXT REFERENCE SECTION
+// =====================================================================
+
+.reference-grid {
+  @include stack(var(--gap-xs));
+}
+
+.reference-card {
+  @include unified-card;
+  @include stream-animation;
+}
+
+.reference-card__header {
+  @include row(var(--space-2));
+  justify-content: space-between;
+}
+
+.reference-card__title {
+  @include type-title;
+  flex: 1;
+}
+
+.reference-card__category {
+  @include badge;
+}
+
+.reference-card__meta {
+  @include row(var(--space-4));
+  flex-wrap: wrap;
+  margin-top: var(--space-1);
+}
+
+.reference-card__source,
+.reference-card__date {
+  @include type-meta;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+
+  lucide-icon, svg {
+    width: var(--icon-xs);
+    height: var(--icon-xs);
+    opacity: 0.5;
+  }
+}
+
+.reference-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// NETWORK SECTION
+// =====================================================================
+
+.network-grid {
+  @include grid(180px);
+}
+
+.network-card {
+  @include unified-card;
+  @include stream-animation;
+}
+
+.network-card__icon {
+  @include icon-container(var(--icon-lg));
+  margin-bottom: var(--space-1);
+}
+
+.network-card__name {
+  @include type-title;
+  margin: 0 0 var(--space-1) 0;
+}
+
+.network-card__type {
+  @include badge;
+  margin-bottom: var(--space-1);
+}
+
+.network-card__description {
+  @include type-subtitle;
+  margin: 0;
+}
+
+.network-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// PRODUCT SECTION
+// =====================================================================
+
+.product-grid {
+  @include grid(200px);
+}
+
+.product-card {
+  @include unified-card;
+  @include stream-animation;
+}
+
+.product-card__header {
+  @include row(var(--space-2));
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.product-card__name {
+  @include type-title;
+  flex: 1;
+}
+
+.product-card__category {
+  @include badge;
+}
+
+.product-card__description {
+  @include type-subtitle;
+  margin: 0 0 var(--space-3) 0;
+}
+
+.product-card__features {
+  @include stack(var(--space-1));
+}
+
+.product-card__feature {
+  @include type-meta;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  lucide-icon, svg {
+    width: var(--icon-xs);
+    height: var(--icon-xs);
+    color: var(--status-success);
+  }
+}
+
+.product-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// SOLUTIONS SECTION
+// =====================================================================
+
+.solutions-grid {
+  @include grid(200px);
+}
+
+.solution-card {
+  @include unified-card;
+  @include stream-animation;
+}
+
+.solution-card__icon {
+  @include icon-container(var(--icon-xl));
+  margin-bottom: var(--space-2);
+}
+
+.solution-card__name {
+  @include type-title;
+  margin: 0 0 var(--space-1) 0;
+}
+
+.solution-card__description {
+  @include type-subtitle;
+  margin: 0;
+}
+
+.solution-card__benefits {
+  @include stack(var(--space-1));
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.solution-card__benefit {
+  @include type-meta;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  lucide-icon, svg {
+    width: var(--icon-xs);
+    height: var(--icon-xs);
+    color: var(--accent);
+  }
+}
+
+.solutions-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// TIMELINE SECTION
+// =====================================================================
+
+.timeline-grid {
+  @include stack(0);
+  position: relative;
+  padding-left: var(--space-5);
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: var(--space-1);
+    top: var(--space-3);
+    bottom: var(--space-3);
+    width: 1px;
+    background: var(--accent);
+    opacity: 0.3;
+  }
+}
+
+.timeline-item {
+  @include unified-card;
+  @include stream-animation;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: calc(-1 * var(--space-5) + var(--space-1) - 3px);
+    top: var(--space-3);
+    width: 7px;
+    height: 7px;
+    background: var(--accent);
+    border-radius: var(--radius-full);
+    z-index: 1;
+  }
+}
+
+.timeline-item__date {
+  @include badge;
+  margin-bottom: var(--space-1);
+}
+
+.timeline-item__title {
+  @include type-title;
+  margin: 0 0 var(--space-1) 0;
+}
+
+.timeline-item__description {
+  @include type-subtitle;
+  margin: 0;
+}
+
+.timeline-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// BRAND COLORS SECTION
+// =====================================================================
+
+.brand-colors-grid {
+  @include grid(100px);
+}
+
+.brand-color-tile {
+  @include unified-card;
+  @include stream-animation;
+  padding: 0;
+  overflow: hidden;
+}
+
+.brand-color-tile__swatch {
+  width: 100%;
+  height: 48px;
+}
+
+.brand-color-tile__info {
+  padding: var(--space-2);
+}
+
+.brand-color-tile__name {
+  @include type-title;
+  font-size: var(--card-subtitle-font-size);
+  margin: 0 0 var(--space-0) 0;
+}
+
+.brand-color-tile__code {
+  @include type-meta;
+  font-family: "SF Mono", Monaco, "Consolas", monospace;
+}
+
+.brand-colors-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// SOCIAL MEDIA SECTION
+// =====================================================================
+
+.social-feed {
+  @include grid(160px);
+}
+
+.social-post {
+  @include unified-card;
+  @include stream-animation;
+}
+
+.social-post__header {
+  @include row(var(--space-2));
+  margin-bottom: var(--space-2);
+}
+
+.social-post__platform {
+  @include badge;
+  text-transform: capitalize;
+}
+
+.social-post__handle {
+  @include type-title;
+}
+
+.social-post__followers {
+  @include type-value;
+  margin-bottom: var(--space-1);
+}
+
+.social-post__label {
+  @include type-label;
+}
+
+.social-post__content {
+  @include type-subtitle;
+  margin: var(--space-2) 0 0 0;
+}
+
+.social-media-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// GALLERY SECTION
+// =====================================================================
+
+.gallery-grid {
+  @include grid(120px);
+}
+
+.gallery-item {
+  @include unified-card;
+  @include stream-animation;
+  padding: 0;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+}
+
+.gallery-item__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-item__caption {
+  @include type-meta;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-2);
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  color: white;
+}
+
+.gallery-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// VIDEO SECTION
+// =====================================================================
+
+.video-grid {
+  @include grid(180px);
+}
+
+.video-card {
+  @include unified-card;
+  @include stream-animation;
+  padding: 0;
+  overflow: hidden;
+}
+
+.video-card__thumbnail {
+  width: 100%;
+  height: 90px;
+  background: #{$brand-color-10};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &::after {
+    content: "▶";
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: white;
+    padding-left: 2px;
+  }
+}
+
+.video-card__info {
+  padding: var(--space-2) var(--space-3);
+}
+
+.video-card__title {
+  @include type-title;
+  margin: 0 0 var(--space-1) 0;
+}
+
+.video-card__meta {
+  @include row(var(--space-3));
+}
+
+.video-card__duration,
+.video-card__views {
+  @include type-meta;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+
+  lucide-icon, svg {
+    width: var(--icon-xs);
+    height: var(--icon-xs);
+    opacity: 0.5;
+  }
+}
+
+.video-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// CHART SECTION
+// =====================================================================
+
+.chart-container {
+  @include unified-card;
+  min-height: 180px;
+
+  canvas {
+    max-width: 100%;
+    height: auto !important;
+  }
+}
+
+.chart-header {
+  @include row(var(--space-2));
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.chart-title {
+  @include type-title;
+}
+
+.chart-legend {
+  @include row(var(--space-4));
+}
+
+.chart-legend__item {
+  @include type-meta;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.chart-legend__color {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-xs);
+}
+
+.chart-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// LIST SECTION
+// =====================================================================
+
+.list-grid {
+  @include stack(var(--gap-xs));
+}
+
+.list-card {
+  @include unified-card;
+  @include stream-animation;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+}
+
+.list-card__icon {
+  @include icon-container(var(--icon-lg));
+}
+
+.list-card__content {
+  @include stack(var(--space-0));
+  flex: 1;
+  min-width: 0;
+}
+
+.list-card__title {
+  @include type-title;
+}
+
+.list-card__description {
+  @include type-subtitle;
+}
+
+.list-card__badge {
+  @include badge;
+  @include badge-status;
+}
+
+.list-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// MAP SECTION
+// =====================================================================
+
+.map-container {
+  @include unified-card;
+  padding: var(--space-5);
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  text-align: center;
+}
+
+.map-grid {
+  @include grid(160px);
+}
+
+.map-card {
+  @include unified-card;
+  @include stream-animation;
+}
+
+.map-card__icon {
+  @include icon-container(var(--icon-lg));
+  margin-bottom: var(--space-2);
+}
+
+.map-card__name {
+  @include type-title;
+  margin: 0 0 var(--space-1) 0;
+}
+
+.map-card__address {
+  @include type-subtitle;
+  margin: 0 0 var(--space-1) 0;
+}
+
+.map-card__coordinates {
+  @include type-meta;
+  font-family: "SF Mono", Monaco, "Consolas", monospace;
+}
+
+.map-location {
+  @include type-title;
+}
+
+.map-placeholder {
+  @include type-meta;
+}
+
+.map-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// FAQ SECTION
+// =====================================================================
+
+.faq-grid {
+  @include stack(var(--gap-xs));
+}
+
+.faq-card {
+  @include unified-card;
+  @include stream-animation;
+}
+
+.faq-card__question {
+  @include type-title;
+  margin: 0 0 var(--space-2) 0;
+}
+
+.faq-card__answer {
+  @include type-subtitle;
+  margin: 0;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--accent);
+  opacity: 0.9;
+}
+
+.faq-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// PRICING SECTION
+// =====================================================================
+
+.pricing-grid {
+  @include grid(180px);
+}
+
+.pricing-card {
+  @include unified-card;
+  @include stream-animation;
+  text-align: center;
+}
+
+.pricing-card__name {
+  @include type-title;
+  margin: 0 0 var(--space-3) 0;
+}
+
+.pricing-card__price {
+  @include type-value-large;
+  color: var(--accent);
+  margin-bottom: var(--space-1);
+}
+
+.pricing-card__period {
+  @include type-meta;
+  margin-bottom: var(--space-4);
+}
+
+.pricing-card__features {
+  @include stack(var(--space-2));
+  text-align: left;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.pricing-card__feature {
+  @include type-meta;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  lucide-icon, svg {
+    width: var(--icon-xs);
+    height: var(--icon-xs);
+    color: var(--status-success);
+  }
+}
+
+.pricing-empty {
+  @include empty-state;
+}
+
+// =====================================================================
+// FALLBACK SECTION
+// =====================================================================
+
+.fallback-empty {
+  @include empty-state;
+}
+
+.fallback-message {
+  @include type-subtitle;
+  margin: 0;
+}
+
+// =====================================================================
+// SECTION BODY
+// =====================================================================
+
+.ai-section__body {
+  width: 100%;
+  box-sizing: border-box;
+}

@@ -399,12 +399,12 @@ export interface ISectionTypeDemo {
 
       /* Preview */
       .demo-preview {
-        padding: 2rem;
+        padding: 0;
         background: var(--docs-bg, #fafbfd);
         min-height: 300px;
         display: flex;
+        flex-direction: column;
         align-items: stretch;
-        justify-content: stretch;
         width: 100%;
 
         &.theme-dark {

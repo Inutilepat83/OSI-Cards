@@ -4,7 +4,7 @@ import { Routes } from '@angular/router';
  * Documentation routes
  * Auto-generated from page files - do not edit manually
  * Uses DocPageComponent (no NgDoc dependency for Angular 20 compatibility)
- * Generated: 2025-12-01T18:30:18.833Z
+ * Generated: 2025-12-02T15:50:04.285Z
  */
 
 export const NG_DOC_ROUTING: Routes = [
@@ -130,8 +130,20 @@ export const NG_DOC_ROUTING: Routes = [
         loadComponent: () => import('./section-types/event/page.component').then(m => m.default)
       },
       {
+        path: 'fallback',
+        loadComponent: () => import('./section-types/fallback/page.component').then(m => m.default)
+      },
+      {
+        path: 'faq',
+        loadComponent: () => import('./section-types/faq/page.component').then(m => m.default)
+      },
+      {
         path: 'financials',
         loadComponent: () => import('./section-types/financials/page.component').then(m => m.default)
+      },
+      {
+        path: 'gallery',
+        loadComponent: () => import('./section-types/gallery/page.component').then(m => m.default)
       },
       {
         path: 'info',
@@ -176,6 +188,14 @@ export const NG_DOC_ROUTING: Routes = [
       {
         path: 'text-reference',
         loadComponent: () => import('./section-types/text-reference/page.component').then(m => m.default)
+      },
+      {
+        path: 'timeline',
+        loadComponent: () => import('./section-types/timeline/page.component').then(m => m.default)
+      },
+      {
+        path: 'video',
+        loadComponent: () => import('./section-types/video/page.component').then(m => m.default)
       },
     ]
   },

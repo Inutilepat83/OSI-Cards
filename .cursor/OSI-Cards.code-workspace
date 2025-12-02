@@ -1,15 +1,18 @@
 {
-	"folders": [
-		{
-			"path": ".."
-		}
-	],
-	"settings": {
-		"files.associations": {
-			"*.css": "postcss"
-		},
-		"emmet.includeLanguages": {
-			"postcss": "html"
-		}
-	}
+  "folders": [
+    {
+      "path": "..",
+    },
+    {
+      "path": "../../../Downloads/sales_assistance_frontend-OSI-CardsV2",
+    },
+  ],
+  "settings": {
+    "files.associations": {
+      "*.css": "postcss",
+    },
+    "emmet.includeLanguages": {
+      "postcss": "html",
+    },
+  },
 }

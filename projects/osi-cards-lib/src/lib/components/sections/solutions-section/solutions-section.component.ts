@@ -1,46 +1,27 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardField } from '../../../models';
-import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
+import { BaseSectionComponent } from '../base-section.component';
 
-interface SolutionField extends CardField {
-  category?: 'consulting' | 'technology' | 'managed' | 'training' | 'support' | string;
-  benefits?: string[];
-  deliveryTime?: string;
-  teamSize?: string;
-  outcomes?: string[];
-}
-
+/**
+ * Solutions Section Component
+ *
+ * Displays solution offerings, use cases, and service information.
+ * Features: benefits, complexity indicators, delivery timeframes.
+ */
 @Component({
-  selector: 'app-solutions-section',
+  selector: 'lib-solutions-section',
   standalone: true,
-  imports: [CommonModule, LucideIconsModule],
+  imports: [CommonModule],
   templateUrl: './solutions-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './solutions-section.scss'
 })
-export class SolutionsSectionComponent extends BaseSectionComponent<SolutionField> {
-  /** Multi-item showcase needs width */
-  static readonly layoutConfig: SectionLayoutConfig = {
-    preferredColumns: 3,
-    minColumns: 2,
-    maxColumns: 4,
-    expandOnItemCount: 4,
-  };
-  get fields(): SolutionField[] {
-    return super.getFields() as SolutionField[];
-  }
+export class SolutionsSectionComponent extends BaseSectionComponent {
 
-  override get hasFields(): boolean {
-    return super.hasFields;
-  }
-
-  override trackField(index: number, field: SolutionField): string {
-    return field.id || field.title || field.label || index.toString();
-  }
-
-  onSolutionClick(field: SolutionField): void {
-    // Solutions are treated as items in the template
-    this.emitItemInteraction(field, { category: field.category });
+  /**
+   * Get complexity class
+   */
+  getComplexityClass(complexity?: string): string {
+    if (!complexity) return '';
+    return `complexity--${complexity}`;
   }
 }

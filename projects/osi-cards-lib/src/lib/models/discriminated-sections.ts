@@ -286,6 +286,52 @@ export interface NewsSection extends BaseSectionProps {
   dateRange?: { start: string; end: string };
 }
 
+/**
+ * Timeline Section - displays chronological events
+ */
+export interface TimelineSection extends BaseSectionProps {
+  type: 'timeline';
+  items: CardItem[];
+  fields?: never;
+  chartData?: never;
+  chartType?: never;
+}
+
+/**
+ * Gallery Section - displays image galleries
+ */
+export interface GallerySection extends BaseSectionProps {
+  type: 'gallery';
+  items: CardItem[];
+  fields?: never;
+  chartData?: never;
+  chartType?: never;
+  /** Gallery layout */
+  galleryLayout?: 'grid' | 'masonry' | 'carousel';
+}
+
+/**
+ * FAQ Section - displays frequently asked questions
+ */
+export interface FaqSection extends BaseSectionProps {
+  type: 'faq';
+  items: CardItem[];
+  fields?: never;
+  chartData?: never;
+  chartType?: never;
+}
+
+/**
+ * Video Section - displays video content
+ */
+export interface VideoSection extends BaseSectionProps {
+  type: 'video';
+  items: CardItem[];
+  fields?: never;
+  chartData?: never;
+  chartType?: never;
+}
+
 // ============================================================================
 // MIXED (FIELDS + ITEMS) SECTIONS
 // ============================================================================
@@ -417,6 +463,10 @@ export type DiscriminatedSection =
   | BrandColorsSection
   | NewsSection
   | SocialMediaSection
+  | TimelineSection
+  | GallerySection
+  | FaqSection
+  | VideoSection
   | FallbackSection;
 
 // ============================================================================
@@ -631,6 +681,10 @@ export type SectionTypeMap = {
   'brand-colors': BrandColorsSection;
   'news': NewsSection;
   'social-media': SocialMediaSection;
+  'timeline': TimelineSection;
+  'gallery': GallerySection;
+  'faq': FaqSection;
+  'video': VideoSection;
   'fallback': FallbackSection;
 };
 

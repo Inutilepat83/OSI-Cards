@@ -1,87 +1,44 @@
-<section 
-  class="ai-section ai-section--analytics"
-  [attr.aria-label]="section.title"
-  [attr.aria-describedby]="section.description ? 'analytics-desc-' + section.id : null"
->
-  <header class="ai-section__header">
-    <div class="ai-section__details">
-      <h3 class="ai-section__title" [id]="'analytics-title-' + section.id">{{ section.title }}</h3>
-      <p 
-        *ngIf="section.description" 
-        class="ai-section__description"
-        [id]="'analytics-desc-' + section.id"
-      >{{ section.description }}</p>
-    </div>
-  </header>
-
-  <div 
-    class="ai-section__body"
-    role="list"
-    [attr.aria-label]="'Metrics for ' + section.title"
-  >
-    <ng-container *ngIf="fields.length; else analyticsEmpty">
-      <div class="section-grid section-grid--metrics" role="presentation">
-        <article
-          *ngFor="let field of fields; trackBy: trackField; let idx = index"
-          class="section-card section-card--metric"
-          role="listitem"
-          tabindex="0"
-          [attr.aria-label]="getMetricAriaLabel(field)"
-          (click)="onFieldClick(field)"
-          (keydown.enter)="onFieldClick(field)"
-          (keydown.space)="$event.preventDefault(); onFieldClick(field)"
-        >
-          <div class="section-card__label">
-            <span aria-hidden="true">{{ field.label }}</span>
-          </div>
-
-          <div class="section-card__value">
-            <span aria-hidden="true">{{ getDisplayValue(field) }}</span>
-            <lucide-icon
-              *ngIf="getTrendIcon(field)"
-              [name]="getTrendIcon(field)"
-              [size]="18"
-              [ngClass]="getTrendClass(field)"
-              aria-hidden="true"
-            ></lucide-icon>
-          </div>
-
-          <div 
-            *ngIf="field.percentage !== undefined" 
-            class="section-card__progress"
-            role="progressbar"
-            [attr.aria-valuenow]="field.percentage"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            [attr.aria-label]="field.label + ' progress: ' + field.percentage + '%'"
-          >
-            <div
-              class="section-card__progress-bar"
-              [style.width.%]="Math.min(field.percentage, 100)"
-              aria-hidden="true"
-            ></div>
-          </div>
-
-          <div *ngIf="shouldShowPercentage(field)" class="section-card__meta" aria-hidden="true">
-            <span>{{ field.percentage }}%</span>
-          </div>
-
-          <div *ngIf="field.change !== undefined" class="section-card__meta" aria-hidden="true">
-            <span>Change:</span>
-            <span class="section-card__meta-change" [ngClass]="getTrendClass(field)">
-              {{ formatChange(field.change) }}
-            </span>
-            <lucide-icon [name]="getTrendIcon(field)" [size]="14" [ngClass]="getTrendClass(field)" aria-hidden="true"></lucide-icon>
-          </div>
-        </article>
-      </div>
-    </ng-container>
-
-    <ng-template #analyticsEmpty>
-      <div class="section-empty" role="status" aria-live="polite">
-        <lucide-icon name="bar-chart-3" [size]="32" class="mb-4 opacity-50" aria-hidden="true"></lucide-icon>
-        <p class="text-sm">No analytics data configured</p>
-      </div>
-    </ng-template>
+<div class="analytics-container">
+  <!-- Section Header -->
+  <div class="section-header" *ngIf="section.title || section.description">
+    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
+    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
   </div>
-</section>
+
+  <!-- Metrics Grid -->
+  <div class="analytics-grid" *ngIf="section.fields && section.fields.length > 0">
+    <div class="metric-card" *ngFor="let metric of section.fields" [class.has-icon]="metric.icon">
+      <!-- Metric Header -->
+      <div class="metric-header">
+        <span class="metric-label">{{ metric.label }}</span>
+        <span class="metric-trend" [ngClass]="getTrendClass(metric.trend)" *ngIf="metric.trend">
+          <span class="trend-icon" [attr.data-trend]="metric.trend"></span>
+          <span class="trend-text" *ngIf="metric.change">{{ formatChange(metric.change) }}</span>
+        </span>
+      </div>
+
+      <!-- Metric Value -->
+      <div class="metric-value">{{ metric.value }}</div>
+
+      <!-- Progress Bar (if percentage provided) -->
+      <div class="metric-progress" *ngIf="metric.percentage !== undefined">
+        <div class="progress-fill"
+             [style.width.%]="metric.percentage"
+             [ngClass]="getPerformanceClass(metric.performance)">
+        </div>
+      </div>
+
+      <!-- Performance Badge -->
+      <span class="metric-performance"
+            [ngClass]="getPerformanceClass(metric.performance)"
+            *ngIf="metric.performance">
+        {{ metric.performance }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="analytics-empty" *ngIf="!section.fields || section.fields.length === 0">
+    <p class="empty-text">No analytics data available</p>
+  </div>
+</div>

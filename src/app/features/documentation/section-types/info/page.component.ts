@@ -19,7 +19,7 @@ The **Info Section** (\`type: "info"\`) is used for displays key-value pairs in 
 | Uses Items | No |
 | Default Columns | 1 |
 | Supports Collapse | Yes |
-| Aliases | \`project\` |
+| Aliases | None |
 
 
 ## Use Cases
@@ -28,6 +28,7 @@ The **Info Section** (\`type: "info"\`) is used for displays key-value pairs in 
 - Contact details
 - Metadata display
 - Key-value pairs
+- Profile summaries
 
 ## Data Schema
 
@@ -49,35 +50,73 @@ The **Info Section** (\`type: "info"\`) is used for displays key-value pairs in 
 
 \`\`\`json
 {
-  "title": "Company Information",
+  "title": "Nexus Technologies Inc.",
   "type": "info",
-  "description": "Detailed company information and metadata",
+  "description": "Enterprise SaaS company specializing in AI-powered analytics",
   "fields": [
     {
       "label": "Industry",
-      "value": "Technology",
+      "value": "Enterprise Software & AI",
       "icon": "🏢"
     },
     {
       "label": "Founded",
-      "value": "2010",
+      "value": "2018",
       "icon": "📅"
     },
     {
       "label": "Headquarters",
-      "value": "San Francisco, CA",
+      "value": "Austin, Texas, USA",
       "icon": "📍"
     },
     {
       "label": "Employees",
-      "value": "5,000+",
+      "value": "2,847",
       "icon": "👥",
-      "trend": "up"
+      "trend": "up",
+      "change": 23.5
+    },
+    {
+      "label": "Annual Revenue",
+      "value": "$127M ARR",
+      "icon": "💰",
+      "trend": "up",
+      "change": 45.2
+    },
+    {
+      "label": "Funding Stage",
+      "value": "Series C ($85M raised)",
+      "icon": "🚀"
+    },
+    {
+      "label": "Customer Base",
+      "value": "450+ Enterprise Clients",
+      "icon": "🎯"
+    },
+    {
+      "label": "Global Offices",
+      "value": "Austin, London, Singapore, São Paulo",
+      "icon": "🌐"
+    },
+    {
+      "label": "Tech Stack",
+      "value": "Python, Kubernetes, AWS, Snowflake",
+      "icon": "⚙️"
+    },
+    {
+      "label": "CEO",
+      "value": "Dr. Maya Chen",
+      "icon": "👤"
+    },
+    {
+      "label": "Stock Symbol",
+      "value": "NXUS (NASDAQ)",
+      "icon": "📈"
     },
     {
       "label": "Website",
-      "value": "www.example.com",
-      "icon": "🌐"
+      "value": "www.nexustech.io",
+      "icon": "🔗"
     }
   ]
 }
@@ -87,12 +126,12 @@ The **Info Section** (\`type: "info"\`) is used for displays key-value pairs in 
 
 \`\`\`json
 {
-  "title": "Info",
+  "title": "Quick Info",
   "type": "info",
   "fields": [
     {
-      "label": "Key",
-      "value": "Value"
+      "label": "Status",
+      "value": "Active"
     }
   ]
 }
@@ -104,12 +143,13 @@ The **Info Section** (\`type: "info"\`) is used for displays key-value pairs in 
 2. Keep labels concise and descriptive
 3. Use trend indicators for dynamic data
 4. Group related fields together
+5. Use icons to enhance visual hierarchy
 
 ## Component Information
 
-- **Selector:** \`app-info-section\`
-- **Component Path:** \`./lib/components/sections/info-section.component\`
-- **Style Path:** \`./lib/styles/components/sections/_info.scss\`
+- **Selector:** \`lib-info-section\`
+- **Component Path:** \`./lib/components/sections/info-section/info-section.component\`
+- **Style Path:** \`./lib/components/sections/info-section/info-section.scss\`
 
 ## Related Documentation
 
@@ -119,35 +159,73 @@ The **Info Section** (\`type: "info"\`) is used for displays key-value pairs in 
 `;
 
 const demoConfig = {
-  title: 'Company Information',
+  title: 'Nexus Technologies Inc.',
   type: 'info',
-  description: 'Detailed company information and metadata',
+  description: 'Enterprise SaaS company specializing in AI-powered analytics',
   fields: [
     {
       label: 'Industry',
-      value: 'Technology',
+      value: 'Enterprise Software & AI',
       icon: '🏢',
     },
     {
       label: 'Founded',
-      value: '2010',
+      value: '2018',
       icon: '📅',
     },
     {
       label: 'Headquarters',
-      value: 'San Francisco, CA',
+      value: 'Austin, Texas, USA',
       icon: '📍',
     },
     {
       label: 'Employees',
-      value: '5,000+',
+      value: '2,847',
       icon: '👥',
       trend: 'up',
+      change: 23.5,
+    },
+    {
+      label: 'Annual Revenue',
+      value: '$127M ARR',
+      icon: '💰',
+      trend: 'up',
+      change: 45.2,
+    },
+    {
+      label: 'Funding Stage',
+      value: 'Series C ($85M raised)',
+      icon: '🚀',
+    },
+    {
+      label: 'Customer Base',
+      value: '450+ Enterprise Clients',
+      icon: '🎯',
+    },
+    {
+      label: 'Global Offices',
+      value: 'Austin, London, Singapore, São Paulo',
+      icon: '🌐',
+    },
+    {
+      label: 'Tech Stack',
+      value: 'Python, Kubernetes, AWS, Snowflake',
+      icon: '⚙️',
+    },
+    {
+      label: 'CEO',
+      value: 'Dr. Maya Chen',
+      icon: '👤',
+    },
+    {
+      label: 'Stock Symbol',
+      value: 'NXUS (NASDAQ)',
+      icon: '📈',
     },
     {
       label: 'Website',
-      value: 'www.example.com',
-      icon: '🌐',
+      value: 'www.nexustech.io',
+      icon: '🔗',
     },
   ],
 };

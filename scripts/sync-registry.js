@@ -2,10 +2,10 @@
 
 /**
  * Registry Sync Script
- * 
+ *
  * Validates that all files are in sync with the section registry.
  * Can be run as a pre-commit hook or in CI to ensure consistency.
- * 
+ *
  * Usage: node scripts/sync-registry.js [--check] [--fix]
  *   --check: Only check, don't modify files (default)
  *   --fix: Auto-fix by regenerating files
@@ -47,13 +47,13 @@ function loadRegistry() {
  */
 function checkGeneratedTypes(registry) {
   const typesPath = path.join(LIB_SRC, 'lib', 'models', 'generated-section-types.ts');
-  
+
   if (!fs.existsSync(typesPath)) {
     return { ok: false, message: 'Generated types file does not exist' };
   }
-  
+
   const content = fs.readFileSync(typesPath, 'utf8');
-  
+
   // Check if all section types are present
   const missing = [];
   Object.keys(registry.sections).forEach(type => {
@@ -61,11 +61,11 @@ function checkGeneratedTypes(registry) {
       missing.push(type);
     }
   });
-  
+
   if (missing.length > 0) {
     return { ok: false, message: `Missing types: ${missing.join(', ')}` };
   }
-  
+
   // Check if all aliases are present
   if (registry.typeAliases) {
     Object.keys(registry.typeAliases).forEach(alias => {
@@ -74,11 +74,11 @@ function checkGeneratedTypes(registry) {
       }
     });
   }
-  
+
   if (missing.length > 0) {
     return { ok: false, message: `Missing aliases: ${missing.join(', ')}` };
   }
-  
+
   return { ok: true };
 }
 
@@ -87,25 +87,25 @@ function checkGeneratedTypes(registry) {
  */
 function checkCardModel(registry) {
   const modelPath = path.join(LIB_SRC, 'lib', 'models', 'card.model.ts');
-  
+
   if (!fs.existsSync(modelPath)) {
     return { ok: false, message: 'card.model.ts not found' };
   }
-  
+
   const content = fs.readFileSync(modelPath, 'utf8');
-  
+
   // Check if it imports from generated types
-  if (content.includes("from './generated-section-types'") || 
+  if (content.includes("from './generated-section-types'") ||
       content.includes('SectionTypeInput')) {
     return { ok: true, message: 'Using generated types' };
   }
-  
+
   // Check manual type union
   const typeMatch = content.match(/type:\s*\n?\s*\|?\s*'([^']+)'(\s*\|\s*'[^']+')+/);
   if (!typeMatch) {
     return { ok: false, message: 'Could not find type union in card.model.ts' };
   }
-  
+
   return { ok: true, message: 'Type union found (consider migrating to generated types)' };
 }
 
@@ -114,33 +114,33 @@ function checkCardModel(registry) {
  */
 function checkSectionRenderer(registry) {
   const rendererPath = path.join(LIB_SRC, 'lib', 'components', 'section-renderer', 'section-renderer.component.html');
-  
+
   if (!fs.existsSync(rendererPath)) {
     return { ok: false, message: 'section-renderer.component.html not found' };
   }
-  
+
   const content = fs.readFileSync(rendererPath, 'utf8');
-  
+
   // Check if using dynamic component loading
   if (content.includes('ngComponentOutlet') || content.includes('SECTION_COMPONENT_MAP')) {
     return { ok: true, message: 'Using dynamic component loading' };
   }
-  
+
   // Check switch cases for all types
   const missing = [];
   Object.entries(registry.sections).forEach(([type, def]) => {
     if (def.isInternal) return; // Skip internal sections
-    
+
     const selector = def.selector;
     if (!content.includes(selector) && !content.includes(`'${type}'`)) {
       missing.push(type);
     }
   });
-  
+
   if (missing.length > 0) {
     return { ok: false, message: `Missing section cases: ${missing.join(', ')}` };
   }
-  
+
   return { ok: true };
 }
 
@@ -149,18 +149,18 @@ function checkSectionRenderer(registry) {
  */
 function checkPublicApi(registry) {
   const apiPath = path.join(LIB_SRC, 'public-api.ts');
-  
+
   if (!fs.existsSync(apiPath)) {
     return { ok: false, message: 'public-api.ts not found' };
   }
-  
+
   const content = fs.readFileSync(apiPath, 'utf8');
-  
+
   // Check if generated types are exported
   if (!content.includes('generated-section-types')) {
     return { ok: false, message: 'Generated types not exported' };
   }
-  
+
   return { ok: true };
 }
 
@@ -169,41 +169,48 @@ function checkPublicApi(registry) {
  */
 function checkComponentFiles(registry) {
   const missing = [];
-  
+
   Object.entries(registry.sections).forEach(([type, def]) => {
     const componentPath = path.join(LIB_SRC, def.componentPath + '.ts');
     if (!fs.existsSync(componentPath)) {
       missing.push(`${type}: ${componentPath}`);
     }
   });
-  
+
   if (missing.length > 0) {
     return { ok: false, message: `Missing component files:\n    ${missing.join('\n    ')}` };
   }
-  
+
   return { ok: true };
 }
 
 /**
  * Check style files exist
+ * Note: Styles are now in unified bundles (_sections-base.scss, _unified-sections-final.scss)
+ * so we only check that the bundle files exist, not individual section styles
  */
 function checkStyleFiles(registry) {
+  const bundleFiles = [
+    '_sections-base.scss',
+    '_unified-sections-final.scss',
+    '_all-sections.scss'
+  ];
+
+  const stylesDir = path.join(LIB_SRC, 'lib', 'styles', 'components', 'sections');
   const missing = [];
-  
-  Object.entries(registry.sections).forEach(([type, def]) => {
-    if (!def.stylePath) return;
-    
-    const stylePath = path.join(LIB_SRC, def.stylePath);
-    if (!fs.existsSync(stylePath)) {
-      missing.push(`${type}: ${stylePath}`);
+
+  bundleFiles.forEach(file => {
+    const fullPath = path.join(stylesDir, file);
+    if (!fs.existsSync(fullPath)) {
+      missing.push(file);
     }
   });
-  
+
   if (missing.length > 0) {
-    return { ok: false, message: `Missing style files:\n    ${missing.join('\n    ')}` };
+    return { ok: false, message: `Missing style bundle files:\n    ${missing.join('\n    ')}` };
   }
-  
-  return { ok: true };
+
+  return { ok: true, message: 'Styles use unified bundles' };
 }
 
 /**
@@ -212,14 +219,14 @@ function checkStyleFiles(registry) {
 function main() {
   const args = process.argv.slice(2);
   const shouldFix = args.includes('--fix');
-  
+
   log('\n🔍 Registry Sync Check', colors.cyan);
   log('═'.repeat(50), colors.cyan);
-  
+
   try {
     const registry = loadRegistry();
     log(`\n📄 Registry: v${registry.version} (${Object.keys(registry.sections).length} sections)`, colors.blue);
-    
+
     const checks = [
       { name: 'Generated Types', fn: () => checkGeneratedTypes(registry) },
       { name: 'Card Model', fn: () => checkCardModel(registry) },
@@ -228,9 +235,9 @@ function main() {
       { name: 'Component Files', fn: () => checkComponentFiles(registry) },
       { name: 'Style Files', fn: () => checkStyleFiles(registry) },
     ];
-    
+
     let hasErrors = false;
-    
+
     log('\nChecks:', colors.blue);
     checks.forEach(({ name, fn }) => {
       const result = fn();
@@ -245,12 +252,12 @@ function main() {
         hasErrors = true;
       }
     });
-    
+
     if (hasErrors) {
       if (shouldFix) {
         log('\n🔧 Attempting to fix issues...', colors.yellow);
         try {
-          execSync('node scripts/generate-from-registry.js', { 
+          execSync('node scripts/generate-from-registry.js', {
             cwd: ROOT_DIR,
             stdio: 'inherit'
           });
@@ -266,9 +273,9 @@ function main() {
     } else {
       log('\n✅ All checks passed!', colors.green);
     }
-    
+
     log('═'.repeat(50) + '\n', colors.cyan);
-    
+
   } catch (error) {
     log(`\n❌ Error: ${error.message}`, colors.red);
     process.exit(1);

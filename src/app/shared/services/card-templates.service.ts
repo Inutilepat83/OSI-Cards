@@ -1,12 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, shareReplay } from 'rxjs/operators';
-import { AICardConfig, CardType } from '../../models';
 import { CardDataService } from '../../core/services/card-data/card-data.service';
 import { LoggingService } from '../../core/services/logging.service';
-import { ExportService } from '../../core/services/export.service';
 import { ValidationService } from '../../core/services/validation.service';
+import { AICardConfig, CardType } from '../../models';
 import { ensureCardIds, removeAllIds } from '../utils/card-utils';
+import { ExportService } from './export.service';
 
 /**
  * Card templates service

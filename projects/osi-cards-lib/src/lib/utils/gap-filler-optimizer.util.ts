@@ -6,7 +6,7 @@
 
 /**
  * Gap Filler Optimizer Utility
- * 
+ *
  * Provides comprehensive algorithms for detecting and filling gaps in masonry grid layouts:
  * - Gap detection with topology tracking (L-shaped, rectangular, fragmented)
  * - Gap filling priority queue based on fillability
@@ -18,20 +18,20 @@
  * - Utilization threshold alerts
  * - Compaction passes
  * - Gap metrics dashboard
- * 
+ *
  * @example
  * ```typescript
- * import { 
- *   GapAnalyzer, 
- *   GapFiller, 
+ * import {
+ *   GapAnalyzer,
+ *   GapFiller,
  *   GapPriorityQueue,
- *   optimizeLayoutGaps 
+ *   optimizeLayoutGaps
  * } from './gap-filler-optimizer.util';
- * 
+ *
  * const analyzer = new GapAnalyzer(sections, columns);
  * const gaps = analyzer.findAllGaps();
  * const metrics = analyzer.getMetrics();
- * 
+ *
  * const filler = new GapFiller(sections, columns, config);
  * const optimized = filler.fillGaps();
  * ```
@@ -63,7 +63,7 @@ export interface GapAnalyzableSection {
 /**
  * Gap topology types
  */
-export type GapTopology = 
+export type GapTopology =
   | 'rectangular'  // Simple rectangular gap
   | 'L-shaped'     // L-shaped gap (two connected rectangles)
   | 'T-shaped'     // T-shaped gap
@@ -160,6 +160,19 @@ export interface GapFillerConfig {
   enableCompaction?: boolean;
 }
 
+/**
+ * Configuration for adaptive grid resolution (Point 20)
+ * Uses finer resolution for small sections, coarser for large
+ */
+export interface AdaptiveResolutionConfig {
+  /** Fine resolution for small sections (default: 5px) */
+  fineResolution: number;
+  /** Coarse resolution for large sections (default: 15px) */
+  coarseResolution: number;
+  /** Threshold height for switching resolution (default: 300px) */
+  resolutionThreshold: number;
+}
+
 /** Default configuration */
 export const DEFAULT_GAP_FILLER_CONFIG: GapFillerConfig = {
   gridResolution: 10,
@@ -175,6 +188,37 @@ export const DEFAULT_GAP_FILLER_CONFIG: GapFillerConfig = {
   minSplitHeight: 300,
   enableCompaction: true,
 };
+
+/** Default adaptive resolution config (Point 20) */
+export const DEFAULT_ADAPTIVE_RESOLUTION: AdaptiveResolutionConfig = {
+  fineResolution: 5,
+  coarseResolution: 15,
+  resolutionThreshold: 300,
+};
+
+/**
+ * Calculates adaptive grid resolution based on section heights (Point 20)
+ * Uses finer resolution for small sections to catch smaller gaps
+ */
+export function calculateAdaptiveResolution(
+  sections: Array<{ height: number }>,
+  config: AdaptiveResolutionConfig = DEFAULT_ADAPTIVE_RESOLUTION
+): number {
+  if (sections.length === 0) {
+    return config.fineResolution;
+  }
+
+  // Calculate average section height
+  const avgHeight = sections.reduce((sum, s) => sum + s.height, 0) / sections.length;
+
+  // Use finer resolution for smaller sections
+  if (avgHeight < config.resolutionThreshold) {
+    return config.fineResolution;
+  }
+
+  // Use coarser resolution for larger sections
+  return config.coarseResolution;
+}
 
 /**
  * Priority queue item for gap filling
@@ -192,7 +236,7 @@ interface PriorityQueueItem {
 /**
  * Finds gaps in the current layout where sections could be placed.
  * Uses a grid-based approach to identify empty spaces.
- * 
+ *
  * @param sections - Sections with height information
  * @param columns - Number of columns
  * @param config - Configuration options
@@ -283,13 +327,13 @@ export function findLayoutGaps<T extends GapAnalyzableSection & { height: number
 
 /**
  * Optimizes layout by filling gaps with movable sections.
- * 
+ *
  * Algorithm:
  * 1. Build an occupancy grid from current section positions
  * 2. Identify significant gaps (empty spaces between sections)
  * 3. Find single-column sections that could fit in gaps
  * 4. Reposition sections to fill gaps without increasing total height
- * 
+ *
  * @param sections - Currently positioned sections
  * @param columns - Number of columns
  * @param sectionHeights - Map of section keys to heights
@@ -303,7 +347,7 @@ export function optimizeLayoutGaps<T extends GapAnalyzableSection>(
   config: Partial<GapFillerConfig> = {}
 ): T[] {
   const fullConfig = { ...DEFAULT_GAP_FILLER_CONFIG, ...config };
-  
+
   if (sections.length < 2 || columns < 2) {
     return sections; // No optimization possible
   }
@@ -322,18 +366,33 @@ export function optimizeLayoutGaps<T extends GapAnalyzableSection>(
   }
 
   // Find candidate sections that could fill gaps
-  // Prefer single-column, low-priority sections for repositioning
+  // UPDATED (Point 16): Allow multi-column sections if they fit the gap width
+  // Prefer sections with flexible size for repositioning
   const movableSections = sections
     .map((s, idx) => ({
       section: s,
       index: idx,
       height: sectionHeights.get(s.key) ?? 200,
     }))
-    .filter(
-      ({ section }) =>
-        section.colSpan === 1 && section.preferredColumns === 1
-    )
-    .sort((a, b) => b.section.top - a.section.top); // Start from bottom sections
+    .filter(({ section }) => {
+      // Single-column sections are always candidates
+      if (section.colSpan === 1 && section.preferredColumns === 1) {
+        return true;
+      }
+      // Multi-column sections can fill gaps if they have flexible sizing
+      // and there exists a gap they could fit into
+      const canShrink = section.section?.canShrink !== false;
+      const canGrow = section.section?.canGrow !== false;
+      return canShrink || canGrow;
+    })
+    .sort((a, b) => {
+      // Prioritize single-column sections first (most flexible)
+      const aIsSingle = a.section.colSpan === 1 ? 0 : 1;
+      const bIsSingle = b.section.colSpan === 1 ? 0 : 1;
+      if (aIsSingle !== bIsSingle) return aIsSingle - bIsSingle;
+      // Then by position (bottom sections first)
+      return b.section.top - a.section.top;
+    });
 
   if (movableSections.length === 0) {
     return sections; // No movable sections
@@ -344,23 +403,52 @@ export function optimizeLayoutGaps<T extends GapAnalyzableSection>(
   let madeChanges = false;
 
   for (const gap of gaps) {
-    // Find a section that fits in this gap
-    const candidate = movableSections.find(
-      ({ section, height }) =>
-        section.colSpan <= gap.width &&
-        height <= gap.height + fullConfig.heightTolerance
-    );
+    // UPDATED (Point 16): Find sections that could fill this gap
+    // Now considers multi-column sections with potential shrinking
+    const candidate = movableSections.find(({ section, height }) => {
+      // Section must fit height-wise
+      if (height > gap.height + fullConfig.heightTolerance) {
+        return false;
+      }
+
+      // Single-column section always fits a single-column gap
+      if (section.colSpan === 1 && gap.width >= 1) {
+        return true;
+      }
+
+      // Multi-column section can fill if gap is wide enough
+      if (section.colSpan <= gap.width) {
+        return true;
+      }
+
+      // Multi-column section can shrink to fit
+      const canShrink = section.section?.canShrink !== false;
+      const minColumns = section.section?.minColumns ?? 1;
+      if (canShrink && minColumns <= gap.width) {
+        return true;
+      }
+
+      return false;
+    });
 
     if (candidate) {
       // Move section to fill the gap
       const targetIndex = result.findIndex(s => s.key === candidate.section.key);
       const targetSection = result[targetIndex];
       if (targetIndex >= 0 && targetSection) {
+        // Calculate effective colSpan (may shrink for multi-column sections)
+        let effectiveColSpan = candidate.section.colSpan;
+        if (effectiveColSpan > gap.width) {
+          const minColumns = targetSection.section?.minColumns ?? 1;
+          effectiveColSpan = Math.max(gap.width, minColumns);
+        }
+
         const movedSection: T = {
           ...targetSection,
+          colSpan: effectiveColSpan,
           left: generateLeftExpression(columns, gap.column, fullConfig.gap),
           top: gap.top,
-          width: generateWidthExpression(columns, candidate.section.colSpan, fullConfig.gap),
+          width: generateWidthExpression(columns, effectiveColSpan, fullConfig.gap),
         };
         result[targetIndex] = movedSection;
         madeChanges = true;
@@ -620,7 +708,7 @@ export class GapAnalyzer<T extends GapAnalyzableSection & { height: number }> {
       cells.some(([r, c]) => r === height - 1 && c === 0),
       cells.some(([r, c]) => r === height - 1 && c === width - 1),
     ];
-    
+
     // L-shape has 3 corners filled
     return corners.filter(Boolean).length === 3;
   }
@@ -692,8 +780,8 @@ export class GapAnalyzer<T extends GapAnalyzableSection & { height: number }> {
   getMetrics(): GapMetrics {
     const totalGapArea = this.gaps.reduce((sum, g) => sum + g.area, 0);
     const containerArea = this.columns * this.containerHeight;
-    const utilizationPercent = containerArea > 0 
-      ? ((containerArea - totalGapArea) / containerArea) * 100 
+    const utilizationPercent = containerArea > 0
+      ? ((containerArea - totalGapArea) / containerArea) * 100
       : 100;
 
     const gapsByTopology: Record<GapTopology, number> = {
@@ -785,7 +873,7 @@ export class GapPriorityQueue {
    */
   enqueue(gap: LayoutGap, candidateSections: string[]): void {
     const priority = this.calculatePriority(gap, candidateSections);
-    
+
     const item: PriorityQueueItem = {
       gap,
       priority,
@@ -978,13 +1066,13 @@ export class GapFiller<T extends GapAnalyzableSection> {
       .filter(s => {
         // Must fit width
         if (s.colSpan > gap.width) return false;
-        
+
         // Must fit height (with tolerance)
         if (s.height > gap.height + this.config.heightTolerance) return false;
-        
+
         // Prefer flexible sections
         if (s.preferredColumns > 1 && s.colSpan === 1) return true;
-        
+
         // Single-column sections are most movable
         return s.colSpan === 1;
       })
@@ -1036,7 +1124,7 @@ export class GapFiller<T extends GapAnalyzableSection> {
     analyzer: GapAnalyzer<T & { height: number }>
   ): (T & { height: number })[] {
     const absorbableGaps = analyzer.getAllGaps().filter(g => g.canAbsorb);
-    
+
     for (const gap of absorbableGaps) {
       // Find adjacent section that could absorb
       const adjacentSection = this.findAdjacentSection(sections, gap);
@@ -1064,8 +1152,8 @@ export class GapFiller<T extends GapAnalyzableSection> {
     return sections.find(s => {
       const sCol = parseColumnIndex(s.left, this.columns, this.config.gap);
       const sBottom = s.top + s.height;
-      
-      return sCol <= gap.column && 
+
+      return sCol <= gap.column &&
              sCol + s.colSpan > gap.column &&
              Math.abs(sBottom - gap.top) < 20;  // Within 20px
     });
@@ -1148,7 +1236,7 @@ export function predictGaps(
       totalGapSize += gapHeight;
 
       // Check if any pending section could fill this gap
-      const canFill = pendingSections.some(s => 
+      const canFill = pendingSections.some(s =>
         s.colSpan === 1 && s.height <= gapHeight + 20
       );
       if (canFill) fillableGaps++;
@@ -1181,7 +1269,7 @@ export function coalesceFragments<T extends GapAnalyzableSection>(
 
   // Find adjacent fragmented gaps
   const fragmentedGaps = gaps.filter(g => g.topology === 'fragmented' || g.area < 5000);
-  
+
   if (fragmentedGaps.length < 2) {
     return sections;  // Not enough fragments to coalesce
   }
@@ -1243,7 +1331,7 @@ function tryCoalesceGroup<T extends GapAnalyzableSection>(
   // Find sections that could be moved to consolidate the gap
   const movableSections = sections.filter(s => {
     const sCol = parseColumnIndex(s.left, columns, config.gap);
-    return sCol >= minCol && sCol < maxCol && 
+    return sCol >= minCol && sCol < maxCol &&
            s.top >= minTop && s.top < maxBottom &&
            s.colSpan === 1;  // Only move single-column sections
   });

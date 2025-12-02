@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
+import {
+  ComingSoonComponent,
+  ComingSoonConfig,
+} from '../../shared/components/coming-soon/coming-soon.component';
 
 /**
  * Templates page component
@@ -9,9 +10,16 @@ import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
 @Component({
   selector: 'app-templates',
   standalone: true,
-  imports: [CommonModule, RouterModule, LucideIconsModule],
-  templateUrl: './templates.component.html',
-  styleUrls: ['./templates.component.scss'],
+  imports: [ComingSoonComponent],
+  template: `<app-coming-soon [config]="config"></app-coming-soon>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TemplatesComponent {}
+export class TemplatesComponent {
+  readonly config: ComingSoonConfig = {
+    title: 'Templates',
+    subtitle: 'Ready-to-use card templates',
+    icon: 'layout-template',
+    description:
+      'This page is under development. Check back soon for pre-built card templates and examples.',
+  };
+}

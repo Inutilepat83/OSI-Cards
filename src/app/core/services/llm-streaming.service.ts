@@ -1,11 +1,10 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { AICardConfig, CardField, CardItem, CardSection } from '../../models';
 import { CardChangeType } from 'projects/osi-cards-lib/src/lib/utils/card-diff.util';
-import { AppConfigService } from './app-config.service';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { AICardConfig, CardField, CardItem, CardSection, CardTypeGuards } from '../../models';
 import { ensureCardIds } from '../../shared/utils/card-utils';
-import { CardTypeGuards } from '../../models';
 import { RequestCanceller } from '../../shared/utils/request-cancellation.util';
+import { AppConfigService } from './app-config.service';
 
 export interface LLMStreamingState {
   isActive: boolean;

@@ -29,24 +29,33 @@
     "module": "ES2022",
     "useDefineForClassFields": false,
     "skipLibCheck": true,
-    "lib": [
-      "ES2022",
-      "dom"
-    ],
+    "lib": ["ES2022", "dom"],
     "paths": {
       "@osi-cards/lib": ["projects/osi-cards-lib/src/public-api.ts"],
       "@osi-cards/lib/*": ["projects/osi-cards-lib/src/lib/*"],
-      "@osi-cards/sections": ["projects/osi-cards-lib/src/lib/components/sections/index.ts"],
-      "@osi-cards/services": ["projects/osi-cards-lib/src/lib/services/index.ts"],
+      "@osi-cards/sections": [
+        "projects/osi-cards-lib/src/lib/components/sections/index.ts"
+      ],
+      "@osi-cards/services": [
+        "projects/osi-cards-lib/src/lib/services/index.ts"
+      ],
       "@osi-cards/utils": ["projects/osi-cards-lib/src/lib/utils/index.ts"],
       "@osi-cards/models": ["projects/osi-cards-lib/src/lib/models/index.ts"],
       "@osi-cards/themes": ["projects/osi-cards-lib/src/lib/themes/index.ts"],
-      "@osi-cards/constants": ["projects/osi-cards-lib/src/lib/constants/index.ts"],
+      "@osi-cards/constants": [
+        "projects/osi-cards-lib/src/lib/constants/index.ts"
+      ],
       "@osi-cards/testing": ["projects/osi-cards-lib/src/lib/testing/index.ts"],
       "@osi-cards/events": ["projects/osi-cards-lib/src/lib/events/index.ts"],
-      "@osi-cards/interfaces": ["projects/osi-cards-lib/src/lib/interfaces/index.ts"],
-      "@osi-cards/providers": ["projects/osi-cards-lib/src/lib/providers/index.ts"],
-      "@osi-cards/components": ["projects/osi-cards-lib/src/lib/components/index.ts"],
+      "@osi-cards/interfaces": [
+        "projects/osi-cards-lib/src/lib/interfaces/index.ts"
+      ],
+      "@osi-cards/providers": [
+        "projects/osi-cards-lib/src/lib/providers/index.ts"
+      ],
+      "@osi-cards/components": [
+        "projects/osi-cards-lib/src/lib/components/index.ts"
+      ],
       "@osi-cards/core": ["projects/osi-cards-lib/src/lib/core/index.ts"],
       "@app/*": ["./src/app/*"],
       "@environments/*": ["./src/environments/*"],
@@ -66,12 +75,8 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
-  "files": [
-    "src/polyfills.ts"
-  ],
-  "include": [
-    "src/**/*.ts"
-  ],
+  "files": ["src/polyfills.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": [
     "src/app/core/index.ts",
     "src/app/features/index.ts",

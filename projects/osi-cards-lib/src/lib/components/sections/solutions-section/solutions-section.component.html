@@ -1,81 +1,43 @@
-<div class="ai-section ai-section--solutions">
-  <div class="ai-section__header">
-    <div class="ai-section__details">
-      <h3 class="ai-section__title">{{ section.title }}</h3>
-      <p *ngIf="section.description" class="ai-section__description">{{ section.description }}</p>
-    </div>
-    <span *ngIf="hasFields" class="ai-section__badge">
-      {{ fields.length }} {{ fields.length === 1 ? 'solution' : 'solutions' }}
-    </span>
+<div class="solutions-container">
+  <!-- Section Header -->
+  <div class="section-header" *ngIf="section.title || section.description">
+    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
+    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
   </div>
 
-  <div class="ai-section__body">
-    <ng-container *ngIf="hasFields; else solutionsEmpty">
-      <div class="solutions-grid">
-        <article
-          *ngFor="let field of fields; trackBy: trackField"
-          class="solution-card"
-          role="button"
-          tabindex="0"
-          (click)="onSolutionClick(field)"
-          (keydown.enter)="onSolutionClick(field)"
-          (keydown.space)="$event.preventDefault(); onSolutionClick(field)"
-        >
-          <!-- Header: Title and Category -->
-          <header class="solution-card__header">
-            <h3 class="solution-card__title">
-              {{ field.title || field.label }}
-            </h3>
-            <div class="solution-card__badges" *ngIf="field.category">
-              <span *ngIf="field.category" class="solution-card__badge solution-card__badge--category">
-                {{ field.category }}
-              </span>
-            </div>
-          </header>
+  <!-- Solutions Grid -->
+  <div class="solutions-grid" *ngIf="section.fields && section.fields.length > 0">
+    <div class="solution-card" *ngFor="let solution of section.fields">
 
-          <!-- Description -->
-          <p *ngIf="field.description" class="solution-card__description">
-            {{ field.description }}
-          </p>
-
-          <!-- Benefits/Features -->
-          <ul *ngIf="field.benefits?.length" class="solution-card__benefits">
-            <li *ngFor="let benefit of field.benefits | slice:0:4" class="solution-card__benefit">
-              <lucide-icon name="check" size="14" class="solution-card__benefit-icon"></lucide-icon>
-              <span class="solution-card__benefit-text">{{ benefit }}</span>
-            </li>
-          </ul>
-
-          <!-- Meta Information -->
-          <footer *ngIf="field.deliveryTime || field.teamSize || field.outcomes?.length" class="solution-card__footer">
-            <div *ngIf="field.deliveryTime" class="solution-card__meta">
-              <lucide-icon name="clock" size="14" class="solution-card__meta-icon"></lucide-icon>
-              <span class="solution-card__meta-text">{{ field.deliveryTime }}</span>
-            </div>
-            <div *ngIf="field.teamSize" class="solution-card__meta">
-              <lucide-icon name="users" size="14" class="solution-card__meta-icon"></lucide-icon>
-              <span class="solution-card__meta-text">{{ field.teamSize }}</span>
-            </div>
-            <ng-container *ngIf="field.outcomes as outcomes">
-              <div *ngIf="outcomes[0]" class="solution-card__meta">
-                <lucide-icon name="trending-up" size="14" class="solution-card__meta-icon"></lucide-icon>
-                <span class="solution-card__meta-text">{{ outcomes[0] }}</span>
-              </div>
-              <div *ngIf="outcomes[1]" class="solution-card__meta">
-                <lucide-icon name="sparkles" size="14" class="solution-card__meta-icon"></lucide-icon>
-                <span class="solution-card__meta-text">{{ outcomes[1] }}</span>
-              </div>
-            </ng-container>
-          </footer>
-        </article>
+      <!-- Solution Header -->
+      <div class="solution-header">
+        <h4 class="solution-title">{{ solution.title }}</h4>
+        <span class="solution-category" *ngIf="solution.category">{{ solution.category }}</span>
       </div>
-    </ng-container>
 
-    <ng-template #solutionsEmpty>
-      <div class="section-empty">
-        <lucide-icon name="sparkles" size="32" class="section-empty__icon"></lucide-icon>
-        <p class="section-empty__text">No solutions available</p>
+      <!-- Solution Description -->
+      <p class="solution-description" *ngIf="solution.description">{{ solution.description }}</p>
+
+      <!-- Benefits -->
+      <ul class="solution-benefits" *ngIf="solution.benefits && solution.benefits.length > 0">
+        <li *ngFor="let benefit of solution.benefits">{{ benefit }}</li>
+      </ul>
+
+      <!-- Meta Info -->
+      <div class="solution-meta">
+        <span class="delivery-time" *ngIf="solution.deliveryTime">
+          ⏱️ {{ solution.deliveryTime }}
+        </span>
+        <span class="complexity-badge" [ngClass]="getComplexityClass(solution.complexity)" *ngIf="solution.complexity">
+          {{ solution.complexity }}
+        </span>
       </div>
-    </ng-template>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="solutions-empty" *ngIf="!section.fields || section.fields.length === 0">
+    <div class="empty-icon">💡</div>
+    <p class="empty-text">No solutions available</p>
   </div>
 </div>

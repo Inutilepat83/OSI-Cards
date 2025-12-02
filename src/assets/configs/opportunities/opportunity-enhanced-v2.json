@@ -4,162 +4,34 @@
   "cardType": "opportunity",
   "sections": [
     {
-      "title": "Opportunity Overview",
+      "title": "Overview",
       "type": "info",
       "fields": [
-        { "label": "Opportunity Type", "value": "Cloud Migration Project" },
-        { "label": "Industry Focus", "value": "Financial Services" },
-        { "label": "Estimated Value", "value": "$8M - $12M" },
+        { "label": "Type", "value": "Cloud Migration" },
+        { "label": "Value", "value": "$8M - $12M" },
         { "label": "Timeline", "value": "12-15 Months" },
-        { "label": "Lead Source", "value": "Existing Client Referral" },
-        { "label": "Decision Maker", "value": "CIO Level" },
-        { "label": "Competition Level", "value": "High" },
-        { "label": "Success Probability", "value": "75%" }
+        { "label": "Probability", "value": "75%" }
       ]
     },
     {
-      "title": "Project Progress",
+      "title": "Progress",
       "type": "analytics",
       "fields": [
         {
-          "label": "Assessment Phase",
-          "value": "100% Complete",
-          "percentage": 100,
-          "performance": "excellent",
-          "trend": "stable"
-        },
-        {
-          "label": "Migration Planning",
-          "value": "90% Complete",
+          "label": "Planning",
+          "value": "90%",
           "percentage": 90,
-          "performance": "excellent",
           "trend": "up"
-        },
-        {
-          "label": "Resource Allocation",
-          "value": "70% Complete",
-          "percentage": 70,
-          "performance": "good",
-          "trend": "up"
-        },
-        {
-          "label": "Risk Assessment",
-          "value": "85% Complete",
-          "percentage": 85,
-          "performance": "good",
-          "trend": "up"
-        }
-      ]
-    },
-    {
-      "title": "Business Impact Forecast",
-      "type": "chart",
-      "chartType": "bar",
-      "chartData": {
-        "labels": ["Cost Savings", "Performance", "Scalability"],
-        "datasets": [
-          {
-            "label": "Improvement %",
-            "data": [40, 60, 80],
-            "backgroundColor": ["#3b82f6", "#1d4ed8", "#1e3a8a"]
-          }
-        ]
-      }
-    },
-    {
-      "title": "Financial Impact",
-      "type": "financials",
-      "fields": [
-        {
-          "label": "Estimated Value",
-          "value": "$10M",
-          "format": "currency",
-          "change": 0,
-          "trend": "stable"
-        },
-        {
-          "label": "Expected Cost Savings",
-          "value": "$4M annually",
-          "format": "currency",
-          "change": 40,
-          "trend": "up"
-        },
-        {
-          "label": "ROI Projection",
-          "value": "250%",
-          "format": "percentage",
-          "change": 25,
-          "trend": "up"
-        }
-      ]
-    },
-    {
-      "title": "Key Stakeholders",
-      "type": "contact-card",
-      "fields": [
-        {
-          "label": "Primary Contact",
-          "title": "David Kim",
-          "value": "Chief Information Officer",
-          "email": "david.kim@client.com",
-          "phone": "+1 555 5678",
-          "role": "Decision Maker",
-          "department": "IT"
-        },
-        {
-          "label": "Project Sponsor",
-          "title": "Lisa Johnson",
-          "value": "Chief Operating Officer",
-          "email": "lisa.johnson@client.com",
-          "phone": "+1 555 5679",
-          "role": "Executive",
-          "department": "Operations"
-        }
-      ]
-    },
-    {
-      "title": "Project Milestones",
-      "type": "event",
-      "fields": [
-        {
-          "label": "Phase 1: Assessment",
-          "value": "Completed - December 2024",
-          "date": "2024-12-15",
-          "category": "Milestone",
-          "status": "completed"
-        },
-        {
-          "label": "Phase 2: Planning",
-          "value": "In Progress - Q1 2025",
-          "date": "2025-03-31",
-          "category": "Milestone",
-          "status": "in-progress"
-        },
-        {
-          "label": "Phase 3: Migration",
-          "value": "Upcoming - Q2 2025",
-          "date": "2025-06-30",
-          "category": "Milestone",
-          "status": "pending"
         }
       ]
     }
   ],
   "actions": [
     {
-      "label": "Review Migration Plan",
+      "label": "Review Plan",
       "type": "question",
       "variant": "primary",
-      "icon": "📋",
-      "question": "Can you show me the migration plan details?"
-    },
-    {
-      "label": "Schedule Review",
-      "type": "agent",
-      "variant": "secondary",
-      "icon": "🏗️",
-      "agentId": "calendar-agent",
-      "agentContext": { "action": "schedule_review" }
+      "icon": "📋"
     }
   ]
 }

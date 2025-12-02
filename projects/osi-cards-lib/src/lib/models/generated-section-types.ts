@@ -8,24 +8,28 @@
  * All valid section type identifiers
  */
 export type SectionType =
-  | 'info'
   | 'analytics'
-  | 'contact-card'
-  | 'network-card'
-  | 'map'
-  | 'financials'
-  | 'event'
-  | 'list'
-  | 'chart'
-  | 'product'
-  | 'solutions'
-  | 'overview'
-  | 'quotation'
-  | 'text-reference'
   | 'brand-colors'
+  | 'chart'
+  | 'contact-card'
+  | 'event'
+  | 'fallback'
+  | 'faq'
+  | 'financials'
+  | 'gallery'
+  | 'info'
+  | 'list'
+  | 'map'
+  | 'network-card'
   | 'news'
+  | 'overview'
+  | 'product'
+  | 'quotation'
   | 'social-media'
-  | 'fallback';
+  | 'solutions'
+  | 'text-reference'
+  | 'timeline'
+  | 'video';
 
 /**
  * Section type aliases (alternative names that resolve to canonical types)
@@ -33,15 +37,38 @@ export type SectionType =
 export type SectionTypeAlias =
   | 'metrics'
   | 'stats'
-  | 'timeline'
-  | 'table'
-  | 'locations'
-  | 'quote'
-  | 'reference'
-  | 'text-ref'
+  | 'kpi'
   | 'brands'
   | 'colors'
-  | 'project';
+  | 'palette'
+  | 'graph'
+  | 'visualization'
+  | 'calendar'
+  | 'schedule'
+  | 'questions'
+  | 'help'
+  | 'photos'
+  | 'images'
+  | 'table'
+  | 'checklist'
+  | 'locations'
+  | 'press'
+  | 'articles'
+  | 'summary'
+  | 'executive'
+  | 'quote'
+  | 'testimonial'
+  | 'social'
+  | 'socials'
+  | 'services'
+  | 'offerings'
+  | 'reference'
+  | 'text-ref'
+  | 'documentation'
+  | 'history'
+  | 'milestones'
+  | 'videos'
+  | 'media';
 
 /**
  * All accepted section type values (canonical + aliases)
@@ -67,17 +94,6 @@ export interface SectionMetadata {
  * Metadata map for all section types
  */
 export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
-  'info': {
-    name: 'Info Section',
-    usesFields: true,
-    usesItems: false,
-    usesChartData: false,
-    defaultColumns: 1,
-    supportsCollapse: true,
-    supportsEmoji: true,
-    requiresExternalLib: undefined,
-    selector: 'app-info-section',
-  },
   'analytics': {
     name: 'Analytics Section',
     usesFields: true,
@@ -87,139 +103,7 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     supportsCollapse: true,
     supportsEmoji: true,
     requiresExternalLib: undefined,
-    selector: 'app-analytics-section',
-  },
-  'contact-card': {
-    name: 'Contact Card Section',
-    usesFields: true,
-    usesItems: false,
-    usesChartData: false,
-    defaultColumns: 2,
-    supportsCollapse: true,
-    supportsEmoji: false,
-    requiresExternalLib: undefined,
-    selector: 'app-contact-card-section',
-  },
-  'network-card': {
-    name: 'Network Card Section',
-    usesFields: false,
-    usesItems: true,
-    usesChartData: false,
-    defaultColumns: 1,
-    supportsCollapse: true,
-    supportsEmoji: false,
-    requiresExternalLib: undefined,
-    selector: 'app-network-card-section',
-  },
-  'map': {
-    name: 'Map Section',
-    usesFields: true,
-    usesItems: false,
-    usesChartData: false,
-    defaultColumns: 1,
-    supportsCollapse: false,
-    supportsEmoji: false,
-    requiresExternalLib: 'leaflet',
-    selector: 'app-map-section',
-  },
-  'financials': {
-    name: 'Financials Section',
-    usesFields: true,
-    usesItems: false,
-    usesChartData: false,
-    defaultColumns: 2,
-    supportsCollapse: true,
-    supportsEmoji: false,
-    requiresExternalLib: undefined,
-    selector: 'app-financials-section',
-  },
-  'event': {
-    name: 'Event Section',
-    usesFields: true,
-    usesItems: true,
-    usesChartData: false,
-    defaultColumns: 1,
-    supportsCollapse: true,
-    supportsEmoji: true,
-    requiresExternalLib: undefined,
-    selector: 'app-event-section',
-  },
-  'list': {
-    name: 'List Section',
-    usesFields: false,
-    usesItems: true,
-    usesChartData: false,
-    defaultColumns: 1,
-    supportsCollapse: true,
-    supportsEmoji: true,
-    requiresExternalLib: undefined,
-    selector: 'app-list-section',
-  },
-  'chart': {
-    name: 'Chart Section',
-    usesFields: false,
-    usesItems: false,
-    usesChartData: true,
-    defaultColumns: 2,
-    supportsCollapse: false,
-    supportsEmoji: false,
-    requiresExternalLib: 'chart.js',
-    selector: 'app-chart-section',
-  },
-  'product': {
-    name: 'Product Section',
-    usesFields: true,
-    usesItems: false,
-    usesChartData: false,
-    defaultColumns: 1,
-    supportsCollapse: true,
-    supportsEmoji: true,
-    requiresExternalLib: undefined,
-    selector: 'app-product-section',
-  },
-  'solutions': {
-    name: 'Solutions Section',
-    usesFields: true,
-    usesItems: true,
-    usesChartData: false,
-    defaultColumns: 1,
-    supportsCollapse: true,
-    supportsEmoji: false,
-    requiresExternalLib: undefined,
-    selector: 'app-solutions-section',
-  },
-  'overview': {
-    name: 'Overview Section',
-    usesFields: true,
-    usesItems: false,
-    usesChartData: false,
-    defaultColumns: 1,
-    supportsCollapse: false,
-    supportsEmoji: true,
-    requiresExternalLib: undefined,
-    selector: 'app-overview-section',
-  },
-  'quotation': {
-    name: 'Quotation Section',
-    usesFields: true,
-    usesItems: false,
-    usesChartData: false,
-    defaultColumns: 1,
-    supportsCollapse: true,
-    supportsEmoji: false,
-    requiresExternalLib: undefined,
-    selector: 'app-quotation-section',
-  },
-  'text-reference': {
-    name: 'Text Reference Section',
-    usesFields: true,
-    usesItems: false,
-    usesChartData: false,
-    defaultColumns: 1,
-    supportsCollapse: true,
-    supportsEmoji: false,
-    requiresExternalLib: undefined,
-    selector: 'app-text-reference-section',
+    selector: 'lib-analytics-section',
   },
   'brand-colors': {
     name: 'Brand Colors Section',
@@ -230,21 +114,32 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     supportsCollapse: true,
     supportsEmoji: false,
     requiresExternalLib: undefined,
-    selector: 'app-brand-colors-section',
+    selector: 'lib-brand-colors-section',
   },
-  'news': {
-    name: 'News Section',
+  'chart': {
+    name: 'Chart Section',
     usesFields: false,
-    usesItems: true,
+    usesItems: false,
+    usesChartData: true,
+    defaultColumns: 2,
+    supportsCollapse: false,
+    supportsEmoji: false,
+    requiresExternalLib: 'chart.js',
+    selector: 'lib-chart-section',
+  },
+  'contact-card': {
+    name: 'Contact Card Section',
+    usesFields: true,
+    usesItems: false,
     usesChartData: false,
-    defaultColumns: 1,
+    defaultColumns: 2,
     supportsCollapse: true,
     supportsEmoji: false,
     requiresExternalLib: undefined,
-    selector: 'app-news-section',
+    selector: 'lib-contact-card-section',
   },
-  'social-media': {
-    name: 'Social Media Section',
+  'event': {
+    name: 'Event Section',
     usesFields: true,
     usesItems: true,
     usesChartData: false,
@@ -252,7 +147,7 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     supportsCollapse: true,
     supportsEmoji: true,
     requiresExternalLib: undefined,
-    selector: 'app-social-media-section',
+    selector: 'lib-event-section',
   },
   'fallback': {
     name: 'Fallback Section',
@@ -263,7 +158,183 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     supportsCollapse: true,
     supportsEmoji: true,
     requiresExternalLib: undefined,
-    selector: 'app-fallback-section',
+    selector: 'lib-fallback-section',
+  },
+  'faq': {
+    name: 'FAQ Section',
+    usesFields: false,
+    usesItems: true,
+    usesChartData: false,
+    defaultColumns: 1,
+    supportsCollapse: true,
+    supportsEmoji: true,
+    requiresExternalLib: undefined,
+    selector: 'lib-faq-section',
+  },
+  'financials': {
+    name: 'Financials Section',
+    usesFields: true,
+    usesItems: false,
+    usesChartData: false,
+    defaultColumns: 2,
+    supportsCollapse: true,
+    supportsEmoji: false,
+    requiresExternalLib: undefined,
+    selector: 'lib-financials-section',
+  },
+  'gallery': {
+    name: 'Gallery Section',
+    usesFields: false,
+    usesItems: true,
+    usesChartData: false,
+    defaultColumns: 2,
+    supportsCollapse: true,
+    supportsEmoji: false,
+    requiresExternalLib: undefined,
+    selector: 'lib-gallery-section',
+  },
+  'info': {
+    name: 'Info Section',
+    usesFields: true,
+    usesItems: false,
+    usesChartData: false,
+    defaultColumns: 1,
+    supportsCollapse: true,
+    supportsEmoji: true,
+    requiresExternalLib: undefined,
+    selector: 'lib-info-section',
+  },
+  'list': {
+    name: 'List Section',
+    usesFields: false,
+    usesItems: true,
+    usesChartData: false,
+    defaultColumns: 1,
+    supportsCollapse: true,
+    supportsEmoji: true,
+    requiresExternalLib: undefined,
+    selector: 'lib-list-section',
+  },
+  'map': {
+    name: 'Map Section',
+    usesFields: true,
+    usesItems: false,
+    usesChartData: false,
+    defaultColumns: 1,
+    supportsCollapse: false,
+    supportsEmoji: false,
+    requiresExternalLib: 'leaflet',
+    selector: 'lib-map-section',
+  },
+  'network-card': {
+    name: 'Network Card Section',
+    usesFields: false,
+    usesItems: true,
+    usesChartData: false,
+    defaultColumns: 1,
+    supportsCollapse: true,
+    supportsEmoji: false,
+    requiresExternalLib: undefined,
+    selector: 'lib-network-card-section',
+  },
+  'news': {
+    name: 'News Section',
+    usesFields: false,
+    usesItems: true,
+    usesChartData: false,
+    defaultColumns: 1,
+    supportsCollapse: true,
+    supportsEmoji: false,
+    requiresExternalLib: undefined,
+    selector: 'lib-news-section',
+  },
+  'overview': {
+    name: 'Overview Section',
+    usesFields: true,
+    usesItems: false,
+    usesChartData: false,
+    defaultColumns: 1,
+    supportsCollapse: false,
+    supportsEmoji: true,
+    requiresExternalLib: undefined,
+    selector: 'lib-overview-section',
+  },
+  'product': {
+    name: 'Product Section',
+    usesFields: true,
+    usesItems: false,
+    usesChartData: false,
+    defaultColumns: 1,
+    supportsCollapse: true,
+    supportsEmoji: true,
+    requiresExternalLib: undefined,
+    selector: 'lib-product-section',
+  },
+  'quotation': {
+    name: 'Quotation Section',
+    usesFields: true,
+    usesItems: false,
+    usesChartData: false,
+    defaultColumns: 1,
+    supportsCollapse: true,
+    supportsEmoji: false,
+    requiresExternalLib: undefined,
+    selector: 'lib-quotation-section',
+  },
+  'social-media': {
+    name: 'Social Media Section',
+    usesFields: true,
+    usesItems: true,
+    usesChartData: false,
+    defaultColumns: 1,
+    supportsCollapse: true,
+    supportsEmoji: true,
+    requiresExternalLib: undefined,
+    selector: 'lib-social-media-section',
+  },
+  'solutions': {
+    name: 'Solutions Section',
+    usesFields: true,
+    usesItems: true,
+    usesChartData: false,
+    defaultColumns: 1,
+    supportsCollapse: true,
+    supportsEmoji: false,
+    requiresExternalLib: undefined,
+    selector: 'lib-solutions-section',
+  },
+  'text-reference': {
+    name: 'Text Reference Section',
+    usesFields: true,
+    usesItems: false,
+    usesChartData: false,
+    defaultColumns: 1,
+    supportsCollapse: true,
+    supportsEmoji: false,
+    requiresExternalLib: undefined,
+    selector: 'lib-text-reference-section',
+  },
+  'timeline': {
+    name: 'Timeline Section',
+    usesFields: false,
+    usesItems: true,
+    usesChartData: false,
+    defaultColumns: 1,
+    supportsCollapse: true,
+    supportsEmoji: true,
+    requiresExternalLib: undefined,
+    selector: 'lib-timeline-section',
+  },
+  'video': {
+    name: 'Video Section',
+    usesFields: false,
+    usesItems: true,
+    usesChartData: false,
+    defaultColumns: 2,
+    supportsCollapse: true,
+    supportsEmoji: true,
+    requiresExternalLib: undefined,
+    selector: 'lib-video-section',
   }
 };
 
@@ -273,15 +344,38 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
 export const SECTION_TYPE_ALIASES: Record<SectionTypeAlias, SectionType> = {
   'metrics': 'analytics',
   'stats': 'analytics',
-  'timeline': 'event',
-  'table': 'list',
-  'locations': 'map',
-  'quote': 'quotation',
-  'reference': 'text-reference',
-  'text-ref': 'text-reference',
+  'kpi': 'analytics',
   'brands': 'brand-colors',
   'colors': 'brand-colors',
-  'project': 'info'
+  'palette': 'brand-colors',
+  'graph': 'chart',
+  'visualization': 'chart',
+  'calendar': 'event',
+  'schedule': 'event',
+  'questions': 'faq',
+  'help': 'faq',
+  'photos': 'gallery',
+  'images': 'gallery',
+  'table': 'list',
+  'checklist': 'list',
+  'locations': 'map',
+  'press': 'news',
+  'articles': 'news',
+  'summary': 'overview',
+  'executive': 'overview',
+  'quote': 'quotation',
+  'testimonial': 'quotation',
+  'social': 'social-media',
+  'socials': 'social-media',
+  'services': 'solutions',
+  'offerings': 'solutions',
+  'reference': 'text-reference',
+  'text-ref': 'text-reference',
+  'documentation': 'text-reference',
+  'history': 'timeline',
+  'milestones': 'timeline',
+  'videos': 'video',
+  'media': 'video'
 };
 
 /**
@@ -313,45 +407,53 @@ export function getSectionMetadata(type: SectionTypeInput): SectionMetadata | un
  * All public section types (excluding internal ones)
  */
 export const PUBLIC_SECTION_TYPES: SectionType[] = [
-  'info',
   'analytics',
-  'contact-card',
-  'network-card',
-  'map',
-  'financials',
-  'event',
-  'list',
-  'chart',
-  'product',
-  'solutions',
-  'overview',
-  'quotation',
-  'text-reference',
   'brand-colors',
+  'chart',
+  'contact-card',
+  'event',
+  'faq',
+  'financials',
+  'gallery',
+  'info',
+  'list',
+  'map',
+  'network-card',
   'news',
-  'social-media'
+  'overview',
+  'product',
+  'quotation',
+  'social-media',
+  'solutions',
+  'text-reference',
+  'timeline',
+  'video'
 ];
 
 /**
  * All section types (including internal)
  */
 export const ALL_SECTION_TYPES: SectionType[] = [
-  'info',
   'analytics',
-  'contact-card',
-  'network-card',
-  'map',
-  'financials',
-  'event',
-  'list',
-  'chart',
-  'product',
-  'solutions',
-  'overview',
-  'quotation',
-  'text-reference',
   'brand-colors',
+  'chart',
+  'contact-card',
+  'event',
+  'fallback',
+  'faq',
+  'financials',
+  'gallery',
+  'info',
+  'list',
+  'map',
+  'network-card',
   'news',
+  'overview',
+  'product',
+  'quotation',
   'social-media',
-  'fallback'
+  'solutions',
+  'text-reference',
+  'timeline',
+  'video'
 ];

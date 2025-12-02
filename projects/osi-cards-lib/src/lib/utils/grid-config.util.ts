@@ -289,9 +289,277 @@ export const SECTION_MAX_EXPANSION: SectionExpansionLimits = {
   'default': 3,
 };
 
+// ============================================================================
+// CARD-LEVEL LAYOUT CONFIGURATION (Points 77-79)
+// ============================================================================
+
+/**
+ * Per-card layout configuration (Point 77)
+ * Allows customization of layout behavior on a per-card basis.
+ */
+export interface CardLayoutConfig {
+  /**
+   * Card identifier for tracking
+   */
+  cardId?: string;
+
+  /**
+   * Maximum columns for this card (overrides global)
+   */
+  maxColumns?: number;
+
+  /**
+   * Preferred algorithm for this card
+   */
+  preferredAlgorithm?: PackingAlgorithm;
+
+  /**
+   * Gap size in pixels (overrides global)
+   */
+  gapSize?: number;
+
+  /**
+   * Priority multiplier for all sections in this card (Point 79)
+   * Values > 1 increase priority, < 1 decrease priority
+   */
+  priorityMultiplier?: number;
+
+  /**
+   * Whether to enable layout optimization for this card
+   */
+  enableOptimization?: boolean;
+
+  /**
+   * Custom expansion limits for this card (Point 78)
+   */
+  expansionLimits?: Partial<SectionExpansionLimits>;
+
+  /**
+   * Custom column preferences for this card
+   */
+  columnPreferences?: Partial<SectionColumnPreferences>;
+}
+
+/**
+ * Default card layout configuration
+ */
+export const DEFAULT_CARD_LAYOUT_CONFIG: CardLayoutConfig = {
+  maxColumns: MAX_COLUMNS,
+  priorityMultiplier: 1,
+  enableOptimization: true,
+};
+
+/**
+ * Merges card config with global config
+ */
+export function mergeCardConfig(
+  globalConfig: MasonryPackingConfig,
+  cardConfig?: CardLayoutConfig
+): MasonryPackingConfig {
+  if (!cardConfig) {
+    return globalConfig;
+  }
+
+  return {
+    ...globalConfig,
+    maxColumns: cardConfig.maxColumns ?? globalConfig.maxColumns,
+    gap: cardConfig.gapSize ?? globalConfig.gap,
+    packingAlgorithm: cardConfig.preferredAlgorithm ?? globalConfig.packingAlgorithm,
+  };
+}
+
+/**
+ * Applies card-level priority multiplier to section priority (Point 79)
+ */
+export function applyCardPriorityMultiplier(
+  sectionPriority: number,
+  cardConfig?: CardLayoutConfig
+): number {
+  const multiplier = cardConfig?.priorityMultiplier ?? 1;
+  // Higher priority number = lower visual priority
+  // So we divide by multiplier to increase priority when multiplier > 1
+  return Math.max(1, Math.min(4, sectionPriority / multiplier));
+}
+
+/**
+ * Gets expansion limit for a section type, considering card overrides (Point 78)
+ */
+export function getEffectiveExpansionLimit(
+  sectionType: string,
+  cardConfig?: CardLayoutConfig
+): number {
+  // Check card-level override first
+  if (cardConfig?.expansionLimits?.[sectionType] !== undefined) {
+    return cardConfig.expansionLimits[sectionType]!;
+  }
+
+  // Fall back to global defaults
+  return SECTION_MAX_EXPANSION[sectionType] ?? SECTION_MAX_EXPANSION['default'] ?? 3;
+}
+
+/**
+ * Gets preferred columns for a section type, considering card overrides
+ */
+export function getEffectiveColumnPreference(
+  sectionType: string,
+  cardConfig?: CardLayoutConfig
+): PreferredColumns {
+  // Check card-level override first
+  if (cardConfig?.columnPreferences?.[sectionType] !== undefined) {
+    return cardConfig.columnPreferences[sectionType] as PreferredColumns;
+  }
+
+  // Fall back to global defaults
+  return (DEFAULT_SECTION_COLUMN_PREFERENCES[sectionType] ?? DEFAULT_SECTION_COLUMN_PREFERENCES['default'] ?? 2) as PreferredColumns;
+}
+
+// ============================================================================
+// CSS VARIABLE INTEGRATION (Point 80)
+// ============================================================================
+
+/**
+ * CSS variable names for theming
+ */
+export const CSS_THEME_VARS = {
+  /** Masonry gap between sections */
+  masonryGap: '--masonry-gap',
+  /** Column count */
+  masonryColumns: '--masonry-columns',
+  /** Calculated column width */
+  masonryColumnWidth: '--masonry-column-width',
+  /** Container width */
+  masonryContainerWidth: '--masonry-container-width',
+  /** Section border radius */
+  sectionBorderRadius: '--section-border-radius',
+  /** Section padding */
+  sectionPadding: '--section-padding',
+};
+
+/**
+ * Reads gap from CSS variable if available, falls back to config/default
+ */
+export function getGapFromTheme(element?: HTMLElement | null, fallback: number = GRID_GAP): number {
+  if (typeof getComputedStyle === 'undefined' || !element) {
+    return fallback;
+  }
+
+  try {
+    const computedStyle = getComputedStyle(element);
+    const cssGap = computedStyle.getPropertyValue(CSS_THEME_VARS.masonryGap).trim();
+
+    if (cssGap) {
+      const parsed = parseInt(cssGap, 10);
+      if (!isNaN(parsed) && parsed >= 0) {
+        return parsed;
+      }
+    }
+  } catch {
+    // Ignore errors, use fallback
+  }
+
+  return fallback;
+}
+
+/**
+ * Sets CSS variables on a container element
+ */
+export function setCssVariables(
+  element: HTMLElement,
+  config: {
+    gap: number;
+    columns: number;
+    columnWidth?: number;
+    containerWidth?: number;
+  }
+): void {
+  element.style.setProperty(CSS_THEME_VARS.masonryGap, `${config.gap}px`);
+  element.style.setProperty(CSS_THEME_VARS.masonryColumns, String(config.columns));
+
+  if (config.columnWidth !== undefined) {
+    element.style.setProperty(CSS_THEME_VARS.masonryColumnWidth, `${config.columnWidth}px`);
+  }
+
+  if (config.containerWidth !== undefined) {
+    element.style.setProperty(CSS_THEME_VARS.masonryContainerWidth, `${config.containerWidth}px`);
+  }
+}
+
+// ============================================================================
+// SECTION TYPE DEFAULTS FROM REGISTRY (Point 76)
+// ============================================================================
+
+/**
+ * Section type configuration loaded from registry
+ */
+export interface SectionTypeDefaults {
+  type: string;
+  preferredColumns: PreferredColumns;
+  maxExpansion: number;
+  minHeight: number;
+  maxHeight: number;
+  canShrink: boolean;
+  canGrow: boolean;
+}
+
+/**
+ * Registry of section type defaults
+ * This should be generated from section-registry.json
+ */
+let _sectionTypeRegistry: Map<string, SectionTypeDefaults> | null = null;
+
+/**
+ * Initialize the section type registry from JSON data
+ */
+export function initializeSectionTypeRegistry(
+  registryData: Array<{
+    type: string;
+    layout?: {
+      preferredColumns?: number;
+      maxExpansion?: number;
+      minHeight?: number;
+      maxHeight?: number;
+      canShrink?: boolean;
+      canGrow?: boolean;
+    };
+  }>
+): void {
+  _sectionTypeRegistry = new Map();
+
+  for (const entry of registryData) {
+    const defaults: SectionTypeDefaults = {
+      type: entry.type,
+      preferredColumns: (entry.layout?.preferredColumns ?? DEFAULT_SECTION_COLUMN_PREFERENCES[entry.type] ?? 2) as PreferredColumns,
+      maxExpansion: entry.layout?.maxExpansion ?? SECTION_MAX_EXPANSION[entry.type] ?? 3,
+      minHeight: entry.layout?.minHeight ?? 100,
+      maxHeight: entry.layout?.maxHeight ?? 600,
+      canShrink: entry.layout?.canShrink ?? true,
+      canGrow: entry.layout?.canGrow ?? true,
+    };
+
+    _sectionTypeRegistry.set(entry.type, defaults);
+  }
+}
+
+/**
+ * Get section type defaults from registry
+ */
+export function getSectionTypeDefaults(sectionType: string): SectionTypeDefaults | undefined {
+  return _sectionTypeRegistry?.get(sectionType);
+}
+
+/**
+ * Check if registry is initialized
+ */
+export function isSectionTypeRegistryInitialized(): boolean {
+  return _sectionTypeRegistry !== null;
+}
+
+// ============================================================================
+// EXISTING CONFIGURATION (continued)
+// ============================================================================
+
 /**
  * Content density threshold for expansion.
- * Sections with density below this value will not be expanded,
  * as sparse content looks bad when stretched across multiple columns.
  * Lowered from 15 to 8 to allow more aggressive gap filling.
  */

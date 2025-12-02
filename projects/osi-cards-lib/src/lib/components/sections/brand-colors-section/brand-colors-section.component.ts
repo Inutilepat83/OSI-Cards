@@ -1,115 +1,45 @@
-import { ChangeDetectionStrategy, Component, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardField } from '../../../models';
-import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
+import { Component } from '@angular/core';
+import { BaseSectionComponent } from '../base-section.component';
 
-interface BrandColor {
-  id: string;
-  label: string;
-  hex: string;
-  rgb?: string;
-  copied?: boolean;
-}
-
+/**
+ * Brand Colors Section Component
+ *
+ * Displays color swatches with names, hex/RGB values, and usage descriptions.
+ * Perfect for brand identity, design systems, and style guides.
+ */
 @Component({
-  selector: 'app-brand-colors-section',
+  selector: 'lib-brand-colors-section',
   standalone: true,
-  imports: [CommonModule, LucideIconsModule],
+  imports: [CommonModule],
   templateUrl: './brand-colors-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './brand-colors-section.scss',
 })
-export class BrandColorsSectionComponent extends BaseSectionComponent<CardField> {
-  /** Color swatches display better with width */
-  static readonly layoutConfig: SectionLayoutConfig = {
-    preferredColumns: 2,
-    minColumns: 1,
-    maxColumns: 3,
-    expandOnItemCount: 6,
-  };
-  brandColors: BrandColor[] = [];
-  copiedColorId: string | null = null;
+export class BrandColorsSectionComponent extends BaseSectionComponent {
+  /**
+   * Check if value is a valid color (hex, rgb, rgba, hsl)
+   */
+  isValidColor(value: any): boolean {
+    if (!value || typeof value !== 'string') return false;
 
-  override ngOnChanges(changes: SimpleChanges): void {
-    super.ngOnChanges(changes);
-    if (changes['section']) {
-      this.extractBrandColors();
-    }
+    // Check common color formats
+    const hexPattern = /^#([0-9A-F]{3}){1,2}$/i;
+    const rgbPattern = /^rgba?\(/i;
+    const hslPattern = /^hsla?\(/i;
+
+    return hexPattern.test(value) || rgbPattern.test(value) || hslPattern.test(value);
   }
 
-  private extractBrandColors(): void {
-    const fields = this.getFields();
-    const colors: BrandColor[] = [];
-
-    fields.forEach((field, index) => {
-      if (field.value && typeof field.value === 'string') {
-        // Check if it's a hex color
-        if (this.isHexColor(field.value)) {
-          colors.push({
-            id: field.id || `color-${index}`,
-            label: field.label || field.title || `Color ${index + 1}`,
-            hex: field.value.toUpperCase(),
-            rgb: this.hexToRgb(field.value),
-            copied: false
-          });
-        }
+  /**
+   * Copy color value to clipboard
+   */
+  async copyColor(value: any): Promise<void> {
+    if (navigator.clipboard && value && typeof value === 'string') {
+      try {
+        await navigator.clipboard.writeText(value);
+      } catch (err) {
+        console.warn('Failed to copy color', err);
       }
-    });
-
-    this.brandColors = colors;
-    // Trigger change detection for OnPush strategy
-    this.cdr.markForCheck();
-  }
-
-  private isHexColor(value: string): boolean {
-    return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(value);
-  }
-
-  private hexToRgb(hex: string): string {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    if (result && result[1] && result[2] && result[3]) {
-      const r = parseInt(result[1], 16);
-      const g = parseInt(result[2], 16);
-      const b = parseInt(result[3], 16);
-      return `rgb(${r}, ${g}, ${b})`;
     }
-    return '';
-  }
-
-  async copyToClipboard(color: BrandColor): Promise<void> {
-    try {
-      await navigator.clipboard.writeText(color.hex);
-      this.copiedColorId = color.id;
-      
-      // Reset after 2 seconds
-      setTimeout(() => {
-        this.copiedColorId = null;
-        this.cdr.markForCheck();
-      }, 2000);
-      
-      this.cdr.markForCheck();
-    } catch (err) {
-      console.error('Failed to copy to clipboard:', err);
-    }
-  }
-
-  get hasColors(): boolean {
-    return this.brandColors.length > 0;
-  }
-
-  get fields(): CardField[] {
-    return this.getFields();
-  }
-
-  override get hasFields(): boolean {
-    return this.hasColors;
-  }
-
-  onColorClick(color: BrandColor): void {
-    this.copyToClipboard(color);
-  }
-
-  trackColor(index: number, color: BrandColor): string {
-    return color.id;
   }
 }

@@ -1,49 +1,27 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardField } from '../../../models';
-import { LucideIconsModule } from '../../../icons';
-import { BaseSectionComponent, SectionLayoutConfig } from '../base-section.component';
+import { BaseSectionComponent } from '../base-section.component';
 
-type NetworkField = CardField;
-
+/**
+ * Network Card Section Component
+ *
+ * Displays network relationships, partnerships, and organizational structures.
+ * Features: influence scores, connection counts, status indicators.
+ */
 @Component({
-  selector: 'app-network-card-section',
+  selector: 'lib-network-card-section',
   standalone: true,
-  imports: [CommonModule, LucideIconsModule],
+  imports: [CommonModule],
   templateUrl: './network-card-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './network-card-section.scss'
 })
-export class NetworkCardSectionComponent extends BaseSectionComponent<NetworkField> {
-  /** Compact network card */
-  static readonly layoutConfig: SectionLayoutConfig = {
-    preferredColumns: 1,
-    minColumns: 1,
-    maxColumns: 2,
-  };
-  get fields(): NetworkField[] {
-    return super.getFields();
-  }
-
-  override get hasFields(): boolean {
-    return super.hasFields;
-  }
-
-  override trackField = (_index: number, field: NetworkField): string => field.id ?? field.label ?? `network-${_index}`;
-
-  onItemClick(field: NetworkField): void {
-    // Emit as field interaction (network fields are treated as fields)
-    this.emitFieldInteraction(field);
-  }
+export class NetworkCardSectionComponent extends BaseSectionComponent {
 
   /**
-   * Get display value, hiding "Streaming…" placeholder text
-   * Inline implementation to avoid TypeScript override conflicts
+   * Get status class
    */
-  getDisplayValue(field: NetworkField): string {
-    const value = field.value;
-    if (value === 'Streaming…' || value === 'Streaming...') {
-      return '';
-    }
-    return value != null ? String(value) : '';
+  getStatusClass(status?: unknown): string {
+    if (!status || typeof status !== 'string') return '';
+    return `network-status--${status}`;
   }
 }

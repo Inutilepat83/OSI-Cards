@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
+import {
+  ComingSoonComponent,
+  ComingSoonConfig,
+} from '../../shared/components/coming-soon/coming-soon.component';
 
 /**
  * Pricing page component
@@ -9,9 +10,16 @@ import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
 @Component({
   selector: 'app-pricing',
   standalone: true,
-  imports: [CommonModule, RouterModule, LucideIconsModule],
-  templateUrl: './pricing.component.html',
-  styleUrls: ['./pricing.component.scss'],
+  imports: [ComingSoonComponent],
+  template: `<app-coming-soon [config]="config"></app-coming-soon>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PricingComponent {}
+export class PricingComponent {
+  readonly config: ComingSoonConfig = {
+    title: 'Pricing',
+    subtitle: 'Plans and pricing options',
+    icon: 'credit-card',
+    description:
+      'This page is under development. Check back soon for pricing information and plan details.',
+  };
+}

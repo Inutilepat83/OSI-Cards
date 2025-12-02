@@ -1,0 +1,218 @@
+// =====================================================================
+// MAP SECTION - Enhanced Geographic Display
+// =====================================================================
+
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
+@use '../../../styles/components/sections/component-mixins' as components;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+// =====================================================================
+// CONTAINER
+// =====================================================================
+
+.map-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-header-gap);
+}
+
+// =====================================================================
+// SECTION HEADER
+// =====================================================================
+
+.section-header {
+  .section-title {
+    @include heading(3);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .section-description {
+    @include body-text('base');
+    color: var(--muted-foreground);
+    line-height: var(--leading-relaxed);
+  }
+}
+
+// =====================================================================
+// MAP WRAPPER - Enhanced with Loading State
+// =====================================================================
+
+.map-wrapper {
+  @include card;
+  padding: 0;
+  overflow: hidden;
+  height: 380px;
+  border-radius: var(--radius-md);
+  position: relative;
+  background: var(--surface-subtle);
+  transition: box-shadow 300ms var(--ease-out);
+
+  &:hover {
+    box-shadow: var(--shadow-xl);
+  }
+
+  // Loading indicator
+  &.is-loading {
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        var(--surface-subtle) 0%,
+        var(--surface-hover) 50%,
+        var(--surface-subtle) 100%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      z-index: 1;
+    }
+
+    &::after {
+      content: 'Loading map...';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      @include typo.caption;
+      color: var(--muted-foreground);
+      z-index: 2;
+    }
+  }
+
+  .map-element {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-md);
+  }
+}
+
+// =====================================================================
+// LOCATION LIST - Enhanced Grid
+// =====================================================================
+
+.location-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+  gap: var(--spacing-md);
+
+  .location-item {
+    @include card;
+    padding: var(--spacing-sm);
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    transition: all 250ms var(--ease-out);
+
+    &:hover {
+      transform: translateX(2px);
+      box-shadow: var(--shadow-sm);
+      background: var(--surface-raised);
+
+      .location-name {
+        color: var(--accent);
+      }
+    }
+
+    .location-name {
+      @include heading(6);
+      margin-bottom: var(--spacing-xs);
+      font-weight: var(--font-semibold);
+      transition: color 200ms var(--ease-out);
+    }
+
+    .location-address {
+      @include typo.caption;
+      margin: 0;
+      color: var(--muted-foreground);
+      line-height: var(--leading-relaxed);
+    }
+
+    .location-type {
+      @include components.badge-modern('default');
+      margin-top: var(--spacing-sm);
+      display: inline-block;
+      font-size: 0.65rem;
+    }
+  }
+}
+
+// =====================================================================
+// EMPTY STATE
+// =====================================================================
+
+.map-empty {
+  @include components.empty-state-modern;
+  padding: var(--spacing-3xl);
+
+  .empty-icon {
+    font-size: 56px;
+    opacity: 0.25;
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+// =====================================================================
+// ANIMATIONS
+// =====================================================================
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(-3deg);
+  }
+}
+
+// =====================================================================
+// RESPONSIVE
+// =====================================================================
+
+@media (max-width: 768px) {
+  .map-wrapper {
+    height: 320px;
+  }
+}
+
+@media (max-width: 480px) {
+  .map-wrapper {
+    height: 280px;
+  }
+
+  .location-list {
+    grid-template-columns: 1fr;
+  }
+
+  .location-item {
+    padding: var(--spacing-xs);
+  }
+}
+
+// =====================================================================
+// ACCESSIBILITY
+// =====================================================================
+
+@media (prefers-contrast: high) {
+  .map-wrapper {
+    border: 2px solid var(--foreground);
+  }
+
+  .location-item {
+    border: 1px solid var(--foreground);
+  }
+}
+

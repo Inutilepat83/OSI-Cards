@@ -250,7 +250,7 @@ export interface DemoConfig {
       }
 
       .demo-preview {
-        padding: 1.5rem;
+        padding: 0;
         display: flex;
         flex-direction: column;
         align-items: stretch;
@@ -289,7 +289,7 @@ export interface DemoConfig {
       .preview-wrapper {
         width: 100%;
         display: flex;
-        justify-content: stretch;
+        flex-direction: column;
         flex: 1;
       }
 
@@ -297,6 +297,7 @@ export interface DemoConfig {
         width: 100%;
         max-width: none;
         flex: 1;
+        display: block;
       }
 
       .demo-placeholder {
