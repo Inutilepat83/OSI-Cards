@@ -1,9 +1,9 @@
 <div class="analytics-container">
   <!-- Section Header -->
-  <div class="section-header" *ngIf="section.title || section.description">
-    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
-    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
-  </div>
+  <lib-section-header
+    [title]="section.title"
+    [description]="section.description">
+  </lib-section-header>
 
   <!-- Metrics Grid -->
   <div class="analytics-grid" *ngIf="section.fields && section.fields.length > 0">
@@ -11,34 +11,41 @@
       <!-- Metric Header -->
       <div class="metric-header">
         <span class="metric-label">{{ metric.label }}</span>
-        <span class="metric-trend" [ngClass]="getTrendClass(metric.trend)" *ngIf="metric.trend">
-          <span class="trend-icon" [attr.data-trend]="metric.trend"></span>
-          <span class="trend-text" *ngIf="metric.change">{{ formatChange(metric.change) }}</span>
-        </span>
+        <lib-trend-indicator
+          *ngIf="metric.trend"
+          [trend]="getTrendDirection(metric.trend)"
+          [value]="metric.change"
+          size="small">
+        </lib-trend-indicator>
       </div>
 
       <!-- Metric Value -->
       <div class="metric-value">{{ metric.value }}</div>
 
       <!-- Progress Bar (if percentage provided) -->
-      <div class="metric-progress" *ngIf="metric.percentage !== undefined">
-        <div class="progress-fill"
-             [style.width.%]="metric.percentage"
-             [ngClass]="getPerformanceClass(metric.performance)">
-        </div>
-      </div>
+      <lib-progress-bar
+        *ngIf="metric.percentage !== undefined"
+        [value]="metric.percentage"
+        [variant]="getProgressVariant(metric.performance)"
+        [shimmer]="true"
+        size="small">
+      </lib-progress-bar>
 
       <!-- Performance Badge -->
-      <span class="metric-performance"
-            [ngClass]="getPerformanceClass(metric.performance)"
-            *ngIf="metric.performance">
+      <lib-badge
+        *ngIf="metric.performance"
+        [variant]="getPerformanceBadgeVariant(metric.performance)"
+        size="sm">
         {{ metric.performance }}
-      </span>
+      </lib-badge>
     </div>
   </div>
 
   <!-- Empty State -->
-  <div class="analytics-empty" *ngIf="!section.fields || section.fields.length === 0">
-    <p class="empty-text">No analytics data available</p>
-  </div>
+  <lib-empty-state
+    *ngIf="!section.fields || section.fields.length === 0"
+    message="No analytics data available"
+    icon="📊"
+    variant="minimal">
+  </lib-empty-state>
 </div>

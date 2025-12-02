@@ -1,9 +1,9 @@
 <div class="video-container">
   <!-- Section Header -->
-  <div class="section-header" *ngIf="section.title || section.description">
-    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
-    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
-  </div>
+  <lib-section-header
+    [title]="section.title"
+    [description]="section.description">
+  </lib-section-header>
 
   <!-- Videos Grid -->
   <div class="videos-grid" *ngIf="section.items && section.items.length > 0">
@@ -49,7 +49,10 @@
   </div>
 
   <!-- Empty State -->
-  <div class="video-empty" *ngIf="!section.items || section.items.length === 0">
-    <p class="empty-text">No videos available</p>
-  </div>
+  <lib-empty-state
+    *ngIf="!section.fields && !section.items || (section.fields?.length === 0 && section.items?.length === 0)"
+    message="No videos available"
+    icon="🎥"
+    variant="minimal">
+  </lib-empty-state>
 </div>

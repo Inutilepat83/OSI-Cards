@@ -1,0 +1,216 @@
+// =====================================================================
+// UNIFIED SECTION STYLES - Compact, Responsive, Consistent
+// =====================================================================
+// Apply these styles to ALL sections for perfect consistency
+
+@use './tokens' as *;
+
+// ═══════════════════════════════════════════════════════════════════
+// UNIVERSAL TYPOGRAPHY (Consistent across ALL sections)
+// ═══════════════════════════════════════════════════════════════════
+
+// Item titles (h4, h5, h6 in cards/items)
+@mixin unified-item-title {
+  margin: 0;
+  font-size: var(--osi-text-sm);        // 14px - Consistent size
+  font-weight: var(--osi-font-semibold); // 600
+  line-height: var(--osi-leading-snug); // 1.375
+  color: var(--osi-foreground);
+
+  @include mobile {
+    font-size: var(--osi-text-sm);      // Keep same on mobile
+  }
+}
+
+// Item labels (small uppercase text)
+@mixin unified-item-label {
+  font-size: 0.7rem;                     // 11.2px - Compact
+  font-weight: var(--osi-font-medium);   // 500
+  line-height: var(--osi-leading-tight); // 1.25
+  color: var(--osi-muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  @include mobile {
+    font-size: 0.65rem;                  // 10.4px on mobile
+  }
+}
+
+// Item values (prominent text/numbers)
+@mixin unified-item-value {
+  font-size: var(--osi-text-sm);        // 14px - Consistent
+  font-weight: var(--osi-font-semibold); // 600
+  line-height: var(--osi-leading-normal); // 1.5
+  color: var(--osi-foreground);
+
+  @include mobile {
+    font-size: var(--osi-text-sm);      // Keep same on mobile
+  }
+}
+
+// Item descriptions (secondary text)
+@mixin unified-item-description {
+  font-size: var(--osi-text-xs);        // 12px
+  font-weight: var(--osi-font-normal);   // 400
+  line-height: var(--osi-leading-relaxed); // 1.625
+  color: var(--osi-muted-foreground);
+
+  @include mobile {
+    font-size: var(--osi-text-xs);      // Keep same on mobile
+    line-height: var(--osi-leading-normal); // Tighter on mobile
+  }
+}
+
+// Number displays (metrics, analytics)
+@mixin unified-number-display {
+  font-size: var(--osi-text-xl);        // 24px - Compact (was 30px)
+  font-weight: var(--osi-font-bold);     // 700
+  line-height: 1;
+  letter-spacing: var(--osi-tracking-tight);
+  font-variant-numeric: tabular-nums;
+  color: var(--osi-foreground);
+
+  @include mobile {
+    font-size: var(--osi-text-lg);      // 20px on mobile
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// COMPACT CARD STYLES
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin unified-card-compact {
+  padding: var(--osi-spacing-sm);        // 8px
+  border-radius: var(--osi-radius-sm);   // 4px
+  gap: var(--osi-spacing-xs);            // 4px
+  min-height: var(--osi-card-min-height); // 90px
+
+  @include mobile {
+    padding: var(--osi-spacing-xs);      // 4px on mobile
+    min-height: auto;                     // Remove min-height on mobile
+  }
+}
+
+@mixin unified-item-compact {
+  padding: var(--osi-spacing-sm);        // 8px
+  gap: var(--osi-spacing-xs);            // 4px
+
+  @include mobile {
+    padding: var(--osi-spacing-xs);      // 4px on mobile
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// COMPACT GRID LAYOUTS (Responsive)
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin unified-grid-small-compact {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--osi-spacing-sm);            // 8px
+
+  @include mobile {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: var(--osi-spacing-xs);          // 4px
+  }
+}
+
+@mixin unified-grid-medium-compact {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--osi-spacing-sm);            // 8px
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: var(--osi-spacing-xs);          // 4px
+  }
+}
+
+@mixin unified-list-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 0;  // No gap for seamless items
+
+  > * {
+    border-bottom: 1px solid var(--osi-border-muted);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// UNIFIED RESPONSIVE BEHAVIOR
+// ═══════════════════════════════════════════════════════════════════
+
+// Apply consistent mobile behavior to all sections
+@mixin unified-mobile-behavior {
+  @include mobile {
+    // Reduce padding
+    padding: var(--osi-spacing-xs);
+
+    // Stack flex items
+    &.flex-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    // Reduce gaps
+    gap: var(--osi-spacing-xs);
+
+    // Full width buttons/actions
+    .action-button,
+    .contact-link,
+    .news-link {
+      width: 100%;
+      text-align: center;
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// UTILITY: Apply to Section Container
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin apply-unified-section-styles {
+  // Container
+  display: flex;
+  flex-direction: column;
+  gap: var(--osi-section-header-gap);
+
+  // Typography defaults
+  .item-title,
+  .metric-title,
+  .contact-name,
+  .event-title,
+  .news-title,
+  .product-title {
+    @include unified-item-title;
+  }
+
+  .item-label,
+  .metric-label,
+  .field-label {
+    @include unified-item-label;
+  }
+
+  .item-value,
+  .field-value {
+    @include unified-item-value;
+  }
+
+  .item-description,
+  .field-description {
+    @include unified-item-description;
+  }
+
+  .metric-value,
+  .number-display {
+    @include unified-number-display;
+  }
+
+  // Responsive
+  @include unified-mobile-behavior;
+}
+

@@ -1,325 +1,94 @@
 // =====================================================================
-// NEWS SECTION - Enhanced Article Display
+// NEWS SECTION - Compact, Responsive, Consistent
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/typography-system' as typo;
-@use '../../../styles/components/sections/component-mixins' as components;
+@use '../../../styles/design-system/tokens' as *;
+@use '../../../styles/design-system/unified-sections' as unified;
 
 :host {
   display: block;
   width: 100%;
 }
 
-// =====================================================================
-// CONTAINER
-// =====================================================================
-
 .news-container {
   display: flex;
   flex-direction: column;
-  gap: var(--section-header-gap);
+  gap: var(--osi-section-header-gap);
 }
-
-// =====================================================================
-// SECTION HEADER
-// =====================================================================
-
-.section-header {
-  .section-title {
-    @include heading(3);
-    margin-bottom: var(--spacing-xs);
-  }
-
-  .section-description {
-    @include body-text('base');
-    color: var(--muted-foreground);
-    line-height: var(--leading-relaxed);
-  }
-}
-
-// =====================================================================
-// NEWS GRID - Enhanced Responsive Layout
-// =====================================================================
 
 .news-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
-  gap: var(--spacing-lg);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--osi-spacing-sm);
 
-  @media (max-width: 640px) {
+  @include mobile {
     grid-template-columns: 1fr;
-    gap: var(--spacing-md);
+    gap: var(--osi-spacing-xs);
   }
 }
-
-// =====================================================================
-// NEWS CARD - Enhanced with Modern Effects
-// =====================================================================
 
 .news-card {
-  @include card-elevated;
-  padding: 0;
+  background: var(--osi-surface);
+  border: 1px solid var(--osi-border-muted);
+  border-radius: var(--osi-radius-sm);
   overflow: hidden;
+  transition: all var(--osi-duration-medium) var(--osi-ease-out);
   display: flex;
   flex-direction: column;
-  background: var(--surface);
-  border-radius: var(--radius-md);
-  transition: all 300ms var(--ease-out);
-  position: relative;
 
-  // Hover effect with elevation
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-xl);
-
-    .news-image {
-      transform: scale(1.08);
-    }
-
-    .news-title {
-      color: var(--accent);
-    }
-
-    .news-link {
-      transform: translateX(4px);
-      color: var(--accent);
-    }
-  }
-
-  // Focus for accessibility
-  &:focus-within {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
+    transform: translateY(-2px);
+    box-shadow: var(--osi-shadow-md);
+    border-color: var(--osi-border);
   }
 }
-
-// =====================================================================
-// NEWS IMAGE - Enhanced with Better Aspect Ratio
-// =====================================================================
 
 .news-image {
   width: 100%;
-  height: 200px;
+  height: 120px;
   object-fit: cover;
-  background: var(--surface-subtle);
-  transition: transform 400ms var(--ease-out);
-  display: block;
 
-  // Loading placeholder
-  &[src=""], &:not([src]) {
-    background: linear-gradient(
-      90deg,
-      var(--surface-subtle) 0%,
-      var(--surface-hover) 50%,
-      var(--surface-subtle) 100%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-
-    .news-card:hover & {
-      transform: none;
-    }
+  @include mobile {
+    height: 100px;
   }
 }
-
-// =====================================================================
-// NEWS CONTENT - Enhanced Spacing
-// =====================================================================
 
 .news-content {
-  padding: var(--spacing-md);
+  padding: var(--osi-spacing-sm);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
-  flex: 1;
-  background: var(--surface);
-}
+  gap: var(--osi-spacing-xs);
 
-// =====================================================================
-// NEWS META - Improved Layout
-// =====================================================================
+  @include mobile {
+    padding: var(--osi-spacing-xs);
+  }
+}
 
 .news-meta {
   display: flex;
+  gap: var(--osi-spacing-xs);
   flex-wrap: wrap;
-  gap: var(--spacing-md);
-  align-items: center;
-  margin-bottom: var(--spacing-xs);
-
-  .news-date {
-    @include typo.caption-bold;
-    color: var(--accent);
-    font-size: 0.7rem;
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-
-    // Removed emoji for minimalist design
-  }
-
-  .news-source {
-    @include typo.caption;
-    color: var(--muted-foreground);
-    font-size: 0.7rem;
-  }
-
-  .news-category {
-    @include components.badge-modern('default');
-    font-size: 0.65rem;
-    padding: 2px 8px;
-  }
+  font-size: 0.65rem;
+  color: var(--osi-muted-foreground);
 }
-
-// =====================================================================
-// NEWS TITLE - Enhanced Typography
-// =====================================================================
 
 .news-title {
-  @include heading(5);
-  margin: 0;
-  line-height: var(--leading-tight);
-  font-weight: var(--font-bold);
-  color: var(--foreground);
-  transition: color 200ms var(--ease-out);
-
-  // Clamp to 2 lines with ellipsis
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  @include unified.unified-item-title;
 }
-
-// =====================================================================
-// NEWS EXCERPT - Improved Readability
-// =====================================================================
 
 .news-excerpt {
-  @include body-text('small');
-  color: var(--muted-foreground);
-  line-height: var(--leading-relaxed);
-  flex: 1;
-
-  // Clamp to 3 lines with ellipsis
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  @include unified.unified-item-description;
+  margin: 0;
 }
-
-// =====================================================================
-// NEWS LINK - Enhanced with Arrow Animation
-// =====================================================================
 
 .news-link {
-  @include typo.link-base;
-  font-size: var(--text-sm);
-  margin-top: auto; // Push to bottom
-  padding-top: var(--spacing-sm);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  font-weight: var(--font-semibold);
-  color: var(--accent);
+  @include unified.unified-item-label;
+  text-transform: none;
+  color: var(--osi-accent);
   text-decoration: none;
-  transition: all 200ms var(--ease-out);
+  align-self: flex-start;
 
-  &::after {
-    content: '→';
-    transition: transform 200ms var(--ease-out);
-  }
-
-  &:hover::after {
-    transform: translateX(4px);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-    border-radius: var(--radius-sm);
+  &:hover {
+    text-decoration: underline;
   }
 }
-
-// =====================================================================
-// EMPTY STATE - Enhanced
-// =====================================================================
-
-.news-empty {
-  @include components.empty-state-modern;
-  padding: var(--spacing-xl);
-
-  .empty-text {
-    color: var(--muted-foreground);
-    font-size: var(--text-sm);
-  }
-}
-
-// =====================================================================
-// ANIMATIONS
-// =====================================================================
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-// =====================================================================
-// RESPONSIVE DESIGN
-// =====================================================================
-
-@media (max-width: 768px) {
-  .news-grid {
-    gap: var(--spacing-md);
-  }
-
-  .news-image {
-    height: 180px;
-  }
-}
-
-@media (max-width: 480px) {
-  .news-grid {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-sm);
-  }
-
-  .news-image {
-    height: 160px;
-  }
-
-  .news-content {
-    padding: var(--spacing-sm);
-  }
-
-  .news-meta {
-    gap: var(--spacing-sm);
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-// =====================================================================
-// PRINT STYLES
-// =====================================================================
-
-@media print {
-  .news-card {
-    break-inside: avoid;
-    box-shadow: none;
-    border: 1px solid #ddd;
-  }
-
-  .news-link {
-    display: none;
-  }
-}
-

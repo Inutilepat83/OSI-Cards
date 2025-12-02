@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseSectionComponent } from '../base-section.component';
+import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../../shared';
 
 /**
  * Fallback Section Component
@@ -11,7 +12,7 @@ import { BaseSectionComponent } from '../base-section.component';
 @Component({
   selector: 'lib-fallback-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
   templateUrl: './fallback-section.component.html',
   styleUrl: './fallback-section.scss'
 })

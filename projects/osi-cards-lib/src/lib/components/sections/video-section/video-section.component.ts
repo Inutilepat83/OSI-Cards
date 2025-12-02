@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { BaseSectionComponent } from '../base-section.component';
+import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../../shared';
 
 /**
  * Video Section Component
@@ -12,7 +13,7 @@ import { BaseSectionComponent } from '../base-section.component';
 @Component({
   selector: 'lib-video-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
   templateUrl: './video-section.component.html',
   styleUrl: './video-section.scss'
 })

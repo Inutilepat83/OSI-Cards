@@ -1,9 +1,9 @@
 <div class="network-container">
   <!-- Section Header -->
-  <div class="section-header" *ngIf="section.title || section.description">
-    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
-    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
-  </div>
+  <lib-section-header
+    [title]="section.title"
+    [description]="section.description">
+  </lib-section-header>
 
   <!-- Network Grid -->
   <div class="network-grid" *ngIf="section.items && section.items.length > 0">
@@ -33,8 +33,10 @@
   </div>
 
   <!-- Empty State -->
-  <div class="network-empty" *ngIf="!section.items || section.items.length === 0">
-    <div class="empty-icon">🔗</div>
-    <p class="empty-text">No network data available</p>
-  </div>
+  <lib-empty-state
+    *ngIf="!section.fields && !section.items || (section.fields?.length === 0 && section.items?.length === 0)"
+    message="No network data available"
+    icon="🔗"
+    variant="minimal">
+  </lib-empty-state>
 </div>

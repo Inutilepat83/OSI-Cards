@@ -1,9 +1,9 @@
 <div class="contacts-container">
   <!-- Section Header -->
-  <div class="section-header" *ngIf="section.title || section.description">
-    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
-    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
-  </div>
+  <lib-section-header
+    [title]="section.title"
+    [description]="section.description">
+  </lib-section-header>
 
   <!-- Contacts Grid -->
   <div class="contacts-grid" *ngIf="section.fields && section.fields.length > 0">
@@ -26,9 +26,13 @@
         <p class="contact-role" *ngIf="getContactRole(contact)">{{ getContactRole(contact) }}</p>
 
         <!-- Department Badge -->
-        <span class="contact-department" *ngIf="contact.department">
+        <lib-badge
+          *ngIf="contact.department"
+          variant="primary"
+          size="sm"
+          [pill]="true">
           {{ contact.department }}
-        </span>
+        </lib-badge>
 
         <!-- Location -->
         <div class="contact-location" *ngIf="contact.location">
@@ -63,7 +67,10 @@
   </div>
 
   <!-- Empty State -->
-  <div class="contacts-empty" *ngIf="!section.fields || section.fields.length === 0">
-    <p class="empty-text">No contacts available</p>
-  </div>
+  <lib-empty-state
+    *ngIf="!section.fields || section.fields.length === 0"
+    message="No contacts available"
+    icon="👤"
+    variant="minimal">
+  </lib-empty-state>
 </div>

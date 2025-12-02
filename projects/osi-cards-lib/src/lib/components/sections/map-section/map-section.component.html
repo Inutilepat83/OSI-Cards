@@ -1,9 +1,6 @@
 <div class="map-container">
   <!-- Section Header -->
-  <div class="section-header" *ngIf="section.title || section.description">
-    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
-    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
-  </div>
+  <lib-section-header [title]="section.title" [description]="section.description"> </lib-section-header>
 
   <!-- Map Display -->
   <div class="map-wrapper">
@@ -18,4 +15,13 @@
       <span class="location-type" *ngIf="location.type">{{ location.type }}</span>
     </div>
   </div>
+
+  <!-- Empty State -->
+  <lib-empty-state
+    *ngIf="!section.fields || section.fields.length === 0"
+    message="No locations to display"
+    icon="🗺️"
+    variant="minimal"
+  >
+  </lib-empty-state>
 </div>

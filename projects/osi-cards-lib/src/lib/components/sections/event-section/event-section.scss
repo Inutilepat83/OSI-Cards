@@ -1,291 +1,133 @@
 // =====================================================================
-// EVENT SECTION - Enhanced Calendar & Schedule Display
+// EVENT SECTION - Compact, Responsive, Consistent
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/typography-system' as typo;
-@use '../../../styles/components/sections/modern-effects' as effects;
-@use '../../../styles/components/sections/component-mixins' as components;
+@use '../../../styles/design-system/tokens' as *;
+@use '../../../styles/design-system/unified-sections' as unified;
 
 :host {
   display: block;
   width: 100%;
 }
 
-// =====================================================================
-// CONTAINER
-// =====================================================================
-
 .events-container {
   display: flex;
   flex-direction: column;
-  gap: var(--section-header-gap);
+  gap: var(--osi-section-header-gap);
 }
-
-// =====================================================================
-// SECTION HEADER
-// =====================================================================
-
-.section-header {
-  .section-title {
-    @include heading(3);
-    margin-bottom: var(--spacing-xs);
-  }
-
-  .section-description {
-    @include body-text('base');
-    color: var(--muted-foreground);
-    line-height: var(--leading-relaxed);
-  }
-}
-
-// =====================================================================
-// EVENTS LIST
-// =====================================================================
 
 .events-list {
+  background: var(--osi-surface);
+  border: 1px solid var(--osi-border-muted);
+  border-radius: var(--osi-radius-md);
+  padding: var(--osi-spacing-xs);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: 0;
 }
-
-// =====================================================================
-// EVENT CARD - Enhanced with Modern Design
-// =====================================================================
 
 .event-card {
-  @include card;
   display: flex;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
-  background: var(--surface);
-  border-radius: var(--radius-md);
-  border-left: 4px solid var(--accent);
-  transition: all 300ms var(--ease-out);
+  gap: var(--osi-spacing-sm);
+  padding: var(--osi-spacing-sm);
+  border-radius: var(--osi-radius-sm);
+  transition: all var(--osi-duration-normal) var(--osi-ease-out);
 
-  &:hover {
-    transform: translateX(6px);
-    box-shadow: var(--shadow-lg);
-    border-left-color: var(--accent-bright);
-
-    .event-date {
-      transform: scale(1.05) rotate(-2deg);
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-bright) 100%);
-      color: white;
-
-      .date-day, .date-month {
-        color: white;
-      }
-    }
-
-    .event-title {
-      color: var(--accent);
-    }
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--osi-border-muted);
   }
 
-  &:focus-within {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
+  &:hover {
+    background: var(--osi-surface-raised);
+  }
+
+  @include mobile {
+    padding: var(--osi-spacing-xs);
+    gap: var(--osi-spacing-xs);
+    flex-direction: column;
   }
 }
 
-// =====================================================================
-// EVENT DATE - Enhanced Calendar Style
-// =====================================================================
-
 .event-date {
-  min-width: 68px;
-  padding: var(--spacing-sm);
-  text-align: center;
-  background: var(--surface-raised);
-  border-radius: var(--radius-md);
   flex-shrink: 0;
-  box-shadow: var(--shadow-sm);
-  transition: all 300ms var(--ease-out);
-  border: 2px solid var(--accent-subtle);
+  width: 48px;
+  text-align: center;
+  padding: var(--osi-spacing-xs);
+  background: var(--osi-accent);
+  border-radius: var(--osi-radius-sm);
+  color: white;
 
   .date-day {
-    @include typo.number-display-medium;
+    @include unified.unified-number-display;
+    font-size: var(--osi-text-lg);
     display: block;
-    line-height: 1;
-    color: var(--accent);
-    font-size: var(--text-2xl);
-    font-weight: var(--font-bold);
   }
 
   .date-month {
-    @include typo.label-uppercase;
+    @include unified.unified-item-label;
     display: block;
-    margin-top: var(--spacing-xs);
-    font-size: 0.65rem;
-    color: var(--muted-foreground);
-    letter-spacing: 1px;
+    color: white;
+    text-transform: uppercase;
+  }
+
+  @include mobile {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: var(--osi-spacing-xs);
+
+    .date-day, .date-month {
+      display: inline;
+    }
   }
 }
-
-// =====================================================================
-// EVENT CONTENT
-// =====================================================================
 
 .event-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
-  min-width: 0;
+  gap: var(--osi-spacing-xs);
 }
 
 .event-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: var(--spacing-md);
+  gap: var(--osi-spacing-sm);
   flex-wrap: wrap;
 }
 
 .event-title {
-  @include heading(5);
+  @include unified.unified-item-title;
   flex: 1;
-  margin: 0;
-  font-weight: var(--font-bold);
-  transition: color 200ms var(--ease-out);
-  line-height: var(--leading-tight);
-}
-
-.event-status {
-  @include components.badge-modern('default');
-  font-size: 0.65rem;
-  flex-shrink: 0;
-
-  &.event-status--confirmed {
-    @include components.badge-modern('success');
-  }
-
-  &.event-status--completed {
-    @include components.badge-modern('primary');
-  }
-
-  &.event-status--cancelled {
-    @include components.badge-modern('error');
-  }
-
-  &.event-status--tentative {
-    @include components.badge-modern('warning');
-  }
 }
 
 .event-details {
   display: flex;
+  gap: var(--osi-spacing-sm);
   flex-wrap: wrap;
-  gap: var(--spacing-md);
-  margin-top: var(--spacing-xs);
+  font-size: var(--osi-text-xs);
+  color: var(--osi-muted-foreground);
 
-  > span {
-    @include typo.caption;
+  > * {
     display: flex;
     align-items: center;
-    gap: var(--spacing-xs);
-    color: var(--muted-foreground);
-    font-size: 0.75rem;
-
-    &::before {
-      font-size: 1rem;
-    }
+    gap: var(--osi-spacing-xs);
   }
 
-  // Removed emoji icons for minimalist design
+  @include mobile {
+    flex-direction: column;
+    gap: var(--osi-spacing-xs);
+  }
 }
 
 .event-category {
-  @include components.badge-modern('default');
-  align-self: flex-start;
-  margin-top: var(--spacing-xs);
-  font-size: 0.65rem;
+  @include unified.unified-item-label;
+  text-transform: none;
 }
 
-// =====================================================================
-// EMPTY STATE
-// =====================================================================
-
-.events-empty {
-  @include components.empty-state-modern;
-  padding: var(--spacing-3xl);
-
-  .empty-icon {
-    font-size: 56px;
-    opacity: 0.25;
-    animation: float 3s ease-in-out infinite;
+@include mobile {
+  .events-list {
+    padding: 2px;
   }
 }
-
-// =====================================================================
-// ANIMATIONS
-// =====================================================================
-
-@keyframes pulse {
-  0%, 100% {
-    box-shadow: 0 0 0 2px var(--accent), var(--shadow-sm);
-  }
-  50% {
-    box-shadow: 0 0 0 6px var(--accent-subtle), var(--shadow-md);
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-10px) rotate(-3deg);
-  }
-}
-
-// =====================================================================
-// RESPONSIVE
-// =====================================================================
-
-@media (max-width: 640px) {
-  .event-card {
-    gap: var(--spacing-sm);
-  }
-
-  .event-date {
-    min-width: 60px;
-    padding: var(--spacing-xs);
-
-    .date-day {
-      font-size: var(--text-xl);
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .event-card {
-    flex-direction: column;
-    padding: var(--spacing-sm);
-  }
-
-  .event-date {
-    align-self: flex-start;
-  }
-
-  .event-details {
-    flex-direction: column;
-    gap: var(--spacing-xs);
-  }
-}
-
-// =====================================================================
-// REDUCED MOTION
-// =====================================================================
-
-@media (prefers-reduced-motion: reduce) {
-  .event-card:hover {
-    transform: none;
-  }
-
-  .event-date {
-    transition: background 200ms;
-  }
-}
-

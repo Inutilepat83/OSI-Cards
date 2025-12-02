@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseSectionComponent } from '../base-section.component';
+import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../../shared';
 
 /**
  * Event Section Component
@@ -11,7 +12,7 @@ import { BaseSectionComponent } from '../base-section.component';
 @Component({
   selector: 'lib-event-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
   templateUrl: './event-section.component.html',
   styleUrl: './event-section.scss'
 })
@@ -35,10 +36,25 @@ export class EventSectionComponent extends BaseSectionComponent {
   }
 
   /**
-   * Get status class
+   * Get status class (deprecated - kept for backward compatibility)
    */
   getStatusClass(status?: string): string {
     if (!status) return '';
     return `event-status--${status}`;
+  }
+
+  /**
+   * Map status to badge variant
+   */
+  getStatusVariant(status?: string): 'success' | 'warning' | 'error' | 'primary' | 'default' {
+    if (!status) return 'default';
+    const statusLower = status.toLowerCase();
+
+    if (statusLower === 'confirmed' || statusLower === 'completed') return 'success';
+    if (statusLower === 'upcoming' || statusLower === 'scheduled') return 'primary';
+    if (statusLower === 'tentative' || statusLower === 'pending') return 'warning';
+    if (statusLower === 'cancelled' || statusLower === 'postponed') return 'error';
+
+    return 'default';
   }
 }

@@ -1,262 +1,154 @@
 // =====================================================================
-// LIST SECTION - Enhanced Structured List Display
+// LIST SECTION - Compact, Responsive, Consistent
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/modern-effects' as effects;
-@use '../../../styles/components/sections/component-mixins' as components;
-@use '../../../styles/components/sections/typography-system' as typo;
+@use '../../../styles/design-system/tokens' as *;
+@use '../../../styles/design-system/unified-sections' as unified;
 
 :host {
   display: block;
   width: 100%;
 }
 
-// =====================================================================
+// ═══════════════════════════════════════════════════════════════════
 // CONTAINER
-// =====================================================================
+// ═══════════════════════════════════════════════════════════════════
 
 .list-container {
   display: flex;
   flex-direction: column;
-  gap: var(--section-header-gap);
+  gap: var(--osi-section-header-gap);
 }
 
-// =====================================================================
-// SECTION HEADER
-// =====================================================================
-
-.section-header {
-  .section-title {
-    @include heading(3);
-    margin-bottom: var(--spacing-xs);
-  }
-
-  .section-description {
-    @include body-text('base');
-    color: var(--muted-foreground);
-    line-height: var(--leading-relaxed);
-  }
-}
-
-// =====================================================================
+// ═══════════════════════════════════════════════════════════════════
 // SECTION LIST
-// =====================================================================
+// ═══════════════════════════════════════════════════════════════════
 
 .section-list {
-  @include card;
-  padding: var(--spacing-sm);
+  background: var(--osi-surface);
+  border: 1px solid var(--osi-border-muted);
+  border-radius: var(--osi-radius-md);
+  padding: var(--osi-spacing-xs);
   display: flex;
   flex-direction: column;
-  gap: 0; // Removed gap for seamless zebra striping
-  background: var(--surface);
+  gap: 0;
 }
 
-// =====================================================================
-// LIST ITEM - Enhanced with Zebra Striping & Better Interactions
-// =====================================================================
+// ═══════════════════════════════════════════════════════════════════
+// LIST ITEM - Compact
+// ═══════════════════════════════════════════════════════════════════
 
 .list-item {
-  position: relative;
   display: flex;
   align-items: flex-start;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
-  border-radius: var(--radius-sm);
-  transition: all 250ms var(--ease-out);
+  gap: var(--osi-spacing-sm);
+  padding: var(--osi-spacing-sm);
+  border-radius: var(--osi-radius-sm);
+  transition: all var(--osi-duration-normal) var(--osi-ease-out);
   cursor: pointer;
 
-  // Zebra striping for better readability
-  &:nth-child(even) {
-    background: var(--surface-subtle);
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--osi-border-muted);
   }
 
-  // Enhanced hover effect with elevation
-  &:hover {
-    background: var(--surface-raised);
-    transform: translateX(4px);
-    box-shadow: var(--shadow-md);
-    z-index: 1;
+  &:nth-child(even) {
+    background: var(--osi-surface-subtle);
+  }
 
-    .item-icon, .item-bullet {
-      transform: scale(1.15);
-      color: var(--accent);
+  &:hover {
+    background: var(--osi-surface-raised);
+    transform: translateX(4px);
+
+    .item-bullet {
+      color: var(--osi-accent);
+      transform: scale(1.1);
     }
 
     .item-title {
-      color: var(--accent);
+      color: var(--osi-accent);
     }
   }
 
-  // Active state
-  &:active {
-    transform: translateX(2px);
-    box-shadow: var(--shadow-sm);
-  }
-
-  // Focus for keyboard navigation
   &:focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--osi-accent);
     outline-offset: 2px;
-    background: var(--surface-raised);
+  }
+
+  @include mobile {
+    padding: var(--osi-spacing-xs);
+    gap: var(--osi-spacing-xs);
   }
 }
 
-// =====================================================================
-// ICONS & BULLETS - Enhanced
-// =====================================================================
-
-.item-icon {
-  font-size: var(--text-2xl);
-  flex-shrink: 0;
-  line-height: 1;
-  transition: all 250ms var(--ease-out);
-  color: var(--muted-foreground);
-}
+// ═══════════════════════════════════════════════════════════════════
+// BULLET
+// ═══════════════════════════════════════════════════════════════════
 
 .item-bullet {
-  font-size: var(--text-xl);
-  color: var(--accent);
+  font-size: var(--osi-text-base);
+  color: var(--osi-accent);
   flex-shrink: 0;
   line-height: 1;
-  font-weight: var(--font-bold);
-  transition: all 250ms var(--ease-out);
+  font-weight: var(--osi-font-bold);
+  transition: all var(--osi-duration-normal) var(--osi-ease-out);
   opacity: 0.7;
 }
 
-// =====================================================================
+// ═══════════════════════════════════════════════════════════════════
 // ITEM CONTENT
-// =====================================================================
+// ═══════════════════════════════════════════════════════════════════
 
 .item-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
-  min-width: 0; // Allow text truncation
+  gap: var(--osi-spacing-xs);
+  min-width: 0;
 }
 
 .item-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--spacing-md);
+  gap: var(--osi-spacing-sm);
   flex-wrap: wrap;
 }
 
 .item-title {
-  @include heading(6);
+  @include unified.unified-item-title;  // Consistent title style
   flex: 1;
-  margin: 0;
-  transition: color 200ms var(--ease-out);
-  line-height: var(--leading-snug);
+  transition: color var(--osi-duration-normal) var(--osi-ease-out);
 }
 
-// =====================================================================
-// BADGES - Enhanced with Better Colors
-// =====================================================================
-
+// Badges container
 .item-badges {
   display: flex;
-  gap: var(--spacing-xs);
+  gap: var(--osi-spacing-xs);
   flex-shrink: 0;
   flex-wrap: wrap;
 }
 
-.item-status {
-  @include components.badge-modern('default');
-  font-size: 0.65rem;
-  padding: 3px 8px;
-  font-weight: var(--font-semibold);
-
-  &.item-status--completed {
-    @include components.badge-modern('success');
-  }
-
-  &.item-status--in-progress {
-    @include components.badge-modern('primary');
-  }
-
-  &.item-status--pending {
-    @include components.badge-modern('warning');
-  }
-
-  &.item-status--cancelled,
-  &.item-status--blocked {
-    @include components.badge-modern('error');
-  }
-}
-
-.item-priority {
-  @include components.badge-modern('default');
-  font-size: 0.65rem;
-  padding: 3px 8px;
-  font-weight: var(--font-semibold);
-
-  &.item-priority--high {
-    @include components.badge-modern('error');
-  }
-
-  &.item-priority--medium {
-    @include components.badge-modern('warning');
-  }
-
-  &.item-priority--low {
-    @include components.badge-modern('success');
-  }
-}
-
-// =====================================================================
-// ITEM DESCRIPTION
-// =====================================================================
-
+// Description
 .item-description {
-  @include body-text('small');
-  color: var(--muted-foreground);
-  line-height: var(--leading-relaxed);
-  margin-top: var(--spacing-xs);
+  @include unified.unified-item-description;  // Consistent description style
 }
 
-// =====================================================================
-// EMPTY STATE
-// =====================================================================
-
-.list-empty {
-  @include components.empty-state-modern;
-  padding: var(--spacing-xl);
-
-  .empty-text {
-    color: var(--muted-foreground);
-    font-size: var(--text-sm);
-  }
-}
-
-// =====================================================================
+// ═══════════════════════════════════════════════════════════════════
 // RESPONSIVE
-// =====================================================================
+// ═══════════════════════════════════════════════════════════════════
 
-@media (max-width: 640px) {
+@include mobile {
   .section-list {
-    padding: var(--spacing-xs);
-  }
-
-  .list-item {
-    padding: var(--spacing-sm);
-    gap: var(--spacing-sm);
-  }
-
-  .item-icon, .item-bullet {
-    font-size: var(--text-lg);
+    padding: 2px;
   }
 
   .item-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--spacing-sm);
+    gap: var(--osi-spacing-xs);
   }
 
   .item-badges {
     width: 100%;
   }
 }
-

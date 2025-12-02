@@ -1,6 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseSectionComponent } from '../base-section.component';
+import {
+  SectionHeaderComponent,
+  EmptyStateComponent,
+  TrendIndicatorComponent,
+  type TrendDirection
+} from '../../shared';
 
 /**
  * Info Section Component
@@ -11,14 +17,14 @@ import { BaseSectionComponent } from '../base-section.component';
 @Component({
   selector: 'lib-info-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, TrendIndicatorComponent],
   templateUrl: './info-section.component.html',
   styleUrl: './info-section.scss'
 })
 export class InfoSectionComponent extends BaseSectionComponent {
 
   /**
-   * Get trend class
+   * Get trend class (deprecated - kept for backward compatibility)
    */
   getTrendClass(trend?: string): string {
     if (!trend) return '';
@@ -32,5 +38,19 @@ export class InfoSectionComponent extends BaseSectionComponent {
     if (change === undefined || change === null) return '';
     const sign = change > 0 ? '+' : '';
     return `${sign}${change}%`;
+  }
+
+  /**
+   * Map trend string to TrendDirection type
+   */
+  getTrendDirection(trend?: string): TrendDirection {
+    if (!trend) return 'neutral';
+    const trendLower = trend.toLowerCase();
+
+    if (trendLower === 'up' || trendLower === 'increase' || trendLower === 'rising') return 'up';
+    if (trendLower === 'down' || trendLower === 'decrease' || trendLower === 'falling') return 'down';
+    if (trendLower === 'stable' || trendLower === 'flat' || trendLower === 'unchanged') return 'stable';
+
+    return 'neutral';
   }
 }

@@ -1,5 +1,13 @@
 # Pre-Push Checklist
 
+> **🚀 Pipeline Overview**: This guide covers deployment to **both Firebase (demo app)** and **NPM (library package)**.
+>
+> - **Quick Update**: Use standard workflows (§18-20)
+> - **Library Release**: Use `npm run publish:smart` (§19b) or automated script (§21a)
+> - **Full Pipeline**: One command deploys both targets (§20a)
+>
+> See **Deployment Pipeline Overview** below for detailed decision tree.
+
 ## 1. Code Completion Verification
 
 - [ ] All planned features are implemented
@@ -69,6 +77,36 @@ Deployment is **automatic** via GitHub Actions on push to `main`:
 - **GitHub Actions**: https://github.com/Inutilepat83/OSI-Cards/actions
 
 No manual Firebase deploy needed!
+
+---
+
+# 🔄 Deployment Pipeline Overview
+
+This repository has **two deployment targets**:
+
+| Target       | What                            | When                            | How                                   |
+| ------------ | ------------------------------- | ------------------------------- | ------------------------------------- |
+| **Firebase** | Demo app (osi-card.web.app)     | Every push to `main`            | Automatic via GitHub Actions          |
+| **NPM**      | Library package (osi-cards-lib) | On demand or with smart publish | Manual or via `npm run publish:smart` |
+
+### Three Deployment Strategies:
+
+1. **Firebase Only** (§18-19): Push code changes, auto-deploys demo app
+2. **NPM Only** (§24-25): Publish library updates manually
+3. **Combined** (§19b, §20a): Update both Firebase + NPM in one workflow ⭐ **Recommended for releases**
+
+### Quick Start:
+
+```bash
+# 🚀 Demo app update only → Firebase auto-deploys
+npm run build && git add . && git commit -m "feat: new feature" && git push
+
+# 📦 Library release → Publishes to NPM + triggers Firebase deploy
+npm run publish:smart
+
+# 🎯 Full release with monitoring → Both targets + real-time status
+# See §20a for complete one-liner
+```
 
 ---
 
@@ -419,6 +457,38 @@ git commit --no-verify -m "chore(release): v$(node -p \"require('./version.confi
 git push origin main
 ```
 
+## 19a. Release Push with NPM Publish
+
+```bash
+# Full release: Version bump, build, deploy, and publish to npm
+npm run version:patch && \
+npm run release:notes && \
+npm run lint:fix && \
+npm run format && \
+npm run build && \
+npm run build:lib && \
+git add . && \
+git commit --no-verify -m "chore(release): v$(node -p \"require('./version.config.json').version\")" && \
+git push origin main && \
+cd dist/osi-cards-lib && \
+npm publish --access public && \
+cd ../.. && \
+echo "✅ Pushed to GitHub & Published to NPM!"
+```
+
+## 19b. Smart Release (Recommended)
+
+Use the smart publish script that handles everything:
+
+```bash
+# Publish to npm (includes version bump, build, git push)
+npm run publish:smart           # patch: 1.5.2 → 1.5.3
+npm run publish:smart:minor     # minor: 1.5.2 → 1.6.0
+npm run publish:smart:major     # major: 1.5.2 → 2.0.0
+
+# Note: This also pushes to GitHub, triggering Firebase deployment
+```
+
 ## 20. Ultimate One-Liner (Push + Monitor)
 
 ```bash
@@ -441,25 +511,300 @@ echo "" && \
 [ "$CONCLUSION" == "success" ] && echo "✅ Deployed! Site: HTTP $HTTP" || echo "❌ Failed - run: gh run view --log"
 ```
 
-## 21. Post-Deployment Verification
+## 20a. Ultimate One-Liner (Push + NPM Publish + Monitor)
+
+```bash
+npm run version:sync && \
+npm run lint:fix && \
+npm run format && \
+npm run build && \
+npm run build:lib && \
+git add . && git commit --no-verify -m "type(scope): description" && \
+git push origin main && \
+cd dist/osi-cards-lib && npm publish --access public && cd ../.. && \
+NPM_VERSION=$(npm view osi-cards-lib version) && \
+echo "📦 Published to NPM: v$NPM_VERSION" && \
+echo "⏳ Waiting for Firebase pipeline..." && sleep 15 && \
+while true; do \
+  STATUS=$(gh run list --repo Inutilepat83/OSI-Cards --workflow deploy.yml --limit 1 --json status -q '.[0].status' 2>/dev/null); \
+  CONCLUSION=$(gh run list --repo Inutilepat83/OSI-Cards --workflow deploy.yml --limit 1 --json conclusion -q '.[0].conclusion' 2>/dev/null); \
+  echo "$(date +%H:%M:%S) Pipeline: $STATUS ($CONCLUSION)"; \
+  [ "$STATUS" == "completed" ] && break; \
+  sleep 10; \
+done && \
+HTTP=$(curl -s -o /dev/null -w "%{http_code}" https://osi-card.web.app/) && \
+echo "" && \
+[ "$CONCLUSION" == "success" ] && echo "✅ Firebase Deployed! Site: HTTP $HTTP | NPM: v$NPM_VERSION" || echo "❌ Pipeline Failed - run: gh run view --log"
+```
+
+## 21. Workflow Decision Tree
+
+Choose the right workflow for your needs:
+
+| Scenario                         | Use This Workflow               | Section |
+| -------------------------------- | ------------------------------- | ------- |
+| **Bug fix or minor change**      | Standard Push (no version bump) | §18     |
+| **New feature (demo app only)**  | Release Push (version bump)     | §19     |
+| **Library update + demo app**    | Smart Release (recommended)     | §19b    |
+| **Manual control needed**        | Release Push with NPM           | §19a    |
+| **Quick iteration**              | Ultimate One-Liner              | §20     |
+| **Full release with monitoring** | Ultimate One-Liner + NPM        | §20a    |
+
+### Quick Decision:
+
+```bash
+# Changed demo app only? → Standard push
+npm run version:sync && npm run lint:fix && npm run format && npm run build && git push
+
+# Changed library code? → Smart publish (handles everything)
+npm run publish:smart
+
+# Need to monitor deployment? → Use Ultimate One-Liner workflows (§20, §20a)
+```
+
+## 21a. Automated Release Script
+
+Save this as `scripts/release.sh` for a fully automated release workflow:
+
+```bash
+#!/bin/bash
+# Full Release Script - Firebase + NPM deployment with monitoring
+
+set -e  # Exit on error
+
+REPO="Inutilepat83/OSI-Cards"
+SITE_URL="https://osi-card.web.app/"
+MAX_WAIT=300
+
+# Parse arguments
+BUMP_TYPE="${1:-patch}"  # patch, minor, major
+COMMIT_MSG="${2:-chore(release): automated release}"
+PUBLISH_NPM="${3:-yes}"  # yes/no
+
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║              OSI-CARDS RELEASE PIPELINE                       ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+echo "📋 Release Configuration:"
+echo "   • Version Bump: $BUMP_TYPE"
+echo "   • Publish NPM: $PUBLISH_NPM"
+echo "   • Firebase: Auto-deploy via GitHub Actions"
+echo ""
+
+# 1. Version bump and sync
+echo "🔄 Step 1: Version bump ($BUMP_TYPE)..."
+npm run version:$BUMP_TYPE
+VERSION=$(node -p "require('./version.config.json').version")
+echo "   ✅ New version: $VERSION"
+echo ""
+
+# 2. Generate release notes
+echo "📝 Step 2: Generating release notes..."
+npm run release:notes
+echo "   ✅ Release notes updated"
+echo ""
+
+# 3. Lint and format
+echo "🧹 Step 3: Lint and format..."
+npm run lint:fix 2>&1 | tail -n 3
+npm run format 2>&1 | tail -n 3
+echo "   ✅ Code formatted"
+echo ""
+
+# 4. Build demo app
+echo "🏗️  Step 4: Building demo app..."
+npm run build 2>&1 | tail -n 5
+echo "   ✅ Demo app built"
+echo ""
+
+# 5. Build library (if publishing to NPM)
+if [ "$PUBLISH_NPM" == "yes" ]; then
+    echo "📦 Step 5: Building library..."
+    npm run build:lib 2>&1 | tail -n 5
+    echo "   ✅ Library built"
+    echo ""
+fi
+
+# 6. Git operations
+echo "🔀 Step 6: Committing changes..."
+git add .
+git commit --no-verify -m "$COMMIT_MSG (v$VERSION)"
+echo "   ✅ Changes committed"
+echo ""
+
+# 7. Push to GitHub (triggers Firebase deployment)
+echo "🚀 Step 7: Pushing to GitHub..."
+git push origin main
+echo "   ✅ Pushed to GitHub - Firebase deployment triggered"
+echo ""
+
+# 8. Publish to NPM (if enabled)
+if [ "$PUBLISH_NPM" == "yes" ]; then
+    echo "📦 Step 8: Publishing to NPM..."
+    cd dist/osi-cards-lib
+    npm publish --access public
+    cd ../..
+    echo "   ✅ Published to NPM: osi-cards-lib@$VERSION"
+    echo "   📊 NPM: https://www.npmjs.com/package/osi-cards-lib"
+    echo ""
+fi
+
+# 9. Monitor Firebase deployment
+echo "⏳ Step 9: Monitoring Firebase deployment..."
+echo "   (Waiting 15s for workflow to start...)"
+sleep 15
+
+START_TIME=$(date +%s)
+while true; do
+    ELAPSED=$(($(date +%s) - START_TIME))
+
+    if [ $ELAPSED -gt $MAX_WAIT ]; then
+        echo "   ⏰ Timeout after ${MAX_WAIT}s"
+        echo "   Check manually: https://github.com/$REPO/actions"
+        break
+    fi
+
+    STATUS=$(gh run list --repo "$REPO" --workflow deploy.yml --limit 1 --json status -q '.[0].status' 2>/dev/null || echo "unknown")
+    CONCLUSION=$(gh run list --repo "$REPO" --workflow deploy.yml --limit 1 --json conclusion -q '.[0].conclusion' 2>/dev/null || echo "null")
+
+    echo -ne "\r   [$ELAPSED s] Status: $STATUS | Conclusion: $CONCLUSION     "
+
+    if [ "$STATUS" == "completed" ]; then
+        echo ""
+        if [ "$CONCLUSION" == "success" ]; then
+            echo "   ✅ Firebase pipeline passed!"
+            break
+        else
+            echo "   ❌ Firebase pipeline failed!"
+            echo "   View logs: https://github.com/$REPO/actions"
+            exit 1
+        fi
+    fi
+
+    sleep 10
+done
+echo ""
+
+# 10. Verify deployments
+echo "🔍 Step 10: Verifying deployments..."
+
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$SITE_URL")
+if [ "$HTTP_CODE" == "200" ]; then
+    echo "   ✅ Firebase: $SITE_URL (HTTP $HTTP_CODE)"
+else
+    echo "   ⚠️  Firebase: $SITE_URL (HTTP $HTTP_CODE) - may still be propagating"
+fi
+
+if [ "$PUBLISH_NPM" == "yes" ]; then
+    NPM_VERSION=$(npm view osi-cards-lib version 2>/dev/null)
+    if [ "$NPM_VERSION" == "$VERSION" ]; then
+        echo "   ✅ NPM: osi-cards-lib@$NPM_VERSION"
+    else
+        echo "   ⚠️  NPM: Version mismatch (expected: $VERSION, got: $NPM_VERSION)"
+    fi
+fi
+echo ""
+
+# Summary
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║                     RELEASE COMPLETE! 🎉                      ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+echo "📦 Version: $VERSION"
+echo "🌐 Demo: $SITE_URL"
+if [ "$PUBLISH_NPM" == "yes" ]; then
+    echo "📦 NPM: https://www.npmjs.com/package/osi-cards-lib"
+fi
+echo "📊 Actions: https://github.com/$REPO/actions"
+echo ""
+```
+
+### Usage:
+
+```bash
+# Make executable
+chmod +x scripts/release.sh
+
+# Patch release (Firebase + NPM)
+./scripts/release.sh patch
+
+# Minor release (Firebase + NPM)
+./scripts/release.sh minor
+
+# Major release (Firebase + NPM)
+./scripts/release.sh major
+
+# Firebase only (no NPM publish)
+./scripts/release.sh patch "feat: demo update" no
+```
+
+## 22. Post-Deployment Verification
+
+### Firebase Deployment
 
 - [ ] Check GitHub Actions completed successfully
 - [ ] Verify https://osi-card.web.app/ loads correctly
 - [ ] Test key features (card rendering, streaming, themes)
 - [ ] Check browser console for errors
 
-### Quick Verification:
-
 ```bash
 # Open site and actions in browser
 open https://osi-card.web.app/ https://github.com/Inutilepat83/OSI-Cards/actions
+```
+
+### NPM Package (if published)
+
+- [ ] Check npm registry updated: `npm view osi-cards-lib version`
+- [ ] Verify package downloads: `npm view osi-cards-lib`
+- [ ] Test installation in temp project (see §26)
+- [ ] Check bundlephobia for size: https://bundlephobia.com/package/osi-cards-lib
+
+```bash
+# Quick NPM verification
+npm view osi-cards-lib version && \
+open https://www.npmjs.com/package/osi-cards-lib https://bundlephobia.com/package/osi-cards-lib
+```
+
+### Combined Verification (Firebase + NPM)
+
+```bash
+#!/bin/bash
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║              DEPLOYMENT VERIFICATION                          ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+
+echo "🌐 Firebase Status:"
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://osi-card.web.app/)
+if [ "$HTTP_CODE" == "200" ]; then
+    echo "   ✅ https://osi-card.web.app/ → HTTP $HTTP_CODE"
+else
+    echo "   ⚠️  https://osi-card.web.app/ → HTTP $HTTP_CODE"
+fi
+echo ""
+
+echo "📦 NPM Status:"
+NPM_VERSION=$(npm view osi-cards-lib version 2>/dev/null)
+if [ -n "$NPM_VERSION" ]; then
+    echo "   ✅ osi-cards-lib@$NPM_VERSION"
+    DOWNLOADS=$(curl -s "https://api.npmjs.org/downloads/point/last-week/osi-cards-lib" | jq -r '.downloads')
+    echo "   📊 Downloads (last week): $DOWNLOADS"
+else
+    echo "   ⚠️  Package not found or npm unavailable"
+fi
+echo ""
+
+echo "🔗 Quick Links:"
+echo "   • Demo: https://osi-card.web.app/"
+echo "   • Actions: https://github.com/Inutilepat83/OSI-Cards/actions"
+echo "   • NPM: https://www.npmjs.com/package/osi-cards-lib"
 ```
 
 ---
 
 # 📦 NPM Library Management
 
-## 22. Pre-Publish Checklist
+## 23. Pre-Publish Checklist
 
 Before publishing a new version:
 
@@ -474,7 +819,7 @@ Before publishing a new version:
 npm run build:lib && npm run version:show
 ```
 
-## 23. Smart Publish Workflow
+## 24. Smart Publish Workflow
 
 The smart publish script handles everything automatically:
 
@@ -497,9 +842,11 @@ npm run publish:smart:major     # major: 1.5.2 → 2.0.0
 5. ✅ Builds the library
 6. ✅ Commits and creates git tag
 7. ✅ Publishes to npm
-8. ✅ Pushes to git remote
+8. ✅ Pushes to git remote (triggers Firebase deployment)
 
-## 24. Manual Publish (If Needed)
+**Note:** Smart publish also pushes to GitHub, which automatically triggers the Firebase deployment workflow!
+
+## 25. Manual Publish (If Needed)
 
 ```bash
 # Build library
@@ -518,7 +865,7 @@ npm publish --access public
 cd ../..
 ```
 
-## 25. NPM Package Monitoring
+## 26. NPM Package Monitoring
 
 ### Check Package Status
 
@@ -576,7 +923,7 @@ echo "   • Bundlephobia: https://bundlephobia.com/package/osi-cards-lib"
 echo "   • NPM Charts: https://npmcharts.com/compare/osi-cards-lib"
 ```
 
-## 26. Post-Publish Verification
+## 27. Post-Publish Verification
 
 After publishing, verify the package works:
 
@@ -608,7 +955,7 @@ open https://www.npmjs.com/package/osi-cards-lib
 open https://bundlephobia.com/package/osi-cards-lib
 ```
 
-## 27. Version Strategy
+## 28. Version Strategy
 
 | Change Type     | Version Bump | Example            | When to Use                       |
 | --------------- | ------------ | ------------------ | --------------------------------- |
@@ -641,7 +988,7 @@ PATCH: Bug fixes (backwards-compatible)
   - Style fixes
 ```
 
-## 28. Deprecation & Breaking Changes
+## 29. Deprecation & Breaking Changes
 
 When making breaking changes:
 
@@ -662,7 +1009,7 @@ oldMethod(): void {
 // 3. Update migration guide
 ```
 
-## 29. NPM Token Management
+## 30. NPM Token Management
 
 ### Check Token Status
 
@@ -684,7 +1031,7 @@ npm login
 npm config set //registry.npmjs.org/:_authToken YOUR_TOKEN
 ```
 
-## 30. Troubleshooting NPM Publish
+## 31. Troubleshooting NPM Publish
 
 | Issue                | Solution                                                             |
 | -------------------- | -------------------------------------------------------------------- |
@@ -792,7 +1139,9 @@ firebase login
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    OSI-CARDS DEPLOYMENT                      │
+│                 OSI-CARDS DEPLOYMENT PIPELINE                │
+├─────────────────────────────────────────────────────────────┤
+│                   FIREBASE DEPLOYMENT                        │
 ├─────────────────────────────────────────────────────────────┤
 │ VERSION:  npm run version:show                              │
 │ SYNC:     npm run version:sync                              │
@@ -803,14 +1152,22 @@ firebase login
 │ SITE:     https://osi-card.web.app/                         │
 │ ACTIONS:  https://github.com/Inutilepat83/OSI-Cards/actions │
 ├─────────────────────────────────────────────────────────────┤
-│                    NPM LIBRARY                               │
+│                    NPM PACKAGE PUBLISH                       │
 ├─────────────────────────────────────────────────────────────┤
 │ CHECK:    npm view osi-cards-lib version                    │
 │ DRY RUN:  npm run publish:smart:dry                         │
-│ PUBLISH:  npm run publish:smart                             │
+│ PUBLISH:  npm run publish:smart (also deploys Firebase!)    │
+│ MANUAL:   npm run build:lib && cd dist/osi-cards-lib && npm publish │
 │ STATS:    curl api.npmjs.org/downloads/point/last-week/osi-cards-lib │
 │ NPM:      https://www.npmjs.com/package/osi-cards-lib       │
 │ SIZE:     https://bundlephobia.com/package/osi-cards-lib    │
+├─────────────────────────────────────────────────────────────┤
+│                   COMBINED WORKFLOWS                         │
+├─────────────────────────────────────────────────────────────┤
+│ QUICK FIX:     §18 - Standard Push (no version bump)        │
+│ APP RELEASE:   §19 - Release Push (version bump)            │
+│ LIB RELEASE:   §19b - Smart Publish (Firebase + NPM)        │
+│ FULL RELEASE:  §20a - One-Liner (Push + NPM + Monitor)      │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -819,3 +1176,4 @@ firebase login
 - "Check my GitHub pipeline status" (with MCP configured)
 - "Check npm package osi-cards-lib stats"
 - "What's the latest version of osi-cards-lib on npm?"
+- "Run the full release pipeline with npm publish"

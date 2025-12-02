@@ -1,0 +1,395 @@
+// =====================================================================
+// SECTION BASE STYLES - Common Patterns for All Sections
+// =====================================================================
+// These styles define the standard structure and patterns used across
+// all section types. Import this file to get consistent styling.
+
+@use './tokens' as *;
+
+// ═══════════════════════════════════════════════════════════════════
+// SECTION CONTAINER (Standard wrapper for all sections)
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin section-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--osi-section-header-gap);
+  width: 100%;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// GRID LAYOUTS (Standardized grid patterns)
+// ═══════════════════════════════════════════════════════════════════
+
+// Small cards (analytics, metrics)
+@mixin grid-small-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--osi-grid-min-small), 1fr));
+  gap: var(--osi-grid-gap);
+
+  @include mobile {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--osi-spacing-sm);
+  }
+}
+
+// Medium cards (contacts, products)
+@mixin grid-medium-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--osi-grid-min-medium), 1fr));
+  gap: var(--osi-grid-gap);
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: var(--osi-spacing-sm);
+  }
+}
+
+// Large cards (gallery, features)
+@mixin grid-large-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--osi-grid-min-large), 1fr));
+  gap: var(--osi-grid-gap);
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Two-column layout
+@mixin grid-two-column {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--osi-grid-gap);
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Three-column layout
+@mixin grid-three-column {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--osi-grid-gap);
+
+  @include tablet {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// LIST LAYOUTS (Vertical stacking)
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin list-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--osi-item-gap);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CARD STYLES (Standard card appearance)
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin card-base {
+  background: var(--osi-surface);
+  border: 1px solid var(--osi-border-muted);
+  border-radius: var(--osi-radius-md);
+  padding: var(--osi-item-padding);
+  transition: all var(--osi-duration-normal) var(--osi-ease-out);
+}
+
+@mixin card-elevated {
+  @include card-base;
+  box-shadow: var(--osi-shadow-sm);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--osi-shadow-md);
+  }
+}
+
+@mixin card-interactive {
+  @include card-elevated;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--osi-surface-raised);
+    border-color: var(--osi-border);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: var(--osi-shadow-sm);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--osi-accent);
+    outline-offset: 2px;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ITEM STYLES (Individual items in lists/grids)
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin item-base {
+  padding: var(--osi-item-padding);
+  border-radius: var(--osi-radius-sm);
+  transition: all var(--osi-duration-normal) var(--osi-ease-out);
+}
+
+@mixin item-hoverable {
+  @include item-base;
+
+  &:hover {
+    background: var(--osi-surface-raised);
+    transform: translateX(4px);
+  }
+}
+
+@mixin item-with-border {
+  @include item-base;
+  border: 1px solid var(--osi-border-muted);
+
+  &:hover {
+    border-color: var(--osi-border);
+    background: var(--osi-surface-raised);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TYPOGRAPHY PATTERNS
+// ═══════════════════════════════════════════════════════════════════
+
+// Item title (h4-h6 level headings in items)
+@mixin item-title {
+  margin: 0;
+  font-size: var(--osi-text-base);
+  font-weight: var(--osi-font-semibold);
+  line-height: var(--osi-leading-snug);
+  color: var(--osi-foreground);
+}
+
+// Item label (small uppercase labels)
+@mixin item-label {
+  font-size: var(--osi-text-xs);
+  font-weight: var(--osi-font-medium);
+  line-height: var(--osi-leading-tight);
+  color: var(--osi-muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: var(--osi-tracking-wider);
+}
+
+// Item value (prominent values)
+@mixin item-value {
+  font-size: var(--osi-text-md);
+  font-weight: var(--osi-font-semibold);
+  line-height: var(--osi-leading-normal);
+  color: var(--osi-foreground);
+}
+
+// Item description (secondary text)
+@mixin item-description {
+  font-size: var(--osi-text-sm);
+  font-weight: var(--osi-font-normal);
+  line-height: var(--osi-leading-relaxed);
+  color: var(--osi-muted-foreground);
+}
+
+// Number display (for metrics, analytics)
+@mixin number-display {
+  font-size: var(--osi-text-2xl);
+  font-weight: var(--osi-font-bold);
+  line-height: 1;
+  letter-spacing: var(--osi-tracking-tight);
+  font-variant-numeric: tabular-nums;
+  color: var(--osi-foreground);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CONTENT STRUCTURE (Common element layouts)
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin content-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--osi-spacing-md);
+  margin-bottom: var(--osi-spacing-sm);
+}
+
+@mixin content-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--osi-element-gap);
+}
+
+@mixin content-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--osi-spacing-sm);
+  margin-top: var(--osi-spacing-sm);
+  padding-top: var(--osi-spacing-sm);
+  border-top: 1px solid var(--osi-border-muted);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// COMMON PATTERNS
+// ═══════════════════════════════════════════════════════════════════
+
+// Metadata row (icons + text)
+@mixin metadata-row {
+  display: flex;
+  align-items: center;
+  gap: var(--osi-spacing-xs);
+  font-size: var(--osi-text-sm);
+  color: var(--osi-muted-foreground);
+}
+
+// Badge container
+@mixin badge-container {
+  display: flex;
+  align-items: center;
+  gap: var(--osi-spacing-xs);
+  flex-wrap: wrap;
+}
+
+// Avatar (circular)
+@mixin avatar($size: 40px) {
+  width: $size;
+  height: $size;
+  border-radius: var(--osi-radius-full);
+  object-fit: cover;
+  background: var(--osi-surface-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc($size * 0.4);
+  font-weight: var(--osi-font-semibold);
+  color: var(--osi-foreground);
+}
+
+// Icon wrapper
+@mixin icon-wrapper($size: 24px) {
+  width: $size;
+  height: $size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--osi-muted-foreground);
+}
+
+// Divider line
+@mixin divider {
+  height: 1px;
+  background: var(--osi-border-muted);
+  margin: var(--osi-spacing-sm) 0;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ANIMATION PATTERNS
+// ═══════════════════════════════════════════════════════════════════
+
+// Fade in animation
+@mixin fade-in {
+  animation: fadeIn var(--osi-duration-medium) var(--osi-ease-out);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Slide in animation
+@mixin slide-in-right {
+  animation: slideInRight var(--osi-duration-medium) var(--osi-ease-out);
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Scale in animation
+@mixin scale-in {
+  animation: scaleIn var(--osi-duration-normal) var(--osi-ease-bounce);
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ACCESSIBILITY PATTERNS
+// ═══════════════════════════════════════════════════════════════════
+
+// Screen reader only
+@mixin sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+// Focus visible (keyboard navigation)
+@mixin focus-visible {
+  &:focus-visible {
+    outline: 2px solid var(--osi-accent);
+    outline-offset: 2px;
+    border-radius: var(--osi-radius-sm);
+  }
+}
+
+// Interactive element states
+@mixin interactive-states {
+  @include focus-visible;
+
+  &:hover {
+    @content;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover,
+    &:active {
+      transform: none;
+    }
+  }
+}
+

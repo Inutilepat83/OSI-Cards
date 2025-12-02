@@ -1,0 +1,16 @@
+<span
+  class="trend-indicator"
+  [class.trend-indicator--animated]="animated"
+  [ngClass]="['trend-indicator--' + trend, 'trend-indicator--' + size, trendClass]"
+  role="status"
+  [attr.aria-label]="computedAriaLabel">
+
+  <!-- Arrow Icon -->
+  <span class="trend-icon" aria-hidden="true">{{ arrowIcon }}</span>
+
+  <!-- Value (if provided) -->
+  <span class="trend-value" *ngIf="value !== undefined && value !== null">
+    {{ formattedValue }}
+  </span>
+</span>
+

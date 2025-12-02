@@ -1,0 +1,238 @@
+// =====================================================================
+// DESIGN SYSTEM TOKENS - Universal Variables
+// =====================================================================
+// This file defines all design tokens used across sections
+// Use these tokens instead of hardcoded values for consistency
+
+:root {
+  // ═══════════════════════════════════════════════════════════════════
+  // SPACING SCALE (4px base unit)
+  // ═══════════════════════════════════════════════════════════════════
+  --osi-spacing-xs: 4px;
+  --osi-spacing-sm: 8px;
+  --osi-spacing-md: 12px;
+  --osi-spacing-lg: 16px;
+  --osi-spacing-xl: 24px;
+  --osi-spacing-2xl: 32px;
+  --osi-spacing-3xl: 48px;
+
+  // Section-specific spacing (More compact by default)
+  --osi-section-header-gap: var(--osi-spacing-sm);   // 8px (was 12px)
+  --osi-section-padding: var(--osi-spacing-sm);      // 8px (was 12px)
+  --osi-section-gap: var(--osi-spacing-md);          // 12px (was 16px)
+  --osi-item-padding: var(--osi-spacing-sm);         // 8px (was 12px)
+  --osi-item-gap: var(--osi-spacing-xs);             // 4px (was 8px)
+  --osi-element-gap: 2px;                             // 2px (was 4px)
+
+  // ═══════════════════════════════════════════════════════════════════
+  // TYPOGRAPHY SCALE
+  // ═══════════════════════════════════════════════════════════════════
+
+  // Font Sizes (rem-based for accessibility)
+  --osi-text-xs: 0.75rem;      // 12px
+  --osi-text-sm: 0.875rem;     // 14px
+  --osi-text-base: 1rem;       // 16px
+  --osi-text-md: 1.125rem;     // 18px
+  --osi-text-lg: 1.25rem;      // 20px
+  --osi-text-xl: 1.5rem;       // 24px
+  --osi-text-2xl: 1.875rem;    // 30px
+  --osi-text-3xl: 2.25rem;     // 36px
+
+  // Font Weights
+  --osi-font-normal: 400;
+  --osi-font-medium: 500;
+  --osi-font-semibold: 600;
+  --osi-font-bold: 700;
+
+  // Line Heights
+  --osi-leading-tight: 1.25;
+  --osi-leading-snug: 1.375;
+  --osi-leading-normal: 1.5;
+  --osi-leading-relaxed: 1.625;
+  --osi-leading-loose: 2;
+
+  // Letter Spacing
+  --osi-tracking-tight: -0.025em;
+  --osi-tracking-normal: 0;
+  --osi-tracking-wide: 0.025em;
+  --osi-tracking-wider: 0.05em;
+
+  // ═══════════════════════════════════════════════════════════════════
+  // COLOR SYSTEM - Semantic Colors
+  // ═══════════════════════════════════════════════════════════════════
+
+  // Surface Colors (Layering)
+  --osi-surface: hsl(0, 0%, 10%);          // #1a1a1a
+  --osi-surface-raised: hsl(0, 0%, 15%);   // #262626
+  --osi-surface-hover: hsl(0, 0%, 20%);    // #333333
+  --osi-surface-subtle: hsl(0, 0%, 12%);   // #1f1f1f
+
+  // Text Colors
+  --osi-foreground: hsl(0, 0%, 95%);       // #f2f2f2
+  --osi-foreground-strong: hsl(0, 0%, 100%); // #ffffff
+  --osi-muted-foreground: hsl(0, 0%, 60%); // #999999
+  --osi-disabled-foreground: hsl(0, 0%, 40%); // #666666
+
+  // Brand/Accent Colors
+  --osi-accent: hsl(25, 100%, 50%);        // #ff7900
+  --osi-accent-bright: hsl(25, 100%, 60%); // #ffa347
+  --osi-accent-muted: hsl(25, 50%, 40%);   // #bf7400
+
+  // Status Colors
+  --osi-success: hsl(142, 71%, 45%);       // #22c55e
+  --osi-success-bg: hsla(142, 71%, 45%, 0.15);
+  --osi-success-bright: hsl(142, 71%, 55%);
+
+  --osi-error: hsl(0, 84%, 60%);           // #ef4444
+  --osi-error-bg: hsla(0, 84%, 60%, 0.15);
+  --osi-error-bright: hsl(0, 84%, 70%);
+
+  --osi-warning: hsl(45, 93%, 47%);        // #eab308
+  --osi-warning-bg: hsla(45, 93%, 47%, 0.15);
+  --osi-warning-bright: hsl(45, 93%, 57%);
+
+  --osi-info: hsl(221, 83%, 53%);          // #3b82f6
+  --osi-info-bg: hsla(221, 83%, 53%, 0.15);
+  --osi-info-bright: hsl(221, 83%, 63%);
+
+  // Border Colors
+  --osi-border: hsla(0, 0%, 100%, 0.2);    // rgba(255, 255, 255, 0.2)
+  --osi-border-muted: hsla(0, 0%, 100%, 0.06);
+  --osi-border-strong: hsla(0, 0%, 100%, 0.35);
+
+  // ═══════════════════════════════════════════════════════════════════
+  // BORDER RADIUS
+  // ═══════════════════════════════════════════════════════════════════
+  --osi-radius-none: 0;
+  --osi-radius-sm: 4px;
+  --osi-radius-md: 8px;
+  --osi-radius-lg: 12px;
+  --osi-radius-xl: 16px;
+  --osi-radius-full: 9999px;
+
+  // ═══════════════════════════════════════════════════════════════════
+  // SHADOWS (Elevation)
+  // ═══════════════════════════════════════════════════════════════════
+  --osi-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --osi-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --osi-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --osi-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+  --osi-shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.25);
+
+  // ═══════════════════════════════════════════════════════════════════
+  // TRANSITIONS & ANIMATIONS
+  // ═══════════════════════════════════════════════════════════════════
+
+  // Durations
+  --osi-duration-fast: 150ms;
+  --osi-duration-normal: 200ms;
+  --osi-duration-medium: 300ms;
+  --osi-duration-slow: 600ms;
+
+  // Easing Functions
+  --osi-ease-linear: linear;
+  --osi-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --osi-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --osi-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --osi-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  // ═══════════════════════════════════════════════════════════════════
+  // Z-INDEX SCALE
+  // ═══════════════════════════════════════════════════════════════════
+  --osi-z-base: 0;
+  --osi-z-raised: 10;
+  --osi-z-dropdown: 100;
+  --osi-z-sticky: 200;
+  --osi-z-fixed: 300;
+  --osi-z-modal: 400;
+  --osi-z-popover: 500;
+  --osi-z-tooltip: 600;
+
+  // ═══════════════════════════════════════════════════════════════════
+  // GRID & LAYOUT
+  // ═══════════════════════════════════════════════════════════════════
+  --osi-grid-gap: var(--osi-spacing-md);
+  --osi-grid-row-gap: var(--osi-grid-gap);
+  --osi-grid-column-gap: var(--osi-grid-gap);
+
+  // Common grid column widths
+  --osi-grid-min-small: 140px;   // Analytics cards
+  --osi-grid-min-medium: 200px;  // Contact cards
+  --osi-grid-min-large: 300px;   // Gallery items
+
+  // ═══════════════════════════════════════════════════════════════════
+  // COMPACT SIZES (for min-heights, etc.)
+  // ═══════════════════════════════════════════════════════════════════
+  --osi-card-min-height: 90px;         // Compact metric cards (was 120px)
+  --osi-card-min-height-large: 120px;  // Larger cards when needed
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// RESPONSIVE BREAKPOINTS
+// ═══════════════════════════════════════════════════════════════════
+
+$osi-breakpoint-sm: 640px;   // Small devices
+$osi-breakpoint-md: 768px;   // Medium devices
+$osi-breakpoint-lg: 1024px;  // Large devices
+$osi-breakpoint-xl: 1280px;  // Extra large devices
+
+// Responsive mixins
+@mixin mobile {
+  @media (max-width: #{$osi-breakpoint-sm - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: $osi-breakpoint-sm) and (max-width: #{$osi-breakpoint-md - 1px}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: $osi-breakpoint-md) {
+    @content;
+  }
+}
+
+@mixin large-desktop {
+  @media (min-width: $osi-breakpoint-lg) {
+    @content;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DARK MODE OVERRIDES
+// ═══════════════════════════════════════════════════════════════════
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --osi-surface: hsl(0, 0%, 8%);
+    --osi-surface-raised: hsl(0, 0%, 12%);
+    --osi-surface-hover: hsl(0, 0%, 16%);
+    --osi-border-muted: hsla(0, 0%, 100%, 0.04);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ACCESSIBILITY
+// ═══════════════════════════════════════════════════════════════════
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  :root {
+    --osi-border: hsla(0, 0%, 100%, 0.4);
+    --osi-border-strong: hsla(0, 0%, 100%, 0.6);
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --osi-duration-fast: 0ms;
+    --osi-duration-normal: 0ms;
+    --osi-duration-medium: 0ms;
+    --osi-duration-slow: 0ms;
+  }
+}
+

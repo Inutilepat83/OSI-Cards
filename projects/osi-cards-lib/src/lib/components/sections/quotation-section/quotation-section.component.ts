@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseSectionComponent } from '../base-section.component';
+import { SectionHeaderComponent, EmptyStateComponent } from '../../shared';
 
 /**
  * Quotation Section Component
@@ -11,7 +12,7 @@ import { BaseSectionComponent } from '../base-section.component';
 @Component({
   selector: 'lib-quotation-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './quotation-section.component.html',
   styleUrl: './quotation-section.scss'
 })

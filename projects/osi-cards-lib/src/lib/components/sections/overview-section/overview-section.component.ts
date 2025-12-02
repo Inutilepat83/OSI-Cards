@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseSectionComponent } from '../base-section.component';
+import { SectionHeaderComponent, EmptyStateComponent } from '../../shared';
 
 /**
  * Overview Section Component
@@ -11,7 +12,7 @@ import { BaseSectionComponent } from '../base-section.component';
 @Component({
   selector: 'lib-overview-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './overview-section.component.html',
   styleUrl: './overview-section.scss'
 })

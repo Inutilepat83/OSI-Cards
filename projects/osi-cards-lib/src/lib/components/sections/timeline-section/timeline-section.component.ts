@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseSectionComponent } from '../base-section.component';
+import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../../shared';
 
 /**
  * Timeline Section Component
@@ -11,7 +12,7 @@ import { BaseSectionComponent } from '../base-section.component';
 @Component({
   selector: 'lib-timeline-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
   templateUrl: './timeline-section.component.html',
   styleUrl: './timeline-section.scss'
 })

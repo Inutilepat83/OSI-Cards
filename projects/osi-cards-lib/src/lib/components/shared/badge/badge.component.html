@@ -1,0 +1,23 @@
+<span
+  class="badge"
+  [class.badge--outlined]="outlined"
+  [class.badge--pill]="pill"
+  [class.badge--dot]="dot"
+  [class.badge--interactive]="interactive"
+  [ngClass]="['badge--' + variant, 'badge--' + size, badgeClass]"
+  [attr.role]="interactive ? 'button' : 'status'"
+  [attr.tabindex]="interactive ? 0 : null"
+  [attr.aria-label]="ariaLabel">
+
+  <!-- Optional dot indicator -->
+  <span class="badge-dot" *ngIf="dot" aria-hidden="true"></span>
+
+  <!-- Optional icon -->
+  <span class="badge-icon" *ngIf="icon" aria-hidden="true">{{ icon }}</span>
+
+  <!-- Content -->
+  <span class="badge-content">
+    <ng-content></ng-content>
+  </span>
+</span>
+

@@ -1,9 +1,9 @@
 <div class="list-container">
   <!-- Section Header -->
-  <div class="section-header" *ngIf="section.title || section.description">
-    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
-    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
-  </div>
+  <lib-section-header
+    [title]="section.title"
+    [description]="section.description">
+  </lib-section-header>
 
   <!-- List Items -->
   <div class="section-list" *ngIf="section.items && section.items.length > 0">
@@ -17,12 +17,18 @@
         <div class="item-header">
           <h4 class="item-title">{{ item.title }}</h4>
           <div class="item-badges">
-            <span class="item-status" [ngClass]="getStatusClass(item.status)" *ngIf="item.status">
+            <lib-badge
+              *ngIf="item.status"
+              [variant]="getStatusVariant(item.status)"
+              size="sm">
               {{ item.status }}
-            </span>
-            <span class="item-priority" [ngClass]="getPriorityClass(item.priority)" *ngIf="item.priority">
+            </lib-badge>
+            <lib-badge
+              *ngIf="item.priority"
+              [variant]="getPriorityVariant(item.priority)"
+              size="sm">
               {{ item.priority }}
-            </span>
+            </lib-badge>
           </div>
         </div>
 
@@ -32,7 +38,10 @@
   </div>
 
   <!-- Empty State -->
-  <div class="list-empty" *ngIf="!section.items || section.items.length === 0">
-    <p class="empty-text">No items in list</p>
-  </div>
+  <lib-empty-state
+    *ngIf="!section.items || section.items.length === 0"
+    message="No items in list"
+    icon="📝"
+    variant="minimal">
+  </lib-empty-state>
 </div>

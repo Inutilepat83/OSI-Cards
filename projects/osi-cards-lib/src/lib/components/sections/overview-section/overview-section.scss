@@ -1,181 +1,77 @@
 // =====================================================================
-// OVERVIEW SECTION - Enhanced Executive Summary Display
+// OVERVIEW SECTION - Compact, Responsive, Consistent
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/component-mixins' as components;
-@use '../../../styles/components/sections/typography-system' as typo;
+@use '../../../styles/design-system/tokens' as *;
+@use '../../../styles/design-system/unified-sections' as unified;
 
 :host {
   display: block;
   width: 100%;
 }
 
-// =====================================================================
-// CONTAINER - Enhanced Card
-// =====================================================================
-
 .overview-container {
-  @include card-elevated;
-  padding: var(--spacing-lg);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
-  background: var(--surface);
-  border-radius: var(--radius-md);
-  transition: box-shadow 300ms var(--ease-out);
-
-  &:hover {
-    box-shadow: var(--shadow-xl);
-  }
+  gap: var(--osi-section-header-gap);
 }
-
-// =====================================================================
-// OVERVIEW HEADER - Enhanced Typography
-// =====================================================================
-
-.overview-header {
-  padding-bottom: var(--spacing-md);
-
-  .overview-title {
-    @include heading(2);
-    margin-bottom: var(--spacing-sm);
-    font-weight: var(--font-bold);
-    color: var(--foreground);
-  }
-
-  .overview-description {
-    @include body-text('large');
-    color: var(--muted-foreground);
-    line-height: var(--leading-relaxed);
-  }
-}
-
-// =====================================================================
-// OVERVIEW CONTENT
-// =====================================================================
 
 .overview-content {
+  background: var(--osi-surface);
+  border: 1px solid var(--osi-border-muted);
+  border-radius: var(--osi-radius-md);
+  padding: var(--osi-spacing-xs);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: 0;
 }
 
-// =====================================================================
-// OVERVIEW SECTION - Enhanced with Hover
-// =====================================================================
-
 .overview-section {
-  padding: var(--spacing-md);
-  border-radius: var(--radius-sm);
-  transition: all 250ms var(--ease-out);
+  padding: var(--osi-spacing-sm);
+  border-radius: var(--osi-radius-sm);
+  transition: all var(--osi-duration-normal) var(--osi-ease-out);
 
   &:not(:last-child) {
-    margin-bottom: var(--spacing-xs);
+    border-bottom: 1px solid var(--osi-border-muted);
   }
 
   &.is-highlighted {
-    padding: var(--spacing-md);
-    background: linear-gradient(135deg, var(--accent-subtle) 0%, transparent 100%);
-    border-radius: var(--radius-md);
-    border-left: 3px solid var(--accent);
+    background: var(--osi-surface-raised);
+    border-left: 3px solid var(--osi-accent);
+    padding-left: calc(var(--osi-spacing-sm) - 3px);
   }
 
   &:hover {
-    background: var(--surface-raised);
-    transform: translateX(4px);
-    box-shadow: var(--shadow-sm);
-
-    .section-icon {
-      transform: scale(1.1) rotate(5deg);
-      color: var(--accent);
-    }
-
-    .section-label {
-      color: var(--accent-bright);
-    }
+    background: var(--osi-surface-raised);
   }
 
-  .section-label-wrapper {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-sm);
-
-    .section-icon {
-      font-size: var(--text-2xl);
-      color: var(--muted-foreground);
-      transition: all 250ms var(--ease-out);
-    }
-
-    .section-label {
-      @include heading(5);
-      color: var(--accent);
-      font-weight: var(--font-semibold);
-      transition: color 200ms var(--ease-out);
-    }
-  }
-
-  .section-value {
-    @include body-text('base');
-    line-height: var(--leading-relaxed);
-    color: var(--foreground);
-    padding-left: calc(var(--text-2xl) + var(--spacing-sm));
+  @include mobile {
+    padding: var(--osi-spacing-xs);
   }
 }
 
-// =====================================================================
-// EMPTY STATE
-// =====================================================================
-
-.overview-empty {
-  @include components.empty-state-modern;
-  padding: var(--spacing-3xl);
-
-  .empty-icon {
-    font-size: 56px;
-    opacity: 0.25;
-    animation: float 3s ease-in-out infinite;
-  }
+.section-label-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--osi-spacing-xs);
+  margin-bottom: var(--osi-spacing-xs);
 }
 
-// =====================================================================
-// ANIMATIONS
-// =====================================================================
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+.section-icon {
+  font-size: var(--osi-text-base);
+  flex-shrink: 0;
 }
 
-// =====================================================================
-// RESPONSIVE
-// =====================================================================
-
-@media (max-width: 640px) {
-  .overview-container {
-    padding: var(--spacing-md);
-  }
-
-  .overview-section {
-    padding: var(--spacing-sm);
-
-    .section-value {
-      padding-left: 0;
-      margin-top: var(--spacing-xs);
-    }
-  }
+.section-label {
+  @include unified.unified-item-label;
 }
 
-@media (max-width: 480px) {
-  .overview-header {
-    .overview-title {
-      font-size: var(--text-2xl);
-    }
-  }
+.section-value {
+  @include unified.unified-item-value;
 }
 
+@include mobile {
+  .overview-content {
+    padding: 2px;
+  }
+}

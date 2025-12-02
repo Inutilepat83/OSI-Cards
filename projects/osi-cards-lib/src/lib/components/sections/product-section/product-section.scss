@@ -1,208 +1,80 @@
 // =====================================================================
-// PRODUCT SECTION - Enhanced Product Information Display
+// PRODUCT SECTION - Compact, Responsive, Consistent
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/typography-system' as typo;
-@use '../../../styles/components/sections/component-mixins' as components;
+@use '../../../styles/design-system/tokens' as *;
+@use '../../../styles/design-system/unified-sections' as unified;
 
 :host {
   display: block;
   width: 100%;
 }
 
-// =====================================================================
-// CONTAINER
-// =====================================================================
-
 .product-container {
   display: flex;
   flex-direction: column;
-  gap: var(--section-header-gap);
+  gap: var(--osi-section-header-gap);
 }
-
-// =====================================================================
-// SECTION HEADER
-// =====================================================================
-
-.section-header {
-  .section-title {
-    @include heading(3);
-    margin-bottom: var(--spacing-xs);
-  }
-
-  .section-description {
-    @include body-text('base');
-    color: var(--muted-foreground);
-    line-height: var(--leading-relaxed);
-  }
-}
-
-// =====================================================================
-// PRODUCT INFO - Enhanced Card
-// =====================================================================
 
 .product-info {
-  @include card;
-  padding: var(--spacing-md);
+  background: var(--osi-surface);
+  border: 1px solid var(--osi-border-muted);
+  border-radius: var(--osi-radius-md);
+  padding: var(--osi-spacing-xs);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
-  background: var(--surface);
-  border-radius: var(--radius-md);
-  transition: box-shadow 300ms var(--ease-out);
-
-  &:hover {
-    box-shadow: var(--shadow-lg);
-  }
+  gap: 0;
 }
-
-// =====================================================================
-// PRODUCT FIELD - Enhanced with Hover
-// =====================================================================
 
 .product-field {
-  padding: var(--spacing-sm);
-  border-radius: var(--radius-sm);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  transition: all 250ms var(--ease-out);
+  padding: var(--osi-spacing-sm);
+  border-radius: var(--osi-radius-sm);
+  transition: all var(--osi-duration-normal) var(--osi-ease-out);
 
   &:not(:last-child) {
-    margin-bottom: var(--spacing-xs);
+    border-bottom: 1px solid var(--osi-border-muted);
   }
 
   &:hover {
-    background: var(--surface-hover);
-    transform: translateX(4px);
+    background: var(--osi-surface-raised);
+  }
 
-    .field-icon {
-      transform: scale(1.1);
-      color: var(--accent);
-    }
-
-    .field-price {
-      transform: scale(1.05);
-    }
+  @include mobile {
+    padding: var(--osi-spacing-xs);
   }
 }
-
-// =====================================================================
-// FIELD HEADER - Enhanced Layout
-// =====================================================================
 
 .field-header {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-
-  .field-icon {
-    font-size: var(--text-xl);
-    flex-shrink: 0;
-    color: var(--muted-foreground);
-    transition: all 250ms var(--ease-out);
-  }
-
-  .field-label {
-    @include typo.label-base;
-    flex: 1;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--muted-foreground);
-    font-weight: var(--font-semibold);
-  }
-
-  .field-status {
-    @include components.badge-modern('default');
-    font-size: 0.6rem;
-    flex-shrink: 0;
-
-    &.product-status--available {
-      @include components.badge-modern('success');
-    }
-
-    &.product-status--coming-soon {
-      @include components.badge-modern('primary');
-    }
-
-    &.product-status--out-of-stock {
-      @include components.badge-modern('warning');
-    }
-
-    &.product-status--deprecated {
-      @include components.badge-modern('error');
-    }
-  }
+  gap: var(--osi-spacing-xs);
+  margin-bottom: var(--osi-spacing-xs);
+  flex-wrap: wrap;
 }
 
-// =====================================================================
-// FIELD VALUE & PRICE
-// =====================================================================
+.field-icon {
+  font-size: var(--osi-text-base);
+  flex-shrink: 0;
+}
+
+.field-label {
+  @include unified.unified-item-label;
+  flex: 1;
+}
 
 .field-value {
-  @include body-text('base');
-  color: var(--foreground);
-  line-height: var(--leading-relaxed);
-  padding-left: calc(var(--text-xl) + var(--spacing-sm));
+  @include unified.unified-item-value;
+  margin-bottom: var(--osi-spacing-xs);
 }
 
 .field-price {
-  @include typo.number-display-small;
-  color: var(--accent);
-  margin-top: var(--spacing-xs);
-  font-size: var(--text-xl);
-  font-weight: var(--font-bold);
-  padding-left: calc(var(--text-xl) + var(--spacing-sm));
-  transition: all 200ms var(--ease-out);
+  @include unified.unified-number-display;
+  font-size: var(--osi-text-lg);
+  color: var(--osi-accent);
 }
 
-// =====================================================================
-// EMPTY STATE
-// =====================================================================
-
-.product-empty {
-  @include components.empty-state-modern;
-  padding: var(--spacing-3xl);
-
-  .empty-icon {
-    font-size: 56px;
-    opacity: 0.25;
-    animation: float 3s ease-in-out infinite;
-  }
-}
-
-// =====================================================================
-// ANIMATIONS
-// =====================================================================
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-// =====================================================================
-// RESPONSIVE
-// =====================================================================
-
-@media (max-width: 640px) {
+@include mobile {
   .product-info {
-    padding: var(--spacing-sm);
-    gap: var(--spacing-sm);
-  }
-
-  .product-field {
-    padding: var(--spacing-xs);
-  }
-
-  .field-value, .field-price {
-    padding-left: 0;
-    margin-top: var(--spacing-xs);
+    padding: 2px;
   }
 }
-

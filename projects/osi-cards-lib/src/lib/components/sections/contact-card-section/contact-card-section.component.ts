@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { BadgeComponent, EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent } from '../base-section.component';
 
 /**
@@ -11,7 +12,7 @@ import { BaseSectionComponent } from '../base-section.component';
 @Component({
   selector: 'lib-contact-card-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
   templateUrl: './contact-card-section.component.html',
   styleUrl: './contact-card-section.scss',
 })

@@ -1,9 +1,9 @@
 <div class="social-media-container">
   <!-- Section Header -->
-  <div class="section-header" *ngIf="section.title || section.description">
-    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
-    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
-  </div>
+  <lib-section-header
+    [title]="section.title"
+    [description]="section.description">
+  </lib-section-header>
 
   <!-- Social Links -->
   <div class="social-grid" *ngIf="section.fields && section.fields.length > 0">
@@ -19,7 +19,13 @@
       <div class="social-info">
         <div class="social-header">
           <span class="social-platform">{{ social.platform }}</span>
-          <span class="verified-badge" *ngIf="social.verified">✓</span>
+          <lib-badge
+            *ngIf="social.verified"
+            variant="primary"
+            size="sm"
+            icon="✓">
+            Verified
+          </lib-badge>
         </div>
 
         <span class="social-handle" *ngIf="social.handle">{{ social.handle }}</span>
@@ -39,7 +45,10 @@
   </div>
 
   <!-- Empty State -->
-  <div class="social-empty" *ngIf="!section.fields || section.fields.length === 0">
-    <p class="empty-text">No social media links</p>
-  </div>
+  <lib-empty-state
+    *ngIf="!section.fields || section.fields.length === 0"
+    message="No social media links"
+    icon="📱"
+    variant="minimal">
+  </lib-empty-state>
 </div>

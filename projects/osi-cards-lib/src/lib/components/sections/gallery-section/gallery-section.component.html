@@ -1,9 +1,9 @@
 <div class="gallery-container">
   <!-- Section Header -->
-  <div class="section-header" *ngIf="section.title || section.description">
-    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
-    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
-  </div>
+  <lib-section-header
+    [title]="section.title"
+    [description]="section.description">
+  </lib-section-header>
 
   <!-- Gallery Grid -->
   <div class="gallery-grid" *ngIf="section.items && section.items.length > 0">
@@ -28,8 +28,10 @@
   </div>
 
   <!-- Empty State -->
-  <div class="gallery-empty" *ngIf="!section.items || section.items.length === 0">
-    <div class="empty-icon">🖼️</div>
-    <p class="empty-text">No images in gallery</p>
-  </div>
+  <lib-empty-state
+    *ngIf="!section.fields && !section.items || (section.fields?.length === 0 && section.items?.length === 0)"
+    message="No images in gallery"
+    icon="🖼️"
+    variant="minimal">
+  </lib-empty-state>
 </div>

@@ -198,6 +198,11 @@ export * from './lib/components/card-preview/card-preview.component';
 export * from './lib/components/osi-cards-container';
 
 // ═══════════════════════════════════════════════════════════════════════════
+// SHARED COMPONENTS (Reusable components for sections)
+// ═══════════════════════════════════════════════════════════════════════════
+export * from './lib/components/shared';
+
+// ═══════════════════════════════════════════════════════════════════════════
 // COMPOSABLE COMPONENTS
 // ═══════════════════════════════════════════════════════════════════════════
 export * from './lib/components/card-header/card-header.component';

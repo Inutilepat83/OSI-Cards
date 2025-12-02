@@ -1,9 +1,9 @@
 <div class="overview-container">
   <!-- Section Header -->
-  <div class="overview-header" *ngIf="section.title || section.description">
-    <h3 class="overview-title" *ngIf="section.title">{{ section.title }}</h3>
-    <p class="overview-description" *ngIf="section.description">{{ section.description }}</p>
-  </div>
+  <lib-section-header
+    [title]="section.title"
+    [description]="section.description">
+  </lib-section-header>
 
   <!-- Overview Content -->
   <div class="overview-content" *ngIf="section.fields && section.fields.length > 0">
@@ -21,8 +21,10 @@
   </div>
 
   <!-- Empty State -->
-  <div class="overview-empty" *ngIf="!section.fields || section.fields.length === 0">
-    <div class="empty-icon">📊</div>
-    <p class="empty-text">No overview data available</p>
-  </div>
+  <lib-empty-state
+    *ngIf="!section.fields || section.fields.length === 0"
+    message="No overview data available"
+    icon="📊"
+    variant="minimal">
+  </lib-empty-state>
 </div>

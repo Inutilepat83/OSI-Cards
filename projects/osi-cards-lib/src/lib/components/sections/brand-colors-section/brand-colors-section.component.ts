@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent } from '../base-section.component';
 
 /**
@@ -11,7 +12,7 @@ import { BaseSectionComponent } from '../base-section.component';
 @Component({
   selector: 'lib-brand-colors-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './brand-colors-section.component.html',
   styleUrl: './brand-colors-section.scss',
 })

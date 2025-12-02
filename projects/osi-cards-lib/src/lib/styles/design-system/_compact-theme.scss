@@ -1,0 +1,160 @@
+// =====================================================================
+// COMPACT THEME - Tighter Spacing for Dense Information Display
+// =====================================================================
+
+@use './tokens' as *;
+
+// ═══════════════════════════════════════════════════════════════════
+// COMPACT SPACING TOKENS
+// ═══════════════════════════════════════════════════════════════════
+
+:root {
+  // Compact spacing scale (reduce by ~33%)
+  --osi-spacing-compact-xs: 2px;
+  --osi-spacing-compact-sm: 6px;
+  --osi-spacing-compact-md: 8px;
+  --osi-spacing-compact-lg: 10px;
+  --osi-spacing-compact-xl: 16px;
+
+  // Compact section-specific
+  --osi-section-header-gap-compact: var(--osi-spacing-compact-sm);
+  --osi-section-padding-compact: var(--osi-spacing-compact-md);
+  --osi-item-padding-compact: var(--osi-spacing-compact-md);
+  --osi-item-gap-compact: var(--osi-spacing-compact-sm);
+  --osi-element-gap-compact: var(--osi-spacing-compact-xs);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// COMPACT TYPOGRAPHY (Slightly smaller, tighter)
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin compact-section-title {
+  font-size: var(--osi-text-base);      // 16px (was 18px)
+  font-weight: var(--osi-font-bold);
+  line-height: var(--osi-leading-tight);
+  margin: 0;
+}
+
+@mixin compact-section-description {
+  font-size: var(--osi-text-sm);        // 14px
+  font-weight: var(--osi-font-normal);
+  line-height: var(--osi-leading-snug);
+  margin: 0;
+}
+
+@mixin compact-item-title {
+  font-size: var(--osi-text-sm);        // 14px (was 16px)
+  font-weight: var(--osi-font-semibold);
+  line-height: var(--osi-leading-snug);
+  margin: 0;
+}
+
+@mixin compact-item-label {
+  font-size: 0.7rem;                     // 11.2px (was 12px)
+  font-weight: var(--osi-font-medium);
+  line-height: var(--osi-leading-tight);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+@mixin compact-item-value {
+  font-size: var(--osi-text-sm);        // 14px (was 16px)
+  font-weight: var(--osi-font-semibold);
+  line-height: var(--osi-leading-normal);
+}
+
+@mixin compact-number-display {
+  font-size: var(--osi-text-xl);        // 24px (was 30px)
+  font-weight: var(--osi-font-bold);
+  line-height: 1;
+  letter-spacing: var(--osi-tracking-tight);
+  font-variant-numeric: tabular-nums;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// COMPACT CARD & ITEM MIXINS
+// ═══════════════════════════════════════════════════════════════════
+
+@mixin compact-card {
+  padding: var(--osi-spacing-compact-md);
+  border-radius: var(--osi-radius-sm);
+  gap: var(--osi-spacing-compact-sm);
+  min-height: auto;  // Remove fixed heights
+}
+
+@mixin compact-item {
+  padding: var(--osi-spacing-compact-md);
+  gap: var(--osi-spacing-compact-sm);
+}
+
+@mixin compact-grid {
+  gap: var(--osi-spacing-compact-md);
+}
+
+@mixin compact-list {
+  gap: var(--osi-spacing-compact-sm);
+  padding: var(--osi-spacing-compact-sm);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// APPLY COMPACT THEME
+// ═══════════════════════════════════════════════════════════════════
+
+// Apply to host element with [data-compact] attribute
+:host-context([data-compact]),
+:host([data-compact]) {
+  // Override spacing tokens
+  --osi-section-header-gap: var(--osi-section-header-gap-compact);
+  --osi-section-padding: var(--osi-section-padding-compact);
+  --osi-item-padding: var(--osi-item-padding-compact);
+  --osi-item-gap: var(--osi-item-gap-compact);
+  --osi-element-gap: var(--osi-element-gap-compact);
+
+  // Reduce min-heights
+  .metric-card,
+  .contact-card,
+  .solution-card {
+    min-height: auto;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// COMPACT MODIFIER CLASS
+// ═══════════════════════════════════════════════════════════════════
+
+.section-compact {
+  // Section-level compact mode
+  --osi-section-header-gap: var(--osi-section-header-gap-compact);
+  --osi-section-padding: var(--osi-section-padding-compact);
+  --osi-item-padding: var(--osi-item-padding-compact);
+  --osi-item-gap: var(--osi-item-gap-compact);
+
+  // Typography adjustments
+  .section-title,
+  h3 {
+    font-size: var(--osi-text-base);
+    margin-bottom: var(--osi-spacing-compact-xs);
+  }
+
+  .section-description {
+    font-size: var(--osi-text-sm);
+    line-height: var(--osi-leading-snug);
+  }
+
+  // Card/item adjustments
+  .metric-card,
+  .contact-card,
+  .list-item,
+  .info-item {
+    padding: var(--osi-spacing-compact-md);
+    min-height: auto;
+  }
+
+  // Grid adjustments
+  .analytics-grid,
+  .contacts-grid,
+  .news-grid {
+    gap: var(--osi-spacing-compact-md);
+  }
+}
+

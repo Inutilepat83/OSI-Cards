@@ -1,9 +1,9 @@
 <div class="events-container">
   <!-- Section Header -->
-  <div class="section-header" *ngIf="section.title || section.description">
-    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
-    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
-  </div>
+  <lib-section-header
+    [title]="section.title"
+    [description]="section.description">
+  </lib-section-header>
 
   <!-- Events List -->
   <div class="events-list" *ngIf="section.fields && section.fields.length > 0">
@@ -21,9 +21,12 @@
       <div class="event-content">
         <div class="event-header">
           <h4 class="event-title">{{ event.label || event.value }}</h4>
-          <span class="event-status" [ngClass]="getStatusClass(event.status)" *ngIf="event.status">
+          <lib-badge
+            *ngIf="event.status"
+            [variant]="getStatusVariant(event.status)"
+            size="sm">
             {{ event.status }}
-          </span>
+          </lib-badge>
         </div>
 
         <div class="event-details">
@@ -38,7 +41,10 @@
   </div>
 
   <!-- Empty State -->
-  <div class="events-empty" *ngIf="!section.fields || section.fields.length === 0">
-    <p class="empty-text">No events scheduled</p>
-  </div>
+  <lib-empty-state
+    *ngIf="!section.fields || section.fields.length === 0"
+    message="No events scheduled"
+    icon="📅"
+    variant="minimal">
+  </lib-empty-state>
 </div>

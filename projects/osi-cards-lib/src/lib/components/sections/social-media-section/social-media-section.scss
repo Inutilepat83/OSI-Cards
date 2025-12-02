@@ -1,276 +1,120 @@
 // =====================================================================
-// SOCIAL MEDIA SECTION - Enhanced Social Profile Display
+// SOCIAL MEDIA SECTION - Compact, Responsive, Consistent
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/typography-system' as typo;
-@use '../../../styles/components/sections/modern-effects' as effects;
-@use '../../../styles/components/sections/component-mixins' as components;
+@use '../../../styles/design-system/tokens' as *;
+@use '../../../styles/design-system/unified-sections' as unified;
 
 :host {
   display: block;
   width: 100%;
 }
 
-// =====================================================================
-// CONTAINER
-// =====================================================================
-
 .social-media-container {
   display: flex;
   flex-direction: column;
-  gap: var(--section-header-gap);
+  gap: var(--osi-section-header-gap);
 }
-
-// =====================================================================
-// SECTION HEADER
-// =====================================================================
-
-.section-header {
-  .section-title {
-    @include heading(3);
-    margin-bottom: var(--spacing-xs);
-  }
-
-  .section-description {
-    @include body-text('base');
-    color: var(--muted-foreground);
-    line-height: var(--leading-relaxed);
-  }
-}
-
-// =====================================================================
-// SOCIAL GRID - Enhanced Layout
-// =====================================================================
 
 .social-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
-  gap: var(--spacing-md);
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--osi-spacing-sm);
 
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
+  @include mobile {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--osi-spacing-xs);
   }
 }
-
-// =====================================================================
-// SOCIAL CARD - Enhanced with Better Interactions
-// =====================================================================
 
 .social-card {
-  @include card-elevated;
-  padding: var(--spacing-md);
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  background: var(--surface);
-  border-radius: var(--radius-md);
-  transition: all 300ms var(--ease-out);
-  position: relative;
-  overflow: hidden;
-
-  // Accent border on hover
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border: 2px solid var(--accent);
-    border-radius: var(--radius-md);
-    opacity: 0;
-    transition: opacity 300ms var(--ease-out);
-  }
-
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-lg);
-
-    &::before {
-      opacity: 1;
-    }
-
-    .social-icon {
-      transform: scale(1.05) rotate(5deg);
-      box-shadow: var(--shadow-md);
-    }
-
-    .social-platform {
-      color: var(--accent);
-    }
-
-    .stat-value {
-      transform: scale(1.05);
-      color: var(--accent);
-    }
-  }
-
-  &:focus-visible {
-    outline: 3px solid var(--accent);
-    outline-offset: 2px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    &:hover {
-      transform: none;
-    }
-  }
-}
-
-// =====================================================================
-// SOCIAL ICON - Enhanced Avatar Style
-// =====================================================================
-
-.social-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-md);
-  font-size: var(--text-2xl);
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-bright) 100%);
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: var(--font-bold);
-  transition: all 300ms var(--ease-out);
-  box-shadow: var(--shadow-sm);
-}
-
-// =====================================================================
-// SOCIAL INFO - Enhanced Layout
-// =====================================================================
-
-.social-info {
-  flex: 1;
+  background: var(--osi-surface);
+  border: 1px solid var(--osi-border-muted);
+  border-radius: var(--osi-radius-sm);
+  padding: var(--osi-spacing-sm);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
-  min-width: 0;
+  align-items: center;
+  gap: var(--osi-spacing-xs);
+  text-decoration: none;
+  color: inherit;
+  transition: all var(--osi-duration-medium) var(--osi-ease-out);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--osi-shadow-md);
+    background: var(--osi-surface-raised);
+    border-color: var(--osi-accent);
+  }
+
+  @include mobile {
+    padding: var(--osi-spacing-xs);
+  }
+}
+
+.social-icon {
+  font-size: var(--osi-text-2xl);
+  line-height: 1;
+}
+
+.social-info {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--osi-spacing-xs);
+  text-align: center;
 }
 
 .social-header {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  justify-content: center;
+  gap: var(--osi-spacing-xs);
+}
 
-  .social-platform {
-    @include heading(6);
-    text-transform: capitalize;
-    transition: color 200ms var(--ease-out);
-    font-weight: var(--font-bold);
-  }
-
-  .verified-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-    background: var(--accent);
-    color: white;
-    border-radius: var(--radius-full);
-    font-size: 10px;
-    font-weight: var(--font-bold);
-    flex-shrink: 0;
-
-    &::before {
-      content: '✓';
-      font-weight: var(--font-bold);
-    }
-  }
+.social-platform {
+  @include unified.unified-item-title;
 }
 
 .social-handle {
-  @include typo.caption;
-  color: var(--muted-foreground);
-  font-size: 0.75rem;
+  @include unified.unified-item-label;
+  text-transform: none;
 }
-
-// =====================================================================
-// SOCIAL STATS - Enhanced Number Display
-// =====================================================================
 
 .social-stats {
   display: flex;
-  gap: var(--spacing-lg);
-  margin-top: var(--spacing-sm);
-  padding-top: var(--spacing-sm);
-  border-top: 1px solid var(--border-light);
+  justify-content: center;
+  gap: var(--osi-spacing-md);
+  margin-top: var(--osi-spacing-xs);
 
-  .stat-item {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-
-    .stat-value {
-      @include typo.number-display-small;
-      font-size: var(--text-lg);
-      font-weight: var(--font-bold);
-      color: var(--foreground);
-      font-variant-numeric: tabular-nums;
-      transition: all 200ms var(--ease-out);
-    }
-
-    .stat-label {
-      @include typo.caption;
-      color: var(--muted-foreground);
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+  @include mobile {
+    gap: var(--osi-spacing-sm);
   }
 }
 
-// =====================================================================
-// EMPTY STATE
-// =====================================================================
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 
-.social-empty {
-  @include components.empty-state-modern;
-  padding: var(--spacing-3xl);
+.stat-value {
+  @include unified.unified-item-value;
+  font-size: var(--osi-text-base);
+}
 
-  .empty-icon {
-    font-size: 56px;
-    opacity: 0.25;
-    animation: float 3s ease-in-out infinite;
+.stat-label {
+  @include unified.unified-item-label;
+}
+
+@include mobile {
+  .social-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-// =====================================================================
-// ANIMATIONS
-// =====================================================================
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    transform: translateY(-10px) scale(1.05);
-  }
-}
-
-// =====================================================================
-// RESPONSIVE DESIGN
-// =====================================================================
-
-@media (max-width: 480px) {
+@media (max-width: 400px) {
   .social-grid {
     grid-template-columns: 1fr;
   }
-
-  .social-card {
-    padding: var(--spacing-sm);
-  }
-
-  .social-icon {
-    width: 48px;
-    height: 48px;
-    font-size: var(--text-xl);
-  }
-
-  .social-stats {
-    gap: var(--spacing-md);
-  }
 }
-

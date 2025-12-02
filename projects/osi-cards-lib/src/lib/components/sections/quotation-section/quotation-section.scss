@@ -1,12 +1,9 @@
 // =====================================================================
-// QUOTATION SECTION - Enhanced Testimonials & Quotes Display
+// QUOTATION SECTION - Compact, Responsive, Consistent
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/typography-system' as typo;
-@use '../../../styles/components/sections/modern-effects' as effects;
-@use '../../../styles/components/sections/component-mixins' as components;
-
+@use '../../../styles/design-system/tokens' as *;
+@use '../../../styles/design-system/unified-sections' as unified;
 
 :host {
   display: block;
@@ -16,206 +13,89 @@
 .quotation-container {
   display: flex;
   flex-direction: column;
-  gap: var(--section-header-gap);
+  gap: var(--osi-section-header-gap);
 }
-
-.section-header {
-  .section-title {
-    @include heading(3);
-    margin-bottom: var(--spacing-xs);
-  }
-
-  .section-description {
-    @include body-text('base');
-    color: var(--muted-foreground);
-  }
-}
-
-// =====================================================================
-// QUOTES GRID - Enhanced Layout
-// =====================================================================
 
 .quotes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
-  gap: var(--spacing-lg);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--osi-spacing-sm);
 
-  @media (max-width: 640px) {
+  @include mobile {
     grid-template-columns: 1fr;
-    gap: var(--spacing-md);
+    gap: var(--osi-spacing-xs);
   }
 }
-
-// =====================================================================
-// QUOTE CARD - Enhanced with Modern Effects
-// =====================================================================
 
 .quote-card {
-  @include card-elevated;
-  position: relative;
-  margin: 0;
-  padding: var(--spacing-md);
-  background: var(--surface);
-  border-radius: var(--radius-md);
-  transition: all 300ms var(--ease-out);
-  overflow: hidden;
-
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
-
-    .quote-icon {
-      opacity: 0.15;
-      transform: scale(1.05) rotate(-5deg);
-    }
-
-    .author-name {
-      color: var(--accent);
-    }
-  }
-}
-
-// =====================================================================
-// QUOTE ICON - Enhanced
-// =====================================================================
-
-.quote-icon {
-  position: absolute;
-  top: var(--spacing-sm);
-  left: var(--spacing-sm);
-  font-size: 64px;
-  line-height: 1;
-  color: var(--accent);
-  opacity: 0.08;
-  font-family: Georgia, serif;
-  transition: all 300ms var(--ease-out);
-
-  &::before {
-    content: '"';
-  }
-}
-
-// =====================================================================
-// QUOTE TEXT - Enhanced Typography
-// =====================================================================
-
-.quote-text {
-  @include body-text('large');
-  font-style: italic;
-  line-height: var(--leading-relaxed);
-  color: var(--foreground);
-  margin: 0 0 var(--spacing-md);
-  position: relative;
-  z-index: 1;
-  font-weight: var(--font-medium);
-  padding-left: var(--spacing-md);
-}
-
-// =====================================================================
-// QUOTE FOOTER - Enhanced Layout
-// =====================================================================
-
-.quote-footer {
+  background: var(--osi-surface);
+  border: 1px solid var(--osi-border-muted);
+  border-left: 3px solid var(--osi-accent);
+  border-radius: var(--osi-radius-sm);
+  padding: var(--osi-spacing-sm);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
-  border-top: 1px solid var(--border-light);
-  padding-top: var(--spacing-sm);
-  position: relative;
-  z-index: 1;
+  gap: var(--osi-spacing-xs);
+  transition: all var(--osi-duration-medium) var(--osi-ease-out);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--osi-shadow-md);
+    background: var(--osi-surface-raised);
+  }
+
+  @include mobile {
+    padding: var(--osi-spacing-xs);
+  }
 }
 
-// =====================================================================
-// AUTHOR INFO - Enhanced
-// =====================================================================
+.quote-icon {
+  font-size: var(--osi-text-2xl);
+  line-height: 1;
+  color: var(--osi-accent);
+  opacity: 0.3;
+}
+
+.quote-text {
+  @include unified.unified-item-value;
+  font-style: italic;
+  margin: 0;
+  line-height: var(--osi-leading-relaxed);
+}
+
+.quote-footer {
+  margin-top: var(--osi-spacing-xs);
+  padding-top: var(--osi-spacing-xs);
+  border-top: 1px solid var(--osi-border-muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--osi-spacing-sm);
+
+  @include mobile {
+    flex-direction: column;
+    gap: var(--osi-spacing-xs);
+  }
+}
 
 .author-info {
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
 
-  .author-name {
-    @include heading(6);
-    font-style: normal;
-    color: var(--foreground);
-    font-weight: var(--font-semibold);
-    transition: color 200ms var(--ease-out);
-  }
+.author-name {
+  @include unified.unified-item-title;
+  font-style: normal;
+}
 
-  .author-role {
-    @include typo.caption;
-    color: var(--muted-foreground);
-    font-size: 0.7rem;
-  }
-
-  .author-company {
-    @include typo.caption-bold;
-    color: var(--accent);
-    font-size: 0.75rem;
-    margin-top: var(--spacing-xs);
-  }
+.author-role,
+.author-company {
+  @include unified.unified-item-description;
+  font-size: 0.7rem;
 }
 
 .quote-date {
-  @include typo.caption;
-  opacity: 0.6;
-  font-size: 0.65rem;
-  margin-top: var(--spacing-xs);
+  @include unified.unified-item-label;
+  text-transform: none;
 }
-
-// =====================================================================
-// EMPTY STATE
-// =====================================================================
-
-.quotation-empty {
-  @include components.empty-state-modern;
-  padding: var(--spacing-3xl);
-
-  .empty-icon {
-    font-size: 56px;
-    opacity: 0.25;
-    animation: float 3s ease-in-out infinite;
-  }
-}
-
-// =====================================================================
-// ANIMATIONS
-// =====================================================================
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-10px) rotate(2deg);
-  }
-}
-
-// =====================================================================
-// RESPONSIVE
-// =====================================================================
-
-@media (max-width: 640px) {
-  .quotes-grid {
-    gap: var(--spacing-md);
-  }
-}
-
-@media (max-width: 480px) {
-  .quotes-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .quote-card {
-    padding: var(--spacing-sm);
-  }
-
-  .quote-icon {
-    font-size: 48px;
-  }
-
-  .quote-text {
-    padding-left: var(--spacing-sm);
-  }
-}
-

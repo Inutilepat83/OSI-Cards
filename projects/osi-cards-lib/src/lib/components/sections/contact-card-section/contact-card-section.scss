@@ -1,102 +1,87 @@
 // =====================================================================
-// CONTACT CARD SECTION - Enhanced Team Member Display
+// CONTACT CARD SECTION - Compact, Responsive, Consistent
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/typography-system' as typo;
-@use '../../../styles/components/sections/modern-effects' as effects;
-@use '../../../styles/components/sections/component-mixins' as components;
+@use '../../../styles/design-system/tokens' as *;
+@use '../../../styles/design-system/unified-sections' as unified;
 
 :host {
   display: block;
   width: 100%;
 }
 
-// =====================================================================
-// SECTION CONTAINER
-// =====================================================================
+// ═══════════════════════════════════════════════════════════════════
+// CONTAINER
+// ═══════════════════════════════════════════════════════════════════
 
 .contacts-container {
   display: flex;
   flex-direction: column;
-  gap: var(--section-header-gap);
+  gap: var(--osi-section-header-gap);
 }
 
-.section-header {
-  .section-title {
-    @include heading(3);
-    margin-bottom: var(--spacing-xs);
-  }
-
-  .section-description {
-    @include body-text('base');
-    color: var(--muted-foreground);
-    line-height: var(--leading-relaxed);
-  }
-}
-
-// =====================================================================
-// CONTACTS GRID - Enhanced Layout
-// =====================================================================
+// ═══════════════════════════════════════════════════════════════════
+// CONTACTS GRID - Compact & Responsive
+// ═══════════════════════════════════════════════════════════════════
 
 .contacts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
-  gap: var(--spacing-lg);
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--osi-spacing-sm);
 
-  @media (max-width: 640px) {
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 180px), 1fr));
-    gap: var(--spacing-md);
+  @include mobile {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--osi-spacing-xs);
   }
 }
 
-// =====================================================================
-// CONTACT CARD - Enhanced with Modern Effects
-// =====================================================================
+// ═══════════════════════════════════════════════════════════════════
+// CONTACT CARD - Compact
+// ═══════════════════════════════════════════════════════════════════
 
 .contact-card {
-  @include card-elevated;
-  position: relative;
+  background: var(--osi-surface);
+  border: 1px solid var(--osi-border-muted);
+  border-radius: var(--osi-radius-sm);
+  padding: var(--osi-spacing-sm);
   text-align: center;
-  padding: var(--spacing-md) var(--spacing-sm) var(--spacing-lg);
-  background: var(--surface);
-  border-radius: var(--radius-md);
-  transition: all 300ms var(--ease-out);
-  overflow: hidden;
+  transition: all var(--osi-duration-medium) var(--osi-ease-out);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--osi-spacing-xs);
 
-  // Minimalist hover
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    box-shadow: var(--osi-shadow-md);
+    background: var(--osi-surface-raised);
 
     .contact-avatar {
       transform: scale(1.05);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     }
 
     .contact-name {
-      color: var(--accent);
+      color: var(--osi-accent);
     }
+  }
 
-    .contact-link {
-      transform: scale(1.15);
-    }
+  @include mobile {
+    padding: var(--osi-spacing-xs);
   }
 }
 
-// =====================================================================
-// AVATAR - Enhanced with Better Styling
-// =====================================================================
+// ═══════════════════════════════════════════════════════════════════
+// AVATAR - Compact
+// ═══════════════════════════════════════════════════════════════════
 
 .contact-avatar {
-  width: 72px;
-  height: 72px;
-  border-radius: var(--radius-md);
-  margin: 0 auto var(--spacing-sm);
-  border: 3px solid var(--accent-subtle);
+  width: 48px;                              // Compact (was 72px)
+  height: 48px;
+  border-radius: var(--osi-radius-md);
+  border: 2px solid var(--osi-border);    // Thinner border
   overflow: hidden;
-  transition: all 300ms var(--ease-out);
-  box-shadow: var(--shadow-sm);
+  transition: all var(--osi-duration-medium) var(--osi-ease-out);
+  flex-shrink: 0;
 
   img {
     width: 100%;
@@ -104,164 +89,102 @@
     object-fit: cover;
   }
 
-  .avatar-initials {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    font-size: var(--text-xl);
-    font-weight: var(--font-bold);
-    color: white;
-    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-bright) 100%);
+  @include mobile {
+    width: 40px;                          // Even smaller on mobile
+    height: 40px;
   }
 }
 
-// =====================================================================
-// CONTACT INFO - Enhanced
-// =====================================================================
+.avatar-initials {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--osi-surface-hover);
+  font-size: 0.9rem;                      // Compact
+  font-weight: var(--osi-font-semibold);
+  color: var(--osi-foreground);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CONTACT INFO - Unified Typography
+// ═══════════════════════════════════════════════════════════════════
 
 .contact-info {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  gap: var(--osi-spacing-xs);
   align-items: center;
 }
 
 .contact-name {
-  @include heading(5);
-  margin-bottom: 0;
-  font-weight: var(--font-bold);
-  transition: color 200ms var(--ease-out);
+  @include unified.unified-item-title;   // Consistent style
+  text-align: center;
+  transition: color var(--osi-duration-normal) var(--osi-ease-out);
 }
 
 .contact-role {
-  @include typo.caption;
-  color: var(--muted-foreground);
-  font-size: 0.75rem;
-  line-height: var(--leading-tight);
+  @include unified.unified-item-description;  // Consistent style
+  text-align: center;
+  margin: 0;
 }
 
-.contact-department {
-  @include components.badge-modern('primary');
-  margin-top: var(--spacing-xs);
-  font-size: 0.65rem;
-}
-
+// Location
 .contact-location {
-  @include typo.caption-bold;
+  @include unified.unified-item-label;   // Consistent label style
+  text-transform: none;
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
-  color: var(--muted-foreground);
-  margin-top: var(--spacing-xs);
-  font-size: 0.7rem;
-
-  .location-icon {
-    font-size: 0.9rem;
-  }
-
-  // Removed emoji for minimalist design
+  gap: var(--osi-spacing-xs);
 }
 
-// =====================================================================
-// CONTACT METHODS - Enhanced Interactive Buttons
-// =====================================================================
+// ═══════════════════════════════════════════════════════════════════
+// CONTACT METHODS - Compact
+// ═══════════════════════════════════════════════════════════════════
 
 .contact-methods {
   display: flex;
-  gap: var(--spacing-xs);
+  gap: var(--osi-spacing-xs);
+  flex-wrap: wrap;
   justify-content: center;
-  margin-top: var(--spacing-md);
-  padding-top: var(--spacing-sm);
+  margin-top: var(--osi-spacing-xs);
+}
 
-  .contact-link {
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-md);
-    background: var(--surface-raised);
-    color: var(--foreground);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--text-lg);
-    text-decoration: none;
-    transition: all 250ms var(--ease-out);
-    border: 1px solid var(--border-light);
+.contact-link {
+  font-size: var(--osi-text-xs);
+  padding: var(--osi-spacing-xs) var(--osi-spacing-sm);
+  border-radius: var(--osi-radius-sm);
+  background: var(--osi-surface-hover);
+  color: var(--osi-foreground);
+  text-decoration: none;
+  transition: all var(--osi-duration-normal) var(--osi-ease-out);
 
-    &:hover {
-      transform: translateY(-3px) scale(1.1);
-      background: var(--accent);
-      color: white;
-      box-shadow: var(--shadow-md);
-      border-color: var(--accent);
-    }
+  &:hover {
+    background: var(--osi-accent);
+    color: white;
+    transform: scale(1.05);
+  }
 
-    &:active {
-      transform: translateY(-1px) scale(1.05);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      &:hover {
-        transform: none;
-      }
-    }
+  @include mobile {
+    font-size: 0.65rem;
+    padding: 2px var(--osi-spacing-xs);
   }
 }
 
-// =====================================================================
-// EMPTY STATE
-// =====================================================================
-
-.contacts-empty {
-  @include components.empty-state-modern;
-  padding: var(--spacing-xl);
-
-  .empty-text {
-    @include body-text('base');
-    color: var(--muted-foreground);
-  }
-}
-
-// =====================================================================
+// ═══════════════════════════════════════════════════════════════════
 // RESPONSIVE
-// =====================================================================
+// ═══════════════════════════════════════════════════════════════════
 
-@media (max-width: 640px) {
+@include mobile {
   .contacts-grid {
-    gap: var(--spacing-md);
+    grid-template-columns: repeat(2, 1fr);  // 2 columns on mobile
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 400px) {
   .contacts-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .contact-card {
-    padding: var(--spacing-md) var(--spacing-sm);
-  }
-
-  .contact-avatar {
-    width: 64px;
-    height: 64px;
-
-    .avatar-initials {
-      font-size: var(--text-lg);
-    }
-  }
-
-  .contact-methods {
-    .contact-link {
-      width: 32px;
-      height: 32px;
-      font-size: var(--text-md);
-    }
+    grid-template-columns: 1fr;  // Single column on very small screens
   }
 }
-

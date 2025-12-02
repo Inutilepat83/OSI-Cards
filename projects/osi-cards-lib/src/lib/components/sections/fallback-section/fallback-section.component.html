@@ -1,9 +1,11 @@
 <div class="fallback-container">
-  <div class="fallback-warning">
-    <div class="warning-icon">⚠️</div>
-    <h3 class="warning-title">Unknown Section Type</h3>
-    <p class="warning-message">Section type "{{ getSectionType() }}" is not recognized</p>
-  </div>
+  <!-- Fallback Warning Header -->
+  <lib-empty-state
+    message='Section type "{{ getSectionType() }}" is not recognized'
+    icon="⚠️"
+    variant="centered"
+    size="large">
+  </lib-empty-state>
 
   <div class="fallback-data" *ngIf="section.title || section.description || section.fields || section.items">
     <div *ngIf="section.title" class="data-item">

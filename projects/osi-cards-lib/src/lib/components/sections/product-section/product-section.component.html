@@ -1,9 +1,9 @@
 <div class="product-container">
   <!-- Section Header -->
-  <div class="section-header" *ngIf="section.title || section.description">
-    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
-    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
-  </div>
+  <lib-section-header
+    [title]="section.title"
+    [description]="section.description">
+  </lib-section-header>
 
   <!-- Product Info -->
   <div class="product-info" *ngIf="section.fields && section.fields.length > 0">
@@ -12,9 +12,12 @@
       <div class="field-header">
         <span class="field-icon" *ngIf="field.icon">{{ field.icon }}</span>
         <span class="field-label">{{ field.label }}</span>
-        <span class="field-status" [ngClass]="getStatusClass(field.status)" *ngIf="field.status">
+        <lib-badge
+          *ngIf="field.status"
+          [variant]="getStatusVariant(field.status)"
+          size="sm">
           {{ field.status }}
-        </span>
+        </lib-badge>
       </div>
 
       <div class="field-value">{{ field.value }}</div>
@@ -24,8 +27,10 @@
   </div>
 
   <!-- Empty State -->
-  <div class="product-empty" *ngIf="!section.fields || section.fields.length === 0">
-    <div class="empty-icon">📦</div>
-    <p class="empty-text">No product information available</p>
-  </div>
+  <lib-empty-state
+    *ngIf="!section.fields || section.fields.length === 0"
+    message="No product information available"
+    icon="📦"
+    variant="minimal">
+  </lib-empty-state>
 </div>

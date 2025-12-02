@@ -1,0 +1,135 @@
+// =====================================================================
+// SECTION HEADER - Universal Shared Component
+// =====================================================================
+
+@use '../../../styles/components/sections/design-system' as *;
+@use '../../../styles/components/sections/typography-system' as typo;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+// =====================================================================
+// HEADER CONTAINER
+// =====================================================================
+
+.section-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs, 4px);
+  margin-bottom: var(--section-header-gap, var(--spacing-md, 12px));
+}
+
+// =====================================================================
+// SECTION TITLE - Universal Styling for All Heading Levels
+// =====================================================================
+
+.section-title {
+  margin: 0;
+  padding: 0;
+  color: var(--foreground, #f2f2f2);
+  line-height: var(--leading-tight, 1.25);
+
+  // Default to h3 styling
+  font-size: var(--text-lg, 1.125rem);
+  font-weight: var(--font-bold, 700);
+
+  // Level-specific sizing
+  &:is(h1) {
+    font-size: var(--text-3xl, 1.875rem);
+  }
+
+  &:is(h2) {
+    font-size: var(--text-2xl, 1.5rem);
+  }
+
+  &:is(h3) {
+    font-size: var(--text-lg, 1.125rem);
+  }
+
+  &:is(h4) {
+    font-size: var(--text-base, 1rem);
+    font-weight: var(--font-semibold, 600);
+  }
+
+  &:is(h5) {
+    font-size: var(--text-sm, 0.875rem);
+    font-weight: var(--font-semibold, 600);
+  }
+
+  &:is(h6) {
+    font-size: var(--text-sm, 0.875rem);
+    font-weight: var(--font-semibold, 600);
+  }
+}
+
+// =====================================================================
+// SECTION DESCRIPTION
+// =====================================================================
+
+.section-description {
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-base, 0.875rem);
+  font-weight: var(--font-normal, 400);
+  line-height: var(--leading-relaxed, 1.625);
+  color: var(--muted-foreground, #999999);
+}
+
+// =====================================================================
+// RESPONSIVE
+// =====================================================================
+
+@media (max-width: 640px) {
+  .section-title {
+    &:is(h1) {
+      font-size: var(--text-2xl, 1.5rem);
+    }
+
+    &:is(h2) {
+      font-size: var(--text-xl, 1.25rem);
+    }
+
+    &:is(h3) {
+      font-size: var(--text-base, 1rem);
+    }
+  }
+
+  .section-description {
+    font-size: var(--text-sm, 0.75rem);
+  }
+}
+
+// =====================================================================
+// DARK MODE SUPPORT
+// =====================================================================
+
+@media (prefers-color-scheme: dark) {
+  .section-title {
+    color: var(--foreground, #f2f2f2);
+  }
+
+  .section-description {
+    color: var(--muted-foreground, #999999);
+  }
+}
+
+// =====================================================================
+// CUSTOMIZATION VIA CSS CUSTOM PROPERTIES
+// =====================================================================
+
+:host-context([data-compact]) {
+  .section-header {
+    margin-bottom: var(--spacing-sm, 8px);
+  }
+
+  .section-title {
+    font-size: var(--text-base, 1rem);
+  }
+
+  .section-description {
+    font-size: var(--text-sm, 0.75rem);
+  }
+}
+

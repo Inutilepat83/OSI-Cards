@@ -1,0 +1,251 @@
+// =====================================================================
+// TREND INDICATOR - Universal Shared Component
+// =====================================================================
+
+@use '../../../styles/components/sections/design-system' as *;
+
+:host {
+  display: inline-flex;
+  align-items: center;
+}
+
+// =====================================================================
+// TREND INDICATOR BASE
+// =====================================================================
+
+.trend-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs, 4px);
+  padding: 3px 6px;
+  border-radius: var(--radius-sm, 4px);
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: var(--font-bold, 700);
+  line-height: 1;
+  white-space: nowrap;
+  transition: all 200ms var(--ease-out, cubic-bezier(0, 0, 0.2, 1));
+}
+
+// =====================================================================
+// SIZE VARIANTS
+// =====================================================================
+
+.trend-indicator--small {
+  padding: 2px 4px;
+  font-size: 0.65rem;
+  gap: 2px;
+
+  .trend-icon {
+    font-size: 10px;
+  }
+}
+
+.trend-indicator--medium {
+  padding: 3px 6px;
+  font-size: var(--text-xs, 0.75rem);
+  gap: var(--spacing-xs, 4px);
+
+  .trend-icon {
+    font-size: 12px;
+  }
+}
+
+.trend-indicator--large {
+  padding: 4px 8px;
+  font-size: var(--text-sm, 0.875rem);
+  gap: var(--spacing-xs, 4px);
+
+  .trend-icon {
+    font-size: 14px;
+  }
+}
+
+// =====================================================================
+// TREND DIRECTION VARIANTS
+// =====================================================================
+
+.trend-indicator--up {
+  color: var(--status-success, #22c55e);
+  background: var(--status-success-bg, rgba(34, 197, 94, 0.15));
+  border: 1px solid var(--status-success, #22c55e);
+}
+
+.trend-indicator--down {
+  color: var(--status-error, #ef4444);
+  background: var(--status-error-bg, rgba(239, 68, 68, 0.15));
+  border: 1px solid var(--status-error, #ef4444);
+}
+
+.trend-indicator--stable {
+  color: var(--status-warning, #eab308);
+  background: var(--status-warning-bg, rgba(234, 179, 8, 0.15));
+  border: 1px solid var(--status-warning, #eab308);
+}
+
+.trend-indicator--neutral {
+  color: var(--muted-foreground, #999999);
+  background: var(--surface-hover, rgba(255, 255, 255, 0.1));
+  border: 1px solid var(--border-muted, rgba(255, 255, 255, 0.06));
+}
+
+// =====================================================================
+// ICON
+// =====================================================================
+
+.trend-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  line-height: 1;
+  transition: transform 200ms var(--ease-out, cubic-bezier(0, 0, 0.2, 1));
+}
+
+// =====================================================================
+// VALUE
+// =====================================================================
+
+.trend-value {
+  display: inline-flex;
+  align-items: center;
+  font-weight: var(--font-bold, 700);
+  font-variant-numeric: tabular-nums;
+}
+
+// =====================================================================
+// ANIMATION
+// =====================================================================
+
+.trend-indicator--animated {
+  .trend-icon {
+    animation: trendBounce 1.5s ease-in-out infinite;
+  }
+
+  &:hover .trend-icon {
+    animation-play-state: paused;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes trendBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+// Direction-specific animations
+.trend-indicator--up.trend-indicator--animated .trend-icon {
+  animation: trendUp 1.5s ease-in-out infinite;
+}
+
+.trend-indicator--down.trend-indicator--animated .trend-icon {
+  animation: trendDown 1.5s ease-in-out infinite;
+}
+
+@keyframes trendUp {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes trendDown {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+// =====================================================================
+// HOVER STATE
+// =====================================================================
+
+.trend-indicator:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+}
+
+// =====================================================================
+// RESPONSIVE
+// =====================================================================
+
+@media (max-width: 640px) {
+  .trend-indicator {
+    font-size: 0.65rem;
+    padding: 2px 5px;
+  }
+
+  .trend-indicator--large {
+    font-size: var(--text-xs, 0.75rem);
+    padding: 3px 6px;
+  }
+}
+
+// =====================================================================
+// DARK MODE SUPPORT
+// =====================================================================
+
+@media (prefers-color-scheme: dark) {
+  .trend-indicator--up {
+    background: rgba(34, 197, 94, 0.2);
+  }
+
+  .trend-indicator--down {
+    background: rgba(239, 68, 68, 0.2);
+  }
+
+  .trend-indicator--stable {
+    background: rgba(234, 179, 8, 0.2);
+  }
+}
+
+// =====================================================================
+// ACCESSIBILITY
+// =====================================================================
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  .trend-indicator {
+    border-width: 2px;
+  }
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  .trend-indicator--animated .trend-icon {
+    animation: none;
+  }
+
+  .trend-indicator:hover {
+    transform: none;
+  }
+}
+
+// =====================================================================
+// CONTEXTUAL VARIANTS
+// =====================================================================
+
+// In metric cards
+:host-context(.metric-card) {
+  .trend-indicator {
+    position: absolute;
+    top: var(--spacing-sm, 8px);
+    right: var(--spacing-sm, 8px);
+  }
+}
+
+// Inline with text
+:host-context(.inline-trend) {
+  .trend-indicator {
+    margin-left: var(--spacing-xs, 4px);
+    vertical-align: middle;
+  }
+}
+

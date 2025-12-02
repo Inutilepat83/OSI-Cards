@@ -1,0 +1,337 @@
+// =====================================================================
+// BADGE - Universal Shared Component
+// =====================================================================
+
+@use '../../../styles/components/sections/design-system' as *;
+
+:host {
+  display: inline-block;
+}
+
+// =====================================================================
+// BADGE BASE
+// =====================================================================
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs, 4px);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm, 4px);
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: var(--font-semibold, 600);
+  line-height: 1;
+  white-space: nowrap;
+  text-transform: capitalize;
+  transition: all 200ms var(--ease-out, cubic-bezier(0, 0, 0.2, 1));
+
+  // Prevent text selection for better UX
+  user-select: none;
+}
+
+// =====================================================================
+// SIZE VARIANTS
+// =====================================================================
+
+.badge--sm {
+  padding: 2px 6px;
+  font-size: 0.65rem;
+  gap: 2px;
+}
+
+.badge--md {
+  padding: 4px 10px;
+  font-size: var(--text-xs, 0.75rem);
+  gap: var(--spacing-xs, 4px);
+}
+
+.badge--lg {
+  padding: 6px 14px;
+  font-size: var(--text-sm, 0.875rem);
+  gap: var(--spacing-sm, 8px);
+}
+
+// =====================================================================
+// COLOR VARIANTS - Filled Style
+// =====================================================================
+
+.badge--default {
+  background: var(--surface-hover, rgba(255, 255, 255, 0.1));
+  color: var(--foreground, #f2f2f2);
+  border: 1px solid var(--border-muted, rgba(255, 255, 255, 0.06));
+}
+
+.badge--primary {
+  background: var(--accent, #ff7900);
+  color: #ffffff;
+  border: 1px solid transparent;
+}
+
+.badge--success {
+  background: var(--status-success-bg, rgba(34, 197, 94, 0.15));
+  color: var(--status-success, #22c55e);
+  border: 1px solid var(--status-success, #22c55e);
+}
+
+.badge--error {
+  background: var(--status-error-bg, rgba(239, 68, 68, 0.15));
+  color: var(--status-error, #ef4444);
+  border: 1px solid var(--status-error, #ef4444);
+}
+
+.badge--warning {
+  background: var(--status-warning-bg, rgba(234, 179, 8, 0.15));
+  color: var(--status-warning, #eab308);
+  border: 1px solid var(--status-warning, #eab308);
+}
+
+.badge--info {
+  background: var(--status-info-bg, rgba(59, 130, 246, 0.15));
+  color: var(--status-info, #3b82f6);
+  border: 1px solid var(--status-info, #3b82f6);
+}
+
+// =====================================================================
+// OUTLINED VARIANT
+// =====================================================================
+
+.badge--outlined {
+  background: transparent;
+
+  &.badge--default {
+    border-color: var(--border, rgba(255, 255, 255, 0.2));
+    color: var(--foreground, #f2f2f2);
+  }
+
+  &.badge--primary {
+    border-color: var(--accent, #ff7900);
+    color: var(--accent, #ff7900);
+  }
+
+  &.badge--success {
+    border-color: var(--status-success, #22c55e);
+    color: var(--status-success, #22c55e);
+    background: transparent;
+  }
+
+  &.badge--error {
+    border-color: var(--status-error, #ef4444);
+    color: var(--status-error, #ef4444);
+    background: transparent;
+  }
+
+  &.badge--warning {
+    border-color: var(--status-warning, #eab308);
+    color: var(--status-warning, #eab308);
+    background: transparent;
+  }
+
+  &.badge--info {
+    border-color: var(--status-info, #3b82f6);
+    color: var(--status-info, #3b82f6);
+    background: transparent;
+  }
+}
+
+// =====================================================================
+// PILL VARIANT
+// =====================================================================
+
+.badge--pill {
+  border-radius: var(--radius-full, 9999px);
+  padding-left: 12px;
+  padding-right: 12px;
+
+  &.badge--sm {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  &.badge--lg {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+// =====================================================================
+// DOT INDICATOR
+// =====================================================================
+
+.badge-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full, 9999px);
+  background: currentColor;
+
+  .badge--sm & {
+    width: 4px;
+    height: 4px;
+  }
+
+  .badge--lg & {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+// =====================================================================
+// ICON
+// =====================================================================
+
+.badge-icon {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1em;
+  line-height: 1;
+}
+
+// =====================================================================
+// CONTENT
+// =====================================================================
+
+.badge-content {
+  display: inline-flex;
+  align-items: center;
+}
+
+// =====================================================================
+// INTERACTIVE STATE
+// =====================================================================
+
+.badge--interactive {
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+
+    &.badge--default {
+      background: var(--surface-raised, rgba(255, 255, 255, 0.15));
+    }
+
+    &.badge--primary {
+      background: var(--accent-bright, #ffa347);
+    }
+
+    &.badge--success {
+      background: rgba(34, 197, 94, 0.25);
+    }
+
+    &.badge--error {
+      background: rgba(239, 68, 68, 0.25);
+    }
+
+    &.badge--warning {
+      background: rgba(234, 179, 8, 0.25);
+    }
+
+    &.badge--info {
+      background: rgba(59, 130, 246, 0.25);
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent, #ff7900);
+    outline-offset: 2px;
+  }
+}
+
+// =====================================================================
+// RESPONSIVE
+// =====================================================================
+
+@media (max-width: 640px) {
+  .badge {
+    font-size: 0.65rem;
+    padding: 3px 8px;
+  }
+
+  .badge--lg {
+    font-size: var(--text-xs, 0.75rem);
+    padding: 5px 12px;
+  }
+}
+
+// =====================================================================
+// DARK MODE SUPPORT
+// =====================================================================
+
+@media (prefers-color-scheme: dark) {
+  .badge--default {
+    background: var(--surface-hover, rgba(255, 255, 255, 0.1));
+    border-color: var(--border-muted, rgba(255, 255, 255, 0.06));
+  }
+}
+
+// =====================================================================
+// ACCESSIBILITY
+// =====================================================================
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  .badge {
+    border-width: 2px;
+  }
+
+  .badge--outlined {
+    border-width: 2px;
+  }
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  .badge {
+    transition: none;
+  }
+
+  .badge--interactive:hover {
+    transform: none;
+  }
+}
+
+// =====================================================================
+// STATUS-SPECIFIC CLASSES (for backward compatibility)
+// =====================================================================
+
+// Allow specific status mapping
+:host-context([data-status="completed"]) .badge--default,
+.badge--completed {
+  @extend .badge--success;
+}
+
+:host-context([data-status="in-progress"]) .badge--default,
+.badge--in-progress {
+  @extend .badge--primary;
+}
+
+:host-context([data-status="pending"]) .badge--default,
+.badge--pending {
+  @extend .badge--warning;
+}
+
+:host-context([data-status="cancelled"]) .badge--default,
+:host-context([data-status="blocked"]) .badge--default,
+.badge--cancelled,
+.badge--blocked {
+  @extend .badge--error;
+}
+
+// Priority mapping
+.badge--high {
+  @extend .badge--error;
+}
+
+.badge--medium {
+  @extend .badge--warning;
+}
+
+.badge--low {
+  @extend .badge--success;
+}
+

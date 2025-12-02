@@ -1,248 +1,100 @@
 // =====================================================================
-// TEXT REFERENCE SECTION - Enhanced Academic Citations & Documentation
+// TEXT REFERENCE SECTION - Compact, Responsive, Consistent
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/typography-system' as typo;
-@use '../../../styles/components/sections/component-mixins' as components;
+@use '../../../styles/design-system/tokens' as *;
+@use '../../../styles/design-system/unified-sections' as unified;
 
 :host {
   display: block;
   width: 100%;
 }
 
-// =====================================================================
-// CONTAINER
-// =====================================================================
-
 .text-reference-container {
   display: flex;
   flex-direction: column;
-  gap: var(--section-header-gap);
+  gap: var(--osi-section-header-gap);
 }
-
-// =====================================================================
-// SECTION HEADER
-// =====================================================================
-
-.section-header {
-  .section-title {
-    @include heading(3);
-    margin-bottom: var(--spacing-xs);
-  }
-
-  .section-description {
-    @include body-text('base');
-    color: var(--muted-foreground);
-    line-height: var(--leading-relaxed);
-  }
-}
-
-// =====================================================================
-// REFERENCES LIST - Academic Style
-// =====================================================================
 
 .references-list {
-  @include card;
-  padding: var(--spacing-lg);
+  background: var(--osi-surface);
+  border: 1px solid var(--osi-border-muted);
+  border-radius: var(--osi-radius-md);
+  padding: var(--osi-spacing-xs);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
-  background: var(--surface);
+  gap: 0;
 }
-
-// =====================================================================
-// REFERENCE ITEM - Enhanced Citation Style
-// =====================================================================
 
 .reference-item {
   display: flex;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
-  border-radius: var(--radius-sm);
-  transition: all 250ms var(--ease-out);
+  gap: var(--osi-spacing-sm);
+  padding: var(--osi-spacing-sm);
+  border-radius: var(--osi-radius-sm);
+  transition: all var(--osi-duration-normal) var(--osi-ease-out);
 
   &:not(:last-child) {
-    border-bottom: 1px solid var(--border-light);
-    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--osi-border-muted);
   }
 
   &:hover {
-    background: var(--surface-hover);
-    transform: translateX(4px);
+    background: var(--osi-surface-raised);
+  }
 
-    .reference-number {
-      transform: scale(1.1);
-      background: var(--accent);
-      color: white;
-    }
-
-    .reference-link {
-      color: var(--accent-bright);
-      transform: translateX(4px);
-    }
+  @include mobile {
+    padding: var(--osi-spacing-xs);
+    gap: var(--osi-spacing-xs);
   }
 }
 
-// =====================================================================
-// REFERENCE NUMBER - Enhanced Badge Style
-// =====================================================================
-
 .reference-number {
-  @include typo.label-base;
-  min-width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--accent);
-  background: var(--accent-subtle);
-  border-radius: var(--radius-sm);
+  @include unified.unified-item-label;
   flex-shrink: 0;
-  font-weight: var(--font-bold);
-  font-size: var(--text-sm);
-  transition: all 250ms var(--ease-out);
+  min-width: 1.5rem;
+  text-align: center;
 }
-
-// =====================================================================
-// REFERENCE CONTENT
-// =====================================================================
 
 .reference-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
-  min-width: 0;
+  gap: var(--osi-spacing-xs);
 }
 
 .reference-title {
-  @include heading(6);
-  margin: 0;
-  font-weight: var(--font-semibold);
-  line-height: var(--leading-tight);
-  color: var(--foreground);
+  @include unified.unified-item-title;
 }
 
 .reference-text {
-  @include body-text('base');
-  color: var(--muted-foreground);
-  line-height: var(--leading-relaxed);
+  @include unified.unified-item-description;
   margin: 0;
-  font-style: italic;
 }
-
-// =====================================================================
-// REFERENCE META - Enhanced Layout
-// =====================================================================
 
 .reference-meta {
   display: flex;
+  gap: var(--osi-spacing-sm);
   flex-wrap: wrap;
-  gap: var(--spacing-md);
-  margin-top: var(--spacing-xs);
+  font-size: 0.7rem;
+  color: var(--osi-muted-foreground);
 
-  > span {
-    @include typo.caption;
-    color: var(--muted-foreground);
-    font-size: 0.7rem;
-  }
-
-  .ref-source {
-    font-weight: var(--font-semibold);
-    color: var(--foreground);
-  }
-
-  .ref-type {
-    @include components.badge-modern('default');
-    font-size: 0.6rem;
-  }
-
-  .ref-date {
-    opacity: 0.7;
+  @include mobile {
+    gap: var(--osi-spacing-xs);
   }
 }
-
-// =====================================================================
-// REFERENCE LINK - Enhanced with Icon
-// =====================================================================
 
 .reference-link {
-  @include typo.link-base;
-  font-size: var(--text-sm);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  margin-top: var(--spacing-sm);
-  font-weight: var(--font-semibold);
-  transition: all 200ms var(--ease-out);
-
-  &::after {
-    content: '→';
-    font-size: 0.9rem;
-  }
+  @include unified.unified-item-label;
+  text-transform: none;
+  color: var(--osi-accent);
+  text-decoration: none;
 
   &:hover {
-    color: var(--accent);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-    border-radius: var(--radius-sm);
+    text-decoration: underline;
   }
 }
 
-// =====================================================================
-// EMPTY STATE
-// =====================================================================
-
-.text-reference-empty {
-  @include components.empty-state-modern;
-  padding: var(--spacing-3xl);
-
-  .empty-icon {
-    font-size: 56px;
-    opacity: 0.25;
-    animation: float 3s ease-in-out infinite;
-  }
-}
-
-// =====================================================================
-// ANIMATIONS
-// =====================================================================
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-// =====================================================================
-// RESPONSIVE
-// =====================================================================
-
-@media (max-width: 640px) {
+@include mobile {
   .references-list {
-    padding: var(--spacing-md);
-    gap: var(--spacing-md);
-  }
-
-  .reference-item {
-    flex-direction: column;
-    padding: var(--spacing-sm);
-  }
-
-  .reference-number {
-    align-self: flex-start;
-  }
-
-  .reference-meta {
-    flex-direction: column;
-    gap: var(--spacing-xs);
+    padding: 2px;
   }
 }
-

@@ -1,9 +1,9 @@
 <div class="chart-container">
   <!-- Section Header -->
-  <div class="chart-header" *ngIf="section.title || section.description">
-    <h3 class="chart-title" *ngIf="section.title">{{ section.title }}</h3>
-    <p class="chart-description" *ngIf="section.description">{{ section.description }}</p>
-  </div>
+  <lib-section-header
+    [title]="section.title"
+    [description]="section.description">
+  </lib-section-header>
 
   <!-- Chart Canvas -->
   <div class="chart-wrapper">

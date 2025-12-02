@@ -1,9 +1,6 @@
 <div class="info-container">
   <!-- Section Header -->
-  <div class="section-header" *ngIf="section.title || section.description">
-    <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
-    <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
-  </div>
+  <lib-section-header [title]="section.title" [description]="section.description"> </lib-section-header>
 
   <!-- Info List -->
   <div class="info-list" *ngIf="section.fields && section.fields.length > 0">
@@ -14,10 +11,13 @@
 
       <div class="info-value-wrapper">
         <span class="info-value">{{ field.value }}</span>
-        <span class="info-trend" [ngClass]="getTrendClass(field.trend)" *ngIf="field.trend">
-          <span class="trend-arrow" [attr.data-trend]="field.trend"></span>
-          <span *ngIf="field.change">{{ formatChange(field.change) }}</span>
-        </span>
+        <lib-trend-indicator
+          *ngIf="field.trend"
+          [trend]="getTrendDirection(field.trend)"
+          [value]="field.change"
+          size="small"
+        >
+        </lib-trend-indicator>
       </div>
 
       <p class="info-description" *ngIf="field.description">{{ field.description }}</p>
@@ -25,7 +25,11 @@
   </div>
 
   <!-- Empty State -->
-  <div class="info-empty" *ngIf="!section.fields || section.fields.length === 0">
-    <p class="empty-text">No information available</p>
-  </div>
+  <lib-empty-state
+    *ngIf="!section.fields || section.fields.length === 0"
+    message="No information available"
+    icon="ℹ️"
+    variant="minimal"
+  >
+  </lib-empty-state>
 </div>
