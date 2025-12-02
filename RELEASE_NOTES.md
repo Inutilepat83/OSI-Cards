@@ -1,32 +1,27 @@
-# Release Notes - v1.5.3
+# Release Notes - v1.5.4
 
-## [1.5.3] - 2025-12-01
+## [1.5.4] - 2025-12-02
 
-> Released: 2025-12-01T16:59:42.110Z
+> Released: 2025-12-02T21:34:01.585Z
 
 ### ✨ Features
 
-- **version**: add unified version management system (`d0ee086`)
+- **design**: complete section rebuild with compact design system (`050018c`)
 
 ### 🐛 Bug Fixes
 
-- **build**: resolve TypeScript unused declaration errors (`e82f63f`)
-- **ci**: simplify workflows and fix npm install flags (`44a2ad4`)
-- **build**: disable font inlining to fix CI build (`ac6abb5`)
-- **ci**: skip husky install in CI with --ignore-scripts (`d583e9b`)
-- **ci**: add --legacy-peer-deps to fix npm dependency conflict (`ee71e2d`)
-- **typescript**: fix index signature property access and duplicate imports (`aaa6164`)
-- resolve build errors for npm publishing (`09af1f1`)
+- **docs**: fix live preview theming for dark/light mode support (`afc1ad7`)
+- **theme**: fix inconsistent section backgrounds and remove light theme bleed-through (`824b444`)
 
-### ⚡ Performance
+### ♻️ Refactoring
 
-- **ci**: optimize GitHub Actions build times (`897bf8e`)
+- **sections**: rebuild analytics, financials, network, list, timeline with unified design system (`1c9a14a`)
+- **sections**: major design system overhaul and section consolidation (`8f8989a`)
 
 ### 📚 Documentation
 
-- add auto-monitoring and auto-fix scripts to push-code (`fd96b52`)
-- add pipeline and deployment status checks to push-code (`56929d3`)
-- update push-code checklist with practical workflow (`413b928`)
+- improve documentation with auto-generated README and cross-links (`4f75020`)
+- update library documentation with streaming vs static examples and npm management guide (`f1c37c9`)
 
 
 
@@ -35,7 +30,7 @@
 ## Installation
 
 ```bash
-npm install osi-cards-lib@1.5.3
+npm install osi-cards-lib@1.5.4
 ```
 
 ## Links
