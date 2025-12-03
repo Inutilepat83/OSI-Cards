@@ -1,16 +1,16 @@
 /**
  * OSI Cards Branded Types
- * 
+ *
  * Branded types (also known as nominal types) provide compile-time safety
  * by preventing accidental mixing of different ID types.
- * 
+ *
  * @example
  * ```typescript
  * import { CardId, SectionId, createCardId } from 'osi-cards-lib';
- * 
+ *
  * const cardId: CardId = createCardId('card-123');
  * const sectionId: SectionId = createSectionId('section-456');
- * 
+ *
  * // Type error: CardId is not assignable to SectionId
  * const wrongId: SectionId = cardId;
  * ```
@@ -379,6 +379,51 @@ export function generateItemId(prefix = 'item'): ItemId {
 export function generateActionId(prefix = 'action'): ActionId {
   return createActionId(`${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`);
 }
+
+// ============================================================================
+// BACKWARDS COMPATIBILITY (from src/app/models/branded-types.ts)
+// ============================================================================
+
+/**
+ * Helper functions to create branded IDs (backwards compatibility)
+ * @deprecated Use create* functions instead (e.g., createCardId)
+ */
+export const BrandedIds = {
+  cardId: (id: string): CardId => id as CardId,
+  sectionId: (id: string): SectionId => id as SectionId,
+  fieldId: (id: string): FieldId => id as FieldId,
+  itemId: (id: string): ItemId => id as ItemId,
+  actionId: (id: string): ActionId => id as ActionId,
+  toCardId: (id: string | undefined | null): CardId | undefined => {
+    if (!id) return undefined;
+    return id as CardId;
+  },
+  toSectionId: (id: string | undefined | null): SectionId | undefined => {
+    if (!id) return undefined;
+    return id as SectionId;
+  },
+  toFieldId: (id: string | undefined | null): FieldId | undefined => {
+    if (!id) return undefined;
+    return id as FieldId;
+  },
+  toItemId: (id: string | undefined | null): ItemId | undefined => {
+    if (!id) return undefined;
+    return id as ItemId;
+  },
+  toActionId: (id: string | undefined | null): ActionId | undefined => {
+    if (!id) return undefined;
+    return id as ActionId;
+  },
+};
+
+/**
+ * Type guards (backwards compatibility)
+ * @deprecated Use isValid* functions instead
+ */
+export const isCardId = isValidCardId;
+export const isSectionId = isValidSectionId;
+export const isFieldId = isValidFieldId;
+export const isItemId = isValidItemId;
 
 
 

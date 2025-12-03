@@ -25,7 +25,10 @@
 
 import { Injectable, OnDestroy, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { AnimationState } from '../types';
+import { AnimationState as WebAnimationState } from '../utils/web-animations.util';
+
+// Local animation state with additional values
+export type AnimationState = WebAnimationState | 'entering' | 'entered' | 'none';
 
 // ============================================================================
 // TYPES

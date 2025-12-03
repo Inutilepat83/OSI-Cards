@@ -1,17 +1,11 @@
-import { InjectionToken } from '@angular/core';
-import { LoggingService } from '../services/logging.service';
-import { PerformanceService } from '../services/performance.service';
-import { AppConfigService } from '../services/app-config.service';
-import { CardDataService } from '../services/card-data/card-data.service';
-import { ICardRepository } from '../services/card-data/card-repository.interface';
-
 /**
- * Dependency Injection Tokens for Services
- * Enables better testing and service swapping
+ * Service Tokens - Re-export from Library
+ *
+ * This file re-exports injection tokens from the library.
+ * The library version is the single source of truth.
+ *
+ * @deprecated Import directly from '@osi-cards/providers' instead
  */
 
-export const LOGGING_SERVICE = new InjectionToken<LoggingService>('LoggingService');
-export const PERFORMANCE_SERVICE = new InjectionToken<PerformanceService>('PerformanceService');
-export const APP_CONFIG_SERVICE = new InjectionToken<AppConfigService>('AppConfigService');
-export const CARD_DATA_SERVICE = new InjectionToken<CardDataService>('CardDataService');
-export const CARD_REPOSITORY = new InjectionToken<ICardRepository>('CardRepository');
+// Re-export all tokens from library
+export * from '@osi-cards/providers';

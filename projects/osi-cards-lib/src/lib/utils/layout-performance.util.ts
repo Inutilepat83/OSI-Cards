@@ -522,7 +522,7 @@ export class LazyPositionCalculator {
     top: number;
     width: string;
     height: number;
-  }> = new Map();
+  } | null | undefined> = new Map();
 
   private sectionOrder: string[] = [];
   private sectionData: Map<string, { section: CardSection; colSpan: number; height: number }> = new Map();
@@ -605,7 +605,7 @@ export class LazyPositionCalculator {
   /**
    * Calculate position for a single section
    */
-  private calculatePosition(key: string): { left: string; top: number; width: string; height: number } | null {
+  private calculatePosition(key: string): { left: string; top: number; width: string; height: number } | null | undefined {
     const data = this.sectionData.get(key);
     if (!data) return null;
 

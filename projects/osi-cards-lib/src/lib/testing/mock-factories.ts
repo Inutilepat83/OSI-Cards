@@ -145,9 +145,9 @@ export function createMockInfoSection(overrides: DeepPartial<CardSection> = {}):
       type: 'info',
       title: 'Information',
       fields: [
-        createMockField({ label: 'Status', value: 'Active' }),
-        createMockField({ label: 'Created', value: new Date().toISOString() }),
-        createMockField({ label: 'Updated', value: new Date().toISOString() }),
+        createMockField({ label: 'Status', value: 'Active' }) as CardField,
+        createMockField({ label: 'Created', value: new Date().toISOString() }) as CardField,
+        createMockField({ label: 'Updated', value: new Date().toISOString() }) as CardField,
       ],
     },
     overrides
@@ -164,9 +164,9 @@ export function createMockAnalyticsSection(overrides: DeepPartial<CardSection> =
       type: 'analytics',
       title: 'Analytics',
       fields: [
-        createMockField({ label: 'Views', value: randomNumber(100, 10000) }),
-        createMockField({ label: 'Engagement', value: `${randomNumber(1, 100)}%` }),
-        createMockField({ label: 'Conversions', value: randomNumber(10, 500) }),
+        createMockField({ label: 'Views', value: randomNumber(100, 10000) }) as CardField,
+        createMockField({ label: 'Engagement', value: `${randomNumber(1, 100)}%` }) as CardField,
+        createMockField({ label: 'Conversions', value: randomNumber(10, 500) }) as CardField,
       ],
     },
     overrides

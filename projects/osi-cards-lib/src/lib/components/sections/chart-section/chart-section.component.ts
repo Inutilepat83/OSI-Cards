@@ -14,7 +14,7 @@ import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../
 @Component({
   selector: 'lib-chart-section',
   standalone: true,
-  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
+  imports: [CommonModule, SectionHeaderComponent],
   templateUrl: './chart-section.component.html',
   styleUrl: './chart-section.scss'
 })

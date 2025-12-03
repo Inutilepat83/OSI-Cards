@@ -394,7 +394,7 @@ export interface ChartData {
   labels?: string[];
   datasets?: Array<{
     label?: string;
-    data: number[];
+    data: (number | null)[];
     backgroundColor?: string | string[];
     borderColor?: string | string[];
     borderWidth?: number;

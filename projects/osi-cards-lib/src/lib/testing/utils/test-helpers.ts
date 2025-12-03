@@ -1,16 +1,16 @@
 /**
  * Test Helper Utilities
- * 
+ *
  * Provides common testing utilities and helpers for OSI Cards tests.
- * 
+ *
  * @example
  * ```typescript
- * import { 
- *   waitForStability, 
- *   triggerAnimation, 
- *   expectNoConsoleErrors 
+ * import {
+ *   waitForStability,
+ *   triggerAnimation,
+ *   expectNoConsoleErrors
  * } from 'osi-cards-lib/testing';
- * 
+ *
  * it('should animate smoothly', async () => {
  *   await triggerAnimation(element, 'enter');
  *   await waitForStability(fixture);
@@ -18,6 +18,13 @@
  * });
  * ```
  */
+
+// Type declarations for test environment
+declare const expect: any;
+declare namespace jasmine {
+  export function createSpy(name: string): any;
+  export interface Spy {}
+}
 
 import { ComponentFixture } from '@angular/core/testing';
 import { DebugElement } from '@angular/core';
@@ -219,7 +226,7 @@ export function triggerAnimation(
   state: 'enter' | 'leave' | 'void'
 ): void {
   const nativeElement = element instanceof HTMLElement ? element : element.nativeElement;
-  
+
   switch (state) {
     case 'enter':
       nativeElement.classList.add('ng-animating', 'ng-enter');
@@ -275,7 +282,7 @@ export function createConsoleSpy(): {
 } {
   const errors: unknown[] = [];
   const warnings: unknown[] = [];
-  
+
   const originalError = console.error;
   const originalWarn = console.warn;
 
@@ -332,7 +339,7 @@ export function expectStyles(
 ): void {
   const nativeElement = element instanceof HTMLElement ? element : element.nativeElement;
   const computedStyles = getComputedStyle(nativeElement);
-  
+
   Object.entries(styles).forEach(([property, value]) => {
     expect(computedStyles.getPropertyValue(property)).toBe(value);
   });
@@ -348,7 +355,7 @@ export function expectText(
 ): void {
   const nativeElement = element instanceof HTMLElement ? element : element.nativeElement;
   const elementText = nativeElement.textContent ?? '';
-  
+
   if (exact) {
     expect(elementText.trim()).toBe(text);
   } else {
@@ -459,7 +466,7 @@ export function createMockSubject<T>(): {
   complete: () => void;
 } {
   const subscribers: Array<(value: T) => void> = [];
-  
+
   return {
     next: (value: T) => {
       subscribers.forEach(fn => fn(value));

@@ -14,7 +14,7 @@ import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../
 @Component({
   selector: 'lib-map-section',
   standalone: true,
-  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
+  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './map-section.component.html',
   styleUrl: './map-section.scss'
 })

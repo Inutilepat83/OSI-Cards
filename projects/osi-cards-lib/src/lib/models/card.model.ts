@@ -1,6 +1,6 @@
 import { SectionTypeInput, resolveSectionType, isValidSectionType } from './generated-section-types';
 
-export type CardType = 'all' | 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'event' | 'project' | 'sko';
+export type CardType = 'all' | 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'event' | 'project' | 'sko' | 'news';
 
 /**
  * Numeric layout priority for space-filling algorithm
@@ -122,7 +122,7 @@ export interface CardSection {
     labels?: string[];
     datasets?: {
       label?: string;
-      data: number[];
+      data: (number | null)[];
       backgroundColor?: string | string[];
       borderColor?: string | string[];
       borderWidth?: number;
@@ -138,7 +138,7 @@ export interface CardField {
   title?: string;
   value?: string | number | boolean | null;
   icon?: string;
-  format?: 'currency' | 'percentage' | 'number' | 'text';
+  format?: 'currency' | 'percentage' | 'number' | 'text' | 'ratio';
   percentage?: number;
   change?: number;
   trend?: 'up' | 'down' | 'stable' | 'neutral';
@@ -157,7 +157,7 @@ export interface CardField {
   avatar?: string;
   department?: string;
   location?: string;
-  status?: 'completed' | 'in-progress' | 'pending' | 'cancelled' | 'active' | 'inactive' | 'warning';
+  status?: 'completed' | 'in-progress' | 'pending' | 'cancelled' | 'active' | 'inactive' | 'warning' | 'confirmed' | 'planned' | 'tentative' | 'available' | 'coming-soon' | 'deprecated' | 'out-of-stock';
   priority?: 'high' | 'medium' | 'low';
   date?: string;
   time?: string;

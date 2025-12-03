@@ -24,7 +24,7 @@ import { packSectionsIntoRows, RowPackingResult, RowPackerConfig } from './row-p
 import { SkylinePacker, PackingResult as SkylinePackingResult, PlacedSection } from './skyline-algorithm.util';
 import { binPack2D, SectionWithMetrics } from './smart-grid.util';
 import { IncrementalLayoutEngine } from './incremental-layout.util';
-import { gridLogger } from './smart-grid-logger.util';
+import { gridLogger } from './grid-logger.util';
 
 // ============================================================================
 // TYPES AND INTERFACES
@@ -205,7 +205,9 @@ export class AlgorithmSelector {
     this.lastSelectionResult = result;
 
     // Log selection if debug is enabled
-    gridLogger.logAlgorithmSelection?.(result);
+    if (gridLogger.logAlgorithmSelection) {
+      gridLogger.logAlgorithmSelection(result.selectedAlgorithm, result.selectionReason);
+    }
 
     return result;
   }
@@ -672,7 +674,8 @@ export class AlgorithmSelector {
     if (!this.incrementalEngine) {
       this.incrementalEngine = new IncrementalLayoutEngine({
         columns: this.config.columns,
-        gap: this.config.gap,
+        containerWidth: 1200,
+        gap: this.config.gap
       });
     }
     return this.incrementalEngine;

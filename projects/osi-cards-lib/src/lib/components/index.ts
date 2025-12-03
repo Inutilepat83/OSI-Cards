@@ -5,7 +5,7 @@
  */
 
 // AI Card Renderer
-export { AICardRendererComponent, StreamingStage } from './ai-card-renderer/ai-card-renderer.component';
+export { AICardRendererComponent, StreamingStage, type CardFieldInteractionEvent } from './ai-card-renderer/ai-card-renderer.component';
 
 // Card Parts
 export { CardHeaderComponent } from './card-header/card-header.component';
@@ -19,7 +19,7 @@ export { CardPreviewComponent } from './card-preview/card-preview.component';
 
 // Section Components
 export * from './sections';
-export { SectionRendererComponent } from './section-renderer/section-renderer.component';
+export { SectionRendererComponent, type SectionRenderEvent } from './section-renderer/section-renderer.component';
 export { SectionSkeletonComponent } from './section-skeleton/section-skeleton.component';
 export { SectionErrorBoundaryComponent } from './section-error-boundary/section-error-boundary.component';
 

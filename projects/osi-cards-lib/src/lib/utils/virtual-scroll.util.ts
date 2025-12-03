@@ -1,19 +1,19 @@
 /**
  * Virtual Scroll Utilities
- * 
+ *
  * Implements virtual scrolling for large card lists (20+ sections).
  * Only renders visible sections plus a buffer, significantly improving
  * performance for cards with many sections.
- * 
+ *
  * @example
  * ```typescript
  * import { VirtualScrollManager } from 'osi-cards-lib';
- * 
+ *
  * const manager = new VirtualScrollManager(containerRef, {
  *   bufferSize: 3,
  *   estimatedItemHeight: 200,
  * });
- * 
+ *
  * manager.setItems(sections);
  * const visible = manager.getVisibleItems();
  * ```
@@ -114,19 +114,19 @@ export class VirtualScrollManager<T = CardSection> {
   private heights: Map<number, number> = new Map();
   private offsets: number[] = [];
   private totalHeight = 0;
-  
+
   private scrollTop = 0;
   private viewportHeight = 0;
   private lastScrollTop = 0;
   private scrollVelocity = 0;
-  
+
   private observer: IntersectionObserver | null = null;
   private resizeObserver: ResizeObserver | null = null;
   private measureCallbacks = new Map<number, () => void>();
-  
+
   private readonly config: Required<VirtualScrollConfig>;
   private readonly heightEstimator: (item: T) => number;
-  
+
   private onVisibilityChange?: (indices: number[]) => void;
   private onScrollChange?: (event: ScrollEvent) => void;
 
@@ -137,7 +137,7 @@ export class VirtualScrollManager<T = CardSection> {
   ) {
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.heightEstimator = heightEstimator ?? this.defaultHeightEstimator;
-    
+
     this.setupObservers();
     this.measureViewport();
   }
@@ -188,7 +188,7 @@ export class VirtualScrollManager<T = CardSection> {
     this.lastScrollTop = this.scrollTop;
     this.scrollTop = scrollTop;
     this.scrollVelocity = scrollTop - this.lastScrollTop;
-    
+
     this.onScrollChange?.({
       scrollTop,
       scrollLeft: 0,
@@ -238,7 +238,7 @@ export class VirtualScrollManager<T = CardSection> {
   getViewportState(): ViewportState {
     const startIndex = this.findStartIndex(this.scrollTop);
     const endIndex = this.findEndIndex(this.scrollTop + this.viewportHeight);
-    
+
     const { bufferSize } = this.config;
     const renderStartIndex = Math.max(0, startIndex - bufferSize);
     const renderEndIndex = Math.min(this.items.length - 1, endIndex + bufferSize);
@@ -275,7 +275,7 @@ export class VirtualScrollManager<T = CardSection> {
     if (!this.container || index < 0 || index >= this.items.length) return;
 
     const offset = this.offsets[index] ?? 0;
-    
+
     this.container.scrollTo({
       top: offset,
       behavior: this.config.smoothScroll ? behavior : 'auto',
@@ -333,7 +333,7 @@ export class VirtualScrollManager<T = CardSection> {
     };
 
     this.measureCallbacks.set(index, callback);
-    
+
     // Measure on next frame
     requestAnimationFrame(callback);
 
@@ -379,7 +379,7 @@ export class VirtualScrollManager<T = CardSection> {
         const index = parseInt(indexStr, 10);
         if (!isNaN(index)) {
           changedIndices.push(index);
-          
+
           // Measure on visibility change
           const callback = this.measureCallbacks.get(index);
           if (callback && entry.isIntersecting) {
@@ -563,7 +563,7 @@ export function applyVirtualPosition(
   element.style.top = '0';
   element.style.left = '0';
   element.style.right = '0';
-  
+
   if (height !== undefined) {
     element.style.height = `${height}px`;
   }

@@ -123,10 +123,12 @@ export * from './change-detection-optimization.util';
 export * from './code-splitting.util';
 export * from './compression.util';
 export * from './css-optimization.util';
-export * from './memoization.util'; // Local extensions
+// Memoization now in library - use @osi-cards/utils instead
+// export * from './memoization.util';
 export * from './progressive-loading.util';
 export * from './resource-hints.util';
-export * from './virtual-scrolling.util'; // Local extensions
+// Virtual scrolling now in library - use @osi-cards/utils instead
+// export * from './virtual-scrolling.util';
 
 // ===== Memory & Cleanup =====
 export * from './cleanup.util';
@@ -140,7 +142,8 @@ export * from './request-cancellation.util';
 export * from './url.util';
 
 // ===== Error Handling (App-specific extensions) =====
-export * from './error-recovery.util';
+// Error recovery now in library - use @osi-cards/utils instead
+// export * from './error-recovery.util';
 export * from './improved-error-messages.util';
 
 // ===== Security =====
@@ -148,7 +151,8 @@ export * from './security-headers.util';
 
 // ===== UI & Accessibility =====
 export * from './alt-text.util';
-export * from './color-contrast.util';
+// Color contrast functions may be in library - check for conflicts
+// export * from './color-contrast.util';
 export * from './drag-drop.util';
 export * from './image-optimization.util';
 export * from './pagination.util';

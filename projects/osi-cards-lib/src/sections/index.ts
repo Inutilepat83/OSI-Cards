@@ -3,7 +3,7 @@
  * Import individual sections for tree-shaking
  */
 export * from '../lib/components/sections/base-section.component';
-export * from '../lib/components/sections/info-section.component';
+export * from '../lib/components/sections/info-section/info-section.component';
 export * from '../lib/components/sections/analytics-section/analytics-section.component';
 export * from '../lib/components/sections/contact-card-section/contact-card-section.component';
 export * from '../lib/components/sections/network-card-section/network-card-section.component';

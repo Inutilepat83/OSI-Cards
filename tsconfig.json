@@ -41,6 +41,9 @@
       ],
       "@osi-cards/utils": ["projects/osi-cards-lib/src/lib/utils/index.ts"],
       "@osi-cards/models": ["projects/osi-cards-lib/src/lib/models/index.ts"],
+      "@osi-cards/types": ["projects/osi-cards-lib/src/lib/types/index.ts"],
+      "@osi-cards/decorators": ["projects/osi-cards-lib/src/lib/decorators/index.ts"],
+      "@osi-cards/icons": ["projects/osi-cards-lib/src/lib/icons/index.ts"],
       "@osi-cards/themes": ["projects/osi-cards-lib/src/lib/themes/index.ts"],
       "@osi-cards/constants": [
         "projects/osi-cards-lib/src/lib/constants/index.ts"

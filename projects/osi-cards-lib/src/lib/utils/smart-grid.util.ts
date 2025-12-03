@@ -12,7 +12,7 @@
  */
 
 import { CardSection, CardField } from '../models/card.model';
-import { gridLogger, GapAnalysis, ColumnAnalysis, PlacementDecision } from './smart-grid-logger.util';
+import { gridLogger, GapAnalysis, ColumnAnalysis, PlacementDecision } from './grid-logger.util';
 import {
   HeightEstimator,
   HeightEstimationContext,

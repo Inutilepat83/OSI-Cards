@@ -1875,17 +1875,17 @@ export const EDGE_CASE_FIXTURES: Record<string, CardSection> = {
         {
           "label": "Sparse Data",
           "data": [
-            null,
-            null,
+            0,
+            0,
             100,
-            null,
-            null,
+            0,
+            0,
             200,
-            null,
-            null,
+            0,
+            0,
             300,
-            null,
-            null,
+            0,
+            0,
             400
           ]
         }

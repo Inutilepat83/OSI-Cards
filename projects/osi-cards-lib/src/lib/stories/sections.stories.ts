@@ -9,7 +9,8 @@ import type { Meta, StoryObj } from '@storybook/angular';
 import { SectionRendererComponent } from '../components/section-renderer/section-renderer.component';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { applicationConfig } from '@storybook/angular';
-import type { CardSection, InfoSection, AnalyticsSection, ListSection, ContactCardSection } from '../models';
+import type { CardSection } from '../models';
+import type { InfoSection as InfoSectionType, AnalyticsSection as AnalyticsSectionType, ListSection as ListSectionType, ContactCardSection as ContactCardSectionType } from '../models';
 
 /**
  * Meta configuration for Section Renderer stories
@@ -70,7 +71,7 @@ type Story = StoryObj<SectionRendererComponent>;
 // INFO SECTION STORIES
 // =============================================================================
 
-const infoSection: InfoSection = {
+const infoSection: InfoSectionType = {
   id: 'info-demo',
   title: 'Company Information',
   type: 'info',
@@ -119,7 +120,7 @@ export const InfoSectionMinimal: Story = {
 // ANALYTICS SECTION STORIES
 // =============================================================================
 
-const analyticsSection: AnalyticsSection = {
+const analyticsSection: AnalyticsSectionType = {
   id: 'analytics-demo',
   title: 'Performance Metrics',
   type: 'analytics',
@@ -167,7 +168,7 @@ export const AnalyticsTrends: Story = {
 // LIST SECTION STORIES
 // =============================================================================
 
-const listSection: ListSection = {
+const listSection: ListSectionType = {
   id: 'list-demo',
   title: 'Recent Activities',
   type: 'list',
@@ -215,7 +216,7 @@ export const ListWithLinks: Story = {
 // CONTACT CARD SECTION STORIES
 // =============================================================================
 
-const contactSection: ContactCardSection = {
+const contactSection: ContactCardSectionType = {
   id: 'contact-demo',
   title: 'Key Contacts',
   type: 'contact-card',

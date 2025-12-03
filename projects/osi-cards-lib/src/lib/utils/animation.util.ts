@@ -26,12 +26,12 @@
  */
 
 // Re-export all animation utilities
-export * from '../animation-optimization.util';
-export * from '../flip-animation.util';
-export * from '../web-animations.util';
+export * from './animation-optimization.util';
+export * from './flip-animation.util';
+export * from './web-animations.util';
 
 // Create consolidated namespace
-import { FlipAnimator, flipAnimate } from '../flip-animation.util';
+import { FlipAnimator, flipAnimate } from './flip-animation.util';
 import {
   AnimationController,
   fadeIn,
@@ -42,10 +42,10 @@ import {
   slideInRight,
   scaleIn,
   staggerAnimate
-} from '../web-animations.util';
+} from './web-animations.util';
 
 // Export slideInLeft as slideIn for backwards compatibility
-export { slideInLeft as slideIn } from '../web-animations.util';
+export { slideInLeft as slideIn } from './web-animations.util';
 
 export const AnimationUtil = {
   // FLIP animations

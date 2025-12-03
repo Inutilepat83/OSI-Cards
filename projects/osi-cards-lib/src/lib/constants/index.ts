@@ -100,6 +100,14 @@ export {
   ICON_SIZE,
   TOAST_CONFIG,
   VALIDATION_LIMITS,
+  // Additional constants from ui.constants
+  TIME_CONSTANTS,
+  SIZE_CONSTANTS,
+  VALIDATION_CONSTANTS,
+  LAYOUT_CONSTANTS,
+  ID_CONSTANTS,
+  CARD_LIMITS,
+  RETRY_CONSTANTS,
   type IconSizeKey,
   type ParticleConfigKey,
 } from './ui.constants';

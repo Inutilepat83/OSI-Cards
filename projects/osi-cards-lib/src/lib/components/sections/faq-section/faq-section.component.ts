@@ -12,7 +12,7 @@ import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../
 @Component({
   selector: 'lib-faq-section',
   standalone: true,
-  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
+  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './faq-section.component.html',
   styleUrl: './faq-section.scss'
 })

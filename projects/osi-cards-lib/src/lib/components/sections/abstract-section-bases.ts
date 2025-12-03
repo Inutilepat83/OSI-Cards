@@ -378,7 +378,7 @@ export abstract class ChartSectionBaseComponent extends BaseSectionComponent {
       labels: chartData.labels ?? [],
       datasets: (chartData.datasets ?? []).map((ds) => ({
         label: ds.label,
-        data: ds.data,
+        data: ds.data.map(v => v === null ? 0 : v),
         backgroundColor: ds.backgroundColor,
         borderColor: ds.borderColor,
         borderWidth: ds.borderWidth ?? 1,

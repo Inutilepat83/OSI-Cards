@@ -44,7 +44,10 @@ import {
 } from '../utils/web-animations.util';
 import { FlipAnimator } from '../utils/flip-animation.util';
 import { onReducedMotionChange } from '../utils/masonry-detection.util';
-import { AnimationState } from '../types';
+import { AnimationState as WebAnimationState } from '../utils/web-animations.util';
+
+// Local animation state with additional values
+export type AnimationState = WebAnimationState | 'entering' | 'entered' | 'none';
 
 // ============================================================================
 // TYPES AND INTERFACES

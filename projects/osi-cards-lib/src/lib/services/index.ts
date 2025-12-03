@@ -47,9 +47,10 @@ export { MIGRATION_FLAGS_TOKEN } from './feature-flags.service';
 // export * from './section-animation.service';  // Disabled: duplicates animation.service exports
 
 // Accessibility services (now consolidated into accessibility.service.ts)
-export * from './focus-trap.service';
-export * from './live-announcer.service';
-export * from './reduced-motion.service';
+// Re-exports for backwards compatibility (avoiding duplicates)
+export { FocusTrapService } from './focus-trap.service';
+export { LiveAnnouncerService } from './live-announcer.service';
+export { ReducedMotionService } from './reduced-motion.service';
 
 // Section services (caching now built into section-normalization.service.ts)
 export * from './cached-section-normalization.service';

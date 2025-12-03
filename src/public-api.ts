@@ -43,7 +43,8 @@ export * from './app/shared/utils/pagination.util';
 export * from './app/shared/utils/resource-hints.util';
 export * from './app/shared/utils/batch-conversion.util';
 export * from './app/shared/utils/validation.util';
-export * from './app/shared/utils/memoization.util';
+// Memoization now in library - don't export from app utils
+// export * from './app/shared/utils/memoization.util';
 export * from './app/shared/utils/cache.util';
 export * from './app/shared/utils/url.util';
 export * from './app/shared/utils/color-contrast.util';
@@ -74,8 +75,55 @@ export * from './app/shared/utils/test-utilities.util';
 export * from './app/shared/utils/snapshot-testing.util';
 export * from './app/shared/utils/contract-testing.util';
 
-// Models
-export * from './app/models';
+// Models (excluding ValidationResult which conflicts with core)
+export {
+  AICardConfig,
+  CardSection,
+  CardField,
+  CardItem,
+  CardAction,
+  CardType,
+  CardActionButtonType,
+  EmailContact,
+  EmailConfig,
+  MailCardAction,
+  WebsiteCardAction,
+  AgentCardAction,
+  QuestionCardAction,
+  LegacyCardAction,
+  CardTypeGuards,
+  CardUtils,
+  SectionType,
+  SectionTypeAlias,
+  SectionTypeInput,
+  SectionMetadata,
+  SECTION_METADATA,
+  SECTION_TYPE_ALIASES,
+  resolveSectionType,
+  isValidSectionType,
+  getSectionMetadata,
+  DiscriminatedSection,
+  isOverviewSection,
+  isInfoSection,
+  isAnalyticsSection,
+  isListSection,
+  isChartSection,
+  isContactCardSection,
+  isNetworkCardSection,
+  isMapSection,
+  isFinancialsSection,
+  isEventSection,
+  isProductSection,
+  isSolutionsSection,
+  isQuotationSection,
+  isTextReferenceSection,
+  isBrandColorsSection,
+  isNewsSection,
+  isSocialMediaSection,
+  isFallbackSection,
+  isContactSection,
+  isNetworkSection,
+} from './app/models';
 
 // Store (NgRx) - Actions, Selectors, Reducers, Effects
 export * from './app/store';

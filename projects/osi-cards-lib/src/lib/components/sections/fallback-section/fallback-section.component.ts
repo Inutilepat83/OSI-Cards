@@ -12,7 +12,7 @@ import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../
 @Component({
   selector: 'lib-fallback-section',
   standalone: true,
-  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
+  imports: [CommonModule, EmptyStateComponent],
   templateUrl: './fallback-section.component.html',
   styleUrl: './fallback-section.scss'
 })

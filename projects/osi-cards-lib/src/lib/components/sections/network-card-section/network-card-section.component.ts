@@ -12,7 +12,7 @@ import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../
 @Component({
   selector: 'lib-network-card-section',
   standalone: true,
-  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
+  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './network-card-section.component.html',
   styleUrl: './network-card-section.scss'
 })

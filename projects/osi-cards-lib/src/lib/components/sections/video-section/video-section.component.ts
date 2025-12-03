@@ -13,7 +13,7 @@ import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../
 @Component({
   selector: 'lib-video-section',
   standalone: true,
-  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
+  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './video-section.component.html',
   styleUrl: './video-section.scss'
 })
