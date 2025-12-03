@@ -24,9 +24,9 @@
 // Re-export core memoization utilities (avoiding duplicates)
 export {
   memo,
-  memoWithTTL,
   memoWeakMap,
   memoWithEquality,
+  memoWithTTL,
   once,
   type MemoizedGetter,
 } from './memo.util';

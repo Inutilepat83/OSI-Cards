@@ -310,7 +310,9 @@ export class VirtualScrollManager<T = CardSection> {
    */
   onVisibilityChanged(callback: (indices: number[]) => void): () => void {
     this.onVisibilityChange = callback;
-    return () => { this.onVisibilityChange = undefined; };
+    return () => {
+      this.onVisibilityChange = undefined;
+    };
   }
 
   /**
@@ -318,7 +320,9 @@ export class VirtualScrollManager<T = CardSection> {
    */
   onScroll(callback: (event: ScrollEvent) => void): () => void {
     this.onScrollChange = callback;
-    return () => { this.onScrollChange = undefined; };
+    return () => {
+      this.onScrollChange = undefined;
+    };
   }
 
   /**
@@ -348,14 +352,11 @@ export class VirtualScrollManager<T = CardSection> {
 
   private setupObservers(): void {
     if (typeof IntersectionObserver !== 'undefined') {
-      this.observer = new IntersectionObserver(
-        (entries) => this.handleIntersection(entries),
-        {
-          root: this.container,
-          rootMargin: `${this.config.overscanCount * this.config.estimatedItemHeight}px`,
-          threshold: [0, 0.25, 0.5, 0.75, 1],
-        }
-      );
+      this.observer = new IntersectionObserver((entries) => this.handleIntersection(entries), {
+        root: this.container,
+        rootMargin: `${this.config.overscanCount * this.config.estimatedItemHeight}px`,
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+      });
     }
 
     if (typeof ResizeObserver !== 'undefined' && this.container) {
@@ -492,7 +493,11 @@ export class VirtualScrollManager<T = CardSection> {
   }
 
   private isCardSection(item: T): item is T & CardSection {
-    return item !== null && typeof item === 'object' && ('type' in item || 'title' in item || 'fields' in item);
+    return (
+      item !== null &&
+      typeof item === 'object' &&
+      ('type' in item || 'title' in item || 'fields' in item)
+    );
   }
 }
 
@@ -553,11 +558,7 @@ export function createVisibilityObserver(
 /**
  * Applies virtual scroll transform to position an item
  */
-export function applyVirtualPosition(
-  element: HTMLElement,
-  offset: number,
-  height?: number
-): void {
+export function applyVirtualPosition(element: HTMLElement, offset: number, height?: number): void {
   element.style.transform = `translateY(${offset}px)`;
   element.style.position = 'absolute';
   element.style.top = '0';
@@ -583,4 +584,3 @@ export function createScrollSpacer(totalHeight: number): HTMLDivElement {
   spacer.style.visibility = 'hidden';
   return spacer;
 }
-

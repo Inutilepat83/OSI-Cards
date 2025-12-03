@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent } from '../base-section.component';
-import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../../shared';
 
 /**
  * Gallery Section Component
@@ -14,10 +14,9 @@ import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../
   standalone: true,
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './gallery-section.component.html',
-  styleUrl: './gallery-section.scss'
+  styleUrl: './gallery-section.scss',
 })
 export class GallerySectionComponent extends BaseSectionComponent {
-
   /**
    * Get image URL from item
    */

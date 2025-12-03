@@ -20,11 +20,11 @@
 
 import { CardSection } from '../models/card.model';
 import { PackingAlgorithm } from './grid-config.util';
-import { packSectionsIntoRows, RowPackingResult, RowPackerConfig } from './row-packer.util';
-import { SkylinePacker, PackingResult as SkylinePackingResult, PlacedSection } from './skyline-algorithm.util';
-import { binPack2D, SectionWithMetrics } from './smart-grid.util';
-import { IncrementalLayoutEngine } from './incremental-layout.util';
 import { gridLogger } from './grid-logger.util';
+import { IncrementalLayoutEngine } from './incremental-layout.util';
+import { packSectionsIntoRows, RowPackingResult } from './row-packer.util';
+import { SkylinePacker, PackingResult as SkylinePackingResult } from './skyline-algorithm.util';
+import { binPack2D, SectionWithMetrics } from './smart-grid.util';
 
 // ============================================================================
 // TYPES AND INTERFACES
@@ -169,7 +169,7 @@ export class AlgorithmSelector {
     const metrics = this.benchmarkAlgorithms(sampleSections);
 
     // Score each algorithm
-    const scores = metrics.map(m => ({
+    const scores = metrics.map((m) => ({
       algorithm: m.algorithm,
       score: this.calculateAlgorithmScore(m),
       metrics: m,
@@ -254,7 +254,9 @@ export class AlgorithmSelector {
   ): string {
     const reasons: string[] = [];
 
-    reasons.push(`${winner.algorithm} selected with ${winner.utilizationPercent.toFixed(1)}% utilization`);
+    reasons.push(
+      `${winner.algorithm} selected with ${winner.utilizationPercent.toFixed(1)}% utilization`
+    );
 
     if (winner.gapCount === 0) {
       reasons.push('no gaps');
@@ -271,7 +273,7 @@ export class AlgorithmSelector {
     }
 
     // Compare with runner-up
-    const runnerUp = allScores.find(s => s.algorithm !== winner.algorithm);
+    const runnerUp = allScores.find((s) => s.algorithm !== winner.algorithm);
     if (runnerUp) {
       const diff = winner.utilizationPercent - runnerUp.metrics.utilizationPercent;
       if (Math.abs(diff) > 5) {
@@ -361,7 +363,7 @@ export class AlgorithmSelector {
           });
           // Calculate metrics from legacy result
           if (result.length > 0) {
-            const maxTop = Math.max(...result.map(s => (s.top ?? 0) + s.estimatedHeight));
+            const maxTop = Math.max(...result.map((s) => (s.top ?? 0) + s.estimatedHeight));
             totalHeight = maxTop;
             const totalArea = this.config.columns * maxTop;
             const usedArea = result.reduce((sum, s) => sum + s.colSpan * s.estimatedHeight, 0);
@@ -399,7 +401,7 @@ export class AlgorithmSelector {
     if (result.rows.length === 0) return 1;
 
     // Check how many rows have full width
-    const fullRows = result.rows.filter(r => r.remainingCapacity === 0).length;
+    const fullRows = result.rows.filter((r) => r.remainingCapacity === 0).length;
     return fullRows / result.rows.length;
   }
 
@@ -410,9 +412,10 @@ export class AlgorithmSelector {
     // Use final skyline segments to determine balance
     if (result.finalSkyline.length === 0) return 1;
 
-    const heights = result.finalSkyline.map(s => s.y);
+    const heights = result.finalSkyline.map((s) => s.y);
     const avgHeight = heights.reduce((a, b) => a + b, 0) / heights.length;
-    const variance = heights.reduce((sum, h) => sum + Math.pow(h - avgHeight, 2), 0) / heights.length;
+    const variance =
+      heights.reduce((sum, h) => sum + Math.pow(h - avgHeight, 2), 0) / heights.length;
 
     const maxVariance = Math.pow(avgHeight, 2);
     return maxVariance > 0 ? Math.max(0, 1 - variance / maxVariance) : 1;
@@ -454,7 +457,8 @@ export class AlgorithmSelector {
     sections: CardSection[],
     preferredAlgorithm?: PackingAlgorithm
   ): { algorithm: PackingAlgorithm; metrics: AlgorithmMetrics; result: unknown } {
-    const algorithm = preferredAlgorithm ?? this.lastSelectionResult?.selectedAlgorithm ?? 'row-first';
+    const algorithm =
+      preferredAlgorithm ?? this.lastSelectionResult?.selectedAlgorithm ?? 'row-first';
     const attempts: PackingAlgorithm[] = [algorithm];
 
     // Build fallback chain based on the preferred algorithm
@@ -498,8 +502,10 @@ export class AlgorithmSelector {
         }
 
         // Log fallback
-        gridLogger.log?.('layout', `Algorithm ${tryAlgorithm} utilization ${metrics.utilizationPercent.toFixed(1)}% below threshold, trying fallback`);
-
+        gridLogger.log?.(
+          'layout',
+          `Algorithm ${tryAlgorithm} utilization ${metrics.utilizationPercent.toFixed(1)}% below threshold, trying fallback`
+        );
       } catch (error) {
         lastError = error as Error;
         gridLogger.log?.('error', `Algorithm ${tryAlgorithm} failed: ${lastError.message}`);
@@ -518,7 +524,10 @@ export class AlgorithmSelector {
   /**
    * Tries algorithm-specific optimizations
    */
-  private tryOptimizations(algorithm: PackingAlgorithm, sections: CardSection[]): AlgorithmMetrics | null {
+  private tryOptimizations(
+    algorithm: PackingAlgorithm,
+    sections: CardSection[]
+  ): AlgorithmMetrics | null {
     // Different optimizations for each algorithm
     switch (algorithm) {
       case 'row-first':
@@ -651,14 +660,14 @@ export class AlgorithmSelector {
    * Converts Skyline result to SectionWithMetrics array
    */
   private skylineToMetrics(result: SkylinePackingResult): SectionWithMetrics[] {
-    return result.placements.map(p => ({
+    return result.placements.map((p) => ({
       section: p.section,
       estimatedHeight: p.height,
       colSpan: p.width, // In skyline, width is column span
       priority: p.priority,
       density: 0,
       column: p.x, // In skyline, x is column index
-      top: p.y,    // In skyline, y is top position
+      top: p.y, // In skyline, y is top position
     }));
   }
 
@@ -675,7 +684,7 @@ export class AlgorithmSelector {
       this.incrementalEngine = new IncrementalLayoutEngine({
         columns: this.config.columns,
         containerWidth: 1200,
-        gap: this.config.gap
+        gap: this.config.gap,
       });
     }
     return this.incrementalEngine;
@@ -692,10 +701,7 @@ export class AlgorithmSelector {
    * Selects the best algorithm for streaming scenarios.
    * Considers section arrival rate and incremental layout requirements.
    */
-  selectForStreaming(
-    currentSections: CardSection[],
-    isFirstBatch: boolean
-  ): PackingAlgorithm {
+  selectForStreaming(currentSections: CardSection[], isFirstBatch: boolean): PackingAlgorithm {
     if (!this.config.enableStreamingAware) {
       return 'row-first';
     }
@@ -779,4 +785,3 @@ export function executeHybridLayout(
   const selector = new AlgorithmSelector({ columns, gap, enableHybridMode: true });
   return selector.executeHybrid(sections);
 }
-

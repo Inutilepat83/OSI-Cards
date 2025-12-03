@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { ValidateCardType } from '@osi-cards/decorators';
 import { CardChangeType, CardDiffUtil } from '@osi-cards/utils';
 import { AICardConfig, CardType } from '../../models';
-import { ValidateCardType } from '@osi-cards/decorators';
 import { ensureCardIds } from '../../shared/utils/card-utils';
 import { AppState } from '../../store/app.state';
 import * as CardActions from '../../store/cards/cards.state';

@@ -52,12 +52,7 @@ export async function withRetry<T>(
   fn: () => Promise<T>,
   options: ErrorRecoveryOptions = {}
 ): Promise<T> {
-  const {
-    maxAttempts = 3,
-    backoff = 'exponential',
-    initialDelay = 1000,
-    onRetry
-  } = options;
+  const { maxAttempts = 3, backoff = 'exponential', initialDelay = 1000, onRetry } = options;
 
   let lastError: Error;
 
@@ -68,12 +63,13 @@ export async function withRetry<T>(
       lastError = error as Error;
 
       if (attempt < maxAttempts) {
-        const delay = backoff === 'exponential'
-          ? initialDelay * Math.pow(2, attempt - 1)
-          : initialDelay * attempt;
+        const delay =
+          backoff === 'exponential'
+            ? initialDelay * Math.pow(2, attempt - 1)
+            : initialDelay * attempt;
 
         onRetry?.(attempt, lastError);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
   }
@@ -106,7 +102,7 @@ export function getUserMessage(error: unknown): string {
     }
 
     if (message.includes('forbidden') || message.includes('403')) {
-      return 'You don\'t have permission to access this resource.';
+      return "You don't have permission to access this resource.";
     }
 
     if (message.includes('not found') || message.includes('404')) {
@@ -150,7 +146,12 @@ export function isRecoverableError(error: unknown): boolean {
     }
 
     // Client errors are usually not recoverable
-    if (message.includes('400') || message.includes('401') || message.includes('403') || message.includes('404')) {
+    if (
+      message.includes('400') ||
+      message.includes('401') ||
+      message.includes('403') ||
+      message.includes('404')
+    ) {
       return false;
     }
   }
@@ -166,7 +167,7 @@ export enum ErrorSeverity {
   Low = 'low',
   Medium = 'medium',
   High = 'high',
-  Critical = 'critical'
+  Critical = 'critical',
 }
 
 /**
@@ -207,6 +208,5 @@ export const ErrorUtil = {
   getUserMessage,
   isRecoverableError,
   getErrorSeverity,
-  ErrorSeverity
+  ErrorSeverity,
 };
-

@@ -37,4 +37,3 @@ export const CardUtil = {
   // Re-export from card-diff.util
   // Additional utilities will be added here
 };
-

@@ -11,15 +11,14 @@
  * adaptive learning and text-aware calculations (Points 6-10).
  */
 
-import { CardSection, CardField } from '../models/card.model';
-import { gridLogger, GapAnalysis, ColumnAnalysis, PlacementDecision } from './grid-logger.util';
+import { CardSection } from '../models/card.model';
+import { GapAnalysis, gridLogger } from './grid-logger.util';
 import {
-  HeightEstimator,
+  BASE_HEIGHT_ESTIMATES,
+  HEIGHT_MULTIPLIERS,
   HeightEstimationContext,
   estimateSectionHeight as estimateHeightNew,
   measureContentDensity as measureDensityNew,
-  BASE_HEIGHT_ESTIMATES,
-  HEIGHT_MULTIPLIERS,
 } from './height-estimation.util';
 
 // Local implementation of calculateSmartColumns (previously from section-layout-registry)
@@ -36,25 +35,25 @@ function calculateSmartColumnsLocal(section: CardSection, maxColumns: number): n
   // Default column spans based on section type
   // UPDATED: Increased spans to reduce gaps
   const defaultSpans: Record<string, number> = {
-    'overview': 3,      // Increased from 2
+    overview: 3, // Increased from 2
     'contact-card': 1,
-    'network-card': 2,  // Increased from 1
-    'analytics': 2,
-    'stats': 2,         // Increased from 1
-    'chart': 2,
-    'map': 2,
-    'financials': 2,
-    'info': 2,          // Increased from 1
-    'list': 1,
-    'event': 2,         // Increased from 1
-    'timeline': 2,
-    'news': 1,
-    'product': 2,       // Increased from 1
-    'quotation': 2,     // Increased from 1
-    'solutions': 2,
+    'network-card': 2, // Increased from 1
+    analytics: 2,
+    stats: 2, // Increased from 1
+    chart: 2,
+    map: 2,
+    financials: 2,
+    info: 2, // Increased from 1
+    list: 1,
+    event: 2, // Increased from 1
+    timeline: 2,
+    news: 1,
+    product: 2, // Increased from 1
+    quotation: 2, // Increased from 1
+    solutions: 2,
     'social-media': 1,
     'text-reference': 2, // Increased from 1
-    'brand-colors': 1
+    'brand-colors': 1,
   };
 
   return Math.min(defaultSpans[type] || 2, maxColumns); // Default increased from 1 to 2
@@ -94,8 +93,8 @@ export interface GridPosition {
  */
 export interface Bin {
   sections: SectionWithMetrics[];
-  totalWidth: number;  // In columns
-  maxHeight: number;   // In pixels (estimated)
+  totalWidth: number; // In columns
+  maxHeight: number; // In pixels (estimated)
 }
 
 /**
@@ -122,7 +121,7 @@ export interface LayoutResult {
 }
 
 // Import types from services to avoid duplication
-import { PriorityBand, PriorityBandConfig, PRIORITY_BANDS } from '../services/section-normalization.service';
+import { PRIORITY_BANDS, PriorityBand } from '../services/section-normalization.service';
 
 // ============================================================================
 // CONSTANTS - Re-exported from height-estimation.util.ts
@@ -170,10 +169,7 @@ export function measureContentDensity(section: CardSection): number {
  * @param maxColumns - Maximum available columns
  * @returns Recommended column span (1-4)
  */
-export function calculateOptimalColumns(
-  section: CardSection,
-  maxColumns: number = 4
-): number {
+export function calculateOptimalColumns(section: CardSection, maxColumns: number = 4): number {
   // Use the smart column calculation
   return calculateSmartColumnsLocal(section, maxColumns);
 }
@@ -264,11 +260,7 @@ export function binPack2D(
     balanceColumns?: boolean;
   } = {}
 ): SectionWithMetrics[] {
-  const {
-    respectPriority = true,
-    fillGaps = true,
-    balanceColumns = true
-  } = options;
+  const { respectPriority = true, fillGaps = true, balanceColumns = true } = options;
 
   if (sections.length === 0 || columns <= 0) {
     return [];
@@ -277,12 +269,12 @@ export function binPack2D(
   gridLogger.startSession({
     columns,
     containerWidth: columns * 260,
-    sectionCount: sections.length
+    sectionCount: sections.length,
   });
 
   // Step 1: Calculate metrics for all sections
   gridLogger.startPhase('measure');
-  const sectionsWithMetrics: SectionWithMetrics[] = sections.map(section => ({
+  const sectionsWithMetrics: SectionWithMetrics[] = sections.map((section) => ({
     section,
     estimatedHeight: estimateSectionHeight(section),
     colSpan: calculateOptimalColumns(section, columns),
@@ -317,12 +309,14 @@ export function binPack2D(
     });
   }
 
-  gridLogger.logSortOrder(sectionsWithMetrics.map(s => ({
-    title: s.section.title ?? 'Untitled',
-    type: s.section.type ?? 'unknown',
-    priority: s.priority,
-    colSpan: s.colSpan
-  })));
+  gridLogger.logSortOrder(
+    sectionsWithMetrics.map((s) => ({
+      title: s.section.title ?? 'Untitled',
+      type: s.section.type ?? 'unknown',
+      priority: s.priority,
+      colSpan: s.colSpan,
+    }))
+  );
   gridLogger.endPhase('sort');
 
   // Step 3: Pack sections into rows using shelf algorithm
@@ -344,7 +338,7 @@ export function binPack2D(
       heights: columnHeights,
       variance: calculateVariance(columnHeights),
       maxDiff: Math.max(...columnHeights) - Math.min(...columnHeights),
-      balanceScore: calculateBalanceScore(columnHeights)
+      balanceScore: calculateBalanceScore(columnHeights),
     });
     gridLogger.endPhase('balance');
   }
@@ -379,7 +373,7 @@ function packIntoRows(
       topOffset: currentTop,
       height: 0,
       sections: [],
-      remainingCapacity: columns
+      remainingCapacity: columns,
     };
 
     // First pass: place sections that fit
@@ -411,12 +405,13 @@ function packIntoRows(
           sectionId: section.section.id ?? section.section.title ?? '',
           sectionType: section.section.type ?? 'unknown',
           title: section.section.title ?? 'Untitled',
-          requestedColSpan: sections.find(s => s.section === section.section)?.colSpan ?? effectiveColSpan,
+          requestedColSpan:
+            sections.find((s) => s.section === section.section)?.colSpan ?? effectiveColSpan,
           actualColSpan: effectiveColSpan,
           column: section.column,
           row: rowIndex,
           top: currentTop,
-          reason: row.remainingCapacity === 0 ? 'Exact fit' : 'First fit'
+          reason: row.remainingCapacity === 0 ? 'Exact fit' : 'First fit',
         });
       } else {
         i++;
@@ -450,7 +445,7 @@ function packIntoRows(
             column: section.column,
             row: rowIndex,
             top: currentTop,
-            reason: 'Gap fill'
+            reason: 'Gap fill',
           });
         }
       }
@@ -459,7 +454,7 @@ function packIntoRows(
     // Log row completion
     gridLogger.logRowBuilt(
       rowIndex,
-      row.sections.map(s => ({ title: s.section.title ?? 'Untitled', colSpan: s.colSpan })),
+      row.sections.map((s) => ({ title: s.section.title ?? 'Untitled', colSpan: s.colSpan })),
       row.remainingCapacity
     );
 
@@ -523,13 +518,15 @@ function balanceColumnLoads(sections: SectionWithMetrics[], columns: number): vo
     }
 
     // Find a section in the tallest column that could fit in the shortest
-    const movableSection = sections.find(s =>
-      s.column === tallestCol &&
-      s.colSpan === 1 &&
-      s.priority >= 3 // Only move low priority sections
+    const movableSection = sections.find(
+      (s) => s.column === tallestCol && s.colSpan === 1 && s.priority >= 3 // Only move low priority sections
     );
 
-    if (movableSection && columnHeights[tallestCol] !== undefined && columnHeights[shortestCol] !== undefined) {
+    if (
+      movableSection &&
+      columnHeights[tallestCol] !== undefined &&
+      columnHeights[shortestCol] !== undefined
+    ) {
       movableSection.column = shortestCol;
       columnHeights[tallestCol] = columnHeights[tallestCol]! - movableSection.estimatedHeight;
       columnHeights[shortestCol] = columnHeights[shortestCol]! + movableSection.estimatedHeight;
@@ -561,7 +558,7 @@ function calculateColumnHeights(sections: SectionWithMetrics[], columns: number)
  */
 function calculateVariance(heights: number[]): number {
   const avg = heights.reduce((a, b) => a + b, 0) / heights.length;
-  const squaredDiffs = heights.map(h => Math.pow(h - avg, 2));
+  const squaredDiffs = heights.map((h) => Math.pow(h - avg, 2));
   return squaredDiffs.reduce((a, b) => a + b, 0) / heights.length;
 }
 
@@ -597,7 +594,7 @@ function analyzeGaps(sections: SectionWithMetrics[], columns: number): GapAnalys
     totalGaps: gapArea > 0 ? Math.ceil(gapArea / (260 * 100)) : 0,
     gapArea: Math.max(0, gapArea),
     gaps: [], // Detailed gaps would require more complex analysis
-    utilizationPercent: totalArea > 0 ? (usedArea / totalArea) * 100 : 100
+    utilizationPercent: totalArea > 0 ? (usedArea / totalArea) * 100 : 100,
   };
 }
 
@@ -614,7 +611,13 @@ function analyzeGaps(sections: SectionWithMetrics[], columns: number): GapAnalys
  * @returns Array of gap positions
  */
 export function findGaps(
-  positionedSections: Array<{ colSpan: number; left: string; top: number; width: string; height: number }>,
+  positionedSections: Array<{
+    colSpan: number;
+    left: string;
+    top: number;
+    width: string;
+    height: number;
+  }>,
   columns: number,
   containerHeight: number
 ): Array<{ column: number; top: number; height: number; width: number }> {
@@ -627,9 +630,7 @@ export function findGaps(
   // Build occupancy grid
   const gridResolution = 10; // pixels
   const rows = Math.ceil(containerHeight / gridResolution);
-  const grid: boolean[][] = Array.from({ length: rows }, () =>
-    new Array(columns).fill(false)
-  );
+  const grid: boolean[][] = Array.from({ length: rows }, () => new Array(columns).fill(false));
 
   // Mark occupied cells
   for (const section of positionedSections) {
@@ -660,12 +661,13 @@ export function findGaps(
       } else if (isOccupied && gapStart !== null) {
         // Found end of gap
         const gapHeight = (r - gapStart) * gridResolution;
-        if (gapHeight >= 50) { // Only count significant gaps
+        if (gapHeight >= 50) {
+          // Only count significant gaps
           gaps.push({
             column: c,
             top: gapStart * gridResolution,
             height: gapHeight,
-            width: 1
+            width: 1,
           });
         }
         gapStart = null;
@@ -702,8 +704,8 @@ export function fillGapsWithSections(
   const pending: SectionWithMetrics[] = [...orderedSections];
 
   // Separate by flexibility
-  const rigid = pending.filter(s => s.priority <= 2); // Critical/Important don't move
-  const flexible = pending.filter(s => s.priority > 2);
+  const rigid = pending.filter((s) => s.priority <= 2); // Critical/Important don't move
+  const flexible = pending.filter((s) => s.priority > 2);
 
   // Place rigid sections first
   result.push(...rigid);
@@ -766,17 +768,13 @@ export function calculateLayoutAnalytics(
   containerHeight: number
 ): { gapCount: number; utilizationPercent: number; balanceScore: number } {
   // Calculate total section area
-  const totalArea = sections.reduce((acc, s) =>
-    acc + (s.colSpan * s.estimatedHeight), 0
-  );
+  const totalArea = sections.reduce((acc, s) => acc + s.colSpan * s.estimatedHeight, 0);
 
   // Calculate container area
   const containerArea = columns * containerHeight;
 
   // Utilization percentage
-  const utilizationPercent = containerArea > 0
-    ? Math.round((totalArea / containerArea) * 100)
-    : 0;
+  const utilizationPercent = containerArea > 0 ? Math.round((totalArea / containerArea) * 100) : 0;
 
   // Column balance (standard deviation of heights)
   const columnHeights = calculateColumnHeights(sections, columns);
@@ -825,8 +823,8 @@ export function flattenGroups(
   const groupedEntries = Array.from(groups.entries())
     .filter(([key]) => key !== undefined)
     .sort((a, b) => {
-      const aPriority = Math.min(...a[1].map(s => s.priority));
-      const bPriority = Math.min(...b[1].map(s => s.priority));
+      const aPriority = Math.min(...a[1].map((s) => s.priority));
+      const bPriority = Math.min(...b[1].map((s) => s.priority));
       return aPriority - bPriority;
     });
 
@@ -851,7 +849,7 @@ export function flattenGroups(
     }
 
     const ungroupedPriority = nextUngrouped.priority;
-    const groupPriority = Math.min(...nextGroup[1].map(s => s.priority));
+    const groupPriority = Math.min(...nextGroup[1].map((s) => s.priority));
 
     if (ungroupedPriority <= groupPriority) {
       result.push(nextUngrouped);

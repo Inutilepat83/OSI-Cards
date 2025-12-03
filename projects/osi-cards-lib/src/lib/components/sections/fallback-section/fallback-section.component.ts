@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { EmptyStateComponent } from '../../shared';
 import { BaseSectionComponent } from '../base-section.component';
-import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../../shared';
 
 /**
  * Fallback Section Component
@@ -14,10 +14,9 @@ import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../
   standalone: true,
   imports: [CommonModule, EmptyStateComponent],
   templateUrl: './fallback-section.component.html',
-  styleUrl: './fallback-section.scss'
+  styleUrl: './fallback-section.scss',
 })
 export class FallbackSectionComponent extends BaseSectionComponent {
-
   /**
    * Get section type display
    */

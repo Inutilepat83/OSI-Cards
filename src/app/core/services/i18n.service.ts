@@ -22,7 +22,7 @@ export class I18nService extends LibI18nService {
    * Translate a key with optional parameters
    * Backwards compatibility method
    */
-  public translate(key: string, params?: TranslationParams): string {
+  public override translate(key: string, params?: TranslationParams): string {
     // For now, return the key as-is since translations aren't implemented
     // This matches the old behavior
     if (!params) {

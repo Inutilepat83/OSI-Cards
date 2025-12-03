@@ -4,17 +4,17 @@
 export * from './card-facade.service';
 export * from './email-handler.service';
 export * from './empty-state.service';
+export { CardBusEvent, EventBusService, EventHandler } from './event-bus.service';
 export * from './event-middleware.service';
+export * from './i18n.service';
 export * from './icon.service';
 export * from './keyboard-shortcuts.service';
 export * from './layout-worker.service';
 export * from './magnetic-tilt.service';
+export * from './retry-policy.service';
 export * from './section-plugin-registry.service';
 export * from './section-utils.service';
 export * from './streaming.service';
-export * from './retry-policy.service';
-export * from './i18n.service';
-export { CardBusEvent, EventBusService, EventHandler } from './event-bus.service';
 
 // ============================================================================
 // CONSOLIDATED SERVICES (Phase 3 Consolidation)

@@ -195,8 +195,9 @@ export class SectionRendererComponent implements OnChanges {
 
   /**
    * Create the dynamic component
+   * @internal Reserved for future use
    */
-  private createComponent(resolvedType: string): void {
+  private _createComponent(resolvedType: string): void {
     const componentClass = this.loader.getComponentForSection(this.section);
 
     if (!componentClass) {

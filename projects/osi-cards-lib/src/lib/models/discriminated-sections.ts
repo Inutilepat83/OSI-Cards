@@ -25,7 +25,7 @@
  * @module models/discriminated-sections
  */
 
-import type { CardField, CardItem, CardAction } from './card.model';
+import type { CardField, CardItem } from './card.model';
 import type { SectionType } from './generated-section-types';
 
 // ============================================================================
@@ -567,7 +567,9 @@ export function isQuotationSection(section: DiscriminatedSection): section is Qu
 /**
  * Type guard for Text Reference Section
  */
-export function isTextReferenceSection(section: DiscriminatedSection): section is TextReferenceSection {
+export function isTextReferenceSection(
+  section: DiscriminatedSection
+): section is TextReferenceSection {
   return section.type === 'text-reference';
 }
 
@@ -602,7 +604,9 @@ export function isFallbackSection(section: DiscriminatedSection): section is Fal
 /**
  * Type guard for field-based sections
  */
-export function hasFields(section: DiscriminatedSection): section is
+export function hasFields(
+  section: DiscriminatedSection
+): section is
   | InfoSection
   | AnalyticsSection
   | ContactCardSection
@@ -619,10 +623,9 @@ export function hasFields(section: DiscriminatedSection): section is
 /**
  * Type guard for item-based sections
  */
-export function hasItems(section: DiscriminatedSection): section is
-  | ListSection
-  | NetworkCardSection
-  | NewsSection {
+export function hasItems(
+  section: DiscriminatedSection
+): section is ListSection | NetworkCardSection | NewsSection {
   return 'items' in section && Array.isArray(section.items);
 }
 
@@ -664,28 +667,28 @@ export function assertNever(x: never): never {
  * Useful for creating type-safe section handlers.
  */
 export type SectionTypeMap = {
-  'info': InfoSection;
-  'analytics': AnalyticsSection;
+  info: InfoSection;
+  analytics: AnalyticsSection;
   'contact-card': ContactCardSection;
   'network-card': NetworkCardSection;
-  'map': MapSection;
-  'financials': FinancialsSection;
-  'event': EventSection;
-  'list': ListSection;
-  'chart': ChartSection;
-  'product': ProductSection;
-  'solutions': SolutionsSection;
-  'overview': OverviewSection;
-  'quotation': QuotationSection;
+  map: MapSection;
+  financials: FinancialsSection;
+  event: EventSection;
+  list: ListSection;
+  chart: ChartSection;
+  product: ProductSection;
+  solutions: SolutionsSection;
+  overview: OverviewSection;
+  quotation: QuotationSection;
   'text-reference': TextReferenceSection;
   'brand-colors': BrandColorsSection;
-  'news': NewsSection;
+  news: NewsSection;
   'social-media': SocialMediaSection;
-  'timeline': TimelineSection;
-  'gallery': GallerySection;
-  'faq': FaqSection;
-  'video': VideoSection;
-  'fallback': FallbackSection;
+  timeline: TimelineSection;
+  gallery: GallerySection;
+  faq: FaqSection;
+  video: VideoSection;
+  fallback: FallbackSection;
 };
 
 /**
@@ -697,6 +700,3 @@ export type ExtractSectionType<T extends DiscriminatedSection> = T['type'];
  * Get discriminated section type from section type string
  */
 export type GetDiscriminatedSection<T extends SectionType> = SectionTypeMap[T];
-
-
-

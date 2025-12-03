@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent } from '../base-section.component';
-import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../../shared';
 
 /**
  * Video Section Component
@@ -15,10 +15,9 @@ import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../
   standalone: true,
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './video-section.component.html',
-  styleUrl: './video-section.scss'
+  styleUrl: './video-section.scss',
 })
 export class VideoSectionComponent extends BaseSectionComponent {
-
   constructor(private sanitizer: DomSanitizer) {
     super();
   }

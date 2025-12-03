@@ -1,7 +1,7 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent } from '../base-section.component';
-import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../../shared';
 
 /**
  * Chart Section Component
@@ -16,9 +16,12 @@ import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../
   standalone: true,
   imports: [CommonModule, SectionHeaderComponent],
   templateUrl: './chart-section.component.html',
-  styleUrl: './chart-section.scss'
+  styleUrl: './chart-section.scss',
 })
-export class ChartSectionComponent extends BaseSectionComponent implements AfterViewInit, OnDestroy {
+export class ChartSectionComponent
+  extends BaseSectionComponent
+  implements AfterViewInit, OnDestroy
+{
   @ViewChild('chartCanvas', { static: false }) chartCanvas?: ElementRef<HTMLCanvasElement>;
 
   private chartInstance: any;
@@ -56,9 +59,9 @@ export class ChartSectionComponent extends BaseSectionComponent implements After
           plugins: {
             legend: {
               position: 'bottom',
-            }
-          }
-        }
+            },
+          },
+        },
       });
     } catch (error) {
       console.warn('Chart.js not available', error);

@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json.schemastore.org/eslintrc",
+  "root": false,
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "extends": ["./eslint.config.js"],
+      "rules": {
+        "@typescript-eslint/explicit-function-return-type": [
+          "warn",
+          {
+            "allowExpressions": true,
+            "allowTypedFunctionExpressions": true,
+            "allowHigherOrderFunctions": true,
+            "allowDirectConstAssertionInArrowFunctions": true
+          }
+        ],
+        "@typescript-eslint/explicit-member-accessibility": [
+          "error",
+          {
+            "accessibility": "explicit",
+            "overrides": {
+              "constructors": "no-public"
+            }
+          }
+        ],
+        "@typescript-eslint/member-ordering": [
+          "warn",
+          {
+            "default": [
+              "public-static-field",
+              "protected-static-field",
+              "private-static-field",
+              "public-instance-field",
+              "protected-instance-field",
+              "private-instance-field",
+              "constructor",
+              "public-static-method",
+              "protected-static-method",
+              "private-static-method",
+              "public-instance-method",
+              "protected-instance-method",
+              "private-instance-method"
+            ]
+          }
+        ],
+        "@typescript-eslint/naming-convention": [
+          "error",
+          {
+            "selector": "default",
+            "format": ["camelCase"],
+            "leadingUnderscore": "allow",
+            "trailingUnderscore": "forbid"
+          },
+          {
+            "selector": "variable",
+            "format": ["camelCase", "UPPER_CASE", "PascalCase"],
+            "leadingUnderscore": "allow"
+          },
+          {
+            "selector": "typeLike",
+            "format": ["PascalCase"]
+          },
+          {
+            "selector": "enumMember",
+            "format": ["PascalCase", "UPPER_CASE"]
+          },
+          {
+            "selector": "interface",
+            "format": ["PascalCase"],
+            "custom": {
+              "regex": "^I[A-Z]",
+              "match": false
+            }
+          }
+        ],
+        "@typescript-eslint/no-explicit-any": "warn",
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_"
+          }
+        ],
+        "@typescript-eslint/prefer-readonly": "warn",
+        "@typescript-eslint/promise-function-async": "warn",
+        "@typescript-eslint/no-floating-promises": "error",
+        "@typescript-eslint/no-misused-promises": "error",
+        "@typescript-eslint/await-thenable": "error",
+        "complexity": ["warn", { "max": 10 }],
+        "max-lines": ["warn", { "max": 400, "skipBlankLines": true, "skipComments": true }],
+        "max-lines-per-function": [
+          "warn",
+          { "max": 75, "skipBlankLines": true, "skipComments": true }
+        ],
+        "max-depth": ["warn", 4],
+        "max-nested-callbacks": ["warn", 3],
+        "max-params": ["warn", 4],
+        "no-console": ["warn", { "allow": ["warn", "error"] }],
+        "no-debugger": "error",
+        "no-duplicate-imports": "error",
+        "no-magic-numbers": [
+          "warn",
+          {
+            "ignore": [-1, 0, 1, 2, 100],
+            "ignoreArrayIndexes": true,
+            "ignoreDefaultValues": true,
+            "enforceConst": true
+          }
+        ],
+        "prefer-const": "error",
+        "prefer-arrow-callback": "warn",
+        "no-var": "error",
+        "eqeqeq": ["error", "always"],
+        "curly": ["error", "all"],
+        "dot-notation": "warn",
+        "no-throw-literal": "error",
+        "prefer-template": "warn",
+        "radix": "error",
+        "no-return-await": "warn"
+      }
+    },
+    {
+      "files": ["*.html"],
+      "extends": [
+        "plugin:@angular-eslint/template/recommended",
+        "plugin:@angular-eslint/template/accessibility"
+      ],
+      "rules": {
+        "@angular-eslint/template/no-negated-async": "error",
+        "@angular-eslint/template/use-track-by-function": "warn",
+        "@angular-eslint/template/no-call-expression": "warn",
+        "@angular-eslint/template/conditional-complexity": ["warn", { "maxComplexity": 3 }],
+        "@angular-eslint/template/cyclomatic-complexity": ["warn", { "maxComplexity": 5 }],
+        "@angular-eslint/template/i18n": [
+          "warn",
+          {
+            "checkId": false,
+            "checkText": true,
+            "checkAttributes": true,
+            "ignoreAttributes": ["class", "style", "id"]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*.spec.ts"],
+      "rules": {
+        "max-lines-per-function": "off",
+        "max-lines": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "no-magic-numbers": "off"
+      }
+    }
+  ]
+}
+

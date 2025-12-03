@@ -1,30 +1,30 @@
 /**
  * Section Animation Service
- * 
+ *
  * Centralized service for managing section animations in OSI Cards.
  * Handles entrance animations, streaming effects, and animation state tracking.
- * 
+ *
  * @example
  * ```typescript
  * import { SectionAnimationService } from 'osi-cards-lib';
- * 
+ *
  * const animationService = inject(SectionAnimationService);
- * 
+ *
  * // Track a new section
  * animationService.markSectionEntering('section-1', 0);
- * 
+ *
  * // Check animation state
  * if (animationService.shouldAnimate('section-1')) {
  *   // Apply animation
  * }
- * 
+ *
  * // Complete animation
  * animationService.markSectionAnimated('section-1');
  * ```
  */
 
-import { Injectable, OnDestroy, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { inject, Injectable, OnDestroy, PLATFORM_ID } from '@angular/core';
 import { AnimationState as WebAnimationState } from '../utils/web-animations.util';
 
 // Local animation state with additional values
@@ -123,7 +123,7 @@ export class SectionAnimationService implements OnDestroy {
 
   /**
    * Mark a section as entering (starting animation)
-   * 
+   *
    * @param key - Unique section identifier
    * @param staggerIndex - Position in stagger sequence
    */
@@ -148,7 +148,7 @@ export class SectionAnimationService implements OnDestroy {
 
   /**
    * Mark a section's animation as complete
-   * 
+   *
    * @param key - Unique section identifier
    */
   markSectionAnimated(key: string): void {
@@ -171,7 +171,7 @@ export class SectionAnimationService implements OnDestroy {
 
   /**
    * Check if a section should animate
-   * 
+   *
    * @param key - Unique section identifier
    * @returns true if section should animate
    */
@@ -193,7 +193,7 @@ export class SectionAnimationService implements OnDestroy {
 
   /**
    * Check if a section has completed its animation
-   * 
+   *
    * @param key - Unique section identifier
    * @returns true if animation is complete
    */
@@ -203,7 +203,7 @@ export class SectionAnimationService implements OnDestroy {
 
   /**
    * Get the animation state of a section
-   * 
+   *
    * @param key - Unique section identifier
    * @returns Current animation state or 'none'
    */
@@ -213,7 +213,7 @@ export class SectionAnimationService implements OnDestroy {
 
   /**
    * Get CSS class for section animation
-   * 
+   *
    * @param key - Unique section identifier
    * @returns CSS class name based on animation state
    */
@@ -235,7 +235,7 @@ export class SectionAnimationService implements OnDestroy {
 
   /**
    * Get stagger delay for a section
-   * 
+   *
    * @param key - Unique section identifier
    * @returns Stagger delay in milliseconds
    */
@@ -300,7 +300,7 @@ export class SectionAnimationService implements OnDestroy {
 
   /**
    * Calculate total animation duration including stagger
-   * 
+   *
    * @param staggerIndex - Position in stagger sequence
    * @returns Total duration in milliseconds
    */
@@ -360,12 +360,3 @@ export class SectionAnimationService implements OnDestroy {
     this.pendingAnimations.clear();
   }
 }
-
-
-
-
-
-
-
-
-

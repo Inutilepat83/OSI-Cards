@@ -16,7 +16,7 @@
  * ```
  */
 
-import { CardSection, AICardConfig } from '../models';
+import { AICardConfig, CardSection } from '../models';
 
 // =============================================================================
 // TYPES
@@ -95,7 +95,10 @@ export function deepMerge<T extends object>(target: T, source: DeepPartial<T>): 
         typeof targetValue === 'object' &&
         targetValue !== null
       ) {
-        result[key] = deepMerge(targetValue as object, sourceValue as DeepPartial<object>) as T[keyof T];
+        result[key] = deepMerge(
+          targetValue as object,
+          sourceValue as DeepPartial<object>
+        ) as T[keyof T];
       } else {
         result[key] = sourceValue as T[keyof T];
       }
@@ -112,7 +115,9 @@ export function deepMerge<T extends object>(target: T, source: DeepPartial<T>): 
 /**
  * Create a mock field
  */
-export function createMockField(overrides: DeepPartial<{ label: string; value: unknown; icon?: string }> = {}): { label: string; value: unknown; icon?: string } {
+export function createMockField(
+  overrides: DeepPartial<{ label: string; value: unknown; icon?: string }> = {}
+): { label: string; value: unknown; icon?: string } {
   return deepMerge(
     {
       label: `Field ${randomNumber(1, 100)}`,
@@ -125,7 +130,9 @@ export function createMockField(overrides: DeepPartial<{ label: string; value: u
 /**
  * Create a mock item
  */
-export function createMockItem(overrides: DeepPartial<{ title: string; description?: string; icon?: string }> = {}): { title: string; description?: string; icon?: string } {
+export function createMockItem(
+  overrides: DeepPartial<{ title: string; description?: string; icon?: string }> = {}
+): { title: string; description?: string; icon?: string } {
   return deepMerge(
     {
       title: `Item ${randomNumber(1, 100)}`,
@@ -244,11 +251,7 @@ export function createMockCard(overrides: DeepPartial<AICardConfig> = {}): AICar
       id,
       cardTitle: `Test Card ${id}`,
       cardSubtitle: 'A test card for unit testing',
-      sections: [
-        createMockInfoSection(),
-        createMockAnalyticsSection(),
-        createMockListSection(),
-      ],
+      sections: [createMockInfoSection(), createMockAnalyticsSection(), createMockListSection()],
       theme: {
         preset: 'default',
       },
@@ -352,21 +355,30 @@ export class MockFactory {
   /**
    * Create a single field
    */
-  static field(overrides?: DeepPartial<{ label: string; value: unknown }>): { label: string; value: unknown } {
+  static field(overrides?: DeepPartial<{ label: string; value: unknown }>): {
+    label: string;
+    value: unknown;
+  } {
     return createMockField(overrides);
   }
 
   /**
    * Create multiple fields
    */
-  static fields(count: number, overrides?: DeepPartial<{ label: string; value: unknown }>): { label: string; value: unknown }[] {
+  static fields(
+    count: number,
+    overrides?: DeepPartial<{ label: string; value: unknown }>
+  ): { label: string; value: unknown }[] {
     return Array.from({ length: count }, () => createMockField(overrides));
   }
 
   /**
    * Create streaming card data (for testing streaming functionality)
    */
-  static streamingCard(chunkCount: number = 5): { chunks: Partial<AICardConfig>[]; final: AICardConfig } {
+  static streamingCard(chunkCount: number = 5): {
+    chunks: Partial<AICardConfig>[];
+    final: AICardConfig;
+  } {
     const final = createMockCard();
     const chunks: Partial<AICardConfig>[] = [];
 
@@ -402,7 +414,10 @@ export class MockFactory {
 /**
  * Create a mock HTTP response
  */
-export function createMockHttpResponse<T>(data: T, status: number = 200): {
+export function createMockHttpResponse<T>(
+  data: T,
+  status: number = 200
+): {
   body: T;
   status: number;
   statusText: string;
@@ -440,10 +455,7 @@ export function createMockErrorResponse(
 /**
  * Create a mock event
  */
-export function createMockEvent<T extends Event>(
-  type: string,
-  options: Partial<T> = {}
-): T {
+export function createMockEvent<T extends Event>(type: string, options: Partial<T> = {}): T {
   const event = new Event(type) as T;
   Object.assign(event, options);
   return event;
@@ -469,10 +481,7 @@ export function createMockKeyboardEvent(
 /**
  * Create a mock mouse event
  */
-export function createMockMouseEvent(
-  type: string,
-  options: Partial<MouseEvent> = {}
-): MouseEvent {
+export function createMockMouseEvent(type: string, options: Partial<MouseEvent> = {}): MouseEvent {
   return new MouseEvent(type, {
     bubbles: true,
     cancelable: true,
@@ -549,6 +558,3 @@ export class CardBuilder {
 export function cardBuilder(): CardBuilder {
   return new CardBuilder();
 }
-
-
-

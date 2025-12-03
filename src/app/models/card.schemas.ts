@@ -16,13 +16,26 @@ export const cardFieldSchema = z
     label: z.string().optional(),
     value: z.union([z.string(), z.number(), z.boolean(), z.null()]).optional(),
     icon: z.string().optional(),
-    format: z.enum(['currency', 'percentage', 'number', 'text', 'date', 'datetime']).optional(),
+    format: z
+      .enum(['currency', 'percentage', 'number', 'text', 'date', 'datetime', 'ratio'])
+      .optional(),
     trend: z.enum(['up', 'down', 'stable', 'neutral']).optional(),
     change: z.number().optional(),
     percentage: z.number().min(0).optional(), // Removed max(100) to allow values > 100 (e.g., 120%, 185%)
     performance: z.string().optional(),
     description: z.string().optional(),
-    status: z.enum(['completed', 'in-progress', 'pending', 'error', 'confirmed']).optional(),
+    status: z
+      .enum([
+        'completed',
+        'in-progress',
+        'pending',
+        'error',
+        'confirmed',
+        'planned',
+        'tentative',
+        'available',
+      ])
+      .optional(),
     priority: z.enum(['high', 'medium', 'low']).optional(),
     type: z.string().optional(),
     meta: z.record(z.unknown()).optional(),
@@ -178,6 +191,15 @@ export const cardSectionSchema = z
       'brand-colors',
       'news',
       'social-media',
+      'faq', // NEW: FAQ sections
+      'gallery', // NEW: Gallery sections
+      'video', // NEW: Video sections
+      'hero', // NEW: Hero sections
+      'profile-card', // NEW: Profile card sections
+      'article', // NEW: Article sections
+      'text', // NEW: Text sections
+      'data-grid', // NEW: Data grid sections
+      'form', // NEW: Form sections
     ]),
     description: z.string().optional(),
     subtitle: z.string().optional(),

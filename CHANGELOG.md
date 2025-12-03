@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - TBD
 
+## [1.5.5] - 2025-12-03
+
+> Released: 2025-12-03T22:21:56.809Z
+
+### ♻️ Refactoring
+
+- **consolidation**: complete phase 1 consolidation - 38/100 items, 11/13 phases, 0 app errors (`3f1adb3`)
+
 ## [1.5.4] - 2025-12-02
 
 > Released: 2025-12-02T21:34:01.585Z

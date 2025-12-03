@@ -9,25 +9,25 @@
 
 // Re-export ONLY memoization-related exports to avoid conflicts
 export {
-  memoize,
-  memoizeAsync,
-  memoizeWeak,
+  LRUCache,
+  MemoizationUtil,
   Memoize,
   MemoizeAsync,
   MemoizeCache,
-  defaultKeyGenerator,
-  primitiveKeyGenerator,
   clearMemoizeCache,
-  MemoizationUtil,
+  defaultKeyGenerator,
   memo,
-  memoWithTTL,
   memoWeakMap,
   memoWithEquality,
+  memoWithTTL,
+  memoize,
+  memoizeAsync,
+  memoizeWeak,
   once,
-  LRUCache,
+  primitiveKeyGenerator,
+  type LRUCacheOptions,
   type MemoizeDecoratorOptions,
   type MemoizedGetter,
-  type LRUCacheOptions,
 } from '@osi-cards/utils';
 
 // Additional types (these are in memo.util but not re-exported through utils/index)

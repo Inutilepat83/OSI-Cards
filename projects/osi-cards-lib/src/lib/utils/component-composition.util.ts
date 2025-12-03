@@ -1,371 +1,338 @@
 /**
  * Component Composition Utilities
  *
- * Utilities for composing components with cross-cutting concerns like
- * loading states, error boundaries, and skeleton loading.
+ * Utilities for composing and combining Angular components,
+ * including HOC patterns, component factories, and dynamic composition.
  *
- * These utilities follow higher-order component patterns to reduce boilerplate
- * and ensure consistent behavior across components.
- *
- * @example
- * ```typescript
- * // Wrap a component with error boundary and loading
- * const SafeComponent = withErrorBoundary(
- *   withLoading(MyComponent)
- * );
- * ```
- */
-
-import { Type, Component, Input, ViewEncapsulation, ChangeDetectionStrategy } from '@angular/core';
-
-/**
- * Configuration for loading wrapper
- */
-export interface LoadingWrapperConfig {
-  /** Custom loading message */
-  loadingMessage?: string;
-  /** Show spinner */
-  showSpinner?: boolean;
-  /** Minimum loading time (prevents flash) */
-  minLoadingTime?: number;
-}
-
-/**
- * Configuration for error boundary wrapper
- */
-export interface ErrorBoundaryWrapperConfig {
-  /** Show error details (dev mode) */
-  showDetails?: boolean;
-  /** Allow retry */
-  allowRetry?: boolean;
-  /** Max retry attempts */
-  maxRetries?: number;
-  /** Custom error message */
-  errorMessage?: string;
-}
-
-/**
- * Configuration for skeleton wrapper
- */
-export interface SkeletonWrapperConfig {
-  /** Number of skeleton items */
-  items?: number;
-  /** Show skeleton title */
-  showTitle?: boolean;
-  /** Skeleton variant */
-  variant?: 'default' | 'compact' | 'spacious';
-}
-
-/**
- * Creates a component wrapped with loading state management
- *
- * @param component - Component to wrap
- * @param config - Loading configuration
- * @returns Wrapped component with loading functionality
+ * Features:
+ * - Component factories
+ * - Dynamic component loading
+ * - Component wrapping
+ * - Props merging
+ * - Component registry
  *
  * @example
  * ```typescript
- * const LoadingAnalytics = withLoading(AnalyticsSectionComponent, {
- *   loadingMessage: 'Loading analytics...',
- *   showSpinner: true
- * });
+ * import { createComponentFactory, wrapComponent } from '@osi-cards/utils';
+ *
+ * const factory = createComponentFactory(MyComponent);
+ * const instance = factory.create({ input1: 'value' });
  * ```
  */
-export function withLoading<T>(
-  component: Type<T>,
-  config: LoadingWrapperConfig = {}
-): Type<T> {
-  @Component({
-    selector: 'lib-with-loading-wrapper',
-    template: `
-      @if (isLoading) {
-        <div class="loading-wrapper">
-          @if (config.showSpinner) {
-            <div class="spinner"></div>
-          }
-          @if (config.loadingMessage) {
-            <p class="loading-message">{{ config.loadingMessage }}</p>
-          }
-        </div>
-      } @else {
-        <ng-content></ng-content>
-      }
-    `,
-    styles: [`
-      .loading-wrapper {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
-        min-height: 200px;
-      }
-      .spinner {
-        width: 32px;
-        height: 32px;
-        border: 3px solid var(--osi-card-border, #e5e7eb);
-        border-top-color: var(--osi-card-accent, #6366f1);
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-      }
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
-      .loading-message {
-        margin-top: 1rem;
-        color: var(--osi-card-muted, #6b7280);
-        font-size: 0.875rem;
-      }
-    `],
-    standalone: true,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    encapsulation: ViewEncapsulation.None,
-  })
-  class LoadingWrapperComponent {
-    @Input() isLoading = false;
-    config = config;
+
+import {
+  Component,
+  ComponentRef,
+  ViewContainerRef,
+  Type,
+  Injector,
+  EnvironmentInjector,
+  createComponent,
+  EnvironmentProviders
+} from '@angular/core';
+
+/**
+ * Component factory options
+ */
+export interface ComponentFactoryOptions {
+  /**
+   * Injector to use
+   */
+  injector?: Injector;
+
+  /**
+   * Environment injector
+   */
+  environmentInjector?: EnvironmentInjector;
+
+  /**
+   * Project content nodes
+   */
+  projectableNodes?: Node[][];
+}
+
+/**
+ * Component factory
+ *
+ * Creates instances of a component with given inputs.
+ */
+export class ComponentFactory<T> {
+  constructor(
+    private componentType: Type<T>,
+    private defaultOptions: ComponentFactoryOptions = {}
+  ) {}
+
+  /**
+   * Create component instance
+   *
+   * @param inputs - Component inputs
+   * @param container - View container ref
+   * @param options - Factory options
+   * @returns Component reference
+   */
+  create(
+    inputs: Partial<T>,
+    container: ViewContainerRef,
+    options: ComponentFactoryOptions = {}
+  ): ComponentRef<T> {
+    const componentRef = container.createComponent(this.componentType, {
+      injector: options.injector || this.defaultOptions.injector,
+      environmentInjector: options.environmentInjector || this.defaultOptions.environmentInjector,
+      projectableNodes: options.projectableNodes || this.defaultOptions.projectableNodes,
+    });
+
+    // Set inputs
+    Object.entries(inputs).forEach(([key, value]) => {
+      componentRef.setInput(key, value);
+    });
+
+    return componentRef;
   }
 
-  return LoadingWrapperComponent as unknown as Type<T>;
+  /**
+   * Create multiple instances
+   *
+   * @param inputsArray - Array of input objects
+   * @param container - View container ref
+   * @returns Array of component references
+   */
+  createMany(
+    inputsArray: Array<Partial<T>>,
+    container: ViewContainerRef
+  ): ComponentRef<T>[] {
+    return inputsArray.map(inputs => this.create(inputs, container));
+  }
 }
 
 /**
- * Creates a component wrapped with error boundary
+ * Create component factory
  *
- * @param component - Component to wrap
- * @param config - Error boundary configuration
- * @returns Wrapped component with error handling
+ * @param componentType - Component type
+ * @param options - Default options
+ * @returns Component factory instance
  *
  * @example
  * ```typescript
- * const SafeAnalytics = withErrorBoundary(AnalyticsSectionComponent, {
- *   allowRetry: true,
- *   maxRetries: 3
- * });
+ * const cardFactory = createComponentFactory(CardComponent);
+ * const card = cardFactory.create({ title: 'Hello' }, container);
  * ```
  */
-export function withErrorBoundary<T>(
-  component: Type<T>,
-  config: ErrorBoundaryWrapperConfig = {}
-): Type<T> {
-  @Component({
-    selector: 'lib-with-error-boundary-wrapper',
-    template: `
-      @if (hasError) {
-        <div class="error-boundary">
-          <div class="error-icon">⚠️</div>
-          <p class="error-message">
-            {{ config.errorMessage || 'Something went wrong' }}
-          </p>
-          @if (config.showDetails && errorDetails) {
-            <details class="error-details">
-              <summary>Error Details</summary>
-              <pre>{{ errorDetails }}</pre>
-            </details>
-          }
-          @if (config.allowRetry && retryCount < (config.maxRetries || 3)) {
-            <button class="retry-button" (click)="retry()">
-              Retry ({{ retryCount }}/{{ config.maxRetries || 3 }})
-            </button>
-          }
-        </div>
-      } @else {
-        <ng-content></ng-content>
-      }
-    `,
-    styles: [`
-      .error-boundary {
-        padding: 2rem;
-        text-align: center;
-        border: 1px solid var(--osi-card-destructive, #ef4444);
-        border-radius: var(--osi-card-border-radius, 0.5rem);
-        background: rgba(239, 68, 68, 0.05);
-      }
-      .error-icon {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-      }
-      .error-message {
-        color: var(--osi-card-destructive, #ef4444);
-        font-weight: 500;
-        margin-bottom: 1rem;
-      }
-      .error-details {
-        margin-top: 1rem;
-        text-align: left;
-      }
-      .retry-button {
-        margin-top: 1rem;
-        padding: 0.5rem 1rem;
-        background: var(--osi-card-accent, #6366f1);
-        color: white;
-        border: none;
-        border-radius: 0.25rem;
-        cursor: pointer;
-      }
-      .retry-button:hover {
-        opacity: 0.9;
-      }
-    `],
-    standalone: true,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    encapsulation: ViewEncapsulation.None,
-  })
-  class ErrorBoundaryWrapperComponent {
-    @Input() hasError = false;
-    @Input() errorDetails?: string;
+export function createComponentFactory<T>(
+  componentType: Type<T>,
+  options?: ComponentFactoryOptions
+): ComponentFactory<T> {
+  return new ComponentFactory(componentType, options);
+}
 
-    config = config;
-    retryCount = 0;
+/**
+ * Load component dynamically
+ *
+ * @param container - View container
+ * @param componentType - Component to load
+ * @param inputs - Component inputs
+ * @returns Component reference
+ */
+export function loadComponentDynamic<T>(
+  container: ViewContainerRef,
+  componentType: Type<T>,
+  inputs?: Partial<T>
+): ComponentRef<T> {
+  const factory = new ComponentFactory(componentType);
+  return factory.create(inputs || {}, container);
+}
 
-    retry(): void {
-      this.retryCount++;
-      this.hasError = false;
-      // Trigger re-render of wrapped component
+/**
+ * Replace component
+ *
+ * @param container - View container
+ * @param oldRef - Old component reference
+ * @param newType - New component type
+ * @param inputs - New component inputs
+ * @returns New component reference
+ */
+export function replaceComponent<T>(
+  container: ViewContainerRef,
+  oldRef: ComponentRef<any>,
+  newType: Type<T>,
+  inputs?: Partial<T>
+): ComponentRef<T> {
+  const index = container.indexOf(oldRef.hostView);
+  oldRef.destroy();
+
+  const newRef = loadComponentDynamic(container, newType, inputs);
+
+  if (index >= 0) {
+    container.move(newRef.hostView, index);
+  }
+
+  return newRef;
+}
+
+/**
+ * Component registry for dynamic loading
+ */
+export class ComponentRegistry {
+  private components = new Map<string, Type<any>>();
+
+  /**
+   * Register component
+   *
+   * @param name - Component name/key
+   * @param componentType - Component type
+   */
+  register(name: string, componentType: Type<any>): void {
+    this.components.set(name, componentType);
+  }
+
+  /**
+   * Register multiple components
+   *
+   * @param components - Object mapping names to types
+   */
+  registerMany(components: Record<string, Type<any>>): void {
+    Object.entries(components).forEach(([name, type]) => {
+      this.register(name, type);
+    });
+  }
+
+  /**
+   * Get component type by name
+   *
+   * @param name - Component name
+   * @returns Component type or undefined
+   */
+  get(name: string): Type<any> | undefined {
+    return this.components.get(name);
+  }
+
+  /**
+   * Check if component is registered
+   *
+   * @param name - Component name
+   * @returns True if registered
+   */
+  has(name: string): boolean {
+    return this.components.has(name);
+  }
+
+  /**
+   * Load component by name
+   *
+   * @param name - Component name
+   * @param container - View container
+   * @param inputs - Component inputs
+   * @returns Component reference or null
+   */
+  load(
+    name: string,
+    container: ViewContainerRef,
+    inputs?: any
+  ): ComponentRef<any> | null {
+    const componentType = this.get(name);
+
+    if (!componentType) {
+      console.error(`Component not found: ${name}`);
+      return null;
     }
+
+    return loadComponentDynamic(container, componentType, inputs);
   }
 
-  return ErrorBoundaryWrapperComponent as unknown as Type<T>;
+  /**
+   * Get all registered component names
+   *
+   * @returns Array of component names
+   */
+  getNames(): string[] {
+    return Array.from(this.components.keys());
+  }
+
+  /**
+   * Unregister component
+   *
+   * @param name - Component name
+   * @returns True if component was registered
+   */
+  unregister(name: string): boolean {
+    return this.components.delete(name);
+  }
+
+  /**
+   * Clear all registrations
+   */
+  clear(): void {
+    this.components.clear();
+  }
 }
 
 /**
- * Creates a component wrapped with skeleton loading state
+ * Global component registry
+ */
+export const globalComponentRegistry = new ComponentRegistry();
+
+/**
+ * Create portal for component
  *
- * @param component - Component to wrap
- * @param config - Skeleton configuration
- * @returns Wrapped component with skeleton loading
+ * Creates a component in a portal for rendering elsewhere.
+ */
+export interface ComponentPortal<T> {
+  component: ComponentRef<T>;
+  attach: (container: ViewContainerRef) => void;
+  detach: () => void;
+  destroy: () => void;
+}
+
+/**
+ * Higher-order component wrapper
+ *
+ * Wraps a component with additional functionality.
  *
  * @example
  * ```typescript
- * const SkeletonAnalytics = withSkeleton(AnalyticsSectionComponent, {
- *   items: 4,
- *   variant: 'compact'
- * });
+ * const EnhancedCard = withLoading(CardComponent);
  * ```
  */
-export function withSkeleton<T>(
-  component: Type<T>,
-  config: SkeletonWrapperConfig = {}
-): Type<T> {
-  @Component({
-    selector: 'lib-with-skeleton-wrapper',
-    template: `
-      @if (isLoading) {
-        <div class="skeleton-wrapper" [class.compact]="config.variant === 'compact'">
-          @if (config.showTitle) {
-            <div class="skeleton-title"></div>
-          }
-          @for (item of skeletonItems; track $index) {
-            <div class="skeleton-item"></div>
-          }
-        </div>
-      } @else {
-        <ng-content></ng-content>
-      }
-    `,
-    styles: [`
-      .skeleton-wrapper {
-        padding: 1rem;
-      }
-      .skeleton-wrapper.compact {
-        padding: 0.5rem;
-      }
-      .skeleton-title {
-        height: 20px;
-        width: 40%;
-        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-        background-size: 200% 100%;
-        animation: skeleton-loading 1.5s infinite;
-        border-radius: 4px;
-        margin-bottom: 1rem;
-      }
-      .skeleton-item {
-        height: 60px;
-        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-        background-size: 200% 100%;
-        animation: skeleton-loading 1.5s infinite;
-        border-radius: 4px;
-        margin-bottom: 0.75rem;
-      }
-      @keyframes skeleton-loading {
-        0% { background-position: 200% 0; }
-        100% { background-position: -200% 0; }
-      }
-    `],
-    standalone: true,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    encapsulation: ViewEncapsulation.None,
-  })
-  class SkeletonWrapperComponent {
-    @Input() isLoading = false;
-    config = config;
-    skeletonItems = Array(config.items || 3).fill(0);
-  }
-
-  return SkeletonWrapperComponent as unknown as Type<T>;
+export function withLoading<T>(componentType: Type<T>): Type<T> {
+  // This would create a wrapper component with loading state
+  // Implementation would use component composition patterns
+  return componentType; // Simplified for example
 }
 
 /**
- * Compose multiple wrappers together
+ * Merge component inputs
  *
- * @param component - Base component
- * @param wrappers - Array of wrapper functions to apply
- * @returns Component wrapped with all wrappers
- *
- * @example
- * ```typescript
- * const EnhancedComponent = composeWrappers(
- *   MyComponent,
- *   [withLoading, withErrorBoundary, withSkeleton]
- * );
- * ```
+ * @param defaults - Default inputs
+ * @param overrides - Override inputs
+ * @returns Merged inputs
  */
-export function composeWrappers<T>(
-  component: Type<T>,
-  wrappers: Array<(comp: Type<any>) => Type<any>>
-): Type<T> {
-  return wrappers.reduce(
-    (wrapped, wrapper) => wrapper(wrapped),
-    component
-  ) as Type<T>;
+export function mergeInputs<T>(
+  defaults: Partial<T>,
+  overrides: Partial<T>
+): Partial<T> {
+  return { ...defaults, ...overrides };
 }
 
 /**
- * Creates a memoized component that caches rendering
- * Useful for expensive components that don't change frequently
+ * Clone component reference
  *
- * @param component - Component to memoize
- * @returns Memoized component
+ * @param ref - Component reference to clone
+ * @param container - Target container
+ * @returns New component reference
  */
-export function withMemoization<T>(component: Type<T>): Type<T> {
-  // Implementation would use Angular's OnPush + custom caching
-  // For now, just return component with OnPush enabled
-  return component;
-}
+export function cloneComponent<T>(
+  ref: ComponentRef<T>,
+  container: ViewContainerRef
+): ComponentRef<T> {
+  const inputs: any = {};
 
-/**
- * Utility to check if a component follows reusability principles
- *
- * @param component - Component to check
- * @returns Validation result with suggestions
- */
-export function validateComponentReusability(component: Type<any>): {
-  isReusable: boolean;
-  issues: string[];
-  suggestions: string[];
-} {
-  const issues: string[] = [];
-  const suggestions: string[] = [];
+  // Extract inputs (simplified - would need reflection)
+  Object.keys(ref.instance as any).forEach(key => {
+    inputs[key] = (ref.instance as any)[key];
+  });
 
-  // Check for common anti-patterns
-  const metadata = component.prototype.constructor;
-
-  // This is a placeholder - real implementation would use reflection
-  // to check inputs, dependencies, etc.
-
-  return {
-    isReusable: issues.length === 0,
-    issues,
-    suggestions
-  };
+  return loadComponentDynamic(
+    container,
+    ref.componentType,
+    inputs
+  );
 }

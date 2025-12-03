@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "path": "dist/osi-cards/browser/main-*.js",
+      "maxSize": "500 KB",
+      "compression": "gzip"
+    },
+    {
+      "path": "dist/osi-cards/browser/polyfills-*.js",
+      "maxSize": "80 KB",
+      "compression": "gzip"
+    },
+    {
+      "path": "dist/osi-cards/browser/styles-*.css",
+      "maxSize": "60 KB",
+      "compression": "gzip"
+    },
+    {
+      "path": "dist/osi-cards-lib/**/*.js",
+      "maxSize": "350 KB",
+      "compression": "gzip"
+    }
+  ],
+  "ci": {
+    "trackBranches": ["main", "develop"],
+    "repoBranchBase": "main"
+  }
+}
+

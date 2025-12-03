@@ -19,6 +19,7 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "exactOptionalPropertyTypes": false,
+    "noImplicitAny": false,
     "sourceMap": true,
     "declaration": false,
     "downlevelIteration": true,
@@ -29,7 +30,7 @@
     "module": "ES2022",
     "useDefineForClassFields": false,
     "skipLibCheck": true,
-    "lib": ["ES2022", "dom"],
+    "lib": ["ES2022", "dom", "ES2021.WeakRef"],
     "paths": {
       "@osi-cards/lib": ["projects/osi-cards-lib/src/public-api.ts"],
       "@osi-cards/lib/*": ["projects/osi-cards-lib/src/lib/*"],
@@ -42,7 +43,9 @@
       "@osi-cards/utils": ["projects/osi-cards-lib/src/lib/utils/index.ts"],
       "@osi-cards/models": ["projects/osi-cards-lib/src/lib/models/index.ts"],
       "@osi-cards/types": ["projects/osi-cards-lib/src/lib/types/index.ts"],
-      "@osi-cards/decorators": ["projects/osi-cards-lib/src/lib/decorators/index.ts"],
+      "@osi-cards/decorators": [
+        "projects/osi-cards-lib/src/lib/decorators/index.ts"
+      ],
       "@osi-cards/icons": ["projects/osi-cards-lib/src/lib/icons/index.ts"],
       "@osi-cards/themes": ["projects/osi-cards-lib/src/lib/themes/index.ts"],
       "@osi-cards/constants": [

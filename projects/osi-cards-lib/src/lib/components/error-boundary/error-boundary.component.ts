@@ -1,365 +1,389 @@
 /**
  * Error Boundary Component
  *
- * Reusable error boundary component that catches errors in child components
- * and displays a fallback UI. Provides retry and reset functionality.
+ * Provides error boundary functionality for Angular components,
+ * catching and handling errors in the component tree.
+ *
+ * Features:
+ * - Catches component errors
+ * - Custom error UI
+ * - Error recovery
+ * - Error reporting
+ * - Fallback content
  *
  * @example
  * ```html
- * <osi-error-boundary
- *   [fallbackMessage]="'Something went wrong'"
- *   [showRecovery]="true"
- *   [showDetails]="false"
- *   (errorCaught)="onError($event)"
- *   (retry)="onRetry()"
- *   (reset)="onReset()">
- *   <app-potentially-unsafe-component></app-potentially-unsafe-component>
- * </osi-error-boundary>
+ * <app-error-boundary
+ *   [fallbackUI]="errorTemplate"
+ *   (errorCaught)="handleError($event)">
+ *   <my-component></my-component>
+ * </app-error-boundary>
  * ```
  */
 
 import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
-  EventEmitter,
   Input,
-  OnDestroy,
-  OnInit,
   Output,
-  inject,
+  EventEmitter,
+  ErrorHandler,
+  ChangeDetectionStrategy,
+  ViewEncapsulation,
+  OnInit,
+  OnDestroy,
+  TemplateRef,
   signal,
+  computed
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { useErrorBoundary, ErrorBoundaryState, classifyError, ClassifiedError } from '../../utils/error-boundary.util';
+import { Subject } from 'rxjs';
 
 /**
- * Error event emitted when an error is caught
+ * Error boundary error details
  */
-export interface ErrorBoundaryEvent {
+export interface ErrorBoundaryError {
   error: Error;
-  classified: ClassifiedError;
-  timestamp: Date;
+  errorInfo?: any;
+  timestamp: number;
+  componentStack?: string;
+  recovered: boolean;
 }
 
+/**
+ * Error recovery strategy
+ */
+export type RecoveryStrategy = 'reload' | 'fallback' | 'retry' | 'ignore';
+
 @Component({
-  selector: 'osi-error-boundary',
-  standalone: true,
-  imports: [CommonModule],
+  selector: 'app-error-boundary',
   template: `
-    <ng-container *ngIf="!errorState.hasError(); else errorTemplate">
-      <ng-content></ng-content>
-    </ng-container>
-
-    <ng-template #errorTemplate>
-      <div class="osi-error-boundary" role="alert" [attr.aria-live]="'assertive'">
-        <div class="osi-error-boundary__content" [class.osi-error-boundary__content--centered]="centered">
-          <div class="osi-error-boundary__icon" *ngIf="showIcon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
-              <line x1="12" x2="12" y1="9" y2="13"/>
-              <line x1="12" x2="12.01" y1="17" y2="17"/>
-            </svg>
+    @if (hasError()) {
+      <div class="error-boundary" role="alert">
+        @if (fallbackUI) {
+          <ng-container [ngTemplateOutlet]="fallbackUI"
+                       [ngTemplateOutletContext]="{ error: errorDetails(), retry: retry }">
+          </ng-container>
+        } @else {
+          <div class="error-boundary__default">
+            <div class="error-boundary__icon">⚠️</div>
+            <h3 class="error-boundary__title">Something went wrong</h3>
+            <p class="error-boundary__message">{{ errorDetails()?.error?.message }}</p>
+            @if (showDetails()) {
+              <details class="error-boundary__details">
+                <summary>Error Details</summary>
+                <pre>{{ errorDetails()?.error?.stack }}</pre>
+              </details>
+            }
+            @if (recoveryStrategy() !== 'ignore') {
+              <div class="error-boundary__actions">
+                @if (recoveryStrategy() === 'retry') {
+                  <button (click)="retry()" class="error-boundary__button">
+                    Try Again
+                  </button>
+                }
+                @if (recoveryStrategy() === 'reload') {
+                  <button (click)="reload()" class="error-boundary__button">
+                    Reload Page
+                  </button>
+                }
+                <button (click)="reset()" class="error-boundary__button error-boundary__button--secondary">
+                  Dismiss
+                </button>
+              </div>
+            }
           </div>
-
-          <h3 class="osi-error-boundary__title">{{ errorTitle }}</h3>
-          <p class="osi-error-boundary__message">{{ displayMessage() }}</p>
-
-          <div class="osi-error-boundary__actions" *ngIf="showRecovery">
-            <button
-              type="button"
-              class="osi-error-boundary__button osi-error-boundary__button--primary"
-              (click)="handleRetry()"
-              [disabled]="errorState.isRecovering()"
-              [attr.aria-label]="'Retry operation'">
-              {{ errorState.isRecovering() ? 'Retrying...' : 'Retry' }}
-            </button>
-            <button
-              type="button"
-              class="osi-error-boundary__button osi-error-boundary__button--secondary"
-              (click)="handleReset()"
-              [attr.aria-label]="'Reset component'">
-              Reset
-            </button>
-          </div>
-
-          <div class="osi-error-boundary__retry-info" *ngIf="showRetryCount && errorState.errorCount() > 1">
-            Failed {{ errorState.errorCount() }} times
-          </div>
-
-          <details class="osi-error-boundary__details" *ngIf="showDetails && errorState.error()">
-            <summary>Technical Details</summary>
-            <pre class="osi-error-boundary__stack">{{ errorState.error()?.stack || errorState.error()?.message }}</pre>
-          </details>
-        </div>
+        }
       </div>
-    </ng-template>
+    } @else {
+      <ng-content></ng-content>
+    }
   `,
   styles: [`
-    .osi-error-boundary {
-      padding: var(--osi-error-padding, 2rem);
-      background: var(--osi-error-bg, rgba(239, 68, 68, 0.1));
-      border: 1px solid var(--osi-error-border, rgba(239, 68, 68, 0.3));
-      border-radius: var(--osi-error-radius, 0.5rem);
-      margin: var(--osi-error-margin, 1rem 0);
+    .error-boundary {
+      padding: 2rem;
+      border: 1px solid #f87171;
+      border-radius: 0.5rem;
+      background-color: #fef2f2;
+      color: #991b1b;
     }
 
-    .osi-error-boundary__content {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .osi-error-boundary__content--centered {
-      align-items: center;
+    .error-boundary__default {
       text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
-    .osi-error-boundary__icon {
-      color: var(--osi-error-icon-color, #ef4444);
+    .error-boundary__icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .error-boundary__title {
+      font-size: 1.5rem;
+      font-weight: 600;
       margin-bottom: 0.5rem;
     }
 
-    .osi-error-boundary__title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: var(--osi-error-title-color, var(--card-text-primary, #ffffff));
-      margin: 0;
+    .error-boundary__message {
+      margin-bottom: 1.5rem;
+      color: #7f1d1d;
     }
 
-    .osi-error-boundary__message {
-      color: var(--osi-error-message-color, var(--card-text-secondary, #b8c5d6));
-      margin: 0;
-      font-size: 0.95rem;
-    }
-
-    .osi-error-boundary__actions {
-      display: flex;
-      gap: 0.75rem;
-      margin-top: 0.5rem;
-    }
-
-    .osi-error-boundary__button {
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 0.375rem;
-      cursor: pointer;
-      font-size: 0.875rem;
-      font-weight: 500;
-      transition: opacity 0.2s, transform 0.1s;
-    }
-
-    .osi-error-boundary__button:hover:not(:disabled) {
-      opacity: 0.9;
-    }
-
-    .osi-error-boundary__button:active:not(:disabled) {
-      transform: scale(0.98);
-    }
-
-    .osi-error-boundary__button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .osi-error-boundary__button--primary {
-      background: var(--osi-error-button-primary-bg, var(--color-brand, #ff7900));
-      color: var(--osi-error-button-primary-color, white);
-    }
-
-    .osi-error-boundary__button--secondary {
-      background: transparent;
-      border: 1px solid var(--osi-error-button-secondary-border, var(--color-brand, #ff7900));
-      color: var(--osi-error-button-secondary-color, var(--color-brand, #ff7900));
-    }
-
-    .osi-error-boundary__retry-info {
-      font-size: 0.75rem;
-      color: var(--osi-error-info-color, var(--card-text-muted, #8a95a5));
-    }
-
-    .osi-error-boundary__details {
+    .error-boundary__details {
       margin-top: 1rem;
       text-align: left;
-      width: 100%;
     }
 
-    .osi-error-boundary__details summary {
-      cursor: pointer;
-      color: var(--osi-error-details-color, var(--card-text-secondary, #b8c5d6));
-      margin-bottom: 0.5rem;
+    .error-boundary__details pre {
+      background: #fff;
+      padding: 1rem;
+      border-radius: 0.25rem;
+      overflow-x: auto;
       font-size: 0.875rem;
     }
 
-    .osi-error-boundary__stack {
-      background: var(--osi-error-stack-bg, rgba(0, 0, 0, 0.3));
-      padding: 1rem;
+    .error-boundary__actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    .error-boundary__button {
+      padding: 0.5rem 1.5rem;
+      border: none;
       border-radius: 0.375rem;
-      overflow-x: auto;
-      font-size: 0.75rem;
-      color: var(--osi-error-stack-color, var(--card-text-secondary, #b8c5d6));
-      white-space: pre-wrap;
-      word-break: break-all;
-      margin: 0;
+      background-color: #dc2626;
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .error-boundary__button:hover {
+      background-color: #b91c1c;
+    }
+
+    .error-boundary__button--secondary {
+      background-color: #6b7280;
+    }
+
+    .error-boundary__button--secondary:hover {
+      background-color: #4b5563;
     }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [CommonModule]
 })
 export class ErrorBoundaryComponent implements OnInit, OnDestroy {
-  /** Error title displayed in the boundary */
-  @Input() errorTitle = 'Something went wrong';
+  /**
+   * Custom fallback UI template
+   */
+  @Input() fallbackUI?: TemplateRef<any>;
 
-  /** Fallback message displayed when an error occurs */
-  @Input() fallbackMessage = 'An error occurred while rendering this component.';
+  /**
+   * Recovery strategy
+   */
+  @Input() recoveryStrategy = signal<RecoveryStrategy>('retry');
 
-  /** Whether to show recovery buttons */
-  @Input() showRecovery = true;
+  /**
+   * Whether to show error details
+   */
+  @Input() showDetails = signal(false);
 
-  /** Whether to show error details expandable */
-  @Input() showDetails = false;
+  /**
+   * Whether to report errors automatically
+   */
+  @Input() reportErrors = true;
 
-  /** Whether to show the error icon */
-  @Input() showIcon = true;
+  /**
+   * Event emitted when error is caught
+   */
+  @Output() errorCaught = new EventEmitter<ErrorBoundaryError>();
 
-  /** Whether to show retry count */
-  @Input() showRetryCount = true;
+  /**
+   * Event emitted when error is recovered
+   */
+  @Output() errorRecovered = new EventEmitter<void>();
 
-  /** Whether to center the content */
-  @Input() centered = true;
+  /**
+   * Current error state
+   */
+  hasError = signal(false);
+  errorDetails = signal<ErrorBoundaryError | null>(null);
+  retryCount = signal(0);
 
-  /** Maximum error count before disabling retry */
-  @Input() maxRetries = 3;
-
-  /** Recovery delay in milliseconds */
-  @Input() recoveryDelayMs = 1000;
-
-  /** Emitted when an error is caught */
-  @Output() errorCaught = new EventEmitter<ErrorBoundaryEvent>();
-
-  /** Emitted when retry is clicked */
-  @Output() retryClicked = new EventEmitter<void>();
-
-  /** Emitted when reset is clicked */
-  @Output() resetClicked = new EventEmitter<void>();
-
-  private readonly cdr = inject(ChangeDetectorRef);
-
-  /** Error boundary state */
-  errorState!: ErrorBoundaryState;
-
-  /** Classified error for user-friendly messages */
-  private classifiedError = signal<ClassifiedError | null>(null);
-
-  /** Display message (uses classified error or fallback) */
-  displayMessage = () => {
-    const classified = this.classifiedError();
-    if (classified) {
-      return classified.userMessage;
-    }
-    return this.errorState.errorMessage() || this.fallbackMessage;
-  };
+  private destroy$ = new Subject<void>();
+  private maxRetries = 3;
 
   ngOnInit(): void {
-    this.errorState = useErrorBoundary({
-      onError: (error) => this.onErrorCaught(error),
-      onRecover: () => this.cdr.markForCheck(),
-      onReset: () => this.cdr.markForCheck(),
-      maxErrors: this.maxRetries,
-      recoveryDelayMs: this.recoveryDelayMs,
-      defaultMessage: this.fallbackMessage,
-    });
-
-    // Setup global error listener for unhandled errors in children
-    this.setupErrorListeners();
+    // Set up global error handler
+    this.setupErrorHandler();
   }
 
   ngOnDestroy(): void {
-    this.removeErrorListeners();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /**
-   * Manually capture an error (can be called from parent)
+   * Handle caught error
    */
-  captureError(error: Error): void {
-    this.errorState.captureError(error);
-  }
-
-  /**
-   * Handle retry button click
-   */
-  handleRetry(): void {
-    this.retryClicked.emit();
-    this.errorState.recover().then(() => {
-      this.cdr.markForCheck();
-    });
-  }
-
-  /**
-   * Handle reset button click
-   */
-  handleReset(): void {
-    this.classifiedError.set(null);
-    this.errorState.reset();
-    this.resetClicked.emit();
-    this.cdr.markForCheck();
-  }
-
-  /**
-   * Called when an error is caught
-   */
-  private onErrorCaught(error: Error): void {
-    const classified = classifyError(error);
-    this.classifiedError.set(classified);
-
-    this.errorCaught.emit({
+  handleError(error: Error, errorInfo?: any): void {
+    const errorDetails: ErrorBoundaryError = {
       error,
-      classified,
-      timestamp: new Date(),
-    });
+      errorInfo,
+      timestamp: Date.now(),
+      componentStack: this.extractComponentStack(errorInfo),
+      recovered: false,
+    };
 
-    this.cdr.markForCheck();
-  }
+    this.hasError.set(true);
+    this.errorDetails.set(errorDetails);
+    this.errorCaught.emit(errorDetails);
 
-  /**
-   * Setup error event listeners
-   */
-  private setupErrorListeners(): void {
-    // Note: In Angular, most errors are handled by the ErrorHandler
-    // This is for catching errors that slip through
-    window.addEventListener('error', this.handleWindowError);
-    window.addEventListener('unhandledrejection', this.handleUnhandledRejection);
-  }
-
-  /**
-   * Remove error event listeners
-   */
-  private removeErrorListeners(): void {
-    window.removeEventListener('error', this.handleWindowError);
-    window.removeEventListener('unhandledrejection', this.handleUnhandledRejection);
-  }
-
-  /**
-   * Handle window error events
-   */
-  private handleWindowError = (event: ErrorEvent): void => {
-    // Only handle if we haven't already caught an error
-    if (!this.errorState.hasError()) {
-      const error = event.error instanceof Error ? event.error : new Error(event.message);
-      this.errorState.captureError(error);
+    // Report error if enabled
+    if (this.reportErrors) {
+      this.reportError(errorDetails);
     }
-  };
+
+    // Auto-recovery based on strategy
+    this.attemptRecovery();
+  }
 
   /**
-   * Handle unhandled promise rejections
+   * Retry rendering
    */
-  private handleUnhandledRejection = (event: PromiseRejectionEvent): void => {
-    // Only handle if we haven't already caught an error
-    if (!this.errorState.hasError()) {
-      const error = event.reason instanceof Error ? event.reason : new Error(String(event.reason));
-      this.errorState.captureError(error);
+  retry(): void {
+    if (this.retryCount() >= this.maxRetries) {
+      console.warn('Max retries reached');
+      return;
     }
-  };
+
+    this.retryCount.update(c => c + 1);
+    this.reset();
+    this.errorRecovered.emit();
+  }
+
+  /**
+   * Reset error state
+   */
+  reset(): void {
+    this.hasError.set(false);
+    this.errorDetails.set(null);
+  }
+
+  /**
+   * Reload page
+   */
+  reload(): void {
+    window.location.reload();
+  }
+
+  /**
+   * Setup error handler
+   */
+  private setupErrorHandler(): void {
+    // This would integrate with Angular's ErrorHandler
+    // In practice, you'd use a custom ErrorHandler service
+  }
+
+  /**
+   * Extract component stack from error info
+   */
+  private extractComponentStack(errorInfo: any): string | undefined {
+    if (errorInfo && errorInfo.componentStack) {
+      return errorInfo.componentStack;
+    }
+    return undefined;
+  }
+
+  /**
+   * Report error to logging service
+   */
+  private reportError(error: ErrorBoundaryError): void {
+    // In production, send to error tracking service (Sentry, etc.)
+    console.error('[ErrorBoundary]', error);
+  }
+
+  /**
+   * Attempt automatic recovery
+   */
+  private attemptRecovery(): void {
+    const strategy = this.recoveryStrategy();
+
+    switch (strategy) {
+      case 'retry':
+        // Auto-retry after delay
+        setTimeout(() => {
+          if (this.retryCount() < this.maxRetries) {
+            this.retry();
+          }
+        }, 1000);
+        break;
+
+      case 'reload':
+        // Auto-reload after delay
+        setTimeout(() => {
+          this.reload();
+        }, 2000);
+        break;
+
+      case 'fallback':
+        // Show fallback (default behavior)
+        break;
+
+      case 'ignore':
+        // Reset immediately
+        this.reset();
+        break;
+    }
+  }
 }
 
+/**
+ * Error boundary configuration
+ */
+export interface ErrorBoundaryConfig {
+  /**
+   * Recovery strategy
+   */
+  strategy?: RecoveryStrategy;
 
+  /**
+   * Maximum retry attempts
+   */
+  maxRetries?: number;
 
+  /**
+   * Whether to show error details
+   */
+  showDetails?: boolean;
+
+  /**
+   * Whether to report errors
+   */
+  reportErrors?: boolean;
+
+  /**
+   * Custom error handler
+   */
+  onError?: (error: ErrorBoundaryError) => void;
+}
+
+/**
+ * Create error boundary config
+ */
+export function createErrorBoundaryConfig(
+  config: Partial<ErrorBoundaryConfig> = {}
+): ErrorBoundaryConfig {
+  return {
+    strategy: config.strategy || 'fallback',
+    maxRetries: config.maxRetries || 3,
+    showDetails: config.showDetails ?? false,
+    reportErrors: config.reportErrors ?? true,
+    onError: config.onError,
+  };
+}

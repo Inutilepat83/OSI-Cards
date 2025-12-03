@@ -21,18 +21,17 @@
    ============================================================ */
 
 .masonry-container {
-  /* Smooth height transitions using cubic-bezier for natural motion */
-  transition: opacity 0.25s ease, 
-              height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* CSS GRID: Browser handles ALL positioning! */
+  display: grid;
+  grid-template-columns: repeat(var(--masonry-columns, 4), 1fr);
+  gap: var(--masonry-gap, 12px);
+  grid-auto-rows: min-content;  /* Rows fit content height automatically */
+  grid-auto-flow: dense;  /* Fill gaps automatically */
+  width: 100%;
+  
+  /* Smooth transitions */
+  transition: opacity 0.25s ease;
   opacity: 1;
-  min-height: 400px;
-  
-  /* Better containment for absolute positioned items */
-  contain: layout style paint;
-  
-  /* GPU acceleration */
-  will-change: height;
-  transform: translateZ(0);
 }
 
 .masonry-container--loading {
@@ -219,22 +218,38 @@
    ============================================================ */
 
 .masonry-item {
-  /* Start at full opacity - NO flash from 0.3 to 1 */
-  opacity: 1;
+  /* CSS GRID ITEM: Browser handles positioning and heights! */
+  grid-column: span var(--section-col-span, 1);
   
-  /* GPU-accelerated transforms */
-  will-change: top, left, width;
-  backface-visibility: hidden;
-  transform: translateZ(0);
+  /* Start at full opacity */
+  opacity: 1;
   
   /* Pointer events enabled */
   pointer-events: auto;
   
-  /* No opacity transition needed since we start at 1 */
-  transition: none;
-  
-  /* CSS containment for rendering isolation */
+  /* CSS containment */
   contain: layout style paint;
+}
+
+/* Column span fallbacks */
+.masonry-item[data-col-span="1"] { grid-column: span 1; }
+.masonry-item[data-col-span="2"] { grid-column: span 2; }
+.masonry-item[data-col-span="3"] { grid-column: span 3; }
+.masonry-item[data-col-span="4"] { grid-column: span 4; }
+
+/* Responsive: Single column on mobile */
+@media (max-width: 639px) {
+  .masonry-item {
+    grid-column: span 1 !important;
+  }
+}
+
+/* Tablet: Max 2 columns */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .masonry-item[data-col-span="3"],
+  .masonry-item[data-col-span="4"] {
+    grid-column: span 2;
+  }
 }
 
 .masonry-item--ready {

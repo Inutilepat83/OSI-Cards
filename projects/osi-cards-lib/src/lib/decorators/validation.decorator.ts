@@ -20,8 +20,8 @@
  * ```
  */
 
-import { CardSection, CardField, CardItem } from '../models';
 import { ValidationError as LibValidationError, RequiredFieldError } from '../errors';
+import { CardField, CardItem, CardSection } from '../models';
 
 // Re-export for convenience
 export { RequiredFieldError };
@@ -154,7 +154,9 @@ export function RequiredFields(fieldNames: string[]) {
         for (const fieldName of fieldNames) {
           const fieldValue = (newValue as Record<string, unknown>)[fieldName];
           if (fieldValue === undefined || fieldValue === null || fieldValue === '') {
-            console.warn(`Required field "${fieldName}" is missing or empty in section "${newValue.title}"`);
+            console.warn(
+              `Required field "${fieldName}" is missing or empty in section "${newValue.title}"`
+            );
           }
         }
       }
@@ -210,8 +212,10 @@ export function ValidateParam(validator: (value: unknown) => boolean, errorMessa
   return function (target: object, propertyKey: string, parameterIndex: number): void {
     // Store validators for this method (requires reflect-metadata)
     if (typeof Reflect !== 'undefined' && (Reflect as any).getMetadata) {
-      const existingValidators: Map<number, { validator: (value: unknown) => boolean; message?: string }> =
-        (Reflect as any).getMetadata('paramValidators', target, propertyKey) ?? new Map();
+      const existingValidators: Map<
+        number,
+        { validator: (value: unknown) => boolean; message?: string }
+      > = (Reflect as any).getMetadata('paramValidators', target, propertyKey) ?? new Map();
 
       existingValidators.set(parameterIndex, { validator, message: errorMessage });
       (Reflect as any).defineMetadata('paramValidators', existingValidators, target, propertyKey);
@@ -326,10 +330,7 @@ export function validateItem(item: CardItem, index: number): string[] {
 /**
  * Validate a value against field options
  */
-export function validateValue(
-  value: unknown,
-  options: FieldValidationOptions
-): ValidationResult {
+export function validateValue(value: unknown, options: FieldValidationOptions): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
 
@@ -386,7 +387,11 @@ export class PropertyValidationError extends Error {
 /**
  * Validator function type for property validation
  */
-export type ValidatorFn<T = unknown> = (value: T) => { isValid: boolean; error?: string; suggestions?: string[] };
+export type ValidatorFn<T = unknown> = (value: T) => {
+  isValid: boolean;
+  error?: string;
+  suggestions?: string[];
+};
 
 /**
  * Property metadata for validation
@@ -647,7 +652,9 @@ export function getValidationMetadata(target: object): Map<string, ValidationMet
 /**
  * Validate an object's properties
  */
-export function validateObject(target: object): Array<{ isValid: boolean; error?: string; suggestions?: string[] }> {
+export function validateObject(
+  target: object
+): Array<{ isValid: boolean; error?: string; suggestions?: string[] }> {
   const metadataMap = validationMetadata.get(target);
   if (!metadataMap) {
     return [];
@@ -724,4 +731,3 @@ export function CatchValidationErrors(handler: (errors: string[]) => void) {
     return descriptor;
   };
 }
-

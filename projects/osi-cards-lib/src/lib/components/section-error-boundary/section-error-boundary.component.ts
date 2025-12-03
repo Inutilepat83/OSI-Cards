@@ -1,9 +1,9 @@
 /**
  * Section Error Boundary Component
- * 
+ *
  * Wraps section components to catch and handle rendering errors gracefully.
  * Displays a user-friendly error message instead of breaking the entire card.
- * 
+ *
  * @example
  * ```html
  * <app-section-error-boundary>
@@ -23,10 +23,9 @@ import {
   ViewEncapsulation,
   ErrorHandler,
   inject,
-  DestroyRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subject, catchError, takeUntil, of, timer, take } from 'rxjs';
+import { Subject, takeUntil, timer, take } from 'rxjs';
 import { LucideIconsModule } from '../../icons';
 
 // ============================================================================
@@ -42,11 +41,11 @@ export interface SectionError {
   /** Error timestamp */
   timestamp: Date;
   /** Section ID if available */
-  sectionId?: string;
+  sectionId?: string | undefined;
   /** Section type if available */
-  sectionType?: string;
+  sectionType?: string | undefined;
   /** Original error object */
-  originalError?: Error;
+  originalError?: Error | undefined;
   /** Number of retry attempts */
   retryCount: number;
 }
@@ -92,15 +91,15 @@ export const DEFAULT_ERROR_BOUNDARY_CONFIG: ErrorBoundaryConfig = {
 
     <!-- Error display template -->
     <ng-template #errorTemplate>
-      <div 
+      <div
         class="section-error-boundary"
         role="alert"
         aria-live="polite"
         [class.section-error-boundary--retrying]="isRetrying"
       >
         <div class="section-error-boundary__icon" aria-hidden="true">
-          <lucide-icon 
-            [name]="isRetrying ? 'loader-2' : 'alert-circle'" 
+          <lucide-icon
+            [name]="isRetrying ? 'loader-2' : 'alert-circle'"
             [size]="24"
             [class.animate-spin]="isRetrying"
           ></lucide-icon>
@@ -126,7 +125,7 @@ export const DEFAULT_ERROR_BOUNDARY_CONFIG: ErrorBoundaryConfig = {
         </div>
 
         <div class="section-error-boundary__actions" *ngIf="config.allowRetry && !isRetrying && canRetry">
-          <button 
+          <button
             type="button"
             class="section-error-boundary__retry-btn"
             (click)="onRetry()"
@@ -278,12 +277,11 @@ export class SectionErrorBoundaryComponent implements OnInit, OnDestroy {
   @Output() errorCleared = new EventEmitter<void>();
 
   private readonly errorHandler = inject(ErrorHandler);
-  private readonly destroyRef = inject(DestroyRef);
   private readonly destroy$ = new Subject<void>();
 
   hasError = false;
   isRetrying = false;
-  errorInfo: SectionError | null = null;
+  errorInfo: SectionError | undefined = undefined;
   retryCount = 0;
 
   get canRetry(): boolean {
@@ -342,7 +340,7 @@ export class SectionErrorBoundaryComponent implements OnInit, OnDestroy {
    */
   clearError(): void {
     this.hasError = false;
-    this.errorInfo = null;
+    this.errorInfo = undefined;
     this.retryCount = 0;
     this.isRetrying = false;
     this.errorCleared.emit();
@@ -367,7 +365,7 @@ export class SectionErrorBoundaryComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.isRetrying = false;
         this.hasError = false;
-        this.errorInfo = null;
+        this.errorInfo = undefined;
         this.retryRequested.emit(this.retryCount);
       });
   }

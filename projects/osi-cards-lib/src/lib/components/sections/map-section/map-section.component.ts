@@ -1,7 +1,7 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent } from '../base-section.component';
-import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../../shared';
 
 /**
  * Map Section Component
@@ -16,7 +16,7 @@ import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../
   standalone: true,
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './map-section.component.html',
-  styleUrl: './map-section.scss'
+  styleUrl: './map-section.scss',
 })
 export class MapSectionComponent extends BaseSectionComponent implements AfterViewInit, OnDestroy {
   @ViewChild('mapElement', { static: false }) mapElement?: ElementRef<HTMLDivElement>;
@@ -52,7 +52,7 @@ export class MapSectionComponent extends BaseSectionComponent implements AfterVi
 
       // Add tile layer
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
+        attribution: '© OpenStreetMap contributors',
       }).addTo(this.mapInstance);
 
       // Add markers for all locations

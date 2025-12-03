@@ -152,7 +152,6 @@ export {
   CachedSectionNormalizationService,
   I18nService,
   SupportedLocale,
-  TranslationDictionary,
   KeyboardShortcutsService,
   KeyboardShortcut,
 } from './lib/services';
@@ -215,7 +214,7 @@ export { CardStreamingIndicatorComponent } from './lib/components/card-streaming
 // ═══════════════════════════════════════════════════════════════════════════
 // ERROR BOUNDARY
 // ═══════════════════════════════════════════════════════════════════════════
-export { ErrorBoundaryComponent, ErrorBoundaryEvent } from './lib/components/error-boundary/error-boundary.component';
+export { ErrorBoundaryComponent } from './lib/components/error-boundary/error-boundary.component';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // SECTION COMPONENTS (Generated from section-registry.json)

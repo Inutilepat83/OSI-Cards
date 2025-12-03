@@ -1,0 +1,93 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "_comment": "This configuration is for mutation testing with Stryker",
+  "packageManager": "npm",
+  "reporters": [
+    "html",
+    "clear-text",
+    "progress",
+    "json",
+    "dashboard"
+  ],
+  "testRunner": "karma",
+  "karma": {
+    "configFile": "karma.conf.js",
+    "projectType": "angular-cli",
+    "config": {
+      "browsers": ["ChromeHeadless"]
+    }
+  },
+  "mutate": [
+    "projects/osi-cards-lib/src/lib/**/*.ts",
+    "!projects/osi-cards-lib/src/lib/**/*.spec.ts",
+    "!projects/osi-cards-lib/src/lib/**/*.stories.ts",
+    "!projects/osi-cards-lib/src/lib/testing/**/*.ts",
+    "!projects/osi-cards-lib/src/lib/**/*.d.ts",
+    "!projects/osi-cards-lib/src/lib/**/index.ts"
+  ],
+  "mutator": {
+    "plugins": [
+      "@stryker-mutator/typescript-checker"
+    ]
+  },
+  "checkers": ["typescript"],
+  "tsconfigFile": "tsconfig.json",
+  "typescriptChecker": {
+    "prioritizePerformanceOverAccuracy": false
+  },
+  "coverageAnalysis": "perTest",
+  "thresholds": {
+    "high": 80,
+    "low": 60,
+    "break": 50
+  },
+  "timeoutMS": 60000,
+  "timeoutFactor": 1.5,
+  "maxConcurrentTestRunners": 4,
+  "tempDirName": "stryker-tmp",
+  "cleanTempDir": true,
+  "maxTestRunnerReuse": 3,
+  "ignorePatterns": [
+    "node_modules",
+    "dist",
+    "coverage",
+    "*.spec.ts",
+    "*.stories.ts",
+    "testing/**/*",
+    "mocks/**/*",
+    "fixtures/**/*"
+  ],
+  "mutationScoreComparison": {
+    "enabled": true,
+    "projectName": "osi-cards",
+    "threshold": 80
+  },
+  "dashboard": {
+    "project": "github.com/Inutilepat83/OSI-Cards",
+    "version": "main",
+    "module": "osi-cards-lib",
+    "baseUrl": "https://dashboard.stryker-mutator.io"
+  },
+  "htmlReporter": {
+    "fileName": "mutation-report.html",
+    "baseDir": "reports/mutation"
+  },
+  "jsonReporter": {
+    "fileName": "mutation-report.json"
+  },
+  "buildCommand": "npm run build:lib",
+  "disableTypeChecks": false,
+  "allowConsoleColors": true,
+  "logLevel": "info",
+  "fileLogLevel": "info",
+  "clearTextReporter": {
+    "allowColor": true,
+    "logTests": false,
+    "maxTestsToLog": 3
+  },
+  "plugins": [
+    "@stryker-mutator/karma-runner",
+    "@stryker-mutator/typescript-checker"
+  ]
+}
+

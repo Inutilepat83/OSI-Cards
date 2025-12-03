@@ -1,140 +1,86 @@
+import { Preview } from '@storybook/angular';
 import { setCompodocJson } from '@storybook/addon-docs/angular';
-import { applicationConfig, moduleMetadata } from '@storybook/angular';
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { importProvidersFrom } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { provideRouter } from '@angular/router';
+// Import Compodoc JSON if available
+// import docJson from '../documentation.json';
+// setCompodocJson(docJson);
 
-// Import styles
-import '!style-loader!css-loader!sass-loader!../src/styles.scss';
-
-// Import compodoc documentation if available
-// setCompodocJson(require('../documentation.json'));
-
-/**
- * Global decorator for all stories
- * Provides Angular application configuration and module metadata
- */
-export const decorators = [
-  moduleMetadata({
-    imports: []
-  }),
-  applicationConfig({
-    providers: [
-      provideAnimations(),
-      provideHttpClient(withInterceptorsFromDi()),
-      provideRouter([]),
-      importProvidersFrom(BrowserModule)
-    ]
-  })
-];
-
-/**
- * Global parameters for all stories
- */
-export const parameters = {
-  actions: { argTypesRegex: '^on[A-Z].*' },
-  controls: {
-    matchers: {
-      color: /(background|color)$/i,
-      date: /Date$/i
+const preview: Preview = {
+  parameters: {
+    actions: { argTypesRegex: '^on[A-Z].*' },
+    controls: {
+      matchers: {
+        color: /(background|color)$/i,
+        date: /Date$/i,
+      },
+      expanded: true,
     },
-    expanded: true,
-    sort: 'requiredFirst'
-  },
-  docs: {
-    toc: true,
-    source: {
-      type: 'code',
-      state: 'open'
-    }
-  },
-  backgrounds: {
-    default: 'light',
-    values: [
-      {
-        name: 'light',
-        value: '#ffffff'
-      },
-      {
-        name: 'dark',
-        value: '#1a1a1a'
-      },
-      {
-        name: 'gray',
-        value: '#f5f5f5'
-      }
-    ]
-  },
-  viewport: {
-    viewports: {
-      mobile: {
-        name: 'Mobile',
-        styles: {
-          width: '375px',
-          height: '667px'
-        }
-      },
-      tablet: {
-        name: 'Tablet',
-        styles: {
-          width: '768px',
-          height: '1024px'
-        }
-      },
-      desktop: {
-        name: 'Desktop',
-        styles: {
-          width: '1920px',
-          height: '1080px'
-        }
-      }
-    }
-  },
-  layout: 'padded',
-  a11y: {
-    config: {
-      rules: [
+    docs: {
+      toc: true,
+    },
+    backgrounds: {
+      default: 'light',
+      values: [
         {
-          id: 'color-contrast',
-          enabled: true
+          name: 'light',
+          value: '#ffffff',
         },
         {
-          id: 'keyboard-accessibility',
-          enabled: true
-        }
-      ]
+          name: 'dark',
+          value: '#1a1a1a',
+        },
+        {
+          name: 'gray',
+          value: '#f5f5f5',
+        },
+      ],
     },
-    options: {
-      checks: { 'color-contrast': { options: { noScroll: true } } },
-      restoreScroll: true
-    }
-  }
+    viewport: {
+      viewports: {
+        mobile: {
+          name: 'Mobile',
+          styles: {
+            width: '375px',
+            height: '667px',
+          },
+        },
+        tablet: {
+          name: 'Tablet',
+          styles: {
+            width: '768px',
+            height: '1024px',
+          },
+        },
+        desktop: {
+          name: 'Desktop',
+          styles: {
+            width: '1440px',
+            height: '900px',
+          },
+        },
+      },
+    },
+    a11y: {
+      config: {
+        rules: [
+          {
+            id: 'color-contrast',
+            enabled: true,
+          },
+          {
+            id: 'label',
+            enabled: true,
+          },
+        ],
+      },
+    },
+  },
+  decorators: [
+    (story) => {
+      // Add global styles or providers here
+      return story();
+    },
+  ],
+  tags: ['autodocs'],
 };
 
-/**
- * Global arg types for consistent controls across stories
- */
-export const argTypes = {
-  theme: {
-    control: 'select',
-    options: ['light', 'dark'],
-    description: 'Theme for the component'
-  }
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export default preview;

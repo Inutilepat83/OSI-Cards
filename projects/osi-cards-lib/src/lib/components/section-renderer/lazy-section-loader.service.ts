@@ -209,7 +209,7 @@ export class LazySectionLoaderService {
    */
   clearCache(): void {
     this.componentCache.clear();
-    for (const [type, state] of this.loadingStates) {
+    for (const [_type, state] of this.loadingStates) {
       state.loading = false;
       state.loaded = false;
       state.error = null;

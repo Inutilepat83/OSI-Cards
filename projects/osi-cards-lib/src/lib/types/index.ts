@@ -11,10 +11,10 @@ export * from './branded.types';
 export * from './utility.types';
 
 // Re-export commonly needed types from other modules
-export type { AnimationState } from '../utils/web-animations.util';
-export type { PackingAlgorithm, LayoutPhase } from '../utils/grid-logger.util';
-export type { Breakpoint } from '../utils/responsive.util';
 export type { ThemePreset } from '../themes/theme.service';
+export type { LayoutPhase, PackingAlgorithm } from '../utils/grid-logger.util';
+export type { Breakpoint } from '../utils/responsive.util';
+export type { AnimationState } from '../utils/web-animations.util';
 
 // ThemeMode type
 export type ThemeMode = 'light' | 'dark' | 'auto' | 'system';
@@ -26,7 +26,21 @@ export type LayoutState = 'idle' | 'measuring' | 'calculating' | 'rendering' | '
 export type PreferredColumns = 1 | 2 | 3 | 4;
 export type PriorityBand = 'critical' | 'important' | 'standard' | 'optional';
 export type SectionOrientation = 'vertical' | 'horizontal' | 'auto';
-export type FieldStatus = 'completed' | 'in-progress' | 'pending' | 'cancelled' | 'active' | 'inactive' | 'warning' | 'confirmed' | 'planned' | 'tentative' | 'available' | 'coming-soon' | 'deprecated' | 'out-of-stock';
+export type FieldStatus =
+  | 'completed'
+  | 'in-progress'
+  | 'pending'
+  | 'cancelled'
+  | 'active'
+  | 'inactive'
+  | 'warning'
+  | 'confirmed'
+  | 'planned'
+  | 'tentative'
+  | 'available'
+  | 'coming-soon'
+  | 'deprecated'
+  | 'out-of-stock';
 export type FieldPriority = 'high' | 'medium' | 'low';
 export type PerformanceLevel = 'high' | 'medium' | 'low';
 export type CardActionVariant = 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'link';

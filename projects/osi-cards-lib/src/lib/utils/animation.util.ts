@@ -36,12 +36,12 @@ import {
   AnimationController,
   fadeIn,
   fadeOut,
-  slideUp,
+  scaleIn,
   slideDown,
   slideInLeft,
   slideInRight,
-  scaleIn,
-  staggerAnimate
+  slideUp,
+  staggerAnimate,
 } from './web-animations.util';
 
 // Export slideInLeft as slideIn for backwards compatibility
@@ -74,7 +74,11 @@ export const AnimationUtil = {
   },
 
   // Helper to create optimized animations
-  createOptimized: (element: HTMLElement, keyframes: Keyframe[], options: KeyframeAnimationOptions) => {
+  createOptimized: (
+    element: HTMLElement,
+    keyframes: Keyframe[],
+    options: KeyframeAnimationOptions
+  ) => {
     // Use will-change for better performance
     element.style.willChange = 'transform, opacity';
     const anim = element.animate(keyframes, options);
@@ -82,6 +86,5 @@ export const AnimationUtil = {
       element.style.willChange = 'auto';
     };
     return anim;
-  }
+  },
 };
-

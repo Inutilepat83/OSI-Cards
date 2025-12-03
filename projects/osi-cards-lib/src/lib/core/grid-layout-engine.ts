@@ -27,6 +27,7 @@
 
 import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
+import { MasterGridLayoutEngine, MasterLayoutResult } from '../utils/master-grid-layout-engine.util';
 
 // ============================================================================
 // TYPES
@@ -99,6 +100,8 @@ export interface GridLayoutConfig {
   optimize: boolean;
   /** Default section height estimate */
   defaultHeight: number;
+  /** Whether to use master engine (NEW - recommended) */
+  useMasterEngine?: boolean;
 }
 
 const DEFAULT_CONFIG: GridLayoutConfig = {
@@ -107,6 +110,7 @@ const DEFAULT_CONFIG: GridLayoutConfig = {
   minColumnWidth: 280,
   optimize: true,
   defaultHeight: 200,
+  useMasterEngine: true, // Enable by default
 };
 
 // ============================================================================
@@ -118,6 +122,7 @@ export class GridLayoutEngine {
   private readonly layoutSubject = new BehaviorSubject<GridLayout | null>(null);
   private cache = new Map<string, GridLayout>();
   private heights = new Map<string, number>();
+  private masterEngine: MasterGridLayoutEngine | null = null;
 
   /** Current layout observable */
   readonly layout$: Observable<GridLayout | null> = this.layoutSubject.asObservable();
@@ -130,6 +135,18 @@ export class GridLayoutEngine {
 
   constructor(config: Partial<GridLayoutConfig> = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };
+
+    // Initialize master engine if enabled
+    if (this.config.useMasterEngine) {
+      this.masterEngine = new MasterGridLayoutEngine({
+        gap: this.config.gap,
+        minColumnWidth: this.config.minColumnWidth,
+        maxColumns: this.config.maxColumns,
+        enableWeightedSelection: true,
+        enableIntelligence: true,
+        enableCompaction: this.config.optimize,
+      });
+    }
   }
 
   // ==========================================================================
@@ -138,6 +155,7 @@ export class GridLayoutEngine {
 
   /**
    * Calculate layout for given sections and container width
+   * NEW: Uses master engine if enabled for optimal results
    */
   calculate(sections: GridSection[], containerWidth: number): GridLayout {
     const startTime = performance.now();
@@ -152,6 +170,61 @@ export class GridLayoutEngine {
     // Calculate columns
     const columns = this.calculateColumns(containerWidth);
 
+    // NEW: Use master engine if available
+    if (this.masterEngine && sections.length > 0) {
+      try {
+        const masterResult: MasterLayoutResult = this.masterEngine.calculateLayout(
+          sections.map(s => ({
+            ...s,
+            colSpan: typeof s.preferredSpan === 'number' ? s.preferredSpan : 1,
+          })) as any,
+          containerWidth,
+          columns
+        );
+
+        // Convert to GridLayout format
+        const positioned: PositionedGridSection[] = masterResult.sections.map(s => ({
+          id: s.section.id || s.key,
+          section: s.section as GridSection,
+          colSpan: s.colSpan,
+          left: s.left,
+          width: s.width,
+          top: s.top,
+          row: Math.floor(s.top / (this.config.defaultHeight + this.config.gap)),
+          column: s.column,
+        }));
+
+        const gaps: GridGap[] = masterResult.gapCount > 0
+          ? this.findGaps(positioned, columns)
+          : [];
+
+        const layout: GridLayout = {
+          sections: positioned,
+          columns,
+          containerWidth,
+          totalHeight: masterResult.totalHeight,
+          gaps,
+          metrics: {
+            sectionCount: sections.length,
+            rowCount: Math.ceil(masterResult.totalHeight / (this.config.defaultHeight + this.config.gap)),
+            gapCount: masterResult.gapCount,
+            fillRate: masterResult.utilization / 100,
+            computeTime: masterResult.metrics.computeTime,
+          },
+        };
+
+        // Cache and emit
+        this.cache.set(cacheKey, layout);
+        this.layoutSubject.next(layout);
+
+        return layout;
+      } catch (error) {
+        console.warn('[GridLayoutEngine] Master engine failed, using legacy:', error);
+        // Fall through to legacy algorithm
+      }
+    }
+
+    // LEGACY ALGORITHM (fallback)
     // Position sections
     const positioned = this.positionSections(sections, columns);
 

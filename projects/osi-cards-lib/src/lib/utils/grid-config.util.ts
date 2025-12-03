@@ -585,13 +585,13 @@ export function getMaxExpansion(
  */
 export interface SectionExpansionInfo {
   /** Section type (e.g., 'contact-card', 'chart') */
-  type?: string;
+  type?: string | undefined;
   /** Whether section can grow (canGrow !== false) */
-  canGrow?: boolean;
+  canGrow?: boolean | undefined;
   /** Explicit max columns limit from section config */
-  maxColumns?: number;
+  maxColumns?: number | undefined;
   /** Content density score (calculated from measureContentDensity) */
-  density?: number;
+  density?: number | undefined;
 }
 
 /**

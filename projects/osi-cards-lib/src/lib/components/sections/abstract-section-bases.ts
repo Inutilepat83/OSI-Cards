@@ -376,13 +376,23 @@ export abstract class ChartSectionBaseComponent extends BaseSectionComponent {
     return {
       type: this.chartType(),
       labels: chartData.labels ?? [],
-      datasets: (chartData.datasets ?? []).map((ds) => ({
-        label: ds.label,
-        data: ds.data.map(v => v === null ? 0 : v),
-        backgroundColor: ds.backgroundColor,
-        borderColor: ds.borderColor,
-        borderWidth: ds.borderWidth ?? 1,
-      })),
+      datasets: (chartData.datasets ?? []).map((ds) => {
+        const dataset: any = {
+          label: ds.label,
+          data: ds.data.map((v) => (v === null ? 0 : v)),
+          borderWidth: ds.borderWidth ?? 1,
+        };
+
+        // Only add optional properties if defined
+        if (ds.backgroundColor !== undefined) {
+          dataset.backgroundColor = ds.backgroundColor;
+        }
+        if (ds.borderColor !== undefined) {
+          dataset.borderColor = ds.borderColor;
+        }
+
+        return dataset;
+      }),
     };
   });
 

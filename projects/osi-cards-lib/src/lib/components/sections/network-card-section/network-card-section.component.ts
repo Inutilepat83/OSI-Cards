@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent } from '../base-section.component';
-import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../../shared';
 
 /**
  * Network Card Section Component
@@ -14,10 +14,9 @@ import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../
   standalone: true,
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './network-card-section.component.html',
-  styleUrl: './network-card-section.scss'
+  styleUrl: './network-card-section.scss',
 })
 export class NetworkCardSectionComponent extends BaseSectionComponent {
-
   /**
    * Get status class
    */

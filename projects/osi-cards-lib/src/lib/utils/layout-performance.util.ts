@@ -248,8 +248,7 @@ export class MemoizedCalculator {
     }
 
     // Remove oldest entries (LRU-like)
-    const entries = Array.from(cache.entries())
-      .sort((a, b) => a[1].timestamp - b[1].timestamp);
+    const entries = Array.from(cache.entries()).sort((a, b) => a[1].timestamp - b[1].timestamp);
 
     const toRemove = entries.slice(0, cache.size - this.maxCacheSize + 50);
 
@@ -391,9 +390,7 @@ export class SpatialIndex {
    * Get all sections in a specific column
    */
   findInColumn(column: number): IndexedSection[] {
-    return this.sections.filter(s =>
-      s.column <= column && s.column + s.colSpan > column
-    );
+    return this.sections.filter((s) => s.column <= column && s.column + s.colSpan > column);
   }
 }
 
@@ -517,15 +514,21 @@ export class DirtyTracker {
  * Only calculates positions for sections in the visible viewport.
  */
 export class LazyPositionCalculator {
-  private calculatedSections: Map<string, {
-    left: string;
-    top: number;
-    width: string;
-    height: number;
-  } | null | undefined> = new Map();
+  private calculatedSections: Map<
+    string,
+    | {
+        left: string;
+        top: number;
+        width: string;
+        height: number;
+      }
+    | null
+    | undefined
+  > = new Map();
 
   private sectionOrder: string[] = [];
-  private sectionData: Map<string, { section: CardSection; colSpan: number; height: number }> = new Map();
+  private sectionData: Map<string, { section: CardSection; colSpan: number; height: number }> =
+    new Map();
   private columnHeights: number[] = [];
   private config: { columns: number; gap: number } = { columns: 4, gap: 12 };
 
@@ -533,7 +536,12 @@ export class LazyPositionCalculator {
    * Initialize with sections and config
    */
   initialize(
-    sections: Array<{ key: string; section: CardSection; colSpan: number; estimatedHeight: number }>,
+    sections: Array<{
+      key: string;
+      section: CardSection;
+      colSpan: number;
+      estimatedHeight: number;
+    }>,
     config: { columns: number; gap: number }
   ): void {
     this.config = config;
@@ -555,18 +563,24 @@ export class LazyPositionCalculator {
   /**
    * Get positions for sections in viewport
    */
-  getPositionsForViewport(viewport: ViewportBounds): Map<string, {
-    left: string;
-    top: number;
-    width: string;
-    height: number;
-  }> {
-    const result = new Map<string, {
+  getPositionsForViewport(viewport: ViewportBounds): Map<
+    string,
+    {
       left: string;
       top: number;
       width: string;
       height: number;
-    }>();
+    }
+  > {
+    const result = new Map<
+      string,
+      {
+        left: string;
+        top: number;
+        width: string;
+        height: number;
+      }
+    >();
 
     const expandedTop = Math.max(0, viewport.top - viewport.buffer);
     const expandedBottom = viewport.bottom + viewport.buffer;
@@ -605,7 +619,9 @@ export class LazyPositionCalculator {
   /**
    * Calculate position for a single section
    */
-  private calculatePosition(key: string): { left: string; top: number; width: string; height: number } | null | undefined {
+  private calculatePosition(
+    key: string
+  ): { left: string; top: number; width: string; height: number } | null | undefined {
     const data = this.sectionData.get(key);
     if (!data) return null;
 
@@ -706,10 +722,13 @@ export class LazyPositionCalculator {
  */
 export class LayoutWorkerManager {
   private worker: Worker | null = null;
-  private pendingRequests: Map<string, {
-    resolve: (result: unknown) => void;
-    reject: (error: Error) => void;
-  }> = new Map();
+  private pendingRequests: Map<
+    string,
+    {
+      resolve: (result: unknown) => void;
+      reject: (error: Error) => void;
+    }
+  > = new Map();
 
   private requestIdCounter = 0;
 
@@ -844,6 +863,3 @@ export function resetPerformanceHelpers(): void {
   _spatialIndex = null;
   _dirtyTracker = null;
 }
-
-
-

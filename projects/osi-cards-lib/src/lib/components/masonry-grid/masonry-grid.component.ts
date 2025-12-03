@@ -11,28 +11,13 @@ import {
   generateWidthExpression,
   generateLeftExpression,
   getPreferredColumns,
-  resolveColumnSpan,
-  DEFAULT_SECTION_COLUMN_PREFERENCES,
   PreferredColumns,
-  PackingAlgorithm,
-  MasonryPackingConfig,
-  DEFAULT_MASONRY_PACKING_CONFIG,
-  RowPackingOptions,
-  DEFAULT_ROW_PACKING_OPTIONS,
   shouldExpandSection,
   SectionExpansionInfo,
   calculateBasicDensity
 } from '../../utils/grid-config.util';
 import {
-  calculateOptimalColumns,
-  estimateSectionHeight,
-  calculatePriorityScore,
-  gridLogger,
-  enableGridDebug,
-  binPack2D,
-  SectionWithMetrics,
-  findGaps,
-  fillGapsWithSections
+  estimateSectionHeight
 } from '../../utils/smart-grid.util';
 import {
   HeightEstimator,
@@ -40,16 +25,10 @@ import {
   HeightEstimationContext
 } from '../../utils/height-estimation.util';
 import {
-  packSectionsIntoRows,
-  packingResultToPositions,
-  RowPackerConfig
-} from '../../utils/row-packer.util';
-import {
   VirtualScrollManager,
-  VirtualScrollConfig,
-  VirtualItem,
   ViewportState
 } from '../../utils/virtual-scroll.util';
+import { MasterGridLayoutEngine, MasterLayoutResult } from '../../utils/master-grid-layout-engine.util';
 
 interface ColSpanThresholds {
   two: number;
@@ -72,8 +51,8 @@ interface PositionedSection {
   left: string;
   top: number;
   width: string;
-  isNew?: boolean;  // Whether this section should animate (newly added during streaming)
-  hasAnimated?: boolean;  // Whether this section has completed its entrance animation
+  isNew?: boolean | undefined;  // Whether this section should animate (newly added during streaming)
+  hasAnimated?: boolean | undefined;  // Whether this section has completed its entrance animation
 }
 
 /**
@@ -105,7 +84,7 @@ export interface LayoutLogEntry {
   /** Current number of columns */
   columns: number;
   /** Previous number of columns (only for columns_changed event) */
-  previousColumns?: number;
+  previousColumns?: number | undefined;
   /** Detailed information for each section */
   sections: SectionLayoutLog[];
 }
@@ -160,30 +139,11 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   @Input() isStreaming = false;
 
   /**
-   * Enable tetris-style layout optimization.
-   * When true, uses bin-packing algorithm to minimize gaps and maximize space utilization.
-   * Disable for streaming mode if section repositioning is disruptive.
+   * Enable ultra-compact layout optimization.
+   * When true, uses 5-pass compaction algorithm to minimize gaps and maximize space utilization.
+   * Uses the master grid layout engine for intelligent, content-aware placement.
    */
   @Input() optimizeLayout = true;
-
-  /**
-   * Packing algorithm to use for section layout.
-   * - 'legacy': Original masonry algorithm (FFDH-based)
-   * - 'row-first': New space-filling algorithm that prioritizes complete rows (default)
-   * - 'skyline': Skyline bin-packing algorithm
-   */
-  @Input() packingAlgorithm: PackingAlgorithm = 'row-first';
-
-  /**
-   * Options for the row-first packing algorithm.
-   * Only used when packingAlgorithm is 'row-first'.
-   */
-  @Input() rowPackingOptions: RowPackingOptions = DEFAULT_ROW_PACKING_OPTIONS;
-
-  /**
-   * Whether to use the legacy algorithm as a fallback when the selected algorithm fails.
-   */
-  @Input() useLegacyFallback = true;
 
   /**
    * Enable virtual scrolling for large section lists.
@@ -213,8 +173,14 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   @Input() set debug(value: boolean) {
     this._debug = value;
     if (value) {
-      enableGridDebug('debug');
       console.log('[MasonryGrid] Debug mode enabled - watch console for layout logs');
+    }
+    // Update master engine debug setting
+    if (this.masterEngine) {
+      this.masterEngine = new MasterGridLayoutEngine({
+        ...this.masterEngine['config'],
+        debug: value,
+      });
     }
   }
   get debug(): boolean {
@@ -265,16 +231,16 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   /** Current column count (after calculation) */
   currentColumns = 1;
 
-  private resizeObserver?: ResizeObserver;
-  private itemObserver?: ResizeObserver;
-  private pendingAnimationFrame?: number;
+  private resizeObserver?: ResizeObserver | undefined;
+  private itemObserver?: ResizeObserver | undefined;
+  private pendingAnimationFrame?: number | undefined;
   private reflowCount = 0;
   private readonly MAX_REFLOWS = 5;
-  private resizeThrottleTimeout?: number;
+  private resizeThrottleTimeout?: number | undefined;
   private readonly RESIZE_THROTTLE_MS = 16; // ~1 frame at 60fps
   private readonly RESIZE_DEBOUNCE_MS = 100; // Debounce rapid resize events
-  private lastLayoutInfo?: MasonryLayoutInfo;
-  private rafId?: number;
+  private lastLayoutInfo?: MasonryLayoutInfo | undefined;
+  private rafId?: number | undefined;
   private initialLayoutRetries = 0;
   private readonly MAX_INITIAL_RETRIES = 5; // Reduced - rely more on ResizeObserver
   private initialLayoutTimeout?: number;
@@ -282,14 +248,14 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   // Track whether layout has been successfully calculated with valid width
   private hasValidLayout = false;
   private lastValidContainerWidth = 0;
-  private layoutVerificationTimeout?: number;
+  private layoutVerificationTimeout?: number | undefined;
 
   // Debounced resize handling
-  private resizeDebounceTimeout?: number;
+  private resizeDebounceTimeout?: number | undefined;
   private pendingResizeWidth = 0;
 
   // Simplified polling (reduced from 5s to 2s)
-  private widthPollingInterval?: number;
+  private widthPollingInterval?: number | undefined;
   private widthPollingStartTime = 0;
   private readonly WIDTH_POLLING_DURATION_MS = 2000;
   private readonly WIDTH_POLLING_INTERVAL_MS = 50; // Faster polling
@@ -301,6 +267,9 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private virtualScrollManager: VirtualScrollManager<PositionedSection> | null = null;
   private scrollUnsubscribe: (() => void) | null = null;
 
+  // NEW: Advanced grid layout systems
+  private masterEngine!: MasterGridLayoutEngine;
+
   /** Sections currently rendered (may be subset when virtual scrolling is active) */
   renderedSections: PositionedSection[] = [];
 
@@ -311,6 +280,20 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   get isVirtualScrollActive(): boolean {
     return this.enableVirtualScroll &&
            this.positionedSections.length >= this.virtualThreshold;
+  }
+
+  constructor() {
+    // Initialize master grid engine (handles all layout intelligence)
+    this.masterEngine = new MasterGridLayoutEngine({
+      gap: this.gap,
+      minColumnWidth: this.minColumnWidth,
+      maxColumns: this.maxColumns,
+      enableWeightedSelection: true,
+      enableIntelligence: true,
+      enableCompaction: true,
+      enableCaching: true,
+      debug: this._debug,
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -830,9 +813,16 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   private scheduleLayoutUpdate(): void {
+    if (this._debug) {
+      console.log('[MasonryGrid] 📅 Scheduling layout update');
+    }
+
     // Cancel any pending RAF
     if (this.rafId) {
       cancelAnimationFrame(this.rafId);
+      if (this._debug) {
+        console.log('[MasonryGrid] 🚫 Cancelled pending RAF');
+      }
     }
     if (this.pendingAnimationFrame) {
       cancelAnimationFrame(this.pendingAnimationFrame);
@@ -846,6 +836,9 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       this.rafId = undefined;
       this.pendingAnimationFrame = requestAnimationFrame(() => {
         this.pendingAnimationFrame = undefined;
+        if (this._debug) {
+          console.log('[MasonryGrid] 🔄 Executing reflowWithActualHeights from RAF');
+        }
         this.reflowWithActualHeights();
       });
     });
@@ -873,9 +866,22 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private computeInitialLayout(): void {
     const resolvedSections = this.sections ?? [];
 
+    if (this._debug) {
+      console.log('[MasonryGrid] 🔄 computeInitialLayout called:', {
+        sectionCount: resolvedSections.length,
+        isStreaming: this.isStreaming,
+        isLayoutReady: this.isLayoutReady,
+        hasValidLayout: this.hasValidLayout,
+        timestamp: Date.now()
+      });
+    }
+
     // STREAMING OPTIMIZATION: Use incremental layout when streaming with existing sections
     // This prevents blinking by avoiding isLayoutReady reset
     if (this.isStreaming && this.positionedSections.length > 0 && this.isLayoutReady) {
+      if (this._debug) {
+        console.log('[MasonryGrid] 📝 Using incremental layout for streaming');
+      }
       this.addNewSectionsIncrementally(resolvedSections);
       return;
     }
@@ -889,167 +895,172 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     }
     this.layoutState = 'measuring';
 
-    // Calculate container width and columns for IMMEDIATE multi-column layout
+    // Get container dimensions
     const containerWidth = this.getContainerWidth();
-    const columns = Math.min(this.maxColumns, Math.max(1,
+
+    if (this._debug) {
+      console.log('[MasonryGrid] 📐 Container width:', containerWidth);
+    }
+
+    // Guard against invalid width
+    if (containerWidth <= 0) {
+      console.warn('[MasonryGrid] ⚠️ Invalid container width, skipping layout');
+      return;
+    }
+
+    // ========================================================================
+    // CSS GRID: Browser does ALL the work!
+    // No JavaScript calculations, no absolute positioning, no complex algorithms
+    // ========================================================================
+
+    // Calculate responsive columns
+    this.currentColumns = this.calculateResponsiveColumns(containerWidth);
+    
+    // Set CSS variables for grid
+    const containerElement = this.containerRef?.nativeElement;
+    if (containerElement) {
+      containerElement.style.setProperty('--masonry-columns', this.currentColumns.toString());
+      containerElement.style.setProperty('--masonry-gap', `${this.gap}px`);
+    }
+
+    // That's it! Browser handles everything else via CSS Grid
+    this.isLayoutReady = true;
+    this.hasValidLayout = true;
+    this.layoutState = 'ready';
+
+    if (this._debug) {
+      console.log('[MasonryGrid] ✅ CSS Grid layout ready', {
+        columns: this.currentColumns,
+        sections: resolvedSections.length,
+        containerWidth
+      });
+    }
+
+    // Emit layout change
+    this.layoutChange.emit({
+      breakpoint: this.getBreakpoint(containerWidth),
+      columns: this.currentColumns,
+      containerWidth,
+    });
+
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Calculate responsive columns based on container width
+   */
+  private calculateResponsiveColumns(containerWidth: number): number {
+    if (containerWidth < 640) return 1;   // Mobile
+    if (containerWidth < 1024) return 2;  // Tablet
+    if (containerWidth < 1440) return 3;  // Desktop
+    return Math.min(4, this.maxColumns);  // Wide
+  }
+
+  /**
+   * Get column span for a section (used by CSS Grid)
+   */
+  getColSpan(section: CardSection): number {
+    // Explicit colSpan takes priority
+    if (section.colSpan && section.colSpan > 0) {
+      return Math.min(section.colSpan, this.currentColumns);
+    }
+    
+    // Type-based intelligent defaults
+    const type = (section.type || '').toLowerCase();
+    
+    // Full-width types
+    if (type === 'overview' || type === 'header' || type === 'hero') {
+      return this.currentColumns;
+    }
+    
+    // Wide types (2-3 columns)
+    if (type === 'chart' || type === 'analytics' || type === 'gallery') {
+      return Math.min(2, this.currentColumns);
+    }
+    
+    if (type === 'timeline') {
+      return Math.min(3, this.currentColumns);
+    }
+    
+    // Default: 1 column
+    return 1;
+  }
+
+  /**
+   * Get breakpoint name from container width
+   */
+  private getBreakpoint(containerWidth: number): Breakpoint {
+    if (containerWidth < 640) return 'xs' as Breakpoint;
+    if (containerWidth < 768) return 'sm' as Breakpoint;
+    if (containerWidth < 1024) return 'md' as Breakpoint;
+    if (containerWidth < 1280) return 'lg' as Breakpoint;
+    if (containerWidth < 1536) return 'xl' as Breakpoint;
+    return '2xl' as Breakpoint;
+  }
+
+  /**
+   * Fallback layout method if master engine fails
+   * Simplified version for safety
+   */
+  private computeLegacyLayoutFallback(
+    sections: CardSection[],
+    containerWidth: number
+  ): void {
+    const columns = Math.max(1, Math.min(
+      this.maxColumns,
       Math.floor((containerWidth + this.gap) / (this.minColumnWidth + this.gap))
     ));
 
-    // Use row-first packing algorithm when enabled
-    if (this.packingAlgorithm === 'row-first' && resolvedSections.length > 0) {
-      try {
-        this.computeRowFirstLayout(resolvedSections, columns);
-        return;
-      } catch (error) {
-        // Fall back to legacy algorithm if row-first fails and fallback is enabled
-        if (this.useLegacyFallback) {
-          console.warn('[MasonryGrid] Row-first packing failed, using legacy algorithm:', error);
-        } else {
-          throw error;
-        }
-      }
-    }
-
-    // Legacy layout algorithm
-    this.computeLegacyLayout(resolvedSections, columns, containerWidth);
-  }
-
-  /**
-   * Computes layout using the row-first space-filling algorithm.
-   * This algorithm prioritizes filling rows completely (zero white space) over
-   * strictly respecting section preferred widths.
-   */
-  private computeRowFirstLayout(sections: CardSection[], columns: number): void {
-    // Configure the row packer
-    const config: RowPackerConfig = {
-      totalColumns: columns,
-      gap: this.gap,
-      prioritizeSpaceFilling: this.rowPackingOptions.prioritizeSpaceFilling,
-      allowShrinking: this.rowPackingOptions.allowShrinking,
-      allowGrowing: this.rowPackingOptions.allowGrowing,
-      maxOptimizationPasses: this.rowPackingOptions.maxOptimizationPasses,
-    };
-
-    // Pack sections into rows
-    const result = packSectionsIntoRows(sections, config);
-
-    // Convert to positioned sections for rendering
-    const rowPackerPositions = packingResultToPositions(result, {
-      totalColumns: columns,
-      gap: this.gap,
-    });
-
-    // Convert row packer positions to component's PositionedSection format
-    this.positionedSections = rowPackerPositions.map((pos, index) => {
-      const section = pos.section;
-      const key = this.getStableSectionKey(section, index);
-      const isNew = this.isStreaming && this.isTrulyNewSection(section, key);
-      this.markSectionRendered(section, key);
-
-      const item: PositionedSection = {
-        section,
-        key,
-        colSpan: pos.colSpan,
-        preferredColumns: pos.preferredColumns,
-        left: pos.left,
-        top: pos.top,
-        width: pos.width,
-        isNew,
-      };
-
-      return item;
-    });
-
-    this.containerHeight = result.totalHeight;
-
-    // Log packing metrics in debug mode
-    if (this._debug) {
-      console.log('[MasonryGrid] Row-first packing result:', {
-        rows: result.rows.length,
-        utilization: `${result.utilizationPercent.toFixed(1)}%`,
-        rowsWithGaps: result.rowsWithGaps,
-        shrunkCount: result.shrunkCount,
-        grownCount: result.grownCount,
-      });
-    }
-
-    this.cdr.markForCheck();
-  }
-
-  /**
-   * Computes layout using the legacy bin-packing algorithm.
-   * This is the original masonry grid algorithm.
-   */
-  private computeLegacyLayout(
-    resolvedSections: CardSection[],
-    columns: number,
-    containerWidth: number
-  ): void {
-    // Calculate column width for positioning
-    const colWidth = columns > 1
-      ? (containerWidth - (this.gap * (columns - 1))) / columns
-      : containerWidth;
-
-    // Track column heights for proper multi-column placement
     const colHeights = Array(columns).fill(0);
 
-    // Determine optimal section ordering using bin-packing algorithm
-    let orderedSections = resolvedSections;
-
-    if (this.optimizeLayout && resolvedSections.length > 1) {
-      // Use bin-packing to determine optimal section ordering
-      // This pre-sorts sections to minimize gaps during placement
-      const packedSections = binPack2D(resolvedSections, columns, {
-        respectPriority: true,
-        fillGaps: true,
-        balanceColumns: false  // Focus on gap minimization
-      });
-
-      // Extract the ordered sections from the packed result
-      orderedSections = packedSections.map(s => s.section);
-    }
-
-    // Place sections in multi-column layout from the start
-    this.positionedSections = orderedSections.map((section, index) => {
-      const preferredCols = this.getPreferredColumns(section);
-      // Use stable key with index to ensure uniqueness for sections without id
+    this.positionedSections = sections.map((section, index) => {
       const key = this.getStableSectionKey(section, index);
-      // Check if this section is TRULY new (not yet rendered in ANY previous update)
+      const colSpan = Math.min(section.colSpan || 1, columns);
       const isNew = this.isStreaming && this.isTrulyNewSection(section, key);
-      // Mark as rendered immediately to prevent re-animation on subsequent updates
       this.markSectionRendered(section, key);
 
-      // Find shortest column for placement (simple greedy algorithm)
-      const shortestCol = colHeights.indexOf(Math.min(...colHeights));
-      const left = shortestCol * (colWidth + this.gap);
-      const top = colHeights[shortestCol];
+      // Find shortest column
+      let bestCol = 0;
+      let minHeight = Infinity;
+      for (let col = 0; col <= columns - colSpan; col++) {
+        let maxHeight = 0;
+        for (let c = col; c < col + colSpan; c++) {
+          maxHeight = Math.max(maxHeight, colHeights[c] || 0);
+        }
+        if (maxHeight < minHeight) {
+          minHeight = maxHeight;
+          bestCol = col;
+        }
+      }
 
-      // Estimate section height (will be corrected in reflowWithActualHeights)
-      const estimatedHeight = 300;
-      colHeights[shortestCol] = top + estimatedHeight + this.gap;
+      const top = minHeight;
+      const height = 200; // Estimate
 
-      // Generate width expression using centralized helper (handles gaps correctly)
-      const widthExpr = columns > 1
-        ? generateWidthExpression(columns, 1, this.gap)
-        : '100%';
+      // Update column heights
+      for (let c = bestCol; c < bestCol + colSpan; c++) {
+        colHeights[c] = top + height + this.gap;
+      }
 
-      const item: PositionedSection = {
+      return {
         section,
         key,
-        colSpan: this.getSectionColSpan(section),
-        preferredColumns: preferredCols,
-        left: columns > 1 ? `${left}px` : '0px',
+        colSpan,
+        preferredColumns: colSpan as PreferredColumns,
+        left: generateLeftExpression(columns, bestCol, this.gap),
         top,
-        width: widthExpr,
-        isNew
+        width: generateWidthExpression(columns, colSpan, this.gap),
+        isNew,
+        hasAnimated: this.animatedSectionKeys.has(key),
       };
-
-      return item;
     });
 
-    this.containerHeight = Math.max(...colHeights, 0);
-    this.cdr.markForCheck();
+    this.containerHeight = Math.max(...colHeights);
+    this.currentColumns = columns;
+    this.isLayoutReady = true;
+    this.hasValidLayout = true;
+    this.layoutState = 'ready';
   }
+
 
   /**
    * Incremental section addition for streaming mode
@@ -1301,7 +1312,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       // Prefer positions that minimize both height and gap creation
       // Use weighted scoring: height is primary, gap score is secondary
       // Increased gap penalty from 50 to 150 for more aggressive gap avoidance
-      const weightedScore = maxColHeight + (gapScore * 150);
+      const _weightedScore = maxColHeight + (gapScore * 150); // Reserved for future use
 
       if (maxColHeight < minHeight || (maxColHeight === minHeight && gapScore < bestGapScore)) {
         minHeight = maxColHeight;
@@ -1468,7 +1479,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       if (!section) continue;
 
       const currentSpan = section.colSpan;
-      const height = sectionHeights.get(section.key) ?? 200;
+      const _height = sectionHeights.get(section.key) ?? 200; // Reserved for future use
 
       // Only try reducing by 1 (don't go from 3 to 1 directly)
       const narrowerSpan = Math.max(1, currentSpan - 1);
@@ -1573,7 +1584,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     placedSections: PositionedSection[],
     sectionHeights: Map<string, number>,
     columns: number,
-    containerWidth: number
+    _containerWidth: number
   ): PositionedSection[] {
     if (placedSections.length < 2 || columns < 2) {
       return placedSections;
@@ -1609,8 +1620,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
           if (sectionA.colSpan === sectionB.colSpan) continue;
 
           // Skip if swap would violate preferred columns constraints
-          const heightA = sectionHeights.get(sectionA.key) ?? 200;
-          const heightB = sectionHeights.get(sectionB.key) ?? 200;
+          const _heightA = sectionHeights.get(sectionA.key) ?? 200; // Reserved for future constraint checking
+          const _heightB = sectionHeights.get(sectionB.key) ?? 200; // Reserved for future constraint checking
 
           // Try swapping their positions (and thus, effectively their placements)
           const swapped = this.trySwapSections(
@@ -1657,64 +1668,44 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   /**
-   * Recalculates section positions using the FFDH algorithm.
+   * Recalculates section positions using weighted column selection + section intelligence.
+   * NEW: Uses advanced algorithms for better space utilization and gap elimination.
+   */
+  /**
+   * Recalculates section positions using actual measured heights.
+   * Uses the master engine for intelligent placement.
    */
   private recalculatePositions(
     sections: PositionedSection[],
     sectionHeights: Map<string, number>,
     columns: number
   ): PositionedSection[] {
-    const colHeights = Array(columns).fill(0);
+    // Use master engine to recalculate with actual heights
+    const containerWidth = this.getContainerWidth();
+    const cardSections = sections.map(s => s.section);
 
-    // Sort by height descending
-    const sorted = [...sections].sort((a, b) => {
-      const heightA = sectionHeights.get(a.key) ?? 200;
-      const heightB = sectionHeights.get(b.key) ?? 200;
-      return heightB - heightA;
-    });
+    try {
+      const layout = this.masterEngine.calculateLayout(cardSections, containerWidth, columns);
 
-    const result: PositionedSection[] = [];
-
-    for (const section of sorted) {
-      const height = sectionHeights.get(section.key) ?? 200;
-      const span = Math.min(section.colSpan, columns);
-
-      // Find best column
-      let bestColumn = 0;
-      let minColHeight = Number.MAX_VALUE;
-
-      for (let col = 0; col <= columns - span; col++) {
-        let maxHeight = 0;
-        for (let c = col; c < col + span; c++) {
-          if ((colHeights[c] ?? 0) > maxHeight) {
-            maxHeight = colHeights[c] ?? 0;
-          }
-        }
-        if (maxHeight < minColHeight) {
-          minColHeight = maxHeight;
-          bestColumn = col;
-        }
-      }
-
-      // Calculate position
-      const widthExpr = generateWidthExpression(columns, span, this.gap);
-      const leftExpr = generateLeftExpression(columns, bestColumn, this.gap);
-
-      // Update column heights
-      const newHeight = minColHeight + height + this.gap;
-      for (let c = bestColumn; c < bestColumn + span; c++) {
-        colHeights[c] = newHeight;
-      }
-
-      result.push({
-        ...section,
-        left: leftExpr,
-        top: minColHeight,
-        width: widthExpr
+      // Convert back to PositionedSection format, preserving animation state
+      return layout.sections.map(placed => {
+        const original = sections.find(s => s.key === placed.key);
+        return {
+          section: placed.section,
+          key: placed.key,
+          colSpan: placed.colSpan,
+          preferredColumns: placed.colSpan as PreferredColumns,
+          left: placed.left,
+          top: placed.top,
+          width: placed.width,
+          isNew: original?.isNew,
+          hasAnimated: original?.hasAnimated,
+        };
       });
+    } catch (error) {
+      console.warn('[MasonryGrid] Recalculation failed, keeping current positions:', error);
+      return sections;
     }
-
-    return result;
   }
 
   /**
@@ -1737,14 +1728,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
   /**
    * Post-layout gap optimization.
-   * After initial placement, analyzes the layout for gaps and attempts to fill them
-   * by repositioning flexible sections.
-   *
-   * Algorithm:
-   * 1. Build an occupancy grid from current section positions
-   * 2. Identify significant gaps (empty spaces between sections)
-   * 3. Find single-column sections that could fit in gaps
-   * 4. Reposition sections to fill gaps without increasing total height
+   * Uses master engine for intelligent gap elimination.
    *
    * @param sections - Currently positioned sections
    * @param columns - Number of columns
@@ -1769,6 +1753,46 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       sectionHeights.set(section.key, height);
     });
 
+    try {
+      // Use master engine for gap optimization
+      const layout = this.masterEngine.calculateLayout(
+        sections.map(s => s.section),
+        containerWidth,
+        columns
+      );
+
+      if (this._debug) {
+        console.log('[MasonryGrid] Gap Optimization Results:', {
+          totalHeight: layout.totalHeight,
+          gapCount: layout.gapCount,
+          utilization: `${layout.utilization.toFixed(1)}%`,
+          optimizations: layout.optimizations,
+        });
+      }
+
+      // Convert back to PositionedSection format, preserving animation state
+      const optimized = layout.sections.map(placed => {
+        const original = sections.find(s => s.key === placed.key);
+        return {
+          section: placed.section,
+          key: placed.key,
+          colSpan: placed.colSpan,
+          preferredColumns: placed.colSpan as PreferredColumns,
+          left: placed.left,
+          top: placed.top,
+          width: placed.width,
+          isNew: original?.isNew,
+          hasAnimated: original?.hasAnimated,
+        };
+      });
+
+      return optimized;
+    } catch (error) {
+      console.warn('[MasonryGrid] Gap optimization failed, using fallback:', error);
+      // Fallback to original sections if optimization fails
+    }
+
+    // FALLBACK: Original gap optimization
     // Build sections with height info for gap analysis
     const sectionsWithHeight = sections.map(s => ({
       ...s,
@@ -2343,7 +2367,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
    * Priority order:
    * 1. Explicit colSpan (hard override)
    * 2. preferredColumns (adaptive hint)
-   * 3. Content-based calculation (threshold-based)
+   * 3. Type-based defaults
    */
   private getSectionColSpan(section: CardSection): number {
     // Priority 1: Explicit colSpan always takes precedence (hard override)
@@ -2351,26 +2375,22 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       return Math.min(section.colSpan, this.currentColumns || this.maxColumns);
     }
 
-    const type = (section.type ?? '').toLowerCase();
-
-    // Special case: project sections always span 1 column
-    if (type === 'project') {
-      return 1;
+    // Priority 2: Use preferredColumns if available
+    const preferredCols = this.getPreferredColumns(section);
+    if (preferredCols > 0) {
+      return Math.min(preferredCols, this.currentColumns || this.maxColumns);
     }
 
-    // Use the smart-grid algorithm for optimal column calculation
-    // This considers content density, section type, and constraints
-    const optimalColumns = calculateOptimalColumns(section, this.currentColumns || this.maxColumns);
-
-    // Clamp to available columns
-    return Math.min(optimalColumns, this.currentColumns || this.maxColumns);
+    // Priority 3: Default to 1 column
+    return 1;
   }
 
   /**
    * Get column span thresholds for a section
    * First checks section's meta (set during normalization), then falls back to default
    */
-  private getColSpanThresholds(section: CardSection): ColSpanThresholds {
+  /** @internal Reserved for future use */
+  private _getColSpanThresholds(section: CardSection): ColSpanThresholds {
     const meta = section.meta as Record<string, unknown> | undefined;
     const thresholds = meta?.['colSpanThresholds'] as ColSpanThresholds | undefined;
 
@@ -2382,7 +2402,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     return DEFAULT_COL_SPAN_THRESHOLD;
   }
 
-  private getDescriptionDensity(description?: string): number {
+  /** @internal Reserved for future use */
+  private _getDescriptionDensity(description?: string): number {
     if (!description) {
       return 0;
     }

@@ -1,16 +1,67 @@
+/**
+ * Magnetic Tilt Service
+ *
+ * Provides smooth 3D tilt effects for cards based on mouse movement,
+ * creating an engaging magnetic attraction effect with dynamic lighting.
+ *
+ * Features:
+ * - Smooth interpolated tilt animations
+ * - Dynamic glow and reflection effects
+ * - Performance-optimized with RAF and caching
+ * - Automatic cleanup and reset on mouse leave
+ *
+ * @example
+ * ```typescript
+ * import { MagneticTiltService } from 'osi-cards-lib';
+ *
+ * const tilt = inject(MagneticTiltService);
+ *
+ * // Subscribe to tilt calculations
+ * tilt.tiltCalculations$.subscribe(calc => {
+ *   element.style.transform = `
+ *     rotateX(${calc.rotateX}deg)
+ *     rotateY(${calc.rotateY}deg)
+ *   `;
+ * });
+ *
+ * // Update tilt on mouse move
+ * onMouseMove(event: MouseEvent) {
+ *   tilt.calculateTilt({ x: event.clientX, y: event.clientY }, element);
+ * }
+ *
+ * // Reset on mouse leave
+ * onMouseLeave() {
+ *   tilt.resetTilt();
+ * }
+ * ```
+ */
+
 import { Injectable, NgZone, inject, OnDestroy } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
+/**
+ * Mouse position in viewport coordinates
+ */
 export interface MousePosition {
+  /** X coordinate in pixels */
   x: number;
+  /** Y coordinate in pixels */
   y: number;
 }
 
+/**
+ * Calculated tilt values for 3D transformations and lighting effects
+ */
 export interface TiltCalculations {
+  /** Rotation around X axis in degrees */
   rotateX: number;
+  /** Rotation around Y axis in degrees */
   rotateY: number;
+  /** Glow blur radius in pixels */
   glowBlur: number;
+  /** Glow opacity (0-1) */
   glowOpacity: number;
+  /** Reflection opacity (0-1) */
   reflectionOpacity: number;
 }
 
@@ -34,6 +85,13 @@ interface ElementCache {
   lastUpdate: number;
 }
 
+/**
+ * Service for creating magnetic 3D tilt effects on cards
+ *
+ * Uses requestAnimationFrame for smooth animations and caches element
+ * dimensions for optimal performance. All calculations are smoothly
+ * interpolated to create a natural, responsive feel.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -46,6 +104,12 @@ export class MagneticTiltService implements OnDestroy {
     reflectionOpacity: 0
   });
 
+  /**
+   * Observable stream of tilt calculations
+   *
+   * Emits smoothly interpolated tilt values that can be applied
+   * to element transforms and lighting effects.
+   */
   tiltCalculations$ = this.tiltCalculationsSubject.asObservable();
 
   // Performance: cache element dimensions to avoid repeated getBoundingClientRect calls
@@ -69,6 +133,25 @@ export class MagneticTiltService implements OnDestroy {
   private readonly CACHE_DURATION = 200; // Recalculate rect every 200ms max (reduces lag from getBoundingClientRect)
   private readonly ngZone = inject(NgZone);
 
+  /**
+   * Calculate tilt effect based on mouse position
+   *
+   * Updates tilt calculations based on the mouse position relative to the
+   * element. Uses smooth interpolation and caching for optimal performance.
+   *
+   * @param mousePosition - Current mouse position in viewport coordinates
+   * @param element - HTML element to apply tilt to
+   *
+   * @example
+   * ```typescript
+   * onMouseMove(event: MouseEvent, cardElement: HTMLElement) {
+   *   tilt.calculateTilt(
+   *     { x: event.clientX, y: event.clientY },
+   *     cardElement
+   *   );
+   * }
+   * ```
+   */
   calculateTilt(mousePosition: MousePosition, element: HTMLElement | null): void {
     if (!element) {
       this.resetTilt();
@@ -108,7 +191,7 @@ export class MagneticTiltService implements OnDestroy {
 
     // Get or update cached element dimensions
     const cache = this.getElementCache(element);
-    
+
     // Calculate normalized position (0-1) - optimized with cached inverse width/height
     // Use actual card dimensions, not screen dimensions, to handle tall cards
     const invWidth = 1.0 / cache.rect.width;
@@ -127,7 +210,7 @@ export class MagneticTiltService implements OnDestroy {
     // Use clamped position directly for more reliable calculation
     const cardPosX = clampedFx; // 0 = left edge, 1 = right edge
     const cardPosY = clampedFy; // 0 = top edge, 1 = bottom edge
-    
+
     // Wave function: 0 at 0%, max at 25%, 0 at 50%, -max at 75%, 0 at 100%
     // Pattern: 0, 100, 0, 100, 0
     const getTiltMultiplier = (pos: number): number => {
@@ -145,10 +228,10 @@ export class MagneticTiltService implements OnDestroy {
         return -1 + (pos - 0.75) * 4; // -1 -> 0
       }
     };
-    
+
     const tiltMultiplierX = getTiltMultiplier(cardPosX);
     const tiltMultiplierY = getTiltMultiplier(cardPosY);
-    
+
     // Tilt based on card position: entry: 0°, 25%: 0.5°, 50%: 0°, 75%: -0.5°, exit: 0°
     // Pattern: 0, 0.5, 0, -0.5, 0 degrees (softer, more subtle effect)
     // Only horizontal tilt (left to right), vertical tilt disabled
@@ -221,7 +304,7 @@ export class MagneticTiltService implements OnDestroy {
    */
   private continueSmoothing(): void {
     const threshold = 0.01; // Threshold for smooth updates
-    
+
     // Check if we need to continue smoothing using latest target values
     const rotateYDiff = Math.abs(this.currentRotateY - this.targetRotateY);
     const rotateXDiff = Math.abs(this.currentRotateX - this.targetRotateX);
@@ -230,8 +313,8 @@ export class MagneticTiltService implements OnDestroy {
     const reflectionDiff = Math.abs(this.currentReflectionOpacity - this.targetReflectionOpacity);
 
     // Continue smoothing if there's any significant difference
-    if (rotateYDiff > threshold || rotateXDiff > threshold || 
-        glowBlurDiff > threshold || glowOpacityDiff > threshold || 
+    if (rotateYDiff > threshold || rotateXDiff > threshold ||
+        glowBlurDiff > threshold || glowOpacityDiff > threshold ||
         reflectionDiff > threshold) {
       // Continue smoothing towards latest targets
       this.currentRotateY = this.lerp(this.currentRotateY, this.targetRotateY, SMOOTHING_FACTOR);
@@ -297,7 +380,7 @@ export class MagneticTiltService implements OnDestroy {
     const glowBlurDiff = newCalc.glowBlur - old.glowBlur;
     const glowOpacityDiff = newCalc.glowOpacity - old.glowOpacity;
     const reflectionDiff = newCalc.reflectionOpacity - old.reflectionOpacity;
-    
+
     // Fast absolute value check: (x < 0 ? -x : x) is faster than Math.abs() for known values
     // Very low thresholds for ultra-smooth updates
     return (
@@ -312,6 +395,27 @@ export class MagneticTiltService implements OnDestroy {
   private resetRafId: number | null = null;
   private readonly RESET_TRANSITION_DURATION_MS = 800; // Even smoother exit transition
 
+  /**
+   * Reset tilt to neutral position
+   *
+   * Cancels any ongoing tilt calculations and returns the element
+   * to its neutral position (no tilt). Can be animated smoothly or instant.
+   *
+   * @param smooth - Whether to animate the reset (default: true)
+   *
+   * @example
+   * ```typescript
+   * // Smooth reset on mouse leave
+   * onMouseLeave() {
+   *   tilt.resetTilt(); // or tilt.resetTilt(true)
+   * }
+   *
+   * // Instant reset
+   * onDestroy() {
+   *   tilt.resetTilt(false);
+   * }
+   * ```
+   */
   resetTilt(smooth = true): void {
     // Cancel any pending tilt calculations
     if (this.rafId !== null) {
@@ -319,19 +423,19 @@ export class MagneticTiltService implements OnDestroy {
       this.rafId = null;
     }
     this.pendingUpdate = null;
-    
+
     // Cancel smoothing animation
     if (this.smoothingRafId !== null) {
       cancelAnimationFrame(this.smoothingRafId);
       this.smoothingRafId = null;
     }
-    
+
     // Cancel any existing reset animation
     if (this.resetRafId !== null) {
       cancelAnimationFrame(this.resetRafId);
       this.resetRafId = null;
     }
-    
+
     if (smooth) {
       // Smooth reset: gradually transition to zero over the transition duration
       // Use RAF for smooth 60fps animation
@@ -341,21 +445,21 @@ export class MagneticTiltService implements OnDestroy {
       const startGlowBlur = this.currentGlowBlur;
       const startGlowOpacity = this.currentGlowOpacity;
       const startReflectionOpacity = this.currentReflectionOpacity;
-      
+
       const animateReset = () => {
         const elapsed = performance.now() - startTime;
         const progress = Math.min(elapsed / this.RESET_TRANSITION_DURATION_MS, 1);
-        
+
         // Optimized cubic ease-out - avoid Math.pow() for better performance
         const t = 1 - progress;
         const easeOut = 1 - (t * t * t); // t³ instead of Math.pow(t, 3)
-        
+
         this.currentRotateY = startRotateY * (1 - easeOut);
         this.currentRotateX = startRotateX * (1 - easeOut);
         this.currentGlowBlur = BASE_GLOW_BLUR + (startGlowBlur - BASE_GLOW_BLUR) * (1 - easeOut);
         this.currentGlowOpacity = BASE_GLOW_OPACITY + (startGlowOpacity - BASE_GLOW_OPACITY) * (1 - easeOut);
         this.currentReflectionOpacity = startReflectionOpacity * (1 - easeOut);
-        
+
         const currentCalculations: TiltCalculations = {
           rotateY: this.currentRotateY,
           rotateX: this.currentRotateX,
@@ -363,12 +467,12 @@ export class MagneticTiltService implements OnDestroy {
           glowOpacity: this.currentGlowOpacity,
           reflectionOpacity: this.currentReflectionOpacity
         };
-        
+
         this.lastCalculations = currentCalculations;
         this.ngZone.runOutsideAngular(() => {
           this.tiltCalculationsSubject.next(currentCalculations);
         });
-        
+
         if (progress < 1) {
           // Continue animation using RAF for smooth 60fps
           this.resetRafId = requestAnimationFrame(animateReset);
@@ -395,7 +499,7 @@ export class MagneticTiltService implements OnDestroy {
           this.resetRafId = null;
         }
       };
-      
+
       // Start smooth reset animation using RAF
       this.resetRafId = requestAnimationFrame(animateReset);
     } else {

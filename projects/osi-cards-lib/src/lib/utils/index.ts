@@ -23,12 +23,12 @@ export * from './virtual-scroll.util';
 // ============================================================================
 
 // Card utilities (consolidated) - selective export to avoid conflicts
+export * from './accessibility.util';
 export { CardDiffUtil, type CardDiffResult } from './card.util';
 export * from './component-composition.util';
-export * from './section-design.utils';
-export * from './accessibility.util';
 export * from './container-queries.util';
 export * from './input-coercion.util';
+export * from './section-design.utils';
 // Input validation utilities
 export * from './input-validation.util';
 export * from './masonry-detection.util';
@@ -38,13 +38,13 @@ export * from './style-validator.util';
 
 // Consolidated utilities
 export * from './error.util';
-export * from './timing.util';
 export * from './grid-logger.util';
+export * from './timing.util';
 export * from './virtual-scroll.util';
 
 // Animation utilities
-export * from './flip-animation.util';
 export * from './animation-optimization.util';
+export * from './flip-animation.util';
 export * from './web-animations.util';
 
 // Memoization (use this instead of memo.util, memory.util, etc.)

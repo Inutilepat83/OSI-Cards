@@ -18,15 +18,29 @@ export const VALID_SECTION_TYPES = [
   'financials',
   'event',
   'list',
+  'table',
   'chart',
   'product',
   'solutions',
   'overview',
+  'stats',
   'quotation',
+  'reference',
   'text-reference',
+  'text-ref',
   'brand-colors',
   'news',
   'social-media',
+  'faq', // NEW: FAQ sections
+  'gallery', // NEW: Gallery sections
+  'video', // NEW: Video sections
+  'hero', // NEW: Hero sections
+  'profile-card', // NEW: Profile card sections
+  'article', // NEW: Article sections
+  'text', // NEW: Text sections
+  'data-grid', // NEW: Data grid sections
+  'form', // NEW: Form sections
+  'timeline', // Ensure timeline is included
   'fallback',
 ];
 

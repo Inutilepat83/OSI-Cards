@@ -1,6 +1,20 @@
-import { SectionTypeInput, resolveSectionType, isValidSectionType } from './generated-section-types';
+import {
+  SectionTypeInput,
+  isValidSectionType,
+  resolveSectionType,
+} from './generated-section-types';
 
-export type CardType = 'all' | 'company' | 'contact' | 'opportunity' | 'product' | 'analytics' | 'event' | 'project' | 'sko' | 'news';
+export type CardType =
+  | 'all'
+  | 'company'
+  | 'contact'
+  | 'opportunity'
+  | 'product'
+  | 'analytics'
+  | 'event'
+  | 'project'
+  | 'sko'
+  | 'news';
 
 /**
  * Numeric layout priority for space-filling algorithm
@@ -11,20 +25,20 @@ export type CardType = 'all' | 'company' | 'contact' | 'opportunity' | 'product'
 export type LayoutPriority = 1 | 2 | 3;
 
 // Re-export for convenience
-export { SectionTypeInput, resolveSectionType, isValidSectionType };
+export { SectionTypeInput, isValidSectionType, resolveSectionType };
 
 export interface AICardConfig {
-  id?: string;
+  id?: string | undefined;
   cardTitle: string;
-  cardType?: CardType; // Optional - only for demo examples
-  description?: string;
-  columns?: 1 | 2 | 3;
+  cardType?: CardType | undefined; // Optional - only for demo examples
+  description?: string | undefined;
+  columns?: 1 | 2 | 3 | undefined;
   sections: CardSection[];
-  actions?: CardAction[];
-  meta?: Record<string, unknown>;
-  processedAt?: number;
+  actions?: CardAction[] | undefined;
+  meta?: Record<string, unknown> | undefined;
+  processedAt?: number | undefined;
   /** Display order for drag-and-drop reordering (lower numbers appear first) */
-  displayOrder?: number;
+  displayOrder?: number | undefined;
 }
 
 export interface CardSection {
@@ -157,7 +171,21 @@ export interface CardField {
   avatar?: string;
   department?: string;
   location?: string;
-  status?: 'completed' | 'in-progress' | 'pending' | 'cancelled' | 'active' | 'inactive' | 'warning' | 'confirmed' | 'planned' | 'tentative' | 'available' | 'coming-soon' | 'deprecated' | 'out-of-stock';
+  status?:
+    | 'completed'
+    | 'in-progress'
+    | 'pending'
+    | 'cancelled'
+    | 'active'
+    | 'inactive'
+    | 'warning'
+    | 'confirmed'
+    | 'planned'
+    | 'tentative'
+    | 'available'
+    | 'coming-soon'
+    | 'deprecated'
+    | 'out-of-stock';
   priority?: 'high' | 'medium' | 'low';
   date?: string;
   time?: string;
@@ -211,7 +239,13 @@ export interface CardItem {
  *
  * Legacy values ('primary', 'secondary') are supported for backward compatibility but should use 'variant' for styling
  */
-export type CardActionButtonType = 'mail' | 'website' | 'agent' | 'question' | 'primary' | 'secondary';
+export type CardActionButtonType =
+  | 'mail'
+  | 'website'
+  | 'agent'
+  | 'question'
+  | 'primary'
+  | 'secondary';
 
 /**
  * Email contact information - required for mail button type
@@ -370,7 +404,12 @@ export interface LegacyCardAction extends BaseCardAction {
  *   "question": "What is the status?"
  * }
  */
-export type CardAction = MailCardAction | WebsiteCardAction | AgentCardAction | QuestionCardAction | LegacyCardAction;
+export type CardAction =
+  | MailCardAction
+  | WebsiteCardAction
+  | AgentCardAction
+  | QuestionCardAction
+  | LegacyCardAction;
 
 export class CardTypeGuards {
   static isAICardConfig(obj: unknown): obj is AICardConfig {
@@ -414,9 +453,11 @@ export class CardTypeGuards {
     // Must have contact with name, email, and role
     if (!email['contact'] || typeof email['contact'] !== 'object') return false;
     const contact = email['contact'] as Record<string, unknown>;
-    if (typeof contact['name'] !== 'string' ||
-        typeof contact['email'] !== 'string' ||
-        typeof contact['role'] !== 'string') {
+    if (
+      typeof contact['name'] !== 'string' ||
+      typeof contact['email'] !== 'string' ||
+      typeof contact['role'] !== 'string'
+    ) {
       return false;
     }
 
@@ -457,25 +498,34 @@ export class CardUtils {
   }
 
   static ensureSectionIds(sections: CardSection[]): CardSection[] {
-    return sections.map((section, sectionIndex) => ({
-      ...section,
-      id: section.id || this.generateId(`section_${sectionIndex}`),
-      fields: section.fields ? this.ensureFieldIds(section.fields, sectionIndex) : undefined,
-      items: section.items ? this.ensureItemIds(section.items, sectionIndex) : undefined
-    }));
+    return sections.map((section, sectionIndex) => {
+      const result: CardSection = {
+        ...section,
+        id: section.id || this.generateId(`section_${sectionIndex}`),
+      };
+
+      if (section.fields) {
+        result.fields = this.ensureFieldIds(section.fields, sectionIndex);
+      }
+      if (section.items) {
+        result.items = this.ensureItemIds(section.items, sectionIndex);
+      }
+
+      return result;
+    });
   }
 
   static ensureFieldIds(fields: CardField[], sectionIndex: number): CardField[] {
     return fields.map((field, fieldIndex) => ({
       ...field,
-      id: field.id || this.generateId(`field_${sectionIndex}_${fieldIndex}`)
+      id: field.id || this.generateId(`field_${sectionIndex}_${fieldIndex}`),
     }));
   }
 
   static ensureItemIds(items: CardItem[], sectionIndex: number): CardItem[] {
     return items.map((item, itemIndex) => ({
       ...item,
-      id: item.id || this.generateId(`item_${sectionIndex}_${itemIndex}`)
+      id: item.id || this.generateId(`item_${sectionIndex}_${itemIndex}`),
     }));
   }
 
@@ -484,24 +534,19 @@ export class CardUtils {
       return null;
     }
 
-    return {
+    const result: AICardConfig = {
       ...config,
       cardTitle: this.safeString(config.cardTitle, 200),
       sections: this.ensureSectionIds(config.sections.filter(CardTypeGuards.isCardSection)),
-      actions: config.actions?.map((action) => ({ ...action, id: action.id ?? this.generateId('action') }))
     };
+
+    if (config.actions) {
+      result.actions = config.actions.map((action) => ({
+        ...action,
+        id: action.id ?? this.generateId('action'),
+      }));
+    }
+
+    return result;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

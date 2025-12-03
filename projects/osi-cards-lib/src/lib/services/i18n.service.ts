@@ -1,421 +1,290 @@
-import { Injectable, inject, signal, computed, LOCALE_ID } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
-
 /**
- * Supported locales
- */
-export type SupportedLocale = 'en' | 'fr' | 'es' | 'de' | 'pt' | 'it' | 'ja' | 'zh' | 'ko' | 'ar';
-
-/**
- * Translation dictionary
- */
-export type TranslationDictionary = Record<string, string | Record<string, string>>;
-
-/**
- * RTL languages
- */
-const RTL_LOCALES: SupportedLocale[] = ['ar'];
-
-/**
- * Default translations for OSI Cards
- */
-const DEFAULT_TRANSLATIONS: Record<SupportedLocale, TranslationDictionary> = {
-  en: {
-    common: {
-      loading: 'Loading...',
-      error: 'An error occurred',
-      retry: 'Retry',
-      close: 'Close',
-      expand: 'Expand',
-      collapse: 'Collapse',
-      showMore: 'Show more',
-      showLess: 'Show less',
-      copyToClipboard: 'Copy to clipboard',
-      copied: 'Copied!',
-      search: 'Search',
-      noResults: 'No results found',
-      viewAll: 'View all',
-    },
-    card: {
-      streaming: 'Generating content...',
-      complete: 'Content loaded',
-      error: 'Failed to load content',
-    },
-    sections: {
-      info: 'Information',
-      overview: 'Overview',
-      timeline: 'Timeline',
-      gallery: 'Gallery',
-      video: 'Video',
-      code: 'Code',
-      faq: 'FAQ',
-      pricing: 'Pricing',
-      rating: 'Reviews',
-      social: 'Social',
-      kanban: 'Board',
-      comparison: 'Comparison',
-    },
-    accessibility: {
-      skipToContent: 'Skip to main content',
-      expandSection: 'Expand section',
-      collapseSection: 'Collapse section',
-      playVideo: 'Play video',
-      pauseVideo: 'Pause video',
-      nextSlide: 'Next slide',
-      prevSlide: 'Previous slide',
-    }
-  },
-  fr: {
-    common: {
-      loading: 'Chargement...',
-      error: 'Une erreur est survenue',
-      retry: 'Réessayer',
-      close: 'Fermer',
-      expand: 'Développer',
-      collapse: 'Réduire',
-      showMore: 'Voir plus',
-      showLess: 'Voir moins',
-      copyToClipboard: 'Copier',
-      copied: 'Copié !',
-      search: 'Rechercher',
-      noResults: 'Aucun résultat',
-      viewAll: 'Voir tout',
-    },
-    card: {
-      streaming: 'Génération du contenu...',
-      complete: 'Contenu chargé',
-      error: 'Échec du chargement',
-    },
-    sections: {
-      info: 'Informations',
-      overview: 'Aperçu',
-      timeline: 'Chronologie',
-      gallery: 'Galerie',
-      video: 'Vidéo',
-      code: 'Code',
-      faq: 'FAQ',
-      pricing: 'Tarifs',
-      rating: 'Avis',
-      social: 'Social',
-      kanban: 'Tableau',
-      comparison: 'Comparaison',
-    },
-    accessibility: {
-      skipToContent: 'Aller au contenu principal',
-      expandSection: 'Développer la section',
-      collapseSection: 'Réduire la section',
-      playVideo: 'Lire la vidéo',
-      pauseVideo: 'Pause',
-      nextSlide: 'Diapositive suivante',
-      prevSlide: 'Diapositive précédente',
-    }
-  },
-  es: {
-    common: {
-      loading: 'Cargando...',
-      error: 'Se produjo un error',
-      retry: 'Reintentar',
-      close: 'Cerrar',
-      expand: 'Expandir',
-      collapse: 'Contraer',
-      showMore: 'Ver más',
-      showLess: 'Ver menos',
-      copyToClipboard: 'Copiar',
-      copied: '¡Copiado!',
-      search: 'Buscar',
-      noResults: 'Sin resultados',
-      viewAll: 'Ver todo',
-    },
-    card: {
-      streaming: 'Generando contenido...',
-      complete: 'Contenido cargado',
-      error: 'Error al cargar',
-    },
-    sections: {
-      info: 'Información',
-      overview: 'Resumen',
-      timeline: 'Cronología',
-      gallery: 'Galería',
-      video: 'Video',
-      code: 'Código',
-      faq: 'Preguntas frecuentes',
-      pricing: 'Precios',
-      rating: 'Reseñas',
-      social: 'Social',
-      kanban: 'Tablero',
-      comparison: 'Comparación',
-    },
-    accessibility: {
-      skipToContent: 'Ir al contenido principal',
-      expandSection: 'Expandir sección',
-      collapseSection: 'Contraer sección',
-      playVideo: 'Reproducir video',
-      pauseVideo: 'Pausar',
-      nextSlide: 'Siguiente diapositiva',
-      prevSlide: 'Diapositiva anterior',
-    }
-  },
-  de: {
-    common: {
-      loading: 'Laden...',
-      error: 'Ein Fehler ist aufgetreten',
-      retry: 'Erneut versuchen',
-      close: 'Schließen',
-      expand: 'Erweitern',
-      collapse: 'Minimieren',
-      showMore: 'Mehr anzeigen',
-      showLess: 'Weniger anzeigen',
-      copyToClipboard: 'Kopieren',
-      copied: 'Kopiert!',
-      search: 'Suchen',
-      noResults: 'Keine Ergebnisse',
-      viewAll: 'Alle anzeigen',
-    },
-    card: {
-      streaming: 'Inhalt wird generiert...',
-      complete: 'Inhalt geladen',
-      error: 'Laden fehlgeschlagen',
-    },
-    sections: {
-      info: 'Informationen',
-      overview: 'Überblick',
-      timeline: 'Zeitleiste',
-      gallery: 'Galerie',
-      video: 'Video',
-      code: 'Code',
-      faq: 'FAQ',
-      pricing: 'Preise',
-      rating: 'Bewertungen',
-      social: 'Sozial',
-      kanban: 'Board',
-      comparison: 'Vergleich',
-    },
-    accessibility: {
-      skipToContent: 'Zum Inhalt springen',
-      expandSection: 'Abschnitt erweitern',
-      collapseSection: 'Abschnitt minimieren',
-      playVideo: 'Video abspielen',
-      pauseVideo: 'Pause',
-      nextSlide: 'Nächste Folie',
-      prevSlide: 'Vorherige Folie',
-    }
-  },
-  // Placeholder translations for other languages
-  pt: { common: {}, card: {}, sections: {}, accessibility: {} },
-  it: { common: {}, card: {}, sections: {}, accessibility: {} },
-  ja: { common: {}, card: {}, sections: {}, accessibility: {} },
-  zh: { common: {}, card: {}, sections: {}, accessibility: {} },
-  ko: { common: {}, card: {}, sections: {}, accessibility: {} },
-  ar: { common: {}, card: {}, sections: {}, accessibility: {} },
-};
-
-/**
- * I18n Service for OSI Cards
+ * Internationalization Service
  *
- * Provides internationalization support with translations,
- * locale detection, and RTL handling.
+ * Provides i18n features including translation, pluralization,
+ * date/number formatting, and locale management.
  *
  * @example
  * ```typescript
  * const i18n = inject(I18nService);
  *
- * // Set locale
- * i18n.setLocale('fr');
- *
- * // Get translation
- * const text = i18n.t('common.loading');
+ * i18n.setLocale('es');
+ * const greeting = i18n.translate('greeting', { name: 'John' });
+ * const plural = i18n.plural('items', 5);
  * ```
  */
-@Injectable({ providedIn: 'root' })
+
+import { Injectable, signal, computed } from '@angular/core';
+
+export interface Translation {
+  [key: string]: string | Translation;
+}
+
+export interface Translations {
+  [locale: string]: Translation;
+}
+
+export interface PluralRules {
+  zero?: string;
+  one?: string;
+  two?: string;
+  few?: string;
+  many?: string;
+  other: string;
+}
+
+export type SupportedLocale = 'en' | 'es' | 'fr' | 'de' | 'it' | 'pt' | 'ja' | 'zh' | 'ar' | string;
+
+export interface I18nConfig {
+  defaultLocale: string;
+  fallbackLocale?: string;
+  translations: Translations;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
 export class I18nService {
-  private readonly document = inject(DOCUMENT);
-  private readonly localeId = inject(LOCALE_ID, { optional: true });
+  private config = signal<I18nConfig>({
+    defaultLocale: 'en',
+    fallbackLocale: 'en',
+    translations: {},
+  });
 
-  /** Current locale */
-  private readonly currentLocale = signal<SupportedLocale>('en');
+  private currentLocale = signal<string>('en');
 
-  /** Custom translations */
-  private readonly customTranslations = signal<Record<string, TranslationDictionary>>({});
+  /**
+   * Current locale
+   */
+  readonly locale = this.currentLocale.asReadonly();
 
-  /** Current locale (readonly) */
-  readonly locale = computed(() => this.currentLocale());
+  /**
+   * Available locales
+   */
+  readonly availableLocales = computed(() => {
+    return Object.keys(this.config().translations);
+  });
 
-  /** Is RTL language */
-  readonly isRTL = computed(() => RTL_LOCALES.includes(this.currentLocale()));
-
-  /** Text direction */
-  readonly direction = computed(() => this.isRTL() ? 'rtl' : 'ltr');
-
-  constructor() {
-    // Auto-detect locale
-    this.detectLocale();
+  /**
+   * Initialize i18n
+   */
+  init(config: I18nConfig): void {
+    this.config.set(config);
+    this.currentLocale.set(config.defaultLocale);
   }
 
   /**
-   * Set the current locale
+   * Set current locale
    */
-  setLocale(locale: SupportedLocale): void {
-    this.currentLocale.set(locale);
-    this.updateDocumentDirection();
+  setLocale(locale: string): void {
+    if (this.availableLocales().includes(locale)) {
+      this.currentLocale.set(locale);
+    } else {
+      console.warn(`Locale '${locale}' not available`);
+    }
   }
 
   /**
-   * Get a translation by key
+   * Translate key
+   *
+   * @param key - Translation key (supports dot notation)
+   * @param params - Interpolation parameters
+   * @returns Translated string
+   *
+   * @example
+   * ```typescript
+   * i18n.translate('greeting'); // "Hello"
+   * i18n.translate('welcome', { name: 'John' }); // "Welcome, John!"
+   * ```
    */
-  t(key: string, params?: Record<string, string | number>): string {
+  translate(key: string, params?: Record<string, any>): string {
     const locale = this.currentLocale();
-    let value = this.getNestedValue(key, locale);
+    const translations = this.config().translations[locale];
 
-    // Fallback to English
-    if (!value && locale !== 'en') {
-      value = this.getNestedValue(key, 'en');
+    let value = this.getNestedValue(translations, key);
+
+    // Fallback to default locale
+    if (value === undefined && this.config().fallbackLocale) {
+      const fallbackTranslations = this.config().translations[this.config().fallbackLocale!];
+      value = this.getNestedValue(fallbackTranslations, key);
     }
 
-    // Fallback to key
-    if (!value) {
+    // Return key if no translation found
+    if (value === undefined) {
       return key;
     }
 
-    // Replace parameters
+    // Interpolate parameters
     if (params) {
-      Object.entries(params).forEach(([paramKey, paramValue]) => {
-        value = value.replace(new RegExp(`{{${paramKey}}}`, 'g'), String(paramValue));
-      });
+      return this.interpolate(value as string, params);
     }
 
-    return value;
+    return value as string;
   }
 
   /**
-   * Add custom translations
+   * Alias for translate
    */
-  addTranslations(locale: SupportedLocale, translations: TranslationDictionary): void {
-    this.customTranslations.update(current => ({
-      ...current,
-      [locale]: this.mergeDeep(current[locale] || {}, translations)
-    }));
+  t(key: string, params?: Record<string, any>): string {
+    return this.translate(key, params);
   }
 
   /**
-   * Get all translations for a locale
+   * Pluralize
+   *
+   * @param key - Translation key
+   * @param count - Count for pluralization
+   * @param params - Additional parameters
+   * @returns Pluralized string
+   *
+   * @example
+   * ```typescript
+   * i18n.plural('items', 0); // "No items"
+   * i18n.plural('items', 1); // "1 item"
+   * i18n.plural('items', 5); // "5 items"
+   * ```
    */
-  getTranslations(locale?: SupportedLocale): TranslationDictionary {
-    const targetLocale = locale ?? this.currentLocale();
-    return this.mergeDeep(
-      DEFAULT_TRANSLATIONS[targetLocale] || {},
-      this.customTranslations()[targetLocale] || {}
-    );
+  plural(key: string, count: number, params?: Record<string, any>): string {
+    const pluralKey = this.getPluralKey(count);
+    const translationKey = `${key}.${pluralKey}`;
+
+    return this.translate(translationKey, { count, ...params });
   }
 
   /**
-   * Get supported locales
+   * Format date
    */
-  getSupportedLocales(): SupportedLocale[] {
-    return Object.keys(DEFAULT_TRANSLATIONS) as SupportedLocale[];
+  formatDate(date: Date, format: 'short' | 'medium' | 'long' | 'full' = 'medium'): string {
+    const locale = this.currentLocale();
+
+    const formatOptions: Record<string, Intl.DateTimeFormatOptions> = {
+      short: { month: 'numeric', day: 'numeric', year: '2-digit' },
+      medium: { month: 'short', day: 'numeric', year: 'numeric' },
+      long: { month: 'long', day: 'numeric', year: 'numeric' },
+      full: { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' },
+    };
+
+    const options = formatOptions[format] || formatOptions['medium'];
+
+    return new Intl.DateTimeFormat(locale, options).format(date);
   }
 
   /**
-   * Format number for locale
+   * Format number
    */
-  formatNumber(value: number): string {
-    return new Intl.NumberFormat(this.currentLocale()).format(value);
+  formatNumber(value: number, options?: Intl.NumberFormatOptions): string {
+    const locale = this.currentLocale();
+    return new Intl.NumberFormat(locale, options).format(value);
   }
 
   /**
-   * Format date for locale
+   * Format currency
    */
-  formatDate(date: Date, options?: Intl.DateTimeFormatOptions): string {
-    return new Intl.DateTimeFormat(this.currentLocale(), options).format(date);
-  }
-
-  /**
-   * Format currency for locale
-   */
-  formatCurrency(value: number, currency = 'USD'): string {
-    return new Intl.NumberFormat(this.currentLocale(), {
+  formatCurrency(value: number, currency: string): string {
+    const locale = this.currentLocale();
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency
+      currency,
     }).format(value);
   }
 
   /**
-   * Detect locale from browser/Angular
+   * Format percentage
    */
-  private detectLocale(): void {
-    // Try Angular locale
-    if (this.localeId) {
-      const locale = this.localeId.split('-')[0] as SupportedLocale;
-      if (this.isSupported(locale)) {
-        this.currentLocale.set(locale);
-        return;
-      }
-    }
-
-    // Try browser locale
-    const browserLocale = navigator.language?.split('-')[0] as SupportedLocale;
-    if (this.isSupported(browserLocale)) {
-      this.currentLocale.set(browserLocale);
-    }
+  formatPercent(value: number): string {
+    const locale = this.currentLocale();
+    return new Intl.NumberFormat(locale, {
+      style: 'percent',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(value);
   }
 
   /**
-   * Check if locale is supported
+   * Add translations
    */
-  private isSupported(locale: string): locale is SupportedLocale {
-    return locale in DEFAULT_TRANSLATIONS;
+  addTranslations(locale: string, translations: Translation): void {
+    this.config.update(config => ({
+      ...config,
+      translations: {
+        ...config.translations,
+        [locale]: {
+          ...config.translations[locale],
+          ...translations,
+        },
+      },
+    }));
   }
 
   /**
-   * Get nested value from translation dictionary
+   * Get nested value from object using dot notation
    */
-  private getNestedValue(key: string, locale: SupportedLocale): string {
-    const translations = this.getTranslations(locale);
-    const keys = key.split('.');
-
-    let value: unknown = translations;
-    for (const k of keys) {
-      if (value && typeof value === 'object' && k in value) {
-        value = (value as Record<string, unknown>)[k];
-      } else {
-        return '';
-      }
-    }
-
-    return typeof value === 'string' ? value : '';
+  private getNestedValue(obj: any, path: string): any {
+    return path.split('.').reduce((current, key) => {
+      return current?.[key];
+    }, obj);
   }
 
   /**
-   * Deep merge objects
+   * Interpolate parameters into string
    */
-  private mergeDeep(target: TranslationDictionary, source: TranslationDictionary): TranslationDictionary {
-    const result: TranslationDictionary = { ...target };
-
-    for (const key of Object.keys(source)) {
-      const targetValue = result[key];
-      const sourceValue = source[key];
-
-      if (sourceValue === undefined) continue;
-
-      if (typeof sourceValue === 'object' && sourceValue !== null && typeof targetValue === 'object' && targetValue !== null) {
-        result[key] = this.mergeDeep(
-          targetValue as Record<string, string>,
-          sourceValue as Record<string, string>
-        ) as Record<string, string>;
-      } else {
-        result[key] = sourceValue;
-      }
-    }
-
-    return result;
+  private interpolate(template: string, params: Record<string, any>): string {
+    return template.replace(/\{\{(\w+)\}\}/g, (_, key) => {
+      return params[key] !== undefined ? String(params[key]) : `{{${key}}}`;
+    });
   }
 
   /**
-   * Update document direction for RTL support
+   * Get plural key based on count
    */
-  private updateDocumentDirection(): void {
-    const dir = this.direction();
-    this.document.documentElement.setAttribute('dir', dir);
-    this.document.documentElement.setAttribute('lang', this.currentLocale());
+  private getPluralKey(count: number): string {
+    if (count === 0) return 'zero';
+    if (count === 1) return 'one';
+    if (count === 2) return 'two';
+    return 'other';
+  }
+
+  /**
+   * Check if locale is RTL
+   */
+  isRTL(locale?: string): boolean {
+    const rtlLocales = ['ar', 'he', 'fa', 'ur'];
+    const checkLocale = locale || this.currentLocale();
+    return rtlLocales.some(rtl => checkLocale.startsWith(rtl));
+  }
+
+  /**
+   * Get text direction
+   */
+  getDirection(locale?: string): 'ltr' | 'rtl' {
+    return this.isRTL(locale) ? 'rtl' : 'ltr';
+  }
+
+  /**
+   * Format relative time
+   */
+  formatRelativeTime(date: Date): string {
+    const locale = this.currentLocale();
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHour = Math.floor(diffMin / 60);
+    const diffDay = Math.floor(diffHour / 24);
+
+    const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+
+    if (diffDay > 0) return rtf.format(-diffDay, 'day');
+    if (diffHour > 0) return rtf.format(-diffHour, 'hour');
+    if (diffMin > 0) return rtf.format(-diffMin, 'minute');
+    return rtf.format(-diffSec, 'second');
+  }
+
+  /**
+   * Get locale display name
+   */
+  getLocaleDisplayName(locale: string): string {
+    const currentLocale = this.currentLocale();
+    return new Intl.DisplayNames([currentLocale], { type: 'language' }).of(locale) || locale;
   }
 }
-

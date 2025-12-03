@@ -31,7 +31,16 @@ export * from './layout-debug.util';
 // ============================================================================
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error' | 'none';
-export type LayoutPhase = 'init' | 'measure' | 'sort' | 'pack' | 'place' | 'reflow' | 'gap-fill' | 'balance' | 'complete';
+export type LayoutPhase =
+  | 'init'
+  | 'measure'
+  | 'sort'
+  | 'pack'
+  | 'place'
+  | 'reflow'
+  | 'gap-fill'
+  | 'balance'
+  | 'complete';
 export type PackingAlgorithm = 'first-fit' | 'best-fit' | 'next-fit' | 'skyline';
 
 export interface PlacementDecision {
@@ -138,7 +147,7 @@ export const gridLogger = {
   },
   configure: (config: { level?: string; enabled?: boolean; consoleOutput?: boolean }) => {
     if (typeof window !== 'undefined') {
-      (window as any).__GRID_DEBUG__ = config.enabled ? (config.level || 'debug') : false;
+      (window as any).__GRID_DEBUG__ = config.enabled ? config.level || 'debug' : false;
     }
   },
   logSortOrder: (order: any) => {
@@ -189,4 +198,3 @@ export const GridLogger = {
     gridLogger.logColumnAnalysis(analysis);
   },
 };
-

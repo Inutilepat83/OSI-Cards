@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent } from '../base-section.component';
-import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../../shared';
 
 /**
  * FAQ Section Component
@@ -14,7 +14,7 @@ import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../
   standalone: true,
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './faq-section.component.html',
-  styleUrl: './faq-section.scss'
+  styleUrl: './faq-section.scss',
 })
 export class FaqSectionComponent extends BaseSectionComponent {
   expandedItems: Set<number> = new Set();
