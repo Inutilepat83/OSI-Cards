@@ -52,7 +52,7 @@ jobs:
           retention-days: 7
 
       - name: Comment PR with Results
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         if: failure() && github.event_name == 'pull_request'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
