@@ -148,44 +148,21 @@ function main() {
     }
     log('');
 
-    // 6. Update version.ts (runtime version file)
-    log('6️⃣  Updating version.ts...', 'yellow');
-    const versionTsPath = path.join(process.cwd(), 'src/version.ts');
-    const gitHash = require('child_process')
-      .execSync('git rev-parse --short HEAD', { encoding: 'utf8' })
-      .trim();
-    const gitBranch = require('child_process')
-      .execSync('git branch --show-current', { encoding: 'utf8' })
-      .trim();
-    
-    const versionTsContent = `/**
- * Application Version Information
- * 
- * AUTO-GENERATED - DO NOT EDIT MANUALLY
- * Generated: ${new Date().toISOString()}
- */
+  // 6. Update version.ts via generate-version.js
+  log('6️⃣  Updating version.ts...', 'yellow');
+  require('child_process').execSync('node scripts/generate-version.js', { stdio: 'inherit' });
+  updates.push('version.ts');
+  log('');
 
-export const VERSION = {
-  full: '${version}',
-  major: ${version.split('.')[0]},
-  minor: ${version.split('.')[1]},
-  patch: ${version.split('.')[2].split('-')[0]},
-  prerelease: '${version.includes('-') ? version.split('-')[1] : ''}',
-  buildDate: '${new Date().toISOString()}',
-  gitHash: '${gitHash}',
-  gitBranch: '${gitBranch}',
-} as const;
+  // Get git info for summary
+  const gitHash = require('child_process')
+    .execSync('git rev-parse --short HEAD', { encoding: 'utf8' })
+    .trim();
+  const gitBranch = require('child_process')
+    .execSync('git branch --show-current', { encoding: 'utf8' })
+    .trim();
 
-export const APP_VERSION = VERSION.full;
-export const LIB_VERSION = VERSION.full;
-`;
-    
-    fs.writeFileSync(versionTsPath, versionTsContent, 'utf8');
-    log('   ✓ src/version.ts', 'green');
-    updates.push('version.ts');
-    log('');
-
-    // 7. Update manifest.json
+  // 7. Update manifest.json
     log('7️⃣  Updating manifest files...', 'yellow');
     const manifestPath = path.join(process.cwd(), 'src/assets/configs/generated/manifest.json');
     if (fs.existsSync(manifestPath)) {

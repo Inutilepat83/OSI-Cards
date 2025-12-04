@@ -299,7 +299,7 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   // Version info
-  readonly appVersion = VERSION.full;
+  readonly appVersion = VERSION;
 
   // State signals
   sidebarOpen = signal(false);
