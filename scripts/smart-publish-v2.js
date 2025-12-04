@@ -67,6 +67,22 @@ function main() {
     log(`📦 Current Version: ${oldVersion}`, 'blue');
     log(`🔄 Bump Type: ${bumpType}\n`, 'yellow');
 
+    // Step 0: Check NPM version
+    log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'blue');
+    log('Step 0: Checking NPM registry...', 'yellow');
+    log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n', 'blue');
+    
+    const npmVersion = exec('npm view osi-cards-lib version', true) || '0.0.0';
+    log(`   NPM Registry: ${npmVersion.trim()}`, 'blue');
+    log(`   Local: ${oldVersion}`, 'blue');
+    
+    if (npmVersion.trim() === oldVersion) {
+      log(`   ⚠️  Version ${oldVersion} already published to NPM`, 'yellow');
+      log(`   Will bump to next ${bumpType} version\n`, 'yellow');
+    } else {
+      log(`   ✅ Local version is ready to publish\n`, 'green');
+    }
+
     // Step 1: Version bump
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'blue');
     log('Step 1: Bumping version...', 'yellow');

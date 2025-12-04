@@ -69,6 +69,7 @@
     "publish:smart": "node scripts/smart-publish-v2.js patch",
     "publish:smart:minor": "node scripts/smart-publish-v2.js minor",
     "publish:smart:major": "node scripts/smart-publish-v2.js major",
+    "publish:force": "npm run build:lib && cd dist/osi-cards-lib && npm publish --access public && cd ../.. && echo '✅ Published!' || echo '❌ Publish failed - version may already exist'",
     "_comment_misc": "═══ MISC ═══",
     "prebuild": "npm run generate:manifest && npm run version:generate",
     "storybook": "storybook dev -p 6006",

@@ -2,7 +2,7 @@
 
 /**
  * Comprehensive Version Synchronization Script
- * 
+ *
  * Ensures version consistency across ALL project files:
  * - package.json files
  * - Documentation files
@@ -44,19 +44,19 @@ function updateJSONFile(filePath, version) {
 
 function updateMarkdownVersion(filePath, oldVersion, newVersion) {
   let content = fs.readFileSync(filePath, 'utf8');
-  
+
   // Update version badges and references
   content = content.replace(/v\d+\.\d+\.\d+/g, `v${newVersion}`);
   content = content.replace(/version \d+\.\d+\.\d+/gi, `version ${newVersion}`);
   content = content.replace(/What's New in v\d+\.\d+\.\d+/gi, `What's New in v${newVersion}`);
   content = content.replace(/@\d+\.\d+\.\d+/g, `@${newVersion}`);
-  
+
   fs.writeFileSync(filePath, content, 'utf8');
 }
 
 function updateTypeScriptTemplate(filePath, version) {
   let content = fs.readFileSync(filePath, 'utf8');
-  
+
   // Update hardcoded version strings
   content = content.replace(
     /<span class="version">v[\d.]+<\/span>/g,
@@ -66,7 +66,7 @@ function updateTypeScriptTemplate(filePath, version) {
     /version">v[\d.]+</g,
     `version">v${version}<`
   );
-  
+
   fs.writeFileSync(filePath, content, 'utf8');
 }
 
@@ -85,7 +85,7 @@ function main() {
   try {
     const config = loadVersionConfig();
     const version = config.version;
-    
+
     log(`📦 Source Version: ${version}`, 'blue');
     log('');
 
@@ -97,7 +97,7 @@ function main() {
       'package.json',
       'projects/osi-cards-lib/package.json'
     ];
-    
+
     packageFiles.forEach(file => {
       const filePath = path.join(process.cwd(), file);
       if (fs.existsSync(filePath)) {
@@ -178,7 +178,7 @@ function main() {
     log('╔══════════════════════════════════════════════════════════════╗', 'bright');
     log('║                  SYNCHRONIZATION COMPLETE                     ║', 'bright');
     log('╚══════════════════════════════════════════════════════════════╝\n', 'bright');
-    
+
     log(`📦 Version: ${version}`, 'blue');
     log(`📝 Updated: ${updates.length} files`, 'green');
     log(`🔨 Git: ${gitBranch}@${gitHash}`, 'blue');
