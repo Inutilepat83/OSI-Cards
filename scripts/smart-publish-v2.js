@@ -85,19 +85,29 @@ function main() {
 
     // Step 1: Version bump
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'blue');
-    log('Step 1: Bumping version...', 'yellow');
+    log('Step 1: Bumping version in root package.json...', 'yellow');
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n', 'blue');
     
     exec(`npm version ${bumpType} --no-git-tag-version`);
-    const newVersion = getVersion();
-    log(`   ✅ Bumped: ${oldVersion} → ${newVersion}\n`, 'green');
+    
+    // Update version.config.json immediately
+    const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+    const newVersion = packageJson.version;
+    const versionConfig = JSON.parse(fs.readFileSync('version.config.json', 'utf8'));
+    versionConfig.version = newVersion;
+    versionConfig.lastUpdated = new Date().toISOString();
+    fs.writeFileSync('version.config.json', JSON.stringify(versionConfig, null, 2) + '\n', 'utf8');
+    
+    log(`   ✅ Bumped: ${oldVersion} → ${newVersion}`, 'green');
+    log(`   ✅ Updated version.config.json\n`, 'green');
 
-    // Step 2: Sync all versions
+    // Step 2: Sync all versions (CRITICAL - must happen BEFORE build!)
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'blue');
     log('Step 2: Syncing all version references...', 'yellow');
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n', 'blue');
     
     exec('node scripts/sync-all-versions.js');
+    log('   ⚠️  IMPORTANT: Library package.json now has v' + newVersion, 'yellow');
     log('');
 
     // Step 3: Build library
