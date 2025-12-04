@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: https://osi-cards.web.app
+      url: https://osi-card.web.app
 
     steps:
       - uses: actions/checkout@v4
@@ -46,13 +46,13 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           channelId: live
-          projectId: osi-cards
+          projectId: osi-card
 
       - name: Notify Success
         if: success()
         run: |
           echo "✅ Deployment successful!"
-          echo "🚀 App is live at https://osi-cards.web.app"
+          echo "🚀 App is live at https://osi-card.web.app"
 
       - name: Notify Failure
         if: failure()
