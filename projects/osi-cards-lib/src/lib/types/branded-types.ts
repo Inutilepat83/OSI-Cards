@@ -84,9 +84,7 @@ export function make<T extends Brand<any, any>>(value: any): T {
  * const str: string = unwrap(id); // 'user-123'
  * ```
  */
-export function unwrap<Base, BrandName extends string>(
-  value: Brand<Base, BrandName>
-): Base {
+export function unwrap<Base, BrandName extends string>(value: Brand<Base, BrandName>): Base {
   return value as Base;
 }
 
@@ -483,4 +481,3 @@ export type PartialBranded<T> = {
 export type UnBrandObject<T> = {
   [K in keyof T]: UnBrand<T[K]>;
 };
-

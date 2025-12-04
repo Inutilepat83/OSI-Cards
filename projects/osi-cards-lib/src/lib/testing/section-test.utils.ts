@@ -168,12 +168,7 @@ export const MockData = {
     subtitle: 'With all section types',
     theme: 'light',
     status: 'complete',
-    sections: [
-      MockData.analytics(),
-      MockData.list(),
-      MockData.chart(),
-      MockData.contact(),
-    ],
+    sections: [MockData.analytics(), MockData.list(), MockData.chart(), MockData.contact()],
   }),
 };
 
@@ -185,7 +180,9 @@ export const SectionAssertions = {
    * Assert section has a title
    */
   hasTitle: (fixture: ComponentFixture<unknown>, expectedTitle: string) => {
-    const titleEl = fixture.nativeElement.querySelector('.section-title, [data-testid="section-title"]');
+    const titleEl = fixture.nativeElement.querySelector(
+      '.section-title, [data-testid="section-title"]'
+    );
     expect(titleEl?.textContent?.trim()).toBe(expectedTitle);
   },
 
@@ -246,4 +243,3 @@ export const EventHelpers = {
     element.dispatchEvent(new FocusEvent('blur', { bubbles: true }));
   },
 };
-

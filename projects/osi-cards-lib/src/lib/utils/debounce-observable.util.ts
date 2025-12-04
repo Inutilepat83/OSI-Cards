@@ -33,25 +33,25 @@ export function throttleTime$<T>(delay: number) {
  * Distinct until changed with compare function
  */
 export function distinctBy$<T, K>(keySelector: (value: T) => K) {
-  return (source: Observable<T>) => source.pipe(
-    distinctUntilChanged((prev, curr) => keySelector(prev) === keySelector(curr))
-  );
+  return (source: Observable<T>) =>
+    source.pipe(distinctUntilChanged((prev, curr) => keySelector(prev) === keySelector(curr)));
 }
 
 /**
  * Filter truthy values
  */
 export function filterTruthy$<T>() {
-  return (source: Observable<T>) => source.pipe(filter(value => !!value));
+  return (source: Observable<T>) => source.pipe(filter((value) => !!value));
 }
 
 /**
  * Filter null and undefined
  */
 export function filterNullish$<T>() {
-  return (source: Observable<T>) => source.pipe(
-    filter(value => value !== null && value !== undefined)
-  ) as Observable<NonNullable<T>>;
+  return (source: Observable<T>) =>
+    source.pipe(filter((value) => value !== null && value !== undefined)) as Observable<
+      NonNullable<T>
+    >;
 }
 
 /**
@@ -83,4 +83,3 @@ export class ThrottledSubject<T> extends Subject<T> {
     return this.throttled$.subscribe(...args);
   }
 }
-

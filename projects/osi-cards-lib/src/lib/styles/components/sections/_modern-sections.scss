@@ -126,19 +126,24 @@
 }
 
 @mixin badge-status {
-  &.status--completed, &.status--success {
+  &.status--completed,
+  &.status--success {
     color: var(--status-success);
     background: var(--status-success-bg);
   }
-  &.status--active, &.status--in-progress {
+  &.status--active,
+  &.status--in-progress {
     color: var(--accent);
     background: #{$brand-color-10};
   }
-  &.status--pending, &.status--warning {
+  &.status--pending,
+  &.status--warning {
     color: var(--status-warning);
     background: var(--status-warning-bg);
   }
-  &.status--blocked, &.status--cancelled, &.status--error {
+  &.status--blocked,
+  &.status--cancelled,
+  &.status--error {
     color: var(--status-error);
     background: var(--status-error-bg);
   }
@@ -155,14 +160,21 @@
   font-size: var(--card-meta-font-size);
   font-weight: 600;
 
-  lucide-icon, svg {
+  lucide-icon,
+  svg {
     width: var(--icon-xs);
     height: var(--icon-xs);
   }
 
-  &.trend--up { color: #{$osi-color-trend-up}; }
-  &.trend--down { color: #{$osi-color-trend-down}; }
-  &.trend--stable { color: #{$osi-color-trend-stable}; }
+  &.trend--up {
+    color: #{$osi-color-trend-up};
+  }
+  &.trend--down {
+    color: #{$osi-color-trend-down};
+  }
+  &.trend--stable {
+    color: #{$osi-color-trend-stable};
+  }
 }
 
 // =====================================================================
@@ -198,7 +210,8 @@
   color: var(--accent);
   flex-shrink: 0;
 
-  lucide-icon, svg {
+  lucide-icon,
+  svg {
     width: calc($size * 0.6);
     height: calc($size * 0.6);
   }
@@ -255,7 +268,8 @@
   border-radius: var(--section-item-border-radius);
   border: 1px dashed var(--border);
 
-  lucide-icon, svg {
+  lucide-icon,
+  svg {
     opacity: 0.4;
     width: var(--icon-lg);
     height: var(--icon-lg);
@@ -317,7 +331,8 @@
   &.section-item-streaming,
   &.item-streaming,
   &.field-streaming {
-    animation: unified-stream-in var(--duration-moderate) var(--ease-out-smooth) var(--animation-fill-mode);
+    animation: unified-stream-in var(--duration-moderate) var(--ease-out-smooth)
+      var(--animation-fill-mode);
   }
 
   &.section-item-entered,

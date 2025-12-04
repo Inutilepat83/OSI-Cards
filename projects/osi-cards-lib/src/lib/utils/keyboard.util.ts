@@ -46,13 +46,18 @@ export function createShortcut(
   const key = parts[parts.length - 1];
 
   const handler = (e: KeyboardEvent): void => {
-    const hasModifiers = modifiers.every(mod => {
+    const hasModifiers = modifiers.every((mod) => {
       switch (mod) {
-        case 'ctrl': return e.ctrlKey;
-        case 'shift': return e.shiftKey;
-        case 'alt': return e.altKey;
-        case 'meta': return e.metaKey;
-        default: return false;
+        case 'ctrl':
+          return e.ctrlKey;
+        case 'shift':
+          return e.shiftKey;
+        case 'alt':
+          return e.altKey;
+        case 'meta':
+          return e.metaKey;
+        default:
+          return false;
       }
     });
 
@@ -91,7 +96,8 @@ export function getKeyName(e: KeyboardEvent): string {
  * Navigate focusable elements
  */
 export function getFocusableElements(container: HTMLElement): HTMLElement[] {
-  const selector = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  const selector =
+    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
   return Array.from(container.querySelectorAll(selector));
 }
 
@@ -160,4 +166,3 @@ export function trapFocus(container: HTMLElement): () => void {
   container.addEventListener('keydown', handler);
   return () => container.removeEventListener('keydown', handler);
 }
-

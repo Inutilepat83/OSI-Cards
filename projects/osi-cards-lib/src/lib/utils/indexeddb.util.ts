@@ -136,7 +136,7 @@ export class IndexedDBStore<T = any> {
   }
 
   close(): void {
-    this.dbPromise.then(db => db.close());
+    this.dbPromise.then((db) => db.close());
   }
 }
 
@@ -157,4 +157,3 @@ export function deleteDatabase(dbName: string): Promise<void> {
 export function isIndexedDBSupported(): boolean {
   return 'indexedDB' in window;
 }
-

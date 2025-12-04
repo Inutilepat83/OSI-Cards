@@ -3,7 +3,7 @@
 // =====================================================================
 // More design variables for greater control and beautiful sections
 
-@use 'design-tokens' as *;
+@use "design-tokens" as *;
 
 // ═══════════════════════════════════════════════════════════════════
 // ENHANCED SPACING - Balanced (Not Too Cramped)
@@ -11,22 +11,22 @@
 
 :root {
   // Card/Item padding (comfortable, not cramped)
-  --osi-card-padding-comfortable: 12px;    // Balanced
-  --osi-card-padding-compact: 10px;        // Slightly tight
-  --osi-card-padding-dense: 8px;           // Dense
+  --osi-card-padding-comfortable: 12px; // Balanced
+  --osi-card-padding-compact: 10px; // Slightly tight
+  --osi-card-padding-dense: 8px; // Dense
 
   // Grid gaps (visual breathing room)
-  --osi-grid-gap-comfortable: 12px;        // Good visual separation
-  --osi-grid-gap-compact: 10px;            // Less separation
-  --osi-grid-gap-dense: 8px;               // Tight
+  --osi-grid-gap-comfortable: 12px; // Good visual separation
+  --osi-grid-gap-compact: 10px; // Less separation
+  --osi-grid-gap-dense: 8px; // Tight
 
   // Item gaps (within cards)
-  --osi-item-internal-gap: 8px;            // Between elements in card
-  --osi-item-compact-gap: 6px;             // Compact
+  --osi-item-internal-gap: 8px; // Between elements in card
+  --osi-item-compact-gap: 6px; // Compact
 
   // Section gaps
-  --osi-section-gap-comfortable: 14px;     // Between major sections
-  --osi-section-gap-compact: 10px;         // Compact
+  --osi-section-gap-comfortable: 14px; // Between major sections
+  --osi-section-gap-compact: 10px; // Compact
 
   // Defaults (comfortable for readability)
   --osi-default-card-padding: var(--osi-card-padding-comfortable);
@@ -40,31 +40,31 @@
 
 :root {
   // Section-level typography
-  --osi-section-title-size: var(--text-xl);           // 19px
-  --osi-section-title-weight: var(--font-bold);       // 700
+  --osi-section-title-size: var(--text-xl); // 19px
+  --osi-section-title-weight: var(--font-bold); // 700
   --osi-section-title-line-height: var(--leading-tight);
 
-  --osi-section-description-size: var(--text-sm);     // 12px
+  --osi-section-description-size: var(--text-sm); // 12px
   --osi-section-description-weight: var(--font-normal);
   --osi-section-description-line-height: var(--leading-relaxed);
 
   // Item-level typography
-  --osi-item-title-size: var(--text-base);            // 13px
-  --osi-item-title-weight: var(--font-semibold);      // 600
+  --osi-item-title-size: var(--text-base); // 13px
+  --osi-item-title-weight: var(--font-semibold); // 600
   --osi-item-title-line-height: var(--leading-snug);
 
-  --osi-item-label-size: var(--text-xs);              // 11px
-  --osi-item-label-weight: var(--font-medium);        // 500
+  --osi-item-label-size: var(--text-xs); // 11px
+  --osi-item-label-weight: var(--font-medium); // 500
   --osi-item-label-line-height: var(--leading-tight);
 
-  --osi-item-value-size: var(--text-md);              // 14px
-  --osi-item-value-weight: var(--font-semibold);      // 600
+  --osi-item-value-size: var(--text-md); // 14px
+  --osi-item-value-weight: var(--font-semibold); // 600
   --osi-item-value-line-height: var(--leading-normal);
 
   // Metric/Number displays
-  --osi-metric-value-size: var(--text-2xl);           // 22px
-  --osi-metric-value-weight: var(--font-bold);        // 700
-  --osi-metric-label-size: var(--text-xs);            // 11px
+  --osi-metric-value-size: var(--text-2xl); // 22px
+  --osi-metric-value-weight: var(--font-bold); // 700
+  --osi-metric-label-size: var(--text-xs); // 11px
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -73,9 +73,9 @@
 
 :root {
   // Hover transforms
-  --osi-hover-lift: -3px;                              // Lift on hover
-  --osi-hover-slide: 6px;                              // Slide on hover
-  --osi-hover-scale: 1.02;                             // Scale on hover
+  --osi-hover-lift: -3px; // Lift on hover
+  --osi-hover-slide: 6px; // Slide on hover
+  --osi-hover-scale: 1.02; // Scale on hover
 
   // Shadow depths
   --osi-card-shadow-rest: var(--shadow-sm);
@@ -123,15 +123,15 @@
 
 :root {
   // Min widths for different card sizes
-  --osi-grid-min-tiny: 100px;      // Very small cards
-  --osi-grid-min-small: 140px;     // Analytics, metrics
-  --osi-grid-min-medium: 200px;    // Contacts, products
-  --osi-grid-min-large: 280px;     // Gallery, news
+  --osi-grid-min-tiny: 100px; // Very small cards
+  --osi-grid-min-small: 140px; // Analytics, metrics
+  --osi-grid-min-medium: 200px; // Contacts, products
+  --osi-grid-min-large: 280px; // Gallery, news
 
   // Card heights
-  --osi-card-height-small: 100px;  // Metrics
+  --osi-card-height-small: 100px; // Metrics
   --osi-card-height-medium: 140px; // Standard cards
-  --osi-card-height-large: 200px;  // Featured cards
+  --osi-card-height-large: 200px; // Featured cards
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -145,4 +145,3 @@
   --osi-custom-hover-effect: translateY(-3px);
   --osi-custom-border-style: solid;
 }
-

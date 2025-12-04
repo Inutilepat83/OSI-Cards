@@ -8,7 +8,6 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 :root {
-
   // Info Section
   --osi-section-info-columns: 1;
   --osi-section-info-collapse: 1;
@@ -84,58 +83,58 @@
 
 // Section type display properties
 @mixin section-type-vars($type) {
-  @if $type == 'info' {
+  @if $type == "info" {
     --section-columns: var(--osi-section-info-columns, 1);
   }
-  @if $type == 'analytics' {
+  @if $type == "analytics" {
     --section-columns: var(--osi-section-analytics-columns, 2);
   }
-  @if $type == 'contact-card' {
+  @if $type == "contact-card" {
     --section-columns: var(--osi-section-contact-card-columns, 2);
   }
-  @if $type == 'network-card' {
+  @if $type == "network-card" {
     --section-columns: var(--osi-section-network-card-columns, 1);
   }
-  @if $type == 'map' {
+  @if $type == "map" {
     --section-columns: var(--osi-section-map-columns, 1);
   }
-  @if $type == 'financials' {
+  @if $type == "financials" {
     --section-columns: var(--osi-section-financials-columns, 2);
   }
-  @if $type == 'event' {
+  @if $type == "event" {
     --section-columns: var(--osi-section-event-columns, 1);
   }
-  @if $type == 'list' {
+  @if $type == "list" {
     --section-columns: var(--osi-section-list-columns, 1);
   }
-  @if $type == 'chart' {
+  @if $type == "chart" {
     --section-columns: var(--osi-section-chart-columns, 2);
   }
-  @if $type == 'product' {
+  @if $type == "product" {
     --section-columns: var(--osi-section-product-columns, 1);
   }
-  @if $type == 'solutions' {
+  @if $type == "solutions" {
     --section-columns: var(--osi-section-solutions-columns, 1);
   }
-  @if $type == 'overview' {
+  @if $type == "overview" {
     --section-columns: var(--osi-section-overview-columns, 1);
   }
-  @if $type == 'quotation' {
+  @if $type == "quotation" {
     --section-columns: var(--osi-section-quotation-columns, 1);
   }
-  @if $type == 'text-reference' {
+  @if $type == "text-reference" {
     --section-columns: var(--osi-section-text-reference-columns, 1);
   }
-  @if $type == 'brand-colors' {
+  @if $type == "brand-colors" {
     --section-columns: var(--osi-section-brand-colors-columns, 2);
   }
-  @if $type == 'news' {
+  @if $type == "news" {
     --section-columns: var(--osi-section-news-columns, 1);
   }
-  @if $type == 'social-media' {
+  @if $type == "social-media" {
     --section-columns: var(--osi-section-social-media-columns, 1);
   }
-  @if $type == 'fallback' {
+  @if $type == "fallback" {
     --section-columns: var(--osi-section-fallback-columns, 1);
   }
 }

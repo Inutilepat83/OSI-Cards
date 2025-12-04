@@ -1,12 +1,12 @@
 /**
  * Optional Features Entry Point
- * 
- * This secondary entry point contains optional heavy components that 
+ *
+ * This secondary entry point contains optional heavy components that
  * can be loaded separately to reduce initial bundle size:
  * - ChartSectionComponent (requires chart.js)
  * - MapSectionComponent (requires leaflet)
  * - NetworkCardSectionComponent
- * 
+ *
  * @example
  * ```typescript
  * // Import only when needed
@@ -22,12 +22,3 @@ export { MapSectionComponent } from '../components/sections/map-section/map-sect
 
 // Network Card Section (complex visualization)
 export { NetworkCardSectionComponent } from '../components/sections/network-card-section/network-card-section.component';
-
-
-
-
-
-
-
-
-

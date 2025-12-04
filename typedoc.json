@@ -1,71 +1,34 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "entryPoints": [
-    "src/app/core/**/*.ts",
-    "src/app/shared/**/*.ts",
-    "src/app/features/**/*.ts",
-    "src/app/models/**/*.ts"
-  ],
-  "exclude": [
-    "**/*.spec.ts",
-    "**/*.test.ts",
-    "**/node_modules/**",
-    "**/dist/**",
-    "**/e2e/**",
-    "docs/IMPLEMENTATION_SUMMARY.md",
-    "docs/IMPROVEMENT_PLAN.md",
-    "docs/IMPROVEMENTS_IMPLEMENTED.md",
-    "docs/TYPESCRIPT_STRICT_MIGRATION.md"
+    "projects/osi-cards-lib/src/public-api.ts"
   ],
   "out": "docs/api",
-  "theme": "default",
-  "name": "OSI Cards API Documentation",
-  "readme": "README.md",
-  "includeVersion": true,
-  "gitRevision": "main",
-  "excludePrivate": false,
+  "exclude": [
+    "**/*.spec.ts",
+    "**/node_modules/**"
+  ],
+  "excludePrivate": true,
   "excludeProtected": false,
-  "excludeInternal": false,
-  "includeSources": true,
-  "sourceLinkTemplate": "https://github.com/your-org/osi-cards/blob/{gitRevision}/{path}#L{line}",
+  "excludeExternals": true,
+  "readme": "README.md",
+  "name": "OSI Cards API Documentation",
+  "includeVersion": true,
+  "sort": ["source-order"],
   "categorizeByGroup": true,
+  "defaultCategory": "Other",
   "categoryOrder": [
-    "Core Services",
-    "Shared Components",
-    "Features",
-    "Models",
+    "Components",
+    "Services",
     "Utilities",
+    "Types",
+    "Models",
     "*"
   ],
-  "kindSortOrder": [
-    "Project",
-    "Module",
-    "Namespace",
-    "Enum",
-    "Class",
-    "Interface",
-    "Type alias",
-    "Function",
-    "Variable"
-  ],
-  "navigation": {
-    "includeCategories": true,
-    "includeGroups": true
-  },
+  "gitRevision": "main",
+  "plugin": [],
+  "theme": "default",
+  "hideGenerator": false,
   "searchInComments": true,
-  "validation": {
-    "invalidLink": true,
-    "notDocumented": false
-  },
-  "plugin": [
-    "typedoc-plugin-markdown",
-    "typedoc-plugin-example-tag"
-  ],
-  "markdown": {
-    "gitbook": false,
-    "hideBreadcrumbs": false,
-    "hidePageHeader": false,
-    "hidePageTitle": false,
-    "hideSources": false
-  }
+  "cleanOutputDir": true
 }

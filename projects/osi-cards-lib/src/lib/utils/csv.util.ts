@@ -43,12 +43,12 @@ export function arrayToCSV(data: any[], options: CSVOptions = {}): string {
 
   // Add headers
   if (includeHeaders) {
-    rows.push(headers.map(h => escapeCSV(h, delimiter, quote, escape)).join(delimiter));
+    rows.push(headers.map((h) => escapeCSV(h, delimiter, quote, escape)).join(delimiter));
   }
 
   // Add data rows
-  data.forEach(row => {
-    const values = headers.map(header => {
+  data.forEach((row) => {
+    const values = headers.map((header) => {
       const value = row[header];
       return escapeCSV(String(value ?? ''), delimiter, quote, escape);
     });
@@ -87,15 +87,15 @@ export function exportToCSV(data: any[], filename: string, options?: CSVOptions)
  */
 export function parseCSV(csv: string, options: CSVOptions = {}): any[] {
   const { delimiter = ',', lineBreak = '\n' } = options;
-  const lines = csv.split(lineBreak).filter(line => line.trim());
+  const lines = csv.split(lineBreak).filter((line) => line.trim());
 
   if (lines.length === 0) return [];
 
-  const headers = lines[0].split(delimiter).map(h => h.trim().replace(/^"|"$/g, ''));
+  const headers = lines[0].split(delimiter).map((h) => h.trim().replace(/^"|"$/g, ''));
   const data: any[] = [];
 
   for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(delimiter).map(v => v.trim().replace(/^"|"$/g, ''));
+    const values = lines[i].split(delimiter).map((v) => v.trim().replace(/^"|"$/g, ''));
     const row: any = {};
 
     headers.forEach((header, index) => {
@@ -107,4 +107,3 @@ export function parseCSV(csv: string, options: CSVOptions = {}): any[] {
 
   return data;
 }
-

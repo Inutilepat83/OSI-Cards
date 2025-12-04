@@ -24,8 +24,9 @@
 
 /// Card hover state
 @mixin card-hover {
-  transition: transform var(--osi-duration-200) var(--osi-ease-out),
-              box-shadow var(--osi-duration-200) var(--osi-ease-out);
+  transition:
+    transform var(--osi-duration-200) var(--osi-ease-out),
+    box-shadow var(--osi-duration-200) var(--osi-ease-out);
 
   &:hover {
     transform: translateY(-2px);
@@ -342,29 +343,47 @@
 
 /// Mobile-first breakpoint
 @mixin breakpoint($size) {
-  @if $size == 'sm' {
-    @media (min-width: 640px) { @content; }
-  } @else if $size == 'md' {
-    @media (min-width: 768px) { @content; }
-  } @else if $size == 'lg' {
-    @media (min-width: 1024px) { @content; }
-  } @else if $size == 'xl' {
-    @media (min-width: 1280px) { @content; }
-  } @else if $size == '2xl' {
-    @media (min-width: 1536px) { @content; }
+  @if $size == "sm" {
+    @media (min-width: 640px) {
+      @content;
+    }
+  } @else if $size == "md" {
+    @media (min-width: 768px) {
+      @content;
+    }
+  } @else if $size == "lg" {
+    @media (min-width: 1024px) {
+      @content;
+    }
+  } @else if $size == "xl" {
+    @media (min-width: 1280px) {
+      @content;
+    }
+  } @else if $size == "2xl" {
+    @media (min-width: 1536px) {
+      @content;
+    }
   }
 }
 
 /// Max-width breakpoint
 @mixin breakpoint-down($size) {
-  @if $size == 'sm' {
-    @media (max-width: 639px) { @content; }
-  } @else if $size == 'md' {
-    @media (max-width: 767px) { @content; }
-  } @else if $size == 'lg' {
-    @media (max-width: 1023px) { @content; }
-  } @else if $size == 'xl' {
-    @media (max-width: 1279px) { @content; }
+  @if $size == "sm" {
+    @media (max-width: 639px) {
+      @content;
+    }
+  } @else if $size == "md" {
+    @media (max-width: 767px) {
+      @content;
+    }
+  } @else if $size == "lg" {
+    @media (max-width: 1023px) {
+      @content;
+    }
+  } @else if $size == "xl" {
+    @media (max-width: 1279px) {
+      @content;
+    }
   }
 }
 
@@ -401,8 +420,12 @@
 
 // Keyframe definitions
 @keyframes osi-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes osi-slide-up {
@@ -417,14 +440,20 @@
 }
 
 @keyframes osi-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 @keyframes osi-shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
-
-
-

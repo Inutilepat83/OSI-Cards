@@ -1,6 +1,6 @@
 /**
  * Unit Tests for Grid Configuration Utilities
- * 
+ *
  * Tests the grid configuration constants, calculations, and expansion logic.
  */
 
@@ -288,9 +288,9 @@ describe('shouldExpandSection', () => {
     });
 
     it('should respect explicit maxColumns over type limit', () => {
-      const section: SectionExpansionInfo = { 
+      const section: SectionExpansionInfo = {
         type: 'chart', // Type limit is 4
-        maxColumns: 2,  // Explicit limit is 2
+        maxColumns: 2, // Explicit limit is 2
         density: 30,
       };
       const context: ExpansionContext = {
@@ -326,8 +326,8 @@ describe('shouldExpandSection', () => {
 
   describe('Content density checks', () => {
     it('should not expand sparse content when other sections can fit', () => {
-      const section: SectionExpansionInfo = { 
-        type: 'info', 
+      const section: SectionExpansionInfo = {
+        type: 'info',
         density: 5, // Below threshold (15)
       };
       const context: ExpansionContext = {
@@ -343,8 +343,8 @@ describe('shouldExpandSection', () => {
     });
 
     it('should expand dense content', () => {
-      const section: SectionExpansionInfo = { 
-        type: 'info', 
+      const section: SectionExpansionInfo = {
+        type: 'info',
         density: 30, // Above threshold
       };
       const context: ExpansionContext = {
@@ -436,12 +436,3 @@ describe('calculateBasicDensity', () => {
     expect(density).toBeGreaterThan(8);
   });
 });
-
-
-
-
-
-
-
-
-

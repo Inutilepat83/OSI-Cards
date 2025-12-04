@@ -90,13 +90,14 @@ export class VisualRegressionUtils {
     const totalPixels = baseline.width * baseline.height;
     let diffPixels = 0;
 
-    const diffData = options.generateDiff
-      ? new Uint8ClampedArray(baseline.data.length)
-      : null;
+    const diffData = options.generateDiff ? new Uint8ClampedArray(baseline.data.length) : null;
 
     for (let i = 0; i < baseline.data.length; i += 4) {
       // Skip if in ignore region
-      if (options.ignoreRegions && this.isInIgnoreRegion(i, baseline.width, options.ignoreRegions)) {
+      if (
+        options.ignoreRegions &&
+        this.isInIgnoreRegion(i, baseline.width, options.ignoreRegions)
+      ) {
         if (diffData) {
           diffData[i] = baseline.data[i];
           diffData[i + 1] = baseline.data[i + 1];
@@ -296,4 +297,3 @@ export async function updateBaseline(
 
   return snapshot;
 }
-

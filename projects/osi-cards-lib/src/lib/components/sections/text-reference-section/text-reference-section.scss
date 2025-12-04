@@ -2,9 +2,9 @@
 // TEXT REFERENCE SECTION - Clean List, Proper Spacing
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/typography-system' as typo;
-@use '../../../styles/components/sections/component-mixins' as components;
+@use "../../../styles/components/sections/design-system" as *;
+@use "../../../styles/components/sections/typography-system" as typo;
+@use "../../../styles/components/sections/component-mixins" as components;
 
 :host {
   display: block;
@@ -28,11 +28,11 @@
 
 // REFERENCE ITEM - Proper spacing for all elements
 .reference-item {
-  padding: 14px 8px;  // Good vertical padding
+  padding: 14px 8px; // Good vertical padding
   border-radius: var(--radius-sm);
   transition: all 200ms var(--ease-out);
   display: flex;
-  gap: 12px;  // Good gap between number and content
+  gap: 12px; // Good gap between number and content
 
   &:not(:last-child) {
     border-bottom: 1px solid var(--border);
@@ -56,7 +56,7 @@
 .reference-number {
   @include typo.label-base;
   flex-shrink: 0;
-  min-width: 24px;  // Enough space for 2-digit numbers
+  min-width: 24px; // Enough space for 2-digit numbers
   text-align: center;
   font-weight: var(--font-bold);
   font-size: 0.7rem;
@@ -70,22 +70,22 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;  // Space between title, text, meta, link
+  gap: 8px; // Space between title, text, meta, link
   min-width: 0;
 }
 
 .reference-title {
   @include heading(6);
-  font-size: 0.8125rem;  // 13px
+  font-size: 0.8125rem; // 13px
   margin: 0;
   line-height: 1.4;
   transition: color 200ms var(--ease-out);
 }
 
 .reference-text {
-  @include body-text('small');
+  @include body-text("small");
   color: var(--muted-foreground);
-  font-size: 0.75rem;  // 12px
+  font-size: 0.75rem; // 12px
   line-height: 1.6;
   margin: 0;
   opacity: 0.9;

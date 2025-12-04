@@ -57,7 +57,7 @@ export class ABTest {
   getResults(): Record<string, ABTestResult> {
     const results: Record<string, ABTestResult> = {};
 
-    this.config.variants.forEach(variant => {
+    this.config.variants.forEach((variant) => {
       const impressions = this.getImpressions(variant);
       const conversions = this.getConversions(variant);
 
@@ -163,4 +163,3 @@ export function trackConversion(testName: string, variants: string[]): void {
   const test = new ABTest({ name: testName, variants });
   test.trackConversion();
 }
-

@@ -19,7 +19,7 @@
 export function deepFreeze<T extends object>(obj: T): Readonly<T> {
   Object.freeze(obj);
 
-  Object.getOwnPropertyNames(obj).forEach(prop => {
+  Object.getOwnPropertyNames(obj).forEach((prop) => {
     const value = (obj as any)[prop];
     if (value && typeof value === 'object' && !Object.isFrozen(value)) {
       deepFreeze(value);
@@ -206,4 +206,3 @@ export function objectSize(obj: any): number {
 export function objectEquals(obj1: any, obj2: any): boolean {
   return JSON.stringify(obj1) === JSON.stringify(obj2);
 }
-

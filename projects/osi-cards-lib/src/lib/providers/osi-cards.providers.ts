@@ -52,9 +52,9 @@ export function provideOsiCardsCore(): Provider[] {
     SectionPluginRegistry,
 
     // Consolidated services (Phase 3)
-    FeatureFlagsService,        // Now includes migration flags
-    AccessibilityService,        // Now includes focus-trap, live-announcer, reduced-motion
-    AnimationService,            // Now includes orchestrator + section animation
+    FeatureFlagsService, // Now includes migration flags
+    AccessibilityService, // Now includes focus-trap, live-announcer, reduced-motion
+    AnimationService, // Now includes orchestrator + section animation
     // LayoutOptimizerService,      // Disabled: service has type errors
   ];
 }
@@ -79,9 +79,7 @@ export function provideOsiCardsCore(): Provider[] {
  * ```
  */
 export function provideOsiCards(config?: OsiCardsConfig): EnvironmentProviders {
-  const providers: Provider[] = [
-    ...provideOsiCardsCore(),
-  ];
+  const providers: Provider[] = [...provideOsiCardsCore()];
 
   // Add migration flags if provided
   if (config?.migrationFlags) {
@@ -99,11 +97,7 @@ export function provideOsiCards(config?: OsiCardsConfig): EnvironmentProviders {
  * Use this for apps that only need basic functionality
  */
 export function provideOsiCardsMinimal(): EnvironmentProviders {
-  return makeEnvironmentProviders([
-    EventBusService,
-    IconService,
-    SectionNormalizationService,
-  ]);
+  return makeEnvironmentProviders([EventBusService, IconService, SectionNormalizationService]);
 }
 
 /**

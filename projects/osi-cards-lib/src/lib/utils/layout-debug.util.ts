@@ -1,20 +1,20 @@
 /**
  * Layout Debug Utilities
- * 
+ *
  * Real-time debug overlay for grid layouts showing:
  * - Column boundaries
  * - Gap areas
  * - Section bounding boxes
  * - Animation timelines
  * - Performance metrics
- * 
+ *
  * @example
  * ```typescript
  * import { LayoutDebugOverlay } from 'osi-cards-lib';
- * 
+ *
  * const debug = new LayoutDebugOverlay(container);
  * debug.show();
- * 
+ *
  * // Update with layout data
  * debug.updateLayout(sections, columns);
  * ```
@@ -133,14 +133,14 @@ export class LayoutDebugOverlay {
   private ctx: CanvasRenderingContext2D | null = null;
   private metricsPanel: HTMLElement | null = null;
   private animationPanel: HTMLElement | null = null;
-  
+
   private config: Required<DebugOverlayConfig>;
   private isVisible = false;
   private updateTimer: number | null = null;
   private frameCount = 0;
   private lastFrameTime = 0;
   private fpsHistory: number[] = [];
-  
+
   private sections: SectionDebugInfo[] = [];
   private columns = 4;
   private gap = 12;
@@ -204,11 +204,7 @@ export class LayoutDebugOverlay {
   /**
    * Updates layout data for visualization
    */
-  updateLayout(
-    sections: SectionDebugInfo[],
-    columns: number,
-    gap: number = 12
-  ): void {
+  updateLayout(sections: SectionDebugInfo[], columns: number, gap: number = 12): void {
     this.sections = sections;
     this.columns = columns;
     this.gap = gap;
@@ -388,7 +384,7 @@ export class LayoutDebugOverlay {
     // Count running animations
     const animations = document.getAnimations();
     this.performanceMetrics.pendingAnimations = animations.filter(
-      a => a.playState === 'running'
+      (a) => a.playState === 'running'
     ).length;
   }
 
@@ -528,7 +524,7 @@ export class LayoutDebugOverlay {
   private renderMetricsPanel(): void {
     if (!this.metricsPanel) return;
 
-    const { fps, layoutTime, renderTime, memoryUsed, sectionCount, pendingAnimations } = 
+    const { fps, layoutTime, renderTime, memoryUsed, sectionCount, pendingAnimations } =
       this.performanceMetrics;
 
     const fpsColor = fps < 30 ? COLORS.error : fps < 55 ? COLORS.warning : '#10b981';
@@ -603,12 +599,3 @@ export function disableLayoutDebug(): void {
 export function getLayoutDebugOverlay(): LayoutDebugOverlay | null {
   return globalDebugOverlay;
 }
-
-
-
-
-
-
-
-
-

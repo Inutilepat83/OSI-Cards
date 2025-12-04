@@ -44,6 +44,7 @@ import {
   OSICardsStreamingService,
   StreamingState,
 } from '../../../../../../projects/osi-cards-lib/src/lib/services/streaming.service';
+import { ThemeService } from '../../../../../../projects/osi-cards-lib/src/lib/themes/theme.service';
 
 // Import standalone components
 import { FormsModule } from '@angular/forms';
@@ -83,8 +84,12 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private readonly agentService = inject(AgentService);
   private readonly chatService = inject(ChatService);
   private readonly document = inject(DOCUMENT);
+  private readonly themeService = inject(ThemeService);
 
-  theme: 'day' | 'night' = 'night';
+  // Expose current theme for template
+  get currentTheme(): string {
+    return this.themeService.getResolvedTheme();
+  }
 
   @ViewChild('previewRegion') private previewRegion?: ElementRef<HTMLDivElement>;
   @ViewChild('cardRenderer') private cardRenderer?: AICardRendererComponent;
@@ -194,14 +199,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private lastPersistedFingerprint: string | null = null;
 
   ngOnInit(): void {
-    // Initialize theme
-    if (typeof window !== 'undefined') {
-      const storedTheme = localStorage.getItem('osi-theme');
-      if (storedTheme === 'day' || storedTheme === 'night') {
-        this.theme = storedTheme;
-      }
-    }
-    this.applyTheme();
+    // Theme is automatically initialized by ThemeService in app.config.ts
 
     // Subscribe to streaming service state (following iLibrary pattern)
     this.streamingService.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
@@ -2702,19 +2700,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
   }
 
   toggleTheme(): void {
-    this.theme = this.theme === 'night' ? 'day' : 'night';
-    this.applyTheme();
+    // Use ThemeService for consistent theme management
+    this.themeService.toggleTheme();
     this.cd.markForCheck();
-  }
-
-  private applyTheme(): void {
-    const root = this.document.documentElement;
-    root.dataset.theme = this.theme;
-    localStorage.setItem('osi-theme', this.theme);
-    if (typeof window !== 'undefined') {
-      const styles = getComputedStyle(root);
-      this.document.body.style.background = styles.getPropertyValue('--background');
-      this.document.body.style.color = styles.getPropertyValue('--foreground');
-    }
   }
 }

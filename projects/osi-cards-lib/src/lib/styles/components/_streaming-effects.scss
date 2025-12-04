@@ -23,7 +23,7 @@
 
 /* Traveling spark - small glowing dot that travels around the border */
 .ai-card-surface.streaming-active::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 3px;
   height: 3px;
@@ -45,15 +45,15 @@
 .ai-card-surface.streaming-active .item-description,
 .ai-card-surface.streaming-active .section-title,
 .ai-card-surface.streaming-active .section-description,
-.ai-card-surface.streaming-active [class*='value'],
-.ai-card-surface.streaming-active [class*='label'] {
+.ai-card-surface.streaming-active [class*="value"],
+.ai-card-surface.streaming-active [class*="label"] {
   transition: all 0.2s ease-out;
 }
 
 /* Typing cursor effect - blinking cursor at end of streaming text */
-.ai-card-surface.streaming-active [class*='value']:last-child::after,
+.ai-card-surface.streaming-active [class*="value"]:last-child::after,
 .ai-card-surface.streaming-active .field-value:last-child::after {
-  content: '▋';
+  content: "▋";
   display: inline-block;
   color: var(--color-brand, #ff7900);
   animation: cursorBlink 0.8s step-end infinite;
@@ -102,7 +102,7 @@
 
 /* Only animating sections get the glow effect - ONE iteration, not infinite */
 .ai-card-surface.streaming-active .masonry-item--animating .section-card,
-.ai-card-surface.streaming-active .masonry-item--animating [class*='section-'] > div {
+.ai-card-surface.streaming-active .masonry-item--animating [class*="section-"] > div {
   border-color: rgba(255, 121, 0, 0.3) !important;
   box-shadow: 0 0 15px rgba(255, 121, 0, 0.25);
   animation: sectionGlowPulse 0.8s ease-out forwards;
@@ -122,7 +122,7 @@
 
 /* Subtle inner border glow - ONE-SHOT only */
 .ai-card-surface.streaming-active .masonry-item--animating .section-card::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -134,7 +134,7 @@
 
 /* Stop effects on completed sections */
 .ai-card-surface.streaming-active .masonry-item--animated .section-card,
-.ai-card-surface.streaming-active .masonry-item--animated [class*='section-'] > div,
+.ai-card-surface.streaming-active .masonry-item--animated [class*="section-"] > div,
 .ai-card-surface.streaming-active .masonry-item[data-animated="true"] .section-card {
   animation: none !important;
   box-shadow: none !important;
@@ -188,10 +188,15 @@
 
 /* Shimmer sweep effect - ONLY on animating sections */
 .ai-card-surface.streaming-active .masonry-item--animating::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(110deg, transparent 30%, rgba(255, 149, 0, 0.15) 50%, transparent 70%);
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(255, 149, 0, 0.15) 50%,
+    transparent 70%
+  );
   animation: shimmerSweep 0.8s ease-out forwards;
   animation-iteration-count: 1;
   pointer-events: none;
@@ -203,7 +208,8 @@
    Staggered entrance ONLY for elements inside ANIMATING sections
    =================================================================== */
 
-.ai-card-surface.streaming-active .masonry-item--animating
+.ai-card-surface.streaming-active
+  .masonry-item--animating
   :where(
     .info-row,
     .section-card,
@@ -226,7 +232,8 @@
 }
 
 /* Staggered animation delays - ONLY inside animating sections */
-.ai-card-surface.streaming-active .masonry-item--animating
+.ai-card-surface.streaming-active
+  .masonry-item--animating
   :where(
     .info-row,
     .section-card,
@@ -244,7 +251,8 @@
   animation-delay: 0s;
 }
 
-.ai-card-surface.streaming-active .masonry-item--animating
+.ai-card-surface.streaming-active
+  .masonry-item--animating
   :where(
     .info-row,
     .section-card,
@@ -262,7 +270,8 @@
   animation-delay: 0.05s;
 }
 
-.ai-card-surface.streaming-active .masonry-item--animating
+.ai-card-surface.streaming-active
+  .masonry-item--animating
   :where(
     .info-row,
     .section-card,
@@ -280,7 +289,8 @@
   animation-delay: 0.1s;
 }
 
-.ai-card-surface.streaming-active .masonry-item--animating
+.ai-card-surface.streaming-active
+  .masonry-item--animating
   :where(
     .info-row,
     .section-card,
@@ -298,7 +308,8 @@
   animation-delay: 0.15s;
 }
 
-.ai-card-surface.streaming-active .masonry-item--animating
+.ai-card-surface.streaming-active
+  .masonry-item--animating
   :where(
     .info-row,
     .section-card,
@@ -316,7 +327,8 @@
   animation-delay: 0.2s;
 }
 
-.ai-card-surface.streaming-active .masonry-item--animating
+.ai-card-surface.streaming-active
+  .masonry-item--animating
   :where(
     .info-row,
     .section-card,
@@ -335,7 +347,8 @@
 }
 
 /* Ensure animated section content is stable */
-.ai-card-surface.streaming-active .masonry-item--animated
+.ai-card-surface.streaming-active
+  .masonry-item--animated
   :where(
     .info-row,
     .section-card,
@@ -369,7 +382,7 @@
 
   /* Traveling spark */
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     width: 3px;
     height: 3px;
@@ -388,7 +401,7 @@
    =================================================================== */
 
 .typing-cursor::after {
-  content: '▋';
+  content: "▋";
   display: inline-block;
   color: var(--color-brand, #ff7900);
   animation: cursorBlink 0.8s step-end infinite;
@@ -407,7 +420,7 @@
 }
 
 .section-highlight::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: -4px;
   border: 2px solid color-mix(in srgb, var(--color-brand, #ff7900) 60%, transparent);
@@ -491,7 +504,7 @@
   }
 
   /* Remove typing cursor */
-  .ai-card-surface.streaming-active [class*='value']:last-child::after,
+  .ai-card-surface.streaming-active [class*="value"]:last-child::after,
   .ai-card-surface.streaming-active .field-value:last-child::after,
   .typing-cursor::after {
     content: none !important;

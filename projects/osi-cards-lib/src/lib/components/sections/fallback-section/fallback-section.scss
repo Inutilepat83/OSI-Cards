@@ -2,8 +2,8 @@
 // FALLBACK SECTION - Compact, Responsive, Consistent
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/typography-system' as typo;
+@use "../../../styles/components/sections/design-system" as *;
+@use "../../../styles/components/sections/typography-system" as typo;
 
 :host {
   display: block;
@@ -52,7 +52,7 @@
 }
 
 .data-value {
-  @include body-text('base');
+  @include body-text("base");
   flex: 1;
 }
 

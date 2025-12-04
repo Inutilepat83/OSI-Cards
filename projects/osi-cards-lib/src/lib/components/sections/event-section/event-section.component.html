@@ -1,8 +1,5 @@
 <div class="events">
-  <lib-section-header
-    *ngIf="section.title"
-    [title]="section.title"
-    [description]="section.description">
+  <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
   <div class="list" *ngIf="section.fields?.length">
@@ -21,20 +18,11 @@
           <span *ngIf="e.attendees">{{ e.attendees }} people</span>
         </div>
       </div>
-      <lib-badge
-        *ngIf="e.status"
-        class="status"
-        [variant]="getStatusVariant(e.status)"
-        size="sm">
+      <lib-badge *ngIf="e.status" class="status" [variant]="getStatusVariant(e.status)" size="sm">
         {{ e.status }}
       </lib-badge>
     </div>
   </div>
 
-  <lib-empty-state
-    *ngIf="!section.fields?.length"
-    message="No events"
-    icon="📅"
-    variant="compact">
-  </lib-empty-state>
+  <lib-empty-state *ngIf="!section.fields?.length" message="No events" icon="📅" variant="compact"> </lib-empty-state>
 </div>

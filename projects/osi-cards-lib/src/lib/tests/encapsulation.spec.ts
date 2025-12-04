@@ -6,7 +6,7 @@ import { provideOSICards } from '../providers/osi-cards.providers';
 
 /**
  * Encapsulation Test Suite
- * 
+ *
  * Verifies CSS encapsulation and isolation for OSI Cards components.
  * Tests:
  * - Shadow DOM encapsulation is applied
@@ -23,7 +23,7 @@ describe('CSS Encapsulation', () => {
     beforeEach(async () => {
       await TestBed.configureTestingModule({
         imports: [CardSkeletonComponent],
-        providers: [provideOSICards()]
+        providers: [provideOSICards()],
       }).compileComponents();
 
       fixture = TestBed.createComponent(CardSkeletonComponent);
@@ -39,7 +39,7 @@ describe('CSS Encapsulation', () => {
     it('should have isolated styles within shadow root', () => {
       const element = fixture.nativeElement as HTMLElement;
       const shadowRoot = element.shadowRoot;
-      
+
       if (shadowRoot) {
         // Check that styles are defined within shadow root
         const styles = shadowRoot.querySelector('style');
@@ -50,7 +50,7 @@ describe('CSS Encapsulation', () => {
     it('should define keyframe animations within shadow root', () => {
       const element = fixture.nativeElement as HTMLElement;
       const shadowRoot = element.shadowRoot;
-      
+
       if (shadowRoot) {
         const styles = shadowRoot.querySelector('style');
         if (styles) {
@@ -64,7 +64,7 @@ describe('CSS Encapsulation', () => {
     it('should apply shimmer animation to skeleton lines', () => {
       const element = fixture.nativeElement as HTMLElement;
       const shadowRoot = element.shadowRoot;
-      
+
       if (shadowRoot) {
         const skeletonLine = shadowRoot.querySelector('.skeleton-line');
         if (skeletonLine) {
@@ -84,15 +84,17 @@ describe('CSS Encapsulation', () => {
           <app-card-skeleton [sectionCount]="2"></app-card-skeleton>
         </div>
       `,
-      styles: [`
-        .test-host-container {
-          --foreground: red;
-          --background: green;
-          font-size: 50px;
-        }
-      `],
+      styles: [
+        `
+          .test-host-container {
+            --foreground: red;
+            --background: green;
+            font-size: 50px;
+          }
+        `,
+      ],
       standalone: true,
-      imports: [CardSkeletonComponent]
+      imports: [CardSkeletonComponent],
     })
     class TestHostComponent {}
 
@@ -101,7 +103,7 @@ describe('CSS Encapsulation', () => {
     beforeEach(async () => {
       await TestBed.configureTestingModule({
         imports: [TestHostComponent, CardSkeletonComponent],
-        providers: [provideOSICards()]
+        providers: [provideOSICards()],
       }).compileComponents();
 
       fixture = TestBed.createComponent(TestHostComponent);
@@ -112,7 +114,7 @@ describe('CSS Encapsulation', () => {
       const skeleton = fixture.debugElement.query(By.directive(CardSkeletonComponent));
       const element = skeleton.nativeElement as HTMLElement;
       const shadowRoot = element.shadowRoot;
-      
+
       if (shadowRoot) {
         // Get computed style inside shadow root
         const innerElement = shadowRoot.querySelector('.card-skeleton');
@@ -130,7 +132,7 @@ describe('CSS Encapsulation', () => {
       const skeleton = fixture.debugElement.query(By.directive(CardSkeletonComponent));
       const element = skeleton.nativeElement as HTMLElement;
       const shadowRoot = element.shadowRoot;
-      
+
       if (shadowRoot) {
         const innerElement = shadowRoot.querySelector('.card-skeleton');
         if (innerElement) {
@@ -150,7 +152,7 @@ describe('CSS Encapsulation', () => {
         <app-card-skeleton [sectionCount]="1"></app-card-skeleton>
       `,
       standalone: true,
-      imports: [CardSkeletonComponent]
+      imports: [CardSkeletonComponent],
     })
     class TestSiblingComponent {}
 
@@ -159,7 +161,7 @@ describe('CSS Encapsulation', () => {
     beforeEach(async () => {
       await TestBed.configureTestingModule({
         imports: [TestSiblingComponent, CardSkeletonComponent],
-        providers: [provideOSICards()]
+        providers: [provideOSICards()],
       }).compileComponents();
 
       fixture = TestBed.createComponent(TestSiblingComponent);
@@ -167,8 +169,10 @@ describe('CSS Encapsulation', () => {
     });
 
     it('should not style host elements with same class names', () => {
-      const hostElement = fixture.nativeElement.querySelector('.card-skeleton:not(app-card-skeleton *)');
-      
+      const hostElement = fixture.nativeElement.querySelector(
+        '.card-skeleton:not(app-card-skeleton *)'
+      );
+
       if (hostElement) {
         const style = getComputedStyle(hostElement);
         // Host element should NOT have card-skeleton styles applied
@@ -186,10 +190,10 @@ describe('CSS Encapsulation', () => {
       testEl.className = 'osi-cards-container';
       testEl.setAttribute('data-theme', 'day');
       document.body.appendChild(testEl);
-      
+
       // CSS variables should be scoped to container
       const style = getComputedStyle(testEl);
-      
+
       // Clean up
       document.body.removeChild(testEl);
     });
@@ -204,7 +208,7 @@ describe('CSS Encapsulation', () => {
         </div>
       `,
       standalone: true,
-      imports: [CardSkeletonComponent]
+      imports: [CardSkeletonComponent],
     })
     class TestThemeHostComponent {}
 
@@ -213,7 +217,7 @@ describe('CSS Encapsulation', () => {
     beforeEach(async () => {
       await TestBed.configureTestingModule({
         imports: [TestThemeHostComponent, CardSkeletonComponent],
-        providers: [provideOSICards()]
+        providers: [provideOSICards()],
       }).compileComponents();
 
       fixture = TestBed.createComponent(TestThemeHostComponent);
@@ -223,7 +227,7 @@ describe('CSS Encapsulation', () => {
     it('should apply component-level theme regardless of parent theme', () => {
       const skeleton = fixture.debugElement.query(By.directive(CardSkeletonComponent));
       const element = skeleton.nativeElement as HTMLElement;
-      
+
       // Component has data-theme="night"
       expect(element.getAttribute('data-theme')).toBe('night');
     });
@@ -242,7 +246,7 @@ describe('Animation Encapsulation', () => {
         'pulse',
         'spin',
         'sectionEnter',
-        'fieldEnter'
+        'fieldEnter',
       ];
 
       // In a real test, we would check stylesheets
@@ -256,8 +260,8 @@ describe('Animation Encapsulation', () => {
       // This test would check media query handling
       // Mock matchMedia
       const originalMatchMedia = window.matchMedia;
-      
-      window.matchMedia = jest.fn().mockImplementation(query => ({
+
+      window.matchMedia = jest.fn().mockImplementation((query) => ({
         matches: query === '(prefers-reduced-motion: reduce)',
         media: query,
         onchange: null,
@@ -265,7 +269,7 @@ describe('Animation Encapsulation', () => {
         removeListener: jest.fn(),
         addEventListener: jest.fn(),
         removeEventListener: jest.fn(),
-        dispatchEvent: jest.fn()
+        dispatchEvent: jest.fn(),
       }));
 
       // Test would verify animations are disabled
@@ -274,12 +278,3 @@ describe('Animation Encapsulation', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-

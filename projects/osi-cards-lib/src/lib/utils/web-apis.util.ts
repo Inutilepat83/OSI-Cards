@@ -173,4 +173,3 @@ export function getHardwareConcurrency(): number {
 export function getMaxTouchPoints(): number {
   return navigator.maxTouchPoints || 0;
 }
-

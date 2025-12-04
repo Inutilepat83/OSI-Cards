@@ -1,4 +1,11 @@
-import { ComponentFixture, TestBed, fakeAsync, tick, flush, discardPeriodicTasks } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+  flush,
+  discardPeriodicTasks,
+} from '@angular/core/testing';
 import { Component, ViewChild, SimpleChange } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { MasonryGridComponent, MasonryLayoutInfo, LayoutLogEntry } from './masonry-grid.component';
@@ -26,7 +33,7 @@ import { PackingAlgorithm, RowPackingOptions } from '../../utils/grid-config.uti
         (layoutLog)="onLayoutLog($event)"
       ></app-masonry-grid>
     </div>
-  `
+  `,
 })
 class TestHostComponent {
   @ViewChild('grid') grid!: MasonryGridComponent;
@@ -46,19 +53,19 @@ class TestHostComponent {
     maxOptimizationPasses: 3,
   };
   debug = false;
-  
+
   lastSectionEvent: unknown;
   lastLayoutChange: MasonryLayoutInfo | undefined;
   layoutLogs: LayoutLogEntry[] = [];
-  
+
   onSectionEvent(event: unknown) {
     this.lastSectionEvent = event;
   }
-  
+
   onLayoutChange(info: MasonryLayoutInfo) {
     this.lastLayoutChange = info;
   }
-  
+
   onLayoutLog(entry: LayoutLogEntry) {
     this.layoutLogs.push(entry);
   }
@@ -73,14 +80,14 @@ describe('MasonryGridComponent', () => {
     return Array.from({ length: count }, (_, i) => ({
       title: `Section ${i + 1}`,
       type: 'info' as const,
-      preferredColumns: 1
+      preferredColumns: 1,
     }));
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MasonryGridComponent],
-      declarations: [TestHostComponent]
+      declarations: [TestHostComponent],
     }).compileComponents();
 
     hostFixture = TestBed.createComponent(TestHostComponent);
@@ -100,7 +107,7 @@ describe('MasonryGridComponent', () => {
     it('should render empty container with no sections', () => {
       hostComponent.sections = [];
       hostFixture.detectChanges();
-      
+
       const container = hostFixture.debugElement.query(By.css('.masonry-container'));
       expect(container).toBeTruthy();
     });
@@ -110,7 +117,7 @@ describe('MasonryGridComponent', () => {
       hostFixture.detectChanges();
       tick(100);
       hostFixture.detectChanges();
-      
+
       const items = hostFixture.debugElement.queryAll(By.css('.masonry-item'));
       expect(items.length).toBe(3);
     }));
@@ -119,12 +126,12 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(2);
       hostFixture.detectChanges();
       tick(100);
-      
+
       hostComponent.sections = createSections(4);
       hostFixture.detectChanges();
       tick(100);
       hostFixture.detectChanges();
-      
+
       const items = hostFixture.debugElement.queryAll(By.css('.masonry-item'));
       expect(items.length).toBe(4);
     }));
@@ -149,28 +156,28 @@ describe('MasonryGridComponent', () => {
     it('should accept custom gap', () => {
       hostComponent.gap = 24;
       hostFixture.detectChanges();
-      
+
       expect(component.gap).toBe(24);
     });
 
     it('should accept custom minColumnWidth', () => {
       hostComponent.minColumnWidth = 200;
       hostFixture.detectChanges();
-      
+
       expect(component.minColumnWidth).toBe(200);
     });
 
     it('should accept custom maxColumns', () => {
       hostComponent.maxColumns = 3;
       hostFixture.detectChanges();
-      
+
       expect(component.maxColumns).toBe(3);
     });
 
     it('should accept containerWidth override', () => {
       hostComponent.containerWidth = 800;
       hostFixture.detectChanges();
-      
+
       expect(component.containerWidth).toBe(800);
     });
   });
@@ -182,36 +189,36 @@ describe('MasonryGridComponent', () => {
     it('should return vertical for overview sections', () => {
       const section: CardSection = {
         title: 'Overview',
-        type: 'overview'
+        type: 'overview',
       };
-      
+
       expect(component.getOrientation(section)).toBe('vertical');
     });
 
     it('should return horizontal for contact-card sections', () => {
       const section: CardSection = {
         title: 'Contacts',
-        type: 'contact-card'
+        type: 'contact-card',
       };
-      
+
       expect(component.getOrientation(section)).toBe('horizontal');
     });
 
     it('should return horizontal for analytics sections', () => {
       const section: CardSection = {
         title: 'Analytics',
-        type: 'analytics'
+        type: 'analytics',
       };
-      
+
       expect(component.getOrientation(section)).toBe('horizontal');
     });
 
     it('should return auto for chart sections', () => {
       const section: CardSection = {
         title: 'Chart',
-        type: 'chart'
+        type: 'chart',
       };
-      
+
       expect(component.getOrientation(section)).toBe('auto');
     });
 
@@ -219,9 +226,9 @@ describe('MasonryGridComponent', () => {
       const section: CardSection = {
         title: 'Info',
         type: 'info',
-        orientation: 'horizontal'
+        orientation: 'horizontal',
       };
-      
+
       expect(component.getOrientation(section)).toBe('horizontal');
     });
 
@@ -231,13 +238,11 @@ describe('MasonryGridComponent', () => {
     });
 
     it('should apply orientation class to DOM', fakeAsync(() => {
-      hostComponent.sections = [
-        { title: 'Test', type: 'contact-card' }
-      ];
+      hostComponent.sections = [{ title: 'Test', type: 'contact-card' }];
       hostFixture.detectChanges();
       tick(100);
       hostFixture.detectChanges();
-      
+
       const item = hostFixture.debugElement.query(By.css('.masonry-item--horizontal'));
       expect(item).toBeTruthy();
     }));
@@ -248,37 +253,31 @@ describe('MasonryGridComponent', () => {
   // ============================================================================
   describe('section priority', () => {
     it('should apply priority-critical class', fakeAsync(() => {
-      hostComponent.sections = [
-        { title: 'Test', type: 'overview', priority: 'critical' }
-      ];
+      hostComponent.sections = [{ title: 'Test', type: 'overview', priority: 'critical' }];
       hostFixture.detectChanges();
       tick(100);
       hostFixture.detectChanges();
-      
+
       const item = hostFixture.debugElement.query(By.css('.masonry-item--priority-critical'));
       expect(item).toBeTruthy();
     }));
 
     it('should apply priority-important class', fakeAsync(() => {
-      hostComponent.sections = [
-        { title: 'Test', type: 'chart', priority: 'important' }
-      ];
+      hostComponent.sections = [{ title: 'Test', type: 'chart', priority: 'important' }];
       hostFixture.detectChanges();
       tick(100);
       hostFixture.detectChanges();
-      
+
       const item = hostFixture.debugElement.query(By.css('.masonry-item--priority-important'));
       expect(item).toBeTruthy();
     }));
 
     it('should set data-priority attribute', fakeAsync(() => {
-      hostComponent.sections = [
-        { title: 'Test', type: 'info', priority: 'standard' }
-      ];
+      hostComponent.sections = [{ title: 'Test', type: 'info', priority: 'standard' }];
       hostFixture.detectChanges();
       tick(100);
       hostFixture.detectChanges();
-      
+
       const item = hostFixture.debugElement.query(By.css('.masonry-item'));
       expect(item.nativeElement.getAttribute('data-priority')).toBe('standard');
     }));
@@ -289,25 +288,21 @@ describe('MasonryGridComponent', () => {
   // ============================================================================
   describe('sticky sections', () => {
     it('should apply sticky class', fakeAsync(() => {
-      hostComponent.sections = [
-        { title: 'Sticky', type: 'overview', sticky: true }
-      ];
+      hostComponent.sections = [{ title: 'Sticky', type: 'overview', sticky: true }];
       hostFixture.detectChanges();
       tick(100);
       hostFixture.detectChanges();
-      
+
       const item = hostFixture.debugElement.query(By.css('.masonry-item--sticky'));
       expect(item).toBeTruthy();
     }));
 
     it('should not apply sticky class when false', fakeAsync(() => {
-      hostComponent.sections = [
-        { title: 'Normal', type: 'info', sticky: false }
-      ];
+      hostComponent.sections = [{ title: 'Normal', type: 'info', sticky: false }];
       hostFixture.detectChanges();
       tick(100);
       hostFixture.detectChanges();
-      
+
       const item = hostFixture.debugElement.query(By.css('.masonry-item--sticky'));
       expect(item).toBeFalsy();
     }));
@@ -318,13 +313,11 @@ describe('MasonryGridComponent', () => {
   // ============================================================================
   describe('flex grow sections', () => {
     it('should apply flex-grow class', fakeAsync(() => {
-      hostComponent.sections = [
-        { title: 'Expanding', type: 'info', flexGrow: true }
-      ];
+      hostComponent.sections = [{ title: 'Expanding', type: 'info', flexGrow: true }];
       hostFixture.detectChanges();
       tick(100);
       hostFixture.detectChanges();
-      
+
       const item = hostFixture.debugElement.query(By.css('.masonry-item--flex-grow'));
       expect(item).toBeTruthy();
     }));
@@ -335,26 +328,22 @@ describe('MasonryGridComponent', () => {
   // ============================================================================
   describe('data attributes', () => {
     it('should set data-col-span attribute', fakeAsync(() => {
-      hostComponent.sections = [
-        { title: 'Wide', type: 'chart', preferredColumns: 2 }
-      ];
+      hostComponent.sections = [{ title: 'Wide', type: 'chart', preferredColumns: 2 }];
       hostFixture.detectChanges();
       tick(100);
       hostFixture.detectChanges();
-      
+
       const item = hostFixture.debugElement.query(By.css('.masonry-item'));
       const colSpan = item.nativeElement.getAttribute('data-col-span');
       expect(colSpan).toBeTruthy();
     }));
 
     it('should set data-orientation attribute', fakeAsync(() => {
-      hostComponent.sections = [
-        { title: 'Test', type: 'contact-card' }
-      ];
+      hostComponent.sections = [{ title: 'Test', type: 'contact-card' }];
       hostFixture.detectChanges();
       tick(100);
       hostFixture.detectChanges();
-      
+
       const item = hostFixture.debugElement.query(By.css('.masonry-item'));
       expect(item.nativeElement.getAttribute('data-orientation')).toBe('horizontal');
     }));
@@ -367,22 +356,22 @@ describe('MasonryGridComponent', () => {
     it('should generate ID from title', () => {
       const section: CardSection = {
         title: 'Test Section',
-        type: 'info'
+        type: 'info',
       };
-      
+
       const id = component.getSectionId(section);
-      
+
       expect(id).toBe('section-test-section');
     });
 
     it('should sanitize special characters', () => {
       const section: CardSection = {
         title: 'Test & Section #1',
-        type: 'info'
+        type: 'info',
       };
-      
+
       const id = component.getSectionId(section);
-      
+
       expect(id).toMatch(/^section-[a-z0-9-]+$/);
     });
 
@@ -390,11 +379,11 @@ describe('MasonryGridComponent', () => {
       const section: CardSection = {
         id: 'custom-id',
         title: 'Test',
-        type: 'info'
+        type: 'info',
       };
-      
+
       const id = component.getSectionId(section);
-      
+
       expect(id).toBe('section-custom-id');
     });
 
@@ -415,17 +404,17 @@ describe('MasonryGridComponent', () => {
         colSpan: 1,
         left: '0px',
         top: 0,
-        width: '100%'
+        width: '100%',
       };
-      
+
       const result = component.trackItem(0, item);
-      
+
       expect(result).toBe('test-key');
     });
 
     it('should return fallback for null item', () => {
       const result = component.trackItem(5, null as any);
-      
+
       expect(result).toBe('null-item-5');
     });
   });
@@ -439,7 +428,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.containerWidth = 1000;
       hostFixture.detectChanges();
       tick(200);
-      
+
       expect(hostComponent.lastLayoutChange).toBeDefined();
       expect(hostComponent.lastLayoutChange?.columns).toBeGreaterThan(0);
     }));
@@ -449,7 +438,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.containerWidth = 1000;
       hostFixture.detectChanges();
       tick(200);
-      
+
       expect(hostComponent.lastLayoutChange?.breakpoint).toBeDefined();
     }));
 
@@ -458,7 +447,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.containerWidth = 800;
       hostFixture.detectChanges();
       tick(200);
-      
+
       expect(hostComponent.lastLayoutChange?.containerWidth).toBeGreaterThan(0);
     }));
   });
@@ -472,7 +461,7 @@ describe('MasonryGridComponent', () => {
       hostFixture.detectChanges();
       tick(200);
       hostFixture.detectChanges();
-      
+
       expect(component.containerHeight).toBeGreaterThan(0);
     }));
 
@@ -481,11 +470,11 @@ describe('MasonryGridComponent', () => {
       hostFixture.detectChanges();
       tick(200);
       const initialHeight = component.containerHeight;
-      
+
       hostComponent.sections = createSections(6);
       hostFixture.detectChanges();
       tick(200);
-      
+
       expect(component.containerHeight).toBeGreaterThanOrEqual(initialHeight);
     }));
   });
@@ -498,7 +487,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(4);
       hostFixture.detectChanges();
       tick(200);
-      
+
       expect(component.positionedSections.length).toBe(4);
     }));
 
@@ -506,7 +495,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(1);
       hostFixture.detectChanges();
       tick(200);
-      
+
       const positioned = component.positionedSections[0];
       expect(positioned.left).toBeDefined();
       expect(positioned.top).toBeDefined();
@@ -517,14 +506,14 @@ describe('MasonryGridComponent', () => {
     it('should handle sections with different column spans', fakeAsync(() => {
       hostComponent.sections = [
         { title: 'Wide', type: 'chart', preferredColumns: 2 },
-        { title: 'Narrow', type: 'info', preferredColumns: 1 }
+        { title: 'Narrow', type: 'info', preferredColumns: 1 },
       ];
       hostFixture.detectChanges();
       tick(200);
-      
-      const wideSection = component.positionedSections.find(p => p.section.title === 'Wide');
-      const narrowSection = component.positionedSections.find(p => p.section.title === 'Narrow');
-      
+
+      const wideSection = component.positionedSections.find((p) => p.section.title === 'Wide');
+      const narrowSection = component.positionedSections.find((p) => p.section.title === 'Narrow');
+
       expect(wideSection?.colSpan).toBeGreaterThan(narrowSection?.colSpan || 0);
     }));
   });
@@ -538,7 +527,7 @@ describe('MasonryGridComponent', () => {
       hostFixture.detectChanges();
       tick(500);
       hostFixture.detectChanges();
-      
+
       expect(component.isLayoutReady).toBe(true);
     }));
 
@@ -547,7 +536,7 @@ describe('MasonryGridComponent', () => {
       hostFixture.detectChanges();
       tick(500);
       hostFixture.detectChanges();
-      
+
       const item = hostFixture.debugElement.query(By.css('.masonry-item--ready'));
       expect(item).toBeTruthy();
     }));
@@ -555,7 +544,7 @@ describe('MasonryGridComponent', () => {
     it('should apply loading class when not ready', () => {
       hostComponent.sections = createSections(2);
       hostFixture.detectChanges();
-      
+
       // Before layout is ready
       expect(component.isLayoutReady).toBe(false);
     });
@@ -568,7 +557,7 @@ describe('MasonryGridComponent', () => {
     it('should not throw on destroy', () => {
       hostComponent.sections = createSections(2);
       hostFixture.detectChanges();
-      
+
       expect(() => {
         hostFixture.destroy();
       }).not.toThrow();
@@ -577,7 +566,7 @@ describe('MasonryGridComponent', () => {
     it('should handle empty sections on destroy', () => {
       hostComponent.sections = [];
       hostFixture.detectChanges();
-      
+
       expect(() => {
         hostFixture.destroy();
       }).not.toThrow();
@@ -589,12 +578,10 @@ describe('MasonryGridComponent', () => {
   // ============================================================================
   describe('edge cases', () => {
     it('should handle sections without title', fakeAsync(() => {
-      hostComponent.sections = [
-        { title: '', type: 'info' }
-      ];
+      hostComponent.sections = [{ title: '', type: 'info' }];
       hostFixture.detectChanges();
       tick(100);
-      
+
       expect(component.positionedSections.length).toBe(1);
     }));
 
@@ -604,10 +591,10 @@ describe('MasonryGridComponent', () => {
         hostFixture.detectChanges();
         tick(50);
       }
-      
+
       hostFixture.detectChanges();
       tick(200);
-      
+
       expect(component.positionedSections.length).toBe(5);
     }));
 
@@ -615,7 +602,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(50);
       hostFixture.detectChanges();
       tick(500);
-      
+
       expect(component.positionedSections.length).toBe(50);
     }));
 
@@ -632,12 +619,12 @@ describe('MasonryGridComponent', () => {
           flexGrow: true,
           sticky: false,
           groupId: 'test-group',
-          columnAffinity: 0
-        }
+          columnAffinity: 0,
+        },
       ];
       hostFixture.detectChanges();
       tick(200);
-      
+
       expect(component.positionedSections.length).toBe(1);
     }));
   });
@@ -649,7 +636,7 @@ describe('MasonryGridComponent', () => {
     it('should accept isStreaming input', () => {
       hostComponent.isStreaming = true;
       hostFixture.detectChanges();
-      
+
       expect(component.isStreaming).toBe(true);
     });
 
@@ -657,13 +644,13 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(2);
       hostFixture.detectChanges();
       tick(200);
-      
+
       const initialReady = component.isLayoutReady;
-      
+
       hostComponent.isStreaming = true;
       hostFixture.detectChanges();
       tick(100);
-      
+
       // Layout should remain ready during streaming
       expect(component.isLayoutReady).toBe(initialReady);
     }));
@@ -673,7 +660,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.isStreaming = true;
       hostFixture.detectChanges();
       tick(200);
-      
+
       // Check that the first section is marked as new
       const firstSection = component.positionedSections[0];
       expect(firstSection).toBeDefined();
@@ -684,14 +671,14 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(1);
       hostFixture.detectChanges();
       tick(200);
-      
+
       const initialCount = component.positionedSections.length;
-      
+
       // Add more sections
       hostComponent.sections = createSections(3);
       hostFixture.detectChanges();
       tick(200);
-      
+
       expect(component.positionedSections.length).toBe(3);
       expect(component.positionedSections.length).toBeGreaterThan(initialCount);
     }));
@@ -701,11 +688,11 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(2);
       hostFixture.detectChanges();
       tick(200);
-      
+
       hostComponent.isStreaming = false;
       hostFixture.detectChanges();
       tick(100);
-      
+
       // All sections should be finalized
       for (const section of component.positionedSections) {
         expect(section.isNew).toBeFalsy();
@@ -722,7 +709,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(1);
       hostFixture.detectChanges();
       tick(200);
-      
+
       const section = component.positionedSections[0];
       if (section) {
         // New sections during streaming should animate
@@ -736,11 +723,11 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(1);
       hostFixture.detectChanges();
       tick(200);
-      
+
       const section = component.positionedSections[0];
       if (section) {
         component.onSectionAnimationEnd(section.key);
-        
+
         expect(component.hasAnimated(section.key)).toBe(true);
         expect(component.shouldAnimate(section.key)).toBe(false);
       }
@@ -751,17 +738,17 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(1);
       hostFixture.detectChanges();
       tick(200);
-      
+
       const section = component.positionedSections[0];
       if (section) {
         // Mark as animated
         component.onSectionAnimationEnd(section.key);
-        
+
         // Update sections (simulating more streaming data)
         hostComponent.sections = [...createSections(1), { title: 'New', type: 'info' }];
         hostFixture.detectChanges();
         tick(200);
-        
+
         // Original section should not animate again
         expect(component.shouldAnimate(section.key)).toBe(false);
       }
@@ -777,7 +764,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(4);
       hostFixture.detectChanges();
       tick(200);
-      
+
       // With 260px min width and 12px gap: 1000px fits ~3-4 columns
       expect(component.currentColumns).toBeGreaterThanOrEqual(3);
     }));
@@ -787,7 +774,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(2);
       hostFixture.detectChanges();
       tick(200);
-      
+
       expect(component.currentColumns).toBe(1);
     }));
 
@@ -797,7 +784,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(4);
       hostFixture.detectChanges();
       tick(200);
-      
+
       expect(component.currentColumns).toBeLessThanOrEqual(2);
     }));
 
@@ -806,13 +793,13 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(4);
       hostFixture.detectChanges();
       tick(200);
-      
+
       const initialColumns = component.currentColumns;
-      
+
       hostComponent.containerWidth = 500;
       hostFixture.detectChanges();
       tick(200);
-      
+
       expect(component.currentColumns).toBeLessThan(initialColumns);
     }));
 
@@ -821,7 +808,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(2);
       hostFixture.detectChanges();
       tick(200);
-      
+
       expect(component.currentColumns).toBeGreaterThan(0);
     }));
   });
@@ -833,7 +820,7 @@ describe('MasonryGridComponent', () => {
     it('should accept optimizeLayout input', () => {
       hostComponent.optimizeLayout = false;
       hostFixture.detectChanges();
-      
+
       expect(component.optimizeLayout).toBe(false);
     });
 
@@ -842,13 +829,17 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = [
         { title: 'Tall', type: 'list', fields: Array(10).fill({ label: 'Item', value: 'Value' }) },
         { title: 'Short', type: 'info', fields: [{ label: 'One', value: '1' }] },
-        { title: 'Medium', type: 'analytics', fields: Array(5).fill({ label: 'Metric', value: '100' }) }
+        {
+          title: 'Medium',
+          type: 'analytics',
+          fields: Array(5).fill({ label: 'Metric', value: '100' }),
+        },
       ];
       hostComponent.optimizeLayout = true;
       hostComponent.containerWidth = 800;
       hostFixture.detectChanges();
       tick(300);
-      
+
       expect(component.positionedSections.length).toBe(3);
     }));
 
@@ -857,7 +848,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.optimizeLayout = true;
       hostFixture.detectChanges();
       tick(200);
-      
+
       expect(component.positionedSections.length).toBe(1);
     }));
   });
@@ -869,7 +860,7 @@ describe('MasonryGridComponent', () => {
     it('should accept packingAlgorithm input', () => {
       hostComponent.packingAlgorithm = 'row-first';
       hostFixture.detectChanges();
-      
+
       expect(component.packingAlgorithm).toBe('row-first');
     });
 
@@ -883,7 +874,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.containerWidth = 1000;
       hostFixture.detectChanges();
       tick(300);
-      
+
       expect(component.positionedSections.length).toBe(4);
     }));
 
@@ -894,10 +885,10 @@ describe('MasonryGridComponent', () => {
         allowGrowing: true,
         maxOptimizationPasses: 5,
       };
-      
+
       hostComponent.rowPackingOptions = customOptions;
       hostFixture.detectChanges();
-      
+
       expect(component.rowPackingOptions.prioritizeSpaceFilling).toBe(false);
       expect(component.rowPackingOptions.maxOptimizationPasses).toBe(5);
     });
@@ -908,7 +899,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.containerWidth = 1000;
       hostFixture.detectChanges();
       tick(300);
-      
+
       // Should still layout sections even if algorithm falls back
       expect(component.positionedSections.length).toBe(2);
     }));
@@ -923,18 +914,16 @@ describe('MasonryGridComponent', () => {
       hostComponent.containerWidth = 800;
       hostFixture.detectChanges();
       tick(300);
-      
+
       expect(hostComponent.layoutLogs.length).toBeGreaterThan(0);
     }));
 
     it('should include section details in layout log', fakeAsync(() => {
-      hostComponent.sections = [
-        { title: 'Test Section', type: 'info', preferredColumns: 2 }
-      ];
+      hostComponent.sections = [{ title: 'Test Section', type: 'info', preferredColumns: 2 }];
       hostComponent.containerWidth = 800;
       hostFixture.detectChanges();
       tick(300);
-      
+
       const lastLog = hostComponent.layoutLogs[hostComponent.layoutLogs.length - 1];
       if (lastLog) {
         expect(lastLog.sections.length).toBeGreaterThan(0);
@@ -948,17 +937,17 @@ describe('MasonryGridComponent', () => {
       hostComponent.containerWidth = 1000;
       hostFixture.detectChanges();
       tick(300);
-      
+
       hostComponent.layoutLogs = []; // Clear logs
-      
+
       hostComponent.containerWidth = 300; // Force single column
       hostFixture.detectChanges();
       tick(300);
-      
+
       const columnsChangedLog = hostComponent.layoutLogs.find(
-        log => log.event === 'columns_changed'
+        (log) => log.event === 'columns_changed'
       );
-      
+
       // May or may not emit depending on actual column change
       expect(hostComponent.layoutLogs.length).toBeGreaterThanOrEqual(0);
     }));
@@ -971,7 +960,7 @@ describe('MasonryGridComponent', () => {
     it('should accept debug input', () => {
       hostComponent.debug = true;
       hostFixture.detectChanges();
-      
+
       expect(component.debug).toBe(true);
     });
 
@@ -980,7 +969,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(3);
       hostFixture.detectChanges();
       tick(200);
-      
+
       expect(component.positionedSections.length).toBe(3);
     }));
   });
@@ -990,17 +979,27 @@ describe('MasonryGridComponent', () => {
   // ============================================================================
   describe('section type handling', () => {
     const sectionTypes = [
-      'info', 'overview', 'analytics', 'chart', 'map', 
-      'contact-card', 'network-card', 'list', 'event',
-      'financials', 'product', 'solutions', 'quotation'
+      'info',
+      'overview',
+      'analytics',
+      'chart',
+      'map',
+      'contact-card',
+      'network-card',
+      'list',
+      'event',
+      'financials',
+      'product',
+      'solutions',
+      'quotation',
     ];
 
-    sectionTypes.forEach(type => {
+    sectionTypes.forEach((type) => {
       it(`should handle section type: ${type}`, fakeAsync(() => {
         hostComponent.sections = [{ title: `${type} section`, type }];
         hostFixture.detectChanges();
         tick(200);
-        
+
         expect(component.positionedSections.length).toBe(1);
         expect(component.positionedSections[0].section.type).toBe(type);
       }));
@@ -1010,7 +1009,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = [{ title: 'Unknown', type: 'unknown-type' as any }];
       hostFixture.detectChanges();
       tick(200);
-      
+
       expect(component.positionedSections.length).toBe(1);
     }));
   });
@@ -1020,50 +1019,44 @@ describe('MasonryGridComponent', () => {
   // ============================================================================
   describe('preferred columns', () => {
     it('should use section preferredColumns when set', fakeAsync(() => {
-      hostComponent.sections = [
-        { title: 'Wide', type: 'info', preferredColumns: 3 }
-      ];
+      hostComponent.sections = [{ title: 'Wide', type: 'info', preferredColumns: 3 }];
       hostComponent.containerWidth = 1200;
       hostFixture.detectChanges();
       tick(200);
-      
+
       const section = component.positionedSections[0];
       expect(section.preferredColumns).toBe(3);
     }));
 
     it('should default preferredColumns based on section type', fakeAsync(() => {
-      hostComponent.sections = [
-        { title: 'Analytics', type: 'analytics' }
-      ];
+      hostComponent.sections = [{ title: 'Analytics', type: 'analytics' }];
       hostComponent.containerWidth = 1000;
       hostFixture.detectChanges();
       tick(200);
-      
+
       const section = component.positionedSections[0];
       // Analytics defaults to 2 columns
       expect(section.preferredColumns).toBe(2);
     }));
 
     it('should respect minColumns constraint', fakeAsync(() => {
-      hostComponent.sections = [
-        { title: 'Min2', type: 'info', minColumns: 2 }
-      ];
+      hostComponent.sections = [{ title: 'Min2', type: 'info', minColumns: 2 }];
       hostComponent.containerWidth = 1000;
       hostFixture.detectChanges();
       tick(200);
-      
+
       const section = component.positionedSections[0];
       expect(section.colSpan).toBeGreaterThanOrEqual(1);
     }));
 
     it('should respect maxColumns constraint', fakeAsync(() => {
       hostComponent.sections = [
-        { title: 'Max2', type: 'info', maxColumns: 2, preferredColumns: 4 }
+        { title: 'Max2', type: 'info', maxColumns: 2, preferredColumns: 4 },
       ];
       hostComponent.containerWidth = 1200;
       hostFixture.detectChanges();
       tick(200);
-      
+
       // Column span should be constrained
       const section = component.positionedSections[0];
       expect(section).toBeDefined();
@@ -1071,13 +1064,13 @@ describe('MasonryGridComponent', () => {
 
     it('should use explicit colSpan over preferredColumns', fakeAsync(() => {
       hostComponent.sections = [
-        { title: 'Explicit', type: 'info', preferredColumns: 1, colSpan: 3 }
+        { title: 'Explicit', type: 'info', preferredColumns: 1, colSpan: 3 },
       ];
       hostComponent.containerWidth = 1200;
       hostComponent.maxColumns = 4;
       hostFixture.detectChanges();
       tick(200);
-      
+
       const section = component.positionedSections[0];
       // Explicit colSpan should take precedence
       expect(section.colSpan).toBeGreaterThanOrEqual(1);
@@ -1093,7 +1086,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.containerWidth = 1000;
       hostFixture.detectChanges();
       tick(200);
-      
+
       const section = component.positionedSections[0];
       // Should use calc() expression in multi-column layout
       expect(section.width).toBeDefined();
@@ -1104,7 +1097,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.containerWidth = 1000;
       hostFixture.detectChanges();
       tick(200);
-      
+
       for (const section of component.positionedSections) {
         expect(section.left).toBeDefined();
         expect(section.top).toBeGreaterThanOrEqual(0);
@@ -1120,7 +1113,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(2);
       hostFixture.detectChanges();
       tick(200);
-      
+
       expect(() => {
         hostFixture.destroy();
       }).not.toThrow();
@@ -1129,7 +1122,7 @@ describe('MasonryGridComponent', () => {
     it('should cancel pending animation frames on destroy', fakeAsync(() => {
       hostComponent.sections = createSections(5);
       hostFixture.detectChanges();
-      
+
       // Immediately destroy before layout completes
       expect(() => {
         hostFixture.destroy();
@@ -1146,7 +1139,7 @@ describe('MasonryGridComponent', () => {
         tick(50);
         fixture.destroy();
       }
-      
+
       discardPeriodicTasks();
     }));
   });
@@ -1161,7 +1154,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(2);
       hostFixture.detectChanges();
       tick(200);
-      
+
       // Should use the explicit 600px, not the 1200px host width
       expect(component.containerWidth).toBe(600);
     }));
@@ -1172,7 +1165,7 @@ describe('MasonryGridComponent', () => {
       hostComponent.sections = createSections(2);
       hostFixture.detectChanges();
       tick(200);
-      
+
       // Should measure from DOM
       expect(component.containerWidth).toBeUndefined();
     }));
@@ -1184,24 +1177,24 @@ describe('MasonryGridComponent', () => {
   describe('section resize constraints', () => {
     it('should respect canShrink=false', fakeAsync(() => {
       hostComponent.sections = [
-        { title: 'NoShrink', type: 'info', preferredColumns: 2, canShrink: false }
+        { title: 'NoShrink', type: 'info', preferredColumns: 2, canShrink: false },
       ];
       hostComponent.containerWidth = 1000;
       hostFixture.detectChanges();
       tick(200);
-      
+
       const section = component.positionedSections[0];
       expect(section).toBeDefined();
     }));
 
     it('should respect canGrow=false', fakeAsync(() => {
       hostComponent.sections = [
-        { title: 'NoGrow', type: 'info', preferredColumns: 1, canGrow: false }
+        { title: 'NoGrow', type: 'info', preferredColumns: 1, canGrow: false },
       ];
       hostComponent.containerWidth = 1000;
       hostFixture.detectChanges();
       tick(200);
-      
+
       const section = component.positionedSections[0];
       expect(section).toBeDefined();
     }));
@@ -1214,26 +1207,25 @@ describe('MasonryGridComponent', () => {
     it('should handle numeric layoutPriority', fakeAsync(() => {
       hostComponent.sections = [
         { title: 'High', type: 'overview', layoutPriority: 1 },
-        { title: 'Low', type: 'info', layoutPriority: 3 }
+        { title: 'Low', type: 'info', layoutPriority: 3 },
       ];
       hostComponent.containerWidth = 1000;
       hostFixture.detectChanges();
       tick(200);
-      
+
       expect(component.positionedSections.length).toBe(2);
     }));
 
     it('should map string priority to layoutPriority', fakeAsync(() => {
       hostComponent.sections = [
         { title: 'Critical', type: 'overview', priority: 'critical' },
-        { title: 'Optional', type: 'info', priority: 'optional' }
+        { title: 'Optional', type: 'info', priority: 'optional' },
       ];
       hostComponent.containerWidth = 1000;
       hostFixture.detectChanges();
       tick(200);
-      
+
       expect(component.positionedSections.length).toBe(2);
     }));
   });
 });
-

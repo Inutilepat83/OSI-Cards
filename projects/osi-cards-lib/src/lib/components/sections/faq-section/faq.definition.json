@@ -32,8 +32,14 @@
       "meta": {
         "type": "object",
         "properties": {
-          "question": { "type": "string", "description": "Alternative question field" },
-          "answer": { "type": "string", "description": "Alternative answer field" },
+          "question": {
+            "type": "string",
+            "description": "Alternative question field"
+          },
+          "answer": {
+            "type": "string",
+            "description": "Alternative answer field"
+          },
           "category": { "type": "string", "description": "FAQ category" }
         }
       }
@@ -102,21 +108,22 @@
     "minimal": {
       "title": "FAQ",
       "type": "faq",
-      "items": [
-        { "title": "Question?", "description": "Answer here." }
-      ]
+      "items": [{ "title": "Question?", "description": "Answer here." }]
     },
     "edgeCases": {
       "title": "FAQ Edge Cases",
       "type": "faq",
       "items": [
         { "title": "Question without answer", "description": "" },
-        { "title": "Very long question that exceeds normal length and should wrap properly across multiple lines without breaking the accordion component layout?", "description": "Short answer." },
-        { "title": "Q with special chars: <>&\"'?!", "description": "Answer with special characters: <>&\"'!@#$%^*()" }
+        {
+          "title": "Very long question that exceeds normal length and should wrap properly across multiple lines without breaking the accordion component layout?",
+          "description": "Short answer."
+        },
+        {
+          "title": "Q with special chars: <>&\"'?!",
+          "description": "Answer with special characters: <>&\"'!@#$%^*()"
+        }
       ]
     }
   }
 }
-
-
-

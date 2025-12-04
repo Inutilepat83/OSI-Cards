@@ -1,36 +1,37 @@
 <div class="video-container">
   <!-- Section Header -->
-  <lib-section-header
-    [title]="section.title"
-    [description]="section.description">
-  </lib-section-header>
+  <lib-section-header [title]="section.title" [description]="section.description"> </lib-section-header>
 
   <!-- Videos Grid -->
   <div class="videos-grid" *ngIf="section.items && section.items.length > 0">
     <div class="video-card" *ngFor="let video of section.items">
-
       <!-- Video Player/Thumbnail -->
       <div class="video-wrapper">
         <!-- Embedded Video (YouTube/Vimeo) -->
-        <iframe [src]="getSafeVideoUrl(video)"
-                *ngIf="isEmbeddable(getVideoUrl(video))"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen>
+        <iframe
+          [src]="getSafeVideoUrl(video)"
+          *ngIf="isEmbeddable(getVideoUrl(video))"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        >
         </iframe>
 
         <!-- Native Video -->
-        <video [src]="getVideoUrl(video)"
-               controls
-               *ngIf="!isEmbeddable(getVideoUrl(video)) && getVideoUrl(video)"
-               [poster]="getThumbnail(video)">
-        </video>
+        <video
+          [src]="getVideoUrl(video)"
+          controls
+          *ngIf="!isEmbeddable(getVideoUrl(video)) && getVideoUrl(video)"
+          [poster]="getThumbnail(video)"
+        ></video>
 
         <!-- Thumbnail Only -->
-        <img [src]="getThumbnail(video)"
-             [alt]="video.title"
-             *ngIf="!getVideoUrl(video) && getThumbnail(video)"
-             class="video-thumbnail">
+        <img
+          [src]="getThumbnail(video)"
+          [alt]="video.title"
+          *ngIf="!getVideoUrl(video) && getThumbnail(video)"
+          class="video-thumbnail"
+        />
       </div>
 
       <!-- Video Info -->
@@ -50,9 +51,10 @@
 
   <!-- Empty State -->
   <lib-empty-state
-    *ngIf="!section.fields && !section.items || (section.fields?.length === 0 && section.items?.length === 0)"
+    *ngIf="(!section.fields && !section.items) || (section.fields?.length === 0 && section.items?.length === 0)"
     message="No videos available"
     icon="🎥"
-    variant="minimal">
+    variant="minimal"
+  >
   </lib-empty-state>
 </div>

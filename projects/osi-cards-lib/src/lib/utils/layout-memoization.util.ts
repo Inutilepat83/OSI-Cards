@@ -172,9 +172,7 @@ export function layoutKeyGenerator(
   containerWidth: number
 ): string {
   // Create a lightweight key based on section structure
-  const sectionKey = sections
-    .map(s => `${s.key}:${s.colSpan}`)
-    .join('|');
+  const sectionKey = sections.map((s) => `${s.key}:${s.colSpan}`).join('|');
 
   return `${columns}-${containerWidth}-${sectionKey}`;
 }
@@ -186,9 +184,7 @@ export function heightKeyGenerator(
   sections: Array<{ key: string; height?: number }>,
   columns: number
 ): string {
-  const heightKey = sections
-    .map(s => `${s.key}:${s.height || 0}`)
-    .join('|');
+  const heightKey = sections.map((s) => `${s.key}:${s.height || 0}`).join('|');
 
   return `${columns}-${heightKey}`;
 }
@@ -261,9 +257,7 @@ export function createDebouncedLayout<T>(
 /**
  * Create a requestAnimationFrame-based update scheduler
  */
-export function createRAFScheduler<T>(
-  callback: (value: T) => void
-): DebouncedLayoutUpdate<T> {
+export function createRAFScheduler<T>(callback: (value: T) => void): DebouncedLayoutUpdate<T> {
   let rafId: number | null = null;
   let pendingValue: T | null = null;
 
@@ -361,6 +355,3 @@ export function createBatchProcessor<T>(
     },
   };
 }
-
-
-

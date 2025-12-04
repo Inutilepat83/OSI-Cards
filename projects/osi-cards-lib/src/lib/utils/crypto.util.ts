@@ -29,25 +29,33 @@ export function generateUUID(): string {
  */
 export function generateId(length = 16): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  return Array.from({ length }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+  return Array.from({ length }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join(
+    ''
+  );
 }
 
 /**
  * Base64 encode
  */
 export function encode(str: string): string {
-  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) => {
-    return String.fromCharCode(parseInt(p1, 16));
-  }));
+  return btoa(
+    encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) => {
+      return String.fromCharCode(parseInt(p1, 16));
+    })
+  );
 }
 
 /**
  * Base64 decode
  */
 export function decode(str: string): string {
-  return decodeURIComponent(Array.prototype.map.call(atob(str), (c: string) => {
-    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  }).join(''));
+  return decodeURIComponent(
+    Array.prototype.map
+      .call(atob(str), (c: string) => {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join('')
+  );
 }
 
 /**
@@ -58,7 +66,7 @@ export async function hash(str: string): Promise<string> {
   const data = encoder.encode(str);
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 /**
@@ -73,16 +81,17 @@ export function randomBytes(length: number): Uint8Array {
  */
 export function secureRandom(length: number): string {
   const bytes = randomBytes(length);
-  return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
 }
 
 /**
  * Simple XOR cipher (for demonstration only, not secure)
  */
 export function xorCipher(str: string, key: string): string {
-  return str.split('').map((char, i) =>
-    String.fromCharCode(char.charCodeAt(0) ^ key.charCodeAt(i % key.length))
-  ).join('');
+  return str
+    .split('')
+    .map((char, i) => String.fromCharCode(char.charCodeAt(0) ^ key.charCodeAt(i % key.length)))
+    .join('');
 }
 
 /**
@@ -113,4 +122,3 @@ export function checksum(str: string): number {
 export function verifyChecksum(str: string, expected: number): boolean {
   return checksum(str) === expected;
 }
-

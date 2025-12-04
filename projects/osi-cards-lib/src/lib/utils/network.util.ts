@@ -31,17 +31,26 @@ export function isOffline(): boolean {
 }
 
 export function getConnectionType(): string {
-  const conn = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+  const conn =
+    (navigator as any).connection ||
+    (navigator as any).mozConnection ||
+    (navigator as any).webkitConnection;
   return conn?.type || 'unknown';
 }
 
 export function getEffectiveConnectionType(): string {
-  const conn = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+  const conn =
+    (navigator as any).connection ||
+    (navigator as any).mozConnection ||
+    (navigator as any).webkitConnection;
   return conn?.effectiveType || 'unknown';
 }
 
 export function getConnectionInfo(): ConnectionInfo {
-  const conn = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+  const conn =
+    (navigator as any).connection ||
+    (navigator as any).mozConnection ||
+    (navigator as any).webkitConnection;
 
   return {
     online: navigator.onLine,
@@ -67,7 +76,10 @@ export function onConnectionChange(callback: (online: boolean) => void): () => v
 }
 
 export function onConnectionTypeChange(callback: (info: ConnectionInfo) => void): () => void {
-  const conn = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+  const conn =
+    (navigator as any).connection ||
+    (navigator as any).mozConnection ||
+    (navigator as any).webkitConnection;
 
   if (!conn) return () => {};
 
@@ -102,4 +114,3 @@ export async function ping(url: string): Promise<number> {
     return -1;
   }
 }
-

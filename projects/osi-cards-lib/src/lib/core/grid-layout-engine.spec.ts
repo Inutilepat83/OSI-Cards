@@ -81,7 +81,7 @@ describe('GridLayoutEngine', () => {
   describe('observable', () => {
     it('should emit layout changes', (done) => {
       let emitCount = 0;
-      engine.layout$.subscribe(layout => {
+      engine.layout$.subscribe((layout) => {
         emitCount++;
         if (emitCount === 2 && layout) {
           expect(layout.sections.length).toBe(3);
@@ -101,6 +101,3 @@ describe('GridLayoutEngine', () => {
     });
   });
 });
-
-
-

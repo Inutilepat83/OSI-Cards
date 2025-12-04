@@ -153,14 +153,14 @@ export class PerformanceMonitor {
    */
   public getMetricsByName(pattern: string | RegExp): PerformanceMetrics[] {
     const regex = typeof pattern === 'string' ? new RegExp(pattern) : pattern;
-    return this.metrics.filter(m => regex.test(m.name));
+    return this.metrics.filter((m) => regex.test(m.name));
   }
 
   /**
    * Get average duration for a metric name
    */
   public getAverageDuration(name: string): number {
-    const filtered = this.metrics.filter(m => m.name === name);
+    const filtered = this.metrics.filter((m) => m.name === name);
     if (filtered.length === 0) return 0;
 
     const sum = filtered.reduce((acc, m) => acc + m.duration, 0);
@@ -187,7 +187,7 @@ export class PerformanceMonitor {
    * Notify all observers of a new metric
    */
   private notifyObservers(metric: PerformanceMetrics): void {
-    this.observers.forEach(callback => callback(metric));
+    this.observers.forEach((callback) => callback(metric));
   }
 
   /**
@@ -211,7 +211,7 @@ export class PerformanceMonitor {
         dropped,
       };
 
-      this.frameCallbacks.forEach(callback => callback(timing));
+      this.frameCallbacks.forEach((callback) => callback(timing));
 
       this.lastFrameTime = timestamp;
       this.rafId = requestAnimationFrame(monitorFrame);
@@ -262,11 +262,11 @@ export class PerformanceMonitor {
    * Generate performance report
    */
   public generateReport(): PerformanceReport {
-    const uniqueNames = Array.from(new Set(this.metrics.map(m => m.name)));
-    const summary = uniqueNames.map(name => {
-      const filtered = this.metrics.filter(m => m.name === name);
-      const durations = filtered.map(m => m.duration);
-      const budgetViolations = filtered.filter(m => m.budgetExceeded).length;
+    const uniqueNames = Array.from(new Set(this.metrics.map((m) => m.name)));
+    const summary = uniqueNames.map((name) => {
+      const filtered = this.metrics.filter((m) => m.name === name);
+      const durations = filtered.map((m) => m.duration);
+      const budgetViolations = filtered.filter((m) => m.budgetExceeded).length;
 
       return {
         name,
@@ -371,11 +371,7 @@ export async function measureAsync<T>(
 /**
  * Helper to measure synchronous operations
  */
-export function measureSync<T>(
-  name: string,
-  fn: () => T,
-  metadata?: Record<string, unknown>
-): T {
+export function measureSync<T>(name: string, fn: () => T, metadata?: Record<string, unknown>): T {
   globalPerformanceMonitor.startMeasure(name);
   try {
     const result = fn();
@@ -386,4 +382,3 @@ export function measureSync<T>(
     throw error;
   }
 }
-

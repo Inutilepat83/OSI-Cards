@@ -6,7 +6,7 @@ describe('IconService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [IconService]
+      providers: [IconService],
     });
     service = TestBed.inject(IconService);
   });
@@ -174,12 +174,3 @@ describe('IconService', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-

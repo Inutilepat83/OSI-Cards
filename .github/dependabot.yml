@@ -1,51 +1,62 @@
+# Dependabot configuration for automated dependency updates
+# See: https://docs.github.com/en/code-security/dependabot
+
 version: 2
 updates:
-  # Enable version updates for npm
-  - package-ecosystem: "npm"
-    directory: "/"
+  # NPM dependencies
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
     open-pull-requests-limit: 10
+    labels:
+      - 'dependencies'
+      - 'automated'
     reviewers:
-      - "Inutilepat83"
-    labels:
-      - "dependencies"
-      - "automated"
+      - 'osi-cards-team'
+    assignees:
+      - 'osi-cards-team'
     commit-message:
-      prefix: "chore"
-      include: "scope"
-    # Group updates for minor and patch versions
+      prefix: 'chore(deps)'
+      include: 'scope'
+    # Auto-merge configuration (requires GitHub Actions)
     groups:
-      production-dependencies:
-        dependency-type: "production"
+      angular:
+        patterns:
+          - '@angular/*'
+          - '@angular-devkit/*'
         update-types:
-          - "minor"
-          - "patch"
-      development-dependencies:
-        dependency-type: "development"
+          - 'minor'
+          - 'patch'
+      ngrx:
+        patterns:
+          - '@ngrx/*'
         update-types:
-          - "minor"
-          - "patch"
-    # Ignore major version updates for critical packages
+          - 'minor'
+          - 'patch'
+      dev-dependencies:
+        dependency-type: 'development'
+        update-types:
+          - 'patch'
+    # Version requirements
+    versioning-strategy: 'increase'
+    # Ignore specific updates
     ignore:
-      - dependency-name: "@angular/*"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "typescript"
-        update-types: ["version-update:semver-major"]
-    # Allow updates for security vulnerabilities
-    allow:
-      - dependency-type: "all"
-        update-types:
-          - "security"
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@angular/*'
+        update-types: ['version-update:semver-major']
 
-  # Enable version updates for GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  # GitHub Actions
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "monthly"
-    open-pull-requests-limit: 5
+      interval: 'weekly'
+      day: 'monday'
     labels:
-      - "github-actions"
-      - "automated"
+      - 'dependencies'
+      - 'github-actions'
+    commit-message:
+      prefix: 'chore(ci)'

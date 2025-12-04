@@ -29,35 +29,25 @@ export function createEntityResolver<T>(
     const id = route.paramMap.get(paramName);
     if (!id) return of(null);
 
-    return fetchFn(id).pipe(
-      catchError(() => of(null))
-    );
+    return fetchFn(id).pipe(catchError(() => of(null)));
   };
 }
 
 /**
  * 2. List Resolver Factory
  */
-export function createListResolver<T>(
-  fetchFn: () => Observable<T[]>
-): ResolveFn<T[]> {
+export function createListResolver<T>(fetchFn: () => Observable<T[]>): ResolveFn<T[]> {
   return () => {
-    return fetchFn().pipe(
-      catchError(() => of([]))
-    );
+    return fetchFn().pipe(catchError(() => of([])));
   };
 }
 
 /**
  * 3. User Resolver Factory
  */
-export function createUserResolver<T>(
-  fetchUserFn: () => Observable<T>
-): ResolveFn<T | null> {
+export function createUserResolver<T>(fetchUserFn: () => Observable<T>): ResolveFn<T | null> {
   return () => {
-    return fetchUserFn().pipe(
-      catchError(() => of(null))
-    );
+    return fetchUserFn().pipe(catchError(() => of(null)));
   };
 }
 
@@ -69,9 +59,7 @@ export function createConfigResolver<T>(
   defaultConfig: T
 ): ResolveFn<T> {
   return () => {
-    return fetchConfigFn().pipe(
-      catchError(() => of(defaultConfig))
-    );
+    return fetchConfigFn().pipe(catchError(() => of(defaultConfig)));
   };
 }
 
@@ -89,20 +77,20 @@ export function createCachedResolver<T>(
     const cached = cache.get(cacheKey);
     const now = Date.now();
 
-    if (cached && (now - cached.timestamp) < ttl) {
+    if (cached && now - cached.timestamp < ttl) {
       return of(cached.data);
     }
 
-    return new Observable<T | null>(observer => {
-      fetchFn().pipe(
-        catchError(() => of(null as T | null))
-      ).subscribe(data => {
-        if (data) {
-          cache.set(cacheKey, { data, timestamp: now });
-        }
-        observer.next(data);
-        observer.complete();
-      });
+    return new Observable<T | null>((observer) => {
+      fetchFn()
+        .pipe(catchError(() => of(null as T | null)))
+        .subscribe((data) => {
+          if (data) {
+            cache.set(cacheKey, { data, timestamp: now });
+          }
+          observer.next(data);
+          observer.complete();
+        });
     });
   };
 }
@@ -110,9 +98,9 @@ export function createCachedResolver<T>(
 /**
  * 6. Preload Resolver Factory
  */
-export function createPreloadResolver<T extends Record<string, any>>(
-  resolvers: { [K in keyof T]: () => Observable<T[K]> }
-): ResolveFn<T> {
+export function createPreloadResolver<T extends Record<string, any>>(resolvers: {
+  [K in keyof T]: () => Observable<T[K]>;
+}): ResolveFn<T> {
   return () => {
     const observables: Record<string, Observable<any>> = {};
 
@@ -120,15 +108,13 @@ export function createPreloadResolver<T extends Record<string, any>>(
       observables[key] = resolver();
     });
 
-    return new Observable<T>(observer => {
+    return new Observable<T>((observer) => {
       const results: Partial<T> = {};
       let completed = 0;
       const total = Object.keys(observables).length;
 
       Object.entries(observables).forEach(([key, obs]) => {
-        obs.pipe(
-          catchError(() => of(null))
-        ).subscribe(data => {
+        obs.pipe(catchError(() => of(null))).subscribe((data) => {
           results[key as keyof T] = data;
           completed++;
 
@@ -145,9 +131,7 @@ export function createPreloadResolver<T extends Record<string, any>>(
 /**
  * 7. Lazy Resolver Factory
  */
-export function createLazyResolver<T>(
-  fetchFn: () => Observable<T>
-): ResolveFn<T | null> {
+export function createLazyResolver<T>(fetchFn: () => Observable<T>): ResolveFn<T | null> {
   let cached: T | null = null;
 
   return () => {
@@ -155,9 +139,7 @@ export function createLazyResolver<T>(
       return of(cached);
     }
 
-    return fetchFn().pipe(
-      catchError(() => of(null))
-    );
+    return fetchFn().pipe(catchError(() => of(null)));
   };
 }
 
@@ -169,9 +151,6 @@ export function createFallbackResolver<T>(
   fallbackValue: T
 ): ResolveFn<T> {
   return () => {
-    return fetchFn().pipe(
-      catchError(() => of(fallbackValue))
-    );
+    return fetchFn().pipe(catchError(() => of(fallbackValue)));
   };
 }
-

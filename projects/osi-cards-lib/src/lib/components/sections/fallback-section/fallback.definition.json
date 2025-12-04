@@ -3,11 +3,7 @@
   "name": "Fallback Section",
   "description": "Default section renderer for unknown or unsupported section types.",
   "selector": "lib-fallback-section",
-  "useCases": [
-    "Unknown types",
-    "Error handling",
-    "Graceful degradation"
-  ],
+  "useCases": ["Unknown types", "Error handling", "Graceful degradation"],
   "bestPractices": [
     "Display section data in readable format",
     "Show section type for debugging",
@@ -33,7 +29,10 @@
         { "label": "Status", "value": "Active" }
       ],
       "items": [
-        { "title": "Custom Item 1", "description": "Description for custom item" },
+        {
+          "title": "Custom Item 1",
+          "description": "Description for custom item"
+        },
         { "title": "Custom Item 2", "description": "Another custom item" }
       ]
     },
@@ -51,6 +50,3 @@
     }
   }
 }
-
-
-

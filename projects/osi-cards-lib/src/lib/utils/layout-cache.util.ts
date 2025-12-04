@@ -1,14 +1,14 @@
 /**
  * Layout Cache Utilities
- * 
+ *
  * High-performance caching for layout calculations using WeakMap
  * and dirty-checking. Prevents redundant recalculations when
  * section configurations haven't changed.
- * 
+ *
  * @example
  * ```typescript
  * import { LayoutCache } from 'osi-cards-lib';
- * 
+ *
  * const cache = new LayoutCache();
  * const layout = cache.getOrCompute(sections, columns, () => computeLayout(...));
  * ```
@@ -149,11 +149,7 @@ export function computeSectionHash(section: CardSection): number {
  * Computes a content hash for entire card
  */
 export function computeCardHash(card: AICardConfig): number {
-  const parts = [
-    card.cardTitle ?? '',
-    card.cardType ?? '',
-    String(card.sections?.length ?? 0),
-  ];
+  const parts = [card.cardTitle ?? '', card.cardType ?? '', String(card.sections?.length ?? 0)];
 
   if (card.sections) {
     for (const section of card.sections) {
@@ -168,7 +164,7 @@ export function computeCardHash(card: AICardConfig): number {
  * Computes a quick structural hash (for detecting section add/remove)
  */
 export function computeStructureHash(sections: CardSection[]): number {
-  const ids = sections.map(s => s.id ?? s.title ?? 'unknown');
+  const ids = sections.map((s) => s.id ?? s.title ?? 'unknown');
   return fnv1aHash(ids.join(','));
 }
 
@@ -182,13 +178,13 @@ export function computeStructureHash(sections: CardSection[]): number {
 export class LayoutCache {
   /** Section-level cache (keyed by section object) */
   private sectionCache = new WeakMap<CardSection, CachedSectionLayout>();
-  
+
   /** Card-level cache (keyed by card object) */
   private cardCache = new WeakMap<AICardConfig, CachedCardLayout>();
-  
+
   /** Hash-based backup cache for when WeakMap misses */
   private hashCache = new Map<number, CachedSectionLayout>();
-  
+
   /** Statistics tracking */
   private stats: CacheStats = {
     hits: 0,
@@ -200,17 +196,14 @@ export class LayoutCache {
 
   /** Maximum entries in hash cache */
   private readonly maxHashCacheSize: number;
-  
+
   /** Cache entry TTL in milliseconds */
   private readonly ttl: number;
-  
+
   /** Computation time tracking */
   private computationTimes: number[] = [];
 
-  constructor(options?: {
-    maxHashCacheSize?: number;
-    ttlMs?: number;
-  }) {
+  constructor(options?: { maxHashCacheSize?: number; ttlMs?: number }) {
     this.maxHashCacheSize = options?.maxHashCacheSize ?? 500;
     this.ttl = options?.ttlMs ?? 60000; // 1 minute default
   }
@@ -223,7 +216,7 @@ export class LayoutCache {
     compute: () => Omit<CachedSectionLayout, 'contentHash' | 'timestamp'>
   ): CachedSectionLayout {
     const currentHash = computeSectionHash(section);
-    
+
     // Try WeakMap cache first
     const cached = this.sectionCache.get(section);
     if (cached && cached.contentHash === currentHash && !this.isExpired(cached.timestamp)) {
@@ -271,7 +264,7 @@ export class LayoutCache {
     compute: () => Omit<CachedCardLayout, 'cardHash' | 'timestamp' | 'hitCount'>
   ): CachedCardLayout {
     const currentHash = computeCardHash(card);
-    
+
     // Try WeakMap cache
     const cached = this.cardCache.get(card);
     if (
@@ -332,7 +325,7 @@ export class LayoutCache {
 
     // Determine what changed
     const changes: ('content' | 'structure' | 'dimensions' | 'position')[] = [];
-    
+
     // Check structural changes (id, type, title)
     const structureHash = fnv1aHash(`${section.id}|${section.type}|${section.title}`);
     const cachedStructureHash = fnv1aHash(`${cached.key}|${section.type}|${section.title}`);
@@ -435,10 +428,11 @@ export class LayoutCache {
     const entrySize = 200; // Rough estimate per entry
     this.stats.memoryEstimate = this.hashCache.size * entrySize;
     this.stats.entries = this.hashCache.size;
-    
+
     // Calculate average time saved
     if (this.computationTimes.length > 0) {
-      const avgTime = this.computationTimes.reduce((a, b) => a + b, 0) / this.computationTimes.length;
+      const avgTime =
+        this.computationTimes.reduce((a, b) => a + b, 0) / this.computationTimes.length;
       this.stats.avgTimeSaved = this.stats.hits * avgTime;
     }
 
@@ -607,12 +601,3 @@ export function createDebouncedLayoutUpdate(
 
   return { schedule, cancel, flush };
 }
-
-
-
-
-
-
-
-
-

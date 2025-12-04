@@ -24,7 +24,7 @@ export function capitalize(str: string): string {
  * Capitalize all words
  */
 export function capitalizeWords(str: string): string {
-  return str.replace(/\b\w/g, char => char.toUpperCase());
+  return str.replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 /**
@@ -62,7 +62,7 @@ export function truncateWords(str: string, wordCount: number, suffix = '...'): s
 export function camelCase(str: string): string {
   return str
     .replace(/[-_\s]+(.)?/g, (_, char) => (char ? char.toUpperCase() : ''))
-    .replace(/^./, char => char.toLowerCase());
+    .replace(/^./, (char) => char.toLowerCase());
 }
 
 /**
@@ -206,7 +206,9 @@ export function mask(str: string, visibleChars = 4, maskChar = '*'): string {
  */
 export function randomString(length: number): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  return Array.from({ length }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+  return Array.from({ length }, () => chars.charAt(Math.floor(Math.random() * chars.length))).join(
+    ''
+  );
 }
 
 /**
@@ -248,4 +250,3 @@ export function similarity(str1: string, str2: string): number {
   const maxLength = Math.max(str1.length, str2.length);
   return 1 - distance / maxLength;
 }
-

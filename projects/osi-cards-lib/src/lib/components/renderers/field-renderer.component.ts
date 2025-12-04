@@ -17,7 +17,16 @@ import { CommonModule } from '@angular/common';
 export interface FieldData {
   label: string;
   value: string | number | boolean | null | undefined;
-  type?: 'text' | 'number' | 'date' | 'currency' | 'percentage' | 'url' | 'email' | 'phone' | 'boolean';
+  type?:
+    | 'text'
+    | 'number'
+    | 'date'
+    | 'currency'
+    | 'percentage'
+    | 'url'
+    | 'email'
+    | 'phone'
+    | 'boolean';
   icon?: string;
   copyable?: boolean;
   href?: string;
@@ -38,8 +47,8 @@ export interface FieldClickEvent {
       [class.field--clickable]="clickable"
       [class.field--copyable]="field.copyable"
       [attr.role]="clickable ? 'button' : null"
-      [attr.tabindex]="clickable ? 0 : null">
-
+      [attr.tabindex]="clickable ? 0 : null"
+    >
       @if (field.icon) {
         <span class="field__icon" [innerHTML]="field.icon"></span>
       }
@@ -60,8 +69,10 @@ export interface FieldClickEvent {
             <a [href]="'tel:' + stringValue">{{ displayValue }}</a>
           }
           @case ('boolean') {
-            <span [class.field__value--true]="field.value === true"
-                  [class.field__value--false]="field.value === false">
+            <span
+              [class.field__value--true]="field.value === true"
+              [class.field__value--false]="field.value === false"
+            >
               {{ field.value ? '✓' : '✗' }}
             </span>
           }
@@ -72,95 +83,94 @@ export interface FieldClickEvent {
       </span>
 
       @if (field.copyable) {
-        <button
-          class="field__copy"
-          (click)="onCopy($event)"
-          aria-label="Copy to clipboard">
+        <button class="field__copy" (click)="onCopy($event)" aria-label="Copy to clipboard">
           📋
         </button>
       }
     </div>
   `,
-  styles: [`
-    .field {
-      display: flex;
-      align-items: baseline;
-      gap: 0.5rem;
-      padding: 0.25rem 0;
+  styles: [
+    `
+      .field {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        padding: 0.25rem 0;
 
-      &--clickable {
+        &--clickable {
+          cursor: pointer;
+          border-radius: 4px;
+          padding: 0.25rem 0.5rem;
+          margin: 0 -0.5rem;
+          transition: background-color 0.15s ease;
+
+          &:hover {
+            background-color: var(--osi-field-hover-bg, rgba(0, 0, 0, 0.05));
+          }
+
+          &:focus-visible {
+            outline: 2px solid var(--osi-focus-ring, #4f46e5);
+            outline-offset: 2px;
+          }
+        }
+      }
+
+      .field__label {
+        color: var(--osi-field-label-color, #64748b);
+        font-size: 0.875rem;
+        flex-shrink: 0;
+
+        &::after {
+          content: ':';
+        }
+      }
+
+      .field__value {
+        color: var(--osi-field-value-color, #1e293b);
+        font-weight: 500;
+
+        a {
+          color: var(--osi-link-color, #3b82f6);
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+
+        &--true {
+          color: var(--osi-success-color, #22c55e);
+        }
+
+        &--false {
+          color: var(--osi-error-color, #ef4444);
+        }
+      }
+
+      .field__icon {
+        font-size: 1rem;
+        flex-shrink: 0;
+      }
+
+      .field__copy {
+        background: none;
+        border: none;
         cursor: pointer;
-        border-radius: 4px;
-        padding: 0.25rem 0.5rem;
-        margin: 0 -0.5rem;
-        transition: background-color 0.15s ease;
+        opacity: 0;
+        transition: opacity 0.15s ease;
+        padding: 0.125rem;
+        font-size: 0.75rem;
+
+        .field:hover & {
+          opacity: 0.7;
+        }
 
         &:hover {
-          background-color: var(--osi-field-hover-bg, rgba(0, 0, 0, 0.05));
-        }
-
-        &:focus-visible {
-          outline: 2px solid var(--osi-focus-ring, #4f46e5);
-          outline-offset: 2px;
+          opacity: 1 !important;
         }
       }
-    }
-
-    .field__label {
-      color: var(--osi-field-label-color, #64748b);
-      font-size: 0.875rem;
-      flex-shrink: 0;
-
-      &::after {
-        content: ':';
-      }
-    }
-
-    .field__value {
-      color: var(--osi-field-value-color, #1e293b);
-      font-weight: 500;
-
-      a {
-        color: var(--osi-link-color, #3b82f6);
-        text-decoration: none;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-
-      &--true {
-        color: var(--osi-success-color, #22c55e);
-      }
-
-      &--false {
-        color: var(--osi-error-color, #ef4444);
-      }
-    }
-
-    .field__icon {
-      font-size: 1rem;
-      flex-shrink: 0;
-    }
-
-    .field__copy {
-      background: none;
-      border: none;
-      cursor: pointer;
-      opacity: 0;
-      transition: opacity 0.15s ease;
-      padding: 0.125rem;
-      font-size: 0.75rem;
-
-      .field:hover & {
-        opacity: 0.7;
-      }
-
-      &:hover {
-        opacity: 1 !important;
-      }
-    }
-  `],
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FieldRendererComponent {
@@ -189,7 +199,9 @@ export class FieldRendererComponent {
 
     switch (this.field.type) {
       case 'currency':
-        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(val));
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
+          Number(val)
+        );
       case 'percentage':
         return `${val}%`;
       case 'date':
@@ -207,6 +219,3 @@ export class FieldRendererComponent {
     this.copied.emit(this.stringValue);
   }
 }
-
-
-

@@ -3,7 +3,14 @@
  * Provides fluent builders for creating test data
  */
 
-import { AICardConfig, CardSection, CardField, CardItem, CardAction, SectionTypeInput } from '../models/card.model';
+import {
+  AICardConfig,
+  CardSection,
+  CardField,
+  CardItem,
+  CardAction,
+  SectionTypeInput,
+} from '../models/card.model';
 
 /**
  * Builder for creating test card configurations
@@ -262,11 +269,7 @@ export class TestSectionBuilder {
    */
   public asList(): this {
     this.data.type = 'list';
-    this.data.items = [
-      { title: 'Item 1' },
-      { title: 'Item 2' },
-      { title: 'Item 3' },
-    ];
+    this.data.items = [{ title: 'Item 1' }, { title: 'Item 2' }, { title: 'Item 3' }];
     return this;
   }
 
@@ -425,12 +428,7 @@ export class TestDataHelpers {
     const builder = TestCardBuilder.create().withTitle('Test Card');
 
     for (let i = 0; i < sectionCount; i++) {
-      builder.withSection(
-        TestSectionBuilder.create()
-          .withTitle(`Section ${i}`)
-          .asInfo()
-          .build()
-      );
+      builder.withSection(TestSectionBuilder.create().withTitle(`Section ${i}`).asInfo().build());
     }
 
     return builder.build();
@@ -465,4 +463,3 @@ export const TestBuilders = {
   Field: TestFieldBuilder,
   Helpers: TestDataHelpers,
 };
-

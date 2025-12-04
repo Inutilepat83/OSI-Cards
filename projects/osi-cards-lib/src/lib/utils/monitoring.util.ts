@@ -46,7 +46,7 @@ export class Monitor {
 
   getMetrics(name?: string): Metric[] {
     if (name) {
-      return this.metrics.filter(m => m.name === name);
+      return this.metrics.filter((m) => m.name === name);
     }
     return this.metrics;
   }
@@ -99,12 +99,12 @@ export function createHealthCheck(
 export async function runHealthChecks(
   checks: Array<() => Promise<HealthCheck>>
 ): Promise<HealthCheck[]> {
-  return Promise.all(checks.map(check => check()));
+  return Promise.all(checks.map((check) => check()));
 }
 
 export function getOverallHealth(checks: HealthCheck[]): 'healthy' | 'degraded' | 'unhealthy' {
-  const unhealthy = checks.filter(c => c.status === 'unhealthy').length;
-  const degraded = checks.filter(c => c.status === 'degraded').length;
+  const unhealthy = checks.filter((c) => c.status === 'unhealthy').length;
+  const degraded = checks.filter((c) => c.status === 'degraded').length;
 
   if (unhealthy > 0) return 'unhealthy';
   if (degraded > 0) return 'degraded';
@@ -120,4 +120,3 @@ export function trackMetric(name: string, value: number, tags?: Record<string, s
 export function getMetrics(name?: string): Metric[] {
   return globalMonitor.getMetrics(name);
 }
-

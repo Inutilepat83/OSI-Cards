@@ -24,11 +24,13 @@ import { NG_VALIDATORS, Validator, AbstractControl, ValidationErrors } from '@an
  */
 @Directive({
   selector: '[emailValidator]',
-  providers: [{
-    provide: NG_VALIDATORS,
-    useExisting: forwardRef(() => EmailValidatorDirective),
-    multi: true
-  }],
+  providers: [
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => EmailValidatorDirective),
+      multi: true,
+    },
+  ],
   standalone: true,
 })
 export class EmailValidatorDirective implements Validator {
@@ -45,11 +47,13 @@ export class EmailValidatorDirective implements Validator {
  */
 @Directive({
   selector: '[urlValidator]',
-  providers: [{
-    provide: NG_VALIDATORS,
-    useExisting: forwardRef(() => URLValidatorDirective),
-    multi: true
-  }],
+  providers: [
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => URLValidatorDirective),
+      multi: true,
+    },
+  ],
   standalone: true,
 })
 export class URLValidatorDirective implements Validator {
@@ -66,11 +70,13 @@ export class URLValidatorDirective implements Validator {
  */
 @Directive({
   selector: '[phoneValidator]',
-  providers: [{
-    provide: NG_VALIDATORS,
-    useExisting: forwardRef(() => PhoneValidatorDirective),
-    multi: true
-  }],
+  providers: [
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => PhoneValidatorDirective),
+      multi: true,
+    },
+  ],
   standalone: true,
 })
 export class PhoneValidatorDirective implements Validator {
@@ -87,11 +93,13 @@ export class PhoneValidatorDirective implements Validator {
  */
 @Directive({
   selector: '[minLengthValidator]',
-  providers: [{
-    provide: NG_VALIDATORS,
-    useExisting: forwardRef(() => MinLengthValidatorDirective),
-    multi: true
-  }],
+  providers: [
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => MinLengthValidatorDirective),
+      multi: true,
+    },
+  ],
   standalone: true,
 })
 export class MinLengthValidatorDirective implements Validator {
@@ -101,9 +109,11 @@ export class MinLengthValidatorDirective implements Validator {
     if (!control.value) return null;
 
     const length = control.value.length;
-    return length >= this.minLengthValidator ? null : {
-      minLength: { required: this.minLengthValidator, actual: length }
-    };
+    return length >= this.minLengthValidator
+      ? null
+      : {
+          minLength: { required: this.minLengthValidator, actual: length },
+        };
   }
 }
 
@@ -112,11 +122,13 @@ export class MinLengthValidatorDirective implements Validator {
  */
 @Directive({
   selector: '[maxLengthValidator]',
-  providers: [{
-    provide: NG_VALIDATORS,
-    useExisting: forwardRef(() => MaxLengthValidatorDirective),
-    multi: true
-  }],
+  providers: [
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => MaxLengthValidatorDirective),
+      multi: true,
+    },
+  ],
   standalone: true,
 })
 export class MaxLengthValidatorDirective implements Validator {
@@ -126,9 +138,11 @@ export class MaxLengthValidatorDirective implements Validator {
     if (!control.value) return null;
 
     const length = control.value.length;
-    return length <= this.maxLengthValidator ? null : {
-      maxLength: { required: this.maxLengthValidator, actual: length }
-    };
+    return length <= this.maxLengthValidator
+      ? null
+      : {
+          maxLength: { required: this.maxLengthValidator, actual: length },
+        };
   }
 }
 
@@ -137,11 +151,13 @@ export class MaxLengthValidatorDirective implements Validator {
  */
 @Directive({
   selector: '[patternValidator]',
-  providers: [{
-    provide: NG_VALIDATORS,
-    useExisting: forwardRef(() => PatternValidatorDirective),
-    multi: true
-  }],
+  providers: [
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => PatternValidatorDirective),
+      multi: true,
+    },
+  ],
   standalone: true,
 })
 export class PatternValidatorDirective implements Validator {
@@ -150,9 +166,10 @@ export class PatternValidatorDirective implements Validator {
   validate(control: AbstractControl): ValidationErrors | null {
     if (!control.value) return null;
 
-    const regex = typeof this.patternValidator === 'string'
-      ? new RegExp(this.patternValidator)
-      : this.patternValidator;
+    const regex =
+      typeof this.patternValidator === 'string'
+        ? new RegExp(this.patternValidator)
+        : this.patternValidator;
 
     return regex.test(control.value) ? null : { pattern: true };
   }
@@ -163,11 +180,13 @@ export class PatternValidatorDirective implements Validator {
  */
 @Directive({
   selector: '[rangeValidator]',
-  providers: [{
-    provide: NG_VALIDATORS,
-    useExisting: forwardRef(() => RangeValidatorDirective),
-    multi: true
-  }],
+  providers: [
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => RangeValidatorDirective),
+      multi: true,
+    },
+  ],
   standalone: true,
 })
 export class RangeValidatorDirective implements Validator {
@@ -180,9 +199,11 @@ export class RangeValidatorDirective implements Validator {
     const value = parseFloat(control.value);
     if (isNaN(value)) return { number: true };
 
-    return value >= this.rangeMin && value <= this.rangeMax ? null : {
-      range: { min: this.rangeMin, max: this.rangeMax, actual: value }
-    };
+    return value >= this.rangeMin && value <= this.rangeMax
+      ? null
+      : {
+          range: { min: this.rangeMin, max: this.rangeMax, actual: value },
+        };
   }
 }
 
@@ -191,11 +212,13 @@ export class RangeValidatorDirective implements Validator {
  */
 @Directive({
   selector: '[requiredValidator]',
-  providers: [{
-    provide: NG_VALIDATORS,
-    useExisting: forwardRef(() => RequiredValidatorDirective),
-    multi: true
-  }],
+  providers: [
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => RequiredValidatorDirective),
+      multi: true,
+    },
+  ],
   standalone: true,
 })
 export class RequiredValidatorDirective implements Validator {
@@ -210,11 +233,13 @@ export class RequiredValidatorDirective implements Validator {
  */
 @Directive({
   selector: '[matchValidator]',
-  providers: [{
-    provide: NG_VALIDATORS,
-    useExisting: forwardRef(() => MatchValidatorDirective),
-    multi: true
-  }],
+  providers: [
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => MatchValidatorDirective),
+      multi: true,
+    },
+  ],
   standalone: true,
 })
 export class MatchValidatorDirective implements Validator {
@@ -235,11 +260,13 @@ export class MatchValidatorDirective implements Validator {
  */
 @Directive({
   selector: '[customValidator]',
-  providers: [{
-    provide: NG_VALIDATORS,
-    useExisting: forwardRef(() => CustomValidatorDirective),
-    multi: true
-  }],
+  providers: [
+    {
+      provide: NG_VALIDATORS,
+      useExisting: forwardRef(() => CustomValidatorDirective),
+      multi: true,
+    },
+  ],
   standalone: true,
 })
 export class CustomValidatorDirective implements Validator {
@@ -249,9 +276,11 @@ export class CustomValidatorDirective implements Validator {
   validate(control: AbstractControl): ValidationErrors | null {
     if (!control.value) return null;
 
-    return this.customValidator(control.value) ? null : {
-      [this.customValidatorError]: true
-    };
+    return this.customValidator(control.value)
+      ? null
+      : {
+          [this.customValidatorError]: true,
+        };
   }
 }
 
@@ -268,4 +297,3 @@ export const VALIDATION_DIRECTIVES = [
   MatchValidatorDirective,
   CustomValidatorDirective,
 ];
-

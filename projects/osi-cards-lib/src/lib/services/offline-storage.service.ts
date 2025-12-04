@@ -53,7 +53,7 @@ export class OfflineStorageService {
   private readonly config: Required<OfflineStorageConfig> = {
     dbName: 'osi-cards-offline',
     dbVersion: 1,
-    storeName: 'cards'
+    storeName: 'cards',
   };
 
   /**
@@ -104,7 +104,7 @@ export class OfflineStorageService {
       data,
       timestamp: Date.now(),
       expires: expiresIn ? Date.now() + expiresIn : undefined,
-      synced: true
+      synced: true,
     };
 
     return new Promise((resolve, reject) => {
@@ -159,7 +159,7 @@ export class OfflineStorageService {
         const results = request.result as StoredCard[];
         // Filter out expired cards
         const now = Date.now();
-        const valid = results.filter(card => !card.expires || card.expires > now);
+        const valid = results.filter((card) => !card.expires || card.expires > now);
         resolve(valid);
       };
       request.onerror = () => reject(new Error('Failed to get all cards'));
@@ -207,7 +207,7 @@ export class OfflineStorageService {
 
     return {
       count: cards.length,
-      totalSize
+      totalSize,
     };
   }
 
@@ -235,7 +235,7 @@ export class OfflineStorageService {
    */
   async getUnsyncedCards(): Promise<StoredCard[]> {
     const cards = await this.getAllCards();
-    return cards.filter(card => !card.synced);
+    return cards.filter((card) => !card.synced);
   }
 
   /**
@@ -279,6 +279,3 @@ export class OfflineStorageService {
     }
   }
 }
-
-
-

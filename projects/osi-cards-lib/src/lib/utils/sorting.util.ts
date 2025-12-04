@@ -86,10 +86,7 @@ export function sortByDate<T>(
 /**
  * Stable sort
  */
-export function stableSort<T>(
-  items: T[],
-  compareFn: (a: T, b: T) => number
-): T[] {
+export function stableSort<T>(items: T[], compareFn: (a: T, b: T) => number): T[] {
   return items
     .map((item, index) => ({ item, index }))
     .sort((a, b) => {
@@ -137,22 +134,13 @@ export function sortCaseInsensitive(items: string[], order: SortOrder = 'asc'): 
 /**
  * Top N items
  */
-export function topN<T>(
-  items: T[],
-  n: number,
-  compareFn: (a: T, b: T) => number
-): T[] {
+export function topN<T>(items: T[], n: number, compareFn: (a: T, b: T) => number): T[] {
   return [...items].sort(compareFn).slice(0, n);
 }
 
 /**
  * Bottom N items
  */
-export function bottomN<T>(
-  items: T[],
-  n: number,
-  compareFn: (a: T, b: T) => number
-): T[] {
+export function bottomN<T>(items: T[], n: number, compareFn: (a: T, b: T) => number): T[] {
   return [...items].sort(compareFn).slice(-n);
 }
-

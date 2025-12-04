@@ -51,8 +51,8 @@ export function createAuthInterceptor(
     if (token) {
       req = req.clone({
         setHeaders: {
-          [headerName]: `${tokenPrefix}${token}`
-        }
+          [headerName]: `${tokenPrefix}${token}`,
+        },
       });
     }
 
@@ -88,8 +88,9 @@ export function createLoggingInterceptor(
     });
 
     return next(req).pipe(
-      tap(event => {
-        if (event.type === 4) { // HttpEventType.Response
+      tap((event) => {
+        if (event.type === 4) {
+          // HttpEventType.Response
           const elapsed = Date.now() - started;
           log('HTTP Response', {
             method: req.method,
@@ -99,7 +100,7 @@ export function createLoggingInterceptor(
           });
         }
       }),
-      catchError(error => {
+      catchError((error) => {
         const elapsed = Date.now() - started;
         log('HTTP Error', {
           method: req.method,
@@ -171,7 +172,7 @@ export function createRetryInterceptor(options: {
           // Exponential backoff
           const backoffDelay = delay * Math.pow(2, retryCount - 1);
           return timer(backoffDelay);
-        }
+        },
       })
     );
   };
@@ -210,7 +211,7 @@ export function createBaseUrlInterceptor(baseUrl: string): HttpInterceptorFn {
     // Only prepend if URL is relative
     if (!req.url.startsWith('http')) {
       req = req.clone({
-        url: `${baseUrl}${req.url}`
+        url: `${baseUrl}${req.url}`,
       });
     }
 
@@ -232,12 +233,10 @@ export function createBaseUrlInterceptor(baseUrl: string): HttpInterceptorFn {
  * });
  * ```
  */
-export function createHeaderInterceptor(
-  headers: Record<string, string>
-): HttpInterceptorFn {
+export function createHeaderInterceptor(headers: Record<string, string>): HttpInterceptorFn {
   return (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
     req = req.clone({
-      setHeaders: headers
+      setHeaders: headers,
     });
 
     return next(req);
@@ -266,7 +265,7 @@ export function createErrorHandlerInterceptor(
 ): HttpInterceptorFn {
   return (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
     return next(req).pipe(
-      catchError(error => {
+      catchError((error) => {
         errorHandler(error);
         return throwError(() => error);
       })
@@ -293,15 +292,16 @@ export function createCacheInterceptor(
 
     const cached = cache.get(req.url);
     if (cached) {
-      return new Observable(observer => {
+      return new Observable((observer) => {
         observer.next(cached);
         observer.complete();
       });
     }
 
     return next(req).pipe(
-      tap(event => {
-        if (event.type === 4) { // Response
+      tap((event) => {
+        if (event.type === 4) {
+          // Response
           cache.set(req.url, event);
         }
       })
@@ -325,4 +325,3 @@ export function createCacheInterceptor(
  * )
  * ```
  */
-

@@ -195,10 +195,7 @@ export function lazyLoadModule<T>(loader: () => Promise<T>): LazyLoader<T> {
  * // Only loads once
  * ```
  */
-export async function lazyLoadCached<T>(
-  key: string,
-  loader: () => Promise<T>
-): Promise<T> {
+export async function lazyLoadCached<T>(key: string, loader: () => Promise<T>): Promise<T> {
   const lazyLoader = globalLazyLoadCache.getOrCreate(key, loader);
   return lazyLoader.load();
 }
@@ -240,9 +237,7 @@ export async function lazyLoadWithRetry<T>(
     }
   }
 
-  throw new Error(
-    `Lazy load failed after ${maxAttempts} attempts: ${lastError?.message}`
-  );
+  throw new Error(`Lazy load failed after ${maxAttempts} attempts: ${lastError?.message}`);
 }
 
 /**
@@ -297,4 +292,3 @@ export function lazyLoadIdle<T>(loader: () => Promise<T>): LazyLoader<T> {
 
   return lazyLoader;
 }
-

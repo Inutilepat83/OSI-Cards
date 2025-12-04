@@ -1,27 +1,31 @@
 /**
  * Skyline Bin-Packing Algorithm
- * 
+ *
  * Advanced layout algorithm that maintains a "skyline" of column tops
  * for optimal section placement. Provides better space utilization than
  * the simpler First Fit Decreasing Height (FFDH) algorithm.
- * 
+ *
  * The algorithm:
  * 1. Maintains a skyline (list of segment heights) representing the "top edge"
  * 2. For each section, finds the best position where it fits with minimal waste
  * 3. Updates the skyline after placement
  * 4. Supports multi-column spanning sections
- * 
+ *
  * @example
  * ```typescript
  * import { SkylinePacker } from 'osi-cards-lib';
- * 
+ *
  * const packer = new SkylinePacker(4, 1200); // 4 columns, 1200px width
  * const layout = packer.pack(sections);
  * ```
  */
 
 import { CardSection } from '../models/card.model';
-import { estimateSectionHeight, measureContentDensity, calculatePriorityScore } from './smart-grid.util';
+import {
+  estimateSectionHeight,
+  measureContentDensity,
+  calculatePriorityScore,
+} from './smart-grid.util';
 
 // ============================================================================
 // TYPES AND INTERFACES
@@ -44,11 +48,11 @@ export interface SkylineSegment {
  */
 export interface PlacedSection {
   section: CardSection;
-  x: number;           // Left position (column index)
-  y: number;           // Top position (pixels)
-  width: number;       // Width in columns
-  height: number;      // Height in pixels
-  priority: number;    // Priority score
+  x: number; // Left position (column index)
+  y: number; // Top position (pixels)
+  width: number; // Width in columns
+  height: number; // Height in pixels
+  priority: number; // Priority score
   wastedSpace: number; // Wasted space at this position
 }
 
@@ -134,17 +138,19 @@ export class SkylinePacker {
    * Resets the packer to initial state
    */
   reset(): void {
-    this.skyline = [{
-      x: 0,
-      width: this.config.columns,
-      y: 0,
-    }];
+    this.skyline = [
+      {
+        x: 0,
+        width: this.config.columns,
+        y: 0,
+      },
+    ];
     this.placements = [];
   }
 
   /**
    * Packs sections using the skyline algorithm
-   * 
+   *
    * @param sections - Sections to pack
    * @param options - Packing options
    * @returns Packing result with placements and metrics
@@ -184,13 +190,8 @@ export class SkylinePacker {
 
     // Place each section
     for (const item of sectionsToPlace) {
-      const placement = this.placeSection(
-        item.section,
-        item.colSpan,
-        item.height,
-        item.priority
-      );
-      
+      const placement = this.placeSection(item.section, item.colSpan, item.height, item.priority);
+
       if (placement) {
         this.placements.push(placement);
         this.updateSkyline(placement);
@@ -211,7 +212,7 @@ export class SkylinePacker {
   ): PlacedSection | null {
     // Clamp colSpan to available columns
     const effectiveColSpan = Math.min(colSpan, this.config.columns);
-    
+
     // Find best position
     const candidate = this.config.useBestFit
       ? this.findBestFit(effectiveColSpan, height)
@@ -286,11 +287,7 @@ export class SkylinePacker {
   /**
    * Evaluates a potential placement position
    */
-  private evaluatePosition(
-    x: number,
-    colSpan: number,
-    height: number
-  ): PlacementCandidate | null {
+  private evaluatePosition(x: number, colSpan: number, height: number): PlacementCandidate | null {
     // Find the maximum Y among all segments this placement would span
     let maxY = 0;
     let touchedSegments = 0;
@@ -323,7 +320,7 @@ export class SkylinePacker {
         const overlapStart = Math.max(segment.x, x);
         const overlapEnd = Math.min(segmentEnd, placementEnd);
         const overlapWidth = overlapEnd - overlapStart;
-        
+
         // Wasted space is the gap between segment top and placement bottom
         const gap = maxY - segment.y;
         if (gap > 0) {
@@ -334,11 +331,7 @@ export class SkylinePacker {
 
     // Fitness score: lower is better
     // Prioritize: lower Y position, less wasted space, fewer touched segments
-    const fitnessScore = 
-      maxY * 1000 + 
-      wastedSpace * 0.01 + 
-      touchedSegments * 10 +
-      x * 0.001; // Slight preference for left positions
+    const fitnessScore = maxY * 1000 + wastedSpace * 0.01 + touchedSegments * 10 + x * 0.001; // Slight preference for left positions
 
     return {
       segmentIndex: 0, // Will be set by caller
@@ -426,7 +419,7 @@ export class SkylinePacker {
 
     for (let i = 1; i < segments.length; i++) {
       const next = segments[i]!;
-      
+
       // Check if segments are adjacent and at same height
       if (current.x + current.width === next.x && current.y === next.y) {
         // Merge: extend current segment
@@ -459,14 +452,14 @@ export class SkylinePacker {
     // Type-based defaults
     const type = section.type?.toLowerCase() ?? '';
     const typeDefaults: Record<string, number> = {
-      'overview': 4,
-      'chart': 2,
-      'map': 2,
-      'analytics': 1,
+      overview: 4,
+      chart: 2,
+      map: 2,
+      analytics: 1,
       'contact-card': 1,
       'network-card': 1,
-      'info': 1,
-      'list': 1,
+      info: 1,
+      list: 1,
     };
 
     return Math.min(typeDefaults[type] ?? 1, this.config.columns);
@@ -477,12 +470,12 @@ export class SkylinePacker {
    */
   private getResult(): PackingResult {
     // Calculate total height from skyline
-    const totalHeight = Math.max(...this.skyline.map(s => s.y), 0);
+    const totalHeight = Math.max(...this.skyline.map((s) => s.y), 0);
 
     // Calculate utilization
     const totalArea = this.config.containerWidth * totalHeight;
     const usedArea = this.placements.reduce(
-      (sum, p) => sum + (p.width * this.columnWidth * p.height),
+      (sum, p) => sum + p.width * this.columnWidth * p.height,
       0
     );
     const utilization = totalArea > 0 ? (usedArea / totalArea) * 100 : 0;
@@ -491,8 +484,8 @@ export class SkylinePacker {
     const wastedSpace = this.placements.reduce((sum, p) => sum + p.wastedSpace, 0);
 
     // Count gaps (segments below max height)
-    const maxSegmentY = Math.max(...this.skyline.map(s => s.y));
-    const gapCount = this.skyline.filter(s => s.y < maxSegmentY).length;
+    const maxSegmentY = Math.max(...this.skyline.map((s) => s.y));
+    const gapCount = this.skyline.filter((s) => s.y < maxSegmentY).length;
 
     return {
       placements: this.placements,
@@ -511,7 +504,7 @@ export class SkylinePacker {
 
 /**
  * Packs sections using skyline algorithm with default configuration
- * 
+ *
  * @param sections - Sections to pack
  * @param columns - Number of columns
  * @param containerWidth - Container width in pixels
@@ -544,7 +537,7 @@ export function packWithSkyline(
 
 /**
  * Converts skyline packing result to positioned sections for rendering
- * 
+ *
  * @param result - Packing result from skyline algorithm
  * @param columns - Number of columns
  * @param gap - Gap between items
@@ -561,18 +554,18 @@ export function skylineResultToPositions(
   width: string;
   colSpan: number;
 }> {
-  return result.placements.map(placement => {
+  return result.placements.map((placement) => {
     // Calculate CSS expressions
     const totalGaps = gap * (columns - 1);
     const singleColWidth = `calc((100% - ${totalGaps}px) / ${columns})`;
-    
-    const width = placement.width === 1
-      ? singleColWidth
-      : `calc(${singleColWidth} * ${placement.width} + ${gap * (placement.width - 1)}px)`;
-    
-    const left = placement.x === 0
-      ? '0px'
-      : `calc((${singleColWidth} + ${gap}px) * ${placement.x})`;
+
+    const width =
+      placement.width === 1
+        ? singleColWidth
+        : `calc(${singleColWidth} * ${placement.width} + ${gap * (placement.width - 1)}px)`;
+
+    const left =
+      placement.x === 0 ? '0px' : `calc((${singleColWidth} + ${gap}px) * ${placement.x})`;
 
     return {
       section: placement.section,
@@ -586,7 +579,7 @@ export function skylineResultToPositions(
 
 /**
  * Compares packing efficiency between FFDH and Skyline algorithms
- * 
+ *
  * @param sections - Sections to pack
  * @param columns - Number of columns
  * @param containerWidth - Container width
@@ -606,7 +599,7 @@ export function comparePacking(
   };
 } {
   const skylineResult = packWithSkyline(sections, columns, containerWidth);
-  
+
   // For comparison, we'd need to run the FFDH algorithm too
   // Here we return just the skyline result with placeholder comparison
   return {
@@ -619,12 +612,3 @@ export function comparePacking(
     },
   };
 }
-
-
-
-
-
-
-
-
-

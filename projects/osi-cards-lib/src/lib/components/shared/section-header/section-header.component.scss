@@ -2,7 +2,7 @@
 // SECTION HEADER - Ultra Compact
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
+@use "../../../styles/components/sections/design-system" as *;
 
 :host {
   display: block;
@@ -24,12 +24,27 @@
   font-size: 1rem;
   font-weight: 700;
 
-  &:is(h1) { font-size: 1.6rem; }
-  &:is(h2) { font-size: 1.3rem; }
-  &:is(h3) { font-size: 1rem; }
-  &:is(h4) { font-size: 0.85rem; font-weight: 600; }
-  &:is(h5) { font-size: 0.75rem; font-weight: 600; }
-  &:is(h6) { font-size: 0.7rem; font-weight: 600; }
+  &:is(h1) {
+    font-size: 1.6rem;
+  }
+  &:is(h2) {
+    font-size: 1.3rem;
+  }
+  &:is(h3) {
+    font-size: 1rem;
+  }
+  &:is(h4) {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  &:is(h5) {
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  &:is(h6) {
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
 }
 
 .section-description {
@@ -47,9 +62,15 @@
   }
 
   .section-title {
-    &:is(h1) { font-size: 1.4rem; }
-    &:is(h2) { font-size: 1.1rem; }
-    &:is(h3) { font-size: 0.9rem; }
+    &:is(h1) {
+      font-size: 1.4rem;
+    }
+    &:is(h2) {
+      font-size: 1.1rem;
+    }
+    &:is(h3) {
+      font-size: 0.9rem;
+    }
   }
 
   .section-description {

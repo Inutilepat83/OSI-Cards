@@ -31,18 +31,22 @@ export * from './app/shared/services/command.service';
 export * from './app/shared/services/confirmation-dialog.service';
 export * from './app/shared/services/optimistic-updates.service';
 export * from './app/shared/services/section-completion.service';
-export * from './app/shared/services/toast.service';
+// Toast service now in library - use osi-cards-lib
+// export * from './app/shared/services/toast.service';
 
 // Shared Utils - Export individually to avoid conflicts with core exports
 export * from './app/shared/utils/alt-text.util';
 export * from './app/shared/utils/batch-conversion.util';
 export * from './app/shared/utils/card-utils';
-export * from './app/shared/utils/compression.util';
+// Compression now in library - use osi-cards-lib
+// export * from './app/shared/utils/compression.util';
 export * from './app/shared/utils/error-recovery.util';
 export * from './app/shared/utils/form-labels.util';
-export * from './app/shared/utils/pagination.util';
+// Pagination now in library - use osi-cards-lib
+// export * from './app/shared/utils/pagination.util';
 export * from './app/shared/utils/resource-hints.util';
-export * from './app/shared/utils/validation.util';
+// Validation util exports - export Validator but not ValidationResult (conflicts with core)
+export { FormValidator, Validator } from './app/shared/utils/validation.util';
 // Memoization now in library - don't export from app utils
 // export * from './app/shared/utils/memoization.util';
 export * from './app/shared/utils/base-classes.util';
@@ -56,13 +60,15 @@ export * from './app/shared/utils/command-pattern.util';
 export * from './app/shared/utils/contract-testing.util';
 export * from './app/shared/utils/css-optimization.util';
 export * from './app/shared/utils/dependency-injection-tokens.util';
-export * from './app/shared/utils/drag-drop.util';
+// Drag-drop now in library - use osi-cards-lib
+// export * from './app/shared/utils/drag-drop.util';
 export * from './app/shared/utils/event-bus.util';
 export * from './app/shared/utils/facade-pattern.util';
 export * from './app/shared/utils/improved-error-messages.util';
 export * from './app/shared/utils/interface-segregation.util';
 export * from './app/shared/utils/memory-management.util';
-export * from './app/shared/utils/progressive-loading.util';
+// Progressive loading now in library - use osi-cards-lib
+// export * from './app/shared/utils/progressive-loading.util';
 export * from './app/shared/utils/rate-limiting.util';
 export * from './app/shared/utils/repository-pattern.util';
 export * from './app/shared/utils/request-cancellation.util';
@@ -72,7 +78,8 @@ export * from './app/shared/utils/snapshot-testing.util';
 export * from './app/shared/utils/test-utilities.util';
 export * from './app/shared/utils/track-by.util';
 export * from './app/shared/utils/type-guards-enhanced.util';
-export * from './app/shared/utils/url.util';
+// URL utils now in library - use osi-cards-lib
+// export * from './app/shared/utils/url.util';
 export * from './app/shared/utils/virtual-scrolling.util';
 
 // Models (excluding ValidationResult which conflicts with core)

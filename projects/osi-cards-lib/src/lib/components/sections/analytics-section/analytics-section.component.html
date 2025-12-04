@@ -1,19 +1,12 @@
 <div class="analytics-section">
-  <lib-section-header
-    *ngIf="section.title"
-    [title]="section.title"
-    [description]="section.description">
+  <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
   <div class="analytics-grid" *ngIf="section.fields?.length">
     <div class="metric-card" *ngFor="let metric of section.fields">
       <div class="metric-header">
         <span class="metric-label">{{ metric.label }}</span>
-        <lib-trend-indicator
-          *ngIf="metric.trend"
-          [trend]="getTrend(metric.trend)"
-          [value]="metric.change"
-          size="small">
+        <lib-trend-indicator *ngIf="metric.trend" [trend]="getTrend(metric.trend)" [value]="metric.change" size="small">
         </lib-trend-indicator>
       </div>
       <div class="metric-value">{{ metric.value }}</div>
@@ -22,21 +15,15 @@
         [value]="metric.percentage"
         [variant]="getVariant(metric.performance)"
         [shimmer]="true"
-        size="small">
+        size="small"
+      >
       </lib-progress-bar>
-      <lib-badge
-        *ngIf="metric.performance"
-        [variant]="getBadgeVariant(metric.performance)"
-        size="sm">
+      <lib-badge *ngIf="metric.performance" [variant]="getBadgeVariant(metric.performance)" size="sm">
         {{ metric.performance }}
       </lib-badge>
     </div>
   </div>
 
-  <lib-empty-state
-    *ngIf="!section.fields?.length"
-    message="No analytics data"
-    icon="📊"
-    variant="minimal">
+  <lib-empty-state *ngIf="!section.fields?.length" message="No analytics data" icon="📊" variant="minimal">
   </lib-empty-state>
 </div>

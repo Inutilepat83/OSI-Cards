@@ -29,11 +29,23 @@
     "properties": {
       "label": { "type": "string", "description": "Event label" },
       "value": { "type": "string", "description": "Event name/description" },
-      "date": { "type": "string", "format": "date", "description": "Event date" },
+      "date": {
+        "type": "string",
+        "format": "date",
+        "description": "Event date"
+      },
       "time": { "type": "string", "description": "Event time" },
-      "endDate": { "type": "string", "format": "date", "description": "Event end date" },
+      "endDate": {
+        "type": "string",
+        "format": "date",
+        "description": "Event end date"
+      },
       "category": { "type": "string", "description": "Event category" },
-      "status": { "type": "string", "enum": ["confirmed", "planned", "tentative", "cancelled", "completed"], "description": "Event status" },
+      "status": {
+        "type": "string",
+        "enum": ["confirmed", "planned", "tentative", "cancelled", "completed"],
+        "description": "Event status"
+      },
       "location": { "type": "string", "description": "Event location" },
       "attendees": { "type": "number", "description": "Number of attendees" }
     },
@@ -141,14 +153,32 @@
       "title": "Event Edge Cases",
       "type": "event",
       "fields": [
-        { "label": "Past Event", "value": "Historical Milestone", "date": "2020-01-01", "status": "completed" },
-        { "label": "Far Future", "value": "Long-term Planning", "date": "2030-12-31", "status": "tentative" },
-        { "label": "Cancelled Event", "value": "Postponed Conference", "date": "2025-06-01", "status": "cancelled" },
-        { "label": "All Day Event", "value": "Company Holiday", "date": "2025-12-25", "time": "", "status": "confirmed" }
+        {
+          "label": "Past Event",
+          "value": "Historical Milestone",
+          "date": "2020-01-01",
+          "status": "completed"
+        },
+        {
+          "label": "Far Future",
+          "value": "Long-term Planning",
+          "date": "2030-12-31",
+          "status": "tentative"
+        },
+        {
+          "label": "Cancelled Event",
+          "value": "Postponed Conference",
+          "date": "2025-06-01",
+          "status": "cancelled"
+        },
+        {
+          "label": "All Day Event",
+          "value": "Company Holiday",
+          "date": "2025-12-25",
+          "time": "",
+          "status": "confirmed"
+        }
       ]
     }
   }
 }
-
-
-

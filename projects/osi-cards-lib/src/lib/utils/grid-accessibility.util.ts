@@ -1,17 +1,17 @@
 /**
  * Grid Accessibility Utilities
- * 
+ *
  * Provides accessibility enhancements for grid layouts including:
  * - Reduced motion alternatives
  * - Screen reader announcements
  * - Keyboard navigation (roving tabindex)
  * - Focus management
  * - High contrast mode support
- * 
+ *
  * @example
  * ```typescript
  * import { GridAccessibilityManager } from 'osi-cards-lib';
- * 
+ *
  * const a11y = new GridAccessibilityManager(gridContainer);
  * a11y.enableKeyboardNavigation();
  * a11y.announceLoadProgress(3, 8);
@@ -101,11 +101,11 @@ export class GridAccessibilityManager {
   private focusState: FocusState;
   private navConfig: Required<KeyboardNavConfig>;
   private announcementConfig: Required<AnnouncementConfig>;
-  
+
   private liveRegion: HTMLElement | null = null;
   private keydownHandler: ((e: KeyboardEvent) => void) | null = null;
   private prefChangeCleanup: (() => void)[] = [];
-  
+
   private preferences: A11yPreferences = {
     reducedMotion: false,
     highContrast: false,
@@ -123,7 +123,7 @@ export class GridAccessibilityManager {
     this.container = container;
     this.navConfig = { ...DEFAULT_NAV_CONFIG, ...options?.navConfig };
     this.announcementConfig = { ...DEFAULT_ANNOUNCEMENT_CONFIG, ...options?.announcementConfig };
-    
+
     this.focusState = {
       currentIndex: 0,
       totalItems: 0,
@@ -142,7 +142,7 @@ export class GridAccessibilityManager {
   destroy(): void {
     this.disableKeyboardNavigation();
     this.removeLiveRegion();
-    this.prefChangeCleanup.forEach(cleanup => cleanup());
+    this.prefChangeCleanup.forEach((cleanup) => cleanup());
     this.prefChangeCleanup = [];
   }
 
@@ -279,8 +279,8 @@ export class GridAccessibilityManager {
 
       case 'End':
         if (this.navConfig.homeEndKeys) {
-          newIndex = e.ctrlKey 
-            ? totalItems - 1 
+          newIndex = e.ctrlKey
+            ? totalItems - 1
             : Math.min(Math.floor(currentIndex / columns) * columns + columns - 1, totalItems - 1);
           e.preventDefault();
         }
@@ -451,7 +451,7 @@ export class GridAccessibilityManager {
     };
     handleReducedMotion(reducedMotionQuery);
     reducedMotionQuery.addEventListener('change', handleReducedMotion);
-    this.prefChangeCleanup.push(() => 
+    this.prefChangeCleanup.push(() =>
       reducedMotionQuery.removeEventListener('change', handleReducedMotion)
     );
 
@@ -462,7 +462,7 @@ export class GridAccessibilityManager {
     };
     handleHighContrast(highContrastQuery);
     highContrastQuery.addEventListener('change', handleHighContrast);
-    this.prefChangeCleanup.push(() => 
+    this.prefChangeCleanup.push(() =>
       highContrastQuery.removeEventListener('change', handleHighContrast)
     );
 
@@ -473,7 +473,7 @@ export class GridAccessibilityManager {
     };
     handleColorScheme(darkModeQuery);
     darkModeQuery.addEventListener('change', handleColorScheme);
-    this.prefChangeCleanup.push(() => 
+    this.prefChangeCleanup.push(() =>
       darkModeQuery.removeEventListener('change', handleColorScheme)
     );
   }
@@ -611,11 +611,11 @@ export function applyFocusStyles(element: HTMLElement): void {
 export function isAccessiblyVisible(element: HTMLElement): boolean {
   if (element.hidden) return false;
   if (element.getAttribute('aria-hidden') === 'true') return false;
-  
+
   const style = getComputedStyle(element);
   if (style.display === 'none') return false;
   if (style.visibility === 'hidden') return false;
-  
+
   return true;
 }
 
@@ -678,12 +678,3 @@ export function createFocusTrap(container: HTMLElement): {
     },
   };
 }
-
-
-
-
-
-
-
-
-

@@ -18,14 +18,11 @@ export interface TreeNode<T = any> {
   children?: TreeNode<T>[];
 }
 
-export function flattenTree<T extends TreeNode>(
-  tree: T[],
-  childrenKey = 'children'
-): T[] {
+export function flattenTree<T extends TreeNode>(tree: T[], childrenKey = 'children'): T[] {
   const result: T[] = [];
 
   function traverse(nodes: T[]): void {
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       result.push(node);
       if (node[childrenKey]) {
         traverse(node[childrenKey]);
@@ -46,11 +43,11 @@ export function buildTree<T extends Record<string, any>>(
   const map = new Map<any, T>();
   const roots: T[] = [];
 
-  items.forEach(item => {
+  items.forEach((item) => {
     map.set(item[idKey], { ...item, [childrenKey]: [] });
   });
 
-  items.forEach(item => {
+  items.forEach((item) => {
     const node = map.get(item[idKey])!;
     const parentId = item[parentKey];
 
@@ -89,7 +86,7 @@ export function mapTree<T extends TreeNode, U extends TreeNode>(
   mapper: (node: T) => U,
   childrenKey = 'children'
 ): U[] {
-  return tree.map(node => {
+  return tree.map((node) => {
     const mapped = mapper(node);
     if (node[childrenKey]) {
       (mapped as any)[childrenKey] = mapTree(node[childrenKey], mapper, childrenKey);
@@ -105,7 +102,7 @@ export function filterTree<T extends TreeNode>(
 ): T[] {
   const filtered: T[] = [];
 
-  tree.forEach(node => {
+  tree.forEach((node) => {
     if (predicate(node)) {
       const newNode = { ...node } as any;
       if (node[childrenKey]) {
@@ -118,15 +115,12 @@ export function filterTree<T extends TreeNode>(
   return filtered;
 }
 
-export function getTreeDepth<T extends TreeNode>(
-  tree: T[],
-  childrenKey = 'children'
-): number {
+export function getTreeDepth<T extends TreeNode>(tree: T[], childrenKey = 'children'): number {
   let maxDepth = 0;
 
   function traverse(nodes: T[], depth: number): void {
     maxDepth = Math.max(maxDepth, depth);
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       if (node[childrenKey]) {
         traverse(node[childrenKey], depth + 1);
       }
@@ -137,10 +131,7 @@ export function getTreeDepth<T extends TreeNode>(
   return maxDepth;
 }
 
-export function getTreeNodeCount<T extends TreeNode>(
-  tree: T[],
-  childrenKey = 'children'
-): number {
+export function getTreeNodeCount<T extends TreeNode>(tree: T[], childrenKey = 'children'): number {
   return flattenTree(tree, childrenKey).length;
 }
 
@@ -167,4 +158,3 @@ export function getPath<T extends TreeNode>(
 
   return traverse(tree, []);
 }
-

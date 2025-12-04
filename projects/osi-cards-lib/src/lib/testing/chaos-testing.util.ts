@@ -123,11 +123,7 @@ export class ChaosEngineer {
     // Check steady state after recovery
     await this.sleep(1000); // Allow time for recovery
     const finalState = await experiment.steadyStateHypothesis();
-    observations.push(
-      finalState
-        ? 'System recovered to steady state'
-        : 'System failed to recover'
-    );
+    observations.push(finalState ? 'System recovered to steady state' : 'System failed to recover');
 
     const duration = performance.now() - startTime;
 
@@ -446,4 +442,3 @@ export class ChaosExperiments {
  * });
  * ```
  */
-

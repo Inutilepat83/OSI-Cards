@@ -19,8 +19,10 @@
             type="button"
             class="toggle-switch"
             role="switch"
-            [attr.aria-checked]="theme === 'day'"
-            [attr.aria-label]="theme === 'day' ? 'Switch to night theme' : 'Switch to day theme'"
+            [attr.aria-checked]="currentTheme === 'day' || currentTheme === 'light'"
+            [attr.aria-label]="
+              currentTheme === 'day' || currentTheme === 'light' ? 'Switch to night theme' : 'Switch to day theme'
+            "
             (click)="toggleTheme()"
           >
             <span class="toggle-thumb"></span>

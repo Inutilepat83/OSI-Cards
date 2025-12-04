@@ -27,8 +27,8 @@ export function parseMarkdownBasic(markdown: string): string {
 export function parseCSV(csv: string, delimiter = ','): string[][] {
   return csv
     .split('\n')
-    .filter(line => line.trim())
-    .map(line => line.split(delimiter).map(cell => cell.trim()));
+    .filter((line) => line.trim())
+    .map((line) => line.split(delimiter).map((cell) => cell.trim()));
 }
 
 export function parseINI(ini: string): Record<string, Record<string, string>> {
@@ -36,7 +36,7 @@ export function parseINI(ini: string): Record<string, Record<string, string>> {
   let currentSection = 'default';
   result[currentSection] = {};
 
-  ini.split('\n').forEach(line => {
+  ini.split('\n').forEach((line) => {
     line = line.trim();
 
     if (!line || line.startsWith(';') || line.startsWith('#')) return;
@@ -61,14 +61,14 @@ export function parseYAMLBasic(yaml: string): any {
   let currentIndent = 0;
   let currentObj: any = result;
 
-  lines.forEach(line => {
+  lines.forEach((line) => {
     if (!line.trim() || line.trim().startsWith('#')) return;
 
     const indent = line.search(/\S/);
     const content = line.trim();
 
     if (content.includes(':')) {
-      const [key, value] = content.split(':').map(s => s.trim());
+      const [key, value] = content.split(':').map((s) => s.trim());
       currentObj[key] = value || {};
     }
   });
@@ -134,4 +134,3 @@ export function parseUserAgent(ua: string): {
 
   return { browser, version, os, mobile };
 }
-

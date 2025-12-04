@@ -16,12 +16,12 @@ describe('CardActionsComponent', () => {
   const mockActions: CardAction[] = [
     { id: '1', label: 'Primary Action', variant: 'primary' },
     { id: '2', label: 'Secondary Action', variant: 'secondary' },
-    { id: '3', label: 'Website', type: 'website', url: 'https://example.com', variant: 'outline' }
+    { id: '3', label: 'Website', type: 'website', url: 'https://example.com', variant: 'outline' },
   ];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CardActionsComponent]
+      imports: [CardActionsComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CardActionsComponent);
@@ -46,9 +46,9 @@ describe('CardActionsComponent', () => {
       fixture.detectChanges();
 
       const buttons = fixture.debugElement.queryAll(By.css('button'));
-      const labels = buttons.map(b => b.nativeElement.textContent.trim());
+      const labels = buttons.map((b) => b.nativeElement.textContent.trim());
 
-      expect(labels.some(l => l.includes('Primary Action'))).toBeTruthy();
+      expect(labels.some((l) => l.includes('Primary Action'))).toBeTruthy();
     });
 
     it('should handle empty actions array', () => {
@@ -109,7 +109,7 @@ describe('CardActionsComponent', () => {
   describe('Action Types', () => {
     it('should render website action with external link indicator', () => {
       component.actions = [
-        { id: '1', label: 'Visit Site', type: 'website', url: 'https://example.com' }
+        { id: '1', label: 'Visit Site', type: 'website', url: 'https://example.com' },
       ];
       fixture.detectChanges();
 
@@ -126,9 +126,9 @@ describe('CardActionsComponent', () => {
           email: {
             to: 'test@example.com',
             subject: 'Test',
-            body: 'Test body'
-          }
-        }
+            body: 'Test body',
+          },
+        },
       ];
       fixture.detectChanges();
 
@@ -137,9 +137,7 @@ describe('CardActionsComponent', () => {
     });
 
     it('should render agent action', () => {
-      component.actions = [
-        { id: '1', label: 'Talk to Agent', type: 'agent', agentId: 'agent-1' }
-      ];
+      component.actions = [{ id: '1', label: 'Talk to Agent', type: 'agent', agentId: 'agent-1' }];
       fixture.detectChanges();
 
       const button = fixture.debugElement.query(By.css('button'));
@@ -148,7 +146,7 @@ describe('CardActionsComponent', () => {
 
     it('should render question action', () => {
       component.actions = [
-        { id: '1', label: 'Ask Question', type: 'question', question: 'How can I help?' }
+        { id: '1', label: 'Ask Question', type: 'question', question: 'How can I help?' },
       ];
       fixture.detectChanges();
 
@@ -177,7 +175,7 @@ describe('CardActionsComponent', () => {
       fixture.detectChanges();
 
       let emittedAction: CardAction | undefined;
-      component.actionClick.subscribe(action => {
+      component.actionClick.subscribe((action) => {
         emittedAction = action;
       });
 
@@ -192,9 +190,7 @@ describe('CardActionsComponent', () => {
 
   describe('Icons', () => {
     it('should render icon when provided', () => {
-      component.actions = [
-        { id: '1', label: 'With Icon', icon: 'mail' }
-      ];
+      component.actions = [{ id: '1', label: 'With Icon', icon: 'mail' }];
       fixture.detectChanges();
 
       // Icon rendering depends on implementation
@@ -202,9 +198,7 @@ describe('CardActionsComponent', () => {
     });
 
     it('should use default icon for type-specific actions', () => {
-      component.actions = [
-        { id: '1', label: 'Send Email', type: 'mail' }
-      ];
+      component.actions = [{ id: '1', label: 'Send Email', type: 'mail' }];
       fixture.detectChanges();
 
       // Should show mail icon by default for mail type
@@ -218,12 +212,11 @@ describe('CardActionsComponent', () => {
       fixture.detectChanges();
 
       const buttons = fixture.debugElement.queryAll(By.css('button'));
-      buttons.forEach(button => {
+      buttons.forEach((button) => {
         const el = button.nativeElement;
         // Buttons should have accessible names
-        const hasAccessibleName = el.textContent.trim() ||
-                                  el.getAttribute('aria-label') ||
-                                  el.getAttribute('title');
+        const hasAccessibleName =
+          el.textContent.trim() || el.getAttribute('aria-label') || el.getAttribute('title');
         expect(hasAccessibleName).toBeTruthy();
       });
     });
@@ -233,7 +226,7 @@ describe('CardActionsComponent', () => {
       fixture.detectChanges();
 
       const buttons = fixture.debugElement.queryAll(By.css('button'));
-      buttons.forEach(button => {
+      buttons.forEach((button) => {
         const type = button.nativeElement.getAttribute('type');
         // Should be 'button' to prevent form submission
         expect(type).toBe('button');
@@ -244,7 +237,7 @@ describe('CardActionsComponent', () => {
   describe('Disabled State', () => {
     it('should handle disabled actions', () => {
       component.actions = [
-        { id: '1', label: 'Disabled', disabled: true } as CardAction & { disabled: boolean }
+        { id: '1', label: 'Disabled', disabled: true } as CardAction & { disabled: boolean },
       ];
       fixture.detectChanges();
 
@@ -256,13 +249,12 @@ describe('CardActionsComponent', () => {
   describe('TrackBy Function', () => {
     it('should have trackBy function for performance', () => {
       if ('trackAction' in component) {
-        const trackFn = (component as { trackAction: (index: number, action: CardAction) => string }).trackAction;
+        const trackFn = (
+          component as { trackAction: (index: number, action: CardAction) => string }
+        ).trackAction;
         const result = trackFn(0, mockActions[0]!);
         expect(result).toBeTruthy();
       }
     });
   });
 });
-
-
-

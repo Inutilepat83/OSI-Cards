@@ -47,14 +47,14 @@ export async function waitForStability<T>(fixture: ComponentFixture<T>): Promise
  * Wait for a specific amount of time
  */
 export function wait(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
  * Wait for next animation frame
  */
 export function waitForAnimationFrame(): Promise<number> {
-  return new Promise(resolve => requestAnimationFrame(resolve));
+  return new Promise((resolve) => requestAnimationFrame(resolve));
 }
 
 /**
@@ -204,10 +204,7 @@ export function mouseEvent(
 /**
  * Simulate input value change
  */
-export function setInputValue(
-  element: HTMLElement | DebugElement,
-  value: string
-): void {
+export function setInputValue(element: HTMLElement | DebugElement, value: string): void {
   const nativeElement = element instanceof HTMLElement ? element : element.nativeElement;
   (nativeElement as HTMLInputElement).value = value;
   nativeElement.dispatchEvent(new Event('input', { bubbles: true }));
@@ -307,12 +304,9 @@ export function createConsoleSpy(): {
 /**
  * Assert element has specific classes
  */
-export function expectClasses(
-  element: HTMLElement | DebugElement,
-  ...classes: string[]
-): void {
+export function expectClasses(element: HTMLElement | DebugElement, ...classes: string[]): void {
   const nativeElement = element instanceof HTMLElement ? element : element.nativeElement;
-  classes.forEach(className => {
+  classes.forEach((className) => {
     expect(nativeElement.classList.contains(className)).toBe(true);
   });
 }
@@ -320,12 +314,9 @@ export function expectClasses(
 /**
  * Assert element does not have specific classes
  */
-export function expectNoClasses(
-  element: HTMLElement | DebugElement,
-  ...classes: string[]
-): void {
+export function expectNoClasses(element: HTMLElement | DebugElement, ...classes: string[]): void {
   const nativeElement = element instanceof HTMLElement ? element : element.nativeElement;
-  classes.forEach(className => {
+  classes.forEach((className) => {
     expect(nativeElement.classList.contains(className)).toBe(false);
   });
 }
@@ -348,11 +339,7 @@ export function expectStyles(
 /**
  * Assert element text contains string
  */
-export function expectText(
-  element: HTMLElement | DebugElement,
-  text: string,
-  exact = false
-): void {
+export function expectText(element: HTMLElement | DebugElement, text: string, exact = false): void {
   const nativeElement = element instanceof HTMLElement ? element : element.nativeElement;
   const elementText = nativeElement.textContent ?? '';
 
@@ -370,20 +357,14 @@ export function expectText(
 /**
  * Query all elements matching selector
  */
-export function queryAll<T>(
-  fixture: ComponentFixture<T>,
-  selector: string
-): DebugElement[] {
+export function queryAll<T>(fixture: ComponentFixture<T>, selector: string): DebugElement[] {
   return fixture.debugElement.queryAll(By.css(selector));
 }
 
 /**
  * Query first element matching selector
  */
-export function query<T>(
-  fixture: ComponentFixture<T>,
-  selector: string
-): DebugElement | null {
+export function query<T>(fixture: ComponentFixture<T>, selector: string): DebugElement | null {
   return fixture.debugElement.query(By.css(selector));
 }
 
@@ -400,10 +381,7 @@ export function queryByTestId<T>(
 /**
  * Query elements by test ID attribute
  */
-export function queryAllByTestId<T>(
-  fixture: ComponentFixture<T>,
-  testId: string
-): DebugElement[] {
+export function queryAllByTestId<T>(fixture: ComponentFixture<T>, testId: string): DebugElement[] {
   return fixture.debugElement.queryAll(By.css(`[data-testid="${testId}"]`));
 }
 
@@ -414,10 +392,7 @@ export function queryAllByTestId<T>(
 /**
  * Query inside Shadow DOM
  */
-export function queryShadow(
-  element: HTMLElement,
-  selector: string
-): Element | null {
+export function queryShadow(element: HTMLElement, selector: string): Element | null {
   const shadowRoot = element.shadowRoot;
   if (!shadowRoot) {
     return null;
@@ -428,10 +403,7 @@ export function queryShadow(
 /**
  * Query all inside Shadow DOM
  */
-export function queryAllShadow(
-  element: HTMLElement,
-  selector: string
-): Element[] {
+export function queryAllShadow(element: HTMLElement, selector: string): Element[] {
   const shadowRoot = element.shadowRoot;
   if (!shadowRoot) {
     return [];
@@ -451,7 +423,7 @@ export function createMockObservable<T>(values: T[]): {
 } {
   return {
     subscribe: (callback: (value: T) => void) => {
-      values.forEach(v => callback(v));
+      values.forEach((v) => callback(v));
       return { unsubscribe: () => {} };
     },
   };
@@ -469,7 +441,7 @@ export function createMockSubject<T>(): {
 
   return {
     next: (value: T) => {
-      subscribers.forEach(fn => fn(value));
+      subscribers.forEach((fn) => fn(value));
     },
     subscribe: (callback: (value: T) => void) => {
       subscribers.push(callback);
@@ -523,9 +495,7 @@ export function createMockChangeDetectorRef(): {
 /**
  * Measure render time
  */
-export async function measureRenderTime<T>(
-  fixture: ComponentFixture<T>
-): Promise<number> {
+export async function measureRenderTime<T>(fixture: ComponentFixture<T>): Promise<number> {
   const start = performance.now();
   await waitForStability(fixture);
   return performance.now() - start;
@@ -541,12 +511,3 @@ export async function expectRenderWithinBudget<T>(
   const renderTime = await measureRenderTime(fixture);
   expect(renderTime).toBeLessThan(budgetMs);
 }
-
-
-
-
-
-
-
-
-

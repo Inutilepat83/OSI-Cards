@@ -15,16 +15,17 @@
   padding: clamp(1.5rem, 3vw, 2.25rem);
   border-radius: 1.25rem;
   background: color-mix(in srgb, var(--card, #0c0c0c) 90%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-brand, #FF7900) 25%, transparent);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18), 
-              0 0 12px color-mix(in srgb, var(--color-brand, #FF7900) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-brand, #ff7900) 25%, transparent);
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.18),
+    0 0 12px color-mix(in srgb, var(--color-brand, #ff7900) 8%, transparent);
   backdrop-filter: blur(20px);
   overflow: hidden;
 }
 
 .preview-shell::before,
 .preview-shell::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   opacity: 0;
@@ -70,8 +71,9 @@ app-ai-card-renderer {
   display: block;
   width: 100%;
   height: 100%;
-  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: opacity, transform;
   animation: fadeInScale 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -108,15 +110,15 @@ app-ai-card-renderer {
   padding: 5rem 1.5rem;
   position: relative;
   min-height: 400px;
-  
+
   /* Animated background gradient */
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     background: radial-gradient(
       circle at center,
-      color-mix(in srgb, var(--color-brand, #FF7900) 8%, transparent) 0%,
+      color-mix(in srgb, var(--color-brand, #ff7900) 8%, transparent) 0%,
       transparent 70%
     );
     animation: pulseGlow 2s ease-in-out infinite;
@@ -125,7 +127,8 @@ app-ai-card-renderer {
 }
 
 @keyframes pulseGlow {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.5;
     transform: scale(1);
   }
@@ -139,21 +142,21 @@ app-ai-card-renderer {
   width: 3.5rem;
   height: 3.5rem;
   border-radius: 999px;
-  border: 4px solid color-mix(in srgb, var(--color-brand, #FF7900) 20%, transparent);
-  border-top-color: var(--color-brand, #FF7900);
-  border-right-color: var(--color-brand, #FF7900);
+  border: 4px solid color-mix(in srgb, var(--color-brand, #ff7900) 20%, transparent);
+  border-top-color: var(--color-brand, #ff7900);
+  border-right-color: var(--color-brand, #ff7900);
   animation: spin 0.8s linear infinite;
   position: relative;
   z-index: 1;
-  box-shadow: 0 0 20px color-mix(in srgb, var(--color-brand, #FF7900) 30%, transparent);
-  
+  box-shadow: 0 0 20px color-mix(in srgb, var(--color-brand, #ff7900) 30%, transparent);
+
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     inset: -4px;
     border-radius: 999px;
     border: 4px solid transparent;
-    border-top-color: color-mix(in srgb, var(--color-brand, #FF7900) 40%, transparent);
+    border-top-color: color-mix(in srgb, var(--color-brand, #ff7900) 40%, transparent);
     animation: spin 1.2s linear infinite reverse;
   }
 }
@@ -185,15 +188,15 @@ app-ai-card-renderer {
   padding: 5rem 1.5rem;
   position: relative;
   min-height: 400px;
-  
+
   /* Subtle animated background */
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     background: radial-gradient(
       circle at center,
-      color-mix(in srgb, var(--color-brand, #FF7900) 5%, transparent) 0%,
+      color-mix(in srgb, var(--color-brand, #ff7900) 5%, transparent) 0%,
       transparent 70%
     );
     animation: pulseGlow 3s ease-in-out infinite;
@@ -208,28 +211,32 @@ app-ai-card-renderer {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg,
-    color-mix(in srgb, var(--color-brand, #FF7900) 20%, transparent),
-    color-mix(in srgb, var(--color-brand, #FF7900) 12%, transparent));
-  border: 2px solid color-mix(in srgb, var(--color-brand, #FF7900) 40%, transparent);
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-brand, #FF7900) 20%, transparent),
-              inset 0 0 0 1px color-mix(in srgb, var(--color-white, #ffffff) 10%, transparent);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-brand, #ff7900) 20%, transparent),
+    color-mix(in srgb, var(--color-brand, #ff7900) 12%, transparent)
+  );
+  border: 2px solid color-mix(in srgb, var(--color-brand, #ff7900) 40%, transparent);
+  box-shadow:
+    0 8px 24px color-mix(in srgb, var(--color-brand, #ff7900) 20%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--color-white, #ffffff) 10%, transparent);
   position: relative;
   z-index: 1;
   animation: float 3s ease-in-out infinite;
-  
+
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     inset: -4px;
     border-radius: 999px;
-    border: 2px solid color-mix(in srgb, var(--color-brand, #FF7900) 20%, transparent);
+    border: 2px solid color-mix(in srgb, var(--color-brand, #ff7900) 20%, transparent);
     animation: pulseRing 2s ease-in-out infinite;
   }
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -286,13 +293,13 @@ app-ai-card-renderer {
   justify-content: center;
   padding: 0.5rem 1rem;
   background: color-mix(in srgb, var(--card-background, var(--card, #1c1c1f)) 80%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border, rgba(200,200,200,0.3)) 50%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border, rgba(200, 200, 200, 0.3)) 50%, transparent);
   border-radius: 0.5rem;
   transition: all 0.3s ease;
-  
+
   &:hover {
     background: color-mix(in srgb, var(--card-background, var(--card, #1c1c1f)) 90%, transparent);
-    border-color: color-mix(in srgb, var(--color-brand, #FF7900) 30%, transparent);
+    border-color: color-mix(in srgb, var(--color-brand, #ff7900) 30%, transparent);
     transform: translateX(4px);
   }
 }
@@ -307,9 +314,9 @@ app-ai-card-renderer {
 }
 
 .badge {
-  background-color: color-mix(in srgb, var(--color-brand, #FF7900) 20%, transparent);
-  color: var(--primary, #FF7900);
-  border: 1px solid color-mix(in srgb, var(--color-brand, #FF7900) 35%, transparent);
+  background-color: color-mix(in srgb, var(--color-brand, #ff7900) 20%, transparent);
+  color: var(--primary, #ff7900);
+  border: 1px solid color-mix(in srgb, var(--color-brand, #ff7900) 35%, transparent);
   padding: 0.3rem 0.6rem;
   border-radius: 999px;
   font-size: 0.7rem;
@@ -327,15 +334,15 @@ app-ai-card-renderer {
 }
 
 .sparkles-icon::before {
-  content: '✨';
+  content: "✨";
   font-size: 1.2rem;
-  color: var(--primary, #FF7900);
+  color: var(--primary, #ff7900);
 }
 
 .code-icon::before {
-  content: '💻';
+  content: "💻";
   font-size: 1.2rem;
-  color: var(--primary, #FF7900);
+  color: var(--primary, #ff7900);
 }
 
 @keyframes spin {

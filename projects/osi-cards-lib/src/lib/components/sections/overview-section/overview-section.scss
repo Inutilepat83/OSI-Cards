@@ -2,8 +2,8 @@
 // OVERVIEW SECTION - Original Product Style
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/typography-system' as typo;
+@use "../../../styles/components/sections/design-system" as *;
+@use "../../../styles/components/sections/typography-system" as typo;
 
 :host {
   display: block;
@@ -78,7 +78,7 @@
 }
 
 .value {
-  @include body-text('base');
+  @include body-text("base");
   color: var(--foreground);
   line-height: var(--leading-relaxed);
 }

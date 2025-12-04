@@ -29,7 +29,7 @@ export function fuzzySearch<T>(
   const results: SearchResult<T>[] = [];
   const lowerQuery = query.toLowerCase();
 
-  items.forEach(item => {
+  items.forEach((item) => {
     const text = getText(item).toLowerCase();
     const score = fuzzyMatch(text, lowerQuery);
 
@@ -83,13 +83,9 @@ function fuzzyMatch(text: string, query: string): number {
 /**
  * Simple search (contains)
  */
-export function simpleSearch<T>(
-  items: T[],
-  query: string,
-  getText: (item: T) => string
-): T[] {
+export function simpleSearch<T>(items: T[], query: string, getText: (item: T) => string): T[] {
   const lowerQuery = query.toLowerCase();
-  return items.filter(item => {
+  return items.filter((item) => {
     const text = getText(item).toLowerCase();
     return text.includes(lowerQuery);
   });
@@ -105,8 +101,8 @@ export function multiFieldSearch<T>(
 ): T[] {
   const lowerQuery = query.toLowerCase();
 
-  return items.filter(item => {
-    return fields.some(getField => {
+  return items.filter((item) => {
+    return fields.some((getField) => {
       const text = getField(item).toLowerCase();
       return text.includes(lowerQuery);
     });
@@ -133,11 +129,7 @@ function escapeRegex(str: string): string {
 /**
  * Search rank (for sorting)
  */
-export function searchRank<T>(
-  item: T,
-  query: string,
-  getText: (item: T) => string
-): number {
+export function searchRank<T>(item: T, query: string, getText: (item: T) => string): number {
   const text = getText(item).toLowerCase();
   const lowerQuery = query.toLowerCase();
 
@@ -160,13 +152,9 @@ export function searchRank<T>(
 /**
  * Search and rank
  */
-export function searchAndRank<T>(
-  items: T[],
-  query: string,
-  getText: (item: T) => string
-): T[] {
+export function searchAndRank<T>(items: T[], query: string, getText: (item: T) => string): T[] {
   return items
-    .map(item => ({
+    .map((item) => ({
       item,
       rank: searchRank(item, query, getText),
     }))
@@ -178,11 +166,8 @@ export function searchAndRank<T>(
 /**
  * Filter by multiple criteria
  */
-export function filterByCriteria<T>(
-  items: T[],
-  criteria: Array<(item: T) => boolean>
-): T[] {
-  return items.filter(item => criteria.every(criterion => criterion(item)));
+export function filterByCriteria<T>(items: T[], criteria: Array<(item: T) => boolean>): T[] {
+  return items.filter((item) => criteria.every((criterion) => criterion(item)));
 }
 
 /**
@@ -203,4 +188,3 @@ export function createDebouncedSearch<T>(
     }, delay);
   };
 }
-

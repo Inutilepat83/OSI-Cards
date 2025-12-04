@@ -2,7 +2,7 @@
 // TREND INDICATOR - Ultra Compact
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
+@use "../../../styles/components/sections/design-system" as *;
 
 :host {
   display: inline-flex;
@@ -109,8 +109,13 @@
 }
 
 @keyframes trendBounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-2px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
 }
 
 .trend-indicator--up.trend-indicator--animated .trend-icon {
@@ -122,13 +127,23 @@
 }
 
 @keyframes trendUp {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-2px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
 }
 
 @keyframes trendDown {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(2px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(2px);
+  }
 }
 
 .trend-indicator:hover {

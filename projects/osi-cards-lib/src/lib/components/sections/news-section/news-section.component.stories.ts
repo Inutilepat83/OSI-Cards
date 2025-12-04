@@ -152,10 +152,6 @@ export const SingleItem: Story = {
 // Minimal news
 export const Minimal: Story = {
   args: {
-    section: TestBuilders.Section.create()
-      .withTitle('News')
-      .withType('news')
-      .build(),
+    section: TestBuilders.Section.create().withTitle('News').withType('news').build(),
   },
 };
-

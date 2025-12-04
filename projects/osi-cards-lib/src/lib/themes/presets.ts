@@ -63,7 +63,8 @@ export const DEFAULT_THEME_PRESET: ThemeStylePreset = {
     '--theme-ai-card-background': 'rgba(20, 20, 20, 0.6)',
     '--theme-ai-card-background-hover': 'rgba(30, 30, 30, 0.8)',
     '--theme-ai-card-box-shadow': '0 4px 24px -1px rgba(0, 0, 0, 0.2)',
-    '--theme-ai-card-box-shadow-hover': '0 20px 40px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 121, 0, 0.2)',
+    '--theme-ai-card-box-shadow-hover':
+      '0 20px 40px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 121, 0, 0.2)',
     '--theme-ai-card-backdrop-filter': 'blur(12px)',
     '--theme-ai-card-transition': 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 
@@ -71,7 +72,8 @@ export const DEFAULT_THEME_PRESET: ThemeStylePreset = {
     '--theme-card-border': '1px solid rgba(255, 255, 255, 0.08)',
     '--theme-card-border-hover': 'var(--color-brand)',
     '--theme-card-background': 'var(--background)',
-    '--theme-card-background-hover': 'color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%)',
+    '--theme-card-background-hover':
+      'color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%)',
     '--theme-card-box-shadow': '0 1px 3px rgba(0, 0, 0, 0.35)',
     '--theme-card-box-shadow-hover': '0 2px 4px rgba(0, 0, 0, 0.45)',
 
@@ -79,7 +81,7 @@ export const DEFAULT_THEME_PRESET: ThemeStylePreset = {
     '--theme-section-border': '1px solid rgba(255, 255, 255, 0.1)',
     '--theme-section-border-hover': '1px solid rgba(255, 255, 255, 0.1)',
     '--theme-section-box-shadow': '0 1px 3px rgba(0, 0, 0, 0.4)',
-    '--theme-section-box-shadow-hover': '0 2px 5px rgba(0, 0, 0, 0.5)'
+    '--theme-section-box-shadow-hover': '0 2px 5px rgba(0, 0, 0, 0.5)',
   },
   light: {
     // AI Card - light theme with blur
@@ -87,8 +89,10 @@ export const DEFAULT_THEME_PRESET: ThemeStylePreset = {
     '--theme-ai-card-border-hover': '1px solid rgba(255, 121, 0, 0.4)',
     '--theme-ai-card-background': 'rgba(255, 255, 255, 0.85)',
     '--theme-ai-card-background-hover': 'rgba(255, 255, 255, 0.92)',
-    '--theme-ai-card-box-shadow': '0 4px 24px -1px rgba(0, 0, 0, 0.1), 0 0 18px rgba(255, 121, 0, 0.15)',
-    '--theme-ai-card-box-shadow-hover': '0 20px 40px -5px rgba(0, 0, 0, 0.15), 0 0 24px rgba(255, 121, 0, 0.25), 0 0 0 1px rgba(255, 121, 0, 0.15)',
+    '--theme-ai-card-box-shadow':
+      '0 4px 24px -1px rgba(0, 0, 0, 0.1), 0 0 18px rgba(255, 121, 0, 0.15)',
+    '--theme-ai-card-box-shadow-hover':
+      '0 20px 40px -5px rgba(0, 0, 0, 0.15), 0 0 24px rgba(255, 121, 0, 0.25), 0 0 0 1px rgba(255, 121, 0, 0.15)',
     '--theme-ai-card-backdrop-filter': 'blur(12px)',
     '--theme-ai-card-transition': 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 
@@ -96,7 +100,8 @@ export const DEFAULT_THEME_PRESET: ThemeStylePreset = {
     '--theme-card-border': '1px solid rgba(0, 0, 0, 0.08)',
     '--theme-card-border-hover': 'var(--color-brand)',
     '--theme-card-background': 'var(--background)',
-    '--theme-card-background-hover': 'color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%)',
+    '--theme-card-background-hover':
+      'color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%)',
     '--theme-card-box-shadow': '0 1px 2px rgba(15, 15, 20, 0.04)',
     '--theme-card-box-shadow-hover': '0 1px 3px rgba(10, 10, 16, 0.06)',
 
@@ -104,8 +109,8 @@ export const DEFAULT_THEME_PRESET: ThemeStylePreset = {
     '--theme-section-border': '1px solid rgba(0, 0, 0, 0.08)',
     '--theme-section-border-hover': '1px solid rgba(0, 0, 0, 0.1)',
     '--theme-section-box-shadow': '0 1px 3px rgba(0, 0, 0, 0.05)',
-    '--theme-section-box-shadow-hover': '0 2px 4px rgba(0, 0, 0, 0.07)'
-  }
+    '--theme-section-box-shadow-hover': '0 2px 4px rgba(0, 0, 0, 0.07)',
+  },
 };
 
 /**
@@ -136,7 +141,7 @@ export const HIGH_CONTRAST_THEME_PRESET: ThemeStylePreset = {
     '--theme-section-border': '1px solid rgba(255, 255, 255, 0.2)',
     '--theme-section-border-hover': '1px solid rgba(255, 255, 255, 0.4)',
     '--theme-section-box-shadow': 'none',
-    '--theme-section-box-shadow-hover': 'none'
+    '--theme-section-box-shadow-hover': 'none',
   },
   light: {
     '--theme-ai-card-border': '2px solid rgba(0, 0, 0, 0.3)',
@@ -158,8 +163,8 @@ export const HIGH_CONTRAST_THEME_PRESET: ThemeStylePreset = {
     '--theme-section-border': '1px solid rgba(0, 0, 0, 0.15)',
     '--theme-section-border-hover': '1px solid rgba(0, 0, 0, 0.25)',
     '--theme-section-box-shadow': 'none',
-    '--theme-section-box-shadow-hover': 'none'
-  }
+    '--theme-section-box-shadow-hover': 'none',
+  },
 };
 
 /**
@@ -167,7 +172,7 @@ export const HIGH_CONTRAST_THEME_PRESET: ThemeStylePreset = {
  */
 export const THEME_STYLE_PRESETS: Record<string, ThemeStylePreset> = {
   default: DEFAULT_THEME_PRESET,
-  'high-contrast': HIGH_CONTRAST_THEME_PRESET
+  'high-contrast': HIGH_CONTRAST_THEME_PRESET,
 };
 
 /**
@@ -202,4 +207,3 @@ export function removeThemeStylePreset(element: HTMLElement, preset: ThemeStyleP
     element.style.removeProperty(key);
   });
 }
-

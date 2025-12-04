@@ -1,12 +1,12 @@
 /**
  * OSI Cards Streaming Constants
- * 
+ *
  * Configuration values for LLM streaming simulation and card generation.
- * 
+ *
  * @example
  * ```typescript
  * import { STREAMING_CONFIG, STREAMING_STAGES } from 'osi-cards-lib';
- * 
+ *
  * const delay = STREAMING_CONFIG.THINKING_DELAY_MS;
  * ```
  */
@@ -21,34 +21,34 @@
 export const STREAMING_CONFIG = {
   /** Minimum chunk size in characters */
   MIN_CHUNK_SIZE: 10,
-  
+
   /** Maximum chunk size in characters */
   MAX_CHUNK_SIZE: 50,
-  
+
   /** Thinking delay before streaming starts (ms) */
   THINKING_DELAY_MS: 100,
-  
+
   /** Characters per token for speed calculation */
   CHARS_PER_TOKEN: 4,
-  
+
   /** Target tokens per second */
   TOKENS_PER_SECOND: 80,
-  
+
   /** Card update throttle (ms) */
   CARD_UPDATE_THROTTLE_MS: 50,
-  
+
   /** Completion batch delay (ms) */
   COMPLETION_BATCH_DELAY_MS: 100,
-  
+
   /** Maximum buffer size before forcing parse */
   MAX_BUFFER_SIZE: 100000,
-  
+
   /** Timeout for streaming operations (ms) */
   STREAMING_TIMEOUT_MS: 30000,
-  
+
   /** Retry delay after parse error (ms) */
   PARSE_RETRY_DELAY_MS: 100,
-  
+
   /** Maximum parse retries */
   MAX_PARSE_RETRIES: 3,
 } as const;
@@ -59,19 +59,19 @@ export const STREAMING_CONFIG = {
 export const STREAMING_STAGES = {
   /** No streaming active */
   IDLE: 'idle',
-  
+
   /** LLM is thinking/processing */
   THINKING: 'thinking',
-  
+
   /** Actively receiving chunks */
   STREAMING: 'streaming',
-  
+
   /** Streaming finished successfully */
   COMPLETE: 'complete',
-  
+
   /** Streaming was cancelled */
   ABORTED: 'aborted',
-  
+
   /** An error occurred */
   ERROR: 'error',
 } as const;
@@ -82,16 +82,16 @@ export const STREAMING_STAGES = {
 export const STREAMING_PROGRESS = {
   /** Progress at which to start showing preview */
   PREVIEW_THRESHOLD: 0.1,
-  
+
   /** Progress at which structure is usually complete */
   STRUCTURE_THRESHOLD: 0.3,
-  
+
   /** Progress at which most content is available */
   CONTENT_THRESHOLD: 0.7,
-  
+
   /** Progress at which to prepare for completion */
   NEAR_COMPLETE_THRESHOLD: 0.9,
-  
+
   /** Complete progress */
   COMPLETE: 1.0,
 } as const;
@@ -106,19 +106,19 @@ export const STREAMING_PROGRESS = {
 export const PLACEHOLDER_TEXT = {
   /** Default card title during streaming */
   CARD_TITLE: 'Generating card…',
-  
+
   /** Default section title during streaming */
   SECTION_TITLE: 'Loading section…',
-  
+
   /** Default field label during streaming */
   FIELD_LABEL: 'Loading…',
-  
+
   /** Default field value during streaming */
   FIELD_VALUE: 'Streaming…',
-  
+
   /** Default item title during streaming */
   ITEM_TITLE: 'Loading…',
-  
+
   /** Default item description during streaming */
   ITEM_DESCRIPTION: '…',
 } as const;
@@ -159,16 +159,16 @@ export const DEFAULT_LOADING_MESSAGES = [
 export const STREAMING_ID_PREFIXES = {
   /** Prefix for streaming-generated section IDs */
   SECTION: 'llm-section',
-  
+
   /** Prefix for streaming-generated field IDs */
   FIELD: 'llm-field',
-  
+
   /** Prefix for streaming-generated item IDs */
   ITEM: 'llm-item',
-  
+
   /** Prefix for streaming-generated card IDs */
   CARD: 'llm-card',
-  
+
   /** Prefix for streaming-generated action IDs */
   ACTION: 'llm-action',
 } as const;
@@ -183,13 +183,13 @@ export const STREAMING_ID_PREFIXES = {
 export const JSON_PARSING_CONFIG = {
   /** Regex for detecting section boundaries */
   SECTIONS_ARRAY_REGEX: /"sections"\s*:\s*\[/,
-  
+
   /** Regex for detecting card title */
   CARD_TITLE_REGEX: /"cardTitle"\s*:\s*"([^"]*)"/,
-  
+
   /** Characters that indicate a JSON boundary */
   BOUNDARY_CHARS: /[\n,}\]]/,
-  
+
   /** Maximum recursion depth for parsing */
   MAX_PARSE_DEPTH: 50,
 } as const;
@@ -204,13 +204,13 @@ export const JSON_PARSING_CONFIG = {
 export const SECTION_COMPLETION = {
   /** Minimum fields to consider section complete */
   MIN_FIELDS_FOR_COMPLETE: 1,
-  
+
   /** Minimum items to consider section complete */
   MIN_ITEMS_FOR_COMPLETE: 1,
-  
+
   /** Delay before emitting completion (ms) */
   COMPLETION_EMIT_DELAY: 50,
-  
+
   /** Batch multiple completions within this window (ms) */
   COMPLETION_BATCH_WINDOW: 100,
 } as const;
@@ -278,14 +278,5 @@ export function getRandomLoadingMessage(customMessages?: readonly string[]): str
 // TYPE EXPORTS
 // ============================================================================
 
-export type StreamingStage = typeof STREAMING_STAGES[keyof typeof STREAMING_STAGES];
+export type StreamingStage = (typeof STREAMING_STAGES)[keyof typeof STREAMING_STAGES];
 export type StreamingIdPrefix = keyof typeof STREAMING_ID_PREFIXES;
-
-
-
-
-
-
-
-
-

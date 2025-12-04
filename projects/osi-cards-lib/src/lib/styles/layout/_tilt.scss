@@ -6,28 +6,25 @@
 /* Base tilt container with 3D perspective - Optimized for smooth mouse following */
 .tilt-container {
   /* 3D transform with hardware acceleration - using CSS variables for smooth updates */
-  transform: perspective(1000px)
-             rotateX(var(--tilt-x, 0deg))
-             rotateY(var(--tilt-y, 0deg))
-             scale(var(--tilt-scale, 1))
-             translateZ(0) !important; /* Force GPU acceleration */
-  
+  transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg))
+    scale(var(--tilt-scale, 1)) translateZ(0) !important; /* Force GPU acceleration */
+
   /* No CSS transitions on transform - JavaScript handles smooth updates */
   /* Only transition box-shadow for glow effect */
   transition: box-shadow 200ms cubic-bezier(0.2, 0, 0.2, 1);
-  
+
   /* Enable 3D rendering */
   transform-style: preserve-3d;
   backface-visibility: hidden; /* Prevent flickering */
-  
+
   position: relative;
   border-radius: var(--card-border-radius);
-  
+
   /* Performance optimizations - no paint to prevent glow clipping */
   contain: layout style; /* Don't use paint - it clips shadows/glow */
   isolation: isolate; /* Create new stacking context */
   will-change: transform; /* Hint browser about upcoming transforms */
-  
+
   /* Optimize compositing */
   transform-origin: center center;
 }
@@ -43,8 +40,7 @@
   /* Hint browser about upcoming transform changes */
   will-change: transform;
   /* Orange glow only - no dark shadows, intensified by 50% */
-  box-shadow: 
-    0 0 var(--glow-blur) var(--glow-color, rgba(255, 121, 0, 0.375));
+  box-shadow: 0 0 var(--glow-blur) var(--glow-color, rgba(255, 121, 0, 0.375));
   /* Smooth transition for glow only - transform handled by JavaScript */
   transition: box-shadow 200ms cubic-bezier(0.2, 0, 0.2, 1);
 }
@@ -56,11 +52,11 @@
   filter: drop-shadow(0 0 var(--glow-blur) var(--glow-color, rgba(255, 121, 0, 0.225)));
   transition: filter 200ms cubic-bezier(0.4, 0, 0.2, 1);
   will-change: filter;
-  
+
   /* Performance optimizations */
   contain: layout style; /* Don't use paint - it clips shadows */
   isolation: isolate; /* Create new stacking context */
-  
+
   /* Optimize compositing */
   transform: translateZ(0); /* Force GPU layer */
 }
@@ -86,7 +82,7 @@
   transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
   border-radius: inherit;
-  
+
   /* Optimize as overlay */
   will-change: opacity;
   backface-visibility: hidden;
@@ -102,7 +98,7 @@
   transform-style: preserve-3d;
   transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
   backface-visibility: hidden;
-  
+
   /* Optimize transforms */
   contain: layout style;
 }
@@ -122,7 +118,7 @@
   background: transparent;
   opacity: var(--glare-opacity, 0);
   transition: opacity var(--glow-duration) var(--ease-out-smooth);
-  
+
   /* Optimize as overlay */
   will-change: opacity;
   backface-visibility: hidden;
@@ -136,17 +132,13 @@
 @media (max-width: 768px) {
   .tilt-container {
     /* Reduce perspective for subtler effect on mobile, but keep doubled tilt */
-    transform: perspective(800px)
-               rotateX(calc(var(--tilt-x, 0deg) * 0.7))
-               rotateY(calc(var(--tilt-y, 0deg) * 0.7))
-               scale(var(--tilt-scale, 1))
-               translateZ(0);
+    transform: perspective(800px) rotateX(calc(var(--tilt-x, 0deg) * 0.7))
+      rotateY(calc(var(--tilt-y, 0deg) * 0.7)) scale(var(--tilt-scale, 1)) translateZ(0);
   }
-  
+
   .tilt-container:hover {
     /* Orange glow only - no dark shadows, intensified by 50% */
-    box-shadow: 
-      0 0 var(--glow-blur) var(--glow-color, rgba(255, 121, 0, 0.375));
+    box-shadow: 0 0 var(--glow-blur) var(--glow-color, rgba(255, 121, 0, 0.375));
   }
 }
 
@@ -162,12 +154,12 @@
     box-shadow: none !important;
     will-change: auto !important;
   }
-  
+
   .glow-container {
     filter: none !important;
     will-change: auto !important;
   }
-  
+
   .card-reflection,
   .tilt-glare {
     opacity: 0 !important;
@@ -186,22 +178,22 @@
     transform: none !important;
     transition: none !important;
   }
-  
+
   .tilt-container:hover {
     box-shadow: none !important;
   }
-  
+
   .glow-container {
     filter: none !important;
     transition: none !important;
   }
-  
+
   .card-reflection,
   .tilt-glare {
     opacity: 0 !important;
     transition: none !important;
   }
-  
+
   /* Remove will-change hints */
   .tilt-container,
   .glow-container,

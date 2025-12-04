@@ -10,8 +10,8 @@
 // USAGE: Import this file in section SCSS files to access color helpers.
 // ===================================================================
 
-@forward '../tokens/master';
-@use '../tokens/master' as *;
+@forward "../tokens/master";
+@use "../tokens/master" as *;
 
 // All color variables, functions, and opacity variants are now
 // exported from the master tokens file:

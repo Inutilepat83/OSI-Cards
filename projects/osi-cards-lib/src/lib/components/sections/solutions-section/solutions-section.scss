@@ -2,9 +2,9 @@
 // SOLUTIONS SECTION - Feature Cards, Proper Spacing
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/typography-system' as typo;
-@use '../../../styles/components/sections/component-mixins' as components;
+@use "../../../styles/components/sections/design-system" as *;
+@use "../../../styles/components/sections/typography-system" as typo;
+@use "../../../styles/components/sections/component-mixins" as components;
 
 :host {
   display: block;
@@ -36,17 +36,17 @@
 
 .solution-card {
   @include card-elevated;
-  padding: 16px 14px;  // Good padding for all content
-  min-height: 220px;  // Ensure space for title, description, benefits, meta
+  padding: 16px 14px; // Good padding for all content
+  min-height: 220px; // Ensure space for title, description, benefits, meta
   display: flex;
   flex-direction: column;
-  gap: 12px;  // Good separation
+  gap: 12px; // Good separation
   transition: all 300ms var(--ease-out);
   position: relative;
 
   // Animated bottom accent line
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     left: 0;
@@ -82,7 +82,7 @@
 
 .solution-title {
   @include heading(5);
-  font-size: 0.9375rem;  // 15px
+  font-size: 0.9375rem; // 15px
   flex: 1;
   margin: 0;
   line-height: 1.4;
@@ -91,14 +91,14 @@
 
 .solution-category {
   @include typo.label-uppercase;
-  font-size: 0.65rem;  // 10px
+  font-size: 0.65rem; // 10px
   opacity: 0.7;
 }
 
 .solution-description {
-  @include body-text('small');
+  @include body-text("small");
   color: var(--muted-foreground);
-  font-size: 0.75rem;  // 12px
+  font-size: 0.75rem; // 12px
   line-height: 1.6;
   margin: 0;
   opacity: 0.9;
@@ -111,18 +111,18 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;  // Good separation
+  gap: 6px; // Good separation
   flex: 1;
 
   li {
-    font-size: 0.7rem;  // 11px
+    font-size: 0.7rem; // 11px
     color: var(--muted-foreground);
-    padding-left: 18px;  // Room for checkmark
+    padding-left: 18px; // Room for checkmark
     position: relative;
     line-height: 1.4;
 
     &::before {
-      content: '✓';
+      content: "✓";
       position: absolute;
       left: 0;
       color: var(--accent);
@@ -138,7 +138,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  margin-top: auto;  // Push to bottom
+  margin-top: auto; // Push to bottom
   padding-top: 10px;
   border-top: 1px solid var(--border);
 }

@@ -29,7 +29,7 @@ import type {
   CardField,
   CardItem,
   CardAction,
-  CardType
+  CardType,
 } from '../models/card.model';
 import type { SectionTypeInput } from '../models/generated-section-types';
 
@@ -469,10 +469,7 @@ export class CardFactory {
    * Create a minimal card with just title and one section
    */
   static minimal(title: string, section: CardSection): AICardConfig {
-    return /*#__PURE__*/ CardFactory.create()
-      .withTitle(title)
-      .withSection(section)
-      .build();
+    return /*#__PURE__*/ CardFactory.create().withTitle(title).withSection(section).build();
   }
 
   /**
@@ -539,10 +536,7 @@ export class SectionFactory {
    * Create a minimal section with just type and title
    */
   static minimal(type: SectionTypeInput, title: string): CardSection {
-    return /*#__PURE__*/ SectionFactory.create()
-      .withType(type)
-      .withTitle(title)
-      .build();
+    return /*#__PURE__*/ SectionFactory.create().withType(type).withTitle(title).build();
   }
 
   /**
@@ -609,7 +603,7 @@ export class FieldFactory {
    * @pure
    */
   static text(label: string, value: string): CardField {
-    return /*#__PURE__*/ ({ label, value, type: 'text' });
+    return /*#__PURE__*/ { label, value, type: 'text' };
   }
 
   /**
@@ -617,7 +611,7 @@ export class FieldFactory {
    * @pure
    */
   static number(label: string, value: number): CardField {
-    return /*#__PURE__*/ ({ label, value, type: 'number', format: 'number' });
+    return /*#__PURE__*/ { label, value, type: 'number', format: 'number' };
   }
 
   /**
@@ -625,7 +619,7 @@ export class FieldFactory {
    * @pure
    */
   static currency(label: string, value: string | number): CardField {
-    return /*#__PURE__*/ ({ label, value, format: 'currency' });
+    return /*#__PURE__*/ { label, value, format: 'currency' };
   }
 
   /**
@@ -633,12 +627,12 @@ export class FieldFactory {
    * @pure
    */
   static percentage(label: string, value: number, percentage?: number): CardField {
-    return /*#__PURE__*/ ({
+    return /*#__PURE__*/ {
       label,
       value: `${value}%`,
       percentage: percentage ?? value,
-      format: 'percentage'
-    });
+      format: 'percentage',
+    };
   }
 
   /**
@@ -651,27 +645,22 @@ export class FieldFactory {
     trend: 'up' | 'down' | 'stable' | 'neutral',
     change?: number
   ): CardField {
-    return /*#__PURE__*/ ({ label, value, trend, change });
+    return /*#__PURE__*/ { label, value, trend, change };
   }
 
   /**
    * Create a contact field
    * @pure
    */
-  static contact(
-    name: string,
-    role: string,
-    email?: string,
-    phone?: string
-  ): CardField {
-    return /*#__PURE__*/ ({
+  static contact(name: string, role: string, email?: string, phone?: string): CardField {
+    return /*#__PURE__*/ {
       label: name,
       title: name,
       value: role,
       role,
       email,
-      phone
-    });
+      phone,
+    };
   }
 
   /**
@@ -679,24 +668,20 @@ export class FieldFactory {
    * @pure
    */
   static link(label: string, url: string, value?: string): CardField {
-    return /*#__PURE__*/ ({
+    return /*#__PURE__*/ {
       label,
       value: value ?? url,
       link: url,
-      clickable: true
-    });
+      clickable: true,
+    };
   }
 
   /**
    * Create a status field
    * @pure
    */
-  static status(
-    label: string,
-    status: CardField['status'],
-    value?: string
-  ): CardField {
-    return /*#__PURE__*/ ({ label, value: value ?? status, status });
+  static status(label: string, status: CardField['status'], value?: string): CardField {
+    return /*#__PURE__*/ { label, value: value ?? status, status };
   }
 }
 
@@ -711,7 +696,7 @@ export class ItemFactory {
    * @pure
    */
   static basic(title: string, description?: string): CardItem {
-    return /*#__PURE__*/ ({ title, description });
+    return /*#__PURE__*/ { title, description };
   }
 
   /**
@@ -719,36 +704,27 @@ export class ItemFactory {
    * @pure
    */
   static withIcon(title: string, icon: string, description?: string): CardItem {
-    return /*#__PURE__*/ ({ title, icon, description });
+    return /*#__PURE__*/ { title, icon, description };
   }
 
   /**
    * Create a news item
    * @pure
    */
-  static news(
-    title: string,
-    description: string,
-    source?: string,
-    date?: string
-  ): CardItem {
-    return /*#__PURE__*/ ({
+  static news(title: string, description: string, source?: string, date?: string): CardItem {
+    return /*#__PURE__*/ {
       title,
       description,
-      meta: { source, date }
-    });
+      meta: { source, date },
+    };
   }
 
   /**
    * Create a list item with status
    * @pure
    */
-  static withStatus(
-    title: string,
-    status: string,
-    description?: string
-  ): CardItem {
-    return /*#__PURE__*/ ({ title, status, description });
+  static withStatus(title: string, status: string, description?: string): CardItem {
+    return /*#__PURE__*/ { title, status, description };
   }
 
   /**
@@ -756,7 +732,7 @@ export class ItemFactory {
    * @pure
    */
   static withValue(title: string, value: string | number, description?: string): CardItem {
-    return /*#__PURE__*/ ({ title, value, description });
+    return /*#__PURE__*/ { title, value, description };
   }
 }
 
@@ -771,7 +747,7 @@ export class ActionFactory {
    * @pure
    */
   static primary(label: string, action?: string): CardAction {
-    return /*#__PURE__*/ ({ label, action, variant: 'primary' }) as CardAction;
+    return /*#__PURE__*/ { label, action, variant: 'primary' } as CardAction;
   }
 
   /**
@@ -779,7 +755,7 @@ export class ActionFactory {
    * @pure
    */
   static secondary(label: string, action?: string): CardAction {
-    return /*#__PURE__*/ ({ label, action, variant: 'secondary' }) as CardAction;
+    return /*#__PURE__*/ { label, action, variant: 'secondary' } as CardAction;
   }
 
   /**
@@ -787,12 +763,12 @@ export class ActionFactory {
    * @pure
    */
   static website(label: string, url: string): CardAction {
-    return /*#__PURE__*/ ({
+    return /*#__PURE__*/ {
       label,
       type: 'website',
       url,
-      variant: 'primary'
-    }) as CardAction;
+      variant: 'primary',
+    } as CardAction;
   }
 
   /**
@@ -805,12 +781,12 @@ export class ActionFactory {
     subject: string,
     body: string
   ): CardAction {
-    return /*#__PURE__*/ ({
+    return /*#__PURE__*/ {
       label,
       type: 'mail',
       variant: 'primary',
-      email: { contact, subject, body }
-    }) as CardAction;
+      email: { contact, subject, body },
+    } as CardAction;
   }
 
   /**
@@ -818,13 +794,13 @@ export class ActionFactory {
    * @pure
    */
   static agent(label: string, agentId?: string, context?: Record<string, unknown>): CardAction {
-    return /*#__PURE__*/ ({
+    return /*#__PURE__*/ {
       label,
       type: 'agent',
       variant: 'outline',
       agentId,
-      agentContext: context
-    }) as CardAction;
+      agentContext: context,
+    } as CardAction;
   }
 
   /**
@@ -832,17 +808,11 @@ export class ActionFactory {
    * @pure
    */
   static question(label: string, question?: string): CardAction {
-    return /*#__PURE__*/ ({
+    return /*#__PURE__*/ {
       label,
       type: 'question',
       variant: 'ghost',
-      question
-    }) as CardAction;
+      question,
+    } as CardAction;
   }
 }
-
-
-
-
-
-

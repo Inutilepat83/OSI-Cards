@@ -91,16 +91,15 @@ export function createPrintFriendly(element: HTMLElement): HTMLElement {
   const clone = element.cloneNode(true) as HTMLElement;
 
   // Remove interactive elements
-  clone.querySelectorAll('button, input, select, textarea').forEach(el => el.remove());
+  clone.querySelectorAll('button, input, select, textarea').forEach((el) => el.remove());
 
   // Remove navigation
-  clone.querySelectorAll('nav, .nav, .navigation').forEach(el => el.remove());
+  clone.querySelectorAll('nav, .nav, .navigation').forEach((el) => el.remove());
 
   // Expand collapsed sections
-  clone.querySelectorAll('[hidden]').forEach(el => {
+  clone.querySelectorAll('[hidden]').forEach((el) => {
     el.removeAttribute('hidden');
   });
 
   return clone;
 }
-

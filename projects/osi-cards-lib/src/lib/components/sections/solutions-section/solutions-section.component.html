@@ -1,14 +1,10 @@
 <div class="solutions-container">
   <!-- Section Header -->
-  <lib-section-header
-    [title]="section.title"
-    [description]="section.description">
-  </lib-section-header>
+  <lib-section-header [title]="section.title" [description]="section.description"> </lib-section-header>
 
   <!-- Solutions Grid -->
   <div class="solutions-grid" *ngIf="section.fields && section.fields.length > 0">
     <div class="solution-card" *ngFor="let solution of section.fields">
-
       <!-- Solution Header -->
       <div class="solution-header">
         <h4 class="solution-title">{{ solution.title }}</h4>
@@ -25,13 +21,8 @@
 
       <!-- Meta Info -->
       <div class="solution-meta">
-        <span class="delivery-time" *ngIf="solution.deliveryTime">
-          ⏱️ {{ solution.deliveryTime }}
-        </span>
-        <lib-badge
-          *ngIf="solution.complexity"
-          [variant]="getComplexityVariant(solution.complexity)"
-          size="sm">
+        <span class="delivery-time" *ngIf="solution.deliveryTime"> ⏱️ {{ solution.deliveryTime }} </span>
+        <lib-badge *ngIf="solution.complexity" [variant]="getComplexityVariant(solution.complexity)" size="sm">
           {{ solution.complexity }}
         </lib-badge>
       </div>
@@ -43,6 +34,7 @@
     *ngIf="!section.fields || section.fields.length === 0"
     message="No solutions available"
     icon="💡"
-    variant="minimal">
+    variant="minimal"
+  >
   </lib-empty-state>
 </div>

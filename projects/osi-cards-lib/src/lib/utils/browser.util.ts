@@ -157,7 +157,11 @@ export function getDoNotTrack(): string | null {
 }
 
 export function getConnectionInfo(): any {
-  return (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+  return (
+    (navigator as any).connection ||
+    (navigator as any).mozConnection ||
+    (navigator as any).webkitConnection
+  );
 }
 
 export function getBatteryInfo(): Promise<any> {
@@ -165,7 +169,10 @@ export function getBatteryInfo(): Promise<any> {
 }
 
 export function isStandalone(): boolean {
-  return window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone === true;
+  return (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (navigator as any).standalone === true
+  );
 }
 
 export function getViewportSize(): { width: number; height: number } {
@@ -202,4 +209,3 @@ export function getDocumentSize(): { width: number; height: number } {
     ),
   };
 }
-

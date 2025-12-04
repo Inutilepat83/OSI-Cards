@@ -78,7 +78,7 @@ export class ErrorTrackingService implements OnDestroy {
     logToConsole: true,
     reporter: async () => {},
     ignorePatterns: [],
-    sampleRate: 1.0
+    sampleRate: 1.0,
   };
 
   /** Get all errors as array */
@@ -86,13 +86,11 @@ export class ErrorTrackingService implements OnDestroy {
 
   /** Get critical errors */
   readonly criticalErrors = computed(() =>
-    this.allErrors().filter(e => e.severity === 'critical')
+    this.allErrors().filter((e) => e.severity === 'critical')
   );
 
   /** Get unreported errors */
-  readonly unreportedErrors = computed(() =>
-    this.allErrors().filter(e => !e.reported)
-  );
+  readonly unreportedErrors = computed(() => this.allErrors().filter((e) => !e.reported));
 
   /** Get error count */
   readonly errorCount = computed(() => this.errors().size);
@@ -136,12 +134,12 @@ export class ErrorTrackingService implements OnDestroy {
 
     if (existing) {
       // Increment count for existing error
-      this.errors.update(map => {
+      this.errors.update((map) => {
         const newMap = new Map(map);
         newMap.set(errorId, {
           ...existing,
           count: existing.count + 1,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
         return newMap;
       });
@@ -157,16 +155,17 @@ export class ErrorTrackingService implements OnDestroy {
         context: options?.context,
         timestamp: Date.now(),
         count: 1,
-        reported: false
+        reported: false,
       };
 
-      this.errors.update(map => {
+      this.errors.update((map) => {
         const newMap = new Map(map);
 
         // Remove oldest if at max
         if (newMap.size >= this.config.maxErrors) {
-          const oldest = Array.from(newMap.entries())
-            .sort(([, a], [, b]) => a.timestamp - b.timestamp)[0];
+          const oldest = Array.from(newMap.entries()).sort(
+            ([, a], [, b]) => a.timestamp - b.timestamp
+          )[0];
           if (oldest) {
             newMap.delete(oldest[0]);
           }
@@ -180,7 +179,7 @@ export class ErrorTrackingService implements OnDestroy {
       if (this.config.logToConsole) {
         console.error(`[OSI Cards Error] ${err.message}`, {
           component: options?.component,
-          context: options?.context
+          context: options?.context,
         });
       }
     }
@@ -206,14 +205,14 @@ export class ErrorTrackingService implements OnDestroy {
    * Get errors by component
    */
   getErrorsByComponent(component: string): TrackedError[] {
-    return this.allErrors().filter(e => e.component === component);
+    return this.allErrors().filter((e) => e.component === component);
   }
 
   /**
    * Get errors by severity
    */
   getErrorsBySeverity(severity: ErrorSeverity): TrackedError[] {
-    return this.allErrors().filter(e => e.severity === severity);
+    return this.allErrors().filter((e) => e.severity === severity);
   }
 
   /**
@@ -236,7 +235,7 @@ export class ErrorTrackingService implements OnDestroy {
    * Mark an error as reported
    */
   markAsReported(id: string): void {
-    this.errors.update(map => {
+    this.errors.update((map) => {
       const error = map.get(id);
       if (error) {
         const newMap = new Map(map);
@@ -262,20 +261,18 @@ export class ErrorTrackingService implements OnDestroy {
       low: 0,
       medium: 0,
       high: 0,
-      critical: 0
+      critical: 0,
     };
 
-    all.forEach(e => bySeverity[e.severity]++);
+    all.forEach((e) => bySeverity[e.severity]++);
 
-    const topErrors = [...all]
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
+    const topErrors = [...all].sort((a, b) => b.count - a.count).slice(0, 5);
 
     return {
       total: all.length,
       bySeverity,
       unreported: this.unreportedErrors().length,
-      topErrors
+      topErrors,
     };
   }
 
@@ -290,7 +287,7 @@ export class ErrorTrackingService implements OnDestroy {
    * Remove a specific error
    */
   remove(id: string): void {
-    this.errors.update(map => {
+    this.errors.update((map) => {
       const newMap = new Map(map);
       newMap.delete(id);
       return newMap;
@@ -301,11 +298,15 @@ export class ErrorTrackingService implements OnDestroy {
    * Export errors as JSON
    */
   export(): string {
-    return JSON.stringify({
-      errors: this.allErrors(),
-      summary: this.getSummary(),
-      timestamp: Date.now()
-    }, null, 2);
+    return JSON.stringify(
+      {
+        errors: this.allErrors(),
+        summary: this.getSummary(),
+        timestamp: Date.now(),
+      },
+      null,
+      2
+    );
   }
 
   /**
@@ -316,7 +317,7 @@ export class ErrorTrackingService implements OnDestroy {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash;
     }
     return `err_${Math.abs(hash).toString(16)}`;
@@ -326,8 +327,8 @@ export class ErrorTrackingService implements OnDestroy {
    * Check if error should be ignored
    */
   private shouldIgnore(error: Error): boolean {
-    return this.config.ignorePatterns.some(pattern =>
-      pattern.test(error.message) || pattern.test(error.stack || '')
+    return this.config.ignorePatterns.some(
+      (pattern) => pattern.test(error.message) || pattern.test(error.stack || '')
     );
   }
 
@@ -362,8 +363,8 @@ export class OSICardsErrorHandler implements ErrorHandler {
     this.errorTracking.track(error, {
       severity: 'high',
       context: {
-        source: 'ErrorHandler'
-      }
+        source: 'ErrorHandler',
+      },
     });
 
     // Re-throw in development
@@ -372,6 +373,3 @@ export class OSICardsErrorHandler implements ErrorHandler {
     }
   }
 }
-
-
-

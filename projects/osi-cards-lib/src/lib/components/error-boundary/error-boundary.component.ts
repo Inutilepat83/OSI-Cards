@@ -33,7 +33,7 @@ import {
   OnDestroy,
   TemplateRef,
   signal,
-  computed
+  computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
@@ -60,8 +60,10 @@ export type RecoveryStrategy = 'reload' | 'fallback' | 'retry' | 'ignore';
     @if (hasError()) {
       <div class="error-boundary" role="alert">
         @if (fallbackUI) {
-          <ng-container [ngTemplateOutlet]="fallbackUI"
-                       [ngTemplateOutletContext]="{ error: errorDetails(), retry: retry }">
+          <ng-container
+            [ngTemplateOutlet]="fallbackUI"
+            [ngTemplateOutletContext]="{ error: errorDetails(), retry: retry }"
+          >
           </ng-container>
         } @else {
           <div class="error-boundary__default">
@@ -77,16 +79,15 @@ export type RecoveryStrategy = 'reload' | 'fallback' | 'retry' | 'ignore';
             @if (recoveryStrategy() !== 'ignore') {
               <div class="error-boundary__actions">
                 @if (recoveryStrategy() === 'retry') {
-                  <button (click)="retry()" class="error-boundary__button">
-                    Try Again
-                  </button>
+                  <button (click)="retry()" class="error-boundary__button">Try Again</button>
                 }
                 @if (recoveryStrategy() === 'reload') {
-                  <button (click)="reload()" class="error-boundary__button">
-                    Reload Page
-                  </button>
+                  <button (click)="reload()" class="error-boundary__button">Reload Page</button>
                 }
-                <button (click)="reset()" class="error-boundary__button error-boundary__button--secondary">
+                <button
+                  (click)="reset()"
+                  class="error-boundary__button error-boundary__button--secondary"
+                >
                   Dismiss
                 </button>
               </div>
@@ -98,84 +99,86 @@ export type RecoveryStrategy = 'reload' | 'fallback' | 'retry' | 'ignore';
       <ng-content></ng-content>
     }
   `,
-  styles: [`
-    .error-boundary {
-      padding: 2rem;
-      border: 1px solid #f87171;
-      border-radius: 0.5rem;
-      background-color: #fef2f2;
-      color: #991b1b;
-    }
+  styles: [
+    `
+      .error-boundary {
+        padding: 2rem;
+        border: 1px solid #f87171;
+        border-radius: 0.5rem;
+        background-color: #fef2f2;
+        color: #991b1b;
+      }
 
-    .error-boundary__default {
-      text-align: center;
-      max-width: 600px;
-      margin: 0 auto;
-    }
+      .error-boundary__default {
+        text-align: center;
+        max-width: 600px;
+        margin: 0 auto;
+      }
 
-    .error-boundary__icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
+      .error-boundary__icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
 
-    .error-boundary__title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
+      .error-boundary__title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
 
-    .error-boundary__message {
-      margin-bottom: 1.5rem;
-      color: #7f1d1d;
-    }
+      .error-boundary__message {
+        margin-bottom: 1.5rem;
+        color: #7f1d1d;
+      }
 
-    .error-boundary__details {
-      margin-top: 1rem;
-      text-align: left;
-    }
+      .error-boundary__details {
+        margin-top: 1rem;
+        text-align: left;
+      }
 
-    .error-boundary__details pre {
-      background: #fff;
-      padding: 1rem;
-      border-radius: 0.25rem;
-      overflow-x: auto;
-      font-size: 0.875rem;
-    }
+      .error-boundary__details pre {
+        background: #fff;
+        padding: 1rem;
+        border-radius: 0.25rem;
+        overflow-x: auto;
+        font-size: 0.875rem;
+      }
 
-    .error-boundary__actions {
-      display: flex;
-      gap: 0.75rem;
-      justify-content: center;
-      margin-top: 1.5rem;
-    }
+      .error-boundary__actions {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+        margin-top: 1.5rem;
+      }
 
-    .error-boundary__button {
-      padding: 0.5rem 1.5rem;
-      border: none;
-      border-radius: 0.375rem;
-      background-color: #dc2626;
-      color: white;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
+      .error-boundary__button {
+        padding: 0.5rem 1.5rem;
+        border: none;
+        border-radius: 0.375rem;
+        background-color: #dc2626;
+        color: white;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
 
-    .error-boundary__button:hover {
-      background-color: #b91c1c;
-    }
+      .error-boundary__button:hover {
+        background-color: #b91c1c;
+      }
 
-    .error-boundary__button--secondary {
-      background-color: #6b7280;
-    }
+      .error-boundary__button--secondary {
+        background-color: #6b7280;
+      }
 
-    .error-boundary__button--secondary:hover {
-      background-color: #4b5563;
-    }
-  `],
+      .error-boundary__button--secondary:hover {
+        background-color: #4b5563;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule],
 })
 export class ErrorBoundaryComponent implements OnInit, OnDestroy {
   /**
@@ -262,7 +265,7 @@ export class ErrorBoundaryComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.retryCount.update(c => c + 1);
+    this.retryCount.update((c) => c + 1);
     this.reset();
     this.errorRecovered.emit();
   }

@@ -14,11 +14,11 @@ export * from './theme-config.provider';
 export * from './theme-composer.util';
 
 // Theme Builder Utilities (excluding mergeThemes to avoid duplicate)
-export { 
+export {
   buildThemeFromBase,
   createPartialTheme,
   validateCSSVariableNames,
-  generateThemeFromPalette
+  generateThemeFromPalette,
 } from './theme-builder.util';
 
 // Theme Presets

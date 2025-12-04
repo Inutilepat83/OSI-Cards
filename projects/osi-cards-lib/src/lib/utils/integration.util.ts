@@ -130,4 +130,3 @@ export function removeStylesheet(href: string): void {
     link.remove();
   }
 }
-

@@ -165,7 +165,7 @@ export const PREFERENCE_OPTIMIZED_CONFIG: MasonryPackingConfig = {
   rowPackingOptions: {
     prioritizeSpaceFilling: false,
     allowShrinking: false,
-    allowGrowing: true,  // Allow growing only to fill gaps
+    allowGrowing: true, // Allow growing only to fill gaps
     maxOptimizationPasses: 2,
   },
   useLegacyFallback: true,
@@ -208,30 +208,30 @@ export interface SectionColumnPreferences {
 export const DEFAULT_SECTION_COLUMN_PREFERENCES: SectionColumnPreferences = {
   // Single column sections - truly compact only
   'contact-card': 1,
-  'project': 1,
+  project: 1,
 
   // Two column sections - most section types
-  'network-card': 2,  // Increased - networks benefit from more space
-  'analytics': 2,
-  'stats': 2,
-  'chart': 2,
-  'map': 2,
-  'locations': 2,
-  'financials': 2,
-  'product': 2,
-  'solutions': 2,
-  'event': 2,
-  'list': 2,
-  'quotation': 2,
+  'network-card': 2, // Increased - networks benefit from more space
+  analytics: 2,
+  stats: 2,
+  chart: 2,
+  map: 2,
+  locations: 2,
+  financials: 2,
+  product: 2,
+  solutions: 2,
+  event: 2,
+  list: 2,
+  quotation: 2,
   'text-reference': 2,
-  'timeline': 2,
-  'info': 2,
+  timeline: 2,
+  info: 2,
 
   // Wide sections
-  'overview': 3,  // Increased - overview benefits from more space
+  overview: 3, // Increased - overview benefits from more space
 
   // Default for unknown types - 2 columns to reduce gaps
-  'default': 2,
+  default: 2,
 };
 
 // ============================================================================
@@ -260,33 +260,33 @@ export interface SectionExpansionLimits {
  */
 export const SECTION_MAX_EXPANSION: SectionExpansionLimits = {
   // Compact sections - can expand to fill gaps
-  'contact-card': 3,    // Contact cards can expand for multiple contacts
-  'network-card': 3,    // Network cards can show more connections
-  'project': 2,         // Projects can expand slightly
-  'quotation': 3,       // Quotes can expand for readability
+  'contact-card': 3, // Contact cards can expand for multiple contacts
+  'network-card': 3, // Network cards can show more connections
+  project: 2, // Projects can expand slightly
+  quotation: 3, // Quotes can expand for readability
 
   // Medium sections - can expand more freely
-  'info': 3,            // Info sections work at 1-3 columns
-  'list': 3,            // Lists can expand for better readability
-  'event': 3,           // Events can expand
-  'timeline': 3,        // Timelines can expand
-  'financials': 3,      // Financial data can expand for more metrics
-  'stats': 3,           // Stats can expand for more metrics
-  'product': 3,         // Products can expand
-  'solutions': 3,       // Solutions work at medium width
-  'text-reference': 3,  // Text references can expand
+  info: 3, // Info sections work at 1-3 columns
+  list: 3, // Lists can expand for better readability
+  event: 3, // Events can expand
+  timeline: 3, // Timelines can expand
+  financials: 3, // Financial data can expand for more metrics
+  stats: 3, // Stats can expand for more metrics
+  product: 3, // Products can expand
+  solutions: 3, // Solutions work at medium width
+  'text-reference': 3, // Text references can expand
 
   // Wide sections - can expand fully
-  'analytics': 4,       // Analytics with multiple metrics can expand fully
-  'locations': 4,       // Location maps can be wider
+  analytics: 4, // Analytics with multiple metrics can expand fully
+  locations: 4, // Location maps can be wider
 
   // Full-width capable sections
-  'chart': 4,           // Charts benefit from full width
-  'map': 4,             // Maps benefit from full width
-  'overview': 4,        // Overview sections can span full width
+  chart: 4, // Charts benefit from full width
+  map: 4, // Maps benefit from full width
+  overview: 4, // Overview sections can span full width
 
   // More permissive default for unknown types
-  'default': 3,
+  default: 3,
 };
 
 // ============================================================================
@@ -410,7 +410,9 @@ export function getEffectiveColumnPreference(
   }
 
   // Fall back to global defaults
-  return (DEFAULT_SECTION_COLUMN_PREFERENCES[sectionType] ?? DEFAULT_SECTION_COLUMN_PREFERENCES['default'] ?? 2) as PreferredColumns;
+  return (DEFAULT_SECTION_COLUMN_PREFERENCES[sectionType] ??
+    DEFAULT_SECTION_COLUMN_PREFERENCES['default'] ??
+    2) as PreferredColumns;
 }
 
 // ============================================================================
@@ -528,7 +530,9 @@ export function initializeSectionTypeRegistry(
   for (const entry of registryData) {
     const defaults: SectionTypeDefaults = {
       type: entry.type,
-      preferredColumns: (entry.layout?.preferredColumns ?? DEFAULT_SECTION_COLUMN_PREFERENCES[entry.type] ?? 2) as PreferredColumns,
+      preferredColumns: (entry.layout?.preferredColumns ??
+        DEFAULT_SECTION_COLUMN_PREFERENCES[entry.type] ??
+        2) as PreferredColumns,
       maxExpansion: entry.layout?.maxExpansion ?? SECTION_MAX_EXPANSION[entry.type] ?? 3,
       minHeight: entry.layout?.minHeight ?? 100,
       maxHeight: entry.layout?.maxHeight ?? 600,
@@ -714,8 +718,8 @@ export function shouldExpandSection(
     // Allow expansion only if remaining space is truly unusable
     const gapTotal = gap * (totalColumns - 1);
     const columnWidthPx = (containerWidth - gapTotal) / totalColumns;
-    const remainingWidthPx = remainingColumns * columnWidthPx +
-      (remainingColumns > 0 ? (remainingColumns - 1) * gap : 0);
+    const remainingWidthPx =
+      remainingColumns * columnWidthPx + (remainingColumns > 0 ? (remainingColumns - 1) * gap : 0);
 
     // If another section COULD fit, don't expand sparse content
     if (remainingWidthPx >= minColumnWidth || canPendingFit) {
@@ -730,8 +734,8 @@ export function shouldExpandSection(
   // Check if remaining space can fit another section
   const gapTotal = gap * (totalColumns - 1);
   const columnWidthPx = (containerWidth - gapTotal) / totalColumns;
-  const remainingWidthPx = remainingColumns * columnWidthPx +
-    (remainingColumns > 0 ? (remainingColumns - 1) * gap : 0);
+  const remainingWidthPx =
+    remainingColumns * columnWidthPx + (remainingColumns > 0 ? (remainingColumns - 1) * gap : 0);
 
   // Expand only if:
   // 1. Remaining space can't fit minimum width section, OR
@@ -772,14 +776,16 @@ export function calculateBasicDensity(
   items?: unknown[],
   description?: string
 ): number {
-  const textLength = (description?.length ?? 0) +
-    (fields?.reduce((acc, f) => acc + String(f.value ?? '').length + (f.label?.length ?? 0), 0) ?? 0);
+  const textLength =
+    (description?.length ?? 0) +
+    (fields?.reduce((acc, f) => acc + String(f.value ?? '').length + (f.label?.length ?? 0), 0) ??
+      0);
   const itemCount = items?.length ?? 0;
   const fieldCount = fields?.length ?? 0;
 
-  const textScore = textLength / 50;  // 1 point per 50 chars
-  const itemScore = itemCount * 3;     // 3 points per item
-  const fieldScore = fieldCount * 2;   // 2 points per field
+  const textScore = textLength / 50; // 1 point per 50 chars
+  const itemScore = itemCount * 3; // 3 points per item
+  const fieldScore = fieldCount * 2; // 2 points per field
 
   return Math.round(textScore + itemScore + fieldScore);
 }
@@ -798,15 +804,8 @@ export function calculateBasicDensity(
  * @param config - Grid configuration (optional, uses defaults)
  * @returns Number of columns (1 to maxColumns)
  */
-export function calculateColumns(
-  containerWidth: number,
-  config: Partial<GridConfig> = {}
-): number {
-  const {
-    minColumnWidth = MIN_COLUMN_WIDTH,
-    maxColumns = MAX_COLUMNS,
-    gap = GRID_GAP
-  } = config;
+export function calculateColumns(containerWidth: number, config: Partial<GridConfig> = {}): number {
+  const { minColumnWidth = MIN_COLUMN_WIDTH, maxColumns = MAX_COLUMNS, gap = GRID_GAP } = config;
 
   if (containerWidth <= 0) {
     return 1;
@@ -967,9 +966,9 @@ export function generateLeftExpression(
  */
 export const BREAKPOINTS = {
   xs: 0,
-  sm: 544,   // 2 columns possible (544px = 2*260 + 1*12 + padding)
-  md: 816,   // 3 columns possible (816px = 3*260 + 2*12 + padding)
-  lg: 1088,  // 4 columns possible (1088px = 4*260 + 3*12 + padding)
+  sm: 544, // 2 columns possible (544px = 2*260 + 1*12 + padding)
+  md: 816, // 3 columns possible (816px = 3*260 + 2*12 + padding)
+  lg: 1088, // 4 columns possible (1088px = 4*260 + 3*12 + padding)
   xl: 1024,
   '2xl': 1280,
 } as const;
@@ -999,9 +998,12 @@ export function getBreakpoint(width: number): BreakpointKey {
  */
 export function getColumnsForBreakpoint(breakpoint: BreakpointKey): number {
   switch (breakpoint) {
-    case 'xs': return 1;
-    case 'sm': return 2;
-    case 'md': return 3;
+    case 'xs':
+      return 1;
+    case 'sm':
+      return 2;
+    case 'md':
+      return 3;
     case 'lg':
     case 'xl':
     case '2xl':
@@ -1010,4 +1012,3 @@ export function getColumnsForBreakpoint(breakpoint: BreakpointKey): number {
       return 1;
   }
 }
-

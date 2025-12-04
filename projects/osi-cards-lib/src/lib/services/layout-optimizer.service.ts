@@ -92,7 +92,7 @@ interface LayoutEvent {
 // ============================================================================
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LayoutOptimizerService {
   private readonly featureFlags = inject(FeatureFlagsService);
@@ -146,14 +146,14 @@ export class LayoutOptimizerService {
     const startTime = performance.now();
 
     // Convert to optimizable format
-    const optimizableSections = sections.map(s => this.toOptimizable(s));
+    const optimizableSections = sections.map((s) => this.toOptimizable(s));
 
     // Run optimization
-    const result = optimizeLayout(
-      optimizableSections,
+    const result = optimizeLayout(optimizableSections, columns, {
+      ...this.config,
       columns,
-      { ...this.config, columns, containerWidth }
-    );
+      containerWidth,
+    });
 
     const packingTime = performance.now() - startTime;
 
@@ -163,7 +163,7 @@ export class LayoutOptimizerService {
       gapCount: result.metrics.gapCount,
       packingTimeMs: packingTime,
       algorithm: 'unified',
-      eventType: 'initial'
+      eventType: 'initial',
     });
 
     return result;
@@ -177,7 +177,7 @@ export class LayoutOptimizerService {
     sectionHeights: Map<string, number>,
     columns: number
   ): LayoutGap[] {
-    const optimizable = sections.map(s => this.toOptimizable(s));
+    const optimizable = sections.map((s) => this.toOptimizable(s));
     return findLayoutGaps(optimizable, columns, this.config.gridResolution ?? 10);
   }
 
@@ -190,12 +190,12 @@ export class LayoutOptimizerService {
     sectionHeights: Map<string, number>,
     columns: number
   ): PositionedSection[] {
-    const optimizable = sections.map(s => this.toOptimizable(s));
+    const optimizable = sections.map((s) => this.toOptimizable(s));
     const filled = fillLayoutGaps(optimizable, gaps, columns, {
-      minGapHeight: this.config.minGapHeight ?? 100
+      minGapHeight: this.config.minGapHeight ?? 100,
     });
 
-    return filled.map(s => this.toPositioned(s, sections));
+    return filled.map((s) => this.toPositioned(s, sections));
   }
 
   /**
@@ -206,9 +206,9 @@ export class LayoutOptimizerService {
     sectionHeights: Map<string, number>,
     columns: number
   ): PositionedSection[] {
-    const optimizable = sections.map(s => this.toOptimizable(s));
+    const optimizable = sections.map((s) => this.toOptimizable(s));
     const optimized = optimizeColumnSpans(optimizable, sectionHeights, columns);
-    return optimized.map(s => this.toPositioned(s, sections));
+    return optimized.map((s) => this.toPositioned(s, sections));
   }
 
   /**
@@ -219,9 +219,9 @@ export class LayoutOptimizerService {
     sectionHeights: Map<string, number>,
     columns: number
   ): PositionedSection[] {
-    const optimizable = sections.map(s => this.toOptimizable(s));
+    const optimizable = sections.map((s) => this.toOptimizable(s));
     const result = localSwapOptimization(optimizable, sectionHeights);
-    return result.sections.map(s => this.toPositioned(s, sections));
+    return result.sections.map((s) => this.toPositioned(s, sections));
   }
 
   /**
@@ -234,7 +234,7 @@ export class LayoutOptimizerService {
     containerWidth: number,
     containerHeight: number
   ): OptimizationMetrics {
-    const optimizable = sections.map(s => this.toOptimizable(s));
+    const optimizable = sections.map((s) => this.toOptimizable(s));
     const analysis = analyzeLayout(optimizable);
     return {
       ...analysis,
@@ -244,7 +244,8 @@ export class LayoutOptimizerService {
       gapsFilled: 0,
       swapsPerformed: 0,
       // layoutDensity: 0,  // Not in OptimizationMetrics type
-      averageGapSize: analysis.gaps.length > 0 ? analysis.estimatedImprovement / analysis.gaps.length : 0
+      averageGapSize:
+        analysis.gaps.length > 0 ? analysis.estimatedImprovement / analysis.gaps.length : 0,
     };
   }
 
@@ -303,7 +304,7 @@ export class LayoutOptimizerService {
       },
       eventType,
       sessionId: this.sessionId,
-      error
+      error,
     };
 
     this.events.push(event);
@@ -328,10 +329,10 @@ export class LayoutOptimizerService {
       excellent: 0,
       good: 0,
       fair: 0,
-      poor: 0
+      poor: 0,
     };
 
-    this.events.forEach(e => {
+    this.events.forEach((e) => {
       const util = e.metrics.utilizationPercent;
       if (util >= 95) distribution.excellent++;
       else if (util >= 85) distribution.good++;
@@ -352,7 +353,7 @@ export class LayoutOptimizerService {
       utilizationDistribution: distribution,
       errorCount: this.errorCount,
       firstTrackedAt: this.firstTrackedAt,
-      lastTrackedAt: this.lastTrackedAt
+      lastTrackedAt: this.lastTrackedAt,
     };
   }
 
@@ -379,10 +380,14 @@ export class LayoutOptimizerService {
    * Export analytics data
    */
   exportAnalytics(): string {
-    return JSON.stringify({
-      summary: this.getAnalyticsSummary(),
-      events: this.events
-    }, null, 2);
+    return JSON.stringify(
+      {
+        summary: this.getAnalyticsSummary(),
+        events: this.events,
+      },
+      null,
+      2
+    );
   }
 
   // ============================================================================
@@ -395,7 +400,7 @@ export class LayoutOptimizerService {
       colSpan: section.colSpan,
       left: section.left,
       top: section.top,
-      width: section.width
+      width: section.width,
     };
   }
 
@@ -403,10 +408,10 @@ export class LayoutOptimizerService {
     optimized: OptimizableLayoutSection,
     original: PositionedSection[]
   ): PositionedSection {
-    const orig = original.find(s => s.key === optimized.key);
+    const orig = original.find((s) => s.key === optimized.key);
     return {
       ...orig!,
-      ...optimized
+      ...optimized,
     };
   }
 
@@ -414,4 +419,3 @@ export class LayoutOptimizerService {
     return `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
 }
-

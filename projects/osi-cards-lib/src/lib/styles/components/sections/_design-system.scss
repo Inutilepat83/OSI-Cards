@@ -13,23 +13,26 @@
 //
 // =====================================================================
 
-@use '../../tokens/master' as *;
+@use "../../tokens/master" as *;
 
 // Import enhanced modules
-@use 'design-tokens' as tokens;
-@use 'modern-effects' as effects;
-@use 'component-mixins' as components;
-@use 'typography-system' as typo;
-@use 'compact-mixins' as compact;
+@use "design-tokens" as tokens;
+@use "modern-effects" as effects;
+@use "component-mixins" as components;
+@use "typography-system" as typo;
+@use "compact-mixins" as compact;
 
 // Import base styles (legacy compatibility)
-@import 'sections-base';
+@import "sections-base";
 
 // =====================================================================
 // GRID LAYOUTS
 // =====================================================================
 
-@mixin section-responsive-grid($min-width: var(--section-grid-min-width), $gap: var(--section-card-gap)) {
+@mixin section-responsive-grid(
+  $min-width: var(--section-grid-min-width),
+  $gap: var(--section-card-gap)
+) {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
   gap: $gap;
@@ -288,7 +291,8 @@
     object-fit: cover;
   }
 
-  lucide-icon, svg {
+  lucide-icon,
+  svg {
     width: calc($size * 0.5);
     height: calc($size * 0.5);
     color: var(--accent);
@@ -312,7 +316,8 @@
   border: 1px dashed var(--border);
   border-radius: var(--section-item-border-radius);
 
-  lucide-icon, svg {
+  lucide-icon,
+  svg {
     opacity: 0.4;
     width: 32px;
     height: 32px;
@@ -346,7 +351,8 @@
   background: #{$brand-color-10};
   flex-shrink: 0;
 
-  lucide-icon, svg {
+  lucide-icon,
+  svg {
     width: calc($size * 0.5);
     height: calc($size * 0.5);
     color: var(--accent);
@@ -383,12 +389,12 @@
   }
 }
 
-@mixin body-text($size: 'base') {
-  @if $size == 'large' {
+@mixin body-text($size: "base") {
+  @if $size == "large" {
     @include typo.body-large;
-  } @else if $size == 'small' {
+  } @else if $size == "small" {
     @include typo.body-small;
-  } @else if $size == 'xs' {
+  } @else if $size == "xs" {
     @include typo.body-xs;
   } @else {
     @include typo.body-base;

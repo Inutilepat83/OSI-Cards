@@ -121,27 +121,27 @@ export interface HeightPredictor {
  * Base values that are adjusted through adaptive learning
  */
 export const BASE_HEIGHT_ESTIMATES: Record<string, number> = {
-  'overview': 180,
+  overview: 180,
   'contact-card': 160,
   'network-card': 160,
-  'analytics': 200,
-  'stats': 180,
-  'chart': 280,
-  'map': 250,
-  'financials': 200,
-  'info': 180,
-  'list': 220,
-  'event': 240,
-  'timeline': 240,
-  'product': 260,
-  'solutions': 240,
-  'quotation': 160,
+  analytics: 200,
+  stats: 180,
+  chart: 280,
+  map: 250,
+  financials: 200,
+  info: 180,
+  list: 220,
+  event: 240,
+  timeline: 240,
+  product: 260,
+  solutions: 240,
+  quotation: 160,
   'text-reference': 180,
   'social-media': 140,
   'brand-colors': 120,
-  'project': 180,
-  'news': 200,
-  'default': 180,
+  project: 180,
+  news: 200,
+  default: 180,
 };
 
 /**
@@ -287,10 +287,7 @@ export class HeightEstimator {
   /**
    * Estimate height for multiple sections at once
    */
-  estimateAll(
-    sections: CardSection[],
-    context: HeightEstimationContext = {}
-  ): Map<string, number> {
+  estimateAll(sections: CardSection[], context: HeightEstimationContext = {}): Map<string, number> {
     const results = new Map<string, number>();
 
     for (let i = 0; i < sections.length; i++) {
@@ -316,12 +313,7 @@ export class HeightEstimator {
    * @param actual - The actual measured height
    * @param contentHash - Optional hash for deduplication
    */
-  recordActualHeight(
-    type: string,
-    estimated: number,
-    actual: number,
-    contentHash?: string
-  ): void {
+  recordActualHeight(type: string, estimated: number, actual: number, contentHash?: string): void {
     const normalizedType = this.normalizeType(type);
 
     const measurement: HeightMeasurement = {
@@ -340,7 +332,7 @@ export class HeightEstimator {
 
     // Deduplicate by content hash if provided
     if (contentHash) {
-      const existingIndex = typeMeasurements.findIndex(m => m.contentHash === contentHash);
+      const existingIndex = typeMeasurements.findIndex((m) => m.contentHash === contentHash);
       if (existingIndex >= 0) {
         typeMeasurements[existingIndex] = measurement;
       } else {
@@ -424,10 +416,7 @@ export class HeightEstimator {
    * - Font size and line height
    * - Text length in various fields
    */
-  private calculateTextAwareBase(
-    section: CardSection,
-    context: HeightEstimationContext
-  ): number {
+  private calculateTextAwareBase(section: CardSection, context: HeightEstimationContext): number {
     const type = this.normalizeType(section.type);
     const baseHeight = BASE_HEIGHT_ESTIMATES[type] ?? BASE_HEIGHT_ESTIMATES['default']!;
 
@@ -479,9 +468,8 @@ export class HeightEstimator {
     }
 
     // Combine base height with text-calculated height
-    const calculatedHeight = HEIGHT_MULTIPLIERS.headerHeight +
-                            HEIGHT_MULTIPLIERS.padding +
-                            textHeight;
+    const calculatedHeight =
+      HEIGHT_MULTIPLIERS.headerHeight + HEIGHT_MULTIPLIERS.padding + textHeight;
 
     // Use the larger of base or calculated, with diminishing returns for very long content
     if (calculatedHeight > baseHeight) {
@@ -525,7 +513,7 @@ export class HeightEstimator {
     if (context.colSpan && context.colSpan > 1 && context.totalColumns) {
       const spanRatio = context.colSpan / context.totalColumns;
       // Reduce height proportionally to extra width (content spreads out)
-      height *= (1 - (spanRatio - 0.25) * 0.15);
+      height *= 1 - (spanRatio - 0.25) * 0.15;
     }
 
     // Type-specific adjustments
@@ -540,9 +528,10 @@ export class HeightEstimator {
 
       case 'list':
         // Lists grow more predictably
-        height = HEIGHT_MULTIPLIERS.headerHeight +
-                HEIGHT_MULTIPLIERS.padding +
-                itemCount * HEIGHT_MULTIPLIERS.perItem;
+        height =
+          HEIGHT_MULTIPLIERS.headerHeight +
+          HEIGHT_MULTIPLIERS.padding +
+          itemCount * HEIGHT_MULTIPLIERS.perItem;
         break;
 
       case 'contact-card':
@@ -655,7 +644,8 @@ export class HeightEstimator {
 
     // Calculate rolling average (last N measurements)
     const recentMeasurements = measurements.slice(-this.config.rollingWindowSize);
-    const rollingAverage = recentMeasurements.reduce((sum, m) => sum + m.actual, 0) / recentMeasurements.length;
+    const rollingAverage =
+      recentMeasurements.reduce((sum, m) => sum + m.actual, 0) / recentMeasurements.length;
 
     // Calculate correction factor
     const correctionFactor = averageEstimated > 0 ? averageActual / averageEstimated : 1;
@@ -690,10 +680,7 @@ export class HeightEstimator {
         data[type] = measurements.slice(-50);
       }
 
-      localStorage.setItem(
-        `${this.config.storageKeyPrefix}measurements`,
-        JSON.stringify(data)
-      );
+      localStorage.setItem(`${this.config.storageKeyPrefix}measurements`, JSON.stringify(data));
     } catch (e) {
       // Storage quota exceeded or other error - fail silently
       console.warn('[HeightEstimator] Failed to save to storage:', e);
@@ -739,10 +726,7 @@ export class HeightEstimator {
    * Clamp height to min/max bounds
    */
   private clampHeight(height: number): number {
-    return Math.min(
-      Math.max(height, HEIGHT_MULTIPLIERS.minHeight),
-      HEIGHT_MULTIPLIERS.maxHeight
-    );
+    return Math.min(Math.max(height, HEIGHT_MULTIPLIERS.minHeight), HEIGHT_MULTIPLIERS.maxHeight);
   }
 
   /**
@@ -762,7 +746,7 @@ export class HeightEstimator {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
 
@@ -835,9 +819,12 @@ export const SECTION_PADDING = HEIGHT_MULTIPLIERS.padding;
  * Now uses the HeightEstimator for consistency
  */
 export function measureContentDensity(section: CardSection): number {
-  const textLength = (section.description?.length ?? 0) +
-    (section.fields?.reduce((acc: number, f: CardField) =>
-      acc + String(f.value ?? '').length + (f.label?.length ?? 0), 0) ?? 0);
+  const textLength =
+    (section.description?.length ?? 0) +
+    (section.fields?.reduce(
+      (acc: number, f: CardField) => acc + String(f.value ?? '').length + (f.label?.length ?? 0),
+      0
+    ) ?? 0);
   const itemCount = section.items?.length ?? 0;
   const fieldCount = section.fields?.length ?? 0;
 
@@ -847,4 +834,3 @@ export function measureContentDensity(section: CardSection): number {
 
   return Math.round(textScore + itemScore + fieldScore);
 }
-

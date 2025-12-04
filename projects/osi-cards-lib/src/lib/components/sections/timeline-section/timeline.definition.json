@@ -53,14 +53,9 @@
         }
       }
     },
-    "required": [
-      "title"
-    ]
+    "required": ["title"]
   },
-  "aliases": [
-    "history",
-    "milestones"
-  ],
+  "aliases": ["history", "milestones"],
   "testFixtures": {
     "complete": {
       "title": "Company Journey",

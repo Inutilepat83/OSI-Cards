@@ -92,11 +92,7 @@ export interface ThrottleOptions {
 export function Debounce(delay: number, options: DebounceOptions = {}): MethodDecorator {
   const { leading = false, trailing = true, maxWait } = options;
 
-  return function (
-    target: any,
-    propertyKey: string | symbol,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
     let timeout: ReturnType<typeof setTimeout> | null = null;
     let maxWaitTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -238,11 +234,7 @@ export function Debounce(delay: number, options: DebounceOptions = {}): MethodDe
 export function Throttle(delay: number, options: ThrottleOptions = {}): MethodDecorator {
   const { leading = true, trailing = true } = options;
 
-  return function (
-    target: any,
-    propertyKey: string | symbol,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
     let timeout: ReturnType<typeof setTimeout> | null = null;
     let previous = 0;
@@ -609,4 +601,3 @@ export function DebounceLeading(delay: number): MethodDecorator {
 export function ThrottleMax(delay: number, maxWait: number): MethodDecorator {
   return Debounce(delay, { maxWait });
 }
-

@@ -1,8 +1,5 @@
 <div class="list-section">
-  <lib-section-header
-    *ngIf="section.title"
-    [title]="section.title"
-    [description]="section.description">
+  <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
   <div class="list-container" *ngIf="section.items?.length">
@@ -12,16 +9,10 @@
         <div class="list-header">
           <h4 class="list-title">{{ item.title }}</h4>
           <div class="list-badges">
-            <lib-badge
-              *ngIf="item.status"
-              [variant]="getStatusVariant(item.status)"
-              size="sm">
+            <lib-badge *ngIf="item.status" [variant]="getStatusVariant(item.status)" size="sm">
               {{ item.status }}
             </lib-badge>
-            <lib-badge
-              *ngIf="item.priority"
-              [variant]="getPriorityVariant(item.priority)"
-              size="sm">
+            <lib-badge *ngIf="item.priority" [variant]="getPriorityVariant(item.priority)" size="sm">
               {{ item.priority }}
             </lib-badge>
           </div>
@@ -31,10 +22,5 @@
     </div>
   </div>
 
-  <lib-empty-state
-    *ngIf="!section.items?.length"
-    message="No items"
-    icon="📝"
-    variant="minimal">
-  </lib-empty-state>
+  <lib-empty-state *ngIf="!section.items?.length" message="No items" icon="📝" variant="minimal"> </lib-empty-state>
 </div>

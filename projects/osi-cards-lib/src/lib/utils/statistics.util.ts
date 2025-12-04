@@ -29,7 +29,7 @@ export function mode(numbers: number[]): number | null {
   if (numbers.length === 0) return null;
 
   const freq = new Map<number, number>();
-  numbers.forEach(n => freq.set(n, (freq.get(n) || 0) + 1));
+  numbers.forEach((n) => freq.set(n, (freq.get(n) || 0) + 1));
 
   let maxFreq = 0;
   let mode: number | null = null;
@@ -47,7 +47,7 @@ export function mode(numbers: number[]): number | null {
 export function variance(numbers: number[]): number {
   if (numbers.length === 0) return 0;
   const avg = mean(numbers);
-  return mean(numbers.map(n => Math.pow(n - avg, 2)));
+  return mean(numbers.map((n) => Math.pow(n - avg, 2)));
 }
 
 export function standardDeviation(numbers: number[]): number {
@@ -118,12 +118,11 @@ export function normalizeData(numbers: number[]): number[] {
   const min = Math.min(...numbers);
   const max = Math.max(...numbers);
   const range = max - min;
-  return numbers.map(n => (n - min) / range);
+  return numbers.map((n) => (n - min) / range);
 }
 
 export function standardizeData(numbers: number[]): number[] {
   const avg = mean(numbers);
   const std = standardDeviation(numbers);
-  return numbers.map(n => (n - avg) / std);
+  return numbers.map((n) => (n - avg) / std);
 }
-

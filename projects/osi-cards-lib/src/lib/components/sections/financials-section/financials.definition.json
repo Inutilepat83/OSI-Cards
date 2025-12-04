@@ -29,11 +29,25 @@
     "properties": {
       "label": { "type": "string", "description": "Financial metric name" },
       "value": { "type": ["string", "number"], "description": "Metric value" },
-      "format": { "type": "string", "enum": ["currency", "percentage", "number", "ratio"], "description": "Value format" },
+      "format": {
+        "type": "string",
+        "enum": ["currency", "percentage", "number", "ratio"],
+        "description": "Value format"
+      },
       "change": { "type": "number", "description": "Change percentage" },
-      "trend": { "type": "string", "enum": ["up", "down", "stable"], "description": "Trend indicator" },
-      "period": { "type": "string", "description": "Time period (Q1, YTD, etc.)" },
-      "currency": { "type": "string", "description": "Currency code (USD, EUR, etc.)" }
+      "trend": {
+        "type": "string",
+        "enum": ["up", "down", "stable"],
+        "description": "Trend indicator"
+      },
+      "period": {
+        "type": "string",
+        "description": "Time period (Q1, YTD, etc.)"
+      },
+      "currency": {
+        "type": "string",
+        "description": "Currency code (USD, EUR, etc.)"
+      }
     },
     "required": ["label"]
   },
@@ -43,43 +57,159 @@
       "type": "financials",
       "description": "Annual financial performance and key metrics",
       "fields": [
-        { "label": "Annual Recurring Revenue", "value": "$127.4M", "format": "currency", "change": 45.2, "trend": "up", "period": "FY2024" },
-        { "label": "Total Revenue", "value": "$142.8M", "format": "currency", "change": 38.7, "trend": "up", "period": "FY2024" },
-        { "label": "Gross Profit", "value": "$112.3M", "format": "currency", "change": 41.2, "trend": "up", "period": "FY2024" },
-        { "label": "Gross Margin", "value": "78.6%", "format": "percentage", "change": 2.3, "trend": "up" },
-        { "label": "Operating Expenses", "value": "$98.5M", "format": "currency", "change": 22.1, "trend": "up" },
-        { "label": "EBITDA", "value": "$24.8M", "format": "currency", "change": 156.3, "trend": "up" },
-        { "label": "Net Income", "value": "$18.2M", "format": "currency", "change": 245.8, "trend": "up" },
-        { "label": "Operating Margin", "value": "17.4%", "format": "percentage", "change": 8.2, "trend": "up" },
-        { "label": "Cash & Equivalents", "value": "$89.3M", "format": "currency", "change": 12.4, "trend": "up" },
-        { "label": "Total Assets", "value": "$234.7M", "format": "currency", "change": 28.9, "trend": "up" },
-        { "label": "Debt-to-Equity Ratio", "value": "0.34", "format": "ratio", "change": -8.1, "trend": "down" },
-        { "label": "Free Cash Flow", "value": "$31.2M", "format": "currency", "change": 67.4, "trend": "up" },
-        { "label": "R&D Investment", "value": "$28.4M", "format": "currency", "change": 35.2, "trend": "up", "period": "FY2024" },
-        { "label": "Customer Acquisition Cost", "value": "$12,450", "format": "currency", "change": -12.3, "trend": "down" },
-        { "label": "LTV/CAC Ratio", "value": "6.8x", "format": "ratio", "change": 23.5, "trend": "up" }
+        {
+          "label": "Annual Recurring Revenue",
+          "value": "$127.4M",
+          "format": "currency",
+          "change": 45.2,
+          "trend": "up",
+          "period": "FY2024"
+        },
+        {
+          "label": "Total Revenue",
+          "value": "$142.8M",
+          "format": "currency",
+          "change": 38.7,
+          "trend": "up",
+          "period": "FY2024"
+        },
+        {
+          "label": "Gross Profit",
+          "value": "$112.3M",
+          "format": "currency",
+          "change": 41.2,
+          "trend": "up",
+          "period": "FY2024"
+        },
+        {
+          "label": "Gross Margin",
+          "value": "78.6%",
+          "format": "percentage",
+          "change": 2.3,
+          "trend": "up"
+        },
+        {
+          "label": "Operating Expenses",
+          "value": "$98.5M",
+          "format": "currency",
+          "change": 22.1,
+          "trend": "up"
+        },
+        {
+          "label": "EBITDA",
+          "value": "$24.8M",
+          "format": "currency",
+          "change": 156.3,
+          "trend": "up"
+        },
+        {
+          "label": "Net Income",
+          "value": "$18.2M",
+          "format": "currency",
+          "change": 245.8,
+          "trend": "up"
+        },
+        {
+          "label": "Operating Margin",
+          "value": "17.4%",
+          "format": "percentage",
+          "change": 8.2,
+          "trend": "up"
+        },
+        {
+          "label": "Cash & Equivalents",
+          "value": "$89.3M",
+          "format": "currency",
+          "change": 12.4,
+          "trend": "up"
+        },
+        {
+          "label": "Total Assets",
+          "value": "$234.7M",
+          "format": "currency",
+          "change": 28.9,
+          "trend": "up"
+        },
+        {
+          "label": "Debt-to-Equity Ratio",
+          "value": "0.34",
+          "format": "ratio",
+          "change": -8.1,
+          "trend": "down"
+        },
+        {
+          "label": "Free Cash Flow",
+          "value": "$31.2M",
+          "format": "currency",
+          "change": 67.4,
+          "trend": "up"
+        },
+        {
+          "label": "R&D Investment",
+          "value": "$28.4M",
+          "format": "currency",
+          "change": 35.2,
+          "trend": "up",
+          "period": "FY2024"
+        },
+        {
+          "label": "Customer Acquisition Cost",
+          "value": "$12,450",
+          "format": "currency",
+          "change": -12.3,
+          "trend": "down"
+        },
+        {
+          "label": "LTV/CAC Ratio",
+          "value": "6.8x",
+          "format": "ratio",
+          "change": 23.5,
+          "trend": "up"
+        }
       ]
     },
     "minimal": {
       "title": "Revenue",
       "type": "financials",
-      "fields": [
-        { "label": "Total Revenue", "value": "$10M" }
-      ]
+      "fields": [{ "label": "Total Revenue", "value": "$10M" }]
     },
     "edgeCases": {
       "title": "Financial Edge Cases",
       "type": "financials",
       "fields": [
-        { "label": "Zero Revenue", "value": "$0", "format": "currency", "change": 0, "trend": "stable" },
-        { "label": "Loss", "value": "-$15.8M", "format": "currency", "change": -234.5, "trend": "down" },
-        { "label": "Large Number", "value": "$999,999,999,999", "format": "currency", "change": 9999.99 },
-        { "label": "Euro Currency", "value": "€45.2M", "format": "currency", "currency": "EUR" },
-        { "label": "Yen Currency", "value": "¥5.2B", "format": "currency", "currency": "JPY" }
+        {
+          "label": "Zero Revenue",
+          "value": "$0",
+          "format": "currency",
+          "change": 0,
+          "trend": "stable"
+        },
+        {
+          "label": "Loss",
+          "value": "-$15.8M",
+          "format": "currency",
+          "change": -234.5,
+          "trend": "down"
+        },
+        {
+          "label": "Large Number",
+          "value": "$999,999,999,999",
+          "format": "currency",
+          "change": 9999.99
+        },
+        {
+          "label": "Euro Currency",
+          "value": "€45.2M",
+          "format": "currency",
+          "currency": "EUR"
+        },
+        {
+          "label": "Yen Currency",
+          "value": "¥5.2B",
+          "format": "currency",
+          "currency": "JPY"
+        }
       ]
     }
   }
 }
-
-
-

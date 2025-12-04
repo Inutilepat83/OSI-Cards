@@ -14,10 +14,9 @@ import { SectionHeaderComponent, EmptyStateComponent } from '../../shared';
   standalone: true,
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './text-reference-section.component.html',
-  styleUrl: './text-reference-section.scss'
+  styleUrl: './text-reference-section.scss',
 })
 export class TextReferenceSectionComponent extends BaseSectionComponent {
-
   /**
    * Get reference title
    */

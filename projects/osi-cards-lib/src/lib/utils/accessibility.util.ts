@@ -1,27 +1,27 @@
 /**
  * OSI Cards Accessibility Utilities
- * 
+ *
  * Provides accessibility helpers for WCAG compliance, focus management,
  * keyboard navigation, and screen reader support.
- * 
+ *
  * @example
  * ```typescript
- * import { 
- *   trapFocus, 
+ * import {
+ *   trapFocus,
  *   announceToScreenReader,
- *   getContrastRatio 
+ *   getContrastRatio
  * } from 'osi-cards-lib';
- * 
+ *
  * // Trap focus in modal
  * const releaseFocus = trapFocus(modalElement);
- * 
+ *
  * // Announce changes
  * announceToScreenReader('Card loaded successfully');
- * 
+ *
  * // Check color contrast
  * const ratio = getContrastRatio('#ffffff', '#000000');
  * ```
- * 
+ *
  * @module utils/accessibility
  */
 
@@ -67,28 +67,27 @@ export const WCAG_CONTRAST = {
  * Get all focusable elements within a container
  */
 export function getFocusableElements(container: HTMLElement): HTMLElement[] {
-  return Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS))
-    .filter(el => {
-      // Filter out hidden elements
-      if (el.offsetParent === null && getComputedStyle(el).position !== 'fixed') {
-        return false;
-      }
-      // Filter out elements with display:none
-      if (getComputedStyle(el).display === 'none') {
-        return false;
-      }
-      // Filter out elements with visibility:hidden
-      if (getComputedStyle(el).visibility === 'hidden') {
-        return false;
-      }
-      return true;
-    });
+  return Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS)).filter((el) => {
+    // Filter out hidden elements
+    if (el.offsetParent === null && getComputedStyle(el).position !== 'fixed') {
+      return false;
+    }
+    // Filter out elements with display:none
+    if (getComputedStyle(el).display === 'none') {
+      return false;
+    }
+    // Filter out elements with visibility:hidden
+    if (getComputedStyle(el).visibility === 'hidden') {
+      return false;
+    }
+    return true;
+  });
 }
 
 /**
  * Trap focus within a container
  * Returns a function to release the trap
- * 
+ *
  * @param container - Element to trap focus within
  * @param options - Configuration options
  * @returns Function to release focus trap
@@ -102,7 +101,7 @@ export function trapFocus(
   } = {}
 ): () => void {
   const { initialFocus, returnFocus, allowEscape = false } = options;
-  
+
   const previouslyFocused = document.activeElement as HTMLElement | null;
   const focusableElements = getFocusableElements(container);
 
@@ -113,9 +112,10 @@ export function trapFocus(
 
   // Set initial focus
   if (initialFocus) {
-    const target = typeof initialFocus === 'string'
-      ? container.querySelector<HTMLElement>(initialFocus)
-      : initialFocus;
+    const target =
+      typeof initialFocus === 'string'
+        ? container.querySelector<HTMLElement>(initialFocus)
+        : initialFocus;
     target?.focus();
   } else {
     focusableElements[0]?.focus();
@@ -169,9 +169,9 @@ export function moveFocus(
   options: { preventScroll?: boolean; select?: boolean } = {}
 ): void {
   const { preventScroll = false, select = false } = options;
-  
+
   element.focus({ preventScroll });
-  
+
   if (select && element instanceof HTMLInputElement) {
     element.select();
   }
@@ -262,14 +262,14 @@ export function announceToScreenReader(
 
   // Get or create live region
   let liveRegion = document.getElementById('osi-cards-announcer');
-  
+
   if (!liveRegion) {
     liveRegion = document.createElement('div');
     liveRegion.id = 'osi-cards-announcer';
     liveRegion.setAttribute('aria-live', priority);
     liveRegion.setAttribute('aria-atomic', 'true');
     liveRegion.setAttribute('role', 'status');
-    
+
     // Visually hidden but accessible
     Object.assign(liveRegion.style, {
       position: 'absolute',
@@ -282,7 +282,7 @@ export function announceToScreenReader(
       whiteSpace: 'nowrap',
       border: '0',
     });
-    
+
     document.body.appendChild(liveRegion);
   }
 
@@ -291,11 +291,11 @@ export function announceToScreenReader(
 
   // Clear and set message (forces re-announcement)
   liveRegion.textContent = '';
-  
+
   // Use setTimeout to ensure the clear takes effect
   setTimeout(() => {
     liveRegion!.textContent = message;
-    
+
     // Clear after delay if specified
     if (clearAfter > 0) {
       setTimeout(() => {
@@ -320,7 +320,7 @@ export function createLiveRegion(
   region.setAttribute('aria-live', priority);
   region.setAttribute('aria-atomic', 'true');
   region.setAttribute('role', 'status');
-  
+
   Object.assign(region.style, {
     position: 'absolute',
     width: '1px',
@@ -332,7 +332,7 @@ export function createLiveRegion(
     whiteSpace: 'nowrap',
     border: '0',
   });
-  
+
   document.body.appendChild(region);
 
   return {
@@ -358,7 +358,7 @@ export function createLiveRegion(
 export function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   if (!result) return null;
-  
+
   return {
     r: parseInt(result[1]!, 16),
     g: parseInt(result[2]!, 16),
@@ -371,7 +371,7 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } | nul
  * Based on WCAG 2.1 formula
  */
 export function getLuminance(r: number, g: number, b: number): number {
-  const [rs, gs, bs] = [r, g, b].map(v => {
+  const [rs, gs, bs] = [r, g, b].map((v) => {
     v = v / 255;
     return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
   });
@@ -385,18 +385,18 @@ export function getLuminance(r: number, g: number, b: number): number {
 export function getContrastRatio(color1: string, color2: string): number {
   const rgb1 = hexToRgb(color1);
   const rgb2 = hexToRgb(color2);
-  
+
   if (!rgb1 || !rgb2) {
     console.warn('Invalid color format. Use hex format (#RRGGBB)');
     return 1;
   }
-  
+
   const l1 = getLuminance(rgb1.r, rgb1.g, rgb1.b);
   const l2 = getLuminance(rgb2.r, rgb2.g, rgb2.b);
-  
+
   const lighter = Math.max(l1, l2);
   const darker = Math.min(l1, l2);
-  
+
   return (lighter + 0.05) / (darker + 0.05);
 }
 
@@ -415,12 +415,9 @@ export function meetsContrastRequirement(
 /**
  * Get WCAG compliance level for a color pair
  */
-export function getWCAGLevel(
-  foreground: string,
-  background: string
-): 'AAA' | 'AA' | 'Fail' {
+export function getWCAGLevel(foreground: string, background: string): 'AAA' | 'AA' | 'Fail' {
   const ratio = getContrastRatio(foreground, background);
-  
+
   if (ratio >= WCAG_CONTRAST.AAA_NORMAL) return 'AAA';
   if (ratio >= WCAG_CONTRAST.AA_NORMAL) return 'AA';
   return 'Fail';
@@ -439,7 +436,7 @@ export function setAriaAttributes(
 ): void {
   Object.entries(attributes).forEach(([key, value]) => {
     const ariaKey = key.startsWith('aria-') ? key : `aria-${key}`;
-    
+
     if (value === null || value === undefined) {
       element.removeAttribute(ariaKey);
     } else {
@@ -468,7 +465,7 @@ export function linkAriaElements(
     targetId = generateAriaId();
     target.id = targetId;
   }
-  
+
   trigger.setAttribute(`aria-${relationship}`, targetId);
 }
 
@@ -495,10 +492,10 @@ export function registerShortcuts(
     if (event.altKey) combo.push('Alt');
     if (event.shiftKey) combo.push('Shift');
     combo.push(event.key.toUpperCase());
-    
+
     const comboString = combo.join('+');
     const handler = shortcuts[comboString];
-    
+
     if (handler) {
       if (preventDefault) {
         event.preventDefault();
@@ -529,25 +526,23 @@ export function prefersReducedMotion(): boolean {
 /**
  * Watch for reduced motion preference changes
  */
-export function watchReducedMotion(
-  callback: (prefersReduced: boolean) => void
-): () => void {
+export function watchReducedMotion(callback: (prefersReduced: boolean) => void): () => void {
   if (typeof window === 'undefined') {
     return () => {};
   }
-  
+
   const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  
+
   const handler = (event: MediaQueryListEvent): void => {
     callback(event.matches);
   };
-  
+
   // Initial call
   callback(mediaQuery.matches);
-  
+
   // Watch for changes
   mediaQuery.addEventListener('change', handler);
-  
+
   return () => {
     mediaQuery.removeEventListener('change', handler);
   };
@@ -560,15 +555,12 @@ export function watchReducedMotion(
 /**
  * Create a skip link for keyboard navigation
  */
-export function createSkipLink(
-  targetId: string,
-  text = 'Skip to content'
-): HTMLAnchorElement {
+export function createSkipLink(targetId: string, text = 'Skip to content'): HTMLAnchorElement {
   const link = document.createElement('a');
   link.href = `#${targetId}`;
   link.textContent = text;
   link.className = 'osi-skip-link';
-  
+
   // Style to be visible only on focus
   Object.assign(link.style, {
     position: 'absolute',
@@ -580,24 +572,15 @@ export function createSkipLink(
     textDecoration: 'none',
     borderRadius: '4px',
   });
-  
+
   link.addEventListener('focus', () => {
     link.style.left = '8px';
     link.style.top = '8px';
   });
-  
+
   link.addEventListener('blur', () => {
     link.style.left = '-9999px';
   });
-  
+
   return link;
 }
-
-
-
-
-
-
-
-
-

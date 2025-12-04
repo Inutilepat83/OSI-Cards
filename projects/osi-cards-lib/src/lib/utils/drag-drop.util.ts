@@ -313,7 +313,7 @@ export function makeSortable<T>(
   });
 
   return () => {
-    cleanups.forEach(cleanup => cleanup());
+    cleanups.forEach((cleanup) => cleanup());
   };
 }
 
@@ -327,7 +327,7 @@ export function getDroppedFiles(event: DragEvent): File[] {
   const files: File[] = [];
 
   if (event.dataTransfer?.files) {
-    Array.from(event.dataTransfer.files).forEach(file => {
+    Array.from(event.dataTransfer.files).forEach((file) => {
       files.push(file);
     });
   }
@@ -356,4 +356,3 @@ export function setDragImage(element: HTMLElement, event: DragEvent): void {
     event.dataTransfer.setDragImage(element, 0, 0);
   }
 }
-

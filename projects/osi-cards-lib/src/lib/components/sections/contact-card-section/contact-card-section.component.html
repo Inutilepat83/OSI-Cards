@@ -1,14 +1,11 @@
 <div class="contacts">
-  <lib-section-header
-    *ngIf="section.title"
-    [title]="section.title"
-    [description]="section.description">
+  <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
   <div class="grid" *ngIf="section.fields?.length">
     <div class="card" *ngFor="let c of section.fields">
       <div class="avatar">
-        <img [src]="getAvatar(c)" [alt]="getContactName(c)" *ngIf="getAvatar(c)" loading="lazy">
+        <img [src]="getAvatar(c)" [alt]="getContactName(c)" *ngIf="getAvatar(c)" loading="lazy" />
         <span class="initials" *ngIf="!getAvatar(c)">{{ getInitials(getContactName(c)) }}</span>
       </div>
       <h4 class="name">{{ getContactName(c) }}</h4>
@@ -22,10 +19,5 @@
     </div>
   </div>
 
-  <lib-empty-state
-    *ngIf="!section.fields?.length"
-    message="No contacts"
-    icon="👤"
-    variant="compact">
-  </lib-empty-state>
+  <lib-empty-state *ngIf="!section.fields?.length" message="No contacts" icon="👤" variant="compact"> </lib-empty-state>
 </div>

@@ -49,7 +49,7 @@ export interface ReducedMotionAnimationConfig {
  * - SSR-safe implementation
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ReducedMotionService implements OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
@@ -75,9 +75,7 @@ export class ReducedMotionService implements OnDestroy {
    * Takes into account both system preference and manual override.
    */
   get prefersReducedMotion$(): Observable<boolean> {
-    return this._prefersReducedMotion$.asObservable().pipe(
-      distinctUntilChanged()
-    );
+    return this._prefersReducedMotion$.asObservable().pipe(distinctUntilChanged());
   }
 
   /**
@@ -98,9 +96,7 @@ export class ReducedMotionService implements OnDestroy {
    * Observable for animation enabled state
    */
   get animationsEnabled$(): Observable<boolean> {
-    return this.prefersReducedMotion$.pipe(
-      map(prefers => !prefers)
-    );
+    return this.prefersReducedMotion$.pipe(map((prefers) => !prefers));
   }
 
   /**
@@ -194,14 +190,14 @@ export class ReducedMotionService implements OnDestroy {
       return {
         duration: 0,
         easing: EASING.LINEAR,
-        skip: true
+        skip: true,
       };
     }
 
     return {
       duration: baseDuration,
       easing: baseEasing,
-      skip: false
+      skip: false,
     };
   }
 
@@ -266,7 +262,7 @@ export class ReducedMotionService implements OnDestroy {
    */
   get cssClass$(): Observable<string> {
     return this.prefersReducedMotion$.pipe(
-      map(prefers => prefers ? 'osi-reduced-motion' : 'osi-full-motion')
+      map((prefers) => (prefers ? 'osi-reduced-motion' : 'osi-full-motion'))
     );
   }
 
@@ -372,6 +368,3 @@ export const REDUCED_MOTION_CSS = `
   transition: none !important;
 }
 `;
-
-
-

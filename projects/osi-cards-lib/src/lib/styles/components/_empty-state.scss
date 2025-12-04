@@ -21,11 +21,21 @@
 }
 
 /* Utility classes for Shadow DOM (Tailwind not available) */
-.w-full { width: 100%; }
-.h-full { height: 100%; }
-.flex-1 { flex: 1 1 0%; }
-.min-h-0 { min-height: 0; }
-.max-w-none { max-width: none; }
+.w-full {
+  width: 100%;
+}
+.h-full {
+  height: 100%;
+}
+.flex-1 {
+  flex: 1 1 0%;
+}
+.min-h-0 {
+  min-height: 0;
+}
+.max-w-none {
+  max-width: none;
+}
 
 /* Animated Empty State */
 .card-empty-state {
@@ -39,7 +49,7 @@
   padding: 4rem 2rem;
   border-radius: 1.5rem;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--color-brand, #FF7900) 20%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-brand, #ff7900) 20%, transparent);
   background: color-mix(in srgb, var(--background, #0c0c0c) 98%, transparent);
   transition: all 0.3s ease;
   flex: 1;
@@ -62,7 +72,7 @@
 }
 
 .card-empty-state:hover {
-  border-color: color-mix(in srgb, var(--color-brand, #FF7900) 30%, transparent);
+  border-color: color-mix(in srgb, var(--color-brand, #ff7900) 30%, transparent);
   background: color-mix(in srgb, var(--background, #0c0c0c) 99%, transparent);
 }
 
@@ -82,8 +92,8 @@
   height: 150%;
   background: radial-gradient(
     circle,
-    color-mix(in srgb, var(--color-brand, #FF7900) 6%, transparent) 0%,
-    color-mix(in srgb, var(--color-brand, #FF7900) 3%, transparent) 50%,
+    color-mix(in srgb, var(--color-brand, #ff7900) 6%, transparent) 0%,
+    color-mix(in srgb, var(--color-brand, #ff7900) 3%, transparent) 50%,
     transparent 80%
   );
   animation: gradient-pulse 5s ease-in-out infinite;
@@ -91,7 +101,8 @@
 }
 
 @keyframes gradient-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.6;
     transform: translate(-50%, -50%) scale(1);
   }
@@ -112,9 +123,11 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--color-brand, #FF7900);
-  box-shadow: 0 0 8px var(--color-brand, #FF7900);
-  transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.5s ease;
+  background: var(--color-brand, #ff7900);
+  box-shadow: 0 0 8px var(--color-brand, #ff7900);
+  transition:
+    transform 0.8s cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 0.5s ease;
   will-change: transform, opacity;
   top: 50%;
   left: 50%;
@@ -127,16 +140,16 @@
 .empty-state-particles .particle:nth-child(odd) {
   width: 5px;
   height: 5px;
-  background: var(--color-brand, #FF7900);
-  box-shadow: 0 0 10px var(--color-brand, #FF7900);
+  background: var(--color-brand, #ff7900);
+  box-shadow: 0 0 10px var(--color-brand, #ff7900);
   opacity: 0.8;
 }
 
 .empty-state-particles .particle:nth-child(even) {
   width: 3px;
   height: 3px;
-  background: var(--color-brand, #FF7900);
-  box-shadow: 0 0 6px var(--color-brand, #FF7900);
+  background: var(--color-brand, #ff7900);
+  box-shadow: 0 0 6px var(--color-brand, #ff7900);
   opacity: 0.6;
 }
 
@@ -167,7 +180,7 @@
 .empty-state-icon-ring {
   position: absolute;
   inset: -8px;
-  border: 1.5px solid color-mix(in srgb, var(--color-brand, #FF7900) 25%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--color-brand, #ff7900) 25%, transparent);
   border-radius: 50%;
   animation: ring-pulse 3s ease-in-out infinite;
 }
@@ -175,13 +188,14 @@
 .empty-state-icon-pulse {
   position: absolute;
   inset: -16px;
-  border: 1px solid color-mix(in srgb, var(--color-brand, #FF7900) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-brand, #ff7900) 15%, transparent);
   border-radius: 50%;
   animation: ring-pulse 3s ease-in-out infinite 0.75s;
 }
 
 @keyframes ring-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.4;
     transform: scale(1);
   }
@@ -194,14 +208,15 @@
 .empty-state-icon {
   position: relative;
   z-index: 1;
-  color: var(--color-brand, #FF7900);
+  color: var(--color-brand, #ff7900);
   animation: icon-float 4s ease-in-out infinite;
-  filter: drop-shadow(0 2px 8px color-mix(in srgb, var(--color-brand, #FF7900) 25%, transparent));
+  filter: drop-shadow(0 2px 8px color-mix(in srgb, var(--color-brand, #ff7900) 25%, transparent));
   opacity: 0.95;
 }
 
 @keyframes icon-float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0) rotate(0deg);
   }
   25% {
@@ -245,7 +260,7 @@
 
 .empty-state-message {
   font-size: 1rem;
-  color: var(--color-brand, #FF7900);
+  color: var(--color-brand, #ff7900);
   margin: 0;
   line-height: 1.6;
   font-weight: 500;
@@ -273,13 +288,14 @@
   align-items: center;
   justify-content: center;
   padding: 3rem;
-  background: linear-gradient(135deg, 
-    color-mix(in srgb, var(--color-brand, #FF7900) 5%, transparent) 0%,
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-brand, #ff7900) 5%, transparent) 0%,
     color-mix(in srgb, var(--background, #0c0c0c) 98%, transparent) 50%,
     transparent 100%
   );
   border-radius: 1.5rem;
-  border: 1px dashed color-mix(in srgb, var(--color-brand, #FF7900) 20%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--color-brand, #ff7900) 20%, transparent);
 }
 
 .empty-state-box {
@@ -291,7 +307,7 @@
   display: flex;
   justify-content: center;
   margin-bottom: 1.5rem;
-  color: var(--color-brand, #FF7900);
+  color: var(--color-brand, #ff7900);
   opacity: 0.7;
 }
 
@@ -312,39 +328,43 @@
   overflow: hidden;
   background: radial-gradient(
     circle at 50% 50%,
-    color-mix(in srgb, var(--color-brand, #FF7900) 5%, transparent) 0%,
+    color-mix(in srgb, var(--color-brand, #ff7900) 5%, transparent) 0%,
     transparent 70%
   );
-  animation: generating-bg-pulse 3s ease-in-out infinite, card-generating-pulse 2s ease-in-out infinite;
+  animation:
+    generating-bg-pulse 3s ease-in-out infinite,
+    card-generating-pulse 2s ease-in-out infinite;
 }
 
 @keyframes card-generating-pulse {
-  0%, 100% {
-    box-shadow: 
-      inset 0 1px 3px color-mix(in srgb, var(--color-brand, #FF7900) 8%, transparent),
+  0%,
+  100% {
+    box-shadow:
+      inset 0 1px 3px color-mix(in srgb, var(--color-brand, #ff7900) 8%, transparent),
       0 4px 20px rgba(0, 0, 0, 0.15),
       0 0 0 transparent;
   }
   50% {
-    box-shadow: 
-      inset 0 1px 3px color-mix(in srgb, var(--color-brand, #FF7900) 15%, transparent),
+    box-shadow:
+      inset 0 1px 3px color-mix(in srgb, var(--color-brand, #ff7900) 15%, transparent),
       0 4px 20px rgba(0, 0, 0, 0.15),
-      0 0 30px color-mix(in srgb, var(--color-brand, #FF7900) 20%, transparent);
+      0 0 30px color-mix(in srgb, var(--color-brand, #ff7900) 20%, transparent);
   }
 }
 
 @keyframes generating-bg-pulse {
-  0%, 100% {
+  0%,
+  100% {
     background: radial-gradient(
       circle at 50% 50%,
-      color-mix(in srgb, var(--color-brand, #FF7900) 5%, transparent) 0%,
+      color-mix(in srgb, var(--color-brand, #ff7900) 5%, transparent) 0%,
       transparent 70%
     );
   }
   50% {
     background: radial-gradient(
       circle at 50% 50%,
-      color-mix(in srgb, var(--color-brand, #FF7900) 12%, transparent) 0%,
+      color-mix(in srgb, var(--color-brand, #ff7900) 12%, transparent) 0%,
       transparent 70%
     );
   }
@@ -365,7 +385,7 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    color-mix(in srgb, var(--color-brand, #FF7900) 15%, transparent) 50%,
+    color-mix(in srgb, var(--color-brand, #ff7900) 15%, transparent) 50%,
     transparent 100%
   );
   animation: shimmer-sweep 2.5s ease-in-out infinite;
@@ -390,7 +410,7 @@
   background: linear-gradient(
     90deg,
     var(--foreground, #ffffff) 0%,
-    var(--color-brand, #FF7900) 50%,
+    var(--color-brand, #ff7900) 50%,
     var(--foreground, #ffffff) 100%
   );
   background-size: 200% 100%;
@@ -404,7 +424,8 @@
 }
 
 @keyframes text-shimmer-flow {
-  0%, 100% {
+  0%,
+  100% {
     background-position: -200% 0;
   }
   50% {
@@ -425,22 +446,55 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--color-brand, #FF7900);
-  box-shadow: 0 0 6px var(--color-brand, #FF7900);
+  background: var(--color-brand, #ff7900);
+  box-shadow: 0 0 6px var(--color-brand, #ff7900);
   animation: particle-float 4s ease-in-out infinite;
 }
 
-.particle:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
-.particle:nth-child(2) { top: 30%; left: 80%; animation-delay: 0.5s; }
-.particle:nth-child(3) { top: 70%; left: 30%; animation-delay: 1s; }
-.particle:nth-child(4) { top: 80%; left: 70%; animation-delay: 1.5s; }
-.particle:nth-child(5) { top: 20%; left: 50%; animation-delay: 0.3s; }
-.particle:nth-child(6) { top: 60%; left: 15%; animation-delay: 0.9s; }
-.particle:nth-child(7) { top: 50%; left: 90%; animation-delay: 1.8s; }
-.particle:nth-child(8) { top: 15%; left: 60%; animation-delay: 2.1s; }
+.particle:nth-child(1) {
+  top: 10%;
+  left: 20%;
+  animation-delay: 0s;
+}
+.particle:nth-child(2) {
+  top: 30%;
+  left: 80%;
+  animation-delay: 0.5s;
+}
+.particle:nth-child(3) {
+  top: 70%;
+  left: 30%;
+  animation-delay: 1s;
+}
+.particle:nth-child(4) {
+  top: 80%;
+  left: 70%;
+  animation-delay: 1.5s;
+}
+.particle:nth-child(5) {
+  top: 20%;
+  left: 50%;
+  animation-delay: 0.3s;
+}
+.particle:nth-child(6) {
+  top: 60%;
+  left: 15%;
+  animation-delay: 0.9s;
+}
+.particle:nth-child(7) {
+  top: 50%;
+  left: 90%;
+  animation-delay: 1.8s;
+}
+.particle:nth-child(8) {
+  top: 15%;
+  left: 60%;
+  animation-delay: 2.1s;
+}
 
 @keyframes particle-float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0) translateX(0) scale(1);
     opacity: 0.3;
   }
@@ -483,7 +537,7 @@
 .spinner-circle {
   stroke-dasharray: 125.6;
   stroke-dashoffset: 31.4;
-  stroke: var(--color-brand, #FF7900);
+  stroke: var(--color-brand, #ff7900);
   animation: spinner-dash 1.5s ease-in-out infinite;
 }
 
@@ -520,9 +574,10 @@
   font-weight: 600;
   color: var(--foreground, #ffffff);
   margin-bottom: 0.5rem;
-  background: linear-gradient(90deg, 
+  background: linear-gradient(
+    90deg,
     var(--foreground, #ffffff) 0%,
-    var(--color-brand, #FF7900) 50%,
+    var(--color-brand, #ff7900) 50%,
     var(--foreground, #ffffff) 100%
   );
   background-size: 200% 100%;
@@ -539,7 +594,8 @@
 }
 
 @keyframes text-shimmer {
-  0%, 100% {
+  0%,
+  100% {
     background-position: -200% 0;
   }
   50% {
@@ -553,10 +609,11 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg,
+  background: linear-gradient(
+    90deg,
     transparent 0%,
-    var(--color-brand, #FF7900) 25%,
-    var(--color-brand, #FF7900) 75%,
+    var(--color-brand, #ff7900) 25%,
+    var(--color-brand, #ff7900) 75%,
     transparent 100%
   );
   background-size: 200% 100%;
@@ -571,4 +628,3 @@
     background-position: 200% 0;
   }
 }
-

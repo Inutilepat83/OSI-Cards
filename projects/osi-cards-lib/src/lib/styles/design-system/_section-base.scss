@@ -4,7 +4,7 @@
 // These styles define the standard structure and patterns used across
 // all section types. Import this file to get consistent styling.
 
-@use './tokens' as *;
+@use "./tokens" as *;
 
 // ═══════════════════════════════════════════════════════════════════
 // SECTION CONTAINER (Standard wrapper for all sections)
@@ -392,4 +392,3 @@
     }
   }
 }
-

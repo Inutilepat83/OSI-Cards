@@ -20,7 +20,7 @@ import { TrendDirection } from '../../../types';
   imports: [CommonModule],
   templateUrl: './trend-indicator.component.html',
   styleUrl: './trend-indicator.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TrendIndicatorComponent {
   /**
@@ -95,10 +95,14 @@ export class TrendIndicatorComponent {
     if (this.icon) return this.icon;
 
     switch (this.trend) {
-      case 'up': return '↗';
-      case 'down': return '↘';
-      case 'stable': return '→';
-      default: return '•';
+      case 'up':
+        return '↗';
+      case 'down':
+        return '↘';
+      case 'stable':
+        return '→';
+      default:
+        return '•';
     }
   }
 
@@ -108,9 +112,14 @@ export class TrendIndicatorComponent {
   get computedAriaLabel(): string {
     if (this.ariaLabel) return this.ariaLabel;
 
-    const trendText = this.trend === 'up' ? 'increasing' :
-                      this.trend === 'down' ? 'decreasing' :
-                      this.trend === 'stable' ? 'stable' : 'neutral';
+    const trendText =
+      this.trend === 'up'
+        ? 'increasing'
+        : this.trend === 'down'
+          ? 'decreasing'
+          : this.trend === 'stable'
+            ? 'stable'
+            : 'neutral';
 
     return `Trend ${trendText}${this.value !== undefined ? ` by ${this.formattedValue}` : ''}`;
   }
@@ -120,7 +129,7 @@ export class TrendIndicatorComponent {
    */
   get classes(): Record<string, boolean> {
     const classes: Record<string, boolean> = {
-      'trend-indicator--animated': this.animated
+      'trend-indicator--animated': this.animated,
     };
 
     classes[`trend-indicator--${this.trend}`] = true;
@@ -133,4 +142,3 @@ export class TrendIndicatorComponent {
     return classes;
   }
 }
-

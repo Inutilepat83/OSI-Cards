@@ -1,8 +1,5 @@
 <div class="timeline-section">
-  <lib-section-header
-    *ngIf="section.title"
-    [title]="section.title"
-    [description]="section.description">
+  <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
   <div class="timeline-container" *ngIf="section.items?.length">
@@ -17,20 +14,13 @@
           <span class="timeline-date" *ngIf="event.meta?.date">{{ event.meta?.date }}</span>
         </div>
         <p class="timeline-description" *ngIf="event.description">{{ event.description }}</p>
-        <lib-badge
-          *ngIf="event.meta?.type"
-          variant="primary"
-          size="sm">
+        <lib-badge *ngIf="event.meta?.type" variant="primary" size="sm">
           {{ event.meta?.type }}
         </lib-badge>
       </div>
     </div>
   </div>
 
-  <lib-empty-state
-    *ngIf="!section.items?.length"
-    message="No timeline events"
-    icon="📅"
-    variant="minimal">
+  <lib-empty-state *ngIf="!section.items?.length" message="No timeline events" icon="📅" variant="minimal">
   </lib-empty-state>
 </div>

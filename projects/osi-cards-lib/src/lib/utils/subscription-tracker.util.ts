@@ -81,7 +81,7 @@ export class SubscriptionTracker {
    * @param subscriptions - Subscriptions to track
    */
   trackAll(...subscriptions: Subscription[]): void {
-    subscriptions.forEach(sub => this.track(sub));
+    subscriptions.forEach((sub) => this.track(sub));
   }
 
   /**
@@ -104,7 +104,7 @@ export class SubscriptionTracker {
    * Unsubscribe from all tracked subscriptions
    */
   unsubscribeAll(): void {
-    this.subscriptions.forEach(sub => {
+    this.subscriptions.forEach((sub) => {
       if (!sub.closed) {
         sub.unsubscribe();
       }
@@ -121,7 +121,7 @@ export class SubscriptionTracker {
    * @returns Number of active subscriptions
    */
   getActiveCount(): number {
-    return this.subscriptions.filter(sub => !sub.closed).length;
+    return this.subscriptions.filter((sub) => !sub.closed).length;
   }
 
   /**
@@ -174,11 +174,7 @@ function getTracker(instance: any): SubscriptionTracker {
  * }
  * ```
  */
-export function track(
-  instance: any,
-  subscription: Subscription,
-  name?: string
-): Subscription {
+export function track(instance: any, subscription: Subscription, name?: string): Subscription {
   const tracker = getTracker(instance);
   return tracker.track(subscription, name);
 }
@@ -198,10 +194,7 @@ export function track(
  * );
  * ```
  */
-export function trackAll(
-  instance: any,
-  ...subscriptions: Subscription[]
-): void {
+export function trackAll(instance: any, ...subscriptions: Subscription[]): void {
   const tracker = getTracker(instance);
   tracker.trackAll(...subscriptions);
 }
@@ -363,11 +356,7 @@ export function untilDestroyed(instance: any) {
  * ```
  */
 export function Subscribe(name?: string): MethodDecorator {
-  return function (
-    target: any,
-    propertyKey: string | symbol,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
     descriptor.value = function (...args: any[]) {
@@ -480,7 +469,7 @@ export class SubscriptionPool {
    * Unsubscribe from all subscriptions
    */
   unsubscribeAll(): void {
-    this.subscriptions.forEach(sub => {
+    this.subscriptions.forEach((sub) => {
       if (!sub.closed) {
         sub.unsubscribe();
       }
@@ -507,4 +496,3 @@ export class SubscriptionPool {
     return this.subscriptions.size;
   }
 }
-

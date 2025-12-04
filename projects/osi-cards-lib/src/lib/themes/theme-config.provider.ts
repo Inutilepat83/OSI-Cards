@@ -1,14 +1,14 @@
-import { 
-  Provider, 
-  EnvironmentProviders, 
+import {
+  Provider,
+  EnvironmentProviders,
   makeEnvironmentProviders,
-  InjectionToken
+  InjectionToken,
 } from '@angular/core';
-import { 
-  OSI_THEME_CONFIG, 
-  ThemeServiceConfig, 
+import {
+  OSI_THEME_CONFIG,
+  ThemeServiceConfig,
   OSICardsThemeConfig,
-  ThemePreset 
+  ThemePreset,
 } from './theme.service';
 
 // ============================================
@@ -110,19 +110,19 @@ export const OSI_CUSTOM_THEMES = new InjectionToken<Map<string, OSICardsThemeCon
 
 /**
  * Provide OSI Cards theming configuration
- * 
+ *
  * Use this function in your application configuration to set up
  * the theming system with your desired options.
- * 
+ *
  * @param options Theme configuration options
  * @returns Environment providers for theming
- * 
+ *
  * @example
  * ```typescript
  * // app.config.ts
  * import { ApplicationConfig } from '@angular/core';
  * import { provideOSICardsTheme } from 'osi-cards-lib';
- * 
+ *
  * export const appConfig: ApplicationConfig = {
  *   providers: [
  *     provideOSICardsTheme({
@@ -141,25 +141,23 @@ export const OSI_CUSTOM_THEMES = new InjectionToken<Map<string, OSICardsThemeCon
  *   ]
  * };
  * ```
- * 
+ *
  * @example
  * ```typescript
  * // Simple dark mode default
  * provideOSICardsTheme({ defaultTheme: 'dark' })
  * ```
- * 
+ *
  * @example
  * ```typescript
  * // Disable persistence
- * provideOSICardsTheme({ 
+ * provideOSICardsTheme({
  *   defaultTheme: 'light',
- *   enablePersistence: false 
+ *   enablePersistence: false
  * })
  * ```
  */
-export function provideOSICardsTheme(
-  options: OSICardsThemeOptions = {}
-): EnvironmentProviders {
+export function provideOSICardsTheme(options: OSICardsThemeOptions = {}): EnvironmentProviders {
   const config: Partial<ThemeServiceConfig> = {
     defaultTheme: options.defaultTheme ?? 'system',
     persistKey: options.persistKey ?? 'osi-cards-theme',
@@ -168,22 +166,22 @@ export function provideOSICardsTheme(
     transitionDuration: options.transitionDuration ?? 200,
     followSystemPreference: options.followSystemPreference ?? true,
     updateColorSchemeMeta: options.updateColorSchemeMeta ?? true,
-    customThemes: options.themes
+    customThemes: options.themes,
   };
 
   return makeEnvironmentProviders([
     {
       provide: OSI_THEME_CONFIG,
-      useValue: config
-    }
+      useValue: config,
+    },
   ]);
 }
 
 /**
  * Provide OSI Cards theming with full feature configuration
- * 
+ *
  * Extended version that includes feature flags and additional options.
- * 
+ *
  * @param options Full theme configuration options
  * @returns Environment providers
  */
@@ -198,20 +196,20 @@ export function provideOSICardsThemeFull(
     transitionDuration: options.transitionDuration ?? 200,
     followSystemPreference: options.followSystemPreference ?? true,
     updateColorSchemeMeta: options.updateColorSchemeMeta ?? true,
-    customThemes: options.themes
+    customThemes: options.themes,
   };
 
   const providers: Provider[] = [
     {
       provide: OSI_THEME_CONFIG,
-      useValue: config
-    }
+      useValue: config,
+    },
   ];
 
   if (options.features) {
     providers.push({
       provide: OSI_THEME_FEATURES,
-      useValue: options.features
+      useValue: options.features,
     });
   }
 
@@ -222,7 +220,7 @@ export function provideOSICardsThemeFull(
     });
     providers.push({
       provide: OSI_CUSTOM_THEMES,
-      useValue: themesMap
+      useValue: themesMap,
     });
   }
 
@@ -231,9 +229,9 @@ export function provideOSICardsThemeFull(
 
 /**
  * Provide a single custom theme
- * 
+ *
  * Convenience function for registering a single custom theme.
- * 
+ *
  * @param theme Theme configuration
  * @returns Provider
  */
@@ -245,7 +243,7 @@ export function provideCustomTheme(theme: OSICardsThemeConfig): Provider {
       map.set(theme.name, theme);
       return map;
     },
-    multi: false
+    multi: false,
   };
 }
 
@@ -255,9 +253,9 @@ export function provideCustomTheme(theme: OSICardsThemeConfig): Provider {
 
 /**
  * Create a minimal theme configuration
- * 
+ *
  * Helper for creating simple theme configs with just accent color.
- * 
+ *
  * @param name Theme name
  * @param accentColor Primary accent color
  * @param isDark Whether this is a dark theme
@@ -274,8 +272,8 @@ export function createSimpleTheme(
     variables: {
       '--osi-card-accent': accentColor,
       '--osi-card-accent-hover': accentColor,
-      '--osi-card-ring': `${accentColor}40` // 25% opacity
-    }
+      '--osi-card-ring': `${accentColor}40`, // 25% opacity
+    },
   };
 }
 
@@ -288,7 +286,7 @@ export const ThemePresets = {
    */
   system: (): OSICardsThemeOptions => ({
     defaultTheme: 'system',
-    followSystemPreference: true
+    followSystemPreference: true,
   }),
 
   /**
@@ -296,7 +294,7 @@ export const ThemePresets = {
    */
   light: (): OSICardsThemeOptions => ({
     defaultTheme: 'light',
-    followSystemPreference: false
+    followSystemPreference: false,
   }),
 
   /**
@@ -304,7 +302,7 @@ export const ThemePresets = {
    */
   dark: (): OSICardsThemeOptions => ({
     defaultTheme: 'dark',
-    followSystemPreference: false
+    followSystemPreference: false,
   }),
 
   /**
@@ -312,7 +310,7 @@ export const ThemePresets = {
    */
   stateless: (defaultTheme: ThemePreset = 'light'): OSICardsThemeOptions => ({
     defaultTheme,
-    enablePersistence: false
+    enablePersistence: false,
   }),
 
   /**
@@ -320,7 +318,7 @@ export const ThemePresets = {
    */
   noTransitions: (defaultTheme: ThemePreset = 'system'): OSICardsThemeOptions => ({
     defaultTheme,
-    enableTransitions: false
+    enableTransitions: false,
   }),
 
   /**
@@ -329,15 +327,6 @@ export const ThemePresets = {
   accessible: (): OSICardsThemeOptions => ({
     defaultTheme: 'high-contrast',
     enableTransitions: true,
-    transitionDuration: 0 // Instant transitions for reduced motion
-  })
+    transitionDuration: 0, // Instant transitions for reduced motion
+  }),
 };
-
-
-
-
-
-
-
-
-

@@ -2,17 +2,17 @@ import { OSICardsThemeConfig } from './theme.service';
 
 /**
  * Theme Builder Utility
- * 
+ *
  * Helper functions for building and modifying theme configurations
  */
 
 /**
  * Create a theme configuration from a base theme with overrides
- * 
+ *
  * @param baseTheme - Base theme configuration
  * @param overrides - Variable overrides to apply
  * @returns New theme configuration with overrides applied
- * 
+ *
  * @example
  * ```typescript
  * const customTheme = buildThemeFromBase(lightTheme, {
@@ -31,15 +31,15 @@ export function buildThemeFromBase(
     preset: false,
     variables: {
       ...baseTheme.variables,
-      ...overrides
-    }
+      ...overrides,
+    },
   };
 }
 
 /**
  * Merge multiple theme configurations
  * Later themes override earlier ones
- * 
+ *
  * @param themes - Array of theme configurations to merge
  * @returns Merged theme configuration
  */
@@ -52,17 +52,17 @@ export function mergeThemes(...themes: OSICardsThemeConfig[]): OSICardsThemeConf
   if (!firstTheme) {
     throw new Error('At least one theme is required');
   }
-  
+
   const merged: OSICardsThemeConfig = {
     name: firstTheme.name,
     preset: false,
-    variables: {}
+    variables: {},
   };
 
-  themes.forEach(theme => {
+  themes.forEach((theme) => {
     merged.variables = {
       ...merged.variables,
-      ...theme.variables
+      ...theme.variables,
     };
   });
 
@@ -72,7 +72,7 @@ export function mergeThemes(...themes: OSICardsThemeConfig[]): OSICardsThemeConf
 /**
  * Create a theme with only specific CSS variables
  * Useful for partial theme customization
- * 
+ *
  * @param name - Theme name
  * @param variables - CSS variables to include
  * @returns Theme configuration with only specified variables
@@ -84,22 +84,20 @@ export function createPartialTheme(
   return {
     name,
     preset: false,
-    variables
+    variables,
   };
 }
 
 /**
  * Validate CSS variable names
- * 
+ *
  * @param variables - Object with CSS variable names as keys
  * @returns Array of invalid variable names
  */
-export function validateCSSVariableNames(
-  variables: Record<string, string>
-): string[] {
+export function validateCSSVariableNames(variables: Record<string, string>): string[] {
   const invalid: string[] = [];
 
-  Object.keys(variables).forEach(key => {
+  Object.keys(variables).forEach((key) => {
     // CSS custom properties should start with --
     if (!key.startsWith('--')) {
       invalid.push(key);
@@ -119,11 +117,11 @@ export function validateCSSVariableNames(
 /**
  * Generate a theme from a color palette
  * Automatically generates related CSS variables from base colors
- * 
+ *
  * @param name - Theme name
  * @param colors - Color palette object
  * @returns Theme configuration with generated variables
- * 
+ *
  * @example
  * ```typescript
  * const theme = generateThemeFromPalette('my-brand', {
@@ -176,7 +174,6 @@ export function generateThemeFromPalette(
   return {
     name,
     preset: false,
-    variables
+    variables,
   };
 }
-

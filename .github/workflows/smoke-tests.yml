@@ -1,0 +1,49 @@
+name: Smoke Tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  deployment_status:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-tests:
+    name: Smoke Tests
+    runs-on: ubuntu-latest
+    if: github.event.deployment_status.state == 'success' || github.event_name != 'deployment_status'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Build Application
+        run: npm run build
+
+      - name: Run Smoke Tests
+        run: npx playwright test smoke-tests.e2e-spec.ts --project=chromium --reporter=line
+        timeout-minutes: 5
+
+      - name: Report Results
+        if: always()
+        run: |
+          if [ $? -eq 0 ]; then
+            echo "✅ Smoke tests passed"
+          else
+            echo "❌ Smoke tests failed - critical issues detected"
+            exit 1
+          fi
+

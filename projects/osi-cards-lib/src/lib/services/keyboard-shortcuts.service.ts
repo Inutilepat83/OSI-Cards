@@ -71,7 +71,7 @@ export class KeyboardShortcutsService implements OnDestroy {
   /** Get shortcuts grouped by category */
   readonly shortcutsByCategory = computed(() => {
     const grouped = new Map<string, KeyboardShortcut[]>();
-    this.allShortcuts().forEach(shortcut => {
+    this.allShortcuts().forEach((shortcut) => {
       const category = shortcut.category || 'General';
       const existing = grouped.get(category) || [];
       grouped.set(category, [...existing, shortcut]);
@@ -93,12 +93,12 @@ export class KeyboardShortcutsService implements OnDestroy {
    * Register a keyboard shortcut
    */
   register(shortcut: KeyboardShortcut): void {
-    this.shortcuts.update(map => {
+    this.shortcuts.update((map) => {
       const newMap = new Map(map);
       newMap.set(shortcut.id, {
         enabled: true,
         preventDefault: true,
-        ...shortcut
+        ...shortcut,
       });
       return newMap;
     });
@@ -108,14 +108,14 @@ export class KeyboardShortcutsService implements OnDestroy {
    * Register multiple shortcuts at once
    */
   registerAll(shortcuts: KeyboardShortcut[]): void {
-    shortcuts.forEach(shortcut => this.register(shortcut));
+    shortcuts.forEach((shortcut) => this.register(shortcut));
   }
 
   /**
    * Unregister a shortcut by ID
    */
   unregister(id: string): void {
-    this.shortcuts.update(map => {
+    this.shortcuts.update((map) => {
       const newMap = new Map(map);
       newMap.delete(id);
       return newMap;
@@ -126,7 +126,7 @@ export class KeyboardShortcutsService implements OnDestroy {
    * Enable a specific shortcut
    */
   enable(id: string): void {
-    this.shortcuts.update(map => {
+    this.shortcuts.update((map) => {
       const shortcut = map.get(id);
       if (shortcut) {
         const newMap = new Map(map);
@@ -141,7 +141,7 @@ export class KeyboardShortcutsService implements OnDestroy {
    * Disable a specific shortcut
    */
   disable(id: string): void {
-    this.shortcuts.update(map => {
+    this.shortcuts.update((map) => {
       const shortcut = map.get(id);
       if (shortcut) {
         const newMap = new Map(map);
@@ -170,7 +170,7 @@ export class KeyboardShortcutsService implements OnDestroy {
    * Toggle help modal
    */
   toggleHelp(): void {
-    this.helpOpen.update(v => !v);
+    this.helpOpen.update((v) => !v);
   }
 
   /**
@@ -214,9 +214,9 @@ export class KeyboardShortcutsService implements OnDestroy {
       .pipe(
         takeUntil(this.destroy$),
         filter(() => this.enabled()),
-        filter(event => !this.isInputElement(event.target as HTMLElement))
+        filter((event) => !this.isInputElement(event.target as HTMLElement))
       )
-      .subscribe(event => this.handleKeydown(event));
+      .subscribe((event) => this.handleKeydown(event));
   }
 
   /**
@@ -261,14 +261,17 @@ export class KeyboardShortcutsService implements OnDestroy {
    * Parse key combination string
    */
   private parseKeys(keys: string): ParsedKeys {
-    const parts = keys.toLowerCase().split('+').map(p => p.trim());
+    const parts = keys
+      .toLowerCase()
+      .split('+')
+      .map((p) => p.trim());
 
     return {
-      key: parts.find(p => !['ctrl', 'alt', 'shift', 'meta', 'cmd'].includes(p)) || '',
+      key: parts.find((p) => !['ctrl', 'alt', 'shift', 'meta', 'cmd'].includes(p)) || '',
       ctrl: parts.includes('ctrl'),
       alt: parts.includes('alt'),
       shift: parts.includes('shift'),
-      meta: parts.includes('meta') || parts.includes('cmd')
+      meta: parts.includes('meta') || parts.includes('cmd'),
     };
   }
 
@@ -277,16 +280,16 @@ export class KeyboardShortcutsService implements OnDestroy {
    */
   private normalizeKey(key: string): string {
     const keyMap: Record<string, string> = {
-      'escape': 'escape',
-      'esc': 'escape',
-      'enter': 'enter',
-      'return': 'enter',
-      'space': ' ',
+      escape: 'escape',
+      esc: 'escape',
+      enter: 'enter',
+      return: 'enter',
+      space: ' ',
       ' ': ' ',
-      'arrowup': 'arrowup',
-      'arrowdown': 'arrowdown',
-      'arrowleft': 'arrowleft',
-      'arrowright': 'arrowright'
+      arrowup: 'arrowup',
+      arrowdown: 'arrowdown',
+      arrowleft: 'arrowleft',
+      arrowright: 'arrowright',
     };
     return keyMap[key] || key;
   }
@@ -320,7 +323,7 @@ export class KeyboardShortcutsService implements OnDestroy {
       keys: 'shift+?',
       description: 'Show keyboard shortcuts',
       category: 'General',
-      action: () => this.toggleHelp()
+      action: () => this.toggleHelp(),
     });
 
     this.register({
@@ -332,10 +335,7 @@ export class KeyboardShortcutsService implements OnDestroy {
         if (this.helpOpen()) {
           this.closeHelp();
         }
-      }
+      },
     });
   }
 }
-
-
-

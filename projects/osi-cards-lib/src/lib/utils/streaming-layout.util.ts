@@ -28,7 +28,7 @@ import {
   generateWidthExpression,
   generateLeftExpression,
   GRID_GAP,
-  calculateColumns
+  calculateColumns,
 } from './grid-config.util';
 import { estimateSectionHeight } from './height-estimation.util';
 
@@ -40,11 +40,11 @@ import { estimateSectionHeight } from './height-estimation.util';
  * Animation state for a section (Point 37)
  */
 export type AnimationPhase =
-  | 'pending'      // Not yet visible
-  | 'entering'     // Playing entrance animation
-  | 'positioned'   // In final position, animation complete
+  | 'pending' // Not yet visible
+  | 'entering' // Playing entrance animation
+  | 'positioned' // In final position, animation complete
   | 'repositioning' // Moving to new position
-  | 'exiting';     // Leaving the layout
+  | 'exiting'; // Leaving the layout
 
 /**
  * Comprehensive animation state for a section
@@ -126,7 +126,7 @@ export const DEFAULT_STREAMING_CONFIG: StreamingLayoutConfig = {
   columns: 4,
   gap: GRID_GAP,
   containerWidth: 1200,
-  batchSize: 4,  // Buffer 4 sections before placing (Point 36)
+  batchSize: 4, // Buffer 4 sections before placing (Point 36)
   optimizationInterval: 5, // Optimize after every 5 sections (Point 38)
   enterAnimationDuration: 300,
   repositionAnimationDuration: 200,
@@ -274,7 +274,7 @@ export class StreamingLayoutManager {
    * Generates a content hash from sections
    */
   private generateContentHash(sections: CardSection[]): string {
-    const parts = sections.map(s => `${s.type}:${s.title}:${s.fields?.length ?? 0}`);
+    const parts = sections.map((s) => `${s.type}:${s.title}:${s.fields?.length ?? 0}`);
     return parts.join('|');
   }
 
@@ -445,7 +445,7 @@ export class StreamingLayoutManager {
 
     return {
       column: bestColumn,
-      top: bestTop === Infinity ? 0 : bestTop
+      top: bestTop === Infinity ? 0 : bestTop,
     };
   }
 
@@ -514,7 +514,7 @@ export class StreamingLayoutManager {
 
     // Find gaps in each column
     for (let col = 0; col < this.config.columns; col++) {
-      const sectionsInCol = layout.filter(s => {
+      const sectionsInCol = layout.filter((s) => {
         const colIndex = this.parseColumnIndex(s.left);
         return colIndex <= col && colIndex + s.colSpan > col;
       });
@@ -556,7 +556,10 @@ export class StreamingLayoutManager {
   /**
    * Finds a section that could fill a gap
    */
-  private findFillerSection(targetCol: number, maxHeight: number): StreamingPositionedSection | null {
+  private findFillerSection(
+    targetCol: number,
+    maxHeight: number
+  ): StreamingPositionedSection | null {
     for (const section of this.sections.values()) {
       // Single-column sections at the bottom are best candidates
       if (section.colSpan === 1 && section.height <= maxHeight) {
@@ -726,8 +729,9 @@ export class StreamingLayoutManager {
    * Gets all active animations
    */
   getActiveAnimations(): SectionAnimationState[] {
-    return Array.from(this.animationStates.values())
-      .filter(s => !s.completed && (s.phase === 'entering' || s.phase === 'repositioning'));
+    return Array.from(this.animationStates.values()).filter(
+      (s) => !s.completed && (s.phase === 'entering' || s.phase === 'repositioning')
+    );
   }
 
   /**
@@ -763,7 +767,7 @@ export class StreamingLayoutManager {
    */
   getLayout(): StreamingPositionedSection[] {
     return this.sectionOrder
-      .map(key => this.sections.get(key))
+      .map((key) => this.sections.get(key))
       .filter((s): s is StreamingPositionedSection => s !== undefined);
   }
 
@@ -827,7 +831,9 @@ let _streamingManagerInstance: StreamingLayoutManager | null = null;
 /**
  * Gets the global streaming layout manager instance
  */
-export function getStreamingLayoutManager(config?: Partial<StreamingLayoutConfig>): StreamingLayoutManager {
+export function getStreamingLayoutManager(
+  config?: Partial<StreamingLayoutConfig>
+): StreamingLayoutManager {
   if (!_streamingManagerInstance) {
     _streamingManagerInstance = new StreamingLayoutManager(config);
   } else if (config) {
@@ -863,8 +869,11 @@ export function detectNewCard(
   }
 
   // Type signature check
-  const currentTypes = currentSections.map(s => s.type).join(',');
-  const previousTypes = previousSections.slice(0, currentSections.length).map(s => s.type).join(',');
+  const currentTypes = currentSections.map((s) => s.type).join(',');
+  const previousTypes = previousSections
+    .slice(0, currentSections.length)
+    .map((s) => s.type)
+    .join(',');
 
   if (currentSections.length <= 3 && currentTypes !== previousTypes) {
     return true;

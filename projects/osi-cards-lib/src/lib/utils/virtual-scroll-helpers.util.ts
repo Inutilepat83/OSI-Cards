@@ -190,9 +190,7 @@ export class VirtualScrollManager {
     }
 
     const { itemHeight } = this.config;
-    const height = typeof itemHeight === 'function'
-      ? itemHeight(index)
-      : itemHeight;
+    const height = typeof itemHeight === 'function' ? itemHeight(index) : itemHeight;
 
     this.heightCache.set(index, height);
     return height;
@@ -241,7 +239,7 @@ export class VirtualScrollManager {
   updateItemHeight(index: number, height: number): void {
     const oldHeight = this.heightCache.get(index) || 0;
     this.heightCache.set(index, height);
-    this.totalHeight += (height - oldHeight);
+    this.totalHeight += height - oldHeight;
   }
 
   /**
@@ -280,9 +278,7 @@ export class VirtualScrollManager {
  * @param config - Virtual scroll configuration
  * @returns New VirtualScrollManager instance
  */
-export function createVirtualScroll(
-  config: VirtualScrollConfig
-): VirtualScrollManager {
+export function createVirtualScroll(config: VirtualScrollConfig): VirtualScrollManager {
   return new VirtualScrollManager(config);
 }
 
@@ -296,10 +292,7 @@ export class VirtualScrollHelper {
   private scrollElement: HTMLElement;
   private onScrollCallback?: () => void;
 
-  constructor(
-    config: VirtualScrollConfig,
-    scrollElement: HTMLElement
-  ) {
+  constructor(config: VirtualScrollConfig, scrollElement: HTMLElement) {
     this.manager = new VirtualScrollManager(config);
     this.scrollElement = scrollElement;
     this.setupScrollListener();
@@ -451,4 +444,3 @@ export function isIndexVisible(index: number, range: VisibleRange): boolean {
 export function getVisibleCount(range: VisibleRange): number {
   return range.end - range.start;
 }
-

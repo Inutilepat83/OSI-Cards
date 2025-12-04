@@ -1,13 +1,13 @@
 // ============================================
 // TOKENS INDEX - Single Source of Truth
 // ============================================
-// 
+//
 // This file consolidates all design tokens for the OSI Cards library.
 // Import this file to access all tokens and mixins.
 //
 // Usage:
 //   @use 'osi-cards-lib/styles/tokens' as tokens;
-//   
+//
 //   :host {
 //     @include tokens.osi-tokens('integration', true);
 //     @include tokens.osi-theme-base('integration', true);
@@ -15,26 +15,32 @@
 //
 // ============================================
 
-@forward 'master';
+@forward "master";
 
 // ============================================
 // ISOLATED FONT STACK
 // ============================================
-// 
+//
 // System font stack that doesn't rely on external fonts.
 // This ensures consistent typography without host app interference.
 //
 
-$osi-font-stack-system: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, 
-                        Helvetica, Arial, sans-serif, "Apple Color Emoji", 
-                        "Segoe UI Emoji", "Segoe UI Symbol";
+$osi-font-stack-system:
+  -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif,
+  "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 
-$osi-font-stack-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, 
-                      "Liberation Mono", monospace;
+$osi-font-stack-mono:
+  ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
 // Helvetica-first stack for OSI Cards (matches existing)
-$osi-font-stack-primary: Helvetica, -apple-system, BlinkMacSystemFont, 
-                         "Segoe UI", Roboto, Arial, sans-serif;
+$osi-font-stack-primary:
+  Helvetica,
+  -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  Roboto,
+  Arial,
+  sans-serif;
 
 /// Apply isolated font stack
 /// @param {Boolean} $important - Whether to use !important
@@ -44,13 +50,13 @@ $osi-font-stack-primary: Helvetica, -apple-system, BlinkMacSystemFont,
     -webkit-font-smoothing: antialiased !important;
     -moz-osx-font-smoothing: grayscale !important;
     text-rendering: optimizeLegibility !important;
-    font-feature-settings: 'kern' 1 !important;
+    font-feature-settings: "kern" 1 !important;
   } @else {
     font-family: $osi-font-stack-primary;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    font-feature-settings: 'kern' 1;
+    font-feature-settings: "kern" 1;
   }
 }
 
@@ -59,24 +65,24 @@ $osi-font-stack-primary: Helvetica, -apple-system, BlinkMacSystemFont,
 @mixin osi-container-isolation() {
   // Create new stacking context
   isolation: isolate;
-  
+
   // Ensure box-sizing is correct
   box-sizing: border-box;
-  
+
   // Apply font isolation
   @include osi-font-isolation(true);
-  
+
   // Reset inherited styles that could leak from host
   font-size: var(--font-size-base, 13px);
   font-weight: var(--font-weight-normal, 400);
   line-height: 1.5;
   text-align: left;
   color: var(--foreground, #1c1c1f);
-  
+
   // Preserve 3D transforms for tilt effects
   perspective: 1200px;
   transform-style: preserve-3d;
-  
+
   // Apply to all children
   *,
   *::before,

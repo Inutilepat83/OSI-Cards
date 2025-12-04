@@ -1,15 +1,15 @@
 /**
  * LRU (Least Recently Used) Cache Utility
- * 
+ *
  * A generic, configurable LRU cache implementation for memoization
  * and caching expensive operations in the OSI Cards library.
- * 
+ *
  * @example
  * ```typescript
  * import { LRUCache } from 'osi-cards-lib';
- * 
+ *
  * const cache = new LRUCache<string, object>({ maxSize: 100 });
- * 
+ *
  * cache.set('key1', { data: 'value1' });
  * const value = cache.get('key1');
  * ```
@@ -58,7 +58,7 @@ export interface CacheStats {
 
 /**
  * LRU Cache implementation
- * 
+ *
  * Uses a Map for O(1) access and maintains insertion order for LRU tracking.
  */
 export class LRUCache<K extends string | number, V> {
@@ -81,7 +81,7 @@ export class LRUCache<K extends string | number, V> {
 
   /**
    * Get a value from the cache
-   * 
+   *
    * @param key - Cache key
    * @returns Value or undefined if not found/expired
    */
@@ -110,7 +110,7 @@ export class LRUCache<K extends string | number, V> {
 
   /**
    * Set a value in the cache
-   * 
+   *
    * @param key - Cache key
    * @param value - Value to cache
    * @returns The cache instance for chaining
@@ -128,7 +128,7 @@ export class LRUCache<K extends string | number, V> {
 
     const entry: CacheEntry<V> = {
       value,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     this.cache.set(key, entry);
@@ -137,13 +137,13 @@ export class LRUCache<K extends string | number, V> {
 
   /**
    * Check if a key exists in the cache
-   * 
+   *
    * @param key - Cache key
    * @returns true if key exists and is not expired
    */
   has(key: K): boolean {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       return false;
     }
@@ -158,13 +158,13 @@ export class LRUCache<K extends string | number, V> {
 
   /**
    * Delete a key from the cache
-   * 
+   *
    * @param key - Cache key
    * @returns true if key was deleted
    */
   delete(key: K): boolean {
     const entry = this.cache.get(key);
-    
+
     if (entry) {
       this.onEvict?.(key, entry.value);
       return this.cache.delete(key);
@@ -207,7 +207,7 @@ export class LRUCache<K extends string | number, V> {
       hits: this.hits,
       misses: this.misses,
       hitRate: total > 0 ? this.hits / total : 0,
-      evictions: this.evictions
+      evictions: this.evictions,
     };
   }
 
@@ -222,7 +222,7 @@ export class LRUCache<K extends string | number, V> {
    * Get all values in the cache
    */
   values(): V[] {
-    return Array.from(this.cache.values()).map(entry => entry.value);
+    return Array.from(this.cache.values()).map((entry) => entry.value);
   }
 
   /**
@@ -238,14 +238,14 @@ export class LRUCache<K extends string | number, V> {
 
   /**
    * Get or set a value with a factory function
-   * 
+   *
    * @param key - Cache key
    * @param factory - Function to create value if not cached
    * @returns Cached or newly created value
    */
   getOrSet(key: K, factory: () => V): V {
     const cached = this.get(key);
-    
+
     if (cached !== undefined) {
       return cached;
     }
@@ -257,14 +257,14 @@ export class LRUCache<K extends string | number, V> {
 
   /**
    * Get or set a value with an async factory function
-   * 
+   *
    * @param key - Cache key
    * @param factory - Async function to create value if not cached
    * @returns Promise resolving to cached or newly created value
    */
   async getOrSetAsync(key: K, factory: () => Promise<V>): Promise<V> {
     const cached = this.get(key);
-    
+
     if (cached !== undefined) {
       return cached;
     }
@@ -276,14 +276,14 @@ export class LRUCache<K extends string | number, V> {
 
   /**
    * Prune expired entries
-   * 
+   *
    * @returns Number of entries pruned
    */
   prune(): number {
     if (!this.ttl) return 0;
 
     let pruned = 0;
-    
+
     for (const [key, entry] of this.cache) {
       if (this.isExpired(entry)) {
         this.delete(key);
@@ -306,7 +306,7 @@ export class LRUCache<K extends string | number, V> {
   private evictOldest(): void {
     // Get first (oldest) entry
     const oldestKey = this.cache.keys().next().value;
-    
+
     if (oldestKey !== undefined) {
       const entry = this.cache.get(oldestKey);
       if (entry) {
@@ -324,7 +324,7 @@ export class LRUCache<K extends string | number, V> {
 
 /**
  * Create a memoized version of a function using LRU cache
- * 
+ *
  * @param fn - Function to memoize
  * @param options - Cache options
  * @param keyFn - Optional function to generate cache key from arguments
@@ -345,14 +345,14 @@ export function memoize<T extends (...args: unknown[]) => unknown>(
 
   return ((...args: Parameters<T>): ReturnType<T> => {
     const key = generateKey(...args);
-    
+
     return cache.getOrSet(key, () => fn(...args) as ReturnType<T>);
   }) as T;
 }
 
 /**
  * Create a memoized version of an async function using LRU cache
- * 
+ *
  * @param fn - Async function to memoize
  * @param options - Cache options
  * @param keyFn - Optional function to generate cache key from arguments
@@ -374,7 +374,7 @@ export function memoizeAsync<T extends (...args: unknown[]) => Promise<unknown>>
 
   return (async (...args: Parameters<T>): Promise<unknown> => {
     const key = generateKey(...args);
-    
+
     // Check cache first
     const cached = cache.get(key);
     if (cached !== undefined) {
@@ -388,14 +388,16 @@ export function memoizeAsync<T extends (...args: unknown[]) => Promise<unknown>>
     }
 
     // Create new promise
-    const promise = fn(...args).then(result => {
-      cache.set(key, result as ReturnType<T>);
-      pendingPromises.delete(key);
-      return result;
-    }).catch(error => {
-      pendingPromises.delete(key);
-      throw error;
-    });
+    const promise = fn(...args)
+      .then((result) => {
+        cache.set(key, result as ReturnType<T>);
+        pendingPromises.delete(key);
+        return result;
+      })
+      .catch((error) => {
+        pendingPromises.delete(key);
+        throw error;
+      });
 
     pendingPromises.set(key, promise);
     return promise;
@@ -415,10 +417,13 @@ export function createSectionCache(): LRUCache<string, unknown> {
     ttl: 5 * 60 * 1000, // 5 minutes
     onEvict: (key) => {
       // Optional: log evictions in debug mode
-      if (typeof window !== 'undefined' && (window as unknown as Record<string, unknown>)['OSI_DEBUG']) {
+      if (
+        typeof window !== 'undefined' &&
+        (window as unknown as Record<string, unknown>)['OSI_DEBUG']
+      ) {
         console.debug(`[SectionCache] Evicted: ${key}`);
       }
-    }
+    },
   });
 }
 
@@ -428,15 +433,6 @@ export function createSectionCache(): LRUCache<string, unknown> {
 export function createLayoutCache(): LRUCache<string, unknown> {
   return new LRUCache({
     maxSize: 100,
-    ttl: 60 * 1000 // 1 minute
+    ttl: 60 * 1000, // 1 minute
   });
 }
-
-
-
-
-
-
-
-
-

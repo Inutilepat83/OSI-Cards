@@ -125,10 +125,14 @@ export function onHover(
  */
 export function getMouseButton(e: MouseEvent): 'left' | 'middle' | 'right' | 'unknown' {
   switch (e.button) {
-    case 0: return 'left';
-    case 1: return 'middle';
-    case 2: return 'right';
-    default: return 'unknown';
+    case 0:
+      return 'left';
+    case 1:
+      return 'middle';
+    case 2:
+      return 'right';
+    default:
+      return 'unknown';
   }
 }
 
@@ -167,11 +171,13 @@ export function getRelativePosition(e: MouseEvent, element: HTMLElement): { x: n
 /**
  * Get normalized position (0-1)
  */
-export function getNormalizedPosition(e: MouseEvent, element: HTMLElement): { x: number; y: number } {
+export function getNormalizedPosition(
+  e: MouseEvent,
+  element: HTMLElement
+): { x: number; y: number } {
   const rect = element.getBoundingClientRect();
   return {
     x: (e.clientX - rect.left) / rect.width,
     y: (e.clientY - rect.top) / rect.height,
   };
 }
-

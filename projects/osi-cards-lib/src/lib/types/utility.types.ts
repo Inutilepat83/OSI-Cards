@@ -1,30 +1,30 @@
 /**
  * OSI Cards Utility Types
- * 
+ *
  * Advanced TypeScript utility types for better developer experience
  * when working with card configurations and transformations.
- * 
+ *
  * @example
  * ```typescript
  * import { DeepPartial, RequiredFields, SectionOf } from 'osi-cards-lib';
- * 
+ *
  * // Create a partial card config for merging
  * const partialConfig: DeepPartial<AICardConfig> = {
  *   cardTitle: 'Updated Title',
  *   sections: [{ title: 'New Section' }]
  * };
- * 
+ *
  * // Require specific fields
  * type RequiredCard = RequiredFields<AICardConfig, 'id' | 'cardTitle'>;
  * ```
  */
 
-import type { 
-  AICardConfig, 
-  CardSection, 
-  CardField, 
-  CardItem, 
-  CardAction 
+import type {
+  AICardConfig,
+  CardSection,
+  CardField,
+  CardItem,
+  CardAction,
 } from '../models/card.model';
 
 // ============================================================================
@@ -34,7 +34,7 @@ import type {
 /**
  * Makes all properties in T optional recursively
  * Useful for creating partial update objects
- * 
+ *
  * @example
  * ```typescript
  * const partialCard: DeepPartial<AICardConfig> = {
@@ -60,7 +60,7 @@ export type DeepRequired<T> = T extends object
 
 /**
  * Makes specified properties required while keeping others optional
- * 
+ *
  * @example
  * ```typescript
  * type CardWithId = RequiredFields<AICardConfig, 'id' | 'cardTitle'>;
@@ -119,7 +119,7 @@ export type SectionTypeOf<T extends CardSection> = T['type'];
 /**
  * Create a section type with specific type discriminant
  * Useful for creating type-safe section handlers
- * 
+ *
  * @example
  * ```typescript
  * type InfoSection = SectionOf<'info'>;
@@ -149,18 +149,22 @@ export type Discriminant<T, K extends keyof T> = T[K];
 
 /**
  * Filter a union type by a discriminant value
- * 
+ *
  * @example
  * ```typescript
  * type MailAction = FilterByType<CardAction, 'type', 'mail'>;
  * ```
  */
-export type FilterByType<T, K extends keyof T, V extends T[K]> = T extends { [key in K]: V } ? T : never;
+export type FilterByType<T, K extends keyof T, V extends T[K]> = T extends { [key in K]: V }
+  ? T
+  : never;
 
 /**
  * Exclude from a union type by a discriminant value
  */
-export type ExcludeByType<T, K extends keyof T, V extends T[K]> = T extends { [key in K]: V } ? never : T;
+export type ExcludeByType<T, K extends keyof T, V extends T[K]> = T extends { [key in K]: V }
+  ? never
+  : T;
 
 // ============================================================================
 // PICK & OMIT VARIANTS
@@ -168,7 +172,7 @@ export type ExcludeByType<T, K extends keyof T, V extends T[K]> = T extends { [k
 
 /**
  * Pick properties from T that match type U
- * 
+ *
  * @example
  * ```typescript
  * type StringFields = PickByType<CardField, string>;
@@ -206,12 +210,20 @@ export type KeysOfType<T, U> = {
 /**
  * Extract parameter types from a function
  */
-export type Parameters<T extends (...args: unknown[]) => unknown> = T extends (...args: infer P) => unknown ? P : never;
+export type Parameters<T extends (...args: unknown[]) => unknown> = T extends (
+  ...args: infer P
+) => unknown
+  ? P
+  : never;
 
 /**
  * Extract return type from a function
  */
-export type ReturnType<T extends (...args: unknown[]) => unknown> = T extends (...args: unknown[]) => infer R ? R : never;
+export type ReturnType<T extends (...args: unknown[]) => unknown> = T extends (
+  ...args: unknown[]
+) => infer R
+  ? R
+  : never;
 
 /**
  * Create a function type that transforms one type to another
@@ -418,12 +430,16 @@ export type Last<T extends unknown[]> = T extends [...unknown[], infer L] ? L : 
 /**
  * Uppercase first letter of a string type
  */
-export type Capitalize<S extends string> = S extends `${infer F}${infer R}` ? `${Uppercase<F>}${R}` : S;
+export type Capitalize<S extends string> = S extends `${infer F}${infer R}`
+  ? `${Uppercase<F>}${R}`
+  : S;
 
 /**
  * Lowercase first letter of a string type
  */
-export type Uncapitalize<S extends string> = S extends `${infer F}${infer R}` ? `${Lowercase<F>}${R}` : S;
+export type Uncapitalize<S extends string> = S extends `${infer F}${infer R}`
+  ? `${Lowercase<F>}${R}`
+  : S;
 
 /**
  * Convert string to kebab-case type
@@ -447,12 +463,3 @@ export type PrefixKeys<T, P extends string> = {
 export type SuffixKeys<T, S extends string> = {
   [K in keyof T as K extends string ? `${K}${S}` : K]: T[K];
 };
-
-
-
-
-
-
-
-
-

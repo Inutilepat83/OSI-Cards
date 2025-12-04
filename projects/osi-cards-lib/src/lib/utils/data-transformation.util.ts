@@ -39,13 +39,10 @@
  * // Map { 'admin' => [...], 'user' => [...] }
  * ```
  */
-export function groupBy<T, K>(
-  items: T[],
-  keyFn: (item: T) => K
-): Map<K, T[]> {
+export function groupBy<T, K>(items: T[], keyFn: (item: T) => K): Map<K, T[]> {
   const map = new Map<K, T[]>();
 
-  items.forEach(item => {
+  items.forEach((item) => {
     const key = keyFn(item);
     const group = map.get(key) || [];
     group.push(item);
@@ -67,14 +64,11 @@ export function groupBy<T, K>(
  * const [adults, children] = partition(users, u => u.age >= 18);
  * ```
  */
-export function partition<T>(
-  items: T[],
-  predicate: (item: T) => boolean
-): [T[], T[]] {
+export function partition<T>(items: T[], predicate: (item: T) => boolean): [T[], T[]] {
   const matching: T[] = [];
   const nonMatching: T[] = [];
 
-  items.forEach(item => {
+  items.forEach((item) => {
     if (predicate(item)) {
       matching.push(item);
     } else {
@@ -107,7 +101,7 @@ export function deepClone<T>(obj: T): T {
   }
 
   if (obj instanceof Array) {
-    return obj.map(item => deepClone(item)) as any;
+    return obj.map((item) => deepClone(item)) as any;
   }
 
   if (obj instanceof Map) {
@@ -120,7 +114,7 @@ export function deepClone<T>(obj: T): T {
 
   if (obj instanceof Set) {
     const cloned = new Set();
-    obj.forEach(value => {
+    obj.forEach((value) => {
       cloned.add(deepClone(value));
     });
     return cloned as any;
@@ -128,7 +122,7 @@ export function deepClone<T>(obj: T): T {
 
   // Plain object
   const cloned: any = {};
-  Object.keys(obj).forEach(key => {
+  Object.keys(obj).forEach((key) => {
     cloned[key] = deepClone((obj as any)[key]);
   });
 
@@ -161,7 +155,7 @@ export function deepMerge<T extends object>(target: T, ...sources: Partial<T>[])
   }
 
   if (isObject(target) && isObject(source)) {
-    Object.keys(source).forEach(key => {
+    Object.keys(source).forEach((key) => {
       const sourceValue = (source as any)[key];
       const targetValue = (target as any)[key];
 
@@ -197,13 +191,10 @@ function isObject(item: any): item is object {
  * // { id: 1, name: 'Alice', email: 'alice@example.com' }
  * ```
  */
-export function pick<T extends object, K extends keyof T>(
-  obj: T,
-  keys: K[]
-): Pick<T, K> {
+export function pick<T extends object, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
   const result = {} as Pick<T, K>;
 
-  keys.forEach(key => {
+  keys.forEach((key) => {
     if (key in obj) {
       result[key] = obj[key];
     }
@@ -226,13 +217,10 @@ export function pick<T extends object, K extends keyof T>(
  * // { id: 1, name: 'Alice' }
  * ```
  */
-export function omit<T extends object, K extends keyof T>(
-  obj: T,
-  keys: K[]
-): Omit<T, K> {
+export function omit<T extends object, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
   const result = { ...obj };
 
-  keys.forEach(key => {
+  keys.forEach((key) => {
     delete result[key];
   });
 
@@ -285,7 +273,7 @@ export function uniq<T>(arr: T[], keyFn?: (item: T) => any): T[] {
   }
 
   const seen = new Set();
-  return arr.filter(item => {
+  return arr.filter((item) => {
     const key = keyFn(item);
     if (seen.has(key)) {
       return false;
@@ -331,11 +319,7 @@ export function chunk<T>(arr: T[], size: number): T[][] {
  * const sorted = sortBy(users, u => u.name, 'asc');
  * ```
  */
-export function sortBy<T>(
-  arr: T[],
-  keyFn: (item: T) => any,
-  order: 'asc' | 'desc' = 'asc'
-): T[] {
+export function sortBy<T>(arr: T[], keyFn: (item: T) => any, order: 'asc' | 'desc' = 'asc'): T[] {
   const sorted = [...arr].sort((a, b) => {
     const aKey = keyFn(a);
     const bKey = keyFn(b);
@@ -382,11 +366,7 @@ export function sum<T>(arr: T[], keyFn?: (item: T) => number): number {
  * const name = get(user, 'profile.name', 'Unknown');
  * ```
  */
-export function get<T = any>(
-  obj: any,
-  path: string,
-  defaultValue?: T
-): T | undefined {
+export function get<T = any>(obj: any, path: string, defaultValue?: T): T | undefined {
   const keys = path.split('.');
   let result = obj;
 
@@ -480,7 +460,7 @@ export function mapValues<T extends object, R>(
 ): Record<keyof T, R> {
   const result = {} as Record<keyof T, R>;
 
-  (Object.keys(obj) as Array<keyof T>).forEach(key => {
+  (Object.keys(obj) as Array<keyof T>).forEach((key) => {
     result[key] = mapper(obj[key], key);
   });
 
@@ -506,7 +486,7 @@ export function mapKeys<T extends object, K extends string>(
 ): Record<K, T[keyof T]> {
   const result = {} as Record<K, T[keyof T]>;
 
-  (Object.keys(obj) as Array<keyof T>).forEach(key => {
+  (Object.keys(obj) as Array<keyof T>).forEach((key) => {
     const newKey = mapper(key);
     result[newKey] = obj[key];
   });
@@ -526,12 +506,10 @@ export function mapKeys<T extends object, K extends string>(
  * // { '1': 'a', '2': 'b' }
  * ```
  */
-export function invert<K extends string, V extends string>(
-  obj: Record<K, V>
-): Record<V, K> {
+export function invert<K extends string, V extends string>(obj: Record<K, V>): Record<V, K> {
   const result = {} as Record<V, K>;
 
-  (Object.keys(obj) as K[]).forEach(key => {
+  (Object.keys(obj) as K[]).forEach((key) => {
     const value = obj[key];
     result[value] = key;
   });
@@ -546,10 +524,7 @@ export function invert<K extends string, V extends string>(
  * @param predicate - Predicate function
  * @returns Found item or undefined
  */
-export function findItem<T>(
-  arr: T[],
-  predicate: (item: T) => boolean
-): T | undefined {
+export function findItem<T>(arr: T[], predicate: (item: T) => boolean): T | undefined {
   return arr.find(predicate);
 }
 
@@ -565,11 +540,8 @@ export function findItem<T>(
  * const newArray = removeItem(items, item => item.id === 3);
  * ```
  */
-export function removeItem<T>(
-  arr: T[],
-  predicate: (item: T) => boolean
-): T[] {
-  return arr.filter(item => !predicate(item));
+export function removeItem<T>(arr: T[], predicate: (item: T) => boolean): T[] {
+  return arr.filter((item) => !predicate(item));
 }
 
 /**
@@ -594,7 +566,7 @@ export function updateItem<T>(
   predicate: (item: T) => boolean,
   updater: (item: T) => T
 ): T[] {
-  return arr.map(item => (predicate(item) ? updater(item) : item));
+  return arr.map((item) => (predicate(item) ? updater(item) : item));
 }
 
 /**
@@ -675,7 +647,7 @@ export function normalize<T extends Record<K, string | number>, K extends keyof 
   const byId: Record<string, T> = {};
   const allIds: Array<T[K]> = [];
 
-  items.forEach(item => {
+  items.forEach((item) => {
     const id = item[idKey];
     byId[String(id)] = item;
     allIds.push(id);
@@ -699,7 +671,7 @@ export function denormalize<T>(normalized: {
   byId: Record<string, T>;
   allIds: Array<string | number>;
 }): T[] {
-  return normalized.allIds.map(id => normalized.byId[String(id)]);
+  return normalized.allIds.map((id) => normalized.byId[String(id)]);
 }
 
 /**
@@ -715,11 +687,11 @@ export function denormalize<T>(normalized: {
  * ```
  */
 export function zip<T extends any[][]>(...arrays: T): Array<{ [K in keyof T]: T[K][number] }> {
-  const minLength = Math.min(...arrays.map(arr => arr.length));
+  const minLength = Math.min(...arrays.map((arr) => arr.length));
   const result: any[] = [];
 
   for (let i = 0; i < minLength; i++) {
-    result.push(arrays.map(arr => arr[i]));
+    result.push(arrays.map((arr) => arr[i]));
   }
 
   return result;
@@ -738,13 +710,10 @@ export function zip<T extends any[][]>(...arrays: T): Array<{ [K in keyof T]: T[
  * const user = byId.get(123);
  * ```
  */
-export function indexBy<T, K>(
-  arr: T[],
-  keyFn: (item: T) => K
-): Map<K, T> {
+export function indexBy<T, K>(arr: T[], keyFn: (item: T) => K): Map<K, T> {
   const map = new Map<K, T>();
 
-  arr.forEach(item => {
+  arr.forEach((item) => {
     const key = keyFn(item);
     map.set(key, item);
   });
@@ -765,13 +734,10 @@ export function indexBy<T, K>(
  * // Map { 'a' => 3, 'b' => 1, 'c' => 1 }
  * ```
  */
-export function countBy<T>(
-  arr: T[],
-  keyFn?: (item: T) => any
-): Map<any, number> {
+export function countBy<T>(arr: T[], keyFn?: (item: T) => any): Map<any, number> {
   const map = new Map<any, number>();
 
-  arr.forEach(item => {
+  arr.forEach((item) => {
     const key = keyFn ? keyFn(item) : item;
     const count = map.get(key) || 0;
     map.set(key, count + 1);
@@ -795,7 +761,7 @@ export function countBy<T>(
  */
 export function difference<T>(arr1: T[], arr2: T[]): T[] {
   const set2 = new Set(arr2);
-  return arr1.filter(item => !set2.has(item));
+  return arr1.filter((item) => !set2.has(item));
 }
 
 /**
@@ -813,6 +779,5 @@ export function difference<T>(arr1: T[], arr2: T[]): T[] {
  */
 export function intersection<T>(arr1: T[], arr2: T[]): T[] {
   const set2 = new Set(arr2);
-  return arr1.filter(item => set2.has(item));
+  return arr1.filter((item) => set2.has(item));
 }
-

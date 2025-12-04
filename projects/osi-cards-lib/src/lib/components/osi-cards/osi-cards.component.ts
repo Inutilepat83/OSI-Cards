@@ -5,15 +5,19 @@ import {
   EventEmitter,
   ChangeDetectionStrategy,
   ViewEncapsulation,
-  inject
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AICardConfig, CardAction } from '../../models';
-import { AICardRendererComponent, CardFieldInteractionEvent, StreamingStage } from '../ai-card-renderer/ai-card-renderer.component';
+import {
+  AICardRendererComponent,
+  CardFieldInteractionEvent,
+  StreamingStage,
+} from '../ai-card-renderer/ai-card-renderer.component';
 import {
   OSI_THEME_CONFIG_TOKEN,
   OSI_ANIMATION_CONFIG,
-  OSIAnimationConfig
+  OSIAnimationConfig,
 } from '../../providers/injection-tokens';
 
 /**
@@ -58,7 +62,8 @@ import {
     <div
       class="osi-cards-root"
       [attr.data-theme]="effectiveTheme"
-      [class.osi-cards-fullscreen]="fullscreen">
+      [class.osi-cards-fullscreen]="fullscreen"
+    >
       <app-ai-card-renderer
         [cardConfig]="card"
         [isFullscreen]="fullscreen"
@@ -75,38 +80,43 @@ import {
         (fullscreenToggle)="onFullscreenToggle($event)"
         (agentAction)="onAgentAction($event)"
         (questionAction)="onQuestionAction($event)"
-        (export)="onExport()">
+        (export)="onExport()"
+      >
       </app-ai-card-renderer>
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-      width: 100%;
-    }
+  styles: [
+    `
+      :host {
+        display: block;
+        width: 100%;
+      }
 
-    .osi-cards-root {
-      width: 100%;
-      min-height: 200px;
-    }
+      .osi-cards-root {
+        width: 100%;
+        min-height: 200px;
+      }
 
-    .osi-cards-fullscreen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: var(--z-modal, 500);
-      background: var(--background, #ffffff);
-    }
-  `],
+      .osi-cards-fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: var(--z-modal, 500);
+        background: var(--background, #ffffff);
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None // Uses AICardRenderer's Shadow DOM
+  encapsulation: ViewEncapsulation.None, // Uses AICardRenderer's Shadow DOM
 })
 export class OsiCardsComponent {
   // Inject configuration
   private readonly defaultThemeConfig = inject(OSI_THEME_CONFIG_TOKEN, { optional: true });
-  private readonly animationConfig = inject<OSIAnimationConfig | null>(OSI_ANIMATION_CONFIG, { optional: true });
+  private readonly animationConfig = inject<OSIAnimationConfig | null>(OSI_ANIMATION_CONFIG, {
+    optional: true,
+  });
 
   // ========================================
   // CARD DATA INPUTS
@@ -171,14 +181,14 @@ export class OsiCardsComponent {
     action: CardAction;
     card: AICardConfig;
     agentId?: string;
-    context?: Record<string, unknown>
+    context?: Record<string, unknown>;
   }>();
 
   /** Emitted for question-type actions */
   @Output() questionAction = new EventEmitter<{
     action: CardAction;
     card: AICardConfig;
-    question?: string
+    question?: string;
   }>();
 
   /** Emitted when export is requested */
@@ -226,16 +236,12 @@ export class OsiCardsComponent {
     action: CardAction;
     card: AICardConfig;
     agentId?: string;
-    context?: Record<string, unknown>
+    context?: Record<string, unknown>;
   }): void {
     this.agentAction.emit(event);
   }
 
-  onQuestionAction(event: {
-    action: CardAction;
-    card: AICardConfig;
-    question?: string
-  }): void {
+  onQuestionAction(event: { action: CardAction; card: AICardConfig; question?: string }): void {
     this.questionAction.emit(event);
   }
 
@@ -243,10 +249,3 @@ export class OsiCardsComponent {
     this.export.emit();
   }
 }
-
-
-
-
-
-
-

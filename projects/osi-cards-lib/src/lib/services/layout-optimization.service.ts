@@ -93,7 +93,7 @@ const DEFAULT_SERVICE_CONFIG: LayoutOptimizationConfig = {
 // ============================================================================
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LayoutOptimizationService {
   private readonly featureFlags = inject(FeatureFlagsService);
@@ -238,7 +238,7 @@ export class LayoutOptimizationService {
     sections: PositionedSection[],
     heights?: Map<string, number>
   ): OptimizablePositionedSection[] {
-    return sections.map(s => this.toOptimizable(s, heights?.get(s.key)));
+    return sections.map((s) => this.toOptimizable(s, heights?.get(s.key)));
   }
 
   /**
@@ -267,7 +267,7 @@ export class LayoutOptimizationService {
    */
   calculateHeight<T extends OptimizableLayoutSection>(sections: T[]): number {
     if (sections.length === 0) return 0;
-    return Math.max(...sections.map(s => s.top + (s.height || 100)));
+    return Math.max(...sections.map((s) => s.top + (s.height || 100)));
   }
 
   // ==========================================================================
@@ -302,4 +302,3 @@ export class LayoutOptimizationService {
     console.groupEnd();
   }
 }
-

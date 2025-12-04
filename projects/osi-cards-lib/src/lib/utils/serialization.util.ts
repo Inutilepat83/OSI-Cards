@@ -35,7 +35,7 @@ export function toQueryString(params: Record<string, any>): string {
   return Object.entries(params)
     .map(([key, value]) => {
       if (Array.isArray(value)) {
-        return value.map(v => `${encodeURIComponent(key)}[]=${encodeURIComponent(v)}`).join('&');
+        return value.map((v) => `${encodeURIComponent(key)}[]=${encodeURIComponent(v)}`).join('&');
       }
       return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
     })
@@ -45,7 +45,7 @@ export function toQueryString(params: Record<string, any>): string {
 export function fromQueryString(query: string): Record<string, any> {
   const params: Record<string, any> = {};
 
-  query.split('&').forEach(pair => {
+  query.split('&').forEach((pair) => {
     const [key, value] = pair.split('=');
     if (!key) return;
 
@@ -71,7 +71,7 @@ export function toFormData(obj: Record<string, any>): FormData {
     if (value instanceof File) {
       formData.append(key, value);
     } else if (Array.isArray(value)) {
-      value.forEach(v => formData.append(`${key}[]`, v));
+      value.forEach((v) => formData.append(`${key}[]`, v));
     } else {
       formData.append(key, String(value));
     }
@@ -95,4 +95,3 @@ export function fromFormData(formData: FormData): Record<string, any> {
 
   return obj;
 }
-

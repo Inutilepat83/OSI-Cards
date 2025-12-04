@@ -182,7 +182,7 @@ class StorageWrapper {
       }
     }
 
-    keysToRemove.forEach(key => this.storage.removeItem(key));
+    keysToRemove.forEach((key) => this.storage.removeItem(key));
   }
 
   /**
@@ -292,9 +292,8 @@ export class CookieManager {
     let cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
 
     if (options.expires) {
-      const expires = options.expires instanceof Date
-        ? options.expires
-        : new Date(Date.now() + options.expires);
+      const expires =
+        options.expires instanceof Date ? options.expires : new Date(Date.now() + options.expires);
       cookie += `; expires=${expires.toUTCString()}`;
     }
 
@@ -342,10 +341,7 @@ export class CookieManager {
    * @param name - Cookie name
    * @param options - Cookie options (path, domain)
    */
-  remove(
-    name: string,
-    options: { path?: string; domain?: string } = {}
-  ): void {
+  remove(name: string, options: { path?: string; domain?: string } = {}): void {
     this.set(name, '', {
       ...options,
       expires: new Date(0),
@@ -370,7 +366,7 @@ export class CookieManager {
   getAll(): Record<string, string> {
     const cookies: Record<string, string> = {};
 
-    document.cookie.split(';').forEach(cookie => {
+    document.cookie.split(';').forEach((cookie) => {
       const [name, value] = cookie.trim().split('=');
       if (name) {
         cookies[decodeURIComponent(name)] = decodeURIComponent(value || '');
@@ -466,4 +462,3 @@ export function watchStorage(
     window.removeEventListener('storage', handler);
   };
 }
-

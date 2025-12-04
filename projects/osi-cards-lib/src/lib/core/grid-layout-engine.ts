@@ -27,7 +27,10 @@
 
 import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
-import { MasterGridLayoutEngine, MasterLayoutResult } from '../utils/master-grid-layout-engine.util';
+import {
+  MasterGridLayoutEngine,
+  MasterLayoutResult,
+} from '../utils/master-grid-layout-engine.util';
 
 // ============================================================================
 // TYPES
@@ -129,7 +132,7 @@ export class GridLayoutEngine {
 
   /** Positioned sections observable */
   readonly sections$: Observable<PositionedGridSection[]> = this.layout$.pipe(
-    map(l => l?.sections ?? []),
+    map((l) => l?.sections ?? []),
     distinctUntilChanged()
   );
 
@@ -174,7 +177,7 @@ export class GridLayoutEngine {
     if (this.masterEngine && sections.length > 0) {
       try {
         const masterResult: MasterLayoutResult = this.masterEngine.calculateLayout(
-          sections.map(s => ({
+          sections.map((s) => ({
             ...s,
             colSpan: typeof s.preferredSpan === 'number' ? s.preferredSpan : 1,
           })) as any,
@@ -183,7 +186,7 @@ export class GridLayoutEngine {
         );
 
         // Convert to GridLayout format
-        const positioned: PositionedGridSection[] = masterResult.sections.map(s => ({
+        const positioned: PositionedGridSection[] = masterResult.sections.map((s) => ({
           id: s.section.id || s.key,
           section: s.section as GridSection,
           colSpan: s.colSpan,
@@ -194,9 +197,7 @@ export class GridLayoutEngine {
           column: s.column,
         }));
 
-        const gaps: GridGap[] = masterResult.gapCount > 0
-          ? this.findGaps(positioned, columns)
-          : [];
+        const gaps: GridGap[] = masterResult.gapCount > 0 ? this.findGaps(positioned, columns) : [];
 
         const layout: GridLayout = {
           sections: positioned,
@@ -206,7 +207,9 @@ export class GridLayoutEngine {
           gaps,
           metrics: {
             sectionCount: sections.length,
-            rowCount: Math.ceil(masterResult.totalHeight / (this.config.defaultHeight + this.config.gap)),
+            rowCount: Math.ceil(
+              masterResult.totalHeight / (this.config.defaultHeight + this.config.gap)
+            ),
             gapCount: masterResult.gapCount,
             fillRate: masterResult.utilization / 100,
             computeTime: masterResult.metrics.computeTime,
@@ -419,7 +422,7 @@ export class GridLayoutEngine {
     // Try to fill gaps with movable sections
     for (const gap of gaps) {
       const movable = result
-        .filter(s => s.colSpan === 1 && s.top > gap.row * this.config.defaultHeight)
+        .filter((s) => s.colSpan === 1 && s.top > gap.row * this.config.defaultHeight)
         .sort((a, b) => b.top - a.top);
 
       for (const section of movable) {
@@ -427,7 +430,7 @@ export class GridLayoutEngine {
 
         if (height <= gap.height + 20) {
           // Move section to gap
-          const idx = result.findIndex(s => s.id === section.id);
+          const idx = result.findIndex((s) => s.id === section.id);
           if (idx !== -1) {
             result[idx] = {
               ...section,
@@ -454,13 +457,13 @@ export class GridLayoutEngine {
     if (sections.length === 0) return gaps;
 
     // Build occupancy grid
-    const maxTop = Math.max(...sections.map(s => s.top + (this.heights.get(s.id) ?? this.config.defaultHeight)));
+    const maxTop = Math.max(
+      ...sections.map((s) => s.top + (this.heights.get(s.id) ?? this.config.defaultHeight))
+    );
     const rowHeight = this.config.defaultHeight + this.config.gap;
     const rows = Math.ceil(maxTop / rowHeight);
 
-    const grid: boolean[][] = Array.from({ length: rows }, () =>
-      new Array(columns).fill(false)
-    );
+    const grid: boolean[][] = Array.from({ length: rows }, () => new Array(columns).fill(false));
 
     // Mark occupied cells
     for (const section of sections) {
@@ -537,8 +540,8 @@ export class GridLayoutEngine {
   // ==========================================================================
 
   private getCacheKey(sections: GridSection[], containerWidth: number): string {
-    const sectionKey = sections.map(s => `${s.id}:${s.preferredSpan || 1}`).join('|');
-    const heightKey = sections.map(s => this.heights.get(s.id) ?? 0).join(',');
+    const sectionKey = sections.map((s) => `${s.id}:${s.preferredSpan || 1}`).join('|');
+    const heightKey = sections.map((s) => this.heights.get(s.id) ?? 0).join(',');
     return `${containerWidth}-${this.calculateColumns(containerWidth)}-${sectionKey}-${heightKey}`;
   }
 
@@ -550,7 +553,7 @@ export class GridLayoutEngine {
     if (sections.length === 0) return 0;
 
     return Math.max(
-      ...sections.map(s => s.top + (this.heights.get(s.id) ?? this.config.defaultHeight))
+      ...sections.map((s) => s.top + (this.heights.get(s.id) ?? this.config.defaultHeight))
     );
   }
 
@@ -568,7 +571,7 @@ export class GridLayoutEngine {
     const totalArea = totalHeight * columns;
     const usedArea = sections.reduce((sum, s) => {
       const height = this.heights.get(s.id) ?? this.config.defaultHeight;
-      return sum + (s.colSpan * height);
+      return sum + s.colSpan * height;
     }, 0);
 
     return {
@@ -589,4 +592,3 @@ export class GridLayoutEngine {
 export function createGridLayoutEngine(config?: Partial<GridLayoutConfig>): GridLayoutEngine {
   return new GridLayoutEngine(config);
 }
-

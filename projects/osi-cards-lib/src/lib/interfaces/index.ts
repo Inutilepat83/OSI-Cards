@@ -4,4 +4,3 @@
 
 export * from './section-plugin.interface';
 export * from './event-middleware.interface';
-

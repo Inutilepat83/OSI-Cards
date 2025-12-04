@@ -39,10 +39,7 @@ export function sanitizeFilename(filename: string): string {
 }
 
 export function sanitizeInput(input: string): string {
-  return input
-    .trim()
-    .replace(/[<>]/g, '')
-    .slice(0, 1000);
+  return input.trim().replace(/[<>]/g, '').slice(0, 1000);
 }
 
 export function removeSQLInjection(input: string): string {

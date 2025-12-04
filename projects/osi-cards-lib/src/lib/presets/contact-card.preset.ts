@@ -2,7 +2,7 @@ import { AICardConfig, CardSection, CardAction, CardField } from '../models';
 
 /**
  * Contact Card Preset
- * 
+ *
  * Factory functions for creating contact profile cards.
  */
 
@@ -41,10 +41,10 @@ export interface ContactCardOptions {
 
 /**
  * Create a basic contact card
- * 
+ *
  * @param options - Contact card options
  * @returns AICardConfig for a contact card
- * 
+ *
  * @example
  * ```typescript
  * const card = createContactCard({
@@ -67,7 +67,7 @@ export function createContactCard(options: ContactCardOptions): AICardConfig {
     linkedIn,
     metrics = [],
     customSections = [],
-    customActions = []
+    customActions = [],
   } = options;
 
   const profileFields: CardField[] = [];
@@ -83,53 +83,66 @@ export function createContactCard(options: ContactCardOptions): AICardConfig {
       id: 'professional-profile',
       title: 'Professional Profile',
       type: 'info',
-      fields: profileFields
+      fields: profileFields,
     },
-    ...(metrics.length > 0 ? [{
-      id: 'performance-metrics',
-      title: 'Performance Metrics',
-      type: 'analytics' as const,
-      fields: metrics.map((m, i): CardField => ({
-        id: `metric-${i}`,
-        label: m.label,
-        value: m.value,
-        percentage: m.percentage,
-        trend: m.trend ?? 'up'
-      }))
-    }] : []),
-    ...customSections
+    ...(metrics.length > 0
+      ? [
+          {
+            id: 'performance-metrics',
+            title: 'Performance Metrics',
+            type: 'analytics' as const,
+            fields: metrics.map(
+              (m, i): CardField => ({
+                id: `metric-${i}`,
+                label: m.label,
+                value: m.value,
+                percentage: m.percentage,
+                trend: m.trend ?? 'up',
+              })
+            ),
+          },
+        ]
+      : []),
+    ...customSections,
   ];
 
   const actions: CardAction[] = [
-    ...(email ? [{
-      id: 'send-email',
-      label: 'Send Email',
-      type: 'mail' as const,
-      variant: 'primary' as const,
-      icon: 'mail',
-      email: {
-        to: email,
-        subject: `Hello ${name.split(' ')[0]}`,
-        body: `Dear ${name},\n\n`
-      }
-    }] : []),
-    ...(linkedIn ? [{
-      id: 'linkedin',
-      label: 'LinkedIn',
-      type: 'website' as const,
-      variant: 'secondary' as const,
-      icon: 'linkedin',
-      url: linkedIn
-    }] : []),
-    ...customActions
+    ...(email
+      ? [
+          {
+            id: 'send-email',
+            label: 'Send Email',
+            type: 'mail' as const,
+            variant: 'primary' as const,
+            icon: 'mail',
+            email: {
+              to: email,
+              subject: `Hello ${name.split(' ')[0]}`,
+              body: `Dear ${name},\n\n`,
+            },
+          },
+        ]
+      : []),
+    ...(linkedIn
+      ? [
+          {
+            id: 'linkedin',
+            label: 'LinkedIn',
+            type: 'website' as const,
+            variant: 'secondary' as const,
+            icon: 'linkedin',
+            url: linkedIn,
+          },
+        ]
+      : []),
+    ...customActions,
   ];
 
   return {
     id: `contact-${name.toLowerCase().replace(/\s+/g, '-')}`,
     cardTitle: name,
     cardType: 'contact',
-    sections: sections.filter(s => s.fields && s.fields.length > 0),
-    actions: actions.length > 0 ? actions : undefined
+    sections: sections.filter((s) => s.fields && s.fields.length > 0),
+    actions: actions.length > 0 ? actions : undefined,
   };
 }
-

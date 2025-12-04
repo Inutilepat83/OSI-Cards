@@ -24,10 +24,7 @@ type Story = StoryObj<ListSectionComponent>;
 // Basic list
 export const Basic: Story = {
   args: {
-    section: TestBuilders.Section.create()
-      .withTitle('Key Features')
-      .asList()
-      .build(),
+    section: TestBuilders.Section.create().withTitle('Key Features').asList().build(),
   },
 };
 
@@ -129,10 +126,7 @@ export const WithValues: Story = {
 // Empty list
 export const Empty: Story = {
   args: {
-    section: TestBuilders.Section.create()
-      .withTitle('No Items')
-      .withType('list')
-      .build(),
+    section: TestBuilders.Section.create().withTitle('No Items').withType('list').build(),
   },
 };
 
@@ -163,4 +157,3 @@ export const NumberedList: Story = {
       .build(),
   },
 };
-

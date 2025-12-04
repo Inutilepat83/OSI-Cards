@@ -31,12 +31,20 @@
       "label": { "type": "string", "description": "Contact label" },
       "value": { "type": "string", "description": "Role or description" },
       "role": { "type": "string", "description": "Job role/title" },
-      "email": { "type": "string", "format": "email", "description": "Email address" },
+      "email": {
+        "type": "string",
+        "format": "email",
+        "description": "Email address"
+      },
       "phone": { "type": "string", "description": "Phone number" },
       "avatar": { "type": "string", "description": "Avatar image URL" },
       "department": { "type": "string", "description": "Department name" },
       "location": { "type": "string", "description": "Office location" },
-      "linkedIn": { "type": "string", "format": "uri", "description": "LinkedIn profile URL" },
+      "linkedIn": {
+        "type": "string",
+        "format": "uri",
+        "description": "LinkedIn profile URL"
+      },
       "twitter": { "type": "string", "description": "Twitter handle" }
     },
     "required": []
@@ -117,21 +125,24 @@
     "minimal": {
       "title": "Primary Contact",
       "type": "contact-card",
-      "fields": [
-        { "title": "Support Team", "email": "support@company.com" }
-      ]
+      "fields": [{ "title": "Support Team", "email": "support@company.com" }]
     },
     "edgeCases": {
       "title": "Contact Edge Cases",
       "type": "contact-card",
       "fields": [
         { "title": "No Contact Info", "value": "Contact details pending" },
-        { "title": "Dr. Alexandra Konstantinopoulou-Papadimitriou", "value": "Senior Director of International Business Development", "email": "alexandra.konstantinopoulou@subdomain.longcompanyname.example.com" },
-        { "title": "日本語の名前", "value": "Japanese Name Test", "department": "国際部門" }
+        {
+          "title": "Dr. Alexandra Konstantinopoulou-Papadimitriou",
+          "value": "Senior Director of International Business Development",
+          "email": "alexandra.konstantinopoulou@subdomain.longcompanyname.example.com"
+        },
+        {
+          "title": "日本語の名前",
+          "value": "Japanese Name Test",
+          "department": "国際部門"
+        }
       ]
     }
   }
 }
-
-
-

@@ -186,19 +186,14 @@ export class StateMachine<TState extends string, TEvent extends string> {
 
     if (!nextState) {
       if (this.config.strict) {
-        throw new Error(
-          `Invalid transition: ${this.currentState} + ${event}`
-        );
+        throw new Error(`Invalid transition: ${this.currentState} + ${event}`);
       }
       return false;
     }
 
     // Check guard
     if (currentStateConfig.guard) {
-      const canTransition = currentStateConfig.guard(
-        event,
-        context || this.context
-      );
+      const canTransition = currentStateConfig.guard(event, context || this.context);
 
       if (!canTransition) {
         this.recordTransition(this.currentState, this.currentState, event, false);
@@ -322,7 +317,7 @@ export class StateMachine<TState extends string, TEvent extends string> {
    */
   getAvailableEvents(): TEvent[] {
     const currentStateConfig = this.config.states[this.currentState];
-    return currentStateConfig.on ? Object.keys(currentStateConfig.on) as TEvent[] : [];
+    return currentStateConfig.on ? (Object.keys(currentStateConfig.on) as TEvent[]) : [];
   }
 
   /**
@@ -339,12 +334,7 @@ export class StateMachine<TState extends string, TEvent extends string> {
   /**
    * Record a transition in history
    */
-  private recordTransition(
-    from: TState,
-    to: TState,
-    event: TEvent,
-    success: boolean
-  ): void {
+  private recordTransition(from: TState, to: TState, event: TEvent, success: boolean): void {
     const transition: StateTransition<TState, TEvent> = {
       from,
       to,
@@ -465,4 +455,3 @@ export class StateMachineBuilder<TState extends string, TEvent extends string> {
     });
   }
 }
-

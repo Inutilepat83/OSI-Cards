@@ -163,10 +163,6 @@ export const Minimal: Story = {
 // Empty timeline
 export const Empty: Story = {
   args: {
-    section: TestBuilders.Section.create()
-      .withTitle('No Events')
-      .withType('timeline')
-      .build(),
+    section: TestBuilders.Section.create().withTitle('No Events').withType('timeline').build(),
   },
 };
-

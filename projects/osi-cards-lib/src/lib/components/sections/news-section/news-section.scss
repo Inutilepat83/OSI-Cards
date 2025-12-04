@@ -2,8 +2,8 @@
 // NEWS SECTION - Original Product Style
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/typography-system' as typo;
+@use "../../../styles/components/sections/design-system" as *;
+@use "../../../styles/components/sections/typography-system" as typo;
 
 :host {
   display: block;
@@ -79,7 +79,7 @@
   gap: var(--spacing-sm);
 
   > *:not(:last-child)::after {
-    content: '·';
+    content: "·";
     margin-left: var(--spacing-sm);
     opacity: 0.5;
   }
@@ -93,7 +93,7 @@
 }
 
 .excerpt {
-  @include body-text('small');
+  @include body-text("small");
   color: var(--muted-foreground);
   display: -webkit-box;
   -webkit-line-clamp: 2;

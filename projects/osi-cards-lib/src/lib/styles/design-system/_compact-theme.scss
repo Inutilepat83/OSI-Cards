@@ -2,7 +2,7 @@
 // COMPACT THEME - Tighter Spacing for Dense Information Display
 // =====================================================================
 
-@use './tokens' as *;
+@use "./tokens" as *;
 
 // ═══════════════════════════════════════════════════════════════════
 // COMPACT SPACING TOKENS
@@ -29,28 +29,28 @@
 // ═══════════════════════════════════════════════════════════════════
 
 @mixin compact-section-title {
-  font-size: var(--osi-text-base);      // 16px (was 18px)
+  font-size: var(--osi-text-base); // 16px (was 18px)
   font-weight: var(--osi-font-bold);
   line-height: var(--osi-leading-tight);
   margin: 0;
 }
 
 @mixin compact-section-description {
-  font-size: var(--osi-text-sm);        // 14px
+  font-size: var(--osi-text-sm); // 14px
   font-weight: var(--osi-font-normal);
   line-height: var(--osi-leading-snug);
   margin: 0;
 }
 
 @mixin compact-item-title {
-  font-size: var(--osi-text-sm);        // 14px (was 16px)
+  font-size: var(--osi-text-sm); // 14px (was 16px)
   font-weight: var(--osi-font-semibold);
   line-height: var(--osi-leading-snug);
   margin: 0;
 }
 
 @mixin compact-item-label {
-  font-size: 0.7rem;                     // 11.2px (was 12px)
+  font-size: 0.7rem; // 11.2px (was 12px)
   font-weight: var(--osi-font-medium);
   line-height: var(--osi-leading-tight);
   text-transform: uppercase;
@@ -58,13 +58,13 @@
 }
 
 @mixin compact-item-value {
-  font-size: var(--osi-text-sm);        // 14px (was 16px)
+  font-size: var(--osi-text-sm); // 14px (was 16px)
   font-weight: var(--osi-font-semibold);
   line-height: var(--osi-leading-normal);
 }
 
 @mixin compact-number-display {
-  font-size: var(--osi-text-xl);        // 24px (was 30px)
+  font-size: var(--osi-text-xl); // 24px (was 30px)
   font-weight: var(--osi-font-bold);
   line-height: 1;
   letter-spacing: var(--osi-tracking-tight);
@@ -79,7 +79,7 @@
   padding: var(--osi-spacing-compact-md);
   border-radius: var(--osi-radius-sm);
   gap: var(--osi-spacing-compact-sm);
-  min-height: auto;  // Remove fixed heights
+  min-height: auto; // Remove fixed heights
 }
 
 @mixin compact-item {
@@ -157,4 +157,3 @@
     gap: var(--osi-spacing-compact-md);
   }
 }
-

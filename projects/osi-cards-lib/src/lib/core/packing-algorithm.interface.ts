@@ -172,7 +172,11 @@ export interface IPackingAlgorithm {
    * @param config - Packing configuration
    * @returns Updated layout result
    */
-  addSection?(section: CardSection, currentLayout: LayoutResult, config: PackingConfig): LayoutResult;
+  addSection?(
+    section: CardSection,
+    currentLayout: LayoutResult,
+    config: PackingConfig
+  ): LayoutResult;
 
   /**
    * Optimize an existing layout
@@ -218,10 +222,7 @@ export abstract class BasePackingAlgorithm implements IPackingAlgorithm {
     }
 
     const totalArea = columns * totalHeight;
-    const usedArea = sections.reduce(
-      (sum, s) => sum + s.colSpan * s.height,
-      0
-    );
+    const usedArea = sections.reduce((sum, s) => sum + s.colSpan * s.height, 0);
 
     return Math.min(100, (usedArea / totalArea) * 100);
   }
@@ -233,10 +234,8 @@ export abstract class BasePackingAlgorithm implements IPackingAlgorithm {
     if (columnHeights.length === 0) return 1;
 
     const avg = columnHeights.reduce((a, b) => a + b, 0) / columnHeights.length;
-    const variance = columnHeights.reduce(
-      (sum, h) => sum + Math.pow(h - avg, 2),
-      0
-    ) / columnHeights.length;
+    const variance =
+      columnHeights.reduce((sum, h) => sum + Math.pow(h - avg, 2), 0) / columnHeights.length;
 
     const maxVariance = Math.pow(avg, 2);
     return maxVariance > 0 ? Math.max(0, 1 - variance / maxVariance) : 1;
@@ -279,10 +278,7 @@ const algorithmRegistry = new Map<string, () => IPackingAlgorithm>();
 /**
  * Register a packing algorithm
  */
-export function registerPackingAlgorithm(
-  name: string,
-  factory: () => IPackingAlgorithm
-): void {
+export function registerPackingAlgorithm(name: string, factory: () => IPackingAlgorithm): void {
   algorithmRegistry.set(name, factory);
 }
 
@@ -338,7 +334,7 @@ export async function initializeDefaultAlgorithms(): Promise<void> {
       // Convert to standard LayoutResult format
       const positioned = rowPacker.packingResultToPositions(result, {
         totalColumns: config.columns,
-        gap: config.gap
+        gap: config.gap,
       });
 
       return {
@@ -393,8 +389,14 @@ export async function initializeDefaultAlgorithms(): Promise<void> {
           colSpan: s.colSpan,
           column: col,
           top,
-          left: col === 0 ? '0px' : `calc((100% - ${(config.columns - 1) * config.gap}px) / ${config.columns} * ${col} + ${col * config.gap}px)`,
-          width: s.colSpan === config.columns ? '100%' : `calc((100% - ${(config.columns - 1) * config.gap}px) / ${config.columns} * ${s.colSpan} + ${(s.colSpan - 1) * config.gap}px)`,
+          left:
+            col === 0
+              ? '0px'
+              : `calc((100% - ${(config.columns - 1) * config.gap}px) / ${config.columns} * ${col} + ${col * config.gap}px)`,
+          width:
+            s.colSpan === config.columns
+              ? '100%'
+              : `calc((100% - ${(config.columns - 1) * config.gap}px) / ${config.columns} * ${s.colSpan} + ${(s.colSpan - 1) * config.gap}px)`,
           height: s.estimatedHeight,
         };
       });
@@ -432,21 +434,27 @@ export async function initializeDefaultAlgorithms(): Promise<void> {
       const result = packer.pack(sections);
 
       return {
-        sections: result.placements.map(p => ({
+        sections: result.placements.map((p) => ({
           section: p.section,
           key: p.section.id || `section-${result.placements.indexOf(p)}`,
           colSpan: p.width,
           column: p.x,
           top: p.y,
-          left: p.x === 0 ? '0px' : `calc((100% - ${(config.columns - 1) * config.gap}px) / ${config.columns} * ${p.x} + ${p.x * config.gap}px)`,
-          width: p.width === config.columns ? '100%' : `calc((100% - ${(config.columns - 1) * config.gap}px) / ${config.columns} * ${p.width} + ${(p.width - 1) * config.gap}px)`,
+          left:
+            p.x === 0
+              ? '0px'
+              : `calc((100% - ${(config.columns - 1) * config.gap}px) / ${config.columns} * ${p.x} + ${p.x * config.gap}px)`,
+          width:
+            p.width === config.columns
+              ? '100%'
+              : `calc((100% - ${(config.columns - 1) * config.gap}px) / ${config.columns} * ${p.width} + ${(p.width - 1) * config.gap}px)`,
           height: p.height,
         })),
         totalHeight: result.totalHeight,
         utilizationPercent: result.utilization,
         gapCount: result.gapCount,
         gaps: [],
-        columnHeights: result.finalSkyline.map(s => s.y),
+        columnHeights: result.finalSkyline.map((s) => s.y),
         shrunkCount: 0,
         grownCount: 0,
         packingTimeMs: performance.now() - start,
@@ -454,6 +462,3 @@ export async function initializeDefaultAlgorithms(): Promise<void> {
     },
   }));
 }
-
-
-

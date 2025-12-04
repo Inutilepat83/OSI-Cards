@@ -81,10 +81,7 @@ export interface RetryOptions {
  * );
  * ```
  */
-export async function retry<T>(
-  fn: () => Promise<T>,
-  options: RetryOptions = {}
-): Promise<T> {
+export async function retry<T>(fn: () => Promise<T>, options: RetryOptions = {}): Promise<T> {
   const {
     attempts = 3,
     delay = 1000,
@@ -148,9 +145,7 @@ export function timeout<T>(
 ): Promise<T> {
   return Promise.race([
     promise,
-    new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new Error(message)), ms)
-    ),
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error(message)), ms)),
   ]);
 }
 
@@ -168,7 +163,7 @@ export function timeout<T>(
  * ```
  */
 export function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -215,11 +210,7 @@ export async function parallel<T>(
   tasks: Array<() => Promise<T>>,
   options: ParallelOptions = {}
 ): Promise<T[]> {
-  const {
-    concurrency = Infinity,
-    stopOnError = false,
-    onProgress,
-  } = options;
+  const { concurrency = Infinity, stopOnError = false, onProgress } = options;
 
   const results: T[] = [];
   const errors: any[] = [];
@@ -227,7 +218,7 @@ export async function parallel<T>(
 
   // Execute all at once if no concurrency limit
   if (concurrency >= tasks.length) {
-    return Promise.all(tasks.map(task => task()));
+    return Promise.all(tasks.map((task) => task()));
   }
 
   // Execute with concurrency limit
@@ -237,7 +228,7 @@ export async function parallel<T>(
     const task = tasks[i];
 
     const promise = task()
-      .then(result => {
+      .then((result) => {
         results[i] = result;
         completed++;
 
@@ -245,7 +236,7 @@ export async function parallel<T>(
           onProgress(completed, tasks.length);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         errors[i] = error;
 
         if (stopOnError) {
@@ -259,7 +250,7 @@ export async function parallel<T>(
       await Promise.race(executing);
       // Remove completed promises
       executing.splice(
-        executing.findIndex(p => p === promise),
+        executing.findIndex((p) => p === promise),
         1
       );
     }
@@ -269,8 +260,8 @@ export async function parallel<T>(
   await Promise.all(executing);
 
   // Throw if there were errors and stopOnError
-  if (stopOnError && errors.some(e => e)) {
-    throw errors.find(e => e);
+  if (stopOnError && errors.some((e) => e)) {
+    throw errors.find((e) => e);
   }
 
   return results;
@@ -291,9 +282,7 @@ export async function parallel<T>(
  * ]);
  * ```
  */
-export async function sequence<T>(
-  tasks: Array<() => Promise<T>>
-): Promise<T[]> {
+export async function sequence<T>(tasks: Array<() => Promise<T>>): Promise<T[]> {
   const results: T[] = [];
 
   for (const task of tasks) {
@@ -328,13 +317,13 @@ export async function raceSuccess<T>(promises: Promise<T>[]): Promise<T> {
 
     promises.forEach((promise, index) => {
       promise
-        .then(result => {
+        .then((result) => {
           if (!resolved) {
             resolved = true;
             resolve(result);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           errors[index] = error;
           errorCount++;
 
@@ -412,10 +401,7 @@ export async function batch<T>(
  * );
  * ```
  */
-export function debounceAsync<T extends (...args: any[]) => Promise<any>>(
-  fn: T,
-  delay: number
-): T {
+export function debounceAsync<T extends (...args: any[]) => Promise<any>>(fn: T, delay: number): T {
   let timeout: ReturnType<typeof setTimeout> | null = null;
   let latestResolve: ((value: any) => void) | null = null;
   let latestReject: ((error: any) => void) | null = null;
@@ -511,9 +497,7 @@ export async function poll<T>(
  * const content = await readFileAsync('file.txt', 'utf8');
  * ```
  */
-export function promisify<T>(
-  fn: (...args: any[]) => void
-): (...args: any[]) => Promise<T> {
+export function promisify<T>(fn: (...args: any[]) => void): (...args: any[]) => Promise<T> {
   return (...args: any[]) => {
     return new Promise<T>((resolve, reject) => {
       fn(...args, (error: any, result: T) => {
@@ -542,9 +526,7 @@ export function promisify<T>(
  * );
  * ```
  */
-export function memoizeAsync<T extends (...args: any[]) => Promise<any>>(
-  fn: T
-): T {
+export function memoizeAsync<T extends (...args: any[]) => Promise<any>>(fn: T): T {
   const cache = new Map<string, Promise<any>>();
 
   return (async (...args: any[]) => {
@@ -581,10 +563,7 @@ export function memoizeAsync<T extends (...args: any[]) => Promise<any>>(
  * // Returns null if fetch fails
  * ```
  */
-export async function catchDefault<T>(
-  promise: Promise<T>,
-  defaultValue: T
-): Promise<T> {
+export async function catchDefault<T>(promise: Promise<T>, defaultValue: T): Promise<T> {
   try {
     return await promise;
   } catch {
@@ -607,10 +586,7 @@ export async function catchDefault<T>(
  * );
  * ```
  */
-export function throttleAsync<T extends (...args: any[]) => Promise<any>>(
-  fn: T,
-  delay: number
-): T {
+export function throttleAsync<T extends (...args: any[]) => Promise<any>>(fn: T, delay: number): T {
   let lastExecution = 0;
   let pending: Promise<any> | null = null;
 
@@ -711,10 +687,7 @@ export function withRetry<T extends (...args: any[]) => Promise<any>>(
  * );
  * ```
  */
-export function withTimeout<T extends (...args: any[]) => Promise<any>>(
-  fn: T,
-  ms: number
-): T {
+export function withTimeout<T extends (...args: any[]) => Promise<any>>(fn: T, ms: number): T {
   return (async (...args: any[]) => {
     return timeout(fn(...args), ms);
   }) as T;
@@ -779,4 +752,3 @@ export function defer<T>(): {
 
   return { promise, resolve, reject };
 }
-

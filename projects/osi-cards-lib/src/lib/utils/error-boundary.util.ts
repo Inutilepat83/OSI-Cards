@@ -103,7 +103,7 @@ export function useErrorBoundary(options: ErrorBoundaryOptions = {}): ErrorBound
     onReset,
     maxErrors = 5,
     recoveryDelayMs = 1000,
-    defaultMessage = 'An error occurred'
+    defaultMessage = 'An error occurred',
   } = options;
 
   const _error = signal<Error | null>(null);
@@ -115,7 +115,7 @@ export function useErrorBoundary(options: ErrorBoundaryOptions = {}): ErrorBound
 
   const captureError = (error: Error) => {
     _error.set(error);
-    _errorCount.update(c => c + 1);
+    _errorCount.update((c) => c + 1);
     onError?.(error);
   };
 
@@ -133,7 +133,7 @@ export function useErrorBoundary(options: ErrorBoundaryOptions = {}): ErrorBound
     _isRecovering.set(true);
     onRecover?.();
 
-    await new Promise(resolve => setTimeout(resolve, recoveryDelayMs));
+    await new Promise((resolve) => setTimeout(resolve, recoveryDelayMs));
 
     _error.set(null);
     _isRecovering.set(false);
@@ -167,7 +167,7 @@ export function useErrorBoundary(options: ErrorBoundaryOptions = {}): ErrorBound
     captureError,
     recover,
     wrap,
-    wrapAsync
+    wrapAsync,
   };
 }
 
@@ -195,9 +195,7 @@ export function tryCatch<T>(fn: () => T): [T | null, Error | null] {
  * @param fn - Async function to execute
  * @returns Promise of tuple [result, error]
  */
-export async function tryCatchAsync<T>(
-  fn: () => Promise<T>
-): Promise<[T | null, Error | null]> {
+export async function tryCatchAsync<T>(fn: () => Promise<T>): Promise<[T | null, Error | null]> {
   try {
     return [await fn(), null];
   } catch (e) {
@@ -237,9 +235,7 @@ export function createSafeFunction<T extends (...args: any[]) => any>(
  * @param onError - Error callback
  * @returns Safe async function
  */
-export function createSafeAsyncFunction<
-  T extends (...args: any[]) => Promise<any>
->(
+export function createSafeAsyncFunction<T extends (...args: any[]) => Promise<any>>(
   fn: T,
   fallback: Awaited<ReturnType<T>>,
   onError?: (error: Error) => void
@@ -291,7 +287,7 @@ export function classifyError(error: Error): ClassifiedError {
       category: 'network',
       isRecoverable: true,
       userMessage: 'Network error. Please check your connection.',
-      technicalMessage: error.message
+      technicalMessage: error.message,
     };
   }
 
@@ -303,7 +299,7 @@ export function classifyError(error: Error): ClassifiedError {
       category: 'timeout',
       isRecoverable: true,
       userMessage: 'The operation timed out. Please try again.',
-      technicalMessage: error.message
+      technicalMessage: error.message,
     };
   }
 
@@ -315,7 +311,7 @@ export function classifyError(error: Error): ClassifiedError {
       category: 'validation',
       isRecoverable: false,
       userMessage: 'Invalid data provided.',
-      technicalMessage: error.message
+      technicalMessage: error.message,
     };
   }
 
@@ -327,7 +323,7 @@ export function classifyError(error: Error): ClassifiedError {
       category: 'permission',
       isRecoverable: false,
       userMessage: 'You do not have permission to perform this action.',
-      technicalMessage: error.message
+      technicalMessage: error.message,
     };
   }
 
@@ -339,7 +335,7 @@ export function classifyError(error: Error): ClassifiedError {
       category: 'parsing',
       isRecoverable: false,
       userMessage: 'Invalid data format received.',
-      technicalMessage: error.message
+      technicalMessage: error.message,
     };
   }
 
@@ -351,7 +347,7 @@ export function classifyError(error: Error): ClassifiedError {
       category: 'type',
       isRecoverable: false,
       userMessage: 'An unexpected error occurred.',
-      technicalMessage: error.message
+      technicalMessage: error.message,
     };
   }
 
@@ -363,7 +359,7 @@ export function classifyError(error: Error): ClassifiedError {
       category: 'reference',
       isRecoverable: false,
       userMessage: 'An unexpected error occurred.',
-      technicalMessage: error.message
+      technicalMessage: error.message,
     };
   }
 
@@ -374,7 +370,7 @@ export function classifyError(error: Error): ClassifiedError {
     category: 'unknown',
     isRecoverable: true,
     userMessage: 'An error occurred. Please try again.',
-    technicalMessage: error.message
+    technicalMessage: error.message,
   };
 }
 
@@ -407,17 +403,14 @@ export interface RetryOptions {
  * @param options - Retry options
  * @returns Result of the function
  */
-export async function withRetry<T>(
-  fn: () => Promise<T>,
-  options: RetryOptions = {}
-): Promise<T> {
+export async function withRetry<T>(fn: () => Promise<T>, options: RetryOptions = {}): Promise<T> {
   const {
     maxRetries = 3,
     delayMs = 1000,
     backoffMultiplier = 2,
     maxDelayMs = 30000,
     shouldRetry = () => true,
-    onRetry
+    onRetry,
   } = options;
 
   let lastError: Error;
@@ -435,7 +428,7 @@ export async function withRetry<T>(
 
       onRetry?.(lastError, attempt + 1);
 
-      await new Promise(resolve => setTimeout(resolve, currentDelay));
+      await new Promise((resolve) => setTimeout(resolve, currentDelay));
       currentDelay = Math.min(currentDelay * backoffMultiplier, maxDelayMs);
     }
   }
@@ -479,17 +472,10 @@ export async function executeWithErrors<T>(
       results.push(outcome.value);
     } else {
       errors.push(
-        outcome.reason instanceof Error
-          ? outcome.reason
-          : new Error(String(outcome.reason))
+        outcome.reason instanceof Error ? outcome.reason : new Error(String(outcome.reason))
       );
     }
   }
 
   return { results, errors };
 }
-
-
-
-
-

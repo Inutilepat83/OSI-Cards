@@ -16,7 +16,16 @@
  * 10. ResizeObserver
  */
 
-import { Directive, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 
 /**
  * 1. Click Outside Directive
@@ -107,7 +116,7 @@ export class InfiniteScrollDirective implements OnInit, OnDestroy {
     };
 
     this.observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           this.scrolled.emit();
         }
@@ -141,7 +150,7 @@ export class LazyLoadDirective implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           this.loadImage();
           this.observer.disconnect();
@@ -297,7 +306,7 @@ export class ResizeObserverDirective implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.observer = new ResizeObserver((entries) => {
-      entries.forEach(entry => this.resized.emit(entry));
+      entries.forEach((entry) => this.resized.emit(entry));
     });
 
     this.observer.observe(this.elementRef.nativeElement);
@@ -323,4 +332,3 @@ export const COMMON_DIRECTIVES = [
   LongPressDirective,
   ResizeObserverDirective,
 ];
-

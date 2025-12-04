@@ -4,7 +4,7 @@
 // Beautiful, polished effects that sections can apply
 // Extracted from best-looking sections (like analytics)
 
-@use 'design-tokens' as *;
+@use "design-tokens" as *;
 
 // ═══════════════════════════════════════════════════════════════════
 // CARD HOVER EFFECTS - Analytics-Style Polish
@@ -18,16 +18,13 @@
 
   // Subtle gradient overlay for depth
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg,
-      var(--accent) 0%,
-      transparent 100%
-    );
+    background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
     opacity: 0;
     transition: opacity 300ms var(--ease-out);
   }
@@ -100,8 +97,13 @@
   animation: numberPulse 2s ease-in-out infinite;
 
   @keyframes numberPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.85; }
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.85;
+    }
   }
 }
 
@@ -115,7 +117,7 @@
   overflow: hidden;
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: -100%;
@@ -131,8 +133,12 @@
   }
 
   @keyframes shimmer {
-    0% { left: -100%; }
-    100% { left: 100%; }
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
   }
 }
 
@@ -144,8 +150,13 @@
   }
 
   @keyframes progressPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.8; }
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
   }
 }
 
@@ -158,16 +169,13 @@
   position: relative;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg,
-      var(--accent) 0%,
-      transparent 100%
-    );
+    background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
     opacity: 0;
     transition: opacity 300ms var(--ease-out);
   }
@@ -195,8 +203,13 @@
   }
 
   @keyframes trendBounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-2px); }
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-2px);
+    }
   }
 
   &:hover .trend-icon,
@@ -259,18 +272,12 @@
 // ═══════════════════════════════════════════════════════════════════
 
 @mixin gradient-background {
-  background: linear-gradient(135deg,
-    var(--surface) 0%,
-    var(--surface-raised) 100%
-  );
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface-raised) 100%);
 }
 
 @mixin gradient-hover {
   &:hover {
-    background: linear-gradient(135deg,
-      var(--surface-raised) 0%,
-      var(--surface-hover) 100%
-    );
+    background: linear-gradient(135deg, var(--surface-raised) 0%, var(--surface-hover) 100%);
   }
 }
 
@@ -295,7 +302,7 @@
   overflow: hidden;
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     background: linear-gradient(
@@ -309,8 +316,12 @@
   }
 
   @keyframes loadingShimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
   }
 }
 
@@ -352,4 +363,3 @@
   border-radius: var(--osi-card-border-radius);
   padding: var(--osi-default-card-padding);
 }
-

@@ -1,8 +1,5 @@
 <div class="network-section">
-  <lib-section-header
-    *ngIf="section.title"
-    [title]="section.title"
-    [description]="section.description">
+  <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
   <div class="network-grid" *ngIf="section.items?.length">
@@ -27,10 +24,6 @@
     </div>
   </div>
 
-  <lib-empty-state
-    *ngIf="!section.items?.length"
-    message="No network data"
-    icon="🔗"
-    variant="minimal">
+  <lib-empty-state *ngIf="!section.items?.length" message="No network data" icon="🔗" variant="minimal">
   </lib-empty-state>
 </div>

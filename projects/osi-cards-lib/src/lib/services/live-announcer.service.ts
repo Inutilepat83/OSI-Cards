@@ -59,7 +59,7 @@ export class LiveAnnouncerService implements OnDestroy {
     politeness: AriaLivePoliteness = 'polite',
     duration?: number
   ): Promise<void> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const element = this.liveElements.get(politeness);
       if (!element) {
         resolve();
@@ -171,7 +171,7 @@ export class LiveAnnouncerService implements OnDestroy {
     if (this.clearTimeout) {
       clearTimeout(this.clearTimeout);
     }
-    this.liveElements.forEach(element => {
+    this.liveElements.forEach((element) => {
       element.textContent = '';
     });
   }
@@ -182,7 +182,7 @@ export class LiveAnnouncerService implements OnDestroy {
   private createLiveRegions(): void {
     const politenessLevels: AriaLivePoliteness[] = ['polite', 'assertive'];
 
-    politenessLevels.forEach(politeness => {
+    politenessLevels.forEach((politeness) => {
       const element = this.document.createElement('div');
 
       // Make visually hidden but accessible to screen readers
@@ -195,7 +195,7 @@ export class LiveAnnouncerService implements OnDestroy {
         overflow: 'hidden',
         clip: 'rect(0, 0, 0, 0)',
         whiteSpace: 'nowrap',
-        border: '0'
+        border: '0',
       });
 
       // Set ARIA attributes
@@ -214,12 +214,9 @@ export class LiveAnnouncerService implements OnDestroy {
    * Remove live region elements
    */
   private removeLiveRegions(): void {
-    this.liveElements.forEach(element => {
+    this.liveElements.forEach((element) => {
       element.remove();
     });
     this.liveElements.clear();
   }
 }
-
-
-

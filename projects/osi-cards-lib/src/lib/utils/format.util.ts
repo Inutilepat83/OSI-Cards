@@ -53,7 +53,7 @@ export function formatFileSize(bytes: number): string {
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
   if (bytes === 0) return '0 Bytes';
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+  return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + ' ' + sizes[i];
 }
 
 export function formatDuration(ms: number): string {
@@ -83,18 +83,17 @@ export function formatList(items: string[], conjunction = 'and'): string {
 export function formatInitials(name: string): string {
   return name
     .split(' ')
-    .map(word => word.charAt(0).toUpperCase())
+    .map((word) => word.charAt(0).toUpperCase())
     .join('');
 }
 
 export function formatTitle(str: string): string {
   return str
     .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ');
 }
 
 export function formatSentence(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() + '.';
 }
-

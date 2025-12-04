@@ -168,7 +168,10 @@ export function addText(
 /**
  * Add group to SVG
  */
-export function addGroup(parent: SVGElement, options: Omit<SVGElementOptions, 'x' | 'y' | 'width' | 'height'> = {}): SVGGElement {
+export function addGroup(
+  parent: SVGElement,
+  options: Omit<SVGElementOptions, 'x' | 'y' | 'width' | 'height'> = {}
+): SVGGElement {
   const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   applyAttributes(group, options);
   parent.appendChild(group);
@@ -185,7 +188,8 @@ function applyAttributes(element: SVGElement, options: any): void {
   if (options.height !== undefined) element.setAttribute('height', options.height.toString());
   if (options.fill) element.setAttribute('fill', options.fill);
   if (options.stroke) element.setAttribute('stroke', options.stroke);
-  if (options.strokeWidth !== undefined) element.setAttribute('stroke-width', options.strokeWidth.toString());
+  if (options.strokeWidth !== undefined)
+    element.setAttribute('stroke-width', options.strokeWidth.toString());
   if (options.opacity !== undefined) element.setAttribute('opacity', options.opacity.toString());
   if (options.transform) element.setAttribute('transform', options.transform);
   if (options.class) element.setAttribute('class', options.class);
@@ -269,11 +273,7 @@ export function getSVGBBox(element: SVGGraphicsElement): DOMRect {
 /**
  * Create SVG icon
  */
-export function createIcon(
-  pathData: string,
-  size = 24,
-  color = 'currentColor'
-): SVGSVGElement {
+export function createIcon(pathData: string, size = 24, color = 'currentColor'): SVGSVGElement {
   const svg = createSVG(size, size);
   addPath(svg, {
     d: pathData,
@@ -292,7 +292,13 @@ export function cloneSVG(svg: SVGSVGElement): SVGSVGElement {
 /**
  * Set SVG viewBox
  */
-export function setViewBox(svg: SVGSVGElement, x: number, y: number, width: number, height: number): void {
+export function setViewBox(
+  svg: SVGSVGElement,
+  x: number,
+  y: number,
+  width: number,
+  height: number
+): void {
   svg.setAttribute('viewBox', `${x} ${y} ${width} ${height}`);
 }
 
@@ -304,11 +310,13 @@ export function createLinearGradient(
   id: string,
   stops: Array<{ offset: string; color: string; opacity?: number }>
 ): SVGLinearGradientElement {
-  const defs = svg.querySelector('defs') || svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'defs'));
+  const defs =
+    svg.querySelector('defs') ||
+    svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'defs'));
   const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
   gradient.setAttribute('id', id);
 
-  stops.forEach(stop => {
+  stops.forEach((stop) => {
     const stopEl = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
     stopEl.setAttribute('offset', stop.offset);
     stopEl.setAttribute('stop-color', stop.color);
@@ -349,4 +357,3 @@ export function animateSVG(
   element.appendChild(animate);
   return animate;
 }
-

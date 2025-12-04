@@ -139,9 +139,7 @@ export const OutOfStock: Story = {
         { label: 'Status', value: 'Out of Stock', status: 'inactive' },
         { label: 'Expected', value: 'January 2026' },
       ])
-      .withItems([
-        { title: 'Notify me when available' },
-      ])
+      .withItems([{ title: 'Notify me when available' }])
       .build(),
   },
 };
@@ -156,4 +154,3 @@ export const Minimal: Story = {
       .build(),
   },
 };
-

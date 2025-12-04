@@ -14,10 +14,9 @@ import { SectionHeaderComponent, EmptyStateComponent } from '../../shared';
   standalone: true,
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './overview-section.component.html',
-  styleUrl: './overview-section.scss'
+  styleUrl: './overview-section.scss',
 })
 export class OverviewSectionComponent extends BaseSectionComponent {
-
   /**
    * Check if field should be highlighted
    */

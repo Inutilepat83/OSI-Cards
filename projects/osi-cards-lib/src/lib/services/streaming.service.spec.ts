@@ -1,10 +1,10 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { 
-  OSICardsStreamingService, 
-  StreamingState, 
+import {
+  OSICardsStreamingService,
+  StreamingState,
   StreamingStage,
   CardUpdate,
-  StreamingConfig 
+  StreamingConfig,
 } from './streaming.service';
 import { AICardConfig } from '../models';
 
@@ -20,8 +20,8 @@ describe('OSICardsStreamingService', () => {
         type: 'info',
         fields: [
           { label: 'Field 1', value: 'Value 1' },
-          { label: 'Field 2', value: 'Value 2' }
-        ]
+          { label: 'Field 2', value: 'Value 2' },
+        ],
       },
       {
         id: 'section-2',
@@ -29,15 +29,15 @@ describe('OSICardsStreamingService', () => {
         type: 'list',
         items: [
           { title: 'Item 1', description: 'Description 1' },
-          { title: 'Item 2', description: 'Description 2' }
-        ]
-      }
-    ]
+          { title: 'Item 2', description: 'Description 2' },
+        ],
+      },
+    ],
   });
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [OSICardsStreamingService]
+      providers: [OSICardsStreamingService],
     });
     service = TestBed.inject(OSICardsStreamingService);
   });
@@ -56,7 +56,7 @@ describe('OSICardsStreamingService', () => {
   describe('initial state', () => {
     it('should have idle state initially', () => {
       const state = service.getState();
-      
+
       expect(state.isActive).toBe(false);
       expect(state.stage).toBe('idle');
       expect(state.progress).toBe(0);
@@ -76,9 +76,9 @@ describe('OSICardsStreamingService', () => {
   // ============================================================================
   describe('configure', () => {
     it('should merge configuration', () => {
-      service.configure({ 
+      service.configure({
         minChunkSize: 5,
-        maxChunkSize: 100 
+        maxChunkSize: 100,
       });
 
       // Configuration is internal, but we can test behavior
@@ -92,37 +92,37 @@ describe('OSICardsStreamingService', () => {
   describe('start', () => {
     it('should transition to thinking stage', fakeAsync(() => {
       let currentStage: StreamingStage = 'idle';
-      service.state$.subscribe(state => {
+      service.state$.subscribe((state) => {
         currentStage = state.stage;
       });
 
       service.start(validCardJson);
-      
+
       expect(currentStage).toBe('thinking');
     }));
 
     it('should set target length from JSON', fakeAsync(() => {
       service.start(validCardJson);
-      
+
       const state = service.getState();
       expect(state.targetLength).toBe(validCardJson.length);
     }));
 
     it('should transition to streaming after thinking delay', fakeAsync(() => {
       let currentStage: StreamingStage = 'idle';
-      service.state$.subscribe(state => {
+      service.state$.subscribe((state) => {
         currentStage = state.stage;
       });
 
       service.start(validCardJson);
       tick(200); // Default thinking delay is 100ms
-      
+
       expect(currentStage).toBe('streaming');
     }));
 
     it('should process instantly when instant option is true', fakeAsync(() => {
       let stages: StreamingStage[] = [];
-      service.state$.subscribe(state => {
+      service.state$.subscribe((state) => {
         if (!stages.includes(state.stage)) {
           stages.push(state.stage);
         }
@@ -138,7 +138,7 @@ describe('OSICardsStreamingService', () => {
     it('should set error stage for empty JSON', fakeAsync(() => {
       service.start('');
       tick(100);
-      
+
       const state = service.getState();
       expect(state.stage).toBe('error');
     }));
@@ -146,9 +146,9 @@ describe('OSICardsStreamingService', () => {
     it('should stop previous streaming before starting new', fakeAsync(() => {
       service.start(validCardJson);
       tick(50);
-      
+
       service.start(validCardJson);
-      
+
       // Should not throw
       expect(service.getState().isActive).toBe(true);
     }));
@@ -161,9 +161,9 @@ describe('OSICardsStreamingService', () => {
     it('should set stage to aborted', fakeAsync(() => {
       service.start(validCardJson);
       tick(50);
-      
+
       service.stop();
-      
+
       const state = service.getState();
       expect(state.stage).toBe('aborted');
       expect(state.isActive).toBe(false);
@@ -172,9 +172,9 @@ describe('OSICardsStreamingService', () => {
     it('should clear buffer and queue', fakeAsync(() => {
       service.start(validCardJson);
       tick(200);
-      
+
       service.stop();
-      
+
       const state = service.getState();
       expect(state.bufferLength).toBe(0);
     }));
@@ -186,7 +186,7 @@ describe('OSICardsStreamingService', () => {
   describe('getState', () => {
     it('should return current state', () => {
       const state = service.getState();
-      
+
       expect(state).toHaveProperty('isActive');
       expect(state).toHaveProperty('stage');
       expect(state).toHaveProperty('progress');
@@ -206,10 +206,10 @@ describe('OSICardsStreamingService', () => {
     it('should return placeholder card during streaming', fakeAsync(() => {
       service.start(validCardJson);
       tick(200);
-      
+
       const placeholder = service.getPlaceholderCard();
       expect(placeholder).toBeTruthy();
-      
+
       service.stop();
     }));
   });
@@ -220,7 +220,7 @@ describe('OSICardsStreamingService', () => {
   describe('cardUpdates$', () => {
     it('should emit card updates during streaming', fakeAsync(() => {
       const updates: CardUpdate[] = [];
-      service.cardUpdates$.subscribe(update => {
+      service.cardUpdates$.subscribe((update) => {
         updates.push(update);
       });
 
@@ -233,7 +233,7 @@ describe('OSICardsStreamingService', () => {
 
     it('should include change type in updates', fakeAsync(() => {
       let lastUpdate: CardUpdate | null = null;
-      service.cardUpdates$.subscribe(update => {
+      service.cardUpdates$.subscribe((update) => {
         lastUpdate = update;
       });
 
@@ -250,7 +250,7 @@ describe('OSICardsStreamingService', () => {
   describe('bufferUpdates$', () => {
     it('should emit buffer updates during streaming', fakeAsync(() => {
       const buffers: string[] = [];
-      service.bufferUpdates$.subscribe(buffer => {
+      service.bufferUpdates$.subscribe((buffer) => {
         buffers.push(buffer);
       });
 
@@ -258,7 +258,7 @@ describe('OSICardsStreamingService', () => {
       tick(1000);
 
       expect(buffers.length).toBeGreaterThan(0);
-      
+
       service.stop();
     }));
   });
@@ -269,7 +269,7 @@ describe('OSICardsStreamingService', () => {
   describe('progress tracking', () => {
     it('should update progress during streaming', fakeAsync(() => {
       let maxProgress = 0;
-      service.state$.subscribe(state => {
+      service.state$.subscribe((state) => {
         if (state.progress > maxProgress) {
           maxProgress = state.progress;
         }
@@ -305,7 +305,7 @@ describe('OSICardsStreamingService', () => {
 
     it('should emit final card on completion', fakeAsync(() => {
       let finalCard: AICardConfig | null = null;
-      service.cardUpdates$.subscribe(update => {
+      service.cardUpdates$.subscribe((update) => {
         finalCard = update.card;
       });
 
@@ -324,7 +324,7 @@ describe('OSICardsStreamingService', () => {
   describe('section completion tracking', () => {
     it('should track completed sections', fakeAsync(() => {
       let completedSections: number[] = [];
-      service.cardUpdates$.subscribe(update => {
+      service.cardUpdates$.subscribe((update) => {
         if (update.completedSections?.length) {
           completedSections = update.completedSections;
         }
@@ -353,7 +353,7 @@ describe('OSICardsStreamingService', () => {
     it('should handle empty sections array', fakeAsync(() => {
       const emptyCard = JSON.stringify({
         cardTitle: 'Empty Card',
-        sections: []
+        sections: [],
       });
 
       service.start(emptyCard, { instant: true });
@@ -391,7 +391,7 @@ describe('OSICardsStreamingService', () => {
 
     it('should emit state updates', fakeAsync(() => {
       const states: StreamingState[] = [];
-      service.state$.subscribe(state => {
+      service.state$.subscribe((state) => {
         states.push({ ...state });
       });
 
@@ -402,12 +402,3 @@ describe('OSICardsStreamingService', () => {
     }));
   });
 });
-
-
-
-
-
-
-
-
-

@@ -25,7 +25,8 @@ export * from './services/error-handling.service';
 export * from './services/error-reporting.service';
 export * from './services/feature-flag.service';
 export * from './services/health-check.service';
-export * from './services/i18n.service';
+// i18n service now in library - use osi-cards-lib
+// export * from './services/i18n.service';
 export * from './services/indexeddb-cache.service';
 export * from './services/json-processing.service';
 export * from './services/json-validation.service';

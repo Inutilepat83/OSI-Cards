@@ -24,17 +24,15 @@ export interface ChartData {
   datasets: ChartDataset[];
 }
 
-export function prepareChartData(
-  values: number[],
-  labels: string[],
-  label = 'Dataset'
-): ChartData {
+export function prepareChartData(values: number[], labels: string[], label = 'Dataset'): ChartData {
   return {
     labels,
-    datasets: [{
-      label,
-      data: values,
-    }],
+    datasets: [
+      {
+        label,
+        data: values,
+      },
+    ],
   };
 }
 
@@ -47,7 +45,7 @@ export function normalizeData(values: number[], min = 0, max = 100): number[] {
   const dataMax = Math.max(...values);
   const range = dataMax - dataMin;
 
-  return values.map(v => {
+  return values.map((v) => {
     if (range === 0) return min;
     return min + ((v - dataMin) / range) * (max - min);
   });
@@ -59,11 +57,8 @@ export function binData(values: number[], binCount: number): number[] {
   const binSize = (max - min) / binCount;
   const bins = Array(binCount).fill(0);
 
-  values.forEach(value => {
-    const binIndex = Math.min(
-      Math.floor((value - min) / binSize),
-      binCount - 1
-    );
+  values.forEach((value) => {
+    const binIndex = Math.min(Math.floor((value - min) / binSize), binCount - 1);
     bins[binIndex]++;
   });
 
@@ -105,7 +100,7 @@ export function cumulativeSum(values: number[]): number[] {
   const result: number[] = [];
   let sum = 0;
 
-  values.forEach(v => {
+  values.forEach((v) => {
     sum += v;
     result.push(sum);
   });
@@ -123,4 +118,3 @@ export function growthRate(values: number[]): number[] {
 
   return rates;
 }
-

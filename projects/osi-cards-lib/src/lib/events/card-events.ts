@@ -1,15 +1,15 @@
 /**
  * OSI Cards Event System
- * 
+ *
  * Provides isolated, typed events that properly bubble through Shadow DOM.
  * Uses CustomEvent with composed: true to ensure events cross shadow boundaries.
- * 
+ *
  * @example
  * ```typescript
  * // Dispatching an event
  * const event = createFieldClickEvent(field, section);
  * element.dispatchEvent(event);
- * 
+ *
  * // Listening to events
  * element.addEventListener('osi-field-click', (e: OSIFieldClickEvent) => {
  *   console.log(e.detail.field);
@@ -117,10 +117,10 @@ export const OSI_EVENTS = {
   CARD_INTERACTION: 'osi-card-interaction',
   THEME_CHANGE: 'osi-theme-change',
   STREAMING_STATE: 'osi-streaming-state',
-  SECTION_RENDERED: 'osi-section-rendered'
+  SECTION_RENDERED: 'osi-section-rendered',
 } as const;
 
-export type OSIEventName = typeof OSI_EVENTS[keyof typeof OSI_EVENTS];
+export type OSIEventName = (typeof OSI_EVENTS)[keyof typeof OSI_EVENTS];
 
 // ============================================
 // EVENT FACTORY FUNCTIONS
@@ -134,7 +134,7 @@ function createEventOptions<T extends OSIEventDetail>(detail: T): CustomEventIni
     bubbles: true,
     composed: true, // Ensures event crosses Shadow DOM boundaries
     cancelable: true,
-    detail
+    detail,
   };
 }
 
@@ -147,13 +147,16 @@ export function createFieldClickEvent(
   metadata?: Record<string, unknown>,
   source = 'osi-cards'
 ): OSIFieldClickEvent {
-  return new CustomEvent(OSI_EVENTS.FIELD_CLICK, createEventOptions({
-    timestamp: Date.now(),
-    source,
-    field,
-    section,
-    metadata
-  }));
+  return new CustomEvent(
+    OSI_EVENTS.FIELD_CLICK,
+    createEventOptions({
+      timestamp: Date.now(),
+      source,
+      field,
+      section,
+      metadata,
+    })
+  );
 }
 
 /**
@@ -165,13 +168,16 @@ export function createItemClickEvent(
   metadata?: Record<string, unknown>,
   source = 'osi-cards'
 ): OSIItemClickEvent {
-  return new CustomEvent(OSI_EVENTS.ITEM_CLICK, createEventOptions({
-    timestamp: Date.now(),
-    source,
-    item,
-    section,
-    metadata
-  }));
+  return new CustomEvent(
+    OSI_EVENTS.ITEM_CLICK,
+    createEventOptions({
+      timestamp: Date.now(),
+      source,
+      item,
+      section,
+      metadata,
+    })
+  );
 }
 
 /**
@@ -183,13 +189,16 @@ export function createActionClickEvent(
   metadata?: Record<string, unknown>,
   source = 'osi-cards'
 ): OSIActionClickEvent {
-  return new CustomEvent(OSI_EVENTS.ACTION_CLICK, createEventOptions({
-    timestamp: Date.now(),
-    source,
-    action,
-    card,
-    metadata
-  }));
+  return new CustomEvent(
+    OSI_EVENTS.ACTION_CLICK,
+    createEventOptions({
+      timestamp: Date.now(),
+      source,
+      action,
+      card,
+      metadata,
+    })
+  );
 }
 
 /**
@@ -201,13 +210,16 @@ export function createCardInteractionEvent(
   metadata?: Record<string, unknown>,
   source = 'osi-cards'
 ): OSICardInteractionEvent {
-  return new CustomEvent(OSI_EVENTS.CARD_INTERACTION, createEventOptions({
-    timestamp: Date.now(),
-    source,
-    type,
-    card,
-    metadata
-  }));
+  return new CustomEvent(
+    OSI_EVENTS.CARD_INTERACTION,
+    createEventOptions({
+      timestamp: Date.now(),
+      source,
+      type,
+      card,
+      metadata,
+    })
+  );
 }
 
 /**
@@ -218,12 +230,15 @@ export function createThemeChangeEvent(
   newTheme: 'day' | 'night',
   source = 'osi-cards'
 ): OSIThemeChangeEvent {
-  return new CustomEvent(OSI_EVENTS.THEME_CHANGE, createEventOptions({
-    timestamp: Date.now(),
-    source,
-    previousTheme,
-    newTheme
-  }));
+  return new CustomEvent(
+    OSI_EVENTS.THEME_CHANGE,
+    createEventOptions({
+      timestamp: Date.now(),
+      source,
+      previousTheme,
+      newTheme,
+    })
+  );
 }
 
 /**
@@ -235,13 +250,16 @@ export function createStreamingStateEvent(
   error?: string,
   source = 'osi-cards'
 ): OSIStreamingStateEvent {
-  return new CustomEvent(OSI_EVENTS.STREAMING_STATE, createEventOptions({
-    timestamp: Date.now(),
-    source,
-    stage,
-    progress,
-    error
-  }));
+  return new CustomEvent(
+    OSI_EVENTS.STREAMING_STATE,
+    createEventOptions({
+      timestamp: Date.now(),
+      source,
+      stage,
+      progress,
+      error,
+    })
+  );
 }
 
 /**
@@ -252,12 +270,15 @@ export function createSectionRenderedEvent(
   isNew: boolean,
   source = 'osi-cards'
 ): OSISectionRenderedEvent {
-  return new CustomEvent(OSI_EVENTS.SECTION_RENDERED, createEventOptions({
-    timestamp: Date.now(),
-    source,
-    section,
-    isNew
-  }));
+  return new CustomEvent(
+    OSI_EVENTS.SECTION_RENDERED,
+    createEventOptions({
+      timestamp: Date.now(),
+      source,
+      section,
+      isNew,
+    })
+  );
 }
 
 // ============================================
@@ -308,12 +329,3 @@ declare global {
     'osi-section-rendered': OSISectionRenderedEvent;
   }
 }
-
-
-
-
-
-
-
-
-

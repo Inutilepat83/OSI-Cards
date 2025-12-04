@@ -1,13 +1,13 @@
 /**
  * Masonry Detection Utilities
- * 
+ *
  * Runtime detection for CSS Grid Level 2 masonry support and progressive enhancement.
  * Provides feature detection, fallback strategies, and layout mode selection.
- * 
+ *
  * @example
  * ```typescript
  * import { detectMasonrySupport, getOptimalLayoutMode } from 'osi-cards-lib';
- * 
+ *
  * const support = detectMasonrySupport();
  * const layoutMode = getOptimalLayoutMode(support);
  * ```
@@ -23,37 +23,37 @@
 export interface MasonrySupportResult {
   /** Native CSS masonry support (grid-template-rows: masonry) */
   nativeMasonry: boolean;
-  
+
   /** CSS Subgrid support (grid-template-rows: subgrid) */
   subgrid: boolean;
-  
+
   /** CSS Container Queries support */
   containerQueries: boolean;
-  
+
   /** CSS content-visibility support */
   contentVisibility: boolean;
-  
+
   /** CSS Anchor Positioning support */
   anchorPositioning: boolean;
-  
+
   /** CSS aspect-ratio support */
   aspectRatio: boolean;
-  
+
   /** CSS scroll-snap support */
   scrollSnap: boolean;
-  
+
   /** View Transitions API support */
   viewTransitions: boolean;
-  
+
   /** Web Animations API support */
   webAnimations: boolean;
-  
+
   /** ResizeObserver support */
   resizeObserver: boolean;
-  
+
   /** IntersectionObserver support */
   intersectionObserver: boolean;
-  
+
   /** requestIdleCallback support */
   requestIdleCallback: boolean;
 }
@@ -61,19 +61,19 @@ export interface MasonrySupportResult {
 /**
  * Layout mode based on feature support
  */
-export type LayoutMode = 
-  | 'native-masonry'      // CSS Grid Level 2 masonry
-  | 'subgrid-aligned'     // CSS Subgrid for aligned sections
-  | 'css-grid-dense'      // CSS Grid with dense packing
-  | 'js-masonry';         // JavaScript-based masonry (fallback)
+export type LayoutMode =
+  | 'native-masonry' // CSS Grid Level 2 masonry
+  | 'subgrid-aligned' // CSS Subgrid for aligned sections
+  | 'css-grid-dense' // CSS Grid with dense packing
+  | 'js-masonry'; // JavaScript-based masonry (fallback)
 
 /**
  * Animation mode based on feature support
  */
 export type AnimationMode =
-  | 'web-animations'      // Web Animations API
-  | 'css-animations'      // CSS keyframe animations
-  | 'reduced-motion';     // Reduced motion alternatives
+  | 'web-animations' // Web Animations API
+  | 'css-animations' // CSS keyframe animations
+  | 'reduced-motion'; // Reduced motion alternatives
 
 /**
  * Layout engine configuration
@@ -99,7 +99,7 @@ let cachedSupport: MasonrySupportResult | null = null;
 /**
  * Detects CSS and API feature support for masonry layouts
  * Results are cached for performance
- * 
+ *
  * @returns MasonrySupportResult with all detected features
  */
 export function detectMasonrySupport(): MasonrySupportResult {
@@ -151,7 +151,7 @@ function getServerSideDefaults(): MasonrySupportResult {
     contentVisibility: false,
     anchorPositioning: false,
     aspectRatio: true, // Widely supported
-    scrollSnap: true,  // Widely supported
+    scrollSnap: true, // Widely supported
     viewTransitions: false,
     webAnimations: true,
     resizeObserver: true,
@@ -279,13 +279,13 @@ function detectRequestIdleCallback(): boolean {
 
 /**
  * Determines the optimal layout mode based on feature support
- * 
+ *
  * Priority:
  * 1. Native CSS masonry (best performance, native browser support)
  * 2. Subgrid-aligned (aligned headers, better visual consistency)
  * 3. CSS Grid dense (decent gap handling)
  * 4. JS masonry (fallback, full control)
- * 
+ *
  * @param support - Feature support detection results
  * @returns Optimal layout mode
  */
@@ -314,7 +314,7 @@ export function getOptimalLayoutMode(support?: MasonrySupportResult): LayoutMode
 
 /**
  * Determines the optimal animation mode based on feature support and user preferences
- * 
+ *
  * @param support - Feature support detection results
  * @returns Optimal animation mode
  */
@@ -340,7 +340,7 @@ export function getOptimalAnimationMode(support?: MasonrySupportResult): Animati
 
 /**
  * Gets the complete layout engine configuration based on feature detection
- * 
+ *
  * @param options - Optional overrides for specific features
  * @returns Complete layout engine configuration
  */
@@ -351,7 +351,7 @@ export function getLayoutEngineConfig(options?: {
   disableWebWorker?: boolean;
 }): LayoutEngineConfig {
   const features = detectMasonrySupport();
-  
+
   return {
     layoutMode: options?.forceLayoutMode ?? getOptimalLayoutMode(features),
     animationMode: options?.forceAnimationMode ?? getOptimalAnimationMode(features),
@@ -368,7 +368,7 @@ export function getLayoutEngineConfig(options?: {
 
 /**
  * Generates CSS classes based on detected features and layout mode
- * 
+ *
  * @param config - Layout engine configuration
  * @returns Array of CSS class names to apply to the container
  */
@@ -471,7 +471,7 @@ export function canUseWebAnimations(): boolean {
 /**
  * Dynamically loads polyfills for missing features
  * Only loads what's needed based on detection
- * 
+ *
  * @returns Promise that resolves when all polyfills are loaded
  */
 export async function loadMasonryPolyfills(): Promise<void> {
@@ -494,7 +494,7 @@ export async function loadMasonryPolyfills(): Promise<void> {
   // Note: ResizeObserver and IntersectionObserver polyfills should be loaded
   // at the application level if needed, as they require external packages.
   // Modern browsers (2020+) support both natively.
-  
+
   // Clear cache to re-detect with polyfills
   clearMasonrySupportCache();
 }
@@ -505,32 +505,34 @@ export async function loadMasonryPolyfills(): Promise<void> {
 
 /**
  * Listens for changes to reduced motion preference
- * 
+ *
  * @param callback - Function to call when preference changes
  * @returns Cleanup function to remove listener
  */
-export function onReducedMotionChange(callback: (prefersReducedMotion: boolean) => void): () => void {
+export function onReducedMotionChange(
+  callback: (prefersReducedMotion: boolean) => void
+): () => void {
   if (typeof window === 'undefined') {
     return () => {};
   }
 
   const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  
+
   const handler = (event: MediaQueryListEvent) => {
     callback(event.matches);
   };
 
   mediaQuery.addEventListener('change', handler);
-  
+
   // Call immediately with current value
   callback(mediaQuery.matches);
-  
+
   return () => mediaQuery.removeEventListener('change', handler);
 }
 
 /**
  * Listens for changes to color scheme preference
- * 
+ *
  * @param callback - Function to call when preference changes
  * @returns Cleanup function to remove listener
  */
@@ -540,22 +542,22 @@ export function onColorSchemeChange(callback: (prefersDark: boolean) => void): (
   }
 
   const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-  
+
   const handler = (event: MediaQueryListEvent) => {
     callback(event.matches);
   };
 
   mediaQuery.addEventListener('change', handler);
-  
+
   // Call immediately with current value
   callback(mediaQuery.matches);
-  
+
   return () => mediaQuery.removeEventListener('change', handler);
 }
 
 /**
  * Listens for forced colors mode (high contrast)
- * 
+ *
  * @param callback - Function to call when preference changes
  * @returns Cleanup function to remove listener
  */
@@ -565,16 +567,15 @@ export function onForcedColorsChange(callback: (forcedColors: boolean) => void):
   }
 
   const mediaQuery = window.matchMedia('(forced-colors: active)');
-  
+
   const handler = (event: MediaQueryListEvent) => {
     callback(event.matches);
   };
 
   mediaQuery.addEventListener('change', handler);
-  
+
   // Call immediately with current value
   callback(mediaQuery.matches);
-  
+
   return () => mediaQuery.removeEventListener('change', handler);
 }
-

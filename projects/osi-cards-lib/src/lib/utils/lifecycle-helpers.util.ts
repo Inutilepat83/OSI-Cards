@@ -29,7 +29,14 @@
  */
 
 import { Subject, Observable, take } from 'rxjs';
-import { OnInit, OnDestroy, AfterViewInit, AfterContentInit, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  AfterContentInit,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 
 /**
  * Lifecycle hook symbol keys
@@ -45,11 +52,7 @@ const LIFECYCLE_HOOKS = {
 /**
  * Get or create lifecycle subject
  */
-function getLifecycleSubject<T>(
-  instance: any,
-  hook: symbol,
-  lifecycleMethod: string
-): Subject<T> {
+function getLifecycleSubject<T>(instance: any, hook: symbol, lifecycleMethod: string): Subject<T> {
   if (!instance[hook]) {
     instance[hook] = new Subject<T>();
 
@@ -140,7 +143,11 @@ export function AfterViewInit$(instance: AfterViewInit): Observable<void> {
  * @returns Observable that emits when ngAfterContentInit is called
  */
 export function AfterContentInit$(instance: AfterContentInit): Observable<void> {
-  return getLifecycleSubject<void>(instance, LIFECYCLE_HOOKS.AFTER_CONTENT_INIT, 'ngAfterContentInit')
+  return getLifecycleSubject<void>(
+    instance,
+    LIFECYCLE_HOOKS.AFTER_CONTENT_INIT,
+    'ngAfterContentInit'
+  )
     .asObservable()
     .pipe(take(1));
 }
@@ -170,8 +177,11 @@ export function AfterContentInit$(instance: AfterContentInit): Observable<void> 
  * ```
  */
 export function OnChanges$(instance: OnChanges): Observable<SimpleChanges> {
-  return getLifecycleSubject<SimpleChanges>(instance, LIFECYCLE_HOOKS.CHANGES, 'ngOnChanges')
-    .asObservable();
+  return getLifecycleSubject<SimpleChanges>(
+    instance,
+    LIFECYCLE_HOOKS.CHANGES,
+    'ngOnChanges'
+  ).asObservable();
 }
 
 /**
@@ -229,10 +239,7 @@ export function afterContentInit(instance: AfterContentInit, callback: () => voi
  * @param instance - Component instance
  * @param callback - Callback to run with changes
  */
-export function onChanges(
-  instance: OnChanges,
-  callback: (changes: SimpleChanges) => void
-): void {
+export function onChanges(instance: OnChanges, callback: (changes: SimpleChanges) => void): void {
   OnChanges$(instance).subscribe(callback);
 }
 
@@ -262,7 +269,7 @@ export function onInputChange<T = any>(
   inputName: string,
   callback: (value: T, previousValue: T | undefined) => void
 ): void {
-  OnChanges$(instance).subscribe(changes => {
+  OnChanges$(instance).subscribe((changes) => {
     const change = changes[inputName];
     if (change) {
       callback(change.currentValue, change.previousValue);
@@ -284,7 +291,7 @@ export function onFirstInputChange<T = any>(
 ): void {
   OnChanges$(instance)
     .pipe(take(1))
-    .subscribe(changes => {
+    .subscribe((changes) => {
       const change = changes[inputName];
       if (change) {
         callback(change.currentValue);
@@ -349,7 +356,7 @@ export function combineLifecycles(
 ): Observable<void> {
   const observables: Observable<void>[] = [];
 
-  lifecycles.forEach(lifecycle => {
+  lifecycles.forEach((lifecycle) => {
     switch (lifecycle) {
       case 'OnInit':
         observables.push(OnInit$(instance));
@@ -363,8 +370,8 @@ export function combineLifecycles(
     }
   });
 
-  return new Observable<void>(subscriber => {
-    observables.forEach(obs => {
+  return new Observable<void>((subscriber) => {
+    observables.forEach((obs) => {
       obs.subscribe(() => subscriber.next());
     });
   });
@@ -389,11 +396,7 @@ export function combineLifecycles(
  * ```
  */
 export function MeasureLifecycle(hookName: string): MethodDecorator {
-  return function (
-    target: any,
-    propertyKey: string | symbol,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
     descriptor.value = function (...args: any[]) {
@@ -409,4 +412,3 @@ export function MeasureLifecycle(hookName: string): MethodDecorator {
     return descriptor;
   };
 }
-

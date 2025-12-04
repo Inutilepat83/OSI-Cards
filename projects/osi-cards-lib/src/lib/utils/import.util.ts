@@ -24,7 +24,7 @@ export async function importFromCSV(file: File): Promise<any[]> {
  * Parse CSV text
  */
 export function parseCSV(text: string): any[] {
-  const lines = text.split('\n').filter(line => line.trim());
+  const lines = text.split('\n').filter((line) => line.trim());
   if (lines.length === 0) return [];
 
   const headers = parseCSVLine(lines[0]);
@@ -120,7 +120,7 @@ export async function importFromExcelCSV(file: File): Promise<any[]> {
   let text = await file.text();
 
   // Remove BOM if present
-  if (text.charCodeAt(0) === 0xFEFF) {
+  if (text.charCodeAt(0) === 0xfeff) {
     text = text.slice(1);
   }
 
@@ -131,9 +131,6 @@ export async function importFromExcelCSV(file: File): Promise<any[]> {
  * Batch import multiple files
  */
 export async function batchImport(files: File[]): Promise<any[]> {
-  const results = await Promise.all(
-    files.map(file => importFromFile(file))
-  );
+  const results = await Promise.all(files.map((file) => importFromFile(file)));
   return results;
 }
-

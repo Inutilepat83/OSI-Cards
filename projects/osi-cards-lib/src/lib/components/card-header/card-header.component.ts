@@ -4,7 +4,7 @@ import { LucideIconsModule } from '../../icons';
 
 /**
  * Card Header Component
- * 
+ *
  * Displays the card title and export button.
  * Extracted from AICardRendererComponent for better separation of concerns.
  */
@@ -14,7 +14,7 @@ import { LucideIconsModule } from '../../icons';
   imports: [CommonModule, LucideIconsModule],
   templateUrl: './card-header.component.html',
   styleUrls: ['./card-header.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardHeaderComponent {
   @Input() cardTitle?: string;

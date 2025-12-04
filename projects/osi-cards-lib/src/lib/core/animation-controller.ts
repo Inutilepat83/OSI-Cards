@@ -88,14 +88,8 @@ const DEFAULT_EASING = 'cubic-bezier(0.4, 0, 0.2, 1)';
 const DEFAULT_STAGGER_DELAY = 50;
 
 const KEYFRAMES: Record<AnimationType, Keyframe[]> = {
-  'fade-in': [
-    { opacity: 0 },
-    { opacity: 1 },
-  ],
-  'fade-out': [
-    { opacity: 1 },
-    { opacity: 0 },
-  ],
+  'fade-in': [{ opacity: 0 }, { opacity: 1 }],
+  'fade-out': [{ opacity: 1 }, { opacity: 0 }],
   'fade-up': [
     { opacity: 0, transform: 'translateY(20px)' },
     { opacity: 1, transform: 'translateY(0)' },
@@ -120,7 +114,7 @@ const KEYFRAMES: Record<AnimationType, Keyframe[]> = {
     { opacity: 0, transform: 'translateX(-20px)' },
     { opacity: 1, transform: 'translateX(0)' },
   ],
-  'flip': [], // Handled specially
+  flip: [], // Handled specially
 };
 
 // ============================================================================
@@ -143,11 +137,7 @@ export class AnimationController {
   /**
    * Animate an element with a preset animation
    */
-  animate(
-    element: Element,
-    type: AnimationType,
-    options: AnimationOptions = {}
-  ): AnimationState {
+  animate(element: Element, type: AnimationType, options: AnimationOptions = {}): AnimationState {
     if (this.reducedMotion) {
       return this.skipAnimation(options.onComplete);
     }
@@ -177,11 +167,7 @@ export class AnimationController {
   /**
    * Stagger animations across multiple elements
    */
-  stagger(
-    elements: Element[],
-    type: AnimationType,
-    options: StaggerOptions = {}
-  ): AnimationState {
+  stagger(elements: Element[], type: AnimationType, options: StaggerOptions = {}): AnimationState {
     if (this.reducedMotion || elements.length === 0) {
       return this.skipAnimation(options.onComplete);
     }
@@ -203,7 +189,7 @@ export class AnimationController {
     });
 
     const finished = Promise.all(
-      elements.map(el => {
+      elements.map((el) => {
         const anim = this.activeAnimations.get(el);
         return anim?.finished ?? Promise.resolve();
       })
@@ -215,7 +201,7 @@ export class AnimationController {
       running: true,
       cancel: () => {
         cancelled = true;
-        animations.forEach(a => a.cancel());
+        animations.forEach((a) => a.cancel());
       },
       finished: finished as Promise<void>,
     };
@@ -225,11 +211,7 @@ export class AnimationController {
    * FLIP animation for layout changes
    * First-Last-Invert-Play technique
    */
-  flip(
-    elements: Element[],
-    change: () => void,
-    options: FlipOptions = {}
-  ): AnimationState {
+  flip(elements: Element[], change: () => void, options: FlipOptions = {}): AnimationState {
     if (this.reducedMotion || elements.length === 0) {
       change();
       return this.skipAnimation();
@@ -237,7 +219,7 @@ export class AnimationController {
 
     // FIRST: Record initial positions
     const firstRects = new Map<Element, DOMRect>();
-    elements.forEach(el => {
+    elements.forEach((el) => {
       firstRects.set(el, el.getBoundingClientRect());
     });
 
@@ -247,7 +229,7 @@ export class AnimationController {
     // LAST: Record final positions
     const animations: Animation[] = [];
 
-    elements.forEach(el => {
+    elements.forEach((el) => {
       const first = firstRects.get(el);
       const last = el.getBoundingClientRect();
 
@@ -265,17 +247,20 @@ export class AnimationController {
       }
 
       // PLAY: Animate from inverted position to final
-      const anim = el.animate([
+      const anim = el.animate(
+        [
+          {
+            transform: `translate(${deltaX}px, ${deltaY}px) scale(${deltaW}, ${deltaH})`,
+          },
+          {
+            transform: 'translate(0, 0) scale(1, 1)',
+          },
+        ],
         {
-          transform: `translate(${deltaX}px, ${deltaY}px) scale(${deltaW}, ${deltaH})`,
-        },
-        {
-          transform: 'translate(0, 0) scale(1, 1)',
-        },
-      ], {
-        duration: options.duration ?? DEFAULT_DURATION,
-        easing: options.easing ?? DEFAULT_EASING,
-      });
+          duration: options.duration ?? DEFAULT_DURATION,
+          easing: options.easing ?? DEFAULT_EASING,
+        }
+      );
 
       animations.push(anim);
       this.activeAnimations.set(el, anim);
@@ -285,13 +270,11 @@ export class AnimationController {
       };
     });
 
-    const finished = Promise.all(
-      animations.map(a => a.finished)
-    ).then(() => {});
+    const finished = Promise.all(animations.map((a) => a.finished)).then(() => {});
 
     return {
       running: true,
-      cancel: () => animations.forEach(a => a.cancel()),
+      cancel: () => animations.forEach((a) => a.cancel()),
       finished,
     };
   }
@@ -300,7 +283,7 @@ export class AnimationController {
    * Cancel all active animations
    */
   cancelAll(): void {
-    this.activeAnimations.forEach(anim => anim.cancel());
+    this.activeAnimations.forEach((anim) => anim.cancel());
     this.activeAnimations.clear();
   }
 
@@ -350,13 +333,15 @@ export class AnimationController {
 
     this.activeAnimations.set(element, anim);
 
-    const finished = anim.finished.then(() => {
-      this.activeAnimations.delete(element);
-      options.onComplete?.();
-    }).catch(() => {
-      // Animation was cancelled
-      this.activeAnimations.delete(element);
-    });
+    const finished = anim.finished
+      .then(() => {
+        this.activeAnimations.delete(element);
+        options.onComplete?.();
+      })
+      .catch(() => {
+        // Animation was cancelled
+        this.activeAnimations.delete(element);
+      });
 
     return {
       running: true,
@@ -412,6 +397,3 @@ export function getAnimationController(): AnimationController {
 export function createAnimationController(): AnimationController {
   return new AnimationController();
 }
-
-
-

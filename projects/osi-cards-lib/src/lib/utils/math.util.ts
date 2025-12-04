@@ -84,7 +84,7 @@ export function sum(numbers: number[]): number {
  */
 export function standardDeviation(numbers: number[]): number {
   const avg = average(numbers);
-  const squareDiffs = numbers.map(n => Math.pow(n - avg, 2));
+  const squareDiffs = numbers.map((n) => Math.pow(n - avg, 2));
   const avgSquareDiff = average(squareDiffs);
   return Math.sqrt(avgSquareDiff);
 }
@@ -172,7 +172,12 @@ export function distance(x1: number, y1: number, x2: number, y2: number): number
 /**
  * Map value from one range to another
  */
-export function map(value: number, inMin: number, inMax: number, outMin: number, outMax: number): number {
+export function map(
+  value: number,
+  inMin: number,
+  inMax: number,
+  outMin: number,
+  outMax: number
+): number {
   return ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
 }
-

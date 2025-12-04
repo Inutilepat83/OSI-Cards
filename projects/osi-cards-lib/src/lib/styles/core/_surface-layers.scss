@@ -44,7 +44,10 @@
 
 @mixin surface-section-hover {
   /* Use hover background variable - flat color with theme border */
-  background: var(--section-surface-hover, var(--section-background-hover, var(--section-surface))) !important;
+  background: var(
+    --section-surface-hover,
+    var(--section-background-hover, var(--section-surface))
+  ) !important;
   border-color: var(--section-border-hover, var(--section-border)) !important;
   box-shadow: var(--section-box-shadow-hover, var(--section-box-shadow)) !important;
 }

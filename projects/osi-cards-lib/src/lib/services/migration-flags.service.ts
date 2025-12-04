@@ -51,16 +51,14 @@ export class MigrationFlagsService {
    * Get enabled flags only
    */
   getEnabled(): (keyof MigrationFlags)[] {
-    return (Object.keys(this.flags) as (keyof MigrationFlags)[])
-      .filter(key => this.flags[key]);
+    return (Object.keys(this.flags) as (keyof MigrationFlags)[]).filter((key) => this.flags[key]);
   }
 
   /**
    * Get disabled flags only
    */
   getDisabled(): (keyof MigrationFlags)[] {
-    return (Object.keys(this.flags) as (keyof MigrationFlags)[])
-      .filter(key => !this.flags[key]);
+    return (Object.keys(this.flags) as (keyof MigrationFlags)[]).filter((key) => !this.flags[key]);
   }
 
   /**
@@ -74,6 +72,3 @@ export class MigrationFlagsService {
     console.groupEnd();
   }
 }
-
-
-

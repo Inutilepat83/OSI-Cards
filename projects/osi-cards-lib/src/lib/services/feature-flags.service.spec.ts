@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { PLATFORM_ID } from '@angular/core';
-import { 
-  FeatureFlagsService, 
-  OSI_FEATURE_FLAGS, 
+import {
+  FeatureFlagsService,
+  OSI_FEATURE_FLAGS,
   FEATURE_FLAG_META,
-  FeatureFlagKey 
+  FeatureFlagKey,
 } from './feature-flags.service';
 
 describe('FeatureFlagsService', () => {
@@ -13,12 +13,9 @@ describe('FeatureFlagsService', () => {
   beforeEach(() => {
     // Clear localStorage before each test
     localStorage.clear();
-    
+
     TestBed.configureTestingModule({
-      providers: [
-        FeatureFlagsService,
-        { provide: PLATFORM_ID, useValue: 'browser' }
-      ]
+      providers: [FeatureFlagsService, { provide: PLATFORM_ID, useValue: 'browser' }],
     });
     service = TestBed.inject(FeatureFlagsService);
   });
@@ -37,7 +34,7 @@ describe('FeatureFlagsService', () => {
   describe('initialization', () => {
     it('should initialize with default values', () => {
       const all = service.getAll();
-      
+
       // Check that defaults are applied
       expect(all[OSI_FEATURE_FLAGS.FLIP_ANIMATIONS]).toBe(true); // Default: true
       expect(all[OSI_FEATURE_FLAGS.PLUGINS]).toBe(true); // Default: true
@@ -46,7 +43,7 @@ describe('FeatureFlagsService', () => {
 
     it('should have all feature flags defined in metadata', () => {
       const allFlags = Object.values(OSI_FEATURE_FLAGS);
-      
+
       for (const flag of allFlags) {
         expect(FEATURE_FLAG_META[flag]).toBeDefined();
         expect(FEATURE_FLAG_META[flag].description).toBeDefined();
@@ -77,7 +74,7 @@ describe('FeatureFlagsService', () => {
 
   describe('observe', () => {
     it('should emit current value immediately', (done) => {
-      service.observe(OSI_FEATURE_FLAGS.VIRTUAL_SCROLL).subscribe(value => {
+      service.observe(OSI_FEATURE_FLAGS.VIRTUAL_SCROLL).subscribe((value) => {
         expect(value).toBe(false);
         done();
       });
@@ -85,8 +82,8 @@ describe('FeatureFlagsService', () => {
 
     it('should emit new values when flag changes', (done) => {
       const values: boolean[] = [];
-      
-      service.observe(OSI_FEATURE_FLAGS.VIRTUAL_SCROLL).subscribe(value => {
+
+      service.observe(OSI_FEATURE_FLAGS.VIRTUAL_SCROLL).subscribe((value) => {
         values.push(value);
         if (values.length === 2) {
           expect(values).toEqual([false, true]);
@@ -112,7 +109,7 @@ describe('FeatureFlagsService', () => {
   describe('getMeta', () => {
     it('should return metadata for known flags', () => {
       const meta = service.getMeta(OSI_FEATURE_FLAGS.VIRTUAL_SCROLL);
-      
+
       expect(meta).toBeDefined();
       expect(meta?.description).toContain('virtual scrolling');
       expect(meta?.experimental).toBe(false);
@@ -128,7 +125,7 @@ describe('FeatureFlagsService', () => {
   describe('getExperimentalFlags', () => {
     it('should return only experimental flags', () => {
       const experimental = service.getExperimentalFlags();
-      
+
       for (const flag of experimental) {
         expect(FEATURE_FLAG_META[flag].experimental).toBe(true);
       }
@@ -136,7 +133,7 @@ describe('FeatureFlagsService', () => {
 
     it('should include web workers and streaming v2', () => {
       const experimental = service.getExperimentalFlags();
-      
+
       expect(experimental).toContain(OSI_FEATURE_FLAGS.WEB_WORKERS);
       expect(experimental).toContain(OSI_FEATURE_FLAGS.STREAMING_V2);
     });
@@ -148,14 +145,14 @@ describe('FeatureFlagsService', () => {
   describe('enable', () => {
     it('should enable a mutable flag', () => {
       const result = service.enable(OSI_FEATURE_FLAGS.VIRTUAL_SCROLL);
-      
+
       expect(result).toBe(true);
       expect(service.isEnabled(OSI_FEATURE_FLAGS.VIRTUAL_SCROLL)).toBe(true);
     });
 
     it('should return false for immutable flags', () => {
       const result = service.enable(OSI_FEATURE_FLAGS.STREAMING_V2);
-      
+
       // STREAMING_V2 is not mutable
       expect(result).toBe(false);
     });
@@ -165,7 +162,7 @@ describe('FeatureFlagsService', () => {
     it('should disable a mutable flag', () => {
       service.enable(OSI_FEATURE_FLAGS.VIRTUAL_SCROLL);
       const result = service.disable(OSI_FEATURE_FLAGS.VIRTUAL_SCROLL);
-      
+
       expect(result).toBe(true);
       expect(service.isEnabled(OSI_FEATURE_FLAGS.VIRTUAL_SCROLL)).toBe(false);
     });
@@ -188,7 +185,7 @@ describe('FeatureFlagsService', () => {
     it('should set flag to specified value', () => {
       service.setFlag(OSI_FEATURE_FLAGS.VIRTUAL_SCROLL, true);
       expect(service.isEnabled(OSI_FEATURE_FLAGS.VIRTUAL_SCROLL)).toBe(true);
-      
+
       service.setFlag(OSI_FEATURE_FLAGS.VIRTUAL_SCROLL, false);
       expect(service.isEnabled(OSI_FEATURE_FLAGS.VIRTUAL_SCROLL)).toBe(false);
     });
@@ -219,7 +216,7 @@ describe('FeatureFlagsService', () => {
 
     it('should skip immutable flags', () => {
       const originalValue = service.isEnabled(OSI_FEATURE_FLAGS.PLUGINS);
-      
+
       service.configure({
         [OSI_FEATURE_FLAGS.PLUGINS]: !originalValue,
       });
@@ -249,7 +246,7 @@ describe('FeatureFlagsService', () => {
       service.enableExperimental();
 
       const experimental = service.getExperimentalFlags();
-      
+
       for (const flag of experimental) {
         const meta = FEATURE_FLAG_META[flag];
         if (meta.mutable) {
@@ -265,10 +262,10 @@ describe('FeatureFlagsService', () => {
   describe('persistence', () => {
     it('should persist mutable flags to localStorage', () => {
       service.enable(OSI_FEATURE_FLAGS.VIRTUAL_SCROLL);
-      
+
       const stored = localStorage.getItem('osi-cards-feature-flags');
       expect(stored).toBeTruthy();
-      
+
       const parsed = JSON.parse(stored!);
       expect(parsed[OSI_FEATURE_FLAGS.VIRTUAL_SCROLL]).toBe(true);
     });
@@ -277,19 +274,22 @@ describe('FeatureFlagsService', () => {
       // PLUGINS is immutable
       const stored = localStorage.getItem('osi-cards-feature-flags');
       const parsed = stored ? JSON.parse(stored) : {};
-      
+
       expect(parsed[OSI_FEATURE_FLAGS.PLUGINS]).toBeUndefined();
     });
 
     it('should load persisted flags on initialization', () => {
       // Set up localStorage before creating new service
-      localStorage.setItem('osi-cards-feature-flags', JSON.stringify({
-        [OSI_FEATURE_FLAGS.VIRTUAL_SCROLL]: true,
-      }));
+      localStorage.setItem(
+        'osi-cards-feature-flags',
+        JSON.stringify({
+          [OSI_FEATURE_FLAGS.VIRTUAL_SCROLL]: true,
+        })
+      );
 
       // Create new service instance
       const newService = new FeatureFlagsService();
-      
+
       expect(newService.isEnabled(OSI_FEATURE_FLAGS.VIRTUAL_SCROLL)).toBe(true);
     });
   });
@@ -299,7 +299,7 @@ describe('FeatureFlagsService', () => {
   // ============================================================================
   describe('flags$', () => {
     it('should emit current flags state', (done) => {
-      service.flags$.subscribe(flags => {
+      service.flags$.subscribe((flags) => {
         expect(flags instanceof Map).toBe(true);
         done();
       });
@@ -307,8 +307,8 @@ describe('FeatureFlagsService', () => {
 
     it('should emit updated state when flags change', (done) => {
       let emissions = 0;
-      
-      service.flags$.subscribe(flags => {
+
+      service.flags$.subscribe((flags) => {
         emissions++;
         if (emissions === 2) {
           expect(flags.get(OSI_FEATURE_FLAGS.VIRTUAL_SCROLL)).toBe(true);
@@ -320,12 +320,3 @@ describe('FeatureFlagsService', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-

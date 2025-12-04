@@ -41,7 +41,7 @@ export {
   SectionHarness,
   ActionHarness,
   CardHarness,
-  MasonryGridHarness
+  MasonryGridHarness,
 } from './harnesses/card-harness';
 
 // Re-export registry fixtures (SINGLE SOURCE OF TRUTH)
@@ -69,7 +69,7 @@ export {
 
   // Types
   type FixtureCategory,
-  type SectionFixtures
+  type SectionFixtures,
 } from '../registry/fixtures.generated';
 
 // ============================================================================
@@ -87,7 +87,7 @@ export function createMockCard(overrides: Partial<AICardConfig> = {}): AICardCon
     cardTitle: 'Test Card',
     description: 'A test card for unit testing',
     sections: [createMockSection()],
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -100,7 +100,7 @@ export function createMockSection(overrides: Partial<CardSection> = {}): CardSec
     title: 'Test Section',
     type: 'info',
     fields: [createMockField()],
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -112,7 +112,7 @@ export function createMockField(overrides: Partial<CardField> = {}): CardField {
     id: `mock-field-${Math.random().toString(36).substring(7)}`,
     label: 'Test Field',
     value: 'Test Value',
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -124,7 +124,7 @@ export function createMockItem(overrides: Partial<CardItem> = {}): CardItem {
     id: `mock-item-${Math.random().toString(36).substring(7)}`,
     title: 'Test Item',
     description: 'Test item description',
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -136,7 +136,7 @@ export function createMockAction(overrides: Partial<CardAction> = {}): CardActio
     type: 'website',
     label: 'Test Action',
     url: 'https://example.com',
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -147,7 +147,7 @@ export function createMockCards(count: number): AICardConfig[] {
   return Array.from({ length: count }, (_, i) =>
     createMockCard({
       id: `mock-card-${i}`,
-      cardTitle: `Test Card ${i + 1}`
+      cardTitle: `Test Card ${i + 1}`,
     })
   );
 }
@@ -163,17 +163,18 @@ export function createComplexMockCard(): AICardConfig {
     sections: [
       createMockSection({ type: 'info', title: 'Information' }),
       createMockSection({ type: 'analytics', title: 'Analytics' }),
-      createMockSection({ type: 'list', title: 'List Items', items: [
-        createMockItem(),
-        createMockItem({ title: 'Second Item' })
-      ]}),
+      createMockSection({
+        type: 'list',
+        title: 'List Items',
+        items: [createMockItem(), createMockItem({ title: 'Second Item' })],
+      }),
       createMockSection({ type: 'contact-card', title: 'Contact' }),
       createMockSection({ type: 'chart', title: 'Chart' }),
     ],
     actions: [
       createMockAction({ type: 'mail', label: 'Contact' }),
-      createMockAction({ type: 'website', label: 'Website' })
-    ]
+      createMockAction({ type: 'website', label: 'Website' }),
+    ],
   };
 }
 
@@ -212,7 +213,7 @@ export class MockStreamingService {
 
   async *stream(): AsyncGenerator<string, void, unknown> {
     for (const chunk of this.chunks) {
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
       yield chunk;
     }
   }
@@ -265,7 +266,7 @@ export function accessibilityAudit(element: HTMLElement): A11yAuditResult {
         description: 'Image elements must have an alt attribute',
         impact: 'critical',
         nodes: [`img:nth-of-type(${i + 1})`],
-        help: 'Add alt="" for decorative images or descriptive text for informative ones'
+        help: 'Add alt="" for decorative images or descriptive text for informative ones',
       });
     } else {
       passes++;
@@ -285,7 +286,7 @@ export function accessibilityAudit(element: HTMLElement): A11yAuditResult {
         description: 'Buttons must have discernible text',
         impact: 'critical',
         nodes: [`button:nth-of-type(${i + 1})`],
-        help: 'Add text content or aria-label to the button'
+        help: 'Add text content or aria-label to the button',
       });
     } else {
       passes++;
@@ -303,7 +304,7 @@ export function accessibilityAudit(element: HTMLElement): A11yAuditResult {
         description: `Heading level ${level} skips level ${lastLevel + 1}`,
         impact: 'moderate',
         nodes: [`${heading.tagName.toLowerCase()}:nth-of-type(${i + 1})`],
-        help: 'Maintain sequential heading hierarchy'
+        help: 'Maintain sequential heading hierarchy',
       });
     }
     lastLevel = level;
@@ -323,7 +324,7 @@ export function accessibilityAudit(element: HTMLElement): A11yAuditResult {
         description: 'Form elements must have labels',
         impact: 'critical',
         nodes: [`input:nth-of-type(${i + 1})`],
-        help: 'Add a label element or aria-label attribute'
+        help: 'Add a label element or aria-label attribute',
       });
     } else {
       passes++;
@@ -341,13 +342,15 @@ export function accessibilityAudit(element: HTMLElement): A11yAuditResult {
         description: 'Inline color styles detected - verify contrast manually',
         impact: 'moderate',
         nodes: [`[style*="color"]:nth-of-type(${i + 1})`],
-        help: 'Ensure text has sufficient contrast with background'
+        help: 'Ensure text has sufficient contrast with background',
       });
     }
   });
 
   // Check for tabindex > 0 (anti-pattern)
-  const highTabIndex = element.querySelectorAll('[tabindex]:not([tabindex="-1"]):not([tabindex="0"])');
+  const highTabIndex = element.querySelectorAll(
+    '[tabindex]:not([tabindex="-1"]):not([tabindex="0"])'
+  );
   highTabIndex.forEach((el, i) => {
     const tabindex = el.getAttribute('tabindex');
     if (tabindex && parseInt(tabindex, 10) > 0) {
@@ -356,7 +359,7 @@ export function accessibilityAudit(element: HTMLElement): A11yAuditResult {
         description: 'Avoid positive tabindex values',
         impact: 'serious',
         nodes: [`[tabindex="${tabindex}"]:nth-of-type(${i + 1})`],
-        help: 'Use tabindex="0" or "-1" instead of positive values'
+        help: 'Use tabindex="0" or "-1" instead of positive values',
       });
     }
   });
@@ -372,7 +375,7 @@ export function accessibilityAudit(element: HTMLElement): A11yAuditResult {
     passed: violations.length === 0,
     violations,
     warnings,
-    passes
+    passes,
   };
 }
 
@@ -393,7 +396,7 @@ export async function waitForElement(
   while (Date.now() - startTime < timeout) {
     const element = container.querySelector<HTMLElement>(selector);
     if (element) return element;
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
   }
 
   return null;
@@ -411,7 +414,7 @@ export async function waitForText(
 
   while (Date.now() - startTime < timeout) {
     if (container.textContent?.includes(text)) return true;
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
   }
 
   return false;
@@ -450,7 +453,7 @@ export function simulateKeyPress(
     code: key,
     bubbles: true,
     cancelable: true,
-    ...options
+    ...options,
   });
   element.dispatchEvent(event);
 }
@@ -505,7 +508,7 @@ export async function runPerformanceTest(
     avgDuration: durations.reduce((a, b) => a + b, 0) / iterations,
     minDuration: Math.min(...durations),
     maxDuration: Math.max(...durations),
-    memoryUsed
+    memoryUsed,
   };
 }
 
@@ -520,8 +523,8 @@ export function createCardSnapshot(card: AICardConfig): string {
   const snapshot = {
     cardTitle: card.cardTitle,
     sectionCount: card.sections.length,
-    sectionTypes: card.sections.map(s => s.type),
-    actionCount: card.actions?.length ?? 0
+    sectionTypes: card.sections.map((s) => s.type),
+    actionCount: card.actions?.length ?? 0,
   };
   return JSON.stringify(snapshot, null, 2);
 }
@@ -550,7 +553,7 @@ export function compareSnapshots(
       a.forEach((item, i) => compare(item, b[i], `${path}[${i}]`));
     } else if (typeof a === 'object' && a !== null) {
       const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
-      keys.forEach(key => {
+      keys.forEach((key) => {
         compare(a[key], b[key], path ? `${path}.${key}` : key);
       });
     } else if (a !== b) {
@@ -562,6 +565,6 @@ export function compareSnapshots(
 
   return {
     equal: differences.length === 0,
-    differences
+    differences,
   };
 }

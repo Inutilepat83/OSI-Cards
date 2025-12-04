@@ -2,8 +2,8 @@
 // VIDEO SECTION - Compact, Responsive, Consistent
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/typography-system' as typo;
+@use "../../../styles/components/sections/design-system" as *;
+@use "../../../styles/components/sections/typography-system" as typo;
 
 :host {
   display: block;
@@ -53,7 +53,7 @@
   position: relative;
 
   &::after {
-    content: '▶';
+    content: "▶";
     position: absolute;
     font-size: var(--osi-text-2xl);
     color: white;

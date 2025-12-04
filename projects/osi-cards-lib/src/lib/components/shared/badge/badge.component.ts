@@ -4,13 +4,7 @@ import { CommonModule } from '@angular/common';
 /**
  * Badge variant types
  */
-export type BadgeVariant =
-  | 'default'
-  | 'primary'
-  | 'success'
-  | 'error'
-  | 'warning'
-  | 'info';
+export type BadgeVariant = 'default' | 'primary' | 'success' | 'error' | 'warning' | 'info';
 
 /**
  * Badge size types
@@ -36,7 +30,7 @@ export type BadgeSize = 'sm' | 'md' | 'lg';
   imports: [CommonModule],
   templateUrl: './badge.component.html',
   styleUrl: './badge.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BadgeComponent {
   /**
@@ -111,4 +105,3 @@ export class BadgeComponent {
     return classes;
   }
 }
-

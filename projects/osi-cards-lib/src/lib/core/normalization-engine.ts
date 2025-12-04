@@ -188,7 +188,9 @@ export class NormalizationEngine {
     // Normalize card structure
     const normalized: NormalizedCard = {
       id: this.normalizeString(input['id'], 'id', errors) || this.generateId(),
-      cardTitle: this.normalizeString(input['cardTitle'] || input['title'], 'cardTitle', errors) || 'Untitled',
+      cardTitle:
+        this.normalizeString(input['cardTitle'] || input['title'], 'cardTitle', errors) ||
+        'Untitled',
       sections: this.normalizeSections(input['sections'], errors, warnings),
       actions: this.normalizeActions(input['actions'], errors),
       metadata: this.normalizeMetadata(input['metadata'] || input['meta']),
@@ -290,14 +292,14 @@ export class NormalizationEngine {
 
     return data
       .map((s, i) => this.normalizeSection(s, i))
-      .filter(r => {
+      .filter((r) => {
         if (!r.valid) {
           errors.push(...r.errors);
           warnings.push(...r.warnings);
         }
         return r.valid || !this.config.strict;
       })
-      .map(r => r.data);
+      .map((r) => r.data);
   }
 
   private normalizeFields(
@@ -315,16 +317,18 @@ export class NormalizationEngine {
     }
 
     return data
-      .filter(f => f && typeof f === 'object')
+      .filter((f) => f && typeof f === 'object')
       .map((f, i) => {
         const field = f as Record<string, unknown>;
         return {
-          label: this.normalizeString(field['label'] || field['name'], `${path}[${i}].label`, errors) || '',
+          label:
+            this.normalizeString(field['label'] || field['name'], `${path}[${i}].label`, errors) ||
+            '',
           value: this.normalizeValue(field['value'], `${path}[${i}].value`),
           type: this.normalizeString(field['type'], `${path}[${i}].type`, []),
         };
       })
-      .filter(f => f.label || f.value !== undefined);
+      .filter((f) => f.label || f.value !== undefined);
   }
 
   private normalizeItems(
@@ -342,18 +346,19 @@ export class NormalizationEngine {
     }
 
     return data
-      .filter(item => item && typeof item === 'object')
+      .filter((item) => item && typeof item === 'object')
       .map((item, i) => {
         const it = item as Record<string, unknown>;
         return {
           id: this.normalizeString(it['id'], `${path}[${i}].id`, []) || this.generateId(),
-          title: this.normalizeString(it['title'] || it['name'], `${path}[${i}].title`, errors) || '',
+          title:
+            this.normalizeString(it['title'] || it['name'], `${path}[${i}].title`, errors) || '',
           description: this.normalizeString(it['description'], `${path}[${i}].description`, []),
           icon: this.normalizeString(it['icon'], `${path}[${i}].icon`, []),
           value: this.normalizeValue(it['value'], `${path}[${i}].value`),
         };
       })
-      .filter(item => item.title);
+      .filter((item) => item.title);
   }
 
   private normalizeActions(data: unknown, errors: NormalizationError[]): NormalizedAction[] {
@@ -361,11 +366,16 @@ export class NormalizationEngine {
     if (!Array.isArray(data)) return [];
 
     return data
-      .filter(a => a && typeof a === 'object')
+      .filter((a) => a && typeof a === 'object')
       .map((a, i) => {
         const action = a as Record<string, unknown>;
         return {
-          label: this.normalizeString(action['label'] || action['text'], `actions[${i}].label`, errors) || 'Action',
+          label:
+            this.normalizeString(
+              action['label'] || action['text'],
+              `actions[${i}].label`,
+              errors
+            ) || 'Action',
           type: this.normalizeString(action['type'], `actions[${i}].type`, []) || 'primary',
           url: this.normalizeString(action['url'] || action['href'], `actions[${i}].url`, []),
         };
@@ -374,10 +384,14 @@ export class NormalizationEngine {
 
   private normalizeMetadata(data: unknown): Record<string, unknown> {
     if (!data || typeof data !== 'object') return {};
-    return { ...data as Record<string, unknown> };
+    return { ...(data as Record<string, unknown>) };
   }
 
-  private normalizeString(value: unknown, path: string, errors: NormalizationError[]): string | undefined {
+  private normalizeString(
+    value: unknown,
+    path: string,
+    errors: NormalizationError[]
+  ): string | undefined {
     if (value === undefined || value === null) return undefined;
     if (typeof value === 'string') return value.trim();
     if (typeof value === 'number') return String(value);
@@ -427,10 +441,13 @@ export class NormalizationEngine {
   }
 
   private hashData(data: unknown): string {
-    return JSON.stringify(data).split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0).toString(36);
+    return JSON.stringify(data)
+      .split('')
+      .reduce((a, b) => {
+        a = (a << 5) - a + b.charCodeAt(0);
+        return a & a;
+      }, 0)
+      .toString(36);
   }
 
   private generateId(): string {
@@ -505,6 +522,3 @@ export function createNormalizer(config?: Partial<NormalizationConfig>): Normali
 export function createStrictNormalizer(): NormalizationEngine {
   return new NormalizationEngine({ strict: true, collectAllErrors: false });
 }
-
-
-

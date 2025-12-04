@@ -32,6 +32,7 @@
     "skipLibCheck": true,
     "lib": ["ES2022", "dom", "ES2021.WeakRef"],
     "paths": {
+      "osi-cards-lib": ["projects/osi-cards-lib/src/public-api.ts"],
       "@osi-cards/lib": ["projects/osi-cards-lib/src/public-api.ts"],
       "@osi-cards/lib/*": ["projects/osi-cards-lib/src/lib/*"],
       "@osi-cards/sections": [

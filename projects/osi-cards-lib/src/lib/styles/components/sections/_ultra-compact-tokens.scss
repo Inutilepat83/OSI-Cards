@@ -7,7 +7,7 @@
 //
 // =====================================================================
 
-@use '../../tokens/master' as *;
+@use "../../tokens/master" as *;
 
 // =====================================================================
 // CORE SPACING - Ultra Compact Scale
@@ -26,15 +26,15 @@
   --uc-space-12: 12px;
 
   // Section spacing standards
-  --uc-section-gap: 8px;           // Between sections
-  --uc-card-padding: 8px;          // Card internal padding
-  --uc-card-padding-sm: 6px;       // Mobile card padding
-  --uc-item-padding: 6px 8px;      // List item padding
-  --uc-item-padding-sm: 5px 6px;   // Mobile item padding
-  --uc-internal-gap: 4px;          // Between elements
-  --uc-internal-gap-sm: 3px;       // Tight internal gap
-  --uc-grid-gap: 8px;              // Grid gap
-  --uc-grid-gap-sm: 6px;           // Mobile grid gap
+  --uc-section-gap: 8px; // Between sections
+  --uc-card-padding: 8px; // Card internal padding
+  --uc-card-padding-sm: 6px; // Mobile card padding
+  --uc-item-padding: 6px 8px; // List item padding
+  --uc-item-padding-sm: 5px 6px; // Mobile item padding
+  --uc-internal-gap: 4px; // Between elements
+  --uc-internal-gap-sm: 3px; // Tight internal gap
+  --uc-grid-gap: 8px; // Grid gap
+  --uc-grid-gap-sm: 6px; // Mobile grid gap
 }
 
 // =====================================================================
@@ -43,15 +43,15 @@
 
 :root {
   // Font sizes (optimized for density)
-  --uc-text-xs: 0.55rem;    // 8.8px - Tiny labels
-  --uc-text-sm: 0.6rem;     // 9.6px - Small labels
-  --uc-text-base: 0.65rem;  // 10.4px - Labels, meta
-  --uc-text-md: 0.7rem;     // 11.2px - Body text
-  --uc-text-lg: 0.75rem;    // 12px - Titles
-  --uc-text-xl: 0.8rem;     // 12.8px - Values
-  --uc-text-2xl: 0.95rem;   // 15.2px - Large values
-  --uc-text-3xl: 1.1rem;    // 17.6px - Metric values
-  --uc-text-4xl: 1.2rem;    // 19.2px - Large metrics
+  --uc-text-xs: 0.55rem; // 8.8px - Tiny labels
+  --uc-text-sm: 0.6rem; // 9.6px - Small labels
+  --uc-text-base: 0.65rem; // 10.4px - Labels, meta
+  --uc-text-md: 0.7rem; // 11.2px - Body text
+  --uc-text-lg: 0.75rem; // 12px - Titles
+  --uc-text-xl: 0.8rem; // 12.8px - Values
+  --uc-text-2xl: 0.95rem; // 15.2px - Large values
+  --uc-text-3xl: 1.1rem; // 17.6px - Metric values
+  --uc-text-4xl: 1.2rem; // 19.2px - Large metrics
 
   // Line heights (tight)
   --uc-leading-tightest: 1;
@@ -73,29 +73,29 @@
 
 :root {
   // 200px column cards
-  --uc-card-height-200px: 80px;      // Analytics, Financials
-  --uc-card-height-contact: 140px;   // Contact cards
-  --uc-card-height-gallery: 150px;   // Gallery items
-  --uc-card-height-social: 105px;    // Social media
-  --uc-card-height-network: 105px;   // Network cards
-  --uc-card-height-news: 210px;      // News cards
-  --uc-card-height-quote: 130px;     // Quotations
-  --uc-card-height-color: 110px;     // Brand colors
+  --uc-card-height-200px: 80px; // Analytics, Financials
+  --uc-card-height-contact: 140px; // Contact cards
+  --uc-card-height-gallery: 150px; // Gallery items
+  --uc-card-height-social: 105px; // Social media
+  --uc-card-height-network: 105px; // Network cards
+  --uc-card-height-news: 210px; // News cards
+  --uc-card-height-quote: 130px; // Quotations
+  --uc-card-height-color: 110px; // Brand colors
 
   // 400px full-width items
-  --uc-item-height-info: 42px;       // Info items
-  --uc-item-height-list: 44px;       // List items
-  --uc-item-height-event: 52px;      // Event items
-  --uc-item-height-overview: 48px;   // Overview items
-  --uc-item-height-product: 54px;    // Product items
-  --uc-item-height-faq: 42px;        // FAQ items
+  --uc-item-height-info: 42px; // Info items
+  --uc-item-height-list: 44px; // List items
+  --uc-item-height-event: 52px; // Event items
+  --uc-item-height-overview: 48px; // Overview items
+  --uc-item-height-product: 54px; // Product items
+  --uc-item-height-faq: 42px; // FAQ items
 
   // Component-specific
-  --uc-avatar-size: 42px;            // Compact avatars
-  --uc-icon-size: 1rem;              // Standard icons
-  --uc-icon-size-lg: 1.6rem;         // Large icons
-  --uc-button-height: 24px;          // Compact buttons
-  --uc-date-badge: 44px;             // Date badges
+  --uc-avatar-size: 42px; // Compact avatars
+  --uc-icon-size: 1rem; // Standard icons
+  --uc-icon-size-lg: 1.6rem; // Large icons
+  --uc-button-height: 24px; // Compact buttons
+  --uc-date-badge: 44px; // Date badges
 }
 
 // =====================================================================
@@ -173,8 +173,8 @@
 
 :root {
   // Column widths
-  --uc-col-200px: 200px;  // Compact sections
-  --uc-col-400px: 400px;  // Full-width sections
+  --uc-col-200px: 200px; // Compact sections
+  --uc-col-400px: 400px; // Full-width sections
 
   // Breakpoints
   --uc-bp-tiny: 420px;
@@ -199,7 +199,7 @@
   transition: var(--uc-transition-all);
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -333,20 +333,43 @@
 // =====================================================================
 
 // Gap utilities
-.uc-gap-2 { gap: var(--uc-space-2); }
-.uc-gap-3 { gap: var(--uc-space-3); }
-.uc-gap-4 { gap: var(--uc-space-4); }
-.uc-gap-6 { gap: var(--uc-space-6); }
-.uc-gap-8 { gap: var(--uc-space-8); }
+.uc-gap-2 {
+  gap: var(--uc-space-2);
+}
+.uc-gap-3 {
+  gap: var(--uc-space-3);
+}
+.uc-gap-4 {
+  gap: var(--uc-space-4);
+}
+.uc-gap-6 {
+  gap: var(--uc-space-6);
+}
+.uc-gap-8 {
+  gap: var(--uc-space-8);
+}
 
 // Padding utilities
-.uc-p-4 { padding: var(--uc-space-4); }
-.uc-p-6 { padding: var(--uc-space-6); }
-.uc-p-8 { padding: var(--uc-space-8); }
+.uc-p-4 {
+  padding: var(--uc-space-4);
+}
+.uc-p-6 {
+  padding: var(--uc-space-6);
+}
+.uc-p-8 {
+  padding: var(--uc-space-8);
+}
 
 // Flex utilities
-.uc-flex { display: flex; }
-.uc-flex-col { flex-direction: column; }
-.uc-items-center { align-items: center; }
-.uc-justify-between { justify-content: space-between; }
-
+.uc-flex {
+  display: flex;
+}
+.uc-flex-col {
+  flex-direction: column;
+}
+.uc-items-center {
+  align-items: center;
+}
+.uc-justify-between {
+  justify-content: space-between;
+}

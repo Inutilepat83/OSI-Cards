@@ -34,7 +34,11 @@
       "author": { "type": "string", "description": "Quote author" },
       "role": { "type": "string", "description": "Author's role" },
       "company": { "type": "string", "description": "Author's company" },
-      "date": { "type": "string", "format": "date", "description": "Quote date" }
+      "date": {
+        "type": "string",
+        "format": "date",
+        "description": "Quote date"
+      }
     },
     "required": []
   },
@@ -91,9 +95,7 @@
     "minimal": {
       "title": "Testimonial",
       "type": "quotation",
-      "fields": [
-        { "value": "\"Great product!\"" }
-      ]
+      "fields": [{ "value": "\"Great product!\"" }]
     },
     "edgeCases": {
       "title": "Quotation Edge Cases",
@@ -101,11 +103,11 @@
       "fields": [
         { "value": "'Single quotes' and \"double quotes\" mixed together" },
         { "value": "Quote with special characters: <>&\"'!@#$%^*()[]{}|\\:;" },
-        { "value": "Multi-line quote:\nLine 1\nLine 2\nLine 3", "description": "Testing line breaks" }
+        {
+          "value": "Multi-line quote:\nLine 1\nLine 2\nLine 3",
+          "description": "Testing line breaks"
+        }
       ]
     }
   }
 }
-
-
-

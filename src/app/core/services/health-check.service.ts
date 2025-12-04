@@ -1,213 +1,319 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of, timer } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
-import { LoggingService } from './logging.service';
-import { AppConfigService } from './app-config.service';
-
-export interface HealthStatus {
-  status: 'healthy' | 'degraded' | 'unhealthy';
-  timestamp: Date;
-  services: Record<
-    string,
-    {
-      status: 'up' | 'down' | 'degraded';
-      responseTime?: number;
-      error?: string;
-    }
-  >;
-  metrics: {
-    uptime: number;
-    memoryUsage?: number;
-    cpuUsage?: number;
-  };
-}
-
 /**
  * Health Check Service
  *
  * Provides health check endpoints and monitoring for the application.
- * Can be used to monitor service availability and performance.
+ * Monitors critical services and dependencies.
  *
  * @example
  * ```typescript
- * const healthCheck = inject(HealthCheckService);
- * healthCheck.checkHealth().subscribe(status => {
- *   console.log('Health status:', status.status);
- * });
+ * @Component({...})
+ * export class HealthComponent {
+ *   private health = inject(HealthCheckService);
+ *
+ *   async checkHealth() {
+ *     const status = await this.health.check();
+ *     console.log('Health:', status.status);
+ *   }
+ * }
  * ```
  */
+
+import { Injectable } from '@angular/core';
+
+export interface HealthStatus {
+  status: 'healthy' | 'degraded' | 'unhealthy';
+  timestamp: number;
+  version: string;
+  uptime: number;
+  checks: HealthCheck[];
+}
+
+export interface HealthCheck {
+  name: string;
+  status: 'pass' | 'fail' | 'warn';
+  duration: number;
+  message?: string;
+  metadata?: Record<string, unknown>;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class HealthCheckService {
-  private readonly http = inject(HttpClient);
-  private readonly logger = inject(LoggingService);
-  private readonly config = inject(AppConfigService);
-
-  private readonly startTime = Date.now();
-  private readonly healthCheckInterval = 30000; // 30 seconds
+  private startTime = Date.now();
+  private version = '1.5.5'; // Should match package.json
 
   /**
-   * Check application health
+   * Perform comprehensive health check
    */
-  checkHealth(): Observable<HealthStatus> {
-    const services: HealthStatus['services'] = {};
+  async check(): Promise<HealthStatus> {
+    const checks: HealthCheck[] = await Promise.all([
+      this.checkMemory(),
+      this.checkPerformance(),
+      this.checkDOM(),
+      this.checkLocalStorage(),
+      this.checkNetwork(),
+    ]);
 
-    // Check API health
-    const apiHealth$ = this.checkApiHealth().pipe(
-      map((result) => {
-        services.api = result;
-        return result;
-      }),
-      catchError((error) => {
-        services.api = {
-          status: 'down',
-          error: error instanceof Error ? error.message : 'Unknown error',
-        };
-        return of(services.api);
-      })
-    );
+    // Determine overall status
+    const hasFailed = checks.some((c) => c.status === 'fail');
+    const hasWarnings = checks.some((c) => c.status === 'warn');
 
-    // Check local storage
-    const storageHealth = this.checkStorageHealth();
-    services.storage = storageHealth;
+    const status: HealthStatus['status'] = hasFailed
+      ? 'unhealthy'
+      : hasWarnings
+        ? 'degraded'
+        : 'healthy';
 
-    // Check service worker
-    const swHealth = this.checkServiceWorkerHealth();
-    services.serviceWorker = swHealth;
-
-    return apiHealth$.pipe(
-      map(() => {
-        const overallStatus = this.determineOverallStatus(services);
-
-        return {
-          status: overallStatus,
-          timestamp: new Date(),
-          services,
-          metrics: {
-            uptime: Date.now() - this.startTime,
-            memoryUsage: this.getMemoryUsage(),
-            cpuUsage: this.getCpuUsage(),
-          },
-        };
-      })
-    );
+    return {
+      status,
+      timestamp: Date.now(),
+      version: this.version,
+      uptime: this.getUptime(),
+      checks,
+    };
   }
 
   /**
-   * Check API health
+   * Check memory usage
    */
-  private checkApiHealth(): Observable<{
-    status: 'up' | 'down' | 'degraded';
-    responseTime?: number;
-    error?: string;
-  }> {
-    const apiUrl = this.config.ENV.API_URL;
+  private async checkMemory(): Promise<HealthCheck> {
+    const start = performance.now();
 
-    if (!apiUrl || apiUrl === '/api') {
-      // No external API configured
-      return of({ status: 'up' });
-    }
-
-    const startTime = performance.now();
-    return this.http.get(`${apiUrl}/health`, { observe: 'response' }).pipe(
-      map((response) => {
-        const responseTime = performance.now() - startTime;
-        const status: 'up' | 'down' | 'degraded' = response.status === 200 ? 'up' : 'degraded';
-        return { status, responseTime };
-      }),
-      catchError((error) => {
-        const responseTime = performance.now() - startTime;
-        return of({
-          status: 'down' as const,
-          responseTime,
-          error: error instanceof Error ? error.message : 'Unknown error',
-        });
-      })
-    );
-  }
-
-  /**
-   * Check storage health
-   */
-  private checkStorageHealth(): { status: 'up' | 'down' | 'degraded'; error?: string } {
     try {
-      const testKey = '__health_check__';
-      localStorage.setItem(testKey, 'test');
-      localStorage.removeItem(testKey);
-      return { status: 'up' };
+      const memory = (performance as any).memory;
+
+      if (!memory) {
+        return {
+          name: 'memory',
+          status: 'warn',
+          duration: performance.now() - start,
+          message: 'Memory API not available',
+        };
+      }
+
+      const usedMB = memory.usedJSHeapSize / 1024 / 1024;
+      const limitMB = memory.jsHeapSizeLimit / 1024 / 1024;
+      const usagePercent = (usedMB / limitMB) * 100;
+
+      return {
+        name: 'memory',
+        status: usagePercent > 90 ? 'fail' : usagePercent > 70 ? 'warn' : 'pass',
+        duration: performance.now() - start,
+        message: `${usedMB.toFixed(0)}MB used (${usagePercent.toFixed(1)}%)`,
+        metadata: {
+          usedMB,
+          limitMB,
+          usagePercent,
+        },
+      };
     } catch (error) {
       return {
-        status: 'down',
-        error: error instanceof Error ? error.message : 'Storage unavailable',
+        name: 'memory',
+        status: 'fail',
+        duration: performance.now() - start,
+        message: `Check failed: ${error}`,
       };
     }
   }
 
   /**
-   * Check service worker health
+   * Check performance
    */
-  private checkServiceWorkerHealth(): { status: 'up' | 'down' | 'degraded'; error?: string } {
-    if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
-      return { status: 'up' };
+  private async checkPerformance(): Promise<HealthCheck> {
+    const start = performance.now();
+
+    try {
+      const navigation = performance.getEntriesByType(
+        'navigation'
+      )[0] as PerformanceNavigationTiming;
+
+      if (!navigation) {
+        return {
+          name: 'performance',
+          status: 'warn',
+          duration: performance.now() - start,
+          message: 'Navigation timing not available',
+        };
+      }
+
+      const loadTime = navigation.loadEventEnd - navigation.fetchStart;
+
+      return {
+        name: 'performance',
+        status: loadTime > 5000 ? 'warn' : 'pass',
+        duration: performance.now() - start,
+        message: `Page load: ${loadTime.toFixed(0)}ms`,
+        metadata: {
+          loadTime,
+          domContentLoaded: navigation.domContentLoadedEventEnd - navigation.fetchStart,
+          domInteractive: navigation.domInteractive - navigation.fetchStart,
+        },
+      };
+    } catch (error) {
+      return {
+        name: 'performance',
+        status: 'warn',
+        duration: performance.now() - start,
+        message: `Check not available`,
+      };
     }
+  }
+
+  /**
+   * Check DOM health
+   */
+  private async checkDOM(): Promise<HealthCheck> {
+    const start = performance.now();
+
+    try {
+      const nodeCount = document.getElementsByTagName('*').length;
+
+      return {
+        name: 'dom',
+        status: nodeCount > 10000 ? 'warn' : 'pass',
+        duration: performance.now() - start,
+        message: `${nodeCount} DOM nodes`,
+        metadata: {
+          nodeCount,
+        },
+      };
+    } catch (error) {
+      return {
+        name: 'dom',
+        status: 'fail',
+        duration: performance.now() - start,
+        message: `Check failed: ${error}`,
+      };
+    }
+  }
+
+  /**
+   * Check localStorage availability
+   */
+  private async checkLocalStorage(): Promise<HealthCheck> {
+    const start = performance.now();
+
+    try {
+      const testKey = '__health_check__';
+      localStorage.setItem(testKey, 'test');
+      const retrieved = localStorage.getItem(testKey);
+      localStorage.removeItem(testKey);
+
+      return {
+        name: 'localStorage',
+        status: retrieved === 'test' ? 'pass' : 'fail',
+        duration: performance.now() - start,
+        message: retrieved === 'test' ? 'Available' : 'Not working',
+      };
+    } catch (error) {
+      return {
+        name: 'localStorage',
+        status: 'fail',
+        duration: performance.now() - start,
+        message: 'Not available (private mode?)',
+      };
+    }
+  }
+
+  /**
+   * Check network connectivity
+   */
+  private async checkNetwork(): Promise<HealthCheck> {
+    const start = performance.now();
+
+    try {
+      const online = navigator.onLine;
+
+      return {
+        name: 'network',
+        status: online ? 'pass' : 'fail',
+        duration: performance.now() - start,
+        message: online ? 'Online' : 'Offline',
+        metadata: {
+          online,
+          connection: (navigator as any).connection?.effectiveType || 'unknown',
+        },
+      };
+    } catch (error) {
+      return {
+        name: 'network',
+        status: 'warn',
+        duration: performance.now() - start,
+        message: 'Check not available',
+      };
+    }
+  }
+
+  /**
+   * Get application uptime in milliseconds
+   */
+  getUptime(): number {
+    return Date.now() - this.startTime;
+  }
+
+  /**
+   * Get formatted uptime
+   */
+  getFormattedUptime(): string {
+    const uptime = this.getUptime();
+    const seconds = Math.floor(uptime / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) {
+      return `${days}d ${hours % 24}h`;
+    }
+    if (hours > 0) {
+      return `${hours}h ${minutes % 60}m`;
+    }
+    if (minutes > 0) {
+      return `${minutes}m ${seconds % 60}s`;
+    }
+    return `${seconds}s`;
+  }
+
+  /**
+   * Check if in production
+   */
+  private isProduction(): boolean {
+    return (
+      typeof window !== 'undefined' &&
+      window.location.hostname !== 'localhost' &&
+      !window.location.hostname.includes('127.0.0.1')
+    );
+  }
+
+  /**
+   * Check if in development
+   */
+  private isDevelopment(): boolean {
+    return !this.isProduction();
+  }
+
+  /**
+   * Send to external monitoring service
+   */
+  private sendToExternalService(error: any): void {
+    // TODO: Integrate with external monitoring (DataDog, New Relic, etc.)
+    // For now, this is a placeholder
+  }
+
+  /**
+   * Get health status as HTTP response format
+   */
+  async getHealthResponse(): Promise<{
+    status: number;
+    body: HealthStatus;
+  }> {
+    const health = await this.check();
+
+    const statusCode = health.status === 'healthy' ? 200 : health.status === 'degraded' ? 200 : 503;
+
     return {
-      status: 'degraded',
-      error: 'Service Worker not supported',
+      status: statusCode,
+      body: health,
     };
-  }
-
-  /**
-   * Determine overall health status
-   */
-  private determineOverallStatus(
-    services: HealthStatus['services']
-  ): 'healthy' | 'degraded' | 'unhealthy' {
-    const serviceStatuses = Object.values(services);
-    const downCount = serviceStatuses.filter((s) => s.status === 'down').length;
-    const degradedCount = serviceStatuses.filter((s) => s.status === 'degraded').length;
-
-    if (downCount > 0) {
-      return 'unhealthy';
-    }
-    if (degradedCount > 0) {
-      return 'degraded';
-    }
-    return 'healthy';
-  }
-
-  /**
-   * Get memory usage (if available)
-   */
-  private getMemoryUsage(): number | undefined {
-    if (typeof performance !== 'undefined' && (performance as any).memory) {
-      const memory = (performance as any).memory;
-      return memory.usedJSHeapSize / memory.totalJSHeapSize;
-    }
-    return undefined;
-  }
-
-  /**
-   * Get CPU usage (estimated)
-   */
-  private getCpuUsage(): number | undefined {
-    // CPU usage is not directly available in browser
-    // This would require performance monitoring over time
-    return undefined;
-  }
-
-  /**
-   * Start periodic health checks
-   */
-  startPeriodicHealthChecks(): Observable<HealthStatus> {
-    return timer(0, this.healthCheckInterval).pipe(switchMap(() => this.checkHealth()));
-  }
-
-  /**
-   * Get health check endpoint URL
-   */
-  getHealthCheckUrl(): string {
-    return '/api/health';
   }
 }

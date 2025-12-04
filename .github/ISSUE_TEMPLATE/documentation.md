@@ -1,86 +1,59 @@
 ---
-name: Documentation
-about: Suggest improvements to documentation
+name: 📝 Documentation Issue
+about: Report missing or incorrect documentation
 title: '[DOCS] '
 labels: documentation
 assignees: ''
 ---
 
-## Documentation Type
+## 📝 Documentation Issue
 
-<!-- Select the type of documentation -->
+<!-- What documentation needs improvement? -->
 
-- [ ] API Reference
-- [ ] Tutorial/Guide
-- [ ] Code Examples
-- [ ] Architecture Documentation
-- [ ] README
-- [ ] CHANGELOG
-- [ ] Migration Guide
-- [ ] Troubleshooting
-- [ ] Other (specify below)
+## 📍 Location
 
-## Issue Description
+**Documentation Page:** [e.g., README.md, API docs, guides]
+**Section:** [e.g., Installation, Usage, API Reference]
+**URL:** [if applicable]
 
-<!-- Describe the documentation issue or improvement needed -->
+## 🐛 Issue Type
 
-## Current State
+<!-- What type of documentation issue is this? -->
 
-<!-- What is the current state of the documentation? -->
-<!-- Include links to the relevant documentation -->
+- [ ] Missing documentation
+- [ ] Incorrect documentation
+- [ ] Outdated documentation
+- [ ] Unclear explanation
+- [ ] Missing examples
+- [ ] Broken links
+- [ ] Typos/grammar
 
-## Proposed Improvement
+## 📋 Current Documentation
 
-<!-- What changes or additions do you suggest? -->
+<!-- What does the current documentation say? (if applicable) -->
 
-## Specific Sections Affected
+```
+Current text or code example
+```
 
-<!-- List specific sections, files, or pages that need updating -->
+## ✨ Suggested Improvement
 
--
--
+<!-- What should the documentation say instead? -->
 
-## Missing Information
+```
+Suggested text or code example
+```
 
-<!-- What information is missing or unclear? -->
+## 🎯 Why This Matters
 
-## Target Audience
+<!-- Why is this documentation important? -->
 
-<!-- Who is the primary audience for this documentation? -->
+## 📚 Additional Context
 
-- [ ] Beginners
-- [ ] Intermediate users
-- [ ] Advanced users
-- [ ] Contributors
-- [ ] All users
+<!-- Any other information that would help -->
 
-## Examples Needed
+## ✅ Checklist
 
-<!-- Should code examples be added or improved? -->
-
-- [ ] Code snippets needed
-- [ ] Complete working examples needed
-- [ ] Visual diagrams needed
-- [ ] Screenshots needed
-- [ ] Video tutorial needed
-
-## Related Documentation
-
-<!-- Link to related documentation or issues -->
-
-Related to #
-
-## Priority
-
-- [ ] Critical - Documentation is incorrect or misleading
-- [ ] High - Important missing information
-- [ ] Medium - Nice to have improvements
-- [ ] Low - Minor clarifications
-
-## Checklist
-
-- [ ] I have searched existing documentation issues
-- [ ] I have checked the current documentation
-- [ ] I have provided specific suggestions
-- [ ] I have identified the target audience
-
+- [ ] I have checked the latest documentation
+- [ ] I have provided clear suggestions
+- [ ] I can help write the documentation

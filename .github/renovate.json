@@ -1,0 +1,31 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:base"],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "automerge": true
+    },
+    {
+      "matchPackagePatterns": ["^@angular"],
+      "groupName": "Angular packages"
+    },
+    {
+      "matchPackagePatterns": ["^@ngrx"],
+      "groupName": "NgRx packages"
+    }
+  ],
+  "schedule": ["before 9am on Monday"],
+  "prCreation": "immediate",
+  "prHourlyLimit": 2,
+  "stabilityDays": 3,
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"]
+  }
+}
+

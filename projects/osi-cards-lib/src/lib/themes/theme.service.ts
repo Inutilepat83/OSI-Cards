@@ -1,4 +1,12 @@
-import { Injectable, inject, Inject, PLATFORM_ID, OnDestroy, InjectionToken, Optional } from '@angular/core';
+import {
+  Injectable,
+  inject,
+  Inject,
+  PLATFORM_ID,
+  OnDestroy,
+  InjectionToken,
+  Optional,
+} from '@angular/core';
 import { isPlatformBrowser, DOCUMENT } from '@angular/common';
 import { BehaviorSubject, Observable, Subject, fromEvent, map, takeUntil, startWith } from 'rxjs';
 import { EventBusService, ThemeChangedPayload } from '../services/event-bus.service';
@@ -26,9 +34,9 @@ export interface OSICardsThemeConfig {
 /**
  * Built-in theme presets
  */
-export type ThemePreset = 
-  | 'light' 
-  | 'dark' 
+export type ThemePreset =
+  | 'light'
+  | 'dark'
   | 'system'
   | 'midnight'
   | 'corporate'
@@ -81,7 +89,7 @@ export const DEFAULT_THEME_CONFIG: ThemeServiceConfig = {
   enableTransitions: true,
   transitionDuration: 200,
   followSystemPreference: true,
-  updateColorSchemeMeta: true
+  updateColorSchemeMeta: true,
 };
 
 // ============================================
@@ -90,7 +98,7 @@ export const DEFAULT_THEME_CONFIG: ThemeServiceConfig = {
 
 /**
  * Enhanced Theme Service
- * 
+ *
  * Manages theme configuration and runtime theme switching for OSI Cards library.
  * Features:
  * - System preference detection (prefers-color-scheme)
@@ -99,20 +107,20 @@ export const DEFAULT_THEME_CONFIG: ThemeServiceConfig = {
  * - Color scheme meta tag management
  * - Event bus integration for theme change notifications
  * - Scoped theme support
- * 
+ *
  * @example
  * ```typescript
  * const themeService = inject(ThemeService);
- * 
+ *
  * // Follow system preference
  * themeService.setTheme('system');
- * 
+ *
  * // Switch to specific theme
  * themeService.setTheme('dark');
- * 
+ *
  * // Toggle between light and dark
  * themeService.toggleTheme();
- * 
+ *
  * // Apply custom theme
  * themeService.applyCustomTheme({
  *   name: 'my-brand',
@@ -121,7 +129,7 @@ export const DEFAULT_THEME_CONFIG: ThemeServiceConfig = {
  *     '--osi-card-background': '#1a1a1a'
  *   }
  * });
- * 
+ *
  * // Watch system preference changes
  * themeService.systemPreference$.subscribe(pref => {
  *   console.log('System prefers:', pref);
@@ -129,19 +137,19 @@ export const DEFAULT_THEME_CONFIG: ThemeServiceConfig = {
  * ```
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ThemeService implements OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly document = inject(DOCUMENT);
   private readonly eventBus = inject(EventBusService);
   private readonly config: ThemeServiceConfig;
-  
+
   private readonly destroy$ = new Subject<void>();
   private readonly currentThemeSubject = new BehaviorSubject<ThemePreset | string>('system');
   private readonly resolvedThemeSubject = new BehaviorSubject<string>('light');
   private readonly systemPreferenceSubject = new BehaviorSubject<ColorSchemePreference>('light');
-  
+
   private customThemes = new Map<string, OSICardsThemeConfig>();
   private readonly rootElement: HTMLElement | null;
   private colorSchemeMetaTag: HTMLMetaElement | null = null;
@@ -149,22 +157,22 @@ export class ThemeService implements OnDestroy {
   private transitionTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   /** Observable of the current theme setting (may be 'system') */
-  readonly currentTheme$: Observable<ThemePreset | string> = this.currentThemeSubject.asObservable();
-  
+  readonly currentTheme$: Observable<ThemePreset | string> =
+    this.currentThemeSubject.asObservable();
+
   /** Observable of the resolved/effective theme (never 'system', always the actual theme) */
   readonly resolvedTheme$: Observable<string> = this.resolvedThemeSubject.asObservable();
-  
+
   /** Observable of system color scheme preference */
-  readonly systemPreference$: Observable<ColorSchemePreference> = this.systemPreferenceSubject.asObservable();
+  readonly systemPreference$: Observable<ColorSchemePreference> =
+    this.systemPreferenceSubject.asObservable();
 
   constructor(@Optional() @Inject(OSI_THEME_CONFIG) providedConfig?: Partial<ThemeServiceConfig>) {
     // Merge provided config with defaults
     this.config = { ...DEFAULT_THEME_CONFIG, ...providedConfig };
-    
-    this.rootElement = isPlatformBrowser(this.platformId) 
-      ? this.document.documentElement 
-      : null;
-    
+
+    this.rootElement = isPlatformBrowser(this.platformId) ? this.document.documentElement : null;
+
     if (isPlatformBrowser(this.platformId)) {
       this.initializeSystemPreferenceWatcher();
       this.initializeColorSchemeMeta();
@@ -176,7 +184,7 @@ export class ThemeService implements OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    
+
     if (this.transitionTimeoutId) {
       clearTimeout(this.transitionTimeoutId);
     }
@@ -226,7 +234,7 @@ export class ThemeService implements OnDestroy {
     if (!isPlatformBrowser(this.platformId)) {
       return 'light';
     }
-    
+
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
 
@@ -251,7 +259,7 @@ export class ThemeService implements OnDestroy {
     }
 
     const previousTheme = this.currentThemeSubject.value;
-    
+
     if (previousTheme === theme) {
       return; // No change needed
     }
@@ -262,11 +270,11 @@ export class ThemeService implements OnDestroy {
     }
 
     this.currentThemeSubject.next(theme);
-    
+
     // Resolve the actual theme
     const resolvedTheme = this.resolveTheme(theme);
     this.applyTheme(resolvedTheme);
-    
+
     // Persist preference
     if (this.config.enablePersistence) {
       this.savePreference();
@@ -282,7 +290,7 @@ export class ThemeService implements OnDestroy {
    */
   toggleTheme(): void {
     const current = this.getResolvedTheme();
-    const newTheme = this.isThemeDark(current) ? 'light' : 'dark';
+    const newTheme = this.isThemeDark(current) ? 'day' : 'night';
     this.setTheme(newTheme);
   }
 
@@ -324,7 +332,7 @@ export class ThemeService implements OnDestroy {
     // Apply the theme
     this.rootElement.setAttribute('data-theme', config.name);
     this.applyCSSVariables(config.variables);
-    
+
     // Update color scheme
     const colorScheme = config.colorScheme || (this.inferColorScheme(config) ? 'dark' : 'light');
     this.updateColorScheme(colorScheme);
@@ -375,9 +383,22 @@ export class ThemeService implements OnDestroy {
    * Get all available theme names (presets + custom)
    */
   getAvailableThemes(): string[] {
-    const presets: ThemePreset[] = [
-      'light', 'dark', 'system', 'midnight', 'corporate', 
-      'nature', 'sunset', 'ocean', 'rose', 'minimal', 'high-contrast'
+    const presets: string[] = [
+      'light',
+      'dark',
+      'day',
+      'night',
+      'osi-day',
+      'osi-night',
+      'system',
+      'midnight',
+      'corporate',
+      'nature',
+      'sunset',
+      'ocean',
+      'rose',
+      'minimal',
+      'high-contrast',
     ];
     const customNames = Array.from(this.customThemes.keys());
     return [...presets, ...customNames];
@@ -411,7 +432,7 @@ export class ThemeService implements OnDestroy {
       return;
     }
 
-    variableNames.forEach(name => {
+    variableNames.forEach((name) => {
       const varName = name.startsWith('--') ? name : `--${name}`;
       this.rootElement!.style.removeProperty(varName);
     });
@@ -425,7 +446,7 @@ export class ThemeService implements OnDestroy {
     if (!this.rootElement) {
       return '';
     }
-    
+
     const varName = name.startsWith('--') ? name : `--${name}`;
     return getComputedStyle(this.rootElement).getPropertyValue(varName).trim();
   }
@@ -445,7 +466,7 @@ export class ThemeService implements OnDestroy {
 
     const storageKey = key || this.config.persistKey;
     const theme = this.currentThemeSubject.value;
-    
+
     try {
       localStorage.setItem(storageKey, theme);
     } catch (e) {
@@ -464,7 +485,7 @@ export class ThemeService implements OnDestroy {
     }
 
     const storageKey = key || this.config.persistKey;
-    
+
     try {
       return localStorage.getItem(storageKey);
     } catch (e) {
@@ -483,7 +504,7 @@ export class ThemeService implements OnDestroy {
     }
 
     const storageKey = key || this.config.persistKey;
-    
+
     try {
       localStorage.removeItem(storageKey);
     } catch (e) {
@@ -505,7 +526,7 @@ export class ThemeService implements OnDestroy {
     }
 
     const transitionDuration = duration ?? this.config.transitionDuration;
-    
+
     // Add transitioning class
     this.rootElement.classList.add('theme-transitioning');
     this.rootElement.setAttribute('data-theme-transition', 'true');
@@ -564,13 +585,17 @@ export class ThemeService implements OnDestroy {
       });
     }
 
-    if (config.extends && !this.customThemes.has(config.extends) && !this.isBuiltInTheme(config.extends)) {
+    if (
+      config.extends &&
+      !this.customThemes.has(config.extends) &&
+      !this.isBuiltInTheme(config.extends)
+    ) {
       errors.push(`Base theme "${config.extends}" not found`);
     }
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -581,18 +606,18 @@ export class ThemeService implements OnDestroy {
   private initializeTheme(): void {
     // Try to load persisted preference first
     const savedTheme = this.config.enablePersistence ? this.loadPreference() : null;
-    
+
     // Determine initial theme
     const initialTheme = savedTheme || this.config.defaultTheme;
-    
+
     // Get initial data-theme from document if set
     const documentTheme = this.rootElement?.getAttribute('data-theme');
-    
+
     // Use document theme if set and no saved preference
     const themeToApply = savedTheme || documentTheme || initialTheme;
-    
+
     this.currentThemeSubject.next(themeToApply);
-    
+
     const resolvedTheme = this.resolveTheme(themeToApply);
     this.applyTheme(resolvedTheme);
   }
@@ -603,23 +628,25 @@ export class ThemeService implements OnDestroy {
     }
 
     this.mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)');
-    
+
     // Set initial value
     this.systemPreferenceSubject.next(this.mediaQueryList.matches ? 'dark' : 'light');
 
     // Watch for changes
-    fromEvent<MediaQueryListEvent>(this.mediaQueryList, 'change').pipe(
-      takeUntil(this.destroy$),
-      map(event => event.matches ? 'dark' as const : 'light' as const)
-    ).subscribe(preference => {
-      this.systemPreferenceSubject.next(preference);
-      
-      // If following system, update theme
-      if (this.isFollowingSystem() && this.config.followSystemPreference) {
-        const resolvedTheme = preference;
-        this.applyTheme(resolvedTheme);
-      }
-    });
+    fromEvent<MediaQueryListEvent>(this.mediaQueryList, 'change')
+      .pipe(
+        takeUntil(this.destroy$),
+        map((event) => (event.matches ? ('dark' as const) : ('light' as const)))
+      )
+      .subscribe((preference) => {
+        this.systemPreferenceSubject.next(preference);
+
+        // If following system, update theme
+        if (this.isFollowingSystem() && this.config.followSystemPreference) {
+          const resolvedTheme = preference;
+          this.applyTheme(resolvedTheme);
+        }
+      });
   }
 
   private initializeColorSchemeMeta(): void {
@@ -629,7 +656,7 @@ export class ThemeService implements OnDestroy {
 
     // Find or create color-scheme meta tag
     this.colorSchemeMetaTag = this.document.querySelector('meta[name="color-scheme"]');
-    
+
     if (!this.colorSchemeMetaTag) {
       this.colorSchemeMetaTag = this.document.createElement('meta');
       this.colorSchemeMetaTag.name = 'color-scheme';
@@ -661,7 +688,7 @@ export class ThemeService implements OnDestroy {
 
     // Set data-theme attribute
     this.rootElement.setAttribute('data-theme', theme);
-    
+
     // Update resolved theme subject
     this.resolvedThemeSubject.next(theme);
 
@@ -683,8 +710,16 @@ export class ThemeService implements OnDestroy {
   }
 
   private isThemeDark(theme: string): boolean {
-    const darkThemes = ['dark', 'midnight', 'ocean', 'sunset', 'high-contrast'];
-    
+    const darkThemes = [
+      'dark',
+      'night',
+      'osi-night',
+      'midnight',
+      'ocean',
+      'sunset',
+      'high-contrast',
+    ];
+
     // Check built-in dark themes
     if (darkThemes.includes(theme)) {
       return true;
@@ -706,24 +741,48 @@ export class ThemeService implements OnDestroy {
 
   private inferColorScheme(config: OSICardsThemeConfig): boolean {
     // Try to infer if theme is dark based on background color
-    const bgVar = config.variables['--osi-card-background'] || 
-                  config.variables['--background'] ||
-                  config.variables['background'];
-    
+    const bgVar =
+      config.variables['--osi-card-background'] ||
+      config.variables['--background'] ||
+      config.variables['background'];
+
     if (bgVar) {
       // Simple heuristic: if background contains 'dark' values
-      const darkPatterns = ['#0', '#1', '#2', 'rgb(0', 'rgb(1', 'rgb(2', 'rgba(0', 'rgba(1', 'rgba(2'];
-      return darkPatterns.some(pattern => bgVar.toLowerCase().startsWith(pattern));
+      const darkPatterns = [
+        '#0',
+        '#1',
+        '#2',
+        'rgb(0',
+        'rgb(1',
+        'rgb(2',
+        'rgba(0',
+        'rgba(1',
+        'rgba(2',
+      ];
+      return darkPatterns.some((pattern) => bgVar.toLowerCase().startsWith(pattern));
     }
 
     return false;
   }
 
   private isBuiltInTheme(name: string): boolean {
-    const builtIn: ThemePreset[] = [
-      'light', 'dark', 'system', 'midnight', 'corporate',
-      'nature', 'sunset', 'ocean', 'rose', 'minimal', 'high-contrast'
+    const builtIn: string[] = [
+      'light',
+      'dark',
+      'day',
+      'night',
+      'osi-day',
+      'osi-night',
+      'system',
+      'midnight',
+      'corporate',
+      'nature',
+      'sunset',
+      'ocean',
+      'rose',
+      'minimal',
+      'high-contrast',
     ];
-    return builtIn.includes(name as ThemePreset);
+    return builtIn.includes(name);
   }
 }

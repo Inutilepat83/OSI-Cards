@@ -1,19 +1,19 @@
 /**
  * Copy to Clipboard Directive
- * 
+ *
  * Enables one-click copy functionality for any element.
  * Supports text content, custom values, and feedback display.
- * 
+ *
  * @example
  * ```html
  * <!-- Copy element text content -->
  * <span [appCopyToClipboard]>contact@example.com</span>
- * 
+ *
  * <!-- Copy custom value -->
  * <button [appCopyToClipboard]="customValue" (copySuccess)="onCopied()">
  *   Copy Value
  * </button>
- * 
+ *
  * <!-- With feedback message -->
  * <code appCopyToClipboard showFeedback="Copied!">
  *   npm install osi-cards
@@ -91,9 +91,9 @@ export class CopyToClipboardDirective {
   @HostListener('click', ['$event'])
   public async onClick(event: MouseEvent): Promise<void> {
     event.preventDefault();
-    
+
     const textToCopy = this.getTextToCopy();
-    
+
     if (!textToCopy) {
       this.handleError('No text to copy');
       return;
@@ -158,10 +158,10 @@ export class CopyToClipboardDirective {
     textarea.style.left = '-9999px';
     textarea.style.top = '-9999px';
     textarea.setAttribute('readonly', '');
-    
+
     document.body.appendChild(textarea);
     textarea.select();
-    
+
     try {
       const success = document.execCommand('copy');
       if (!success) {
@@ -226,7 +226,11 @@ export class CopyToClipboardDirective {
     this.renderer.setStyle(this.feedbackElement, 'transform', 'translateX(-50%)');
     this.renderer.setStyle(this.feedbackElement, 'padding', '4px 8px');
     this.renderer.setStyle(this.feedbackElement, 'borderRadius', '4px');
-    this.renderer.setStyle(this.feedbackElement, 'backgroundColor', 'var(--osi-color-success, #10b981)');
+    this.renderer.setStyle(
+      this.feedbackElement,
+      'backgroundColor',
+      'var(--osi-color-success, #10b981)'
+    );
     this.renderer.setStyle(this.feedbackElement, 'color', 'white');
     this.renderer.setStyle(this.feedbackElement, 'fontSize', '12px');
     this.renderer.setStyle(this.feedbackElement, 'whiteSpace', 'nowrap');
@@ -253,12 +257,3 @@ export class CopyToClipboardDirective {
     }
   }
 }
-
-
-
-
-
-
-
-
-

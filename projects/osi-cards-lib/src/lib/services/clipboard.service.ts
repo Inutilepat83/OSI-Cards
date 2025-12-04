@@ -22,7 +22,7 @@ export interface ClipboardEntry {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ClipboardService {
   private history = signal<ClipboardEntry[]>([]);
@@ -92,7 +92,7 @@ export class ClipboardService {
    * Add to history
    */
   private addToHistory(text: string, type: ClipboardEntry['type']): void {
-    this.history.update(history => {
+    this.history.update((history) => {
       const entry: ClipboardEntry = {
         text,
         timestamp: new Date(),
@@ -125,4 +125,3 @@ export class ClipboardService {
     return !!(navigator.clipboard && navigator.clipboard.writeText);
   }
 }
-

@@ -1,8 +1,4 @@
-<div class="empty-state"
-     [ngClass]="[variant, size, containerClass]"
-     role="status"
-     aria-live="polite">
-
+<div class="empty-state" [ngClass]="[variant, size, containerClass]" role="status" aria-live="polite">
   <!-- Icon/Emoji -->
   <div class="empty-icon" *ngIf="icon" aria-hidden="true">
     {{ icon }}
@@ -12,12 +8,7 @@
   <p class="empty-text">{{ message }}</p>
 
   <!-- Optional Action Button -->
-  <button
-    class="empty-action"
-    type="button"
-    *ngIf="actionLabel"
-    (click)="onActionClick()">
+  <button class="empty-action" type="button" *ngIf="actionLabel" (click)="onActionClick()">
     {{ actionLabel }}
   </button>
 </div>
-

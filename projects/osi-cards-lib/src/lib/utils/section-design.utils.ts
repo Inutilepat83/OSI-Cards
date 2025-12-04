@@ -50,7 +50,9 @@ export function createDesignWithOverrides(
  * Merge multiple design parameter objects
  * Later parameters override earlier ones
  */
-export function mergeDesignParams(...params: (SectionDesignParams | undefined)[]): SectionDesignParams {
+export function mergeDesignParams(
+  ...params: (SectionDesignParams | undefined)[]
+): SectionDesignParams {
   // Filter out undefined params first
   const validParams = params.filter((p): p is SectionDesignParams => p !== undefined);
 
@@ -85,7 +87,8 @@ export function designParamsToCssVars(params: SectionDesignParams): Record<strin
   // Colors
   if (params.itemColor) cssVars['--section-item-color'] = params.itemColor;
   if (params.itemBackground) cssVars['--section-item-background'] = params.itemBackground;
-  if (params.itemBackgroundHover) cssVars['--section-item-background-hover'] = params.itemBackgroundHover;
+  if (params.itemBackgroundHover)
+    cssVars['--section-item-background-hover'] = params.itemBackgroundHover;
   if (params.itemBorderColor) cssVars['--section-item-border-color'] = params.itemBorderColor;
   if (params.itemBorderHover) cssVars['--section-item-border-hover'] = params.itemBorderHover;
   if (params.accentColor) cssVars['--section-accent-color'] = params.accentColor;
@@ -127,15 +130,19 @@ export function designParamsToCssVars(params: SectionDesignParams): Record<strin
 
   // Shadow
   if (params.itemBoxShadow) cssVars['--section-item-box-shadow'] = params.itemBoxShadow;
-  if (params.itemBoxShadowHover) cssVars['--section-item-box-shadow-hover'] = params.itemBoxShadowHover;
-  if (params.itemBoxShadowFocus) cssVars['--section-item-box-shadow-focus'] = params.itemBoxShadowFocus;
+  if (params.itemBoxShadowHover)
+    cssVars['--section-item-box-shadow-hover'] = params.itemBoxShadowHover;
+  if (params.itemBoxShadowFocus)
+    cssVars['--section-item-box-shadow-focus'] = params.itemBoxShadowFocus;
 
   // Typography
   if (params.labelFontSize) cssVars['--section-label-font-size'] = params.labelFontSize;
   if (params.valueFontSize) cssVars['--section-value-font-size'] = params.valueFontSize;
   if (params.titleFontSize) cssVars['--section-title-font-size'] = params.titleFontSize;
-  if (params.labelFontWeight) cssVars['--section-label-font-weight'] = String(params.labelFontWeight);
-  if (params.valueFontWeight) cssVars['--section-value-font-weight'] = String(params.valueFontWeight);
+  if (params.labelFontWeight)
+    cssVars['--section-label-font-weight'] = String(params.labelFontWeight);
+  if (params.valueFontWeight)
+    cssVars['--section-value-font-weight'] = String(params.valueFontWeight);
   if (params.fontFamily) cssVars['--section-font-family'] = params.fontFamily;
   if (params.letterSpacing) cssVars['--section-letter-spacing'] = params.letterSpacing;
   if (params.lineHeight) cssVars['--section-line-height'] = String(params.lineHeight);
@@ -154,7 +161,10 @@ export function designParamsToCssVars(params: SectionDesignParams): Record<strin
  * Apply design parameters to an HTML element
  * Useful for programmatic styling
  */
-export function applyDesignParamsToElement(element: HTMLElement, params: SectionDesignParams): void {
+export function applyDesignParamsToElement(
+  element: HTMLElement,
+  params: SectionDesignParams
+): void {
   const cssVars = designParamsToCssVars(params);
   Object.entries(cssVars).forEach(([key, value]) => {
     element.style.setProperty(key, value);
@@ -176,12 +186,15 @@ export function getDesignParamsWithFallback(
  * Create color scheme parameters from a base color
  * Automatically generates related colors (hover, border, etc.)
  */
-export function createColorScheme(baseColor: string, options?: {
-  generateHover?: boolean;
-  generateBorder?: boolean;
-  hoverLighten?: number; // 0-100
-  borderAlpha?: number; // 0-1
-}): Partial<SectionDesignParams> {
+export function createColorScheme(
+  baseColor: string,
+  options?: {
+    generateHover?: boolean;
+    generateBorder?: boolean;
+    hoverLighten?: number; // 0-100
+    borderAlpha?: number; // 0-1
+  }
+): Partial<SectionDesignParams> {
   const {
     generateHover = true,
     generateBorder = true,
@@ -228,13 +241,21 @@ export function validateDesignParams(params: SectionDesignParams): string[] {
 
   // Validate color formats (basic check)
   const colorParams = [
-    'itemColor', 'itemBackground', 'itemBackgroundHover',
-    'itemBorderColor', 'itemBorderHover', 'accentColor',
-    'labelColor', 'valueColor', 'mutedColor',
-    'successColor', 'warningColor', 'errorColor'
+    'itemColor',
+    'itemBackground',
+    'itemBackgroundHover',
+    'itemBorderColor',
+    'itemBorderHover',
+    'accentColor',
+    'labelColor',
+    'valueColor',
+    'mutedColor',
+    'successColor',
+    'warningColor',
+    'errorColor',
   ] as const;
 
-  colorParams.forEach(param => {
+  colorParams.forEach((param) => {
     const value = params[param];
     if (value && typeof value === 'string') {
       // Basic validation - must start with #, rgb, rgba, hsl, hsla, or var(
@@ -289,4 +310,3 @@ export function createSectionDesign(config: {
     params,
   };
 }
-

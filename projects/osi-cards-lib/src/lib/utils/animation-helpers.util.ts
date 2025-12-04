@@ -49,20 +49,14 @@ export function animate(
  * Fade in animation
  */
 export function fadeIn(duration = 300): Keyframe[] {
-  return [
-    { opacity: 0 },
-    { opacity: 1 }
-  ];
+  return [{ opacity: 0 }, { opacity: 1 }];
 }
 
 /**
  * Fade out animation
  */
 export function fadeOut(duration = 300): Keyframe[] {
-  return [
-    { opacity: 1 },
-    { opacity: 0 }
-  ];
+  return [{ opacity: 1 }, { opacity: 0 }];
 }
 
 /**
@@ -71,7 +65,7 @@ export function fadeOut(duration = 300): Keyframe[] {
 export function slideInLeft(distance = 100): Keyframe[] {
   return [
     { transform: `translateX(-${distance}px)`, opacity: 0 },
-    { transform: 'translateX(0)', opacity: 1 }
+    { transform: 'translateX(0)', opacity: 1 },
   ];
 }
 
@@ -81,7 +75,7 @@ export function slideInLeft(distance = 100): Keyframe[] {
 export function slideInRight(distance = 100): Keyframe[] {
   return [
     { transform: `translateX(${distance}px)`, opacity: 0 },
-    { transform: 'translateX(0)', opacity: 1 }
+    { transform: 'translateX(0)', opacity: 1 },
   ];
 }
 
@@ -91,7 +85,7 @@ export function slideInRight(distance = 100): Keyframe[] {
 export function slideUp(distance = 100): Keyframe[] {
   return [
     { transform: `translateY(${distance}px)`, opacity: 0 },
-    { transform: 'translateY(0)', opacity: 1 }
+    { transform: 'translateY(0)', opacity: 1 },
   ];
 }
 
@@ -101,7 +95,7 @@ export function slideUp(distance = 100): Keyframe[] {
 export function scaleIn(from = 0): Keyframe[] {
   return [
     { transform: `scale(${from})`, opacity: 0 },
-    { transform: 'scale(1)', opacity: 1 }
+    { transform: 'scale(1)', opacity: 1 },
   ];
 }
 
@@ -109,10 +103,7 @@ export function scaleIn(from = 0): Keyframe[] {
  * Rotate animation
  */
 export function rotate(degrees = 360): Keyframe[] {
-  return [
-    { transform: 'rotate(0deg)' },
-    { transform: `rotate(${degrees}deg)` }
-  ];
+  return [{ transform: 'rotate(0deg)' }, { transform: `rotate(${degrees}deg)` }];
 }
 
 /**
@@ -122,7 +113,7 @@ export function bounce(): Keyframe[] {
   return [
     { transform: 'translateY(0)', offset: 0 },
     { transform: 'translateY(-30px)', offset: 0.5 },
-    { transform: 'translateY(0)', offset: 1 }
+    { transform: 'translateY(0)', offset: 1 },
   ];
 }
 
@@ -133,7 +124,7 @@ export function pulse(scale = 1.1): Keyframe[] {
   return [
     { transform: 'scale(1)', offset: 0 },
     { transform: `scale(${scale})`, offset: 0.5 },
-    { transform: 'scale(1)', offset: 1 }
+    { transform: 'scale(1)', offset: 1 },
   ];
 }
 
@@ -146,7 +137,7 @@ export function shake(): Keyframe[] {
     { transform: 'translateX(-10px)', offset: 0.25 },
     { transform: 'translateX(10px)', offset: 0.5 },
     { transform: 'translateX(-10px)', offset: 0.75 },
-    { transform: 'translateX(0)', offset: 1 }
+    { transform: 'translateX(0)', offset: 1 },
   ];
 }
 
@@ -166,21 +157,21 @@ export async function waitForAnimation(animation: Animation): Promise<void> {
  * @param element - Element
  */
 export function cancelAnimations(element: Element): void {
-  element.getAnimations().forEach(anim => anim.cancel());
+  element.getAnimations().forEach((anim) => anim.cancel());
 }
 
 /**
  * Pause all animations on element
  */
 export function pauseAnimations(element: Element): void {
-  element.getAnimations().forEach(anim => anim.pause());
+  element.getAnimations().forEach((anim) => anim.pause());
 }
 
 /**
  * Resume all animations on element
  */
 export function resumeAnimations(element: Element): void {
-  element.getAnimations().forEach(anim => anim.play());
+  element.getAnimations().forEach((anim) => anim.play());
 }
 
 /**
@@ -203,7 +194,7 @@ export function staggerAnimation(
   elements.forEach((element, index) => {
     const anim = animate(element, keyframes, {
       ...options,
-      delay: (options.delay || 0) + (index * staggerDelay),
+      delay: (options.delay || 0) + index * staggerDelay,
     });
     animations.push(anim);
   });
@@ -261,4 +252,3 @@ export const Easing = {
   easeOutBack: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
   easeInOutBack: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
 } as const;
-

@@ -1,7 +1,4 @@
-<div
-  class="progress-bar-container"
-  [ngClass]="containerClasses">
-
+<div class="progress-bar-container" [ngClass]="containerClasses">
   <!-- Progress Bar -->
   <div
     class="progress-bar"
@@ -9,14 +6,10 @@
     [attr.aria-valuenow]="ariaValueNow"
     [attr.aria-valuemin]="ariaValueMin"
     [attr.aria-valuemax]="ariaValueMax"
-    [attr.aria-label]="label || 'Progress: ' + formattedLabel">
-
+    [attr.aria-label]="label || 'Progress: ' + formattedLabel"
+  >
     <!-- Progress Fill -->
-    <div
-      class="progress-fill"
-      [ngClass]="fillClasses"
-      [style.width.%]="percentage">
-    </div>
+    <div class="progress-fill" [ngClass]="fillClasses" [style.width.%]="percentage"></div>
   </div>
 
   <!-- Optional Label -->
@@ -24,4 +17,3 @@
     {{ formattedLabel }}
   </span>
 </div>
-

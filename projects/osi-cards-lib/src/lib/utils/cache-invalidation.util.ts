@@ -149,14 +149,14 @@ export class CacheManager<T = any> {
     };
 
     // Update indexes
-    entry.tags.forEach(tag => {
+    entry.tags.forEach((tag) => {
       if (!this.tagIndex.has(tag)) {
         this.tagIndex.set(tag, new Set());
       }
       this.tagIndex.get(tag)!.add(key);
     });
 
-    entry.dependencies.forEach(dep => {
+    entry.dependencies.forEach((dep) => {
       if (!this.dependencyIndex.has(dep)) {
         this.dependencyIndex.set(dep, new Set());
       }
@@ -228,11 +228,11 @@ export class CacheManager<T = any> {
     }
 
     // Remove from indexes
-    entry.tags.forEach(tag => {
+    entry.tags.forEach((tag) => {
       this.tagIndex.get(tag)?.delete(key);
     });
 
-    entry.dependencies.forEach(dep => {
+    entry.dependencies.forEach((dep) => {
       this.dependencyIndex.get(dep)?.delete(key);
     });
 
@@ -267,7 +267,7 @@ export class CacheManager<T = any> {
     }
 
     let count = 0;
-    keys.forEach(key => {
+    keys.forEach((key) => {
       if (this.delete(key, 'tag')) {
         count++;
       }
@@ -304,7 +304,7 @@ export class CacheManager<T = any> {
     }
 
     let count = 0;
-    keys.forEach(key => {
+    keys.forEach((key) => {
       if (this.delete(key, 'dependency')) {
         count++;
       }
@@ -433,11 +433,7 @@ export const globalCache = new CacheManager();
  * ```
  */
 export function Cached(options: CacheOptions = {}): MethodDecorator {
-  return function (
-    target: any,
-    propertyKey: string | symbol,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
     descriptor.value = function (...args: any[]) {
@@ -454,7 +450,7 @@ export function Cached(options: CacheOptions = {}): MethodDecorator {
 
       // Handle promises
       if (result instanceof Promise) {
-        return result.then(value => {
+        return result.then((value) => {
           globalCache.set(key, value, options);
           return value;
         });
@@ -467,4 +463,3 @@ export function Cached(options: CacheOptions = {}): MethodDecorator {
     return descriptor;
   };
 }
-

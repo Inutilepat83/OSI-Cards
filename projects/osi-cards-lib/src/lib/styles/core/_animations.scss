@@ -128,7 +128,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(var(--motion-scale-soft-end)) translate3d(0, 0, 0);
     opacity: 1;
   }
@@ -150,7 +151,8 @@
 
 /* Glow accent animation - brand color pulse */
 @keyframes glowAccent {
-  0%, 100% {
+  0%,
+  100% {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   }
   50% {
@@ -160,7 +162,8 @@
 
 /* Value emphasis - gentle highlight on important numbers */
 @keyframes valueEmphasize {
-  0%, 100% {
+  0%,
+  100% {
     color: var(--card-text-primary);
   }
   50% {
@@ -170,7 +173,8 @@
 
 /* Glow & Effect Animations - For visual enhancements */
 @keyframes glowPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.6;
     filter: blur(25px);
   }
@@ -181,7 +185,8 @@
 }
 
 @keyframes glowDrift {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.7;
     transform: translate3d(0, 0, 0);
   }
@@ -200,7 +205,8 @@
 }
 
 @keyframes shimmer {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.5;
   }
   50% {
@@ -229,19 +235,28 @@
 
 /* Shake & Attention Animations */
 @keyframes shake {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate3d(0, 0, 0);
   }
-  10%, 30%, 50%, 70%, 90% {
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
     transform: translate3d(calc(var(--motion-distance-sm) * -1), 0, 0);
   }
-  20%, 40%, 60%, 80% {
+  20%,
+  40%,
+  60%,
+  80% {
     transform: translate3d(var(--motion-distance-sm), 0, 0);
   }
 }
 
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate3d(0, 0, 0);
     animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
   }
@@ -270,7 +285,8 @@
 
 /* Section streaming glow effect - subtle pulse during appearance */
 @keyframes sectionStreamingGlow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(255, 121, 0, 0);
   }
   50% {
@@ -309,11 +325,26 @@
 
 /* Traveling spark around card border - follows the perimeter */
 @keyframes sparkTravel {
-  0% { top: -1.5px; left: 0; }
-  25% { top: -1.5px; left: calc(100% - 1.5px); }
-  50% { top: calc(100% - 1.5px); left: calc(100% - 1.5px); }
-  75% { top: calc(100% - 1.5px); left: 0; }
-  100% { top: -1.5px; left: 0; }
+  0% {
+    top: -1.5px;
+    left: 0;
+  }
+  25% {
+    top: -1.5px;
+    left: calc(100% - 1.5px);
+  }
+  50% {
+    top: calc(100% - 1.5px);
+    left: calc(100% - 1.5px);
+  }
+  75% {
+    top: calc(100% - 1.5px);
+    left: 0;
+  }
+  100% {
+    top: -1.5px;
+    left: 0;
+  }
 }
 
 /* Magical section entrance - blur-to-sharp reveal with scale bounce */
@@ -337,32 +368,58 @@
 
 /* Shimmer sweep effect - diagonal light sweep across sections */
 @keyframes shimmerSweep {
-  0% { transform: translateX(-100%); opacity: 1; }
-  100% { transform: translateX(100%); opacity: 0; }
+  0% {
+    transform: translateX(-100%);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }
 
 /* Inner glow flash on section appearance */
 @keyframes innerFlash {
-  0% { box-shadow: inset 0 0 30px rgba(255, 149, 0, 0.4); }
-  100% { box-shadow: inset 0 0 0 rgba(255, 149, 0, 0); }
+  0% {
+    box-shadow: inset 0 0 30px rgba(255, 149, 0, 0.4);
+  }
+  100% {
+    box-shadow: inset 0 0 0 rgba(255, 149, 0, 0);
+  }
 }
 
 /* Subtle inner border glow pulse */
 @keyframes innerBorderPulse {
-  0%, 100% { box-shadow: inset 0 0 0 1px rgba(255, 121, 0, 0.1); }
-  50% { box-shadow: inset 0 0 0 1px rgba(255, 121, 0, 0.3); }
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 1px rgba(255, 121, 0, 0.1);
+  }
+  50% {
+    box-shadow: inset 0 0 0 1px rgba(255, 121, 0, 0.3);
+  }
 }
 
 /* Typing cursor blink effect */
 @keyframes cursorBlink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
 }
 
 /* Section glow pulse during streaming */
 @keyframes sectionGlowPulse {
-  0%, 100% { box-shadow: 0 0 10px rgba(255, 121, 0, 0.15); }
-  50% { box-shadow: 0 0 20px rgba(255, 121, 0, 0.35); }
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(255, 121, 0, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 121, 0, 0.35);
+  }
 }
 
 /* Field enter with bounce - more dynamic than simple fade */
@@ -423,20 +480,29 @@
 
 /* Error shake animation - for error states */
 @keyframes errorShake {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate3d(0, 0, 0);
   }
-  10%, 30%, 50%, 70%, 90% {
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
     transform: translate3d(-4px, 0, 0);
   }
-  20%, 40%, 60%, 80% {
+  20%,
+  40%,
+  60%,
+  80% {
     transform: translate3d(4px, 0, 0);
   }
 }
 
 /* Error pulse - subtle pulse for error indication */
 @keyframes errorPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
     box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
   }
@@ -458,7 +524,8 @@
 
 /* Skeleton pulse - breathing effect for loading */
 @keyframes skeletonPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.6;
   }
   50% {
@@ -484,7 +551,8 @@
 
 /* Background pulse glow - radial gradient pulsing effect */
 @keyframes pulseGlow {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.5;
     transform: scale(1);
   }
@@ -496,7 +564,8 @@
 
 /* Float animation - vertical floating motion */
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0) translate3d(0, 0, 0);
   }
   50% {
@@ -518,7 +587,8 @@
 
 /* Text shimmer - gradient text shimmer effect */
 @keyframes textShimmer {
-  0%, 100% {
+  0%,
+  100% {
     background-position: -200% 0;
   }
   50% {
@@ -538,7 +608,8 @@
 
 /* Section pulse - subtle scale pulse for highlighted sections */
 @keyframes sectionPulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -550,7 +621,7 @@
 @keyframes sectionBorderFade {
   0% {
     opacity: 1;
-    box-shadow: 0 0 20px color-mix(in srgb, var(--color-brand, #FF7900) 40%, transparent);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-brand, #ff7900) 40%, transparent);
   }
   100% {
     opacity: 0;
@@ -561,18 +632,19 @@
 /* New section glow - glow effect for newly added sections */
 @keyframes newSectionGlow {
   0% {
-    border-color: color-mix(in srgb, var(--color-brand, #FF7900) 60%, transparent);
-    box-shadow: 0 0 25px color-mix(in srgb, var(--color-brand, #FF7900) 40%, transparent);
+    border-color: color-mix(in srgb, var(--color-brand, #ff7900) 60%, transparent);
+    box-shadow: 0 0 25px color-mix(in srgb, var(--color-brand, #ff7900) 40%, transparent);
   }
   100% {
-    border-color: color-mix(in srgb, var(--color-brand, #FF7900) 20%, transparent);
-    box-shadow: 0 0 10px color-mix(in srgb, var(--color-brand, #FF7900) 15%, transparent);
+    border-color: color-mix(in srgb, var(--color-brand, #ff7900) 20%, transparent);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--color-brand, #ff7900) 15%, transparent);
   }
 }
 
 /* Dot pulse - pulsing dot animation */
 @keyframes dotPulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(-50%, -50%) scale(1);
     opacity: 0.6;
   }
@@ -600,17 +672,18 @@
 
 /* Generating background pulse - for loading states */
 @keyframes generatingBgPulse {
-  0%, 100% {
+  0%,
+  100% {
     background: radial-gradient(
       circle at 50% 50%,
-      color-mix(in srgb, var(--color-brand, #FF7900) 5%, transparent) 0%,
+      color-mix(in srgb, var(--color-brand, #ff7900) 5%, transparent) 0%,
       transparent 70%
     );
   }
   50% {
     background: radial-gradient(
       circle at 50% 50%,
-      color-mix(in srgb, var(--color-brand, #FF7900) 12%, transparent) 0%,
+      color-mix(in srgb, var(--color-brand, #ff7900) 12%, transparent) 0%,
       transparent 70%
     );
   }
@@ -618,23 +691,25 @@
 
 /* Card generating pulse - glow pulse for cards during generation */
 @keyframes cardGeneratingPulse {
-  0%, 100% {
-    box-shadow: 
-      inset 0 1px 3px color-mix(in srgb, var(--color-brand, #FF7900) 8%, transparent),
+  0%,
+  100% {
+    box-shadow:
+      inset 0 1px 3px color-mix(in srgb, var(--color-brand, #ff7900) 8%, transparent),
       0 4px 20px rgba(0, 0, 0, 0.15),
       0 0 0 transparent;
   }
   50% {
-    box-shadow: 
-      inset 0 1px 3px color-mix(in srgb, var(--color-brand, #FF7900) 15%, transparent),
+    box-shadow:
+      inset 0 1px 3px color-mix(in srgb, var(--color-brand, #ff7900) 15%, transparent),
       0 4px 20px rgba(0, 0, 0, 0.15),
-      0 0 30px color-mix(in srgb, var(--color-brand, #FF7900) 20%, transparent);
+      0 0 30px color-mix(in srgb, var(--color-brand, #ff7900) 20%, transparent);
   }
 }
 
 /* Gradient pulse - for empty state backgrounds */
 @keyframes gradientPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.6;
     transform: translate(-50%, -50%) scale(1);
   }
@@ -646,7 +721,8 @@
 
 /* Ring pulse - for icon wrappers */
 @keyframes ringPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.4;
     transform: scale(1);
   }
@@ -658,7 +734,8 @@
 
 /* Icon float - floating icon animation */
 @keyframes iconFloat {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0) rotate(0deg);
   }
   25% {
@@ -674,7 +751,8 @@
 
 /* Particle float - for floating particle effects */
 @keyframes particleFloat {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0) translateX(0) scale(1);
     opacity: 0.3;
   }
@@ -720,7 +798,8 @@
 
 /* Text shimmer flow - gradient text shimmer (alternative) */
 @keyframes textShimmerFlow {
-  0%, 100% {
+  0%,
+  100% {
     background-position: -200% 0;
   }
   50% {
@@ -859,17 +938,39 @@
 }
 
 /* Stagger delay utilities for section animations */
-.section-stagger-0 { animation-delay: 0ms; }
-.section-stagger-1 { animation-delay: 80ms; }
-.section-stagger-2 { animation-delay: 160ms; }
-.section-stagger-3 { animation-delay: 240ms; }
-.section-stagger-4 { animation-delay: 320ms; }
-.section-stagger-5 { animation-delay: 400ms; }
-.section-stagger-6 { animation-delay: 480ms; }
-.section-stagger-7 { animation-delay: 560ms; }
-.section-stagger-8 { animation-delay: 640ms; }
-.section-stagger-9 { animation-delay: 720ms; }
-.section-stagger-10 { animation-delay: 800ms; }
+.section-stagger-0 {
+  animation-delay: 0ms;
+}
+.section-stagger-1 {
+  animation-delay: 80ms;
+}
+.section-stagger-2 {
+  animation-delay: 160ms;
+}
+.section-stagger-3 {
+  animation-delay: 240ms;
+}
+.section-stagger-4 {
+  animation-delay: 320ms;
+}
+.section-stagger-5 {
+  animation-delay: 400ms;
+}
+.section-stagger-6 {
+  animation-delay: 480ms;
+}
+.section-stagger-7 {
+  animation-delay: 560ms;
+}
+.section-stagger-8 {
+  animation-delay: 640ms;
+}
+.section-stagger-9 {
+  animation-delay: 720ms;
+}
+.section-stagger-10 {
+  animation-delay: 800ms;
+}
 
 /* ===================================================================
    FIELD & ITEM ANIMATION CLASSES
@@ -926,40 +1027,104 @@
 
 /* Stagger delay utilities for field animations (30ms increments) */
 // Field stagger delays - 40ms increment for smooth sequential animation
-.field-stagger-0 { animation-delay: 0ms; }
-.field-stagger-1 { animation-delay: 40ms; }
-.field-stagger-2 { animation-delay: 80ms; }
-.field-stagger-3 { animation-delay: 120ms; }
-.field-stagger-4 { animation-delay: 160ms; }
-.field-stagger-5 { animation-delay: 200ms; }
-.field-stagger-6 { animation-delay: 240ms; }
-.field-stagger-7 { animation-delay: 280ms; }
-.field-stagger-8 { animation-delay: 320ms; }
-.field-stagger-9 { animation-delay: 360ms; }
-.field-stagger-10 { animation-delay: 400ms; }
-.field-stagger-11 { animation-delay: 440ms; }
-.field-stagger-12 { animation-delay: 480ms; }
-.field-stagger-13 { animation-delay: 520ms; }
-.field-stagger-14 { animation-delay: 560ms; }
-.field-stagger-15 { animation-delay: 600ms; }
+.field-stagger-0 {
+  animation-delay: 0ms;
+}
+.field-stagger-1 {
+  animation-delay: 40ms;
+}
+.field-stagger-2 {
+  animation-delay: 80ms;
+}
+.field-stagger-3 {
+  animation-delay: 120ms;
+}
+.field-stagger-4 {
+  animation-delay: 160ms;
+}
+.field-stagger-5 {
+  animation-delay: 200ms;
+}
+.field-stagger-6 {
+  animation-delay: 240ms;
+}
+.field-stagger-7 {
+  animation-delay: 280ms;
+}
+.field-stagger-8 {
+  animation-delay: 320ms;
+}
+.field-stagger-9 {
+  animation-delay: 360ms;
+}
+.field-stagger-10 {
+  animation-delay: 400ms;
+}
+.field-stagger-11 {
+  animation-delay: 440ms;
+}
+.field-stagger-12 {
+  animation-delay: 480ms;
+}
+.field-stagger-13 {
+  animation-delay: 520ms;
+}
+.field-stagger-14 {
+  animation-delay: 560ms;
+}
+.field-stagger-15 {
+  animation-delay: 600ms;
+}
 
 /* Stagger delay utilities for item animations (40ms increments) */
-.item-stagger-0 { animation-delay: 0ms; }
-.item-stagger-1 { animation-delay: 40ms; }
-.item-stagger-2 { animation-delay: 80ms; }
-.item-stagger-3 { animation-delay: 120ms; }
-.item-stagger-4 { animation-delay: 160ms; }
-.item-stagger-5 { animation-delay: 200ms; }
-.item-stagger-6 { animation-delay: 240ms; }
-.item-stagger-7 { animation-delay: 280ms; }
-.item-stagger-8 { animation-delay: 320ms; }
-.item-stagger-9 { animation-delay: 360ms; }
-.item-stagger-10 { animation-delay: 400ms; }
-.item-stagger-11 { animation-delay: 440ms; }
-.item-stagger-12 { animation-delay: 480ms; }
-.item-stagger-13 { animation-delay: 520ms; }
-.item-stagger-14 { animation-delay: 560ms; }
-.item-stagger-15 { animation-delay: 600ms; }
+.item-stagger-0 {
+  animation-delay: 0ms;
+}
+.item-stagger-1 {
+  animation-delay: 40ms;
+}
+.item-stagger-2 {
+  animation-delay: 80ms;
+}
+.item-stagger-3 {
+  animation-delay: 120ms;
+}
+.item-stagger-4 {
+  animation-delay: 160ms;
+}
+.item-stagger-5 {
+  animation-delay: 200ms;
+}
+.item-stagger-6 {
+  animation-delay: 240ms;
+}
+.item-stagger-7 {
+  animation-delay: 280ms;
+}
+.item-stagger-8 {
+  animation-delay: 320ms;
+}
+.item-stagger-9 {
+  animation-delay: 360ms;
+}
+.item-stagger-10 {
+  animation-delay: 400ms;
+}
+.item-stagger-11 {
+  animation-delay: 440ms;
+}
+.item-stagger-12 {
+  animation-delay: 480ms;
+}
+.item-stagger-13 {
+  animation-delay: 520ms;
+}
+.item-stagger-14 {
+  animation-delay: 560ms;
+}
+.item-stagger-15 {
+  animation-delay: 600ms;
+}
 
 /* ===================================================================
    STATE TRANSITION ANIMATION CLASSES
@@ -1075,7 +1240,7 @@
   background: linear-gradient(
     90deg,
     var(--foreground, #ffffff) 0%,
-    var(--color-brand, #FF7900) 50%,
+    var(--color-brand, #ff7900) 50%,
     var(--foreground, #ffffff) 100%
   );
   background-size: 200% 100%;
@@ -1090,8 +1255,8 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    var(--color-brand, #FF7900) 25%,
-    var(--color-brand, #FF7900) 75%,
+    var(--color-brand, #ff7900) 25%,
+    var(--color-brand, #ff7900) 75%,
     transparent 100%
   );
   background-size: 200% 100%;
@@ -1125,7 +1290,9 @@
 
 /* Generating pulse - loading states */
 .animate-generating-pulse {
-  animation: generatingBgPulse 3s ease-in-out infinite, cardGeneratingPulse 2s ease-in-out infinite;
+  animation:
+    generatingBgPulse 3s ease-in-out infinite,
+    cardGeneratingPulse 2s ease-in-out infinite;
 }
 
 /* Gradient pulse - background gradient */
@@ -1157,9 +1324,9 @@
 .btn-ripple {
   position: relative;
   overflow: hidden;
-  
+
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     width: 100%;
     height: 100%;
@@ -1168,14 +1335,14 @@
     transform: translate(-50%, -50%) scale(0);
     background: radial-gradient(
       circle,
-      color-mix(in srgb, var(--color-brand, #FF7900) 30%, transparent) 0%,
+      color-mix(in srgb, var(--color-brand, #ff7900) 30%, transparent) 0%,
       transparent 70%
     );
     pointer-events: none;
     border-radius: inherit;
     opacity: 0;
   }
-  
+
   &:active::after {
     animation: rippleEffect 0.6s ease-out;
   }
@@ -1189,15 +1356,15 @@
 /* Spark travel - border traveling spark */
 .animate-spark-travel {
   position: relative;
-  
+
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     width: 3px;
     height: 3px;
-    background: var(--color-brand, #FF7900);
+    background: var(--color-brand, #ff7900);
     border-radius: 50%;
-    box-shadow: 0 0 6px 1px color-mix(in srgb, var(--color-brand, #FF7900) 80%, transparent);
+    box-shadow: 0 0 6px 1px color-mix(in srgb, var(--color-brand, #ff7900) 80%, transparent);
     animation: sparkTravel 3s linear infinite;
     pointer-events: none;
     z-index: 10;
@@ -1208,12 +1375,12 @@
 .section-highlight {
   animation: sectionPulse 2s ease-out;
   position: relative;
-  
+
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     inset: -4px;
-    border: 2px solid color-mix(in srgb, var(--color-brand, #FF7900) 60%, transparent);
+    border: 2px solid color-mix(in srgb, var(--color-brand, #ff7900) 60%, transparent);
     border-radius: 14px;
     pointer-events: none;
     animation: sectionBorderFade 2s ease-out forwards;
@@ -1306,7 +1473,7 @@
     opacity: 1 !important;
     transform: none !important;
   }
-  
+
   /* Disable pseudo-element animations */
   .animate-spark-travel::before,
   .section-highlight::after,
@@ -1314,13 +1481,13 @@
     animation: none !important;
     display: none;
   }
-  
+
   /* Disable text shimmer gradient */
   .animate-text-shimmer {
     background: none !important;
     -webkit-text-fill-color: var(--foreground, currentColor) !important;
   }
-  
+
   /* Remove will-change hints */
   .will-animate,
   .will-animate-transform,

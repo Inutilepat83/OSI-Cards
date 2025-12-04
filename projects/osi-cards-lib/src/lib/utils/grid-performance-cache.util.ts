@@ -124,11 +124,7 @@ export class GridPerformanceCache {
   /**
    * Create a stable key for section caching
    */
-  private createSectionKey(
-    section: CardSection,
-    containerWidth: number,
-    columns: number
-  ): string {
+  private createSectionKey(section: CardSection, containerWidth: number, columns: number): string {
     const sectionHash = this.hashSection(section);
     return `section:${sectionHash}:${containerWidth}:${columns}`;
   }
@@ -195,7 +191,7 @@ export class GridPerformanceCache {
    */
   createLayoutHash(sections: Array<{ key: string; top: number; column: number }>): string {
     const positions = sections
-      .map(s => `${s.key}:${s.top}:${s.column}`)
+      .map((s) => `${s.key}:${s.top}:${s.column}`)
       .sort()
       .join('|');
     return this.simpleHash(positions);
@@ -257,12 +253,7 @@ export class GridPerformanceCache {
   /**
    * Set value in cache with LRU eviction
    */
-  private set<T>(
-    cache: Map<string, CacheEntry<T>>,
-    key: string,
-    value: T,
-    size: number
-  ): void {
+  private set<T>(cache: Map<string, CacheEntry<T>>, key: string, value: T, size: number): void {
     // Check if we need to evict
     while (this.needsEviction(size)) {
       this.evictLRU();
@@ -366,7 +357,7 @@ export class GridPerformanceCache {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash).toString(36);
@@ -484,4 +475,3 @@ export function getGlobalGridCache(config?: GridCacheConfig): GridPerformanceCac
 export function resetGlobalGridCache(): void {
   globalCache = null;
 }
-

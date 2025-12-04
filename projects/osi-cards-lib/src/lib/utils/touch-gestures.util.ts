@@ -230,4 +230,3 @@ export function getTouchPosition(e: TouchEvent, index = 0): { x: number; y: numb
   }
   return null;
 }
-

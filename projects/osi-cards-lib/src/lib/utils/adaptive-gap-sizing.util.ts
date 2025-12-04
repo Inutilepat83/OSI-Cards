@@ -80,10 +80,10 @@ const DEFAULT_CONFIG: Required<AdaptiveGapConfig> = {
 
 // Recommended gap sizes per device category (based on UI/UX best practices)
 const RECOMMENDED_GAPS: Record<DeviceCategory, number> = {
-  mobile: 8,    // Smaller screens need tighter spacing
-  tablet: 12,   // Balanced spacing
-  desktop: 16,  // Comfortable spacing
-  wide: 20,     // Generous spacing for large displays
+  mobile: 8, // Smaller screens need tighter spacing
+  tablet: 12, // Balanced spacing
+  desktop: 16, // Comfortable spacing
+  wide: 20, // Generous spacing for large displays
 };
 
 // ============================================================================
@@ -184,7 +184,7 @@ function getAdaptiveGap(
 
   // Adjust for content density
   // Higher density = smaller gaps
-  const densityFactor = 1 - (config.contentDensity * 0.4); // Max 40% reduction
+  const densityFactor = 1 - config.contentDensity * 0.4; // Max 40% reduction
   let gap = baseGap * densityFactor;
 
   // Fine-tune based on exact width within device category
@@ -198,10 +198,7 @@ function getAdaptiveGap(
 /**
  * Get dynamic gap with smooth interpolation
  */
-function getDynamicGap(
-  containerWidth: number,
-  config: Required<AdaptiveGapConfig>
-): number {
+function getDynamicGap(containerWidth: number, config: Required<AdaptiveGapConfig>): number {
   const { breakpoints, minGap, maxGap } = config;
 
   // Linear interpolation between min and max
@@ -394,10 +391,7 @@ export const GapPresets: Record<string, AdaptiveGapConfig> = {
 /**
  * Calculate gap transition duration for animations
  */
-export function calculateGapTransitionDuration(
-  oldGap: number,
-  newGap: number
-): number {
+export function calculateGapTransitionDuration(oldGap: number, newGap: number): number {
   const diff = Math.abs(newGap - oldGap);
 
   // Longer transitions for larger changes
@@ -430,4 +424,3 @@ export function batchCalculateGaps(
 
   return results;
 }
-

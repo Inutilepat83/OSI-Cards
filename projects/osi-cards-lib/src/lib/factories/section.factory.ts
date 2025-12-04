@@ -81,8 +81,10 @@ export class SectionFactory {
     const sections: SectionRegistryEntry[] = [
       {
         type: 'analytics',
-        loader: () => import('../components/sections/analytics-section/analytics-section.component')
-          .then(m => m.AnalyticsSectionComponent),
+        loader: () =>
+          import('../components/sections/analytics-section/analytics-section.component').then(
+            (m) => m.AnalyticsSectionComponent
+          ),
         metadata: {
           type: 'analytics',
           displayName: 'Analytics',
@@ -94,8 +96,10 @@ export class SectionFactory {
       },
       {
         type: 'brand-colors',
-        loader: () => import('../components/sections/brand-colors-section/brand-colors-section.component')
-          .then(m => m.BrandColorsSectionComponent),
+        loader: () =>
+          import('../components/sections/brand-colors-section/brand-colors-section.component').then(
+            (m) => m.BrandColorsSectionComponent
+          ),
         metadata: {
           type: 'brand-colors',
           displayName: 'Brand Colors',
@@ -107,8 +111,10 @@ export class SectionFactory {
       },
       {
         type: 'chart',
-        loader: () => import('../components/sections/chart-section/chart-section.component')
-          .then(m => m.ChartSectionComponent),
+        loader: () =>
+          import('../components/sections/chart-section/chart-section.component').then(
+            (m) => m.ChartSectionComponent
+          ),
         metadata: {
           type: 'chart',
           displayName: 'Chart',
@@ -120,8 +126,10 @@ export class SectionFactory {
       },
       {
         type: 'contact-card',
-        loader: () => import('../components/sections/contact-card-section/contact-card-section.component')
-          .then(m => m.ContactCardSectionComponent),
+        loader: () =>
+          import('../components/sections/contact-card-section/contact-card-section.component').then(
+            (m) => m.ContactCardSectionComponent
+          ),
         metadata: {
           type: 'contact-card',
           displayName: 'Contact Card',
@@ -133,8 +141,10 @@ export class SectionFactory {
       },
       {
         type: 'event',
-        loader: () => import('../components/sections/event-section/event-section.component')
-          .then(m => m.EventSectionComponent),
+        loader: () =>
+          import('../components/sections/event-section/event-section.component').then(
+            (m) => m.EventSectionComponent
+          ),
         metadata: {
           type: 'event',
           displayName: 'Event',
@@ -146,8 +156,10 @@ export class SectionFactory {
       },
       {
         type: 'fallback',
-        loader: () => import('../components/sections/fallback-section/fallback-section.component')
-          .then(m => m.FallbackSectionComponent),
+        loader: () =>
+          import('../components/sections/fallback-section/fallback-section.component').then(
+            (m) => m.FallbackSectionComponent
+          ),
         metadata: {
           type: 'fallback',
           displayName: 'Fallback',
@@ -159,8 +171,10 @@ export class SectionFactory {
       },
       {
         type: 'financials',
-        loader: () => import('../components/sections/financials-section/financials-section.component')
-          .then(m => m.FinancialsSectionComponent),
+        loader: () =>
+          import('../components/sections/financials-section/financials-section.component').then(
+            (m) => m.FinancialsSectionComponent
+          ),
         metadata: {
           type: 'financials',
           displayName: 'Financials',
@@ -172,8 +186,10 @@ export class SectionFactory {
       },
       {
         type: 'info',
-        loader: () => import('../components/sections/info-section/info-section.component')
-          .then(m => m.InfoSectionComponent),
+        loader: () =>
+          import('../components/sections/info-section/info-section.component').then(
+            (m) => m.InfoSectionComponent
+          ),
         metadata: {
           type: 'info',
           displayName: 'Info',
@@ -185,8 +201,10 @@ export class SectionFactory {
       },
       {
         type: 'list',
-        loader: () => import('../components/sections/list-section/list-section.component')
-          .then(m => m.ListSectionComponent),
+        loader: () =>
+          import('../components/sections/list-section/list-section.component').then(
+            (m) => m.ListSectionComponent
+          ),
         metadata: {
           type: 'list',
           displayName: 'List',
@@ -198,8 +216,10 @@ export class SectionFactory {
       },
       {
         type: 'map',
-        loader: () => import('../components/sections/map-section/map-section.component')
-          .then(m => m.MapSectionComponent),
+        loader: () =>
+          import('../components/sections/map-section/map-section.component').then(
+            (m) => m.MapSectionComponent
+          ),
         metadata: {
           type: 'map',
           displayName: 'Map',
@@ -211,8 +231,10 @@ export class SectionFactory {
       },
       {
         type: 'network-card',
-        loader: () => import('../components/sections/network-card-section/network-card-section.component')
-          .then(m => m.NetworkCardSectionComponent),
+        loader: () =>
+          import('../components/sections/network-card-section/network-card-section.component').then(
+            (m) => m.NetworkCardSectionComponent
+          ),
         metadata: {
           type: 'network-card',
           displayName: 'Network Card',
@@ -224,8 +246,10 @@ export class SectionFactory {
       },
       {
         type: 'news',
-        loader: () => import('../components/sections/news-section/news-section.component')
-          .then(m => m.NewsSectionComponent),
+        loader: () =>
+          import('../components/sections/news-section/news-section.component').then(
+            (m) => m.NewsSectionComponent
+          ),
         metadata: {
           type: 'news',
           displayName: 'News',
@@ -237,8 +261,10 @@ export class SectionFactory {
       },
       {
         type: 'overview',
-        loader: () => import('../components/sections/overview-section/overview-section.component')
-          .then(m => m.OverviewSectionComponent),
+        loader: () =>
+          import('../components/sections/overview-section/overview-section.component').then(
+            (m) => m.OverviewSectionComponent
+          ),
         metadata: {
           type: 'overview',
           displayName: 'Overview',
@@ -250,8 +276,10 @@ export class SectionFactory {
       },
       {
         type: 'product',
-        loader: () => import('../components/sections/product-section/product-section.component')
-          .then(m => m.ProductSectionComponent),
+        loader: () =>
+          import('../components/sections/product-section/product-section.component').then(
+            (m) => m.ProductSectionComponent
+          ),
         metadata: {
           type: 'product',
           displayName: 'Product',
@@ -263,8 +291,10 @@ export class SectionFactory {
       },
       {
         type: 'quotation',
-        loader: () => import('../components/sections/quotation-section/quotation-section.component')
-          .then(m => m.QuotationSectionComponent),
+        loader: () =>
+          import('../components/sections/quotation-section/quotation-section.component').then(
+            (m) => m.QuotationSectionComponent
+          ),
         metadata: {
           type: 'quotation',
           displayName: 'Quotation',
@@ -276,8 +306,10 @@ export class SectionFactory {
       },
       {
         type: 'social-media',
-        loader: () => import('../components/sections/social-media-section/social-media-section.component')
-          .then(m => m.SocialMediaSectionComponent),
+        loader: () =>
+          import('../components/sections/social-media-section/social-media-section.component').then(
+            (m) => m.SocialMediaSectionComponent
+          ),
         metadata: {
           type: 'social-media',
           displayName: 'Social Media',
@@ -289,8 +321,10 @@ export class SectionFactory {
       },
       {
         type: 'solutions',
-        loader: () => import('../components/sections/solutions-section/solutions-section.component')
-          .then(m => m.SolutionsSectionComponent),
+        loader: () =>
+          import('../components/sections/solutions-section/solutions-section.component').then(
+            (m) => m.SolutionsSectionComponent
+          ),
         metadata: {
           type: 'solutions',
           displayName: 'Solutions',
@@ -302,8 +336,10 @@ export class SectionFactory {
       },
       {
         type: 'text-reference',
-        loader: () => import('../components/sections/text-reference-section/text-reference-section.component')
-          .then(m => m.TextReferenceSectionComponent),
+        loader: () =>
+          import('../components/sections/text-reference-section/text-reference-section.component').then(
+            (m) => m.TextReferenceSectionComponent
+          ),
         metadata: {
           type: 'text-reference',
           displayName: 'Text Reference',
@@ -411,7 +447,7 @@ export class SectionFactory {
    * Preload specific section types.
    */
   async preload(types: SectionType[]): Promise<void> {
-    await Promise.all(types.map(type => this.createSection(type)));
+    await Promise.all(types.map((type) => this.createSection(type)));
   }
 
   /**
@@ -428,4 +464,3 @@ export class SectionFactory {
     this.cache.clear();
   }
 }
-

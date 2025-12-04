@@ -1,9 +1,9 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { 
-  AnimationOrchestratorService, 
-  AnimationSequence, 
+import {
+  AnimationOrchestratorService,
+  AnimationSequence,
   AnimationSequenceDefinition,
-  OrchestratorState 
+  OrchestratorState,
 } from './animation-orchestrator.service';
 
 describe('AnimationOrchestratorService', () => {
@@ -12,7 +12,7 @@ describe('AnimationOrchestratorService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [AnimationOrchestratorService]
+      providers: [AnimationOrchestratorService],
     });
     service = TestBed.inject(AnimationOrchestratorService);
 
@@ -68,27 +68,27 @@ describe('AnimationOrchestratorService', () => {
 
     it('should skip animation for unregistered sequence', async () => {
       const consoleSpy = spyOn(console, 'warn');
-      
+
       await service.orchestrate('unknown-sequence' as AnimationSequence, mockElement);
-      
+
       expect(consoleSpy).toHaveBeenCalled();
     });
 
     it('should apply delay option', fakeAsync(async () => {
       const startTime = Date.now();
-      
+
       const promise = service.orchestrate('card-entrance', mockElement, { delay: 100 });
       tick(200);
       await promise;
-      
+
       expect(service).toBeTruthy();
     }));
 
     it('should skip specified steps', async () => {
-      await service.orchestrate('card-entrance', mockElement, { 
-        skipSteps: ['card-fade'] 
+      await service.orchestrate('card-entrance', mockElement, {
+        skipSteps: ['card-fade'],
       });
-      
+
       expect(service).toBeTruthy();
     });
   });
@@ -106,10 +106,10 @@ describe('AnimationOrchestratorService', () => {
             target: mockElement,
             animation: {
               keyframes: [{ opacity: 0 }, { opacity: 1 }],
-              timing: { duration: 100 }
-            }
-          }
-        ]
+              timing: { duration: 100 },
+            },
+          },
+        ],
       };
 
       await service.playSequence(sequence);
@@ -118,11 +118,13 @@ describe('AnimationOrchestratorService', () => {
 
     it('should call onStart callback', async () => {
       let started = false;
-      
+
       const sequence: AnimationSequenceDefinition = {
         name: 'card-entrance',
         steps: [],
-        onStart: () => { started = true; }
+        onStart: () => {
+          started = true;
+        },
       };
 
       await service.playSequence(sequence);
@@ -131,11 +133,13 @@ describe('AnimationOrchestratorService', () => {
 
     it('should call onComplete callback', async () => {
       let completed = false;
-      
+
       const sequence: AnimationSequenceDefinition = {
         name: 'card-entrance',
         steps: [],
-        onComplete: () => { completed = true; }
+        onComplete: () => {
+          completed = true;
+        },
       };
 
       await service.playSequence(sequence);
@@ -144,7 +148,7 @@ describe('AnimationOrchestratorService', () => {
 
     it('should call onStepComplete for each step', async () => {
       const completedSteps: string[] = [];
-      
+
       const sequence: AnimationSequenceDefinition = {
         name: 'card-entrance',
         steps: [
@@ -153,19 +157,21 @@ describe('AnimationOrchestratorService', () => {
             target: mockElement,
             animation: {
               keyframes: [{ opacity: 0 }, { opacity: 1 }],
-              timing: { duration: 50 }
-            }
+              timing: { duration: 50 },
+            },
           },
           {
             name: 'step-2',
             target: mockElement,
             animation: {
               keyframes: [{ opacity: 0 }, { opacity: 1 }],
-              timing: { duration: 50 }
-            }
-          }
+              timing: { duration: 50 },
+            },
+          },
         ],
-        onStepComplete: (stepName) => { completedSteps.push(stepName); }
+        onStepComplete: (stepName) => {
+          completedSteps.push(stepName);
+        },
       };
 
       await service.playSequence(sequence);
@@ -188,11 +194,11 @@ describe('AnimationOrchestratorService', () => {
               target: [mockElement],
               animation: {
                 keyframes: [{ opacity: 0 }, { opacity: 1 }],
-                timing: { duration: 100 }
-              }
-            }
-          ]
-        }
+                timing: { duration: 100 },
+              },
+            },
+          ],
+        },
       });
 
       // Should be able to orchestrate the custom preset
@@ -207,21 +213,21 @@ describe('AnimationOrchestratorService', () => {
   describe('setGlobalSpeed', () => {
     it('should set global speed', () => {
       service.setGlobalSpeed(2);
-      
+
       const state = service.getState();
       expect(state.globalSpeed).toBe(2);
     });
 
     it('should clamp speed to minimum 0.1', () => {
       service.setGlobalSpeed(0);
-      
+
       const state = service.getState();
       expect(state.globalSpeed).toBe(0.1);
     });
 
     it('should clamp speed to maximum 3', () => {
       service.setGlobalSpeed(10);
-      
+
       const state = service.getState();
       expect(state.globalSpeed).toBe(3);
     });
@@ -260,7 +266,7 @@ describe('AnimationOrchestratorService', () => {
   describe('cancelAll', () => {
     it('should cancel all animations', () => {
       service.cancelAll();
-      
+
       const state = service.getState();
       expect(state.isAnimating).toBe(false);
       expect(state.queueLength).toBe(0);
@@ -291,22 +297,22 @@ describe('AnimationOrchestratorService', () => {
   describe('animateLayoutChange', () => {
     it('should execute update function', async () => {
       let updated = false;
-      
+
       await service.animateLayoutChange(mockElement, () => {
         updated = true;
       });
-      
+
       expect(updated).toBe(true);
     });
 
     it('should handle async update function', async () => {
       let updated = false;
-      
+
       await service.animateLayoutChange(mockElement, async () => {
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
         updated = true;
       });
-      
+
       expect(updated).toBe(true);
     });
   });
@@ -322,15 +328,15 @@ describe('AnimationOrchestratorService', () => {
 
     it('should emit state changes', fakeAsync(() => {
       const states: OrchestratorState[] = [];
-      
-      service.state$.subscribe(state => {
+
+      service.state$.subscribe((state) => {
         states.push({ ...state });
       });
 
       service.setGlobalSpeed(2);
       tick(100);
 
-      expect(states.some(s => s.globalSpeed === 2)).toBe(true);
+      expect(states.some((s) => s.globalSpeed === 2)).toBe(true);
     }));
   });
 
@@ -347,27 +353,18 @@ describe('AnimationOrchestratorService', () => {
     it('should cancel pending animations', async () => {
       // Start an animation
       const promise = service.orchestrate('card-entrance', mockElement);
-      
+
       // Immediately destroy
       service.ngOnDestroy();
-      
+
       // Promise should reject or resolve
       try {
         await promise;
       } catch (e) {
         // Expected - animation was cancelled
       }
-      
+
       expect(service).toBeTruthy();
     });
   });
 });
-
-
-
-
-
-
-
-
-

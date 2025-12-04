@@ -2,8 +2,8 @@
 // FAQ SECTION - Original Product Style
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/typography-system' as typo;
+@use "../../../styles/components/sections/design-system" as *;
+@use "../../../styles/components/sections/typography-system" as typo;
 
 :host {
   display: block;
@@ -95,7 +95,7 @@
   margin-top: var(--spacing-sm);
 
   .text {
-    @include body-text('small');
+    @include body-text("small");
     color: var(--muted-foreground);
     line-height: var(--leading-relaxed);
   }

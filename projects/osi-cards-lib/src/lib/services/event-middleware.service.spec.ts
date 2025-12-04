@@ -12,19 +12,19 @@ describe('EventMiddlewareService', () => {
     section: {
       id: 'test-section',
       title: 'Test Section',
-      type: 'info'
+      type: 'info',
     },
     field: {
       id: 'test-field',
       label: 'Test Field',
-      value: 'Test Value'
+      value: 'Test Value',
     },
-    metadata: { key: 'value' }
+    metadata: { key: 'value' },
   });
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [EventMiddlewareService]
+      providers: [EventMiddlewareService],
     });
     service = TestBed.inject(EventMiddlewareService);
   });
@@ -44,13 +44,13 @@ describe('EventMiddlewareService', () => {
     it('should pass event through unchanged when no middleware', () => {
       const event = createMockEvent();
       const result = service.processEvent(event);
-      
+
       expect(result).toBe(event);
     });
 
     it('should emit raw event', (done) => {
       const event = createMockEvent();
-      
+
       service.rawEvents$.subscribe((rawEvent) => {
         expect(rawEvent).toBe(event);
         done();
@@ -61,7 +61,7 @@ describe('EventMiddlewareService', () => {
 
     it('should emit processed event', (done) => {
       const event = createMockEvent();
-      
+
       service.processedEvents$.subscribe((processedEvent) => {
         expect(processedEvent).toBe(event);
         done();
@@ -78,7 +78,7 @@ describe('EventMiddlewareService', () => {
         handle: (e, next) => {
           middlewareCalled = true;
           return next(e);
-        }
+        },
       });
 
       service.processEvent(event);
@@ -93,7 +93,7 @@ describe('EventMiddlewareService', () => {
         handle: (e, next) => {
           order.push(1);
           return next(e);
-        }
+        },
       });
 
       service.addMiddleware({
@@ -101,11 +101,11 @@ describe('EventMiddlewareService', () => {
         handle: (e, next) => {
           order.push(2);
           return next(e);
-        }
+        },
       });
 
       service.processEvent(createMockEvent());
-      
+
       // Higher priority runs first
       expect(order).toEqual([1, 2]);
     });
@@ -117,12 +117,12 @@ describe('EventMiddlewareService', () => {
   describe('addMiddleware', () => {
     it('should add middleware to chain', () => {
       let called = false;
-      
+
       service.addMiddleware({
         handle: (e, next) => {
           called = true;
           return next(e);
-        }
+        },
       });
 
       service.processEvent(createMockEvent());
@@ -131,12 +131,12 @@ describe('EventMiddlewareService', () => {
 
     it('should return remove function', () => {
       let called = false;
-      
+
       const remove = service.addMiddleware({
         handle: (e, next) => {
           called = true;
           return next(e);
-        }
+        },
       });
 
       // Remove middleware
@@ -156,7 +156,7 @@ describe('EventMiddlewareService', () => {
         handle: (e, next) => {
           order.push('medium');
           return next(e);
-        }
+        },
       });
 
       service.addMiddleware({
@@ -164,7 +164,7 @@ describe('EventMiddlewareService', () => {
         handle: (e, next) => {
           order.push('high');
           return next(e);
-        }
+        },
       });
 
       service.addMiddleware({
@@ -172,11 +172,11 @@ describe('EventMiddlewareService', () => {
         handle: (e, next) => {
           order.push('low');
           return next(e);
-        }
+        },
       });
 
       service.processEvent(createMockEvent());
-      
+
       // Should be sorted by priority (highest first)
       expect(order).toEqual(['high', 'medium', 'low']);
     });
@@ -194,14 +194,14 @@ describe('EventMiddlewareService', () => {
         handle: (e, next) => {
           called1 = true;
           return next(e);
-        }
+        },
       };
 
       const middleware2: EventMiddleware = {
         handle: (e, next) => {
           called2 = true;
           return next(e);
-        }
+        },
       };
 
       service.addMiddleware(middleware1);
@@ -218,7 +218,7 @@ describe('EventMiddlewareService', () => {
 
     it('should handle removing non-existent middleware gracefully', () => {
       const middleware: EventMiddleware = {
-        handle: (e, next) => next(e)
+        handle: (e, next) => next(e),
       };
 
       // Should not throw
@@ -238,14 +238,14 @@ describe('EventMiddlewareService', () => {
         handle: (e, next) => {
           callCount++;
           return next(e);
-        }
+        },
       });
 
       service.addMiddleware({
         handle: (e, next) => {
           callCount++;
           return next(e);
-        }
+        },
       });
 
       service.clearMiddleware();
@@ -277,7 +277,7 @@ describe('EventMiddlewareService', () => {
 
     it('should use console.log by default', () => {
       const consoleSpy = spyOn(console, 'log');
-      
+
       const middleware = service.createLoggingMiddleware();
       service.addMiddleware(middleware);
 
@@ -299,16 +299,14 @@ describe('EventMiddlewareService', () => {
     it('should pass events that match filter', () => {
       let received = false;
 
-      const middleware = service.createFilterMiddleware(
-        (event) => event.type === 'field'
-      );
+      const middleware = service.createFilterMiddleware((event) => event.type === 'field');
       service.addMiddleware(middleware);
 
       service.addMiddleware({
         handle: (e, next) => {
           received = true;
           return next(e);
-        }
+        },
       });
 
       service.processEvent(createMockEvent('field'));
@@ -319,9 +317,7 @@ describe('EventMiddlewareService', () => {
     it('should block events that do not match filter', () => {
       let receivedInNext = false;
 
-      const middleware = service.createFilterMiddleware(
-        (event) => event.type === 'action'
-      );
+      const middleware = service.createFilterMiddleware((event) => event.type === 'action');
       service.addMiddleware(middleware);
 
       service.addMiddleware({
@@ -329,7 +325,7 @@ describe('EventMiddlewareService', () => {
         handle: (e, next) => {
           receivedInNext = true;
           return next(e);
-        }
+        },
       });
 
       service.processEvent(createMockEvent('field'));
@@ -348,7 +344,7 @@ describe('EventMiddlewareService', () => {
 
       const middleware = service.createTransformMiddleware((event) => ({
         ...event,
-        metadata: { ...event.metadata, transformed: true }
+        metadata: { ...event.metadata, transformed: true },
       }));
       service.addMiddleware(middleware);
 
@@ -356,7 +352,7 @@ describe('EventMiddlewareService', () => {
         handle: (e, next) => {
           transformedEvent = e;
           return next(e);
-        }
+        },
       });
 
       service.processEvent(createMockEvent());
@@ -409,7 +405,7 @@ describe('EventMiddlewareService', () => {
         handle: (e, next) => {
           order.push('middleware');
           return next(e);
-        }
+        },
       });
 
       service.processedEvents$.subscribe(() => {
@@ -436,12 +432,3 @@ describe('EventMiddlewareService', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-

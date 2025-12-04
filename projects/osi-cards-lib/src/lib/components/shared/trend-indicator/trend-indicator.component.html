@@ -1,9 +1,4 @@
-<span
-  class="trend-indicator"
-  [ngClass]="classes"
-  role="status"
-  [attr.aria-label]="computedAriaLabel">
-
+<span class="trend-indicator" [ngClass]="classes" role="status" [attr.aria-label]="computedAriaLabel">
   <!-- Arrow Icon -->
   <span class="trend-icon" aria-hidden="true">{{ arrowIcon }}</span>
 
@@ -12,4 +7,3 @@
     {{ formattedValue }}
   </span>
 </span>
-

@@ -1,14 +1,10 @@
 <div class="text-reference-container">
   <!-- Section Header -->
-  <lib-section-header
-    [title]="section.title"
-    [description]="section.description">
-  </lib-section-header>
+  <lib-section-header [title]="section.title" [description]="section.description"> </lib-section-header>
 
   <!-- References List -->
   <div class="references-list" *ngIf="section.fields && section.fields.length > 0">
     <div class="reference-item" *ngFor="let ref of section.fields; let i = index">
-
       <!-- Reference Number -->
       <span class="reference-number">[{{ i + 1 }}]</span>
 
@@ -25,13 +21,7 @@
         </div>
 
         <!-- Reference Link -->
-        <a [href]="ref.url"
-           class="reference-link"
-           *ngIf="ref.url"
-           target="_blank"
-           rel="noopener">
-          View source →
-        </a>
+        <a [href]="ref.url" class="reference-link" *ngIf="ref.url" target="_blank" rel="noopener"> View source → </a>
       </div>
     </div>
   </div>
@@ -41,6 +31,7 @@
     *ngIf="!section.fields || section.fields.length === 0"
     message="No references available"
     icon="📚"
-    variant="minimal">
+    variant="minimal"
+  >
   </lib-empty-state>
 </div>

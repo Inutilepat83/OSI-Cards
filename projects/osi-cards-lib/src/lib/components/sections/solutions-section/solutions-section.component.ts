@@ -14,10 +14,9 @@ import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../
   standalone: true,
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
   templateUrl: './solutions-section.component.html',
-  styleUrl: './solutions-section.scss'
+  styleUrl: './solutions-section.scss',
 })
 export class SolutionsSectionComponent extends BaseSectionComponent {
-
   /**
    * Get complexity class (deprecated)
    */

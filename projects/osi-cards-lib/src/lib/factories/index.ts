@@ -30,15 +30,7 @@ export {
 } from './card.factory';
 
 // Section Component Factory (for dynamic component loading)
-export {
-  SectionFactory,
-  type SectionType,
-  type SectionMetadata,
-} from './section.factory';
+export { SectionFactory, type SectionType, type SectionMetadata } from './section.factory';
 
 // Type-Safe Card Builder DSL is planned for future implementation
 // See: Improvement Plan Point #26
-
-
-
-

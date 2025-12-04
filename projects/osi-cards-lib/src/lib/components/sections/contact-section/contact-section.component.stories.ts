@@ -188,4 +188,3 @@ export const WithSocialMedia: Story = {
       .build(),
   },
 };
-

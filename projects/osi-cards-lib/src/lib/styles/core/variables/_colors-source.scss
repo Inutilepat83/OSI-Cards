@@ -7,7 +7,7 @@
 //
 // ===================================================================
 
-@use '../../tokens/master' as *;
+@use "../../tokens/master" as *;
 
 // Theme color mixins are now defined in master tokens:
 //
@@ -21,14 +21,14 @@
 //   @include osi-theme-light($variant, $is-scoped);
 
 // Legacy mixin aliases for backward compatibility
-@mixin osi-colors($variant: 'demo', $is-scoped: false) {
+@mixin osi-colors($variant: "demo", $is-scoped: false) {
   @include osi-theme-base($variant, $is-scoped);
 }
 
-@mixin osi-colors-dark($variant: 'demo', $is-scoped: false) {
+@mixin osi-colors-dark($variant: "demo", $is-scoped: false) {
   @include osi-theme-dark($variant, $is-scoped);
 }
 
-@mixin osi-colors-light($variant: 'demo', $is-scoped: false) {
+@mixin osi-colors-light($variant: "demo", $is-scoped: false) {
   @include osi-theme-light($variant, $is-scoped);
 }

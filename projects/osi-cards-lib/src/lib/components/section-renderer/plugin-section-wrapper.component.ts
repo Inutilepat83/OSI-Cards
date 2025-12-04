@@ -1,4 +1,17 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ViewContainerRef, ComponentRef, inject, ChangeDetectorRef, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+  ViewContainerRef,
+  ComponentRef,
+  inject,
+  ChangeDetectorRef,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardSection } from '../../models';
 import { BaseSectionComponent } from '../sections/base-section.component';
@@ -13,7 +26,7 @@ import { Subject, takeUntil } from 'rxjs';
   standalone: true,
   imports: [CommonModule],
   template: `<!-- Plugin component rendered dynamically -->`,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PluginSectionWrapperComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input({ required: true }) section!: CardSection;
@@ -69,12 +82,12 @@ export class PluginSectionWrapperComponent implements OnInit, AfterViewInit, OnD
     if (this.componentRef.instance.fieldInteraction) {
       this.componentRef.instance.fieldInteraction
         .pipe(takeUntil(this.destroy$))
-        .subscribe(event => {
+        .subscribe((event) => {
           this.sectionEvent.emit({
             type: 'field',
             section: this.section,
             field: event.field,
-            metadata: event.metadata
+            metadata: event.metadata,
           });
         });
     }
@@ -82,12 +95,12 @@ export class PluginSectionWrapperComponent implements OnInit, AfterViewInit, OnD
     if (this.componentRef.instance.itemInteraction) {
       this.componentRef.instance.itemInteraction
         .pipe(takeUntil(this.destroy$))
-        .subscribe(event => {
+        .subscribe((event) => {
           this.sectionEvent.emit({
             type: 'item',
             section: this.section,
             item: event.item,
-            metadata: event.metadata
+            metadata: event.metadata,
           });
         });
     }
@@ -95,4 +108,3 @@ export class PluginSectionWrapperComponent implements OnInit, AfterViewInit, OnD
     this.cdr.markForCheck();
   }
 }
-

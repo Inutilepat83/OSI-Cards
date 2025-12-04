@@ -1,6 +1,19 @@
-import { ChangeDetectionStrategy, Component, Input, EventEmitter, Output, ChangeDetectorRef, OnChanges, SimpleChanges, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  EventEmitter,
+  Output,
+  ChangeDetectorRef,
+  OnChanges,
+  SimpleChanges,
+  inject,
+} from '@angular/core';
 import { CardField, CardItem, CardSection } from '../../models';
-import { SectionDesignParams, getSectionDesignParams } from '../../models/section-design-params.model';
+import {
+  SectionDesignParams,
+  getSectionDesignParams,
+} from '../../models/section-design-params.model';
 
 /**
  * Layout configuration for a section type.
@@ -47,9 +60,11 @@ export interface SectionInteraction<T = CardField | CardItem> {
  */
 @Component({
   template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export abstract class BaseSectionComponent<T extends CardField | CardItem = CardField> implements OnChanges {
+export abstract class BaseSectionComponent<
+  T extends CardField | CardItem = CardField,
+> implements OnChanges {
   @Input({ required: true }) section!: CardSection;
   @Output() fieldInteraction = new EventEmitter<SectionInteraction<T>>();
   @Output() itemInteraction = new EventEmitter<SectionInteraction<T>>();
@@ -97,9 +112,11 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
         return {
           ...cardField,
           title: cardField.title ?? cardField.label ?? cardField.id,
-          description: cardField.description ?? (typeof cardField.meta?.['description'] === 'string'
-            ? cardField.meta['description'] as string
-            : undefined)
+          description:
+            cardField.description ??
+            (typeof cardField.meta?.['description'] === 'string'
+              ? (cardField.meta['description'] as string)
+              : undefined),
         } as CardItem;
       });
     }
@@ -332,8 +349,8 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
       metadata: {
         sectionId: this.section.id,
         sectionTitle: this.section.title,
-        ...metadata
-      }
+        ...metadata,
+      },
     });
   }
 
@@ -346,8 +363,8 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
       metadata: {
         sectionId: this.section.id,
         sectionTitle: this.section.title,
-        ...metadata
-      }
+        ...metadata,
+      },
     });
   }
 
@@ -420,6 +437,4 @@ export abstract class BaseSectionComponent<T extends CardField | CardItem = Card
   protected get hasDesignParams(): boolean {
     return !!this.getDesignParams();
   }
-
 }
-

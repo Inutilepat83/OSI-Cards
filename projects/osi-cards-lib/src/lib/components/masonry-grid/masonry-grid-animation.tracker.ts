@@ -55,7 +55,7 @@ export class MasonryGridAnimationTracker {
 
     return {
       started: !wasStreaming && nowStreaming,
-      ended: wasStreaming && !nowStreaming
+      ended: wasStreaming && !nowStreaming,
     };
   }
 
@@ -64,7 +64,7 @@ export class MasonryGridAnimationTracker {
    */
   finalizeStreamingAnimations(): void {
     // Mark all sections as animated when streaming completes
-    this.renderedSectionKeys.forEach(key => {
+    this.renderedSectionKeys.forEach((key) => {
       this.animatedSectionKeys.add(key);
     });
   }
@@ -94,12 +94,8 @@ export class MasonryGridAnimationTracker {
 
     // If no previous IDs, use title-based comparison
     if (previousIds.size === 0) {
-      const previousTitles = new Set(
-        previousSections.map(s => s.title || '').filter(t => t)
-      );
-      const hasOverlap = currentSections.some(
-        s => s.title && previousTitles.has(s.title)
-      );
+      const previousTitles = new Set(previousSections.map((s) => s.title || '').filter((t) => t));
+      const hasOverlap = currentSections.some((s) => s.title && previousTitles.has(s.title));
       return !hasOverlap;
     }
 
@@ -206,8 +202,7 @@ export class MasonryGridAnimationTracker {
     return {
       rendered: this.renderedSectionKeys.size,
       animated: this.animatedSectionKeys.size,
-      previousIds: this.previousSectionIds.size
+      previousIds: this.previousSectionIds.size,
     };
   }
 }
-

@@ -14,10 +14,9 @@ import { SectionHeaderComponent, EmptyStateComponent } from '../../shared';
   standalone: true,
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './quotation-section.component.html',
-  styleUrl: './quotation-section.scss'
+  styleUrl: './quotation-section.scss',
 })
 export class QuotationSectionComponent extends BaseSectionComponent {
-
   /**
    * Get quote text
    */

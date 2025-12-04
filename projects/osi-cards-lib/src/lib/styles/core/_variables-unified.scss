@@ -8,22 +8,22 @@
 // This file is designed to be imported INSIDE .osi-cards-container { }
 // ===================================================================
 
-@use '../tokens/master' as *;
+@use "../tokens/master" as *;
 
-@import 'variables/colors-unified';
+@import "variables/colors-unified";
 
 // Additional design tokens that extend the theme system
 &,
-&[data-theme='night'],
-&[data-theme='day'] {
-  @include osi-tokens('integration', true);
+&[data-theme="night"],
+&[data-theme="day"] {
+  @include osi-tokens("integration", true);
 }
 
 // ===== HIGH CONTRAST MODE SUPPORT =====
 @media (prefers-contrast: high) {
   &,
-  &[data-theme='night'],
-  &[data-theme='day'] {
+  &[data-theme="night"],
+  &[data-theme="day"] {
     @include osi-tokens-high-contrast();
   }
 }
@@ -31,8 +31,8 @@
 // Windows High Contrast Mode detection
 @media (forced-colors: active) {
   &,
-  &[data-theme='night'],
-  &[data-theme='day'] {
+  &[data-theme="night"],
+  &[data-theme="day"] {
     @include osi-tokens-forced-colors();
   }
 }
@@ -41,8 +41,8 @@
 // Reduced motion support for accessibility
 @media (prefers-reduced-motion: reduce) {
   &,
-  &[data-theme='night'],
-  &[data-theme='day'] {
+  &[data-theme="night"],
+  &[data-theme="day"] {
     @include osi-tokens-reduced-motion();
   }
 

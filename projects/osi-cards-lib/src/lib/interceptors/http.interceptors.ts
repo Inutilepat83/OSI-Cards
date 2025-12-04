@@ -26,7 +26,7 @@ export function createLoadingInterceptor(
 
     return next(req).pipe(
       tap(() => onLoadingChange(false)),
-      catchError(error => {
+      catchError((error) => {
         onLoadingChange(false);
         return throwError(() => error);
       })
@@ -68,7 +68,7 @@ export function createCachingInterceptor(
     }
 
     return next(req).pipe(
-      tap(response => {
+      tap((response) => {
         cache.set(req.url, response);
       })
     );
@@ -78,26 +78,19 @@ export function createCachingInterceptor(
 /**
  * 4. Retry Interceptor Factory
  */
-export function createRetryInterceptor(
-  count = 3,
-  delay = 1000
-): HttpInterceptorFn {
+export function createRetryInterceptor(count = 3, delay = 1000): HttpInterceptorFn {
   return (req, next) => {
-    return next(req).pipe(
-      retry({ count, delay })
-    );
+    return next(req).pipe(retry({ count, delay }));
   };
 }
 
 /**
  * 5. Headers Interceptor Factory
  */
-export function createHeadersInterceptor(
-  headers: Record<string, string>
-): HttpInterceptorFn {
+export function createHeadersInterceptor(headers: Record<string, string>): HttpInterceptorFn {
   return (req, next) => {
     const modifiedReq = req.clone({
-      setHeaders: headers
+      setHeaders: headers,
     });
 
     return next(modifiedReq);
@@ -107,17 +100,15 @@ export function createHeadersInterceptor(
 /**
  * Auth Token Interceptor Factory
  */
-export function createAuthTokenInterceptor(
-  getToken: () => string | null
-): HttpInterceptorFn {
+export function createAuthTokenInterceptor(getToken: () => string | null): HttpInterceptorFn {
   return (req, next) => {
     const token = getToken();
 
     if (token) {
       const modifiedReq = req.clone({
         setHeaders: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
       return next(modifiedReq);
     }
@@ -137,11 +128,11 @@ export function createLoggingInterceptor(
     log(`HTTP ${req.method} ${req.url}`);
 
     return next(req).pipe(
-      tap(response => {
+      tap((response) => {
         const elapsed = Date.now() - started;
         log(`HTTP ${req.method} ${req.url} - ${elapsed}ms`, response);
       }),
-      catchError(error => {
+      catchError((error) => {
         const elapsed = Date.now() - started;
         log(`HTTP ${req.method} ${req.url} - ERROR after ${elapsed}ms`, error);
         return throwError(() => error);
@@ -149,4 +140,3 @@ export function createLoggingInterceptor(
     );
   };
 }
-

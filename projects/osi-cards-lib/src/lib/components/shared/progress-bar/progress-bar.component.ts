@@ -24,7 +24,7 @@ export type ProgressBarVariant = 'default' | 'success' | 'warning' | 'error' | '
   imports: [CommonModule],
   templateUrl: './progress-bar.component.html',
   styleUrl: './progress-bar.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProgressBarComponent {
   /**
@@ -136,8 +136,7 @@ export class ProgressBarComponent {
       [`progress-fill--${this.variant}`]: true,
       'progress-fill--animated': this.animated,
       'progress-fill--striped': this.striped,
-      'progress-fill--shimmer': this.shimmer
+      'progress-fill--shimmer': this.shimmer,
     };
   }
 }
-

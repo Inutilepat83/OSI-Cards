@@ -2,8 +2,8 @@
 // BRAND COLORS SECTION - Original Product Style
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/typography-system' as typo;
+@use "../../../styles/components/sections/design-system" as *;
+@use "../../../styles/components/sections/typography-system" as typo;
 
 :host {
   display: block;
@@ -64,13 +64,7 @@
   transition: transform 300ms var(--ease-out);
 
   &.invalid {
-    background: repeating-linear-gradient(
-      45deg,
-      #ccc,
-      #ccc 10px,
-      #999 10px,
-      #999 20px
-    );
+    background: repeating-linear-gradient(45deg, #ccc, #ccc 10px, #999 10px, #999 20px);
   }
 }
 
@@ -89,7 +83,7 @@
 
 .value {
   font-size: 0.7rem;
-  font-family: 'Monaco', 'Courier New', monospace;
+  font-family: "Monaco", "Courier New", monospace;
   color: var(--muted-foreground);
 }
 

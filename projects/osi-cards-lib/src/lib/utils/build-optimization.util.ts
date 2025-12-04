@@ -73,10 +73,7 @@ export function detectDuplicates(stats: any): string[] {
 /**
  * Calculate tree-shaking efficiency
  */
-export function calculateTreeShakingEfficiency(
-  originalSize: number,
-  shakdenSize: number
-): number {
+export function calculateTreeShakingEfficiency(originalSize: number, shakdenSize: number): number {
   return ((originalSize - shakdenSize) / originalSize) * 100;
 }
 
@@ -96,4 +93,3 @@ export function getBundleRecommendations(analysis: BundleAnalysis): string[] {
 
   return recommendations;
 }
-

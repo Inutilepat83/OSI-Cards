@@ -20,7 +20,11 @@ export interface TemplateOptions {
 /**
  * Simple template interpolation
  */
-export function template(str: string, data: Record<string, any>, options: TemplateOptions = {}): string {
+export function template(
+  str: string,
+  data: Record<string, any>,
+  options: TemplateOptions = {}
+): string {
   const { delimiter = ['{{', '}}'], escape = false } = options;
   const [start, end] = delimiter;
 
@@ -37,7 +41,10 @@ export function template(str: string, data: Record<string, any>, options: Templa
 /**
  * Compile template to function
  */
-export function compile(str: string, options: TemplateOptions = {}): (data: Record<string, any>) => string {
+export function compile(
+  str: string,
+  options: TemplateOptions = {}
+): (data: Record<string, any>) => string {
   return (data) => template(str, data, options);
 }
 
@@ -83,10 +90,12 @@ export function html(strings: TemplateStringsArray, ...values: any[]): string {
 /**
  * SQL tagged template (for safe queries)
  */
-export function sql(strings: TemplateStringsArray, ...values: any[]): { text: string; values: any[] } {
+export function sql(
+  strings: TemplateStringsArray,
+  ...values: any[]
+): { text: string; values: any[] } {
   const text = strings.reduce((result, str, i) => {
     return result + str + (i < values.length ? `$${i + 1}` : '');
   }, '');
   return { text, values };
 }
-

@@ -69,7 +69,7 @@ const MAX_LIFT_PX = 2.1; // Increased for more visible effect
 const BASE_GLOW_BLUR = 10; // Increased for more visible glow
 const MAX_GLOW_BLUR_OFFSET = 5; // Increased for more spread
 const BASE_GLOW_OPACITY = 0.25; // Increased for more visible effect
-const MAX_GLOW_OPACITY_OFFSET = 0.20; // Increased for more visible changes
+const MAX_GLOW_OPACITY_OFFSET = 0.2; // Increased for more visible changes
 const MAX_REFLECTION_OPACITY = 0.25; // Increased for more visible reflection
 const SMOOTHING_FACTOR = 0.08; // Smooth interpolation that follows mouse cursor (lower = softer, less reactive)
 const MAX_TILT_ANGLE = 15; // Maximum tilt angle in degrees
@@ -93,7 +93,7 @@ interface ElementCache {
  * interpolated to create a natural, responsive feel.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MagneticTiltService implements OnDestroy {
   private tiltCalculationsSubject = new BehaviorSubject<TiltCalculations>({
@@ -101,7 +101,7 @@ export class MagneticTiltService implements OnDestroy {
     rotateY: 0,
     glowBlur: BASE_GLOW_BLUR,
     glowOpacity: BASE_GLOW_OPACITY,
-    reflectionOpacity: 0
+    reflectionOpacity: 0,
   });
 
   /**
@@ -115,7 +115,8 @@ export class MagneticTiltService implements OnDestroy {
   // Performance: cache element dimensions to avoid repeated getBoundingClientRect calls
   private elementCache: Map<HTMLElement, ElementCache> = new Map<HTMLElement, ElementCache>();
   private rafId: number | null = null;
-  private pendingUpdate: { mousePosition: MousePosition; element: HTMLElement | null } | null = null;
+  private pendingUpdate: { mousePosition: MousePosition; element: HTMLElement | null } | null =
+    null;
   private lastCalculations: TiltCalculations | null = null;
   // Current smoothed values for interpolation
   private currentRotateY: number = 0;
@@ -261,15 +262,23 @@ export class MagneticTiltService implements OnDestroy {
     this.currentRotateY = this.lerp(this.currentRotateY, targetRotateY, SMOOTHING_FACTOR);
     this.currentRotateX = this.lerp(this.currentRotateX, targetRotateX, SMOOTHING_FACTOR);
     this.currentGlowBlur = this.lerp(this.currentGlowBlur, targetGlowBlur, SMOOTHING_FACTOR);
-    this.currentGlowOpacity = this.lerp(this.currentGlowOpacity, targetGlowOpacity, SMOOTHING_FACTOR);
-    this.currentReflectionOpacity = this.lerp(this.currentReflectionOpacity, targetReflectionOpacity, SMOOTHING_FACTOR);
+    this.currentGlowOpacity = this.lerp(
+      this.currentGlowOpacity,
+      targetGlowOpacity,
+      SMOOTHING_FACTOR
+    );
+    this.currentReflectionOpacity = this.lerp(
+      this.currentReflectionOpacity,
+      targetReflectionOpacity,
+      SMOOTHING_FACTOR
+    );
 
     const newCalculations: TiltCalculations = {
       rotateY: this.currentRotateY,
       rotateX: this.currentRotateX,
       glowBlur: this.currentGlowBlur,
       glowOpacity: this.currentGlowOpacity,
-      reflectionOpacity: this.currentReflectionOpacity
+      reflectionOpacity: this.currentReflectionOpacity,
     };
 
     // Always emit for smooth continuous updates
@@ -313,22 +322,34 @@ export class MagneticTiltService implements OnDestroy {
     const reflectionDiff = Math.abs(this.currentReflectionOpacity - this.targetReflectionOpacity);
 
     // Continue smoothing if there's any significant difference
-    if (rotateYDiff > threshold || rotateXDiff > threshold ||
-        glowBlurDiff > threshold || glowOpacityDiff > threshold ||
-        reflectionDiff > threshold) {
+    if (
+      rotateYDiff > threshold ||
+      rotateXDiff > threshold ||
+      glowBlurDiff > threshold ||
+      glowOpacityDiff > threshold ||
+      reflectionDiff > threshold
+    ) {
       // Continue smoothing towards latest targets
       this.currentRotateY = this.lerp(this.currentRotateY, this.targetRotateY, SMOOTHING_FACTOR);
       this.currentRotateX = this.lerp(this.currentRotateX, this.targetRotateX, SMOOTHING_FACTOR);
       this.currentGlowBlur = this.lerp(this.currentGlowBlur, this.targetGlowBlur, SMOOTHING_FACTOR);
-      this.currentGlowOpacity = this.lerp(this.currentGlowOpacity, this.targetGlowOpacity, SMOOTHING_FACTOR);
-      this.currentReflectionOpacity = this.lerp(this.currentReflectionOpacity, this.targetReflectionOpacity, SMOOTHING_FACTOR);
+      this.currentGlowOpacity = this.lerp(
+        this.currentGlowOpacity,
+        this.targetGlowOpacity,
+        SMOOTHING_FACTOR
+      );
+      this.currentReflectionOpacity = this.lerp(
+        this.currentReflectionOpacity,
+        this.targetReflectionOpacity,
+        SMOOTHING_FACTOR
+      );
 
       const newCalculations: TiltCalculations = {
         rotateY: this.currentRotateY,
         rotateX: this.currentRotateX,
         glowBlur: this.currentGlowBlur,
         glowOpacity: this.currentGlowOpacity,
-        reflectionOpacity: this.currentReflectionOpacity
+        reflectionOpacity: this.currentReflectionOpacity,
       };
 
       this.lastCalculations = newCalculations;
@@ -351,7 +372,7 @@ export class MagneticTiltService implements OnDestroy {
     const cached = this.elementCache.get(element);
 
     // Use cache if recent (within CACHE_DURATION ms)
-    if (cached && (now - cached.lastUpdate) < this.CACHE_DURATION) {
+    if (cached && now - cached.lastUpdate < this.CACHE_DURATION) {
       return cached;
     }
 
@@ -365,7 +386,7 @@ export class MagneticTiltService implements OnDestroy {
       halfH: rect.height / 2,
       maxAngleY: MAX_TILT_ANGLE, // Use constant max angle for consistent behavior
       maxAngleX: MAX_TILT_ANGLE, // Use constant max angle for consistent behavior
-      lastUpdate: now
+      lastUpdate: now,
     };
 
     this.elementCache.set(element, cache);
@@ -452,12 +473,13 @@ export class MagneticTiltService implements OnDestroy {
 
         // Optimized cubic ease-out - avoid Math.pow() for better performance
         const t = 1 - progress;
-        const easeOut = 1 - (t * t * t); // t³ instead of Math.pow(t, 3)
+        const easeOut = 1 - t * t * t; // t³ instead of Math.pow(t, 3)
 
         this.currentRotateY = startRotateY * (1 - easeOut);
         this.currentRotateX = startRotateX * (1 - easeOut);
         this.currentGlowBlur = BASE_GLOW_BLUR + (startGlowBlur - BASE_GLOW_BLUR) * (1 - easeOut);
-        this.currentGlowOpacity = BASE_GLOW_OPACITY + (startGlowOpacity - BASE_GLOW_OPACITY) * (1 - easeOut);
+        this.currentGlowOpacity =
+          BASE_GLOW_OPACITY + (startGlowOpacity - BASE_GLOW_OPACITY) * (1 - easeOut);
         this.currentReflectionOpacity = startReflectionOpacity * (1 - easeOut);
 
         const currentCalculations: TiltCalculations = {
@@ -465,7 +487,7 @@ export class MagneticTiltService implements OnDestroy {
           rotateX: this.currentRotateX,
           glowBlur: this.currentGlowBlur,
           glowOpacity: this.currentGlowOpacity,
-          reflectionOpacity: this.currentReflectionOpacity
+          reflectionOpacity: this.currentReflectionOpacity,
         };
 
         this.lastCalculations = currentCalculations;
@@ -494,7 +516,7 @@ export class MagneticTiltService implements OnDestroy {
             rotateX: 0,
             glowBlur: BASE_GLOW_BLUR,
             glowOpacity: BASE_GLOW_OPACITY,
-            reflectionOpacity: 0
+            reflectionOpacity: 0,
           });
           this.resetRafId = null;
         }
@@ -520,7 +542,7 @@ export class MagneticTiltService implements OnDestroy {
         rotateX: 0,
         glowBlur: BASE_GLOW_BLUR,
         glowOpacity: BASE_GLOW_OPACITY,
-        reflectionOpacity: 0
+        reflectionOpacity: 0,
       });
     }
   }
@@ -550,12 +572,3 @@ export class MagneticTiltService implements OnDestroy {
     }
   }
 }
-
-
-
-
-
-
-
-
-

@@ -25,10 +25,10 @@ import { CardSection } from '../models/card.model';
  * Responsive breakpoint definitions
  */
 export interface ResponsiveBreakpoints {
-  mobile: number;      // < 640px
-  tablet: number;      // < 1024px
-  desktop: number;     // < 1440px
-  wide: number;        // >= 1440px
+  mobile: number; // < 640px
+  tablet: number; // < 1024px
+  desktop: number; // < 1440px
+  wide: number; // >= 1440px
 }
 
 /**
@@ -146,7 +146,7 @@ const DEFAULT_COMPACTION_CONFIG: CompactionConfig = {
  */
 const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
   // Headers and Overviews (full width)
-  'overview': {
+  overview: {
     type: 'overview',
     preferredColumns: { mobile: 1, tablet: 2, desktop: 4, wide: 4 },
     minColumns: 1,
@@ -158,7 +158,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
     isHeader: true,
     isFooter: false,
   },
-  'hero': {
+  hero: {
     type: 'hero',
     preferredColumns: { mobile: 1, tablet: 2, desktop: 4, wide: 4 },
     minColumns: 1,
@@ -172,7 +172,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
   },
 
   // Charts and Analytics (prefer 2 columns, can adapt)
-  'chart': {
+  chart: {
     type: 'chart',
     preferredColumns: { mobile: 1, tablet: 2, desktop: 2, wide: 2 },
     minColumns: 1,
@@ -185,7 +185,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
     isHeader: false,
     isFooter: false,
   },
-  'analytics': {
+  analytics: {
     type: 'analytics',
     preferredColumns: { mobile: 1, tablet: 2, desktop: 2, wide: 3 },
     minColumns: 1,
@@ -197,7 +197,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
     isHeader: false,
     isFooter: false,
   },
-  'stats': {
+  stats: {
     type: 'stats',
     preferredColumns: { mobile: 1, tablet: 1, desktop: 2, wide: 2 },
     minColumns: 1,
@@ -211,7 +211,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
   },
 
   // Maps (prefer square-ish)
-  'map': {
+  map: {
     type: 'map',
     preferredColumns: { mobile: 1, tablet: 2, desktop: 2, wide: 2 },
     minColumns: 1,
@@ -264,7 +264,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
   },
 
   // Lists and Text (flexible, prefer 1-2 columns)
-  'list': {
+  list: {
     type: 'list',
     preferredColumns: { mobile: 1, tablet: 1, desktop: 1, wide: 1 },
     minColumns: 1,
@@ -276,7 +276,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
     isHeader: false,
     isFooter: false,
   },
-  'info': {
+  info: {
     type: 'info',
     preferredColumns: { mobile: 1, tablet: 1, desktop: 1, wide: 2 },
     minColumns: 1,
@@ -288,7 +288,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
     isHeader: false,
     isFooter: false,
   },
-  'text': {
+  text: {
     type: 'text',
     preferredColumns: { mobile: 1, tablet: 2, desktop: 2, wide: 2 },
     minColumns: 1,
@@ -302,7 +302,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
   },
 
   // Timeline and Events (prefer horizontal on wider screens)
-  'timeline': {
+  timeline: {
     type: 'timeline',
     preferredColumns: { mobile: 1, tablet: 2, desktop: 3, wide: 4 },
     minColumns: 1,
@@ -314,7 +314,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
     isHeader: false,
     isFooter: false,
   },
-  'event': {
+  event: {
     type: 'event',
     preferredColumns: { mobile: 1, tablet: 1, desktop: 2, wide: 2 },
     minColumns: 1,
@@ -328,7 +328,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
   },
 
   // News and Articles
-  'news': {
+  news: {
     type: 'news',
     preferredColumns: { mobile: 1, tablet: 1, desktop: 1, wide: 1 },
     minColumns: 1,
@@ -340,7 +340,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
     isHeader: false,
     isFooter: false,
   },
-  'article': {
+  article: {
     type: 'article',
     preferredColumns: { mobile: 1, tablet: 2, desktop: 2, wide: 3 },
     minColumns: 1,
@@ -354,7 +354,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
   },
 
   // Products and Media
-  'product': {
+  product: {
     type: 'product',
     preferredColumns: { mobile: 1, tablet: 1, desktop: 2, wide: 2 },
     minColumns: 1,
@@ -367,7 +367,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
     isHeader: false,
     isFooter: false,
   },
-  'gallery': {
+  gallery: {
     type: 'gallery',
     preferredColumns: { mobile: 1, tablet: 2, desktop: 3, wide: 3 },
     minColumns: 1,
@@ -379,7 +379,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
     isHeader: false,
     isFooter: false,
   },
-  'video': {
+  video: {
     type: 'video',
     preferredColumns: { mobile: 1, tablet: 2, desktop: 2, wide: 2 },
     minColumns: 1,
@@ -394,7 +394,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
   },
 
   // Tables and Data
-  'table': {
+  table: {
     type: 'table',
     preferredColumns: { mobile: 1, tablet: 2, desktop: 3, wide: 4 },
     minColumns: 1,
@@ -420,7 +420,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
   },
 
   // Forms
-  'form': {
+  form: {
     type: 'form',
     preferredColumns: { mobile: 1, tablet: 2, desktop: 2, wide: 2 },
     minColumns: 1,
@@ -434,7 +434,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
   },
 
   // FAQ
-  'faq': {
+  faq: {
     type: 'faq',
     preferredColumns: { mobile: 1, tablet: 1, desktop: 2, wide: 2 },
     minColumns: 1,
@@ -448,7 +448,7 @@ const SECTION_TYPE_PREFERENCES: Record<string, SectionLayoutPreferences> = {
   },
 
   // Default fallback
-  'default': {
+  default: {
     type: 'default',
     preferredColumns: { mobile: 1, tablet: 1, desktop: 1, wide: 2 },
     minColumns: 1,
@@ -512,12 +512,7 @@ export class SectionLayoutIntelligence {
     const estimatedHeight = this.estimateHeight(section, colSpan, content);
 
     // Determine layout orientation
-    const isHorizontal = this.shouldUseHorizontalLayout(
-      section,
-      colSpan,
-      content,
-      breakpoint
-    );
+    const isHorizontal = this.shouldUseHorizontalLayout(section, colSpan, content, breakpoint);
 
     // Calculate compacity score
     const compacityScore = this.calculateCompacityScore(
@@ -528,12 +523,7 @@ export class SectionLayoutIntelligence {
     );
 
     // Generate reason
-    const reason = this.generateLayoutReason(
-      preferences,
-      content,
-      breakpoint,
-      colSpan
-    );
+    const reason = this.generateLayoutReason(preferences, content, breakpoint, colSpan);
 
     return {
       colSpan,
@@ -560,16 +550,16 @@ export class SectionLayoutIntelligence {
     const content: any = section.content || {};
 
     // Count text length
-    const textLength = (content.text || '').length +
-                      (content.title || section.title || '').length +
-                      (content.description || '').length;
+    const textLength =
+      (content.text || '').length +
+      (content.title || section.title || '').length +
+      (content.description || '').length;
 
     // Count items
     const itemCount = (content.items || []).length;
 
     // Count images
-    const imageCount = (content.images || []).length +
-                      (content.image ? 1 : 0);
+    const imageCount = (content.images || []).length + (content.image ? 1 : 0);
 
     // Determine characteristics
     const isTextHeavy = textLength > 500 || itemCount > 10;
@@ -582,9 +572,7 @@ export class SectionLayoutIntelligence {
       (itemCount > 5 && itemCount < 15);
 
     const prefersVertical =
-      section.type === 'list' ||
-      section.type === 'contact-card' ||
-      itemCount > 15;
+      section.type === 'list' || section.type === 'contact-card' || itemCount > 15;
 
     // Width requirements
     const minWidth = this.calculateMinWidth(section);
@@ -678,9 +666,8 @@ export class SectionLayoutIntelligence {
     const remaining = availableColumns - currentSpan;
 
     // Check if any pending section fits in remaining space
-    const minPendingSpan = pendingSections.length > 0
-      ? Math.min(...pendingSections.map(s => s.colSpan || 1))
-      : 1;
+    const minPendingSpan =
+      pendingSections.length > 0 ? Math.min(...pendingSections.map((s) => s.colSpan || 1)) : 1;
 
     // If remaining space can't fit any pending section, try shrinking
     if (remaining > 0 && remaining < minPendingSpan && currentSpan > preferences.minColumns) {
@@ -794,7 +781,7 @@ export class SectionLayoutIntelligence {
     if (preferences.preferCompact) score += 15;
 
     // Penalty for wasted space
-    const contentVolume = content.textLength + (content.itemCount * 50) + (content.imageCount * 100);
+    const contentVolume = content.textLength + content.itemCount * 50 + content.imageCount * 100;
     const sectionVolume = colSpan * height;
     const utilization = contentVolume / sectionVolume;
     if (utilization > 0.7) score += 10;
@@ -848,30 +835,30 @@ export class SectionLayoutIntelligence {
    */
   private getBaseHeight(type: string): number {
     const heights: Record<string, number> = {
-      'overview': 300,
-      'hero': 400,
-      'chart': 250,
-      'analytics': 220,
-      'stats': 180,
-      'map': 300,
+      overview: 300,
+      hero: 400,
+      chart: 250,
+      analytics: 220,
+      stats: 180,
+      map: 300,
       'contact-card': 200,
       'profile-card': 250,
       'network-card': 180,
-      'list': 200,
-      'info': 180,
-      'text': 200,
-      'timeline': 250,
-      'event': 200,
-      'news': 180,
-      'article': 300,
-      'product': 250,
-      'gallery': 300,
-      'video': 280,
-      'table': 300,
+      list: 200,
+      info: 180,
+      text: 200,
+      timeline: 250,
+      event: 200,
+      news: 180,
+      article: 300,
+      product: 250,
+      gallery: 300,
+      video: 280,
+      table: 300,
       'data-grid': 350,
-      'form': 300,
-      'faq': 200,
-      'default': 200,
+      form: 300,
+      faq: 200,
+      default: 200,
     };
 
     return heights[type.toLowerCase()] || heights['default']!;
@@ -885,12 +872,12 @@ export class SectionLayoutIntelligence {
 
     // Some sections have minimum width requirements
     const minWidths: Record<string, number> = {
-      'chart': 300,
-      'map': 280,
-      'table': 350,
+      chart: 300,
+      map: 280,
+      table: 350,
       'data-grid': 400,
-      'video': 320,
-      'gallery': 300,
+      video: 320,
+      gallery: 300,
     };
 
     return minWidths[type.toLowerCase()] || 260;
@@ -954,8 +941,8 @@ export function getPreferredColumns(
  * Quick helper to check if section should be compact
  */
 export function shouldBeCompact(sectionType: string): boolean {
-  const preferences = SECTION_TYPE_PREFERENCES[sectionType.toLowerCase()] ||
-                     SECTION_TYPE_PREFERENCES['default']!;
+  const preferences =
+    SECTION_TYPE_PREFERENCES[sectionType.toLowerCase()] || SECTION_TYPE_PREFERENCES['default']!;
   return preferences.preferCompact;
 }
 
@@ -963,8 +950,8 @@ export function shouldBeCompact(sectionType: string): boolean {
  * Quick helper to get placement priority
  */
 export function getPlacementPriority(sectionType: string): number {
-  const preferences = SECTION_TYPE_PREFERENCES[sectionType.toLowerCase()] ||
-                     SECTION_TYPE_PREFERENCES['default']!;
+  const preferences =
+    SECTION_TYPE_PREFERENCES[sectionType.toLowerCase()] || SECTION_TYPE_PREFERENCES['default']!;
   return preferences.placementPriority;
 }
 
@@ -978,4 +965,3 @@ export function sortByPlacementPriority(sections: CardSection[]): CardSection[] 
     return priorityB - priorityA;
   });
 }
-

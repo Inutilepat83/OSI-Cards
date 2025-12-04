@@ -80,7 +80,7 @@ import {
   Zap,
   // Provider token and class
   LUCIDE_ICONS,
-  LucideIconProvider
+  LucideIconProvider,
 } from 'lucide-angular';
 
 const ICONS = {
@@ -160,12 +160,12 @@ const ICONS = {
   Type,
   Wrench,
   XCircle,
-  Zap
+  Zap,
 };
 
 @NgModule({
   imports: [LucideAngularModule.pick(ICONS)],
-  exports: [LucideAngularModule]
+  exports: [LucideAngularModule],
 })
 export class LucideIconsModule {}
 
@@ -174,28 +174,10 @@ export class LucideIconsModule {}
  * This is used by provideOSICards() to register icons at the application level
  */
 export function provideLucideIcons(): Provider[] {
-  return [
-    { provide: LUCIDE_ICONS, useFactory: () => new LucideIconProvider(ICONS) }
-  ];
+  return [{ provide: LUCIDE_ICONS, useFactory: () => new LucideIconProvider(ICONS) }];
 }
 
 /**
  * Export the ICONS object for direct use
  */
 export { ICONS as OSI_CARDS_ICONS };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

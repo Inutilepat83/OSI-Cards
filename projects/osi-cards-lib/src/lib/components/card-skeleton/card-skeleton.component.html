@@ -1,5 +1,5 @@
-<div 
-  class="card-skeleton" 
+<div
+  class="card-skeleton"
   [class.card-skeleton--fullscreen]="isFullscreen"
   [class.card-skeleton--animated]="animated"
   role="status"
@@ -15,10 +15,10 @@
       <div class="skeleton-title-placeholder skeleton-shimmer"></div>
     </ng-template>
   </div>
-  
+
   <!-- Typed Section Skeletons -->
   <div class="card-skeleton-sections" *ngIf="effectiveSections.length > 0">
-    <div 
+    <div
       *ngFor="let section of effectiveSections; let i = index; trackBy: trackBySection"
       [ngClass]="getSectionClasses(section)"
       [style.animation-delay.ms]="i * 100"
@@ -28,10 +28,9 @@
         <div class="skeleton-line skeleton-line--title skeleton-shimmer"></div>
         <div class="skeleton-line skeleton-line--subtitle skeleton-shimmer" *ngIf="section.title"></div>
       </div>
-      
+
       <!-- Section Content (varies by type) -->
       <ng-container [ngSwitch]="section.type">
-        
         <!-- Analytics Section Skeleton -->
         <div *ngSwitchCase="'analytics'" class="skeleton-section-content skeleton-section-content--analytics">
           <div class="skeleton-metrics-grid">
@@ -42,12 +41,12 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Chart Section Skeleton -->
         <div *ngSwitchCase="'chart'" class="skeleton-section-content skeleton-section-content--chart">
           <div class="skeleton-chart skeleton-shimmer"></div>
         </div>
-        
+
         <!-- Contact Card Section Skeleton -->
         <div *ngSwitchCase="'contact-card'" class="skeleton-section-content skeleton-section-content--contact">
           <div class="skeleton-contacts-grid">
@@ -60,7 +59,7 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Network Card Section Skeleton -->
         <div *ngSwitchCase="'network-card'" class="skeleton-section-content skeleton-section-content--network">
           <div class="skeleton-network">
@@ -69,14 +68,14 @@
             <div class="skeleton-line skeleton-line--connections skeleton-shimmer"></div>
           </div>
         </div>
-        
+
         <!-- Map Section Skeleton -->
         <div *ngSwitchCase="'map'" class="skeleton-section-content skeleton-section-content--map">
           <div class="skeleton-map skeleton-shimmer">
             <div class="skeleton-map-marker"></div>
           </div>
         </div>
-        
+
         <!-- Event Section Skeleton -->
         <div *ngSwitchCase="'event'" class="skeleton-section-content skeleton-section-content--event">
           <div class="skeleton-events">
@@ -89,7 +88,7 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Product Section Skeleton -->
         <div *ngSwitchCase="'product'" class="skeleton-section-content skeleton-section-content--product">
           <div class="skeleton-products-grid">
@@ -100,7 +99,7 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Overview Section Skeleton -->
         <div *ngSwitchCase="'overview'" class="skeleton-section-content skeleton-section-content--overview">
           <div class="skeleton-overview-rows">
@@ -110,7 +109,7 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Financials Section Skeleton -->
         <div *ngSwitchCase="'financials'" class="skeleton-section-content skeleton-section-content--financials">
           <div class="skeleton-financials-grid">
@@ -121,7 +120,7 @@
             </div>
           </div>
         </div>
-        
+
         <!-- List Section Skeleton -->
         <div *ngSwitchCase="'list'" class="skeleton-section-content skeleton-section-content--list">
           <div class="skeleton-list">
@@ -131,7 +130,7 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Quotation Section Skeleton -->
         <div *ngSwitchCase="'quotation'" class="skeleton-section-content skeleton-section-content--quotation">
           <div class="skeleton-quote">
@@ -141,7 +140,7 @@
             <div class="skeleton-line skeleton-line--author skeleton-shimmer"></div>
           </div>
         </div>
-        
+
         <!-- Solutions Section Skeleton -->
         <div *ngSwitchCase="'solutions'" class="skeleton-section-content skeleton-section-content--solutions">
           <div class="skeleton-solutions">
@@ -151,21 +150,20 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Generic/Default Section Skeleton -->
         <div *ngSwitchDefault class="skeleton-section-content">
           <div class="skeleton-line skeleton-shimmer" *ngFor="let line of range(3); trackBy: trackByIndex"></div>
         </div>
-        
       </ng-container>
     </div>
   </div>
-  
+
   <!-- Empty State -->
   <div class="card-skeleton-empty" *ngIf="effectiveSections.length === 0 && sectionCount === 0">
     <div class="skeleton-line skeleton-line--empty skeleton-shimmer"></div>
   </div>
-  
+
   <!-- Screen Reader Text -->
   <span class="sr-only">Loading card content, please wait...</span>
 </div>

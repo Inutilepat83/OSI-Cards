@@ -148,7 +148,7 @@ export function findLayoutGaps<T extends OptimizableLayoutSection>(
   if (sections.length === 0) return gaps;
 
   // Build a grid map
-  const maxTop = Math.max(...sections.map(s => s.top + (s.height || 100)));
+  const maxTop = Math.max(...sections.map((s) => s.top + (s.height || 100)));
   const rowHeight = opts.gridGap + 100; // Approximate row height
   const rows = Math.ceil(maxTop / rowHeight);
 
@@ -210,7 +210,7 @@ export function fillLayoutGaps<T extends FullyOptimizableSection>(
 
   for (const gap of gaps) {
     // Find sections that could expand to fill this gap
-    const expandable = result.filter(s => {
+    const expandable = result.filter((s) => {
       const sCol = parseColumnFromLeft(s.left || '0%', opts.maxColumns);
       const sRow = Math.floor(s.top / (opts.gridGap + 100));
 
@@ -230,7 +230,10 @@ export function fillLayoutGaps<T extends FullyOptimizableSection>(
         if (idx !== -1) {
           result[idx] = {
             ...toExpand,
-            colSpan: Math.min(toExpand.colSpan + gap.width, toExpand.preferredColumns?.max || opts.maxColumns),
+            colSpan: Math.min(
+              toExpand.colSpan + gap.width,
+              toExpand.preferredColumns?.max || opts.maxColumns
+            ),
           } as T;
           gapsFilled++;
         }
@@ -260,7 +263,7 @@ export function optimizeColumnSpans<T extends FullyOptimizableSection>(
   const sorted = [...result].sort((a, b) => (b.priority || 0) - (a.priority || 0));
 
   for (const section of sorted) {
-    const idx = result.findIndex(s => s.key === section.key);
+    const idx = result.findIndex((s) => s.key === section.key);
     if (idx === -1) continue;
 
     const current = result[idx];
@@ -272,7 +275,11 @@ export function optimizeColumnSpans<T extends FullyOptimizableSection>(
     // Try to use ideal span if possible
     const idealSpan = preferred.ideal || current.colSpan;
 
-    if (idealSpan !== current.colSpan && idealSpan >= (preferred.min || 1) && idealSpan <= (preferred.max || opts.maxColumns)) {
+    if (
+      idealSpan !== current.colSpan &&
+      idealSpan >= (preferred.min || 1) &&
+      idealSpan <= (preferred.max || opts.maxColumns)
+    ) {
       result[idx] = { ...current, colSpan: idealSpan } as T;
       spanChanges++;
     }
@@ -390,7 +397,9 @@ export function optimizeLayout<T extends FullyOptimizableSection>(
     const improvement = ((prevHeight - newHeight) / prevHeight) * 100;
 
     if (opts.debug) {
-      console.log(`[UnifiedOptimizer] Iteration ${iteration + 1}: ${prevHeight}px -> ${newHeight}px (${improvement.toFixed(2)}% improvement)`);
+      console.log(
+        `[UnifiedOptimizer] Iteration ${iteration + 1}: ${prevHeight}px -> ${newHeight}px (${improvement.toFixed(2)}% improvement)`
+      );
     }
 
     if (improvement < opts.minImprovementThreshold) {
@@ -430,7 +439,7 @@ function parseColumnFromLeft(left: string, maxColumns: number): number {
 
 function calculateLayoutHeight<T extends OptimizableLayoutSection>(sections: T[]): number {
   if (sections.length === 0) return 0;
-  return Math.max(...sections.map(s => s.top + (s.height || 100)));
+  return Math.max(...sections.map((s) => s.top + (s.height || 100)));
 }
 
 function findAdjacentSections<T extends OptimizableLayoutSection>(
@@ -441,7 +450,7 @@ function findAdjacentSections<T extends OptimizableLayoutSection>(
   rowHeight: number
 ): string[] {
   return sections
-    .filter(s => {
+    .filter((s) => {
       const sRow = Math.floor(s.top / rowHeight);
       const sCol = parseColumnFromLeft(s.left || '0%', 4);
 
@@ -450,7 +459,7 @@ function findAdjacentSections<T extends OptimizableLayoutSection>(
         (sCol + s.colSpan === gapColumn || sCol === gapColumn + gapWidth)
       );
     })
-    .map(s => s.key);
+    .map((s) => s.key);
 }
 
 // ============================================================================
@@ -491,4 +500,3 @@ export function analyzeLayout<T extends FullyOptimizableSection>(
 
   return { gaps, estimatedImprovement };
 }
-

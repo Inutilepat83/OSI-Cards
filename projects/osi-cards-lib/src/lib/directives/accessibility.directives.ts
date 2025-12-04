@@ -16,7 +16,15 @@
  * 10. ReducedMotion
  */
 
-import { Directive, ElementRef, HostBinding, HostListener, Input, OnInit, Renderer2 } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  HostBinding,
+  HostListener,
+  Input,
+  OnInit,
+  Renderer2,
+} from '@angular/core';
 
 /**
  * 1. ARIA Label Directive
@@ -220,7 +228,10 @@ export class RoleButtonDirective implements OnInit {
   standalone: true,
 })
 export class ScreenReaderOnlyDirective implements OnInit {
-  constructor(private elementRef: ElementRef, private renderer: Renderer2) {}
+  constructor(
+    private elementRef: ElementRef,
+    private renderer: Renderer2
+  ) {}
 
   ngOnInit(): void {
     const styles = {
@@ -284,4 +295,3 @@ export const ACCESSIBILITY_DIRECTIVES = [
   HighContrastDirective,
   ReducedMotionDirective,
 ];
-

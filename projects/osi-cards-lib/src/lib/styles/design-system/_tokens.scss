@@ -17,26 +17,26 @@
   --osi-spacing-3xl: 48px;
 
   // Section-specific spacing (More compact by default)
-  --osi-section-header-gap: var(--osi-spacing-sm);   // 8px (was 12px)
-  --osi-section-padding: var(--osi-spacing-sm);      // 8px (was 12px)
-  --osi-section-gap: var(--osi-spacing-md);          // 12px (was 16px)
-  --osi-item-padding: var(--osi-spacing-sm);         // 8px (was 12px)
-  --osi-item-gap: var(--osi-spacing-xs);             // 4px (was 8px)
-  --osi-element-gap: 2px;                             // 2px (was 4px)
+  --osi-section-header-gap: var(--osi-spacing-sm); // 8px (was 12px)
+  --osi-section-padding: var(--osi-spacing-sm); // 8px (was 12px)
+  --osi-section-gap: var(--osi-spacing-md); // 12px (was 16px)
+  --osi-item-padding: var(--osi-spacing-sm); // 8px (was 12px)
+  --osi-item-gap: var(--osi-spacing-xs); // 4px (was 8px)
+  --osi-element-gap: 2px; // 2px (was 4px)
 
   // ═══════════════════════════════════════════════════════════════════
   // TYPOGRAPHY SCALE
   // ═══════════════════════════════════════════════════════════════════
 
   // Font Sizes (rem-based for accessibility)
-  --osi-text-xs: 0.75rem;      // 12px
-  --osi-text-sm: 0.875rem;     // 14px
-  --osi-text-base: 1rem;       // 16px
-  --osi-text-md: 1.125rem;     // 18px
-  --osi-text-lg: 1.25rem;      // 20px
-  --osi-text-xl: 1.5rem;       // 24px
-  --osi-text-2xl: 1.875rem;    // 30px
-  --osi-text-3xl: 2.25rem;     // 36px
+  --osi-text-xs: 0.75rem; // 12px
+  --osi-text-sm: 0.875rem; // 14px
+  --osi-text-base: 1rem; // 16px
+  --osi-text-md: 1.125rem; // 18px
+  --osi-text-lg: 1.25rem; // 20px
+  --osi-text-xl: 1.5rem; // 24px
+  --osi-text-2xl: 1.875rem; // 30px
+  --osi-text-3xl: 2.25rem; // 36px
 
   // Font Weights
   --osi-font-normal: 400;
@@ -62,41 +62,41 @@
   // ═══════════════════════════════════════════════════════════════════
 
   // Surface Colors (Layering)
-  --osi-surface: hsl(0, 0%, 10%);          // #1a1a1a
-  --osi-surface-raised: hsl(0, 0%, 15%);   // #262626
-  --osi-surface-hover: hsl(0, 0%, 20%);    // #333333
-  --osi-surface-subtle: hsl(0, 0%, 12%);   // #1f1f1f
+  --osi-surface: hsl(0, 0%, 10%); // #1a1a1a
+  --osi-surface-raised: hsl(0, 0%, 15%); // #262626
+  --osi-surface-hover: hsl(0, 0%, 20%); // #333333
+  --osi-surface-subtle: hsl(0, 0%, 12%); // #1f1f1f
 
   // Text Colors
-  --osi-foreground: hsl(0, 0%, 95%);       // #f2f2f2
+  --osi-foreground: hsl(0, 0%, 95%); // #f2f2f2
   --osi-foreground-strong: hsl(0, 0%, 100%); // #ffffff
   --osi-muted-foreground: hsl(0, 0%, 60%); // #999999
   --osi-disabled-foreground: hsl(0, 0%, 40%); // #666666
 
   // Brand/Accent Colors
-  --osi-accent: hsl(25, 100%, 50%);        // #ff7900
+  --osi-accent: hsl(25, 100%, 50%); // #ff7900
   --osi-accent-bright: hsl(25, 100%, 60%); // #ffa347
-  --osi-accent-muted: hsl(25, 50%, 40%);   // #bf7400
+  --osi-accent-muted: hsl(25, 50%, 40%); // #bf7400
 
   // Status Colors
-  --osi-success: hsl(142, 71%, 45%);       // #22c55e
+  --osi-success: hsl(142, 71%, 45%); // #22c55e
   --osi-success-bg: hsla(142, 71%, 45%, 0.15);
   --osi-success-bright: hsl(142, 71%, 55%);
 
-  --osi-error: hsl(0, 84%, 60%);           // #ef4444
+  --osi-error: hsl(0, 84%, 60%); // #ef4444
   --osi-error-bg: hsla(0, 84%, 60%, 0.15);
   --osi-error-bright: hsl(0, 84%, 70%);
 
-  --osi-warning: hsl(45, 93%, 47%);        // #eab308
+  --osi-warning: hsl(45, 93%, 47%); // #eab308
   --osi-warning-bg: hsla(45, 93%, 47%, 0.15);
   --osi-warning-bright: hsl(45, 93%, 57%);
 
-  --osi-info: hsl(221, 83%, 53%);          // #3b82f6
+  --osi-info: hsl(221, 83%, 53%); // #3b82f6
   --osi-info-bg: hsla(221, 83%, 53%, 0.15);
   --osi-info-bright: hsl(221, 83%, 63%);
 
   // Border Colors
-  --osi-border: hsla(0, 0%, 100%, 0.2);    // rgba(255, 255, 255, 0.2)
+  --osi-border: hsla(0, 0%, 100%, 0.2); // rgba(255, 255, 255, 0.2)
   --osi-border-muted: hsla(0, 0%, 100%, 0.06);
   --osi-border-strong: hsla(0, 0%, 100%, 0.35);
 
@@ -156,25 +156,25 @@
   --osi-grid-column-gap: var(--osi-grid-gap);
 
   // Common grid column widths
-  --osi-grid-min-small: 140px;   // Analytics cards
-  --osi-grid-min-medium: 200px;  // Contact cards
-  --osi-grid-min-large: 300px;   // Gallery items
+  --osi-grid-min-small: 140px; // Analytics cards
+  --osi-grid-min-medium: 200px; // Contact cards
+  --osi-grid-min-large: 300px; // Gallery items
 
   // ═══════════════════════════════════════════════════════════════════
   // COMPACT SIZES (for min-heights, etc.)
   // ═══════════════════════════════════════════════════════════════════
-  --osi-card-min-height: 90px;         // Compact metric cards (was 120px)
-  --osi-card-min-height-large: 120px;  // Larger cards when needed
+  --osi-card-min-height: 90px; // Compact metric cards (was 120px)
+  --osi-card-min-height-large: 120px; // Larger cards when needed
 }
 
 // ═══════════════════════════════════════════════════════════════════
 // RESPONSIVE BREAKPOINTS
 // ═══════════════════════════════════════════════════════════════════
 
-$osi-breakpoint-sm: 640px;   // Small devices
-$osi-breakpoint-md: 768px;   // Medium devices
-$osi-breakpoint-lg: 1024px;  // Large devices
-$osi-breakpoint-xl: 1280px;  // Extra large devices
+$osi-breakpoint-sm: 640px; // Small devices
+$osi-breakpoint-md: 768px; // Medium devices
+$osi-breakpoint-lg: 1024px; // Large devices
+$osi-breakpoint-xl: 1280px; // Extra large devices
 
 // Responsive mixins
 @mixin mobile {
@@ -235,4 +235,3 @@ $osi-breakpoint-xl: 1280px;  // Extra large devices
     --osi-duration-slow: 0ms;
   }
 }
-

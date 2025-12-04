@@ -115,4 +115,3 @@ export function getOffsetLimit(page: number, pageSize: number): { offset: number
 export function getPageFromOffset(offset: number, pageSize: number): number {
   return Math.floor(offset / pageSize) + 1;
 }
-

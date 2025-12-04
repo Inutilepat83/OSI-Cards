@@ -28,9 +28,10 @@ export function setCookie(name: string, value: string, options: CookieOptions = 
   let cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
 
   if (options.expires) {
-    const expires = typeof options.expires === 'number'
-      ? new Date(Date.now() + options.expires * 24 * 60 * 60 * 1000)
-      : options.expires;
+    const expires =
+      typeof options.expires === 'number'
+        ? new Date(Date.now() + options.expires * 24 * 60 * 60 * 1000)
+        : options.expires;
     cookie += `; expires=${expires.toUTCString()}`;
   }
 
@@ -62,7 +63,10 @@ export function getCookie(name: string): string | null {
 /**
  * Delete cookie
  */
-export function deleteCookie(name: string, options: Pick<CookieOptions, 'path' | 'domain'> = {}): void {
+export function deleteCookie(
+  name: string,
+  options: Pick<CookieOptions, 'path' | 'domain'> = {}
+): void {
   setCookie(name, '', {
     ...options,
     expires: new Date(0),
@@ -82,7 +86,7 @@ export function hasCookie(name: string): boolean {
 export function getAllCookies(): Record<string, string> {
   const cookies: Record<string, string> = {};
 
-  document.cookie.split(';').forEach(cookie => {
+  document.cookie.split(';').forEach((cookie) => {
     const [name, value] = cookie.trim().split('=');
     if (name) {
       cookies[decodeURIComponent(name)] = decodeURIComponent(value || '');
@@ -97,6 +101,5 @@ export function getAllCookies(): Record<string, string> {
  */
 export function clearAllCookies(): void {
   const cookies = getAllCookies();
-  Object.keys(cookies).forEach(name => deleteCookie(name));
+  Object.keys(cookies).forEach((name) => deleteCookie(name));
 }
-

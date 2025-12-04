@@ -2,8 +2,8 @@
 // LIST SECTION - Clean & Modern
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/typography-system' as typo;
+@use "../../../styles/components/sections/design-system" as *;
+@use "../../../styles/components/sections/typography-system" as typo;
 
 :host {
   display: block;
@@ -112,7 +112,7 @@
 
 // Description
 .list-description {
-  @include body-text('small');
+  @include body-text("small");
   color: var(--muted-foreground);
   margin: 0;
   line-height: 1.5;

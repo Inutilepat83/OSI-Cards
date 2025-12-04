@@ -30,16 +30,18 @@ export function exportToCSV(data: any[], filename: string): void {
   const headers = Object.keys(data[0]);
   const rows = [headers];
 
-  data.forEach(row => {
-    rows.push(headers.map(header => {
-      const value = row[header];
-      return typeof value === 'string' && value.includes(',')
-        ? `"${value}"`
-        : String(value ?? '');
-    }));
+  data.forEach((row) => {
+    rows.push(
+      headers.map((header) => {
+        const value = row[header];
+        return typeof value === 'string' && value.includes(',')
+          ? `"${value}"`
+          : String(value ?? '');
+      })
+    );
   });
 
-  const csv = rows.map(row => row.join(',')).join('\n');
+  const csv = rows.map((row) => row.join(',')).join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   downloadBlob(blob, filename);
 }
@@ -64,7 +66,7 @@ function objectToXML(obj: any, rootName: string): string {
     let result = '';
 
     if (Array.isArray(data)) {
-      data.forEach(item => {
+      data.forEach((item) => {
         result += `${spaces}<item>\n${toXML(item, indent + 1)}${spaces}</item>\n`;
       });
     } else if (typeof data === 'object' && data !== null) {
@@ -129,17 +131,17 @@ function downloadBlob(blob: Blob, filename: string): void {
 export function exportTableToCSV(table: HTMLTableElement, filename: string): void {
   const rows: string[][] = [];
 
-  table.querySelectorAll('tr').forEach(tr => {
+  table.querySelectorAll('tr').forEach((tr) => {
     const row: string[] = [];
-    tr.querySelectorAll('td, th').forEach(cell => {
+    tr.querySelectorAll('td, th').forEach((cell) => {
       row.push(cell.textContent || '');
     });
     rows.push(row);
   });
 
-  const csv = rows.map(row => row.map(cell =>
-    cell.includes(',') ? `"${cell}"` : cell
-  ).join(',')).join('\n');
+  const csv = rows
+    .map((row) => row.map((cell) => (cell.includes(',') ? `"${cell}"` : cell)).join(','))
+    .join('\n');
 
   const blob = new Blob([csv], { type: 'text/csv' });
   downloadBlob(blob, filename);
@@ -155,12 +157,11 @@ export function exportToExcelCSV(data: any[], filename: string): void {
   const headers = Object.keys(data[0]);
   const rows = [headers];
 
-  data.forEach(row => {
-    rows.push(headers.map(header => String(row[header] ?? '')));
+  data.forEach((row) => {
+    rows.push(headers.map((header) => String(row[header] ?? '')));
   });
 
-  const csv = BOM + rows.map(row => row.join(',')).join('\n');
+  const csv = BOM + rows.map((row) => row.join(',')).join('\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   downloadBlob(blob, filename);
 }
-

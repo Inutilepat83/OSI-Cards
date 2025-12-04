@@ -81,8 +81,12 @@ export class EventEmitter<Events extends Record<string, unknown>> {
       while (this.log.length > this.maxLogSize) this.log.shift();
     }
 
-    this.handlers.get(eventName)?.forEach(handler => {
-      try { handler(processedData); } catch (e) { console.error(e); }
+    this.handlers.get(eventName)?.forEach((handler) => {
+      try {
+        handler(processedData);
+      } catch (e) {
+        console.error(e);
+      }
     });
 
     this.subjects.get(eventName)?.next(processedData);
@@ -102,7 +106,7 @@ export class EventEmitter<Events extends Record<string, unknown>> {
 
   destroy(): void {
     this.handlers.clear();
-    this.subjects.forEach(s => s.complete());
+    this.subjects.forEach((s) => s.complete());
     this.subjects.clear();
   }
 }

@@ -180,7 +180,7 @@ export class ConfigurationManager {
   /** Select a specific config path */
   select<K extends keyof OSICardsConfig>(key: K): Observable<OSICardsConfig[K]> {
     return this.config$.pipe(
-      map(config => config[key]),
+      map((config) => config[key]),
       distinctUntilChanged()
     );
   }
@@ -193,7 +193,7 @@ export class ConfigurationManager {
   /** Observe feature flag */
   observeFeature(feature: keyof FeatureFlags): Observable<boolean> {
     return this.config$.pipe(
-      map(config => config.features[feature]),
+      map((config) => config.features[feature]),
       distinctUntilChanged()
     );
   }
@@ -333,6 +333,3 @@ export function initConfiguration(config: Partial<OSICardsConfig>): Configuratio
   instance = new ConfigurationManager(config);
   return instance;
 }
-
-
-

@@ -1,6 +1,30 @@
-import { Component, ElementRef, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, inject, Injector, isDevMode, PLATFORM_ID, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  AfterViewInit,
+  inject,
+  Injector,
+  isDevMode,
+  PLATFORM_ID,
+  ViewEncapsulation,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AICardConfig, CardSection, CardField, CardItem, CardAction, LegacyCardAction } from '../../models';
+import {
+  AICardConfig,
+  CardSection,
+  CardField,
+  CardItem,
+  CardAction,
+  LegacyCardAction,
+} from '../../models';
 import { Subject, takeUntil, fromEvent, interval } from 'rxjs';
 import { MagneticTiltService, MousePosition, TiltCalculations } from '../../services';
 import { IconService, SectionNormalizationService } from '../../services';
@@ -22,12 +46,25 @@ export interface CardFieldInteractionEvent {
   metadata?: Record<string, unknown>;
 }
 
-export type StreamingStage = 'idle' | 'thinking' | 'streaming' | 'complete' | 'aborted' | 'error' | undefined;
+export type StreamingStage =
+  | 'idle'
+  | 'thinking'
+  | 'streaming'
+  | 'complete'
+  | 'aborted'
+  | 'error'
+  | undefined;
 
 @Component({
   selector: 'app-ai-card-renderer',
   standalone: true,
-  imports: [CommonModule, LucideIconsModule, CardHeaderComponent, CardSectionListComponent, CardActionsComponent],
+  imports: [
+    CommonModule,
+    LucideIconsModule,
+    CardHeaderComponent,
+    CardSectionListComponent,
+    CardActionsComponent,
+  ],
   templateUrl: './ai-card-renderer.component.html',
   styleUrls: ['../../styles/bundles/_ai-card.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,10 +73,10 @@ export type StreamingStage = 'idle' | 'thinking' | 'streaming' | 'complete' | 'a
     trigger('messageAnimation', [
       transition('* => *', [
         style({ opacity: 0, transform: 'translateY(10px)' }),
-        animate('0.4s ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-      ])
-    ])
-  ]
+        animate('0.4s ease-out', style({ opacity: 1, transform: 'translateY(0)' })),
+      ]),
+    ]),
+  ],
 })
 export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy {
   private _cardConfig: AICardConfig | undefined;
@@ -88,7 +125,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     'Asking Siri nicely...',
     'Reading tea leaves...',
     'Channeling inner wisdom...',
-    'Waiting for the right moment...'
+    'Waiting for the right moment...',
   ];
 
   /**
@@ -122,7 +159,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     const sectionsHash = this.hashSections(this._cardConfig.sections);
-    const shouldForceStructural = sectionsHash !== this.previousSectionsHash || this._updateSource === 'liveEdit';
+    const shouldForceStructural =
+      sectionsHash !== this.previousSectionsHash || this._updateSource === 'liveEdit';
     this.refreshProcessedSections(shouldForceStructural);
     this.cdr.markForCheck();
   }
@@ -163,7 +201,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
 
     // Create a lightweight hash based on section metadata
     const hash = sections
-      .map(section => {
+      .map((section) => {
         const fieldCount = section.fields?.length ?? 0;
         const itemCount = section.items?.length ?? 0;
         return `${section.id || ''}|${section.title || ''}|${section.type || ''}|f${fieldCount}|i${itemCount}`;
@@ -174,7 +212,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     let result = 0;
     for (let i = 0; i < hash.length; i++) {
       const char = hash.charCodeAt(i);
-      result = ((result << 5) - result) + char;
+      result = (result << 5) - result + char;
       result = result & result; // Convert to 32-bit integer
     }
 
@@ -219,7 +257,10 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       return this.streamingStage;
     }
     // Show loading state by default when no data is available
-    if (this.showLoadingByDefault && (!this.processedSections || this.processedSections.length === 0)) {
+    if (
+      this.showLoadingByDefault &&
+      (!this.processedSections || this.processedSections.length === 0)
+    ) {
       return 'thinking';
     }
     return undefined;
@@ -239,10 +280,19 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     return this._changeType;
   }
   @Output() fieldInteraction = new EventEmitter<CardFieldInteractionEvent>();
-  @Output() cardInteraction = new EventEmitter<{ action: string, card: AICardConfig }>();
+  @Output() cardInteraction = new EventEmitter<{ action: string; card: AICardConfig }>();
   @Output() fullscreenToggle = new EventEmitter<boolean>();
-  @Output() agentAction = new EventEmitter<{ action: CardAction; card: AICardConfig; agentId?: string; context?: Record<string, unknown> }>();
-  @Output() questionAction = new EventEmitter<{ action: CardAction; card: AICardConfig; question?: string }>();
+  @Output() agentAction = new EventEmitter<{
+    action: CardAction;
+    card: AICardConfig;
+    agentId?: string;
+    context?: Record<string, unknown>;
+  }>();
+  @Output() questionAction = new EventEmitter<{
+    action: CardAction;
+    card: AICardConfig;
+    question?: string;
+  }>();
   @Output() export = new EventEmitter<void>();
 
   @ViewChild('cardContainer') cardContainer!: ElementRef<HTMLElement>;
@@ -311,24 +361,24 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
             id: 'industry',
             label: 'Industry',
             value: 'Technology',
-            type: 'text'
+            type: 'text',
           },
           {
             id: 'employees',
             label: 'Employees',
             value: '250',
-            type: 'text'
-          }
-        ]
-      }
+            type: 'text',
+          },
+        ],
+      },
     ],
     actions: [
       {
         id: 'view-details',
         label: 'View Details',
-        variant: 'primary'
-      }
-    ]
+        variant: 'primary',
+      },
+    ],
   };
 
   ngOnInit(): void {
@@ -383,7 +433,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
                 '--tilt-y': `${pendingCalculations.rotateY}deg`,
                 '--glow-blur': `${pendingCalculations.glowBlur}px`,
                 '--glow-color': `rgba(255,121,0,${pendingCalculations.glowOpacity})`,
-                '--reflection-opacity': pendingCalculations.reflectionOpacity
+                '--reflection-opacity': pendingCalculations.reflectionOpacity,
               };
               this.cdr.markForCheck();
             }
@@ -487,7 +537,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
    * Sanitizes section title for use as HTML ID
    */
   private sanitizeSectionId(title: string): string {
-    return title.toLowerCase()
+    return title
+      .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '');
   }
@@ -496,7 +547,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     // Create 20 smaller particles for smoother mouse following trail
     this.particles = Array.from({ length: 20 }, () => ({
       transform: 'translate(0, 0) scale(1)',
-      opacity: 0.5
+      opacity: 0.5,
     }));
   }
 
@@ -563,10 +614,10 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     this.particles = this.particles.map((_particle, index) => {
       // Create a trailing effect with exponential easing
       const delay = index * 0.08;
-      const followStrength = 0.4 - (delay * 0.3); // Particles further back follow less
+      const followStrength = 0.4 - delay * 0.3; // Particles further back follow less
       const spiralRadius = 15 + (index % 4) * 8;
       const angle = (index * 137.5) % 360; // Golden angle for spiral distribution
-      const angleRad = angle * Math.PI / 180;
+      const angleRad = (angle * Math.PI) / 180;
 
       // Calculate spiral offset
       const spiralX = Math.cos(angleRad) * spiralRadius;
@@ -579,12 +630,13 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       // Opacity based on distance and position
       const baseOpacity = 0.5;
       const distanceOpacity = normalizedDistance * 0.3;
-      const positionOpacity = (1 - Math.abs(index - this.particles.length / 2) / this.particles.length) * 0.2;
+      const positionOpacity =
+        (1 - Math.abs(index - this.particles.length / 2) / this.particles.length) * 0.2;
       const finalOpacity = Math.min(1, baseOpacity + distanceOpacity + positionOpacity);
 
       return {
         transform: `translate(${targetX}px, ${targetY}px) scale(${0.8 + normalizedDistance * 0.4})`,
-        opacity: finalOpacity
+        opacity: finalOpacity,
       };
     });
 
@@ -594,7 +646,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   private resetParticles(): void {
     this.particles = this.particles.map(() => ({
       transform: 'translate(0, 0) scale(1)',
-      opacity: 0.5
+      opacity: 0.5,
     }));
     this.cdr.markForCheck();
   }
@@ -655,7 +707,10 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     this.mousePosition = { x: event.clientX, y: event.clientY };
     if (this.tiltContainerRef?.nativeElement) {
       // Smooth enter: calculate tilt immediately for responsive feel
-      this.magneticTiltService.calculateTilt(this.mousePosition, this.tiltContainerRef.nativeElement);
+      this.magneticTiltService.calculateTilt(
+        this.mousePosition,
+        this.tiltContainerRef.nativeElement
+      );
     }
     // No need for markForCheck - tilt updates are handled via RAF in subscription
   }
@@ -689,7 +744,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         if (this.pendingMouseMove && this.tiltContainerRef?.nativeElement) {
           this.mousePosition = {
             x: this.pendingMouseMove.clientX,
-            y: this.pendingMouseMove.clientY
+            y: this.pendingMouseMove.clientY,
           };
           this.magneticTiltService.calculateTilt(
             this.mousePosition,
@@ -716,7 +771,9 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   /**
    * Type guard to check if action has email property
    */
-  private hasEmailProperty(action: CardAction): action is CardAction & { email: NonNullable<LegacyCardAction['email']> } {
+  private hasEmailProperty(
+    action: CardAction
+  ): action is CardAction & { email: NonNullable<LegacyCardAction['email']> } {
     return 'email' in action && action.email !== undefined;
   }
 
@@ -748,7 +805,12 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
           return;
 
         case 'agent':
-          const agentEvent: { action: CardAction; card: AICardConfig; agentId?: string; context?: Record<string, unknown> } = {
+          const agentEvent: {
+            action: CardAction;
+            card: AICardConfig;
+            agentId?: string;
+            context?: Record<string, unknown>;
+          } = {
             action: actionObj,
             card: this.cardConfig,
           };
@@ -766,7 +828,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
           this.questionAction.emit({
             action: actionObj,
             card: this.cardConfig,
-            question: actionObj.question || actionObj.label
+            question: actionObj.question || actionObj.label,
           });
           return;
 
@@ -794,11 +856,13 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     const action = actionObj.action || actionObj.label;
     this.cardInteraction.emit({
       action: action,
-      card: this.cardConfig
+      card: this.cardConfig,
     });
   }
 
-  private handleEmailAction(action: CardAction & { email: NonNullable<LegacyCardAction['email']> }): void {
+  private handleEmailAction(
+    action: CardAction & { email: NonNullable<LegacyCardAction['email']> }
+  ): void {
     // Validate that email configuration exists
     if (!action.email) {
       console.error('Email action requires email configuration');
@@ -814,7 +878,9 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         return;
       }
       if (!email.contact.name || !email.contact.email || !email.contact.role) {
-        console.error('Mail action requires email.contact.name, email.contact.email, and email.contact.role');
+        console.error(
+          'Mail action requires email.contact.name, email.contact.email, and email.contact.role'
+        );
         return;
       }
       if (!email.subject) {
@@ -934,7 +1000,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   get hasLoadingOverlay(): boolean {
-    const isStreamingOrThinking = this.streamingStage === 'streaming' || this.streamingStage === 'thinking';
+    const isStreamingOrThinking =
+      this.streamingStage === 'streaming' || this.streamingStage === 'thinking';
     const hasNoProcessedSections = !this.processedSections || this.processedSections.length === 0;
     const hasNoConfigSections = !this.cardConfig?.sections || this.cardConfig.sections.length === 0;
     return isStreamingOrThinking && hasNoProcessedSections && hasNoConfigSections;
@@ -943,11 +1010,9 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   trackSection = (_index: number, section: CardSection): string =>
     section.id ?? `${section.title}-${_index}`;
 
-  trackField = (_index: number, field: CardField): string =>
-    field.id ?? `${field.label}-${_index}`;
+  trackField = (_index: number, field: CardField): string => field.id ?? `${field.label}-${_index}`;
 
-  trackItem = (_index: number, item: CardItem): string =>
-    item.id ?? `${item.title}-${_index}`;
+  trackItem = (_index: number, item: CardItem): string => item.id ?? `${item.title}-${_index}`;
 
   trackAction = (_index: number, action: CardAction): string =>
     action.id ?? `${action.label}-${_index}`;
@@ -959,7 +1024,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
           const fieldEvent: CardFieldInteractionEvent = {
             field: event.field,
             action: 'click',
-            sectionTitle: (event.metadata?.['sectionTitle'] as string | undefined) ?? event.section.title,
+            sectionTitle:
+              (event.metadata?.['sectionTitle'] as string | undefined) ?? event.section.title,
           };
           if (event.metadata) {
             fieldEvent.metadata = event.metadata;
@@ -972,7 +1038,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
           const itemEvent: CardFieldInteractionEvent = {
             item: event.item,
             action: 'click',
-            sectionTitle: (event.metadata?.['sectionTitle'] as string | undefined) ?? event.section.title,
+            sectionTitle:
+              (event.metadata?.['sectionTitle'] as string | undefined) ?? event.section.title,
           };
           if (event.metadata) {
             itemEvent.metadata = event.metadata;
@@ -982,10 +1049,11 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         break;
       case 'action':
         if (event.action && this.cardConfig) {
-          const identifier = event.action.action ?? event.action.id ?? event.action.label ?? 'section-action';
+          const identifier =
+            event.action.action ?? event.action.id ?? event.action.label ?? 'section-action';
           this.cardInteraction.emit({
             action: identifier,
-            card: this.cardConfig
+            card: this.cardConfig,
           });
         }
         break;
@@ -997,7 +1065,6 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   onLayoutChange(_layout: MasonryLayoutInfo): void {
     // Layout change handler - kept for potential future use
   }
-
 
   getActionIconName(action: CardAction): string {
     // If icon is explicitly provided, use it
@@ -1098,12 +1165,17 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   getActionButtonClasses(action: CardAction): string {
-    const primaryClasses = 'bg-[var(--color-brand)] text-white font-semibold border-0 hover:bg-[var(--color-brand)]/90 hover:shadow-lg hover:shadow-[var(--color-brand)]/40 active:scale-95';
-    const outlineClasses = 'text-[var(--color-brand)] border border-[var(--color-brand)] bg-transparent font-semibold hover:bg-[var(--color-brand)]/10 active:scale-95';
-    const ghostClasses = 'text-[var(--color-brand)] bg-transparent border-0 font-semibold hover:bg-[var(--color-brand)]/10 active:scale-95';
+    const primaryClasses =
+      'bg-[var(--color-brand)] text-white font-semibold border-0 hover:bg-[var(--color-brand)]/90 hover:shadow-lg hover:shadow-[var(--color-brand)]/40 active:scale-95';
+    const outlineClasses =
+      'text-[var(--color-brand)] border border-[var(--color-brand)] bg-transparent font-semibold hover:bg-[var(--color-brand)]/10 active:scale-95';
+    const ghostClasses =
+      'text-[var(--color-brand)] bg-transparent border-0 font-semibold hover:bg-[var(--color-brand)]/10 active:scale-95';
 
     // Use variant field if present, otherwise check legacy type field for styling
-    const styleVariant = action.variant || (action.type === 'primary' || action.type === 'secondary' ? action.type : 'primary');
+    const styleVariant =
+      action.variant ||
+      (action.type === 'primary' || action.type === 'secondary' ? action.type : 'primary');
 
     switch (styleVariant) {
       case 'secondary':
@@ -1137,13 +1209,15 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       this.normalizedSectionCache = new WeakMap<CardSection, CardSection>();
     }
 
-    const normalizedSections = sections.map(section => this.getNormalizedSection(section, requiresStructuralRebuild));
+    const normalizedSections = sections.map((section) =>
+      this.getNormalizedSection(section, requiresStructuralRebuild)
+    );
     const orderedSections = requiresStructuralRebuild
       ? this.sectionNormalizationService.sortSections(normalizedSections)
       : this.mergeWithPreviousOrder(normalizedSections);
 
     this.processedSections = orderedSections;
-    this.sectionOrderKeys = orderedSections.map(section => this.getSectionKey(section));
+    this.sectionOrderKeys = orderedSections.map((section) => this.getSectionKey(section));
     this.previousSectionsHash = nextHash;
 
     // Removed excessive logging for performance
@@ -1170,12 +1244,12 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     const nextByKey = new Map<string, CardSection>();
-    normalizedSections.forEach(section => {
+    normalizedSections.forEach((section) => {
       nextByKey.set(this.getSectionKey(section), section);
     });
 
     const ordered: CardSection[] = [];
-    this.sectionOrderKeys.forEach(key => {
+    this.sectionOrderKeys.forEach((key) => {
       const match = nextByKey.get(key);
       if (match) {
         ordered.push(match);
@@ -1183,7 +1257,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       }
     });
 
-    nextByKey.forEach(section => ordered.push(section));
+    nextByKey.forEach((section) => ordered.push(section));
     return ordered;
   }
 
@@ -1224,22 +1298,22 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       if (!animationBuilder) {
         console.warn(
           '⚠️ OSI Cards Library: Animation providers may not be configured.\n' +
-          'The library requires animation providers to function correctly.\n' +
-          'Please add provideOSICards() to your app.config.ts providers array:\n\n' +
-          '  import { provideOSICards } from \'osi-cards-lib\';\n' +
-          '  export const appConfig: ApplicationConfig = {\n' +
-          '    providers: [provideOSICards(), ...]\n' +
-          '  };\n\n' +
-          'See https://github.com/Inutilepat83/OSI-Cards for more information.'
+            'The library requires animation providers to function correctly.\n' +
+            'Please add provideOSICards() to your app.config.ts providers array:\n\n' +
+            "  import { provideOSICards } from 'osi-cards-lib';\n" +
+            '  export const appConfig: ApplicationConfig = {\n' +
+            '    providers: [provideOSICards(), ...]\n' +
+            '  };\n\n' +
+            'See https://github.com/Inutilepat83/OSI-Cards for more information.'
         );
       }
     } catch (error) {
       // AnimationBuilder injection failed - likely no animations provider
       console.warn(
         '⚠️ OSI Cards Library: Animation providers are not configured.\n' +
-        'The library requires animation providers for proper functionality.\n' +
-        'Please add provideOSICards() to your app.config.ts providers array.\n' +
-        'See documentation for setup instructions.'
+          'The library requires animation providers for proper functionality.\n' +
+          'Please add provideOSICards() to your app.config.ts providers array.\n' +
+          'See documentation for setup instructions.'
       );
     }
   }

@@ -47,7 +47,7 @@ export class UtilityRegistry {
   getCategory(category: string): any[] {
     const names = this.categories.get(category);
     if (!names) return [];
-    return Array.from(names).map(name => this.utilities.get(name));
+    return Array.from(names).map((name) => this.utilities.get(name));
   }
 
   getAllCategories(): string[] {
@@ -93,10 +93,7 @@ export function curry(fn: Function): any {
 /**
  * Partial application
  */
-export function partial(
-  fn: Function,
-  ...partialArgs: any[]
-): (...args: any[]) => any {
+export function partial(fn: Function, ...partialArgs: any[]): (...args: any[]) => any {
   return (...args: any[]) => fn(...partialArgs, ...args);
 }
 
@@ -142,14 +139,10 @@ export function tryCatch<T>(fn: () => T, fallback: T): T {
 /**
  * Async safe call
  */
-export async function tryCatchAsync<T>(
-  fn: () => Promise<T>,
-  fallback: T
-): Promise<T> {
+export async function tryCatchAsync<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
   try {
     return await fn();
   } catch {
     return fallback;
   }
 }
-

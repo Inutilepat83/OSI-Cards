@@ -24,7 +24,7 @@ import {
   ChangeDetectionStrategy,
   ViewEncapsulation,
   inject,
-  PLATFORM_ID
+  PLATFORM_ID,
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 
@@ -45,7 +45,7 @@ export interface SkipLinkConfig {
  */
 export const DEFAULT_SKIP_LINKS: SkipLinkConfig[] = [
   { target: '#main-content', label: 'Skip to main content' },
-  { target: '#card-sections', label: 'Skip to card sections' }
+  { target: '#card-sections', label: 'Skip to card sections' },
 ];
 
 @Component({
@@ -60,7 +60,8 @@ export const DEFAULT_SKIP_LINKS: SkipLinkConfig[] = [
           [href]="normalizeTarget(link.target)"
           (click)="handleClick($event, link.target)"
           (keydown.enter)="handleClick($event, link.target)"
-          [attr.aria-label]="link.label + (link.shortcutHint ? ' (' + link.shortcutHint + ')' : '')">
+          [attr.aria-label]="link.label + (link.shortcutHint ? ' (' + link.shortcutHint + ')' : '')"
+        >
           {{ link.label }}
           @if (link.shortcutHint) {
             <span class="skip-link-shortcut">{{ link.shortcutHint }}</span>
@@ -69,76 +70,78 @@ export const DEFAULT_SKIP_LINKS: SkipLinkConfig[] = [
       }
     </nav>
   `,
-  styles: [`
-    .skip-link-nav {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 10000;
-    }
+  styles: [
+    `
+      .skip-link-nav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 10000;
+      }
 
-    .skip-link {
-      position: absolute;
-      top: -9999px;
-      left: -9999px;
-      padding: 0.75rem 1rem;
-      background-color: var(--osi-color-brand, #ff7900);
-      color: white;
-      font-weight: 600;
-      font-size: 0.875rem;
-      text-decoration: none;
-      border-radius: 0 0 var(--osi-border-radius-md, 8px) 0;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      transition: none; /* Instant appearance for accessibility */
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .skip-link:focus,
-    .skip-link:focus-visible {
-      position: fixed;
-      top: 0;
-      left: 0;
-      outline: 3px solid var(--osi-color-focus, #005fcc);
-      outline-offset: 2px;
-    }
-
-    .skip-link:hover {
-      background-color: var(--osi-color-brand-dark, #e66a00);
-    }
-
-    .skip-link-shortcut {
-      font-size: 0.75rem;
-      opacity: 0.8;
-      padding: 0.125rem 0.375rem;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
-    }
-
-    /* High contrast mode support */
-    @media (forced-colors: active) {
       .skip-link {
-        background-color: Highlight;
-        color: HighlightText;
-        border: 2px solid HighlightText;
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+        padding: 0.75rem 1rem;
+        background-color: var(--osi-color-brand, #ff7900);
+        color: white;
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-decoration: none;
+        border-radius: 0 0 var(--osi-border-radius-md, 8px) 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: none; /* Instant appearance for accessibility */
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
       }
 
-      .skip-link:focus {
-        outline: 3px solid HighlightText;
+      .skip-link:focus,
+      .skip-link:focus-visible {
+        position: fixed;
+        top: 0;
+        left: 0;
+        outline: 3px solid var(--osi-color-focus, #005fcc);
+        outline-offset: 2px;
       }
-    }
 
-    /* Reduced motion - instant transitions */
-    @media (prefers-reduced-motion: reduce) {
-      .skip-link {
-        transition: none;
+      .skip-link:hover {
+        background-color: var(--osi-color-brand-dark, #e66a00);
       }
-    }
-  `],
+
+      .skip-link-shortcut {
+        font-size: 0.75rem;
+        opacity: 0.8;
+        padding: 0.125rem 0.375rem;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+      }
+
+      /* High contrast mode support */
+      @media (forced-colors: active) {
+        .skip-link {
+          background-color: Highlight;
+          color: HighlightText;
+          border: 2px solid HighlightText;
+        }
+
+        .skip-link:focus {
+          outline: 3px solid HighlightText;
+        }
+      }
+
+      /* Reduced motion - instant transitions */
+      @media (prefers-reduced-motion: reduce) {
+        .skip-link {
+          transition: none;
+        }
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class SkipLinkComponent {
   private readonly platformId = inject(PLATFORM_ID);
@@ -206,7 +209,7 @@ import { Directive, ElementRef, Input as DirectiveInput, OnInit } from '@angular
 
 @Directive({
   selector: '[appSkipTarget], [osiSkipTarget]',
-  standalone: true
+  standalone: true,
 })
 export class SkipTargetDirective implements OnInit {
   private readonly el = inject(ElementRef);
@@ -233,11 +236,13 @@ export class SkipTargetDirective implements OnInit {
     }
 
     // Add landmark role if not present
-    if (!element.hasAttribute('role') && !['main', 'nav', 'aside', 'header', 'footer', 'section', 'article'].includes(element.tagName.toLowerCase())) {
+    if (
+      !element.hasAttribute('role') &&
+      !['main', 'nav', 'aside', 'header', 'footer', 'section', 'article'].includes(
+        element.tagName.toLowerCase()
+      )
+    ) {
       element.setAttribute('role', 'region');
     }
   }
 }
-
-
-

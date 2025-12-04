@@ -1,0 +1,21 @@
+{
+  "rules": {
+    "@typescript-eslint/no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["**/features/**"],
+            "message": "Features should not import from each other. Use shared module instead.",
+            "allowTypeImports": false
+          },
+          {
+            "group": ["**/app/**"],
+            "importNames": ["*"],
+            "message": "Library should not import from application code"
+          }
+        ]
+      }
+    ]
+  }
+}

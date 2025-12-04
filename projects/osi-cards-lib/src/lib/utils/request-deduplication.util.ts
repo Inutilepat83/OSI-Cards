@@ -160,7 +160,7 @@ export class RequestDeduplicator {
    */
   cancelAll(): void {
     // Clear all timeouts
-    this.timeouts.forEach(timeout => {
+    this.timeouts.forEach((timeout) => {
       clearTimeout(timeout);
     });
 
@@ -242,20 +242,12 @@ export const globalDeduplicator = new RequestDeduplicator();
 export function Deduplicate(options: DeduplicationOptions = {}): MethodDecorator {
   const deduplicator = new RequestDeduplicator();
 
-  return function (
-    target: any,
-    propertyKey: string | symbol,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
     descriptor.value = function (...args: any[]) {
       const key = `${String(propertyKey)}-${JSON.stringify(args)}`;
-      return deduplicator.deduplicate(
-        key,
-        () => originalMethod.apply(this, args),
-        options
-      );
+      return deduplicator.deduplicate(key, () => originalMethod.apply(this, args), options);
     };
 
     return descriptor;
@@ -276,9 +268,7 @@ export function Deduplicate(options: DeduplicationOptions = {}): MethodDecorator
  * });
  * ```
  */
-export function createDeduplicator(
-  defaultOptions: DeduplicationOptions = {}
-): RequestDeduplicator {
+export function createDeduplicator(defaultOptions: DeduplicationOptions = {}): RequestDeduplicator {
   const deduplicator = new RequestDeduplicator();
 
   // Wrap deduplicate to apply default options
@@ -296,4 +286,3 @@ export function createDeduplicator(
 
   return deduplicator;
 }
-

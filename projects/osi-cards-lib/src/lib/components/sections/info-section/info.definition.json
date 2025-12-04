@@ -28,12 +28,29 @@
     "type": "object",
     "properties": {
       "label": { "type": "string", "description": "Field label/key" },
-      "value": { "type": ["string", "number", "boolean", "null"], "description": "Field value" },
-      "icon": { "type": "string", "description": "Icon identifier (emoji or icon name)" },
-      "description": { "type": "string", "description": "Additional field description" },
-      "trend": { "type": "string", "enum": ["up", "down", "stable", "neutral"], "description": "Trend indicator" },
+      "value": {
+        "type": ["string", "number", "boolean", "null"],
+        "description": "Field value"
+      },
+      "icon": {
+        "type": "string",
+        "description": "Icon identifier (emoji or icon name)"
+      },
+      "description": {
+        "type": "string",
+        "description": "Additional field description"
+      },
+      "trend": {
+        "type": "string",
+        "enum": ["up", "down", "stable", "neutral"],
+        "description": "Trend indicator"
+      },
       "change": { "type": "number", "description": "Numeric change value" },
-      "format": { "type": "string", "enum": ["currency", "percentage", "number", "text"], "description": "Value format" }
+      "format": {
+        "type": "string",
+        "enum": ["currency", "percentage", "number", "text"],
+        "description": "Value format"
+      }
     },
     "required": ["label"]
   },
@@ -43,15 +60,51 @@
       "type": "info",
       "description": "Enterprise SaaS company specializing in AI-powered analytics",
       "fields": [
-        { "label": "Industry", "value": "Enterprise Software & AI", "icon": "🏢" },
+        {
+          "label": "Industry",
+          "value": "Enterprise Software & AI",
+          "icon": "🏢"
+        },
         { "label": "Founded", "value": "2018", "icon": "📅" },
-        { "label": "Headquarters", "value": "Austin, Texas, USA", "icon": "📍" },
-        { "label": "Employees", "value": "2,847", "icon": "👥", "trend": "up", "change": 23.5 },
-        { "label": "Annual Revenue", "value": "$127M ARR", "icon": "💰", "trend": "up", "change": 45.2 },
-        { "label": "Funding Stage", "value": "Series C ($85M raised)", "icon": "🚀" },
-        { "label": "Customer Base", "value": "450+ Enterprise Clients", "icon": "🎯" },
-        { "label": "Global Offices", "value": "Austin, London, Singapore, São Paulo", "icon": "🌐" },
-        { "label": "Tech Stack", "value": "Python, Kubernetes, AWS, Snowflake", "icon": "⚙️" },
+        {
+          "label": "Headquarters",
+          "value": "Austin, Texas, USA",
+          "icon": "📍"
+        },
+        {
+          "label": "Employees",
+          "value": "2,847",
+          "icon": "👥",
+          "trend": "up",
+          "change": 23.5
+        },
+        {
+          "label": "Annual Revenue",
+          "value": "$127M ARR",
+          "icon": "💰",
+          "trend": "up",
+          "change": 45.2
+        },
+        {
+          "label": "Funding Stage",
+          "value": "Series C ($85M raised)",
+          "icon": "🚀"
+        },
+        {
+          "label": "Customer Base",
+          "value": "450+ Enterprise Clients",
+          "icon": "🎯"
+        },
+        {
+          "label": "Global Offices",
+          "value": "Austin, London, Singapore, São Paulo",
+          "icon": "🌐"
+        },
+        {
+          "label": "Tech Stack",
+          "value": "Python, Kubernetes, AWS, Snowflake",
+          "icon": "⚙️"
+        },
         { "label": "CEO", "value": "Dr. Maya Chen", "icon": "👤" },
         { "label": "Stock Symbol", "value": "NXUS (NASDAQ)", "icon": "📈" },
         { "label": "Website", "value": "www.nexustech.io", "icon": "🔗" }
@@ -60,9 +113,7 @@
     "minimal": {
       "title": "Quick Info",
       "type": "info",
-      "fields": [
-        { "label": "Status", "value": "Active" }
-      ]
+      "fields": [{ "label": "Status", "value": "Active" }]
     },
     "edgeCases": {
       "title": "Edge Case Testing - Extended Fields",
@@ -70,17 +121,25 @@
       "fields": [
         { "label": "Empty Value", "value": "" },
         { "label": "Null Value", "value": null },
-        { "label": "Very Long Label That Exceeds Normal Display Width", "value": "Short" },
-        { "label": "Short", "value": "This is a very long value that should wrap properly across multiple lines without breaking the layout" },
+        {
+          "label": "Very Long Label That Exceeds Normal Display Width",
+          "value": "Short"
+        },
+        {
+          "label": "Short",
+          "value": "This is a very long value that should wrap properly across multiple lines without breaking the layout"
+        },
         { "label": "Numeric", "value": 12345.6789, "format": "number" },
         { "label": "Boolean True", "value": true },
         { "label": "Boolean False", "value": false },
-        { "label": "Negative Trend", "value": "-15%", "trend": "down", "change": -15.3 },
+        {
+          "label": "Negative Trend",
+          "value": "-15%",
+          "trend": "down",
+          "change": -15.3
+        },
         { "label": "Unicode", "value": "日本語 中文 العربية 한국어 🎉🚀💡" }
       ]
     }
   }
 }
-
-
-

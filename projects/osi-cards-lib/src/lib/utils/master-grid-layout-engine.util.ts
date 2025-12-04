@@ -25,7 +25,10 @@
 
 import { CardSection } from '../models/card.model';
 import { WeightedColumnSelector, ColumnSelectionResult } from './weighted-column-selector.util';
-import { SectionLayoutIntelligence, OptimizedSectionLayout } from './section-layout-intelligence.util';
+import {
+  SectionLayoutIntelligence,
+  OptimizedSectionLayout,
+} from './section-layout-intelligence.util';
 import { UltraCompactLayoutEngine, CompactionResult } from './ultra-compact-layout.util';
 import { generateWidthExpression, generateLeftExpression } from './grid-config.util';
 import { GridPerformanceCache, getGlobalGridCache } from './grid-performance-cache.util';
@@ -199,14 +202,11 @@ export class MasterGridLayoutEngine {
     } as Required<MasterGridConfig>;
 
     // Initialize subsystems
-    this.intelligence = new SectionLayoutIntelligence(
-      this.config.breakpoints,
-      {
-        aggressive: this.config.compaction.enableShrinking,
-        allowShrinking: this.config.compaction.enableShrinking,
-        maxGapTolerance: this.config.compaction.gapTolerance,
-      }
-    );
+    this.intelligence = new SectionLayoutIntelligence(this.config.breakpoints, {
+      aggressive: this.config.compaction.enableShrinking,
+      allowShrinking: this.config.compaction.enableShrinking,
+      maxGapTolerance: this.config.compaction.gapTolerance,
+    });
 
     this.columnSelector = new WeightedColumnSelector({
       gapWeight: this.config.weightedSelection.gapWeight,
@@ -251,7 +251,7 @@ export class MasterGridLayoutEngine {
         sectionCount: sections.length,
         containerWidth,
         forceColumns,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
 
@@ -296,7 +296,7 @@ export class MasterGridLayoutEngine {
         breakpoint,
         gap: effectiveGap,
         enableCaching: this.config.enableCaching,
-        enableCompaction: this.config.enableCompaction
+        enableCompaction: this.config.enableCompaction,
       });
     }
 
@@ -391,9 +391,7 @@ export class MasterGridLayoutEngine {
     const gap = this.lastGapResult?.gap || this.config.gap;
 
     // Calculate max possible columns
-    const maxPossible = Math.floor(
-      (containerWidth + gap) / (this.config.minColumnWidth + gap)
-    );
+    const maxPossible = Math.floor((containerWidth + gap) / (this.config.minColumnWidth + gap));
 
     // Apply responsive rules
     let columns: number;
@@ -403,7 +401,8 @@ export class MasterGridLayoutEngine {
       columns = Math.min(2, maxPossible);
     } else if (breakpoint === 'desktop') {
       columns = Math.min(this.config.maxColumns, maxPossible);
-    } else { // wide
+    } else {
+      // wide
       columns = Math.min(this.config.maxColumns, maxPossible);
     }
 
@@ -561,7 +560,7 @@ export class MasterGridLayoutEngine {
 
     for (let i = 0; i < sections.length; i++) {
       const section = sections[i]!;
-      const pending = sections.slice(i + 1).map(s => s.section);
+      const pending = sections.slice(i + 1).map((s) => s.section);
 
       // Use weighted selector with lookahead
       const placement: ColumnSelectionResult = this.config.enableWeightedSelection
@@ -652,12 +651,10 @@ export class MasterGridLayoutEngine {
       });
     }
 
-    const sectionHeights = new Map(
-      sections.map(s => [s.key, s.estimatedHeight])
-    );
+    const sectionHeights = new Map(sections.map((s) => [s.key, s.estimatedHeight]));
 
     return this.compactor.compact(
-      sections.map(s => s.section),
+      sections.map((s) => s.section),
       columns,
       sectionHeights
     );
@@ -670,8 +667,8 @@ export class MasterGridLayoutEngine {
     compacted: CompactionResult,
     original: PlacedSection[]
   ): PlacedSection[] {
-    return compacted.sections.map(compact => {
-      const orig = original.find(o => o.key === compact.key);
+    return compacted.sections.map((compact) => {
+      const orig = original.find((o) => o.key === compact.key);
       return {
         section: compact.section,
         key: compact.key,
@@ -712,7 +709,7 @@ export class MasterGridLayoutEngine {
    */
   private calculateTotalHeight(sections: PlacedSection[]): number {
     if (sections.length === 0) return 0;
-    return Math.max(...sections.map(s => s.top + s.estimatedHeight));
+    return Math.max(...sections.map((s) => s.top + s.estimatedHeight));
   }
 
   /**
@@ -726,10 +723,7 @@ export class MasterGridLayoutEngine {
     if (totalHeight === 0) return 100;
 
     const totalArea = totalHeight * columns;
-    const usedArea = sections.reduce(
-      (sum, s) => sum + (s.colSpan * s.estimatedHeight),
-      0
-    );
+    const usedArea = sections.reduce((sum, s) => sum + s.colSpan * s.estimatedHeight, 0);
 
     return (usedArea / totalArea) * 100;
   }
@@ -737,16 +731,10 @@ export class MasterGridLayoutEngine {
   /**
    * Count gaps in layout
    */
-  private countGaps(
-    sections: PlacedSection[],
-    columns: number,
-    totalHeight: number
-  ): number {
+  private countGaps(sections: PlacedSection[], columns: number, totalHeight: number): number {
     const resolution = 20; // Grid resolution in pixels
     const rows = Math.ceil(totalHeight / resolution);
-    const grid: boolean[][] = Array.from({ length: rows }, () =>
-      new Array(columns).fill(false)
-    );
+    const grid: boolean[][] = Array.from({ length: rows }, () => new Array(columns).fill(false));
 
     // Mark occupied cells
     for (const section of sections) {
@@ -808,7 +796,7 @@ export class MasterGridLayoutEngine {
    * Calculate column balance score using enhanced visual balance scorer
    */
   private calculateBalanceScore(sections: PlacedSection[], columns: number): number {
-    const balanceableSections = sections.map(s => ({
+    const balanceableSections = sections.map((s) => ({
       column: s.column,
       top: s.top,
       colSpan: s.colSpan,
@@ -874,4 +862,3 @@ export function calculateMasterLayout(
   const engine = new MasterGridLayoutEngine(config);
   return engine.calculateLayout(sections, containerWidth);
 }
-

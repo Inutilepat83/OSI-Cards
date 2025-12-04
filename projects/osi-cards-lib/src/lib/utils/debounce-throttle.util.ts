@@ -126,10 +126,13 @@ export function throttleTrailing<T extends (...args: any[]) => any>(
     } else {
       if (timeoutId) clearTimeout(timeoutId);
 
-      timeoutId = setTimeout(() => {
-        fn(...args);
-        lastRun = Date.now();
-      }, delay - (now - lastRun));
+      timeoutId = setTimeout(
+        () => {
+          fn(...args);
+          lastRun = Date.now();
+        },
+        delay - (now - lastRun)
+      );
     }
   };
 }
@@ -148,7 +151,7 @@ export function rateLimit<T extends (...args: any[]) => any>(
     const now = Date.now();
 
     // Remove old calls
-    while (calls.length > 0 && calls[0] < now - timeWindow) {
+    while (calls.length > 0 && calls[0]! < now - timeWindow) {
       calls.shift();
     }
 
@@ -162,7 +165,9 @@ export function rateLimit<T extends (...args: any[]) => any>(
 /**
  * Once function (executes only once)
  */
-export function once<T extends (...args: any[]) => any>(fn: T): (...args: Parameters<T>) => ReturnType<T> | undefined {
+export function once<T extends (...args: any[]) => any>(
+  fn: T
+): (...args: Parameters<T>) => ReturnType<T> | undefined {
   let called = false;
   let result: ReturnType<T>;
 
@@ -175,4 +180,3 @@ export function once<T extends (...args: any[]) => any>(fn: T): (...args: Parame
     return result;
   };
 }
-

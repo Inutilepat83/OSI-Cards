@@ -1,13 +1,14 @@
 <div class="colors">
-  <lib-section-header
-    *ngIf="section.title"
-    [title]="section.title"
-    [description]="section.description">
+  <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
   <div class="grid" *ngIf="section.fields?.length">
     <div class="color" *ngFor="let c of section.fields" (click)="copyColor(c.value)" [attr.title]="'Copy ' + c.value">
-      <div class="swatch" [style.background]="isValidColor(c.value) ? c.value : '#ccc'" [class.invalid]="!isValidColor(c.value)"></div>
+      <div
+        class="swatch"
+        [style.background]="isValidColor(c.value) ? c.value : '#ccc'"
+        [class.invalid]="!isValidColor(c.value)"
+      ></div>
       <div class="info">
         <div class="name">{{ c.label }}</div>
         <div class="value">{{ c.value }}</div>
@@ -17,10 +18,5 @@
     </div>
   </div>
 
-  <lib-empty-state
-    *ngIf="!section.fields?.length"
-    message="No colors"
-    icon="🎨"
-    variant="compact">
-  </lib-empty-state>
+  <lib-empty-state *ngIf="!section.fields?.length" message="No colors" icon="🎨" variant="compact"> </lib-empty-state>
 </div>

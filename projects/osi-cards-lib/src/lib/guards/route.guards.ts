@@ -22,7 +22,10 @@ import { Router, CanActivateFn, CanDeactivateFn } from '@angular/router';
 /**
  * 1. Auth Guard Factory
  */
-export function createAuthGuard(isAuthenticated: () => boolean, redirectUrl = '/login'): CanActivateFn {
+export function createAuthGuard(
+  isAuthenticated: () => boolean,
+  redirectUrl = '/login'
+): CanActivateFn {
   return () => {
     const router = inject(Router);
 
@@ -173,7 +176,7 @@ export function createGeoGuard(
   return () => {
     const router = inject(Router);
 
-    const allowed = allowedRegions.some(region => isInAllowedRegion(region));
+    const allowed = allowedRegions.some((region) => isInAllowedRegion(region));
 
     if (allowed) {
       return true;
@@ -236,4 +239,3 @@ export function anyGuard(...guards: CanActivateFn[]): CanActivateFn {
     return false;
   };
 }
-

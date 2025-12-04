@@ -29,9 +29,20 @@
     "properties": {
       "label": { "type": "string", "description": "Metric label" },
       "value": { "type": ["string", "number"], "description": "Metric value" },
-      "percentage": { "type": "number", "description": "Percentage value for visualization" },
-      "performance": { "type": "string", "enum": ["excellent", "good", "average", "poor"], "description": "Performance rating" },
-      "trend": { "type": "string", "enum": ["up", "down", "stable", "neutral"], "description": "Trend indicator" },
+      "percentage": {
+        "type": "number",
+        "description": "Percentage value for visualization"
+      },
+      "performance": {
+        "type": "string",
+        "enum": ["excellent", "good", "average", "poor"],
+        "description": "Performance rating"
+      },
+      "trend": {
+        "type": "string",
+        "enum": ["up", "down", "stable", "neutral"],
+        "description": "Trend indicator"
+      },
       "change": { "type": "number", "description": "Numeric change value" },
       "icon": { "type": "string", "description": "Icon identifier" }
     },
@@ -44,40 +55,144 @@
       "type": "analytics",
       "description": "Comprehensive business metrics and KPIs",
       "fields": [
-        { "label": "Revenue Growth", "value": "47.3% YoY", "percentage": 47, "performance": "excellent", "trend": "up", "change": 12.8 },
-        { "label": "Customer Acquisition Cost", "value": "$124", "percentage": 78, "performance": "good", "trend": "down", "change": -8.5 },
-        { "label": "Monthly Active Users", "value": "2.4M", "percentage": 89, "performance": "excellent", "trend": "up", "change": 31.2 },
-        { "label": "Net Promoter Score", "value": "72", "percentage": 72, "performance": "excellent", "trend": "up", "change": 5 },
-        { "label": "Customer Lifetime Value", "value": "$8,450", "percentage": 84, "performance": "excellent", "trend": "up", "change": 18.3 },
-        { "label": "Churn Rate", "value": "2.1%", "percentage": 21, "performance": "excellent", "trend": "down", "change": -0.8 },
-        { "label": "Average Deal Size", "value": "$45K", "percentage": 65, "performance": "good", "trend": "up", "change": 7.2 },
-        { "label": "Sales Cycle Length", "value": "34 days", "percentage": 55, "performance": "average", "trend": "stable", "change": -2 },
-        { "label": "Pipeline Coverage", "value": "4.2x", "percentage": 84, "performance": "excellent", "trend": "up", "change": 0.5 },
-        { "label": "Win Rate", "value": "38%", "percentage": 38, "performance": "average", "trend": "up", "change": 3.1 },
-        { "label": "Employee Satisfaction", "value": "4.6/5", "percentage": 92, "performance": "excellent", "trend": "stable" },
-        { "label": "Product Uptime", "value": "99.97%", "percentage": 99, "performance": "excellent", "trend": "stable" }
+        {
+          "label": "Revenue Growth",
+          "value": "47.3% YoY",
+          "percentage": 47,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 12.8
+        },
+        {
+          "label": "Customer Acquisition Cost",
+          "value": "$124",
+          "percentage": 78,
+          "performance": "good",
+          "trend": "down",
+          "change": -8.5
+        },
+        {
+          "label": "Monthly Active Users",
+          "value": "2.4M",
+          "percentage": 89,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 31.2
+        },
+        {
+          "label": "Net Promoter Score",
+          "value": "72",
+          "percentage": 72,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 5
+        },
+        {
+          "label": "Customer Lifetime Value",
+          "value": "$8,450",
+          "percentage": 84,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 18.3
+        },
+        {
+          "label": "Churn Rate",
+          "value": "2.1%",
+          "percentage": 21,
+          "performance": "excellent",
+          "trend": "down",
+          "change": -0.8
+        },
+        {
+          "label": "Average Deal Size",
+          "value": "$45K",
+          "percentage": 65,
+          "performance": "good",
+          "trend": "up",
+          "change": 7.2
+        },
+        {
+          "label": "Sales Cycle Length",
+          "value": "34 days",
+          "percentage": 55,
+          "performance": "average",
+          "trend": "stable",
+          "change": -2
+        },
+        {
+          "label": "Pipeline Coverage",
+          "value": "4.2x",
+          "percentage": 84,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 0.5
+        },
+        {
+          "label": "Win Rate",
+          "value": "38%",
+          "percentage": 38,
+          "performance": "average",
+          "trend": "up",
+          "change": 3.1
+        },
+        {
+          "label": "Employee Satisfaction",
+          "value": "4.6/5",
+          "percentage": 92,
+          "performance": "excellent",
+          "trend": "stable"
+        },
+        {
+          "label": "Product Uptime",
+          "value": "99.97%",
+          "percentage": 99,
+          "performance": "excellent",
+          "trend": "stable"
+        }
       ]
     },
     "minimal": {
       "title": "Key Metric",
       "type": "analytics",
-      "fields": [
-        { "label": "Score", "value": "85%", "percentage": 85 }
-      ]
+      "fields": [{ "label": "Score", "value": "85%", "percentage": 85 }]
     },
     "edgeCases": {
       "title": "Analytics Edge Cases",
       "type": "analytics",
       "fields": [
-        { "label": "Zero Performance", "value": "0%", "percentage": 0, "performance": "poor", "trend": "down", "change": -100 },
-        { "label": "Negative Value", "value": "-23.5%", "percentage": -23, "performance": "poor", "trend": "down", "change": -45.2 },
-        { "label": "Maximum Score", "value": "100%", "percentage": 100, "performance": "excellent", "trend": "up", "change": 999.99 },
+        {
+          "label": "Zero Performance",
+          "value": "0%",
+          "percentage": 0,
+          "performance": "poor",
+          "trend": "down",
+          "change": -100
+        },
+        {
+          "label": "Negative Value",
+          "value": "-23.5%",
+          "percentage": -23,
+          "performance": "poor",
+          "trend": "down",
+          "change": -45.2
+        },
+        {
+          "label": "Maximum Score",
+          "value": "100%",
+          "percentage": 100,
+          "performance": "excellent",
+          "trend": "up",
+          "change": 999.99
+        },
         { "label": "No Percentage", "value": "N/A", "performance": "average" },
-        { "label": "Extreme Change", "value": "+1,234%", "percentage": 100, "trend": "up", "change": 1234 }
+        {
+          "label": "Extreme Change",
+          "value": "+1,234%",
+          "percentage": 100,
+          "trend": "up",
+          "change": 1234
+        }
       ]
     }
   }
 }
-
-
-

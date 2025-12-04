@@ -40,57 +40,61 @@ import { CSS_ISOLATION_MODE, DEFAULT_THEME } from '../../providers/injection-tok
   selector: 'osi-cards-container',
   standalone: true,
   template: `
-    <div [class]="containerClass"
-         [attr.data-theme]="effectiveTheme"
-         [style.contain]="strictIsolation ? 'content' : null"
-         [style.isolation]="strictIsolation ? 'isolate' : null">
+    <div
+      [class]="containerClass"
+      [attr.data-theme]="effectiveTheme"
+      [style.contain]="strictIsolation ? 'content' : null"
+      [style.isolation]="strictIsolation ? 'isolate' : null"
+    >
       <ng-content></ng-content>
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-      background: transparent !important;
-      background-color: transparent !important;
-    }
+  styles: [
+    `
+      :host {
+        display: block;
+        background: transparent !important;
+        background-color: transparent !important;
+      }
 
-    .osi-cards-container {
-      /*
+      .osi-cards-container {
+        /*
        * Fully transparent container - allows host app background to show through.
        * 8px padding for subtle shadow/glow effects around the card.
        */
-      padding: 8px;
-      background: transparent !important;
-      background-color: transparent !important;
+        padding: 8px;
+        background: transparent !important;
+        background-color: transparent !important;
 
-      /* Preserve 3D transforms for child elements */
-      perspective: 1200px;
-      transform-style: preserve-3d;
+        /* Preserve 3D transforms for child elements */
+        perspective: 1200px;
+        transform-style: preserve-3d;
 
-      /* Ensure card is centered */
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-    }
-
-    /* Strict isolation mode - additional containment */
-    .osi-cards-container--strict {
-      /* CSS Containment for performance and isolation */
-      contain: content;
-      /* Create new stacking context */
-      isolation: isolate;
-      /* Ensure content doesn't overflow */
-      overflow: hidden;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 480px) {
-      .osi-cards-container {
-        padding: 4px;
+        /* Ensure card is centered */
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
       }
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+
+      /* Strict isolation mode - additional containment */
+      .osi-cards-container--strict {
+        /* CSS Containment for performance and isolation */
+        contain: content;
+        /* Create new stacking context */
+        isolation: isolate;
+        /* Ensure content doesn't overflow */
+        overflow: hidden;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 480px) {
+        .osi-cards-container {
+          padding: 4px;
+        }
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OsiCardsContainerComponent {
   // Inject configuration from providers (optional - may not be provided)
@@ -121,7 +125,7 @@ export class OsiCardsContainerComponent {
   get containerClass(): string {
     const classes = ['osi-cards-container'];
 
-    const isStrictMode = this.strictIsolation ?? (this.cssIsolationMode === 'strict' as string);
+    const isStrictMode = this.strictIsolation ?? this.cssIsolationMode === ('strict' as string);
     if (isStrictMode) {
       classes.push('osi-cards-container--strict');
     }
@@ -136,7 +140,8 @@ export class OsiCardsContainerComponent {
   get effectiveTheme(): 'day' | 'night' {
     // Get theme from input, config default, or 'day'
     const configTheme = this.defaultThemeConfig;
-    const resolvedTheme = this.theme ?? (typeof configTheme === 'string' ? configTheme : null) ?? 'day';
+    const resolvedTheme =
+      this.theme ?? (typeof configTheme === 'string' ? configTheme : null) ?? 'day';
     return resolvedTheme as 'day' | 'night';
   }
 }

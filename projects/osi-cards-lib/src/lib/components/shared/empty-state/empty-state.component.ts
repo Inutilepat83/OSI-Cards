@@ -23,7 +23,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   templateUrl: './empty-state.component.html',
   styleUrl: './empty-state.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmptyStateComponent {
   /**
@@ -71,4 +71,3 @@ export class EmptyStateComponent {
     this.action.emit();
   }
 }
-

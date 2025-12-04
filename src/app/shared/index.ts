@@ -19,7 +19,8 @@ export * from './services/focus-management.service';
 export * from './services/optimistic-updates.service';
 export * from './services/search-filter.service';
 export * from './services/section-completion.service';
-export * from './services/toast.service';
+// Toast service now in library - use osi-cards-lib
+// export * from './services/toast.service';
 export * from './utils';
 
 // Re-export from library for backwards compatibility

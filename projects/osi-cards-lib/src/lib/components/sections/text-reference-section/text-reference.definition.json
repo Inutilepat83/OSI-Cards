@@ -30,11 +30,25 @@
       "label": { "type": "string", "description": "Reference label" },
       "value": { "type": "string", "description": "Reference title/name" },
       "text": { "type": "string", "description": "Reference text content" },
-      "description": { "type": "string", "description": "Reference description" },
-      "url": { "type": "string", "format": "uri", "description": "Reference URL" },
+      "description": {
+        "type": "string",
+        "description": "Reference description"
+      },
+      "url": {
+        "type": "string",
+        "format": "uri",
+        "description": "Reference URL"
+      },
       "source": { "type": "string", "description": "Source attribution" },
-      "type": { "type": "string", "description": "Document type (PDF, Video, etc.)" },
-      "date": { "type": "string", "format": "date", "description": "Publication date" }
+      "type": {
+        "type": "string",
+        "description": "Document type (PDF, Video, etc.)"
+      },
+      "date": {
+        "type": "string",
+        "format": "date",
+        "description": "Publication date"
+      }
     },
     "required": []
   },
@@ -110,20 +124,23 @@
     "minimal": {
       "title": "References",
       "type": "text-reference",
-      "fields": [
-        { "label": "Link", "value": "Reference Document" }
-      ]
+      "fields": [{ "label": "Link", "value": "Reference Document" }]
     },
     "edgeCases": {
       "title": "Reference Edge Cases",
       "type": "text-reference",
       "fields": [
-        { "label": "No URL", "value": "Document without web link", "description": "Internal document, contact support for access" },
-        { "label": "Long URL", "value": "External Resource", "url": "https://very-long-subdomain.example.com/path/to/deeply/nested/resource/document.pdf?param1=value1&param2=value2&token=abc123xyz" }
+        {
+          "label": "No URL",
+          "value": "Document without web link",
+          "description": "Internal document, contact support for access"
+        },
+        {
+          "label": "Long URL",
+          "value": "External Resource",
+          "url": "https://very-long-subdomain.example.com/path/to/deeply/nested/resource/document.pdf?param1=value1&param2=value2&token=abc123xyz"
+        }
       ]
     }
   }
 }
-
-
-

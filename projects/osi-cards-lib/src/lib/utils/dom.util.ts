@@ -86,7 +86,7 @@ export function createElement<K extends keyof HTMLElementTagNameMap>(
   }
 
   if (children) {
-    children.forEach(child => {
+    children.forEach((child) => {
       if (typeof child === 'string') {
         element.appendChild(document.createTextNode(child));
       } else {
@@ -146,8 +146,9 @@ export function getChildren(element: HTMLElement): HTMLElement[] {
 }
 
 export function getSiblings(element: HTMLElement): HTMLElement[] {
-  return Array.from(element.parentElement?.children || [])
-    .filter(child => child !== element) as HTMLElement[];
+  return Array.from(element.parentElement?.children || []).filter(
+    (child) => child !== element
+  ) as HTMLElement[];
 }
 
 export function getNextSiblings(element: HTMLElement): HTMLElement[] {
@@ -197,4 +198,3 @@ export function getDataAttribute(element: HTMLElement, key: string): string | nu
 export function setDataAttribute(element: HTMLElement, key: string, value: string): void {
   element.setAttribute(`data-${key}`, value);
 }
-

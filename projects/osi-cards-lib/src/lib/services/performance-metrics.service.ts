@@ -83,14 +83,10 @@ export class PerformanceMetricsService implements OnDestroy {
   readonly allMetrics = computed(() => this.metrics());
 
   /** Get render metrics */
-  readonly renderMetrics = computed(() =>
-    this.metrics().filter(m => m.type === 'render')
-  );
+  readonly renderMetrics = computed(() => this.metrics().filter((m) => m.type === 'render'));
 
   /** Get load metrics */
-  readonly loadMetrics = computed(() =>
-    this.metrics().filter(m => m.type === 'load')
-  );
+  readonly loadMetrics = computed(() => this.metrics().filter((m) => m.type === 'load'));
 
   constructor() {
     this.initPerformanceObserver();
@@ -113,7 +109,7 @@ export class PerformanceMetricsService implements OnDestroy {
         name,
         type,
         startTime,
-        duration
+        duration,
       });
     };
   }
@@ -138,7 +134,7 @@ export class PerformanceMetricsService implements OnDestroy {
    * Record a metric manually
    */
   recordMetric(metric: PerformanceMetric): void {
-    this.metrics.update(current => {
+    this.metrics.update((current) => {
       const updated = [...current, metric];
       // Keep only latest metrics
       if (updated.length > this.maxMetrics) {
@@ -153,12 +149,12 @@ export class PerformanceMetricsService implements OnDestroy {
    */
   getSummary(): PerformanceSummary {
     const all = this.metrics();
-    const renders = all.filter(m => m.type === 'render');
-    const loads = all.filter(m => m.type === 'load');
-    const interactions = all.filter(m => m.type === 'interaction');
+    const renders = all.filter((m) => m.type === 'render');
+    const loads = all.filter((m) => m.type === 'load');
+    const interactions = all.filter((m) => m.type === 'interaction');
 
-    const avgRender = this.average(renders.map(m => m.duration));
-    const avgLoad = this.average(loads.map(m => m.duration));
+    const avgRender = this.average(renders.map((m) => m.duration));
+    const avgLoad = this.average(loads.map((m) => m.duration));
     const slowest = this.findSlowest(all);
 
     return {
@@ -167,7 +163,7 @@ export class PerformanceMetricsService implements OnDestroy {
       interactionCount: interactions.length,
       slowestOperation: slowest,
       memoryUsage: this.getMemoryUsage(),
-      webVitals: this.getWebVitals()
+      webVitals: this.getWebVitals(),
     };
   }
 
@@ -175,23 +171,23 @@ export class PerformanceMetricsService implements OnDestroy {
    * Get metrics by type
    */
   getMetricsByType(type: MetricType): PerformanceMetric[] {
-    return this.metrics().filter(m => m.type === type);
+    return this.metrics().filter((m) => m.type === type);
   }
 
   /**
    * Get average duration for a metric name
    */
   getAverageDuration(name: string): number {
-    const matching = this.metrics().filter(m => m.name === name);
-    return this.average(matching.map(m => m.duration));
+    const matching = this.metrics().filter((m) => m.name === name);
+    return this.average(matching.map((m) => m.duration));
   }
 
   /**
    * Get 95th percentile duration for a metric
    */
   getP95Duration(name: string): number {
-    const matching = this.metrics().filter(m => m.name === name);
-    const durations = matching.map(m => m.duration).sort((a, b) => a - b);
+    const matching = this.metrics().filter((m) => m.name === name);
+    const durations = matching.map((m) => m.duration).sort((a, b) => a - b);
     const index = Math.floor(durations.length * 0.95);
     return durations[index] ?? 0;
   }
@@ -207,11 +203,15 @@ export class PerformanceMetricsService implements OnDestroy {
    * Export metrics as JSON
    */
   export(): string {
-    return JSON.stringify({
-      metrics: this.metrics(),
-      summary: this.getSummary(),
-      timestamp: Date.now()
-    }, null, 2);
+    return JSON.stringify(
+      {
+        metrics: this.metrics(),
+        summary: this.getSummary(),
+        timestamp: Date.now(),
+      },
+      null,
+      2
+    );
   }
 
   /**
@@ -236,7 +236,7 @@ export class PerformanceMetricsService implements OnDestroy {
    * Get current frame rate
    */
   measureFrameRate(duration = 1000): Promise<number> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       let frames = 0;
       const startTime = performance.now();
 
@@ -270,7 +270,7 @@ export class PerformanceMetricsService implements OnDestroy {
       });
 
       this.observer.observe({
-        entryTypes: ['paint', 'largest-contentful-paint', 'layout-shift', 'longtask']
+        entryTypes: ['paint', 'largest-contentful-paint', 'layout-shift', 'longtask'],
       });
     } catch {
       // Observer not supported
@@ -295,8 +295,8 @@ export class PerformanceMetricsService implements OnDestroy {
       startTime: entry.startTime,
       duration: entry.duration,
       metadata: {
-        entryType: entry.entryType
-      }
+        entryType: entry.entryType,
+      },
     });
   }
 
@@ -312,14 +312,14 @@ export class PerformanceMetricsService implements OnDestroy {
    * Get Web Vitals from recorded metrics
    */
   private getWebVitals(): PerformanceSummary['webVitals'] {
-    const paints = this.metrics().filter(m => m.type === 'paint');
+    const paints = this.metrics().filter((m) => m.type === 'paint');
 
-    const fcp = paints.find(m => m.name === 'first-contentful-paint')?.startTime;
-    const lcp = paints.find(m => m.name === 'largest-contentful-paint')?.startTime;
+    const fcp = paints.find((m) => m.name === 'first-contentful-paint')?.startTime;
+    const lcp = paints.find((m) => m.name === 'largest-contentful-paint')?.startTime;
 
     return {
       fcp,
-      lcp
+      lcp,
     };
   }
 
@@ -336,11 +336,6 @@ export class PerformanceMetricsService implements OnDestroy {
    */
   private findSlowest(metrics: PerformanceMetric[]): PerformanceMetric | null {
     if (metrics.length === 0) return null;
-    return metrics.reduce((max, current) =>
-      current.duration > max.duration ? current : max
-    );
+    return metrics.reduce((max, current) => (current.duration > max.duration ? current : max));
   }
 }
-
-
-

@@ -124,4 +124,3 @@ export function trackTiming(name: string, duration: number, category?: string): 
 export function trackUserAction(action: string, data?: Record<string, any>): void {
   trackEvent('user_action', { action, ...data });
 }
-

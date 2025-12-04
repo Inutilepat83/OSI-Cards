@@ -14,23 +14,22 @@ import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../
   standalone: true,
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
   templateUrl: './social-media-section.component.html',
-  styleUrl: './social-media-section.scss'
+  styleUrl: './social-media-section.scss',
 })
 export class SocialMediaSectionComponent extends BaseSectionComponent {
-
   /**
    * Get platform icon (emoji fallback)
    */
   getPlatformIcon(platform?: unknown): string {
     if (!platform || typeof platform !== 'string') return '🌐';
     const icons: Record<string, string> = {
-      'twitter': '𝕏',
-      'linkedin': '🔗',
-      'facebook': '👤',
-      'instagram': '📷',
-      'youtube': '▶️',
-      'tiktok': '🎵',
-      'github': '💻'
+      twitter: '𝕏',
+      linkedin: '🔗',
+      facebook: '👤',
+      instagram: '📷',
+      youtube: '▶️',
+      tiktok: '🎵',
+      github: '💻',
     };
     return icons[platform.toLowerCase()] || '🌐';
   }

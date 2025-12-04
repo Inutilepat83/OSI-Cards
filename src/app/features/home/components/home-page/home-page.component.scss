@@ -113,28 +113,34 @@
     box-shadow 0.3s ease;
 }
 
-:host-context(:root[data-theme="night"]) .icon-moon {
+:host-context(:root[data-theme="night"]) .icon-moon,
+:host-context(:root[data-theme="dark"]) .icon-moon {
   color: #faca16;
 }
 
-:host-context(:root[data-theme="night"]) .icon-sun {
+:host-context(:root[data-theme="night"]) .icon-sun,
+:host-context(:root[data-theme="dark"]) .icon-sun {
   color: rgba(255, 255, 255, 0.65);
 }
 
-:host-context(:root[data-theme="day"]) .toggle-switch {
+:host-context(:root[data-theme="day"]) .toggle-switch,
+:host-context(:root[data-theme="light"]) .toggle-switch {
   background: rgba(255, 255, 255, 0.9);
   border: 0.5px solid rgba(0, 0, 0, 0.2);
 }
 
-:host-context(:root[data-theme="day"]) .toggle-thumb {
+:host-context(:root[data-theme="day"]) .toggle-thumb,
+:host-context(:root[data-theme="light"]) .toggle-thumb {
   left: calc(100% - 20px);
 }
 
-:host-context(:root[data-theme="day"]) .icon-moon {
+:host-context(:root[data-theme="day"]) .icon-moon,
+:host-context(:root[data-theme="light"]) .icon-moon {
   color: rgba(0, 0, 0, 0.5);
 }
 
-:host-context(:root[data-theme="day"]) .icon-sun {
+:host-context(:root[data-theme="day"]) .icon-sun,
+:host-context(:root[data-theme="light"]) .icon-sun {
   color: #faca16;
 }
 

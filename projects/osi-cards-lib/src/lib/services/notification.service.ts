@@ -113,7 +113,7 @@ export interface Notification extends NotificationConfig {
  * Manages application-wide notifications.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NotificationService {
   private idCounter = 0;
@@ -157,7 +157,7 @@ export class NotificationService {
       dismissible: config.dismissible ?? true,
     };
 
-    this.notifications.update(notifications => [...notifications, notification]);
+    this.notifications.update((notifications) => [...notifications, notification]);
     this.notificationSubject.next(notification);
 
     // Auto-dismiss
@@ -243,7 +243,7 @@ export class NotificationService {
    */
   dismiss(id: string): boolean {
     const notifications = this.notifications();
-    const index = notifications.findIndex(n => n.id === id);
+    const index = notifications.findIndex((n) => n.id === id);
 
     if (index === -1) {
       return false;
@@ -251,9 +251,7 @@ export class NotificationService {
 
     notifications[index].dismissed = true;
 
-    this.notifications.update(notifications =>
-      notifications.filter(n => n.id !== id)
-    );
+    this.notifications.update((notifications) => notifications.filter((n) => n.id !== id));
 
     return true;
   }
@@ -272,10 +270,8 @@ export class NotificationService {
    * @param updates - Properties to update
    */
   update(id: string, updates: Partial<NotificationConfig>): void {
-    this.notifications.update(notifications =>
-      notifications.map(n =>
-        n.id === id ? { ...n, ...updates } : n
-      )
+    this.notifications.update((notifications) =>
+      notifications.map((n) => (n.id === id ? { ...n, ...updates } : n))
     );
   }
 
@@ -286,4 +282,3 @@ export class NotificationService {
     return `notification-${++this.idCounter}-${Date.now()}`;
   }
 }
-

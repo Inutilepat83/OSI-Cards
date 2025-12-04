@@ -6,15 +6,15 @@
 
 /**
  * Local Swap Optimizer Utility
- * 
+ *
  * Provides algorithms for optimizing layouts by swapping section positions.
  * After initial placement, tries swapping pairs of sections to find
  * improvements in total container height.
- * 
+ *
  * @example
  * ```typescript
  * import { localSwapOptimization } from './local-swap-optimizer.util';
- * 
+ *
  * const optimized = localSwapOptimization(sections, sectionHeights, columns, gap);
  * ```
  */
@@ -64,13 +64,13 @@ export const DEFAULT_SWAP_CONFIG: SwapOptimizerConfig = {
 
 /**
  * Optimizes layout by swapping pairs of sections to reduce total height.
- * 
+ *
  * Algorithm:
  * 1. Group sections by their "row band" (similar top positions)
  * 2. For each pair of sections in the same band with different spans
  * 3. Simulate swapping their column spans
  * 4. Keep the swap if it reduces total height
- * 
+ *
  * @param placedSections - Already positioned sections
  * @param sectionHeights - Map of section keys to actual heights
  * @param columns - Number of columns
@@ -84,13 +84,13 @@ export function localSwapOptimization<T extends SwappableSection>(
   config: Partial<SwapOptimizerConfig> = {}
 ): T[] {
   const fullConfig = { ...DEFAULT_SWAP_CONFIG, ...config };
-  
+
   if (placedSections.length < 2 || columns < 2) {
     return placedSections;
   }
 
   // Clone for modification
-  let result = placedSections.map(s => ({ ...s }));
+  let result = placedSections.map((s) => ({ ...s }));
   const currentHeight = calculateTotalHeight(result, sectionHeights);
 
   // Limit iterations to avoid performance issues
@@ -119,14 +119,7 @@ export function localSwapOptimization<T extends SwappableSection>(
         if (sectionA.colSpan === sectionB.colSpan) continue;
 
         // Try swapping their positions
-        const swapped = trySwapSections(
-          result,
-          i,
-          j,
-          sectionHeights,
-          columns,
-          fullConfig.gap
-        );
+        const swapped = trySwapSections(result, i, j, sectionHeights, columns, fullConfig.gap);
 
         const swappedHeight = calculateTotalHeight(swapped, sectionHeights);
 
@@ -153,7 +146,7 @@ function trySwapSections<T extends SwappableSection>(
   columns: number,
   gap: number
 ): T[] {
-  const swapped = sections.map(s => ({ ...s }));
+  const swapped = sections.map((s) => ({ ...s }));
 
   // Swap the sections in the array (which affects their placement order)
   const temp = swapped[indexA];
@@ -243,12 +236,3 @@ function calculateTotalHeight<T extends { key: string; top: number }>(
   }
   return maxBottom;
 }
-
-
-
-
-
-
-
-
-

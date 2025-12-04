@@ -1,8 +1,5 @@
 <div class="info">
-  <lib-section-header
-    *ngIf="section.title"
-    [title]="section.title"
-    [description]="section.description">
+  <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
   <div class="list" *ngIf="section.fields?.length">
@@ -14,16 +11,12 @@
         class="trend"
         [trend]="getTrendDirection(f.trend)"
         [value]="f.change"
-        size="small">
+        size="small"
+      >
       </lib-trend-indicator>
       <p class="desc" *ngIf="f.description">{{ f.description }}</p>
     </div>
   </div>
 
-  <lib-empty-state
-    *ngIf="!section.fields?.length"
-    message="No data"
-    icon="ℹ️"
-    variant="compact">
-  </lib-empty-state>
+  <lib-empty-state *ngIf="!section.fields?.length" message="No data" icon="ℹ️" variant="compact"> </lib-empty-state>
 </div>

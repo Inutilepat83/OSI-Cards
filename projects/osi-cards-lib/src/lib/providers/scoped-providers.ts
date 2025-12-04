@@ -28,7 +28,7 @@ import {
   signal,
   computed,
   DestroyRef,
-  OnDestroy
+  OnDestroy,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, Observable } from 'rxjs';
@@ -107,13 +107,13 @@ export class ScopedAnimationService implements OnDestroy {
    * Register an item for animation
    */
   register(id: string, index: number): void {
-    this._items.update(items => {
+    this._items.update((items) => {
       const newItems = new Map(items);
       newItems.set(id, {
         id,
         state: 'pending',
         index,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
       return newItems;
     });
@@ -128,7 +128,7 @@ export class ScopedAnimationService implements OnDestroy {
 
     this._isAnimating.set(true);
 
-    this._items.update(items => {
+    this._items.update((items) => {
       const newItems = new Map(items);
       newItems.set(id, { ...item, state: 'entering', timestamp: Date.now() });
       return newItems;
@@ -136,7 +136,7 @@ export class ScopedAnimationService implements OnDestroy {
 
     const delay = item.index * this._staggerDelayMs() + this._animationDurationMs();
     const timeout = setTimeout(() => {
-      this._items.update(items => {
+      this._items.update((items) => {
         const newItems = new Map(items);
         const current = newItems.get(id);
         if (current?.state === 'entering') {
@@ -154,7 +154,7 @@ export class ScopedAnimationService implements OnDestroy {
    * Start exit animation for an item
    */
   animateOut(id: string): Promise<void> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const item = this._items().get(id);
       if (!item) {
         resolve();
@@ -163,14 +163,14 @@ export class ScopedAnimationService implements OnDestroy {
 
       this._isAnimating.set(true);
 
-      this._items.update(items => {
+      this._items.update((items) => {
         const newItems = new Map(items);
         newItems.set(id, { ...item, state: 'exiting', timestamp: Date.now() });
         return newItems;
       });
 
       const timeout = setTimeout(() => {
-        this._items.update(items => {
+        this._items.update((items) => {
           const newItems = new Map(items);
           newItems.delete(id);
           return newItems;
@@ -191,10 +191,14 @@ export class ScopedAnimationService implements OnDestroy {
     if (!item) return '';
 
     switch (item.state) {
-      case 'entering': return 'animate-enter';
-      case 'entered': return 'animate-entered';
-      case 'exiting': return 'animate-exit';
-      default: return '';
+      case 'entering':
+        return 'animate-enter';
+      case 'entered':
+        return 'animate-entered';
+      case 'exiting':
+        return 'animate-exit';
+      default:
+        return '';
     }
   }
 
@@ -211,7 +215,7 @@ export class ScopedAnimationService implements OnDestroy {
    * Reset all animation states
    */
   reset(): void {
-    this.timeouts.forEach(t => clearTimeout(t));
+    this.timeouts.forEach((t) => clearTimeout(t));
     this.timeouts = [];
     this._items.set(new Map());
     this._isAnimating.set(false);
@@ -223,7 +227,7 @@ export class ScopedAnimationService implements OnDestroy {
 
   private checkAnimationComplete(): void {
     const hasAnimating = Array.from(this._items().values()).some(
-      item => item.state === 'entering' || item.state === 'exiting'
+      (item) => item.state === 'entering' || item.state === 'exiting'
     );
     this._isAnimating.set(hasAnimating);
   }
@@ -235,7 +239,7 @@ export class ScopedAnimationService implements OnDestroy {
 export function provideScopedAnimationService(): Provider {
   return {
     provide: SCOPED_ANIMATION_SERVICE,
-    useClass: ScopedAnimationService
+    useClass: ScopedAnimationService,
   };
 }
 
@@ -312,7 +316,7 @@ export class ScopedSelectionService<T> implements OnDestroy {
    * Select an item
    */
   select(item: T): void {
-    this._selectedItems.update(items => {
+    this._selectedItems.update((items) => {
       const newItems = this._multiSelect() ? new Set(items) : new Set<T>();
       newItems.add(item);
       return newItems;
@@ -325,7 +329,7 @@ export class ScopedSelectionService<T> implements OnDestroy {
    * Deselect an item
    */
   deselect(item: T): void {
-    this._selectedItems.update(items => {
+    this._selectedItems.update((items) => {
       const newItems = new Set(items);
       newItems.delete(item);
       return newItems;
@@ -385,7 +389,7 @@ export class ScopedSelectionService<T> implements OnDestroy {
 export function provideScopedSelectionService<T>(): Provider {
   return {
     provide: SCOPED_SELECTION_SERVICE,
-    useClass: ScopedSelectionService<T>
+    useClass: ScopedSelectionService<T>,
   };
 }
 
@@ -505,11 +509,8 @@ export class ScopedStateService<T extends object> implements OnDestroy {
 export function provideScopedStateService<T extends object>(): Provider {
   return {
     provide: SCOPED_STATE_SERVICE,
-    useClass: ScopedStateService<T>
+    useClass: ScopedStateService<T>,
   };
 }
 
 // All items are already exported at their definition
-
-
-

@@ -27,7 +27,10 @@ export interface RecordingOptions {
 /**
  * Play audio from URL
  */
-export async function playAudio(url: string, options: AudioOptions = {}): Promise<HTMLAudioElement> {
+export async function playAudio(
+  url: string,
+  options: AudioOptions = {}
+): Promise<HTMLAudioElement> {
   const audio = new Audio(url);
 
   if (options.volume !== undefined) audio.volume = options.volume;
@@ -112,7 +115,10 @@ export function fadeOut(audio: HTMLAudioElement, duration = 1000): void {
 /**
  * Record audio
  */
-export async function recordAudio(durationMs: number, options: RecordingOptions = {}): Promise<Blob> {
+export async function recordAudio(
+  durationMs: number,
+  options: RecordingOptions = {}
+): Promise<Blob> {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   const mediaRecorder = new MediaRecorder(stream, options);
   const chunks: Blob[] = [];
@@ -126,7 +132,7 @@ export async function recordAudio(durationMs: number, options: RecordingOptions 
 
     mediaRecorder.onstop = () => {
       const blob = new Blob(chunks, { type: mediaRecorder.mimeType });
-      stream.getTracks().forEach(track => track.stop());
+      stream.getTracks().forEach((track) => track.stop());
       resolve(blob);
     };
 
@@ -161,7 +167,10 @@ export function createAudioContext(): AudioContext {
 /**
  * Load audio buffer
  */
-export async function loadAudioBuffer(audioContext: AudioContext, url: string): Promise<AudioBuffer> {
+export async function loadAudioBuffer(
+  audioContext: AudioContext,
+  url: string
+): Promise<AudioBuffer> {
   const response = await fetch(url);
   const arrayBuffer = await response.arrayBuffer();
   return await audioContext.decodeAudioData(arrayBuffer);
@@ -170,11 +179,13 @@ export async function loadAudioBuffer(audioContext: AudioContext, url: string): 
 /**
  * Play audio buffer
  */
-export function playAudioBuffer(audioContext: AudioContext, buffer: AudioBuffer): AudioBufferSourceNode {
+export function playAudioBuffer(
+  audioContext: AudioContext,
+  buffer: AudioBuffer
+): AudioBufferSourceNode {
   const source = audioContext.createBufferSource();
   source.buffer = buffer;
   source.connect(audioContext.destination);
   source.start();
   return source;
 }
-

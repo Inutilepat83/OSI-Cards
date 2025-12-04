@@ -7,7 +7,7 @@
 //
 // =====================================================================
 
-@use '../../tokens/master' as *;
+@use "../../tokens/master" as *;
 
 // =====================================================================
 // PERFECT SPACING (From Solutions Section)
@@ -17,11 +17,11 @@
   // Card spacing (comfortable, not cramped)
   --perfect-card-padding: 16px 14px;
   --perfect-card-padding-mobile: 14px 12px;
-  --perfect-gap: 12px;              // Between elements in card
+  --perfect-gap: 12px; // Between elements in card
   --perfect-gap-mobile: 10px;
-  --perfect-grid-gap: 14px;         // Between cards
+  --perfect-grid-gap: 14px; // Between cards
   --perfect-grid-gap-mobile: 12px;
-  --perfect-section-gap: 12px;      // Between header and content
+  --perfect-section-gap: 12px; // Between header and content
 }
 
 // =====================================================================
@@ -41,7 +41,7 @@
 
   // Bottom accent line (like Solutions)
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     left: 0;
@@ -96,7 +96,7 @@
 // =====================================================================
 
 @mixin perfect-title {
-  font-size: 0.9375rem;  // 15px
+  font-size: 0.9375rem; // 15px
   font-weight: var(--font-semibold);
   line-height: 1.4;
   color: var(--foreground);
@@ -105,7 +105,7 @@
 }
 
 @mixin perfect-body {
-  font-size: 0.75rem;  // 12px
+  font-size: 0.75rem; // 12px
   line-height: 1.6;
   color: var(--muted-foreground);
   margin: 0;
@@ -113,7 +113,7 @@
 }
 
 @mixin perfect-label {
-  font-size: 0.65rem;  // 10.4px
+  font-size: 0.65rem; // 10.4px
   font-weight: var(--font-semibold);
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -122,7 +122,7 @@
 }
 
 @mixin perfect-value {
-  font-size: 1.25rem;  // 20px
+  font-size: 1.25rem; // 20px
   font-weight: var(--font-bold);
   line-height: 1.2;
   color: var(--foreground);
@@ -130,7 +130,7 @@
 }
 
 @mixin perfect-meta {
-  font-size: 0.7rem;  // 11.2px
+  font-size: 0.7rem; // 11.2px
   color: var(--muted-foreground);
   opacity: 0.7;
 }
@@ -202,4 +202,3 @@
     }
   }
 }
-

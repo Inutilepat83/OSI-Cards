@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Toast, ToastService } from '../../services/toast.service';
+import { Toast, ToastService } from 'osi-cards-lib';
 import { animate, style, transition, trigger } from '@angular/animations';
 
 /**
@@ -171,13 +171,18 @@ export class ToastComponent implements OnInit {
 
   toasts: Toast[] = [];
 
-  ngOnInit(): void {
-    this.toastService.toasts$.subscribe((toasts) => {
-      this.toasts = toasts;
+  constructor() {
+    // Subscribe to toasts signal
+    effect(() => {
+      this.toasts = this.toastService.currentToasts();
     });
   }
 
+  ngOnInit(): void {
+    // Initialization logic if needed
+  }
+
   remove(id: string): void {
-    this.toastService.remove(id);
+    this.toastService.dismiss(id);
   }
 }

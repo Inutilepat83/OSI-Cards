@@ -1,6 +1,6 @@
 /**
  * Unit Tests for Row-First Space-Filling Packing Algorithm
- * 
+ *
  * Tests the row-packer utility which prioritizes filling rows completely
  * over strictly respecting section preferred widths.
  */
@@ -70,8 +70,8 @@ describe('Row Packer Utility', () => {
     it('should calculate preferred width based on section type', () => {
       const sections: CardSection[] = [
         createSection({ type: 'overview' }), // Should prefer 4 columns
-        createSection({ type: 'chart' }),    // Should prefer 2 columns
-        createSection({ type: 'info' }),     // Should prefer 1 column
+        createSection({ type: 'chart' }), // Should prefer 2 columns
+        createSection({ type: 'info' }), // Should prefer 1 column
       ];
 
       const prepared = prepareSections(sections, defaultConfig);
@@ -82,9 +82,7 @@ describe('Row Packer Utility', () => {
     });
 
     it('should respect explicit preferredColumns on section', () => {
-      const sections: CardSection[] = [
-        createSection({ type: 'info', preferredColumns: 3 }),
-      ];
+      const sections: CardSection[] = [createSection({ type: 'info', preferredColumns: 3 })];
 
       const prepared = prepareSections(sections, defaultConfig);
 
@@ -92,9 +90,7 @@ describe('Row Packer Utility', () => {
     });
 
     it('should respect explicit colSpan (hard override)', () => {
-      const sections: CardSection[] = [
-        createSection({ type: 'overview', colSpan: 2 }),
-      ];
+      const sections: CardSection[] = [createSection({ type: 'overview', colSpan: 2 })];
 
       const prepared = prepareSections(sections, defaultConfig);
 
@@ -117,9 +113,7 @@ describe('Row Packer Utility', () => {
     });
 
     it('should use explicit layoutPriority if provided', () => {
-      const sections: CardSection[] = [
-        createSection({ priority: 'optional', layoutPriority: 1 }),
-      ];
+      const sections: CardSection[] = [createSection({ priority: 'optional', layoutPriority: 1 })];
 
       const prepared = prepareSections(sections, defaultConfig);
 
@@ -147,9 +141,7 @@ describe('Row Packer Utility', () => {
         allowGrowing: false,
       };
 
-      const sections: CardSection[] = [
-        createSection({ canShrink: true, canGrow: true }),
-      ];
+      const sections: CardSection[] = [createSection({ canShrink: true, canGrow: true })];
 
       const prepared = prepareSections(sections, restrictiveConfig);
 
@@ -169,9 +161,7 @@ describe('Row Packer Utility', () => {
     });
 
     it('should pack single section into one row', () => {
-      const sections: CardSection[] = [
-        createSection({ preferredColumns: 2 }),
-      ];
+      const sections: CardSection[] = [createSection({ preferredColumns: 2 })];
 
       const result = packSectionsIntoRows(sections, defaultConfig);
 
@@ -329,10 +319,10 @@ describe('Row Packer Utility', () => {
       });
 
       expect(positions).toHaveLength(2);
-      
+
       // First section should start at left: 0
       expect(positions[0]?.left).toBe('0px');
-      
+
       // Each position should have CSS expressions for width
       expect(positions[0]?.width).toContain('calc');
     });
@@ -350,7 +340,7 @@ describe('Row Packer Utility', () => {
       });
 
       // Sections should have been grown to fill the row
-      const grownSections = positions.filter(p => p.wasGrown);
+      const grownSections = positions.filter((p) => p.wasGrown);
       expect(grownSections.length).toBeGreaterThan(0);
     });
   });
@@ -390,15 +380,13 @@ describe('Row Packer Utility', () => {
         allowGrowing: false,
       };
 
-      const sections: CardSection[] = [
-        createSection({ preferredColumns: 1 }),
-      ];
+      const sections: CardSection[] = [createSection({ preferredColumns: 1 })];
 
       const result = packSectionsIntoRows(sections, noGrowConfig);
       const warnings = validatePackingResult(result);
 
       // Should warn about low utilization (1/4 columns = 25%)
-      expect(warnings.some(w => w.includes('utilization'))).toBe(true);
+      expect(warnings.some((w) => w.includes('utilization'))).toBe(true);
     });
 
     it('should warn about rows with gaps', () => {
@@ -417,7 +405,7 @@ describe('Row Packer Utility', () => {
 
       // Should warn about gaps if there are any
       if (result.rowsWithGaps > 0) {
-        expect(warnings.some(w => w.includes('gap'))).toBe(true);
+        expect(warnings.some((w) => w.includes('gap'))).toBe(true);
       }
     });
   });
@@ -426,11 +414,11 @@ describe('Row Packer Utility', () => {
     it('should not expand contact-card beyond type limit', () => {
       // Contact cards have a max expansion of 2
       const sections: CardSection[] = [
-        createSection({ 
-          type: 'contact-card', 
-          preferredColumns: 1, 
+        createSection({
+          type: 'contact-card',
+          preferredColumns: 1,
           canGrow: true,
-          fields: [{ label: 'Name', value: 'Test' }]
+          fields: [{ label: 'Name', value: 'Test' }],
         }),
       ];
 
@@ -443,11 +431,11 @@ describe('Row Packer Utility', () => {
     it('should allow chart to expand to full width', () => {
       // Charts have a max expansion of 4
       const sections: CardSection[] = [
-        createSection({ 
-          type: 'chart', 
-          preferredColumns: 2, 
+        createSection({
+          type: 'chart',
+          preferredColumns: 2,
           canGrow: true,
-          fields: Array(10).fill({ label: 'Data', value: '100' }) // Dense content
+          fields: Array(10).fill({ label: 'Data', value: '100' }), // Dense content
         }),
       ];
 
@@ -460,17 +448,17 @@ describe('Row Packer Utility', () => {
     it('should respect type limits during Phase 2 expansion', () => {
       // Two contact cards - even with gaps, shouldn't exceed type limit
       const sections: CardSection[] = [
-        createSection({ 
-          type: 'contact-card', 
-          preferredColumns: 1, 
+        createSection({
+          type: 'contact-card',
+          preferredColumns: 1,
           canGrow: true,
-          fields: [{ label: 'Name', value: 'Test' }]
+          fields: [{ label: 'Name', value: 'Test' }],
         }),
-        createSection({ 
-          type: 'contact-card', 
-          preferredColumns: 1, 
+        createSection({
+          type: 'contact-card',
+          preferredColumns: 1,
           canGrow: true,
-          fields: [{ label: 'Name', value: 'Test' }]
+          fields: [{ label: 'Name', value: 'Test' }],
         }),
       ];
 
@@ -485,9 +473,9 @@ describe('Row Packer Utility', () => {
     it('should respect type limits during Phase 4 distribution', () => {
       // Single project section - should stay at 1 column
       const sections: CardSection[] = [
-        createSection({ 
-          type: 'project', 
-          preferredColumns: 1, 
+        createSection({
+          type: 'project',
+          preferredColumns: 1,
           canGrow: true,
         }),
       ];
@@ -519,9 +507,7 @@ describe('Row Packer Utility', () => {
     });
 
     it('should handle sections with minColumns constraint', () => {
-      const sections: CardSection[] = [
-        createSection({ preferredColumns: 3, minColumns: 2 }),
-      ];
+      const sections: CardSection[] = [createSection({ preferredColumns: 3, minColumns: 2 })];
 
       const result = packSectionsIntoRows(sections, defaultConfig);
 
@@ -550,9 +536,8 @@ describe('Row Packer Utility', () => {
       const result = packSectionsIntoRows(sections, defaultConfig);
 
       // All same priority, should maintain original order
-      const titles = result.rows.flatMap(r => r.sections.map(s => s.section.title));
+      const titles = result.rows.flatMap((r) => r.sections.map((s) => s.section.title));
       expect(titles).toEqual(['First', 'Second', 'Third']);
     });
   });
 });
-

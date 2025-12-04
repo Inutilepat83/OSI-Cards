@@ -15,10 +15,9 @@ import { TrendDirection } from '../../../types';
   standalone: true,
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, TrendIndicatorComponent],
   templateUrl: './financials-section.component.html',
-  styleUrl: './financials-section.scss'
+  styleUrl: './financials-section.scss',
 })
 export class FinancialsSectionComponent extends BaseSectionComponent {
-
   /**
    * Get trend class
    */

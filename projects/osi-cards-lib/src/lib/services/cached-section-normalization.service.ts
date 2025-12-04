@@ -5,25 +5,25 @@ import { LRUCache } from '../utils/lru-cache.util';
 
 /**
  * CachedSectionNormalizationService
- * 
+ *
  * A caching wrapper around SectionNormalizationService that reduces
  * redundant computations for repeated section normalization.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CachedSectionNormalizationService {
   private readonly normalizationService = inject(SectionNormalizationService);
-  
+
   // Cache for normalized sections (key: hash of section, value: normalized section)
   private readonly normalizedSectionsCache = new LRUCache<string, CardSection>({ maxSize: 200 });
-  
+
   // Cache for sorted sections (key: hash of sections array, value: sorted sections)
   private readonly sortedSectionsCache = new LRUCache<string, CardSection[]>({ maxSize: 50 });
-  
+
   // Cache for column span calculations
   private readonly columnSpanCache = new LRUCache<string, number>({ maxSize: 500 });
-  
+
   // Statistics
   private cacheHits = 0;
   private cacheMisses = 0;
@@ -35,13 +35,13 @@ export class CachedSectionNormalizationService {
    */
   normalizeSection(section: CardSection): CardSection {
     const key = this.generateSectionKey(section);
-    
+
     const cached = this.normalizedSectionsCache.get(key);
     if (cached) {
       this.cacheHits++;
       return cached;
     }
-    
+
     this.cacheMisses++;
     const normalized = this.normalizationService.normalizeSection(section);
     this.normalizedSectionsCache.set(key, normalized);
@@ -54,7 +54,7 @@ export class CachedSectionNormalizationService {
    * @returns Array of normalized sections
    */
   normalizeSections(sections: CardSection[]): CardSection[] {
-    return sections.map(section => this.normalizeSection(section));
+    return sections.map((section) => this.normalizeSection(section));
   }
 
   /**
@@ -64,13 +64,13 @@ export class CachedSectionNormalizationService {
    */
   sortSections(sections: CardSection[]): CardSection[] {
     const key = this.generateSectionsArrayKey(sections);
-    
+
     const cached = this.sortedSectionsCache.get(key);
     if (cached) {
       this.cacheHits++;
       return cached;
     }
-    
+
     this.cacheMisses++;
     const sorted = this.normalizationService.sortSections(sections);
     this.sortedSectionsCache.set(key, sorted);
@@ -88,20 +88,20 @@ export class CachedSectionNormalizationService {
       this.cacheHits++;
       return cached;
     }
-    
+
     this.cacheMisses++;
     // Default column span based on section type
     const colSpan = this.getDefaultColumnSpanForType(sectionType);
     this.columnSpanCache.set(sectionType, colSpan);
     return colSpan;
   }
-  
+
   private getDefaultColumnSpanForType(sectionType: string): number {
     // Wide sections that benefit from more space
     const wideTypes = ['chart', 'map', 'analytics', 'network', 'overview', 'timeline'];
     // Narrow sections that work well in single column
     const narrowTypes = ['contact', 'quotation', 'brand-colors'];
-    
+
     if (wideTypes.includes(sectionType)) return 2;
     if (narrowTypes.includes(sectionType)) return 1;
     return 1; // Default to single column
@@ -146,7 +146,7 @@ export class CachedSectionNormalizationService {
       hitRate: total > 0 ? this.cacheHits / total : 0,
       normalizedCacheSize: this.normalizedSectionsCache.size,
       sortedCacheSize: this.sortedSectionsCache.size,
-      columnSpanCacheSize: this.columnSpanCache.size
+      columnSpanCacheSize: this.columnSpanCache.size,
     };
   }
 
@@ -154,7 +154,7 @@ export class CachedSectionNormalizationService {
    * Pre-warms the cache with common section types
    */
   warmCache(sectionTypes: string[]): void {
-    sectionTypes.forEach(type => {
+    sectionTypes.forEach((type) => {
       this.getColumnSpan(type);
     });
   }
@@ -173,7 +173,6 @@ export class CachedSectionNormalizationService {
    * Generates a cache key for an array of sections
    */
   private generateSectionsArrayKey(sections: CardSection[]): string {
-    return sections.map(s => this.generateSectionKey(s)).join('|');
+    return sections.map((s) => this.generateSectionKey(s)).join('|');
   }
 }
-

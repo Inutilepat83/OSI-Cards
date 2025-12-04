@@ -24,8 +24,8 @@ const sampleInfoSection: CardSection = {
     { id: 'f1', label: 'Industry', value: 'Technology', icon: '🏢' },
     { id: 'f2', label: 'Founded', value: '2010', icon: '📅' },
     { id: 'f3', label: 'Headquarters', value: 'San Francisco, CA', icon: '📍' },
-    { id: 'f4', label: 'Employees', value: '5,000+', icon: '👥', trend: 'up' }
-  ]
+    { id: 'f4', label: 'Employees', value: '5,000+', icon: '👥', trend: 'up' },
+  ],
 };
 
 const sampleAnalyticsSection: CardSection = {
@@ -35,8 +35,8 @@ const sampleAnalyticsSection: CardSection = {
   fields: [
     { id: 'a1', label: 'Revenue Growth', value: '25%', percentage: 25, trend: 'up', change: 5.2 },
     { id: 'a2', label: 'Market Share', value: '12%', percentage: 12, trend: 'stable' },
-    { id: 'a3', label: 'Customer Satisfaction', value: '4.8/5', percentage: 96, trend: 'up' }
-  ]
+    { id: 'a3', label: 'Customer Satisfaction', value: '4.8/5', percentage: 96, trend: 'up' },
+  ],
 };
 
 const sampleListSection: CardSection = {
@@ -44,10 +44,28 @@ const sampleListSection: CardSection = {
   title: 'Recent Updates',
   type: 'list',
   items: [
-    { id: 'i1', title: 'Product Launch', description: 'New feature released', icon: '🚀', status: 'completed' },
-    { id: 'i2', title: 'Partnership', description: 'Strategic alliance formed', icon: '🤝', status: 'in-progress' },
-    { id: 'i3', title: 'Expansion', description: 'Opening new offices', icon: '🌍', status: 'pending' }
-  ]
+    {
+      id: 'i1',
+      title: 'Product Launch',
+      description: 'New feature released',
+      icon: '🚀',
+      status: 'completed',
+    },
+    {
+      id: 'i2',
+      title: 'Partnership',
+      description: 'Strategic alliance formed',
+      icon: '🤝',
+      status: 'in-progress',
+    },
+    {
+      id: 'i3',
+      title: 'Expansion',
+      description: 'Opening new offices',
+      icon: '🌍',
+      status: 'pending',
+    },
+  ],
 };
 
 const sampleContactSection: CardSection = {
@@ -61,41 +79,42 @@ const sampleContactSection: CardSection = {
       title: 'Jane Smith',
       value: 'Chief Executive Officer',
       email: 'jane@example.com',
-      phone: '+1 555 0100'
+      phone: '+1 555 0100',
     },
     {
       id: 'c2',
       label: 'CTO',
       title: 'John Doe',
       value: 'Chief Technology Officer',
-      email: 'john@example.com'
-    }
-  ]
+      email: 'john@example.com',
+    },
+  ],
 };
 
 const sampleActions: CardAction[] = [
   { id: 'act-1', label: 'View Details', variant: 'primary' },
   { id: 'act-2', label: 'Contact', type: 'mail', variant: 'outline' },
-  { id: 'act-3', label: 'Visit Website', type: 'website', url: 'https://example.com', variant: 'ghost' }
+  {
+    id: 'act-3',
+    label: 'Visit Website',
+    type: 'website',
+    url: 'https://example.com',
+    variant: 'ghost',
+  },
 ];
 
 const completeCard: AICardConfig = {
   id: 'demo-card-1',
   cardTitle: 'Acme Corporation',
   description: 'Leading technology solutions provider',
-  sections: [
-    sampleInfoSection,
-    sampleAnalyticsSection,
-    sampleListSection,
-    sampleContactSection
-  ],
-  actions: sampleActions
+  sections: [sampleInfoSection, sampleAnalyticsSection, sampleListSection, sampleContactSection],
+  actions: sampleActions,
 };
 
 const minimalCard: AICardConfig = {
   id: 'minimal-card',
   cardTitle: 'Simple Card',
-  sections: [sampleInfoSection]
+  sections: [sampleInfoSection],
 };
 
 /**
@@ -107,8 +126,8 @@ const meta: Meta<AICardRendererComponent> = {
   tags: ['autodocs'],
   decorators: [
     applicationConfig({
-      providers: [provideAnimations()]
-    })
+      providers: [provideAnimations()],
+    }),
   ],
   parameters: {
     layout: 'centered',
@@ -138,45 +157,45 @@ export class MyComponent {
   card: AICardConfig = { ... };
 }
 \`\`\`
-        `
-      }
-    }
+        `,
+      },
+    },
   },
   argTypes: {
     cardConfig: {
       description: 'The card configuration object',
-      control: 'object'
+      control: 'object',
     },
     isFullscreen: {
       description: 'Whether the card is in fullscreen mode',
-      control: 'boolean'
+      control: 'boolean',
     },
     tiltEnabled: {
       description: 'Enable/disable the tilt hover effect',
-      control: 'boolean'
+      control: 'boolean',
     },
     streamingStage: {
       description: 'Current streaming stage',
       control: 'select',
-      options: ['idle', 'thinking', 'streaming', 'complete', 'error', undefined]
+      options: ['idle', 'thinking', 'streaming', 'complete', 'error', undefined],
     },
     isStreaming: {
       description: 'Boolean flag for streaming animation state',
-      control: 'boolean'
+      control: 'boolean',
     },
     showLoadingByDefault: {
       description: 'Show loading state when no data',
-      control: 'boolean'
+      control: 'boolean',
     },
     loadingTitle: {
       description: 'Custom loading title',
-      control: 'text'
+      control: 'text',
     },
     loadingMessages: {
       description: 'Custom loading messages array',
-      control: 'object'
-    }
-  }
+      control: 'object',
+    },
+  },
 };
 
 export default meta;
@@ -189,8 +208,8 @@ export const Default: Story = {
   args: {
     cardConfig: completeCard,
     tiltEnabled: true,
-    showLoadingByDefault: false
-  }
+    showLoadingByDefault: false,
+  },
 };
 
 /**
@@ -199,8 +218,8 @@ export const Default: Story = {
 export const Minimal: Story = {
   args: {
     cardConfig: minimalCard,
-    tiltEnabled: true
-  }
+    tiltEnabled: true,
+  },
 };
 
 /**
@@ -211,8 +230,8 @@ export const Loading: Story = {
     cardConfig: undefined,
     streamingStage: 'thinking',
     showLoadingByDefault: true,
-    loadingTitle: 'Generating Card'
-  }
+    loadingTitle: 'Generating Card',
+  },
 };
 
 /**
@@ -222,11 +241,11 @@ export const Streaming: Story = {
   args: {
     cardConfig: {
       ...minimalCard,
-      sections: [sampleInfoSection]
+      sections: [sampleInfoSection],
     },
     streamingStage: 'streaming',
-    isStreaming: true
-  }
+    isStreaming: true,
+  },
 };
 
 /**
@@ -235,8 +254,8 @@ export const Streaming: Story = {
 export const NoTilt: Story = {
   args: {
     cardConfig: completeCard,
-    tiltEnabled: false
-  }
+    tiltEnabled: false,
+  },
 };
 
 /**
@@ -245,11 +264,11 @@ export const NoTilt: Story = {
 export const Fullscreen: Story = {
   args: {
     cardConfig: completeCard,
-    isFullscreen: true
+    isFullscreen: true,
   },
   parameters: {
-    layout: 'fullscreen'
-  }
+    layout: 'fullscreen',
+  },
 };
 
 /**
@@ -265,9 +284,9 @@ export const CustomLoadingMessages: Story = {
       'Crunching numbers...',
       'Analyzing patterns...',
       'Building insights...',
-      'Almost there...'
-    ]
-  }
+      'Almost there...',
+    ],
+  },
 };
 
 /**
@@ -286,12 +305,12 @@ export const AnalyticsDashboard: Story = {
           type: 'financials',
           fields: [
             { id: 'rev', label: 'Revenue', value: '$50M', change: 15, trend: 'up' },
-            { id: 'margin', label: 'Margin', value: '18%', change: 3.2, trend: 'up' }
-          ]
-        }
-      ]
-    }
-  }
+            { id: 'margin', label: 'Margin', value: '18%', change: 3.2, trend: 'up' },
+          ],
+        },
+      ],
+    },
+  },
 };
 
 /**
@@ -305,10 +324,10 @@ export const ContactCard: Story = {
       sections: [sampleContactSection],
       actions: [
         { id: 'email', label: 'Send Email', type: 'mail', variant: 'primary' },
-        { id: 'call', label: 'Schedule Call', variant: 'outline' }
-      ]
-    }
-  }
+        { id: 'call', label: 'Schedule Call', variant: 'outline' },
+      ],
+    },
+  },
 };
 
 /**
@@ -325,10 +344,10 @@ export const ManySections: Story = {
         sampleListSection,
         sampleContactSection,
         { ...sampleInfoSection, id: 'info-2', title: 'Additional Info' },
-        { ...sampleListSection, id: 'list-2', title: 'More Updates' }
-      ]
-    }
-  }
+        { ...sampleListSection, id: 'list-2', title: 'More Updates' },
+      ],
+    },
+  },
 };
 
 /**
@@ -338,8 +357,8 @@ export const ErrorState: Story = {
   args: {
     cardConfig: undefined,
     streamingStage: 'error',
-    showLoadingByDefault: true
-  }
+    showLoadingByDefault: true,
+  },
 };
 
 /**
@@ -350,10 +369,7 @@ export const EmptyCard: Story = {
     cardConfig: {
       id: 'empty',
       cardTitle: 'Empty Card',
-      sections: []
-    }
-  }
+      sections: [],
+    },
+  },
 };
-
-
-

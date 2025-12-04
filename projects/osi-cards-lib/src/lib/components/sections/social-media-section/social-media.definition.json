@@ -27,9 +27,25 @@
   "fieldSchema": {
     "type": "object",
     "properties": {
-      "platform": { "type": "string", "enum": ["twitter", "linkedin", "facebook", "instagram", "youtube", "tiktok", "github"], "description": "Social platform" },
+      "platform": {
+        "type": "string",
+        "enum": [
+          "twitter",
+          "linkedin",
+          "facebook",
+          "instagram",
+          "youtube",
+          "tiktok",
+          "github"
+        ],
+        "description": "Social platform"
+      },
       "handle": { "type": "string", "description": "Social media handle" },
-      "url": { "type": "string", "format": "uri", "description": "Profile URL" },
+      "url": {
+        "type": "string",
+        "format": "uri",
+        "description": "Profile URL"
+      },
       "followers": { "type": "number", "description": "Follower count" },
       "engagement": { "type": "number", "description": "Engagement rate" },
       "verified": { "type": "boolean", "description": "Verified account" }
@@ -95,9 +111,7 @@
     "minimal": {
       "title": "Social",
       "type": "social-media",
-      "fields": [
-        { "platform": "linkedin", "handle": "@company" }
-      ]
+      "fields": [{ "platform": "linkedin", "handle": "@company" }]
     },
     "edgeCases": {
       "title": "Social Edge Cases",
@@ -110,6 +124,3 @@
     }
   }
 }
-
-
-

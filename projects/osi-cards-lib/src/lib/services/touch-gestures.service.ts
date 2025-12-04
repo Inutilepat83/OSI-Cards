@@ -5,7 +5,17 @@ import { map, filter, takeUntil, switchMap, take } from 'rxjs/operators';
 /**
  * Touch gesture types
  */
-export type GestureType = 'tap' | 'doubletap' | 'swipe' | 'swipeleft' | 'swiperight' | 'swipeup' | 'swipedown' | 'pinch' | 'pan' | 'press';
+export type GestureType =
+  | 'tap'
+  | 'doubletap'
+  | 'swipe'
+  | 'swipeleft'
+  | 'swiperight'
+  | 'swipeup'
+  | 'swipedown'
+  | 'pinch'
+  | 'pan'
+  | 'press';
 
 /**
  * Touch gesture event
@@ -84,7 +94,7 @@ export class TouchGesturesService implements OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    this.gestureHandlers.forEach(subject => subject.complete());
+    this.gestureHandlers.forEach((subject) => subject.complete());
     this.gestureHandlers.clear();
   }
 
@@ -99,7 +109,7 @@ export class TouchGesturesService implements OnDestroy {
       swipeVelocity = 0.3,
       tapDuration = 250,
       doubleTapTimeout = 300,
-      pressDuration = 500
+      pressDuration = 500,
     } = config;
 
     // Create destroy subject for this element
@@ -119,9 +129,7 @@ export class TouchGesturesService implements OnDestroy {
       const touchMove$ = fromEvent<TouchEvent>(element, 'touchmove', { passive: true });
       const touchEnd$ = fromEvent<TouchEvent>(element, 'touchend', { passive: true });
 
-      touchStart$.pipe(
-        takeUntil(merge(this.destroy$, elementDestroy$))
-      ).subscribe(event => {
+      touchStart$.pipe(takeUntil(merge(this.destroy$, elementDestroy$))).subscribe((event) => {
         const touch = event.touches[0];
         if (!touch) return;
         touchStartTime = Date.now();
@@ -132,22 +140,22 @@ export class TouchGesturesService implements OnDestroy {
         if (gestures.includes('press')) {
           pressTimeout = setTimeout(() => {
             this.ngZone.run(() => {
-              events$.next(this.createGestureEvent('press', element, {
-                startX: touchStartX,
-                startY: touchStartY,
-                endX: touchStartX,
-                endY: touchStartY,
-                duration: pressDuration,
-                originalEvent: event
-              }));
+              events$.next(
+                this.createGestureEvent('press', element, {
+                  startX: touchStartX,
+                  startY: touchStartY,
+                  endX: touchStartX,
+                  endY: touchStartY,
+                  duration: pressDuration,
+                  originalEvent: event,
+                })
+              );
             });
           }, pressDuration);
         }
       });
 
-      touchMove$.pipe(
-        takeUntil(merge(this.destroy$, elementDestroy$))
-      ).subscribe(() => {
+      touchMove$.pipe(takeUntil(merge(this.destroy$, elementDestroy$))).subscribe(() => {
         // Cancel press on move
         if (pressTimeout) {
           clearTimeout(pressTimeout);
@@ -155,9 +163,7 @@ export class TouchGesturesService implements OnDestroy {
         }
       });
 
-      touchEnd$.pipe(
-        takeUntil(merge(this.destroy$, elementDestroy$))
-      ).subscribe(event => {
+      touchEnd$.pipe(takeUntil(merge(this.destroy$, elementDestroy$))).subscribe((event) => {
         // Cancel press timer
         if (pressTimeout) {
           clearTimeout(pressTimeout);
@@ -184,7 +190,7 @@ export class TouchGesturesService implements OnDestroy {
           velocityX,
           velocityY,
           duration,
-          originalEvent: event
+          originalEvent: event,
         };
 
         this.ngZone.run(() => {
@@ -197,20 +203,24 @@ export class TouchGesturesService implements OnDestroy {
               const type = `swipe${direction}` as GestureType;
 
               if (gestures.includes('swipe') || gestures.includes(type)) {
-                events$.next(this.createGestureEvent(type, element, {
-                  ...gestureBase,
-                  direction
-                }));
+                events$.next(
+                  this.createGestureEvent(type, element, {
+                    ...gestureBase,
+                    direction,
+                  })
+                );
               }
             } else if (!isHorizontal && velocityY > swipeVelocity) {
               const direction = deltaY > 0 ? 'down' : 'up';
               const type = `swipe${direction}` as GestureType;
 
               if (gestures.includes('swipe') || gestures.includes(type)) {
-                events$.next(this.createGestureEvent(type, element, {
-                  ...gestureBase,
-                  direction
-                }));
+                events$.next(
+                  this.createGestureEvent(type, element, {
+                    ...gestureBase,
+                    direction,
+                  })
+                );
               }
             }
           }
@@ -231,9 +241,7 @@ export class TouchGesturesService implements OnDestroy {
       });
     });
 
-    return events$.asObservable().pipe(
-      takeUntil(merge(this.destroy$, elementDestroy$))
-    );
+    return events$.asObservable().pipe(takeUntil(merge(this.destroy$, elementDestroy$)));
   }
 
   /**
@@ -270,8 +278,7 @@ export class TouchGesturesService implements OnDestroy {
       direction: data.direction,
       scale: data.scale,
       duration: data.duration ?? 0,
-      originalEvent: data.originalEvent!
+      originalEvent: data.originalEvent!,
     };
   }
 }
-

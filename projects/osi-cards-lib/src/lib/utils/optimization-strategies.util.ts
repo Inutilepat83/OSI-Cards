@@ -6,11 +6,7 @@
 /**
  * Optimization strategy type
  */
-export type OptimizationStrategy =
-  | 'aggressive'
-  | 'balanced'
-  | 'conservative'
-  | 'custom';
+export type OptimizationStrategy = 'aggressive' | 'balanced' | 'conservative' | 'custom';
 
 /**
  * Optimization configuration
@@ -37,7 +33,10 @@ export interface OptimizationConfig {
 /**
  * Optimization preset configurations
  */
-export const OPTIMIZATION_PRESETS: Record<Exclude<OptimizationStrategy, 'custom'>, OptimizationConfig> = {
+export const OPTIMIZATION_PRESETS: Record<
+  Exclude<OptimizationStrategy, 'custom'>,
+  OptimizationConfig
+> = {
   aggressive: {
     strategy: 'aggressive',
     virtualScrolling: true,
@@ -314,9 +313,7 @@ export class OptimizationStrategyAnalyzer {
  * </app-masonry-grid>
  * ```
  */
-export function applyOptimizationStrategy(
-  strategy: OptimizationStrategy
-): OptimizationConfig {
+export function applyOptimizationStrategy(strategy: OptimizationStrategy): OptimizationConfig {
   if (strategy === 'custom') {
     throw new Error('Custom strategy requires explicit configuration');
   }
@@ -350,4 +347,3 @@ export function getOptimizationForEnvironment(
       return 'balanced';
   }
 }
-

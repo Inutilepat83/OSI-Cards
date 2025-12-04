@@ -35,7 +35,12 @@ import { filter, map } from 'rxjs/operators';
 /**
  * WebSocket connection state
  */
-export type WebSocketState = 'connecting' | 'connected' | 'disconnecting' | 'disconnected' | 'error';
+export type WebSocketState =
+  | 'connecting'
+  | 'connected'
+  | 'disconnecting'
+  | 'disconnected'
+  | 'error';
 
 /**
  * WebSocket options
@@ -224,7 +229,7 @@ export class WebSocketManager<TSend = any, TReceive = any> {
    * @param messages - Messages to send
    */
   sendBatch(messages: TSend[]): void {
-    messages.forEach(msg => this.send(msg));
+    messages.forEach((msg) => this.send(msg));
   }
 
   /**
@@ -241,7 +246,7 @@ export class WebSocketManager<TSend = any, TReceive = any> {
    */
   on(type: string): Observable<TReceive> {
     return this.messages$.pipe(
-      map(msg => msg.data),
+      map((msg) => msg.data),
       filter((data: any) => data.type === type)
     );
   }
@@ -259,7 +264,7 @@ export class WebSocketManager<TSend = any, TReceive = any> {
         ? setTimeout(() => reject(new Error('Timeout waiting for message')), timeout)
         : null;
 
-      const sub = this.on(type).subscribe(message => {
+      const sub = this.on(type).subscribe((message) => {
         if (timeoutId) clearTimeout(timeoutId);
         sub.unsubscribe();
         resolve(message);
@@ -388,4 +393,3 @@ export function createWebSocket<TSend = any, TReceive = any>(
   manager.connect();
   return manager;
 }
-

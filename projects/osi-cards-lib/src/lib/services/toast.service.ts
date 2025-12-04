@@ -19,7 +19,13 @@ export interface ToastConfig {
   message: string;
   type: 'success' | 'error' | 'warning' | 'info';
   duration?: number;
-  position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center';
+  position?:
+    | 'top-right'
+    | 'top-left'
+    | 'bottom-right'
+    | 'bottom-left'
+    | 'top-center'
+    | 'bottom-center';
   dismissible?: boolean;
 }
 
@@ -29,7 +35,7 @@ export interface Toast extends ToastConfig {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ToastService {
   private toasts = signal<Toast[]>([]);
@@ -63,7 +69,7 @@ export class ToastService {
       timestamp: new Date(),
     };
 
-    this.toasts.update(toasts => [...toasts, toast]);
+    this.toasts.update((toasts) => [...toasts, toast]);
 
     if (toast.duration && toast.duration > 0) {
       setTimeout(() => this.dismiss(toast.id), toast.duration);
@@ -73,7 +79,7 @@ export class ToastService {
   }
 
   dismiss(id: string): void {
-    this.toasts.update(toasts => toasts.filter(t => t.id !== id));
+    this.toasts.update((toasts) => toasts.filter((t) => t.id !== id));
   }
 
   dismissAll(): void {
@@ -84,4 +90,3 @@ export class ToastService {
     return `toast_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 }
-

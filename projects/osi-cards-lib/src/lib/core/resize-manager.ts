@@ -90,7 +90,7 @@ export class ResizeManager {
 
     // Setup observables with debouncing
     this.width$ = this.widthSubject.pipe(
-      filter(w => w >= this.config.minValidWidth),
+      filter((w) => w >= this.config.minValidWidth),
       debounceTime(this.config.debounce),
       distinctUntilChanged(),
       takeUntil(this.destroy$)
@@ -182,7 +182,7 @@ export class ResizeManager {
     this.resizeObserver?.disconnect();
 
     // Create new observer
-    this.resizeObserver = new ResizeObserver(entries => {
+    this.resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         this.handleResize(entry);
       }
@@ -310,6 +310,3 @@ export function createGridResizeManager(element?: Element): ResizeManager {
 
   return manager;
 }
-
-
-

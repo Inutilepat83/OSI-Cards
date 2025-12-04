@@ -1,0 +1,24 @@
+{
+  "$schema": "./node_modules/@compodoc/compodoc/package.json",
+  "port": 8080,
+  "name": "OSI Cards Documentation",
+  "output": "docs/compodoc",
+  "tsconfig": "./tsconfig.json",
+  "theme": "material",
+  "serve": false,
+  "disableSourceCode": false,
+  "disableGraph": false,
+  "disableCoverage": false,
+  "disablePrivate": false,
+  "disableProtected": false,
+  "disableInternal": false,
+  "disableLifeCycleHooks": false,
+  "disableRoutesGraph": false,
+  "disableSearch": false,
+  "coverageTest": 80,
+  "coverageMinimumPerFile": 70,
+  "includes": "./docs",
+  "includesName": "Additional Documentation",
+  "silent": false
+}
+

@@ -24,9 +24,11 @@ export function isDevelopment(): boolean {
  * Check if running in production
  */
 export function isProduction(): boolean {
-  return window.location.hostname !== 'localhost' &&
-         !window.location.hostname.includes('127.0.0.1') &&
-         !window.location.hostname.includes('dev');
+  return (
+    window.location.hostname !== 'localhost' &&
+    !window.location.hostname.includes('127.0.0.1') &&
+    !window.location.hostname.includes('dev')
+  );
 }
 
 /**
@@ -76,8 +78,7 @@ export function isNode(): boolean {
  * Is localhost
  */
 export function isLocalhost(): boolean {
-  return window.location.hostname === 'localhost' ||
-         window.location.hostname === '127.0.0.1';
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 }
 
 /**
@@ -149,4 +150,3 @@ export function getSearchParams(): URLSearchParams {
 export function isEmbedded(): boolean {
   return window.self !== window.top;
 }
-

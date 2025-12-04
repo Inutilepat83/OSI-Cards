@@ -1,5 +1,9 @@
 import { TestBed } from '@angular/core/testing';
-import { SectionNormalizationService, PRIORITY_BANDS, PriorityBand } from './section-normalization.service';
+import {
+  SectionNormalizationService,
+  PRIORITY_BANDS,
+  PriorityBand,
+} from './section-normalization.service';
 import { CardSection } from '../models/card.model';
 
 describe('SectionNormalizationService', () => {
@@ -7,7 +11,7 @@ describe('SectionNormalizationService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [SectionNormalizationService]
+      providers: [SectionNormalizationService],
     });
     service = TestBed.inject(SectionNormalizationService);
   });
@@ -23,44 +27,44 @@ describe('SectionNormalizationService', () => {
     it('should preserve existing type', () => {
       const section: CardSection = {
         title: 'Test Section',
-        type: 'analytics'
+        type: 'analytics',
       };
-      
+
       const result = service.normalizeSection(section);
-      
+
       expect(result.type).toBe('analytics');
     });
 
     it('should resolve timeline type to event', () => {
       const section: CardSection = {
         title: 'Timeline',
-        type: 'timeline'
+        type: 'timeline',
       };
-      
+
       const result = service.normalizeSection(section);
-      
+
       expect(result.type).toBe('event');
     });
 
     it('should resolve metrics type to analytics', () => {
       const section: CardSection = {
         title: 'Metrics',
-        type: 'metrics'
+        type: 'metrics',
       };
-      
+
       const result = service.normalizeSection(section);
-      
+
       expect(result.type).toBe('analytics');
     });
 
     it('should add preferredColumns from type defaults', () => {
       const section: CardSection = {
         title: 'Chart',
-        type: 'chart'
+        type: 'chart',
       };
-      
+
       const result = service.normalizeSection(section);
-      
+
       expect(result.preferredColumns).toBeDefined();
     });
 
@@ -68,22 +72,22 @@ describe('SectionNormalizationService', () => {
       const section: CardSection = {
         title: 'Info',
         type: 'info',
-        preferredColumns: 3
+        preferredColumns: 3,
       };
-      
+
       const result = service.normalizeSection(section);
-      
+
       expect(result.preferredColumns).toBe(3);
     });
 
     it('should set priority band on section', () => {
       const section: CardSection = {
         title: 'Overview',
-        type: 'overview'
+        type: 'overview',
       };
-      
+
       const result = service.normalizeSection(section);
-      
+
       expect(result.priority).toBe('critical');
     });
 
@@ -91,22 +95,22 @@ describe('SectionNormalizationService', () => {
       const section: CardSection = {
         title: 'Info',
         type: 'info',
-        priority: 'important'
+        priority: 'important',
       };
-      
+
       const result = service.normalizeSection(section);
-      
+
       expect(result.priority).toBe('important');
     });
 
     it('should add meta with colSpanThresholds', () => {
       const section: CardSection = {
         title: 'Test',
-        type: 'info'
+        type: 'info',
       };
-      
+
       const result = service.normalizeSection(section);
-      
+
       expect(result.meta).toBeDefined();
       const meta = result.meta as Record<string, unknown>;
       expect(meta['colSpanThresholds']).toBeDefined();
@@ -115,11 +119,11 @@ describe('SectionNormalizationService', () => {
     it('should add meta with priorityBand', () => {
       const section: CardSection = {
         title: 'Test',
-        type: 'info'
+        type: 'info',
       };
-      
+
       const result = service.normalizeSection(section);
-      
+
       const meta = result.meta as Record<string, unknown>;
       expect(meta['priorityBand']).toBeDefined();
     });
@@ -128,11 +132,11 @@ describe('SectionNormalizationService', () => {
       const section: CardSection = {
         title: 'Test',
         type: 'info',
-        subtitle: 'This is a subtitle'
+        subtitle: 'This is a subtitle',
       };
-      
+
       const result = service.normalizeSection(section);
-      
+
       expect(result.description).toBe('This is a subtitle');
     });
   });
@@ -206,44 +210,44 @@ describe('SectionNormalizationService', () => {
     it('should return 999 for critical sections (never condense)', () => {
       const section: CardSection = {
         title: 'Overview',
-        type: 'overview'
+        type: 'overview',
       };
-      
+
       const order = service.getCondensationOrder(section);
-      
+
       expect(order).toBe(999);
     });
 
     it('should return 3 for important sections (condense last)', () => {
       const section: CardSection = {
         title: 'Chart',
-        type: 'chart'
+        type: 'chart',
       };
-      
+
       const order = service.getCondensationOrder(section);
-      
+
       expect(order).toBe(3);
     });
 
     it('should return 2 for standard sections (condense always)', () => {
       const section: CardSection = {
         title: 'Info',
-        type: 'info'
+        type: 'info',
       };
-      
+
       const order = service.getCondensationOrder(section);
-      
+
       expect(order).toBe(2);
     });
 
     it('should return 1 for optional sections (condense first)', () => {
       const section: CardSection = {
         title: 'Event',
-        type: 'event'
+        type: 'event',
       };
-      
+
       const order = service.getCondensationOrder(section);
-      
+
       expect(order).toBe(1);
     });
 
@@ -251,11 +255,11 @@ describe('SectionNormalizationService', () => {
       const section: CardSection = {
         title: 'Info',
         type: 'info',
-        priority: 'critical'
+        priority: 'critical',
       };
-      
+
       const order = service.getCondensationOrder(section);
-      
+
       expect(order).toBe(999);
     });
   });
@@ -267,30 +271,30 @@ describe('SectionNormalizationService', () => {
     it('should not collapse sections when count is within limit', () => {
       const sections: CardSection[] = [
         { title: 'S1', type: 'info' },
-        { title: 'S2', type: 'list' }
+        { title: 'S2', type: 'list' },
       ];
-      
+
       const result = service.applyCondensation(sections, 5);
-      
-      expect(result.every(s => !s.collapsed)).toBe(true);
+
+      expect(result.every((s) => !s.collapsed)).toBe(true);
     });
 
     it('should collapse low priority sections first', () => {
       const sections: CardSection[] = [
-        { title: 'Overview', type: 'overview' },    // critical - never collapse
-        { title: 'Chart', type: 'chart' },          // important - collapse last
-        { title: 'Info', type: 'info' },            // standard - collapse always
-        { title: 'Event', type: 'event' }           // optional - collapse first
+        { title: 'Overview', type: 'overview' }, // critical - never collapse
+        { title: 'Chart', type: 'chart' }, // important - collapse last
+        { title: 'Info', type: 'info' }, // standard - collapse always
+        { title: 'Event', type: 'event' }, // optional - collapse first
       ];
-      
+
       const result = service.applyCondensation(sections, 2);
-      
+
       // Overview should not be collapsed (critical)
-      const overviewSection = result.find(s => s.title === 'Overview');
+      const overviewSection = result.find((s) => s.title === 'Overview');
       expect(overviewSection?.collapsed).toBeFalsy();
-      
+
       // Event should be collapsed (optional = condense first)
-      const eventSection = result.find(s => s.title === 'Event');
+      const eventSection = result.find((s) => s.title === 'Event');
       expect(eventSection?.collapsed).toBe(true);
     });
 
@@ -299,15 +303,15 @@ describe('SectionNormalizationService', () => {
         { title: 'Overview', type: 'overview' },
         { title: 'Contact', type: 'contact-card' },
         { title: 'Event1', type: 'event' },
-        { title: 'Event2', type: 'event' }
+        { title: 'Event2', type: 'event' },
       ];
-      
+
       const result = service.applyCondensation(sections, 1);
-      
+
       // Critical sections should never be collapsed
-      const overview = result.find(s => s.title === 'Overview');
-      const contact = result.find(s => s.title === 'Contact');
-      
+      const overview = result.find((s) => s.title === 'Overview');
+      const contact = result.find((s) => s.title === 'Contact');
+
       expect(overview?.collapsed).toBeFalsy();
       expect(contact?.collapsed).toBeFalsy();
     });
@@ -316,11 +320,11 @@ describe('SectionNormalizationService', () => {
       const sections: CardSection[] = [
         { title: 'First', type: 'overview' },
         { title: 'Second', type: 'info' },
-        { title: 'Third', type: 'event' }
+        { title: 'Third', type: 'event' },
       ];
-      
+
       const result = service.applyCondensation(sections, 2);
-      
+
       expect(result[0]?.title).toBe('First');
       expect(result[1]?.title).toBe('Second');
       expect(result[2]?.title).toBe('Third');
@@ -334,22 +338,22 @@ describe('SectionNormalizationService', () => {
     it('should return low priority for overview', () => {
       const section: CardSection = {
         title: 'Overview',
-        type: 'overview'
+        type: 'overview',
       };
-      
+
       const priority = service.getSectionPriority(section);
-      
+
       expect(priority).toBeLessThan(2);
     });
 
     it('should return low priority for contact-card', () => {
       const section: CardSection = {
         title: 'Contacts',
-        type: 'contact-card'
+        type: 'contact-card',
       };
-      
+
       const priority = service.getSectionPriority(section);
-      
+
       expect(priority).toBeLessThan(2);
     });
 
@@ -357,32 +361,32 @@ describe('SectionNormalizationService', () => {
       const section: CardSection = {
         title: 'Event',
         type: 'event',
-        priority: 'critical'
+        priority: 'critical',
       };
-      
+
       const priority = service.getSectionPriority(section);
-      
+
       expect(priority).toBe(1);
     });
 
     it('should give lower priority (higher number) to optional sections', () => {
       const criticalSection: CardSection = { title: 'Overview', type: 'overview' };
       const optionalSection: CardSection = { title: 'Event', type: 'event' };
-      
+
       const criticalPriority = service.getSectionPriority(criticalSection);
       const optionalPriority = service.getSectionPriority(optionalSection);
-      
+
       expect(criticalPriority).toBeLessThan(optionalPriority);
     });
 
     it('should handle title-based overrides', () => {
       const section: CardSection = {
         title: 'Company Overview',
-        type: 'info'
+        type: 'info',
       };
-      
+
       const priority = service.getSectionPriority(section);
-      
+
       expect(priority).toBe(1); // Title contains 'overview'
     });
   });
@@ -395,11 +399,11 @@ describe('SectionNormalizationService', () => {
       const sections: CardSection[] = [
         { title: 'Event', type: 'event' },
         { title: 'Overview', type: 'overview' },
-        { title: 'Info', type: 'info' }
+        { title: 'Info', type: 'info' },
       ];
-      
+
       const result = service.sortSections(sections);
-      
+
       // Overview should come first (lowest priority number)
       expect(result[0]?.type).toBe('overview');
     });
@@ -408,11 +412,11 @@ describe('SectionNormalizationService', () => {
       const sections: CardSection[] = [
         { title: 'Second', type: 'overview', meta: { streamingOrder: 2 } },
         { title: 'First', type: 'info', meta: { streamingOrder: 1 } },
-        { title: 'Third', type: 'event', meta: { streamingOrder: 3 } }
+        { title: 'Third', type: 'event', meta: { streamingOrder: 3 } },
       ];
-      
+
       const result = service.sortSections(sections);
-      
+
       expect(result[0]?.title).toBe('First');
       expect(result[1]?.title).toBe('Second');
       expect(result[2]?.title).toBe('Third');
@@ -421,13 +425,13 @@ describe('SectionNormalizationService', () => {
     it('should not mutate original array', () => {
       const sections: CardSection[] = [
         { title: 'Event', type: 'event' },
-        { title: 'Overview', type: 'overview' }
+        { title: 'Overview', type: 'overview' },
       ];
-      const originalOrder = sections.map(s => s.title);
-      
+      const originalOrder = sections.map((s) => s.title);
+
       service.sortSections(sections);
-      
-      expect(sections.map(s => s.title)).toEqual(originalOrder);
+
+      expect(sections.map((s) => s.title)).toEqual(originalOrder);
     });
   });
 
@@ -437,12 +441,12 @@ describe('SectionNormalizationService', () => {
   describe('normalizeAndSortSections', () => {
     it('should normalize and sort in one call', () => {
       const sections: CardSection[] = [
-        { title: 'Timeline', type: 'timeline' },  // Should resolve to 'event'
-        { title: 'Overview', type: 'overview' }
+        { title: 'Timeline', type: 'timeline' }, // Should resolve to 'event'
+        { title: 'Overview', type: 'overview' },
       ];
-      
+
       const result = service.normalizeAndSortSections(sections);
-      
+
       // Should be sorted (overview first)
       expect(result[0]?.type).toBe('overview');
       // Timeline should be normalized to event
@@ -450,12 +454,10 @@ describe('SectionNormalizationService', () => {
     });
 
     it('should add required properties', () => {
-      const sections: CardSection[] = [
-        { title: 'Test', type: 'info' }
-      ];
-      
+      const sections: CardSection[] = [{ title: 'Test', type: 'info' }];
+
       const result = service.normalizeAndSortSections(sections);
-      
+
       expect(result[0]?.preferredColumns).toBeDefined();
       expect(result[0]?.priority).toBeDefined();
       expect(result[0]?.meta).toBeDefined();
@@ -502,7 +504,7 @@ describe('SectionNormalizationService', () => {
 
     it('should have all priority bands', () => {
       const bands: PriorityBand[] = ['critical', 'important', 'standard', 'optional'];
-      bands.forEach(band => {
+      bands.forEach((band) => {
         expect(PRIORITY_BANDS[band]).toBeDefined();
         expect(PRIORITY_BANDS[band].types).toBeDefined();
         expect(PRIORITY_BANDS[band].condensePriority).toBeDefined();

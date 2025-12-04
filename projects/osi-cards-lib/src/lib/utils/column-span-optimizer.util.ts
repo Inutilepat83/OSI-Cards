@@ -6,23 +6,23 @@
 
 /**
  * Column Span Optimizer Utility
- * 
+ *
  * Provides algorithms for optimizing column spans in masonry grids:
  * - Dynamic span reduction with total layout impact consideration
  * - Span expansion heuristics with content density awareness
  * - Cross-section span negotiation
  * - Minimum viable span calculation
  * - Span stability hints for consistent user experience
- * 
+ *
  * @example
  * ```typescript
- * import { 
- *   optimizeColumnSpans, 
+ * import {
+ *   optimizeColumnSpans,
  *   negotiateSpans,
  *   calculateMinViableSpan,
- *   SpanStabilityTracker 
+ *   SpanStabilityTracker
  * } from './column-span-optimizer.util';
- * 
+ *
  * const optimized = optimizeColumnSpans(sections, sectionHeights, columns);
  * const negotiated = negotiateSpans(sections, columns, containerWidth);
  * ```
@@ -43,7 +43,7 @@ export interface OptimizableSection {
   colSpan: number;
   preferredColumns: PreferredColumns;
   top: number;
-  section?: CardSection;  // Optional reference to original section
+  section?: CardSection; // Optional reference to original section
 }
 
 /**
@@ -150,12 +150,12 @@ export const DEFAULT_OPTIMIZER_CONFIG: ColumnSpanOptimizerConfig = {
 
 /**
  * Optimizes column spans for sections to minimize total container height.
- * 
+ *
  * Algorithm:
  * 1. Identify tall multi-column sections (height > average * threshold)
  * 2. For each candidate, simulate layout with current span vs narrower span
  * 3. If narrower span results in lower total height, adjust the span
- * 
+ *
  * @param sections - Sections with position information
  * @param sectionHeights - Map of section keys to actual heights
  * @param columns - Number of columns
@@ -185,7 +185,7 @@ export function optimizeColumnSpans<T extends OptimizableSection>(
   const tallThreshold = avgHeight * config.tallThresholdMultiplier;
 
   // Find multi-column sections that are tall candidates
-  const candidates = sections.filter(s => {
+  const candidates = sections.filter((s) => {
     const height = sectionHeights.get(s.key) ?? 200;
     return s.colSpan > 1 && s.preferredColumns > 1 && height > tallThreshold;
   });
@@ -195,10 +195,10 @@ export function optimizeColumnSpans<T extends OptimizableSection>(
   }
 
   // Clone sections for modification
-  const optimized = sections.map(s => ({ ...s }));
+  const optimized = sections.map((s) => ({ ...s }));
 
   for (const candidate of candidates) {
-    const idx = optimized.findIndex(s => s.key === candidate.key);
+    const idx = optimized.findIndex((s) => s.key === candidate.key);
     if (idx < 0) continue;
 
     const section = optimized[idx];
@@ -235,7 +235,7 @@ export function optimizeColumnSpans<T extends OptimizableSection>(
 /**
  * Simulates layout and returns the total container height.
  * Used for comparing different layout configurations.
- * 
+ *
  * @param sections - Sections to simulate
  * @param sectionHeights - Map of section keys to heights
  * @param columns - Number of columns
@@ -288,7 +288,7 @@ export function simulateLayoutHeight<T extends OptimizableSection>(
 
 /**
  * Calculates total container height from placed sections.
- * 
+ *
  * @param sections - Positioned sections
  * @param sectionHeights - Map of section keys to heights
  * @returns Total container height
@@ -314,14 +314,14 @@ export function calculateTotalHeight<T extends { key: string; top: number }>(
 
 /**
  * Dynamic span reduction with total layout impact consideration.
- * 
+ *
  * Unlike basic optimization that only considers individual sections,
  * this evaluates how span changes affect the ENTIRE layout including:
  * - How other sections reflow
  * - Total container height change
  * - Column balance impact
  * - Gap creation/elimination
- * 
+ *
  * @param sections - Sections to optimize
  * @param sectionHeights - Map of section keys to heights
  * @param columns - Number of columns
@@ -339,7 +339,7 @@ export function optimizeSpansWithGlobalImpact<T extends OptimizableSection>(
   }
 
   const maxIterations = config.maxIterations ?? 5;
-  let optimized = sections.map(s => ({ ...s }));
+  let optimized = sections.map((s) => ({ ...s }));
   let currentHeight = simulateLayoutHeight(optimized, sectionHeights, columns);
   let improved = true;
   let iteration = 0;
@@ -379,7 +379,13 @@ export function optimizeSpansWithGlobalImpact<T extends OptimizableSection>(
       const heightImprovement = currentHeight - newHeight;
 
       // Calculate balance score change
-      const originalBalance = calculateColumnBalance(optimized, sectionHeights, columns, originalSpan, i);
+      const originalBalance = calculateColumnBalance(
+        optimized,
+        sectionHeights,
+        columns,
+        originalSpan,
+        i
+      );
       const newBalance = calculateColumnBalance(optimized, sectionHeights, columns, newSpan, i);
       const balanceImprovement = newBalance - originalBalance;
 
@@ -455,13 +461,13 @@ function calculateColumnBalance<T extends OptimizableSection>(
 
 /**
  * Cross-section span negotiation.
- * 
+ *
  * When multiple sections compete for the same space, this negotiates
  * span allocations based on:
  * - Content density (denser content gets more space)
  * - Priority (higher priority sections preferred)
  * - Flexibility (some sections can shrink/grow more)
- * 
+ *
  * @param sections - Sections to negotiate
  * @param config - Negotiation configuration
  * @returns Negotiated sections with resolved conflicts
@@ -471,8 +477,8 @@ export function negotiateSpans(
   config: SpanNegotiationConfig
 ): SpanNegotiationResult {
   const { columns, allowShrink = true, allowGrow = true, priorityWeight = 1.0 } = config;
-  
-  const result: ExtendedOptimizableSection[] = sections.map(s => ({ ...s }));
+
+  const result: ExtendedOptimizableSection[] = sections.map((s) => ({ ...s }));
   const conflicts: SpanConflict[] = [];
   let shrunkCount = 0;
   let grownCount = 0;
@@ -482,24 +488,24 @@ export function negotiateSpans(
 
   for (const row of rows) {
     const totalPreferred = row.reduce((sum, s) => sum + s.colSpan, 0);
-    
+
     if (totalPreferred === columns) {
       // Perfect fit, no negotiation needed
       continue;
     }
-    
+
     if (totalPreferred > columns) {
       // Over-subscribed row - need to shrink
       if (!allowShrink) continue;
 
       const excess = totalPreferred - columns;
       const shrinkable = row
-        .filter(s => s.canShrink !== false && s.colSpan > 1)
+        .filter((s) => s.canShrink !== false && s.colSpan > 1)
         .sort((a, b) => {
           // Sort by priority (lower = keep original), then density (lower = shrink first)
           const priorityA = calculateNegotiationPriority(a, priorityWeight);
           const priorityB = calculateNegotiationPriority(b, priorityWeight);
-          return priorityB - priorityA;  // Higher priority keeps span
+          return priorityB - priorityA; // Higher priority keeps span
         });
 
       let remaining = excess;
@@ -508,7 +514,7 @@ export function negotiateSpans(
 
         const maxShrink = section.colSpan - 1;
         const shrinkAmount = Math.min(remaining, maxShrink);
-        
+
         if (shrinkAmount > 0) {
           section.colSpan -= shrinkAmount;
           section.preferredColumns = section.colSpan as PreferredColumns;
@@ -517,7 +523,7 @@ export function negotiateSpans(
 
           // Record conflict if multiple sections involved
           if (row.length > 1) {
-            const otherSection = row.find(s => s.key !== section.key);
+            const otherSection = row.find((s) => s.key !== section.key);
             if (otherSection) {
               conflicts.push({
                 section1Key: section.key,
@@ -535,7 +541,7 @@ export function negotiateSpans(
 
       const available = columns - totalPreferred;
       const growable = row
-        .filter(s => s.canGrow !== false)
+        .filter((s) => s.canGrow !== false)
         .sort((a, b) => {
           // Higher density grows first
           return (b.density ?? 0) - (a.density ?? 0);
@@ -546,7 +552,7 @@ export function negotiateSpans(
         if (remaining <= 0) break;
 
         const maxGrow = columns - section.colSpan;
-        const growAmount = Math.min(remaining, maxGrow, 1);  // Grow by 1 at a time
+        const growAmount = Math.min(remaining, maxGrow, 1); // Grow by 1 at a time
 
         if (growAmount > 0) {
           section.colSpan += growAmount;
@@ -607,11 +613,8 @@ function groupIntoRows(
 /**
  * Calculates negotiation priority for a section
  */
-function calculateNegotiationPriority(
-  section: ExtendedOptimizableSection,
-  weight: number
-): number {
-  let priority = 50;  // Base priority
+function calculateNegotiationPriority(section: ExtendedOptimizableSection, weight: number): number {
+  let priority = 50; // Base priority
 
   // Density bonus
   priority += (section.density ?? 0) * 0.5;
@@ -634,13 +637,13 @@ function calculateNegotiationPriority(
 
 /**
  * Calculates the minimum viable span for a section.
- * 
+ *
  * Determines the smallest span that still renders content well based on:
  * - Character counts and average word length
  * - Field widths and label lengths
  * - Item complexity
  * - Section type requirements
- * 
+ *
  * @param section - Section to analyze
  * @param columnWidth - Width of a single column in pixels
  * @param options - Calculation options
@@ -656,13 +659,14 @@ export function calculateMinViableSpan(
   }
 ): number {
   const minCharsPerLine = options?.minCharsPerLine ?? 20;
-  const avgCharWidth = options?.avgCharWidth ?? 8;  // pixels per character
-  const padding = options?.padding ?? 32;  // Total horizontal padding
+  const avgCharWidth = options?.avgCharWidth ?? 8; // pixels per character
+  const padding = options?.padding ?? 32; // Total horizontal padding
 
   // Get content from section
-  const cardSection: CardSection = 'section' in section && (section as ExtendedOptimizableSection).section 
-    ? (section as ExtendedOptimizableSection).section! 
-    : section as CardSection;
+  const cardSection: CardSection =
+    'section' in section && (section as ExtendedOptimizableSection).section
+      ? (section as ExtendedOptimizableSection).section!
+      : (section as CardSection);
   if (!cardSection) return 1;
 
   const fields: Array<{ value?: unknown }> = cardSection.fields ?? [];
@@ -672,13 +676,13 @@ export function calculateMinViableSpan(
 
   // Type-based minimum spans
   const typeMinimums: Record<string, number> = {
-    'chart': 2,
-    'map': 2,
-    'overview': 2,
-    'analytics': 1,
+    chart: 2,
+    map: 2,
+    overview: 2,
+    analytics: 1,
     'contact-card': 1,
-    'info': 1,
-    'list': 1,
+    info: 1,
+    list: 1,
   };
   const typeMin = typeMinimums[type] ?? 1;
 
@@ -698,12 +702,13 @@ export function calculateMinViableSpan(
   // Check description line requirements
   if (description.length > 0) {
     const words = description.split(/\s+/);
-    const avgWordLength = words.reduce((sum: number, w: string) => sum + w.length, 0) / words.length;
+    const avgWordLength =
+      words.reduce((sum: number, w: string) => sum + w.length, 0) / words.length;
     const minLineWidth = minCharsPerLine * avgCharWidth + padding;
-    
+
     if (avgWordLength > 10) {
       // Long words need more space
-      const neededSpan = Math.ceil(minLineWidth * 1.5 / columnWidth);
+      const neededSpan = Math.ceil((minLineWidth * 1.5) / columnWidth);
       contentMin = Math.max(contentMin, neededSpan);
     }
   }
@@ -729,7 +734,7 @@ export function applyMinViableSpans<T extends ExtendedOptimizableSection>(
   sections: T[],
   columnWidth: number
 ): T[] {
-  return sections.map(section => {
+  return sections.map((section) => {
     const minSpan = calculateMinViableSpan(section, columnWidth);
     return {
       ...section,
@@ -744,7 +749,7 @@ export function applyMinViableSpans<T extends ExtendedOptimizableSection>(
 
 /**
  * Tracks span preferences for consistent user experience.
- * 
+ *
  * Maintains a history of span assignments to provide stability hints:
  * - Remembers user-adjusted spans
  * - Provides consistent spans across re-renders
@@ -752,14 +757,11 @@ export function applyMinViableSpans<T extends ExtendedOptimizableSection>(
  */
 export class SpanStabilityTracker {
   private records: Map<string, SpanStabilityRecord> = new Map();
-  private readonly maxAge: number;  // Max age in milliseconds
+  private readonly maxAge: number; // Max age in milliseconds
   private readonly decayFactor: number;
 
-  constructor(options?: {
-    maxAgeMs?: number;
-    decayFactor?: number;
-  }) {
-    this.maxAge = options?.maxAgeMs ?? 24 * 60 * 60 * 1000;  // 24 hours default
+  constructor(options?: { maxAgeMs?: number; decayFactor?: number }) {
+    this.maxAge = options?.maxAgeMs ?? 24 * 60 * 60 * 1000; // 24 hours default
     this.decayFactor = options?.decayFactor ?? 0.9;
   }
 
@@ -768,7 +770,7 @@ export class SpanStabilityTracker {
    */
   recordSpan(sectionKey: string, span: number, isUserPreference: boolean = false): void {
     const existing = this.records.get(sectionKey);
-    
+
     if (existing) {
       existing.lastUsedSpan = span;
       existing.usageCount++;
@@ -792,7 +794,7 @@ export class SpanStabilityTracker {
    */
   getStableSpan(sectionKey: string, defaultSpan: number): number {
     const record = this.records.get(sectionKey);
-    
+
     if (!record) {
       return defaultSpan;
     }
@@ -805,7 +807,7 @@ export class SpanStabilityTracker {
     }
 
     // Calculate confidence based on usage and age
-    const ageWeight = 1 - (age / this.maxAge);
+    const ageWeight = 1 - age / this.maxAge;
     const usageWeight = Math.min(1, record.usageCount / 10);
     const confidence = ageWeight * usageWeight;
 
@@ -822,7 +824,7 @@ export class SpanStabilityTracker {
    * Applies stability hints to sections
    */
   applyStabilityHints<T extends ExtendedOptimizableSection>(sections: T[]): T[] {
-    return sections.map(section => {
+    return sections.map((section) => {
       const stableSpan = this.getStableSpan(section.key, section.colSpan);
       return {
         ...section,
@@ -873,13 +875,13 @@ export class SpanStabilityTracker {
 
 /**
  * Improved span expansion heuristics with content density awareness.
- * 
+ *
  * Determines whether a section should expand based on:
  * - Content density (more content = more expansion benefit)
  * - Available space (only expand into truly unused space)
  * - Section type capabilities
  * - Visual balance considerations
- * 
+ *
  * @param section - Section to evaluate
  * @param availableSpace - Available columns for expansion
  * @param context - Expansion context
@@ -904,14 +906,14 @@ export function calculateSpanExpansion(
 
   // Type-based max expansion
   const typeMaxExpansion: Record<string, number> = {
-    'chart': 4,
-    'map': 4,
-    'overview': 4,
-    'analytics': 3,
+    chart: 4,
+    map: 4,
+    overview: 4,
+    analytics: 3,
     'contact-card': 2,
-    'info': 2,
-    'list': 2,
-    'event': 2,
+    info: 2,
+    list: 2,
+    event: 2,
   };
   const typeMax = typeMaxExpansion[type] ?? 2;
 
@@ -936,11 +938,7 @@ export function calculateSpanExpansion(
   }
 
   // Cap expansion based on type and score
-  const maxExpansion = Math.min(
-    availableSpace,
-    typeMax - currentSpan,
-    expansionScore
-  );
+  const maxExpansion = Math.min(availableSpace, typeMax - currentSpan, expansionScore);
 
   return Math.max(0, maxExpansion);
 }
@@ -953,33 +951,33 @@ export function applyExpansionHeuristics<T extends ExtendedOptimizableSection>(
   columns: number,
   sectionHeights?: Map<string, number>
 ): T[] {
-  const result = sections.map(s => ({ ...s }));
-  
+  const result = sections.map((s) => ({ ...s }));
+
   // Group into rows
   const rows = groupIntoRows(result, columns);
-  
+
   for (const row of rows) {
     const usedSpace = row.reduce((sum, s) => sum + s.colSpan, 0);
     const availableSpace = columns - usedSpace;
-    
+
     if (availableSpace <= 0) continue;
-    
+
     // Calculate average density
     const avgDensity = row.reduce((sum, s) => sum + (s.density ?? 0), 0) / row.length;
-    
+
     // Sort by expansion benefit (higher density first)
     const sortedRow = [...row].sort((a, b) => (b.density ?? 0) - (a.density ?? 0));
-    
+
     let remaining = availableSpace;
     for (const section of sortedRow) {
       if (remaining <= 0) break;
-      
+
       const expansion = calculateSpanExpansion(section, remaining, {
         columns,
         otherSectionsDensity: avgDensity,
         sectionHeights,
       });
-      
+
       if (expansion > 0) {
         section.colSpan += expansion;
         section.preferredColumns = section.colSpan as PreferredColumns;
@@ -987,10 +985,6 @@ export function applyExpansionHeuristics<T extends ExtendedOptimizableSection>(
       }
     }
   }
-  
+
   return result;
 }
-
-
-
-

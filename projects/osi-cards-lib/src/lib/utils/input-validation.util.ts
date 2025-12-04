@@ -1,23 +1,23 @@
 /**
  * Input Validation Utilities
- * 
+ *
  * Provides comprehensive input validation and sanitization for security.
  * Protects against XSS, injection attacks, and malformed data.
- * 
+ *
  * @example
  * ```typescript
  * import { validateUrl, sanitizeHtml, validateEmail } from 'osi-cards-lib';
- * 
+ *
  * // Validate URL
  * const urlResult = validateUrl('https://example.com');
  * if (urlResult.valid) {
  *   console.log('Safe URL:', urlResult.sanitized);
  * }
- * 
+ *
  * // Sanitize HTML content
  * const safeHtml = sanitizeHtml('<script>alert("xss")</script><p>Hello</p>');
  * // Returns: '<p>Hello</p>'
- * 
+ *
  * // Validate email
  * if (validateEmail('user@example.com')) {
  *   console.log('Valid email');
@@ -79,19 +79,36 @@ const DEFAULT_ALLOWED_PROTOCOLS = ['https:', 'http:', 'mailto:', 'tel:'];
  * Default allowed HTML tags (safe subset)
  */
 const DEFAULT_ALLOWED_TAGS = [
-  'p', 'br', 'b', 'i', 'u', 'strong', 'em', 'span',
-  'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-  'ul', 'ol', 'li',
-  'a', 'blockquote', 'code', 'pre'
+  'p',
+  'br',
+  'b',
+  'i',
+  'u',
+  'strong',
+  'em',
+  'span',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'ul',
+  'ol',
+  'li',
+  'a',
+  'blockquote',
+  'code',
+  'pre',
 ];
 
 /**
  * Default allowed HTML attributes
  */
 const DEFAULT_ALLOWED_ATTRIBUTES: Record<string, string[]> = {
-  'a': ['href', 'title', 'target', 'rel'],
-  'span': ['class'],
-  '*': ['class', 'id']
+  a: ['href', 'title', 'target', 'rel'],
+  span: ['class'],
+  '*': ['class', 'id'],
 };
 
 /**
@@ -108,7 +125,7 @@ const MAX_TITLE_LENGTH = 200;
 
 /**
  * Validate and sanitize a URL
- * 
+ *
  * @param url - URL to validate
  * @param options - Validation options
  * @returns Validation result with sanitized URL
@@ -118,7 +135,7 @@ export function validateUrl(url: unknown, options: UrlValidationOptions = {}): V
     allowedProtocols = DEFAULT_ALLOWED_PROTOCOLS,
     allowRelative = false,
     allowDataUrls = false,
-    maxLength = MAX_URL_LENGTH
+    maxLength = MAX_URL_LENGTH,
   } = options;
 
   // Check type
@@ -157,12 +174,12 @@ export function validateUrl(url: unknown, options: UrlValidationOptions = {}): V
     }
 
     const parsed = new URL(trimmed, 'https://placeholder.com');
-    
+
     // Check protocol
     if (!allowedProtocols.includes(parsed.protocol)) {
-      return { 
-        valid: false, 
-        error: `Protocol ${parsed.protocol} is not allowed. Allowed: ${allowedProtocols.join(', ')}` 
+      return {
+        valid: false,
+        error: `Protocol ${parsed.protocol} is not allowed. Allowed: ${allowedProtocols.join(', ')}`,
       };
     }
 
@@ -175,7 +192,7 @@ export function validateUrl(url: unknown, options: UrlValidationOptions = {}): V
 
 /**
  * Check if a URL is safe for use in href attributes
- * 
+ *
  * @param url - URL to check
  * @returns true if URL is safe
  */
@@ -190,26 +207,27 @@ export function isSafeUrl(url: unknown): boolean {
 /**
  * Email validation regex (RFC 5322 simplified)
  */
-const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+const EMAIL_REGEX =
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
 /**
  * Validate an email address
- * 
+ *
  * @param email - Email to validate
  * @returns true if email is valid
  */
 export function validateEmail(email: unknown): boolean {
   if (typeof email !== 'string') return false;
-  
+
   const trimmed = email.trim();
   if (!trimmed || trimmed.length > MAX_EMAIL_LENGTH) return false;
-  
+
   return EMAIL_REGEX.test(trimmed);
 }
 
 /**
  * Validate and sanitize email configuration for mail actions
- * 
+ *
  * @param config - Email configuration
  * @returns Validation result
  */
@@ -224,7 +242,7 @@ export function validateEmailConfig(config: unknown): ValidationResult<Record<st
   // Validate contact
   if (emailConfig['contact']) {
     const contact = emailConfig['contact'] as Record<string, unknown>;
-    
+
     if (contact['email'] && !validateEmail(contact['email'])) {
       return { valid: false, error: 'Invalid contact email address' };
     }
@@ -232,23 +250,23 @@ export function validateEmailConfig(config: unknown): ValidationResult<Record<st
     sanitized['contact'] = {
       name: sanitizeText(contact['name'] as string, MAX_TEXT_LENGTH),
       email: contact['email'] ? (contact['email'] as string).trim() : '',
-      role: sanitizeText(contact['role'] as string, MAX_TEXT_LENGTH)
+      role: sanitizeText(contact['role'] as string, MAX_TEXT_LENGTH),
     };
   }
 
   // Validate CC emails
   if (Array.isArray(emailConfig['cc'])) {
     const validCc = (emailConfig['cc'] as unknown[])
-      .filter(email => validateEmail(email))
-      .map(email => (email as string).trim());
+      .filter((email) => validateEmail(email))
+      .map((email) => (email as string).trim());
     sanitized['cc'] = validCc;
   }
 
   // Validate BCC emails
   if (Array.isArray(emailConfig['bcc'])) {
     const validBcc = (emailConfig['bcc'] as unknown[])
-      .filter(email => validateEmail(email))
-      .map(email => (email as string).trim());
+      .filter((email) => validateEmail(email))
+      .map((email) => (email as string).trim());
     sanitized['bcc'] = validBcc;
   }
 
@@ -272,24 +290,24 @@ const HTML_ENTITIES: Record<string, string> = {
   '>': '&gt;',
   '"': '&quot;',
   "'": '&#x27;',
-  '/': '&#x2F;'
+  '/': '&#x2F;',
 };
 
 /**
  * Escape HTML special characters
- * 
+ *
  * @param text - Text to escape
  * @returns Escaped text safe for HTML
  */
 export function escapeHtml(text: unknown): string {
   if (typeof text !== 'string') return '';
-  
-  return text.replace(/[&<>"'/]/g, char => HTML_ENTITIES[char] || char);
+
+  return text.replace(/[&<>"'/]/g, (char) => HTML_ENTITIES[char] || char);
 }
 
 /**
  * Sanitize HTML content
- * 
+ *
  * @param html - HTML to sanitize
  * @param options - Sanitization options
  * @returns Sanitized HTML string
@@ -301,7 +319,7 @@ export function sanitizeHtml(html: unknown, options: HtmlSanitizationOptions = {
     allowedTags = DEFAULT_ALLOWED_TAGS,
     allowedAttributes = DEFAULT_ALLOWED_ATTRIBUTES,
     allowLinks = true,
-    stripHtml = false
+    stripHtml = false,
   } = options;
 
   // If stripping HTML, just escape everything
@@ -311,14 +329,14 @@ export function sanitizeHtml(html: unknown, options: HtmlSanitizationOptions = {
 
   // Remove script tags and their content
   let sanitized = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-  
+
   // Remove style tags and their content
   sanitized = sanitized.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '');
-  
+
   // Remove event handlers (onclick, onerror, etc.)
   sanitized = sanitized.replace(/\s*on\w+\s*=\s*["'][^"']*["']/gi, '');
   sanitized = sanitized.replace(/\s*on\w+\s*=\s*[^\s>]*/gi, '');
-  
+
   // Remove javascript: and vbscript: URLs from href/src
   sanitized = sanitized.replace(/(?:href|src)\s*=\s*["']?\s*javascript:[^"'>\s]*/gi, '');
   sanitized = sanitized.replace(/(?:href|src)\s*=\s*["']?\s*vbscript:[^"'>\s]*/gi, '');
@@ -327,25 +345,25 @@ export function sanitizeHtml(html: unknown, options: HtmlSanitizationOptions = {
   const tagRegex = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi;
   sanitized = sanitized.replace(tagRegex, (match, tagName: string) => {
     const lowerTag = tagName.toLowerCase();
-    
+
     if (!allowedTags.includes(lowerTag)) {
       return '';
     }
-    
+
     // If it's a closing tag, just return it
     if (match.startsWith('</')) {
       return `</${lowerTag}>`;
     }
-    
+
     // For anchor tags, verify href is safe
     if (lowerTag === 'a' && !allowLinks) {
       return '';
     }
-    
+
     // Filter attributes
     const attrAllowed = allowedAttributes[lowerTag] || allowedAttributes['*'] || [];
     const cleanTag = filterAttributes(match, lowerTag, attrAllowed);
-    
+
     return cleanTag;
   });
 
@@ -359,12 +377,12 @@ function filterAttributes(tag: string, tagName: string, allowed: string[]): stri
   // Extract attributes
   const attrRegex = /([a-z-]+)\s*=\s*["']([^"']*)["']/gi;
   const attrs: string[] = [];
-  
+
   let match;
   while ((match = attrRegex.exec(tag)) !== null) {
     const attrName = match[1]?.toLowerCase() ?? '';
     let attrValue = match[2] ?? '';
-    
+
     if (allowed.includes(attrName)) {
       // Special handling for href
       if (attrName === 'href') {
@@ -372,14 +390,14 @@ function filterAttributes(tag: string, tagName: string, allowed: string[]): stri
         if (!urlResult.valid) continue;
         attrValue = urlResult.sanitized ?? attrValue;
       }
-      
+
       attrs.push(`${attrName}="${escapeHtml(attrValue)}"`);
     }
   }
-  
+
   const isSelfClosing = tag.endsWith('/>');
   const attrString = attrs.length ? ' ' + attrs.join(' ') : '';
-  
+
   return `<${tagName}${attrString}${isSelfClosing ? ' /' : ''}>`;
 }
 
@@ -389,35 +407,35 @@ function filterAttributes(tag: string, tagName: string, allowed: string[]): stri
 
 /**
  * Sanitize plain text input
- * 
+ *
  * @param text - Text to sanitize
  * @param maxLength - Maximum allowed length
  * @returns Sanitized text
  */
 export function sanitizeText(text: unknown, maxLength = MAX_TEXT_LENGTH): string {
   if (typeof text !== 'string') return '';
-  
+
   // Trim whitespace
   let sanitized = text.trim();
-  
+
   // Remove null bytes
   sanitized = sanitized.replace(/\0/g, '');
-  
+
   // Normalize whitespace (but preserve single line breaks)
   sanitized = sanitized.replace(/[^\S\n]+/g, ' ');
   sanitized = sanitized.replace(/\n{3,}/g, '\n\n');
-  
+
   // Truncate to max length
   if (sanitized.length > maxLength) {
     sanitized = sanitized.substring(0, maxLength);
   }
-  
+
   return sanitized;
 }
 
 /**
  * Sanitize a card title
- * 
+ *
  * @param title - Title to sanitize
  * @returns Sanitized title
  */
@@ -433,7 +451,7 @@ export function sanitizeTitle(title: unknown): string {
 
 /**
  * Validate and sanitize card configuration
- * 
+ *
  * @param config - Card configuration to validate
  * @returns Validation result
  */
@@ -444,12 +462,12 @@ export function validateCardConfig(config: unknown): ValidationResult<Record<str
 
   const cardConfig = config as Record<string, unknown>;
   const errors: string[] = [];
-  
+
   // Check required fields
   if (!cardConfig['cardTitle'] || typeof cardConfig['cardTitle'] !== 'string') {
     errors.push('cardTitle is required and must be a string');
   }
-  
+
   if (!Array.isArray(cardConfig['sections'])) {
     errors.push('sections must be an array');
   }
@@ -462,13 +480,17 @@ export function validateCardConfig(config: unknown): ValidationResult<Record<str
   const sanitized: Record<string, unknown> = {
     ...cardConfig,
     cardTitle: sanitizeTitle(cardConfig['cardTitle']),
-    description: cardConfig['description'] ? sanitizeText(cardConfig['description'] as string) : undefined,
-    sections: (cardConfig['sections'] as unknown[]).map(section => sanitizeSection(section))
+    description: cardConfig['description']
+      ? sanitizeText(cardConfig['description'] as string)
+      : undefined,
+    sections: (cardConfig['sections'] as unknown[]).map((section) => sanitizeSection(section)),
   };
 
   // Sanitize actions if present
   if (Array.isArray(cardConfig['actions'])) {
-    sanitized['actions'] = (cardConfig['actions'] as unknown[]).map(action => sanitizeAction(action));
+    sanitized['actions'] = (cardConfig['actions'] as unknown[]).map((action) =>
+      sanitizeAction(action)
+    );
   }
 
   return { valid: true, sanitized };
@@ -486,17 +508,19 @@ function sanitizeSection(section: unknown): Record<string, unknown> {
   const sanitized: Record<string, unknown> = {
     ...sectionObj,
     title: sanitizeText(sectionObj['title'] as string, MAX_TITLE_LENGTH),
-    description: sectionObj['description'] ? sanitizeText(sectionObj['description'] as string) : undefined
+    description: sectionObj['description']
+      ? sanitizeText(sectionObj['description'] as string)
+      : undefined,
   };
 
   // Sanitize fields
   if (Array.isArray(sectionObj['fields'])) {
-    sanitized['fields'] = (sectionObj['fields'] as unknown[]).map(field => sanitizeField(field));
+    sanitized['fields'] = (sectionObj['fields'] as unknown[]).map((field) => sanitizeField(field));
   }
 
   // Sanitize items
   if (Array.isArray(sectionObj['items'])) {
-    sanitized['items'] = (sectionObj['items'] as unknown[]).map(item => sanitizeItem(item));
+    sanitized['items'] = (sectionObj['items'] as unknown[]).map((item) => sanitizeItem(item));
   }
 
   return sanitized;
@@ -514,7 +538,7 @@ function sanitizeField(field: unknown): Record<string, unknown> {
   const sanitized: Record<string, unknown> = {
     ...fieldObj,
     label: sanitizeText(fieldObj['label'] as string, MAX_TITLE_LENGTH),
-    value: sanitizeFieldValue(fieldObj['value'])
+    value: sanitizeFieldValue(fieldObj['value']),
   };
 
   // Sanitize URL if present
@@ -551,7 +575,9 @@ function sanitizeItem(item: unknown): Record<string, unknown> {
   const sanitized: Record<string, unknown> = {
     ...itemObj,
     title: sanitizeText(itemObj['title'] as string, MAX_TITLE_LENGTH),
-    description: itemObj['description'] ? sanitizeText(itemObj['description'] as string) : undefined
+    description: itemObj['description']
+      ? sanitizeText(itemObj['description'] as string)
+      : undefined,
   };
 
   // Sanitize URL if present
@@ -574,7 +600,7 @@ function sanitizeAction(action: unknown): Record<string, unknown> {
   const actionObj = action as Record<string, unknown>;
   const sanitized: Record<string, unknown> = {
     ...actionObj,
-    label: sanitizeText(actionObj['label'] as string, MAX_TITLE_LENGTH)
+    label: sanitizeText(actionObj['label'] as string, MAX_TITLE_LENGTH),
   };
 
   // Validate email for mail actions
@@ -600,7 +626,7 @@ function sanitizeAction(action: unknown): Record<string, unknown> {
 
 /**
  * Check if styles are CSP-compliant (no inline styles via string)
- * 
+ *
  * @param element - Element to check
  * @returns true if element has no inline style attribute
  */
@@ -610,12 +636,12 @@ export function isCspCompliantElement(element: HTMLElement): boolean {
 
 /**
  * Apply styles in a CSP-compliant way using CSS custom properties
- * 
+ *
  * @param element - Element to style
  * @param styles - CSS custom properties to set
  */
 export function applyCspCompliantStyles(
-  element: HTMLElement, 
+  element: HTMLElement,
   styles: Record<string, string | number>
 ): void {
   for (const [property, value] of Object.entries(styles)) {
@@ -623,4 +649,3 @@ export function applyCspCompliantStyles(
     element.style.setProperty(cssProperty, String(value));
   }
 }
-

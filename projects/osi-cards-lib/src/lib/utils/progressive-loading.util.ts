@@ -201,7 +201,7 @@ export class ProgressiveLoader<T = any> {
     processor: (chunk: T[], progress: LoadProgress<T>) => void | Promise<void>
   ): Promise<void> {
     const visible = items.filter(isVisible);
-    const hidden = items.filter(item => !isVisible(item));
+    const hidden = items.filter((item) => !isVisible(item));
 
     // Load visible first
     await this.loadInChunks(visible, processor);
@@ -230,7 +230,7 @@ export class ProgressiveLoader<T = any> {
    * Sleep utility
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 
@@ -240,9 +240,7 @@ export class ProgressiveLoader<T = any> {
  * @param config - Loader configuration
  * @returns New ProgressiveLoader instance
  */
-export function createProgressiveLoader<T>(
-  config?: ProgressiveLoadConfig
-): ProgressiveLoader<T> {
+export function createProgressiveLoader<T>(config?: ProgressiveLoadConfig): ProgressiveLoader<T> {
   return new ProgressiveLoader<T>(config);
 }
 
@@ -470,10 +468,9 @@ export function lazyLoadOnScroll(
       if (distanceFromBottom < threshold) {
         isLoading = true;
 
-        Promise.resolve(loadMore())
-          .finally(() => {
-            isLoading = false;
-          });
+        Promise.resolve(loadMore()).finally(() => {
+          isLoading = false;
+        });
       }
     }, debounce);
   };
@@ -487,4 +484,3 @@ export function lazyLoadOnScroll(
     }
   };
 }
-

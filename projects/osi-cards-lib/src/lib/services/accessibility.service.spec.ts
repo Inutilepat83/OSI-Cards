@@ -7,10 +7,7 @@ describe('AccessibilityService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        AccessibilityService,
-        { provide: PLATFORM_ID, useValue: 'browser' }
-      ]
+      providers: [AccessibilityService, { provide: PLATFORM_ID, useValue: 'browser' }],
     });
     service = TestBed.inject(AccessibilityService);
   });
@@ -30,43 +27,43 @@ describe('AccessibilityService', () => {
     it('should create live regions on initialization', () => {
       const politeRegion = document.querySelector('[aria-live="polite"]');
       const assertiveRegion = document.querySelector('[aria-live="assertive"]');
-      
+
       expect(politeRegion).toBeTruthy();
       expect(assertiveRegion).toBeTruthy();
     });
 
     it('should announce polite messages', fakeAsync(() => {
       const politeRegion = document.querySelector('[aria-live="polite"]');
-      
+
       service.announce('Test message', 'polite');
       tick(100);
-      
+
       expect(politeRegion?.textContent).toBe('Test message');
-      
+
       tick(1000);
       expect(politeRegion?.textContent).toBe('');
     }));
 
     it('should announce assertive messages', fakeAsync(() => {
       const assertiveRegion = document.querySelector('[aria-live="assertive"]');
-      
+
       service.announce('Urgent message', 'assertive');
       tick(100);
-      
+
       expect(assertiveRegion?.textContent).toBe('Urgent message');
     }));
 
     it('should respect custom clear delay', fakeAsync(() => {
       const politeRegion = document.querySelector('[aria-live="polite"]');
-      
+
       service.announce('Test message', 'polite', 2000);
       tick(100);
-      
+
       expect(politeRegion?.textContent).toBe('Test message');
-      
+
       tick(1500);
       expect(politeRegion?.textContent).toBe('Test message');
-      
+
       tick(600);
       expect(politeRegion?.textContent).toBe('');
     }));
@@ -75,10 +72,10 @@ describe('AccessibilityService', () => {
   describe('announceCardLoading', () => {
     it('should announce loading message', fakeAsync(() => {
       const politeRegion = document.querySelector('[aria-live="polite"]');
-      
+
       service.announceCardLoading();
       tick(100);
-      
+
       expect(politeRegion?.textContent).toContain('Loading');
     }));
   });
@@ -86,19 +83,19 @@ describe('AccessibilityService', () => {
   describe('announceCardLoaded', () => {
     it('should announce loaded message with title', fakeAsync(() => {
       const politeRegion = document.querySelector('[aria-live="polite"]');
-      
+
       service.announceCardLoaded('My Card');
       tick(100);
-      
+
       expect(politeRegion?.textContent).toContain('My Card');
     }));
 
     it('should announce generic message without title', fakeAsync(() => {
       const politeRegion = document.querySelector('[aria-live="polite"]');
-      
+
       service.announceCardLoaded();
       tick(100);
-      
+
       expect(politeRegion?.textContent).toContain('loaded');
     }));
   });
@@ -106,19 +103,19 @@ describe('AccessibilityService', () => {
   describe('announceStreamingUpdate', () => {
     it('should announce section count (singular)', fakeAsync(() => {
       const politeRegion = document.querySelector('[aria-live="polite"]');
-      
+
       service.announceStreamingUpdate(1);
       tick(100);
-      
+
       expect(politeRegion?.textContent).toContain('1 section');
     }));
 
     it('should announce section count (plural)', fakeAsync(() => {
       const politeRegion = document.querySelector('[aria-live="polite"]');
-      
+
       service.announceStreamingUpdate(5);
       tick(100);
-      
+
       expect(politeRegion?.textContent).toContain('5 sections');
     }));
   });
@@ -126,10 +123,10 @@ describe('AccessibilityService', () => {
   describe('announceActionExecuted', () => {
     it('should announce action assertively', fakeAsync(() => {
       const assertiveRegion = document.querySelector('[aria-live="assertive"]');
-      
+
       service.announceActionExecuted('Send Email');
       tick(100);
-      
+
       expect(assertiveRegion?.textContent).toContain('Send Email');
     }));
   });
@@ -137,10 +134,10 @@ describe('AccessibilityService', () => {
   describe('announceError', () => {
     it('should announce error assertively', fakeAsync(() => {
       const assertiveRegion = document.querySelector('[aria-live="assertive"]');
-      
+
       service.announceError('Something went wrong');
       tick(100);
-      
+
       expect(assertiveRegion?.textContent).toContain('Error');
       expect(assertiveRegion?.textContent).toContain('Something went wrong');
     }));
@@ -189,9 +186,9 @@ describe('AccessibilityService', () => {
       service.trapFocus(container);
       button3.focus();
 
-      const event = new KeyboardEvent('keydown', { 
+      const event = new KeyboardEvent('keydown', {
         key: 'Tab',
-        bubbles: true 
+        bubbles: true,
       });
       container.dispatchEvent(event);
 
@@ -342,20 +339,11 @@ describe('AccessibilityService', () => {
   describe('ngOnDestroy', () => {
     it('should clean up live regions', () => {
       const beforePolite = document.querySelectorAll('[aria-live="polite"]').length;
-      
+
       service.ngOnDestroy();
-      
+
       const afterPolite = document.querySelectorAll('[aria-live="polite"]').length;
       expect(afterPolite).toBe(beforePolite - 1);
     });
   });
 });
-
-
-
-
-
-
-
-
-

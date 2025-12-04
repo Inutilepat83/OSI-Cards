@@ -207,7 +207,7 @@ export class EnhancedCompactionEngine {
 
       if (newTop < section.top - this.config.gapTolerance) {
         // Update section position
-        const index = result.findIndex(s => s.key === section.key);
+        const index = result.findIndex((s) => s.key === section.key);
         if (index !== -1) {
           result[index] = { ...result[index], top: newTop } as T;
           moved++;
@@ -237,7 +237,7 @@ export class EnhancedCompactionEngine {
 
     // Find small sections that can fill gaps
     const movableSections = result
-      .filter(s => s.canMove !== false && s.colSpan === 1)
+      .filter((s) => s.canMove !== false && s.colSpan === 1)
       .sort((a, b) => a.height - b.height); // Smallest first
 
     for (const gap of gaps) {
@@ -250,7 +250,7 @@ export class EnhancedCompactionEngine {
           const canFit = this.canFitInGap(section, gap, result);
 
           if (canFit) {
-            const index = result.findIndex(s => s.key === section.key);
+            const index = result.findIndex((s) => s.key === section.key);
             if (index !== -1) {
               result[index] = {
                 ...result[index],
@@ -289,7 +289,7 @@ export class EnhancedCompactionEngine {
       // Adjust spacing
       let currentTop = 0;
       for (const section of sorted) {
-        const index = result.findIndex(s => s.key === section.key);
+        const index = result.findIndex((s) => s.key === section.key);
         if (index !== -1 && section.top > currentTop + 5) {
           result[index] = { ...result[index], top: currentTop } as T;
           moved++;
@@ -310,7 +310,7 @@ export class EnhancedCompactionEngine {
    */
   private calculateHeight<T extends CompactableSection>(sections: T[]): number {
     if (sections.length === 0) return 0;
-    return Math.max(...sections.map(s => s.top + s.height));
+    return Math.max(...sections.map((s) => s.top + s.height));
   }
 
   /**
@@ -353,7 +353,7 @@ export class EnhancedCompactionEngine {
 
     for (let col = 0; col < columns; col++) {
       const colSections = sections
-        .filter(s => s.column <= col && col < s.column + s.colSpan)
+        .filter((s) => s.column <= col && col < s.column + s.colSpan)
         .sort((a, b) => a.top - b.top);
 
       let currentTop = 0;
@@ -369,7 +369,7 @@ export class EnhancedCompactionEngine {
       }
     }
 
-    return gaps.filter(g => g.height >= 50); // Only significant gaps
+    return gaps.filter((g) => g.height >= 50); // Only significant gaps
   }
 
   /**
@@ -388,8 +388,7 @@ export class EnhancedCompactionEngine {
         other.column <= gap.column && gap.column < other.column + other.colSpan;
 
       const verticalOverlap =
-        other.top < gap.top + section.height &&
-        gap.top < other.top + other.height;
+        other.top < gap.top + section.height && gap.top < other.top + other.height;
 
       if (columnsOverlap && verticalOverlap) {
         return false;
@@ -454,4 +453,3 @@ export function estimateCompactionBenefit<T extends CompactableSection>(
 
   return gaps.reduce((sum: number, gap: any) => sum + gap.height, 0);
 }
-

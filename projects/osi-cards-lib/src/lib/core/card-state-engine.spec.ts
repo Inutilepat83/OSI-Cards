@@ -6,9 +6,7 @@ describe('CardStateEngine', () => {
   const mockCard: CardData = {
     id: 'card-1',
     title: 'Test Card',
-    sections: [
-      { id: 'section-1', type: 'info', fields: [{ label: 'Name', value: 'Test' }] },
-    ],
+    sections: [{ id: 'section-1', type: 'info', fields: [{ label: 'Name', value: 'Test' }] }],
   };
 
   beforeEach(() => {
@@ -103,7 +101,7 @@ describe('CardStateEngine', () => {
 
   describe('observables', () => {
     it('should emit cards on change', (done) => {
-      engine.cards$.subscribe(cards => {
+      engine.cards$.subscribe((cards) => {
         if (cards.length === 1) {
           expect(cards[0].id).toBe('card-1');
           done();
@@ -115,7 +113,7 @@ describe('CardStateEngine', () => {
 
     it('should emit count on change', (done) => {
       let emitCount = 0;
-      engine.count$.subscribe(count => {
+      engine.count$.subscribe((count) => {
         emitCount++;
         if (emitCount === 2) {
           expect(count).toBe(1);
@@ -149,6 +147,3 @@ describe('CardStateEngine', () => {
     });
   });
 });
-
-
-

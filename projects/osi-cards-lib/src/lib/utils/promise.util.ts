@@ -22,8 +22,8 @@ export async function promiseAllProgress<T>(
   let completed = 0;
   const total = promises.length;
 
-  const wrappedPromises = promises.map(promise =>
-    promise.then(result => {
+  const wrappedPromises = promises.map((promise) =>
+    promise.then((result) => {
       completed++;
       onProgress?.(completed, total);
       return result;
@@ -40,7 +40,7 @@ export async function promiseAllSettled<T>(
   promises: Promise<T>[]
 ): Promise<Array<{ status: 'fulfilled' | 'rejected'; value?: T; reason?: any }>> {
   const results = await Promise.allSettled(promises);
-  return results.map(result => ({
+  return results.map((result) => ({
     status: result.status,
     value: result.status === 'fulfilled' ? result.value : undefined,
     reason: result.status === 'rejected' ? result.reason : undefined,
@@ -56,15 +56,13 @@ export async function promiseAny<T>(promises: Promise<T>[]): Promise<T> {
     const errors: any[] = [];
 
     promises.forEach((promise, index) => {
-      promise
-        .then(resolve)
-        .catch(error => {
-          rejectionCount++;
-          errors[index] = error;
-          if (rejectionCount === promises.length) {
-            reject(errors);
-          }
-        });
+      promise.then(resolve).catch((error) => {
+        rejectionCount++;
+        errors[index] = error;
+        if (rejectionCount === promises.length) {
+          reject(errors);
+        }
+      });
     });
   });
 }
@@ -83,11 +81,11 @@ export async function promiseWithTimeout<T>(
     }, timeoutMs);
 
     promise
-      .then(value => {
+      .then((value) => {
         clearTimeout(timer);
         resolve(value);
       })
-      .catch(error => {
+      .catch((error) => {
         clearTimeout(timer);
         reject(error);
       });
@@ -107,7 +105,7 @@ export async function retryPromise<T>(
       return await fn();
     } catch (error) {
       if (i === attempts - 1) throw error;
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
   throw new Error('Max attempts reached');
@@ -117,7 +115,7 @@ export async function retryPromise<T>(
  * Delay promise
  */
 export function delay(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -188,4 +186,3 @@ export class PromiseQueue {
     this.queue = [];
   }
 }
-

@@ -7,17 +7,17 @@
 //
 // =====================================================================
 
-@use '../../tokens/master' as *;
+@use "../../tokens/master" as *;
 
 // =====================================================================
 // STANDARD SPACING (Good balance)
 // =====================================================================
 
 :root {
-  --section-padding: var(--spacing-md);      // 12px
-  --section-gap: var(--spacing-md);          // 12px
+  --section-padding: var(--spacing-md); // 12px
+  --section-gap: var(--spacing-md); // 12px
   --section-item-padding: var(--spacing-sm); // 8px
-  --section-item-gap: var(--spacing-sm);     // 8px
+  --section-item-gap: var(--spacing-sm); // 8px
 }
 
 // =====================================================================
@@ -155,4 +155,3 @@
     }
   }
 }
-

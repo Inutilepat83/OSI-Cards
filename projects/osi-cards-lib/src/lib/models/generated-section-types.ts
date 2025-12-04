@@ -94,7 +94,7 @@ export interface SectionMetadata {
  * Metadata map for all section types
  */
 export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
-  'analytics': {
+  analytics: {
     name: 'Analytics Section',
     usesFields: true,
     usesItems: false,
@@ -116,7 +116,7 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     requiresExternalLib: undefined,
     selector: 'lib-brand-colors-section',
   },
-  'chart': {
+  chart: {
     name: 'Chart Section',
     usesFields: false,
     usesItems: false,
@@ -138,7 +138,7 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     requiresExternalLib: undefined,
     selector: 'lib-contact-card-section',
   },
-  'event': {
+  event: {
     name: 'Event Section',
     usesFields: true,
     usesItems: true,
@@ -149,7 +149,7 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     requiresExternalLib: undefined,
     selector: 'lib-event-section',
   },
-  'fallback': {
+  fallback: {
     name: 'Fallback Section',
     usesFields: true,
     usesItems: true,
@@ -160,7 +160,7 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     requiresExternalLib: undefined,
     selector: 'lib-fallback-section',
   },
-  'faq': {
+  faq: {
     name: 'FAQ Section',
     usesFields: false,
     usesItems: true,
@@ -171,7 +171,7 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     requiresExternalLib: undefined,
     selector: 'lib-faq-section',
   },
-  'financials': {
+  financials: {
     name: 'Financials Section',
     usesFields: true,
     usesItems: false,
@@ -182,7 +182,7 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     requiresExternalLib: undefined,
     selector: 'lib-financials-section',
   },
-  'gallery': {
+  gallery: {
     name: 'Gallery Section',
     usesFields: false,
     usesItems: true,
@@ -193,7 +193,7 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     requiresExternalLib: undefined,
     selector: 'lib-gallery-section',
   },
-  'info': {
+  info: {
     name: 'Info Section',
     usesFields: true,
     usesItems: false,
@@ -204,7 +204,7 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     requiresExternalLib: undefined,
     selector: 'lib-info-section',
   },
-  'list': {
+  list: {
     name: 'List Section',
     usesFields: false,
     usesItems: true,
@@ -215,7 +215,7 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     requiresExternalLib: undefined,
     selector: 'lib-list-section',
   },
-  'map': {
+  map: {
     name: 'Map Section',
     usesFields: true,
     usesItems: false,
@@ -237,7 +237,7 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     requiresExternalLib: undefined,
     selector: 'lib-network-card-section',
   },
-  'news': {
+  news: {
     name: 'News Section',
     usesFields: false,
     usesItems: true,
@@ -248,7 +248,7 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     requiresExternalLib: undefined,
     selector: 'lib-news-section',
   },
-  'overview': {
+  overview: {
     name: 'Overview Section',
     usesFields: true,
     usesItems: false,
@@ -259,7 +259,7 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     requiresExternalLib: undefined,
     selector: 'lib-overview-section',
   },
-  'product': {
+  product: {
     name: 'Product Section',
     usesFields: true,
     usesItems: false,
@@ -270,7 +270,7 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     requiresExternalLib: undefined,
     selector: 'lib-product-section',
   },
-  'quotation': {
+  quotation: {
     name: 'Quotation Section',
     usesFields: true,
     usesItems: false,
@@ -292,7 +292,7 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     requiresExternalLib: undefined,
     selector: 'lib-social-media-section',
   },
-  'solutions': {
+  solutions: {
     name: 'Solutions Section',
     usesFields: true,
     usesItems: true,
@@ -314,7 +314,7 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     requiresExternalLib: undefined,
     selector: 'lib-text-reference-section',
   },
-  'timeline': {
+  timeline: {
     name: 'Timeline Section',
     usesFields: false,
     usesItems: true,
@@ -325,7 +325,7 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     requiresExternalLib: undefined,
     selector: 'lib-timeline-section',
   },
-  'video': {
+  video: {
     name: 'Video Section',
     usesFields: false,
     usesItems: true,
@@ -335,47 +335,47 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     supportsEmoji: true,
     requiresExternalLib: undefined,
     selector: 'lib-video-section',
-  }
+  },
 };
 
 /**
  * Map of type aliases to canonical types
  */
 export const SECTION_TYPE_ALIASES: Record<SectionTypeAlias, SectionType> = {
-  'metrics': 'analytics',
-  'stats': 'analytics',
-  'kpi': 'analytics',
-  'brands': 'brand-colors',
-  'colors': 'brand-colors',
-  'palette': 'brand-colors',
-  'graph': 'chart',
-  'visualization': 'chart',
-  'calendar': 'event',
-  'schedule': 'event',
-  'questions': 'faq',
-  'help': 'faq',
-  'photos': 'gallery',
-  'images': 'gallery',
-  'table': 'list',
-  'checklist': 'list',
-  'locations': 'map',
-  'press': 'news',
-  'articles': 'news',
-  'summary': 'overview',
-  'executive': 'overview',
-  'quote': 'quotation',
-  'testimonial': 'quotation',
-  'social': 'social-media',
-  'socials': 'social-media',
-  'services': 'solutions',
-  'offerings': 'solutions',
-  'reference': 'text-reference',
+  metrics: 'analytics',
+  stats: 'analytics',
+  kpi: 'analytics',
+  brands: 'brand-colors',
+  colors: 'brand-colors',
+  palette: 'brand-colors',
+  graph: 'chart',
+  visualization: 'chart',
+  calendar: 'event',
+  schedule: 'event',
+  questions: 'faq',
+  help: 'faq',
+  photos: 'gallery',
+  images: 'gallery',
+  table: 'list',
+  checklist: 'list',
+  locations: 'map',
+  press: 'news',
+  articles: 'news',
+  summary: 'overview',
+  executive: 'overview',
+  quote: 'quotation',
+  testimonial: 'quotation',
+  social: 'social-media',
+  socials: 'social-media',
+  services: 'solutions',
+  offerings: 'solutions',
+  reference: 'text-reference',
   'text-ref': 'text-reference',
-  'documentation': 'text-reference',
-  'history': 'timeline',
-  'milestones': 'timeline',
-  'videos': 'video',
-  'media': 'video'
+  documentation: 'text-reference',
+  history: 'timeline',
+  milestones: 'timeline',
+  videos: 'video',
+  media: 'video',
 };
 
 /**
@@ -427,7 +427,7 @@ export const PUBLIC_SECTION_TYPES: SectionType[] = [
   'solutions',
   'text-reference',
   'timeline',
-  'video'
+  'video',
 ];
 
 /**
@@ -455,5 +455,5 @@ export const ALL_SECTION_TYPES: SectionType[] = [
   'solutions',
   'text-reference',
   'timeline',
-  'video'
+  'video',
 ];

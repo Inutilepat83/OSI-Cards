@@ -67,10 +67,7 @@ export class DynamicImportManager {
    * );
    * ```
    */
-  async import<T>(
-    key: string,
-    importFn: () => Promise<T>
-  ): Promise<T> {
+  async import<T>(key: string, importFn: () => Promise<T>): Promise<T> {
     // Check cache
     const cached = this.cache.get(key);
     if (cached) {
@@ -88,7 +85,7 @@ export class DynamicImportManager {
 
     // Create new import
     const promise = importFn()
-      .then(module => {
+      .then((module) => {
         this.cache.set(key, {
           promise,
           result: module,
@@ -97,7 +94,7 @@ export class DynamicImportManager {
         this.stateMap.set(key, { status: 'success', module });
         return module;
       })
-      .catch(error => {
+      .catch((error) => {
         this.cache.set(key, {
           promise,
           error,
@@ -228,10 +225,7 @@ export function preload<T>(importFn: () => Promise<T>): void {
  * );
  * ```
  */
-export async function lazyLoadWithRetry<T>(
-  importFn: () => Promise<T>,
-  retries = 3
-): Promise<T> {
+export async function lazyLoadWithRetry<T>(importFn: () => Promise<T>, retries = 3): Promise<T> {
   let lastError: Error | undefined;
 
   for (let i = 0; i < retries; i++) {
@@ -242,7 +236,7 @@ export async function lazyLoadWithRetry<T>(
 
       if (i < retries - 1) {
         // Wait before retry
-        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+        await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
       }
     }
   }
@@ -265,7 +259,7 @@ export async function lazyLoadWithRetry<T>(
  * ```
  */
 export function preloadAll(imports: Array<() => Promise<any>>): void {
-  imports.forEach(importFn => preload(importFn));
+  imports.forEach((importFn) => preload(importFn));
 }
 
 /**
@@ -283,9 +277,7 @@ export function preloadAll(imports: Array<() => Promise<any>>): void {
  * );
  * ```
  */
-export async function lazyLoadComponent<T>(
-  importFn: () => Promise<T>
-): Promise<T> {
+export async function lazyLoadComponent<T>(importFn: () => Promise<T>): Promise<T> {
   return lazyLoad(importFn);
 }
 
@@ -375,9 +367,6 @@ export async function lazyLoadWithTimeout<T>(
 ): Promise<T> {
   return Promise.race([
     lazyLoad(importFn),
-    new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new Error('Import timeout')), timeoutMs)
-    ),
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error('Import timeout')), timeoutMs)),
   ]);
 }
-

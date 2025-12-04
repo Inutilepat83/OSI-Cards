@@ -26,7 +26,10 @@
  * Validation error
  */
 export class ValidationError extends Error {
-  constructor(message: string, public field?: string) {
+  constructor(
+    message: string,
+    public field?: string
+  ) {
     super(message);
     this.name = 'ValidationError';
   }
@@ -36,7 +39,10 @@ export class ValidationError extends Error {
  * Security error
  */
 export class SecurityError extends Error {
-  constructor(message: string, public threat?: string) {
+  constructor(
+    message: string,
+    public threat?: string
+  ) {
     super(message);
     this.name = 'SecurityError';
   }
@@ -78,7 +84,8 @@ export class SecurityInputValidator {
     }
 
     // RFC 5322 compliant email regex (simplified)
-    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    const emailRegex =
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
     if (!emailRegex.test(trimmed)) {
       throw new ValidationError('Invalid email format', 'email');
@@ -248,10 +255,7 @@ export class SecurityInputValidator {
     sanitized = sanitized.replace(/javascript:/gi, '');
 
     // Remove data: URLs (except images)
-    sanitized = sanitized.replace(
-      /src\s*=\s*["']data:(?!image\/)[^"']*["']/gi,
-      ''
-    );
+    sanitized = sanitized.replace(/src\s*=\s*["']data:(?!image\/)[^"']*["']/gi, '');
 
     // Remove iframe
     sanitized = sanitized.replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '');
@@ -421,11 +425,7 @@ export class SecurityInputValidator {
    * const age = SecurityInputValidator.validateNumber('25', 0, 150);
    * ```
    */
-  public static validateNumber(
-    input: string | number,
-    min?: number,
-    max?: number
-  ): number {
+  public static validateNumber(input: string | number, min?: number, max?: number): number {
     const num = typeof input === 'string' ? parseFloat(input) : input;
 
     if (isNaN(num) || !isFinite(num)) {
@@ -609,4 +609,3 @@ export class SecurityInputValidator {
     return results;
   }
 }
-

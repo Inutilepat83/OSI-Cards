@@ -2,7 +2,7 @@ import { AICardConfig, CardSection, CardAction } from '../models';
 
 /**
  * Analytics Dashboard Preset
- * 
+ *
  * Factory functions for creating analytics dashboard cards.
  */
 
@@ -48,10 +48,10 @@ export interface AnalyticsDashboardOptions {
 
 /**
  * Create an analytics dashboard card
- * 
+ *
  * @param options - Analytics dashboard options
  * @returns AICardConfig for an analytics dashboard
- * 
+ *
  * @example
  * ```typescript
  * const card = createAnalyticsDashboard({
@@ -75,78 +75,93 @@ export function createAnalyticsDashboard(options: AnalyticsDashboardOptions): AI
     chartData,
     dashboardUrl,
     customSections = [],
-    customActions = []
+    customActions = [],
   } = options;
 
   const sections: CardSection[] = [
-    ...(dashboardType || dataSource || updateFrequency || timeRange ? [{
-      id: 'analytics-overview',
-      title: 'Analytics Overview',
-      type: 'info' as const,
-      fields: [
-        ...(dashboardType ? [{ id: 'dashboard-type', label: 'Dashboard Type', value: dashboardType }] : []),
-        ...(dataSource ? [{ id: 'data-source', label: 'Data Source', value: dataSource }] : []),
-        ...(updateFrequency ? [{ id: 'update-frequency', label: 'Update Frequency', value: updateFrequency }] : []),
-        ...(timeRange ? [{ id: 'time-range', label: 'Time Range', value: timeRange }] : [])
-      ].filter(Boolean)
-    }] : []),
-    ...(kpis.length > 0 ? [{
-      id: 'kpis',
-      title: 'Key Performance Indicators',
-      type: 'analytics' as const,
-      fields: kpis.map((kpi, i) => ({
-        id: `kpi-${i}`,
-        label: kpi.label,
-        value: kpi.value,
-        percentage: kpi.percentage,
-        performance: kpi.performance || (kpi.percentage && kpi.percentage > 100 ? 'excellent' : 'good'),
-        trend: kpi.trend || 'up'
-      }))
-    }] : []),
-    ...(chartData ? [{
-      id: 'chart',
-      title: 'Performance Chart',
-      type: 'chart' as const,
-      chartType: 'bar' as const,
-      chartData: {
-        labels: chartData.labels,
-        datasets: chartData.datasets.map(ds => ({
-          label: ds.label,
-          data: ds.data,
-          backgroundColor: 'rgba(255, 121, 0, 0.6)',
-          borderColor: 'rgba(255, 121, 0, 1)',
-          borderWidth: 2
-        }))
-      }
-    }] : []),
-    ...customSections
+    ...(dashboardType || dataSource || updateFrequency || timeRange
+      ? [
+          {
+            id: 'analytics-overview',
+            title: 'Analytics Overview',
+            type: 'info' as const,
+            fields: [
+              ...(dashboardType
+                ? [{ id: 'dashboard-type', label: 'Dashboard Type', value: dashboardType }]
+                : []),
+              ...(dataSource
+                ? [{ id: 'data-source', label: 'Data Source', value: dataSource }]
+                : []),
+              ...(updateFrequency
+                ? [{ id: 'update-frequency', label: 'Update Frequency', value: updateFrequency }]
+                : []),
+              ...(timeRange ? [{ id: 'time-range', label: 'Time Range', value: timeRange }] : []),
+            ].filter(Boolean),
+          },
+        ]
+      : []),
+    ...(kpis.length > 0
+      ? [
+          {
+            id: 'kpis',
+            title: 'Key Performance Indicators',
+            type: 'analytics' as const,
+            fields: kpis.map((kpi, i) => ({
+              id: `kpi-${i}`,
+              label: kpi.label,
+              value: kpi.value,
+              percentage: kpi.percentage,
+              performance:
+                kpi.performance || (kpi.percentage && kpi.percentage > 100 ? 'excellent' : 'good'),
+              trend: kpi.trend || 'up',
+            })),
+          },
+        ]
+      : []),
+    ...(chartData
+      ? [
+          {
+            id: 'chart',
+            title: 'Performance Chart',
+            type: 'chart' as const,
+            chartType: 'bar' as const,
+            chartData: {
+              labels: chartData.labels,
+              datasets: chartData.datasets.map((ds) => ({
+                label: ds.label,
+                data: ds.data,
+                backgroundColor: 'rgba(255, 121, 0, 0.6)',
+                borderColor: 'rgba(255, 121, 0, 1)',
+                borderWidth: 2,
+              })),
+            },
+          },
+        ]
+      : []),
+    ...customSections,
   ].filter(Boolean);
 
   const actions: CardAction[] = [
-    ...(dashboardUrl ? [{
-      id: 'view-dashboard',
-      label: 'View Full Dashboard',
-      type: 'website' as const,
-      variant: 'primary' as const,
-      icon: 'bar-chart',
-      url: dashboardUrl
-    }] : []),
-    ...customActions
+    ...(dashboardUrl
+      ? [
+          {
+            id: 'view-dashboard',
+            label: 'View Full Dashboard',
+            type: 'website' as const,
+            variant: 'primary' as const,
+            icon: 'bar-chart',
+            url: dashboardUrl,
+          },
+        ]
+      : []),
+    ...customActions,
   ];
 
   return {
     id: `analytics-${title.toLowerCase().replace(/\s+/g, '-')}`,
     cardTitle: title,
     cardType: 'analytics',
-    sections: sections.filter(s => (s.fields && s.fields.length > 0) || s.chartData),
-    actions: actions.length > 0 ? actions : undefined
+    sections: sections.filter((s) => (s.fields && s.fields.length > 0) || s.chartData),
+    actions: actions.length > 0 ? actions : undefined,
   };
 }
-
-
-
-
-
-
-
-

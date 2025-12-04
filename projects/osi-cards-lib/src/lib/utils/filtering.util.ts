@@ -48,7 +48,7 @@ export function filterByRange<T>(
   min: number,
   max: number
 ): T[] {
-  return items.filter(item => {
+  return items.filter((item) => {
     const value = getValue(item);
     return value >= min && value <= max;
   });
@@ -63,7 +63,7 @@ export function filterByDateRange<T>(
   start: Date,
   end: Date
 ): T[] {
-  return items.filter(item => {
+  return items.filter((item) => {
     const date = new Date(getDate(item));
     return date >= start && date <= end;
   });
@@ -79,8 +79,8 @@ export function filterByText<T>(
 ): T[] {
   const lowerQuery = query.toLowerCase();
 
-  return items.filter(item => {
-    return getFields.some(getField => {
+  return items.filter((item) => {
+    return getFields.some((getField) => {
       const text = getField(item).toLowerCase();
       return text.includes(lowerQuery);
     });
@@ -97,9 +97,9 @@ export function filterByTags<T>(
 ): T[] {
   if (selectedTags.length === 0) return items;
 
-  return items.filter(item => {
+  return items.filter((item) => {
     const itemTags = getTags(item);
-    return selectedTags.every(tag => itemTags.includes(tag));
+    return selectedTags.every((tag) => itemTags.includes(tag));
   });
 }
 
@@ -113,9 +113,9 @@ export function filterByAnyTags<T>(
 ): T[] {
   if (selectedTags.length === 0) return items;
 
-  return items.filter(item => {
+  return items.filter((item) => {
     const itemTags = getTags(item);
-    return selectedTags.some(tag => itemTags.includes(tag));
+    return selectedTags.some((tag) => itemTags.includes(tag));
   });
 }
 
@@ -123,14 +123,14 @@ export function filterByAnyTags<T>(
  * Combine filters (AND logic)
  */
 export function combineFilters<T>(...filters: FilterPredicate<T>[]): FilterPredicate<T> {
-  return (item: T) => filters.every(filter => filter(item));
+  return (item: T) => filters.every((filter) => filter(item));
 }
 
 /**
  * Any filter (OR logic)
  */
 export function anyFilter<T>(...filters: FilterPredicate<T>[]): FilterPredicate<T> {
-  return (item: T) => filters.some(filter => filter(item));
+  return (item: T) => filters.some((filter) => filter(item));
 }
 
 /**
@@ -145,7 +145,7 @@ export function notFilter<T>(filter: FilterPredicate<T>): FilterPredicate<T> {
  */
 export function filterUnique<T>(items: T[], getKey: (item: T) => any): T[] {
   const seen = new Set();
-  return items.filter(item => {
+  return items.filter((item) => {
     const key = getKey(item);
     if (seen.has(key)) return false;
     seen.add(key);
@@ -159,14 +159,13 @@ export function filterUnique<T>(items: T[], getKey: (item: T) => any): T[] {
 export function filterDuplicates<T>(items: T[], getKey: (item: T) => any): T[] {
   const counts = new Map<any, number>();
 
-  items.forEach(item => {
+  items.forEach((item) => {
     const key = getKey(item);
     counts.set(key, (counts.get(key) || 0) + 1);
   });
 
-  return items.filter(item => {
+  return items.filter((item) => {
     const key = getKey(item);
     return (counts.get(key) || 0) > 1;
   });
 }
-

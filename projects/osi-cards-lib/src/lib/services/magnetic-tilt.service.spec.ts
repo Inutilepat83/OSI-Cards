@@ -8,7 +8,7 @@ describe('MagneticTiltService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [MagneticTiltService]
+      providers: [MagneticTiltService],
     });
     service = TestBed.inject(MagneticTiltService);
 
@@ -24,8 +24,8 @@ describe('MagneticTiltService', () => {
         height: 300,
         x: 100,
         y: 100,
-        toJSON: () => ({})
-      })
+        toJSON: () => ({}),
+      }),
     });
   });
 
@@ -189,9 +189,9 @@ describe('MagneticTiltService', () => {
             height: 300,
             x: 100,
             y: 100,
-            toJSON: () => ({})
+            toJSON: () => ({}),
           };
-        }
+        },
       });
 
       // Multiple calculations within cache duration should reuse cache
@@ -209,7 +209,7 @@ describe('MagneticTiltService', () => {
     it('should clear cache for specific element', () => {
       service.calculateTilt({ x: 200, y: 200 }, mockElement);
       service.clearCache(mockElement);
-      
+
       // Should not throw
       expect(service).toBeTruthy();
     });
@@ -217,7 +217,7 @@ describe('MagneticTiltService', () => {
     it('should clear all cache when no element specified', () => {
       service.calculateTilt({ x: 200, y: 200 }, mockElement);
       service.clearCache();
-      
+
       // Should not throw
       expect(service).toBeTruthy();
     });
@@ -251,32 +251,23 @@ describe('MagneticTiltService', () => {
     it('should cancel all animations on destroy', fakeAsync(() => {
       service.calculateTilt({ x: 200, y: 200 }, mockElement);
       tick(10);
-      
+
       // Should not throw on destroy
       service.ngOnDestroy();
       tick(100);
-      
+
       expect(service).toBeTruthy();
     }));
 
     it('should clear pending resets on destroy', fakeAsync(() => {
       service.resetTilt(true); // Start animated reset
       tick(10);
-      
+
       // Destroy should cancel the reset animation
       service.ngOnDestroy();
       tick(1000);
-      
+
       expect(service).toBeTruthy();
     }));
   });
 });
-
-
-
-
-
-
-
-
-

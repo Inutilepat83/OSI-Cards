@@ -1,27 +1,27 @@
 /**
  * FLIP Animation Engine
- * 
+ *
  * First-Last-Invert-Play animation system for smooth layout transitions.
  * Automatically animates elements when their positions change in the DOM.
- * 
+ *
  * FLIP Technique:
  * 1. First: Record initial position/size
  * 2. Last: Make DOM change, record final position/size
  * 3. Invert: Apply transform to make element appear at initial position
  * 4. Play: Remove transform with animation
- * 
+ *
  * @example
  * ```typescript
  * import { FlipAnimator } from 'osi-cards-lib';
- * 
+ *
  * const flip = new FlipAnimator(containerElement);
- * 
+ *
  * // Before DOM change
  * flip.first();
- * 
+ *
  * // Make DOM changes
  * reorderElements();
- * 
+ *
  * // Animate the change
  * await flip.play();
  * ```
@@ -206,7 +206,7 @@ export class FlipAnimator {
     this.config.onStart(animatingElements);
 
     // Wait for all animations to complete
-    await Promise.all(animations.map(a => a.finished.catch(() => {})));
+    await Promise.all(animations.map((a) => a.finished.catch(() => {})));
 
     this.activeAnimations = [];
     this.config.onComplete(animatingElements);
@@ -272,10 +272,12 @@ export class FlipAnimator {
     const scaleY = state.first.height / state.last.height;
 
     // Check threshold
-    if (Math.abs(dx) < this.config.threshold && 
-        Math.abs(dy) < this.config.threshold &&
-        Math.abs(scaleX - 1) < 0.01 &&
-        Math.abs(scaleY - 1) < 0.01) {
+    if (
+      Math.abs(dx) < this.config.threshold &&
+      Math.abs(dy) < this.config.threshold &&
+      Math.abs(scaleX - 1) < 0.01 &&
+      Math.abs(scaleY - 1) < 0.01
+    ) {
       return null;
     }
 
@@ -289,7 +291,7 @@ export class FlipAnimator {
 
   private animateElement(state: FlipState): Animation | null {
     const delta = this.calculateDelta(state);
-    
+
     // Element appeared (no first position)
     if (!state.first && state.last) {
       return this.animateEnter(state.element);
@@ -386,9 +388,7 @@ export async function flipAnimate(
 /**
  * Records positions of elements before a change
  */
-export function recordPositions(
-  elements: HTMLElement[]
-): Map<HTMLElement, ElementRect> {
+export function recordPositions(elements: HTMLElement[]): Map<HTMLElement, ElementRect> {
   const positions = new Map<HTMLElement, ElementRect>();
 
   for (const element of elements) {
@@ -425,10 +425,7 @@ export async function animateFromPositions(
     }
 
     const animation = element.animate(
-      [
-        { transform: `translate(${dx}px, ${dy}px)` },
-        { transform: 'translate(0, 0)' },
-      ],
+      [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'translate(0, 0)' }],
       {
         duration: finalConfig.duration,
         easing: finalConfig.easing,
@@ -439,7 +436,7 @@ export async function animateFromPositions(
     animations.push(animation);
   }
 
-  await Promise.all(animations.map(a => a.finished.catch(() => {})));
+  await Promise.all(animations.map((a) => a.finished.catch(() => {})));
   return animations;
 }
 
@@ -480,22 +477,10 @@ export function getFlipId(element: HTMLElement): string | null {
 /**
  * Prepares elements for FLIP by ensuring they have IDs
  */
-export function prepareForFlip(
-  elements: HTMLElement[],
-  idPrefix: string = 'flip'
-): void {
+export function prepareForFlip(elements: HTMLElement[], idPrefix: string = 'flip'): void {
   elements.forEach((element, index) => {
     if (!element.hasAttribute('data-flip-id')) {
       element.setAttribute('data-flip-id', `${idPrefix}-${index}`);
     }
   });
 }
-
-
-
-
-
-
-
-
-

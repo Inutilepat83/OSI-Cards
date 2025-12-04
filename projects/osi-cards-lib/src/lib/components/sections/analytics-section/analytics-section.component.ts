@@ -7,7 +7,7 @@ import {
   TrendIndicatorComponent,
   ProgressBarComponent,
   BadgeComponent,
-  type ProgressBarVariant
+  type ProgressBarVariant,
 } from '../../shared';
 import { TrendDirection } from '../../../types';
 
@@ -26,13 +26,12 @@ import { TrendDirection } from '../../../types';
     EmptyStateComponent,
     TrendIndicatorComponent,
     ProgressBarComponent,
-    BadgeComponent
+    BadgeComponent,
   ],
   templateUrl: './analytics-section.component.html',
-  styleUrl: './analytics-section.scss'
+  styleUrl: './analytics-section.scss',
 })
 export class AnalyticsSectionComponent extends BaseSectionComponent {
-
   /**
    * Map trend string to TrendDirection type
    */

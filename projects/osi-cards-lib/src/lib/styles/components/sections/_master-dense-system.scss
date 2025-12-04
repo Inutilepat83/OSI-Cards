@@ -23,11 +23,11 @@
   --ds-space-16: 16px;
 
   // Component spacing (final standards)
-  --ds-card-padding: 14px 12px;      // Slightly reduced
-  --ds-card-gap: 8px;                // Tighter internal
-  --ds-item-padding: 10px 12px;     // Good for lists
-  --ds-grid-gap: 12px;              // Between cards
-  --ds-section-gap: 10px;           // Section to content
+  --ds-card-padding: 14px 12px; // Slightly reduced
+  --ds-card-gap: 8px; // Tighter internal
+  --ds-item-padding: 10px 12px; // Good for lists
+  --ds-grid-gap: 12px; // Between cards
+  --ds-section-gap: 10px; // Section to content
 }
 
 // =====================================================================
@@ -36,15 +36,15 @@
 
 :root {
   // Reduced font scale
-  --ds-text-xs: 0.5625rem;    // 9px - Tiny meta
-  --ds-text-sm: 0.625rem;     // 10px - Labels
-  --ds-text-base: 0.6875rem;  // 11px - Small body
-  --ds-text-md: 0.75rem;      // 12px - Body text
-  --ds-text-lg: 0.8125rem;    // 13px - Titles
-  --ds-text-xl: 0.875rem;     // 14px - Large titles
-  --ds-text-2xl: 1rem;        // 16px - Values
-  --ds-text-3xl: 1.125rem;    // 18px - Large values
-  --ds-text-4xl: 1.25rem;     // 20px - Metrics
+  --ds-text-xs: 0.5625rem; // 9px - Tiny meta
+  --ds-text-sm: 0.625rem; // 10px - Labels
+  --ds-text-base: 0.6875rem; // 11px - Small body
+  --ds-text-md: 0.75rem; // 12px - Body text
+  --ds-text-lg: 0.8125rem; // 13px - Titles
+  --ds-text-xl: 0.875rem; // 14px - Large titles
+  --ds-text-2xl: 1rem; // 16px - Values
+  --ds-text-3xl: 1.125rem; // 18px - Large values
+  --ds-text-4xl: 1.25rem; // 20px - Metrics
 
   // Tight line heights
   --ds-leading-tight: 1;
@@ -70,7 +70,7 @@
   transition: all 300ms var(--ease-out);
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     left: 0;
@@ -231,7 +231,8 @@
   @media (prefers-reduced-motion: reduce) {
     transition: none;
     animation: none;
-    &:hover { transform: none; }
+    &:hover {
+      transform: none;
+    }
   }
 }
-

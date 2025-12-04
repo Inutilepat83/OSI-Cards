@@ -101,9 +101,7 @@ export class MemoizationCache<T> {
   private accessOrder: string[] = [];
   private stats = { hits: 0, misses: 0 };
 
-  constructor(
-    private options: Required<MemoizeOptions>
-  ) {}
+  constructor(private options: Required<MemoizeOptions>) {}
 
   /**
    * Get value from cache
@@ -251,11 +249,7 @@ export function Memoize(options: Partial<MemoizeOptions> = {}): MethodDecorator 
 
   const cache = new MemoizationCache(fullOptions);
 
-  return function (
-    target: any,
-    propertyKey: string | symbol,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
     descriptor.value = function (...args: any[]) {
@@ -302,10 +296,7 @@ export function Memoize(options: Partial<MemoizeOptions> = {}): MethodDecorator 
  * }
  * ```
  */
-export function MemoizeTTL(
-  ttl: number,
-  options: Partial<MemoizeOptions> = {}
-): MethodDecorator {
+export function MemoizeTTL(ttl: number, options: Partial<MemoizeOptions> = {}): MethodDecorator {
   return Memoize({
     ...options,
     ttl,
@@ -494,4 +485,3 @@ export function memoize<T extends (...args: any[]) => any>(
 
   return memoized;
 }
-

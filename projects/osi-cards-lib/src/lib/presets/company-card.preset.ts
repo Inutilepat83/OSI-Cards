@@ -2,7 +2,7 @@ import { AICardConfig, CardSection, CardAction, CardField, CardItem } from '../m
 
 /**
  * Company Card Preset
- * 
+ *
  * Factory functions for creating company profile cards with common sections.
  */
 
@@ -38,10 +38,10 @@ export interface CompanyCardOptions {
 
 /**
  * Create a basic company card
- * 
+ *
  * @param options - Company card options
  * @returns AICardConfig for a company card
- * 
+ *
  * @example
  * ```typescript
  * const card = createCompanyCard({
@@ -65,14 +65,15 @@ export function createCompanyCard(options: CompanyCardOptions): AICardConfig {
     marketShare,
     websiteUrl,
     customSections = [],
-    customActions = []
+    customActions = [],
   } = options;
 
   const overviewFields: CardField[] = [];
   if (industry) overviewFields.push({ id: 'industry', label: 'Industry', value: industry });
   if (founded) overviewFields.push({ id: 'founded', label: 'Founded', value: founded });
   if (employees) overviewFields.push({ id: 'employees', label: 'Employees', value: employees });
-  if (headquarters) overviewFields.push({ id: 'headquarters', label: 'Headquarters', value: headquarters });
+  if (headquarters)
+    overviewFields.push({ id: 'headquarters', label: 'Headquarters', value: headquarters });
   if (revenue) overviewFields.push({ id: 'revenue', label: 'Annual Revenue', value: revenue });
 
   const sections: CardSection[] = [
@@ -80,64 +81,92 @@ export function createCompanyCard(options: CompanyCardOptions): AICardConfig {
       id: 'company-overview',
       title: 'Company Overview',
       type: 'info',
-      fields: overviewFields
+      fields: overviewFields,
     },
-    ...(growthRate || marketShare ? [{
-      id: 'key-metrics',
-      title: 'Key Metrics',
-      type: 'analytics' as const,
-      fields: [
-        ...(growthRate ? [{
-          id: 'growth-rate',
-          label: 'Growth Rate',
-          value: `${growthRate}% YoY`,
-          percentage: growthRate,
-          performance: growthRate > 20 ? 'excellent' as const : growthRate > 10 ? 'good' as const : 'fair' as const,
-          trend: 'up' as const
-        }] : []),
-        ...(marketShare ? [{
-          id: 'market-share',
-          label: 'Market Share',
-          value: `${marketShare}%`,
-          percentage: marketShare,
-          performance: marketShare > 15 ? 'excellent' as const : marketShare > 10 ? 'good' as const : 'fair' as const,
-          trend: 'up' as const
-        }] : [])
-      ]
-    }] : []),
-    ...customSections
+    ...(growthRate || marketShare
+      ? [
+          {
+            id: 'key-metrics',
+            title: 'Key Metrics',
+            type: 'analytics' as const,
+            fields: [
+              ...(growthRate
+                ? [
+                    {
+                      id: 'growth-rate',
+                      label: 'Growth Rate',
+                      value: `${growthRate}% YoY`,
+                      percentage: growthRate,
+                      performance:
+                        growthRate > 20
+                          ? ('excellent' as const)
+                          : growthRate > 10
+                            ? ('good' as const)
+                            : ('fair' as const),
+                      trend: 'up' as const,
+                    },
+                  ]
+                : []),
+              ...(marketShare
+                ? [
+                    {
+                      id: 'market-share',
+                      label: 'Market Share',
+                      value: `${marketShare}%`,
+                      percentage: marketShare,
+                      performance:
+                        marketShare > 15
+                          ? ('excellent' as const)
+                          : marketShare > 10
+                            ? ('good' as const)
+                            : ('fair' as const),
+                      trend: 'up' as const,
+                    },
+                  ]
+                : []),
+            ],
+          },
+        ]
+      : []),
+    ...customSections,
   ];
 
   const actions: CardAction[] = [
-    ...(websiteUrl ? [{
-      id: 'view-website',
-      label: 'View Website',
-      type: 'website' as const,
-      variant: 'primary' as const,
-      icon: 'globe',
-      url: websiteUrl
-    }] : []),
-    ...customActions
+    ...(websiteUrl
+      ? [
+          {
+            id: 'view-website',
+            label: 'View Website',
+            type: 'website' as const,
+            variant: 'primary' as const,
+            icon: 'globe',
+            url: websiteUrl,
+          },
+        ]
+      : []),
+    ...customActions,
   ];
 
   return {
     id: `company-${name.toLowerCase().replace(/\s+/g, '-')}`,
     cardTitle: name,
     cardType: 'company',
-    sections: sections.filter(s => s.fields && s.fields.length > 0),
-    actions: actions.length > 0 ? actions : undefined
+    sections: sections.filter((s) => s.fields && s.fields.length > 0),
+    actions: actions.length > 0 ? actions : undefined,
   };
 }
 
 /**
  * Create an enhanced company card with more sections
  */
-export function createEnhancedCompanyCard(options: CompanyCardOptions & {
-  financials?: Array<{ label: string; value: string | number }>;
-  products?: Array<{ name: string; description?: string }>;
-}): AICardConfig {
+export function createEnhancedCompanyCard(
+  options: CompanyCardOptions & {
+    financials?: Array<{ label: string; value: string | number }>;
+    products?: Array<{ name: string; description?: string }>;
+  }
+): AICardConfig {
   const baseCard = createCompanyCard(options);
-  
+
   const { financials = [], products = [] } = options;
 
   // Add financials section if provided
@@ -145,13 +174,13 @@ export function createEnhancedCompanyCard(options: CompanyCardOptions & {
     const financialFields: CardField[] = financials.map((f, i) => ({
       id: `financial-${i}`,
       label: f.label,
-      value: f.value
+      value: f.value,
     }));
     baseCard.sections.push({
       id: 'financials',
       title: 'Financials',
       type: 'financials',
-      fields: financialFields
+      fields: financialFields,
     });
   }
 
@@ -160,16 +189,15 @@ export function createEnhancedCompanyCard(options: CompanyCardOptions & {
     const productItems: CardItem[] = products.map((p, i) => ({
       id: `product-${i}`,
       title: p.name,
-      description: p.description
+      description: p.description,
     }));
     baseCard.sections.push({
       id: 'products',
       title: 'Products & Services',
       type: 'list',
-      items: productItems
+      items: productItems,
     });
   }
 
   return baseCard;
 }
-

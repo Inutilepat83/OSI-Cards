@@ -100,4 +100,3 @@ export function estimateCompressionRatio(original: string, compressed: Blob): nu
   const originalSize = new Blob([original]).size;
   return compressed.size / originalSize;
 }
-

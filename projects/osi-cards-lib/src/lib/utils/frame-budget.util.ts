@@ -1,16 +1,16 @@
 /**
  * Frame Budget Management Utilities
- * 
+ *
  * Enforces 16ms frame budget for layout work to maintain 60fps.
  * Defers excess calculations to next frame with priority queue.
  * Uses requestAnimationFrame and requestIdleCallback for scheduling.
- * 
+ *
  * @example
  * ```typescript
  * import { FrameBudgetManager } from 'osi-cards-lib';
- * 
+ *
  * const budget = new FrameBudgetManager();
- * 
+ *
  * // Schedule work with automatic frame budget management
  * budget.schedule(() => {
  *   // Expensive layout calculation
@@ -114,9 +114,9 @@ export class FrameBudgetManager {
   private animationFrameId: number | null = null;
   private idleCallbackId: number | null = null;
   private workIdCounter = 0;
-  
+
   private readonly config: Required<FrameBudgetConfig>;
-  
+
   // Statistics
   private frameTimes: number[] = [];
   private stats: FrameStats = {
@@ -128,7 +128,7 @@ export class FrameBudgetManager {
     completedWork: 0,
     deferredWork: 0,
   };
-  
+
   // Callbacks
   private completionCallbacks = new Map<string, WorkCompletionCallback>();
 
@@ -194,10 +194,7 @@ export class FrameBudgetManager {
   /**
    * Schedules layout work with estimated duration
    */
-  scheduleLayout(
-    task: () => void,
-    estimatedMs: number = 5
-  ): string {
+  scheduleLayout(task: () => void, estimatedMs: number = 5): string {
     return this.schedule(task, {
       priority: 'high',
       estimatedMs,
@@ -215,7 +212,7 @@ export class FrameBudgetManager {
    * Cancels scheduled work by ID
    */
   cancel(id: string): boolean {
-    const index = this.queue.findIndex(w => w.id === id);
+    const index = this.queue.findIndex((w) => w.id === id);
     if (index !== -1) {
       this.queue.splice(index, 1);
       this.completionCallbacks.delete(id);
@@ -230,17 +227,17 @@ export class FrameBudgetManager {
   cancelAll(): void {
     this.queue = [];
     this.completionCallbacks.clear();
-    
+
     if (this.animationFrameId !== null) {
       cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = null;
     }
-    
+
     if (this.idleCallbackId !== null && typeof cancelIdleCallback !== 'undefined') {
       cancelIdleCallback(this.idleCallbackId);
       this.idleCallbackId = null;
     }
-    
+
     this.isProcessing = false;
   }
 
@@ -300,7 +297,7 @@ export class FrameBudgetManager {
 
   private insertByPriority(work: ScheduledWork): void {
     const priority = PRIORITY_ORDER[work.priority];
-    
+
     // Find insertion point
     let insertIndex = this.queue.length;
     for (let i = 0; i < this.queue.length; i++) {
@@ -310,13 +307,13 @@ export class FrameBudgetManager {
         break;
       }
     }
-    
+
     this.queue.splice(insertIndex, 0, work);
   }
 
   private ensureProcessing(): void {
     if (this.isProcessing) return;
-    
+
     this.isProcessing = true;
     this.scheduleNextFrame();
   }
@@ -326,23 +323,20 @@ export class FrameBudgetManager {
     if (
       this.config.useIdleCallback &&
       this.queue.length > 0 &&
-      this.queue.every(w => w.priority === 'idle') &&
+      this.queue.every((w) => w.priority === 'idle') &&
       typeof requestIdleCallback !== 'undefined'
     ) {
-      this.idleCallbackId = requestIdleCallback(
-        (deadline) => this.processIdleWork(deadline),
-        { timeout: 1000 }
-      );
+      this.idleCallbackId = requestIdleCallback((deadline) => this.processIdleWork(deadline), {
+        timeout: 1000,
+      });
     } else {
-      this.animationFrameId = requestAnimationFrame(
-        (timestamp) => this.processFrame(timestamp)
-      );
+      this.animationFrameId = requestAnimationFrame((timestamp) => this.processFrame(timestamp));
     }
   }
 
   private processFrame(timestamp: number): void {
     this.animationFrameId = null;
-    
+
     if (this.queue.length === 0) {
       this.isProcessing = false;
       return;
@@ -354,13 +348,10 @@ export class FrameBudgetManager {
     let totalTimeSpent = 0;
 
     // Process work within budget
-    while (
-      this.queue.length > 0 &&
-      itemsProcessed < this.config.maxItemsPerFrame
-    ) {
+    while (this.queue.length > 0 && itemsProcessed < this.config.maxItemsPerFrame) {
       const elapsed = performance.now() - frameStart;
       const remaining = budget - elapsed;
-      
+
       // Check if we have budget remaining
       if (remaining <= 0) {
         break;
@@ -370,11 +361,7 @@ export class FrameBudgetManager {
       if (!work) break;
 
       // Skip if estimated time exceeds remaining budget (unless critical)
-      if (
-        work.priority !== 'critical' &&
-        work.estimatedMs &&
-        work.estimatedMs > remaining
-      ) {
+      if (work.priority !== 'critical' && work.estimatedMs && work.estimatedMs > remaining) {
         // Check if work has deadline
         if (work.deadline && performance.now() > work.deadline) {
           // Deadline passed, must execute
@@ -389,17 +376,17 @@ export class FrameBudgetManager {
       // Execute work
       this.queue.shift();
       const workStart = performance.now();
-      
+
       try {
         const result = work.task();
-        
+
         // Handle async tasks
         if (result instanceof Promise) {
-          result.catch(error => {
+          result.catch((error) => {
             console.error('Error in async work:', error);
           });
         }
-        
+
         itemsProcessed++;
         this.stats.completedWork++;
       } catch (error) {
@@ -431,7 +418,7 @@ export class FrameBudgetManager {
       if (!work) break;
 
       const workStart = performance.now();
-      
+
       try {
         work.task();
         this.stats.completedWork++;
@@ -512,23 +499,17 @@ export function getFrameBudgetManager(): FrameBudgetManager {
 /**
  * Schedules work using the global frame budget manager
  */
-export function scheduleWork(
-  task: () => void,
-  priority: WorkPriority = 'normal'
-): string {
+export function scheduleWork(task: () => void, priority: WorkPriority = 'normal'): string {
   return getFrameBudgetManager().schedule(task, { priority });
 }
 
 /**
  * Batches DOM updates using requestAnimationFrame
  */
-export function batchDOMUpdates(
-  updates: Array<() => void>,
-  onComplete?: () => void
-): void {
+export function batchDOMUpdates(updates: Array<() => void>, onComplete?: () => void): void {
   requestAnimationFrame(() => {
     const budget = getFrameBudgetManager();
-    
+
     for (const update of updates) {
       budget.schedule(update, { priority: 'high', estimatedMs: 1 });
     }
@@ -542,10 +523,7 @@ export function batchDOMUpdates(
 /**
  * Runs expensive work during idle time
  */
-export function runWhenIdle(
-  task: () => void,
-  timeout: number = 1000
-): void {
+export function runWhenIdle(task: () => void, timeout: number = 1000): void {
   if (typeof requestIdleCallback !== 'undefined') {
     requestIdleCallback(
       (deadline) => {
@@ -576,7 +554,7 @@ export function throttleWithBudget<T extends (...args: any[]) => void>(
 
   return ((...args: Parameters<T>) => {
     lastArgs = args;
-    
+
     if (!scheduled) {
       scheduled = true;
       getFrameBudgetManager().schedule(
@@ -624,8 +602,8 @@ export async function processInBatches<T, R>(
 
   for (let i = 0; i < items.length; i += batchSize) {
     const batch = items.slice(i, i + batchSize);
-    
-    await new Promise<void>(resolve => {
+
+    await new Promise<void>((resolve) => {
       budget.schedule(
         () => {
           for (let j = 0; j < batch.length; j++) {
@@ -644,12 +622,3 @@ export async function processInBatches<T, R>(
 
   return results;
 }
-
-
-
-
-
-
-
-
-

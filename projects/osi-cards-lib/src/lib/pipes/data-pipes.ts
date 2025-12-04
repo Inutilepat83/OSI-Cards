@@ -21,7 +21,14 @@
  */
 
 import { Pipe, PipeTransform } from '@angular/core';
-import { DomSanitizer, SafeHtml, SafeResourceUrl, SafeScript, SafeStyle, SafeUrl } from '@angular/platform-browser';
+import {
+  DomSanitizer,
+  SafeHtml,
+  SafeResourceUrl,
+  SafeScript,
+  SafeStyle,
+  SafeUrl,
+} from '@angular/platform-browser';
 
 /**
  * Safe pipe for bypassing sanitization
@@ -34,7 +41,7 @@ import { DomSanitizer, SafeHtml, SafeResourceUrl, SafeScript, SafeStyle, SafeUrl
  */
 @Pipe({
   name: 'safe',
-  standalone: true
+  standalone: true,
 })
 export class SafePipe implements PipeTransform {
   constructor(private sanitizer: DomSanitizer) {}
@@ -73,7 +80,7 @@ export class SafePipe implements PipeTransform {
 @Pipe({
   name: 'filter',
   standalone: true,
-  pure: false
+  pure: false,
 })
 export class FilterPipe implements PipeTransform {
   transform<T>(items: T[] | null | undefined, predicate: (item: T) => boolean): T[] {
@@ -95,7 +102,7 @@ export class FilterPipe implements PipeTransform {
 @Pipe({
   name: 'map',
   standalone: true,
-  pure: false
+  pure: false,
 })
 export class MapPipe implements PipeTransform {
   transform<T, R>(items: T[] | null | undefined, mapper: (item: T) => R): R[] {
@@ -116,7 +123,7 @@ export class MapPipe implements PipeTransform {
  */
 @Pipe({
   name: 'keys',
-  standalone: true
+  standalone: true,
 })
 export class KeysPipe implements PipeTransform {
   transform(obj: any): string[] {
@@ -137,7 +144,7 @@ export class KeysPipe implements PipeTransform {
  */
 @Pipe({
   name: 'values',
-  standalone: true
+  standalone: true,
 })
 export class ValuesPipe implements PipeTransform {
   transform(obj: any): any[] {
@@ -158,7 +165,7 @@ export class ValuesPipe implements PipeTransform {
  */
 @Pipe({
   name: 'entries',
-  standalone: true
+  standalone: true,
 })
 export class EntriesPipe implements PipeTransform {
   transform(obj: any): Array<[string, any]> {
@@ -178,7 +185,7 @@ export class EntriesPipe implements PipeTransform {
  */
 @Pipe({
   name: 'truncate',
-  standalone: true
+  standalone: true,
 })
 export class TruncatePipe implements PipeTransform {
   transform(value: string | null | undefined, limit: number, suffix = '...'): string {
@@ -198,7 +205,7 @@ export class TruncatePipe implements PipeTransform {
  */
 @Pipe({
   name: 'default',
-  standalone: true
+  standalone: true,
 })
 export class DefaultPipe implements PipeTransform {
   transform<T>(value: T | null | undefined, defaultValue: T): T {
@@ -216,7 +223,7 @@ export class DefaultPipe implements PipeTransform {
  */
 @Pipe({
   name: 'join',
-  standalone: true
+  standalone: true,
 })
 export class JoinPipe implements PipeTransform {
   transform(items: any[] | null | undefined, separator = ', '): string {
@@ -237,7 +244,7 @@ export class JoinPipe implements PipeTransform {
  */
 @Pipe({
   name: 'reverse',
-  standalone: true
+  standalone: true,
 })
 export class ReversePipe implements PipeTransform {
   transform<T>(items: T[] | null | undefined): T[] {
@@ -259,7 +266,7 @@ export class ReversePipe implements PipeTransform {
 @Pipe({
   name: 'sort',
   standalone: true,
-  pure: false
+  pure: false,
 })
 export class SortPipe implements PipeTransform {
   transform<T>(items: T[] | null | undefined, key?: keyof T, order: 'asc' | 'desc' = 'asc'): T[] {
@@ -290,7 +297,7 @@ export class SortPipe implements PipeTransform {
 @Pipe({
   name: 'groupBy',
   standalone: true,
-  pure: false
+  pure: false,
 })
 export class GroupByPipe implements PipeTransform {
   transform<T>(items: T[] | null | undefined, key: keyof T): Array<{ key: any; items: T[] }> {
@@ -298,7 +305,7 @@ export class GroupByPipe implements PipeTransform {
 
     const map = new Map<any, T[]>();
 
-    items.forEach(item => {
+    items.forEach((item) => {
       const groupKey = item[key];
       const group = map.get(groupKey) || [];
       group.push(item);
@@ -321,7 +328,7 @@ export class GroupByPipe implements PipeTransform {
  */
 @Pipe({
   name: 'unique',
-  standalone: true
+  standalone: true,
 })
 export class UniquePipe implements PipeTransform {
   transform<T>(items: T[] | null | undefined, key?: keyof T): T[] {
@@ -332,7 +339,7 @@ export class UniquePipe implements PipeTransform {
     }
 
     const seen = new Set();
-    return items.filter(item => {
+    return items.filter((item) => {
       const k = item[key];
       if (seen.has(k)) return false;
       seen.add(k);
@@ -355,7 +362,7 @@ export class UniquePipe implements PipeTransform {
  */
 @Pipe({
   name: 'chunk',
-  standalone: true
+  standalone: true,
 })
 export class ChunkPipe implements PipeTransform {
   transform<T>(items: T[] | null | undefined, size: number): T[][] {
@@ -380,7 +387,7 @@ export class ChunkPipe implements PipeTransform {
  */
 @Pipe({
   name: 'fileSize',
-  standalone: true
+  standalone: true,
 })
 export class FileSizePipe implements PipeTransform {
   transform(bytes: number | null | undefined, decimals = 2): string {
@@ -406,7 +413,7 @@ export class FileSizePipe implements PipeTransform {
  */
 @Pipe({
   name: 'timeAgo',
-  standalone: true
+  standalone: true,
 })
 export class TimeAgoPipe implements PipeTransform {
   transform(value: Date | string | number | null | undefined): string {
@@ -436,7 +443,7 @@ export class TimeAgoPipe implements PipeTransform {
  */
 @Pipe({
   name: 'highlight',
-  standalone: true
+  standalone: true,
 })
 export class HighlightPipe implements PipeTransform {
   transform(text: string | null | undefined, search: string): string {
@@ -462,14 +469,10 @@ export class HighlightPipe implements PipeTransform {
  */
 @Pipe({
   name: 'pluralize',
-  standalone: true
+  standalone: true,
 })
 export class PluralizePipe implements PipeTransform {
-  transform(
-    singular: string,
-    count: number,
-    plural?: string
-  ): string {
+  transform(singular: string, count: number, plural?: string): string {
     if (count === 1) return singular;
     return plural || singular + 's';
   }
@@ -486,7 +489,7 @@ export class PluralizePipe implements PipeTransform {
  */
 @Pipe({
   name: 'ordinal',
-  standalone: true
+  standalone: true,
 })
 export class OrdinalPipe implements PipeTransform {
   transform(value: number | null | undefined): string {
@@ -526,4 +529,3 @@ export const DATA_PIPES = [
   PluralizePipe,
   OrdinalPipe,
 ] as const;
-

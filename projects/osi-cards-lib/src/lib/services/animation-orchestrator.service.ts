@@ -1,16 +1,16 @@
 /**
  * Animation Orchestrator Service
- * 
+ *
  * Centralized service to coordinate animation sequences.
  * Manages section entrance animations, field reveals, chart animations,
  * and streaming layout transitions.
- * 
+ *
  * @example
  * ```typescript
  * @Component({...})
  * export class MyComponent {
  *   private orchestrator = inject(AnimationOrchestratorService);
- *   
+ *
  *   async animateCardEntrance(card: CardElement) {
  *     await this.orchestrator.orchestrate('card-entrance', card);
  *   }
@@ -40,7 +40,7 @@ import { onReducedMotionChange } from '../utils/masonry-detection.util';
 /**
  * Animation sequence names
  */
-export type AnimationSequence = 
+export type AnimationSequence =
   | 'card-entrance'
   | 'section-reveal'
   | 'fields-populate'
@@ -101,11 +101,11 @@ export interface OrchestratorAnimationPreset {
 // ============================================================================
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AnimationOrchestratorService implements OnDestroy {
   private readonly destroy$ = new Subject<void>();
-  
+
   // State management
   private readonly _state = new BehaviorSubject<OrchestratorState>({
     isAnimating: false,
@@ -116,21 +116,21 @@ export class AnimationOrchestratorService implements OnDestroy {
     globalSpeed: 1,
   });
   readonly state$ = this._state.asObservable();
-  
+
   // Animation queue
   private animationQueue: Array<{
     sequence: AnimationSequenceDefinition;
     resolve: () => void;
     reject: (error: Error) => void;
   }> = [];
-  
+
   private isProcessing = false;
   private activeAnimations: Animation[] = [];
   private flipAnimators = new Map<HTMLElement, FlipAnimator>();
-  
+
   // Registered presets
   private presets = new Map<string, AnimationSequenceDefinition>();
-  
+
   // Reduced motion cleanup
   private reducedMotionCleanup: (() => void) | null = null;
 
@@ -144,7 +144,7 @@ export class AnimationOrchestratorService implements OnDestroy {
     this.destroy$.complete();
     this.cancelAll();
     this.reducedMotionCleanup?.();
-    this.flipAnimators.forEach(f => f.cancelAll());
+    this.flipAnimators.forEach((f) => f.cancelAll());
   }
 
   // ============================================================================
@@ -181,9 +181,7 @@ export class AnimationOrchestratorService implements OnDestroy {
 
     // Apply options
     if (options?.skipSteps) {
-      sequence.steps = sequence.steps.filter(
-        s => !options.skipSteps?.includes(s.name)
-      );
+      sequence.steps = sequence.steps.filter((s) => !options.skipSteps?.includes(s.name));
     }
 
     return this.queueSequence(sequence, target, options);
@@ -259,12 +257,14 @@ export class AnimationOrchestratorService implements OnDestroy {
   async waitForCompletion(): Promise<void> {
     if (!this._state.value.isAnimating) return;
 
-    return new Promise(resolve => {
-      this.state$.pipe(
-        filter(state => !state.isAnimating),
-        first(),
-        takeUntil(this.destroy$)
-      ).subscribe(() => resolve());
+    return new Promise((resolve) => {
+      this.state$
+        .pipe(
+          filter((state) => !state.isAnimating),
+          first(),
+          takeUntil(this.destroy$)
+        )
+        .subscribe(() => resolve());
     });
   }
 
@@ -276,13 +276,13 @@ export class AnimationOrchestratorService implements OnDestroy {
       animation.cancel();
     }
     this.activeAnimations = [];
-    
+
     // Reject queued sequences
     for (const queued of this.animationQueue) {
       queued.reject(new Error('Animation cancelled'));
     }
     this.animationQueue = [];
-    
+
     this.isProcessing = false;
     this.updateState({
       isAnimating: false,
@@ -319,7 +319,7 @@ export class AnimationOrchestratorService implements OnDestroy {
   // ============================================================================
 
   private setupReducedMotionListener(): void {
-    this.reducedMotionCleanup = onReducedMotionChange(prefersReduced => {
+    this.reducedMotionCleanup = onReducedMotionChange((prefersReduced) => {
       this.updateState({ reducedMotion: prefersReduced });
       if (prefersReduced) {
         this.cancelAll();
@@ -426,7 +426,7 @@ export class AnimationOrchestratorService implements OnDestroy {
     const preparedSequence = this.prepareSequence(sequence, target);
 
     if (options?.delay) {
-      await new Promise(resolve => setTimeout(resolve, options.delay));
+      await new Promise((resolve) => setTimeout(resolve, options.delay));
     }
 
     return new Promise((resolve, reject) => {
@@ -440,14 +440,14 @@ export class AnimationOrchestratorService implements OnDestroy {
     sequence: AnimationSequenceDefinition,
     target: HTMLElement
   ): AnimationSequenceDefinition {
-    const preparedSteps = sequence.steps.map(step => {
+    const preparedSteps = sequence.steps.map((step) => {
       // If target is empty array, find elements in the provided target
       if (Array.isArray(step.target) && step.target.length === 0) {
         const selector = this.getDefaultSelector(step.name);
         const elements = target.querySelectorAll(selector);
         return {
           ...step,
-          target: elements.length > 0 ? Array.from(elements) as HTMLElement[] : [target],
+          target: elements.length > 0 ? (Array.from(elements) as HTMLElement[]) : [target],
         };
       }
       return step;
@@ -464,7 +464,7 @@ export class AnimationOrchestratorService implements OnDestroy {
       'fields-populate': '.field-row, .card-field',
       'items-enter': '.card-item, .item-row',
       'content-fade': '.section-content',
-      'highlight': '.masonry-section',
+      highlight: '.masonry-section',
     };
     return selectors[stepName] ?? '*';
   }
@@ -475,17 +475,17 @@ export class AnimationOrchestratorService implements OnDestroy {
     }
 
     this.isProcessing = true;
-    
+
     while (this.animationQueue.length > 0) {
       const { sequence, resolve, reject } = this.animationQueue.shift()!;
-      
+
       try {
         await this.executeSequence(sequence);
         resolve();
       } catch (error) {
         reject(error as Error);
       }
-      
+
       this.updateQueueLength();
     }
 
@@ -517,7 +517,7 @@ export class AnimationOrchestratorService implements OnDestroy {
 
       // Apply delay
       if (step.delay && !step.parallel) {
-        await new Promise(resolve => setTimeout(resolve, this.adjustDuration(step.delay!)));
+        await new Promise((resolve) => setTimeout(resolve, this.adjustDuration(step.delay!)));
       }
 
       const stepPromise = this.executeStep(step);
@@ -546,7 +546,7 @@ export class AnimationOrchestratorService implements OnDestroy {
 
   private async executeStep(step: AnimationStep): Promise<void> {
     const targets = Array.isArray(step.target) ? step.target : [step.target];
-    
+
     if (targets.length === 0) {
       return;
     }
@@ -565,23 +565,19 @@ export class AnimationOrchestratorService implements OnDestroy {
         ...anim,
         timing: {
           ...anim.timing,
-          duration: this.adjustDuration(anim.timing.duration as number ?? 300),
+          duration: this.adjustDuration((anim.timing.duration as number) ?? 300),
         },
       };
     };
 
     if (step.stagger && targets.length > 1) {
-      const animations = await staggerAnimate(
-        targets,
-        adjustedAnimation(targets[0]!),
-        {
-          ...step.stagger,
-          delay: this.adjustDuration(step.stagger.delay),
-        }
-      );
+      const animations = await staggerAnimate(targets, adjustedAnimation(targets[0]!), {
+        ...step.stagger,
+        delay: this.adjustDuration(step.stagger.delay),
+      });
       this.activeAnimations.push(...animations);
     } else {
-      const animations = targets.map(target => {
+      const animations = targets.map((target) => {
         const anim = target.animate(
           adjustedAnimation(target).keyframes,
           adjustedAnimation(target).timing
@@ -589,7 +585,7 @@ export class AnimationOrchestratorService implements OnDestroy {
         this.activeAnimations.push(anim);
         return anim.finished;
       });
-      await Promise.all(animations.map(p => p.catch(() => {})));
+      await Promise.all(animations.map((p) => p.catch(() => {})));
     }
   }
 
@@ -597,13 +593,10 @@ export class AnimationOrchestratorService implements OnDestroy {
     return duration / this._state.value.globalSpeed;
   }
 
-  private async runReducedMotionFallback(
-    sequenceName: string,
-    target: HTMLElement
-  ): Promise<void> {
+  private async runReducedMotionFallback(sequenceName: string, target: HTMLElement): Promise<void> {
     // For reduced motion, just make elements visible instantly
     const elements = target.querySelectorAll('.masonry-section, .card-field, .card-item');
-    elements.forEach(el => {
+    elements.forEach((el) => {
       (el as HTMLElement).style.opacity = '1';
       (el as HTMLElement).style.transform = 'none';
     });
@@ -617,4 +610,3 @@ export class AnimationOrchestratorService implements OnDestroy {
     this.updateState({ queueLength: this.animationQueue.length });
   }
 }
-

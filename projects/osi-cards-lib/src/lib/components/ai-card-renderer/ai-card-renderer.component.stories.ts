@@ -80,12 +80,7 @@ export const CompanyCard: Story = {
           .withField({ label: 'Location', value: 'San Francisco, CA' })
           .build()
       )
-      .withSection(
-        TestBuilders.Section.create()
-          .withTitle('Key Metrics')
-          .asAnalytics()
-          .build()
-      )
+      .withSection(TestBuilders.Section.create().withTitle('Key Metrics').asAnalytics().build())
       .build(),
     tiltEnabled: true,
   },
@@ -161,4 +156,3 @@ export const CardWithActions: Story = {
       .build(),
   },
 };
-

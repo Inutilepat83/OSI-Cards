@@ -1,41 +1,41 @@
-import { 
-  Directive, 
-  Input, 
-  ElementRef, 
-  OnInit, 
-  OnDestroy, 
-  OnChanges, 
+import {
+  Directive,
+  Input,
+  ElementRef,
+  OnInit,
+  OnDestroy,
+  OnChanges,
   SimpleChanges,
   inject,
-  Renderer2
+  Renderer2,
 } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { ThemeService, OSICardsThemeConfig, ThemePreset } from '../themes/theme.service';
 
 /**
  * Scoped Theme Directive
- * 
+ *
  * Applies theme to a specific DOM subtree, allowing cards or sections
  * to have independent themes from the global document theme.
- * 
+ *
  * Features:
  * - Scoped CSS variable application
  * - Optional isolation from global theme changes
  * - Support for theme presets and custom themes
  * - Automatic cleanup on destroy
- * 
+ *
  * @example
  * ```html
  * <!-- Apply dark theme to this card only -->
  * <div osiTheme="dark">
  *   <app-ai-card-renderer [cardConfig]="card"></app-ai-card-renderer>
  * </div>
- * 
+ *
  * <!-- Use a custom theme -->
  * <div [osiTheme]="myCustomTheme" [osiThemeIsolated]="true">
  *   <app-ai-card-renderer [cardConfig]="card"></app-ai-card-renderer>
  * </div>
- * 
+ *
  * <!-- Follow global theme (default behavior) -->
  * <div osiTheme="inherit">
  *   <app-ai-card-renderer [cardConfig]="card"></app-ai-card-renderer>
@@ -45,7 +45,7 @@ import { ThemeService, OSICardsThemeConfig, ThemePreset } from '../themes/theme.
 @Directive({
   selector: '[osiTheme]',
   standalone: true,
-  exportAs: 'osiTheme'
+  exportAs: 'osiTheme',
 })
 export class OsiThemeDirective implements OnInit, OnDestroy, OnChanges {
   private readonly elementRef = inject(ElementRef<HTMLElement>);
@@ -79,12 +79,10 @@ export class OsiThemeDirective implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit(): void {
     this.applyTheme();
-    
+
     // Watch for global theme changes if not isolated
     if (!this.osiThemeIsolated && this.theme === 'inherit') {
-      this.themeService.resolvedTheme$.pipe(
-        takeUntil(this.destroy$)
-      ).subscribe(() => {
+      this.themeService.resolvedTheme$.pipe(takeUntil(this.destroy$)).subscribe(() => {
         this.applyTheme();
       });
     }
@@ -94,13 +92,11 @@ export class OsiThemeDirective implements OnInit, OnDestroy, OnChanges {
     if (changes['theme'] || changes['osiThemeVariables']) {
       this.applyTheme();
     }
-    
+
     if (changes['osiThemeIsolated'] && !changes['osiThemeIsolated'].firstChange) {
       // Re-subscribe or unsubscribe based on isolation change
       if (!this.osiThemeIsolated && this.theme === 'inherit') {
-        this.themeService.resolvedTheme$.pipe(
-          takeUntil(this.destroy$)
-        ).subscribe(() => {
+        this.themeService.resolvedTheme$.pipe(takeUntil(this.destroy$)).subscribe(() => {
           this.applyTheme();
         });
       }
@@ -216,7 +212,7 @@ export class OsiThemeDirective implements OnInit, OnDestroy, OnChanges {
   private cleanupVariables(): void {
     const element = this.elementRef.nativeElement;
 
-    this.appliedVariables.forEach(varName => {
+    this.appliedVariables.forEach((varName) => {
       this.renderer.removeStyle(element, varName);
     });
 
@@ -226,10 +222,10 @@ export class OsiThemeDirective implements OnInit, OnDestroy, OnChanges {
 
 /**
  * Theme Container Directive
- * 
+ *
  * Creates an isolated theme container with proper CSS containment.
  * Use this for fully isolated theme contexts.
- * 
+ *
  * @example
  * ```html
  * <div osiThemeContainer="dark">
@@ -240,10 +236,17 @@ export class OsiThemeDirective implements OnInit, OnDestroy, OnChanges {
 @Directive({
   selector: '[osiThemeContainer]',
   standalone: true,
-  hostDirectives: [{
-    directive: OsiThemeDirective,
-    inputs: ['osiTheme: osiThemeContainer', 'osiThemeIsolated', 'osiThemeTransitions', 'osiThemeVariables']
-  }]
+  hostDirectives: [
+    {
+      directive: OsiThemeDirective,
+      inputs: [
+        'osiTheme: osiThemeContainer',
+        'osiThemeIsolated',
+        'osiThemeTransitions',
+        'osiThemeVariables',
+      ],
+    },
+  ],
 })
 export class OsiThemeContainerDirective implements OnInit {
   private readonly elementRef = inject(ElementRef<HTMLElement>);
@@ -252,18 +255,9 @@ export class OsiThemeContainerDirective implements OnInit {
   ngOnInit(): void {
     // Apply container styles for proper isolation
     const element = this.elementRef.nativeElement;
-    
+
     this.renderer.addClass(element, 'osi-theme-container');
     this.renderer.setStyle(element, 'container-type', 'inline-size');
     this.renderer.setStyle(element, 'contain', 'layout style');
   }
 }
-
-
-
-
-
-
-
-
-

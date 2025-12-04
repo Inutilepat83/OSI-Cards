@@ -22,7 +22,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   templateUrl: './section-header.component.html',
   styleUrl: './section-header.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SectionHeaderComponent {
   /**
@@ -63,4 +63,3 @@ export class SectionHeaderComponent {
     return `h${this.level}`;
   }
 }
-

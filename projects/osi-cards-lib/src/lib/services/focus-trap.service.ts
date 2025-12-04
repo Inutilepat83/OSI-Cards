@@ -34,7 +34,7 @@ const FOCUSABLE_SELECTORS = [
   'audio[controls]',
   'video[controls]',
   'details>summary:first-of-type',
-  'details'
+  'details',
 ].join(',');
 
 /**
@@ -72,12 +72,12 @@ export class FocusTrapService {
     const { element, returnFocusTo, initialFocus } = config;
 
     // Store the currently focused element if no returnFocusTo specified
-    const previouslyFocused = returnFocusTo || this.document.activeElement as HTMLElement;
+    const previouslyFocused = returnFocusTo || (this.document.activeElement as HTMLElement);
 
     // Add to stack
     this.activeTraps.push({
       ...config,
-      returnFocusTo: previouslyFocused
+      returnFocusTo: previouslyFocused,
     });
 
     // Setup event listeners
@@ -121,11 +121,9 @@ export class FocusTrapService {
    * Get focusable elements within an element
    */
   getFocusableElements(element: HTMLElement): HTMLElement[] {
-    const elements = Array.from(
-      element.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS)
-    );
+    const elements = Array.from(element.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS));
 
-    return elements.filter(el => {
+    return elements.filter((el) => {
       // Check if visible
       const style = getComputedStyle(el);
       return (
@@ -255,10 +253,7 @@ export class FocusTrapService {
   /**
    * Focus initial element in trap
    */
-  private focusInitialElement(
-    container: HTMLElement,
-    initialFocus?: HTMLElement | string
-  ): void {
+  private focusInitialElement(container: HTMLElement, initialFocus?: HTMLElement | string): void {
     if (initialFocus instanceof HTMLElement) {
       initialFocus.focus();
     } else if (typeof initialFocus === 'string') {
@@ -281,7 +276,6 @@ export function createFocusTrap(
   return {
     element: elementRef.nativeElement,
     escapeDeactivates: true,
-    ...options
+    ...options,
   };
 }
-

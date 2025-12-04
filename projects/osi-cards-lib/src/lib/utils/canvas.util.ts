@@ -41,7 +41,11 @@ export interface ImageExportOptions {
 /**
  * Create canvas element
  */
-export function createCanvas(width: number, height: number, backgroundColor?: string): HTMLCanvasElement {
+export function createCanvas(
+  width: number,
+  height: number,
+  backgroundColor?: string
+): HTMLCanvasElement {
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
@@ -68,8 +72,10 @@ export function getContext2D(canvas: HTMLCanvasElement): CanvasRenderingContext2
  * Get WebGL context
  */
 export function getContextWebGL(canvas: HTMLCanvasElement): WebGLRenderingContext | null {
-  return canvas.getContext('webgl') as WebGLRenderingContext | null ||
-         canvas.getContext('experimental-webgl') as WebGLRenderingContext | null;
+  return (
+    (canvas.getContext('webgl') as WebGLRenderingContext | null) ||
+    (canvas.getContext('experimental-webgl') as WebGLRenderingContext | null)
+  );
 }
 
 /**
@@ -232,10 +238,7 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
 /**
  * Export canvas to data URL
  */
-export function exportCanvas(
-  canvas: HTMLCanvasElement,
-  options: ImageExportOptions = {}
-): string {
+export function exportCanvas(canvas: HTMLCanvasElement, options: ImageExportOptions = {}): string {
   const { format = 'png', quality = 0.92 } = options;
   const mimeType = `image/${format}`;
   return canvas.toDataURL(mimeType, quality);
@@ -330,10 +333,7 @@ export function measureText(
 /**
  * Apply filter to canvas
  */
-export function applyFilter(
-  ctx: CanvasRenderingContext2D,
-  filter: string
-): void {
+export function applyFilter(ctx: CanvasRenderingContext2D, filter: string): void {
   ctx.filter = filter;
 }
 
@@ -404,4 +404,3 @@ export function invertColors(ctx: CanvasRenderingContext2D): void {
 
   putPixelData(ctx, imageData);
 }
-

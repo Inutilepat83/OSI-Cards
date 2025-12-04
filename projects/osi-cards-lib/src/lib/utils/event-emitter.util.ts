@@ -112,8 +112,8 @@ export class TypedEventEmitter<TEvents extends Record<string, any>> {
   ): Subscription {
     return this.events$
       .pipe(
-        filter(event => event.type === type),
-        map(event => event.payload as TEvents[K])
+        filter((event) => event.type === type),
+        map((event) => event.payload as TEvents[K])
       )
       .subscribe(handler);
   }
@@ -150,8 +150,8 @@ export class TypedEventEmitter<TEvents extends Record<string, any>> {
    */
   observe<K extends keyof TEvents & string>(type: K): Observable<TEvents[K]> {
     return this.events$.pipe(
-      filter(event => event.type === type),
-      map(event => event.payload as TEvents[K])
+      filter((event) => event.type === type),
+      map((event) => event.payload as TEvents[K])
     );
   }
 
@@ -179,11 +179,9 @@ export class TypedEventEmitter<TEvents extends Record<string, any>> {
    * @param type - Optional event type filter
    * @returns Array of past events
    */
-  getHistory<K extends keyof TEvents & string>(
-    type?: K
-  ): Array<TypedEvent<K, TEvents[K]>> {
+  getHistory<K extends keyof TEvents & string>(type?: K): Array<TypedEvent<K, TEvents[K]>> {
     if (type) {
-      return this.eventHistory.filter(e => e.type === type) as Array<TypedEvent<K, TEvents[K]>>;
+      return this.eventHistory.filter((e) => e.type === type) as Array<TypedEvent<K, TEvents[K]>>;
     }
     return this.eventHistory as Array<TypedEvent<K, TEvents[K]>>;
   }
@@ -225,7 +223,9 @@ export class TypedEventEmitter<TEvents extends Record<string, any>> {
  * const emitter = createEventEmitter<Events>();
  * ```
  */
-export function createEventEmitter<TEvents extends Record<string, any>>(): TypedEventEmitter<TEvents> {
+export function createEventEmitter<
+  TEvents extends Record<string, any>,
+>(): TypedEventEmitter<TEvents> {
   return new TypedEventEmitter<TEvents>();
 }
 
@@ -306,4 +306,3 @@ export class SimpleEventEmitter<T = any> {
 export function createSimpleEmitter<T = any>(): SimpleEventEmitter<T> {
   return new SimpleEventEmitter<T>();
 }
-

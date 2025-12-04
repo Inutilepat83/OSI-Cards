@@ -70,7 +70,7 @@ interface FocusTrapState {
 // ============================================================================
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AccessibilityService implements OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
@@ -116,7 +116,7 @@ export class AccessibilityService implements OnDestroy {
     politeness: AriaLivePoliteness = 'polite',
     duration?: number
   ): Promise<void> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       if (!isPlatformBrowser(this.platformId)) {
         resolve();
         return;
@@ -191,7 +191,7 @@ export class AccessibilityService implements OnDestroy {
     if (this.clearTimeout) {
       clearTimeout(this.clearTimeout);
     }
-    this.liveElements.forEach(element => {
+    this.liveElements.forEach((element) => {
       element.textContent = '';
     });
   }
@@ -207,15 +207,14 @@ export class AccessibilityService implements OnDestroy {
     if (!isPlatformBrowser(this.platformId)) return;
 
     // Store previous focus
-    const previouslyFocused = options.returnFocus !== false
-      ? this.document.activeElement as HTMLElement
-      : undefined;
+    const previouslyFocused =
+      options.returnFocus !== false ? (this.document.activeElement as HTMLElement) : undefined;
 
     // Add to trap stack
     this.activeTraps.push({
       element: container,
       returnFocusTo: previouslyFocused,
-      config: options
+      config: options,
     });
 
     // Setup listeners if first trap
@@ -285,9 +284,13 @@ export class AccessibilityService implements OnDestroy {
       mainContent.focus();
 
       if (!hadTabIndex) {
-        mainContent.addEventListener('blur', () => {
-          mainContent.removeAttribute('tabindex');
-        }, { once: true });
+        mainContent.addEventListener(
+          'blur',
+          () => {
+            mainContent.removeAttribute('tabindex');
+          },
+          { once: true }
+        );
       }
     }
   }
@@ -308,7 +311,7 @@ export class AccessibilityService implements OnDestroy {
       'audio[controls]',
       'video[controls]',
       'details>summary:first-of-type',
-      'details'
+      'details',
     ];
 
     if (additionalSelector) {
@@ -318,7 +321,7 @@ export class AccessibilityService implements OnDestroy {
     const selector = baseSelectors.join(', ');
     const elements = Array.from(container.querySelectorAll<HTMLElement>(selector));
 
-    return elements.filter(el => {
+    return elements.filter((el) => {
       const style = window.getComputedStyle(el);
       return (
         style.display !== 'none' &&
@@ -353,9 +356,7 @@ export class AccessibilityService implements OnDestroy {
    * Observable of reduced motion preference
    */
   get prefersReducedMotion$(): Observable<boolean> {
-    return this._prefersReducedMotion$.asObservable().pipe(
-      distinctUntilChanged()
-    );
+    return this._prefersReducedMotion$.asObservable().pipe(distinctUntilChanged());
   }
 
   /**
@@ -376,7 +377,7 @@ export class AccessibilityService implements OnDestroy {
    * Observable for animation enabled state
    */
   get animationsEnabled$(): Observable<boolean> {
-    return this.prefersReducedMotion$.pipe(map(prefers => !prefers));
+    return this.prefersReducedMotion$.pipe(map((prefers) => !prefers));
   }
 
   /**
@@ -412,14 +413,14 @@ export class AccessibilityService implements OnDestroy {
       return {
         duration: 0,
         easing: EASING.LINEAR,
-        skip: true
+        skip: true,
       };
     }
 
     return {
       duration: baseDuration,
       easing: baseEasing,
-      skip: false
+      skip: false,
     };
   }
 
@@ -514,7 +515,7 @@ export class AccessibilityService implements OnDestroy {
   private setupLiveRegions(): void {
     const politenessLevels: AriaLivePoliteness[] = ['polite', 'assertive'];
 
-    politenessLevels.forEach(politeness => {
+    politenessLevels.forEach((politeness) => {
       const element = this.document.createElement('div');
 
       // Visually hidden but accessible
@@ -527,7 +528,7 @@ export class AccessibilityService implements OnDestroy {
         overflow: 'hidden',
         clip: 'rect(0, 0, 0, 0)',
         whiteSpace: 'nowrap',
-        border: '0'
+        border: '0',
       });
 
       element.setAttribute('aria-live', politeness);
@@ -644,10 +645,7 @@ export class AccessibilityService implements OnDestroy {
     }
   }
 
-  private focusInitialElement(
-    container: HTMLElement,
-    initialFocus?: HTMLElement | string
-  ): void {
+  private focusInitialElement(container: HTMLElement, initialFocus?: HTMLElement | string): void {
     if (initialFocus instanceof HTMLElement) {
       initialFocus.focus();
     } else if (typeof initialFocus === 'string') {
@@ -662,7 +660,7 @@ export class AccessibilityService implements OnDestroy {
     this.releaseAllFocusTraps();
 
     // Remove live regions
-    this.liveElements.forEach(element => element.remove());
+    this.liveElements.forEach((element) => element.remove());
     this.liveElements.clear();
 
     // Remove media query listener
@@ -680,4 +678,3 @@ export class AccessibilityService implements OnDestroy {
     }
   }
 }
-

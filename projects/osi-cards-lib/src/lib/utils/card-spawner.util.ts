@@ -2,7 +2,7 @@ import { AICardConfig, CardSection, CardField, CardItem, CardAction } from '../m
 
 /**
  * Card Spawner Utilities
- * 
+ *
  * Helper functions for dynamically instantiating and managing card components,
  * particularly useful for agentic flows and LLM integrations.
  */
@@ -14,7 +14,7 @@ export function createEmptyCard(title: string = 'Loading...'): AICardConfig {
   return {
     cardTitle: title,
     sections: [],
-    actions: []
+    actions: [],
   };
 }
 
@@ -29,9 +29,9 @@ export function createSkeletonCard(): AICardConfig {
         id: 'skeleton-section',
         title: 'Loading',
         type: 'info',
-        fields: []
-      }
-    ]
+        fields: [],
+      },
+    ],
   };
 }
 
@@ -45,7 +45,7 @@ export function mergeCardConfig(
 ): AICardConfig {
   const merged: AICardConfig = {
     ...existing,
-    ...update
+    ...update,
   };
 
   // Merge sections intelligently
@@ -64,20 +64,17 @@ export function mergeCardConfig(
 /**
  * Merges sections arrays, updating existing sections or adding new ones
  */
-export function mergeSections(
-  existing: CardSection[],
-  updates: CardSection[]
-): CardSection[] {
+export function mergeSections(existing: CardSection[], updates: CardSection[]): CardSection[] {
   const sectionMap = new Map<string, CardSection>();
 
   // Add existing sections to map
-  existing.forEach(section => {
+  existing.forEach((section) => {
     const key = getSectionKey(section);
     sectionMap.set(key, { ...section });
   });
 
   // Merge or add updated sections
-  updates.forEach(updateSection => {
+  updates.forEach((updateSection) => {
     const key = getSectionKey(updateSection);
     const existingSection = sectionMap.get(key);
 
@@ -86,14 +83,8 @@ export function mergeSections(
       sectionMap.set(key, {
         ...existingSection,
         ...updateSection,
-        fields: mergeFields(
-          existingSection.fields || [],
-          updateSection.fields || []
-        ),
-        items: mergeItems(
-          existingSection.items || [],
-          updateSection.items || []
-        )
+        fields: mergeFields(existingSection.fields || [], updateSection.fields || []),
+        items: mergeItems(existingSection.items || [], updateSection.items || []),
       });
     } else {
       // Add new section
@@ -107,20 +98,17 @@ export function mergeSections(
 /**
  * Merges fields arrays, avoiding duplicates by ID or label
  */
-function mergeFields(
-  existing: CardField[],
-  updates: CardField[]
-): CardField[] {
+function mergeFields(existing: CardField[], updates: CardField[]): CardField[] {
   const fieldMap = new Map<string, CardField>();
 
   // Add existing fields
-  existing.forEach(field => {
+  existing.forEach((field) => {
     const key = field.id ?? field.label ?? String(field);
     fieldMap.set(key, field);
   });
 
   // Add or update fields
-  updates.forEach(update => {
+  updates.forEach((update) => {
     const key = update.id ?? update.label ?? String(update);
     fieldMap.set(key, update);
   });
@@ -131,20 +119,17 @@ function mergeFields(
 /**
  * Merges items arrays, avoiding duplicates by ID or name
  */
-function mergeItems(
-  existing: CardItem[],
-  updates: CardItem[]
-): CardItem[] {
+function mergeItems(existing: CardItem[], updates: CardItem[]): CardItem[] {
   const itemMap = new Map<string, CardItem>();
 
   // Add existing items
-  existing.forEach(item => {
+  existing.forEach((item) => {
     const key = item.id ?? item.title ?? String(item);
     itemMap.set(key, item);
   });
 
   // Add or update items
-  updates.forEach(update => {
+  updates.forEach((update) => {
     const key = update.id ?? update.title ?? String(update);
     itemMap.set(key, update);
   });
@@ -155,20 +140,17 @@ function mergeItems(
 /**
  * Merges actions arrays, avoiding duplicates by ID or label
  */
-function mergeActions(
-  existing: CardAction[],
-  updates: CardAction[]
-): CardAction[] {
+function mergeActions(existing: CardAction[], updates: CardAction[]): CardAction[] {
   const actionMap = new Map<string, CardAction>();
 
   // Add existing actions
-  existing.forEach(action => {
+  existing.forEach((action) => {
     const key = action.id ?? action.label ?? String(action);
     actionMap.set(key, action);
   });
 
   // Add or update actions
-  updates.forEach(update => {
+  updates.forEach((update) => {
     const key = update.id ?? update.label ?? String(update);
     actionMap.set(key, update);
   });
@@ -180,8 +162,7 @@ function mergeActions(
  * Gets a unique key for a section (for merging)
  */
 function getSectionKey(section: CardSection): string {
-  return section.id || 
-         `${section.title || 'section'}-${section.type || 'info'}`;
+  return section.id || `${section.title || 'section'}-${section.type || 'info'}`;
 }
 
 /**
@@ -214,7 +195,7 @@ export function validateCardConfig(card: Partial<AICardConfig>): {
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -229,7 +210,7 @@ export function createCardFromPartial(
   return {
     cardTitle: partial.cardTitle || defaults.cardTitle || 'Card',
     sections: partial.sections || defaults.sections || [],
-    actions: partial.actions || defaults.actions || []
+    actions: partial.actions || defaults.actions || [],
   };
 }
 
@@ -241,10 +222,12 @@ export function isCardComplete(card: Partial<AICardConfig>): boolean {
     card.cardTitle &&
     card.sections &&
     card.sections.length > 0 &&
-    card.sections.every(section => 
-      section.title && 
-      section.type &&
-      ((section.fields && section.fields.length > 0) || (section.items && section.items.length > 0))
+    card.sections.every(
+      (section) =>
+        section.title &&
+        section.type &&
+        ((section.fields && section.fields.length > 0) ||
+          (section.items && section.items.length > 0))
     )
   );
 }
@@ -252,10 +235,7 @@ export function isCardComplete(card: Partial<AICardConfig>): boolean {
 /**
  * Creates a card configuration with error information
  */
-export function createErrorCard(
-  error: Error | string,
-  title: string = 'Error'
-): AICardConfig {
+export function createErrorCard(error: Error | string, title: string = 'Error'): AICardConfig {
   const errorMessage = typeof error === 'string' ? error : error.message;
 
   return {
@@ -270,11 +250,11 @@ export function createErrorCard(
             id: 'error-message',
             label: 'Message',
             value: errorMessage,
-            type: 'text'
-          }
-        ]
-      }
-    ]
+            type: 'text',
+          },
+        ],
+      },
+    ],
   };
 }
 
@@ -282,15 +262,13 @@ export function createErrorCard(
  * Prepares a card configuration for streaming updates
  * Ensures the card has the necessary structure for progressive updates
  */
-export function prepareCardForStreaming(
-  card: Partial<AICardConfig>
-): AICardConfig {
+export function prepareCardForStreaming(card: Partial<AICardConfig>): AICardConfig {
   return {
     cardTitle: card.cardTitle || 'Loading...',
     sections: card.sections || [],
     actions: card.actions || [],
     // Ensure sections have IDs for tracking during updates
-    ...card
+    ...card,
   };
 }
 
@@ -329,4 +307,3 @@ export function updateCardIncremental(
 export function cloneCardConfig(card: AICardConfig): AICardConfig {
   return JSON.parse(JSON.stringify(card));
 }
-

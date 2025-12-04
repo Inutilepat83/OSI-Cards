@@ -22,7 +22,7 @@ export interface TooltipConfig {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TooltipService {
   private currentTooltip = signal<{ element: HTMLElement; config: TooltipConfig } | null>(null);
@@ -115,4 +115,3 @@ export function attachTooltip(
     element.removeEventListener('mouseleave', hideTooltip);
   };
 }
-

@@ -1,21 +1,21 @@
 /**
  * Empty State Service
- * 
+ *
  * Manages the empty/loading state animations and messages for cards.
  * Extracted from AICardRendererComponent for better separation of concerns.
- * 
+ *
  * @example
  * ```typescript
  * import { EmptyStateService } from 'osi-cards-lib';
- * 
+ *
  * const emptyState = inject(EmptyStateService);
- * 
+ *
  * // Set custom messages
  * emptyState.setMessages(['Loading...', 'Please wait...']);
- * 
+ *
  * // Start message rotation
  * emptyState.startMessageRotation();
- * 
+ *
  * // Get current message
  * emptyState.currentMessage$.subscribe(message => console.log(message));
  * ```
@@ -76,7 +76,7 @@ const DEFAULT_LOADING_MESSAGES = [
   'Asking Siri nicely...',
   'Reading tea leaves...',
   'Channeling inner wisdom...',
-  'Waiting for the right moment...'
+  'Waiting for the right moment...',
 ];
 
 const DEFAULT_ROTATION_INTERVAL = 2500;
@@ -87,7 +87,7 @@ const DEFAULT_PARTICLE_COUNT = 8;
 // ============================================================================
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class EmptyStateService implements OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
@@ -246,7 +246,12 @@ export class EmptyStateService implements OnDestroy {
   /**
    * Update particle positions based on mouse movement
    */
-  updateParticlePositions(mouseX: number, mouseY: number, containerWidth: number, containerHeight: number): void {
+  updateParticlePositions(
+    mouseX: number,
+    mouseY: number,
+    containerWidth: number,
+    containerHeight: number
+  ): void {
     const centerX = containerWidth / 2;
     const centerY = containerHeight / 2;
     const normalizedX = (mouseX - centerX) / centerX;
@@ -256,10 +261,10 @@ export class EmptyStateService implements OnDestroy {
       const depth = 1 + (index % 3) * 0.5;
       const offsetX = normalizedX * 20 * depth;
       const offsetY = normalizedY * 20 * depth;
-      
+
       return {
         transform: `translate(${offsetX}px, ${offsetY}px)`,
-        opacity: 0.3 + Math.abs(normalizedX * normalizedY) * 0.3
+        opacity: 0.3 + Math.abs(normalizedX * normalizedY) * 0.3,
       };
     });
 
@@ -272,7 +277,7 @@ export class EmptyStateService implements OnDestroy {
   resetParticlePositions(): void {
     const resetParticles = this._particles.value.map(() => ({
       transform: 'translate(0, 0)',
-      opacity: 0.3
+      opacity: 0.3,
     }));
     this._particles.next(resetParticles);
   }
@@ -284,7 +289,12 @@ export class EmptyStateService implements OnDestroy {
   /**
    * Update parallax transforms based on mouse position
    */
-  updateParallax(mouseX: number, mouseY: number, containerWidth: number, containerHeight: number): void {
+  updateParallax(
+    mouseX: number,
+    mouseY: number,
+    containerWidth: number,
+    containerHeight: number
+  ): void {
     const centerX = containerWidth / 2;
     const centerY = containerHeight / 2;
     const normalizedX = (mouseX - centerX) / centerX;
@@ -293,7 +303,9 @@ export class EmptyStateService implements OnDestroy {
     // Gradient follows mouse
     const gradientX = normalizedX * 30;
     const gradientY = normalizedY * 30;
-    this._gradientTransform.next(`translate(calc(-50% + ${gradientX}px), calc(-50% + ${gradientY}px))`);
+    this._gradientTransform.next(
+      `translate(calc(-50% + ${gradientX}px), calc(-50% + ${gradientY}px))`
+    );
 
     // Content has subtle inverse movement
     const contentX = -normalizedX * 5;
@@ -330,11 +342,11 @@ export class EmptyStateService implements OnDestroy {
 
   private initializeParticles(): void {
     const particles: ParticleState[] = [];
-    
+
     for (let i = 0; i < this.particleCount; i++) {
       particles.push({
         transform: 'translate(0, 0)',
-        opacity: 0.3
+        opacity: 0.3,
       });
     }
 
@@ -353,4 +365,3 @@ export class EmptyStateService implements OnDestroy {
     this.messages = array;
   }
 }
-

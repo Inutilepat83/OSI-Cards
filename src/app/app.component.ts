@@ -1,9 +1,11 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { CommonModule, DOCUMENT } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ErrorDisplayComponent } from './shared/components/error-display/error-display.component';
 import { PerformanceService } from './core';
 import { getVersionString, VERSION_INFO } from '../version';
+import { ThemeService } from '../../projects/osi-cards-lib/src/lib/themes/theme.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -43,18 +45,16 @@ import { getVersionString, VERSION_INFO } from '../version';
   ],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  theme: 'day' | 'night' = 'night';
-  private readonly document = inject(DOCUMENT);
+  private readonly themeService = inject(ThemeService);
   private readonly performanceService = inject(PerformanceService);
+  private readonly destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    if (typeof window !== 'undefined') {
-      const storedTheme = localStorage.getItem('osi-theme');
-      if (storedTheme === 'day' || storedTheme === 'night') {
-        this.theme = storedTheme;
-      }
-    }
-    this.applyTheme();
+    // Subscribe to theme changes for any additional app-level logic
+    this.themeService.resolvedTheme$.pipe(takeUntil(this.destroy$)).subscribe((theme) => {
+      // Theme is automatically applied by ThemeService
+      // This subscription is for any additional app-level theme logic if needed
+    });
 
     // Initialize performance monitoring
     this.performanceService.initialize();
@@ -72,28 +72,12 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Performance service cleanup is handled automatically via OnDestroy interface
-    // No explicit cleanup needed - intentionally empty
-    void 0; // Satisfy linter requirement for non-empty method
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   toggleTheme(): void {
-    this.theme = this.theme === 'night' ? 'day' : 'night';
-    this.applyTheme();
-  }
-
-  private applyTheme(): void {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    // Batch DOM updates with requestAnimationFrame for smooth theme switching
-    requestAnimationFrame(() => {
-      const root = this.document.documentElement;
-      root.dataset.theme = this.theme;
-      localStorage.setItem('osi-theme', this.theme);
-      // CSS variables and transitions handle styling automatically
-      // No need for getComputedStyle() or manual body styling
-    });
+    // Use ThemeService for theme toggling
+    this.themeService.toggleTheme();
   }
 }

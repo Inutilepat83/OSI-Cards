@@ -149,19 +149,11 @@ export class Validator<T> {
     max?: number
   ): boolean {
     if (min !== undefined && value < min) {
-      this.addError(
-        `Field "${fieldName}" must be at least ${min}`,
-        `>=${min}`,
-        value
-      );
+      this.addError(`Field "${fieldName}" must be at least ${min}`, `>=${min}`, value);
       return false;
     }
     if (max !== undefined && value > max) {
-      this.addError(
-        `Field "${fieldName}" must be at most ${max}`,
-        `<=${max}`,
-        value
-      );
+      this.addError(`Field "${fieldName}" must be at most ${max}`, `<=${max}`, value);
       return false;
     }
     return true;
@@ -170,11 +162,7 @@ export class Validator<T> {
   /**
    * Validate enum value
    */
-  protected validateEnum(
-    value: unknown,
-    fieldName: string,
-    allowedValues: unknown[]
-  ): boolean {
+  protected validateEnum(value: unknown, fieldName: string, allowedValues: unknown[]): boolean {
     if (!allowedValues.includes(value)) {
       this.addError(
         `Field "${fieldName}" must be one of: ${allowedValues.join(', ')}`,
@@ -443,7 +431,7 @@ export function validateField(field: unknown): ValidationResult<CardField> {
 export function assertValidCard(config: unknown): asserts config is AICardConfig {
   const result = validateCard(config);
   if (!result.valid) {
-    const errorMessages = result.errors?.map(e => `${e.path}: ${e.message}`).join('\n');
+    const errorMessages = result.errors?.map((e) => `${e.path}: ${e.message}`).join('\n');
     throw new Error(`Invalid card configuration:\n${errorMessages}`);
   }
 }
@@ -454,8 +442,7 @@ export function assertValidCard(config: unknown): asserts config is AICardConfig
 export function assertValidSection(section: unknown): asserts section is CardSection {
   const result = validateSection(section);
   if (!result.valid) {
-    const errorMessages = result.errors?.map(e => `${e.path}: ${e.message}`).join('\n');
+    const errorMessages = result.errors?.map((e) => `${e.path}: ${e.message}`).join('\n');
     throw new Error(`Invalid section:\n${errorMessages}`);
   }
 }
-

@@ -1,0 +1,93 @@
+name: Dependency Updates
+
+on:
+  schedule:
+    # Run weekly on Monday at 9am UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-dependencies:
+    name: Update Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Check for Updates
+        id: check-updates
+        run: |
+          npm outdated --json > outdated.json || true
+
+          if [ -s outdated.json ]; then
+            echo "has_updates=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_updates=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update Dependencies
+        if: steps.check-updates.outputs.has_updates == 'true'
+        run: |
+          # Update patch and minor versions
+          npm update
+
+          # Check for major updates
+          npx npm-check-updates -u --target minor
+
+          npm install
+
+      - name: Run Tests
+        if: steps.check-updates.outputs.has_updates == 'true'
+        run: |
+          npm run build:lib
+          npm test -- --watch=false --browsers=ChromeHeadless
+
+      - name: Create Pull Request
+        if: steps.check-updates.outputs.has_updates == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(deps): update dependencies'
+          title: '⬆️ Weekly Dependency Updates'
+          body: |
+            ## 📦 Dependency Updates
+
+            Automated weekly dependency updates.
+
+            ### What's Changed
+            - Updated patch and minor versions
+            - All tests passing
+
+            ### Checklist
+            - [x] Dependencies updated
+            - [x] Tests passing
+            - [ ] Reviewed by human
+            - [ ] Breaking changes checked
+
+            **Note:** Review changes before merging.
+          branch: deps/automated-updates
+          labels: dependencies, automated
+
+  renovate:
+    name: Renovate Bot
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Self-hosted Renovate
+        uses: renovatebot/github-action@v39
+        with:
+          configurationFile: .github/renovate.json
+          token: ${{ secrets.GITHUB_TOKEN }}
+

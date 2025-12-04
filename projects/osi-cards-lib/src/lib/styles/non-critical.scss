@@ -90,7 +90,8 @@
 }
 
 @keyframes osi-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -108,11 +109,15 @@
 }
 
 @keyframes osi-bounce {
-  0%, 20%, 53%, 100% {
+  0%,
+  20%,
+  53%,
+  100% {
     animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
     transform: translateY(0);
   }
-  40%, 43% {
+  40%,
+  43% {
     animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
     transform: translateY(-15px);
   }
@@ -126,7 +131,8 @@
 }
 
 @keyframes osi-float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
@@ -140,8 +146,9 @@
 
 .osi-card {
   // Add transitions for non-critical interactions
-  transition: box-shadow var(--osi-transition-normal),
-              transform var(--osi-transition-normal);
+  transition:
+    box-shadow var(--osi-transition-normal),
+    transform var(--osi-transition-normal);
 
   &:hover {
     box-shadow: var(--osi-shadow-lg);
@@ -225,11 +232,7 @@
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.1) 0%,
-    transparent 50%
-  );
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
   opacity: 0;
   transition: opacity var(--osi-transition-normal);
 }
@@ -255,7 +258,7 @@
 
 .osi-section--streaming {
   .osi-section-title::after {
-    content: '';
+    content: "";
     display: inline-block;
     width: 3px;
     height: 1em;
@@ -328,11 +331,12 @@
 // =============================================================================
 
 .osi-action-button {
-  transition: background var(--osi-transition-fast),
-              color var(--osi-transition-fast),
-              border-color var(--osi-transition-fast),
-              transform var(--osi-transition-fast),
-              box-shadow var(--osi-transition-fast);
+  transition:
+    background var(--osi-transition-fast),
+    color var(--osi-transition-fast),
+    border-color var(--osi-transition-fast),
+    transform var(--osi-transition-fast),
+    box-shadow var(--osi-transition-fast);
 
   &:hover {
     transform: translateY(-1px);
@@ -374,7 +378,7 @@
     color: transparent;
 
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       width: 16px;
       height: 16px;
@@ -522,8 +526,9 @@
   box-shadow: var(--osi-shadow-md);
   opacity: 0;
   transform: translateY(4px);
-  transition: opacity var(--osi-transition-fast),
-              transform var(--osi-transition-fast);
+  transition:
+    opacity var(--osi-transition-fast),
+    transform var(--osi-transition-fast);
   pointer-events: none;
 
   &--visible {
@@ -636,6 +641,3 @@
     border: 1px solid CanvasText;
   }
 }
-
-
-

@@ -63,7 +63,7 @@ export function decodeHTML(str: string): string {
  */
 export function encodeHex(str: string): string {
   return Array.from(str)
-    .map(char => char.charCodeAt(0).toString(16).padStart(2, '0'))
+    .map((char) => char.charCodeAt(0).toString(16).padStart(2, '0'))
     .join('');
 }
 
@@ -72,7 +72,7 @@ export function encodeHex(str: string): string {
  */
 export function decodeHex(hex: string): string {
   const bytes = hex.match(/.{1,2}/g) || [];
-  return bytes.map(byte => String.fromCharCode(parseInt(byte, 16))).join('');
+  return bytes.map((byte) => String.fromCharCode(parseInt(byte, 16))).join('');
 }
 
 /**
@@ -80,7 +80,7 @@ export function decodeHex(hex: string): string {
  */
 export function encodeBinary(str: string): string {
   return Array.from(str)
-    .map(char => char.charCodeAt(0).toString(2).padStart(8, '0'))
+    .map((char) => char.charCodeAt(0).toString(2).padStart(8, '0'))
     .join(' ');
 }
 
@@ -90,7 +90,7 @@ export function encodeBinary(str: string): string {
 export function decodeBinary(binary: string): string {
   return binary
     .split(' ')
-    .map(byte => String.fromCharCode(parseInt(byte, 2)))
+    .map((byte) => String.fromCharCode(parseInt(byte, 2)))
     .join('');
 }
 
@@ -137,7 +137,7 @@ export function encodeQueryString(params: Record<string, any>): string {
 export function decodeQueryString(query: string): Record<string, string> {
   const params: Record<string, string> = {};
 
-  query.split('&').forEach(pair => {
+  query.split('&').forEach((pair) => {
     const [key, value] = pair.split('=');
     if (key) {
       params[decodeURIComponent(key)] = decodeURIComponent(value || '');
@@ -146,4 +146,3 @@ export function decodeQueryString(query: string): Record<string, string> {
 
   return params;
 }
-

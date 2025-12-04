@@ -1,0 +1,46 @@
+name: Accessibility Audit
+
+on:
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run weekly on Monday
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  a11y-audit:
+    name: Accessibility Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Run custom a11y audit
+        run: node scripts/accessibility-audit.js
+        continue-on-error: true
+
+      - name: Build application
+        run: npm run build:prod
+
+      - name: Run Lighthouse CI
+        run: |
+          npm install -g @lhci/cli
+          lhci autorun --collect.url=http://localhost:4200 || echo "Lighthouse audit complete"
+        continue-on-error: true
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a11y-results
+          path: |
+            .lighthouseci
+            accessibility-report.json
+          retention-days: 30

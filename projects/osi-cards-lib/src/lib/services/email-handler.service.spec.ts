@@ -13,21 +13,18 @@ describe('EmailHandlerService', () => {
       contact: {
         name: 'John Doe',
         email: 'john@example.com',
-        role: 'Manager'
+        role: 'Manager',
       },
       subject: 'Test Subject',
       body: 'Test Body',
       cc: ['cc@example.com'],
-      bcc: ['bcc@example.com']
-    }
+      bcc: ['bcc@example.com'],
+    },
   };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        EmailHandlerService,
-        { provide: PLATFORM_ID, useValue: 'browser' }
-      ]
+      providers: [EmailHandlerService, { provide: PLATFORM_ID, useValue: 'browser' }],
     });
     service = TestBed.inject(EmailHandlerService);
   });
@@ -42,7 +39,7 @@ describe('EmailHandlerService', () => {
   describe('buildMailtoUrl', () => {
     it('should build mailto URL from valid action', () => {
       const result = service.buildMailtoUrl(validMailAction);
-      
+
       expect(result.success).toBe(true);
       expect(result.url).toContain('mailto:john%40example.com');
       expect(result.url).toContain('subject=Test%20Subject');
@@ -51,13 +48,13 @@ describe('EmailHandlerService', () => {
 
     it('should include CC recipients', () => {
       const result = service.buildMailtoUrl(validMailAction);
-      
+
       expect(result.url).toContain('cc=cc%40example.com');
     });
 
     it('should include BCC recipients', () => {
       const result = service.buildMailtoUrl(validMailAction);
-      
+
       expect(result.url).toContain('bcc=bcc%40example.com');
     });
 
@@ -68,13 +65,13 @@ describe('EmailHandlerService', () => {
           ...validMailAction.email,
           contact: {
             ...validMailAction.email.contact,
-            email: 'invalid-email'
-          }
-        }
+            email: 'invalid-email',
+          },
+        },
       };
 
       const result = service.buildMailtoUrl(invalidAction);
-      
+
       expect(result.success).toBe(false);
       expect(result.error).toContain('email');
     });
@@ -84,12 +81,12 @@ describe('EmailHandlerService', () => {
         ...validMailAction,
         email: {
           ...validMailAction.email,
-          cc: ['valid@example.com', 'invalid', 'also-valid@test.org']
-        }
+          cc: ['valid@example.com', 'invalid', 'also-valid@test.org'],
+        },
       };
 
       const result = service.buildMailtoUrl(action);
-      
+
       expect(result.success).toBe(true);
       expect(result.url).toContain('valid%40example.com');
       expect(result.url).toContain('also-valid%40test.org');
@@ -104,15 +101,15 @@ describe('EmailHandlerService', () => {
           contact: {
             name: 'Jane',
             email: 'jane@example.com',
-            role: 'Developer'
+            role: 'Developer',
           },
           subject: 'Hi',
-          body: 'Hello'
-        }
+          body: 'Hello',
+        },
       };
 
       const result = service.buildMailtoUrl(simpleAction);
-      
+
       expect(result.success).toBe(true);
       expect(result.url).not.toContain('cc=');
       expect(result.url).not.toContain('bcc=');
@@ -128,12 +125,12 @@ describe('EmailHandlerService', () => {
         ...validMailAction,
         email: {
           ...validMailAction.email,
-          subject: 'Hello {{userName}}'
-        }
+          subject: 'Hello {{userName}}',
+        },
       };
 
       const result = service.buildMailtoUrl(action, { userName: 'Alice' });
-      
+
       expect(result.url).toContain('Hello%20Alice');
     });
 
@@ -142,15 +139,15 @@ describe('EmailHandlerService', () => {
         ...validMailAction,
         email: {
           ...validMailAction.email,
-          body: 'Dear {{userName}}, your company {{companyName}}'
-        }
+          body: 'Dear {{userName}}, your company {{companyName}}',
+        },
       };
 
-      const result = service.buildMailtoUrl(action, { 
-        userName: 'Bob', 
-        companyName: 'Acme Corp' 
+      const result = service.buildMailtoUrl(action, {
+        userName: 'Bob',
+        companyName: 'Acme Corp',
       });
-      
+
       expect(result.url).toContain('Dear%20Bob');
       expect(result.url).toContain('Acme%20Corp');
     });
@@ -162,12 +159,12 @@ describe('EmailHandlerService', () => {
         ...validMailAction,
         email: {
           ...validMailAction.email,
-          subject: 'Hello {{userName}}'
-        }
+          subject: 'Hello {{userName}}',
+        },
       };
 
       const result = service.buildMailtoUrl(action);
-      
+
       expect(result.url).toContain('Hello%20DefaultUser');
     });
 
@@ -178,12 +175,12 @@ describe('EmailHandlerService', () => {
         ...validMailAction,
         email: {
           ...validMailAction.email,
-          subject: 'Hello {{userName}}'
-        }
+          subject: 'Hello {{userName}}',
+        },
       };
 
       const result = service.buildMailtoUrl(action, { userName: 'OverrideUser' });
-      
+
       expect(result.url).toContain('Hello%20OverrideUser');
     });
 
@@ -207,14 +204,14 @@ describe('EmailHandlerService', () => {
   describe('validateMailAction', () => {
     it('should validate valid mail action', () => {
       const result = service.validateMailAction(validMailAction);
-      
+
       expect(result.valid).toBe(true);
       expect(result.errors).toEqual([]);
     });
 
     it('should fail for null action', () => {
       const result = service.validateMailAction(null as unknown as CardAction);
-      
+
       expect(result.valid).toBe(false);
       expect(result.errors).toContain('Action is required');
     });
@@ -222,23 +219,23 @@ describe('EmailHandlerService', () => {
     it('should fail for non-mail action', () => {
       const action: CardAction = {
         type: 'website',
-        label: 'Visit'
+        label: 'Visit',
       };
 
       const result = service.validateMailAction(action);
-      
+
       expect(result.valid).toBe(false);
-      expect(result.errors.some(e => e.includes('mail'))).toBe(true);
+      expect(result.errors.some((e) => e.includes('mail'))).toBe(true);
     });
 
     it('should fail for missing email config', () => {
       const action = {
         type: 'mail',
-        label: 'Email'
+        label: 'Email',
       } as CardAction;
 
       const result = service.validateMailAction(action);
-      
+
       expect(result.valid).toBe(false);
     });
 
@@ -250,15 +247,15 @@ describe('EmailHandlerService', () => {
           contact: {
             name: 'Test',
             email: 'not-an-email',
-            role: 'Tester'
-          }
-        }
+            role: 'Tester',
+          },
+        },
       };
 
       const result = service.validateMailAction(action);
-      
+
       expect(result.valid).toBe(false);
-      expect(result.errors.some(e => e.includes('invalid'))).toBe(true);
+      expect(result.errors.some((e) => e.includes('invalid'))).toBe(true);
     });
 
     it('should report invalid CC emails', () => {
@@ -266,14 +263,14 @@ describe('EmailHandlerService', () => {
         ...validMailAction,
         email: {
           ...validMailAction.email,
-          cc: ['valid@test.com', 'invalid-cc']
-        }
+          cc: ['valid@test.com', 'invalid-cc'],
+        },
       };
 
       const result = service.validateMailAction(action);
-      
+
       expect(result.valid).toBe(false);
-      expect(result.errors.some(e => e.includes('CC'))).toBe(true);
+      expect(result.errors.some((e) => e.includes('CC'))).toBe(true);
     });
   });
 
@@ -298,7 +295,7 @@ describe('EmailHandlerService', () => {
       const url = service.buildMailtoFromConfig({
         to: 'test@example.com',
         subject: 'Hello',
-        body: 'World'
+        body: 'World',
       });
 
       expect(url).toContain('mailto:test%40example.com');
@@ -309,7 +306,7 @@ describe('EmailHandlerService', () => {
     it('should handle multiple CC recipients', () => {
       const url = service.buildMailtoFromConfig({
         to: 'test@example.com',
-        cc: ['cc1@test.com', 'cc2@test.com']
+        cc: ['cc1@test.com', 'cc2@test.com'],
       });
 
       expect(url).toContain('cc=');
@@ -325,21 +322,12 @@ describe('EmailHandlerService', () => {
     it('should return false for invalid action', () => {
       const action: CardAction = {
         type: 'website',
-        label: 'Not email'
+        label: 'Not email',
       };
 
       const result = service.executeMailAction(action);
-      
+
       expect(result).toBe(false);
     });
   });
 });
-
-
-
-
-
-
-
-
-

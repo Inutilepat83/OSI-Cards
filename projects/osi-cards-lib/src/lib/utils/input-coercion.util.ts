@@ -169,11 +169,7 @@ export function coerceNumberInRange(
 /**
  * Create a range-constrained number coercer
  */
-export function coerceNumberInRangeFactory(
-  min: number,
-  max: number,
-  fallback?: number
-) {
+export function coerceNumberInRangeFactory(min: number, max: number, fallback?: number) {
   return (value: unknown): number => coerceNumberInRange(value, min, max, fallback);
 }
 
@@ -250,23 +246,20 @@ export function coerceUppercaseString(value: unknown, fallback = ''): string {
  * // <my-comp tags="a,b,c"> → ['a', 'b', 'c']
  * ```
  */
-export function coerceStringArray(
-  value: unknown,
-  separator: string | RegExp = ','
-): string[] {
+export function coerceStringArray(value: unknown, separator: string | RegExp = ','): string[] {
   if (value === null || value === undefined || value === '') {
     return [];
   }
 
   if (Array.isArray(value)) {
-    return value.map(v => String(v).trim()).filter(v => v.length > 0);
+    return value.map((v) => String(v).trim()).filter((v) => v.length > 0);
   }
 
   if (typeof value === 'string') {
     return value
       .split(separator)
-      .map(s => s.trim())
-      .filter(s => s.length > 0);
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
   }
 
   return [String(value)];
@@ -286,25 +279,22 @@ export function coerceStringArrayFactory(separator: string | RegExp = ',') {
  * @param separator - Separator for string splitting
  * @returns Number array (NaN values filtered out)
  */
-export function coerceNumberArray(
-  value: unknown,
-  separator: string | RegExp = ','
-): number[] {
+export function coerceNumberArray(value: unknown, separator: string | RegExp = ','): number[] {
   if (value === null || value === undefined || value === '') {
     return [];
   }
 
   if (Array.isArray(value)) {
     return value
-      .map(v => typeof v === 'number' ? v : parseFloat(String(v)))
-      .filter(n => !isNaN(n));
+      .map((v) => (typeof v === 'number' ? v : parseFloat(String(v))))
+      .filter((n) => !isNaN(n));
   }
 
   if (typeof value === 'string') {
     return value
       .split(separator)
-      .map(s => parseFloat(s.trim()))
-      .filter(n => !isNaN(n));
+      .map((s) => parseFloat(s.trim()))
+      .filter((n) => !isNaN(n));
   }
 
   const num = parseFloat(String(value));
@@ -347,13 +337,12 @@ export function coerceEnum<T extends string | number>(
     return fallback;
   }
 
-  const coercedValue = typeof fallback === 'number'
-    ? coerceNumber(value, fallback as number)
-    : coerceString(value, fallback as string);
+  const coercedValue =
+    typeof fallback === 'number'
+      ? coerceNumber(value, fallback as number)
+      : coerceString(value, fallback as string);
 
-  const valueSet = validValues instanceof Set
-    ? validValues
-    : new Set(validValues);
+  const valueSet = validValues instanceof Set ? validValues : new Set(validValues);
 
   return valueSet.has(coercedValue as T) ? (coercedValue as T) : fallback;
 }
@@ -379,10 +368,7 @@ export function coerceEnumFactory<T extends string | number>(
  * @param fallback - Fallback value for invalid inputs
  * @returns Parsed object or fallback
  */
-export function coerceObject<T extends object>(
-  value: unknown,
-  fallback: T
-): T {
+export function coerceObject<T extends object>(value: unknown, fallback: T): T {
   if (value === null || value === undefined) {
     return fallback;
   }
@@ -538,8 +524,3 @@ export function isPositiveNumber(value: unknown): value is number {
 export function isNonNegativeNumber(value: unknown): value is number {
   return isFiniteNumber(value) && value >= 0;
 }
-
-
-
-
-

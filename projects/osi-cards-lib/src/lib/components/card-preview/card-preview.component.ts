@@ -1,7 +1,21 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  OnChanges,
+  SimpleChanges,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AICardConfig, CardAction } from '../../models';
-import { AICardRendererComponent, CardFieldInteractionEvent } from '../ai-card-renderer/ai-card-renderer.component';
+import {
+  AICardRendererComponent,
+  CardFieldInteractionEvent,
+} from '../ai-card-renderer/ai-card-renderer.component';
 import { CardSkeletonComponent } from '../card-skeleton/card-skeleton.component';
 
 /**
@@ -29,7 +43,7 @@ export interface QuestionActionEvent {
   imports: [CommonModule, AICardRendererComponent, CardSkeletonComponent],
   templateUrl: './card-preview.component.html',
   styleUrls: ['./card-preview.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardPreviewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() generatedCard: AICardConfig | null = null;

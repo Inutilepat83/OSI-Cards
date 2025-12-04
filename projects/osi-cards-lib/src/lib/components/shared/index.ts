@@ -19,5 +19,7 @@ export { TrendIndicatorComponent } from './trend-indicator/trend-indicator.compo
 // Note: TrendDirection is exported from lib/types
 
 // Progress Bar Component
-export { ProgressBarComponent, type ProgressBarVariant } from './progress-bar/progress-bar.component';
-
+export {
+  ProgressBarComponent,
+  type ProgressBarVariant,
+} from './progress-bar/progress-bar.component';

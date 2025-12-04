@@ -109,4 +109,3 @@ export function sanitizeHTML(html: string): string {
 export function escapeRegex(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
-

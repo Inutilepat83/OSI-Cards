@@ -309,14 +309,14 @@ export const glassmorphismTheme: OSICardsThemeConfig = {
 export const ADDITIONAL_THEMES = {
   'corporate-blue': corporateBlueTheme,
   'corporate-dark': corporateDarkTheme,
-  'sunset': sunsetTheme,
-  'ocean': oceanTheme,
-  'forest': forestTheme,
-  'minimal': minimalTheme,
+  sunset: sunsetTheme,
+  ocean: oceanTheme,
+  forest: forestTheme,
+  minimal: minimalTheme,
   'neon-dark': neonDarkTheme,
   'rose-gold': roseGoldTheme,
-  'midnight': midnightTheme,
-  'glassmorphism': glassmorphismTheme,
+  midnight: midnightTheme,
+  glassmorphism: glassmorphismTheme,
 } as const;
 
 /**
@@ -328,6 +328,3 @@ export const ADDITIONAL_THEME_LIST: OSICardsThemeConfig[] = Object.values(ADDITI
  * Theme names for type safety
  */
 export type AdditionalThemeName = keyof typeof ADDITIONAL_THEMES;
-
-
-

@@ -87,13 +87,10 @@ export async function getVideoDuration(src: string): Promise<number> {
 /**
  * Capture frame from video
  */
-export async function captureFrame(
-  video: HTMLVideoElement,
-  atSeconds?: number
-): Promise<string> {
+export async function captureFrame(video: HTMLVideoElement, atSeconds?: number): Promise<string> {
   if (atSeconds !== undefined) {
     video.currentTime = atSeconds;
-    await new Promise(resolve => video.addEventListener('seeked', resolve, { once: true }));
+    await new Promise((resolve) => video.addEventListener('seeked', resolve, { once: true }));
   }
 
   const canvas = document.createElement('canvas');
@@ -171,4 +168,3 @@ export function getVideoInfo(video: HTMLVideoElement): {
     ended: video.ended,
   };
 }
-

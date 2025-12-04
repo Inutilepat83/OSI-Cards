@@ -3,7 +3,7 @@
 // =====================================================================
 // Philosophy: Less is more. Remove visual noise, maximize clarity.
 
-@use 'design-tokens' as *;
+@use "design-tokens" as *;
 
 // ═══════════════════════════════════════════════════════════════════
 // MINIMALISTIC SPACING - Tight but Breathable
@@ -18,13 +18,13 @@
   --minimal-spacing-xl: 18px;
 
   // Card/Item spacing
-  --minimal-card-padding: 10px;           // Balanced compact
-  --minimal-card-gap: 10px;               // Visual separation
-  --minimal-item-gap: 6px;                // Between elements
+  --minimal-card-padding: 10px; // Balanced compact
+  --minimal-card-gap: 10px; // Visual separation
+  --minimal-item-gap: 6px; // Between elements
 
   // Heights
-  --minimal-card-height: 95px;            // Compact but not cramped
-  --minimal-card-height-mobile: auto;     // Flexible on mobile
+  --minimal-card-height: 95px; // Compact but not cramped
+  --minimal-card-height-mobile: auto; // Flexible on mobile
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -34,13 +34,13 @@
 :root {
   // Subtle backgrounds (less contrast = cleaner)
   --minimal-surface: var(--surface);
-  --minimal-surface-hover: rgba(var(--foreground-rgb), 0.03);  // Very subtle
-  --minimal-border: rgba(var(--foreground-rgb), 0.06);         // Subtle borders
+  --minimal-surface-hover: rgba(var(--foreground-rgb), 0.03); // Very subtle
+  --minimal-border: rgba(var(--foreground-rgb), 0.06); // Subtle borders
   --minimal-border-hover: rgba(var(--foreground-rgb), 0.1);
 
   // Accent usage (minimal, strategic)
   --minimal-accent-subtle: rgba(var(--accent-rgb), 0.1);
-  --minimal-accent-line: 2px;                                   // Thin accent
+  --minimal-accent-line: 2px; // Thin accent
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -49,26 +49,26 @@
 
 // Minimal card - clean, subtle
 @mixin minimal-card {
-  background: transparent;                           // No background
-  border: 1px solid var(--minimal-border);          // Subtle border
-  border-radius: var(--radius-sm);                  // Small radius
-  padding: var(--minimal-card-padding);             // 10px
+  background: transparent; // No background
+  border: 1px solid var(--minimal-border); // Subtle border
+  border-radius: var(--radius-sm); // Small radius
+  padding: var(--minimal-card-padding); // 10px
   transition: all 200ms var(--ease-out);
 
   &:hover {
     border-color: var(--minimal-border-hover);
-    background: var(--minimal-surface-hover);       // Very subtle
-    transform: translateY(-1px);                    // Subtle lift
+    background: var(--minimal-surface-hover); // Very subtle
+    transform: translateY(-1px); // Subtle lift
   }
 }
 
 // Minimal card elevated - with subtle shadow
 @mixin minimal-card-elevated {
   @include minimal-card;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);       // Very subtle
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04); // Very subtle
 
   &:hover {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);     // Subtle elevation
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); // Subtle elevation
   }
 }
 
@@ -98,11 +98,11 @@
   gap: var(--minimal-card-gap);
 
   @media (max-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);  // 3 columns on tablet
+    grid-template-columns: repeat(3, 1fr); // 3 columns on tablet
   }
 
   @media (max-width: 480px) {
-    grid-template-columns: repeat(2, 1fr);  // 2 columns on mobile
+    grid-template-columns: repeat(2, 1fr); // 2 columns on mobile
   }
 }
 
@@ -113,11 +113,11 @@
   gap: var(--minimal-card-gap);
 
   @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);  // 2 columns on tablet
+    grid-template-columns: repeat(2, 1fr); // 2 columns on tablet
   }
 
   @media (max-width: 480px) {
-    grid-template-columns: 1fr;  // 1 column on mobile
+    grid-template-columns: 1fr; // 1 column on mobile
   }
 }
 
@@ -125,7 +125,7 @@
 @mixin minimal-list {
   display: flex;
   flex-direction: column;
-  gap: 0;  // Seamless with borders
+  gap: 0; // Seamless with borders
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -133,24 +133,24 @@
 // ═══════════════════════════════════════════════════════════════════
 
 @mixin minimal-section-title {
-  font-size: var(--text-lg);              // 17px - not too large
-  font-weight: var(--font-semibold);      // 600 - not too bold
+  font-size: var(--text-lg); // 17px - not too large
+  font-weight: var(--font-semibold); // 600 - not too bold
   line-height: var(--leading-tight);
   color: var(--foreground);
   margin: 0;
 }
 
 @mixin minimal-item-title {
-  font-size: var(--text-base);            // 13px
-  font-weight: var(--font-medium);        // 500 - subtle
+  font-size: var(--text-base); // 13px
+  font-weight: var(--font-medium); // 500 - subtle
   line-height: var(--leading-snug);
   color: var(--foreground);
   margin: 0;
 }
 
 @mixin minimal-label {
-  font-size: var(--text-xs);              // 11px
-  font-weight: var(--font-normal);        // 400 - light
+  font-size: var(--text-xs); // 11px
+  font-weight: var(--font-normal); // 400 - light
   line-height: var(--leading-tight);
   color: var(--muted-foreground);
   text-transform: uppercase;
@@ -158,15 +158,15 @@
 }
 
 @mixin minimal-value {
-  font-size: var(--text-md);              // 14px
-  font-weight: var(--font-medium);        // 500 - not too bold
+  font-size: var(--text-md); // 14px
+  font-weight: var(--font-medium); // 500 - not too bold
   line-height: var(--leading-normal);
   color: var(--foreground);
 }
 
 @mixin minimal-number {
-  font-size: var(--text-2xl);             // 22px
-  font-weight: var(--font-semibold);      // 600 - not too bold
+  font-size: var(--text-2xl); // 22px
+  font-weight: var(--font-semibold); // 600 - not too bold
   line-height: 1;
   letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
@@ -212,7 +212,7 @@
   position: relative;
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     left: 0;
@@ -243,8 +243,8 @@
 
 @mixin minimal-mobile {
   @media (max-width: 480px) {
-    padding: var(--minimal-spacing-sm);  // 6px on mobile
-    gap: var(--minimal-spacing-xs);      // 3px between elements
+    padding: var(--minimal-spacing-sm); // 6px on mobile
+    gap: var(--minimal-spacing-xs); // 3px between elements
   }
 }
 
@@ -266,4 +266,3 @@
     padding: var(--minimal-spacing-sm);
   }
 }
-

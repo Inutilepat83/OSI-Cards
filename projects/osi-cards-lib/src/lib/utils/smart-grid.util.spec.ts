@@ -12,7 +12,7 @@ import {
   flattenGroups,
   PRIORITY_BANDS,
   SECTION_HEIGHT_ESTIMATES,
-  SectionWithMetrics
+  SectionWithMetrics,
 } from './smart-grid.util';
 import { CardSection } from '../models/card.model';
 
@@ -24,7 +24,7 @@ describe('Smart Grid Utilities', () => {
     it('should return 0 for empty section', () => {
       const section: CardSection = {
         title: 'Empty Section',
-        type: 'info'
+        type: 'info',
       };
       expect(measureContentDensity(section)).toBe(0);
     });
@@ -33,7 +33,7 @@ describe('Smart Grid Utilities', () => {
       const section: CardSection = {
         title: 'Test',
         type: 'info',
-        description: 'A'.repeat(100) // 100 chars = 2 points (100/50)
+        description: 'A'.repeat(100), // 100 chars = 2 points (100/50)
       };
       expect(measureContentDensity(section)).toBe(2);
     });
@@ -45,8 +45,8 @@ describe('Smart Grid Utilities', () => {
         fields: [
           { label: 'Field 1', value: 'Value 1' },
           { label: 'Field 2', value: 'Value 2' },
-          { label: 'Field 3', value: 'Value 3' }
-        ]
+          { label: 'Field 3', value: 'Value 3' },
+        ],
       };
       // 3 fields * 2 points = 6 + text length contribution
       const density = measureContentDensity(section);
@@ -57,12 +57,7 @@ describe('Smart Grid Utilities', () => {
       const section: CardSection = {
         title: 'Test',
         type: 'list',
-        items: [
-          { title: 'Item 1' },
-          { title: 'Item 2' },
-          { title: 'Item 3' },
-          { title: 'Item 4' }
-        ]
+        items: [{ title: 'Item 1' }, { title: 'Item 2' }, { title: 'Item 3' }, { title: 'Item 4' }],
       };
       // 4 items * 3 points = 12
       const density = measureContentDensity(section);
@@ -76,9 +71,9 @@ describe('Smart Grid Utilities', () => {
         description: 'A'.repeat(50), // 1 point
         fields: [
           { label: 'F1', value: 'V1' },
-          { label: 'F2', value: 'V2' }
+          { label: 'F2', value: 'V2' },
         ], // 2 fields * 2 = 4 points + text
-        items: [{ title: 'I1' }] // 1 item * 3 = 3 points
+        items: [{ title: 'I1' }], // 1 item * 3 = 3 points
       };
       const density = measureContentDensity(section);
       expect(density).toBeGreaterThan(7);
@@ -93,7 +88,7 @@ describe('Smart Grid Utilities', () => {
       const section: CardSection = {
         title: 'Test',
         type: 'info',
-        preferredColumns: 3
+        preferredColumns: 3,
       };
       expect(calculateOptimalColumns(section, 4)).toBe(3);
     });
@@ -103,7 +98,7 @@ describe('Smart Grid Utilities', () => {
         title: 'Test',
         type: 'info',
         preferredColumns: 4,
-        maxColumns: 2
+        maxColumns: 2,
       };
       expect(calculateOptimalColumns(section, 4)).toBe(2);
     });
@@ -113,7 +108,7 @@ describe('Smart Grid Utilities', () => {
         title: 'Test',
         type: 'info',
         preferredColumns: 1,
-        minColumns: 2
+        minColumns: 2,
       };
       expect(calculateOptimalColumns(section, 4)).toBe(2);
     });
@@ -122,7 +117,7 @@ describe('Smart Grid Utilities', () => {
       const section: CardSection = {
         title: 'Test',
         type: 'info',
-        preferredColumns: 4
+        preferredColumns: 4,
       };
       expect(calculateOptimalColumns(section, 2)).toBe(2);
     });
@@ -133,7 +128,7 @@ describe('Smart Grid Utilities', () => {
         type: 'info',
         description: 'A'.repeat(500), // High text density
         fields: Array(10).fill({ label: 'Field', value: 'Value' }),
-        items: Array(5).fill({ title: 'Item' })
+        items: Array(5).fill({ title: 'Item' }),
       };
       const columns = calculateOptimalColumns(section, 4);
       expect(columns).toBeGreaterThan(1);
@@ -142,7 +137,7 @@ describe('Smart Grid Utilities', () => {
     it('should return 1 for low density content', () => {
       const section: CardSection = {
         title: 'Sparse',
-        type: 'info'
+        type: 'info',
       };
       expect(calculateOptimalColumns(section, 4)).toBe(1);
     });
@@ -155,7 +150,7 @@ describe('Smart Grid Utilities', () => {
     it('should return base height for section type', () => {
       const section: CardSection = {
         title: 'Chart',
-        type: 'chart'
+        type: 'chart',
       };
       const height = estimateSectionHeight(section);
       const expectedHeight = SECTION_HEIGHT_ESTIMATES['chart'] ?? 350;
@@ -165,7 +160,7 @@ describe('Smart Grid Utilities', () => {
     it('should use default height for unknown type', () => {
       const section: CardSection = {
         title: 'Unknown',
-        type: 'unknown' as any
+        type: 'unknown' as any,
       };
       const height = estimateSectionHeight(section);
       expect(height).toBeGreaterThanOrEqual(120);
@@ -175,16 +170,16 @@ describe('Smart Grid Utilities', () => {
       const sectionWithItems: CardSection = {
         title: 'List',
         type: 'list',
-        items: Array(10).fill({ title: 'Item' })
+        items: Array(10).fill({ title: 'Item' }),
       };
       const sectionWithoutItems: CardSection = {
         title: 'List',
-        type: 'list'
+        type: 'list',
       };
-      
+
       const heightWith = estimateSectionHeight(sectionWithItems);
       const heightWithout = estimateSectionHeight(sectionWithoutItems);
-      
+
       expect(heightWith).toBeGreaterThan(heightWithout);
     });
 
@@ -192,16 +187,16 @@ describe('Smart Grid Utilities', () => {
       const sectionWithFields: CardSection = {
         title: 'Info',
         type: 'info',
-        fields: Array(15).fill({ label: 'Label', value: 'Value' })
+        fields: Array(15).fill({ label: 'Label', value: 'Value' }),
       };
       const sectionWithoutFields: CardSection = {
         title: 'Info',
-        type: 'info'
+        type: 'info',
       };
-      
+
       const heightWith = estimateSectionHeight(sectionWithFields);
       const heightWithout = estimateSectionHeight(sectionWithoutFields);
-      
+
       expect(heightWith).toBeGreaterThan(heightWithout);
     });
 
@@ -209,7 +204,7 @@ describe('Smart Grid Utilities', () => {
       const section: CardSection = {
         title: 'Huge',
         type: 'list',
-        items: Array(100).fill({ title: 'Item' }) // Many items
+        items: Array(100).fill({ title: 'Item' }), // Many items
       };
       const height = estimateSectionHeight(section);
       expect(height).toBeLessThanOrEqual(600);
@@ -223,7 +218,7 @@ describe('Smart Grid Utilities', () => {
     it('should return critical for overview sections', () => {
       const section: CardSection = {
         title: 'Overview',
-        type: 'overview'
+        type: 'overview',
       };
       expect(getSectionPriorityBand(section)).toBe('critical');
     });
@@ -231,7 +226,7 @@ describe('Smart Grid Utilities', () => {
     it('should return critical for contact-card sections', () => {
       const section: CardSection = {
         title: 'Contacts',
-        type: 'contact-card'
+        type: 'contact-card',
       };
       expect(getSectionPriorityBand(section)).toBe('critical');
     });
@@ -239,7 +234,7 @@ describe('Smart Grid Utilities', () => {
     it('should return important for analytics sections', () => {
       const section: CardSection = {
         title: 'Analytics',
-        type: 'analytics'
+        type: 'analytics',
       };
       expect(getSectionPriorityBand(section)).toBe('important');
     });
@@ -247,7 +242,7 @@ describe('Smart Grid Utilities', () => {
     it('should return important for chart sections', () => {
       const section: CardSection = {
         title: 'Chart',
-        type: 'chart'
+        type: 'chart',
       };
       expect(getSectionPriorityBand(section)).toBe('important');
     });
@@ -255,7 +250,7 @@ describe('Smart Grid Utilities', () => {
     it('should return standard for info sections', () => {
       const section: CardSection = {
         title: 'Info',
-        type: 'info'
+        type: 'info',
       };
       expect(getSectionPriorityBand(section)).toBe('standard');
     });
@@ -263,7 +258,7 @@ describe('Smart Grid Utilities', () => {
     it('should return optional for event sections', () => {
       const section: CardSection = {
         title: 'Events',
-        type: 'event'
+        type: 'event',
       };
       expect(getSectionPriorityBand(section)).toBe('optional');
     });
@@ -272,7 +267,7 @@ describe('Smart Grid Utilities', () => {
       const section: CardSection = {
         title: 'Info',
         type: 'info',
-        priority: 'critical'
+        priority: 'critical',
       };
       expect(getSectionPriorityBand(section)).toBe('critical');
     });
@@ -282,7 +277,7 @@ describe('Smart Grid Utilities', () => {
     it('should return 1 for critical priority', () => {
       const section: CardSection = {
         title: 'Overview',
-        type: 'overview'
+        type: 'overview',
       };
       expect(calculatePriorityScore(section)).toBe(1);
     });
@@ -290,7 +285,7 @@ describe('Smart Grid Utilities', () => {
     it('should return 2 for important priority', () => {
       const section: CardSection = {
         title: 'Chart',
-        type: 'chart'
+        type: 'chart',
       };
       expect(calculatePriorityScore(section)).toBe(2);
     });
@@ -298,7 +293,7 @@ describe('Smart Grid Utilities', () => {
     it('should return 3 for standard priority', () => {
       const section: CardSection = {
         title: 'Info',
-        type: 'info'
+        type: 'info',
       };
       expect(calculatePriorityScore(section)).toBe(3);
     });
@@ -306,7 +301,7 @@ describe('Smart Grid Utilities', () => {
     it('should return 4 for optional priority', () => {
       const section: CardSection = {
         title: 'Event',
-        type: 'event'
+        type: 'event',
       };
       expect(calculatePriorityScore(section)).toBe(4);
     });
@@ -322,9 +317,7 @@ describe('Smart Grid Utilities', () => {
     });
 
     it('should return empty array for zero columns', () => {
-      const sections: CardSection[] = [
-        { title: 'Test', type: 'info' }
-      ];
+      const sections: CardSection[] = [{ title: 'Test', type: 'info' }];
       const result = binPack2D(sections, 0);
       expect(result).toEqual([]);
     });
@@ -333,11 +326,11 @@ describe('Smart Grid Utilities', () => {
       const sections: CardSection[] = [
         { title: 'Info', type: 'info' },
         { title: 'Overview', type: 'overview' },
-        { title: 'Event', type: 'event' }
+        { title: 'Event', type: 'event' },
       ];
-      
+
       const result = binPack2D(sections, 4, { respectPriority: true });
-      
+
       // Overview (critical) should be first
       expect(result.length).toBeGreaterThan(0);
       expect(result[0]?.section.type).toBe('overview');
@@ -347,23 +340,23 @@ describe('Smart Grid Utilities', () => {
       const sections: CardSection[] = [
         { title: 'Wide', type: 'overview', preferredColumns: 2 },
         { title: 'Narrow1', type: 'info', preferredColumns: 1 },
-        { title: 'Narrow2', type: 'info', preferredColumns: 1 }
+        { title: 'Narrow2', type: 'info', preferredColumns: 1 },
       ];
-      
+
       const result = binPack2D(sections, 4);
-      
+
       expect(result.length).toBe(3);
       // All sections should be included
-      expect(result.map(r => r.section.title).sort()).toEqual(['Narrow1', 'Narrow2', 'Wide']);
+      expect(result.map((r) => r.section.title).sort()).toEqual(['Narrow1', 'Narrow2', 'Wide']);
     });
 
     it('should respect column span limits', () => {
       const sections: CardSection[] = [
-        { title: 'Too Wide', type: 'info', preferredColumns: 4 as 1 | 2 | 3 | 4 }
+        { title: 'Too Wide', type: 'info', preferredColumns: 4 as 1 | 2 | 3 | 4 },
       ];
-      
+
       const result = binPack2D(sections, 2); // Only 2 columns available
-      
+
       expect(result.length).toBeGreaterThan(0);
       expect(result[0]?.colSpan).toBeLessThanOrEqual(2);
     });
@@ -372,11 +365,11 @@ describe('Smart Grid Utilities', () => {
       const sections: CardSection[] = [
         { title: 'Wide', type: 'chart', preferredColumns: 3 },
         { title: 'Small1', type: 'info', preferredColumns: 1 },
-        { title: 'Small2', type: 'info', preferredColumns: 1 }
+        { title: 'Small2', type: 'info', preferredColumns: 1 },
       ];
-      
+
       const result = binPack2D(sections, 4, { fillGaps: true });
-      
+
       // Should try to fill remaining column after wide section
       expect(result.length).toBe(3);
     });
@@ -394,11 +387,11 @@ describe('Smart Grid Utilities', () => {
     it('should detect gaps in layout', () => {
       const positionedSections = [
         { colSpan: 2, left: '0%', top: 0, width: '50%', height: 200 },
-        { colSpan: 2, left: '50%', top: 100, width: '50%', height: 200 }
+        { colSpan: 2, left: '50%', top: 100, width: '50%', height: 200 },
       ];
-      
+
       const gaps = findGaps(positionedSections, 4, 400);
-      
+
       // There should be a gap in the layout
       // The exact gap detection depends on the implementation
       expect(gaps.length).toBeGreaterThanOrEqual(0);
@@ -411,23 +404,47 @@ describe('Smart Grid Utilities', () => {
   describe('fillGapsWithSections', () => {
     it('should return all sections', () => {
       const sections: SectionWithMetrics[] = [
-        { section: { title: 'S1', type: 'info' } as CardSection, estimatedHeight: 200, colSpan: 2, priority: 3, density: 10 },
-        { section: { title: 'S2', type: 'list' } as CardSection, estimatedHeight: 200, colSpan: 1, priority: 3, density: 5 }
+        {
+          section: { title: 'S1', type: 'info' } as CardSection,
+          estimatedHeight: 200,
+          colSpan: 2,
+          priority: 3,
+          density: 10,
+        },
+        {
+          section: { title: 'S2', type: 'list' } as CardSection,
+          estimatedHeight: 200,
+          colSpan: 1,
+          priority: 3,
+          density: 5,
+        },
       ];
-      
+
       const result = fillGapsWithSections(sections, 4);
-      
+
       expect(result.length).toBe(2);
     });
 
     it('should keep rigid sections in order', () => {
       const sections: SectionWithMetrics[] = [
-        { section: { title: 'Critical', type: 'overview' } as CardSection, estimatedHeight: 200, colSpan: 2, priority: 1, density: 10 },
-        { section: { title: 'Optional', type: 'event' } as CardSection, estimatedHeight: 200, colSpan: 1, priority: 4, density: 5 }
+        {
+          section: { title: 'Critical', type: 'overview' } as CardSection,
+          estimatedHeight: 200,
+          colSpan: 2,
+          priority: 1,
+          density: 10,
+        },
+        {
+          section: { title: 'Optional', type: 'event' } as CardSection,
+          estimatedHeight: 200,
+          colSpan: 1,
+          priority: 4,
+          density: 5,
+        },
       ];
-      
+
       const result = fillGapsWithSections(sections, 4);
-      
+
       // Critical section should remain first
       expect(result.length).toBeGreaterThan(0);
       expect(result[0]?.section.title).toBe('Critical');
@@ -440,32 +457,50 @@ describe('Smart Grid Utilities', () => {
   describe('calculateLayoutAnalytics', () => {
     it('should calculate utilization percentage', () => {
       const sections: SectionWithMetrics[] = [
-        { section: { title: 'S1', type: 'info' } as CardSection, estimatedHeight: 200, colSpan: 4, priority: 3, density: 10 }
+        {
+          section: { title: 'S1', type: 'info' } as CardSection,
+          estimatedHeight: 200,
+          colSpan: 4,
+          priority: 3,
+          density: 10,
+        },
       ];
-      
+
       const analytics = calculateLayoutAnalytics(sections, 4, 400);
-      
+
       expect(analytics.utilizationPercent).toBeGreaterThan(0);
       expect(analytics.utilizationPercent).toBeLessThanOrEqual(100);
     });
 
     it('should calculate balance score', () => {
       const sections: SectionWithMetrics[] = [
-        { section: { title: 'S1', type: 'info' } as CardSection, estimatedHeight: 200, colSpan: 2, priority: 3, density: 10 },
-        { section: { title: 'S2', type: 'info' } as CardSection, estimatedHeight: 200, colSpan: 2, priority: 3, density: 10 }
+        {
+          section: { title: 'S1', type: 'info' } as CardSection,
+          estimatedHeight: 200,
+          colSpan: 2,
+          priority: 3,
+          density: 10,
+        },
+        {
+          section: { title: 'S2', type: 'info' } as CardSection,
+          estimatedHeight: 200,
+          colSpan: 2,
+          priority: 3,
+          density: 10,
+        },
       ];
-      
+
       const analytics = calculateLayoutAnalytics(sections, 4, 400);
-      
+
       expect(analytics.balanceScore).toBeGreaterThanOrEqual(0);
       expect(analytics.balanceScore).toBeLessThanOrEqual(100);
     });
 
     it('should count gaps', () => {
       const sections: SectionWithMetrics[] = [];
-      
+
       const analytics = calculateLayoutAnalytics(sections, 4, 400);
-      
+
       expect(analytics.gapCount).toBeGreaterThanOrEqual(0);
     });
   });
@@ -476,25 +511,59 @@ describe('Smart Grid Utilities', () => {
   describe('groupRelatedSections', () => {
     it('should group sections by groupId', () => {
       const sections: SectionWithMetrics[] = [
-        { section: { title: 'S1', type: 'info' } as CardSection, estimatedHeight: 200, colSpan: 1, priority: 3, density: 10, groupId: 'group-a' },
-        { section: { title: 'S2', type: 'info' } as CardSection, estimatedHeight: 200, colSpan: 1, priority: 3, density: 10, groupId: 'group-a' },
-        { section: { title: 'S3', type: 'info' } as CardSection, estimatedHeight: 200, colSpan: 1, priority: 3, density: 10, groupId: 'group-b' }
+        {
+          section: { title: 'S1', type: 'info' } as CardSection,
+          estimatedHeight: 200,
+          colSpan: 1,
+          priority: 3,
+          density: 10,
+          groupId: 'group-a',
+        },
+        {
+          section: { title: 'S2', type: 'info' } as CardSection,
+          estimatedHeight: 200,
+          colSpan: 1,
+          priority: 3,
+          density: 10,
+          groupId: 'group-a',
+        },
+        {
+          section: { title: 'S3', type: 'info' } as CardSection,
+          estimatedHeight: 200,
+          colSpan: 1,
+          priority: 3,
+          density: 10,
+          groupId: 'group-b',
+        },
       ];
-      
+
       const groups = groupRelatedSections(sections);
-      
+
       expect(groups.get('group-a')?.length).toBe(2);
       expect(groups.get('group-b')?.length).toBe(1);
     });
 
     it('should handle ungrouped sections', () => {
       const sections: SectionWithMetrics[] = [
-        { section: { title: 'S1', type: 'info' } as CardSection, estimatedHeight: 200, colSpan: 1, priority: 3, density: 10 },
-        { section: { title: 'S2', type: 'info' } as CardSection, estimatedHeight: 200, colSpan: 1, priority: 3, density: 10, groupId: 'group-a' }
+        {
+          section: { title: 'S1', type: 'info' } as CardSection,
+          estimatedHeight: 200,
+          colSpan: 1,
+          priority: 3,
+          density: 10,
+        },
+        {
+          section: { title: 'S2', type: 'info' } as CardSection,
+          estimatedHeight: 200,
+          colSpan: 1,
+          priority: 3,
+          density: 10,
+          groupId: 'group-a',
+        },
       ];
-      
+
       const groups = groupRelatedSections(sections);
-      
+
       expect(groups.get(undefined)?.length).toBe(1);
       expect(groups.get('group-a')?.length).toBe(1);
     });
@@ -504,15 +573,33 @@ describe('Smart Grid Utilities', () => {
     it('should flatten groups while keeping grouped sections together', () => {
       const groups = new Map<string | undefined, SectionWithMetrics[]>();
       groups.set('group-a', [
-        { section: { title: 'G1-S1', type: 'info' } as CardSection, estimatedHeight: 200, colSpan: 1, priority: 3, density: 10 },
-        { section: { title: 'G1-S2', type: 'info' } as CardSection, estimatedHeight: 200, colSpan: 1, priority: 3, density: 10 }
+        {
+          section: { title: 'G1-S1', type: 'info' } as CardSection,
+          estimatedHeight: 200,
+          colSpan: 1,
+          priority: 3,
+          density: 10,
+        },
+        {
+          section: { title: 'G1-S2', type: 'info' } as CardSection,
+          estimatedHeight: 200,
+          colSpan: 1,
+          priority: 3,
+          density: 10,
+        },
       ]);
       groups.set(undefined, [
-        { section: { title: 'Ungrouped', type: 'info' } as CardSection, estimatedHeight: 200, colSpan: 1, priority: 3, density: 10 }
+        {
+          section: { title: 'Ungrouped', type: 'info' } as CardSection,
+          estimatedHeight: 200,
+          colSpan: 1,
+          priority: 3,
+          density: 10,
+        },
       ]);
-      
+
       const result = flattenGroups(groups);
-      
+
       expect(result.length).toBe(3);
     });
   });
@@ -543,4 +630,3 @@ describe('Smart Grid Utilities', () => {
     });
   });
 });
-

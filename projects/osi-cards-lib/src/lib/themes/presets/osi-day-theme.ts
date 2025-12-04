@@ -3,7 +3,7 @@ import { OSI_COLORS } from '../tokens.constants';
 
 /**
  * OSI Deployment Day Theme (Light Mode)
- * 
+ *
  * This theme replicates the styling from the Orange Sales Assistance application
  * in light mode. It includes both OSI Cards core variables and app-specific
  * variables for full integration compatibility.
@@ -33,35 +33,26 @@ export const osiDayTheme: OSICardsThemeConfig = {
     '--bkg-color': '#F7F7F7',
     '--btn-txt-color': 'black',
     '--btn-bg-color': '#FFFFFF',
-    
+
     // Chat-related variables
     '--chat-border-color': '#ECECEC',
     '--chat-content-bg-color': '#FFFFFF',
     '--chat-content-sources-bg-color': '#F7F7F7',
-    
+
     // Treeview
     '--ngx-treeview-maxwidth': '230px',
-    
+
     // Content button
     '--content-btn-border': 'black',
-    
+
     // History panel
     '--history-border-color': '#ECECEC',
     '--history-tab-active-bg-color': '#ffffff',
     '--history-tab-active-color': '#000000',
     '--history-tab-active-border-color': '#000000',
-    
+
     // Star/favorite
     '--star-bg-color': '#E9E9E9',
     '--star-hover': '#5A5F62',
   },
 };
-
-
-
-
-
-
-
-
-

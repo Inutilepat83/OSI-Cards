@@ -1,10 +1,11 @@
 <div class="fallback-container">
   <!-- Fallback Warning Header -->
   <lib-empty-state
-    message='Section type "{{ getSectionType() }}" is not recognized'
+    message="Section type &quot;{{ getSectionType() }}&quot; is not recognized"
     icon="⚠️"
     variant="centered"
-    size="large">
+    size="large"
+  >
   </lib-empty-state>
 
   <div class="fallback-data" *ngIf="section.title || section.description || section.fields || section.items">

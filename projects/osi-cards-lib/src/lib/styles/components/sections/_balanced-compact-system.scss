@@ -18,14 +18,14 @@
   --balanced-space-8: 14px;
 
   // Component spacing (visually pleasant)
-  --balanced-card-padding: 12px;        // Cards need breathing room
+  --balanced-card-padding: 12px; // Cards need breathing room
   --balanced-card-padding-mobile: 10px;
-  --balanced-item-padding-y: 10px;      // Comfortable for touch
+  --balanced-item-padding-y: 10px; // Comfortable for touch
   --balanced-item-padding-x: 12px;
-  --balanced-gap-tight: 6px;            // Between close elements
-  --balanced-gap-comfortable: 8px;       // Standard gap
-  --balanced-gap-spacious: 10px;        // For visual separation
-  --balanced-section-gap: 10px;         // Between sections
+  --balanced-gap-tight: 6px; // Between close elements
+  --balanced-gap-comfortable: 8px; // Standard gap
+  --balanced-gap-spacious: 10px; // For visual separation
+  --balanced-section-gap: 10px; // Between sections
 }
 
 // =====================================================================
@@ -42,7 +42,7 @@
 
   // Subtle accent line
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -184,4 +184,3 @@
     }
   }
 }
-

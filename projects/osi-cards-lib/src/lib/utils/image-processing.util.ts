@@ -22,10 +22,7 @@ export interface ResizeOptions {
   format?: 'image/jpeg' | 'image/png' | 'image/webp';
 }
 
-export async function resizeImage(
-  file: File,
-  options: ResizeOptions
-): Promise<Blob> {
+export async function resizeImage(file: File, options: ResizeOptions): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
@@ -79,10 +76,7 @@ export async function resizeImage(
   });
 }
 
-export async function compressImage(
-  file: File,
-  quality = 0.8
-): Promise<Blob> {
+export async function compressImage(file: File, quality = 0.8): Promise<Blob> {
   return resizeImage(file, {
     width: undefined,
     height: undefined,
@@ -143,10 +137,7 @@ export async function cropImage(
   });
 }
 
-export function createThumbnail(
-  file: File,
-  maxSize = 150
-): Promise<Blob> {
+export function createThumbnail(file: File, maxSize = 150): Promise<Blob> {
   return resizeImage(file, {
     width: maxSize,
     height: maxSize,
@@ -162,4 +153,3 @@ export async function convertImageFormat(
 ): Promise<Blob> {
   return resizeImage(file, { format, quality });
 }
-

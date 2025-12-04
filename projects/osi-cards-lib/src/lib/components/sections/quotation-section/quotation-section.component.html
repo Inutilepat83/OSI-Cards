@@ -1,8 +1,5 @@
 <div class="quotes">
-  <lib-section-header
-    *ngIf="section.title"
-    [title]="section.title"
-    [description]="section.description">
+  <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
   <div class="grid" *ngIf="section.fields?.length">
@@ -16,10 +13,5 @@
     </blockquote>
   </div>
 
-  <lib-empty-state
-    *ngIf="!section.fields?.length"
-    message="No quotes"
-    icon="💬"
-    variant="compact">
-  </lib-empty-state>
+  <lib-empty-state *ngIf="!section.fields?.length" message="No quotes" icon="💬" variant="compact"> </lib-empty-state>
 </div>

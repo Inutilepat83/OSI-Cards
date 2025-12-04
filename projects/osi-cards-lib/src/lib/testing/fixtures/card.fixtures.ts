@@ -1,22 +1,22 @@
 /**
  * Card Test Fixtures
- * 
+ *
  * Factory functions for creating test card configurations.
- * 
+ *
  * IMPORTANT: Sample cards are now sourced from the Section Registry.
  * Use SAMPLE_CARDS or create cards with registry fixtures for consistency.
- * 
+ *
  * @example
  * ```typescript
- * import { 
- *   createMockCard, 
+ * import {
+ *   createMockCard,
  *   SAMPLE_CARDS,
- *   getFixture 
+ *   getFixture
  * } from 'osi-cards-lib/testing';
- * 
+ *
  * // Use pre-built sample cards (recommended)
  * const companyCard = SAMPLE_CARDS.company;
- * 
+ *
  * // Or create custom card with registry fixtures
  * const customCard = createMockCard({
  *   cardTitle: 'Custom Card',
@@ -29,10 +29,10 @@
  */
 
 import type { AICardConfig, CardSection, CardAction } from '../../models/card.model';
-import { 
+import {
   SAMPLE_CARDS as REGISTRY_SAMPLE_CARDS,
   COMPLETE_FIXTURES,
-  getAllFixtures
+  getAllFixtures,
 } from '../../registry/fixtures.generated';
 
 // ============================================================================
@@ -51,9 +51,7 @@ export function createMockCard(overrides: Partial<AICardConfig> = {}): AICardCon
         id: 'section-1',
         title: 'Test Section',
         type: 'info',
-        fields: [
-          { id: 'field-1', label: 'Test Field', value: 'Test Value' },
-        ],
+        fields: [{ id: 'field-1', label: 'Test Field', value: 'Test Value' }],
       },
     ],
     ...overrides,
@@ -75,7 +73,7 @@ export function createMinimalCard(title: string): AICardConfig {
  */
 export function createMultiSectionCard(sectionCount: number): AICardConfig {
   const sections: CardSection[] = [];
-  
+
   for (let i = 0; i < sectionCount; i++) {
     sections.push({
       id: `section-${i}`,
@@ -105,9 +103,10 @@ export function createCardWithActions(actions: Partial<CardAction>[] = []): AICa
   ];
 
   return createMockCard({
-    actions: actions.length > 0 
-      ? actions.map((a, i) => ({ id: `action-${i}`, label: 'Action', ...a } as CardAction))
-      : defaultActions,
+    actions:
+      actions.length > 0
+        ? actions.map((a, i) => ({ id: `action-${i}`, label: 'Action', ...a }) as CardAction)
+        : defaultActions,
   });
 }
 
@@ -143,7 +142,7 @@ export function createCardFromRegistry(
   options: Partial<AICardConfig> = {}
 ): AICardConfig {
   const sections = sectionTypes
-    .map(type => COMPLETE_FIXTURES[type as keyof typeof COMPLETE_FIXTURES])
+    .map((type) => COMPLETE_FIXTURES[type as keyof typeof COMPLETE_FIXTURES])
     .filter((s): s is CardSection => s !== undefined);
 
   return {
@@ -171,9 +170,7 @@ export const SAMPLE_CONTACT_CARD: AICardConfig = {
   id: 'sample-contact',
   cardTitle: 'John Smith',
   cardType: 'contact',
-  sections: [
-    COMPLETE_FIXTURES['contact-card']!,
-  ].filter(Boolean),
+  sections: [COMPLETE_FIXTURES['contact-card']!].filter(Boolean),
   actions: [
     { id: 'email', label: 'Send Email', type: 'mail', variant: 'primary' } as CardAction,
     { id: 'call', label: 'Call', variant: 'secondary' } as CardAction,
@@ -251,7 +248,8 @@ export const LONG_CONTENT_CARD: AICardConfig = {
         {
           id: 'field-long',
           label: 'Long Label That Is Much Longer Than Expected',
-          value: 'This is a very long value that contains a lot of text and should be handled properly by the component without breaking the layout or causing any visual issues. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          value:
+            'This is a very long value that contains a lot of text and should be handled properly by the component without breaking the layout or causing any visual issues. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
         },
       ],
     },

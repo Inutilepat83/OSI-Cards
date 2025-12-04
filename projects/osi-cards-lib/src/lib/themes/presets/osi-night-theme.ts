@@ -3,7 +3,7 @@ import { OSI_COLORS } from '../tokens.constants';
 
 /**
  * OSI Deployment Night Theme (Dark Mode)
- * 
+ *
  * This theme replicates the styling from the Orange Sales Assistance application
  * in dark mode. It includes both OSI Cards core variables and app-specific
  * variables for full integration compatibility.
@@ -33,40 +33,31 @@ export const osiNightTheme: OSICardsThemeConfig = {
     '--bkg-color': '#1B1B1D',
     '--btn-txt-color': 'white',
     '--btn-bg-color': '#27272B',
-    
+
     // Chat-related variables
     '--chat-border-color': '#27272B',
     '--chat-content-bg-color': '#27272B',
     '--chat-content-sources-bg-color': '#1B1B1D',
-    
+
     // Treeview
     '--ngx-treeview-maxwidth': '230px',
-    
+
     // Content button (uses Bootstrap warning variable reference in original)
     '--content-btn-border': OSI_COLORS.brand,
-    
+
     // History panel
     '--history-border-color': '#343541',
     '--history-tab-active-bg-color': '#232323',
     '--history-tab-active-color': '#FFFFFF',
     '--history-tab-active-border-color': '#343541',
-    
+
     // Star/favorite
     '--star-bg-color': '#343541',
     '--star-hover': '#E9E9E9',
-    
+
     // Bootstrap body overrides for dark theme
     '--bs-body-bg': '#27272B',
     '--bs-emphasis-color': 'white',
     '--bs-body-color': 'white',
   },
 };
-
-
-
-
-
-
-
-
-

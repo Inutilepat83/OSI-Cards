@@ -7,7 +7,7 @@
 //
 // =====================================================================
 
-@use 'design-tokens' as *;
+@use "design-tokens" as *;
 
 // =====================================================================
 // GLASS MORPHISM
@@ -43,18 +43,13 @@
   position: relative;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      var(--accent) 50%,
-      transparent 100%
-    );
+    background: linear-gradient(90deg, transparent 0%, var(--accent) 50%, transparent 100%);
     opacity: 0;
     transition: opacity var(--duration-base) var(--ease-out);
   }
@@ -81,7 +76,7 @@
   overflow: hidden;
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: -100%;
@@ -137,7 +132,7 @@
 // GLOW EFFECT
 // =====================================================================
 
-@mixin glow-on-hover($intensity: 'md') {
+@mixin glow-on-hover($intensity: "md") {
   transition: box-shadow var(--duration-base) var(--ease-out);
 
   &:hover {
@@ -156,20 +151,12 @@
 
   // Hover state
   &:hover {
-    background: color-mix(
-      in srgb,
-      var(--section-item-background) 90%,
-      var(--foreground) 10%
-    );
+    background: color-mix(in srgb, var(--section-item-background) 90%, var(--foreground) 10%);
   }
 
   // Active state
   &:active {
-    background: color-mix(
-      in srgb,
-      var(--section-item-background) 85%,
-      var(--foreground) 15%
-    );
+    background: color-mix(in srgb, var(--section-item-background) 85%, var(--foreground) 15%);
   }
 
   // Focus state (keyboard navigation)
@@ -197,17 +184,12 @@
   border: 1px solid transparent;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(
-      135deg,
-      transparent 0%,
-      var(--accent) 50%,
-      transparent 100%
-    );
+    background: linear-gradient(135deg, transparent 0%, var(--accent) 50%, transparent 100%);
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
       linear-gradient(#fff 0 0);
@@ -231,7 +213,7 @@
   overflow: hidden;
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 50%;
     left: 50%;
@@ -248,9 +230,10 @@
     width: 200%;
     height: 200%;
     opacity: 1;
-    transition: width var(--duration-slow) var(--ease-out),
-                height var(--duration-slow) var(--ease-out),
-                opacity var(--duration-fast) var(--ease-out);
+    transition:
+      width var(--duration-slow) var(--ease-out),
+      height var(--duration-slow) var(--ease-out),
+      opacity var(--duration-fast) var(--ease-out);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -265,7 +248,8 @@
 // =====================================================================
 
 @keyframes skeleton-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -322,7 +306,7 @@
   }
 }
 
-@mixin fade-in-animation($type: 'up', $delay: 0ms) {
+@mixin fade-in-animation($type: "up", $delay: 0ms) {
   animation: fade-in-#{$type} var(--duration-base) var(--ease-out) $delay forwards;
 
   @media (prefers-reduced-motion: reduce) {
@@ -396,8 +380,9 @@
 @mixin scroll-reveal {
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity var(--duration-slow) var(--ease-out),
-              transform var(--duration-slow) var(--ease-out);
+  transition:
+    opacity var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
 
   &.is-revealed {
     opacity: 1;
@@ -409,4 +394,3 @@
     transform: none;
   }
 }
-

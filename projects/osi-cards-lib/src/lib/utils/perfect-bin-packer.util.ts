@@ -1,12 +1,12 @@
 /**
  * PERFECT BIN-PACKER: Zero-Gap 2D Layout Algorithm
- * 
+ *
  * This is a TRUE 2D bin-packing algorithm that:
  * 1. Looks at ALL sections at once (not row-by-row)
  * 2. Dynamically adjusts spans to fill every gap
  * 3. Uses lookahead to prevent unfillable spaces
  * 4. Achieves 98-100% space utilization
- * 
+ *
  * Algorithm: Best-Fit with Dynamic Span Adjustment (BFDSA)
  */
 
@@ -56,7 +56,7 @@ export class PerfectBinPacker {
     if (this.debug) {
       console.log('[PerfectBinPacker] 🎯 Starting zero-gap packing:', {
         sections: sections.length,
-        columns: this.columns
+        columns: this.columns,
       });
     }
 
@@ -64,7 +64,7 @@ export class PerfectBinPacker {
     this.initializeGrid(100);
 
     const packed: PackedSection[] = [];
-    
+
     // PHASE 1: Categorize and prepare sections
     const prepared = this.prepareSections(sections, measuredHeights);
 
@@ -77,14 +77,20 @@ export class PerfectBinPacker {
     for (const section of sorted) {
       // Find best position for this section
       const placement = this.findBestPlacement(section, currentY);
-      
+
       if (!placement) {
         console.warn('[PerfectBinPacker] Could not place section, expanding grid');
         continue;
       }
 
       // Mark grid cells as occupied
-      this.occupyCells(placement.row, placement.column, placement.colSpan, placement.rowSpan, section.id);
+      this.occupyCells(
+        placement.row,
+        placement.column,
+        placement.colSpan,
+        placement.rowSpan,
+        section.id
+      );
 
       // Add to result
       packed.push({
@@ -100,7 +106,9 @@ export class PerfectBinPacker {
       });
 
       if (this.debug && packed.length <= 5) {
-        console.log(`  📦 Placed section ${packed.length}: row=${placement.row}, col=${placement.column}, span=${placement.colSpan}, height=${section.height}`);
+        console.log(
+          `  📦 Placed section ${packed.length}: row=${placement.row}, col=${placement.column}, span=${placement.colSpan}, height=${section.height}`
+        );
       }
     }
 
@@ -111,7 +119,7 @@ export class PerfectBinPacker {
       console.log('[PerfectBinPacker] ✅ Packing complete:', {
         utilization: `${result.utilization.toFixed(1)}%`,
         emptySpaces: result.emptySpaces,
-        totalRows: result.totalRows
+        totalRows: result.totalRows,
       });
     }
 
@@ -138,18 +146,20 @@ export class PerfectBinPacker {
   /**
    * Sort sections for optimal packing
    */
-  private sortForOptimalPacking(sections: ReturnType<typeof this.prepareSections>): typeof sections {
+  private sortForOptimalPacking(
+    sections: ReturnType<typeof this.prepareSections>
+  ): typeof sections {
     return [...sections].sort((a, b) => {
       // 1. Tallest first (fills vertical space)
       if (Math.abs(b.height - a.height) > 50) {
         return b.height - a.height;
       }
-      
+
       // 2. Widest first (creates stable base)
       if (b.preferredSpan !== a.preferredSpan) {
         return b.preferredSpan - a.preferredSpan;
       }
-      
+
       // 3. Densest first
       return b.density - a.density;
     });
@@ -158,14 +168,18 @@ export class PerfectBinPacker {
   /**
    * Find BEST placement for section using 2D lookahead
    */
-  private findBestPlacement(section: ReturnType<typeof this.prepareSections>[0], startY: number): {
+  private findBestPlacement(
+    section: ReturnType<typeof this.prepareSections>[0],
+    startY: number
+  ): {
     row: number;
     column: number;
     colSpan: number;
     rowSpan: number;
   } | null {
     let bestScore = -Infinity;
-    let bestPlacement: { row: number; column: number; colSpan: number; rowSpan: number } | null = null;
+    let bestPlacement: { row: number; column: number; colSpan: number; rowSpan: number } | null =
+      null;
 
     // Try different spans (prefer closer to preferred)
     const spansToTry = this.getSpansToTry(section);
@@ -179,7 +193,7 @@ export class PerfectBinPacker {
 
           // Score this placement
           const score = this.scorePlacement(row, col, span, section);
-          
+
           if (score > bestScore) {
             bestScore = score;
             bestPlacement = { row, column: col, colSpan: span, rowSpan: 1 };
@@ -194,7 +208,12 @@ export class PerfectBinPacker {
   /**
    * Score a potential placement (higher = better)
    */
-  private scorePlacement(row: number, col: number, span: number, section: ReturnType<typeof this.prepareSections>[0]): number {
+  private scorePlacement(
+    row: number,
+    col: number,
+    span: number,
+    section: ReturnType<typeof this.prepareSections>[0]
+  ): number {
     let score = 1000;
 
     // Prefer earlier rows (compact from top)
@@ -281,7 +300,13 @@ export class PerfectBinPacker {
   /**
    * Mark cells as occupied
    */
-  private occupyCells(row: number, col: number, colSpan: number, rowSpan: number, sectionId: string): void {
+  private occupyCells(
+    row: number,
+    col: number,
+    colSpan: number,
+    rowSpan: number,
+    sectionId: string
+  ): void {
     for (let r = row; r < row + rowSpan; r++) {
       for (let c = col; c < col + colSpan; c++) {
         if (this.grid[r] && this.grid[r]![c]) {
@@ -325,7 +350,7 @@ export class PerfectBinPacker {
    * Calculate final metrics
    */
   private calculateMetrics(packed: PackedSection[], heights: Map<string, number>): PackingResult {
-    const maxRow = Math.max(...packed.map(p => p.row), 0);
+    const maxRow = Math.max(...packed.map((p) => p.row), 0);
     const totalHeight = packed.reduce((sum, p) => Math.max(sum, p.y + p.height), 0);
 
     // Count empty spaces
@@ -353,7 +378,7 @@ export class PerfectBinPacker {
 
   private calculateWidthExpression(colSpan: number): string {
     if (colSpan === this.columns) return '100%';
-    const gapAdjustment = this.gap * (this.columns - colSpan) / this.columns;
+    const gapAdjustment = (this.gap * (this.columns - colSpan)) / this.columns;
     return `calc(${(colSpan / this.columns) * 100}% - ${gapAdjustment}px)`;
   }
 
@@ -397,4 +422,3 @@ export class PerfectBinPacker {
     return density;
   }
 }
-

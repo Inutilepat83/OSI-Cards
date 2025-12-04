@@ -28,7 +28,7 @@ import {
   generateWidthExpression,
   generateLeftExpression,
   getMaxExpansion,
-  EXPANSION_DENSITY_THRESHOLD
+  EXPANSION_DENSITY_THRESHOLD,
 } from './grid-config.util';
 
 // ============================================================================
@@ -39,23 +39,23 @@ import {
  * Default height estimates per section type (in pixels)
  */
 const SECTION_HEIGHT_ESTIMATES: Record<string, number> = {
-  'overview': 180,
+  overview: 180,
   'contact-card': 160,
   'network-card': 160,
-  'analytics': 200,
-  'stats': 180,
-  'chart': 280,
-  'map': 250,
-  'financials': 200,
-  'info': 180,
-  'list': 220,
-  'event': 240,
-  'timeline': 240,
-  'product': 260,
-  'solutions': 240,
-  'quotation': 160,
+  analytics: 200,
+  stats: 180,
+  chart: 280,
+  map: 250,
+  financials: 200,
+  info: 180,
+  list: 220,
+  event: 240,
+  timeline: 240,
+  product: 260,
+  solutions: 240,
+  quotation: 160,
   'text-reference': 180,
-  'default': 180,
+  default: 180,
 };
 
 const HEIGHT_PER_ITEM = 50;
@@ -89,8 +89,12 @@ function estimateSectionHeight(section: CardSection): number {
  * Measures the content density of a section
  */
 function measureContentDensity(section: CardSection): number {
-  const textLength = (section.description?.length ?? 0) +
-    (section.fields?.reduce((acc: number, f: CardField) => acc + String(f.value ?? '').length + (f.label?.length ?? 0), 0) ?? 0);
+  const textLength =
+    (section.description?.length ?? 0) +
+    (section.fields?.reduce(
+      (acc: number, f: CardField) => acc + String(f.value ?? '').length + (f.label?.length ?? 0),
+      0
+    ) ?? 0);
   const itemCount = section.items?.length ?? 0;
   const fieldCount = section.fields?.length ?? 0;
 
@@ -291,10 +295,7 @@ function calculateAdaptiveLookAhead(
  * @param pendingSections - Sections yet to be placed
  * @returns Weighted penalty score (lower is better)
  */
-function calculateOrphanPenalty(
-  remainingGap: number,
-  pendingSections: PlannedSection[]
-): number {
+function calculateOrphanPenalty(remainingGap: number, pendingSections: PlannedSection[]): number {
   if (remainingGap === 0) return 0;
 
   let penalty = 0;
@@ -322,7 +323,7 @@ function calculateOrphanPenalty(
 
   // Weight by how many sections we're orphaning
   const orphanRatio = pendingSections.length / Math.max(1, fillableSections);
-  penalty *= (1 + orphanRatio * 0.5);
+  penalty *= 1 + orphanRatio * 0.5;
 
   // Consider if remaining sections have wide minimum widths
   const avgMinWidth = pendingSections.length > 0 ? totalMinWidth / pendingSections.length : 1;
@@ -372,24 +373,24 @@ export function mapPriorityToNumber(
  * UPDATED: Increased preferred widths to better fill rows and avoid gaps
  */
 const TYPE_PREFERRED_WIDTHS: Record<string, number> = {
-  'overview': 4,
-  'chart': 2,
-  'map': 2,
-  'locations': 2,
-  'analytics': 2,   // Increased from 1 - metrics benefit from more space
-  'stats': 2,       // Increased from 1 - stats benefit from more space
+  overview: 4,
+  chart: 2,
+  map: 2,
+  locations: 2,
+  analytics: 2, // Increased from 1 - metrics benefit from more space
+  stats: 2, // Increased from 1 - stats benefit from more space
   'contact-card': 1,
   'network-card': 2, // Increased from 1 - networks often have multiple connections
-  'info': 1,
-  'list': 1,
-  'event': 2,       // Increased from 1 - events have dates and descriptions
-  'financials': 2,  // Increased from 1 - financial data benefits from more space
-  'product': 2,
-  'solutions': 2,
-  'quotation': 2,   // Increased from 1 - quotes benefit from wider display
+  info: 1,
+  list: 1,
+  event: 2, // Increased from 1 - events have dates and descriptions
+  financials: 2, // Increased from 1 - financial data benefits from more space
+  product: 2,
+  solutions: 2,
+  quotation: 2, // Increased from 1 - quotes benefit from wider display
   'text-reference': 2,
-  'timeline': 2,    // Increased from 1 - timelines benefit from more space
-  'project': 1,
+  timeline: 2, // Increased from 1 - timelines benefit from more space
+  project: 1,
 };
 
 /**
@@ -488,7 +489,8 @@ export function prepareSections(
 
     // Determine flexibility
     const canShrink = section.canShrink !== false && fullConfig.allowShrinking;
-    const canGrow = (section.canGrow !== false && section.flexGrow !== false) && fullConfig.allowGrowing;
+    const canGrow =
+      section.canGrow !== false && section.flexGrow !== false && fullConfig.allowGrowing;
 
     return {
       section,
@@ -521,7 +523,11 @@ function findOptimalCombination(
   lookAheadCount: number
 ): number[] | null {
   // UPDATED (Point 17): Use adaptive look-ahead based on remaining sections
-  const adaptiveLookAhead = calculateAdaptiveLookAhead(available.length, targetWidth, lookAheadCount);
+  const adaptiveLookAhead = calculateAdaptiveLookAhead(
+    available.length,
+    targetWidth,
+    lookAheadCount
+  );
   const candidates = available.slice(0, Math.min(adaptiveLookAhead + 3, available.length));
 
   // Track best combination with penalty scoring
@@ -536,7 +542,10 @@ function findOptimalCombination(
     const combinations = getCombinations(candidates.length, combinationSize);
 
     for (const combo of combinations) {
-      const totalWidth = combo.reduce((sum, idx) => sum + (candidates[idx]?.preferredWidth ?? 0), 0);
+      const totalWidth = combo.reduce(
+        (sum, idx) => sum + (candidates[idx]?.preferredWidth ?? 0),
+        0
+      );
 
       // Skip if exceeds target
       if (totalWidth > targetWidth) continue;
@@ -646,8 +655,9 @@ function tryBacktrackSwap(
 
   // Find a section from remaining that exactly fills the gap
   const exactFitIdx = remaining.findIndex(
-    s => s.preferredWidth === targetWidth ||
-        (s.canShrink && s.minWidth <= targetWidth && s.preferredWidth >= targetWidth)
+    (s) =>
+      s.preferredWidth === targetWidth ||
+      (s.canShrink && s.minWidth <= targetWidth && s.preferredWidth >= targetWidth)
   );
 
   if (exactFitIdx >= 0) {
@@ -817,7 +827,7 @@ function buildRow(
     const space = totalColumns - currentColumn;
 
     // Find the highest priority section that fits
-    const fitIndex = remaining.findIndex(s => s.preferredWidth <= space);
+    const fitIndex = remaining.findIndex((s) => s.preferredWidth <= space);
 
     if (fitIndex === -1) {
       // No section fits at preferred width, move to Phase 2
@@ -846,7 +856,7 @@ function buildRow(
     // Sort by priority (lower = higher priority, expand last)
     // We want to expand low-priority sections first to preserve high-priority section widths
     const expandable = rowSections
-      .filter(s => {
+      .filter((s) => {
         // Check if section can grow
         if (!s.canGrow) return false;
 
@@ -893,7 +903,7 @@ function buildRow(
 
   // Phase 2.5: If still have gap and sections can't grow further, try ALL sections regardless of density
   if (gap > 0 && config.allowGrowing && rowSections.length > 0) {
-    const anyExpandable = rowSections.filter(s => {
+    const anyExpandable = rowSections.filter((s) => {
       const typeMaxExpansion = getMaxExpansion(s.section.type ?? 'default');
       // Use higher max (+1) to allow filling critical gaps
       const effectiveMax = Math.min(s.maxWidth, typeMaxExpansion + 1, totalColumns);
@@ -948,7 +958,7 @@ function buildRow(
 
     if (shrinkCandidates.length > 0) {
       const candidate = shrinkCandidates[0]!;
-      const shrinkIndex = remaining.findIndex(s => s === candidate.section);
+      const shrinkIndex = remaining.findIndex((s) => s === candidate.section);
 
       if (shrinkIndex !== -1) {
         const section = remaining.splice(shrinkIndex, 1)[0]!;
@@ -975,7 +985,7 @@ function buildRow(
   // This is a fallback for when Phase 2 couldn't fill the gap
   // We're more lenient here since this is the last chance to fill gaps
   if (gap > 0 && config.allowGrowing) {
-    const growable = rowSections.filter(s => {
+    const growable = rowSections.filter((s) => {
       if (!s.canGrow) return false;
 
       // Calculate type-aware max expansion limit
@@ -1019,7 +1029,7 @@ function buildRow(
   // This ensures no gaps at the end of the grid
   if (isLastRow && gap > 0 && rowSections.length > 0) {
     // Find any section that can still grow (ignore density threshold)
-    const anyGrowable = rowSections.filter(s => {
+    const anyGrowable = rowSections.filter((s) => {
       const typeMaxExpansion = getMaxExpansion(s.section.type ?? 'default');
       const effectiveMax = Math.min(s.maxWidth, typeMaxExpansion + 1, totalColumns); // Allow +1 beyond type max for last row
       return s.finalWidth < effectiveMax;
@@ -1200,7 +1210,7 @@ export function packSectionsIntoRows(
   const totalCells = rows.length * fullConfig.totalColumns;
   const usedCells = rows.reduce((sum, row) => sum + row.totalWidth, 0);
   const utilizationPercent = totalCells > 0 ? (usedCells / totalCells) * 100 : 100;
-  const rowsWithGaps = rows.filter(r => r.remainingCapacity > 0).length;
+  const rowsWithGaps = rows.filter((r) => r.remainingCapacity > 0).length;
 
   let shrunkCount = 0;
   let grownCount = 0;
@@ -1212,9 +1222,8 @@ export function packSectionsIntoRows(
   }
 
   // Calculate total height
-  const totalHeight = rows.length > 0
-    ? rows[rows.length - 1]!.topOffset + rows[rows.length - 1]!.estimatedHeight
-    : 0;
+  const totalHeight =
+    rows.length > 0 ? rows[rows.length - 1]!.topOffset + rows[rows.length - 1]!.estimatedHeight : 0;
 
   return {
     rows,
@@ -1332,16 +1341,8 @@ export function packingResultToPositions(
 
   for (const row of result.rows) {
     for (const placed of row.sections) {
-      const widthExpr = generateWidthExpression(
-        config.totalColumns,
-        placed.finalWidth,
-        config.gap
-      );
-      const leftExpr = generateLeftExpression(
-        config.totalColumns,
-        placed.columnIndex,
-        config.gap
-      );
+      const widthExpr = generateWidthExpression(config.totalColumns, placed.finalWidth, config.gap);
+      const leftExpr = generateLeftExpression(config.totalColumns, placed.columnIndex, config.gap);
 
       positions.push({
         section: placed.section,
@@ -1380,14 +1381,14 @@ export function analyzeSections(sections: CardSection[]): {
     totalColumns: 4,
     prioritizeSpaceFilling: true,
     allowShrinking: true,
-    allowGrowing: true
+    allowGrowing: true,
   });
 
   const totalPreferredWidth = prepared.reduce((sum, s) => sum + s.preferredWidth, 0);
-  const priorities = new Set(prepared.map(s => s.priority));
+  const priorities = new Set(prepared.map((s) => s.priority));
 
   // Suggest columns based on section widths
-  const maxPreferred = Math.max(...prepared.map(s => s.preferredWidth));
+  const maxPreferred = Math.max(...prepared.map((s) => s.preferredWidth));
   const avgPreferred = totalPreferredWidth / prepared.length;
 
   let suggestedColumns = 4;
@@ -1431,4 +1432,3 @@ export function validatePackingResult(result: RowPackingResult): string[] {
 
   return warnings;
 }
-

@@ -221,11 +221,11 @@ $section-bg-hover: #f7f7f7;
 // ============================================
 
 $breakpoints: (
-  'mobile': 520px,
-  'tablet': 640px,
-  'lg': 820px,
-  'desktop': 1024px,
-  'wide': 1280px
+  "mobile": 520px,
+  "tablet": 640px,
+  "lg": 820px,
+  "desktop": 1024px,
+  "wide": 1280px,
 );
 
 // ============================================
@@ -432,7 +432,7 @@ $breakpoints: (
 
 /// Generate typography tokens
 /// @param {String} $variant - 'demo' or 'integration'
-@mixin osi-typography($variant: 'demo') {
+@mixin osi-typography($variant: "demo") {
   // Both demo and integration now use the same compact values
   --font-size-base: 13px;
   --text-xs: 0.625rem;
@@ -452,7 +452,7 @@ $breakpoints: (
 
 /// Generate card typography tokens
 /// @param {String} $variant - 'demo' or 'integration'
-@mixin osi-card-typography($variant: 'demo') {
+@mixin osi-card-typography($variant: "demo") {
   // Both demo and integration now use the same compact values
   // Section Titles
   --section-title-font-size: clamp(0.92rem, 0.87rem + 0.2vw, 1.07rem);
@@ -483,7 +483,7 @@ $breakpoints: (
   --card-label-text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 
   // Card Values
-  --card-value-font-size: clamp(1.0rem, 0.95rem + 0.2vw, 1.0rem);
+  --card-value-font-size: clamp(1rem, 0.95rem + 0.2vw, 1rem);
   --card-value-font-size-large: clamp(1.2rem, 1.15rem + 0.2vw, 1.25rem);
   --card-value-font-size-xl: clamp(1.25rem, 1.2rem + 0.2vw, 1.25rem);
   --card-value-font-weight: 600;
@@ -628,13 +628,21 @@ $breakpoints: (
   // 3. AI CARDS
   --ai-card-border: var(--theme-ai-card-border, none);
   --ai-card-border-hover: var(--theme-ai-card-border-hover, var(--ai-card-border));
-  --ai-card-background: var(--theme-ai-card-background, var(--card-surface, var(--card-section-bg)));
-  --ai-card-background-hover: var(--theme-ai-card-background-hover, var(--card-surface-hover, var(--card-section-bg)));
+  --ai-card-background: var(
+    --theme-ai-card-background,
+    var(--card-surface, var(--card-section-bg))
+  );
+  --ai-card-background-hover: var(
+    --theme-ai-card-background-hover,
+    var(--card-surface-hover, var(--card-section-bg))
+  );
   --ai-card-border-radius: var(--radius-lg);
   --ai-card-box-shadow: var(--theme-ai-card-box-shadow, var(--shadow-md));
   --ai-card-box-shadow-hover: var(--theme-ai-card-box-shadow-hover, var(--shadow-lg));
   --ai-card-hover-transform: none;
-  --ai-card-transition-default: border 0.32s cubic-bezier(0.4, 0, 0.2, 1), background 0.32s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  --ai-card-transition-default:
+    border 0.32s cubic-bezier(0.4, 0, 0.2, 1), background 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.32s cubic-bezier(0.4, 0, 0.2, 1);
   --ai-card-transition: var(--theme-ai-card-transition, var(--ai-card-transition-default));
 
   // 4. SECTIONS
@@ -644,7 +652,10 @@ $breakpoints: (
   --section-box-shadow-default: var(--shadow-md);
   --section-box-shadow-hover-default: var(--shadow-lg), var(--shadow-glow-sm);
   --section-box-shadow: var(--theme-section-box-shadow, var(--section-box-shadow-default));
-  --section-box-shadow-hover: var(--theme-section-box-shadow-hover, var(--section-box-shadow-hover-default));
+  --section-box-shadow-hover: var(
+    --theme-section-box-shadow-hover,
+    var(--section-box-shadow-hover-default)
+  );
   --section-hover-transform: none;
   --section-transition: var(--theme-section-transition, none);
 
@@ -652,14 +663,25 @@ $breakpoints: (
   --section-item-border: var(--theme-section-item-border, 1px solid #{$white-05});
   --section-item-border-hover: var(--theme-section-item-border-hover, 1px solid #{$brand-color-08});
   --section-item-background: var(--theme-section-item-background, var(--card-section-bg));
-  --section-item-background-hover: var(--theme-section-item-background-hover, var(--card-section-bg));
+  --section-item-background-hover: var(
+    --theme-section-item-background-hover,
+    var(--card-section-bg)
+  );
   --section-item-border-radius: var(--radius-md);
   --section-item-box-shadow: var(--theme-section-item-box-shadow, var(--shadow-sm));
   --section-item-box-shadow-hover-default: var(--shadow-md), var(--shadow-glow-sm);
-  --section-item-box-shadow-hover: var(--theme-section-item-box-shadow-hover, var(--section-item-box-shadow-hover-default));
+  --section-item-box-shadow-hover: var(
+    --theme-section-item-box-shadow-hover,
+    var(--section-item-box-shadow-hover-default)
+  );
   --section-item-hover-transform: var(--theme-section-item-hover-transform, none);
-  --section-item-transition-default: background 220ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1), border-color 220ms cubic-bezier(0.4, 0, 0.2, 1);
-  --section-item-transition: var(--theme-section-item-transition, var(--section-item-transition-default));
+  --section-item-transition-default:
+    background 220ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  --section-item-transition: var(
+    --theme-section-item-transition,
+    var(--section-item-transition-default)
+  );
 
   // Legacy card variables (theme-aware)
   --card-border: var(--theme-card-border, 1px solid rgba(146, 153, 158, 0.15));
@@ -669,9 +691,12 @@ $breakpoints: (
   --card-hover-transform: none;
 
   // Entrance animations
-  --ai-card-entrance-animation: fadeInUpSoft var(--duration-moderate) var(--ease-out-smooth) 10ms 1 normal both;
-  --section-entrance-animation: fadeInSoft var(--duration-moderate) var(--ease-out-smooth) 20ms 1 normal both;
-  --section-item-entrance-animation: fadeInScaleSoft var(--duration-normal) var(--ease-out-smooth) 30ms 1 normal both;
+  --ai-card-entrance-animation: fadeInUpSoft var(--duration-moderate) var(--ease-out-smooth) 10ms 1
+    normal both;
+  --section-entrance-animation: fadeInSoft var(--duration-moderate) var(--ease-out-smooth) 20ms 1
+    normal both;
+  --section-item-entrance-animation: fadeInScaleSoft var(--duration-normal) var(--ease-out-smooth)
+    30ms 1 normal both;
 }
 
 // ============================================
@@ -681,7 +706,7 @@ $breakpoints: (
 /// Generate base theme colors (default/dark)
 /// @param {String} $variant - 'demo' or 'integration' (deprecated - now always uses demo values)
 /// @param {Boolean} $is-scoped - If true, outputs for nested context
-@mixin osi-theme-base($variant: 'demo', $is-scoped: false) {
+@mixin osi-theme-base($variant: "demo", $is-scoped: false) {
   @if $is-scoped {
     color-scheme: light dark;
   }
@@ -697,7 +722,8 @@ $breakpoints: (
   --theme-ai-card-background: var(--background);
   --theme-ai-card-background-hover: var(--background);
   --theme-ai-card-box-shadow: 0 2px 12px -1px rgba(0, 0, 0, 0.12);
-  --theme-ai-card-box-shadow-hover: 0 8px 20px -3px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(255, 121, 0, 0.12);
+  --theme-ai-card-box-shadow-hover:
+    0 8px 20px -3px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(255, 121, 0, 0.12);
   --theme-ai-card-transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 
   --theme-card-border: 1px solid rgba(0, 0, 0, 0.06);
@@ -711,7 +737,8 @@ $breakpoints: (
   --theme-section-border-hover: 1px solid rgba(255, 121, 0, 0.15);
   --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   --theme-section-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.05);
-  --theme-section-transition: border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  --theme-section-transition:
+    border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   // Flat backgrounds - no color-mix
   --section-background: var(--background);
   --section-background-hover: var(--background);
@@ -725,13 +752,15 @@ $breakpoints: (
   --theme-section-item-box-shadow: var(--shadow-md, 0 1px 2px rgba(0, 0, 0, 0.04));
   --theme-section-item-box-shadow-hover: var(--shadow-lg, 0 1px 3px rgba(0, 0, 0, 0.05));
   --theme-section-item-hover-transform: none;
-  --theme-section-item-transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --theme-section-item-transition:
+    border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /// Generate dark theme colors
 /// @param {String} $variant - 'demo' or 'integration' (deprecated - now always uses demo values)
 /// @param {Boolean} $is-scoped - If true, outputs for nested context
-@mixin osi-theme-dark($variant: 'demo', $is-scoped: false) {
+@mixin osi-theme-dark($variant: "demo", $is-scoped: false) {
   @if $is-scoped {
     color-scheme: dark;
     --background: #{$osi-background-dark-scoped};
@@ -757,7 +786,8 @@ $breakpoints: (
   --theme-ai-card-background: #141414;
   --theme-ai-card-background-hover: #1a1a1a;
   --theme-ai-card-box-shadow: 0 2px 12px -1px rgba(0, 0, 0, 0.15);
-  --theme-ai-card-box-shadow-hover: 0 6px 16px -2px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(255, 121, 0, 0.1);
+  --theme-ai-card-box-shadow-hover:
+    0 6px 16px -2px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(255, 121, 0, 0.1);
 
   // Flat card backgrounds - subtle hover
   --theme-card-border: 1px solid rgba(255, 255, 255, 0.06);
@@ -791,7 +821,7 @@ $breakpoints: (
   --chart-2: #{$osi-color-brand-light};
   --chart-3: #{$osi-color-brand-dark};
   --chart-4: #{$osi-color-brand-pale};
-  --chart-5: #FF4500;
+  --chart-5: #ff4500;
 
   // Element type overrides - subtle theme-aware hover
   --hero-card-border: 1px solid rgba(233, 233, 233, 0.2);
@@ -813,7 +843,7 @@ $breakpoints: (
 /// Generate light theme colors
 /// @param {String} $variant - 'demo' or 'integration' (deprecated - now always uses demo values)
 /// @param {Boolean} $is-scoped - If true, outputs for nested context
-@mixin osi-theme-light($variant: 'demo', $is-scoped: false) {
+@mixin osi-theme-light($variant: "demo", $is-scoped: false) {
   @if $is-scoped {
     color-scheme: light;
   }
@@ -836,7 +866,8 @@ $breakpoints: (
   --theme-ai-card-background: #ffffff;
   --theme-ai-card-background-hover: #fcfcfc;
   --theme-ai-card-box-shadow: 0 2px 12px -1px rgba(0, 0, 0, 0.06);
-  --theme-ai-card-box-shadow-hover: 0 6px 16px -2px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 121, 0, 0.08);
+  --theme-ai-card-box-shadow-hover:
+    0 6px 16px -2px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 121, 0, 0.08);
 
   // Flat card backgrounds - subtle hover
   --theme-card-border: 1px solid rgba(0, 0, 0, 0.05);
@@ -870,7 +901,7 @@ $breakpoints: (
   --chart-2: #{$osi-color-brand-light};
   --chart-3: #{$osi-color-brand-dark};
   --chart-4: #{$osi-color-brand-pale};
-  --chart-5: #FF4500;
+  --chart-5: #ff4500;
 
   // Light theme gray overrides
   --color-gray-700: #e0e0e0;
@@ -900,7 +931,7 @@ $breakpoints: (
 /// Generate all design tokens
 /// @param {String} $variant - 'demo' for larger demo app, 'integration' for compact OSA
 /// @param {Boolean} $is-scoped - If true, outputs for nested context
-@mixin osi-tokens($variant: 'demo', $is-scoped: false) {
+@mixin osi-tokens($variant: "demo", $is-scoped: false) {
   @include osi-shadows();
   @include osi-radius();
   @include osi-spacing();
@@ -993,4 +1024,3 @@ $breakpoints: (
 @mixin grid-columns($value) {
   grid-template-columns: $value !important;
 }
-

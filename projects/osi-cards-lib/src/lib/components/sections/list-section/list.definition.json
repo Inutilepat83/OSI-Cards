@@ -41,20 +41,11 @@
       },
       "status": {
         "type": "string",
-        "enum": [
-          "completed",
-          "in-progress",
-          "pending",
-          "cancelled",
-          "blocked"
-        ],
+        "enum": ["completed", "in-progress", "pending", "cancelled", "blocked"],
         "description": "Item status"
       },
       "value": {
-        "type": [
-          "string",
-          "number"
-        ],
+        "type": ["string", "number"],
         "description": "Item value"
       },
       "date": {
@@ -64,23 +55,13 @@
       },
       "priority": {
         "type": "string",
-        "enum": [
-          "critical",
-          "high",
-          "medium",
-          "low"
-        ],
+        "enum": ["critical", "high", "medium", "low"],
         "description": "Priority level"
       }
     },
-    "required": [
-      "title"
-    ]
+    "required": ["title"]
   },
-  "aliases": [
-    "table",
-    "checklist"
-  ],
+  "aliases": ["table", "checklist"],
   "testFixtures": {
     "complete": {
       "title": "Product Roadmap Q1-Q2 2025",

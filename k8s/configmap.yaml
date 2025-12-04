@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: osi-cards-config
+data:
+  # Application Configuration
+  APP_NAME: "OSI Cards"
+  APP_VERSION: "1.5.5"
+  NODE_ENV: "production"
+
+  # API Configuration
+  API_URL: "https://api.osi-cards.com"
+  API_TIMEOUT: "30000"
+  API_RETRIES: "3"
+
+  # Feature Flags
+  ENABLE_ANALYTICS: "true"
+  ENABLE_SERVICE_WORKER: "true"
+  ENABLE_DARK_MODE: "true"
+  ENABLE_STREAMING: "true"
+
+  # Performance
+  PERFORMANCE_SAMPLE_RATE: "0.1"
+  PERFORMANCE_REPORT_INTERVAL: "60000"
+
+  # Logging
+  LOG_LEVEL: "warn"
+  LOG_ENABLE_CONSOLE: "false"
+  LOG_ENABLE_REMOTE: "true"
+

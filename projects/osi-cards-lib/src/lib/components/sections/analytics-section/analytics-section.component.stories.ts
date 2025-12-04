@@ -24,10 +24,7 @@ type Story = StoryObj<AnalyticsSectionComponent>;
 // Basic analytics
 export const Basic: Story = {
   args: {
-    section: TestBuilders.Section.create()
-      .withTitle('Key Metrics')
-      .asAnalytics()
-      .build(),
+    section: TestBuilders.Section.create().withTitle('Key Metrics').asAnalytics().build(),
   },
 };
 
@@ -218,4 +215,3 @@ export const ZeroValues: Story = {
       .build(),
   },
 };
-

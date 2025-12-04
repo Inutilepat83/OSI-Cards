@@ -79,7 +79,7 @@ export interface RetryDecoratorOptions {
  * Sleep utility
  */
 function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -101,18 +101,9 @@ function sleep(ms: number): Promise<void> {
  * ```
  */
 export function Retry(options: RetryDecoratorOptions = {}): MethodDecorator {
-  const {
-    attempts = 3,
-    shouldRetry = () => true,
-    onRetry,
-    onFailure,
-  } = options;
+  const { attempts = 3, shouldRetry = () => true, onRetry, onFailure } = options;
 
-  return function (
-    target: any,
-    propertyKey: string | symbol,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
     descriptor.value = function (...args: any[]) {
@@ -175,11 +166,7 @@ export function RetryAsync(options: RetryDecoratorOptions = {}): MethodDecorator
     onFailure,
   } = options;
 
-  return function (
-    target: any,
-    propertyKey: string | symbol,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
@@ -244,7 +231,7 @@ export function RetryOn(
   return RetryAsync({
     ...options,
     shouldRetry: (error: any, attempt: number) => {
-      const matchesType = errorTypes.some(ErrorType => error instanceof ErrorType);
+      const matchesType = errorTypes.some((ErrorType) => error instanceof ErrorType);
       const originalCheck = options.shouldRetry?.(error, attempt) ?? true;
       return matchesType && originalCheck;
     },
@@ -275,7 +262,7 @@ export function RetryExcept(
   return RetryAsync({
     ...options,
     shouldRetry: (error: any, attempt: number) => {
-      const matchesType = errorTypes.some(ErrorType => error instanceof ErrorType);
+      const matchesType = errorTypes.some((ErrorType) => error instanceof ErrorType);
       const originalCheck = options.shouldRetry?.(error, attempt) ?? true;
       return !matchesType && originalCheck;
     },
@@ -337,13 +324,15 @@ export function RetryLinear(
   increment: number,
   options: Omit<RetryDecoratorOptions, 'delay' | 'backoff'> = {}
 ): MethodDecorator {
-  return function (
-    target: any,
-    propertyKey: string | symbol,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
-    const { attempts = 3, maxDelay = 30000, shouldRetry = () => true, onRetry, onFailure } = options;
+    const {
+      attempts = 3,
+      maxDelay = 30000,
+      shouldRetry = () => true,
+      onRetry,
+      onFailure,
+    } = options;
 
     descriptor.value = async function (...args: any[]) {
       let lastError: any;
@@ -402,4 +391,3 @@ export function RetryImmediate(
     attempts,
   });
 }
-

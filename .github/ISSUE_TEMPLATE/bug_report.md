@@ -1,100 +1,70 @@
 ---
-name: Bug Report
-about: Create a report to help us improve
+name: 🐛 Bug Report
+about: Report a bug to help us improve
 title: '[BUG] '
 labels: bug, needs-triage
 assignees: ''
 ---
 
-## Bug Description
+## 🐛 Bug Description
 
-<!-- A clear and concise description of what the bug is -->
+<!-- A clear and concise description of the bug -->
 
-## Steps to Reproduce
+## 📝 Steps to Reproduce
 
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
 
-## Expected Behavior
+## ✅ Expected Behavior
 
-<!-- A clear and concise description of what you expected to happen -->
+<!-- What you expected to happen -->
 
-## Actual Behavior
+## ❌ Actual Behavior
 
-<!-- A clear and concise description of what actually happened -->
+<!-- What actually happened -->
 
-## Screenshots
+## 📸 Screenshots
 
 <!-- If applicable, add screenshots to help explain your problem -->
 
-## Environment
+## 🖥️ Environment
 
-- **OSI Cards Version:** [e.g., 1.5.4]
-- **Angular Version:** [e.g., 20.0.0]
-- **Browser:** [e.g., Chrome 120, Firefox 121, Safari 17]
-- **OS:** [e.g., Windows 11, macOS 14, Ubuntu 22.04]
-- **Device:** [e.g., Desktop, iPhone 15, Samsung Galaxy S23]
+- **OS:** [e.g. Windows 11, macOS 14.0, Ubuntu 22.04]
+- **Browser:** [e.g. Chrome 120, Firefox 121, Safari 17]
+- **OSI Cards Version:** [e.g. 1.5.5]
+- **Angular Version:** [e.g. 18.0.0]
+- **Node Version:** [e.g. 20.10.0]
 
-## Code Example
+## 🔧 Configuration
 
-<!-- If applicable, provide a minimal code example that reproduces the issue -->
-
-```typescript
-// Your code here
-```
-
-## Error Messages
-
-<!-- Include any error messages from console or logs -->
-
-```
-Paste error messages here
-```
-
-## Configuration
-
-<!-- Share relevant configuration (remove sensitive data) -->
+<!-- Any relevant configuration -->
 
 ```typescript
-// Card configuration or other relevant config
+// Your grid configuration
 ```
 
-## Additional Context
+## 📋 Additional Context
 
-<!-- Add any other context about the problem here -->
+<!-- Any other context about the problem -->
 
-## Possible Solution
+## 🔍 Possible Solution
 
 <!-- If you have suggestions on how to fix the bug -->
 
-## Severity
+## 📊 Severity
 
-<!-- Mark the severity -->
+<!-- How severe is this bug? -->
 
-- [ ] Critical - Application crash or data loss
-- [ ] High - Major functionality broken
-- [ ] Medium - Feature partially broken
-- [ ] Low - Minor issue or cosmetic
+- [ ] 🔴 Critical - App is unusable
+- [ ] 🟠 High - Major feature broken
+- [ ] 🟡 Medium - Minor feature broken
+- [ ] 🟢 Low - Cosmetic issue
 
-## Impact
+## ✅ Checklist
 
-<!-- Who is affected by this bug? -->
-
-- [ ] All users
-- [ ] Specific configuration (describe below)
-- [ ] Specific browser/device (describe below)
-
-## Workaround
-
-<!-- If you found a workaround, please describe it -->
-
-## Checklist
-
-- [ ] I have searched existing issues to avoid duplicates
-- [ ] I have tested with the latest version
-- [ ] I have provided all requested information
-- [ ] I have included code examples (if applicable)
-- [ ] I have included error messages (if applicable)
-
+- [ ] I have searched for similar issues
+- [ ] I have included all relevant information
+- [ ] I can reproduce this consistently
+- [ ] I have provided a minimal reproduction example

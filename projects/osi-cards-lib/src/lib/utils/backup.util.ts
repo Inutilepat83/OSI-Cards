@@ -84,10 +84,7 @@ export async function restoreBackup<T = any>(backup: BackupData): Promise<T> {
 /**
  * Create auto-backup
  */
-export function createAutoBackup(
-  getData: () => any,
-  interval: number = 60000
-): () => void {
+export function createAutoBackup(getData: () => any, interval: number = 60000): () => void {
   const timer = setInterval(async () => {
     const data = getData();
     const backup = await createBackup(data);
@@ -113,6 +110,5 @@ async function simpleHash(str: string): Promise<string> {
   const data = encoder.encode(str);
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
-

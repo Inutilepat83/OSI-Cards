@@ -14,10 +14,9 @@ import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../
   standalone: true,
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
   templateUrl: './event-section.component.html',
-  styleUrl: './event-section.scss'
+  styleUrl: './event-section.scss',
 })
 export class EventSectionComponent extends BaseSectionComponent {
-
   /**
    * Format date for display
    */
@@ -28,7 +27,7 @@ export class EventSectionComponent extends BaseSectionComponent {
       const date = new Date(dateStr);
       return {
         day: date.getDate().toString(),
-        month: date.toLocaleDateString('en-US', { month: 'short' })
+        month: date.toLocaleDateString('en-US', { month: 'short' }),
       };
     } catch {
       return null;

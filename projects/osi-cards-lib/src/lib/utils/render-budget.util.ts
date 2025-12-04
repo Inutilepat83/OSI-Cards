@@ -254,7 +254,8 @@ export class RenderBudgetMonitor {
       minFPS: Math.min(...fpsValues),
       maxFPS: Math.max(...fpsValues),
       averageDuration: durations.reduce((a, b) => a + b, 0) / durations.length,
-      averageBudgetUsage: (durations.reduce((a, b) => a + b, 0) / durations.length / frameBudget) * 100,
+      averageBudgetUsage:
+        (durations.reduce((a, b) => a + b, 0) / durations.length / frameBudget) * 100,
     };
   }
 
@@ -266,7 +267,9 @@ export class RenderBudgetMonitor {
 
     console.log('\n📊 Render Budget Summary:');
     console.log(`  Total Frames: ${stats.totalFrames}`);
-    console.log(`  Good Frames: ${stats.goodFrames} (${((stats.goodFrames / stats.totalFrames) * 100).toFixed(1)}%)`);
+    console.log(
+      `  Good Frames: ${stats.goodFrames} (${((stats.goodFrames / stats.totalFrames) * 100).toFixed(1)}%)`
+    );
     console.log(`  Warning Frames: ${stats.warningFrames}`);
     console.log(`  Critical Frames: ${stats.criticalFrames}`);
     console.log(`  Dropped Frames: ${stats.droppedFrames}`);
@@ -342,4 +345,3 @@ export function getRemainingFrameBudget(targetFPS: number = 60): number {
   const frameDuration = elapsed % frameBudget;
   return frameBudget - frameDuration;
 }
-

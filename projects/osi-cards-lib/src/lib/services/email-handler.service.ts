@@ -1,18 +1,18 @@
 /**
  * Email Handler Service
- * 
+ *
  * Handles email action construction and execution for card actions.
  * Extracted from AICardRendererComponent for better separation of concerns.
- * 
+ *
  * @example
  * ```typescript
  * import { EmailHandlerService } from 'osi-cards-lib';
- * 
+ *
  * const emailHandler = inject(EmailHandlerService);
- * 
+ *
  * // Build mailto URL from action
  * const mailtoUrl = emailHandler.buildMailtoUrl(mailAction);
- * 
+ *
  * // Execute email action
  * emailHandler.executeMailAction(mailAction);
  * ```
@@ -64,7 +64,7 @@ export interface MailtoResult {
 // ============================================================================
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class EmailHandlerService {
   private readonly platformId = inject(PLATFORM_ID);
@@ -103,7 +103,7 @@ export class EmailHandlerService {
 
   /**
    * Build a mailto URL from a mail card action
-   * 
+   *
    * @param action - Mail card action
    * @param placeholders - Optional placeholder values
    * @returns MailtoResult with URL or error
@@ -129,7 +129,7 @@ export class EmailHandlerService {
       cc: ccArray?.filter((e: string) => validateEmail(e)),
       bcc: bccArray?.filter((e: string) => validateEmail(e)),
       subject: this.replacePlaceholders(email.subject || '', placeholders),
-      body: this.replacePlaceholders(email.body || '', placeholders)
+      body: this.replacePlaceholders(email.body || '', placeholders),
     };
 
     // Construct mailto URL
@@ -140,7 +140,7 @@ export class EmailHandlerService {
 
   /**
    * Build mailto URL from simple email configuration
-   * 
+   *
    * @param config - Email configuration
    * @returns Mailto URL string
    */
@@ -150,7 +150,7 @@ export class EmailHandlerService {
 
   /**
    * Execute a mail action (opens email client)
-   * 
+   *
    * @param action - Mail card action or CardAction
    * @param placeholders - Optional placeholder values
    * @returns true if successfully opened
@@ -168,7 +168,7 @@ export class EmailHandlerService {
     }
 
     const result = this.buildMailtoUrl(mailAction, placeholders);
-    
+
     if (!result.success || !result.url) {
       console.warn('Failed to build mailto URL:', result.error);
       return false;
@@ -189,7 +189,7 @@ export class EmailHandlerService {
 
   /**
    * Replace placeholders in text with actual values
-   * 
+   *
    * @param text - Text containing {{placeholder}} patterns
    * @param placeholders - Values to substitute
    * @returns Text with placeholders replaced
@@ -210,7 +210,7 @@ export class EmailHandlerService {
 
   /**
    * Validate an email address
-   * 
+   *
    * @param email - Email to validate
    * @returns true if valid
    */
@@ -220,7 +220,7 @@ export class EmailHandlerService {
 
   /**
    * Validate a mail action configuration
-   * 
+   *
    * @param action - Action to validate
    * @returns Validation result with errors
    */
@@ -236,7 +236,7 @@ export class EmailHandlerService {
     }
 
     const mailAction = action as MailCardAction;
-    
+
     if (!mailAction.email) {
       errors.push('Email configuration is required');
     } else {
@@ -252,7 +252,9 @@ export class EmailHandlerService {
 
       // Validate CC emails
       if (mailAction.email.cc) {
-        const ccEmails = Array.isArray(mailAction.email.cc) ? mailAction.email.cc : [mailAction.email.cc];
+        const ccEmails = Array.isArray(mailAction.email.cc)
+          ? mailAction.email.cc
+          : [mailAction.email.cc];
         ccEmails.forEach((email: string, index: number) => {
           if (!validateEmail(email)) {
             errors.push(`CC email at index ${index} is invalid`);
@@ -262,7 +264,9 @@ export class EmailHandlerService {
 
       // Validate BCC emails
       if (mailAction.email.bcc) {
-        const bccEmails = Array.isArray(mailAction.email.bcc) ? mailAction.email.bcc : [mailAction.email.bcc];
+        const bccEmails = Array.isArray(mailAction.email.bcc)
+          ? mailAction.email.bcc
+          : [mailAction.email.bcc];
         bccEmails.forEach((email: string, index: number) => {
           if (!validateEmail(email)) {
             errors.push(`BCC email at index ${index} is invalid`);
@@ -282,11 +286,11 @@ export class EmailHandlerService {
     const params: string[] = [];
 
     if (config.cc?.length) {
-      params.push(`cc=${config.cc.map(e => encodeURIComponent(e)).join(',')}`);
+      params.push(`cc=${config.cc.map((e) => encodeURIComponent(e)).join(',')}`);
     }
 
     if (config.bcc?.length) {
-      params.push(`bcc=${config.bcc.map(e => encodeURIComponent(e)).join(',')}`);
+      params.push(`bcc=${config.bcc.map((e) => encodeURIComponent(e)).join(',')}`);
     }
 
     if (config.subject) {
@@ -310,15 +314,15 @@ export class EmailHandlerService {
     // Handle legacy format
     if (action.type === 'mail') {
       const legacyAction = action as CardAction & { email?: unknown };
-      
+
       if (legacyAction.email && typeof legacyAction.email === 'object') {
         const email = legacyAction.email as Record<string, unknown>;
-        
+
         // Try to construct valid mail action from legacy format
         if (email['contact'] || email['to'] || email['recipient']) {
           const contact = (email['contact'] as Record<string, unknown>) || {};
           const recipient = (email['to'] || email['recipient'] || contact['email']) as string;
-          
+
           if (recipient && validateEmail(recipient)) {
             return {
               ...action,
@@ -327,13 +331,13 @@ export class EmailHandlerService {
                 contact: {
                   name: (contact['name'] || '') as string,
                   email: recipient,
-                  role: (contact['role'] || '') as string
+                  role: (contact['role'] || '') as string,
                 },
                 subject: (email['subject'] || '') as string,
                 body: (email['body'] || '') as string,
                 cc: email['cc'] as string[] | undefined,
-                bcc: email['bcc'] as string[] | undefined
-              }
+                bcc: email['bcc'] as string[] | undefined,
+              },
             };
           }
         }
@@ -343,4 +347,3 @@ export class EmailHandlerService {
     return null;
   }
 }
-

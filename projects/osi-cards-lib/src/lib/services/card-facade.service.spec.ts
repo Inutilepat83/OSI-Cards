@@ -8,10 +8,7 @@ describe('CardFacadeService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        CardFacadeService,
-        { provide: PLATFORM_ID, useValue: 'browser' }
-      ]
+      providers: [CardFacadeService, { provide: PLATFORM_ID, useValue: 'browser' }],
     });
     service = TestBed.inject(CardFacadeService);
   });
@@ -30,7 +27,7 @@ describe('CardFacadeService', () => {
   describe('createCard', () => {
     it('should create card with title', () => {
       const options: CreateCardOptions = {
-        title: 'Test Card'
+        title: 'Test Card',
       };
 
       const card = service.createCard(options);
@@ -46,9 +43,9 @@ describe('CardFacadeService', () => {
           {
             title: 'Info Section',
             type: 'info',
-            fields: [{ label: 'Field 1', value: 'Value 1' }]
-          }
-        ]
+            fields: [{ label: 'Field 1', value: 'Value 1' }],
+          },
+        ],
       };
 
       const card = service.createCard(options);
@@ -60,9 +57,7 @@ describe('CardFacadeService', () => {
     it('should create card with actions', () => {
       const options: CreateCardOptions = {
         title: 'Test Card',
-        actions: [
-          { id: 'action-1', label: 'Action 1' }
-        ]
+        actions: [{ id: 'action-1', label: 'Action 1' }],
       };
 
       const card = service.createCard(options);
@@ -74,7 +69,7 @@ describe('CardFacadeService', () => {
     it('should create card with description', () => {
       const options: CreateCardOptions = {
         title: 'Test Card',
-        description: 'Test Description'
+        description: 'Test Description',
       };
 
       const card = service.createCard(options);
@@ -88,9 +83,9 @@ describe('CardFacadeService', () => {
         sections: [
           {
             title: 'Overview Section',
-            type: 'overview'
-          }
-        ]
+            type: 'overview',
+          },
+        ],
       };
 
       const card = service.createCard(options);
@@ -153,7 +148,7 @@ describe('CardFacadeService', () => {
     it('should set current card', () => {
       const card: AICardConfig = {
         cardTitle: 'Test Card',
-        sections: []
+        sections: [],
       };
 
       service.setCurrentCard(card);
@@ -170,9 +165,7 @@ describe('CardFacadeService', () => {
     it('should normalize sections when setting card', () => {
       const card: AICardConfig = {
         cardTitle: 'Test Card',
-        sections: [
-          { title: 'Overview', type: 'overview' }
-        ]
+        sections: [{ title: 'Overview', type: 'overview' }],
       };
 
       service.setCurrentCard(card);
@@ -190,7 +183,7 @@ describe('CardFacadeService', () => {
     it('should return current card after setting', () => {
       const card: AICardConfig = {
         cardTitle: 'Test',
-        sections: []
+        sections: [],
       };
 
       service.setCurrentCard(card);
@@ -202,7 +195,7 @@ describe('CardFacadeService', () => {
     it('should merge updates into card', () => {
       const original: AICardConfig = {
         cardTitle: 'Original',
-        sections: []
+        sections: [],
       };
 
       const merged = service.mergeCard(original, { cardTitle: 'Updated' });
@@ -213,7 +206,7 @@ describe('CardFacadeService', () => {
     it('should preserve original sections if not updated', () => {
       const original: AICardConfig = {
         cardTitle: 'Original',
-        sections: [{ title: 'Section 1', type: 'info' }]
+        sections: [{ title: 'Section 1', type: 'info' }],
       };
 
       const merged = service.mergeCard(original, { cardTitle: 'Updated' });
@@ -227,12 +220,12 @@ describe('CardFacadeService', () => {
       const original: AICardConfig = {
         cardTitle: 'Original',
         sections: [
-          { 
-            title: 'Section 1', 
+          {
+            title: 'Section 1',
             type: 'info',
-            fields: [{ label: 'Field 1', value: 'Value 1' }]
-          }
-        ]
+            fields: [{ label: 'Field 1', value: 'Value 1' }],
+          },
+        ],
       };
 
       const clone = service.cloneCard(original);
@@ -251,12 +244,12 @@ describe('CardFacadeService', () => {
     it('should add section to card', () => {
       const card: AICardConfig = {
         cardTitle: 'Test',
-        sections: []
+        sections: [],
       };
 
       const section: CardSection = {
         title: 'New Section',
-        type: 'info'
+        type: 'info',
       };
 
       const updated = service.addSection(card, section);
@@ -268,12 +261,12 @@ describe('CardFacadeService', () => {
     it('should normalize added section', () => {
       const card: AICardConfig = {
         cardTitle: 'Test',
-        sections: []
+        sections: [],
       };
 
       const section: CardSection = {
         title: 'Overview',
-        type: 'overview'
+        type: 'overview',
       };
 
       const updated = service.addSection(card, section);
@@ -288,8 +281,8 @@ describe('CardFacadeService', () => {
         cardTitle: 'Test',
         sections: [
           { id: 'section-1', title: 'Section 1', type: 'info' },
-          { id: 'section-2', title: 'Section 2', type: 'list' }
-        ]
+          { id: 'section-2', title: 'Section 2', type: 'list' },
+        ],
       };
 
       const updated = service.removeSection(card, 'section-1');
@@ -303,9 +296,7 @@ describe('CardFacadeService', () => {
     it('should update section by ID', () => {
       const card: AICardConfig = {
         cardTitle: 'Test',
-        sections: [
-          { id: 'section-1', title: 'Original Title', type: 'info' }
-        ]
+        sections: [{ id: 'section-1', title: 'Original Title', type: 'info' }],
       };
 
       const updated = service.updateSection(card, 'section-1', { title: 'Updated Title' });
@@ -318,8 +309,8 @@ describe('CardFacadeService', () => {
         cardTitle: 'Test',
         sections: [
           { id: 'section-1', title: 'Section 1', type: 'info' },
-          { id: 'section-2', title: 'Section 2', type: 'list' }
-        ]
+          { id: 'section-2', title: 'Section 2', type: 'list' },
+        ],
       };
 
       const updated = service.updateSection(card, 'section-1', { title: 'Updated' });
@@ -336,13 +327,13 @@ describe('CardFacadeService', () => {
       const card: Partial<AICardConfig> = {
         cardTitle: 'Valid Card',
         sections: [
-          { 
+          {
             id: 'section-1',
             title: 'Info',
             type: 'info',
-            fields: [{ label: 'Test', value: 'Value' }]
-          }
-        ]
+            fields: [{ label: 'Test', value: 'Value' }],
+          },
+        ],
       };
 
       const result = service.validate(card);
@@ -353,38 +344,34 @@ describe('CardFacadeService', () => {
     it('should add warning for missing description', () => {
       const card: Partial<AICardConfig> = {
         cardTitle: 'Test',
-        sections: []
+        sections: [],
       };
 
       const result = service.validate(card);
 
-      expect(result.warnings.some(w => w.includes('description'))).toBe(true);
+      expect(result.warnings.some((w) => w.includes('description'))).toBe(true);
     });
 
     it('should add warning for sections without ID', () => {
       const card: Partial<AICardConfig> = {
         cardTitle: 'Test',
-        sections: [
-          { title: 'No ID', type: 'info' }
-        ]
+        sections: [{ title: 'No ID', type: 'info' }],
       };
 
       const result = service.validate(card);
 
-      expect(result.warnings.some(w => w.includes('ID'))).toBe(true);
+      expect(result.warnings.some((w) => w.includes('ID'))).toBe(true);
     });
 
     it('should add warning for empty sections', () => {
       const card: Partial<AICardConfig> = {
         cardTitle: 'Test',
-        sections: [
-          { id: 'section-1', title: 'Empty Section', type: 'info' }
-        ]
+        sections: [{ id: 'section-1', title: 'Empty Section', type: 'info' }],
       };
 
       const result = service.validate(card);
 
-      expect(result.warnings.some(w => w.includes('no fields or items'))).toBe(true);
+      expect(result.warnings.some((w) => w.includes('no fields or items'))).toBe(true);
     });
   });
 
@@ -392,7 +379,7 @@ describe('CardFacadeService', () => {
     it('should return true for valid card', () => {
       const card: AICardConfig = {
         cardTitle: 'Test',
-        sections: []
+        sections: [],
       };
 
       expect(service.isValidCard(card)).toBe(true);
@@ -419,22 +406,16 @@ describe('CardFacadeService', () => {
             type: 'info',
             fields: [
               { label: 'F1', value: '1' },
-              { label: 'F2', value: '2' }
-            ]
+              { label: 'F2', value: '2' },
+            ],
           },
           {
             title: 'List',
             type: 'list',
-            items: [
-              { title: 'Item 1' },
-              { title: 'Item 2' },
-              { title: 'Item 3' }
-            ]
-          }
+            items: [{ title: 'Item 1' }, { title: 'Item 2' }, { title: 'Item 3' }],
+          },
         ],
-        actions: [
-          { id: 'a1', label: 'Action 1' }
-        ]
+        actions: [{ id: 'a1', label: 'Action 1' }],
       };
 
       const stats = service.getStatistics(card);
@@ -451,7 +432,7 @@ describe('CardFacadeService', () => {
     it('should handle card without actions', () => {
       const card: AICardConfig = {
         cardTitle: 'Test',
-        sections: []
+        sections: [],
       };
 
       const stats = service.getStatistics(card);
@@ -468,10 +449,10 @@ describe('CardFacadeService', () => {
     it('should emit current card changes', (done) => {
       const card: AICardConfig = {
         cardTitle: 'Observable Test',
-        sections: []
+        sections: [],
       };
 
-      service.currentCard$.subscribe(current => {
+      service.currentCard$.subscribe((current) => {
         if (current?.cardTitle === 'Observable Test') {
           expect(current).toBeTruthy();
           done();
@@ -492,7 +473,7 @@ describe('CardFacadeService', () => {
 
     it('should get streaming state', () => {
       const state = service.getStreamingState();
-      
+
       expect(state).toBeDefined();
       expect(state.stage).toBeDefined();
     });
@@ -503,12 +484,3 @@ describe('CardFacadeService', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-

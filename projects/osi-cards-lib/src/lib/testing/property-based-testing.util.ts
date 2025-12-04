@@ -103,7 +103,11 @@ export class Gen {
   /**
    * Generate array of values
    */
-  public static array<T>(gen: Arbitrary<T>, minLength: number = 0, maxLength: number = 10): Arbitrary<T[]> {
+  public static array<T>(
+    gen: Arbitrary<T>,
+    minLength: number = 0,
+    maxLength: number = 10
+  ): Arbitrary<T[]> {
     return new Arbitrary(() => {
       const length = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
       return gen.generateMany(length);
@@ -127,9 +131,9 @@ export class Gen {
   /**
    * Generate object with generated properties
    */
-  public static object<T extends Record<string, any>>(
-    shape: { [K in keyof T]: Arbitrary<T[K]> }
-  ): Arbitrary<T> {
+  public static object<T extends Record<string, any>>(shape: {
+    [K in keyof T]: Arbitrary<T[K]>;
+  }): Arbitrary<T> {
     return new Arbitrary(() => {
       const result: any = {};
       Object.entries(shape).forEach(([key, gen]) => {
@@ -391,4 +395,3 @@ export class CardProperties {
  * });
  * ```
  */
-

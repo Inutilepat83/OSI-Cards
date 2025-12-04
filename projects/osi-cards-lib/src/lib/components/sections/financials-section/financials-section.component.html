@@ -1,8 +1,5 @@
 <div class="financials-section">
-  <lib-section-header
-    *ngIf="section.title"
-    [title]="section.title"
-    [description]="section.description">
+  <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
   <div class="financials-grid" *ngIf="section.fields?.length">
@@ -16,15 +13,12 @@
         *ngIf="metric.trend"
         [trend]="getTrendDirection(metric.trend)"
         [value]="metric.change"
-        size="small">
+        size="small"
+      >
       </lib-trend-indicator>
     </div>
   </div>
 
-  <lib-empty-state
-    *ngIf="!section.fields?.length"
-    message="No financial data"
-    icon="💰"
-    variant="minimal">
+  <lib-empty-state *ngIf="!section.fields?.length" message="No financial data" icon="💰" variant="minimal">
   </lib-empty-state>
 </div>

@@ -8,27 +8,3 @@ export function getBreakpointFromWidth(width: number): Breakpoint {
   if (width < 1536) return 'xl';
   return '2xl';
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

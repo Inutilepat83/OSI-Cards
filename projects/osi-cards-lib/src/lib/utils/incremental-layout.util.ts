@@ -1,14 +1,14 @@
 /**
  * Incremental Layout Utilities
- * 
+ *
  * Optimized layout calculation for streaming mode that only recalculates
  * affected sections instead of performing full reflows. Uses dirty-tracking
  * and partial updates for smooth streaming experiences.
- * 
+ *
  * @example
  * ```typescript
  * import { IncrementalLayoutEngine } from 'osi-cards-lib';
- * 
+ *
  * const engine = new IncrementalLayoutEngine(4, 1200);
  * const update = engine.addSection(newSection);
  * const positions = engine.getPositions();
@@ -89,7 +89,7 @@ export class IncrementalLayoutEngine {
   private containerHeight = 0;
   private lastStructureHash = 0;
   private renderCounter = 0;
-  
+
   private readonly config: Required<IncrementalLayoutConfig>;
   private readonly columnWidth: number;
 
@@ -139,10 +139,10 @@ export class IncrementalLayoutEngine {
   setColumns(columns: number, containerWidth: number): LayoutUpdate {
     this.config.columns = columns;
     this.config.containerWidth = containerWidth;
-    
+
     const totalGaps = this.config.gap * (columns - 1);
     (this as any).columnWidth = (containerWidth - totalGaps) / columns;
-    
+
     this.initializeColumns();
     return this.fullReflow();
   }
@@ -152,14 +152,17 @@ export class IncrementalLayoutEngine {
    */
   addSection(section: CardSection): LayoutUpdate {
     const key = this.getSectionKey(section);
-    
+
     // Check if section already exists
     if (this.sections.has(key)) {
       return this.updateSection(section);
     }
 
     const contentHash = computeSectionHash(section);
-    const colSpan = Math.min(calculateOptimalColumns(section, this.config.columns), this.config.columns);
+    const colSpan = Math.min(
+      calculateOptimalColumns(section, this.config.columns),
+      this.config.columns
+    );
     const estimatedHeight = estimateSectionHeight(section);
 
     // Find best column for placement
@@ -189,11 +192,16 @@ export class IncrementalLayoutEngine {
     return {
       type: 'add',
       affectedSections: [key],
-      newPositions: new Map([[key, {
-        left: layoutSection.left,
-        top: layoutSection.top,
-        width: layoutSection.width,
-      }]]),
+      newPositions: new Map([
+        [
+          key,
+          {
+            left: layoutSection.left,
+            top: layoutSection.top,
+            width: layoutSection.width,
+          },
+        ],
+      ]),
       containerHeight: this.containerHeight,
       needsFullReflow: false,
     };
@@ -212,9 +220,12 @@ export class IncrementalLayoutEngine {
 
     const newHash = computeSectionHash(section);
     const hashChanged = newHash !== existing.contentHash;
-    
+
     // Check if colSpan changed
-    const newColSpan = Math.min(calculateOptimalColumns(section, this.config.columns), this.config.columns);
+    const newColSpan = Math.min(
+      calculateOptimalColumns(section, this.config.columns),
+      this.config.columns
+    );
     const colSpanChanged = newColSpan !== existing.colSpan;
 
     // Check if height estimate changed significantly
@@ -242,7 +253,7 @@ export class IncrementalLayoutEngine {
     if (colSpanChanged || heightChanged) {
       existing.colSpan = newColSpan;
       existing.estimatedHeight = newHeight;
-      
+
       if (this.config.enableOptimization && !colSpanChanged) {
         // Only height changed - try in-place update
         return this.updateInPlace(existing);
@@ -255,11 +266,16 @@ export class IncrementalLayoutEngine {
     return {
       type: 'update',
       affectedSections: [key],
-      newPositions: new Map([[key, {
-        left: existing.left,
-        top: existing.top,
-        width: existing.width,
-      }]]),
+      newPositions: new Map([
+        [
+          key,
+          {
+            left: existing.left,
+            top: existing.top,
+            width: existing.width,
+          },
+        ],
+      ]),
       containerHeight: this.containerHeight,
       needsFullReflow: false,
     };
@@ -269,9 +285,7 @@ export class IncrementalLayoutEngine {
    * Removes a section from the layout
    */
   removeSection(sectionOrKey: CardSection | string): LayoutUpdate {
-    const key = typeof sectionOrKey === 'string' 
-      ? sectionOrKey 
-      : this.getSectionKey(sectionOrKey);
+    const key = typeof sectionOrKey === 'string' ? sectionOrKey : this.getSectionKey(sectionOrKey);
 
     if (!this.sections.has(key)) {
       return {
@@ -284,7 +298,7 @@ export class IncrementalLayoutEngine {
     }
 
     this.sections.delete(key);
-    this.sectionOrder = this.sectionOrder.filter(k => k !== key);
+    this.sectionOrder = this.sectionOrder.filter((k) => k !== key);
 
     // Sections below may need repositioning
     return this.partialReflow(key);
@@ -321,11 +335,11 @@ export class IncrementalLayoutEngine {
       this.sections.clear();
       this.sectionOrder = [];
       this.initializeColumns();
-      
+
       for (const section of sections) {
         this.addSection(section);
       }
-      
+
       return this.fullReflow();
     }
 
@@ -334,7 +348,7 @@ export class IncrementalLayoutEngine {
     const newPositions = new Map<string, { left: string; top: number; width: string }>();
 
     // Track which sections exist in new list
-    const newKeys = new Set(sections.map(s => this.getSectionKey(s)));
+    const newKeys = new Set(sections.map((s) => this.getSectionKey(s)));
 
     // Remove sections that no longer exist
     for (const key of this.sectionOrder) {
@@ -347,7 +361,7 @@ export class IncrementalLayoutEngine {
     // Add or update sections
     for (const section of sections) {
       const key = this.getSectionKey(section);
-      const update = this.sections.has(key) 
+      const update = this.sections.has(key)
         ? this.updateSection(section)
         : this.addSection(section);
 
@@ -380,7 +394,7 @@ export class IncrementalLayoutEngine {
    */
   getOrderedSections(): LayoutSection[] {
     return this.sectionOrder
-      .map(key => this.sections.get(key))
+      .map((key) => this.sections.get(key))
       .filter((s): s is LayoutSection => s !== undefined)
       .sort((a, b) => a.renderIndex - b.renderIndex);
   }
@@ -425,7 +439,8 @@ export class IncrementalLayoutEngine {
   }
 
   private updateColumnHeights(section: LayoutSection): void {
-    const newHeight = section.top + (section.measuredHeight ?? section.estimatedHeight) + this.config.gap;
+    const newHeight =
+      section.top + (section.measuredHeight ?? section.estimatedHeight) + this.config.gap;
 
     for (let c = section.column; c < section.column + section.colSpan; c++) {
       const col = this.columns[c];
@@ -437,7 +452,7 @@ export class IncrementalLayoutEngine {
   }
 
   private updateContainerHeight(): void {
-    this.containerHeight = Math.max(...this.columns.map(c => c.height), 0);
+    this.containerHeight = Math.max(...this.columns.map((c) => c.height), 0);
   }
 
   private updateInPlace(section: LayoutSection): LayoutUpdate {
@@ -449,11 +464,16 @@ export class IncrementalLayoutEngine {
       return {
         type: 'update',
         affectedSections: [section.key],
-        newPositions: new Map([[section.key, {
-          left: section.left,
-          top: section.top,
-          width: section.width,
-        }]]),
+        newPositions: new Map([
+          [
+            section.key,
+            {
+              left: section.left,
+              top: section.top,
+              width: section.width,
+            },
+          ],
+        ]),
         containerHeight: this.containerHeight,
         needsFullReflow: false,
       };
@@ -509,13 +529,13 @@ export class IncrementalLayoutEngine {
 
     // Get all sections that need repositioning (below the changed one)
     const sectionsToReposition = this.sectionOrder
-      .map(key => this.sections.get(key)!)
-      .filter(s => s && s.top >= changedTop)
+      .map((key) => this.sections.get(key)!)
+      .filter((s) => s && s.top >= changedTop)
       .sort((a, b) => a.renderIndex - b.renderIndex);
 
     // Reset column heights up to the changed section
     this.initializeColumns();
-    
+
     // First, place all sections above the changed one
     for (const [key, section] of this.sections) {
       if (section.top < changedTop) {
@@ -529,10 +549,9 @@ export class IncrementalLayoutEngine {
 
     for (const section of sectionsToReposition) {
       const placement = this.findBestPlacement(section.colSpan, section.estimatedHeight);
-      
-      const positionChanged = 
-        section.column !== placement.column || 
-        Math.abs(section.top - placement.top) > 1;
+
+      const positionChanged =
+        section.column !== placement.column || Math.abs(section.top - placement.top) > 1;
 
       section.column = placement.column;
       section.top = placement.top;
@@ -565,8 +584,8 @@ export class IncrementalLayoutEngine {
     this.initializeColumns();
 
     const allSections = this.sectionOrder
-      .map(key => this.sections.get(key)!)
-      .filter(s => s !== undefined)
+      .map((key) => this.sections.get(key)!)
+      .filter((s) => s !== undefined)
       .sort((a, b) => a.renderIndex - b.renderIndex);
 
     const affectedSections: string[] = [];
@@ -574,11 +593,15 @@ export class IncrementalLayoutEngine {
 
     for (const section of allSections) {
       const placement = this.findBestPlacement(section.colSpan, section.estimatedHeight);
-      
+
       section.column = placement.column;
       section.top = placement.top;
       section.left = generateLeftExpression(this.config.columns, placement.column, this.config.gap);
-      section.width = generateWidthExpression(this.config.columns, section.colSpan, this.config.gap);
+      section.width = generateWidthExpression(
+        this.config.columns,
+        section.colSpan,
+        this.config.gap
+      );
 
       affectedSections.push(section.key);
       newPositions.set(section.key, {
@@ -605,15 +628,15 @@ export class IncrementalLayoutEngine {
     // Full reflow if section count changed significantly
     const currentCount = this.sections.size;
     const newCount = sections.length;
-    
+
     if (Math.abs(newCount - currentCount) > 3) {
       return true;
     }
 
     // Full reflow if more than half the sections are new
     const existingKeys = new Set(this.sectionOrder);
-    const newSections = sections.filter(s => !existingKeys.has(this.getSectionKey(s)));
-    
+    const newSections = sections.filter((s) => !existingKeys.has(this.getSectionKey(s)));
+
     return newSections.length > sections.length / 2;
   }
 }
@@ -640,9 +663,7 @@ export function createIncrementalLayout(
 /**
  * Converts layout sections to positioned sections format
  */
-export function toPositionedSections(
-  engine: IncrementalLayoutEngine
-): Array<{
+export function toPositionedSections(engine: IncrementalLayoutEngine): Array<{
   section: CardSection;
   key: string;
   colSpan: number;
@@ -651,7 +672,7 @@ export function toPositionedSections(
   width: string;
   isNew: boolean;
 }> {
-  return engine.getOrderedSections().map(s => ({
+  return engine.getOrderedSections().map((s) => ({
     section: s.section,
     key: s.key,
     colSpan: s.colSpan,
@@ -661,12 +682,3 @@ export function toPositionedSections(
     isNew: s.isNew,
   }));
 }
-
-
-
-
-
-
-
-
-

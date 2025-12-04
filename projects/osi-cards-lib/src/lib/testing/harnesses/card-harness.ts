@@ -147,4 +147,3 @@ export class MasonryGridHarness extends ComponentHarness {
     return this.locatorForAll(SectionHarness)();
   }
 }
-

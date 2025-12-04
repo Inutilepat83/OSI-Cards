@@ -19,7 +19,7 @@ import { Title } from '@angular/platform-browser';
  * 1. Enhanced Title Service
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class EnhancedTitleService {
   private defaultTitle = signal('');
@@ -50,7 +50,7 @@ export class EnhancedTitleService {
  * 2. Meta Service
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MetaTagService {
   setTag(name: string, content: string): void {
@@ -103,7 +103,7 @@ export class MetaTagService {
  * 3. Favicon Service
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FaviconService {
   setFavicon(url: string): void {
@@ -128,7 +128,7 @@ export class FaviconService {
  * 4. Simple Theme Service
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SimpleThemeService {
   private currentTheme = signal<'light' | 'dark'>('light');
@@ -154,7 +154,7 @@ export class SimpleThemeService {
  * 5. Fullscreen Service
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FullscreenService {
   private isFullscreenSignal = signal(false);
@@ -196,7 +196,7 @@ export class FullscreenService {
  * 6. Page Visibility Service
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class VisibilityService {
   private isVisibleSignal = signal(true);
@@ -235,4 +235,3 @@ export const UTILITY_SERVICES = [
   FullscreenService,
   VisibilityService,
 ];
-

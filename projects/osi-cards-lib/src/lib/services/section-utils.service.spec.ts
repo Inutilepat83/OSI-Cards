@@ -1,12 +1,17 @@
 import { TestBed } from '@angular/core/testing';
-import { SectionUtilsService, StatusValue, PriorityValue, TrendValue } from './section-utils.service';
+import {
+  SectionUtilsService,
+  StatusValue,
+  PriorityValue,
+  TrendValue,
+} from './section-utils.service';
 
 describe('SectionUtilsService', () => {
   let service: SectionUtilsService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [SectionUtilsService]
+      providers: [SectionUtilsService],
     });
     service = TestBed.inject(SectionUtilsService);
   });
@@ -256,12 +261,3 @@ describe('SectionUtilsService', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-

@@ -1,69 +1,71 @@
-  <ng-container>
-    <!-- Initial loading state -->
-    <ng-container *ngIf="!isInitialized; else initializedState">
-      <div class="preview-loading" role="status">
-        <div class="preview-spinner"></div>
-        <div>
-          <p class="preview-loading-title">Initializing System…</p>
-          <p class="preview-loading-subtitle">Loading templates and services</p>
-        </div>
+<ng-container>
+  <!-- Initial loading state -->
+  <ng-container *ngIf="!isInitialized; else initializedState">
+    <div class="preview-loading" role="status">
+      <div class="preview-spinner"></div>
+      <div>
+        <p class="preview-loading-title">Initializing System…</p>
+        <p class="preview-loading-subtitle">Loading templates and services</p>
       </div>
+    </div>
+  </ng-container>
+
+  <ng-template #initializedState>
+    <!-- Show skeleton frame only when generating -->
+    <ng-container *ngIf="showSkeleton; else cardContent">
+      <app-card-skeleton
+        [cardTitle]="generatedCard?.cardTitle || ''"
+        [sectionCount]="generatedCard?.sections?.length || 0"
+        [isFullscreen]="isFullscreen"
+      >
+      </app-card-skeleton>
     </ng-container>
 
-    <ng-template #initializedState>
-      <!-- Show skeleton frame only when generating -->
-      <ng-container *ngIf="showSkeleton; else cardContent">
-        <app-card-skeleton
-          [cardTitle]="generatedCard?.cardTitle || ''"
-          [sectionCount]="generatedCard?.sections?.length || 0"
-          [isFullscreen]="isFullscreen">
-        </app-card-skeleton>
+    <ng-template #cardContent>
+      <!-- Show card if we have generatedCard -->
+      <ng-container *ngIf="generatedCard; else previewEmpty">
+        <div class="card-preview-container">
+          <app-ai-card-renderer
+            [cardConfig]="generatedCard"
+            [updateSource]="'liveEdit'"
+            [isFullscreen]="isFullscreen"
+            (cardInteraction)="onCardInteraction($event)"
+            (fieldInteraction)="onFieldInteraction($event)"
+            (fullscreenToggle)="onFullscreenToggle($event)"
+            (agentAction)="onAgentAction($event)"
+            (questionAction)="onQuestionAction($event)"
+          >
+          </app-ai-card-renderer>
+        </div>
       </ng-container>
+    </ng-template>
 
-      <ng-template #cardContent>
-        <!-- Show card if we have generatedCard -->
-        <ng-container *ngIf="generatedCard; else previewEmpty">
-          <div class="card-preview-container">
-            <app-ai-card-renderer
-              [cardConfig]="generatedCard"
-              [updateSource]="'liveEdit'"
-              [isFullscreen]="isFullscreen"
-              (cardInteraction)="onCardInteraction($event)"
-              (fieldInteraction)="onFieldInteraction($event)"
-              (fullscreenToggle)="onFullscreenToggle($event)"
-              (agentAction)="onAgentAction($event)"
-              (questionAction)="onQuestionAction($event)">
-            </app-ai-card-renderer>
+    <ng-template #previewEmpty>
+      <div class="preview-empty">
+        <div class="preview-empty-icon" aria-hidden="true">
+          <div class="code-icon w-8 h-8"></div>
+        </div>
+        <div class="preview-empty-copy">
+          <p class="preview-empty-title">No Card Preview</p>
+          <p class="preview-empty-subtitle">
+            Enter a valid JSON configuration or load a template to see your card design render in real time.
+          </p>
+        </div>
+        <div class="preview-empty-hints">
+          <div class="preview-empty-hint">
+            <div class="hint-dot bg-green-500"></div>
+            <span>Valid JSON auto-generates layouts</span>
           </div>
-        </ng-container>
-      </ng-template>
-
-      <ng-template #previewEmpty>
-        <div class="preview-empty">
-          <div class="preview-empty-icon" aria-hidden="true">
-            <div class="code-icon w-8 h-8"></div>
+          <div class="preview-empty-hint">
+            <div class="hint-dot bg-blue-500"></div>
+            <span>Magnetic tilt responds to cursor position</span>
           </div>
-          <div class="preview-empty-copy">
-            <p class="preview-empty-title">No Card Preview</p>
-            <p class="preview-empty-subtitle">
-              Enter a valid JSON configuration or load a template to see your card design render in real time.
-            </p>
-          </div>
-          <div class="preview-empty-hints">
-            <div class="preview-empty-hint">
-              <div class="hint-dot bg-green-500"></div>
-              <span>Valid JSON auto-generates layouts</span>
-            </div>
-            <div class="preview-empty-hint">
-              <div class="hint-dot bg-blue-500"></div>
-              <span>Magnetic tilt responds to cursor position</span>
-            </div>
-            <div class="preview-empty-hint">
-              <div class="hint-dot bg-purple-500"></div>
-              <span>Export high-fidelity PNG snapshots</span>
-            </div>
+          <div class="preview-empty-hint">
+            <div class="hint-dot bg-purple-500"></div>
+            <span>Export high-fidelity PNG snapshots</span>
           </div>
         </div>
-      </ng-template>
+      </div>
     </ng-template>
-  </ng-container>
+  </ng-template>
+</ng-container>

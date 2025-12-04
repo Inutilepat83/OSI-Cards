@@ -199,8 +199,9 @@ export class MemoryLeakDetector {
    */
   private checkSubscriptions(): void {
     const now = Date.now();
-    const longLived = Array.from(this.subscriptions.values())
-      .filter(sub => now - sub.created > 60000); // More than 1 minute
+    const longLived = Array.from(this.subscriptions.values()).filter(
+      (sub) => now - sub.created > 60000
+    ); // More than 1 minute
 
     if (longLived.length > 50) {
       this.addWarning({
@@ -220,11 +221,14 @@ export class MemoryLeakDetector {
    * Group subscription entries by component
    */
   private groupByComponent(entries: SubscriptionEntry[]): Record<string, number> {
-    return entries.reduce((acc, entry) => {
-      const component = entry.component || 'unknown';
-      acc[component] = (acc[component] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    return entries.reduce(
+      (acc, entry) => {
+        const component = entry.component || 'unknown';
+        acc[component] = (acc[component] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
   }
 
   /**
@@ -246,9 +250,10 @@ export class MemoryLeakDetector {
     ) {
       if (detector.enabled) {
         const element = this;
-        const elementRef: WeakRefLike<EventTarget> = (typeof (globalThis as any).WeakRef !== 'undefined')
-          ? new (globalThis as any).WeakRef(element)
-          : { deref: () => element };
+        const elementRef: WeakRefLike<EventTarget> =
+          typeof (globalThis as any).WeakRef !== 'undefined'
+            ? new (globalThis as any).WeakRef(element)
+            : { deref: () => element };
 
         detector.listeners.push({
           element: elementRef,
@@ -270,7 +275,7 @@ export class MemoryLeakDetector {
       if (detector.enabled) {
         // Remove from tracking (simplified - in real implementation would match exact listener)
         const index = detector.listeners.findIndex(
-          l => l.element.deref() === this && l.event === type
+          (l) => l.element.deref() === this && l.event === type
         );
         if (index !== -1) {
           detector.listeners.splice(index, 1);
@@ -286,7 +291,7 @@ export class MemoryLeakDetector {
    */
   private checkListeners(): void {
     // Clean up listeners for garbage collected elements
-    this.listeners = this.listeners.filter(l => l.element.deref() !== undefined);
+    this.listeners = this.listeners.filter((l) => l.element.deref() !== undefined);
 
     if (this.listeners.length > 500) {
       this.addWarning({
@@ -306,10 +311,13 @@ export class MemoryLeakDetector {
    * Group listeners by event type
    */
   private groupListenersByEvent(): Record<string, number> {
-    return this.listeners.reduce((acc, listener) => {
-      acc[listener.event] = (acc[listener.event] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    return this.listeners.reduce(
+      (acc, listener) => {
+        acc[listener.event] = (acc[listener.event] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
   }
 
   /**
@@ -320,11 +328,12 @@ export class MemoryLeakDetector {
 
     // Log warning
     const prefix = `[MemoryLeakDetector][${warning.severity.toUpperCase()}]`;
-    const style = warning.severity === 'high'
-      ? 'color: red; font-weight: bold;'
-      : warning.severity === 'medium'
-      ? 'color: orange;'
-      : 'color: yellow;';
+    const style =
+      warning.severity === 'high'
+        ? 'color: red; font-weight: bold;'
+        : warning.severity === 'medium'
+          ? 'color: orange;'
+          : 'color: yellow;';
 
     console.warn(`%c${prefix} ${warning.message}`, style, warning.details);
 
@@ -345,7 +354,7 @@ export class MemoryLeakDetector {
    * Get warnings by severity
    */
   public getWarningsBySeverity(severity: 'low' | 'medium' | 'high'): MemoryLeakWarning[] {
-    return this.warnings.filter(w => w.severity === severity);
+    return this.warnings.filter((w) => w.severity === severity);
   }
 
   /**
@@ -360,9 +369,7 @@ export class MemoryLeakDetector {
       warningCount: this.warnings.length,
       activeSubscriptions: this.subscriptions.size,
       activeListeners: this.listeners.length,
-      currentMemoryMB: latestSnapshot
-        ? latestSnapshot.usedJSHeapSize / 1024 / 1024
-        : null,
+      currentMemoryMB: latestSnapshot ? latestSnapshot.usedJSHeapSize / 1024 / 1024 : null,
       warnings: {
         high: this.getWarningsBySeverity('high').length,
         medium: this.getWarningsBySeverity('medium').length,
@@ -401,7 +408,7 @@ export class MemoryLeakDetector {
 
     if (this.warnings.length > 0) {
       lines.push('=== Recent Warnings ===');
-      this.warnings.slice(-10).forEach(warning => {
+      this.warnings.slice(-10).forEach((warning) => {
         const time = new Date(warning.timestamp).toLocaleTimeString();
         lines.push(`[${time}] [${warning.severity}] ${warning.type}: ${warning.message}`);
       });
@@ -491,4 +498,3 @@ export function TrackSubscriptions(componentName?: string) {
     };
   };
 }
-

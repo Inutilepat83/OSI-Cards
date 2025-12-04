@@ -123,17 +123,13 @@ export class WeightedColumnSelector {
     );
 
     // Calculate placement height
-    const top = this.calculatePlacementHeight(
-      columnHeights,
-      bestScore.column,
-      colSpan
-    );
+    const top = this.calculatePlacementHeight(columnHeights, bestScore.column, colSpan);
 
     return {
       column: bestScore.column,
       top,
       score: bestScore,
-      alternatives: scores.filter(s => s.column !== bestScore.column).slice(0, 3),
+      alternatives: scores.filter((s) => s.column !== bestScore.column).slice(0, 3),
     };
   }
 
@@ -272,10 +268,11 @@ export class WeightedColumnSelector {
 
     // Calculate variance after placement
     const avgHeight = simulated.reduce((sum, h) => sum + h, 0) / simulated.length;
-    const variance = simulated.reduce((sum, h) => {
-      const diff = h - avgHeight;
-      return sum + diff * diff;
-    }, 0) / simulated.length;
+    const variance =
+      simulated.reduce((sum, h) => {
+        const diff = h - avgHeight;
+        return sum + diff * diff;
+      }, 0) / simulated.length;
 
     // Return standard deviation as penalty
     return Math.sqrt(variance);
@@ -311,9 +308,8 @@ export class WeightedColumnSelector {
     let totalPenalty = 0;
 
     // Analyze pending sections to determine minimum span
-    const minPendingSpan = pendingSections.length > 0
-      ? Math.min(...pendingSections.map(s => s.colSpan || 1))
-      : 1;
+    const minPendingSpan =
+      pendingSections.length > 0 ? Math.min(...pendingSections.map((s) => s.colSpan || 1)) : 1;
 
     // Check for orphan columns on the left
     if (column > 0 && column < minPendingSpan) {
@@ -337,11 +333,7 @@ export class WeightedColumnSelector {
       const heightDiff = simulatedHeight - currentHeight;
       if (heightDiff > 100) {
         // Large gap created - check if any pending section can fill it
-        const canFill = this.canAnyPendingSectionFill(
-          heightDiff,
-          1,
-          pendingSections
-        );
+        const canFill = this.canAnyPendingSectionFill(heightDiff, 1, pendingSections);
 
         if (!canFill) {
           totalPenalty += heightDiff * 0.1;
@@ -362,7 +354,7 @@ export class WeightedColumnSelector {
   ): boolean {
     const heightTolerance = 20;
 
-    return pendingSections.some(section => {
+    return pendingSections.some((section) => {
       const sectionSpan = section.colSpan || 1;
       const sectionHeight = this.estimateSectionHeight(section);
 
@@ -379,11 +371,11 @@ export class WeightedColumnSelector {
 
     // Basic estimation by type
     const typeHeights: Record<string, number> = {
-      'overview': 300,
-      'chart': 250,
-      'list': 200,
+      overview: 300,
+      chart: 250,
+      list: 200,
       'contact-card': 150,
-      'info': 180,
+      info: 180,
     };
 
     return typeHeights[section.type || ''] || 200;
@@ -515,10 +507,11 @@ export function compareSelectionStrategies(
   };
 
   // Generate difference explanation
-  const difference = weighted.column === simple.column
-    ? 'Same choice'
-    : `Weighted chose col ${weighted.column} (score=${weighted.score.totalScore.toFixed(0)}) ` +
-      `vs simple col ${simple.column} (height=${simple.top.toFixed(0)})`;
+  const difference =
+    weighted.column === simple.column
+      ? 'Same choice'
+      : `Weighted chose col ${weighted.column} (score=${weighted.score.totalScore.toFixed(0)}) ` +
+        `vs simple col ${simple.column} (height=${simple.top.toFixed(0)})`;
 
   return {
     weighted,
@@ -562,5 +555,3 @@ export function createPresetSelector(
 
   return new WeightedColumnSelector(configs[preset]);
 }
-
-

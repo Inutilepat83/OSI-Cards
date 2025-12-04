@@ -297,16 +297,18 @@ export class FeatureFlagsService {
    * Get enabled migration flags
    */
   getEnabledMigrationFlags(): (keyof MigrationFlags)[] {
-    return (Object.keys(this.migrationFlags) as (keyof MigrationFlags)[])
-      .filter(key => this.migrationFlags[key]);
+    return (Object.keys(this.migrationFlags) as (keyof MigrationFlags)[]).filter(
+      (key) => this.migrationFlags[key]
+    );
   }
 
   /**
    * Get disabled migration flags
    */
   getDisabledMigrationFlags(): (keyof MigrationFlags)[] {
-    return (Object.keys(this.migrationFlags) as (keyof MigrationFlags)[])
-      .filter(key => !this.migrationFlags[key]);
+    return (Object.keys(this.migrationFlags) as (keyof MigrationFlags)[]).filter(
+      (key) => !this.migrationFlags[key]
+    );
   }
 
   /**

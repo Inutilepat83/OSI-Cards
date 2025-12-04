@@ -296,4 +296,3 @@ export const SmallChart: Story = {
       .build(),
   },
 };
-

@@ -1,23 +1,27 @@
 import { AICardConfig } from '../models';
-import { createCompanyCard, CompanyCardOptions, createEnhancedCompanyCard } from './company-card.preset';
+import {
+  createCompanyCard,
+  CompanyCardOptions,
+  createEnhancedCompanyCard,
+} from './company-card.preset';
 import { createContactCard, ContactCardOptions } from './contact-card.preset';
 import { createAnalyticsDashboard, AnalyticsDashboardOptions } from './analytics-dashboard.preset';
 
 /**
  * Preset Factory
- * 
+ *
  * Centralized factory for creating card presets with common configurations.
- * 
+ *
  * @example
  * ```typescript
  * import { PresetFactory } from 'osi-cards-lib';
- * 
+ *
  * // Create a company card
  * const companyCard = PresetFactory.createCompany({
  *   name: 'Acme Corp',
  *   industry: 'Technology'
  * });
- * 
+ *
  * // Create a contact card
  * const contactCard = PresetFactory.createContact({
  *   name: 'John Doe',
@@ -28,7 +32,7 @@ import { createAnalyticsDashboard, AnalyticsDashboardOptions } from './analytics
 export class PresetFactory {
   /**
    * Create a company card
-   * 
+   *
    * @param options - Company card options
    * @returns Company card configuration
    */
@@ -38,20 +42,22 @@ export class PresetFactory {
 
   /**
    * Create an enhanced company card with additional sections
-   * 
+   *
    * @param options - Enhanced company card options
    * @returns Enhanced company card configuration
    */
-  static createEnhancedCompany(options: CompanyCardOptions & {
-    financials?: Array<{ label: string; value: string | number }>;
-    products?: Array<{ name: string; description?: string }>;
-  }): AICardConfig {
+  static createEnhancedCompany(
+    options: CompanyCardOptions & {
+      financials?: Array<{ label: string; value: string | number }>;
+      products?: Array<{ name: string; description?: string }>;
+    }
+  ): AICardConfig {
     return createEnhancedCompanyCard(options);
   }
 
   /**
    * Create a contact card
-   * 
+   *
    * @param options - Contact card options
    * @returns Contact card configuration
    */
@@ -61,7 +67,7 @@ export class PresetFactory {
 
   /**
    * Create an analytics dashboard card
-   * 
+   *
    * @param options - Analytics dashboard options
    * @returns Analytics dashboard configuration
    */
@@ -71,7 +77,7 @@ export class PresetFactory {
 
   /**
    * Create a custom card from a template
-   * 
+   *
    * @param template - Template function that returns AICardConfig
    * @returns Card configuration
    */
@@ -107,19 +113,3 @@ export function createContactPreset(options: ContactCardOptions): AICardConfig {
 export function createAnalyticsPreset(options: AnalyticsDashboardOptions): AICardConfig {
   return PresetFactory.createAnalytics(options);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

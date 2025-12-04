@@ -1,15 +1,15 @@
 /**
  * Layout Worker Service
- * 
+ *
  * Angular service for interacting with the layout Web Worker.
  * Provides promise-based API for off-thread layout calculations.
- * 
+ *
  * @example
  * ```typescript
  * @Component({...})
  * export class MyComponent {
  *   private layoutWorker = inject(LayoutWorkerService);
- *   
+ *
  *   async calculateLayout(sections: CardSection[]) {
  *     const result = await this.layoutWorker.packSections(sections, 4, 12);
  *     console.log('Layout:', result.placements);
@@ -101,7 +101,7 @@ export interface WorkerStatus {
 // ============================================================================
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LayoutWorkerService implements OnDestroy {
   private worker: Worker | null = null;
@@ -110,11 +110,14 @@ export class LayoutWorkerService implements OnDestroy {
 
   private readonly destroy$ = new Subject<void>();
   private messageIdCounter = 0;
-  private pendingRequests = new Map<string, {
-    resolve: (value: any) => void;
-    reject: (error: Error) => void;
-    startTime: number;
-  }>();
+  private pendingRequests = new Map<
+    string,
+    {
+      resolve: (value: any) => void;
+      reject: (error: Error) => void;
+      startTime: number;
+    }
+  >();
 
   private processingTimes: number[] = [];
   private totalProcessed = 0;
@@ -197,9 +200,7 @@ export class LayoutWorkerService implements OnDestroy {
   /**
    * Computes estimated heights for sections
    */
-  computeHeights(
-    sections: CardSection[]
-  ): Promise<Array<{ key: string; height: number }>> {
+  computeHeights(sections: CardSection[]): Promise<Array<{ key: string; height: number }>> {
     return this.sendMessage('COMPUTE_HEIGHTS', {
       sections: this.convertSections(sections),
     });
@@ -278,17 +279,15 @@ export class LayoutWorkerService implements OnDestroy {
 
     try {
       // Create worker using module worker syntax
-      this.worker = new Worker(
-        new URL('../workers/layout-worker', import.meta.url),
-        { type: 'module' }
-      );
+      this.worker = new Worker(new URL('../workers/layout-worker', import.meta.url), {
+        type: 'module',
+      });
 
       this.worker.onmessage = this.handleMessage.bind(this);
       this.worker.onerror = this.handleError.bind(this);
 
       this.isSupported = true;
       this._status.next(this.getStatus());
-
     } catch (error: unknown) {
       console.error('Failed to initialize layout worker:', error);
       this.isSupported = false;
@@ -354,7 +353,10 @@ export class LayoutWorkerService implements OnDestroy {
     setTimeout(() => this.initializeWorker(), 1000);
   }
 
-  private sendMessage<T>(type: LayoutWorkerMessageType, payload: Record<string, unknown>): Promise<T> {
+  private sendMessage<T>(
+    type: LayoutWorkerMessageType,
+    payload: Record<string, unknown>
+  ): Promise<T> {
     return new Promise((resolve, reject) => {
       if (!this.worker) {
         reject(new Error('Worker not available'));
@@ -389,18 +391,18 @@ export class LayoutWorkerService implements OnDestroy {
   }
 
   private convertSections(sections: CardSection[]): WorkerSection[] {
-    return sections.map(section => ({
+    return sections.map((section) => ({
       id: section.id,
       title: section.title,
       type: section.type,
       description: section.description,
       colSpan: section.colSpan,
       preferredColumns: section.preferredColumns,
-      fields: section.fields?.map(f => ({
+      fields: section.fields?.map((f) => ({
         label: f.label,
         value: f.value,
       })),
-      items: section.items?.map(i => ({
+      items: section.items?.map((i) => ({
         title: i.title,
         description: i.description,
       })),
@@ -410,7 +412,7 @@ export class LayoutWorkerService implements OnDestroy {
   private getAverageProcessingTime(): number {
     if (this.processingTimes.length === 0) return 0;
     const sum = this.processingTimes.reduce((a, b) => a + b, 0);
-    return Math.round(sum / this.processingTimes.length * 100) / 100;
+    return Math.round((sum / this.processingTimes.length) * 100) / 100;
   }
 }
 
@@ -431,13 +433,13 @@ export function createLayoutWorker(): {
 
   let worker: Worker;
   let messageId = 0;
-  const pending = new Map<string, { resolve: (value: any) => void; reject: (reason: Error) => void }>();
+  const pending = new Map<
+    string,
+    { resolve: (value: any) => void; reject: (reason: Error) => void }
+  >();
 
   try {
-    worker = new Worker(
-      new URL('../workers/layout-worker', import.meta.url),
-      { type: 'module' }
-    );
+    worker = new Worker(new URL('../workers/layout-worker', import.meta.url), { type: 'module' });
 
     worker.onmessage = (event: MessageEvent<LayoutWorkerResponse>) => {
       const { id, success, result, error } = event.data;
@@ -469,4 +471,3 @@ export function createLayoutWorker(): {
     },
   };
 }
-

@@ -16,12 +16,9 @@
 /**
  * Convert array to Map
  */
-export function toMap<T, K>(
-  items: T[],
-  getKey: (item: T) => K
-): Map<K, T> {
+export function toMap<T, K>(items: T[], getKey: (item: T) => K): Map<K, T> {
   const map = new Map<K, T>();
-  items.forEach(item => map.set(getKey(item), item));
+  items.forEach((item) => map.set(getKey(item), item));
   return map;
 }
 
@@ -51,7 +48,7 @@ export function setToArray<T>(set: Set<T>): T[] {
  */
 export function frequency<T>(items: T[]): Map<T, number> {
   const freq = new Map<T, number>();
-  items.forEach(item => {
+  items.forEach((item) => {
     freq.set(item, (freq.get(item) || 0) + 1);
   });
   return freq;
@@ -80,12 +77,9 @@ export function mostCommon<T>(items: T[]): T | undefined {
 /**
  * Index by
  */
-export function indexBy<T>(
-  items: T[],
-  getKey: (item: T) => string | number
-): Record<string, T> {
+export function indexBy<T>(items: T[], getKey: (item: T) => string | number): Record<string, T> {
   const result: Record<string, T> = {};
-  items.forEach(item => {
+  items.forEach((item) => {
     const key = String(getKey(item));
     result[key] = item;
   });
@@ -95,13 +89,10 @@ export function indexBy<T>(
 /**
  * Group into Map
  */
-export function groupToMap<T, K>(
-  items: T[],
-  getKey: (item: T) => K
-): Map<K, T[]> {
+export function groupToMap<T, K>(items: T[], getKey: (item: T) => K): Map<K, T[]> {
   const map = new Map<K, T[]>();
 
-  items.forEach(item => {
+  items.forEach((item) => {
     const key = getKey(item);
     const group = map.get(key) || [];
     group.push(item);
@@ -114,10 +105,7 @@ export function groupToMap<T, K>(
 /**
  * Partition into Map
  */
-export function partitionToMap<T, K>(
-  items: T[],
-  getKey: (item: T) => K
-): Map<K, T[]> {
+export function partitionToMap<T, K>(items: T[], getKey: (item: T) => K): Map<K, T[]> {
   return groupToMap(items, getKey);
 }
 
@@ -188,8 +176,8 @@ export function isSuperset<T>(superset: Set<T>, subset: Set<T>): boolean {
  */
 export function setUnion<T>(...sets: Set<T>[]): Set<T> {
   const result = new Set<T>();
-  sets.forEach(set => {
-    set.forEach(item => result.add(item));
+  sets.forEach((set) => {
+    set.forEach((item) => result.add(item));
   });
   return result;
 }
@@ -218,11 +206,10 @@ export function setIntersection<T>(...sets: Set<T>[]): Set<T> {
  */
 export function setDifference<T>(set1: Set<T>, set2: Set<T>): Set<T> {
   const result = new Set<T>();
-  set1.forEach(item => {
+  set1.forEach((item) => {
     if (!set2.has(item)) {
       result.add(item);
     }
   });
   return result;
 }
-

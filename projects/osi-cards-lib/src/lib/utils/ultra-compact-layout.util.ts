@@ -187,7 +187,7 @@ export class UltraCompactLayoutEngine {
     return {
       sections: positioned,
       totalHeight,
-      gapCount: gaps.filter(g => g.height > this.config.gapTolerance).length,
+      gapCount: gaps.filter((g) => g.height > this.config.gapTolerance).length,
       totalGapArea,
       utilization,
       passesRun,
@@ -222,7 +222,8 @@ export class UltraCompactLayoutEngine {
       );
 
       let colSpan = optimized.colSpan;
-      const height = sectionHeights.get(section.id || section.title || '') || optimized.estimatedHeight;
+      const height =
+        sectionHeights.get(section.id || section.title || '') || optimized.estimatedHeight;
 
       // Find best column
       let bestColumn = 0;
@@ -286,7 +287,7 @@ export class UltraCompactLayoutEngine {
 
       if (newTop < section.top) {
         // Move it up
-        const idx = result.findIndex(s => s.key === section.key);
+        const idx = result.findIndex((s) => s.key === section.key);
         if (idx >= 0) {
           result[idx] = { ...section, top: newTop };
           movedCount++;
@@ -362,14 +363,13 @@ export class UltraCompactLayoutEngine {
       if (newSpan >= section.minColumns) {
         // Check if this creates fillable space
         const remaining = section.colSpan - newSpan;
-        const adjacentGaps = gaps.filter(g =>
-          (g.column === col + newSpan || g.column === col - 1) &&
-          g.width < remaining + 1
+        const adjacentGaps = gaps.filter(
+          (g) => (g.column === col + newSpan || g.column === col - 1) && g.width < remaining + 1
         );
 
         if (adjacentGaps.length > 0) {
           // Shrink it
-          const idx = result.findIndex(s => s.key === section.key);
+          const idx = result.findIndex((s) => s.key === section.key);
           if (idx >= 0) {
             result[idx] = {
               ...section,
@@ -414,10 +414,11 @@ export class UltraCompactLayoutEngine {
 
       if (newSpan > section.colSpan) {
         // Check if this fills a gap
-        const adjacentGaps = gaps.filter(g =>
-          g.column === col + section.colSpan &&
-          g.width >= 1 &&
-          Math.abs(g.top - section.top) < section.height + 50
+        const adjacentGaps = gaps.filter(
+          (g) =>
+            g.column === col + section.colSpan &&
+            g.width >= 1 &&
+            Math.abs(g.top - section.top) < section.height + 50
         );
 
         if (adjacentGaps.length > 0) {
@@ -431,7 +432,7 @@ export class UltraCompactLayoutEngine {
           );
 
           if (!wouldOverlap) {
-            const idx = result.findIndex(s => s.key === section.key);
+            const idx = result.findIndex((s) => s.key === section.key);
             if (idx >= 0) {
               result[idx] = {
                 ...section,
@@ -475,8 +476,9 @@ export class UltraCompactLayoutEngine {
       const colOverlap = !(col + newSpan <= otherCol || col >= otherCol + otherSpan);
 
       // Check for vertical overlap
-      const vertOverlap = !(section.top >= otherBottom + this.config.gap ||
-                           sectionBottom + this.config.gap <= other.top);
+      const vertOverlap = !(
+        section.top >= otherBottom + this.config.gap || sectionBottom + this.config.gap <= other.top
+      );
 
       if (colOverlap && vertOverlap) {
         return true;
@@ -498,11 +500,10 @@ export class UltraCompactLayoutEngine {
 
     // Find gaps
     const totalHeight = this.calculateTotalHeight(result);
-    const gaps = this.findGaps(result, columns, totalHeight)
-      .sort((a, b) => b.area - a.area); // Largest gaps first
+    const gaps = this.findGaps(result, columns, totalHeight).sort((a, b) => b.area - a.area); // Largest gaps first
 
     // Find small sections that could fit
-    const candidates = result.filter(s => s.colSpan <= 2 && s.height < 300);
+    const candidates = result.filter((s) => s.colSpan <= 2 && s.height < 300);
 
     for (const gap of gaps) {
       if (gap.height < this.config.gapTolerance) continue;
@@ -517,16 +518,10 @@ export class UltraCompactLayoutEngine {
         if (gap.top < currentTop) {
           // Check if we can move it without creating overlap
           const col = gap.column;
-          const canFit = !this.wouldOverlapAfterMove(
-            result,
-            candidate,
-            col,
-            gap.top,
-            columns
-          );
+          const canFit = !this.wouldOverlapAfterMove(result, candidate, col, gap.top, columns);
 
           if (canFit) {
-            const idx = result.findIndex(s => s.key === candidate.key);
+            const idx = result.findIndex((s) => s.key === candidate.key);
             if (idx >= 0) {
               result[idx] = {
                 ...candidate,
@@ -571,8 +566,9 @@ export class UltraCompactLayoutEngine {
       const colOverlap = !(newCol + section.colSpan <= otherCol || newCol >= otherCol + otherSpan);
 
       // Check for vertical overlap (with gap tolerance)
-      const vertOverlap = !(newTop >= otherBottom + this.config.gap ||
-                           newBottom + this.config.gap <= other.top);
+      const vertOverlap = !(
+        newTop >= otherBottom + this.config.gap || newBottom + this.config.gap <= other.top
+      );
 
       if (colOverlap && vertOverlap) {
         return true;
@@ -658,9 +654,7 @@ export class UltraCompactLayoutEngine {
 
     // Build occupancy grid
     const rows = Math.ceil(containerHeight / resolution);
-    const grid: boolean[][] = Array.from({ length: rows }, () =>
-      new Array(columns).fill(false)
-    );
+    const grid: boolean[][] = Array.from({ length: rows }, () => new Array(columns).fill(false));
 
     // Mark occupied cells
     for (const section of sections) {
@@ -708,7 +702,7 @@ export class UltraCompactLayoutEngine {
    */
   private calculateTotalHeight(sections: CompactPositionedSection[]): number {
     if (sections.length === 0) return 0;
-    return Math.max(...sections.map(s => s.top + s.height + this.config.gap));
+    return Math.max(...sections.map((s) => s.top + s.height + this.config.gap));
   }
 
   /**
@@ -722,7 +716,7 @@ export class UltraCompactLayoutEngine {
     const totalArea = totalHeight * columns;
     if (totalArea === 0) return 100;
 
-    const usedArea = sections.reduce((sum, s) => sum + (s.colSpan * s.height), 0);
+    const usedArea = sections.reduce((sum, s) => sum + s.colSpan * s.height, 0);
     return (usedArea / totalArea) * 100;
   }
 
@@ -753,4 +747,3 @@ export function compactLayout(
   const engine = new UltraCompactLayoutEngine({ containerWidth });
   return engine.compact(sections, columns, sectionHeights);
 }
-

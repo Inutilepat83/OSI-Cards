@@ -128,7 +128,7 @@ export function memo<TArgs extends unknown[], TResult>(
     hits,
     misses,
     size: cache.size,
-    hitRate: hits + misses > 0 ? hits / (hits + misses) : 0
+    hitRate: hits + misses > 0 ? hits / (hits + misses) : 0,
   });
 
   return memoized;
@@ -192,7 +192,7 @@ export function memoWithTTL<TArgs extends unknown[], TResult>(
 
     cache.set(key, {
       value: result,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     return result;
@@ -412,7 +412,3 @@ export function memoDebouncedAsync<TArgs extends unknown[], TResult>(
     return promise;
   };
 }
-
-
-
-

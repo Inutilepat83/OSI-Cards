@@ -91,11 +91,7 @@ export function parseUrl(url: string): ParsedUrl {
  * // '/api/users?page=2&limit=10#results'
  * ```
  */
-export function buildUrl(
-  base: string,
-  params?: Record<string, any>,
-  hash?: string
-): string {
+export function buildUrl(base: string, params?: Record<string, any>, hash?: string): string {
   let url = base;
 
   if (params && Object.keys(params).length > 0) {
@@ -127,9 +123,7 @@ export function objectToQueryString(obj: Record<string, any>): string {
     .filter(([_, value]) => value !== null && value !== undefined)
     .map(([key, value]) => {
       if (Array.isArray(value)) {
-        return value
-          .map(v => `${encodeURIComponent(key)}=${encodeURIComponent(v)}`)
-          .join('&');
+        return value.map((v) => `${encodeURIComponent(key)}=${encodeURIComponent(v)}`).join('&');
       }
       return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
     })
@@ -154,7 +148,7 @@ export function queryStringToObject(queryString: string): Record<string, string>
 
   if (!search) return params;
 
-  search.split('&').forEach(param => {
+  search.split('&').forEach((param) => {
     const [key, value] = param.split('=');
     if (key) {
       params[decodeURIComponent(key)] = decodeURIComponent(value || '');
@@ -203,7 +197,7 @@ export function removeQueryParams(url: string, keys: string[]): string {
   if (!existing) return base;
 
   const params = queryStringToObject(existing);
-  keys.forEach(key => delete params[key]);
+  keys.forEach((key) => delete params[key]);
 
   return buildUrl(base, params);
 }
@@ -438,4 +432,3 @@ export function removeHash(url: string): string {
   const [base] = url.split('#');
   return base;
 }
-

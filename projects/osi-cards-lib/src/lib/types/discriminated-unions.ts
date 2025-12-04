@@ -55,11 +55,8 @@ export type DiscriminantType<T, K extends keyof T> = T[K];
  * // { type: 'add'; value: number }
  * ```
  */
-export type ExtractByDiscriminant<
-  T,
-  K extends keyof T,
-  V extends T[K]
-> = T extends Record<K, V> ? T : never;
+export type ExtractByDiscriminant<T, K extends keyof T, V extends T[K]> =
+  T extends Record<K, V> ? T : never;
 
 /**
  * Exhaustive type checker
@@ -103,10 +100,7 @@ export function exhaustive(value: never): never {
  * }, 'status');
  * ```
  */
-export function match<
-  T extends Record<string, string>,
-  R = any
->(
+export function match<T extends Record<string, string>, R = any>(
   value: T,
   matchers: Record<string, (value: any) => R>,
   key = 'type'
@@ -141,11 +135,7 @@ export function match<
  * }
  * ```
  */
-export function isUnionMember<
-  T extends Record<K, string>,
-  K extends keyof T,
-  V extends T[K]
->(
+export function isUnionMember<T extends Record<K, string>, K extends keyof T, V extends T[K]>(
   key: K,
   value: V
 ): (obj: T) => obj is ExtractByDiscriminant<T, K, V> {
@@ -170,10 +160,7 @@ export function isUnionMember<
  * }, 'type');
  * ```
  */
-export function matchWithDefault<
-  T extends Record<string, string>,
-  R = any
->(
+export function matchWithDefault<T extends Record<string, string>, R = any>(
   value: T,
   matchers: Record<string, (value: any) => R> & {
     default: (value: T) => R;
@@ -202,11 +189,7 @@ export function matchWithDefault<
  * }
  * ```
  */
-export function narrow<
-  T extends Record<K, string>,
-  K extends keyof T,
-  V extends T[K]
->(
+export function narrow<T extends Record<K, string>, K extends keyof T, V extends T[K]>(
   value: T,
   key: K,
   expectedValue: V
@@ -229,18 +212,12 @@ export function narrow<
  * // addActions has type { type: 'add'; value: number }[]
  * ```
  */
-export function filterUnion<
-  T extends Record<K, string>,
-  K extends keyof T,
-  V extends T[K]
->(
+export function filterUnion<T extends Record<K, string>, K extends keyof T, V extends T[K]>(
   items: T[],
   key: K,
   value: V
 ): Array<ExtractByDiscriminant<T, K, V>> {
-  return items.filter(
-    (item): item is ExtractByDiscriminant<T, K, V> => item[key] === value
-  );
+  return items.filter((item): item is ExtractByDiscriminant<T, K, V> => item[key] === value);
 }
 
 /**
@@ -257,16 +234,13 @@ export function filterUnion<
  * // Map<'add' | 'subtract', Action[]>
  * ```
  */
-export function groupByDiscriminant<
-  T extends Record<K, string>,
-  K extends keyof T
->(
+export function groupByDiscriminant<T extends Record<K, string>, K extends keyof T>(
   items: T[],
   key: K
 ): Map<T[K], T[]> {
   const map = new Map<T[K], T[]>();
 
-  items.forEach(item => {
+  items.forEach((item) => {
     const discriminant = item[key];
     const group = map.get(discriminant) || [];
     group.push(item);
@@ -315,9 +289,7 @@ export function transform<T extends Record<string, string>, R = any>(
 /**
  * Result type for operations that can succeed or fail
  */
-export type Result<T, E = Error> =
-  | { type: 'success'; value: T }
-  | { type: 'error'; error: E };
+export type Result<T, E = Error> = { type: 'success'; value: T } | { type: 'error'; error: E };
 
 /**
  * Loading state type
@@ -368,10 +340,7 @@ export function isError<T, E>(result: Result<T, E>): result is { type: 'error'; 
 /**
  * Map success value
  */
-export function mapSuccess<T, E, R>(
-  result: Result<T, E>,
-  mapper: (value: T) => R
-): Result<R, E> {
+export function mapSuccess<T, E, R>(result: Result<T, E>, mapper: (value: T) => R): Result<R, E> {
   if (isSuccess(result)) {
     return success(mapper(result.value));
   }
@@ -381,10 +350,7 @@ export function mapSuccess<T, E, R>(
 /**
  * Map error value
  */
-export function mapError<T, E, F>(
-  result: Result<T, E>,
-  mapper: (error: E) => F
-): Result<T, F> {
+export function mapError<T, E, F>(result: Result<T, E>, mapper: (error: E) => F): Result<T, F> {
   if (isError(result)) {
     return error(mapper(result.error));
   }
@@ -410,4 +376,3 @@ export function unwrapOr<T, E>(result: Result<T, E>, defaultValue: T): T {
   }
   return defaultValue;
 }
-

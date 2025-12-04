@@ -68,33 +68,81 @@ export interface MigrationItem {
 
 export const MIGRATION_TRACKER: Record<string, MigrationItem[]> = {
   sections: [
-    { name: 'analytics', status: 'completed', libPath: 'lib/components/sections/analytics-section' },
-    { name: 'brand-colors', status: 'completed', libPath: 'lib/components/sections/brand-colors-section' },
+    {
+      name: 'analytics',
+      status: 'completed',
+      libPath: 'lib/components/sections/analytics-section',
+    },
+    {
+      name: 'brand-colors',
+      status: 'completed',
+      libPath: 'lib/components/sections/brand-colors-section',
+    },
     { name: 'chart', status: 'completed', libPath: 'lib/components/sections/chart-section' },
-    { name: 'contact-card', status: 'completed', libPath: 'lib/components/sections/contact-card-section' },
+    {
+      name: 'contact-card',
+      status: 'completed',
+      libPath: 'lib/components/sections/contact-card-section',
+    },
     { name: 'event', status: 'completed', libPath: 'lib/components/sections/event-section' },
     { name: 'fallback', status: 'completed', libPath: 'lib/components/sections/fallback-section' },
-    { name: 'financials', status: 'completed', libPath: 'lib/components/sections/financials-section' },
+    {
+      name: 'financials',
+      status: 'completed',
+      libPath: 'lib/components/sections/financials-section',
+    },
     { name: 'info', status: 'completed', libPath: 'lib/components/sections/info-section' },
     { name: 'list', status: 'completed', libPath: 'lib/components/sections/list-section' },
     { name: 'map', status: 'completed', libPath: 'lib/components/sections/map-section' },
-    { name: 'network-card', status: 'completed', libPath: 'lib/components/sections/network-card-section' },
+    {
+      name: 'network-card',
+      status: 'completed',
+      libPath: 'lib/components/sections/network-card-section',
+    },
     { name: 'news', status: 'completed', libPath: 'lib/components/sections/news-section' },
     { name: 'overview', status: 'completed', libPath: 'lib/components/sections/overview-section' },
     { name: 'product', status: 'completed', libPath: 'lib/components/sections/product-section' },
-    { name: 'quotation', status: 'completed', libPath: 'lib/components/sections/quotation-section' },
-    { name: 'social-media', status: 'completed', libPath: 'lib/components/sections/social-media-section' },
-    { name: 'solutions', status: 'completed', libPath: 'lib/components/sections/solutions-section' },
-    { name: 'text-reference', status: 'completed', libPath: 'lib/components/sections/text-reference-section' },
+    {
+      name: 'quotation',
+      status: 'completed',
+      libPath: 'lib/components/sections/quotation-section',
+    },
+    {
+      name: 'social-media',
+      status: 'completed',
+      libPath: 'lib/components/sections/social-media-section',
+    },
+    {
+      name: 'solutions',
+      status: 'completed',
+      libPath: 'lib/components/sections/solutions-section',
+    },
+    {
+      name: 'text-reference',
+      status: 'completed',
+      libPath: 'lib/components/sections/text-reference-section',
+    },
   ],
   services: [
     { name: 'theme', status: 'completed', libPath: 'lib/themes/theme.service.ts' },
     { name: 'card-facade', status: 'completed', libPath: 'lib/services/card-facade.service.ts' },
     { name: 'event-bus', status: 'completed', libPath: 'lib/services/event-bus.service.ts' },
-    { name: 'section-normalization', status: 'completed', libPath: 'lib/services/section-normalization.service.ts' },
-    { name: 'section-utils', status: 'completed', libPath: 'lib/services/section-utils.service.ts' },
+    {
+      name: 'section-normalization',
+      status: 'completed',
+      libPath: 'lib/services/section-normalization.service.ts',
+    },
+    {
+      name: 'section-utils',
+      status: 'completed',
+      libPath: 'lib/services/section-utils.service.ts',
+    },
     { name: 'icon', status: 'completed', libPath: 'lib/services/icon.service.ts' },
-    { name: 'magnetic-tilt', status: 'completed', libPath: 'lib/services/magnetic-tilt.service.ts' },
+    {
+      name: 'magnetic-tilt',
+      status: 'completed',
+      libPath: 'lib/services/magnetic-tilt.service.ts',
+    },
   ],
   components: [
     { name: 'ai-card-renderer', status: 'completed', libPath: 'lib/components/ai-card-renderer' },
@@ -103,6 +151,3 @@ export const MIGRATION_TRACKER: Record<string, MigrationItem[]> = {
     { name: 'card-skeleton', status: 'completed', libPath: 'lib/components/card-skeleton' },
   ],
 };
-
-
-

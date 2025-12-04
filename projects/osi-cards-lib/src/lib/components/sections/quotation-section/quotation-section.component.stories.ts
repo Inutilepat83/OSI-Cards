@@ -42,7 +42,9 @@ export const CustomerTestimonial: Story = {
     section: TestBuilders.Section.create()
       .withTitle('What Our Customers Say')
       .withType('quotation')
-      .withDescription('"OSI Cards transformed how we present data to our clients. The streaming feature creates an engaging experience that sets us apart from competitors."')
+      .withDescription(
+        '"OSI Cards transformed how we present data to our clients. The streaming feature creates an engaging experience that sets us apart from competitors."'
+      )
       .withFields([
         { label: 'Customer', value: 'Sarah Johnson' },
         { label: 'Company', value: 'Tech Solutions Inc.' },
@@ -59,7 +61,9 @@ export const ExecutiveQuote: Story = {
     section: TestBuilders.Section.create()
       .withTitle('Message from CEO')
       .withType('quotation')
-      .withDescription('"We\'re building the future of dynamic content delivery. Our mission is to make beautiful, performant card layouts accessible to everyone."')
+      .withDescription(
+        '"We\'re building the future of dynamic content delivery. Our mission is to make beautiful, performant card layouts accessible to everyone."'
+      )
       .withFields([
         { label: 'Speaker', value: 'Michael Chen' },
         { label: 'Position', value: 'CEO & Co-Founder' },
@@ -75,7 +79,9 @@ export const TechnicalQuote: Story = {
     section: TestBuilders.Section.create()
       .withTitle('Technical Excellence')
       .withType('quotation')
-      .withDescription('"Code is poetry written in logic. Every line should serve a purpose, every function should tell a story."')
+      .withDescription(
+        '"Code is poetry written in logic. Every line should serve a purpose, every function should tell a story."'
+      )
       .withFields([
         { label: 'Author', value: 'Anonymous Developer' },
         { label: 'Source', value: 'Clean Code Principles' },
@@ -90,7 +96,9 @@ export const ReviewQuote: Story = {
     section: TestBuilders.Section.create()
       .withTitle('Industry Recognition')
       .withType('quotation')
-      .withDescription('"OSI Cards represents a significant advancement in web component architecture. Its performance optimizations and developer experience set a new standard."')
+      .withDescription(
+        '"OSI Cards represents a significant advancement in web component architecture. Its performance optimizations and developer experience set a new standard."'
+      )
       .withFields([
         { label: 'Publication', value: 'TechCrunch' },
         { label: 'Author', value: 'Jane Smith, Tech Reporter' },
@@ -107,10 +115,10 @@ export const TeamQuote: Story = {
     section: TestBuilders.Section.create()
       .withTitle('Team Philosophy')
       .withType('quotation')
-      .withDescription('"Together we achieve more. Every team member brings unique perspectives that make our product better."')
-      .withFields([
-        { label: 'Source', value: 'Company Values' },
-      ])
+      .withDescription(
+        '"Together we achieve more. Every team member brings unique perspectives that make our product better."'
+      )
+      .withFields([{ label: 'Source', value: 'Company Values' }])
       .build(),
   },
 };
@@ -136,4 +144,3 @@ export const Minimal: Story = {
       .build(),
   },
 };
-

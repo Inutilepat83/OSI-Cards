@@ -36,7 +36,7 @@ import {
   PLATFORM_ID,
   NgZone,
   EmbeddedViewRef,
-  ChangeDetectorRef
+  ChangeDetectorRef,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
@@ -65,7 +65,7 @@ const DEFAULT_OPTIONS: Required<Omit<LazyRenderOptions, 'placeholder' | 'onVisib
   rootMargin: '50px',
   threshold: 0,
   persistent: true,
-  disabled: false
+  disabled: false,
 };
 
 /**
@@ -73,7 +73,7 @@ const DEFAULT_OPTIONS: Required<Omit<LazyRenderOptions, 'placeholder' | 'onVisib
  */
 @Directive({
   selector: '[appLazyRender], [osiLazyRender]',
-  standalone: true
+  standalone: true,
 })
 export class LazyRenderDirective implements OnInit, OnDestroy {
   private readonly templateRef = inject(TemplateRef);
@@ -172,7 +172,7 @@ export class LazyRenderDirective implements OnInit, OnDestroy {
       persistent: this.lazyPersistent ?? this.options.persistent ?? DEFAULT_OPTIONS.persistent,
       disabled: this.lazyDisabled ?? this.options.disabled ?? DEFAULT_OPTIONS.disabled,
       placeholder: this.lazyPlaceholder ?? this.options.placeholder,
-      onVisibilityChange: this.options.onVisibilityChange
+      onVisibilityChange: this.options.onVisibilityChange,
     };
   }
 
@@ -190,7 +190,8 @@ export class LazyRenderDirective implements OnInit, OnDestroy {
     this.ngZone.runOutsideAngular(() => {
       // Create a sentinel element to observe
       this.sentinelElement = document.createElement('div');
-      this.sentinelElement.style.cssText = 'width: 1px; height: 1px; position: absolute; pointer-events: none;';
+      this.sentinelElement.style.cssText =
+        'width: 1px; height: 1px; position: absolute; pointer-events: none;';
       this.sentinelElement.setAttribute('aria-hidden', 'true');
       this.sentinelElement.setAttribute('data-lazy-sentinel', 'true');
 
@@ -218,14 +219,17 @@ export class LazyRenderDirective implements OnInit, OnDestroy {
   /**
    * Handle intersection changes
    */
-  private handleIntersection(entries: IntersectionObserverEntry[], options: {
-    rootMargin?: string;
-    threshold?: number | number[];
-    persistent?: boolean;
-    disabled?: boolean;
-    placeholder?: TemplateRef<unknown> | undefined;
-    onVisibilityChange?: ((isVisible: boolean) => void) | undefined;
-  }): void {
+  private handleIntersection(
+    entries: IntersectionObserverEntry[],
+    options: {
+      rootMargin?: string;
+      threshold?: number | number[];
+      persistent?: boolean;
+      disabled?: boolean;
+      placeholder?: TemplateRef<unknown> | undefined;
+      onVisibilityChange?: ((isVisible: boolean) => void) | undefined;
+    }
+  ): void {
     const entry = entries[0];
     if (!entry) return;
 
@@ -352,17 +356,20 @@ export interface ObserverEntry {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LazyRenderObserverService implements OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly ngZone = inject(NgZone);
 
   /** Map of observer configs to shared observers */
-  private readonly observers = new Map<string, {
-    observer: IntersectionObserver;
-    entries: Map<Element, ObserverEntry>;
-  }>();
+  private readonly observers = new Map<
+    string,
+    {
+      observer: IntersectionObserver;
+      entries: Map<Element, ObserverEntry>;
+    }
+  >();
 
   /**
    * Register an element for observation
@@ -433,7 +440,7 @@ export class LazyRenderObserverService implements OnDestroy {
       },
       {
         rootMargin: options.rootMargin ?? '50px',
-        threshold: options.threshold ?? 0
+        threshold: options.threshold ?? 0,
       }
     );
 
@@ -458,4 +465,3 @@ export class LazyRenderObserverService implements OnDestroy {
     this.observers.clear();
   }
 }
-

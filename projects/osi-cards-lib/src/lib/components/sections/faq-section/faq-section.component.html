@@ -1,8 +1,5 @@
 <div class="faq">
-  <lib-section-header
-    *ngIf="section.title"
-    [title]="section.title"
-    [description]="section.description">
+  <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
   <div class="list" *ngIf="section.items?.length">
@@ -18,10 +15,5 @@
     </div>
   </div>
 
-  <lib-empty-state
-    *ngIf="!section.items?.length"
-    message="No FAQs"
-    icon="❓"
-    variant="compact">
-  </lib-empty-state>
+  <lib-empty-state *ngIf="!section.items?.length" message="No FAQs" icon="❓" variant="compact"> </lib-empty-state>
 </div>

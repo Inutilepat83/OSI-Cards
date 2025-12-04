@@ -146,10 +146,7 @@ export class MasonryGridResizeManager {
   /**
    * Get container width with fallback chain
    */
-  getContainerWidth(
-    containerElement: HTMLElement | undefined,
-    explicitWidth?: number
-  ): number {
+  getContainerWidth(containerElement: HTMLElement | undefined, explicitWidth?: number): number {
     // Priority 1: Use explicitly provided width
     if (explicitWidth && explicitWidth > 0) {
       return explicitWidth;
@@ -224,4 +221,3 @@ export class MasonryGridResizeManager {
     this.itemObserver = undefined;
   }
 }
-

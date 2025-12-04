@@ -96,4 +96,3 @@ export {
   createConfiguration,
   initConfiguration,
 } from './configuration';
-

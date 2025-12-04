@@ -114,18 +114,23 @@ export * from './card-utils';
 // ===== Validation & Input =====
 export * from '../decorators/validation.decorator';
 export * from './form-labels.util';
-export * from './validation.util';
+// Export Validator but not ValidationResult (conflicts with decorator)
+export * from './sanitization.util';
+export * from './shared-utilities.index';
+export { FormValidator, Validator } from './validation.util';
 
 // ===== Performance & Optimization (App-specific) =====
 export * from './bundle-optimization.util';
 export * from './cache.util';
 export * from './change-detection-optimization.util';
 export * from './code-splitting.util';
-export * from './compression.util';
+// Compression now in library - use osi-cards-lib
+// export * from './compression.util';
 export * from './css-optimization.util';
 // Memoization now in library - use @osi-cards/utils instead
 // export * from './memoization.util';
-export * from './progressive-loading.util';
+// Progressive loading now in library - use osi-cards-lib
+// export * from './progressive-loading.util';
 export * from './resource-hints.util';
 // Virtual scrolling now in library - use @osi-cards/utils instead
 // export * from './virtual-scrolling.util';
@@ -139,7 +144,8 @@ export * from './track-by.util';
 // ===== Network & HTTP =====
 export * from './rate-limiting.util';
 export * from './request-cancellation.util';
-export * from './url.util';
+// URL utils now in library - use osi-cards-lib
+// export * from './url.util';
 
 // ===== Error Handling (App-specific extensions) =====
 // Error recovery now in library - use @osi-cards/utils instead
@@ -153,9 +159,11 @@ export * from './security-headers.util';
 export * from './alt-text.util';
 // Color contrast functions may be in library - check for conflicts
 // export * from './color-contrast.util';
-export * from './drag-drop.util';
+// Drag-drop now in library - use osi-cards-lib
+// export * from './drag-drop.util';
 export * from './image-optimization.util';
-export * from './pagination.util';
+// Pagination now in library - use osi-cards-lib
+// export * from './pagination.util';
 
 // ===== Design Patterns =====
 export * from './base-classes.util';

@@ -1,22 +1,22 @@
 /**
  * Section Test Fixtures
- * 
+ *
  * Factory functions for creating test section configurations.
- * 
+ *
  * IMPORTANT: Sample sections are now sourced from the Section Registry.
  * Use getFixture() or SECTION_FIXTURES for pre-built examples.
- * 
+ *
  * @example
  * ```typescript
- * import { 
- *   createMockSection, 
+ * import {
+ *   createMockSection,
  *   getFixture,
- *   COMPLETE_FIXTURES 
+ *   COMPLETE_FIXTURES
  * } from 'osi-cards-lib/testing';
- * 
+ *
  * // Use registry fixture (recommended)
  * const infoSection = getFixture('info', 'complete');
- * 
+ *
  * // Or create custom section with factory
  * const customSection = createMockSection({
  *   type: 'analytics',
@@ -27,10 +27,10 @@
  */
 
 import type { CardSection, CardField, CardItem } from '../../models/card.model';
-import { 
-  COMPLETE_FIXTURES, 
-  MINIMAL_FIXTURES, 
-  EDGE_CASE_FIXTURES 
+import {
+  COMPLETE_FIXTURES,
+  MINIMAL_FIXTURES,
+  EDGE_CASE_FIXTURES,
 } from '../../registry/fixtures.generated';
 
 // ============================================================================
@@ -45,9 +45,7 @@ export function createMockSection(overrides: Partial<CardSection> = {}): CardSec
     id: `section-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
     title: 'Test Section',
     type: 'info',
-    fields: [
-      { id: 'field-1', label: 'Test Field', value: 'Test Value' },
-    ],
+    fields: [{ id: 'field-1', label: 'Test Field', value: 'Test Value' }],
     ...overrides,
   };
 }
@@ -55,10 +53,7 @@ export function createMockSection(overrides: Partial<CardSection> = {}): CardSec
 /**
  * Creates an info section with fields
  */
-export function createInfoSection(
-  title: string,
-  fields: Partial<CardField>[]
-): CardSection {
+export function createInfoSection(title: string, fields: Partial<CardField>[]): CardSection {
   return {
     id: `info-${Date.now()}`,
     title,
@@ -77,7 +72,12 @@ export function createInfoSection(
  */
 export function createAnalyticsSection(
   title: string,
-  metrics: Array<{ label: string; value: string; percentage?: number; trend?: 'up' | 'down' | 'stable' }>
+  metrics: Array<{
+    label: string;
+    value: string;
+    percentage?: number;
+    trend?: 'up' | 'down' | 'stable';
+  }>
 ): CardSection {
   return {
     id: `analytics-${Date.now()}`,
@@ -96,10 +96,7 @@ export function createAnalyticsSection(
 /**
  * Creates a list section with items
  */
-export function createListSection(
-  title: string,
-  items: Partial<CardItem>[]
-): CardSection {
+export function createListSection(title: string, items: Partial<CardItem>[]): CardSection {
   return {
     id: `list-${Date.now()}`,
     title,

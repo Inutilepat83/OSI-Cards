@@ -1,30 +1,30 @@
 /**
  * Card Facade Service
- * 
+ *
  * Provides a unified, simplified API for all card operations.
  * Acts as a single entry point for creating, managing, and streaming cards.
- * 
+ *
  * This facade pattern:
  * - Simplifies complex subsystem interactions
  * - Provides a clean API for consumers
  * - Manages internal service coordination
  * - Handles state synchronization
- * 
+ *
  * @example
  * ```typescript
  * import { CardFacade } from 'osi-cards-lib';
- * 
+ *
  * @Component({...})
  * export class MyComponent {
  *   private facade = inject(CardFacade);
- * 
+ *
  *   async createCard() {
  *     const card = await this.facade.createCard({
  *       title: 'My Card',
  *       sections: [...]
  *     });
  *   }
- * 
+ *
  *   streamCard(json: string) {
  *     this.facade.stream(json).subscribe(update => {
  *       console.log('Card update:', update);
@@ -39,15 +39,20 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, Subject, BehaviorSubject, merge, EMPTY } from 'rxjs';
 import { map, filter, tap, catchError, shareReplay } from 'rxjs/operators';
 
-import type { 
-  AICardConfig, 
-  CardSection, 
-  CardField, 
-  CardItem, 
-  CardAction 
+import type {
+  AICardConfig,
+  CardSection,
+  CardField,
+  CardItem,
+  CardAction,
 } from '../models/card.model';
 import { CardUtils, CardTypeGuards } from '../models/card.model';
-import { OSICardsStreamingService, CardUpdate, StreamingState, StreamingConfig } from './streaming.service';
+import {
+  OSICardsStreamingService,
+  CardUpdate,
+  StreamingState,
+  StreamingConfig,
+} from './streaming.service';
 import { ThemeService } from '../themes/theme.service';
 import { CardFactory, SectionFactory } from '../factories/card.factory';
 import { ValidationError } from '../errors';
@@ -130,7 +135,7 @@ export interface CardEvent {
 // ============================================================================
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CardFacade {
   private readonly destroyRef = inject(DestroyRef);
@@ -147,7 +152,7 @@ export class CardFacade {
   public readonly cards = computed(() => Array.from(this._cards().values()));
   public readonly activeCard = computed(() => {
     const id = this._activeCardId();
-    return id ? this._cards().get(id) ?? null : null;
+    return id ? (this._cards().get(id) ?? null) : null;
   });
   public readonly cardCount = computed(() => this._cards().size);
   public readonly hasCards = computed(() => this._cards().size > 0);
@@ -166,7 +171,7 @@ export class CardFacade {
     // Subscribe to streaming updates
     this.streamingService.cardUpdates$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(update => {
+      .subscribe((update) => {
         if (update.card) {
           this.updateCardInternal(update.card);
           this.emitEvent('card:stream:update', update.card.id ?? 'unknown', update.card);
@@ -174,14 +179,12 @@ export class CardFacade {
       });
 
     // Subscribe to streaming state changes
-    this.streamingService.state$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(state => {
-        if (state.stage === 'complete') {
-          // Clear all streaming card IDs when streaming completes
-          this._streamingCardIds.set(new Set());
-        }
-      });
+    this.streamingService.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
+      if (state.stage === 'complete') {
+        // Clear all streaming card IDs when streaming completes
+        this._streamingCardIds.set(new Set());
+      }
+    });
   }
 
   // ============================================================================
@@ -192,15 +195,19 @@ export class CardFacade {
    * Create a new card
    */
   public createCard(options: CreateCardOptions): AICardConfig {
-    const { title, sections = [], actions, description, generateIds = true, validate = true } = options;
+    const {
+      title,
+      sections = [],
+      actions,
+      description,
+      generateIds = true,
+      validate = true,
+    } = options;
 
     let card: AICardConfig;
 
     try {
-      card = CardFactory.create()
-        .withTitle(title)
-        .withSections(sections)
-        .build();
+      card = CardFactory.create().withTitle(title).withSections(sections).build();
 
       if (description) {
         card.description = description;
@@ -235,8 +242,8 @@ export class CardFacade {
    */
   public addCard(card: AICardConfig): void {
     const cardWithId = this.ensureIds(card);
-    
-    this._cards.update(cards => {
+
+    this._cards.update((cards) => {
       const newCards = new Map(cards);
       newCards.set(cardWithId.id!, cardWithId);
       return newCards;
@@ -248,7 +255,7 @@ export class CardFacade {
    */
   public updateCard(cardId: string, updates: Partial<AICardConfig>): AICardConfig | null {
     const existingCard = this._cards().get(cardId);
-    
+
     if (!existingCard) {
       console.warn(`Card ${cardId} not found`);
       return null;
@@ -260,7 +267,7 @@ export class CardFacade {
       id: cardId, // Preserve ID
     };
 
-    this._cards.update(cards => {
+    this._cards.update((cards) => {
       const newCards = new Map(cards);
       newCards.set(cardId, updatedCard);
       return newCards;
@@ -275,9 +282,9 @@ export class CardFacade {
    */
   public deleteCard(cardId: string): boolean {
     const existed = this._cards().has(cardId);
-    
+
     if (existed) {
-      this._cards.update(cards => {
+      this._cards.update((cards) => {
         const newCards = new Map(cards);
         newCards.delete(cardId);
         return newCards;
@@ -331,7 +338,7 @@ export class CardFacade {
     }
 
     // Mark as streaming
-    this._streamingCardIds.update(ids => {
+    this._streamingCardIds.update((ids) => {
       const newIds = new Set(ids);
       newIds.add(cardId!);
       return newIds;
@@ -348,15 +355,15 @@ export class CardFacade {
 
     // Return observable with callbacks
     return this.streamingService.cardUpdates$.pipe(
-      tap(update => {
+      tap((update) => {
         if (update.card && onUpdate) {
           onUpdate(update.card);
         }
       }),
-      filter(update => update.changeType === 'content' || update.changeType === 'structural'),
-      tap(update => {
+      filter((update) => update.changeType === 'content' || update.changeType === 'structural'),
+      tap((update) => {
         if (this.streamingService.getState().stage === 'complete' && update.card) {
-          this._streamingCardIds.update(ids => {
+          this._streamingCardIds.update((ids) => {
             const newIds = new Set(ids);
             newIds.delete(cardId!);
             return newIds;
@@ -367,8 +374,8 @@ export class CardFacade {
           }
         }
       }),
-      catchError(error => {
-        this._streamingCardIds.update(ids => {
+      catchError((error) => {
+        this._streamingCardIds.update((ids) => {
           const newIds = new Set(ids);
           newIds.delete(cardId!);
           return newIds;
@@ -438,17 +445,19 @@ export class CardFacade {
     const card = this._cards().get(cardId);
     if (!card) return false;
 
-    const sectionWithId = section.id ? section : {
-      ...section,
-      id: CardUtils.generateId('section')
-    };
+    const sectionWithId = section.id
+      ? section
+      : {
+          ...section,
+          id: CardUtils.generateId('section'),
+        };
 
     const updatedCard: AICardConfig = {
       ...card,
-      sections: [...card.sections, sectionWithId]
+      sections: [...card.sections, sectionWithId],
     };
 
-    this._cards.update(cards => {
+    this._cards.update((cards) => {
       const newCards = new Map(cards);
       newCards.set(cardId, updatedCard);
       return newCards;
@@ -467,10 +476,10 @@ export class CardFacade {
 
     const updatedCard: AICardConfig = {
       ...card,
-      sections: card.sections.filter(s => s.id !== sectionId)
+      sections: card.sections.filter((s) => s.id !== sectionId),
     };
 
-    this._cards.update(cards => {
+    this._cards.update((cards) => {
       const newCards = new Map(cards);
       newCards.set(cardId, updatedCard);
       return newCards;
@@ -483,34 +492,30 @@ export class CardFacade {
   /**
    * Update a section in a card
    */
-  public updateSection(
-    cardId: string,
-    sectionId: string,
-    updates: Partial<CardSection>
-  ): boolean {
+  public updateSection(cardId: string, sectionId: string, updates: Partial<CardSection>): boolean {
     const card = this._cards().get(cardId);
     if (!card) return false;
 
-    const sectionIndex = card.sections.findIndex(s => s.id === sectionId);
+    const sectionIndex = card.sections.findIndex((s) => s.id === sectionId);
     if (sectionIndex === -1) return false;
 
     const updatedSections = [...card.sections];
     const existingSection = updatedSections[sectionIndex];
     if (!existingSection) return false;
-    
+
     updatedSections[sectionIndex] = {
       ...existingSection,
       ...updates,
       id: sectionId,
-      title: updates.title ?? existingSection.title
+      title: updates.title ?? existingSection.title,
     };
 
     const updatedCard: AICardConfig = {
       ...card,
-      sections: updatedSections
+      sections: updatedSections,
     };
 
-    this._cards.update(cards => {
+    this._cards.update((cards) => {
       const newCards = new Map(cards);
       newCards.set(cardId, updatedCard);
       return newCards;
@@ -527,7 +532,7 @@ export class CardFacade {
     const card = this._cards().get(cardId);
     if (!card) return false;
 
-    const sectionMap = new Map(card.sections.map(s => [s.id, s]));
+    const sectionMap = new Map(card.sections.map((s) => [s.id, s]));
     const reorderedSections: CardSection[] = [];
 
     for (const id of sectionIds) {
@@ -546,10 +551,10 @@ export class CardFacade {
 
     const updatedCard: AICardConfig = {
       ...card,
-      sections: reorderedSections
+      sections: reorderedSections,
     };
 
-    this._cards.update(cards => {
+    this._cards.update((cards) => {
       const newCards = new Map(cards);
       newCards.set(cardId, updatedCard);
       return newCards;
@@ -639,8 +644,8 @@ export class CardFacade {
       sections: CardUtils.ensureSectionIds(card.sections),
       actions: card.actions?.map((action, i) => ({
         ...action,
-        id: action.id ?? CardUtils.generateId(`action_${i}`)
-      }))
+        id: action.id ?? CardUtils.generateId(`action_${i}`),
+      })),
     };
   }
 
@@ -650,7 +655,7 @@ export class CardFacade {
   private updateCardInternal(card: AICardConfig): void {
     if (!card.id) return;
 
-    this._cards.update(cards => {
+    this._cards.update((cards) => {
       const newCards = new Map(cards);
       newCards.set(card.id!, card);
       return newCards;
@@ -660,18 +665,13 @@ export class CardFacade {
   /**
    * Emit a card event
    */
-  private emitEvent(
-    type: CardEventType,
-    cardId: string,
-    card?: AICardConfig,
-    error?: Error
-  ): void {
+  private emitEvent(type: CardEventType, cardId: string, card?: AICardConfig, error?: Error): void {
     this._events$.next({
       type,
       cardId,
       card,
       error,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 }

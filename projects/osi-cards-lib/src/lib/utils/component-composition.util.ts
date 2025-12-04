@@ -28,7 +28,7 @@ import {
   Injector,
   EnvironmentInjector,
   createComponent,
-  EnvironmentProviders
+  EnvironmentProviders,
 } from '@angular/core';
 
 /**
@@ -96,11 +96,8 @@ export class ComponentFactory<T> {
    * @param container - View container ref
    * @returns Array of component references
    */
-  createMany(
-    inputsArray: Array<Partial<T>>,
-    container: ViewContainerRef
-  ): ComponentRef<T>[] {
-    return inputsArray.map(inputs => this.create(inputs, container));
+  createMany(inputsArray: Array<Partial<T>>, container: ViewContainerRef): ComponentRef<T>[] {
+    return inputsArray.map((inputs) => this.create(inputs, container));
   }
 }
 
@@ -223,11 +220,7 @@ export class ComponentRegistry {
    * @param inputs - Component inputs
    * @returns Component reference or null
    */
-  load(
-    name: string,
-    container: ViewContainerRef,
-    inputs?: any
-  ): ComponentRef<any> | null {
+  load(name: string, container: ViewContainerRef, inputs?: any): ComponentRef<any> | null {
     const componentType = this.get(name);
 
     if (!componentType) {
@@ -305,10 +298,7 @@ export function withLoading<T>(componentType: Type<T>): Type<T> {
  * @param overrides - Override inputs
  * @returns Merged inputs
  */
-export function mergeInputs<T>(
-  defaults: Partial<T>,
-  overrides: Partial<T>
-): Partial<T> {
+export function mergeInputs<T>(defaults: Partial<T>, overrides: Partial<T>): Partial<T> {
   return { ...defaults, ...overrides };
 }
 
@@ -326,13 +316,9 @@ export function cloneComponent<T>(
   const inputs: any = {};
 
   // Extract inputs (simplified - would need reflection)
-  Object.keys(ref.instance as any).forEach(key => {
+  Object.keys(ref.instance as any).forEach((key) => {
     inputs[key] = (ref.instance as any)[key];
   });
 
-  return loadComponentDynamic(
-    container,
-    ref.componentType,
-    inputs
-  );
+  return loadComponentDynamic(container, ref.componentType, inputs);
 }

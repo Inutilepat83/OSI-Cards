@@ -6,10 +6,10 @@ import { SectionRenderEvent } from '../section-renderer/section-renderer.compone
 
 /**
  * Card Body Component
- * 
+ *
  * Composable component for rendering card body with sections in a masonry grid layout.
  * Wraps MasonryGridComponent for easier composition.
- * 
+ *
  * @example
  * ```html
  * <app-card-body
@@ -33,26 +33,27 @@ import { SectionRenderEvent } from '../section-renderer/section-renderer.compone
       [minColumnWidth]="minColumnWidth"
       class="w-full"
       (sectionEvent)="onSectionEvent($event)"
-      (layoutChange)="onLayoutChange($event)">
+      (layoutChange)="onLayoutChange($event)"
+    >
     </app-masonry-grid>
-    
+
     <ng-content></ng-content>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardBodyComponent {
   /** Sections to render */
   @Input() sections: CardSection[] = [];
-  
+
   /** Gap between grid items in pixels */
   @Input() gap = 12;
-  
+
   /** Minimum column width in pixels */
   @Input() minColumnWidth = 260;
-  
+
   /** Emitted when a section event occurs */
   @Output() sectionEvent = new EventEmitter<SectionRenderEvent>();
-  
+
   /** Emitted when layout changes */
   @Output() layoutChange = new EventEmitter<MasonryLayoutInfo>();
 
@@ -64,8 +65,3 @@ export class CardBodyComponent {
     this.layoutChange.emit(info);
   }
 }
-
-
-
-
-

@@ -14,10 +14,9 @@ import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../
   standalone: true,
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
   templateUrl: './timeline-section.component.html',
-  styleUrl: './timeline-section.scss'
+  styleUrl: './timeline-section.scss',
 })
 export class TimelineSectionComponent extends BaseSectionComponent {
-
   /**
    * Get date display
    */

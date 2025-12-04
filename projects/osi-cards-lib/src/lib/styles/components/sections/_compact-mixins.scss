@@ -7,11 +7,11 @@
 //
 // =====================================================================
 
-@use 'design-tokens' as *;
-@use 'sections-base' as base;
-@use 'component-mixins' as components;
-@use 'modern-effects' as effects;
-@use 'typography-system' as typo;
+@use "design-tokens" as *;
+@use "sections-base" as base;
+@use "component-mixins" as components;
+@use "modern-effects" as effects;
+@use "typography-system" as typo;
 
 // =====================================================================
 // COMPACT SECTION CONTAINER
@@ -118,7 +118,7 @@
 // COMPACT BADGES & INDICATORS
 // =====================================================================
 
-@mixin badge-compact($variant: 'default') {
+@mixin badge-compact($variant: "default") {
   @include components.badge-modern($variant);
   font-size: 0.55rem;
   padding: 1px 4px;
@@ -178,4 +178,3 @@
     gap: var(--spacing-compact-sm);
   }
 }
-

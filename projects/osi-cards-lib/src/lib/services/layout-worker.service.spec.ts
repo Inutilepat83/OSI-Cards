@@ -1,9 +1,9 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { 
-  LayoutWorkerService, 
-  WorkerStatus, 
+import {
+  LayoutWorkerService,
+  WorkerStatus,
   WorkerPackResult,
-  WorkerPositionedSection 
+  WorkerPositionedSection,
 } from './layout-worker.service';
 import { CardSection } from '../models/card.model';
 
@@ -17,8 +17,8 @@ describe('LayoutWorkerService', () => {
       type: 'info',
       fields: [
         { label: 'Field 1', value: 'Value 1' },
-        { label: 'Field 2', value: 'Value 2' }
-      ]
+        { label: 'Field 2', value: 'Value 2' },
+      ],
     },
     {
       id: 'section-2',
@@ -26,14 +26,14 @@ describe('LayoutWorkerService', () => {
       type: 'list',
       items: [
         { title: 'Item 1', description: 'Description 1' },
-        { title: 'Item 2', description: 'Description 2' }
-      ]
-    }
+        { title: 'Item 2', description: 'Description 2' },
+      ],
+    },
   ];
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [LayoutWorkerService]
+      providers: [LayoutWorkerService],
     });
     service = TestBed.inject(LayoutWorkerService);
   });
@@ -98,9 +98,7 @@ describe('LayoutWorkerService', () => {
     it('should reject when worker not available', async () => {
       // If worker is not supported, it should reject
       if (!service.isReady()) {
-        await expectAsync(
-          service.packSections(mockSections, 4)
-        ).toBeRejected();
+        await expectAsync(service.packSections(mockSections, 4)).toBeRejected();
       } else {
         // If worker is available, skip this test
         expect(service.isReady()).toBe(true);
@@ -114,9 +112,7 @@ describe('LayoutWorkerService', () => {
   describe('skylinePack', () => {
     it('should reject when worker not available', async () => {
       if (!service.isReady()) {
-        await expectAsync(
-          service.skylinePack(mockSections, 4)
-        ).toBeRejected();
+        await expectAsync(service.skylinePack(mockSections, 4)).toBeRejected();
       } else {
         expect(service.isReady()).toBe(true);
       }
@@ -129,9 +125,7 @@ describe('LayoutWorkerService', () => {
   describe('calculatePositions', () => {
     it('should reject when worker not available', async () => {
       if (!service.isReady()) {
-        await expectAsync(
-          service.calculatePositions(mockSections, 4)
-        ).toBeRejected();
+        await expectAsync(service.calculatePositions(mockSections, 4)).toBeRejected();
       } else {
         expect(service.isReady()).toBe(true);
       }
@@ -151,14 +145,12 @@ describe('LayoutWorkerService', () => {
           top: 0,
           left: '0%',
           width: '50%',
-          height: 100
-        }
+          height: 100,
+        },
       ];
 
       if (!service.isReady()) {
-        await expectAsync(
-          service.analyzeGaps(placements, 4, 200)
-        ).toBeRejected();
+        await expectAsync(service.analyzeGaps(placements, 4, 200)).toBeRejected();
       } else {
         expect(service.isReady()).toBe(true);
       }
@@ -171,9 +163,7 @@ describe('LayoutWorkerService', () => {
   describe('computeHeights', () => {
     it('should reject when worker not available', async () => {
       if (!service.isReady()) {
-        await expectAsync(
-          service.computeHeights(mockSections)
-        ).toBeRejected();
+        await expectAsync(service.computeHeights(mockSections)).toBeRejected();
       } else {
         expect(service.isReady()).toBe(true);
       }
@@ -186,9 +176,7 @@ describe('LayoutWorkerService', () => {
   describe('optimizeLayout', () => {
     it('should reject when worker not available', async () => {
       if (!service.isReady()) {
-        await expectAsync(
-          service.optimizeLayout(mockSections, 4)
-        ).toBeRejected();
+        await expectAsync(service.optimizeLayout(mockSections, 4)).toBeRejected();
       } else {
         expect(service.isReady()).toBe(true);
       }
@@ -196,9 +184,7 @@ describe('LayoutWorkerService', () => {
 
     it('should accept algorithm parameter', async () => {
       if (!service.isReady()) {
-        await expectAsync(
-          service.optimizeLayout(mockSections, 4, 12, 'skyline')
-        ).toBeRejected();
+        await expectAsync(service.optimizeLayout(mockSections, 4, 12, 'skyline')).toBeRejected();
       } else {
         expect(service.isReady()).toBe(true);
       }
@@ -214,18 +200,13 @@ describe('LayoutWorkerService', () => {
         placements: [],
         containerHeight: 100,
         utilization: 0.8,
-        gapCount: 0
+        gapCount: 0,
       };
 
       const fallbackFn = jasmine.createSpy('fallbackFn').and.returnValue(mockFallbackResult);
 
       if (!service.isReady()) {
-        const result = await service.packSectionsWithFallback(
-          mockSections,
-          4,
-          12,
-          fallbackFn
-        );
+        const result = await service.packSectionsWithFallback(mockSections, 4, 12, fallbackFn);
 
         expect(fallbackFn).toHaveBeenCalled();
         expect(result).toEqual(mockFallbackResult);
@@ -240,19 +221,14 @@ describe('LayoutWorkerService', () => {
         placements: [],
         containerHeight: 100,
         utilization: 0.8,
-        gapCount: 0
+        gapCount: 0,
       };
 
       const fallbackFn = jasmine.createSpy('fallbackFn').and.returnValue(mockFallbackResult);
 
       // Force worker to be not ready
       if (!service.isReady()) {
-        const result = await service.packSectionsWithFallback(
-          mockSections,
-          4,
-          12,
-          fallbackFn
-        );
+        const result = await service.packSectionsWithFallback(mockSections, 4, 12, fallbackFn);
 
         expect(fallbackFn).toHaveBeenCalled();
       } else {
@@ -283,12 +259,3 @@ describe('LayoutWorkerService', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-

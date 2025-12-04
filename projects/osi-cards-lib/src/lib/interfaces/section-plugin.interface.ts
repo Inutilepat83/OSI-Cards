@@ -32,7 +32,7 @@ export interface SectionPluginConfig {
 
 /**
  * Plugin interface that custom section components must implement
- * 
+ *
  * @example
  * ```typescript
  * @Component({
@@ -42,11 +42,11 @@ export interface SectionPluginConfig {
  * })
  * export class CustomSectionComponent extends BaseSectionComponent implements SectionPlugin {
  *   static readonly PLUGIN_TYPE = 'custom-section';
- *   
+ *
  *   getPluginType(): string {
  *     return CustomSectionComponent.PLUGIN_TYPE;
  *   }
- *   
+ *
  *   canHandle(section: CardSection): boolean {
  *     return section.type === 'custom-section';
  *   }
@@ -78,19 +78,3 @@ export interface RegisteredSectionPlugin extends SectionPluginMetadata {
   /** Priority for resolution (default: 0) */
   priority: number;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

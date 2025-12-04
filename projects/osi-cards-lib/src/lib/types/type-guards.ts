@@ -133,10 +133,7 @@ export function isArray(value: unknown): value is unknown[] {
  * }
  * ```
  */
-export function isArrayOf<T>(
-  value: unknown,
-  guard: (item: unknown) => item is T
-): value is T[] {
+export function isArrayOf<T>(value: unknown, guard: (item: unknown) => item is T): value is T[] {
   return isArray(value) && value.every(guard);
 }
 
@@ -169,10 +166,7 @@ export function isEmptyArray(value: unknown): value is [] {
  * }
  * ```
  */
-export function hasProperty<K extends string>(
-  obj: unknown,
-  key: K
-): obj is Record<K, unknown> {
+export function hasProperty<K extends string>(obj: unknown, key: K): obj is Record<K, unknown> {
   return isObject(obj) && key in obj;
 }
 
@@ -195,7 +189,7 @@ export function hasProperties<K extends string>(
   keys: readonly K[]
 ): obj is Record<K, unknown> {
   if (!isObject(obj)) return false;
-  return keys.every(key => key in obj);
+  return keys.every((key) => key in obj);
 }
 
 // ============================================================================
@@ -305,8 +299,7 @@ export function isDateString(value: unknown): value is string {
  * Check if value is a Promise
  */
 export function isPromise<T = any>(value: unknown): value is Promise<T> {
-  return value instanceof Promise ||
-    (isObject(value) && isFunction((value as any).then));
+  return value instanceof Promise || (isObject(value) && isFunction((value as any).then));
 }
 
 // ============================================================================
@@ -349,13 +342,13 @@ export function isError(value: unknown): value is Error {
  * }
  * ```
  */
-export function createShapeGuard<T extends Record<string, any>>(
-  shape: { [K in keyof T]: (value: unknown) => value is T[K] }
-): (value: unknown) => value is T {
+export function createShapeGuard<T extends Record<string, any>>(shape: {
+  [K in keyof T]: (value: unknown) => value is T[K];
+}): (value: unknown) => value is T {
   return (value: unknown): value is T => {
     if (!isObject(value)) return false;
 
-    return (Object.keys(shape) as Array<keyof T>).every(key => {
+    return (Object.keys(shape) as Array<keyof T>).every((key) => {
       const guard = shape[key];
       return guard((value as any)[key]);
     });
@@ -381,7 +374,7 @@ export function createUnionGuard<T extends unknown[]>(
   ...guards: { [K in keyof T]: (value: unknown) => value is T[K] }
 ): (value: unknown) => value is T[number] {
   return (value: unknown): value is T[number] => {
-    return guards.some(guard => guard(value));
+    return guards.some((guard) => guard(value));
   };
 }
 
@@ -496,10 +489,7 @@ export function assertObject(
  * assert(user.age >= 18, 'User must be 18 or older');
  * ```
  */
-export function assert(
-  condition: boolean,
-  message = 'Assertion failed'
-): asserts condition {
+export function assert(condition: boolean, message = 'Assertion failed'): asserts condition {
   if (!condition) {
     throw new Error(message);
   }
@@ -529,4 +519,3 @@ export function assertNever(
 ): never {
   throw new Error(message);
 }
-

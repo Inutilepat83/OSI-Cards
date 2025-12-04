@@ -132,4 +132,3 @@ export async function copyWithFeedback(
 export function isClipboardAvailable(): boolean {
   return !!(navigator.clipboard && navigator.clipboard.writeText);
 }
-

@@ -88,7 +88,7 @@ export function getQueryParam(route: ActivatedRoute, paramName: string): string 
  */
 export function getAllQueryParams(route: ActivatedRoute): Record<string, string> {
   const params: Record<string, string> = {};
-  route.snapshot.queryParamMap.keys.forEach(key => {
+  route.snapshot.queryParamMap.keys.forEach((key) => {
     const value = route.snapshot.queryParamMap.get(key);
     if (value) {
       params[key] = value;
@@ -153,12 +153,18 @@ export function createRedirectGuard(
 
     if (result instanceof Observable) {
       return result.pipe(
-        map(allowed => allowed || router.createUrlTree(Array.isArray(redirectTo) ? redirectTo : [redirectTo]))
+        map(
+          (allowed) =>
+            allowed || router.createUrlTree(Array.isArray(redirectTo) ? redirectTo : [redirectTo])
+        )
       );
     }
 
     if (result instanceof Promise) {
-      return result.then(allowed => allowed || router.createUrlTree(Array.isArray(redirectTo) ? redirectTo : [redirectTo]));
+      return result.then(
+        (allowed) =>
+          allowed || router.createUrlTree(Array.isArray(redirectTo) ? redirectTo : [redirectTo])
+      );
     }
 
     return result || router.createUrlTree(Array.isArray(redirectTo) ? redirectTo : [redirectTo]);
@@ -247,7 +253,7 @@ export function getBreadcrumbs(route: ActivatedRoute): Array<{ label: string; ur
 
   while (currentRoute) {
     if (currentRoute.snapshot.data['breadcrumb']) {
-      const url = currentRoute.snapshot.url.map(segment => segment.path).join('/');
+      const url = currentRoute.snapshot.url.map((segment) => segment.path).join('/');
       breadcrumbs.push({
         label: currentRoute.snapshot.data['breadcrumb'],
         url: '/' + url,
@@ -267,7 +273,7 @@ export function getBreadcrumbs(route: ActivatedRoute): Array<{ label: string; ur
  */
 export function reloadCurrentRoute(router: Router, route: ActivatedRoute): Promise<boolean> {
   const currentUrl = router.url;
-  return router.navigateByUrl('/', { skipLocationChange: true })
+  return router
+    .navigateByUrl('/', { skipLocationChange: true })
     .then(() => router.navigateByUrl(currentUrl));
 }
-

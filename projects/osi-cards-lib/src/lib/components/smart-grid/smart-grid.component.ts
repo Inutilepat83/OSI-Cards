@@ -53,10 +53,7 @@ import {
   GridLayout,
   createGridLayoutEngine,
 } from '../../core/grid-layout-engine';
-import {
-  ResizeManager,
-  createGridResizeManager,
-} from '../../core/resize-manager';
+import { ResizeManager, createGridResizeManager } from '../../core/resize-manager';
 
 // ============================================================================
 // TYPES
@@ -81,11 +78,7 @@ export interface SectionClickEvent {
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div
-      #container
-      class="smart-grid-container"
-      [style.minHeight.px]="layout?.totalHeight || 200"
-    >
+    <div #container class="smart-grid-container" [style.minHeight.px]="layout?.totalHeight || 200">
       @for (pos of layout?.sections || []; track pos.id) {
         <div
           class="smart-grid-item"
@@ -97,7 +90,10 @@ export interface SectionClickEvent {
         >
           @if (sectionTemplate) {
             <ng-container
-              *ngTemplateOutlet="sectionTemplate; context: { $implicit: pos.section, position: pos }"
+              *ngTemplateOutlet="
+                sectionTemplate;
+                context: { $implicit: pos.section, position: pos }
+              "
             ></ng-container>
           } @else {
             <div class="default-section">
@@ -108,38 +104,46 @@ export interface SectionClickEvent {
       }
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-      position: relative;
-    }
+  styles: [
+    `
+      :host {
+        display: block;
+        position: relative;
+      }
 
-    .smart-grid-container {
-      position: relative;
-      width: 100%;
-    }
+      .smart-grid-container {
+        position: relative;
+        width: 100%;
+      }
 
-    .smart-grid-item {
-      position: absolute;
-      transition: all 0.3s ease-out;
-    }
+      .smart-grid-item {
+        position: absolute;
+        transition: all 0.3s ease-out;
+      }
 
-    .smart-grid-item.is-new {
-      animation: fadeIn 0.3s ease-out;
-    }
+      .smart-grid-item.is-new {
+        animation: fadeIn 0.3s ease-out;
+      }
 
-    .default-section {
-      padding: 16px;
-      background: var(--osi-section-bg, #f5f5f5);
-      border-radius: 8px;
-      height: 100%;
-    }
+      .default-section {
+        padding: 16px;
+        background: var(--osi-section-bg, #f5f5f5);
+        border-radius: 8px;
+        height: 100%;
+      }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  `],
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    `,
+  ],
 })
 export class SmartGridComponent implements OnInit, OnDestroy, OnChanges {
   private readonly cdr = inject(ChangeDetectorRef);
@@ -200,18 +204,16 @@ export class SmartGridComponent implements OnInit, OnDestroy, OnChanges {
     // Subscribe to width changes
     this.resizeManager.width$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(width => this.recalculateLayout(width));
+      .subscribe((width) => this.recalculateLayout(width));
 
     // Subscribe to layout changes
-    this.engine.layout$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(layout => {
-        this.layout = layout;
-        if (layout) {
-          this.layoutChange.emit(layout);
-        }
-        this.cdr.markForCheck();
-      });
+    this.engine.layout$.pipe(takeUntil(this.destroy$)).subscribe((layout) => {
+      this.layout = layout;
+      if (layout) {
+        this.layoutChange.emit(layout);
+      }
+      this.cdr.markForCheck();
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -219,7 +221,12 @@ export class SmartGridComponent implements OnInit, OnDestroy, OnChanges {
       this.detectNewSections();
     }
 
-    if (changes['maxColumns'] || changes['gap'] || changes['minColumnWidth'] || changes['optimize']) {
+    if (
+      changes['maxColumns'] ||
+      changes['gap'] ||
+      changes['minColumnWidth'] ||
+      changes['optimize']
+    ) {
       this.engine?.configure({
         maxColumns: this.maxColumns,
         gap: this.gap,
@@ -278,7 +285,7 @@ export class SmartGridComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private detectNewSections(): void {
-    const currentIds = new Set(this.sections.map(s => s.id));
+    const currentIds = new Set(this.sections.map((s) => s.id));
 
     this.newSectionIds.clear();
     for (const id of currentIds) {
@@ -305,6 +312,3 @@ export class SmartGridComponent implements OnInit, OnDestroy, OnChanges {
     });
   }
 }
-
-
-

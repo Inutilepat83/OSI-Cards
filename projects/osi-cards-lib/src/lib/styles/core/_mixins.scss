@@ -27,37 +27,37 @@ $osi-use-important: true !default;
 
 /// Apply display property with conditional !important
 @mixin display($value) {
-  @include important-prop('display', $value);
+  @include important-prop("display", $value);
 }
 
 /// Apply width property with conditional !important
 @mixin width($value) {
-  @include important-prop('width', $value);
+  @include important-prop("width", $value);
 }
 
 /// Apply grid-template-columns with conditional !important
 @mixin grid-columns($value) {
-  @include important-prop('grid-template-columns', $value);
+  @include important-prop("grid-template-columns", $value);
 }
 
 /// Apply gap property with conditional !important
 @mixin gap($value) {
-  @include important-prop('gap', $value);
+  @include important-prop("gap", $value);
 }
 
 /// Apply flex-direction with conditional !important
 @mixin flex-direction($value) {
-  @include important-prop('flex-direction', $value);
+  @include important-prop("flex-direction", $value);
 }
 
 /// Apply box-sizing with conditional !important
 @mixin box-sizing($value) {
-  @include important-prop('box-sizing', $value);
+  @include important-prop("box-sizing", $value);
 }
 
 /// Apply min-height with conditional !important
 @mixin min-height($value) {
-  @include important-prop('min-height', $value);
+  @include important-prop("min-height", $value);
 }
 
 /* Glass panel effect for cards and modals */
@@ -78,12 +78,8 @@ $osi-use-important: true !default;
 }
 
 /* Shimmer overlay effect */
-@mixin shimmer-overlay(
-  $border-radius: 20px,
-  $start-opacity: 0.08,
-  $end-opacity: 0
-) {
-  content: '';
+@mixin shimmer-overlay($border-radius: 20px, $start-opacity: 0.08, $end-opacity: 0) {
+  content: "";
   position: absolute;
   inset: 1px;
   border-radius: $border-radius;
@@ -99,7 +95,7 @@ $osi-use-important: true !default;
 /* Standard smooth transition for all properties */
 @mixin smooth-transition($duration: var(--duration-normal)) {
   transition: all $duration var(--ease-out-smooth);
-  
+
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
@@ -108,7 +104,7 @@ $osi-use-important: true !default;
 /* Transform-only transition (best performance) */
 @mixin transition-transform($duration: var(--duration-normal)) {
   transition: transform $duration var(--ease-out-smooth);
-  
+
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
@@ -117,22 +113,26 @@ $osi-use-important: true !default;
 /* Opacity transition */
 @mixin transition-opacity($duration: var(--duration-normal)) {
   transition: opacity $duration var(--ease-out-smooth);
-  
+
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
 }
 
 /* Multiple property transition */
-@mixin transition-properties($properties, $duration: var(--duration-normal), $easing: var(--ease-out-smooth)) {
+@mixin transition-properties(
+  $properties,
+  $duration: var(--duration-normal),
+  $easing: var(--ease-out-smooth)
+) {
   $transition-list: ();
-  
+
   @each $property in $properties {
     $transition-list: append($transition-list, #{$property} $duration $easing, comma);
   }
-  
+
   transition: $transition-list;
-  
+
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
@@ -140,11 +140,12 @@ $osi-use-important: true !default;
 
 /* Card interaction transitions - standard for all cards */
 @mixin card-transition() {
-  transition: transform var(--card-hover-duration) var(--ease-out-smooth), 
-              border-color var(--card-hover-duration) var(--ease-out-smooth), 
-              background var(--card-hover-duration) var(--ease-out-smooth), 
-              box-shadow var(--card-hover-duration) var(--ease-out-smooth);
-  
+  transition:
+    transform var(--card-hover-duration) var(--ease-out-smooth),
+    border-color var(--card-hover-duration) var(--ease-out-smooth),
+    background var(--card-hover-duration) var(--ease-out-smooth),
+    box-shadow var(--card-hover-duration) var(--ease-out-smooth);
+
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
@@ -160,11 +161,11 @@ $osi-use-important: true !default;
 /* Will-change optimization (use sparingly) */
 @mixin will-change-transform() {
   will-change: transform;
-  
+
   &:not(:hover):not(:focus):not(:active) {
     will-change: auto;
   }
-  
+
   @media (prefers-reduced-motion: reduce) {
     will-change: auto;
   }
@@ -173,11 +174,11 @@ $osi-use-important: true !default;
 /* Hover lift effect - DISABLED: Cards should not move vertically */
 @mixin hover-lift($distance: 0px) {
   @include transition-transform();
-  
+
   &:hover {
     /* No vertical movement, only GPU acceleration */
     transform: translateZ(0);
-    
+
     @media (prefers-reduced-motion: reduce) {
       transform: none;
     }
@@ -187,10 +188,10 @@ $osi-use-important: true !default;
 /* Hover scale effect */
 @mixin hover-scale($scale: 1.05) {
   @include transition-transform();
-  
+
   &:hover {
     transform: scale($scale) translateZ(0);
-    
+
     @media (prefers-reduced-motion: reduce) {
       transform: none;
     }
@@ -205,84 +206,84 @@ $osi-use-important: true !default;
 /// Label text - used for field names, categories, tags
 /// @example @include osi-text('label');
 @mixin osi-text-label {
-  @include important-prop('font-size', var(--card-label-font-size, 0.5rem));
-  @include important-prop('font-weight', var(--card-label-font-weight, 700));
-  @include important-prop('letter-spacing', var(--card-label-letter-spacing, 0.065em));
-  @include important-prop('text-transform', var(--card-label-text-transform, uppercase));
-  @include important-prop('color', var(--card-text-label, inherit));
-  @include important-prop('line-height', var(--card-label-line-height, 1.25));
-  @include important-prop('text-align', left);
-  @include important-prop('font-family', inherit);
+  @include important-prop("font-size", var(--card-label-font-size, 0.5rem));
+  @include important-prop("font-weight", var(--card-label-font-weight, 700));
+  @include important-prop("letter-spacing", var(--card-label-letter-spacing, 0.065em));
+  @include important-prop("text-transform", var(--card-label-text-transform, uppercase));
+  @include important-prop("color", var(--card-text-label, inherit));
+  @include important-prop("line-height", var(--card-label-line-height, 1.25));
+  @include important-prop("text-align", left);
+  @include important-prop("font-family", inherit);
 }
 
 /// Value text - used for field values, data points
 @mixin osi-text-value {
-  @include important-prop('font-size', var(--card-value-font-size, 1rem));
-  @include important-prop('font-weight', var(--card-value-font-weight, 600));
-  @include important-prop('color', var(--card-text-primary, inherit));
-  @include important-prop('letter-spacing', var(--card-value-letter-spacing, -0.015em));
-  @include important-prop('line-height', var(--card-value-line-height, 1.35));
-  @include important-prop('text-align', left);
-  @include important-prop('font-family', inherit);
+  @include important-prop("font-size", var(--card-value-font-size, 1rem));
+  @include important-prop("font-weight", var(--card-value-font-weight, 600));
+  @include important-prop("color", var(--card-text-primary, inherit));
+  @include important-prop("letter-spacing", var(--card-value-letter-spacing, -0.015em));
+  @include important-prop("line-height", var(--card-value-line-height, 1.35));
+  @include important-prop("text-align", left);
+  @include important-prop("font-family", inherit);
 }
 
 /// Large value text - for emphasized stats, metrics
 @mixin osi-text-value-lg {
-  @include important-prop('font-size', var(--card-value-font-size-large, 1.2rem));
-  @include important-prop('font-weight', var(--card-value-font-weight, 600));
-  @include important-prop('color', var(--card-text-primary, inherit));
-  @include important-prop('letter-spacing', var(--card-value-letter-spacing, -0.015em));
-  @include important-prop('line-height', var(--card-value-line-height, 1.35));
-  @include important-prop('text-align', left);
-  @include important-prop('font-family', inherit);
+  @include important-prop("font-size", var(--card-value-font-size-large, 1.2rem));
+  @include important-prop("font-weight", var(--card-value-font-weight, 600));
+  @include important-prop("color", var(--card-text-primary, inherit));
+  @include important-prop("letter-spacing", var(--card-value-letter-spacing, -0.015em));
+  @include important-prop("line-height", var(--card-value-line-height, 1.35));
+  @include important-prop("text-align", left);
+  @include important-prop("font-family", inherit);
 }
 
 /// Title text - used for card titles, headings within cards
 @mixin osi-text-title {
-  @include important-prop('font-size', var(--card-title-font-size, 0.95rem));
-  @include important-prop('font-weight', var(--card-title-font-weight, 700));
-  @include important-prop('color', var(--card-text-primary, inherit));
-  @include important-prop('letter-spacing', var(--card-title-letter-spacing, -0.01em));
-  @include important-prop('line-height', var(--card-title-line-height, 1.4));
-  @include important-prop('text-align', left);
-  @include important-prop('font-family', inherit);
+  @include important-prop("font-size", var(--card-title-font-size, 0.95rem));
+  @include important-prop("font-weight", var(--card-title-font-weight, 700));
+  @include important-prop("color", var(--card-text-primary, inherit));
+  @include important-prop("letter-spacing", var(--card-title-letter-spacing, -0.01em));
+  @include important-prop("line-height", var(--card-title-line-height, 1.4));
+  @include important-prop("text-align", left);
+  @include important-prop("font-family", inherit);
 }
 
 /// Subtitle text - used for secondary headings, roles
 @mixin osi-text-subtitle {
-  @include important-prop('font-size', var(--card-subtitle-font-size, 0.7rem));
-  @include important-prop('font-weight', var(--card-subtitle-font-weight, 500));
-  @include important-prop('color', var(--card-text-secondary, inherit));
-  @include important-prop('letter-spacing', var(--card-subtitle-letter-spacing, 0.015em));
-  @include important-prop('line-height', var(--card-subtitle-line-height, 1.3));
-  @include important-prop('text-align', left);
-  @include important-prop('font-family', inherit);
+  @include important-prop("font-size", var(--card-subtitle-font-size, 0.7rem));
+  @include important-prop("font-weight", var(--card-subtitle-font-weight, 500));
+  @include important-prop("color", var(--card-text-secondary, inherit));
+  @include important-prop("letter-spacing", var(--card-subtitle-letter-spacing, 0.015em));
+  @include important-prop("line-height", var(--card-subtitle-line-height, 1.3));
+  @include important-prop("text-align", left);
+  @include important-prop("font-family", inherit);
 }
 
 /// Meta text - used for timestamps, small descriptions
 @mixin osi-text-meta {
-  @include important-prop('font-size', var(--card-meta-font-size, 0.6rem));
-  @include important-prop('font-weight', var(--card-meta-font-weight, 500));
-  @include important-prop('color', var(--card-text-muted, inherit));
-  @include important-prop('line-height', var(--card-meta-line-height, 1.3));
-  @include important-prop('text-align', left);
-  @include important-prop('font-family', inherit);
+  @include important-prop("font-size", var(--card-meta-font-size, 0.6rem));
+  @include important-prop("font-weight", var(--card-meta-font-weight, 500));
+  @include important-prop("color", var(--card-text-muted, inherit));
+  @include important-prop("line-height", var(--card-meta-line-height, 1.3));
+  @include important-prop("text-align", left);
+  @include important-prop("font-family", inherit);
 }
 
 /// Unified text mixin with variant selector
 /// @param {String} $variant - label, value, value-lg, title, subtitle, meta
 @mixin osi-text($variant) {
-  @if $variant == 'label' {
+  @if $variant == "label" {
     @include osi-text-label;
-  } @else if $variant == 'value' {
+  } @else if $variant == "value" {
     @include osi-text-value;
-  } @else if $variant == 'value-lg' {
+  } @else if $variant == "value-lg" {
     @include osi-text-value-lg;
-  } @else if $variant == 'title' {
+  } @else if $variant == "title" {
     @include osi-text-title;
-  } @else if $variant == 'subtitle' {
+  } @else if $variant == "subtitle" {
     @include osi-text-subtitle;
-  } @else if $variant == 'meta' {
+  } @else if $variant == "meta" {
     @include osi-text-meta;
   }
 }
@@ -295,14 +296,17 @@ $osi-use-important: true !default;
 /// Responsive auto-fit grid
 /// @param {Length} $min-width - Minimum column width
 /// @param {Length} $gap - Gap between items
-@mixin osi-grid($min-width: var(--section-grid-min-width, 200px), $gap: var(--section-card-gap, 12px)) {
+@mixin osi-grid(
+  $min-width: var(--section-grid-min-width, 200px),
+  $gap: var(--section-card-gap, 12px)
+) {
   @include display(grid);
   @include grid-columns(repeat(auto-fit, minmax($min-width, 1fr)));
   @include gap($gap);
   @include width(100%);
   @include min-height(0);
   @include box-sizing(border-box);
-  
+
   @media (max-width: 420px) {
     @include grid-columns(1fr);
   }
@@ -339,7 +343,12 @@ $osi-use-important: true !default;
 /// @param {Time} $base-delay - Base delay between items (default: 0.08s)
 /// @param {String} $selector - Child selector (default: '&')
 /// @param {String} $property - CSS property to delay (default: animation-delay)
-@mixin stagger-animation($count: 10, $base-delay: 0.08s, $selector: '&', $property: animation-delay) {
+@mixin stagger-animation(
+  $count: 10,
+  $base-delay: 0.08s,
+  $selector: "&",
+  $property: animation-delay
+) {
   @for $i from 1 through $count {
     #{$selector}:nth-child(#{$i}) {
       #{$property}: #{$i * $base-delay};
@@ -351,7 +360,7 @@ $osi-use-important: true !default;
 /// @param {Number} $count - Number of children to stagger
 /// @param {Time} $base-delay - Base delay between items (default: 0.05s)
 /// @param {String} $selector - Child selector (default: '&')
-@mixin stagger-transition($count: 10, $base-delay: 0.05s, $selector: '&') {
+@mixin stagger-transition($count: 10, $base-delay: 0.05s, $selector: "&") {
   @include stagger-animation($count, $base-delay, $selector, transition-delay);
 }
 
@@ -361,13 +370,13 @@ $osi-use-important: true !default;
 /// @param {Time} $duration - Animation duration (default: 0.6s)
 @mixin stagger-entrance($count: 10, $base-delay: 0.08s, $duration: 0.6s) {
   animation: fadeInUp $duration ease-out backwards;
-  
+
   @for $i from 1 through $count {
     &:nth-child(#{$i}) {
       animation-delay: #{$i * $base-delay};
     }
   }
-  
+
   @media (prefers-reduced-motion: reduce) {
     animation: none;
   }
@@ -384,7 +393,7 @@ $osi-use-important: true !default;
 @mixin brand-gradient-bg($opacity: 0.1, $position: center) {
   background: radial-gradient(
     circle at $position,
-    color-mix(in srgb, var(--color-brand, #FF7900) #{$opacity * 100}%, transparent) 0%,
+    color-mix(in srgb, var(--color-brand, #ff7900) #{$opacity * 100}%, transparent) 0%,
     transparent 70%
   );
 }
@@ -396,8 +405,8 @@ $osi-use-important: true !default;
 @mixin brand-gradient-linear($angle: 135deg, $start-opacity: 0.15, $end-opacity: 0.05) {
   background: linear-gradient(
     $angle,
-    color-mix(in srgb, var(--color-brand, #FF7900) #{$start-opacity * 100}%, transparent) 0%,
-    color-mix(in srgb, var(--color-brand, #FF7900) #{$end-opacity * 100}%, transparent) 100%
+    color-mix(in srgb, var(--color-brand, #ff7900) #{$start-opacity * 100}%, transparent) 0%,
+    color-mix(in srgb, var(--color-brand, #ff7900) #{$end-opacity * 100}%, transparent) 100%
   );
 }
 
@@ -407,14 +416,14 @@ $osi-use-important: true !default;
   background: linear-gradient(
     90deg,
     var(--foreground, #ffffff) 0%,
-    var(--color-brand, #FF7900) 50%,
+    var(--color-brand, #ff7900) 50%,
     var(--foreground, #ffffff) 100%
   );
   background-size: 200% 100%;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  
+
   @media (prefers-reduced-motion: reduce) {
     background: none;
     -webkit-text-fill-color: currentColor;
@@ -426,7 +435,7 @@ $osi-use-important: true !default;
 @mixin brand-gradient-text-animated($duration: 2s) {
   @include brand-gradient-text();
   animation: textShimmer $duration ease-in-out infinite;
-  
+
   @media (prefers-reduced-motion: reduce) {
     animation: none;
     background: none;
@@ -438,7 +447,7 @@ $osi-use-important: true !default;
 /// @param {Color} $color - Glow color (default: brand color)
 /// @param {Length} $blur - Blur radius (default: 20px)
 /// @param {Number} $opacity - Opacity (default: 0.4)
-@mixin glow-effect($color: var(--color-brand, #FF7900), $blur: 20px, $opacity: 0.4) {
+@mixin glow-effect($color: var(--color-brand, #ff7900), $blur: 20px, $opacity: 0.4) {
   box-shadow: 0 0 $blur color-mix(in srgb, $color #{$opacity * 100}%, transparent);
 }
 
@@ -446,13 +455,13 @@ $osi-use-important: true !default;
 /// @param {Color} $color - Glow color (default: brand color)
 /// @param {Length} $blur - Blur radius (default: 25px)
 /// @param {Number} $opacity - Opacity (default: 0.5)
-@mixin glow-effect-hover($color: var(--color-brand, #FF7900), $blur: 25px, $opacity: 0.5) {
+@mixin glow-effect-hover($color: var(--color-brand, #ff7900), $blur: 25px, $opacity: 0.5) {
   transition: box-shadow var(--duration-normal, 200ms) var(--ease-out-smooth, ease-out);
-  
+
   &:hover {
     @include glow-effect($color, $blur, $opacity);
   }
-  
+
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }

@@ -17,6 +17,12 @@ export * from './section-utils.service';
 export * from './streaming.service';
 
 // ============================================================================
+// LAYOUT SERVICES (Architectural Improvement - Dec 2025)
+// ============================================================================
+export * from './layout-calculation.service';
+export * from './layout-state-manager.service';
+
+// ============================================================================
 // CONSOLIDATED SERVICES (Phase 3 Consolidation)
 // ============================================================================
 
@@ -70,9 +76,11 @@ export {
 // ============================================================================
 // ADDITIONAL SERVICES
 // ============================================================================
-export * from './error-tracking.service';
+export { ErrorSeverity, ErrorTrackingService, TrackedError } from './error-tracking.service';
+export { LogEntry, LogLevel, LoggerService, createLogger } from './logger.service';
 export * from './offline-storage.service';
 export * from './performance-metrics.service';
+export { Toast, ToastService } from './toast.service';
 export * from './touch-gestures.service';
 
 // ============================================================================

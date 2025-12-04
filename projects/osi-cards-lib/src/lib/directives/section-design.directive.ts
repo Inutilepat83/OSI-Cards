@@ -14,10 +14,7 @@
  */
 
 import { Directive, ElementRef, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
-import {
-  SectionDesignParams,
-  getSectionDesignParams
-} from '../models/section-design-params.model';
+import { SectionDesignParams, getSectionDesignParams } from '../models/section-design-params.model';
 
 /**
  * Mapping of design parameter keys to CSS custom property names
@@ -114,8 +111,7 @@ export class SectionDesignDirective implements OnChanges {
     this.clearAppliedVars();
 
     // Get design parameters from meta or direct input
-    const designParams = this.sectionDesignParams ||
-                        getSectionDesignParams(this.libSectionDesign);
+    const designParams = this.sectionDesignParams || getSectionDesignParams(this.libSectionDesign);
 
     if (!designParams) {
       return;
@@ -159,7 +155,7 @@ export class SectionDesignDirective implements OnChanges {
    */
   private clearAppliedVars(): void {
     const element = this.elementRef.nativeElement;
-    this.appliedVars.forEach(varName => {
+    this.appliedVars.forEach((varName) => {
       element.style.removeProperty(varName);
     });
     this.appliedVars.clear();
@@ -194,4 +190,3 @@ export class SectionDesignDirective implements OnChanges {
     return String(value);
   }
 }
-

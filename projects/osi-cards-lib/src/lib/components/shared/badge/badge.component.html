@@ -3,8 +3,8 @@
   [ngClass]="classes"
   [attr.role]="interactive ? 'button' : 'status'"
   [attr.tabindex]="interactive ? 0 : null"
-  [attr.aria-label]="ariaLabel">
-
+  [attr.aria-label]="ariaLabel"
+>
   <!-- Optional dot indicator -->
   <span class="badge-dot" *ngIf="dot" aria-hidden="true"></span>
 
@@ -16,4 +16,3 @@
     <ng-content></ng-content>
   </span>
 </span>
-

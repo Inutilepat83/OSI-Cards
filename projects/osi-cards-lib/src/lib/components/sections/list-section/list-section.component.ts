@@ -14,10 +14,9 @@ import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../
   standalone: true,
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent, BadgeComponent],
   templateUrl: './list-section.component.html',
-  styleUrl: './list-section.scss'
+  styleUrl: './list-section.scss',
 })
 export class ListSectionComponent extends BaseSectionComponent {
-
   /**
    * Get status class (deprecated - kept for backward compatibility)
    */

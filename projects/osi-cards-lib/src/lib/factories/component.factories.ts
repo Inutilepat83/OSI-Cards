@@ -11,7 +11,13 @@
  * ```
  */
 
-import { ComponentRef, EnvironmentInjector, Type, ViewContainerRef, createComponent } from '@angular/core';
+import {
+  ComponentRef,
+  EnvironmentInjector,
+  Type,
+  ViewContainerRef,
+  createComponent,
+} from '@angular/core';
 
 /**
  * Create dynamic component
@@ -22,7 +28,7 @@ export function createDynamicComponent<T>(
   environmentInjector: EnvironmentInjector
 ): ComponentRef<T> {
   return container.createComponent(component, {
-    environmentInjector
+    environmentInjector,
   });
 }
 
@@ -54,7 +60,7 @@ export function createComponentAtIndex<T>(
 ): ComponentRef<T> {
   return container.createComponent(component, {
     index,
-    environmentInjector
+    environmentInjector,
   });
 }
 
@@ -102,7 +108,7 @@ export class ComponentPool<T> {
   }
 
   clear(): void {
-    this.pool.forEach(ref => ref.destroy());
+    this.pool.forEach((ref) => ref.destroy());
     this.pool = [];
   }
 
@@ -110,4 +116,3 @@ export class ComponentPool<T> {
     return this.pool.length;
   }
 }
-

@@ -112,12 +112,12 @@ export class CardStateEngine {
     this.config = { ...DEFAULT_CONFIG, ...config };
 
     this.cards$ = this.cardsSubject.pipe(
-      map(m => Array.from(m.values())),
+      map((m) => Array.from(m.values())),
       distinctUntilChanged((a, b) => a.length === b.length && a.every((c, i) => c.id === b[i]?.id))
     );
 
     this.count$ = this.cardsSubject.pipe(
-      map(m => m.size),
+      map((m) => m.size),
       distinctUntilChanged()
     );
 
@@ -159,7 +159,7 @@ export class CardStateEngine {
   /** Select card observable */
   selectCard(id: string): Observable<CardData | undefined> {
     return this.cardsSubject.pipe(
-      map(m => m.get(id)),
+      map((m) => m.get(id)),
       distinctUntilChanged()
     );
   }
@@ -167,7 +167,7 @@ export class CardStateEngine {
   /** Select cards by type */
   selectByType(type: string): Observable<CardData[]> {
     return this.cards$.pipe(
-      map(cards => cards.filter(c => c.sections.some(s => s.type === type)))
+      map((cards) => cards.filter((c) => c.sections.some((s) => s.type === type)))
     );
   }
 
@@ -227,7 +227,7 @@ export class CardStateEngine {
     const card = this.cardsSubject.value.get(cardId);
     if (!card) return false;
 
-    const sectionIndex = card.sections.findIndex(s => s.id === sectionId);
+    const sectionIndex = card.sections.findIndex((s) => s.id === sectionId);
     if (sectionIndex === -1) return false;
 
     const newSections = [...card.sections];
@@ -436,6 +436,3 @@ export function createPersistentCardStateEngine(
 
   return engine;
 }
-
-
-

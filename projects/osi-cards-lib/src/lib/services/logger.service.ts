@@ -41,7 +41,7 @@ const LOG_LEVELS: Record<LogLevel, number> = {
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LoggerService {
   private config = signal<LoggerConfig>({
@@ -57,7 +57,7 @@ export class LoggerService {
    * Configure logger
    */
   configure(config: Partial<LoggerConfig>): void {
-    this.config.update(current => ({ ...current, ...config }));
+    this.config.update((current) => ({ ...current, ...config }));
   }
 
   /**
@@ -156,7 +156,7 @@ export class LoggerService {
    * Store logs in memory
    */
   private storeLogs(entry: LogEntry): void {
-    this.logs.update(logs => {
+    this.logs.update((logs) => {
       const newLogs = [...logs, entry];
       const maxLogs = this.config().maxStoredLogs || 1000;
 
@@ -179,7 +179,7 @@ export class LoggerService {
       return logs;
     }
 
-    return logs.filter(log => {
+    return logs.filter((log) => {
       if (filter.level && log.level !== filter.level) {
         return false;
       }
@@ -223,7 +223,7 @@ export class LoggerService {
    */
   getLogCount(level?: LogLevel): number {
     if (level) {
-      return this.logs().filter(log => log.level === level).length;
+      return this.logs().filter((log) => log.level === level).length;
     }
     return this.logs().length;
   }
@@ -235,7 +235,7 @@ export class LoggerService {
     const grouped = new Map<string, LogEntry[]>();
     const logs = this.logs();
 
-    logs.forEach(log => {
+    logs.forEach((log) => {
       const key = this.getPeriodKey(log.timestamp, period);
       const existing = grouped.get(key) || [];
       grouped.set(key, [...existing, log]);
@@ -261,7 +261,7 @@ export class LoggerService {
       case 'week':
         const weekStart = new Date(date);
         weekStart.setDate(date.getDate() - date.getDay());
-        return weekStart.toISOString().split('T')[0];
+        return weekStart.toISOString().split('T')[0]!;
     }
   }
 }
@@ -281,4 +281,3 @@ export function createLogger(service: LoggerService, defaultContext: Record<stri
       service.error(message, { ...defaultContext, ...context }, error),
   };
 }
-

@@ -114,17 +114,26 @@ export const DEFAULT_ERROR_BOUNDARY_CONFIG: ErrorBoundaryConfig = {
             {{ errorInfo?.message || 'An unexpected error occurred' }}
           </p>
 
-          <p class="section-error-boundary__type" *ngIf="errorInfo?.sectionType && config.showDetails">
+          <p
+            class="section-error-boundary__type"
+            *ngIf="errorInfo?.sectionType && config.showDetails"
+          >
             Section type: {{ errorInfo?.sectionType }}
           </p>
 
-          <details *ngIf="config.showDetails && errorInfo?.originalError" class="section-error-boundary__details">
+          <details
+            *ngIf="config.showDetails && errorInfo?.originalError"
+            class="section-error-boundary__details"
+          >
             <summary>Technical details</summary>
             <pre>{{ errorInfo?.originalError?.stack || errorInfo?.originalError?.message }}</pre>
           </details>
         </div>
 
-        <div class="section-error-boundary__actions" *ngIf="config.allowRetry && !isRetrying && canRetry">
+        <div
+          class="section-error-boundary__actions"
+          *ngIf="config.allowRetry && !isRetrying && canRetry"
+        >
           <button
             type="button"
             class="section-error-boundary__retry-btn"
@@ -142,118 +151,124 @@ export const DEFAULT_ERROR_BOUNDARY_CONFIG: ErrorBoundaryConfig = {
       </div>
     </ng-template>
   `,
-  styles: [`
-    .section-error-boundary {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-      background: var(--osi-surface-error, #fef2f2);
-      border: 1px solid var(--osi-border-error, #fecaca);
-      border-radius: var(--osi-radius-md, 8px);
-      text-align: center;
-      min-height: 120px;
-    }
+  styles: [
+    `
+      .section-error-boundary {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        background: var(--osi-surface-error, #fef2f2);
+        border: 1px solid var(--osi-border-error, #fecaca);
+        border-radius: var(--osi-radius-md, 8px);
+        text-align: center;
+        min-height: 120px;
+      }
 
-    .section-error-boundary--retrying {
-      opacity: 0.7;
-    }
+      .section-error-boundary--retrying {
+        opacity: 0.7;
+      }
 
-    .section-error-boundary__icon {
-      color: var(--osi-text-error, #dc2626);
-      margin-bottom: 0.75rem;
-    }
+      .section-error-boundary__icon {
+        color: var(--osi-text-error, #dc2626);
+        margin-bottom: 0.75rem;
+      }
 
-    .section-error-boundary__icon .animate-spin {
-      animation: spin 1s linear infinite;
-    }
+      .section-error-boundary__icon .animate-spin {
+        animation: spin 1s linear infinite;
+      }
 
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
 
-    .section-error-boundary__content {
-      max-width: 300px;
-    }
+      .section-error-boundary__content {
+        max-width: 300px;
+      }
 
-    .section-error-boundary__title {
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--osi-text-error, #dc2626);
-      margin: 0 0 0.5rem 0;
-    }
+      .section-error-boundary__title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--osi-text-error, #dc2626);
+        margin: 0 0 0.5rem 0;
+      }
 
-    .section-error-boundary__message {
-      font-size: 0.75rem;
-      color: var(--osi-text-muted, #6b7280);
-      margin: 0;
-    }
+      .section-error-boundary__message {
+        font-size: 0.75rem;
+        color: var(--osi-text-muted, #6b7280);
+        margin: 0;
+      }
 
-    .section-error-boundary__type {
-      font-size: 0.625rem;
-      color: var(--osi-text-muted, #9ca3af);
-      margin: 0.5rem 0 0 0;
-      font-family: monospace;
-    }
+      .section-error-boundary__type {
+        font-size: 0.625rem;
+        color: var(--osi-text-muted, #9ca3af);
+        margin: 0.5rem 0 0 0;
+        font-family: monospace;
+      }
 
-    .section-error-boundary__details {
-      margin-top: 0.75rem;
-      text-align: left;
-      font-size: 0.625rem;
-    }
+      .section-error-boundary__details {
+        margin-top: 0.75rem;
+        text-align: left;
+        font-size: 0.625rem;
+      }
 
-    .section-error-boundary__details summary {
-      cursor: pointer;
-      color: var(--osi-text-muted, #6b7280);
-    }
+      .section-error-boundary__details summary {
+        cursor: pointer;
+        color: var(--osi-text-muted, #6b7280);
+      }
 
-    .section-error-boundary__details pre {
-      margin: 0.5rem 0 0 0;
-      padding: 0.5rem;
-      background: var(--osi-surface-secondary, #f3f4f6);
-      border-radius: 4px;
-      overflow-x: auto;
-      font-size: 0.625rem;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
+      .section-error-boundary__details pre {
+        margin: 0.5rem 0 0 0;
+        padding: 0.5rem;
+        background: var(--osi-surface-secondary, #f3f4f6);
+        border-radius: 4px;
+        overflow-x: auto;
+        font-size: 0.625rem;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
 
-    .section-error-boundary__actions {
-      margin-top: 1rem;
-    }
+      .section-error-boundary__actions {
+        margin-top: 1rem;
+      }
 
-    .section-error-boundary__retry-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      padding: 0.375rem 0.75rem;
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: var(--osi-text-primary, #374151);
-      background: var(--osi-surface-primary, #ffffff);
-      border: 1px solid var(--osi-border-primary, #d1d5db);
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
+      .section-error-boundary__retry-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.375rem 0.75rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--osi-text-primary, #374151);
+        background: var(--osi-surface-primary, #ffffff);
+        border: 1px solid var(--osi-border-primary, #d1d5db);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
 
-    .section-error-boundary__retry-btn:hover:not(:disabled) {
-      background: var(--osi-surface-hover, #f3f4f6);
-    }
+      .section-error-boundary__retry-btn:hover:not(:disabled) {
+        background: var(--osi-surface-hover, #f3f4f6);
+      }
 
-    .section-error-boundary__retry-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+      .section-error-boundary__retry-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
 
-    .section-error-boundary__retry-exhausted {
-      font-size: 0.625rem;
-      color: var(--osi-text-muted, #9ca3af);
-      margin: 0.75rem 0 0 0;
-    }
-  `],
+      .section-error-boundary__retry-exhausted {
+        font-size: 0.625rem;
+        color: var(--osi-text-muted, #9ca3af);
+        margin: 0.75rem 0 0 0;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.Emulated,
 })
@@ -358,10 +373,7 @@ export class SectionErrorBoundaryComponent implements OnInit, OnDestroy {
     this.retryCount++;
 
     timer(this.config.retryDelayMs)
-      .pipe(
-        take(1),
-        takeUntil(this.destroy$)
-      )
+      .pipe(take(1), takeUntil(this.destroy$))
       .subscribe(() => {
         this.isRetrying = false;
         this.hasError = false;
@@ -380,4 +392,3 @@ export class SectionErrorBoundaryComponent implements OnInit, OnDestroy {
     return error.message || 'Unknown error';
   }
 }
-

@@ -3,10 +3,18 @@ import { Injectable } from '@angular/core';
 /**
  * Status values that can be used in sections
  */
-export type StatusValue = 
-  | 'active' | 'completed' | 'success'
-  | 'pending' | 'warning' | 'in-progress'
-  | 'inactive' | 'error' | 'cancelled' | 'blocked' | 'delayed'
+export type StatusValue =
+  | 'active'
+  | 'completed'
+  | 'success'
+  | 'pending'
+  | 'warning'
+  | 'in-progress'
+  | 'inactive'
+  | 'error'
+  | 'cancelled'
+  | 'blocked'
+  | 'delayed'
   | string;
 
 /**
@@ -24,7 +32,7 @@ export type TrendValue = 'up' | 'down' | 'stable' | 'neutral';
  * Provides consistent status, trend, and icon handling across all sections
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SectionUtilsService {
   /**
@@ -33,7 +41,7 @@ export class SectionUtilsService {
    */
   getStatusClasses(status?: StatusValue): string {
     const normalizedStatus = (status ?? '').toLowerCase().trim();
-    
+
     switch (normalizedStatus) {
       case 'completed':
       case 'success':
@@ -60,7 +68,7 @@ export class SectionUtilsService {
    */
   getPriorityClasses(priority?: PriorityValue): string {
     const normalizedPriority = (priority ?? '').toLowerCase().trim();
-    
+
     switch (normalizedPriority) {
       case 'high':
         return 'priority--high';
@@ -78,7 +86,7 @@ export class SectionUtilsService {
    */
   getTrendIcon(trend?: TrendValue | string): string {
     const normalizedTrend = (trend ?? '').toLowerCase().trim();
-    
+
     switch (normalizedTrend) {
       case 'up':
         return 'trending-up';
@@ -104,7 +112,7 @@ export class SectionUtilsService {
     }
 
     const normalizedTrend = (trend ?? '').toLowerCase().trim();
-    
+
     switch (normalizedTrend) {
       case 'up':
         return 'trend--up';
@@ -139,27 +147,3 @@ export class SectionUtilsService {
     return `${change > 0 ? '+' : ''}${change}%`;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

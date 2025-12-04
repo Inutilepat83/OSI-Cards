@@ -1,24 +1,18 @@
 <div class="product">
-  <lib-section-header
-    *ngIf="section.title"
-    [title]="section.title"
-    [description]="section.description">
+  <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
   <div class="list" *ngIf="section.fields?.length">
     <div class="item" *ngFor="let f of section.fields">
       <span class="icon" *ngIf="f.icon">{{ f.icon }}</span>
       <span class="label">{{ f.label }}</span>
-      <lib-badge *ngIf="f.status" class="status" [variant]="getStatusVariant(f.status)" size="sm">{{ f.status }}</lib-badge>
+      <lib-badge *ngIf="f.status" class="status" [variant]="getStatusVariant(f.status)" size="sm">{{
+        f.status
+      }}</lib-badge>
       <div class="value">{{ f.value }}</div>
       <div class="price" *ngIf="f.price">{{ f.price }}</div>
     </div>
   </div>
 
-  <lib-empty-state
-    *ngIf="!section.fields?.length"
-    message="No products"
-    icon="📦"
-    variant="compact">
-  </lib-empty-state>
+  <lib-empty-state *ngIf="!section.fields?.length" message="No products" icon="📦" variant="compact"> </lib-empty-state>
 </div>

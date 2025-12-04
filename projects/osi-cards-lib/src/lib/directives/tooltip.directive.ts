@@ -1,19 +1,19 @@
 /**
  * Tooltip Directive
- * 
+ *
  * Provides configurable tooltips for any element.
  * Supports multiple positions, delays, and custom styling.
- * 
+ *
  * @example
  * ```html
  * <!-- Simple tooltip -->
  * <button appTooltip="Click to save">Save</button>
- * 
+ *
  * <!-- Positioned tooltip -->
  * <span [appTooltip]="helpText" tooltipPosition="bottom">
  *   Help
  * </span>
- * 
+ *
  * <!-- Delayed tooltip -->
  * <icon appTooltip="Settings" [tooltipDelay]="500" tooltipPosition="left">
  *   ⚙️
@@ -92,7 +92,7 @@ export class TooltipDirective implements OnDestroy {
   @HostListener('mouseenter')
   public onMouseEnter(): void {
     if (this.tooltipDisabled || !this.text) return;
-    
+
     this.clearTimeouts();
     this.showTimeout = setTimeout(() => {
       this.show();
@@ -108,7 +108,7 @@ export class TooltipDirective implements OnDestroy {
   @HostListener('focusin')
   public onFocus(): void {
     if (this.tooltipDisabled || !this.text) return;
-    
+
     this.clearTimeouts();
     this.show();
   }
@@ -129,7 +129,7 @@ export class TooltipDirective implements OnDestroy {
    */
   private show(): void {
     if (this.isVisible) return;
-    
+
     this.create();
     this.position();
     this.isVisible = true;
@@ -147,10 +147,10 @@ export class TooltipDirective implements OnDestroy {
    */
   private hide(): void {
     if (!this.isVisible) return;
-    
+
     if (this.tooltipElement) {
       this.renderer.addClass(this.tooltipElement, 'tooltip-hiding');
-      
+
       // Wait for animation then remove
       setTimeout(() => {
         this.remove();
@@ -169,7 +169,7 @@ export class TooltipDirective implements OnDestroy {
     this.tooltipElement = this.renderer.createElement('div');
     this.renderer.addClass(this.tooltipElement, 'osi-tooltip');
     this.renderer.addClass(this.tooltipElement, `tooltip-${this.tooltipPosition}`);
-    
+
     if (this.tooltipClass) {
       this.renderer.addClass(this.tooltipElement, this.tooltipClass);
     }
@@ -207,19 +207,19 @@ export class TooltipDirective implements OnDestroy {
 
     // Base styles
     const styles: Record<string, string> = {
-      'position': 'fixed',
+      position: 'fixed',
       'z-index': '10000',
-      'padding': '6px 10px',
+      padding: '6px 10px',
       'border-radius': '4px',
       'font-size': '12px',
       'line-height': '1.4',
       'max-width': `${this.tooltipMaxWidth}px`,
       'word-wrap': 'break-word',
       'pointer-events': 'none',
-      'opacity': '0',
-      'transition': 'opacity 0.15s ease-out, transform 0.15s ease-out',
+      opacity: '0',
+      transition: 'opacity 0.15s ease-out, transform 0.15s ease-out',
       'background-color': 'var(--osi-tooltip-bg, #1f2937)',
-      'color': 'var(--osi-tooltip-color, #ffffff)',
+      color: 'var(--osi-tooltip-color, #ffffff)',
       'box-shadow': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
     };
 
@@ -281,7 +281,7 @@ export class TooltipDirective implements OnDestroy {
         margin-top: -4px;
       }
     `;
-    
+
     // Only add once
     if (!document.querySelector('#osi-tooltip-styles')) {
       styleSheet.id = 'osi-tooltip-styles';
@@ -366,12 +366,3 @@ export class TooltipDirective implements OnDestroy {
     }
   }
 }
-
-
-
-
-
-
-
-
-

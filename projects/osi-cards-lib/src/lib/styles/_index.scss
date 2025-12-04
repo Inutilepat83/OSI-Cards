@@ -11,18 +11,15 @@
  */
 
 // Design tokens (CSS custom properties)
-@forward 'osi-cards-tokens';
+@forward "osi-cards-tokens";
 
 // SCSS mixins and utilities
-@forward 'osi-cards-mixins';
+@forward "osi-cards-mixins";
 
 // Component styles
-@forward 'components/card' as card-*;
-@forward 'components/section' as section-*;
+@forward "components/card" as card-*;
+@forward "components/section" as section-*;
 
 // Optional: Theme utilities
-@forward 'themes/light' as light-*;
-@forward 'themes/dark' as dark-*;
-
-
-
+@forward "themes/light" as light-*;
+@forward "themes/dark" as dark-*;

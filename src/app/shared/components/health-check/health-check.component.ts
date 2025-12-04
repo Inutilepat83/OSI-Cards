@@ -1,8 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { HealthCheckService, HealthStatus } from '../../../core/services/health-check.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DestroyRef } from '@angular/core';
 
 /**
  * Health Check Component
@@ -46,11 +51,9 @@ import { DestroyRef } from '@angular/core';
         <h3>Metrics</h3>
         <dl>
           <dt>Uptime:</dt>
-          <dd>{{ formatUptime(healthStatus?.metrics?.uptime || 0) }}</dd>
-          <dt *ngIf="healthStatus?.metrics?.memoryUsage">Memory Usage:</dt>
-          <dd *ngIf="healthStatus?.metrics?.memoryUsage">
-            {{ (healthStatus?.metrics?.memoryUsage || 0) * 100 | number: '1.0-2' }}%
-          </dd>
+          <dd>{{ formatUptime(healthStatus?.uptime || 0) }}</dd>
+          <dt>Version:</dt>
+          <dd>{{ healthStatus?.version || 'Unknown' }}</dd>
         </dl>
       </div>
     </div>
@@ -137,32 +140,11 @@ export class HealthCheckComponent implements OnInit, OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
 
   healthStatus: HealthStatus | null = null;
-  serviceEntries: { key: string; value: HealthStatus['services'][string] }[] = [];
+  serviceEntries: { key: string; value: any }[] = [];
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     // Initial health check
-    this.healthCheckService
-      .checkHealth()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((status) => {
-        this.healthStatus = status;
-        this.serviceEntries = Object.entries(status.services).map(([key, value]) => ({
-          key,
-          value,
-        }));
-      });
-
-    // Periodic health checks
-    this.healthCheckService
-      .startPeriodicHealthChecks()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((status) => {
-        this.healthStatus = status;
-        this.serviceEntries = Object.entries(status.services).map(([key, value]) => ({
-          key,
-          value,
-        }));
-      });
+    this.healthStatus = await this.healthCheckService.check();
   }
 
   ngOnDestroy(): void {

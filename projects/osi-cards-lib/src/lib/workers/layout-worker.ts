@@ -1,9 +1,9 @@
 /**
  * Layout Worker
- * 
+ *
  * Web Worker for offloading heavy layout calculations from the main thread.
  * Handles bin-packing, gap analysis, and position calculations.
- * 
+ *
  * Message Types:
  * - PACK_SECTIONS: Run bin-packing algorithm on sections
  * - CALCULATE_POSITIONS: Calculate positions for sections
@@ -21,7 +21,7 @@ declare const self: {
 // MESSAGE TYPES
 // ============================================================================
 
-export type LayoutWorkerMessageType = 
+export type LayoutWorkerMessageType =
   | 'PACK_SECTIONS'
   | 'CALCULATE_POSITIONS'
   | 'ANALYZE_GAPS'
@@ -60,7 +60,11 @@ export interface LayoutWorkerMessage {
 /**
  * Result types for different worker operations
  */
-export type LayoutWorkerResult = PackResult | GapAnalysis | PositionedSection[] | Array<{ key: string; height: number }>;
+export type LayoutWorkerResult =
+  | PackResult
+  | GapAnalysis
+  | PositionedSection[]
+  | Array<{ key: string; height: number }>;
 
 export interface LayoutWorkerResponse {
   type: LayoutWorkerMessageType;
@@ -105,14 +109,14 @@ interface PositionedSection {
  */
 function estimateHeight(section: WorkerSection): number {
   const baseHeights: Record<string, number> = {
-    'overview': 180,
+    overview: 180,
     'contact-card': 160,
-    'analytics': 200,
-    'chart': 280,
-    'map': 250,
-    'info': 180,
-    'list': 220,
-    'default': 180,
+    analytics: 200,
+    chart: 280,
+    map: 250,
+    info: 180,
+    list: 220,
+    default: 180,
   };
 
   const type = (section.type ?? 'default').toLowerCase();
@@ -122,7 +126,7 @@ function estimateHeight(section: WorkerSection): number {
   const fieldCount = section.fields?.length ?? 0;
 
   const contentHeight = Math.max(itemCount * 50, fieldCount * 32);
-  
+
   return Math.max(base, 48 + contentHeight + 20);
 }
 
@@ -140,12 +144,12 @@ function calculateColSpan(section: WorkerSection, maxColumns: number): number {
 
   const type = (section.type ?? '').toLowerCase();
   const typeDefaults: Record<string, number> = {
-    'overview': 4,
-    'chart': 2,
-    'map': 2,
+    overview: 4,
+    chart: 2,
+    map: 2,
     'contact-card': 1,
-    'info': 1,
-    'list': 1,
+    info: 1,
+    list: 1,
   };
 
   return Math.min(typeDefaults[type] ?? 1, maxColumns);
@@ -196,11 +200,7 @@ interface PackResult {
   gapCount: number;
 }
 
-function packSections(
-  sections: WorkerSection[],
-  columns: number,
-  gap: number = 12
-): PackResult {
+function packSections(sections: WorkerSection[], columns: number, gap: number = 12): PackResult {
   const colHeights = new Array(columns).fill(0);
   const placements: PositionedSection[] = [];
 
@@ -260,19 +260,19 @@ function packSections(
 
   // Restore original order
   placements.sort((a, b) => {
-    const idxA = withMetrics.findIndex(m => m.key === a.key);
-    const idxB = withMetrics.findIndex(m => m.key === b.key);
+    const idxA = withMetrics.findIndex((m) => m.key === a.key);
+    const idxB = withMetrics.findIndex((m) => m.key === b.key);
     return (withMetrics[idxA]?.index ?? 0) - (withMetrics[idxB]?.index ?? 0);
   });
 
   const containerHeight = Math.max(...colHeights, 0);
   const totalArea = columns * containerHeight;
-  const usedArea = placements.reduce((sum, p) => sum + (p.colSpan * p.height), 0);
+  const usedArea = placements.reduce((sum, p) => sum + p.colSpan * p.height, 0);
   const utilization = totalArea > 0 ? (usedArea / totalArea) * 100 : 0;
 
   // Count gaps
   const maxHeight = Math.max(...colHeights);
-  const gapCount = colHeights.filter(h => h < maxHeight).length;
+  const gapCount = colHeights.filter((h) => h < maxHeight).length;
 
   return {
     placements,
@@ -292,11 +292,7 @@ interface SkylineSegment {
   y: number;
 }
 
-function skylinePack(
-  sections: WorkerSection[],
-  columns: number,
-  gap: number = 12
-): PackResult {
+function skylinePack(sections: WorkerSection[], columns: number, gap: number = 12): PackResult {
   let skyline: SkylineSegment[] = [{ x: 0, width: columns, y: 0 }];
   const placements: PositionedSection[] = [];
 
@@ -360,14 +356,14 @@ function skylinePack(
 
   // Restore original order
   placements.sort((a, b) => {
-    const idxA = withMetrics.findIndex(m => m.key === a.key);
-    const idxB = withMetrics.findIndex(m => m.key === b.key);
+    const idxA = withMetrics.findIndex((m) => m.key === a.key);
+    const idxB = withMetrics.findIndex((m) => m.key === b.key);
     return (withMetrics[idxA]?.index ?? 0) - (withMetrics[idxB]?.index ?? 0);
   });
 
-  const containerHeight = Math.max(...skyline.map(s => s.y), 0);
+  const containerHeight = Math.max(...skyline.map((s) => s.y), 0);
   const totalArea = columns * containerHeight;
-  const usedArea = placements.reduce((sum, p) => sum + (p.colSpan * p.height), 0);
+  const usedArea = placements.reduce((sum, p) => sum + p.colSpan * p.height, 0);
   const utilization = totalArea > 0 ? (usedArea / totalArea) * 100 : 0;
   const gapCount = skyline.length - 1;
 
@@ -590,7 +586,6 @@ self.onmessage = (event: MessageEvent<LayoutWorkerMessage>) => {
       result,
       duration,
     } as LayoutWorkerResponse);
-
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown worker error';
     self.postMessage({
@@ -605,4 +600,3 @@ self.onmessage = (event: MessageEvent<LayoutWorkerMessage>) => {
 
 // Export types for main thread usage
 export type { WorkerSection, PositionedSection, PackResult, GapAnalysis };
-

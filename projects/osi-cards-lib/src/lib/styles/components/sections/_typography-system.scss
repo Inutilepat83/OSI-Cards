@@ -7,7 +7,7 @@
 //
 // =====================================================================
 
-@use 'design-tokens' as *;
+@use "design-tokens" as *;
 
 // =====================================================================
 // HEADING MIXINS
@@ -34,7 +34,7 @@
 // CONSISTENT HIERARCHY: Section headers and content headers
 @mixin heading-3 {
   // Section Title (main section header)
-  font-size: var(--text-xl);      // Consistent: 19px
+  font-size: var(--text-xl); // Consistent: 19px
   font-weight: var(--font-bold);
   line-height: var(--leading-tight);
   letter-spacing: -0.01em;
@@ -44,7 +44,7 @@
 
 @mixin heading-4 {
   // Sub-section Title
-  font-size: var(--text-lg);      // Consistent: 17px
+  font-size: var(--text-lg); // Consistent: 17px
   font-weight: var(--font-semibold);
   line-height: var(--leading-snug);
   color: var(--foreground);
@@ -53,7 +53,7 @@
 
 @mixin heading-5 {
   // Card/Item Title (consistent across all sections)
-  font-size: var(--text-base);    // Consistent: 13px
+  font-size: var(--text-base); // Consistent: 13px
   font-weight: var(--font-semibold);
   line-height: var(--leading-normal);
   color: var(--foreground);
@@ -62,7 +62,7 @@
 
 @mixin heading-6 {
   // Small Item Title / Label Header
-  font-size: var(--text-sm);      // Consistent: 11.2px
+  font-size: var(--text-sm); // Consistent: 11.2px
   font-weight: var(--font-semibold);
   line-height: var(--leading-normal);
   color: var(--foreground);
@@ -164,7 +164,7 @@
 // =====================================================================
 
 @mixin code-inline {
-  font-family: 'Monaco', 'Courier New', monospace;
+  font-family: "Monaco", "Courier New", monospace;
   font-size: 0.9em;
   padding: 2px 6px;
   background: var(--muted);
@@ -174,7 +174,7 @@
 }
 
 @mixin code-block {
-  font-family: 'Monaco', 'Courier New', monospace;
+  font-family: "Monaco", "Courier New", monospace;
   font-size: var(--text-sm);
   padding: var(--spacing-md);
   background: var(--muted);
@@ -273,7 +273,10 @@
 // =====================================================================
 
 @mixin reading-optimized {
-  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+  font-feature-settings:
+    "kern" 1,
+    "liga" 1,
+    "calt" 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -292,13 +295,16 @@
 @mixin fluid-type($min-size, $max-size, $min-width: 320px, $max-width: 1200px) {
   font-size: clamp(
     #{$min-size},
-    calc(#{$min-size} + (#{strip-unit($max-size)} - #{strip-unit($min-size)}) * ((100vw - #{$min-width}) / (#{strip-unit($max-width)} - #{strip-unit($min-width)}))),
+    calc(
+      #{$min-size} + (#{strip-unit($max-size)} - #{strip-unit($min-size)}) *
+        ((100vw - #{$min-width}) / (#{strip-unit($max-width)} - #{strip-unit($min-width)}))
+    ),
     #{$max-size}
   );
 }
 
 @function strip-unit($number) {
-  @if type-of($number) == 'number' and not unitless($number) {
+  @if type-of($number) == "number" and not unitless($number) {
     @return $number / ($number * 0 + 1);
   }
   @return $number;
@@ -319,4 +325,3 @@
     color: var(--foreground);
   }
 }
-

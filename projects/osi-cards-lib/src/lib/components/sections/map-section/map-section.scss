@@ -2,8 +2,8 @@
 // MAP SECTION - Compact, Responsive, Consistent
 // =====================================================================
 
-@use '../../../styles/components/sections/design-system' as *;
-@use '../../../styles/components/sections/typography-system' as typo;
+@use "../../../styles/components/sections/design-system" as *;
+@use "../../../styles/components/sections/typography-system" as typo;
 
 :host {
   display: block;
@@ -61,7 +61,7 @@
 }
 
 .location-address {
-  @include body-text('small');
+  @include body-text("small");
   margin: var(--osi-spacing-xs) 0 0;
 }
 

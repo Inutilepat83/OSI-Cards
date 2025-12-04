@@ -57,18 +57,18 @@ export interface GapAnalyzableSection {
   width: string;
   section?: CardSection;
   canSplit?: boolean;
-  elasticPadding?: number;  // Max padding that can be added/removed
+  elasticPadding?: number; // Max padding that can be added/removed
 }
 
 /**
  * Gap topology types
  */
 export type GapTopology =
-  | 'rectangular'  // Simple rectangular gap
-  | 'L-shaped'     // L-shaped gap (two connected rectangles)
-  | 'T-shaped'     // T-shaped gap
-  | 'fragmented'   // Multiple disconnected small gaps
-  | 'irregular';   // Complex shape
+  | 'rectangular' // Simple rectangular gap
+  | 'L-shaped' // L-shaped gap (two connected rectangles)
+  | 'T-shaped' // T-shaped gap
+  | 'fragmented' // Multiple disconnected small gaps
+  | 'irregular'; // Complex shape
 
 /**
  * Gap information in the layout
@@ -255,10 +255,7 @@ export function findLayoutGaps<T extends GapAnalyzableSection & { height: number
   }
 
   // Calculate container height from sections
-  const containerHeight = Math.max(
-    ...sections.map(s => s.top + s.height),
-    0
-  );
+  const containerHeight = Math.max(...sections.map((s) => s.top + s.height), 0);
 
   if (containerHeight === 0) {
     return gaps;
@@ -266,14 +263,18 @@ export function findLayoutGaps<T extends GapAnalyzableSection & { height: number
 
   // Build occupancy grid
   const rows = Math.ceil(containerHeight / fullConfig.gridResolution);
-  const grid: boolean[][] = Array.from({ length: rows }, () =>
-    new Array(columns).fill(false) as boolean[]
+  const grid: boolean[][] = Array.from(
+    { length: rows },
+    () => new Array(columns).fill(false) as boolean[]
   );
 
   // Mark occupied cells
   for (const section of sections) {
     const startRow = Math.floor(section.top / fullConfig.gridResolution);
-    const endRow = Math.min(Math.ceil((section.top + section.height) / fullConfig.gridResolution), rows);
+    const endRow = Math.min(
+      Math.ceil((section.top + section.height) / fullConfig.gridResolution),
+      rows
+    );
     const startCol = parseColumnIndex(section.left, columns, fullConfig.gap);
     const endCol = Math.min(startCol + section.colSpan, columns);
 
@@ -309,7 +310,7 @@ export function findLayoutGaps<T extends GapAnalyzableSection & { height: number
             topology: 'rectangular',
             area: gapHeight * 1, // height * width in column-pixels
             fillability: Math.min(100, Math.round((gapHeight / fullConfig.minGapHeight) * 50)),
-            canAbsorb: true
+            canAbsorb: true,
           });
         }
         gapStart = null;
@@ -320,7 +321,7 @@ export function findLayoutGaps<T extends GapAnalyzableSection & { height: number
   }
 
   // Sort gaps by area (largest first) to prioritize filling bigger gaps
-  gaps.sort((a, b) => (b.height * b.width) - (a.height * a.width));
+  gaps.sort((a, b) => b.height * b.width - a.height * a.width);
 
   return gaps;
 }
@@ -353,7 +354,7 @@ export function optimizeLayoutGaps<T extends GapAnalyzableSection>(
   }
 
   // Build sections with height info for gap analysis
-  const sectionsWithHeight = sections.map(s => ({
+  const sectionsWithHeight = sections.map((s) => ({
     ...s,
     height: sectionHeights.get(s.key) ?? 200,
   }));
@@ -433,7 +434,7 @@ export function optimizeLayoutGaps<T extends GapAnalyzableSection>(
 
     if (candidate) {
       // Move section to fill the gap
-      const targetIndex = result.findIndex(s => s.key === candidate.section.key);
+      const targetIndex = result.findIndex((s) => s.key === candidate.section.key);
       const targetSection = result[targetIndex];
       if (targetIndex >= 0 && targetSection) {
         // Calculate effective colSpan (may shrink for multi-column sections)
@@ -455,7 +456,7 @@ export function optimizeLayoutGaps<T extends GapAnalyzableSection>(
 
         // Remove from movable list to avoid reusing
         const movableIdx = movableSections.findIndex(
-          m => m.section.key === candidate.section.key
+          (m) => m.section.key === candidate.section.key
         );
         if (movableIdx >= 0) {
           movableSections.splice(movableIdx, 1);
@@ -515,11 +516,7 @@ export class GapAnalyzer<T extends GapAnalyzableSection & { height: number }> {
   private gaps: LayoutGap[] = [];
   private nextGapId = 0;
 
-  constructor(
-    sections: T[],
-    columns: number,
-    config: Partial<GapFillerConfig> = {}
-  ) {
+  constructor(sections: T[], columns: number, config: Partial<GapFillerConfig> = {}) {
     this.sections = sections;
     this.columns = columns;
     this.config = { ...DEFAULT_GAP_FILLER_CONFIG, ...config };
@@ -533,14 +530,12 @@ export class GapAnalyzer<T extends GapAnalyzableSection & { height: number }> {
   private buildOccupancyGrid(): void {
     if (this.sections.length === 0) return;
 
-    this.containerHeight = Math.max(
-      ...this.sections.map(s => s.top + s.height),
-      0
-    );
+    this.containerHeight = Math.max(...this.sections.map((s) => s.top + s.height), 0);
 
     const rows = Math.ceil(this.containerHeight / this.config.gridResolution);
-    this.grid = Array.from({ length: rows }, () =>
-      new Array(this.columns).fill(false) as boolean[]
+    this.grid = Array.from(
+      { length: rows },
+      () => new Array(this.columns).fill(false) as boolean[]
     );
 
     for (const section of this.sections) {
@@ -596,7 +591,11 @@ export class GapAnalyzer<T extends GapAnalyzableSection & { height: number }> {
   /**
    * Flood fills to find all cells in a gap region
    */
-  private floodFill(startRow: number, startCol: number, visited: Set<string>): Array<[number, number]> {
+  private floodFill(
+    startRow: number,
+    startCol: number,
+    visited: Set<string>
+  ): Array<[number, number]> {
     const cells: Array<[number, number]> = [];
     const queue: Array<[number, number]> = [[startRow, startCol]];
     const rows = this.grid.length;
@@ -610,7 +609,7 @@ export class GapAnalyzer<T extends GapAnalyzableSection & { height: number }> {
       }
 
       if (this.grid[r]?.[c]) {
-        continue;  // Occupied cell
+        continue; // Occupied cell
       }
 
       visited.add(key);
@@ -628,10 +627,10 @@ export class GapAnalyzer<T extends GapAnalyzableSection & { height: number }> {
    */
   private createGapFromCells(cells: Array<[number, number]>): LayoutGap {
     // Calculate bounding box
-    const minRow = Math.min(...cells.map(c => c[0]));
-    const maxRow = Math.max(...cells.map(c => c[0]));
-    const minCol = Math.min(...cells.map(c => c[1]));
-    const maxCol = Math.max(...cells.map(c => c[1]));
+    const minRow = Math.min(...cells.map((c) => c[0]));
+    const maxRow = Math.max(...cells.map((c) => c[0]));
+    const minCol = Math.min(...cells.map((c) => c[1]));
+    const maxCol = Math.max(...cells.map((c) => c[1]));
 
     const boundingWidth = maxCol - minCol + 1;
     const boundingHeight = (maxRow - minRow + 1) * this.config.gridResolution;
@@ -639,7 +638,13 @@ export class GapAnalyzer<T extends GapAnalyzableSection & { height: number }> {
     const actualArea = cells.length * this.config.gridResolution;
 
     // Determine topology based on shape analysis
-    const topology = this.analyzeTopology(cells, boundingWidth, maxRow - minRow + 1, actualArea, boundingArea);
+    const topology = this.analyzeTopology(
+      cells,
+      boundingWidth,
+      maxRow - minRow + 1,
+      actualArea,
+      boundingArea
+    );
 
     // Calculate fillability based on shape regularity and size
     const fillability = this.calculateFillability(cells, topology, actualArea);
@@ -732,7 +737,7 @@ export class GapAnalyzer<T extends GapAnalyzableSection & { height: number }> {
     topology: GapTopology,
     area: number
   ): number {
-    let score = 50;  // Base score
+    let score = 50; // Base score
 
     // Topology bonus
     switch (topology) {
@@ -771,7 +776,7 @@ export class GapAnalyzer<T extends GapAnalyzableSection & { height: number }> {
    * Gets fillable gaps sorted by priority
    */
   getFillableGaps(minFillability: number = 50): LayoutGap[] {
-    return this.gaps.filter(g => g.fillability >= minFillability);
+    return this.gaps.filter((g) => g.fillability >= minFillability);
   }
 
   /**
@@ -780,31 +785,27 @@ export class GapAnalyzer<T extends GapAnalyzableSection & { height: number }> {
   getMetrics(): GapMetrics {
     const totalGapArea = this.gaps.reduce((sum, g) => sum + g.area, 0);
     const containerArea = this.columns * this.containerHeight;
-    const utilizationPercent = containerArea > 0
-      ? ((containerArea - totalGapArea) / containerArea) * 100
-      : 100;
+    const utilizationPercent =
+      containerArea > 0 ? ((containerArea - totalGapArea) / containerArea) * 100 : 100;
 
     const gapsByTopology: Record<GapTopology, number> = {
-      'rectangular': 0,
+      rectangular: 0,
       'L-shaped': 0,
       'T-shaped': 0,
-      'fragmented': 0,
-      'irregular': 0,
+      fragmented: 0,
+      irregular: 0,
     };
     for (const gap of this.gaps) {
       gapsByTopology[gap.topology]++;
     }
 
-    const avgGapSize = this.gaps.length > 0
-      ? totalGapArea / this.gaps.length
-      : 0;
+    const avgGapSize = this.gaps.length > 0 ? totalGapArea / this.gaps.length : 0;
 
-    const largestGap = this.gaps.length > 0
-      ? this.gaps.reduce((max, g) => g.area > max.area ? g : max)
-      : null;
+    const largestGap =
+      this.gaps.length > 0 ? this.gaps.reduce((max, g) => (g.area > max.area ? g : max)) : null;
 
-    const fillableGaps = this.gaps.filter(g => g.fillability >= 50).length;
-    const absorbableGaps = this.gaps.filter(g => g.canAbsorb).length;
+    const fillableGaps = this.gaps.filter((g) => g.fillability >= 50).length;
+    const absorbableGaps = this.gaps.filter((g) => g.canAbsorb).length;
 
     // Generate alerts
     const alerts: GapAlert[] = [];
@@ -826,7 +827,7 @@ export class GapAnalyzer<T extends GapAnalyzableSection & { height: number }> {
       });
     }
 
-    const unfillableCount = this.gaps.filter(g => g.fillability < 30).length;
+    const unfillableCount = this.gaps.filter((g) => g.fillability < 30).length;
     if (unfillableCount > 2) {
       alerts.push({
         type: 'unfillable_gap',
@@ -986,7 +987,7 @@ export class GapFiller<T extends GapAnalyzableSection> {
     sectionHeights: Map<string, number>,
     config: Partial<GapFillerConfig> = {}
   ) {
-    this.sections = sections.map(s => ({
+    this.sections = sections.map((s) => ({
       ...s,
       height: sectionHeights.get(s.key) ?? 200,
     }));
@@ -1063,7 +1064,7 @@ export class GapFiller<T extends GapAnalyzableSection> {
    */
   private findCandidateSections(gap: LayoutGap, sections: (T & { height: number })[]): string[] {
     return sections
-      .filter(s => {
+      .filter((s) => {
         // Must fit width
         if (s.colSpan > gap.width) return false;
 
@@ -1076,20 +1077,17 @@ export class GapFiller<T extends GapAnalyzableSection> {
         // Single-column sections are most movable
         return s.colSpan === 1;
       })
-      .map(s => s.key);
+      .map((s) => s.key);
   }
 
   /**
    * Tries to fill a specific gap
    */
-  private tryFillGap(
-    item: PriorityQueueItem,
-    sections: (T & { height: number })[]
-  ): boolean {
+  private tryFillGap(item: PriorityQueueItem, sections: (T & { height: number })[]): boolean {
     const { gap, candidateSections } = item;
 
     for (const candidateKey of candidateSections) {
-      const sectionIndex = sections.findIndex(s => s.key === candidateKey);
+      const sectionIndex = sections.findIndex((s) => s.key === candidateKey);
       if (sectionIndex < 0) continue;
 
       const section = sections[sectionIndex];
@@ -1105,7 +1103,7 @@ export class GapFiller<T extends GapAnalyzableSection> {
 
       // Verify improvement (section moved up or layout improved)
       if (section.top < originalTop) {
-        return true;  // Successfully filled gap
+        return true; // Successfully filled gap
       }
 
       // Revert if no improvement
@@ -1123,7 +1121,7 @@ export class GapFiller<T extends GapAnalyzableSection> {
     sections: (T & { height: number })[],
     analyzer: GapAnalyzer<T & { height: number }>
   ): (T & { height: number })[] {
-    const absorbableGaps = analyzer.getAllGaps().filter(g => g.canAbsorb);
+    const absorbableGaps = analyzer.getAllGaps().filter((g) => g.canAbsorb);
 
     for (const gap of absorbableGaps) {
       // Find adjacent section that could absorb
@@ -1149,13 +1147,13 @@ export class GapFiller<T extends GapAnalyzableSection> {
     gap: LayoutGap
   ): (T & { height: number }) | undefined {
     // Find section directly above the gap
-    return sections.find(s => {
+    return sections.find((s) => {
       const sCol = parseColumnIndex(s.left, this.columns, this.config.gap);
       const sBottom = s.top + s.height;
 
-      return sCol <= gap.column &&
-             sCol + s.colSpan > gap.column &&
-             Math.abs(sBottom - gap.top) < 20;  // Within 20px
+      return (
+        sCol <= gap.column && sCol + s.colSpan > gap.column && Math.abs(sBottom - gap.top) < 20
+      ); // Within 20px
     });
   }
 
@@ -1227,7 +1225,7 @@ export function predictGaps(
 
     // Find the highest point in this column
     const colHeight = layout
-      .filter(p => c >= p.column && c < p.column + p.width)
+      .filter((p) => c >= p.column && c < p.column + p.width)
       .reduce((max, p) => Math.max(max, p.top + p.height), 0);
 
     // Gap between this column's top and the new placement's bottom
@@ -1236,9 +1234,7 @@ export function predictGaps(
       totalGapSize += gapHeight;
 
       // Check if any pending section could fill this gap
-      const canFill = pendingSections.some(s =>
-        s.colSpan === 1 && s.height <= gapHeight + 20
-      );
+      const canFill = pendingSections.some((s) => s.colSpan === 1 && s.height <= gapHeight + 20);
       if (canFill) fillableGaps++;
     }
   }
@@ -1268,10 +1264,10 @@ export function coalesceFragments<T extends GapAnalyzableSection>(
   const gaps = analyzer.getAllGaps();
 
   // Find adjacent fragmented gaps
-  const fragmentedGaps = gaps.filter(g => g.topology === 'fragmented' || g.area < 5000);
+  const fragmentedGaps = gaps.filter((g) => g.topology === 'fragmented' || g.area < 5000);
 
   if (fragmentedGaps.length < 2) {
-    return sections;  // Not enough fragments to coalesce
+    return sections; // Not enough fragments to coalesce
   }
 
   // Group fragments by proximity
@@ -1289,8 +1285,8 @@ export function coalesceFragments<T extends GapAnalyzableSection>(
       if (used.has(other.id)) continue;
 
       // Check if adjacent (within 50px vertically and same or adjacent column)
-      const verticallyAdjacent = Math.abs(gap.top - other.top) < 50 ||
-        Math.abs((gap.top + gap.height) - other.top) < 50;
+      const verticallyAdjacent =
+        Math.abs(gap.top - other.top) < 50 || Math.abs(gap.top + gap.height - other.top) < 50;
       const horizontallyAdjacent = Math.abs(gap.column - other.column) <= 1;
 
       if (verticallyAdjacent && horizontallyAdjacent) {
@@ -1323,17 +1319,17 @@ function tryCoalesceGroup<T extends GapAnalyzableSection>(
   config: GapFillerConfig
 ): (T & { height: number })[] {
   // Find the combined bounding box
-  const minCol = Math.min(...fragments.map(f => f.column));
-  const maxCol = Math.max(...fragments.map(f => f.column + f.width));
-  const minTop = Math.min(...fragments.map(f => f.top));
-  const maxBottom = Math.max(...fragments.map(f => f.top + f.height));
+  const minCol = Math.min(...fragments.map((f) => f.column));
+  const maxCol = Math.max(...fragments.map((f) => f.column + f.width));
+  const minTop = Math.min(...fragments.map((f) => f.top));
+  const maxBottom = Math.max(...fragments.map((f) => f.top + f.height));
 
   // Find sections that could be moved to consolidate the gap
-  const movableSections = sections.filter(s => {
+  const movableSections = sections.filter((s) => {
     const sCol = parseColumnIndex(s.left, columns, config.gap);
-    return sCol >= minCol && sCol < maxCol &&
-           s.top >= minTop && s.top < maxBottom &&
-           s.colSpan === 1;  // Only move single-column sections
+    return (
+      sCol >= minCol && sCol < maxCol && s.top >= minTop && s.top < maxBottom && s.colSpan === 1
+    ); // Only move single-column sections
   });
 
   if (movableSections.length === 0) {
@@ -1343,7 +1339,7 @@ function tryCoalesceGroup<T extends GapAnalyzableSection>(
   // Try moving the movable section to one side to consolidate
   const result = [...sections];
   for (const movable of movableSections) {
-    const idx = result.findIndex(s => s.key === movable.key);
+    const idx = result.findIndex((s) => s.key === movable.key);
     if (idx < 0) continue;
 
     const section = result[idx];
@@ -1384,7 +1380,3 @@ export function checkUtilization<T extends GapAnalyzableSection & { height: numb
 
   return alerts;
 }
-
-
-
-

@@ -52,7 +52,7 @@ export function unique<T>(array: T[]): T[] {
  */
 export function uniqueBy<T>(array: T[], key: keyof T | ((item: T) => any)): T[] {
   const seen = new Set();
-  return array.filter(item => {
+  return array.filter((item) => {
     const k = typeof key === 'function' ? key(item) : item[key];
     if (seen.has(k)) return false;
     seen.add(k);
@@ -75,22 +75,24 @@ export function chunk<T>(array: T[], size: number): T[][] {
  * Flatten array
  */
 export function flatten<T>(array: any[]): T[] {
-  return array.reduce((acc, val) =>
-    Array.isArray(val) ? acc.concat(flatten(val)) : acc.concat(val), []);
+  return array.reduce(
+    (acc, val) => (Array.isArray(val) ? acc.concat(flatten(val)) : acc.concat(val)),
+    []
+  );
 }
 
 /**
  * Difference between arrays
  */
 export function difference<T>(array1: T[], array2: T[]): T[] {
-  return array1.filter(item => !array2.includes(item));
+  return array1.filter((item) => !array2.includes(item));
 }
 
 /**
  * Intersection of arrays
  */
 export function intersection<T>(array1: T[], array2: T[]): T[] {
-  return array1.filter(item => array2.includes(item));
+  return array1.filter((item) => array2.includes(item));
 }
 
 /**
@@ -104,31 +106,40 @@ export function union<T>(...arrays: T[][]): T[] {
  * Zip arrays
  */
 export function zip<T>(...arrays: T[][]): T[][] {
-  const maxLength = Math.max(...arrays.map(arr => arr.length));
-  return Array.from({ length: maxLength }, (_, i) => arrays.map(arr => arr[i]));
+  const maxLength = Math.max(...arrays.map((arr) => arr.length));
+  return Array.from({ length: maxLength }, (_, i) => arrays.map((arr) => arr[i]));
 }
 
 /**
  * Group by
  */
 export function groupBy<T>(array: T[], key: keyof T | ((item: T) => string)): Record<string, T[]> {
-  return array.reduce((groups, item) => {
-    const groupKey = typeof key === 'function' ? key(item) : String(item[key]);
-    groups[groupKey] = groups[groupKey] || [];
-    groups[groupKey].push(item);
-    return groups;
-  }, {} as Record<string, T[]>);
+  return array.reduce(
+    (groups, item) => {
+      const groupKey = typeof key === 'function' ? key(item) : String(item[key]);
+      groups[groupKey] = groups[groupKey] || [];
+      groups[groupKey].push(item);
+      return groups;
+    },
+    {} as Record<string, T[]>
+  );
 }
 
 /**
  * Count by
  */
-export function countBy<T>(array: T[], key: keyof T | ((item: T) => string)): Record<string, number> {
-  return array.reduce((counts, item) => {
-    const countKey = typeof key === 'function' ? key(item) : String(item[key]);
-    counts[countKey] = (counts[countKey] || 0) + 1;
-    return counts;
-  }, {} as Record<string, number>);
+export function countBy<T>(
+  array: T[],
+  key: keyof T | ((item: T) => string)
+): Record<string, number> {
+  return array.reduce(
+    (counts, item) => {
+      const countKey = typeof key === 'function' ? key(item) : String(item[key]);
+      counts[countKey] = (counts[countKey] || 0) + 1;
+      return counts;
+    },
+    {} as Record<string, number>
+  );
 }
 
 /**
@@ -272,4 +283,3 @@ export function removeAt<T>(array: T[], index: number): T[] {
 export function updateAt<T>(array: T[], index: number, value: T): T[] {
   return [...array.slice(0, index), value, ...array.slice(index + 1)];
 }
-

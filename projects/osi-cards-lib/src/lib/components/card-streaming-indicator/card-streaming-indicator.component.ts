@@ -10,17 +10,24 @@ import { CommonModule } from '@angular/common';
  * - 'aborted': Streaming was cancelled
  * - 'error': An error occurred during streaming
  */
-export type StreamingStage = 'idle' | 'thinking' | 'streaming' | 'complete' | 'aborted' | 'error' | undefined;
+export type StreamingStage =
+  | 'idle'
+  | 'thinking'
+  | 'streaming'
+  | 'complete'
+  | 'aborted'
+  | 'error'
+  | undefined;
 
 /**
  * Card Streaming Indicator Component
- * 
+ *
  * Displays streaming progress and status for card generation.
  * Provides visual feedback during LLM streaming with:
  * - Progress bar with animated fill
  * - Stage-specific ARIA labels for accessibility
  * - Customizable progress labels
- * 
+ *
  * @example
  * ```html
  * <app-card-streaming-indicator
@@ -37,7 +44,7 @@ export type StreamingStage = 'idle' | 'thinking' | 'streaming' | 'complete' | 'a
   templateUrl: './card-streaming-indicator.component.html',
   styleUrls: ['./card-streaming-indicator.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class CardStreamingIndicatorComponent {
   /**
@@ -82,9 +89,7 @@ export class CardStreamingIndicatorComponent {
       case 'thinking':
         return 'Thinking, please wait';
       case 'streaming':
-        const progress = this.streamingProgress 
-          ? Math.round(this.streamingProgress * 100) 
-          : 0;
+        const progress = this.streamingProgress ? Math.round(this.streamingProgress * 100) : 0;
         return `Streaming progress: ${progress}%`;
       case 'error':
         return 'Error occurred during streaming';
@@ -97,12 +102,3 @@ export class CardStreamingIndicatorComponent {
     }
   }
 }
-
-
-
-
-
-
-
-
-

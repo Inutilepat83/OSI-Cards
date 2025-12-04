@@ -130,7 +130,7 @@ export class ModalRef<T = any, R = any> {
  * Manages application-wide modals.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ModalService {
   private openModals = signal<ModalRef[]>([]);
@@ -167,10 +167,7 @@ export class ModalService {
    * const result = await modalRef.waitForClose();
    * ```
    */
-  open<T, D = any, R = any>(
-    component: Type<T>,
-    config: ModalConfig<D> = {}
-  ): ModalRef<T, R> {
+  open<T, D = any, R = any>(component: Type<T>, config: ModalConfig<D> = {}): ModalRef<T, R> {
     if (!this.container) {
       throw new Error('Modal container not set. Call setContainer() first.');
     }
@@ -187,14 +184,14 @@ export class ModalService {
 
     const componentRef = this.container.createComponent(component);
 
-      // Pass data to component
-      if (fullConfig.data && componentRef.instance && typeof componentRef.instance === 'object') {
-        (componentRef.instance as any).data = fullConfig.data;
-      }
+    // Pass data to component
+    if (fullConfig.data && componentRef.instance && typeof componentRef.instance === 'object') {
+      (componentRef.instance as any).data = fullConfig.data;
+    }
 
     const modalRef = new ModalRef<T, R>(componentRef, fullConfig);
 
-    this.openModals.update(modals => [...modals, modalRef]);
+    this.openModals.update((modals) => [...modals, modalRef]);
 
     // Setup keyboard listener
     if (fullConfig.closeOnEscape) {
@@ -203,7 +200,7 @@ export class ModalService {
 
     // Handle close
     modalRef.afterClosed$.subscribe(() => {
-      this.openModals.update(modals => modals.filter(m => m !== modalRef));
+      this.openModals.update((modals) => modals.filter((m) => m !== modalRef));
     });
 
     return modalRef;
@@ -223,7 +220,7 @@ export class ModalService {
    * Close all modals
    */
   closeAll(): void {
-    this.openModals().forEach(modal => modal.close());
+    this.openModals().forEach((modal) => modal.close());
   }
 
   /**
@@ -294,4 +291,3 @@ export class ModalService {
     });
   }
 }
-

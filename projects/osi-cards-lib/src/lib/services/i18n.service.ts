@@ -42,7 +42,7 @@ export interface I18nConfig {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class I18nService {
   private config = signal<I18nConfig>({
@@ -204,7 +204,7 @@ export class I18nService {
    * Add translations
    */
   addTranslations(locale: string, translations: Translation): void {
-    this.config.update(config => ({
+    this.config.update((config) => ({
       ...config,
       translations: {
         ...config.translations,
@@ -250,7 +250,7 @@ export class I18nService {
   isRTL(locale?: string): boolean {
     const rtlLocales = ['ar', 'he', 'fa', 'ur'];
     const checkLocale = locale || this.currentLocale();
-    return rtlLocales.some(rtl => checkLocale.startsWith(rtl));
+    return rtlLocales.some((rtl) => checkLocale.startsWith(rtl));
   }
 
   /**

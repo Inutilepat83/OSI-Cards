@@ -27,23 +27,23 @@
  * Date format tokens
  */
 const FORMAT_TOKENS: Record<string, (date: Date) => string> = {
-  'YYYY': (date) => date.getFullYear().toString(),
-  'YY': (date) => date.getFullYear().toString().slice(-2),
-  'MM': (date) => String(date.getMonth() + 1).padStart(2, '0'),
-  'M': (date) => String(date.getMonth() + 1),
-  'DD': (date) => String(date.getDate()).padStart(2, '0'),
-  'D': (date) => String(date.getDate()),
-  'HH': (date) => String(date.getHours()).padStart(2, '0'),
-  'H': (date) => String(date.getHours()),
-  'hh': (date) => String(date.getHours() % 12 || 12).padStart(2, '0'),
-  'h': (date) => String(date.getHours() % 12 || 12),
-  'mm': (date) => String(date.getMinutes()).padStart(2, '0'),
-  'm': (date) => String(date.getMinutes()),
-  'ss': (date) => String(date.getSeconds()).padStart(2, '0'),
-  's': (date) => String(date.getSeconds()),
-  'SSS': (date) => String(date.getMilliseconds()).padStart(3, '0'),
-  'A': (date) => date.getHours() >= 12 ? 'PM' : 'AM',
-  'a': (date) => date.getHours() >= 12 ? 'pm' : 'am',
+  YYYY: (date) => date.getFullYear().toString(),
+  YY: (date) => date.getFullYear().toString().slice(-2),
+  MM: (date) => String(date.getMonth() + 1).padStart(2, '0'),
+  M: (date) => String(date.getMonth() + 1),
+  DD: (date) => String(date.getDate()).padStart(2, '0'),
+  D: (date) => String(date.getDate()),
+  HH: (date) => String(date.getHours()).padStart(2, '0'),
+  H: (date) => String(date.getHours()),
+  hh: (date) => String(date.getHours() % 12 || 12).padStart(2, '0'),
+  h: (date) => String(date.getHours() % 12 || 12),
+  mm: (date) => String(date.getMinutes()).padStart(2, '0'),
+  m: (date) => String(date.getMinutes()),
+  ss: (date) => String(date.getSeconds()).padStart(2, '0'),
+  s: (date) => String(date.getSeconds()),
+  SSS: (date) => String(date.getMilliseconds()).padStart(3, '0'),
+  A: (date) => (date.getHours() >= 12 ? 'PM' : 'AM'),
+  a: (date) => (date.getHours() >= 12 ? 'pm' : 'am'),
 };
 
 /**
@@ -329,8 +329,20 @@ export function getDayName(date: Date, short = false): string {
 export function getMonthName(date: Date, short = false): string {
   const months = short
     ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    : ['January', 'February', 'March', 'April', 'May', 'June',
-       'July', 'August', 'September', 'October', 'November', 'December'];
+    : [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+      ];
   return months[date.getMonth()];
 }
 
@@ -356,7 +368,7 @@ export function getWeekNumber(date: Date): number {
   const dayNum = d.getUTCDay() || 7;
   d.setUTCDate(d.getUTCDate() + 4 - dayNum);
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+  return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 }
 
 /**
@@ -389,4 +401,3 @@ export function formatDuration(ms: number): string {
   if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
   return `${seconds}s`;
 }
-

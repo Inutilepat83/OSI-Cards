@@ -1,19 +1,19 @@
 /**
  * Retry Utility
- * 
+ *
  * Provides configurable retry mechanisms for async operations.
  * Supports exponential backoff, max retries, and custom error handling.
- * 
+ *
  * @example
  * ```typescript
  * import { retryWithBackoff, RetryConfig } from 'osi-cards-lib';
- * 
+ *
  * const config: RetryConfig = {
  *   maxRetries: 3,
  *   initialDelayMs: 1000,
  *   backoffMultiplier: 2,
  * };
- * 
+ *
  * const result = await retryWithBackoff(
  *   () => fetchData(),
  *   config,
@@ -83,7 +83,7 @@ export const DEFAULT_RETRY_CONFIG: RetryConfig = {
 
 /**
  * Retry a Promise-returning function with exponential backoff.
- * 
+ *
  * @param fn - Async function to retry
  * @param config - Retry configuration
  * @param onRetry - Optional callback for retry events
@@ -147,7 +147,7 @@ export async function retryWithBackoff<T>(
 
 /**
  * Retry a synchronous function with exponential backoff.
- * 
+ *
  * @param fn - Function to retry
  * @param config - Retry configuration
  * @param onRetry - Optional callback for retry events
@@ -168,11 +168,11 @@ export async function retrySync<T>(
 
 /**
  * RxJS operator for retrying Observables with exponential backoff.
- * 
+ *
  * @param config - Retry configuration
  * @param onRetry - Optional callback for retry events
  * @returns RxJS pipeable operator
- * 
+ *
  * @example
  * ```typescript
  * http.get('/api/data').pipe(
@@ -180,16 +180,13 @@ export async function retrySync<T>(
  * ).subscribe(...)
  * ```
  */
-export function retryWithBackoff$(
-  config: Partial<RetryConfig> = {},
-  onRetry?: RetryCallback
-) {
+export function retryWithBackoff$(config: Partial<RetryConfig> = {}, onRetry?: RetryCallback) {
   const fullConfig = { ...DEFAULT_RETRY_CONFIG, ...config };
   const startTime = Date.now();
 
   return <T>(source: Observable<T>): Observable<T> => {
     return source.pipe(
-      retryWhen(errors =>
+      retryWhen((errors) =>
         errors.pipe(
           mergeMap((error, attempt) => {
             const attemptNum = attempt + 1;
@@ -366,7 +363,7 @@ function calculateDelay(attempt: number, config: RetryConfig): number {
  * Sleep for a given number of milliseconds
  */
 function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -394,20 +391,7 @@ export function isRetryableHttpError(error: unknown): boolean {
   const httpError = error as { status?: number };
   if (typeof httpError?.status === 'number') {
     // Retry on 408 (timeout), 429 (rate limit), 500+ (server errors)
-    return (
-      httpError.status === 408 ||
-      httpError.status === 429 ||
-      httpError.status >= 500
-    );
+    return httpError.status === 408 || httpError.status === 429 || httpError.status >= 500;
   }
   return isNetworkError(error);
 }
-
-
-
-
-
-
-
-
-

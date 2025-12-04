@@ -35,13 +35,15 @@ import { LucideIconsModule } from '../../icons';
             [style.border-radius]="'var(--section-card-border-radius, 10px)'"
             (click)="onActionClick(action)"
             (keydown.enter)="onActionClick(action)"
-            (keydown.space)="$event.preventDefault(); onActionClick(action)">
+            (keydown.space)="$event.preventDefault(); onActionClick(action)"
+          >
             <!-- Lucide icon -->
             <lucide-icon
               *ngIf="getActionIconNameForDisplay(action) as iconName"
               [name]="iconName"
               [size]="16"
-              aria-hidden="true">
+              aria-hidden="true"
+            >
             </lucide-icon>
             <!-- Image icon -->
             <img
@@ -64,126 +66,152 @@ import { LucideIconsModule } from '../../icons';
       </div>
     </div>
   `,
-  styles: [`
-    /* Reset host styles */
-    :host {
-      display: block !important;
-      font-family: Helvetica, 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
-    }
+  styles: [
+    `
+      /* Reset host styles */
+      :host {
+        display: block !important;
+        font-family:
+          Helvetica,
+          'Helvetica Neue',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          Arial,
+          sans-serif !important;
+      }
 
-    .card-footer {
-      margin-top: auto !important;
-      padding-top: var(--section-card-gap, 12px) !important;
-      padding-bottom: 16px !important;
-      font-family: inherit !important;
-    }
+      .card-footer {
+        margin-top: auto !important;
+        padding-top: var(--section-card-gap, 12px) !important;
+        padding-bottom: 16px !important;
+        font-family: inherit !important;
+      }
 
-    .card-actions {
-      margin-bottom: 12px !important;
-    }
+      .card-actions {
+        margin-bottom: 12px !important;
+      }
 
-    .flex {
-      display: flex !important;
-    }
+      .flex {
+        display: flex !important;
+      }
 
-    .flex-wrap {
-      flex-wrap: wrap !important;
-    }
+      .flex-wrap {
+        flex-wrap: wrap !important;
+      }
 
-    .items-center {
-      align-items: center !important;
-    }
+      .items-center {
+        align-items: center !important;
+      }
 
-    .gap-3 {
-      gap: 0.75rem !important;
-    }
+      .gap-3 {
+        gap: 0.75rem !important;
+      }
 
-    /* ENFORCED Action Button Styles */
-    .action-button {
-      margin: 0 !important;
-      padding: 10px 20px !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      gap: 8px !important;
-      font-size: 0.875rem !important;
-      font-weight: 600 !important;
-      font-family: Helvetica, 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
-      line-height: 1.25rem !important;
-      cursor: pointer !important;
-      border-radius: var(--section-card-border-radius, 10px) !important;
-      transition: all 0.2s ease !important;
-      box-sizing: border-box !important;
-      white-space: nowrap !important;
-      -webkit-appearance: none !important;
-      appearance: none !important;
-      text-decoration: none !important;
-    }
+      /* ENFORCED Action Button Styles */
+      .action-button {
+        margin: 0 !important;
+        padding: 10px 20px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        font-size: 0.875rem !important;
+        font-weight: 600 !important;
+        font-family:
+          Helvetica,
+          'Helvetica Neue',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          Arial,
+          sans-serif !important;
+        line-height: 1.25rem !important;
+        cursor: pointer !important;
+        border-radius: var(--section-card-border-radius, 10px) !important;
+        transition: all 0.2s ease !important;
+        box-sizing: border-box !important;
+        white-space: nowrap !important;
+        -webkit-appearance: none !important;
+        appearance: none !important;
+        text-decoration: none !important;
+      }
 
-    .action-button--primary {
-      background-color: var(--color-brand, #FF7900) !important;
-      color: #ffffff !important;
-      border: none !important;
-      box-shadow: 0 2px 4px rgba(255, 121, 0, 0.2) !important;
-    }
+      .action-button--primary {
+        background-color: var(--color-brand, #ff7900) !important;
+        color: #ffffff !important;
+        border: none !important;
+        box-shadow: 0 2px 4px rgba(255, 121, 0, 0.2) !important;
+      }
 
-    .action-button--primary:hover {
-      background-color: #e66d00 !important;
-      box-shadow: 0 4px 12px rgba(255, 121, 0, 0.35) !important;
-      transform: translateY(-1px) !important;
-    }
+      .action-button--primary:hover {
+        background-color: #e66d00 !important;
+        box-shadow: 0 4px 12px rgba(255, 121, 0, 0.35) !important;
+        transform: translateY(-1px) !important;
+      }
 
-    .action-button--secondary {
-      background-color: transparent !important;
-      color: var(--color-brand, #FF7900) !important;
-      border: 2px solid var(--color-brand, #FF7900) !important;
-    }
+      .action-button--secondary {
+        background-color: transparent !important;
+        color: var(--color-brand, #ff7900) !important;
+        border: 2px solid var(--color-brand, #ff7900) !important;
+      }
 
-    .action-button--secondary:hover {
-      background-color: rgba(255, 121, 0, 0.08) !important;
-      box-shadow: 0 2px 8px rgba(255, 121, 0, 0.15) !important;
-    }
+      .action-button--secondary:hover {
+        background-color: rgba(255, 121, 0, 0.08) !important;
+        box-shadow: 0 2px 8px rgba(255, 121, 0, 0.15) !important;
+      }
 
-    .action-button span {
-      color: inherit !important;
-      font-family: inherit !important;
-    }
+      .action-button span {
+        color: inherit !important;
+        font-family: inherit !important;
+      }
 
-    .action-button img {
-      width: 18px !important;
-      height: 18px !important;
-      object-fit: contain !important;
-    }
+      .action-button img {
+        width: 18px !important;
+        height: 18px !important;
+        object-fit: contain !important;
+      }
 
-    /* ENFORCED Card Signature Styles */
-    .card-signature {
-      display: block !important;
-      margin: 12px 0 0 0 !important;
-      padding: 8px 0 !important;
-      font-size: 0.75rem !important;
-      font-weight: 500 !important;
-      color: var(--muted-foreground, rgba(85, 88, 97, 0.6)) !important;
-      text-align: center !important;
-      font-family: Helvetica, 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
-      line-height: 1.4 !important;
-      letter-spacing: 0.02em !important;
-      width: 100% !important;
-      box-sizing: border-box !important;
-    }
+      /* ENFORCED Card Signature Styles */
+      .card-signature {
+        display: block !important;
+        margin: 12px 0 0 0 !important;
+        padding: 8px 0 !important;
+        font-size: 0.75rem !important;
+        font-weight: 500 !important;
+        color: var(--muted-foreground, rgba(85, 88, 97, 0.6)) !important;
+        text-align: center !important;
+        font-family:
+          Helvetica,
+          'Helvetica Neue',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          Arial,
+          sans-serif !important;
+        line-height: 1.4 !important;
+        letter-spacing: 0.02em !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
 
-    /* Lucide icon styling */
-    lucide-icon {
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-    }
+      /* Lucide icon styling */
+      lucide-icon {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
 
-    lucide-icon svg {
-      stroke: currentColor !important;
-      fill: none !important;
-      stroke-width: 2 !important;
-    }
-  `],
-  changeDetection: ChangeDetectionStrategy.OnPush
+      lucide-icon svg {
+        stroke: currentColor !important;
+        fill: none !important;
+        stroke-width: 2 !important;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardFooterComponent {
   /** Actions to display */
@@ -212,7 +240,7 @@ export class CardFooterComponent {
   getActionButtonClasses(action: CardAction): Record<string, boolean> {
     return {
       'action-button--primary': action.variant === 'primary',
-      'action-button--secondary': action.variant === 'secondary' || !action.variant
+      'action-button--secondary': action.variant === 'secondary' || !action.variant,
     };
   }
 
@@ -222,7 +250,11 @@ export class CardFooterComponent {
     }
 
     // If it's a lucide icon name, return it
-    if (typeof action.icon === 'string' && !action.icon.startsWith('http') && !action.icon.match(/[\u{1F300}-\u{1F9FF}]/u)) {
+    if (
+      typeof action.icon === 'string' &&
+      !action.icon.startsWith('http') &&
+      !action.icon.match(/[\u{1F300}-\u{1F9FF}]/u)
+    ) {
       return action.icon;
     }
 
@@ -246,4 +278,3 @@ export class CardFooterComponent {
     this.actionClick.emit(action);
   }
 }
-

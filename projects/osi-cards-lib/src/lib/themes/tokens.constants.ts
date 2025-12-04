@@ -154,12 +154,3 @@ export function hexToRgba(hex: string, opacity: number): string {
   const b = parseInt(hex.slice(5, 7), 16);
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
-
-
-
-
-
-
-
-
-

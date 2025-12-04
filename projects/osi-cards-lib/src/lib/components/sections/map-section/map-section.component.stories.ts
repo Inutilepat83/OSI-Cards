@@ -65,7 +65,7 @@ export const MultipleOffices: Story = {
             description: 'Headquarters',
           },
           {
-            position: { lat: 40.7128, lng: -74.0060 },
+            position: { lat: 40.7128, lng: -74.006 },
             title: 'New York',
             description: 'East Coast Office',
           },
@@ -167,11 +167,11 @@ export const CustomerLocation: Story = {
       .withTitle('Customer Site')
       .withType('map')
       .withMapConfig({
-        center: { lat: 37.4419, lng: -122.1430 },
+        center: { lat: 37.4419, lng: -122.143 },
         zoom: 14,
         markers: [
           {
-            position: { lat: 37.4419, lng: -122.1430 },
+            position: { lat: 37.4419, lng: -122.143 },
             title: 'Customer HQ',
           },
         ],
@@ -197,4 +197,3 @@ export const Minimal: Story = {
       .build(),
   },
 };
-

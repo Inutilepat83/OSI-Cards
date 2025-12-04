@@ -14,10 +14,9 @@ import { SectionHeaderComponent, EmptyStateComponent } from '../../shared';
   standalone: true,
   imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './news-section.component.html',
-  styleUrl: './news-section.scss'
+  styleUrl: './news-section.scss',
 })
 export class NewsSectionComponent extends BaseSectionComponent {
-
   /**
    * Get article image URL
    */
@@ -34,7 +33,7 @@ export class NewsSectionComponent extends BaseSectionComponent {
       return new Date(dateStr).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
-        day: 'numeric'
+        day: 'numeric',
       });
     } catch {
       return String(dateStr);

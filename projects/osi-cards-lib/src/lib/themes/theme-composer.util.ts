@@ -79,8 +79,8 @@ export function extendTheme(
     colorScheme: base.colorScheme,
     variables: {
       ...base.variables,
-      ...overrides
-    }
+      ...overrides,
+    },
   };
 }
 
@@ -100,10 +100,7 @@ export function extendTheme(
  * );
  * ```
  */
-export function mergeThemes(
-  themes: OSICardsThemeConfig[],
-  name: string
-): OSICardsThemeConfig {
+export function mergeThemes(themes: OSICardsThemeConfig[], name: string): OSICardsThemeConfig {
   if (themes.length === 0) {
     throw new Error('At least one theme is required for merging');
   }
@@ -120,7 +117,7 @@ export function mergeThemes(
     name,
     preset: false,
     colorScheme: lastTheme?.colorScheme ?? 'dark',
-    variables: mergedVariables
+    variables: mergedVariables,
   };
 }
 
@@ -156,7 +153,7 @@ export function createThemeFromColors(
     success = '#10b981',
     warning = '#f59e0b',
     error = '#ef4444',
-    info = '#3b82f6'
+    info = '#3b82f6',
   } = palette;
 
   const accentForeground = getContrastColor(primary);
@@ -213,8 +210,8 @@ export function createThemeFromColors(
       '--osi-card-shadow-lg': isDark
         ? '0 10px 15px rgba(0, 0, 0, 0.3), 0 4px 6px rgba(0, 0, 0, 0.15)'
         : '0 10px 15px rgba(0, 0, 0, 0.08), 0 4px 6px rgba(0, 0, 0, 0.03)',
-      '--osi-card-shadow-glow': `0 0 20px rgba(${primaryRgb}, ${isDark ? 0.2 : 0.15})`
-    }
+      '--osi-card-shadow-glow': `0 0 20px rgba(${primaryRgb}, ${isDark ? 0.2 : 0.15})`,
+    },
   };
 }
 
@@ -244,7 +241,7 @@ export function deriveColorScale(baseColor: string): ColorScale {
     700: adjustLightness(baseColor, -20),
     800: adjustLightness(baseColor, -30),
     900: adjustLightness(baseColor, -40),
-    950: adjustLightness(baseColor, -45)
+    950: adjustLightness(baseColor, -45),
   };
 }
 
@@ -268,7 +265,7 @@ export function createThemeFromScale(
       background: isDark ? scale[950] : '#ffffff',
       foreground: isDark ? scale[50] : scale[900],
       muted: scale[isDark ? 400 : 500],
-      border: scale[isDark ? 700 : 200]
+      border: scale[isDark ? 700 : 200],
     },
     name,
     isDark
@@ -288,7 +285,7 @@ export function createThemePair(
 ): { light: OSICardsThemeConfig; dark: OSICardsThemeConfig } {
   return {
     light: createThemeFromColors(palette, `${baseName}-light`, false),
-    dark: createThemeFromColors(palette, `${baseName}-dark`, true)
+    dark: createThemeFromColors(palette, `${baseName}-dark`, true),
   };
 }
 
@@ -305,7 +302,7 @@ export function pickThemeVariables(
 ): OSICardsThemeConfig {
   const picked: Record<string, string> = {};
 
-  keys.forEach(key => {
+  keys.forEach((key) => {
     const varKey = key.startsWith('--') ? key : `--${key}`;
     if (theme.variables[varKey]) {
       picked[varKey] = theme.variables[varKey];
@@ -317,7 +314,7 @@ export function pickThemeVariables(
   return {
     ...theme,
     name: `${theme.name}-partial`,
-    variables: picked
+    variables: picked,
   };
 }
 
@@ -332,7 +329,7 @@ export function omitThemeVariables(
   theme: OSICardsThemeConfig,
   keys: string[]
 ): OSICardsThemeConfig {
-  const normalizedKeys = keys.map(k => k.startsWith('--') ? k : `--${k}`);
+  const normalizedKeys = keys.map((k) => (k.startsWith('--') ? k : `--${k}`));
   const filtered: Record<string, string> = {};
 
   Object.entries(theme.variables).forEach(([key, value]) => {
@@ -344,7 +341,7 @@ export function omitThemeVariables(
   return {
     ...theme,
     name: `${theme.name}-filtered`,
-    variables: filtered
+    variables: filtered,
   };
 }
 
@@ -367,10 +364,15 @@ export function hexToRgbString(hex: string): string {
  * Convert RGB values to hex
  */
 export function rgbToHex(r: number, g: number, b: number): string {
-  return '#' + [r, g, b].map(x => {
-    const hex = Math.max(0, Math.min(255, Math.round(x))).toString(16);
-    return hex.length === 1 ? '0' + hex : hex;
-  }).join('');
+  return (
+    '#' +
+    [r, g, b]
+      .map((x) => {
+        const hex = Math.max(0, Math.min(255, Math.round(x))).toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+      })
+      .join('')
+  );
 }
 
 /**
@@ -438,7 +440,7 @@ function hexToRgbValues(hex: string): { r: number; g: number; b: number } | null
   return {
     r: parseInt(result[1], 16),
     g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16)
+    b: parseInt(result[3], 16),
   };
 }
 
@@ -486,19 +488,18 @@ function hslToRgb(h: number, s: number, l: number): { r: number; g: number; b: n
     const hue2rgb = (p: number, q: number, t: number) => {
       if (t < 0) t += 1;
       if (t > 1) t -= 1;
-      if (t < 1/6) return p + (q - p) * 6 * t;
-      if (t < 1/2) return q;
-      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
       return p;
     };
 
     const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
     const p = 2 * l - q;
-    r = hue2rgb(p, q, h + 1/3);
+    r = hue2rgb(p, q, h + 1 / 3);
     g = hue2rgb(p, q, h);
-    b = hue2rgb(p, q, h - 1/3);
+    b = hue2rgb(p, q, h - 1 / 3);
   }
 
   return { r: r * 255, g: g * 255, b: b * 255 };
 }
-

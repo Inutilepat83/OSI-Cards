@@ -68,7 +68,7 @@ export class Graph {
 
   removeNode(node: string): void {
     this.adjacencyList.delete(node);
-    this.adjacencyList.forEach(neighbors => neighbors.delete(node));
+    this.adjacencyList.forEach((neighbors) => neighbors.delete(node));
   }
 
   removeEdge(from: string, to: string): void {
@@ -97,7 +97,7 @@ export function bfs(graph: Graph, start: string): string[] {
     visited.add(node);
     result.push(node);
 
-    graph.getNeighbors(node).forEach(neighbor => {
+    graph.getNeighbors(node).forEach((neighbor) => {
       if (!visited.has(neighbor)) {
         queue.push(neighbor);
       }
@@ -117,7 +117,7 @@ export function dfs(graph: Graph, start: string): string[] {
     visited.add(node);
     result.push(node);
 
-    graph.getNeighbors(node).forEach(neighbor => visit(neighbor));
+    graph.getNeighbors(node).forEach((neighbor) => visit(neighbor));
   }
 
   visit(start);
@@ -125,7 +125,7 @@ export function dfs(graph: Graph, start: string): string[] {
 }
 
 export function findShortestPath(graph: Graph, start: string, end: string): string[] | null {
-  const queue: Array<{node: string; path: string[]}> = [{ node: start, path: [start] }];
+  const queue: Array<{ node: string; path: string[] }> = [{ node: start, path: [start] }];
   const visited = new Set<string>();
 
   while (queue.length > 0) {
@@ -136,7 +136,7 @@ export function findShortestPath(graph: Graph, start: string, end: string): stri
 
     visited.add(node);
 
-    graph.getNeighbors(node).forEach(neighbor => {
+    graph.getNeighbors(node).forEach((neighbor) => {
       queue.push({ node: neighbor, path: [...path, neighbor] });
     });
   }
@@ -172,4 +172,3 @@ export function detectCycle(graph: Graph): boolean {
 
   return false;
 }
-

@@ -102,7 +102,7 @@ export class InitialsPipe implements PipeTransform {
   transform(value: string): string {
     return value
       .split(' ')
-      .map(word => word.charAt(0).toUpperCase())
+      .map((word) => word.charAt(0).toUpperCase())
       .join('');
   }
 }
@@ -164,7 +164,7 @@ export class ChunkPipe implements PipeTransform {
 @Pipe({ name: 'pluck', standalone: true })
 export class PluckPipe implements PipeTransform {
   transform(value: any[], key: string): any[] {
-    return value.map(item => item[key]);
+    return value.map((item) => item[key]);
   }
 }
 
@@ -172,7 +172,7 @@ export class PluckPipe implements PipeTransform {
 @Pipe({ name: 'diff', standalone: true })
 export class DiffPipe implements PipeTransform {
   transform(value: any[], compare: any[]): any[] {
-    return value.filter(item => !compare.includes(item));
+    return value.filter((item) => !compare.includes(item));
   }
 }
 
@@ -194,4 +194,3 @@ export const UTILITY_PIPES = [
   PluckPipe,
   DiffPipe,
 ];
-

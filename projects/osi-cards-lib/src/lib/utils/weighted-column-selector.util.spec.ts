@@ -52,13 +52,7 @@ describe('WeightedColumnSelector', () => {
       ];
 
       // Placing a 2-column section
-      const result = selector.findBestColumn(
-        columnHeights,
-        2,
-        100,
-        pendingSections,
-        12
-      );
+      const result = selector.findBestColumn(columnHeights, 2, 100, pendingSections, 12);
 
       // Should prefer column 0 or 2 (leaves 2 columns), not column 1 (leaves orphans)
       expect([0, 2]).toContain(result.column);
@@ -104,13 +98,7 @@ describe('WeightedColumnSelector', () => {
 
       // Placing a 2-column section at column 1 would leave 1 orphan column
       // which can't fit the pending 2-column section
-      const result = selector.findBestColumn(
-        columnHeights,
-        2,
-        100,
-        pendingSections,
-        12
-      );
+      const result = selector.findBestColumn(columnHeights, 2, 100, pendingSections, 12);
 
       // Should prefer column 0 (leaves 1 empty) over column 1 (leaves orphans on both sides)
       expect(result.column).toBe(0);
@@ -124,13 +112,7 @@ describe('WeightedColumnSelector', () => {
       ];
 
       // Any placement is fine since we have narrow sections to fill gaps
-      const result = selector.findBestColumn(
-        columnHeights,
-        2,
-        100,
-        pendingSections,
-        12
-      );
+      const result = selector.findBestColumn(columnHeights, 2, 100, pendingSections, 12);
 
       expect(result.column).toBeGreaterThanOrEqual(0);
       expect(result.column).toBeLessThanOrEqual(2);
@@ -145,17 +127,9 @@ describe('WeightedColumnSelector', () => {
       });
 
       const columnHeights = [0, 0, 100, 100];
-      const pendingSections: CardSection[] = [
-        { id: '1', type: 'info', colSpan: 2, title: 'Wide' },
-      ];
+      const pendingSections: CardSection[] = [{ id: '1', type: 'info', colSpan: 2, title: 'Wide' }];
 
-      const result = customSelector.findBestColumn(
-        columnHeights,
-        2,
-        100,
-        pendingSections,
-        12
-      );
+      const result = customSelector.findBestColumn(columnHeights, 2, 100, pendingSections, 12);
 
       // With high gap penalty, should strongly avoid creating orphans
       expect([0, 2]).toContain(result.column);
@@ -174,17 +148,9 @@ describe('WeightedColumnSelector', () => {
       });
 
       const columnHeights = [0, 0, 0, 0];
-      const pendingSections: CardSection[] = [
-        { id: '1', type: 'info', colSpan: 2, title: 'Wide' },
-      ];
+      const pendingSections: CardSection[] = [{ id: '1', type: 'info', colSpan: 2, title: 'Wide' }];
 
-      const result = fastSelector.findBestColumn(
-        columnHeights,
-        2,
-        100,
-        pendingSections,
-        12
-      );
+      const result = fastSelector.findBestColumn(columnHeights, 2, 100, pendingSections, 12);
 
       // Should complete without error
       expect(result.column).toBeGreaterThanOrEqual(0);
@@ -248,17 +214,9 @@ describe('WeightedColumnSelector', () => {
 
     it('compareSelectionStrategies should show differences', () => {
       const columnHeights = [0, 0, 100, 100];
-      const pendingSections: CardSection[] = [
-        { id: '1', type: 'info', colSpan: 2, title: 'Wide' },
-      ];
+      const pendingSections: CardSection[] = [{ id: '1', type: 'info', colSpan: 2, title: 'Wide' }];
 
-      const comparison = compareSelectionStrategies(
-        columnHeights,
-        2,
-        100,
-        pendingSections,
-        12
-      );
+      const comparison = compareSelectionStrategies(columnHeights, 2, 100, pendingSections, 12);
 
       expect(comparison.weighted).toBeDefined();
       expect(comparison.simple).toBeDefined();
@@ -291,13 +249,7 @@ describe('WeightedColumnSelector', () => {
       ];
 
       // Place a 2-column chart
-      const result = selector.findBestColumn(
-        columnHeights,
-        2,
-        250,
-        pendingSections,
-        12
-      );
+      const result = selector.findBestColumn(columnHeights, 2, 250, pendingSections, 12);
 
       expect(result.column).toBeGreaterThanOrEqual(0);
       expect(result.column).toBeLessThanOrEqual(2);
@@ -314,26 +266,14 @@ describe('WeightedColumnSelector', () => {
       ];
 
       // Place the first section (3 columns)
-      const result1 = selector.findBestColumn(
-        columnHeights,
-        3,
-        300,
-        pendingSections.slice(1),
-        12
-      );
+      const result1 = selector.findBestColumn(columnHeights, 3, 300, pendingSections.slice(1), 12);
       expect(result1.column).toBe(0);
 
       // Update heights
       const updatedHeights = [300, 300, 300];
 
       // Place second section (2 columns)
-      const result2 = selector.findBestColumn(
-        updatedHeights,
-        2,
-        200,
-        pendingSections.slice(2),
-        12
-      );
+      const result2 = selector.findBestColumn(updatedHeights, 2, 200, pendingSections.slice(2), 12);
 
       // Should prefer columns that leave space for the 1-column section
       expect(result2.column).toBeGreaterThanOrEqual(0);
@@ -352,13 +292,7 @@ describe('WeightedColumnSelector', () => {
       }));
 
       const startTime = performance.now();
-      const result = selector.findBestColumn(
-        columnHeights,
-        2,
-        200,
-        pendingSections,
-        12
-      );
+      const result = selector.findBestColumn(columnHeights, 2, 200, pendingSections, 12);
       const endTime = performance.now();
 
       expect(result.column).toBeGreaterThanOrEqual(0);
@@ -379,13 +313,7 @@ describe('WeightedColumnSelector', () => {
       }));
 
       const startTime = performance.now();
-      const result = fastSelector.findBestColumn(
-        columnHeights,
-        1,
-        200,
-        pendingSections,
-        12
-      );
+      const result = fastSelector.findBestColumn(columnHeights, 1, 200, pendingSections, 12);
       const endTime = performance.now();
 
       expect(result.column).toBeGreaterThanOrEqual(0);
@@ -393,4 +321,3 @@ describe('WeightedColumnSelector', () => {
     });
   });
 });
-

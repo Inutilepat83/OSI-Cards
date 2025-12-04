@@ -48,7 +48,8 @@ export class CustomValidators {
         return null;
       }
 
-      const emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+      const emailRegex =
+        /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
       if (!emailRegex.test(control.value)) {
         return { email: { value: control.value } };
@@ -286,7 +287,7 @@ export class CustomValidators {
     return (control: AbstractControl): ValidationErrors | null => {
       const group = control as any;
 
-      const hasValue = controlNames.some(name => {
+      const hasValue = controlNames.some((name) => {
         const ctrl = group.get(name);
         return ctrl && ctrl.value;
       });
@@ -331,7 +332,7 @@ export class CustomValidators {
 
       return timer(debounceTime).pipe(
         switchMap(() => checkFn(control.value)),
-        map(isUnique => {
+        map((isUnique) => {
           return isUnique ? null : { unique: { value: control.value } };
         })
       );
@@ -493,7 +494,7 @@ export class CustomValidators {
         return null;
       }
 
-      const isAllowed = allowedTypes.some(type => {
+      const isAllowed = allowedTypes.some((type) => {
         if (type.startsWith('.')) {
           return file.name.endsWith(type);
         }
@@ -621,10 +622,7 @@ export function getErrorMessage(
  * }
  * ```
  */
-export function hasError(
-  control: AbstractControl | null,
-  errorKey: string
-): boolean {
+export function hasError(control: AbstractControl | null, errorKey: string): boolean {
   return !!control?.hasError(errorKey) && (control?.dirty || control?.touched);
 }
 
@@ -635,10 +633,7 @@ export function hasError(
  * @param fieldName - Field name for messages
  * @returns First error message or null
  */
-export function getFirstError(
-  control: AbstractControl | null,
-  fieldName = 'Field'
-): string | null {
+export function getFirstError(control: AbstractControl | null, fieldName = 'Field'): string | null {
   if (!control || !control.errors || (!control.dirty && !control.touched)) {
     return null;
   }
@@ -662,7 +657,7 @@ export function markAllAsTouched(control: AbstractControl): void {
 
   if ('controls' in control) {
     const group = control as any;
-    Object.keys(group.controls).forEach(key => {
+    Object.keys(group.controls).forEach((key) => {
       markAllAsTouched(group.controls[key]);
     });
   }
@@ -697,4 +692,3 @@ export function validateForm(control: AbstractControl): boolean {
   control.updateValueAndValidity();
   return control.valid;
 }
-

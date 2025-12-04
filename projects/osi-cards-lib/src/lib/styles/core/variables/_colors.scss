@@ -3,19 +3,19 @@
 // Generated from master tokens
 // ===================================================================
 
-@use '../../tokens/master' as *;
+@use "../../tokens/master" as *;
 
 // Base colors for :root
 :root {
-  @include osi-theme-base('demo', false);
+  @include osi-theme-base("demo", false);
 }
 
 // Dark theme (Night Mode)
-:root[data-theme='night'] {
-  @include osi-theme-dark('demo', false);
+:root[data-theme="night"] {
+  @include osi-theme-dark("demo", false);
 }
 
 // Light theme (Day Mode)
-:root[data-theme='day'] {
-  @include osi-theme-light('demo', false);
+:root[data-theme="day"] {
+  @include osi-theme-light("demo", false);
 }

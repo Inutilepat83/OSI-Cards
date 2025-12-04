@@ -235,10 +235,7 @@ export class DynamicColumnOptimizer {
 
     if (characteristics.hasNarrowContent && columns < this.config.maxColumns) {
       // Narrow content can use more columns
-      const suggestedColumns = Math.min(
-        this.config.maxColumns,
-        Math.ceil(columns * 1.25)
-      );
+      const suggestedColumns = Math.min(this.config.maxColumns, Math.ceil(columns * 1.25));
       if (suggestedColumns > columns) {
         columns = suggestedColumns;
         reason += '; Increased for narrow content';
@@ -269,9 +266,7 @@ export class DynamicColumnOptimizer {
     const breakpoint = this.getBreakpoint(containerWidth);
 
     // Calculate maximum possible columns
-    const maxPossible = Math.floor(
-      (containerWidth + 12) / (this.config.minColumnWidth + 12)
-    );
+    const maxPossible = Math.floor((containerWidth + 12) / (this.config.minColumnWidth + 12));
 
     let columns: number;
     let reason: string;
@@ -315,9 +310,7 @@ export class DynamicColumnOptimizer {
     sections: CardSection[]
   ): ColumnOptimizationResult {
     // Calculate based on available width
-    const idealColumns = Math.floor(
-      (containerWidth + 12) / (this.config.minColumnWidth + 12)
-    );
+    const idealColumns = Math.floor((containerWidth + 12) / (this.config.minColumnWidth + 12));
 
     // Apply constraints
     let columns = Math.max(1, Math.min(this.config.maxColumns, idealColumns));
@@ -482,4 +475,3 @@ export function shouldRecalculateColumns(
   const widthDiff = Math.abs(newWidth - oldWidth);
   return widthDiff >= threshold;
 }
-

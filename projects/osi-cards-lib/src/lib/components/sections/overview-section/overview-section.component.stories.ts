@@ -27,7 +27,9 @@ export const CompanyOverview: Story = {
     section: TestBuilders.Section.create()
       .withTitle('Company Overview')
       .withType('overview')
-      .withDescription('OSI Cards is a leading enterprise software company specializing in dynamic card generation and data visualization. Founded in 2020, we serve over 3,850 customers worldwide, including Fortune 500 companies.')
+      .withDescription(
+        'OSI Cards is a leading enterprise software company specializing in dynamic card generation and data visualization. Founded in 2020, we serve over 3,850 customers worldwide, including Fortune 500 companies.'
+      )
       .withFields([
         { label: 'Founded', value: '2020' },
         { label: 'Headquarters', value: 'San Francisco, CA' },
@@ -46,7 +48,9 @@ export const ProductOverview: Story = {
     section: TestBuilders.Section.create()
       .withTitle('Product Overview')
       .withType('overview')
-      .withDescription('OSI Cards Pro is an enterprise-grade platform for creating dynamic, responsive card layouts with real-time streaming capabilities. Built with Angular 18+ and optimized for performance, it handles large datasets while maintaining 60 FPS.')
+      .withDescription(
+        'OSI Cards Pro is an enterprise-grade platform for creating dynamic, responsive card layouts with real-time streaming capabilities. Built with Angular 18+ and optimized for performance, it handles large datasets while maintaining 60 FPS.'
+      )
       .withFields([
         { label: 'Version', value: '2.0.0' },
         { label: 'Released', value: 'December 2025' },
@@ -64,7 +68,9 @@ export const ProjectOverview: Story = {
     section: TestBuilders.Section.create()
       .withTitle('Project Overview')
       .withType('overview')
-      .withDescription('Enterprise CRM Implementation - A comprehensive customer relationship management system rollout across 15 departments, including data migration, training, and integration with existing systems.')
+      .withDescription(
+        'Enterprise CRM Implementation - A comprehensive customer relationship management system rollout across 15 departments, including data migration, training, and integration with existing systems.'
+      )
       .withFields([
         { label: 'Client', value: 'Tech Corp' },
         { label: 'Timeline', value: 'January - June 2026' },
@@ -82,7 +88,9 @@ export const EventOverview: Story = {
     section: TestBuilders.Section.create()
       .withTitle('TechConnect 2026 Overview')
       .withType('overview')
-      .withDescription('Our annual technology conference brings together 5,000+ industry leaders, innovators, and developers for three days of keynotes, workshops, and networking.')
+      .withDescription(
+        'Our annual technology conference brings together 5,000+ industry leaders, innovators, and developers for three days of keynotes, workshops, and networking.'
+      )
       .withFields([
         { label: 'Dates', value: 'March 15-17, 2026' },
         { label: 'Location', value: 'Moscone Center, San Francisco' },
@@ -101,7 +109,9 @@ export const ReportOverview: Story = {
     section: TestBuilders.Section.create()
       .withTitle('Q4 2025 Performance Report')
       .withType('overview')
-      .withDescription('This report provides a comprehensive analysis of Q4 2025 performance across all business units, highlighting key achievements, challenges, and strategic initiatives for the coming quarter.')
+      .withDescription(
+        'This report provides a comprehensive analysis of Q4 2025 performance across all business units, highlighting key achievements, challenges, and strategic initiatives for the coming quarter.'
+      )
       .withFields([
         { label: 'Period', value: 'Oct 1 - Dec 31, 2025' },
         { label: 'Report Date', value: 'January 5, 2026' },
@@ -119,7 +129,9 @@ export const ServiceOverview: Story = {
     section: TestBuilders.Section.create()
       .withTitle('Managed Cloud Services Overview')
       .withType('overview')
-      .withDescription('Enterprise-grade cloud infrastructure management with 24/7 monitoring, automatic scaling, daily backups, and dedicated support.')
+      .withDescription(
+        'Enterprise-grade cloud infrastructure management with 24/7 monitoring, automatic scaling, daily backups, and dedicated support.'
+      )
       .withFields([
         { label: 'Service Type', value: 'Infrastructure Management' },
         { label: 'Uptime SLA', value: '99.99%' },
@@ -137,7 +149,9 @@ export const TeamOverview: Story = {
     section: TestBuilders.Section.create()
       .withTitle('Engineering Team Overview')
       .withType('overview')
-      .withDescription('Our engineering team consists of 85 talented developers, designers, and DevOps engineers working across frontend, backend, and infrastructure. We practice agile development with two-week sprints.')
+      .withDescription(
+        'Our engineering team consists of 85 talented developers, designers, and DevOps engineers working across frontend, backend, and infrastructure. We practice agile development with two-week sprints.'
+      )
       .withFields([
         { label: 'Team Size', value: '85 members' },
         { label: 'Frontend Engineers', value: '35' },
@@ -160,4 +174,3 @@ export const Minimal: Story = {
       .build(),
   },
 };
-

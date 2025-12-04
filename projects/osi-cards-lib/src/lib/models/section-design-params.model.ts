@@ -185,13 +185,13 @@ export interface SectionTypographyParams {
  * Combine all parameter types for comprehensive customization
  */
 export interface SectionDesignParams
-  extends SectionColorParams,
-          SectionBorderParams,
-          SectionSpacingParams,
-          SectionAnimationParams,
-          SectionShadowParams,
-          SectionTypographyParams {
-
+  extends
+    SectionColorParams,
+    SectionBorderParams,
+    SectionSpacingParams,
+    SectionAnimationParams,
+    SectionShadowParams,
+    SectionTypographyParams {
   /** Custom CSS variables (for advanced use cases) */
   customVars?: Record<string, string>;
 }
@@ -294,21 +294,27 @@ export const SECTION_DESIGN_PRESETS: Record<SectionDesignPreset, SectionDesignPa
 /**
  * Type guard to check if meta contains design parameters
  */
-export function hasSectionDesign(meta: Record<string, unknown> | undefined): meta is { design: SectionDesignParams } {
+export function hasSectionDesign(
+  meta: Record<string, unknown> | undefined
+): meta is { design: SectionDesignParams } {
   return meta !== undefined && 'design' in meta && typeof meta.design === 'object';
 }
 
 /**
  * Type guard to check if meta contains design config
  */
-export function hasSectionDesignConfig(meta: Record<string, unknown> | undefined): meta is { design: SectionDesignConfig } {
+export function hasSectionDesignConfig(
+  meta: Record<string, unknown> | undefined
+): meta is { design: SectionDesignConfig } {
   return meta !== undefined && 'design' in meta && typeof meta.design === 'object';
 }
 
 /**
  * Extract design parameters from section meta
  */
-export function getSectionDesignParams(meta: Record<string, unknown> | undefined): SectionDesignParams | undefined {
+export function getSectionDesignParams(
+  meta: Record<string, unknown> | undefined
+): SectionDesignParams | undefined {
   if (!hasSectionDesign(meta) && !hasSectionDesignConfig(meta)) {
     return undefined;
   }
@@ -323,6 +329,5 @@ export function getSectionDesignParams(meta: Record<string, unknown> | undefined
   }
 
   // Direct parameters or config with only params
-  return 'params' in design ? design.params : design as SectionDesignParams;
+  return 'params' in design ? design.params : (design as SectionDesignParams);
 }
-

@@ -55,7 +55,11 @@ export class AccordionManager {
 export class CarouselManager {
   private currentIndex = 0;
 
-  constructor(private totalItems: number, private autoRotate = false, private interval = 5000) {
+  constructor(
+    private totalItems: number,
+    private autoRotate = false,
+    private interval = 5000
+  ) {
     if (autoRotate) {
       this.startAutoRotate();
     }
@@ -105,4 +109,3 @@ export function createAccordion(allowMultiple = false): AccordionManager {
 export function createCarousel(totalItems: number, autoRotate = false): CarouselManager {
   return new CarouselManager(totalItems, autoRotate);
 }
-

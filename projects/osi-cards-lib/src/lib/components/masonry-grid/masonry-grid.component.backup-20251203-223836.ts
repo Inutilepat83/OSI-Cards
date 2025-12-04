@@ -1,7 +1,27 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, Output, QueryList, SimpleChanges, ViewChild, ViewChildren, inject, ViewEncapsulation } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren,
+  inject,
+  ViewEncapsulation,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardSection } from '../../models';
-import { SectionRendererComponent, SectionRenderEvent } from '../section-renderer/section-renderer.component';
+import {
+  SectionRendererComponent,
+  SectionRenderEvent,
+} from '../section-renderer/section-renderer.component';
 import { Breakpoint, getBreakpointFromWidth } from '../../utils/responsive.util';
 import {
   MIN_COLUMN_WIDTH,
@@ -14,21 +34,19 @@ import {
   PreferredColumns,
   shouldExpandSection,
   SectionExpansionInfo,
-  calculateBasicDensity
+  calculateBasicDensity,
 } from '../../utils/grid-config.util';
-import {
-  estimateSectionHeight
-} from '../../utils/smart-grid.util';
+import { estimateSectionHeight } from '../../utils/smart-grid.util';
 import {
   HeightEstimator,
   recordHeightMeasurement,
-  HeightEstimationContext
+  HeightEstimationContext,
 } from '../../utils/height-estimation.util';
+import { VirtualScrollManager, ViewportState } from '../../utils/virtual-scroll.util';
 import {
-  VirtualScrollManager,
-  ViewportState
-} from '../../utils/virtual-scroll.util';
-import { MasterGridLayoutEngine, MasterLayoutResult } from '../../utils/master-grid-layout-engine.util';
+  MasterGridLayoutEngine,
+  MasterLayoutResult,
+} from '../../utils/master-grid-layout-engine.util';
 
 interface ColSpanThresholds {
   two: number;
@@ -51,8 +69,8 @@ interface PositionedSection {
   left: string;
   top: number;
   width: string;
-  isNew?: boolean | undefined;  // Whether this section should animate (newly added during streaming)
-  hasAnimated?: boolean | undefined;  // Whether this section has completed its entrance animation
+  isNew?: boolean | undefined; // Whether this section should animate (newly added during streaming)
+  hasAnimated?: boolean | undefined; // Whether this section has completed its entrance animation
 }
 
 /**
@@ -118,7 +136,7 @@ export interface SectionLayoutLog {
   templateUrl: './masonry-grid.component.html',
   styleUrls: ['./masonry-grid.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None // Inherits styles from parent's Shadow DOM
+  encapsulation: ViewEncapsulation.None, // Inherits styles from parent's Shadow DOM
 })
 export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() sections: CardSection[] = [];
@@ -278,8 +296,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
   /** Whether virtual scrolling is currently active */
   get isVirtualScrollActive(): boolean {
-    return this.enableVirtualScroll &&
-           this.positionedSections.length >= this.virtualThreshold;
+    return this.enableVirtualScroll && this.positionedSections.length >= this.virtualThreshold;
   }
 
   constructor() {
@@ -392,7 +409,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       // Custom height estimator for positioned sections
       (item: PositionedSection) => {
         // Use actual DOM height if available, otherwise estimate
-        const itemIndex = this.positionedSections.findIndex(s => s.key === item.key);
+        const itemIndex = this.positionedSections.findIndex((s) => s.key === item.key);
         const itemRef = this.itemRefs?.toArray()[itemIndex];
         if (itemRef?.nativeElement?.offsetHeight) {
           return itemRef.nativeElement.offsetHeight;
@@ -409,7 +426,9 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
     // Setup container scroll listener
     if (this.containerRef?.nativeElement) {
-      this.containerRef.nativeElement.addEventListener('scroll', this.handleScroll.bind(this), { passive: true });
+      this.containerRef.nativeElement.addEventListener('scroll', this.handleScroll.bind(this), {
+        passive: true,
+      });
     }
   }
 
@@ -441,7 +460,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
     // Get visible items
     const visibleItems = this.virtualScrollManager.getVisibleItems();
-    this.renderedSections = visibleItems.map(vi => vi.item);
+    this.renderedSections = visibleItems.map((vi) => vi.item);
     this.virtualViewport = this.virtualScrollManager.getViewportState();
 
     // Log in debug mode
@@ -656,7 +675,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     if (key) {
       this.animatedSectionKeys.add(key);
       // Also mark in the positionedSections array for state tracking
-      const section = this.positionedSections.find(s => s.key === key);
+      const section = this.positionedSections.find((s) => s.key === key);
       if (section) {
         section.hasAnimated = true;
         // CRITICAL: Clear isNew flag to stop animation from re-triggering
@@ -727,7 +746,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
    * Sanitizes section title for use as HTML ID
    */
   private sanitizeSectionId(title: string): string {
-    return title.toLowerCase()
+    return title
+      .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '');
   }
@@ -859,7 +879,10 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     // This prevents duplicate keys when sections have same title+type but no id
     const title = section.title ?? '';
     const type = section.type ?? 'section';
-    const idx = index !== undefined ? `-${index}` : `-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    const idx =
+      index !== undefined
+        ? `-${index}`
+        : `-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     return `${title}-${type}${idx}`;
   }
 
@@ -872,7 +895,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
         isStreaming: this.isStreaming,
         isLayoutReady: this.isLayoutReady,
         hasValidLayout: this.hasValidLayout,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
 
@@ -978,7 +1001,6 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       if (this._debug) {
         console.log('[MasonryGrid] ✅ Layout complete, isLayoutReady:', this.isLayoutReady);
       }
-
     } catch (error) {
       console.error('[MasonryGrid] ❌ Master engine failed, using fallback:', error);
       // Fallback to legacy if master engine fails
@@ -1004,14 +1026,14 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
    * Fallback layout method if master engine fails
    * Simplified version for safety
    */
-  private computeLegacyLayoutFallback(
-    sections: CardSection[],
-    containerWidth: number
-  ): void {
-    const columns = Math.max(1, Math.min(
-      this.maxColumns,
-      Math.floor((containerWidth + this.gap) / (this.minColumnWidth + this.gap))
-    ));
+  private computeLegacyLayoutFallback(sections: CardSection[], containerWidth: number): void {
+    const columns = Math.max(
+      1,
+      Math.min(
+        this.maxColumns,
+        Math.floor((containerWidth + this.gap) / (this.minColumnWidth + this.gap))
+      )
+    );
 
     const colHeights = Array(columns).fill(0);
 
@@ -1062,7 +1084,6 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     this.hasValidLayout = true;
     this.layoutState = 'ready';
   }
-
 
   /**
    * Incremental section addition for streaming mode
@@ -1127,12 +1148,12 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
     // Calculate columns for proper multi-column placement
     const containerWidth = this.getContainerWidth();
-    const columns = Math.min(this.maxColumns, Math.max(1,
-      Math.floor((containerWidth + this.gap) / (this.minColumnWidth + this.gap))
-    ));
-    const colWidth = columns > 1
-      ? (containerWidth - (this.gap * (columns - 1))) / columns
-      : containerWidth;
+    const columns = Math.min(
+      this.maxColumns,
+      Math.max(1, Math.floor((containerWidth + this.gap) / (this.minColumnWidth + this.gap)))
+    );
+    const colWidth =
+      columns > 1 ? (containerWidth - this.gap * (columns - 1)) / columns : containerWidth;
 
     // Build column heights from existing sections with better height estimation
     const colHeights = Array(columns).fill(0);
@@ -1192,9 +1213,10 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       // For streaming, use single column width (will be optimized in post-streaming reflow)
       // Exception: charts and maps benefit from 2 columns even during streaming
       const type = section.type?.toLowerCase() ?? '';
-      const streamingColSpan = (type === 'chart' || type === 'map' || type === 'overview')
-        ? Math.min(2, columns - shortestCol)
-        : 1;
+      const streamingColSpan =
+        type === 'chart' || type === 'map' || type === 'overview'
+          ? Math.min(2, columns - shortestCol)
+          : 1;
 
       // Ensure column fits
       const actualColSpan = Math.min(streamingColSpan, columns - shortestCol);
@@ -1219,7 +1241,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
         left: leftExpr,
         top: topPosition,
         width: widthExpr,
-        isNew
+        isNew,
       };
 
       return item;
@@ -1309,12 +1331,18 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       }
 
       // Calculate gap score: how much unfillable space would this placement create?
-      const gapScore = this.calculateGapScore(colHeights, col, targetSpan, columns, pendingSections);
+      const gapScore = this.calculateGapScore(
+        colHeights,
+        col,
+        targetSpan,
+        columns,
+        pendingSections
+      );
 
       // Prefer positions that minimize both height and gap creation
       // Use weighted scoring: height is primary, gap score is secondary
       // Increased gap penalty from 50 to 150 for more aggressive gap avoidance
-      const _weightedScore = maxColHeight + (gapScore * 150); // Reserved for future use
+      const _weightedScore = maxColHeight + gapScore * 150; // Reserved for future use
 
       if (maxColHeight < minHeight || (maxColHeight === minHeight && gapScore < bestGapScore)) {
         minHeight = maxColHeight;
@@ -1330,18 +1358,15 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     const canPendingFit = this.canAnyPendingSectionFit(remainingCols, pendingSections);
 
     // Use the new type-aware expansion decision function
-    const expansionResult = shouldExpandSection(
-      sectionInfo ?? { type: 'default' },
-      {
-        currentSpan: targetSpan,
-        remainingColumns: remainingCols,
-        totalColumns: columns,
-        containerWidth,
-        minColumnWidth: this.minColumnWidth,
-        gap: this.gap,
-        canPendingFit,
-      }
-    );
+    const expansionResult = shouldExpandSection(sectionInfo ?? { type: 'default' }, {
+      currentSpan: targetSpan,
+      remainingColumns: remainingCols,
+      totalColumns: columns,
+      containerWidth,
+      minColumnWidth: this.minColumnWidth,
+      gap: this.gap,
+      canPendingFit,
+    });
 
     return {
       columnIndex: bestColumn,
@@ -1384,16 +1409,16 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
     // Calculate height variance - lower variance = better balanced = fewer gaps
     const avgHeight = simulatedHeights.reduce((a, b) => a + b, 0) / columns;
-    const variance = simulatedHeights.reduce((acc, h) => acc + Math.pow(h - avgHeight, 2), 0) / columns;
+    const variance =
+      simulatedHeights.reduce((acc, h) => acc + Math.pow(h - avgHeight, 2), 0) / columns;
 
     // Check if remaining columns on the row could fit any pending section
     const remainingAfter = columns - startCol - span;
     const remainingBefore = startCol;
 
     // Find minimum colSpan among pending sections
-    const minPendingSpan = pendingSections.length > 0
-      ? Math.min(...pendingSections.map(s => s.colSpan))
-      : 1;
+    const minPendingSpan =
+      pendingSections.length > 0 ? Math.min(...pendingSections.map((s) => s.colSpan)) : 1;
 
     // Penalty for creating orphan columns that can't fit any pending section
     let orphanPenalty = 0;
@@ -1410,13 +1435,16 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   /**
    * Checks if any pending section can fit in the given number of columns.
    */
-  private canAnyPendingSectionFit(availableColumns: number, pendingSections?: PositionedSection[]): boolean {
+  private canAnyPendingSectionFit(
+    availableColumns: number,
+    pendingSections?: PositionedSection[]
+  ): boolean {
     if (!pendingSections || pendingSections.length === 0 || availableColumns <= 0) {
       return false;
     }
 
     // Check if any pending section has colSpan <= available columns
-    return pendingSections.some(s => s.colSpan <= availableColumns);
+    return pendingSections.some((s) => s.colSpan <= availableColumns);
   }
 
   /**
@@ -1459,11 +1487,9 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     const tallThreshold = avgHeight * 1.5;
 
     // Find multi-column sections that are tall candidates
-    const candidates = sections.filter(s => {
+    const candidates = sections.filter((s) => {
       const height = sectionHeights.get(s.key) ?? 200;
-      return s.colSpan > 1 &&
-             s.preferredColumns > 1 &&
-             height > tallThreshold;
+      return s.colSpan > 1 && s.preferredColumns > 1 && height > tallThreshold;
     });
 
     if (candidates.length === 0) {
@@ -1471,10 +1497,10 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     }
 
     // Clone sections for modification
-    const optimized = sections.map(s => ({ ...s }));
+    const optimized = sections.map((s) => ({ ...s }));
 
     for (const candidate of candidates) {
-      const idx = optimized.findIndex(s => s.key === candidate.key);
+      const idx = optimized.findIndex((s) => s.key === candidate.key);
       if (idx < 0) continue;
 
       const section = optimized[idx];
@@ -1489,16 +1515,12 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       if (narrowerSpan === currentSpan) continue;
 
       // Simulate both layouts and compare total heights
-      const currentLayoutHeight = this.simulateLayoutHeight(
-        optimized, sectionHeights, columns
-      );
+      const currentLayoutHeight = this.simulateLayoutHeight(optimized, sectionHeights, columns);
 
       // Temporarily modify span
       section.colSpan = narrowerSpan;
 
-      const narrowerLayoutHeight = this.simulateLayoutHeight(
-        optimized, sectionHeights, columns
-      );
+      const narrowerLayoutHeight = this.simulateLayoutHeight(optimized, sectionHeights, columns);
 
       // Keep narrower span only if it reduces total height
       if (narrowerLayoutHeight < currentLayoutHeight) {
@@ -1593,7 +1615,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     }
 
     // Clone for modification
-    let result = placedSections.map(s => ({ ...s }));
+    let result = placedSections.map((s) => ({ ...s }));
     const currentHeight = this.calculateTotalHeight(result, sectionHeights);
 
     // Limit iterations to avoid performance issues
@@ -1626,13 +1648,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
           const _heightB = sectionHeights.get(sectionB.key) ?? 200; // Reserved for future constraint checking
 
           // Try swapping their positions (and thus, effectively their placements)
-          const swapped = this.trySwapSections(
-            result,
-            i,
-            j,
-            sectionHeights,
-            columns
-          );
+          const swapped = this.trySwapSections(result, i, j, sectionHeights, columns);
 
           const swappedHeight = this.calculateTotalHeight(swapped, sectionHeights);
 
@@ -1658,7 +1674,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     sectionHeights: Map<string, number>,
     columns: number
   ): PositionedSection[] {
-    const swapped = sections.map(s => ({ ...s }));
+    const swapped = sections.map((s) => ({ ...s }));
 
     // Swap the sections in the array (which affects their placement order)
     const temp = swapped[indexA];
@@ -1684,14 +1700,14 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   ): PositionedSection[] {
     // Use master engine to recalculate with actual heights
     const containerWidth = this.getContainerWidth();
-    const cardSections = sections.map(s => s.section);
+    const cardSections = sections.map((s) => s.section);
 
     try {
       const layout = this.masterEngine.calculateLayout(cardSections, containerWidth, columns);
 
       // Convert back to PositionedSection format, preserving animation state
-      return layout.sections.map(placed => {
-        const original = sections.find(s => s.key === placed.key);
+      return layout.sections.map((placed) => {
+        const original = sections.find((s) => s.key === placed.key);
         return {
           section: placed.section,
           key: placed.key,
@@ -1758,7 +1774,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     try {
       // Use master engine for gap optimization
       const layout = this.masterEngine.calculateLayout(
-        sections.map(s => s.section),
+        sections.map((s) => s.section),
         containerWidth,
         columns
       );
@@ -1773,8 +1789,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       }
 
       // Convert back to PositionedSection format, preserving animation state
-      const optimized = layout.sections.map(placed => {
-        const original = sections.find(s => s.key === placed.key);
+      const optimized = layout.sections.map((placed) => {
+        const original = sections.find((s) => s.key === placed.key);
         return {
           section: placed.section,
           key: placed.key,
@@ -1796,9 +1812,9 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
     // FALLBACK: Original gap optimization
     // Build sections with height info for gap analysis
-    const sectionsWithHeight = sections.map(s => ({
+    const sectionsWithHeight = sections.map((s) => ({
       ...s,
-      height: sectionHeights.get(s.key) ?? 200
+      height: sectionHeights.get(s.key) ?? 200,
     }));
 
     // Find gaps in current layout
@@ -1812,10 +1828,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     // Prefer single-column, low-priority sections for repositioning
     const movableSections = sections
       .map((s, idx) => ({ section: s, index: idx, height: sectionHeights.get(s.key) ?? 200 }))
-      .filter(({ section }) =>
-        section.colSpan === 1 &&
-        section.preferredColumns === 1
-      )
+      .filter(({ section }) => section.colSpan === 1 && section.preferredColumns === 1)
       .sort((a, b) => b.section.top - a.section.top); // Start from bottom sections
 
     if (movableSections.length === 0) {
@@ -1828,14 +1841,13 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
     for (const gap of gaps) {
       // Find a section that fits in this gap
-      const candidate = movableSections.find(({ section, height }) =>
-        section.colSpan <= gap.width &&
-        height <= gap.height + 20 // Allow small tolerance
+      const candidate = movableSections.find(
+        ({ section, height }) => section.colSpan <= gap.width && height <= gap.height + 20 // Allow small tolerance
       );
 
       if (candidate) {
         // Move section to fill the gap
-        const targetIndex = result.findIndex(s => s.key === candidate.section.key);
+        const targetIndex = result.findIndex((s) => s.key === candidate.section.key);
         const targetSection = result[targetIndex];
         if (targetIndex >= 0 && targetSection) {
           const movedSection: PositionedSection = {
@@ -1846,13 +1858,15 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
             isNew: targetSection.isNew,
             left: generateLeftExpression(columns, gap.column, this.gap),
             top: gap.top,
-            width: generateWidthExpression(columns, candidate.section.colSpan, this.gap)
+            width: generateWidthExpression(columns, candidate.section.colSpan, this.gap),
           };
           result[targetIndex] = movedSection;
           madeChanges = true;
 
           // Remove from movable list to avoid reusing
-          const movableIdx = movableSections.findIndex(m => m.section.key === candidate.section.key);
+          const movableIdx = movableSections.findIndex(
+            (m) => m.section.key === candidate.section.key
+          );
           if (movableIdx >= 0) {
             movableSections.splice(movableIdx, 1);
           }
@@ -1882,10 +1896,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     }
 
     // Calculate container height from sections
-    const containerHeight = Math.max(
-      ...sections.map(s => s.top + s.height),
-      0
-    );
+    const containerHeight = Math.max(...sections.map((s) => s.top + s.height), 0);
 
     if (containerHeight === 0) {
       return gaps;
@@ -1894,9 +1905,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     // Build occupancy grid with 10px resolution
     const gridResolution = 10;
     const rows = Math.ceil(containerHeight / gridResolution);
-    const grid: boolean[][] = Array.from({ length: rows }, () =>
-      new Array(columns).fill(false)
-    );
+    const grid: boolean[][] = Array.from({ length: rows }, () => new Array(columns).fill(false));
 
     // Parse column index from CSS calc expression
     const parseColumnIndex = (left: string): number => {
@@ -1948,7 +1957,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
               column: c,
               top: gapStart * gridResolution,
               height: gapHeight,
-              width: 1 // Single column gap
+              width: 1, // Single column gap
             });
           }
           gapStart = null;
@@ -1959,7 +1968,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     }
 
     // Sort gaps by area (largest first) to prioritize filling bigger gaps
-    gaps.sort((a, b) => (b.height * b.width) - (a.height * a.width));
+    gaps.sort((a, b) => b.height * b.width - a.height * a.width);
 
     return gaps;
   }
@@ -2017,14 +2026,14 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     const columns = calculateColumns(containerWidth, {
       minColumnWidth: this.minColumnWidth,
       maxColumns: this.maxColumns,
-      gap: this.gap
+      gap: this.gap,
     });
 
     // Expose column count as CSS custom property for section grids to consume
     if (containerElement.style && typeof containerElement.style.setProperty === 'function') {
       containerElement.style.setProperty('--masonry-columns', columns.toString());
       // Also expose the calculated column width for CSS consumption
-      const colWidth = (containerWidth - (this.gap * (columns - 1))) / columns;
+      const colWidth = (containerWidth - this.gap * (columns - 1)) / columns;
       containerElement.style.setProperty('--masonry-column-width', `${colWidth}px`);
     }
 
@@ -2129,7 +2138,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     for (const item of sectionsToPlace) {
       // Remove current item from pending list
       if (pendingSections) {
-        const pendingIndex = pendingSections.findIndex(p => p.key === item.key);
+        const pendingIndex = pendingSections.findIndex((p) => p.key === item.key);
         if (pendingIndex >= 0) {
           pendingSections.splice(pendingIndex, 1);
         }
@@ -2142,7 +2151,11 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
         type: item.section.type,
         canGrow: item.section.canGrow,
         maxColumns: item.section.maxColumns,
-        density: calculateBasicDensity(item.section.fields, item.section.items, item.section.description),
+        density: calculateBasicDensity(
+          item.section.fields,
+          item.section.items,
+          item.section.description
+        ),
       };
 
       // Use the column negotiation algorithm for optimal assignment
@@ -2180,7 +2193,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
         colSpan,
         left: leftExpr,
         top: topPosition,
-        width: widthExpr
+        width: widthExpr,
       });
     }
 
@@ -2232,8 +2245,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
         this.positionedSections = gapOptimized;
         // Recalculate container height after optimization
         this.containerHeight = Math.max(
-          ...gapOptimized.map(s => {
-            const idx = updated.findIndex(u => u.key === s.key);
+          ...gapOptimized.map((s) => {
+            const idx = updated.findIndex((u) => u.key === s.key);
             const height = itemRefArray[idx]?.nativeElement?.offsetHeight ?? 200;
             return s.top + height;
           }),
@@ -2248,11 +2261,17 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
     if (columnsChanged) {
       // Emit columns_changed event
-      this.emitLayoutLog('columns_changed', columns, containerWidth, updated, this.previousColumnCount);
+      this.emitLayoutLog(
+        'columns_changed',
+        columns,
+        containerWidth,
+        updated,
+        this.previousColumnCount
+      );
     }
 
     // Check for any expanded sections (colSpan > preferredColumns)
-    const hasExpandedSections = updated.some(ps => ps.colSpan > ps.preferredColumns);
+    const hasExpandedSections = updated.some((ps) => ps.colSpan > ps.preferredColumns);
 
     if (hasExpandedSections && !columnsChanged) {
       // Emit section_expanded event only when sections expanded but columns didn't change
@@ -2291,7 +2310,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     const layoutInfo: MasonryLayoutInfo = {
       columns,
       containerWidth,
-      breakpoint: getBreakpointFromWidth(containerWidth)
+      breakpoint: getBreakpointFromWidth(containerWidth),
     };
     if (this.isSameLayoutInfo(layoutInfo, this.lastLayoutInfo)) {
       return;
@@ -2332,7 +2351,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       containerWidth,
       columns,
       previousColumns,
-      sections: positionedSections.map(ps => ({
+      sections: positionedSections.map((ps) => ({
         id: ps.section.id || ps.key,
         type: ps.section.type || 'unknown',
         title: ps.section.title || '',
@@ -2340,24 +2359,29 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
         actualColSpan: ps.colSpan,
         expanded: ps.colSpan > ps.preferredColumns,
         position: { left: ps.left, top: ps.top },
-        width: ps.width
-      }))
+        width: ps.width,
+      })),
     };
 
     // Console logging only when debug mode is enabled
     if (this._debug) {
-      const eventEmoji = event === 'columns_changed' ? '📊' : event === 'section_expanded' ? '📐' : '📍';
+      const eventEmoji =
+        event === 'columns_changed' ? '📊' : event === 'section_expanded' ? '📐' : '📍';
       console.group(`${eventEmoji} [MasonryGrid] ${event.toUpperCase()}`);
-      console.log(`Container: ${containerWidth}px | Columns: ${columns}${previousColumns ? ` (was ${previousColumns})` : ''}`);
-      console.table(entry.sections.map(s => ({
-        title: s.title,
-        type: s.type,
-        preferred: s.preferredColumns,
-        actual: s.actualColSpan,
-        expanded: s.expanded ? '✓' : '',
-        left: s.position.left,
-        width: s.width
-      })));
+      console.log(
+        `Container: ${containerWidth}px | Columns: ${columns}${previousColumns ? ` (was ${previousColumns})` : ''}`
+      );
+      console.table(
+        entry.sections.map((s) => ({
+          title: s.title,
+          type: s.type,
+          preferred: s.preferredColumns,
+          actual: s.actualColSpan,
+          expanded: s.expanded ? '✓' : '',
+          left: s.position.left,
+          width: s.width,
+        }))
+      );
       console.groupEnd();
     }
 
@@ -2531,8 +2555,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     // If no previous IDs, use title-based comparison
     if (previousIds.size === 0) {
       // Use title comparison as fallback
-      const previousTitles = new Set(previousSections.map(s => s.title || '').filter(t => t));
-      const hasOverlap = currentSections.some(s => s.title && previousTitles.has(s.title));
+      const previousTitles = new Set(previousSections.map((s) => s.title || '').filter((t) => t));
+      const hasOverlap = currentSections.some((s) => s.title && previousTitles.has(s.title));
       return !hasOverlap;
     }
 
@@ -2646,12 +2670,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       const contentHash = HeightEstimator.generateContentHash(item.section);
 
       // Record the measurement for learning
-      recordHeightMeasurement(
-        item.section.type ?? 'default',
-        estimated,
-        actualHeight,
-        contentHash
-      );
+      recordHeightMeasurement(item.section.type ?? 'default', estimated, actualHeight, contentHash);
     }
   }
 
@@ -2659,24 +2678,27 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
    * Section type defaults for content orientation
    * Determines whether items within a section flow horizontally or vertically
    */
-  private readonly SECTION_ORIENTATION_DEFAULTS: Record<string, 'vertical' | 'horizontal' | 'auto'> = {
-    'contact-card': 'horizontal',  // Contact cards look good side-by-side
-    'network-card': 'horizontal',  // Network cards similar to contacts
-    'overview': 'vertical',        // Key-value pairs stack well
-    'analytics': 'horizontal',     // Metrics often display horizontally
-    'stats': 'horizontal',         // Stats similar to analytics
-    'financials': 'horizontal',    // Financial metrics horizontally
-    'list': 'vertical',            // Lists are naturally vertical
-    'event': 'vertical',           // Timeline flows vertically
-    'timeline': 'vertical',        // Timeline flows vertically
-    'chart': 'auto',               // Depends on chart type and size
-    'map': 'auto',                 // Maps can be either
-    'product': 'auto',             // Products can be either based on count
-    'solutions': 'vertical',       // Solutions usually list vertically
-    'info': 'vertical',            // Info sections stack key-value pairs
-    'quotation': 'vertical',       // Quotes stack naturally
-    'text-reference': 'vertical',  // Text references vertical
-    'project': 'vertical',         // Projects vertical
+  private readonly SECTION_ORIENTATION_DEFAULTS: Record<
+    string,
+    'vertical' | 'horizontal' | 'auto'
+  > = {
+    'contact-card': 'horizontal', // Contact cards look good side-by-side
+    'network-card': 'horizontal', // Network cards similar to contacts
+    overview: 'vertical', // Key-value pairs stack well
+    analytics: 'horizontal', // Metrics often display horizontally
+    stats: 'horizontal', // Stats similar to analytics
+    financials: 'horizontal', // Financial metrics horizontally
+    list: 'vertical', // Lists are naturally vertical
+    event: 'vertical', // Timeline flows vertically
+    timeline: 'vertical', // Timeline flows vertically
+    chart: 'auto', // Depends on chart type and size
+    map: 'auto', // Maps can be either
+    product: 'auto', // Products can be either based on count
+    solutions: 'vertical', // Solutions usually list vertically
+    info: 'vertical', // Info sections stack key-value pairs
+    quotation: 'vertical', // Quotes stack naturally
+    'text-reference': 'vertical', // Text references vertical
+    project: 'vertical', // Projects vertical
   };
 
   /**
@@ -2719,10 +2741,11 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     // Few items with wide content -> horizontal
     if (totalItems <= 4 && totalItems > 0) {
       // Check if items have short values (metrics-like)
-      const hasShortValues = section.fields?.every(f => {
-        const valueLength = String(f.value ?? '').length;
-        return valueLength < 20;
-      }) ?? true;
+      const hasShortValues =
+        section.fields?.every((f) => {
+          const valueLength = String(f.value ?? '').length;
+          return valueLength < 20;
+        }) ?? true;
 
       if (hasShortValues && fieldCount > 0) {
         return 'horizontal';

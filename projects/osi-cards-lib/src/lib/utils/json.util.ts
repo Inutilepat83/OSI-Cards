@@ -80,15 +80,19 @@ export function parseJSONWithValidation<T>(
  */
 export function stringifyWithCircular(obj: any, indent?: number): string {
   const seen = new WeakSet();
-  return JSON.stringify(obj, (key, value) => {
-    if (typeof value === 'object' && value !== null) {
-      if (seen.has(value)) {
-        return '[Circular]';
+  return JSON.stringify(
+    obj,
+    (key, value) => {
+      if (typeof value === 'object' && value !== null) {
+        if (seen.has(value)) {
+          return '[Circular]';
+        }
+        seen.add(value);
       }
-      seen.add(value);
-    }
-    return value;
-  }, indent);
+      return value;
+    },
+    indent
+  );
 }
 
 /**
@@ -104,13 +108,13 @@ export function jsonEquals(obj1: any, obj2: any): boolean {
 export function jsonDiff(obj1: any, obj2: any): any {
   const diff: any = {};
 
-  Object.keys(obj1).forEach(key => {
+  Object.keys(obj1).forEach((key) => {
     if (JSON.stringify(obj1[key]) !== JSON.stringify(obj2[key])) {
       diff[key] = { old: obj1[key], new: obj2[key] };
     }
   });
 
-  Object.keys(obj2).forEach(key => {
+  Object.keys(obj2).forEach((key) => {
     if (!(key in obj1)) {
       diff[key] = { old: undefined, new: obj2[key] };
     }
@@ -118,4 +122,3 @@ export function jsonDiff(obj1: any, obj2: any): any {
 
   return diff;
 }
-

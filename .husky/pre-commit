@@ -1,40 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Run lint-staged (handles linting and formatting)
 npm run pre-commit
-
-# Check file sizes for staged files
-staged_files=$(git diff --cached --name-only --diff-filter=ACM)
-if [ -n "$staged_files" ]; then
-  node scripts/check-file-sizes.js $staged_files
-fi
-
-# Check dependencies (warn only, don't block commit)
-if command -v node >/dev/null 2>&1; then
-  if [ -f "scripts/check-dependencies.js" ]; then
-    node scripts/check-dependencies.js outdated || true
-  fi
-fi
-
-# Pre-render documentation if doc files changed
-doc_files_changed=$(git diff --cached --name-only | grep -E "src/app/features/documentation/.*page\.component\.ts$" || true)
-if [ -n "$doc_files_changed" ]; then
-  echo "📚 Documentation files changed, pre-rendering..."
-  npx ts-node scripts/prerender-docs.ts
-  
-  # Stage the generated files
-  git add src/assets/docs/rendered/ docs-static/ 2>/dev/null || true
-  echo "✅ Documentation pre-rendered and staged"
-fi
-
-
-
-
-
-
-
-
-
-
-

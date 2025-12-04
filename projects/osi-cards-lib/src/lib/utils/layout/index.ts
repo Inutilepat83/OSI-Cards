@@ -37,4 +37,3 @@ export * from '../height-estimation.util';
 
 // Backwards compatibility - consolidated logger
 export { GridLogger } from './grid-logger.consolidated';
-

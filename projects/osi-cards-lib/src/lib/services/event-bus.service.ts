@@ -4,7 +4,7 @@ import { Subject, Observable, Subscription, filter, map } from 'rxjs';
 /**
  * Event types supported by the event bus
  */
-export type CardEventType = 
+export type CardEventType =
   | 'card:created'
   | 'card:updated'
   | 'card:deleted'
@@ -80,19 +80,19 @@ export type EventHandler<T = unknown> = (event: CardBusEvent<T>) => void;
 
 /**
  * EventBusService
- * 
+ *
  * A centralized event bus for decoupled communication between card components.
  * Supports typed events, filtering, and replay capabilities.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class EventBusService {
   private readonly ngZone = inject(NgZone);
   private readonly eventSubject = new Subject<CardBusEvent>();
   private readonly eventHistory: CardBusEvent[] = [];
   private readonly maxHistorySize = 100;
-  
+
   /** All events as an observable stream */
   readonly events$: Observable<CardBusEvent> = this.eventSubject.asObservable();
 
@@ -103,8 +103,8 @@ export class EventBusService {
    * @param options Additional event options
    */
   emit<T>(
-    type: CardEventType, 
-    payload: T, 
+    type: CardEventType,
+    payload: T,
     options?: { source?: string; metadata?: Record<string, unknown> }
   ): void {
     const event: CardBusEvent<T> = {
@@ -112,7 +112,7 @@ export class EventBusService {
       payload,
       timestamp: Date.now(),
       source: options?.source,
-      metadata: options?.metadata
+      metadata: options?.metadata,
     };
 
     // Store in history
@@ -134,10 +134,12 @@ export class EventBusService {
    * @returns Subscription
    */
   on<T = unknown>(type: CardEventType, handler: EventHandler<T>): Subscription {
-    return this.events$.pipe(
-      filter(event => event.type === type),
-      map(event => event as CardBusEvent<T>)
-    ).subscribe(handler);
+    return this.events$
+      .pipe(
+        filter((event) => event.type === type),
+        map((event) => event as CardBusEvent<T>)
+      )
+      .subscribe(handler);
   }
 
   /**
@@ -147,10 +149,12 @@ export class EventBusService {
    * @returns Subscription
    */
   onAny<T = unknown>(types: CardEventType[], handler: EventHandler<T>): Subscription {
-    return this.events$.pipe(
-      filter(event => types.includes(event.type)),
-      map(event => event as CardBusEvent<T>)
-    ).subscribe(handler);
+    return this.events$
+      .pipe(
+        filter((event) => types.includes(event.type)),
+        map((event) => event as CardBusEvent<T>)
+      )
+      .subscribe(handler);
   }
 
   /**
@@ -160,13 +164,15 @@ export class EventBusService {
    * @returns Subscription
    */
   onWhere<T = unknown>(
-    predicate: (event: CardBusEvent) => boolean, 
+    predicate: (event: CardBusEvent) => boolean,
     handler: EventHandler<T>
   ): Subscription {
-    return this.events$.pipe(
-      filter(predicate),
-      map(event => event as CardBusEvent<T>)
-    ).subscribe(handler);
+    return this.events$
+      .pipe(
+        filter(predicate),
+        map((event) => event as CardBusEvent<T>)
+      )
+      .subscribe(handler);
   }
 
   /**
@@ -176,8 +182,8 @@ export class EventBusService {
    */
   select<T = unknown>(type: CardEventType): Observable<CardBusEvent<T>> {
     return this.events$.pipe(
-      filter(event => event.type === type),
-      map(event => event as CardBusEvent<T>)
+      filter((event) => event.type === type),
+      map((event) => event as CardBusEvent<T>)
     );
   }
 
@@ -188,8 +194,8 @@ export class EventBusService {
    */
   selectAny<T = unknown>(types: CardEventType[]): Observable<CardBusEvent<T>> {
     return this.events$.pipe(
-      filter(event => types.includes(event.type)),
-      map(event => event as CardBusEvent<T>)
+      filter((event) => types.includes(event.type)),
+      map((event) => event as CardBusEvent<T>)
     );
   }
 
@@ -200,14 +206,12 @@ export class EventBusService {
    * @returns Array of past events
    */
   getHistory(type?: CardEventType, limit?: number): CardBusEvent[] {
-    let history = type 
-      ? this.eventHistory.filter(e => e.type === type)
-      : [...this.eventHistory];
-    
+    let history = type ? this.eventHistory.filter((e) => e.type === type) : [...this.eventHistory];
+
     if (limit && limit > 0) {
       history = history.slice(-limit);
     }
-    
+
     return history;
   }
 
@@ -224,13 +228,9 @@ export class EventBusService {
    * @param type Optional filter by type
    * @param limit Number of events to replay
    */
-  replay<T = unknown>(
-    handler: EventHandler<T>, 
-    type?: CardEventType, 
-    limit = 10
-  ): void {
+  replay<T = unknown>(handler: EventHandler<T>, type?: CardEventType, limit = 10): void {
     const events = this.getHistory(type, limit);
-    events.forEach(event => handler(event as CardBusEvent<T>));
+    events.forEach((event) => handler(event as CardBusEvent<T>));
   }
 
   // ============================================
@@ -276,10 +276,10 @@ export class EventBusService {
    * Emit error event
    */
   emitError(error: Error | string, context?: string, recoverable = true): void {
-    this.emit<ErrorPayload>('error:occurred', { 
-      error, 
-      context, 
-      recoverable 
+    this.emit<ErrorPayload>('error:occurred', {
+      error,
+      context,
+      recoverable,
     });
   }
 
@@ -294,12 +294,15 @@ export class EventBusService {
    * Subscribe to streaming events
    */
   onStreaming(handler: EventHandler): Subscription {
-    return this.onAny([
-      'card:streaming-started', 
-      'card:streamed', 
-      'card:streaming-completed', 
-      'card:streaming-error'
-    ], handler);
+    return this.onAny(
+      [
+        'card:streaming-started',
+        'card:streamed',
+        'card:streaming-completed',
+        'card:streaming-error',
+      ],
+      handler
+    );
   }
 
   /**
@@ -309,12 +312,3 @@ export class EventBusService {
     return this.on('error:occurred', handler);
   }
 }
-
-
-
-
-
-
-
-
-

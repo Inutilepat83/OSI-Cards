@@ -287,18 +287,14 @@ export class A11yTestUtils {
       const role = current.getAttribute('role');
 
       // Check for HTML5 landmarks
-      if (
-        ['header', 'nav', 'main', 'aside', 'footer', 'section', 'article'].includes(tagName)
-      ) {
+      if (['header', 'nav', 'main', 'aside', 'footer', 'section', 'article'].includes(tagName)) {
         return true;
       }
 
       // Check for ARIA landmarks
       if (
         role &&
-        ['banner', 'navigation', 'main', 'complementary', 'contentinfo', 'region'].includes(
-          role
-        )
+        ['banner', 'navigation', 'main', 'complementary', 'contentinfo', 'region'].includes(role)
       ) {
         return true;
       }
@@ -447,4 +443,3 @@ export function testContrast(
 export function getFocusableElements(container: HTMLElement): HTMLElement[] {
   return A11yTestUtils.getFocusableElements(container);
 }
-

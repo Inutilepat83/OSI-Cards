@@ -2,7 +2,7 @@
   #container
   class="w-full masonry-container"
   role="grid"
-  [attr.aria-label]="'Card sections grid with ' + (sections?.length || 0) + ' sections'"
+  [attr.aria-label]="'Card sections grid with ' + (sections.length || 0) + ' sections'"
   [attr.aria-busy]="!isLayoutReady || isStreaming"
   [attr.aria-colcount]="currentColumns"
   [class.masonry-container--loading]="!isLayoutReady"
@@ -35,9 +35,6 @@
     tabindex="0"
     [class.masonry-item--ready]="isLayoutReady"
   >
-    <app-section-renderer 
-      [section]="section" 
-      (sectionEvent)="onSectionEvent($event)">
-    </app-section-renderer>
+    <app-section-renderer [section]="section" (sectionEvent)="onSectionEvent($event)"> </app-section-renderer>
   </div>
 </div>

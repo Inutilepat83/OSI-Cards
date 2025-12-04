@@ -29,7 +29,11 @@
   "chartSchema": {
     "type": "object",
     "properties": {
-      "chartType": { "type": "string", "enum": ["bar", "line", "pie", "doughnut", "area", "radar"], "description": "Type of chart" },
+      "chartType": {
+        "type": "string",
+        "enum": ["bar", "line", "pie", "doughnut", "area", "radar"],
+        "description": "Type of chart"
+      },
       "chartData": {
         "type": "object",
         "properties": {
@@ -59,7 +63,13 @@
       "type": "chart",
       "chartType": "bar",
       "chartData": {
-        "labels": ["Q1 2024", "Q2 2024", "Q3 2024", "Q4 2024", "Q1 2025 (Proj)"],
+        "labels": [
+          "Q1 2024",
+          "Q2 2024",
+          "Q3 2024",
+          "Q4 2024",
+          "Q1 2025 (Proj)"
+        ],
         "datasets": [
           {
             "label": "Revenue ($M)",
@@ -99,16 +109,51 @@
       "type": "chart",
       "chartType": "line",
       "chartData": {
-        "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        "labels": [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec"
+        ],
         "datasets": [
-          { "label": "Negative Values", "data": [-50, -25, -10, 0, 15, 30, 45, 35, 20, 5, -15, -30] },
-          { "label": "Large Scale", "data": [1000000, 2500000, 1800000, 3200000, 2900000, 4100000, 3800000, 4500000, 5200000, 4800000, 5800000, 6200000] },
-          { "label": "Sparse Data", "data": [null, null, 100, null, null, 200, null, null, 300, null, null, 400] }
+          {
+            "label": "Negative Values",
+            "data": [-50, -25, -10, 0, 15, 30, 45, 35, 20, 5, -15, -30]
+          },
+          {
+            "label": "Large Scale",
+            "data": [
+              1000000, 2500000, 1800000, 3200000, 2900000, 4100000, 3800000,
+              4500000, 5200000, 4800000, 5800000, 6200000
+            ]
+          },
+          {
+            "label": "Sparse Data",
+            "data": [
+              null,
+              null,
+              100,
+              null,
+              null,
+              200,
+              null,
+              null,
+              300,
+              null,
+              null,
+              400
+            ]
+          }
         ]
       }
     }
   }
 }
-
-
-

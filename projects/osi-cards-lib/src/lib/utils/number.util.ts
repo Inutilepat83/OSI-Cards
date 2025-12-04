@@ -169,4 +169,3 @@ export function abbreviateNumber(num: number): string {
 
   return scaled.toFixed(1) + suffix;
 }
-

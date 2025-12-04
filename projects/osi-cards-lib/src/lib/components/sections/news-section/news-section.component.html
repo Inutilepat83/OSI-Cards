@@ -1,16 +1,15 @@
 <div class="news">
-  <lib-section-header
-    *ngIf="section.title"
-    [title]="section.title"
-    [description]="section.description">
+  <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
   <div class="grid" *ngIf="section.items?.length">
     <!-- SMART: Adaptive height based on content -->
-    <article class="card"
-             *ngFor="let a of section.items"
-             [class.has-image]="getImageUrl(a)"
-             [class.has-excerpt]="a.description">
+    <article
+      class="card"
+      *ngFor="let a of section.items"
+      [class.has-image]="getImageUrl(a)"
+      [class.has-excerpt]="a.description"
+    >
       <img [src]="getImageUrl(a)" [alt]="a.title" class="img" *ngIf="getImageUrl(a)" loading="lazy" />
       <div class="content">
         <div class="meta">
@@ -24,10 +23,5 @@
     </article>
   </div>
 
-  <lib-empty-state
-    *ngIf="!section.items?.length"
-    message="No news"
-    icon="📰"
-    variant="compact">
-  </lib-empty-state>
+  <lib-empty-state *ngIf="!section.items?.length" message="No news" icon="📰" variant="compact"> </lib-empty-state>
 </div>

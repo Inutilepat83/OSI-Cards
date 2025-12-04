@@ -258,7 +258,8 @@
   gap: var(--space-1);
   text-decoration: none;
 
-  lucide-icon, svg {
+  lucide-icon,
+  svg {
     width: var(--icon-xs);
     height: var(--icon-xs);
     opacity: 0.6;
@@ -308,7 +309,8 @@
   @include row(var(--space-3));
   flex-wrap: wrap;
 
-  lucide-icon, svg {
+  lucide-icon,
+  svg {
     width: var(--icon-xs);
     height: var(--icon-xs);
     opacity: 0.5;
@@ -416,7 +418,8 @@
   align-items: center;
   gap: var(--space-1);
 
-  lucide-icon, svg {
+  lucide-icon,
+  svg {
     width: var(--icon-xs);
     height: var(--icon-xs);
     opacity: 0.5;
@@ -507,7 +510,8 @@
   align-items: center;
   gap: var(--space-2);
 
-  lucide-icon, svg {
+  lucide-icon,
+  svg {
     width: var(--icon-xs);
     height: var(--icon-xs);
     color: var(--status-success);
@@ -559,7 +563,8 @@
   align-items: center;
   gap: var(--space-2);
 
-  lucide-icon, svg {
+  lucide-icon,
+  svg {
     width: var(--icon-xs);
     height: var(--icon-xs);
     color: var(--accent);
@@ -815,7 +820,8 @@
   align-items: center;
   gap: var(--space-1);
 
-  lucide-icon, svg {
+  lucide-icon,
+  svg {
     width: var(--icon-xs);
     height: var(--icon-xs);
     opacity: 0.5;
@@ -1045,7 +1051,8 @@
   align-items: center;
   gap: var(--space-2);
 
-  lucide-icon, svg {
+  lucide-icon,
+  svg {
     width: var(--icon-xs);
     height: var(--icon-xs);
     color: var(--status-success);

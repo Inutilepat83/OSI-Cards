@@ -1,6 +1,6 @@
 import { AICardConfig, CardAction, CardField, CardItem, CardSection } from '../../models';
 import { CARD_LIMITS, ID_CONSTANTS, SIZE_CONSTANTS } from './constants';
-import { ValidationUtil } from './validation.util';
+import { Sanitizer } from './sanitization.util';
 import { inject } from '@angular/core';
 import { CardValidationService } from '../services/card-validation.service';
 
@@ -414,7 +414,7 @@ export function sanitizeCardConfig(config: Partial<AICardConfig>): Partial<AICar
 
     // Sanitize description
     if ('description' in sanitized && typeof sanitized.description === 'string') {
-      cleanedRoot.description = ValidationUtil.sanitizeString(
+      cleanedRoot.description = Sanitizer.html(
         sanitized.description.substring(0, CARD_LIMITS.MAX_DESCRIPTION_LENGTH)
       );
     }
@@ -472,14 +472,14 @@ function sanitizeSection(section: CardSection): CardSection {
 
   // Sanitize description
   if (typeof section.description === 'string') {
-    sanitized.description = ValidationUtil.sanitizeString(
+    sanitized.description = Sanitizer.html(
       section.description.substring(0, CARD_LIMITS.MAX_SECTION_DESCRIPTION_LENGTH)
     );
   }
 
   // Sanitize subtitle
   if (typeof section.subtitle === 'string') {
-    sanitized.subtitle = ValidationUtil.sanitizeString(
+    sanitized.subtitle = Sanitizer.html(
       section.subtitle.substring(0, CARD_LIMITS.MAX_SECTION_SUBTITLE_LENGTH)
     );
   }
@@ -510,16 +510,12 @@ function sanitizeField(field: CardField): CardField {
 
   // Sanitize label
   if (typeof field.label === 'string') {
-    sanitized.label = ValidationUtil.sanitizeString(
-      field.label.substring(0, CARD_LIMITS.MAX_FIELD_LABEL_LENGTH)
-    );
+    sanitized.label = Sanitizer.html(field.label.substring(0, CARD_LIMITS.MAX_FIELD_LABEL_LENGTH));
   }
 
   // Sanitize title
   if (typeof field.title === 'string') {
-    sanitized.title = ValidationUtil.sanitizeString(
-      field.title.substring(0, CARD_LIMITS.MAX_FIELD_LABEL_LENGTH)
-    );
+    sanitized.title = Sanitizer.html(field.title.substring(0, CARD_LIMITS.MAX_FIELD_LABEL_LENGTH));
   }
 
   // Sanitize value
@@ -529,7 +525,7 @@ function sanitizeField(field: CardField): CardField {
 
   // Sanitize description
   if (typeof field.description === 'string') {
-    sanitized.description = ValidationUtil.sanitizeString(
+    sanitized.description = Sanitizer.html(
       field.description.substring(0, CARD_LIMITS.MAX_FIELD_DESCRIPTION_LENGTH)
     );
   }
@@ -566,13 +562,13 @@ function sanitizeItem(item: CardItem): CardItem {
     ...item,
     title:
       typeof item.title === 'string'
-        ? ValidationUtil.sanitizeString(item.title.substring(0, CARD_LIMITS.MAX_ITEM_TITLE_LENGTH))
+        ? Sanitizer.html(item.title.substring(0, CARD_LIMITS.MAX_ITEM_TITLE_LENGTH))
         : '',
   };
 
   // Sanitize description
   if (typeof item.description === 'string') {
-    sanitized.description = ValidationUtil.sanitizeString(
+    sanitized.description = Sanitizer.html(
       item.description.substring(0, CARD_LIMITS.MAX_ITEM_DESCRIPTION_LENGTH)
     );
   }
@@ -581,7 +577,7 @@ function sanitizeItem(item: CardItem): CardItem {
   if (item.value !== null && item.value !== undefined) {
     sanitized.value =
       typeof item.value === 'string'
-        ? ValidationUtil.sanitizeString(item.value.substring(0, CARD_LIMITS.MAX_ITEM_VALUE_LENGTH))
+        ? Sanitizer.html(item.value.substring(0, CARD_LIMITS.MAX_ITEM_VALUE_LENGTH))
         : item.value;
   }
 
@@ -599,17 +595,12 @@ function sanitizeItem(item: CardItem): CardItem {
 function sanitizeAction(action: CardAction): CardAction {
   const sanitized: CardAction = {
     ...action,
-    label:
-      typeof action.label === 'string'
-        ? ValidationUtil.sanitizeString(action.label.substring(0, 100))
-        : '',
+    label: typeof action.label === 'string' ? Sanitizer.html(action.label.substring(0, 100)) : '',
   };
 
   // Sanitize icon
   if (typeof action.icon === 'string') {
-    sanitized.icon = ValidationUtil.sanitizeString(
-      action.icon.substring(0, CARD_LIMITS.MAX_ACTION_ICON_LENGTH)
-    );
+    sanitized.icon = Sanitizer.html(action.icon.substring(0, CARD_LIMITS.MAX_ACTION_ICON_LENGTH));
   }
 
   // Sanitize URL for website actions
@@ -642,23 +633,23 @@ function sanitizeAction(action: CardAction): CardAction {
     if (emailConfig.contact && typeof emailConfig.contact === 'object') {
       const contact = emailConfig.contact as Record<string, unknown>;
       sanitizedEmail.contact = {
-        name: typeof contact.name === 'string' ? ValidationUtil.sanitizeString(contact.name) : '',
+        name: typeof contact.name === 'string' ? Sanitizer.html(contact.name) : '',
         email:
           typeof contact.email === 'string'
             ? SanitizationUtil.sanitizeEmail(contact.email) || ''
             : '',
-        role: typeof contact.role === 'string' ? ValidationUtil.sanitizeString(contact.role) : '',
+        role: typeof contact.role === 'string' ? Sanitizer.html(contact.role) : '',
       };
     }
 
     // Sanitize subject and body
     if (typeof emailConfig.subject === 'string') {
-      sanitizedEmail.subject = ValidationUtil.sanitizeString(
+      sanitizedEmail.subject = Sanitizer.html(
         emailConfig.subject.substring(0, CARD_LIMITS.MAX_FIELD_LABEL_LENGTH)
       );
     }
     if (typeof emailConfig.body === 'string') {
-      sanitizedEmail.body = ValidationUtil.sanitizeString(
+      sanitizedEmail.body = Sanitizer.html(
         emailConfig.body.substring(0, CARD_LIMITS.MAX_EMAIL_BODY_LENGTH)
       );
     }

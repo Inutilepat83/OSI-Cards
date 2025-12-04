@@ -142,7 +142,7 @@ function calculateRowFirstLayout(
     }
 
     // Calculate position
-    const columnWidth = (100 / totalColumns);
+    const columnWidth = 100 / totalColumns;
     const left = currentColumn * columnWidth;
     const top = Math.max(...columnHeights.slice(currentColumn, currentColumn + colSpan));
 
@@ -244,7 +244,11 @@ function calculateSkylineLayout(
 /**
  * Calculate optimal number of columns
  */
-function calculateColumns(payload: { containerWidth: number; minColumnWidth: number; maxColumns: number }): number {
+function calculateColumns(payload: {
+  containerWidth: number;
+  minColumnWidth: number;
+  maxColumns: number;
+}): number {
   const { containerWidth, minColumnWidth, maxColumns } = payload;
 
   if (containerWidth <= 0) return 1;
@@ -322,4 +326,3 @@ function optimizeLayout(payload: { positions: any[]; columns: number }): LayoutC
 }
 
 export {};
-

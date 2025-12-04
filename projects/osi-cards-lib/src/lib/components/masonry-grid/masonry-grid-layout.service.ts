@@ -17,16 +17,13 @@ import {
   PreferredColumns,
   shouldExpandSection,
   SectionExpansionInfo,
-  calculateBasicDensity
+  calculateBasicDensity,
 } from '../../utils/grid-config.util';
-import {
-  estimateSectionHeight,
-  binPack2D
-} from '../../utils/smart-grid.util';
+import { estimateSectionHeight, binPack2D } from '../../utils/smart-grid.util';
 import {
   packSectionsIntoRows,
   packingResultToPositions,
-  RowPackerConfig
+  RowPackerConfig,
 } from '../../utils/row-packer.util';
 
 export interface PositionedSection {
@@ -135,7 +132,7 @@ export class MasonryGridLayoutService {
     return {
       positionedSections,
       containerHeight: result.totalHeight,
-      columns: config.columns
+      columns: config.columns,
     };
   }
 
@@ -149,28 +146,27 @@ export class MasonryGridLayoutService {
     markAsNew: (section: CardSection, key: string) => boolean
   ): LayoutResult {
     const { columns, gap, containerWidth, optimizeLayout } = config;
-    const colWidth = columns > 1
-      ? (containerWidth - (gap * (columns - 1))) / columns
-      : containerWidth;
+    const colWidth =
+      columns > 1 ? (containerWidth - gap * (columns - 1)) / columns : containerWidth;
 
     const colHeights = Array(columns).fill(0);
 
     // Determine section ordering
     let orderedSections = sections;
     if (optimizeLayout && sections.length > 1) {
-      const resolvedSections = sections.map(s => ({
+      const resolvedSections = sections.map((s) => ({
         section: s,
         colSpan: this.getSectionColSpan(s),
-        preferredColumns: getPreferredColumns(s.type ?? 'info')
+        preferredColumns: getPreferredColumns(s.type ?? 'info'),
       }));
 
       const packedSections = binPack2D(resolvedSections, columns, {
         respectPriority: true,
         fillGaps: true,
-        balanceColumns: false
+        balanceColumns: false,
       });
 
-      orderedSections = packedSections.map(s => s.section);
+      orderedSections = packedSections.map((s) => s.section);
     }
 
     // Place sections
@@ -188,9 +184,7 @@ export class MasonryGridLayoutService {
       const estimatedHeight = 300;
       colHeights[shortestCol] = top + estimatedHeight + gap;
 
-      const widthExpr = columns > 1
-        ? generateWidthExpression(columns, 1, gap)
-        : '100%';
+      const widthExpr = columns > 1 ? generateWidthExpression(columns, 1, gap) : '100%';
 
       return {
         section,
@@ -200,14 +194,14 @@ export class MasonryGridLayoutService {
         left: columns > 1 ? `${left}px` : '0px',
         top,
         width: widthExpr,
-        isNew
+        isNew,
       };
     });
 
     return {
       positionedSections,
       containerHeight: Math.max(...colHeights, 0),
-      columns
+      columns,
     };
   }
 
@@ -270,14 +264,14 @@ export class MasonryGridLayoutService {
         colSpan: span,
         left: leftExpr,
         top: topPosition,
-        width: widthExpr
+        width: widthExpr,
       });
     }
 
     return {
       positionedSections: placedSections,
       containerHeight: Math.max(...colHeights, 0),
-      columns
+      columns,
     };
   }
 
@@ -327,18 +321,15 @@ export class MasonryGridLayoutService {
     const remainingCols = columns - bestColumn - targetSpan;
     const canPendingFit = this.canAnyPendingSectionFit(remainingCols, pendingSections);
 
-    const expansionResult = shouldExpandSection(
-      sectionInfo ?? { type: 'default' },
-      {
-        currentSpan: targetSpan,
-        remainingColumns: remainingCols,
-        totalColumns: columns,
-        containerWidth: config.containerWidth,
-        minColumnWidth: config.minColumnWidth,
-        gap: config.gap,
-        canPendingFit,
-      }
-    );
+    const expansionResult = shouldExpandSection(sectionInfo ?? { type: 'default' }, {
+      currentSpan: targetSpan,
+      remainingColumns: remainingCols,
+      totalColumns: columns,
+      containerWidth: config.containerWidth,
+      minColumnWidth: config.minColumnWidth,
+      gap: config.gap,
+      canPendingFit,
+    });
 
     return {
       columnIndex: bestColumn,
@@ -369,7 +360,7 @@ export class MasonryGridLayoutService {
       return false;
     }
 
-    return pendingSections.some(s => s.colSpan <= remainingCols);
+    return pendingSections.some((s) => s.colSpan <= remainingCols);
   }
 
   /**
@@ -382,10 +373,7 @@ export class MasonryGridLayoutService {
   /**
    * Calculate total height from positioned sections
    */
-  calculateTotalHeight(
-    sections: PositionedSection[],
-    sectionHeights: Map<string, number>
-  ): number {
+  calculateTotalHeight(sections: PositionedSection[], sectionHeights: Map<string, number>): number {
     let maxHeight = 0;
 
     for (const section of sections) {
@@ -399,4 +387,3 @@ export class MasonryGridLayoutService {
     return maxHeight;
   }
 }
-

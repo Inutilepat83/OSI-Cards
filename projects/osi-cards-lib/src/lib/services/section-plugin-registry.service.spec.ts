@@ -9,7 +9,7 @@ import { CardSection } from '../models';
 @Component({
   selector: 'app-mock-section',
   template: '<div>Mock Section</div>',
-  standalone: true
+  standalone: true,
 })
 class MockSectionComponent extends BaseSectionComponent implements SectionPlugin {
   @Input() override section!: CardSection;
@@ -27,7 +27,7 @@ class MockSectionComponent extends BaseSectionComponent implements SectionPlugin
 @Component({
   selector: 'app-another-mock-section',
   template: '<div>Another Mock Section</div>',
-  standalone: true
+  standalone: true,
 })
 class AnotherMockSectionComponent extends BaseSectionComponent implements SectionPlugin {
   @Input() override section!: CardSection;
@@ -46,7 +46,7 @@ describe('SectionPluginRegistry', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [SectionPluginRegistry]
+      providers: [SectionPluginRegistry],
     });
     registry = TestBed.inject(SectionPluginRegistry);
   });
@@ -67,7 +67,7 @@ describe('SectionPluginRegistry', () => {
       registry.register({
         type: 'mock-section',
         name: 'Mock Section',
-        component: MockSectionComponent
+        component: MockSectionComponent,
       });
 
       expect(registry.hasPlugin('mock-section')).toBe(true);
@@ -78,7 +78,7 @@ describe('SectionPluginRegistry', () => {
         type: 'mock-section',
         name: 'Mock Section',
         description: 'A test mock section',
-        component: MockSectionComponent
+        component: MockSectionComponent,
       });
 
       const metadata = registry.getPluginMetadata('mock-section');
@@ -92,8 +92,8 @@ describe('SectionPluginRegistry', () => {
         component: MockSectionComponent,
         config: {
           priority: 10,
-          override: false
-        }
+          override: false,
+        },
       });
 
       const metadata = registry.getPluginMetadata('mock-section');
@@ -107,8 +107,8 @@ describe('SectionPluginRegistry', () => {
         component: MockSectionComponent,
         metadata: {
           version: '1.0.0',
-          author: 'Test Author'
-        }
+          author: 'Test Author',
+        },
       });
 
       const metadata = registry.getPluginMetadata('mock-section');
@@ -120,14 +120,14 @@ describe('SectionPluginRegistry', () => {
       registry.register({
         type: 'mock-section',
         name: 'Mock Section',
-        component: MockSectionComponent
+        component: MockSectionComponent,
       });
 
       expect(() => {
         registry.register({
           type: 'mock-section',
           name: 'Duplicate Mock',
-          component: MockSectionComponent
+          component: MockSectionComponent,
         });
       }).toThrowError(/already registered/);
     });
@@ -136,14 +136,14 @@ describe('SectionPluginRegistry', () => {
       registry.register({
         type: 'mock-section',
         name: 'Original',
-        component: MockSectionComponent
+        component: MockSectionComponent,
       });
 
       registry.register({
         type: 'mock-section',
         name: 'Override',
         component: AnotherMockSectionComponent,
-        config: { override: true }
+        config: { override: true },
       });
 
       const metadata = registry.getPluginMetadata('mock-section');
@@ -159,7 +159,7 @@ describe('SectionPluginRegistry', () => {
       registry.register({
         type: 'mock-section',
         name: 'Mock Section',
-        component: MockSectionComponent
+        component: MockSectionComponent,
       });
 
       const result = registry.unregister('mock-section');
@@ -182,7 +182,7 @@ describe('SectionPluginRegistry', () => {
       registry.register({
         type: 'mock-section',
         name: 'Mock Section',
-        component: MockSectionComponent
+        component: MockSectionComponent,
       });
 
       const component = registry.getComponent('mock-section');
@@ -203,13 +203,13 @@ describe('SectionPluginRegistry', () => {
       registry.register({
         type: 'mock-section',
         name: 'Mock Section',
-        component: MockSectionComponent
+        component: MockSectionComponent,
       });
 
       const section: CardSection = {
         id: 'test',
         title: 'Test',
-        type: 'mock-section'
+        type: 'mock-section',
       };
 
       const component = registry.getComponentForSection(section);
@@ -220,7 +220,7 @@ describe('SectionPluginRegistry', () => {
       const section: CardSection = {
         id: 'test',
         title: 'Test',
-        type: 'info'
+        type: 'info',
       };
 
       const component = registry.getComponentForSection(section);
@@ -231,7 +231,7 @@ describe('SectionPluginRegistry', () => {
       const section: CardSection = {
         id: 'test',
         title: 'Test',
-        type: '' as never
+        type: '' as never,
       };
 
       const component = registry.getComponentForSection(section);
@@ -242,13 +242,13 @@ describe('SectionPluginRegistry', () => {
       registry.register({
         type: 'mock-section',
         name: 'Mock Section',
-        component: MockSectionComponent
+        component: MockSectionComponent,
       });
 
       const section: CardSection = {
         id: 'test',
         title: 'Test',
-        type: 'MOCK-SECTION' as never
+        type: 'MOCK-SECTION' as never,
       };
 
       const component = registry.getComponentForSection(section);
@@ -264,7 +264,7 @@ describe('SectionPluginRegistry', () => {
       registry.register({
         type: 'mock-section',
         name: 'Mock Section',
-        component: MockSectionComponent
+        component: MockSectionComponent,
       });
 
       expect(registry.hasPlugin('mock-section')).toBe(true);
@@ -288,13 +288,13 @@ describe('SectionPluginRegistry', () => {
       registry.register({
         type: 'mock-section',
         name: 'Mock Section',
-        component: MockSectionComponent
+        component: MockSectionComponent,
       });
 
       registry.register({
         type: 'another-mock',
         name: 'Another Mock',
-        component: AnotherMockSectionComponent
+        component: AnotherMockSectionComponent,
       });
 
       const plugins = registry.getPlugins();
@@ -306,14 +306,14 @@ describe('SectionPluginRegistry', () => {
         type: 'low-priority',
         name: 'Low',
         component: MockSectionComponent,
-        config: { priority: 5 }
+        config: { priority: 5 },
       });
 
       registry.register({
         type: 'high-priority',
         name: 'High',
         component: AnotherMockSectionComponent,
-        config: { priority: 20 }
+        config: { priority: 20 },
       });
 
       const plugins = registry.getPlugins();
@@ -333,7 +333,7 @@ describe('SectionPluginRegistry', () => {
         description: 'Test description',
         component: MockSectionComponent,
         config: { priority: 15 },
-        metadata: { version: '2.0.0' }
+        metadata: { version: '2.0.0' },
       });
 
       const metadata = registry.getPluginMetadata('mock-section');
@@ -360,13 +360,13 @@ describe('SectionPluginRegistry', () => {
       registry.register({
         type: 'mock-section',
         name: 'Mock Section',
-        component: MockSectionComponent
+        component: MockSectionComponent,
       });
 
       registry.register({
         type: 'another-mock',
         name: 'Another Mock',
-        component: AnotherMockSectionComponent
+        component: AnotherMockSectionComponent,
       });
 
       registry.clear();
@@ -386,13 +386,13 @@ describe('SectionPluginRegistry', () => {
         {
           type: 'mock-section',
           name: 'Mock Section',
-          component: MockSectionComponent
+          component: MockSectionComponent,
         },
         {
           type: 'another-mock',
           name: 'Another Mock',
-          component: AnotherMockSectionComponent
-        }
+          component: AnotherMockSectionComponent,
+        },
       ]);
 
       expect(registry.hasPlugin('mock-section')).toBe(true);
@@ -404,7 +404,7 @@ describe('SectionPluginRegistry', () => {
       registry.register({
         type: 'mock-section',
         name: 'Existing',
-        component: MockSectionComponent
+        component: MockSectionComponent,
       });
 
       const consoleSpy = spyOn(console, 'error');
@@ -413,13 +413,13 @@ describe('SectionPluginRegistry', () => {
         {
           type: 'mock-section', // Will fail (duplicate)
           name: 'Duplicate',
-          component: MockSectionComponent
+          component: MockSectionComponent,
         },
         {
           type: 'another-mock', // Should succeed
           name: 'Another',
-          component: AnotherMockSectionComponent
-        }
+          component: AnotherMockSectionComponent,
+        },
       ]);
 
       expect(consoleSpy).toHaveBeenCalled();
@@ -427,12 +427,3 @@ describe('SectionPluginRegistry', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-

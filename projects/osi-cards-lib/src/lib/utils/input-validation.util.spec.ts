@@ -7,7 +7,7 @@ import {
   sanitizeHtml,
   sanitizeText,
   sanitizeTitle,
-  validateCardConfig
+  validateCardConfig,
 } from './input-validation.util';
 
 describe('Input Validation Utilities', () => {
@@ -132,10 +132,10 @@ describe('Input Validation Utilities', () => {
         contact: {
           name: 'John Doe',
           email: 'john@example.com',
-          role: 'Manager'
+          role: 'Manager',
         },
         subject: 'Test Subject',
-        body: 'Test Body'
+        body: 'Test Body',
       };
 
       const result = validateEmailConfig(config);
@@ -148,8 +148,8 @@ describe('Input Validation Utilities', () => {
         contact: {
           name: 'John',
           email: 'invalid-email',
-          role: 'Manager'
-        }
+          role: 'Manager',
+        },
       };
 
       const result = validateEmailConfig(config);
@@ -159,7 +159,7 @@ describe('Input Validation Utilities', () => {
     it('should filter invalid CC emails', () => {
       const config = {
         contact: { name: 'John', email: 'john@example.com', role: 'Manager' },
-        cc: ['valid@example.com', 'invalid', 'another@valid.com']
+        cc: ['valid@example.com', 'invalid', 'another@valid.com'],
       };
 
       const result = validateEmailConfig(config);
@@ -300,9 +300,7 @@ describe('Input Validation Utilities', () => {
     it('should validate valid card config', () => {
       const config = {
         cardTitle: 'Test Card',
-        sections: [
-          { title: 'Section 1', type: 'info' }
-        ]
+        sections: [{ title: 'Section 1', type: 'info' }],
       };
 
       const result = validateCardConfig(config);
@@ -325,7 +323,7 @@ describe('Input Validation Utilities', () => {
     it('should sanitize card title', () => {
       const config = {
         cardTitle: '<script>alert("xss")</script>Test',
-        sections: []
+        sections: [],
       };
 
       const result = validateCardConfig(config);
@@ -340,11 +338,9 @@ describe('Input Validation Utilities', () => {
           {
             title: '<b>Section</b>',
             type: 'info',
-            fields: [
-              { label: 'Field<script>', value: 'Value' }
-            ]
-          }
-        ]
+            fields: [{ label: 'Field<script>', value: 'Value' }],
+          },
+        ],
       };
 
       const result = validateCardConfig(config);
@@ -359,8 +355,12 @@ describe('Input Validation Utilities', () => {
         sections: [],
         actions: [
           { label: 'Click Me', type: 'website', url: 'https://example.com' },
-          { label: 'Email', type: 'mail', email: { contact: { email: 'test@test.com', name: 'Test', role: 'Dev' } } }
-        ]
+          {
+            label: 'Email',
+            type: 'mail',
+            email: { contact: { email: 'test@test.com', name: 'Test', role: 'Dev' } },
+          },
+        ],
       };
 
       const result = validateCardConfig(config);
@@ -375,12 +375,3 @@ describe('Input Validation Utilities', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-

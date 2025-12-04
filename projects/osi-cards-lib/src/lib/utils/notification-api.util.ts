@@ -34,7 +34,10 @@ export function hasPermission(): boolean {
   return Notification.permission === 'granted';
 }
 
-export function showNotification(title: string, options?: NotificationOptions): Notification | null {
+export function showNotification(
+  title: string,
+  options?: NotificationOptions
+): Notification | null {
   if (!hasPermission()) {
     console.warn('Notification permission not granted');
     return null;
@@ -58,4 +61,3 @@ export function onNotificationClick(notification: Notification, callback: () => 
 export function onNotificationClose(notification: Notification, callback: () => void): void {
   notification.onclose = callback;
 }
-

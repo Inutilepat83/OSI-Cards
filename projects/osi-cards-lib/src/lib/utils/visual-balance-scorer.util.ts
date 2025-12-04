@@ -92,10 +92,7 @@ export class VisualBalanceScorer {
   /**
    * Calculate comprehensive balance score
    */
-  calculateBalance<T extends BalanceableSection>(
-    sections: T[],
-    columns: number
-  ): BalanceScore {
+  calculateBalance<T extends BalanceableSection>(sections: T[], columns: number): BalanceScore {
     if (sections.length === 0 || columns === 0) {
       return this.createEmptyScore();
     }
@@ -163,17 +160,18 @@ export class VisualBalanceScorer {
     const maxDiff = maxHeight - minHeight;
 
     // Calculate standard deviation
-    const variance = columnHeights.reduce((sum, h) => {
-      const diff = h - avgHeight;
-      return sum + diff * diff;
-    }, 0) / columnHeights.length;
+    const variance =
+      columnHeights.reduce((sum, h) => {
+        const diff = h - avgHeight;
+        return sum + diff * diff;
+      }, 0) / columnHeights.length;
     const stdDev = Math.sqrt(variance);
 
     // Score: Lower variance = higher score
     // Perfect balance (0 variance) = 100
     // High variance = lower score
     const varianceRatio = avgHeight > 0 ? stdDev / avgHeight : 0;
-    const score = Math.max(0, 100 - (varianceRatio * 200));
+    const score = Math.max(0, 100 - varianceRatio * 200);
 
     return { score, maxDiff, avgHeight, stdDev };
   }
@@ -200,14 +198,15 @@ export class VisualBalanceScorer {
 
     // Calculate variance
     const avgWeight = columnWeights.reduce((a, b) => a + b, 0) / columns;
-    const variance = columnWeights.reduce((sum, w) => {
-      const diff = w - avgWeight;
-      return sum + diff * diff;
-    }, 0) / columns;
+    const variance =
+      columnWeights.reduce((sum, w) => {
+        const diff = w - avgWeight;
+        return sum + diff * diff;
+      }, 0) / columns;
 
     // Score: Lower variance = higher score
     const varianceRatio = avgWeight > 0 ? Math.sqrt(variance) / avgWeight : 0;
-    const score = Math.max(0, 100 - (varianceRatio * 150));
+    const score = Math.max(0, 100 - varianceRatio * 150);
 
     return { score, variance };
   }
@@ -243,13 +242,14 @@ export class VisualBalanceScorer {
 
     // Calculate variance
     const avgDensity = columnDensities.reduce((a, b) => a + b, 0) / columns;
-    const variance = columnDensities.reduce((sum, d) => {
-      const diff = d - avgDensity;
-      return sum + diff * diff;
-    }, 0) / columns;
+    const variance =
+      columnDensities.reduce((sum, d) => {
+        const diff = d - avgDensity;
+        return sum + diff * diff;
+      }, 0) / columns;
 
     // Score: Lower variance = higher score
-    const score = Math.max(0, 100 - (Math.sqrt(variance) * 200));
+    const score = Math.max(0, 100 - Math.sqrt(variance) * 200);
 
     return { score, variance };
   }
@@ -281,7 +281,7 @@ export class VisualBalanceScorer {
     // Normalize by total height
     const totalHeight = Math.max(...columnHeights);
     const symmetryRatio = totalHeight > 0 ? symmetryDiff / (totalHeight * midpoint) : 0;
-    const score = Math.max(0, 100 - (symmetryRatio * 100));
+    const score = Math.max(0, 100 - symmetryRatio * 100);
 
     return { score };
   }
@@ -434,4 +434,3 @@ export function compareBalance<T extends BalanceableSection>(
 
   return { better, score1, score2 };
 }
-

@@ -12,7 +12,9 @@
  */
 
 import { ChangeDetectorRef, inject, OnDestroy, Pipe, PipeTransform } from '@angular/core';
-import { I18nService, TranslationParams } from '../../core/services/i18n.service';
+import { I18nService } from 'osi-cards-lib';
+
+type TranslationParams = Record<string, string | number>;
 import { Subscription } from 'rxjs';
 
 @Pipe({
@@ -40,10 +42,10 @@ export class TranslatePipe implements PipeTransform, OnDestroy {
       }
 
       // Subscribe to locale changes
-      this.subscription = this.i18n.locale$.subscribe(() => {
-        this.lastValue = this.i18n.translate(key, params);
-        this.cdr.markForCheck();
-      });
+      // Note: i18n service uses signals, not observables
+      // TODO: Update to use signal-based i18n
+      this.lastValue = this.i18n.translate(key, params);
+      this.cdr.markForCheck();
 
       // Get initial value
       this.lastValue = this.i18n.translate(key, params);

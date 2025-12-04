@@ -1,14 +1,17 @@
 <div class="gallery">
-  <lib-section-header
-    *ngIf="section.title"
-    [title]="section.title"
-    [description]="section.description">
+  <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
   <div class="grid" *ngIf="section.items?.length">
-    <div class="item" *ngFor="let i of section.items; let idx = index" (click)="onImageClick(i, idx)" tabindex="0" role="button">
+    <div
+      class="item"
+      *ngFor="let i of section.items; let idx = index"
+      (click)="onImageClick(i, idx)"
+      tabindex="0"
+      role="button"
+    >
       <div class="img-container">
-        <img [src]="getImageUrl(i)" [alt]="getAltText(i)" class="img" loading="lazy">
+        <img [src]="getImageUrl(i)" [alt]="getAltText(i)" class="img" loading="lazy" />
       </div>
       <div class="caption" *ngIf="getCaption(i)">
         <span class="text">{{ getCaption(i) }}</span>
@@ -16,10 +19,5 @@
     </div>
   </div>
 
-  <lib-empty-state
-    *ngIf="!section.items?.length"
-    message="No images"
-    icon="🖼️"
-    variant="compact">
-  </lib-empty-state>
+  <lib-empty-state *ngIf="!section.items?.length" message="No images" icon="🖼️" variant="compact"> </lib-empty-state>
 </div>

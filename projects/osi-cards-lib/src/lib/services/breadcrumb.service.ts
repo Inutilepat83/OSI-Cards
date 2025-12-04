@@ -24,7 +24,7 @@ export interface Breadcrumb {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BreadcrumbService {
   private breadcrumbs = signal<Breadcrumb[]>([]);
@@ -36,11 +36,11 @@ export class BreadcrumbService {
   }
 
   addBreadcrumb(breadcrumb: Breadcrumb): void {
-    this.breadcrumbs.update(crumbs => [...crumbs, breadcrumb]);
+    this.breadcrumbs.update((crumbs) => [...crumbs, breadcrumb]);
   }
 
   removeLast(): void {
-    this.breadcrumbs.update(crumbs => crumbs.slice(0, -1));
+    this.breadcrumbs.update((crumbs) => crumbs.slice(0, -1));
   }
 
   clear(): void {
@@ -51,4 +51,3 @@ export class BreadcrumbService {
     return this.breadcrumbs();
   }
 }
-

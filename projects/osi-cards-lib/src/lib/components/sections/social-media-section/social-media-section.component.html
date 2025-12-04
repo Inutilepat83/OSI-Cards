@@ -1,8 +1,5 @@
 <div class="social">
-  <lib-section-header
-    *ngIf="section.title"
-    [title]="section.title"
-    [description]="section.description">
+  <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
   <div class="grid" *ngIf="section.fields?.length">
@@ -24,10 +21,6 @@
     </a>
   </div>
 
-  <lib-empty-state
-    *ngIf="!section.fields?.length"
-    message="No social links"
-    icon="📱"
-    variant="compact">
+  <lib-empty-state *ngIf="!section.fields?.length" message="No social links" icon="📱" variant="compact">
   </lib-empty-state>
 </div>

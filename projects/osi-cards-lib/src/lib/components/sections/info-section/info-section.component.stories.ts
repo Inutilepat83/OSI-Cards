@@ -24,10 +24,7 @@ type Story = StoryObj<InfoSectionComponent>;
 // Basic info section
 export const Basic: Story = {
   args: {
-    section: TestBuilders.Section.create()
-      .withTitle('Company Information')
-      .asInfo()
-      .build(),
+    section: TestBuilders.Section.create().withTitle('Company Information').asInfo().build(),
   },
 };
 
@@ -92,10 +89,7 @@ export const WithDescription: Story = {
 // Empty info section
 export const Empty: Story = {
   args: {
-    section: TestBuilders.Section.create()
-      .withTitle('No Data')
-      .withType('info')
-      .build(),
+    section: TestBuilders.Section.create().withTitle('No Data').withType('info').build(),
   },
 };
 
@@ -109,4 +103,3 @@ export const SingleField: Story = {
       .build(),
   },
 };
-

@@ -98,7 +98,7 @@ export class MockChart {
   }
 
   public static getChart(key: string | HTMLCanvasElement): MockChart | undefined {
-    return MockChart.instances.find(c => c.canvas === key);
+    return MockChart.instances.find((c) => c.canvas === key);
   }
 
   public static register(..._items: unknown[]): void {
@@ -289,7 +289,7 @@ export class MockLeafletMap {
   public fire(type: string, data?: unknown): this {
     const handlers = this._eventHandlers.get(type);
     if (handlers) {
-      handlers.forEach(fn => fn(data));
+      handlers.forEach((fn) => fn(data));
     }
     return this;
   }
@@ -302,7 +302,10 @@ export class MockLeafletMap {
     return { x: 800, y: 600 };
   }
 
-  public getBounds(): { getNorthEast: () => { lat: number; lng: number }; getSouthWest: () => { lat: number; lng: number } } {
+  public getBounds(): {
+    getNorthEast: () => { lat: number; lng: number };
+    getSouthWest: () => { lat: number; lng: number };
+  } {
     return {
       getNorthEast: () => ({ lat: 90, lng: 180 }),
       getSouthWest: () => ({ lat: -90, lng: -180 }),
@@ -466,10 +469,13 @@ export interface MockTileLayerOptions {
  * Mock Leaflet namespace
  */
 export const MockL = {
-  map: (element: string | HTMLElement, options?: MockMapOptions) => new MockLeafletMap(element, options),
-  marker: (latlng: [number, number], options?: MockMarkerOptions) => new MockLeafletMarker(latlng, options),
+  map: (element: string | HTMLElement, options?: MockMapOptions) =>
+    new MockLeafletMap(element, options),
+  marker: (latlng: [number, number], options?: MockMarkerOptions) =>
+    new MockLeafletMarker(latlng, options),
   popup: () => new MockLeafletPopup(),
-  tileLayer: (url: string, options?: MockTileLayerOptions) => new MockLeafletTileLayer(url, options),
+  tileLayer: (url: string, options?: MockTileLayerOptions) =>
+    new MockLeafletTileLayer(url, options),
   icon: (options: unknown) => options,
   divIcon: (options: unknown) => options,
   latLng: (lat: number, lng: number) => ({ lat, lng }),
@@ -513,21 +519,18 @@ export function cleanupExternalMocks(): void {
  * Check if Chart.js is available (mocked or real)
  */
 export function isChartJSAvailable(): boolean {
-  return typeof (window as unknown as { Chart?: unknown }).Chart !== 'undefined' ||
-         typeof (global as unknown as { Chart?: unknown }).Chart !== 'undefined';
+  return (
+    typeof (window as unknown as { Chart?: unknown }).Chart !== 'undefined' ||
+    typeof (global as unknown as { Chart?: unknown }).Chart !== 'undefined'
+  );
 }
 
 /**
  * Check if Leaflet is available (mocked or real)
  */
 export function isLeafletAvailable(): boolean {
-  return typeof (window as unknown as { L?: unknown }).L !== 'undefined' ||
-         typeof (global as unknown as { L?: unknown }).L !== 'undefined';
+  return (
+    typeof (window as unknown as { L?: unknown }).L !== 'undefined' ||
+    typeof (global as unknown as { L?: unknown }).L !== 'undefined'
+  );
 }
-
-
-
-
-
-
-

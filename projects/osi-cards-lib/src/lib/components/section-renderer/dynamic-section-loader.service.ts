@@ -7,10 +7,14 @@ import {
   SectionTypeInput,
   resolveSectionType,
   isValidSectionType,
-  getSectionMetadata
+  getSectionMetadata,
 } from '../../models/generated-section-types';
 import { SECTION_COMPONENT_MAP, getSectionComponent } from './section-component-map.generated';
-import { LazySectionLoaderService, LazySectionType, LAZY_SECTION_TYPES } from './lazy-section-loader.service';
+import {
+  LazySectionLoaderService,
+  LazySectionType,
+  LAZY_SECTION_TYPES,
+} from './lazy-section-loader.service';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnySectionComponent = Type<BaseSectionComponent<any>>;
@@ -36,7 +40,7 @@ export interface ComponentResolution {
  * - Fallback to default component for unknown types
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DynamicSectionLoaderService {
   private readonly pluginRegistry = inject(SectionPluginRegistry);
@@ -148,7 +152,7 @@ export class DynamicSectionLoaderService {
    */
   getSupportedTypes(): string[] {
     const builtInTypes = Object.keys(SECTION_COMPONENT_MAP);
-    const pluginTypes = this.pluginRegistry.getPlugins().map(p => p.type);
+    const pluginTypes = this.pluginRegistry.getPlugins().map((p) => p.type);
 
     return [...new Set([...builtInTypes, ...pluginTypes])];
   }
@@ -178,7 +182,7 @@ export class DynamicSectionLoaderService {
     if (!section?.type) {
       return {
         component: this.getFallbackComponent(),
-        isLazy: false
+        isLazy: false,
       };
     }
 
@@ -193,21 +197,21 @@ export class DynamicSectionLoaderService {
       if (cachedComponent) {
         return {
           component: cachedComponent,
-          isLazy: true
+          isLazy: true,
         };
       }
 
       return {
         component: null,
         isLazy: true,
-        loadPromise: this.lazySectionLoader.loadSection(lazyType)
+        loadPromise: this.lazySectionLoader.loadSection(lazyType),
       };
     }
 
     // Non-lazy section - use sync loading
     return {
       component: this.getComponentForSection(section),
-      isLazy: false
+      isLazy: false,
     };
   }
 
@@ -251,4 +255,3 @@ export class DynamicSectionLoaderService {
     return this.lazySectionLoader.getLoadingState(type);
   }
 }
-

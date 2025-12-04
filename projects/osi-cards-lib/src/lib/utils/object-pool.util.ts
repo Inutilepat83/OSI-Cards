@@ -289,9 +289,7 @@ export class ObjectPool<T> {
       ...this.stats,
       poolSize: this.pool.length,
       acquiredCount: this.acquired.size,
-      hitRate: this.stats.acquired > 0
-        ? this.stats.hits / this.stats.acquired
-        : 0,
+      hitRate: this.stats.acquired > 0 ? this.stats.hits / this.stats.acquired : 0,
     };
   }
 
@@ -325,7 +323,7 @@ export class ObjectPool<T> {
     const now = Date.now();
     const originalSize = this.pool.length;
 
-    this.pool = this.pool.filter(pooled => {
+    this.pool = this.pool.filter((pooled) => {
       const age = now - pooled.createdAt;
       return age < this.maxAge;
     });
@@ -435,10 +433,7 @@ export async function using<T, R>(
  * });
  * ```
  */
-export function withPooled<T, R>(
-  pool: ObjectPool<T>,
-  callback: (obj: T) => R
-): R {
+export function withPooled<T, R>(pool: ObjectPool<T>, callback: (obj: T) => R): R {
   const obj = pool.acquire();
   try {
     return callback(obj);
@@ -446,4 +441,3 @@ export function withPooled<T, R>(
     pool.release(obj);
   }
 }
-

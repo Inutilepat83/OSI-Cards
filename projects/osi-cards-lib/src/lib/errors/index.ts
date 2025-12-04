@@ -1,13 +1,13 @@
 /**
  * OSI Cards Error Classes
- * 
+ *
  * Typed error classes for different error scenarios in the library.
  * Each error class includes context-specific information for debugging.
- * 
+ *
  * @example
  * ```typescript
  * import { SectionRenderError, StreamingError, ValidationError } from 'osi-cards-lib';
- * 
+ *
  * try {
  *   // Section rendering code
  * } catch (error) {
@@ -29,18 +29,14 @@
 export class OSICardsError extends Error {
   /** Error code for categorization */
   readonly code: string;
-  
+
   /** Timestamp when error occurred */
   readonly timestamp: Date;
-  
+
   /** Additional context data */
   readonly context?: Record<string, unknown>;
 
-  constructor(
-    message: string,
-    code: string,
-    context?: Record<string, unknown>
-  ) {
+  constructor(message: string, code: string, context?: Record<string, unknown>) {
     super(message);
     this.name = 'OSICardsError';
     this.code = code;
@@ -85,19 +81,14 @@ export class OSICardsError extends Error {
 export class SectionRenderError extends OSICardsError {
   /** ID of the section that failed */
   readonly sectionId?: string;
-  
+
   /** Type of the section that failed */
   readonly sectionType?: string;
-  
+
   /** Original error that caused the failure */
   override readonly cause?: Error;
 
-  constructor(
-    message: string,
-    sectionId?: string,
-    sectionType?: string,
-    cause?: Error
-  ) {
+  constructor(message: string, sectionId?: string, sectionType?: string, cause?: Error) {
     super(message, 'SECTION_RENDER_ERROR', { sectionId, sectionType });
     this.name = 'SectionRenderError';
     this.sectionId = sectionId;
@@ -117,17 +108,16 @@ export class SectionRenderError extends OSICardsError {
 export class UnknownSectionTypeError extends OSICardsError {
   /** The unknown section type */
   readonly unknownType: string;
-  
+
   /** Available section types */
   readonly availableTypes?: string[];
 
   constructor(unknownType: string, availableTypes?: string[]) {
     const availableStr = availableTypes ? ` Available types: ${availableTypes.join(', ')}` : '';
-    super(
-      `Unknown section type: "${unknownType}".${availableStr}`,
-      'UNKNOWN_SECTION_TYPE',
-      { unknownType, availableTypes }
-    );
+    super(`Unknown section type: "${unknownType}".${availableStr}`, 'UNKNOWN_SECTION_TYPE', {
+      unknownType,
+      availableTypes,
+    });
     this.name = 'UnknownSectionTypeError';
     this.unknownType = unknownType;
     this.availableTypes = availableTypes;
@@ -148,19 +138,14 @@ export class UnknownSectionTypeError extends OSICardsError {
 export class StreamingError extends OSICardsError {
   /** Current progress when error occurred (0-100) */
   readonly progress?: number;
-  
+
   /** Current streaming stage */
   readonly stage?: string;
-  
+
   /** Whether the error is recoverable */
   readonly recoverable: boolean;
 
-  constructor(
-    message: string,
-    progress?: number,
-    stage?: string,
-    recoverable = true
-  ) {
+  constructor(message: string, progress?: number, stage?: string, recoverable = true) {
     super(message, 'STREAMING_ERROR', { progress, stage, recoverable });
     this.name = 'StreamingError';
     this.progress = progress;
@@ -201,7 +186,7 @@ export class StreamingTimeoutError extends StreamingError {
 export class StreamingParseError extends StreamingError {
   /** The malformed JSON string */
   readonly jsonFragment?: string;
-  
+
   /** Parse error details */
   readonly parseError?: string;
 
@@ -228,16 +213,12 @@ export class StreamingParseError extends StreamingError {
 export class ValidationError extends OSICardsError {
   /** Validation errors found */
   readonly errors: string[];
-  
+
   /** The invalid configuration */
   readonly invalidConfig?: Record<string, unknown>;
 
   constructor(errors: string[], invalidConfig?: Record<string, unknown>) {
-    super(
-      `Card configuration invalid: ${errors.join(', ')}`,
-      'VALIDATION_ERROR',
-      { errors }
-    );
+    super(`Card configuration invalid: ${errors.join(', ')}`, 'VALIDATION_ERROR', { errors });
     this.name = 'ValidationError';
     this.errors = errors;
     this.invalidConfig = invalidConfig;
@@ -254,7 +235,7 @@ export class ValidationError extends OSICardsError {
 export class RequiredFieldError extends ValidationError {
   /** Name of the missing field */
   readonly fieldName: string;
-  
+
   /** Path to the missing field */
   readonly fieldPath?: string;
 
@@ -278,19 +259,14 @@ export class RequiredFieldError extends ValidationError {
 export class LayoutError extends OSICardsError {
   /** Number of sections being laid out */
   readonly sectionCount?: number;
-  
+
   /** Number of columns */
   readonly columns?: number;
-  
+
   /** Layout algorithm being used */
   readonly algorithm?: string;
 
-  constructor(
-    message: string,
-    sectionCount?: number,
-    columns?: number,
-    algorithm?: string
-  ) {
+  constructor(message: string, sectionCount?: number, columns?: number, algorithm?: string) {
     super(message, 'LAYOUT_ERROR', { sectionCount, columns, algorithm });
     this.name = 'LayoutError';
     this.sectionCount = sectionCount;
@@ -309,7 +285,7 @@ export class LayoutError extends OSICardsError {
 export class WorkerError extends OSICardsError {
   /** Worker message type that failed */
   readonly messageType?: string;
-  
+
   /** Worker ID if available */
   readonly workerId?: string;
 
@@ -335,7 +311,7 @@ export class WorkerError extends OSICardsError {
 export class PluginRegistrationError extends OSICardsError {
   /** Plugin ID that failed */
   readonly pluginId: string;
-  
+
   /** Reason for failure */
   readonly reason: string;
 
@@ -391,4 +367,3 @@ export function getUserMessage(error: unknown): string {
 
   return 'Something went wrong.';
 }
-

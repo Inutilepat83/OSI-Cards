@@ -53,9 +53,9 @@ export interface LayoutAnalyticsSummary {
   /** Distribution of utilization scores */
   utilizationDistribution: {
     excellent: number; // >= 95%
-    good: number;      // 85-95%
-    fair: number;      // 75-85%
-    poor: number;      // < 75%
+    good: number; // 85-95%
+    fair: number; // 75-85%
+    poor: number; // < 75%
   };
   /** Error count */
   errorCount: number;
@@ -146,10 +146,7 @@ export class LayoutAnalyticsService {
   /**
    * Track a layout event
    */
-  trackLayout(
-    metrics: LayoutMetrics,
-    eventType: LayoutEvent['eventType'] = 'initial'
-  ): void {
+  trackLayout(metrics: LayoutMetrics, eventType: LayoutEvent['eventType'] = 'initial'): void {
     if (!this.config.enabled) return;
 
     // Sample rate check
@@ -215,7 +212,7 @@ export class LayoutAnalyticsService {
    * Get analytics summary
    */
   getSummary(): LayoutAnalyticsSummary {
-    const validEvents = this.events.filter(e => !e.error);
+    const validEvents = this.events.filter((e) => !e.error);
 
     if (validEvents.length === 0) {
       return this.getEmptySummary();
@@ -224,7 +221,7 @@ export class LayoutAnalyticsService {
     // Calculate averages
     const utilizationSum = validEvents.reduce((sum, e) => sum + e.metrics.utilizationPercent, 0);
     const gapSum = validEvents.reduce((sum, e) => sum + e.metrics.gapCount, 0);
-    const reflowSum = validEvents.filter(e => e.eventType === 'reflow').length;
+    const reflowSum = validEvents.filter((e) => e.eventType === 'reflow').length;
     const packingTimeSum = validEvents.reduce((sum, e) => sum + e.metrics.packingTimeMs, 0);
 
     // Calculate utilization distribution
@@ -246,15 +243,14 @@ export class LayoutAnalyticsService {
     // Calculate algorithm usage
     const algorithmUsage: Record<string, number> = {};
     for (const event of validEvents) {
-      algorithmUsage[event.metrics.algorithm] =
-        (algorithmUsage[event.metrics.algorithm] ?? 0) + 1;
+      algorithmUsage[event.metrics.algorithm] = (algorithmUsage[event.metrics.algorithm] ?? 0) + 1;
     }
 
     return {
       totalLayouts: validEvents.length,
       avgUtilization: utilizationSum / validEvents.length,
-      minUtilization: Math.min(...validEvents.map(e => e.metrics.utilizationPercent)),
-      maxUtilization: Math.max(...validEvents.map(e => e.metrics.utilizationPercent)),
+      minUtilization: Math.min(...validEvents.map((e) => e.metrics.utilizationPercent)),
+      maxUtilization: Math.max(...validEvents.map((e) => e.metrics.utilizationPercent)),
       avgGapCount: gapSum / validEvents.length,
       totalReflows: reflowSum,
       avgReflowsPerLayout: reflowSum / validEvents.length,
@@ -279,7 +275,7 @@ export class LayoutAnalyticsService {
    */
   getSessionEvents(sessionId?: string): LayoutEvent[] {
     const targetSession = sessionId ?? this.sessionId;
-    return this.events.filter(e => e.sessionId === targetSession);
+    return this.events.filter((e) => e.sessionId === targetSession);
   }
 
   /**
@@ -305,11 +301,15 @@ export class LayoutAnalyticsService {
    * Export analytics data as JSON
    */
   exportData(): string {
-    return JSON.stringify({
-      summary: this.getSummary(),
-      events: this.events,
-      exportedAt: new Date().toISOString(),
-    }, null, 2);
+    return JSON.stringify(
+      {
+        summary: this.getSummary(),
+        events: this.events,
+        exportedAt: new Date().toISOString(),
+      },
+      null,
+      2
+    );
   }
 
   /**
@@ -323,7 +323,7 @@ export class LayoutAnalyticsService {
     if (summary.avgUtilization < 85) {
       recommendations.push(
         `Average utilization (${summary.avgUtilization.toFixed(1)}%) is below 85%. ` +
-        `Consider enabling more aggressive gap filling or using the 'row-first' algorithm.`
+          `Consider enabling more aggressive gap filling or using the 'row-first' algorithm.`
       );
     }
 
@@ -331,7 +331,7 @@ export class LayoutAnalyticsService {
     if (summary.avgGapCount > 3) {
       recommendations.push(
         `Average gap count (${summary.avgGapCount.toFixed(1)}) is high. ` +
-        `Review section preferred widths to ensure they fill rows completely.`
+          `Review section preferred widths to ensure they fill rows completely.`
       );
     }
 
@@ -339,7 +339,7 @@ export class LayoutAnalyticsService {
     if (summary.avgReflowsPerLayout > 2) {
       recommendations.push(
         `High reflow rate (${summary.avgReflowsPerLayout.toFixed(1)} per layout). ` +
-        `Consider using fixed heights for sections with lazy-loaded content.`
+          `Consider using fixed heights for sections with lazy-loaded content.`
       );
     }
 
@@ -347,7 +347,7 @@ export class LayoutAnalyticsService {
     if (summary.avgPackingTimeMs > 50) {
       recommendations.push(
         `Average packing time (${summary.avgPackingTimeMs.toFixed(1)}ms) is high. ` +
-        `Consider using the Web Worker for large layouts or reducing optimization passes.`
+          `Consider using the Web Worker for large layouts or reducing optimization passes.`
       );
     }
 
@@ -355,7 +355,7 @@ export class LayoutAnalyticsService {
     if (summary.errorCount > summary.totalLayouts * 0.05) {
       recommendations.push(
         `Error rate (${((summary.errorCount / Math.max(summary.totalLayouts, 1)) * 100).toFixed(1)}%) ` +
-        `is concerning. Review error logs for common issues.`
+          `is concerning. Review error logs for common issues.`
       );
     }
 
@@ -363,7 +363,7 @@ export class LayoutAnalyticsService {
     if (summary.utilizationDistribution.poor > summary.totalLayouts * 0.2) {
       recommendations.push(
         `${summary.utilizationDistribution.poor} layouts (${((summary.utilizationDistribution.poor / summary.totalLayouts) * 100).toFixed(1)}%) ` +
-        `had poor utilization. Consider switching algorithms or adjusting section constraints.`
+          `had poor utilization. Consider switching algorithms or adjusting section constraints.`
       );
     }
 
@@ -464,6 +464,3 @@ export function getLayoutAnalyticsSummary(): LayoutAnalyticsSummary {
 export function getLayoutRecommendations(): string[] {
   return LayoutAnalyticsService.getInstance().getRecommendations();
 }
-
-
-

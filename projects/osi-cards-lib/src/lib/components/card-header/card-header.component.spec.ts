@@ -15,7 +15,7 @@ describe('CardHeaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CardHeaderComponent]
+      imports: [CardHeaderComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CardHeaderComponent);
@@ -66,7 +66,8 @@ describe('CardHeaderComponent', () => {
       fixture.detectChanges();
 
       const hostElement = fixture.debugElement.nativeElement;
-      const hasStreamingClass = hostElement.classList.contains('streaming') ||
+      const hasStreamingClass =
+        hostElement.classList.contains('streaming') ||
         fixture.debugElement.query(By.css('.streaming')) !== null;
 
       // Component may handle streaming differently
@@ -91,7 +92,9 @@ describe('CardHeaderComponent', () => {
 
       const spy = spyOn(component.fullscreenToggle, 'emit');
 
-      const toggleButton = fixture.debugElement.query(By.css('[data-testid="fullscreen-toggle"], .fullscreen-toggle'));
+      const toggleButton = fixture.debugElement.query(
+        By.css('[data-testid="fullscreen-toggle"], .fullscreen-toggle')
+      );
       if (toggleButton) {
         toggleButton.nativeElement.click();
         expect(spy).toHaveBeenCalled();
@@ -115,7 +118,9 @@ describe('CardHeaderComponent', () => {
 
       const spy = spyOn(component.export, 'emit');
 
-      const exportButton = fixture.debugElement.query(By.css('[data-testid="export-button"], .export-button'));
+      const exportButton = fixture.debugElement.query(
+        By.css('[data-testid="export-button"], .export-button')
+      );
       if (exportButton) {
         exportButton.nativeElement.click();
         expect(spy).toHaveBeenCalled();
@@ -139,9 +144,10 @@ describe('CardHeaderComponent', () => {
       fixture.detectChanges();
 
       const buttons = fixture.debugElement.queryAll(By.css('button'));
-      buttons.forEach(button => {
-        const hasLabel = button.nativeElement.getAttribute('aria-label') ||
-                        button.nativeElement.textContent.trim();
+      buttons.forEach((button) => {
+        const hasLabel =
+          button.nativeElement.getAttribute('aria-label') ||
+          button.nativeElement.textContent.trim();
         expect(hasLabel).toBeTruthy();
       });
     });
@@ -185,7 +191,8 @@ describe('CardHeaderComponent', () => {
         (component as unknown as { customClass: string }).customClass = 'custom-class';
         fixture.detectChanges();
 
-        const hasClass = fixture.debugElement.nativeElement.classList.contains('custom-class') ||
+        const hasClass =
+          fixture.debugElement.nativeElement.classList.contains('custom-class') ||
           fixture.debugElement.query(By.css('.custom-class')) !== null;
         expect(hasClass || true).toBeTruthy(); // Pass if customClass not implemented
       }
@@ -203,7 +210,7 @@ describe('CardHeaderComponent', () => {
     </app-card-header>
   `,
   standalone: true,
-  imports: [CardHeaderComponent]
+  imports: [CardHeaderComponent],
 })
 class TestHostComponent {}
 
@@ -212,7 +219,7 @@ describe('CardHeaderComponent with Content Projection', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TestHostComponent]
+      imports: [TestHostComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TestHostComponent);
@@ -225,6 +232,3 @@ describe('CardHeaderComponent with Content Projection', () => {
     expect(fixture).toBeTruthy();
   });
 });
-
-
-

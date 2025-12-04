@@ -1,12 +1,12 @@
-import { 
-  CardTypeGuards, 
-  CardUtils, 
-  AICardConfig, 
-  CardSection, 
-  CardField, 
+import {
+  CardTypeGuards,
+  CardUtils,
+  AICardConfig,
+  CardSection,
+  CardField,
   CardItem,
   CardAction,
-  MailCardAction
+  MailCardAction,
 } from './card.model';
 
 describe('CardTypeGuards', () => {
@@ -17,7 +17,7 @@ describe('CardTypeGuards', () => {
     it('should return true for valid card config', () => {
       const card: AICardConfig = {
         cardTitle: 'Test Card',
-        sections: []
+        sections: [],
       };
 
       expect(CardTypeGuards.isAICardConfig(card)).toBe(true);
@@ -26,9 +26,7 @@ describe('CardTypeGuards', () => {
     it('should return true for card with sections', () => {
       const card: AICardConfig = {
         cardTitle: 'Test Card',
-        sections: [
-          { title: 'Section 1', type: 'info' }
-        ]
+        sections: [{ title: 'Section 1', type: 'info' }],
       };
 
       expect(CardTypeGuards.isAICardConfig(card)).toBe(true);
@@ -61,7 +59,9 @@ describe('CardTypeGuards', () => {
     });
 
     it('should return false for non-array sections', () => {
-      expect(CardTypeGuards.isAICardConfig({ cardTitle: 'Test', sections: 'not array' })).toBe(false);
+      expect(CardTypeGuards.isAICardConfig({ cardTitle: 'Test', sections: 'not array' })).toBe(
+        false
+      );
     });
   });
 
@@ -72,7 +72,7 @@ describe('CardTypeGuards', () => {
     it('should return true for valid section', () => {
       const section: CardSection = {
         title: 'Test Section',
-        type: 'info'
+        type: 'info',
       };
 
       expect(CardTypeGuards.isCardSection(section)).toBe(true);
@@ -110,7 +110,7 @@ describe('CardTypeGuards', () => {
     it('should return true for valid field', () => {
       const field: CardField = {
         label: 'Test Field',
-        value: 'Test Value'
+        value: 'Test Value',
       };
 
       expect(CardTypeGuards.isCardField(field)).toBe(true);
@@ -147,11 +147,11 @@ describe('CardTypeGuards', () => {
           contact: {
             name: 'John Doe',
             email: 'john@example.com',
-            role: 'Manager'
+            role: 'Manager',
           },
           subject: 'Test Subject',
-          body: 'Test Body'
-        }
+          body: 'Test Body',
+        },
       };
 
       expect(CardTypeGuards.isMailAction(action)).toBe(true);
@@ -162,62 +162,74 @@ describe('CardTypeGuards', () => {
     });
 
     it('should return false for non-mail type', () => {
-      expect(CardTypeGuards.isMailAction({ 
-        type: 'website', 
-        label: 'Visit' 
-      })).toBe(false);
+      expect(
+        CardTypeGuards.isMailAction({
+          type: 'website',
+          label: 'Visit',
+        })
+      ).toBe(false);
     });
 
     it('should return false for missing email property', () => {
-      expect(CardTypeGuards.isMailAction({ 
-        type: 'mail', 
-        label: 'Send' 
-      })).toBe(false);
+      expect(
+        CardTypeGuards.isMailAction({
+          type: 'mail',
+          label: 'Send',
+        })
+      ).toBe(false);
     });
 
     it('should return false for missing contact', () => {
-      expect(CardTypeGuards.isMailAction({ 
-        type: 'mail', 
-        label: 'Send',
-        email: {
-          subject: 'Test',
-          body: 'Test'
-        }
-      })).toBe(false);
+      expect(
+        CardTypeGuards.isMailAction({
+          type: 'mail',
+          label: 'Send',
+          email: {
+            subject: 'Test',
+            body: 'Test',
+          },
+        })
+      ).toBe(false);
     });
 
     it('should return false for incomplete contact', () => {
-      expect(CardTypeGuards.isMailAction({ 
-        type: 'mail', 
-        label: 'Send',
-        email: {
-          contact: { name: 'John' }, // Missing email and role
-          subject: 'Test',
-          body: 'Test'
-        }
-      })).toBe(false);
+      expect(
+        CardTypeGuards.isMailAction({
+          type: 'mail',
+          label: 'Send',
+          email: {
+            contact: { name: 'John' }, // Missing email and role
+            subject: 'Test',
+            body: 'Test',
+          },
+        })
+      ).toBe(false);
     });
 
     it('should return false for missing subject', () => {
-      expect(CardTypeGuards.isMailAction({ 
-        type: 'mail', 
-        label: 'Send',
-        email: {
-          contact: { name: 'John', email: 'john@example.com', role: 'Manager' },
-          body: 'Test'
-        }
-      })).toBe(false);
+      expect(
+        CardTypeGuards.isMailAction({
+          type: 'mail',
+          label: 'Send',
+          email: {
+            contact: { name: 'John', email: 'john@example.com', role: 'Manager' },
+            body: 'Test',
+          },
+        })
+      ).toBe(false);
     });
 
     it('should return false for missing body', () => {
-      expect(CardTypeGuards.isMailAction({ 
-        type: 'mail', 
-        label: 'Send',
-        email: {
-          contact: { name: 'John', email: 'john@example.com', role: 'Manager' },
-          subject: 'Test'
-        }
-      })).toBe(false);
+      expect(
+        CardTypeGuards.isMailAction({
+          type: 'mail',
+          label: 'Send',
+          email: {
+            contact: { name: 'John', email: 'john@example.com', role: 'Manager' },
+            subject: 'Test',
+          },
+        })
+      ).toBe(false);
     });
   });
 });
@@ -336,7 +348,7 @@ describe('CardUtils', () => {
     it('should add IDs to sections without IDs', () => {
       const sections: CardSection[] = [
         { title: 'Section 1', type: 'info' },
-        { title: 'Section 2', type: 'list' }
+        { title: 'Section 2', type: 'list' },
       ];
 
       const result = CardUtils.ensureSectionIds(sections);
@@ -346,9 +358,7 @@ describe('CardUtils', () => {
     });
 
     it('should preserve existing IDs', () => {
-      const sections: CardSection[] = [
-        { id: 'existing-id', title: 'Section 1', type: 'info' }
-      ];
+      const sections: CardSection[] = [{ id: 'existing-id', title: 'Section 1', type: 'info' }];
 
       const result = CardUtils.ensureSectionIds(sections);
 
@@ -357,13 +367,11 @@ describe('CardUtils', () => {
 
     it('should add IDs to fields', () => {
       const sections: CardSection[] = [
-        { 
-          title: 'Section 1', 
+        {
+          title: 'Section 1',
           type: 'info',
-          fields: [
-            { label: 'Field 1', value: 'Value 1' }
-          ]
-        }
+          fields: [{ label: 'Field 1', value: 'Value 1' }],
+        },
       ];
 
       const result = CardUtils.ensureSectionIds(sections);
@@ -373,13 +381,11 @@ describe('CardUtils', () => {
 
     it('should add IDs to items', () => {
       const sections: CardSection[] = [
-        { 
-          title: 'Section 1', 
+        {
+          title: 'Section 1',
           type: 'list',
-          items: [
-            { title: 'Item 1' }
-          ]
-        }
+          items: [{ title: 'Item 1' }],
+        },
       ];
 
       const result = CardUtils.ensureSectionIds(sections);
@@ -401,9 +407,7 @@ describe('CardUtils', () => {
     it('should sanitize valid config', () => {
       const config: AICardConfig = {
         cardTitle: 'Test Card',
-        sections: [
-          { title: 'Section 1', type: 'info' }
-        ]
+        sections: [{ title: 'Section 1', type: 'info' }],
       };
 
       const result = CardUtils.sanitizeCardConfig(config);
@@ -415,7 +419,7 @@ describe('CardUtils', () => {
     it('should truncate long card titles', () => {
       const config: AICardConfig = {
         cardTitle: 'a'.repeat(500),
-        sections: []
+        sections: [],
       };
 
       const result = CardUtils.sanitizeCardConfig(config);
@@ -426,9 +430,7 @@ describe('CardUtils', () => {
     it('should add IDs to sections', () => {
       const config: AICardConfig = {
         cardTitle: 'Test',
-        sections: [
-          { title: 'Section 1', type: 'info' }
-        ]
+        sections: [{ title: 'Section 1', type: 'info' }],
       };
 
       const result = CardUtils.sanitizeCardConfig(config);
@@ -440,9 +442,7 @@ describe('CardUtils', () => {
       const config: AICardConfig = {
         cardTitle: 'Test',
         sections: [],
-        actions: [
-          { label: 'Action 1' }
-        ]
+        actions: [{ label: 'Action 1' }],
       };
 
       const result = CardUtils.sanitizeCardConfig(config);
@@ -456,8 +456,8 @@ describe('CardUtils', () => {
         sections: [
           { title: 'Valid', type: 'info' },
           { invalid: 'section' }, // Invalid - missing title and type
-          { title: 'Also Valid', type: 'list' }
-        ]
+          { title: 'Also Valid', type: 'list' },
+        ],
       };
 
       const result = CardUtils.sanitizeCardConfig(config);
@@ -466,12 +466,3 @@ describe('CardUtils', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-

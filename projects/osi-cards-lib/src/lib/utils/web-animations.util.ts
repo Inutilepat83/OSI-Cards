@@ -1,14 +1,14 @@
 /**
  * Web Animations API Utilities
- * 
+ *
  * Programmatic animation control using the Web Animations API.
  * Provides pause/resume, playback rate control, animation sequencing,
  * and declarative animation definitions.
- * 
+ *
  * @example
  * ```typescript
  * import { AnimationController, fadeIn, slideUp } from 'osi-cards-lib';
- * 
+ *
  * const controller = new AnimationController(element);
  * await controller.play(fadeIn({ duration: 300 }));
  * await controller.play(slideUp({ duration: 200, easing: 'ease-out' }));
@@ -69,10 +69,10 @@ export interface StaggerConfig {
  * Spring physics configuration
  */
 export interface SpringConfig {
-  tension?: number;    // Stiffness (default: 170)
-  friction?: number;   // Damping (default: 26)
-  mass?: number;       // Mass (default: 1)
-  precision?: number;  // When to consider animation complete (default: 0.01)
+  tension?: number; // Stiffness (default: 170)
+  friction?: number; // Damping (default: 26)
+  mass?: number; // Mass (default: 1)
+  precision?: number; // When to consider animation complete (default: 0.01)
 }
 
 // ============================================================================
@@ -143,10 +143,7 @@ export class AnimationController {
         // Cancel any existing animation
         this.cancel();
 
-        this.currentAnimation = this.element.animate(
-          definition.keyframes,
-          definition.timing
-        );
+        this.currentAnimation = this.element.animate(definition.keyframes, definition.timing);
 
         this.currentAnimation.playbackRate = this._playbackRate;
 
@@ -252,7 +249,7 @@ export class AnimationController {
    */
   getProgress(): number {
     if (!this.currentAnimation?.effect) return 0;
-    
+
     const timing = this.currentAnimation.effect.getComputedTiming();
     const progress = timing.progress ?? 0;
     return typeof progress === 'number' ? progress : 0;
@@ -263,10 +260,10 @@ export class AnimationController {
    */
   seekTo(progress: number): void {
     if (!this.currentAnimation?.effect) return;
-    
+
     const timing = this.currentAnimation.effect.getComputedTiming();
     const duration = timing.duration;
-    
+
     if (typeof duration === 'number') {
       this.currentAnimation.currentTime = progress * duration;
     }
@@ -282,10 +279,7 @@ export class AnimationController {
  */
 export function fadeIn(timing?: AnimationTiming): AnimationDefinition {
   return {
-    keyframes: [
-      { opacity: 0 },
-      { opacity: 1 },
-    ],
+    keyframes: [{ opacity: 0 }, { opacity: 1 }],
     timing: { ...DEFAULT_TIMING, ...timing },
   };
 }
@@ -295,10 +289,7 @@ export function fadeIn(timing?: AnimationTiming): AnimationDefinition {
  */
 export function fadeOut(timing?: AnimationTiming): AnimationDefinition {
   return {
-    keyframes: [
-      { opacity: 1 },
-      { opacity: 0 },
-    ],
+    keyframes: [{ opacity: 1 }, { opacity: 0 }],
     timing: { ...DEFAULT_TIMING, ...timing },
   };
 }
@@ -306,10 +297,7 @@ export function fadeOut(timing?: AnimationTiming): AnimationDefinition {
 /**
  * Creates a slide-up animation
  */
-export function slideUp(
-  distance: number = 20,
-  timing?: AnimationTiming
-): AnimationDefinition {
+export function slideUp(distance: number = 20, timing?: AnimationTiming): AnimationDefinition {
   return {
     keyframes: [
       { transform: `translateY(${distance}px)`, opacity: 0 },
@@ -322,10 +310,7 @@ export function slideUp(
 /**
  * Creates a slide-down animation
  */
-export function slideDown(
-  distance: number = 20,
-  timing?: AnimationTiming
-): AnimationDefinition {
+export function slideDown(distance: number = 20, timing?: AnimationTiming): AnimationDefinition {
   return {
     keyframes: [
       { transform: 'translateY(0)', opacity: 1 },
@@ -338,10 +323,7 @@ export function slideDown(
 /**
  * Creates a slide-in-left animation
  */
-export function slideInLeft(
-  distance: number = 30,
-  timing?: AnimationTiming
-): AnimationDefinition {
+export function slideInLeft(distance: number = 30, timing?: AnimationTiming): AnimationDefinition {
   return {
     keyframes: [
       { transform: `translateX(-${distance}px)`, opacity: 0 },
@@ -354,10 +336,7 @@ export function slideInLeft(
 /**
  * Creates a slide-in-right animation
  */
-export function slideInRight(
-  distance: number = 30,
-  timing?: AnimationTiming
-): AnimationDefinition {
+export function slideInRight(distance: number = 30, timing?: AnimationTiming): AnimationDefinition {
   return {
     keyframes: [
       { transform: `translateX(${distance}px)`, opacity: 0 },
@@ -370,10 +349,7 @@ export function slideInRight(
 /**
  * Creates a scale-in animation
  */
-export function scaleIn(
-  fromScale: number = 0.95,
-  timing?: AnimationTiming
-): AnimationDefinition {
+export function scaleIn(fromScale: number = 0.95, timing?: AnimationTiming): AnimationDefinition {
   return {
     keyframes: [
       { transform: `scale(${fromScale})`, opacity: 0 },
@@ -386,10 +362,7 @@ export function scaleIn(
 /**
  * Creates a scale-out animation
  */
-export function scaleOut(
-  toScale: number = 0.95,
-  timing?: AnimationTiming
-): AnimationDefinition {
+export function scaleOut(toScale: number = 0.95, timing?: AnimationTiming): AnimationDefinition {
   return {
     keyframes: [
       { transform: 'scale(1)', opacity: 1 },
@@ -443,10 +416,7 @@ export function pulse(scale: number = 1.05, timing?: AnimationTiming): Animation
  */
 export function shimmer(timing?: AnimationTiming): AnimationDefinition {
   return {
-    keyframes: [
-      { backgroundPosition: '-200% 0' },
-      { backgroundPosition: '200% 0' },
-    ],
+    keyframes: [{ backgroundPosition: '-200% 0' }, { backgroundPosition: '200% 0' }],
     timing: {
       ...DEFAULT_TIMING,
       duration: 1500,
@@ -489,10 +459,7 @@ export async function staggerAnimate(
 /**
  * Calculates stagger delays based on configuration
  */
-export function calculateStaggerDelays(
-  count: number,
-  config: StaggerConfig
-): number[] {
+export function calculateStaggerDelays(count: number, config: StaggerConfig): number[] {
   const delays: number[] = [];
   const { delay, curve = 'linear', from = 'start' } = config;
 
@@ -571,23 +538,23 @@ export function springKeyframes(
     let displacement: number;
     if (zeta < 1) {
       const omegaD = omega * Math.sqrt(1 - zeta * zeta);
-      displacement = delta * (1 - Math.exp(-zeta * omega * t) * (
-        Math.cos(omegaD * t) + (zeta * omega / omegaD) * Math.sin(omegaD * t)
-      ));
+      displacement =
+        delta *
+        (1 -
+          Math.exp(-zeta * omega * t) *
+            (Math.cos(omegaD * t) + ((zeta * omega) / omegaD) * Math.sin(omegaD * t)));
     } else {
       // Critically damped or overdamped
       displacement = delta * (1 - Math.exp(-omega * t) * (1 + omega * t));
     }
 
     position = from + displacement;
-    
+
     // Normalize offset (0-1)
     const normalizedOffset = t / 5; // Normalize to ~5 seconds
     if (normalizedOffset <= 1) {
-      const value = property === 'transform' 
-        ? `translateY(${position}px)` 
-        : String(position);
-      
+      const value = property === 'transform' ? `translateY(${position}px)` : String(position);
+
       keyframes.push({
         [property]: value,
         offset: Math.min(normalizedOffset, 1),
@@ -600,7 +567,12 @@ export function springKeyframes(
     }
 
     t += dt;
-    velocity = (position - (keyframes[keyframes.length - 2] ? from + (keyframes[keyframes.length - 2]?.offset ?? 0) * delta : from)) / dt;
+    velocity =
+      (position -
+        (keyframes[keyframes.length - 2]
+          ? from + (keyframes[keyframes.length - 2]?.offset ?? 0) * delta
+          : from)) /
+      dt;
   }
 
   // Ensure final keyframe
@@ -625,11 +597,7 @@ export function springAnimation(
   const keyframes: Keyframe[] = [];
 
   // Generate spring motion for each property
-  const springFrames = springKeyframes(
-    from[keys[0]!] ?? 0,
-    to[keys[0]!] ?? 0,
-    config
-  );
+  const springFrames = springKeyframes(from[keys[0]!] ?? 0, to[keys[0]!] ?? 0, config);
 
   // Use spring timing to generate keyframes for all properties
   for (const frame of springFrames) {
@@ -720,7 +688,7 @@ export function setAnimationSpeed(element: HTMLElement, rate: number): void {
  * Gets all running animations on an element
  */
 export function getRunningAnimations(element: HTMLElement): Animation[] {
-  return element.getAnimations().filter(a => a.playState === 'running');
+  return element.getAnimations().filter((a) => a.playState === 'running');
 }
 
 /**
@@ -730,4 +698,3 @@ export function commitAnimationStyles(animation: Animation): void {
   animation.commitStyles();
   animation.cancel();
 }
-

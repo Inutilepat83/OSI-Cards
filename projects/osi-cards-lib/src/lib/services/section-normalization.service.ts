@@ -47,12 +47,12 @@ import {
   SectionType,
   SectionTypeInput,
   resolveSectionType as resolveType,
-  isValidSectionType
+  isValidSectionType,
 } from '../models/generated-section-types';
 import {
   getPreferredColumns,
   DEFAULT_SECTION_COLUMN_PREFERENCES,
-  PreferredColumns
+  PreferredColumns,
 } from '../utils/grid-config.util';
 import { LRUCache } from '../utils/lru-cache.util';
 
@@ -86,22 +86,22 @@ export const PRIORITY_BANDS: Record<PriorityBand, PriorityBandConfig> = {
   critical: {
     types: ['overview', 'contact-card'],
     condensePriority: 'never',
-    order: 1
+    order: 1,
   },
   important: {
     types: ['analytics', 'chart', 'stats', 'financials'],
     condensePriority: 'last',
-    order: 2
+    order: 2,
   },
   standard: {
     types: ['info', 'list', 'product', 'solutions', 'map'],
     condensePriority: 'always',
-    order: 3
+    order: 3,
   },
   optional: {
     types: ['news', 'event', 'timeline', 'quotation', 'text-reference', 'network-card'],
     condensePriority: 'first',
-    order: 4
+    order: 4,
   },
 };
 
@@ -118,11 +118,11 @@ export const PRIORITY_BANDS: Record<PriorityBand, PriorityBandConfig> = {
  */
 const SECTION_COL_SPAN_THRESHOLDS: Record<string, ColSpanThresholds> = {
   // Overview sections typically have 6-10 key-value pairs, should span 2-3 columns easily
-  overview: { two: 2, three: 6 },  // Lowered from { two: 5, three: 10 }
+  overview: { two: 2, three: 6 }, // Lowered from { two: 5, three: 10 }
 
   // Charts and maps need space, should span 2 columns with minimal content
-  chart: { two: 1, three: 4 },     // Lowered and added three
-  map: { two: 1, three: 4 },       // Lowered and added three
+  chart: { two: 1, three: 4 }, // Lowered and added three
+  map: { two: 1, three: 4 }, // Lowered and added three
   locations: { two: 1, three: 4 }, // Lowered and added three
 
   // Contact cards - span 2 with just 2 contacts
@@ -131,37 +131,37 @@ const SECTION_COL_SPAN_THRESHOLDS: Record<string, ColSpanThresholds> = {
 
   // Analytics/Stats - span 2 with just 2 metrics
   analytics: { two: 2, three: 5 }, // Lowered from { two: 3 }
-  stats: { two: 2, three: 5 },     // Lowered from { two: 3 }
+  stats: { two: 2, three: 5 }, // Lowered from { two: 3 }
 
   // Financials - span 2 with just 2 fields
   financials: { two: 2, three: 5 }, // Lowered from { two: 3 }
 
   // Info sections with key-value pairs - easier to span 2
-  info: { two: 2, three: 6 },       // Lowered from { two: 4, three: 8 }
+  info: { two: 2, three: 6 }, // Lowered from { two: 4, three: 8 }
 
   // Solutions/products - easier to span 2
   solutions: { two: 2, three: 5 }, // Lowered from { two: 3 }
-  product: { two: 2, three: 5 },   // Lowered from { two: 3 }
+  product: { two: 2, three: 5 }, // Lowered from { two: 3 }
 
   // Lists - span 2 with just 3 items
-  list: { two: 3, three: 6 },      // Lowered from { two: 4 }
+  list: { two: 3, three: 6 }, // Lowered from { two: 4 }
 
   // Events/Timelines - span 2 with 2 events
-  event: { two: 2, three: 5 },     // Lowered from { two: 3 }
-  timeline: { two: 2, three: 5 },  // Added
+  event: { two: 2, three: 5 }, // Lowered from { two: 3 }
+  timeline: { two: 2, three: 5 }, // Added
 
   // Text-heavy sections - easier to span 2
-  quotation: { two: 2, three: 4 },      // Lowered from { two: 3 }
+  quotation: { two: 2, three: 4 }, // Lowered from { two: 3 }
   'text-reference': { two: 2, three: 4 }, // Lowered from { two: 3 }
 
   // Projects - can now span 2 if they have content
-  project: { two: 4, three: 8 }    // Changed from { two: 999 }
+  project: { two: 4, three: 8 }, // Changed from { two: 999 }
 };
 
 const DEFAULT_COL_SPAN_THRESHOLD: ColSpanThresholds = { two: 3, three: 6 }; // Lowered from { two: 6 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SectionNormalizationService {
   // ========== Caching (merged from cached-section-normalization.service.ts) ==========
@@ -201,7 +201,7 @@ export class SectionNormalizationService {
 
     const normalized: CardSection = {
       ...section,
-      type: resolvedType
+      type: resolvedType,
     };
 
     // Handle analytics sections with metrics array
@@ -229,7 +229,7 @@ export class SectionNormalizationService {
       // Only add if not already defined (allows sections to override)
       colSpanThresholds: existingMeta?.['colSpanThresholds'] ?? colSpanThresholds,
       preferredColumns: existingMeta?.['preferredColumns'] ?? preferredColumns,
-      priorityBand: existingMeta?.['priorityBand'] ?? priorityBand
+      priorityBand: existingMeta?.['priorityBand'] ?? priorityBand,
     };
 
     // Also set preferredColumns on the section itself if not already defined
@@ -319,11 +319,16 @@ export class SectionNormalizationService {
     const config = PRIORITY_BANDS[band as PriorityBand];
 
     switch (config?.condensePriority) {
-      case 'first': return 1;   // Condense first
-      case 'always': return 2;  // Normal condensation
-      case 'last': return 3;    // Condense last
-      case 'never': return 999; // Never condense
-      default: return 2;
+      case 'first':
+        return 1; // Condense first
+      case 'always':
+        return 2; // Normal condensation
+      case 'last':
+        return 3; // Condense last
+      case 'never':
+        return 999; // Never condense
+      default:
+        return 2;
     }
   }
 
@@ -347,10 +352,10 @@ export class SectionNormalizationService {
 
     // Determine which sections to collapse
     const toCollapse = sortedByCondensation.slice(maxVisibleSections);
-    const collapseIds = new Set(toCollapse.map(s => s.id ?? s.title));
+    const collapseIds = new Set(toCollapse.map((s) => s.id ?? s.title));
 
     // Apply collapsed flag while preserving original order
-    return sections.map(section => {
+    return sections.map((section) => {
       const shouldCollapse = collapseIds.has(section.id ?? section.title);
       const band = section.priority ?? this.getPriorityBandForType(section.type ?? 'info');
       const config = PRIORITY_BANDS[band as PriorityBand];
@@ -440,20 +445,20 @@ export class SectionNormalizationService {
 
     // Fine-grained ordering within bands
     const typeOrder: Record<string, number> = {
-      'overview': 0,
+      overview: 0,
       'contact-card': 1,
-      'analytics': 0,
-      'chart': 1,
-      'stats': 2,
-      'financials': 3,
-      'info': 0,
-      'product': 1,
-      'solutions': 2,
-      'list': 3,
-      'map': 4,
-      'event': 0,
-      'timeline': 1,
-      'quotation': 2,
+      analytics: 0,
+      chart: 1,
+      stats: 2,
+      financials: 3,
+      info: 0,
+      product: 1,
+      solutions: 2,
+      list: 3,
+      map: 4,
+      event: 0,
+      timeline: 1,
+      quotation: 2,
       'text-reference': 3,
       'network-card': 4,
     };
@@ -529,7 +534,7 @@ export class SectionNormalizationService {
    * Normalize and sort sections
    */
   normalizeAndSortSections(sections: CardSection[]): CardSection[] {
-    const normalized = sections.map(section => this.normalizeSection(section));
+    const normalized = sections.map((section) => this.normalizeSection(section));
     return this.sortSections(normalized);
   }
 
@@ -566,7 +571,7 @@ export class SectionNormalizationService {
       hitRate: total > 0 ? this.cacheHits / total : 0,
       normalizedCacheSize: this.normalizedSectionsCache.size,
       sortedCacheSize: this.sortedSectionsCache.size,
-      columnSpanCacheSize: this.columnSpanCache.size
+      columnSpanCacheSize: this.columnSpanCache.size,
     };
   }
 
@@ -575,7 +580,7 @@ export class SectionNormalizationService {
    */
   warmCache(sectionTypes: string[]): void {
     // Pre-compute column spans for common types
-    sectionTypes.forEach(type => {
+    sectionTypes.forEach((type) => {
       const preferredCols = this.getPreferredColumnsForType(type);
       this.columnSpanCache.set(type, preferredCols);
     });
@@ -595,19 +600,6 @@ export class SectionNormalizationService {
    * Generate cache key for sections array
    */
   private generateSectionsArrayKey(sections: CardSection[]): string {
-    return sections.map(s => this.generateSectionKey(s)).join('|');
+    return sections.map((s) => this.generateSectionKey(s)).join('|');
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

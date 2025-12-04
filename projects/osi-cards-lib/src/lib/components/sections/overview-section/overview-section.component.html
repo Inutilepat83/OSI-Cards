@@ -1,8 +1,5 @@
 <div class="overview">
-  <lib-section-header
-    *ngIf="section.title"
-    [title]="section.title"
-    [description]="section.description">
+  <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
   <div class="list" *ngIf="section.fields?.length">
@@ -13,10 +10,5 @@
     </div>
   </div>
 
-  <lib-empty-state
-    *ngIf="!section.fields?.length"
-    message="No overview"
-    icon="📊"
-    variant="compact">
-  </lib-empty-state>
+  <lib-empty-state *ngIf="!section.fields?.length" message="No overview" icon="📊" variant="compact"> </lib-empty-state>
 </div>

@@ -1,127 +1,80 @@
 ---
-name: Feature Request
+name: ✨ Feature Request
 about: Suggest an idea for this project
 title: '[FEATURE] '
 labels: enhancement, needs-triage
 assignees: ''
 ---
 
-## Feature Description
+## ✨ Feature Description
 
-<!-- A clear and concise description of the feature you'd like to see -->
+<!-- A clear and concise description of the feature -->
 
-## Problem Statement
+## 🎯 Problem Statement
 
-<!-- Is your feature request related to a problem? Please describe -->
+<!-- What problem does this feature solve? -->
+
+**Is your feature request related to a problem?**
 <!-- e.g., "I'm always frustrated when..." -->
 
-## Proposed Solution
+## 💡 Proposed Solution
 
 <!-- Describe the solution you'd like -->
 
-## Alternative Solutions
+## 🔄 Alternatives Considered
 
-<!-- Describe any alternative solutions or features you've considered -->
+<!-- Describe alternatives you've considered -->
 
-## Use Cases
+## 📋 Use Case
 
-<!-- Describe specific use cases for this feature -->
-
-1. **Use Case 1:**
-   - As a [type of user]
-   - I want to [do something]
-   - So that [benefit/goal]
-
-2. **Use Case 2:**
-   - ...
-
-## Examples
-
-<!-- Provide examples of how this feature would be used -->
-
-### API Usage Example
+<!-- Describe the use case for this feature -->
 
 ```typescript
-// How you envision using this feature
+// Example usage
+const grid = new MasonryGrid({
+  // Your feature here
+});
 ```
 
-### Visual Example
+## 🎨 UI/UX Mockups
 
-<!-- If applicable, add mockups or diagrams -->
+<!-- If applicable, add mockups or wireframes -->
 
-## Benefits
-
-<!-- What are the benefits of implementing this feature? -->
-
-- Benefit 1
-- Benefit 2
-- Benefit 3
-
-## Implementation Suggestions
-
-<!-- If you have ideas about how to implement this feature -->
-
-### Technical Approach
-
-<!-- Suggest technical implementation details -->
-
-### Files/Components Affected
-
-<!-- List components or files that would need changes -->
-
--
--
-
-### Breaking Changes
-
-<!-- Would this require breaking changes? -->
-
-- [ ] No breaking changes required
-- [ ] Breaking changes required (explain below)
-
-## Priority
+## 📊 Priority
 
 <!-- How important is this feature to you? -->
 
-- [ ] Critical - Blocking current work
-- [ ] High - Important for workflow
-- [ ] Medium - Nice to have
-- [ ] Low - Would be cool
+- [ ] 🔴 Critical - Blocking my work
+- [ ] 🟠 High - Very important
+- [ ] 🟡 Medium - Would be nice
+- [ ] 🟢 Low - Not urgent
 
-## Adoption
+## 💪 Willingness to Contribute
 
-<!-- Who would benefit from this feature? -->
+<!-- Are you willing to help implement this? -->
 
-- [ ] All users
-- [ ] Specific use case (describe below)
-- [ ] Advanced users
-- [ ] Developers integrating the library
-
-## Related Features
-
-<!-- Link to related features or issues -->
-
-Related to #
-
-## Additional Context
-
-<!-- Add any other context, screenshots, or examples -->
-
-## Willingness to Contribute
-
-<!-- Are you willing to help implement this feature? -->
-
-- [ ] I can submit a PR for this feature
-- [ ] I can help with testing
+- [ ] I can implement this feature
 - [ ] I can help with documentation
-- [ ] I can provide feedback during development
-- [ ] I can provide use cases and requirements
+- [ ] I can help with testing
+- [ ] I can provide design/mockups
+- [ ] I can only report the request
 
-## Checklist
+## 🔗 Related Issues
 
-- [ ] I have searched existing issues/PRs for similar requests
-- [ ] I have provided a clear description of the feature
-- [ ] I have explained the use cases
-- [ ] I have considered alternative solutions
-- [ ] I have provided examples (if applicable)
+<!-- Link any related issues -->
 
+## 📊 Impact
+
+**Who will benefit from this feature?**
+- [ ] All users
+- [ ] Library developers
+- [ ] Application developers
+- [ ] Specific use case
+
+## ✅ Checklist
+
+- [ ] I have searched for similar feature requests
+- [ ] I have described the problem clearly
+- [ ] I have provided a solution proposal
+- [ ] I have considered alternatives
+- [ ] I have provided use case examples
