@@ -46,7 +46,7 @@ jobs:
           NODE_ENV: production
 
       - name: Publish to NPM
-        if: contains(github.event.head_commit.message, '[publish]')
+        if: contains(github.event.head_commit.message, '[publish]') && env.NPM_TOKEN != ''
         run: |
           cd dist/osi-cards-lib
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
@@ -55,7 +55,17 @@ jobs:
           VERSION=$(node -p "require('./version.config.json').version")
           echo "✅ Published osi-cards-lib@$VERSION to NPM"
         env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Notify NPM Publish Skipped
+        if: contains(github.event.head_commit.message, '[publish]') && env.NPM_TOKEN == ''
+        run: |
+          echo "ℹ️  NPM publish skipped - NPM_TOKEN not configured"
+          echo "   Library was likely published locally via smart-publish"
+          echo "   To enable CI/CD NPM publishing, add NPM_TOKEN secret"
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
