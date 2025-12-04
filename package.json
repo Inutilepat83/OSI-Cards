@@ -61,6 +61,14 @@
     "audit:sec": "npm audit",
     "_comment_version": "═══ VERSION ═══",
     "version:generate": "node scripts/generate-version.js",
+    "version:sync-all": "node scripts/sync-all-versions.js",
+    "version:patch": "npm version patch --no-git-tag-version && npm run version:sync-all",
+    "version:minor": "npm version minor --no-git-tag-version && npm run version:sync-all",
+    "version:major": "npm version major --no-git-tag-version && npm run version:sync-all",
+    "_comment_publish": "═══ PUBLISH ═══",
+    "publish:smart": "node scripts/smart-publish-v2.js patch",
+    "publish:smart:minor": "node scripts/smart-publish-v2.js minor",
+    "publish:smart:major": "node scripts/smart-publish-v2.js major",
     "_comment_misc": "═══ MISC ═══",
     "prebuild": "npm run generate:manifest && npm run version:generate",
     "storybook": "storybook dev -p 6006",
@@ -140,9 +148,16 @@
     "typescript-eslint": "8.40.0"
   },
   "lint-staged": {
-    "*.{ts,js}": ["eslint --fix", "prettier --write"],
-    "*.{html,css,scss,json,md}": ["prettier --write"],
-    "*.ts": ["bash -c 'npx tsc --noEmit --project tsconfig.json || true'"],
+    "*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{html,css,scss,json,md}": [
+      "prettier --write"
+    ],
+    "*.ts": [
+      "bash -c 'npx tsc --noEmit --project tsconfig.json || true'"
+    ],
     "projects/osi-cards-lib/section-registry.json": [
       "node scripts/generate-from-registry.js"
     ]
@@ -153,5 +168,10 @@
       "pre-push": "npm run lint && npm run test:unit && npm run check:security && npm run size:check"
     }
   },
-  "sideEffects": ["**/*.css", "**/*.scss", "src/polyfills.ts", "src/main.ts"]
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss",
+    "src/polyfills.ts",
+    "src/main.ts"
+  ]
 }

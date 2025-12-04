@@ -15,6 +15,7 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { fromEvent, Subject } from 'rxjs';
 import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
+import { VERSION } from '../../../version';
 
 interface DocRoute {
   path: string;
@@ -125,7 +126,7 @@ interface SearchResult {
         <div class="sidebar-header">
           <a routerLink="/docs" class="sidebar-logo">
             <span>OSI Cards</span>
-            <span class="version">v2.0</span>
+            <span class="version">v{{ appVersion }}</span>
           </a>
           <button class="close-btn" (click)="closeSidebar()" aria-label="Close navigation">
             <lucide-icon name="x" [size]="20"></lucide-icon>
@@ -296,6 +297,9 @@ export class DocsWrapperComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private el = inject(ElementRef);
   private destroy$ = new Subject<void>();
+
+  // Version info
+  readonly appVersion = VERSION.full;
 
   // State signals
   sidebarOpen = signal(false);

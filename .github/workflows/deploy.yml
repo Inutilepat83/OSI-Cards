@@ -28,6 +28,11 @@ jobs:
       - name: Install Dependencies
         run: npm ci --legacy-peer-deps
 
+      - name: Sync All Versions
+        run: |
+          node scripts/sync-all-versions.js
+          echo "📦 Versions synchronized across all files"
+
       # Tests disabled - pre-existing test errors don't block production builds
       # - name: Run Tests
       #   run: npm test -- --watch=false --browsers=ChromeHeadless
@@ -39,6 +44,18 @@ jobs:
         run: npm run build
         env:
           NODE_ENV: production
+
+      - name: Publish to NPM
+        if: contains(github.event.head_commit.message, '[publish]')
+        run: |
+          cd dist/osi-cards-lib
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          npm publish --access public
+          cd ../..
+          VERSION=$(node -p "require('./version.config.json').version")
+          echo "✅ Published osi-cards-lib@$VERSION to NPM"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
