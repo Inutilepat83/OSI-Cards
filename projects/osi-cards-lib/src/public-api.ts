@@ -313,6 +313,23 @@ export {
 } from './lib/utils/grid-config.util';
 
 // ═══════════════════════════════════════════════════════════════════════════
+// VERSION INFO
+// ═══════════════════════════════════════════════════════════════════════════
+export {
+  VERSION,
+  BUILD_DATE,
+  BUILD_HASH,
+  BUILD_BRANCH,
+  VERSION_INFO,
+  getVersionString,
+  getShortVersion,
+  getBuildInfo,
+  isProductionBuild,
+  isPrerelease,
+  type VersionInfo,
+} from './lib/version';
+
+// ═══════════════════════════════════════════════════════════════════════════
 // ERRORS
 // ═══════════════════════════════════════════════════════════════════════════
 export * from './lib/errors';

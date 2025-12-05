@@ -91,6 +91,7 @@ function main() {
   logInfo('Running post-build tasks for osi-cards-lib...\n');
 
   const tasks = [
+    { script: 'scripts/generate-version.js', desc: 'Generate version files', optional: false },
     { script: 'scripts/generate-library-package-json.js', desc: 'Generate library package.json', optional: false },
     { script: 'scripts/copy-library-files.js', desc: 'Copy library files', optional: true },
     { script: 'scripts/compile-styles.js', desc: 'Compile styles', optional: true },

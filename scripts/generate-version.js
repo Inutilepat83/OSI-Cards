@@ -18,6 +18,7 @@ const { execSync } = require('child_process');
 const ROOT_DIR = path.join(__dirname, '..');
 const VERSION_CONFIG = path.join(ROOT_DIR, 'version.config.json');
 const VERSION_FILE = path.join(ROOT_DIR, 'src', 'version.ts');
+const LIB_VERSION_FILE = path.join(ROOT_DIR, 'projects', 'osi-cards-lib', 'src', 'lib', 'version.ts');
 
 /**
  * Get git info
@@ -137,6 +138,15 @@ export function isPrerelease(): boolean {
 
   fs.writeFileSync(VERSION_FILE, content, 'utf8');
   console.log(`✓ Generated version.ts (${version} @ ${git.branch}/${git.hash})`);
+
+  // Also generate version file for library
+  const libSrcDir = path.dirname(LIB_VERSION_FILE);
+  if (!fs.existsSync(libSrcDir)) {
+    fs.mkdirSync(libSrcDir, { recursive: true });
+  }
+
+  fs.writeFileSync(LIB_VERSION_FILE, content, 'utf8');
+  console.log(`✓ Generated library version.ts (${version} @ ${git.branch}/${git.hash})`);
 }
 
 // Run if called directly
