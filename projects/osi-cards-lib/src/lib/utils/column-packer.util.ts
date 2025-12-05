@@ -40,54 +40,26 @@ import { SkylinePacker, packWithSkyline, skylineResultToPositions } from './skyl
 // HEIGHT ESTIMATION
 // ============================================================================
 
-/**
- * Default height estimates per section type (in pixels)
- */
-const SECTION_HEIGHT_ESTIMATES: Record<string, number> = {
-  overview: 180,
-  'contact-card': 160,
-  'network-card': 160,
-  analytics: 200,
-  stats: 180,
-  chart: 280,
-  map: 250,
-  financials: 200,
-  info: 180,
-  list: 220,
-  event: 240,
-  timeline: 240,
-  product: 220,
-  solutions: 240,
-  quotation: 160,
-  'text-reference': 180,
-  default: 180,
-};
+import { HeightEstimationService } from '../services/height-estimation.service';
 
-const HEIGHT_PER_ITEM = 50;
-const HEIGHT_PER_FIELD = 32;
-const SECTION_HEADER_HEIGHT = 48;
-const SECTION_PADDING = 20;
+// Create a singleton instance for use in utility functions
+// Note: In Angular components, inject the service instead
+let heightEstimationServiceInstance: HeightEstimationService | null = null;
+
+function getHeightEstimationService(): HeightEstimationService {
+  if (!heightEstimationServiceInstance) {
+    heightEstimationServiceInstance = new HeightEstimationService();
+  }
+  return heightEstimationServiceInstance;
+}
 
 /**
  * Estimates the height of a section based on its content
+ * Uses HeightEstimationService for consistent estimates
  */
-function estimateSectionHeight(section: CardSection): number {
-  const type = String(section.type ?? 'default').toLowerCase();
-  const baseHeight = SECTION_HEIGHT_ESTIMATES[type] ?? SECTION_HEIGHT_ESTIMATES['default'] ?? 120;
-
-  const itemCount = section.items?.length ?? 0;
-  const fieldCount = section.fields?.length ?? 0;
-
-  const itemsHeight = itemCount * HEIGHT_PER_ITEM;
-  const fieldsHeight = fieldCount * HEIGHT_PER_FIELD;
-  const contentHeight = Math.max(itemsHeight, fieldsHeight);
-
-  const estimatedHeight = Math.max(
-    baseHeight,
-    SECTION_HEADER_HEIGHT + contentHeight + SECTION_PADDING
-  );
-
-  return Math.min(estimatedHeight, 500);
+function estimateSectionHeight(section: CardSection, colSpan?: number): number {
+  const service = getHeightEstimationService();
+  return service.estimate(section, { colSpan });
 }
 
 // ============================================================================
@@ -220,9 +192,19 @@ function packWithFFDH(
   gap: number,
   optimizePasses: number = 1
 ): ColumnPackedSection[] {
+  // Debug logging - only in development mode
+  const isDevelopment =
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
   let positioned: ColumnPackedSection[] = [];
   let bestPositioned: ColumnPackedSection[] = [];
-  let bestMetrics = { gapCount: Infinity, heightVariance: Infinity, totalHeight: Infinity };
+  let bestMetrics = {
+    gapCount: Infinity,
+    heightVariance: Infinity,
+    totalHeight: Infinity,
+    utilization: 0,
+  };
 
   // Multi-pass optimization: try different strategies and pick the best
   for (let pass = 0; pass < optimizePasses; pass++) {
@@ -380,6 +362,34 @@ function packWithFFDH(
       bestPositioned = positioned;
       bestMetrics = { ...metrics, totalHeight };
     }
+
+    // Early exit: Stop if layout is already excellent
+    // Utilization > 95% and no gaps means we've achieved optimal layout
+    if (metrics.utilization > 95 && metrics.gapCount === 0) {
+      if (isDevelopment) {
+        console.log('[ColumnPacker] Early exit: Excellent layout achieved', {
+          pass: pass + 1,
+          utilization: metrics.utilization.toFixed(1) + '%',
+          gapCount: metrics.gapCount,
+        });
+      }
+      break;
+    }
+
+    // Early exit: Stop if improvement is minimal (< 1% utilization improvement)
+    if (pass > 0 && bestMetrics.utilization > 0) {
+      const previousUtilization = pass === 1 ? 0 : bestMetrics.utilization;
+      const improvement = metrics.utilization - previousUtilization;
+      if (improvement < 1 && metrics.gapCount <= bestMetrics.gapCount) {
+        if (isDevelopment) {
+          console.log('[ColumnPacker] Early exit: Minimal improvement', {
+            pass: pass + 1,
+            improvement: improvement.toFixed(2) + '%',
+          });
+        }
+        break;
+      }
+    }
   }
 
   return bestPositioned.length > 0 ? bestPositioned : positioned;
@@ -467,7 +477,99 @@ function calculateGapScoreForPosition(
     gapScore -= 30; // Increased reward for balanced rows (better consolidation)
   }
 
+  // Enhanced: Check if placement fills existing gaps
+  const maxHeightBefore = Math.max(...colHeights, 0);
+  const minHeightBefore = Math.min(...colHeights.filter((h) => h > 0), maxHeightBefore);
+  const gapBefore = maxHeightBefore - minHeightBefore;
+
+  // Simulate placement
+  const simulatedHeights = [...colHeights];
+  for (let c = startCol; c < startCol + colSpan; c++) {
+    simulatedHeights[c] = Math.max(simulatedHeights[c] || 0, placementHeight);
+  }
+  const maxHeightAfter = Math.max(...simulatedHeights, 0);
+  const minHeightAfter = Math.min(...simulatedHeights.filter((h) => h > 0), maxHeightAfter);
+  const gapAfter = maxHeightAfter - minHeightAfter;
+
+  // Reward placements that reduce gaps
+  if (gapAfter < gapBefore) {
+    gapScore -= (gapBefore - gapAfter) * 5; // Strong reward for gap reduction
+  }
+
   return gapScore;
+}
+
+/**
+ * Post-processing gap filling: Reposition small sections to fill gaps
+ */
+function fillGapsPostProcessing(
+  positioned: ColumnPackedSection[],
+  columns: number,
+  gap: number
+): ColumnPackedSection[] {
+  // Calculate column heights
+  const colHeights = new Array(columns).fill(0);
+  for (const pos of positioned) {
+    const height = estimateSectionHeight(pos.section, pos.colSpan);
+    const bottom = pos.top + height + gap;
+    for (let c = pos.columnIndex; c < pos.columnIndex + pos.colSpan; c++) {
+      if (bottom > colHeights[c]) {
+        colHeights[c] = bottom;
+      }
+    }
+  }
+
+  const maxHeight = Math.max(...colHeights, 0);
+  const gapThreshold = 10;
+
+  // Find sections that could fill gaps (small, single-column sections)
+  const smallSections = positioned
+    .filter((p) => p.colSpan === 1)
+    .sort((a, b) => {
+      const heightA = estimateSectionHeight(a.section, a.colSpan);
+      const heightB = estimateSectionHeight(b.section, b.colSpan);
+      return heightA - heightB; // Smallest first
+    });
+
+  // Try to reposition small sections to fill gaps
+  const result = [...positioned];
+  const usedSections = new Set<number>();
+
+  for (const smallSection of smallSections) {
+    const sectionHeight = estimateSectionHeight(smallSection.section, smallSection.colSpan);
+    const sectionIndex = result.indexOf(smallSection);
+    if (usedSections.has(sectionIndex)) continue;
+
+    // Find column with largest gap
+    let bestColumn = -1;
+    let bestGap = 0;
+
+    for (let col = 0; col < columns; col++) {
+      const gapSize = maxHeight - colHeights[col];
+      if (gapSize >= sectionHeight + gapThreshold && gapSize > bestGap) {
+        bestGap = gapSize;
+        bestColumn = col;
+      }
+    }
+
+    // If we found a gap that fits, reposition the section
+    if (bestColumn >= 0 && bestGap >= sectionHeight) {
+      const newTop = colHeights[bestColumn];
+      result[sectionIndex] = {
+        ...smallSection,
+        columnIndex: bestColumn,
+        top: newTop,
+        left: generateLeftExpression(columns, bestColumn, gap),
+        width: generateWidthExpression(columns, 1, gap),
+      };
+
+      // Update column height
+      colHeights[bestColumn] = newTop + sectionHeight + gap;
+      usedSections.add(sectionIndex);
+    }
+  }
+
+  return result;
 }
 
 /**
@@ -636,7 +738,7 @@ export function packSectionsIntoColumns(
     return {
       section,
       originalIndex: index,
-      height: estimateSectionHeight(section),
+      height: estimateSectionHeight(section, colSpan),
       colSpan,
       preferredColumns,
       canShrinkToFill,
@@ -653,183 +755,229 @@ export function packSectionsIntoColumns(
   // Determine which algorithm to use
   let useSkyline = packingMode === 'skyline';
   let positioned: ColumnPackedSection[];
+  let optimizationPasses = 2; // Default value, will be set in else block
 
-  if (useSkyline || (packingMode === 'hybrid' && containerWidth)) {
-    // Use Skyline algorithm
-    const skylineResult = packWithSkyline(
-      orderedSections.map((s) => s.section),
-      columns,
-      containerWidth ?? 1200,
-      {
-        gap,
-        useBestFit: true,
-        sortByHeight: true,
+  try {
+    if (useSkyline || (packingMode === 'hybrid' && containerWidth)) {
+      // Use Skyline algorithm
+      const skylineResult = packWithSkyline(
+        orderedSections.map((s) => s.section),
+        columns,
+        containerWidth ?? 1200,
+        {
+          gap,
+          useBestFit: true,
+          sortByHeight: true,
+        }
+      );
+
+      const skylinePositions = skylineResultToPositions(skylineResult, columns, gap);
+
+      // Map back to our format, preserving original indices
+      // Create lookup map for O(1) access instead of O(n) find()
+      const sectionToMetrics = new Map(orderedSections.map((s) => [s.section, s]));
+
+      positioned = skylinePositions.map((pos, skylineIndex) => {
+        // Use Map lookup instead of find() for better performance
+        const originalItem = sectionToMetrics.get(pos.section);
+
+        // Parse column index from left CSS expression
+        let columnIndex = 0;
+        if (pos.left !== '0px' && pos.left.includes('calc')) {
+          const match = pos.left.match(/\*\s*(\d+)\s*\)/);
+          if (match && match[1]) {
+            columnIndex = parseInt(match[1], 10);
+          }
+        }
+
+        return {
+          section: pos.section,
+          colSpan: pos.colSpan,
+          preferredColumns: originalItem?.preferredColumns ?? (1 as PreferredColumns),
+          left: pos.left,
+          top: pos.top,
+          width: pos.width,
+          originalIndex: originalItem?.originalIndex ?? skylineIndex,
+          columnIndex,
+        };
+      });
+
+      // Restore original order if reordering is disabled
+      if (!allowReordering) {
+        positioned.sort((a, b) => a.originalIndex - b.originalIndex);
       }
-    );
+    } else {
+      // Use FFDH algorithm with multi-pass optimization
+      optimizationPasses = fullConfig.optimizationPasses ?? 2;
+      const enableGapAware = fullConfig.enableGapAwarePlacement ?? true;
 
-    const skylinePositions = skylineResultToPositions(skylineResult, columns, gap);
+      // Adaptive optimization: Limit passes based on section count
+      // Fewer sections = fewer passes needed (diminishing returns)
+      let adaptivePasses = optimizationPasses;
+      if (sections.length <= 5) {
+        adaptivePasses = Math.min(2, optimizationPasses); // Max 2 passes for small layouts
+      } else if (sections.length <= 10) {
+        adaptivePasses = Math.min(3, optimizationPasses); // Max 3 passes for medium layouts
+      }
 
-    // Map back to our format, preserving original indices
-    // Create lookup map for O(1) access instead of O(n) find()
-    const sectionToMetrics = new Map(orderedSections.map((s) => [s.section, s]));
+      positioned = packWithFFDH(orderedSections, columns, gap, enableGapAware ? adaptivePasses : 1);
 
-    positioned = skylinePositions.map((pos, skylineIndex) => {
-      // Use Map lookup instead of find() for better performance
-      const originalItem = sectionToMetrics.get(pos.section);
+      // Restore original order if reordering is disabled
+      if (!allowReordering) {
+        positioned.sort((a, b) => a.originalIndex - b.originalIndex);
+      }
 
-      // Parse column index from left CSS expression
-      let columnIndex = 0;
-      if (pos.left !== '0px' && pos.left.includes('calc')) {
-        const match = pos.left.match(/\*\s*(\d+)\s*\)/);
-        if (match && match[1]) {
-          columnIndex = parseInt(match[1], 10);
+      // In hybrid mode, check if we should switch to Skyline
+      if (packingMode === 'hybrid' && containerWidth) {
+        const totalHeight = Math.max(
+          ...positioned.map((p) => p.top + estimateSectionHeight(p.section)),
+          0
+        );
+        const metrics = calculateMetrics(positioned, totalHeight, columns, gap);
+
+        if (metrics.gapCount >= useSkylineThreshold) {
+          // Re-run with Skyline for better compaction
+          const skylineResult = packWithSkyline(
+            orderedSections.map((s) => s.section),
+            columns,
+            containerWidth,
+            {
+              gap,
+              useBestFit: true,
+              sortByHeight: true,
+            }
+          );
+
+          const skylinePositions = skylineResultToPositions(skylineResult, columns, gap);
+          // Create lookup map for O(1) access instead of O(n) find()
+          const sectionToMetrics = new Map(orderedSections.map((s) => [s.section, s]));
+
+          positioned = skylinePositions.map((pos, skylineIndex) => {
+            // Use Map lookup instead of find() for better performance
+            const originalItem = sectionToMetrics.get(pos.section);
+
+            // Parse column index from left CSS expression
+            let columnIndex = 0;
+            if (pos.left !== '0px' && pos.left.includes('calc')) {
+              const match = pos.left.match(/\*\s*(\d+)\s*\)/);
+              if (match && match[1]) {
+                columnIndex = parseInt(match[1], 10);
+              }
+            }
+
+            return {
+              section: pos.section,
+              colSpan: pos.colSpan,
+              preferredColumns: originalItem?.preferredColumns ?? (1 as PreferredColumns),
+              left: pos.left,
+              top: pos.top,
+              width: pos.width,
+              originalIndex: originalItem?.originalIndex ?? skylineIndex,
+              columnIndex,
+            };
+          });
+
+          if (!allowReordering) {
+            positioned.sort((a, b) => a.originalIndex - b.originalIndex);
+          }
+
+          useSkyline = true;
         }
       }
-
-      return {
-        section: pos.section,
-        colSpan: pos.colSpan,
-        preferredColumns: originalItem?.preferredColumns ?? (1 as PreferredColumns),
-        left: pos.left,
-        top: pos.top,
-        width: pos.width,
-        originalIndex: originalItem?.originalIndex ?? skylineIndex,
-        columnIndex,
-      };
-    });
-
-    // Restore original order if reordering is disabled
-    if (!allowReordering) {
-      positioned.sort((a, b) => a.originalIndex - b.originalIndex);
     }
-  } else {
-    // Use FFDH algorithm with multi-pass optimization
-    const optimizationPasses = fullConfig.optimizationPasses ?? 2;
-    const enableGapAware = fullConfig.enableGapAwarePlacement ?? true;
 
-    positioned = packWithFFDH(
-      orderedSections,
-      columns,
-      gap,
-      enableGapAware ? optimizationPasses : 1
+    // Calculate total height
+    let totalHeight = Math.max(
+      ...positioned.map((p) => p.top + estimateSectionHeight(p.section)),
+      0
     );
 
-    // Restore original order if reordering is disabled
-    if (!allowReordering) {
-      positioned.sort((a, b) => a.originalIndex - b.originalIndex);
-    }
-
-    // In hybrid mode, check if we should switch to Skyline
-    if (packingMode === 'hybrid' && containerWidth) {
-      const totalHeight = Math.max(
-        ...positioned.map((p) => p.top + estimateSectionHeight(p.section)),
+    // Post-processing: Try to fill gaps by repositioning small sections
+    if (optimizationPasses > 1 && positioned.length > 2) {
+      positioned = fillGapsPostProcessing(positioned, columns, gap);
+      // Recalculate total height after gap filling
+      totalHeight = Math.max(
+        ...positioned.map((p) => p.top + estimateSectionHeight(p.section, p.colSpan)),
         0
       );
-      const metrics = calculateMetrics(positioned, totalHeight, columns, gap);
-
-      if (metrics.gapCount >= useSkylineThreshold) {
-        // Re-run with Skyline for better compaction
-        const skylineResult = packWithSkyline(
-          orderedSections.map((s) => s.section),
-          columns,
-          containerWidth,
-          {
-            gap,
-            useBestFit: true,
-            sortByHeight: true,
-          }
-        );
-
-        const skylinePositions = skylineResultToPositions(skylineResult, columns, gap);
-        // Create lookup map for O(1) access instead of O(n) find()
-        const sectionToMetrics = new Map(orderedSections.map((s) => [s.section, s]));
-
-        positioned = skylinePositions.map((pos, skylineIndex) => {
-          // Use Map lookup instead of find() for better performance
-          const originalItem = sectionToMetrics.get(pos.section);
-
-          // Parse column index from left CSS expression
-          let columnIndex = 0;
-          if (pos.left !== '0px' && pos.left.includes('calc')) {
-            const match = pos.left.match(/\*\s*(\d+)\s*\)/);
-            if (match && match[1]) {
-              columnIndex = parseInt(match[1], 10);
-            }
-          }
-
-          return {
-            section: pos.section,
-            colSpan: pos.colSpan,
-            preferredColumns: originalItem?.preferredColumns ?? (1 as PreferredColumns),
-            left: pos.left,
-            top: pos.top,
-            width: pos.width,
-            originalIndex: originalItem?.originalIndex ?? skylineIndex,
-            columnIndex,
-          };
-        });
-
-        if (!allowReordering) {
-          positioned.sort((a, b) => a.originalIndex - b.originalIndex);
-        }
-
-        useSkyline = true;
-      }
     }
-  }
 
-  // Calculate total height
-  const totalHeight = Math.max(
-    ...positioned.map((p) => p.top + estimateSectionHeight(p.section)),
-    0
-  );
+    // Calculate metrics
+    const metrics = calculateMetrics(positioned, totalHeight, columns, gap);
 
-  // Calculate metrics
-  const metrics = calculateMetrics(positioned, totalHeight, columns, gap);
-
-  // Debug logging - only in development mode (reuse isDevelopment from above)
-  if (
-    isDevelopment &&
-    (packingMode === 'hybrid' ||
-      packingMode === 'skyline' ||
-      metrics.gapCount > 0 ||
-      sections.length > 10)
-  ) {
-    const columnHeights = Array.from({ length: columns }, (_, i) => {
-      const colSections = positioned.filter((p) => {
-        const startCol = p.columnIndex;
-        const endCol = startCol + p.colSpan;
-        return i >= startCol && i < endCol;
+    // Debug logging - only in development mode (reuse isDevelopment from above)
+    if (
+      isDevelopment &&
+      (packingMode === 'hybrid' ||
+        packingMode === 'skyline' ||
+        metrics.gapCount > 0 ||
+        sections.length > 10)
+    ) {
+      const columnHeights = Array.from({ length: columns }, (_, i) => {
+        const colSections = positioned.filter((p) => {
+          const startCol = p.columnIndex;
+          const endCol = startCol + p.colSpan;
+          return i >= startCol && i < endCol;
+        });
+        return colSections.length > 0
+          ? Math.max(...colSections.map((p) => p.top + estimateSectionHeight(p.section)), 0)
+          : 0;
       });
-      return colSections.length > 0
-        ? Math.max(...colSections.map((p) => p.top + estimateSectionHeight(p.section)), 0)
-        : 0;
-    });
 
-    console.log('[ColumnPacker] ✅ Packing complete', {
-      algorithm: useSkyline ? 'skyline' : 'ffdh',
-      totalHeight: Math.round(totalHeight),
-      utilization: metrics.utilization.toFixed(1) + '%',
+      console.log('[ColumnPacker] ✅ Packing complete', {
+        algorithm: useSkyline ? 'skyline' : 'ffdh',
+        totalHeight: Math.round(totalHeight),
+        utilization: metrics.utilization.toFixed(1) + '%',
+        gapCount: metrics.gapCount,
+        gapArea: metrics.gapArea,
+        heightVariance: metrics.heightVariance,
+        sections: positioned.length,
+        columnHeights: columnHeights.map((h) => Math.round(h)),
+        maxColumnHeight: Math.max(...columnHeights),
+        minColumnHeight: Math.min(...columnHeights.filter((h) => h > 0)),
+      });
+    }
+
+    return {
+      positionedSections: positioned,
+      totalHeight,
+      columns,
+      utilization: metrics.utilization,
       gapCount: metrics.gapCount,
       gapArea: metrics.gapArea,
       heightVariance: metrics.heightVariance,
-      sections: positioned.length,
-      columnHeights: columnHeights.map((h) => Math.round(h)),
-      maxColumnHeight: Math.max(...columnHeights),
-      minColumnHeight: Math.min(...columnHeights.filter((h) => h > 0)),
-    });
-  }
+      algorithm: useSkyline ? 'skyline' : 'ffdh',
+    };
+  } catch (error) {
+    // Error handling: Return safe fallback result
+    const errorObj = error instanceof Error ? error : new Error(String(error));
+    console.error('[ColumnPacker] Packing failed:', errorObj);
 
-  return {
-    positionedSections: positioned,
-    totalHeight,
-    columns,
-    utilization: metrics.utilization,
-    gapCount: metrics.gapCount,
-    gapArea: metrics.gapArea,
-    heightVariance: metrics.heightVariance,
-    algorithm: useSkyline ? 'skyline' : 'ffdh',
-  };
+    // Return minimal valid result
+    return {
+      positionedSections: sections.map((section, index) => ({
+        section,
+        colSpan: 1,
+        preferredColumns: 1 as PreferredColumns,
+        left: generateLeftExpression(
+          config.columns || 4,
+          index % (config.columns || 4),
+          config.gap || 12
+        ),
+        top: 0,
+        width: generateWidthExpression(config.columns || 4, 1, config.gap || 12),
+        originalIndex: index,
+        columnIndex: index % (config.columns || 4),
+      })),
+      totalHeight: 200,
+      columns: config.columns || 4,
+      utilization: 0,
+      gapCount: sections.length,
+      gapArea: 0,
+      heightVariance: 0,
+      algorithm: 'ffdh',
+    };
+  }
 }
 
 /**

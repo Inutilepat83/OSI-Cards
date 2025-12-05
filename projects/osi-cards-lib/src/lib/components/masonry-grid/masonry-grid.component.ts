@@ -53,11 +53,20 @@ import {
   HeightEstimationContext,
 } from '../../utils/height-estimation.util';
 import { VirtualScrollManager, ViewportState } from '../../utils/virtual-scroll.util';
-import {
-  MasterGridLayoutEngine,
-  MasterLayoutResult,
-} from '../../utils/master-grid-layout-engine.util';
+// Removed MasterGridLayoutEngine - using layout service directly
 import { SectionLayoutPreferenceService } from '../../services/section-layout-preference.service';
+import {
+  validateLayoutQuality,
+  getLayoutQualitySummary,
+} from '../../utils/layout-quality-checker.util';
+import { HeightEstimationService } from '../../services/height-estimation.service';
+import {
+  LayoutPreset,
+  getPresetConfig,
+  presetToColumnPackerConfig,
+  mergePresetWithOverrides,
+  LayoutPresetConfig,
+} from '../../config/layout-presets.config';
 
 interface ColSpanThresholds {
   two: number;
@@ -173,6 +182,9 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
    * Uses the master grid layout engine for intelligent, content-aware placement.
    */
   @Input() optimizeLayout = true;
+  @Input() enableTwoPhaseLayout = true; // Enable two-phase layout (estimate → measure → refine)
+  @Input() preset: LayoutPreset = 'balanced'; // Layout preset: 'performance' | 'quality' | 'balanced' | 'custom'
+  @Input() presetOverrides?: Partial<LayoutPresetConfig>; // Override specific preset settings
 
   /**
    * Enable virtual scrolling for large section lists.
@@ -204,13 +216,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     if (value) {
       console.log('[MasonryGrid] Debug mode enabled - watch console for layout logs');
     }
-    // Update master engine debug setting
-    if (this.masterEngine) {
-      this.masterEngine = new MasterGridLayoutEngine({
-        ...this.masterEngine['config'],
-        debug: value,
-      });
-    }
+    // Debug mode is handled by layout service
   }
   get debug(): boolean {
     return this._debug;
@@ -221,6 +227,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   @Output() layoutChange = new EventEmitter<MasonryLayoutInfo>();
   /** Detailed layout log for debugging - emits on column changes and section repositioning */
   @Output() layoutLog = new EventEmitter<LayoutLogEntry>();
+  /** Error event emitted when layout calculation fails */
+  @Output() layoutError = new EventEmitter<{ error: Error; context: string }>();
 
   @ViewChild('container', { static: true }) containerRef!: ElementRef<HTMLDivElement>;
   @ViewChildren('itemRef') itemRefs!: QueryList<ElementRef<HTMLDivElement>>;
@@ -228,6 +236,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly layoutService = inject(MasonryGridLayoutService);
   private readonly layoutPreferenceService = inject(SectionLayoutPreferenceService);
+  private readonly heightEstimationService = inject(HeightEstimationService);
 
   positionedSections: PositionedSection[] = [];
   containerHeight = 0;
@@ -273,6 +282,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private reflowCount = 0;
   private lastLayoutInfo?: MasonryLayoutInfo;
   private isReflowing = false; // Prevent concurrent reflows
+  private heightMeasurementScheduled = false; // Prevent multiple height measurements
   private readonly MAX_REFLOWS = 3;
 
   private readonly DEBOUNCE_MS = 150;
@@ -281,8 +291,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private virtualScrollManager: VirtualScrollManager<PositionedSection> | null = null;
   private scrollUnsubscribe: (() => void) | null = null;
 
-  // NEW: Advanced grid layout systems
-  private masterEngine!: MasterGridLayoutEngine;
+  // Removed MasterGridLayoutEngine - using layout service directly
 
   /** Sections currently rendered (may be subset when virtual scrolling is active) */
   renderedSections: PositionedSection[] = [];
@@ -296,48 +305,424 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   constructor() {
-    // Initialize master grid engine (handles all layout intelligence)
-    this.masterEngine = new MasterGridLayoutEngine({
-      gap: this.gap,
-      minColumnWidth: this.minColumnWidth,
-      maxColumns: this.maxColumns,
-      enableWeightedSelection: true,
-      enableIntelligence: true,
-      enableCompaction: true,
-      enableCaching: true,
-      debug: this._debug,
-    });
+    // Layout service is injected, no initialization needed
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Only update if sections actually changed
+    // Handle containerWidth changes - always requires full recalculation
+    if (changes['containerWidth']) {
+      const newWidth = changes['containerWidth'].currentValue;
+      if (newWidth && newWidth > 0 && newWidth !== this.lastWidth) {
+        const newColumns = this.calculateResponsiveColumns(newWidth);
+        const columnsChanged = newColumns !== this.currentColumns;
+
+        if (columnsChanged) {
+          // Column count changed - full recalculation required
+          this.reflowCount = 0;
+          this.updateLayout();
+        } else {
+          // Width changed but columns same - can use incremental update
+          this.lastWidth = newWidth;
+          this.incrementalLayoutUpdate('width-change');
+        }
+      }
+    }
+
+    // Handle sections changes with incremental updates
     if (changes['sections']) {
       const prevSections = changes['sections'].previousValue as CardSection[] | undefined;
       const currSections = changes['sections'].currentValue as CardSection[] | undefined;
 
-      // Check if sections actually changed (length or content)
-      const sectionsChanged =
-        !prevSections ||
-        !currSections ||
-        prevSections.length !== currSections.length ||
-        prevSections.some(
-          (s, i) => s?.id !== currSections[i]?.id || s?.title !== currSections[i]?.title
+      if (!prevSections || !currSections) {
+        // Initial load or cleared - full calculation
+        this.reflowCount = 0;
+        this.updateLayout();
+        return;
+      }
+
+      // Detect change type
+      const changeType = this.detectSectionChangeType(prevSections, currSections);
+
+      if (changeType === 'major') {
+        // Major change - full recalculation
+        this.reflowCount = 0;
+        this.updateLayout();
+      } else if (changeType !== 'none') {
+        // Incremental update
+        this.incrementalLayoutUpdate(changeType, prevSections, currSections);
+      }
+    }
+  }
+
+  /**
+   * Detects the type of section change for incremental updates
+   */
+  private detectSectionChangeType(
+    prevSections: CardSection[],
+    currSections: CardSection[]
+  ): 'add' | 'remove' | 'update' | 'reorder' | 'major' | 'none' {
+    const prevLength = prevSections.length;
+    const currLength = currSections.length;
+
+    // Length changes indicate add/remove
+    if (currLength > prevLength) {
+      // Check if it's a simple append (new sections at end)
+      const isAppend = prevSections.every(
+        (s, i) => {
+          const curr = currSections[i];
+          return curr && this.getStableSectionKey(s, i) === this.getStableSectionKey(curr, i);
+        }
+      );
+      return isAppend ? 'add' : 'major';
+    } else if (currLength < prevLength) {
+      // Check if it's a simple removal (sections removed from end)
+      const isRemoval = currSections.every(
+        (s, i) => {
+          const prev = prevSections[i];
+          return prev && this.getStableSectionKey(s, i) === this.getStableSectionKey(prev, i);
+        }
+      );
+      return isRemoval ? 'remove' : 'major';
+    } else {
+      // Same length - check for updates or reordering
+      let updateCount = 0;
+      let reorderCount = 0;
+
+      for (let i = 0; i < currLength; i++) {
+      const prev = prevSections[i];
+      const curr = currSections[i];
+      if (!prev || !curr) continue;
+      const prevKey = this.getStableSectionKey(prev, i);
+      const currKey = this.getStableSectionKey(curr, i);
+        const currKeyAtPrevIndex = prevSections.findIndex(
+          (s, idx) => this.getStableSectionKey(s, idx) === currKey
         );
 
-      if (sectionsChanged) {
-        this.reflowCount = 0; // Reset reflow count on section changes
-        this.updateLayout();
+        if (prevKey !== currKey) {
+          if (currKeyAtPrevIndex === i) {
+            // Same section, different position - reorder
+            reorderCount++;
+          } else if (currKeyAtPrevIndex >= 0) {
+            // Section moved - reorder
+            reorderCount++;
+          } else {
+            // Section content changed - update
+            updateCount++;
+          }
+        } else {
+          // Check if content changed but key same
+          const prev = prevSections[i];
+          const curr = currSections[i];
+          if (prev && curr && (
+            prev.title !== curr.title ||
+            prev.type !== curr.type ||
+            JSON.stringify(prev.items) !== JSON.stringify(curr.items) ||
+            JSON.stringify(prev.fields) !== JSON.stringify(curr.fields)
+          )) {
+            updateCount++;
+          }
+        }
+      }
+
+      // If more than 30% changed, treat as major change
+      if (updateCount + reorderCount > currLength * 0.3) {
+        return 'major';
+      }
+
+      if (reorderCount > 0) {
+        return 'reorder';
+      }
+      if (updateCount > 0) {
+        return 'update';
+      }
+
+      return 'none';
+    }
+  }
+
+  /**
+   * Performs incremental layout update based on change type
+   */
+  private incrementalLayoutUpdate(
+    changeType: 'add' | 'remove' | 'update' | 'reorder' | 'width-change',
+    prevSections?: CardSection[],
+    currSections?: CardSection[]
+  ): void {
+    const containerWidth = this.getContainerWidth();
+    if (containerWidth <= 0) {
+      return;
+    }
+
+    try {
+      switch (changeType) {
+        case 'add':
+          this.handleIncrementalAdd(currSections!);
+          break;
+        case 'remove':
+          this.handleIncrementalRemove(currSections!);
+          break;
+        case 'update':
+          this.handleIncrementalUpdate(currSections!);
+          break;
+        case 'reorder':
+          // Reordering requires full recalculation
+          this.calculateLayout();
+          break;
+        case 'width-change':
+          // Width change with same columns - just recalculate positions
+          this.recalculatePositionsForWidthChange(containerWidth);
+          break;
+      }
+    } catch (error) {
+      console.warn(
+        '[MasonryGrid] Incremental update failed, falling back to full calculation:',
+        error
+      );
+      this.calculateLayout();
+    }
+  }
+
+  /**
+   * Handles incremental add: places new sections in shortest column
+   */
+  private handleIncrementalAdd(sections: CardSection[]): void {
+    if (sections.length === 0) {
+      return;
+    }
+
+    const containerWidth = this.getContainerWidth();
+    const columns = this.currentColumns;
+    const gap = this.gap;
+
+    // Find existing positioned sections
+    const existingSections = this.positionedSections.map((p) => p.section);
+    const existingKeys = new Set(existingSections.map((s, i) => this.getStableSectionKey(s, i)));
+
+    // Find new sections (not in existing)
+    const newSections = sections.filter(
+      (s, i) => !existingKeys.has(this.getStableSectionKey(s, i))
+    );
+
+    if (newSections.length === 0) {
+      return;
+    }
+
+    // Calculate column heights from existing sections
+    const colHeights = new Array(columns).fill(0);
+    for (const pos of this.positionedSections) {
+      const height = this.heightEstimationService.estimate(pos.section, { colSpan: pos.colSpan });
+      const bottom = pos.top + height + gap;
+      for (let c = 0; c < pos.colSpan; c++) {
+        const colIndex = this.getColumnIndexFromLeft(pos.left, columns, gap);
+        if (colIndex >= 0 && colIndex < columns) {
+          colHeights[colIndex] = Math.max(colHeights[colIndex], bottom);
+        }
       }
     }
 
-    // Handle containerWidth changes
-    if (changes['containerWidth']) {
-      const newWidth = changes['containerWidth'].currentValue;
-      if (newWidth && newWidth > 0 && newWidth !== this.lastWidth) {
-        this.reflowCount = 0; // Reset reflow count on width changes
-        this.updateLayout();
+    // Place new sections in shortest column
+    const newPositions: PositionedSection[] = [];
+    for (const section of newSections) {
+      const colSpan = Math.min(section.colSpan || this.getColSpan(section), columns);
+      const height = this.heightEstimationService.estimate(section, { colSpan });
+
+      // Find shortest column that can fit this section
+      let bestColumn = 0;
+      let minHeight = colHeights[0];
+      for (let c = 0; c <= columns - colSpan; c++) {
+        const maxColHeight = Math.max(
+          ...Array.from({ length: colSpan }, (_, i) => colHeights[c + i] || 0)
+        );
+        if (maxColHeight < minHeight) {
+          minHeight = maxColHeight;
+          bestColumn = c;
+        }
+      }
+
+      const top = minHeight;
+      const left = generateLeftExpression(columns, bestColumn, gap);
+      const width = generateWidthExpression(columns, colSpan, gap);
+
+      newPositions.push({
+        section,
+        key: this.getStableSectionKey(section, sections.indexOf(section)),
+        colSpan,
+        preferredColumns: this.getColSpan(section) as PreferredColumns,
+        left,
+        top,
+        width,
+        isNew: true,
+      });
+
+      // Update column heights
+      const newBottom = top + height + gap;
+      for (let c = bestColumn; c < bestColumn + colSpan; c++) {
+        colHeights[c] = Math.max(colHeights[c], newBottom);
       }
     }
+
+    // Merge with existing positions
+    this.positionedSections = [...this.positionedSections, ...newPositions];
+    this.containerHeight = Math.max(
+      this.containerHeight,
+      ...newPositions.map((p) => {
+        const height = this.heightEstimationService.estimate(p.section, { colSpan: p.colSpan });
+        return p.top + height;
+      })
+    );
+
+    this.applyLayoutToDOM(containerWidth);
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Handles incremental remove: compacts remaining sections
+   */
+  private handleIncrementalRemove(sections: CardSection[]): void {
+    const containerWidth = this.getContainerWidth();
+    const columns = this.currentColumns;
+
+    // Filter out removed sections
+    const sectionKeys = new Set(sections.map((s, i) => this.getStableSectionKey(s, i)));
+    const remaining = this.positionedSections.filter((p) => sectionKeys.has(p.key));
+
+    if (remaining.length === 0) {
+      this.positionedSections = [];
+      this.containerHeight = 0;
+      this.applyLayoutToDOM(containerWidth);
+      this.cdr.markForCheck();
+      return;
+    }
+
+    // Recalculate positions for remaining sections (compact)
+    const sectionHeights = new Map<string, number>();
+    remaining.forEach((pos) => {
+      const height = this.heightEstimationService.estimate(pos.section, { colSpan: pos.colSpan });
+      sectionHeights.set(pos.key, height);
+    });
+
+    const compacted = this.recalculatePositions(remaining, sectionHeights, columns);
+    this.positionedSections = compacted;
+    this.containerHeight = compacted.reduce((max, p) => {
+      const height = sectionHeights.get(p.key) ?? 200;
+      return Math.max(max, p.top + height);
+    }, 0);
+
+    this.applyLayoutToDOM(containerWidth);
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Handles incremental update: only recalculates affected sections
+   */
+  private handleIncrementalUpdate(sections: CardSection[]): void {
+    const containerWidth = this.getContainerWidth();
+    const columns = this.currentColumns;
+
+    // Find sections that changed
+    const changedKeys = new Set<string>();
+    sections.forEach((section, index) => {
+      const key = this.getStableSectionKey(section, index);
+      const existing = this.positionedSections.find((p) => p.key === key);
+      if (existing) {
+        // Check if content changed significantly
+        const oldHeight = this.heightEstimationService.estimate(existing.section, {
+          colSpan: existing.colSpan,
+        });
+        const newHeight = this.heightEstimationService.estimate(section, {
+          colSpan: existing.colSpan,
+        });
+        if (Math.abs(newHeight - oldHeight) > 20) {
+          changedKeys.add(key);
+        }
+      }
+    });
+
+    if (changedKeys.size === 0) {
+      // No significant changes, just update section references
+      this.positionedSections = this.positionedSections.map((pos) => {
+        const section = sections.find((s, i) => this.getStableSectionKey(s, i) === pos.key);
+        return section ? { ...pos, section } : pos;
+      });
+      this.cdr.markForCheck();
+      return;
+    }
+
+    // Recalculate positions for changed sections and those below them
+    const sectionHeights = new Map<string, number>();
+    this.positionedSections.forEach((pos) => {
+      const section = sections.find((s, i) => this.getStableSectionKey(s, i) === pos.key);
+      if (section) {
+        const height = this.heightEstimationService.estimate(section, { colSpan: pos.colSpan });
+        sectionHeights.set(pos.key, height);
+      } else {
+        const height = this.heightEstimationService.estimate(pos.section, { colSpan: pos.colSpan });
+        sectionHeights.set(pos.key, height);
+      }
+    });
+
+    // Update section references and recalculate
+    const updated = this.positionedSections.map((pos) => {
+      const section = sections.find((s, i) => this.getStableSectionKey(s, i) === pos.key);
+      return section ? { ...pos, section } : pos;
+    });
+
+    const recalculated = this.recalculatePositions(updated, sectionHeights, columns);
+    this.positionedSections = recalculated;
+    this.containerHeight = recalculated.reduce((max, p) => {
+      const height = sectionHeights.get(p.key) ?? 200;
+      return Math.max(max, p.top + height);
+    }, 0);
+
+    this.applyLayoutToDOM(containerWidth);
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Recalculates positions when width changes but columns stay same
+   */
+  private recalculatePositionsForWidthChange(containerWidth: number): void {
+    const columns = this.currentColumns;
+    const sectionHeights = new Map<string, number>();
+
+    this.positionedSections.forEach((pos) => {
+      const height = this.heightEstimationService.estimate(pos.section, { colSpan: pos.colSpan });
+      sectionHeights.set(pos.key, height);
+    });
+
+    const recalculated = this.recalculatePositions(
+      this.positionedSections,
+      sectionHeights,
+      columns
+    );
+    this.positionedSections = recalculated;
+    this.containerHeight = recalculated.reduce((max, p) => {
+      const height = sectionHeights.get(p.key) ?? 200;
+      return Math.max(max, p.top + height);
+    }, 0);
+
+    this.applyLayoutToDOM(containerWidth);
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Gets column index from left CSS expression
+   */
+  private getColumnIndexFromLeft(left: string, columns: number, gap: number): number {
+    if (left === '0px') return 0;
+    if (left.includes('calc')) {
+      const match = left.match(/\*\s*(\d+)\s*\)/);
+      if (match && match[1]) {
+        return parseInt(match[1], 10);
+      }
+    }
+    // Fallback: try to parse
+    const numeric = parseFloat(left);
+    if (!isNaN(numeric)) {
+      const columnWidth = (this.getContainerWidth() - gap * (columns - 1)) / columns;
+      return Math.round(numeric / (columnWidth + gap));
+    }
+    return 0;
   }
 
   ngAfterViewInit(): void {
@@ -529,6 +914,14 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     }
     // Use section ID or generate stable key
     return item.id || this.getStableSectionKey(item, index);
+  };
+
+  trackByPositionedSection = (
+    index: number,
+    item: PositionedSection | null | undefined
+  ): string => {
+    if (!item) return `positioned-${index}`;
+    return item.key;
   };
 
   onSectionEvent(event: SectionRenderEvent): void {
@@ -762,8 +1155,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   /**
-   * Simple layout calculation - CSS Grid handles positioning
-   * Just calculate columns and let CSS do the rest
+   * Layout calculation using JavaScript positioning (packSectionsIntoColumns)
+   * Pure JS positioning for better control and results
    */
   private calculateLayout(): void {
     // Early return if container not ready
@@ -779,27 +1172,255 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     const sections = this.sections ?? [];
     if (sections.length === 0) {
       this.currentColumns = 1;
+      this.positionedSections = [];
+      this.containerHeight = 0;
       this.isLayoutReady = true;
       this.layoutState = 'ready';
       this.cdr.markForCheck();
       return;
     }
 
-    // Calculate columns - CSS Grid handles the rest
-    this.currentColumns = this.calculateResponsiveColumns(containerWidth);
-    this.lastWidth = containerWidth;
+    try {
+      this.layoutState = 'calculating';
+      const columns = this.calculateResponsiveColumns(containerWidth);
+      this.currentColumns = columns;
+      this.lastWidth = containerWidth;
 
-    // Apply CSS variables - CSS Grid handles positioning
-    this.applyLayoutToDOM(containerWidth);
+      // Use layout service to calculate positions with packing algorithm
+      const layoutResult = this.layoutService.calculateLayout(
+        sections,
+        {
+          columns,
+          gap: this.gap,
+          containerWidth,
+          minColumnWidth: this.minColumnWidth,
+          optimizeLayout: this.optimizeLayout,
+          packingAlgorithm: 'column-based', // Use column-based packing (FFDH)
+          useLegacyFallback: true,
+          columnPackingOptions: {
+            packingMode: 'ffdh',
+            allowReordering: true,
+            sortByHeight: true,
+            useSkylineThreshold: 3,
+          },
+        },
+        (section, index) => this.getStableSectionKey(section, index),
+        (section, key) => this.isTrulyNewSection(section, key)
+      );
 
-    // Mark as ready - CSS Grid handles heights automatically
-    this.isLayoutReady = true;
-    this.layoutState = 'ready';
+      // Phase 1: Apply calculated positions with estimates
+      this.positionedSections = layoutResult.positionedSections;
+      this.containerHeight = layoutResult.containerHeight;
 
-    // Emit layout change event
-    this.emitLayoutInfo(this.currentColumns, containerWidth);
+      // Apply layout to DOM (absolute positioning)
+      this.applyLayoutToDOM(containerWidth);
+
+      // Mark as ready for initial render
+      this.isLayoutReady = true;
+      this.layoutState = 'ready';
+
+      // Emit layout change event
+      this.emitLayoutInfo(columns, containerWidth);
+
+      // Phase 2: Measure actual heights and refine layout
+      const presetConfig = getPresetConfig(this.preset);
+      const finalPresetConfig = this.presetOverrides
+        ? mergePresetWithOverrides(presetConfig, this.presetOverrides)
+        : presetConfig;
+
+      if ((this.enableTwoPhaseLayout ?? finalPresetConfig.enableTwoPhaseLayout) !== false) {
+        this.scheduleHeightMeasurement();
+      }
+
+      // Validate layout quality
+      if (layoutResult.metrics) {
+        const qualityResult = validateLayoutQuality(layoutResult.metrics, sections);
+
+        if (this._debug || qualityResult.quality === 'poor') {
+          const summary = getLayoutQualitySummary(qualityResult);
+          if (qualityResult.quality === 'poor') {
+            console.warn('[MasonryGrid] Poor layout quality detected:\n' + summary);
+          } else if (this._debug) {
+            console.log('[MasonryGrid] Layout quality:\n' + summary);
+          }
+        }
+      }
+
+      // Debug logging
+      if (this._debug) {
+        console.log('[MasonryGrid] Layout calculated:', {
+          sections: sections.length,
+          columns,
+          containerWidth,
+          containerHeight: this.containerHeight,
+          positionedSections: this.positionedSections.length,
+        });
+      }
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      console.error('[MasonryGrid] Layout calculation failed:', errorObj);
+
+      // Emit error event for parent components
+      this.layoutError.emit({
+        error: errorObj,
+        context: 'calculateLayout',
+      });
+
+      // Fallback to simple layout
+      try {
+        this.createFallbackLayout(sections, containerWidth);
+        this.isLayoutReady = true;
+        this.layoutState = 'ready';
+      } catch (fallbackError) {
+        console.error('[MasonryGrid] Fallback layout also failed:', fallbackError);
+        // Last resort: empty layout
+        this.positionedSections = [];
+        this.containerHeight = 0;
+        this.currentColumns = 1;
+        this.isLayoutReady = true;
+        this.layoutState = 'ready';
+      }
+    }
 
     this.cdr.markForCheck();
+  }
+
+  /**
+   * Schedule height measurement for two-phase layout
+   * Phase 2: Measure actual heights after initial render
+   */
+  private scheduleHeightMeasurement(): void {
+    if (this.heightMeasurementScheduled) {
+      return;
+    }
+
+    this.heightMeasurementScheduled = true;
+
+    // Wait for next frame to ensure DOM is rendered
+    requestAnimationFrame(() => {
+      // Wait one more frame to ensure all content is loaded
+      requestAnimationFrame(() => {
+        this.measureAndRefineLayout();
+      });
+    });
+  }
+
+  /**
+   * Phase 2 & 3: Measure actual heights and refine layout
+   */
+  private measureAndRefineLayout(): void {
+    if (!this.itemRefs || this.positionedSections.length === 0) {
+      this.heightMeasurementScheduled = false;
+      return;
+    }
+
+    const itemRefArray = this.itemRefs.toArray();
+    if (itemRefArray.length !== this.positionedSections.length) {
+      // Not all sections rendered yet, try again later
+      this.heightMeasurementScheduled = false;
+      setTimeout(() => this.scheduleHeightMeasurement(), 100);
+      return;
+    }
+
+    // Measure actual heights
+    const actualHeights = new Map<string, number>();
+    let hasSignificantDifference = false;
+
+    for (let i = 0; i < this.positionedSections.length; i++) {
+      const positioned = this.positionedSections[i];
+      if (!positioned) continue;
+      
+      const itemElement = itemRefArray[i]?.nativeElement;
+      const actualHeight = itemElement?.offsetHeight ?? 0;
+
+      if (actualHeight > 0) {
+        actualHeights.set(positioned.key, actualHeight);
+
+        // Record actual height for future estimates
+        this.heightEstimationService.recordActual(positioned.section, actualHeight, {
+          colSpan: positioned.colSpan,
+          columns: this.currentColumns,
+        });
+
+        // Check if there's a significant difference (>10% or >50px)
+        const estimatedHeight = this.heightEstimationService.estimate(positioned.section, {
+          colSpan: positioned.colSpan,
+        });
+        const difference = Math.abs(actualHeight - estimatedHeight);
+        if (difference > 50 || difference > estimatedHeight * 0.1) {
+          hasSignificantDifference = true;
+        }
+      }
+    }
+
+    // Phase 3: Refine layout if there are significant differences
+    if (hasSignificantDifference && actualHeights.size > 0) {
+      this.refineLayoutWithActualHeights(actualHeights);
+    } else {
+      this.heightMeasurementScheduled = false;
+    }
+  }
+
+  /**
+   * Phase 3: Refine layout using actual measured heights
+   */
+  private refineLayoutWithActualHeights(actualHeights: Map<string, number>): void {
+    try {
+      const containerWidth = this.getContainerWidth();
+      if (containerWidth <= 0) {
+        this.heightMeasurementScheduled = false;
+        return;
+      }
+
+      const sections = this.positionedSections.map((p) => p.section);
+      const columns = this.currentColumns;
+
+      // Create section heights map for recalculatePositions
+      const sectionHeights = new Map<string, number>();
+      this.positionedSections.forEach((pos) => {
+        const height = actualHeights.get(pos.key);
+        if (height) {
+          sectionHeights.set(pos.key, height);
+        }
+      });
+
+      if (sectionHeights.size > 0) {
+        const refined = this.recalculatePositions(this.positionedSections, sectionHeights, columns);
+
+        // Only update if there's a meaningful change
+        const totalHeightDiff = Math.abs(
+          refined.reduce((max, p) => {
+            if (!p) return max;
+            const height = sectionHeights.get(p.key) ?? 200;
+            return Math.max(max, p.top + height);
+          }, 0) - this.containerHeight
+        );
+
+        if (totalHeightDiff > 20) {
+          // Update positions smoothly
+          this.positionedSections = refined;
+          this.containerHeight = refined.reduce((max, p) => {
+            if (!p) return max;
+            const height = sectionHeights.get(p.key) ?? 200;
+            return Math.max(max, p.top + height);
+          }, 0);
+
+          this.applyLayoutToDOM(containerWidth);
+          this.cdr.markForCheck();
+
+          if (this._debug) {
+            console.log('[MasonryGrid] Layout refined with actual heights', {
+              sectionsMeasured: actualHeights.size,
+              heightDifference: totalHeightDiff,
+            });
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('[MasonryGrid] Layout refinement failed:', error);
+    } finally {
+      this.heightMeasurementScheduled = false;
+    }
   }
 
   /**
@@ -825,22 +1446,22 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   /**
-   * Apply layout to DOM - CSS Grid handles everything
-   * Just set CSS variables, CSS does the positioning
+   * Apply layout to DOM - JavaScript handles positioning with absolute positioning
+   * Set container height and let items position themselves via left/top/width styles
    */
   private applyLayoutToDOM(containerWidth: number): void {
     const containerElement = this.containerRef?.nativeElement;
     if (!containerElement) return;
 
-    // Calculate column width for CSS variable
-    const colWidth = (containerWidth - this.gap * (this.currentColumns - 1)) / this.currentColumns;
+    // Set container height for absolute positioning
+    containerElement.style.height = `${this.containerHeight}px`;
+    containerElement.style.position = 'relative';
 
-    // Set CSS variables - CSS Grid handles the rest
+    // Set CSS variables for reference (not used for positioning, but may be used by child components)
+    const colWidth = (containerWidth - this.gap * (this.currentColumns - 1)) / this.currentColumns;
     containerElement.style.setProperty('--masonry-columns', this.currentColumns.toString());
     containerElement.style.setProperty('--masonry-gap', `${this.gap}px`);
     containerElement.style.setProperty('--masonry-column-width', `${colWidth}px`);
-
-    // CSS Grid handles height automatically - no need to set it
   }
 
   /**
@@ -1638,31 +2259,50 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
    */
   /**
    * Recalculates section positions using actual measured heights.
-   * Uses the master engine for intelligent placement.
+   * Uses layout service with column-based packing for intelligent placement.
    */
   private recalculatePositions(
     sections: PositionedSection[],
     sectionHeights: Map<string, number>,
     columns: number
   ): PositionedSection[] {
-    // Use master engine to recalculate with actual heights
+    // Use layout service to recalculate with actual heights
     const containerWidth = this.getContainerWidth();
     const cardSections = sections.map((s) => s.section);
 
     try {
-      const layout = this.masterEngine.calculateLayout(cardSections, containerWidth, columns);
+      const layoutResult = this.layoutService.calculateLayout(
+        cardSections,
+        {
+          columns,
+          gap: this.gap,
+          containerWidth,
+          minColumnWidth: this.minColumnWidth,
+          optimizeLayout: this.optimizeLayout,
+          packingAlgorithm: 'column-based',
+          useLegacyFallback: true,
+          columnPackingOptions: {
+            packingMode: 'ffdh',
+            allowReordering: true,
+            sortByHeight: true,
+            useSkylineThreshold: 3,
+          },
+        },
+        (section, index) => {
+          const original = sections.find((s) => s.section === section);
+          return original?.key || this.getStableSectionKey(section, index);
+        },
+        (section, key) => {
+          const original = sections.find((s) => s.key === key);
+          return original?.isNew || false;
+        }
+      );
 
       // Convert back to PositionedSection format, preserving animation state
-      return layout.sections.map((placed) => {
-        const original = sections.find((s) => s.key === placed.key);
+      return layoutResult.positionedSections.map((positioned) => {
+        const original = sections.find((s) => s.key === positioned.key);
         return {
-          section: placed.section,
-          key: placed.key,
-          colSpan: placed.colSpan,
-          preferredColumns: placed.colSpan as PreferredColumns,
-          left: placed.left,
-          top: placed.top,
-          width: placed.width,
+          ...positioned,
           isNew: original?.isNew,
           hasAnimated: original?.hasAnimated,
         };
@@ -1719,33 +2359,47 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     });
 
     try {
-      // Use master engine for gap optimization
-      const layout = this.masterEngine.calculateLayout(
+      // Use layout service for gap optimization
+      const layoutResult = this.layoutService.calculateLayout(
         sections.map((s) => s.section),
-        containerWidth,
-        columns
+        {
+          columns,
+          gap: this.gap,
+          containerWidth,
+          minColumnWidth: this.minColumnWidth,
+          optimizeLayout: true,
+          packingAlgorithm: 'column-based',
+          useLegacyFallback: true,
+          columnPackingOptions: {
+            packingMode: 'ffdh',
+            allowReordering: true,
+            sortByHeight: true,
+            useSkylineThreshold: 3,
+          },
+        },
+        (section, index) => {
+          const original = sections.find((s) => s.section === section);
+          return original?.key || this.getStableSectionKey(section, index);
+        },
+        (section, key) => {
+          const original = sections.find((s) => s.key === key);
+          return original?.isNew || false;
+        }
       );
 
       if (this._debug) {
         console.log('[MasonryGrid] Gap Optimization Results:', {
-          totalHeight: layout.totalHeight,
-          gapCount: layout.gapCount,
-          utilization: `${layout.utilization.toFixed(1)}%`,
-          optimizations: layout.optimizations,
+          containerHeight: layoutResult.containerHeight,
+          columns: layoutResult.columns,
+          positionedSections: layoutResult.positionedSections.length,
         });
       }
 
       // Convert back to PositionedSection format, preserving animation state
-      const optimized = layout.sections.map((placed) => {
-        const original = sections.find((s) => s.key === placed.key);
+      const optimized = layoutResult.positionedSections.map((positioned) => {
+        const original = sections.find((s) => s.key === positioned.key);
         return {
-          section: placed.section,
-          key: placed.key,
-          colSpan: placed.colSpan,
-          preferredColumns: placed.colSpan as PreferredColumns,
-          left: placed.left,
-          top: placed.top,
-          width: placed.width,
+          ...positioned,
           isNew: original?.isNew,
           hasAnimated: original?.hasAnimated,
         };
@@ -1753,7 +2407,15 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
       return optimized;
     } catch (error) {
-      console.warn('[MasonryGrid] Gap optimization failed, using fallback:', error);
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      console.warn('[MasonryGrid] Gap optimization failed, using fallback:', errorObj);
+
+      // Emit error event
+      this.layoutError.emit({
+        error: errorObj,
+        context: 'optimizeLayoutGaps',
+      });
+
       // Fallback to original sections if optimization fails
     }
 

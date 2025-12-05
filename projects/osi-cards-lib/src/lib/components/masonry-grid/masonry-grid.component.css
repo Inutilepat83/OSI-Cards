@@ -21,22 +21,14 @@
    ============================================================ */
 
 .masonry-container {
-  /* CSS GRID: Browser handles ALL positioning and heights! */
-  display: grid;
-  grid-template-columns: repeat(var(--masonry-columns, 4), 1fr);
-  gap: var(--masonry-gap, 12px);
-  grid-auto-rows: min-content; /* Rows fit content height automatically */
-  grid-auto-flow: row dense; /* Fill gaps automatically, row-based flow */
+  /* JavaScript positioning: Container uses relative positioning for absolute children */
+  position: relative;
   width: 100%;
-  align-items: start; /* Align items to start of grid cell */
+  min-height: 0;
 
   /* Smooth transitions */
   transition: opacity 0.25s ease;
   opacity: 1;
-
-  /* Let CSS handle height - no JavaScript needed */
-  height: auto;
-  min-height: 0;
 }
 
 .masonry-container--loading {
@@ -236,12 +228,9 @@
    ============================================================ */
 
 .masonry-item {
-  /* CSS GRID ITEM: Browser handles positioning and heights! */
-  grid-column: span var(--section-col-span, 1);
-
-  /* Remove absolute positioning - CSS Grid handles it */
-  position: relative;
-  width: 100%;
+  /* JavaScript positioning: Items use absolute positioning with left/top/width from JS */
+  position: absolute;
+  /* left, top, width are set via inline styles from positionedSections */
   height: auto;
   min-height: fit-content;
 
@@ -257,35 +246,12 @@
   /* Ensure content determines height */
   display: flex;
   flex-direction: column;
-}
 
-/* Column span fallbacks */
-.masonry-item[data-col-span="1"] {
-  grid-column: span 1;
-}
-.masonry-item[data-col-span="2"] {
-  grid-column: span 2;
-}
-.masonry-item[data-col-span="3"] {
-  grid-column: span 3;
-}
-.masonry-item[data-col-span="4"] {
-  grid-column: span 4;
-}
-
-/* Responsive: Single column on mobile */
-@media (max-width: 639px) {
-  .masonry-item {
-    grid-column: span 1 !important;
-  }
-}
-
-/* Tablet: Max 2 columns */
-@media (min-width: 640px) and (max-width: 1023px) {
-  .masonry-item[data-col-span="3"],
-  .masonry-item[data-col-span="4"] {
-    grid-column: span 2;
-  }
+  /* Smooth transitions for repositioning */
+  transition:
+    left 0.3s ease,
+    top 0.3s ease,
+    width 0.3s ease;
 }
 
 .masonry-item--ready {

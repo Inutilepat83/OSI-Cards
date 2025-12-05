@@ -27,10 +27,8 @@
 
 import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
-import {
-  MasterGridLayoutEngine,
-  MasterLayoutResult,
-} from '../utils/master-grid-layout-engine.util';
+import { packSectionsIntoColumns, ColumnPackerConfig } from '../utils/column-packer.util';
+import { CardSection, SectionTypeInput } from '../models/card.model';
 
 // ============================================================================
 // TYPES
@@ -104,7 +102,6 @@ export interface GridLayoutConfig {
   /** Default section height estimate */
   defaultHeight: number;
   /** Whether to use master engine (NEW - recommended) */
-  useMasterEngine?: boolean;
 }
 
 const DEFAULT_CONFIG: GridLayoutConfig = {
@@ -113,7 +110,6 @@ const DEFAULT_CONFIG: GridLayoutConfig = {
   minColumnWidth: 280,
   optimize: true,
   defaultHeight: 200,
-  useMasterEngine: true, // Enable by default
 };
 
 // ============================================================================
@@ -125,7 +121,7 @@ export class GridLayoutEngine {
   private readonly layoutSubject = new BehaviorSubject<GridLayout | null>(null);
   private cache = new Map<string, GridLayout>();
   private heights = new Map<string, number>();
-  private masterEngine: MasterGridLayoutEngine | null = null;
+  private cacheStats = { hits: 0, misses: 0 };
 
   /** Current layout observable */
   readonly layout$: Observable<GridLayout | null> = this.layoutSubject.asObservable();
@@ -138,18 +134,6 @@ export class GridLayoutEngine {
 
   constructor(config: Partial<GridLayoutConfig> = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };
-
-    // Initialize master engine if enabled
-    if (this.config.useMasterEngine) {
-      this.masterEngine = new MasterGridLayoutEngine({
-        gap: this.config.gap,
-        minColumnWidth: this.config.minColumnWidth,
-        maxColumns: this.config.maxColumns,
-        enableWeightedSelection: true,
-        enableIntelligence: true,
-        enableCompaction: this.config.optimize,
-      });
-    }
   }
 
   // ==========================================================================
@@ -163,56 +147,78 @@ export class GridLayoutEngine {
   calculate(sections: GridSection[], containerWidth: number): GridLayout {
     const startTime = performance.now();
 
-    // Check cache
+    // Check cache with improved key generation
     const cacheKey = this.getCacheKey(sections, containerWidth);
     const cached = this.cache.get(cacheKey);
     if (cached) {
+      this.cacheStats.hits++;
       return cached;
     }
+    this.cacheStats.misses++;
 
     // Calculate columns
     const columns = this.calculateColumns(containerWidth);
 
-    // NEW: Use master engine if available
-    if (this.masterEngine && sections.length > 0) {
+    // Use column packer algorithm if optimize is enabled
+    if (this.config.optimize && sections.length > 0) {
       try {
-        const masterResult: MasterLayoutResult = this.masterEngine.calculateLayout(
-          sections.map((s) => ({
-            ...s,
-            colSpan: typeof s.preferredSpan === 'number' ? s.preferredSpan : 1,
-          })) as any,
+        // Convert GridSection to CardSection format
+        // Note: GridSection uses number priority, CardSection doesn't have priority field
+        // We'll omit priority from the conversion
+        const cardSections: CardSection[] = sections.map((s) => ({
+          id: s.id,
+          title: s.title || '',
+          type: (s.type || 'info') as SectionTypeInput,
+          colSpan: typeof s.preferredSpan === 'number' ? s.preferredSpan : undefined,
+        }));
+
+        const packConfig: ColumnPackerConfig = {
+          columns,
+          gap: this.config.gap,
           containerWidth,
-          columns
-        );
+          packingMode: 'ffdh',
+          allowReordering: false,
+          sortByHeight: true,
+          optimizationPasses: 2,
+          enableGapAwarePlacement: true,
+        };
+
+        const packResult = packSectionsIntoColumns(cardSections, packConfig);
 
         // Convert to GridLayout format
-        const positioned: PositionedGridSection[] = masterResult.sections.map((s) => ({
-          id: s.section.id || s.key,
-          section: s.section as GridSection,
+        const positioned: PositionedGridSection[] = packResult.positionedSections.map((s, idx) => ({
+          id: s.section.id || `section-${idx}`,
+          section: {
+            id: s.section.id || `section-${idx}`,
+            title: s.section.title || '',
+            type: s.section.type || 'info',
+            priority: typeof s.section.priority === 'number' ? s.section.priority : undefined,
+            preferredSpan: s.colSpan,
+          },
           colSpan: s.colSpan,
           left: s.left,
           width: s.width,
           top: s.top,
           row: Math.floor(s.top / (this.config.defaultHeight + this.config.gap)),
-          column: s.column,
+          column: s.columnIndex,
         }));
 
-        const gaps: GridGap[] = masterResult.gapCount > 0 ? this.findGaps(positioned, columns) : [];
+        const gaps: GridGap[] = packResult.gapCount > 0 ? this.findGaps(positioned, columns) : [];
 
         const layout: GridLayout = {
           sections: positioned,
           columns,
           containerWidth,
-          totalHeight: masterResult.totalHeight,
+          totalHeight: packResult.totalHeight,
           gaps,
           metrics: {
             sectionCount: sections.length,
             rowCount: Math.ceil(
-              masterResult.totalHeight / (this.config.defaultHeight + this.config.gap)
+              packResult.totalHeight / (this.config.defaultHeight + this.config.gap)
             ),
-            gapCount: masterResult.gapCount,
-            fillRate: masterResult.utilization / 100,
-            computeTime: masterResult.metrics.computeTime,
+            gapCount: packResult.gapCount,
+            fillRate: packResult.utilization / 100,
+            computeTime: 0, // Packing algorithm doesn't expose this
           },
         };
 
@@ -222,7 +228,7 @@ export class GridLayoutEngine {
 
         return layout;
       } catch (error) {
-        console.warn('[GridLayoutEngine] Master engine failed, using legacy:', error);
+        console.warn('[GridLayoutEngine] Packing algorithm failed, using legacy:', error);
         // Fall through to legacy algorithm
       }
     }
@@ -267,7 +273,7 @@ export class GridLayoutEngine {
   setHeight(sectionId: string, height: number): void {
     this.heights.set(sectionId, height);
     // Invalidate cache entries containing this section
-    this.invalidateCache();
+    this.invalidateCache([sectionId]);
   }
 
   /**
@@ -275,10 +281,13 @@ export class GridLayoutEngine {
    */
   setHeights(heights: Map<string, number> | Record<string, number>): void {
     const entries = heights instanceof Map ? heights.entries() : Object.entries(heights);
+    const changedIds: string[] = [];
     for (const [id, height] of entries) {
       this.heights.set(id, height);
+      changedIds.push(id);
     }
-    this.invalidateCache();
+    // Selective invalidation for changed sections
+    this.invalidateCache(changedIds);
   }
 
   /**
@@ -293,6 +302,20 @@ export class GridLayoutEngine {
    */
   clearCache(): void {
     this.cache.clear();
+    this.cacheStats = { hits: 0, misses: 0 };
+  }
+
+  /**
+   * Get cache statistics
+   */
+  getCacheStats(): { hits: number; misses: number; hitRate: number; size: number } {
+    const total = this.cacheStats.hits + this.cacheStats.misses;
+    return {
+      hits: this.cacheStats.hits,
+      misses: this.cacheStats.misses,
+      hitRate: total > 0 ? this.cacheStats.hits / total : 0,
+      size: this.cache.size,
+    };
   }
 
   /**
@@ -539,14 +562,63 @@ export class GridLayoutEngine {
   // HELPERS
   // ==========================================================================
 
+  /**
+   * Generate comprehensive cache key including:
+   * - Container width and calculated columns
+   * - Section IDs, types, preferred spans
+   * - Actual measured heights (if available)
+   * - Configuration (gap, minColumnWidth, maxColumns, optimize)
+   */
   private getCacheKey(sections: GridSection[], containerWidth: number): string {
-    const sectionKey = sections.map((s) => `${s.id}:${s.preferredSpan || 1}`).join('|');
-    const heightKey = sections.map((s) => this.heights.get(s.id) ?? 0).join(',');
-    return `${containerWidth}-${this.calculateColumns(containerWidth)}-${sectionKey}-${heightKey}`;
+    const columns = this.calculateColumns(containerWidth);
+
+    // Section identifiers: ID, type, preferred span
+    const sectionIds = sections.map((s) => s.id).join(',');
+    const sectionTypes = sections.map((s) => s.type || 'default').join(',');
+    const sectionSpans = sections
+      .map((s) => {
+        if (typeof s.preferredSpan === 'number') return s.preferredSpan;
+        if (s.preferredSpan) {
+          return `${s.preferredSpan.min || 1}-${s.preferredSpan.ideal || 1}-${s.preferredSpan.max || columns}`;
+        }
+        return '1';
+      })
+      .join(',');
+
+    // Heights: use actual if available, otherwise 0 (will be estimated)
+    const heightKey = sections
+      .map((s) => {
+        const height = this.heights.get(s.id);
+        return height ? Math.round(height / 10) : 0; // Round to 10px for cache efficiency
+      })
+      .join(',');
+
+    // Configuration hash
+    const configHash = `${this.config.gap}-${this.config.minColumnWidth}-${this.config.maxColumns}-${this.config.optimize ? '1' : '0'}`;
+
+    // Combine all parts
+    return `${containerWidth}-${columns}-${configHash}-${sectionIds}-${sectionTypes}-${sectionSpans}-${heightKey}`;
   }
 
-  private invalidateCache(): void {
-    this.cache.clear();
+  /**
+   * Invalidate cache - can be selective or full clear
+   * @param sectionIds - Optional: only invalidate entries containing these section IDs
+   */
+  private invalidateCache(sectionIds?: string[]): void {
+    if (!sectionIds || sectionIds.length === 0) {
+      // Full clear
+      this.cache.clear();
+      return;
+    }
+
+    // Selective invalidation: remove entries that contain any of the changed sections
+    const idsSet = new Set(sectionIds);
+    for (const [key, layout] of this.cache.entries()) {
+      const hasChangedSection = layout.sections.some((s) => idsSet.has(s.id));
+      if (hasChangedSection) {
+        this.cache.delete(key);
+      }
+    }
   }
 
   private calculateTotalHeight(sections: PositionedGridSection[]): number {

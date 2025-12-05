@@ -32,57 +32,29 @@ import {
 } from './grid-config.util';
 
 // ============================================================================
-// HEIGHT ESTIMATION (copied from smart-grid to avoid circular dependencies)
+// HEIGHT ESTIMATION
 // ============================================================================
 
-/**
- * Default height estimates per section type (in pixels)
- */
-const SECTION_HEIGHT_ESTIMATES: Record<string, number> = {
-  overview: 180,
-  'contact-card': 160,
-  'network-card': 160,
-  analytics: 200,
-  stats: 180,
-  chart: 280,
-  map: 250,
-  financials: 200,
-  info: 180,
-  list: 220,
-  event: 240,
-  timeline: 240,
-  product: 220,
-  solutions: 240,
-  quotation: 160,
-  'text-reference': 180,
-  default: 180,
-};
+import { HeightEstimationService } from '../services/height-estimation.service';
 
-const HEIGHT_PER_ITEM = 50;
-const HEIGHT_PER_FIELD = 32;
-const SECTION_HEADER_HEIGHT = 48;
-const SECTION_PADDING = 20;
+// Create a singleton instance for use in utility functions
+// Note: In Angular components, inject the service instead
+let heightEstimationServiceInstance: HeightEstimationService | null = null;
+
+function getHeightEstimationService(): HeightEstimationService {
+  if (!heightEstimationServiceInstance) {
+    heightEstimationServiceInstance = new HeightEstimationService();
+  }
+  return heightEstimationServiceInstance;
+}
 
 /**
  * Estimates the height of a section based on its content
+ * Uses HeightEstimationService for consistent estimates
  */
-function estimateSectionHeight(section: CardSection): number {
-  const type = section.type?.toLowerCase() ?? 'default';
-  const baseHeight = SECTION_HEIGHT_ESTIMATES[type] ?? SECTION_HEIGHT_ESTIMATES['default'] ?? 120;
-
-  const itemCount = section.items?.length ?? 0;
-  const fieldCount = section.fields?.length ?? 0;
-
-  const itemsHeight = itemCount * HEIGHT_PER_ITEM;
-  const fieldsHeight = fieldCount * HEIGHT_PER_FIELD;
-  const contentHeight = Math.max(itemsHeight, fieldsHeight);
-
-  const estimatedHeight = Math.max(
-    baseHeight as number,
-    SECTION_HEADER_HEIGHT + contentHeight + SECTION_PADDING
-  );
-
-  return Math.min(estimatedHeight, 500);
+function estimateSectionHeight(section: CardSection, colSpan?: number): number {
+  const service = getHeightEstimationService();
+  return service.estimate(section, { colSpan });
 }
 
 /**

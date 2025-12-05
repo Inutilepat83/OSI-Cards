@@ -20,21 +20,25 @@
     </span>
   </div>
 
-  <!-- CSS GRID: Let CSS handle all positioning and heights -->
+  <!-- JavaScript positioning: Use positionedSections with absolute positioning -->
   <div
-    *ngFor="let section of sections; let idx = index; trackBy: trackItem"
+    *ngFor="let positionedSection of positionedSections; let idx = index; trackBy: trackByPositionedSection"
     #itemRef
     class="masonry-item"
     role="gridcell"
-    [attr.aria-label]="section.title || 'Section ' + (idx + 1)"
-    [attr.aria-colspan]="getColSpan(section)"
-    [attr.data-col-span]="getColSpan(section)"
-    [attr.data-section-type]="section.type"
-    [attr.id]="getSectionId(section)"
-    [style.--section-col-span]="getColSpan(section)"
+    [attr.aria-label]="positionedSection.section.title || 'Section ' + (idx + 1)"
+    [attr.aria-colspan]="positionedSection.colSpan"
+    [attr.data-col-span]="positionedSection.colSpan"
+    [attr.data-section-type]="positionedSection.section.type"
+    [attr.id]="getSectionId(positionedSection.section)"
+    [style.left]="positionedSection.left"
+    [style.top.px]="positionedSection.top"
+    [style.width]="positionedSection.width"
     tabindex="0"
     [class.masonry-item--ready]="isLayoutReady"
+    [class.masonry-item--animating]="shouldAnimate(positionedSection.key)"
   >
-    <app-section-renderer [section]="section" (sectionEvent)="onSectionEvent($event)"> </app-section-renderer>
+    <app-section-renderer [section]="positionedSection.section" (sectionEvent)="onSectionEvent($event)">
+    </app-section-renderer>
   </div>
 </div>

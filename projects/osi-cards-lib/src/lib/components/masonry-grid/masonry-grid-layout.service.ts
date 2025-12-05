@@ -21,7 +21,7 @@ import {
   calculateBasicDensity,
   ColumnPackingOptions,
 } from '../../utils/grid-config.util';
-import { estimateSectionHeight } from '../../utils/smart-grid.util';
+import { HeightEstimationService } from '../../services/height-estimation.service';
 import {
   packSectionsIntoRows,
   packingResultToPositions,
@@ -61,6 +61,12 @@ export interface LayoutResult {
   positionedSections: PositionedSection[];
   containerHeight: number;
   columns: number;
+  metrics?: {
+    utilization: number;
+    gapCount: number;
+    gapArea?: number;
+    heightVariance?: number;
+  };
 }
 
 export interface ColumnAssignment {
@@ -75,6 +81,7 @@ export interface ColumnAssignment {
 })
 export class MasonryGridLayoutService {
   private readonly layoutPreferenceService = inject(SectionLayoutPreferenceService);
+  private readonly heightEstimationService = inject(HeightEstimationService);
 
   /**
    * Calculate layout for sections
@@ -200,6 +207,12 @@ export class MasonryGridLayoutService {
       positionedSections,
       containerHeight: result.totalHeight,
       columns: config.columns,
+      metrics: {
+        utilization: result.utilization,
+        gapCount: result.gapCount,
+        gapArea: result.gapArea,
+        heightVariance: result.heightVariance,
+      },
     };
   }
 
@@ -271,8 +284,8 @@ export class MasonryGridLayoutService {
     if (optimizeLayout && sections.length > 1) {
       // Sort by estimated height (descending) for better packing
       orderedSections = [...sections].sort((a, b) => {
-        const heightA = estimateSectionHeight(a);
-        const heightB = estimateSectionHeight(b);
+        const heightA = this.heightEstimationService.estimate(a);
+        const heightB = this.heightEstimationService.estimate(b);
         return heightB - heightA;
       });
     }
