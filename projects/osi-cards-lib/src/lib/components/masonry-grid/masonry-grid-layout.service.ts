@@ -7,8 +7,9 @@
  * Extracted from masonry-grid.component.ts for better separation of concerns.
  */
 
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { CardSection } from '../../models';
+import { SectionLayoutPreferenceService } from '../../services/section-layout-preference.service';
 import {
   generateWidthExpression,
   generateLeftExpression,
@@ -73,6 +74,8 @@ export interface ColumnAssignment {
   providedIn: 'root',
 })
 export class MasonryGridLayoutService {
+  private readonly layoutPreferenceService = inject(SectionLayoutPreferenceService);
+
   /**
    * Calculate layout for sections
    */
@@ -87,7 +90,13 @@ export class MasonryGridLayoutService {
         return this.calculateColumnBasedLayout(sections, config, getStableKey, markAsNew);
       } catch (error) {
         if (config.useLegacyFallback) {
-          console.warn('[LayoutService] Column-based failed, using legacy:', error);
+          // Only warn in development mode
+          const isDevelopment =
+            typeof window !== 'undefined' &&
+            (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+          if (isDevelopment) {
+            console.warn('[LayoutService] Column-based failed, using legacy:', error);
+          }
           return this.calculateLegacyLayout(sections, config, getStableKey, markAsNew);
         }
         throw error;
@@ -99,7 +108,13 @@ export class MasonryGridLayoutService {
         return this.calculateRowFirstLayout(sections, config, getStableKey, markAsNew);
       } catch (error) {
         if (config.useLegacyFallback) {
-          console.warn('[LayoutService] Row-first failed, using legacy:', error);
+          // Only warn in development mode
+          const isDevelopment =
+            typeof window !== 'undefined' &&
+            (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+          if (isDevelopment) {
+            console.warn('[LayoutService] Row-first failed, using legacy:', error);
+          }
           return this.calculateLegacyLayout(sections, config, getStableKey, markAsNew);
         }
         throw error;
@@ -118,11 +133,19 @@ export class MasonryGridLayoutService {
     getStableKey: (section: CardSection, index: number) => string,
     markAsNew: (section: CardSection, key: string) => boolean
   ): LayoutResult {
-    console.log('[LayoutService] 🎯 calculateColumnBasedLayout called', {
-      sectionsCount: sections.length,
-      columns: config.columns,
-      containerWidth: config.containerWidth,
-    });
+    // Only log in development mode
+    const isDevelopment =
+      typeof window !== 'undefined' &&
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+    if (isDevelopment) {
+      console.log('[LayoutService] 🎯 calculateColumnBasedLayout called', {
+        sectionsCount: sections.length,
+        columns: config.columns,
+        containerWidth: config.containerWidth,
+      });
+    }
+
     const packConfig: ColumnPackerConfig = {
       columns: config.columns,
       gap: config.gap,
@@ -131,16 +154,20 @@ export class MasonryGridLayoutService {
       allowReordering: config.columnPackingOptions?.allowReordering ?? true,
       sortByHeight: config.columnPackingOptions?.sortByHeight ?? true,
       useSkylineThreshold: config.columnPackingOptions?.useSkylineThreshold ?? 3,
+      layoutPreferenceService: this.layoutPreferenceService, // NEW: Pass service for dynamic preferences
     };
 
     const result = packSectionsIntoColumns(sections, packConfig);
-    console.log('[LayoutService] 📦 Packing result', {
-      positionedCount: result.positionedSections.length,
-      totalHeight: result.totalHeight,
-      algorithm: result.algorithm,
-      utilization: result.utilization,
-      gapCount: result.gapCount,
-    });
+
+    if (isDevelopment) {
+      console.log('[LayoutService] 📦 Packing result', {
+        positionedCount: result.positionedSections.length,
+        totalHeight: result.totalHeight,
+        algorithm: result.algorithm,
+        utilization: result.utilization,
+        gapCount: result.gapCount,
+      });
+    }
 
     const positions = columnPackingResultToPositions(result);
 
@@ -161,11 +188,13 @@ export class MasonryGridLayoutService {
       };
     });
 
-    console.log('[LayoutService] ✅ Column-based layout complete', {
-      positionedSectionsCount: positionedSections.length,
-      containerHeight: result.totalHeight,
-      columns: config.columns,
-    });
+    if (isDevelopment) {
+      console.log('[LayoutService] ✅ Column-based layout complete', {
+        positionedSectionsCount: positionedSections.length,
+        containerHeight: result.totalHeight,
+        columns: config.columns,
+      });
+    }
 
     return {
       positionedSections,

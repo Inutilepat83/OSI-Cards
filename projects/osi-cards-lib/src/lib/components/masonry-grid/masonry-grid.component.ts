@@ -57,6 +57,7 @@ import {
   MasterGridLayoutEngine,
   MasterLayoutResult,
 } from '../../utils/master-grid-layout-engine.util';
+import { SectionLayoutPreferenceService } from '../../services/section-layout-preference.service';
 
 interface ColSpanThresholds {
   two: number;
@@ -226,6 +227,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly layoutService = inject(MasonryGridLayoutService);
+  private readonly layoutPreferenceService = inject(SectionLayoutPreferenceService);
 
   positionedSections: PositionedSection[] = [];
   containerHeight = 0;
@@ -845,15 +847,17 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
    * Calculate responsive columns based on container width
    */
   private calculateResponsiveColumns(containerWidth: number): number {
-    if (containerWidth < 640) return 1; // Mobile
-    if (containerWidth < 1024) return 2; // Tablet
-    if (containerWidth < 1440) return 3; // Desktop
-    return Math.min(4, this.maxColumns); // Wide
+    // Updated breakpoints for 220px min column width
+    // 2 cols: 2*220 + 1*12 = 452px, 3 cols: 3*220 + 2*12 = 684px, 4 cols: 4*220 + 3*12 = 916px
+    if (containerWidth < 464) return 1; // Mobile (< 2 columns)
+    if (containerWidth < 684) return 2; // Tablet (2 columns)
+    if (containerWidth < 904) return 3; // Desktop (3 columns)
+    return Math.min(4, this.maxColumns); // Wide (4 columns)
   }
 
   /**
    * Get column span for a section - simple and respects preferred columns (1-4)
-   * Priority: explicit colSpan → preferredColumns → type-based default
+   * Priority: explicit colSpan → dynamic layout preferences → preferredColumns → type-based default
    */
   getColSpan(section: CardSection): number {
     // Priority 1: Explicit colSpan always takes precedence
@@ -861,13 +865,23 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       return Math.min(section.colSpan, this.currentColumns);
     }
 
-    // Priority 2: Use preferredColumns (1, 2, 3, or 4)
-    const preferredCols = this.getPreferredColumns(section);
-    if (preferredCols && preferredCols > 0) {
-      return Math.min(preferredCols, this.currentColumns);
+    // Priority 2: Use dynamic layout preferences (NEW)
+    const layoutPrefs = this.getSectionLayoutPreferences(section);
+    if (layoutPrefs.preferredColumns && layoutPrefs.preferredColumns > 0) {
+      // Respect min/max constraints
+      const result = Math.max(
+        layoutPrefs.minColumns,
+        Math.min(layoutPrefs.preferredColumns, layoutPrefs.maxColumns, this.currentColumns)
+      );
+      return result;
     }
 
-    // Priority 3: Type-based defaults (keep simple)
+    // Priority 3: Use preferredColumns from section data
+    if (section.preferredColumns && section.preferredColumns > 0) {
+      return Math.min(section.preferredColumns, this.currentColumns);
+    }
+
+    // Priority 4: Type-based defaults (keep simple)
     const type = (section.type || '').toLowerCase();
 
     // Full-width types
@@ -1152,9 +1166,15 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
   /**
    * Gets the preferred column count for a section.
-   * Checks: section.preferredColumns → meta.preferredColumns → type-based default
+   * Checks: section layout preferences (dynamic) → section.preferredColumns → meta.preferredColumns → type-based default
    */
   private getPreferredColumns(section: CardSection): PreferredColumns {
+    // NEW: Try to get dynamic layout preferences from service first
+    const layoutPrefs = this.layoutPreferenceService.getPreferences(section, this.currentColumns);
+    if (layoutPrefs) {
+      return layoutPrefs.preferredColumns;
+    }
+
     // Direct property takes precedence
     if (section.preferredColumns) {
       return section.preferredColumns;
@@ -1168,7 +1188,40 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     }
 
     // Fall back to type-based default
-    return getPreferredColumns(section.type ?? 'info');
+    return getPreferredColumns(section.type ?? 'info', undefined, undefined, this.currentColumns);
+  }
+
+  /**
+   * Get layout preferences for a section (including canShrinkToFill flag)
+   */
+  private getSectionLayoutPreferences(section: CardSection): {
+    preferredColumns: PreferredColumns;
+    minColumns: number;
+    maxColumns: number;
+    canShrinkToFill: boolean;
+    shrinkPriority: number;
+  } {
+    // Try to get from service first
+    const layoutPrefs = this.layoutPreferenceService.getPreferences(section, this.currentColumns);
+    if (layoutPrefs) {
+      return {
+        preferredColumns: layoutPrefs.preferredColumns,
+        minColumns: layoutPrefs.minColumns,
+        maxColumns: layoutPrefs.maxColumns,
+        canShrinkToFill: layoutPrefs.canShrinkToFill,
+        shrinkPriority: layoutPrefs.shrinkPriority ?? 50,
+      };
+    }
+
+    // Fallback to static preferences
+    const preferredColumns = this.getPreferredColumns(section);
+    return {
+      preferredColumns,
+      minColumns: section.minColumns ?? 1,
+      maxColumns: section.maxColumns ?? 4,
+      canShrinkToFill: false, // Default: don't shrink unless explicitly enabled
+      shrinkPriority: 50,
+    };
   }
 
   /**

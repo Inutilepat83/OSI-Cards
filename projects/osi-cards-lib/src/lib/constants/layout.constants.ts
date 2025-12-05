@@ -30,7 +30,7 @@ export const GRID_CONFIG = {
   DEFAULT_COLUMNS: 3,
 
   /** Minimum column width in pixels */
-  MIN_COLUMN_WIDTH: 260,
+  MIN_COLUMN_WIDTH: 220,
 
   /** Maximum column width in pixels */
   MAX_COLUMN_WIDTH: 500,

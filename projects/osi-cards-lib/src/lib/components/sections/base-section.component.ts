@@ -18,6 +18,7 @@ import {
 /**
  * Layout configuration for a section type.
  * Each section component defines its own static layoutConfig.
+ * @deprecated Use SectionLayoutPreferences instead
  */
 export interface SectionLayoutConfig {
   /** Preferred column span (1-4) */
@@ -46,6 +47,62 @@ export const DEFAULT_LAYOUT_CONFIG: SectionLayoutConfig = {
 };
 
 /**
+ * Layout preferences for a section component.
+ * Each section component defines its own responsive behavior dynamically.
+ */
+export interface SectionLayoutPreferences {
+  /** Preferred column count (1-4) */
+  preferredColumns: 1 | 2 | 3 | 4;
+  /** Minimum columns the section should span */
+  minColumns: 1 | 2 | 3 | 4;
+  /** Maximum columns the section can span */
+  maxColumns: 1 | 2 | 3 | 4;
+  /** Can shrink to 1 column to fill grid gaps */
+  canShrinkToFill: boolean;
+  /** Priority when multiple sections can shrink (lower = shrink first) */
+  shrinkPriority?: number;
+  /** Content-based expansion rules */
+  expandOnContent?: {
+    /** Expand by 1 column when field count exceeds this threshold */
+    fieldCount?: number;
+    /** Expand by 1 column when item count exceeds this threshold */
+    itemCount?: number;
+    /** Expand by 1 column when description exceeds this character count */
+    descriptionLength?: number;
+  };
+}
+
+/**
+ * Context for layout suggestions
+ */
+export interface LayoutSuggestionContext {
+  /** Available columns in the grid */
+  availableColumns: number;
+  /** Current column heights */
+  columnHeights?: number[];
+  /** Container width */
+  containerWidth?: number;
+  /** Whether grid has gaps that need filling */
+  hasGaps?: boolean;
+  /** Remaining sections to be placed */
+  pendingSections?: number;
+}
+
+/**
+ * Layout suggestion event
+ */
+export interface LayoutSuggestionEvent {
+  /** Section ID */
+  sectionId?: string;
+  /** Suggested column span */
+  suggestedColSpan: number;
+  /** Reason for suggestion */
+  reason: string;
+  /** Priority of suggestion (higher = more important) */
+  priority?: number;
+}
+
+/**
  * Base interface for section field/item interactions
  */
 export interface SectionInteraction<T = CardField | CardItem> {
@@ -68,6 +125,7 @@ export abstract class BaseSectionComponent<
   @Input({ required: true }) section!: CardSection;
   @Output() fieldInteraction = new EventEmitter<SectionInteraction<T>>();
   @Output() itemInteraction = new EventEmitter<SectionInteraction<T>>();
+  @Output() layoutSuggestion = new EventEmitter<LayoutSuggestionEvent>();
 
   protected readonly cdr = inject(ChangeDetectorRef);
 
@@ -436,5 +494,101 @@ export abstract class BaseSectionComponent<
    */
   protected get hasDesignParams(): boolean {
     return !!this.getDesignParams();
+  }
+
+  // ============================================================================
+  // LAYOUT PREFERENCES (Dynamic Section Responsive Layout System)
+  // ============================================================================
+
+  /**
+   * Get layout preferences for this section.
+   * Each section component should override this method to define its own
+   * responsive behavior based on content and context.
+   *
+   * @param availableColumns - Number of columns available in the grid
+   * @returns Layout preferences for this section
+   */
+  getLayoutPreferences(availableColumns: number = 4): SectionLayoutPreferences {
+    // Default implementation - sections should override
+    const fieldCount = this.getFields().length;
+    const itemCount = this.getItems().length;
+    const descriptionLength = this.section.description?.length ?? 0;
+
+    // Calculate preferred columns based on content
+    let preferredColumns: 1 | 2 | 3 | 4 = 1;
+    if (fieldCount > 6 || itemCount > 6) {
+      preferredColumns = 2;
+    }
+    if (fieldCount > 10 || itemCount > 10 || descriptionLength > 200) {
+      preferredColumns = 3;
+    }
+
+    return {
+      preferredColumns: Math.min(preferredColumns, availableColumns) as 1 | 2 | 3 | 4,
+      minColumns: 1,
+      maxColumns: Math.min(4, availableColumns) as 1 | 2 | 3 | 4,
+      canShrinkToFill: true, // Default: allow shrinking to fill grid (promotes side-by-side)
+      shrinkPriority: 40, // Lower priority = more willing to shrink (better consolidation)
+      expandOnContent: {
+        fieldCount: 6,
+        itemCount: 6,
+        descriptionLength: 200,
+      },
+    };
+  }
+
+  /**
+   * Suggest a layout change to the grid system.
+   * Called when section wants to proactively suggest a different column span.
+   *
+   * @param suggestedColSpan - Suggested column span
+   * @param reason - Reason for the suggestion
+   * @param priority - Priority of suggestion (higher = more important)
+   */
+  suggestLayout(suggestedColSpan: number, reason: string, priority: number = 50): void {
+    this.layoutSuggestion.emit({
+      sectionId: this.section.id,
+      suggestedColSpan: Math.max(1, Math.min(4, suggestedColSpan)),
+      reason,
+      priority,
+    });
+  }
+
+  /**
+   * Calculate optimal column count based on section content.
+   * Helper method that sections can use in their getLayoutPreferences() implementation.
+   *
+   * @param availableColumns - Maximum columns available
+   * @param options - Calculation options
+   * @returns Optimal column count
+   */
+  protected calculateOptimalColumns(
+    availableColumns: number = 4,
+    options?: {
+      fieldCount?: number;
+      itemCount?: number;
+      descriptionLength?: number;
+      baseColumns?: number;
+    }
+  ): 1 | 2 | 3 | 4 {
+    const fieldCount = options?.fieldCount ?? this.getFields().length;
+    const itemCount = options?.itemCount ?? this.getItems().length;
+    const descriptionLength = options?.descriptionLength ?? this.section.description?.length ?? 0;
+    const baseColumns = options?.baseColumns ?? 1;
+
+    let optimal = baseColumns;
+
+    // Expand based on content
+    if (fieldCount > 6 || itemCount > 6) {
+      optimal = Math.max(optimal, 2);
+    }
+    if (fieldCount > 10 || itemCount > 10 || descriptionLength > 200) {
+      optimal = Math.max(optimal, 3);
+    }
+    if (fieldCount > 15 || itemCount > 15 || descriptionLength > 400) {
+      optimal = Math.max(optimal, 4);
+    }
+
+    return Math.min(optimal, availableColumns) as 1 | 2 | 3 | 4;
   }
 }

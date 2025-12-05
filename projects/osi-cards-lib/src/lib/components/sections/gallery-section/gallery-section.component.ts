@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
-import { BaseSectionComponent } from '../base-section.component';
+import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
+import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { CardSection } from '../../../models';
 
 /**
  * Gallery Section Component
@@ -16,7 +18,69 @@ import { BaseSectionComponent } from '../base-section.component';
   templateUrl: './gallery-section.component.html',
   styleUrl: './gallery-section.scss',
 })
-export class GallerySectionComponent extends BaseSectionComponent {
+export class GallerySectionComponent extends BaseSectionComponent implements OnInit {
+  private readonly layoutService = inject(SectionLayoutPreferenceService);
+
+  ngOnInit(): void {
+    // Register layout preference function for this section type
+    this.layoutService.register('gallery', (section: CardSection, availableColumns: number) => {
+      return this.calculateGalleryLayoutPreferences(section, availableColumns);
+    });
+  }
+
+  /**
+   * Calculate layout preferences for gallery section based on content.
+   * Gallery sections: 2 cols default, can shrink to 1, expands to 3-4 for many images
+   */
+  private calculateGalleryLayoutPreferences(
+    section: CardSection,
+    availableColumns: number
+  ): SectionLayoutPreferences {
+    const items = section.items ?? [];
+    const itemCount = items.length;
+
+    // Gallery sections: 2 cols default, can shrink to 1, expands to 3-4 for many images
+    let preferredColumns: 1 | 2 | 3 | 4 = 2;
+    if (itemCount >= 6 && availableColumns >= 3) {
+      preferredColumns = 3;
+    }
+    if (itemCount <= 2) {
+      preferredColumns = 1;
+    }
+
+    // Respect explicit preferences
+    if (section.preferredColumns) {
+      preferredColumns = section.preferredColumns;
+    }
+
+    preferredColumns = Math.min(preferredColumns, availableColumns) as 1 | 2 | 3 | 4;
+
+    return {
+      preferredColumns,
+      minColumns: (section.minColumns ?? 1) as 1 | 2 | 3 | 4,
+      maxColumns: Math.min((section.maxColumns ?? 3) as 1 | 2 | 3 | 4, availableColumns) as
+        | 1
+        | 2
+        | 3
+        | 4,
+      canShrinkToFill: true,
+      shrinkPriority: 18, // Higher priority for shrinking (galleries are flexible, promotes side-by-side)
+      expandOnContent: {
+        itemCount: 6, // Expand to 3 columns at 6+ images
+      },
+    };
+  }
+
+  /**
+   * Get layout preferences for gallery section.
+   */
+  override getLayoutPreferences(availableColumns: number = 4): SectionLayoutPreferences {
+    const servicePrefs = this.layoutService.getPreferences(this.section, availableColumns);
+    if (servicePrefs) {
+      return servicePrefs;
+    }
+    return this.calculateGalleryLayoutPreferences(this.section, availableColumns);
+  }
   /**
    * Get image URL from item
    */

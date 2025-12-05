@@ -196,7 +196,7 @@ export interface MasterLayoutResult {
 
 const DEFAULT_CONFIG: MasterGridConfig = {
   gap: 12,
-  minColumnWidth: 260,
+  minColumnWidth: 220,
   maxColumns: 4,
 
   enableWeightedSelection: true,

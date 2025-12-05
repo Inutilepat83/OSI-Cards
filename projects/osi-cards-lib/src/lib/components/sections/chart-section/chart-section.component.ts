@@ -1,7 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { SectionHeaderComponent } from '../../shared';
-import { BaseSectionComponent } from '../base-section.component';
+import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
+import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { CardSection } from '../../../models';
 
 /**
  * Chart Section Component
@@ -20,8 +30,16 @@ import { BaseSectionComponent } from '../base-section.component';
 })
 export class ChartSectionComponent
   extends BaseSectionComponent
-  implements AfterViewInit, OnDestroy
+  implements AfterViewInit, OnDestroy, OnInit
 {
+  private readonly layoutService = inject(SectionLayoutPreferenceService);
+
+  ngOnInit(): void {
+    // Register layout preference function for this section type
+    this.layoutService.register('chart', (section: CardSection, availableColumns: number) => {
+      return this.calculateChartLayoutPreferences(section, availableColumns);
+    });
+  }
   @ViewChild('chartCanvas', { static: false }) chartCanvas?: ElementRef<HTMLCanvasElement>;
 
   private chartInstance: any;
@@ -76,5 +94,61 @@ export class ChartSectionComponent
       this.chartInstance.destroy();
       this.chartInstance = null;
     }
+  }
+
+  /**
+   * Calculate layout preferences for chart section based on content.
+   * Chart sections: 2 cols default, can shrink to 1, expands to 3-4 for wide charts
+   */
+  private calculateChartLayoutPreferences(
+    section: CardSection,
+    availableColumns: number
+  ): SectionLayoutPreferences {
+    // Chart sections prefer 2 columns for optimal viewing
+    // Can expand to 3-4 for wide charts, shrink to 1 for compact layouts
+    let preferredColumns: 1 | 2 | 3 | 4 = 2;
+
+    // Check if chart type suggests wider layout
+    const chartType = (section.meta as Record<string, unknown>)?.['chartType'] as
+      | string
+      | undefined;
+    const isWideChart = chartType === 'line' || chartType === 'bar' || chartType === 'area';
+
+    if (isWideChart && availableColumns >= 3) {
+      preferredColumns = 3;
+    }
+
+    // Respect explicit preferences
+    if (section.preferredColumns) {
+      preferredColumns = section.preferredColumns;
+    }
+
+    preferredColumns = Math.min(preferredColumns, availableColumns) as 1 | 2 | 3 | 4;
+
+    return {
+      preferredColumns,
+      minColumns: (section.minColumns ?? 1) as 1 | 2 | 3 | 4,
+      maxColumns: Math.min((section.maxColumns ?? 4) as 1 | 2 | 3 | 4, availableColumns) as
+        | 1
+        | 2
+        | 3
+        | 4,
+      canShrinkToFill: true,
+      shrinkPriority: 25, // Higher priority for shrinking (promotes side-by-side placement)
+      expandOnContent: {
+        // Charts can expand based on data complexity
+      },
+    };
+  }
+
+  /**
+   * Get layout preferences for chart section.
+   */
+  override getLayoutPreferences(availableColumns: number = 4): SectionLayoutPreferences {
+    const servicePrefs = this.layoutService.getPreferences(this.section, availableColumns);
+    if (servicePrefs) {
+      return servicePrefs;
+    }
+    return this.calculateChartLayoutPreferences(this.section, availableColumns);
   }
 }

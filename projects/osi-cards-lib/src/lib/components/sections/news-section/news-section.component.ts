@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BaseSectionComponent } from '../base-section.component';
+import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 import { SectionHeaderComponent, EmptyStateComponent } from '../../shared';
+import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { CardSection } from '../../../models';
 
 /**
  * News Section Component
@@ -16,7 +18,69 @@ import { SectionHeaderComponent, EmptyStateComponent } from '../../shared';
   templateUrl: './news-section.component.html',
   styleUrl: './news-section.scss',
 })
-export class NewsSectionComponent extends BaseSectionComponent {
+export class NewsSectionComponent extends BaseSectionComponent implements OnInit {
+  private readonly layoutService = inject(SectionLayoutPreferenceService);
+
+  ngOnInit(): void {
+    // Register layout preference function for this section type
+    this.layoutService.register('news', (section: CardSection, availableColumns: number) => {
+      return this.calculateNewsLayoutPreferences(section, availableColumns);
+    });
+  }
+
+  /**
+   * Calculate layout preferences for news section based on content.
+   * News sections: 2 cols default, can shrink to 1, expands based on item count
+   */
+  private calculateNewsLayoutPreferences(
+    section: CardSection,
+    availableColumns: number
+  ): SectionLayoutPreferences {
+    const items = section.items ?? [];
+    const itemCount = items.length;
+
+    // News sections: 2 cols default, can shrink to 1, expands based on item count
+    let preferredColumns: 1 | 2 | 3 | 4 = 2;
+    if (itemCount >= 5 && availableColumns >= 3) {
+      preferredColumns = 3;
+    }
+    if (itemCount <= 2) {
+      preferredColumns = 1;
+    }
+
+    // Respect explicit preferences
+    if (section.preferredColumns) {
+      preferredColumns = section.preferredColumns;
+    }
+
+    preferredColumns = Math.min(preferredColumns, availableColumns) as 1 | 2 | 3 | 4;
+
+    return {
+      preferredColumns,
+      minColumns: (section.minColumns ?? 1) as 1 | 2 | 3 | 4,
+      maxColumns: Math.min((section.maxColumns ?? 3) as 1 | 2 | 3 | 4, availableColumns) as
+        | 1
+        | 2
+        | 3
+        | 4,
+      canShrinkToFill: true,
+      shrinkPriority: 22, // Higher priority for shrinking (promotes side-by-side placement)
+      expandOnContent: {
+        itemCount: 5, // Expand to 3 columns at 5+ articles
+      },
+    };
+  }
+
+  /**
+   * Get layout preferences for news section.
+   */
+  override getLayoutPreferences(availableColumns: number = 4): SectionLayoutPreferences {
+    const servicePrefs = this.layoutService.getPreferences(this.section, availableColumns);
+    if (servicePrefs) {
+      return servicePrefs;
+    }
+    return this.calculateNewsLayoutPreferences(this.section, availableColumns);
+  }
   /**
    * Get article image URL
    */

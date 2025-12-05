@@ -10,7 +10,7 @@
 // ============================================================================
 
 /** Minimum width for a single column in pixels */
-export const MIN_COLUMN_WIDTH = 260;
+export const MIN_COLUMN_WIDTH = 220;
 
 /** Maximum number of columns allowed */
 export const MAX_COLUMNS = 4;
@@ -121,6 +121,19 @@ export interface ColumnPackingOptions {
    * @default 3
    */
   useSkylineThreshold?: number;
+
+  /**
+   * Number of optimization passes for FFDH algorithm (1-3)
+   * More passes = better results but slower. Default: 2
+   * @default 2
+   */
+  optimizationPasses?: number;
+
+  /**
+   * Enable gap-aware placement that considers gap creation when placing sections
+   * @default true
+   */
+  enableGapAwarePlacement?: boolean;
 }
 
 /**
@@ -130,7 +143,9 @@ export const DEFAULT_COLUMN_PACKING_OPTIONS: Required<ColumnPackingOptions> = {
   packingMode: 'ffdh',
   allowReordering: true,
   sortByHeight: true,
-  useSkylineThreshold: 3,
+  useSkylineThreshold: 1, // Very aggressive: Switch to Skyline at first gap
+  optimizationPasses: 4, // Increased: Maximum compactness through more passes
+  enableGapAwarePlacement: true,
 };
 
 /**
@@ -193,12 +208,18 @@ export const DEFAULT_MASONRY_PACKING_CONFIG: MasonryPackingConfig = {
 export const SPACE_OPTIMIZED_CONFIG: MasonryPackingConfig = {
   ...DEFAULT_GRID_CONFIG,
   packingAlgorithm: 'column-based',
-  rowPackingOptions: DEFAULT_ROW_PACKING_OPTIONS,
+  rowPackingOptions: {
+    ...DEFAULT_ROW_PACKING_OPTIONS,
+    prioritizeSpaceFilling: true, // Aggressively fill rows
+    allowShrinking: true, // Allow shrinking for better consolidation
+    maxOptimizationPasses: 6, // Maximum passes for best results
+  },
   columnPackingOptions: {
     packingMode: 'hybrid',
     allowReordering: true,
     sortByHeight: true,
-    useSkylineThreshold: 2, // Lower threshold for more aggressive compaction
+    useSkylineThreshold: 1, // Very aggressive: switch to Skyline at first gap
+    optimizationPasses: 5, // Maximum optimization passes for compactness
   },
   useLegacyFallback: true,
 };
@@ -622,10 +643,10 @@ export function isSectionTypeRegistryInitialized(): boolean {
 
 /**
  * Content density threshold for expansion.
- * as sparse content looks bad when stretched across multiple columns.
- * Lowered from 15 to 8 to allow more aggressive gap filling.
+ * Lowered to 5 to allow more aggressive gap filling and better consolidation.
+ * Sections with density >= 5 can expand to fill gaps, promoting side-by-side placement.
  */
-export const EXPANSION_DENSITY_THRESHOLD = 8;
+export const EXPANSION_DENSITY_THRESHOLD = 5;
 
 /**
  * Gets the maximum expansion limit for a section type.
@@ -930,14 +951,52 @@ export function calculateMinContainerWidth(
  *
  * @param sectionType - The section type
  * @param preferences - Optional custom preferences map
+ * @param sectionComponent - Optional section component instance (for dynamic preferences)
+ * @param availableColumns - Optional available columns in grid
  * @returns Preferred column count (1, 2, or 3)
  */
 export function getPreferredColumns(
   sectionType: string,
-  preferences: SectionColumnPreferences = DEFAULT_SECTION_COLUMN_PREFERENCES
+  preferences: SectionColumnPreferences = DEFAULT_SECTION_COLUMN_PREFERENCES,
+  sectionComponent?: any, // BaseSectionComponent instance
+  availableColumns: number = 4
 ): PreferredColumns {
+  // NEW: Try to get preferences from section component first (dynamic)
+  if (sectionComponent && typeof sectionComponent.getLayoutPreferences === 'function') {
+    try {
+      const layoutPrefs = sectionComponent.getLayoutPreferences(availableColumns);
+      return layoutPrefs.preferredColumns;
+    } catch (error) {
+      // Only warn in development mode
+      const isDevelopment =
+        typeof window !== 'undefined' &&
+        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+      if (isDevelopment) {
+        console.warn(
+          '[GridConfig] Failed to get layout preferences from section component:',
+          error
+        );
+      }
+      // Fall through to static preferences
+    }
+  }
+
+  // Fallback to static preferences (deprecated but kept for backward compatibility)
   const type = sectionType?.toLowerCase() || 'default';
-  return preferences[type] ?? preferences['default'] ?? 1;
+  const staticPref = preferences[type] ?? preferences['default'] ?? 1;
+
+  // Warn if using deprecated static preferences (only in development)
+  const isDevelopment =
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  if (isDevelopment && !sectionComponent) {
+    console.warn(
+      `[GridConfig] Using deprecated static preferences for section type "${type}". ` +
+        `Consider implementing getLayoutPreferences() in the section component.`
+    );
+  }
+
+  return staticPref;
 }
 
 /**
@@ -946,16 +1005,50 @@ export function getPreferredColumns(
  * @param preferredColumns - The section's preferred column count
  * @param availableColumns - The total columns available in the container
  * @param explicitColSpan - Optional explicit colSpan override from section config
+ * @param sectionComponent - Optional section component instance (for dynamic preferences)
+ * @param canShrinkToFill - Whether section can shrink to 1 column to fill grid
  * @returns The effective column span to use
  */
 export function resolveColumnSpan(
   preferredColumns: PreferredColumns,
   availableColumns: number,
-  explicitColSpan?: number
+  explicitColSpan?: number,
+  sectionComponent?: any, // BaseSectionComponent instance
+  canShrinkToFill?: boolean
 ): number {
   // Explicit colSpan always takes precedence
   if (explicitColSpan !== undefined && explicitColSpan > 0) {
     return Math.min(explicitColSpan, availableColumns);
+  }
+
+  // Get layout preferences from section component if available
+  if (sectionComponent && typeof sectionComponent.getLayoutPreferences === 'function') {
+    try {
+      const layoutPrefs = sectionComponent.getLayoutPreferences(availableColumns);
+      const effectivePref = Math.min(layoutPrefs.preferredColumns, availableColumns);
+
+      // Respect min/max constraints
+      const minCols = Math.max(1, layoutPrefs.minColumns);
+      const maxCols = Math.min(availableColumns, layoutPrefs.maxColumns);
+
+      let result = Math.max(minCols, Math.min(effectivePref, maxCols));
+
+      // If canShrinkToFill is true and we need to fill gaps, allow shrinking to 1
+      if (canShrinkToFill && layoutPrefs.canShrinkToFill) {
+        result = Math.max(1, result); // Can go down to 1
+      }
+
+      return result;
+    } catch (error) {
+      // Only warn in development mode
+      const isDevelopment =
+        typeof window !== 'undefined' &&
+        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+      if (isDevelopment) {
+        console.warn('[GridConfig] Failed to resolve column span from section component:', error);
+      }
+      // Fall through to static preferences
+    }
   }
 
   // Use preferred columns, constrained by available columns
@@ -1024,9 +1117,9 @@ export function generateLeftExpression(
  */
 export const BREAKPOINTS = {
   xs: 0,
-  sm: 544, // 2 columns possible (544px = 2*260 + 1*12 + padding)
-  md: 816, // 3 columns possible (816px = 3*260 + 2*12 + padding)
-  lg: 1088, // 4 columns possible (1088px = 4*260 + 3*12 + padding)
+  sm: 464, // 2 columns possible (464px = 2*220 + 1*12 + padding)
+  md: 684, // 3 columns possible (684px = 3*220 + 2*12 + padding)
+  lg: 904, // 4 columns possible (904px = 4*220 + 3*12 + padding)
   xl: 1024,
   '2xl': 1280,
 } as const;

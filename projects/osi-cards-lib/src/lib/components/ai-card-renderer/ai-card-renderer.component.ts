@@ -1,42 +1,47 @@
+import { animate, AnimationBuilder, style, transition, trigger } from '@angular/animations';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {
-  Component,
-  ElementRef,
-  Input,
-  Output,
-  EventEmitter,
-  OnInit,
-  OnDestroy,
-  ViewChild,
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
   inject,
   Injector,
+  Input,
   isDevMode,
+  OnDestroy,
+  OnInit,
+  Output,
   PLATFORM_ID,
+  ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { catchError, fromEvent, interval, of, Subject, takeUntil } from 'rxjs';
+import { LucideIconsModule } from '../../icons';
 import {
   AICardConfig,
-  CardSection,
+  CardAction,
   CardField,
   CardItem,
-  CardAction,
+  CardSection,
   LegacyCardAction,
 } from '../../models';
-import { Subject, takeUntil, fromEvent, interval } from 'rxjs';
-import { MagneticTiltService, MousePosition, TiltCalculations } from '../../services';
-import { IconService, SectionNormalizationService } from '../../services';
-import { LucideIconsModule } from '../../icons';
-import { MasonryLayoutInfo } from '../masonry-grid/masonry-grid.component';
-import { SectionRenderEvent } from '../section-renderer/section-renderer.component';
+import {
+  IconService,
+  MagneticTiltService,
+  MousePosition,
+  SectionNormalizationService,
+  TiltCalculations,
+} from '../../services';
+import { CardChangeType } from '../../utils';
+import { CardActionsComponent } from '../card-actions/card-actions.component';
 import { CardHeaderComponent } from '../card-header/card-header.component';
 import { CardSectionListComponent } from '../card-section-list/card-section-list.component';
-import { CardActionsComponent } from '../card-actions/card-actions.component';
-import { CardChangeType } from '../../utils';
-import { trigger, transition, style, animate, AnimationBuilder } from '@angular/animations';
-import { isPlatformBrowser } from '@angular/common';
+import { MasonryLayoutInfo } from '../masonry-grid/masonry-grid.component';
+import { SectionRenderEvent } from '../section-renderer/section-renderer.component';
 
 export interface CardFieldInteractionEvent {
   field?: CardField;
@@ -344,42 +349,21 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   private readonly magneticTiltService = inject(MagneticTiltService);
   private readonly iconService = inject(IconService);
   private readonly sectionNormalizationService = inject(SectionNormalizationService);
+  private readonly http = inject(HttpClient, { optional: true });
   // ViewportScroller available for future scroll functionality
   // private readonly viewportScroller = inject(ViewportScroller);
 
-  // Fallback card configuration for testing
-  private fallbackCard: AICardConfig = {
-    id: 'fallback-test',
-    cardTitle: 'Test Company',
-    sections: [
-      {
-        id: 'test-info',
-        title: 'Company Information',
-        type: 'info',
-        fields: [
-          {
-            id: 'industry',
-            label: 'Industry',
-            value: 'Technology',
-            type: 'text',
-          },
-          {
-            id: 'employees',
-            label: 'Employees',
-            value: '250',
-            type: 'text',
-          },
-        ],
-      },
-    ],
-    actions: [
-      {
-        id: 'view-details',
-        label: 'View Details',
-        variant: 'primary',
-      },
-    ],
-  };
+  /**
+   * Optional LLM API endpoint for fallback card generation.
+   * If not provided, will attempt to use a default endpoint.
+   */
+  @Input() llmFallbackEndpoint?: string;
+
+  /**
+   * Optional context/prompt for LLM fallback generation.
+   * If not provided, uses a default prompt.
+   */
+  @Input() llmFallbackPrompt?: string;
 
   ngOnInit(): void {
     // Validate animations provider in development mode
@@ -395,9 +379,9 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
 
     // Track scroll for parallax effect
     this.setupScrollTracking();
-    // Use fallback if no card config provided
+    // Use LLM fallback if no card config provided
     if (!this.cardConfig) {
-      this.cardConfig = this.fallbackCard;
+      this.generateFallbackCard();
     }
 
     if (!this.processedSections.length) {
@@ -972,7 +956,8 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     // Convert to Outlook URL scheme (platform-specific)
     // Windows: Use mailto: (New Outlook doesn't support custom schemes)
     // Mac: Use ms-outlook: (forces Outlook desktop app)
-    const isWindows = typeof navigator !== 'undefined' &&
+    const isWindows =
+      typeof navigator !== 'undefined' &&
       (/Win/i.test(navigator.platform) || /Windows/i.test(navigator.userAgent));
     const outlookLink = isWindows ? mailtoLink : `ms-outlook:${mailtoLink}`;
 
@@ -1355,6 +1340,160 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
    */
   trackByParticle(index: number): number {
     return index;
+  }
+
+  /**
+   * Generates a fallback card using LLM API call.
+   * Similar to Orange Sales Assistance implementation pattern.
+   * Makes an HTTP POST request to the LLM endpoint with a prompt to generate card data.
+   */
+  private generateFallbackCard(): void {
+    // Check if HttpClient is available
+    if (!this.http) {
+      if (isDevMode()) {
+        console.warn(
+          'HttpClient not available. Cannot generate fallback card via LLM. Make sure HttpClient is provided in your app configuration.'
+        );
+      }
+      return;
+    }
+
+    // Only make API calls in browser environment
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    // Determine the API endpoint (default or custom)
+    // Following Orange Sales Assistance pattern: 'osa/invoke' or similar
+    const endpoint = this.llmFallbackEndpoint || '/api/llm/generate-card';
+
+    // Create the prompt for LLM based on documentation guidelines
+    // This prompt follows the LLM_PROMPT.md documentation structure
+    const prompt =
+      this.llmFallbackPrompt ||
+      `Generate a complete OSI card configuration JSON following these guidelines:
+
+1. Use valid section types: analytics, brand-colors, chart, contact-card, event, faq, financials, gallery, info, list, map, network-card, news, overview, product, quotation, social-media, solutions, text-reference, timeline, or video.
+
+2. Match data structure - use 'fields' for sections like info, analytics, overview, or 'items' for sections like list, gallery, timeline.
+
+3. Include required properties: 'title' and 'type' are always required for each section.
+
+4. Create a card with:
+   - cardTitle: A descriptive title for the card
+   - cardType: company|contact|event|product|analytics (optional)
+   - sections: Array of 2-4 sections with diverse types
+   - actions: Optional array of action buttons
+
+5. Example structure:
+   - Overview section (type: overview) with key company information
+   - Info section (type: info) with detailed fields
+   - Analytics section (type: analytics) with metrics if applicable
+   - Contact section (type: contact-card) with contact information
+
+6. Ensure all JSON is valid and properly formatted.
+
+Generate a default company card with comprehensive information including overview, key details, metrics, and contact information.`;
+
+    // Prepare the payload similar to Orange Sales Assistance pattern
+    // Matches the structure used in Orange Sales Assistance chatbot component
+    // See: chatbot.component.ts line 201-216
+    const payload = {
+      question: prompt,
+      knowledge_base: 'default',
+      session_id: 'fallback',
+      chat_id: 'fallback-card',
+      sources: [],
+      prompt: prompt,
+      model_name: 'gpt-4o', // Default model, matching Orange Sales Assistance default
+      prompt_status: 'Default',
+      source_weights: [],
+    };
+
+    // Make LLM API call (following Orange Sales Assistance pattern)
+    // Response structure matches Orange Sales Assistance: { result: string, ... }
+    // See: chatbot.component.ts line 225-229
+    this.http
+      .post<{ result?: string; card?: AICardConfig; data?: AICardConfig; response?: string }>(
+        endpoint,
+        payload
+      )
+      .pipe(
+        takeUntil(this.destroyed$),
+        catchError((error: HttpErrorResponse) => {
+          // Log error but don't throw - allow empty state to show
+          // Following Orange Sales Assistance error handling pattern
+          if (isDevMode()) {
+            console.error('LLM fallback API call failed:', error);
+            console.warn(
+              'Falling back to empty state. Ensure LLM endpoint is configured correctly.'
+            );
+          }
+          // Return null to allow empty state to display
+          return of(null);
+        })
+      )
+      .subscribe((response) => {
+        if (response) {
+          // Handle different response formats (flexible like Orange Sales Assistance)
+          // Orange Sales Assistance returns: { result: string } where result may be JSON
+          let cardConfig: AICardConfig | null = null;
+
+          // Try different response property names (matching Orange Sales Assistance pattern)
+          if (response.result) {
+            // Orange Sales Assistance pattern: result contains the response
+            try {
+              const parsed = JSON.parse(response.result);
+              if (parsed && typeof parsed === 'object') {
+                cardConfig = parsed as AICardConfig;
+              }
+            } catch (parseError) {
+              // If result is not JSON, try to extract JSON from the string
+              try {
+                // Look for JSON object in the response string
+                const jsonMatch = response.result.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                  const parsed = JSON.parse(jsonMatch[0]);
+                  if (parsed && typeof parsed === 'object') {
+                    cardConfig = parsed as AICardConfig;
+                  }
+                }
+              } catch (extractError) {
+                if (isDevMode()) {
+                  console.error('Failed to parse LLM result as JSON:', extractError);
+                }
+              }
+            }
+          } else if (response.card) {
+            cardConfig = response.card;
+          } else if (response.data) {
+            cardConfig = response.data;
+          } else if (response.response) {
+            // If response is a JSON string, parse it
+            try {
+              const parsed = JSON.parse(response.response);
+              if (parsed && typeof parsed === 'object') {
+                cardConfig = parsed as AICardConfig;
+              }
+            } catch (parseError) {
+              if (isDevMode()) {
+                console.error('Failed to parse LLM response as JSON:', parseError);
+              }
+            }
+          }
+
+          // Update card config if we got valid data
+          if (cardConfig) {
+            this.cardConfig = cardConfig;
+            this.cdr.markForCheck();
+
+            // Refresh sections if needed
+            if (!this.processedSections.length) {
+              this.refreshProcessedSections(true);
+            }
+          }
+        }
+      });
   }
 
   /**

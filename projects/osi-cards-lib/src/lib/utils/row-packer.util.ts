@@ -51,7 +51,7 @@ const SECTION_HEIGHT_ESTIMATES: Record<string, number> = {
   list: 220,
   event: 240,
   timeline: 240,
-  product: 260,
+  product: 220,
   solutions: 240,
   quotation: 160,
   'text-reference': 180,
