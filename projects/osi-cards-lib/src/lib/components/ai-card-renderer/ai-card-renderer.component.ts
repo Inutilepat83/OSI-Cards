@@ -968,9 +968,13 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     // Construct mailto link
     const queryString = params.length > 0 ? '?' + params.join('&') : '';
     const mailtoLink = `mailto:${recipientEmail}${queryString}`;
-
-    // Convert to Outlook URL scheme (works on both Windows and Mac)
-    const outlookLink = `ms-outlook:${mailtoLink}`;
+    
+    // Convert to Outlook URL scheme (platform-specific)
+    // Windows: Use mailto: (New Outlook doesn't support custom schemes)
+    // Mac: Use ms-outlook: (forces Outlook desktop app)
+    const isWindows = typeof navigator !== 'undefined' && 
+      (/Win/i.test(navigator.platform) || /Windows/i.test(navigator.userAgent));
+    const outlookLink = isWindows ? mailtoLink : `ms-outlook:${mailtoLink}`;
 
     // Detect Edge browser for specific handling
     const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : '';
