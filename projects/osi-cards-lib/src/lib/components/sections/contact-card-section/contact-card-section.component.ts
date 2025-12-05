@@ -56,4 +56,17 @@ export class ContactCardSectionComponent extends BaseSectionComponent {
     }
     return name[0]?.toUpperCase() || '?';
   }
+
+  /**
+   * Convert email address to Outlook URL scheme
+   * Uses ms-outlook: scheme which works on both Windows and Mac
+   *
+   * @param email - Email address
+   * @returns Outlook URL scheme
+   */
+  getOutlookEmailUrl(email: string): string {
+    // ms-outlook: scheme works on both Windows and Mac
+    // Format: ms-outlook:mailto:email@example.com
+    return `ms-outlook:mailto:${email}`;
+  }
 }

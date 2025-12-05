@@ -56,7 +56,7 @@ function logInfo(msg) {
 function runScript(scriptPath, description, optional = false) {
   const fs = require('fs');
   const fullPath = path.join(__dirname, '..', scriptPath);
-  
+
   // Check if script exists
   if (!fs.existsSync(fullPath)) {
     if (optional) {
@@ -68,7 +68,7 @@ function runScript(scriptPath, description, optional = false) {
       return false;
     }
   }
-  
+
   try {
     log(`\n▶ ${description}...`, colors.cyan);
     execSync(`node ${scriptPath}`, { stdio: 'inherit', cwd: path.join(__dirname, '..') });
@@ -113,7 +113,7 @@ function main() {
   }
 
   log('\n' + '═'.repeat(70), colors.cyan);
-  
+
   if (requiredFailed === 0) {
     logSuccess(`All required post-build tasks completed successfully (${success}/${tasks.length})`);
     logInfo('\nLibrary build artifacts are ready in dist/osi-cards-lib/');

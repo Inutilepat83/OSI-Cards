@@ -652,7 +652,9 @@ export abstract class ContactSectionBaseComponent extends FieldBasedSectionCompo
   onEmailClick(): void {
     const email = this.contactInfo().email;
     if (email) {
-      window.location.href = `mailto:${email}`;
+      // Convert to Outlook URL scheme (works on both Windows and Mac)
+      const outlookUrl = `ms-outlook:mailto:${email}`;
+      window.location.href = outlookUrl;
     }
   }
 

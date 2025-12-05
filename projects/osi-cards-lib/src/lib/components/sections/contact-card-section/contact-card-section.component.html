@@ -12,7 +12,7 @@
       <p class="role" *ngIf="getContactRole(c)">{{ getContactRole(c) }}</p>
       <lib-badge *ngIf="c.department" class="dept" variant="primary" size="sm">{{ c.department }}</lib-badge>
       <div class="actions">
-        <a [href]="'mailto:' + c.email" class="action" *ngIf="c.email" title="Email">📧</a>
+        <a [href]="getOutlookEmailUrl(c.email)" class="action" *ngIf="c.email" title="Email">📧</a>
         <a [href]="'tel:' + c.phone" class="action" *ngIf="c.phone" title="Call">📞</a>
         <a [href]="c.linkedIn" class="action" target="_blank" rel="noopener" *ngIf="c.linkedIn" title="LinkedIn">💼</a>
       </div>

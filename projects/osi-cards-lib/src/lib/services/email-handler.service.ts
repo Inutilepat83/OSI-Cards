@@ -302,7 +302,23 @@ export class EmailHandlerService {
     }
 
     const queryString = params.length > 0 ? `?${params.join('&')}` : '';
-    return `mailto:${encodeURIComponent(config.to)}${queryString}`;
+    const mailtoUrl = `mailto:${encodeURIComponent(config.to)}${queryString}`;
+
+    // Convert to Outlook URL scheme (works on both Windows and Mac)
+    return this.convertToOutlookUrl(mailtoUrl);
+  }
+
+  /**
+   * Convert mailto URL to Outlook URL scheme
+   * Uses ms-outlook: scheme which works on both Windows and Mac
+   *
+   * @param mailtoUrl - Standard mailto URL
+   * @returns Outlook URL scheme
+   */
+  private convertToOutlookUrl(mailtoUrl: string): string {
+    // ms-outlook: scheme works on both Windows and Mac
+    // Format: ms-outlook:mailto:email@example.com?subject=...&body=...
+    return `ms-outlook:${mailtoUrl}`;
   }
 
   private normalizeMailAction(action: CardAction): MailCardAction | null {

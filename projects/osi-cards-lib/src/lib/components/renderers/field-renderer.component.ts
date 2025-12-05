@@ -63,7 +63,7 @@ export interface FieldClickEvent {
             </a>
           }
           @case ('email') {
-            <a [href]="'mailto:' + stringValue">{{ displayValue }}</a>
+            <a [href]="getOutlookEmailUrl(stringValue)">{{ displayValue }}</a>
           }
           @case ('phone') {
             <a [href]="'tel:' + stringValue">{{ displayValue }}</a>
@@ -217,5 +217,18 @@ export class FieldRendererComponent {
     event.stopPropagation();
     navigator.clipboard.writeText(this.stringValue);
     this.copied.emit(this.stringValue);
+  }
+
+  /**
+   * Convert email address to Outlook URL scheme
+   * Uses ms-outlook: scheme which works on both Windows and Mac
+   *
+   * @param email - Email address
+   * @returns Outlook URL scheme
+   */
+  getOutlookEmailUrl(email: string): string {
+    // ms-outlook: scheme works on both Windows and Mac
+    // Format: ms-outlook:mailto:email@example.com
+    return `ms-outlook:mailto:${email}`;
   }
 }

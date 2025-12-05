@@ -969,6 +969,9 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     const queryString = params.length > 0 ? '?' + params.join('&') : '';
     const mailtoLink = `mailto:${recipientEmail}${queryString}`;
 
+    // Convert to Outlook URL scheme (works on both Windows and Mac)
+    const outlookLink = `ms-outlook:${mailtoLink}`;
+
     // Detect Edge browser for specific handling
     const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : '';
     const isEdgeChromium = /Edg/i.test(userAgent) && !/OPR/i.test(userAgent);
@@ -978,11 +981,11 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       // Use window.location.href as primary method for Edge, anchor click for others
       if (isEdgeChromium) {
         // For Edge, use window.location.href directly (most reliable)
-        window.location.href = mailtoLink;
+        window.location.href = outlookLink;
       } else if (typeof document !== 'undefined' && document.body) {
         // For other browsers, try anchor click method first
         const anchor = document.createElement('a');
-        anchor.href = mailtoLink;
+        anchor.href = outlookLink;
         // Edge may require the element to be in the DOM and visible (even briefly)
         // Use a more Edge-compatible approach: minimal visibility
         anchor.style.position = 'absolute';
@@ -1001,7 +1004,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
           } catch (clickError) {
             // If click fails, fall back to window.location
             console.warn('Anchor click failed, using window.location fallback:', clickError);
-            window.location.href = mailtoLink;
+            window.location.href = outlookLink;
           }
 
           // Remove anchor after a short delay
@@ -1013,18 +1016,18 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
         });
       } else {
         // Fallback: use window.location if document.body is not available
-        window.location.href = mailtoLink;
+        window.location.href = outlookLink;
       }
     } catch (error) {
       console.error('Failed to open email client:', error);
       // Final fallback: try direct window.location
       try {
-        window.location.href = mailtoLink;
+        window.location.href = outlookLink;
       } catch (fallbackError) {
         console.error('Failed to open email client with fallback method:', fallbackError);
         // Last resort: try window.open (may be blocked by popup blockers)
         try {
-          const mailtoWindow = window.open(mailtoLink, '_blank');
+          const mailtoWindow = window.open(outlookLink, '_blank');
           if (!mailtoWindow) {
             console.warn(
               'Popup blocked. Please allow popups for this site to use email functionality.'
