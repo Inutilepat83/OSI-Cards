@@ -310,16 +310,16 @@ export class EmailHandlerService {
 
   /**
    * Convert mailto URL to Outlook URL scheme with platform-specific handling
-   * 
+   *
    * Strategy:
    * - Windows: Use mailto: (New Outlook doesn't support custom URL schemes)
    *   - Will open Outlook if it's set as the default email client
    *   - For Classic Outlook, user can set it as default or switch to Classic Outlook
    * - Mac: Use ms-outlook: (forces Outlook desktop app to open)
-   * 
+   *
    * Note: New Outlook for Windows doesn't support custom URL schemes like ms-outlook: or outlookmail:
    * The only way to open it is via mailto: when it's set as the default email client.
-   * 
+   *
    * @param mailtoUrl - Standard mailto URL
    * @returns Outlook URL scheme or mailto fallback
    */
@@ -330,7 +330,7 @@ export class EmailHandlerService {
     }
 
     const isWindows = /Win/i.test(navigator.platform) || /Windows/i.test(navigator.userAgent);
-    
+
     if (isWindows) {
       // Windows: Use mailto: (New Outlook doesn't support custom schemes)
       // This will open the default email client (Outlook if configured as default)

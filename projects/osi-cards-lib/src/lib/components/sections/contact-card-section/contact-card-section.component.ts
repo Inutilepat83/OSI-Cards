@@ -60,24 +60,24 @@ export class ContactCardSectionComponent extends BaseSectionComponent {
   /**
    * Convert email address to Outlook URL scheme
    * Platform-specific: Windows uses mailto: (New Outlook compatibility), Mac uses ms-outlook:
-   * 
+   *
    * @param email - Email address
    * @returns Outlook URL scheme or mailto fallback
    */
   getOutlookEmailUrl(email: string): string {
     const mailtoUrl = `mailto:${email}`;
-    
+
     // Check if we're on Windows
     if (typeof navigator !== 'undefined') {
       const isWindows = /Win/i.test(navigator.platform) || /Windows/i.test(navigator.userAgent);
-      
+
       if (isWindows) {
         // Windows: Use mailto: (New Outlook doesn't support custom schemes)
         // Will open Outlook if set as default email client
         return mailtoUrl;
       }
     }
-    
+
     // Mac: Use ms-outlook: scheme (works with Outlook desktop app)
     return `ms-outlook:${mailtoUrl}`;
   }

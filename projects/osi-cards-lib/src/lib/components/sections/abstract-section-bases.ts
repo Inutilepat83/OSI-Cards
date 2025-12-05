@@ -653,11 +653,11 @@ export abstract class ContactSectionBaseComponent extends FieldBasedSectionCompo
     const email = this.contactInfo().email;
     if (email) {
       const mailtoUrl = `mailto:${email}`;
-      
+
       // Platform-specific: Windows uses mailto: (New Outlook compatibility), Mac uses ms-outlook:
       if (typeof navigator !== 'undefined') {
         const isWindows = /Win/i.test(navigator.platform) || /Windows/i.test(navigator.userAgent);
-        
+
         if (isWindows) {
           // Windows: Use mailto: (New Outlook doesn't support custom schemes)
           // Will open Outlook if set as default email client
@@ -665,7 +665,7 @@ export abstract class ContactSectionBaseComponent extends FieldBasedSectionCompo
           return;
         }
       }
-      
+
       // Mac: Use ms-outlook: scheme (works with Outlook desktop app)
       window.location.href = `ms-outlook:${mailtoUrl}`;
     }
