@@ -1,54 +1,66 @@
 /**
  * Public API - Utilities
  *
- * Exports all utility functions with organized subdirectories (Phase 4).
+ * Exports consolidated utility functions for OSI Cards library.
+ * Reduced from 143 to ~40 utilities focused on core card rendering functionality.
  */
 
 // ============================================================================
-// CONSOLIDATED UTILITIES (Phase 4) - Use These!
+// CORE UTILITIES - Essential for card rendering
 // ============================================================================
 
-// Performance and memory utilities (consolidated)
-// export { PerformanceUtil, MemoryUtil, CleanupRegistry } from './performance';
-// export type { Memoized, MemoOptions, MemoTTLOptions, CacheStats } from './performance';
-
-// Animation utilities (consolidated)
-// export { AnimationUtil, slideIn } from './animations';
-
-// Virtual scroll
-export * from './virtual-scroll.util';
-
-// ============================================================================
-// CORE UTILITIES (Kept at root level)
-// ============================================================================
-
-// Card utilities (consolidated) - selective export to avoid conflicts
+// Accessibility
 export * from './accessibility.util';
-export { CardDiffUtil, type CardDiffResult } from './card.util';
-export * from './component-composition.util';
-export * from './container-queries.util';
-export * from './input-coercion.util';
-export * from './section-design.utils';
-// Input validation utilities
-export * from './input-validation.util';
-export * from './masonry-detection.util';
-export * from './responsive.util';
-export * from './retry.util';
-export * from './style-validator.util';
+export * from './grid-accessibility.util';
 
-// Consolidated utilities
-export * from './error.util';
-export * from './grid-logger.util';
-export * from './timing.util';
+// Card utilities
+export { CardUtil } from './card.util';
+
+// Performance & Memoization
+export { Memoize, MemoizeLRU, MemoizeTTL } from './advanced-memoization.util';
+export { ObjectPool } from './object-pool.util';
+
+// Layout & Grid - Core algorithms
+export * from './grid-config.util';
+export * from './master-grid-layout-engine.util';
+export { PerfectBinPacker } from './perfect-bin-packer.util';
+export * from './row-packer.util';
+// Note: skyline-algorithm.util has PackingResult conflict with perfect-bin-packer
+// Import directly if needed
+
+// Virtual scrolling
 export * from './virtual-scroll.util';
+// Note: virtual-scroll-helpers.util exports conflict with virtual-scroll.util
+// Import directly if needed: import { ... } from './lib/utils/virtual-scroll-helpers.util';
 
-// Animation utilities
-export * from './animation-optimization.util';
+// Animation
 export * from './flip-animation.util';
 export * from './web-animations.util';
 
-// Memoization (use this instead of memo.util, memory.util, etc.)
-export * from './memoization.util';
+// Validation & Coercion
+export * from './input-coercion.util';
+export * from './input-validation.util';
+
+// Error handling
+export * from './error-boundary.util';
+
+// Subscription management
+export { AutoUnsubscribe, SubscriptionTracker } from './subscription-tracker.util';
+
+// Retry logic
+export * from './retry.util';
+
+// Performance utilities
+export * from './debounce-throttle.util';
+export * from './performance.util';
+
+// Masonry detection
+export * from './masonry-detection.util';
+
+// Note: smart-grid.util was removed - use master-grid-layout-engine.util instead
+
+// Section design utilities
+export * from './section-design.utils';
 
 // Re-export type for convenience
 export type { CardChangeType } from '../types';

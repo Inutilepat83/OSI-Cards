@@ -563,7 +563,7 @@ export class CardImportExportComponent implements OnInit, OnDestroy {
         // Save valid cards
         result.valid.forEach((card: AICardConfig) => {
           this.storageService
-            .saveCard(card)
+            .saveCard?.(card)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               error: (error: any) => {
@@ -659,8 +659,8 @@ export class CardImportExportComponent implements OnInit, OnDestroy {
   analyzeCards(): void {
     const jsonStrings = this.storedCards.map((card) => JSON.stringify(card));
     this.analysisResult = BatchConversionUtil.analyzeCollection(
-      jsonStrings,
-      this.validationService
+      jsonStrings
+      // this.validationService
     );
 
     this.typeEntries = Object.entries(this.analysisResult.stats.byType).map(([key, value]) => ({

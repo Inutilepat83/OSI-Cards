@@ -101,3 +101,4 @@ const section: CardSection = {
 - `chart.definition.json` - Section metadata and schema
 - `README.md` - This documentation
 
+

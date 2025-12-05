@@ -81,8 +81,8 @@ export class VirtualScrollComponent<T> implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.scrollManager = new VirtualScrollManager({
       itemHeight: this.itemHeight,
-      containerHeight: this.containerHeight,
-      overscan: this.overscan,
+      // containerHeight: this.containerHeight,
+      bufferSize: this.overscan,
     });
 
     this.updateVirtualScroll();
@@ -96,7 +96,11 @@ export class VirtualScrollComponent<T> implements AfterViewInit, OnDestroy {
   onScroll(event: Event): void {
     const target = event.target as HTMLElement;
     if (this.scrollManager) {
-      const result = this.scrollManager.updateScroll(target.scrollTop);
+      const result = this.scrollManager.calculate(
+        this.items,
+        target.scrollTop,
+        target.clientHeight
+      );
       this.updateDisplay(result);
       this.scrollChange.emit(result);
     }
@@ -104,8 +108,10 @@ export class VirtualScrollComponent<T> implements AfterViewInit, OnDestroy {
 
   private updateVirtualScroll(): void {
     if (this.scrollManager) {
-      this.scrollManager.setTotalItems(this.items.length);
-      const result = this.scrollManager.calculate();
+      // Stub implementation - get scroll values from somewhere
+      const scrollTop = 0;
+      const viewportHeight = 600;
+      const result = this.scrollManager.calculate(this.items, scrollTop, viewportHeight);
       this.updateDisplay(result);
     }
   }

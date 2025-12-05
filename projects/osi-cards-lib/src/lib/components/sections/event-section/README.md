@@ -87,3 +87,4 @@ const section: CardSection = {
 - `event.definition.json` - Section metadata and schema
 - `README.md` - This documentation
 
+

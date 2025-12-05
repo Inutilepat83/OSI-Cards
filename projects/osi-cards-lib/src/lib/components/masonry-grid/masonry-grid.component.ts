@@ -22,7 +22,16 @@ import {
   SectionRendererComponent,
   SectionRenderEvent,
 } from '../section-renderer/section-renderer.component';
-import { Breakpoint, getBreakpointFromWidth } from '../../utils/responsive.util';
+import { Breakpoint } from '../../types';
+
+// Stub function - responsive.util was removed
+function getBreakpointFromWidth(width: number): Breakpoint {
+  if (width < 576) return 'xs';
+  if (width < 768) return 'sm';
+  if (width < 992) return 'md';
+  if (width < 1200) return 'lg';
+  return 'xl';
+}
 import {
   MIN_COLUMN_WIDTH,
   MAX_COLUMNS,

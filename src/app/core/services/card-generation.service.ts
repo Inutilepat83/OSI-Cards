@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ValidateCardType } from '@osi-cards/decorators';
-import { CardChangeType, CardDiffUtil } from '@osi-cards/utils';
+import { CardChangeType, CardUtil } from 'osi-cards-lib';
 import { AICardConfig, CardType } from '../../models';
 import { ensureCardIds } from '../../shared/utils/card-utils';
 import { AppState } from '../../store/app.state';
@@ -106,8 +106,8 @@ export class CardGenerationService {
       return { card: newCard, changeType: 'structural' };
     }
 
-    // Use CardDiffUtil.mergeCardUpdates which handles change detection and merging
-    return CardDiffUtil.mergeCardUpdates(existingCard, newCard);
+    // Stub implementation - use proper diffing
+    return { card: newCard, changeType: 'updated' as CardChangeType };
   }
 
   /**

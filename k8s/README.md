@@ -298,3 +298,4 @@ HPA automatically scales based on:
 **Kubernetes Version:** 1.28+
 **Status:** Production Ready ☸️
 
+

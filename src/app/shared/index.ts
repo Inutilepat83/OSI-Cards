@@ -21,7 +21,13 @@ export * from './services/search-filter.service';
 export * from './services/section-completion.service';
 // Toast service now in library - use osi-cards-lib
 // export * from './services/toast.service';
-export * from './utils';
+
+// Utils - export selectively to avoid conflicts
+export { ensureCardIds, removeAllIds, CardUtil } from './utils/card-utils';
+export * from './utils/error-messages';
+export * from './utils/validation.util';
+// Note: Constants not exported to avoid StreamingStage conflict with components/cards
+// Import directly from './utils/constants' if needed
 
 // Re-export from library for backwards compatibility
 export {

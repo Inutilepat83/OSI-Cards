@@ -165,9 +165,9 @@ const DEFAULT_COL_SPAN_THRESHOLD: ColSpanThresholds = { two: 3, three: 6 }; // L
 })
 export class SectionNormalizationService {
   // ========== Caching (merged from cached-section-normalization.service.ts) ==========
-  private readonly normalizedSectionsCache = new LRUCache<string, CardSection>({ maxSize: 200 });
-  private readonly sortedSectionsCache = new LRUCache<string, CardSection[]>({ maxSize: 50 });
-  private readonly columnSpanCache = new LRUCache<string, number>({ maxSize: 500 });
+  private readonly normalizedSectionsCache = new LRUCache<string, CardSection>(200);
+  private readonly sortedSectionsCache = new LRUCache<string, CardSection[]>(50);
+  private readonly columnSpanCache = new LRUCache<string, number>(500);
   private cacheHits = 0;
   private cacheMisses = 0;
 

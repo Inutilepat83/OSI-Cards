@@ -118,7 +118,7 @@ export class CardTemplatesService {
         const template = cards[Math.min(variant - 1, cards.length - 1)] ?? cards[0];
 
         // Sanitize template (remove IDs, ensure structure)
-        const scrubbed = removeAllIds(template);
+        const scrubbed = template ? removeAllIds(template) : template;
         if (!scrubbed) {
           // Fallback to built-in templates if scrubbing fails
           return this.getBuiltInTemplate(cardType, variant);

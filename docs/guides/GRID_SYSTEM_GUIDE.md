@@ -382,3 +382,4 @@ export class CustomGridComponent {
 **Status:** Production Ready
 **Version:** 1.5.5
 
+

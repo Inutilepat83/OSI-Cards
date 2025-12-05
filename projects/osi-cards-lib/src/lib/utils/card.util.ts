@@ -29,8 +29,8 @@
  */
 
 // Re-export card diff utilities
-export * from './card-diff.util';
-export * from './card-spawner.util';
+// Removed - card-diff.util and card-spawner.util deleted
+// Use CardUtil methods instead
 
 // Consolidated namespace for convenience
 export const CardUtil = {

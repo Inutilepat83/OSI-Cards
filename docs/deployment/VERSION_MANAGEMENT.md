@@ -25,7 +25,7 @@ The OSI Cards project maintains version consistency across multiple targets:
 # Patch release (1.5.5 → 1.5.6) + publish to NPM
 npm run publish:smart
 
-# Minor release (1.5.5 → 1.6.0) + publish to NPM  
+# Minor release (1.5.5 → 1.6.0) + publish to NPM
 npm run publish:smart:minor
 
 # Major release (1.5.5 → 2.0.0) + publish to NPM
@@ -105,7 +105,7 @@ Use smart publish script:
 
 ```bash
 npm run publish:smart          # patch
-npm run publish:smart:minor    # minor  
+npm run publish:smart:minor    # minor
 npm run publish:smart:major    # major
 ```
 
@@ -314,6 +314,7 @@ The deployment pipeline now:
 
 ---
 
-**Last Updated:** Automated version sync system  
+**Last Updated:** Automated version sync system
 **Version:** Dynamic (synced from `version.config.json`)
+
 

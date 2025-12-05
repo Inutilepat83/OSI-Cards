@@ -78,7 +78,7 @@ jobs:
 
       - name: Publish to NPM
         if: |
-          github.event.inputs.publish_npm == 'true' || 
+          github.event.inputs.publish_npm == 'true' ||
           (github.event_name == 'push' && contains(github.event.head_commit.message, '[publish]'))
         run: |
           cd dist/osi-cards-lib
@@ -112,11 +112,11 @@ jobs:
           name: Release v${{ env.NEW_VERSION }}
           body: |
             ## OSI Cards v${{ env.NEW_VERSION }}
-            
+
             ### Deployments
             - 📦 NPM: https://www.npmjs.com/package/osi-cards-lib
             - 🌐 Demo: https://osi-card.web.app/
-            
+
             ### Changes
             See [CHANGELOG.md](https://github.com/Inutilepat83/OSI-Cards/blob/main/CHANGELOG.md) for details.
           draft: false
@@ -136,4 +136,5 @@ jobs:
         run: |
           echo "❌ Deployment failed!"
           echo "Check logs for details."
+
 

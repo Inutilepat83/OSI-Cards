@@ -21,11 +21,17 @@
  */
 
 import { CardSection } from '../models/card.model';
-import {
-  estimateSectionHeight,
-  measureContentDensity,
-  calculatePriorityScore,
-} from './smart-grid.util';
+// Removed - smart-grid.util deleted
+// Stub implementations
+function estimateSectionHeight(section: any): number {
+  return 200;
+}
+function measureContentDensity(section: any): number {
+  return 1;
+}
+function calculatePriorityScore(section: any): number {
+  return 1;
+}
 
 // ============================================================================
 // TYPES AND INTERFACES

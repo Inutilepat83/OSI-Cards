@@ -125,7 +125,7 @@ export {
   CardUpdate,
   DynamicSectionLoaderService,
   EmailHandlerService,
-  EmptyStateService,
+  // EmptyStateService, // Removed - implement in your app
   ErrorSeverity,
   // Error & Logging Services
   ErrorTrackingService,
@@ -276,16 +276,8 @@ export * from './lib/interfaces';
 // Performance Optimization
 export { Memoize, MemoizeLRU, MemoizeTTL } from './lib/utils/advanced-memoization.util';
 export { ObjectPool } from './lib/utils/object-pool.util';
-export {
-  Deduplicate,
-  RequestDeduplicator,
-  createDeduplicator,
-  globalDeduplicator,
-  type DeduplicationOptions,
-} from './lib/utils/request-deduplication.util';
 
 // Layout & Grid
-export { calculateAdaptiveGap } from './lib/utils/adaptive-gap-sizing.util';
 export { PerfectBinPacker } from './lib/utils/perfect-bin-packer.util';
 
 // Animation & Interactions

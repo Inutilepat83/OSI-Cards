@@ -16,13 +16,13 @@ export class CachedSectionNormalizationService {
   private readonly normalizationService = inject(SectionNormalizationService);
 
   // Cache for normalized sections (key: hash of section, value: normalized section)
-  private readonly normalizedSectionsCache = new LRUCache<string, CardSection>({ maxSize: 200 });
+  private readonly normalizedSectionsCache = new LRUCache<string, CardSection>(200);
 
   // Cache for sorted sections (key: hash of sections array, value: sorted sections)
-  private readonly sortedSectionsCache = new LRUCache<string, CardSection[]>({ maxSize: 50 });
+  private readonly sortedSectionsCache = new LRUCache<string, CardSection[]>(50);
 
   // Cache for column span calculations
-  private readonly columnSpanCache = new LRUCache<string, number>({ maxSize: 500 });
+  private readonly columnSpanCache = new LRUCache<string, number>(500);
 
   // Statistics
   private cacheHits = 0;

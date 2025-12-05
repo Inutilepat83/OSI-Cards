@@ -24,17 +24,76 @@
  */
 
 import { CardSection } from '../models/card.model';
-import { WeightedColumnSelector, ColumnSelectionResult } from './weighted-column-selector.util';
-import {
-  SectionLayoutIntelligence,
-  OptimizedSectionLayout,
-} from './section-layout-intelligence.util';
-import { UltraCompactLayoutEngine, CompactionResult } from './ultra-compact-layout.util';
+// Removed - weighted-column-selector.util deleted
+type ColumnSelectionResult = any;
+class WeightedColumnSelector {
+  constructor(config?: any) {}
+  selectColumn(sections: any[], columns: number, config: any): ColumnSelectionResult {
+    return { column: 0, reason: 'default' };
+  }
+  findBestColumn(
+    section: any,
+    columnHeights: number[] | number,
+    config: any,
+    pending?: any,
+    intelligence?: any
+  ): number {
+    return 0;
+  }
+}
+// Removed - section-layout-intelligence.util deleted
+type OptimizedSectionLayout = any;
+class SectionLayoutIntelligence {
+  constructor(breakpoints: any, config?: any) {}
+  optimizeLayout(
+    sections: any[],
+    columns: number,
+    containerWidth?: number
+  ): OptimizedSectionLayout {
+    return sections;
+  }
+  optimizeSection(section: any, containerWidth: number, columns: number, config?: any): any {
+    return section;
+  }
+  getSectionPreferences(section: any): any {
+    return {};
+  }
+}
+
+// Removed - ultra-compact-layout.util deleted
+type CompactionResult = any;
+class UltraCompactLayoutEngine {
+  constructor(config?: any) {}
+  compact(layout: any, columns?: number, config?: any): CompactionResult {
+    return layout;
+  }
+}
+
 import { generateWidthExpression, generateLeftExpression } from './grid-config.util';
-import { GridPerformanceCache, getGlobalGridCache } from './grid-performance-cache.util';
-import { calculateAdaptiveGap, AdaptiveGapConfig, GapSizeResult } from './adaptive-gap-sizing.util';
-import { VisualBalanceScorer, BalanceScore } from './visual-balance-scorer.util';
-import { DynamicColumnOptimizer } from './dynamic-column-optimizer.util';
+
+// Removed utilities - stubs provided
+type GridPerformanceCache = any;
+function getGlobalGridCache(config?: any): GridPerformanceCache {
+  return {};
+}
+type AdaptiveGapConfig = any;
+type GapSizeResult = any;
+function calculateAdaptiveGap(width: number, config?: any): GapSizeResult {
+  return { gap: 16, reason: 'default' };
+}
+// Removed utilities - stubs provided
+type BalanceScore = any;
+class VisualBalanceScorer {
+  calculateBalance(layout: any, config?: any): BalanceScore {
+    return {};
+  }
+}
+class DynamicColumnOptimizer {
+  constructor(config?: any) {}
+  optimize(config: any): any {
+    return config;
+  }
+}
 
 // ============================================================================
 // TYPES

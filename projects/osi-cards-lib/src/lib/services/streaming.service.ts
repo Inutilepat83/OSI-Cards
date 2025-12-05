@@ -29,7 +29,7 @@
 import { Injectable, OnDestroy, inject, DestroyRef } from '@angular/core';
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { AICardConfig, CardSection, CardField, CardItem, CardTypeGuards } from '../models';
-import { CardChangeType } from '../utils/card-diff.util';
+import { CardChangeType } from '../types';
 
 /**
  * Streaming stage type

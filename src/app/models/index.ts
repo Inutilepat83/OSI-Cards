@@ -107,5 +107,6 @@ export {
 // APP-SPECIFIC TYPE EXTENSIONS
 // ============================================================================
 
-export * from './branded-types';
-export * from './discriminated-unions';
+// Removed - use library version from 'osi-cards-lib'
+// export * from './branded-types';
+// Removed - use library version from 'osi-cards-lib'

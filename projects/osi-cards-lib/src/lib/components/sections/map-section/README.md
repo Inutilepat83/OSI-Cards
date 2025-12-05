@@ -80,3 +80,4 @@ const section: CardSection = {
 - `map.definition.json` - Section metadata and schema
 - `README.md` - This documentation
 
+

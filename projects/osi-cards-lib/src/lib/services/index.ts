@@ -3,7 +3,8 @@
 // ============================================================================
 export * from './card-facade.service';
 export * from './email-handler.service';
-export * from './empty-state.service';
+// Removed - implement in your app
+// export * from './empty-state.service';
 export { CardBusEvent, EventBusService, EventHandler } from './event-bus.service';
 export * from './event-middleware.service';
 export * from './i18n.service';
@@ -31,7 +32,8 @@ export * from './accessibility.service';
 
 // Animation Service (merged: animation-orchestrator + section-animation)
 // Also available as separate services for backwards compatibility
-export * from './animation.service';
+// Removed - consolidated
+// export * from './animation.service';
 
 // Section Normalization Service (now includes caching from cached-section-normalization)
 export * from './section-normalization.service';
@@ -78,7 +80,8 @@ export {
 // ============================================================================
 export { ErrorSeverity, ErrorTrackingService, TrackedError } from './error-tracking.service';
 export { LogEntry, LogLevel, LoggerService, createLogger } from './logger.service';
-export * from './offline-storage.service';
+// Removed - implement in your app
+// export * from './offline-storage.service';
 export * from './performance-metrics.service';
 export { Toast, ToastService } from './toast.service';
 export * from './touch-gestures.service';

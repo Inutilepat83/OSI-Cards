@@ -334,3 +334,4 @@ kubectl scale deployment osi-cards --replicas=3
 **Next Test:** Quarterly
 **Status:** ✅ Ready
 
+

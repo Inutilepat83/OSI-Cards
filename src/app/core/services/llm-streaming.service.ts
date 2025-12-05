@@ -1,5 +1,5 @@
 import { inject, Injectable, OnDestroy } from '@angular/core';
-import { CardChangeType } from 'projects/osi-cards-lib/src/lib/utils/card-diff.util';
+import { CardChangeType } from 'osi-cards-lib';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { AICardConfig, CardField, CardItem, CardSection, CardTypeGuards } from '../../models';
 import { ensureCardIds } from '../../shared/utils/card-utils';

@@ -2,7 +2,7 @@
 
 /**
  * Smart Publish v2.0
- * 
+ *
  * Comprehensive publishing pipeline:
  * 1. Version bump (patch/minor/major)
  * 2. Sync all version references
@@ -32,7 +32,7 @@ function log(message, color = 'reset') {
 
 function exec(command, silent = false) {
   try {
-    const output = execSync(command, { 
+    const output = execSync(command, {
       encoding: 'utf8',
       stdio: silent ? 'pipe' : 'inherit'
     });
@@ -51,7 +51,7 @@ function getVersion() {
 function main() {
   const bumpType = process.argv[2] || 'patch';
   const validTypes = ['patch', 'minor', 'major', 'prerelease'];
-  
+
   if (!validTypes.includes(bumpType)) {
     log(`\n❌ Invalid bump type: ${bumpType}`, 'red');
     log(`Valid types: ${validTypes.join(', ')}\n`, 'yellow');
@@ -71,11 +71,11 @@ function main() {
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'blue');
     log('Step 0: Checking NPM registry...', 'yellow');
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n', 'blue');
-    
+
     const npmVersion = exec('npm view osi-cards-lib version', true) || '0.0.0';
     log(`   NPM Registry: ${npmVersion.trim()}`, 'blue');
     log(`   Local: ${oldVersion}`, 'blue');
-    
+
     if (npmVersion.trim() === oldVersion) {
       log(`   ⚠️  Version ${oldVersion} already published to NPM`, 'yellow');
       log(`   Will bump to next ${bumpType} version\n`, 'yellow');
@@ -87,9 +87,9 @@ function main() {
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'blue');
     log('Step 1: Bumping version in root package.json...', 'yellow');
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n', 'blue');
-    
+
     exec(`npm version ${bumpType} --no-git-tag-version`);
-    
+
     // Update version.config.json immediately
     const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
     const newVersion = packageJson.version;
@@ -97,7 +97,7 @@ function main() {
     versionConfig.version = newVersion;
     versionConfig.lastUpdated = new Date().toISOString();
     fs.writeFileSync('version.config.json', JSON.stringify(versionConfig, null, 2) + '\n', 'utf8');
-    
+
     log(`   ✅ Bumped: ${oldVersion} → ${newVersion}`, 'green');
     log(`   ✅ Updated version.config.json\n`, 'green');
 
@@ -105,7 +105,7 @@ function main() {
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'blue');
     log('Step 2: Syncing all version references...', 'yellow');
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n', 'blue');
-    
+
     exec('node scripts/sync-all-versions.js');
     log('   ⚠️  IMPORTANT: Library package.json now has v' + newVersion, 'yellow');
     log('');
@@ -114,7 +114,7 @@ function main() {
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'blue');
     log('Step 3: Building library...', 'yellow');
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n', 'blue');
-    
+
     exec('npm run build:lib');
     log('   ✅ Library built\n', 'green');
 
@@ -122,7 +122,7 @@ function main() {
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'blue');
     log('Step 4: Building demo app...', 'yellow');
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n', 'blue');
-    
+
     const buildOutput = exec('npm run build 2>&1', true);
     if (buildOutput && buildOutput.includes('Application bundle generation complete')) {
       log('   ✅ Demo app built\n', 'green');
@@ -134,7 +134,7 @@ function main() {
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'blue');
     log('Step 5: Publishing to NPM...', 'yellow');
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n', 'blue');
-    
+
     process.chdir('dist/osi-cards-lib');
     exec('npm publish --access public');
     process.chdir('../..');
@@ -144,7 +144,7 @@ function main() {
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'blue');
     log('Step 6: Committing changes...', 'yellow');
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n', 'blue');
-    
+
     exec('git add .');
     exec(`git commit --no-verify -m "chore(release): v${newVersion} [publish]"`);
     exec(`git tag -a "v${newVersion}" -m "Release v${newVersion}"`);
@@ -154,7 +154,7 @@ function main() {
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'blue');
     log('Step 7: Pushing to GitHub...', 'yellow');
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n', 'blue');
-    
+
     exec('git push origin main');
     exec('git push origin --tags');
     log('   ✅ Pushed to GitHub (Firebase deploy triggered)\n', 'green');

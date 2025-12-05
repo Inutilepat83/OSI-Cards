@@ -79,3 +79,4 @@ const section: CardSection = {
 - `financials.definition.json` - Section metadata and schema
 - `README.md` - This documentation
 
+

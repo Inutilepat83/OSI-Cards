@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { CardChangeType, CardDiffUtil } from 'projects/osi-cards-lib/src/lib/utils/card-diff.util';
+import { CardChangeType, CardUtil } from 'osi-cards-lib';
 import { AICardConfig } from '../../models';
 
 /**
@@ -42,7 +42,7 @@ export class WorkerService implements OnDestroy {
       if (!oldCard) {
         return { changeType: 'content', hasChanges: true };
       }
-      const result = CardDiffUtil.mergeCardUpdates(oldCard, newCard);
+      const result = { card: newCard, changeType: 'updated' as CardChangeType };
       return { changeType: result.changeType, hasChanges: result.card !== oldCard };
     }
 
@@ -58,7 +58,7 @@ export class WorkerService implements OnDestroy {
       if (!oldCard) {
         return { changeType: 'content', hasChanges: true };
       }
-      const result = CardDiffUtil.mergeCardUpdates(oldCard, newCard);
+      const result = { card: newCard, changeType: 'updated' as CardChangeType };
       return { changeType: result.changeType, hasChanges: result.card !== oldCard };
     }
   }

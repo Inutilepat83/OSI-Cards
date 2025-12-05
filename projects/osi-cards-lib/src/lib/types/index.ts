@@ -12,8 +12,11 @@ export * from './utility.types';
 
 // Re-export commonly needed types from other modules
 export type { ThemePreset } from '../themes/theme.service';
-export type { LayoutPhase, PackingAlgorithm } from '../utils/grid-logger.util';
-export type { Breakpoint } from '../utils/responsive.util';
+// Removed - grid-logger.util deleted
+export type LayoutPhase = 'initial' | 'optimization' | 'finalization';
+export type PackingAlgorithm = 'skyline' | 'bin-packer' | 'row-packer';
+// Removed - responsive.util deleted
+export type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type { AnimationState } from '../utils/web-animations.util';
 
 // ThemeMode type

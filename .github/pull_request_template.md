@@ -1,62 +1,95 @@
-## Description
+# Pull Request
 
-<!-- Provide a brief description of the changes in this PR -->
+## 📋 Description
 
-## Type of Change
+<!-- Provide a brief description of your changes -->
 
-- [ ] Bug fix (non-breaking change that fixes an issue)
-- [ ] New feature (non-breaking change that adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to change)
-- [ ] Documentation update
-- [ ] Performance improvement
-- [ ] Code refactoring (no functional changes)
-- [ ] Test update
+## 🎯 Type of Change
 
-## Related Issues
+- [ ] 🐛 Bug fix (non-breaking change fixing an issue)
+- [ ] ✨ New feature (non-breaking change adding functionality)
+- [ ] 💥 Breaking change (fix or feature causing existing functionality to change)
+- [ ] 📝 Documentation update
+- [ ] 🎨 Style/UI update
+- [ ] ♻️ Code refactoring
+- [ ] ⚡ Performance improvement
+- [ ] ✅ Test addition/update
+- [ ] 🔧 Configuration change
 
-<!-- Link any related issues here using #issue-number -->
+## 🔗 Related Issues
 
-Fixes #
+<!-- Link related issues: Fixes #123, Closes #456 -->
 
-## Checklist
+## 🧪 Testing
+
+- [ ] All existing tests pass
+- [ ] New tests added for new functionality
+- [ ] Manual testing completed
+- [ ] E2E tests updated (if applicable)
+
+## ✅ Checklist
 
 ### Code Quality
-
-- [ ] My code follows the project's coding standards
-- [ ] I have performed a self-review of my code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] My changes generate no new warnings or errors
+- [ ] Code follows project style guidelines
+- [ ] No console.log or debugging code left
+- [ ] No TypeScript errors
+- [ ] ESLint passes without warnings
+- [ ] Code is self-documenting or has comments
 
 ### Testing
-
-- [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] New and existing unit tests pass locally with my changes
-- [ ] E2E tests pass (if applicable)
+- [ ] Unit tests added/updated
+- [ ] Test coverage maintained/improved
+- [ ] E2E tests pass
+- [ ] Manual testing performed
 
 ### Documentation
-
-- [ ] I have made corresponding changes to the documentation
-- [ ] I have updated the CHANGELOG (if applicable)
-
-### Accessibility
-
-- [ ] I have ensured my changes meet WCAG 2.1 AA standards
-- [ ] Interactive elements have appropriate ARIA labels
-- [ ] Keyboard navigation works as expected
+- [ ] README updated (if needed)
+- [ ] API documentation updated (if needed)
+- [ ] CHANGELOG updated
+- [ ] Comments added for complex logic
 
 ### Performance
+- [ ] No performance regressions
+- [ ] Bundle size checked
+- [ ] Lighthouse score maintained
 
-- [ ] I have considered the performance impact of my changes
-- [ ] Components use OnPush change detection
-- [ ] ngFor loops have trackBy functions
+### Accessibility
+- [ ] WCAG 2.1 AA compliant
+- [ ] Keyboard navigation works
+- [ ] Screen reader tested (if UI changes)
+- [ ] Color contrast checked
 
-## Screenshots (if applicable)
+## 📸 Screenshots
 
-<!-- Add screenshots to help explain your changes -->
+<!-- Add screenshots if UI changes -->
 
-## Additional Notes
+## 📝 Additional Notes
 
-<!-- Add any additional notes for reviewers -->
+<!-- Any additional information for reviewers -->
 
+---
 
+## For Reviewers
+
+### Review Checklist
+
+- [ ] Code quality and style
+- [ ] Test coverage adequate
+- [ ] Documentation complete
+- [ ] No security vulnerabilities
+- [ ] Performance acceptable
+- [ ] Accessibility maintained
+- [ ] Breaking changes documented
+
+### Testing Instructions
+
+1. Checkout branch: `git checkout feature/branch-name`
+2. Install dependencies: `npm install`
+3. Run tests: `npm test`
+4. Start app: `npm start`
+5. Test manually: [specific testing steps]
+
+---
+
+**Thank you for your contribution! 🎉**
 

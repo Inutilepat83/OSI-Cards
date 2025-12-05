@@ -79,10 +79,6 @@ export class WebPImageAsyncPipe implements PipeTransform {
       return of(originalUrl);
     }
 
-    return from(
-      getOptimizedImageUrl(originalUrl, webpUrl)
-        .then((result) => result.src)
-        .catch(() => originalUrl)
-    );
+    return from(Promise.resolve(getOptimizedImageUrl(originalUrl)).catch(() => originalUrl));
   }
 }

@@ -34,7 +34,10 @@ import { LucideIconsModule } from '../../icons/lucide-icons.module';
   template: `
     <div class="collaboration-indicator" *ngIf="collaborationState$ | async as state">
       <!-- Presence indicators -->
-      <div class="presence-indicators" *ngIf="state.collaborators.length > 0">
+      <div
+        class="presence-indicators"
+        *ngIf="state.collaborators && state.collaborators.length > 0"
+      >
         <div
           *ngFor="let collaborator of state.collaborators"
           class="presence-avatar"
@@ -43,8 +46,8 @@ import { LucideIconsModule } from '../../icons/lucide-icons.module';
         >
           <span class="presence-initial">{{ getInitial(collaborator.name) }}</span>
         </div>
-        <span class="presence-count" *ngIf="state.collaborators.length > 3">
-          +{{ state.collaborators.length - 3 }}
+        <span class="presence-count" *ngIf="state.collaborators && state.collaborators.length > 3">
+          +{{ (state.collaborators?.length || 0) - 3 }}
         </span>
       </div>
 

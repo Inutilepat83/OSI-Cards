@@ -423,3 +423,4 @@ $([ "$(cat version.config.json | jq -r .version)" == "$(npm view osi-cards-lib v
 EOF
 ```
 
+

@@ -10,7 +10,8 @@ import { CardFacadeService } from '../services/card-facade.service';
 import { SectionPluginRegistry } from '../services/section-plugin-registry.service';
 import { FeatureFlagsService } from '../services/feature-flags.service';
 import { AccessibilityService } from '../services/accessibility.service';
-import { AnimationService } from '../services/animation.service';
+// Removed - animation.service deleted
+// Use animation utilities instead
 // import { LayoutOptimizerService } from '../services/layout-optimizer.service';  // Service disabled due to type errors
 
 /**
@@ -54,7 +55,7 @@ export function provideOsiCardsCore(): Provider[] {
     // Consolidated services (Phase 3)
     FeatureFlagsService, // Now includes migration flags
     AccessibilityService, // Now includes focus-trap, live-announcer, reduced-motion
-    AnimationService, // Now includes orchestrator + section animation
+    // AnimationService, // Removed // Now includes orchestrator + section animation
     // LayoutOptimizerService,      // Disabled: service has type errors
   ];
 }

@@ -39,7 +39,7 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
   private logger = inject(LoggingService);
   private destroyRef = inject(DestroyRef);
   private requestQueue = inject(RequestQueueService);
-  private indexedDBCache = inject(IndexedDBCacheService);
+  private indexedDBCache: IndexedDBCacheService = inject(IndexedDBCacheService);
   private validationService = inject(CardValidationService);
   private zodValidationService = inject(ValidationService);
   private manifestCache$?: Observable<CardManifest>;

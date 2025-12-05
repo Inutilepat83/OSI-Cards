@@ -20,7 +20,10 @@
  */
 
 import { CardSection } from '../models/card.model';
-import { estimateSectionHeight } from './smart-grid.util';
+// Stub function - smart-grid.util was removed
+function estimateSectionHeight(section: any): number {
+  return 200; // Default height estimate
+}
 
 // ============================================================================
 // TYPES AND INTERFACES

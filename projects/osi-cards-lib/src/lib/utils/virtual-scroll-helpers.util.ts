@@ -313,7 +313,7 @@ export class VirtualScrollHelper {
       if (i < items.length) {
         visibleItems.push({
           index: i,
-          data: items[i],
+          data: items[i]!,
           height: this.manager.getItemHeight(i),
           top: this.manager.getPositionAtIndex(i),
         });
