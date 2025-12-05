@@ -726,7 +726,7 @@ export class MasterGridLayoutEngine {
     compacted: CompactionResult,
     original: PlacedSection[]
   ): PlacedSection[] {
-    return compacted.sections.map((compact) => {
+    return compacted.sections.map((compact: any) => {
       const orig = original.find((o) => o.key === compact.key);
       return {
         section: compact.section,

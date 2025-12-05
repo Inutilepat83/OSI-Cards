@@ -53,15 +53,35 @@ function logInfo(msg) {
 }
 
 // Execute a script and handle errors
-function runScript(scriptPath, description) {
+function runScript(scriptPath, description, optional = false) {
+  const fs = require('fs');
+  const fullPath = path.join(__dirname, '..', scriptPath);
+  
+  // Check if script exists
+  if (!fs.existsSync(fullPath)) {
+    if (optional) {
+      log(`\n▶ ${description}...`, colors.cyan);
+      logInfo(`${description} skipped (script not found)`);
+      return true;
+    } else {
+      logError(`${description} failed: Script not found: ${scriptPath}`);
+      return false;
+    }
+  }
+  
   try {
     log(`\n▶ ${description}...`, colors.cyan);
     execSync(`node ${scriptPath}`, { stdio: 'inherit', cwd: path.join(__dirname, '..') });
     logSuccess(`${description} completed`);
     return true;
   } catch (error) {
-    logError(`${description} failed: ${error.message}`);
-    return false;
+    if (optional) {
+      logInfo(`${description} skipped: ${error.message}`);
+      return true;
+    } else {
+      logError(`${description} failed: ${error.message}`);
+      return false;
+    }
   }
 }
 
@@ -71,29 +91,34 @@ function main() {
   logInfo('Running post-build tasks for osi-cards-lib...\n');
 
   const tasks = [
-    { script: 'scripts/generate-library-package-json.js', desc: 'Generate library package.json' },
-    { script: 'scripts/copy-library-files.js', desc: 'Copy library files' },
-    { script: 'scripts/compile-styles.js', desc: 'Compile styles' },
+    { script: 'scripts/generate-library-package-json.js', desc: 'Generate library package.json', optional: false },
+    { script: 'scripts/copy-library-files.js', desc: 'Copy library files', optional: true },
+    { script: 'scripts/compile-styles.js', desc: 'Compile styles', optional: true },
   ];
 
   let success = 0;
   let failed = 0;
+  let requiredFailed = 0;
 
   for (const task of tasks) {
-    if (runScript(task.script, task.desc)) {
+    const result = runScript(task.script, task.desc, task.optional);
+    if (result) {
       success++;
     } else {
       failed++;
+      if (!task.optional) {
+        requiredFailed++;
+      }
     }
   }
 
   log('\n' + '═'.repeat(70), colors.cyan);
-
-  if (failed === 0) {
-    logSuccess(`All post-build tasks completed successfully (${success}/${tasks.length})`);
+  
+  if (requiredFailed === 0) {
+    logSuccess(`All required post-build tasks completed successfully (${success}/${tasks.length})`);
     logInfo('\nLibrary build artifacts are ready in dist/osi-cards-lib/');
   } else {
-    logError(`Post-build completed with errors: ${failed}/${tasks.length} tasks failed`);
+    logError(`Post-build completed with errors: ${requiredFailed} required task(s) failed`);
     process.exit(1);
   }
 }
