@@ -14,27 +14,27 @@
 .chart-container {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
 }
 
 // CHART WRAPPER - Proper spacing and height
 .chart-wrapper {
   @include card;
-  padding: 16px; // Good padding around chart
+  padding: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
   background: var(--surface);
-  min-height: 320px; // Ensure chart has good size
+  min-height: 300px; // Compact: 300px (was 320px) - Charts need space
   display: flex;
   flex-direction: column;
-  gap: 12px; // Space between title and canvas
+  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
 }
 
 .chart-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
   flex-wrap: wrap;
-  padding-bottom: 12px; // Separation from chart
+  padding-bottom: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
   border-bottom: 1px solid var(--border);
 }
 
@@ -47,21 +47,21 @@
 
 .chart-legend {
   display: flex;
-  gap: 12px;
+  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
   flex-wrap: wrap;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 6px)
   font-size: 0.7rem;
   color: var(--muted-foreground);
 }
 
 .legend-color {
-  width: 12px;
-  height: 12px;
+  width: 10px; // Compact: 10px (was 12px)
+  height: 10px; // Compact: 10px (was 12px)
   border-radius: 2px;
   flex-shrink: 0;
 }
@@ -70,7 +70,7 @@
 .chart-canvas-wrapper {
   flex: 1;
   position: relative;
-  min-height: 250px; // Ensure good chart size
+  min-height: 230px; // Compact: 230px (was 250px)
   width: 100%;
 
   canvas {
@@ -83,8 +83,8 @@
 .chart-footer {
   display: flex;
   justify-content: space-around;
-  gap: 16px;
-  padding-top: 12px;
+  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
+  padding-top: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
   border-top: 1px solid var(--border);
 }
 
@@ -92,7 +92,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
 }
 
 .chart-stat-value {
@@ -112,23 +112,23 @@
 // RESPONSIVE
 @media (max-width: 768px) {
   .chart-wrapper {
-    padding: 14px;
-    min-height: 280px;
+    padding: var(--osi-spacing-compact-md, 12px);
+    min-height: 260px; // Compact: 260px (was 280px)
   }
 
   .chart-canvas-wrapper {
-    min-height: 220px;
+    min-height: 200px; // Compact: 200px (was 220px)
   }
 }
 
 @media (max-width: 480px) {
   .chart-wrapper {
-    padding: 12px;
-    min-height: 240px;
+    padding: var(--osi-spacing-compact-sm, 6px);
+    min-height: 220px; // Compact: 220px (was 240px)
   }
 
   .chart-canvas-wrapper {
-    min-height: 180px;
+    min-height: 160px; // Compact: 160px (was 180px)
   }
 
   .chart-header {
@@ -137,6 +137,6 @@
 
   .chart-footer {
     flex-direction: column;
-    gap: 12px;
+    gap: var(--osi-spacing-compact-sm, 6px);
   }
 }

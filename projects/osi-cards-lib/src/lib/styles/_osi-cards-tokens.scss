@@ -118,13 +118,21 @@
   --osi-spacing-20: 5rem; // 80px
   --osi-spacing-24: 6rem; // 96px
 
-  // Semantic spacing aliases
+  // Semantic spacing aliases (DEFAULT)
   --osi-spacing-xs: var(--osi-spacing-1);
   --osi-spacing-sm: var(--osi-spacing-2);
   --osi-spacing-md: var(--osi-spacing-4);
   --osi-spacing-lg: var(--osi-spacing-6);
   --osi-spacing-xl: var(--osi-spacing-8);
   --osi-spacing-2xl: var(--osi-spacing-12);
+
+  // COMPACT MODE - Reduced spacing (25-30% smaller)
+  --osi-spacing-compact-xs: var(--osi-spacing-0_5); // 2px (was 4px)
+  --osi-spacing-compact-sm: var(--osi-spacing-1_5); // 6px (was 8px)
+  --osi-spacing-compact-md: var(--osi-spacing-3); // 12px (was 16px)
+  --osi-spacing-compact-lg: var(--osi-spacing-4); // 16px (was 24px)
+  --osi-spacing-compact-xl: var(--osi-spacing-6); // 24px (was 32px)
+  --osi-spacing-compact-2xl: var(--osi-spacing-8); // 32px (was 48px)
 }
 
 // ============================================================================

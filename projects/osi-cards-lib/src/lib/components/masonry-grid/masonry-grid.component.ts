@@ -22,6 +22,7 @@ import {
   SectionRendererComponent,
   SectionRenderEvent,
 } from '../section-renderer/section-renderer.component';
+import { MasonryGridLayoutService, LayoutConfig } from './masonry-grid-layout.service';
 import { Breakpoint } from '../../types';
 
 // Stub function - responsive.util was removed
@@ -224,6 +225,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   @ViewChildren('itemRef') itemRefs!: QueryList<ElementRef<HTMLDivElement>>;
 
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly layoutService = inject(MasonryGridLayoutService);
 
   positionedSections: PositionedSection[] = [];
   containerHeight = 0;
@@ -258,37 +260,20 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   /** Current column count (after calculation) */
   currentColumns = 1;
 
-  private resizeObserver?: ResizeObserver | undefined;
-  private itemObserver?: ResizeObserver | undefined;
-  private pendingAnimationFrame?: number | undefined;
+  // ========================================================================
+  // SIMPLE LAYOUT SYSTEM
+  // ========================================================================
+
+  private resizeObserver?: ResizeObserver;
+  private layoutTimeout?: number;
+  private reflowTimeout?: number;
+  private lastWidth = 0;
   private reflowCount = 0;
-  private readonly MAX_REFLOWS = 5;
-  private resizeThrottleTimeout?: number | undefined;
-  private readonly RESIZE_THROTTLE_MS = 16; // ~1 frame at 60fps
-  private readonly RESIZE_DEBOUNCE_MS = 100; // Debounce rapid resize events
-  private lastLayoutInfo?: MasonryLayoutInfo | undefined;
-  private rafId?: number | undefined;
-  private initialLayoutRetries = 0;
-  private readonly MAX_INITIAL_RETRIES = 5; // Reduced - rely more on ResizeObserver
-  private initialLayoutTimeout?: number;
+  private lastLayoutInfo?: MasonryLayoutInfo;
+  private isReflowing = false; // Prevent concurrent reflows
+  private readonly MAX_REFLOWS = 3;
 
-  // Track whether layout has been successfully calculated with valid width
-  private hasValidLayout = false;
-  private lastValidContainerWidth = 0;
-  private layoutVerificationTimeout?: number | undefined;
-
-  // Debounced resize handling
-  private resizeDebounceTimeout?: number | undefined;
-  private pendingResizeWidth = 0;
-
-  // Simplified polling (reduced from 5s to 2s)
-  private widthPollingInterval?: number | undefined;
-  private widthPollingStartTime = 0;
-  private readonly WIDTH_POLLING_DURATION_MS = 2000;
-  private readonly WIDTH_POLLING_INTERVAL_MS = 50; // Faster polling
-
-  // Track previous column count for logging column changes
-  private previousColumnCount = 0;
+  private readonly DEBOUNCE_MS = 150;
 
   // Virtual scroll manager for large section lists
   private virtualScrollManager: VirtualScrollManager<PositionedSection> | null = null;
@@ -305,7 +290,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
   /** Whether virtual scrolling is currently active */
   get isVirtualScrollActive(): boolean {
-    return this.enableVirtualScroll && this.positionedSections.length >= this.virtualThreshold;
+    return this.enableVirtualScroll && (this.sections?.length || 0) >= this.virtualThreshold;
   }
 
   constructor() {
@@ -323,78 +308,40 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    // Track streaming state changes - but DON'T clear renderedSectionKeys on start
-    // We only clear it when sections are completely replaced (new card)
-    if (changes['isStreaming']) {
-      const wasStreaming = this.previousStreamingState;
-      const nowStreaming = this.isStreaming;
-
-      // Streaming ended - finalize all section animations
-      if (wasStreaming && !nowStreaming) {
-        this.finalizeStreamingAnimations();
-      }
-
-      this.previousStreamingState = nowStreaming;
-    }
-
+    // Only update if sections actually changed
     if (changes['sections']) {
-      const previousSections = changes['sections'].previousValue as CardSection[] | undefined;
-      const currentSections = changes['sections'].currentValue as CardSection[] | undefined;
+      const prevSections = changes['sections'].previousValue as CardSection[] | undefined;
+      const currSections = changes['sections'].currentValue as CardSection[] | undefined;
 
-      // Detect if this is a completely new card (different section IDs)
-      const isNewCard = this.detectNewCard(previousSections, currentSections);
+      // Check if sections actually changed (length or content)
+      const sectionsChanged =
+        !prevSections ||
+        !currSections ||
+        prevSections.length !== currSections.length ||
+        prevSections.some(
+          (s, i) => s?.id !== currSections[i]?.id || s?.title !== currSections[i]?.title
+        );
 
-      if (isNewCard) {
-        // New card - clear animation tracking to allow fresh animations
-        this.renderedSectionKeys.clear();
-        this.previousSectionIds.clear();
-        this.animatedSectionKeys.clear();
+      if (sectionsChanged) {
+        this.reflowCount = 0; // Reset reflow count on section changes
+        this.updateLayout();
       }
-
-      // Update previous section IDs for next comparison
-      this.updatePreviousSectionIds(currentSections);
-
-      this.computeInitialLayout();
-      // Reset reflow count for section changes
-      this.reflowCount = 0;
-      // Schedule immediate layout update for section changes
-      this.scheduleLayoutUpdate();
-      // Also force initial layout if not ready
-      if (!this.isLayoutReady && this.containerRef?.nativeElement) {
-        this.forceInitialLayout();
-      }
-      this.cdr.markForCheck();
     }
 
-    // Handle containerWidth changes - trigger immediate layout recalculation
-    // IMPORTANT: Handle BOTH first change and subsequent changes
+    // Handle containerWidth changes
     if (changes['containerWidth']) {
-      const newValue = changes['containerWidth'].currentValue;
-
-      // Trigger recalculation if new width is valid
-      if (newValue && newValue > 0) {
-        this.reflowCount = 0;
-        this.hasValidLayout = false; // Force recalculation
-        // Use forceInitialLayout for comprehensive recalculation
-        this.forceInitialLayout();
-        this.cdr.markForCheck();
+      const newWidth = changes['containerWidth'].currentValue;
+      if (newWidth && newWidth > 0 && newWidth !== this.lastWidth) {
+        this.reflowCount = 0; // Reset reflow count on width changes
+        this.updateLayout();
       }
     }
   }
 
   ngAfterViewInit(): void {
-    this.computeInitialLayout();
-    this.observeContainer();
-    this.observeItems();
-
-    // Initialize virtual scroll if enabled
-    this.initializeVirtualScroll();
-
-    // Force initial layout calculation with retry mechanism
-    this.forceInitialLayout();
-
-    // Schedule verification as a safety net for delayed width availability
-    this.scheduleLayoutVerification();
+    this.setupResizeObserver();
+    this.setupFullscreenListener();
+    this.updateLayout();
   }
 
   /**
@@ -489,111 +436,35 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
    * Forces initial layout calculation with retry mechanism.
    * This handles the case where container width is 0 on first render.
    */
-  private forceInitialLayout(): void {
-    this.initialLayoutRetries = 0;
-    this.tryInitialLayout();
-  }
-
-  private tryInitialLayout(): void {
-    if (this.initialLayoutRetries >= this.MAX_INITIAL_RETRIES) {
-      // Give up after max retries, mark as visually ready for CSS but keep hasValidLayout false
-      // This shows the content but allows ResizeObserver to trigger full layout later
-      this.isLayoutReady = true;
-      // hasValidLayout remains false - layout still needs recalculation when width becomes available
-      this.cdr.markForCheck();
-      // Schedule a verification check to catch delayed width availability
-      this.scheduleLayoutVerification();
-      return;
-    }
-
-    this.initialLayoutRetries++;
-
-    // Check if container has a valid width
-    const containerWidth = this.getContainerWidth();
-
-    if (containerWidth > 0) {
-      // Container has width, proceed with layout
-      this.reflowCount = 0;
-      requestAnimationFrame(() => {
-        this.reflowWithActualHeights();
-        requestAnimationFrame(() => {
-          this.reflowWithActualHeights();
-          // Additional reflow for safety
-          requestAnimationFrame(() => {
-            this.reflowWithActualHeights();
-            this.isLayoutReady = true;
-            // hasValidLayout is set in reflowWithActualHeights when successful
-            this.cdr.markForCheck();
-          });
-        });
-      });
-    } else {
-      // Container width is 0, retry after a short delay
-      // Use increasing delays: 0, 16, 32, 48... ms
-      const delay = Math.min(this.initialLayoutRetries * 16, 100);
-      this.initialLayoutTimeout = window.setTimeout(() => {
-        this.tryInitialLayout();
-      }, delay);
-    }
-  }
 
   /**
    * Gets the container width using simplified fallback chain.
-   * Priority: @Input containerWidth → ResizeObserver cached width → DOM measurement → parent fallback
+   * Priority: @Input containerWidth → DOM measurement → parent fallback
+   * Improved to handle fullscreen and ensure accurate measurements
    */
   private getContainerWidth(): number {
-    // Priority 1: Use explicitly provided containerWidth from parent (most reliable)
+    // Use explicit input width if provided
     if (this.containerWidth && this.containerWidth > 0) {
       return this.containerWidth;
     }
 
-    // Priority 2: Use cached resize width if available (from ResizeObserver)
-    if (this.pendingResizeWidth > 0) {
-      return this.pendingResizeWidth;
-    }
-
-    // Priority 3: Use last valid width (prevents flickering during resize)
-    if (this.lastValidContainerWidth > 0) {
-      return this.lastValidContainerWidth;
-    }
-
     const container = this.containerRef?.nativeElement;
     if (!container) {
-      // Priority 4: Window fallback when container not ready
-      return this.getWindowFallbackWidth();
+      // Fallback to window width minus padding
+      return typeof window !== 'undefined' ? window.innerWidth - 80 : 1200;
     }
 
-    // Priority 5: Try getBoundingClientRect (most reliable DOM method)
+    // Use getBoundingClientRect for accurate measurement (includes padding/borders)
     const rect = container.getBoundingClientRect();
-    let width = rect.width;
+    const measuredWidth = rect.width || container.clientWidth || container.offsetWidth;
 
-    // If 0, try clientWidth as fallback
-    if (width === 0) {
-      width = container.clientWidth;
+    // Ensure we have a valid width
+    if (measuredWidth > 0) {
+      return measuredWidth;
     }
 
-    // If still too small, try parent (limited traversal)
-    if (width < this.minColumnWidth) {
-      const parent = container.parentElement;
-      if (parent) {
-        const parentRect = parent.getBoundingClientRect();
-        if (parentRect.width >= this.minColumnWidth) {
-          width = parentRect.width;
-        }
-      }
-    }
-
-    // Priority 6: Window fallback when all else fails
-    if (width < this.minColumnWidth) {
-      width = this.getWindowFallbackWidth();
-    }
-
-    // Cache valid width for stability
-    if (width >= this.minColumnWidth) {
-      this.lastValidContainerWidth = width;
-    }
-
-    return width;
+    // Final fallback
+    return typeof window !== 'undefined' ? window.innerWidth - 80 : 1200;
   }
 
   /**
@@ -611,31 +482,35 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   ngOnDestroy(): void {
+    // Clean up observers
     this.resizeObserver?.disconnect();
-    this.itemObserver?.disconnect();
-    if (this.pendingAnimationFrame) {
-      cancelAnimationFrame(this.pendingAnimationFrame);
+    this.resizeObserver = undefined;
+
+    // Clean up fullscreen listener
+    if (typeof document !== 'undefined') {
+      document.removeEventListener('fullscreenchange', this.handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', this.handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', this.handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', this.handleFullscreenChange);
     }
-    if (this.rafId) {
-      cancelAnimationFrame(this.rafId);
+
+    // Clean up timeouts
+    if (this.layoutTimeout) {
+      clearTimeout(this.layoutTimeout);
+      this.layoutTimeout = undefined;
     }
-    if (this.resizeThrottleTimeout) {
-      clearTimeout(this.resizeThrottleTimeout);
+    if (this.reflowTimeout) {
+      clearTimeout(this.reflowTimeout);
+      this.reflowTimeout = undefined;
     }
-    if (this.resizeDebounceTimeout) {
-      clearTimeout(this.resizeDebounceTimeout);
-    }
-    if (this.initialLayoutTimeout) {
-      clearTimeout(this.initialLayoutTimeout);
-    }
-    if (this.layoutVerificationTimeout) {
-      clearTimeout(this.layoutVerificationTimeout);
-    }
-    this.stopWidthPolling();
 
     // Clean up virtual scroll
     this.virtualScrollManager?.destroy();
+    this.virtualScrollManager = null;
     this.scrollUnsubscribe?.();
+    this.scrollUnsubscribe = null;
+
+    // Remove event listeners
     if (this.containerRef?.nativeElement) {
       this.containerRef.nativeElement.removeEventListener('scroll', this.handleScroll.bind(this));
     }
@@ -646,11 +521,12 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     this.animatedSectionKeys.clear();
   }
 
-  trackItem = (index: number, item: PositionedSection | null | undefined): string => {
+  trackItem = (index: number, item: CardSection | null | undefined): string => {
     if (!item) {
       return `null-item-${index}`;
     }
-    return item.key;
+    // Use section ID or generate stable key
+    return item.id || this.getStableSectionKey(item, index);
   };
 
   onSectionEvent(event: SectionRenderEvent): void {
@@ -765,8 +641,31 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
    * Sets up the ResizeObserver for the container.
    * Uses debouncing to prevent excessive layout calculations during resize.
    */
-  private observeContainer(): void {
-    if (typeof ResizeObserver === 'undefined' || !this.containerRef) {
+
+  /**
+   * Simple layout update with debouncing
+   * Prevents rapid recalculations during resize or rapid changes
+   */
+  private updateLayout(): void {
+    // Cancel any pending layout update
+    if (this.layoutTimeout) {
+      clearTimeout(this.layoutTimeout);
+      this.layoutTimeout = undefined;
+    }
+
+    // Debounce layout calculation to prevent excessive recalculations
+    this.layoutTimeout = window.setTimeout(() => {
+      this.layoutTimeout = undefined;
+      this.calculateLayout();
+    }, this.DEBOUNCE_MS);
+  }
+
+  /**
+   * Setup resize observer - only triggers on significant width changes
+   * Improved to handle fullscreen transitions and ensure proper recalculation
+   */
+  private setupResizeObserver(): void {
+    if (!this.containerRef || typeof ResizeObserver === 'undefined') {
       return;
     }
 
@@ -779,18 +678,27 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       // Skip if width is invalid
       if (newWidth <= 0) return;
 
-      // Cache the width for immediate use
-      this.pendingResizeWidth = newWidth;
+      // Calculate new column count
+      const newColumns = this.calculateResponsiveColumns(newWidth);
+      const columnsChanged = newColumns !== this.currentColumns;
 
-      // Check if this is a significant width change (> 4px)
-      const widthChange = Math.abs(newWidth - this.lastValidContainerWidth);
+      // Calculate width difference
+      const widthDiff = Math.abs(newWidth - this.lastWidth);
 
-      if (!this.hasValidLayout) {
-        // First valid width - force immediate layout
-        this.forceInitialLayout();
-      } else if (widthChange > 4) {
-        // Significant width change - debounce the layout update
-        this.debouncedLayoutUpdate(newWidth);
+      // Only update if:
+      // 1. Column count changed (breakpoint change) - always update
+      // 2. Width changed significantly (> 10px) - increased threshold to reduce blinking
+      // 3. Width changed by more than 2% (handles fullscreen transitions)
+      const significantChange =
+        widthDiff > 10 || (this.lastWidth > 0 && widthDiff / this.lastWidth > 0.02);
+
+      if (columnsChanged || significantChange) {
+        // Update cached width before triggering layout
+        this.lastWidth = newWidth;
+        this.updateLayout();
+      } else {
+        // Update cached width even if not recalculating (for next comparison)
+        this.lastWidth = newWidth;
       }
     });
 
@@ -798,80 +706,36 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   /**
-   * Debounces layout updates during rapid resize events.
-   * Waits for resize to settle before recalculating layout.
+   * Setup fullscreen change listener to recalculate layout when entering/exiting fullscreen
+   * This ensures proper layout when the container size changes due to fullscreen transitions
    */
-  private debouncedLayoutUpdate(newWidth: number): void {
-    // Clear existing debounce timeout
-    if (this.resizeDebounceTimeout) {
-      clearTimeout(this.resizeDebounceTimeout);
-    }
-
-    // Schedule debounced update
-    this.resizeDebounceTimeout = window.setTimeout(() => {
-      this.resizeDebounceTimeout = undefined;
-      this.pendingResizeWidth = newWidth;
-      this.scheduleLayoutUpdate();
-    }, this.RESIZE_DEBOUNCE_MS);
-  }
-
-  private observeItems(): void {
-    if (typeof ResizeObserver === 'undefined') {
+  private setupFullscreenListener(): void {
+    if (typeof document === 'undefined') {
       return;
     }
 
-    this.itemObserver = new ResizeObserver(() => this.throttledScheduleLayoutUpdate());
+    // Bind handler to preserve 'this' context
+    this.handleFullscreenChange = this.handleFullscreenChange.bind(this);
 
-    this.itemRefs.changes.subscribe((items: QueryList<ElementRef<HTMLDivElement>>) => {
-      this.itemObserver?.disconnect();
-      items.forEach((item) => this.itemObserver?.observe(item.nativeElement));
-      this.scheduleLayoutUpdate();
-    });
-
-    this.itemRefs.forEach((item) => this.itemObserver?.observe(item.nativeElement));
+    // Listen for fullscreen changes (cross-browser support)
+    document.addEventListener('fullscreenchange', this.handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', this.handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', this.handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', this.handleFullscreenChange);
   }
 
-  private throttledScheduleLayoutUpdate(): void {
-    if (this.resizeThrottleTimeout) {
-      return;
-    }
-    this.resizeThrottleTimeout = window.setTimeout(() => {
-      this.resizeThrottleTimeout = undefined;
-      this.scheduleLayoutUpdate();
-    }, this.RESIZE_THROTTLE_MS);
-  }
-
-  private scheduleLayoutUpdate(): void {
-    if (this._debug) {
-      console.log('[MasonryGrid] 📅 Scheduling layout update');
-    }
-
-    // Cancel any pending RAF
-    if (this.rafId) {
-      cancelAnimationFrame(this.rafId);
-      if (this._debug) {
-        console.log('[MasonryGrid] 🚫 Cancelled pending RAF');
-      }
-    }
-    if (this.pendingAnimationFrame) {
-      cancelAnimationFrame(this.pendingAnimationFrame);
-    }
-
-    // Reset reflow counter for new layout calculation
-    this.reflowCount = 0;
-
-    // Use immediate RAF for fastest response
-    this.rafId = requestAnimationFrame(() => {
-      this.rafId = undefined;
-      this.pendingAnimationFrame = requestAnimationFrame(() => {
-        this.pendingAnimationFrame = undefined;
-        if (this._debug) {
-          console.log('[MasonryGrid] 🔄 Executing reflowWithActualHeights from RAF');
-        }
-        this.reflowWithActualHeights();
-      });
-    });
-  }
+  /**
+   * Handle fullscreen change events
+   * Recalculates layout after a short delay to allow DOM to settle
+   */
+  private handleFullscreenChange = (): void => {
+    // Wait a bit for the DOM to settle after fullscreen change
+    setTimeout(() => {
+      // Force layout recalculation
+      this.lastWidth = 0; // Reset to force recalculation
+      this.updateLayout();
+    }, 100);
+  };
 
   /**
    * Generate a stable key for a section.
@@ -895,87 +759,86 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     return `${title}-${type}${idx}`;
   }
 
-  private computeInitialLayout(): void {
-    const resolvedSections = this.sections ?? [];
-
-    if (this._debug) {
-      console.log('[MasonryGrid] 🔄 computeInitialLayout called:', {
-        sectionCount: resolvedSections.length,
-        isStreaming: this.isStreaming,
-        isLayoutReady: this.isLayoutReady,
-        hasValidLayout: this.hasValidLayout,
-        timestamp: Date.now(),
-      });
-    }
-
-    // STREAMING OPTIMIZATION: Use incremental layout when streaming with existing sections
-    // This prevents blinking by avoiding isLayoutReady reset
-    if (this.isStreaming && this.positionedSections.length > 0 && this.isLayoutReady) {
-      if (this._debug) {
-        console.log('[MasonryGrid] 📝 Using incremental layout for streaming');
-      }
-      this.addNewSectionsIncrementally(resolvedSections);
+  /**
+   * Simple layout calculation - CSS Grid handles positioning
+   * Just calculate columns and let CSS do the rest
+   */
+  private calculateLayout(): void {
+    // Early return if container not ready
+    if (!this.containerRef?.nativeElement) {
       return;
     }
 
-    this.reflowCount = 0;
-    this.containerHeight = 0;
-    // IMPORTANT: During streaming, DON'T reset isLayoutReady to prevent opacity flash
-    if (!this.isStreaming) {
-      this.isLayoutReady = false;
-      this.hasValidLayout = false;
-    }
-    this.layoutState = 'measuring';
-
-    // Get container dimensions
     const containerWidth = this.getContainerWidth();
-
-    if (this._debug) {
-      console.log('[MasonryGrid] 📐 Container width:', containerWidth);
-    }
-
-    // Guard against invalid width
     if (containerWidth <= 0) {
-      console.warn('[MasonryGrid] ⚠️ Invalid container width, skipping layout');
       return;
     }
 
-    // ========================================================================
-    // CSS GRID: Browser does ALL the work!
-    // No JavaScript calculations, no absolute positioning, no complex algorithms
-    // ========================================================================
-
-    // Calculate responsive columns
-    this.currentColumns = this.calculateResponsiveColumns(containerWidth);
-
-    // Set CSS variables for grid
-    const containerElement = this.containerRef?.nativeElement;
-    if (containerElement) {
-      containerElement.style.setProperty('--masonry-columns', this.currentColumns.toString());
-      containerElement.style.setProperty('--masonry-gap', `${this.gap}px`);
+    const sections = this.sections ?? [];
+    if (sections.length === 0) {
+      this.currentColumns = 1;
+      this.isLayoutReady = true;
+      this.layoutState = 'ready';
+      this.cdr.markForCheck();
+      return;
     }
 
-    // That's it! Browser handles everything else via CSS Grid
+    // Calculate columns - CSS Grid handles the rest
+    this.currentColumns = this.calculateResponsiveColumns(containerWidth);
+    this.lastWidth = containerWidth;
+
+    // Apply CSS variables - CSS Grid handles positioning
+    this.applyLayoutToDOM(containerWidth);
+
+    // Mark as ready - CSS Grid handles heights automatically
     this.isLayoutReady = true;
-    this.hasValidLayout = true;
     this.layoutState = 'ready';
 
-    if (this._debug) {
-      console.log('[MasonryGrid] ✅ CSS Grid layout ready', {
-        columns: this.currentColumns,
-        sections: resolvedSections.length,
-        containerWidth,
-      });
-    }
-
-    // Emit layout change
-    this.layoutChange.emit({
-      breakpoint: this.getBreakpoint(containerWidth),
-      columns: this.currentColumns,
-      containerWidth,
-    });
+    // Emit layout change event
+    this.emitLayoutInfo(this.currentColumns, containerWidth);
 
     this.cdr.markForCheck();
+  }
+
+  /**
+   * Create fallback layout when calculation fails
+   */
+  private createFallbackLayout(sections: CardSection[], containerWidth: number): void {
+    this.currentColumns = this.calculateResponsiveColumns(containerWidth);
+    this.positionedSections = sections.map((section, index) => {
+      const key = this.getStableSectionKey(section, index);
+      const colSpan = Math.min(section.colSpan || this.getColSpan(section), this.currentColumns);
+      return {
+        section,
+        key,
+        colSpan,
+        preferredColumns: getPreferredColumns(section.type ?? 'default'),
+        left: generateLeftExpression(this.currentColumns, 0, this.gap),
+        top: 0,
+        width: generateWidthExpression(this.currentColumns, colSpan, this.gap),
+        isNew: this.isTrulyNewSection(section, key),
+      };
+    });
+    this.containerHeight = Math.max(...this.positionedSections.map((s) => s.top), 0) + 200;
+  }
+
+  /**
+   * Apply layout to DOM - CSS Grid handles everything
+   * Just set CSS variables, CSS does the positioning
+   */
+  private applyLayoutToDOM(containerWidth: number): void {
+    const containerElement = this.containerRef?.nativeElement;
+    if (!containerElement) return;
+
+    // Calculate column width for CSS variable
+    const colWidth = (containerWidth - this.gap * (this.currentColumns - 1)) / this.currentColumns;
+
+    // Set CSS variables - CSS Grid handles the rest
+    containerElement.style.setProperty('--masonry-columns', this.currentColumns.toString());
+    containerElement.style.setProperty('--masonry-gap', `${this.gap}px`);
+    containerElement.style.setProperty('--masonry-column-width', `${colWidth}px`);
+
+    // CSS Grid handles height automatically - no need to set it
   }
 
   /**
@@ -989,28 +852,35 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   /**
-   * Get column span for a section (used by CSS Grid)
+   * Get column span for a section - simple and respects preferred columns (1-4)
+   * Priority: explicit colSpan → preferredColumns → type-based default
    */
   getColSpan(section: CardSection): number {
-    // Explicit colSpan takes priority
+    // Priority 1: Explicit colSpan always takes precedence
     if (section.colSpan && section.colSpan > 0) {
       return Math.min(section.colSpan, this.currentColumns);
     }
 
-    // Type-based intelligent defaults
+    // Priority 2: Use preferredColumns (1, 2, 3, or 4)
+    const preferredCols = this.getPreferredColumns(section);
+    if (preferredCols && preferredCols > 0) {
+      return Math.min(preferredCols, this.currentColumns);
+    }
+
+    // Priority 3: Type-based defaults (keep simple)
     const type = (section.type || '').toLowerCase();
 
     // Full-width types
     if (type === 'overview' || type === 'header' || type === 'hero') {
-      return this.currentColumns;
+      return Math.min(4, this.currentColumns);
     }
 
-    // Wide types (2-3 columns)
-    if (type === 'chart' || type === 'analytics' || type === 'gallery') {
+    // Wide types
+    if (type === 'chart' || type === 'analytics' || type === 'gallery' || type === 'map') {
       return Math.min(2, this.currentColumns);
     }
 
-    if (type === 'timeline') {
+    if (type === 'timeline' || type === 'financials') {
       return Math.min(3, this.currentColumns);
     }
 
@@ -1089,7 +959,6 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     this.containerHeight = Math.max(...colHeights);
     this.currentColumns = columns;
     this.isLayoutReady = true;
-    this.hasValidLayout = true;
     this.layoutState = 'ready';
   }
 
@@ -1259,8 +1128,25 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     this.positionedSections = [...this.positionedSections, ...newPositionedSections];
     this.containerHeight = Math.max(...colHeights, 0);
 
-    // Schedule soft reflow (preserves isLayoutReady)
-    this.scheduleLayoutUpdate();
+    // Update container CSS directly without triggering full recalculation
+    const containerElement = this.containerRef?.nativeElement;
+    if (containerElement) {
+      containerElement.style.setProperty('--masonry-columns', columns.toString());
+      containerElement.style.setProperty('--masonry-gap', `${this.gap}px`);
+      const colWidth =
+        columns > 1 ? (containerWidth - this.gap * (columns - 1)) / columns : containerWidth;
+      containerElement.style.setProperty('--masonry-column-width', `${colWidth}px`);
+
+      // Ensure container height is set correctly
+      const finalHeight = Math.max(this.containerHeight, 0);
+      containerElement.style.height = `${finalHeight}px`;
+      containerElement.style.position = 'relative';
+      containerElement.style.minHeight = '0';
+      containerElement.style.maxHeight = 'none';
+    }
+
+    // Mark for check without triggering full layout recalculation
+    // This prevents blinking by avoiding isLayoutReady reset
     this.cdr.markForCheck();
   }
 
@@ -2002,316 +1888,13 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     return -1;
   }
 
+  /**
+   * Reflow is no longer needed - CSS Grid handles heights automatically
+   * This method is kept for backwards compatibility but does nothing
+   */
   private reflowWithActualHeights(): void {
-    if (!this.containerRef?.nativeElement || this.reflowCount >= this.MAX_REFLOWS) {
-      return;
-    }
-
-    this.reflowCount++;
-
-    const containerElement = this.containerRef.nativeElement;
-    if (!containerElement) {
-      return;
-    }
-
-    const containerWidth = this.getContainerWidth();
-
-    // If width is still too small for even single column, schedule another attempt
-    // With our fallbacks, this should rarely happen
-    if (!containerWidth || containerWidth < this.minColumnWidth) {
-      if (this.reflowCount < this.MAX_REFLOWS) {
-        requestAnimationFrame(() => {
-          this.reflowWithActualHeights();
-        });
-      }
-      return;
-    }
-
-    // Cache valid width
-    this.lastValidContainerWidth = containerWidth;
-
-    // Use centralized column calculation from grid-config.util.ts
-    const columns = calculateColumns(containerWidth, {
-      minColumnWidth: this.minColumnWidth,
-      maxColumns: this.maxColumns,
-      gap: this.gap,
-    });
-
-    // Expose column count as CSS custom property for section grids to consume
-    if (containerElement.style && typeof containerElement.style.setProperty === 'function') {
-      containerElement.style.setProperty('--masonry-columns', columns.toString());
-      // Also expose the calculated column width for CSS consumption
-      const colWidth = (containerWidth - this.gap * (columns - 1)) / columns;
-      containerElement.style.setProperty('--masonry-column-width', `${colWidth}px`);
-    }
-
-    this.emitLayoutInfo(columns, containerWidth);
-
-    const colHeights = Array(columns).fill(0);
-    let hasZeroHeights = false;
-    const itemRefArray = this.itemRefs?.toArray() ?? [];
-
-    this.layoutState = 'calculating';
-
-    // ========================================================================
-    // PHASE 1: MEASURE ALL HEIGHTS FIRST
-    // Before making any placement decisions, collect actual DOM heights
-    // ========================================================================
-    const sectionHeightMap = new Map<string, number>();
-    const sectionIndexMap = new Map<string, number>();
-
-    this.positionedSections.forEach((item, index) => {
-      const itemElement = itemRefArray[index]?.nativeElement;
-      let height = itemElement?.offsetHeight ?? 0;
-
-      // If height is 0, try to get the first child's height
-      if (height === 0 && itemElement?.firstElementChild) {
-        height = (itemElement.firstElementChild as HTMLElement).offsetHeight ?? 0;
-      }
-
-      // Still 0? Use reasonable minimum and flag for retry
-      if (height === 0) {
-        height = 200;
-        hasZeroHeights = true;
-      }
-
-      sectionHeightMap.set(item.key, height);
-      sectionIndexMap.set(item.key, index);
-    });
-
-    // ========================================================================
-    // PHASE 1.5: ADAPTIVE HEIGHT LEARNING (Point 6 & Point 8)
-    // Record actual heights vs estimates for future predictions
-    // ========================================================================
-    if (!hasZeroHeights) {
-      this.recordHeightsForLearning(containerWidth, columns);
-    }
-
-    // ========================================================================
-    // PHASE 2: COLUMN SPAN OPTIMIZATION
-    // For tall multi-column sections, evaluate if narrower span would help
-    // ========================================================================
-    let optimizedSections = this.positionedSections;
-
-    if (this.optimizeLayout && !hasZeroHeights && columns > 1) {
-      optimizedSections = this.optimizeColumnSpans(
-        this.positionedSections,
-        sectionHeightMap,
-        columns
-      );
-    }
-
-    // ========================================================================
-    // PHASE 3: HEIGHT-SORTED RE-LAYOUT (FFDH - First Fit Decreasing Height)
-    // Sort sections by actual height (tallest first) then re-layout
-    // This is the core tetris optimization: tall pieces go first so short
-    // pieces can fill the gaps they create
-    // ========================================================================
-    let sectionsToPlace: PositionedSection[];
-
-    if (this.optimizeLayout && !hasZeroHeights && columns > 1) {
-      // Sort by height descending (FFDH principle with real data)
-      sectionsToPlace = [...optimizedSections].sort((a, b) => {
-        const heightA = sectionHeightMap.get(a.key) ?? 200;
-        const heightB = sectionHeightMap.get(b.key) ?? 200;
-
-        // Primary: taller sections first
-        if (heightB !== heightA) {
-          return heightB - heightA;
-        }
-
-        // Secondary: wider sections first (more column commitment)
-        if (b.colSpan !== a.colSpan) {
-          return b.colSpan - a.colSpan;
-        }
-
-        // Tertiary: preserve original order for stability
-        const idxA = sectionIndexMap.get(a.key) ?? 0;
-        const idxB = sectionIndexMap.get(b.key) ?? 0;
-        return idxA - idxB;
-      });
-    } else {
-      // No optimization - use original order
-      sectionsToPlace = [...optimizedSections];
-    }
-
-    // Track pending sections for gap prediction
-    const pendingSections = this.optimizeLayout ? [...sectionsToPlace] : undefined;
-
-    // ========================================================================
-    // PHASE 3: PLACE SECTIONS IN HEIGHT-SORTED ORDER
-    // ========================================================================
-    const placedSections: PositionedSection[] = [];
-
-    for (const item of sectionsToPlace) {
-      // Remove current item from pending list
-      if (pendingSections) {
-        const pendingIndex = pendingSections.findIndex((p) => p.key === item.key);
-        if (pendingIndex >= 0) {
-          pendingSections.splice(pendingIndex, 1);
-        }
-      }
-
-      const height = sectionHeightMap.get(item.key) ?? 200;
-
-      // Build section info for type-aware expansion
-      const sectionInfo: SectionExpansionInfo = {
-        type: item.section.type,
-        canGrow: item.section.canGrow,
-        maxColumns: item.section.maxColumns,
-        density: calculateBasicDensity(
-          item.section.fields,
-          item.section.items,
-          item.section.description
-        ),
-      };
-
-      // Use the column negotiation algorithm for optimal assignment
-      const assignment = this.findOptimalColumnAssignment(
-        colHeights,
-        item.colSpan,
-        columns,
-        containerWidth,
-        pendingSections,
-        sectionInfo
-      );
-
-      const { columnIndex: bestColumn, colSpan } = assignment;
-
-      // Find the top position (max height of columns this span will occupy)
-      let topPosition = 0;
-      for (let c = bestColumn; c < bestColumn + colSpan; c++) {
-        if (colHeights[c] > topPosition) {
-          topPosition = colHeights[c];
-        }
-      }
-
-      // Use centralized width/left expression generators
-      const widthExpr = generateWidthExpression(columns, colSpan, this.gap);
-      const leftExpr = generateLeftExpression(columns, bestColumn, this.gap);
-
-      // Update column heights for all columns this span occupies
-      const newHeight = topPosition + height + this.gap;
-      for (let col = bestColumn; col < bestColumn + colSpan; col += 1) {
-        colHeights[col] = newHeight;
-      }
-
-      placedSections.push({
-        ...item,
-        colSpan,
-        left: leftExpr,
-        top: topPosition,
-        width: widthExpr,
-      });
-    }
-
-    // Restore original order for DOM stability (positions are already calculated)
-    const updated = placedSections.sort((a, b) => {
-      const idxA = sectionIndexMap.get(a.key) ?? 0;
-      const idxB = sectionIndexMap.get(b.key) ?? 0;
-      return idxA - idxB;
-    });
-
-    this.positionedSections = updated;
-    this.containerHeight = Math.max(...colHeights, 0);
-    this.currentColumns = columns;
-
-    // ========================================================================
-    // PHASE 4: LOCAL SWAP OPTIMIZATION
-    // Try swapping pairs of sections to find improvements
-    // ========================================================================
-    let finalSections = updated;
-
-    if (this.optimizeLayout && !hasZeroHeights && columns > 1) {
-      const swapOptimized = this.localSwapOptimization(
-        updated,
-        sectionHeightMap,
-        columns,
-        containerWidth
-      );
-
-      if (swapOptimized !== updated) {
-        finalSections = swapOptimized;
-        this.positionedSections = swapOptimized;
-        this.containerHeight = this.calculateTotalHeight(swapOptimized, sectionHeightMap);
-      }
-    }
-
-    // ========================================================================
-    // PHASE 5: GAP FILLING OPTIMIZATION
-    // After initial placement, try to fill any remaining gaps
-    // ========================================================================
-    if (this.optimizeLayout && !hasZeroHeights && columns > 1) {
-      const gapOptimized = this.optimizeLayoutGaps(
-        finalSections,
-        columns,
-        containerWidth,
-        itemRefArray
-      );
-
-      if (gapOptimized !== finalSections) {
-        this.positionedSections = gapOptimized;
-        // Recalculate container height after optimization
-        this.containerHeight = Math.max(
-          ...gapOptimized.map((s) => {
-            const idx = updated.findIndex((u) => u.key === s.key);
-            const height = itemRefArray[idx]?.nativeElement?.offsetHeight ?? 200;
-            return s.top + height;
-          }),
-          0
-        );
-      }
-    }
-
-    // Emit layout logs for debugging and monitoring
-    // Check if columns changed since last layout
-    const columnsChanged = columns !== this.previousColumnCount && this.previousColumnCount > 0;
-
-    if (columnsChanged) {
-      // Emit columns_changed event
-      this.emitLayoutLog(
-        'columns_changed',
-        columns,
-        containerWidth,
-        updated,
-        this.previousColumnCount
-      );
-    }
-
-    // Check for any expanded sections (colSpan > preferredColumns)
-    const hasExpandedSections = updated.some((ps) => ps.colSpan > ps.preferredColumns);
-
-    if (hasExpandedSections && !columnsChanged) {
-      // Emit section_expanded event only when sections expanded but columns didn't change
-      this.emitLayoutLog('section_expanded', columns, containerWidth, updated);
-    } else if (!columnsChanged) {
-      // Emit sections_positioned for normal repositioning
-      this.emitLayoutLog('sections_positioned', columns, containerWidth, updated);
-    }
-
-    // Update previous column count for next comparison
-    this.previousColumnCount = columns;
-
-    // Mark layout as ready on first successful reflow without zero heights
-    if (!hasZeroHeights) {
-      this.isLayoutReady = true;
-      this.layoutState = 'ready';
-      // Mark layout as valid only when we have proper width and no zero heights
-      this.hasValidLayout = true;
-      this.lastValidContainerWidth = containerWidth;
-    }
-
-    // Force change detection - transitions will be handled by CSS
-    this.cdr.markForCheck();
-
-    // If we detected zero heights and haven't hit max reflows, try again immediately
-    if (hasZeroHeights && this.reflowCount < this.MAX_REFLOWS) {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          this.reflowWithActualHeights();
-        });
-      });
-    }
+    // CSS Grid handles heights automatically - no JavaScript needed
+    // This method is a no-op to prevent breaking existing code
   }
 
   private emitLayoutInfo(columns: number, containerWidth: number): void {
@@ -2448,81 +2031,6 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     }
 
     return Math.ceil(trimmedLength / 120);
-  }
-
-  /**
-   * Schedules a deferred layout verification check.
-   * This catches cases where the initial layout failed but the container
-   * has since become properly sized (e.g., after animations, lazy loading).
-   */
-  private scheduleLayoutVerification(): void {
-    if (this.layoutVerificationTimeout) {
-      clearTimeout(this.layoutVerificationTimeout);
-    }
-
-    // Check after 500ms - enough time for most animations/transitions to complete
-    this.layoutVerificationTimeout = window.setTimeout(() => {
-      this.layoutVerificationTimeout = undefined;
-
-      // If we still don't have a valid layout, start aggressive polling
-      if (!this.hasValidLayout) {
-        const containerWidth = this.getContainerWidth();
-        if (containerWidth > 0) {
-          // Width is now available, force full layout calculation
-          this.forceInitialLayout();
-        } else {
-          // Still no width, start aggressive polling
-          this.startWidthPolling();
-        }
-      }
-    }, 500);
-  }
-
-  /**
-   * Starts aggressive width polling to detect when container dimensions become available.
-   * This is a fallback for cases where ResizeObserver doesn't fire.
-   */
-  private startWidthPolling(): void {
-    // Don't start if already polling or if we have a valid layout
-    if (this.widthPollingInterval || this.hasValidLayout) {
-      return;
-    }
-
-    this.widthPollingStartTime = Date.now();
-
-    this.widthPollingInterval = window.setInterval(() => {
-      // Check if we should stop polling
-      const elapsed = Date.now() - this.widthPollingStartTime;
-      if (elapsed >= this.WIDTH_POLLING_DURATION_MS) {
-        this.stopWidthPolling();
-        return;
-      }
-
-      // If we already have a valid layout, stop polling
-      if (this.hasValidLayout) {
-        this.stopWidthPolling();
-        return;
-      }
-
-      // Check container width
-      const containerWidth = this.getContainerWidth();
-
-      if (containerWidth > 0) {
-        this.stopWidthPolling();
-        // Force layout calculation
-        this.forceInitialLayout();
-      }
-    }, this.WIDTH_POLLING_INTERVAL_MS);
-  }
-
-  /**
-   * Stops the width polling interval.
-   */
-  private stopWidthPolling(): void {
-    if (this.widthPollingInterval) {
-      clearInterval(this.widthPollingInterval);
-      this.widthPollingInterval = undefined;
-    }
   }
 
   /**

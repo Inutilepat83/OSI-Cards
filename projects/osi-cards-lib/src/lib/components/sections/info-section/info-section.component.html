@@ -3,7 +3,7 @@
   </lib-section-header>
 
   <div class="list" *ngIf="section.fields?.length">
-    <div class="item" *ngFor="let f of section.fields">
+    <div class="item" *ngFor="let f of section.fields; trackBy: trackByField">
       <span class="label">{{ f.label }}</span>
       <span class="value">{{ f.value }}</span>
       <lib-trend-indicator

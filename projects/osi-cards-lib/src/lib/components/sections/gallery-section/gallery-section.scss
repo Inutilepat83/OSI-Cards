@@ -13,17 +13,17 @@
 .gallery {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--spacing-md);
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); // Smaller min for compact
+  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
 
   @media (max-width: 768px) {
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--spacing-sm);
+    gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
   }
 
   @media (max-width: 640px) {
@@ -61,7 +61,7 @@
 
 .img-container {
   width: 100%;
-  height: 150px;
+  height: 120px; // Compact: 120px (was 150px)
   overflow: hidden;
 }
 
@@ -75,11 +75,11 @@
 }
 
 .caption {
-  padding: var(--spacing-sm) var(--spacing-md);
+  padding: var(--osi-spacing-compact-xs, 2px) var(--osi-spacing-compact-sm, 6px); // Compact: 2-6px (was 8-16px)
   background: var(--surface);
   display: flex;
   align-items: center;
-  min-height: 44px;
+  min-height: 36px; // Compact: 36px (was 44px)
 
   .text {
     @include heading(6);
@@ -94,10 +94,10 @@
 
 @media (max-width: 480px) {
   .img-container {
-    height: 130px;
+    height: 100px; // Compact: 100px (was 130px)
   }
 
   .caption {
-    padding: var(--spacing-xs) var(--spacing-sm);
+    padding: var(--osi-spacing-compact-xs, 2px) var(--osi-spacing-compact-sm, 6px);
   }
 }

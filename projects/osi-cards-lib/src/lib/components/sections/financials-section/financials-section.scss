@@ -13,22 +13,22 @@
 .financials-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
 }
 
 // Grid
 .financials-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); // Smaller min for compact
+  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
 
   @media (max-width: 768px) {
-    gap: 10px;
+    gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 10px)
   }
 
   @media (max-width: 640px) {
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
   }
 
   @media (max-width: 420px) {
@@ -40,11 +40,11 @@
 .financial-card {
   @include card-elevated;
   position: relative;
-  padding: 14px;
-  min-height: 120px;
+  padding: var(--osi-spacing-compact-sm, 6px) var(--osi-spacing-compact-md, 12px); // Compact: 6-12px (was 14px)
+  min-height: 95px; // Compact: 95px (was 120px)
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 10px)
   transition: all 300ms var(--ease-out);
 
   &::after {
@@ -78,7 +78,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
 }
 
 .financial-label {
@@ -87,7 +87,7 @@
 }
 
 .financial-period {
-  font-size: 0.65rem;
+  font-size: 0.625rem; // Compact: 10px (was 0.65rem)
   color: var(--muted-foreground);
   opacity: 0.7;
 }
@@ -95,8 +95,8 @@
 // Value
 .financial-value {
   @include typo.number-display-medium;
-  font-size: 1.5rem;
-  margin: 4px 0;
+  font-size: 1.375rem; // Compact: 22px (was 1.5rem)
+  margin: 2px 0; // Compact: 2px (was 4px)
   transition: color 200ms var(--ease-out);
 }
 
@@ -108,13 +108,13 @@
 // Responsive
 @media (max-width: 640px) {
   .financial-card {
-    padding: 12px;
-    min-height: 110px;
-    gap: 8px;
+    padding: var(--osi-spacing-compact-sm, 6px);
+    min-height: 85px; // Compact: 85px (was 110px)
+    gap: var(--osi-spacing-compact-xs, 2px);
   }
 
   .financial-value {
-    font-size: 1.3rem;
+    font-size: 1.25rem; // Compact: 20px (was 1.3rem)
   }
 }
 

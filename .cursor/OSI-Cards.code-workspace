@@ -3,6 +3,9 @@
     {
       "path": "..",
     },
+    {
+      "path": "../../../Downloads/sales_assistance_frontend-merge-osicards",
+    },
   ],
   "settings": {
     "files.associations": {

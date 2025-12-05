@@ -13,16 +13,16 @@
 .contacts {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: var(--spacing-md);
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); // Smaller min for compact
+  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
 
   @media (max-width: 768px) {
-    gap: var(--spacing-sm);
+    gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
   }
 
   @media (max-width: 640px) {
@@ -36,14 +36,14 @@
 
 .card {
   @include card-elevated;
-  padding: var(--spacing-md);
+  padding: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
   text-align: center;
-  min-height: 180px;
+  min-height: 140px; // Compact: 140px (was 180px)
   background: var(--surface);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
   transition: all 300ms var(--ease-out);
 
   &:hover {
@@ -62,15 +62,15 @@
 }
 
 .avatar {
-  width: 60px;
-  height: 60px;
+  width: 48px; // Compact: 48px (was 60px)
+  height: 48px; // Compact: 48px (was 60px)
   border-radius: var(--radius-lg);
   border: 2px solid var(--border);
   overflow: hidden;
   transition: all 300ms var(--ease-out);
   box-shadow: var(--shadow-sm);
   flex-shrink: 0;
-  margin-bottom: var(--spacing-xs);
+  margin-bottom: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
 
   img {
     width: 100%;
@@ -86,7 +86,7 @@
   align-items: center;
   justify-content: center;
   background: var(--surface-hover);
-  font-size: 1.2rem;
+  font-size: 1rem; // Compact: 16px (was 1.2rem)
   font-weight: var(--font-semibold);
   color: var(--foreground);
 }
@@ -104,9 +104,9 @@
 
 .actions {
   display: flex;
-  gap: var(--spacing-xs);
+  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
   margin-top: auto;
-  padding-top: var(--spacing-sm);
+  padding-top: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
   border-top: 1px solid var(--border);
   width: 100%;
   justify-content: center;
@@ -116,8 +116,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 32px; // Keep minimum touch target
+  height: 32px; // Keep minimum touch target
   border-radius: var(--radius-sm);
   background: var(--surface-hover);
   text-decoration: none;
@@ -134,6 +134,6 @@
 
 @media (max-width: 480px) {
   .card {
-    padding: var(--spacing-sm);
+    padding: var(--osi-spacing-compact-sm, 6px);
   }
 }

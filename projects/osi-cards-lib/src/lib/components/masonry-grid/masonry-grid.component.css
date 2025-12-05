@@ -21,17 +21,22 @@
    ============================================================ */
 
 .masonry-container {
-  /* CSS GRID: Browser handles ALL positioning! */
+  /* CSS GRID: Browser handles ALL positioning and heights! */
   display: grid;
   grid-template-columns: repeat(var(--masonry-columns, 4), 1fr);
   gap: var(--masonry-gap, 12px);
   grid-auto-rows: min-content; /* Rows fit content height automatically */
-  grid-auto-flow: dense; /* Fill gaps automatically */
+  grid-auto-flow: row dense; /* Fill gaps automatically, row-based flow */
   width: 100%;
+  align-items: start; /* Align items to start of grid cell */
 
   /* Smooth transitions */
   transition: opacity 0.25s ease;
   opacity: 1;
+
+  /* Let CSS handle height - no JavaScript needed */
+  height: auto;
+  min-height: 0;
 }
 
 .masonry-container--loading {
@@ -234,14 +239,24 @@
   /* CSS GRID ITEM: Browser handles positioning and heights! */
   grid-column: span var(--section-col-span, 1);
 
+  /* Remove absolute positioning - CSS Grid handles it */
+  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: fit-content;
+
   /* Start at full opacity */
   opacity: 1;
 
   /* Pointer events enabled */
   pointer-events: auto;
 
-  /* CSS containment */
+  /* CSS containment for performance */
   contain: layout style paint;
+
+  /* Ensure content determines height */
+  display: flex;
+  flex-direction: column;
 }
 
 /* Column span fallbacks */

@@ -20,9 +20,9 @@
     </span>
   </div>
 
-  <!-- CSS GRID: Browser handles ALL positioning automatically! -->
+  <!-- CSS GRID: Let CSS handle all positioning and heights -->
   <div
-    *ngFor="let section of sections; let idx = index"
+    *ngFor="let section of sections; let idx = index; trackBy: trackItem"
     #itemRef
     class="masonry-item"
     role="gridcell"

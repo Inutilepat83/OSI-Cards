@@ -58,8 +58,9 @@ export const DEFAULT_GRID_CONFIG: GridConfig = {
  * - 'legacy': Original masonry algorithm (FFDH-based)
  * - 'row-first': New space-filling algorithm that prioritizes complete rows
  * - 'skyline': Skyline bin-packing algorithm
+ * - 'column-based': Column-based FFDH algorithm (places cards in shortest column)
  */
-export type PackingAlgorithm = 'legacy' | 'row-first' | 'skyline';
+export type PackingAlgorithm = 'legacy' | 'row-first' | 'skyline' | 'column-based';
 
 /**
  * Configuration for the row-first packing algorithm
@@ -94,6 +95,45 @@ export interface RowPackingOptions {
 }
 
 /**
+ * Configuration for the column-based packing algorithm
+ */
+export interface ColumnPackingOptions {
+  /**
+   * Packing mode: 'ffdh' (fast, effective), 'skyline' (maximum compaction), or 'hybrid' (adaptive)
+   * @default 'ffdh'
+   */
+  packingMode?: 'ffdh' | 'skyline' | 'hybrid';
+
+  /**
+   * Whether to allow reordering sections for optimal packing
+   * @default true
+   */
+  allowReordering?: boolean;
+
+  /**
+   * Whether to sort sections by height before packing (FFDH = First Fit Decreasing Height)
+   * @default true
+   */
+  sortByHeight?: boolean;
+
+  /**
+   * Gap count threshold for hybrid mode to switch to Skyline algorithm
+   * @default 3
+   */
+  useSkylineThreshold?: number;
+}
+
+/**
+ * Default column packing options
+ */
+export const DEFAULT_COLUMN_PACKING_OPTIONS: Required<ColumnPackingOptions> = {
+  packingMode: 'ffdh',
+  allowReordering: true,
+  sortByHeight: true,
+  useSkylineThreshold: 3,
+};
+
+/**
  * Default row packing options
  */
 export const DEFAULT_ROW_PACKING_OPTIONS: RowPackingOptions = {
@@ -109,7 +149,7 @@ export const DEFAULT_ROW_PACKING_OPTIONS: RowPackingOptions = {
 export interface MasonryPackingConfig extends GridConfig {
   /**
    * Which packing algorithm to use
-   * @default 'row-first'
+   * @default 'column-based'
    */
   packingAlgorithm: PackingAlgorithm;
 
@@ -118,6 +158,12 @@ export interface MasonryPackingConfig extends GridConfig {
    * Only used when packingAlgorithm is 'row-first'
    */
   rowPackingOptions: RowPackingOptions;
+
+  /**
+   * Options for the column-based packing algorithm
+   * Only used when packingAlgorithm is 'column-based'
+   */
+  columnPackingOptions?: ColumnPackingOptions;
 
   /**
    * Whether to use the legacy algorithm as a fallback
@@ -129,28 +175,30 @@ export interface MasonryPackingConfig extends GridConfig {
 
 /**
  * Default masonry packing configuration
- * Uses row-first algorithm by default for zero white space packing
- * Set packingAlgorithm to 'legacy' for backward compatibility
+ * Uses column-based algorithm by default for optimal space utilization
+ * Set packingAlgorithm to 'row-first' or 'legacy' for backward compatibility
  */
 export const DEFAULT_MASONRY_PACKING_CONFIG: MasonryPackingConfig = {
   ...DEFAULT_GRID_CONFIG,
-  packingAlgorithm: 'row-first',
+  packingAlgorithm: 'column-based',
   rowPackingOptions: DEFAULT_ROW_PACKING_OPTIONS,
+  columnPackingOptions: DEFAULT_COLUMN_PACKING_OPTIONS,
   useLegacyFallback: true,
 };
 
 /**
  * Configuration preset for maximum space utilization
- * Aggressively shrinks and grows sections to fill all gaps
+ * Uses column-based packing with hybrid mode for best compaction
  */
 export const SPACE_OPTIMIZED_CONFIG: MasonryPackingConfig = {
   ...DEFAULT_GRID_CONFIG,
-  packingAlgorithm: 'row-first',
-  rowPackingOptions: {
-    prioritizeSpaceFilling: true,
-    allowShrinking: true,
-    allowGrowing: true,
-    maxOptimizationPasses: 5,
+  packingAlgorithm: 'column-based',
+  rowPackingOptions: DEFAULT_ROW_PACKING_OPTIONS,
+  columnPackingOptions: {
+    packingMode: 'hybrid',
+    allowReordering: true,
+    sortByHeight: true,
+    useSkylineThreshold: 2, // Lower threshold for more aggressive compaction
   },
   useLegacyFallback: true,
 };
@@ -199,38 +247,48 @@ export interface SectionColumnPreferences {
 
 /**
  * Default preferred columns per section type
- * - 1 column: truly compact sections (project, simple info)
- * - 2 columns: medium sections (most section types)
- * - 3+ columns: wide sections (overview, charts)
- *
- * UPDATED: Increased preferred columns to reduce gaps
+ * Provides variety: 1, 2, 3, or 4 columns based on section type
+ * - 1 column: compact sections (contact-card, project)
+ * - 2 columns: medium sections (most common)
+ * - 3 columns: wide sections (overview, timeline, financials)
+ * - 4 columns: full-width sections (hero, header)
  */
 export const DEFAULT_SECTION_COLUMN_PREFERENCES: SectionColumnPreferences = {
-  // Single column sections - truly compact only
+  // 1 column - compact sections
   'contact-card': 1,
   project: 1,
+  faq: 1,
 
-  // Two column sections - most section types
-  'network-card': 2, // Increased - networks benefit from more space
+  // 2 columns - medium sections (most common)
+  'network-card': 2,
   analytics: 2,
   stats: 2,
   chart: 2,
   map: 2,
   locations: 2,
-  financials: 2,
   product: 2,
   solutions: 2,
   event: 2,
   list: 2,
   quotation: 2,
   'text-reference': 2,
-  timeline: 2,
   info: 2,
+  news: 2,
+  gallery: 2,
+  video: 2,
+  'social-media': 2,
+  'brand-colors': 2,
 
-  // Wide sections
-  overview: 3, // Increased - overview benefits from more space
+  // 3 columns - wide sections
+  overview: 3,
+  timeline: 3,
+  financials: 3,
 
-  // Default for unknown types - 2 columns to reduce gaps
+  // 4 columns - full-width sections
+  hero: 4,
+  header: 4,
+
+  // Default for unknown types - 2 columns
   default: 2,
 };
 

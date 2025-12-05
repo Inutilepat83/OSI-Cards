@@ -863,6 +863,12 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   private handleEmailAction(
     action: CardAction & { email: NonNullable<LegacyCardAction['email']> }
   ): void {
+    // Check if we're in a browser environment
+    if (!isPlatformBrowser(this.platformId)) {
+      console.warn('Email action can only be executed in a browser environment');
+      return;
+    }
+
     // Validate that email configuration exists
     if (!action.email) {
       console.error('Email action requires email configuration');
@@ -963,14 +969,72 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     const queryString = params.length > 0 ? '?' + params.join('&') : '';
     const mailtoLink = `mailto:${recipientEmail}${queryString}`;
 
-    // Open email client using a temporary anchor element (most reliable method)
-    // This ensures the email client opens without navigating away from the page
-    const anchor = document.createElement('a');
-    anchor.href = mailtoLink;
-    anchor.style.display = 'none';
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
+    // Detect Edge browser for specific handling
+    const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+    const isEdgeChromium = /Edg/i.test(userAgent) && !/OPR/i.test(userAgent);
+
+    try {
+      // Edge-specific handling: Edge Chromium sometimes blocks programmatic clicks
+      // Use window.location.href as primary method for Edge, anchor click for others
+      if (isEdgeChromium) {
+        // For Edge, use window.location.href directly (most reliable)
+        window.location.href = mailtoLink;
+      } else if (typeof document !== 'undefined' && document.body) {
+        // For other browsers, try anchor click method first
+        const anchor = document.createElement('a');
+        anchor.href = mailtoLink;
+        // Edge may require the element to be in the DOM and visible (even briefly)
+        // Use a more Edge-compatible approach: minimal visibility
+        anchor.style.position = 'absolute';
+        anchor.style.left = '-9999px';
+        anchor.style.opacity = '0';
+        anchor.style.pointerEvents = 'none';
+        anchor.setAttribute('target', '_blank');
+        anchor.setAttribute('rel', 'noopener noreferrer');
+
+        document.body.appendChild(anchor);
+
+        // Use requestAnimationFrame to ensure DOM is ready (Edge compatibility)
+        requestAnimationFrame(() => {
+          try {
+            anchor.click();
+          } catch (clickError) {
+            // If click fails, fall back to window.location
+            console.warn('Anchor click failed, using window.location fallback:', clickError);
+            window.location.href = mailtoLink;
+          }
+
+          // Remove anchor after a short delay
+          setTimeout(() => {
+            if (document.body.contains(anchor)) {
+              document.body.removeChild(anchor);
+            }
+          }, 200);
+        });
+      } else {
+        // Fallback: use window.location if document.body is not available
+        window.location.href = mailtoLink;
+      }
+    } catch (error) {
+      console.error('Failed to open email client:', error);
+      // Final fallback: try direct window.location
+      try {
+        window.location.href = mailtoLink;
+      } catch (fallbackError) {
+        console.error('Failed to open email client with fallback method:', fallbackError);
+        // Last resort: try window.open (may be blocked by popup blockers)
+        try {
+          const mailtoWindow = window.open(mailtoLink, '_blank');
+          if (!mailtoWindow) {
+            console.warn(
+              'Popup blocked. Please allow popups for this site to use email functionality.'
+            );
+          }
+        } catch (openError) {
+          console.error('All email client opening methods failed:', openError);
+        }
+      }
+    }
   }
 
   toggleFullscreen(): void {

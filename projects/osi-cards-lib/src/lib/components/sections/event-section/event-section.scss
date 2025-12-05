@@ -18,15 +18,15 @@
 .events {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
 }
 
 .list {
   @include card;
-  padding: var(--spacing-md);
+  padding: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
   background: var(--surface);
 
   &:hover {
@@ -35,15 +35,15 @@
 }
 
 .event {
-  padding: var(--spacing-sm);
+  padding: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
   border-radius: var(--radius-sm);
   display: flex;
-  gap: var(--spacing-md);
+  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
   transition: all 250ms var(--ease-out);
   cursor: pointer;
 
   &:not(:last-child) {
-    margin-bottom: var(--spacing-xs);
+    margin-bottom: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
   }
 
   &:hover {
@@ -68,8 +68,8 @@
 
 .date {
   flex-shrink: 0;
-  width: 54px;
-  padding: var(--spacing-xs) var(--spacing-xs);
+  width: 50px; // Compact: 50px (was 54px)
+  padding: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
   background: var(--surface-hover);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -79,11 +79,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 1px; // Compact: 1px (was 2px)
 
   .day {
     display: block;
-    font-size: var(--text-xl);
+    font-size: 1.125rem; // Compact: 18px (was var(--text-xl) ~20px)
     font-weight: var(--font-bold);
     line-height: 1;
     color: var(--foreground);
@@ -91,7 +91,7 @@
 
   .month {
     display: block;
-    font-size: 0.65rem;
+    font-size: 0.625rem; // Compact: 10px (was 0.65rem)
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--muted-foreground);
@@ -102,7 +102,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
   min-width: 0;
 }
 
@@ -110,7 +110,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: var(--spacing-sm);
+  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
   flex-wrap: wrap;
 }
 
@@ -124,24 +124,24 @@
 .details {
   @include typo.caption;
   display: flex;
-  gap: var(--spacing-sm);
+  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
   flex-wrap: wrap;
 
   > span {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
   }
 }
 
 @media (max-width: 480px) {
   .list {
-    padding: var(--spacing-sm);
+    padding: var(--osi-spacing-compact-sm, 6px);
   }
 
   .event {
     flex-direction: column;
-    padding: var(--spacing-xs);
+    padding: var(--osi-spacing-compact-xs, 2px);
 
     .date {
       width: 100%;

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { BaseSectionComponent } from '../base-section.component';
 import { SectionHeaderComponent, EmptyStateComponent, TrendIndicatorComponent } from '../../shared';
 import { TrendDirection } from '../../../types';
+import { trackByField } from '../../../utils/track-by.util';
 
 /**
  * Info Section Component
@@ -18,6 +19,11 @@ import { TrendDirection } from '../../../types';
   styleUrl: './info-section.scss',
 })
 export class InfoSectionComponent extends BaseSectionComponent {
+  /**
+   * TrackBy function for fields
+   */
+  readonly trackByField = trackByField;
+
   /**
    * Get trend class (deprecated - kept for backward compatibility)
    */

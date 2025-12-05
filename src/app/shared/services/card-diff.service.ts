@@ -26,10 +26,10 @@ import { Injectable } from '@angular/core';
 export { CardChangeType, CardUtil as CardDiffUtil } from 'osi-cards-lib';
 
 // Create type aliases for backward compatibility
-export type CardDiffResult = {
+export interface CardDiffResult {
   hasChanges: boolean;
   changes: any[];
-};
+}
 
 import { CardChangeType, CardUtil } from 'osi-cards-lib';
 import { AICardConfig } from '../../models';

@@ -13,16 +13,16 @@
 .news {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--spacing-md);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); // Smaller min for compact
+  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
 
   @media (max-width: 768px) {
-    gap: var(--spacing-sm);
+    gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
   }
 
   @media (max-width: 640px) {
@@ -59,28 +59,28 @@
 
 .img {
   width: 100%;
-  height: 140px;
+  height: 110px; // Compact: 110px (was 140px)
   object-fit: cover;
   transition: all 400ms var(--ease-out);
   background: var(--surface-hover);
 }
 
 .content {
-  padding: var(--spacing-md);
+  padding: var(--osi-spacing-compact-sm, 6px) var(--osi-spacing-compact-md, 12px); // Compact: 6-12px (was 16px)
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
   flex: 1;
 }
 
 .meta {
   @include typo.caption;
   display: flex;
-  gap: var(--spacing-sm);
+  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
 
   > *:not(:last-child)::after {
     content: "·";
-    margin-left: var(--spacing-sm);
+    margin-left: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
     opacity: 0.5;
   }
 }
@@ -103,7 +103,7 @@
 
 .link {
   margin-top: auto;
-  padding-top: var(--spacing-sm);
+  padding-top: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
   font-size: 0.7rem;
   font-weight: var(--font-semibold);
   color: var(--accent);
@@ -118,6 +118,6 @@
 
 @media (max-width: 480px) {
   .content {
-    padding: var(--spacing-sm);
+    padding: var(--osi-spacing-compact-sm, 6px);
   }
 }

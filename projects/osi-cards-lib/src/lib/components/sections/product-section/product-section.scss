@@ -18,15 +18,15 @@
 .product {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
 }
 
 .list {
   @include card;
-  padding: var(--spacing-md);
+  padding: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
   background: var(--surface);
 
   &:hover {
@@ -35,15 +35,15 @@
 }
 
 .item {
-  padding: var(--spacing-sm);
+  padding: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
   border-radius: var(--radius-sm);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
   transition: all 250ms var(--ease-out);
 
   &:not(:last-child) {
-    margin-bottom: var(--spacing-xs);
+    margin-bottom: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
   }
 
   &:hover {
@@ -64,7 +64,7 @@
 .top {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
   flex-wrap: wrap;
 }
 
@@ -87,7 +87,7 @@
 .value {
   @include body-text("base");
   color: var(--foreground);
-  line-height: var(--leading-relaxed);
+  line-height: 1.5; // Compact: 1.5 (was --leading-relaxed 1.625)
 }
 
 .price {
@@ -99,10 +99,10 @@
 
 @media (max-width: 480px) {
   .list {
-    padding: var(--spacing-sm);
+    padding: var(--osi-spacing-compact-sm, 6px);
   }
 
   .item {
-    padding: var(--spacing-xs);
+    padding: var(--osi-spacing-compact-xs, 2px);
   }
 }

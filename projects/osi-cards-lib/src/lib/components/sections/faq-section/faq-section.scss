@@ -18,15 +18,15 @@
 .faq {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
 }
 
 .list {
   @include card;
-  padding: var(--spacing-md);
+  padding: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
   background: var(--surface);
 
   &:hover {
@@ -35,14 +35,14 @@
 }
 
 .item {
-  padding: var(--spacing-sm);
+  padding: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
   border-radius: var(--radius-sm);
   display: flex;
   flex-direction: column;
   transition: all 250ms var(--ease-out);
 
   &:not(:last-child) {
-    margin-bottom: var(--spacing-xs);
+    margin-bottom: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
   }
 
   &.expanded {
@@ -59,7 +59,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
   padding: 0;
   background: none;
   border: none;
@@ -73,7 +73,7 @@
   }
 
   .icon {
-    font-size: 1.2rem;
+    font-size: 1.125rem; // Compact: 18px (was 1.2rem)
     font-weight: var(--font-bold);
     color: var(--muted-foreground);
     transition: transform 300ms var(--ease-out);
@@ -90,19 +90,19 @@
 }
 
 .answer {
-  padding: var(--spacing-sm) 0 0 var(--spacing-md);
+  padding: var(--osi-spacing-compact-sm, 6px) 0 0 var(--osi-spacing-compact-md, 12px); // Compact: 6-12px (was 8-16px)
   border-left: 2px solid var(--border);
-  margin-top: var(--spacing-sm);
+  margin-top: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
 
   .text {
     @include body-text("small");
     color: var(--muted-foreground);
-    line-height: var(--leading-relaxed);
+    line-height: 1.5; // Compact: 1.5 (was --leading-relaxed 1.625)
   }
 
   .cat {
     display: inline-block;
-    margin-top: var(--spacing-xs);
+    margin-top: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
     padding: 2px 6px;
     font-size: 0.6rem;
     font-weight: var(--font-semibold);
@@ -115,10 +115,10 @@
 
 @media (max-width: 480px) {
   .list {
-    padding: var(--spacing-sm);
+    padding: var(--osi-spacing-compact-sm, 6px);
   }
 
   .item {
-    padding: var(--spacing-xs);
+    padding: var(--osi-spacing-compact-xs, 2px);
   }
 }

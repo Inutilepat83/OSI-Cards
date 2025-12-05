@@ -18,13 +18,19 @@ import {
   shouldExpandSection,
   SectionExpansionInfo,
   calculateBasicDensity,
+  ColumnPackingOptions,
 } from '../../utils/grid-config.util';
-import { estimateSectionHeight, binPack2D } from '../../utils/smart-grid.util';
+import { estimateSectionHeight } from '../../utils/smart-grid.util';
 import {
   packSectionsIntoRows,
   packingResultToPositions,
   RowPackerConfig,
 } from '../../utils/row-packer.util';
+import {
+  packSectionsIntoColumns,
+  columnPackingResultToPositions,
+  ColumnPackerConfig,
+} from '../../utils/column-packer.util';
 
 export interface PositionedSection {
   section: CardSection;
@@ -44,9 +50,10 @@ export interface LayoutConfig {
   containerWidth: number;
   minColumnWidth: number;
   optimizeLayout: boolean;
-  packingAlgorithm: 'legacy' | 'row-first' | 'skyline';
+  packingAlgorithm: 'legacy' | 'row-first' | 'skyline' | 'column-based';
   useLegacyFallback: boolean;
   rowPackingOptions?: any;
+  columnPackingOptions?: ColumnPackingOptions;
 }
 
 export interface LayoutResult {
@@ -62,7 +69,9 @@ export interface ColumnAssignment {
   expansionReason?: string;
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class MasonryGridLayoutService {
   /**
    * Calculate layout for sections
@@ -73,6 +82,18 @@ export class MasonryGridLayoutService {
     getStableKey: (section: CardSection, index: number) => string,
     markAsNew: (section: CardSection, key: string) => boolean
   ): LayoutResult {
+    if (config.packingAlgorithm === 'column-based') {
+      try {
+        return this.calculateColumnBasedLayout(sections, config, getStableKey, markAsNew);
+      } catch (error) {
+        if (config.useLegacyFallback) {
+          console.warn('[LayoutService] Column-based failed, using legacy:', error);
+          return this.calculateLegacyLayout(sections, config, getStableKey, markAsNew);
+        }
+        throw error;
+      }
+    }
+
     if (config.packingAlgorithm === 'row-first') {
       try {
         return this.calculateRowFirstLayout(sections, config, getStableKey, markAsNew);
@@ -86,6 +107,71 @@ export class MasonryGridLayoutService {
     }
 
     return this.calculateLegacyLayout(sections, config, getStableKey, markAsNew);
+  }
+
+  /**
+   * Calculate layout using column-based algorithm
+   */
+  private calculateColumnBasedLayout(
+    sections: CardSection[],
+    config: LayoutConfig,
+    getStableKey: (section: CardSection, index: number) => string,
+    markAsNew: (section: CardSection, key: string) => boolean
+  ): LayoutResult {
+    console.log('[LayoutService] 🎯 calculateColumnBasedLayout called', {
+      sectionsCount: sections.length,
+      columns: config.columns,
+      containerWidth: config.containerWidth,
+    });
+    const packConfig: ColumnPackerConfig = {
+      columns: config.columns,
+      gap: config.gap,
+      containerWidth: config.containerWidth,
+      packingMode: config.columnPackingOptions?.packingMode ?? 'ffdh',
+      allowReordering: config.columnPackingOptions?.allowReordering ?? true,
+      sortByHeight: config.columnPackingOptions?.sortByHeight ?? true,
+      useSkylineThreshold: config.columnPackingOptions?.useSkylineThreshold ?? 3,
+    };
+
+    const result = packSectionsIntoColumns(sections, packConfig);
+    console.log('[LayoutService] 📦 Packing result', {
+      positionedCount: result.positionedSections.length,
+      totalHeight: result.totalHeight,
+      algorithm: result.algorithm,
+      utilization: result.utilization,
+      gapCount: result.gapCount,
+    });
+
+    const positions = columnPackingResultToPositions(result);
+
+    const positionedSections = positions.map((pos, index) => {
+      const section = pos.section;
+      const key = getStableKey(section, index);
+      const isNew = markAsNew(section, key);
+
+      return {
+        section,
+        key,
+        colSpan: pos.colSpan,
+        preferredColumns: pos.preferredColumns,
+        left: pos.left,
+        top: pos.top,
+        width: pos.width,
+        isNew,
+      };
+    });
+
+    console.log('[LayoutService] ✅ Column-based layout complete', {
+      positionedSectionsCount: positionedSections.length,
+      containerHeight: result.totalHeight,
+      columns: config.columns,
+    });
+
+    return {
+      positionedSections,
+      containerHeight: result.totalHeight,
+      columns: config.columns,
+    };
   }
 
   /**
@@ -151,22 +237,15 @@ export class MasonryGridLayoutService {
 
     const colHeights = Array(columns).fill(0);
 
-    // Determine section ordering
+    // Determine section ordering - sort by height for better packing
     let orderedSections = sections;
     if (optimizeLayout && sections.length > 1) {
-      const resolvedSections = sections.map((s) => ({
-        section: s,
-        colSpan: this.getSectionColSpan(s),
-        preferredColumns: getPreferredColumns(s.type ?? 'info'),
-      }));
-
-      const packedSections = binPack2D(resolvedSections, columns, {
-        respectPriority: true,
-        fillGaps: true,
-        balanceColumns: false,
+      // Sort by estimated height (descending) for better packing
+      orderedSections = [...sections].sort((a, b) => {
+        const heightA = estimateSectionHeight(a);
+        const heightB = estimateSectionHeight(b);
+        return heightB - heightA;
       });
-
-      orderedSections = packedSections.map((s) => s.section);
     }
 
     // Place sections
@@ -189,7 +268,7 @@ export class MasonryGridLayoutService {
       return {
         section,
         key,
-        colSpan: this.getSectionColSpan(section),
+        colSpan: this.getSectionColSpan(section, config.columns),
         preferredColumns: preferredCols,
         left: columns > 1 ? `${left}px` : '0px',
         top,
@@ -254,9 +333,10 @@ export class MasonryGridLayoutService {
       const leftExpr = generateLeftExpression(columns, bestColumn, gap);
 
       // Update column heights
+      // Add height + gap to position (gap is spacing between items)
       const newHeight = topPosition + height + gap;
       for (let col = bestColumn; col < bestColumn + span; col++) {
-        colHeights[col] = newHeight;
+        colHeights[col] = Math.max(colHeights[col] || 0, newHeight);
       }
 
       placedSections.push({
@@ -268,9 +348,14 @@ export class MasonryGridLayoutService {
       });
     }
 
+    // Calculate container height as max column height, but subtract last gap
+    // (gap is added after each item, so the last gap shouldn't count)
+    const maxColHeight = Math.max(...colHeights, 0);
+    const containerHeight = maxColHeight > 0 ? Math.max(0, maxColHeight - gap) : 0;
+
     return {
       positionedSections: placedSections,
-      containerHeight: Math.max(...colHeights, 0),
+      containerHeight,
       columns,
     };
   }
@@ -366,8 +451,9 @@ export class MasonryGridLayoutService {
   /**
    * Get section column span
    */
-  private getSectionColSpan(section: CardSection): number {
-    return resolveColumnSpan(section);
+  private getSectionColSpan(section: CardSection, availableColumns: number = 4): number {
+    const preferredColumns = getPreferredColumns(section.type ?? 'default');
+    return resolveColumnSpan(preferredColumns, availableColumns, section.colSpan);
   }
 
   /**
