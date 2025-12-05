@@ -1,4 +1,4 @@
-<div class="empty-state" [ngClass]="[variant, size, containerClass]" role="status" aria-live="polite">
+<div class="empty-state" [ngClass]="getClassArray()" role="status" aria-live="polite">
   <!-- Icon/Emoji -->
   <div class="empty-icon" *ngIf="icon" aria-hidden="true">
     {{ icon }}

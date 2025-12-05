@@ -70,4 +70,14 @@ export class EmptyStateComponent {
   onActionClick(): void {
     this.action.emit();
   }
+
+  /**
+   * Get array of CSS classes, filtering out undefined values
+   * NgClass requires all values to be strings, not undefined
+   */
+  getClassArray(): string[] {
+    return [this.variant, this.size, this.containerClass].filter(
+      (cls): cls is string => cls !== undefined && cls !== null
+    );
+  }
 }
