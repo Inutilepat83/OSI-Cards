@@ -1,44 +1,22 @@
 <div
   #container
-  class="w-full masonry-container"
-  role="grid"
-  [attr.aria-label]="'Card sections grid with ' + (sections.length || 0) + ' sections'"
-  [attr.aria-busy]="!isLayoutReady || isStreaming"
-  [attr.aria-colcount]="currentColumns"
-  [class.masonry-container--loading]="!isLayoutReady"
+  class="masonry-container"
+  [class.masonry-container--ready]="isLayoutReady"
   [class.masonry-container--streaming]="isStreaming"
   [style.--masonry-columns]="currentColumns"
   [style.--masonry-gap.px]="gap"
 >
-  <!-- Screen reader live region for streaming updates -->
-  <div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
-    <span *ngIf="isStreaming && positionedSections.length > 0">
-      Loading section {{ positionedSections.length }} of card content
-    </span>
-    <span *ngIf="!isStreaming && isLayoutReady && positionedSections.length > 0">
-      Card loaded with {{ positionedSections.length }} sections
-    </span>
-  </div>
-
-  <!-- JavaScript positioning: Use positionedSections with absolute positioning -->
   <div
-    *ngFor="let positionedSection of positionedSections; let idx = index; trackBy: trackByPositionedSection"
+    *ngFor="let positioned of positionedSections; let idx = index; trackBy: trackBySection"
     #itemRef
     class="masonry-item"
-    role="gridcell"
-    [attr.aria-label]="positionedSection.section.title || 'Section ' + (idx + 1)"
-    [attr.aria-colspan]="positionedSection.colSpan"
-    [attr.data-col-span]="positionedSection.colSpan"
-    [attr.data-section-type]="positionedSection.section.type"
-    [attr.id]="getSectionId(positionedSection.section)"
-    [style.left]="positionedSection.left"
-    [style.top.px]="positionedSection.top"
-    [style.width]="positionedSection.width"
-    tabindex="0"
-    [class.masonry-item--ready]="isLayoutReady"
-    [class.masonry-item--animating]="shouldAnimate(positionedSection.key)"
+    [attr.data-index]="idx"
+    [attr.data-col-span]="positioned.colSpan"
+    [style.left]="positioned.left"
+    [style.top.px]="positioned.top"
+    [style.width]="positioned.width"
   >
-    <app-section-renderer [section]="positionedSection.section" (sectionEvent)="onSectionEvent($event)">
+    <app-section-renderer [section]="positioned.section" (sectionEvent)="onSectionEvent($event)">
     </app-section-renderer>
   </div>
 </div>
