@@ -66,6 +66,3 @@ describe('CardsState Reducer', () => {
     });
   });
 });
-
-
-

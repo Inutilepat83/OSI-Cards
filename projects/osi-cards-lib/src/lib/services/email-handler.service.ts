@@ -340,7 +340,7 @@ export class EmailHandlerService {
 
     // Mac: Use ms-outlook: scheme (works with Outlook desktop app)
     // Format: ms-outlook:mailto:email@example.com?subject=...&body=...
-    return `ms-outlook:${mailtoUrl}`;
+    return mailtoUrl;
   }
 
   private normalizeMailAction(action: CardAction): MailCardAction | null {

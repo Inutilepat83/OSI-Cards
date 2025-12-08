@@ -500,8 +500,8 @@ export interface QueryFilters {
 })
 export class QueryBuilderComponent {
   @Input() filters: QueryFilters = {};
-  @Input() lastUpdated: string = 'Just now';
-  @Input() dataSource: string = 'Internal API';
+  @Input() lastUpdated = 'Just now';
+  @Input() dataSource = 'Internal API';
   @Input() advancedFilterKeys: string[] = [];
 
   @Output() filtersChange = new EventEmitter<QueryFilters>();
@@ -530,9 +530,15 @@ export class QueryBuilderComponent {
 
   getQueryPreview(): string {
     const parts: string[] = [];
-    if (this.filters.company) parts.push(`company:${this.filters.company}`);
-    if (this.filters.geography) parts.push(`geo:${this.filters.geography}`);
-    if (this.filters.segment) parts.push(`seg:${this.filters.segment}`);
+    if (this.filters.company) {
+      parts.push(`company:${this.filters.company}`);
+    }
+    if (this.filters.geography) {
+      parts.push(`geo:${this.filters.geography}`);
+    }
+    if (this.filters.segment) {
+      parts.push(`seg:${this.filters.segment}`);
+    }
     return parts.length > 0 ? parts.join(' | ') : 'No filters applied';
   }
 
@@ -549,4 +555,3 @@ export class QueryBuilderComponent {
     }
   }
 }
-

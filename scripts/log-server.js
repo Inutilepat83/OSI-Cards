@@ -37,7 +37,7 @@ const server = http.createServer((req, res) => {
   if (parsedUrl.pathname === '/api/logs/save' && req.method === 'POST') {
     let body = '';
 
-    req.on('data', chunk => {
+    req.on('data', (chunk) => {
       body += chunk.toString();
     });
 
@@ -52,15 +52,25 @@ const server = http.createServer((req, res) => {
           return;
         }
 
-        // Create log file
-        const logTimestamp = timestamp || new Date().toISOString().replace(/[:.]/g, '-');
-        const logFile = path.join(LOG_DIR, `masonry-grid-${logTimestamp}.log`);
+        // Create log file with better timestamp format
+        const now = new Date();
+        const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD
+        const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '-'); // HH-MM-SS
+        const logTimestamp = timestamp || `${dateStr}T${timeStr}`;
+        const logFile = path.join(LOG_DIR, `app-${logTimestamp}.log`);
 
         // Append each log entry as JSON line
         const stream = fs.createWriteStream(logFile, { flags: 'a' });
-        logs.forEach(log => {
+        let writeError = null;
+
+        stream.on('error', (err) => {
+          writeError = err;
+          console.error('Error writing to log file:', err);
+        });
+
+        logs.forEach((log) => {
           const logEntry = {
-            timestamp: log.time || log.timestamp || Date.now(),
+            timestamp: log.time || log.timestamp || new Date().toISOString(),
             level: log.level || 'info',
             message: log.message || '',
             data: log.data,
@@ -68,12 +78,19 @@ const server = http.createServer((req, res) => {
           };
           stream.write(JSON.stringify(logEntry) + '\n');
         });
-        stream.end();
 
-        console.log(`✅ Saved ${logs.length} logs to ${logFile}`);
-
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: true, file: logFile, count: logs.length }));
+        stream.end(() => {
+          if (writeError) {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(
+              JSON.stringify({ error: 'Failed to write log file', details: writeError.message })
+            );
+            return;
+          }
+          console.log(`✅ Saved ${logs.length} logs to ${logFile}`);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: true, file: logFile, count: logs.length }));
+        });
       } catch (error) {
         console.error('Error saving logs:', error);
         res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -104,11 +121,3 @@ process.on('SIGINT', () => {
     process.exit(0);
   });
 });
-
-
-
-
-
-
-
-

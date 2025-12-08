@@ -282,6 +282,3 @@ export class NotificationService {
     return `notification-${++this.idCounter}-${Date.now()}`;
   }
 }
-
-
-

@@ -92,7 +92,7 @@ export class ContactCardSectionComponent extends BaseSectionComponent implements
     }
 
     // Mac: Use ms-outlook: scheme (works with Outlook desktop app)
-    return `ms-outlook:${mailtoUrl}`;
+    return mailtoUrl;
   }
 
   /**

@@ -297,6 +297,3 @@ export async function updateBaseline(
 
   return snapshot;
 }
-
-
-

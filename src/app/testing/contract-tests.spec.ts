@@ -142,6 +142,3 @@ describe('Contract Tests', () => {
 // 3. Version contracts
 // 4. Use contract testing tools (Pact, Spring Cloud Contract)
 // 5. Fail fast on contract violations
-
-
-

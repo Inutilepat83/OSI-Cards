@@ -331,6 +331,3 @@ describe('EmailHandlerService', () => {
     });
   });
 });
-
-
-

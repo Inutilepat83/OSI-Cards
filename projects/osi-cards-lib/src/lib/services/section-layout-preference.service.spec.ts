@@ -196,13 +196,3 @@ describe('SectionLayoutPreferenceService', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-
-

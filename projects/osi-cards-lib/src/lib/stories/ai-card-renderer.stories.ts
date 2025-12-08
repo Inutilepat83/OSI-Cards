@@ -373,6 +373,3 @@ export const EmptyCard: Story = {
     },
   },
 };
-
-
-

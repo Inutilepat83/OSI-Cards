@@ -12,6 +12,12 @@
  * - Supports multi-column spanning sections
  * - Allows reordering by height for optimal packing
  *
+ * This utility aligns with the 40-Point Section Placement System:
+ * - Points 1-10: Core Layout Algorithm (single-pass, column selection)
+ * - Points 11-20: Performance & Optimization (caching, debouncing)
+ * - Points 21-30: Height Management (estimation, measurement)
+ * - Points 31-40: State Management & Quality (validation, metrics)
+ *
  * @example
  * ```typescript
  * import { packSectionsIntoColumns } from './column-packer.util';
@@ -133,6 +139,7 @@ export interface ColumnPackedSection {
   width: string;
   originalIndex: number;
   columnIndex: number; // Track column index for gap calculation
+  height: number; // Store the actual height used during placement
 }
 
 /**
@@ -309,14 +316,14 @@ function packWithFFDH(
         width,
         originalIndex,
         columnIndex: bestColumn,
+        height, // Store the height used during placement
       });
     }
 
-    // Evaluate this pass
-    const totalHeight = Math.max(
-      ...positioned.map((p) => p.top + estimateSectionHeight(p.section)),
-      0
-    );
+    // Evaluate this pass: Use max column height (which includes gap), then subtract gap for actual content height
+    // The colHeights array already has the correct bottom positions (top + height + gap)
+    const maxColHeight = Math.max(...colHeights, 0);
+    const totalHeight = maxColHeight > 0 ? Math.max(0, maxColHeight - gap) : 0;
     const metrics = calculateMetrics(positioned, totalHeight, columns, gap);
 
     // Keep the best result
@@ -396,8 +403,51 @@ function packWithFFDH(
 }
 
 /**
- * Enhanced column finder that considers gap creation
- * Prefers positions that minimize both height and gap creation
+ * Find best position that minimizes wasted space (underneath gaps)
+ * Returns column index, top position, and wasted space amount
+ */
+function findBestPositionMinimizeWastedSpace(
+  sectionHeight: number,
+  colSpan: number,
+  totalColumns: number,
+  colHeights: number[]
+): { col: number; top: number; wastedSpace: number } {
+  let bestColumn = 0;
+  let minWastedSpace = Infinity;
+  let bestTopPosition = Infinity;
+
+  // Iterate through every possible starting column
+  for (let col = 0; col <= totalColumns - colSpan; col++) {
+    const spanCols = colHeights.slice(col, col + colSpan);
+
+    // The item must sit on the tallest column in this span
+    const spanMaxHeight = Math.max(...spanCols);
+
+    // CALCULATE WASTED SPACE: Sum of gaps created under the item
+    // (Top of item - Height of specific column)
+    const wastedSpace = spanCols.reduce((sum, h) => sum + (spanMaxHeight - h), 0);
+
+    // CRITERIA 1: Minimize Wasted Space (Primary Goal)
+    if (wastedSpace < minWastedSpace) {
+      minWastedSpace = wastedSpace;
+      bestTopPosition = spanMaxHeight;
+      bestColumn = col;
+    }
+    // CRITERIA 2: Tie-breaker - Prefer higher up on the page
+    else if (wastedSpace === minWastedSpace) {
+      if (spanMaxHeight < bestTopPosition) {
+        bestTopPosition = spanMaxHeight;
+        bestColumn = col;
+      }
+    }
+  }
+
+  return { col: bestColumn, top: bestTopPosition, wastedSpace: minWastedSpace };
+}
+
+/**
+ * Enhanced column finder that considers gap creation and wasted space
+ * Uses hybrid scoring: 60% wasted space minimization, 40% gap-aware logic
  */
 function findShortestColumnWithGapAwareness(
   colHeights: number[],
@@ -419,14 +469,17 @@ function findShortestColumnWithGapAwareness(
       }
     }
 
-    // Calculate gap score: how much empty space would be created
-    const remainingCols = columns - col - colSpan;
-    const gapScore = calculateGapScoreForPosition(colHeights, col, colSpan, columns, maxColHeight);
+    // Calculate wasted space (60% weight)
+    const spanCols = colHeights.slice(col, col + colSpan);
+    const wastedSpace = spanCols.reduce((sum, h) => sum + (maxColHeight - h), 0);
+    const wastedSpaceScore = wastedSpace * 0.6;
 
-    // Combined score: prioritize horizontal placement and gap minimization
-    // Very aggressive: strongly favor side-by-side placement
-    // Lower height weight even more to maximize horizontal packing
-    const score = maxColHeight * 0.5 + gapScore * 150;
+    // Calculate gap score: how much empty space would be created (40% weight)
+    const gapScore =
+      calculateGapScoreForPosition(colHeights, col, colSpan, columns, maxColHeight) * 0.4;
+
+    // Combined score: hybrid of wasted space and gap-aware logic
+    const score = wastedSpaceScore + gapScore;
 
     if (score < minScore) {
       minScore = score;
@@ -507,10 +560,10 @@ function fillGapsPostProcessing(
   columns: number,
   gap: number
 ): ColumnPackedSection[] {
-  // Calculate column heights
+  // Calculate column heights - use stored height
   const colHeights = new Array(columns).fill(0);
   for (const pos of positioned) {
-    const height = estimateSectionHeight(pos.section, pos.colSpan);
+    const height = pos.height; // Use stored height from placement
     const bottom = pos.top + height + gap;
     for (let c = pos.columnIndex; c < pos.columnIndex + pos.colSpan; c++) {
       if (bottom > colHeights[c]) {
@@ -526,8 +579,8 @@ function fillGapsPostProcessing(
   const smallSections = positioned
     .filter((p) => p.colSpan === 1)
     .sort((a, b) => {
-      const heightA = estimateSectionHeight(a.section, a.colSpan);
-      const heightB = estimateSectionHeight(b.section, b.colSpan);
+      const heightA = a.height; // Use stored height
+      const heightB = b.height; // Use stored height
       return heightA - heightB; // Smallest first
     });
 
@@ -536,7 +589,7 @@ function fillGapsPostProcessing(
   const usedSections = new Set<number>();
 
   for (const smallSection of smallSections) {
-    const sectionHeight = estimateSectionHeight(smallSection.section, smallSection.colSpan);
+    const sectionHeight = smallSection.height; // Use stored height
     const sectionIndex = result.indexOf(smallSection);
     if (usedSections.has(sectionIndex)) continue;
 
@@ -561,6 +614,7 @@ function fillGapsPostProcessing(
         top: newTop,
         left: generateLeftExpression(columns, bestColumn, gap),
         width: generateWidthExpression(columns, 1, gap),
+        // height is already stored, keep it
       };
 
       // Update column height
@@ -584,19 +638,19 @@ function calculateMetrics(
   // Calculate total area
   const totalArea = columns * totalHeight;
 
-  // Calculate used area
+  // Calculate used area - use stored height instead of re-estimating
   const usedArea = positioned.reduce((sum, p) => {
-    const height = estimateSectionHeight(p.section);
+    const height = p.height; // Use stored height from placement
     return sum + p.colSpan * height;
   }, 0);
 
   // Utilization percentage
   const utilization = totalArea > 0 ? (usedArea / totalArea) * 100 : 0;
 
-  // Calculate actual column heights by tracking placements
+  // Calculate actual column heights by tracking placements - use stored height
   const colHeights = new Array(columns).fill(0);
   for (const pos of positioned) {
-    const height = estimateSectionHeight(pos.section);
+    const height = pos.height; // Use stored height from placement
     const top = pos.top;
     const bottom = top + height + gap;
 
@@ -799,6 +853,7 @@ export function packSectionsIntoColumns(
           width: pos.width,
           originalIndex: originalItem?.originalIndex ?? skylineIndex,
           columnIndex,
+          height: originalItem?.height ?? estimateSectionHeight(pos.section, pos.colSpan), // Store height from metrics or estimate
         };
       });
 
@@ -829,10 +884,9 @@ export function packSectionsIntoColumns(
 
       // In hybrid mode, check if we should switch to Skyline
       if (packingMode === 'hybrid' && containerWidth) {
-        const totalHeight = Math.max(
-          ...positioned.map((p) => p.top + estimateSectionHeight(p.section)),
-          0
-        );
+        // Calculate total height using stored heights
+        const maxBottom = Math.max(...positioned.map((p) => p.top + p.height), 0);
+        const totalHeight = maxBottom; // Height already includes content, gap is between items
         const metrics = calculateMetrics(positioned, totalHeight, columns, gap);
 
         if (metrics.gapCount >= useSkylineThreshold) {
@@ -874,6 +928,7 @@ export function packSectionsIntoColumns(
               width: pos.width,
               originalIndex: originalItem?.originalIndex ?? skylineIndex,
               columnIndex,
+              height: originalItem?.height ?? estimateSectionHeight(pos.section, pos.colSpan), // Store height from metrics or estimate
             };
           });
 
@@ -886,20 +941,17 @@ export function packSectionsIntoColumns(
       }
     }
 
-    // Calculate total height
-    let totalHeight = Math.max(
-      ...positioned.map((p) => p.top + estimateSectionHeight(p.section)),
-      0
-    );
+    // Calculate total height using stored heights
+    // Find the maximum bottom position (top + height) across all sections
+    let maxBottom = Math.max(...positioned.map((p) => p.top + p.height), 0);
+    let totalHeight = maxBottom; // This is the actual content height (gap is spacing between items, not part of content)
 
     // Post-processing: Try to fill gaps by repositioning small sections
     if (optimizationPasses > 1 && positioned.length > 2) {
       positioned = fillGapsPostProcessing(positioned, columns, gap);
-      // Recalculate total height after gap filling
-      totalHeight = Math.max(
-        ...positioned.map((p) => p.top + estimateSectionHeight(p.section, p.colSpan)),
-        0
-      );
+      // Recalculate total height after gap filling using stored heights
+      maxBottom = Math.max(...positioned.map((p) => p.top + p.height), 0);
+      totalHeight = maxBottom;
     }
 
     // Calculate metrics
@@ -968,6 +1020,7 @@ export function packSectionsIntoColumns(
         width: generateWidthExpression(config.columns || 4, 1, config.gap || 12),
         originalIndex: index,
         columnIndex: index % (config.columns || 4),
+        height: estimateSectionHeight(section, 1), // Add height property
       })),
       totalHeight: 200,
       columns: config.columns || 4,

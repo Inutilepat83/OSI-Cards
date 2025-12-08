@@ -115,6 +115,3 @@ export function attachTooltip(
     element.removeEventListener('mouseleave', hideTooltip);
   };
 }
-
-
-

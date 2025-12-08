@@ -155,6 +155,3 @@ export const Minimal: Story = {
     section: TestBuilders.Section.create().withTitle('News').withType('news').build(),
   },
 };
-
-
-

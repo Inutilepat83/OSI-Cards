@@ -136,6 +136,3 @@ export interface ComingSoonConfig {
 export class ComingSoonComponent {
   @Input({ required: true }) config!: ComingSoonConfig;
 }
-
-
-

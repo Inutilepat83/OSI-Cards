@@ -254,6 +254,3 @@ describe('LayoutQualityChecker', () => {
     });
   });
 });
-
-
-

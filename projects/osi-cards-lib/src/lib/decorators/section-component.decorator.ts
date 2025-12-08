@@ -139,6 +139,3 @@ export function getRegisteredComponent(type: string): Type<BaseSectionComponent>
 export function getRegisteredSectionTypes(): string[] {
   return Array.from(DECORATED_SECTION_COMPONENTS.keys());
 }
-
-
-

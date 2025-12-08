@@ -238,6 +238,3 @@ export class SLAMonitorService {
     this.updateStatus();
   }
 }
-
-
-

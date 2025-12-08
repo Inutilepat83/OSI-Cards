@@ -484,6 +484,3 @@ describe('CardFacadeService', () => {
     });
   });
 });
-
-
-

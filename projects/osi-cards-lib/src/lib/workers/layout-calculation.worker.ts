@@ -326,6 +326,3 @@ function optimizeLayout(payload: { positions: any[]; columns: number }): LayoutC
 }
 
 export {};
-
-
-

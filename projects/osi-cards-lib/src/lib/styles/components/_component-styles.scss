@@ -72,7 +72,9 @@
   flex-direction: column;
 
   /* Smooth transitions for grid-column changes */
-  transition: grid-column 0.3s ease, opacity 0.3s ease;
+  transition:
+    grid-column 0.3s ease,
+    opacity 0.3s ease;
 }
 
 /* Gentle entrance animation for new sections */
@@ -201,13 +203,3 @@ app-card-streaming-indicator {
   white-space: nowrap;
   border: 0;
 }
-
-
-
-
-
-
-
-
-
-

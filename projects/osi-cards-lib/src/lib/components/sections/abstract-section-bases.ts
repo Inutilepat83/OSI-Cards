@@ -667,7 +667,7 @@ export abstract class ContactSectionBaseComponent extends FieldBasedSectionCompo
       }
 
       // Mac: Use ms-outlook: scheme (works with Outlook desktop app)
-      window.location.href = `ms-outlook:${mailtoUrl}`;
+      window.location.href = mailtoUrl;
     }
   }
 

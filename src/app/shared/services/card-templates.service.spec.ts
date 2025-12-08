@@ -211,6 +211,3 @@ describe('CardTemplatesService', () => {
     });
   });
 });
-
-
-

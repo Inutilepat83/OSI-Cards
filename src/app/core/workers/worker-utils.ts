@@ -64,6 +64,3 @@ export function sendWorkerMessage<TRequest, TResponse>(
     worker.postMessage(message);
   });
 }
-
-
-

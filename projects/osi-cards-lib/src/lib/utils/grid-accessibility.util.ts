@@ -678,6 +678,3 @@ export function createFocusTrap(container: HTMLElement): {
     },
   };
 }
-
-
-

@@ -36,6 +36,7 @@ import {
   SectionNormalizationService,
   TiltCalculations,
 } from '../../services';
+import { generateCardSummary, generateBriefSummary } from '../../utils/card-summary.util';
 import { CardChangeType } from '../../utils';
 import { CardActionsComponent } from '../card-actions/card-actions.component';
 import { CardHeaderComponent } from '../card-header/card-header.component';
@@ -918,8 +919,22 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
       console.warn('Email subject is missing for mail action');
     }
 
-    // Process body - replace placeholders with contact information if available
+    // Process body - replace placeholders with contact information and card summary
     let processedBody = email.body || '';
+
+    // Replace card summary placeholders if card config is available
+    if (this.cardConfig) {
+      const cardSummary = generateCardSummary(this.cardConfig);
+      const briefSummary = generateBriefSummary(this.cardConfig);
+
+      // Replace {{summary}} placeholder with full card summary
+      processedBody = processedBody.replace(/\{\{summary\}\}/g, cardSummary);
+      // Replace {{briefSummary}} placeholder with brief summary
+      processedBody = processedBody.replace(/\{\{briefSummary\}\}/g, briefSummary);
+      // Replace {{cardTitle}} placeholder
+      processedBody = processedBody.replace(/\{\{cardTitle\}\}/g, this.cardConfig.cardTitle || '');
+    }
+
     if (email.contact) {
       // Replace {name} placeholder if contact name is available
       if (email.contact.name) {
@@ -959,7 +974,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     const isWindows =
       typeof navigator !== 'undefined' &&
       (/Win/i.test(navigator.platform) || /Windows/i.test(navigator.userAgent));
-    const outlookLink = isWindows ? mailtoLink : `ms-outlook:${mailtoLink}`;
+    const outlookLink = mailtoLink;
 
     // Detect Edge browser for specific handling
     const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : '';

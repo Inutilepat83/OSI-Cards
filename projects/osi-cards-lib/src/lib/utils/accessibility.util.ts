@@ -584,6 +584,3 @@ export function createSkipLink(targetId: string, text = 'Skip to content'): HTML
 
   return link;
 }
-
-
-

@@ -432,6 +432,3 @@ describe('EventMiddlewareService', () => {
     });
   });
 });
-
-
-

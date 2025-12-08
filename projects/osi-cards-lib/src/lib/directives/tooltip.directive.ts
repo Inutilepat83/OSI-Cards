@@ -366,6 +366,3 @@ export class TooltipDirective implements OnDestroy {
     }
   }
 }
-
-
-

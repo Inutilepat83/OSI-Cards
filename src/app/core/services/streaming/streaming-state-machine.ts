@@ -585,6 +585,3 @@ export function createStreamingStateMachine(options?: {
     maxReconnectAttempts: options?.maxReconnectAttempts ?? 5,
   });
 }
-
-
-

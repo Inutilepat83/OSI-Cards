@@ -96,6 +96,3 @@ describe('Mutation Testing Examples', () => {
 // 2. Configure: npx stryker init
 // 3. Run: npx stryker run
 // 4. Target: 80%+ mutation score
-
-
-

@@ -484,6 +484,3 @@ export function prepareForFlip(elements: HTMLElement[], idPrefix: string = 'flip
     }
   });
 }
-
-
-

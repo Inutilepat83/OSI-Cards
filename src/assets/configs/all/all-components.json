@@ -1426,6 +1426,28 @@
   ],
   "actions": [
     {
+      "label": "Generate Presentation",
+      "type": "agent",
+      "variant": "primary",
+      "icon": "📊",
+      "agentId": "ppt-generation"
+    },
+    {
+      "label": "Write Email",
+      "type": "mail",
+      "variant": "primary",
+      "icon": "✉️",
+      "email": {
+        "subject": "Nexus Technologies - All Sections Demo",
+        "body": "Hello,\n\nI wanted to share this comprehensive overview of Nexus Technologies with you.\n\nThis card demonstrates all available section types in our OSI Cards library, including:\n- Analytics and KPIs\n- Brand identity and design tokens\n- Revenue and growth charts\n- Executive leadership team\n- Key events and milestones\n- Financial summaries\n- Product information\n- And much more...\n\nPlease let me know if you have any questions or would like to schedule a demo.\n\nBest regards",
+        "contact": {
+          "name": "Nexus Technologies",
+          "email": "info@nexustech.io",
+          "role": "Sales Team"
+        }
+      }
+    },
+    {
       "label": "Learn More",
       "type": "website",
       "variant": "primary",

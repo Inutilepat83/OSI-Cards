@@ -177,6 +177,3 @@ export function takeUntilCondition<T>(predicate: (value: T) => boolean) {
       return () => subscription.unsubscribe();
     });
 }
-
-
-

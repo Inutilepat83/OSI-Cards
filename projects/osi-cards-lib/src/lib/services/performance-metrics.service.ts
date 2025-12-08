@@ -339,6 +339,3 @@ export class PerformanceMetricsService implements OnDestroy {
     return metrics.reduce((max, current) => (current.duration > max.duration ? current : max));
   }
 }
-
-
-

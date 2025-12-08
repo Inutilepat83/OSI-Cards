@@ -386,7 +386,7 @@ import { LucideIconsModule } from '../../icons/lucide-icons.module';
 })
 export class JsonPreviewComponent {
   @Input() jsonData: any = {};
-  @Input() previewLines: number = 10;
+  @Input() previewLines = 10;
 
   mode: 'business' | 'technical' = 'business';
   showFullModal = false;
@@ -442,4 +442,3 @@ export class JsonPreviewComponent {
     }
   }
 }
-

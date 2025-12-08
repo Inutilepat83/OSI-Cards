@@ -116,6 +116,3 @@ export class ComponentPool<T> {
     return this.pool.length;
   }
 }
-
-
-

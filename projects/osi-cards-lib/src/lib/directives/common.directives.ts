@@ -332,6 +332,3 @@ export const COMMON_DIRECTIVES = [
   LongPressDirective,
   ResizeObserverDirective,
 ];
-
-
-

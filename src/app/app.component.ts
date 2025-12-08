@@ -1,11 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { ErrorDisplayComponent } from './shared/components/error-display/error-display.component';
-import { PerformanceService } from './core';
-import { getVersionString, VERSION_INFO } from '../version';
-import { ThemeService } from '../../projects/osi-cards-lib/src/lib/themes/theme.service';
 import { Subject, takeUntil } from 'rxjs';
+import { ThemeService } from '../../projects/osi-cards-lib/src/lib/themes/theme.service';
+import { getVersionString, VERSION_INFO } from '../version';
+import { PerformanceService } from './core';
+import { FileLoggingService } from './core/services/file-logging.service';
+import { ErrorDisplayComponent } from './shared/components/error-display/error-display.component';
 
 @Component({
   selector: 'app-root',
@@ -47,6 +48,7 @@ import { Subject, takeUntil } from 'rxjs';
 export class AppComponent implements OnInit, OnDestroy {
   private readonly themeService = inject(ThemeService);
   private readonly performanceService = inject(PerformanceService);
+  private readonly fileLogging = inject(FileLoggingService);
   private readonly destroy$ = new Subject<void>();
 
   ngOnInit(): void {
@@ -58,6 +60,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Initialize performance monitoring
     this.performanceService.initialize();
+
+    // Start automatic log sending to server (every 30 seconds)
+    this.fileLogging.startAutoSend(30000);
 
     // Log version info in development
     if (typeof console !== 'undefined') {
@@ -72,6 +77,10 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    // Stop automatic log sending
+    this.fileLogging.stopAutoSend();
+    // Send any remaining logs before destroying
+    this.fileLogging.sendLogsToServer();
     this.destroy$.next();
     this.destroy$.complete();
   }

@@ -3,19 +3,62 @@
   width: 100%;
 }
 
-/* Force minimum heights to prevent collapse */
-.masonry-item {
-  min-height: 100px !important;
+/* ============================================================
+   CONTAINER - CSS Grid with Masonry
+   ============================================================ */
+
+.masonry-container {
+  display: grid;
+  grid-template-columns: repeat(var(--masonry-columns, 3), 1fr);
+  gap: var(--masonry-gap, 16px);
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
-/* Ensure sections are visible for measurement and fit their container */
+/* Native masonry when supported (Chrome 109+, Firefox 142+) */
+@supports (grid-template-rows: masonry) {
+  .masonry-container {
+    grid-template-rows: masonry;
+  }
+}
+
+/* Fallback: row dense for gap filling (excellent browser support) */
+@supports not (grid-template-rows: masonry) {
+  .masonry-container {
+    grid-auto-flow: row dense;
+  }
+}
+
+.masonry-container--ready {
+  opacity: 1;
+}
+
+/* ============================================================
+   ITEMS - Grid cells with column spans
+   ============================================================ */
+
+.masonry-item {
+  grid-column: span var(--col-span, 1);
+  min-height: 100px;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  /* Performance optimizations */
+  contain: layout style paint;
+  display: block;
+}
+
+/* Ensure sections are visible and fit their container */
 app-section-renderer {
   display: block !important;
   min-height: 80px !important;
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
-  overflow: hidden; /* Prevent content from breaking out of column */
+  overflow: hidden;
 }
 
 /* Ensure all child elements respect column boundaries */
@@ -35,74 +78,20 @@ app-section-renderer {
 /* Prevent any element from exceeding column width */
 .masonry-item > * {
   max-width: 100%;
-  overflow-x: auto; /* Allow horizontal scroll for very wide content if needed */
-}
-
-/* ============================================================
-   CONTAINER
-   ============================================================ */
-
-.masonry-container {
-  position: relative;
-  width: 100%;
-  min-height: 200px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  padding: 16px; /* Horizontal padding for visual spacing */
-  padding-bottom: 60px; /* Ensure bottom sections are visible */
-  box-sizing: border-box;
-  overflow: hidden; /* Prevent any content from breaking out */
-}
-
-.masonry-container--ready {
-  opacity: 1;
-}
-
-/* ============================================================
-   ITEMS - Absolute positioning with smooth transitions
-   ============================================================ */
-
-.masonry-item {
-  position: absolute;
-  margin-bottom: 16px; /* Increase vertical spacing */
-
-  /* Ensure sections fit their columns exactly */
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  overflow-wrap: break-word;
-  overflow: hidden; /* Prevent content from overflowing column boundaries */
-
-  /* Performance optimizations */
-  contain: layout style paint;
-  /* Point 40: Use will-change sparingly - only if translating via transform, not top/left */
-  /* Removed will-change: transform since we use top/left positioning */
-}
-
-/* During measurement pass, keep sections visible but don't animate */
-/* Sections must be visible for height measurement */
-.masonry-container:not(.masonry-container--ready) .masonry-item {
-  /* Keep visible during measurement so sections are always visible */
-  opacity: 1 !important; /* Show sections immediately for measurement */
-  visibility: visible !important; /* Force browser to render */
-  transition: none !important; /* No animations during measurement */
-  pointer-events: auto; /* Allow interaction */
-  /* Ensure items are positioned absolutely */
-  position: absolute !important;
+  overflow-x: auto;
 }
 
 /* Ensure images have minimum dimensions during load and fit column */
 .masonry-item img {
-  min-height: 200px; /* Prevents collapse before load */
+  min-height: 200px;
   width: 100%;
   max-width: 100%;
   height: auto;
-  object-fit: contain; /* Changed from cover to contain to fit within column */
+  object-fit: contain;
   box-sizing: border-box;
 }
 
 /* Ensure media does not blow up height unexpectedly and fits column width */
-/* Point 26: CSS aspect ratios for heavy media to improve first measured height */
 .masonry-item img,
 .masonry-item video,
 .masonry-item iframe,
@@ -112,21 +101,21 @@ app-section-renderer {
   height: auto;
   display: block;
   box-sizing: border-box;
-  object-fit: contain; /* Ensure images fit within bounds */
+  object-fit: contain;
 }
 
-/* Point 26: Apply aspect ratios for common media types */
+/* Apply aspect ratios for common media types */
 .masonry-item img {
-  aspect-ratio: 16 / 9; /* Common image aspect ratio */
+  aspect-ratio: 16 / 9;
 }
 
 .masonry-item iframe,
 .masonry-item video {
-  aspect-ratio: 16 / 9; /* Common video aspect ratio */
+  aspect-ratio: 16 / 9;
 }
 
 .masonry-item canvas {
-  aspect-ratio: 4 / 3; /* Common chart aspect ratio */
+  aspect-ratio: 4 / 3;
 }
 
 /* Charts and iframes should have minimum height */
@@ -136,59 +125,12 @@ app-section-renderer {
   min-height: 300px;
 }
 
-/* Once ready, fade in smoothly */
-.masonry-container--ready .masonry-item {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* Position transitions only when animated (after first layout) */
-/* Point 39: Short transition durations (200-350ms) with ease-out */
-.masonry-container--ready.masonry-container--animated .masonry-item {
-  transition:
-    left 0.3s ease-out,
-    top 0.3s ease-out,
-    width 0.3s ease-out,
-    opacity 0.25s ease-out;
-}
-
-/* First layout: snap into place, no sliding overlap */
-.masonry-container--ready:not(.masonry-container--animated) .masonry-item {
-  transition: none;
-}
-
-/* Staggered fade-in for initial load */
-.masonry-container--ready .masonry-item:nth-child(1) {
-  transition-delay: 0ms;
-}
-
-.masonry-container--ready .masonry-item:nth-child(2) {
-  transition-delay: 50ms;
-}
-
-.masonry-container--ready .masonry-item:nth-child(3) {
-  transition-delay: 100ms;
-}
-
-.masonry-container--ready .masonry-item:nth-child(4) {
-  transition-delay: 150ms;
-}
-
-.masonry-container--ready .masonry-item:nth-child(5) {
-  transition-delay: 200ms;
-}
-
-.masonry-container--ready .masonry-item:nth-child(n + 6) {
-  transition-delay: 250ms;
-}
-
 /* ============================================================
    STREAMING MODE - Disable transitions during active streaming
    ============================================================ */
 
 .masonry-container--streaming .masonry-item {
   transition: opacity 0.3s ease !important;
-  transition-delay: 0ms !important;
 }
 
 /* ============================================================
@@ -196,12 +138,8 @@ app-section-renderer {
    ============================================================ */
 
 @media (max-width: 768px) {
-  .masonry-item {
-    transition:
-      left 0.25s ease-out,
-      top 0.25s ease-out,
-      width 0.25s ease-out,
-      opacity 0.2s ease-out;
+  .masonry-container {
+    padding: 0;
   }
 }
 
@@ -218,6 +156,5 @@ app-section-renderer {
 
   .masonry-container--ready .masonry-item {
     opacity: 1;
-    transition-delay: 0ms !important;
   }
 }

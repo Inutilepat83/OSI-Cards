@@ -5,6 +5,8 @@
 // Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
+@use "../../../styles/osi-cards-mixins" as mixins;
+@use "../../../styles/design-system/section-base" as section-base;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -22,7 +24,7 @@
 }
 
 .map-wrapper {
-  @include card-base;
+  @include mixins.card-base;
   overflow: hidden;
   height: 280px; // Compact: 280px (was 300px)
   padding: 0; // Remove padding for map content
@@ -45,7 +47,7 @@
 }
 
 .location-item {
-  @include item-with-border;
+  @include section-base.item-with-border;
   padding: var(--osi-spacing-compact-sm, 6px); // Compact: 6px
 
   @media (max-width: 480px) {

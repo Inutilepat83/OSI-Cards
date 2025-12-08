@@ -157,6 +157,3 @@ export const NumberedList: Story = {
       .build(),
   },
 };
-
-
-

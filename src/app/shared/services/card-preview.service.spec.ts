@@ -128,6 +128,3 @@ describe('CardPreviewService', () => {
     });
   });
 });
-
-
-

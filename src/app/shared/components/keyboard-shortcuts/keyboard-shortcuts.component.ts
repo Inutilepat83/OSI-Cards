@@ -628,6 +628,3 @@ export class KeyboardShortcutsComponent implements OnInit, OnDestroy {
     return navigator.platform.toUpperCase().indexOf('MAC') >= 0;
   }
 }
-
-
-

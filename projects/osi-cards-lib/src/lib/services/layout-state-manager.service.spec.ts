@@ -368,6 +368,3 @@ describe('LayoutStateManager', () => {
     });
   });
 });
-
-
-

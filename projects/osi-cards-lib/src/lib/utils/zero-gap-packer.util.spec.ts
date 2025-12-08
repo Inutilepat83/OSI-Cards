@@ -97,9 +97,9 @@ describe('ZeroGapPacker', () => {
       // I will cast to any to keep the test logic identical without changing string values which might be used in the test body logic (though here it just uses register).
 
       const sectionsCasted: any[] = [
-          { id: '1', type: 'full', title: 'Full Width', colSpan: 4 },
-          { id: '2', type: 'half', title: 'Half Width', colSpan: 2 },
-          { id: '3', type: 'half', title: 'Half Width', colSpan: 2 },
+        { id: '1', type: 'full', title: 'Full Width', colSpan: 4 },
+        { id: '2', type: 'half', title: 'Half Width', colSpan: 2 },
+        { id: '3', type: 'half', title: 'Half Width', colSpan: 2 },
       ];
 
       preferenceService.register('full', () => ({
@@ -126,7 +126,13 @@ describe('ZeroGapPacker', () => {
         columnCount: 4,
       };
 
-      const result = packWithZeroGapsGuarantee(sectionsCasted as CardSection[], 4, 12, preferenceService, context);
+      const result = packWithZeroGapsGuarantee(
+        sectionsCasted as CardSection[],
+        4,
+        12,
+        preferenceService,
+        context
+      );
 
       expect(result.positionedSections.length).toBe(3);
       // Full width should be 4 columns
@@ -168,13 +174,3 @@ describe('ZeroGapPacker', () => {
     });
   });
 });
-
-
-
-
-
-
-
-
-
-

@@ -181,6 +181,3 @@ describe('HeightEstimationService', () => {
     });
   });
 });
-
-
-

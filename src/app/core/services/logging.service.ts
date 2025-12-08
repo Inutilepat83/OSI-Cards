@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { AppConfigService } from './app-config.service';
+import { FileLoggingService } from './file-logging.service';
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
@@ -23,6 +24,7 @@ export interface LogEntry {
 })
 export class LoggingService {
   private readonly config = inject(AppConfigService);
+  private readonly fileLogging = inject(FileLoggingService);
   private readonly logHistory: LogEntry[] = [];
   private readonly maxHistorySize = 1000;
   private correlationId: string | null = null;
@@ -121,6 +123,9 @@ export class LoggingService {
     if (this.logHistory.length > this.maxHistorySize) {
       this.logHistory.shift();
     }
+
+    // Also send to file logging service for server persistence
+    this.fileLogging.log(level, message, data);
 
     // Enhanced structured logging with correlation ID
     const structuredLog: Record<string, unknown> = {

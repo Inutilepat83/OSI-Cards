@@ -232,6 +232,3 @@ describe('CardHeaderComponent with Content Projection', () => {
     expect(fixture).toBeTruthy();
   });
 });
-
-
-

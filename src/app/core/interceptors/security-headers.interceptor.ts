@@ -93,6 +93,3 @@ export function securityHeadersInterceptor(
   const interceptor = inject(SecurityHeadersInterceptor);
   return interceptor.intercept(req, next);
 }
-
-
-

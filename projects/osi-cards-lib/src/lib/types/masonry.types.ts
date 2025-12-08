@@ -72,4 +72,3 @@ export type PreferenceCalculator = (
   availableColumns: number,
   context: LayoutContext
 ) => SectionLayoutPreferences;
-

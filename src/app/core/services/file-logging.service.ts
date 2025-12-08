@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { PLATFORM_ID, inject } from '@angular/core';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { AppConfigService } from './app-config.service';
 
 /**
  * File Logging Service
@@ -13,8 +13,10 @@ import { PLATFORM_ID, inject } from '@angular/core';
 })
 export class FileLoggingService {
   private readonly platformId = inject(PLATFORM_ID);
-  private logs: Array<{ timestamp: number; level: string; message: string; data?: any }> = [];
+  private readonly config = inject(AppConfigService);
+  private logs: { timestamp: number; level: string; message: string; data?: any }[] = [];
   private readonly maxLogs = 10000;
+  private logServerCheckInterval: number | null = null;
 
   /**
    * Add a log entry
@@ -40,7 +42,7 @@ export class FileLoggingService {
   /**
    * Get all logs
    */
-  getLogs(): Array<{ timestamp: number; level: string; message: string; data?: any }> {
+  getLogs(): { timestamp: number; level: string; message: string; data?: any }[] {
     return [...this.logs];
   }
 
@@ -59,7 +61,7 @@ export class FileLoggingService {
       return;
     }
 
-    const logs = this.logs.map(log => ({
+    const logs = this.logs.map((log) => ({
       time: new Date(log.timestamp).toISOString(),
       level: log.level,
       message: log.message,
@@ -71,7 +73,8 @@ export class FileLoggingService {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = filename || `masonry-grid-logs-${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+    link.download =
+      filename || `masonry-grid-logs-${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -86,21 +89,48 @@ export class FileLoggingService {
       return;
     }
 
-    const text = this.logs.map(log => {
-      const time = new Date(log.timestamp).toISOString();
-      const dataStr = log.data ? '\n' + JSON.stringify(log.data, null, 2) : '';
-      return `[${time}] [${log.level.toUpperCase()}] ${log.message}${dataStr}`;
-    }).join('\n\n');
+    const text = this.logs
+      .map((log) => {
+        const time = new Date(log.timestamp).toISOString();
+        const dataStr = log.data ? '\n' + JSON.stringify(log.data, null, 2) : '';
+        return `[${time}] [${log.level.toUpperCase()}] ${log.message}${dataStr}`;
+      })
+      .join('\n\n');
 
     const blob = new Blob([text], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = filename || `masonry-grid-logs-${new Date().toISOString().replace(/[:.]/g, '-')}.txt`;
+    link.download =
+      filename || `masonry-grid-logs-${new Date().toISOString().replace(/[:.]/g, '-')}.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+  }
+
+  /**
+   * Check if log server is available
+   */
+  async checkLogServerHealth(): Promise<boolean> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return false;
+    }
+
+    if (!this.config.LOGGING.ENABLE_LOG_SERVER) {
+      return false;
+    }
+
+    try {
+      const logServerUrl = this.config.LOGGING.LOG_SERVER_URL;
+      const response = await fetch(`${logServerUrl}/health`, {
+        method: 'GET',
+        signal: AbortSignal.timeout(2000), // 2 second timeout
+      });
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
   }
 
   /**
@@ -112,27 +142,82 @@ export class FileLoggingService {
       return;
     }
 
+    if (!this.config.LOGGING.ENABLE_LOG_SERVER) {
+      return;
+    }
+
+    if (this.logs.length === 0) {
+      return;
+    }
+
     try {
-      const response = await fetch('/api/logs', {
+      const logServerUrl = this.config.LOGGING.LOG_SERVER_URL;
+      const response = await fetch(`${logServerUrl}/api/logs/save`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          logs: this.logs,
+          logs: this.logs.map((log) => ({
+            time: new Date(log.timestamp).toISOString(),
+            timestamp: log.timestamp,
+            level: log.level,
+            message: log.message,
+            data: log.data,
+          })),
           timestamp: new Date().toISOString(),
+          source: 'FileLoggingService',
         }),
       });
 
       if (response.ok) {
-        console.log('Logs sent to server successfully');
+        const result = await response.json();
+        console.log(`✅ Logs sent to server successfully: ${result.count} logs saved`);
+        // Clear logs after successful send
+        this.clearLogs();
       } else {
         console.warn('Failed to send logs to server:', response.statusText);
       }
     } catch (error) {
       console.warn('Error sending logs to server:', error);
-      // Fallback: export as file
-      this.exportLogsAsFile();
+      // Don't export as file automatically - let user decide
+    }
+  }
+
+  /**
+   * Start automatic log sending to server at intervals
+   */
+  startAutoSend(intervalMs = 30000): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    if (!this.config.LOGGING.ENABLE_LOG_SERVER) {
+      return;
+    }
+
+    if (this.logServerCheckInterval) {
+      return; // Already started
+    }
+
+    this.logServerCheckInterval = window.setInterval(async () => {
+      if (this.logs.length > 0) {
+        // Check if server is available before sending
+        const isAvailable = await this.checkLogServerHealth();
+        if (isAvailable) {
+          this.sendLogsToServer();
+        }
+      }
+    }, intervalMs);
+  }
+
+  /**
+   * Stop automatic log sending
+   */
+  stopAutoSend(): void {
+    if (this.logServerCheckInterval) {
+      clearInterval(this.logServerCheckInterval);
+      this.logServerCheckInterval = null;
     }
   }
 
@@ -146,7 +231,7 @@ export class FileLoggingService {
     newest: string;
   } {
     const byLevel: Record<string, number> = {};
-    this.logs.forEach(log => {
+    this.logs.forEach((log) => {
       byLevel[log.level] = (byLevel[log.level] || 0) + 1;
     });
 
@@ -160,4 +245,3 @@ export class FileLoggingService {
     };
   }
 }
-

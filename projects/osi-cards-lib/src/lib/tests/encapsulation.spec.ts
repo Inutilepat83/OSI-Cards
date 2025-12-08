@@ -278,6 +278,3 @@ describe('Animation Encapsulation', () => {
     });
   });
 });
-
-
-

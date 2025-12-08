@@ -243,6 +243,3 @@ export class LazySectionPlaceholderComponent {
     this.retry.emit();
   }
 }
-
-
-

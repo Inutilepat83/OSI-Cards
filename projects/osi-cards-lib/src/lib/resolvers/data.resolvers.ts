@@ -154,6 +154,3 @@ export function createFallbackResolver<T>(
     return fetchFn().pipe(catchError(() => of(fallbackValue)));
   };
 }
-
-
-

@@ -11,6 +11,10 @@ export const environment = {
   apiUrl: 'http://localhost:3000/api',
   apiTimeout: 30000, // 30 seconds
 
+  // Log Server Configuration
+  logServerUrl: 'http://localhost:3001',
+  enableLogServer: true,
+
   // Debugging and Logging
   enableDebug: true,
   logLevel: 'debug' as 'error' | 'warn' | 'info' | 'debug',

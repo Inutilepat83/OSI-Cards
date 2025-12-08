@@ -310,6 +310,3 @@ export function createGridResizeManager(element?: Element): ResizeManager {
 
   return manager;
 }
-
-
-

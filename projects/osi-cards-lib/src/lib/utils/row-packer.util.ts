@@ -10,6 +10,12 @@
  * 2. SECONDARY: Respect section priority (1-3)
  * 3. TERTIARY: Honor preferred column widths when possible
  *
+ * This utility aligns with the 40-Point Section Placement System:
+ * - Points 1-10: Core Layout Algorithm (single-pass, column selection)
+ * - Points 11-20: Performance & Optimization (caching, debouncing)
+ * - Points 21-30: Height Management (estimation, measurement)
+ * - Points 31-40: State Management & Quality (validation, metrics)
+ *
  * @example
  * ```typescript
  * import { packSectionsIntoRows } from './row-packer.util';
@@ -23,12 +29,12 @@
  * ```
  */
 
-import { CardSection, LayoutPriority, CardField } from '../models/card.model';
+import { CardField, CardSection, LayoutPriority } from '../models/card.model';
 import {
-  generateWidthExpression,
-  generateLeftExpression,
-  getMaxExpansion,
   EXPANSION_DENSITY_THRESHOLD,
+  generateLeftExpression,
+  generateWidthExpression,
+  getMaxExpansion,
 } from './grid-config.util';
 
 // ============================================================================

@@ -11,6 +11,10 @@ export const environment = {
   apiUrl: 'https://api.osi-cards.com/api',
   apiTimeout: 15000, // 15 seconds
 
+  // Log Server Configuration
+  logServerUrl: 'http://localhost:3001',
+  enableLogServer: false, // Disabled in production
+
   // Debugging and Logging
   enableDebug: false,
   logLevel: 'error' as 'error' | 'warn' | 'info' | 'debug',

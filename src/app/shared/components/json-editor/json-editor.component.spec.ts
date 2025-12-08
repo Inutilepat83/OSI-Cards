@@ -277,6 +277,3 @@ describe('JsonEditorComponent', () => {
     });
   });
 });
-
-
-

@@ -1,4 +1,5 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -15,9 +16,10 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
-import { CardChangeType, CardUtil } from 'osi-cards-lib';
+import { CardChangeType } from 'osi-cards-lib';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { AgentService } from '../../../../core/services/agent.service';
+import { AppConfigService } from '../../../../core/services/app-config.service';
 import { CardDataService } from '../../../../core/services/card-data/card-data.service';
 import { ChatService } from '../../../../core/services/chat.service';
 import { LoggingService } from '../../../../core/services/logging.service';
@@ -85,6 +87,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private readonly chatService = inject(ChatService);
   private readonly document = inject(DOCUMENT);
   private readonly themeService = inject(ThemeService);
+  private readonly http = inject(HttpClient);
+  private readonly config = inject(AppConfigService);
 
   // Expose current theme for template
   get currentTheme(): string {
@@ -186,6 +190,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private statusRole: 'status' | 'alert' = 'status';
   private previousLoading = false;
   private previousError = '';
+  isGeneratingPPT = false;
 
   // Debounced JSON input processing
   private jsonInputSubject = new Subject<string>();
@@ -2569,17 +2574,145 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.isFullscreen = isFullscreen;
   }
 
+  /**
+   * Generate PPT file from card data
+   * Similar to chat's downloadPPT functionality
+   */
+  generatePPTFromCard(card: AICardConfig, context?: Record<string, unknown>): void {
+    if (this.isGeneratingPPT) {
+      this.logger.warn('PPT generation already in progress', 'HomePageComponent');
+      return;
+    }
+
+    if (!card) {
+      this.announceStatus('No card data available for PPT generation', true);
+      this.logger.warn('No card data available for PPT generation', 'HomePageComponent');
+      return;
+    }
+
+    this.isGeneratingPPT = true;
+    this.announceStatus('Generating presentation...');
+
+    // Convert card data to JSON string for context
+    // Remove IDs for cleaner JSON (matching chat behavior which uses answer text)
+    const cardWithoutIds = removeAllIds(card);
+    delete cardWithoutIds.cardType;
+    const cardContext = JSON.stringify(cardWithoutIds, null, 2);
+
+    // Prepare headers
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    });
+
+    // Prepare payload - matching chat component structure
+    const payload = {
+      context: cardContext,
+      ftid: context?.ftid || context?.userId || 'default',
+      kb_name: context?.kb_name || context?.clientName || 'default',
+    };
+
+    // Get API URL from config
+    const apiUrl = this.config.ENV.API_URL || 'http://localhost:3000/api';
+    const endpoint = `${apiUrl}/ppt/creation`;
+
+    this.logger.info('Generating PPT from card', 'HomePageComponent', {
+      endpoint,
+      cardTitle: card.cardTitle,
+      contextLength: cardContext.length,
+    });
+
+    // Make POST request to generate PPT
+    this.http
+      .post(endpoint, payload, {
+        headers,
+        responseType: 'blob',
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response: Blob) => {
+          try {
+            // Create blob and trigger download
+            const blob = new Blob([response], {
+              type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${card.cardTitle || 'card'}_${Date.now()}.pptx`.replace(
+              /[^a-z0-9.-]/gi,
+              '_'
+            );
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            this.isGeneratingPPT = false;
+            this.announceStatus('Presentation generated and downloaded successfully');
+            this.logger.info('PPT generated successfully', 'HomePageComponent', {
+              filename: a.download,
+            });
+            this.cd.markForCheck();
+          } catch (error) {
+            this.isGeneratingPPT = false;
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            this.announceStatus(`Failed to download presentation: ${errorMessage}`, true);
+            this.logger.error('Failed to download PPT file', 'HomePageComponent', error);
+            this.cd.markForCheck();
+          }
+        },
+        error: (error: HttpErrorResponse) => {
+          this.isGeneratingPPT = false;
+          const errorMessage =
+            error.error instanceof Blob
+              ? 'File download failed. Please retry later.'
+              : error.message || 'File download failed. Please retry later.';
+          this.announceStatus(errorMessage, true);
+          this.logger.error('PPT generation failed', 'HomePageComponent', {
+            error: error.message,
+            status: error.status,
+            statusText: error.statusText,
+          });
+          this.cd.markForCheck();
+        },
+      });
+  }
+
   onAgentAction(event: {
     action: any;
     card: AICardConfig;
     agentId?: string;
     context?: Record<string, unknown>;
   }): void {
-    // Handle agent action - trigger agent with the provided context
-    this.logger.info('Agent action triggered', 'HomePageComponent', event);
-    this.agentService.triggerAgent(event.agentId, event.context).catch((error) => {
-      this.logger.error('Failed to trigger agent', 'HomePageComponent', error);
-    });
+    // Check if action is for PPT generation
+    const actionLabel = event.action?.label?.toLowerCase() || '';
+    const agentId = event.agentId?.toLowerCase() || '';
+    const isPPTGeneration =
+      actionLabel.includes('presentation') ||
+      actionLabel.includes('ppt') ||
+      agentId === 'ppt-generation' ||
+      agentId === 'presentation';
+
+    if (isPPTGeneration) {
+      // Handle PPT generation
+      this.logger.info('PPT generation action triggered', 'HomePageComponent', {
+        actionLabel: event.action?.label,
+        agentId: event.agentId,
+        cardTitle: event.card?.cardTitle,
+      });
+      this.generatePPTFromCard(event.card, {
+        ...event.context,
+        actionLabel: event.action?.label,
+        agentId: event.agentId,
+      });
+    } else {
+      // Handle other agent actions - trigger agent with the provided context
+      this.logger.info('Agent action triggered', 'HomePageComponent', event);
+      this.agentService.triggerAgent(event.agentId, event.context).catch((error) => {
+        this.logger.error('Failed to trigger agent', 'HomePageComponent', error);
+      });
+    }
   }
 
   onQuestionAction(event: { action: any; card: AICardConfig; question?: string }): void {

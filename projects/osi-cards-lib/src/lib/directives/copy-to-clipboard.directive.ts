@@ -257,6 +257,3 @@ export class CopyToClipboardDirective {
     }
   }
 }
-
-
-

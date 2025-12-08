@@ -464,6 +464,3 @@ export function getLayoutAnalyticsSummary(): LayoutAnalyticsSummary {
 export function getLayoutRecommendations(): string[] {
   return LayoutAnalyticsService.getInstance().getRecommendations();
 }
-
-
-

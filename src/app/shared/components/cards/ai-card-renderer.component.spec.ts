@@ -1,11 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MasonryGridComponent, SectionRenderEvent } from '@osi-cards/components';
-import { MagneticTiltService } from '@osi-cards/services';
+import { IconService, MagneticTiltService, SectionNormalizationService } from '@osi-cards/services';
 import { Breakpoint } from '@osi-cards/types';
 import { LoggingService } from '../../../core/services/logging.service';
 import { CardBuilder, SectionBuilder } from '../../../testing/test-builders';
-import { IconService } from '../../services/icon.service';
-import { SectionNormalizationService } from '../../services/section-normalization.service';
 import { AICardRendererComponent } from './ai-card-renderer.component';
 
 describe('AICardRendererComponent', () => {
@@ -19,11 +17,16 @@ describe('AICardRendererComponent', () => {
   beforeEach(async () => {
     const loggingSpy = jasmine.createSpyObj('LoggingService', ['debug', 'info', 'warn', 'error']);
     const iconSpy = jasmine.createSpyObj('IconService', ['getIcon', 'getFieldIcon']);
-    const normalizationSpy = jasmine.createSpyObj('SectionNormalizationService', ['normalize']);
+    const normalizationSpy = jasmine.createSpyObj('SectionNormalizationService', [
+      'normalizeSection',
+      'sortSections',
+    ]);
     const tiltSpy = jasmine.createSpyObj('MagneticTiltService', ['calculateTilt', 'resetTilt']);
 
     iconSpy.getIcon.and.returnValue('sparkles');
-    normalizationSpy.normalize.and.returnValue([]);
+    iconSpy.getFieldIcon.and.returnValue('sparkles');
+    normalizationSpy.normalizeSection.and.callFake((section: any) => section);
+    normalizationSpy.sortSections.and.callFake((sections: any[]) => sections);
 
     await TestBed.configureTestingModule({
       imports: [AICardRendererComponent, MasonryGridComponent],
@@ -62,14 +65,10 @@ describe('AICardRendererComponent', () => {
       .withSection(SectionBuilder.create().withTitle('Test Section').withType('info').build())
       .build();
 
-    normalizationService.normalize.and.returnValue([
-      SectionBuilder.create().withTitle('Test Section').withType('info').build(),
-    ]);
-
     component.cardConfig = card;
     fixture.detectChanges();
 
-    expect(normalizationService.normalize).toHaveBeenCalled();
+    expect(normalizationService.normalizeSection).toHaveBeenCalled();
     expect(component.processedSections.length).toBeGreaterThan(0);
   });
 
@@ -82,8 +81,6 @@ describe('AICardRendererComponent', () => {
 
   it('should handle card config without sections', () => {
     const card = CardBuilder.create().withTitle('Card Without Sections').build();
-
-    normalizationService.normalize.and.returnValue([]);
 
     component.cardConfig = card;
     fixture.detectChanges();
@@ -191,18 +188,10 @@ describe('AICardRendererComponent', () => {
       .withSection(SectionBuilder.create().withTitle('Section 2').withType('analytics').build())
       .build();
 
-    normalizationService.normalize.and.returnValue([
-      SectionBuilder.create().withTitle('Section 1').withType('info').build(),
-    ]);
-
     component.cardConfig = card1;
     fixture.detectChanges();
 
     const initialSections = component.processedSections.length;
-
-    normalizationService.normalize.and.returnValue([
-      SectionBuilder.create().withTitle('Section 2').withType('analytics').build(),
-    ]);
 
     component.cardConfig = card2;
     fixture.detectChanges();
@@ -216,11 +205,6 @@ describe('AICardRendererComponent', () => {
       .withSection(SectionBuilder.create().withTitle('Section 1').withType('info').build())
       .withSection(SectionBuilder.create().withTitle('Section 2').withType('analytics').build())
       .build();
-
-    normalizationService.normalize.and.returnValue([
-      SectionBuilder.create().withTitle('Section 1').withType('info').build(),
-      SectionBuilder.create().withTitle('Section 2').withType('analytics').build(),
-    ]);
 
     component.cardConfig = card;
     fixture.detectChanges();

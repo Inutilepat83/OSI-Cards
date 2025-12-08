@@ -61,6 +61,3 @@ export const osiNightTheme: OSICardsThemeConfig = {
     '--bs-body-color': 'white',
   },
 };
-
-
-

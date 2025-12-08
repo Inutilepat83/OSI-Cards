@@ -22,6 +22,7 @@ export * from './streaming.service';
 // ============================================================================
 export * from './layout-calculation.service';
 export * from './layout-state-manager.service';
+export * from './height-estimation.service';
 
 // ============================================================================
 // CONSOLIDATED SERVICES (Phase 3 Consolidation)

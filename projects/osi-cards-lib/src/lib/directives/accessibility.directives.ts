@@ -295,6 +295,3 @@ export const ACCESSIBILITY_DIRECTIVES = [
   HighContrastDirective,
   ReducedMotionDirective,
 ];
-
-
-

@@ -347,6 +347,3 @@ describe('AccessibilityService', () => {
     });
   });
 });
-
-
-

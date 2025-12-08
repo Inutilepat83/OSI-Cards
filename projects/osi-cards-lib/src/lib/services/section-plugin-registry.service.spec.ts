@@ -427,6 +427,3 @@ describe('SectionPluginRegistry', () => {
     });
   });
 });
-
-
-

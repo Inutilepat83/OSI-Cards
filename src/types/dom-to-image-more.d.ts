@@ -23,6 +23,3 @@ declare module 'dom-to-image-more' {
 
   export { toSvg, toPng, toJpeg, toBlob, toPixelData, toCanvas, Options };
 }
-
-
-

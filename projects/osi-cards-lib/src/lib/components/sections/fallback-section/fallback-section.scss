@@ -5,6 +5,7 @@
 // Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
+@use "../../../styles/osi-cards-mixins" as mixins;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -22,7 +23,7 @@
 }
 
 .fallback-data {
-  @include card-base;
+  @include mixins.card-base;
   padding: var(--osi-spacing-sm);
   display: flex;
   flex-direction: column;

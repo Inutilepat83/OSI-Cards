@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 
 /**
@@ -102,6 +102,8 @@ export class AppConfigService {
     ENABLE_DEBUG: environment.enableDebug ?? false,
     ENABLE_PERFORMANCE_LOGGING: environment.enablePerformanceLogging ?? false,
     ENABLE_STATE_LOGGING: environment.enableStateLogging ?? false,
+    LOG_SERVER_URL: environment.logServerUrl || 'http://localhost:3001',
+    ENABLE_LOG_SERVER: environment.enableLogServer ?? !environment.production,
   };
 
   // Development Warnings Configuration

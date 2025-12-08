@@ -215,6 +215,3 @@ export const ZeroValues: Story = {
       .build(),
   },
 };
-
-
-

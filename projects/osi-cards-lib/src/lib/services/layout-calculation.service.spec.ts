@@ -423,6 +423,3 @@ describe('LayoutCalculationService', () => {
     });
   });
 });
-
-
-

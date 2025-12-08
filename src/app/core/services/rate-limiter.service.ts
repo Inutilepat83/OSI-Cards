@@ -195,6 +195,3 @@ export const DEFAULT_RATE_LIMITS = {
     message: 'Upload limit reached.',
   },
 };
-
-
-

@@ -21,4 +21,3 @@ export interface LayoutContext {
   /** Current number of columns in the grid */
   columnCount: number;
 }
-

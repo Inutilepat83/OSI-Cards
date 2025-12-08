@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { forkJoin, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { DOCUMENTATION_ITEMS } from '../../features/documentation/documentation.config';
@@ -23,7 +23,7 @@ export class DocsPreloadService {
    * All markdown files to preload
    * Includes both DOCUMENTATION_ITEMS and all index.md files
    */
-  private readonly allMarkdownFiles: Array<{ id: string; path: string }> = [
+  private readonly allMarkdownFiles: { id: string; path: string }[] = [
     // From DOCUMENTATION_ITEMS
     ...DOCUMENTATION_ITEMS.map((doc) => ({ id: doc.id, path: doc.path })),
     // All index.md files from documentation features
@@ -34,41 +34,129 @@ export class DocsPreloadService {
     { id: 'best-practices', path: 'assets/docs/best-practices/index.md' },
     { id: 'llm-integration', path: 'assets/docs/llm-integration/index.md' },
     // Section types
-    ...['analytics', 'brand-colors', 'chart', 'contact-card', 'event', 'faq', 'fallback', 'financials', 'gallery', 'info', 'list', 'map', 'network-card', 'news', 'overview', 'product', 'quotation', 'social-media', 'solutions', 'text-reference', 'timeline', 'video'].map(
-      (type) => ({ id: `section-${type}`, path: `assets/docs/section-types/${type}/index.md` })
-    ),
+    ...[
+      'analytics',
+      'brand-colors',
+      'chart',
+      'contact-card',
+      'event',
+      'faq',
+      'fallback',
+      'financials',
+      'gallery',
+      'info',
+      'list',
+      'map',
+      'network-card',
+      'news',
+      'overview',
+      'product',
+      'quotation',
+      'social-media',
+      'solutions',
+      'text-reference',
+      'timeline',
+      'video',
+    ].map((type) => ({
+      id: `section-${type}`,
+      path: `assets/docs/section-types/${type}/index.md`,
+    })),
     // Components
-    ...['ai-card-renderer', 'card-actions', 'card-header', 'card-preview', 'card-skeleton', 'card-streaming-indicator', 'masonry-grid', 'section-renderer', 'osi-cards', 'osi-cards-container'].map(
-      (comp) => ({ id: `component-${comp}`, path: `assets/docs/components/${comp}/index.md` })
-    ),
+    ...[
+      'ai-card-renderer',
+      'card-actions',
+      'card-header',
+      'card-preview',
+      'card-skeleton',
+      'card-streaming-indicator',
+      'masonry-grid',
+      'section-renderer',
+      'osi-cards',
+      'osi-cards-container',
+    ].map((comp) => ({ id: `component-${comp}`, path: `assets/docs/components/${comp}/index.md` })),
     // Services
-    ...['animation-orchestrator', 'event-middleware-service', 'icon-service', 'layout-worker-service', 'magnetic-tilt-service', 'section-normalization', 'section-plugin-registry', 'section-utils-service', 'streaming-service', 'theme-service'].map(
-      (svc) => ({ id: `service-${svc}`, path: `assets/docs/services/${svc}/index.md` })
-    ),
+    ...[
+      'animation-orchestrator',
+      'event-middleware-service',
+      'icon-service',
+      'layout-worker-service',
+      'magnetic-tilt-service',
+      'section-normalization',
+      'section-plugin-registry',
+      'section-utils-service',
+      'streaming-service',
+      'theme-service',
+    ].map((svc) => ({ id: `service-${svc}`, path: `assets/docs/services/${svc}/index.md` })),
     // Integration
-    ...['agent-systems', 'angular-18', 'angular-20', 'card-generation-prompt', 'card-validation', 'dependencies', 'error-recovery', 'json-schema-llm', 'lazy-loading', 'llm-overview', 'module-based', 'npm-installation', 'prompt-engineering', 'pwa', 'quick-start', 'rate-limiting', 'ssr', 'standalone-components', 'streaming-responses', 'websocket-integration'].map(
-      (int) => ({ id: `integration-${int}`, path: `assets/docs/integration/${int}/index.md` })
-    ),
+    ...[
+      'agent-systems',
+      'angular-18',
+      'angular-20',
+      'card-generation-prompt',
+      'card-validation',
+      'dependencies',
+      'error-recovery',
+      'json-schema-llm',
+      'lazy-loading',
+      'llm-overview',
+      'module-based',
+      'npm-installation',
+      'prompt-engineering',
+      'pwa',
+      'quick-start',
+      'rate-limiting',
+      'ssr',
+      'standalone-components',
+      'streaming-responses',
+      'websocket-integration',
+    ].map((int) => ({ id: `integration-${int}`, path: `assets/docs/integration/${int}/index.md` })),
     // Advanced
-    ...['accessibility', 'css-properties', 'custom-sections', 'error-patterns', 'event-middleware', 'i18n', 'performance', 'security', 'theme-presets', 'theming-overview'].map(
-      (adv) => ({ id: `advanced-${adv}`, path: `assets/docs/advanced/${adv}/index.md` })
-    ),
+    ...[
+      'accessibility',
+      'css-properties',
+      'custom-sections',
+      'error-patterns',
+      'event-middleware',
+      'i18n',
+      'performance',
+      'security',
+      'theme-presets',
+      'theming-overview',
+    ].map((adv) => ({ id: `advanced-${adv}`, path: `assets/docs/advanced/${adv}/index.md` })),
     // Streaming
-    ...['card-updates', 'config', 'error-handling', 'lifecycle', 'overview', 'progressive-rendering', 'state'].map(
-      (str) => ({ id: `streaming-${str}`, path: `assets/docs/streaming/${str}/index.md` })
-    ),
+    ...[
+      'card-updates',
+      'config',
+      'error-handling',
+      'lifecycle',
+      'overview',
+      'progressive-rendering',
+      'state',
+    ].map((str) => ({ id: `streaming-${str}`, path: `assets/docs/streaming/${str}/index.md` })),
     // Schemas
-    ...['ai-card-config', 'card-action', 'card-field', 'card-item', 'card-section', 'email-config', 'type-aliases'].map(
-      (sch) => ({ id: `schema-${sch}`, path: `assets/docs/schemas/${sch}/index.md` })
-    ),
+    ...[
+      'ai-card-config',
+      'card-action',
+      'card-field',
+      'card-item',
+      'card-section',
+      'email-config',
+      'type-aliases',
+    ].map((sch) => ({ id: `schema-${sch}`, path: `assets/docs/schemas/${sch}/index.md` })),
     // Utilities
-    ...['card-type-guards', 'card-utils', 'ensure-card-ids', 'is-valid-section-type', 'resolve-section-type', 'sanitize-card-config'].map(
-      (util) => ({ id: `utility-${util}`, path: `assets/docs/utilities/${util}/index.md` })
-    ),
+    ...[
+      'card-type-guards',
+      'card-utils',
+      'ensure-card-ids',
+      'is-valid-section-type',
+      'resolve-section-type',
+      'sanitize-card-config',
+    ].map((util) => ({ id: `utility-${util}`, path: `assets/docs/utilities/${util}/index.md` })),
     // Library docs
-    ...['agentic-flow', 'events', 'services', 'theming'].map(
-      (lib) => ({ id: `library-${lib}`, path: `assets/docs/library-docs/${lib}/index.md` })
-    ),
+    ...['agentic-flow', 'events', 'services', 'theming'].map((lib) => ({
+      id: `library-${lib}`,
+      path: `assets/docs/library-docs/${lib}/index.md`,
+    })),
   ];
 
   /**
@@ -123,7 +211,9 @@ export class DocsPreloadService {
     if (loadPromises.length > 0) {
       forkJoin(loadPromises).subscribe({
         next: () => {
-          console.log(`[DocsPreload] Preloaded ${this.allMarkdownFiles.length} documentation files`);
+          console.log(
+            `[DocsPreload] Preloaded ${this.allMarkdownFiles.length} documentation files`
+          );
         },
         error: (err) => {
           console.warn('[DocsPreload] Some documentation files failed to preload:', err);
@@ -153,4 +243,3 @@ export class DocsPreloadService {
     return this.contentCache.has(docId);
   }
 }
-

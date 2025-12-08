@@ -271,6 +271,3 @@ describe('MagneticTiltService', () => {
     }));
   });
 });
-
-
-
