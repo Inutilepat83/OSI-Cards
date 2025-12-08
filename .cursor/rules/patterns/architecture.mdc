@@ -1,0 +1,132 @@
+---
+description: "Clean Architecture, CQRS, DDD, SOLID principles"
+alwaysApply: true
+---
+
+# Architecture Patterns
+
+## Clean Architecture
+
+### Core Principles
+
+1. **Dependency Rule**: Dependencies point inward. Outer layers depend on inner layers, never the reverse.
+2. **Separation of Concerns**: Each layer has a single, well-defined responsibility.
+3. **Independence**: Business logic is independent of frameworks, UI, databases, and external services.
+
+### Layer Structure
+
+```
+┌─────────────────────────────────────┐
+│         Presentation Layer          │  (Controllers, UI Components)
+├─────────────────────────────────────┤
+│        Application Layer            │  (Use Cases, Application Services)
+├─────────────────────────────────────┤
+│          Domain Layer               │  (Entities, Value Objects, Domain Logic)
+├─────────────────────────────────────┤
+│       Infrastructure Layer          │  (Data Access, External Services)
+└─────────────────────────────────────┘
+```
+
+### Implementation Guidelines
+
+- **Domain Layer**: Pure business logic, no dependencies on external frameworks
+- **Application Layer**: Orchestrates domain objects, implements use cases
+- **Infrastructure Layer**: Implements interfaces defined in domain/application layers
+- **Presentation Layer**: Thin layer that delegates to application layer
+
+## Vertical Slice Architecture
+
+Organize code by **feature**, not by **layer**.
+
+### Structure
+
+```
+features/
+  ├── user-registration/
+  │   ├── domain/
+  │   ├── application/
+  │   ├── infrastructure/
+  │   └── presentation/
+  ├── order-processing/
+  │   ├── domain/
+  │   ├── application/
+  │   ├── infrastructure/
+  │   └── presentation/
+```
+
+### Benefits
+
+- Features are self-contained
+- Easier to understand and maintain
+- Reduces coupling between features
+- Enables independent deployment
+
+## CQRS (Command Query Responsibility Segregation)
+
+### Commands (Write Operations)
+
+- Mutate state
+- Return success/failure, not data
+- Should be idempotent when possible
+- Use command handlers
+
+### Queries (Read Operations)
+
+- Never mutate state
+- Return data
+- Can be optimized independently
+- Use query handlers
+
+### When to Use CQRS
+
+- High read/write ratio
+- Complex read models
+- Need for independent scaling
+- Different consistency requirements
+
+## Domain-Driven Design (DDD)
+
+### Aggregates
+
+- Cluster of domain objects treated as a single unit
+- One aggregate root per aggregate
+- Enforce invariants within aggregate boundaries
+- Reference other aggregates by ID, not by object
+
+### Value Objects
+
+- Immutable
+- Defined by their attributes
+- No identity
+- Examples: Money, Address, Email
+
+### Domain Events
+
+- Represent something that happened in the domain
+- Published by aggregates
+- Handled by event handlers
+- Enable eventual consistency
+
+## SOLID Principles
+
+### Single Responsibility Principle (SRP)
+
+A class should have only one reason to change.
+
+### Open/Closed Principle (OCP)
+
+Open for extension, closed for modification.
+
+### Liskov Substitution Principle (LSP)
+
+Subtypes must be substitutable for their base types.
+
+### Interface Segregation Principle (ISP)
+
+Clients should not depend on interfaces they don't use.
+
+### Dependency Inversion Principle (DIP)
+
+Depend on abstractions, not concretions.
+
+**See also:** `error-handling.mdc`, `cqrs.mdc`, `testing.mdc`

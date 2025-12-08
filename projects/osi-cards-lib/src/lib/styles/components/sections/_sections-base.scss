@@ -45,10 +45,10 @@
 // =====================================================================
 
 @mixin card {
-  background: var(--section-item-background);
-  border: var(--section-item-border);
-  border-radius: var(--section-item-border-radius);
-  box-shadow: var(--section-item-box-shadow);
+  background: var(--section-item-background, var(--osi-surface-raised));
+  border: var(--section-item-border, 1px solid var(--osi-border));
+  border-radius: var(--section-item-border-radius, var(--osi-radius-md));
+  box-shadow: var(--section-item-box-shadow, var(--osi-shadow-sm));
   padding: var(--card-padding);
 
   display: flex;
@@ -65,21 +65,46 @@
   transition:
     background 0.2s ease,
     box-shadow 0.2s ease,
-    border-color 0.2s ease;
+    border-color 0.2s ease,
+    transform 0.2s ease;
+
+  // Subtle accent border indicator
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent, var(--osi-accent)) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    border-radius: var(--section-item-border-radius, var(--osi-radius-md))
+      var(--section-item-border-radius, var(--osi-radius-md)) 0 0;
+  }
 
   &:hover {
-    background: var(--section-item-background-hover);
-    border-color: var(--section-item-border-hover);
-    box-shadow: var(--section-item-box-shadow-hover);
+    background: var(--section-item-background-hover, var(--osi-surface-hover));
+    border-color: var(--section-item-border-hover, var(--osi-border));
+    box-shadow: var(--section-item-box-shadow-hover, var(--osi-shadow-md));
+    transform: translateY(-2px);
+
+    &::before {
+      opacity: 0.6;
+    }
   }
 
   &:focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--accent, var(--osi-accent));
     outline-offset: 2px;
   }
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
+
+    &:hover {
+      transform: none;
+    }
   }
 }
 

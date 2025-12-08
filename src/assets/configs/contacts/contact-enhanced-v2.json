@@ -31,7 +31,8 @@
       "label": "Connect on LinkedIn",
       "type": "website",
       "variant": "primary",
-      "icon": "💼"
+      "icon": "💼",
+      "url": "https://linkedin.com/in/johnsmith"
     }
   ]
 }

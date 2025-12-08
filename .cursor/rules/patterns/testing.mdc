@@ -1,0 +1,169 @@
+---
+description: "TDD workflow, AAA pattern, test organization"
+alwaysApply: true
+---
+
+# Testing Patterns
+
+## Test-Driven Development (TDD)
+
+### The Red-Green-Refactor Cycle
+
+1. **RED**: Write a failing test
+   - Test should fail for the right reason
+   - Write the minimal test that defines the desired behavior
+
+2. **GREEN**: Write minimal code to pass
+   - Write the simplest code that makes the test pass
+   - Don't worry about code quality yet
+
+3. **REFACTOR**: Improve code while keeping tests green
+   - Clean up the implementation
+   - Remove duplication
+   - Improve readability
+   - All tests must remain green
+
+### TDD Benefits
+
+- Better design (forces you to think about usage first)
+- Comprehensive test coverage
+- Living documentation
+- Confidence in refactoring
+- Faster feedback loop
+
+## AAA Pattern (Arrange-Act-Assert)
+
+### Structure
+
+```typescript
+describe('FeatureName', () => {
+  it('should do something specific', () => {
+    // Arrange: Set up test data and dependencies
+    const input = createTestInput();
+    const mockDependency = createMock();
+
+    // Act: Execute the code under test
+    const result = systemUnderTest.execute(input);
+
+    // Assert: Verify the outcome
+    expect(result).toEqual(expectedOutput);
+  });
+});
+```
+
+### Guidelines
+
+- **Arrange**: Set up all necessary preconditions
+- **Act**: Execute the single behavior being tested
+- **Assert**: Verify the outcome and side effects
+- Keep each section focused and clear
+
+## Test Organization
+
+### Test Structure
+
+```
+src/
+  ├── feature/
+  │   ├── feature.component.ts
+  │   ├── feature.component.spec.ts
+  │   └── feature.service.ts
+  └── feature.service.spec.ts
+```
+
+### Test Categories
+
+1. **Unit Tests**
+   - Test individual components in isolation
+   - Fast execution
+   - Mock external dependencies
+   - Test business logic
+
+2. **Integration Tests**
+   - Test component interactions
+   - Use real dependencies where appropriate
+   - Test data flow between layers
+
+3. **End-to-End Tests**
+   - Test complete user workflows
+   - Use real infrastructure (or close to it)
+   - Verify system behavior from user perspective
+
+## Test Naming
+
+### Descriptive Test Names
+
+```typescript
+// Good
+it('should return error when email is invalid', () => {});
+it('should create user when all fields are valid', () => {});
+it('should throw NotFoundError when user does not exist', () => {});
+
+// Bad
+it('test1', () => {});
+it('works', () => {});
+it('user test', () => {});
+```
+
+### Test Name Format
+
+- Start with "should"
+- Describe the expected behavior
+- Include relevant context (when, given, etc.)
+
+## Test Data
+
+### Test Fixtures
+
+- Create reusable test data builders
+- Use factories for complex objects
+- Keep test data close to tests
+- Make test data explicit and readable
+
+### Mocking Guidelines
+
+- Mock external dependencies (databases, APIs, file system)
+- Don't mock the code under test
+- Use mocks to verify interactions
+- Prefer spies over mocks when possible
+
+## Test Coverage
+
+### Coverage Goals
+
+- Aim for high coverage of business logic
+- Don't chase 100% coverage blindly
+- Focus on critical paths and edge cases
+- Cover error scenarios
+
+### What to Test
+
+✅ **DO Test:**
+- Business logic and rules
+- Edge cases and boundaries
+- Error handling
+- Integration points
+
+❌ **DON'T Test:**
+- Framework code
+- Trivial getters/setters
+- Third-party library code
+- Generated code
+
+## Test Maintenance
+
+### Keep Tests Clean
+
+- Tests are code too - apply same quality standards
+- Refactor tests when refactoring production code
+- Remove obsolete tests
+- Keep tests fast and independent
+
+### Flaky Tests
+
+- Identify and fix flaky tests immediately
+- Use deterministic test data
+- Avoid time-dependent tests
+- Isolate tests from each other
+
+**See also:** `development/tdd-planning.mdc`, `development/code-implementation.mdc`

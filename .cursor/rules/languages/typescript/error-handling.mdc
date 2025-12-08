@@ -1,0 +1,279 @@
+---
+description: "TypeScript error handling, Result pattern, exception handling"
+globs: ["**/*.ts", "**/*.tsx"]
+---
+
+# TypeScript Error Handling
+
+## Result Pattern
+
+### Implementation
+
+```typescript
+type Result<T, E = Error> =
+  | { success: true; value: T }
+  | { success: false; error: E };
+
+// Helper functions
+function success<T>(value: T): Result<T, never> {
+  return { success: true, value };
+}
+
+function failure<E>(error: E): Result<never, E> {
+  return { success: false, error };
+}
+
+// Usage
+async function getUser(id: string): Promise<Result<User, UserError>> {
+  if (!id) {
+    return failure(new UserError('ID is required'));
+  }
+
+  try {
+    const user = await repository.findById(id);
+    if (!user) {
+      return failure(new UserError('User not found'));
+    }
+    return success(user);
+  } catch (error) {
+    return failure(new UserError('Failed to fetch user', error));
+  }
+}
+```
+
+### Chaining Results
+
+```typescript
+function map<T, U, E>(
+  result: Result<T, E>,
+  fn: (value: T) => U
+): Result<U, E> {
+  return result.success
+    ? success(fn(result.value))
+    : result;
+}
+
+function flatMap<T, U, E>(
+  result: Result<T, E>,
+  fn: (value: T) => Result<U, E>
+): Result<U, E> {
+  return result.success
+    ? fn(result.value)
+    : result;
+}
+```
+
+## Custom Error Classes
+
+### Domain Errors
+
+```typescript
+class UserError extends Error {
+  constructor(
+    message: string,
+    public readonly code: string,
+    public readonly details?: unknown
+  ) {
+    super(message);
+    this.name = 'UserError';
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+class ValidationError extends UserError {
+  constructor(message: string, public readonly field: string) {
+    super(message, 'VALIDATION_ERROR');
+    this.name = 'ValidationError';
+  }
+}
+
+class NotFoundError extends UserError {
+  constructor(resource: string, id: string) {
+    super(`${resource} with id ${id} not found`, 'NOT_FOUND');
+    this.name = 'NotFoundError';
+  }
+}
+```
+
+## Exception Handling
+
+### Try-Catch
+
+```typescript
+async function processUser(id: string): Promise<User> {
+  try {
+    const user = await getUser(id);
+    return user;
+  } catch (error) {
+    if (error instanceof UserError) {
+      // Handle domain error
+      logger.warn('User error', { error, id });
+      throw error;
+    }
+    // Handle unexpected error
+    logger.error('Unexpected error', { error, id });
+    throw new Error('Failed to process user');
+  }
+}
+```
+
+### Error Boundaries
+
+```typescript
+async function safeExecute<T>(
+  fn: () => Promise<T>,
+  onError: (error: Error) => T
+): Promise<T> {
+  try {
+    return await fn();
+  } catch (error) {
+    return onError(error as Error);
+  }
+}
+```
+
+## Angular Error Handling
+
+### HTTP Interceptors
+
+```typescript
+@Injectable()
+export class ErrorInterceptor implements HttpInterceptor {
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    return next.handle(req).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          // Handle unauthorized
+        } else if (error.status === 403) {
+          // Handle forbidden
+        } else if (error.status >= 500) {
+          // Handle server errors
+        }
+        return throwError(() => error);
+      })
+    );
+  }
+}
+```
+
+### Global Error Handler
+
+```typescript
+@Injectable()
+export class GlobalErrorHandler implements ErrorHandler {
+  constructor(private logger: Logger) {}
+
+  handleError(error: Error): void {
+    this.logger.error('Global error', { error });
+    // Show user-friendly message
+    // Report to error tracking service
+  }
+}
+```
+
+## Error Logging
+
+### Structured Logging
+
+```typescript
+interface ErrorContext {
+  userId?: string;
+  requestId?: string;
+  timestamp: string;
+  [key: string]: unknown;
+}
+
+function logError(
+  error: Error,
+  context: ErrorContext,
+  logger: Logger
+): void {
+  logger.error({
+    message: error.message,
+    stack: error.stack,
+    name: error.name,
+    ...context
+  });
+}
+```
+
+## Error Recovery
+
+### Retry Logic
+
+```typescript
+import { retry, catchError } from 'rxjs/operators';
+
+this.http.get('/api/users').pipe(
+  retry({
+    count: 3,
+    delay: (error, retryCount) => {
+      return timer(retryCount * 1000);
+    }
+  }),
+  catchError(error => {
+    // Handle final error
+    return throwError(() => error);
+  })
+);
+```
+
+### Circuit Breaker
+
+```typescript
+class CircuitBreaker {
+  private failures = 0;
+  private state: 'closed' | 'open' | 'half-open' = 'closed';
+
+  async execute<T>(fn: () => Promise<T>): Promise<T> {
+    if (this.state === 'open') {
+      throw new Error('Circuit breaker is open');
+    }
+
+    try {
+      const result = await fn();
+      this.onSuccess();
+      return result;
+    } catch (error) {
+      this.onFailure();
+      throw error;
+    }
+  }
+
+  private onSuccess(): void {
+    this.failures = 0;
+    this.state = 'closed';
+  }
+
+  private onFailure(): void {
+    this.failures++;
+    if (this.failures >= 5) {
+      this.state = 'open';
+      setTimeout(() => {
+        this.state = 'half-open';
+      }, 60000);
+    }
+  }
+}
+```
+
+## Best Practices
+
+### ✅ Do
+
+- Use Result pattern for expected failures
+- Use exceptions for unexpected failures
+- Create custom error classes
+- Log errors with context
+- Provide user-friendly messages
+- Handle errors at appropriate levels
+
+### ❌ Don't
+
+- Swallow errors silently
+- Expose internal error details
+- Use generic Error for everything
+- Ignore error handling
+- Log sensitive information
+
+**See also:** `patterns/error-handling.mdc`, `code-quality.mdc`, `testing.mdc`

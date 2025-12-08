@@ -2,8 +2,13 @@
 // CONTACT CARD SECTION - Original Product Style
 // =====================================================================
 
+// Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
+
+// Import base section styles
+@import "../../../styles/components/sections/sections-base";
+@import "../../../styles/components/sections/section-shell";
 
 :host {
   display: block;
@@ -39,7 +44,7 @@
   padding: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
   text-align: center;
   min-height: 140px; // Compact: 140px (was 180px)
-  background: var(--surface);
+  // Background inherited from @include card-elevated mixin
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -1,0 +1,235 @@
+---
+description: "Dependency injection, Angular DI, NestJS DI, dependency management"
+globs: ["**/*.ts", "**/*.tsx"]
+---
+
+# TypeScript Dependencies
+
+## Dependency Injection
+
+### Angular Dependency Injection
+
+```typescript
+@Injectable({
+  providedIn: 'root' // Singleton service
+})
+export class UserService {
+  constructor(
+    private readonly http: HttpClient,
+    private readonly logger: Logger
+  ) {}
+}
+
+// Component injection
+@Component({...})
+export class UserComponent {
+  constructor(
+    private readonly userService: UserService,
+    private readonly route: ActivatedRoute
+  ) {}
+}
+```
+
+### NestJS Dependency Injection
+
+```typescript
+@Injectable()
+export class UserService {
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    private readonly logger: Logger
+  ) {}
+}
+
+@Controller('users')
+export class UserController {
+  constructor(private readonly userService: UserService) {}
+}
+```
+
+## Dependency Inversion Principle
+
+### Depend on Abstractions
+
+```typescript
+// ✅ Good - depend on interface
+interface UserRepository {
+  findById(id: string): Promise<User | null>;
+  save(user: User): Promise<User>;
+}
+
+class UserService {
+  constructor(private readonly repository: UserRepository) {}
+}
+
+// ❌ Bad - depend on concrete class
+class UserService {
+  constructor(private readonly repository: PostgresUserRepository) {}
+}
+```
+
+### Interface Segregation
+
+```typescript
+// ✅ Good - small, focused interfaces
+interface ReadableRepository<T> {
+  findById(id: string): Promise<T | null>;
+  findAll(): Promise<T[]>;
+}
+
+interface WritableRepository<T> {
+  save(entity: T): Promise<T>;
+  delete(id: string): Promise<void>;
+}
+
+// ❌ Bad - large interface
+interface Repository<T> {
+  findById(id: string): Promise<T | null>;
+  findAll(): Promise<T[]>;
+  save(entity: T): Promise<T>;
+  delete(id: string): Promise<void>;
+  update(id: string, data: Partial<T>): Promise<T>;
+  // ... many more methods
+}
+```
+
+## Module Organization
+
+### Feature Modules
+
+```typescript
+// Angular
+@NgModule({
+  declarations: [UserComponent, UserListComponent],
+  imports: [CommonModule, HttpClientModule],
+  providers: [UserService],
+  exports: [UserComponent]
+})
+export class UserModule {}
+
+// NestJS
+@Module({
+  controllers: [UserController],
+  providers: [UserService, UserRepository],
+  exports: [UserService]
+})
+export class UserModule {}
+```
+
+## Dependency Management
+
+### Package Management
+
+- Use `package.json` for dependencies
+- Pin exact versions for production
+- Use `^` or `~` for minor/patch updates
+- Regularly update dependencies
+- Use `npm audit` to check vulnerabilities
+
+### Dependency Types
+
+```json
+{
+  "dependencies": {
+    // Runtime dependencies
+  },
+  "devDependencies": {
+    // Development-only dependencies
+  },
+  "peerDependencies": {
+    // Required by consumers
+  },
+  "optionalDependencies": {
+    // Optional dependencies
+  }
+}
+```
+
+## Circular Dependencies
+
+### Avoid Circular Dependencies
+
+```typescript
+// ❌ Bad - circular dependency
+// user.service.ts
+import { OrderService } from './order.service';
+export class UserService {
+  constructor(private orderService: OrderService) {}
+}
+
+// order.service.ts
+import { UserService } from './user.service';
+export class OrderService {
+  constructor(private userService: UserService) {}
+}
+
+// ✅ Good - use events or shared service
+// user.service.ts
+export class UserService {
+  private events = new EventEmitter();
+  onUserCreated(callback: (user: User) => void) {
+    this.events.on('userCreated', callback);
+  }
+}
+
+// order.service.ts
+export class OrderService {
+  constructor(private userService: UserService) {
+    this.userService.onUserCreated(user => {
+      // Handle user creation
+    });
+  }
+}
+```
+
+## Testing Dependencies
+
+### Mocking Dependencies
+
+```typescript
+describe('UserService', () => {
+  let service: UserService;
+  let mockRepository: jest.Mocked<UserRepository>;
+
+  beforeEach(() => {
+    mockRepository = {
+      findById: jest.fn(),
+      save: jest.fn()
+    } as any;
+
+    service = new UserService(mockRepository);
+  });
+
+  it('should get user by id', async () => {
+    const user = { id: '1', name: 'John' };
+    mockRepository.findById.mockResolvedValue(user);
+
+    const result = await service.getUser('1');
+
+    expect(result).toEqual(user);
+    expect(mockRepository.findById).toHaveBeenCalledWith('1');
+  });
+});
+```
+
+## Best Practices
+
+### ✅ Do
+
+- Use dependency injection
+- Depend on abstractions
+- Keep dependencies minimal
+- Use interfaces for contracts
+- Organize into modules
+- Mock dependencies in tests
+
+### ❌ Don't
+
+- Create dependencies directly (use DI)
+- Depend on concrete classes
+- Create circular dependencies
+- Import everything from one module
+- Mix concerns in dependencies
+
+**See also:** `code-quality.mdc`, `testing.mdc`, `patterns/architecture.mdc`

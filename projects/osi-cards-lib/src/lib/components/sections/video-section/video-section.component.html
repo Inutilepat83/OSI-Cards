@@ -1,4 +1,4 @@
-<div class="video-container">
+<div class="ai-section ai-section--video section-content">
   <!-- Section Header -->
   <lib-section-header [title]="section.title" [description]="section.description"> </lib-section-header>
 
@@ -52,7 +52,7 @@
   <!-- Empty State -->
   <lib-empty-state
     *ngIf="(!section.fields && !section.items) || (section.fields?.length === 0 && section.items?.length === 0)"
-    message="No videos available"
+    message="No video data"
     icon="🎥"
     variant="minimal"
   >

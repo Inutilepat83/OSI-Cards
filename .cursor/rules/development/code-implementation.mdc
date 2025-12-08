@@ -1,0 +1,229 @@
+---
+description: "Implementation workflow, code quality standards"
+alwaysApply: true
+---
+
+# Code Implementation Workflow
+
+## Implementation Steps
+
+### 0. Deep Thinking (MANDATORY)
+
+**BEFORE starting, ALWAYS:**
+- Think deeply about the problem
+- Identify root cause, not symptoms
+- Consider multiple solutions
+- Plan thoroughly
+- See: `deep-thinking-protocol.mdc`
+
+### 1. Understand Requirements
+
+- Read and understand the requirement
+- Ask clarifying questions if needed
+- Never assume - always verify
+- Identify acceptance criteria
+- Check browser logs if issue reported
+- Test in browser if UI change
+
+### 2. Plan the Solution
+
+- Break down into smaller tasks
+- Identify dependencies
+- Consider edge cases
+- Plan test cases (TDD)
+
+### 3. Write Tests First (TDD)
+
+- Write failing tests
+- Verify tests fail for right reason
+- Implement minimal code to pass
+- Refactor while keeping tests green
+
+### 4. Implement the Solution
+
+- Follow TDD workflow
+- Apply SOLID principles
+- Use appropriate design patterns
+- Write clean, readable code
+
+### 5. Review and Refactor
+
+- Self-review the code
+- Look for improvements
+- Remove duplication
+- Improve readability
+- Ensure all tests pass
+
+### 6. Document Changes
+
+- Document why, not what
+- Update relevant documentation
+- Add code comments for complex logic
+- Update API documentation if needed
+
+### 7. Browser Testing (MANDATORY for UI changes)
+
+- Start application: `npm start`
+- Navigate to feature in browser
+- Test functionality
+- Check console logs
+- Verify visual appearance
+- See: `browser-testing-workflow.mdc`
+
+### 8. Log Analysis (MANDATORY)
+
+- Read all console messages
+- Categorize errors/warnings
+- Fix all errors
+- Address important warnings
+- Verify network requests
+- See: `browser-testing-workflow.mdc`
+
+### 9. Quality Assurance
+
+- Run comprehensive QA checklist
+- Verify consistency
+- Check performance
+- Verify accessibility
+- See: `comprehensive-qa-checklist.mdc`
+
+## Code Quality Standards
+
+### Readability
+
+- Use descriptive names
+- Keep functions small and focused
+- Use consistent formatting
+- Write self-documenting code
+
+### Maintainability
+
+- Follow DRY (Don't Repeat Yourself)
+- Use design patterns appropriately
+- Keep dependencies minimal
+- Write testable code
+
+### Performance
+
+- Consider performance implications
+- Profile before optimizing
+- Use appropriate data structures
+- Avoid premature optimization
+
+### Security
+
+- Validate all inputs
+- Never hardcode secrets
+- Use secure defaults
+- Follow security best practices
+
+## Code Review Checklist
+
+### Functionality
+
+- [ ] Meets requirements
+- [ ] Handles edge cases
+- [ ] Error handling is appropriate
+- [ ] All tests pass
+
+### Code Quality
+
+- [ ] Code is readable
+- [ ] No duplication
+- [ ] Appropriate abstractions
+- [ ] Follows SOLID principles
+
+### Security
+
+- [ ] Input validation
+- [ ] No secrets exposed
+- [ ] Secure defaults
+- [ ] Error messages don't leak info
+
+### Testing
+
+- [ ] Adequate test coverage
+- [ ] Tests are meaningful
+- [ ] Tests are maintainable
+- [ ] Edge cases tested
+
+### Documentation
+
+- [ ] Code is self-documenting
+- [ ] Complex logic is commented
+- [ ] API changes documented
+- [ ] README updated if needed
+
+## Iterative Improvement
+
+### After Implementation
+
+1. **Review the code:**
+   - Look for improvements
+   - Check for code smells
+   - Verify best practices
+
+2. **Identify improvements:**
+   - What could be better?
+   - Are there any code smells?
+   - Can we simplify?
+
+3. **Implement optimizations:**
+   - Refactor if needed
+   - Improve readability
+   - Optimize if necessary
+
+4. **Repeat until satisfied:**
+   - Continue improving
+   - Don't over-engineer
+   - Balance quality and time
+
+## Retrospective Protocol
+
+After each task, evaluate:
+
+### Rule Effectiveness
+
+- Did the rules help?
+- Were they clear?
+- Did they prevent issues?
+
+### Gaps Encountered
+
+- What wasn't covered?
+- What was unclear?
+- What needs improvement?
+
+### Contradictions
+
+- Were there conflicting rules?
+- What needs clarification?
+- How to resolve conflicts?
+
+### Improvement Proposals
+
+- What could be better?
+- What patterns to add?
+- What rules to refine?
+
+## Common Pitfalls to Avoid
+
+### ❌ Don't:
+
+- Skip tests to save time
+- Assume requirements
+- Hardcode values
+- Ignore error handling
+- Copy-paste without understanding
+- Over-engineer solutions
+
+### ✅ Do:
+
+- Write tests first
+- Ask clarifying questions
+- Use configuration
+- Handle all error cases
+- Understand before implementing
+- Keep it simple
+
+**See also:** `tdd-planning.mdc`, `patterns/testing.mdc`, `patterns/architecture.mdc`

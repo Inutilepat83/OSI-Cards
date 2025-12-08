@@ -1,0 +1,253 @@
+---
+description: "Angular controllers, NestJS controllers, API endpoints"
+globs: ["**/*.controller.ts", "**/*.component.ts"]
+---
+
+# TypeScript Controllers
+
+## Angular Components
+
+### Component Structure
+
+```typescript
+@Component({
+  selector: 'app-user',
+  templateUrl: './user.component.html',
+  styleUrls: ['./user.component.scss'],
+  standalone: true,
+  imports: [CommonModule, FormsModule]
+})
+export class UserComponent implements OnInit, OnDestroy {
+  user$ = new BehaviorSubject<User | null>(null);
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private readonly userService: UserService,
+    private readonly route: ActivatedRoute
+  ) {}
+
+  ngOnInit(): void {
+    this.route.params.pipe(
+      takeUntil(this.destroy$),
+      switchMap(params => this.userService.getUser$(params['id']))
+    ).subscribe(user => this.user$.next(user));
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+}
+```
+
+### Best Practices
+
+- Use `OnPush` change detection when possible
+- Unsubscribe from observables (use `takeUntil` or `async` pipe)
+- Keep components thin - delegate to services
+- Use reactive forms for complex forms
+- Handle loading and error states
+
+## NestJS Controllers
+
+### Controller Structure
+
+```typescript
+@Controller('users')
+@UseGuards(AuthGuard)
+export class UserController {
+  constructor(private readonly userService: UserService) {}
+
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  async getUser(@Param('id') id: string): Promise<UserDto> {
+    const result = await this.userService.getUser(id);
+    if (!result.success) {
+      throw new NotFoundException(result.error.message);
+    }
+    return UserDto.fromDomain(result.value);
+  }
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async createUser(@Body() dto: CreateUserDto): Promise<UserDto> {
+    const result = await this.userService.createUser(dto.toDomain());
+    if (!result.success) {
+      throw new BadRequestException(result.error.message);
+    }
+    return UserDto.fromDomain(result.value);
+  }
+}
+```
+
+### HTTP Methods
+
+```typescript
+@Get()        // GET /users
+@Post()       // POST /users
+@Put(':id')   // PUT /users/:id
+@Patch(':id') // PATCH /users/:id
+@Delete(':id') // DELETE /users/:id
+```
+
+### Status Codes
+
+```typescript
+@HttpCode(HttpStatus.OK)           // 200
+@HttpCode(HttpStatus.CREATED)      // 201
+@HttpCode(HttpStatus.NO_CONTENT)   // 204
+@HttpCode(HttpStatus.BAD_REQUEST)  // 400
+@HttpCode(HttpStatus.NOT_FOUND)    // 404
+```
+
+## Request Validation
+
+### DTOs with Validation
+
+```typescript
+import { IsEmail, IsString, MinLength } from 'class-validator';
+
+export class CreateUserDto {
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  @MinLength(3)
+  name: string;
+
+  @IsString()
+  @MinLength(8)
+  password: string;
+}
+```
+
+### Validation Pipes
+
+```typescript
+// Global validation pipe (NestJS)
+app.useGlobalPipes(
+  new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+    transformOptions: {
+      enableImplicitConversion: true
+    }
+  })
+);
+```
+
+## Error Handling
+
+### Exception Filters
+
+```typescript
+@Catch(UserError)
+export class UserExceptionFilter implements ExceptionFilter {
+  catch(exception: UserError, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
+
+    const status = exception.code === 'NOT_FOUND'
+      ? HttpStatus.NOT_FOUND
+      : HttpStatus.BAD_REQUEST;
+
+    response.status(status).json({
+      type: 'https://example.com/problems/user-error',
+      title: exception.name,
+      status,
+      detail: exception.message,
+      instance: request.url
+    });
+  }
+}
+```
+
+## Response Formatting
+
+### DTOs
+
+```typescript
+export class UserDto {
+  id: string;
+  email: string;
+  name: string;
+  createdAt: string;
+
+  static fromDomain(user: User): UserDto {
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      createdAt: user.createdAt.toISOString()
+    };
+  }
+}
+```
+
+### Pagination
+
+```typescript
+export class PaginatedResponseDto<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+}
+```
+
+## Security
+
+### Authentication
+
+```typescript
+@Controller('users')
+@UseGuards(JwtAuthGuard)
+export class UserController {
+  @Get('profile')
+  async getProfile(@CurrentUser() user: User): Promise<UserDto> {
+    return UserDto.fromDomain(user);
+  }
+}
+```
+
+### Authorization
+
+```typescript
+@Controller('users')
+@UseGuards(JwtAuthGuard)
+export class UserController {
+  @Delete(':id')
+  @Roles('admin')
+  @UseGuards(RolesGuard)
+  async deleteUser(@Param('id') id: string): Promise<void> {
+    await this.userService.deleteUser(id);
+  }
+}
+```
+
+## Best Practices
+
+### ✅ Do
+
+- Keep controllers thin
+- Delegate business logic to services
+- Use DTOs for request/response
+- Validate all inputs
+- Handle errors appropriately
+- Use appropriate HTTP methods
+- Return appropriate status codes
+
+### ❌ Don't
+
+- Put business logic in controllers
+- Return domain entities directly
+- Skip input validation
+- Expose internal errors
+- Use GET for mutations
+
+**See also:** `validation.mdc`, `security.mdc`, `api-design.mdc`

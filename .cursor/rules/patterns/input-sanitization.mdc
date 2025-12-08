@@ -1,0 +1,204 @@
+---
+description: "Input validation, sanitization, XSS prevention"
+alwaysApply: true
+---
+
+# Input Sanitization Patterns
+
+## Validation vs Sanitization
+
+- **Validation**: Check if input meets requirements (reject if not)
+- **Sanitization**: Clean input to make it safe (modify to be safe)
+
+**Prefer validation over sanitization when possible.**
+
+## Input Validation
+
+### Validate at Boundaries
+
+- Validate at API entry points
+- Validate at UI boundaries
+- Don't trust client-side validation alone
+- Reject invalid input early
+
+### Validation Rules
+
+#### Type Validation
+- Ensure correct data types
+- Check for null/undefined
+- Validate required fields
+
+#### Format Validation
+- Email addresses
+- Phone numbers
+- URLs
+- Dates and times
+- Credit card numbers
+
+#### Range Validation
+- String length (min/max)
+- Numeric ranges
+- Array sizes
+- File sizes
+
+#### Business Rule Validation
+- Uniqueness constraints
+- Referential integrity
+- State transitions
+- Business logic rules
+
+## SQL Injection Prevention
+
+### Use Parameterized Queries
+
+```typescript
+// ✅ Good
+const query = 'SELECT * FROM users WHERE id = $1';
+await db.query(query, [userId]);
+
+// ❌ Bad
+const query = `SELECT * FROM users WHERE id = ${userId}`;
+await db.query(query);
+```
+
+### Guidelines
+
+- **Never** concatenate user input into SQL
+- Use ORM query builders
+- Use parameterized statements
+- Validate input types before queries
+
+## XSS (Cross-Site Scripting) Prevention
+
+### Output Encoding
+
+- Encode all user-generated content
+- Use context-appropriate encoding:
+  - HTML: `&lt;`, `&gt;`, `&amp;`, `&quot;`
+  - JavaScript: Escape quotes and backslashes
+  - URLs: URL encoding
+  - CSS: CSS encoding
+
+### Content Security Policy (CSP)
+
+```
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'
+```
+
+### Guidelines
+
+- Never trust user input
+- Encode on output, not input
+- Use framework's built-in encoding
+- Sanitize HTML if you must allow it
+
+## Path Traversal Prevention
+
+### Validate File Paths
+
+```typescript
+// ✅ Good
+const safePath = path.resolve(baseDir, userInput);
+if (!safePath.startsWith(baseDir)) {
+  throw new Error('Invalid path');
+}
+
+// ❌ Bad
+const filePath = path.join(baseDir, userInput);
+```
+
+### Guidelines
+
+- Use allowlists for allowed paths
+- Normalize paths before validation
+- Don't allow `..` in paths
+- Use absolute paths with base directory
+
+## Command Injection Prevention
+
+### Avoid Shell Execution
+
+```typescript
+// ✅ Good - Use API directly
+await execFile('git', ['clone', repoUrl]);
+
+// ❌ Bad - Shell execution
+await exec(`git clone ${repoUrl}`);
+```
+
+### Guidelines
+
+- Use APIs instead of shell commands
+- If shell is necessary, use `execFile` with array arguments
+- Validate and sanitize all arguments
+- Use allowlists for commands
+
+## File Upload Security
+
+### Validation
+
+- Validate file types (MIME type, extension)
+- Validate file size
+- Scan for malware
+- Rename uploaded files
+
+### Storage
+
+- Store outside web root
+- Use secure file names
+- Limit file permissions
+- Serve through secure endpoints
+
+### Guidelines
+
+- Don't trust file extensions
+- Validate MIME types
+- Set size limits
+- Isolate uploaded files
+
+## Data Sanitization
+
+### When Sanitization is Necessary
+
+- HTML content (if you must allow HTML)
+- File names
+- URLs
+- Search queries
+
+### Sanitization Libraries
+
+- Use well-tested libraries
+- Keep libraries updated
+- Understand what they do
+- Test sanitization logic
+
+## Validation Libraries
+
+### TypeScript/JavaScript
+
+- **class-validator**: Decorator-based validation
+- **zod**: Schema validation
+- **joi**: Object schema validation
+- **validator.js**: String validation
+
+### Best Practices
+
+- Use validation libraries
+- Create reusable validation schemas
+- Validate early and often
+- Return clear error messages
+
+## Input Sanitization Checklist
+
+- [ ] All inputs validated at boundaries
+- [ ] Type checking performed
+- [ ] Format validation applied
+- [ ] Range validation enforced
+- [ ] SQL injection prevented (parameterized queries)
+- [ ] XSS prevented (output encoding)
+- [ ] Path traversal prevented
+- [ ] Command injection prevented
+- [ ] File uploads validated
+- [ ] Error messages don't leak information
+
+**See also:** `security.mdc`, `api-design.mdc`, `error-handling.mdc`

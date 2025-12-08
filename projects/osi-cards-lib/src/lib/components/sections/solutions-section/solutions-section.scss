@@ -2,9 +2,14 @@
 // SOLUTIONS SECTION - Feature Cards, Proper Spacing
 // =====================================================================
 
+// Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
 @use "../../../styles/components/sections/component-mixins" as components;
+
+// Import base section styles
+@import "../../../styles/components/sections/sections-base";
+@import "../../../styles/components/sections/section-shell";
 
 :host {
   display: block;

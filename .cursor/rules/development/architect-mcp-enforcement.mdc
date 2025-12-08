@@ -1,0 +1,197 @@
+---
+description: "Enforce Architect MCP pattern validation for all code generation"
+priority: 1
+---
+
+# Architect MCP Enforcement
+
+## CRITICAL: Always Use Architect MCP
+
+**Before generating ANY code, you MUST:**
+
+1. **Query patterns** using `get_file_design_pattern` for the target file
+2. **Generate code** following the returned patterns
+3. **Validate code** using `review_code_change` after generation
+
+## Mandatory Workflow
+
+### Step 1: Pre-Generation Pattern Query
+
+**ALWAYS** call `get_file_design_pattern` before generating code:
+
+```
+Before creating [file path], check what architectural patterns apply.
+```
+
+This ensures you receive:
+- File-specific architectural requirements
+- Design pattern guidelines
+- Coding standards for that file type
+
+### Step 2: Code Generation
+
+Generate code following the patterns returned in Step 1.
+
+### Step 3: Post-Generation Validation
+
+**ALWAYS** call `review_code_change` after generating code:
+
+```
+Review [file path] for pattern compliance
+```
+
+This validates:
+- Pattern adherence
+- Severity rating (LOW/MEDIUM/HIGH)
+- Specific violations
+- Auto-fix suggestions
+
+## Automation Rules
+
+### For New Files
+
+When creating a new file:
+1. ✅ Query patterns first
+2. ✅ Generate following patterns
+3. ✅ Validate after generation
+4. ✅ Fix any HIGH severity violations
+5. ✅ Document MEDIUM severity issues
+
+### For Modified Files
+
+When modifying existing files:
+1. ✅ Query patterns for the file
+2. ✅ Review existing code against patterns
+3. ✅ Make changes following patterns
+4. ✅ Validate changes
+5. ✅ Ensure no new violations introduced
+
+### For Service Files
+
+Services MUST follow:
+- Service Layer Pattern
+- Singleton Pattern
+- Dependency Injection Pattern
+- Observer Pattern (RxJS)
+- Error Handling Pattern
+
+**Always check:** `projects/osi-cards-lib/src/lib/services/**/*.ts`
+
+### For Component Files
+
+Components MUST follow:
+- Component Pattern
+- Dependency Injection Pattern
+- Observer Pattern (RxJS)
+- Performance Pattern
+- Accessibility Pattern
+
+**Always check:** `projects/osi-cards-lib/src/lib/components/**/*.component.ts`
+
+## Pattern Violation Handling
+
+### HIGH Severity
+- **Action:** Block or auto-fix immediately
+- **Example:** Direct database access in service
+- **Fix:** Use repository/provider pattern
+
+### MEDIUM Severity
+- **Action:** Flag for review
+- **Example:** Minor pattern deviation
+- **Fix:** Document or refactor
+
+### LOW Severity
+- **Action:** Auto-submit (pattern followed)
+- **Example:** All patterns correctly applied
+
+## MCP Tool Usage
+
+### Pattern Query Tool
+
+```typescript
+// Always use before code generation
+mcp_architect_get-file-design-pattern({
+  file_path: "target/file/path.ts"
+})
+```
+
+### Code Review Tool
+
+```typescript
+// Always use after code generation
+mcp_architect_review-code-change({
+  file_path: "target/file/path.ts"
+})
+```
+
+## Enforcement Checklist
+
+Before considering code complete:
+
+- [ ] Patterns queried for target file
+- [ ] Code generated following patterns
+- [ ] Code validated against patterns
+- [ ] HIGH severity violations fixed
+- [ ] MEDIUM severity issues documented
+- [ ] All applicable patterns followed
+
+## Examples
+
+### ✅ Correct Workflow
+
+```
+User: "Create a new UserService"
+
+AI:
+1. [Calls get_file_design_pattern for UserService]
+2. Receives Service Layer Pattern requirements
+3. Generates code following patterns
+4. [Calls review_code_change]
+5. Returns validation results
+6. Fixes any violations
+```
+
+### ❌ Incorrect Workflow
+
+```
+User: "Create a new UserService"
+
+AI:
+1. Generates code without checking patterns
+2. May violate architectural patterns
+3. No validation performed
+```
+
+## Integration with Code Generation
+
+### Automatic Pattern Application
+
+When generating code, automatically:
+1. Query patterns for the file
+2. Apply patterns to code generation
+3. Validate generated code
+4. Fix violations automatically when possible
+
+### Pattern-Aware Code Generation
+
+Always generate code that:
+- Follows Service Layer Pattern for services
+- Follows Component Pattern for components
+- Uses Dependency Injection correctly
+- Manages RxJS subscriptions properly
+- Handles errors appropriately
+- Uses OnPush change detection
+- Implements proper lifecycle management
+
+## Reminders
+
+**Remember:**
+- Architect MCP is NOT optional
+- Pattern validation happens BEFORE and AFTER code generation
+- All violations must be addressed
+- Pattern compliance is mandatory, not optional
+
+**See also:**
+- `templates/your-template/architect.yaml` - Pattern definitions
+- `docs/development/ARCHITECT_MCP_SETUP.md` - Setup guide
+- `templates/your-template/PATTERNS_SUMMARY.md` - Pattern reference

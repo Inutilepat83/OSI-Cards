@@ -1,0 +1,213 @@
+// ============================================
+// COMPONENT-SPECIFIC STYLES FOR SHADOW DOM
+// ============================================
+//
+// This file includes styles from components that use ViewEncapsulation.None.
+// These styles must be included in the Shadow DOM bundle to work properly.
+//
+// Components included:
+// - masonry-grid.component
+// - section-renderer.component (minimal styles)
+// - card-streaming-indicator.component
+// - Other ViewEncapsulation.None components
+//
+// ============================================
+
+// ============================================
+// MASONRY GRID COMPONENT STYLES
+// ============================================
+// These styles are from masonry-grid.component.css
+// Component uses ViewEncapsulation.None, so styles must be in Shadow DOM bundle
+
+.masonry-container {
+  /* Pure CSS Grid - browser handles all positioning */
+  display: grid;
+  grid-template-columns: repeat(var(--masonry-columns, 4), 1fr);
+  gap: var(--masonry-gap, 12px);
+  width: 100%;
+  min-height: 0;
+  align-items: start;
+}
+
+/* Native CSS Masonry Support (when available) */
+@supports (grid-template-rows: masonry) {
+  .masonry-container {
+    grid-template-rows: masonry;
+    grid-auto-rows: auto;
+  }
+}
+
+/* Fallback: Use row dense for gap filling */
+@supports not (grid-template-rows: masonry) {
+  .masonry-container {
+    grid-auto-flow: row dense;
+    grid-auto-rows: min-content;
+  }
+}
+
+/* Streaming mode */
+.masonry-container--streaming {
+  /* Smooth updates during streaming */
+  transition: none;
+}
+
+/* ============================================================
+   MASONRY ITEMS
+   ============================================================ */
+
+.masonry-item {
+  /* CSS Grid handles positioning automatically */
+  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: fit-content;
+  opacity: 1;
+  pointer-events: auto;
+
+  /* CSS containment for performance */
+  contain: layout style paint;
+
+  /* Ensure content determines height */
+  display: flex;
+  flex-direction: column;
+
+  /* Smooth transitions for grid-column changes */
+  transition: grid-column 0.3s ease, opacity 0.3s ease;
+}
+
+/* Gentle entrance animation for new sections */
+.masonry-item--animating {
+  animation: masonry-gentle-enter 0.35s ease-out forwards;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+@keyframes masonry-gentle-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Shimmer effect for new items */
+.masonry-item--animating::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 40%,
+    rgba(255, 149, 0, 0.08) 50%,
+    transparent 60%
+  );
+  animation: shimmer-sweep 0.5s ease-out forwards;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 10;
+}
+
+@keyframes shimmer-sweep {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Ensure content fills item */
+.masonry-item > * {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ============================================================
+   RESPONSIVE OPTIMIZATIONS
+   ============================================================ */
+
+/* Mobile: faster transitions */
+@media (max-width: 768px) {
+  .masonry-container {
+    min-height: 300px;
+  }
+
+  .masonry-item {
+    transition: opacity 0.3s ease;
+  }
+}
+
+/* Wide screen */
+@media (min-width: 1400px) {
+  .masonry-container {
+    min-height: 500px;
+  }
+}
+
+/* ============================================================
+   REDUCED MOTION SUPPORT
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .masonry-container,
+  .masonry-item {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .masonry-item--animating::after {
+    display: none;
+  }
+}
+
+// ============================================
+// SECTION RENDERER COMPONENT
+// ============================================
+// Minimal styles - component uses ViewEncapsulation.None
+app-section-renderer {
+  display: block;
+}
+
+// ============================================
+// CARD STREAMING INDICATOR
+// ============================================
+// Styles from card-streaming-indicator.component.css
+// Component uses ViewEncapsulation.None
+
+app-card-streaming-indicator {
+  display: block;
+  width: 100%;
+}
+
+// ============================================
+// SCREEN READER UTILITIES
+// ============================================
+// Shared utility classes for accessibility
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+
+
+
+
+
+
+
+

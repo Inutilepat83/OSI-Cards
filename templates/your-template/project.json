@@ -1,0 +1,43 @@
+{
+  "name": "osi-cards",
+  "version": "1.5.5",
+  "description": "OSI Cards - Angular card rendering library with masonry grid layout",
+  "sourceTemplate": "your-template",
+  "type": "angular-library",
+  "framework": "angular",
+  "architecture": "standalone-components",
+  "patterns": [
+    "service-layer",
+    "facade",
+    "repository",
+    "observer",
+    "factory",
+    "strategy"
+  ],
+  "paths": {
+    "services": [
+      "projects/osi-cards-lib/src/lib/services/**/*.ts",
+      "src/app/core/services/**/*.ts"
+    ],
+    "components": [
+      "projects/osi-cards-lib/src/lib/components/**/*.component.ts",
+      "src/app/**/*.component.ts"
+    ],
+    "utils": [
+      "projects/osi-cards-lib/src/lib/utils/**/*.ts"
+    ],
+    "models": [
+      "projects/osi-cards-lib/src/lib/models/**/*.ts",
+      "projects/osi-cards-lib/src/lib/types/**/*.ts"
+    ]
+  }
+}
+
+
+
+
+
+
+
+
+

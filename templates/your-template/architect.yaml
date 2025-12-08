@@ -1,0 +1,764 @@
+design_patterns:
+  # ============================================================================
+  # SERVICE LAYER PATTERN
+  # ============================================================================
+  # Services use dependency injection, no direct instantiation
+  # Services are stateless or manage their own state
+  # Services use providedIn: 'root' for singleton pattern
+  "projects/osi-cards-lib/src/lib/services/**/*.ts":
+    pattern_name: "Service Layer Pattern"
+    design_pattern: "Services use dependency injection, no direct DB access, proper lifecycle management"
+    includes:
+      - "projects/osi-cards-lib/src/lib/services/**/*.ts"
+      - "src/app/core/**/*.service.ts"
+    description: |
+      ✅ Use @Injectable({ providedIn: 'root' }) for singleton services
+      ✅ Dependency injection via constructor or inject()
+      ✅ Use takeUntilDestroyed for subscription management
+      ✅ Services are stateless or manage isolated state
+      ❌ No direct database imports
+      ❌ No inline SQL queries
+      ❌ No manual service instantiation (new Service())
+      ❌ No memory leaks from unsubscribed observables
+    rules:
+      - "Services MUST use @Injectable decorator"
+      - "Services MUST use providedIn: 'root' or explicit providers"
+      - "Services MUST use inject() or constructor injection"
+      - "Services MUST NOT use new Service() for other services"
+      - "Observable subscriptions MUST use takeUntilDestroyed or manual unsubscribe"
+
+  # ============================================================================
+  # COMPONENT PATTERN
+  # ============================================================================
+  # Components are standalone, use OnPush change detection
+  # Components use Input/Output for communication
+  # Components delegate business logic to services
+  "projects/osi-cards-lib/src/lib/components/**/*.component.ts":
+    pattern_name: "Component Pattern"
+    design_pattern: "Standalone components with OnPush change detection, proper lifecycle management"
+    includes:
+      - "projects/osi-cards-lib/src/lib/components/**/*.component.ts"
+      - "src/app/**/*.component.ts"
+    description: |
+      ✅ Standalone components (standalone: true)
+      ✅ OnPush change detection strategy
+      ✅ Input/Output for parent-child communication
+      ✅ Services for business logic (not in components)
+      ✅ Proper lifecycle hooks (OnInit, OnDestroy, etc.)
+      ✅ Use ViewChild/ViewChildren for DOM access
+      ❌ No business logic in components
+      ❌ No direct DOM manipulation (use Renderer2 or ElementRef)
+      ❌ No subscriptions without cleanup
+      ❌ No Default change detection unless necessary
+    rules:
+      - "Components MUST be standalone"
+      - "Components MUST use ChangeDetectionStrategy.OnPush"
+      - "Components MUST use @Input() and @Output() for communication"
+      - "Components MUST inject services, not instantiate them"
+      - "Components MUST clean up subscriptions in ngOnDestroy"
+
+  # ============================================================================
+  # DEPENDENCY INJECTION PATTERN
+  # ============================================================================
+  # All dependencies injected via constructor or inject()
+  # No manual instantiation of services or components
+  "**/*.ts":
+    pattern_name: "Dependency Injection Pattern"
+    design_pattern: "All dependencies injected, no manual instantiation"
+    includes:
+      - "projects/**/*.ts"
+      - "src/**/*.ts"
+    excludes:
+      - "**/*.spec.ts"
+      - "**/*.test.ts"
+      - "**/node_modules/**"
+    description: |
+      ✅ Use inject() function for dependency injection
+      ✅ Use constructor injection for services
+      ✅ Use providedIn: 'root' for singleton services
+      ✅ Use providers array for component-scoped services
+      ❌ No new Service() instantiation
+      ❌ No static service access
+      ❌ No global state without services
+    rules:
+      - "Dependencies MUST be injected via inject() or constructor"
+      - "Services MUST NOT be instantiated with new keyword"
+      - "Static service access MUST be avoided"
+
+  # ============================================================================
+  # FACADE PATTERN
+  # ============================================================================
+  # CardFacadeService provides unified API
+  # Simplifies complex subsystem interactions
+  "projects/osi-cards-lib/src/lib/services/card-facade.service.ts":
+    pattern_name: "Facade Pattern"
+    design_pattern: "Facade service provides unified API for complex subsystems"
+    includes:
+      - "projects/osi-cards-lib/src/lib/services/*facade*.ts"
+      - "projects/osi-cards-lib/src/lib/services/card-facade.service.ts"
+    description: |
+      ✅ Single entry point for complex operations
+      ✅ Coordinates multiple services internally
+      ✅ Provides simplified API for consumers
+      ✅ Hides subsystem complexity
+      ❌ No direct access to internal services from consumers
+      ❌ No duplicate facade logic
+    rules:
+      - "Facade services MUST coordinate multiple services"
+      - "Consumers MUST use facade, not internal services directly"
+      - "Facade MUST provide simplified API"
+
+  # ============================================================================
+  # REPOSITORY PATTERN
+  # ============================================================================
+  # Data access abstraction layer
+  # No direct database or storage access
+  "projects/osi-cards-lib/src/lib/**/*provider*.ts":
+    pattern_name: "Repository Pattern"
+    design_pattern: "Data access through providers/repositories, no direct storage access"
+    includes:
+      - "projects/osi-cards-lib/src/lib/**/*provider*.ts"
+      - "projects/osi-cards-lib/src/lib/**/*repository*.ts"
+      - "projects/osi-cards-lib/src/lib/**/*data*.ts"
+    description: |
+      ✅ Abstract data access through providers
+      ✅ Repository pattern for data operations
+      ✅ Interface-based data contracts
+      ❌ No direct database imports
+      ❌ No direct localStorage/sessionStorage access
+      ❌ No inline data fetching logic
+    rules:
+      - "Data access MUST go through providers/repositories"
+      - "Storage operations MUST be abstracted"
+      - "Data contracts MUST use interfaces"
+
+  # ============================================================================
+  # OBSERVER PATTERN (RxJS)
+  # ============================================================================
+  # Reactive programming with Observables
+  # Proper subscription management
+  "**/*.ts":
+    pattern_name: "Observer Pattern (RxJS)"
+    design_pattern: "Reactive programming with proper Observable subscription management"
+    includes:
+      - "projects/**/*.ts"
+      - "src/**/*.ts"
+    excludes:
+      - "**/*.spec.ts"
+      - "**/node_modules/**"
+    description: |
+      ✅ Use RxJS Observables for reactive data
+      ✅ Use takeUntilDestroyed for automatic cleanup
+      ✅ Use operators (map, filter, tap, etc.)
+      ✅ Use async pipe in templates when possible
+      ❌ No unsubscribed observables (memory leaks)
+      ❌ No manual subscription without cleanup
+      ❌ No nested subscriptions
+    rules:
+      - "Observable subscriptions MUST be cleaned up"
+      - "Use takeUntilDestroyed in components"
+      - "Prefer async pipe in templates"
+      - "Avoid nested subscriptions (use operators)"
+
+  # ============================================================================
+  # FACTORY PATTERN
+  # ============================================================================
+  # Factory classes for object creation
+  # Fluent API for complex object construction
+  "projects/osi-cards-lib/src/lib/**/*factory*.ts":
+    pattern_name: "Factory Pattern"
+    design_pattern: "Factory classes for object creation with fluent API"
+    includes:
+      - "projects/osi-cards-lib/src/lib/**/*factory*.ts"
+      - "projects/osi-cards-lib/src/lib/**/*builder*.ts"
+    description: |
+      ✅ Factory classes for object creation
+      ✅ Fluent API for complex construction
+      ✅ Type-safe object creation
+      ❌ No direct object instantiation for complex objects
+      ❌ No scattered creation logic
+    rules:
+      - "Complex objects MUST use factories"
+      - "Factories MUST provide fluent API"
+      - "Object creation logic MUST be centralized"
+
+  # ============================================================================
+  # STRATEGY PATTERN
+  # ============================================================================
+  # Pluggable algorithms and strategies
+  # Interface-based strategy selection
+  "projects/osi-cards-lib/src/lib/**/*strategy*.ts":
+    pattern_name: "Strategy Pattern"
+    design_pattern: "Pluggable algorithms through strategy interfaces"
+    includes:
+      - "projects/osi-cards-lib/src/lib/**/*strategy*.ts"
+      - "projects/osi-cards-lib/src/lib/services/layout-*.service.ts"
+    description: |
+      ✅ Strategy interfaces for algorithms
+      ✅ Pluggable strategy implementations
+      ✅ Strategy selection at runtime
+      ❌ No hardcoded algorithm selection
+      ❌ No algorithm logic in components
+    rules:
+      - "Algorithms MUST use strategy pattern"
+      - "Strategy selection MUST be configurable"
+      - "Strategies MUST implement interfaces"
+
+  # ============================================================================
+  # UTILITY PATTERN
+  # ============================================================================
+  # Pure functions, no side effects
+  # Stateless utility functions
+  "projects/osi-cards-lib/src/lib/utils/**/*.ts":
+    pattern_name: "Utility Pattern"
+    design_pattern: "Pure functions, stateless utilities, no side effects"
+    includes:
+      - "projects/osi-cards-lib/src/lib/utils/**/*.ts"
+    description: |
+      ✅ Pure functions (no side effects)
+      ✅ Stateless utilities
+      ✅ Reusable helper functions
+      ✅ Type-safe utility functions
+      ❌ No state in utility functions
+      ❌ No side effects in utilities
+      ❌ No dependencies on services in utilities
+    rules:
+      - "Utilities MUST be pure functions"
+      - "Utilities MUST NOT have side effects"
+      - "Utilities MUST NOT depend on services"
+      - "Utilities MUST be stateless"
+
+  # ============================================================================
+  # MODEL PATTERN
+  # ============================================================================
+  # Type-safe models and interfaces
+  # Clear data contracts
+  "projects/osi-cards-lib/src/lib/models/**/*.ts":
+    pattern_name: "Model Pattern"
+    design_pattern: "Type-safe models with clear interfaces and type guards"
+    includes:
+      - "projects/osi-cards-lib/src/lib/models/**/*.ts"
+      - "projects/osi-cards-lib/src/lib/types/**/*.ts"
+    description: |
+      ✅ Type-safe interfaces and types
+      ✅ Type guards for runtime validation
+      ✅ Clear data contracts
+      ✅ Zod schemas for validation
+      ❌ No any types
+      ❌ No untyped data structures
+      ❌ No validation logic in components
+    rules:
+      - "Models MUST use TypeScript types/interfaces"
+      - "Runtime validation MUST use type guards"
+      - "Data validation MUST use Zod schemas"
+      - "Avoid any type"
+
+  # ============================================================================
+  # ERROR HANDLING PATTERN
+  # ============================================================================
+  # Centralized error handling
+  # Proper error propagation
+  "**/*.ts":
+    pattern_name: "Error Handling Pattern"
+    design_pattern: "Centralized error handling with proper error propagation"
+    includes:
+      - "projects/**/*.ts"
+      - "src/**/*.ts"
+    excludes:
+      - "**/*.spec.ts"
+      - "**/node_modules/**"
+    description: |
+      ✅ Centralized error handling service
+      ✅ Proper error propagation
+      ✅ User-friendly error messages
+      ✅ Error logging and tracking
+      ❌ No silent error swallowing
+      ❌ No unhandled promise rejections
+      ❌ No generic error messages
+    rules:
+      - "Errors MUST be handled or propagated"
+      - "Use ErrorTrackingService for error logging"
+      - "Provide user-friendly error messages"
+      - "Avoid silent error swallowing"
+
+  # ============================================================================
+  # PERFORMANCE PATTERN
+  # ============================================================================
+  # OnPush change detection
+  # Memoization and caching
+  # Lazy loading
+  "**/*.ts":
+    pattern_name: "Performance Pattern"
+    design_pattern: "Optimized performance with OnPush, memoization, and lazy loading"
+    includes:
+      - "projects/**/*.component.ts"
+      - "projects/**/*.service.ts"
+    excludes:
+      - "**/*.spec.ts"
+      - "**/node_modules/**"
+    description: |
+      ✅ OnPush change detection
+      ✅ Memoization for expensive calculations
+      ✅ Lazy loading for routes and components
+      ✅ Virtual scrolling for large lists
+      ✅ TrackBy functions for *ngFor
+      ❌ No Default change detection unless necessary
+      ❌ No expensive operations in templates
+      ❌ No unnecessary re-renders
+    rules:
+      - "Components MUST use OnPush change detection"
+      - "Expensive operations MUST be memoized"
+      - "Large lists MUST use TrackBy"
+      - "Routes MUST use lazy loading"
+
+  # ============================================================================
+  # ACCESSIBILITY PATTERN
+  # ============================================================================
+  # WCAG compliance
+  # ARIA attributes
+  # Keyboard navigation
+  "projects/osi-cards-lib/src/lib/components/**/*.ts":
+    pattern_name: "Accessibility Pattern"
+    design_pattern: "WCAG compliant components with proper ARIA and keyboard support"
+    includes:
+      - "projects/osi-cards-lib/src/lib/components/**/*.component.ts"
+      - "projects/osi-cards-lib/src/lib/services/accessibility.service.ts"
+    description: |
+      ✅ ARIA labels and roles
+      ✅ Keyboard navigation support
+      ✅ Focus management
+      ✅ Screen reader support
+      ✅ Color contrast compliance
+      ❌ No missing ARIA attributes
+      ❌ No keyboard traps
+      ❌ No inaccessible components
+    rules:
+      - "Components MUST have ARIA labels"
+      - "Interactive elements MUST be keyboard accessible"
+      - "Focus MUST be properly managed"
+      - "Color contrast MUST meet WCAG standards"
+
+  # ============================================================================
+  # SINGLETON PATTERN
+  # ============================================================================
+  # Services with providedIn: 'root' for single instance
+  # Global state management through singletons
+  "projects/osi-cards-lib/src/lib/services/**/*.ts":
+    pattern_name: "Singleton Pattern"
+    design_pattern: "Single instance services with providedIn: 'root' for global state"
+    includes:
+      - "projects/osi-cards-lib/src/lib/services/**/*.ts"
+      - "src/app/core/**/*.service.ts"
+    description: |
+      ✅ Use providedIn: 'root' for singleton services
+      ✅ Single instance shared across application
+      ✅ Lazy initialization on first injection
+      ✅ Tree-shakable (excluded if unused)
+      ❌ No multiple instances of the same service
+      ❌ No manual singleton implementation
+      ❌ No static service access
+    rules:
+      - "Services MUST use providedIn: 'root' for singleton pattern"
+      - "Services MUST NOT create multiple instances"
+      - "State MUST be shared through singleton services"
+
+  # ============================================================================
+  # DECORATOR PATTERN
+  # ============================================================================
+  # Method and class decorators for cross-cutting concerns
+  # Add behavior without modifying original code
+  "projects/osi-cards-lib/src/lib/decorators/**/*.ts":
+    pattern_name: "Decorator Pattern"
+    design_pattern: "Decorators add behavior without modifying original code"
+    includes:
+      - "projects/osi-cards-lib/src/lib/decorators/**/*.ts"
+      - "projects/osi-cards-lib/src/lib/utils/**/*memoize*.ts"
+      - "projects/osi-cards-lib/src/lib/utils/**/*subscription*.ts"
+    description: |
+      ✅ Use @Memoize for method result caching
+      ✅ Use @AutoUnsubscribe for subscription cleanup
+      ✅ Use @Validate for property validation
+      ✅ Use @Debounce/@Throttle for rate limiting
+      ✅ Decorators wrap original functionality
+      ❌ No side effects in decorators
+      ❌ No decorator composition issues
+    rules:
+      - "Decorators MUST wrap, not replace, original functionality"
+      - "Decorators MUST be composable"
+      - "Use decorators for cross-cutting concerns"
+
+  # ============================================================================
+  # BUILDER PATTERN
+  # ============================================================================
+  # Fluent API for complex object construction
+  # Step-by-step object building with method chaining
+  "projects/osi-cards-lib/src/lib/**/*builder*.ts":
+    pattern_name: "Builder Pattern"
+    design_pattern: "Fluent API for step-by-step object construction"
+    includes:
+      - "projects/osi-cards-lib/src/lib/**/*builder*.ts"
+      - "projects/osi-cards-lib/src/lib/testing/**/*builder*.ts"
+      - "projects/osi-cards-lib/src/lib/types/**/*builder*.ts"
+    description: |
+      ✅ Fluent API with method chaining
+      ✅ Step-by-step object construction
+      ✅ Type-safe building process
+      ✅ Preset methods for common scenarios
+      ✅ Build validation before finalization
+      ❌ No incomplete objects returned
+      ❌ No scattered construction logic
+    rules:
+      - "Builders MUST provide fluent API"
+      - "Builders MUST validate before build()"
+      - "Builders MUST return complete objects"
+
+  # ============================================================================
+  # COMMAND PATTERN
+  # ============================================================================
+  # Encapsulate requests as objects
+  # Support undo/redo operations
+  "projects/osi-cards-lib/src/lib/**/*command*.ts":
+    pattern_name: "Command Pattern"
+    design_pattern: "Encapsulate requests as objects with undo/redo support"
+    includes:
+      - "projects/osi-cards-lib/src/lib/**/*command*.ts"
+      - "src/app/**/*command*.ts"
+    description: |
+      ✅ Commands encapsulate operations
+      ✅ Support undo/redo functionality
+      ✅ Command history tracking
+      ✅ Batch command execution
+      ❌ No direct operation calls
+      ❌ No lost command history
+    rules:
+      - "Operations MUST be encapsulated as commands"
+      - "Commands MUST support undo/redo"
+      - "Command history MUST be maintained"
+
+  # ============================================================================
+  # MEDIATOR PATTERN
+  # ============================================================================
+  # EventBusService mediates communication between components
+  # Reduces direct dependencies between components
+  "projects/osi-cards-lib/src/lib/services/event-bus.service.ts":
+    pattern_name: "Mediator Pattern"
+    design_pattern: "EventBus mediates communication, reduces component coupling"
+    includes:
+      - "projects/osi-cards-lib/src/lib/services/event-bus.service.ts"
+      - "projects/osi-cards-lib/src/lib/services/event-middleware.service.ts"
+    description: |
+      ✅ EventBus centralizes communication
+      ✅ Components communicate through events
+      ✅ Reduces direct dependencies
+      ✅ Supports event middleware
+      ❌ No direct component-to-component communication
+      ❌ No event bus bypass
+    rules:
+      - "Components MUST use EventBus for cross-component communication"
+      - "Events MUST be typed and structured"
+      - "Event middleware MUST be used for cross-cutting concerns"
+
+  # ============================================================================
+  # CHAIN OF RESPONSIBILITY PATTERN
+  # ============================================================================
+  # EventMiddlewareService chains event handlers
+  # Sequential processing with early termination
+  "projects/osi-cards-lib/src/lib/services/event-middleware.service.ts":
+    pattern_name: "Chain of Responsibility Pattern"
+    design_pattern: "Event middleware chains process events sequentially"
+    includes:
+      - "projects/osi-cards-lib/src/lib/services/event-middleware.service.ts"
+      - "projects/osi-cards-lib/src/lib/interfaces/event-middleware.interface.ts"
+    description: |
+      ✅ Middleware chains process events
+      ✅ Each handler can pass or stop chain
+      ✅ Supports async middleware
+      ✅ Composable middleware functions
+      ❌ No broken middleware chains
+      ❌ No unhandled middleware errors
+    rules:
+      - "Middleware MUST be chainable"
+      - "Middleware MUST support async operations"
+      - "Middleware MUST handle errors gracefully"
+
+  # ============================================================================
+  # STATE PATTERN
+  # ============================================================================
+  # CardStateEngine manages card state transitions
+  # State-specific behavior encapsulation
+  "projects/osi-cards-lib/src/lib/core/card-state-engine.ts":
+    pattern_name: "State Pattern"
+    design_pattern: "State engine manages state transitions and behavior"
+    includes:
+      - "projects/osi-cards-lib/src/lib/core/card-state-engine.ts"
+      - "projects/osi-cards-lib/src/lib/**/*state*.ts"
+    description: |
+      ✅ State engine manages transitions
+      ✅ State-specific behavior encapsulation
+      ✅ Valid state transitions only
+      ✅ State history tracking
+      ❌ No invalid state transitions
+      ❌ No state logic in components
+    rules:
+      - "State transitions MUST go through state engine"
+      - "State-specific behavior MUST be encapsulated"
+      - "Invalid transitions MUST be prevented"
+
+  # ============================================================================
+  # TEMPLATE METHOD PATTERN
+  # ============================================================================
+  # Base classes define algorithm skeleton
+  # Subclasses override specific steps
+  "projects/osi-cards-lib/src/lib/components/sections/base-section.component.ts":
+    pattern_name: "Template Method Pattern"
+    design_pattern: "Base classes define algorithm, subclasses customize steps"
+    includes:
+      - "projects/osi-cards-lib/src/lib/components/sections/base-section.component.ts"
+      - "projects/osi-cards-lib/src/lib/core/**/*base*.ts"
+      - "src/app/core/services/base.service.ts"
+    description: |
+      ✅ Base classes define algorithm structure
+      ✅ Subclasses override specific steps
+      ✅ Common behavior in base class
+      ✅ Hook methods for customization
+      ❌ No algorithm duplication
+      ❌ No breaking template method contract
+    rules:
+      - "Base classes MUST define algorithm structure"
+      - "Subclasses MUST override hook methods"
+      - "Common behavior MUST be in base class"
+
+  # ============================================================================
+  # ADAPTER PATTERN
+  # ============================================================================
+  # Data transformation and format adaptation
+  # Interface compatibility between systems
+  "projects/osi-cards-lib/src/lib/services/section-normalization.service.ts":
+    pattern_name: "Adapter Pattern"
+    design_pattern: "Adapt data formats and interfaces for compatibility"
+    includes:
+      - "projects/osi-cards-lib/src/lib/services/section-normalization.service.ts"
+      - "projects/osi-cards-lib/src/lib/**/*adapter*.ts"
+      - "projects/osi-cards-lib/src/lib/**/*transform*.ts"
+    description: |
+      ✅ Adapters transform data formats
+      ✅ Interface compatibility layer
+      ✅ Isolate transformation logic
+      ✅ Support multiple format versions
+      ❌ No direct format coupling
+      ❌ No scattered transformation logic
+    rules:
+      - "Data transformations MUST use adapters"
+      - "Adapters MUST isolate format differences"
+      - "Multiple format versions MUST be supported"
+
+  # ============================================================================
+  # PROXY PATTERN
+  # ============================================================================
+  # Caching proxies for expensive operations
+  # Lazy loading and access control
+  "projects/osi-cards-lib/src/lib/**/*cache*.ts":
+    pattern_name: "Proxy Pattern"
+    design_pattern: "Caching proxies intercept and optimize access"
+    includes:
+      - "projects/osi-cards-lib/src/lib/**/*cache*.ts"
+      - "projects/osi-cards-lib/src/lib/services/**/*cache*.ts"
+      - "src/app/core/services/indexeddb-cache.service.ts"
+    description: |
+      ✅ Caching proxies for expensive operations
+      ✅ Lazy loading through proxies
+      ✅ Access control via proxies
+      ✅ Transparent caching layer
+      ❌ No cache invalidation issues
+      ❌ No stale data in cache
+    rules:
+      - "Expensive operations MUST use caching proxies"
+      - "Cache invalidation MUST be handled"
+      - "Proxies MUST be transparent to consumers"
+
+  # ============================================================================
+  # MEMENTO PATTERN
+  # ============================================================================
+  # State snapshots for undo/redo
+  # State restoration without exposing internals
+  "projects/osi-cards-lib/src/lib/core/card-state-engine.ts":
+    pattern_name: "Memento Pattern"
+    design_pattern: "State snapshots for undo/redo functionality"
+    includes:
+      - "projects/osi-cards-lib/src/lib/core/card-state-engine.ts"
+      - "projects/osi-cards-lib/src/lib/**/*memento*.ts"
+      - "projects/osi-cards-lib/src/lib/**/*snapshot*.ts"
+    description: |
+      ✅ State snapshots for undo/redo
+      ✅ State restoration without exposing internals
+      ✅ History management
+      ✅ Snapshot serialization
+      ❌ No direct state manipulation
+      ❌ No lost state history
+    rules:
+      - "State snapshots MUST be created before changes"
+      - "State restoration MUST use mementos"
+      - "History MUST be maintained"
+
+  # ============================================================================
+  # VISITOR PATTERN
+  # ============================================================================
+  # Section rendering with visitor-based traversal
+  # Operations on object structure without modification
+  "projects/osi-cards-lib/src/lib/components/section-renderer/section-renderer.component.ts":
+    pattern_name: "Visitor Pattern"
+    design_pattern: "Visitor operations on object structure without modification"
+    includes:
+      - "projects/osi-cards-lib/src/lib/components/section-renderer/section-renderer.component.ts"
+      - "projects/osi-cards-lib/src/lib/components/renderers/**/*.ts"
+    description: |
+      ✅ Visitors operate on object structure
+      ✅ New operations without modifying classes
+      ✅ Type-specific visitor methods
+      ✅ Visitor traversal of structure
+      ❌ No structure modification in visitors
+      ❌ No visitor state leakage
+    rules:
+      - "Visitors MUST operate without modifying structure"
+      - "Type-specific visitor methods MUST be used"
+      - "Visitor state MUST be isolated"
+
+  # ============================================================================
+  # PROTOTYPE PATTERN
+  # ============================================================================
+  # Object cloning for card duplication
+  # Efficient object creation from existing instances
+  "projects/osi-cards-lib/src/lib/models/card.model.ts":
+    pattern_name: "Prototype Pattern"
+    design_pattern: "Clone objects for efficient creation from existing instances"
+    includes:
+      - "projects/osi-cards-lib/src/lib/models/card.model.ts"
+      - "projects/osi-cards-lib/src/lib/**/*clone*.ts"
+      - "projects/osi-cards-lib/src/lib/utils/**/*clone*.ts"
+    description: |
+      ✅ Clone objects for duplication
+      ✅ Deep cloning for nested structures
+      ✅ Efficient object creation
+      ✅ Preserve object relationships
+      ❌ No shallow copy issues
+      ❌ No reference sharing in clones
+    rules:
+      - "Object cloning MUST be deep for nested structures"
+      - "Clones MUST be independent instances"
+      - "Object relationships MUST be preserved"
+
+  # ============================================================================
+  # BRIDGE PATTERN
+  # ============================================================================
+  # Theme abstraction separates interface from implementation
+  # Multiple theme implementations with common interface
+  "projects/osi-cards-lib/src/lib/themes/**/*.ts":
+    pattern_name: "Bridge Pattern"
+    design_pattern: "Theme abstraction separates interface from implementation"
+    includes:
+      - "projects/osi-cards-lib/src/lib/themes/**/*.ts"
+      - "projects/osi-cards-lib/src/lib/services/theme.service.ts"
+    description: |
+      ✅ Theme interface separated from implementation
+      ✅ Multiple theme implementations
+      ✅ Runtime theme switching
+      ✅ Theme composition
+      ❌ No theme implementation coupling
+      ❌ No hardcoded theme logic
+    rules:
+      - "Themes MUST implement common interface"
+      - "Theme switching MUST be at runtime"
+      - "Theme logic MUST be isolated"
+
+  # ============================================================================
+  # COMPOSITE PATTERN
+  # ============================================================================
+  # Card sections form tree structure
+  # Uniform treatment of individual and composite objects
+  "projects/osi-cards-lib/src/lib/components/section-renderer/section-renderer.component.ts":
+    pattern_name: "Composite Pattern"
+    design_pattern: "Card sections form tree structure with uniform treatment"
+    includes:
+      - "projects/osi-cards-lib/src/lib/components/section-renderer/section-renderer.component.ts"
+      - "projects/osi-cards-lib/src/lib/models/card.model.ts"
+    description: |
+      ✅ Sections form tree structure
+      ✅ Uniform treatment of sections
+      ✅ Recursive section operations
+      ✅ Section composition
+      ❌ No section type discrimination in operations
+      ❌ No broken section hierarchy
+    rules:
+      - "Sections MUST be treated uniformly"
+      - "Section operations MUST support recursion"
+      - "Section hierarchy MUST be maintained"
+
+  # ============================================================================
+  # REGISTRY PATTERN
+  # ============================================================================
+  # SectionPluginRegistry manages plugin registration
+  # Dynamic plugin discovery and registration
+  "projects/osi-cards-lib/src/lib/services/section-plugin-registry.service.ts":
+    pattern_name: "Registry Pattern"
+    design_pattern: "Plugin registry manages dynamic plugin registration"
+    includes:
+      - "projects/osi-cards-lib/src/lib/services/section-plugin-registry.service.ts"
+      - "projects/osi-cards-lib/src/lib/interfaces/section-plugin.interface.ts"
+    description: |
+      ✅ Plugin registry manages registration
+      ✅ Dynamic plugin discovery
+      ✅ Plugin lifecycle management
+      ✅ Plugin metadata storage
+      ❌ No duplicate plugin registration
+      ❌ No unregistered plugin usage
+    rules:
+      - "Plugins MUST be registered in registry"
+      - "Plugin discovery MUST be dynamic"
+      - "Plugin metadata MUST be maintained"
+
+  # ============================================================================
+  # PROVIDER PATTERN
+  # ============================================================================
+  # CardDataProvider abstracts data sources
+  # Multiple data source implementations
+  "projects/osi-cards-lib/src/lib/**/*provider*.ts":
+    pattern_name: "Provider Pattern"
+    design_pattern: "Provider pattern abstracts data sources with multiple implementations"
+    includes:
+      - "projects/osi-cards-lib/src/lib/**/*provider*.ts"
+      - "src/app/core/services/card-data/**/*.ts"
+    description: |
+      ✅ Provider interface abstracts data sources
+      ✅ Multiple provider implementations
+      ✅ Provider switching at runtime
+      ✅ Provider composition
+      ❌ No direct data source coupling
+      ❌ No hardcoded provider logic
+    rules:
+      - "Data access MUST go through providers"
+      - "Providers MUST implement common interface"
+      - "Provider switching MUST be configurable"
+
+  # ============================================================================
+  # PRESET PATTERN
+  # ============================================================================
+  # Card presets provide pre-configured card templates
+  # Factory for common card configurations
+  "projects/osi-cards-lib/src/lib/presets/**/*.ts":
+    pattern_name: "Preset Pattern"
+    design_pattern: "Presets provide pre-configured card templates"
+    includes:
+      - "projects/osi-cards-lib/src/lib/presets/**/*.ts"
+      - "projects/osi-cards-lib/src/lib/presets/preset-factory.ts"
+    description: |
+      ✅ Presets provide pre-configured templates
+      ✅ Preset factory for creation
+      ✅ Preset customization
+      ✅ Preset composition
+      ❌ No hardcoded preset logic
+      ❌ No preset duplication
+    rules:
+      - "Presets MUST be created through factory"
+      - "Presets MUST be customizable"
+      - "Preset logic MUST be centralized"
+

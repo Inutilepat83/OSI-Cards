@@ -1,0 +1,219 @@
+---
+description: "Comprehensive QA checklist for all work"
+priority: 0
+---
+
+# Comprehensive QA Checklist
+
+## ✅ Pre-Implementation Checklist
+
+Before starting implementation:
+
+- [ ] Requirements fully understood
+- [ ] Root cause identified (not just symptoms)
+- [ ] Architecture pattern identified
+- [ ] Edge cases considered
+- [ ] Error scenarios planned
+- [ ] Testing strategy defined
+- [ ] Performance implications evaluated
+- [ ] Security implications considered
+- [ ] Accessibility requirements identified
+- [ ] Documentation plan created
+
+---
+
+## ✅ During Implementation Checklist
+
+While implementing:
+
+- [ ] Code follows architectural patterns
+- [ ] Code matches existing style
+- [ ] Error handling implemented
+- [ ] Logging added appropriately
+- [ ] Comments added for complex logic
+- [ ] Type safety maintained
+- [ ] No `any` types (unless justified)
+- [ ] Dependencies injected properly
+- [ ] Subscriptions managed correctly
+- [ ] Memory leaks prevented
+
+---
+
+## ✅ Post-Implementation Checklist
+
+After implementing:
+
+### Code Quality
+- [ ] Code reviewed
+- [ ] Patterns followed
+- [ ] Style consistent
+- [ ] No code smells
+- [ ] Complexity reasonable
+
+### Testing
+- [ ] Unit tests written
+- [ ] Component tests written
+- [ ] Integration tests written
+- [ ] E2E tests written (if applicable)
+- [ ] All tests passing
+- [ ] Test coverage adequate
+- [ ] Edge cases tested
+- [ ] Error scenarios tested
+
+### Browser Testing
+- [ ] App starts without errors
+- [ ] Feature works as expected
+- [ ] No console errors
+- [ ] No critical warnings
+- [ ] Visual appearance correct
+- [ ] Responsive design works
+- [ ] Accessibility verified
+- [ ] Performance acceptable
+
+### Log Analysis
+- [ ] Console messages read
+- [ ] Errors identified and fixed
+- [ ] Warnings understood
+- [ ] Network requests verified
+- [ ] No memory leaks
+
+### Documentation
+- [ ] Code documented
+- [ ] Complex logic explained
+- [ ] API documented (if public)
+- [ ] Examples provided (if needed)
+- [ ] README updated (if needed)
+
+### Performance
+- [ ] Load time acceptable
+- [ ] No unnecessary re-renders
+- [ ] Memory usage stable
+- [ ] Bundle size reasonable
+- [ ] Lazy loading used (if applicable)
+
+### Security
+- [ ] Input validation
+- [ ] XSS prevention
+- [ ] CSRF protection (if applicable)
+- [ ] No secrets exposed
+- [ ] Secure defaults
+
+### Accessibility
+- [ ] ARIA labels present
+- [ ] Keyboard navigation works
+- [ ] Screen reader compatible
+- [ ] Color contrast adequate
+- [ ] Focus management correct
+
+---
+
+## ✅ Final Verification Checklist
+
+Before considering work complete:
+
+### Deep Thinking
+- [ ] Problem fully understood
+- [ ] Root cause identified
+- [ ] Multiple solutions considered
+- [ ] Best solution chosen with reasoning
+- [ ] Edge cases handled
+- [ ] Error scenarios handled
+
+### Consistency
+- [ ] Code style consistent
+- [ ] Patterns consistent
+- [ ] Naming consistent
+- [ ] Structure consistent
+- [ ] Documentation consistent
+- [ ] Consistent with session work
+
+### Quality
+- [ ] Code quality high
+- [ ] Test quality high
+- [ ] Documentation quality high
+- [ ] Performance acceptable
+- [ ] Security verified
+- [ ] Accessibility verified
+
+### Completeness
+- [ ] All requirements met
+- [ ] All edge cases handled
+- [ ] All error scenarios handled
+- [ ] All tests passing
+- [ ] All documentation complete
+- [ ] All checks passed
+
+---
+
+## 🚨 Critical Issues (Must Fix)
+
+These issues MUST be fixed before considering work complete:
+
+- [ ] Console errors
+- [ ] Test failures
+- [ ] Security vulnerabilities
+- [ ] Memory leaks
+- [ ] Critical performance issues
+- [ ] Accessibility violations
+- [ ] Pattern violations (HIGH severity)
+
+---
+
+## ⚠️ Important Issues (Should Fix)
+
+These issues SHOULD be fixed:
+
+- [ ] Console warnings
+- [ ] Code smells
+- [ ] Pattern violations (MEDIUM severity)
+- [ ] Performance optimizations
+- [ ] Documentation improvements
+- [ ] Test coverage gaps
+
+---
+
+## 💡 Nice to Have (Optional)
+
+These can be addressed later:
+
+- [ ] Code style improvements
+- [ ] Documentation enhancements
+- [ ] Performance optimizations
+- [ ] Additional test cases
+- [ ] Refactoring opportunities
+
+---
+
+## 📊 Quality Metrics
+
+Track these metrics:
+
+- **Console Errors:** 0 (target)
+- **Console Warnings:** <5 (target)
+- **Test Coverage:** >80% (target)
+- **Load Time:** <3s (target)
+- **Memory Leaks:** 0 (target)
+- **Accessibility Score:** 100% (target)
+- **Pattern Compliance:** 100% (target)
+
+---
+
+## ✅ Final Checklist
+
+Before marking work as complete:
+
+- [ ] All critical issues fixed
+- [ ] All important issues addressed
+- [ ] Browser tested
+- [ ] Logs analyzed
+- [ ] Tests passing
+- [ ] Documentation complete
+- [ ] Performance verified
+- [ ] Security verified
+- [ ] Accessibility verified
+- [ ] Consistency verified
+- [ ] Quality verified
+
+---
+
+**Remember:** Quality is not optional. Complete all checks before considering work done.

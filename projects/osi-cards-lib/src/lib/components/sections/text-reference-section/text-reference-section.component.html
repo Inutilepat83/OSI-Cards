@@ -1,4 +1,4 @@
-<div class="text-reference-container">
+<div class="ai-section ai-section--text-reference section-content">
   <!-- Section Header -->
   <lib-section-header [title]="section.title" [description]="section.description"> </lib-section-header>
 
@@ -29,7 +29,7 @@
   <!-- Empty State -->
   <lib-empty-state
     *ngIf="!section.fields || section.fields.length === 0"
-    message="No references available"
+    message="No reference data"
     icon="📚"
     variant="minimal"
   >

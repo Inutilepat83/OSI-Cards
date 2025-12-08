@@ -29,7 +29,10 @@
       "label": "Send Email",
       "type": "mail",
       "variant": "primary",
-      "icon": "📧"
+      "icon": "📧",
+      "email": {
+        "to": "john.smith@techcorp.com"
+      }
     }
   ]
 }

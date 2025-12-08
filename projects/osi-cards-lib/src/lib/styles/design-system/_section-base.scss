@@ -97,20 +97,50 @@
 // ═══════════════════════════════════════════════════════════════════
 
 @mixin card-base {
-  background: var(--osi-surface);
-  border: 1px solid var(--osi-border-muted);
+  background: var(--osi-surface-raised);
+  border: 1px solid var(--osi-border);
   border-radius: var(--osi-radius-md);
   padding: var(--osi-item-padding);
   transition: all var(--osi-duration-normal) var(--osi-ease-out);
+  position: relative;
+  overflow: hidden;
+
+  // Ensure proper stacking context
+  isolation: isolate;
 }
 
 @mixin card-elevated {
   @include card-base;
   box-shadow: var(--osi-shadow-sm);
+  position: relative;
+
+  // Subtle accent border on hover for visual interest
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--osi-accent) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity var(--osi-duration-normal) var(--osi-ease-out);
+    border-radius: var(--osi-radius-md) var(--osi-radius-md) 0 0;
+  }
 
   &:hover {
     transform: translateY(-2px);
     box-shadow: var(--osi-shadow-md);
+    border-color: var(--osi-border);
+
+    &::before {
+      opacity: 0.6;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--osi-accent);
+    outline-offset: 2px;
   }
 }
 
@@ -119,13 +149,14 @@
   cursor: pointer;
 
   &:hover {
-    background: var(--osi-surface-raised);
+    background: var(--osi-surface-hover);
     border-color: var(--osi-border);
   }
 
   &:active {
     transform: translateY(0);
     box-shadow: var(--osi-shadow-sm);
+    background: var(--osi-surface-raised);
   }
 
   &:focus-visible {
@@ -155,11 +186,12 @@
 
 @mixin item-with-border {
   @include item-base;
-  border: 1px solid var(--osi-border-muted);
+  background: var(--osi-surface-raised);
+  border: 1px solid var(--osi-border);
 
   &:hover {
     border-color: var(--osi-border);
-    background: var(--osi-surface-raised);
+    background: var(--osi-surface-hover);
   }
 }
 

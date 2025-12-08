@@ -333,3 +333,6 @@ export function initConfiguration(config: Partial<OSICardsConfig>): Configuratio
   instance = new ConfigurationManager(config);
   return instance;
 }
+
+
+

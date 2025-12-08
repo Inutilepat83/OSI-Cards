@@ -1,0 +1,179 @@
+# OSI Cards - Cursor Rules
+
+## CRITICAL: Quality and Consistency
+
+**ALWAYS follow these principles:**
+
+1. **Think Deeply** - Understand root causes, not symptoms
+2. **Be Consistent** - Match existing code, patterns, and conventions
+3. **Test in Browser** - Always verify in browser for UI changes
+4. **Read Logs** - Always check console messages
+5. **Implement Tests** - Write tests for all new code
+6. **Use Architect MCP** - Always query patterns before generating code
+
+---
+
+## 🧠 Deep Thinking Protocol
+
+**BEFORE any action:**
+
+1. Understand the problem fully
+2. Identify root cause
+3. Consider multiple solutions
+4. Choose best approach with reasoning
+5. Plan implementation
+6. Plan testing
+7. Plan verification
+
+**See:** `.cursor/rules/development/deep-thinking-protocol.mdc`
+
+---
+
+## 🎯 Consistency Rules
+
+**ALWAYS maintain consistency:**
+
+- Code style matches existing
+- Patterns match existing
+- Naming matches existing
+- Error handling matches existing
+- Testing matches existing
+
+**See:** `.cursor/rules/development/consistency-enforcement.mdc`
+
+---
+
+## 🌐 Browser Testing (MANDATORY)
+
+**ALWAYS test in browser after:**
+
+- Creating/modifying components
+- Changing CSS/styling
+- Adding new features
+- Fixing bugs
+
+**Workflow:**
+
+1. Start app: `npm start`
+2. Navigate to feature
+3. Test functionality
+4. Check console logs
+5. Verify visual appearance
+6. Test responsive design
+
+**See:** `.cursor/rules/development/browser-testing-workflow.mdc`
+
+---
+
+## 📊 Log Analysis (MANDATORY)
+
+**ALWAYS read and analyze:**
+
+- Console errors (must fix)
+- Console warnings (should fix)
+- Network requests
+- Performance metrics
+- **Stored logs in localStorage** (ALWAYS CHECK BEFORE DEBUGGING)
+
+**Log Storage Locations:**
+
+- Library logs: `localStorage.getItem('osi-cards-logs')`
+- App logs: `localStorage.getItem('osi-cards-app-logs')`
+- Access via services: `LoggerService.getLogsFromLocalStorage()` or `LoggingService.getLogsFromLocalStorage()`
+
+**Workflow:**
+
+1. **Check stored logs first** - Read logs from localStorage before debugging
+2. Read console messages
+3. Categorize issues
+4. Fix errors
+5. Address warnings
+6. Verify fixes
+
+**See:** `.cursor/rules/development/browser-testing-workflow.mdc`
+
+---
+
+## 🧪 Testing Logic
+
+**ALWAYS write tests for:**
+
+- New features
+- Bug fixes
+- Complex logic
+- Edge cases
+- Error scenarios
+
+**Test types:**
+
+- Unit tests
+- Component tests
+- Integration tests
+- E2E tests (if applicable)
+
+**See:** `.cursor/rules/development/browser-testing-workflow.mdc`
+
+---
+
+## 🏗️ Architect MCP (MANDATORY)
+
+**Before generating code:**
+
+1. Query patterns: `get_file_design_pattern`
+2. Generate following patterns
+3. Validate: `review_code_change`
+4. Fix violations
+
+**See:** `.cursor/rules/development/architect-mcp-enforcement.mdc`
+
+---
+
+## ✅ Quality Checklist
+
+Before considering work complete:
+
+- [ ] Deep thinking applied
+- [ ] Root cause identified
+- [ ] Multiple solutions considered
+- [ ] Best solution chosen
+- [ ] Consistency maintained
+- [ ] Browser tested
+- [ ] Logs analyzed
+- [ ] Tests implemented
+- [ ] All tests passing
+- [ ] No console errors
+- [ ] Performance verified
+- [ ] Documentation updated
+
+**See:** `.cursor/rules/development/comprehensive-qa-checklist.mdc`
+
+---
+
+## 📚 Quality Enhancement Rules
+
+**See detailed rules:**
+
+- `deep-thinking-protocol.mdc` - Think thoroughly
+- `consistency-enforcement.mdc` - Maintain consistency
+- `browser-testing-workflow.mdc` - Test in browser
+- `comprehensive-qa-checklist.mdc` - Complete QA
+- `architect-mcp-enforcement.mdc` - Use MCP patterns
+- `ai-quality-enhancement.mdc` - Overall quality
+
+---
+
+## 🚨 Critical Requirements
+
+**These are MANDATORY, not optional:**
+
+- ✅ Think deeply before acting
+- ✅ Test in browser for UI changes
+- ✅ Read and fix console logs
+- ✅ Write tests for new code
+- ✅ Use Architect MCP for patterns
+- ✅ Maintain consistency
+- ✅ Complete QA checklist
+
+---
+
+**Remember:** Quality is not optional. Take time to think deeply, test thoroughly, and ensure consistency.

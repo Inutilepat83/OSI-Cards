@@ -262,3 +262,6 @@ export class SimpleGridComponent implements OnInit, OnChanges, OnDestroy {
     this.calculateLayout();
   }
 }
+
+
+

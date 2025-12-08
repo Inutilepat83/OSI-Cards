@@ -1,6 +1,16 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  inject,
+} from '@angular/core';
 import { CardSection } from '../../models/card.model';
+import { LoggerService } from '../../services/logger.service';
 import { MasonryGridComponent, MasonryLayoutInfo } from '../masonry-grid/masonry-grid.component';
 import { SectionRenderEvent } from '../section-renderer/section-renderer.component';
 
@@ -18,8 +28,10 @@ import { SectionRenderEvent } from '../section-renderer/section-renderer.compone
   styleUrls: ['./card-section-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CardSectionListComponent {
+export class CardSectionListComponent implements OnChanges {
   @Input() sections: CardSection[] = [];
+
+  private readonly logger = inject(LoggerService);
 
   /**
    * Optional explicit container width for reliable masonry layout.
@@ -32,6 +44,12 @@ export class CardSectionListComponent {
    * When true, enables smooth incremental updates and entrance animations.
    */
   @Input() isStreaming = false;
+
+  /**
+   * Enable debug mode for detailed logging of layout calculations and gap elimination.
+   * When true, enables comprehensive logging in MasonryGridComponent.
+   */
+  @Input() debugMode = false;
 
   @Output() sectionEvent = new EventEmitter<SectionRenderEvent>();
   @Output() layoutChange = new EventEmitter<MasonryLayoutInfo>();
@@ -46,4 +64,20 @@ export class CardSectionListComponent {
 
   trackSection = (_index: number, section: CardSection): string =>
     section.id ?? `${section.title}-${_index}`;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['sections'] && this.sections) {
+      this.logger.info('CardSectionList: Sections received', {
+        source: 'CardSectionListComponent',
+        sectionsCount: this.sections.length,
+        sectionTypes: this.sections.map((s) => ({
+          id: s.id,
+          type: s.type,
+          title: s.title,
+          hasFields: !!s.fields?.length,
+          hasItems: !!s.items?.length,
+        })),
+      });
+    }
+  }
 }

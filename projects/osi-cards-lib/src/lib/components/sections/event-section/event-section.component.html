@@ -1,4 +1,4 @@
-<div class="events">
+<div class="ai-section ai-section--event section-content">
   <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
@@ -24,5 +24,6 @@
     </div>
   </div>
 
-  <lib-empty-state *ngIf="!section.fields?.length" message="No events" icon="📅" variant="compact"> </lib-empty-state>
+  <lib-empty-state *ngIf="!section.fields?.length" message="No event data" icon="📅" variant="minimal">
+  </lib-empty-state>
 </div>

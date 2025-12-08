@@ -1,0 +1,243 @@
+---
+description: "Enforce consistency across code, behavior, and sessions"
+priority: 0
+---
+
+# Consistency Enforcement
+
+## 🎯 Consistency Principles
+
+**ALWAYS maintain consistency in:**
+- Code style
+- Architectural patterns
+- Error handling
+- Testing approaches
+- Documentation style
+- Naming conventions
+
+---
+
+## 📝 Code Style Consistency
+
+### Naming Conventions
+
+**Services:**
+- Class: `UserService` (PascalCase)
+- File: `user.service.ts` (kebab-case)
+- Variable: `userService` (camelCase)
+
+**Components:**
+- Class: `UserComponent` (PascalCase)
+- File: `user.component.ts` (kebab-case)
+- Selector: `app-user` (kebab-case)
+
+**Interfaces:**
+- Name: `IUserService` or `UserService` (PascalCase)
+- File: `user-service.interface.ts` (kebab-case)
+
+### Code Structure
+
+**Always follow existing patterns:**
+- Same import order
+- Same class structure
+- Same method organization
+- Same comment style
+
+### Consistency Checklist
+
+- [ ] Matches existing naming conventions
+- [ ] Follows existing code structure
+- [ ] Uses same import style
+- [ ] Matches existing formatting
+- [ ] Uses same comment style
+
+---
+
+## 🏗️ Architectural Consistency
+
+### Pattern Usage
+
+**Always use established patterns:**
+- Service Layer Pattern for services
+- Component Pattern for components
+- Repository Pattern for data access
+- Observer Pattern for reactive code
+
+### Dependency Injection
+
+**Always use same approach:**
+- `inject()` function (preferred)
+- Constructor injection (alternative)
+- Never manual instantiation
+
+### Error Handling
+
+**Always use same approach:**
+- Centralized error handling
+- ErrorTrackingService for logging
+- Proper error propagation
+- User-friendly messages
+
+### Consistency Checklist
+
+- [ ] Uses established patterns
+- [ ] Follows architectural guidelines
+- [ ] Matches existing implementations
+- [ ] No new patterns without justification
+
+---
+
+## 🔄 Session Consistency
+
+### Remember Context
+
+**Within a session:**
+- Remember previous decisions
+- Maintain same approach
+- Reference earlier work
+- Avoid contradictions
+
+### Decision Logging
+
+**Document decisions:**
+- Why this approach?
+- What alternatives considered?
+- What trade-offs made?
+- What patterns followed?
+
+### Consistency Checklist
+
+- [ ] Consistent with previous work in session
+- [ ] No contradictory approaches
+- [ ] Decisions documented
+- [ ] Patterns maintained
+
+---
+
+## 🧪 Testing Consistency
+
+### Test Structure
+
+**Always use same structure:**
+- Arrange-Act-Assert pattern
+- Descriptive test names
+- One assertion per test (when possible)
+- Proper test organization
+
+### Test Naming
+
+**Always use same naming:**
+- `describe('FeatureName', () => {})`
+- `it('should do something specific', () => {})`
+- Clear, descriptive names
+
+### Mocking
+
+**Always use same approach:**
+- Mock external dependencies
+- Use same mocking library
+- Same mock structure
+- Same setup/teardown
+
+### Consistency Checklist
+
+- [ ] Test structure matches existing tests
+- [ ] Test naming follows conventions
+- [ ] Mocking approach consistent
+- [ ] Test organization matches
+
+---
+
+## 📚 Documentation Consistency
+
+### Code Comments
+
+**Always use same style:**
+- JSDoc for public APIs
+- Inline comments for complex logic
+- Explain "why" not "what"
+- Same comment format
+
+### Documentation Style
+
+**Always use same style:**
+- Same markdown format
+- Same structure
+- Same level of detail
+- Same examples format
+
+### Consistency Checklist
+
+- [ ] Comment style matches
+- [ ] Documentation format matches
+- [ ] Examples format matches
+- [ ] Level of detail consistent
+
+---
+
+## 🔍 Consistency Verification
+
+### Before Committing
+
+**Check consistency:**
+- Code style matches
+- Patterns match
+- Naming matches
+- Structure matches
+
+### Code Review
+
+**Review for consistency:**
+- Does this match existing code?
+- Are patterns followed?
+- Is naming consistent?
+- Is structure consistent?
+
+### Consistency Checklist
+
+- [ ] Code style consistent
+- [ ] Patterns consistent
+- [ ] Naming consistent
+- [ ] Structure consistent
+- [ ] Documentation consistent
+
+---
+
+## 🚨 Inconsistency Detection
+
+### Red Flags
+
+**Watch for:**
+- Different naming conventions
+- Different code structure
+- Different patterns
+- Different error handling
+- Different testing approaches
+
+### Fix Inconsistencies
+
+**When found:**
+- Identify the standard
+- Update to match standard
+- Document the change
+- Verify consistency
+
+---
+
+## ✅ Consistency Checklist
+
+Before considering work complete:
+
+- [ ] Code style matches existing
+- [ ] Patterns match existing
+- [ ] Naming matches existing
+- [ ] Structure matches existing
+- [ ] Error handling matches existing
+- [ ] Testing matches existing
+- [ ] Documentation matches existing
+- [ ] Consistent with session work
+- [ ] No contradictions
+
+---
+
+**Remember:** Consistency is critical for maintainability. Always match existing patterns and conventions.

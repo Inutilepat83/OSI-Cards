@@ -1,0 +1,18 @@
+{
+  "name": "osi-cards",
+  "version": "1.5.5",
+  "description": "OSI Cards - Angular card rendering library with masonry grid layout",
+  "sourceTemplate": "your-template",
+  "type": "angular-library",
+  "framework": "angular",
+  "architecture": "standalone-components"
+}
+
+
+
+
+
+
+
+
+

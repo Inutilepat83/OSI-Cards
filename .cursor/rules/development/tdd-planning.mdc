@@ -1,0 +1,124 @@
+---
+description: "TDD planning requirements, test-first approach"
+alwaysApply: true
+---
+
+# TDD Planning
+
+## Before Writing Code
+
+### Understand the Requirement
+
+1. **Ask clarifying questions:**
+   - What is the expected behavior?
+   - What are the edge cases?
+   - What are the error scenarios?
+   - What are the acceptance criteria?
+
+2. **Never assume:**
+   - If something is unclear, ask
+   - Don't make up requirements
+   - Verify understanding before coding
+
+### Plan the Tests
+
+1. **Identify test cases:**
+   - Happy path
+   - Edge cases
+   - Error scenarios
+   - Boundary conditions
+
+2. **Write test names first:**
+   - Describe what should happen
+   - Be specific and clear
+   - One behavior per test
+
+3. **Consider test data:**
+   - What inputs are needed?
+   - What are valid vs invalid inputs?
+   - What are boundary values?
+
+## Test Planning Checklist
+
+- [ ] Understand the requirement completely
+- [ ] Identified all test cases
+- [ ] Written descriptive test names
+- [ ] Considered edge cases
+- [ ] Considered error scenarios
+- [ ] Planned test data
+- [ ] Identified dependencies to mock
+
+## Example: Planning a User Registration Feature
+
+### Questions to Ask
+
+- What fields are required?
+- What validation rules apply?
+- What happens if email already exists?
+- Should we send a confirmation email?
+- What is the expected response format?
+
+### Test Cases
+
+1. ✅ Should create user when all fields are valid
+2. ✅ Should return error when email is missing
+3. ✅ Should return error when email format is invalid
+4. ✅ Should return error when email already exists
+5. ✅ Should hash password before storing
+6. ✅ Should return user data (without password) on success
+
+### Test Structure
+
+```typescript
+describe('UserRegistration', () => {
+  describe('when all fields are valid', () => {
+    it('should create user successfully', () => {});
+    it('should hash password before storing', () => {});
+    it('should return user data without password', () => {});
+  });
+
+  describe('when email is invalid', () => {
+    it('should return error when email is missing', () => {});
+    it('should return error when email format is invalid', () => {});
+    it('should return error when email already exists', () => {});
+  });
+});
+```
+
+## Red-Green-Refactor Workflow
+
+### RED Phase
+
+1. Write the test
+2. Run the test - it should fail
+3. Verify it fails for the right reason
+4. Commit: "RED: Add failing test for [feature]"
+
+### GREEN Phase
+
+1. Write minimal code to pass
+2. Run the test - it should pass
+3. Don't worry about code quality yet
+4. Commit: "GREEN: Implement [feature]"
+
+### REFACTOR Phase
+
+1. Improve code while keeping tests green
+2. Remove duplication
+3. Improve readability
+4. All tests must remain green
+5. Commit: "REFACTOR: Improve [feature] implementation"
+
+## Definition of Done
+
+Before considering a task complete:
+
+- [ ] All tests pass
+- [ ] Code builds without errors/warnings
+- [ ] No secrets exposed
+- [ ] Changes documented
+- [ ] Code reviewed (self-review at minimum)
+- [ ] Edge cases handled
+- [ ] Error scenarios handled
+
+**See also:** `patterns/testing.mdc`, `code-implementation.mdc`

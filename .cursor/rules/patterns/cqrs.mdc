@@ -1,0 +1,209 @@
+---
+description: "Command/Query separation, CQRS patterns"
+alwaysApply: true
+---
+
+# CQRS Patterns
+
+## Command Query Responsibility Segregation
+
+Separate read and write operations for better scalability and maintainability.
+
+## Core Concepts
+
+### Commands (Write Operations)
+
+- **Mutate state**
+- Return success/failure, not data
+- Should be idempotent when possible
+- Represent user intent
+
+### Queries (Read Operations)
+
+- **Never mutate state**
+- Return data
+- Can be optimized independently
+- Can use different data models
+
+## When to Use CQRS
+
+### Good Candidates
+
+- High read/write ratio
+- Complex read models
+- Need for independent scaling
+- Different consistency requirements
+- Complex business logic
+
+### Not Necessary For
+
+- Simple CRUD operations
+- Low traffic applications
+- Simple domain models
+- When complexity isn't justified
+
+## Command Pattern
+
+### Command Structure
+
+```typescript
+interface Command {
+  execute(): Promise<Result<void, Error>>;
+}
+
+class CreateUserCommand implements Command {
+  constructor(
+    private readonly userData: UserData,
+    private readonly userRepository: UserRepository
+  ) {}
+
+  async execute(): Promise<Result<void, Error>> {
+    // Validation
+    // Business logic
+    // Persistence
+  }
+}
+```
+
+### Command Handler
+
+```typescript
+interface CommandHandler<TCommand extends Command> {
+  handle(command: TCommand): Promise<Result<void, Error>>;
+}
+```
+
+### Guidelines
+
+- Commands represent user intent
+- Commands are named with verbs (CreateUser, UpdateOrder)
+- Commands validate input
+- Commands enforce business rules
+- Commands return Result types
+
+## Query Pattern
+
+### Query Structure
+
+```typescript
+interface Query<TResult> {
+  execute(): Promise<Result<TResult, Error>>;
+}
+
+class GetUserQuery implements Query<User> {
+  constructor(
+    private readonly userId: string,
+    private readonly userRepository: UserRepository
+  ) {}
+
+  async execute(): Promise<Result<User, Error>> {
+    return this.userRepository.findById(this.userId);
+  }
+}
+```
+
+### Query Handler
+
+```typescript
+interface QueryHandler<TQuery extends Query<TResult>, TResult> {
+  handle(query: TQuery): Promise<Result<TResult, Error>>;
+}
+```
+
+### Guidelines
+
+- Queries never mutate state
+- Queries are named with nouns (GetUser, ListOrders)
+- Queries can be cached
+- Queries can use read-optimized models
+- Queries return data
+
+## CQRS Implementation Levels
+
+### Level 1: Logical Separation
+
+- Separate command and query handlers
+- Same database, different code paths
+- Simplest form of CQRS
+
+### Level 2: Separate Read Models
+
+- Different data models for reads
+- Read models optimized for queries
+- Still using same database
+
+### Level 3: Separate Databases
+
+- Separate read and write databases
+- Event sourcing for writes
+- Read models built from events
+- Most complex, most scalable
+
+## Event Sourcing (Advanced CQRS)
+
+### Concept
+
+Store all changes as a sequence of events, not current state.
+
+### Benefits
+
+- Complete audit trail
+- Time travel (replay events)
+- Event-driven architecture
+- Natural fit with CQRS
+
+### When to Use
+
+- Need complete audit trail
+- Complex business logic
+- Need to replay events
+- Event-driven requirements
+
+## CQRS Best Practices
+
+### Command Side
+
+- Validate thoroughly
+- Enforce business rules
+- Use transactions when needed
+- Publish domain events
+- Return Result types
+
+### Query Side
+
+- Optimize for reads
+- Use denormalized models
+- Implement caching
+- Support filtering/sorting/pagination
+- Can be eventually consistent
+
+### Consistency
+
+- Write side: Strong consistency
+- Read side: Eventual consistency acceptable
+- Use events to update read models
+- Handle eventual consistency in UI
+
+## Testing CQRS
+
+### Command Testing
+
+- Test validation
+- Test business rules
+- Test state changes
+- Test error scenarios
+
+### Query Testing
+
+- Test data retrieval
+- Test filtering/sorting
+- Test pagination
+- Test caching behavior
+
+### Integration Testing
+
+- Test command → event → read model flow
+- Test eventual consistency
+- Test error recovery
+
+**See also:** `architecture.mdc`, `error-handling.mdc`, `testing.mdc`

@@ -1,0 +1,293 @@
+---
+description: 'Mandatory log analysis workflow - always check stored logs'
+priority: 1
+---
+
+# Log Analysis Workflow
+
+## 🚨 CRITICAL: Always Check Stored Logs First
+
+**BEFORE debugging or investigating any issue, ALWAYS check stored logs from localStorage.**
+
+---
+
+## 📍 Log Storage Locations
+
+### Library Logs (OSI Cards Library)
+
+- **localStorage Key:** `osi-cards-logs`
+- **Service Method:** `LoggerService.getLogsFromLocalStorage()`
+- **Direct Access:**
+  ```javascript
+  JSON.parse(localStorage.getItem('osi-cards-logs') || '[]');
+  ```
+
+### App Logs (Main Application)
+
+- **localStorage Key:** `osi-cards-app-logs`
+- **Service Method:** `LoggingService.getLogsFromLocalStorage()`
+- **Direct Access:**
+  ```javascript
+  JSON.parse(localStorage.getItem('osi-cards-app-logs') || '[]');
+  ```
+
+---
+
+## 🔄 Log Lifecycle
+
+### Automatic Behavior
+
+- ✅ Logs are **automatically stored** to localStorage
+- ✅ Logs are **automatically cleared** on page refresh
+- ✅ Console output is **minimal** - only storage references
+- ✅ Full log details are **only in localStorage**
+
+### Why Logs Are Cleared on Refresh
+
+- Prevents localStorage from filling up
+- Each session starts fresh
+- Easier to debug current session issues
+- No confusion from old logs
+
+---
+
+## 📋 Log Analysis Protocol
+
+### Step 1: Check Stored Logs (MANDATORY)
+
+**Before starting any debugging:**
+
+1. **Open Browser Console**
+
+   ```
+   Open DevTools (F12 or Cmd+Option+I)
+   Go to Console tab
+   ```
+
+2. **Access Library Logs**
+
+   ```javascript
+   const libLogs = JSON.parse(localStorage.getItem('osi-cards-logs') || '[]');
+   console.table(libLogs); // View as table
+   console.log('Library Logs:', libLogs); // View as JSON
+   ```
+
+3. **Access App Logs**
+
+   ```javascript
+   const appLogs = JSON.parse(localStorage.getItem('osi-cards-app-logs') || '[]');
+   console.table(appLogs); // View as table
+   console.log('App Logs:', appLogs); // View as JSON
+   ```
+
+4. **Filter by Level**
+
+   ```javascript
+   // Errors only
+   const errors = libLogs.filter((log) => log.level === 'error');
+   console.log('Errors:', errors);
+
+   // Warnings only
+   const warnings = libLogs.filter((log) => log.level === 'warn');
+   console.log('Warnings:', warnings);
+   ```
+
+5. **Search by Context**
+   ```javascript
+   // Find logs from specific component
+   const masonryLogs = libLogs.filter((log) => log.context?.source === 'MasonryGridComponent');
+   console.log('Masonry Grid Logs:', masonryLogs);
+   ```
+
+### Step 2: Analyze Log Structure
+
+**Each log entry contains:**
+
+```typescript
+{
+  timestamp: string;      // ISO timestamp
+  level: string;          // 'debug' | 'info' | 'warn' | 'error'
+  message: string;        // Log message
+  context?: {             // Additional context
+    source?: string;      // Component/service name
+    [key: string]: any;   // Custom data
+  };
+  stack?: string;         // Error stack trace (if error)
+}
+```
+
+### Step 3: Categorize Issues
+
+**For each log entry:**
+
+1. **🔴 Errors (CRITICAL - Must Fix)**
+   - Check stack traces
+   - Identify root cause
+   - Fix immediately
+   - Verify fix in logs
+
+2. **🟡 Warnings (IMPORTANT - Should Fix)**
+   - Understand warning reason
+   - Determine if action needed
+   - Fix or document decision
+
+3. **🔵 Info (VERIFY)**
+   - Check if expected behavior
+   - Verify data is correct
+   - Note any anomalies
+
+4. **⚪ Debug (OPTIONAL)**
+   - Review if debugging specific issue
+   - Usually safe to ignore
+
+### Step 4: Extract Context Data
+
+**Look for:**
+
+- Component/service names in `context.source`
+- Error messages and stack traces
+- Timestamps for timing issues
+- Custom data in `context` object
+- Correlation IDs for request tracing
+
+---
+
+## 🔍 Common Log Patterns
+
+### Error Pattern
+
+```javascript
+{
+  timestamp: "2025-12-07T18:00:00.000Z",
+  level: "error",
+  message: "Failed to load component",
+  context: {
+    source: "SectionRendererComponent",
+    error: "Component not found",
+    sectionType: "unknown-type"
+  },
+  stack: "Error: Component not found\n  at..."
+}
+```
+
+### Warning Pattern
+
+```javascript
+{
+  timestamp: "2025-12-07T18:00:01.000Z",
+  level: "warn",
+  message: "No component found for section type",
+  context: {
+    source: "SectionRendererComponent",
+    resolvedType: "unknown"
+  }
+}
+```
+
+### Info Pattern
+
+```javascript
+{
+  timestamp: "2025-12-07T18:00:02.000Z",
+  level: "info",
+  message: "Layout complete with actual heights",
+  context: {
+    source: "MasonryGridComponent",
+    sections: 21,
+    columns: 3,
+    container: {
+      width: 910,
+      height: 1933
+    }
+  }
+}
+```
+
+---
+
+## 🛠️ Debugging Workflow
+
+### When Investigating an Issue:
+
+1. ✅ **Check stored logs FIRST**
+   - Open browser console
+   - Access localStorage logs
+   - Filter by error/warn level
+
+2. ✅ **Identify patterns**
+   - Same error repeated?
+   - Timing issues?
+   - Specific component failing?
+
+3. ✅ **Extract context**
+   - Component/service name
+   - Error messages
+   - Stack traces
+   - Custom data
+
+4. ✅ **Fix issues**
+   - Address all errors
+   - Fix important warnings
+   - Document decisions
+
+5. ✅ **Verify fix**
+   - Refresh page (clears logs)
+   - Reproduce issue
+   - Check new logs
+   - Confirm fix worked
+
+---
+
+## 📊 Log Analysis Checklist
+
+Before considering debugging complete:
+
+- [ ] Checked library logs from localStorage
+- [ ] Checked app logs from localStorage
+- [ ] Reviewed all error-level logs
+- [ ] Reviewed all warning-level logs
+- [ ] Identified root causes
+- [ ] Fixed all errors
+- [ ] Addressed important warnings
+- [ ] Verified fixes in new logs
+- [ ] Documented any remaining warnings
+
+---
+
+## 🚨 Important Notes
+
+### Log Clearing
+
+- Logs are **automatically cleared** on page refresh
+- This prevents localStorage from filling up
+- Each session starts fresh
+- Check logs **before refreshing** if you need them
+
+### Console Output
+
+- Console output is **minimal**
+- Only shows storage reference messages
+- Full logs are **only in localStorage**
+- Always check localStorage for details
+
+### Log Storage
+
+- Logs stored in browser localStorage
+- Limited to ~1000 entries per service
+- Older logs automatically trimmed
+- Accessible even after errors occur
+
+---
+
+## 💡 Tips
+
+1. **Use browser console** to access logs quickly
+2. **Filter by level** to focus on errors/warnings
+3. **Search by context** to find specific component logs
+4. **Check timestamps** for timing-related issues
+5. **Export logs** if needed for deeper analysis
+
+---
+
+**Remember:** Always check stored logs FIRST before debugging. They contain detailed context that console messages don't show.
+

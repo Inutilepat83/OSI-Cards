@@ -1,0 +1,292 @@
+---
+description: "Structured logging, Angular logging, logging best practices"
+globs: ["**/*.ts", "**/*.tsx"]
+---
+
+# TypeScript Logging
+
+## Structured Logging
+
+### Log Levels
+
+```typescript
+enum LogLevel {
+  DEBUG = 0,
+  INFO = 1,
+  WARN = 2,
+  ERROR = 3
+}
+
+interface LogEntry {
+  level: LogLevel;
+  message: string;
+  timestamp: string;
+  context?: Record<string, unknown>;
+  error?: Error;
+}
+```
+
+### Logger Interface
+
+```typescript
+interface Logger {
+  debug(message: string, context?: Record<string, unknown>): void;
+  info(message: string, context?: Record<string, unknown>): void;
+  warn(message: string, context?: Record<string, unknown>): void;
+  error(message: string, error?: Error, context?: Record<string, unknown>): void;
+}
+```
+
+## Implementation
+
+### Simple Logger
+
+```typescript
+@Injectable({ providedIn: 'root' })
+export class LoggerService implements Logger {
+  private log(level: LogLevel, message: string, context?: Record<string, unknown>, error?: Error): void {
+    const entry: LogEntry = {
+      level,
+      message,
+      timestamp: new Date().toISOString(),
+      context,
+      error: error ? {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      } : undefined
+    };
+
+    // In production, send to logging service
+    if (environment.production) {
+      this.sendToLoggingService(entry);
+    } else {
+      console.log(entry);
+    }
+  }
+
+  debug(message: string, context?: Record<string, unknown>): void {
+    this.log(LogLevel.DEBUG, message, context);
+  }
+
+  info(message: string, context?: Record<string, unknown>): void {
+    this.log(LogLevel.INFO, message, context);
+  }
+
+  warn(message: string, context?: Record<string, unknown>): void {
+    this.log(LogLevel.WARN, message, context);
+  }
+
+  error(message: string, error?: Error, context?: Record<string, unknown>): void {
+    this.log(LogLevel.ERROR, message, context, error);
+  }
+
+  private sendToLoggingService(entry: LogEntry): void {
+    // Send to external logging service (e.g., Sentry, LogRocket)
+  }
+}
+```
+
+## Logging Libraries
+
+### Winston (Node.js)
+
+```typescript
+import winston from 'winston';
+
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  transports: [
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'combined.log' })
+  ]
+});
+
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.simple()
+  }));
+}
+```
+
+### Pino (Fast JSON Logger)
+
+```typescript
+import pino from 'pino';
+
+const logger = pino({
+  level: process.env.LOG_LEVEL || 'info',
+  transport: {
+    target: 'pino-pretty',
+    options: {
+      colorize: true
+    }
+  }
+});
+```
+
+## Logging Best Practices
+
+### Contextual Information
+
+```typescript
+// ✅ Good - include context
+logger.info('User created', {
+  userId: user.id,
+  email: user.email,
+  timestamp: new Date().toISOString()
+});
+
+// ❌ Bad - no context
+logger.info('User created');
+```
+
+### Error Logging
+
+```typescript
+// ✅ Good - include error and context
+logger.error('Failed to create user', error, {
+  userId: user.id,
+  email: user.email,
+  operation: 'createUser'
+});
+
+// ❌ Bad - just message
+logger.error('Failed to create user');
+```
+
+### Sensitive Data
+
+```typescript
+// ❌ Bad - logging sensitive data
+logger.info('User login', {
+  email: user.email,
+  password: user.password // Never log passwords!
+});
+
+// ✅ Good - exclude sensitive data
+logger.info('User login', {
+  userId: user.id,
+  email: user.email // Email is okay, password is not
+});
+```
+
+## Logging in Angular
+
+### HTTP Interceptor
+
+```typescript
+@Injectable()
+export class LoggingInterceptor implements HttpInterceptor {
+  constructor(private logger: LoggerService) {}
+
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const startTime = Date.now();
+
+    return next.handle(req).pipe(
+      tap({
+        next: (event) => {
+          if (event instanceof HttpResponse) {
+            const duration = Date.now() - startTime;
+            this.logger.info('HTTP request completed', {
+              method: req.method,
+              url: req.url,
+              status: event.status,
+              duration: `${duration}ms`
+            });
+          }
+        },
+        error: (error) => {
+          const duration = Date.now() - startTime;
+          this.logger.error('HTTP request failed', error, {
+            method: req.method,
+            url: req.url,
+            duration: `${duration}ms`
+          });
+        }
+      })
+    );
+  }
+}
+```
+
+## Correlation IDs
+
+### Request Tracking
+
+```typescript
+@Injectable()
+export class CorrelationIdService {
+  private correlationId = this.generateId();
+
+  getCorrelationId(): string {
+    return this.correlationId;
+  }
+
+  setCorrelationId(id: string): void {
+    this.correlationId = id;
+  }
+
+  private generateId(): string {
+    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  }
+}
+
+// Usage in HTTP interceptor
+intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  const correlationId = this.correlationIdService.getCorrelationId();
+
+  const clonedReq = req.clone({
+    setHeaders: {
+      'X-Correlation-ID': correlationId
+    }
+  });
+
+  this.logger.info('HTTP request', {
+    correlationId,
+    method: req.method,
+    url: req.url
+  });
+
+  return next.handle(clonedReq);
+}
+```
+
+## Log Levels by Environment
+
+### Development
+
+- Log everything (DEBUG level)
+- Pretty print logs
+- Show stack traces
+
+### Production
+
+- Log INFO and above
+- Structured JSON format
+- Send to logging service
+- Don't log sensitive data
+
+## Best Practices
+
+### ✅ Do
+
+- Use structured logging
+- Include contextual information
+- Use appropriate log levels
+- Log errors with stack traces
+- Use correlation IDs
+- Mask sensitive data
+- Set log levels by environment
+
+### ❌ Don't
+
+- Log sensitive information (passwords, tokens)
+- Log too much (performance impact)
+- Use console.log in production
+- Log in tight loops
+- Ignore log levels
+- Log without context
+
+**See also:** `error-handling.mdc`, `code-quality.mdc`

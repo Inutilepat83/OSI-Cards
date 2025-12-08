@@ -338,3 +338,6 @@ kubectl scale deployment osi-cards --replicas=3
 
 
 
+
+
+

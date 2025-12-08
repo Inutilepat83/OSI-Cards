@@ -2,8 +2,13 @@
 // TIMELINE SECTION - Clean & Modern (Company Journey)
 // =====================================================================
 
+// Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
+
+// Import base section styles
+@import "../../../styles/components/sections/sections-base";
+@import "../../../styles/components/sections/section-shell";
 
 :host {
   display: block;
@@ -28,11 +33,7 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  background: var(--surface);
-
-  &:hover {
-    box-shadow: var(--shadow-lg);
-  }
+  // Background inherited from @include card mixin
 }
 
 // Timeline Item

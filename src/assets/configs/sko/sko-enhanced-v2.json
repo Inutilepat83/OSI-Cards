@@ -21,7 +21,8 @@
       "label": "Download Brief",
       "type": "website",
       "variant": "primary",
-      "icon": "📄"
+      "icon": "📄",
+      "url": "https://example.com/brief.pdf"
     }
   ]
 }

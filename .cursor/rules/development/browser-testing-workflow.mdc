@@ -1,0 +1,338 @@
+---
+description: 'Comprehensive browser testing workflow for AI'
+priority: 0
+---
+
+# Browser Testing Workflow
+
+## 🌐 Mandatory Browser Testing
+
+**ALWAYS test in browser after:**
+
+- Creating/modifying components
+- Changing CSS/styling
+- Adding new features
+- Fixing bugs
+- Performance optimizations
+
+---
+
+## 📋 Browser Testing Protocol
+
+### Step 1: Start Application
+
+```bash
+# Check if app is running
+lsof -ti:4200
+
+# If not running, start it
+npm start
+```
+
+### Step 2: Navigate to Feature
+
+1. Open browser: `http://localhost:4200`
+2. Navigate to relevant page/feature
+3. Take initial snapshot
+4. Note current state
+
+### Step 3: Test Functionality
+
+**Happy Path:**
+
+- Test primary functionality
+- Verify expected behavior
+- Check data display
+- Verify interactions
+
+**Error Cases:**
+
+- Test invalid inputs
+- Test error scenarios
+- Verify error messages
+- Check error handling
+
+**Edge Cases:**
+
+- Test boundary conditions
+- Test empty states
+- Test large datasets
+- Test rapid interactions
+
+**Responsive:**
+
+- Test mobile view
+- Test tablet view
+- Test desktop view
+- Test different screen sizes
+
+### Step 4: Log Analysis (MANDATORY)
+
+**ALWAYS check stored logs FIRST before debugging:**
+
+1. **Check Stored Logs from localStorage**
+
+   Logs are automatically stored in localStorage and cleared on page refresh.
+
+   **Library logs:**
+
+   ```javascript
+   // In browser console:
+   JSON.parse(localStorage.getItem('osi-cards-logs') || '[]');
+   ```
+
+   **App logs:**
+
+   ```javascript
+   // In browser console:
+   JSON.parse(localStorage.getItem('osi-cards-app-logs') || '[]');
+   ```
+
+   **Access via services:**
+   - `LoggerService.getLogsFromLocalStorage()` - Get library logs
+   - `LoggingService.getLogsFromLocalStorage()` - Get app logs
+
+   **What to check:**
+   - 🔴 Errors logged
+   - 🟡 Warnings logged
+   - 🔵 Info messages
+   - 📊 Context data and stack traces
+   - ⏰ Timestamps for debugging timing issues
+
+2. **Read Console Messages**
+
+   ```
+   browser_console_messages()
+   ```
+
+   Note: Console output is minimal - only storage references. Full logs are in localStorage.
+
+3. **Categorize Issues**
+   - 🔴 Errors (must fix)
+   - 🟡 Warnings (should fix)
+   - 🔵 Info (verify)
+   - ⚪ Debug (optional)
+
+4. **Network Requests**
+
+   ```
+   browser_network_requests()
+   ```
+
+   - Check failed requests
+   - Verify successful requests
+   - Monitor request timing
+
+5. **Fix Issues**
+   - Address all errors found in stored logs
+   - Fix important warnings
+   - Document decisions
+
+### Step 5: Visual Verification
+
+1. **Take Screenshots**
+
+   ```
+   browser_take_screenshot()
+   ```
+
+2. **Compare States**
+   - Before vs after
+   - Expected vs actual
+   - Different screen sizes
+
+3. **Accessibility Check**
+   - ARIA labels present
+   - Keyboard navigation works
+   - Screen reader compatible
+   - Color contrast adequate
+
+### Step 6: Performance Check
+
+1. **Load Time**
+   - Initial load
+   - Route navigation
+   - Component rendering
+
+2. **Memory Usage**
+   - Check for leaks
+   - Monitor memory growth
+   - Verify cleanup
+
+3. **Rendering Performance**
+   - Check for unnecessary re-renders
+   - Verify OnPush change detection
+   - Check virtual scrolling
+
+---
+
+## 🔍 Log Analysis
+
+### Stored Logs Analysis (MANDATORY FIRST STEP)
+
+**ALWAYS check stored logs before debugging:**
+
+1. **Access Library Logs**
+
+   ```javascript
+   JSON.parse(localStorage.getItem('osi-cards-logs') || '[]');
+   ```
+
+2. **Access App Logs**
+
+   ```javascript
+   JSON.parse(localStorage.getItem('osi-cards-app-logs') || '[]');
+   ```
+
+3. **Filter by Level**
+   - Filter errors: `logs.filter(l => l.level === 'error')`
+   - Filter warnings: `logs.filter(l => l.level === 'warn')`
+
+4. **Search by Context**
+   - Find component logs: `logs.filter(l => l.context?.source === 'ComponentName')`
+
+**See:** `.cursor/rules/development/log-analysis.mdc` for detailed log analysis workflow
+
+### Error Analysis
+
+**For each error:**
+
+1. Check stored logs first (see above)
+2. Read error message from logs
+3. Check stack trace in logs
+4. Identify root cause
+5. Find related code
+6. Fix the issue
+7. Verify fix in new logs
+
+### Warning Analysis
+
+**For each warning:**
+
+1. Check stored logs for context
+2. Understand warning reason
+3. Determine if action needed
+4. Check for deprecations
+5. Verify best practices
+6. Fix or document
+
+### Network Analysis
+
+**For each request:**
+
+1. Check status code
+2. Verify request payload
+3. Check response data
+4. Monitor timing
+5. Verify caching
+
+---
+
+## 🧪 Testing Logic Implementation
+
+### Test Structure
+
+```typescript
+describe('FeatureName', () => {
+  describe('Happy Path', () => {
+    it('should work correctly', () => {
+      // Arrange
+      // Act
+      // Assert
+    });
+  });
+
+  describe('Error Cases', () => {
+    it('should handle errors', () => {
+      // Test error scenarios
+    });
+  });
+
+  describe('Edge Cases', () => {
+    it('should handle edge cases', () => {
+      // Test edge cases
+    });
+  });
+});
+```
+
+### Test Coverage
+
+- **Unit Tests:** Individual functions
+- **Component Tests:** Component behavior
+- **Integration Tests:** Component interactions
+- **E2E Tests:** User workflows
+
+### Test Quality
+
+- Clear test names
+- Arrange-Act-Assert pattern
+- Test one thing per test
+- Mock external dependencies
+- Test edge cases
+- Test error scenarios
+
+---
+
+## 📊 Quality Metrics
+
+### Track These Metrics
+
+- **Console Errors:** Should be 0
+- **Console Warnings:** Should be minimal
+- **Test Coverage:** Should be >80%
+- **Load Time:** Should be <3s
+- **Memory Leaks:** Should be 0
+- **Accessibility Score:** Should be 100%
+
+---
+
+## ✅ Browser Testing Checklist
+
+Before considering work complete:
+
+- [ ] App starts without errors
+- [ ] Feature works as expected
+- [ ] **Checked stored logs from localStorage (MANDATORY)**
+- [ ] **No errors in stored logs**
+- [ ] **No critical warnings in stored logs**
+- [ ] No console errors
+- [ ] No critical warnings
+- [ ] Visual appearance correct
+- [ ] Responsive design works
+- [ ] Accessibility verified
+- [ ] Performance acceptable
+- [ ] Network requests successful
+- [ ] Memory usage stable
+- [ ] Tests written and passing
+- [ ] Edge cases tested
+- [ ] Error scenarios tested
+
+---
+
+## 🚨 Common Issues to Check
+
+### Console Errors
+
+- TypeScript errors
+- Runtime errors
+- Network errors
+- Dependency errors
+
+### Visual Issues
+
+- Layout broken
+- Styling incorrect
+- Responsive issues
+- Accessibility problems
+
+### Performance Issues
+
+- Slow rendering
+- Memory leaks
+- Unnecessary re-renders
+- Large bundle size
+
+---
+
+**Remember:** Browser testing is mandatory, not optional. Always verify in browser before considering work complete.

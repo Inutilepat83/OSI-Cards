@@ -1,0 +1,212 @@
+---
+description: "Security principles, OWASP Top 10, secure coding practices"
+alwaysApply: true
+---
+
+# Security Patterns
+
+## Security-First Mindset
+
+Security is not an afterthought. Consider security implications in every decision.
+
+## OWASP Top 10 (2021)
+
+### 1. Broken Access Control
+
+- Implement proper authentication and authorization
+- Validate permissions on every request
+- Use principle of least privilege
+- Test access controls thoroughly
+
+### 2. Cryptographic Failures
+
+- Use strong, up-to-date algorithms
+- Never store passwords in plain text
+- Use HTTPS for all communications
+- Protect sensitive data at rest and in transit
+
+### 3. Injection
+
+- Use parameterized queries (never string concatenation)
+- Validate and sanitize all inputs
+- Use ORM/query builders with parameter binding
+- Escape output to prevent XSS
+
+### 4. Insecure Design
+
+- Design with security in mind from the start
+- Threat modeling
+- Security architecture reviews
+- Defense in depth
+
+### 5. Security Misconfiguration
+
+- Secure default configurations
+- Remove unnecessary features
+- Keep dependencies updated
+- Proper error handling (don't leak information)
+
+### 6. Vulnerable and Outdated Components
+
+- Regularly update dependencies
+- Monitor security advisories
+- Use dependency scanning tools
+- Remove unused dependencies
+
+### 7. Identification and Authentication Failures
+
+- Implement strong password policies
+- Use multi-factor authentication
+- Protect against brute force attacks
+- Secure session management
+
+### 8. Software and Data Integrity Failures
+
+- Verify integrity of dependencies
+- Use signed packages
+- Implement CI/CD security checks
+- Protect against supply chain attacks
+
+### 9. Security Logging and Monitoring Failures
+
+- Log security-relevant events
+- Monitor for suspicious activity
+- Set up alerts for anomalies
+- Retain logs appropriately
+
+### 10. Server-Side Request Forgery (SSRF)
+
+- Validate and sanitize URLs
+- Use allowlists for external resources
+- Don't trust user-provided URLs
+- Use network segmentation
+
+## Input Validation
+
+### Validate All Inputs
+
+- Validate at the boundary (API, UI)
+- Use whitelist validation when possible
+- Reject invalid input early
+- Never trust client-side validation alone
+
+### Validation Rules
+
+- Type checking
+- Range/length validation
+- Format validation (email, phone, etc.)
+- Business rule validation
+
+## Authentication
+
+### Password Security
+
+- Use strong hashing algorithms (bcrypt, Argon2)
+- Salt passwords
+- Enforce password policies
+- Never store passwords in plain text
+
+### Session Management
+
+- Use secure, HttpOnly cookies
+- Implement session timeout
+- Regenerate session IDs after login
+- Invalidate sessions on logout
+
+### Multi-Factor Authentication
+
+- Implement MFA for sensitive operations
+- Use time-based one-time passwords (TOTP)
+- Support backup codes
+- Don't make MFA optional for admin accounts
+
+## Authorization
+
+### Principle of Least Privilege
+
+- Grant minimum permissions necessary
+- Review permissions regularly
+- Use role-based access control (RBAC)
+- Implement attribute-based access control (ABAC) when needed
+
+### Access Control Checks
+
+- Verify permissions on every request
+- Don't rely on UI-only checks
+- Use centralized authorization logic
+- Log access control decisions
+
+## Data Protection
+
+### Encryption
+
+- Encrypt sensitive data at rest
+- Use TLS 1.3 for data in transit
+- Protect encryption keys
+- Use key rotation policies
+
+### PII Handling
+
+- Minimize collection of PII
+- Encrypt PII in storage
+- Mask PII in logs
+- Comply with privacy regulations (GDPR, etc.)
+
+## Secrets Management
+
+### Never Hardcode Secrets
+
+- Use environment variables
+- Use secret management services
+- Rotate secrets regularly
+- Don't commit secrets to version control
+
+### Secret Storage
+
+- Use secure vaults (AWS Secrets Manager, Azure Key Vault, etc.)
+- Limit access to secrets
+- Audit secret access
+- Use different secrets for different environments
+
+## Secure Communication
+
+### HTTPS
+
+- Use HTTPS everywhere
+- Enforce HTTPS (HSTS)
+- Use strong cipher suites
+- Keep certificates up to date
+
+### CORS
+
+- Configure CORS properly
+- Use specific origins, not wildcards
+- Limit allowed methods and headers
+- Don't use credentials with wildcard origins
+
+## Error Handling
+
+### Secure Error Messages
+
+- Don't expose internal details
+- Use generic error messages for users
+- Log detailed errors server-side
+- Don't leak information about system internals
+
+## Dependency Security
+
+### Dependency Management
+
+- Regularly update dependencies
+- Use automated vulnerability scanning
+- Review dependency licenses
+- Remove unused dependencies
+
+### Supply Chain Security
+
+- Verify package integrity
+- Use signed packages
+- Monitor for compromised packages
+- Implement software bill of materials (SBOM)
+
+**See also:** `input-sanitization.mdc`, `api-design.mdc`, `error-handling.mdc`

@@ -1,4 +1,4 @@
-<div class="news">
+<div class="ai-section ai-section--news section-content">
   <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
@@ -23,5 +23,5 @@
     </article>
   </div>
 
-  <lib-empty-state *ngIf="!section.items?.length" message="No news" icon="📰" variant="compact"> </lib-empty-state>
+  <lib-empty-state *ngIf="!section.items?.length" message="No news data" icon="📰" variant="minimal"> </lib-empty-state>
 </div>

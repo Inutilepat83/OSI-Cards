@@ -1,0 +1,210 @@
+---
+description: "REST conventions, API versioning, HTTP methods"
+alwaysApply: true
+---
+
+# API Design Patterns
+
+## REST Principles
+
+### Resource-Based URLs
+
+```
+✅ Good:
+GET    /api/users
+GET    /api/users/123
+POST   /api/users
+PUT    /api/users/123
+DELETE /api/users/123
+
+❌ Bad:
+GET    /api/getUser?id=123
+POST   /api/createUser
+POST   /api/deleteUser
+```
+
+### HTTP Methods
+
+- **GET**: Retrieve resource(s) - idempotent, safe
+- **POST**: Create resource - not idempotent, not safe
+- **PUT**: Update/replace resource - idempotent
+- **PATCH**: Partial update - idempotent
+- **DELETE**: Remove resource - idempotent
+
+### Status Codes
+
+#### Success (2xx)
+- **200 OK**: Successful GET, PUT, PATCH
+- **201 Created**: Successful POST (include Location header)
+- **204 No Content**: Successful DELETE
+
+#### Client Error (4xx)
+- **400 Bad Request**: Invalid request syntax
+- **401 Unauthorized**: Authentication required
+- **403 Forbidden**: Authenticated but not authorized
+- **404 Not Found**: Resource doesn't exist
+- **409 Conflict**: Resource conflict (e.g., duplicate)
+- **422 Unprocessable Entity**: Validation errors
+
+#### Server Error (5xx)
+- **500 Internal Server Error**: Unexpected server error
+- **502 Bad Gateway**: Invalid response from upstream
+- **503 Service Unavailable**: Temporary unavailability
+
+## API Versioning
+
+### URL Versioning (Recommended)
+
+```
+/api/v1/users
+/api/v2/users
+```
+
+### Header Versioning
+
+```
+Accept: application/vnd.api+json;version=2
+```
+
+### Guidelines
+
+- Version when breaking changes occur
+- Maintain backward compatibility when possible
+- Deprecate old versions with notice
+- Document version differences
+
+## Request/Response Format
+
+### JSON Structure
+
+```json
+{
+  "data": {
+    "id": "123",
+    "type": "user",
+    "attributes": {
+      "name": "John Doe",
+      "email": "john@example.com"
+    }
+  },
+  "meta": {
+    "timestamp": "2024-01-01T00:00:00Z"
+  }
+}
+```
+
+### Pagination
+
+```json
+{
+  "data": [...],
+  "pagination": {
+    "page": 1,
+    "pageSize": 20,
+    "total": 100,
+    "totalPages": 5
+  },
+  "links": {
+    "self": "/api/users?page=1",
+    "next": "/api/users?page=2",
+    "prev": null
+  }
+}
+```
+
+### Filtering and Sorting
+
+```
+GET /api/users?filter[status]=active&sort=-createdAt&page=1&pageSize=20
+```
+
+## Error Responses
+
+### RFC 7807 Format
+
+```json
+{
+  "type": "https://example.com/problems/validation-error",
+  "title": "Validation Error",
+  "status": 400,
+  "detail": "The request contains invalid data",
+  "instance": "/api/users",
+  "errors": {
+    "email": ["Email is required", "Email format is invalid"]
+  }
+}
+```
+
+## API Documentation
+
+### OpenAPI/Swagger
+
+- Document all endpoints
+- Include request/response examples
+- Document error responses
+- Keep documentation up to date
+
+### Documentation Requirements
+
+- Endpoint descriptions
+- Request parameters
+- Response formats
+- Error codes and meanings
+- Authentication requirements
+- Rate limiting information
+
+## Rate Limiting
+
+### Implementation
+
+- Set reasonable limits per endpoint
+- Use token bucket or sliding window
+- Return appropriate headers:
+  ```
+  X-RateLimit-Limit: 100
+  X-RateLimit-Remaining: 95
+  X-RateLimit-Reset: 1609459200
+  ```
+- Return 429 Too Many Requests when exceeded
+
+## Caching
+
+### Cache Headers
+
+```
+Cache-Control: public, max-age=3600
+ETag: "33a64df551425fcc55e4d42a148795d9f25f89d4"
+Last-Modified: Wed, 21 Oct 2015 07:28:00 GMT
+```
+
+### Cache Strategies
+
+- **Public caching**: For public, non-sensitive data
+- **Private caching**: For user-specific data
+- **No caching**: For dynamic, sensitive data
+- Use ETags for conditional requests
+
+## API Security
+
+### Authentication
+
+- Use Bearer tokens (JWT)
+- Require HTTPS
+- Implement token expiration
+- Support token refresh
+
+### Authorization
+
+- Verify permissions on every request
+- Use role-based access control
+- Implement resource-level permissions
+- Log access attempts
+
+### Input Validation
+
+- Validate all inputs
+- Use whitelist validation
+- Sanitize user input
+- Return clear validation errors
+
+**See also:** `security.mdc`, `input-sanitization.mdc`, `error-handling.mdc`

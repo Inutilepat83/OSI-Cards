@@ -1,9 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
-import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../../shared';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { Component, OnInit, inject } from '@angular/core';
 import { CardSection } from '../../../models';
+import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { BadgeComponent, EmptyStateComponent, SectionHeaderComponent } from '../../shared';
+import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 
 /**
  * Product Section Component

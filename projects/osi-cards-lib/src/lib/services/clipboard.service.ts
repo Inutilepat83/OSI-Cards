@@ -125,3 +125,6 @@ export class ClipboardService {
     return !!(navigator.clipboard && navigator.clipboard.writeText);
   }
 }
+
+
+

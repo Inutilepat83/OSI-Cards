@@ -11,6 +11,7 @@
  * - Real-time updates
  */
 
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -19,7 +20,6 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Observable, Subject } from 'rxjs';
 import {
   CardCollaborationState,
@@ -47,7 +47,7 @@ import { LucideIconsModule } from '../../icons/lucide-icons.module';
           <span class="presence-initial">{{ getInitial(collaborator.name) }}</span>
         </div>
         <span class="presence-count" *ngIf="state.collaborators && state.collaborators.length > 3">
-          +{{ (state.collaborators?.length || 0) - 3 }}
+          +{{ (state.collaborators.length || 0) - 3 }}
         </span>
       </div>
 

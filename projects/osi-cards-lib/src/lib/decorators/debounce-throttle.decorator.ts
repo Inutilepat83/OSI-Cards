@@ -601,3 +601,6 @@ export function DebounceLeading(delay: number): MethodDecorator {
 export function ThrottleMax(delay: number, maxWait: number): MethodDecorator {
   return Debounce(delay, { maxWait });
 }
+
+
+

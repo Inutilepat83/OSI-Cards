@@ -1,0 +1,137 @@
+---
+description: "Result pattern, RFC 7807 error responses, structured error handling"
+alwaysApply: true
+---
+
+# Error Handling Patterns
+
+## Result Pattern
+
+Use a Result type to represent success or failure without throwing exceptions for expected failures.
+
+### Structure
+
+```typescript
+type Result<T, E = Error> =
+  | { success: true; value: T }
+  | { success: false; error: E };
+```
+
+### Benefits
+
+- Explicit error handling
+- No hidden exceptions
+- Compiler-enforced error checking
+- Better for async operations
+
+### Usage Guidelines
+
+- Use for **expected** failures (validation, business rules)
+- Use exceptions for **unexpected** failures (programming errors, system failures)
+- Always check `result.success` before accessing `value`
+- Chain operations using `flatMap` or `map`
+
+## RFC 7807 Problem Details
+
+For HTTP APIs, use RFC 7807 format for error responses.
+
+### Structure
+
+```json
+{
+  "type": "https://example.com/problems/validation-error",
+  "title": "Validation Error",
+  "status": 400,
+  "detail": "The request contains invalid data",
+  "instance": "/api/users/123",
+  "errors": {
+    "email": ["Email is required", "Email format is invalid"]
+  }
+}
+```
+
+### Implementation
+
+- Use consistent error types
+- Include machine-readable `type` field
+- Provide human-readable `title` and `detail`
+- Include `instance` for traceability
+- Add `errors` object for validation errors
+
+## Error Categories
+
+### 1. Domain Errors
+
+Errors that represent business rule violations.
+
+- Return Result types
+- Include domain context
+- Use domain-specific error types
+
+### 2. Validation Errors
+
+Input validation failures.
+
+- Return 400 Bad Request
+- Use RFC 7807 format
+- Include field-level errors
+
+### 3. Authentication/Authorization Errors
+
+- 401 Unauthorized: Missing or invalid credentials
+- 403 Forbidden: Valid credentials but insufficient permissions
+
+### 4. Not Found Errors
+
+- 404 Not Found: Resource doesn't exist
+- Include resource type and identifier
+
+### 5. System Errors
+
+Unexpected failures.
+
+- Log with full context
+- Return 500 Internal Server Error
+- Don't expose internal details to clients
+- Use correlation IDs for tracking
+
+## Logging Errors
+
+### Structured Logging
+
+```typescript
+logger.error({
+  message: "Failed to process order",
+  error: error.message,
+  stack: error.stack,
+  correlationId: context.correlationId,
+  userId: context.userId,
+  orderId: orderId,
+  timestamp: new Date().toISOString()
+});
+```
+
+### Log Levels
+
+- **Error**: System failures, unexpected exceptions
+- **Warn**: Recoverable issues, degraded functionality
+- **Info**: Important business events
+- **Debug**: Detailed diagnostic information
+
+## Error Recovery
+
+### Retry Strategy
+
+- Use exponential backoff
+- Set maximum retry attempts
+- Distinguish between retryable and non-retryable errors
+- Use circuit breaker pattern for external services
+
+### Graceful Degradation
+
+- Return partial results when possible
+- Use cached data as fallback
+- Provide meaningful error messages
+- Maintain service availability
+
+**See also:** `architecture.mdc`, `security.mdc`, `testing.mdc`

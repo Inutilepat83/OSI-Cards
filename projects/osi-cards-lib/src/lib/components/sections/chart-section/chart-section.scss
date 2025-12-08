@@ -2,9 +2,14 @@
 // CHART SECTION - Proper Canvas Sizing, No Overlaps
 // =====================================================================
 
+// Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
 @use "../../../styles/components/sections/component-mixins" as components;
+
+// Import base section styles
+@import "../../../styles/components/sections/sections-base";
+@import "../../../styles/components/sections/section-shell";
 
 :host {
   display: block;
@@ -21,7 +26,7 @@
 .chart-wrapper {
   @include card;
   padding: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
-  background: var(--surface);
+  // Background inherited from @include card mixin
   min-height: 300px; // Compact: 300px (was 320px) - Charts need space
   display: flex;
   flex-direction: column;

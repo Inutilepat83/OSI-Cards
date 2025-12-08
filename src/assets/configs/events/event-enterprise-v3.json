@@ -32,7 +32,8 @@
       "label": "Register Now",
       "type": "website",
       "variant": "primary",
-      "icon": "🎫"
+      "icon": "🎫",
+      "url": "https://event.example.com/register"
     }
   ]
 }

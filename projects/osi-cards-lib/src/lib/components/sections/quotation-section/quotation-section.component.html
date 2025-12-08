@@ -1,4 +1,4 @@
-<div class="quotes">
+<div class="ai-section ai-section--quotation section-content">
   <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
@@ -13,5 +13,6 @@
     </blockquote>
   </div>
 
-  <lib-empty-state *ngIf="!section.fields?.length" message="No quotes" icon="💬" variant="compact"> </lib-empty-state>
+  <lib-empty-state *ngIf="!section.fields?.length" message="No quotation data" icon="💬" variant="minimal">
+  </lib-empty-state>
 </div>

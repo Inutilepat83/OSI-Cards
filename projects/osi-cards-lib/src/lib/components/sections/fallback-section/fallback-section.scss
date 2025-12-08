@@ -2,8 +2,13 @@
 // FALLBACK SECTION - Compact, Responsive, Consistent
 // =====================================================================
 
+// Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
+
+// Import base section styles
+@import "../../../styles/components/sections/sections-base";
+@import "../../../styles/components/sections/section-shell";
 
 :host {
   display: block;
@@ -17,9 +22,7 @@
 }
 
 .fallback-data {
-  background: var(--osi-surface);
-  border: 1px solid var(--osi-border-muted);
-  border-radius: var(--osi-radius-md);
+  @include card-base;
   padding: var(--osi-spacing-sm);
   display: flex;
   flex-direction: column;

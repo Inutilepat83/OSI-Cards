@@ -1,17 +1,17 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
+import { Component, OnInit, inject } from '@angular/core';
+import { CardSection } from '../../../models';
+import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { TrendDirection } from '../../../types';
 import {
-  SectionHeaderComponent,
-  EmptyStateComponent,
-  TrendIndicatorComponent,
-  ProgressBarComponent,
   BadgeComponent,
+  EmptyStateComponent,
+  ProgressBarComponent,
+  SectionHeaderComponent,
+  TrendIndicatorComponent,
   type ProgressBarVariant,
 } from '../../shared';
-import { TrendDirection } from '../../../types';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
-import { CardSection } from '../../../models';
+import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 
 /**
  * Analytics Section Component - Compact & Minimalist

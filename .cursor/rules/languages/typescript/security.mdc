@@ -1,0 +1,282 @@
+---
+description: "TypeScript security, Angular security, secure coding"
+globs: ["**/*.ts", "**/*.tsx"]
+---
+
+# TypeScript Security
+
+## Input Sanitization
+
+### Angular Sanitization
+
+```typescript
+import { DomSanitizer } from '@angular/platform-browser';
+
+@Component({...})
+export class SafeHtmlComponent {
+  constructor(private sanitizer: DomSanitizer) {}
+
+  getSafeHtml(html: string): SafeHtml {
+    return this.sanitizer.sanitize(SecurityContext.HTML, html);
+  }
+}
+```
+
+### XSS Prevention
+
+```typescript
+// ❌ Bad - direct HTML injection
+element.innerHTML = userInput;
+
+// ✅ Good - use Angular's binding
+<div [innerHTML]="sanitizedHtml"></div>
+
+// ✅ Good - use text binding
+<div>{{ userInput }}</div>
+```
+
+## Authentication
+
+### JWT Handling
+
+```typescript
+@Injectable()
+export class AuthService {
+  private tokenKey = 'auth_token';
+
+  setToken(token: string): void {
+    localStorage.setItem(this.tokenKey, token);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
+  }
+
+  removeToken(): void {
+    localStorage.removeItem(this.tokenKey);
+  }
+
+  isAuthenticated(): boolean {
+    const token = this.getToken();
+    return token !== null && !this.isTokenExpired(token);
+  }
+
+  private isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.exp * 1000 < Date.now();
+    } catch {
+      return true;
+    }
+  }
+}
+```
+
+### HTTP Interceptors
+
+```typescript
+@Injectable()
+export class AuthInterceptor implements HttpInterceptor {
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const token = this.authService.getToken();
+
+    if (token) {
+      req = req.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    }
+
+    return next.handle(req);
+  }
+}
+```
+
+## Authorization
+
+### Route Guards
+
+```typescript
+@Injectable()
+export class AuthGuard implements CanActivate {
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  canActivate(): boolean {
+    if (this.authService.isAuthenticated()) {
+      return true;
+    }
+    this.router.navigate(['/login']);
+    return false;
+  }
+}
+
+@Injectable()
+export class RoleGuard implements CanActivate {
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  canActivate(route: ActivatedRouteSnapshot): boolean {
+    const requiredRoles = route.data['roles'] as string[];
+    const userRoles = this.authService.getUserRoles();
+
+    if (requiredRoles.some(role => userRoles.includes(role))) {
+      return true;
+    }
+
+    this.router.navigate(['/unauthorized']);
+    return false;
+  }
+}
+```
+
+## Secrets Management
+
+### Environment Variables
+
+```typescript
+// environment.ts
+export const environment = {
+  production: false,
+  apiUrl: 'https://api.example.com',
+  // Never put secrets here
+};
+
+// For secrets, use server-side configuration
+// or secure environment variable injection
+```
+
+### Never Commit Secrets
+
+```typescript
+// ❌ Bad - hardcoded secrets
+const API_KEY = 'sk_live_1234567890';
+const DB_PASSWORD = 'password123';
+
+// ✅ Good - use environment variables
+const API_KEY = process.env['API_KEY'];
+const DB_PASSWORD = process.env['DB_PASSWORD'];
+
+// ✅ Better - use configuration service
+@Injectable()
+export class ConfigService {
+  getApiKey(): string {
+    return this.getEnv('API_KEY');
+  }
+}
+```
+
+## HTTPS and CORS
+
+### HTTPS Enforcement
+
+```typescript
+// In production, enforce HTTPS
+if (environment.production && location.protocol !== 'https:') {
+  location.replace('https:' + window.location.href.substring(window.location.protocol.length));
+}
+```
+
+### CORS Configuration
+
+```typescript
+// Backend (NestJS example)
+@Module({
+  imports: [
+    // ...
+  ],
+})
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(cors({
+        origin: process.env['ALLOWED_ORIGINS']?.split(',') || [],
+        credentials: true
+      }))
+      .forRoutes('*');
+  }
+}
+```
+
+## Content Security Policy
+
+### CSP Headers
+
+```typescript
+// Set CSP headers
+app.use((req, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+  );
+  next();
+});
+```
+
+## SQL Injection Prevention
+
+### Parameterized Queries
+
+```typescript
+// TypeORM
+const user = await userRepository.findOne({
+  where: { id: userId } // Parameterized
+});
+
+// ❌ Bad - string concatenation
+const query = `SELECT * FROM users WHERE id = ${userId}`;
+
+// ✅ Good - parameterized
+const query = 'SELECT * FROM users WHERE id = $1';
+await db.query(query, [userId]);
+```
+
+## Dependency Security
+
+### Regular Updates
+
+```bash
+# Check for vulnerabilities
+npm audit
+
+# Fix vulnerabilities
+npm audit fix
+
+# Update dependencies
+npm update
+```
+
+### Dependency Scanning
+
+- Use automated dependency scanning
+- Monitor security advisories
+- Keep dependencies up to date
+- Remove unused dependencies
+
+## Best Practices
+
+### ✅ Do
+
+- Sanitize all user input
+- Use HTTPS everywhere
+- Implement proper authentication
+- Use parameterized queries
+- Keep dependencies updated
+- Never commit secrets
+- Use environment variables for config
+
+### ❌ Don't
+
+- Trust client-side validation alone
+- Store secrets in code
+- Use string concatenation for queries
+- Expose sensitive data in errors
+- Skip security headers
+- Ignore dependency vulnerabilities
+
+**See also:** `patterns/security.mdc`, `input-sanitization.mdc`, `validation.mdc`

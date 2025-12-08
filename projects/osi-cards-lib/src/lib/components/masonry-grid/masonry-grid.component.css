@@ -3,6 +3,41 @@
   width: 100%;
 }
 
+/* Force minimum heights to prevent collapse */
+.masonry-item {
+  min-height: 100px !important;
+}
+
+/* Ensure sections are visible for measurement and fit their container */
+app-section-renderer {
+  display: block !important;
+  min-height: 80px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: hidden; /* Prevent content from breaking out of column */
+}
+
+/* Ensure all child elements respect column boundaries */
+.masonry-item * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Tables and other block elements should fit */
+.masonry-item table {
+  width: 100%;
+  max-width: 100%;
+  table-layout: auto;
+  word-wrap: break-word;
+}
+
+/* Prevent any element from exceeding column width */
+.masonry-item > * {
+  max-width: 100%;
+  overflow-x: auto; /* Allow horizontal scroll for very wide content if needed */
+}
+
 /* ============================================================
    CONTAINER
    ============================================================ */
@@ -13,6 +48,10 @@
   min-height: 200px;
   opacity: 0;
   transition: opacity 0.2s ease;
+  padding: 16px; /* Horizontal padding for visual spacing */
+  padding-bottom: 60px; /* Ensure bottom sections are visible */
+  box-sizing: border-box;
+  overflow: hidden; /* Prevent any content from breaking out */
 }
 
 .masonry-container--ready {
@@ -25,23 +64,97 @@
 
 .masonry-item {
   position: absolute;
-  opacity: 0;
+  margin-bottom: 16px; /* Increase vertical spacing */
 
-  /* Smooth positioning */
-  transition:
-    left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    top 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    opacity 0.3s ease;
+  /* Ensure sections fit their columns exactly */
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  overflow: hidden; /* Prevent content from overflowing column boundaries */
 
   /* Performance optimizations */
   contain: layout style paint;
-  will-change: transform;
+  /* Point 40: Use will-change sparingly - only if translating via transform, not top/left */
+  /* Removed will-change: transform since we use top/left positioning */
 }
 
-/* Fade in items when container ready */
+/* During measurement pass, keep sections visible but don't animate */
+/* Sections must be visible for height measurement */
+.masonry-container:not(.masonry-container--ready) .masonry-item {
+  /* Keep visible during measurement so sections are always visible */
+  opacity: 1 !important; /* Show sections immediately for measurement */
+  visibility: visible !important; /* Force browser to render */
+  transition: none !important; /* No animations during measurement */
+  pointer-events: auto; /* Allow interaction */
+  /* Ensure items are positioned absolutely */
+  position: absolute !important;
+}
+
+/* Ensure images have minimum dimensions during load and fit column */
+.masonry-item img {
+  min-height: 200px; /* Prevents collapse before load */
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain; /* Changed from cover to contain to fit within column */
+  box-sizing: border-box;
+}
+
+/* Ensure media does not blow up height unexpectedly and fits column width */
+/* Point 26: CSS aspect ratios for heavy media to improve first measured height */
+.masonry-item img,
+.masonry-item video,
+.masonry-item iframe,
+.masonry-item canvas {
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  display: block;
+  box-sizing: border-box;
+  object-fit: contain; /* Ensure images fit within bounds */
+}
+
+/* Point 26: Apply aspect ratios for common media types */
+.masonry-item img {
+  aspect-ratio: 16 / 9; /* Common image aspect ratio */
+}
+
+.masonry-item iframe,
+.masonry-item video {
+  aspect-ratio: 16 / 9; /* Common video aspect ratio */
+}
+
+.masonry-item canvas {
+  aspect-ratio: 4 / 3; /* Common chart aspect ratio */
+}
+
+/* Charts and iframes should have minimum height */
+.masonry-item iframe,
+.masonry-item canvas,
+.masonry-item svg {
+  min-height: 300px;
+}
+
+/* Once ready, fade in smoothly */
 .masonry-container--ready .masonry-item {
   opacity: 1;
+  pointer-events: auto;
+}
+
+/* Position transitions only when animated (after first layout) */
+/* Point 39: Short transition durations (200-350ms) with ease-out */
+.masonry-container--ready.masonry-container--animated .masonry-item {
+  transition:
+    left 0.3s ease-out,
+    top 0.3s ease-out,
+    width 0.3s ease-out,
+    opacity 0.25s ease-out;
+}
+
+/* First layout: snap into place, no sliding overlap */
+.masonry-container--ready:not(.masonry-container--animated) .masonry-item {
+  transition: none;
 }
 
 /* Staggered fade-in for initial load */
@@ -85,10 +198,10 @@
 @media (max-width: 768px) {
   .masonry-item {
     transition:
-      left 0.3s ease,
-      top 0.3s ease,
-      width 0.3s ease,
-      opacity 0.2s ease;
+      left 0.25s ease-out,
+      top 0.25s ease-out,
+      width 0.25s ease-out,
+      opacity 0.2s ease-out;
   }
 }
 

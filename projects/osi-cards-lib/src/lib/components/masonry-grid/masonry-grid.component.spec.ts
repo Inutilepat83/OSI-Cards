@@ -1,16 +1,14 @@
+import { Component, ViewChild } from '@angular/core';
 import {
   ComponentFixture,
   TestBed,
+  discardPeriodicTasks,
   fakeAsync,
   tick,
-  flush,
-  discardPeriodicTasks,
 } from '@angular/core/testing';
-import { Component, ViewChild, SimpleChange } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { MasonryGridComponent, MasonryLayoutInfo, LayoutLogEntry } from './masonry-grid.component';
 import { CardSection } from '../../models/card.model';
-import { PackingAlgorithm, RowPackingOptions } from '../../utils/grid-config.util';
+import { LayoutLogEntry, MasonryGridComponent, MasonryLayoutInfo } from './masonry-grid.component';
 
 // Host component for testing
 @Component({
@@ -24,9 +22,6 @@ import { PackingAlgorithm, RowPackingOptions } from '../../utils/grid-config.uti
         [maxColumns]="maxColumns"
         [containerWidth]="containerWidth"
         [isStreaming]="isStreaming"
-        [optimizeLayout]="optimizeLayout"
-        [packingAlgorithm]="packingAlgorithm"
-        [rowPackingOptions]="rowPackingOptions"
         [debug]="debug"
         (sectionEvent)="onSectionEvent($event)"
         (layoutChange)="onLayoutChange($event)"
@@ -44,14 +39,6 @@ class TestHostComponent {
   containerWidth?: number;
   hostWidth = 1000;
   isStreaming = false;
-  optimizeLayout = true;
-  packingAlgorithm: PackingAlgorithm = 'legacy';
-  rowPackingOptions: RowPackingOptions = {
-    prioritizeSpaceFilling: true,
-    allowShrinking: true,
-    allowGrowing: true,
-    maxOptimizationPasses: 3,
-  };
   debug = false;
 
   lastSectionEvent: unknown;
@@ -694,64 +681,27 @@ describe('MasonryGridComponent', () => {
       tick(100);
 
       // All sections should be finalized
-      for (const section of component.positionedSections) {
-        expect(section.isNew).toBeFalsy();
-      }
+      // Note: isNew property was removed in simplified implementation
+      expect(component.positionedSections.length).toBeGreaterThan(0);
     }));
   });
 
   // ============================================================================
   // Animation State Tracking Tests
   // ============================================================================
-  describe('animation state tracking', () => {
+  // Note: Animation state tracking methods (shouldAnimate, onSectionAnimationEnd, hasAnimated)
+  // were removed in the simplified implementation. These tests are skipped.
+  describe.skip('animation state tracking', () => {
     it('should return true for shouldAnimate during streaming for new sections', fakeAsync(() => {
-      hostComponent.isStreaming = true;
-      hostComponent.sections = createSections(1);
-      hostFixture.detectChanges();
-      tick(200);
-
-      const section = component.positionedSections[0];
-      if (section) {
-        // New sections during streaming should animate
-        const shouldAnimate = component.shouldAnimate(section.key);
-        expect(typeof shouldAnimate).toBe('boolean');
-      }
+      // Test removed - method no longer exists
     }));
 
     it('should mark section as animated after onSectionAnimationEnd', fakeAsync(() => {
-      hostComponent.isStreaming = true;
-      hostComponent.sections = createSections(1);
-      hostFixture.detectChanges();
-      tick(200);
-
-      const section = component.positionedSections[0];
-      if (section) {
-        component.onSectionAnimationEnd(section.key);
-
-        expect(component.hasAnimated(section.key)).toBe(true);
-        expect(component.shouldAnimate(section.key)).toBe(false);
-      }
+      // Test removed - method no longer exists
     }));
 
     it('should not re-animate already animated sections', fakeAsync(() => {
-      hostComponent.isStreaming = true;
-      hostComponent.sections = createSections(1);
-      hostFixture.detectChanges();
-      tick(200);
-
-      const section = component.positionedSections[0];
-      if (section) {
-        // Mark as animated
-        component.onSectionAnimationEnd(section.key);
-
-        // Update sections (simulating more streaming data)
-        hostComponent.sections = [...createSections(1), { title: 'New', type: 'info' }];
-        hostFixture.detectChanges();
-        tick(200);
-
-        // Original section should not animate again
-        expect(component.shouldAnimate(section.key)).toBe(false);
-      }
+      // Test removed - method no longer exists
     }));
   });
 
@@ -816,92 +766,44 @@ describe('MasonryGridComponent', () => {
   // ============================================================================
   // Layout Optimization Tests
   // ============================================================================
-  describe('layout optimization', () => {
+  // Note: optimizeLayout property was removed in simplified implementation
+  describe.skip('layout optimization', () => {
     it('should accept optimizeLayout input', () => {
-      hostComponent.optimizeLayout = false;
-      hostFixture.detectChanges();
-
-      expect(component.optimizeLayout).toBe(false);
+      // Test removed - property no longer exists
     });
 
     it('should position sections differently with optimization enabled', fakeAsync(() => {
-      // Create sections with varying heights
-      hostComponent.sections = [
-        { title: 'Tall', type: 'list', fields: Array(10).fill({ label: 'Item', value: 'Value' }) },
-        { title: 'Short', type: 'info', fields: [{ label: 'One', value: '1' }] },
-        {
-          title: 'Medium',
-          type: 'analytics',
-          fields: Array(5).fill({ label: 'Metric', value: '100' }),
-        },
-      ];
-      hostComponent.optimizeLayout = true;
-      hostComponent.containerWidth = 800;
-      hostFixture.detectChanges();
-      tick(300);
-
-      expect(component.positionedSections.length).toBe(3);
+      // Test removed - property no longer exists
     }));
 
     it('should handle optimization with single section', fakeAsync(() => {
-      hostComponent.sections = createSections(1);
-      hostComponent.optimizeLayout = true;
-      hostFixture.detectChanges();
-      tick(200);
-
-      expect(component.positionedSections.length).toBe(1);
+      // Test removed - property no longer exists
     }));
   });
 
   // ============================================================================
   // Packing Algorithm Tests
   // ============================================================================
-  describe('packing algorithms', () => {
+  // Note: packingAlgorithm and rowPackingOptions were removed in simplified implementation
+  describe.skip('packing algorithms', () => {
     it('should accept packingAlgorithm input', () => {
-      hostComponent.packingAlgorithm = 'row-first';
-      hostFixture.detectChanges();
-
-      expect(component.packingAlgorithm).toBe('row-first');
+      // Test removed - property no longer exists
     });
 
     it('should use legacy algorithm by default', () => {
-      expect(component.packingAlgorithm).toBe('legacy');
+      // Test removed - property no longer exists
     });
 
     it('should layout sections with row-first algorithm', fakeAsync(() => {
-      hostComponent.packingAlgorithm = 'row-first';
-      hostComponent.sections = createSections(4);
-      hostComponent.containerWidth = 1000;
-      hostFixture.detectChanges();
-      tick(300);
-
-      expect(component.positionedSections.length).toBe(4);
+      // Test removed - property no longer exists
     }));
 
     it('should accept rowPackingOptions', () => {
-      const customOptions: RowPackingOptions = {
-        prioritizeSpaceFilling: false,
-        allowShrinking: false,
-        allowGrowing: true,
-        maxOptimizationPasses: 5,
-      };
-
-      hostComponent.rowPackingOptions = customOptions;
-      hostFixture.detectChanges();
-
-      expect(component.rowPackingOptions.prioritizeSpaceFilling).toBe(false);
-      expect(component.rowPackingOptions.maxOptimizationPasses).toBe(5);
+      // Test removed - property no longer exists
     });
 
     it('should fall back to legacy when row-first fails', fakeAsync(() => {
-      hostComponent.packingAlgorithm = 'row-first';
-      hostComponent.sections = createSections(2);
-      hostComponent.containerWidth = 1000;
-      hostFixture.detectChanges();
-      tick(300);
-
-      // Should still layout sections even if algorithm falls back
-      expect(component.positionedSections.length).toBe(2);
+      // Test removed - property no longer exists
     }));
   });
 

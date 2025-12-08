@@ -2,9 +2,14 @@
 // TEXT REFERENCE SECTION - Clean List, Proper Spacing
 // =====================================================================
 
+// Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
 @use "../../../styles/components/sections/component-mixins" as components;
+
+// Import base section styles
+@import "../../../styles/components/sections/sections-base";
+@import "../../../styles/components/sections/section-shell";
 
 :host {
   display: block;
@@ -23,7 +28,7 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  background: var(--surface);
+  // Background inherited from @include card mixin
 }
 
 // REFERENCE ITEM - Compact spacing

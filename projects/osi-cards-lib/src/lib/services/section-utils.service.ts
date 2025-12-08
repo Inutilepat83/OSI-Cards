@@ -147,3 +147,6 @@ export class SectionUtilsService {
     return `${change > 0 ? '+' : ''}${change}%`;
   }
 }
+
+
+

@@ -1,4 +1,4 @@
-<div class="map-container">
+<div class="ai-section ai-section--map section-content">
   <!-- Section Header -->
   <lib-section-header [title]="section.title" [description]="section.description"> </lib-section-header>
 
@@ -19,7 +19,7 @@
   <!-- Empty State -->
   <lib-empty-state
     *ngIf="!section.fields || section.fields.length === 0"
-    message="No locations to display"
+    message="No location data"
     icon="🗺️"
     variant="minimal"
   >

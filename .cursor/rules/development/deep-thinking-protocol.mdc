@@ -1,0 +1,272 @@
+---
+description: 'Deep thinking protocol for AI to think thoroughly before acting'
+priority: 0
+---
+
+# Deep Thinking Protocol
+
+## 🧠 Mandatory Thinking Process
+
+**BEFORE taking any action, ALWAYS follow this process:**
+
+---
+
+## Step 1: Understand the Problem
+
+### Read Full Context
+
+- Read the entire request
+- Read relevant code files
+- Read related documentation
+- Understand the full picture
+
+### Identify Root Cause
+
+- What is the actual problem?
+- What are the symptoms?
+- What is the underlying issue?
+- Why is this happening?
+
+### Consider Implications
+
+- What are the side effects?
+- What could break?
+- What are the dependencies?
+- What are the risks?
+
+### Ask Clarifying Questions
+
+- Is the problem fully understood?
+- Are there missing details?
+- Are there assumptions?
+- What are the constraints?
+
+---
+
+## Step 2: Plan the Solution
+
+### Break Down the Problem
+
+- What are the sub-problems?
+- What are the steps needed?
+- What is the order of operations?
+- What are the dependencies?
+
+### Consider Multiple Approaches
+
+- What are different ways to solve this?
+- What are the pros/cons of each?
+- What are the trade-offs?
+- Which approach is best?
+
+### Evaluate Solutions
+
+- Which is most maintainable?
+- Which is most performant?
+- Which is most testable?
+- Which follows patterns?
+
+### Choose Best Approach
+
+- Select the best solution
+- Document the reasoning
+- Consider future implications
+- Plan for edge cases
+
+---
+
+## Step 3: Implement with Care
+
+### Follow Patterns
+
+- Use existing patterns
+- Follow architectural guidelines
+- Match code style
+- Use established conventions
+
+### Add Error Handling
+
+- Handle expected errors
+- Handle unexpected errors
+- Provide meaningful messages
+- Log errors appropriately
+
+### Consider Performance
+
+- Is this efficient?
+- Are there bottlenecks?
+- Can this be optimized?
+- Is caching needed?
+
+### Document Complex Logic
+
+- Add comments for complex code
+- Explain "why" not "what"
+- Document decisions
+- Add examples if needed
+
+---
+
+## Step 4: Verify Thoroughly
+
+### Test in Browser
+
+- Start the application
+- Navigate to feature
+- Test functionality
+- Check console logs
+- Verify visual appearance
+
+### Check Logs
+
+- Read console messages
+- Identify errors
+- Check warnings
+- Verify network requests
+
+### Verify Edge Cases
+
+- Test boundary conditions
+- Test empty states
+- Test error scenarios
+- Test rapid interactions
+
+### Ensure Consistency
+
+- Matches existing code
+- Follows patterns
+- Uses same conventions
+- Consistent with previous work
+
+---
+
+## Step 5: Reflect and Improve
+
+### Review What Worked
+
+- What went well?
+- What patterns helped?
+- What was effective?
+
+### Identify Improvements
+
+- What could be better?
+- What was inefficient?
+- What was unclear?
+
+### Document Learnings
+
+- What was learned?
+- What patterns emerged?
+- What should be remembered?
+
+---
+
+## 🎯 Deep Thinking Checklist
+
+Before responding, ensure:
+
+- [ ] Full context understood
+- [ ] Root cause identified
+- [ ] Multiple solutions considered
+- [ ] Best solution chosen with reasoning
+- [ ] Edge cases considered
+- [ ] Error scenarios handled
+- [ ] Performance implications evaluated
+- [ ] Testing strategy defined
+- [ ] Browser testing planned
+- [ ] Log analysis planned
+
+---
+
+## 💭 Thinking Prompts
+
+### For Problem Understanding
+
+- "What is the actual problem here?"
+- "Why is this happening?"
+- "What are all the factors involved?"
+- "What am I missing?"
+
+### For Solution Planning
+
+- "What are different ways to solve this?"
+- "What are the trade-offs?"
+- "Which approach is most maintainable?"
+- "What could go wrong?"
+
+### For Implementation
+
+- "Does this follow existing patterns?"
+- "Is error handling complete?"
+- "Is this performant?"
+- "Is this testable?"
+
+### For Verification
+
+- "How will I test this?"
+- "What could break?"
+- "Are edge cases handled?"
+- "Is this consistent?"
+
+---
+
+## 🔄 Iterative Thinking
+
+### Think → Plan → Implement → Verify → Reflect
+
+1. **Think** deeply about the problem
+2. **Plan** the solution thoroughly
+3. **Implement** with care
+4. **Verify** comprehensively
+5. **Reflect** and improve
+
+### Don't Skip Steps
+
+- ❌ Don't implement without thinking
+- ❌ Don't skip planning
+- ❌ Don't skip verification
+- ❌ Don't skip reflection
+
+---
+
+## 📊 Quality Indicators
+
+### Good Thinking Shows:
+
+- Clear problem understanding
+- Multiple solutions considered
+- Reasoning for choices
+- Edge cases identified
+- Error scenarios planned
+- Testing strategy defined
+
+### Poor Thinking Shows:
+
+- Jumping to implementation
+- Single solution considered
+- No reasoning provided
+- Edge cases ignored
+- Error handling missing
+- No testing plan
+
+---
+
+## ✅ Deep Thinking Checklist
+
+Before taking action:
+
+- [ ] Problem fully understood
+- [ ] Root cause identified
+- [ ] Multiple approaches considered
+- [ ] Best approach chosen with reasoning
+- [ ] Edge cases planned
+- [ ] Error scenarios planned
+- [ ] Testing strategy defined
+- [ ] Implementation planned
+- [ ] Verification planned
+- [ ] Reflection planned
+
+---
+
+**Remember:** Deep thinking is not optional. Take time to think thoroughly before acting.

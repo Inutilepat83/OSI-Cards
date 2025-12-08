@@ -21,7 +21,8 @@
       "label": "Download Proposal",
       "type": "website",
       "variant": "primary",
-      "icon": "📄"
+      "icon": "📄",
+      "url": "https://example.com/proposal.pdf"
     }
   ]
 }

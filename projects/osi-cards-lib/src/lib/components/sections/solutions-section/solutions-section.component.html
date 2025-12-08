@@ -1,4 +1,4 @@
-<div class="solutions-container">
+<div class="ai-section ai-section--solutions section-content">
   <!-- Section Header -->
   <lib-section-header [title]="section.title" [description]="section.description"> </lib-section-header>
 
@@ -32,7 +32,7 @@
   <!-- Empty State -->
   <lib-empty-state
     *ngIf="!section.fields || section.fields.length === 0"
-    message="No solutions available"
+    message="No solution data"
     icon="💡"
     variant="minimal"
   >

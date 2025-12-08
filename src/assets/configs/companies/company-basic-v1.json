@@ -29,7 +29,8 @@
       "label": "View Website",
       "type": "website",
       "variant": "primary",
-      "icon": "🌐"
+      "icon": "🌐",
+      "url": "https://acme.com"
     }
   ]
 }

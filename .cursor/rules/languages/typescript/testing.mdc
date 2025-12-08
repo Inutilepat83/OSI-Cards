@@ -1,0 +1,244 @@
+---
+description: "TypeScript testing with Jest/Vitest, Angular testing"
+globs: ["**/*.spec.ts", "**/*.test.ts"]
+---
+
+# TypeScript Testing
+
+## Testing Frameworks
+
+### Jest / Vitest
+
+- Fast test runner
+- Built-in mocking
+- Snapshot testing
+- Code coverage
+
+### Angular Testing
+
+- Jasmine/Karma (legacy)
+- Jest (modern)
+- Angular Testing Utilities
+- Component testing
+
+## Test Structure
+
+### Describe Blocks
+
+```typescript
+describe('UserService', () => {
+  describe('getUser', () => {
+    it('should return user when found', () => {});
+    it('should return null when not found', () => {});
+  });
+
+  describe('createUser', () => {
+    it('should create user successfully', () => {});
+    it('should return error when email exists', () => {});
+  });
+});
+```
+
+### AAA Pattern
+
+```typescript
+it('should return user when found', async () => {
+  // Arrange
+  const userId = '123';
+  const expectedUser: User = { id: userId, name: 'John' };
+  const mockRepository = {
+    findById: jest.fn().mockResolvedValue(expectedUser)
+  };
+  const service = new UserService(mockRepository);
+
+  // Act
+  const result = await service.getUser(userId);
+
+  // Assert
+  expect(result).toEqual(expectedUser);
+  expect(mockRepository.findById).toHaveBeenCalledWith(userId);
+});
+```
+
+## Mocking
+
+### Mock Functions
+
+```typescript
+// Jest/Vitest
+const mockFn = jest.fn();
+const mockFn = jest.fn().mockReturnValue(value);
+const mockFn = jest.fn().mockResolvedValue(value);
+const mockFn = jest.fn().mockRejectedValue(error);
+```
+
+### Mock Objects
+
+```typescript
+const mockRepository: Partial<UserRepository> = {
+  findById: jest.fn().mockResolvedValue(user),
+  save: jest.fn().mockResolvedValue(user)
+};
+```
+
+### Mock Modules
+
+```typescript
+jest.mock('./user-repository', () => ({
+  UserRepository: jest.fn().mockImplementation(() => ({
+    findById: jest.fn()
+  }))
+}));
+```
+
+## Angular Component Testing
+
+### Test Setup
+
+```typescript
+describe('UserComponent', () => {
+  let component: UserComponent;
+  let fixture: ComponentFixture<UserComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [UserComponent],
+      imports: [HttpClientTestingModule],
+      providers: [UserService]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(UserComponent);
+    component = fixture.componentInstance;
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+```
+
+### Testing Component Interactions
+
+```typescript
+it('should display user name', () => {
+  component.user = { id: '1', name: 'John' };
+  fixture.detectChanges();
+
+  const element = fixture.nativeElement;
+  expect(element.querySelector('.user-name').textContent).toBe('John');
+});
+
+it('should call service on button click', () => {
+  const service = TestBed.inject(UserService);
+  spyOn(service, 'loadUser');
+
+  const button = fixture.nativeElement.querySelector('button');
+  button.click();
+
+  expect(service.loadUser).toHaveBeenCalled();
+});
+```
+
+## Async Testing
+
+### Promises
+
+```typescript
+it('should handle async operation', async () => {
+  const result = await service.getUser('123');
+  expect(result).toBeDefined();
+});
+```
+
+### Observables (RxJS)
+
+```typescript
+it('should handle observable', (done) => {
+  service.getUser$('123').subscribe({
+    next: (user) => {
+      expect(user).toBeDefined();
+      done();
+    },
+    error: (error) => {
+      fail(error);
+      done();
+    }
+  });
+});
+
+// Or use async/await with firstValueFrom
+it('should handle observable', async () => {
+  const user = await firstValueFrom(service.getUser$('123'));
+  expect(user).toBeDefined();
+});
+```
+
+## Test Utilities
+
+### Custom Matchers
+
+```typescript
+expect.extend({
+  toBeValidUser(received: User) {
+    const pass = received.id && received.email;
+    return {
+      message: () => `expected ${received} to be a valid user`,
+      pass
+    };
+  }
+});
+```
+
+### Test Helpers
+
+```typescript
+function createMockUser(overrides?: Partial<User>): User {
+  return {
+    id: '1',
+    email: 'test@example.com',
+    name: 'Test User',
+    ...overrides
+  };
+}
+```
+
+## Test Coverage
+
+### Coverage Goals
+
+- Aim for 80%+ coverage
+- Focus on business logic
+- Test edge cases
+- Test error scenarios
+
+### Coverage Commands
+
+```bash
+# Jest
+npm test -- --coverage
+
+# Vitest
+npm test -- --coverage
+```
+
+## Best Practices
+
+### ✅ Do
+
+- Write tests before implementation (TDD)
+- Use descriptive test names
+- Keep tests independent
+- Mock external dependencies
+- Test one thing per test
+- Use AAA pattern
+
+### ❌ Don't
+
+- Test implementation details
+- Use real external services
+- Share state between tests
+- Write tests that depend on each other
+- Test framework code
+- Ignore flaky tests
+
+**See also:** `patterns/testing.mdc`, `code-quality.mdc`, `error-handling.mdc`

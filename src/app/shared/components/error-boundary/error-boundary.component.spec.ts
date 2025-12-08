@@ -61,3 +61,6 @@ describe('ErrorBoundaryComponent', () => {
     expect(compiled.textContent).toContain('Custom message');
   });
 });
+
+
+

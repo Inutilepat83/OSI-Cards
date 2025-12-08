@@ -46,3 +46,6 @@ export interface ICardRepository {
    */
   delete(id: string): Observable<boolean>;
 }
+
+
+

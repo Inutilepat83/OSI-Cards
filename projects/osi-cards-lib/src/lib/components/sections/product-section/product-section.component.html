@@ -1,4 +1,4 @@
-<div class="product">
+<div class="ai-section ai-section--product section-content">
   <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
@@ -14,5 +14,6 @@
     </div>
   </div>
 
-  <lib-empty-state *ngIf="!section.fields?.length" message="No products" icon="📦" variant="compact"> </lib-empty-state>
+  <lib-empty-state *ngIf="!section.fields?.length" message="No product data" icon="📦" variant="minimal">
+  </lib-empty-state>
 </div>

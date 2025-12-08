@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CardTypeSelectorComponent } from './card-type-selector.component';
-import { CardType } from '../../../models';
 import { By } from '@angular/platform-browser';
+import { CardTypeSelectorComponent } from './card-type-selector.component';
 
 describe('CardTypeSelectorComponent', () => {
   let component: CardTypeSelectorComponent;
@@ -35,8 +34,9 @@ describe('CardTypeSelectorComponent', () => {
       fixture.detectChanges();
 
       const buttons = fixture.debugElement.queryAll(By.css('button'));
+      expect(buttons.length).toBeGreaterThan(0);
       const companyButton = buttons[0];
-      expect(companyButton.nativeElement.classList.contains('active')).toBe(true);
+      expect(companyButton?.nativeElement.classList.contains('active')).toBe(true);
     });
 
     it('should emit typeChange when type is clicked', () => {
@@ -45,7 +45,8 @@ describe('CardTypeSelectorComponent', () => {
       fixture.detectChanges();
 
       const buttons = fixture.debugElement.queryAll(By.css('button'));
-      buttons[1].nativeElement.click();
+      expect(buttons.length).toBeGreaterThan(1);
+      buttons[1]?.nativeElement.click();
 
       expect(component.typeChange.emit).toHaveBeenCalledWith('contact');
     });
@@ -57,7 +58,8 @@ describe('CardTypeSelectorComponent', () => {
       fixture.detectChanges();
 
       const buttons = fixture.debugElement.queryAll(By.css('button'));
-      buttons[0].nativeElement.click();
+      expect(buttons.length).toBeGreaterThan(0);
+      buttons[0]?.nativeElement.click();
 
       expect(component.typeChange.emit).not.toHaveBeenCalled();
     });
@@ -75,8 +77,9 @@ describe('CardTypeSelectorComponent', () => {
       fixture.detectChanges();
 
       const buttons = fixture.debugElement.queryAll(By.css('button'));
-      expect(buttons[0].nativeElement.textContent.trim()).toBe('Company');
-      expect(buttons[1].nativeElement.textContent.trim()).toBe('Contact');
+      expect(buttons.length).toBeGreaterThan(1);
+      expect(buttons[0]?.nativeElement.textContent.trim()).toBe('Company');
+      expect(buttons[1]?.nativeElement.textContent.trim()).toBe('Contact');
     });
   });
 
@@ -87,8 +90,9 @@ describe('CardTypeSelectorComponent', () => {
       fixture.detectChanges();
 
       const buttons = fixture.debugElement.queryAll(By.css('button'));
-      expect(buttons[0].nativeElement.getAttribute('aria-pressed')).toBe('true');
-      expect(buttons[1].nativeElement.getAttribute('aria-pressed')).toBe('false');
+      expect(buttons.length).toBeGreaterThan(1);
+      expect(buttons[0]?.nativeElement.getAttribute('aria-pressed')).toBe('true');
+      expect(buttons[1]?.nativeElement.getAttribute('aria-pressed')).toBe('false');
     });
 
     it('should set aria-label for each button', () => {
@@ -96,8 +100,9 @@ describe('CardTypeSelectorComponent', () => {
       fixture.detectChanges();
 
       const buttons = fixture.debugElement.queryAll(By.css('button'));
-      expect(buttons[0].nativeElement.getAttribute('aria-label')).toBe('Select company card type');
-      expect(buttons[1].nativeElement.getAttribute('aria-label')).toBe('Select contact card type');
+      expect(buttons.length).toBeGreaterThan(1);
+      expect(buttons[0]?.nativeElement.getAttribute('aria-label')).toBe('Select company card type');
+      expect(buttons[1]?.nativeElement.getAttribute('aria-label')).toBe('Select contact card type');
     });
   });
 

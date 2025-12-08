@@ -28,13 +28,13 @@
 
 import { CardSection } from '../models/card.model';
 import {
-  generateWidthExpression,
+  PreferredColumns,
   generateLeftExpression,
+  generateWidthExpression,
   getPreferredColumns,
   resolveColumnSpan,
-  PreferredColumns,
 } from './grid-config.util';
-import { SkylinePacker, packWithSkyline, skylineResultToPositions } from './skyline-algorithm.util';
+import { packWithSkyline, skylineResultToPositions } from './skyline-algorithm.util';
 
 // ============================================================================
 // HEIGHT ESTIMATION
@@ -296,7 +296,7 @@ function packWithFFDH(
         colHeights[c] = newHeight;
       }
 
-      // Generate CSS expressions
+      // Generate CSS expressions (padding will be handled at component level)
       const left = generateLeftExpression(columns, bestColumn, gap);
       const width = generateWidthExpression(columns, effectiveColSpan, gap);
 

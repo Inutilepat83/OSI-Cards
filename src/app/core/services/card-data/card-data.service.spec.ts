@@ -1,11 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { provideStore } from '@ngrx/store';
+import { reducer as cardsReducer } from '../../../store/cards/cards.state';
 import { CardDataService } from './card-data.service';
 import { JsonFileCardProvider } from './json-file-card-provider.service';
-import { reducer as cardsReducer } from '../../../store/cards/cards.state';
 
 describe('CardDataService', () => {
   let service: CardDataService;
+  let provider: JsonFileCardProvider;
 
   beforeEach(() => {
     TestBed.configureTestingModule({

@@ -8,10 +8,10 @@ import {
   ViewChild,
   inject,
 } from '@angular/core';
-import { SectionHeaderComponent } from '../../shared';
-import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
 import { CardSection } from '../../../models';
+import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
+import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 
 /**
  * Chart Section Component
@@ -24,7 +24,7 @@ import { CardSection } from '../../../models';
 @Component({
   selector: 'lib-chart-section',
   standalone: true,
-  imports: [CommonModule, SectionHeaderComponent],
+  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './chart-section.component.html',
   styleUrl: './chart-section.scss',
 })

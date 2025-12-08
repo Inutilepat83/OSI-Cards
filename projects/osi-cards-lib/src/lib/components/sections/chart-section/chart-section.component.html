@@ -1,9 +1,11 @@
-<div class="chart-container">
+<div class="ai-section ai-section--chart section-content">
   <!-- Section Header -->
   <lib-section-header [title]="section.title" [description]="section.description"> </lib-section-header>
 
   <!-- Chart Canvas -->
-  <div class="chart-wrapper">
+  <div class="chart-wrapper" *ngIf="section.chartData">
     <canvas #chartCanvas></canvas>
   </div>
+
+  <lib-empty-state *ngIf="!section.chartData" message="No chart data" icon="📊" variant="minimal"> </lib-empty-state>
 </div>

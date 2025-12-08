@@ -1,8 +1,14 @@
+import {
+  HttpErrorResponse,
+  HttpEvent,
+  HttpHandler,
+  HttpHeaders,
+  HttpRequest,
+} from '@angular/common/http';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { HttpErrorResponse, HttpEvent, HttpHandler, HttpRequest } from '@angular/common/http';
-import { RateLimitInterceptor } from './rate-limit.interceptor';
-import { LoggingService } from '../services/logging.service';
 import { of, throwError } from 'rxjs';
+import { LoggingService } from '../services/logging.service';
+import { RateLimitInterceptor } from './rate-limit.interceptor';
 
 describe('RateLimitInterceptor', () => {
   let interceptor: RateLimitInterceptor;
@@ -97,12 +103,11 @@ describe('RateLimitInterceptor', () => {
   describe('429 response handling', () => {
     it('should handle 429 responses with Retry-After header', fakeAsync(() => {
       const request = new HttpRequest('GET', '/api/test');
+      const headers = new HttpHeaders().set('Retry-After', '2');
       const errorResponse = new HttpErrorResponse({
         status: 429,
         statusText: 'Too Many Requests',
-        headers: {
-          'Retry-After': '2',
-        },
+        headers: headers,
       });
 
       nextHandler.handle.and.returnValue(throwError(() => errorResponse));
@@ -119,12 +124,11 @@ describe('RateLimitInterceptor', () => {
 
     it('should retry after delay when 429 received', fakeAsync(() => {
       const request = new HttpRequest('GET', '/api/test');
+      const headers = new HttpHeaders().set('Retry-After', '1');
       const errorResponse = new HttpErrorResponse({
         status: 429,
         statusText: 'Too Many Requests',
-        headers: {
-          'Retry-After': '1',
-        },
+        headers: headers,
       });
 
       let callCount = 0;

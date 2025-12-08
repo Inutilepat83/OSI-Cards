@@ -1,0 +1,234 @@
+---
+description: "TypeScript code quality, modern features, best practices"
+globs: ["**/*.ts", "**/*.tsx"]
+---
+
+# TypeScript Code Quality
+
+## Modern TypeScript Features
+
+### Use TypeScript 5.0+ Features
+
+- **Type-only imports**: `import type { ... }`
+- **Satisfies operator**: `const config = { ... } satisfies Config`
+- **const type parameters**: `function identity<const T>(value: T): T`
+- **Decorators**: Use for Angular, NestJS, etc.
+
+### Strict Type Checking
+
+Enable strict mode in `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true
+  }
+}
+```
+
+## Type Safety
+
+### Avoid `any`
+
+```typescript
+// ❌ Bad
+function process(data: any) { }
+
+// ✅ Good
+function process<T>(data: T) { }
+function process(data: unknown) { }
+```
+
+### Use Type Guards
+
+```typescript
+function isUser(obj: unknown): obj is User {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    'id' in obj &&
+    'email' in obj
+  );
+}
+```
+
+### Prefer Union Types Over Enums
+
+```typescript
+// ✅ Good
+type Status = 'pending' | 'approved' | 'rejected';
+
+// ❌ Avoid (unless needed for reverse mapping)
+enum Status {
+  Pending = 'pending',
+  Approved = 'approved',
+  Rejected = 'rejected'
+}
+```
+
+## Nullable Types
+
+### Use Nullable Reference Types
+
+```typescript
+// ✅ Good - explicit null handling
+function getUser(id: string): User | null {
+  // ...
+}
+
+// ✅ Good - optional chaining
+const email = user?.email;
+const name = user?.profile?.name;
+```
+
+### Avoid Non-Null Assertion
+
+```typescript
+// ❌ Bad
+const name = user!.name;
+
+// ✅ Good
+if (user) {
+  const name = user.name;
+}
+```
+
+## Async/Await
+
+### Prefer Async/Await Over Promises
+
+```typescript
+// ✅ Good
+async function fetchUser(id: string): Promise<User> {
+  const response = await http.get(`/users/${id}`);
+  return response.data;
+}
+
+// ❌ Avoid
+function fetchUser(id: string): Promise<User> {
+  return http.get(`/users/${id}`).then(response => response.data);
+}
+```
+
+### Error Handling
+
+```typescript
+// ✅ Good
+async function fetchUser(id: string): Promise<Result<User, Error>> {
+  try {
+    const response = await http.get(`/users/${id}`);
+    return { success: true, value: response.data };
+  } catch (error) {
+    return { success: false, error: error as Error };
+  }
+}
+```
+
+## Code Organization
+
+### File Structure
+
+- One class/interface/type per file
+- Use index files for exports
+- Group related functionality
+
+### Naming Conventions
+
+- **Classes**: PascalCase (`UserService`)
+- **Interfaces**: PascalCase (`UserConfig`)
+- **Types**: PascalCase (`UserStatus`)
+- **Functions**: camelCase (`getUser`)
+- **Constants**: UPPER_SNAKE_CASE (`MAX_RETRIES`)
+- **Private members**: Prefix with `_` or use `#` (private fields)
+
+## Functions
+
+### Keep Functions Small
+
+- Single responsibility
+- Max 20-30 lines
+- Extract complex logic
+
+### Function Parameters
+
+```typescript
+// ✅ Good - use objects for many parameters
+function createUser(data: CreateUserData): Promise<User> { }
+
+interface CreateUserData {
+  email: string;
+  name: string;
+  role: UserRole;
+}
+
+// ❌ Bad - too many parameters
+function createUser(
+  email: string,
+  name: string,
+  role: UserRole,
+  department: string,
+  managerId: string
+): Promise<User> { }
+```
+
+## Classes
+
+### Use Classes Appropriately
+
+- Use for services, components (Angular)
+- Prefer functions for utilities
+- Use interfaces for contracts
+
+### Access Modifiers
+
+```typescript
+class UserService {
+  private readonly repository: UserRepository;
+  protected config: ServiceConfig;
+  public async getUser(id: string): Promise<User> { }
+}
+```
+
+## Generics
+
+### Use Generics for Reusability
+
+```typescript
+// ✅ Good
+interface Repository<T> {
+  findById(id: string): Promise<T | null>;
+  save(entity: T): Promise<T>;
+}
+
+// ✅ Good
+function map<T, U>(items: T[], mapper: (item: T) => U): U[] {
+  return items.map(mapper);
+}
+```
+
+## Utility Types
+
+### Use Built-in Utility Types
+
+```typescript
+// Partial<T> - all properties optional
+type UpdateUserData = Partial<User>;
+
+// Pick<T, K> - select properties
+type UserSummary = Pick<User, 'id' | 'name' | 'email'>;
+
+// Omit<T, K> - exclude properties
+type CreateUserData = Omit<User, 'id' | 'createdAt'>;
+
+// Record<K, V> - object with specific keys
+type UserRoles = Record<string, UserRole>;
+```
+
+**See also:** `testing.mdc`, `error-handling.mdc`, `dependencies.mdc`

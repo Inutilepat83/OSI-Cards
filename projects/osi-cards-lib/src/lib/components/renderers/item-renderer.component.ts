@@ -4,15 +4,15 @@
  * Unified component for rendering list items across all section types.
  * Consolidates item rendering logic from list, timeline, features sections.
  */
+import { CommonModule } from '@angular/common';
 import {
-  Component,
   ChangeDetectionStrategy,
-  Input,
-  Output,
+  Component,
   EventEmitter,
   HostListener,
+  Input,
+  Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 export interface ItemData {
   id?: string;
@@ -92,7 +92,7 @@ export interface ItemClickEvent {
           background-color 0.15s ease,
           transform 0.15s ease;
 
-        &--clickable {
+        &:is(.item--clickable) {
           cursor: pointer;
 
           &:hover {

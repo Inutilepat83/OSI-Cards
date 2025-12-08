@@ -1,4 +1,4 @@
-<div class="gallery">
+<div class="ai-section ai-section--gallery section-content">
   <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
@@ -19,5 +19,6 @@
     </div>
   </div>
 
-  <lib-empty-state *ngIf="!section.items?.length" message="No images" icon="🖼️" variant="compact"> </lib-empty-state>
+  <lib-empty-state *ngIf="!section.items?.length" message="No gallery data" icon="🖼️" variant="minimal">
+  </lib-empty-state>
 </div>

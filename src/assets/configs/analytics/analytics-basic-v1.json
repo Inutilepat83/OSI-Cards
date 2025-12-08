@@ -28,7 +28,8 @@
       "label": "View Dashboard",
       "type": "website",
       "variant": "primary",
-      "icon": "📊"
+      "icon": "📊",
+      "url": "https://dashboard.example.com"
     }
   ]
 }

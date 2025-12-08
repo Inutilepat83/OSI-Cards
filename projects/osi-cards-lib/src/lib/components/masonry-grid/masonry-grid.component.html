@@ -5,16 +5,21 @@
   [class.masonry-container--streaming]="isStreaming"
   [style.--masonry-columns]="currentColumns"
   [style.--masonry-gap.px]="gap"
+  role="grid"
+  [attr.aria-label]="'Masonry grid with ' + positionedSections.length + ' sections'"
 >
   <div
     *ngFor="let positioned of positionedSections; let idx = index; trackBy: trackBySection"
     #itemRef
     class="masonry-item"
+    role="gridcell"
     [attr.data-index]="idx"
     [attr.data-col-span]="positioned.colSpan"
+    [style.position]="'absolute'"
     [style.left]="positioned.left"
     [style.top.px]="positioned.top"
     [style.width]="positioned.width"
+    [attr.aria-label]="'Section: ' + (positioned.section.title || 'Untitled')"
   >
     <app-section-renderer [section]="positioned.section" (sectionEvent)="onSectionEvent($event)">
     </app-section-renderer>

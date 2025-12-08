@@ -2,8 +2,13 @@
 // GALLERY SECTION - Original Product Style
 // =====================================================================
 
+// Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
+
+// Import base section styles
+@import "../../../styles/components/sections/sections-base";
+@import "../../../styles/components/sections/section-shell";
 
 :host {
   display: block;
@@ -76,7 +81,7 @@
 
 .caption {
   padding: var(--osi-spacing-compact-xs, 2px) var(--osi-spacing-compact-sm, 6px); // Compact: 2-6px (was 8-16px)
-  background: var(--surface);
+  background: var(--osi-surface-raised);
   display: flex;
   align-items: center;
   min-height: 36px; // Compact: 36px (was 44px)

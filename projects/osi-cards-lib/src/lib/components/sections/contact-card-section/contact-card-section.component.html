@@ -1,4 +1,4 @@
-<div class="contacts">
+<div class="ai-section ai-section--contact-card section-content">
   <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
@@ -19,5 +19,6 @@
     </div>
   </div>
 
-  <lib-empty-state *ngIf="!section.fields?.length" message="No contacts" icon="👤" variant="compact"> </lib-empty-state>
+  <lib-empty-state *ngIf="!section.fields?.length" message="No contact data" icon="👤" variant="minimal">
+  </lib-empty-state>
 </div>

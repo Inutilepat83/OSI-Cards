@@ -56,3 +56,6 @@ export const osiDayTheme: OSICardsThemeConfig = {
     '--star-hover': '#5A5F62',
   },
 };
+
+
+

@@ -1,10 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
-import { SectionHeaderComponent, EmptyStateComponent, TrendIndicatorComponent } from '../../shared';
-import { TrendDirection } from '../../../types';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { Component, OnInit, inject } from '@angular/core';
 import { CardSection } from '../../../models';
+import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { TrendDirection } from '../../../types';
+import { EmptyStateComponent, SectionHeaderComponent, TrendIndicatorComponent } from '../../shared';
+import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 
 /**
  * Financials Section Component

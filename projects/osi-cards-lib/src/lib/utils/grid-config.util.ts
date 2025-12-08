@@ -1061,19 +1061,22 @@ export function resolveColumnSpan(
  * @param columns - Total number of columns in the grid
  * @param colSpan - Number of columns this item spans
  * @param gap - Gap between columns in pixels
+ * @param padding - Optional container padding (left + right) in pixels
  * @returns CSS calc() expression string
  */
 export function generateWidthExpression(
   columns: number,
   colSpan: number,
-  gap: number = GRID_GAP
+  gap: number = GRID_GAP,
+  padding: number = 0
 ): string {
   if (columns <= 0 || colSpan <= 0) {
-    return '100%';
+    return padding > 0 ? `calc(100% - ${padding}px)` : '100%';
   }
 
   const totalGap = gap * (columns - 1);
-  const singleColumnWidth = `calc((100% - ${totalGap}px) / ${columns})`;
+  const contentWidth = padding > 0 ? `calc(100% - ${padding}px)` : '100%';
+  const singleColumnWidth = `calc((${contentWidth} - ${totalGap}px) / ${columns})`;
 
   if (colSpan === 1) {
     return singleColumnWidth;
@@ -1081,7 +1084,7 @@ export function generateWidthExpression(
 
   // For multi-column spans: (singleWidth * colSpan) + (gap * (colSpan - 1))
   const spanGaps = gap * (colSpan - 1);
-  return `calc(${singleColumnWidth} * ${colSpan} + ${spanGaps}px)`;
+  return `calc((${singleColumnWidth} * ${colSpan}) + ${spanGaps}px)`;
 }
 
 /**
@@ -1090,22 +1093,29 @@ export function generateWidthExpression(
  * @param columns - Total number of columns in the grid
  * @param columnIndex - The starting column index (0-based)
  * @param gap - Gap between columns in pixels
+ * @param paddingLeft - Optional container left padding in pixels
  * @returns CSS calc() expression string
  */
 export function generateLeftExpression(
   columns: number,
   columnIndex: number,
-  gap: number = GRID_GAP
+  gap: number = GRID_GAP,
+  paddingLeft: number = 0
 ): string {
-  if (columns <= 0 || columnIndex <= 0) {
-    return '0px';
+  if (columns <= 0 || columnIndex < 0) {
+    return `${paddingLeft}px`;
+  }
+
+  if (columnIndex === 0) {
+    return `${paddingLeft}px`;
   }
 
   const totalGap = gap * (columns - 1);
-  const singleColumnWidth = `calc((100% - ${totalGap}px) / ${columns})`;
+  const contentWidth = paddingLeft > 0 ? `calc(100% - ${paddingLeft * 2}px)` : '100%';
+  const singleColumnWidth = `calc((${contentWidth} - ${totalGap}px) / ${columns})`;
 
-  // left = (singleWidth + gap) * columnIndex
-  return `calc((${singleColumnWidth} + ${gap}px) * ${columnIndex})`;
+  // left = paddingLeft + (singleWidth + gap) * columnIndex
+  return `calc(${paddingLeft}px + (${singleColumnWidth} + ${gap}px) * ${columnIndex})`;
 }
 
 // ============================================================================

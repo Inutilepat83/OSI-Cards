@@ -1,4 +1,4 @@
-<div class="colors">
+<div class="ai-section ai-section--brand-colors section-content">
   <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
@@ -18,5 +18,6 @@
     </div>
   </div>
 
-  <lib-empty-state *ngIf="!section.fields?.length" message="No colors" icon="🎨" variant="compact"> </lib-empty-state>
+  <lib-empty-state *ngIf="!section.fields?.length" message="No brand colors data" icon="🎨" variant="minimal">
+  </lib-empty-state>
 </div>

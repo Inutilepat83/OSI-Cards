@@ -78,3 +78,6 @@ export interface RegisteredSectionPlugin extends SectionPluginMetadata {
   /** Priority for resolution (default: 0) */
   priority: number;
 }
+
+
+

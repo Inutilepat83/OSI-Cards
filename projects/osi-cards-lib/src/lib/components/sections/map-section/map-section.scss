@@ -2,8 +2,13 @@
 // MAP SECTION - Compact, Responsive, Consistent
 // =====================================================================
 
+// Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
+
+// Import base section styles
+@import "../../../styles/components/sections/sections-base";
+@import "../../../styles/components/sections/section-shell";
 
 :host {
   display: block;
@@ -17,11 +22,10 @@
 }
 
 .map-wrapper {
-  background: var(--osi-surface);
-  border: 1px solid var(--osi-border-muted);
-  border-radius: var(--osi-radius-md);
+  @include card-base;
   overflow: hidden;
   height: 280px; // Compact: 280px (was 300px)
+  padding: 0; // Remove padding for map content
 
   @media (max-width: 480px) {
     height: 180px; // Compact: 180px (was 200px)
@@ -41,15 +45,8 @@
 }
 
 .location-item {
-  background: var(--osi-surface);
-  border: 1px solid var(--osi-border-muted);
-  border-radius: var(--osi-radius-sm);
+  @include item-with-border;
   padding: var(--osi-spacing-compact-sm, 6px); // Compact: 6px
-  transition: all var(--osi-duration-normal) var(--osi-ease-out);
-
-  &:hover {
-    background: var(--osi-surface-raised);
-  }
 
   @media (max-width: 480px) {
     padding: var(--osi-spacing-compact-xs, 2px); // Compact: 2px

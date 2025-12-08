@@ -345,3 +345,6 @@ export function getCriticalFailures(result: StyleComparisonResult): {
 
 
 
+
+
+

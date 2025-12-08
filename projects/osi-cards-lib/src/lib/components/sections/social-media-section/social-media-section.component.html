@@ -1,4 +1,4 @@
-<div class="social">
+<div class="ai-section ai-section--social-media section-content">
   <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
@@ -21,6 +21,6 @@
     </a>
   </div>
 
-  <lib-empty-state *ngIf="!section.fields?.length" message="No social links" icon="📱" variant="compact">
+  <lib-empty-state *ngIf="!section.fields?.length" message="No social media data" icon="📱" variant="minimal">
   </lib-empty-state>
 </div>
