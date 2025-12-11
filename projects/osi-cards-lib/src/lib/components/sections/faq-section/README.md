@@ -4,7 +4,7 @@ Frequently asked questions
 
 ## Overview
 
-**Component:** `lib-faq-section`  
+**Component:** `lib-faq-section`
 **Type:** `faq`
 
 ## Files
