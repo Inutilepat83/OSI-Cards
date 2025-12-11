@@ -11,6 +11,7 @@ A comprehensive Angular library for rendering AI-generated cards with rich secti
 - **Plugin Architecture** - Extend with custom section types
 - **Accessibility** - WCAG compliant with keyboard navigation and screen reader support
 - **Performance** - OnPush change detection, virtual scrolling, and optimized rendering
+- **Zero-gap layout utility** - `packWithZeroGapsGuarantee` helper for maximum grid density
 
 ## Installation
 
@@ -848,4 +849,17 @@ MIT
 
 ## Version
 
-1.5.3
+1.5.16
+
+---
+
+## Zero-Gap Packing (Advanced)
+
+If you need maximum layout density (minimal gaps), you can use the zero-gap packing helper:
+
+```typescript
+import { packWithZeroGapsGuarantee } from 'osi-cards-lib';
+
+const result = packWithZeroGapsGuarantee(sections, 4, 12);
+// result.positionedSections, result.totalHeight, result.utilization, result.gapCount
+```

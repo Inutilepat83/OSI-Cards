@@ -71,7 +71,11 @@ describe('CommandService', () => {
     });
 
     it('should update state after execution', (done) => {
-      const command = new GenericCommand(() => undefined, () => undefined, 'Test command');
+      const command = new GenericCommand(
+        () => undefined,
+        () => undefined,
+        'Test command'
+      );
 
       service.state$.subscribe((state) => {
         if (state.historySize > 0) {
@@ -87,7 +91,11 @@ describe('CommandService', () => {
 
     it('should limit history size to MAX_HISTORY_SIZE', () => {
       for (let i = 0; i < 60; i++) {
-        const command = new GenericCommand(() => undefined, () => undefined, `Command ${i}`);
+        const command = new GenericCommand(
+          () => undefined,
+          () => undefined,
+          `Command ${i}`
+        );
         service.execute(command);
       }
 
@@ -96,9 +104,21 @@ describe('CommandService', () => {
     });
 
     it('should remove future commands when executing after undo', () => {
-      const command1 = new GenericCommand(() => undefined, () => undefined, 'Command 1');
-      const command2 = new GenericCommand(() => undefined, () => undefined, 'Command 2');
-      const command3 = new GenericCommand(() => undefined, () => undefined, 'Command 3');
+      const command1 = new GenericCommand(
+        () => undefined,
+        () => undefined,
+        'Command 1'
+      );
+      const command2 = new GenericCommand(
+        () => undefined,
+        () => undefined,
+        'Command 2'
+      );
+      const command3 = new GenericCommand(
+        () => undefined,
+        () => undefined,
+        'Command 3'
+      );
 
       service.execute(command1);
       service.execute(command2);
@@ -109,7 +129,11 @@ describe('CommandService', () => {
       expect(service.getState().historySize).toBe(3);
       expect(service.canRedo()).toBe(true);
 
-      const newCommand = new GenericCommand(() => undefined, () => undefined, 'New Command');
+      const newCommand = new GenericCommand(
+        () => undefined,
+        () => undefined,
+        'New Command'
+      );
       service.execute(newCommand);
 
       const state = service.getState();
@@ -144,7 +168,11 @@ describe('CommandService', () => {
     });
 
     it('should update state after undo', (done) => {
-      const command = new GenericCommand(() => undefined, () => undefined, 'Test');
+      const command = new GenericCommand(
+        () => undefined,
+        () => undefined,
+        'Test'
+      );
       service.execute(command);
 
       service.state$.subscribe((state) => {
@@ -213,7 +241,11 @@ describe('CommandService', () => {
     });
 
     it('should update state after redo', (done) => {
-      const command = new GenericCommand(() => undefined, () => undefined, 'Test');
+      const command = new GenericCommand(
+        () => undefined,
+        () => undefined,
+        'Test'
+      );
       service.execute(command);
       service.undo();
 
@@ -231,8 +263,16 @@ describe('CommandService', () => {
 
   describe('clearHistory', () => {
     it('should clear all history', () => {
-      const command1 = new GenericCommand(() => undefined, () => undefined, 'Command 1');
-      const command2 = new GenericCommand(() => undefined, () => undefined, 'Command 2');
+      const command1 = new GenericCommand(
+        () => undefined,
+        () => undefined,
+        'Command 1'
+      );
+      const command2 = new GenericCommand(
+        () => undefined,
+        () => undefined,
+        'Command 2'
+      );
 
       service.execute(command1);
       service.execute(command2);
@@ -294,7 +334,11 @@ describe('CommandService', () => {
     });
 
     it('should return updated state after command', () => {
-      const command = new GenericCommand(() => undefined, () => undefined, 'Test');
+      const command = new GenericCommand(
+        () => undefined,
+        () => undefined,
+        'Test'
+      );
       service.execute(command);
 
       const state = service.getState();

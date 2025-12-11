@@ -1,6 +1,6 @@
 {
   "name": "osi-cards",
-  "version": "1.5.15",
+  "version": "1.5.16",
   "private": true,
   "bin": {
     "osi-cards": "./tools/cli/osi-cards-cli.js"

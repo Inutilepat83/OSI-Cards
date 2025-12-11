@@ -13,7 +13,7 @@ Each card is composed of one or more **sections**—standalone, configurable com
 
 ---
 
-## ✨ What's New in v1.5.15
+## ✨ What's New in v1.5.16
 
 ### 🎉 MAJOR: Complete Architecture Optimization
 - **Massive Cleanup**: Removed ~700+ files (28% of project) while maintaining all core functionality
@@ -45,6 +45,9 @@ Each card is composed of one or more **sections**—standalone, configurable com
 - **Layout Services**: New `LayoutCalculationService` & `LayoutStateManager`
 - **CardFacade Service**: Unified API for all card operations
 - **Injection Tokens**: Configurable streaming, animation, layout, theme, accessibility
+
+### Fixes
+- **Zero-gap packing utility restored**: `packWithZeroGapsGuarantee` is available again and exported from `osi-cards-lib` for dense masonry layouts.
 
 ---
 
@@ -383,7 +386,7 @@ MIT
 
 ## Version
 
-1.5.1
+1.5.16
 
 ---
 
