@@ -8,10 +8,10 @@ import {
   ViewChild,
   inject,
 } from '@angular/core';
+import { CardSection } from '../../../models';
+import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
 import { EmptyStateComponent, SectionHeaderComponent } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
-import { CardSection } from '../../../models';
 
 /**
  * Map Section Component
@@ -33,6 +33,7 @@ export class MapSectionComponent
   implements AfterViewInit, OnDestroy, OnInit
 {
   private readonly layoutService = inject(SectionLayoutPreferenceService);
+  mapInitFailed = false;
 
   ngOnInit(): void {
     // Register layout preference function for this section type
@@ -61,7 +62,12 @@ export class MapSectionComponent
 
     try {
       // Dynamic import of Leaflet
-      const L = await import('leaflet');
+      const leafletModule = await import('leaflet');
+      // ESM/CJS interop: depending on bundler, Leaflet may be exposed as default export
+      const L: any = (leafletModule as any).default ?? leafletModule;
+      if (!L || typeof L.map !== 'function') {
+        throw new Error('Leaflet loaded but L.map is not a function');
+      }
 
       // Get first location coordinates
       const firstLocation: any = fields[0];
@@ -88,7 +94,10 @@ export class MapSectionComponent
         }
       });
     } catch (error) {
+      this.mapInitFailed = true;
       console.warn('Leaflet not available', error);
+      this.destroyMap();
+      this.cdr.markForCheck();
     }
   }
 

@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,13 +10,12 @@ import {
   signal,
   ViewEncapsulation,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { filter, map, takeUntil } from 'rxjs/operators';
 import { fromEvent, Subject } from 'rxjs';
-import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
+import { filter, map, takeUntil } from 'rxjs/operators';
 import { VERSION } from '../../../version';
+import { LucideIconsModule } from '../../shared/icons/lucide-icons.module';
 
 interface DocRoute {
   path: string;

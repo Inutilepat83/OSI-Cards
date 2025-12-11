@@ -3,47 +3,49 @@
   <lib-section-header [title]="section.title" [description]="section.description"> </lib-section-header>
 
   <!-- Videos Grid -->
-  <div class="videos-grid" *ngIf="section.items && section.items.length > 0">
-    <div class="video-card" *ngFor="let video of section.items">
-      <!-- Video Player/Thumbnail -->
-      <div class="video-wrapper">
-        <!-- Embedded Video (YouTube/Vimeo) -->
-        <iframe
-          [src]="getSafeVideoUrl(video)"
-          *ngIf="isEmbeddable(getVideoUrl(video))"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-        >
-        </iframe>
+  <div class="video-container" *ngIf="section.items && section.items.length > 0">
+    <div class="video-grid">
+      <div class="video-card" *ngFor="let video of section.items">
+        <!-- Video Player/Thumbnail -->
+        <div class="video-wrapper">
+          <!-- Embedded Video (YouTube/Vimeo) -->
+          <iframe
+            [src]="getSafeVideoUrl(video)"
+            *ngIf="isEmbeddable(getVideoUrl(video))"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          >
+          </iframe>
 
-        <!-- Native Video -->
-        <video
-          [src]="getVideoUrl(video)"
-          controls
-          *ngIf="!isEmbeddable(getVideoUrl(video)) && getVideoUrl(video)"
-          [poster]="getThumbnail(video)"
-        ></video>
+          <!-- Native Video -->
+          <video
+            [src]="getVideoUrl(video)"
+            controls
+            *ngIf="!isEmbeddable(getVideoUrl(video)) && getVideoUrl(video)"
+            [poster]="getThumbnail(video)"
+          ></video>
 
-        <!-- Thumbnail Only -->
-        <img
-          [src]="getThumbnail(video)"
-          [alt]="video.title"
-          *ngIf="!getVideoUrl(video) && getThumbnail(video)"
-          class="video-thumbnail"
-        />
-      </div>
+          <!-- Thumbnail Only -->
+          <img
+            [src]="getThumbnail(video)"
+            [alt]="video.title"
+            *ngIf="!getVideoUrl(video) && getThumbnail(video)"
+            class="video-thumbnail"
+          />
+        </div>
 
-      <!-- Video Info -->
-      <div class="video-info">
-        <h4 class="video-title">{{ video.title }}</h4>
-        <p class="video-description" *ngIf="video.description">{{ video.description }}</p>
+        <!-- Video Info -->
+        <div class="video-info">
+          <h4 class="video-title">{{ video.title }}</h4>
+          <p class="video-description" *ngIf="video.description">{{ video.description }}</p>
 
-        <div class="video-meta">
-          <span class="video-duration" *ngIf="video.meta?.duration">{{ video.meta?.duration }}</span>
-          <span class="video-platform" *ngIf="video.meta?.platform">{{ video.meta?.platform }}</span>
-          <span class="video-views" *ngIf="video.meta?.views">{{ video.meta?.views }} views</span>
-          <span class="video-category" *ngIf="video.meta?.category">{{ video.meta?.category }}</span>
+          <div class="video-meta">
+            <span class="video-duration" *ngIf="video.meta?.duration">{{ video.meta?.duration }}</span>
+            <span class="video-platform" *ngIf="video.meta?.platform">{{ video.meta?.platform }}</span>
+            <span class="video-views" *ngIf="video.meta?.views">{{ video.meta?.views }} views</span>
+            <span class="video-category" *ngIf="video.meta?.category">{{ video.meta?.category }}</span>
+          </div>
         </div>
       </div>
     </div>

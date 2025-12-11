@@ -291,8 +291,8 @@ $line-heights: (
 
 :root {
   // Surface colors
-  --surface-base: var(--section-item-background);
-  --surface-raised: var(--section-item-background-hover);
+  --surface-base: var(--osi-section-item-background);
+  --surface-raised: var(--osi-section-item-background-hover);
   --surface-overlay: var(--glass-bg);
 
   // Border colors

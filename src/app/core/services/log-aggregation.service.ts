@@ -17,9 +17,8 @@
  * ```
  */
 
-import { Injectable } from '@angular/core';
-import { interval, Subject } from 'rxjs';
-import { buffer, filter } from 'rxjs/operators';
+import { Injectable, OnDestroy } from '@angular/core';
+import { Subject } from 'rxjs';
 
 export interface LogEntry {
   level: 'debug' | 'info' | 'warn' | 'error';
@@ -45,10 +44,11 @@ export interface AggregatedLogs {
 @Injectable({
   providedIn: 'root',
 })
-export class LogAggregationService {
+export class LogAggregationService implements OnDestroy {
   private logStream = new Subject<LogEntry>();
   private aggregationInterval = 60000; // 1 minute
   private maxBatchSize = 100;
+  private batchInterval?: ReturnType<typeof setInterval>;
 
   constructor() {
     this.setupAggregation();
@@ -102,7 +102,7 @@ export class LogAggregationService {
     });
 
     // Also send periodically
-    setInterval(() => {
+    this.batchInterval = setInterval(() => {
       if (logBuffer.length > 0) {
         this.sendBatch(logBuffer);
         logBuffer = [];
@@ -202,5 +202,16 @@ export class LogAggregationService {
    */
   private isDevelopment(): boolean {
     return typeof window !== 'undefined' && window.location.hostname === 'localhost';
+  }
+
+  /**
+   * Clean up intervals on destroy
+   */
+  ngOnDestroy(): void {
+    if (this.batchInterval) {
+      clearInterval(this.batchInterval);
+      this.batchInterval = undefined;
+    }
+    this.logStream.complete();
   }
 }

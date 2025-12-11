@@ -1,21 +1,21 @@
 /* =======================================================================
    AI Card Renderer Component Styles
-   
+
    STYLE ARCHITECTURE:
    ===================
    This library uses a dual-layer styling approach:
-   
+
    1. GLOBAL SCSS (osi-cards-lib/styles/_styles-*.scss)
       - Visual styling: colors, borders, shadows, typography
       - Theming: light/dark mode, CSS variables
       - Grid layouts: masonry, sections, cards
       - Wrapped in CSS @layer for easy overrides
-   
+
    2. COMPONENT CSS (this file)
       - Component-specific behavior: animations, states
       - Layout primitives: flex, grid for internal structure
       - Uses CSS variables for consistent theming
-   
+
    This separation ensures:
    - Consumers can import styles via @import or angular.json
    - Angular ViewEncapsulation works correctly
@@ -28,12 +28,12 @@
   width: 100%;
   height: 100%;
 
-  /* 
+  /*
    * IMPORTANT: Prevent CSS inheritance from host environments
-   * 
+   *
    * Shadow DOM encapsulation isolates most styles, but INHERITED CSS properties
    * (font-family, color, line-height, etc.) can still leak through from parent elements.
-   * 
+   *
    * By explicitly setting these properties on :host, we ensure the card component
    * looks consistent regardless of the host application's CSS environment.
    * This is critical for integration into legacy systems with aggressive CSS resets.
@@ -83,10 +83,10 @@
 @keyframes section-pulse {
   0%,
   100% {
-    transform: scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
   50% {
-    transform: scale(1.01);
+    transform: translate3d(0, 0, 0) scale(1.01);
   }
 }
 
@@ -251,15 +251,15 @@
 @keyframes field-enter {
   0% {
     opacity: 0;
-    transform: translateY(12px) scale(0.98);
+    transform: translate3d(0, 12px, 0) scale(0.98);
   }
   60% {
     opacity: 1;
-    transform: translateY(-2px) scale(1.01);
+    transform: translate3d(0, -2px, 0) scale(1.01);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 
@@ -397,7 +397,7 @@
   box-shadow: 0 0 25px rgba(255, 121, 0, 0.4);
 }
 
-/* Magical section entrance - blur-to-sharp reveal with scale bounce 
+/* Magical section entrance - blur-to-sharp reveal with scale bounce
    IMPORTANT: Only apply to ANIMATING sections, not all masonry items */
 .ai-card-surface.streaming-active .masonry-item--animating {
   animation: section-magic-appear 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
@@ -425,17 +425,17 @@
 @keyframes section-magic-appear {
   0% {
     opacity: 0;
-    transform: translateY(20px) scale(0.95);
+    transform: translate3d(0, 20px, 0) scale(0.95);
     filter: blur(8px);
   }
   60% {
     opacity: 1;
-    transform: translateY(-4px) scale(1.02);
+    transform: translate3d(0, -4px, 0) scale(1.02);
     filter: blur(0);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
     filter: blur(0);
   }
 }
@@ -502,11 +502,11 @@
 
 @keyframes shimmer-sweep {
   0% {
-    transform: translateX(-100%);
+    transform: translate3d(-100%, 0, 0);
     opacity: 1;
   }
   100% {
-    transform: translateX(100%);
+    transform: translate3d(100%, 0, 0);
     opacity: 0;
   }
 }
@@ -653,19 +653,19 @@
 @keyframes particle-float {
   0%,
   100% {
-    transform: translateY(0) translateX(0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
     opacity: 0.3;
   }
   25% {
-    transform: translateY(-30px) translateX(20px) scale(1.2);
+    transform: translate3d(20px, -30px, 0) scale(1.2);
     opacity: 0.7;
   }
   50% {
-    transform: translateY(-60px) translateX(-10px) scale(0.8);
+    transform: translate3d(-10px, -60px, 0) scale(0.8);
     opacity: 1;
   }
   75% {
-    transform: translateY(-30px) translateX(15px) scale(1.1);
+    transform: translate3d(15px, -30px, 0) scale(1.1);
     opacity: 0.6;
   }
 }

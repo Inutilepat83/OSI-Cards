@@ -1,0 +1,330 @@
+// =====================================================================
+// SECTION ANIMATIONS - Unified Animation System
+// =====================================================================
+//
+// Consolidated animation system for all sections.
+// All hover effects use shadow/color changes only (no transforms).
+// Easy to maintain and consistent across all sections.
+//
+// =====================================================================
+
+@use "design-tokens" as *;
+
+// =====================================================================
+// STANDARD CARD HOVER EFFECT
+// =====================================================================
+//
+// Primary hover effect for section cards.
+// Uses shadow and color transitions only (no transforms).
+//
+
+@mixin section-card-hover {
+  transition:
+    box-shadow var(--duration-base) var(--ease-out),
+    background var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+
+  &:hover {
+    box-shadow: var(--shadow-lg);
+    background: var(--osi-section-item-background-hover);
+    border-color: var(--osi-section-item-border-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    box-shadow:
+      var(--shadow-lg),
+      0 0 0 4px rgba(var(--accent-rgb, 255, 121, 0), 0.1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover {
+      box-shadow: var(--shadow-md);
+    }
+  }
+}
+
+// =====================================================================
+// ELEVATED CARD HOVER (Stronger Shadow)
+// =====================================================================
+//
+// For cards that need more prominent hover feedback.
+//
+
+@mixin section-card-hover-elevated {
+  transition:
+    box-shadow var(--duration-slow) var(--ease-out),
+    background var(--duration-slow) var(--ease-out),
+    border-color var(--duration-slow) var(--ease-out);
+
+  &:hover {
+    box-shadow: var(--shadow-xl);
+    background: var(--osi-section-item-background-hover);
+    border-color: var(--osi-section-item-border-hover);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// =====================================================================
+// SUBTLE CARD HOVER (Lighter Shadow)
+// =====================================================================
+//
+// For cards that need minimal hover feedback.
+//
+
+@mixin section-card-hover-subtle {
+  transition:
+    box-shadow var(--duration-base) var(--ease-out),
+    background var(--duration-base) var(--ease-out);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+    background: var(--osi-section-item-background-hover);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// =====================================================================
+// LIST ITEM HOVER
+// =====================================================================
+//
+// For list items - background and color changes only.
+//
+
+@mixin section-list-item-hover {
+  transition:
+    background var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+
+  &:hover {
+    background: var(--surface-raised);
+    color: var(--foreground);
+    border-color: var(--border-strong);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// =====================================================================
+// INTERACTIVE SURFACE HOVER
+// =====================================================================
+//
+// For clickable surfaces - color transitions only.
+//
+
+@mixin section-interactive-hover {
+  transition:
+    background var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+
+  &:hover {
+    background: color-mix(in srgb, var(--osi-section-item-background) 90%, var(--foreground) 10%);
+    color: var(--accent);
+  }
+
+  &:active {
+    background: color-mix(in srgb, var(--osi-section-item-background) 85%, var(--foreground) 15%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// =====================================================================
+// GLOW HOVER EFFECT
+// =====================================================================
+//
+// Adds a subtle glow effect on hover using box-shadow.
+//
+
+@mixin section-glow-hover {
+  transition:
+    box-shadow var(--duration-slow) var(--ease-out),
+    border-color var(--duration-slow) var(--ease-out);
+
+  &:hover {
+    box-shadow:
+      var(--shadow-lg),
+      0 0 20px rgba(var(--accent-rgb, 255, 121, 0), 0.2);
+    border-color: var(--accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// =====================================================================
+// ACCENT LINE HOVER
+// =====================================================================
+//
+// Shows an accent line on hover (top border effect).
+//
+
+@mixin section-accent-line-hover {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--ease-out);
+    border-radius: var(--osi-section-item-border-radius) var(--osi-section-item-border-radius) 0 0;
+  }
+
+  &:hover::before {
+    opacity: 0.8;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before {
+      display: none;
+    }
+  }
+}
+
+// =====================================================================
+// ENTRANCE ANIMATIONS
+// =====================================================================
+//
+// Keyframe animations for section/item entrance.
+//
+
+@keyframes section-item-stream {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes section-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes section-fade-in-up {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// =====================================================================
+// STAGGER ANIMATION MIXINS
+// =====================================================================
+//
+// For animating lists of items with staggered delays.
+//
+
+@mixin section-item-animation {
+  &.section-item-streaming {
+    animation: section-item-stream var(--duration-base) var(--ease-out) forwards;
+  }
+
+  &.section-item-entered {
+    animation: none;
+  }
+
+  @for $i from 0 through 15 {
+    &.section-item-stagger-#{$i} {
+      animation-delay: calc(#{$i} * 30ms);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none !important;
+  }
+}
+
+@mixin legacy-item-animation {
+  &.item-streaming {
+    animation: section-item-stream var(--duration-base) var(--ease-out) forwards;
+  }
+
+  &.item-entered {
+    animation: none;
+  }
+
+  @for $i from 0 through 15 {
+    &.item-stagger-#{$i} {
+      animation-delay: calc(#{$i} * 30ms);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none !important;
+  }
+}
+
+@mixin legacy-field-animation {
+  &.field-streaming {
+    animation: section-item-stream var(--duration-base) var(--ease-out) forwards;
+  }
+
+  &.field-entered {
+    animation: none;
+  }
+
+  @for $i from 0 through 15 {
+    &.field-stagger-#{$i} {
+      animation-delay: calc(#{$i} * 30ms);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none !important;
+  }
+}
+
+// =====================================================================
+// REDUCED MOTION SUPPORT
+// =====================================================================
+//
+// Global reduced motion rules for all section animations.
+//
+
+@media (prefers-reduced-motion: reduce) {
+  .unified-card,
+  .section-card,
+  [class*="__card"],
+  [class*="-card"],
+  [class*="__item"],
+  [class*="-item"],
+  .metric-card,
+  .list-item,
+  .analytics-card {
+    transition: none !important;
+    animation: none !important;
+
+    &:hover {
+      transform: none !important;
+    }
+  }
+}

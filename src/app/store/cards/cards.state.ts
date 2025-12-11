@@ -1,5 +1,4 @@
-import { createAction, props } from '@ngrx/store';
-import { createReducer, on } from '@ngrx/store';
+import { createAction, createReducer, on, props } from '@ngrx/store';
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { AICardConfig, CardType } from '../../models/card.model';
 import { ensureCardIds, removeAllIds } from '../../shared/utils/card-utils';

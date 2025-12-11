@@ -1,9 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
-import { SectionHeaderComponent, EmptyStateComponent, BadgeComponent } from '../../shared';
-import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { Component, OnInit, inject } from '@angular/core';
 import { CardSection } from '../../../models';
+import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
+import { BadgeComponent, EmptyStateComponent, SectionHeaderComponent } from '../../shared';
+import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 
 /**
  * List Section Component
@@ -20,6 +20,8 @@ import { CardSection } from '../../../models';
 })
 export class ListSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);
+
+  expandedIndex: number | null = null;
 
   ngOnInit(): void {
     // Register layout preference function for this section type
@@ -124,5 +126,17 @@ export class ListSectionComponent extends BaseSectionComponent implements OnInit
     if (priorityLower === 'low') return 'success';
 
     return 'default';
+  }
+
+  toggleExpanded(index: number): void {
+    this.expandedIndex = this.expandedIndex === index ? null : index;
+  }
+
+  onItemKeydown(event: KeyboardEvent, index: number): void {
+    // Space/Enter toggles (keeps list compact but lets users reveal detail)
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      this.toggleExpanded(index);
+    }
   }
 }

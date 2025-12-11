@@ -4,7 +4,7 @@
 
   <!-- Solutions Grid -->
   <div class="solutions-grid" *ngIf="section.fields && section.fields.length > 0">
-    <div class="solution-card" *ngFor="let solution of section.fields">
+    <div class="solution-card" *ngFor="let solution of section.fields; let i = index" [class.expanded]="isExpanded(i)">
       <!-- Solution Header -->
       <div class="solution-header">
         <h4 class="solution-title">{{ solution.title }}</h4>
@@ -16,8 +16,17 @@
 
       <!-- Benefits -->
       <ul class="solution-benefits" *ngIf="solution.benefits && solution.benefits.length > 0">
-        <li *ngFor="let benefit of solution.benefits">{{ benefit }}</li>
+        <li *ngFor="let benefit of getVisibleBenefits(solution.benefits, i)">{{ benefit }}</li>
       </ul>
+
+      <button
+        class="solution-more"
+        type="button"
+        *ngIf="solution.benefits && solution.benefits.length > 2"
+        (click)="toggleExpanded(i)"
+      >
+        {{ isExpanded(i) ? 'Show less' : '+' + (solution.benefits.length - 2) + ' more' }}
+      </button>
 
       <!-- Meta Info -->
       <div class="solution-meta">

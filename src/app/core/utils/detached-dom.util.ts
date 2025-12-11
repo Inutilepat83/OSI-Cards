@@ -242,7 +242,7 @@ export function startDetachedNodeMonitor(config: MonitorConfig = {}): MonitorHan
   // Only run in development mode
   if (!isDevMode()) {
     return {
-      stop: () => {},
+      stop: () => undefined,
       getStats: () => ({
         totalChecks: 0,
         totalDetached: 0,

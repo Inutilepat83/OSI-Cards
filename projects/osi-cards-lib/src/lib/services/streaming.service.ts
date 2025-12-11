@@ -26,9 +26,9 @@
  * ```
  */
 
-import { Injectable, OnDestroy, inject, DestroyRef } from '@angular/core';
-import { Observable, Subject, BehaviorSubject } from 'rxjs';
-import { AICardConfig, CardSection, CardField, CardItem, CardTypeGuards } from '../models';
+import { DestroyRef, Injectable, OnDestroy, inject } from '@angular/core';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { AICardConfig, CardField, CardItem, CardSection, CardTypeGuards } from '../models';
 import { CardChangeType } from '../types';
 
 /**
@@ -310,9 +310,41 @@ export class OSICardsStreamingService implements OnDestroy {
       return;
     }
 
-    this.initializePlaceholdersIfNeeded(parsed);
+    // In instant mode, use parsed sections directly since we have the complete card
+    const hasSections = parsed.sections && parsed.sections.length > 0;
 
-    if (this.placeholderCard) {
+    if (parsed && hasSections) {
+      // Use parsed card directly with IDs ensured - no need for placeholder merging in instant mode
+      const finalCard = ensureCardIds(parsed);
+
+      // Update section completion states
+      const allSectionIndices = (finalCard.sections || []).map((_, index) => index);
+      allSectionIndices.forEach((index) => {
+        const section = finalCard.sections?.[index];
+        if (section) {
+          const sectionKey = section.id || `section-${index}`;
+          this.sectionCompletionStates.set(sectionKey, true);
+        }
+      });
+
+      // Update placeholder card for consistency (used by other methods)
+      this.placeholderCard = finalCard;
+      this.lastKnownSectionCount = finalCard.sections.length;
+
+      this.updateState({
+        progress: 1,
+        bufferLength: this.buffer.length,
+      });
+
+      this.emitCardUpdate(finalCard, 'structural', allSectionIndices);
+      this.pendingCompletedSectionIndices = [];
+    } else if (parsed) {
+      // Card parsed but no sections - emit it anyway (might be a card with no sections)
+      const cardWithIds = ensureCardIds(parsed);
+      this.placeholderCard = cardWithIds;
+      this.emitCardUpdate(cardWithIds, 'structural');
+    } else if (this.placeholderCard) {
+      // Fallback: if we have placeholders but parsing failed, use placeholders
       const allSectionIndices = (this.placeholderCard.sections || []).map((_, index) => index);
 
       allSectionIndices.forEach((index) => {
@@ -323,33 +355,12 @@ export class OSICardsStreamingService implements OnDestroy {
         }
       });
 
-      this.updateCompletedSectionsOnly(parsed, allSectionIndices);
-
-      const finalCard: AICardConfig = {
-        ...this.placeholderCard,
-        cardTitle: parsed.cardTitle || this.placeholderCard.cardTitle || '',
-        sections: (this.placeholderCard.sections || []).map((section) => ({
-          ...section,
-          fields: section.fields?.map((field) => ({
-            ...field,
-            meta: { ...((field.meta as Record<string, unknown>) || {}), placeholder: false },
-          })),
-          items: section.items?.map((item) => ({
-            ...item,
-            meta: { ...((item.meta as Record<string, unknown>) || {}), placeholder: false },
-          })),
-          meta: { ...((section.meta as Record<string, unknown>) || {}), placeholder: false },
-        })),
-      };
-
-      this.placeholderCard = finalCard;
-
       this.updateState({
         progress: 1,
         bufferLength: this.buffer.length,
       });
 
-      this.emitCardUpdate(finalCard, 'structural', allSectionIndices);
+      this.emitCardUpdate(this.placeholderCard, 'structural', allSectionIndices);
       this.pendingCompletedSectionIndices = [];
     }
 

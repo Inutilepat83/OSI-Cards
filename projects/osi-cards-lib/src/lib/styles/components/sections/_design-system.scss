@@ -217,7 +217,7 @@
   flex-direction: column;
   gap: var(--section-card-gap);
   padding: var(--section-padding);
-  border-radius: var(--section-item-border-radius);
+  border-radius: var(--osi-section-item-border-radius);
   background: var(--section-background);
   border: var(--section-border);
   box-shadow: var(--section-box-shadow);
@@ -312,9 +312,9 @@
   padding: calc(var(--card-padding) * 2);
   text-align: center;
   color: var(--muted-foreground);
-  background: var(--section-item-background);
+  background: var(--osi-section-item-background);
   border: 1px dashed var(--border);
-  border-radius: var(--section-item-border-radius);
+  border-radius: var(--osi-section-item-border-radius);
 
   lucide-icon,
   svg {

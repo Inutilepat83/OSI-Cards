@@ -4,6 +4,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  computed,
   DestroyRef,
   ElementRef,
   EventEmitter,
@@ -12,6 +13,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  signal,
   ViewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -106,10 +108,29 @@ export class HomePageComponent implements OnInit, OnDestroy {
   }>();
 
   // Component properties
-  cardType: CardType = 'all';
   cardVariant = 1;
-  generatedCard: AICardConfig | null = null;
-  isGenerating = false;
+
+  // Properties that wrap signals for backward compatibility
+  get generatedCard(): AICardConfig | null {
+    return this.generatedCardSignal();
+  }
+  set generatedCard(value: AICardConfig | null) {
+    this.generatedCardSignal.set(value);
+  }
+
+  get isGenerating(): boolean {
+    return this.isGeneratingSignal();
+  }
+  set isGenerating(value: boolean) {
+    this.isGeneratingSignal.set(value);
+  }
+
+  get cardType(): CardType {
+    return this.cardTypeSignal();
+  }
+  set cardType(value: CardType) {
+    this.cardTypeSignal.set(value);
+  }
   isInitialized = false;
   isFullscreen = false;
   lastChangeType: CardChangeType = 'structural';
@@ -124,7 +145,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   livePreviewChangeType: CardChangeType = 'structural';
 
   // Library Streaming State (replaces old LLMStreamingService)
-  streamingState: StreamingState | null = null;
+  streamingState = signal<StreamingState | null>(null);
   useStreaming = true;
   streamingSpeed = 80; // tokens per second
   thinkingDelay = 2000; // milliseconds to simulate LLM thinking
@@ -134,38 +155,42 @@ export class HomePageComponent implements OnInit, OnDestroy {
   // Track available variants for each card type
   availableVariants = new Map<CardType, number>();
 
-  // Get available variants for current card type
-  get variants(): number[] {
-    const maxVariants = this.availableVariants.get(this.cardType) || 1;
+  // Signals for reactive state
+  private generatedCardSignal = signal<AICardConfig | null>(null);
+  private isGeneratingSignal = signal<boolean>(false);
+  private cardTypeSignal = signal<CardType>('company');
+
+  // Computed signals for better performance (replaces getters)
+  variants = computed(() => {
+    const maxVariants = this.availableVariants.get(this.cardTypeSignal()) || 1;
     return Array.from({ length: maxVariants }, (_, i) => i + 1);
-  }
+  });
 
-  // Streaming computed properties (following iLibrary pattern)
-  get showCardRenderer(): boolean {
-    return this.isGenerating || this.hasCard;
-  }
+  hasCard = computed(() => {
+    const card = this.generatedCardSignal();
+    return card !== null && card.sections !== undefined && card.sections.length > 0;
+  });
 
-  get hasCard(): boolean {
-    return (
-      this.generatedCard !== null &&
-      this.generatedCard.sections !== undefined &&
-      this.generatedCard.sections.length > 0
-    );
-  }
+  showCardRenderer = computed(() => {
+    return this.isGeneratingSignal() || this.hasCard();
+  });
 
-  get cardConfigForRenderer(): LibraryCardConfig {
-    return (this.generatedCard ?? {
+  cardConfigForRenderer = computed((): LibraryCardConfig => {
+    const card = this.generatedCardSignal();
+    return (card ?? {
       cardTitle: 'Generating...',
       sections: [],
     }) as LibraryCardConfig;
-  }
+  });
 
-  get progressPercent(): number {
-    return Math.round((this.streamingState?.progress ?? 0) * 100);
-  }
+  progressPercent = computed(() => {
+    const state = this.streamingState();
+    return Math.round((state?.progress ?? 0) * 100);
+  });
 
-  get stageLabel(): string {
-    switch (this.streamingState?.stage) {
+  stageLabel = computed(() => {
+    const state = this.streamingState();
+    switch (state?.stage) {
       case 'thinking':
         return 'Thinking...';
       case 'streaming':
@@ -179,11 +204,11 @@ export class HomePageComponent implements OnInit, OnDestroy {
       default:
         return 'Idle';
     }
-  }
+  });
 
-  get isStreamingActive(): boolean {
-    return this.streamingState?.isActive ?? false;
-  }
+  isStreamingActive = computed(() => {
+    return this.streamingState()?.isActive ?? false;
+  });
 
   statusMessage = '';
   private statusTone: 'polite' | 'assertive' = 'polite';
@@ -205,10 +230,14 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Theme is automatically initialized by ThemeService in app.config.ts
+    // Subscribe to theme changes to update UI
+    this.themeService.resolvedTheme$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.cd.markForCheck();
+    });
 
     // Subscribe to streaming service state (following iLibrary pattern)
     this.streamingService.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
-      this.streamingState = state;
+      this.streamingState.set(state);
       this.isGenerating = state.isActive;
       this.cd.markForCheck();
     });
@@ -243,7 +272,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((buffer) => {
         // Update JSON editor during streaming
-        if (this.isStreamingActive) {
+        if (this.isStreamingActive()) {
           this.jsonInput = buffer;
           this.lastProcessedJson = buffer;
         }
@@ -256,7 +285,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((card) => {
         // Only update from store if not actively streaming
-        if (!this.isStreamingActive && !this.livePreviewCard) {
+        if (!this.isStreamingActive() && !this.livePreviewCard) {
           const cardChanged = this.generatedCard !== card;
           this.generatedCard = card;
           if (cardChanged && card && !this.isGenerating && !this.jsonError) {
@@ -283,7 +312,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       .select(CardSelectors.selectCurrentCard)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((card) => {
-        if (card && !this.isStreamingActive) {
+        if (card && !this.isStreamingActive()) {
           // Update JSON editor with the loaded card (remove IDs and cardType for clean JSON)
           const cardWithoutIds = removeAllIds(card);
           delete cardWithoutIds.cardType;
@@ -320,7 +349,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((loading) => {
         // Only use store busy state if not streaming
-        if (!this.isStreamingActive) {
+        if (!this.isStreamingActive()) {
           this.isGenerating = loading;
         }
         if (loading && !this.previousLoading) {
@@ -521,7 +550,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     }
 
     // Stop streaming if active when switching cards
-    if (this.isStreamingActive) {
+    if (this.isStreamingActive()) {
       this.stopGeneration();
     }
 
@@ -823,8 +852,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
       // Handle incomplete strings - close any unclosed strings
       let inString = false;
       let escapeNext = false;
-      for (let i = 0; i < tempJson.length; i++) {
-        const char = tempJson[i];
+      for (const char of tempJson) {
         if (escapeNext) {
           escapeNext = false;
           continue;
@@ -893,9 +921,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
           let inString = false;
           let escapeNext = false;
 
-          for (let i = 0; i < sectionsContent.length; i++) {
-            const char = sectionsContent[i];
-
+          for (const char of sectionsContent) {
             if (escapeNext) {
               currentSection += char;
               escapeNext = false;
@@ -1102,9 +1128,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     let inString = false;
     let escapeNext = false;
 
-    for (let i = 0; i < fieldsContent.length; i++) {
-      const char = fieldsContent[i];
-
+    for (const char of fieldsContent) {
       if (escapeNext) {
         currentField += char;
         escapeNext = false;
@@ -1231,9 +1255,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     let inString = false;
     let escapeNext = false;
 
-    for (let i = 0; i < itemsContent.length; i++) {
-      const char = itemsContent[i];
-
+    for (const char of itemsContent) {
       if (escapeNext) {
         currentItem += char;
         escapeNext = false;
@@ -1759,7 +1781,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
         }
 
         // Basic CSV split for label/value
-        const csvMatch = line.match(/^(?:"([^"]+)"|([^,\{]+))\s*,\s*(?:"([^"]+)"|(.+))$/);
+        const csvMatch = line.match(/^(?:"([^"]+)"|([^,{]+))\s*,\s*(?:"([^"]+)"|(.+))$/);
         if (csvMatch) {
           const label = (csvMatch[1] || csvMatch[2] || '').trim();
           const rawValue = (csvMatch[3] || csvMatch[4] || '').trim();
@@ -2174,7 +2196,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
    * Toggle streaming simulation (called from template)
    */
   onSimulateLLMStart(): void {
-    if (this.isStreamingActive) {
+    if (this.isStreamingActive()) {
       this.stopGeneration();
     } else {
       this.generateCard();
@@ -2539,14 +2561,14 @@ export class HomePageComponent implements OnInit, OnDestroy {
       }
     }
     // During streaming, fall back to generated card
-    if (this.isStreamingActive) {
+    if (this.isStreamingActive()) {
       return this.generatedCard;
     }
     return this.generatedCard ?? null;
   }
 
   get previewChangeType(): CardChangeType {
-    if (this.isStreamingActive) {
+    if (this.isStreamingActive()) {
       // During streaming, use structural changes for layout recalculation
       return 'structural';
     }

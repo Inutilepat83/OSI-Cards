@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -9,7 +10,6 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { VirtualScrollManager, VirtualScrollResult } from '../../utils/virtual-scrolling.util';
 
@@ -29,7 +29,10 @@ import { VirtualScrollManager, VirtualScrollResult } from '../../utils/virtual-s
       [style.height.px]="containerHeight"
     >
       <div [style.height.px]="totalHeight" class="virtual-scroll-spacer"></div>
-      <div [style.transform]="'translateY(' + offsetY + 'px)'" class="virtual-scroll-content">
+      <div
+        [style.transform]="'translate3d(0, ' + offsetY + 'px, 0)'"
+        class="virtual-scroll-content"
+      >
         <ng-container *ngFor="let index of visibleIndices; trackBy: trackByIndex">
           <ng-container
             *ngTemplateOutlet="itemTemplate; context: { $implicit: items[index], index: index }"
@@ -56,6 +59,10 @@ import { VirtualScrollManager, VirtualScrollResult } from '../../utils/virtual-s
 
       .virtual-scroll-content {
         position: relative;
+        /* Performance optimization: GPU acceleration */
+        will-change: transform;
+        /* Performance optimization: CSS containment */
+        contain: layout style paint;
       }
     `,
   ],

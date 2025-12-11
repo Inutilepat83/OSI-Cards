@@ -45,14 +45,15 @@
   flex-direction: column;
   overflow: hidden;
   padding: 0;
-  transition: all 300ms var(--ease-out);
+  transition:
+    box-shadow var(--duration-slow) var(--ease-out),
+    background var(--duration-slow) var(--ease-out);
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-xl);
+    background: var(--osi-section-item-background-hover);
 
     .img {
-      transform: scale(1.05);
       opacity: 0.94;
     }
 

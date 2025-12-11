@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { CardPreviewService } from './card-preview.service';
 import { CardBuilder } from '../../testing/test-builders';
-import { CardChangeType } from '../utils/card-diff.util';
+import { CardPreviewService } from './card-preview.service';
 
 describe('CardPreviewService', () => {
   let service: CardPreviewService;

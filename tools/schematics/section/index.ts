@@ -223,3 +223,4 @@ function logCompletion(name: string, type: string): Rule {
     return _tree;
   };
 }
+

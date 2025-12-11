@@ -1,6 +1,6 @@
 /**
  * OSI Cards - Micro-Interactions
- * 
+ *
  * Delightful micro-animations and interactions for enhanced UX.
  */
 
@@ -90,14 +90,14 @@
 
 .osi-card-container {
   transition:
-    transform var(--osi-duration-normal) var(--osi-ease-out-quart),
-    box-shadow var(--osi-duration-normal) var(--osi-ease-out-quart);
+    box-shadow var(--osi-duration-normal) var(--osi-ease-out-quart),
+    background var(--osi-duration-normal) var(--osi-ease-out-quart);
 
   &:hover {
-    transform: translateY(-4px);
     box-shadow:
       0 12px 40px rgba(0, 0, 0, 0.12),
       0 4px 8px rgba(0, 0, 0, 0.08);
+    background: var(--osi-section-item-background-hover, var(--osi-card-background));
   }
 
   // Subtle glow on hover
@@ -128,33 +128,33 @@
 @keyframes section-enter {
   from {
     opacity: 0;
-    transform: translateY(20px) scale(0.96);
+    transform: translate3d(0, 20px, 0) scale(0.96);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 
 @keyframes section-enter-left {
   from {
     opacity: 0;
-    transform: translateX(-20px);
+    transform: translate3d(-20px, 0, 0);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes section-enter-scale {
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: translate3d(0, 0, 0) scale(0.9);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 
@@ -175,12 +175,12 @@
 @keyframes value-reveal {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translate3d(0, 8px, 0);
     filter: blur(4px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
     filter: blur(0);
   }
 }
@@ -195,14 +195,14 @@
 
 @keyframes metric-pop {
   0% {
-    transform: scale(0.8);
+    transform: translate3d(0, 0, 0) scale(0.8);
     opacity: 0;
   }
   50% {
-    transform: scale(1.05);
+    transform: translate3d(0, 0, 0) scale(1.05);
   }
   100% {
-    transform: scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
     opacity: 1;
   }
 }
@@ -217,22 +217,22 @@
 
 @keyframes trend-up {
   0% {
-    transform: translateY(4px);
+    transform: translate3d(0, 4px, 0);
     opacity: 0;
   }
   100% {
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
     opacity: 1;
   }
 }
 
 @keyframes trend-down {
   0% {
-    transform: translateY(-4px);
+    transform: translate3d(0, -4px, 0);
     opacity: 0;
   }
   100% {
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
     opacity: 1;
   }
 }
@@ -394,11 +394,11 @@
 @keyframes tooltip-enter {
   from {
     opacity: 0;
-    transform: translateY(4px) scale(0.95);
+    transform: translate3d(0, 4px, 0) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 
@@ -475,20 +475,20 @@
 @keyframes shake {
   0%,
   100% {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
   10%,
   30%,
   50%,
   70%,
   90% {
-    transform: translateX(-4px);
+    transform: translate3d(-4px, 0, 0);
   }
   20%,
   40%,
   60%,
   80% {
-    transform: translateX(4px);
+    transform: translate3d(4px, 0, 0);
   }
 }
 
@@ -502,14 +502,14 @@
 
 @keyframes success-pop {
   0% {
-    transform: scale(0);
+    transform: translate3d(0, 0, 0) scale(0);
     opacity: 0;
   }
   50% {
-    transform: scale(1.2);
+    transform: translate3d(0, 0, 0) scale(1.2);
   }
   100% {
-    transform: scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
     opacity: 1;
   }
 }
@@ -555,22 +555,22 @@
 @keyframes slide-in-up {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translate3d(0, 16px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes slide-in-down {
   from {
     opacity: 0;
-    transform: translateY(-16px);
+    transform: translate3d(0, -16px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 

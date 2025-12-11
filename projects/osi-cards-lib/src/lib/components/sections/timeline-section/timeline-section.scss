@@ -42,6 +42,8 @@
   gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
   padding: var(--osi-spacing-compact-sm, 6px) 0; // Compact: 6px (was 12px)
   transition: all 250ms var(--ease-out);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 
   &:not(:last-child) {
     padding-bottom: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
@@ -54,13 +56,22 @@
 
     .timeline-dot {
       background: var(--accent);
-      transform: scale(1.3);
       box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.2);
     }
 
     .timeline-title {
       color: var(--accent);
     }
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(var(--accent-rgb), 0.7);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
   }
 }
 
@@ -133,6 +144,22 @@
   color: var(--muted-foreground);
   margin: 0;
   line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.timeline-item.expanded {
+  .timeline-content {
+    background: var(--surface-raised);
+  }
+
+  .timeline-description {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+  }
 }
 
 // Badge

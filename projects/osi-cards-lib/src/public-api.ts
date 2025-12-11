@@ -195,6 +195,17 @@ export {
   OSICardsThemeConfig,
   OSI_THEME_CONFIG,
   ThemePreset,
+  /**
+   * @deprecated For library integration, prefer container-scoped theming:
+   * - Use `<osi-cards-container [theme]="'day'">` component input
+   * - Use `[attr.data-theme]="theme"` attribute binding
+   * - Use `OsiThemeDirective` for scoped theming
+   *
+   * ThemeService mutates document.documentElement globally, which breaks library independence.
+   * It's primarily intended for demo app use where global theming is acceptable.
+   *
+   * If you must use ThemeService, provide a targetElement in the config for container-scoped theming.
+   */
   ThemeService,
   ThemeServiceConfig,
   provideOSICardsTheme,
@@ -279,6 +290,7 @@ export { ObjectPool } from './lib/utils/object-pool.util';
 
 // Layout & Grid
 export { PerfectBinPacker } from './lib/utils/perfect-bin-packer.util';
+export { packWithZeroGapsGuarantee } from './lib/utils/zero-gap-packer.util';
 
 // Animation & Interactions
 export { debounce, throttle } from './lib/utils/debounce-throttle.util';
@@ -316,16 +328,16 @@ export {
 // VERSION INFO
 // ═══════════════════════════════════════════════════════════════════════════
 export {
-  VERSION,
+  BUILD_BRANCH,
   BUILD_DATE,
   BUILD_HASH,
-  BUILD_BRANCH,
+  VERSION,
   VERSION_INFO,
-  getVersionString,
-  getShortVersion,
   getBuildInfo,
-  isProductionBuild,
+  getShortVersion,
+  getVersionString,
   isPrerelease,
+  isProductionBuild,
   type VersionInfo,
 } from './lib/version';
 

@@ -40,7 +40,9 @@
   border-radius: var(--radius-sm);
   display: flex;
   gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
-  transition: all 250ms var(--ease-out);
+  transition:
+    background var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out);
   cursor: pointer;
 
   &:not(:last-child) {
@@ -49,12 +51,10 @@
 
   &:hover {
     background: var(--surface-hover);
-    transform: translateX(4px);
 
     .date {
       background: var(--accent);
       color: white;
-      transform: scale(1.04);
 
       .month {
         color: rgba(255, 255, 255, 0.9);

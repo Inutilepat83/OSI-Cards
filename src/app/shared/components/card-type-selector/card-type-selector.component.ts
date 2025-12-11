@@ -13,7 +13,7 @@ import { CardType } from '../../../models';
   template: `
     <div class="card-type-wrapper">
       <button
-        *ngFor="let type of cardTypes"
+        *ngFor="let type of cardTypes; trackBy: trackByCardType"
         class="card-type-btn"
         (click)="onTypeClick(type)"
         [class.active]="selectedType === type"
@@ -85,5 +85,9 @@ export class CardTypeSelectorComponent {
     if (!this.disabled) {
       this.typeChange.emit(type);
     }
+  }
+
+  trackByCardType(_index: number, type: CardType): CardType {
+    return type;
   }
 }

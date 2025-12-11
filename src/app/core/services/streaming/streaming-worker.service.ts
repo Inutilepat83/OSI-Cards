@@ -357,7 +357,7 @@ export class StreamingWorkerService implements OnDestroy {
         let result: unknown;
 
         switch (type) {
-          case 'PARSE_JSON':
+          case 'PARSE_JSON': {
             const jsonPayload = payload as unknown as ParseJsonPayload;
             try {
               const card = JSON.parse(jsonPayload.json);
@@ -366,8 +366,9 @@ export class StreamingWorkerService implements OnDestroy {
               result = { card: null, isValid: false };
             }
             break;
+          }
 
-          case 'PARSE_CHUNK':
+          case 'PARSE_CHUNK': {
             const chunkPayload = payload as unknown as ParseChunkPayload;
             const buffer = chunkPayload.buffer + chunkPayload.chunk;
             try {
@@ -387,6 +388,7 @@ export class StreamingWorkerService implements OnDestroy {
               };
             }
             break;
+          }
 
           case 'DIFF_CARDS':
             result = {
@@ -397,12 +399,13 @@ export class StreamingWorkerService implements OnDestroy {
             };
             break;
 
-          case 'VALIDATE_CARD':
+          case 'VALIDATE_CARD': {
             const validatePayload = payload as unknown as ValidateCardPayload;
             const card = validatePayload.card;
             const isValid = card && typeof card === 'object' && 'cardTitle' in card;
             result = { isValid, errors: isValid ? [] : ['Invalid card structure'] };
             break;
+          }
 
           case 'EXTRACT_SECTIONS':
             result = { sections: [], cardTitle: '', isComplete: false };

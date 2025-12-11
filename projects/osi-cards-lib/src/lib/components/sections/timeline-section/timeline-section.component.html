@@ -3,7 +3,16 @@
   </lib-section-header>
 
   <div class="timeline-container" *ngIf="section.items?.length">
-    <div class="timeline-item" *ngFor="let event of section.items; let i = index; let last = last">
+    <div
+      class="timeline-item"
+      *ngFor="let event of section.items; let i = index; let last = last"
+      [class.expanded]="expandedIndex === i"
+      role="button"
+      tabindex="0"
+      [attr.aria-expanded]="expandedIndex === i"
+      (click)="toggleExpanded(i)"
+      (keydown)="onItemKeydown($event, i)"
+    >
       <div class="timeline-marker">
         <div class="timeline-dot"></div>
         <div class="timeline-line" *ngIf="!last"></div>

@@ -4,15 +4,15 @@
  * Unified component for rendering fields across all section types.
  * Consolidates field rendering logic from multiple section components.
  */
+import { CommonModule } from '@angular/common';
 import {
-  Component,
   ChangeDetectionStrategy,
-  Input,
-  Output,
+  Component,
   EventEmitter,
   HostListener,
+  Input,
+  Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 export interface FieldData {
   label: string;
@@ -96,55 +96,55 @@ export interface FieldClickEvent {
         align-items: baseline;
         gap: 0.5rem;
         padding: 0.25rem 0;
+      }
 
-        &--clickable {
-          cursor: pointer;
-          border-radius: 4px;
-          padding: 0.25rem 0.5rem;
-          margin: 0 -0.5rem;
-          transition: background-color 0.15s ease;
+      .field.field--clickable {
+        cursor: pointer;
+        border-radius: 4px;
+        padding: 0.25rem 0.5rem;
+        margin: 0 -0.5rem;
+        transition: background-color 0.15s ease;
+      }
 
-          &:hover {
-            background-color: var(--osi-field-hover-bg, rgba(0, 0, 0, 0.05));
-          }
+      .field.field--clickable:hover {
+        background-color: var(--osi-field-hover-bg, rgba(0, 0, 0, 0.05));
+      }
 
-          &:focus-visible {
-            outline: 2px solid var(--osi-focus-ring, #4f46e5);
-            outline-offset: 2px;
-          }
-        }
+      .field.field--clickable:focus-visible {
+        outline: 2px solid var(--osi-focus-ring, #4f46e5);
+        outline-offset: 2px;
       }
 
       .field__label {
         color: var(--osi-field-label-color, #64748b);
         font-size: 0.875rem;
         flex-shrink: 0;
+      }
 
-        &::after {
-          content: ':';
-        }
+      .field__label::after {
+        content: ':';
       }
 
       .field__value {
         color: var(--osi-field-value-color, #1e293b);
         font-weight: 500;
+      }
 
-        a {
-          color: var(--osi-link-color, #3b82f6);
-          text-decoration: none;
+      .field__value a {
+        color: var(--osi-link-color, #3b82f6);
+        text-decoration: none;
+      }
 
-          &:hover {
-            text-decoration: underline;
-          }
-        }
+      .field__value a:hover {
+        text-decoration: underline;
+      }
 
-        &--true {
-          color: var(--osi-success-color, #22c55e);
-        }
+      .field__value--true {
+        color: var(--osi-success-color, #22c55e);
+      }
 
-        &--false {
-          color: var(--osi-error-color, #ef4444);
-        }
+      .field__value--false {
+        color: var(--osi-error-color, #ef4444);
       }
 
       .field__icon {
@@ -160,14 +160,14 @@ export interface FieldClickEvent {
         transition: opacity 0.15s ease;
         padding: 0.125rem;
         font-size: 0.75rem;
+      }
 
-        .field:hover & {
-          opacity: 0.7;
-        }
+      .field:hover .field__copy {
+        opacity: 0.7;
+      }
 
-        &:hover {
-          opacity: 1 !important;
-        }
+      .field__copy:hover {
+        opacity: 1 !important;
       }
     `,
   ],

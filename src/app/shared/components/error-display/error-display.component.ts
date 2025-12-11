@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { map, Observable } from 'rxjs';
+import { ErrorHandlingService } from '../../../core/services/error-handling.service';
+import { generateUserFriendlyError } from '../../../shared/utils/improved-error-messages.util';
 import { AppState } from '../../../store/app.state';
 import { selectError } from '../../../store/cards/cards.selectors';
 import * as CardActions from '../../../store/cards/cards.state';
-import { ErrorHandlingService } from '../../../core/services/error-handling.service';
-import { generateUserFriendlyError } from '../../../shared/utils/improved-error-messages.util';
 
 @Component({
   selector: 'app-error-display',
@@ -50,7 +50,9 @@ import { generateUserFriendlyError } from '../../../shared/utils/improved-error-
           <h3 class="error-title">{{ friendlyError.title }}</h3>
           <p class="error-text">{{ friendlyError.message }}</p>
           <ul class="error-suggestions" *ngIf="friendlyError.suggestions.length > 0">
-            <li *ngFor="let suggestion of friendlyError.suggestions">{{ suggestion }}</li>
+            <li *ngFor="let suggestion of friendlyError.suggestions; trackBy: trackBySuggestion">
+              {{ suggestion }}
+            </li>
           </ul>
         </div>
         <button
@@ -239,5 +241,9 @@ export class ErrorDisplayComponent {
   retry(): void {
     this.clearError();
     this.store.dispatch(CardActions.loadCards());
+  }
+
+  trackBySuggestion(_index: number, suggestion: string): string {
+    return suggestion;
   }
 }

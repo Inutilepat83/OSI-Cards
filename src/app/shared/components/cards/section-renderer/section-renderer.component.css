@@ -1,4 +1,16 @@
 :host {
   position: relative;
   display: block;
+  width: 100%;
+}
+
+/* Ensure dynamic components have proper styling context */
+:host ::ng-deep > * {
+  width: 100%;
+}
+
+/* Base section container styles */
+:host ::ng-deep .section-container {
+  width: 100%;
+  display: block;
 }

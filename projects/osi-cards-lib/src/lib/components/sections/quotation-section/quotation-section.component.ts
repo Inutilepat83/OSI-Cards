@@ -21,6 +21,8 @@ import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.
 export class QuotationSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);
 
+  expandedIndex: number | null = null;
+
   ngOnInit(): void {
     // Register layout preference function for this section type
     this.layoutService.register('quotation', (section: CardSection, availableColumns: number) => {
@@ -95,5 +97,16 @@ export class QuotationSectionComponent extends BaseSectionComponent implements O
    */
   getAuthorName(field: any): string {
     return field.author || field.label || '';
+  }
+
+  toggleExpanded(index: number): void {
+    this.expandedIndex = this.expandedIndex === index ? null : index;
+  }
+
+  onQuoteKeydown(event: KeyboardEvent, index: number): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      this.toggleExpanded(index);
+    }
   }
 }

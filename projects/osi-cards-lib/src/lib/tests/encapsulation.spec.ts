@@ -1,8 +1,8 @@
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, ViewEncapsulation } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { CardSkeletonComponent } from '../components/card-skeleton/card-skeleton.component';
-import { provideOSICards } from '../providers/osi-cards.providers';
+import { provideOsiCards } from '../providers/osi-cards.providers';
 
 /**
  * Encapsulation Test Suite
@@ -23,7 +23,7 @@ describe('CSS Encapsulation', () => {
     beforeEach(async () => {
       await TestBed.configureTestingModule({
         imports: [CardSkeletonComponent],
-        providers: [provideOSICards()],
+        providers: [provideOsiCards()],
       }).compileComponents();
 
       fixture = TestBed.createComponent(CardSkeletonComponent);
@@ -103,7 +103,7 @@ describe('CSS Encapsulation', () => {
     beforeEach(async () => {
       await TestBed.configureTestingModule({
         imports: [TestHostComponent, CardSkeletonComponent],
-        providers: [provideOSICards()],
+        providers: [provideOsiCards()],
       }).compileComponents();
 
       fixture = TestBed.createComponent(TestHostComponent);
@@ -161,7 +161,7 @@ describe('CSS Encapsulation', () => {
     beforeEach(async () => {
       await TestBed.configureTestingModule({
         imports: [TestSiblingComponent, CardSkeletonComponent],
-        providers: [provideOSICards()],
+        providers: [provideOsiCards()],
       }).compileComponents();
 
       fixture = TestBed.createComponent(TestSiblingComponent);
@@ -217,7 +217,7 @@ describe('CSS Encapsulation', () => {
     beforeEach(async () => {
       await TestBed.configureTestingModule({
         imports: [TestThemeHostComponent, CardSkeletonComponent],
-        providers: [provideOSICards()],
+        providers: [provideOsiCards()],
       }).compileComponents();
 
       fixture = TestBed.createComponent(TestThemeHostComponent);
@@ -261,16 +261,18 @@ describe('Animation Encapsulation', () => {
       // Mock matchMedia
       const originalMatchMedia = window.matchMedia;
 
-      window.matchMedia = jest.fn().mockImplementation((query) => ({
-        matches: query === '(prefers-reduced-motion: reduce)',
-        media: query,
-        onchange: null,
-        addListener: jest.fn(),
-        removeListener: jest.fn(),
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-        dispatchEvent: jest.fn(),
-      }));
+      window.matchMedia = jasmine.createSpy('matchMedia').and.callFake((query: string) => {
+        return {
+          matches: query === '(prefers-reduced-motion: reduce)',
+          media: query,
+          onchange: null,
+          addListener: () => {},
+          removeListener: () => {},
+          addEventListener: () => {},
+          removeEventListener: () => {},
+          dispatchEvent: () => true,
+        } as MediaQueryList;
+      });
 
       // Test would verify animations are disabled
       // Reset

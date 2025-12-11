@@ -21,6 +21,8 @@ import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.
 export class TimelineSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);
 
+  expandedIndex: number | null = null;
+
   ngOnInit(): void {
     // Register layout preference function for this section type
     this.layoutService.register('timeline', (section: CardSection, availableColumns: number) => {
@@ -94,5 +96,16 @@ export class TimelineSectionComponent extends BaseSectionComponent implements On
   getStatusClass(status?: unknown): string {
     if (!status || typeof status !== 'string') return '';
     return `timeline-status--${status}`;
+  }
+
+  toggleExpanded(index: number): void {
+    this.expandedIndex = this.expandedIndex === index ? null : index;
+  }
+
+  onItemKeydown(event: KeyboardEvent, index: number): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      this.toggleExpanded(index);
+    }
   }
 }

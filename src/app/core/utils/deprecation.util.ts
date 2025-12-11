@@ -68,7 +68,7 @@ let config: Required<DeprecationConfig> = {
   enabled: true,
   throwOnDeprecation: false,
   maxWarnings: 3,
-  onWarning: () => {},
+  onWarning: () => undefined,
 };
 
 // =============================================================================

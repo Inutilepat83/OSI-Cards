@@ -1,5 +1,5 @@
 import { animate, AnimationBuilder, style, transition, trigger } from '@angular/animations';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {
   AfterViewInit,
@@ -8,6 +8,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostBinding,
   inject,
   Injector,
   Input,
@@ -36,8 +37,8 @@ import {
   SectionNormalizationService,
   TiltCalculations,
 } from '../../services';
-import { generateCardSummary, generateBriefSummary } from '../../utils/card-summary.util';
 import { CardChangeType } from '../../utils';
+import { generateBriefSummary, generateCardSummary } from '../../utils/card-summary.util';
 import { CardActionsComponent } from '../card-actions/card-actions.component';
 import { CardHeaderComponent } from '../card-header/card-header.component';
 import { CardSectionListComponent } from '../card-section-list/card-section-list.component';
@@ -88,8 +89,122 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   private _cardConfig: AICardConfig | undefined;
   private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly document = inject(DOCUMENT);
   private readonly injector = inject(Injector);
   private readonly platformId = inject(PLATFORM_ID);
+
+  /**
+   * Host binding for data-theme attribute to ensure Shadow DOM theme scope
+   * Resolves theme input to 'day' or 'night' for consistent cross-browser behavior
+   */
+  private readonly fallbackTheme: 'day' | 'night' = 'day';
+  private inheritedTheme: string = this.fallbackTheme;
+  private themeContextElement: HTMLElement | null = null;
+  private themeContextObserver: MutationObserver | null = null;
+
+  @HostBinding('attr.data-theme')
+  get dataTheme(): string {
+    if (this.theme) {
+      // If explicit theme provided, resolve it
+      if (this.theme === 'system') {
+        // Detect system preference
+        if (isPlatformBrowser(this.platformId)) {
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'day';
+        }
+        return 'day';
+      }
+      // Map 'light'/'dark' to 'day'/'night' for consistency
+      if (this.theme === 'light') {
+        return 'day';
+      }
+      if (this.theme === 'dark') {
+        return 'night';
+      }
+      // Return as-is for custom themes or 'day'/'night'
+      return this.theme;
+    }
+
+    // No explicit theme input: use the synced inherited theme (keeps Safari reliable by
+    // ensuring the host itself always has the correct data-theme value).
+    return this.inheritedTheme || this.fallbackTheme;
+  }
+
+  private normalizeThemeFromAttr(raw: string | null): string | null {
+    const value = raw?.trim();
+    if (!value) {
+      return null;
+    }
+
+    // Normalize common app-level names to OSI card names
+    if (value === 'light') return 'day';
+    if (value === 'dark') return 'night';
+
+    if (value === 'system') {
+      if (isPlatformBrowser(this.platformId)) {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'day';
+      }
+      return this.fallbackTheme;
+    }
+
+    return value;
+  }
+
+  /**
+   * Keeps inherited theme in sync with the nearest `data-theme` ancestor (or `<html>`),
+   * so Shadow DOM styling can use `:host([data-theme])` instead of relying on `:host-context`
+   * (which is known to be inconsistent in Safari).
+   */
+  private setupInheritedThemeSync(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    // If theme input is provided, the component is explicitly themed and does not need syncing.
+    if (this.theme) {
+      return;
+    }
+
+    if (this.themeContextElement) {
+      // Already initialized
+      return;
+    }
+
+    const hostElement = this.el.nativeElement;
+
+    // Prefer the nearest ancestor that defines data-theme, but ignore internal wrappers like `.osi-cards-root`
+    // so global theming (ThemeService on <html>) can still drive the card.
+    const contextEl =
+      (hostElement.parentElement?.closest(
+        '[data-theme]:not(.osi-cards-root)'
+      ) as HTMLElement | null) ?? (this.document.documentElement as HTMLElement | null);
+
+    this.themeContextElement = contextEl;
+
+    // Initial sync
+    const initialTheme = this.normalizeThemeFromAttr(
+      contextEl ? contextEl.getAttribute('data-theme') : null
+    );
+    this.inheritedTheme = initialTheme ?? this.fallbackTheme;
+
+    // Observe attribute changes to keep host binding updated (Safari-safe)
+    if (typeof MutationObserver === 'undefined' || !contextEl) {
+      return;
+    }
+
+    this.themeContextObserver = new MutationObserver(() => {
+      const next =
+        this.normalizeThemeFromAttr(contextEl.getAttribute('data-theme')) ?? this.fallbackTheme;
+      if (next !== this.inheritedTheme) {
+        this.inheritedTheme = next;
+        this.cdr.markForCheck();
+      }
+    });
+
+    this.themeContextObserver.observe(contextEl, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
+  }
 
   // Expose Math for template
   Math = Math;
@@ -230,6 +345,13 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   @Input() isFullscreen = false;
   @Input() tiltEnabled = true;
   @Input() streamingStage: StreamingStage = undefined;
+
+  /**
+   * Theme input - allows parent to explicitly set theme for Shadow DOM scope
+   * Values: 'day' | 'night' | 'system' | string (custom theme name)
+   * If not provided, component will attempt to detect from context or use default
+   */
+  @Input() theme?: 'day' | 'night' | 'system' | string;
   @Input() streamingProgress?: number; // Progress 0-1
   @Input() streamingProgressLabel?: string; // e.g., "STREAMING JSON (75%)"
 
@@ -367,6 +489,9 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   @Input() llmFallbackPrompt?: string;
 
   ngOnInit(): void {
+    // Ensure the host gets the correct data-theme even in Safari (no :host-context reliance).
+    this.setupInheritedThemeSync();
+
     // Validate animations provider in development mode
     if (isDevMode() && isPlatformBrowser(this.platformId)) {
       this.validateAnimationsProvider();
@@ -667,6 +792,13 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngOnDestroy(): void {
+    // Clean up theme observer
+    if (this.themeContextObserver) {
+      this.themeContextObserver.disconnect();
+      this.themeContextObserver = null;
+    }
+    this.themeContextElement = null;
+
     // Cancel any pending RAFs
     if (this.mouseMoveRafId !== null) {
       cancelAnimationFrame(this.mouseMoveRafId);
@@ -688,6 +820,9 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   onMouseEnter(event: MouseEvent): void {
+    if (!this.tiltEnabled || this.isFullscreen) {
+      return;
+    }
     this.isHovered = true;
     this.mousePosition = { x: event.clientX, y: event.clientY };
     if (this.tiltContainerRef?.nativeElement) {
@@ -716,7 +851,12 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   onMouseMove(event: MouseEvent): void {
-    if (!this.isHovered || !this.tiltContainerRef?.nativeElement) {
+    if (
+      !this.tiltEnabled ||
+      this.isFullscreen ||
+      !this.isHovered ||
+      !this.tiltContainerRef?.nativeElement
+    ) {
       return;
     }
 

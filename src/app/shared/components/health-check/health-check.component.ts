@@ -4,7 +4,6 @@ import {
   Component,
   DestroyRef,
   inject,
-  OnDestroy,
   OnInit,
 } from '@angular/core';
 import { HealthCheckService, HealthStatus } from '../../../core/services/health-check.service';
@@ -135,7 +134,7 @@ import { HealthCheckService, HealthStatus } from '../../../core/services/health-
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HealthCheckComponent implements OnInit, OnDestroy {
+export class HealthCheckComponent implements OnInit {
   private readonly healthCheckService = inject(HealthCheckService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -145,10 +144,6 @@ export class HealthCheckComponent implements OnInit, OnDestroy {
   async ngOnInit(): Promise<void> {
     // Initial health check
     this.healthStatus = await this.healthCheckService.check();
-  }
-
-  ngOnDestroy(): void {
-    // Cleanup handled by takeUntilDestroyed
   }
 
   formatUptime(ms: number): string {

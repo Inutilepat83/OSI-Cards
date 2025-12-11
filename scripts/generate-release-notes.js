@@ -130,3 +130,4 @@ if (process.argv.includes('--write')) {
   fs.writeFileSync('RELEASE_NOTES.md', notes);
   console.log('\n✅ Release notes written to RELEASE_NOTES.md');
 }
+

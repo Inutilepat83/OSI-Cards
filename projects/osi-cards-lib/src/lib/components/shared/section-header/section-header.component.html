@@ -1,16 +1,16 @@
-<div class="section-header" [ngClass]="headerClass" *ngIf="title || description">
+<div class="section-header ai-section__header" [ngClass]="headerClass" *ngIf="title || description">
   <!-- Dynamic heading level -->
   <ng-container [ngSwitch]="level">
-    <h1 *ngSwitchCase="1" class="section-title" [ngClass]="titleClass">{{ title }}</h1>
-    <h2 *ngSwitchCase="2" class="section-title" [ngClass]="titleClass">{{ title }}</h2>
-    <h3 *ngSwitchCase="3" class="section-title" [ngClass]="titleClass">{{ title }}</h3>
-    <h4 *ngSwitchCase="4" class="section-title" [ngClass]="titleClass">{{ title }}</h4>
-    <h5 *ngSwitchCase="5" class="section-title" [ngClass]="titleClass">{{ title }}</h5>
-    <h6 *ngSwitchCase="6" class="section-title" [ngClass]="titleClass">{{ title }}</h6>
+    <h1 *ngSwitchCase="1" class="section-title ai-section__title" [ngClass]="titleClass">{{ title }}</h1>
+    <h2 *ngSwitchCase="2" class="section-title ai-section__title" [ngClass]="titleClass">{{ title }}</h2>
+    <h3 *ngSwitchCase="3" class="section-title ai-section__title" [ngClass]="titleClass">{{ title }}</h3>
+    <h4 *ngSwitchCase="4" class="section-title ai-section__title" [ngClass]="titleClass">{{ title }}</h4>
+    <h5 *ngSwitchCase="5" class="section-title ai-section__title" [ngClass]="titleClass">{{ title }}</h5>
+    <h6 *ngSwitchCase="6" class="section-title ai-section__title" [ngClass]="titleClass">{{ title }}</h6>
   </ng-container>
 
   <!-- Description -->
-  <p class="section-description" [ngClass]="descriptionClass" *ngIf="description">
+  <p class="section-description ai-section__description" [ngClass]="descriptionClass" *ngIf="description">
     {{ description }}
   </p>
 </div>

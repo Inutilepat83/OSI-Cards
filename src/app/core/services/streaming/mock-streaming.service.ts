@@ -10,6 +10,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, concat, Observable, of, Subject, timer } from 'rxjs';
 import { finalize, map, takeUntil } from 'rxjs/operators';
+import { AICardConfig } from '../../../models';
 import {
   StreamingChunk,
   StreamingConnectionState,
@@ -19,7 +20,6 @@ import {
   StreamingTransportConfig,
   StreamingTransportError,
 } from './streaming-transport.interface';
-import { AICardConfig } from '../../../models';
 
 /**
  * Mock chunk definition
@@ -415,7 +415,7 @@ export class MockStreamingService extends StreamingTransport {
 
     return concat(...chunkObservables).pipe(
       takeUntil(this.destroy$),
-      finalize(() => {})
+      finalize(() => undefined)
     );
   }
 

@@ -1,7 +1,7 @@
-import { TestBed } from '@angular/core/testing';
-import { FocusManagementService } from './focus-management.service';
-import { LoggingService } from '../../core/services/logging.service';
 import { NgZone } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { LoggingService } from '../../core/services/logging.service';
+import { FocusManagementService } from './focus-management.service';
 
 describe('FocusManagementService', () => {
   let service: FocusManagementService;
@@ -23,7 +23,7 @@ describe('FocusManagementService', () => {
     loggingService = TestBed.inject(LoggingService) as jasmine.SpyObj<LoggingService>;
     ngZone = TestBed.inject(NgZone) as jasmine.SpyObj<NgZone>;
 
-    ngZone.runOutsideAngular.and.callFake((fn: () => void) => fn());
+    ngZone.runOutsideAngular.and.callFake(<T>(fn: (...args: any[]) => T) => fn());
   });
 
   it('should be created', () => {
@@ -132,7 +132,7 @@ describe('FocusManagementService', () => {
       spyOn(firstButton, 'focus');
       spyOn(thirdButton, 'focus');
 
-      const release = service.trapFocus(container);
+      const trapId = service.trapFocus(container);
 
       expect(firstButton.focus).toHaveBeenCalled();
 
@@ -143,12 +143,12 @@ describe('FocusManagementService', () => {
       // Should wrap to first
       expect(firstButton.focus).toHaveBeenCalledTimes(2);
 
-      release();
+      service.releaseTrap(trapId);
     });
 
-    it('should return release function', () => {
+    it('should return release function when using trapFocusWithRelease', () => {
       const container = document.getElementById('container') as HTMLElement;
-      const release = service.trapFocus(container);
+      const release = service.trapFocusWithRelease(container);
 
       expect(typeof release).toBe('function');
       expect(() => release()).not.toThrow();

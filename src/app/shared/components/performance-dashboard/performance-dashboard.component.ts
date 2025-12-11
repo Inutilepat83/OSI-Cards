@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PerformanceMetric, PerformanceService } from '../../../core/services/performance.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DestroyRef } from '@angular/core';
 import { interval } from 'rxjs';
 
 /**
@@ -28,7 +27,7 @@ import { interval } from 'rxjs';
   styleUrls: ['./performance-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PerformanceDashboardComponent implements OnInit, OnDestroy {
+export class PerformanceDashboardComponent implements OnInit {
   private readonly performanceService = inject(PerformanceService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -62,10 +61,6 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
           this.loadMetrics();
         });
     }
-  }
-
-  ngOnDestroy(): void {
-    // Cleanup handled by takeUntilDestroyed
   }
 
   /**

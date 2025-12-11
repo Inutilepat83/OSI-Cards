@@ -45,7 +45,7 @@ export class JsonFileStorageService {
     console.warn('JsonFileStorageService: Implement save functionality in your app');
     return {
       pipe: () => ({
-        subscribe: () => {},
+        subscribe: () => ({ unsubscribe: () => undefined }),
       }),
     };
   }
@@ -54,7 +54,7 @@ export class JsonFileStorageService {
     console.warn('JsonFileStorageService: Implement loadAllCards functionality in your app');
     return {
       pipe: () => ({
-        subscribe: () => {},
+        subscribe: () => ({ unsubscribe: () => undefined }),
       }),
     };
   }

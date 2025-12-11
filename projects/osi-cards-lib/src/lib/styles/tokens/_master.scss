@@ -2,8 +2,19 @@
 // MASTER DESIGN TOKENS - Single Source of Truth
 // ============================================
 //
-// This file is the ONLY place where design tokens are defined.
-// All other files import from here.
+// This file is the PRIMARY source for CSS design tokens (`--osi-*` variables).
+// All other SCSS files import from here.
+//
+// ⚠️ TOKEN SOURCE RELATIONSHIPS:
+// - CSS tokens (`--osi-*`): This file is authoritative
+// - JS theme presets (`--theme-*`): See `themes/presets.ts` (applied via JavaScript)
+// - Demo app themes: See `styles/themes.scss` (for demo app global theming)
+//
+// NOTE: `--theme-*` values in `themes/presets.ts` should match corresponding
+// values in this file's mixins (e.g., `osi-theme-dark`, `osi-theme-light`).
+//
+// TODO: Consider consolidating all token sources into a single definition file
+// that both SCSS and TypeScript can consume to eliminate duplication.
 //
 // Organization:
 //   1. PRIMITIVE TOKENS - Raw color values, base numbers
@@ -521,7 +532,7 @@ $breakpoints: (
   --card-nested-gap: clamp(3px, 0.4vw, 6px);
   --section-header-gap: clamp(3px, 0.4vw, 6px);
   --section-header-padding-bottom: clamp(0px, 0.2vw, 2px);
-  --section-title-margin-bottom: 2px;
+  --section-title-margin-bottom: 0;
   --card-border-radius: 12px;
   --card-border-radius-large: 16px;
   --section-card-gap: 8px;
@@ -597,14 +608,348 @@ $breakpoints: (
 
 /// Generate interactive state tokens
 @mixin osi-interactive() {
-  --interactive-hover-bg: #{$brand-color-08};
+  --interactive-hover-bg: #{$brand-color-03};
   --interactive-active-bg: #{$brand-color-12};
   --interactive-focus-ring: 0 0 0 2px #{$brand-color-40};
   --interactive-glow: 0 0 12px #{$brand-color-30};
 }
 
+/// Generate OSI Card component tokens (--osi-card-*)
+/// SINGLE SOURCE OF TRUTH for all card styling variables
+@mixin osi-card-tokens() {
+  // Card Background
+  --osi-card-background: var(
+    --theme-ai-card-background,
+    var(--card-surface, var(--card-section-bg))
+  );
+  --osi-card-background-hover: var(
+    --theme-ai-card-background-hover,
+    var(--card-surface-hover, var(--card-section-bg))
+  );
+  --osi-card-background-fullscreen: var(--osi-card-background);
+
+  // Card Backdrop Filter
+  --osi-card-backdrop-filter: var(--theme-ai-card-backdrop-filter, blur(12px));
+
+  // Card Border
+  --osi-card-border: var(--theme-ai-card-border, 1px solid #{$white-05});
+  --osi-card-border-hover: var(--theme-ai-card-border-hover, 1px solid #{$brand-color-12});
+  --osi-card-border-fullscreen: none;
+
+  // Card Shadow
+  --osi-card-shadow: var(--theme-ai-card-box-shadow, var(--shadow-md));
+  --osi-card-shadow-hover: var(--theme-ai-card-box-shadow-hover, var(--shadow-lg));
+  --osi-card-shadow-fullscreen: none;
+
+  // Card Spacing - Padding
+  --osi-card-padding: var(--card-main-padding);
+  --osi-card-padding-top: var(--card-main-padding);
+  --osi-card-padding-bottom: var(--card-main-padding);
+  --osi-card-padding-left: var(--card-main-padding);
+  --osi-card-padding-right: var(--card-main-padding);
+  --osi-card-padding-mobile: var(--space-1);
+
+  // Card Spacing - Margins
+  --osi-card-margin-top: 0;
+  --osi-card-margin-bottom: 0;
+  --osi-card-margin-left: 0;
+  --osi-card-margin-right: 0;
+
+  // Card Spacing - Gaps
+  --osi-card-gap: var(--section-card-gap);
+  --osi-card-body-gap: var(--space-3);
+  --osi-card-grid-gap: var(--section-card-gap);
+
+  // Card Border Radius
+  --osi-card-border-radius: var(--card-border-radius);
+  --osi-card-border-radius-fullscreen: 0;
+
+  // Card Text Colors
+  --osi-card-text-primary: var(--card-text-primary);
+  --osi-card-text-secondary: var(--card-text-secondary);
+  --osi-card-text-muted: var(--card-text-muted);
+  --osi-card-text-label: var(--card-text-label);
+  --osi-card-text-meta: var(--card-meta-color);
+
+  // Card Transitions
+  --osi-card-transition: var(--theme-ai-card-transition, all 0.28s cubic-bezier(0.4, 0, 0.2, 1));
+  --osi-card-transition-border: border-color 0.2s ease;
+  --osi-card-transition-background: background 0.2s ease;
+  --osi-card-transition-shadow: box-shadow 0.2s ease;
+
+  // Card Actions
+  --osi-card-action-primary-bg: var(--primary, #{$osi-color-brand});
+  --osi-card-action-primary-bg-hover: rgba($osi-color-brand, 0.85);
+  --osi-card-action-primary-color: var(--primary-foreground, #{$osi-color-white});
+  --osi-card-action-primary-border: #{$brand-color-80};
+  --osi-card-action-primary-shadow: 0 2px 8px #{$brand-color-15}, 0 1px 2px rgba(0, 0, 0, 0.1);
+  --osi-card-action-primary-shadow-hover:
+    0 4px 16px #{$brand-color-20}, 0 2px 4px rgba(0, 0, 0, 0.1);
+  --osi-card-action-secondary-bg: rgba(40, 40, 45, 0.9);
+  --osi-card-action-secondary-bg-hover: rgba(50, 46, 42, 0.85);
+  --osi-card-action-secondary-color: var(--foreground, #{$osi-color-white});
+  --osi-card-action-secondary-border: rgba(55, 55, 60, 0.6);
+  --osi-card-action-secondary-border-hover: #{$brand-color-25};
+  --osi-card-action-secondary-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --osi-card-action-secondary-shadow-hover:
+    0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  // Card Meta Elements
+  --osi-card-eyebrow-color: #{$foreground-80};
+  --osi-card-type-pill-bg: #{$brand-color-20};
+  --osi-card-type-pill-border: #{$brand-color-30};
+  --osi-card-type-pill-color: rgba(66, 61, 55, 0.85);
+  --osi-card-meta-color: #{$foreground-80};
+  --osi-card-meta-chip-bg: rgba(40, 40, 45, 0.8);
+  --osi-card-meta-chip-border: rgba(55, 55, 60, 0.65);
+  --osi-card-meta-chip-dot-primary: var(--accent);
+  --osi-card-meta-chip-dot-secondary: #{$brand-color-60};
+  --osi-card-meta-chip-dot-tertiary: #{$brand-color-35};
+  --osi-card-meta-chip-dot-shadow: 0 0 0 1px #{$brand-color-12};
+  --osi-card-footnote-color: #{$foreground-70};
+
+  // Card Fullscreen Button
+  --osi-card-fullscreen-btn-bg: #{$brand-color-08};
+  --osi-card-fullscreen-btn-bg-hover: #{$brand-color-08};
+  --osi-card-fullscreen-btn-border: #{$brand-color-12};
+  --osi-card-fullscreen-btn-border-hover: #{$brand-color-20};
+  --osi-card-fullscreen-btn-shadow: 0 4px 12px #{$brand-color-20};
+  --osi-card-fullscreen-btn-size: 36px;
+  --osi-card-fullscreen-btn-radius: 8px;
+
+  // Card Shine Effect
+  --osi-card-shine-gradient-primary: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  --osi-card-shine-gradient-secondary: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+}
+
+/// Generate OSI Section component tokens (--osi-section-*)
+/// SINGLE SOURCE OF TRUTH for all section styling variables
+@mixin osi-section-tokens() {
+  // Section Background
+  --osi-section-background: var(
+    --section-background,
+    var(--section-surface, var(--card-section-bg))
+  );
+  --osi-section-background-hover: var(
+    --section-background-hover,
+    var(--section-surface-hover, var(--card-section-bg))
+  );
+  --osi-section-background-main: var(--section-bg-main, var(--section-surface, var(--background)));
+  --osi-section-background-main-hover: var(
+    --section-bg-main-hover,
+    var(--section-surface-hover, var(--background))
+  );
+  --osi-section-background-contrast: var(--section-bg-contrast, var(--card-section-bg));
+  --osi-section-background-contrast-hover: var(
+    --section-bg-contrast-hover,
+    var(--card-section-card-bg)
+  );
+
+  // Section Border
+  --osi-section-border: var(--theme-section-border, 1px solid rgba(0, 0, 0, 0.06));
+  --osi-section-border-hover: var(--theme-section-border-hover, 1px solid #{$brand-color-15});
+
+  // Section Shadow
+  --osi-section-shadow: var(--theme-section-box-shadow, var(--shadow-md));
+  --osi-section-shadow-hover: var(
+    --theme-section-box-shadow-hover,
+    var(--shadow-lg),
+    var(--shadow-glow-sm)
+  );
+  --osi-section-shadow-fullscreen: none;
+
+  // Section Spacing - Padding
+  --osi-section-padding: var(--section-padding);
+  --osi-section-padding-top: var(--section-padding);
+  --osi-section-padding-bottom: var(--section-padding);
+  --osi-section-padding-left: var(--section-padding);
+  --osi-section-padding-right: var(--section-padding);
+
+  // Section Spacing - Margins
+  --osi-section-margin-top: 0;
+  --osi-section-margin-bottom: var(--osi-section-spacing-bottom);
+  --osi-section-margin-left: 0;
+  --osi-section-margin-right: 0;
+  --osi-section-spacing-bottom: var(--space-3);
+
+  // Section Spacing - Gaps
+  --osi-section-gap: var(--section-card-gap);
+  --osi-section-gap-internal: var(--card-gap);
+  --osi-section-grid-gap: var(--section-grid-gap);
+  --osi-section-internal-gap: var(--card-gap);
+  --osi-section-header-gap: var(--section-header-gap);
+  --osi-section-header-padding-bottom: var(--section-header-padding-bottom);
+
+  // Section Border Radius
+  --osi-section-border-radius: var(--section-card-border-radius);
+
+  // Section Typography
+  --osi-section-title-font-size: var(--section-title-font-size, 1.1rem);
+  --osi-section-title-font-weight: var(--section-title-font-weight, 700);
+  --osi-section-title-letter-spacing: var(--section-title-letter-spacing, -0.02em);
+  --osi-section-title-line-height: var(--section-title-line-height, 1.3);
+  --osi-section-title-color: var(--card-text-primary);
+  --osi-section-title-margin-bottom: var(--section-title-margin-bottom);
+  --osi-section-title-underline-length: clamp(var(--space-8), 3vw, var(--space-12));
+  --osi-section-title-underline-hover-length: clamp(var(--space-10), 4vw, var(--space-12));
+  --osi-section-title-underline-height: var(--border-width-accent);
+  --osi-section-title-underline-offset: calc(var(--space-2) * -1);
+  --osi-section-title-underline-color: var(--section-accent, var(--accent, #{$osi-color-brand}));
+  // Fallback for browsers without color-mix support
+  --osi-section-title-hover-color: var(--color-brand);
+
+  --osi-section-description-color: var(--muted-foreground);
+  --osi-section-description-color-hover: var(--foreground);
+
+  // Section Accent
+  --osi-section-accent: var(--section-accent, var(--accent, #{$osi-color-brand}));
+  --osi-section-accent-info: var(--section-accent-info, #{$osi-color-brand});
+  --osi-section-accent-analytics: var(--section-accent-analytics, #{$osi-color-brand});
+  --osi-section-accent-financials: var(--section-accent-financials, #{$osi-color-brand});
+  --osi-section-accent-map: var(--section-accent-map, #{$osi-color-brand});
+  --osi-section-accent-network: var(--section-accent-network, #{$osi-color-brand});
+  --osi-section-accent-contact: var(--section-accent-contact, #{$osi-color-brand});
+  --osi-section-accent-product: var(--section-accent-product, #{$osi-color-brand});
+  --osi-section-accent-solutions: var(--section-accent-solutions, #{$osi-color-brand});
+  --osi-section-accent-overview: var(--section-accent-overview, #{$osi-color-brand});
+  --osi-section-accent-list: var(--section-accent-list, #{$osi-color-brand});
+  --osi-section-accent-event: var(--section-accent-event, #{$osi-color-brand});
+  --osi-section-accent-chart: var(--section-accent-chart, var(--accent, #{$osi-color-brand}));
+  --osi-section-accent-reference: var(
+    --section-accent-reference,
+    var(--accent, #{$osi-color-brand})
+  );
+  --osi-section-accent-quotation: var(
+    --section-accent-quotation,
+    var(--accent, #{$osi-color-brand})
+  );
+
+  // Section Effects
+  --osi-section-glow-background: radial-gradient(
+    circle at top right,
+    #{$brand-color-35} 0%,
+    transparent 65%
+  );
+  --osi-section-glow-opacity-hover: 0.12;
+  --osi-section-backdrop-filter: blur(12px);
+
+  // Section Badge
+  --osi-section-badge-bg: linear-gradient(135deg, #{$brand-color-15}, #{$brand-color-12});
+  --osi-section-badge-bg-hover: #{$brand-color-12};
+  --osi-section-badge-color: #{$brand-color-90};
+  --osi-section-badge-padding: calc(var(--tag-padding-y-sm) * 0.75)
+    calc(var(--tag-padding-x) * 0.875);
+
+  // Section Empty State
+  --osi-section-empty-bg: var(--section-item-background, var(--card-section-bg));
+  --osi-section-empty-bg-hover: var(--section-item-background-hover, var(--card-section-card-bg));
+  --osi-section-empty-border: 1px dashed var(--border);
+  --osi-section-empty-border-hover: var(--accent);
+  --osi-section-empty-icon-opacity: 0.5;
+  --osi-section-empty-icon-opacity-hover: 0.7;
+
+  // Section Transitions
+  --osi-section-transition: var(
+    --theme-section-transition,
+    border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1)
+  );
+  --osi-section-title-transition: color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  --osi-section-description-transition: color 0.2s ease;
+}
+
+/// Generate OSI Section Item component tokens (--osi-section-item-*)
+/// SINGLE SOURCE OF TRUTH for all section item/field styling variables
+@mixin osi-section-item-tokens() {
+  // Section Item Background
+  --osi-section-item-background: var(--theme-section-item-background, var(--card-section-bg));
+  --osi-section-item-background-hover: var(
+    --theme-section-item-background-hover,
+    var(--card-section-bg)
+  );
+
+  // Section Item Border
+  --osi-section-item-border: var(--theme-section-item-border, 1px solid rgba(0, 0, 0, 0.06));
+  --osi-section-item-border-hover: var(
+    --theme-section-item-border-hover,
+    1px solid #{$brand-color-08}
+  );
+
+  // Section Item Shadow
+  --osi-section-item-shadow: var(--theme-section-item-box-shadow, var(--shadow-sm));
+  --osi-section-item-shadow-hover: var(
+    --theme-section-item-box-shadow-hover,
+    var(--shadow-md),
+    var(--shadow-glow-sm)
+  );
+
+  // Section Item Spacing - Padding
+  --osi-section-item-padding: var(--section-item-padding);
+  --osi-section-item-padding-top: var(--gap-lg);
+  --osi-section-item-padding-bottom: var(--gap-lg);
+  --osi-section-item-padding-left: var(--gap-lg);
+  --osi-section-item-padding-right: var(--gap-lg);
+  --osi-section-item-metric-padding: var(--metric-item-padding);
+  --osi-section-item-list-padding: var(--list-item-padding);
+
+  // Section Item Spacing - Margins
+  --osi-section-item-margin-top: 0;
+  --osi-section-item-margin-bottom: 0;
+  --osi-section-item-margin-left: 0;
+  --osi-section-item-margin-right: 0;
+
+  // Section Item Spacing - Gaps
+  --osi-section-item-gap: var(--section-item-gap);
+  --osi-section-item-grid-gap: var(--section-item-gap);
+
+  // Section Item Border Radius
+  --osi-section-item-border-radius: var(--radius-md);
+
+  // Section Item Typography - Label
+  --osi-section-item-label-font-size: var(--text-sm);
+  --osi-section-item-label-font-weight: var(--font-weight-medium);
+  --osi-section-item-label-color: var(--muted-foreground);
+  --osi-section-item-label-letter-spacing: 0.01em;
+  --osi-section-item-label-text-transform: uppercase;
+
+  // Section Item Typography - Value
+  --osi-section-item-value-font-size: var(--text-base);
+  --osi-section-item-value-font-weight: var(--font-weight-normal);
+  --osi-section-item-value-color: var(--foreground);
+  --osi-section-item-value-letter-spacing: 0;
+
+  // Section Item Icon
+  --osi-section-item-icon-size: var(--icon-md);
+  --osi-section-item-icon-color: var(--muted-foreground);
+  --osi-section-item-icon-color-hover: var(--accent);
+
+  // Section Item Transitions
+  --osi-section-item-transition: var(
+    --theme-section-item-transition,
+    background 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 220ms cubic-bezier(0.4, 0, 0.2, 1)
+  );
+  --osi-section-item-hover-transform: var(--theme-section-item-hover-transform, none);
+}
+
 /// Generate element type system tokens (Hero, Buttons, Cards, Sections, Section Items)
 @mixin osi-element-system() {
+  // Include component-specific token mixins
+  @include osi-card-tokens();
+  @include osi-section-tokens();
+  @include osi-section-item-tokens();
+
   // 1. HERO CARDS
   --hero-card-border: 1px solid rgba(146, 153, 158, 0.15);
   --hero-card-border-hover: #{$brand-color-40};
@@ -625,67 +970,47 @@ $breakpoints: (
   --button-box-shadow-hover: var(--shadow-md);
   --button-hover-transform: translateY(-1px);
 
-  // 3. AI CARDS
-  --ai-card-border: var(--theme-ai-card-border, none);
-  --ai-card-border-hover: var(--theme-ai-card-border-hover, var(--ai-card-border));
-  --ai-card-background: var(
-    --theme-ai-card-background,
-    var(--card-surface, var(--card-section-bg))
-  );
-  --ai-card-background-hover: var(
-    --theme-ai-card-background-hover,
-    var(--card-surface-hover, var(--card-section-bg))
-  );
-  --ai-card-border-radius: var(--radius-lg);
-  --ai-card-box-shadow: var(--theme-ai-card-box-shadow, var(--shadow-md));
-  --ai-card-box-shadow-hover: var(--theme-ai-card-box-shadow-hover, var(--shadow-lg));
+  // 3. AI CARDS (aliases for backward compatibility)
+  --ai-card-border: var(--osi-card-border);
+  --ai-card-border-hover: var(--osi-card-border-hover);
+  --ai-card-background: var(--osi-card-background);
+  --ai-card-background-hover: var(--osi-card-background-hover);
+  --ai-card-border-radius: var(--osi-card-border-radius);
+  --ai-card-box-shadow: var(--osi-card-shadow);
+  --ai-card-box-shadow-hover: var(--osi-card-shadow-hover);
   --ai-card-hover-transform: none;
   --ai-card-transition-default:
     border 0.32s cubic-bezier(0.4, 0, 0.2, 1), background 0.32s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.32s cubic-bezier(0.4, 0, 0.2, 1);
   --ai-card-transition: var(--theme-ai-card-transition, var(--ai-card-transition-default));
 
-  // 4. SECTIONS
-  --section-border: var(--theme-section-border, 1px solid #{$white-05});
-  --section-border-hover: var(--theme-section-border-hover, 1px solid #{$brand-color-15});
-  --section-border-radius: var(--radius-lg);
-  --section-box-shadow-default: var(--shadow-md);
-  --section-box-shadow-hover-default: var(--shadow-lg), var(--shadow-glow-sm);
-  --section-box-shadow: var(--theme-section-box-shadow, var(--section-box-shadow-default));
-  --section-box-shadow-hover: var(
-    --theme-section-box-shadow-hover,
-    var(--section-box-shadow-hover-default)
-  );
+  // 4. SECTIONS (aliases for backward compatibility)
+  --section-border: var(--osi-section-border);
+  --section-border-hover: var(--osi-section-border-hover);
+  --section-border-radius: var(--osi-section-border-radius);
+  --section-box-shadow-default: var(--osi-section-shadow);
+  --section-box-shadow-hover-default: var(--osi-section-shadow-hover);
+  --section-box-shadow: var(--osi-section-shadow);
+  --section-box-shadow-hover: var(--osi-section-shadow-hover);
   --section-hover-transform: none;
-  --section-transition: var(--theme-section-transition, none);
+  --section-transition: var(--osi-section-transition);
 
-  // 5. SECTION ITEMS - Subtle hover with theme accent
-  --section-item-border: var(--theme-section-item-border, 1px solid #{$white-05});
-  --section-item-border-hover: var(--theme-section-item-border-hover, 1px solid #{$brand-color-08});
-  --section-item-background: var(--theme-section-item-background, var(--card-section-bg));
-  --section-item-background-hover: var(
-    --theme-section-item-background-hover,
-    var(--card-section-bg)
-  );
-  --section-item-border-radius: var(--radius-md);
-  --section-item-box-shadow: var(--theme-section-item-box-shadow, var(--shadow-sm));
-  --section-item-box-shadow-hover-default: var(--shadow-md), var(--shadow-glow-sm);
-  --section-item-box-shadow-hover: var(
-    --theme-section-item-box-shadow-hover,
-    var(--section-item-box-shadow-hover-default)
-  );
-  --section-item-hover-transform: var(--theme-section-item-hover-transform, none);
-  --section-item-transition-default:
-    background 220ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 220ms cubic-bezier(0.4, 0, 0.2, 1);
-  --section-item-transition: var(
-    --theme-section-item-transition,
-    var(--section-item-transition-default)
-  );
+  // 5. SECTION ITEMS (aliases for backward compatibility)
+  --section-item-border: var(--osi-section-item-border);
+  --section-item-border-hover: var(--osi-section-item-border-hover);
+  --section-item-background: var(--osi-section-item-background);
+  --section-item-background-hover: var(--osi-section-item-background-hover);
+  --section-item-border-radius: var(--osi-section-item-border-radius);
+  --section-item-box-shadow: var(--osi-section-item-shadow);
+  --section-item-box-shadow-hover-default: var(--osi-section-item-shadow-hover);
+  --section-item-box-shadow-hover: var(--osi-section-item-shadow-hover);
+  --section-item-hover-transform: var(--osi-section-item-hover-transform);
+  --section-item-transition-default: var(--osi-section-item-transition);
+  --section-item-transition: var(--osi-section-item-transition);
 
   // Legacy card variables (theme-aware)
   --card-border: var(--theme-card-border, 1px solid rgba(146, 153, 158, 0.15));
-  --card-border-hover: var(--theme-card-border-hover, #{$brand-color-40});
+  --card-border-hover: var(--theme-card-border-hover, #{$brand-color-15});
   --card-box-shadow: var(--theme-card-box-shadow, var(--shadow-md));
   --card-box-shadow-hover: var(--theme-card-box-shadow-hover, var(--shadow-lg));
   --card-hover-transform: none;
@@ -716,22 +1041,38 @@ $breakpoints: (
   --background: #{$osi-color-white};
   --surface-contrast-color: #{$osi-color-black};
 
-  // Surface tokens - always use demo values (variant param deprecated)
-  --theme-ai-card-border: 1px solid rgba(255, 255, 255, 0.06);
-  --theme-ai-card-border-hover: 1px solid rgba(255, 121, 0, 0.25);
-  --theme-ai-card-background: var(--background);
-  --theme-ai-card-background-hover: var(--background);
-  --theme-ai-card-box-shadow: 0 2px 12px -1px rgba(0, 0, 0, 0.12);
-  --theme-ai-card-box-shadow-hover:
-    0 8px 20px -3px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(255, 121, 0, 0.12);
-  --theme-ai-card-transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  // Cross-browser color-mix support with token-only fallback
+  @supports (color: color-mix(in srgb, black 50%, white)) {
+    --theme-card-background-hover: color-mix(
+      in srgb,
+      var(--background) 98%,
+      var(--surface-contrast-color) 2%
+    );
+  }
 
-  --theme-card-border: 1px solid rgba(0, 0, 0, 0.06);
-  --theme-card-border-hover: 1px solid rgba(255, 121, 0, 0.2);
+  // Surface tokens - defaults (will be overridden by theme-specific mixins and JavaScript presets)
+  // These are fallback values only - actual values come from osi-theme-dark/light mixins or JavaScript presets
+  --theme-ai-card-border: 1px solid rgba(0, 0, 0, 0.08);
+  --theme-ai-card-border-hover: 1px solid rgba(255, 121, 0, 0.4);
+  --theme-ai-card-background: rgba(255, 255, 255, 0.85);
+  --theme-ai-card-background-hover: rgba(255, 255, 255, 0.92);
+  --theme-ai-card-box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.1), 0 0 18px rgba(255, 121, 0, 0.15);
+  --theme-ai-card-box-shadow-hover:
+    0 20px 40px -5px rgba(0, 0, 0, 0.15), 0 0 24px rgba(255, 121, 0, 0.25),
+    0 0 0 1px rgba(255, 121, 0, 0.15);
+  --theme-ai-card-backdrop-filter: blur(12px);
+  --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  --theme-card-border: 1px solid rgba(0, 0, 0, 0.08);
+  --theme-card-border-hover: var(--color-brand);
   --theme-card-background: var(--background);
-  --theme-card-background-hover: var(--background);
-  --theme-card-box-shadow: 0 1px 2px rgba(15, 15, 20, 0.03);
-  --theme-card-box-shadow-hover: 0 1px 3px rgba(10, 10, 16, 0.05);
+  --theme-card-background-hover: color-mix(
+    in srgb,
+    var(--background) 98%,
+    var(--surface-contrast-color) 2%
+  );
+  --theme-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --theme-card-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.07);
 
   --theme-section-border: 1px solid rgba(0, 0, 0, 0.06);
   --theme-section-border-hover: 1px solid rgba(255, 121, 0, 0.15);
@@ -777,31 +1118,34 @@ $breakpoints: (
   --card-surface: var(--background);
   --card-foreground: #{$osi-foreground-dark};
   --card-surface-hover: var(--background);
-  --card-section-bg: #141414;
-  --card-section-card-bg: #1a1a1a;
+  --card-section-bg: #181818;
+  --card-section-card-bg: #1f1f1f;
 
-  // AI Card surface - flat dark, subtle hover
-  --theme-ai-card-border: 1px solid rgba(255, 255, 255, 0.06);
+  // AI Card surface - transparent with blur effect (matches preset)
+  --theme-ai-card-border: 1px solid rgba(255, 255, 255, 0.08);
   --theme-ai-card-border-hover: 1px solid rgba(255, 121, 0, 0.2);
-  --theme-ai-card-background: #141414;
-  --theme-ai-card-background-hover: #1a1a1a;
-  --theme-ai-card-box-shadow: 0 2px 12px -1px rgba(0, 0, 0, 0.15);
+  --theme-ai-card-background: rgba(20, 20, 20, 0.6);
+  --theme-ai-card-background-hover: rgba(25, 25, 25, 0.7);
+  --theme-ai-card-box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
   --theme-ai-card-box-shadow-hover:
-    0 6px 16px -2px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(255, 121, 0, 0.1);
+    0 12px 32px -4px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 121, 0, 0.1);
+  --theme-ai-card-backdrop-filter: blur(12px);
+  --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
-  // Flat card backgrounds - subtle hover
-  --theme-card-border: 1px solid rgba(255, 255, 255, 0.06);
+  // Card backgrounds (matches preset)
+  --theme-card-border: 1px solid rgba(255, 255, 255, 0.08);
   --theme-card-border-hover: 1px solid rgba(255, 121, 0, 0.2);
   --theme-card-background: var(--background);
-  --theme-card-background-hover: var(--background);
-  --theme-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-  --theme-card-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.3);
+  // Fallback for browsers without color-mix support
+  --theme-card-background-hover: rgba(25, 25, 25, 0.7);
+  --theme-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --theme-card-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.4);
 
   // Flat section backgrounds
   --section-background: var(--background);
   --section-background-hover: var(--background);
-  --section-surface: #141414;
-  --section-surface-hover: #1a1a1a;
+  --section-surface: #181818;
+  --section-surface-hover: #1f1f1f;
   --popover: #111111;
   --popover-foreground: #{$osi-foreground-dark};
   --primary: #{$osi-color-brand};
@@ -826,18 +1170,24 @@ $breakpoints: (
   // Element type overrides - subtle theme-aware hover
   --hero-card-border: 1px solid rgba(233, 233, 233, 0.2);
   --hero-card-border-hover: 1px solid rgba(255, 121, 0, 0.25);
-  --theme-section-border: 1px solid #{$white-10};
-  --theme-section-border-hover: 1px solid rgba(255, 121, 0, 0.15);
-  --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --theme-section-box-shadow-hover: 0 2px 5px rgba(0, 0, 0, 0.35);
-  // Flat section item backgrounds - subtle hover
+  // Section (matches preset)
+  --theme-section-border: 1px solid rgba(255, 255, 255, 0.1);
+  --theme-section-border-hover: 1px solid rgba(255, 255, 255, 0.1);
+  --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --theme-section-box-shadow-hover: 0 2px 5px rgba(0, 0, 0, 0.5);
+  --theme-section-transition:
+    border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  // Section Item (matches preset)
   --theme-section-item-border: 1px solid rgba(255, 255, 255, 0.06);
-  --theme-section-item-border-hover: 1px solid rgba(255, 121, 0, 0.15);
-  --theme-section-item-background: #1a1a1a;
-  --theme-section-item-background-hover: #1e1e1e;
+  --theme-section-item-border-hover: 1px solid rgba(255, 121, 0, 0.08);
+  --theme-section-item-background: #202020;
+  --theme-section-item-background-hover: #212121;
   --theme-section-item-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
   --theme-section-item-box-shadow-hover: 0 1px 4px rgba(0, 0, 0, 0.3);
   --theme-section-item-hover-transform: none;
+  --theme-section-item-transition:
+    background 220ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 220ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /// Generate light theme colors
@@ -852,36 +1202,49 @@ $breakpoints: (
   --muted: #f4f4f6;
   --muted-foreground: #{$osi-muted-foreground-light};
 
+  // Cross-browser color-mix support with token-only fallback
+  @supports (color: color-mix(in srgb, black 50%, white)) {
+    --theme-card-background-hover: color-mix(
+      in srgb,
+      var(--background) 98%,
+      var(--surface-contrast-color) 2%
+    );
+  }
+
   // Flat light backgrounds - no color-mix
   --card: var(--background);
   --card-surface: var(--background);
   --card-foreground: #{$osi-foreground-light};
   --card-surface-hover: var(--background);
-  --card-section-bg: #fafafa;
-  --card-section-card-bg: #f5f5f5;
+  --card-section-bg: #fcfcfc;
+  --card-section-card-bg: #f8f8f8;
 
-  // AI Card surface - flat white, subtle hover
-  --theme-ai-card-border: 1px solid rgba(0, 0, 0, 0.06);
+  // AI Card surface - light theme with blur (matches preset)
+  --theme-ai-card-border: 1px solid rgba(0, 0, 0, 0.08);
   --theme-ai-card-border-hover: 1px solid rgba(255, 121, 0, 0.2);
-  --theme-ai-card-background: #ffffff;
-  --theme-ai-card-background-hover: #fcfcfc;
-  --theme-ai-card-box-shadow: 0 2px 12px -1px rgba(0, 0, 0, 0.06);
+  --theme-ai-card-background: rgba(255, 255, 255, 0.85);
+  --theme-ai-card-background-hover: rgba(255, 255, 255, 0.88);
+  --theme-ai-card-box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.1), 0 0 18px rgba(255, 121, 0, 0.15);
   --theme-ai-card-box-shadow-hover:
-    0 6px 16px -2px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 121, 0, 0.08);
+    0 12px 32px -4px rgba(0, 0, 0, 0.12), 0 0 20px rgba(255, 121, 0, 0.18),
+    0 0 0 1px rgba(255, 121, 0, 0.1);
+  --theme-ai-card-backdrop-filter: blur(12px);
+  --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
-  // Flat card backgrounds - subtle hover
-  --theme-card-border: 1px solid rgba(0, 0, 0, 0.05);
-  --theme-card-border-hover: 1px solid rgba(255, 121, 0, 0.15);
+  // Card backgrounds (matches preset)
+  --theme-card-border: 1px solid rgba(0, 0, 0, 0.08);
+  --theme-card-border-hover: 1px solid rgba(255, 121, 0, 0.2);
   --theme-card-background: var(--background);
-  --theme-card-background-hover: var(--background);
-  --theme-card-box-shadow: 0 1px 2px rgba(15, 15, 20, 0.03);
-  --theme-card-box-shadow-hover: 0 1px 3px rgba(10, 10, 16, 0.04);
+  // Fallback for browsers without color-mix support
+  --theme-card-background-hover: rgba(255, 255, 255, 0.88);
+  --theme-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --theme-card-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.06);
 
   // Flat section backgrounds
   --section-background: var(--background);
   --section-background-hover: var(--background);
-  --section-surface: #fafafa;
-  --section-surface-hover: #f5f5f5;
+  --section-surface: #fcfcfc;
+  --section-surface-hover: #f8f8f8;
   --popover: #{$osi-color-white};
   --popover-foreground: #1a1a1a;
   --primary: #{$osi-color-brand};
@@ -910,18 +1273,24 @@ $breakpoints: (
   // Element type overrides - subtle theme-aware hover
   --hero-card-border: 1px solid rgba(146, 153, 158, 0.25);
   --hero-card-border-hover: 1px solid rgba(255, 121, 0, 0.2);
-  --theme-section-border: 1px solid rgba(0, 0, 0, 0.05);
-  --theme-section-border-hover: 1px solid rgba(255, 121, 0, 0.12);
-  --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  --theme-section-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.05);
-  // Flat section item backgrounds - subtle hover
-  --theme-section-item-border: 1px solid rgba(0, 0, 0, 0.05);
-  --theme-section-item-border-hover: 1px solid rgba(255, 121, 0, 0.12);
-  --theme-section-item-background: #f7f7f7;
-  --theme-section-item-background-hover: #f4f4f4;
+  // Section (matches preset)
+  --theme-section-border: 1px solid rgba(0, 0, 0, 0.08);
+  --theme-section-border-hover: 1px solid rgba(0, 0, 0, 0.1);
+  --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --theme-section-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.07);
+  --theme-section-transition:
+    border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  // Section Item (matches preset)
+  --theme-section-item-border: 1px solid rgba(0, 0, 0, 0.06);
+  --theme-section-item-border-hover: 1px solid rgba(255, 121, 0, 0.08);
+  --theme-section-item-background: #f9f9f9;
+  --theme-section-item-background-hover: #f7f7f7;
   --theme-section-item-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   --theme-section-item-box-shadow-hover: 0 1px 3px rgba(0, 0, 0, 0.05);
   --theme-section-item-hover-transform: none;
+  --theme-section-item-transition:
+    background 220ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 220ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 // ============================================
@@ -934,6 +1303,15 @@ $breakpoints: (
 @mixin osi-tokens($variant: "demo", $is-scoped: false) {
   @include osi-shadows();
   @include osi-radius();
+
+  // Cross-browser color-mix support for section title hover color
+  @supports (color: color-mix(in srgb, black 50%, white)) {
+    --osi-section-title-hover-color: color-mix(
+      in srgb,
+      var(--color-brand) 70%,
+      var(--color-white) 30%
+    );
+  }
   @include osi-spacing();
   @include osi-z-index();
   @include osi-animation();

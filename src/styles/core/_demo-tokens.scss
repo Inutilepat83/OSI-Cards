@@ -1,9 +1,9 @@
 /* ===================================================================
    DEMO WEBSITE TOKENS - Page-level design tokens
-   
+
    These tokens are specific to the demo/documentation website and should
    NOT be used by the library or integration targets like Orange Sales Assistance.
-   
+
    Naming convention: All demo tokens use --demo-* prefix to avoid
    confusion with library tokens (which have no prefix or use --osi-*).
    =================================================================== */
@@ -52,7 +52,7 @@
   );
   --demo-glow-primary: radial-gradient(
     circle,
-    color-mix(in srgb, #ff7900 20%, transparent) 0%,
+    color-mix(in srgb, var(--color-brand) 20%, transparent) 0%,
     transparent 70%
   );
 

@@ -26,12 +26,22 @@
   width: 100%;
 }
 
-:host([data-theme="night"]),
+// Primary: Use :host([data-theme]) for explicit Shadow DOM scope (most reliable)
+// Fallback: :host-context for cases where parent sets data-theme
+:host([data-theme="night"]) {
+  @include osi-theme-dark("integration", true);
+}
+
+:host([data-theme="day"]) {
+  @include osi-theme-light("integration", true);
+}
+
+// Fallback: Support parent context (for backward compatibility)
+// Note: Safari may have inconsistent :host-context behavior, so :host([data-theme]) is preferred
 :host-context([data-theme="night"]) {
   @include osi-theme-dark("integration", true);
 }
 
-:host([data-theme="day"]),
 :host-context([data-theme="day"]) {
   @include osi-theme-light("integration", true);
 }

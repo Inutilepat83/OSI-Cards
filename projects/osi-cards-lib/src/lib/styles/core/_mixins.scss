@@ -5,7 +5,7 @@
 /* ===================================================================
    IMPORTANT FLAG SYSTEM
    Controls whether !important is applied for Bootstrap/Boosted overrides.
-   
+
    Usage:
    - In scoped/standalone styles: $osi-use-important: true (default)
    - In demo app styles: $osi-use-important: false
@@ -73,6 +73,7 @@ $osi-use-important: true !default;
   border: 1px solid $border-color;
   background: color-mix(in srgb, $background-start 50%, $background-end 50%);
   box-shadow: $shadow;
+  -webkit-backdrop-filter: blur(18px);
   backdrop-filter: blur(18px);
   padding: $padding;
 }

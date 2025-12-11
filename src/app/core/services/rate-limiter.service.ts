@@ -20,7 +20,7 @@
  * ```
  */
 
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 
 export interface RateLimitConfig {
   maxRequests: number;
@@ -38,9 +38,10 @@ export interface RateLimitStatus {
 @Injectable({
   providedIn: 'root',
 })
-export class RateLimiterService {
+export class RateLimiterService implements OnDestroy {
   private limits = new Map<string, RateLimitConfig>();
   private requests = new Map<string, number[]>();
+  private cleanupInterval?: ReturnType<typeof setInterval>;
 
   /**
    * Configure rate limit for a key
@@ -145,7 +146,12 @@ export class RateLimiterService {
    * Cleanup old entries periodically
    */
   startCleanup(intervalMs = 300000): void {
-    setInterval(() => {
+    // Clear existing interval if any
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+    }
+
+    this.cleanupInterval = setInterval(() => {
       const now = Date.now();
 
       this.requests.forEach((requests, key) => {
@@ -162,6 +168,16 @@ export class RateLimiterService {
         }
       });
     }, intervalMs);
+  }
+
+  /**
+   * Clean up intervals on destroy
+   */
+  ngOnDestroy(): void {
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+      this.cleanupInterval = undefined;
+    }
   }
 }
 

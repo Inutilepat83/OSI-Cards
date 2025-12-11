@@ -1,10 +1,10 @@
 /* ===================================================================
    STREAMING EFFECTS
    Magical visual effects for LLM streaming card generation
-   
-   IMPORTANT: These styles ONLY target sections that are actively 
+
+   IMPORTANT: These styles ONLY target sections that are actively
    animating (have the --animating class). Sections that have completed
-   their entrance animation (have --animated class) are explicitly 
+   their entrance animation (have --animated class) are explicitly
    excluded to prevent continuous blinking.
    =================================================================== */
 
@@ -15,7 +15,7 @@
 
 .ai-card-surface.streaming-active {
   position: relative;
-  border: 1px solid rgba(255, 121, 0, 0.4);
+  border: 1px solid color-mix(in srgb, var(--color-brand) 40%, transparent);
   box-shadow:
     0 0 10px rgba(255, 121, 0, 0.2),
     0 0 20px rgba(255, 121, 0, 0.1);

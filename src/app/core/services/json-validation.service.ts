@@ -154,8 +154,7 @@ export class JsonValidationService {
       // Handle incomplete strings - close any unclosed strings
       let inString = false;
       let escapeNext = false;
-      for (let i = 0; i < tempJson.length; i++) {
-        const char = tempJson[i];
+      for (const char of tempJson) {
         if (escapeNext) {
           escapeNext = false;
           continue;
@@ -212,12 +211,7 @@ export class JsonValidationService {
           let escapeNext = false;
 
           if (sectionsContent) {
-            for (let i = 0; i < sectionsContent.length; i++) {
-              const char = sectionsContent[i];
-              if (char === undefined) {
-                continue;
-              }
-
+            for (const char of sectionsContent) {
               if (escapeNext) {
                 currentSection += char;
                 escapeNext = false;

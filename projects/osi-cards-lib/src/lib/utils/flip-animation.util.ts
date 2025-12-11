@@ -310,31 +310,50 @@ export class FlipAnimator {
     // Build keyframes
     const keyframes: Keyframe[] = [];
 
+    // Performance optimization: Set will-change before animation
+    if (state.element instanceof HTMLElement) {
+      state.element.style.willChange = 'transform';
+    }
+
     if (this.config.animateSize && (delta.scaleX !== 1 || delta.scaleY !== 1)) {
-      // Animate with scale
+      // Animate with scale (use translate3d for GPU acceleration)
       keyframes.push({
-        transform: `translate(${delta.x}px, ${delta.y}px) scale(${delta.scaleX}, ${delta.scaleY})`,
+        transform: `translate3d(${delta.x}px, ${delta.y}px, 0) scale(${delta.scaleX}, ${delta.scaleY})`,
         transformOrigin: 'top left',
       });
       keyframes.push({
-        transform: 'translate(0, 0) scale(1, 1)',
+        transform: 'translate3d(0, 0, 0) scale(1, 1)',
         transformOrigin: 'top left',
       });
     } else {
-      // Position-only animation
+      // Position-only animation (use translate3d for GPU acceleration)
       keyframes.push({
-        transform: `translate(${delta.x}px, ${delta.y}px)`,
+        transform: `translate3d(${delta.x}px, ${delta.y}px, 0)`,
       });
       keyframes.push({
-        transform: 'translate(0, 0)',
+        transform: 'translate3d(0, 0, 0)',
       });
     }
 
-    return state.element.animate(keyframes, {
+    const animation = state.element.animate(keyframes, {
       duration: this.config.duration,
       easing: this.config.easing,
       fill: 'backwards',
     });
+
+    // Performance optimization: Remove will-change after animation
+    animation.onfinish = () => {
+      if (state.element instanceof HTMLElement) {
+        state.element.style.willChange = 'auto';
+      }
+    };
+    animation.oncancel = () => {
+      if (state.element instanceof HTMLElement) {
+        state.element.style.willChange = 'auto';
+      }
+    };
+
+    return animation;
   }
 
   private animateEnter(element: HTMLElement): Animation {
@@ -424,14 +443,31 @@ export async function animateFromPositions(
       continue;
     }
 
+    // Performance optimization: Set will-change and use translate3d
+    if (element instanceof HTMLElement) {
+      element.style.willChange = 'transform';
+    }
+
     const animation = element.animate(
-      [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'translate(0, 0)' }],
+      [{ transform: `translate3d(${dx}px, ${dy}px, 0)` }, { transform: 'translate3d(0, 0, 0)' }],
       {
         duration: finalConfig.duration,
         easing: finalConfig.easing,
         fill: 'backwards',
       }
     );
+
+    // Remove will-change after animation
+    animation.onfinish = () => {
+      if (element instanceof HTMLElement) {
+        element.style.willChange = 'auto';
+      }
+    };
+    animation.oncancel = () => {
+      if (element instanceof HTMLElement) {
+        element.style.willChange = 'auto';
+      }
+    };
 
     animations.push(animation);
   }

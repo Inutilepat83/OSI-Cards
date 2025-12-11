@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,15 +8,14 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AICardConfig, CardType } from '../../../models';
+import { LucideIconsModule } from '../../icons/lucide-icons.module';
 import { CardTemplatesService } from '../../services/card-templates.service';
 import { SearchFilterService } from '../../services/search-filter.service';
-import { LucideIconsModule } from '../../icons/lucide-icons.module';
 // Import optimized card renderer from app (not library - uses optimized MagneticTiltService)
-import { AICardRendererComponent } from '../cards/ai-card-renderer.component';
 import { AICardConfig as LibraryCardConfig } from '../../../../../projects/osi-cards-lib/src/lib/models/card.model';
+import { AICardRendererComponent } from '../cards/ai-card-renderer.component';
 
 /**
  * Card Templates Gallery Component
@@ -33,7 +33,7 @@ import { AICardConfig as LibraryCardConfig } from '../../../../../projects/osi-c
         <button
           type="button"
           class="close-button"
-          (click)="close.emit()"
+          (click)="closed.emit()"
           aria-label="Close gallery"
         >
           <lucide-icon name="x" [size]="20"></lucide-icon>
@@ -319,7 +319,7 @@ export class CardTemplatesGalleryComponent implements OnInit {
 
   @Input() selectedCardType: CardType | '' = '';
   @Output() templateSelected = new EventEmitter<AICardConfig>();
-  @Output() close = new EventEmitter<void>();
+  @Output() closed = new EventEmitter<void>();
 
   cardTypes: CardType[] = [
     'company',

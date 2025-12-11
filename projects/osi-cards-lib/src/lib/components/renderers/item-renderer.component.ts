@@ -91,42 +91,40 @@ export interface ItemClickEvent {
         transition:
           background-color 0.15s ease,
           transform 0.15s ease;
+      }
 
-        &:is(.item--clickable) {
-          cursor: pointer;
+      .item.item--clickable {
+        cursor: pointer;
+      }
 
-          &:hover {
-            background-color: var(--osi-item-hover-bg, rgba(0, 0, 0, 0.03));
-            transform: translateX(2px);
-          }
+      .item.item--clickable:hover {
+        background-color: var(--osi-item-hover-bg, rgba(0, 0, 0, 0.03));
+        transform: translateX(2px);
+      }
 
-          &:focus-visible {
-            outline: 2px solid var(--osi-focus-ring, #4f46e5);
-            outline-offset: 2px;
-          }
-        }
+      .item.item--clickable:focus-visible {
+        outline: 2px solid var(--osi-focus-ring, #4f46e5);
+        outline-offset: 2px;
+      }
 
-        &--compact {
-          padding: 0.5rem;
+      .item.item--compact {
+        padding: 0.5rem;
+      }
 
-          .item__description {
-            display: none;
-          }
-        }
+      .item.item--compact .item__description {
+        display: none;
+      }
 
-        &--with-image {
-          .item__image {
-            width: 48px;
-            height: 48px;
+      .item.item--with-image .item__image {
+        width: 48px;
+        height: 48px;
+      }
 
-            img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-              border-radius: 6px;
-            }
-          }
-        }
+      .item.item--with-image .item__image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 6px;
       }
 
       .item__icon {

@@ -667,7 +667,7 @@ export class OsiError extends Error {
 
     // Capture stack trace (V8 only feature)
     const ErrorWithCaptureStack = Error as typeof Error & {
-      captureStackTrace?: (target: object, constructor?: Function) => void;
+      captureStackTrace?: (target: object, constructor?: typeof OsiError) => void;
     };
     if (ErrorWithCaptureStack.captureStackTrace) {
       ErrorWithCaptureStack.captureStackTrace(this, OsiError);

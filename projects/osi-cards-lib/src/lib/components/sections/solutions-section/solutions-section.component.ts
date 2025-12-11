@@ -21,6 +21,8 @@ import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.
 export class SolutionsSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);
 
+  expandedIndex: number | null = null;
+
   ngOnInit(): void {
     // Register layout preference function for this section type
     this.layoutService.register('solutions', (section: CardSection, availableColumns: number) => {
@@ -36,8 +38,8 @@ export class SolutionsSectionComponent extends BaseSectionComponent implements O
     section: CardSection,
     availableColumns: number
   ): SectionLayoutPreferences {
-    const items = section.items ?? [];
-    const itemCount = items.length;
+    const solutions = section.fields ?? section.items ?? [];
+    const itemCount = solutions.length;
 
     // Solutions sections: 2 cols default, can shrink to 1, expands based on item count
     let preferredColumns: 1 | 2 | 3 | 4 = 2;
@@ -99,5 +101,19 @@ export class SolutionsSectionComponent extends BaseSectionComponent implements O
     if (complexityLower === 'medium' || complexityLower === 'moderate') return 'warning';
     if (complexityLower === 'high' || complexityLower === 'complex') return 'error';
     return 'default';
+  }
+
+  toggleExpanded(index: number): void {
+    this.expandedIndex = this.expandedIndex === index ? null : index;
+  }
+
+  isExpanded(index: number): boolean {
+    return this.expandedIndex === index;
+  }
+
+  getVisibleBenefits(benefits: string[] | undefined, index: number): string[] {
+    if (!benefits || benefits.length === 0) return [];
+    if (this.isExpanded(index)) return benefits;
+    return benefits.slice(0, 2);
   }
 }

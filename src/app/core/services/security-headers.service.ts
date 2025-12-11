@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
-import { LoggingService } from './logging.service';
-import { inject } from '@angular/core';
-import { CSPNonceService } from './csp-nonce.service';
+import { inject, Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
+import { CSPNonceService } from './csp-nonce.service';
+import { LoggingService } from './logging.service';
 
 /**
  * Security Headers Service

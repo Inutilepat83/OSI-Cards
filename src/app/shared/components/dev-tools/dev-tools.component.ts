@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -6,16 +7,15 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LogEntry, LoggingService } from '../../../core/services/logging.service';
-import { PerformanceService } from '../../../core/services/performance.service';
-import { DevToolsService } from '../../../core/services/dev-tools.service';
 import { Store } from '@ngrx/store';
-import { AppState } from '../../../store/app.state';
-import { selectCards } from '../../../store/cards/cards.selectors';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { DevToolsService } from '../../../core/services/dev-tools.service';
+import { LogEntry, LoggingService } from '../../../core/services/logging.service';
+import { PerformanceService } from '../../../core/services/performance.service';
+import { AppState } from '../../../store/app.state';
+import { selectCards } from '../../../store/cards/cards.selectors';
 
 /**
  * Developer Tools Component
@@ -53,7 +53,7 @@ import { takeUntil } from 'rxjs/operators';
       <div class="dev-tools-content" *ngIf="!isCollapsed">
         <div class="dev-tools-tabs">
           <button
-            *ngFor="let tab of tabs"
+            *ngFor="let tab of tabs; trackBy: trackByTab"
             type="button"
             [class.active]="activeTab === tab"
             (click)="activeTab = tab"
@@ -77,7 +77,7 @@ import { takeUntil } from 'rxjs/operators';
           </div>
           <div class="log-entries">
             <div
-              *ngFor="let entry of filteredLogs"
+              *ngFor="let entry of filteredLogs; trackBy: trackByLogEntry"
               class="log-entry"
               [class]="'log-entry--' + entry.level"
             >
@@ -95,7 +95,10 @@ import { takeUntil } from 'rxjs/operators';
         <!-- Performance Tab -->
         <div class="dev-tools-panel" *ngIf="activeTab === 'Performance'">
           <div class="metric-grid">
-            <div class="metric-item" *ngFor="let metric of performanceMetrics">
+            <div
+              class="metric-item"
+              *ngFor="let metric of performanceMetrics; trackBy: trackByMetric"
+            >
               <div class="metric-label">{{ metric.name }}</div>
               <div class="metric-value">{{ metric.value }}</div>
             </div>
@@ -122,7 +125,7 @@ import { takeUntil } from 'rxjs/operators';
               </div>
             </div>
             <div class="state-tree">
-              <div class="state-node" *ngFor="let node of stateTree">
+              <div class="state-node" *ngFor="let node of stateTree; trackBy: trackByStateNode">
                 <div class="state-node-header" (click)="toggleNode(node)">
                   <span class="node-toggle">{{ node.expanded ? '▼' : '▶' }}</span>
                   <span class="node-key">{{ node.key }}</span>
@@ -152,7 +155,10 @@ import { takeUntil } from 'rxjs/operators';
           <div class="profiler-info">
             <h4>Performance Profiler</h4>
             <div class="profiler-stats">
-              <div class="stat-item" *ngFor="let stat of profilerStats">
+              <div
+                class="stat-item"
+                *ngFor="let stat of profilerStats; trackBy: trackByProfilerStat"
+              >
                 <span class="stat-label">{{ stat.label }}:</span>
                 <span class="stat-value">{{ stat.value }}</span>
               </div>
@@ -160,7 +166,10 @@ import { takeUntil } from 'rxjs/operators';
             <div class="profiler-metrics">
               <h5>Execution Times</h5>
               <div class="metric-list">
-                <div class="metric-row" *ngFor="let metric of profilerMetrics">
+                <div
+                  class="metric-row"
+                  *ngFor="let metric of profilerMetrics; trackBy: trackByProfilerMetric"
+                >
                   <span class="metric-name">{{ metric.name }}</span>
                   <span class="metric-time">{{ metric.time }}ms</span>
                   <div class="metric-bar">
@@ -773,5 +782,30 @@ export class DevToolsComponent implements OnInit, OnDestroy {
     this.profilerStats = [];
     this.memoryInfo = null;
     this.cdr.markForCheck();
+  }
+
+  // TrackBy functions for *ngFor optimization
+  trackByTab(_index: number, tab: string): string {
+    return tab;
+  }
+
+  trackByLogEntry(_index: number, entry: LogEntry): string {
+    return entry.timestamp + entry.level + entry.message;
+  }
+
+  trackByMetric(_index: number, metric: { name: string; value: string }): string {
+    return metric.name;
+  }
+
+  trackByStateNode(_index: number, node: { key: string; type: string }): string {
+    return node.key + node.type;
+  }
+
+  trackByProfilerStat(_index: number, stat: { label: string; value: string }): string {
+    return stat.label;
+  }
+
+  trackByProfilerMetric(_index: number, metric: { name: string; time: number }): string {
+    return metric.name;
   }
 }

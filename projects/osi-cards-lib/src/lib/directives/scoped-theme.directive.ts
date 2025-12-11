@@ -1,16 +1,16 @@
 import {
   Directive,
-  Input,
   ElementRef,
-  OnInit,
-  OnDestroy,
-  OnChanges,
-  SimpleChanges,
   inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
   Renderer2,
+  SimpleChanges,
 } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
-import { ThemeService, OSICardsThemeConfig, ThemePreset } from '../themes/theme.service';
+import { OSICardsThemeConfig, ThemePreset, ThemeService } from '../themes/theme.service';
 
 /**
  * Scoped Theme Directive
@@ -257,7 +257,16 @@ export class OsiThemeContainerDirective implements OnInit {
     const element = this.elementRef.nativeElement;
 
     this.renderer.addClass(element, 'osi-theme-container');
-    this.renderer.setStyle(element, 'container-type', 'inline-size');
     this.renderer.setStyle(element, 'contain', 'layout style');
+
+    // Container queries are progressive enhancement (Safari 16+)
+    // Check support before applying
+    if (
+      typeof CSS !== 'undefined' &&
+      CSS.supports &&
+      CSS.supports('container-type', 'inline-size')
+    ) {
+      this.renderer.setStyle(element, 'container-type', 'inline-size');
+    }
   }
 }

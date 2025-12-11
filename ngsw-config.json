@@ -59,7 +59,7 @@
     },
     {
       "name": "docs-pages",
-      "installMode": "lazy",
+      "installMode": "prefetch",
       "updateMode": "prefetch",
       "resources": {
         "files": ["/chunk-*.js"]
@@ -70,10 +70,15 @@
       "installMode": "prefetch",
       "updateMode": "prefetch",
       "resources": {
-        "files": [
-          "/assets/configs/manifest.json",
-          "/assets/i18n/en.json"
-        ]
+        "files": ["/assets/configs/manifest.json", "/assets/i18n/en.json"]
+      }
+    },
+    {
+      "name": "docs-assets",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": ["/assets/docs/**"]
       }
     },
     {
@@ -99,7 +104,7 @@
   "dataGroups": [
     {
       "name": "docs-content",
-      "urls": ["/docs/**"],
+      "urls": ["/assets/docs/**", "/assets/docs/rendered/**", "/docs/**"],
       "cacheConfig": {
         "strategy": "performance",
         "maxSize": 100,

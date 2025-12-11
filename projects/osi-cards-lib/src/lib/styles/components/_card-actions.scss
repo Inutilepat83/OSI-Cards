@@ -10,11 +10,11 @@ app-card-actions {
   display: flex !important;
   flex-wrap: wrap !important;
   align-items: center !important;
-  gap: 0.75rem !important;
-  margin-top: 12px !important;
-  margin-left: 4px !important;
-  margin-right: 4px !important;
-  padding-bottom: 16px !important;
+  gap: var(--card-element-gap-lg) !important;
+  margin-top: var(--space-3) !important;
+  margin-left: var(--space-1) !important;
+  margin-right: var(--space-1) !important;
+  padding-bottom: var(--osi-card-padding) !important;
 }
 
 // Base Button Styles
@@ -27,8 +27,8 @@ app-card-actions {
   // Layout
   display: inline-flex !important;
   align-items: center !important;
-  gap: 0.5rem !important;
-  padding: 0.625rem 1.25rem !important;
+  gap: var(--card-element-gap-md) !important;
+  padding: var(--space-2) var(--space-5) !important;
 
   // Typography
   font-family:
@@ -50,89 +50,89 @@ app-card-actions {
   cursor: pointer !important;
 
   // Visual
-  border-radius: 10px !important;
-  transition: all 200ms ease !important;
+  border-radius: var(--radius-md) !important;
+  transition: var(--duration-fast) ease !important;
   box-sizing: border-box !important;
 }
 
 // Primary Button - Solid Orange Background with WHITE text
 .osi-action-button--primary {
-  background-color: #ff7900 !important;
-  color: #ffffff !important;
+  background-color: var(--osi-card-action-primary-bg) !important;
+  color: var(--osi-card-action-primary-color) !important;
   border: none !important;
-  box-shadow: 0 2px 8px rgba(255, 121, 0, 0.25) !important;
+  box-shadow: var(--osi-card-action-primary-shadow) !important;
 
   // Force white text on all child elements
   * {
-    color: #ffffff !important;
+    color: var(--osi-card-action-primary-color) !important;
   }
 }
 
 .osi-action-button--primary:hover {
-  background-color: #e66d00 !important;
-  color: #ffffff !important;
-  box-shadow: 0 4px 16px rgba(255, 121, 0, 0.4) !important;
-  transform: translateY(-1px) !important;
+  background-color: var(--osi-card-action-primary-bg-hover) !important;
+  color: var(--osi-card-action-primary-color) !important;
+  box-shadow: var(--osi-card-action-primary-shadow-hover) !important;
+  transform: translateY(calc(var(--motion-distance-xs) * -0.5)) !important;
 }
 
 .osi-action-button--primary:active {
-  background-color: #cc6000 !important;
-  color: #ffffff !important;
+  background-color: var(--color-brand-dark) !important;
+  color: var(--osi-card-action-primary-color) !important;
   transform: scale(0.98) translateY(0) !important;
-  box-shadow: 0 2px 4px rgba(255, 121, 0, 0.2) !important;
+  box-shadow: var(--osi-card-action-primary-shadow) !important;
 }
 
 .osi-action-button--primary:focus-visible {
-  outline: 2px solid #ff7900 !important;
-  outline-offset: 2px !important;
+  outline: var(--border-width-accent-sm) solid var(--color-brand) !important;
+  outline-offset: var(--border-width-accent-sm) !important;
 }
 
 // Secondary Button - Orange Border (Outline) with WHITE text
 .osi-action-button--secondary {
   background-color: transparent !important;
-  color: #ffffff !important;
-  border: 2px solid #ff7900 !important;
+  color: var(--osi-card-action-secondary-color) !important;
+  border: var(--osi-card-action-secondary-border) !important;
 
   // Force white text on all child elements
   * {
-    color: #ffffff !important;
+    color: var(--osi-card-action-secondary-color) !important;
   }
 }
 
 .osi-action-button--secondary:hover {
-  background-color: rgba(255, 121, 0, 0.1) !important;
-  color: #ffffff !important;
-  box-shadow: 0 2px 8px rgba(255, 121, 0, 0.2) !important;
+  background-color: var(--osi-card-action-secondary-bg-hover) !important;
+  color: var(--osi-card-action-secondary-color) !important;
+  box-shadow: var(--osi-card-action-secondary-shadow-hover) !important;
 }
 
 .osi-action-button--secondary:active {
-  background-color: rgba(255, 121, 0, 0.15) !important;
-  color: #ffffff !important;
+  background-color: var(--osi-card-action-secondary-bg-hover) !important;
+  color: var(--osi-card-action-secondary-color) !important;
   transform: scale(0.98) !important;
 }
 
 .osi-action-button--secondary:focus-visible {
-  outline: 2px solid #ff7900 !important;
-  outline-offset: 2px !important;
+  outline: var(--border-width-accent-sm) solid var(--color-brand) !important;
+  outline-offset: var(--border-width-accent-sm) !important;
 }
 
 // Button Content Elements - Always white
 .osi-action-button__label {
-  color: #ffffff !important;
+  color: inherit !important;
   font-family: inherit !important;
   font-size: inherit !important;
   font-weight: inherit !important;
 }
 
 .osi-action-button__icon {
-  width: 18px !important;
-  height: 18px !important;
+  width: var(--icon-sm) !important;
+  height: var(--icon-sm) !important;
   object-fit: contain !important;
   flex-shrink: 0 !important;
 }
 
 .osi-action-button__emoji {
-  font-size: 16px !important;
+  font-size: var(--icon-sm) !important;
   line-height: 1 !important;
   flex-shrink: 0 !important;
 }
@@ -146,11 +146,11 @@ app-card-actions {
 }
 
 .osi-action-button lucide-icon svg {
-  width: 16px !important;
-  height: 16px !important;
+  width: var(--icon-sm) !important;
+  height: var(--icon-sm) !important;
   stroke: currentColor !important;
   fill: none !important;
-  stroke-width: 2 !important;
+  stroke-width: var(--border-width-accent-sm) !important;
   stroke-linecap: round !important;
   stroke-linejoin: round !important;
 }

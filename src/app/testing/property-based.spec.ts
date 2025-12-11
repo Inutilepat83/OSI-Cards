@@ -7,6 +7,7 @@
  * Install: npm install --save-dev fast-check
  */
 
+// @ts-expect-error - fast-check may not be installed
 import * as fc from 'fast-check';
 
 describe('Property-Based Tests', () => {

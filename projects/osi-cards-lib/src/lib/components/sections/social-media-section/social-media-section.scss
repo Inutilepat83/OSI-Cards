@@ -55,11 +55,10 @@
 
   &:hover {
     border-color: var(--accent);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-xl);
+    background: var(--osi-section-item-background-hover);
 
     .icon {
-      transform: scale(1.12);
       color: var(--accent);
     }
 

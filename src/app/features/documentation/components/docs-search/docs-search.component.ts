@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -14,7 +15,6 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -1103,13 +1103,14 @@ export class DocsSearchComponent implements OnInit, OnDestroy, AfterViewInit {
         this.selectedIndex.update((i) => Math.max(i - 1, 0));
         this.scrollToSelected();
         break;
-      case 'Enter':
+      case 'Enter': {
         event.preventDefault();
         const selected = results[this.selectedIndex()];
         if (selected) {
           this.selectResult(selected);
         }
         break;
+      }
     }
   }
 

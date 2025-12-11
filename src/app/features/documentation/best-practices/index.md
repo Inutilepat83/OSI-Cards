@@ -245,3 +245,4 @@ Cache card data to avoid unnecessary API calls.
 - [Section Types](/docs/section-types)
 - [LLM Integration](/docs/llm-integration)
 - [API Reference](/docs/api)
+

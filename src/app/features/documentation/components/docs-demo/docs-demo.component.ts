@@ -533,7 +533,7 @@ export class DocsDemoComponent implements OnInit, OnChanges {
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(
-        /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+        /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g,
         (match) => {
           let cls = 'token-number';
           if (/^"/.test(match)) {
@@ -552,6 +552,6 @@ export class DocsDemoComponent implements OnInit, OnChanges {
           return `<span class="${cls}">${match}</span>`;
         }
       )
-      .replace(/[{}\[\],]/g, (match) => `<span class="token-punctuation">${match}</span>`);
+      .replace(/[[]{}\\],]/g, (match) => `<span class="token-punctuation">${match}</span>`);
   }
 }

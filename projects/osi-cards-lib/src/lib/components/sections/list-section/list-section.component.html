@@ -3,7 +3,16 @@
   </lib-section-header>
 
   <div class="list-container" *ngIf="section.items?.length">
-    <div class="list-item" *ngFor="let item of section.items">
+    <div
+      class="list-item"
+      *ngFor="let item of section.items; let i = index"
+      [class.expanded]="expandedIndex === i"
+      role="button"
+      tabindex="0"
+      [attr.aria-expanded]="expandedIndex === i"
+      (click)="toggleExpanded(i)"
+      (keydown)="onItemKeydown($event, i)"
+    >
       <span class="list-bullet">•</span>
       <div class="list-content">
         <div class="list-header">

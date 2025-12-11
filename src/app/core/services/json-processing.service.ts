@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { AICardConfig, CardSection, CardTypeGuards } from '../../models';
-import { AppConfigService } from './app-config.service';
 import { ensureCardIds } from '../../shared/utils/card-utils';
+import { AppConfigService } from './app-config.service';
 
 /**
  * Service for processing JSON input, including parsing, validation, and partial parsing.
@@ -223,8 +223,7 @@ export class JsonProcessingService {
       // Handle incomplete strings
       let inString = false;
       let escapeNext = false;
-      for (let i = 0; i < sanitized.length; i++) {
-        const char = sanitized[i];
+      for (const char of sanitized) {
         if (escapeNext) {
           escapeNext = false;
           continue;
@@ -310,9 +309,7 @@ export class JsonProcessingService {
     let inString = false;
     let escapeNext = false;
 
-    for (let i = 0; i < sectionsContent.length; i++) {
-      const char = sectionsContent[i];
-
+    for (const char of sectionsContent) {
       if (escapeNext) {
         currentSection += char;
         escapeNext = false;

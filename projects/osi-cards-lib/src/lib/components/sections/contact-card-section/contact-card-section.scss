@@ -49,14 +49,15 @@
   flex-direction: column;
   align-items: center;
   gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
-  transition: all 300ms var(--ease-out);
+  transition:
+    box-shadow var(--duration-slow) var(--ease-out),
+    background var(--duration-slow) var(--ease-out);
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-xl);
+    background: var(--osi-section-item-background-hover);
 
     .avatar {
-      transform: scale(1.06);
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
 
@@ -126,13 +127,15 @@
   border-radius: var(--radius-sm);
   background: var(--surface-hover);
   text-decoration: none;
-  transition: all 200ms var(--ease-out);
+  transition:
+    background var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
   border: 1px solid transparent;
 
   &:hover {
     background: var(--accent);
     border-color: var(--accent);
-    transform: translateY(-1px);
     box-shadow: var(--shadow-sm);
   }
 }

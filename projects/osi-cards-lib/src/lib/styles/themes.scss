@@ -1,7 +1,24 @@
 /**
  * OSI Cards - Theme Presets
- * 
+ *
  * Beautiful, opinionated theme presets for OSI Cards.
+ *
+ * ⚠️ WARNING: This file contains :root selectors for global theming.
+ * For library integration, prefer container-scoped theming:
+ * - Use <osi-cards-container [theme]="'day'"> component
+ * - Use [attr.data-theme]="theme" attribute binding
+ * - This file is primarily for demo app use
+ *
+ * The selectors below support both global (:root) and container-scoped (.osi-cards-container) usage.
+ *
+ * ⚠️ TOKEN SOURCE RELATIONSHIPS:
+ * This file defines demo app theme presets (`--osi-card-*` variables).
+ * For CSS component tokens, see: `styles/tokens/_master.scss`
+ * For JS-applied theme presets, see: `themes/presets.ts`
+ *
+ * NOTE: Theme values here may differ from `themes/presets.ts` as they serve
+ * different purposes (demo app vs library integration). Consider aligning
+ * values if consistency is required.
  */
 
 // ============================================
@@ -9,6 +26,7 @@
 // ============================================
 
 [data-theme="light"],
+.osi-cards-container[data-theme="light"],
 :root {
   // Base colors
   --osi-card-background: #ffffff;
@@ -53,7 +71,8 @@
 // Dark Theme
 // ============================================
 
-[data-theme="dark"] {
+[data-theme="dark"],
+.osi-cards-container[data-theme="dark"] {
   // Base colors
   --osi-card-background: #0f172a;
   --osi-card-foreground: #f1f5f9;
@@ -97,7 +116,8 @@
 // Midnight Theme
 // ============================================
 
-[data-theme="midnight"] {
+[data-theme="midnight"],
+.osi-cards-container[data-theme="midnight"] {
   --osi-card-background: #0a0a0f;
   --osi-card-foreground: #e4e4e7;
   --osi-card-muted: #71717a;
@@ -123,7 +143,8 @@
 // Corporate Theme
 // ============================================
 
-[data-theme="corporate"] {
+[data-theme="corporate"],
+.osi-cards-container[data-theme="corporate"] {
   --osi-card-background: #ffffff;
   --osi-card-foreground: #1e3a5f;
   --osi-card-muted: #5a7fa3;
@@ -154,7 +175,8 @@
 // Nature Theme
 // ============================================
 
-[data-theme="nature"] {
+[data-theme="nature"],
+.osi-cards-container[data-theme="nature"] {
   --osi-card-background: #fefefe;
   --osi-card-foreground: #1a3129;
   --osi-card-muted: #5a7268;
@@ -182,7 +204,8 @@
 // Sunset Theme
 // ============================================
 
-[data-theme="sunset"] {
+[data-theme="sunset"],
+.osi-cards-container[data-theme="sunset"] {
   --osi-card-background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   --osi-card-foreground: #fef3c7;
   --osi-card-muted: #d4a574;
@@ -208,7 +231,8 @@
 // Ocean Theme
 // ============================================
 
-[data-theme="ocean"] {
+[data-theme="ocean"],
+.osi-cards-container[data-theme="ocean"] {
   --osi-card-background: #0a192f;
   --osi-card-foreground: #ccd6f6;
   --osi-card-muted: #8892b0;
@@ -234,7 +258,8 @@
 // Rose Theme
 // ============================================
 
-[data-theme="rose"] {
+[data-theme="rose"],
+.osi-cards-container[data-theme="rose"] {
   --osi-card-background: #fffbfc;
   --osi-card-foreground: #4a1c2c;
   --osi-card-muted: #9f6070;
@@ -258,7 +283,8 @@
 // Minimal Theme
 // ============================================
 
-[data-theme="minimal"] {
+[data-theme="minimal"],
+.osi-cards-container[data-theme="minimal"] {
   --osi-card-background: #ffffff;
   --osi-card-foreground: #171717;
   --osi-card-muted: #737373;
@@ -291,7 +317,8 @@
 // High Contrast Theme (Accessibility)
 // ============================================
 
-[data-theme="high-contrast"] {
+[data-theme="high-contrast"],
+.osi-cards-container[data-theme="high-contrast"] {
   --osi-card-background: #000000;
   --osi-card-foreground: #ffffff;
   --osi-card-muted: #ffffff;
@@ -327,6 +354,7 @@
 
 @media (prefers-color-scheme: dark) {
   [data-theme="system"],
+  .osi-cards-container[data-theme="system"],
   :root:not([data-theme]) {
     --osi-card-background: #0f172a;
     --osi-card-foreground: #f1f5f9;
@@ -340,6 +368,7 @@
 
 @media (prefers-color-scheme: light) {
   [data-theme="system"],
+  .osi-cards-container[data-theme="system"],
   :root:not([data-theme]) {
     --osi-card-background: #ffffff;
     --osi-card-foreground: #1a1a2e;
@@ -356,7 +385,9 @@
 // ============================================
 
 // CSS Custom Properties for transition configuration
-:root {
+// Support both global and container-scoped usage
+:root,
+.osi-cards-container {
   --osi-theme-transition-duration: 200ms;
   --osi-theme-transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -423,7 +454,10 @@ $theme-no-transition-properties: (
 
 .osi-scoped-theme {
   // Inherit theme from data-theme attribute
-  container-type: inline-size;
+  // Container queries are progressive enhancement (Safari 16+)
+  @supports (container-type: inline-size) {
+    container-type: inline-size;
+  }
 
   // Ensure CSS variables cascade properly
   color: var(--osi-card-foreground);
@@ -433,7 +467,10 @@ $theme-no-transition-properties: (
 .osi-theme-container {
   position: relative;
   contain: layout style;
-  container-type: inline-size;
+  // Container queries are progressive enhancement (Safari 16+)
+  @supports (container-type: inline-size) {
+    container-type: inline-size;
+  }
 
   // Reset background to theme
   background-color: var(--osi-card-background);
@@ -502,7 +539,11 @@ $theme-no-transition-properties: (
 [data-theme="dark"],
 [data-theme="midnight"],
 [data-theme="ocean"],
-[data-theme="sunset"] {
+[data-theme="sunset"],
+.osi-cards-container[data-theme="dark"],
+.osi-cards-container[data-theme="midnight"],
+.osi-cards-container[data-theme="ocean"],
+.osi-cards-container[data-theme="sunset"] {
   // Slightly increase font weight for better legibility on dark backgrounds
   --osi-card-font-weight-normal: 400;
   --osi-card-font-weight-medium: 500;
@@ -519,7 +560,8 @@ $theme-no-transition-properties: (
 
 // Print mode - always use light theme
 @media print {
-  [data-theme] {
+  [data-theme],
+  .osi-cards-container[data-theme] {
     --osi-card-background: #ffffff !important;
     --osi-card-foreground: #000000 !important;
     --osi-card-muted: #666666 !important;

@@ -1,7 +1,12 @@
-import { initialState, reducer } from './cards.state';
-import { clearError, generateCardSuccess, loadTemplate, setCardType } from './cards.state';
-import { CardBuilder } from '../../../testing/test-builders';
-import { AICardConfig } from '../../../models';
+import { CardBuilder } from '../../testing/test-builders';
+import {
+  clearError,
+  generateCardSuccess,
+  initialState,
+  loadTemplate,
+  reducer,
+  setCardType,
+} from './cards.state';
 
 describe('CardsState Reducer', () => {
   it('should return initial state', () => {
@@ -40,7 +45,7 @@ describe('CardsState Reducer', () => {
       const action = setCardType({ cardType: 'company' });
       const result = reducer(initialState, action);
 
-      expect(result.selectedCardType).toBe('company');
+      expect(result.cardType).toBe('company');
     });
   });
 

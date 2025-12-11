@@ -18,7 +18,7 @@ export interface WorkerResponse<T = any> {
 /**
  * Create a worker from a blob URL
  */
-export function createWorkerFromFunction(fn: Function): Worker {
+export function createWorkerFromFunction(fn: () => void): Worker {
   const blob = new Blob([`(${fn.toString()})()`], { type: 'application/javascript' });
   const url = URL.createObjectURL(blob);
   return new Worker(url);

@@ -1,15 +1,16 @@
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
-  Injectable,
-  inject,
   Inject,
-  PLATFORM_ID,
-  OnDestroy,
+  Injectable,
   InjectionToken,
+  OnDestroy,
   Optional,
+  PLATFORM_ID,
+  inject,
 } from '@angular/core';
-import { isPlatformBrowser, DOCUMENT } from '@angular/common';
-import { BehaviorSubject, Observable, Subject, fromEvent, map, takeUntil, startWith } from 'rxjs';
-import { EventBusService, ThemeChangedPayload } from '../services/event-bus.service';
+import { BehaviorSubject, Observable, Subject, fromEvent, map, takeUntil } from 'rxjs';
+import { EventBusService } from '../services/event-bus.service';
+import { DEFAULT_THEME_PRESET } from './presets';
 
 // ============================================
 // Types & Interfaces
@@ -72,6 +73,12 @@ export interface ThemeServiceConfig {
   updateColorSchemeMeta: boolean;
   /** Custom themes to register */
   customThemes?: Record<string, OSICardsThemeConfig>;
+  /**
+   * Target element for theme application (container-scoped theming)
+   * If not provided, defaults to document.documentElement (global theming - demo app only)
+   * @deprecated For library integration, use container-scoped theming via [attr.data-theme] or OsiThemeDirective
+   */
+  targetElement?: HTMLElement | null;
 }
 
 /**
@@ -108,32 +115,24 @@ export const DEFAULT_THEME_CONFIG: ThemeServiceConfig = {
  * - Event bus integration for theme change notifications
  * - Scoped theme support
  *
+ * @deprecated For library integration, prefer container-scoped theming:
+ * - Use `<osi-cards-container [theme]="'day'">` component input
+ * - Use `[attr.data-theme]="theme"` attribute binding
+ * - Use `OsiThemeDirective` for scoped theming
+ *
+ * This service is primarily for demo app use where global theming is acceptable.
+ * When used in library mode, it mutates document.documentElement which breaks library independence.
+ *
  * @example
  * ```typescript
+ * // Demo app usage (acceptable)
  * const themeService = inject(ThemeService);
- *
- * // Follow system preference
  * themeService.setTheme('system');
  *
- * // Switch to specific theme
- * themeService.setTheme('dark');
- *
- * // Toggle between light and dark
- * themeService.toggleTheme();
- *
- * // Apply custom theme
- * themeService.applyCustomTheme({
- *   name: 'my-brand',
- *   variables: {
- *     '--osi-card-accent': '#ff0000',
- *     '--osi-card-background': '#1a1a1a'
- *   }
- * });
- *
- * // Watch system preference changes
- * themeService.systemPreference$.subscribe(pref => {
- *   console.log('System prefers:', pref);
- * });
+ * // Library integration (preferred)
+ * <osi-cards-container [theme]="'day'">
+ *   <app-ai-card-renderer [cardConfig]="card"></app-ai-card-renderer>
+ * </osi-cards-container>
  * ```
  */
 @Injectable({
@@ -171,14 +170,45 @@ export class ThemeService implements OnDestroy {
     // Merge provided config with defaults
     this.config = { ...DEFAULT_THEME_CONFIG, ...providedConfig };
 
-    this.rootElement = isPlatformBrowser(this.platformId) ? this.document.documentElement : null;
+    // Use targetElement if provided (container-scoped), otherwise default to documentElement (global - demo only)
+    if (this.config.targetElement !== undefined) {
+      this.rootElement = this.config.targetElement;
+    } else {
+      this.rootElement = isPlatformBrowser(this.platformId) ? this.document.documentElement : null;
+
+      // Warn in development if using global theming (library mode should use container-scoped)
+      if (
+        isPlatformBrowser(this.platformId) &&
+        typeof console !== 'undefined' &&
+        !this.isProduction()
+      ) {
+        console.warn(
+          '[ThemeService] Using global document.documentElement for theming. ' +
+            'For library integration, prefer container-scoped theming via <osi-cards-container [theme]="..."> or OsiThemeDirective.'
+        );
+      }
+    }
 
     if (isPlatformBrowser(this.platformId)) {
       this.initializeSystemPreferenceWatcher();
-      this.initializeColorSchemeMeta();
+      // Only initialize color scheme meta if using global theming
+      if (this.rootElement === this.document.documentElement) {
+        this.initializeColorSchemeMeta();
+      }
       this.registerCustomThemes(this.config.customThemes);
       this.initializeTheme();
     }
+  }
+
+  /**
+   * Check if running in production mode
+   */
+  private isProduction(): boolean {
+    return (
+      typeof window !== 'undefined' &&
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ===
+        false
+    );
   }
 
   ngOnDestroy(): void {
@@ -439,6 +469,25 @@ export class ThemeService implements OnDestroy {
   }
 
   /**
+   * Apply theme style preset to the root element
+   * @param isDark Whether to apply dark or light theme
+   */
+  private applyThemeStylePreset(isDark: boolean): void {
+    if (!this.rootElement) {
+      return;
+    }
+
+    // Apply preset variables - inline styles have higher specificity than CSS rules
+    const variables = isDark ? DEFAULT_THEME_PRESET.dark : DEFAULT_THEME_PRESET.light;
+    Object.entries(variables).forEach(([key, value]) => {
+      if (value) {
+        // Inline styles override CSS rules, so these will take precedence
+        this.rootElement!.style.setProperty(key, value);
+      }
+    });
+  }
+
+  /**
    * Get current value of a CSS variable
    * @param name Variable name
    */
@@ -619,6 +668,7 @@ export class ThemeService implements OnDestroy {
     this.currentThemeSubject.next(themeToApply);
 
     const resolvedTheme = this.resolveTheme(themeToApply);
+    // Apply theme immediately on initialization
     this.applyTheme(resolvedTheme);
   }
 
@@ -676,7 +726,16 @@ export class ThemeService implements OnDestroy {
 
   private resolveTheme(theme: ThemePreset | string): string {
     if (theme === 'system') {
-      return this.detectSystemPreference();
+      const systemPref = this.detectSystemPreference();
+      // Map 'light'/'dark' to 'day'/'night' for consistency
+      return systemPref === 'dark' ? 'night' : 'day';
+    }
+    // Map 'light'/'dark' to 'day'/'night' for consistency
+    if (theme === 'light') {
+      return 'day';
+    }
+    if (theme === 'dark') {
+      return 'night';
     }
     return theme;
   }
@@ -692,6 +751,13 @@ export class ThemeService implements OnDestroy {
     // Update resolved theme subject
     this.resolvedThemeSubject.next(theme);
 
+    // Apply theme style preset (DEFAULT_THEME_PRESET for day/night themes)
+    const isDark = this.isThemeDark(theme);
+    if (theme === 'day' || theme === 'night' || theme === 'light' || theme === 'dark') {
+      // Apply preset immediately - inline styles have higher specificity than CSS rules
+      this.applyThemeStylePreset(isDark);
+    }
+
     // Check if custom theme with variables
     const customTheme = this.customThemes.get(theme);
     if (customTheme) {
@@ -704,7 +770,12 @@ export class ThemeService implements OnDestroy {
   }
 
   private updateColorScheme(scheme: 'light' | 'dark' | 'light dark'): void {
-    if (this.colorSchemeMetaTag && this.config.updateColorSchemeMeta) {
+    // Only update meta tag when using global theming (documentElement)
+    if (
+      this.colorSchemeMetaTag &&
+      this.config.updateColorSchemeMeta &&
+      this.rootElement === this.document.documentElement
+    ) {
       this.colorSchemeMetaTag.content = scheme;
     }
   }

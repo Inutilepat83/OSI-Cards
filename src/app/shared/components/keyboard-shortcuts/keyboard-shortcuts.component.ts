@@ -16,12 +16,9 @@ import {
   computed,
   HostListener,
   inject,
-  OnDestroy,
-  OnInit,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { DOCUMENT } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 
 // =============================================================================
 // TYPES
@@ -503,7 +500,7 @@ const KEYBOARD_SHORTCUTS: KeyboardShortcut[] = [
     `,
   ],
 })
-export class KeyboardShortcutsComponent implements OnInit, OnDestroy {
+export class KeyboardShortcutsComponent {
   private readonly document = inject(DOCUMENT);
 
   /** Whether the panel is open */
@@ -520,14 +517,6 @@ export class KeyboardShortcutsComponent implements OnInit, OnDestroy {
 
   /** All shortcuts */
   private readonly shortcuts = KEYBOARD_SHORTCUTS;
-
-  ngOnInit(): void {
-    // Focus trap when open
-  }
-
-  ngOnDestroy(): void {
-    // Cleanup
-  }
 
   /**
    * Handle global keydown events

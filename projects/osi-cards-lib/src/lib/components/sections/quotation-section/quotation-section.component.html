@@ -3,7 +3,16 @@
   </lib-section-header>
 
   <div class="grid" *ngIf="section.fields?.length">
-    <blockquote class="quote" *ngFor="let q of section.fields">
+    <blockquote
+      class="quote"
+      *ngFor="let q of section.fields; let i = index"
+      [class.expanded]="expandedIndex === i"
+      role="button"
+      tabindex="0"
+      [attr.aria-expanded]="expandedIndex === i"
+      (click)="toggleExpanded(i)"
+      (keydown)="onQuoteKeydown($event, i)"
+    >
       <div class="icon">"</div>
       <p class="text">{{ getQuoteText(q) }}</p>
       <footer class="footer">

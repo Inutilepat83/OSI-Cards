@@ -18,7 +18,10 @@
   >
     <div
       class="tilt-container w-full flex-1 min-h-0"
-      [ngClass]="{ 'max-w-none': isFullscreen }"
+      [ngClass]="{
+        'max-w-none': isFullscreen,
+        'tilt-disabled': !tiltEnabled || isFullscreen,
+      }"
       [style.display]="'flex'"
       [style.flex-direction]="'column'"
       #tiltContainer

@@ -208,7 +208,7 @@ export class FetchStreamingTransport extends StreamingTransport {
     }
 
     if (this.reader) {
-      this.reader.cancel().catch(() => {});
+      this.reader.cancel().catch(() => undefined);
       this.reader = null;
     }
 

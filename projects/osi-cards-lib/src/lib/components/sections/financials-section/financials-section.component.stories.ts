@@ -19,7 +19,7 @@ const meta: Meta<FinancialsSectionComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<FinancialsSection Component>;
+type Story = StoryObj<FinancialsSectionComponent>;
 
 // Quarterly results
 export const QuarterlyResults: Story = {
@@ -92,7 +92,7 @@ export const BalanceSheet: Story = {
         { label: 'Cash & Equivalents', value: '$95M' },
         { label: 'Total Liabilities', value: '$85M' },
         { label: 'Current Liabilities', value: '$42M' },
-        { label: 'Shareholders\' Equity', value: '$200M' },
+        { label: "Shareholders' Equity", value: '$200M' },
         { label: 'Debt-to-Equity Ratio', value: '0.18' },
       ])
       .build(),
@@ -166,11 +166,3 @@ export const Minimal: Story = {
       .build(),
   },
 };
-
-
-
-
-
-
-
-

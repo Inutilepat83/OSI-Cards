@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, effect, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Toast, ToastService } from 'osi-cards-lib';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
+import { Toast, ToastService } from 'osi-cards-lib';
 
 /**
  * Toast notification component
@@ -14,7 +14,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
   template: `
     <div class="toast-container" *ngIf="toasts.length > 0">
       <div
-        *ngFor="let toast of toasts"
+        *ngFor="let toast of toasts; trackBy: trackByToastId"
         class="toast"
         [class]="'toast--' + toast.type"
         [@slideInOut]
@@ -166,7 +166,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ToastComponent implements OnInit {
+export class ToastComponent {
   private readonly toastService = inject(ToastService);
 
   toasts: Toast[] = [];
@@ -178,11 +178,11 @@ export class ToastComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    // Initialization logic if needed
-  }
-
   remove(id: string): void {
     this.toastService.dismiss(id);
+  }
+
+  trackByToastId(_index: number, toast: Toast): string {
+    return toast.id;
   }
 }

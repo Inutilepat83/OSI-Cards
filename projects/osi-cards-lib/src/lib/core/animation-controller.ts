@@ -246,14 +246,19 @@ export class AnimationController {
         return;
       }
 
-      // PLAY: Animate from inverted position to final
+      // Performance optimization: Set will-change for FLIP animation
+      if (el instanceof HTMLElement) {
+        (el as HTMLElement).style.willChange = 'transform';
+      }
+
+      // PLAY: Animate from inverted position to final (use translate3d for GPU acceleration)
       const anim = el.animate(
         [
           {
-            transform: `translate(${deltaX}px, ${deltaY}px) scale(${deltaW}, ${deltaH})`,
+            transform: `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${deltaW}, ${deltaH})`,
           },
           {
-            transform: 'translate(0, 0) scale(1, 1)',
+            transform: 'translate3d(0, 0, 0) scale(1, 1)',
           },
         ],
         {
@@ -267,6 +272,10 @@ export class AnimationController {
 
       anim.onfinish = () => {
         this.activeAnimations.delete(el);
+        // Remove will-change after animation
+        if (el instanceof HTMLElement) {
+          (el as HTMLElement).style.willChange = 'auto';
+        }
       };
     });
 
@@ -324,6 +333,16 @@ export class AnimationController {
     // Cancel existing animation
     this.cancel(element);
 
+    // Performance optimization: Set will-change before animation starts
+    if (element instanceof HTMLElement) {
+      const htmlElement = element as HTMLElement;
+      // Determine which properties will change based on keyframes
+      const willChangeProps = this.determineWillChangeProps(keyframes);
+      if (willChangeProps.length > 0) {
+        htmlElement.style.willChange = willChangeProps.join(', ');
+      }
+    }
+
     const anim = element.animate(keyframes, {
       duration: options.duration ?? DEFAULT_DURATION,
       easing: options.easing ?? DEFAULT_EASING,
@@ -336,11 +355,19 @@ export class AnimationController {
     const finished = anim.finished
       .then(() => {
         this.activeAnimations.delete(element);
+        // Performance optimization: Remove will-change after animation completes
+        if (element instanceof HTMLElement) {
+          (element as HTMLElement).style.willChange = 'auto';
+        }
         options.onComplete?.();
       })
       .catch(() => {
         // Animation was cancelled
         this.activeAnimations.delete(element);
+        // Remove will-change on cancellation
+        if (element instanceof HTMLElement) {
+          (element as HTMLElement).style.willChange = 'auto';
+        }
       });
 
     return {
@@ -348,9 +375,45 @@ export class AnimationController {
       cancel: () => {
         anim.cancel();
         this.activeAnimations.delete(element);
+        // Remove will-change on cancellation
+        if (element instanceof HTMLElement) {
+          (element as HTMLElement).style.willChange = 'auto';
+        }
       },
       finished,
     };
+  }
+
+  /**
+   * Determine which CSS properties will change based on keyframes
+   * Returns array of properties for will-change optimization
+   */
+  private determineWillChangeProps(keyframes: Keyframe[]): string[] {
+    const props = new Set<string>();
+
+    for (const keyframe of keyframes) {
+      for (const prop in keyframe) {
+        if (prop === 'offset' || prop === 'easing') continue;
+
+        // Map CSS properties to will-change values
+        if (
+          prop.includes('transform') ||
+          prop === 'translateX' ||
+          prop === 'translateY' ||
+          prop === 'translateZ' ||
+          prop === 'scale' ||
+          prop === 'rotate'
+        ) {
+          props.add('transform');
+        } else if (prop === 'opacity') {
+          props.add('opacity');
+        } else if (prop.includes('filter')) {
+          props.add('filter');
+        }
+      }
+    }
+
+    return Array.from(props);
   }
 
   private skipAnimation(onComplete?: () => void): AnimationState {

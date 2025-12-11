@@ -13,7 +13,7 @@
 
   // Spacing - No margin above
   margin: 0 !important;
-  padding: 12px 16px !important;
+  padding: var(--space-3) var(--osi-card-padding) !important;
 
   // Typography - Small, centered, muted
   font-family:
@@ -25,14 +25,14 @@
     Roboto,
     Arial,
     sans-serif !important;
-  font-size: 11px !important;
+  font-size: var(--text-xs) !important;
   font-weight: 400 !important;
   line-height: 1.4 !important;
   letter-spacing: 0.02em !important;
   text-align: center !important;
 
   // Color - Muted gray
-  color: rgba(100, 100, 100, 0.7) !important;
+  color: var(--muted-foreground) !important;
 
   // Visual reset
   background: transparent !important;
@@ -40,8 +40,8 @@
   text-decoration: none !important;
 }
 
-// Dark theme variant
+// Dark theme variant - uses theme-aware variable
 :host([data-theme="night"]) .card-signature,
 :host-context([data-theme="night"]) .card-signature {
-  color: rgba(200, 200, 200, 0.6) !important;
+  color: var(--muted-foreground) !important;
 }

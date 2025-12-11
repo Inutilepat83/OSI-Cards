@@ -29,3 +29,4 @@ export interface Schema {
   /** Skip style file creation */
   skipStyles?: boolean;
 }
+

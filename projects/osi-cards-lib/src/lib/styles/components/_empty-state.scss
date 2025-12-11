@@ -104,11 +104,11 @@
   0%,
   100% {
     opacity: 0.6;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate3d(-50%, -50%, 0) scale(1);
   }
   50% {
     opacity: 0.9;
-    transform: translate(-50%, -50%) scale(1.05);
+    transform: translate3d(-50%, -50%, 0) scale(1.05);
   }
 }
 
@@ -217,16 +217,16 @@
 @keyframes icon-float {
   0%,
   100% {
-    transform: translateY(0) rotate(0deg);
+    transform: translate3d(0, 0, 0) rotate(0deg);
   }
   25% {
-    transform: translateY(-6px) rotate(-3deg);
+    transform: translate3d(0, -6px, 0) rotate(-3deg);
   }
   50% {
-    transform: translateY(-10px) rotate(0deg);
+    transform: translate3d(0, -10px, 0) rotate(0deg);
   }
   75% {
-    transform: translateY(-6px) rotate(3deg);
+    transform: translate3d(0, -6px, 0) rotate(3deg);
   }
 }
 
@@ -273,11 +273,11 @@
 @keyframes fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translate3d(0, 10px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 

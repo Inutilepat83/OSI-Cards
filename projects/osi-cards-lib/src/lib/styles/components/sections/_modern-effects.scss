@@ -62,8 +62,8 @@
 @mixin gradient-background {
   background: linear-gradient(
     135deg,
-    var(--section-item-background) 0%,
-    var(--section-item-background-hover) 100%
+    var(--osi-section-item-background) 0%,
+    var(--osi-section-item-background-hover) 100%
   );
 }
 
@@ -108,23 +108,19 @@
 // =====================================================================
 
 @mixin elevated-card {
-  transition: var(--transition-shadow), var(--transition-transform);
+  transition: var(--transition-shadow), var(--transition-colors);
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-xl);
+    background: var(--osi-section-item-background-hover);
   }
 
   &:active {
-    transform: translateY(0);
     box-shadow: var(--shadow-md);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    &:hover,
-    &:active {
-      transform: none;
-    }
+    transition: none;
   }
 }
 
@@ -151,12 +147,12 @@
 
   // Hover state
   &:hover {
-    background: color-mix(in srgb, var(--section-item-background) 90%, var(--foreground) 10%);
+    background: color-mix(in srgb, var(--osi-section-item-background) 90%, var(--foreground) 10%);
   }
 
   // Active state
   &:active {
-    background: color-mix(in srgb, var(--section-item-background) 85%, var(--foreground) 15%);
+    background: color-mix(in srgb, var(--osi-section-item-background) 85%, var(--foreground) 15%);
   }
 
   // Focus state (keyboard navigation)
@@ -287,22 +283,22 @@
 @keyframes fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translate3d(0, 10px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes fade-in-scale {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: translate3d(0, 0, 0) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 
@@ -349,7 +345,7 @@
 // =====================================================================
 
 @mixin neumorphic-card($raised: true) {
-  background: var(--section-item-background);
+  background: var(--osi-section-item-background);
   border-radius: var(--radius-xl);
 
   @if $raised {
@@ -379,14 +375,14 @@
 
 @mixin scroll-reveal {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translate3d(0, 20px, 0);
   transition:
     opacity var(--duration-slow) var(--ease-out),
     transform var(--duration-slow) var(--ease-out);
 
   &.is-revealed {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 
   @media (prefers-reduced-motion: reduce) {

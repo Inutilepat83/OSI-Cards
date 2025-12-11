@@ -2,16 +2,16 @@
    AI Card Styles - Unified with Docs App
    =================================================================== */
 
-/* Host element styles - transparent container with 8px padding */
+/* Host element styles - transparent container with padding */
 :host {
   display: block;
-  padding: 8px;
+  padding: var(--osi-card-padding);
   background: transparent !important;
   background-color: transparent !important;
 
   /* Responsive: reduce padding on mobile */
   @media (max-width: 480px) {
-    padding: 4px;
+    padding: var(--osi-card-padding-mobile);
   }
 }
 
@@ -25,6 +25,9 @@
   /* CSS Isolation */
   isolation: isolate;
 
+  /* Performance optimization: CSS containment (no paint to avoid clipping shadows/glow) */
+  contain: layout style;
+
   /* Card base */
   @include surface-ai-card-base;
 
@@ -32,30 +35,33 @@
   /* These are specific to the main card container, not sections */
 
   /* Background - follows theme but has card-specific styling */
-  background: var(--ai-card-background) !important;
+  background: var(--osi-card-background) !important;
+
+  /* Backdrop filter - blur effect for glassmorphism */
+  backdrop-filter: var(--osi-card-backdrop-filter) !important;
+  -webkit-backdrop-filter: var(--osi-card-backdrop-filter) !important;
 
   /* Border - card-specific (stronger than section borders) */
-  border: var(--theme-ai-card-border) !important;
+  border: var(--osi-card-border) !important;
 
   /* Box shadow - card-specific elevation */
-  box-shadow: var(--theme-ai-card-box-shadow) !important;
+  box-shadow: var(--osi-card-shadow) !important;
 
   /* Padding - card-specific spacing */
-  padding: var(--card-main-padding) !important;
-  padding-bottom: var(--card-main-padding) !important;
+  padding: var(--osi-card-padding) !important;
+  padding-bottom: var(--osi-card-padding) !important;
 
   /* Border radius - card-specific (larger than sections) */
-  border-radius: var(--card-border-radius) !important;
+  border-radius: var(--osi-card-border-radius) !important;
 
   /* Gap - specific space between header and sections */
-  gap: var(--section-card-gap) !important;
+  gap: var(--osi-card-gap) !important;
   /* ========== END CARD SPECIFIC STYLES ========== */
 
   /* Smooth transitions */
   transition:
-    border-color 0.2s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease !important;
+    var(--osi-card-transition-border), var(--osi-card-transition-background),
+    var(--osi-card-transition-shadow) !important;
 
   /* Text rendering optimization */
   -webkit-font-smoothing: antialiased;
@@ -78,49 +84,38 @@
 
   /* ========== CARD HOVER - Theme-aware with card-specific effects ========== */
   /* Background hover - card-specific (different from sections) */
-  background: var(--ai-card-background-hover) !important;
+  background: var(--osi-card-background-hover) !important;
 
   /* Border hover - card-specific accent */
-  border: var(--theme-ai-card-border-hover) !important;
+  border: var(--osi-card-border-hover) !important;
 
   /* Box shadow hover - card-specific elevation */
-  box-shadow: var(--theme-ai-card-box-shadow-hover) !important;
+  box-shadow: var(--osi-card-shadow-hover) !important;
   /* ========== END CARD HOVER ========== */
 }
 
 .ai-card-surface--fullscreen {
   /* Fullscreen styling - use SAME background as normal card */
-  border: none !important;
-  box-shadow: none !important;
-  background: var(--ai-card-background) !important; /* Same as normal mode */
+  border: var(--osi-card-border-fullscreen) !important;
+  box-shadow: var(--osi-card-shadow-fullscreen) !important;
+  background: var(--osi-card-background-fullscreen) !important; /* Same as normal mode */
   max-height: none !important;
   max-width: none !important;
   width: 100% !important;
   overflow: visible !important;
-  padding: var(--card-main-padding) !important;
+  padding: var(--osi-card-padding) !important;
 
   /* Disable hover background change in fullscreen */
   &:hover {
-    background: var(--ai-card-background) !important; /* Keep same background on hover */
-    border: none !important;
-    box-shadow: none !important;
+    background: var(
+      --osi-card-background-fullscreen
+    ) !important; /* Keep same background on hover */
+    border: var(--osi-card-border-fullscreen) !important;
+    box-shadow: var(--osi-card-shadow-fullscreen) !important;
   }
 
-  /* Disable all tilt effects */
-  .tilt-container {
-    transform: none !important;
-    box-shadow: none !important;
-    width: 100% !important;
-    max-width: none !important;
-  }
-
-  .glow-container {
-    filter: none !important;
-  }
-
-  .card-reflection {
-    display: none !important;
-  }
+  /* Disable all tilt effects in fullscreen - handled by _tilt.scss */
+  /* Tilt effects are disabled via .ai-card-surface--fullscreen selector in _tilt.scss */
 
   /* Remove box-shadow glow from masonry items (sections) in fullscreen */
   .masonry-item {
@@ -141,7 +136,7 @@
   }
 
   .ai-card-title {
-    font-size: 14px !important;
+    font-size: var(--text-sm) !important;
   }
 }
 
@@ -149,11 +144,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: rgba(255, 121, 0, 0.08);
-  border: 1px solid rgba(255, 121, 0, 0.2);
+  width: var(--osi-card-fullscreen-btn-size);
+  height: var(--osi-card-fullscreen-btn-size);
+  border-radius: var(--osi-card-fullscreen-btn-radius);
+  background: var(--osi-card-fullscreen-btn-bg);
+  border: var(--border-width-default) solid var(--osi-card-fullscreen-btn-border);
   color: var(--foreground);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -161,16 +156,16 @@
 
   /* Position absolutely in top-right corner */
   position: absolute;
-  top: var(--card-main-padding);
-  right: var(--card-main-padding);
+  top: var(--osi-card-padding);
+  right: var(--osi-card-padding);
   z-index: 100;
 }
 
 .ai-card-fullscreen-btn:hover {
-  transform: translateY(-2px);
-  background: rgba(255, 121, 0, 0.15);
-  border-color: rgba(255, 121, 0, 0.4);
-  box-shadow: 0 4px 12px rgba(255, 121, 0, 0.2);
+  transform: translateY(calc(var(--motion-distance-xs) * -1));
+  background: var(--osi-card-fullscreen-btn-bg-hover);
+  border-color: var(--osi-card-fullscreen-btn-border-hover);
+  box-shadow: var(--osi-card-fullscreen-btn-shadow);
 }
 
 .ai-card-fullscreen-btn:active {
@@ -200,7 +195,7 @@
   margin: 0 !important;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--card-element-gap-md);
   /* NO BORDER - completely invisible */
   border: none !important;
   border-top: none !important;
@@ -282,14 +277,14 @@
 .ai-card-title-stack {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--card-element-gap-xs);
 }
 
 .ai-card-eyebrow {
   font-size: var(--font-card-eyebrow);
   letter-spacing: 0.08em;
   text-transform: none;
-  color: rgba(28, 28, 31, 0.85);
+  color: var(--osi-card-eyebrow-color);
   font-weight: 600;
   opacity: 0.9;
 }
@@ -297,7 +292,7 @@
 /* Removed .ai-card-title-group - content moved up one level */
 
 .ai-card-title {
-  font-size: 18px;
+  font-size: var(--text-lg);
   font-weight: 700;
   color: var(--foreground);
   letter-spacing: -0.01em;
@@ -391,63 +386,63 @@
 .ai-card-type-pill {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  padding: 2px 6px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 121, 0, 0.32);
-  background: rgba(255, 121, 0, 0.18);
+  gap: var(--card-element-gap-sm);
+  padding: var(--tag-padding-sm);
+  border-radius: var(--radius-full);
+  border: var(--border-width-default) solid var(--osi-card-type-pill-border);
+  background: var(--osi-card-type-pill-bg);
   text-transform: none;
   letter-spacing: 0.05em;
   font-size: var(--font-card-meta);
   font-weight: 600;
-  color: rgba(66, 61, 55, 0.85);
+  color: var(--osi-card-type-pill-color);
 }
 
 .ai-card-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 4px;
+  gap: var(--card-element-gap-md);
   text-transform: none;
   font-size: var(--font-card-meta);
   letter-spacing: 0.05em;
-  color: rgba(28, 28, 31, 0.85);
+  color: var(--osi-card-meta-color);
 }
 
 .ai-card-meta__chip {
   display: inline-flex;
   align-items: stretch;
-  gap: 4px;
-  padding: 2px 6px;
-  border-radius: 999px;
-  border: 1px solid rgba(55, 55, 60, 0.65);
-  background: rgba(40, 40, 45, 0.8);
+  gap: var(--card-element-gap-md);
+  padding: var(--tag-padding-sm);
+  border-radius: var(--radius-full);
+  border: var(--border-width-default) solid var(--osi-card-meta-chip-border);
+  background: var(--osi-card-meta-chip-bg);
 }
 
 .ai-card-meta__chip-dot {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 0 1px rgba(255, 121, 0, 0.12);
+  width: var(--icon-xs);
+  height: var(--icon-xs);
+  border-radius: var(--radius-full);
+  background: var(--osi-card-meta-chip-dot-primary);
+  box-shadow: var(--osi-card-meta-chip-dot-shadow);
 }
 
 .ai-card-meta__chip-dot--primary {
-  background: var(--accent);
+  background: var(--osi-card-meta-chip-dot-primary);
 }
 
 .ai-card-meta__chip-dot--secondary {
-  background: rgba(255, 121, 0, 0.65);
+  background: var(--osi-card-meta-chip-dot-secondary);
 }
 
 .ai-card-meta__chip-dot--tertiary {
-  background: rgba(255, 121, 0, 0.35);
+  background: var(--osi-card-meta-chip-dot-tertiary);
 }
 
 .ai-card-meta__chip-content {
   display: flex;
   flex-direction: column;
-  gap: 0px;
+  gap: 0;
   line-height: 1;
 }
 
@@ -455,7 +450,7 @@
   font-size: 0.48rem;
   letter-spacing: 0.05em;
   text-transform: none;
-  color: rgba(28, 28, 31, 0.85);
+  color: var(--osi-card-meta-color);
   font-weight: 600;
 }
 
@@ -487,7 +482,7 @@
   margin-bottom: 0 !important;
   display: flex;
   flex-direction: column;
-  gap: 12px; /* Constant gap between sections */
+  gap: var(--osi-card-body-gap); /* Constant gap between sections */
   min-height: 0;
   /* Allow content to flow properly - no overflow clipping */
   overflow: visible;
@@ -578,63 +573,50 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border-radius: 8px;
+  gap: var(--card-element-gap-xl);
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-md);
   font-weight: 600;
   font-size: var(--font-card-action, 0.875rem);
   letter-spacing: 0.01em;
-  border: 1px solid transparent;
+  border: var(--border-width-default) solid transparent;
   text-transform: none;
   cursor: pointer;
   transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .ai-card-action--primary {
-  background: var(--primary, #ff7900);
-  color: var(--primary-foreground, #ffffff);
-  border-color: rgba(255, 121, 0, 0.8);
-  box-shadow:
-    0 2px 8px rgba(255, 121, 0, 0.25),
-    0 1px 2px rgba(0, 0, 0, 0.1);
+  background: var(--osi-card-action-primary-bg);
+  color: var(--osi-card-action-primary-color);
+  border-color: var(--osi-card-action-primary-border);
+  box-shadow: var(--osi-card-action-primary-shadow);
 }
 
 .ai-card-action--primary:hover {
-  transform: translateY(-1px);
-  box-shadow:
-    0 4px 16px rgba(255, 121, 0, 0.35),
-    0 2px 4px rgba(0, 0, 0, 0.1);
-  background: rgba(255, 121, 0, 0.95);
-  border-color: var(--primary, #ff7900);
+  transform: translateY(calc(var(--motion-distance-xs) * -0.5));
+  box-shadow: var(--osi-card-action-primary-shadow-hover);
+  background: var(--osi-card-action-primary-bg-hover);
+  border-color: var(--osi-card-action-primary-bg);
 }
 
 .ai-card-action--secondary {
-  background: rgba(40, 40, 45, 0.9);
-  color: var(--foreground, #ffffff);
-  border-color: rgba(55, 55, 60, 0.6);
-  box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.1),
-    0 1px 2px rgba(0, 0, 0, 0.06);
+  background: var(--osi-card-action-secondary-bg);
+  color: var(--osi-card-action-secondary-color);
+  border-color: var(--osi-card-action-secondary-border);
+  box-shadow: var(--osi-card-action-secondary-shadow);
 }
 
 .ai-card-action--secondary:hover {
-  transform: translateY(-1px);
-  border-color: rgba(255, 121, 0, 0.4);
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.15),
-    0 2px 4px rgba(0, 0, 0, 0.1);
-  background: rgba(50, 46, 42, 0.95);
+  transform: translateY(calc(var(--motion-distance-xs) * -0.5));
+  border-color: var(--osi-card-action-secondary-border-hover);
+  box-shadow: var(--osi-card-action-secondary-shadow-hover);
+  background: var(--osi-card-action-secondary-bg-hover);
 }
 
 .ai-card-action__shine {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.2) 0%,
-    rgba(255, 255, 255, 0) 50%,
-    rgba(255, 255, 255, 0.1) 100%
-  );
+  background: var(--osi-card-shine-gradient-primary);
   opacity: 0;
   transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
@@ -646,21 +628,11 @@
 }
 
 .ai-card-action--primary .ai-card-action__shine {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.3) 0%,
-    rgba(255, 255, 255, 0) 50%,
-    rgba(255, 255, 255, 0.15) 100%
-  );
+  background: var(--osi-card-shine-gradient-primary);
 }
 
 .ai-card-action--secondary .ai-card-action__shine {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.15) 0%,
-    rgba(255, 255, 255, 0) 50%,
-    rgba(255, 255, 255, 0.08) 100%
-  );
+  background: var(--osi-card-shine-gradient-secondary);
 }
 
 .ai-card-action__content {
@@ -668,7 +640,7 @@
   z-index: 10;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--card-element-gap-lg);
 }
 
 .ai-card-action__icon {
@@ -686,12 +658,12 @@
 }
 
 .ai-card-action:hover .ai-card-action__icon {
-  transform: translateX(2px);
+  transform: translateX(var(--motion-distance-xs));
   opacity: 1;
 }
 
 .ai-card-action:hover .ai-card-action__label {
-  transform: translateX(1px);
+  transform: translateX(calc(var(--motion-distance-xs) * 0.5));
 }
 
 .ai-card-footnote {
@@ -706,10 +678,10 @@
   border-top: none !important;
   text-align: center;
   /* MUCH SMALLER FONT - reduced font size */
-  font-size: 0.65rem !important; /* Reduced from default */
+  font-size: var(--text-xs) !important; /* Reduced from default */
   letter-spacing: 0.08em;
   text-transform: none;
-  color: rgba(28, 28, 31, 0.7);
+  color: var(--osi-card-footnote-color);
   line-height: 1.2;
 }
 

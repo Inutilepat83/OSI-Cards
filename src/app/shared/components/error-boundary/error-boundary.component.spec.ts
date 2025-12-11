@@ -36,28 +36,27 @@ describe('ErrorBoundaryComponent', () => {
   });
 
   it('should reset error state on retry', () => {
-    component.hasError = true;
+    component.hasError.set(true);
     component.reset();
 
-    expect(component.hasError).toBe(false);
-    expect(component.errorDetails).toBe('');
+    expect(component.hasError()).toBe(false);
+    expect(component.errorDetails()).toBeNull();
   });
 
-  it('should use custom error title', () => {
-    component.errorTitle = 'Custom Error';
-    component.handleError(new Error('Test'));
+  it('should display error message', () => {
+    component.handleError(new Error('Test error'));
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement;
-    expect(compiled.textContent).toContain('Custom Error');
+    expect(compiled.textContent).toContain('Test error');
   });
 
-  it('should use custom error message', () => {
-    component.errorMessage = 'Custom message';
-    component.handleError(new Error('Test'));
+  it('should show error details when enabled', () => {
+    component.showDetails.set(true);
+    component.handleError(new Error('Test error'));
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement;
-    expect(compiled.textContent).toContain('Custom message');
+    expect(compiled.querySelector('.error-boundary__details')).toBeTruthy();
   });
 });

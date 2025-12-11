@@ -3,9 +3,17 @@
   <lib-section-header [title]="section.title" [description]="section.description"> </lib-section-header>
 
   <!-- Map Display -->
-  <div class="map-wrapper">
+  <div class="map-wrapper" *ngIf="!mapInitFailed && section.fields && section.fields.length > 0">
     <div #mapElement class="map-element"></div>
   </div>
+
+  <lib-empty-state
+    *ngIf="mapInitFailed && section.fields && section.fields.length > 0"
+    message="Map unavailable"
+    icon="🗺️"
+    variant="minimal"
+  >
+  </lib-empty-state>
 
   <!-- Location List (Optional) -->
   <div class="location-list" *ngIf="section.fields && section.fields.length > 1">

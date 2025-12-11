@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
 import { CSS_ISOLATION_MODE, DEFAULT_THEME } from '../../providers/injection-tokens';
 
 /**
@@ -60,9 +60,9 @@ import { CSS_ISOLATION_MODE, DEFAULT_THEME } from '../../providers/injection-tok
       .osi-cards-container {
         /*
        * Fully transparent container - allows host app background to show through.
-       * 8px padding for subtle shadow/glow effects around the card.
+       * Padding for subtle shadow/glow effects around the card.
        */
-        padding: 8px;
+        padding: var(--osi-card-padding);
         background: transparent !important;
         background-color: transparent !important;
 
@@ -89,7 +89,7 @@ import { CSS_ISOLATION_MODE, DEFAULT_THEME } from '../../providers/injection-tok
       /* Responsive adjustments */
       @media (max-width: 480px) {
         .osi-cards-container {
-          padding: 4px;
+          padding: var(--osi-card-padding-mobile);
         }
       }
     `,

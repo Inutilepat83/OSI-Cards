@@ -1,9 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, take, withLatestFrom } from 'rxjs/operators';
-import { Action } from '@ngrx/store';
 import * as CardsActions from './cards.state';
 import { CardDataService, PerformanceService } from '../../core';
 import { AICardConfig, CardType } from '../../models/card.model';

@@ -49,10 +49,8 @@
 
   &:hover {
     background: var(--surface-hover);
-    transform: translateX(4px);
 
     .icon {
-      transform: scale(1.1);
       color: var(--accent);
     }
 

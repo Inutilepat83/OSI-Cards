@@ -4,18 +4,26 @@
    =================================================================== */
 
 /* Base tilt container with 3D perspective - Optimized for smooth mouse following */
+/* Cross-browser compatible with vendor prefixes for Safari */
 .tilt-container {
   /* 3D transform with hardware acceleration - using CSS variables for smooth updates */
+  /* Vendor prefixes for Safari compatibility */
+  -webkit-transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg))
+    scale(var(--tilt-scale, 1)) translateZ(0);
   transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg))
-    scale(var(--tilt-scale, 1)) translateZ(0) !important; /* Force GPU acceleration */
+    scale(var(--tilt-scale, 1)) translateZ(0);
+  /* Force GPU acceleration */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden; /* Prevent flickering */
 
   /* No CSS transitions on transform - JavaScript handles smooth updates */
   /* Only transition box-shadow for glow effect */
   transition: box-shadow 200ms cubic-bezier(0.2, 0, 0.2, 1);
+  -webkit-transition: box-shadow 200ms cubic-bezier(0.2, 0, 0.2, 1);
 
   /* Enable 3D rendering */
+  -webkit-transform-style: preserve-3d;
   transform-style: preserve-3d;
-  backface-visibility: hidden; /* Prevent flickering */
 
   position: relative;
   border-radius: var(--card-border-radius);
@@ -26,6 +34,7 @@
   will-change: transform; /* Hint browser about upcoming transforms */
 
   /* Optimize compositing */
+  -webkit-transform-origin: center center;
   transform-origin: center center;
 }
 
@@ -45,11 +54,13 @@
   transition: box-shadow 200ms cubic-bezier(0.2, 0, 0.2, 1);
 }
 
-/* Glow container for filter-based effects */
+/* Glow container for filter-based effects - Cross-browser compatible */
 .glow-container {
   position: relative;
   /* Always show base glow - smooth transitions, intensified by 50% */
+  -webkit-filter: drop-shadow(0 0 var(--glow-blur) var(--glow-color, rgba(255, 121, 0, 0.225)));
   filter: drop-shadow(0 0 var(--glow-blur) var(--glow-color, rgba(255, 121, 0, 0.225)));
+  -webkit-transition: filter 200ms cubic-bezier(0.4, 0, 0.2, 1);
   transition: filter 200ms cubic-bezier(0.4, 0, 0.2, 1);
   will-change: filter;
 
@@ -57,19 +68,22 @@
   contain: layout style; /* Don't use paint - it clips shadows */
   isolation: isolate; /* Create new stacking context */
 
-  /* Optimize compositing */
+  /* Optimize compositing - cross-browser */
+  -webkit-transform: translateZ(0); /* Force GPU layer */
   transform: translateZ(0); /* Force GPU layer */
 }
 
 .glow-container:hover {
   will-change: filter;
-  /* Faster enter transition */
+  /* Faster enter transition - cross-browser */
+  -webkit-transition: filter 200ms cubic-bezier(0.4, 0, 0.2, 1);
   transition: filter 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glow-container:not(:hover) {
   will-change: auto;
-  /* Smooth exit transition - longer duration for smooth completion */
+  /* Smooth exit transition - longer duration for smooth completion - cross-browser */
+  -webkit-transition: filter 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   transition: filter 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
@@ -132,6 +146,8 @@
 @media (max-width: 768px) {
   .tilt-container {
     /* Reduce perspective for subtler effect on mobile, but keep doubled tilt */
+    -webkit-transform: perspective(800px) rotateX(calc(var(--tilt-x, 0deg) * 0.7))
+      rotateY(calc(var(--tilt-y, 0deg) * 0.7)) scale(var(--tilt-scale, 1)) translateZ(0);
     transform: perspective(800px) rotateX(calc(var(--tilt-x, 0deg) * 0.7))
       rotateY(calc(var(--tilt-y, 0deg) * 0.7)) scale(var(--tilt-scale, 1)) translateZ(0);
   }
@@ -149,13 +165,15 @@
 
 .ai-card-surface--fullscreen {
   .tilt-container {
-    /* Reset all tilt transforms in fullscreen */
+    /* Reset all tilt transforms in fullscreen - cross-browser compatible */
+    -webkit-transform: perspective(1000px) translateZ(0) !important;
     transform: perspective(1000px) translateZ(0) !important;
     box-shadow: none !important;
     will-change: auto !important;
   }
 
   .glow-container {
+    -webkit-filter: none !important;
     filter: none !important;
     will-change: auto !important;
   }
@@ -168,6 +186,24 @@
 }
 
 /* ===================================================================
+   TILT DISABLED STATE
+   When tilt is explicitly disabled via class
+   =================================================================== */
+
+.tilt-disabled {
+  -webkit-transform: perspective(1000px) translateZ(0) !important;
+  transform: perspective(1000px) translateZ(0) !important;
+  box-shadow: none !important;
+  will-change: auto !important;
+}
+
+.tilt-disabled .glow-container {
+  -webkit-filter: none !important;
+  filter: none !important;
+  will-change: auto !important;
+}
+
+/* ===================================================================
    REDUCED MOTION SUPPORT
    Disable tilt effects for accessibility
    =================================================================== */
@@ -175,7 +211,9 @@
 @media (prefers-reduced-motion: reduce) {
   .tilt-container,
   .tilt-wrapper {
+    -webkit-transform: none !important;
     transform: none !important;
+    -webkit-transition: none !important;
     transition: none !important;
   }
 
@@ -184,7 +222,9 @@
   }
 
   .glow-container {
+    -webkit-filter: none !important;
     filter: none !important;
+    -webkit-transition: none !important;
     transition: none !important;
   }
 

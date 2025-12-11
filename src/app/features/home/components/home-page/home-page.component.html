@@ -141,7 +141,7 @@
         <span class="text-sm font-semibold text-muted-foreground">Variants:</span>
         <div class="variant-selector">
           <button
-            *ngFor="let variant of variants"
+            *ngFor="let variant of variants()"
             (click)="onCardVariantChange(variant)"
             [class.active]="cardVariant === variant"
             [disabled]="switchingType"
@@ -177,19 +177,22 @@
                 <span class="font-bold text-lg" style="letter-spacing: -0.01em">Live Preview</span>
               </div>
               <!-- Streaming Status Badges -->
-              <span *ngIf="streamingState?.stage === 'thinking'" class="status-badge status-badge--thinking">
+              <span *ngIf="streamingState()?.stage === 'thinking'" class="status-badge status-badge--thinking">
                 <span class="status-badge-spinner"></span>
                 Thinking...
               </span>
-              <span *ngIf="streamingState?.stage === 'streaming'" class="status-badge status-badge--streaming">
+              <span *ngIf="streamingState()?.stage === 'streaming'" class="status-badge status-badge--streaming">
                 <span class="status-badge-spinner"></span>
-                Streaming {{ progressPercent }}%
+                Streaming {{ progressPercent() }}%
               </span>
-              <span *ngIf="streamingState?.stage === 'complete'" class="status-badge status-badge--complete">
+              <span *ngIf="streamingState()?.stage === 'complete'" class="status-badge status-badge--complete">
                 <lucide-icon name="check-circle-2" [size]="12" aria-hidden="true"></lucide-icon>
                 Complete
               </span>
-              <span *ngIf="!isStreamingActive && jsonInput?.trim() !== ''" class="status-badge status-badge--live-edit">
+              <span
+                *ngIf="!isStreamingActive() && jsonInput?.trim() !== ''"
+                class="status-badge status-badge--live-edit"
+              >
                 <span class="status-badge-dot"></span>
                 Live edit
               </span>
@@ -208,13 +211,13 @@
               style="display: flex; flex-direction: column; overflow: visible"
             >
               <!-- Card Renderer with Streaming Support -->
-              @if (showCardRenderer) {
+              @if (showCardRenderer()) {
                 <app-ai-card-renderer
                   #cardRenderer
-                  [cardConfig]="cardConfigForRenderer"
-                  [streamingStage]="streamingState?.stage"
-                  [streamingProgress]="streamingState?.progress ?? 0"
-                  [isStreaming]="streamingState?.stage === 'streaming'"
+                  [cardConfig]="cardConfigForRenderer()"
+                  [streamingStage]="streamingState()?.stage"
+                  [streamingProgress]="streamingState()?.progress ?? 0"
+                  [isStreaming]="streamingState()?.stage === 'streaming'"
                   [isFullscreen]="isFullscreen"
                   [tiltEnabled]="true"
                   [showLoadingByDefault]="true"
@@ -300,7 +303,7 @@
 
                   <!-- Generate/Stop Button -->
                   <div class="streaming-control-actions">
-                    @if (!isStreamingActive) {
+                    @if (!isStreamingActive()) {
                       <button class="btn-generate" (click)="generateCard()" [disabled]="!jsonInput.trim()">
                         <lucide-icon name="play" [size]="16"></lucide-icon>
                         Generate
@@ -351,18 +354,18 @@
                 }
 
                 <!-- Progress Bar (during streaming) -->
-                @if (isStreamingActive && streamingState?.stage === 'streaming') {
+                @if (isStreamingActive() && streamingState()?.stage === 'streaming') {
                   <div class="streaming-progress">
                     <div class="progress-bar">
-                      <div class="progress-fill" [style.width.%]="progressPercent"></div>
+                      <div class="progress-fill" [style.width.%]="progressPercent()"></div>
                     </div>
-                    <span class="progress-label">{{ progressPercent }}%</span>
+                    <span class="progress-label">{{ progressPercent() }}%</span>
                   </div>
                 }
               </div>
 
               <!-- JSON Editor Component -->
-              <div class="json-editor-overlay" *ngIf="isGenerating && !isStreamingActive" aria-hidden="true">
+              <div class="json-editor-overlay" *ngIf="isGenerating && !isStreamingActive()" aria-hidden="true">
                 <div class="json-editor-overlay__inner">
                   <svg class="spinner" viewBox="0 0 50 50" fill="none" stroke="currentColor" width="24" height="24">
                     <circle cx="25" cy="25" r="20" stroke-width="5" stroke-opacity="0.25"></circle>

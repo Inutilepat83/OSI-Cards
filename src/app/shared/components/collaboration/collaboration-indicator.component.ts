@@ -39,7 +39,7 @@ import { LucideIconsModule } from '../../icons/lucide-icons.module';
         *ngIf="state.collaborators && state.collaborators.length > 0"
       >
         <div
-          *ngFor="let collaborator of state.collaborators"
+          *ngFor="let collaborator of state.collaborators; trackBy: trackByCollaboratorId"
           class="presence-avatar"
           [title]="collaborator.name"
           [style.background-color]="collaborator.color"
@@ -164,5 +164,9 @@ export class CollaborationIndicatorComponent implements OnInit, OnDestroy {
 
   getInitial(name: string): string {
     return name.charAt(0).toUpperCase();
+  }
+
+  trackByCollaboratorId(_index: number, collaborator: { id?: string; name: string }): string {
+    return collaborator.id || collaborator.name;
   }
 }

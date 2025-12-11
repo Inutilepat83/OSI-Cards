@@ -1,7 +1,7 @@
 import { Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ImprovedAriaLabelDirective } from './improved-aria-labels.directive';
 import { By } from '@angular/platform-browser';
+import { ImprovedAriaLabelDirective } from './improved-aria-labels.directive';
 
 @Component({
   template: `
@@ -44,10 +44,7 @@ describe('ImprovedAriaLabelDirective', () => {
   });
 
   it('should create an instance', () => {
-    const directive = new ImprovedAriaLabelDirective(
-      {} as any, // Renderer2
-      {} as any // ElementRef
-    );
+    const directive = new ImprovedAriaLabelDirective();
     expect(directive).toBeTruthy();
   });
 

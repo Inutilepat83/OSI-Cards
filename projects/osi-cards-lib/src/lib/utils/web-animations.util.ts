@@ -300,8 +300,8 @@ export function fadeOut(timing?: AnimationTiming): AnimationDefinition {
 export function slideUp(distance: number = 20, timing?: AnimationTiming): AnimationDefinition {
   return {
     keyframes: [
-      { transform: `translateY(${distance}px)`, opacity: 0 },
-      { transform: 'translateY(0)', opacity: 1 },
+      { transform: `translate3d(0, ${distance}px, 0)`, opacity: 0 },
+      { transform: 'translate3d(0, 0, 0)', opacity: 1 },
     ],
     timing: { ...DEFAULT_TIMING, ...timing },
   };
@@ -313,8 +313,8 @@ export function slideUp(distance: number = 20, timing?: AnimationTiming): Animat
 export function slideDown(distance: number = 20, timing?: AnimationTiming): AnimationDefinition {
   return {
     keyframes: [
-      { transform: 'translateY(0)', opacity: 1 },
-      { transform: `translateY(${distance}px)`, opacity: 0 },
+      { transform: 'translate3d(0, 0, 0)', opacity: 1 },
+      { transform: `translate3d(0, ${distance}px, 0)`, opacity: 0 },
     ],
     timing: { ...DEFAULT_TIMING, ...timing },
   };
@@ -326,8 +326,8 @@ export function slideDown(distance: number = 20, timing?: AnimationTiming): Anim
 export function slideInLeft(distance: number = 30, timing?: AnimationTiming): AnimationDefinition {
   return {
     keyframes: [
-      { transform: `translateX(-${distance}px)`, opacity: 0 },
-      { transform: 'translateX(0)', opacity: 1 },
+      { transform: `translate3d(-${distance}px, 0, 0)`, opacity: 0 },
+      { transform: 'translate3d(0, 0, 0)', opacity: 1 },
     ],
     timing: { ...DEFAULT_TIMING, ...timing },
   };
@@ -339,8 +339,8 @@ export function slideInLeft(distance: number = 30, timing?: AnimationTiming): An
 export function slideInRight(distance: number = 30, timing?: AnimationTiming): AnimationDefinition {
   return {
     keyframes: [
-      { transform: `translateX(${distance}px)`, opacity: 0 },
-      { transform: 'translateX(0)', opacity: 1 },
+      { transform: `translate3d(${distance}px, 0, 0)`, opacity: 0 },
+      { transform: 'translate3d(0, 0, 0)', opacity: 1 },
     ],
     timing: { ...DEFAULT_TIMING, ...timing },
   };
@@ -352,8 +352,8 @@ export function slideInRight(distance: number = 30, timing?: AnimationTiming): A
 export function scaleIn(fromScale: number = 0.95, timing?: AnimationTiming): AnimationDefinition {
   return {
     keyframes: [
-      { transform: `scale(${fromScale})`, opacity: 0 },
-      { transform: 'scale(1)', opacity: 1 },
+      { transform: `translate3d(0, 0, 0) scale(${fromScale})`, opacity: 0 },
+      { transform: 'translate3d(0, 0, 0) scale(1)', opacity: 1 },
     ],
     timing: { ...DEFAULT_TIMING, ...timing },
   };
@@ -365,8 +365,8 @@ export function scaleIn(fromScale: number = 0.95, timing?: AnimationTiming): Ani
 export function scaleOut(toScale: number = 0.95, timing?: AnimationTiming): AnimationDefinition {
   return {
     keyframes: [
-      { transform: 'scale(1)', opacity: 1 },
-      { transform: `scale(${toScale})`, opacity: 0 },
+      { transform: 'translate3d(0, 0, 0) scale(1)', opacity: 1 },
+      { transform: `translate3d(0, 0, 0) scale(${toScale})`, opacity: 0 },
     ],
     timing: { ...DEFAULT_TIMING, ...timing },
   };
@@ -378,10 +378,10 @@ export function scaleOut(toScale: number = 0.95, timing?: AnimationTiming): Anim
 export function bounceIn(timing?: AnimationTiming): AnimationDefinition {
   return {
     keyframes: [
-      { transform: 'scale(0)', opacity: 0, offset: 0 },
-      { transform: 'scale(1.1)', opacity: 0.7, offset: 0.6 },
-      { transform: 'scale(0.95)', opacity: 0.9, offset: 0.8 },
-      { transform: 'scale(1)', opacity: 1, offset: 1 },
+      { transform: 'translate3d(0, 0, 0) scale(0)', opacity: 0, offset: 0 },
+      { transform: 'translate3d(0, 0, 0) scale(1.1)', opacity: 0.7, offset: 0.6 },
+      { transform: 'translate3d(0, 0, 0) scale(0.95)', opacity: 0.9, offset: 0.8 },
+      { transform: 'translate3d(0, 0, 0) scale(1)', opacity: 1, offset: 1 },
     ],
     timing: {
       ...DEFAULT_TIMING,
@@ -398,9 +398,9 @@ export function bounceIn(timing?: AnimationTiming): AnimationDefinition {
 export function pulse(scale: number = 1.05, timing?: AnimationTiming): AnimationDefinition {
   return {
     keyframes: [
-      { transform: 'scale(1)' },
-      { transform: `scale(${scale})` },
-      { transform: 'scale(1)' },
+      { transform: 'translate3d(0, 0, 0) scale(1)' },
+      { transform: `translate3d(0, 0, 0) scale(${scale})` },
+      { transform: 'translate3d(0, 0, 0) scale(1)' },
     ],
     timing: {
       ...DEFAULT_TIMING,
@@ -553,7 +553,8 @@ export function springKeyframes(
     // Normalize offset (0-1)
     const normalizedOffset = t / 5; // Normalize to ~5 seconds
     if (normalizedOffset <= 1) {
-      const value = property === 'transform' ? `translateY(${position}px)` : String(position);
+      const value =
+        property === 'transform' ? `translate3d(0, ${position}px, 0)` : String(position);
 
       keyframes.push({
         [property]: value,
@@ -577,7 +578,7 @@ export function springKeyframes(
 
   // Ensure final keyframe
   keyframes.push({
-    [property]: property === 'transform' ? `translateY(${to}px)` : String(to),
+    [property]: property === 'transform' ? `translate3d(0, ${to}px, 0)` : String(to),
     offset: 1,
   });
 

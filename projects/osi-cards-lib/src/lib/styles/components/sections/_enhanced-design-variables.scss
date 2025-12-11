@@ -11,22 +11,22 @@
 
 :root {
   // Card/Item padding (comfortable, not cramped)
-  --osi-card-padding-comfortable: 12px; // Balanced
-  --osi-card-padding-compact: 10px; // Slightly tight
-  --osi-card-padding-dense: 8px; // Dense
+  --osi-card-padding-comfortable: var(--space-3); // Balanced
+  --osi-card-padding-compact: var(--space-2); // Slightly tight
+  --osi-card-padding-dense: var(--space-2); // Dense
 
   // Grid gaps (visual breathing room)
-  --osi-grid-gap-comfortable: 12px; // Good visual separation
-  --osi-grid-gap-compact: 10px; // Less separation
-  --osi-grid-gap-dense: 8px; // Tight
+  --osi-grid-gap-comfortable: var(--space-3); // Good visual separation
+  --osi-grid-gap-compact: var(--space-2); // Less separation
+  --osi-grid-gap-dense: var(--gap-md); // Tight
 
   // Item gaps (within cards)
-  --osi-item-internal-gap: 8px; // Between elements in card
-  --osi-item-compact-gap: 6px; // Compact
+  --osi-item-internal-gap: var(--gap-md); // Between elements in card
+  --osi-item-compact-gap: var(--gap-sm); // Compact
 
   // Section gaps
-  --osi-section-gap-comfortable: 14px; // Between major sections
-  --osi-section-gap-compact: 10px; // Compact
+  --osi-section-gap-comfortable: var(--space-4); // Between major sections
+  --osi-section-gap-compact: var(--space-2); // Compact
 
   // Defaults (comfortable for readability)
   --osi-default-card-padding: var(--osi-card-padding-comfortable);
@@ -73,9 +73,9 @@
 
 :root {
   // Hover transforms
-  --osi-hover-lift: -3px; // Lift on hover
-  --osi-hover-slide: 6px; // Slide on hover
-  --osi-hover-scale: 1.02; // Scale on hover
+  --osi-hover-lift: calc(var(--motion-distance-sm) * -1); // Lift on hover
+  --osi-hover-slide: var(--motion-distance-lg); // Slide on hover
+  --osi-hover-scale: var(--motion-scale-soft-end); // Scale on hover
 
   // Shadow depths
   --osi-card-shadow-rest: var(--shadow-sm);
@@ -83,19 +83,19 @@
   --osi-card-shadow-active: var(--shadow-xs);
 
   // Border thickness
-  --osi-border-thin: 1px;
-  --osi-border-medium: 1.5px;
-  --osi-border-thick: 2px;
+  --osi-border-thin: var(--border-width-default);
+  --osi-border-medium: var(--border-width-accent-sm);
+  --osi-border-thick: var(--border-width-accent);
 
   // Transition speeds
-  --osi-transition-fast: 150ms;
-  --osi-transition-normal: 200ms;
-  --osi-transition-slow: 300ms;
+  --osi-transition-fast: var(--duration-fast);
+  --osi-transition-normal: var(--duration-normal);
+  --osi-transition-slow: var(--duration-slow);
 
   // Background overlays (for effects)
-  --osi-overlay-subtle: rgba(255, 255, 255, 0.03);
-  --osi-overlay-medium: rgba(255, 255, 255, 0.06);
-  --osi-overlay-strong: rgba(255, 255, 255, 0.1);
+  --osi-overlay-subtle: #{$white-05};
+  --osi-overlay-medium: #{$white-10};
+  --osi-overlay-strong: #{$white-15};
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -113,8 +113,8 @@
   --osi-card-border-radius: var(--radius-md);
 
   // Accent elements
-  --osi-accent-border-width: 3px;
-  --osi-accent-line-thickness: 2px;
+  --osi-accent-border-width: var(--border-width-accent);
+  --osi-accent-line-thickness: var(--border-width-accent-sm);
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -142,6 +142,6 @@
 :root {
   --osi-custom-accent-color: var(--accent);
   --osi-custom-card-background: var(--osi-card-background);
-  --osi-custom-hover-effect: translateY(-3px);
+  --osi-custom-hover-effect: translateY(calc(var(--motion-distance-sm) * -1));
   --osi-custom-border-style: solid;
 }

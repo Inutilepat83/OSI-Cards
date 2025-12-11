@@ -1,10 +1,9 @@
 import { TestBed } from '@angular/core/testing';
-import { CardTemplatesService } from './card-templates.service';
+import { of, throwError } from 'rxjs';
 import { CardDataService } from '../../core/services/card-data/card-data.service';
 import { LoggingService } from '../../core/services/logging.service';
 import { CardBuilder, SectionBuilder } from '../../testing/test-builders';
-import { AICardConfig, CardType } from '../../models';
-import { of, throwError } from 'rxjs';
+import { CardTemplatesService } from './card-templates.service';
 
 describe('CardTemplatesService', () => {
   let service: CardTemplatesService;
@@ -201,7 +200,7 @@ describe('CardTemplatesService', () => {
           expect(service.getCachedTemplate('company', 1)).toBeTruthy();
           expect(service.getCachedTemplate('product', 1)).toBeTruthy();
 
-          service.clearCacheByType('company');
+          service.clearCacheForType('company');
 
           expect(service.getCachedTemplate('company', 1)).toBeNull();
           expect(service.getCachedTemplate('product', 1)).toBeTruthy();

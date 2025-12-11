@@ -3,6 +3,20 @@
  *
  * Pre-configured theme configurations for different use cases.
  * These presets match the demo app styling exactly.
+ *
+ * ⚠️ TOKEN SOURCE OF TRUTH:
+ * This file (JS presets) is the authoritative source for `--theme-*` variables
+ * that are applied via JavaScript/TypeScript (e.g., ThemeService).
+ *
+ * For CSS-only tokens (`--osi-*`), see: `styles/tokens/_master.scss`
+ * For demo app theme presets, see: `styles/themes.scss`
+ *
+ * NOTE: Values in this file should match corresponding values in:
+ * - `styles/tokens/_master.scss` (SCSS mixins for CSS-only usage)
+ * - `styles/themes.scss` (demo app theme presets)
+ *
+ * TODO: Consider generating this file from a shared token definition (JSON/YAML)
+ * to eliminate duplication and ensure consistency.
  */
 
 /**
@@ -32,6 +46,17 @@ export interface ThemePresetVariables {
   '--theme-section-border-hover': string;
   '--theme-section-box-shadow': string;
   '--theme-section-box-shadow-hover': string;
+  '--theme-section-transition': string;
+
+  // Section Item Surface
+  '--theme-section-item-border': string;
+  '--theme-section-item-border-hover': string;
+  '--theme-section-item-background': string;
+  '--theme-section-item-background-hover': string;
+  '--theme-section-item-box-shadow': string;
+  '--theme-section-item-box-shadow-hover': string;
+  '--theme-section-item-hover-transform': string;
+  '--theme-section-item-transition': string;
 }
 
 /**
@@ -59,57 +84,85 @@ export const DEFAULT_THEME_PRESET: ThemeStylePreset = {
   dark: {
     // AI Card - transparent with blur effect
     '--theme-ai-card-border': '1px solid rgba(255, 255, 255, 0.08)',
-    '--theme-ai-card-border-hover': '1px solid rgba(255, 121, 0, 0.5)',
+    '--theme-ai-card-border-hover': '1px solid rgba(255, 121, 0, 0.2)',
     '--theme-ai-card-background': 'rgba(20, 20, 20, 0.6)',
-    '--theme-ai-card-background-hover': 'rgba(30, 30, 30, 0.8)',
+    '--theme-ai-card-background-hover': 'rgba(25, 25, 25, 0.7)',
     '--theme-ai-card-box-shadow': '0 4px 24px -1px rgba(0, 0, 0, 0.2)',
     '--theme-ai-card-box-shadow-hover':
-      '0 20px 40px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 121, 0, 0.2)',
+      '0 12px 32px -4px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 121, 0, 0.1)',
     '--theme-ai-card-backdrop-filter': 'blur(12px)',
     '--theme-ai-card-transition': 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 
     // Card
     '--theme-card-border': '1px solid rgba(255, 255, 255, 0.08)',
-    '--theme-card-border-hover': 'var(--color-brand)',
+    '--theme-card-border-hover': '1px solid rgba(255, 121, 0, 0.2)',
     '--theme-card-background': 'var(--background)',
-    '--theme-card-background-hover':
-      'color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%)',
+    // Fallback for browsers without color-mix() support (Safari <16.2)
+    // Equivalent to: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%)
+    '--theme-card-background-hover': 'rgba(25, 25, 25, 0.7)',
     '--theme-card-box-shadow': '0 1px 3px rgba(0, 0, 0, 0.35)',
-    '--theme-card-box-shadow-hover': '0 2px 4px rgba(0, 0, 0, 0.45)',
+    '--theme-card-box-shadow-hover': '0 2px 4px rgba(0, 0, 0, 0.4)',
 
     // Section
     '--theme-section-border': '1px solid rgba(255, 255, 255, 0.1)',
     '--theme-section-border-hover': '1px solid rgba(255, 255, 255, 0.1)',
     '--theme-section-box-shadow': '0 1px 3px rgba(0, 0, 0, 0.4)',
     '--theme-section-box-shadow-hover': '0 2px 5px rgba(0, 0, 0, 0.5)',
+    '--theme-section-transition':
+      'border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1)',
+
+    // Section Item
+    '--theme-section-item-border': '1px solid rgba(255, 255, 255, 0.06)',
+    '--theme-section-item-border-hover': '1px solid rgba(255, 121, 0, 0.08)',
+    '--theme-section-item-background': '#1a1a1a',
+    '--theme-section-item-background-hover': '#1c1c1c',
+    '--theme-section-item-box-shadow': '0 1px 2px rgba(0, 0, 0, 0.25)',
+    '--theme-section-item-box-shadow-hover': '0 1px 4px rgba(0, 0, 0, 0.3)',
+    '--theme-section-item-hover-transform': 'none',
+    '--theme-section-item-transition':
+      'background 220ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1), border-color 220ms cubic-bezier(0.4, 0, 0.2, 1)',
   },
   light: {
     // AI Card - light theme with blur
     '--theme-ai-card-border': '1px solid rgba(0, 0, 0, 0.08)',
-    '--theme-ai-card-border-hover': '1px solid rgba(255, 121, 0, 0.4)',
+    '--theme-ai-card-border-hover': '1px solid rgba(255, 121, 0, 0.2)',
     '--theme-ai-card-background': 'rgba(255, 255, 255, 0.85)',
-    '--theme-ai-card-background-hover': 'rgba(255, 255, 255, 0.92)',
+    '--theme-ai-card-background-hover': 'rgba(255, 255, 255, 0.88)',
     '--theme-ai-card-box-shadow':
       '0 4px 24px -1px rgba(0, 0, 0, 0.1), 0 0 18px rgba(255, 121, 0, 0.15)',
     '--theme-ai-card-box-shadow-hover':
-      '0 20px 40px -5px rgba(0, 0, 0, 0.15), 0 0 24px rgba(255, 121, 0, 0.25), 0 0 0 1px rgba(255, 121, 0, 0.15)',
+      '0 12px 32px -4px rgba(0, 0, 0, 0.12), 0 0 20px rgba(255, 121, 0, 0.18), 0 0 0 1px rgba(255, 121, 0, 0.1)',
     '--theme-ai-card-backdrop-filter': 'blur(12px)',
     '--theme-ai-card-transition': 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 
     // Card
     '--theme-card-border': '1px solid rgba(0, 0, 0, 0.08)',
-    '--theme-card-border-hover': 'var(--color-brand)',
+    '--theme-card-border-hover': '1px solid rgba(255, 121, 0, 0.2)',
     '--theme-card-background': 'var(--background)',
-    '--theme-card-background-hover':
-      'color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%)',
+    // Fallback for browsers without color-mix() support (Safari <16.2)
+    // Equivalent to: color-mix(in srgb, var(--background) 98%, var(--surface-contrast-color) 2%)
+    '--theme-card-background-hover': 'rgba(255, 255, 255, 0.88)',
     '--theme-card-box-shadow': '0 1px 2px rgba(15, 15, 20, 0.04)',
-    '--theme-card-box-shadow-hover': '0 1px 3px rgba(10, 10, 16, 0.06)',
+    '--theme-card-box-shadow-hover': '0 1px 3px rgba(10, 10, 16, 0.05)',
 
     // Section
     '--theme-section-border': '1px solid rgba(0, 0, 0, 0.08)',
     '--theme-section-border-hover': '1px solid rgba(0, 0, 0, 0.1)',
     '--theme-section-box-shadow': '0 1px 3px rgba(0, 0, 0, 0.05)',
     '--theme-section-box-shadow-hover': '0 2px 4px rgba(0, 0, 0, 0.07)',
+    '--theme-section-transition':
+      'border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1)',
+
+    // Section Item
+    '--theme-section-item-border': '1px solid rgba(0, 0, 0, 0.06)',
+    '--theme-section-item-border-hover': '1px solid rgba(255, 121, 0, 0.08)',
+    '--theme-section-item-background': '#f7f7f7',
+    '--theme-section-item-background-hover': '#f6f6f6',
+    '--theme-section-item-box-shadow': '0 1px 2px rgba(0, 0, 0, 0.04)',
+    '--theme-section-item-box-shadow-hover': '0 1px 3px rgba(0, 0, 0, 0.05)',
+    '--theme-section-item-hover-transform': 'none',
+    '--theme-section-item-transition':
+      'background 220ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1), border-color 220ms cubic-bezier(0.4, 0, 0.2, 1)',
   },
 };
 
@@ -142,6 +195,17 @@ export const HIGH_CONTRAST_THEME_PRESET: ThemeStylePreset = {
     '--theme-section-border-hover': '1px solid rgba(255, 255, 255, 0.4)',
     '--theme-section-box-shadow': 'none',
     '--theme-section-box-shadow-hover': 'none',
+    '--theme-section-transition': 'border-color 0.2s ease, box-shadow 0.2s ease',
+
+    '--theme-section-item-border': '1px solid rgba(255, 255, 255, 0.2)',
+    '--theme-section-item-border-hover': '1px solid rgba(255, 121, 0, 0.4)',
+    '--theme-section-item-background': '#1a1a1a',
+    '--theme-section-item-background-hover': '#1e1e1e',
+    '--theme-section-item-box-shadow': 'none',
+    '--theme-section-item-box-shadow-hover': '0 0 0 1px rgba(255, 121, 0, 0.5)',
+    '--theme-section-item-hover-transform': 'none',
+    '--theme-section-item-transition':
+      'background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease',
   },
   light: {
     '--theme-ai-card-border': '2px solid rgba(0, 0, 0, 0.3)',
@@ -164,6 +228,17 @@ export const HIGH_CONTRAST_THEME_PRESET: ThemeStylePreset = {
     '--theme-section-border-hover': '1px solid rgba(0, 0, 0, 0.25)',
     '--theme-section-box-shadow': 'none',
     '--theme-section-box-shadow-hover': 'none',
+    '--theme-section-transition': 'border-color 0.2s ease, box-shadow 0.2s ease',
+
+    '--theme-section-item-border': '1px solid rgba(0, 0, 0, 0.2)',
+    '--theme-section-item-border-hover': '1px solid rgba(255, 121, 0, 0.4)',
+    '--theme-section-item-background': '#ffffff',
+    '--theme-section-item-background-hover': '#fafafa',
+    '--theme-section-item-box-shadow': 'none',
+    '--theme-section-item-box-shadow-hover': '0 0 0 1px rgba(255, 121, 0, 0.5)',
+    '--theme-section-item-hover-transform': 'none',
+    '--theme-section-item-transition':
+      'background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease',
   },
 };
 

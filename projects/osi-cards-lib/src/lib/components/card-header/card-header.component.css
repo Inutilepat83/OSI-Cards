@@ -1,9 +1,9 @@
 /* =======================================================================
    Card Header Component Styles
-   
+
    Purpose: Display card title and optional export action.
    Design: Clear hierarchy, subtle interactions, accessible focus states.
-   
+
    All colors use CSS variables with fallbacks for proper theming support.
    ======================================================================= */
 
@@ -14,8 +14,8 @@
   align-items: flex-start !important;
   justify-content: space-between !important;
   position: relative !important;
-  margin-bottom: 1.5rem !important;
-  padding-bottom: 0.75rem !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
   border-bottom: 1px solid var(--osi-border, rgba(255, 255, 255, 0.1)) !important;
   gap: 1rem !important;
 }
@@ -65,7 +65,7 @@
 
 .card-header-export-btn:hover {
   color: var(--color-brand, #ff7900) !important;
-  background-color: var(--osi-surface-hover, rgba(255, 121, 0, 0.1)) !important;
+  background-color: var(--osi-surface-hover, rgba(255, 121, 0, 0.05)) !important;
   transform: scale(1.05) !important;
 }
 

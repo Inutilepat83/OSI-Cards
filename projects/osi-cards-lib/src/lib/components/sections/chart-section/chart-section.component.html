@@ -3,8 +3,12 @@
   <lib-section-header [title]="section.title" [description]="section.description"> </lib-section-header>
 
   <!-- Chart Canvas -->
-  <div class="chart-wrapper" *ngIf="section.chartData">
-    <canvas #chartCanvas></canvas>
+  <div class="chart-container" *ngIf="section.chartData">
+    <div class="chart-wrapper">
+      <div class="chart-canvas-wrapper">
+        <canvas #chartCanvas></canvas>
+      </div>
+    </div>
   </div>
 
   <lib-empty-state *ngIf="!section.chartData" message="No chart data" icon="📊" variant="minimal"> </lib-empty-state>
