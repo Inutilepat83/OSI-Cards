@@ -13,7 +13,7 @@ Each card is composed of one or more **sections**—standalone, configurable com
 
 ---
 
-## ✨ What's New in v1.5.16
+## ✨ What's New in v1.5.17
 
 ### 🎉 MAJOR: Complete Architecture Optimization
 - **Massive Cleanup**: Removed ~700+ files (28% of project) while maintaining all core functionality
@@ -386,7 +386,7 @@ MIT
 
 ## Version
 
-1.5.16
+1.5.17
 
 ---
 
