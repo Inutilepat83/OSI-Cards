@@ -32,18 +32,18 @@
 
             <!-- Actions -->
             <div class="actions" (click)="$event.stopPropagation()">
-            <ng-container *ngFor="let action of getContactActions(c)">
-              <a
-                [href]="getActionUrl(action)"
-                class="action"
-                [attr.aria-label]="action.label + ' ' + getContactName(c)"
-                [attr.title]="action.label"
-                [attr.target]="action.type === 'linkedin' ? '_blank' : null"
-                [attr.rel]="action.type === 'linkedin' ? 'noopener' : null"
-              >
-                {{ getActionIcon(action) }}
-              </a>
-            </ng-container>
+              <ng-container *ngFor="let action of getContactActions(c)">
+                <a
+                  [href]="getActionUrl(action)"
+                  class="action"
+                  [attr.aria-label]="action.label + ' ' + getContactName(c)"
+                  [attr.title]="action.label"
+                  [attr.target]="action.type === 'linkedin' ? '_blank' : null"
+                  [attr.rel]="action.type === 'linkedin' ? 'noopener' : null"
+                >
+                  {{ getActionIcon(action) }}
+                </a>
+              </ng-container>
             </div>
           </div>
         </div>

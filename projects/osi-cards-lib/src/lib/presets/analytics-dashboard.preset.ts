@@ -165,4 +165,3 @@ export function createAnalyticsDashboard(options: AnalyticsDashboardOptions): AI
     actions: actions.length > 0 ? actions : undefined,
   };
 }
-

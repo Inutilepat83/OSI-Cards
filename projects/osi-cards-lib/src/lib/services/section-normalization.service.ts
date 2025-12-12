@@ -603,4 +603,3 @@ export class SectionNormalizationService {
     return sections.map((s) => this.generateSectionKey(s)).join('|');
   }
 }
-

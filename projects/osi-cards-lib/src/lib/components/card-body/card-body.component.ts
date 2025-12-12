@@ -65,4 +65,3 @@ export class CardBodyComponent {
     this.layoutChange.emit(info);
   }
 }
-

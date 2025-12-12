@@ -2,7 +2,7 @@
 
 /**
  * Generate LLM integration documentation
- * 
+ *
  * This script analyzes LLM-related services and generates comprehensive
  * documentation for LLM integration, streaming, and card generation.
  */
@@ -21,7 +21,7 @@ function generateLLMDocs() {
   if (!fs.existsSync(docsDir)) {
     fs.mkdirSync(docsDir, { recursive: true });
   }
-  
+
   // Generate page.ts file
   const pageTs = `import { NgDocPage } from '@ng-doc/core';
 
@@ -33,7 +33,7 @@ const LLMIntegrationPage: NgDocPage = {
 
 export default LLMIntegrationPage;
 `;
-  
+
   // Generate comprehensive markdown content
   const markdown = `# LLM Integration Guide
 
@@ -152,7 +152,6 @@ LLMs should generate cards following this structure:
 \`\`\`json
 {
   "cardTitle": "Card Title",
-  "cardSubtitle": "Optional Subtitle",
   "cardType": "company",
   "sections": [
     {
@@ -318,7 +317,7 @@ streamingService.start(cardJson);
   // Write files
   fs.writeFileSync(path.join(docsDir, 'llm-integration.page.ts'), pageTs, 'utf8');
   fs.writeFileSync(path.join(docsDir, 'index.md'), markdown, 'utf8');
-  
+
   console.log('✅ Generated LLM integration documentation');
 }
 

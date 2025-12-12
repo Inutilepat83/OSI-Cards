@@ -2,21 +2,21 @@
    BOOTSTRAP & BOOSTED STYLE ISOLATION
    Reset Bootstrap/Boosted Variables and Styles for Complete Isolation
    =================================================================== */
-/* 
+/*
  * This file resets all Bootstrap/Boosted CSS variables and common styles
  * within OSI Cards containers to prevent style conflicts when cards are
  * imported into applications that use Bootstrap or Orange Boosted.
- * 
+ *
  * Supported Frameworks:
  *   - Bootstrap 5.x
  *   - Orange Boosted 5.x
  *   - DataTables
- * 
+ *
  * Usage:
  *   This file is automatically imported in scoped stylesheets.
  *   All framework variables are reset to 'unset' within .osi-cards-container
  *   and .ai-card-surface to ensure complete isolation.
- * 
+ *
  * NOTE: This file is imported INSIDE .osi-cards-container { } in _styles-scoped.scss
  */
 
@@ -297,6 +297,194 @@ article.ai-card-surface {
   /* Reset Boosted header variables */
   --o-header-minimized-logo-height: unset;
   --o-header-height: unset;
+
+  /* ===================================================================
+     ADDITIONAL INTEGRATION VARIABLES
+     Ensure all CSS variables are available for perfect integration
+     =================================================================== */
+
+  /* Angular Split variables */
+  --_as-gutter-background-color: var(--as-gutter-background-color, #eeeeee);
+  --_as-gutter-icon-horizontal: var(
+    --as-gutter-icon-horizontal,
+    url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==)
+  );
+  --_as-gutter-icon-vertical: var(
+    --as-gutter-icon-vertical,
+    url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFCAMAAABl/6zIAAAABlBMVEUAAADMzMzIT8AyAAAAAXRSTlMAQObYZgAAABRJREFUeAFjYGRkwIMJSeMHlBkOABP7AEGzSuPKAAAAAElFTkSuQmCC)
+  );
+  --_as-gutter-icon-disabled: var(
+    --as-gutter-icon-disabled,
+    url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==)
+  );
+  --_as-transition-duration: var(--as-transition-duration, 0.3s);
+  --_as-gutter-disabled-cursor: var(--as-gutter-disabled-cursor, default);
+
+  /* Additional spacing variables for integration */
+  --spacing-none: 0;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-base: 16px;
+  --spacing-lg: 20px;
+  --spacing-xl: 28px;
+  --spacing-2xl: 40px;
+  --spacing-3xl: 56px;
+  --spacing-compact-xs: 3px;
+  --spacing-compact-sm: 6px;
+  --spacing-compact-md: 9px;
+  --spacing-compact-base: 12px;
+  --spacing-compact-lg: 16px;
+
+  /* Section card variables */
+  --section-card-min-height: 110px;
+  --section-card-compact-height: 90px;
+  --section-header-gap: var(--spacing-md);
+  --section-content-gap: var(--spacing-sm);
+  --section-card-gap: var(--spacing-md);
+  --section-card-padding: var(--spacing-md);
+
+  /* Additional typography variables */
+  --text-md: 0.875rem;
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+  --leading-tight: 1.2;
+  --leading-snug: 1.3;
+  --leading-normal: 1.4;
+  --leading-relaxed: 1.5;
+  --leading-loose: 1.75;
+
+  /* Additional shadow variables */
+  --radius-none: 0;
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+  --glow-sm: 0 0 10px rgba(var(--accent-rgb), 0.15);
+  --glow-md: 0 0 20px rgba(var(--accent-rgb), 0.2);
+  --glow-lg: 0 0 30px rgba(var(--accent-rgb), 0.25);
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+
+  /* Additional transition variables */
+  --duration-base: 0.2s;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.6, 1);
+  --transition-base: all var(--duration-base) var(--ease-out);
+  --transition-fast: all var(--duration-fast) var(--ease-out);
+  --transition-slow: all var(--duration-slow) var(--ease-out);
+  --transition-colors:
+    background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out), color var(--duration-base) var(--ease-out);
+  --transition-shadow: box-shadow var(--duration-base) var(--ease-out);
+  --transition-transform: transform var(--duration-base) var(--ease-out);
+
+  /* Additional z-index variables */
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-modal-backdrop: 400;
+
+  /* Blur variables */
+  --blur-none: 0;
+  --blur-sm: 4px;
+  --blur-md: 8px;
+  --blur-lg: 16px;
+  --blur-xl: 24px;
+  --glass-blur: var(--blur-md);
+  --glass-bg: rgba(0, 0, 0, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.1);
+
+  /* Opacity scale */
+  --opacity-0: 0;
+  --opacity-5: 0.05;
+  --opacity-10: 0.1;
+  --opacity-20: 0.2;
+  --opacity-30: 0.3;
+  --opacity-40: 0.4;
+  --opacity-50: 0.5;
+  --opacity-60: 0.6;
+  --opacity-70: 0.7;
+  --opacity-80: 0.8;
+  --opacity-90: 0.9;
+  --opacity-100: 1;
+
+  /* Surface variables */
+  --surface-base: var(--osi-section-item-background);
+  --surface-raised: var(--osi-section-item-background-hover);
+  --surface-overlay: var(--glass-bg);
+
+  /* Border variables */
+  --border-light: rgba(var(--foreground-rgb), 0.08);
+  --border-base: var(--border);
+  --border-strong: rgba(var(--foreground-rgb), 0.2);
+
+  /* State opacity variables */
+  --state-hover-opacity: 0.08;
+  --state-active-opacity: 0.12;
+  --state-focus-opacity: 0.16;
+  --state-disabled-opacity: 0.5;
+
+  /* OSI Card foreground */
+  --osi-card-foreground: #1a1a2e;
+
+  /* ===================================================================
+     TAILWIND CSS RESET VARIABLES
+     Prevent Tailwind from affecting card styles
+     =================================================================== */
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x: ;
+  --tw-pan-y: ;
+  --tw-pinch-zoom: ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position: ;
+  --tw-gradient-via-position: ;
+  --tw-gradient-to-position: ;
+  --tw-ordinal: ;
+  --tw-slashed-zero: ;
+  --tw-numeric-figure: ;
+  --tw-numeric-spacing: ;
+  --tw-numeric-fraction: ;
+  --tw-ring-inset: ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur: ;
+  --tw-brightness: ;
+  --tw-contrast: ;
+  --tw-grayscale: ;
+  --tw-hue-rotate: ;
+  --tw-invert: ;
+  --tw-saturate: ;
+  --tw-sepia: ;
+  --tw-drop-shadow: ;
+  --tw-backdrop-blur: ;
+  --tw-backdrop-brightness: ;
+  --tw-backdrop-contrast: ;
+  --tw-backdrop-grayscale: ;
+  --tw-backdrop-hue-rotate: ;
+  --tw-backdrop-invert: ;
+  --tw-backdrop-opacity: ;
+  --tw-backdrop-saturate: ;
+  --tw-backdrop-sepia: ;
+  --tw-contain-size: ;
+  --tw-contain-layout: ;
+  --tw-contain-paint: ;
+  --tw-contain-style: ;
 
   /* ===================================================================
      CSS ISOLATION

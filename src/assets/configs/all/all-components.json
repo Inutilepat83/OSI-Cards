@@ -1,6 +1,5 @@
 {
   "cardTitle": "All Sections Demo",
-  "cardSubtitle": "Complete Component Showcase",
   "cardType": "company",
   "description": "This card demonstrates all available section types in the OSI Cards library",
   "sections": [

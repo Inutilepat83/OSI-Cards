@@ -250,7 +250,7 @@ export function createMockCard(overrides: DeepPartial<AICardConfig> = {}): AICar
     {
       id,
       cardTitle: `Test Card ${id}`,
-      cardSubtitle: 'A test card for unit testing',
+      description: 'A test card for unit testing',
       sections: [createMockInfoSection(), createMockAnalyticsSection(), createMockListSection()],
       theme: {
         preset: 'default',
@@ -509,7 +509,7 @@ export class CardBuilder {
   }
 
   withSubtitle(subtitle: string): this {
-    this.card.cardSubtitle = subtitle;
+    this.card.description = subtitle;
     return this;
   }
 

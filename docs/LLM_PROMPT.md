@@ -13,7 +13,6 @@ that define structured data displays with multiple section types.
 ```json
 {
   "cardTitle": "Card Title",
-  "cardSubtitle": "Optional Subtitle",
   "cardType": "company|contact|event|product|analytics",
   "description": "Card description",
   "sections": [
@@ -593,6 +592,7 @@ The following aliases are supported for backward compatibility:
   ]
 }
 ```
+
 
 
 

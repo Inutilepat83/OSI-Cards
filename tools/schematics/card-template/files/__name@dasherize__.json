@@ -1,6 +1,5 @@
 {
   "cardTitle": "<%= strings.classify(name) %> Card",
-  "cardSubtitle": "Template generated on <%= date %>",
   "cardType": "<%= cardType %>",
   "description": "A card template for <%= cardType %> type cards",
   "columns": 2,

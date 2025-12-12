@@ -158,3 +158,4 @@ Or in your `package.json`:
 The automatic setup script makes it easy to configure OSI Cards library styles in your Angular project. Simply run the script after installation, and styles will be automatically included in every build!
 
 
+

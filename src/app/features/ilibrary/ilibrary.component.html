@@ -59,6 +59,7 @@
                    then transitions to streaming content -->
               <app-ai-card-renderer
                 [cardConfig]="cardConfigForRenderer"
+                [theme]="cardTheme"
                 [streamingStage]="streamingState?.stage"
                 [streamingProgress]="streamingState?.progress ?? 0"
                 [isStreaming]="streamingState?.stage === 'streaming'"

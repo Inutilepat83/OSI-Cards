@@ -180,4 +180,3 @@ export function resumeAllAnimations(element: HTMLElement): void {
 export function cancelAllAnimations(element: HTMLElement): void {
   element.getAnimations().forEach((anim) => anim.cancel());
 }
-

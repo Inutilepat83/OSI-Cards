@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, Input, inject, ViewEncapsulation, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  inject,
+  ViewEncapsulation,
+  OnChanges,
+  SimpleChanges,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CSS_ISOLATION_MODE, DEFAULT_THEME } from '../../providers/injection-tokens';
 
 /**
@@ -94,7 +103,7 @@ import { CSS_ISOLATION_MODE, DEFAULT_THEME } from '../../providers/injection-tok
       }
     `,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default, // Changed from OnPush to Default to ensure theme changes are detected
   encapsulation: ViewEncapsulation.None, // Allow scoped styles from _styles-scoped.scss to apply
 })
 export class OsiCardsContainerComponent implements OnChanges {
@@ -153,8 +162,14 @@ export class OsiCardsContainerComponent implements OnChanges {
    */
   ngOnChanges(changes: SimpleChanges): void {
     // If theme input changed, manually trigger change detection for OnPush strategy
-    if (changes['theme'] && !changes['theme'].firstChange) {
+    // Handle both first change and subsequent changes to ensure theme updates work
+    if (changes['theme']) {
+      const oldTheme = changes['theme'].previousValue;
+      const newTheme = changes['theme'].currentValue;
+      console.log(`[OsiCardsContainer] Theme input changed from ${oldTheme} to ${newTheme}`);
       this.cdr.markForCheck();
+      // Also trigger detectChanges to ensure immediate update
+      this.cdr.detectChanges();
     }
   }
 }

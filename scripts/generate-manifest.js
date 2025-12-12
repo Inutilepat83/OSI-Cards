@@ -73,7 +73,7 @@ async function generateManifest() {
 
     // Process JSON files only
     const jsonFiles = fs.readdirSync(dirPath).filter(file => file.endsWith('.json'));
-    
+
     // Process JSON files
     for (const file of jsonFiles) {
       const cardId = file.replace(/\.json$/, '');
@@ -107,7 +107,6 @@ async function generateManifest() {
         sectionCount,
         title: cardData.cardTitle || cardId,
         metadata: {
-          subtitle: cardData.cardSubtitle || null,
           description: cardData.description || null,
           lastUpdated,
           hasActions: !!(cardData.actions && cardData.actions.length > 0)
@@ -134,13 +133,13 @@ async function generateManifest() {
 
   // Write manifest
   fs.writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2), 'utf8');
-  
+
   console.log(`✓ Generated manifest with ${manifest.cards.length} cards`);
   console.log(`  - High priority: ${manifest.cards.filter(c => c.priority === 'high').length}`);
   console.log(`  - Medium priority: ${manifest.cards.filter(c => c.priority === 'medium').length}`);
   console.log(`  - Low priority: ${manifest.cards.filter(c => c.priority === 'low').length}`);
   console.log(`  - Total size: ${(manifest.cards.reduce((sum, c) => sum + c.size, 0) / 1024).toFixed(2)} KB`);
-  
+
   return manifest;
 }
 

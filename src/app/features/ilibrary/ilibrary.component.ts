@@ -435,6 +435,22 @@ export class IlibraryComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Get current theme normalized to 'day'/'night' format for component input
+   */
+  get cardTheme(): 'day' | 'night' {
+    const theme = this.themeService.getResolvedTheme();
+    // Normalize theme to 'day'/'night' format
+    if (theme === 'light' || theme === 'day') {
+      return 'day';
+    }
+    if (theme === 'dark' || theme === 'night') {
+      return 'night';
+    }
+    // For custom themes, default to 'day'
+    return 'day';
+  }
+
+  /**
    * Get environment by ID
    */
   getEnvironmentById(id: string): ClientEnvironment | undefined {

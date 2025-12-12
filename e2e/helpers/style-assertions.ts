@@ -1,9 +1,9 @@
 /**
  * Style Assertions Helper
- * 
+ *
  * Provides reusable assertion functions for visual regression testing.
  * Validates CSS properties, animations, layout structure, and visual consistency.
- * 
+ *
  * CORRECT SELECTORS (from actual DOM):
  * - .masonry-container - Grid container
  * - .masonry-item - Section card wrapper
@@ -160,7 +160,7 @@ export async function assertStyles(
 
   for (const [prop, expected] of Object.entries(expectedStyles)) {
     const actualValue = actual[prop as keyof ComputedStyles];
-    
+
     if (expected instanceof RegExp) {
       if (!expected.test(actualValue)) {
         failures.push(`${prop}: expected to match ${expected}, got "${actualValue}"`);
@@ -218,14 +218,14 @@ export async function assertAnimationComplete(
   locator: Locator,
   type: 'section' | 'field' | 'item' = 'section'
 ): Promise<void> {
-  const enteredState = type === 'section' 
+  const enteredState = type === 'section'
     ? ANIMATION_STATES.sectionEntered
     : type === 'field'
       ? ANIMATION_STATES.fieldEntered
       : ANIMATION_STATES.itemEntered;
 
   const styles = await getComputedStyles(locator);
-  
+
   expect(styles.opacity).toBe(enteredState.expectedOpacity);
   expect(styles.transform).toMatch(enteredState.expectedTransform);
 }
@@ -272,7 +272,7 @@ export async function assertColumnCount(
 ): Promise<void> {
   const items = page.locator('.masonry-item');
   const count = await items.count();
-  
+
   if (count === 0) {
     throw new Error('No masonry items found');
   }
@@ -301,7 +301,7 @@ export async function assertLoadingState(
   shouldBeVisible: boolean = true
 ): Promise<void> {
   const spinner = page.locator('.loading-spinner');
-  
+
   if (shouldBeVisible) {
     await expect(spinner).toBeVisible({ timeout: 3000 });
   } else {
@@ -315,11 +315,11 @@ export async function assertLoadingState(
 export async function assertSpinnerAnimating(page: Page): Promise<void> {
   const spinner = page.locator('.spinner-svg');
   await expect(spinner).toBeVisible();
-  
+
   const animation = await spinner.evaluate((el) => {
     return window.getComputedStyle(el).animationName;
   });
-  
+
   expect(animation).toContain('spinner-rotate');
 }
 
@@ -329,13 +329,13 @@ export async function assertSpinnerAnimating(page: Page): Promise<void> {
 export async function assertParticlesAnimating(page: Page): Promise<void> {
   const particles = page.locator('.loading-particles .particle');
   const count = await particles.count();
-  
+
   expect(count).toBeGreaterThan(0);
-  
+
   const animation = await particles.first().evaluate((el) => {
     return window.getComputedStyle(el).animationName;
   });
-  
+
   expect(animation).toContain('particle-float');
 }
 
@@ -487,7 +487,7 @@ export function generateSectionConfig(sectionType: SectionType): object {
 export function generateMultiSectionConfig(sectionCount: number = 6): object {
   const sections: object[] = [];
   const types: SectionType[] = ['overview', 'info', 'analytics', 'list', 'event', 'chart'];
-  
+
   for (let i = 0; i < sectionCount; i++) {
     const type = types[i % types.length];
     const config = generateSectionConfig(type);
@@ -556,51 +556,50 @@ export const DOM_SELECTORS = {
   // Masonry Grid
   masonryContainer: '.masonry-container',
   masonryItem: '.masonry-item',
-  
+
   // Section structure
   section: '.ai-section',
   sectionHeader: '.ai-section__header',
   sectionTitle: '.ai-section__title',
   sectionBody: '.ai-section__body',
   sectionBadge: '.ai-section__badge',
-  
+
   // Info section fields
   infoRow: '.info-row',
   infoRowLabel: '.info-row__label',
   infoRowValue: '.info-row__value',
   infoRowDescription: '.info-row__description',
-  
+
   // Analytics
   analyticsMetric: '.analytics-metric',
   metricValue: '.metric-value',
   metricLabel: '.metric-label',
-  
+
   // Contact card
   contactCard: '.contact-card',
   contactAvatar: '.contact-avatar',
   contactName: '.contact-name',
   contactRole: '.contact-role',
-  
+
   // List items
   listItem: '.list-item',
   solutionItem: '.solution-item',
-  
+
   // Card structure
   cardSurface: '.ai-card-surface',
   cardHeader: '.ai-card-header',
   cardTitle: '.ai-card-title',
-  cardSubtitle: '.ai-card-subtitle',
   cardActions: '.ai-card-actions',
   cardAction: '.ai-card-action',
   cardSignature: '.card-signature',
-  
+
   // Loading states
   loadingSpinner: '.loading-spinner',
   spinnerSvg: '.spinner-svg',
   loadingParticles: '.loading-particles',
   particle: '.particle',
   skeleton: '.skeleton-card',
-  
+
   // Animation classes
   sectionStreaming: '.section-streaming',
   sectionEntered: '.section-entered',
@@ -620,16 +619,16 @@ export async function getShadowElement(
 ): Promise<Locator | null> {
   const host = page.locator(hostSelector).first();
   if (await host.count() === 0) return null;
-  
+
   // Use evaluate to access shadow root
   const exists = await host.evaluate((el, selector) => {
     const shadowRoot = el.shadowRoot;
     if (!shadowRoot) return false;
     return shadowRoot.querySelector(selector) !== null;
   }, innerSelector);
-  
+
   if (!exists) return null;
-  
+
   // Return a locator that can work with shadow DOM
   return page.locator(`${hostSelector} >> ${innerSelector}`);
 }
@@ -644,14 +643,14 @@ export async function getShadowStyles(
 ): Promise<ComputedStyles | null> {
   const host = page.locator(hostSelector).first();
   if (await host.count() === 0) return null;
-  
+
   return host.evaluate((el, selector) => {
     const shadowRoot = el.shadowRoot;
     if (!shadowRoot) return null;
-    
+
     const target = shadowRoot.querySelector(selector);
     if (!target) return null;
-    
+
     const computed = window.getComputedStyle(target);
     return {
       backgroundColor: computed.backgroundColor,
@@ -688,7 +687,7 @@ export async function countShadowElements(
 ): Promise<number> {
   const host = page.locator(hostSelector).first();
   if (await host.count() === 0) return 0;
-  
+
   return host.evaluate((el, selector) => {
     const shadowRoot = el.shadowRoot;
     if (!shadowRoot) return 0;
@@ -746,7 +745,7 @@ export interface CEOReport {
  */
 export function formatCEOReport(report: CEOReport): string {
   const lines: string[] = [];
-  
+
   lines.push('');
   lines.push('='.repeat(50));
   lines.push('       OSI-CARDS VISUAL TEST REPORT');
@@ -754,7 +753,7 @@ export function formatCEOReport(report: CEOReport): string {
   lines.push(`Date: ${report.date}`);
   lines.push(`Version: ${report.version}`);
   lines.push('');
-  
+
   // Summary
   lines.push('SUMMARY');
   lines.push(`  Total Tests: ${report.summary.total}`);
@@ -763,11 +762,11 @@ export function formatCEOReport(report: CEOReport): string {
   lines.push(`  Skipped: ${report.summary.skipped}`);
   lines.push(`  Pass Rate: ${report.summary.passRate.toFixed(1)}%`);
   lines.push('');
-  
+
   // Section Coverage
   const passedSections = report.sections.filter(s => s.status === 'pass').length;
   lines.push(`SECTION COVERAGE (${passedSections}/${report.sections.length})`);
-  
+
   const sectionRows: string[] = [];
   for (let i = 0; i < report.sections.length; i += 3) {
     const row = report.sections.slice(i, i + 3)
@@ -777,7 +776,7 @@ export function formatCEOReport(report: CEOReport): string {
   }
   lines.push(...sectionRows);
   lines.push('');
-  
+
   // Animation Status
   lines.push('ANIMATION STATUS');
   for (const anim of report.animations) {
@@ -785,7 +784,7 @@ export function formatCEOReport(report: CEOReport): string {
     lines.push(`  ${icon} ${anim.name}${anim.details ? ` (${anim.details})` : ''}`);
   }
   lines.push('');
-  
+
   // CSS Validation
   lines.push('CSS VALIDATION');
   for (const css of report.cssValidation) {
@@ -797,18 +796,18 @@ export function formatCEOReport(report: CEOReport): string {
     }
   }
   lines.push('');
-  
+
   // Responsive Layouts
   lines.push('RESPONSIVE LAYOUTS');
   for (const layout of report.responsiveLayouts) {
     const icon = layout.status === 'pass' ? '✓' : '✗';
     lines.push(`  ${icon} ${layout.viewport.padEnd(16)} - ${layout.columns} column${layout.columns > 1 ? 's' : ''}`);
   }
-  
+
   lines.push('');
   lines.push('='.repeat(50));
   lines.push('');
-  
+
   return lines.join('\n');
 }
 
@@ -855,16 +854,16 @@ export interface GridMetrics {
 export async function getGridMetrics(page: Page): Promise<GridMetrics> {
   const container = page.locator(DOM_SELECTORS.masonryContainer).first();
   const items = page.locator(DOM_SELECTORS.masonryItem);
-  
+
   // Get container dimensions
   const containerBox = await container.boundingBox().catch(() => null);
   const containerWidth = containerBox?.width || 0;
   const containerHeight = containerBox?.height || 0;
-  
+
   // Get item positions
   const itemCount = await items.count();
   const itemPositions: Array<{ left: number; top: number; width: number; height: number }> = [];
-  
+
   for (let i = 0; i < itemCount; i++) {
     const box = await items.nth(i).boundingBox().catch(() => null);
     if (box) {
@@ -876,14 +875,14 @@ export async function getGridMetrics(page: Page): Promise<GridMetrics> {
       });
     }
   }
-  
+
   // Calculate columns from unique left positions
   const uniqueLefts = [...new Set(itemPositions.map(p => p.left))].sort((a, b) => a - b);
   const columnCount = uniqueLefts.length || 1;
-  
+
   // Calculate column widths
   const columnWidths = itemPositions.slice(0, columnCount).map(p => p.width);
-  
+
   // Calculate gaps between columns
   const gaps: number[] = [];
   for (let i = 1; i < uniqueLefts.length; i++) {
@@ -891,7 +890,7 @@ export async function getGridMetrics(page: Page): Promise<GridMetrics> {
     const gap = uniqueLefts[i]! - prevRight;
     gaps.push(Math.round(gap));
   }
-  
+
   return {
     containerWidth,
     containerHeight,
@@ -912,16 +911,16 @@ export async function assertGridColumns(
   tolerance: number = 1
 ): Promise<{ passed: boolean; actual: number; message: string }> {
   const metrics = await getGridMetrics(page);
-  
+
   const minExpected = Math.max(1, expectedColumns - tolerance);
   const maxExpected = Math.min(GRID_CONFIG.maxColumns, expectedColumns + tolerance);
-  
+
   const passed = metrics.columnCount >= minExpected && metrics.columnCount <= maxExpected;
-  
+
   return {
     passed,
     actual: metrics.columnCount,
-    message: passed 
+    message: passed
       ? `Grid has ${metrics.columnCount} columns (expected: ${expectedColumns}±${tolerance})`
       : `Grid has ${metrics.columnCount} columns but expected ${expectedColumns}±${tolerance}`
   };
@@ -936,7 +935,7 @@ export async function assertGridGap(
   tolerance: number = 4
 ): Promise<{ passed: boolean; actual: number[]; message: string }> {
   const metrics = await getGridMetrics(page);
-  
+
   if (metrics.gaps.length === 0) {
     return {
       passed: true,
@@ -944,11 +943,11 @@ export async function assertGridGap(
       message: 'Single column layout - no gaps to verify'
     };
   }
-  
-  const allGapsValid = metrics.gaps.every(gap => 
+
+  const allGapsValid = metrics.gaps.every(gap =>
     gap >= expectedGap - tolerance && gap <= expectedGap + tolerance
   );
-  
+
   return {
     passed: allGapsValid,
     actual: metrics.gaps,
@@ -967,13 +966,13 @@ export async function assertPadding(
   tolerance: number = 2
 ): Promise<{ passed: boolean; actual: string; message: string }> {
   const actual = await locator.evaluate(el => window.getComputedStyle(el).padding);
-  
+
   if (typeof expected === 'string') {
     // Simple exact match with tolerance
     const actualValue = parseFloat(actual);
     const expectedValue = parseFloat(expected);
     const passed = Math.abs(actualValue - expectedValue) <= tolerance;
-    
+
     return {
       passed,
       actual,
@@ -987,7 +986,7 @@ export async function assertPadding(
     const minValue = parseFloat(expected.min);
     const maxValue = parseFloat(expected.max);
     const passed = actualValue >= minValue - tolerance && actualValue <= maxValue + tolerance;
-    
+
     return {
       passed,
       actual,
@@ -1024,11 +1023,11 @@ export async function assertAnimationLifecycle(
       transform: computed.transform
     };
   });
-  
+
   // After animations complete, opacity should be 1
   const isComplete = parseFloat(state.opacity) >= 0.99;
   const hasAnimation = state.animationName !== 'none';
-  
+
   return {
     passed: isComplete,
     state: {
@@ -1053,23 +1052,23 @@ export async function assertAnimationLifecycle(
  */
 export function formatGridReport(metrics: GridMetrics): string {
   const lines: string[] = [];
-  
+
   lines.push('');
   lines.push('--- GRID METRICS ---');
   lines.push(`  Container: ${metrics.containerWidth}px x ${metrics.containerHeight}px`);
   lines.push(`  Columns: ${metrics.columnCount}`);
   lines.push(`  Items: ${metrics.itemCount}`);
-  
+
   if (metrics.columnWidths.length > 0) {
     lines.push(`  Column widths: ${metrics.columnWidths.map(w => `${w}px`).join(', ')}`);
   }
-  
+
   if (metrics.gaps.length > 0) {
     lines.push(`  Gaps: ${metrics.gaps.map(g => `${g}px`).join(', ')}`);
   }
-  
+
   lines.push('--------------------');
-  
+
   return lines.join('\n');
 }
 
@@ -1108,11 +1107,11 @@ export async function getColumnAssignments(page: Page): Promise<Map<number, Item
   const items = page.locator(DOM_SELECTORS.masonryItem);
   const count = await items.count();
   const positions: ItemPosition[] = [];
-  
+
   for (let i = 0; i < count; i++) {
     const item = items.nth(i);
     const box = await item.boundingBox().catch(() => null);
-    
+
     if (box) {
       const sectionType = await item.evaluate(el => {
         const section = el.querySelector('.ai-section');
@@ -1123,11 +1122,11 @@ export async function getColumnAssignments(page: Page): Promise<Map<number, Item
         }
         return 'unknown';
       });
-      
+
       const colSpan = await item.evaluate(el => {
         return parseInt(el.getAttribute('data-col-span') || '1', 10);
       });
-      
+
       positions.push({
         index: i,
         sectionType,
@@ -1140,28 +1139,28 @@ export async function getColumnAssignments(page: Page): Promise<Map<number, Item
       });
     }
   }
-  
+
   // Assign column indices based on left positions
   const uniqueLefts = [...new Set(positions.map(p => p.left))].sort((a, b) => a - b);
-  
+
   for (const pos of positions) {
     pos.columnIndex = uniqueLefts.indexOf(pos.left);
   }
-  
+
   // Group by column
   const columnMap = new Map<number, ItemPosition[]>();
-  
+
   for (const pos of positions) {
     const items = columnMap.get(pos.columnIndex) || [];
     items.push(pos);
     columnMap.set(pos.columnIndex, items);
   }
-  
+
   // Sort items within each column by top position
   for (const items of columnMap.values()) {
     items.sort((a, b) => a.top - b.top);
   }
-  
+
   return columnMap;
 }
 
@@ -1177,7 +1176,7 @@ export function verifyPositionCalculation(
 ): { valid: boolean; expectedLeft: number; actualLeft: number; diff: number } {
   const expectedLeft = containerLeft + columnIndex * (columnWidth + gap);
   const diff = Math.abs(item.left - expectedLeft);
-  
+
   return {
     valid: diff <= 4, // 4px tolerance
     expectedLeft,
@@ -1194,26 +1193,26 @@ export function verifyVerticalStacking(
   gap: number
 ): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
-  
+
   if (items.length < 2) {
     return { valid: true, errors: [] };
   }
-  
+
   for (let i = 1; i < items.length; i++) {
     const prevItem = items[i - 1]!;
     const currItem = items[i]!;
-    
+
     const expectedTop = prevItem.top + prevItem.height + gap;
     const actualTop = currItem.top;
     const diff = Math.abs(actualTop - expectedTop);
-    
+
     if (diff > 4) {
       errors.push(
         `Item ${currItem.index}: expected top=${expectedTop}px, got ${actualTop}px (diff: ${diff}px)`
       );
     }
   }
-  
+
   return { valid: errors.length === 0, errors };
 }
 
@@ -1224,26 +1223,26 @@ export function checkForOverlaps(
   positions: ItemPosition[]
 ): { hasOverlaps: boolean; overlappingPairs: Array<[number, number]> } {
   const overlappingPairs: Array<[number, number]> = [];
-  
+
   for (let i = 0; i < positions.length; i++) {
     for (let j = i + 1; j < positions.length; j++) {
       const a = positions[i]!;
       const b = positions[j]!;
-      
+
       const aRight = a.left + a.width;
       const aBottom = a.top + a.height;
       const bRight = b.left + b.width;
       const bBottom = b.top + b.height;
-      
+
       const horizontalOverlap = a.left < bRight && aRight > b.left;
       const verticalOverlap = a.top < bBottom && aBottom > b.top;
-      
+
       if (horizontalOverlap && verticalOverlap) {
         overlappingPairs.push([i, j]);
       }
     }
   }
-  
+
   return {
     hasOverlaps: overlappingPairs.length > 0,
     overlappingPairs
@@ -1255,24 +1254,24 @@ export function checkForOverlaps(
  */
 export function formatColumnPositionReport(columnMap: Map<number, ItemPosition[]>): string {
   const lines: string[] = [];
-  
+
   lines.push('');
   lines.push('--- COLUMN POSITION REPORT ---');
   lines.push(`Total Columns: ${columnMap.size}`);
-  
+
   for (const [columnIndex, items] of columnMap) {
     lines.push(`\nColumn ${columnIndex}:`);
     lines.push(`  Left: ${items[0]?.left || 0}px`);
     lines.push(`  Items: ${items.length}`);
-    
+
     for (const item of items) {
       lines.push(`    [${item.index}] ${item.sectionType.padEnd(15)} @ (${item.left}, ${item.top}) ${item.width}x${item.height}`);
     }
   }
-  
+
   lines.push('');
   lines.push('------------------------------');
-  
+
   return lines.join('\n');
 }
 

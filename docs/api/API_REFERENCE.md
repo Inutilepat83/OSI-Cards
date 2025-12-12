@@ -322,7 +322,7 @@ const merged = CardUtil.merge(baseCard, updates);
 ```typescript
 interface AICardConfig {
   cardTitle: string;
-  cardSubtitle?: string;
+  description?: string;
   sections: CardSection[];
   actions?: CardAction[];
   metadata?: Record<string, any>;

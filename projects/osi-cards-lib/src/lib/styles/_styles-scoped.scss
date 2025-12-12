@@ -31,13 +31,44 @@
 /* All library styles go in the osi-cards layer */
 @layer osi-cards {
   .osi-cards-container {
-    // Container base styles - transparent with 8px padding
+    // Base reset styles - ensure perfect isolation and consistent rendering
+    all: initial;
+    position: relative;
+    width: 100% !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    font-size: var(--font-size-base, 14px);
+    line-height: 1.5;
+    color: var(--foreground, #1c1c1f);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern" 1;
+    -webkit-tap-highlight-color: transparent;
+    contain: layout style;
+    box-sizing: border-box !important;
+    margin: 0;
+    padding: 0;
+    outline-color: var(--ring);
+
+    // Container layout styles
     display: flex;
     justify-content: center;
     align-items: flex-start;
     padding: 8px;
     background: transparent !important;
     background-color: transparent !important;
+    min-height: 0;
+
+    // Font family - ensure consistent typography
+    font-family:
+      Helvetica,
+      Helvetica Neue,
+      -apple-system,
+      BlinkMacSystemFont,
+      Segoe UI,
+      Roboto,
+      Arial,
+      sans-serif !important;
 
     // Preserve 3D transforms for tilt effects
     perspective: 1200px;

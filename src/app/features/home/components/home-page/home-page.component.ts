@@ -97,6 +97,22 @@ export class HomePageComponent implements OnInit, OnDestroy {
     return this.themeService.getResolvedTheme();
   }
 
+  /**
+   * Get current theme normalized to 'day'/'night' format for component input
+   */
+  get cardTheme(): 'day' | 'night' {
+    const theme = this.themeService.getResolvedTheme();
+    // Normalize theme to 'day'/'night' format
+    if (theme === 'light' || theme === 'day') {
+      return 'day';
+    }
+    if (theme === 'dark' || theme === 'night') {
+      return 'night';
+    }
+    // For custom themes, default to 'day'
+    return 'day';
+  }
+
   @ViewChild('previewRegion') private previewRegion?: ElementRef<HTMLDivElement>;
   @ViewChild('cardRenderer') private cardRenderer?: AICardRendererComponent;
 

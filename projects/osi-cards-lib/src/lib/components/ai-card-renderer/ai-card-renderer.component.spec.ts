@@ -61,4 +61,3 @@ describe('AICardRendererComponent (theme)', () => {
     expect(fixture.nativeElement.getAttribute('data-theme')).toBe('night');
   }));
 });
-

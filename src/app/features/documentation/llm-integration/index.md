@@ -38,7 +38,6 @@ CARD SCHEMA:
 AICardConfig (root):
   - cardTitle: string (required)
   - sections: array (required)
-  - cardSubtitle: string
   - cardType: company|contact|event|product|analytics
   - description: string
   - actions: array

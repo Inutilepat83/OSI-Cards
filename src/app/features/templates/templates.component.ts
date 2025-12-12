@@ -23,4 +23,3 @@ export class TemplatesComponent {
       'This page is under development. Check back soon for pre-built card templates and examples.',
   };
 }
-
