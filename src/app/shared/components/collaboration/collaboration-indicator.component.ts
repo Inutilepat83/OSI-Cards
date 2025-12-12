@@ -170,3 +170,4 @@ export class CollaborationIndicatorComponent implements OnInit, OnDestroy {
     return collaborator.id || collaborator.name;
   }
 }
+

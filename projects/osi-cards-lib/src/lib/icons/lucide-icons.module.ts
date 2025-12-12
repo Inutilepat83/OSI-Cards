@@ -223,3 +223,4 @@ export function provideLucideIcons(): Provider[] {
  * Export the ICONS object for direct use
  */
 export { ICONS as OSI_CARDS_ICONS };
+

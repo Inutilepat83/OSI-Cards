@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, inject, ViewEncapsulation, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { CSS_ISOLATION_MODE, DEFAULT_THEME } from '../../providers/injection-tokens';
 
 /**
@@ -95,11 +95,13 @@ import { CSS_ISOLATION_MODE, DEFAULT_THEME } from '../../providers/injection-tok
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None, // Allow scoped styles from _styles-scoped.scss to apply
 })
-export class OsiCardsContainerComponent {
+export class OsiCardsContainerComponent implements OnChanges {
   // Inject configuration from providers (optional - may not be provided)
   private readonly cssIsolationMode = inject(CSS_ISOLATION_MODE, { optional: true });
   private readonly defaultThemeConfig = inject(DEFAULT_THEME, { optional: true });
+  private readonly cdr = inject(ChangeDetectorRef);
 
   /**
    * Theme to apply to the container.
@@ -143,5 +145,16 @@ export class OsiCardsContainerComponent {
     const resolvedTheme =
       this.theme ?? (typeof configTheme === 'string' ? configTheme : null) ?? 'day';
     return resolvedTheme as 'day' | 'night';
+  }
+
+  /**
+   * React to input changes, especially theme changes.
+   * This ensures OnPush change detection works correctly when theme input changes.
+   */
+  ngOnChanges(changes: SimpleChanges): void {
+    // If theme input changed, manually trigger change detection for OnPush strategy
+    if (changes['theme'] && !changes['theme'].firstChange) {
+      this.cdr.markForCheck();
+    }
   }
 }

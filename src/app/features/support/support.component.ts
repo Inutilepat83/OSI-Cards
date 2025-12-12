@@ -22,3 +22,4 @@ export class SupportComponent {
     description: 'This page is under development. Check back soon for support resources and FAQs.',
   };
 }
+

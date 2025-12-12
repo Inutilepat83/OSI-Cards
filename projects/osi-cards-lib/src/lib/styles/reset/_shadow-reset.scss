@@ -21,9 +21,13 @@
   all: initial;
 
   // Re-establish essential display properties
-  display: block;
+  display: block !important;
   position: relative;
   box-sizing: border-box;
+  width: 100% !important;
+  min-height: 0; // Allow content to determine height
+  visibility: visible !important;
+  opacity: 1 !important;
 
   // Transparent container with 8px padding (library default)
   // Must be set here immediately after all:initial to ensure application
@@ -94,21 +98,56 @@
 // TYPOGRAPHY RESET
 // ============================================
 
-// Headings
+// Headings - with explicit font sizes matching demo app
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-size: inherit;
-  font-weight: inherit;
-  line-height: inherit;
   margin: 0;
+  line-height: 1.2;
+  font-family: inherit;
+}
+
+h1 {
+  font-size: var(--text-2xl, 1.5rem);
+  font-weight: var(--font-weight-medium, 500);
+}
+
+h2 {
+  font-size: var(--text-xl, 1.25rem);
+  font-weight: var(--font-weight-medium, 500);
+}
+
+h3 {
+  font-size: var(--text-lg, 1.125rem);
+  font-weight: var(--font-weight-medium, 500);
+}
+
+h4 {
+  font-size: var(--text-base, 1rem);
+  font-weight: var(--font-weight-medium, 500);
+}
+
+h5 {
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: var(--font-weight-medium, 500);
+}
+
+h6 {
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: var(--font-weight-medium, 500);
 }
 
 // Paragraphs and text
-p,
+p {
+  font-size: var(--text-base, 1rem);
+  font-weight: var(--font-weight-normal, 400);
+  line-height: 1.5;
+  margin: 0;
+}
+
 span,
 div {
   margin: 0;

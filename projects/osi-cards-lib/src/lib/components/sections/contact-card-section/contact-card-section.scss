@@ -132,6 +132,15 @@
   gap: 0; // No gap between items
 }
 
+// Bottom section: influence and actions
+.card__left-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 6px; // 6px gap between influence and icons
+  margin-top: auto; // Push to bottom
+  align-items: flex-start;
+}
+
 // Right column: note
 .card__right {
   flex-shrink: 0;
@@ -165,7 +174,6 @@
 
 .department-badge {
   margin: 0;
-  margin-top: 2px; // Minimal gap after title
   padding: 0;
   align-self: flex-start;
 }
@@ -175,8 +183,22 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 4px;
+  margin: 0;
   align-self: flex-start;
+  position: relative;
+
+  // On hover, hide bar and show score value
+  &:hover {
+    .score-bar {
+      opacity: 0;
+      width: 0;
+    }
+
+    .score-value {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
 }
 
 .score-label {
@@ -198,6 +220,9 @@
   overflow: hidden;
   position: relative;
   display: block; // Ensure it's displayed
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    width var(--duration-base) var(--ease-out);
 }
 
 .score-fill {
@@ -209,14 +234,28 @@
   display: block; // Ensure it's displayed
 }
 
+.score-value {
+  font-size: 0.625rem; // 10px
+  color: var(--muted-foreground);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  opacity: 0;
+  position: absolute;
+  left: 48px; // Position where bar was
+  transform: translateX(-4px);
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+  white-space: nowrap;
+}
+
 // Actions in left column (aligned to bottom)
 .actions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--osi-spacing-compact-xs, 2px);
-  margin-top: auto; // Push to bottom
-  margin-bottom: 0;
-  padding-top: 0;
+  margin: 0;
+  padding: 0;
 
   // All actions visible by default
   opacity: 1;

@@ -10,7 +10,7 @@
 .masonry-container {
   display: grid;
   grid-template-columns: repeat(var(--masonry-columns, 3), 1fr);
-  gap: var(--masonry-gap, 16px);
+  gap: var(--masonry-gap, 12px);
   width: 100%;
   padding: 0;
   box-sizing: border-box;

@@ -70,7 +70,7 @@ export interface LayoutLogEntry {
 })
 export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() sections: CardSection[] = [];
-  @Input() gap = 16;
+  @Input() gap = 12;
   @Input() minColumnWidth = 260;
   @Input() maxColumns = 4;
   @Input() containerWidth?: number;

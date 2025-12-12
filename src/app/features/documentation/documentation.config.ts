@@ -84,3 +84,4 @@ export function getDocumentationByCategory(): DocCategory[] {
 export function getDocumentationById(id: string): DocItem | undefined {
   return DOCUMENTATION_ITEMS.find((item) => item.id === id);
 }
+

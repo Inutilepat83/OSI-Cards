@@ -108,3 +108,4 @@ export function addPassiveWheelListener(
   addPassiveListener(element, 'wheel', listener);
   return () => removePassiveListener(element, 'wheel', listener);
 }
+

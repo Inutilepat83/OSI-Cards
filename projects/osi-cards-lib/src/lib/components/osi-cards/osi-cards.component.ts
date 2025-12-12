@@ -60,14 +60,14 @@ import {
   imports: [CommonModule, AICardRendererComponent],
   template: `
     <div
-      class="osi-cards-root"
+      class="osi-cards-container osi-cards-root"
       [attr.data-theme]="effectiveTheme"
       [class.osi-cards-fullscreen]="fullscreen"
     >
       <app-ai-card-renderer
         [cardConfig]="card"
         [isFullscreen]="fullscreen"
-        [tiltEnabled]="tiltEnabled"
+        [tiltEnabled]="shouldEnableTilt"
         [streamingStage]="streamingStage"
         [streamingProgress]="streamingProgress ?? 0"
         [isStreaming]="isStreaming"

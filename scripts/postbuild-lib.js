@@ -90,11 +90,30 @@ function main() {
   logHeader('Post-Build Library Processing');
   logInfo('Running post-build tasks for osi-cards-lib...\n');
 
+  // Copy setup script to dist
+  const fs = require('fs');
+  const setupScriptPath = path.join(__dirname, '..', 'scripts', 'setup-angular-styles.js');
+  const distScriptsPath = path.join(__dirname, '..', 'dist', 'osi-cards-lib', 'scripts');
+  const distSetupScriptPath = path.join(distScriptsPath, 'setup-angular-styles.js');
+
+  if (fs.existsSync(setupScriptPath)) {
+    if (!fs.existsSync(distScriptsPath)) {
+      fs.mkdirSync(distScriptsPath, { recursive: true });
+    }
+    fs.copyFileSync(setupScriptPath, distSetupScriptPath);
+    logSuccess('Copied setup-angular-styles.js to dist');
+  }
+
   const tasks = [
     { script: 'scripts/generate-version.js', desc: 'Generate version files', optional: false },
-    { script: 'scripts/generate-library-package-json.js', desc: 'Generate library package.json', optional: false },
+    {
+      script: 'scripts/generate-library-package-json.js',
+      desc: 'Generate library package.json',
+      optional: false,
+    },
     { script: 'scripts/copy-library-files.js', desc: 'Copy library files', optional: true },
     { script: 'scripts/compile-styles.js', desc: 'Compile styles', optional: true },
+    { script: 'scripts/verify-styles-import.js', desc: 'Verify styles import', optional: true },
   ];
 
   let success = 0;
@@ -125,5 +144,3 @@ function main() {
 }
 
 main();
-
-

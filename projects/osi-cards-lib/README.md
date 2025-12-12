@@ -5,13 +5,32 @@ A comprehensive Angular library for rendering AI-generated cards with rich secti
 ## Features
 
 - **17+ Section Types** - Info, Analytics, Chart, List, Contact, Network, Map, Event, Product, Solutions, Financials, and more
-- **CSS Encapsulation** - Shadow DOM isolation with CSS Layers for easy style overrides
+- **Complete CSS Encapsulation** - Shadow DOM isolation with **all styles and animations** self-contained within each card. Cards look identical in demo and any integration without external style dependencies.
 - **Streaming Support** - Progressive card rendering with LLM-style streaming simulation
 - **Theme System** - Built-in themes (day/night) with full customization via CSS custom properties
 - **Plugin Architecture** - Extend with custom section types
 - **Accessibility** - WCAG compliant with keyboard navigation and screen reader support
 - **Performance** - OnPush change detection, virtual scrolling, and optimized rendering
 - **Zero-gap layout utility** - `packWithZeroGapsGuarantee` helper for maximum grid density
+
+## Complete Style & Animation Encapsulation
+
+**🎯 Cards are fully self-contained!** Each card component uses Shadow DOM encapsulation with **all styles and animations** included within the Shadow DOM boundary. This means:
+
+- ✅ **No external style dependencies** - Cards work identically in any application
+- ✅ **All animations included** - Streaming, hover, transitions, and section animations all work out of the box
+- ✅ **Identical appearance everywhere** - Cards look exactly the same in the demo app and any integration
+- ✅ **Complete isolation** - Host app styles cannot affect cards, and card styles cannot leak out
+
+The Shadow DOM bundle includes:
+- All core styles (mixins, utilities, surface layers)
+- All animations (keyframes, utility classes, streaming effects)
+- All component styles (masonry grid, section renderer, card actions, etc.)
+- All section styles (all 17+ section types with their animations)
+- Theme support (day/night modes)
+- Accessibility features (reduced motion, high contrast, forced colors)
+
+**Result**: When you install `osi-cards-lib` from npm, cards render with the exact same appearance and animations as in the demo app, regardless of your host application's styles.
 
 ## Installation
 
@@ -53,11 +72,146 @@ export const appConfig: ApplicationConfig = {
 
 ### Step 2: Import Styles
 
+**🎯 RECOMMENDED: Automatic Setup via angular.json**
+
+The most reliable way to include library styles is to add them directly to `angular.json`. This ensures styles are always loaded correctly, regardless of SASS/SCSS import resolution issues.
+
+### Quick Setup Script
+
+We provide an automated setup script that configures `angular.json` for you:
+
+```bash
+npx osi-cards-lib setup:styles
+```
+
+Or manually run the script from the library:
+
+```bash
+node node_modules/osi-cards-lib/scripts/setup-angular-styles.js
+```
+
+This script will:
+- ✅ Add library styles to your `angular.json` styles array
+- ✅ Configure `stylePreprocessorOptions` with correct `includePaths`
+- ✅ Set up SASS deprecation silence
+- ✅ Work with all Angular projects in your workspace
+
+### Manual Setup (Alternative)
+
+If you prefer to configure manually, choose one of the following options:
+
+#### Option A: Scoped Styles (Recommended for Integration)
+
+Use this when integrating into an existing application to prevent style conflicts. Styles are scoped to `.osi-cards-container`.
+
+**Method 1: Import in your styles file (Recommended)**
+
+In your `src/styles.scss` or `src/styles.sass`:
+
+```scss
+// Import at the TOP of your styles file (before other styles)
+@import 'osi-cards-lib/styles/_styles-scoped';
+
+// If that doesn't work, try with tilde prefix:
+@import '~osi-cards-lib/styles/_styles-scoped';
+
+// Or with explicit .scss extension:
+@import 'osi-cards-lib/styles/_styles-scoped.scss';
+```
+
+**Important**: Place the import at the **top** of your styles file, not at the bottom, to ensure proper CSS cascade.
+
+**Method 2: Add to angular.json (RECOMMENDED - Most Reliable)**
+
+This is the **most reliable method**, especially for SASS files. The styles are automatically included in every build:
+
+```json
+{
+  "projects": {
+    "your-app": {
+      "architect": {
+        "build": {
+          "options": {
+            "styles": [
+              "src/styles.sass",  // Your main styles file
+              "node_modules/osi-cards-lib/styles/_styles-scoped.scss"  // Library styles
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "node_modules/osi-cards-lib/styles"
+              ],
+              "sass": {
+                "silenceDeprecations": ["import"]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+**Note**:
+- The `includePaths` in `stylePreprocessorOptions` helps Angular resolve relative imports within the library's SCSS files.
+- **This is especially important when using SASS files** (`.sass` extension) as they may have different import resolution behavior.
+- Place library styles **after** your main styles file in the array to ensure proper cascade.
+
+**Important**:
+- ⚠️ **Case sensitive**: Use `osi-cards-lib` (lowercase), NOT `osi-cards-Lib`
+- ⚠️ **REQUIRED**: You must wrap your components in a container. **RECOMMENDED: Use `<osi-cards-container>` component** (automatically handles theme and tilt):
+
+```html
+<!-- ✅ RECOMMENDED: Use osi-cards-container component -->
+<osi-cards-container [theme]="'day'">
+  <app-ai-card-renderer [cardConfig]="card"></app-ai-card-renderer>
+</osi-cards-container>
+
+<!-- ✅ Also works with dynamic theme -->
+<osi-cards-container [theme]="cardTheme" *ngIf="cardConfig">
+  <app-ai-card-renderer [cardConfig]="cardConfig"></app-ai-card-renderer>
+</osi-cards-container>
+```
+
+**Why use the component?**
+- ✅ Automatically sets `data-theme` attribute correctly
+- ✅ Automatically adds `perspective: 1200px` for 3D tilt effects
+- ✅ Preserves 3D transform context (`transform-style: preserve-3d`)
+- ✅ Handles all container styling automatically
+- ✅ More reliable than manual div setup
+
+**Alternative (Manual Setup):**
+If you prefer a plain div, you must manually set both the class and `data-theme` attribute:
+
+```html
+<!-- ⚠️ Manual setup - requires both class and data-theme -->
+<div class="osi-cards-container" data-theme="day">
+  <app-ai-card-renderer [cardConfig]="card"></app-ai-card-renderer>
+</div>
+
+<!-- Dynamic theme with manual setup -->
+<div class="osi-cards-container" [attr.data-theme]="theme" *ngIf="cardConfig">
+  <app-ai-card-renderer [cardConfig]="cardConfig"></app-ai-card-renderer>
+</div>
+```
+
+**The `data-theme` attribute is REQUIRED** - without it, styles will not apply correctly. Use `"day"` for light theme or `"night"` for dark theme. The component handles this automatically.
+
+#### Option B: Global Styles (For Standalone Apps)
+
+Use this for standalone applications or when you want styles applied globally.
+
 In your `src/styles.scss`:
 
 ```scss
+// Try this first
 @import 'osi-cards-lib/styles/_styles';
+
+// If that doesn't work, try with tilde:
+@import '~osi-cards-lib/styles/_styles';
 ```
+
+**Note**: This applies styles to `:root`, so no container wrapper is needed, but styles may conflict with your existing application styles.
 
 ### Step 3: Use the Component
 
@@ -104,7 +258,7 @@ export class StaticCardComponent {
 }
 ```
 
-**HTML:**
+**HTML (RECOMMENDED - using OsiCardsContainerComponent):**
 
 ```html
 <osi-cards-container [theme]="cardTheme">
@@ -112,10 +266,27 @@ export class StaticCardComponent {
     [cardConfig]="card"
     [streamingStage]="'complete'"
     [showLoadingByDefault]="false"
+    [tiltEnabled]="true"
     (cardInteraction)="onCardAction($event)">
   </app-ai-card-renderer>
 </osi-cards-container>
 ```
+
+**HTML (Alternative - manual div setup):**
+
+```html
+<div class="osi-cards-container" [attr.data-theme]="cardTheme">
+  <app-ai-card-renderer
+    [cardConfig]="card"
+    [streamingStage]="'complete'"
+    [showLoadingByDefault]="false"
+    [tiltEnabled]="true"
+    (cardInteraction)="onCardAction($event)">
+  </app-ai-card-renderer>
+</div>
+```
+
+**Note**: The component approach is recommended because it automatically handles theme, perspective for tilt, and 3D transform context.
 
 **Key Settings:**
 - `[streamingStage]="'complete'"` → Card is fully loaded
@@ -209,7 +380,7 @@ export class StreamingCardComponent {
 }
 ```
 
-**HTML:**
+**HTML (RECOMMENDED - using OsiCardsContainerComponent):**
 
 ```html
 <button (click)="generateCard()" [disabled]="isStreaming">
@@ -225,9 +396,32 @@ export class StreamingCardComponent {
     [showLoadingByDefault]="true"
     [loadingMessages]="loadingMessages"
     [loadingTitle]="'AI Analysis'"
+    [tiltEnabled]="true"
     (cardInteraction)="onCardAction($event)">
   </app-ai-card-renderer>
 </osi-cards-container>
+```
+
+**HTML (Alternative - manual div setup):**
+
+```html
+<button (click)="generateCard()" [disabled]="isStreaming">
+  {{ isStreaming ? 'Generating...' : 'Generate Card' }}
+</button>
+
+<div class="osi-cards-container" [attr.data-theme]="cardTheme">
+  <app-ai-card-renderer
+    [cardConfig]="card"
+    [isStreaming]="isStreaming"
+    [streamingStage]="streamingStage"
+    [streamingProgress]="streamingProgress"
+    [showLoadingByDefault]="true"
+    [loadingMessages]="loadingMessages"
+    [loadingTitle]="'AI Analysis'"
+    [tiltEnabled]="true"
+    (cardInteraction)="onCardAction($event)">
+  </app-ai-card-renderer>
+</div>
 ```
 
 **Key Settings:**
@@ -820,13 +1014,164 @@ providers: [
 ]
 ```
 
-### Styles not loading
+### Styles not loading / Library looks unstyled
+
+**If using scoped styles (`_styles-scoped`):**
+
+**CRITICAL**: If styles are completely missing (card renders but has no styling), the SASS import is likely not resolving. Use one of these solutions:
+
+**Solution 1: Add to angular.json (RECOMMENDED for SASS files)**
+
+This is the most reliable method:
+
+```json
+{
+  "projects": {
+    "your-app": {
+      "architect": {
+        "build": {
+          "options": {
+            "styles": [
+              "src/styles.sass",
+              "node_modules/osi-cards-lib/styles/_styles-scoped.scss"
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "node_modules/osi-cards-lib/styles"
+              ],
+              "sass": {
+                "silenceDeprecations": ["import"]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Then **remove** the `@import` from your `styles.sass` file.
+
+**Solution 2: Fix the SASS import**
+
+If you want to keep the import in your styles file:
+
+1. **Use tilde prefix**:
+   ```sass
+   @import '~osi-cards-lib/styles/_styles-scoped';
+   ```
+
+2. **Or use full path**:
+   ```sass
+   @import 'node_modules/osi-cards-lib/styles/_styles-scoped';
+   ```
+
+3. **And add to angular.json**:
+   ```json
+   "stylePreprocessorOptions": {
+     "includePaths": ["node_modules"],
+     "sass": {
+       "silenceDeprecations": ["import"]
+     }
+   }
+   ```
+
+**Solution 3: Verify import path** - Use lowercase `osi-cards-lib` (not `osi-cards-Lib`):
+   ```scss
+   @import 'osi-cards-lib/styles/_styles-scoped';
+   ```
+
+2. **Try alternative import methods** if the above doesn't work:
+
+   **Option A: With tilde prefix** (for older Angular versions):
+   ```scss
+   @import '~osi-cards-lib/styles/_styles-scoped';
+   ```
+
+   **Option B: With explicit extension**:
+   ```scss
+   @import 'osi-cards-lib/styles/_styles-scoped.scss';
+   ```
+
+   **Option C: Add to angular.json** (if SCSS import fails):
+   ```json
+   {
+     "projects": {
+       "your-app": {
+         "architect": {
+           "build": {
+             "options": {
+               "styles": [
+                 "node_modules/osi-cards-lib/styles/_styles-scoped.scss",
+                 "src/styles.scss"
+               ],
+               "stylePreprocessorOptions": {
+                 "includePaths": [
+                   "node_modules/osi-cards-lib/styles"
+                 ],
+                 "sass": {
+                   "silenceDeprecations": ["import"]
+                 }
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+   ```
+   Then remove the `@import` from your `styles.scss`.
+
+3. **Wrap components in container** - You MUST wrap your components. **RECOMMENDED: Use `<osi-cards-container>` component** (automatically handles theme and tilt):
+   ```html
+   <!-- ✅ RECOMMENDED: Component automatically handles theme and tilt -->
+   <osi-cards-container [theme]="'day'">
+     <app-ai-card-renderer [cardConfig]="card"></app-ai-card-renderer>
+   </osi-cards-container>
+   ```
+
+   **Alternative (Manual Setup):**
+   ```html
+   <!-- ⚠️ Manual setup - requires both class and data-theme -->
+   <div class="osi-cards-container" data-theme="day">
+     <app-ai-card-renderer [cardConfig]="card"></app-ai-card-renderer>
+   </div>
+   ```
+
+4. **Set theme attribute** - The component handles this automatically via `[theme]` input. For manual setup, add `data-theme="day"` or `data-theme="night"`:
+   ```html
+   <div class="osi-cards-container" data-theme="day">
+   ```
+
+5. **Verify package installation**:
+   ```bash
+   npm list osi-cards-lib
+   ```
+   Should show version `1.5.19` or higher.
+
+6. **Check browser console** - Look for 404 errors on style files. If you see errors, the import path is incorrect.
+
+7. **Rebuild your app** after adding the import:
+   ```bash
+   ng build
+   # or
+   npm start
+   ```
+
+**If using global styles (`_styles`):**
 
 Import styles in your `styles.scss`:
-
 ```scss
 @import 'osi-cards-lib/styles/_styles';
 ```
+
+**Common Issues:**
+- ❌ **Wrong import path**: `@import 'osi-cards-Lib/styles/_styles-scoped'` (wrong casing)
+- ❌ **Missing container**: Components not wrapped in `.osi-cards-container` or `<osi-cards-container>` component
+- ❌ **Missing theme**: No `data-theme` attribute on container (use `<osi-cards-container [theme]="'day'">` to fix automatically)
+- ❌ **Tilt not working**: Missing `perspective` on container (use `<osi-cards-container>` component which adds it automatically)
+- ❌ **SCSS not compiled**: Check that your build process compiles SCSS files
 
 ### Icons not showing
 
@@ -835,6 +1180,20 @@ Ensure `lucide-angular` is installed:
 ```bash
 npm install lucide-angular@^0.548.0
 ```
+
+### CSS Variables not working
+
+If CSS variables (like `--color-brand`) aren't working:
+
+1. **For scoped styles**: Ensure you're using `.osi-cards-container` wrapper
+2. **Check theme**: Verify `data-theme` attribute is set correctly
+3. **Override variables**: You can override variables in your own styles:
+   ```scss
+   .osi-cards-container {
+     --color-brand: #ff7900;
+     --background: #ffffff;
+   }
+   ```
 
 ---
 

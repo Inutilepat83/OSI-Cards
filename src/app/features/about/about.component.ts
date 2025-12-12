@@ -23,3 +23,4 @@ export class AboutComponent {
       'This page is under development. Check back soon for information about our mission and team.',
   };
 }
+

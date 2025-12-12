@@ -71,3 +71,4 @@ export interface SystemStats {
 export class SystemStatsComponent {
   @Input() stats: SystemStats | null = null;
 }
+

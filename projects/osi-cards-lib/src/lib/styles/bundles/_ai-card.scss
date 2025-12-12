@@ -17,33 +17,35 @@
 @use "../reset/shadow-reset";
 
 // 3. Generate CSS custom properties
+// Use "demo" mode to match demo app appearance exactly
 :host {
-  @include osi-theme-base("integration", true);
-  @include osi-tokens("integration", true);
+  @include osi-theme-base("demo", true);
+  @include osi-tokens("demo", true);
 
   // Block display - let content determine height
   display: block;
   width: 100%;
+  min-height: 0; // Allow flex children to shrink
 }
 
 // Primary: Use :host([data-theme]) for explicit Shadow DOM scope (most reliable)
 // Fallback: :host-context for cases where parent sets data-theme
 :host([data-theme="night"]) {
-  @include osi-theme-dark("integration", true);
+  @include osi-theme-dark("demo", true);
 }
 
 :host([data-theme="day"]) {
-  @include osi-theme-light("integration", true);
+  @include osi-theme-light("demo", true);
 }
 
 // Fallback: Support parent context (for backward compatibility)
 // Note: Safari may have inconsistent :host-context behavior, so :host([data-theme]) is preferred
 :host-context([data-theme="night"]) {
-  @include osi-theme-dark("integration", true);
+  @include osi-theme-dark("demo", true);
 }
 
 :host-context([data-theme="day"]) {
-  @include osi-theme-light("integration", true);
+  @include osi-theme-light("demo", true);
 }
 
 // 4. Core styles required for AI card
@@ -65,13 +67,159 @@
 // 5b. Streaming effects
 @import "../components/streaming-effects";
 
+// 5c. Component styles for ViewEncapsulation.None components
+// (masonry-grid, section-renderer, card-actions, card-streaming-indicator, etc.)
+@import "../components/_component-styles";
+
 // 6. AI Card specific styles
 @import "../components/cards/ai-card";
 @import "../components/_empty-state";
 
+// 6a. Utility classes (w-full, h-full, flex-1, min-h-0, etc.)
+@import "../components/sections/_utility-classes";
+
 // 7. Section Styles (consolidated)
 // Design system + sections base + section shell + all section types
 @import "../components/sections/sections-all";
+
+// 7a. Additional design tokens for Shadow DOM
+// Convert :root selectors to :host for Shadow DOM compatibility
+:host {
+  // Spacing scale
+  --spacing-none: 0;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-base: 16px;
+  --spacing-lg: 20px;
+  --spacing-xl: 28px;
+  --spacing-2xl: 40px;
+  --spacing-3xl: 56px;
+
+  // Compact mode variations
+  --spacing-compact-xs: 3px;
+  --spacing-compact-sm: 6px;
+  --spacing-compact-md: 9px;
+  --spacing-compact-base: 12px;
+  --spacing-compact-lg: 16px;
+
+  // Section-specific sizing
+  --section-card-min-height: 110px;
+  --section-card-compact-height: 90px;
+  --section-header-gap: var(--spacing-md);
+  --section-content-gap: var(--spacing-sm);
+  --section-card-gap: var(--spacing-md);
+  --section-card-padding: var(--spacing-md);
+
+  // Typography
+  --text-md: 0.875rem;
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+  --leading-tight: 1.2;
+  --leading-snug: 1.3;
+  --leading-normal: 1.4;
+  --leading-relaxed: 1.5;
+  --leading-loose: 1.75;
+}
+
+// 8. Component-specific optimizations (from demo app)
+// Register CSS custom properties for browser-native interpolation
+@supports (background: paint(id)) {
+  @property --tilt-x {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+  @property --tilt-y {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+  }
+  @property --glow-blur {
+    syntax: "<length>";
+    initial-value: 8px;
+    inherits: false;
+  }
+  @property --glow-color {
+    syntax: "<color>";
+    initial-value: rgba(255, 121, 0, 0.225);
+    inherits: false;
+  }
+  @property --reflection-opacity {
+    syntax: "<number>";
+    initial-value: 0;
+    inherits: false;
+  }
+}
+
+// Card container wrapper - CSS containment for performance
+.card-container-wrapper {
+  contain: layout style;
+}
+
+// Note: Tilt and glow container styles are already included from _tilt.scss import above
+// The tilt effect should work automatically via the tilt-container class
+
+// Card surface styles - matching demo app exactly
+// These ensure the card has proper background and border in Shadow DOM
+// Theme-aware: uses CSS variables but with fallbacks for night theme
+.ai-card-surface {
+  // Use theme variables, but ensure they're applied with proper specificity
+  // The theme mixins set these, but we need to ensure they're not overridden
+  border: var(--osi-card-border, 1px solid rgba(255, 255, 255, 0.08)) !important;
+  background: var(--osi-card-background, rgba(20, 20, 20, 0.6)) !important;
+  backdrop-filter: var(--osi-card-backdrop-filter, blur(12px)) !important;
+  -webkit-backdrop-filter: var(--osi-card-backdrop-filter, blur(12px)) !important;
+  box-shadow: var(--osi-card-shadow, 0 4px 24px -1px rgba(0, 0, 0, 0.2)) !important;
+  transition: var(--osi-card-transition-border, all 0.4s cubic-bezier(0.4, 0, 0.2, 1)) !important;
+}
+
+.ai-card-surface:hover {
+  border: var(--osi-card-border-hover, 1px solid rgba(255, 121, 0, 0.5)) !important;
+  background: var(--osi-card-background-hover, rgba(30, 30, 30, 0.8)) !important;
+  box-shadow: var(--osi-card-shadow-hover, 0 20px 40px -5px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 121, 0, 0.2)) !important;
+}
+
+// Section highlight animation for URL fragment scrolling
+.section-highlight {
+  animation: section-pulse 2s ease-out;
+  position: relative;
+}
+
+.section-highlight::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 2px solid rgba(255, 121, 0, 0.6);
+  border-radius: 14px;
+  pointer-events: none;
+  animation: section-border-fade 2s ease-out forwards;
+}
+
+@keyframes section-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.01);
+  }
+}
+
+@keyframes section-border-fade {
+  0% {
+    opacity: 1;
+    box-shadow: 0 0 20px rgba(255, 121, 0, 0.4);
+  }
+  100% {
+    opacity: 0;
+    box-shadow: 0 0 0 rgba(255, 121, 0, 0);
+  }
+}
 
 // 10. Action buttons and footer (enforced styles for Shadow DOM)
 @import "../components/card-actions";

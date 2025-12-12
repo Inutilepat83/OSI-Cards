@@ -141,3 +141,4 @@ export class ExampleCustomSectionComponent extends BaseSectionComponent implemen
     return section.type === ExampleCustomSectionComponent.PLUGIN_TYPE;
   }
 }
+

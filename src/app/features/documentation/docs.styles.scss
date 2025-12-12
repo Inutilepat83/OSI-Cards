@@ -369,6 +369,8 @@
   text-decoration: none;
   color: var(--docs-text);
   transition: all var(--docs-transition);
+  position: relative;
+  top: -4px;
 
   &:hover .logo-text {
     color: var(--docs-primary);

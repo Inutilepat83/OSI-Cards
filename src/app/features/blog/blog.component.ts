@@ -22,3 +22,4 @@ export class BlogComponent {
     description: 'This page is under development. Check back soon for blog posts and updates.',
   };
 }
+

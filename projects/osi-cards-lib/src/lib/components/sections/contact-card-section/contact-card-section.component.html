@@ -17,17 +17,21 @@
             <lib-badge *ngIf="c.department" class="department-badge" variant="primary" size="sm">
               {{ c.department }}
             </lib-badge>
+          </div>
+
+          <!-- Bottom section: influence and actions -->
+          <div class="card__left-bottom">
             <!-- Score indicator (1-10) -->
             <div class="score-indicator" *ngIf="getScore(c) !== null">
               <span class="score-label">Influence</span>
               <div class="score-bar">
                 <div class="score-fill" [style.width.%]="(getScore(c)! / 10) * 100"></div>
               </div>
+              <span class="score-value">{{ getScore(c)! }}/10</span>
             </div>
-          </div>
 
-          <!-- Actions -->
-          <div class="actions" (click)="$event.stopPropagation()">
+            <!-- Actions -->
+            <div class="actions" (click)="$event.stopPropagation()">
             <ng-container *ngFor="let action of getContactActions(c)">
               <a
                 [href]="getActionUrl(action)"
@@ -40,6 +44,7 @@
                 {{ getActionIcon(action) }}
               </a>
             </ng-container>
+            </div>
           </div>
         </div>
 

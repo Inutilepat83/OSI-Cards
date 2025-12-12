@@ -112,9 +112,10 @@ export class SectionRendererComponent implements OnChanges {
   protected lazyLoadError: Error | null = null;
   protected lazyType: LazySectionType = 'chart';
 
-  // FIX: Add theme input to propagate theming to child sections
-  // Default to 'night' to ensure dark theme is applied if not provided
-  @Input() theme: string = 'night';
+  // Note: Theme is handled via CSS (data-theme attribute on host element)
+  // Section components receive theme styling through Shadow DOM selectors
+  // This input is kept for backward compatibility but is not used
+  @Input() theme?: string;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['section']) {
@@ -331,8 +332,8 @@ export class SectionRendererComponent implements OnChanges {
         this.currentComponentRef.setInput('orientation', this.section._assignedOrientation);
       }
 
-      // FIX: Pass theme to component
-      this.currentComponentRef.setInput('theme', this.theme || 'night');
+      // Note: Theme is handled via CSS (data-theme attribute), not as a component input
+      // Section components receive theme styling through the Shadow DOM's :host([data-theme]) selectors
 
       // CRITICAL: Manually trigger change detection on the dynamically created component
       // setInput() should trigger change detection, but for OnPush components created dynamically,
