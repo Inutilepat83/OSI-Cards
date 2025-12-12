@@ -3,6 +3,7 @@
   class="masonry-container"
   [class.masonry-container--ready]="isLayoutReady"
   [class.masonry-container--streaming]="isStreaming"
+  [class.masonry-container--debug]="debug"
   [style.--masonry-columns]="currentColumns"
   [style.--masonry-gap.px]="gap"
   role="grid"
@@ -11,10 +12,18 @@
   <div
     *ngFor="let item of sectionsWithSpan; let idx = index; trackBy: trackBySection"
     class="masonry-item"
+    [class.masonry-item--compact]="item.layoutVariant === 'compact'"
+    [class.masonry-item--wide]="item.layoutVariant === 'wide'"
+    [class.masonry-item--default]="item.layoutVariant === 'default' || !item.layoutVariant"
+    [attr.data-priority]="item.section.priority || 'standard'"
     role="gridcell"
     [attr.data-index]="idx"
     [attr.data-col-span]="item.colSpan"
     [style.--col-span]="item.colSpan"
+    [style.left]="gridMode === 'absolute-polyfill' && item.left ? item.left : null"
+    [style.top]="gridMode === 'absolute-polyfill' && item.top !== undefined ? item.top + 'px' : null"
+    [style.transform]="gridMode === 'absolute-polyfill' && item.transform ? item.transform : null"
+    [style.width]="gridMode === 'absolute-polyfill' && item.width ? item.width : null"
     [attr.aria-label]="'Section: ' + (item.section.title || 'Untitled')"
   >
     <app-section-renderer [section]="item.section" (sectionEvent)="onSectionEvent($event)"> </app-section-renderer>

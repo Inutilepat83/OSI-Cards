@@ -6,6 +6,7 @@
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
 @use "../../../styles/components/sections/component-mixins" as components;
+@use "../../../styles/responsive" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -115,7 +116,7 @@
 }
 
 // RESPONSIVE
-@media (max-width: 768px) {
+@include responsive-down("md") {
   .chart-wrapper {
     padding: var(--osi-spacing-compact-md, 12px);
     min-height: 260px; // Compact: 260px (was 280px)
@@ -126,7 +127,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@include responsive-down("sm") {
   .chart-wrapper {
     padding: var(--osi-spacing-compact-sm, 6px);
     min-height: 220px; // Compact: 220px (was 240px)

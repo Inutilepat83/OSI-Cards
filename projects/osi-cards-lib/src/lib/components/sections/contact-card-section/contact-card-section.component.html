@@ -3,18 +3,63 @@
   </lib-section-header>
 
   <div class="grid" *ngIf="section.fields?.length">
-    <div class="card" *ngFor="let c of section.fields">
-      <div class="avatar">
-        <img [src]="getAvatar(c)" [alt]="getContactName(c)" *ngIf="getAvatar(c)" loading="lazy" />
-        <span class="initials" *ngIf="!getAvatar(c)">{{ getInitials(getContactName(c)) }}</span>
-      </div>
-      <h4 class="name">{{ getContactName(c) }}</h4>
-      <p class="role" *ngIf="getContactRole(c)">{{ getContactRole(c) }}</p>
-      <lib-badge *ngIf="c.department" class="dept" variant="primary" size="sm">{{ c.department }}</lib-badge>
-      <div class="actions">
-        <a [href]="getOutlookEmailUrl(c.email)" class="action" *ngIf="c.email" title="Email">📧</a>
-        <a [href]="'tel:' + c.phone" class="action" *ngIf="c.phone" title="Call">📞</a>
-        <a [href]="c.linkedIn" class="action" target="_blank" rel="noopener" *ngIf="c.linkedIn" title="LinkedIn">💼</a>
+    <div class="card" [class.card--target]="isTarget(c)" *ngFor="let c of section.fields">
+      <!-- Target label (shown on hover) -->
+      <span class="target-label" *ngIf="isTarget(c)">Target</span>
+
+      <!-- 2-column layout: left (name, title, actions) | right (note) -->
+      <div class="card__content">
+        <!-- Left column: name, title, department, actions -->
+        <div class="card__left">
+          <div class="card__left-top">
+            <h4 class="name">{{ getContactName(c) }}</h4>
+            <p class="title" *ngIf="getContactRole(c)">{{ getContactRole(c) }}</p>
+            <lib-badge *ngIf="c.department" class="department-badge" variant="primary" size="sm">
+              {{ c.department }}
+            </lib-badge>
+            <!-- Score indicator (1-10) -->
+            <div class="score-indicator" *ngIf="getScore(c) !== null">
+              <span class="score-label">Influence</span>
+              <div class="score-bar">
+                <div class="score-fill" [style.width.%]="(getScore(c)! / 10) * 100"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="actions" (click)="$event.stopPropagation()">
+            <ng-container *ngFor="let action of getContactActions(c)">
+              <a
+                [href]="getActionUrl(action)"
+                class="action"
+                [attr.aria-label]="action.label + ' ' + getContactName(c)"
+                [attr.title]="action.label"
+                [attr.target]="action.type === 'linkedin' ? '_blank' : null"
+                [attr.rel]="action.type === 'linkedin' ? 'noopener' : null"
+              >
+                {{ getActionIcon(action) }}
+              </a>
+            </ng-container>
+          </div>
+        </div>
+
+        <!-- Right column: note -->
+        <div class="card__right" (click)="$event.stopPropagation()">
+          <div class="note" *ngIf="hasNote(c)" [class.note--expanded]="isNoteExpanded(c)">
+            <span class="note__label">Note</span>
+            <p class="note__text" [class.note__text--expanded]="isNoteExpanded(c)">{{ getNote(c) }}</p>
+            <button
+              *ngIf="shouldShowExpandButton(c)"
+              class="note__expand-btn"
+              type="button"
+              (click)="toggleNote(c, $event)"
+              [attr.aria-expanded]="isNoteExpanded(c)"
+              [attr.aria-label]="(isNoteExpanded(c) ? 'Collapse' : 'Expand') + ' note for ' + getContactName(c)"
+            >
+              {{ isNoteExpanded(c) ? 'Show less' : 'Show more' }}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

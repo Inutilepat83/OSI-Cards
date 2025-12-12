@@ -1,6 +1,6 @@
 /* ===================================================================
    OSI Cards Demo App Styles
-   
+
    Note: Sass @import deprecation warnings can be safely ignored until
    Dart Sass 3.0.0. Migration to @use/@forward requires significant
    restructuring of the SCSS architecture.
@@ -65,3 +65,38 @@
 
 /* Card styles are now handled by the library's scoped styles */
 /* No overrides needed - library uses --osi- prefixed self-contained variables */
+
+/* Documentation demo context - full width cards with no padding */
+.demo-preview,
+.demo-card,
+.live-demo-preview {
+  --osi-card-padding: 0 !important;
+  --osi-card-padding-top: 0 !important;
+  --osi-card-padding-bottom: 0 !important;
+  --osi-card-padding-left: 0 !important;
+  --osi-card-padding-right: 0 !important;
+  --card-main-padding: 0 !important;
+  --section-container-padding: 0 !important;
+  --section-padding: 0 !important;
+}
+
+/* Ensure app-ai-card-renderer in demo context has no padding */
+.demo-preview app-ai-card-renderer,
+.demo-card app-ai-card-renderer,
+.live-demo-preview app-ai-card-renderer,
+.demo-content app-ai-card-renderer {
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  display: block !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure card container takes full width in demo context */
+.demo-content .card-container-wrapper,
+.live-demo-preview .card-container-wrapper {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+}

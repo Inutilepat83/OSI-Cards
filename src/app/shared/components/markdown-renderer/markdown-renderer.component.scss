@@ -18,6 +18,11 @@
 
   h1 {
     @apply text-3xl border-b border-gray-700 pb-2;
+
+    // Reduce bottom margin when followed by component demo to bring them closer
+    & + app-docs-component-demo {
+      margin-bottom: 0.25rem;
+    }
   }
 
   h2 {
@@ -138,5 +143,37 @@
   // Error message
   .markdown-error {
     @apply text-red-400 bg-red-900/20 border border-red-500 rounded p-4;
+  }
+
+  // Component demo styling - appears after h1
+  app-docs-component-demo {
+    @apply block;
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
+    width: 100%;
+  }
+
+  // Ensure proper spacing when demo appears directly after h1
+  // This targets h1 followed immediately by the component demo
+  h1 + app-docs-component-demo {
+    margin-top: 0.5rem !important;
+    margin-bottom: 2rem;
+  }
+
+  // Handle case where there might be a paragraph or other content between h1 and demo
+  h1 ~ p + app-docs-component-demo,
+  h1 ~ div + app-docs-component-demo {
+    margin-top: 1rem;
+  }
+
+  // Ensure proper spacing when demo appears after h2
+  h2 + app-docs-component-demo {
+    @apply mt-4 mb-6;
+  }
+
+  // Ensure the component appears right after the first h1 in the document
+  h1:first-of-type + app-docs-component-demo {
+    margin-top: 1rem !important;
+    margin-bottom: 2rem;
   }
 }

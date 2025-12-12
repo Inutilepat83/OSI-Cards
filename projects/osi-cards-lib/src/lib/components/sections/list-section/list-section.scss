@@ -5,6 +5,7 @@
 // Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
+@use "../../../styles/responsive" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -15,7 +16,7 @@
   width: 100%;
   min-width: 400px;
 
-  @media (max-width: 640px) {
+  @include responsive-down("sm") {
     min-width: 100%;
   }
 }
@@ -146,7 +147,7 @@
 }
 
 // Responsive
-@media (max-width: 640px) {
+@include responsive-down("sm") {
   .list-container {
     padding: var(--osi-spacing-compact-sm, 6px);
     gap: var(--osi-spacing-compact-xs, 2px);

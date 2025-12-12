@@ -5,6 +5,7 @@
 // Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
+@use "../../../styles/responsive" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -15,7 +16,7 @@
   width: 100%;
   min-width: 400px;
 
-  @media (max-width: 640px) {
+  @include responsive-down("sm") {
     min-width: 100%;
   }
 }
@@ -96,7 +97,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-@media (max-width: 480px) {
+@include responsive-down("sm") {
   .list {
     padding: var(--osi-spacing-compact-sm, 6px);
   }

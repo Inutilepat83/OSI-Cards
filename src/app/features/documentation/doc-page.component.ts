@@ -910,26 +910,34 @@ interface PrerenderedPage {
           overflow: hidden;
           transition:
             max-height 0.3s ease,
-            padding 0.3s ease;
+            padding 0.3s ease,
+            margin 0.3s ease;
           background: var(--docs-blockquote-bg, rgba(255, 121, 0, 0.06));
           border-radius: 0 0 12px 12px;
-          margin-top: -12px;
+          margin-top: 0;
+          margin-bottom: 1rem;
 
           &.expanded {
-            max-height: 600px;
+            max-height: 2000px; /* Large enough for most cards, allows smooth transition */
+            min-height: 200px;
             padding: 1rem;
+            overflow: visible;
           }
 
           .live-demo-preview {
             border: 1px solid var(--docs-border, #e5e7eb);
             border-radius: 8px;
             background: var(--docs-surface, #fff);
-            overflow: hidden;
+            overflow: visible;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
 
             .demo-header {
               padding: 0.5rem 1rem;
               background: var(--docs-bg-secondary, #f6f8fa);
               border-bottom: 1px solid var(--docs-border-light, #f3f4f6);
+              flex-shrink: 0;
             }
 
             .demo-label {
@@ -943,13 +951,26 @@ interface PrerenderedPage {
             .demo-content {
               padding: 1.5rem;
               display: flex;
-              justify-content: stretch;
+              flex-direction: column;
+              justify-content: flex-start;
+              align-items: stretch;
               background: linear-gradient(135deg, #f8f9fa 0%, #fff 50%, #f8f9fa 100%);
               min-height: 200px;
+              width: 100%;
+              box-sizing: border-box;
+              position: relative;
+              overflow: visible;
 
               app-ai-card-renderer {
-                max-width: none;
+                max-width: 100%;
                 width: 100%;
+                min-width: 0;
+                display: block;
+                flex: 1 1 auto;
+                padding: 0 !important;
+                margin: 0 !important;
+                height: auto;
+                min-height: 0;
               }
             }
           }
@@ -1250,6 +1271,19 @@ interface PrerenderedPage {
         .doc-toc {
           display: none;
         }
+
+        /* Live Demo Container - Tablet */
+        .live-demo-container {
+          &.expanded {
+            padding: 0.875rem;
+          }
+
+          .live-demo-preview {
+            .demo-content {
+              padding: 1.25rem;
+            }
+          }
+        }
       }
 
       @media (max-width: 768px) {
@@ -1298,6 +1332,25 @@ interface PrerenderedPage {
           flex-direction: column;
           gap: 0.75rem;
         }
+
+        /* Live Demo Container - Mobile */
+        .live-demo-container {
+          &.expanded {
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+          }
+
+          .live-demo-preview {
+            .demo-header {
+              padding: 0.5rem 0.75rem;
+            }
+
+            .demo-content {
+              padding: 1rem;
+              min-height: 150px;
+            }
+          }
+        }
       }
 
       @media (max-width: 480px) {
@@ -1334,6 +1387,27 @@ interface PrerenderedPage {
         ul li,
         ol li {
           padding-left: 1.25em;
+        }
+
+        /* Live Demo Container - Small Mobile */
+        .live-demo-container {
+          &.expanded {
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+          }
+
+          .live-demo-preview {
+            border-radius: 6px;
+
+            .demo-header {
+              padding: 0.375rem 0.5rem;
+            }
+
+            .demo-content {
+              padding: 0.75rem;
+              min-height: 120px;
+            }
+          }
         }
       }
 

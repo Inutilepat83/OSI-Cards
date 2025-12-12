@@ -1,40 +1,38 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { CardSection } from '../../../models';
 import { SectionLayoutPreferenceService } from '../../../services/section-layout-preference.service';
-import { TrendDirection } from '../../../types';
-import {
-  BadgeComponent,
-  EmptyStateComponent,
-  ProgressBarComponent,
-  SectionHeaderComponent,
-  TrendIndicatorComponent,
-  type ProgressBarVariant,
-} from '../../shared';
+import { EmptyStateComponent, SectionHeaderComponent, type ProgressBarVariant } from '../../shared';
 import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.component';
 
 /**
- * Analytics Section Component - Compact & Minimalist
+ * Analytics Section Component - Compact & Minimalist with Progressive Disclosure
  *
  * Ultra-compact display of performance metrics and KPIs.
+ * Default view shows dense KPI matrix; hover/expand reveals goals and details.
  * Minimal padding, clean typography, maximum information density.
  */
 @Component({
   selector: 'lib-analytics-section',
   standalone: true,
-  imports: [
-    CommonModule,
-    SectionHeaderComponent,
-    EmptyStateComponent,
-    TrendIndicatorComponent,
-    ProgressBarComponent,
-    BadgeComponent,
-  ],
+  imports: [CommonModule, SectionHeaderComponent, EmptyStateComponent],
   templateUrl: './analytics-section.component.html',
   styleUrl: './analytics-section.scss',
 })
 export class AnalyticsSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);
+
+  /**
+   * Density mode for the analytics section
+   * - 'compact': Dense KPI matrix (default)
+   * - 'comfortable': More spacing and always-visible details
+   */
+  @Input() density: 'compact' | 'comfortable' = 'compact';
+
+  /**
+   * Currently expanded metric ID (for progressive disclosure)
+   */
+  expandedMetricId: string | null = null;
 
   ngOnInit(): void {
     // Register layout preference function for this section type
@@ -96,18 +94,6 @@ export class AnalyticsSectionComponent extends BaseSectionComponent implements O
   }
 
   /**
-   * Map trend string to TrendDirection type
-   */
-  getTrend(trend?: string): TrendDirection {
-    if (!trend) return 'neutral';
-    const t = trend.toLowerCase();
-    if (t.includes('up') || t.includes('increas') || t.includes('ris')) return 'up';
-    if (t.includes('down') || t.includes('decreas') || t.includes('fall')) return 'down';
-    if (t.includes('stable') || t.includes('flat')) return 'stable';
-    return 'neutral';
-  }
-
-  /**
    * Map performance rating to progress bar variant
    */
   getVariant(performance?: string): ProgressBarVariant {
@@ -131,5 +117,260 @@ export class AnalyticsSectionComponent extends BaseSectionComponent implements O
     if (p.includes('aver') || p.includes('fair')) return 'warning';
     if (p.includes('poor') || p.includes('bad')) return 'error';
     return 'default';
+  }
+
+  /**
+   * Format metric value for display
+   */
+  formatMetricValue(metric: any): string {
+    if (metric.value === null || metric.value === undefined) return '—';
+
+    // If value is already a formatted string, return it
+    if (
+      typeof metric.value === 'string' &&
+      (metric.value.includes('%') ||
+        metric.value.includes('$') ||
+        metric.value.includes('M') ||
+        metric.value.includes('K'))
+    ) {
+      return metric.value;
+    }
+
+    // Format based on format type
+    if (metric.format === 'currency') {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(Number(metric.value));
+    }
+
+    if (metric.format === 'percentage') {
+      return `${Number(metric.value).toFixed(1)}%`;
+    }
+
+    if (metric.format === 'number') {
+      const numValue = Number(metric.value);
+      // Format large numbers with K/M suffixes
+      if (numValue >= 1000000) {
+        return `${(numValue / 1000000).toFixed(1)}M`;
+      }
+      if (numValue >= 1000) {
+        return `${(numValue / 1000).toFixed(1)}K`;
+      }
+      return new Intl.NumberFormat('en-US').format(numValue);
+    }
+
+    return metric.value.toString();
+  }
+
+  /**
+   * Format a value using a metric's format settings
+   */
+  formatValueWithMetricFormat(metric: any, value: any): string {
+    if (value === null || value === undefined) return '—';
+
+    // Create a temporary metric object with the provided value
+    const tempMetric = {
+      ...metric,
+      value,
+    };
+
+    return this.formatMetricValue(tempMetric);
+  }
+
+  /**
+   * Get progress percentage (0-100)
+   */
+  getProgressPercentage(metric: any): number {
+    if (metric.percentage !== undefined) {
+      return Math.min(100, Math.max(0, metric.percentage));
+    }
+    const goal = (metric as any).goal;
+    if (goal !== undefined && metric.value !== undefined) {
+      const value = Number(metric.value);
+      const goalValue = Number(goal);
+      if (goalValue === 0) return 0;
+      return Math.min(100, Math.max(0, (value / goalValue) * 100));
+    }
+    return 0;
+  }
+
+  /**
+   * Get target percentage for goal marker (0-100)
+   */
+  getTargetPercentage(metric: any): number {
+    const goal = (metric as any).goal;
+    if (!goal) return 100;
+    // If targetPercentage is provided, use it as target
+    const targetPercentage = (metric as any).targetPercentage;
+    if (targetPercentage !== undefined) {
+      return Math.min(100, Math.max(0, targetPercentage));
+    }
+    // Default to 100% if no specific target
+    return 100;
+  }
+
+  /**
+   * Get progress class based on value vs goal
+   */
+  getProgressClass(metric: any): string {
+    const percentage = this.getProgressPercentage(metric);
+    const target = this.getTargetPercentage(metric);
+    const variant = this.getVariant(metric.performance);
+    const goal = (metric as any).goal;
+
+    // If we have a goal and current value is below target
+    if (goal !== undefined && percentage < target - 5) {
+      return 'metric-progress-fill--warning';
+    }
+
+    // If we have a goal and current value meets/exceeds target
+    if (goal !== undefined && percentage >= target - 5) {
+      return 'metric-progress-fill--success';
+    }
+
+    // Use semantic mapping based on variant
+    if (variant === 'success') return 'metric-progress-fill--success';
+    if (variant === 'warning') return 'metric-progress-fill--warning';
+    if (variant === 'error') return 'metric-progress-fill--error';
+    return 'metric-progress-fill--default';
+  }
+
+  /**
+   * Get progress label (X of Y format or percentage)
+   */
+  getProgressLabel(metric: any): string {
+    // If goal exists (via any field), show "X of Y" format
+    // Try goal field, or use percentage as goal reference
+    const goal = (metric as any).goal;
+    if (goal !== undefined && metric.value !== undefined) {
+      const value = Number(metric.value);
+      const goalValue = Number(goal);
+      return `${this.formatValueWithMetricFormat(metric, value)} / ${this.formatValueWithMetricFormat(metric, goalValue)}`;
+    }
+    // Otherwise show percentage
+    const percentage = this.getProgressPercentage(metric);
+    return `${Math.round(percentage)}%`;
+  }
+
+  /**
+   * Get period text from metric (if available)
+   */
+  getPeriod(metric: any): string | undefined {
+    return (metric as any).period;
+  }
+
+  /**
+   * Check if metric has goal
+   */
+  hasGoal(metric: any): boolean {
+    return (metric as any).goal !== undefined;
+  }
+
+  /**
+   * Get goal value from metric
+   */
+  getGoalValue(metric: any): any {
+    return (metric as any).goal;
+  }
+
+  /**
+   * Format goal value for display
+   */
+  formatGoalValue(metric: any): string {
+    const goal = (metric as any).goal;
+    if (goal === undefined || goal === null) return '—';
+    return this.formatValueWithMetricFormat(metric, goal);
+  }
+
+  /**
+   * Get unique identifier for a metric (for expansion tracking)
+   */
+  getMetricId(metric: any, index: number): string {
+    return metric.id || metric.label || `metric-${index}`;
+  }
+
+  /**
+   * Check if a metric is currently expanded
+   */
+  isMetricExpanded(metric: any, index: number): boolean {
+    return this.expandedMetricId === this.getMetricId(metric, index);
+  }
+
+  /**
+   * Toggle expanded state for a metric
+   */
+  toggleMetric(metric: any, index: number): void {
+    const metricId = this.getMetricId(metric, index);
+    if (this.expandedMetricId === metricId) {
+      this.expandedMetricId = null;
+    } else {
+      this.expandedMetricId = metricId;
+    }
+  }
+
+  /**
+   * Handle keyboard events for metric cards
+   */
+  onMetricKeyDown(event: KeyboardEvent, metric: any, index: number): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      this.toggleMetric(metric, index);
+    } else if (event.key === 'Escape' && this.expandedMetricId) {
+      this.expandedMetricId = null;
+    }
+  }
+
+  /**
+   * Check if progress bar should be shown (collapsed mode: only if has goal/percentage)
+   * In expanded mode, always show if available
+   * Note: Hover reveals are handled by CSS
+   */
+  shouldShowProgress(metric: any, index: number): boolean {
+    const hasProgress = metric.percentage !== undefined || this.hasGoal(metric);
+    if (!hasProgress) return false;
+
+    // In comfortable mode, always show
+    if (this.density === 'comfortable') return true;
+
+    // In compact mode: show minimal bar if has goal/percentage
+    // Always show if expanded (hover is handled by CSS)
+    return this.isMetricExpanded(metric, index) || hasProgress;
+  }
+
+  /**
+   * Check if progress label should be shown
+   * Only show when expanded (hover is handled by CSS)
+   */
+  shouldShowProgressLabel(metric: any, index: number): boolean {
+    if (this.density === 'comfortable') return true;
+    return this.isMetricExpanded(metric, index);
+  }
+
+  /**
+   * Check if target/objective should be shown
+   * Only show when expanded (hover is handled by CSS)
+   */
+  shouldShowObjective(metric: any, index: number): boolean {
+    if (!this.hasGoal(metric)) return false;
+    if (this.density === 'comfortable') return true;
+    return this.isMetricExpanded(metric, index);
+  }
+
+  /**
+   * Check if description should be shown
+   * Only show when expanded
+   */
+  shouldShowDescription(metric: any, index: number): boolean {
+    return this.isMetricExpanded(metric, index) && !!(metric as any).description;
+  }
+
+  /**
+   * Get description from metric
+   */
+  getDescription(metric: any): string | undefined {
+    return (metric as any).description;
   }
 }

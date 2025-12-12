@@ -6,6 +6,7 @@
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
 @use "../../../styles/osi-cards-mixins" as mixins;
+@use "../../../styles/responsive" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -29,7 +30,7 @@
   flex-direction: column;
   gap: var(--osi-spacing-sm);
 
-  @media (max-width: 480px) {
+  @include responsive-down("sm") {
     padding: var(--osi-spacing-xs);
     gap: var(--osi-spacing-xs);
   }
@@ -40,7 +41,7 @@
   gap: var(--osi-spacing-sm);
   padding: var(--osi-spacing-xs);
 
-  @media (max-width: 480px) {
+  @include responsive-down("sm") {
     flex-direction: column;
     gap: 2px;
   }
@@ -50,7 +51,7 @@
   @include typo.label-base;
   min-width: 100px;
 
-  @media (max-width: 480px) {
+  @include responsive-down("sm") {
     min-width: auto;
   }
 }

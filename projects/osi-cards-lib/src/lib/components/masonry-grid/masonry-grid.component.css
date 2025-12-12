@@ -20,16 +20,32 @@
 
 /* Native masonry when supported (Chrome 109+, Firefox 142+) */
 @supports (grid-template-rows: masonry) {
-  .masonry-container {
+  .masonry-container--native {
     grid-template-rows: masonry;
   }
 }
 
-/* Fallback: row dense for gap filling (excellent browser support) */
-@supports not (grid-template-rows: masonry) {
-  .masonry-container {
-    grid-auto-flow: row dense;
-  }
+/* Absolute positioning polyfill for non-native masonry browsers */
+.masonry-container--absolute-polyfill {
+  position: relative;
+  display: block; /* Override grid for absolute positioning */
+  /* Container provides positioning context for absolutely positioned children */
+  min-height: 200px; /* Ensure container has minimum height */
+}
+
+.masonry-container--absolute-polyfill .masonry-item {
+  /* Position, left, top, transform, width set via inline styles from component */
+  /* Items start in natural flow for measurement, then switch to absolute positioning */
+}
+
+/* Smooth transitions for position changes (only after initial positioning) */
+.masonry-container--absolute-polyfill.masonry-container--ready .masonry-item {
+  transition:
+    left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    top 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.2s ease;
 }
 
 .masonry-container--ready {
@@ -49,6 +65,22 @@
   /* Performance optimizations */
   contain: layout style paint;
   display: block;
+}
+
+/* Layout variant classes */
+.masonry-item--compact {
+  /* Tighter spacing for compact mode */
+  padding: calc(var(--section-container-padding, 16px) * 0.75);
+}
+
+.masonry-item--wide {
+  /* More spacing for wide mode */
+  padding: calc(var(--section-container-padding, 16px) * 1.1);
+}
+
+.masonry-item--default {
+  /* Default spacing */
+  padding: var(--section-container-padding, 16px);
 }
 
 /* Ensure sections are visible and fit their container */

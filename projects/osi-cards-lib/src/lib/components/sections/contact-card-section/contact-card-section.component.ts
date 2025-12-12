@@ -21,6 +21,16 @@ import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.
 export class ContactCardSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);
 
+  /**
+   * Track which contact card is currently expanded
+   */
+  expandedId: string | null = null;
+
+  /**
+   * Track which note is currently expanded
+   */
+  noteExpandedId: string | null = null;
+
   ngOnInit(): void {
     // Register layout preference function for this section type
     this.layoutService.register(
@@ -30,6 +40,194 @@ export class ContactCardSectionComponent extends BaseSectionComponent implements
       }
     );
   }
+
+  /**
+   * Get unique ID for a contact (for expand state tracking)
+   */
+  getId(contact: any): string {
+    return contact.id || `${this.getContactName(contact)}-${this.getContactRole(contact)}`;
+  }
+
+  /**
+   * Toggle expand/collapse state for a contact
+   */
+  toggle(contact: any): void {
+    const id = this.getId(contact);
+    this.expandedId = this.expandedId === id ? null : id;
+  }
+
+  /**
+   * Check if a contact is currently expanded
+   */
+  isExpanded(contact: any): boolean {
+    return this.expandedId === this.getId(contact);
+  }
+
+  /**
+   * Get primary meta information (role OR department, not both)
+   * Returns a single short line for compact display
+   */
+  getPrimaryMeta(contact: any): string {
+    // Prefer role, fallback to department
+    return this.getContactRole(contact) || contact.department || '';
+  }
+
+  /**
+   * Get secondary meta information (e.g., tenure, company)
+   * Returns empty string if not available
+   */
+  getSecondaryMeta(contact: any): string {
+    // Check for other fields like tenure, company, etc.
+    return contact.tenure || contact.company || '';
+  }
+
+  /**
+   * Check if contact has more details beyond primary actions
+   */
+  hasMoreDetails(contact: any): boolean {
+    const secondaryActions = this.getSecondaryActions(contact);
+    const hasExtraFields = !!(contact.tenure || contact.company);
+    return secondaryActions.length > 0 || hasExtraFields;
+  }
+
+  /**
+   * Get all contact actions (email, phone, LinkedIn, etc.)
+   */
+  getContactActions(contact: any): Array<{ type: string; value: string; label: string }> {
+    const actions: Array<{ type: string; value: string; label: string }> = [];
+    if (contact.email) {
+      actions.push({ type: 'email', value: contact.email, label: 'Email' });
+    }
+    if (contact.phone) {
+      actions.push({ type: 'phone', value: contact.phone, label: 'Call' });
+    }
+    if (contact.linkedIn) {
+      actions.push({ type: 'linkedin', value: contact.linkedIn, label: 'LinkedIn' });
+    }
+    return actions;
+  }
+
+  /**
+   * Get primary contact methods (email + phone, max 2)
+   * These are shown in collapsed state
+   */
+  getPrimaryActions(contact: any): Array<{ type: string; value: string; label: string }> {
+    const allActions = this.getContactActions(contact);
+    // Prefer email + phone, keep LinkedIn under "more"
+    return allActions.filter((a) => a.type !== 'linkedin').slice(0, 2);
+  }
+
+  /**
+   * Get secondary contact methods (everything else, typically LinkedIn)
+   * These are shown in expanded state or under "more" button
+   */
+  getSecondaryActions(contact: any): Array<{ type: string; value: string; label: string }> {
+    const allActions = this.getContactActions(contact);
+    const primaryActions = this.getPrimaryActions(contact);
+    const primaryTypes = new Set(primaryActions.map((a) => a.type));
+    return allActions.filter((a) => !primaryTypes.has(a.type));
+  }
+
+  /**
+   * Get action URL based on type
+   */
+  getActionUrl(action: { type: string; value: string }): string {
+    switch (action.type) {
+      case 'email':
+        return this.getOutlookEmailUrl(action.value);
+      case 'phone':
+        return `tel:${action.value}`;
+      case 'linkedin':
+        return action.value;
+      default:
+        return '#';
+    }
+  }
+
+  /**
+   * Get action icon/emoji based on type
+   */
+  getActionIcon(action: { type: string }): string {
+    switch (action.type) {
+      case 'email':
+        return '📧';
+      case 'phone':
+        return '📞';
+      case 'linkedin':
+        return '💼';
+      default:
+        return '🔗';
+    }
+  }
+
+  /**
+   * Get note text from contact
+   */
+  getNote(contact: any): string | null {
+    return contact.note || null;
+  }
+
+  /**
+   * Check if contact has a note
+   */
+  hasNote(contact: any): boolean {
+    return !!this.getNote(contact);
+  }
+
+  /**
+   * Toggle note expand/collapse state
+   */
+  toggleNote(contact: any, event: Event): void {
+    event.stopPropagation(); // Prevent card toggle
+    const id = this.getId(contact);
+    this.noteExpandedId = this.noteExpandedId === id ? null : id;
+  }
+
+  /**
+   * Check if note is currently expanded
+   */
+  isNoteExpanded(contact: any): boolean {
+    return this.noteExpandedId === this.getId(contact);
+  }
+
+  /**
+   * Check if note text is long enough to need expansion
+   */
+  shouldShowExpandButton(contact: any): boolean {
+    const note = this.getNote(contact);
+    if (!note) return false;
+    // Show expand button if note is longer than ~100 characters
+    return note.length > 100;
+  }
+
+  /**
+   * Check if contact is a target (should be highlighted)
+   */
+  isTarget(contact: any): boolean {
+    return contact.target === true || contact.target === 'true';
+  }
+
+  /**
+   * Get friendly/influencer score (1-10)
+   */
+  getScore(contact: any): number | null {
+    const score = contact.friendly || contact.influencer || contact.score;
+    if (score === null || score === undefined) return null;
+    const numScore = typeof score === 'number' ? score : parseInt(score, 10);
+    if (isNaN(numScore) || numScore < 1 || numScore > 10) return null;
+    return numScore;
+  }
+
+  /**
+   * Get score type label (friendly/influencer/score)
+   */
+  getScoreType(contact: any): string | null {
+    if (contact.friendly !== null && contact.friendly !== undefined) return 'Friendly';
+    if (contact.influencer !== null && contact.influencer !== undefined) return 'Influencer';
+    if (contact.score !== null && contact.score !== undefined) return 'Score';
+    return null;
+  }
+
   /**
    * Get contact name from field
    */
@@ -97,7 +295,7 @@ export class ContactCardSectionComponent extends BaseSectionComponent implements
 
   /**
    * Calculate layout preferences for contact card section based on content.
-   * Contact cards: 1 col default, can expand to 2
+   * Contact cards: 2 columns default, takes right side of layout
    */
   private calculateContactCardLayoutPreferences(
     section: CardSection,
@@ -107,10 +305,12 @@ export class ContactCardSectionComponent extends BaseSectionComponent implements
     const fields = section.fields ?? [];
     const itemCount = items.length + fields.length;
 
-    // Contact cards: 1 col default, can expand to 2 for multiple contacts
-    let preferredColumns: 1 | 2 | 3 | 4 = 1;
-    if (itemCount >= 3 && availableColumns >= 2) {
-      preferredColumns = 2;
+    // Contact cards: 2 columns default to take right side
+    let preferredColumns: 1 | 2 | 3 | 4 = 2;
+
+    // Can expand to 3 if many contacts and space available
+    if (itemCount >= 6 && availableColumns >= 3) {
+      preferredColumns = 3;
     }
 
     // Respect explicit preferences
@@ -122,16 +322,16 @@ export class ContactCardSectionComponent extends BaseSectionComponent implements
 
     return {
       preferredColumns,
-      minColumns: (section.minColumns ?? 1) as 1 | 2 | 3 | 4,
-      maxColumns: Math.min((section.maxColumns ?? 2) as 1 | 2 | 3 | 4, availableColumns) as
+      minColumns: (section.minColumns ?? 2) as 1 | 2 | 3 | 4, // Minimum 2 columns
+      maxColumns: Math.min((section.maxColumns ?? 3) as 1 | 2 | 3 | 4, availableColumns) as
         | 1
         | 2
         | 3
         | 4,
-      canShrinkToFill: true,
-      shrinkPriority: 15, // High priority for shrinking (contact cards are very flexible)
+      canShrinkToFill: false, // Don't shrink below 2 columns
+      shrinkPriority: 10, // Lower priority (don't shrink as aggressively)
       expandOnContent: {
-        itemCount: 3, // Expand to 2 columns at 3+ contacts
+        itemCount: 6, // Expand to 3 columns at 6+ contacts
       },
     };
   }

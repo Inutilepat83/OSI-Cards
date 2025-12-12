@@ -80,13 +80,20 @@ export class MasonryTransformService {
     for (const item of indexedSections) {
       const { section, element, index } = item;
 
-      // CRITICAL: Read ACTUAL height from DOM (after browser layout)
-      // This is safe because we're reading, not writing
+      // Read ACTUAL height from DOM
       const rect = element.getBoundingClientRect();
-      const actualHeight = rect.height;
+      const offsetHeight = element.offsetHeight || 0;
+      const scrollHeight = element.scrollHeight || 0;
+
+      // Use the maximum of all measurements for reliability
+      const actualHeight = Math.max(rect.height, offsetHeight, scrollHeight);
 
       if (actualHeight <= 0) {
-        console.warn(`[MasonryTransform] Section ${index} has zero height, skipping`);
+        console.warn(`[MasonryTransform] Section ${index} has zero height`, {
+          rectHeight: rect.height,
+          offsetHeight,
+          scrollHeight,
+        });
         continue;
       }
 

@@ -2,25 +2,63 @@
   <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
-  <div class="analytics-grid" *ngIf="section.fields?.length">
-    <div class="metric-card" *ngFor="let metric of section.fields">
+  <div class="analytics-grid" *ngIf="section.fields?.length" [attr.data-density]="density">
+    <div
+      class="metric-card"
+      [class.metric-card--expanded]="isMetricExpanded(metric, i)"
+      *ngFor="let metric of section.fields; let i = index"
+      (click)="toggleMetric(metric, i)"
+      (keydown)="onMetricKeyDown($event, metric, i)"
+      [attr.tabindex]="0"
+      role="button"
+      [attr.aria-expanded]="isMetricExpanded(metric, i)"
+      [attr.aria-label]="'Metric: ' + metric.label + (isMetricExpanded(metric, i) ? ', expanded' : ', click to expand')"
+    >
+      <!-- Compact Header: Label -->
       <div class="metric-header">
         <span class="metric-label">{{ metric.label }}</span>
-        <lib-trend-indicator *ngIf="metric.trend" [trend]="getTrend(metric.trend)" [value]="metric.change" size="small">
-        </lib-trend-indicator>
       </div>
-      <div class="metric-value">{{ metric.value }}</div>
-      <lib-progress-bar
-        *ngIf="metric.percentage !== undefined"
-        [value]="metric.percentage"
-        [variant]="getVariant(metric.performance)"
-        [shimmer]="true"
-        size="small"
-      >
-      </lib-progress-bar>
-      <lib-badge *ngIf="metric.performance" [variant]="getBadgeVariant(metric.performance)" size="sm">
-        {{ metric.performance }}
-      </lib-badge>
+
+      <!-- Main Value Row: Realized Value + Period -->
+      <div class="metric-values">
+        <div class="metric-value-primary">
+          <span class="metric-value">{{ formatMetricValue(metric) }}</span>
+          <span class="metric-period" *ngIf="getPeriod(metric)">{{ getPeriod(metric) }}</span>
+        </div>
+
+        <!-- Objective (Target) - Revealed on hover/expand via CSS -->
+        <div class="metric-objective" *ngIf="hasGoal(metric)">
+          <span class="metric-objective-label">Target:</span>
+          <span class="metric-objective-value">{{ formatGoalValue(metric) }}</span>
+        </div>
+      </div>
+
+      <!-- Progress Bar: Always shown if has progress data, label revealed on hover/expand -->
+      <div class="metric-progress-row" *ngIf="metric.percentage !== undefined || hasGoal(metric)">
+        <div class="metric-progress-wrapper">
+          <div class="metric-progress-track">
+            <div
+              class="metric-progress-fill"
+              [style.width.%]="getProgressPercentage(metric)"
+              [ngClass]="getProgressClass(metric)"
+            ></div>
+            <div
+              class="metric-progress-target"
+              *ngIf="hasGoal(metric)"
+              [style.left.%]="getTargetPercentage(metric)"
+            ></div>
+          </div>
+          <!-- Progress label - Revealed on hover/expand via CSS -->
+          <span class="metric-progress-label">
+            {{ getProgressLabel(metric) }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Description - Only shown when expanded -->
+      <div class="metric-description" *ngIf="shouldShowDescription(metric, i)">
+        {{ getDescription(metric) }}
+      </div>
     </div>
   </div>
 

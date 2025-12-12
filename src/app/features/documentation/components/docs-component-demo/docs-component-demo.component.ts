@@ -205,6 +205,7 @@ export interface ISectionTypeDemo {
                   [cardConfig]="$any(currentConfig())"
                   [tiltEnabled]="false"
                   class="demo-card"
+                  style="--osi-card-padding: 0; --card-main-padding: 0; padding: 0;"
                 ></app-ai-card-renderer>
               }
             }
@@ -288,6 +289,9 @@ export interface ISectionTypeDemo {
         overflow: hidden;
         background: var(--docs-surface, #fff);
         box-shadow: var(--docs-shadow, 0 2px 8px rgba(0, 0, 0, 0.06));
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
       }
 
       /* Toolbar */
@@ -306,23 +310,30 @@ export interface ISectionTypeDemo {
         display: flex;
         flex-direction: column;
         gap: 0.25rem;
+        flex: 1;
+        min-width: 0;
       }
 
       .demo-title {
         font-size: 0.875rem;
         font-weight: 600;
         color: var(--docs-text, #1a1d23);
+        line-height: 1.2;
       }
 
       .demo-desc {
         font-size: 0.75rem;
         color: var(--docs-text-muted, #8891a4);
+        line-height: 1.3;
+        display: none;
       }
 
       .toolbar-right {
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        flex-wrap: wrap;
+        flex-shrink: 0;
       }
 
       .toolbar-divider {
@@ -339,6 +350,8 @@ export interface ISectionTypeDemo {
         border: 1px solid var(--docs-border, #e2e8f0);
         border-radius: var(--docs-radius, 6px);
         cursor: pointer;
+        min-width: 120px;
+        max-width: 100%;
       }
 
       .state-buttons,
@@ -348,6 +361,7 @@ export interface ISectionTypeDemo {
         border: 1px solid var(--docs-border, #e2e8f0);
         border-radius: var(--docs-radius, 6px);
         overflow: hidden;
+        flex-shrink: 0;
       }
 
       .state-btn,
@@ -361,6 +375,8 @@ export interface ISectionTypeDemo {
         border: none;
         cursor: pointer;
         transition: all 0.15s ease;
+        min-width: 32px;
+        flex-shrink: 0;
 
         &:hover {
           color: var(--docs-text, #1a1d23);
@@ -390,6 +406,9 @@ export interface ISectionTypeDemo {
         border-radius: var(--docs-radius, 6px);
         cursor: pointer;
         transition: all 0.15s ease;
+        flex-shrink: 0;
+        min-width: 32px;
+        min-height: 32px;
 
         &:hover {
           color: var(--docs-text, #1a1d23);
@@ -399,13 +418,18 @@ export interface ISectionTypeDemo {
 
       /* Preview */
       .demo-preview {
-        padding: 0;
+        padding: 0 !important;
+        margin: 0 !important;
         background: var(--docs-bg, #fafbfd);
         min-height: 300px;
         display: flex;
         flex-direction: column;
         align-items: stretch;
-        width: 100%;
+        justify-content: flex-start;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: visible;
+        box-sizing: border-box;
 
         &.theme-dark {
           background: #0d1117;
@@ -413,10 +437,16 @@ export interface ISectionTypeDemo {
       }
 
       .preview-frame {
-        width: 100%;
-        max-width: 100%;
+        width: 100% !important;
+        max-width: 100% !important;
         flex: 1;
         transition: max-width 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
 
         &.no-animations * {
           animation: none !important;
@@ -425,8 +455,81 @@ export interface ISectionTypeDemo {
       }
 
       .demo-card {
-        width: 100%;
+        width: 100% !important;
         flex: 1;
+        min-width: 0;
+        box-sizing: border-box;
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+
+        /* Override CSS variables for padding */
+        --osi-card-padding: 0 !important;
+        --osi-card-padding-top: 0 !important;
+        --osi-card-padding-bottom: 0 !important;
+        --osi-card-padding-left: 0 !important;
+        --osi-card-padding-right: 0 !important;
+        --card-main-padding: 0 !important;
+        --section-container-padding: 0 !important;
+        --section-padding: 0 !important;
+
+        /* Ensure card renderer takes full width and removes padding */
+        /* Note: :host styles need to be overridden via the component's own styles */
+        ::ng-deep app-ai-card-renderer {
+          width: 100% !important;
+          max-width: 100% !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          display: block !important;
+          box-sizing: border-box !important;
+        }
+
+        /* Target the host element directly (works with Shadow DOM) */
+        ::ng-deep app-ai-card-renderer[class*='demo-card'] {
+          padding: 0 !important;
+        }
+
+        /* Ensure all card container elements take full width */
+        ::ng-deep .card-container-wrapper,
+        ::ng-deep .glow-container,
+        ::ng-deep .tilt-container,
+        ::ng-deep .ai-card-surface,
+        ::ng-deep .ai-card-body {
+          width: 100% !important;
+          max-width: 100% !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          box-sizing: border-box !important;
+        }
+
+        /* Ensure card body and sections take full width */
+        ::ng-deep .card-body,
+        ::ng-deep .sections-container,
+        ::ng-deep osi-masonry-grid,
+        ::ng-deep .masonry-container {
+          width: 100% !important;
+          max-width: 100% !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          box-sizing: border-box !important;
+        }
+
+        /* Remove any internal borders, shadows, or spacing */
+        ::ng-deep .ai-card-surface {
+          border-radius: 0 !important;
+          border: none !important;
+          box-shadow: none !important;
+          padding: 0 !important;
+          margin: 0 !important;
+        }
+
+        /* Override any section padding */
+        ::ng-deep .ai-section,
+        ::ng-deep .section-card,
+        ::ng-deep .masonry-item {
+          padding: 0 !important;
+          margin: 0 !important;
+        }
       }
 
       /* State Overlays */
@@ -672,6 +775,7 @@ export interface ISectionTypeDemo {
         padding: 0.75rem 1rem;
         background: var(--docs-bg-secondary, #f4f6f9);
         border-top: 1px solid var(--docs-border, #e2e8f0);
+        flex-wrap: wrap;
       }
 
       .footer-btn {
@@ -687,6 +791,8 @@ export interface ISectionTypeDemo {
         border-radius: var(--docs-radius, 6px);
         cursor: pointer;
         transition: all 0.15s ease;
+        white-space: nowrap;
+        flex-shrink: 0;
 
         &:hover {
           border-color: var(--docs-primary, #ff7900);
@@ -705,13 +811,134 @@ export interface ISectionTypeDemo {
         }
       }
 
-      @media (max-width: 768px) {
+      /* Responsive Design */
+      @media (max-width: 1024px) {
+        .demo-toolbar {
+          padding: 0.625rem 0.875rem;
+        }
+
         .toolbar-right {
-          flex-wrap: wrap;
+          gap: 0.375rem;
         }
 
         .demo-preview {
-          padding: 1rem;
+          padding: 0;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .component-demo {
+          border-radius: var(--docs-radius-lg, 12px);
+        }
+
+        .demo-toolbar {
+          padding: 0.5rem 0.75rem;
+          gap: 0.75rem;
+        }
+
+        .toolbar-left {
+          min-width: 0;
+        }
+
+        .demo-title {
+          font-size: 0.8125rem;
+        }
+
+        .toolbar-right {
+          width: 100%;
+          justify-content: flex-start;
+          gap: 0.375rem;
+          margin-top: 0.5rem;
+        }
+
+        .toolbar-divider {
+          display: none;
+        }
+
+        .state-buttons,
+        .viewport-buttons {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .state-btn,
+        .viewport-btn {
+          flex: 1;
+          padding: 0.375rem 0.25rem;
+          font-size: 0.7rem;
+        }
+
+        .theme-toggle,
+        .animation-toggle,
+        .export-btn {
+          padding: 0.375rem;
+          min-width: 28px;
+          min-height: 28px;
+        }
+
+        .demo-preview {
+          padding: 0;
+          min-height: 250px;
+        }
+
+        .demo-footer {
+          padding: 0.625rem 0.75rem;
+          gap: 0.375rem;
+        }
+
+        .footer-btn {
+          padding: 0.5rem 0.625rem;
+          font-size: 0.7rem;
+          flex: 1;
+          min-width: 0;
+
+          &.primary {
+            margin-left: 0;
+            flex: 1 1 100%;
+            margin-top: 0.25rem;
+          }
+        }
+
+        .variant-select {
+          width: 100%;
+          margin-bottom: 0.5rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .demo-toolbar {
+          padding: 0.5rem;
+        }
+
+        .demo-title {
+          font-size: 0.75rem;
+        }
+
+        .toolbar-right {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 0.5rem;
+        }
+
+        .state-buttons,
+        .viewport-buttons {
+          width: 100%;
+        }
+
+        .demo-preview {
+          padding: 0.5rem;
+        }
+
+        .demo-footer {
+          flex-direction: column;
+        }
+
+        .footer-btn {
+          width: 100%;
+
+          &.primary {
+            margin-top: 0;
+          }
         }
       }
     `,

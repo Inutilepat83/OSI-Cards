@@ -64,6 +64,13 @@
     // Layout styles
     @import "layout/tilt";
     @import "layout/masonry";
+    @import "layout/feature-grid";
+
+    // Streaming effects (must come after animations)
+    @import "components/streaming-effects";
+
+    // Hero card and feature card styles
+    @import "components/hero-card";
 
     // Component styles (SAME files as demo app)
     @import "components/cards/ai-card";

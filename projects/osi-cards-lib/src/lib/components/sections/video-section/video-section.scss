@@ -5,6 +5,7 @@
 // Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
+@use "../../../styles/responsive" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -26,7 +27,7 @@
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--osi-spacing-sm);
 
-  @media (max-width: 480px) {
+  @include responsive-down("sm") {
     grid-template-columns: 1fr;
     gap: var(--osi-spacing-xs);
   }
@@ -67,7 +68,7 @@
     border-radius: var(--osi-radius-full);
   }
 
-  @media (max-width: 480px) {
+  @include responsive-down("sm") {
     height: 100px;
   }
 }
@@ -78,7 +79,7 @@
   flex-direction: column;
   gap: var(--osi-spacing-xs);
 
-  @media (max-width: 480px) {
+  @include responsive-down("sm") {
     padding: var(--osi-spacing-xs);
   }
 }

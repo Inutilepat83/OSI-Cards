@@ -7,6 +7,7 @@
 @use "../../../styles/components/sections/typography-system" as typo;
 @use "../../../styles/osi-cards-mixins" as mixins;
 @use "../../../styles/design-system/section-base" as section-base;
+@use "../../../styles/responsive" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -29,7 +30,7 @@
   height: 280px; // Compact: 280px (was 300px)
   padding: 0; // Remove padding for map content
 
-  @media (max-width: 480px) {
+  @include responsive-down("sm") {
     height: 180px; // Compact: 180px (was 200px)
   }
 }
@@ -50,7 +51,7 @@
   @include section-base.item-with-border;
   padding: var(--osi-spacing-compact-sm, 6px); // Compact: 6px
 
-  @media (max-width: 480px) {
+  @include responsive-down("sm") {
     padding: var(--osi-spacing-compact-xs, 2px); // Compact: 2px
   }
 }

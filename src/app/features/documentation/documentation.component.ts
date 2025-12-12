@@ -92,9 +92,23 @@ export class DocumentationPageComponent implements OnInit {
     // Update URL without navigation
     this.router.navigate(['/docs', docId], { replaceUrl: true });
 
-    // Fetch markdown file
+    // Fetch markdown file with aggressive cache-busting
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(7);
+    const cacheBuster = doc.path.includes('?')
+      ? `&_t=${timestamp}&_r=${random}`
+      : `?_t=${timestamp}&_r=${random}`;
+    const url = `${doc.path}${cacheBuster}`;
+
     this.http
-      .get(doc.path, { responseType: 'text' })
+      .get(url, {
+        responseType: 'text',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          Pragma: 'no-cache',
+          Expires: '0',
+        },
+      })
       .pipe(
         catchError((err) => {
           console.error('Error loading documentation:', err);

@@ -2,22 +2,188 @@
   <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
   </lib-section-header>
 
-  <div class="list" *ngIf="section.fields?.length">
-    <div class="item" *ngFor="let f of section.fields; trackBy: trackByField">
-      <span class="label">{{ f.label }}</span>
-      <span class="value">{{ f.value }}</span>
-      <lib-trend-indicator
-        *ngIf="f.trend"
-        class="trend"
-        [trend]="getTrendDirection(f.trend)"
-        [value]="f.change"
-        size="small"
+  <!-- Header Row: Company Name + Tagline + Actions -->
+  <div class="info-header" *ngIf="hasHeaderInfo()">
+    <div class="info-header-main">
+      <div class="info-header-text">
+        <h3 class="info-company-name">{{ getCompanyName() }}</h3>
+        <p class="info-tagline" *ngIf="getTagline()">{{ getTagline() }}</p>
+      </div>
+    </div>
+    <div class="info-header-actions" *ngIf="hasHeaderActions()">
+      <button
+        *ngIf="getWebsiteUrl()"
+        class="info-action-icon-button"
+        type="button"
+        (click)="openWebsite(getWebsiteUrl()!)"
+        [attr.aria-label]="'Visit website: ' + getWebsiteUrl()"
+        [title]="'Visit website: ' + getWebsiteUrl()"
       >
-      </lib-trend-indicator>
-      <p class="desc" *ngIf="f.description">{{ f.description }}</p>
+        <span class="info-action-icon">🌐</span>
+        <span class="info-action-label-mobile">Website</span>
+      </button>
+      <button
+        *ngIf="getStockSymbol()"
+        class="info-action-icon-button"
+        type="button"
+        (click)="copyToClipboard(getStockSymbol()!)"
+        [attr.aria-label]="'Copy stock symbol: ' + getStockSymbol()"
+        [title]="'Copy stock symbol: ' + getStockSymbol()"
+      >
+        <span class="info-action-icon">📈</span>
+        <span class="info-action-label-mobile">{{ getStockSymbol() }}</span>
+      </button>
     </div>
   </div>
 
-  <lib-empty-state *ngIf="!section.fields?.length" message="No info data" icon="ℹ️" variant="minimal">
+  <!-- KPI Row: Primary Metrics (2-4 tiles) -->
+  <div class="info-kpi-row" *ngIf="primaryKPIs.length > 0">
+    <div class="info-kpi-tile" *ngFor="let kpi of primaryKPIs; trackBy: trackByField">
+      <div class="info-kpi-content">
+        <div class="info-kpi-header">
+          <span class="info-kpi-label">{{ kpi.label }}</span>
+          <lib-trend-indicator
+            *ngIf="kpi.trend"
+            class="info-kpi-trend"
+            [trend]="getTrendDirection(kpi.trend)"
+            [value]="kpi.change"
+            size="small"
+          >
+          </lib-trend-indicator>
+        </div>
+        <div class="info-kpi-value-row">
+          <span class="info-kpi-value">{{ formatKPIValue(kpi) }}</span>
+        </div>
+        <p class="info-kpi-desc" *ngIf="kpi.description">{{ kpi.description }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Facts Grid: Secondary Information (compact view) -->
+  <div class="info-facts-grid" *ngIf="secondaryFields.length > 0">
+    <!-- Collapsed Facts -->
+    <div class="info-fact-item" *ngFor="let field of collapsedFacts; trackBy: trackByField">
+      <span class="info-fact-label">{{ field.label }}</span>
+      <div class="info-fact-value-row">
+        <!-- Chip Field Rendering -->
+        <div class="info-fact-chips" *ngIf="isChipField(field); else nonChipValue">
+          <span class="info-chip" *ngFor="let chip of getCollapsedChips(field).chips; let i = index" [title]="chip">
+            {{ chip }}
+          </span>
+          <span
+            class="info-chip info-chip--overflow"
+            *ngIf="getCollapsedChips(field).overflowCount > 0"
+            [title]="'+' + getCollapsedChips(field).overflowCount + ' more'"
+          >
+            +{{ getCollapsedChips(field).overflowCount }}
+          </span>
+        </div>
+        <!-- Non-Chip Value Rendering (Link or Regular) -->
+        <ng-template #nonChipValue>
+          <a
+            *ngIf="field.link; else regularValue"
+            class="info-fact-link"
+            [href]="field.link"
+            target="_blank"
+            rel="noopener noreferrer"
+            [title]="field.value?.toString()"
+          >
+            {{ field.value || 'Link' }}
+          </a>
+          <ng-template #regularValue>
+            <span class="info-fact-value" [title]="field.value?.toString()">{{ field.value }}</span>
+          </ng-template>
+        </ng-template>
+        <lib-trend-indicator
+          *ngIf="field.trend"
+          class="info-fact-trend"
+          [trend]="getTrendDirection(field.trend)"
+          [value]="field.change"
+          size="small"
+        >
+        </lib-trend-indicator>
+      </div>
+      <p class="info-fact-desc" *ngIf="field.description">{{ field.description }}</p>
+    </div>
+
+    <!-- Expand/Collapse Button -->
+    <div class="info-expand-row" *ngIf="overflowFacts.length > 0">
+      <button
+        class="info-expand-button"
+        type="button"
+        (click)="toggleExpanded()"
+        [attr.aria-expanded]="isExpanded"
+        [attr.aria-label]="isExpanded ? 'Collapse details' : 'Expand to see more details'"
+      >
+        <span class="info-expand-text">{{ isExpanded ? 'Less' : '+ ' + overflowFacts.length + ' more' }}</span>
+        <span class="info-expand-icon" [class.info-expand-icon--expanded]="isExpanded">▼</span>
+      </button>
+    </div>
+
+    <!-- Expanded Facts Drawer -->
+    <div class="info-facts-drawer" [class.info-facts-drawer--expanded]="isExpanded" *ngIf="overflowFacts.length > 0">
+      <div class="info-fact-item" *ngFor="let field of overflowFacts; trackBy: trackByField">
+        <span class="info-fact-label">{{ field.label }}</span>
+        <div class="info-fact-value-row">
+          <!-- Chip Field Rendering (Full List) -->
+          <div class="info-fact-chips" *ngIf="isChipField(field); else nonChipValueExpanded">
+            <span class="info-chip" *ngFor="let chip of getAllChips(field); let i = index" [title]="chip">
+              {{ chip }}
+            </span>
+          </div>
+          <!-- Non-Chip Value Rendering (Link or Regular) -->
+          <ng-template #nonChipValueExpanded>
+            <a
+              *ngIf="field.link; else regularValueExpanded"
+              class="info-fact-link"
+              [href]="field.link"
+              target="_blank"
+              rel="noopener noreferrer"
+              [title]="field.value?.toString()"
+            >
+              {{ field.value || 'Link' }}
+            </a>
+            <ng-template #regularValueExpanded>
+              <span class="info-fact-value" [title]="field.value?.toString()">{{ field.value }}</span>
+            </ng-template>
+          </ng-template>
+          <lib-trend-indicator
+            *ngIf="field.trend"
+            class="info-fact-trend"
+            [trend]="getTrendDirection(field.trend)"
+            [value]="field.change"
+            size="small"
+          >
+          </lib-trend-indicator>
+        </div>
+        <p class="info-fact-desc" *ngIf="field.description">{{ field.description }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skeleton Loading State -->
+  <div class="info-skeleton" *ngIf="isLoading">
+    <div class="info-skeleton-header">
+      <div class="info-skeleton-avatar"></div>
+      <div class="info-skeleton-text">
+        <div class="info-skeleton-line info-skeleton-line--title"></div>
+        <div class="info-skeleton-line info-skeleton-line--subtitle"></div>
+      </div>
+    </div>
+    <div class="info-skeleton-kpis">
+      <div class="info-skeleton-kpi" *ngFor="let i of [1, 2, 3]">
+        <div class="info-skeleton-line"></div>
+        <div class="info-skeleton-line info-skeleton-line--value"></div>
+      </div>
+    </div>
+    <div class="info-skeleton-facts">
+      <div class="info-skeleton-fact" *ngFor="let i of [1, 2, 3, 4]">
+        <div class="info-skeleton-line"></div>
+        <div class="info-skeleton-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <lib-empty-state *ngIf="!section.fields?.length && !isLoading" message="No info data" icon="ℹ️" variant="minimal">
   </lib-empty-state>
 </div>

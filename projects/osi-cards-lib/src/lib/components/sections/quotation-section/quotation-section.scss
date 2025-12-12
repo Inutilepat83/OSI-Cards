@@ -5,6 +5,7 @@
 // Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
+@use "../../../styles/responsive" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -26,12 +27,12 @@
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); // Compact: 240px (was 280px)
   gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
 
-  @media (max-width: 768px) {
+  @include responsive-down("md") {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
   }
 
-  @media (max-width: 480px) {
+  @include responsive-down("sm") {
     grid-template-columns: 1fr;
   }
 }
@@ -118,7 +119,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@include responsive-down("sm") {
   .quote {
     padding: var(--osi-spacing-compact-sm, 6px);
     min-height: 130px; // Compact: 130px (was 160px)

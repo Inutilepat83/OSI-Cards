@@ -6,6 +6,7 @@
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
 @use "../../../styles/components/sections/component-mixins" as components;
+@use "../../../styles/responsive" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -28,12 +29,12 @@
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); // Compact: 240px (was 280px)
   gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 14px)
 
-  @media (max-width: 768px) {
+  @include responsive-down("md") {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
   }
 
-  @media (max-width: 480px) {
+  @include responsive-down("sm") {
     grid-template-columns: 1fr;
     gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 10px)
   }
@@ -177,7 +178,7 @@
 }
 
 // RESPONSIVE
-@media (max-width: 480px) {
+@include responsive-down("sm") {
   .solution-card {
     padding: var(--osi-spacing-compact-md, 12px);
     min-height: 160px; // Compact: 160px (was 200px)

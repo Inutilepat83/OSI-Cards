@@ -6,6 +6,21 @@
   padding: 12px;
 }
 
+/* Demo mode - no padding for full-width display in documentation */
+:host(.demo-card) {
+  padding: 0 !important;
+}
+
+/* When inside demo preview, remove padding */
+.demo-preview :host {
+  padding: 0 !important;
+}
+
+/* Also target via attribute selector for Shadow DOM compatibility */
+:host[class*="demo"] {
+  padding: 0 !important;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    TILT ANIMATION OPTIMIZATIONS - Points 19-25
    ═══════════════════════════════════════════════════════════════════════════ */

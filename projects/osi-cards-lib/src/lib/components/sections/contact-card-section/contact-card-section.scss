@@ -1,10 +1,11 @@
 // =====================================================================
-// CONTACT CARD SECTION - Original Product Style
+// CONTACT CARD SECTION - Compact Directory Tile Style
 // =====================================================================
 
 // Use design system (must come before @import)
 @use "../../../styles/components/sections/design-system" as *;
 @use "../../../styles/components/sections/typography-system" as typo;
+@use "../../../styles/responsive" as *;
 
 // Import base section styles
 @import "../../../styles/components/sections/sections-base";
@@ -15,133 +16,388 @@
   width: 100%;
 }
 
-.contacts {
-  display: flex;
-  flex-direction: column;
-  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
-}
-
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); // Smaller min for compact
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
+  grid-template-columns: repeat(2, 1fr); // Always 2 columns
+  gap: var(--osi-spacing-compact-md, 12px);
 
-  @media (max-width: 768px) {
-    gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
+  @include responsive-down("md") {
+    gap: var(--osi-spacing-compact-sm, 6px);
   }
 
-  @media (max-width: 640px) {
+  @include responsive-down("sm") {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media (max-width: 380px) {
+  @include responsive-down("xs") {
     grid-template-columns: 1fr;
   }
 }
 
 .card {
   @include card-elevated;
-  padding: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
-  text-align: center;
-  min-height: 140px; // Compact: 140px (was 180px)
-  // Background inherited from @include card-elevated mixin
+  padding: var(--osi-spacing-compact-md, 12px);
+  // 2-column card layout
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
+  gap: var(--osi-spacing-compact-sm, 6px);
+  min-height: auto;
   transition:
     box-shadow var(--duration-slow) var(--ease-out),
-    background var(--duration-slow) var(--ease-out);
+    background var(--duration-slow) var(--ease-out),
+    border-color var(--duration-slow) var(--ease-out);
 
   &:hover {
     box-shadow: var(--shadow-xl);
     background: var(--osi-section-item-background-hover);
 
-    .avatar {
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    }
-
     .name {
       color: var(--accent);
     }
   }
-}
 
-.avatar {
-  width: 48px; // Compact: 48px (was 60px)
-  height: 48px; // Compact: 48px (was 60px)
-  border-radius: var(--radius-lg);
-  border: 2px solid var(--border);
-  overflow: hidden;
-  transition: all 300ms var(--ease-out);
-  box-shadow: var(--shadow-sm);
-  flex-shrink: 0;
-  margin-bottom: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
+  // Target/highlighted contact styling
+  &--target {
+    // Subtle by default, more visible on hover
+    background: var(--osi-section-item-background, var(--background));
+    box-shadow: inset 0 0 0 1px var(--accent);
+    position: relative;
 
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    // Gentle target indicator on hover
+    &:hover {
+      background: color-mix(in srgb, var(--accent) 8%, var(--osi-section-item-background-hover));
+      box-shadow:
+        inset 0 0 0 2px var(--accent),
+        0 0 8px color-mix(in srgb, var(--accent) 40%, transparent),
+        0 0 16px color-mix(in srgb, var(--accent) 20%, transparent),
+        var(--shadow-md);
+
+      // Show target label on hover
+      .target-label {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   }
 }
 
-.initials {
-  width: 100%;
-  height: 100%;
+// Target label (shown on hover)
+.target-label {
+  position: absolute;
+  top: var(--osi-spacing-compact-sm, 6px);
+  right: var(--osi-spacing-compact-sm, 6px);
+  padding: 2px 6px;
+  font-size: 0.625rem; // 10px
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  background: color-mix(
+    in srgb,
+    var(--accent) 15%,
+    var(--osi-section-item-background, var(--background))
+  );
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+  pointer-events: none;
+  z-index: 1;
+}
+
+// 2-column content layout
+.card__content {
+  display: grid;
+  grid-template-columns: 1fr auto; // Left takes available space, right auto-sizes
+  gap: var(--osi-spacing-compact-md, 12px);
+  align-items: flex-start; // Align items to top
+}
+
+// Left column: name, title, actions
+.card__left {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--surface-hover);
-  font-size: 1rem; // Compact: 16px (was 1.2rem)
-  font-weight: var(--font-semibold);
-  color: var(--foreground);
+  flex-direction: column;
+  justify-content: space-between; // Top content at top, icons at bottom
+  min-width: 0; // Allow text truncation
+  height: 100%; // Fill available height
 }
 
+// Top section: name, title, department
+.card__left-top {
+  display: flex;
+  flex-direction: column;
+  gap: 0; // No gap between items
+}
+
+// Right column: note
+.card__right {
+  flex-shrink: 0;
+  min-width: 120px;
+  max-width: 200px;
+}
+
+// Name and title in left column
 .name {
-  @include heading(5);
+  @include heading(6);
   margin: 0;
+  padding: 0;
   transition: color 200ms var(--ease-out);
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.role {
+.title {
   @include typo.caption;
   color: var(--muted-foreground);
+  margin: 0;
+  padding: 0;
+  margin-top: 2px; // Minimal gap after name
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
+.department-badge {
+  margin: 0;
+  margin-top: 2px; // Minimal gap after title
+  padding: 0;
+  align-self: flex-start;
+}
+
+// Score indicator (1-10 scale)
+.score-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  align-self: flex-start;
+}
+
+.score-label {
+  font-size: 0.625rem; // 10px
+  color: var(--muted-foreground);
+  font-weight: var(--font-weight-medium);
+  text-transform: capitalize;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.score-bar {
+  flex: 1;
+  max-width: 80px;
+  min-width: 60px;
+  height: 4px;
+  background: color-mix(in srgb, var(--muted-foreground) 20%, transparent);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+  display: block; // Ensure it's displayed
+}
+
+.score-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width var(--duration-base) var(--ease-out);
+  min-width: 2px; // Ensure fill is always visible
+  display: block; // Ensure it's displayed
+}
+
+// Actions in left column (aligned to bottom)
 .actions {
   display: flex;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
-  margin-top: auto;
-  padding-top: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
-  border-top: 1px solid var(--border);
-  width: 100%;
-  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--osi-spacing-compact-xs, 2px);
+  margin-top: auto; // Push to bottom
+  margin-bottom: 0;
+  padding-top: 0;
+
+  // All actions visible by default
+  opacity: 1;
+  transition: opacity var(--duration-base) var(--ease-out);
 }
 
 .action {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px; // Keep minimum touch target
-  height: 32px; // Keep minimum touch target
+  min-width: 28px; // Smaller touch target
+  min-height: 28px;
+  padding: 2px 6px; // Reduced padding
   border-radius: var(--radius-sm);
-  background: var(--surface-hover);
+  background: var(--osi-section-item-background, var(--surface-hover));
   text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
   transition:
     background var(--duration-base) var(--ease-out),
     border-color var(--duration-base) var(--ease-out),
-    box-shadow var(--duration-base) var(--ease-out);
-  border: 1px solid transparent;
+    box-shadow var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out);
+  font-size: 0.75rem; // Smaller icons: 12px (was 14px)
 
-  &:hover {
+  // Calmer default: subtle surface
+  &:hover,
+  &:focus {
     background: var(--accent);
     border-color: var(--accent);
     box-shadow: var(--shadow-sm);
+    color: var(--accent-foreground);
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 }
 
-@media (max-width: 480px) {
+.action__icon {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+}
+
+.action__label {
+  font-size: 0.75rem; // 12px
+  font-weight: var(--font-weight-medium);
+  color: inherit;
+}
+
+// Expanded panel container
+.actions__expanded {
+  display: flex;
+  flex-direction: column;
+  gap: var(--osi-spacing-compact-xs, 2px);
+  width: 100%;
+  margin-top: var(--osi-spacing-compact-xs, 2px);
+  padding-top: var(--osi-spacing-compact-sm, 6px);
+  border-top: 1px solid var(--border);
+}
+
+// Extra fields in expanded view
+.actions__extra {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: var(--osi-spacing-compact-xs, 2px);
+  padding-top: var(--osi-spacing-compact-sm, 6px);
+  border-top: 1px solid var(--border);
+}
+
+.extra-field {
+  @include typo.caption;
+  margin: 0;
+  font-size: 0.75rem; // 12px
+  color: var(--muted-foreground);
+  line-height: 1.4;
+}
+
+.extra-label {
+  font-weight: var(--font-weight-medium);
+  color: var(--foreground);
+}
+
+// Note section in right column (no wrapper needed, already in card__right)
+
+.note {
+  @include typo.caption;
+  padding: var(--osi-spacing-compact-sm, 6px) var(--osi-spacing-compact-md, 12px);
+  border-radius: var(--radius-sm);
+  // Full border with brand color, non-brand background
+  border: 1px solid var(--accent);
+  background: var(--osi-section-item-background, var(--surface-hover));
+  font-size: 0.75rem; // 12px
+  line-height: 1.4;
+  color: var(--foreground);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+.note__label {
+  display: block;
+  font-size: 0.5rem; // 8px (reduced from 10px)
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+  color: var(--muted-foreground);
+}
+
+.note__text {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; // Limit to 3 lines when collapsed
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+  color: var(--foreground);
+  transition: all var(--duration-base) var(--ease-out);
+
+  // Expanded state: show all text
+  &--expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+  }
+}
+
+.note__expand-btn {
+  margin-top: var(--osi-spacing-compact-xs, 2px);
+  padding: 2px 4px;
+  font-size: 0.625rem; // 10px
+  font-weight: var(--font-weight-medium);
+  color: var(--accent);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: color var(--duration-base) var(--ease-out);
+
+  &:hover,
+  &:focus {
+    color: var(--accent);
+    text-decoration: underline;
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+}
+
+// Expanded note styling
+.note--expanded {
+  .note__text {
+    display: block;
+  }
+}
+
+@include responsive-down("sm") {
   .card {
     padding: var(--osi-spacing-compact-sm, 6px);
+  }
+
+  .name {
+    font-size: 0.875rem; // 14px on mobile
+  }
+
+  // Stack columns on very small screens
+  .card__content {
+    grid-template-columns: 1fr;
+    gap: var(--osi-spacing-compact-sm, 6px);
+  }
+
+  .card__right {
+    max-width: 100%;
   }
 }

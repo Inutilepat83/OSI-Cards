@@ -136,6 +136,7 @@ export class CSPNonceService {
       "img-src 'self' data: https:",
       "font-src 'self' data: https:",
       "connect-src 'self' https:",
+      "media-src 'self' https://videos.nexustech.io",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
