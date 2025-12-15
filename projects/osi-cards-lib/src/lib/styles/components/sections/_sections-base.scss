@@ -18,6 +18,14 @@
   grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
   min-height: 0;
   box-sizing: border-box;
+  max-width: 100%;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
 
   @media (max-width: 420px) {
     grid-template-columns: 1fr;
@@ -34,9 +42,99 @@
   grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
   min-height: 0;
   box-sizing: border-box;
+  max-width: 100%;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 
   @media (max-width: $tablet-breakpoint) {
     grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// =====================================================================
+// RESPONSIVE SINGLE COLUMN MIXIN
+// =====================================================================
+
+@mixin responsive-single-column($breakpoint: 600px) {
+  @media (max-width: $breakpoint) {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+// =====================================================================
+// TEXT OVERFLOW ELLIPSIS MIXIN
+// =====================================================================
+
+@mixin text-overflow-ellipsis($lines: 1) {
+  @if $lines == unset {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  word-break: break-word;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+// =====================================================================
+// EXPANDABLE TEXT MIXIN
+// =====================================================================
+
+@mixin expandable-text($max-lines: 3) {
+  display: -webkit-box;
+  -webkit-line-clamp: $max-lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  &--expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+  }
+}
+
+// =====================================================================
+// BUTTON TEXT MINIMAL MIXIN
+// =====================================================================
+
+@mixin button-text-minimal {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  padding: var(--osi-spacing-compact-xs, 2px) 0;
+  transition: opacity 200ms var(--ease-out);
+
+  &:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
   }
 }
 
@@ -59,8 +157,12 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  max-width: 100%;
   box-sizing: border-box;
   text-align: left;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 
   transition:
     background var(--duration-base) var(--ease-out),

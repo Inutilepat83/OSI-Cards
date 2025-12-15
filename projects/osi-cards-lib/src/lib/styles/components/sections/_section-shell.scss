@@ -18,6 +18,8 @@
   --section-title-underline-height: var(--osi-section-title-underline-height);
   --section-title-underline-offset: var(--osi-section-title-underline-offset);
   --section-title-hover-color: var(--osi-section-title-hover-color);
+  width: 100% !important;
+  max-width: 100% !important;
   height: auto !important;
   min-height: 0 !important;
   max-height: none !important;
@@ -342,3 +344,36 @@
 
 /* Theme system handles all light/dark variations automatically */
 /* All colors adapt through CSS variables defined in tokens/_master.scss */
+
+/* ============================================================
+   GLOBAL SECTION CONTENT WIDTH RULES
+   Ensure all section content expands to use full available width
+   ============================================================ */
+
+.section-content {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important; // Allow shrinking for proper resizing
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Ensure FAQ section specifically resizes properly */
+.ai-section--faq {
+  min-width: 0 !important; // Override any min-width constraints
+  width: 100% !important;
+  max-width: 100% !important;
+
+  .list {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .item {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}

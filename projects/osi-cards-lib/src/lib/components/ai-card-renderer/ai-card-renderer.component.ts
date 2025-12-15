@@ -34,6 +34,7 @@ import {
   IconService,
   MagneticTiltService,
   MousePosition,
+  SectionCompletenessService,
   SectionNormalizationService,
   TiltCalculations,
 } from '../../services';
@@ -473,6 +474,7 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
   private readonly magneticTiltService = inject(MagneticTiltService);
   private readonly iconService = inject(IconService);
   private readonly sectionNormalizationService = inject(SectionNormalizationService);
+  private readonly sectionCompletenessService = inject(SectionCompletenessService);
   private readonly http = inject(HttpClient, { optional: true });
   // ViewportScroller available for future scroll functionality
   // private readonly viewportScroller = inject(ViewportScroller);
@@ -1424,9 +1426,15 @@ export class AICardRendererComponent implements OnInit, AfterViewInit, OnDestroy
     const normalizedSections = sections.map((section) =>
       this.getNormalizedSection(section, requiresStructuralRebuild)
     );
+
+    // Filter out incomplete sections
+    const completeSections = normalizedSections.filter((section) =>
+      this.sectionCompletenessService.isSectionComplete(section)
+    );
+
     const orderedSections = requiresStructuralRebuild
-      ? this.sectionNormalizationService.sortSections(normalizedSections)
-      : this.mergeWithPreviousOrder(normalizedSections);
+      ? this.sectionNormalizationService.sortSections(completeSections)
+      : this.mergeWithPreviousOrder(completeSections);
 
     this.processedSections = orderedSections;
     this.sectionOrderKeys = orderedSections.map((section) => this.getSectionKey(section));

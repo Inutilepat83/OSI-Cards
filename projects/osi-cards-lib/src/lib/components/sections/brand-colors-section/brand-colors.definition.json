@@ -46,6 +46,11 @@
     },
     "required": ["label", "value"]
   },
+  "completionRules": {
+    "minFields": 1,
+    "requireNonEmptyValues": true,
+    "mandatoryFields": ["label", "value"]
+  },
   "aliases": ["brands", "colors", "palette"],
   "examples": {
     "example": {

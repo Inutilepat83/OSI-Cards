@@ -60,6 +60,11 @@
     },
     "required": ["title"]
   },
+  "completionRules": {
+    "minItems": 1,
+    "requireNonEmptyValues": true,
+    "mandatoryFields": ["title"]
+  },
   "examples": {
     "example": {
       "title": "Strategic Partner Ecosystem",

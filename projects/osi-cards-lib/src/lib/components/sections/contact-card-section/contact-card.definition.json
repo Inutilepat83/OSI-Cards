@@ -92,6 +92,10 @@
     },
     "required": []
   },
+  "completionRules": {
+    "minFields": 1,
+    "requireNonEmptyValues": true
+  },
   "examples": {
     "example": {
       "title": "Executive Leadership Team",

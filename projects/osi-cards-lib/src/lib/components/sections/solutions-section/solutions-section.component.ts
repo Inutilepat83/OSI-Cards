@@ -21,7 +21,8 @@ import { BaseSectionComponent, SectionLayoutPreferences } from '../base-section.
 export class SolutionsSectionComponent extends BaseSectionComponent implements OnInit {
   private readonly layoutService = inject(SectionLayoutPreferenceService);
 
-  expandedIndex: number | null = null;
+  expandedIndex: number | null = null; // For benefits expansion
+  descriptionExpandedStates: boolean[] = []; // For description expansion
 
   ngOnInit(): void {
     // Register layout preference function for this section type
@@ -115,5 +116,27 @@ export class SolutionsSectionComponent extends BaseSectionComponent implements O
     if (!benefits || benefits.length === 0) return [];
     if (this.isExpanded(index)) return benefits;
     return benefits.slice(0, 2);
+  }
+
+  /**
+   * Check if description needs "Show more" button
+   */
+  shouldShowExpandButton(solution: any): boolean {
+    const description = solution.description;
+    return description && description.length > 150;
+  }
+
+  /**
+   * Toggle description expansion
+   */
+  toggleDescriptionExpanded(index: number): void {
+    this.descriptionExpandedStates[index] = !this.descriptionExpandedStates[index];
+  }
+
+  /**
+   * Check if description is expanded
+   */
+  isDescriptionExpanded(index: number): boolean {
+    return !!this.descriptionExpandedStates[index];
   }
 }

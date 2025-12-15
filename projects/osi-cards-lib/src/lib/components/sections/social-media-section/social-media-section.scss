@@ -26,6 +26,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); // Compact: 170px (was 200px)
   gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
+  width: 100%; // Ensure full width
+  box-sizing: border-box;
 
   @include responsive-down("md") {
     grid-template-columns: repeat(3, 1fr);
@@ -80,12 +82,18 @@
   @include heading(6);
   margin: 0;
   transition: color 200ms var(--ease-out);
+  @include text-overflow-ellipsis(1); // Limit to 1 line
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .handle {
   @include typo.caption;
   color: var(--muted-foreground);
   opacity: 0.7;
+  @include text-overflow-ellipsis(1); // Limit to 1 line
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .stats {

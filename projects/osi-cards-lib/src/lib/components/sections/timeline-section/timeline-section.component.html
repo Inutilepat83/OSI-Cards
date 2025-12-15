@@ -22,7 +22,19 @@
           <h4 class="timeline-title">{{ event.title }}</h4>
           <span class="timeline-date" *ngIf="event.meta?.date">{{ event.meta?.date }}</span>
         </div>
-        <p class="timeline-description" *ngIf="event.description">{{ event.description }}</p>
+        <p class="timeline-description" *ngIf="event.description" [class.expanded]="expandedIndex === i">
+          {{ event.description }}
+        </p>
+        <button
+          *ngIf="shouldShowExpandButton(event) && expandedIndex !== i"
+          class="timeline-expand-button"
+          type="button"
+          (click)="toggleExpanded(i); $event.stopPropagation()"
+          [attr.aria-expanded]="expandedIndex === i"
+          [attr.aria-label]="'Show more for ' + event.title"
+        >
+          Show more
+        </button>
         <lib-badge *ngIf="event.meta?.type" variant="primary" size="sm">
           {{ event.meta?.type }}
         </lib-badge>

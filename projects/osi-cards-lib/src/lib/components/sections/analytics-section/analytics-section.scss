@@ -27,6 +27,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 6px;
+  max-width: 100%;
+  overflow-x: hidden;
 
   @include responsive-down("md") {
     gap: 5px;
@@ -38,6 +40,10 @@
   }
 
   @include responsive-down("xs") {
+    grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 600px) {
     grid-template-columns: 1fr;
   }
 }
@@ -52,6 +58,11 @@
   gap: 3px;
   justify-content: space-between;
   cursor: pointer;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 
   // Dark-mode depth: distinct surface level
   background: color-mix(
@@ -161,6 +172,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-height: calc(1.2em * 2); // 2 lines max
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 
   @include responsive-down("sm") {
     font-size: 0.575rem;
@@ -341,6 +354,11 @@
   padding-top: 6px;
   border-top: 1px solid color-mix(in srgb, var(--card-border, #333333) 30%, transparent 70%);
   animation: fadeIn 200ms var(--ease-out);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+  box-sizing: border-box;
 
   @keyframes fadeIn {
     from {

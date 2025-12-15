@@ -5,7 +5,7 @@
   <!-- Videos Grid -->
   <div class="video-container" *ngIf="section.items && section.items.length > 0">
     <div class="video-grid">
-      <div class="video-card" *ngFor="let video of section.items">
+      <div class="video-card" *ngFor="let video of section.items; let i = index">
         <!-- Video Player/Thumbnail -->
         <div class="video-wrapper">
           <!-- Embedded Video (YouTube/Vimeo) -->
@@ -38,7 +38,21 @@
         <!-- Video Info -->
         <div class="video-info">
           <h4 class="video-title">{{ video.title }}</h4>
-          <p class="video-description" *ngIf="video.description">{{ video.description }}</p>
+          <p class="video-description" *ngIf="video.description" [class.expanded]="isDescriptionExpanded(i)">
+            {{ video.description }}
+          </p>
+          <button
+            *ngIf="shouldShowExpandButton(video)"
+            class="video-expand-button"
+            type="button"
+            (click)="toggleDescriptionExpanded(i)"
+            [attr.aria-expanded]="isDescriptionExpanded(i)"
+            [attr.aria-label]="
+              (isDescriptionExpanded(i) ? 'Show less' : 'Show more') + ' description for ' + video.title
+            "
+          >
+            {{ isDescriptionExpanded(i) ? 'Show less' : 'Show more' }}
+          </button>
 
           <div class="video-meta">
             <span class="video-duration" *ngIf="video.meta?.duration">{{ video.meta?.duration }}</span>

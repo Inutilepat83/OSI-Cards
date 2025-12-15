@@ -115,4 +115,31 @@ export class VideoSectionComponent extends BaseSectionComponent implements OnIni
   getThumbnail(item: any): string | null {
     return item.meta?.thumbnail || null;
   }
+
+  /**
+   * Track expanded state for descriptions
+   */
+  descriptionExpandedStates: boolean[] = [];
+
+  /**
+   * Toggle description expansion
+   */
+  toggleDescriptionExpanded(index: number): void {
+    this.descriptionExpandedStates[index] = !this.descriptionExpandedStates[index];
+  }
+
+  /**
+   * Check if description is expanded
+   */
+  isDescriptionExpanded(index: number): boolean {
+    return !!this.descriptionExpandedStates[index];
+  }
+
+  /**
+   * Check if description needs "Show more" button
+   */
+  shouldShowExpandButton(video: any): boolean {
+    const description = video.description;
+    return description && description.length > 150;
+  }
 }

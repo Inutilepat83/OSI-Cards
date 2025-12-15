@@ -16,6 +16,10 @@
   margin-bottom: 12px;
   align-items: flex-start;
   text-align: left;
+  max-width: 100%;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .section-title {
@@ -29,6 +33,16 @@
   position: relative;
   transition: color 0.22s ease;
   text-align: left;
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  // Allow title to wrap to 2-3 lines max with ellipsis
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   // Section-shell underline behavior (implemented here so it works through component encapsulation)
   &::before {
@@ -75,6 +89,14 @@
   }
 }
 
+.section-description-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--osi-spacing-compact-xs, 2px);
+  max-width: 100%;
+  width: 100%;
+}
+
 .section-description {
   margin: 0;
   padding: 0;
@@ -84,13 +106,44 @@
   font-weight: 400;
   line-height: 1.5;
   color: var(--muted-foreground, rgba(255, 255, 255, 0.7));
-  max-width: 65ch;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   text-align: left;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+
+  &--expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+  }
+}
+
+.section-description-expand-btn {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  padding: var(--osi-spacing-compact-xs, 2px) 0;
+  text-decoration: underline;
+  transition: opacity 200ms var(--ease-out);
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
 @media (max-width: 640px) {

@@ -26,6 +26,10 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); // Compact: 240px (was 280px)
   gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
+  width: 100%; // Ensure full width
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 
   @include responsive-down("md") {
     grid-template-columns: repeat(2, 1fr);
@@ -33,6 +37,10 @@
   }
 
   @include responsive-down("sm") {
+    grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 600px) {
     grid-template-columns: 1fr;
   }
 }
@@ -47,8 +55,11 @@
   gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
   transition: all 300ms var(--ease-out);
   margin: 0;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 
   &:hover {
     box-shadow: var(--shadow-xl);
@@ -77,25 +88,56 @@
   transition: all 200ms var(--ease-out);
 }
 
+.text-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--osi-spacing-compact-xs, 2px);
+  flex: 1;
+}
+
 .text {
   @include body-text("base");
+  @include expandable-text(3); // Show 3 lines by default
   font-style: italic;
   line-height: 1.5; // Compact: 1.5 (was --leading-relaxed 1.625)
   margin: 0;
   color: var(--foreground);
-  flex: 1;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 
-.quote.expanded {
-  .text {
+  &--expanded {
     display: block;
     -webkit-line-clamp: unset;
     overflow: visible;
   }
+}
+
+.quote-expand-btn {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  padding: var(--osi-spacing-compact-xs, 2px) 0;
+  text-decoration: underline;
+  transition: opacity 200ms var(--ease-out);
+  font-style: normal;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+.quote.expanded {
+  // Expanded state styling
 }
 
 .footer {

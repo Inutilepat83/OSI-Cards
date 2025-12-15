@@ -14,10 +14,12 @@
 :host {
   display: block;
   width: 100%;
-  min-width: 400px;
+  max-width: 100%;
+  min-width: 0; // Allow shrinking below 400px for proper resizing
+  box-sizing: border-box;
 
   @include responsive-down("sm") {
-    min-width: 100%;
+    min-width: 0; // Remove min-width constraint on small screens
   }
 }
 
@@ -30,10 +32,12 @@
 // Container
 .timeline-container {
   @include card;
+  width: 100%; // Ensure full width
   padding: var(--osi-spacing-compact-sm, 6px) var(--osi-spacing-compact-md, 12px); // Compact: 6-12px (was 12-16px)
   display: flex;
   flex-direction: column;
   gap: 0;
+  box-sizing: border-box; // Include padding in width
   // Background inherited from @include card mixin
 }
 
@@ -114,6 +118,8 @@
   border-radius: var(--radius-sm);
   transition: background 200ms var(--ease-out);
   min-width: 0;
+  width: 100%; // Ensure full width expansion
+  box-sizing: border-box;
 }
 
 // Header
@@ -145,10 +151,10 @@
   color: var(--muted-foreground);
   margin: 0;
   line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  @include text-overflow-ellipsis(3); // Limit to 3 lines by default
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  transition: all 0.2s ease-out;
 }
 
 .timeline-item.expanded {
@@ -157,9 +163,18 @@
   }
 
   .timeline-description {
-    display: block;
-    -webkit-line-clamp: unset;
-    overflow: visible;
+    @include text-overflow-ellipsis(unset); // Show full text when expanded
+  }
+}
+
+.timeline-expand-button {
+  @include button-text-minimal;
+  margin-top: var(--osi-spacing-compact-xs, 2px);
+  align-self: flex-start;
+  font-size: 0.7rem;
+  color: var(--accent);
+  &:hover {
+    text-decoration: underline;
   }
 }
 

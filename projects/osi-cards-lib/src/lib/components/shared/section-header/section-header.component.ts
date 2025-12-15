@@ -62,4 +62,23 @@ export class SectionHeaderComponent {
   get headingTag(): string {
     return `h${this.level}`;
   }
+
+  /**
+   * Track expanded state for description
+   */
+  isDescriptionExpanded = false;
+
+  /**
+   * Toggle expanded state for description
+   */
+  toggleDescriptionExpanded(): void {
+    this.isDescriptionExpanded = !this.isDescriptionExpanded;
+  }
+
+  /**
+   * Check if description is long enough to need expansion
+   */
+  shouldShowExpandButton(): boolean {
+    return this.description ? this.description.length > 150 : false;
+  }
 }

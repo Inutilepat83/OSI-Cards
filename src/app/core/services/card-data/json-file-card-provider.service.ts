@@ -23,6 +23,8 @@ import { RequestCanceller } from '../../../shared/utils/request-cancellation.uti
 import { RequestQueueService } from '../request-queue.service';
 import { IndexedDBCacheService } from '../indexeddb-cache.service';
 import { environment } from '../../../../environments/environment';
+import { VERSION } from '../../../../version';
+import { isCachedVersionValid } from '../../utils/version-comparison.util';
 
 const PRIORITY_ORDER = { high: 3, medium: 2, low: 1 };
 
@@ -45,8 +47,12 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
   private manifestCache$?: Observable<CardManifest>;
   private requestCanceller = new RequestCanceller();
   // In-memory cache for instant access (bypasses HTTP for cached items)
-  private memoryCache = new Map<string, { data: AICardConfig | null; timestamp: number }>();
+  private memoryCache = new Map<
+    string,
+    { data: AICardConfig | null; timestamp: number; version?: string }
+  >();
   private readonly CACHE_TTL = environment.performance?.cacheTimeout || 60 * 60 * 1000;
+  private readonly CURRENT_VERSION = VERSION;
 
   /**
    * Load manifest with caching
@@ -107,8 +113,19 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
     const cached = this.memoryCache.get(fullUrl);
     const now = Date.now();
     if (cached && now - cached.timestamp < this.CACHE_TTL) {
-      // Return immediately - no async operations, no queue, no HTTP
-      return of(cached.data);
+      // Check version before using cached data
+      if (isCachedVersionValid(cached.version, this.CURRENT_VERSION)) {
+        // Return immediately - no async operations, no queue, no HTTP
+        return of(cached.data);
+      } else {
+        // Version mismatch - invalidate cache
+        this.logger.debug(
+          `Cache version mismatch for ${fullUrl}: cached=${cached.version}, current=${this.CURRENT_VERSION}. Invalidating cache.`,
+          'JsonFileCardProvider'
+        );
+        this.memoryCache.delete(fullUrl);
+        // Fall through to IndexedDB check or HTTP request
+      }
     }
 
     // Not in memory cache - check IndexedDB and load in background
@@ -116,38 +133,53 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
     return this.indexedDBCache.get(fullUrl).pipe(
       switchMap((indexedEntry: any) => {
         if (indexedEntry && now - indexedEntry.timestamp < this.CACHE_TTL) {
-          try {
-            // Ensure data is a string - handle both string and object cases
-            let jsonText: string;
-            if (typeof indexedEntry.data === 'string') {
-              jsonText = indexedEntry.data;
-            } else if (typeof indexedEntry.data === 'object') {
-              // If it was stored as an object, stringify it
-              jsonText = JSON.stringify(indexedEntry.data);
-            } else {
-              this.logger.warn(`Invalid cached data type for ${fullUrl}`, 'JsonFileCardProvider');
-              throw new Error('Invalid cached data format');
-            }
-
-            // Decode and cache in memory for instant access next time
-            const cardData = this.decodeJsonToCard(jsonText);
-            if (cardData) {
-              this.memoryCache.set(fullUrl, { data: cardData, timestamp: indexedEntry.timestamp });
-              return of(cardData);
-            } else {
-              // Cached data is invalid, clear it and fetch fresh
-              this.indexedDBCache.delete(fullUrl).subscribe();
-              throw new Error('Invalid cached data');
-            }
-          } catch (error) {
-            // Cached data is corrupted, clear it and fetch fresh
-            this.logger.warn(
-              `Cached data invalid for ${fullUrl}, fetching fresh`,
-              'JsonFileCardProvider',
-              error
+          // Check version before using cached data
+          if (!isCachedVersionValid(indexedEntry.version, this.CURRENT_VERSION)) {
+            // Version mismatch - invalidate cache
+            this.logger.debug(
+              `IndexedDB cache version mismatch for ${fullUrl}: cached=${indexedEntry.version}, current=${this.CURRENT_VERSION}. Invalidating cache.`,
+              'JsonFileCardProvider'
             );
             this.indexedDBCache.delete(fullUrl).subscribe();
             // Fall through to HTTP request
+          } else {
+            try {
+              // Ensure data is a string - handle both string and object cases
+              let jsonText: string;
+              if (typeof indexedEntry.data === 'string') {
+                jsonText = indexedEntry.data;
+              } else if (typeof indexedEntry.data === 'object') {
+                // If it was stored as an object, stringify it
+                jsonText = JSON.stringify(indexedEntry.data);
+              } else {
+                this.logger.warn(`Invalid cached data type for ${fullUrl}`, 'JsonFileCardProvider');
+                throw new Error('Invalid cached data format');
+              }
+
+              // Decode and cache in memory for instant access next time
+              const cardData = this.decodeJsonToCard(jsonText);
+              if (cardData) {
+                this.memoryCache.set(fullUrl, {
+                  data: cardData,
+                  timestamp: indexedEntry.timestamp,
+                  version: indexedEntry.version,
+                });
+                return of(cardData);
+              } else {
+                // Cached data is invalid, clear it and fetch fresh
+                this.indexedDBCache.delete(fullUrl).subscribe();
+                throw new Error('Invalid cached data');
+              }
+            } catch (error) {
+              // Cached data is corrupted, clear it and fetch fresh
+              this.logger.warn(
+                `Cached data invalid for ${fullUrl}, fetching fresh`,
+                'JsonFileCardProvider',
+                error
+              );
+              this.indexedDBCache.delete(fullUrl).subscribe();
+              // Fall through to HTTP request
+            }
           }
         }
 
@@ -169,9 +201,13 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
                 throw new Error('Failed to decode JSON card');
               }
 
-              // Cache immediately for next time
-              this.memoryCache.set(fullUrl, { data: cardData, timestamp: now });
-              this.indexedDBCache.set(fullUrl, text, now).subscribe({
+              // Cache immediately for next time with current version
+              this.memoryCache.set(fullUrl, {
+                data: cardData,
+                timestamp: now,
+                version: this.CURRENT_VERSION,
+              });
+              this.indexedDBCache.set(fullUrl, text, now, this.CURRENT_VERSION).subscribe({
                 error: (err) => {
                   this.logger.debug(
                     'Failed to cache in IndexedDB (non-critical)',
@@ -269,7 +305,11 @@ export class JsonFileCardProvider extends CardDataProvider implements OnDestroy 
             }
             const cardData = this.decodeJsonToCard(text);
             if (cardData) {
-              this.memoryCache.set(fullUrl, { data: cardData, timestamp: Date.now() });
+              this.memoryCache.set(fullUrl, {
+                data: cardData,
+                timestamp: Date.now(),
+                version: this.CURRENT_VERSION,
+              });
             }
             return cardData;
           }),

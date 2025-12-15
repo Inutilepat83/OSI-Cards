@@ -11,7 +11,21 @@
       <!-- Reference Content -->
       <div class="reference-content">
         <h4 class="reference-title">{{ getReferenceTitle(ref) }}</h4>
-        <p class="reference-text" *ngIf="getReferenceContent(ref)">{{ getReferenceContent(ref) }}</p>
+        <div class="reference-text-wrapper" *ngIf="getReferenceContent(ref)">
+          <p class="reference-text" [class.reference-text--expanded]="isExpanded(i)" *ngIf="getReferenceContent(ref)">
+            {{ getReferenceContent(ref) }}
+          </p>
+          <button
+            *ngIf="shouldShowExpandButton(ref)"
+            class="reference-expand-btn"
+            type="button"
+            (click)="toggleExpanded(i)"
+            [attr.aria-expanded]="isExpanded(i)"
+            [attr.aria-label]="(isExpanded(i) ? 'Collapse' : 'Expand') + ' reference text'"
+          >
+            {{ isExpanded(i) ? 'Show less' : 'Show more' }}
+          </button>
+        </div>
 
         <!-- Reference Meta -->
         <div class="reference-meta">

@@ -27,6 +27,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); // Compact: 180px (was 200px)
   gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
+  width: 100%; // Ensure full width
+  box-sizing: border-box;
 
   @include responsive-down("md") {
     gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 10px)
@@ -126,6 +128,25 @@
   color: var(--muted-foreground);
   margin: 0;
   line-height: 1.5;
+  @include text-overflow-ellipsis(2); // Limit to 2 lines by default
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  transition: all 0.2s ease-out;
+}
+
+.network-description.expanded {
+  @include text-overflow-ellipsis(unset); // Show full text when expanded
+}
+
+.network-expand-button {
+  @include button-text-minimal;
+  margin-top: var(--osi-spacing-compact-xs, 2px);
+  align-self: flex-start;
+  font-size: 0.7rem;
+  color: var(--accent);
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 // Metrics

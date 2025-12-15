@@ -14,10 +14,12 @@
 :host {
   display: block;
   width: 100%;
-  min-width: 400px;
+  max-width: 100%;
+  min-width: 0; // Allow shrinking below 400px for proper resizing
+  box-sizing: border-box;
 
   @include responsive-down("sm") {
-    min-width: 100%;
+    min-width: 0; // Remove min-width constraint on small screens
   }
 }
 
@@ -29,18 +31,22 @@
 
 .list {
   @include card;
+  width: 100%; // Ensure full width
   padding: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
   display: flex;
   flex-direction: column;
   gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
+  box-sizing: border-box; // Include padding in width
   // Background inherited from @include card mixin
 }
 
 .event {
+  width: 100%; // Ensure full width expansion
   padding: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
   border-radius: var(--radius-sm);
   display: flex;
   gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
+  box-sizing: border-box; // Include padding in width
   transition:
     background var(--duration-base) var(--ease-out),
     color var(--duration-base) var(--ease-out);
@@ -106,6 +112,8 @@
   flex-direction: column;
   gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
   min-width: 0;
+  width: 100%; // Ensure full width expansion
+  box-sizing: border-box;
 }
 
 .top {
@@ -121,6 +129,9 @@
   flex: 1;
   margin: 0;
   transition: color 200ms var(--ease-out);
+  @include text-overflow-ellipsis(2); // Limit to 2 lines
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .details {
@@ -128,11 +139,18 @@
   display: flex;
   gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
   flex-wrap: wrap;
+  width: 100%; // Ensure full width expansion
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  box-sizing: border-box;
 
   > span {
     display: flex;
     align-items: center;
     gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    max-width: 100%;
   }
 }
 

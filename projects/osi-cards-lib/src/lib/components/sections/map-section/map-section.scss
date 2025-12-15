@@ -58,11 +58,17 @@
 
 .location-name {
   @include heading(6);
+  @include text-overflow-ellipsis(2); // Limit to 2 lines
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .location-address {
   @include body-text("small");
   margin: var(--osi-spacing-compact-xs, 2px) 0 0; // Compact: 2px
+  @include text-overflow-ellipsis(2); // Limit to 2 lines
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .location-type {

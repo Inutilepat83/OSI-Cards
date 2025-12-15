@@ -6,7 +6,7 @@
     <!-- SMART: Adaptive height based on content -->
     <article
       class="card"
-      *ngFor="let a of section.items"
+      *ngFor="let a of section.items; let i = index"
       [class.has-image]="getImageUrl(a)"
       [class.has-excerpt]="a.description"
     >
@@ -17,7 +17,21 @@
           <span *ngIf="a.meta?.source">{{ a.meta?.source }}</span>
         </div>
         <h4 class="title">{{ a.title }}</h4>
-        <p class="excerpt" *ngIf="a.description">{{ a.description }}</p>
+        <div class="excerpt-wrapper" *ngIf="a.description">
+          <p class="excerpt" [class.excerpt--expanded]="isExpanded(i)" *ngIf="a.description">
+            {{ a.description }}
+          </p>
+          <button
+            *ngIf="shouldShowExpandButton(a)"
+            class="excerpt-expand-btn"
+            type="button"
+            (click)="toggleExpanded(i); $event.stopPropagation()"
+            [attr.aria-expanded]="isExpanded(i)"
+            [attr.aria-label]="(isExpanded(i) ? 'Collapse' : 'Expand') + ' article preview'"
+          >
+            {{ isExpanded(i) ? 'Show less' : 'Show more' }}
+          </button>
+        </div>
         <a [href]="a.meta?.url" class="link" *ngIf="a.meta?.url" target="_blank" rel="noopener">Read →</a>
       </div>
     </article>

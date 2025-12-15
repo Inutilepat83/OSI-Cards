@@ -108,4 +108,12 @@ export class TimelineSectionComponent extends BaseSectionComponent implements On
       this.toggleExpanded(index);
     }
   }
+
+  /**
+   * Check if description needs "Show more" button
+   */
+  shouldShowExpandButton(event: any): boolean {
+    const description = event.description;
+    return description && description.length > 150;
+  }
 }

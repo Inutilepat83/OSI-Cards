@@ -26,6 +26,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--osi-spacing-sm);
+  width: 100%; // Ensure full width
+  box-sizing: border-box;
 
   @include responsive-down("sm") {
     grid-template-columns: 1fr;
@@ -86,6 +88,35 @@
 
 .video-title {
   @include heading(6);
+  @include text-overflow-ellipsis(2); // Limit to 2 lines
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.video-description {
+  @include body-text("small");
+  color: var(--muted-foreground);
+  margin: 0;
+  line-height: 1.5;
+  @include text-overflow-ellipsis(2); // Limit to 2 lines by default
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  transition: all 0.2s ease-out;
+}
+
+.video-description.expanded {
+  @include text-overflow-ellipsis(unset); // Show full text when expanded
+}
+
+.video-expand-button {
+  @include button-text-minimal;
+  margin-top: var(--osi-spacing-compact-xs, 2px);
+  align-self: flex-start;
+  font-size: 0.7rem;
+  color: var(--accent);
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .video-meta {
@@ -93,4 +124,7 @@
   gap: var(--osi-spacing-sm);
   font-size: 0.7rem;
   color: var(--osi-muted-foreground);
+  flex-wrap: wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }

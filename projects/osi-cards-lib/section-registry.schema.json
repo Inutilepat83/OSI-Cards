@@ -132,6 +132,39 @@
         "examplePath": {
           "type": "string",
           "description": "Path to standalone example JSON file (relative to section folder)"
+        },
+        "completionRules": {
+          "$ref": "#/definitions/CompletionRules",
+          "description": "Rules for determining if a section is complete and should be displayed"
+        }
+      }
+    },
+    "CompletionRules": {
+      "type": "object",
+      "description": "Rules for validating section completeness",
+      "properties": {
+        "minFields": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Minimum number of fields required (for field-based sections)"
+        },
+        "minItems": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Minimum number of items required (for item-based sections)"
+        },
+        "requireNonEmptyValues": {
+          "type": "boolean",
+          "description": "Whether fields/items must have non-empty values"
+        },
+        "mandatoryFields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Array of field property names that must be present (e.g., ['label', 'value'])"
+        },
+        "requireChartData": {
+          "type": "boolean",
+          "description": "Whether chartData is required (for chart sections)"
         }
       }
     },

@@ -9,12 +9,9 @@ import {
 import { Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { AppConfigService } from '../services/app-config.service';
-import { IndexedDBCacheService } from '../services/indexeddb-cache.service';
-
-interface CacheEntry {
-  data: unknown;
-  timestamp: number;
-}
+import { CacheEntry, IndexedDBCacheService } from '../services/indexeddb-cache.service';
+import { VERSION } from '../../../version';
+import { isCachedVersionValid } from '../utils/version-comparison.util';
 
 /**
  * HTTP Cache Interceptor
@@ -51,6 +48,7 @@ export class HttpCacheInterceptor implements HttpInterceptor {
   private readonly config = inject(AppConfigService);
   // Use config service or default to 1 hour (3600000 ms)
   private readonly TTL = this.config.PERFORMANCE_ENV.CACHE_TIMEOUT || 60 * 60 * 1000; // 1 hour default
+  private readonly CURRENT_VERSION = VERSION;
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Only cache GET requests for card configs
@@ -63,31 +61,51 @@ export class HttpCacheInterceptor implements HttpInterceptor {
     // Check in-memory cache first
     const cached = this.cache.get(req.url);
     if (cached && now - cached.timestamp < this.TTL) {
-      // Return cached response
-      return of(
-        new HttpResponse({
-          body: cached.data,
-          status: 200,
-          statusText: 'OK',
-          url: req.url,
-        })
-      );
+      // Check version before using cached data
+      if (isCachedVersionValid(cached.version, this.CURRENT_VERSION)) {
+        // Return cached response
+        return of(
+          new HttpResponse({
+            body: cached.data,
+            status: 200,
+            statusText: 'OK',
+            url: req.url,
+          })
+        );
+      } else {
+        // Version mismatch - invalidate cache
+        console.debug(
+          `HTTP cache version mismatch for ${req.url}: cached=${cached.version}, current=${this.CURRENT_VERSION}. Invalidating cache.`
+        );
+        this.cache.delete(req.url);
+        // Fall through to IndexedDB check or HTTP request
+      }
     }
 
     // Check IndexedDB cache
     return this.indexedDBCache.get(req.url).pipe(
       switchMap((indexedEntry: CacheEntry | null) => {
         if (indexedEntry && now - indexedEntry.timestamp < this.TTL) {
-          // Update in-memory cache and return cached response
-          this.cache.set(req.url, indexedEntry);
-          return of(
-            new HttpResponse({
-              body: indexedEntry.data,
-              status: 200,
-              statusText: 'OK',
-              url: req.url,
-            })
-          );
+          // Check version before using cached data
+          if (!isCachedVersionValid(indexedEntry.version, this.CURRENT_VERSION)) {
+            // Version mismatch - invalidate cache
+            console.debug(
+              `IndexedDB HTTP cache version mismatch for ${req.url}: cached=${indexedEntry.version}, current=${this.CURRENT_VERSION}. Invalidating cache.`
+            );
+            this.indexedDBCache.delete(req.url).subscribe();
+            // Fall through to HTTP request
+          } else {
+            // Update in-memory cache and return cached response
+            this.cache.set(req.url, indexedEntry);
+            return of(
+              new HttpResponse({
+                body: indexedEntry.data,
+                status: 200,
+                statusText: 'OK',
+                url: req.url,
+              })
+            );
+          }
         }
 
         // No valid cache, make request and cache response
@@ -97,13 +115,14 @@ export class HttpCacheInterceptor implements HttpInterceptor {
               const cacheEntry: CacheEntry = {
                 data: event.body,
                 timestamp: now,
+                version: this.CURRENT_VERSION,
               };
 
               // Cache in memory
               this.cache.set(req.url, cacheEntry);
 
               // Cache in IndexedDB (async, don't wait)
-              this.indexedDBCache.set(req.url, event.body, now).subscribe({
+              this.indexedDBCache.set(req.url, event.body, now, this.CURRENT_VERSION).subscribe({
                 error: (err) => {
                   // Silently fail IndexedDB caching - in-memory cache is sufficient
                   console.debug('Failed to cache in IndexedDB:', err);
@@ -121,6 +140,7 @@ export class HttpCacheInterceptor implements HttpInterceptor {
               const cacheEntry: CacheEntry = {
                 data: event.body,
                 timestamp: now,
+                version: this.CURRENT_VERSION,
               };
               this.cache.set(req.url, cacheEntry);
             }

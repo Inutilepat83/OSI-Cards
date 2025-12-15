@@ -109,4 +109,20 @@ export class QuotationSectionComponent extends BaseSectionComponent implements O
       this.toggleExpanded(index);
     }
   }
+
+  /**
+   * Check if a quote is long enough to need expansion
+   */
+  shouldShowExpandButton(field: any): boolean {
+    const quoteText = this.getQuoteText(field);
+    // Show expand button if quote is longer than ~150 characters
+    return !!(quoteText && quoteText.length > 150);
+  }
+
+  /**
+   * Check if a quote is expanded
+   */
+  isQuoteExpanded(index: number): boolean {
+    return this.expandedIndex === index;
+  }
 }

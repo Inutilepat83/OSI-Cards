@@ -12,7 +12,21 @@
       </div>
 
       <!-- Solution Description -->
-      <p class="solution-description" *ngIf="solution.description">{{ solution.description }}</p>
+      <p class="solution-description" *ngIf="solution.description" [class.expanded]="isDescriptionExpanded(i)">
+        {{ solution.description }}
+      </p>
+      <button
+        *ngIf="shouldShowExpandButton(solution)"
+        class="solution-description-expand-button"
+        type="button"
+        (click)="toggleDescriptionExpanded(i)"
+        [attr.aria-expanded]="isDescriptionExpanded(i)"
+        [attr.aria-label]="
+          (isDescriptionExpanded(i) ? 'Show less' : 'Show more') + ' description for ' + solution.title
+        "
+      >
+        {{ isDescriptionExpanded(i) ? 'Show less' : 'Show more' }}
+      </button>
 
       <!-- Benefits -->
       <ul class="solution-benefits" *ngIf="solution.benefits && solution.benefits.length > 0">

@@ -3,10 +3,24 @@
   </lib-section-header>
 
   <div class="list" *ngIf="section.fields?.length">
-    <div class="item" *ngFor="let f of section.fields" [class.highlight]="isHighlighted(f)">
-      <span class="icon" *ngIf="f.icon">{{ f.icon }}</span>
-      <span class="label">{{ f.label }}</span>
-      <div class="value">{{ f.value }}</div>
+    <div class="item" *ngFor="let f of section.fields; let i = index" [class.highlight]="isHighlighted(f)">
+      <div class="label-row">
+        <span class="icon" *ngIf="f.icon">{{ f.icon }}</span>
+        <span class="label">{{ f.label }}</span>
+      </div>
+      <div class="value-wrapper">
+        <div class="value" [class.value--expanded]="isExpanded(i)">{{ f.value }}</div>
+        <button
+          *ngIf="shouldShowExpandButton(f)"
+          class="value-expand-btn"
+          type="button"
+          (click)="toggleExpanded(i); $event.stopPropagation()"
+          [attr.aria-expanded]="isExpanded(i)"
+          [attr.aria-label]="(isExpanded(i) ? 'Collapse' : 'Expand') + ' value for ' + f.label"
+        >
+          {{ isExpanded(i) ? 'Show less' : 'Show more' }}
+        </button>
+      </div>
     </div>
   </div>
 

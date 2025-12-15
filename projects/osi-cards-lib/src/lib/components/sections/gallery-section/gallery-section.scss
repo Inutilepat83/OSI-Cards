@@ -26,6 +26,10 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); // Smaller min for compact
   gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
+  width: 100%; // Ensure full width
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 
   @include responsive-down("md") {
     grid-template-columns: repeat(3, 1fr);
@@ -39,11 +43,17 @@
   @include responsive-down("xs") {
     grid-template-columns: 1fr;
   }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .item {
   @include card-elevated;
+  width: 100%; // Ensure full width expansion
   overflow: hidden;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
   padding: 0;
   cursor: pointer;
   transition:
@@ -51,6 +61,8 @@
     background var(--duration-slow) var(--ease-out);
   display: flex;
   flex-direction: column;
+  max-width: 100%;
+  box-sizing: border-box;
 
   &:hover {
     box-shadow: var(--shadow-xl);
@@ -70,15 +82,19 @@
   width: 100%;
   height: 120px; // Compact: 120px (was 150px)
   overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .img {
   width: 100%;
+  max-width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
   transition: all 400ms var(--ease-out);
   background: var(--surface-hover);
+  box-sizing: border-box;
 }
 
 .caption {
@@ -87,15 +103,29 @@
   display: flex;
   align-items: center;
   min-height: 36px; // Compact: 36px (was 44px)
+  max-width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 
   .text {
     @include heading(6);
     font-size: 0.75rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     width: 100%;
+    max-width: 100%;
     transition: color 200ms var(--ease-out);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    // Allow text to wrap instead of ellipsis
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
   }
 }
 

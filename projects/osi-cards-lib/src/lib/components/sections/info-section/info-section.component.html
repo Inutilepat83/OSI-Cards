@@ -7,7 +7,19 @@
     <div class="info-header-main">
       <div class="info-header-text">
         <h3 class="info-company-name">{{ getCompanyName() }}</h3>
-        <p class="info-tagline" *ngIf="getTagline()">{{ getTagline() }}</p>
+        <p class="info-tagline" *ngIf="getTagline()" [class.expanded]="isTaglineExpanded">
+          {{ getTagline() }}
+        </p>
+        <button
+          *ngIf="shouldShowTaglineExpandButton()"
+          class="info-tagline-expand-button"
+          type="button"
+          (click)="toggleTaglineExpanded()"
+          [attr.aria-expanded]="isTaglineExpanded"
+          [attr.aria-label]="isTaglineExpanded ? 'Show less tagline' : 'Show more tagline'"
+        >
+          {{ isTaglineExpanded ? 'Show less' : 'Show more' }}
+        </button>
       </div>
     </div>
     <div class="info-header-actions" *ngIf="hasHeaderActions()">

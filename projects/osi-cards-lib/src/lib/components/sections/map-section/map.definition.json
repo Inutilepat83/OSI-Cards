@@ -61,6 +61,11 @@
     },
     "required": ["name"]
   },
+  "completionRules": {
+    "minFields": 1,
+    "requireNonEmptyValues": true,
+    "mandatoryFields": ["name"]
+  },
   "aliases": ["locations"],
   "examples": {
     "example": {

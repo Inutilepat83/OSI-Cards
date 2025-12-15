@@ -103,4 +103,36 @@ export class NewsSectionComponent extends BaseSectionComponent implements OnInit
       return String(dateStr);
     }
   }
+
+  /**
+   * Track expanded state for each article
+   */
+  expandedArticles = new Set<number>();
+
+  /**
+   * Toggle expanded state for an article
+   */
+  toggleExpanded(index: number): void {
+    if (this.expandedArticles.has(index)) {
+      this.expandedArticles.delete(index);
+    } else {
+      this.expandedArticles.add(index);
+    }
+  }
+
+  /**
+   * Check if an article is expanded
+   */
+  isExpanded(index: number): boolean {
+    return this.expandedArticles.has(index);
+  }
+
+  /**
+   * Check if an excerpt is long enough to need expansion
+   */
+  shouldShowExpandButton(item: any): boolean {
+    const description = item.description || '';
+    // Show expand button if description is longer than ~100 characters
+    return description && description.length > 100;
+  }
 }

@@ -10,7 +10,24 @@
   </ng-container>
 
   <!-- Description -->
-  <p class="section-description ai-section__description" [ngClass]="descriptionClass" *ngIf="description">
-    {{ description }}
-  </p>
+  <div class="section-description-wrapper" *ngIf="description">
+    <p
+      class="section-description ai-section__description"
+      [ngClass]="descriptionClass"
+      [class.section-description--expanded]="isDescriptionExpanded"
+      *ngIf="description"
+    >
+      {{ description }}
+    </p>
+    <button
+      *ngIf="shouldShowExpandButton()"
+      class="section-description-expand-btn"
+      type="button"
+      (click)="toggleDescriptionExpanded()"
+      [attr.aria-expanded]="isDescriptionExpanded"
+      [attr.aria-label]="(isDescriptionExpanded ? 'Collapse' : 'Expand') + ' description'"
+    >
+      {{ isDescriptionExpanded ? 'Show less' : 'Show more' }}
+    </button>
+  </div>
 </div>

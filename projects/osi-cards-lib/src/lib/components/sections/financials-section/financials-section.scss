@@ -27,6 +27,10 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); // Smaller min for compact
   gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
+  width: 100%; // Ensure full width
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 
   @include responsive-down("md") {
     gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 10px)
@@ -40,6 +44,10 @@
   @include responsive-down("xs") {
     grid-template-columns: 1fr;
   }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 // Financial Card
@@ -51,6 +59,11 @@
   display: flex;
   flex-direction: column;
   gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 10px)
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   transition:
     box-shadow var(--duration-slow) var(--ease-out),
     background var(--duration-slow) var(--ease-out);
@@ -92,6 +105,9 @@
 .financial-label {
   @include typo.label-uppercase;
   flex: 1;
+  min-width: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .financial-period {
@@ -106,6 +122,9 @@
   font-size: 1.375rem; // Compact: 22px (was 1.5rem)
   margin: 2px 0; // Compact: 2px (was 4px)
   transition: color 200ms var(--ease-out);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 // Trend

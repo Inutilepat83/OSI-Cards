@@ -60,6 +60,11 @@
     },
     "required": ["label"]
   },
+  "completionRules": {
+    "minFields": 1,
+    "requireNonEmptyValues": true,
+    "mandatoryFields": ["label"]
+  },
   "examples": {
     "example": {
       "title": "FY2024 Financial Summary",

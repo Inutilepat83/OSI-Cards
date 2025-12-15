@@ -73,6 +73,9 @@
       }
     }
   },
+  "completionRules": {
+    "requireChartData": true
+  },
   "aliases": ["graph", "visualization"],
   "examples": {
     "example": {

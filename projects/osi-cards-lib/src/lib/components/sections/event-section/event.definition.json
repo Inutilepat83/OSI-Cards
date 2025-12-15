@@ -69,6 +69,10 @@
     },
     "required": []
   },
+  "completionRules": {
+    "minFields": 1,
+    "requireNonEmptyValues": true
+  },
   "aliases": ["calendar", "schedule"],
   "examples": {
     "example": {

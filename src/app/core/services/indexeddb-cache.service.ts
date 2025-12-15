@@ -7,9 +7,10 @@ import { Injectable } from '@angular/core';
 import { from, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-interface CacheEntry {
+export interface CacheEntry {
   data: any;
   timestamp: number;
+  version?: string;
 }
 
 @Injectable({
@@ -81,10 +82,11 @@ export class IndexedDBCacheService {
             request.onsuccess = () => {
               const result = request.result;
               if (result) {
-                // Extract data and timestamp from stored entry
+                // Extract data, timestamp, and version from stored entry
                 resolve({
                   data: result.data,
                   timestamp: result.timestamp,
+                  version: result.version,
                 });
               } else {
                 resolve(null);
@@ -102,8 +104,12 @@ export class IndexedDBCacheService {
 
   /**
    * Set cached value in IndexedDB
+   * @param key Cache key
+   * @param value Data to cache
+   * @param timestamp Timestamp when data was cached
+   * @param version Optional version string (e.g., "1.5.40") for cache invalidation
    */
-  set(key: string, value: any, timestamp: number): Observable<void> {
+  set(key: string, value: any, timestamp: number, version?: string): Observable<void> {
     return from(
       this.initDB()
         .then((db) => {
@@ -114,6 +120,7 @@ export class IndexedDBCacheService {
               key,
               data: value,
               timestamp,
+              ...(version && { version }),
             };
             const request = store.put(entry);
 

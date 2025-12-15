@@ -27,6 +27,17 @@ export type LayoutPriority = 1 | 2 | 3;
 // Re-export for convenience
 export { SectionTypeInput, isValidSectionType, resolveSectionType };
 
+/**
+ * Rules for validating section completeness
+ */
+export interface CompletionRules {
+  minFields?: number;
+  minItems?: number;
+  requireNonEmptyValues?: boolean;
+  mandatoryFields?: string[];
+  requireChartData?: boolean;
+}
+
 export interface AICardConfig {
   id?: string | undefined;
   cardTitle: string;

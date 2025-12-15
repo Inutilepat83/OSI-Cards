@@ -3,14 +3,26 @@
   </lib-section-header>
 
   <div class="network-grid" *ngIf="section.items?.length">
-    <div class="network-card" *ngFor="let node of section.items">
+    <div class="network-card" *ngFor="let node of section.items; let i = index">
       <div class="network-header">
         <h4 class="network-name">{{ node.title }}</h4>
         <span class="network-status" [ngClass]="getStatusClass(node.meta?.status)" *ngIf="node.meta?.status">
           {{ node.meta?.status }}
         </span>
       </div>
-      <p class="network-description" *ngIf="node.description">{{ node.description }}</p>
+      <p class="network-description" *ngIf="node.description" [class.expanded]="isDescriptionExpanded(i)">
+        {{ node.description }}
+      </p>
+      <button
+        *ngIf="shouldShowExpandButton(node)"
+        class="network-expand-button"
+        type="button"
+        (click)="toggleDescriptionExpanded(i)"
+        [attr.aria-expanded]="isDescriptionExpanded(i)"
+        [attr.aria-label]="(isDescriptionExpanded(i) ? 'Show less' : 'Show more') + ' description for ' + node.title"
+      >
+        {{ isDescriptionExpanded(i) ? 'Show less' : 'Show more' }}
+      </button>
       <div class="network-metrics" *ngIf="node.meta?.influence || node.meta?.connections">
         <div class="metric-item" *ngIf="node.meta?.influence">
           <span class="metric-label">Influence</span>

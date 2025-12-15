@@ -61,6 +61,11 @@
     },
     "required": ["title"]
   },
+  "completionRules": {
+    "minItems": 1,
+    "requireNonEmptyValues": true,
+    "mandatoryFields": ["title"]
+  },
   "aliases": ["table", "checklist"],
   "examples": {
     "example": {

@@ -139,4 +139,20 @@ export class ListSectionComponent extends BaseSectionComponent implements OnInit
       this.toggleExpanded(index);
     }
   }
+
+  /**
+   * Check if a description is long enough to need expansion
+   */
+  shouldShowExpandButton(item: any): boolean {
+    const description = item.description || '';
+    // Show expand button if description is longer than ~100 characters
+    return description && description.length > 100;
+  }
+
+  /**
+   * Check if an item is expanded
+   */
+  isItemExpanded(index: number): boolean {
+    return this.expandedIndex === index;
+  }
 }

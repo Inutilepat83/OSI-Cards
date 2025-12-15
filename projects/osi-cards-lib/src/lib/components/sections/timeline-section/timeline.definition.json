@@ -54,6 +54,11 @@
     },
     "required": ["title"]
   },
+  "completionRules": {
+    "minItems": 1,
+    "requireNonEmptyValues": true,
+    "mandatoryFields": ["title"]
+  },
   "aliases": ["history", "milestones"],
   "examples": {
     "example": {

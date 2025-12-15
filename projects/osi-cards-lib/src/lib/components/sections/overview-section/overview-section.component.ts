@@ -88,4 +88,36 @@ export class OverviewSectionComponent extends BaseSectionComponent implements On
   isHighlighted(field: any): boolean {
     return field.highlight === true;
   }
+
+  /**
+   * Track expanded state for each field
+   */
+  expandedFields = new Set<number>();
+
+  /**
+   * Toggle expanded state for a field
+   */
+  toggleExpanded(index: number): void {
+    if (this.expandedFields.has(index)) {
+      this.expandedFields.delete(index);
+    } else {
+      this.expandedFields.add(index);
+    }
+  }
+
+  /**
+   * Check if a field is expanded
+   */
+  isExpanded(index: number): boolean {
+    return this.expandedFields.has(index);
+  }
+
+  /**
+   * Check if a value is long enough to need expansion
+   */
+  shouldShowExpandButton(field: any): boolean {
+    const value = field.value?.toString() || '';
+    // Show expand button if value is longer than ~100 characters
+    return value && value.length > 100;
+  }
 }

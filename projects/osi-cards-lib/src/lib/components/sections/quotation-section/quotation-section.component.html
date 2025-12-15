@@ -3,18 +3,21 @@
   </lib-section-header>
 
   <div class="grid" *ngIf="section.fields?.length">
-    <blockquote
-      class="quote"
-      *ngFor="let q of section.fields; let i = index"
-      [class.expanded]="expandedIndex === i"
-      role="button"
-      tabindex="0"
-      [attr.aria-expanded]="expandedIndex === i"
-      (click)="toggleExpanded(i)"
-      (keydown)="onQuoteKeydown($event, i)"
-    >
+    <blockquote class="quote" *ngFor="let q of section.fields; let i = index" [class.expanded]="isQuoteExpanded(i)">
       <div class="icon">"</div>
-      <p class="text">{{ getQuoteText(q) }}</p>
+      <div class="text-wrapper">
+        <p class="text" [class.text--expanded]="isQuoteExpanded(i)">{{ getQuoteText(q) }}</p>
+        <button
+          *ngIf="shouldShowExpandButton(q)"
+          class="quote-expand-btn"
+          type="button"
+          (click)="toggleExpanded(i); $event.stopPropagation()"
+          [attr.aria-expanded]="isQuoteExpanded(i)"
+          [attr.aria-label]="(isQuoteExpanded(i) ? 'Collapse' : 'Expand') + ' quote'"
+        >
+          {{ isQuoteExpanded(i) ? 'Show less' : 'Show more' }}
+        </button>
+      </div>
       <footer class="footer">
         <cite class="name">{{ getAuthorName(q) }}</cite>
         <span class="role" *ngIf="q.role">{{ q.role }}</span>

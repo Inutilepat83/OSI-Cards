@@ -63,6 +63,10 @@
     },
     "required": []
   },
+  "completionRules": {
+    "minFields": 1,
+    "requireNonEmptyValues": true
+  },
   "aliases": ["quote", "testimonial"],
   "examples": {
     "example": {

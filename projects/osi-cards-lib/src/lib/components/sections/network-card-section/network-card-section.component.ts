@@ -90,4 +90,31 @@ export class NetworkCardSectionComponent extends BaseSectionComponent implements
     if (!status || typeof status !== 'string') return '';
     return `network-status--${status}`;
   }
+
+  /**
+   * Track expanded state for descriptions
+   */
+  descriptionExpandedStates: boolean[] = [];
+
+  /**
+   * Toggle description expansion
+   */
+  toggleDescriptionExpanded(index: number): void {
+    this.descriptionExpandedStates[index] = !this.descriptionExpandedStates[index];
+  }
+
+  /**
+   * Check if description is expanded
+   */
+  isDescriptionExpanded(index: number): boolean {
+    return !!this.descriptionExpandedStates[index];
+  }
+
+  /**
+   * Check if description needs "Show more" button
+   */
+  shouldShowExpandButton(node: any): boolean {
+    const description = node.description;
+    return description && description.length > 120;
+  }
 }

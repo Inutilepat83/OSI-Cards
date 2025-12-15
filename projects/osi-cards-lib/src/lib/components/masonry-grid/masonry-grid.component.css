@@ -12,10 +12,12 @@
   grid-template-columns: repeat(var(--masonry-columns, 3), 1fr);
   gap: var(--masonry-gap, 12px);
   width: 100%;
+  max-width: 100%;
   padding: 0;
   box-sizing: border-box;
   opacity: 0;
   transition: opacity 0.2s ease;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 /* Native masonry when supported (Chrome 109+, Firefox 142+) */
@@ -61,6 +63,11 @@
   min-height: 100px;
   box-sizing: border-box;
   overflow: hidden;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word; /* Break long unbreakable strings */
 
   /* Performance optimizations */
   contain: layout style paint;
@@ -91,12 +98,17 @@ app-section-renderer {
   max-width: 100% !important;
   box-sizing: border-box !important;
   overflow: hidden;
+  overflow-x: hidden !important; /* Prevent horizontal scrolling */
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
 }
 
 /* Ensure all child elements respect column boundaries */
 .masonry-item * {
   max-width: 100%;
   box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Tables and other block elements should fit */
@@ -105,12 +117,17 @@ app-section-renderer {
   max-width: 100%;
   table-layout: auto;
   word-wrap: break-word;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
 }
 
 /* Prevent any element from exceeding column width */
 .masonry-item > * {
   max-width: 100%;
-  overflow-x: auto;
+  overflow-x: hidden; /* Changed from auto to hidden to prevent horizontal scroll */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
 }
 
 /* Ensure images have minimum dimensions during load and fit column */

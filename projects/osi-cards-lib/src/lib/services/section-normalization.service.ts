@@ -199,9 +199,16 @@ export class SectionNormalizationService {
 
     const resolvedType = this.resolveSectionType(rawType, title);
 
+    // Handle missing or empty title - use section type as fallback
+    let normalizedTitle = section.title;
+    if (!normalizedTitle || normalizedTitle.trim().length === 0) {
+      normalizedTitle = this.getTitleFromType(resolvedType);
+    }
+
     const normalized: CardSection = {
       ...section,
       type: resolvedType,
+      title: normalizedTitle,
     };
 
     // Handle analytics sections with metrics array
@@ -248,6 +255,49 @@ export class SectionNormalizationService {
     }
 
     return normalized;
+  }
+
+  /**
+   * Get title from section type (fallback when title is missing)
+   * Converts type like "contact-card" to "Contact Card"
+   */
+  private getTitleFromType(type: string): string {
+    // Map of common section type names
+    const typeNameMap: Record<string, string> = {
+      info: 'Info',
+      analytics: 'Analytics',
+      list: 'List',
+      chart: 'Chart',
+      gallery: 'Gallery',
+      map: 'Map',
+      event: 'Event',
+      'contact-card': 'Contact Card',
+      product: 'Product',
+      'social-media': 'Social Media',
+      quotation: 'Quotation',
+      financials: 'Financials',
+      solutions: 'Solutions',
+      overview: 'Overview',
+      'text-reference': 'Text Reference',
+      'brand-colors': 'Brand Colors',
+      news: 'News',
+      faq: 'FAQ',
+      'network-card': 'Network Card',
+      timeline: 'Timeline',
+      video: 'Video',
+      fallback: 'Section',
+    };
+
+    // Check if we have a mapped name
+    if (typeNameMap[type]) {
+      return typeNameMap[type];
+    }
+
+    // Fallback: capitalize and replace hyphens with spaces
+    return type
+      .split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 
   /**

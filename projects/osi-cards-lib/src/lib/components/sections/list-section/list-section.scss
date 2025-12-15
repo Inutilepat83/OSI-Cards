@@ -14,10 +14,11 @@
 :host {
   display: block;
   width: 100%;
-  min-width: 400px;
+  max-width: 100%;
+  min-width: 0; // Allow shrinking below 400px
 
   @include responsive-down("sm") {
-    min-width: 100%;
+    min-width: 0;
   }
 }
 
@@ -30,20 +31,24 @@
 // Container
 .list-container {
   @include card;
+  width: 100%; // Ensure full width
   padding: var(--osi-spacing-compact-sm, 6px) var(--osi-spacing-compact-md, 12px); // Compact: 6-12px (was 12px)
   display: flex;
   flex-direction: column;
   gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 8px)
+  box-sizing: border-box; // Include padding in width
   // Background inherited from @include card mixin
 }
 
 // List Item
 .list-item {
+  width: 100%; // Ensure full width expansion
   padding: var(--osi-spacing-compact-sm, 6px) var(--osi-spacing-compact-md, 12px); // Compact: 6-12px (was 10-12px)
   border-radius: var(--radius-sm);
   display: flex;
   align-items: flex-start;
   gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
+  box-sizing: border-box; // Include padding in width
   transition:
     background var(--duration-base) var(--ease-out),
     color var(--duration-base) var(--ease-out),
@@ -99,6 +104,8 @@
   flex-direction: column;
   gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 6px)
   min-width: 0;
+  width: 100%; // Ensure full width expansion
+  box-sizing: border-box;
 }
 
 // Header
@@ -123,27 +130,56 @@
   flex-shrink: 0;
 }
 
+// Description wrapper
+.list-description-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--osi-spacing-compact-xs, 2px);
+}
+
 // Description
 .list-description {
   @include body-text("small");
+  @include expandable-text(2); // Show 2 lines by default
   color: var(--muted-foreground);
   margin: 0;
   line-height: 1.5;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+
+  &--expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+  }
+}
+
+.list-expand-btn {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  padding: var(--osi-spacing-compact-xs, 2px) 0;
+  text-decoration: underline;
+  transition: opacity 200ms var(--ease-out);
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
 // Expanded item reveals full description without changing global padding
 .list-item.expanded {
   background: var(--surface-raised);
-
-  .list-description {
-    display: block;
-    -webkit-line-clamp: unset;
-    overflow: visible;
-  }
 }
 
 // Responsive
@@ -151,10 +187,14 @@
   .list-container {
     padding: var(--osi-spacing-compact-sm, 6px);
     gap: var(--osi-spacing-compact-xs, 2px);
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   .list-item {
     padding: var(--osi-spacing-compact-xs, 2px) var(--osi-spacing-compact-sm, 6px);
+    max-width: 100%;
+    overflow-x: hidden;
 
     &:not(:last-child) {
       padding-bottom: var(--osi-spacing-compact-xs, 2px);
@@ -165,6 +205,17 @@
   .list-header {
     flex-direction: column;
     gap: var(--osi-spacing-compact-xs, 2px);
+  }
+
+  .list-content {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .list-container {
+    grid-template-columns: 1fr;
   }
 }
 

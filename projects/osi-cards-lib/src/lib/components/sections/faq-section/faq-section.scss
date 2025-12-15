@@ -14,10 +14,12 @@
 :host {
   display: block;
   width: 100%;
-  min-width: 400px;
+  max-width: 100%;
+  min-width: 0; // Allow shrinking below 400px for proper resizing
+  box-sizing: border-box;
 
   @include responsive-down("sm") {
-    min-width: 100%;
+    min-width: 0; // Remove min-width constraint on small screens
   }
 }
 
@@ -25,22 +27,32 @@
   display: flex;
   flex-direction: column;
   gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .list {
   @include card;
+  width: 100% !important; // Ensure full width with higher specificity
+  max-width: 100% !important; // Prevent overflow
+  min-width: 0; // Allow shrinking
   padding: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
   display: flex;
   flex-direction: column;
   gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 16px)
+  box-sizing: border-box; // Include padding in width
   // Background inherited from @include card mixin
 }
 
 .item {
+  width: 100% !important; // Ensure full width expansion with higher specificity
+  max-width: 100% !important; // Prevent overflow
+  min-width: 0; // Allow shrinking
   padding: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 8px)
   border-radius: var(--radius-sm);
   display: flex;
   flex-direction: column;
+  box-sizing: border-box; // Include padding in width
   transition: all 250ms var(--ease-out);
 
   &:not(:last-child) {
@@ -57,7 +69,9 @@
 }
 
 .question {
-  width: 100%;
+  width: 100% !important; // Ensure full width with higher specificity
+  max-width: 100% !important; // Prevent overflow
+  min-width: 0; // Allow shrinking
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -68,10 +82,14 @@
   cursor: pointer;
   text-align: left;
   color: inherit;
+  box-sizing: border-box;
 
   .text {
     @include heading(6);
     transition: color 150ms var(--ease-out);
+    @include text-overflow-ellipsis(2); // Limit to 2 lines
+    overflow-wrap: break-word;
+    word-wrap: break-word;
   }
 
   .icon {
@@ -100,6 +118,14 @@
     @include body-text("small");
     color: var(--muted-foreground);
     line-height: 1.5; // Compact: 1.5 (was --leading-relaxed 1.625)
+    @include text-overflow-ellipsis(3); // Limit to 3 lines by default
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    transition: all 0.2s ease-out;
+  }
+
+  .text.expanded {
+    @include text-overflow-ellipsis(unset); // Show full text when expanded
   }
 
   .cat {
@@ -112,6 +138,17 @@
     color: var(--accent);
     background: rgba(var(--accent-rgb), 0.1);
     border-radius: 4px;
+  }
+}
+
+.answer-expand-button {
+  @include button-text-minimal;
+  margin-top: var(--osi-spacing-compact-xs, 2px);
+  align-self: flex-start;
+  font-size: 0.7rem;
+  color: var(--accent);
+  &:hover {
+    text-decoration: underline;
   }
 }
 

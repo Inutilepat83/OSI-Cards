@@ -99,4 +99,36 @@ export class TextReferenceSectionComponent extends BaseSectionComponent implemen
   getReferenceContent(field: any): string {
     return field.text || field.description || '';
   }
+
+  /**
+   * Track expanded state for each reference item
+   */
+  expandedItems = new Set<number>();
+
+  /**
+   * Toggle expanded state for a reference item
+   */
+  toggleExpanded(index: number): void {
+    if (this.expandedItems.has(index)) {
+      this.expandedItems.delete(index);
+    } else {
+      this.expandedItems.add(index);
+    }
+  }
+
+  /**
+   * Check if a reference item is expanded
+   */
+  isExpanded(index: number): boolean {
+    return this.expandedItems.has(index);
+  }
+
+  /**
+   * Check if a reference content is long enough to need expansion
+   */
+  shouldShowExpandButton(field: any): boolean {
+    const content = this.getReferenceContent(field);
+    // Show expand button if content is longer than ~150 characters
+    return !!(content && content.length > 150);
+  }
 }

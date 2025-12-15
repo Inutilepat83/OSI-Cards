@@ -16,6 +16,11 @@
     "supportsCollapse": true,
     "supportsEmoji": true
   },
+  "completionRules": {
+    "minFields": 0,
+    "minItems": 0,
+    "requireNonEmptyValues": false
+  },
   "isInternal": true,
   "examples": {
     "example": {

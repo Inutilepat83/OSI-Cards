@@ -9,7 +9,17 @@
         <span class="icon" [class.rotated]="isExpanded(i)">›</span>
       </button>
       <div class="answer" *ngIf="isExpanded(i)" [@fadeInOut]>
-        <p class="text">{{ getAnswer(item) }}</p>
+        <p class="text" [class.expanded]="isAnswerExpanded(i)">{{ getAnswer(item) }}</p>
+        <button
+          *ngIf="shouldShowExpandButton(item)"
+          class="answer-expand-button"
+          type="button"
+          (click)="toggleAnswerExpanded(i); $event.stopPropagation()"
+          [attr.aria-expanded]="isAnswerExpanded(i)"
+          [attr.aria-label]="(isAnswerExpanded(i) ? 'Show less' : 'Show more') + ' answer'"
+        >
+          {{ isAnswerExpanded(i) ? 'Show less' : 'Show more' }}
+        </button>
         <span class="cat" *ngIf="item.meta?.category">{{ item.meta?.category }}</span>
       </div>
     </div>

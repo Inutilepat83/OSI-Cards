@@ -85,10 +85,25 @@
   margin: 0;
   color: var(--muted-foreground);
   opacity: 0.9;
-  // Single line with ellipsis
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  @include text-overflow-ellipsis(2); // Limit to 2 lines by default
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  transition: all 0.2s ease-out;
+}
+
+.info-tagline.expanded {
+  @include text-overflow-ellipsis(unset); // Show full text when expanded
+}
+
+.info-tagline-expand-button {
+  @include button-text-minimal;
+  margin-top: var(--osi-spacing-compact-xs, 2px);
+  align-self: flex-start;
+  font-size: 0.7rem;
+  color: var(--accent);
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .info-header-actions {
@@ -286,9 +301,9 @@
   letter-spacing: -0.03em;
   flex: 1;
   min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  @include text-overflow-ellipsis(2); // Allow 2 lines for long values
 
   @include responsive-down("sm") {
     font-size: 1.125rem;
@@ -308,10 +323,9 @@
   opacity: 0.85;
   margin: 0;
   margin-top: var(--osi-spacing-compact-xs, 2px);
-  // Single line with ellipsis
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  @include text-overflow-ellipsis(2); // Allow 2 lines
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 // =====================================================================
@@ -372,10 +386,9 @@
   color: var(--foreground);
   flex: 1;
   min-width: 0;
-  // Single line with ellipsis
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  @include text-overflow-ellipsis(2); // Allow 2 lines
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .info-fact-link {
@@ -387,9 +400,9 @@
   text-decoration: none;
   flex: 1;
   min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  @include text-overflow-ellipsis(2); // Allow 2 lines
+  overflow-wrap: break-word;
+  word-wrap: break-word;
   transition: color 0.2s ease-out;
 
   &:hover {
@@ -443,10 +456,9 @@
   margin: 0;
   margin-top: var(--osi-spacing-compact-xs, 2px);
   font-style: italic;
-  // Single line with ellipsis
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  @include text-overflow-ellipsis(2); // Allow 2 lines
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 // =====================================================================

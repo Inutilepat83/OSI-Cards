@@ -64,6 +64,10 @@
     },
     "required": []
   },
+  "completionRules": {
+    "minFields": 1,
+    "requireNonEmptyValues": true
+  },
   "aliases": ["reference", "text-ref", "documentation"],
   "examples": {
     "example": {

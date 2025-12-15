@@ -271,6 +271,26 @@ export class InfoSectionComponent extends BaseSectionComponent implements OnInit
   }
 
   /**
+   * Track tagline expansion state
+   */
+  isTaglineExpanded: boolean = false;
+
+  /**
+   * Toggle tagline expansion
+   */
+  toggleTaglineExpanded(): void {
+    this.isTaglineExpanded = !this.isTaglineExpanded;
+  }
+
+  /**
+   * Check if tagline needs "Show more" button
+   */
+  shouldShowTaglineExpandButton(): boolean {
+    const tagline = this.getTagline();
+    return !!(tagline && tagline.length > 100);
+  }
+
+  /**
    * Get website URL from fields
    */
   getWebsiteUrl(): string | null {

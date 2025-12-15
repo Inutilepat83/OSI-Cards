@@ -28,6 +28,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); // Compact: 240px (was 280px)
   gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 14px)
+  width: 100%; // Ensure full width
+  box-sizing: border-box;
 
   @include responsive-down("md") {
     grid-template-columns: repeat(2, 1fr);
@@ -108,6 +110,25 @@
   line-height: 1.5; // Compact: 1.5 (was 1.6)
   margin: 0;
   opacity: 0.9;
+  @include text-overflow-ellipsis(2); // Limit to 2 lines by default
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  transition: all 0.2s ease-out;
+}
+
+.solution-description.expanded {
+  @include text-overflow-ellipsis(unset); // Show full text when expanded
+}
+
+.solution-description-expand-button {
+  @include button-text-minimal;
+  margin-top: var(--osi-spacing-compact-xs, 2px);
+  align-self: flex-start;
+  font-size: 0.7rem;
+  color: var(--accent);
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 // BENEFITS LIST - Compact spacing

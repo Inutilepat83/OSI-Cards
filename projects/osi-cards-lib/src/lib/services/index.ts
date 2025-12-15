@@ -39,6 +39,9 @@ export * from './accessibility.service';
 // Section Normalization Service (now includes caching from cached-section-normalization)
 export * from './section-normalization.service';
 
+// Section Completeness Service (validates section completeness for filtering)
+export * from './section-completeness.service';
+
 // Feature Flags Service (now includes migration flags from migration-flags.service)
 export * from './feature-flags.service';
 export { MIGRATION_FLAGS_TOKEN } from './feature-flags.service';
