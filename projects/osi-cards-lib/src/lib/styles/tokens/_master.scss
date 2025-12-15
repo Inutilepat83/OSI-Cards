@@ -466,15 +466,14 @@ $breakpoints: (
 @mixin osi-card-typography($variant: "demo") {
   // Both demo and integration now use the same compact values
   // Section Titles
-  --section-title-font-size: 0.92rem;
+  --section-title-font-size: calc(0.92rem - 6px);
   --section-title-font-weight: 700;
   --section-title-letter-spacing: -0.02em;
   --section-title-line-height: 1.3;
   --section-title-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 
   // Card Header Title (main card title - larger)
-  --card-header-title-font-size: 1.25rem; /* 20px - main card header (reduced by 2px from 22px) */
-  --card-header-title-font-size-mobile: 1rem; /* 16px - mobile (reduced by 2px from 18px) */
+  --card-header-title-font-size: 1rem; /* 16px - fixed size for all screen sizes */
   --card-header-title-font-weight: 700;
   --card-header-title-letter-spacing: -0.02em;
   --card-header-title-line-height: 1.3;
@@ -526,23 +525,23 @@ $breakpoints: (
 
 /// Generate card layout tokens
 @mixin osi-card-layout() {
-  --card-main-padding: 16px;
+  --card-main-padding: 8px;
   --card-padding-vertical: 12px;
-  --card-padding-horizontal: 16px;
-  --card-padding: 16px;
+  --card-padding-horizontal: 12px;
+  --card-padding: 12px;
   --card-padding-large: 20px;
   --section-padding: 12px;
-  --section-container-padding: 12px;
+  --section-container-padding: 16px;
   --card-min-height: auto;
   --card-gap: 6px;
   --card-gap-large: 10px;
   --card-nested-gap: 3px;
-  --section-header-gap: 3px;
+  --section-header-gap: 2px;
   --section-header-padding-bottom: 0px;
   --section-title-margin-bottom: 0;
   --card-border-radius: 12px;
   --card-border-radius-large: 16px;
-  --section-card-gap: 12px;
+  --section-card-gap: 8px;
   --section-card-border-radius: 10px;
 
   // Element gaps within cards
@@ -649,11 +648,11 @@ $breakpoints: (
   --osi-card-shadow-fullscreen: none;
 
   // Card Spacing - Padding
-  --osi-card-padding: var(--card-main-padding, 16px);
-  --osi-card-padding-top: var(--card-main-padding, 16px);
-  --osi-card-padding-bottom: var(--card-main-padding, 16px);
-  --osi-card-padding-left: var(--card-main-padding, 16px);
-  --osi-card-padding-right: var(--card-main-padding, 16px);
+  --osi-card-padding: var(--card-main-padding, 8px);
+  --osi-card-padding-top: var(--card-main-padding, 8px);
+  --osi-card-padding-bottom: var(--card-main-padding, 8px);
+  --osi-card-padding-left: var(--card-main-padding, 8px);
+  --osi-card-padding-right: var(--card-main-padding, 8px);
   --osi-card-padding-mobile: 4px; // Fixed padding - no responsive behavior
 
   // Card Spacing - Margins
@@ -663,9 +662,9 @@ $breakpoints: (
   --osi-card-margin-right: 0;
 
   // Card Spacing - Gaps
-  --osi-card-gap: var(--section-card-gap, 12px);
-  --osi-card-body-gap: var(--space-3, 12px);
-  --osi-card-grid-gap: var(--section-card-gap, 12px);
+  --osi-card-gap: var(--section-card-gap, 8px);
+  --osi-card-body-gap: var(--space-4, 8px);
+  --osi-card-grid-gap: var(--section-card-gap, 8px);
 
   // Card Border Radius
   --osi-card-border-radius: var(--card-border-radius);
@@ -801,7 +800,7 @@ $breakpoints: (
   --osi-section-border-radius: var(--section-card-border-radius);
 
   // Section Typography
-  --osi-section-title-font-size: var(--section-title-font-size, 1.1rem);
+  --osi-section-title-font-size: calc(1.1rem - 4px);
   --osi-section-title-font-weight: var(--section-title-font-weight, 700);
   --osi-section-title-letter-spacing: var(--section-title-letter-spacing, -0.02em);
   --osi-section-title-line-height: var(--section-title-line-height, 1.3);

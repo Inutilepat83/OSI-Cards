@@ -235,6 +235,24 @@ export const cardSectionSchema = z
           .optional(),
       })
       .optional(),
+    tableData: z
+      .object({
+        columns: z.array(
+          z.object({
+            key: z.string(),
+            label: z.string(),
+            type: z.enum(['string', 'number', 'date', 'boolean']).optional(),
+            sortable: z.boolean().optional(),
+            width: z.string().optional(),
+          })
+        ),
+        rows: z.array(
+          z.record(
+            z.union([z.string(), z.number(), z.boolean(), z.date(), z.null(), z.undefined()])
+          )
+        ),
+      })
+      .optional(),
     meta: z.record(z.unknown()).optional(),
   })
   .passthrough();

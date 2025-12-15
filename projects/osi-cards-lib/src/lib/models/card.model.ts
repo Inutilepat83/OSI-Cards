@@ -38,6 +38,32 @@ export interface CompletionRules {
   requireChartData?: boolean;
 }
 
+/**
+ * Table column definition
+ */
+export interface TableColumn {
+  key: string;
+  label: string;
+  type?: 'string' | 'number' | 'date' | 'boolean';
+  sortable?: boolean;
+  width?: string;
+}
+
+/**
+ * Table row data (key-value pairs matching column keys)
+ */
+export interface TableRow {
+  [key: string]: string | number | boolean | Date | null | undefined;
+}
+
+/**
+ * Table data structure for table sections
+ */
+export interface TableData {
+  columns: TableColumn[];
+  rows: TableRow[];
+}
+
 export interface AICardConfig {
   id?: string | undefined;
   cardTitle: string;
@@ -142,6 +168,7 @@ export interface CardSection {
       borderWidth?: number;
     }[];
   };
+  tableData?: TableData;
   meta?: Record<string, unknown>;
   [key: string]: unknown;
 }

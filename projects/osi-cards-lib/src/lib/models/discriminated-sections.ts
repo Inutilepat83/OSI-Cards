@@ -25,7 +25,7 @@
  * @module models/discriminated-sections
  */
 
-import type { CardField, CardItem } from './card.model';
+import type { CardField, CardItem, TableData } from './card.model';
 import type { SectionType } from './generated-section-types';
 
 // ============================================================================
@@ -251,6 +251,18 @@ export interface ListSection extends BaseSectionProps {
 }
 
 /**
+ * Table Section - displays structured tabular data
+ */
+export interface TableSection extends BaseSectionProps {
+  type: 'table';
+  tableData: TableData;
+  fields?: never;
+  items?: never;
+  chartData?: never;
+  chartType?: never;
+}
+
+/**
  * Network Card Section - displays network connections
  */
 export interface NetworkCardSection extends BaseSectionProps {
@@ -446,6 +458,7 @@ export type DiscriminatedSection =
   | FinancialsSection
   | EventSection
   | ListSection
+  | TableSection
   | ChartSection
   | ProductSection
   | SolutionsSection
@@ -667,6 +680,7 @@ export type SectionTypeMap = {
   financials: FinancialsSection;
   event: EventSection;
   list: ListSection;
+  table: TableSection;
   chart: ChartSection;
   product: ProductSection;
   solutions: SolutionsSection;

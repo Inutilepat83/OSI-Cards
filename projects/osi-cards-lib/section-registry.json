@@ -38,10 +38,7 @@
             "description": "Metric label"
           },
           "value": {
-            "type": [
-              "string",
-              "number"
-            ],
+            "type": ["string", "number"],
             "description": "Metric value"
           },
           "percentage": {
@@ -50,22 +47,12 @@
           },
           "performance": {
             "type": "string",
-            "enum": [
-              "excellent",
-              "good",
-              "average",
-              "poor"
-            ],
+            "enum": ["excellent", "good", "average", "poor"],
             "description": "Performance rating"
           },
           "trend": {
             "type": "string",
-            "enum": [
-              "up",
-              "down",
-              "stable",
-              "neutral"
-            ],
+            "enum": ["up", "down", "stable", "neutral"],
             "description": "Trend indicator"
           },
           "change": {
@@ -77,15 +64,9 @@
             "description": "Icon identifier"
           }
         },
-        "required": [
-          "label"
-        ]
+        "required": ["label"]
       },
-      "aliases": [
-        "metrics",
-        "stats",
-        "kpi"
-      ],
+      "aliases": ["metrics", "stats", "kpi"],
       "testFixtures": {
         "complete": {
           "title": "Q4 2024 Performance Dashboard",
@@ -289,16 +270,9 @@
             "description": "Color category (primary, secondary, etc.)"
           }
         },
-        "required": [
-          "label",
-          "value"
-        ]
+        "required": ["label", "value"]
       },
-      "aliases": [
-        "brands",
-        "colors",
-        "palette"
-      ],
+      "aliases": ["brands", "colors", "palette"],
       "testFixtures": {
         "complete": {
           "title": "Nexus Brand Identity System",
@@ -474,10 +448,7 @@
         "supportsEmoji": false,
         "requiresExternalLib": "chart.js"
       },
-      "aliases": [
-        "graph",
-        "visualization"
-      ],
+      "aliases": ["graph", "visualization"],
       "testFixtures": {
         "complete": {
           "title": "Revenue & Growth Analysis",
@@ -494,39 +465,21 @@
             "datasets": [
               {
                 "label": "Revenue ($M)",
-                "data": [
-                  28.5,
-                  32.1,
-                  35.8,
-                  42.4,
-                  48.2
-                ],
+                "data": [28.5, 32.1, 35.8, 42.4, 48.2],
                 "backgroundColor": "#FF7900",
                 "borderColor": "#FF7900",
                 "borderWidth": 1
               },
               {
                 "label": "Operating Costs ($M)",
-                "data": [
-                  22.1,
-                  24.3,
-                  26.8,
-                  31.2,
-                  34.5
-                ],
+                "data": [22.1, 24.3, 26.8, 31.2, 34.5],
                 "backgroundColor": "#4CAF50",
                 "borderColor": "#4CAF50",
                 "borderWidth": 1
               },
               {
                 "label": "Net Profit ($M)",
-                "data": [
-                  6.4,
-                  7.8,
-                  9,
-                  11.2,
-                  13.7
-                ],
+                "data": [6.4, 7.8, 9, 11.2, 13.7],
                 "backgroundColor": "#2196F3",
                 "borderColor": "#2196F3",
                 "borderWidth": 1
@@ -539,18 +492,10 @@
           "type": "chart",
           "chartType": "bar",
           "chartData": {
-            "labels": [
-              "A",
-              "B",
-              "C"
-            ],
+            "labels": ["A", "B", "C"],
             "datasets": [
               {
-                "data": [
-                  10,
-                  20,
-                  30
-                ]
+                "data": [10, 20, 30]
               }
             ]
           }
@@ -577,36 +522,13 @@
             "datasets": [
               {
                 "label": "Negative Values",
-                "data": [
-                  -50,
-                  -25,
-                  -10,
-                  0,
-                  15,
-                  30,
-                  45,
-                  35,
-                  20,
-                  5,
-                  -15,
-                  -30
-                ]
+                "data": [-50, -25, -10, 0, 15, 30, 45, 35, 20, 5, -15, -30]
               },
               {
                 "label": "Large Scale",
                 "data": [
-                  1000000,
-                  2500000,
-                  1800000,
-                  3200000,
-                  2900000,
-                  4100000,
-                  3800000,
-                  4500000,
-                  5200000,
-                  4800000,
-                  5800000,
-                  6200000
+                  1000000, 2500000, 1800000, 3200000, 2900000, 4100000, 3800000,
+                  4500000, 5200000, 4800000, 5800000, 6200000
                 ]
               },
               {
@@ -891,10 +813,7 @@
         },
         "required": []
       },
-      "aliases": [
-        "calendar",
-        "schedule"
-      ],
+      "aliases": ["calendar", "schedule"],
       "testFixtures": {
         "complete": {
           "title": "Q1 2025 Key Events",
@@ -1034,11 +953,7 @@
       "description": "Default section renderer for unknown or unsupported section types.",
       "componentPath": "./lib/components/sections/fallback-section/fallback-section.component",
       "selector": "lib-fallback-section",
-      "useCases": [
-        "Unknown types",
-        "Error handling",
-        "Graceful degradation"
-      ],
+      "useCases": ["Unknown types", "Error handling", "Graceful degradation"],
       "bestPractices": [
         "Display section data in readable format",
         "Show section type for debugging",
@@ -1160,14 +1075,9 @@
             }
           }
         },
-        "required": [
-          "title"
-        ]
+        "required": ["title"]
       },
-      "aliases": [
-        "questions",
-        "help"
-      ],
+      "aliases": ["questions", "help"],
       "testFixtures": {
         "complete": {
           "title": "Frequently Asked Questions",
@@ -1310,20 +1220,12 @@
             "description": "Financial metric name"
           },
           "value": {
-            "type": [
-              "string",
-              "number"
-            ],
+            "type": ["string", "number"],
             "description": "Metric value"
           },
           "format": {
             "type": "string",
-            "enum": [
-              "currency",
-              "percentage",
-              "number",
-              "ratio"
-            ],
+            "enum": ["currency", "percentage", "number", "ratio"],
             "description": "Value format"
           },
           "change": {
@@ -1332,11 +1234,7 @@
           },
           "trend": {
             "type": "string",
-            "enum": [
-              "up",
-              "down",
-              "stable"
-            ],
+            "enum": ["up", "down", "stable"],
             "description": "Trend indicator"
           },
           "period": {
@@ -1348,9 +1246,7 @@
             "description": "Currency code (USD, EUR, etc.)"
           }
         },
-        "required": [
-          "label"
-        ]
+        "required": ["label"]
       },
       "testFixtures": {
         "complete": {
@@ -1582,14 +1478,9 @@
             }
           }
         },
-        "required": [
-          "title"
-        ]
+        "required": ["title"]
       },
-      "aliases": [
-        "photos",
-        "images"
-      ],
+      "aliases": ["photos", "images"],
       "testFixtures": {
         "complete": {
           "title": "Life at Nexus",
@@ -1691,12 +1582,7 @@
             "description": "Field label/key"
           },
           "value": {
-            "type": [
-              "string",
-              "number",
-              "boolean",
-              "null"
-            ],
+            "type": ["string", "number", "boolean", "null"],
             "description": "Field value"
           },
           "icon": {
@@ -1709,12 +1595,7 @@
           },
           "trend": {
             "type": "string",
-            "enum": [
-              "up",
-              "down",
-              "stable",
-              "neutral"
-            ],
+            "enum": ["up", "down", "stable", "neutral"],
             "description": "Trend indicator"
           },
           "change": {
@@ -1723,18 +1604,11 @@
           },
           "format": {
             "type": "string",
-            "enum": [
-              "currency",
-              "percentage",
-              "number",
-              "text"
-            ],
+            "enum": ["currency", "percentage", "number", "text"],
             "description": "Value format"
           }
         },
-        "required": [
-          "label"
-        ]
+        "required": ["label"]
       },
       "testFixtures": {
         "complete": {
@@ -1918,10 +1792,7 @@
             "description": "Item status"
           },
           "value": {
-            "type": [
-              "string",
-              "number"
-            ],
+            "type": ["string", "number"],
             "description": "Item value"
           },
           "date": {
@@ -1931,23 +1802,13 @@
           },
           "priority": {
             "type": "string",
-            "enum": [
-              "critical",
-              "high",
-              "medium",
-              "low"
-            ],
+            "enum": ["critical", "high", "medium", "low"],
             "description": "Priority level"
           }
         },
-        "required": [
-          "title"
-        ]
+        "required": ["title"]
       },
-      "aliases": [
-        "table",
-        "checklist"
-      ],
+      "aliases": ["checklist"],
       "testFixtures": {
         "complete": {
           "title": "Product Roadmap Q1-Q2 2025",
@@ -2007,6 +1868,191 @@
               "description": "This is an extremely long description that contains a lot of information and should properly wrap across multiple lines while maintaining readability and not breaking the overall layout of the card section component"
             }
           ]
+        }
+      }
+    },
+    "table": {
+      "name": "Table Section",
+      "description": "Displays structured tabular data with sorting, filtering, and pagination capabilities.",
+      "componentPath": "./lib/components/sections/table-section/table-section.component",
+      "selector": "lib-table-section",
+      "useCases": [
+        "Data tables",
+        "Sales reports",
+        "Inventory lists",
+        "Financial data",
+        "User directories",
+        "Product catalogs",
+        "Transaction logs"
+      ],
+      "bestPractices": [
+        "Provide tableData with columns and rows",
+        "Define column types for proper sorting",
+        "Mark sortable columns appropriately",
+        "Keep column labels concise and clear",
+        "Use appropriate column widths for readability",
+        "Limit initial row count for performance"
+      ],
+      "rendering": {
+        "usesFields": false,
+        "usesItems": false,
+        "usesTableData": true,
+        "defaultColumns": 2,
+        "supportsCollapse": false
+      },
+      "tableDataSchema": {
+        "type": "object",
+        "properties": {
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "description": "Unique identifier for the column (matches row data keys)"
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Display label for the column header"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": ["string", "number", "date", "boolean"],
+                  "description": "Data type for proper sorting and formatting"
+                },
+                "sortable": {
+                  "type": "boolean",
+                  "description": "Whether the column can be sorted",
+                  "default": true
+                },
+                "width": {
+                  "type": "string",
+                  "description": "Optional CSS width for the column (e.g., '150px', '20%')"
+                }
+              },
+              "required": ["key", "label"]
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Row data object with keys matching column keys",
+              "additionalProperties": true
+            }
+          }
+        },
+        "required": ["columns", "rows"]
+      },
+      "completionRules": {
+        "requireTableData": true,
+        "minColumns": 1,
+        "minRows": 1
+      },
+      "aliases": ["data-table", "grid"],
+      "testFixtures": {
+        "complete": {
+          "title": "Sales Performance Q1 2025",
+          "type": "table",
+          "description": "Quarterly sales data by product and region",
+          "tableData": {
+            "columns": [
+              {
+                "key": "product",
+                "label": "Product",
+                "type": "string",
+                "sortable": true
+              },
+              {
+                "key": "region",
+                "label": "Region",
+                "type": "string",
+                "sortable": true
+              },
+              {
+                "key": "quantity",
+                "label": "Quantity",
+                "type": "number",
+                "sortable": true
+              },
+              {
+                "key": "revenue",
+                "label": "Revenue ($)",
+                "type": "number",
+                "sortable": true
+              },
+              {
+                "key": "date",
+                "label": "Sale Date",
+                "type": "date",
+                "sortable": true
+              }
+            ],
+            "rows": [
+              {
+                "product": "Widget A",
+                "region": "North",
+                "quantity": 150,
+                "revenue": 4498.5,
+                "date": "2025-01-15"
+              },
+              {
+                "product": "Widget B",
+                "region": "South",
+                "quantity": 200,
+                "revenue": 7998.0,
+                "date": "2025-01-20"
+              },
+              {
+                "product": "Widget A",
+                "region": "East",
+                "quantity": 100,
+                "revenue": 2999.0,
+                "date": "2025-01-18"
+              },
+              {
+                "product": "Widget C",
+                "region": "West",
+                "quantity": 75,
+                "revenue": 3749.25,
+                "date": "2025-01-22"
+              },
+              {
+                "product": "Widget B",
+                "region": "North",
+                "quantity": 120,
+                "revenue": 4798.8,
+                "date": "2025-01-25"
+              }
+            ]
+          },
+          "preferredColumns": 3,
+          "priority": 2
+        },
+        "minimal": {
+          "title": "Simple Table",
+          "type": "table",
+          "tableData": {
+            "columns": [
+              {
+                "key": "name",
+                "label": "Name",
+                "type": "string"
+              },
+              {
+                "key": "value",
+                "label": "Value",
+                "type": "number"
+              }
+            ],
+            "rows": [
+              {
+                "name": "Item 1",
+                "value": 100
+              }
+            ]
+          }
         }
       }
     },
@@ -2072,13 +2118,9 @@
             }
           }
         },
-        "required": [
-          "name"
-        ]
+        "required": ["name"]
       },
-      "aliases": [
-        "locations"
-      ],
+      "aliases": ["locations"],
       "testFixtures": {
         "complete": {
           "title": "Global Operations Network",
@@ -2271,11 +2313,7 @@
               },
               "status": {
                 "type": "string",
-                "enum": [
-                  "active",
-                  "inactive",
-                  "pending"
-                ],
+                "enum": ["active", "inactive", "pending"],
                 "description": "Node status"
               },
               "type": {
@@ -2285,9 +2323,7 @@
             }
           }
         },
-        "required": [
-          "title"
-        ]
+        "required": ["title"]
       },
       "testFixtures": {
         "complete": {
@@ -2483,23 +2519,13 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "published",
-              "draft",
-              "archived",
-              "breaking"
-            ],
+            "enum": ["published", "draft", "archived", "breaking"],
             "description": "Article status"
           }
         },
-        "required": [
-          "title"
-        ]
+        "required": ["title"]
       },
-      "aliases": [
-        "press",
-        "articles"
-      ],
+      "aliases": ["press", "articles"],
       "testFixtures": {
         "complete": {
           "title": "Latest News & Press Coverage",
@@ -2621,14 +2647,9 @@
             "description": "Whether to highlight this field"
           }
         },
-        "required": [
-          "label"
-        ]
+        "required": ["label"]
       },
-      "aliases": [
-        "summary",
-        "executive"
-      ],
+      "aliases": ["summary", "executive"],
       "testFixtures": {
         "complete": {
           "title": "Executive Summary",
@@ -2743,18 +2764,11 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "available",
-              "out-of-stock",
-              "coming-soon",
-              "deprecated"
-            ],
+            "enum": ["available", "out-of-stock", "coming-soon", "deprecated"],
             "description": "Product availability"
           }
         },
-        "required": [
-          "label"
-        ]
+        "required": ["label"]
       },
       "testFixtures": {
         "complete": {
@@ -2928,10 +2942,7 @@
         },
         "required": []
       },
-      "aliases": [
-        "quote",
-        "testimonial"
-      ],
+      "aliases": ["quote", "testimonial"],
       "testFixtures": {
         "complete": {
           "title": "Customer Success Stories",
@@ -3074,10 +3085,7 @@
         },
         "required": []
       },
-      "aliases": [
-        "social",
-        "socials"
-      ],
+      "aliases": ["social", "socials"],
       "testFixtures": {
         "complete": {
           "title": "Social Media Presence",
@@ -3220,11 +3228,7 @@
           },
           "complexity": {
             "type": "string",
-            "enum": [
-              "low",
-              "medium",
-              "high"
-            ],
+            "enum": ["low", "medium", "high"],
             "description": "Implementation complexity"
           },
           "outcomes": {
@@ -3235,14 +3239,9 @@
             "description": "Expected outcomes"
           }
         },
-        "required": [
-          "title"
-        ]
+        "required": ["title"]
       },
-      "aliases": [
-        "services",
-        "offerings"
-      ],
+      "aliases": ["services", "offerings"],
       "testFixtures": {
         "complete": {
           "title": "Professional Services Portfolio",
@@ -3470,11 +3469,7 @@
         },
         "required": []
       },
-      "aliases": [
-        "reference",
-        "text-ref",
-        "documentation"
-      ],
+      "aliases": ["reference", "text-ref", "documentation"],
       "testFixtures": {
         "complete": {
           "title": "Resources & Documentation",
@@ -3626,14 +3621,9 @@
             }
           }
         },
-        "required": [
-          "title"
-        ]
+        "required": ["title"]
       },
-      "aliases": [
-        "history",
-        "milestones"
-      ],
+      "aliases": ["history", "milestones"],
       "testFixtures": {
         "complete": {
           "title": "Company Journey",
@@ -3770,14 +3760,9 @@
             }
           }
         },
-        "required": [
-          "title"
-        ]
+        "required": ["title"]
       },
-      "aliases": [
-        "videos",
-        "media"
-      ],
+      "aliases": ["videos", "media"],
       "testFixtures": {
         "complete": {
           "title": "Video Resources",
@@ -3995,39 +3980,21 @@
           "datasets": [
             {
               "label": "Revenue ($M)",
-              "data": [
-                28.5,
-                32.1,
-                35.8,
-                42.4,
-                48.2
-              ],
+              "data": [28.5, 32.1, 35.8, 42.4, 48.2],
               "backgroundColor": "#FF7900",
               "borderColor": "#FF7900",
               "borderWidth": 1
             },
             {
               "label": "Operating Costs ($M)",
-              "data": [
-                22.1,
-                24.3,
-                26.8,
-                31.2,
-                34.5
-              ],
+              "data": [22.1, 24.3, 26.8, 31.2, 34.5],
               "backgroundColor": "#4CAF50",
               "borderColor": "#4CAF50",
               "borderWidth": 1
             },
             {
               "label": "Net Profit ($M)",
-              "data": [
-                6.4,
-                7.8,
-                9,
-                11.2,
-                13.7
-              ],
+              "data": [6.4, 7.8, 9, 11.2, 13.7],
               "backgroundColor": "#2196F3",
               "borderColor": "#2196F3",
               "borderWidth": 1

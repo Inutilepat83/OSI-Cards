@@ -3,7 +3,7 @@
   <lib-section-header [title]="section.title" [description]="section.description"> </lib-section-header>
 
   <!-- Chart Canvas -->
-  <div class="chart-container" *ngIf="section.chartData">
+  <div class="chart-container" *ngIf="section.chartData && !chartError">
     <div class="chart-wrapper">
       <div class="chart-canvas-wrapper">
         <canvas #chartCanvas></canvas>
@@ -11,5 +11,15 @@
     </div>
   </div>
 
-  <lib-empty-state *ngIf="!section.chartData" message="No chart data" icon="📊" variant="minimal"> </lib-empty-state>
+  <!-- Error State -->
+  <lib-empty-state *ngIf="chartError" [message]="chartError" icon="⚠️" variant="minimal"> </lib-empty-state>
+
+  <!-- No Data State -->
+  <lib-empty-state
+    *ngIf="!section.chartData && !chartError"
+    message="No chart data available"
+    icon="📊"
+    variant="minimal"
+  >
+  </lib-empty-state>
 </div>

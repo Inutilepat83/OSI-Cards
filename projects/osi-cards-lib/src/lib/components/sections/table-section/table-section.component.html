@@ -1,0 +1,138 @@
+<div class="ai-section ai-section--table section-content">
+  <!-- Section Header -->
+  <lib-section-header *ngIf="section.title" [title]="section.title" [description]="section.description">
+  </lib-section-header>
+
+  <!-- Table Container -->
+  <div class="table-container" *ngIf="tableData && tableData.columns?.length && tableData.rows?.length">
+    <!-- Search/Filter Input -->
+    <div class="table-controls" *ngIf="allRows.length > 0">
+      <div class="table-search">
+        <input
+          type="text"
+          class="table-search-input"
+          placeholder="Search table..."
+          [value]="searchQuery()"
+          (input)="onSearchChange($any($event.target).value)"
+          aria-label="Search table"
+        />
+      </div>
+      <div class="table-info" *ngIf="totalFilteredItems() > 0">
+        <span class="table-info-text"> Showing {{ getDisplayRange() }} of {{ totalFilteredItems() }} </span>
+      </div>
+    </div>
+
+    <!-- Table Wrapper (for horizontal scroll on mobile) -->
+    <div class="table-wrapper">
+      <table class="table" role="table">
+        <!-- Table Header -->
+        <thead class="table-header">
+          <tr class="table-header-row">
+            <th
+              *ngFor="let column of columns"
+              class="table-header-cell"
+              [class.table-header-cell--sortable]="column.sortable"
+              [class.table-header-cell--sorted]="isColumnSorted(column)"
+              [style.width]="column.width"
+              (click)="onColumnHeaderClick(column)"
+              [attr.aria-sort]="
+                isColumnSorted(column) ? (sortDirection() === 'asc' ? 'ascending' : 'descending') : 'none'
+              "
+              role="columnheader"
+              [attr.tabindex]="column.sortable ? 0 : null"
+              (keydown.enter)="column.sortable && onColumnHeaderClick(column)"
+              (keydown.space)="column.sortable && onColumnHeaderClick(column); $event.preventDefault()"
+            >
+              <span class="table-header-label">{{ column.label }}</span>
+              <span
+                *ngIf="column.sortable"
+                class="table-sort-indicator"
+                [class.table-sort-indicator--active]="isColumnSorted(column)"
+              >
+                {{ getSortIndicator(column) || '⇅' }}
+              </span>
+            </th>
+          </tr>
+        </thead>
+
+        <!-- Table Body -->
+        <tbody class="table-body">
+          <tr
+            *ngFor="let row of paginatedRows(); let i = index"
+            class="table-row"
+            [attr.aria-rowindex]="(currentPage() - 1) * itemsPerPage() + i + 1"
+          >
+            <td
+              *ngFor="let column of columns"
+              class="table-cell"
+              [class.table-cell--number]="column.type === 'number'"
+              [class.table-cell--date]="column.type === 'date'"
+              [class.table-cell--boolean]="column.type === 'boolean'"
+            >
+              {{ formatCellValue(row[column.key], column) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="table-pagination" *ngIf="totalPages() > 1">
+      <button
+        type="button"
+        class="table-pagination-btn"
+        [class.table-pagination-btn--disabled]="currentPage() === 1"
+        [disabled]="currentPage() === 1"
+        (click)="previousPage()"
+        aria-label="Previous page"
+      >
+        ‹
+      </button>
+
+      <div class="table-pagination-pages">
+        <button
+          *ngFor="let page of getPageNumbers()"
+          type="button"
+          class="table-pagination-btn table-pagination-btn--page"
+          [class.table-pagination-btn--active]="page === currentPage()"
+          [class.table-pagination-btn--ellipsis]="page === -1"
+          [disabled]="page === -1 || page === currentPage()"
+          (click)="page !== -1 && goToPage(page)"
+          [attr.aria-label]="page === -1 ? null : 'Go to page ' + page"
+          [attr.aria-current]="page === currentPage() ? 'page' : null"
+        >
+          {{ page === -1 ? '…' : page }}
+        </button>
+      </div>
+
+      <button
+        type="button"
+        class="table-pagination-btn"
+        [class.table-pagination-btn--disabled]="currentPage() === totalPages()"
+        [disabled]="currentPage() === totalPages()"
+        (click)="nextPage()"
+        aria-label="Next page"
+      >
+        ›
+      </button>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <lib-empty-state
+    *ngIf="!tableData || !tableData.columns?.length || !tableData.rows?.length"
+    message="No table data available"
+    icon="📊"
+    variant="minimal"
+  >
+  </lib-empty-state>
+
+  <!-- No Results State (when filtering) -->
+  <lib-empty-state
+    *ngIf="tableData && tableData.columns?.length && tableData.rows?.length && totalFilteredItems() === 0"
+    message="No results found"
+    icon="🔍"
+    variant="minimal"
+  >
+  </lib-empty-state>
+</div>

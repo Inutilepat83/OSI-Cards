@@ -72,6 +72,7 @@ export interface SectionManifestEntry {
     usesFields: boolean;
     usesItems: boolean;
     usesChartData?: boolean;
+    usesTableData?: boolean;
     defaultColumns: number;
     supportsCollapse: boolean;
     requiresExternalLib?: string;

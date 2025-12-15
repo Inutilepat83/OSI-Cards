@@ -22,6 +22,7 @@ export type SectionType =
   | 'quotation'
   | 'social-media'
   | 'solutions'
+  | 'table'
   | 'text-reference';
 
 /**
@@ -212,6 +213,21 @@ export class SectionFactory {
           category: 'content',
           icon: 'list',
           defaultColumnSpan: 1,
+        },
+      },
+      {
+        type: 'table',
+        loader: () =>
+          import('../components/sections/table-section/table-section.component').then(
+            (m) => m.TableSectionComponent
+          ),
+        metadata: {
+          type: 'table',
+          displayName: 'Table',
+          description: 'Display structured tabular data with sorting, filtering, and pagination',
+          category: 'data-visualization',
+          icon: 'table',
+          defaultColumnSpan: 2,
         },
       },
       {

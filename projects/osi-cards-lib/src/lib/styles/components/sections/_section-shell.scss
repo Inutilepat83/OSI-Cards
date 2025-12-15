@@ -46,7 +46,7 @@
   .masonry-item & {
     display: flex !important;
     flex-direction: column !important;
-    gap: var(--osi-section-gap, 12px) !important;
+    gap: var(--osi-section-gap, 8px) !important;
     height: auto !important;
   }
 }
@@ -357,6 +357,7 @@
   box-sizing: border-box !important;
   display: flex !important;
   flex-direction: column !important;
+  padding: 4px !important;
 }
 
 /* Ensure FAQ section specifically resizes properly */

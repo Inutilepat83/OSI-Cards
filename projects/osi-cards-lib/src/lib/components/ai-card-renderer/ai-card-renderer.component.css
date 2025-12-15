@@ -1277,7 +1277,7 @@ lucide-icon svg {
    ============================================ */
 
 .osi-card-actions {
-  margin-top: var(--section-card-gap, 12px) !important;
+  margin-top: var(--section-card-gap, 8px) !important;
   padding-bottom: 16px !important;
   font-family:
     Helvetica,

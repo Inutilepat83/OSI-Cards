@@ -26,3 +26,4 @@ if (fs.existsSync(REGISTRY_SOURCE)) {
   process.exit(1);
 }
 
+

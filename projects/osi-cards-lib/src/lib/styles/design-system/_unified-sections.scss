@@ -16,24 +16,16 @@
   font-weight: var(--osi-font-semibold); // 600
   line-height: var(--osi-leading-snug); // 1.375
   color: var(--osi-foreground);
-
-  @include mobile {
-    font-size: var(--osi-text-sm); // Keep same on mobile
-  }
 }
 
 // Item labels (small uppercase text)
 @mixin unified-item-label {
-  font-size: 0.7rem; // 11.2px - Compact
+  font-size: 0.7rem; // 11.2px - Compact, fixed size
   font-weight: var(--osi-font-medium); // 500
   line-height: var(--osi-leading-tight); // 1.25
   color: var(--osi-muted-foreground);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-
-  @include mobile {
-    font-size: 0.65rem; // 10.4px on mobile
-  }
 }
 
 // Item values (prominent text/numbers)
@@ -42,10 +34,6 @@
   font-weight: var(--osi-font-semibold); // 600
   line-height: var(--osi-leading-normal); // 1.5
   color: var(--osi-foreground);
-
-  @include mobile {
-    font-size: var(--osi-text-sm); // Keep same on mobile
-  }
 }
 
 // Item descriptions (secondary text)
@@ -54,25 +42,16 @@
   font-weight: var(--osi-font-normal); // 400
   line-height: var(--osi-leading-relaxed); // 1.625
   color: var(--osi-muted-foreground);
-
-  @include mobile {
-    font-size: var(--osi-text-xs); // Keep same on mobile
-    line-height: var(--osi-leading-normal); // Tighter on mobile
-  }
 }
 
 // Number displays (metrics, analytics)
 @mixin unified-number-display {
-  font-size: var(--osi-text-xl); // 24px - Compact (was 30px)
+  font-size: var(--osi-text-xl); // 24px - Fixed size for all screen sizes
   font-weight: var(--osi-font-bold); // 700
   line-height: 1;
   letter-spacing: var(--osi-tracking-tight);
   font-variant-numeric: tabular-nums;
   color: var(--osi-foreground);
-
-  @include mobile {
-    font-size: var(--osi-text-lg); // 20px on mobile
-  }
 }
 
 // ═══════════════════════════════════════════════════════════════════

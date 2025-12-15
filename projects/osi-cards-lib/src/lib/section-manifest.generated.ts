@@ -17,6 +17,7 @@ export interface SectionManifestEntry {
     usesFields: boolean;
     usesItems: boolean;
     usesChartData?: boolean;
+    usesTableData?: boolean;
     defaultColumns: number;
     supportsCollapse: boolean;
     requiresExternalLib?: string;
@@ -376,8 +377,43 @@ export const SECTION_MANIFEST: SectionManifestEntry[] = [
       "supportsEmoji": true
     },
     "aliases": [
-      "table",
       "checklist"
+    ],
+    "isInternal": false
+  },
+  {
+    "type": "table",
+    "name": "Table Section",
+    "description": "Displays structured tabular data with sorting, filtering, and pagination capabilities.",
+    "selector": "lib-table-section",
+    "componentPath": "./lib/components/sections/table-section/table-section.component",
+    "useCases": [
+      "Data tables",
+      "Sales reports",
+      "Inventory lists",
+      "Financial data",
+      "User directories",
+      "Product catalogs",
+      "Transaction logs"
+    ],
+    "bestPractices": [
+      "Provide tableData with columns and rows",
+      "Define column types for proper sorting",
+      "Mark sortable columns appropriately",
+      "Keep column labels concise and clear",
+      "Use appropriate column widths for readability",
+      "Limit initial row count for performance"
+    ],
+    "rendering": {
+      "usesFields": false,
+      "usesItems": false,
+      "usesTableData": true,
+      "defaultColumns": 2,
+      "supportsCollapse": false
+    },
+    "aliases": [
+      "data-table",
+      "grid"
     ],
     "isInternal": false
   },
@@ -783,8 +819,8 @@ export function getSectionsRequiringExternalLibs(): Map<string, string[]> {
  * Manifest metadata
  */
 export const MANIFEST_META = {
-  generatedAt: '2025-12-15T18:48:19.532Z',
+  generatedAt: '2025-12-15T21:34:29.849Z',
   registryVersion: '1.5.41',
-  totalSections: 22,
-  publicSections: 22
+  totalSections: 23,
+  publicSections: 23
 };

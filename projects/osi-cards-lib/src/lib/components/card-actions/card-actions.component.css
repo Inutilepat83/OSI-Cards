@@ -1,7 +1,7 @@
 /* =======================================================================
    Card Actions Component Styles
-   
-   ENFORCED DESIGN: These styles use !important to override any external 
+
+   ENFORCED DESIGN: These styles use !important to override any external
    CSS and maintain consistent appearance across all host applications.
    Buttons are rendered directly without wrapper containers.
    ======================================================================= */
@@ -14,10 +14,13 @@
   flex-wrap: wrap !important;
   align-items: center !important;
   gap: 0.75rem !important;
-  margin-top: var(--section-card-gap, 12px) !important;
+  margin-top: var(--section-card-gap, 8px) !important;
   margin-left: 4px !important;
   margin-right: 4px !important;
-  padding-bottom: 16px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
   font-family:
     Helvetica,
     "Helvetica Neue",

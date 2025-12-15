@@ -27,6 +27,7 @@ import { ProductSectionComponent } from '../sections/product-section/product-sec
 import { QuotationSectionComponent } from '../sections/quotation-section/quotation-section.component';
 import { SocialMediaSectionComponent } from '../sections/social-media-section/social-media-section.component';
 import { SolutionsSectionComponent } from '../sections/solutions-section/solutions-section.component';
+import { TableSectionComponent } from '../sections/table-section/table-section.component';
 import { TextReferenceSectionComponent } from '../sections/text-reference-section/text-reference-section.component';
 import { TimelineSectionComponent } from '../sections/timeline-section/timeline-section.component';
 import { VideoSectionComponent } from '../sections/video-section/video-section.component';
@@ -57,6 +58,7 @@ export const SECTION_COMPONENT_MAP: Record<SectionType, Type<BaseSectionComponen
   'quotation': QuotationSectionComponent,
   'social-media': SocialMediaSectionComponent,
   'solutions': SolutionsSectionComponent,
+  'table': TableSectionComponent,
   'text-reference': TextReferenceSectionComponent,
   'timeline': TimelineSectionComponent,
   'video': VideoSectionComponent

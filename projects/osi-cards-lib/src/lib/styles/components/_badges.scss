@@ -3,7 +3,7 @@
  * ============================================================================
  * Standardized badge styling across all sections and card types.
  * Replaces multiple inconsistent badge patterns with unified design.
- * 
+ *
  * Design Spec:
  * - Height: ~20-22px (auto with padding)
  * - Padding: 4px 8px (vertical horizontal)
@@ -275,7 +275,6 @@
 
 @media (max-width: 768px) {
   .badge {
-    font-size: 0.5625rem; /* 9px on mobile */
     padding: 3px 6px;
 
     lucide-icon,

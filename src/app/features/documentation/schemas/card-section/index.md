@@ -58,6 +58,7 @@ interface CardSection {
   items?: CardItem[];
   chartType?: 'bar' | 'line' | 'pie' | 'doughnut';
   chartData?: ChartData;
+  tableData?: TableData;
 
   // State
   collapsed?: boolean;

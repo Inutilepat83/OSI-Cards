@@ -2,7 +2,7 @@
 
 **Single Source of Truth for All Sections**
 
-This directory contains all 22 section types used in OSI Cards. Each section is a self-contained module with everything needed for development, styling, and documentation.
+This directory contains all 23 section types used in OSI Cards. Each section is a self-contained module with everything needed for development, styling, and documentation.
 
 ## ✨ NEW: Smart Auto-Discovery System
 
@@ -31,7 +31,7 @@ section-name/
 
 ---
 
-## 📊 Available Sections (22 Total)
+## 📊 Available Sections (23 Total)
 
 | Section | Type | Aliases | Description |
 |---------|------|---------|-------------|
@@ -45,7 +45,8 @@ section-name/
 | financials-section | `financials` | - | Financial data display |
 | gallery-section | `gallery` | - | Image galleries |
 | info-section | `info` | - | Key-value information |
-| list-section | `list` | table, checklist | Lists and tables |
+| list-section | `list` | checklist | Lists and structured items |
+| table-section | `table` | data-table, grid | Tabular data with sorting, filtering, pagination |
 | map-section | `map` | location | Location maps (Leaflet) |
 | network-card-section | `network-card` | partners | Network relationships |
 | news-section | `news` | - | News and updates |

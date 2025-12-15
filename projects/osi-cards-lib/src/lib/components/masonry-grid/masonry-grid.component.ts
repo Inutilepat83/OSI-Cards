@@ -70,7 +70,7 @@ export interface LayoutLogEntry {
 })
 export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() sections: CardSection[] = [];
-  @Input() gap = 12;
+  @Input() gap = 8;
   @Input() minColumnWidth = 260;
   @Input() maxColumns = 4;
   @Input() containerWidth?: number;
@@ -98,6 +98,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private resizeObserver?: ResizeObserver;
   private resizeThrottleTimeout?: number;
   private lastWidth = 0;
+  private lastContainerWidth = 0;
   private layoutVersion = 0;
   private itemResizeObservers = new Map<HTMLElement, ResizeObserver>();
   private absolutePositionUpdateRafId: number | null = null;
@@ -107,16 +108,82 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private readonly HEIGHT_THRESHOLD = 5; // Ignore height changes below this (px)
   private initialLayoutPollingTimeout?: ReturnType<typeof setTimeout>;
   private itemElements = new Map<string, HTMLElement>(); // Cache element references by section key
+  private cachedPadding: { left: number; right: number; total: number } | null = null;
+  private isFirstCalculation = true;
+  private isFirstPositioning = true;
 
   ngAfterViewInit(): void {
     this.detectGridMode();
     this.setupResizeObserver();
 
-    // Initial layout attempt
-    this.updateLayout();
+    // Force initial layout calculation with proper timing
+    // Steps:
+    // 1. Render items in natural flow first (not absolutely positioned)
+    // 2. Wait for DOM to render and items to have heights
+    // 3. Measure all item heights
+    // 4. Only then switch to absolute positioning
+    this.ngZone.runOutsideAngular(() => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              // Force layout calculation even if width is already known
+              const containerWidth = this.getContainerWidth();
+              if (containerWidth > 0 && this.sections?.length > 0) {
+                // Clear cache to force recalculation
+                this.cachedPadding = null;
+                // Validate prerequisites before layout
+                const prerequisites = this.validateLayoutPrerequisites();
+                if (prerequisites.valid) {
+                  this.ngZone.run(() => {
+                    // Trigger layout calculation
+                    this.updateLayout();
 
-    // Ensure layout with retry if needed
-    this.ensureInitialLayout();
+                    // For absolute polyfill mode, ensure items are measured before positioning
+                    if (this.gridMode === 'absolute-polyfill') {
+                      // Wait additional time for items to render and have heights
+                      setTimeout(() => {
+                        const container = this.containerRef?.nativeElement;
+                        if (container) {
+                          const items = Array.from(
+                            container.querySelectorAll<HTMLElement>('.masonry-item')
+                          );
+                          // Check if all items have valid heights
+                          const allItemsHaveHeights = items.every((item) => {
+                            const offsetHeight = item.offsetHeight || 0;
+                            const rectHeight = item.getBoundingClientRect().height || 0;
+                            return Math.max(offsetHeight, rectHeight) > 0;
+                          });
+
+                          if (allItemsHaveHeights) {
+                            // Items are ready, trigger positioning
+                            this.updateAbsolutePositions();
+                          } else {
+                            // Items not ready yet, retry after longer delay
+                            setTimeout(() => {
+                              this.ngZone.run(() => this.updateAbsolutePositions());
+                            }, 200);
+                          }
+                        }
+                      }, 150);
+                    }
+                  });
+                } else {
+                  // If prerequisites invalid, retry after delay
+                  setTimeout(() => {
+                    this.cachedPadding = null;
+                    this.ngZone.run(() => this.updateLayout());
+                  }, 100);
+                }
+              } else {
+                // If width not ready, use ensureInitialLayout as fallback
+                this.ngZone.run(() => this.ensureInitialLayout());
+              }
+            }, 50);
+          });
+        });
+      });
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -127,6 +194,15 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       changes['minColumnWidth'] ||
       changes['maxColumns']
     ) {
+      // Clear cached padding when container width or gap changes to force recalculation
+      if (changes['containerWidth'] || changes['gap']) {
+        this.cachedPadding = null;
+        // Reset first calculation flags if gap changes
+        if (changes['gap']) {
+          this.isFirstCalculation = true;
+          this.isFirstPositioning = true;
+        }
+      }
       this.updateLayout();
     }
   }
@@ -265,14 +341,47 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       return;
     }
 
+    // Validate layout prerequisites (padding and gap) before first layout
+    const prerequisites = this.validateLayoutPrerequisites();
+
+    // On first calculation, if padding or gap is invalid, force recalculation with longer delay
+    if (this.isFirstCalculation && !prerequisites.valid) {
+      this.isFirstCalculation = false; // Prevent infinite loop
+      this.ngZone.runOutsideAngular(() => {
+        // Use multiple RAF cycles + longer timeout for first calculation
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              setTimeout(() => {
+                // Clear cache to force recalculation
+                this.cachedPadding = null;
+                // Retry layout calculation
+                this.ngZone.run(() => this.updateLayout());
+              }, 200);
+            });
+          });
+        });
+      });
+      return;
+    }
+
+    // Mark that first calculation is complete
+    if (this.isFirstCalculation) {
+      this.isFirstCalculation = false;
+    }
+
     const columns = this.calculateColumns(containerWidth);
     const sectionHash = this.computeSectionHash();
 
-    // Early exit: nothing changed
+    // Check if container width changed (even if columns didn't)
+    const widthChanged = Math.abs(containerWidth - this.lastContainerWidth) > 1;
+
+    // Early exit: nothing changed (including width)
     if (
       columns === this.lastColumnCount &&
       sectionHash === this.lastSectionHash &&
-      this.sectionsWithSpan.length > 0
+      this.sectionsWithSpan.length > 0 &&
+      !widthChanged
     ) {
       // Only update positions if in polyfill mode (items may have resized)
       if (this.gridMode === 'absolute-polyfill') {
@@ -281,10 +390,18 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       return; // Already done, skip expensive calculations
     }
 
+    // If sections changed significantly, reset first calculation flags to ensure padding/gap are recalculated
+    if (sectionHash !== this.lastSectionHash) {
+      this.isFirstCalculation = true;
+      this.isFirstPositioning = true;
+      this.cachedPadding = null; // Clear padding cache when sections change
+    }
+
     this.currentColumns = columns;
 
     this.lastColumnCount = columns;
     this.lastSectionHash = sectionHash;
+    this.lastContainerWidth = containerWidth;
 
     // Clear element cache when sections change
     this.clearItemElementCache();
@@ -322,17 +439,49 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     // Schedule absolute positioning updates for polyfill mode
     if (this.gridMode === 'absolute-polyfill') {
       // Wait for DOM to update and content to render before measuring
-      // Single RAF + delay to ensure images/content are loaded
+      // Use longer delay for first calculation, shorter for subsequent
+      const delay = this.isFirstPositioning ? 200 : 150;
+      const rafCycles = this.isFirstPositioning ? 3 : 1;
+
       this.ngZone.runOutsideAngular(() => {
-        requestAnimationFrame(() => {
-          // Additional delay for images/async content
-          setTimeout(() => {
-            // Cache elements after DOM is ready
-            this.cacheItemElements();
-            this.updateAbsolutePositions();
-            this.observeItemResizes();
-          }, 150);
-        });
+        let rafCount = 0;
+        const runRaf = () => {
+          requestAnimationFrame(() => {
+            rafCount++;
+            if (rafCount < rafCycles) {
+              runRaf();
+            } else {
+              // Additional delay for images/async content
+              setTimeout(() => {
+                // Validate prerequisites before positioning
+                const prerequisites = this.validateLayoutPrerequisites();
+                if (!prerequisites.valid && this.isFirstPositioning) {
+                  // Retry after longer delay if invalid on first positioning
+                  setTimeout(() => {
+                    this.cachedPadding = null;
+                    this.ngZone.run(() => {
+                      this.cacheItemElements();
+                      this.updateAbsolutePositions();
+                      this.observeItemResizes();
+                    });
+                  }, 100);
+                  return;
+                }
+
+                // Cache elements after DOM is ready
+                this.cacheItemElements();
+                this.updateAbsolutePositions();
+                this.observeItemResizes();
+
+                // Mark that first positioning is complete
+                if (this.isFirstPositioning) {
+                  this.isFirstPositioning = false;
+                }
+              }, delay);
+            }
+          });
+        };
+        runRaf();
       });
     }
 
@@ -570,12 +719,16 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     const container = this.containerRef?.nativeElement;
     if (!container) return;
 
-    const padding = this.getContainerPadding();
+    // Use validated prerequisites
+    const prerequisites = this.validateLayoutPrerequisites();
+    const padding = prerequisites.padding;
+    const gap = prerequisites.gap;
+
     const contentWidth = containerWidth - padding.total;
-    const colWidth = (contentWidth - this.gap * (columns - 1)) / columns;
+    const colWidth = (contentWidth - gap * (columns - 1)) / columns;
 
     container.style.setProperty('--masonry-columns', columns.toString());
-    container.style.setProperty('--masonry-gap', `${this.gap}px`);
+    container.style.setProperty('--masonry-gap', `${gap}px`);
     container.style.setProperty('--masonry-column-width', `${colWidth}px`);
 
     // Apply grid mode class
@@ -583,15 +736,125 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     container.classList.add(`masonry-container--${this.gridMode}`);
   }
 
+  /**
+   * Validate layout prerequisites (padding and gap) before calculations
+   * Returns validation status and values
+   */
+  private validateLayoutPrerequisites(): {
+    valid: boolean;
+    padding: { left: number; right: number; total: number };
+    gap: number;
+  } {
+    const padding = this.getContainerPadding();
+    const gap = this.gap > 0 ? this.gap : 12; // Default gap if invalid
+
+    const valid = padding.total > 0 && gap > 0;
+
+    return {
+      valid,
+      padding,
+      gap,
+    };
+  }
+
+  /**
+   * Get container padding with fallback to CSS variable if computed style returns 0
+   * Reads padding from parent .ai-card-surface element (not from masonry container)
+   * Caches padding value to avoid repeated calculations
+   */
   private getContainerPadding(): { left: number; right: number; total: number } {
     const el = this.containerRef?.nativeElement;
     if (!el) {
       return { left: 0, right: 0, total: 0 };
     }
-    const computedStyle = window.getComputedStyle(el);
-    const left = parseFloat(computedStyle.paddingLeft) || 0;
-    const right = parseFloat(computedStyle.paddingRight) || 0;
-    return { left, right, total: left + right };
+
+    // Return cached value if available and valid
+    if (this.cachedPadding && this.cachedPadding.total > 0) {
+      return this.cachedPadding;
+    }
+
+    // Try to read padding from parent .ai-card-surface element first
+    // The masonry container itself has no padding, but its parent does
+    const parentElement = el.closest('.ai-card-surface') as HTMLElement;
+    const targetElement = parentElement || el;
+
+    const computedStyle = window.getComputedStyle(targetElement);
+    let left = parseFloat(computedStyle.paddingLeft) || 0;
+    let right = parseFloat(computedStyle.paddingRight) || 0;
+
+    // If computed style returns 0, try reading CSS variable as fallback
+    if (left === 0 || right === 0) {
+      const cssVarValue = this.getPaddingFromCSSVariable(targetElement);
+      if (cssVarValue > 0) {
+        // Use CSS variable value for both left and right if computed style is 0
+        if (left === 0) {
+          left = cssVarValue;
+        }
+        if (right === 0) {
+          right = cssVarValue;
+        }
+      }
+    }
+
+    const padding = { left, right, total: left + right };
+
+    // Cache padding value if it's valid
+    if (padding.total > 0) {
+      this.cachedPadding = padding;
+    }
+
+    return padding;
+  }
+
+  /**
+   * Read padding value from CSS variable --osi-card-padding
+   * Handles various formats: "16px", "var(--other-var)", etc.
+   */
+  private getPaddingFromCSSVariable(element: HTMLElement): number {
+    try {
+      // Try to get CSS variable value from computed styles
+      const computedStyle = window.getComputedStyle(element);
+      const cssVarValue = computedStyle.getPropertyValue('--osi-card-padding')?.trim();
+
+      if (cssVarValue) {
+        // Parse pixel values (e.g., "16px")
+        const pixelMatch = cssVarValue.match(/^(\d+(?:\.\d+)?)px$/);
+        if (pixelMatch && pixelMatch[1]) {
+          return parseFloat(pixelMatch[1]) || 0;
+        }
+
+        // If it's a var() reference, try to resolve it
+        if (cssVarValue.startsWith('var(')) {
+          // Extract variable name and try to get its value
+          const varMatch = cssVarValue.match(/var\(--([^)]+)\)/);
+          if (varMatch) {
+            const resolvedValue = computedStyle.getPropertyValue(`--${varMatch[1]}`)?.trim();
+            if (resolvedValue) {
+              const resolvedPixelMatch = resolvedValue.match(/^(\d+(?:\.\d+)?)px$/);
+              if (resolvedPixelMatch && resolvedPixelMatch[1]) {
+                return parseFloat(resolvedPixelMatch[1]) || 0;
+              }
+            }
+          }
+        }
+      }
+
+      // Fallback: try reading from document root or parent element
+      const rootStyle = window.getComputedStyle(document.documentElement);
+      const rootVarValue = rootStyle.getPropertyValue('--osi-card-padding')?.trim();
+      if (rootVarValue) {
+        const rootPixelMatch = rootVarValue.match(/^(\d+(?:\.\d+)?)px$/);
+        if (rootPixelMatch && rootPixelMatch[1]) {
+          return parseFloat(rootPixelMatch[1]) || 0;
+        }
+      }
+
+      // Default fallback: 8px (standard card padding)
+      return 8;
+    } catch (error) {
+      // If anything fails, return default
+      return 12;
+    }
   }
 
   private setupResizeObserver(): void {
@@ -621,6 +884,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
             }
             this.resizeThrottleTimeout = window.setTimeout(() => {
               this.lastWidth = newWidth;
+              // Update containerWidth input to trigger change detection
+              this.containerWidth = newWidth;
               this.ngZone.run(() => this.updateLayout());
               this.resizeThrottleTimeout = undefined;
             }, RESIZE_THROTTLE_MS);
@@ -629,6 +894,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
           lastResizeTime = now;
           this.lastWidth = newWidth;
+          // Update containerWidth input to trigger change detection
+          this.containerWidth = newWidth;
           this.ngZone.run(() => this.updateLayout());
         }
       });
@@ -646,7 +913,19 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
                 const width = this.getContainerWidth();
                 // Ensure width is valid and reasonable before updating layout
                 if (width > 0 && width >= 200 && this.sections?.length > 0) {
-                  this.ngZone.run(() => this.updateLayout());
+                  // Force prerequisites validation before first layout
+                  this.cachedPadding = null; // Clear cache to force recalculation
+                  const prerequisites = this.validateLayoutPrerequisites();
+
+                  // If prerequisites are invalid, wait a bit more for styles to be ready
+                  if (!prerequisites.valid) {
+                    setTimeout(() => {
+                      this.cachedPadding = null;
+                      this.ngZone.run(() => this.updateLayout());
+                    }, 200);
+                  } else {
+                    this.ngZone.run(() => this.updateLayout());
+                  }
                 }
               }
             }, 200);
@@ -798,6 +1077,42 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     const container = this.containerRef?.nativeElement;
     if (!container) return;
 
+    // Validate layout prerequisites (padding and gap) before positioning
+    const prerequisites = this.validateLayoutPrerequisites();
+    if (!prerequisites.valid) {
+      // Clear cache and retry after delay
+      this.cachedPadding = null;
+      const delay = this.isFirstPositioning ? 200 : 50;
+      const rafCycles = this.isFirstPositioning ? 3 : 1;
+
+      this.ngZone.runOutsideAngular(() => {
+        let rafCount = 0;
+        const runRaf = () => {
+          requestAnimationFrame(() => {
+            rafCount++;
+            if (rafCount < rafCycles) {
+              runRaf();
+            } else {
+              setTimeout(() => {
+                this.ngZone.run(() => {
+                  // Force recalculation
+                  this.validateLayoutPrerequisites();
+                  // Retry position update
+                  this.updateAbsolutePositions();
+                });
+              }, delay);
+            }
+          });
+        };
+        runRaf();
+      });
+      return;
+    }
+
+    // Use validated values
+    const padding = prerequisites.padding;
+    const gap = prerequisites.gap;
+
     // Use cached elements if available, otherwise query DOM and cache
     let items: HTMLElement[] = [];
     if (this.itemElements.size === this.sectionsWithSpan.length) {
@@ -824,13 +1139,50 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       return;
     }
 
-    // Calculate transforms using MasonryTransformService
+    // CRITICAL: Validate all items have valid heights before positioning
+    // If items have height 0, they will all stack at top: 0
+    const allItemsHaveHeights = items.every((item) => {
+      const offsetHeight = item.offsetHeight || 0;
+      const rectHeight = item.getBoundingClientRect().height || 0;
+      const height = Math.max(offsetHeight, rectHeight);
+      return height > 0;
+    });
+
+    if (!allItemsHaveHeights) {
+      // Items aren't ready yet - wait and retry
+      // Use longer delay for first positioning, shorter for subsequent
+      const delay = this.isFirstPositioning ? 200 : 100;
+      const rafCycles = this.isFirstPositioning ? 3 : 1;
+
+      this.ngZone.runOutsideAngular(() => {
+        let rafCount = 0;
+        const runRaf = () => {
+          requestAnimationFrame(() => {
+            rafCount++;
+            if (rafCount < rafCycles) {
+              runRaf();
+            } else {
+              setTimeout(() => {
+                this.ngZone.run(() => {
+                  // Retry position update after items have rendered
+                  this.updateAbsolutePositions();
+                });
+              }, delay);
+            }
+          });
+        };
+        runRaf();
+      });
+      return;
+    }
+
+    // Calculate transforms using MasonryTransformService with validated gap
     const transforms = this.masonryTransformService.calculateTransforms(
       this.sectionsWithSpan.map((s) => s.section),
       items,
       {
         columns: this.currentColumns,
-        gap: this.gap,
+        gap: gap, // Use validated gap
         containerWidth: this.getContainerWidth(),
       },
       (section, columns) => this.decideSpanForSection(section, columns, true)
@@ -848,15 +1200,19 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
         return;
       }
 
-      // Calculate left position based on column index and span
-      const padding = this.getContainerPadding();
+      // Calculate left position based on column index and span using validated values
       const leftExpr = generateLeftExpression(
         this.currentColumns,
         position.colIndex,
-        this.gap,
+        gap, // Use validated gap
         padding.left
       );
-      const widthExpr = generateWidthExpression(this.currentColumns, position.colSpan, this.gap, 0);
+      const widthExpr = generateWidthExpression(
+        this.currentColumns,
+        position.colSpan,
+        gap,
+        padding.total
+      );
 
       // Apply absolute positioning
       // Position items directly at finalTop (service calculates optimal position)
@@ -886,8 +1242,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       }
     });
 
-    // Add gap at bottom for spacing
-    const finalContainerHeight = maxContainerHeight + this.gap;
+    // Add gap at bottom for spacing using validated gap
+    const finalContainerHeight = maxContainerHeight + gap;
     container.style.height = `${finalContainerHeight}px`;
 
     // Trigger change detection so template bindings update
@@ -951,12 +1307,30 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   /**
    * Ensure initial layout is calculated with retry mechanism if width is invalid
    * Simplified: Single RAF + one timeout retry
+   * Also validates padding before layout calculation
    */
   private ensureInitialLayout(): void {
     const containerWidth = this.getContainerWidth();
 
-    // If we already have a valid width and sections, we're good
+    // If we already have a valid width and sections, validate prerequisites
     if (containerWidth > 0 && containerWidth >= 200 && this.sections?.length > 0) {
+      // Check prerequisites - if invalid, force recalculation
+      const prerequisites = this.validateLayoutPrerequisites();
+      if (!prerequisites.valid) {
+        // Clear cache and retry after delay with multiple RAF cycles
+        this.cachedPadding = null;
+        this.ngZone.runOutsideAngular(() => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                setTimeout(() => {
+                  this.ngZone.run(() => this.updateLayout());
+                }, 200);
+              });
+            });
+          });
+        });
+      }
       return; // Already valid
     }
 
@@ -965,12 +1339,16 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       requestAnimationFrame(() => {
         const width = this.getContainerWidth();
         if (width > 0 && width >= 200 && this.sections?.length > 0) {
+          // Force padding calculation before layout
+          this.cachedPadding = null;
           this.ngZone.run(() => this.updateLayout());
         } else {
           // Single retry after 100ms
           this.initialLayoutPollingTimeout = setTimeout(() => {
             const retryWidth = this.getContainerWidth();
             if (retryWidth > 0 && retryWidth >= 200) {
+              // Force padding calculation before layout
+              this.cachedPadding = null;
               this.ngZone.run(() => this.updateLayout());
             }
           }, 100);

@@ -20,54 +20,58 @@
 .chart-container {
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
+  gap: 0; // No gap to maximize space
+  width: 100%;
 }
 
 // CHART WRAPPER - Proper spacing and height
 .chart-wrapper {
   @include card;
-  padding: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
+  padding: 0; // No padding - maximize chart space
   // Background inherited from @include card mixin
-  min-height: 300px; // Compact: 300px (was 320px) - Charts need space
+  max-height: 200px; // Maximum height constraint
+  height: 200px; // Fixed height for consistent sizing
   display: flex;
   flex-direction: column;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
+  gap: 0; // No gap
+  overflow: visible; // Allow chart to render properly
+  box-sizing: border-box;
 }
 
 .chart-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
+  gap: var(--osi-spacing-compact-xs, 2px); // More compact: 2px
   flex-wrap: wrap;
-  padding-bottom: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
+  padding-bottom: var(--osi-spacing-compact-xs, 2px); // More compact: 2px
   border-bottom: 1px solid var(--border);
 }
 
 .chart-title {
   @include heading(5);
-  font-size: 0.9375rem; // 15px
+  font-size: 0.875rem; // More compact: 14px
   margin: 0;
-  line-height: 1.3;
+  line-height: 1.2;
 }
 
 .chart-legend {
   display: flex;
-  gap: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
+  gap: var(--osi-spacing-compact-xs, 2px); // More compact: 2px
   flex-wrap: wrap;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 6px)
-  font-size: 0.7rem;
+  gap: 2px; // More compact: 2px
+  font-size: 0.65rem; // More compact: smaller font
   color: var(--muted-foreground);
 }
 
 .legend-color {
-  width: 10px; // Compact: 10px (was 12px)
-  height: 10px; // Compact: 10px (was 12px)
+  width: 8px; // More compact: 8px
+  height: 8px; // More compact: 8px
   border-radius: 2px;
   flex-shrink: 0;
 }
@@ -76,12 +80,16 @@
 .chart-canvas-wrapper {
   flex: 1;
   position: relative;
-  min-height: 230px; // Compact: 230px (was 250px)
+  height: 200px; // Use full height of wrapper
   width: 100%;
+  overflow: visible; // Allow chart to render properly
+  box-sizing: border-box;
 
   canvas {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    box-sizing: border-box;
   }
 }
 
@@ -89,8 +97,8 @@
 .chart-footer {
   display: flex;
   justify-content: space-around;
-  gap: var(--osi-spacing-compact-md, 12px); // Compact: 12px (was 16px)
-  padding-top: var(--osi-spacing-compact-sm, 6px); // Compact: 6px (was 12px)
+  gap: var(--osi-spacing-compact-sm, 6px); // More compact: 6px
+  padding-top: var(--osi-spacing-compact-xs, 2px); // More compact: 2px
   border-top: 1px solid var(--border);
 }
 
@@ -98,18 +106,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--osi-spacing-compact-xs, 2px); // Compact: 2px (was 4px)
+  gap: 1px; // More compact: 1px
 }
 
 .chart-stat-value {
   @include typo.number-display-medium;
-  font-size: var(--text-lg);
+  font-size: var(--text-base); // More compact: base instead of lg
   font-weight: var(--font-bold);
 }
 
 .chart-stat-label {
   @include typo.caption;
-  font-size: 0.7rem;
+  font-size: 0.65rem; // More compact: smaller
   color: var(--muted-foreground);
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -118,23 +126,27 @@
 // RESPONSIVE
 @include responsive-down("md") {
   .chart-wrapper {
-    padding: var(--osi-spacing-compact-md, 12px);
-    min-height: 260px; // Compact: 260px (was 280px)
+    padding: 4px;
+    height: 200px;
+    max-height: 200px;
   }
 
   .chart-canvas-wrapper {
-    min-height: 200px; // Compact: 200px (was 220px)
+    height: 190px;
+    min-height: 190px;
   }
 }
 
 @include responsive-down("sm") {
   .chart-wrapper {
-    padding: var(--osi-spacing-compact-sm, 6px);
-    min-height: 220px; // Compact: 220px (was 240px)
+    padding: 3px;
+    height: 180px;
+    max-height: 180px;
   }
 
   .chart-canvas-wrapper {
-    min-height: 160px; // Compact: 160px (was 180px)
+    height: 174px;
+    min-height: 174px;
   }
 
   .chart-header {
@@ -143,6 +155,6 @@
 
   .chart-footer {
     flex-direction: column;
-    gap: var(--osi-spacing-compact-sm, 6px);
+    gap: 2px;
   }
 }

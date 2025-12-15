@@ -81,7 +81,7 @@
 
 // Section description text
 @mixin section-description-text {
-  font-size: var(--section-description-font-size, 0.8rem);
+  font-size: var(--section-description-font-size, calc(0.8rem - 1px));
   font-weight: 400;
   color: var(--card-text-secondary, #{$foreground-60});
   line-height: 1.4;

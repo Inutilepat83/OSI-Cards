@@ -8,7 +8,7 @@
  * To remove a section: Delete the folder, run `npm run sections:build`
  *
  * Generated: 2025-12-02T12:49:57.431Z
- * Sections: 22
+ * Sections: 23
  */
 
 // Base section component
@@ -28,6 +28,7 @@ export { GallerySectionComponent } from './gallery-section/gallery-section.compo
 export { InfoSectionComponent } from './info-section/info-section.component';
 export { ListSectionComponent } from './list-section/list-section.component';
 export { MapSectionComponent } from './map-section/map-section.component';
+export { TableSectionComponent } from './table-section/table-section.component';
 export { NetworkCardSectionComponent } from './network-card-section/network-card-section.component';
 export { NewsSectionComponent } from './news-section/news-section.component';
 export { OverviewSectionComponent } from './overview-section/overview-section.component';

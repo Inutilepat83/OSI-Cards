@@ -17,7 +17,7 @@
   --osi-spacing-3xl: 48px;
 
   // Section-specific spacing (More compact by default)
-  --osi-section-header-gap: var(--osi-spacing-sm); // 8px (was 12px)
+  --osi-section-header-gap: 2px; // Reduced gap between title and subtitle
   --osi-section-padding: var(--osi-spacing-sm); // 8px (was 12px)
   --osi-section-gap: var(--osi-spacing-md); // 12px (was 16px)
   --osi-item-padding: var(--osi-spacing-sm); // 8px (was 12px)

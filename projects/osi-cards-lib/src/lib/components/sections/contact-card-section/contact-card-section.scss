@@ -532,10 +532,6 @@
     padding: var(--osi-spacing-compact-sm, 6px);
   }
 
-  .name {
-    font-size: 0.875rem; // 14px on mobile
-  }
-
   // Stack columns on very small screens
   .card__content {
     grid-template-columns: 1fr;

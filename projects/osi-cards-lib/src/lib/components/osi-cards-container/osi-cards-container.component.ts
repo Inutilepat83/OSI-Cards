@@ -1,12 +1,12 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
-  Input,
   inject,
-  ViewEncapsulation,
+  Input,
   OnChanges,
   SimpleChanges,
-  ChangeDetectorRef,
+  ViewEncapsulation,
 } from '@angular/core';
 import { CSS_ISOLATION_MODE, DEFAULT_THEME } from '../../providers/injection-tokens';
 
@@ -71,11 +71,11 @@ import { CSS_ISOLATION_MODE, DEFAULT_THEME } from '../../providers/injection-tok
        * Fully transparent container - allows host app background to show through.
        * Padding for subtle shadow/glow effects around the card.
        */
-        padding: var(--osi-card-padding, 16px) !important;
-        padding-top: var(--osi-card-padding, 16px) !important;
-        padding-bottom: var(--osi-card-padding, 16px) !important;
-        padding-left: var(--osi-card-padding, 16px) !important;
-        padding-right: var(--osi-card-padding, 16px) !important;
+        padding: var(--osi-card-padding, 8px) !important;
+        padding-top: var(--osi-card-padding, 8px) !important;
+        padding-bottom: var(--osi-card-padding, 8px) !important;
+        padding-left: var(--osi-card-padding, 8px) !important;
+        padding-right: var(--osi-card-padding, 8px) !important;
         background: transparent !important;
         background-color: transparent !important;
 

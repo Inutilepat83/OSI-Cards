@@ -14,7 +14,10 @@ app-card-actions {
   margin-top: var(--space-3) !important;
   margin-left: var(--space-1) !important;
   margin-right: var(--space-1) !important;
+  padding-top: 0 !important;
   padding-bottom: var(--osi-card-padding) !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
 }
 
 // Base Button Styles

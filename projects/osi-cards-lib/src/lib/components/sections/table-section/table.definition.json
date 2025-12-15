@@ -1,0 +1,161 @@
+{
+  "type": "table",
+  "name": "Table Section",
+  "description": "Displays structured tabular data with sorting, filtering, and pagination capabilities.",
+  "selector": "lib-table-section",
+  "useCases": [
+    "Data tables",
+    "Sales reports",
+    "Inventory lists",
+    "Financial data",
+    "User directories",
+    "Product catalogs",
+    "Transaction logs"
+  ],
+  "bestPractices": [
+    "Provide tableData with columns and rows",
+    "Define column types for proper sorting",
+    "Mark sortable columns appropriately",
+    "Keep column labels concise and clear",
+    "Use appropriate column widths for readability",
+    "Limit initial row count for performance"
+  ],
+  "rendering": {
+    "usesFields": false,
+    "usesItems": false,
+    "usesTableData": true,
+    "defaultColumns": 2,
+    "supportsCollapse": false
+  },
+  "tableDataSchema": {
+    "type": "object",
+    "properties": {
+      "columns": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "description": "Unique identifier for the column (matches row data keys)"
+            },
+            "label": {
+              "type": "string",
+              "description": "Display label for the column header"
+            },
+            "type": {
+              "type": "string",
+              "enum": ["string", "number", "date", "boolean"],
+              "description": "Data type for proper sorting and formatting"
+            },
+            "sortable": {
+              "type": "boolean",
+              "description": "Whether the column can be sorted",
+              "default": true
+            },
+            "width": {
+              "type": "string",
+              "description": "Optional CSS width for the column (e.g., '150px', '20%')"
+            }
+          },
+          "required": ["key", "label"]
+        }
+      },
+      "rows": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "description": "Row data object with keys matching column keys",
+          "additionalProperties": true
+        }
+      }
+    },
+    "required": ["columns", "rows"]
+  },
+  "completionRules": {
+    "requireTableData": true,
+    "minColumns": 1,
+    "minRows": 1
+  },
+  "aliases": ["data-table", "grid"],
+  "examples": {
+    "example": {
+      "title": "Sales Performance Q1 2025",
+      "type": "table",
+      "description": "Quarterly sales data by product and region",
+      "tableData": {
+        "columns": [
+          {
+            "key": "product",
+            "label": "Product",
+            "type": "string",
+            "sortable": true
+          },
+          {
+            "key": "region",
+            "label": "Region",
+            "type": "string",
+            "sortable": true
+          },
+          {
+            "key": "quantity",
+            "label": "Quantity",
+            "type": "number",
+            "sortable": true
+          },
+          {
+            "key": "revenue",
+            "label": "Revenue ($)",
+            "type": "number",
+            "sortable": true
+          },
+          {
+            "key": "date",
+            "label": "Sale Date",
+            "type": "date",
+            "sortable": true
+          }
+        ],
+        "rows": [
+          {
+            "product": "Widget A",
+            "region": "North",
+            "quantity": 150,
+            "revenue": 4498.5,
+            "date": "2025-01-15"
+          },
+          {
+            "product": "Widget B",
+            "region": "South",
+            "quantity": 200,
+            "revenue": 7998.0,
+            "date": "2025-01-20"
+          },
+          {
+            "product": "Widget A",
+            "region": "East",
+            "quantity": 100,
+            "revenue": 2999.0,
+            "date": "2025-01-18"
+          },
+          {
+            "product": "Widget C",
+            "region": "West",
+            "quantity": 75,
+            "revenue": 3749.25,
+            "date": "2025-01-22"
+          },
+          {
+            "product": "Widget B",
+            "region": "North",
+            "quantity": 120,
+            "revenue": 4798.8,
+            "date": "2025-01-25"
+          }
+        ]
+      },
+      "preferredColumns": 3,
+      "priority": 2
+    }
+  }
+}

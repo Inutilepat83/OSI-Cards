@@ -299,7 +299,7 @@ $osi-use-important: true !default;
 /// @param {Length} $gap - Gap between items
 @mixin osi-grid(
   $min-width: var(--section-grid-min-width, 200px),
-  $gap: var(--section-card-gap, 12px)
+  $gap: var(--section-card-gap, 8px)
 ) {
   @include display(grid);
   @include grid-columns(repeat(auto-fit, minmax($min-width, 1fr)));
@@ -315,7 +315,7 @@ $osi-use-important: true !default;
 
 /// Flex column stack for vertical lists
 /// @param {Length} $gap - Gap between items
-@mixin osi-stack($gap: var(--section-stack-gap, 12px)) {
+@mixin osi-stack($gap: var(--section-stack-gap, 8px)) {
   @include display(flex);
   @include flex-direction(column);
   @include gap($gap);
@@ -326,7 +326,7 @@ $osi-use-important: true !default;
 /// Fixed column grid
 /// @param {Number} $columns - Number of columns
 /// @param {Length} $gap - Gap between items
-@mixin osi-grid-fixed($columns: 2, $gap: var(--section-card-gap, 12px)) {
+@mixin osi-grid-fixed($columns: 2, $gap: var(--section-card-gap, 8px)) {
   @include display(grid);
   @include grid-columns(repeat($columns, 1fr));
   @include gap($gap);

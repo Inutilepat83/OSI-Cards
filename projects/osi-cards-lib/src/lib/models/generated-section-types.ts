@@ -27,6 +27,7 @@ export type SectionType =
   | 'quotation'
   | 'social-media'
   | 'solutions'
+  | 'table'
   | 'text-reference'
   | 'timeline'
   | 'video';
@@ -49,8 +50,9 @@ export type SectionTypeAlias =
   | 'help'
   | 'photos'
   | 'images'
-  | 'table'
   | 'checklist'
+  | 'data-table'
+  | 'grid'
   | 'locations'
   | 'press'
   | 'articles'
@@ -303,6 +305,17 @@ export const SECTION_METADATA: Record<SectionType, SectionMetadata> = {
     requiresExternalLib: undefined,
     selector: 'lib-solutions-section',
   },
+  table: {
+    name: 'Table Section',
+    usesFields: false,
+    usesItems: false,
+    usesChartData: false,
+    defaultColumns: 2,
+    supportsCollapse: false,
+    supportsEmoji: false,
+    requiresExternalLib: undefined,
+    selector: 'lib-table-section',
+  },
   'text-reference': {
     name: 'Text Reference Section',
     usesFields: true,
@@ -356,8 +369,9 @@ export const SECTION_TYPE_ALIASES: Record<SectionTypeAlias, SectionType> = {
   help: 'faq',
   photos: 'gallery',
   images: 'gallery',
-  table: 'list',
   checklist: 'list',
+  'data-table': 'table',
+  grid: 'table',
   locations: 'map',
   press: 'news',
   articles: 'news',
@@ -425,6 +439,7 @@ export const PUBLIC_SECTION_TYPES: SectionType[] = [
   'quotation',
   'social-media',
   'solutions',
+  'table',
   'text-reference',
   'timeline',
   'video',
@@ -453,6 +468,7 @@ export const ALL_SECTION_TYPES: SectionType[] = [
   'quotation',
   'social-media',
   'solutions',
+  'table',
   'text-reference',
   'timeline',
   'video',

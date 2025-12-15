@@ -1,7 +1,7 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardAction } from '../../models';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { LucideIconsModule } from '../../icons';
+import { CardAction } from '../../models';
 
 /**
  * Card Footer Component
@@ -84,8 +84,8 @@ import { LucideIconsModule } from '../../icons';
 
       .card-footer {
         margin-top: auto !important;
-        padding-top: var(--section-card-gap, 12px) !important;
-        padding-bottom: 16px !important;
+        padding-top: calc(var(--section-card-gap, 8px) + 4px) !important;
+        padding-bottom: 20px !important;
         font-family: inherit !important;
       }
 

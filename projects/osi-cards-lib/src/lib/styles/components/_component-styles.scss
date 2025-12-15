@@ -23,7 +23,7 @@
   /* Pure CSS Grid - browser handles all positioning */
   display: grid;
   grid-template-columns: repeat(var(--masonry-columns, 4), 1fr);
-  gap: var(--masonry-gap, 12px);
+  gap: var(--masonry-gap, 8px);
   width: 100%;
   min-height: 0;
   align-items: start;

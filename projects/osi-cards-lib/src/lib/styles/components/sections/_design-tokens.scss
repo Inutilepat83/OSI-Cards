@@ -73,7 +73,7 @@ $spacing-scale: (
   // Section-specific sizing - BALANCED for good UX
   --section-card-min-height: 110px; // Comfortable (was 120px, not 90px)
   --section-card-compact-height: 90px; // Compact variant
-  --section-header-gap: var(--spacing-md); // 12px - comfortable readability
+  --section-header-gap: 2px; // Reduced gap between title and subtitle
   --section-content-gap: var(--spacing-sm); // 8px - good separation
   --section-card-gap: var(--spacing-md); // 12px - visual breathing room
   --section-card-padding: var(--spacing-md); // 12px - comfortable

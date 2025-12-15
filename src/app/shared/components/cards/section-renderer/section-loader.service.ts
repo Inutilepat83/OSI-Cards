@@ -66,7 +66,20 @@ export class SectionLoaderService {
             await import('projects/osi-cards-lib/src/lib/components/sections/list-section/list-section.component')
           ).ListSectionComponent,
       },
-      ['table']
+      []
+    );
+
+    // Table section - from library
+    this.registry.register(
+      'table',
+      {
+        canHandle: () => true,
+        loadComponent: async () =>
+          (
+            await import('projects/osi-cards-lib/src/lib/components/sections/table-section/table-section.component')
+          ).TableSectionComponent,
+      },
+      ['data-table', 'grid']
     );
 
     // Event section - from library
