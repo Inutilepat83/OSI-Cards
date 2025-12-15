@@ -55,4 +55,3 @@ describe('ListSectionComponent', () => {
     expect(component.expandedIndex).toBeNull();
   });
 });
-

@@ -29,10 +29,7 @@
         "description": "Metric label"
       },
       "value": {
-        "type": [
-          "string",
-          "number"
-        ],
+        "type": ["string", "number"],
         "description": "Metric value"
       },
       "percentage": {
@@ -41,12 +38,7 @@
       },
       "performance": {
         "type": "string",
-        "enum": [
-          "excellent",
-          "good",
-          "average",
-          "poor"
-        ],
+        "enum": ["excellent", "good", "average", "poor"],
         "description": "Performance rating"
       },
       "icon": {
@@ -54,15 +46,9 @@
         "description": "Icon identifier"
       }
     },
-    "required": [
-      "label"
-    ]
+    "required": ["label"]
   },
-  "aliases": [
-    "metrics",
-    "stats",
-    "kpi"
-  ],
+  "aliases": ["metrics", "stats", "kpi"],
   "examples": {
     "example": {
       "title": "Q4 2024 Performance Dashboard",

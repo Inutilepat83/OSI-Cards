@@ -60,14 +60,9 @@
         }
       }
     },
-    "required": [
-      "title"
-    ]
+    "required": ["title"]
   },
-  "aliases": [
-    "videos",
-    "media"
-  ],
+  "aliases": ["videos", "media"],
   "examples": {
     "example": {
       "title": "Video Resources",

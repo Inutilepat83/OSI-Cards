@@ -23,4 +23,3 @@ export class ApiComponent {
       'This page is under development. Check back soon for API documentation and integration guides.',
   };
 }
-

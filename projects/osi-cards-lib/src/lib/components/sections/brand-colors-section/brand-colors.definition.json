@@ -44,16 +44,9 @@
         "description": "Color category (primary, secondary, etc.)"
       }
     },
-    "required": [
-      "label",
-      "value"
-    ]
+    "required": ["label", "value"]
   },
-  "aliases": [
-    "brands",
-    "colors",
-    "palette"
-  ],
+  "aliases": ["brands", "colors", "palette"],
   "examples": {
     "example": {
       "title": "Nexus Brand Identity System",

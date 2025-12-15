@@ -357,7 +357,12 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
    */
   private applyHybridReordering(sections: CardSection[], columns: number): CardSection[] {
     // Group sections by priority
-    const criticalSections: Array<{ section: CardSection; originalIndex: number; estimatedHeight: number; colSpan: number }> = [];
+    const criticalSections: Array<{
+      section: CardSection;
+      originalIndex: number;
+      estimatedHeight: number;
+      colSpan: number;
+    }> = [];
     const reorderableSections: Array<{
       section: CardSection;
       originalIndex: number;
@@ -408,14 +413,15 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
     // Interleave sections by height to create better packing opportunities
     // This helps shorter sections fill gaps left by taller ones
-    const heightGroups: Array<Array<typeof reorderableSections[0]>> = [];
+    const heightGroups: Array<Array<(typeof reorderableSections)[0]>> = [];
     const HEIGHT_TOLERANCE = 50; // Group sections within 50px of each other
 
     for (const item of reorderableSections) {
       let placed = false;
       for (const group of heightGroups) {
         if (group.length > 0) {
-          const groupAvgHeight = group.reduce((sum, i) => sum + i.estimatedHeight, 0) / group.length;
+          const groupAvgHeight =
+            group.reduce((sum, i) => sum + i.estimatedHeight, 0) / group.length;
           if (Math.abs(item.estimatedHeight - groupAvgHeight) <= HEIGHT_TOLERANCE) {
             group.push(item);
             placed = true;
@@ -431,7 +437,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     // Interleave groups: take one from each group in round-robin fashion
     // This creates better opportunities for gap filling
     const interleaved: typeof reorderableSections = [];
-    let maxGroupSize = Math.max(...heightGroups.map(g => g.length), 0);
+    let maxGroupSize = Math.max(...heightGroups.map((g) => g.length), 0);
 
     for (let i = 0; i < maxGroupSize; i++) {
       for (const group of heightGroups) {

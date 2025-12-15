@@ -63,10 +63,7 @@
     },
     "required": []
   },
-  "aliases": [
-    "social",
-    "socials"
-  ],
+  "aliases": ["social", "socials"],
   "examples": {
     "example": {
       "title": "Social Media Presence",

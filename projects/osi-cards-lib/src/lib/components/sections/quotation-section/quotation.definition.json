@@ -63,10 +63,7 @@
     },
     "required": []
   },
-  "aliases": [
-    "quote",
-    "testimonial"
-  ],
+  "aliases": ["quote", "testimonial"],
   "examples": {
     "example": {
       "title": "Customer Success Stories",

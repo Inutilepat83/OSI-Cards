@@ -1,25 +1,25 @@
 <!--
   Card Header Component
-  
+
   Purpose: Display card title and optional export action.
   - Title: Primary heading for the card (h1)
   - Export: Secondary action button (top-right)
-  
+
   Design principles:
   - Clear visual hierarchy with prominent title
   - Subtle export button that appears on hover
   - Consistent spacing and typography
   - Accessible focus states
 -->
-<div *ngIf="cardTitle" class="card-header-container">
+<div *ngIf="cardTitle !== undefined && cardTitle !== null" class="card-header-container">
   <h1 class="card-header-title" id="card-title" [attr.aria-level]="1">
-    {{ cardTitle }}
+    {{ cardTitle || 'Card' }}
   </h1>
   <button
     *ngIf="showExport"
     type="button"
     class="card-header-export-btn"
-    [attr.aria-label]="'Export card: ' + cardTitle"
+    [attr.aria-label]="'Export card: ' + (cardTitle || 'Card')"
     [attr.aria-describedby]="'card-title'"
     title="Export card"
     (click)="onExport()"

@@ -60,23 +60,13 @@
       },
       "status": {
         "type": "string",
-        "enum": [
-          "published",
-          "draft",
-          "archived",
-          "breaking"
-        ],
+        "enum": ["published", "draft", "archived", "breaking"],
         "description": "Article status"
       }
     },
-    "required": [
-      "title"
-    ]
+    "required": ["title"]
   },
-  "aliases": [
-    "press",
-    "articles"
-  ],
+  "aliases": ["press", "articles"],
   "examples": {
     "example": {
       "title": "Latest News & Press Coverage",

@@ -32,20 +32,12 @@
         "description": "Financial metric name"
       },
       "value": {
-        "type": [
-          "string",
-          "number"
-        ],
+        "type": ["string", "number"],
         "description": "Metric value"
       },
       "format": {
         "type": "string",
-        "enum": [
-          "currency",
-          "percentage",
-          "number",
-          "ratio"
-        ],
+        "enum": ["currency", "percentage", "number", "ratio"],
         "description": "Value format"
       },
       "change": {
@@ -54,11 +46,7 @@
       },
       "trend": {
         "type": "string",
-        "enum": [
-          "up",
-          "down",
-          "stable"
-        ],
+        "enum": ["up", "down", "stable"],
         "description": "Trend indicator"
       },
       "period": {
@@ -70,9 +58,7 @@
         "description": "Currency code (USD, EUR, etc.)"
       }
     },
-    "required": [
-      "label"
-    ]
+    "required": ["label"]
   },
   "examples": {
     "example": {

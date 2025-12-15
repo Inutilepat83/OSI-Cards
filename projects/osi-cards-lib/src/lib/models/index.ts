@@ -12,4 +12,3 @@ export * from './section-design-params.model';
 
 // Design parameters
 export * from './section-design-params.model';
-

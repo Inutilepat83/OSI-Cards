@@ -1179,6 +1179,22 @@
   background: transparent !important;
   border: none !important;
   text-decoration: none !important;
+
+  /* Interactive styles */
+  cursor: pointer !important;
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease !important;
+  user-select: none !important;
+}
+
+.card-signature:hover {
+  color: var(--color-brand, #ff7900) !important;
+  opacity: 1 !important;
+}
+
+.card-signature:active {
+  opacity: 0.8 !important;
 }
 
 /* ============================================

@@ -102,7 +102,14 @@
         </app-card-actions>
 
         <!-- Signature at bottom of card -->
-        <div *ngIf="processedSections.length" class="card-signature">Powered by Orange Sales Intelligence</div>
+        <div
+          *ngIf="processedSections.length"
+          class="card-signature"
+          [title]="versionString"
+          (click)="onSignatureClick()"
+        >
+          Powered by Orange Sales Intelligence
+        </div>
       </article>
     </div>
   </div>

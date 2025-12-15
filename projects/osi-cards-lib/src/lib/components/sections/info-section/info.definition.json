@@ -31,12 +31,7 @@
         "description": "Field label/key"
       },
       "value": {
-        "type": [
-          "string",
-          "number",
-          "boolean",
-          "null"
-        ],
+        "type": ["string", "number", "boolean", "null"],
         "description": "Field value"
       },
       "icon": {
@@ -49,12 +44,7 @@
       },
       "trend": {
         "type": "string",
-        "enum": [
-          "up",
-          "down",
-          "stable",
-          "neutral"
-        ],
+        "enum": ["up", "down", "stable", "neutral"],
         "description": "Trend indicator"
       },
       "change": {
@@ -63,18 +53,11 @@
       },
       "format": {
         "type": "string",
-        "enum": [
-          "currency",
-          "percentage",
-          "number",
-          "text"
-        ],
+        "enum": ["currency", "percentage", "number", "text"],
         "description": "Value format"
       }
     },
-    "required": [
-      "label"
-    ]
+    "required": ["label"]
   },
   "examples": {
     "example": {

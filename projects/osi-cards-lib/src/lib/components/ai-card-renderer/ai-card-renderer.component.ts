@@ -39,6 +39,7 @@ import {
 } from '../../services';
 import { CardChangeType } from '../../utils';
 import { generateBriefSummary, generateCardSummary } from '../../utils/card-summary.util';
+import { getShortVersion } from '../../version';
 import { CardActionsComponent } from '../card-actions/card-actions.component';
 import { CardHeaderComponent } from '../card-header/card-header.component';
 import { CardSectionListComponent } from '../card-section-list/card-section-list.component';
@@ -1649,6 +1650,22 @@ Generate a default company card with comprehensive information including overvie
           }
         }
       });
+  }
+
+  /**
+   * Get the version string for display in tooltip
+   */
+  get versionString(): string {
+    return getShortVersion();
+  }
+
+  /**
+   * Handle click on the signature to open OSI Cards website
+   */
+  onSignatureClick(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      window.open('https://osi-card.web.app/', '_blank', 'noopener,noreferrer');
+    }
   }
 
   /**

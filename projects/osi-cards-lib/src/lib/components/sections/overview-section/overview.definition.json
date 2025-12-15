@@ -44,14 +44,9 @@
         "description": "Whether to highlight this field"
       }
     },
-    "required": [
-      "label"
-    ]
+    "required": ["label"]
   },
-  "aliases": [
-    "summary",
-    "executive"
-  ],
+  "aliases": ["summary", "executive"],
   "examples": {
     "example": {
       "title": "Executive Summary",

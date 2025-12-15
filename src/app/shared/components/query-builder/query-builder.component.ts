@@ -555,7 +555,3 @@ export class QueryBuilderComponent {
     }
   }
 }
-
-
-
-

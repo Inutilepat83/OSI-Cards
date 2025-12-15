@@ -45,18 +45,11 @@
       },
       "status": {
         "type": "string",
-        "enum": [
-          "available",
-          "out-of-stock",
-          "coming-soon",
-          "deprecated"
-        ],
+        "enum": ["available", "out-of-stock", "coming-soon", "deprecated"],
         "description": "Product availability"
       }
     },
-    "required": [
-      "label"
-    ]
+    "required": ["label"]
   },
   "examples": {
     "example": {

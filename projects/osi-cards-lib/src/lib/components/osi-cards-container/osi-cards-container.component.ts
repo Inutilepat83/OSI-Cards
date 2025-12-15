@@ -71,7 +71,11 @@ import { CSS_ISOLATION_MODE, DEFAULT_THEME } from '../../providers/injection-tok
        * Fully transparent container - allows host app background to show through.
        * Padding for subtle shadow/glow effects around the card.
        */
-        padding: var(--osi-card-padding);
+        padding: var(--osi-card-padding, 16px) !important;
+        padding-top: var(--osi-card-padding, 16px) !important;
+        padding-bottom: var(--osi-card-padding, 16px) !important;
+        padding-left: var(--osi-card-padding, 16px) !important;
+        padding-right: var(--osi-card-padding, 16px) !important;
         background: transparent !important;
         background-color: transparent !important;
 
@@ -80,9 +84,16 @@ import { CSS_ISOLATION_MODE, DEFAULT_THEME } from '../../providers/injection-tok
         transform-style: preserve-3d;
 
         /* Ensure card is centered */
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: flex-start !important;
+
+        /* Prevent Bootstrap and other external styles from overriding */
+        margin: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
       }
 
       /* Strict isolation mode - additional containment */
@@ -98,7 +109,11 @@ import { CSS_ISOLATION_MODE, DEFAULT_THEME } from '../../providers/injection-tok
       /* Responsive adjustments */
       @media (max-width: 480px) {
         .osi-cards-container {
-          padding: var(--osi-card-padding-mobile);
+          padding: var(--osi-card-padding-mobile, 4px) !important;
+          padding-top: var(--osi-card-padding-mobile, 4px) !important;
+          padding-bottom: var(--osi-card-padding-mobile, 4px) !important;
+          padding-left: var(--osi-card-padding-mobile, 4px) !important;
+          padding-right: var(--osi-card-padding-mobile, 4px) !important;
         }
       }
     `,

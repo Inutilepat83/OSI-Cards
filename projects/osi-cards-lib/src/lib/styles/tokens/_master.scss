@@ -649,11 +649,11 @@ $breakpoints: (
   --osi-card-shadow-fullscreen: none;
 
   // Card Spacing - Padding
-  --osi-card-padding: var(--card-main-padding);
-  --osi-card-padding-top: var(--card-main-padding);
-  --osi-card-padding-bottom: var(--card-main-padding);
-  --osi-card-padding-left: var(--card-main-padding);
-  --osi-card-padding-right: var(--card-main-padding);
+  --osi-card-padding: var(--card-main-padding, 16px);
+  --osi-card-padding-top: var(--card-main-padding, 16px);
+  --osi-card-padding-bottom: var(--card-main-padding, 16px);
+  --osi-card-padding-left: var(--card-main-padding, 16px);
+  --osi-card-padding-right: var(--card-main-padding, 16px);
   --osi-card-padding-mobile: 4px; // Fixed padding - no responsive behavior
 
   // Card Spacing - Margins
@@ -663,9 +663,9 @@ $breakpoints: (
   --osi-card-margin-right: 0;
 
   // Card Spacing - Gaps
-  --osi-card-gap: var(--section-card-gap);
-  --osi-card-body-gap: var(--space-3);
-  --osi-card-grid-gap: var(--section-card-gap);
+  --osi-card-gap: var(--section-card-gap, 12px);
+  --osi-card-body-gap: var(--space-3, 12px);
+  --osi-card-grid-gap: var(--section-card-gap, 12px);
 
   // Card Border Radius
   --osi-card-border-radius: var(--card-border-radius);

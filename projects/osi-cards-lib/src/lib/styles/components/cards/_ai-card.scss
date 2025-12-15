@@ -20,8 +20,10 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  max-width: 100%;
   min-height: 0; // Allow content to determine height
   overflow: visible;
+  box-sizing: border-box !important;
 
   /* CSS Isolation */
   isolation: isolate;
@@ -49,14 +51,17 @@
   box-shadow: var(--osi-card-shadow) !important;
 
   /* Padding - card-specific spacing */
-  padding: var(--osi-card-padding) !important;
-  padding-bottom: var(--osi-card-padding) !important;
+  padding: var(--osi-card-padding, 16px) !important;
+  padding-top: var(--osi-card-padding, 16px) !important;
+  padding-bottom: var(--osi-card-padding, 16px) !important;
+  padding-left: var(--osi-card-padding, 16px) !important;
+  padding-right: var(--osi-card-padding, 16px) !important;
 
   /* Border radius - card-specific (larger than sections) */
   border-radius: var(--osi-card-border-radius) !important;
 
   /* Gap - specific space between header and sections */
-  gap: var(--osi-card-gap) !important;
+  gap: var(--osi-card-gap, 12px) !important;
   /* ========== END CARD SPECIFIC STYLES ========== */
 
   /* Smooth transitions */
@@ -483,8 +488,10 @@
   margin-bottom: 0 !important;
   display: flex;
   flex-direction: column;
-  gap: var(--osi-card-body-gap); /* Constant gap between sections */
+  gap: var(--osi-card-body-gap, 12px) !important; /* Constant gap between sections */
   min-height: 0;
+  max-width: 100%;
+  box-sizing: border-box !important;
   /* Allow content to flow properly - no overflow clipping */
   overflow: visible;
   /* NO BORDER - completely invisible */

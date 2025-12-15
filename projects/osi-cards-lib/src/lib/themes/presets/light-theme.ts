@@ -25,4 +25,3 @@ export const lightTheme: OSICardsThemeConfig = {
     '--ring': OSI_THEME_COLORS.light.ring,
   },
 };
-

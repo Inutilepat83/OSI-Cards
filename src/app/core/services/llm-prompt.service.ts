@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 /**
  * Service to serve the LLM prompt for OSI Cards
@@ -23,16 +23,19 @@ export class LlmPromptService {
    * Get the LLM prompt as a string
    */
   getPrompt(): Observable<string> {
-    return this.getPromptJson().pipe(
-      map((response) => response.prompt)
-    );
+    return this.getPromptJson().pipe(map((response) => response.prompt));
   }
 
   /**
    * Get the LLM prompt as JSON response
    * Loads the pre-generated prompt JSON file
    */
-  getPromptJson(): Observable<{ prompt: string; generatedAt: string; version: string; metadata?: any }> {
+  getPromptJson(): Observable<{
+    prompt: string;
+    generatedAt: string;
+    version: string;
+    metadata?: any;
+  }> {
     return this.http.get<any>(this.PROMPT_JSON_PATH).pipe(
       catchError((error) => {
         console.error('Error loading LLM prompt JSON:', error);

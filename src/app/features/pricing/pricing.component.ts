@@ -23,4 +23,3 @@ export class PricingComponent {
       'This page is under development. Check back soon for pricing information and plan details.',
   };
 }
-

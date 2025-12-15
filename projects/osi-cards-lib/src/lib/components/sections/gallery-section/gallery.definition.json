@@ -60,14 +60,9 @@
         }
       }
     },
-    "required": [
-      "title"
-    ]
+    "required": ["title"]
   },
-  "aliases": [
-    "photos",
-    "images"
-  ],
+  "aliases": ["photos", "images"],
   "examples": {
     "example": {
       "title": "Life at Nexus",

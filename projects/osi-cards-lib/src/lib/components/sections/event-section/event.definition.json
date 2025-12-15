@@ -55,13 +55,7 @@
       },
       "status": {
         "type": "string",
-        "enum": [
-          "confirmed",
-          "planned",
-          "tentative",
-          "cancelled",
-          "completed"
-        ],
+        "enum": ["confirmed", "planned", "tentative", "cancelled", "completed"],
         "description": "Event status"
       },
       "location": {
@@ -75,10 +69,7 @@
     },
     "required": []
   },
-  "aliases": [
-    "calendar",
-    "schedule"
-  ],
+  "aliases": ["calendar", "schedule"],
   "examples": {
     "example": {
       "title": "Q1 2025 Key Events",

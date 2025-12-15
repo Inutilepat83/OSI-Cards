@@ -10,7 +10,7 @@
   --section-background: var(--osi-section-background);
   --section-background-hover: var(--osi-section-background-hover);
   --section-backdrop-filter: var(--osi-section-backdrop-filter);
-  --section-spacing-bottom: var(--osi-section-spacing-bottom);
+  --section-spacing-bottom: var(--osi-section-spacing-bottom, 12px);
   --section-glow-background: var(--osi-section-glow-background);
   --section-glow-opacity-hover: var(--osi-section-glow-opacity-hover);
   --section-title-underline-length: var(--osi-section-title-underline-length);
@@ -18,8 +18,14 @@
   --section-title-underline-height: var(--osi-section-title-underline-height);
   --section-title-underline-offset: var(--osi-section-title-underline-offset);
   --section-title-hover-color: var(--osi-section-title-hover-color);
-  height: 100% !important;
-  margin-bottom: var(--section-spacing-bottom) !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin-bottom: var(--section-spacing-bottom, 12px) !important;
+  margin-top: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
   -webkit-font-smoothing: antialiased !important;
   -moz-osx-font-smoothing: grayscale !important;
 
@@ -38,7 +44,8 @@
   .masonry-item & {
     display: flex !important;
     flex-direction: column !important;
-    gap: var(--osi-section-gap) !important;
+    gap: var(--osi-section-gap, 12px) !important;
+    height: auto !important;
   }
 }
 

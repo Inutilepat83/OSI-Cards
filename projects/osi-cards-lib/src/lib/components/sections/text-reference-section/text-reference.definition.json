@@ -64,11 +64,7 @@
     },
     "required": []
   },
-  "aliases": [
-    "reference",
-    "text-ref",
-    "documentation"
-  ],
+  "aliases": ["reference", "text-ref", "documentation"],
   "examples": {
     "example": {
       "title": "Resources & Documentation",

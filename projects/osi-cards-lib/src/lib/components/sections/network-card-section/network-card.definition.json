@@ -48,11 +48,7 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "active",
-              "inactive",
-              "pending"
-            ],
+            "enum": ["active", "inactive", "pending"],
             "description": "Node status"
           },
           "type": {
@@ -62,9 +58,7 @@
         }
       }
     },
-    "required": [
-      "title"
-    ]
+    "required": ["title"]
   },
   "examples": {
     "example": {

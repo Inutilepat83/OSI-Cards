@@ -338,7 +338,6 @@ class SectionBuilder implements ISectionBuilder {
     return this;
   }
 
-
   /**
    * Set collapsed state
    */

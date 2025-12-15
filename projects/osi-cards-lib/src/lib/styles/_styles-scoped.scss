@@ -54,7 +54,7 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 8px;
+    padding: var(--osi-card-padding, 16px) !important;
     background: transparent !important;
     background-color: transparent !important;
     min-height: 0;
@@ -76,7 +76,7 @@
 
     // Responsive: reduce padding on mobile
     @media (max-width: 480px) {
-      padding: 4px;
+      padding: var(--osi-card-padding-mobile, 4px) !important;
     }
 
     // Bootstrap isolation - must come first to reset external Bootstrap variables

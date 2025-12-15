@@ -55,4 +55,3 @@ describe('QuotationSectionComponent', () => {
     expect(component.expandedIndex).toBeNull();
   });
 });
-

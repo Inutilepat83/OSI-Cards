@@ -52,11 +52,7 @@
       },
       "complexity": {
         "type": "string",
-        "enum": [
-          "low",
-          "medium",
-          "high"
-        ],
+        "enum": ["low", "medium", "high"],
         "description": "Implementation complexity"
       },
       "outcomes": {
@@ -67,14 +63,9 @@
         "description": "Expected outcomes"
       }
     },
-    "required": [
-      "title"
-    ]
+    "required": ["title"]
   },
-  "aliases": [
-    "services",
-    "offerings"
-  ],
+  "aliases": ["services", "offerings"],
   "examples": {
     "example": {
       "title": "Professional Services Portfolio",

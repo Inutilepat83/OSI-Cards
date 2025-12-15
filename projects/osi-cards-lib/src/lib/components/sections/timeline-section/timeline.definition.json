@@ -52,14 +52,9 @@
         }
       }
     },
-    "required": [
-      "title"
-    ]
+    "required": ["title"]
   },
-  "aliases": [
-    "history",
-    "milestones"
-  ],
+  "aliases": ["history", "milestones"],
   "examples": {
     "example": {
       "title": "Company Journey",
