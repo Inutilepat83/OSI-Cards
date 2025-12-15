@@ -35,6 +35,23 @@
     "defaultSection": {
       "type": "string",
       "description": "Default section type for unknown types"
+    },
+    "allSectionsExample": {
+      "type": "object",
+      "description": "Complete card example demonstrating all section types",
+      "properties": {
+        "cardTitle": { "type": "string" },
+        "cardType": { "type": "string" },
+        "description": { "type": "string" },
+        "sections": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "actions": {
+          "type": "array",
+          "items": { "type": "object" }
+        }
+      }
     }
   },
   "definitions": {
@@ -103,14 +120,18 @@
           "type": "boolean",
           "description": "Whether this is an internal section (not for external use)"
         },
-        "testFixtures": {
-          "$ref": "#/definitions/TestFixtures"
+        "examples": {
+          "$ref": "#/definitions/Examples"
         },
         "documentation": {
           "$ref": "#/definitions/Documentation"
         },
         "demo": {
           "$ref": "#/definitions/DemoConfig"
+        },
+        "examplePath": {
+          "type": "string",
+          "description": "Path to standalone example JSON file (relative to section folder)"
         }
       }
     },
@@ -140,39 +161,35 @@
           "type": "boolean",
           "description": "Whether section supports collapse/expand"
         },
-        "supportsEmoji": {
-          "type": "boolean",
-          "description": "Whether section supports emoji icons"
-        },
         "requiresExternalLib": {
           "type": "string",
           "description": "External library requirement (e.g., 'leaflet', 'chart.js')"
+        },
+        "supportsEmoji": {
+          "type": "boolean",
+          "description": "Whether section supports emoji in titles and content"
         }
       }
     },
-    "TestFixtures": {
+    "Examples": {
       "type": "object",
-      "description": "Test fixtures for unit, integration, and E2E tests",
+      "description": "JSON examples for documentation and testing",
       "properties": {
+        "example": {
+          "type": "object",
+          "description": "Representative example demonstrating all available features of the section. Should be concise but show different cases and use all key features."
+        },
         "complete": {
           "type": "object",
-          "description": "Complete example with all fields populated"
+          "description": "Legacy: Complete example (deprecated, use 'example' instead)"
         },
         "minimal": {
           "type": "object",
-          "description": "Minimal example with required fields only"
+          "description": "Legacy: Minimal example (deprecated, use 'example' instead)"
         },
         "edgeCases": {
           "type": "object",
-          "description": "Edge case example for testing boundaries"
-        },
-        "streaming": {
-          "type": "object",
-          "description": "Example for streaming simulation tests"
-        },
-        "accessibility": {
-          "type": "object",
-          "description": "Example optimized for accessibility testing"
+          "description": "Legacy: Edge case example (deprecated, use 'example' instead)"
         }
       }
     },

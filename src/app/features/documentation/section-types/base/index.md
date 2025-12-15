@@ -47,6 +47,7 @@ interface CardSection {
 
 - **fieldInteraction**: Output event
 - **itemInteraction**: Output event
+- **layoutSuggestion**: Output event
 
 
 ## Related Documentation

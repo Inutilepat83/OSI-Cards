@@ -27,7 +27,10 @@
   "fieldSchema": {
     "type": "object",
     "properties": {
-      "label": { "type": "string", "description": "Color name/label" },
+      "label": {
+        "type": "string",
+        "description": "Color name/label"
+      },
       "value": {
         "type": "string",
         "description": "Color value (hex, rgb, etc.)"
@@ -41,11 +44,18 @@
         "description": "Color category (primary, secondary, etc.)"
       }
     },
-    "required": ["label", "value"]
+    "required": [
+      "label",
+      "value"
+    ]
   },
-  "aliases": ["brands", "colors", "palette"],
-  "testFixtures": {
-    "complete": {
+  "aliases": [
+    "brands",
+    "colors",
+    "palette"
+  ],
+  "examples": {
+    "example": {
       "title": "Nexus Brand Identity System",
       "type": "brand-colors",
       "description": "Official brand color palette and design tokens",
@@ -63,82 +73,10 @@
           "category": "Primary"
         },
         {
-          "label": "Nexus Orange Dark",
-          "value": "#CC6100",
-          "description": "Active states, emphasis",
-          "category": "Primary"
-        },
-        {
-          "label": "Midnight Blue",
-          "value": "#0A1628",
-          "description": "Primary text, headers, dark backgrounds",
-          "category": "Secondary"
-        },
-        {
-          "label": "Deep Navy",
-          "value": "#1A2744",
-          "description": "Secondary backgrounds, cards",
-          "category": "Secondary"
-        },
-        {
-          "label": "Slate Gray",
-          "value": "#64748B",
-          "description": "Secondary text, borders, icons",
-          "category": "Neutral"
-        },
-        {
-          "label": "Silver",
-          "value": "#E2E8F0",
-          "description": "Dividers, subtle backgrounds",
-          "category": "Neutral"
-        },
-        {
-          "label": "Cloud White",
-          "value": "#F8FAFC",
-          "description": "Page backgrounds, card surfaces",
-          "category": "Neutral"
-        },
-        {
           "label": "Pure White",
           "value": "#FFFFFF",
           "description": "Card backgrounds, contrast areas",
           "category": "Neutral"
-        },
-        {
-          "label": "Success Green",
-          "value": "#10B981",
-          "description": "Success states, positive trends, completion",
-          "category": "Semantic"
-        },
-        {
-          "label": "Warning Amber",
-          "value": "#F59E0B",
-          "description": "Warning states, caution indicators",
-          "category": "Semantic"
-        },
-        {
-          "label": "Error Red",
-          "value": "#EF4444",
-          "description": "Error states, critical alerts",
-          "category": "Semantic"
-        },
-        {
-          "label": "Info Blue",
-          "value": "#3B82F6",
-          "description": "Informational, links, interactive elements",
-          "category": "Semantic"
-        },
-        {
-          "label": "Chart Teal",
-          "value": "#14B8A6",
-          "description": "Data visualization - series 1",
-          "category": "Data Viz"
-        },
-        {
-          "label": "Chart Purple",
-          "value": "#8B5CF6",
-          "description": "Data visualization - series 2",
-          "category": "Data Viz"
         },
         {
           "label": "Chart Pink",
@@ -146,43 +84,9 @@
           "description": "Data visualization - series 3",
           "category": "Data Viz"
         }
-      ]
-    },
-    "minimal": {
-      "title": "Colors",
-      "type": "brand-colors",
-      "fields": [{ "label": "Primary", "value": "#000000" }]
-    },
-    "edgeCases": {
-      "title": "Color Edge Cases",
-      "type": "brand-colors",
-      "fields": [
-        {
-          "label": "RGB Format",
-          "value": "rgb(255, 121, 0)",
-          "description": "RGB color notation"
-        },
-        {
-          "label": "RGBA Transparent",
-          "value": "rgba(255, 121, 0, 0.5)",
-          "description": "Semi-transparent"
-        },
-        {
-          "label": "HSL Format",
-          "value": "hsl(28, 100%, 50%)",
-          "description": "HSL color notation"
-        },
-        {
-          "label": "Invalid Color",
-          "value": "not-a-valid-color",
-          "description": "Testing invalid input"
-        },
-        {
-          "label": "Short Hex",
-          "value": "#F90",
-          "description": "3-character hex shorthand"
-        }
-      ]
+      ],
+      "preferredColumns": 1,
+      "priority": 3
     }
   }
 }

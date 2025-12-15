@@ -862,13 +862,28 @@
 // =============================================================================
 
 .docs-content {
-  padding: var(--docs-space-8) var(--docs-space-12);
+  padding: var(--docs-space-4) var(--docs-space-6);
   width: 100%;
+  max-width: 100%;
   min-height: 100vh;
+  box-sizing: border-box;
 
   &::before {
     content: "";
     display: table;
+  }
+
+  // Responsive padding
+  @media (max-width: 1200px) {
+    padding: var(--docs-space-3) var(--docs-space-5);
+  }
+
+  @media (max-width: 768px) {
+    padding: var(--docs-space-3) var(--docs-space-4);
+  }
+
+  @media (max-width: 480px) {
+    padding: var(--docs-space-2) var(--docs-space-3);
   }
 }
 
@@ -1075,7 +1090,7 @@
   }
 
   .docs-content {
-    padding: var(--docs-space-6);
+    padding: var(--docs-space-3) var(--docs-space-4);
   }
 
   .page-navigation {
@@ -1096,8 +1111,9 @@
 .doc-page {
   display: grid;
   grid-template-columns: 1fr minmax(240px, 320px);
-  gap: var(--docs-space-10);
+  gap: var(--docs-space-6);
   width: 100%;
+  max-width: 100%;
 
   // Content should be in column 1, TOC in column 2
   .doc-breadcrumbs,
@@ -1115,8 +1131,32 @@
   // A25: Page Load Fade-in
   animation: fadeInUp var(--docs-transition-slow) ease;
 
+  // Responsive breakpoints
+  @media (max-width: 1400px) {
+    gap: var(--docs-space-5);
+  }
+
   @media (max-width: 1200px) {
     grid-template-columns: 1fr;
+    gap: var(--docs-space-4);
+
+    .doc-toc {
+      grid-column: 1;
+      grid-row: auto;
+      margin-top: var(--docs-space-6);
+    }
+  }
+
+  @media (max-width: 768px) {
+    gap: var(--docs-space-3);
+
+    .doc-toc {
+      margin-top: var(--docs-space-4);
+    }
+  }
+
+  @media (max-width: 480px) {
+    gap: var(--docs-space-2);
   }
 }
 
@@ -1138,20 +1178,31 @@
 .doc-content {
   min-width: 0;
   width: 100%;
+  max-width: 100%;
 
-  // Prose content should be readable width
+  // Prose content uses full width for better responsiveness
   > p,
   > ul,
   > ol,
   > blockquote {
-    max-width: var(--docs-content-prose);
+    max-width: 100%;
   }
 
-  // Tables and code blocks can use full width
+  // Tables and code blocks use full width
   > .table-wrapper,
   > .code-block-wrapper,
   > pre {
     max-width: 100%;
+  }
+
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    > p,
+    > ul,
+    > ol,
+    > blockquote {
+      max-width: 100%;
+    }
   }
 
   // A1-A6: Headings with Fluid Typography

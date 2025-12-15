@@ -15,7 +15,7 @@
     [class.masonry-item--compact]="item.layoutVariant === 'compact'"
     [class.masonry-item--wide]="item.layoutVariant === 'wide'"
     [class.masonry-item--default]="item.layoutVariant === 'default' || !item.layoutVariant"
-    [attr.data-priority]="item.section.priority || 'standard'"
+    [attr.data-priority]="item.section.priority || 3"
     role="gridcell"
     [attr.data-index]="idx"
     [attr.data-col-span]="item.colSpan"

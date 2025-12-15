@@ -3,7 +3,12 @@
   </lib-section-header>
 
   <div class="grid" *ngIf="section.fields?.length">
-    <div class="card" [class.card--target]="isTarget(c)" *ngFor="let c of section.fields">
+    <div
+      class="card"
+      [class.card--target]="isTarget(c)"
+      [class.card--note-expanded]="isNoteExpanded(c)"
+      *ngFor="let c of section.fields"
+    >
       <!-- Target label (shown on hover) -->
       <span class="target-label" *ngIf="isTarget(c)">Target</span>
 
@@ -38,8 +43,8 @@
                   class="action"
                   [attr.aria-label]="action.label + ' ' + getContactName(c)"
                   [attr.title]="action.label"
-                  [attr.target]="action.type === 'linkedin' ? '_blank' : null"
-                  [attr.rel]="action.type === 'linkedin' ? 'noopener' : null"
+                  [attr.target]="action.type === 'linkedin' || action.type === 'salesforce' ? '_blank' : null"
+                  [attr.rel]="action.type === 'linkedin' || action.type === 'salesforce' ? 'noopener' : null"
                 >
                   {{ getActionIcon(action) }}
                 </a>

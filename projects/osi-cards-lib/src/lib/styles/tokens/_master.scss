@@ -326,19 +326,19 @@ $breakpoints: (
 @mixin osi-spacing() {
   --spacing-base: 0.25rem;
 
-  // Primary spacing scale (fluid)
-  --space-1: clamp(2px, 0.4vw, 6px);
-  --space-2: clamp(4px, 0.6vw, 8px);
-  --space-3: clamp(6px, 0.8vw, 12px);
-  --space-4: clamp(8px, 1vw, 14px);
-  --space-5: clamp(10px, 1.2vw, 18px);
-  --space-6: clamp(12px, 1.4vw, 20px);
-  --space-7: clamp(14px, 1.6vw, 22px);
-  --space-8: clamp(16px, 1.8vw, 24px);
-  --space-9: clamp(18px, 2vw, 28px);
-  --space-10: clamp(20px, 2.2vw, 32px);
-  --space-11: clamp(22px, 2.4vw, 36px);
-  --space-12: clamp(24px, 2.6vw, 40px);
+  // Primary spacing scale (fixed)
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 6px;
+  --space-4: 8px;
+  --space-5: 10px;
+  --space-6: 12px;
+  --space-7: 14px;
+  --space-8: 16px;
+  --space-9: 18px;
+  --space-10: 20px;
+  --space-11: 22px;
+  --space-12: 24px;
 
   // Semantic spacing aliases
   --spacing-xs: var(--space-1);
@@ -466,27 +466,34 @@ $breakpoints: (
 @mixin osi-card-typography($variant: "demo") {
   // Both demo and integration now use the same compact values
   // Section Titles
-  --section-title-font-size: clamp(0.92rem, 0.87rem + 0.2vw, 1.07rem);
+  --section-title-font-size: 0.92rem;
   --section-title-font-weight: 700;
   --section-title-letter-spacing: -0.02em;
   --section-title-line-height: 1.3;
   --section-title-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 
-  // Card Titles
-  --card-title-font-size: clamp(0.83rem, 0.78rem + 0.15vw, 0.93rem);
+  // Card Header Title (main card title - larger)
+  --card-header-title-font-size: 1.25rem; /* 20px - main card header (reduced by 2px from 22px) */
+  --card-header-title-font-size-mobile: 1rem; /* 16px - mobile (reduced by 2px from 18px) */
+  --card-header-title-font-weight: 700;
+  --card-header-title-letter-spacing: -0.02em;
+  --card-header-title-line-height: 1.3;
+
+  // Card Titles (for items within sections - smaller)
+  --card-title-font-size: 0.705rem;
   --card-title-font-weight: 700;
   --card-title-letter-spacing: -0.01em;
   --card-title-line-height: 1.4;
   --card-title-text-shadow: 0 1px 1px rgba(0, 0, 0, 0.06);
 
   // Card Subtitles
-  --card-subtitle-font-size: clamp(0.65rem, 0.625rem + 0.1vw, 0.7rem);
+  --card-subtitle-font-size: 0.65rem;
   --card-subtitle-font-weight: 500;
   --card-subtitle-letter-spacing: 0.015em;
   --card-subtitle-line-height: 1.3;
 
   // Card Labels
-  --card-label-font-size: clamp(0.5rem, 0.48rem + 0.05vw, 0.5rem);
+  --card-label-font-size: 0.5rem;
   --card-label-font-weight: 700;
   --card-label-letter-spacing: 0.065em;
   --card-label-line-height: 1.25;
@@ -494,21 +501,21 @@ $breakpoints: (
   --card-label-text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 
   // Card Values
-  --card-value-font-size: clamp(1rem, 0.95rem + 0.2vw, 1rem);
-  --card-value-font-size-large: clamp(1.2rem, 1.15rem + 0.2vw, 1.25rem);
-  --card-value-font-size-xl: clamp(1.25rem, 1.2rem + 0.2vw, 1.25rem);
+  --card-value-font-size: 1rem;
+  --card-value-font-size-large: 1.2rem;
+  --card-value-font-size-xl: 1.25rem;
   --card-value-font-weight: 600;
   --card-value-letter-spacing: -0.015em;
   --card-value-line-height: 1.35;
   --card-value-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   // Card Meta
-  --card-meta-font-size: clamp(0.55rem, 0.525rem + 0.1vw, 0.6rem);
+  --card-meta-font-size: 0.55rem;
   --card-meta-font-weight: 500;
   --card-meta-line-height: 1.3;
 
   // Smallest text
-  --card-text-small-font-size: clamp(0.355rem, 0.295rem + 0.13vw, 0.455rem);
+  --card-text-small-font-size: 0.355rem;
 
   // Grid min width
   --section-grid-min-width: 200px;
@@ -527,11 +534,11 @@ $breakpoints: (
   --section-padding: 12px;
   --section-container-padding: 12px;
   --card-min-height: auto;
-  --card-gap: clamp(6px, 0.6vw, 10px);
-  --card-gap-large: clamp(10px, 0.8vw, 14px);
-  --card-nested-gap: clamp(3px, 0.4vw, 6px);
-  --section-header-gap: clamp(3px, 0.4vw, 6px);
-  --section-header-padding-bottom: clamp(0px, 0.2vw, 2px);
+  --card-gap: 6px;
+  --card-gap-large: 10px;
+  --card-nested-gap: 3px;
+  --section-header-gap: 3px;
+  --section-header-padding-bottom: 0px;
   --section-title-margin-bottom: 0;
   --card-border-radius: 12px;
   --card-border-radius-large: 16px;
@@ -647,7 +654,7 @@ $breakpoints: (
   --osi-card-padding-bottom: var(--card-main-padding);
   --osi-card-padding-left: var(--card-main-padding);
   --osi-card-padding-right: var(--card-main-padding);
-  --osi-card-padding-mobile: var(--space-1);
+  --osi-card-padding-mobile: 4px; // Fixed padding - no responsive behavior
 
   // Card Spacing - Margins
   --osi-card-margin-top: 0;
@@ -800,8 +807,8 @@ $breakpoints: (
   --osi-section-title-line-height: var(--section-title-line-height, 1.3);
   --osi-section-title-color: var(--card-text-primary);
   --osi-section-title-margin-bottom: var(--section-title-margin-bottom);
-  --osi-section-title-underline-length: clamp(var(--space-8), 3vw, var(--space-12));
-  --osi-section-title-underline-hover-length: clamp(var(--space-10), 4vw, var(--space-12));
+  --osi-section-title-underline-length: var(--space-8);
+  --osi-section-title-underline-hover-length: var(--space-10);
   --osi-section-title-underline-height: var(--border-width-accent);
   --osi-section-title-underline-offset: calc(var(--space-2) * -1);
   --osi-section-title-underline-color: var(--section-accent, var(--accent, #{$osi-color-brand}));
@@ -1052,50 +1059,53 @@ $breakpoints: (
 
   // Surface tokens - defaults (will be overridden by theme-specific mixins and JavaScript presets)
   // These are fallback values only - actual values come from osi-theme-dark/light mixins or JavaScript presets
-  --theme-ai-card-border: 1px solid rgba(0, 0, 0, 0.08);
-  --theme-ai-card-border-hover: 1px solid rgba(255, 121, 0, 0.4);
-  --theme-ai-card-background: rgba(255, 255, 255, 0.85);
-  --theme-ai-card-background-hover: rgba(255, 255, 255, 0.92);
-  --theme-ai-card-box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.1), 0 0 18px rgba(255, 121, 0, 0.15);
-  --theme-ai-card-box-shadow-hover:
-    0 20px 40px -5px rgba(0, 0, 0, 0.15), 0 0 24px rgba(255, 121, 0, 0.25),
-    0 0 0 1px rgba(255, 121, 0, 0.15);
-  --theme-ai-card-backdrop-filter: blur(12px);
-  --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  & {
+    --theme-ai-card-border: 1px solid rgba(0, 0, 0, 0.08);
+    --theme-ai-card-border-hover: 1px solid rgba(255, 121, 0, 0.4);
+    --theme-ai-card-background: rgba(255, 255, 255, 0.85);
+    --theme-ai-card-background-hover: rgba(255, 255, 255, 0.92);
+    --theme-ai-card-box-shadow:
+      0 4px 24px -1px rgba(0, 0, 0, 0.1), 0 0 18px rgba(255, 121, 0, 0.15);
+    --theme-ai-card-box-shadow-hover:
+      0 20px 40px -5px rgba(0, 0, 0, 0.15), 0 0 24px rgba(255, 121, 0, 0.25),
+      0 0 0 1px rgba(255, 121, 0, 0.15);
+    --theme-ai-card-backdrop-filter: blur(12px);
+    --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
-  --theme-card-border: 1px solid rgba(0, 0, 0, 0.08);
-  --theme-card-border-hover: var(--color-brand);
-  --theme-card-background: var(--background);
-  --theme-card-background-hover: color-mix(
-    in srgb,
-    var(--background) 98%,
-    var(--surface-contrast-color) 2%
-  );
-  --theme-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  --theme-card-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.07);
+    --theme-card-border: 1px solid rgba(0, 0, 0, 0.08);
+    --theme-card-border-hover: var(--color-brand);
+    --theme-card-background: var(--background);
+    --theme-card-background-hover: color-mix(
+      in srgb,
+      var(--background) 98%,
+      var(--surface-contrast-color) 2%
+    );
+    --theme-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --theme-card-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.07);
 
-  --theme-section-border: 1px solid rgba(0, 0, 0, 0.06);
-  --theme-section-border-hover: 1px solid rgba(255, 121, 0, 0.15);
-  --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  --theme-section-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.05);
-  --theme-section-transition:
-    border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-  // Flat backgrounds - no color-mix
-  --section-background: var(--background);
-  --section-background-hover: var(--background);
-  --section-surface: var(--background);
-  --section-surface-hover: var(--background);
+    --theme-section-border: 1px solid rgba(0, 0, 0, 0.06);
+    --theme-section-border-hover: 1px solid rgba(255, 121, 0, 0.15);
+    --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    --theme-section-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --theme-section-transition:
+      border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    // Flat backgrounds - no color-mix
+    --section-background: var(--background);
+    --section-background-hover: var(--background);
+    --section-surface: var(--background);
+    --section-surface-hover: var(--background);
 
-  --theme-section-item-border: 1px solid rgba(0, 0, 0, 0.06);
-  --theme-section-item-border-hover: 1px solid rgba(255, 121, 0, 0.15);
-  --theme-section-item-background: var(--background);
-  --theme-section-item-background-hover: var(--background);
-  --theme-section-item-box-shadow: var(--shadow-md, 0 1px 2px rgba(0, 0, 0, 0.04));
-  --theme-section-item-box-shadow-hover: var(--shadow-lg, 0 1px 3px rgba(0, 0, 0, 0.05));
-  --theme-section-item-hover-transform: none;
-  --theme-section-item-transition:
-    border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --theme-section-item-border: 1px solid rgba(0, 0, 0, 0.06);
+    --theme-section-item-border-hover: 1px solid rgba(255, 121, 0, 0.15);
+    --theme-section-item-background: var(--background);
+    --theme-section-item-background-hover: var(--background);
+    --theme-section-item-box-shadow: var(--shadow-md, 0 1px 2px rgba(0, 0, 0, 0.04));
+    --theme-section-item-box-shadow-hover: var(--shadow-lg, 0 1px 3px rgba(0, 0, 0, 0.05));
+    --theme-section-item-hover-transform: none;
+    --theme-section-item-transition:
+      border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 }
 
 /// Generate dark theme colors
@@ -1108,6 +1118,10 @@ $breakpoints: (
   } @else {
     --background: #{$osi-background-dark};
   }
+
+  // Ensure base colors are always available (even if osi-theme-base wasn't called)
+  @include osi-base-colors();
+
   --surface-contrast-color: #{$osi-color-white};
   --foreground: #{$osi-foreground-dark};
   --muted: #242424;
@@ -1122,72 +1136,74 @@ $breakpoints: (
   --card-section-card-bg: #1f1f1f;
 
   // AI Card surface - transparent with blur effect (matches preset)
-  --theme-ai-card-border: 1px solid rgba(255, 255, 255, 0.08);
-  --theme-ai-card-border-hover: 1px solid rgba(255, 121, 0, 0.2);
-  --theme-ai-card-background: rgba(20, 20, 20, 0.6);
-  --theme-ai-card-background-hover: rgba(25, 25, 25, 0.7);
-  --theme-ai-card-box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
-  --theme-ai-card-box-shadow-hover:
-    0 12px 32px -4px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 121, 0, 0.1);
-  --theme-ai-card-backdrop-filter: blur(12px);
-  --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  & {
+    --theme-ai-card-border: 1px solid rgba(255, 255, 255, 0.08);
+    --theme-ai-card-border-hover: 1px solid rgba(255, 121, 0, 0.2);
+    --theme-ai-card-background: rgba(20, 20, 20, 0.6);
+    --theme-ai-card-background-hover: rgba(25, 25, 25, 0.7);
+    --theme-ai-card-box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
+    --theme-ai-card-box-shadow-hover:
+      0 12px 32px -4px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 121, 0, 0.1);
+    --theme-ai-card-backdrop-filter: blur(12px);
+    --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
-  // Card backgrounds (matches preset)
-  --theme-card-border: 1px solid rgba(255, 255, 255, 0.08);
-  --theme-card-border-hover: 1px solid rgba(255, 121, 0, 0.2);
-  --theme-card-background: var(--background);
-  // Fallback for browsers without color-mix support
-  --theme-card-background-hover: rgba(25, 25, 25, 0.7);
-  --theme-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
-  --theme-card-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.4);
+    // Card backgrounds (matches preset)
+    --theme-card-border: 1px solid rgba(255, 255, 255, 0.08);
+    --theme-card-border-hover: 1px solid rgba(255, 121, 0, 0.2);
+    --theme-card-background: var(--background);
+    // Fallback for browsers without color-mix support
+    --theme-card-background-hover: rgba(25, 25, 25, 0.7);
+    --theme-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    --theme-card-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.4);
 
-  // Flat section backgrounds
-  --section-background: var(--background);
-  --section-background-hover: var(--background);
-  --section-surface: #181818;
-  --section-surface-hover: #1f1f1f;
-  --popover: #111111;
-  --popover-foreground: #{$osi-foreground-dark};
-  --primary: #{$osi-color-brand};
-  --primary-foreground: #{$osi-foreground-dark};
-  --secondary: #333333;
-  --secondary-foreground: #{$osi-foreground-dark};
-  --accent: #{$osi-color-brand};
-  --accent-foreground: #{$osi-color-black};
-  --destructive: #d4183d;
-  --destructive-foreground: #{$osi-foreground-dark};
-  --border: rgba(200, 200, 200, 0.3);
-  --input: transparent;
-  --input-background: #222222;
-  --switch-background: #333333;
-  --ring: #{$brand-color-60};
-  --chart-1: #{$osi-color-brand};
-  --chart-2: #{$osi-color-brand-light};
-  --chart-3: #{$osi-color-brand-dark};
-  --chart-4: #{$osi-color-brand-pale};
-  --chart-5: #ff4500;
+    // Flat section backgrounds
+    --section-background: var(--background);
+    --section-background-hover: var(--background);
+    --section-surface: #181818;
+    --section-surface-hover: #1f1f1f;
+    --popover: #111111;
+    --popover-foreground: #{$osi-foreground-dark};
+    --primary: #{$osi-color-brand};
+    --primary-foreground: #{$osi-foreground-dark};
+    --secondary: #333333;
+    --secondary-foreground: #{$osi-foreground-dark};
+    --accent: #{$osi-color-brand};
+    --accent-foreground: #{$osi-color-black};
+    --destructive: #d4183d;
+    --destructive-foreground: #{$osi-foreground-dark};
+    --border: rgba(200, 200, 200, 0.3);
+    --input: transparent;
+    --input-background: #222222;
+    --switch-background: #333333;
+    --ring: #{$brand-color-60};
+    --chart-1: #{$osi-color-brand};
+    --chart-2: #{$osi-color-brand-light};
+    --chart-3: #{$osi-color-brand-dark};
+    --chart-4: #{$osi-color-brand-pale};
+    --chart-5: #ff4500;
 
-  // Element type overrides - subtle theme-aware hover
-  --hero-card-border: 1px solid rgba(233, 233, 233, 0.2);
-  --hero-card-border-hover: 1px solid rgba(255, 121, 0, 0.25);
-  // Section (matches preset)
-  --theme-section-border: 1px solid rgba(255, 255, 255, 0.1);
-  --theme-section-border-hover: 1px solid rgba(255, 255, 255, 0.1);
-  --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-  --theme-section-box-shadow-hover: 0 2px 5px rgba(0, 0, 0, 0.5);
-  --theme-section-transition:
-    border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-  // Section Item (matches preset)
-  --theme-section-item-border: 1px solid rgba(255, 255, 255, 0.06);
-  --theme-section-item-border-hover: 1px solid rgba(255, 121, 0, 0.08);
-  --theme-section-item-background: #202020;
-  --theme-section-item-background-hover: #212121;
-  --theme-section-item-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-  --theme-section-item-box-shadow-hover: 0 1px 4px rgba(0, 0, 0, 0.3);
-  --theme-section-item-hover-transform: none;
-  --theme-section-item-transition:
-    background 220ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    // Element type overrides - subtle theme-aware hover
+    --hero-card-border: 1px solid rgba(233, 233, 233, 0.2);
+    --hero-card-border-hover: 1px solid rgba(255, 121, 0, 0.25);
+    // Section (matches preset)
+    --theme-section-border: 1px solid rgba(255, 255, 255, 0.1);
+    --theme-section-border-hover: 1px solid rgba(255, 255, 255, 0.1);
+    --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --theme-section-box-shadow-hover: 0 2px 5px rgba(0, 0, 0, 0.5);
+    --theme-section-transition:
+      border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    // Section Item (matches preset)
+    --theme-section-item-border: 1px solid rgba(255, 255, 255, 0.06);
+    --theme-section-item-border-hover: 1px solid rgba(255, 121, 0, 0.08);
+    --theme-section-item-background: #202020;
+    --theme-section-item-background-hover: #212121;
+    --theme-section-item-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    --theme-section-item-box-shadow-hover: 0 1px 4px rgba(0, 0, 0, 0.3);
+    --theme-section-item-hover-transform: none;
+    --theme-section-item-transition:
+      background 220ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
 }
 
 /// Generate light theme colors
@@ -1197,6 +1213,10 @@ $breakpoints: (
   @if $is-scoped {
     color-scheme: light;
   }
+
+  // Ensure base colors are always available (even if osi-theme-base wasn't called)
+  @include osi-base-colors();
+
   --background: #{$osi-background-light};
   --foreground: #{$osi-foreground-light};
   --muted: #f4f4f6;
@@ -1212,85 +1232,88 @@ $breakpoints: (
   }
 
   // Flat light backgrounds - no color-mix
-  --card: var(--background);
-  --card-surface: var(--background);
-  --card-foreground: #{$osi-foreground-light};
-  --card-surface-hover: var(--background);
-  --card-section-bg: #fcfcfc;
-  --card-section-card-bg: #f8f8f8;
+  & {
+    --card: var(--background);
+    --card-surface: var(--background);
+    --card-foreground: #{$osi-foreground-light};
+    --card-surface-hover: var(--background);
+    --card-section-bg: #fcfcfc;
+    --card-section-card-bg: #f8f8f8;
 
-  // AI Card surface - light theme with blur (matches preset)
-  --theme-ai-card-border: 1px solid rgba(0, 0, 0, 0.08);
-  --theme-ai-card-border-hover: 1px solid rgba(255, 121, 0, 0.2);
-  --theme-ai-card-background: rgba(255, 255, 255, 0.85);
-  --theme-ai-card-background-hover: rgba(255, 255, 255, 0.88);
-  --theme-ai-card-box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.1), 0 0 18px rgba(255, 121, 0, 0.15);
-  --theme-ai-card-box-shadow-hover:
-    0 12px 32px -4px rgba(0, 0, 0, 0.12), 0 0 20px rgba(255, 121, 0, 0.18),
-    0 0 0 1px rgba(255, 121, 0, 0.1);
-  --theme-ai-card-backdrop-filter: blur(12px);
-  --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    // AI Card surface - light theme with blur (matches preset)
+    --theme-ai-card-border: 1px solid rgba(0, 0, 0, 0.08);
+    --theme-ai-card-border-hover: 1px solid rgba(255, 121, 0, 0.2);
+    --theme-ai-card-background: rgba(255, 255, 255, 0.85);
+    --theme-ai-card-background-hover: rgba(255, 255, 255, 0.88);
+    --theme-ai-card-box-shadow:
+      0 4px 24px -1px rgba(0, 0, 0, 0.1), 0 0 18px rgba(255, 121, 0, 0.15);
+    --theme-ai-card-box-shadow-hover:
+      0 12px 32px -4px rgba(0, 0, 0, 0.12), 0 0 20px rgba(255, 121, 0, 0.18),
+      0 0 0 1px rgba(255, 121, 0, 0.1);
+    --theme-ai-card-backdrop-filter: blur(12px);
+    --theme-ai-card-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
-  // Card backgrounds (matches preset)
-  --theme-card-border: 1px solid rgba(0, 0, 0, 0.08);
-  --theme-card-border-hover: 1px solid rgba(255, 121, 0, 0.2);
-  --theme-card-background: var(--background);
-  // Fallback for browsers without color-mix support
-  --theme-card-background-hover: rgba(255, 255, 255, 0.88);
-  --theme-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  --theme-card-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.06);
+    // Card backgrounds (matches preset)
+    --theme-card-border: 1px solid rgba(0, 0, 0, 0.08);
+    --theme-card-border-hover: 1px solid rgba(255, 121, 0, 0.2);
+    --theme-card-background: var(--background);
+    // Fallback for browsers without color-mix support
+    --theme-card-background-hover: rgba(255, 255, 255, 0.88);
+    --theme-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --theme-card-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.06);
 
-  // Flat section backgrounds
-  --section-background: var(--background);
-  --section-background-hover: var(--background);
-  --section-surface: #fcfcfc;
-  --section-surface-hover: #f8f8f8;
-  --popover: #{$osi-color-white};
-  --popover-foreground: #1a1a1a;
-  --primary: #{$osi-color-brand};
-  --primary-foreground: #{$osi-color-white};
-  --secondary: #f5f5f5;
-  --secondary-foreground: #1a1a1a;
-  --accent: #{$osi-color-brand};
-  --accent-foreground: #{$osi-color-white};
-  --destructive: #d4183d;
-  --destructive-foreground: #{$osi-color-white};
-  --border: rgba(200, 200, 200, 0.5);
-  --input: transparent;
-  --input-background: #f9f9f9;
-  --switch-background: #e5e5e5;
-  --ring: #{$brand-color-40};
-  --chart-1: #{$osi-color-brand};
-  --chart-2: #{$osi-color-brand-light};
-  --chart-3: #{$osi-color-brand-dark};
-  --chart-4: #{$osi-color-brand-pale};
-  --chart-5: #ff4500;
+    // Flat section backgrounds
+    --section-background: var(--background);
+    --section-background-hover: var(--background);
+    --section-surface: #fcfcfc;
+    --section-surface-hover: #f8f8f8;
+    --popover: #{$osi-color-white};
+    --popover-foreground: #1a1a1a;
+    --primary: #{$osi-color-brand};
+    --primary-foreground: #{$osi-color-white};
+    --secondary: #f5f5f5;
+    --secondary-foreground: #1a1a1a;
+    --accent: #{$osi-color-brand};
+    --accent-foreground: #{$osi-color-white};
+    --destructive: #d4183d;
+    --destructive-foreground: #{$osi-color-white};
+    --border: rgba(200, 200, 200, 0.5);
+    --input: transparent;
+    --input-background: #f9f9f9;
+    --switch-background: #e5e5e5;
+    --ring: #{$brand-color-40};
+    --chart-1: #{$osi-color-brand};
+    --chart-2: #{$osi-color-brand-light};
+    --chart-3: #{$osi-color-brand-dark};
+    --chart-4: #{$osi-color-brand-pale};
+    --chart-5: #ff4500;
 
-  // Light theme gray overrides
-  --color-gray-700: #e0e0e0;
-  --color-gray-600: #d0d0d0;
+    // Light theme gray overrides
+    --color-gray-700: #e0e0e0;
+    --color-gray-600: #d0d0d0;
 
-  // Element type overrides - subtle theme-aware hover
-  --hero-card-border: 1px solid rgba(146, 153, 158, 0.25);
-  --hero-card-border-hover: 1px solid rgba(255, 121, 0, 0.2);
-  // Section (matches preset)
-  --theme-section-border: 1px solid rgba(0, 0, 0, 0.08);
-  --theme-section-border-hover: 1px solid rgba(0, 0, 0, 0.1);
-  --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  --theme-section-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.07);
-  --theme-section-transition:
-    border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-  // Section Item (matches preset)
-  --theme-section-item-border: 1px solid rgba(0, 0, 0, 0.06);
-  --theme-section-item-border-hover: 1px solid rgba(255, 121, 0, 0.08);
-  --theme-section-item-background: #f9f9f9;
-  --theme-section-item-background-hover: #f7f7f7;
-  --theme-section-item-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --theme-section-item-box-shadow-hover: 0 1px 3px rgba(0, 0, 0, 0.05);
-  --theme-section-item-hover-transform: none;
-  --theme-section-item-transition:
-    background 220ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    // Element type overrides - subtle theme-aware hover
+    --hero-card-border: 1px solid rgba(146, 153, 158, 0.25);
+    --hero-card-border-hover: 1px solid rgba(255, 121, 0, 0.2);
+    // Section (matches preset)
+    --theme-section-border: 1px solid rgba(0, 0, 0, 0.08);
+    --theme-section-border-hover: 1px solid rgba(0, 0, 0, 0.1);
+    --theme-section-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --theme-section-box-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.07);
+    --theme-section-transition:
+      border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    // Section Item (matches preset)
+    --theme-section-item-border: 1px solid rgba(0, 0, 0, 0.06);
+    --theme-section-item-border-hover: 1px solid rgba(255, 121, 0, 0.08);
+    --theme-section-item-background: #f9f9f9;
+    --theme-section-item-background-hover: #f7f7f7;
+    --theme-section-item-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --theme-section-item-box-shadow-hover: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --theme-section-item-hover-transform: none;
+    --theme-section-item-transition:
+      background 220ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
 }
 
 // ============================================
@@ -1301,6 +1324,8 @@ $breakpoints: (
 /// @param {String} $variant - 'demo' for larger demo app, 'integration' for compact OSA
 /// @param {Boolean} $is-scoped - If true, outputs for nested context
 @mixin osi-tokens($variant: "demo", $is-scoped: false) {
+  // Ensure base colors are always available
+  @include osi-base-colors();
   @include osi-shadows();
   @include osi-radius();
 

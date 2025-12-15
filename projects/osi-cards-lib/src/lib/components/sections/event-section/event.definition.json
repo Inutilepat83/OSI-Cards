@@ -27,33 +27,60 @@
   "fieldSchema": {
     "type": "object",
     "properties": {
-      "label": { "type": "string", "description": "Event label" },
-      "value": { "type": "string", "description": "Event name/description" },
+      "label": {
+        "type": "string",
+        "description": "Event label"
+      },
+      "value": {
+        "type": "string",
+        "description": "Event name/description"
+      },
       "date": {
         "type": "string",
         "format": "date",
         "description": "Event date"
       },
-      "time": { "type": "string", "description": "Event time" },
+      "time": {
+        "type": "string",
+        "description": "Event time"
+      },
       "endDate": {
         "type": "string",
         "format": "date",
         "description": "Event end date"
       },
-      "category": { "type": "string", "description": "Event category" },
+      "category": {
+        "type": "string",
+        "description": "Event category"
+      },
       "status": {
         "type": "string",
-        "enum": ["confirmed", "planned", "tentative", "cancelled", "completed"],
+        "enum": [
+          "confirmed",
+          "planned",
+          "tentative",
+          "cancelled",
+          "completed"
+        ],
         "description": "Event status"
       },
-      "location": { "type": "string", "description": "Event location" },
-      "attendees": { "type": "number", "description": "Number of attendees" }
+      "location": {
+        "type": "string",
+        "description": "Event location"
+      },
+      "attendees": {
+        "type": "number",
+        "description": "Number of attendees"
+      }
     },
     "required": []
   },
-  "aliases": ["calendar", "schedule"],
-  "testFixtures": {
-    "complete": {
+  "aliases": [
+    "calendar",
+    "schedule"
+  ],
+  "examples": {
+    "example": {
       "title": "Q1 2025 Key Events",
       "type": "event",
       "description": "Major company events and milestones",
@@ -80,26 +107,6 @@
           "attendees": 12
         },
         {
-          "label": "Product Launch",
-          "value": "Nexus Analytics 5.0 Release",
-          "date": "2025-02-10",
-          "time": "10:00",
-          "category": "Product",
-          "status": "confirmed",
-          "location": "Global Webcast"
-        },
-        {
-          "label": "Customer Summit",
-          "value": "NexusCon 2025 - AI Future",
-          "date": "2025-03-18",
-          "endDate": "2025-03-20",
-          "time": "08:00",
-          "category": "Conference",
-          "status": "planned",
-          "location": "Moscone Center, San Francisco",
-          "attendees": 3500
-        },
-        {
           "label": "Investor Day",
           "value": "Annual Investor Relations Event",
           "date": "2025-03-25",
@@ -108,27 +115,6 @@
           "status": "planned",
           "location": "New York Stock Exchange",
           "attendees": 200
-        },
-        {
-          "label": "Partner Summit",
-          "value": "Global Partner Ecosystem Meeting",
-          "date": "2025-04-08",
-          "endDate": "2025-04-09",
-          "time": "09:00",
-          "category": "Partnership",
-          "status": "tentative",
-          "location": "London, UK",
-          "attendees": 180
-        },
-        {
-          "label": "Engineering All-Hands",
-          "value": "Technical Roadmap Review",
-          "date": "2025-02-28",
-          "time": "16:00",
-          "category": "Internal",
-          "status": "confirmed",
-          "location": "Virtual",
-          "attendees": 850
         },
         {
           "label": "AWS re:Invent Presence",
@@ -140,45 +126,9 @@
           "status": "planned",
           "location": "Las Vegas, NV"
         }
-      ]
-    },
-    "minimal": {
-      "title": "Upcoming Event",
-      "type": "event",
-      "fields": [
-        { "label": "Meeting", "value": "Team Sync", "date": "2025-01-15" }
-      ]
-    },
-    "edgeCases": {
-      "title": "Event Edge Cases",
-      "type": "event",
-      "fields": [
-        {
-          "label": "Past Event",
-          "value": "Historical Milestone",
-          "date": "2020-01-01",
-          "status": "completed"
-        },
-        {
-          "label": "Far Future",
-          "value": "Long-term Planning",
-          "date": "2030-12-31",
-          "status": "tentative"
-        },
-        {
-          "label": "Cancelled Event",
-          "value": "Postponed Conference",
-          "date": "2025-06-01",
-          "status": "cancelled"
-        },
-        {
-          "label": "All Day Event",
-          "value": "Company Holiday",
-          "date": "2025-12-25",
-          "time": "",
-          "status": "confirmed"
-        }
-      ]
+      ],
+      "preferredColumns": 1,
+      "priority": 3
     }
   }
 }

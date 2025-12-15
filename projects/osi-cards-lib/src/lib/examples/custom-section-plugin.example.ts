@@ -1,12 +1,9 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardSection, CardField } from '../models';
-import {
-  BaseSectionComponent,
-  SectionInteraction,
-} from '../components/sections/base-section.component';
-import { SectionPlugin } from '../interfaces/section-plugin.interface';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { BaseSectionComponent } from '../components/sections/base-section.component';
 import { LucideIconsModule } from '../icons';
+import { SectionPlugin } from '../interfaces/section-plugin.interface';
+import { CardSection } from '../models';
 
 /**
  * Example custom section plugin component
@@ -138,6 +135,8 @@ export class ExampleCustomSectionComponent extends BaseSectionComponent implemen
    * Determines if this plugin can handle the given section
    */
   canHandle(section: CardSection): boolean {
-    return section.type === ExampleCustomSectionComponent.PLUGIN_TYPE;
+    // Custom plugin types are strings that may not be in SectionTypeInput union
+    const sectionType = section.type as string;
+    return sectionType === ExampleCustomSectionComponent.PLUGIN_TYPE;
   }
 }

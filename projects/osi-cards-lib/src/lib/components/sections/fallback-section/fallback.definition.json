@@ -3,7 +3,11 @@
   "name": "Fallback Section",
   "description": "Default section renderer for unknown or unsupported section types.",
   "selector": "lib-fallback-section",
-  "useCases": ["Unknown types", "Error handling", "Graceful degradation"],
+  "useCases": [
+    "Unknown types",
+    "Error handling",
+    "Graceful degradation"
+  ],
   "bestPractices": [
     "Display section data in readable format",
     "Show section type for debugging",
@@ -17,36 +21,41 @@
     "supportsEmoji": true
   },
   "isInternal": true,
-  "testFixtures": {
-    "complete": {
+  "examples": {
+    "example": {
       "title": "Unknown Section Type",
       "type": "unknown-custom-type",
       "description": "This section type is not recognized and will render using fallback",
       "fields": [
-        { "label": "Custom Field 1", "value": "Some custom data" },
-        { "label": "Custom Field 2", "value": "More data to display" },
-        { "label": "Numeric Data", "value": 42 },
-        { "label": "Status", "value": "Active" }
+        {
+          "label": "Custom Field 1",
+          "value": "Some custom data"
+        },
+        {
+          "label": "Custom Field 2",
+          "value": "More data to display"
+        },
+        {
+          "label": "Numeric Data",
+          "value": 42
+        },
+        {
+          "label": "Status",
+          "value": "Active"
+        }
       ],
       "items": [
         {
           "title": "Custom Item 1",
           "description": "Description for custom item"
         },
-        { "title": "Custom Item 2", "description": "Another custom item" }
-      ]
-    },
-    "minimal": {
-      "title": "Fallback",
-      "type": "fallback"
-    },
-    "edgeCases": {
-      "title": "Fallback Edge Cases",
-      "type": "completely-unknown-type-xyz-123",
-      "fields": [
-        { "label": "Empty", "value": "" },
-        { "label": "Null", "value": null }
-      ]
+        {
+          "title": "Custom Item 2",
+          "description": "Another custom item"
+        }
+      ],
+      "preferredColumns": 1,
+      "priority": 3
     }
   }
 }

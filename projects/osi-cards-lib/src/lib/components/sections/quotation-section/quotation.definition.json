@@ -27,13 +27,34 @@
   "fieldSchema": {
     "type": "object",
     "properties": {
-      "label": { "type": "string", "description": "Quote label/category" },
-      "value": { "type": "string", "description": "Quote text" },
-      "quote": { "type": "string", "description": "Alternative quote field" },
-      "description": { "type": "string", "description": "Attribution/source" },
-      "author": { "type": "string", "description": "Quote author" },
-      "role": { "type": "string", "description": "Author's role" },
-      "company": { "type": "string", "description": "Author's company" },
+      "label": {
+        "type": "string",
+        "description": "Quote label/category"
+      },
+      "value": {
+        "type": "string",
+        "description": "Quote text"
+      },
+      "quote": {
+        "type": "string",
+        "description": "Alternative quote field"
+      },
+      "description": {
+        "type": "string",
+        "description": "Attribution/source"
+      },
+      "author": {
+        "type": "string",
+        "description": "Quote author"
+      },
+      "role": {
+        "type": "string",
+        "description": "Author's role"
+      },
+      "company": {
+        "type": "string",
+        "description": "Author's company"
+      },
       "date": {
         "type": "string",
         "format": "date",
@@ -42,9 +63,12 @@
     },
     "required": []
   },
-  "aliases": ["quote", "testimonial"],
-  "testFixtures": {
-    "complete": {
+  "aliases": [
+    "quote",
+    "testimonial"
+  ],
+  "examples": {
+    "example": {
       "title": "Customer Success Stories",
       "type": "quotation",
       "description": "What industry leaders say about our platform",
@@ -90,24 +114,9 @@
           "company": "Gartner Inc.",
           "date": "2024-09-01"
         }
-      ]
-    },
-    "minimal": {
-      "title": "Testimonial",
-      "type": "quotation",
-      "fields": [{ "value": "\"Great product!\"" }]
-    },
-    "edgeCases": {
-      "title": "Quotation Edge Cases",
-      "type": "quotation",
-      "fields": [
-        { "value": "'Single quotes' and \"double quotes\" mixed together" },
-        { "value": "Quote with special characters: <>&\"'!@#$%^*()[]{}|\\:;" },
-        {
-          "value": "Multi-line quote:\nLine 1\nLine 2\nLine 3",
-          "description": "Testing line breaks"
-        }
-      ]
+      ],
+      "preferredColumns": 1,
+      "priority": 3
     }
   }
 }

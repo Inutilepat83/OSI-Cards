@@ -27,8 +27,14 @@
   "itemSchema": {
     "type": "object",
     "properties": {
-      "title": { "type": "string", "description": "Network node name" },
-      "description": { "type": "string", "description": "Node description" },
+      "title": {
+        "type": "string",
+        "description": "Network node name"
+      },
+      "description": {
+        "type": "string",
+        "description": "Node description"
+      },
       "meta": {
         "type": "object",
         "properties": {
@@ -42,17 +48,26 @@
           },
           "status": {
             "type": "string",
-            "enum": ["active", "inactive", "pending"],
+            "enum": [
+              "active",
+              "inactive",
+              "pending"
+            ],
             "description": "Node status"
           },
-          "type": { "type": "string", "description": "Connection type" }
+          "type": {
+            "type": "string",
+            "description": "Connection type"
+          }
         }
       }
     },
-    "required": ["title"]
+    "required": [
+      "title"
+    ]
   },
-  "testFixtures": {
-    "complete": {
+  "examples": {
+    "example": {
       "title": "Strategic Partner Ecosystem",
       "type": "network-card",
       "description": "Key business relationships and strategic partnerships",
@@ -78,26 +93,6 @@
           }
         },
         {
-          "title": "Accenture",
-          "description": "Systems Integration Partner - Enterprise Deployments",
-          "meta": {
-            "influence": 88,
-            "connections": 34,
-            "status": "active",
-            "type": "Implementation Partner"
-          }
-        },
-        {
-          "title": "Snowflake",
-          "description": "Data Platform Partnership - Native Integration",
-          "meta": {
-            "influence": 85,
-            "connections": 28,
-            "status": "active",
-            "type": "Technology Partner"
-          }
-        },
-        {
           "title": "Microsoft",
           "description": "Azure Marketplace Partner - Co-sell Agreement",
           "meta": {
@@ -105,26 +100,6 @@
             "connections": 52,
             "status": "active",
             "type": "Technology Partner"
-          }
-        },
-        {
-          "title": "Deloitte",
-          "description": "Advisory Partner - Digital Transformation",
-          "meta": {
-            "influence": 82,
-            "connections": 19,
-            "status": "active",
-            "type": "Consulting Partner"
-          }
-        },
-        {
-          "title": "Goldman Sachs",
-          "description": "Strategic Banking Partner",
-          "meta": {
-            "influence": 78,
-            "connections": 8,
-            "status": "active",
-            "type": "Financial Partner"
           }
         },
         {
@@ -137,33 +112,9 @@
             "type": "Network"
           }
         }
-      ]
-    },
-    "minimal": {
-      "title": "Partners",
-      "type": "network-card",
-      "items": [{ "title": "Partner Organization" }]
-    },
-    "edgeCases": {
-      "title": "Network Edge Cases",
-      "type": "network-card",
-      "items": [
-        {
-          "title": "Zero Influence Node",
-          "description": "New connection",
-          "meta": { "influence": 0, "connections": 0, "status": "pending" }
-        },
-        {
-          "title": "Maximum Influence",
-          "description": "Highest priority",
-          "meta": { "influence": 100, "connections": 9999, "status": "active" }
-        },
-        {
-          "title": "Inactive Partner",
-          "description": "Partnership on hold",
-          "meta": { "influence": 45, "connections": 5, "status": "inactive" }
-        }
-      ]
+      ],
+      "preferredColumns": 1,
+      "priority": 3
     }
   }
 }

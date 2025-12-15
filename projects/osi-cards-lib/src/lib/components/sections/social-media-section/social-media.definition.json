@@ -21,8 +21,7 @@
     "usesFields": true,
     "usesItems": true,
     "defaultColumns": 1,
-    "supportsCollapse": true,
-    "supportsEmoji": true
+    "supportsCollapse": true
   },
   "fieldSchema": {
     "type": "object",
@@ -40,24 +39,41 @@
         ],
         "description": "Social platform"
       },
-      "handle": { "type": "string", "description": "Social media handle" },
+      "handle": {
+        "type": "string",
+        "description": "Social media handle"
+      },
       "url": {
         "type": "string",
         "format": "uri",
         "description": "Profile URL"
       },
-      "followers": { "type": "number", "description": "Follower count" },
-      "engagement": { "type": "number", "description": "Engagement rate" },
-      "verified": { "type": "boolean", "description": "Verified account" }
+      "followers": {
+        "type": "number",
+        "description": "Follower count"
+      },
+      "engagement": {
+        "type": "number",
+        "description": "Engagement rate"
+      },
+      "verified": {
+        "type": "boolean",
+        "description": "Verified account"
+      }
     },
     "required": []
   },
-  "aliases": ["social", "socials"],
-  "testFixtures": {
-    "complete": {
+  "aliases": [
+    "social",
+    "socials"
+  ],
+  "examples": {
+    "example": {
       "title": "Social Media Presence",
       "type": "social-media",
       "description": "Official company social profiles and engagement",
+      "preferredColumns": 2,
+      "priority": 3,
       "fields": [
         {
           "platform": "linkedin",
@@ -76,27 +92,11 @@
           "verified": true
         },
         {
-          "platform": "youtube",
-          "handle": "Nexus Technologies",
-          "url": "https://youtube.com/@nexustech",
-          "followers": 45000,
-          "engagement": 6.1,
-          "verified": true
-        },
-        {
           "platform": "github",
           "handle": "nexus-tech",
           "url": "https://github.com/nexus-tech",
           "followers": 12500,
           "verified": false
-        },
-        {
-          "platform": "instagram",
-          "handle": "@nexustech.official",
-          "url": "https://instagram.com/nexustech.official",
-          "followers": 32000,
-          "engagement": 5.4,
-          "verified": true
         },
         {
           "platform": "facebook",
@@ -106,20 +106,6 @@
           "engagement": 2.1,
           "verified": true
         }
-      ]
-    },
-    "minimal": {
-      "title": "Social",
-      "type": "social-media",
-      "fields": [{ "platform": "linkedin", "handle": "@company" }]
-    },
-    "edgeCases": {
-      "title": "Social Edge Cases",
-      "type": "social-media",
-      "fields": [
-        { "platform": "twitter", "handle": "", "followers": 0 },
-        { "platform": "linkedin", "followers": 9999999, "verified": true },
-        { "platform": "tiktok", "handle": "@newplatform", "followers": 1500000 }
       ]
     }
   }

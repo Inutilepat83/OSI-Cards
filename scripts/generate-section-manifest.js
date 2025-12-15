@@ -2,7 +2,7 @@
 
 /**
  * Generate Section Manifest
- * 
+ *
  * Creates a manifest file containing all section metadata for use in:
  * - Build-time optimizations
  * - Documentation generation
@@ -38,7 +38,7 @@ function generateManifest() {
   log('═'.repeat(50), colors.cyan);
 
   const registry = loadRegistry();
-  
+
   const sections = Object.entries(registry.sections).map(([type, def]) => ({
     type,
     name: def.name,
@@ -74,8 +74,8 @@ export interface SectionManifestEntry {
     usesChartData?: boolean;
     defaultColumns: number;
     supportsCollapse: boolean;
-    supportsEmoji: boolean;
     requiresExternalLib?: string;
+    supportsEmoji?: boolean;
   };
   aliases: string[];
   isInternal: boolean;
@@ -91,7 +91,7 @@ export const SECTION_MANIFEST: SectionManifestEntry[] = ${JSON.stringify(section
  */
 export function getManifestEntry(type: string): SectionManifestEntry | undefined {
   const typeLower = type.toLowerCase();
-  return SECTION_MANIFEST.find(s => 
+  return SECTION_MANIFEST.find(s =>
     s.type === typeLower || s.aliases.includes(typeLower)
   );
 }
@@ -110,7 +110,7 @@ export function getPublicSectionTypes(): string[] {
  */
 export function getSectionsRequiringExternalLibs(): Map<string, string[]> {
   const map = new Map<string, string[]>();
-  
+
   SECTION_MANIFEST.forEach(s => {
     if (s.rendering.requiresExternalLib) {
       const lib = s.rendering.requiresExternalLib;
@@ -120,7 +120,7 @@ export function getSectionsRequiringExternalLibs(): Map<string, string[]> {
       map.get(lib)!.push(s.type);
     }
   });
-  
+
   return map;
 }
 

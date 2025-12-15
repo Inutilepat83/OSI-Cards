@@ -19,33 +19,57 @@
     "usesFields": true,
     "usesItems": false,
     "defaultColumns": 2,
-    "supportsCollapse": true,
-    "supportsEmoji": true
+    "supportsCollapse": true
   },
   "fieldSchema": {
     "type": "object",
     "properties": {
-      "label": { "type": "string", "description": "Metric label" },
-      "value": { "type": ["string", "number"], "description": "Metric value" },
+      "label": {
+        "type": "string",
+        "description": "Metric label"
+      },
+      "value": {
+        "type": [
+          "string",
+          "number"
+        ],
+        "description": "Metric value"
+      },
       "percentage": {
         "type": "number",
         "description": "Percentage value for visualization"
       },
       "performance": {
         "type": "string",
-        "enum": ["excellent", "good", "average", "poor"],
+        "enum": [
+          "excellent",
+          "good",
+          "average",
+          "poor"
+        ],
         "description": "Performance rating"
       },
-      "icon": { "type": "string", "description": "Icon identifier" }
+      "icon": {
+        "type": "string",
+        "description": "Icon identifier"
+      }
     },
-    "required": ["label"]
+    "required": [
+      "label"
+    ]
   },
-  "aliases": ["metrics", "stats", "kpi"],
-  "testFixtures": {
-    "complete": {
+  "aliases": [
+    "metrics",
+    "stats",
+    "kpi"
+  ],
+  "examples": {
+    "example": {
       "title": "Q4 2024 Performance Dashboard",
       "type": "analytics",
       "description": "Comprehensive business metrics and KPIs",
+      "preferredColumns": 2,
+      "priority": 2,
       "fields": [
         {
           "label": "Revenue Growth",
@@ -60,99 +84,16 @@
           "performance": "good"
         },
         {
-          "label": "Monthly Active Users",
-          "value": "2.4M",
-          "percentage": 89,
-          "performance": "excellent"
-        },
-        {
-          "label": "Net Promoter Score",
-          "value": "72",
-          "percentage": 72,
-          "performance": "excellent"
-        },
-        {
-          "label": "Customer Lifetime Value",
-          "value": "$8,450",
-          "percentage": 84,
-          "performance": "excellent"
-        },
-        {
-          "label": "Churn Rate",
-          "value": "2.1%",
-          "percentage": 21,
-          "performance": "excellent"
-        },
-        {
           "label": "Average Deal Size",
           "value": "$45K",
           "percentage": 65,
           "performance": "good"
         },
         {
-          "label": "Sales Cycle Length",
-          "value": "34 days",
-          "percentage": 55,
-          "performance": "average"
-        },
-        {
-          "label": "Pipeline Coverage",
-          "value": "4.2x",
-          "percentage": 84,
-          "performance": "excellent"
-        },
-        {
-          "label": "Win Rate",
-          "value": "38%",
-          "percentage": 38,
-          "performance": "average"
-        },
-        {
-          "label": "Employee Satisfaction",
-          "value": "4.6/5",
-          "percentage": 92,
-          "performance": "excellent"
-        },
-        {
           "label": "Product Uptime",
           "value": "99.97%",
           "percentage": 99,
           "performance": "excellent"
-        }
-      ]
-    },
-    "minimal": {
-      "title": "Key Metric",
-      "type": "analytics",
-      "fields": [{ "label": "Score", "value": "85%", "percentage": 85 }]
-    },
-    "edgeCases": {
-      "title": "Analytics Edge Cases",
-      "type": "analytics",
-      "fields": [
-        {
-          "label": "Zero Performance",
-          "value": "0%",
-          "percentage": 0,
-          "performance": "poor"
-        },
-        {
-          "label": "Negative Value",
-          "value": "-23.5%",
-          "percentage": -23,
-          "performance": "poor"
-        },
-        {
-          "label": "Maximum Score",
-          "value": "100%",
-          "percentage": 100,
-          "performance": "excellent"
-        },
-        { "label": "No Percentage", "value": "N/A", "performance": "average" },
-        {
-          "label": "Extreme Change",
-          "value": "+1,234%",
-          "percentage": 100
         }
       ]
     }

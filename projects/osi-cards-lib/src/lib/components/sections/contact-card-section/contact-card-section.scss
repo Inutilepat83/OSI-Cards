@@ -14,23 +14,49 @@
 :host {
   display: block;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+// Ensure section content respects width
+.ai-section--contact-card {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.section-content {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); // Always 2 columns
+  // Allow 2 cards side by side when space permits (min 300px per card)
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
   gap: var(--osi-spacing-compact-md, 12px);
+  width: 100%; // Ensure grid respects container width
+  max-width: 100%; // Prevent overflow
+  box-sizing: border-box;
 
   @include responsive-down("md") {
     gap: var(--osi-spacing-compact-sm, 6px);
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(280px, 100%), 1fr)
+    ); // Slightly smaller on medium screens
   }
 
   @include responsive-down("sm") {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(250px, 100%), 1fr)
+    ); // Smaller on small screens
   }
 
   @include responsive-down("xs") {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; // Single column on extra small screens
   }
 }
 
@@ -42,6 +68,10 @@
   flex-direction: column;
   gap: var(--osi-spacing-compact-sm, 6px);
   min-height: auto;
+  width: 100%; // Full width of container
+  max-width: 100%; // Prevent overflow
+  box-sizing: border-box;
+  overflow: visible; // Allow note to be fully visible, not clipped // Include padding in width calculation
   transition:
     box-shadow var(--duration-slow) var(--ease-out),
     background var(--duration-slow) var(--ease-out),
@@ -72,23 +102,36 @@
         0 0 16px color-mix(in srgb, var(--accent) 20%, transparent),
         var(--shadow-md);
 
-      // Show target label on hover
+      // Target label enhanced on hover
       .target-label {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1.05); // Slightly larger on hover
+        background: color-mix(
+          in srgb,
+          var(--accent) 25%,
+          var(--osi-section-item-background, var(--background))
+        ); // More prominent background on hover
+        box-shadow:
+          0 2px 8px color-mix(in srgb, var(--accent) 30%, transparent),
+          0 0 0 1px var(--accent); // Add shadow on hover
       }
     }
   }
+
+  // When note is expanded, make card span full width
+  &--note-expanded {
+    grid-column: 1 / -1; // Span all columns in the grid
+  }
 }
 
-// Target label (shown on hover)
+// Target label (visible by default, on top)
 .target-label {
   position: absolute;
   top: var(--osi-spacing-compact-sm, 6px);
   right: var(--osi-spacing-compact-sm, 6px);
   padding: 2px 6px;
-  font-size: 0.625rem; // 10px
-  font-weight: var(--font-weight-semibold);
+  font-size: 0.5rem; // 8px (reduced from 10px)
+  font-weight: var(--font-weight-bold, 700); // Bold
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--accent);
@@ -99,21 +142,47 @@
   );
   border: 1px solid var(--accent);
   border-radius: var(--radius-sm);
-  opacity: 0;
-  transform: translateY(-4px);
+  opacity: 1; // Visible by default
+  transform: translateY(0); // No transform by default
   transition:
     opacity var(--duration-base) var(--ease-out),
-    transform var(--duration-base) var(--ease-out);
+    transform var(--duration-base) var(--ease-out),
+    background var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
   pointer-events: none;
-  z-index: 1;
+  z-index: 100; // High z-index to ensure it's on top of everything
 }
 
 // 2-column content layout
 .card__content {
   display: grid;
-  grid-template-columns: 1fr auto; // Left takes available space, right auto-sizes
+  grid-template-columns: auto 1fr; // Left fits content, right takes remaining space
   gap: var(--osi-spacing-compact-md, 12px);
-  align-items: flex-start; // Align items to top
+  align-items: stretch; // Stretch both columns to same height
+  flex: 1; // Expand to fill available card height
+  min-height: 0; // Allow shrinking in flex container
+  width: 100%; // Full width
+  max-width: 100%; // Respect container width
+  min-width: 0; // Allow grid to shrink below content size
+  overflow: visible; // Allow content to be visible
+  box-sizing: border-box; // Include padding in width
+
+  // Ensure both columns are always visible
+  & > * {
+    min-width: 0; // Allow columns to shrink
+    overflow: visible; // Allow content to be visible
+    box-sizing: border-box; // Include padding in width
+  }
+
+  // When right column has note, ensure it gets space
+  &:has(.card__right .note) {
+    grid-template-columns: auto minmax(120px, 1fr); // Ensure minimum space for note
+  }
+}
+
+// When note is expanded, allow right column to take more space
+.card--note-expanded .card__content {
+  grid-template-columns: auto minmax(0, 1fr); // Right can expand more
 }
 
 // Left column: name, title, actions
@@ -121,7 +190,9 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between; // Top content at top, icons at bottom
-  min-width: 0; // Allow text truncation
+  width: fit-content; // Fit content width
+  min-width: 0; // Allow shrinking if needed
+  flex-shrink: 0; // Prevent shrinking
   height: 100%; // Fill available height
 }
 
@@ -139,13 +210,33 @@
   gap: 6px; // 6px gap between influence and icons
   margin-top: auto; // Push to bottom
   align-items: flex-start;
+  flex: 1; // Expand to fill available space
+  justify-content: flex-end; // Align content to bottom
 }
 
 // Right column: note
 .card__right {
-  flex-shrink: 0;
-  min-width: 120px;
-  max-width: 200px;
+  min-width: 0; // Allow text wrapping in grid (important for grid items)
+  width: 100%; // Full width
+  max-width: 100%; // Respect container width
+  height: 100%; // Fill available height to match left column
+  display: flex;
+  flex-direction: column;
+  overflow: visible; // Allow note to be visible
+  visibility: visible; // Ensure visibility
+  opacity: 1; // Ensure opacity
+  position: relative; // Ensure proper positioning
+  z-index: 1; // Ensure note is above other elements
+
+  // Ensure note takes minimum space when present
+  &:has(.note) {
+    min-width: 120px; // Minimum width when note exists
+  }
+}
+
+// When note is expanded, make right column take more space
+.card--note-expanded .card__right {
+  max-width: none; // Remove any max-width constraints
 }
 
 // Name and title in left column
@@ -184,6 +275,7 @@
   align-items: center;
   gap: 8px;
   margin: 0;
+  margin-top: 8px; // 8px margin above influence bar
   align-self: flex-start;
   position: relative;
 
@@ -348,15 +440,26 @@
   @include typo.caption;
   padding: var(--osi-spacing-compact-sm, 6px) var(--osi-spacing-compact-md, 12px);
   border-radius: var(--radius-sm);
-  // Full border with brand color, non-brand background
-  border: 1px solid var(--accent);
+  // Grey border, non-brand background
+  border: 1px solid var(--border);
   background: var(--osi-section-item-background, var(--surface-hover));
-  font-size: 0.75rem; // 12px
+  font-size: 0.6875rem; // 11px (reduced from 12px)
   line-height: 1.4;
   color: var(--foreground);
   box-shadow: var(--shadow-sm);
-  display: flex;
+  display: flex !important; // Force display
   flex-direction: column;
+  height: 100%; // Fill available card height
+  width: 100%; // Full width
+  max-width: 100%; // Ensure it doesn't overflow container
+  min-width: 120px; // Minimum width to ensure visibility
+  visibility: visible !important; // Force visibility
+  opacity: 1 !important; // Force opacity
+  position: relative; // Ensure it's in the document flow
+  z-index: 1; // Ensure it's above other elements
+  box-sizing: border-box; // Include padding and border in width calculation
+  overflow-wrap: break-word; // Break long words to prevent overflow
+  word-wrap: break-word; // Break long words
 }
 
 .note__label {
@@ -378,6 +481,9 @@
   -webkit-box-orient: vertical;
   word-break: break-word;
   color: var(--foreground);
+  font-size: 0.6875rem; // 11px - slightly bigger
+  line-height: 1; // Tight line height to fit more content
+  flex: 1; // Expand to fill available space
   transition: all var(--duration-base) var(--ease-out);
 
   // Expanded state: show all text
@@ -438,5 +544,25 @@
 
   .card__right {
     max-width: 100%;
+  }
+
+  .card__left {
+    width: 100%; // Full width when stacked
+  }
+}
+
+// Responsive adjustments for narrow cards (when in masonry grid)
+@media (max-width: 600px) {
+  .card__content {
+    grid-template-columns: 1fr; // Stack on narrow cards
+    gap: var(--osi-spacing-compact-sm, 6px);
+  }
+
+  .card__left {
+    width: 100%;
+  }
+
+  .card__left-bottom {
+    margin-top: var(--osi-spacing-compact-sm, 6px);
   }
 }

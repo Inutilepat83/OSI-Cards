@@ -4,45 +4,27 @@ Displays structured lists and tables. Supports sorting, filtering, and item inte
 
 ## Overview
 
-The **List Section** (`type: "list"`) is used for displays structured lists and tables. supports sorting, filtering, and item interactions.
-
-### Quick Facts
-
-| Property | Value |
-|----------|-------|
-| Type | `list` |
-| Uses Fields | No |
-| Uses Items | Yes |
-| Default Columns | 1 |
-| Supports Collapse | Yes |
-| Aliases | None |
-
+The **List Section** is used for displays structured lists and tables. supports sorting, filtering, and item interactions.
 
 ## Use Cases
 
 - Product lists
-- Feature lists
-- Task lists
+- Employee rosters
 - Inventory
-- Requirements
+- Task lists
 
 ## Data Schema
 
+```typescript
+interface CardSection {
+  title: string;
+  type: 'list';
+  fields?: CardField[];
+  items?: CardItem[];
+}
+```
 
-
-### Items Schema
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `title` | string | Item title |
-| `description` | string | Item description |
-| `icon` | string | Icon identifier |
-| `status` | string | Item status |
-| `value` | string,number | Item value |
-| `date` | string | Item date |
-| `priority` | string | Priority level |
-
-## Complete Example
+## Example
 
 ```json
 {
@@ -71,36 +53,22 @@ The **List Section** (`type: "list"`) is used for displays structured lists and 
       "status": "completed",
       "priority": "high"
     }
-  ]
-}
-```
-
-## Minimal Example
-
-```json
-{
-  "title": "Tasks",
-  "type": "list",
-  "items": [
-    {
-      "title": "Task 1"
-    }
-  ]
+  ],
+  "preferredColumns": 1,
+  "priority": 3
 }
 ```
 
 ## Best Practices
 
 1. Use items array for list data
-2. Include titles and descriptions
-3. Add status badges when relevant
-4. Keep list items scannable
-5. Use icons for visual hierarchy
+1. Include titles and descriptions
+1. Add status badges when relevant
+1. Keep list items scannable
 
-## Component Information
+## Component Properties
 
-- **Selector:** `lib-list-section`
-- **Component Path:** `./lib/components/sections/list-section/list-section.component`
+
 
 
 ## Related Documentation

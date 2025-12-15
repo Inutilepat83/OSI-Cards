@@ -144,3 +144,4 @@ export function clearMemoizationCache(): void {
   // Note: WeakMap entries cannot be cleared manually
   // This only works for Map-based caches
 }
+

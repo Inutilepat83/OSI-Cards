@@ -293,14 +293,8 @@
 // =====================================================================
 
 @mixin fluid-type($min-size, $max-size, $min-width: 320px, $max-width: 1200px) {
-  font-size: clamp(
-    #{$min-size},
-    calc(
-      #{$min-size} + (#{strip-unit($max-size)} - #{strip-unit($min-size)}) *
-        ((100vw - #{$min-width}) / (#{strip-unit($max-width)} - #{strip-unit($min-width)}))
-    ),
-    #{$max-size}
-  );
+  // Fixed font size - no responsive behavior
+  font-size: #{$min-size};
 }
 
 @function strip-unit($number) {

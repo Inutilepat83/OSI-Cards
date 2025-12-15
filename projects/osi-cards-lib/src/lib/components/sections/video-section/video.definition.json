@@ -21,8 +21,7 @@
     "usesFields": false,
     "usesItems": true,
     "defaultColumns": 2,
-    "supportsCollapse": true,
-    "supportsEmoji": true
+    "supportsCollapse": true
   },
   "itemSchema": {
     "type": "object",
@@ -61,11 +60,16 @@
         }
       }
     },
-    "required": ["title"]
+    "required": [
+      "title"
+    ]
   },
-  "aliases": ["videos", "media"],
-  "testFixtures": {
-    "complete": {
+  "aliases": [
+    "videos",
+    "media"
+  ],
+  "examples": {
+    "example": {
       "title": "Video Resources",
       "type": "video",
       "description": "Product demos, tutorials, and webinar recordings",
@@ -103,45 +107,9 @@
             "category": "Product Demo"
           }
         }
-      ]
-    },
-    "minimal": {
-      "title": "Videos",
-      "type": "video",
-      "items": [
-        {
-          "title": "Video Title"
-        }
-      ]
-    },
-    "edgeCases": {
-      "title": "Video Edge Cases",
-      "type": "video",
-      "items": [
-        {
-          "title": "No Thumbnail",
-          "description": "Video without thumbnail image",
-          "meta": {
-            "duration": "10:00"
-          }
-        },
-        {
-          "title": "Very Long Video",
-          "description": "Extended content",
-          "meta": {
-            "duration": "3:45:30",
-            "views": 0
-          }
-        },
-        {
-          "title": "Short Clip",
-          "description": "Brief snippet",
-          "meta": {
-            "duration": "0:15",
-            "views": 1000000
-          }
-        }
-      ]
+      ],
+      "preferredColumns": 1,
+      "priority": 3
     }
   }
 }

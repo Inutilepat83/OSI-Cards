@@ -51,7 +51,6 @@ export interface CardSection {
   type: SectionTypeInput;
   description?: string;
   subtitle?: string;
-  columns?: number;
   /**
    * Explicit column span override - how many columns this section should span.
    * Takes precedence over preferredColumns.
@@ -107,28 +106,18 @@ export interface CardSection {
    */
   layoutPriority?: LayoutPriority;
   /**
-   * Priority band for layout ordering and condensation
-   * - 'critical': Always visible, never condensed (overview, key contacts)
-   * - 'important': Visible by default, condensed last (analytics, charts)
-   * - 'standard': Normal priority (info, lists)
-   * - 'optional': Can be collapsed first when space is limited
+   * Priority for layout ordering and condensation (1-3)
+   * - 1: Highest priority - Always visible, never condensed (overview, key contacts)
+   * - 2: Medium priority - Visible by default, condensed last (analytics, charts)
+   * - 3: Lowest priority - Normal priority, can be collapsed first (info, lists)
    */
-  priority?: 'critical' | 'important' | 'standard' | 'optional';
-  /**
-   * Keep this section visible at the top during scroll
-   */
-  sticky?: boolean;
-  /**
-   * Group ID to keep related sections together in layout
-   */
-  groupId?: string;
+  priority?: 1 | 2 | 3;
   /**
    * Preferred column position (0-indexed) for column affinity
    */
   columnAffinity?: number;
   width?: number;
   collapsed?: boolean;
-  emoji?: string;
   fields?: CardField[];
   items?: CardItem[];
   chartType?: 'bar' | 'line' | 'pie' | 'doughnut';

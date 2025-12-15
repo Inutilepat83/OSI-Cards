@@ -1,6 +1,6 @@
 /**
  * OSI Cards - Responsive Design System
- * 
+ *
  * Breakpoints and responsive utilities for cards and sections.
  */
 
@@ -89,32 +89,13 @@ $breakpoints: (
 .osi-card-container {
   @include container(card);
 
-  // Base mobile styles
-  --card-padding: 0.75rem;
+  // Fixed styles - no responsive behavior
+  --card-padding: 4px;
   --card-gap: 0.5rem;
   --card-title-size: 1rem;
   --section-title-size: 0.875rem;
   --field-label-size: 0.75rem;
   --field-value-size: 0.875rem;
-
-  @include responsive("sm") {
-    --card-padding: 1rem;
-    --card-gap: 0.75rem;
-    --card-title-size: 1.125rem;
-  }
-
-  @include responsive("md") {
-    --card-padding: 1.25rem;
-    --card-gap: 1rem;
-    --card-title-size: 1.25rem;
-    --section-title-size: 1rem;
-  }
-
-  @include responsive("lg") {
-    --card-padding: 1.5rem;
-    --card-gap: 1.25rem;
-    --card-title-size: 1.375rem;
-  }
 }
 
 // ============================================
@@ -189,10 +170,6 @@ $breakpoints: (
 
     .metric-value {
       font-size: 1.5rem;
-
-      @include responsive("md") {
-        font-size: 2rem;
-      }
     }
   }
 
@@ -227,29 +204,29 @@ $breakpoints: (
 }
 
 // ============================================
-// Typography Responsive Utilities
+// Typography Responsive Utilities (fixed)
 // ============================================
 
 .text-responsive {
-  font-size: clamp(0.875rem, 2vw, 1rem);
+  font-size: 0.875rem;
   line-height: 1.5;
 }
 
 .heading-responsive {
-  font-size: clamp(1.25rem, 4vw, 2rem);
+  font-size: 1.25rem;
   line-height: 1.2;
 }
 
 // ============================================
-// Spacing Responsive Utilities
+// Spacing Responsive Utilities (fixed)
 // ============================================
 
 .space-responsive {
-  padding: clamp(0.5rem, 2vw, 1.5rem);
+  padding: 0.5rem;
 }
 
 .gap-responsive {
-  gap: clamp(0.5rem, 2vw, 1rem);
+  gap: 0.5rem;
 }
 
 // ============================================

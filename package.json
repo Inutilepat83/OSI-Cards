@@ -1,6 +1,6 @@
 {
   "name": "osi-cards",
-  "version": "1.5.19",
+  "version": "1.5.39",
   "private": true,
   "bin": {
     "osi-cards": "./tools/cli/osi-cards-cli.js"
@@ -74,7 +74,7 @@
     "log:server": "node scripts/log-server.js",
     "logs:start": "node scripts/log-server.js",
     "_comment_misc": "═══ MISC ═══",
-    "prebuild": "npm run generate:manifest && npm run version:generate",
+    "prebuild": "npm run generate:manifest && npm run version:generate && node scripts/copy-registry-to-assets.js && node scripts/generate-llm-prompt-json.js",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

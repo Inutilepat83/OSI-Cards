@@ -4,42 +4,27 @@ Displays news articles, headlines, and press releases. Supports source attributi
 
 ## Overview
 
-The **News Section** (`type: "news"`) is used for displays news articles, headlines, and press releases. supports source attribution and publication dates.
-
-### Quick Facts
-
-| Property | Value |
-|----------|-------|
-| Type | `news` |
-| Uses Fields | No |
-| Uses Items | Yes |
-| Default Columns | 1 |
-| Supports Collapse | Yes |
-| Aliases | None |
-
+The **News Section** is used for displays news articles, headlines, and press releases. supports source attribution and publication dates.
 
 ## Use Cases
 
 - News feeds
 - Press releases
 - Announcements
-- Industry updates
-- Company news
+- Blog posts
 
 ## Data Schema
 
+```typescript
+interface CardSection {
+  title: string;
+  type: 'news';
+  fields?: CardField[];
+  items?: CardItem[];
+}
+```
 
-
-### Items Schema
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `title` | string | News headline |
-| `description` | string | News summary |
-| `meta` | object | - |
-| `status` | string | Article status |
-
-## Complete Example
+## Example
 
 ```json
 {
@@ -79,36 +64,22 @@ The **News Section** (`type: "news"`) is used for displays news articles, headli
       },
       "status": "published"
     }
-  ]
-}
-```
-
-## Minimal Example
-
-```json
-{
-  "title": "News",
-  "type": "news",
-  "items": [
-    {
-      "title": "Company Update"
-    }
-  ]
+  ],
+  "preferredColumns": 1,
+  "priority": 3
 }
 ```
 
 ## Best Practices
 
 1. Include source and publication date in meta
-2. Keep headlines concise
-3. Use descriptions for summaries
-4. Include status for article state
-5. Order chronologically
+1. Keep headlines concise
+1. Use descriptions for summaries
+1. Include status for article state
 
-## Component Information
+## Component Properties
 
-- **Selector:** `lib-news-section`
-- **Component Path:** `./lib/components/sections/news-section/news-section.component`
+
 
 
 ## Related Documentation

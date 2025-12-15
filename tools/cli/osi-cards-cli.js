@@ -2,12 +2,12 @@
 
 /**
  * OSI Cards CLI
- * 
+ *
  * Command-line interface for OSI Cards development and management.
- * 
+ *
  * Usage:
  *   npx osi-cards <command> [options]
- * 
+ *
  * Commands:
  *   generate section <name>  - Generate a new section component
  *   validate <config.json>   - Validate a card configuration
@@ -110,13 +110,13 @@ function generateSection(name) {
   }
 
   info(`Generating section: ${name}`);
-  
+
   try {
     execSync(`npm run generate:section -- ${name}`, {
       cwd: ROOT_DIR,
       stdio: 'inherit'
     });
-    
+
     success(`Section '${name}' generated successfully!`);
     info('Run "npm run generate:all" to regenerate derived files');
   } catch (err) {
@@ -136,7 +136,7 @@ function validateConfig(configPath) {
   }
 
   const fullPath = path.resolve(configPath);
-  
+
   if (!fs.existsSync(fullPath)) {
     error(`Config file not found: ${fullPath}`);
     process.exit(1);
@@ -148,7 +148,7 @@ function validateConfig(configPath) {
     const content = fs.readFileSync(fullPath, 'utf8');
     const config = JSON.parse(content);
     const registry = loadRegistry();
-    
+
     const errors = [];
     const warnings = [];
 
@@ -169,7 +169,7 @@ function validateConfig(configPath) {
         } else {
           const type = section.type.toLowerCase();
           const resolvedType = registry.typeAliases?.[type] || type;
-          
+
           if (!registry.sections[resolvedType]) {
             warnings.push(`Section ${i}: unknown type '${type}'`);
           } else {
@@ -225,7 +225,7 @@ function previewConfig(configPath) {
   }
 
   const fullPath = path.resolve(configPath);
-  
+
   if (!fs.existsSync(fullPath)) {
     error(`Config file not found: ${fullPath}`);
     process.exit(1);
@@ -234,28 +234,28 @@ function previewConfig(configPath) {
   try {
     const content = fs.readFileSync(fullPath, 'utf8');
     const config = JSON.parse(content);
-    
+
     log(`\n${colors.cyan}${colors.bright}Card Preview${colors.reset}`);
     log('═'.repeat(50), colors.cyan);
-    
+
     log(`\n${colors.yellow}Title:${colors.reset} ${config.cardTitle}`);
     if (config.description) {
       log(`${colors.yellow}Description:${colors.reset} ${config.description}`);
     }
-    
+
     log(`\n${colors.yellow}Sections (${config.sections?.length || 0}):${colors.reset}`);
     (config.sections || []).forEach((section, i) => {
       const dataCount = section.fields?.length || section.items?.length || 0;
       log(`  ${i + 1}. ${section.title} (${section.type}) - ${dataCount} items`);
     });
-    
+
     if (config.actions?.length > 0) {
       log(`\n${colors.yellow}Actions (${config.actions.length}):${colors.reset}`);
       config.actions.forEach((action, i) => {
         log(`  ${i + 1}. ${action.label} (${action.type || 'default'})`);
       });
     }
-    
+
     log('\n' + '═'.repeat(50), colors.cyan);
 
   } catch (err) {
@@ -270,15 +270,15 @@ function previewConfig(configPath) {
 function runDoctor() {
   log(`\n${colors.cyan}${colors.bright}OSI Cards Doctor${colors.reset}`);
   log('═'.repeat(50), colors.cyan);
-  
+
   const checks = [];
 
   // Check registry exists
   checks.push({
     name: 'Section Registry',
     pass: fs.existsSync(REGISTRY_PATH),
-    message: fs.existsSync(REGISTRY_PATH) 
-      ? 'Found' 
+    message: fs.existsSync(REGISTRY_PATH)
+      ? 'Found'
       : 'Not found - run "npm run generate:from-registry"'
   });
 
@@ -287,8 +287,8 @@ function runDoctor() {
   checks.push({
     name: 'Generated Types',
     pass: fs.existsSync(typesPath),
-    message: fs.existsSync(typesPath) 
-      ? 'Found' 
+    message: fs.existsSync(typesPath)
+      ? 'Found'
       : 'Not found - run "npm run generate:from-registry"'
   });
 
@@ -297,8 +297,8 @@ function runDoctor() {
   checks.push({
     name: 'Component Map',
     pass: fs.existsSync(componentMapPath),
-    message: fs.existsSync(componentMapPath) 
-      ? 'Found' 
+    message: fs.existsSync(componentMapPath)
+      ? 'Found'
       : 'Not found - run "npm run generate:from-registry"'
   });
 
@@ -307,8 +307,8 @@ function runDoctor() {
   checks.push({
     name: 'Section Manifest',
     pass: fs.existsSync(manifestPath),
-    message: fs.existsSync(manifestPath) 
-      ? 'Found' 
+    message: fs.existsSync(manifestPath)
+      ? 'Found'
       : 'Not found - run "npm run generate:manifest"'
   });
 
@@ -317,8 +317,8 @@ function runDoctor() {
   checks.push({
     name: 'Dependencies',
     pass: fs.existsSync(nodeModules),
-    message: fs.existsSync(nodeModules) 
-      ? 'Installed' 
+    message: fs.existsSync(nodeModules)
+      ? 'Installed'
       : 'Not installed - run "npm install"'
   });
 
@@ -333,7 +333,7 @@ function runDoctor() {
   });
 
   log('\n' + '═'.repeat(50), colors.cyan);
-  
+
   if (allPass) {
     success('All checks passed!');
   } else {
@@ -347,24 +347,24 @@ function runDoctor() {
  */
 function listSections() {
   const registry = loadRegistry();
-  
+
   log(`\n${colors.cyan}${colors.bright}Available Section Types${colors.reset}`);
   log('═'.repeat(60), colors.cyan);
-  
+
   const sections = Object.entries(registry.sections)
     .filter(([_, def]) => !def.isInternal)
     .sort(([a], [b]) => a.localeCompare(b));
-  
+
   log(`\n${colors.yellow}Type${' '.repeat(20)}Name${' '.repeat(20)}Data${colors.reset}`);
   log('-'.repeat(60));
-  
+
   sections.forEach(([type, def]) => {
     const dataType = def.rendering.usesItems ? 'items' : (def.rendering.usesChartData ? 'chartData' : 'fields');
     const typePadded = type.padEnd(24);
     const namePadded = def.name.replace(' Section', '').padEnd(24);
     log(`${colors.green}${typePadded}${colors.reset}${namePadded}${dataType}`);
   });
-  
+
   // List aliases
   if (registry.typeAliases && Object.keys(registry.typeAliases).length > 0) {
     log(`\n${colors.yellow}Type Aliases:${colors.reset}`);
@@ -372,7 +372,7 @@ function listSections() {
       log(`  ${colors.dim}${alias}${colors.reset} → ${target}`);
     });
   }
-  
+
   log('\n' + '═'.repeat(60), colors.cyan);
   log(`Total: ${sections.length} section types\n`);
 }
@@ -390,7 +390,7 @@ function sectionInfo(type) {
   const registry = loadRegistry();
   const resolvedType = registry.typeAliases?.[type] || type;
   const def = registry.sections[resolvedType];
-  
+
   if (!def) {
     error(`Unknown section type: ${type}`);
     log('\nAvailable types:');
@@ -402,32 +402,32 @@ function sectionInfo(type) {
 
   log(`\n${colors.cyan}${colors.bright}${def.name}${colors.reset}`);
   log('═'.repeat(50), colors.cyan);
-  
+
   log(`\n${colors.yellow}Type:${colors.reset} ${resolvedType}`);
   log(`${colors.yellow}Description:${colors.reset} ${def.description}`);
   log(`${colors.yellow}Selector:${colors.reset} ${def.selector}`);
-  
+
   log(`\n${colors.yellow}Data Structure:${colors.reset}`);
   log(`  Uses Fields: ${def.rendering.usesFields ? 'Yes' : 'No'}`);
   log(`  Uses Items: ${def.rendering.usesItems ? 'Yes' : 'No'}`);
   log(`  Uses Chart Data: ${def.rendering.usesChartData ? 'Yes' : 'No'}`);
   log(`  Default Columns: ${def.rendering.defaultColumns}`);
-  
+
   if (def.useCases?.length > 0) {
     log(`\n${colors.yellow}Use Cases:${colors.reset}`);
     def.useCases.forEach(uc => log(`  - ${uc}`));
   }
-  
+
   if (def.bestPractices?.length > 0) {
     log(`\n${colors.yellow}Best Practices:${colors.reset}`);
     def.bestPractices.forEach((bp, i) => log(`  ${i + 1}. ${bp}`));
   }
-  
-  if (def.testFixtures?.minimal) {
+
+  if (def.examples?.minimal) {
     log(`\n${colors.yellow}Minimal Example:${colors.reset}`);
-    log(JSON.stringify(def.testFixtures.minimal, null, 2));
+    log(JSON.stringify(def.examples.minimal, null, 2));
   }
-  
+
   log('\n' + '═'.repeat(50), colors.cyan);
 }
 
@@ -436,13 +436,13 @@ function sectionInfo(type) {
  */
 function syncAll() {
   info('Syncing all generated files from registry...');
-  
+
   try {
     execSync('npm run generate:all', {
       cwd: ROOT_DIR,
       stdio: 'inherit'
     });
-    
+
     success('All files synchronized!');
   } catch (err) {
     error(`Sync failed: ${err.message}`);

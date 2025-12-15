@@ -22,10 +22,39 @@ const OUTPUT_PATH = path.join(__dirname, '../src/app/features/documentation/llm-
 
 /**
  * Read and parse the section registry
+ * Also loads examples from definition files if not in registry
  */
 function readRegistry() {
   const content = fs.readFileSync(REGISTRY_PATH, 'utf8');
-  return JSON.parse(content);
+  const registry = JSON.parse(content);
+
+  // If examples are not in registry, load them from definition files
+  const sectionsDir = path.join(__dirname, '..', 'projects', 'osi-cards-lib', 'src', 'lib', 'components', 'sections');
+
+  for (const [type, def] of Object.entries(registry.sections || {})) {
+    if (!def.examples) {
+      const definitionPath = path.join(sectionsDir, `${type}-section`, `${type}.definition.json`);
+      if (fs.existsSync(definitionPath)) {
+        try {
+          const definitionContent = fs.readFileSync(definitionPath, 'utf8');
+          const definition = JSON.parse(definitionContent);
+          if (definition.examples) {
+            def.examples = definition.examples;
+            // Ensure we use example if available, fallback to complete
+            if (def.examples.example) {
+              def.examples.example = def.examples.example;
+            } else if (def.examples.complete) {
+              def.examples.example = def.examples.complete;
+            }
+          }
+        } catch (error) {
+          // Silently fail if definition file can't be read
+        }
+      }
+    }
+  }
+
+  return registry;
 }
 
 /**
@@ -72,23 +101,80 @@ function generateSectionDocs(sections, typeAliases) {
     const schema = def.fieldSchema || def.itemSchema || def.chartSchema;
     const schemaStr = formatSchemaProperties(schema);
 
-    // Get minimal example
-    const example = def.testFixtures?.minimal || { title: type, type };
+    // Get example from examples.example (or fallback to complete/minimal for backwards compatibility)
+    let example = def.examples?.example || def.examples?.complete || def.examples?.minimal || { title: type, type };
 
-    return `### ${type}${aliasStr}
+    // Fix HTML entities in example (deep clone and clean)
+    const exampleStr = JSON.stringify(example);
+    const cleanedStr = exampleStr.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+    try {
+      example = JSON.parse(cleanedStr);
+    } catch (e) {
+      // If parsing fails, use original
+    }
 
-${def.description}
+    // Build use cases list
+    const useCasesList = def.useCases && def.useCases.length > 0
+      ? def.useCases.map(uc => `- ${uc}`).join('\n')
+      : '- General use';
 
-**Data Structure:** ${dataStructure}
-**Use Cases:** ${def.useCases?.join(', ') || 'General use'}
+    // Build best practices list
+    const bestPracticesList = def.bestPractices && def.bestPractices.length > 0
+      ? def.bestPractices.map(bp => `- ${bp}`).join('\n')
+      : '- Follow standard data structure conventions';
 
-**Schema:**
+    // Layout recommendations
+    const defaultColumns = def.rendering?.defaultColumns || 1;
+    const supportsCollapse = def.rendering?.supportsCollapse ? 'Yes' : 'No';
+
+    // Preferred columns guidance based on default
+    let preferredColumnsGuidance = '';
+    if (defaultColumns === 1) {
+      preferredColumnsGuidance = '1 column (single column layout)';
+    } else if (defaultColumns === 2) {
+      preferredColumnsGuidance = '2 columns (side-by-side layout, recommended for most cases)';
+    } else if (defaultColumns >= 3) {
+      preferredColumnsGuidance = `${defaultColumns} columns (wide layout for detailed content)`;
+    }
+
+    // Priority recommendation - dynamically determine based on section type
+    let priorityRecommendation = '3 (lowest - supporting content)';
+    const getPriorityForType = (sectionType) => {
+      if (['overview', 'contact-card'].includes(sectionType)) return 1;
+      if (['analytics', 'chart', 'financials'].includes(sectionType)) return 2;
+      return 3;
+    };
+    const priorityNum = getPriorityForType(type);
+    if (priorityNum === 1) {
+      priorityRecommendation = '1 (highest - critical content)';
+    } else if (priorityNum === 2) {
+      priorityRecommendation = '2 (medium - important metrics)';
+    }
+
+    // Clean example JSON - remove HTML entities
+    const cleanExampleJson = JSON.stringify(example, null, 2)
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"');
+
+    return `#${type}${aliasStr}
+Description: ${def.description || 'No description available'}
+Use Cases:
+${useCasesList}
+Best Practices:
+${bestPracticesList}
+Layout:
+Default columns: ${defaultColumns}
+Recommended: ${preferredColumnsGuidance}
+Supports collapse: ${supportsCollapse}
+Priority recommendation: ${priorityRecommendation}
+Data Structure: ${dataStructure}
+Schema:
 ${schemaStr}
-
-**Example:**
-${JSON.stringify(example, null, 2)}
-
----`;
+Note: The meta field can be used to store additional structured data specific to the section type. See examples for common meta field usage patterns.
+Example:
+${cleanExampleJson}`;
   }).join('\n\n');
 }
 
@@ -103,7 +189,7 @@ function generateQuickReference(sections, typeAliases) {
     const aliases = Object.entries(typeAliases)
       .filter(([_, target]) => target === type)
       .map(([alias]) => alias);
-    const aliasStr = aliases.length > 0 ? aliases.join('/') : '-';
+    const aliasStr = aliases.length > 0 ? aliases.join(', ') : '-';
 
     // Data structure
     let data = 'fields';
@@ -116,59 +202,145 @@ function generateQuickReference(sections, typeAliases) {
     // Use case
     const useCase = def.useCases?.[0] || def.name;
 
-    return `${type} | ${data} | ${aliasStr} | ${useCase}`;
+    // Get default columns
+    const defaultColumns = def.rendering?.defaultColumns || 1;
+
+    return `${type} | ${data} | ${defaultColumns} | ${aliasStr} | ${useCase}`;
   });
 
-  return `Type | Data | Aliases | Use Case\n${rows.join('\n')}`;
+  return `Type | Data | Default Cols | Aliases | Use Case\n${rows.join('\n')}`;
 }
 
 /**
  * Generate type aliases section
  */
 function generateTypeAliases(typeAliases) {
-  return Object.entries(typeAliases)
+  const aliases = Object.entries(typeAliases)
     .map(([alias, target]) => `${alias} -> ${target}`)
     .join('\n');
+  return aliases || '';
+}
+
+/**
+ * Generate common patterns dynamically based on available section types
+ */
+function generateCommonPatterns(sections) {
+  const publicSections = Object.keys(sections).filter(k => !sections[k].isInternal);
+
+  // Helper to get priority recommendation for a section type
+  const getPriority = (type) => {
+    if (['overview', 'contact-card'].includes(type)) return 1;
+    if (['analytics', 'chart', 'financials'].includes(type)) return 2;
+    return 3;
+  };
+
+  // Helper to get description for a section type
+  const getDescription = (type) => {
+    const def = sections[type];
+    if (!def) return '';
+    const useCase = def.useCases?.[0] || def.name || type;
+    return useCase;
+  };
+
+  // Build patterns dynamically
+  const patterns = [];
+
+  // Company Card pattern
+  const companySections = [];
+  if (publicSections.includes('overview')) companySections.push(`overview (priority ${getPriority('overview')}) - ${getDescription('overview')}`);
+  if (publicSections.includes('analytics')) companySections.push(`analytics (priority ${getPriority('analytics')}) - ${getDescription('analytics')}`);
+  if (publicSections.includes('contact-card')) companySections.push(`contact-card (priority ${getPriority('contact-card')}) - ${getDescription('contact-card')}`);
+  if (publicSections.includes('financials')) companySections.push(`financials (priority ${getPriority('financials')}) - ${getDescription('financials')}`);
+  if (publicSections.includes('news')) companySections.push(`news (priority ${getPriority('news')}) - ${getDescription('news')}`);
+
+  if (companySections.length > 0) {
+    patterns.push(`Company Card:\n${companySections.map(s => `- ${s}`).join('\n')}`);
+  }
+
+  // Product Card pattern
+  const productSections = [];
+  if (publicSections.includes('overview')) productSections.push(`overview (priority ${getPriority('overview')}) - ${getDescription('overview')}`);
+  if (publicSections.includes('product')) productSections.push(`product (priority ${getPriority('product')}) - ${getDescription('product')}`);
+  if (publicSections.includes('chart')) productSections.push(`chart (priority ${getPriority('chart')}) - ${getDescription('chart')}`);
+  if (publicSections.includes('quotation')) productSections.push(`quotation (priority ${getPriority('quotation')}) - ${getDescription('quotation')}`);
+
+  if (productSections.length > 0) {
+    patterns.push(`Product Card:\n${productSections.map(s => `- ${s}`).join('\n')}`);
+  }
+
+  // Event Card pattern
+  const eventSections = [];
+  if (publicSections.includes('overview')) eventSections.push(`overview (priority ${getPriority('overview')}) - ${getDescription('overview')}`);
+  if (publicSections.includes('event')) eventSections.push(`event (priority ${getPriority('event')}) - ${getDescription('event')}`);
+  if (publicSections.includes('contact-card')) eventSections.push(`contact-card (priority ${getPriority('contact-card')}) - ${getDescription('contact-card')}`);
+  if (publicSections.includes('gallery')) eventSections.push(`gallery (priority ${getPriority('gallery')}) - ${getDescription('gallery')}`);
+
+  if (eventSections.length > 0) {
+    patterns.push(`Event Card:\n${eventSections.map(s => `- ${s}`).join('\n')}`);
+  }
+
+  // Contact Card pattern
+  const contactSections = [];
+  if (publicSections.includes('contact-card')) contactSections.push(`contact-card (priority ${getPriority('contact-card')}) - ${getDescription('contact-card')}`);
+  if (publicSections.includes('info')) contactSections.push(`info (priority ${getPriority('info')}) - ${getDescription('info')}`);
+  if (publicSections.includes('social-media')) contactSections.push(`social-media (priority ${getPriority('social-media')}) - ${getDescription('social-media')}`);
+
+  if (contactSections.length > 0) {
+    patterns.push(`Contact Card:\n${contactSections.map(s => `- ${s}`).join('\n')}`);
+  }
+
+  return patterns.join('\n\n');
 }
 
 /**
  * Generate complete example cards
  */
-function generateExampleCards(sections) {
+function generateExampleCards(sections, registry) {
   // Example 1: Company card with key sections
+  const loadExample = (type) => {
+    return sections[type]?.examples?.example || sections[type]?.examples?.complete || null;
+  };
+
   const example1 = {
     cardTitle: "Example Company",
     cardType: "company",
     sections: [
-      sections['overview']?.testFixtures?.complete,
-      sections['analytics']?.testFixtures?.complete,
-      sections['contact-card']?.testFixtures?.complete
+      loadExample('overview'),
+      loadExample('analytics'),
+      loadExample('contact-card')
     ].filter(Boolean),
     actions: [
       { label: "Website", type: "website", variant: "primary", url: "https://example.com" }
     ]
   };
 
-  // Example 2: All sections demo
-  const example2 = {
-    cardTitle: "All Sections Demo",
-    sections: Object.entries(sections)
-      .filter(([_, def]) => !def.isInternal && def.testFixtures?.complete)
-      .map(([_, def]) => def.testFixtures.complete),
-    actions: [
-      { label: "Website", type: "website", variant: "primary", url: "https://example.com" },
-      {
-        label: "Email",
-        type: "mail",
-        variant: "secondary",
-        email: {
-          contact: { name: "Support", email: "support@example.com", role: "Support" },
-          subject: "Hello",
-          body: "Message"
+  // Example 2: All sections demo - use compiled version from registry if available
+  let example2 = null;
+  if (registry && registry.allSectionsExample) {
+    example2 = registry.allSectionsExample;
+  } else {
+    // Fallback: compile from individual examples in definitions
+    example2 = {
+      cardTitle: "All Sections Demo",
+      sections: Object.entries(sections)
+        .filter(([_, def]) => !def.isInternal)
+        .map(([type, _]) => loadExample(type))
+        .filter(Boolean),
+      actions: [
+        { label: "Website", type: "website", variant: "primary", url: "https://example.com" },
+        {
+          label: "Email",
+          type: "mail",
+          variant: "secondary",
+          email: {
+            contact: { name: "Support", email: "support@example.com", role: "Support" },
+            subject: "Hello",
+            body: "Message"
+          }
         }
-      }
-    ]
-  };
+      ]
+    };
+  }
 
   return { example1, example2 };
 }
@@ -177,7 +349,7 @@ function generateExampleCards(sections) {
  * Generate the complete LLM system prompt
  */
 function generateLLMPrompt(registry) {
-  const { sections, typeAliases } = registry;
+  const { sections, typeAliases = {} } = registry;
   const sectionCount = Object.keys(sections).filter(k => !sections[k].isInternal).length;
   const aliasCount = Object.keys(typeAliases).length;
 
@@ -188,15 +360,38 @@ function generateLLMPrompt(registry) {
   const quickRef = generateQuickReference(sections, typeAliases);
   const aliasesStr = generateTypeAliases(typeAliases);
   const sectionDocs = generateSectionDocs(sections, typeAliases);
-  const { example1, example2 } = generateExampleCards(sections);
+  const { example1, example2 } = generateExampleCards(sections, registry);
+
+  // Clean HTML entities from examples
+  const cleanExample = (ex) => {
+    if (!ex) return ex;
+    const str = JSON.stringify(ex);
+    const cleaned = str.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+    return JSON.parse(cleaned);
+  };
+
+  const cleanExample1 = cleanExample(example1);
+  const cleanExample2 = cleanExample(example2);
+
+  // Generate common patterns dynamically based on section types
+  const commonPatterns = generateCommonPatterns(sections);
 
   return `You are a JSON generator for OSI Cards. Generate valid JSON configurations for card UI components.
 
 CRITICAL RULES:
-1. Return ONLY valid JSON - no markdown, no explanations
-2. cardTitle and sections are REQUIRED
-3. Each section needs title and type
-4. Use correct data structure: fields, items, or chartData based on type
+Return ONLY valid JSON - no markdown, no explanations
+cardTitle and sections are REQUIRED
+Each section needs title and type
+Use correct data structure: fields, items, or chartData based on type
+
+COMMON MISTAKES TO AVOID:
+Using wrong data structure (e.g., fields for item-based types like faq, gallery)
+Missing required fields (title, type are always required)
+Using HTML entities in JSON (use plain text, e.g., "&" not "&amp;")
+Setting priority outside 1-3 range
+Using preferredColumns outside 1-4 range
+Including component-specific fields (componentPath, selector, stylePath)
+Mixing data structures (don't use both fields and items unless type supports it)
 
 CARD SCHEMA:
 
@@ -216,19 +411,48 @@ CardSection:
   - items: array (for item-based types)
   - chartType: bar|line|pie|doughnut
   - chartData: object
+  - preferredColumns: 1|2|3|4 (preferred width in columns)
+  - minColumns: 1|2|3|4 (minimum width constraint)
+  - maxColumns: 1|2|3|4 (maximum width constraint)
+  - colSpan: number (explicit column span override)
+  - orientation: vertical|horizontal|auto (content flow direction)
+  - priority: 1|2|3 (layout priority: 1=highest, 2=medium, 3=lowest)
+  - collapsed: boolean (whether section is collapsed)
+  - meta: object (additional structured data)
+
+PRIORITY SYSTEM:
+Priority values (1-3) control section ordering and layout importance:
+- Priority 1 (Highest): Critical sections like overview, executive summaries, key contacts
+- Priority 2 (Medium): Important sections like analytics, charts, financials
+- Priority 3 (Lowest): Supporting sections like FAQs, galleries, timelines
+
+Higher priority sections appear first and are less likely to be condensed or moved.
+
+LAYOUT PARAMETERS:
+- preferredColumns: Recommended width (use default from quick reference as starting point)
+- minColumns/maxColumns: Set constraints when section needs specific width range
+- colSpan: Override for exact column span (use sparingly)
+- orientation: Controls content flow (vertical=stacked, horizontal=side-by-side, auto=adaptive)
 
 SECTION TYPES (${sectionCount}):
-
 ${sectionTypesList}
 
 QUICK REFERENCE:
 ${quickRef}
 
-TYPE ALIASES:
-${aliasesStr}
+${aliasesStr ? `TYPE ALIASES:\n${aliasesStr}\n\n` : ''}DATA STRUCTURE GUIDE:
+Choose the correct data structure based on section type:
+- fields: Use for key-value pairs, metrics, contact info, financial data (analytics, contact-card, financials, info, etc.)
+- items: Use for lists, collections, sequences (faq, gallery, list, news, timeline, video, etc.)
+- chartData: Use ONLY for chart type sections (chart)
+
+Quick check: Look at the "Data" column in QUICK REFERENCE table above.
+
+COMMON PATTERNS:
+Typical section combinations for different card types:
+${commonPatterns}
 
 SECTION DETAILS:
-
 ${sectionDocs}
 
 ACTION BUTTONS:
@@ -262,13 +486,10 @@ question:
 EXAMPLES:
 
 Example 1:
-${JSON.stringify(example1, null, 2)}
+${JSON.stringify(cleanExample1, null, 2)}
 
 Example 2:
-${JSON.stringify(example2, null, 2)}
-
-RESPONSE FORMAT:
-Return ONLY the JSON object, nothing else.`;
+${JSON.stringify(cleanExample2, null, 2)}`;
 }
 
 /**
@@ -292,7 +513,7 @@ function generateStats(prompt) {
  */
 function generateMarkdown(prompt, registry, stats) {
   const sectionCount = Object.keys(registry.sections).filter(k => !registry.sections[k].isInternal).length;
-  const aliasCount = Object.keys(registry.typeAliases).length;
+  const aliasCount = Object.keys(registry.typeAliases || {}).length;
 
   return `# LLM Integration
 
@@ -356,6 +577,16 @@ export default LlmIntegrationPageComponent;
 `;
 }
 
+// Export functions for use in other scripts
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    generateLLMPrompt,
+    generateStats,
+    generateMarkdown,
+    readRegistry,
+  };
+}
+
 /**
  * Main execution
  */
@@ -398,11 +629,13 @@ function main() {
   // Summary
   console.log('\n📋 Summary:');
   console.log(`   - Section Types: ${Object.keys(registry.sections).filter(k => !registry.sections[k].isInternal).length}`);
-  console.log(`   - Type Aliases: ${Object.keys(registry.typeAliases).length}`);
+  console.log(`   - Type Aliases: ${Object.keys(registry.typeAliases || {}).length}`);
   console.log(`   - Characters: ${stats.characters}`);
   console.log(`   - Estimated Tokens: ${stats.estimatedTokens}`);
 }
 
-// Run
-main();
+// Run only if called directly (not when required as module)
+if (require.main === module) {
+  main();
+}
 

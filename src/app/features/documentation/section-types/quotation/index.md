@@ -4,46 +4,27 @@ Displays quotes, testimonials, highlighted text, and citations.
 
 ## Overview
 
-The **Quotation Section** (`type: "quotation"`) is used for displays quotes, testimonials, highlighted text, and citations.
-
-### Quick Facts
-
-| Property | Value |
-|----------|-------|
-| Type | `quotation` |
-| Uses Fields | Yes |
-| Uses Items | No |
-| Default Columns | 1 |
-| Supports Collapse | Yes |
-| Aliases | None |
-
+The **Quotation Section** is used for displays quotes, testimonials, highlighted text, and citations.
 
 ## Use Cases
 
 - Testimonials
-- Customer quotes
+- Quotes
 - Citations
 - Highlighted content
-- Expert opinions
 
 ## Data Schema
 
-### Fields Schema
+```typescript
+interface CardSection {
+  title: string;
+  type: 'quotation';
+  fields?: CardField[];
+  
+}
+```
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `label` | string | Quote label/category |
-| `value` | string | Quote text |
-| `quote` | string | Alternative quote field |
-| `description` | string | Attribution/source |
-| `author` | string | Quote author |
-| `role` | string | Author's role |
-| `company` | string | Author's company |
-| `date` | string | Quote date |
-
-
-
-## Complete Example
+## Example
 
 ```json
 {
@@ -92,36 +73,22 @@ The **Quotation Section** (`type: "quotation"`) is used for displays quotes, tes
       "company": "Gartner Inc.",
       "date": "2024-09-01"
     }
-  ]
-}
-```
-
-## Minimal Example
-
-```json
-{
-  "title": "Testimonial",
-  "type": "quotation",
-  "fields": [
-    {
-      "value": "\"Great product!\""
-    }
-  ]
+  ],
+  "preferredColumns": 1,
+  "priority": 3
 }
 ```
 
 ## Best Practices
 
 1. Include source attribution
-2. Add author information
-3. Use for emphasis
-4. Include dates when relevant
-5. Show company/role context
+1. Add author information
+1. Use for emphasis
+1. Include dates when relevant
 
-## Component Information
+## Component Properties
 
-- **Selector:** `lib-quotation-section`
-- **Component Path:** `./lib/components/sections/quotation-section/quotation-section.component`
+
 
 
 ## Related Documentation

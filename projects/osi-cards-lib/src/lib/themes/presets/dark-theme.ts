@@ -25,3 +25,4 @@ export const darkTheme: OSICardsThemeConfig = {
     '--ring': OSI_THEME_COLORS.dark.ring,
   },
 };
+

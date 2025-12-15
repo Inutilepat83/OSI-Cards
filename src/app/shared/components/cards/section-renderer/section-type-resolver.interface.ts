@@ -9,3 +9,4 @@ export interface ISectionTypeResolver {
    */
   resolve(section: CardSection): string;
 }
+

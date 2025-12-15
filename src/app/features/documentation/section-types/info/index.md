@@ -4,19 +4,7 @@ Displays key-value pairs in a clean, scannable format. Ideal for metadata, conta
 
 ## Overview
 
-The **Info Section** (`type: "info"`) is used for displays key-value pairs in a clean, scannable format. ideal for metadata, contact information, and general data display.
-
-### Quick Facts
-
-| Property | Value |
-|----------|-------|
-| Type | `info` |
-| Uses Fields | Yes |
-| Uses Items | No |
-| Default Columns | 1 |
-| Supports Collapse | Yes |
-| Aliases | None |
-
+The **Info Section** is used for displays key-value pairs in a clean, scannable format. ideal for metadata, contact information, and general data display.
 
 ## Use Cases
 
@@ -24,25 +12,19 @@ The **Info Section** (`type: "info"`) is used for displays key-value pairs in a 
 - Contact details
 - Metadata display
 - Key-value pairs
-- Profile summaries
 
 ## Data Schema
 
-### Fields Schema
+```typescript
+interface CardSection {
+  title: string;
+  type: 'info';
+  fields?: CardField[];
+  
+}
+```
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `label` | string | Field label/key |
-| `value` | string,number,boolean,null | Field value |
-| `icon` | string | Icon identifier (emoji or icon name) |
-| `description` | string | Additional field description |
-| `trend` | string | Trend indicator |
-| `change` | number | Numeric change value |
-| `format` | string | Value format |
-
-
-
-## Complete Example
+## Example
 
 ```json
 {
@@ -61,90 +43,31 @@ The **Info Section** (`type: "info"`) is used for displays key-value pairs in a 
       "icon": "📅"
     },
     {
-      "label": "Headquarters",
-      "value": "Austin, Texas, USA",
-      "icon": "📍"
-    },
-    {
-      "label": "Employees",
-      "value": "2,847",
-      "icon": "👥",
-      "trend": "up",
-      "change": 23.5
-    },
-    {
-      "label": "Annual Revenue",
-      "value": "$127M ARR",
-      "icon": "💰",
-      "trend": "up",
-      "change": 45.2
-    },
-    {
-      "label": "Funding Stage",
-      "value": "Series C ($85M raised)",
-      "icon": "🚀"
-    },
-    {
       "label": "Customer Base",
       "value": "450+ Enterprise Clients",
       "icon": "🎯"
-    },
-    {
-      "label": "Global Offices",
-      "value": "Austin, London, Singapore, São Paulo",
-      "icon": "🌐"
-    },
-    {
-      "label": "Tech Stack",
-      "value": "Python, Kubernetes, AWS, Snowflake",
-      "icon": "⚙️"
-    },
-    {
-      "label": "CEO",
-      "value": "Dr. Maya Chen",
-      "icon": "👤"
-    },
-    {
-      "label": "Stock Symbol",
-      "value": "NXUS (NASDAQ)",
-      "icon": "📈"
     },
     {
       "label": "Website",
       "value": "www.nexustech.io",
       "icon": "🔗"
     }
-  ]
-}
-```
-
-## Minimal Example
-
-```json
-{
-  "title": "Quick Info",
-  "type": "info",
-  "fields": [
-    {
-      "label": "Status",
-      "value": "Active"
-    }
-  ]
+  ],
+  "preferredColumns": 1,
+  "priority": 3
 }
 ```
 
 ## Best Practices
 
 1. Use for structured data with clear labels and values
-2. Keep labels concise and descriptive
-3. Use trend indicators for dynamic data
-4. Group related fields together
-5. Use icons to enhance visual hierarchy
+1. Keep labels concise and descriptive
+1. Use trend indicators for dynamic data
+1. Group related fields together
 
-## Component Information
+## Component Properties
 
-- **Selector:** `lib-info-section`
-- **Component Path:** `./lib/components/sections/info-section/info-section.component`
+
 
 
 ## Related Documentation

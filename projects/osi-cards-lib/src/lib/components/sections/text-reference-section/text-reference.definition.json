@@ -27,9 +27,18 @@
   "fieldSchema": {
     "type": "object",
     "properties": {
-      "label": { "type": "string", "description": "Reference label" },
-      "value": { "type": "string", "description": "Reference title/name" },
-      "text": { "type": "string", "description": "Reference text content" },
+      "label": {
+        "type": "string",
+        "description": "Reference label"
+      },
+      "value": {
+        "type": "string",
+        "description": "Reference title/name"
+      },
+      "text": {
+        "type": "string",
+        "description": "Reference text content"
+      },
       "description": {
         "type": "string",
         "description": "Reference description"
@@ -39,7 +48,10 @@
         "format": "uri",
         "description": "Reference URL"
       },
-      "source": { "type": "string", "description": "Source attribution" },
+      "source": {
+        "type": "string",
+        "description": "Source attribution"
+      },
       "type": {
         "type": "string",
         "description": "Document type (PDF, Video, etc.)"
@@ -52,9 +64,13 @@
     },
     "required": []
   },
-  "aliases": ["reference", "text-ref", "documentation"],
-  "testFixtures": {
-    "complete": {
+  "aliases": [
+    "reference",
+    "text-ref",
+    "documentation"
+  ],
+  "examples": {
+    "example": {
       "title": "Resources & Documentation",
       "type": "text-reference",
       "description": "Essential guides, documentation, and reference materials",
@@ -75,41 +91,11 @@
           "type": "API Docs"
         },
         {
-          "label": "Security Whitepaper",
-          "value": "Enterprise Security & Compliance Framework",
-          "description": "Detailed overview of security architecture, encryption standards, access controls, audit logging, and compliance certifications (SOC 2, ISO 27001, GDPR, HIPAA)",
-          "url": "https://nexustech.io/security-whitepaper",
-          "type": "PDF",
-          "date": "2024-10-15"
-        },
-        {
-          "label": "Implementation Guide",
-          "value": "Enterprise Deployment Playbook",
-          "description": "Step-by-step guide for enterprise implementations including architecture patterns, migration strategies, performance tuning, and go-live checklists",
-          "url": "https://docs.nexustech.io/implementation",
-          "type": "Guide"
-        },
-        {
           "label": "Video Training",
           "value": "Nexus Academy - Complete Certification Course",
           "description": "40-hour video training program covering platform fundamentals, advanced analytics, administration, and developer certification paths",
           "url": "https://academy.nexustech.io",
           "type": "Video Course"
-        },
-        {
-          "label": "Case Study",
-          "value": "How Fortune 500 Retailer Achieved 47% Faster Insights",
-          "description": "Detailed case study covering implementation journey, challenges overcome, technical architecture, and measurable business outcomes",
-          "url": "https://nexustech.io/case-studies/retail-transformation",
-          "type": "PDF",
-          "date": "2024-09-20"
-        },
-        {
-          "label": "Architecture Guide",
-          "value": "Multi-tenant Cloud Architecture Deep Dive",
-          "description": "Technical architecture documentation covering data isolation, scaling strategies, disaster recovery, and multi-region deployments",
-          "url": "https://docs.nexustech.io/architecture",
-          "type": "Technical Guide"
         },
         {
           "label": "Release Notes",
@@ -119,28 +105,9 @@
           "type": "Release Notes",
           "date": "2025-01-15"
         }
-      ]
-    },
-    "minimal": {
-      "title": "References",
-      "type": "text-reference",
-      "fields": [{ "label": "Link", "value": "Reference Document" }]
-    },
-    "edgeCases": {
-      "title": "Reference Edge Cases",
-      "type": "text-reference",
-      "fields": [
-        {
-          "label": "No URL",
-          "value": "Document without web link",
-          "description": "Internal document, contact support for access"
-        },
-        {
-          "label": "Long URL",
-          "value": "External Resource",
-          "url": "https://very-long-subdomain.example.com/path/to/deeply/nested/resource/document.pdf?param1=value1&param2=value2&token=abc123xyz"
-        }
-      ]
+      ],
+      "preferredColumns": 1,
+      "priority": 3
     }
   }
 }

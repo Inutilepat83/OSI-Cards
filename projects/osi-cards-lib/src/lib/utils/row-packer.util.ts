@@ -320,26 +320,20 @@ function calculateOrphanPenalty(remainingGap: number, pendingSections: PlannedSe
  * Maps string priority to numeric layout priority
  */
 export function mapPriorityToNumber(
-  priority?: 'critical' | 'important' | 'standard' | 'optional',
+  priority?: 1 | 2 | 3,
   layoutPriority?: LayoutPriority
 ): LayoutPriority {
   // Explicit layoutPriority takes precedence
   if (layoutPriority !== undefined) {
     return layoutPriority;
   }
-
-  // Map string priority to number
-  switch (priority) {
-    case 'critical':
-    case 'important':
-      return 1;
-    case 'standard':
-      return 2;
-    case 'optional':
-      return 3;
-    default:
-      return 2; // Default to standard priority
+  // Priority is now numeric, use it directly
+  if (priority !== undefined) {
+    return priority as LayoutPriority;
   }
+
+  // Default to standard priority (2) if not set
+  return 2;
 }
 
 // ============================================================================

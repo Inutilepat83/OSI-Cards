@@ -41,11 +41,20 @@
       },
       "status": {
         "type": "string",
-        "enum": ["completed", "in-progress", "pending", "cancelled", "blocked"],
+        "enum": [
+          "completed",
+          "in-progress",
+          "pending",
+          "cancelled",
+          "blocked"
+        ],
         "description": "Item status"
       },
       "value": {
-        "type": ["string", "number"],
+        "type": [
+          "string",
+          "number"
+        ],
         "description": "Item value"
       },
       "date": {
@@ -55,15 +64,25 @@
       },
       "priority": {
         "type": "string",
-        "enum": ["critical", "high", "medium", "low"],
+        "enum": [
+          "critical",
+          "high",
+          "medium",
+          "low"
+        ],
         "description": "Priority level"
       }
     },
-    "required": ["title"]
+    "required": [
+      "title"
+    ]
   },
-  "aliases": ["table", "checklist"],
-  "testFixtures": {
-    "complete": {
+  "aliases": [
+    "table",
+    "checklist"
+  ],
+  "examples": {
+    "example": {
       "title": "Product Roadmap Q1-Q2 2025",
       "type": "list",
       "description": "Strategic initiatives and feature development",
@@ -89,38 +108,9 @@
           "status": "completed",
           "priority": "high"
         }
-      ]
-    },
-    "minimal": {
-      "title": "Tasks",
-      "type": "list",
-      "items": [
-        {
-          "title": "Task 1"
-        }
-      ]
-    },
-    "edgeCases": {
-      "title": "List Edge Cases",
-      "type": "list",
-      "items": [
-        {
-          "title": "",
-          "description": "Empty title item"
-        },
-        {
-          "title": "Unicode Support",
-          "description": "日本語 中文 العربية 한국어 🎉🚀💡"
-        },
-        {
-          "title": "Very Long Title That Should Wrap Properly Across Multiple Lines Without Breaking Layout",
-          "description": "Short description"
-        },
-        {
-          "title": "Short",
-          "description": "This is an extremely long description that contains a lot of information and should properly wrap across multiple lines while maintaining readability and not breaking the overall layout of the card section component"
-        }
-      ]
+      ],
+      "preferredColumns": 1,
+      "priority": 3
     }
   }
 }

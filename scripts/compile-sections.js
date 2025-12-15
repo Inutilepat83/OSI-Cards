@@ -104,6 +104,16 @@ function main() {
     logSuccess(`Registry validated (${Object.keys(registry.sections).length} sections)`);
   }
 
+  // Step 2.5: Compile all sections example
+  logStep('Compiling all sections example');
+  try {
+    const { compileAllSectionsExample } = require('./compile-all-sections-example');
+    compileAllSectionsExample();
+    logSuccess('All sections example compiled');
+  } catch (error) {
+    log(`  ⚠️  Could not compile all sections example: ${error.message}`, colors.yellow);
+  }
+
   // Step 3: Build exports
   logStep('Generating sections/index.ts exports');
   const exportsContent = buildExports(sections);

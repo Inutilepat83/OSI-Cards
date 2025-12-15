@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { DocPageComponent } from '../../doc-page.component';
 import { DocsDemoComponent } from '../../components';
+import { DocPageComponent } from '../../doc-page.component';
 
 const pageContent = `# Contact Card Section
 
@@ -63,7 +63,7 @@ The **Contact Card Section** (\`type: "contact-card"\`) is used for displays per
       "title": "Dr. Sarah Mitchell",
       "value": "CEO & Co-Founder",
       "email": "sarah.mitchell@nexustech.io",
-      "phone": "+1 (512) 555-0100",
+      "salesforce": "https://company.salesforce.com/001xx000003DGbQ",
       "role": "Chief Executive Officer",
       "department": "Executive",
       "location": "Austin, TX",
@@ -75,7 +75,7 @@ The **Contact Card Section** (\`type: "contact-card"\`) is used for displays per
       "title": "James Park",
       "value": "CTO & Co-Founder",
       "email": "james.park@nexustech.io",
-      "phone": "+1 (512) 555-0101",
+      "salesforce": "https://company.salesforce.com/001xx000003DGbR",
       "role": "Chief Technology Officer",
       "department": "Engineering",
       "location": "Austin, TX",
@@ -86,7 +86,7 @@ The **Contact Card Section** (\`type: "contact-card"\`) is used for displays per
       "title": "Maria Santos",
       "value": "CRO",
       "email": "maria.santos@nexustech.io",
-      "phone": "+1 (512) 555-0102",
+      "salesforce": "https://company.salesforce.com/001xx000003DGbS",
       "role": "Chief Revenue Officer",
       "department": "Sales",
       "location": "New York, NY",
@@ -97,7 +97,7 @@ The **Contact Card Section** (\`type: "contact-card"\`) is used for displays per
       "title": "David Thompson",
       "value": "CFO",
       "email": "david.thompson@nexustech.io",
-      "phone": "+44 20 7946 0958",
+      "salesforce": "https://company.salesforce.com/001xx000003DGbT",
       "role": "Chief Financial Officer",
       "department": "Finance",
       "location": "London, UK",
@@ -108,7 +108,7 @@ The **Contact Card Section** (\`type: "contact-card"\`) is used for displays per
       "title": "Dr. Wei Chen",
       "value": "VP Engineering - Platform",
       "email": "wei.chen@nexustech.io",
-      "phone": "+65 6823 4567",
+      "salesforce": "https://company.salesforce.com/001xx000003DGbU",
       "role": "VP of Engineering",
       "department": "Engineering",
       "location": "Singapore"
@@ -118,7 +118,7 @@ The **Contact Card Section** (\`type: "contact-card"\`) is used for displays per
       "title": "Rachel Green",
       "value": "VP Customer Success",
       "email": "rachel.green@nexustech.io",
-      "phone": "+1 (512) 555-0105",
+      "salesforce": "https://company.salesforce.com/001xx000003DGbV",
       "role": "VP of Customer Success",
       "department": "Customer Success",
       "location": "Austin, TX"
@@ -137,6 +137,36 @@ The **Contact Card Section** (\`type: "contact-card"\`) is used for displays per
     {
       "title": "Support Team",
       "email": "support@company.com"
+    }
+  ]
+}
+\`\`\`
+
+## Salesforce CRM Examples
+
+\`\`\`json
+{
+  "title": "Sales Contacts",
+  "type": "contact-card",
+  "description": "Key sales contacts with Salesforce CRM integration",
+  "fields": [
+    {
+      "title": "John Smith",
+      "value": "Account Executive",
+      "email": "john.smith@company.com",
+      "salesforce": "https://company.salesforce.com/001xx000003DGbW",
+      "role": "Account Executive",
+      "department": "Sales",
+      "linkedIn": "https://linkedin.com/in/johnsmith"
+    },
+    {
+      "title": "Emily Johnson",
+      "value": "Sales Manager",
+      "email": "emily.johnson@company.com",
+      "salesforce": "https://company.salesforce.com/001xx000003DGbX",
+      "role": "Sales Manager",
+      "department": "Sales",
+      "linkedIn": "https://linkedin.com/in/emilyjohnson"
     }
   ]
 }

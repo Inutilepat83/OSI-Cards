@@ -686,7 +686,7 @@
   line-height: 1.2;
 }
 
-/* All sizing is now continuous via clamp() - no discrete breakpoints */
+/* All sizing is now fixed - no responsive behavior */
 
 @media (prefers-reduced-motion: reduce) {
   .ai-card-surface {

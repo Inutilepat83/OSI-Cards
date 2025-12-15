@@ -4,19 +4,7 @@ Displays solution offerings, use cases, features, and benefits.
 
 ## Overview
 
-The **Solutions Section** (`type: "solutions"`) is used for displays solution offerings, use cases, features, and benefits.
-
-### Quick Facts
-
-| Property | Value |
-|----------|-------|
-| Type | `solutions` |
-| Uses Fields | Yes |
-| Uses Items | Yes |
-| Default Columns | 1 |
-| Supports Collapse | Yes |
-| Aliases | None |
-
+The **Solutions Section** is used for displays solution offerings, use cases, features, and benefits.
 
 ## Use Cases
 
@@ -24,35 +12,19 @@ The **Solutions Section** (`type: "solutions"`) is used for displays solution of
 - Solution portfolios
 - Use cases
 - Case studies
-- Professional services
 
 ## Data Schema
 
-### Fields Schema
+```typescript
+interface CardSection {
+  title: string;
+  type: 'solutions';
+  fields?: CardField[];
+  
+}
+```
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `title` | string | Solution title |
-| `description` | string | Solution description |
-| `category` | string | Solution category |
-| `benefits` | array | List of benefits |
-| `deliveryTime` | string | Delivery timeframe |
-| `complexity` | string | Implementation complexity |
-| `outcomes` | array | Expected outcomes |
-
-### Items Schema
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `title` | string | Solution title |
-| `description` | string | Solution description |
-| `category` | string | Solution category |
-| `benefits` | array | List of benefits |
-| `deliveryTime` | string | Delivery timeframe |
-| `complexity` | string | Implementation complexity |
-| `outcomes` | array | Expected outcomes |
-
-## Complete Example
+## Example
 
 ```json
 {
@@ -98,24 +70,6 @@ The **Solutions Section** (`type: "solutions"`) is used for displays solution of
       ]
     },
     {
-      "title": "Self-Service Analytics Enablement",
-      "description": "Empower business users with intuitive dashboards, natural language queries, and embedded analytics",
-      "category": "Business Intelligence",
-      "benefits": [
-        "No-code dashboard builder",
-        "Natural language queries",
-        "Mobile-optimized reports",
-        "Automated insights"
-      ],
-      "deliveryTime": "6-8 weeks",
-      "complexity": "medium",
-      "outcomes": [
-        "90% self-service adoption",
-        "75% reduced IT requests",
-        "3x faster decision-making"
-      ]
-    },
-    {
       "title": "Cloud Migration & Modernization",
       "description": "Migrate legacy analytics workloads to modern cloud architecture with zero downtime",
       "category": "Cloud Services",
@@ -131,24 +85,6 @@ The **Solutions Section** (`type: "solutions"`) is used for displays solution of
         "60% infrastructure cost reduction",
         "99.99% availability",
         "10x performance improvement"
-      ]
-    },
-    {
-      "title": "Data Governance & Compliance Program",
-      "description": "Implement comprehensive data governance including cataloging, lineage, privacy, and regulatory compliance",
-      "category": "Governance",
-      "benefits": [
-        "Automated data discovery",
-        "Complete lineage tracking",
-        "Privacy by design",
-        "Audit-ready reporting"
-      ],
-      "deliveryTime": "8-10 weeks",
-      "complexity": "medium",
-      "outcomes": [
-        "100% data visibility",
-        "GDPR/CCPA compliance",
-        "Zero compliance violations"
       ]
     },
     {
@@ -169,37 +105,22 @@ The **Solutions Section** (`type: "solutions"`) is used for displays solution of
         "Data-driven board meetings"
       ]
     }
-  ]
-}
-```
-
-## Minimal Example
-
-```json
-{
-  "title": "Solution",
-  "type": "solutions",
-  "fields": [
-    {
-      "title": "Consulting Service",
-      "description": "Professional consultation"
-    }
-  ]
+  ],
+  "preferredColumns": 1,
+  "priority": 3
 }
 ```
 
 ## Best Practices
 
 1. Highlight key benefits
-2. Include use cases
-3. Add feature lists
-4. Show outcomes when available
-5. Include delivery timeframes
+1. Include use cases
+1. Add feature lists
+1. Show outcomes when available
 
-## Component Information
+## Component Properties
 
-- **Selector:** `lib-solutions-section`
-- **Component Path:** `./lib/components/sections/solutions-section/solutions-section.component`
+
 
 
 ## Related Documentation

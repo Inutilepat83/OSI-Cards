@@ -237,9 +237,9 @@ export class SectionNormalizationService {
       normalized.preferredColumns = preferredColumns;
     }
 
-    // Set priority band on section if not already defined
+    // Set priority on section if not already defined (convert PriorityBand to numeric)
     if (!normalized.priority) {
-      normalized.priority = priorityBand;
+      normalized.priority = this.mapPriorityBandToNumericPriority(priorityBand);
     }
 
     // Set numeric layout priority for row-first packing algorithm
@@ -263,6 +263,22 @@ export class SectionNormalizationService {
     }
 
     return 'standard';
+  }
+
+  /**
+   * Map PriorityBand to numeric priority (1-3)
+   */
+  mapPriorityBandToNumericPriority(priority?: PriorityBand): 1 | 2 | 3 {
+    switch (priority) {
+      case 'critical':
+        return 1;
+      case 'important':
+        return 2;
+      case 'standard':
+      case 'optional':
+      default:
+        return 3;
+    }
   }
 
   /**
@@ -305,8 +321,12 @@ export class SectionNormalizationService {
       return section.layoutPriority;
     }
 
-    // Map from priority band
-    const priorityBand = section.priority ?? this.getPriorityBandForType(section.type ?? 'info');
+    // Map from priority (numeric) or priority band (for type-based defaults)
+    if (section.priority !== undefined) {
+      // Priority is now numeric, use it directly for layout priority
+      return section.priority as LayoutPriority;
+    }
+    const priorityBand = this.getPriorityBandForType(section.type ?? 'info');
     return this.mapPriorityBandToLayoutPriority(priorityBand);
   }
 
@@ -428,9 +448,9 @@ export class SectionNormalizationService {
    * Lower numbers appear first
    */
   getSectionPriority(section: CardSection): number {
-    // First check explicit priority on section
-    if (section.priority) {
-      return PRIORITY_BANDS[section.priority]?.order ?? 3;
+    // First check explicit priority on section (now numeric: 1, 2, or 3)
+    if (section.priority !== undefined) {
+      return section.priority;
     }
 
     const type = section.type?.toLowerCase() ?? '';
@@ -603,3 +623,4 @@ export class SectionNormalizationService {
     return sections.map((s) => this.generateSectionKey(s)).join('|');
   }
 }
+

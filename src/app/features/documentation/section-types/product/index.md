@@ -4,43 +4,27 @@ Displays product information, features, benefits, and pricing.
 
 ## Overview
 
-The **Product Section** (`type: "product"`) is used for displays product information, features, benefits, and pricing.
-
-### Quick Facts
-
-| Property | Value |
-|----------|-------|
-| Type | `product` |
-| Uses Fields | Yes |
-| Uses Items | No |
-| Default Columns | 1 |
-| Supports Collapse | Yes |
-| Aliases | None |
-
+The **Product Section** is used for displays product information, features, benefits, and pricing.
 
 ## Use Cases
 
 - Product catalogs
 - Feature lists
 - Product comparisons
-- Specifications
-- Service offerings
+- Pricing tables
 
 ## Data Schema
 
-### Fields Schema
+```typescript
+interface CardSection {
+  title: string;
+  type: 'product';
+  fields?: CardField[];
+  
+}
+```
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `label` | string | Product attribute label |
-| `value` | string | Attribute value |
-| `icon` | string | Icon identifier |
-| `price` | string | Product price |
-| `status` | string | Product availability |
-
-
-
-## Complete Example
+## Example
 
 ```json
 {
@@ -57,90 +41,30 @@ The **Product Section** (`type: "product"`) is used for displays product informa
       "value": "5.2.1 LTS (Long-term Support)"
     },
     {
-      "label": "Release Date",
-      "value": "January 15, 2025"
-    },
-    {
-      "label": "License Type",
-      "value": "Annual Enterprise Subscription"
-    },
-    {
-      "label": "Starting Price",
-      "value": "$2,500/month (billed annually)",
-      "price": "$2,500/mo"
-    },
-    {
-      "label": "Included Users",
-      "value": "Unlimited users with role-based access"
-    },
-    {
-      "label": "Data Connectors",
-      "value": "200+ native connectors (Salesforce, SAP, Oracle, etc.)"
-    },
-    {
       "label": "Storage Included",
       "value": "5TB cloud storage with auto-scaling"
-    },
-    {
-      "label": "API Calls",
-      "value": "10M requests/month included"
-    },
-    {
-      "label": "Support Level",
-      "value": "24/7 Premium Support with dedicated CSM"
-    },
-    {
-      "label": "SLA Guarantee",
-      "value": "99.99% uptime with financial credits"
-    },
-    {
-      "label": "Certifications",
-      "value": "SOC 2 Type II, ISO 27001, GDPR, HIPAA"
-    },
-    {
-      "label": "Deployment Options",
-      "value": "Cloud, Hybrid, or On-premise"
-    },
-    {
-      "label": "Training",
-      "value": "Included: 40 hours onboarding + certification"
     },
     {
       "label": "Status",
       "value": "Generally Available",
       "status": "available"
     }
-  ]
-}
-```
-
-## Minimal Example
-
-```json
-{
-  "title": "Product",
-  "type": "product",
-  "fields": [
-    {
-      "label": "Name",
-      "value": "Basic Product"
-    }
-  ]
+  ],
+  "preferredColumns": 1,
+  "priority": 3
 }
 ```
 
 ## Best Practices
 
 1. Highlight key features
-2. Include pricing when relevant
-3. Use descriptions for details
-4. Add status for availability
-5. Show version information
+1. Include pricing when relevant
+1. Use descriptions for details
+1. Add status for availability
 
-## Component Information
+## Component Properties
 
-- **Selector:** `lib-product-section`
-- **Component Path:** `./lib/components/sections/product-section/product-section.component`
+
 
 
 ## Related Documentation

@@ -60,15 +60,25 @@
       },
       "status": {
         "type": "string",
-        "enum": ["published", "draft", "archived", "breaking"],
+        "enum": [
+          "published",
+          "draft",
+          "archived",
+          "breaking"
+        ],
         "description": "Article status"
       }
     },
-    "required": ["title"]
+    "required": [
+      "title"
+    ]
   },
-  "aliases": ["press", "articles"],
-  "testFixtures": {
-    "complete": {
+  "aliases": [
+    "press",
+    "articles"
+  ],
+  "examples": {
+    "example": {
       "title": "Latest News & Press Coverage",
       "type": "news",
       "description": "Recent company news, press releases, and industry recognition",
@@ -105,40 +115,9 @@
           },
           "status": "published"
         }
-      ]
-    },
-    "minimal": {
-      "title": "News",
-      "type": "news",
-      "items": [
-        {
-          "title": "Company Update"
-        }
-      ]
-    },
-    "edgeCases": {
-      "title": "News Edge Cases",
-      "type": "news",
-      "items": [
-        {
-          "title": "Breaking News",
-          "description": "Urgent announcement",
-          "status": "breaking"
-        },
-        {
-          "title": "Old Article",
-          "description": "Historical archive",
-          "meta": {
-            "date": "2000-01-01"
-          },
-          "status": "archived"
-        },
-        {
-          "title": "Draft Article",
-          "description": "Not yet published",
-          "status": "draft"
-        }
-      ]
+      ],
+      "preferredColumns": 1,
+      "priority": 3
     }
   }
 }

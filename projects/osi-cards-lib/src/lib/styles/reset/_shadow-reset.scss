@@ -29,9 +29,9 @@
   visibility: visible !important;
   opacity: 1 !important;
 
-  // Transparent container with 8px padding (library default)
+  // Transparent container with fixed padding (library default)
   // Must be set here immediately after all:initial to ensure application
-  padding: 8px;
+  padding: 0;
   background: transparent !important;
   background-color: transparent !important;
 
@@ -60,11 +60,6 @@
 
   // Contain styles within shadow boundary
   contain: layout style;
-
-  // Responsive: reduce padding on mobile
-  @media (max-width: 480px) {
-    padding: 4px;
-  }
 }
 
 // Host context variations

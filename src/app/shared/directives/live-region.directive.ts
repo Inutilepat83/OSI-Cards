@@ -53,3 +53,4 @@ export class LiveRegionDirective implements OnInit {
     this.renderer.addClass(element, 'sr-only');
   }
 }
+

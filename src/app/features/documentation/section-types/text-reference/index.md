@@ -4,46 +4,27 @@ Displays long-form text, paragraphs, articles, and reference content.
 
 ## Overview
 
-The **Text Reference Section** (`type: "text-reference"`) is used for displays long-form text, paragraphs, articles, and reference content.
-
-### Quick Facts
-
-| Property | Value |
-|----------|-------|
-| Type | `text-reference` |
-| Uses Fields | Yes |
-| Uses Items | No |
-| Default Columns | 1 |
-| Supports Collapse | Yes |
-| Aliases | None |
-
+The **Text Reference Section** is used for displays long-form text, paragraphs, articles, and reference content.
 
 ## Use Cases
 
 - Articles
-- Documentation links
+- Blog posts
 - Research summaries
-- Reference materials
-- Resource libraries
+- Long-form content
 
 ## Data Schema
 
-### Fields Schema
+```typescript
+interface CardSection {
+  title: string;
+  type: 'text-reference';
+  fields?: CardField[];
+  
+}
+```
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `label` | string | Reference label |
-| `value` | string | Reference title/name |
-| `text` | string | Reference text content |
-| `description` | string | Reference description |
-| `url` | string | Reference URL |
-| `source` | string | Source attribution |
-| `type` | string | Document type (PDF, Video, etc.) |
-| `date` | string | Publication date |
-
-
-
-## Complete Example
+## Example
 
 ```json
 {
@@ -67,41 +48,11 @@ The **Text Reference Section** (`type: "text-reference"`) is used for displays l
       "type": "API Docs"
     },
     {
-      "label": "Security Whitepaper",
-      "value": "Enterprise Security & Compliance Framework",
-      "description": "Detailed overview of security architecture, encryption standards, access controls, audit logging, and compliance certifications (SOC 2, ISO 27001, GDPR, HIPAA)",
-      "url": "https://nexustech.io/security-whitepaper",
-      "type": "PDF",
-      "date": "2024-10-15"
-    },
-    {
-      "label": "Implementation Guide",
-      "value": "Enterprise Deployment Playbook",
-      "description": "Step-by-step guide for enterprise implementations including architecture patterns, migration strategies, performance tuning, and go-live checklists",
-      "url": "https://docs.nexustech.io/implementation",
-      "type": "Guide"
-    },
-    {
       "label": "Video Training",
       "value": "Nexus Academy - Complete Certification Course",
       "description": "40-hour video training program covering platform fundamentals, advanced analytics, administration, and developer certification paths",
       "url": "https://academy.nexustech.io",
       "type": "Video Course"
-    },
-    {
-      "label": "Case Study",
-      "value": "How Fortune 500 Retailer Achieved 47% Faster Insights",
-      "description": "Detailed case study covering implementation journey, challenges overcome, technical architecture, and measurable business outcomes",
-      "url": "https://nexustech.io/case-studies/retail-transformation",
-      "type": "PDF",
-      "date": "2024-09-20"
-    },
-    {
-      "label": "Architecture Guide",
-      "value": "Multi-tenant Cloud Architecture Deep Dive",
-      "description": "Technical architecture documentation covering data isolation, scaling strategies, disaster recovery, and multi-region deployments",
-      "url": "https://docs.nexustech.io/architecture",
-      "type": "Technical Guide"
     },
     {
       "label": "Release Notes",
@@ -111,37 +62,22 @@ The **Text Reference Section** (`type: "text-reference"`) is used for displays l
       "type": "Release Notes",
       "date": "2025-01-15"
     }
-  ]
-}
-```
-
-## Minimal Example
-
-```json
-{
-  "title": "References",
-  "type": "text-reference",
-  "fields": [
-    {
-      "label": "Link",
-      "value": "Reference Document"
-    }
-  ]
+  ],
+  "preferredColumns": 1,
+  "priority": 3
 }
 ```
 
 ## Best Practices
 
 1. Break into readable chunks
-2. Use proper formatting
-3. Include citations
-4. Add metadata for context
-5. Provide action links
+1. Use proper formatting
+1. Include citations
+1. Add metadata for context
 
-## Component Information
+## Component Properties
 
-- **Selector:** `lib-text-reference-section`
-- **Component Path:** `./lib/components/sections/text-reference-section/text-reference-section.component`
+
 
 
 ## Related Documentation

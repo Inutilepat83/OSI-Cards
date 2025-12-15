@@ -1,11 +1,9 @@
 import { NgDocPage } from '@ng-doc/core';
-import SectionTypesCategory from '../ng-doc.category';
 
 const BaseSectionPage: NgDocPage = {
-  title: 'Base Section',
+  title: 'base Section',
   mdFile: './index.md',
-  order: 0,
-  category: SectionTypesCategory,
+  order: 1
 };
 
 export default BaseSectionPage;

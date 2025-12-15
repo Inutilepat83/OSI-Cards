@@ -21,8 +21,7 @@
     "usesFields": false,
     "usesItems": true,
     "defaultColumns": 1,
-    "supportsCollapse": true,
-    "supportsEmoji": true
+    "supportsCollapse": true
   },
   "itemSchema": {
     "type": "object",
@@ -53,11 +52,16 @@
         }
       }
     },
-    "required": ["title"]
+    "required": [
+      "title"
+    ]
   },
-  "aliases": ["history", "milestones"],
-  "testFixtures": {
-    "complete": {
+  "aliases": [
+    "history",
+    "milestones"
+  ],
+  "examples": {
+    "example": {
       "title": "Company Journey",
       "type": "timeline",
       "description": "Key milestones in Nexus Technologies' growth story",
@@ -89,43 +93,9 @@
             "icon": "🎯"
           }
         }
-      ]
-    },
-    "minimal": {
-      "title": "Timeline",
-      "type": "timeline",
-      "items": [
-        {
-          "title": "Event 1",
-          "meta": {
-            "year": "2024"
-          }
-        }
-      ]
-    },
-    "edgeCases": {
-      "title": "Timeline Edge Cases",
-      "type": "timeline",
-      "items": [
-        {
-          "title": "No Date",
-          "description": "Event without date information"
-        },
-        {
-          "title": "Very Old Event",
-          "description": "Historical milestone",
-          "meta": {
-            "date": "January 1900"
-          }
-        },
-        {
-          "title": "Future Event",
-          "description": "Planned milestone",
-          "meta": {
-            "date": "December 2030"
-          }
-        }
-      ]
+      ],
+      "preferredColumns": 1,
+      "priority": 3
     }
   }
 }

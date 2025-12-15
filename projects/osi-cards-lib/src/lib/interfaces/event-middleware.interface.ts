@@ -53,3 +53,4 @@ export type EventTransformer = (event: SectionRenderEvent) => SectionRenderEvent
  * Event filter function type
  */
 export type EventFilter = (event: SectionRenderEvent) => boolean;
+

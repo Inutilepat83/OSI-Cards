@@ -2,7 +2,7 @@
 
 /**
  * Generate section type documentation from component code
- * 
+ *
  * This script scans all section component files and generates comprehensive
  * documentation pages for each section type, including examples, data schemas,
  * and best practices.
@@ -211,23 +211,23 @@ const sectionTypes = {
  */
 function extractComponentMetadata(filePath) {
   const content = fs.readFileSync(filePath, 'utf8');
-  
+
   // Extract component selector
   const selectorMatch = content.match(/selector:\s*['"]([^'"]+)['"]/);
   const selector = selectorMatch ? selectorMatch[1] : null;
-  
+
   // Extract @Input properties
   const inputMatches = content.matchAll(/@Input\(\)\s+(\w+)/g);
   const inputs = Array.from(inputMatches, m => m[1]);
-  
+
   // Extract @Output properties
   const outputMatches = content.matchAll(/@Output\(\)\s+(\w+)/g);
   const outputs = Array.from(outputMatches, m => m[1]);
-  
+
   // Extract description from JSDoc
   const descriptionMatch = content.match(/\/\*\*\s*\n\s*\*\s*(.+?)\n/);
   const description = descriptionMatch ? descriptionMatch[1].trim() : '';
-  
+
   return {
     selector,
     inputs,
@@ -246,17 +246,17 @@ function generateSectionDoc(sectionType, metadata) {
     useCases: [],
     bestPractices: []
   };
-  
+
   const pageDir = path.join(docsDir, sectionType);
   if (!fs.existsSync(pageDir)) {
     fs.mkdirSync(pageDir, { recursive: true });
   }
-  
+
   // Try to find component file
   let componentMetadata = { inputs: [], outputs: [], description: '' };
   try {
     const files = fs.readdirSync(sectionsDir);
-    const componentFile = files.find(f => 
+    const componentFile = files.find(f =>
       f.includes(sectionType) && f.endsWith('.component.ts')
     );
     if (componentFile) {
@@ -267,16 +267,16 @@ function generateSectionDoc(sectionType, metadata) {
     // Directory might not exist or be accessible
     console.warn(`Could not read section directory: ${sectionsDir}`);
   }
-  
+
   // Generate page.ts file
   // Convert section type to valid variable name (camelCase)
   const varName = sectionType
     .split('-')
-    .map((part, index) => index === 0 
+    .map((part, index) => index === 0
       ? part.charAt(0).toUpperCase() + part.slice(1)
       : part.charAt(0).toUpperCase() + part.slice(1))
     .join('') + 'SectionPage';
-  
+
   const pageTs = `import { NgDocPage } from '@ng-doc/core';
 
 const ${varName}: NgDocPage = {
@@ -287,7 +287,7 @@ const ${varName}: NgDocPage = {
 
 export default ${varName};
 `;
-  
+
   // Generate markdown content
   const markdown = `# ${sectionInfo.name}
 
@@ -315,21 +315,42 @@ interface CardSection {
 ## Example
 
 \`\`\`json
-{
-  "title": "${sectionInfo.name} Example",
-  "type": "${sectionType}",
-  ${sectionType === 'list' || sectionType === 'news' ? `"items": [
-    {
-      "title": "Example Item",
-      "description": "Item description"
+${(() => {
+  // Try to load from definition file
+  const definitionPath = path.join(sectionsDir, `${sectionType}-section`, `${sectionType}.definition.json`);
+  if (fs.existsSync(definitionPath)) {
+    try {
+      const definitionContent = fs.readFileSync(definitionPath, 'utf8');
+      const definition = JSON.parse(definitionContent);
+      const example = definition.examples?.example || definition.examples?.complete || definition.examples?.minimal;
+      if (example) {
+        return JSON.stringify(example, null, 2);
+      }
+    } catch (error) {
+      // Fallback to basic example
     }
-  ]` : `"fields": [
-    {
-      "label": "Example Label",
-      "value": "Example Value"
-    }
-  ]`}
-}
+  }
+  // Fallback to basic example
+  return JSON.stringify({
+    title: `${sectionInfo.name} Example`,
+    type: sectionType,
+    ...(sectionType === 'list' || sectionType === 'news' ? {
+      items: [
+        {
+          title: "Example Item",
+          description: "Item description"
+        }
+      ]
+    } : {
+      fields: [
+        {
+          label: "Example Label",
+          value: "Example Value"
+        }
+      ]
+    })
+  }, null, 2);
+})()}
 \`\`\`
 
 ## Best Practices
@@ -347,11 +368,11 @@ ${componentMetadata.outputs.length > 0 ? `### Outputs\n\n${componentMetadata.out
 - [Card Configuration](/docs/api/models/aicardconfig)
 - [Best Practices](/docs/best-practices)
 `;
-  
+
   // Write files
   fs.writeFileSync(path.join(pageDir, `${sectionType}.page.ts`), pageTs, 'utf8');
   fs.writeFileSync(path.join(pageDir, 'index.md'), markdown, 'utf8');
-  
+
   console.log(`✅ Generated documentation for ${sectionType} section`);
 }
 
@@ -361,12 +382,12 @@ try {
   if (!fs.existsSync(docsDir)) {
     fs.mkdirSync(docsDir, { recursive: true });
   }
-  
+
   // Generate docs for each known section type
   Object.keys(sectionTypes).forEach(sectionType => {
     generateSectionDoc(sectionType, sectionTypes[sectionType]);
   });
-  
+
   // Also scan for any additional section types in the codebase
   try {
     const files = fs.readdirSync(sectionsDir);
@@ -389,7 +410,7 @@ try {
   } catch (error) {
     console.warn('Could not scan for additional section types:', error.message);
   }
-  
+
   console.log('✅ Section type documentation generation complete');
 } catch (error) {
   console.error('❌ Error generating section docs:', error);

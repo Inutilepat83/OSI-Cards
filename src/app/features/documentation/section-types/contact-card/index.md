@@ -4,135 +4,82 @@ Displays person information with avatars, roles, contact details, and social lin
 
 ## Overview
 
-The **Contact Card Section** (`type: "contact-card"`) is used for displays person information with avatars, roles, contact details, and social links.
-
-### Quick Facts
-
-| Property | Value |
-|----------|-------|
-| Type | `contact-card` |
-| Uses Fields | Yes |
-| Uses Items | No |
-| Default Columns | 2 |
-| Supports Collapse | Yes |
-| Aliases | None |
-
+The **Contact Card Section** is used for displays person information with avatars, roles, contact details, and social links.
 
 ## Use Cases
 
 - Team members
 - Key contacts
-- Leadership profiles
-- Stakeholder directory
-- Sales contacts
+- Leadership
+- Stakeholders
 
 ## Data Schema
 
-### Fields Schema
+```typescript
+interface CardSection {
+  title: string;
+  type: 'contact-card';
+  fields?: CardField[];
+  
+}
+```
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `title` | string | Contact name |
-| `label` | string | Contact label |
-| `value` | string | Role or description |
-| `role` | string | Job role/title |
-| `email` | string | Email address |
-| `phone` | string | Phone number |
-| `avatar` | string | Avatar image URL |
-| `department` | string | Department name |
-| `location` | string | Office location |
-| `linkedIn` | string | LinkedIn profile URL |
-| `twitter` | string | Twitter handle |
-
-
-
-## Complete Example
+## Example
 
 ```json
 {
   "title": "Executive Leadership Team",
   "type": "contact-card",
   "description": "Key decision makers and stakeholders",
+  "preferredColumns": 2,
+  "minColumns": 2,
+  "priority": 1,
   "fields": [
     {
       "label": "Chief Executive Officer",
       "title": "Dr. Sarah Mitchell",
       "value": "CEO & Co-Founder",
       "email": "sarah.mitchell@nexustech.io",
-      "phone": "+1 (512) 555-0100",
+      "salesforce": "https://company.salesforce.com/001xx000003DGbQ",
       "role": "Chief Executive Officer",
       "department": "Executive",
-      "location": "Austin, TX",
+      "target": true,
+      "influencer": 9,
       "linkedIn": "https://linkedin.com/in/sarahmitchell",
-      "twitter": "@sarahmitchell"
+      "twitter": "@sarahmitchell",
+      "note": "Key decision maker for strategic partnerships and major business initiatives. Prefers email communication and typically responds within 24 hours. Has extensive experience in scaling technology companies from startup to IPO. Known for making data-driven decisions and fostering collaborative team environments. Excellent at building relationships with key stakeholders and investors."
     },
     {
       "label": "Chief Technology Officer",
       "title": "James Park",
       "value": "CTO & Co-Founder",
       "email": "james.park@nexustech.io",
-      "phone": "+1 (512) 555-0101",
+      "salesforce": "https://company.salesforce.com/001xx000003DGbR",
       "role": "Chief Technology Officer",
       "department": "Engineering",
-      "location": "Austin, TX",
-      "linkedIn": "https://linkedin.com/in/jamespark"
-    },
-    {
-      "label": "Chief Revenue Officer",
-      "title": "Maria Santos",
-      "value": "CRO",
-      "email": "maria.santos@nexustech.io",
-      "phone": "+1 (512) 555-0102",
-      "role": "Chief Revenue Officer",
-      "department": "Sales",
-      "location": "New York, NY",
-      "linkedIn": "https://linkedin.com/in/mariasantos"
+      "linkedIn": "https://linkedin.com/in/jamespark",
+      "note": "Expert in cloud architecture, microservices, and distributed systems design. Available for technical discussions and architecture reviews. Led the migration of legacy systems to modern cloud infrastructure, resulting in 40% cost reduction and improved scalability. Strong advocate for DevOps practices and continuous delivery. Regularly speaks at tech conferences and contributes to open-source projects."
     },
     {
       "label": "Chief Financial Officer",
       "title": "David Thompson",
       "value": "CFO",
       "email": "david.thompson@nexustech.io",
-      "phone": "+44 20 7946 0958",
+      "salesforce": "https://company.salesforce.com/001xx000003DGbT",
       "role": "Chief Financial Officer",
       "department": "Finance",
-      "location": "London, UK",
-      "linkedIn": "https://linkedin.com/in/davidthompson"
-    },
-    {
-      "label": "VP of Engineering",
-      "title": "Dr. Wei Chen",
-      "value": "VP Engineering - Platform",
-      "email": "wei.chen@nexustech.io",
-      "phone": "+65 6823 4567",
-      "role": "VP of Engineering",
-      "department": "Engineering",
-      "location": "Singapore"
+      "linkedIn": "https://linkedin.com/in/davidthompson",
+      "note": "Seasoned financial executive with over 20 years of experience in global finance and operations. Successfully led multiple fundraising rounds and managed financial operations across multiple international markets. Expertise in financial planning, risk management, and investor relations. Known for transparent communication and strategic financial guidance. Prefers scheduled calls for detailed discussions."
     },
     {
       "label": "VP of Customer Success",
       "title": "Rachel Green",
       "value": "VP Customer Success",
       "email": "rachel.green@nexustech.io",
-      "phone": "+1 (512) 555-0105",
+      "salesforce": "https://company.salesforce.com/001xx000003DGbV",
       "role": "VP of Customer Success",
       "department": "Customer Success",
-      "location": "Austin, TX"
-    }
-  ]
-}
-```
-
-## Minimal Example
-
-```json
-{
-  "title": "Primary Contact",
-  "type": "contact-card",
-  "fields": [
-    {
-      "title": "Support Team",
-      "email": "support@company.com"
+      "note": "Extremely customer-focused leader who transformed our customer success metrics, achieving 95% customer satisfaction and reducing churn by 30%. Known for her hands-on approach and ability to build strong relationships with enterprise clients. Regularly hosts customer advisory board meetings and is always open to feedback. Great collaborator who works closely with product and engineering teams to advocate for customer needs. Very responsive to urgent customer issues."
     }
   ]
 }
@@ -141,15 +88,13 @@ The **Contact Card Section** (`type: "contact-card"`) is used for displays perso
 ## Best Practices
 
 1. Include name, role, and contact info
-2. Add avatar images when available
-3. Include social media links
-4. Group by department or role
-5. Show location for distributed teams
+1. Add avatar images when available
+1. Include social media links
+1. Group by department or role
 
-## Component Information
+## Component Properties
 
-- **Selector:** `lib-contact-card-section`
-- **Component Path:** `./lib/components/sections/contact-card-section/contact-card-section.component`
+
 
 
 ## Related Documentation

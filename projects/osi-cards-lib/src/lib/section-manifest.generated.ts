@@ -19,8 +19,8 @@ export interface SectionManifestEntry {
     usesChartData?: boolean;
     defaultColumns: number;
     supportsCollapse: boolean;
-    supportsEmoji: boolean;
     requiresExternalLib?: string;
+    supportsEmoji?: boolean;
   };
   aliases: string[];
   isInternal: boolean;
@@ -746,7 +746,7 @@ export const SECTION_MANIFEST: SectionManifestEntry[] = [
  */
 export function getManifestEntry(type: string): SectionManifestEntry | undefined {
   const typeLower = type.toLowerCase();
-  return SECTION_MANIFEST.find(s => 
+  return SECTION_MANIFEST.find(s =>
     s.type === typeLower || s.aliases.includes(typeLower)
   );
 }
@@ -765,7 +765,7 @@ export function getPublicSectionTypes(): string[] {
  */
 export function getSectionsRequiringExternalLibs(): Map<string, string[]> {
   const map = new Map<string, string[]>();
-  
+
   SECTION_MANIFEST.forEach(s => {
     if (s.rendering.requiresExternalLib) {
       const lib = s.rendering.requiresExternalLib;
@@ -775,7 +775,7 @@ export function getSectionsRequiringExternalLibs(): Map<string, string[]> {
       map.get(lib)!.push(s.type);
     }
   });
-  
+
   return map;
 }
 
@@ -783,8 +783,8 @@ export function getSectionsRequiringExternalLibs(): Map<string, string[]> {
  * Manifest metadata
  */
 export const MANIFEST_META = {
-  generatedAt: '2025-12-12T21:36:09.334Z',
-  registryVersion: '1.5.19',
+  generatedAt: '2025-12-15T10:19:41.553Z',
+  registryVersion: '1.5.39',
   totalSections: 22,
   publicSections: 22
 };

@@ -105,11 +105,18 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
   private lastSectionHash = '';
   private itemKeyMap = new Map<HTMLElement, string>(); // Map DOM element to section key
   private readonly HEIGHT_THRESHOLD = 5; // Ignore height changes below this (px)
+  private initialLayoutPollingTimeout?: ReturnType<typeof setTimeout>;
+  private itemElements = new Map<string, HTMLElement>(); // Cache element references by section key
 
   ngAfterViewInit(): void {
     this.detectGridMode();
     this.setupResizeObserver();
+
+    // Initial layout attempt
     this.updateLayout();
+
+    // Ensure layout with retry if needed
+    this.ensureInitialLayout();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -128,6 +135,9 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     this.resizeObserver?.disconnect();
     if (this.resizeThrottleTimeout) {
       clearTimeout(this.resizeThrottleTimeout);
+    }
+    if (this.initialLayoutPollingTimeout) {
+      clearTimeout(this.initialLayoutPollingTimeout);
     }
     this.cleanupAbsolutePositionPolyfill();
     if (this.absolutePositionUpdateRafId !== null) {
@@ -196,7 +206,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
       // In hybrid mode, allow controlled shrink-to-fill for non-critical sections
       if (isHybridReorder && preferences.canShrinkToFill) {
-        const isCritical = section.priority === 'critical' || section.layoutPriority === 1;
+        const isCritical = section.priority === 1 || section.layoutPriority === 1;
         if (!isCritical && preferences.shrinkPriority && preferences.shrinkPriority > 30) {
           // Allow shrinking below preferred for better packing
           span = Math.max(1, Math.min(span, columns));
@@ -218,10 +228,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
     const el = this.containerRef?.nativeElement;
     if (!el) {
-      if (typeof window !== 'undefined') {
-        return Math.max(window.innerWidth - 80, 260);
-      }
-      return 1200;
+      // Don't use window fallback - return 0 to force retry mechanism
+      return 0;
     }
 
     const computedStyle = window.getComputedStyle(el);
@@ -229,8 +237,10 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     const paddingRight = parseFloat(computedStyle.paddingRight) || 0;
     const contentWidth = el.clientWidth - paddingLeft - paddingRight;
 
+    // Only return 0 if truly invalid - don't use window fallback here
+    // This forces the retry mechanism to wait for actual container width
     if (contentWidth < 200) {
-      return 0;
+      return 0; // Force retry mechanism
     }
 
     return contentWidth;
@@ -256,22 +266,28 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     }
 
     const columns = this.calculateColumns(containerWidth);
-    this.currentColumns = columns;
-
-    // Check if we need to recompute (columns changed or sections changed meaningfully)
     const sectionHash = this.computeSectionHash();
-    const needsRecompute = columns !== this.lastColumnCount || sectionHash !== this.lastSectionHash;
 
-    if (!needsRecompute && this.sectionsWithSpan.length > 0) {
-      // Only update positions if in polyfill mode
+    // Early exit: nothing changed
+    if (
+      columns === this.lastColumnCount &&
+      sectionHash === this.lastSectionHash &&
+      this.sectionsWithSpan.length > 0
+    ) {
+      // Only update positions if in polyfill mode (items may have resized)
       if (this.gridMode === 'absolute-polyfill') {
         this.scheduleAbsolutePositionUpdate();
       }
-      return;
+      return; // Already done, skip expensive calculations
     }
+
+    this.currentColumns = columns;
 
     this.lastColumnCount = columns;
     this.lastSectionHash = sectionHash;
+
+    // Clear element cache when sections change
+    this.clearItemElementCache();
 
     // Apply hybrid reordering
     const orderedSections = this.applyHybridReordering(this.sections, columns);
@@ -306,16 +322,16 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     // Schedule absolute positioning updates for polyfill mode
     if (this.gridMode === 'absolute-polyfill') {
       // Wait for DOM to update and content to render before measuring
-      // Multiple RAF + delay to ensure images/content are loaded
+      // Single RAF + delay to ensure images/content are loaded
       this.ngZone.runOutsideAngular(() => {
         requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            // Additional delay for images/async content
-            setTimeout(() => {
-              this.updateAbsolutePositions();
-              this.observeItemResizes();
-            }, 150);
-          });
+          // Additional delay for images/async content
+          setTimeout(() => {
+            // Cache elements after DOM is ready
+            this.cacheItemElements();
+            this.updateAbsolutePositions();
+            this.observeItemResizes();
+          }, 150);
         });
       });
     }
@@ -337,10 +353,11 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
   /**
    * Hybrid reordering: keep critical/important sections in order, reorder the rest
+   * Enhanced to better match section heights for gap filling
    */
   private applyHybridReordering(sections: CardSection[], columns: number): CardSection[] {
     // Group sections by priority
-    const criticalSections: Array<{ section: CardSection; originalIndex: number }> = [];
+    const criticalSections: Array<{ section: CardSection; originalIndex: number; estimatedHeight: number; colSpan: number }> = [];
     const reorderableSections: Array<{
       section: CardSection;
       originalIndex: number;
@@ -350,16 +367,17 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
     sections.forEach((section, index) => {
       const isCritical =
-        section.priority === 'critical' ||
-        section.priority === 'important' ||
+        section.priority === 1 ||
+        section.priority === 2 ||
         section.layoutPriority === 1 ||
         section.layoutPriority === 2;
 
+      const colSpan = this.decideSpanForSection(section, columns, false);
+      const estimatedHeight = this.estimateSectionHeight(section, colSpan);
+
       if (isCritical) {
-        criticalSections.push({ section, originalIndex: index });
+        criticalSections.push({ section, originalIndex: index, estimatedHeight, colSpan });
       } else {
-        const colSpan = this.decideSpanForSection(section, columns, false);
-        const estimatedHeight = this.estimateSectionHeight(section, colSpan);
         reorderableSections.push({
           section,
           originalIndex: index,
@@ -369,52 +387,160 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       }
     });
 
-    // Reorder non-critical sections: stable sort by height desc, span desc, then original index
+    // Enhanced reordering strategy for better gap filling:
+    // 1. Group sections by similar heights (within 50px tolerance)
+    // 2. Within height groups, sort by span for better distribution
+    // 3. Alternate between height groups to create better packing opportunities
+
+    // Sort by height first, then create height-based groups
     reorderableSections.sort((a, b) => {
-      // First by estimated height (desc)
-      if (b.estimatedHeight !== a.estimatedHeight) {
+      // Primary: height (desc) - taller sections first create structure
+      if (Math.abs(b.estimatedHeight - a.estimatedHeight) > 50) {
         return (b.estimatedHeight || 0) - (a.estimatedHeight || 0);
       }
-      // Then by span (desc)
+      // Secondary: within similar heights, sort by span (desc) for variety
       if (b.colSpan !== a.colSpan) {
         return b.colSpan - a.colSpan;
       }
-      // Finally by original index (stability)
+      // Tertiary: original index (stability)
       return a.originalIndex - b.originalIndex;
     });
 
-    // Combine: critical sections first (in original order), then reordered sections
+    // Interleave sections by height to create better packing opportunities
+    // This helps shorter sections fill gaps left by taller ones
+    const heightGroups: Array<Array<typeof reorderableSections[0]>> = [];
+    const HEIGHT_TOLERANCE = 50; // Group sections within 50px of each other
+
+    for (const item of reorderableSections) {
+      let placed = false;
+      for (const group of heightGroups) {
+        if (group.length > 0) {
+          const groupAvgHeight = group.reduce((sum, i) => sum + i.estimatedHeight, 0) / group.length;
+          if (Math.abs(item.estimatedHeight - groupAvgHeight) <= HEIGHT_TOLERANCE) {
+            group.push(item);
+            placed = true;
+            break;
+          }
+        }
+      }
+      if (!placed) {
+        heightGroups.push([item]);
+      }
+    }
+
+    // Interleave groups: take one from each group in round-robin fashion
+    // This creates better opportunities for gap filling
+    const interleaved: typeof reorderableSections = [];
+    let maxGroupSize = Math.max(...heightGroups.map(g => g.length), 0);
+
+    for (let i = 0; i < maxGroupSize; i++) {
+      for (const group of heightGroups) {
+        const item = group[i];
+        if (item) {
+          interleaved.push(item);
+        }
+      }
+    }
+
+    // Combine: critical sections first (in original order), then interleaved reorderable sections
     const result: CardSection[] = [];
     criticalSections.forEach((item) => result.push(item.section));
-    reorderableSections.forEach((item) => result.push(item.section));
+    interleaved.forEach((item) => result.push(item.section));
 
     return result;
   }
 
   /**
-   * Estimate section height for reordering (simple heuristic)
+   * Estimate section height for reordering (enhanced heuristic)
+   * More accurate estimation based on section type and content structure
    */
   private estimateSectionHeight(section: CardSection, colSpan: number): number {
     const fieldCount = section.fields?.length || 0;
     const itemCount = section.items?.length || 0;
     const descriptionLength = section.description?.length || 0;
+    const titleLength = section.title?.length || 0;
 
-    // Base height
-    let height = 100;
+    // Base height varies by section type
+    let baseHeight = 80; // Reduced base for more accurate estimation
+    let height = baseHeight;
 
-    // Add for fields/items
-    height += fieldCount * 40;
-    height += itemCount * 60;
-
-    // Add for description
-    height += Math.min(descriptionLength / 3, 200);
-
-    // Wider sections tend to be shorter (more horizontal space)
-    if (colSpan > 1) {
-      height = Math.floor(height / (1 + (colSpan - 1) * 0.3));
+    // Section type-specific adjustments
+    switch (section.type) {
+      case 'gallery':
+        // Gallery: images with captions
+        baseHeight = 60;
+        height = baseHeight;
+        // Each gallery item: image (120px) + caption (36px) + gap
+        height += itemCount * 160;
+        break;
+      case 'social-media':
+        // Social media: compact cards
+        baseHeight = 50;
+        height = baseHeight;
+        // Each social card: ~125px min-height
+        height += fieldCount * 130;
+        break;
+      case 'overview':
+      case 'financials':
+        // Wide sections with more content
+        baseHeight = 120;
+        height = baseHeight;
+        height += fieldCount * 50;
+        height += itemCount * 70;
+        break;
+      case 'chart':
+        // Charts have fixed aspect ratios
+        baseHeight = 100;
+        height = baseHeight;
+        height += 300; // Chart area
+        break;
+      case 'map':
+        // Maps have fixed heights
+        baseHeight = 100;
+        height = baseHeight;
+        height += 250; // Map area
+        break;
+      case 'contact-card':
+      case 'network-card':
+        // Compact cards
+        baseHeight = 40;
+        height = baseHeight;
+        height += fieldCount * 35;
+        break;
+      default:
+        // Default: standard sections
+        baseHeight = 80;
+        height = baseHeight;
+        height += fieldCount * 45;
+        height += itemCount * 65;
     }
 
-    return height;
+    // Add for header (title + description)
+    height += 20; // Header padding
+    if (titleLength > 0) {
+      height += 24; // Title line
+    }
+    if (descriptionLength > 0) {
+      // Description wraps, estimate based on length and width
+      const estimatedLines = Math.ceil(descriptionLength / (colSpan * 50)); // ~50 chars per column
+      height += Math.min(estimatedLines * 20, 120); // Max 6 lines
+    }
+
+    // Add for fields/items (if not already handled by type)
+    if (section.type !== 'gallery' && section.type !== 'social-media') {
+      height += fieldCount * 40;
+      height += itemCount * 60;
+    }
+
+    // Wider sections tend to be shorter (more horizontal space)
+    // More aggressive reduction for multi-column spans
+    if (colSpan > 1) {
+      const reductionFactor = 1 + (colSpan - 1) * 0.4; // Increased from 0.3 to 0.4
+      height = Math.floor(height / reductionFactor);
+    }
+
+    // Ensure minimum height
+    return Math.max(height, 60);
   }
 
   /**
@@ -502,6 +628,25 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       });
 
       this.resizeObserver.observe(this.containerRef.nativeElement);
+
+      // Force initial measurement after longer delay with validation
+      this.ngZone.runOutsideAngular(() => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              const el = this.containerRef?.nativeElement;
+              // Validate container has real width before calculating
+              if (el && el.clientWidth > 0) {
+                const width = this.getContainerWidth();
+                // Ensure width is valid and reasonable before updating layout
+                if (width > 0 && width >= 200 && this.sections?.length > 0) {
+                  this.ngZone.run(() => this.updateLayout());
+                }
+              }
+            }, 200);
+          });
+        });
+      });
     });
   }
 
@@ -524,6 +669,30 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     this.itemResizeObservers.forEach((observer) => observer.disconnect());
     this.itemResizeObservers.clear();
     this.itemKeyMap.clear();
+    this.itemElements.clear(); // Also clear element cache
+  }
+
+  /**
+   * Cache element references to avoid repeated querySelectorAll calls
+   */
+  private cacheItemElements(): void {
+    const container = this.containerRef?.nativeElement;
+    if (!container) return;
+
+    const items = container.querySelectorAll<HTMLElement>('.masonry-item');
+    items.forEach((item, index) => {
+      const sectionWithSpan = this.sectionsWithSpan[index];
+      if (sectionWithSpan) {
+        this.itemElements.set(sectionWithSpan.key, item);
+      }
+    });
+  }
+
+  /**
+   * Clear cached element references when sections change
+   */
+  private clearItemElementCache(): void {
+    this.itemElements.clear();
   }
 
   /**
@@ -535,7 +704,23 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     const container = this.containerRef?.nativeElement;
     if (!container) return;
 
-    const items = container.querySelectorAll<HTMLElement>('.masonry-item');
+    // Use cached elements if available, otherwise query DOM
+    const items: HTMLElement[] = [];
+    if (this.itemElements.size === this.sectionsWithSpan.length) {
+      // All elements cached, use them
+      this.sectionsWithSpan.forEach((sectionWithSpan) => {
+        const element = this.itemElements.get(sectionWithSpan.key);
+        if (element) {
+          items.push(element);
+        }
+      });
+    } else {
+      // Cache not complete, query DOM and update cache
+      const queriedItems = container.querySelectorAll<HTMLElement>('.masonry-item');
+      items.push(...Array.from(queriedItems));
+      this.cacheItemElements();
+    }
+
     items.forEach((item, index) => {
       if (this.itemResizeObservers.has(item)) {
         return; // Already observing
@@ -549,20 +734,24 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
 
       // Throttle resize updates to avoid excessive recalculations
       let lastHeight = item.offsetHeight;
+      let lastWidth = item.offsetWidth;
       let resizeTimeout: number | null = null;
 
       const observer = new ResizeObserver(() => {
         const newHeight = item.offsetHeight;
+        const newWidth = item.offsetWidth;
         const heightDiff = Math.abs(newHeight - lastHeight);
+        const widthDiff = Math.abs(newWidth - lastWidth);
 
-        // Only trigger update if height changed significantly
-        if (heightDiff < this.HEIGHT_THRESHOLD) {
+        // Only trigger update if height or width changed significantly
+        if (heightDiff < this.HEIGHT_THRESHOLD && widthDiff < 10) {
           return;
         }
 
         lastHeight = newHeight;
+        lastWidth = newWidth;
 
-        // Throttle: wait 200ms before updating
+        // Throttle: wait 150ms before updating (reduced from 200ms for better responsiveness)
         if (resizeTimeout !== null) {
           clearTimeout(resizeTimeout);
         }
@@ -570,7 +759,7 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
         resizeTimeout = window.setTimeout(() => {
           this.scheduleAbsolutePositionUpdate();
           resizeTimeout = null;
-        }, 200);
+        }, 150);
       });
 
       observer.observe(item);
@@ -603,7 +792,22 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     const container = this.containerRef?.nativeElement;
     if (!container) return;
 
-    const items = Array.from(container.querySelectorAll<HTMLElement>('.masonry-item'));
+    // Use cached elements if available, otherwise query DOM and cache
+    let items: HTMLElement[] = [];
+    if (this.itemElements.size === this.sectionsWithSpan.length) {
+      // All elements cached, use them
+      this.sectionsWithSpan.forEach((sectionWithSpan) => {
+        const element = this.itemElements.get(sectionWithSpan.key);
+        if (element) {
+          items.push(element);
+        }
+      });
+    } else {
+      // Cache not complete, query DOM and update cache
+      items = Array.from(container.querySelectorAll<HTMLElement>('.masonry-item'));
+      this.cacheItemElements();
+    }
+
     if (items.length === 0) return;
 
     // Ensure items match sections (should already be in sync)
@@ -626,7 +830,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       (section, columns) => this.decideSpanForSection(section, columns, true)
     );
 
-    // Apply transforms and positions to items
+    // Apply transforms and positions to items, and calculate container height in same loop
+    let maxContainerHeight = 0;
     items.forEach((item, index) => {
       const sectionWithSpan = this.sectionsWithSpan[index];
       if (!sectionWithSpan) return;
@@ -666,18 +871,8 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
       sectionWithSpan.transform = position.transform;
       sectionWithSpan.width = widthExpr;
       sectionWithSpan.colSpan = position.colSpan;
-    });
 
-    // Update container height based on max column height
-    // Calculate max bottom position (finalTop + item height) for each column
-    let maxContainerHeight = 0;
-    items.forEach((item, index) => {
-      const sectionWithSpan = this.sectionsWithSpan[index];
-      if (!sectionWithSpan) return;
-
-      const position = transforms.get(sectionWithSpan.key);
-      if (!position) return;
-
+      // Calculate container height in same loop (todo #5)
       const itemHeight = item.offsetHeight || 0;
       const itemBottom = position.finalTop + itemHeight;
       if (itemBottom > maxContainerHeight) {
@@ -745,5 +940,36 @@ export class MasonryGridComponent implements AfterViewInit, OnChanges, OnDestroy
     });
 
     return colHeights;
+  }
+
+  /**
+   * Ensure initial layout is calculated with retry mechanism if width is invalid
+   * Simplified: Single RAF + one timeout retry
+   */
+  private ensureInitialLayout(): void {
+    const containerWidth = this.getContainerWidth();
+
+    // If we already have a valid width and sections, we're good
+    if (containerWidth > 0 && containerWidth >= 200 && this.sections?.length > 0) {
+      return; // Already valid
+    }
+
+    // Retry with single RAF + timeout
+    this.ngZone.runOutsideAngular(() => {
+      requestAnimationFrame(() => {
+        const width = this.getContainerWidth();
+        if (width > 0 && width >= 200 && this.sections?.length > 0) {
+          this.ngZone.run(() => this.updateLayout());
+        } else {
+          // Single retry after 100ms
+          this.initialLayoutPollingTimeout = setTimeout(() => {
+            const retryWidth = this.getContainerWidth();
+            if (retryWidth > 0 && retryWidth >= 200) {
+              this.ngZone.run(() => this.updateLayout());
+            }
+          }, 100);
+        }
+      });
+    });
   }
 }

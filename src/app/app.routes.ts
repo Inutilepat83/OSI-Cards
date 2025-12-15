@@ -33,6 +33,13 @@ export const routes: Routes = [
     path: 'api',
     loadComponent: () => import('./features/api/api.component').then((m) => m.ApiComponent),
   },
+  // API endpoint for LLM prompt
+  {
+    path: 'api/llm_prompt',
+    loadComponent: () =>
+      import('./features/api/llm-prompt/llm-prompt.component').then((m) => m.LlmPromptComponent),
+    data: { preload: false },
+  },
   {
     path: 'support',
     loadComponent: () =>

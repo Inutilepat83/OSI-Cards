@@ -270,8 +270,8 @@
 }
 
 /* Priority-based visual indicators */
-.masonry-item--priority-critical {
-  /* Critical sections get subtle emphasis */
+.masonry-item[data-priority="1"] {
+  /* Priority 1 (highest) sections get subtle emphasis */
   &::before {
     content: "";
     position: absolute;
@@ -284,18 +284,12 @@
   }
 }
 
-.masonry-item--priority-important {
-  /* Important sections - no special border, use unified styling */
+.masonry-item[data-priority="2"],
+.masonry-item[data-priority="3"] {
+  /* Priority 2 and 3 sections - no special border, use unified styling */
   /* Left accent border removed for consistency */
 }
 
-/* Sticky sections */
-.masonry-item--sticky {
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 10 !important;
-  background: var(--card-background) !important;
-}
 
 /* Flex grow sections - expand to fill space */
 .masonry-item--flex-grow {

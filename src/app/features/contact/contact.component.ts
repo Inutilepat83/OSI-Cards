@@ -23,3 +23,4 @@ export class ContactComponent {
       'This page is under development. Check back soon for contact information and support options.',
   };
 }
+

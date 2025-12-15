@@ -21,8 +21,7 @@
     "usesFields": false,
     "usesItems": true,
     "defaultColumns": 2,
-    "supportsCollapse": true,
-    "supportsEmoji": false
+    "supportsCollapse": true
   },
   "itemSchema": {
     "type": "object",
@@ -61,14 +60,21 @@
         }
       }
     },
-    "required": ["title"]
+    "required": [
+      "title"
+    ]
   },
-  "aliases": ["photos", "images"],
-  "testFixtures": {
-    "complete": {
+  "aliases": [
+    "photos",
+    "images"
+  ],
+  "examples": {
+    "example": {
       "title": "Life at Nexus",
       "type": "gallery",
       "description": "Behind the scenes at our global offices",
+      "preferredColumns": 2,
+      "priority": 3,
       "items": [
         {
           "title": "Austin Headquarters",
@@ -95,36 +101,6 @@
             "url": "https://images.nexustech.io/events/nexuscon-keynote.jpg",
             "caption": "NexusCon 2024 main stage",
             "alt": "Speaker on stage at large conference"
-          }
-        }
-      ]
-    },
-    "minimal": {
-      "title": "Gallery",
-      "type": "gallery",
-      "items": [
-        {
-          "title": "Image 1"
-        }
-      ]
-    },
-    "edgeCases": {
-      "title": "Gallery Edge Cases",
-      "type": "gallery",
-      "items": [
-        {
-          "title": "No Image URL",
-          "description": "Item without image source"
-        },
-        {
-          "title": "Long Caption Test",
-          "description": "This is a very long description that should properly wrap and not break the gallery layout even when it contains significantly more text than typical image captions"
-        },
-        {
-          "title": "日本語キャプション",
-          "description": "Japanese caption test",
-          "meta": {
-            "alt": "Alternative text in English"
           }
         }
       ]

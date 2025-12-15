@@ -586,12 +586,13 @@ interface PrerenderedPage {
       .doc-content {
         min-width: 0;
         width: 100%;
+        max-width: 100%;
 
-        /* Prose content should be readable width, but code/tables can expand */
+        /* Prose content uses full width for better responsiveness */
         > p,
         > ul:not(.toc-list),
         > ol {
-          max-width: 72ch;
+          max-width: 100%;
         }
 
         /* Code blocks and tables use full available width */
@@ -1263,13 +1264,26 @@ interface PrerenderedPage {
        Responsive
        ======================================================================== */
 
-      @media (max-width: 1024px) {
+      @media (max-width: 1200px) {
         .doc-page {
           grid-template-columns: 1fr;
+          gap: 1.5rem;
         }
 
         .doc-toc {
-          display: none;
+          grid-column: 1;
+          grid-row: auto;
+          margin-top: 2rem;
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .doc-page {
+          gap: 1rem;
+        }
+
+        .doc-toc {
+          margin-top: 1.5rem;
         }
 
         /* Live Demo Container - Tablet */

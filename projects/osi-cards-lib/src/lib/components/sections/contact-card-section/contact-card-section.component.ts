@@ -98,8 +98,8 @@ export class ContactCardSectionComponent extends BaseSectionComponent implements
     if (contact.email) {
       actions.push({ type: 'email', value: contact.email, label: 'Email' });
     }
-    if (contact.phone) {
-      actions.push({ type: 'phone', value: contact.phone, label: 'Call' });
+    if (contact.salesforce) {
+      actions.push({ type: 'salesforce', value: contact.salesforce, label: 'Salesforce CRM' });
     }
     if (contact.linkedIn) {
       actions.push({ type: 'linkedin', value: contact.linkedIn, label: 'LinkedIn' });
@@ -108,12 +108,12 @@ export class ContactCardSectionComponent extends BaseSectionComponent implements
   }
 
   /**
-   * Get primary contact methods (email + phone, max 2)
+   * Get primary contact methods (email + salesforce, max 2)
    * These are shown in collapsed state
    */
   getPrimaryActions(contact: any): Array<{ type: string; value: string; label: string }> {
     const allActions = this.getContactActions(contact);
-    // Prefer email + phone, keep LinkedIn under "more"
+    // Prefer email + salesforce, keep LinkedIn under "more"
     return allActions.filter((a) => a.type !== 'linkedin').slice(0, 2);
   }
 
@@ -135,8 +135,8 @@ export class ContactCardSectionComponent extends BaseSectionComponent implements
     switch (action.type) {
       case 'email':
         return this.getOutlookEmailUrl(action.value);
-      case 'phone':
-        return `tel:${action.value}`;
+      case 'salesforce':
+        return action.value; // Salesforce CRM URL
       case 'linkedin':
         return action.value;
       default:
@@ -151,8 +151,8 @@ export class ContactCardSectionComponent extends BaseSectionComponent implements
     switch (action.type) {
       case 'email':
         return '📧';
-      case 'phone':
-        return '📞';
+      case 'salesforce':
+        return '☁️'; // Salesforce cloud icon
       case 'linkedin':
         return '💼';
       default:

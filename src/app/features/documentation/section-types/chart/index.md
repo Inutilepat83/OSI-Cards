@@ -4,19 +4,7 @@ Displays data visualizations including bar charts, line charts, pie charts, and 
 
 ## Overview
 
-The **Chart Section** (`type: "chart"`) is used for displays data visualizations including bar charts, line charts, pie charts, and more.
-
-### Quick Facts
-
-| Property | Value |
-|----------|-------|
-| Type | `chart` |
-| Uses Fields | No |
-| Uses Items | No |
-| Default Columns | 2 |
-| Supports Collapse | No |
-| Aliases | None |
-| External Library | `chart.js` |
+The **Chart Section** is used for displays data visualizations including bar charts, line charts, pie charts, and more.
 
 ## Use Cases
 
@@ -24,15 +12,19 @@ The **Chart Section** (`type: "chart"`) is used for displays data visualizations
 - Analytics dashboards
 - Statistical reports
 - Trend analysis
-- Performance tracking
 
 ## Data Schema
 
+```typescript
+interface CardSection {
+  title: string;
+  type: 'chart';
+  fields?: CardField[];
+  
+}
+```
 
-
-
-
-## Complete Example
+## Example
 
 ```json
 {
@@ -88,48 +80,22 @@ The **Chart Section** (`type: "chart"`) is used for displays data visualizations
         "borderWidth": 1
       }
     ]
-  }
-}
-```
-
-## Minimal Example
-
-```json
-{
-  "title": "Basic Chart",
-  "type": "chart",
-  "chartType": "bar",
-  "chartData": {
-    "labels": [
-      "A",
-      "B",
-      "C"
-    ],
-    "datasets": [
-      {
-        "data": [
-          10,
-          20,
-          30
-        ]
-      }
-    ]
-  }
+  },
+  "preferredColumns": 2,
+  "priority": 2
 }
 ```
 
 ## Best Practices
 
 1. Provide proper chart configuration
-2. Include chart type specification
-3. Use appropriate data formats
-4. Ensure accessibility with labels
-5. Choose chart type based on data
+1. Include chart type specification
+1. Use appropriate data formats
+1. Ensure accessibility with labels
 
-## Component Information
+## Component Properties
 
-- **Selector:** `lib-chart-section`
-- **Component Path:** `./lib/components/sections/chart-section/chart-section.component`
+
 
 
 ## Related Documentation

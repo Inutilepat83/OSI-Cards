@@ -4,19 +4,7 @@ Displays chronological events, timelines, schedules, and calendar information.
 
 ## Overview
 
-The **Event Section** (`type: "event"`) is used for displays chronological events, timelines, schedules, and calendar information.
-
-### Quick Facts
-
-| Property | Value |
-|----------|-------|
-| Type | `event` |
-| Uses Fields | Yes |
-| Uses Items | Yes |
-| Default Columns | 1 |
-| Supports Collapse | Yes |
-| Aliases | None |
-
+The **Event Section** is used for displays chronological events, timelines, schedules, and calendar information.
 
 ## Use Cases
 
@@ -24,39 +12,19 @@ The **Event Section** (`type: "event"`) is used for displays chronological event
 - Project timelines
 - Schedules
 - Milestones
-- Upcoming activities
 
 ## Data Schema
 
-### Fields Schema
+```typescript
+interface CardSection {
+  title: string;
+  type: 'event';
+  fields?: CardField[];
+  items?: CardItem[];
+}
+```
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `label` | string | Event label |
-| `value` | string | Event name/description |
-| `date` | string | Event date |
-| `time` | string | Event time |
-| `endDate` | string | Event end date |
-| `category` | string | Event category |
-| `status` | string | Event status |
-| `location` | string | Event location |
-| `attendees` | number | Number of attendees |
-
-### Items Schema
-
-| Property | Type | Description |
-|----------|------|-------------|
-| `label` | string | Event label |
-| `value` | string | Event name/description |
-| `date` | string | Event date |
-| `time` | string | Event time |
-| `endDate` | string | Event end date |
-| `category` | string | Event category |
-| `status` | string | Event status |
-| `location` | string | Event location |
-| `attendees` | number | Number of attendees |
-
-## Complete Example
+## Example
 
 ```json
 {
@@ -86,26 +54,6 @@ The **Event Section** (`type: "event"`) is used for displays chronological event
       "attendees": 12
     },
     {
-      "label": "Product Launch",
-      "value": "Nexus Analytics 5.0 Release",
-      "date": "2025-02-10",
-      "time": "10:00",
-      "category": "Product",
-      "status": "confirmed",
-      "location": "Global Webcast"
-    },
-    {
-      "label": "Customer Summit",
-      "value": "NexusCon 2025 - AI Future",
-      "date": "2025-03-18",
-      "endDate": "2025-03-20",
-      "time": "08:00",
-      "category": "Conference",
-      "status": "planned",
-      "location": "Moscone Center, San Francisco",
-      "attendees": 3500
-    },
-    {
       "label": "Investor Day",
       "value": "Annual Investor Relations Event",
       "date": "2025-03-25",
@@ -114,27 +62,6 @@ The **Event Section** (`type: "event"`) is used for displays chronological event
       "status": "planned",
       "location": "New York Stock Exchange",
       "attendees": 200
-    },
-    {
-      "label": "Partner Summit",
-      "value": "Global Partner Ecosystem Meeting",
-      "date": "2025-04-08",
-      "endDate": "2025-04-09",
-      "time": "09:00",
-      "category": "Partnership",
-      "status": "tentative",
-      "location": "London, UK",
-      "attendees": 180
-    },
-    {
-      "label": "Engineering All-Hands",
-      "value": "Technical Roadmap Review",
-      "date": "2025-02-28",
-      "time": "16:00",
-      "category": "Internal",
-      "status": "confirmed",
-      "location": "Virtual",
-      "attendees": 850
     },
     {
       "label": "AWS re:Invent Presence",
@@ -146,38 +73,22 @@ The **Event Section** (`type: "event"`) is used for displays chronological event
       "status": "planned",
       "location": "Las Vegas, NV"
     }
-  ]
-}
-```
-
-## Minimal Example
-
-```json
-{
-  "title": "Upcoming Event",
-  "type": "event",
-  "fields": [
-    {
-      "label": "Meeting",
-      "value": "Team Sync",
-      "date": "2025-01-15"
-    }
-  ]
+  ],
+  "preferredColumns": 1,
+  "priority": 3
 }
 ```
 
 ## Best Practices
 
 1. Include dates and times
-2. Add location information
-3. Use status for event state
-4. Chronological ordering
-5. Group by category or date
+1. Add location information
+1. Use status for event state
+1. Chronological ordering
 
-## Component Information
+## Component Properties
 
-- **Selector:** `lib-event-section`
-- **Component Path:** `./lib/components/sections/event-section/event-section.component`
+
 
 
 ## Related Documentation

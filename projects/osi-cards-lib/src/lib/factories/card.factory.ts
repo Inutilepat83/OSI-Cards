@@ -74,15 +74,13 @@ export interface ISectionBuilder {
   withType(type: SectionTypeInput): ISectionBuilder;
   withDescription(description: string): ISectionBuilder;
   withSubtitle(subtitle: string): ISectionBuilder;
-  withColumns(columns: number): ISectionBuilder;
   withColSpan(span: number): ISectionBuilder;
   withPreferredColumns(columns: 1 | 2 | 3 | 4): ISectionBuilder;
-  withPriority(priority: 'critical' | 'important' | 'standard' | 'optional'): ISectionBuilder;
+  withPriority(priority: 1 | 2 | 3): ISectionBuilder;
   withField(field: CardField): ISectionBuilder;
   withFields(fields: CardField[]): ISectionBuilder;
   withItem(item: CardItem): ISectionBuilder;
   withItems(items: CardItem[]): ISectionBuilder;
-  withEmoji(emoji: string): ISectionBuilder;
   withCollapsed(collapsed: boolean): ISectionBuilder;
   withMeta(key: string, value: unknown): ISectionBuilder;
   build(): CardSection;
@@ -284,11 +282,6 @@ class SectionBuilder implements ISectionBuilder {
   /**
    * Set the number of columns
    */
-  withColumns(columns: number): ISectionBuilder {
-    this.section.columns = columns;
-    return this;
-  }
-
   /**
    * Set explicit column span
    */
@@ -306,9 +299,9 @@ class SectionBuilder implements ISectionBuilder {
   }
 
   /**
-   * Set layout priority
+   * Set layout priority (1-3, where 1 is highest)
    */
-  withPriority(priority: 'critical' | 'important' | 'standard' | 'optional'): ISectionBuilder {
+  withPriority(priority: 1 | 2 | 3): ISectionBuilder {
     this.section.priority = priority;
     return this;
   }
@@ -345,13 +338,6 @@ class SectionBuilder implements ISectionBuilder {
     return this;
   }
 
-  /**
-   * Set section emoji
-   */
-  withEmoji(emoji: string): ISectionBuilder {
-    this.section.emoji = emoji;
-    return this;
-  }
 
   /**
    * Set collapsed state
@@ -514,13 +500,11 @@ export class SectionFactory {
     if (config.type) builder.withType(config.type);
     if (config.description) builder.withDescription(config.description);
     if (config.subtitle) builder.withSubtitle(config.subtitle);
-    if (config.columns) builder.withColumns(config.columns);
     if (config.colSpan) builder.withColSpan(config.colSpan);
     if (config.preferredColumns) builder.withPreferredColumns(config.preferredColumns);
     if (config.priority) builder.withPriority(config.priority);
     if (config.fields) builder.withFields(config.fields);
     if (config.items) builder.withItems(config.items);
-    if (config.emoji) builder.withEmoji(config.emoji);
     if (config.collapsed !== undefined) builder.withCollapsed(config.collapsed);
 
     if (config.meta) {

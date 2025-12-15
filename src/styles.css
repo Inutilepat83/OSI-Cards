@@ -490,60 +490,12 @@
 
 /* Responsive Styles */
 @media (min-width: 640px) {
-  .sm\:px-4 {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
-  .sm\:px-6 {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-  }
-
-  .sm\:py-6 {
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
-  }
-
-  .sm\:py-10 {
-    padding-top: 2.5rem;
-    padding-bottom: 2.5rem;
-  }
-
-  .sm\:text-lg {
-    font-size: var(--text-lg);
-  }
-
-  .sm\:text-xl {
-    font-size: var(--text-xl);
-  }
-
-  .sm\:text-4xl {
-    font-size: var(--text-4xl);
-  }
-
-  .sm\:text-5xl {
-    font-size: var(--text-5xl);
-  }
-
   .sm\:gap-3 {
     gap: 0.75rem;
   }
 
   .sm\:gap-4 {
     gap: 1rem;
-  }
-
-  .sm\:mb-4 {
-    margin-bottom: 1rem;
-  }
-
-  .sm\:mb-6 {
-    margin-bottom: 1.5rem;
-  }
-
-  .sm\:mb-8 {
-    margin-bottom: 2rem;
   }
 
   .sm\:w-16 {
@@ -731,8 +683,8 @@
 }
 
 .card-title {
-  font-size: 1.75rem;
-  font-weight: 700;
+  font-size: var(--card-header-title-font-size, 1.25rem);
+  font-weight: var(--card-header-title-font-weight, 700);
   color: var(--foreground);
   margin: 0;
 }
@@ -809,7 +761,7 @@
 }
 
 .section-emoji {
-  font-size: clamp(1.4rem, 1.6vw, 1.75rem);
+  font-size: 1.4rem;
   line-height: 1;
   flex-shrink: 0;
   margin-top: var(--spacing-2xs);

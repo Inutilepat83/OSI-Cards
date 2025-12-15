@@ -44,8 +44,6 @@ export interface BaseSectionProps {
   description?: string;
   /** Optional subtitle */
   subtitle?: string;
-  /** Column configuration */
-  columns?: number;
   /** Explicit column span override */
   colSpan?: number;
   /** Preferred column count */
@@ -64,20 +62,14 @@ export interface BaseSectionProps {
   canGrow?: boolean;
   /** Layout priority (1=highest, 3=lowest) */
   layoutPriority?: 1 | 2 | 3;
-  /** Priority band */
-  priority?: 'critical' | 'important' | 'standard' | 'optional';
-  /** Keep visible during scroll */
-  sticky?: boolean;
-  /** Group ID for related sections */
-  groupId?: string;
+  /** Priority for layout ordering (1-3, where 1 is highest) */
+  priority?: 1 | 2 | 3;
   /** Preferred column position */
   columnAffinity?: number;
   /** Section width */
   width?: number;
   /** Collapsed state */
   collapsed?: boolean;
-  /** Optional emoji */
-  emoji?: string;
   /** Additional metadata */
   meta?: Record<string, unknown>;
 }
