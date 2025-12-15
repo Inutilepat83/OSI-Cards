@@ -2001,14 +2001,14 @@
                 "product": "Widget B",
                 "region": "South",
                 "quantity": 200,
-                "revenue": 7998.0,
+                "revenue": 7998,
                 "date": "2025-01-20"
               },
               {
                 "product": "Widget A",
                 "region": "East",
                 "quantity": 100,
-                "revenue": 2999.0,
+                "revenue": 2999,
                 "date": "2025-01-18"
               },
               {
